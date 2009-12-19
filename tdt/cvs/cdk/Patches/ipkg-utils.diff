@@ -1,0 +1,26 @@
+--- ipkg-utils-050831/Makefile	2004-12-28 16:32:11.000000000 +0100
++++ ipkg-utils-050831/Makefile-new	2007-07-15 21:56:36.000000000 +0200
+@@ -12,7 +12,8 @@
+ 
+ install: ${UTILS}
+ 	cp ${UTILS} $(PREFIX)/bin
+-	python setup.py install
++	echo "Copying build/lib/ipkg.py into $(PREFIX)/bin"
++	cp build/lib/ipkg.py $(PREFIX)/bin
+ 	chmod agu+rx ipkg-make-index
+ 	cp -f ipkg-make-index $(PREFIX)/bin
+ 
+--- ipkg-utils-050831/ipkg.py	2005-03-03 16:11:53.000000000 +0100
++++ ipkg-utils-050831/ipkg.py-new	2008-01-11 19:59:54.000000000 +0100
+@@ -152,9 +152,9 @@
+             self.filename = os.path.basename(fn)
+ 	    ## sys.stderr.write("  extracting control.tar.gz from %s\n"% (fn,)) 
+             if self.isdeb:
+-                control = os.popen("ar p "+fn+" control.tar.gz | tar xfzO - '*control'","r")
++                control = os.popen("ar p "+fn+" control.tar.gz | tar xfzO - './control'","r")
+             else:
+-                control = os.popen("tar xfzO "+fn+" '*control.tar.gz' | tar xfzO - '*control'","r")
++                control = os.popen("tar xfzO "+fn+" '*control.tar.gz' | tar xfzO - './control'","r")
+             line = control.readline()
+             while 1:
+                 if not line: break

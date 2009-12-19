@@ -1,0 +1,161 @@
+--- lirc-0.8.2/daemons/lircd.c	2007-05-06 11:46:59.000000000 +0200
++++ lirc-0.8.2/daemons/lircd.c-new	2008-01-27 09:52:18.000000000 +0100
+@@ -103,14 +103,28 @@
+ char *pidfile = PIDFILE;
+ char *lircdfile = LIRCD;
+ 
++/* konfetti */
++int block_it(int fd,char *message,char *arguments);
++int release_it(int fd,char *message,char *arguments);
++/* konfetti end */
++
+ struct protocol_directive directives[] =
+ {
+ 	{"LIST",list},
+ 	{"SEND_ONCE",send_once},
+ 	{"SEND_START",send_start},
+ 	{"SEND_STOP",send_stop},
++/* konfetti */
++	{"BLOCK",block_it},
++	{"RELEASE",release_it},
++/* konfetti end */
+ 	{"VERSION",version},
+ 	{"SET_TRANSMITTERS",set_transmitters},
++/* konfetti
++ * gemergt mit http://osdir.com/ml/hardware.lirc/2004-03/msg00153.html
++ */
++	{"SEND_RELAY",send_relay},
++/* konfetti end */
+ 	{NULL,NULL}
+ 	/*
+ 	{"DEBUG",debug},
+@@ -118,6 +132,10 @@
+ 	*/
+ };
+ 
++/* konfetti unser fd */
++int not_blocked_fd = -1;
++/* konfetti end */
++
+ enum protocol_string_num {
+ 	P_BEGIN=0,
+ 	P_DATA,
+@@ -209,6 +227,30 @@
+ inline int write_socket(int fd, const char *buf, int len)
+ {
+ 	int done,todo=len;
++/* konfetti */
++	static char* my_buffer = NULL;
++	char* begin_buffer = buf;
++
++	if (my_buffer != NULL) free (my_buffer);
++	my_buffer = malloc(len);
++
++	memcpy(my_buffer, buf, len);
++
++	logprintf(LOG_ERR,"write_socket: %d, %s (vorher)\n", fd, buf);
++	logprintf(LOG_ERR,"not blocked fd =%d\n", not_blocked_fd);
++
++	if ((not_blocked_fd != -1) && (not_blocked_fd != fd))
++	{
++		strcpy(buf, "0000000000000000 00 BLOCK RC660\n");
++		todo = strlen(buf);
++	}else
++	{
++	memcpy(buf, my_buffer, len);
++	todo = len;
++	}
++
++    logprintf(LOG_ERR,"write_socket: %d, %s (nachher)\n", fd, buf);
++/* konfetti end */
+ 
+ 	while(todo)
+ 	{
+@@ -224,6 +266,9 @@
+ 		buf+=done;
+ 		todo-=done;
+ 	}
++/* konfetti */
++	memcpy(begin_buffer, my_buffer, len);
++/* konfetti end */
+ 	return(len);
+ }
+ 
+@@ -1329,6 +1374,23 @@
+ 	return(send_core(fd,message,arguments,0));
+ }
+ 
++/* konfetti */
++int block_it(int fd,char *message,char *arguments)
++{
++	logprintf(LOG_ERR,"block_it: %d\n", fd);
++
++	not_blocked_fd = fd;
++	return 1;
++}
++
++int release_it(int fd,char *message,char *arguments)
++{
++	logprintf(LOG_ERR,"release_it\n");
++	not_blocked_fd = -1;
++	return 1;
++}
++/* konfetti end */
++
+ int send_core(int fd,char *message,char *arguments,int once)
+ {
+ 	struct ir_remote *remote;
+@@ -2195,3 +2257,39 @@
+ 	/* never reached */
+ 	return(EXIT_SUCCESS); 
+ }
++
++/* konfetti:
++ * gemergt mit http://osdir.com/ml/hardware.lirc/2004-03/msg00153.html
++ */
++int send_relay(int fd,char *message,char *arguments)
++{
++	int length;
++	int     i;
++
++	/* pass up "SEND_RELAY ", send rest of string */
++	while ((*message != 0) && (*message != ' '))
++		++message;
++	if (*message == ' ')
++		++message;
++	length = strlen(message);
++
++	if(length)
++	{
++		LOGPRINTF(1,"relaying message: \"%s\"",message);
++		for(i=0;i<clin;i++)
++		{
++			/* don't relay messages to remote clients */
++			if(cli_type[i]==CT_REMOTE)
++				continue;
++			LOGPRINTF(1,"writing to client %d",i);
++			if(write_socket(clis[i],message,length)<length)
++			{
++				remove_client(clis[i]);
++				i--;
++			}
++		}
++	}
++	/* return close client(to close rc/irsend without timeout/pause  */
++	return(0);
++}
++/* konfetti end */
+--- lirc-0.8.2/daemons/lircd.h	2007-05-06 11:46:59.000000000 +0200
++++ lirc-0.8.2/daemons/lircd.h-new	2008-01-27 09:52:23.000000000 +0100
+@@ -71,6 +71,11 @@
+ int send_once(int fd,char *message,char *arguments);
+ int send_start(int fd,char *message,char *arguments);
+ int send_stop(int fd,char *message,char *arguments);
++/* konfetti
++ * gemergt mit http://osdir.com/ml/hardware.lirc/2004-03/msg00153.html
++ */
++int send_relay(int fd,char *message,char *arguments);
++/* konfetti end */
+ int send_core(int fd,char *message,char *arguments,int once);
+ int version(int fd,char *message,char *arguments);
+ int get_pid(int fd,char *message,char *arguments);

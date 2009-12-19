@@ -1,0 +1,534 @@
+diff -u --recursive --new-file oldenigma2/lib/driver/Makefile.am enigma2/lib/driver/Makefile.am
+--- oldenigma2/lib/driver/Makefile.am	2006-12-05 14:56:04.000000000 +0100
++++ enigma2/lib/driver/Makefile.am	2008-06-13 23:42:27.000000000 +0200
+@@ -4,4 +4,4 @@
+ noinst_LIBRARIES = libenigma_driver.a
+ 
+ libenigma_driver_a_SOURCES = \
+-	rc.cpp rcinput.cpp rcconsole.cpp avswitch.cpp rfmod.cpp etimezone.cpp misc_options.cpp
++	rc.cpp rcinput.cpp rcconsole.cpp avswitch.cpp rfmod.cpp etimezone.cpp misc_options.cpp rcufs910.cpp
+diff -u --recursive --new-file oldenigma2/lib/driver/rc.cpp enigma2/lib/driver/rc.cpp
+--- oldenigma2/lib/driver/rc.cpp	2008-03-25 23:12:34.000000000 +0100
++++ enigma2/lib/driver/rc.cpp	2008-05-31 21:30:04.000000000 +0200
+@@ -10,6 +10,46 @@
+ #include <lib/base/init_num.h>
+ #include <lib/base/eerror.h>
+ 
++#define vMENU "54"
++#define vRED "6d"
++#define vGREEN "6e"
++#define vYELLOW "6f"
++#define vBLUE "70"
++#define vEXIT "55"
++#define vTEXT "3c"
++#define vEPG "4c"
++#define vREWIND "21"
++#define vFASTFORWARD "20"
++#define vPLAY "38"
++#define vPAUSE "39"
++#define vRECORD "37"
++#define vSTOP "31"
++#define vSTANDBY "0c"
++#define vMUTE "0d"
++#define vCHANNELUP "1e"
++#define vCHANNELDOWN "1f" 
++#define vVOLUMEUP "10"
++#define vVOLUMEDOWN "11"
++ 
++ 
++#define vINFO "0F"
++#define vOK "5c"
++#define vUP "58"
++#define vRIGHT "5b"
++#define vDOWN "59"
++#define vLEFT "5a"
++ 
++#define v0BUTTON "00"
++#define v1BUTTON "01"
++#define v2BUTTON "02"
++#define v3BUTTON "03"
++#define v4BUTTON "04"
++#define v5BUTTON "05"
++#define v6BUTTON "06"
++#define v7BUTTON "07"
++#define v8BUTTON "08"
++#define v9BUTTON "09"
++
+ /*
+  *  note on the enigma input layer:
+  *  the enigma input layer (rc*) supports n different devices which
+@@ -95,15 +135,124 @@
+ 
+ void eRCInputEventDriver::keyPressed(int)
+ {
++	eDebug("eRCInputEventDriver::keyPressed()->");
+ 	struct input_event ev;
+-	while (1)
+-	{
+-		if (read(handle, &ev, sizeof(struct input_event))!=sizeof(struct input_event))
+-			break;
+-		if (enabled && !input->islocked())
+-			for (std::list<eRCDevice*>::iterator i(listeners.begin()); i!=listeners.end(); ++i)
+-				(*i)->handleCode((long)&ev);
+-	}
++	char stmp[3];
++	/*
++	struct input_event {
++        	struct timeval time;
++        	unsigned short type;
++        	unsigned short code;
++        	unsigned int value;
++	};
++	*/
++ 
++	if (read(handle, &stmp, sizeof("00")) <= 0)
++		eWarning("read error");
++	stmp[2]= '\0';
++	eDebug("KEY->: %s", stmp);
++ 
++	int value;
++	if (!strcasecmp(stmp, vMENU))
++		value = KEY_MENU;
++	else if (!strcasecmp(stmp, vRED))
++		value = KEY_RED;
++	else if (!strcasecmp(stmp, vGREEN))
++		value = KEY_GREEN;
++	else if (!strcasecmp(stmp, vYELLOW))
++		value = KEY_YELLOW;
++	else if (!strcasecmp(stmp, vBLUE))
++		value = KEY_BLUE;
++	else if (!strcasecmp(stmp, vEXIT))
++		value = KEY_HOME;
++	else if (!strcasecmp(stmp, vTEXT))
++		value = KEY_TEXT;
++	else if (!strcasecmp(stmp, vOK))
++		value = KEY_OK;
++	else if (!strcasecmp(stmp, vINFO))
++		value = KEY_HELP;
++	else if (!strcasecmp(stmp, vUP))
++		value = KEY_UP;
++	else if (!strcasecmp(stmp, vRIGHT))
++		value = KEY_RIGHT;
++	else if (!strcasecmp(stmp, vDOWN))
++		value = KEY_DOWN;
++	else if (!strcasecmp(stmp, vLEFT))
++		value = KEY_LEFT;
++	else if (!strcasecmp(stmp, vEPG))
++		value = KEY_EPG;
++	else if (!strcasecmp(stmp, vREWIND))
++		value = KEY_REWIND;
++	else if (!strcasecmp(stmp, vFASTFORWARD))
++		value = KEY_FASTFORWARD;
++	else if (!strcasecmp(stmp, vPLAY))
++		value = KEY_PLAY;
++	else if (!strcasecmp(stmp, vPAUSE))
++		value = KEY_PAUSE;
++	else if (!strcasecmp(stmp, vRECORD))
++		value = KEY_RECORD;
++	else if (!strcasecmp(stmp, vSTOP))
++		value = KEY_STOP;
++	else if (!strcasecmp(stmp, vSTANDBY))
++		value = KEY_POWER;
++	else if (!strcasecmp(stmp, vMUTE))
++		value = KEY_MUTE;
++	else if (!strcasecmp(stmp, vCHANNELUP))
++		value = KEY_PAGEUP;
++	else if (!strcasecmp(stmp, vCHANNELDOWN))
++		value = KEY_PAGEDOWN;
++	else if (!strcasecmp(stmp, vVOLUMEUP))
++		value = KEY_VOLUMEUP;
++	else if (!strcasecmp(stmp, vVOLUMEDOWN))
++		value = KEY_VOLUMEDOWN;
++	else if (!strcasecmp(stmp, v0BUTTON))
++		value = KEY_0;
++	else if (!strcasecmp(stmp, v1BUTTON))
++		value = KEY_1;
++	else if (!strcasecmp(stmp, v2BUTTON))
++		value = KEY_2;
++	else if (!strcasecmp(stmp, v3BUTTON))
++		value = KEY_3;
++	else if (!strcasecmp(stmp, v4BUTTON))
++		value = KEY_4;
++	else if (!strcasecmp(stmp, v5BUTTON))
++		value = KEY_5;
++	else if (!strcasecmp(stmp, v6BUTTON))
++		value = KEY_6;
++	else if (!strcasecmp(stmp, v7BUTTON))
++		value = KEY_7;
++	else if (!strcasecmp(stmp, v8BUTTON))
++		value = KEY_8;
++	else if (!strcasecmp(stmp, v9BUTTON))
++		value = KEY_9;
++	else
++		value = -1;
++ 
++	/*value(vermutung): 1. start des tastendrucks, 0 stop des tastendrucks, 2 ist tastatur,
++	code ist der tastendruckcode,
++	ev->type = EV_KEY da Tastendruecke*/
++
++	struct timeval time;
++	struct timezone tz;
++	gettimeofday(&time,&tz);
++
++	ev.time = time;
++	ev.value = 1;
++	ev.type = EV_KEY;
++
++	ev.code = value/*&0x7FFF*/;
++
++	if (enabled)
++	for (std::list<eRCDevice*>::iterator i(listeners.begin()); i!=listeners.end(); ++i)
++				(*i)->handleCode((int)&ev);
++	usleep(10000);
++	ev.time = time;
++	ev.value = 0;
++	if (enabled)
++		for (std::list<eRCDevice*>::iterator i(listeners.begin()); i!=listeners.end(); ++i)
++			(*i)->handleCode((int)&ev);
++ 
++	eDebug("eRCInputEventDriver::keyPressed()-<");
+ }
+ 
+ eRCInputEventDriver::eRCInputEventDriver(const char *filename): eRCDriver(eRCInput::getInstance())
+@@ -123,9 +272,9 @@
+ 
+ std::string eRCInputEventDriver::getDeviceName()
+ {
+-	char name[128]="";
+-	if (handle >= 0)
+-		::ioctl(handle, EVIOCGNAME(128), name);
++	char name[128]="KATHI-RC";
++	//if (handle >= 0)
++	//	::ioctl(handle, EVIOCGNAME(128), name);
+ 	return name;
+ }
+ 
+diff -u --recursive --new-file oldenigma2/lib/driver/rcinput.cpp enigma2/lib/driver/rcinput.cpp
+--- oldenigma2/lib/driver/rcinput.cpp	2008-03-25 23:12:35.000000000 +0100
++++ enigma2/lib/driver/rcinput.cpp	2008-05-31 21:30:21.000000000 +0200
+@@ -99,20 +99,14 @@
+ public:
+ 	eInputDeviceInit()
+ 	{
+-		int i = 0;
+-		while (1)
+-		{
+-			struct stat s;
+-			char filename[128];
+-			sprintf(filename, "/dev/input/event%d", i);
+-			if (stat(filename, &s))
+-				break;
+-			eRCInputEventDriver *p;
+-			m_drivers.push_back(p = new eRCInputEventDriver(filename));
+-			m_devices.push_back(new eRCDeviceInputDev(p));
+-			++i;
+-		}
+-		eDebug("Found %d input devices!", i);
++		struct stat s;
++		char filename[128];
++		sprintf(filename, "/dev/ttyAS1");
++
++		eRCInputEventDriver *p;
++		m_drivers.push_back(p = new eRCInputEventDriver(filename));
++		m_devices.push_back(new eRCDeviceInputDev(p));
++	eDebug("Found ttyAS1 input devices!");
+ 	}
+ 	
+ 	~eInputDeviceInit()
+diff -u --recursive --new-file oldenigma2/lib/driver/rcufs910.cpp enigma2/lib/driver/rcufs910.cpp
+--- oldenigma2/lib/driver/rcufs910.cpp	1970-01-01 01:00:00.000000000 +0100
++++ enigma2/lib/driver/rcufs910.cpp	2008-06-06 23:57:15.000000000 +0200
+@@ -0,0 +1,261 @@
++/*
++ * Lirc für Enigma
++ * Version: 0.1
++ * by Trick
++ * 
++ * Bug: timeout fehlt
++ */
++#include <lib/base/init.h>
++#include <lib/base/init_num.h>
++#include <lib/driver/rcufs910.h>
++#include <lib/driver/input_fake.h>
++#include <linux/input.h>
++
++#include <stdio.h>
++#include <fcntl.h>
++#include <stdlib.h>
++ 
++#include <string.h>
++#include <unistd.h>
++ 
++#include <sys/socket.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/un.h>
++#include <errno.h>
++#include <getopt.h>
++ 
++#define cExitButton 1
++#define cMuteButton 2
++#define c1Button 3
++#define c2Button 4
++#define c3Button 5
++#define c4Button 6
++#define c5Button 7
++#define c6Button 8
++#define c7Button 9
++#define c8Button 10
++#define c9Button 11
++#define c0Button 12
++#define cMenuButton 13
++#define cTextButton 14
++#define cRedButton 15
++#define cGreenButton 16
++#define cYellowButton 17
++#define cBlueButton 18
++#define cVolumeUpButton 19
++#define cVolumeDownButton 20
++#define cInfoButton 21
++#define cChannelUpButton 22
++#define cChannelDownButton 23
++#define cCursorUpButton 24
++#define cCursorDownButton 25
++#define cCursorLeftButton 26
++#define cCursorRightButton 27
++#define cOKButton 28
++#define cEPGButton 29
++#define cRewindButton 30
++#define cFastForwardButton 31
++#define cPlayButton 32
++#define cPauseButton 33
++#define cRecordButton 34
++#define cStopButton 35
++#define cStandByButton 36
++#define cLastButton 37
++ 
++typedef struct
++{
++	char*   KeyWord;
++	int     KeyCode;
++} tInternalCode;
++ 
++ 
++tInternalCode vInternalCode[cLastButton] =
++{
++	{"0000000022900055", cExitButton},
++	{"000000002290000d", cMuteButton},
++	{"0000000022900001", c1Button},
++	{"0000000022900002", c2Button},
++	{"0000000022900003", c3Button},
++	{"0000000022900004", c4Button},
++	{"0000000022900005", c5Button},
++	{"0000000022900006", c6Button},
++	{"0000000022900007", c7Button},
++	{"0000000022900008", c8Button},
++	{"0000000022900009", c9Button},
++	{"0000000022900000", c0Button},
++	{"0000000022900054", cMenuButton},
++	{"000000002290003c", cTextButton},
++	{"000000002290006d", cRedButton},
++	{"000000002290006e", cGreenButton},
++	{"000000002290006f", cYellowButton},
++	{"0000000022900070", cBlueButton},
++	{"0000000022900010", cVolumeUpButton},
++	{"0000000022900011", cVolumeDownButton},
++	{"000000002290000f", cInfoButton},
++	{"000000002290001e", cChannelUpButton},
++	{"000000002290001f", cChannelDownButton},
++	{"0000000022900058", cCursorUpButton},
++	{"0000000022900059", cCursorDownButton},
++	{"000000002290005a", cCursorLeftButton},
++	{"000000002290005b", cCursorRightButton},
++	{"000000002290005c", cOKButton},
++	{"00000000229000cc", cEPGButton},
++	{"0000000022900021", cRewindButton},
++	{"0000000022900020", cFastForwardButton},
++	{"0000000022900038", cPlayButton},
++	{"0000000022900039", cPauseButton},
++	{"0000000022900037", cRecordButton},
++	{"0000000022900031", cStopButton},
++	{"000000002290000c", cStandByButton},
++	{ NULL,  cLastButton}
++};
++ 
++int getInternalLircCode(char* code)
++{
++	for (int vLoop = 0; vLoop < cLastButton -1; vLoop++)
++	{
++		if (strncmp(vInternalCode[vLoop].KeyWord, code, strlen(vInternalCode[vLoop].KeyWord)) == 0)
++		{
++			return vInternalCode[vLoop].KeyCode;
++		}
++	}
++    return cLastButton;
++}
++#define LIRCD "/dev/lircd"
++eRCUFS910Driver::eRCUFS910Driver(const char *filename): eRCDriver(eRCInput::getInstance())
++{
++	eDebug("UFS910 FERNBEDIENUNG\n");
++	struct sockaddr_un addr;
++	addr.sun_family=AF_UNIX;
++	strcpy(addr.sun_path,LIRCD);
++	handle=socket(AF_UNIX,SOCK_STREAM,0);
++	if(handle==-1)  {
++		perror("socket");
++ 
++	};
++	if(connect(handle,(struct sockaddr *)&addr,sizeof(addr))==-1)  {
++		perror("connect");
++ 
++	};
++	sn=new eSocketNotifier(eApp, handle, eSocketNotifier::Read);
++	CONNECT(sn->activated, eRCUFS910Driver::keyPressed);
++	eRCInput::getInstance()->setFile(handle);
++}
++ 
++eRCUFS910Driver::~eRCUFS910Driver()
++{
++ 	if (handle>=0)
++		close(handle);
++	if (sn)
++		delete sn;
++}
++ 
++void eRCUFS910Driver::keyPressed(int KeyCode)
++{	
++	int key;
++	char buf[128];
++	read(handle,&buf,128);
++	buf[128]='\0';
++	eDebug("KeyCode =%s\n",buf);
++	int code,prell;
++	char tmp2[3];
++	tmp2[0]=buf[17];
++	tmp2[1]=buf[18];
++	tmp2[2]='\0';
++	eDebug("PRELLCOUNT %s\n",tmp2);
++	if (atoi(tmp2)%5 != 0)
++	{
++		eDebug("PRELLING\n");
++		return;
++	}
++	key=getInternalLircCode(buf);
++
++
++	for (std::list<eRCDevice*>::iterator i(listeners.begin()); i!=listeners.end(); ++i)
++		(*i)->handleCode(key);
++ 
++}
++ 
++void eRCUFS910::handleCode(long code)
++{
++	eDebug("UFS910 code is %d", code);
++	code=getKeyCompatibleCode(code);
++	input->keyPressed(eRCKey(this, code, 0));
++}
++ 
++eRCUFS910::eRCUFS910(eRCDriver *driver)
++			: eRCDevice("KATHI-LIRC", driver)
++{
++}
++ 
++const char *eRCUFS910::getDescription() const
++{
++	return "UFS910 Fernbedienung Lirc";
++}
++ 
++const char *eRCUFS910::getKeyDescription(const eRCKey &key) const
++{
++	eDebug("keycode =%d\n",key.code);
++	return 0;
++}
++ 
++int eRCUFS910::getKeyCompatibleCode(int code) const
++{
++	eDebug("keycode1 =%d\n",code);
++	eDebug("keycode1 =%02x\n",code);
++	switch (code)
++	{
++	case c1Button: return KEY_1;
++	case c2Button: return KEY_2;
++	case c3Button: return KEY_3;
++	case c4Button: return KEY_4;
++	case c5Button: return KEY_5;
++	case c6Button: return KEY_6;
++	case c7Button: return KEY_7;
++	case c8Button: return KEY_8;
++	case c9Button: return KEY_9;
++	case c0Button: return KEY_0;
++	case cVolumeUpButton: return KEY_VOLUMEUP;
++	case cVolumeDownButton: return KEY_VOLUMEDOWN;
++	case cMenuButton: return KEY_MENU;
++	case cYellowButton: return KEY_YELLOW;
++	case cGreenButton: return KEY_GREEN;
++	case cRedButton: return KEY_RED;
++	case cBlueButton: return KEY_BLUE;
++	case cExitButton: return KEY_HOME;
++	case cTextButton: return KEY_TEXT;
++	case cOKButton: return KEY_OK;
++	case cInfoButton: return KEY_HELP;
++	case cStandByButton: return KEY_POWER;
++	case cCursorUpButton: return KEY_UP;
++	case cCursorDownButton: return KEY_DOWN;
++	case cCursorLeftButton: return KEY_LEFT;
++	case cCursorRightButton: return KEY_RIGHT;
++	case cEPGButton: return KEY_EPG;
++	case cRewindButton: return KEY_REWIND;
++	case cFastForwardButton: return KEY_FASTFORWARD;
++	case cPlayButton: return KEY_PLAY;
++	case cPauseButton: return KEY_PAUSE;
++	case cRecordButton: return KEY_RECORD;
++	case cStopButton: return KEY_STOP;
++
++	case cMuteButton: return KEY_MUTE;
++	case cChannelUpButton: return KEY_PAGEUP;
++	case cChannelDownButton: return KEY_PAGEDOWN;
++	default:   return -1;
++	}
++}
++ 
++class eRCUFS910Init
++{
++	eRCUFS910Driver driver;
++	eRCUFS910 device;
++public:
++	eRCUFS910Init(): driver("/dev/lirc"), device(&driver)
++	{
++	}
++};
++ 
++eAutoInitP0<eRCUFS910Init> init_rcufs910(eAutoInitNumbers::rc+1, "UFS910 RC Driver");
++ 
+diff -u --recursive --new-file oldenigma2/lib/driver/rcufs910.h enigma2/lib/driver/rcufs910.h
+--- oldenigma2/lib/driver/rcufs910.h	1970-01-01 01:00:00.000000000 +0100
++++ enigma2/lib/driver/rcufs910.h	2008-06-06 18:45:47.000000000 +0200
+@@ -0,0 +1,28 @@
++#ifndef __rcufs910_h
++#define __rcufs910_h
++ 
++#include <termios.h>
++#include <lib/driver/rc.h>
++ 
++class eRCUFS910Driver: public eRCDriver
++{
++	struct termios ot;
++protected:
++	int handle;
++	eSocketNotifier *sn;
++	void keyPressed(int KeyCode);
++public:
++	eRCUFS910Driver(const char *filename);
++	~eRCUFS910Driver();
++};
++ 
++class eRCUFS910: public eRCDevice
++{
++public:
++	void handleCode(long code);
++	eRCUFS910(eRCDriver *driver);
++	const char *getDescription() const;
++	const char *getKeyDescription(const eRCKey &key) const;
++	int getKeyCompatibleCode(const int key) const;
++};
++#endif  

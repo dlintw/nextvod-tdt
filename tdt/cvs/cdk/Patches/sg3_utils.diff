@@ -1,0 +1,180 @@
+diff -Naur sg3_utils-1.24/configure.in sg3_utils-1.19-stm/configure.in
+--- sg3_utils-1.24/configure.in	2007-07-01 00:00:00.000000000 +0000
++++ sg3_utils-1.24/configure.in-new	2007-07-29 11:54:44.484252144 +0000
+@@ -0,0 +1,5 @@
++AC_INIT(sg3_utils, 1.24)
++AM_INIT_AUTOMAKE(nostdinc no-define)
++AC_PROG_CC
++AC_PROG_LIBTOOL
++AC_OUTPUT(Makefile)
+diff -Naur sg3_utils-1.24/Makefile.am sg3_utils-1.24/Makefile.am-new
+--- sg3_utils-1.24/Makefile.am	2007-07-01 00:00:00.000000000 +0000
++++ sg3_utils-1.24/Makefile.am-new	2007-07-29 12:11:41.650619352 +0000
+@@ -0,0 +1,167 @@
++LARGE_FILE_FLAGS = -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
++AM_CPPFLAGS = -g -O2 -Wall -W -DSG3_UTILS_LINUX $(LARGE_FILE_FLAGS)
++CFLAGS_PTHREADS = -D_REENTRANT
++LDFLAGS =
++LIB_VINFO = 1:0:0
++
++bin_PROGRAMS = sg_dd sgp_dd sgm_dd sg_read sg_map sg_scan sg_rbuf \
++	sginfo sg_readcap sg_turs sg_inq sg_test_rwbuf \
++	sg_start sg_reset sg_modes sg_logs sg_senddiag sg_opcodes \
++	sg_persist sg_write_long sg_read_long sg_requests sg_ses \
++	sg_verify sg_emc_trespass sg_luns sg_sync sg_prevent \
++	sg_get_config sg_wr_mode sg_rtpg sg_reassign sg_format \
++	sg_rmsn sg_ident sg_map26 sg_rdac sg_vpd sg_sat_identify \
++	sg_read_buffer sg_write_buffer sg_raw
++
++man8_MANS = sg_dd.8 sgp_dd.8 sgm_dd.8 sg_read.8 sg_map.8 sg_scan.8 sg_rbuf.8 \
++	sginfo.8 sg_readcap.8 sg_turs.8 sg_inq.8 sg_test_rwbuf.8 \
++	sg_start.8 sg_reset.8 sg_modes.8 sg_logs.8 sg_senddiag.8 \
++	sg_opcodes.8 sg_persist.8 sg_write_long.8 sg_read_long.8 \
++	sg_requests.8 sg_ses.8 sg_verify.8 sg_emc_trespass.8 \
++	sg_luns.8 sg_sync.8 sg_prevent.8 sg_get_config.8 sg_wr_mode.8 \
++	sg_rtpg.8 sg_reassign.8 sg_format.8 sg_rmsn.8 sg_ident.8 \
++	sg_map26.8 sg_rdac.8 sg_vpd.8 sg3_utils.8 sg_sat_identify.8 \
++	sg_read_buffer.8 sg_write_buffer.8 sg_raw.8
++
++sgutilsincludedir=$(includedir)/scsi
++sgutilsinclude_HEADERS=sg_lib.h sg_cmds.h sg_cmds_basic.h sg_cmds_extra.h sg_pt.h \
++	sg_io_linux.h sg_linux_inc.h
++
++lib_LTLIBRARIES=libsgutils.la
++libsgutils_la_SOURCES=sg_lib.c sg_cmds_basic.c sg_cmds_extra.c sg_pt_linux.c
++libsgutils_la_LDFLAGS=-version-info $(LIB_VINFO)
++
++sg_inq_SOURCES=sg_inq.c
++sg_inq_LDADD=libsgutils.la
++
++sg_dd_SOURCES=sg_dd.c sg_io_linux.c
++sg_dd_LDADD=libsgutils.la
++
++sg_scan_SOURCES=sg_scan.c sg_io_linux.c
++sg_scan_LDADD=libsgutils.la
++
++sginfo_SOURCES=sginfo.c sg_io_linux.c
++sginfo_LDADD=libsgutils.la
++
++sg_start_SOURCES=sg_start.c
++sg_start_LDADD=libsgutils.la
++
++sg_rbuf_SOURCES=sg_rbuf.c sg_io_linux.c
++sg_rbuf_LDADD=libsgutils.la
++
++sg_readcap_SOURCES=sg_readcap.c
++sg_readcap_LDADD=libsgutils.la
++
++sgp_dd_SOURCES=sgp_dd.c sg_io_linux.c
++sgp_dd_CFLAGS=$(CFLAGS_PTHREADS)
++sgp_dd_LDADD=libsgutils.la -lpthread
++
++sgm_dd_SOURCES=sgm_dd.c sg_io_linux.c
++sgm_dd_LDADD=libsgutils.la
++
++sg_map_SOURCES=sg_map.c sg_io_linux.c
++sg_map_LDADD=libsgutils.la
++
++sg_turs_SOURCES=sg_turs.c
++sg_turs_LDADD=libsgutils.la
++
++sg_test_rwbuf_SOURCES=sg_test_rwbuf.c sg_io_linux.c
++sg_test_rwbuf_LDADD=libsgutils.la
++
++sg_read_SOURCES=sg_read.c sg_io_linux.c
++sg_read_LDADD=libsgutils.la
++
++sg_reset_SOURCES=sg_reset.c
++
++sg_modes_SOURCES=sg_modes.c
++sg_modes_LDADD=libsgutils.la
++
++sg_logs_SOURCES=sg_logs.c
++sg_logs_LDADD=libsgutils.la
++
++sg_senddiag_SOURCES=sg_senddiag.c
++sg_senddiag_LDADD=libsgutils.la
++
++sg_opcodes_SOURCES=sg_opcodes.c
++sg_opcodes_LDADD=libsgutils.la
++
++sg_persist_SOURCES=sg_persist.c
++sg_persist_LDADD=libsgutils.la
++
++sg_write_long_SOURCES=sg_write_long.c
++sg_write_long_LDADD=libsgutils.la
++
++sg_read_long_SOURCES=sg_read_long.c
++sg_read_long_LDADD=libsgutils.la
++
++sg_requests_SOURCES=sg_requests.c
++sg_requests_LDADD=libsgutils.la
++
++sg_ses_SOURCES=sg_ses.c
++sg_ses_LDADD=libsgutils.la
++
++sg_verify_SOURCES=sg_verify.c
++sg_verify_LDADD=libsgutils.la
++
++sg_emc_trespass_SOURCES=sg_emc_trespass.c
++sg_emc_trespass_LDADD=libsgutils.la
++
++sg_luns_SOURCES=sg_luns.c
++sg_luns_LDADD=libsgutils.la
++
++sg_sync_SOURCES=sg_sync.c
++sg_sync_LDADD=libsgutils.la
++
++sg_prevent_SOURCES=sg_prevent.c
++sg_prevent_LDADD=libsgutils.la
++
++sg_get_config_SOURCES=sg_get_config.c
++sg_get_config_LDADD=libsgutils.la
++
++sg_wr_mode_SOURCES=sg_wr_mode.c
++sg_wr_mode_LDADD=libsgutils.la
++
++sg_rtpg_SOURCES=sg_rtpg.c
++sg_rtpg_LDADD=libsgutils.la
++
++sg_reassign_SOURCES=sg_reassign.c
++sg_reassign_LDADD=libsgutils.la
++
++sg_format_SOURCES=sg_format.c
++sg_format_LDADD=libsgutils.la
++
++sg_rmsn_SOURCES=sg_rmsn.c
++sg_rmsn_LDADD=libsgutils.la
++
++sg_ident_SOURCES=sg_ident.c
++sg_ident_LDADD=libsgutils.la
++
++sg_map26_SOURCES=sg_map26.c
++
++sg_rdac_SOURCES=sg_rdac.c
++sg_rdac_LDADD=libsgutils.la
++
++sg_vpd_SOURCES=sg_vpd.c sg_vpd_vendor.c
++sg_vpd_LDADD=libsgutils.la
++
++sg_sat_identify_SOURCES=sg_sat_identify.c
++sg_sat_identify_LDADD=libsgutils.la
++
++sg_read_buffer_SOURCES=sg_read_buffer.c
++sg_read_buffer_LDADD=libsgutils.la
++
++sg_write_buffer_SOURCES=sg_write_buffer.c
++sg_write_buffer_LDADD=libsgutils.la
++
++sg_raw_SOURCES=sg_raw.c
++sg_raw_LDADD=libsgutils.la
++
++install-libLTLIBRARIES: libsgutils.la
++	@$(NORMAL_INSTALL)
++	$(mkinstalldirs) $(DESTDIR)$(libdir)
++	@list='libsgutils.la'; for p in $$list; do \
++	 if test -f $$p; then \
++	  echo "$(LIBTOOL) --mode=install $(INSTALL_DATA) $$p $(DESTDIR)$(libdir)/$$p"; \
++	  $(LIBTOOL) --mode=install $(INSTALL_DATA) $$p $(DESTDIR)$(libdir)/$$p; \
++	 else :; fi; \
++	done

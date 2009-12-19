@@ -1,0 +1,104 @@
+# install rules for cdk
+#
+# fields (separated by ';')
+#   name
+#   rules ('make', 'install', 'link', 'archive') and arguments
+#   ...
+#
+
+#
+# Core
+#
+#squashfs
+ccache;make:install:DESTDIR=HOST
+cramfs;install:mkcramfs:HOST/bin
+ipkg_utils;make:install
+
+#
+# root
+#
+busybox;make:install:CONFIG_PREFIX=TARGETS;shellconfigadd:/bin/ash:5
+lsb;install:-d:TARGETS/lib/lsb;install:-m644:init-functions:TARGETS/lib/lsb
+ipkg;make:install:DESTDIR=TARGETS
+module_init_tools;make:INSTALL=install:install:sbin_PROGRAMS="depmod modinfo":bin_PROGRAMS=:DESTDIR=TARGETS
+
+#
+# contrib apps
+#
+grep;make:install:DESTDIR=TARGETS
+openrdate;make:install:DESTDIR=TARGETS
+e2fsprogs;rewrite-pkgconfig:lib/uuid/uuid.pc:lib/blkid/blkid.pc;make:install:DESTDIR=TARGETS
+xfsprogs;make:install:prefix=TARGETS
+mc;make:install:DESTDIR=TARGETS
+sdparm;make:install:DESTDIR=TARGETS
+sg3_utils;make:install:DESTDIR=TARGETS
+console_data;make:install
+nano;make:install:DESTDIR=TARGETS
+rsync;make:install:DESTDIR=TARGETS
+lm_sensors;make:user_install:MACHINE=sh:PREFIX=/usr:MANDIR=/usr/share/man:DESTDIR=TARGETS
+fuse;rewrite-pkgconfig:fuse.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libfuse.la
+curlftpfs;make:install:DESTDIR=TARGETS
+fbset;install:-d:-m755:TARGETS/{usr/sbin,etc};install:-m755:fbset:TARGETS/usr/sbin;install:-m755:con2fbmap:TARGETS/usr/sbin;install:-m644:etc/fb.modes.ATI:TARGETS/etc/fb.modes
+
+#
+# contrib libs
+#
+libboost;remove:TARGET/include/boost;move:boost:TARGET/usr/include/boost
+ncurses;
+libz;make:install:prefix=TARGETS/usr;install:-m644:libz.a:TARGETS/usr/lib
+libreadline;make:install:DESTDIR=TARGETS
+#freetype;make:install:libdir=TARGETS/usr/lib:includedir=TARGETS/usr/include:bindir=TARGETS/usr/bin:prefix=TARGETS/usr
+freetype;rewrite-pkgconfig:builds/unix/freetype2.pc;make:install:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libfreetype.la
+lirc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblirc_client.la
+jpeg;make:install:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libjpeg.la
+libpng;rewrite-pkgconfig:libpng12.pc;make:install:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libpng.la;rewrite-libtool:TARGETS/usr/lib/libpng12.la
+libungif;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libungif.la
+libgif;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libgif.la
+curl;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libcurl.la
+libfribidi;rewrite-pkgconfig:fribidi.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libfribidi.la
+libsigc;rewrite-pkgconfig:sigc++-1.2.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libsigc-1.2.la;rewrite-dependency:TARGETS/usr/lib/libsigc-1.2.la
+libmad;rewrite-pkgconfig:mad.pc;make:install:DESTDIR=TARGETS;install:-m644:mad.pc:TARGETS/usr/lib/pkgconfig;rewrite-libtool:TARGETS/usr/lib/libmad.la
+libid3tag;rewrite-pkgconfig:id3tag.pc;make:install:DESTDIR=TARGETS;install:-m644:id3tag.pc:TARGETS/usr/lib/pkgconfig;rewrite-libtool:TARGETS/usr/lib/libid3tag.la
+libxml2;rewrite-pkgconfig:libxml-2.0.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxml2.la;rewrite-libtool:TARGETS/usr/lib/python2.6/site-packages/libxml2mod.la
+libxslt;rewrite-pkgconfig:libxslt.pc;rewrite-pkgconfig:libexslt.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxslt.la;rewrite-libtool:TARGETS/usr/lib/libexslt.la;rewrite-libtool:TARGETS/usr/lib/python2.6/site-packages/libxsltmod.la
+glib2;rewrite-pkgconfig:glib-2.0.pc:gmodule-2.0.pc:gmodule-export-2.0.pc:gmodule-no-export-2.0.pc:gobject-2.0.pc:gthread-2.0.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libglib-2.0.la
+libiconv;make:install:DESTDIR=TARGETS
+libmng;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libmng.la;rewrite-dependency:TARGETS/usr/lib/libmng.la
+lcms;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblcms.la
+directfb;rewrite-pkgconfig:directfb.pc;rewrite-pkgconfig:directfb-internal.pc;rewrite-pkgconfig:lib/direct/direct.pc;rewrite-pkgconfig:lib/fusion/fusion.pc;make:install:DESTDIR=TARGETS:LD=sh4-linux-ld;rewrite-libtool:TARGETS/usr/lib/libdirectfb.la;rewrite-libtool:TARGETS/usr/lib/libdirect.la;rewrite-libtool:TARGETS/usr/lib/libfusion.la;rewrite-dependency:TARGETS/usr/lib/libdirectfb.la;rewrite-dependency:TARGETS/usr/lib/libfusion.la
+dfbpp;rewrite-pkgconfig:dfb++.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libdfb++.la
+expat;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libexpat.la
+fontconfig;make:install:DESTDIR=TARGETS
+libxmlccwrap;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxmlccwrap.la
+a52dec;make:install:DESTDIR=TARGETS
+libdvdcss;make:install:DESTDIR=TARGETS
+libdvdnav;make:install:DESTDIR=TARGETS
+libdvdread;make:install:DESTDIR=TARGETS
+#
+# net apps
+#
+portmap;make:install:BASEDIR=TARGETS;install:-m755:debian/init.d:TARGETS/etc/init.d/portmap
+nfs_utils;make:install:DESTDIR=TARGETS;install:-m644:debian/nfs-common.default:TARGETS/etc/default/nfs-common;install:-m755:debian/nfs-common.init:TARGETS/etc/init.d/nfs-common;install:-m644:debian/nfs-kernel-server.default:TARGETS/etc/default/nfs-kernel-server;install:-m755:debian/nfs-kernel-server.init:TARGETS/etc/init.d/nfs-kernel-server;install:-m644:debian/etc.exports:TARGETS/etc/exports;remove:TARGETS/sbin/mount.nfs4:TARGETS/sbin/umount.nfs4
+netkit-ftpx;make:install:DESTDIR=TARGETS
+autofs;make:install:INSTALLROOT=TARGETS
+vsftpd;make:install:PREFIX=TARGETS
+netkit_ftp;make:install:MANDIR=/usr/share/man:INSTALLROOT=TARGETS
+#samba;make:install
+netio;install:-m755:netio:TARGETS/usr/bin;install:-m755:bin/linux-i386:HOST/bin/netio
+lighttpd;make:install:DESTDIR=TARGETS
+wireless_tools;make:install:INSTALL_MAN=TARGETS/usr/share/man:PREFIX=TARGETS/usr
+ethtool;make:install:DESTDIR=TARGETS
+
+#
+# development
+#
+
+#
+# in work
+#
+record;make:install
+flashybrid;make:install
+netkit_base;make:install:PREFIX=TARGETS
+ruby;make:install:DESTDIR=TARGETS
+
+>>?;rules-install-local

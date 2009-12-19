@@ -1,0 +1,85 @@
+--- SPECS/stm-cross-gcc.spec.orig	2009-05-29 01:05:04.000000000 +0200
++++ SPECS/stm-cross-gcc.spec	2009-06-01 21:11:46.000000000 +0200
+@@ -218,7 +218,7 @@
+ %if_target_arch cortex
+         --with-gxx-include-dir="target%{_stm_target_include_dir}/c++/%{version}" \
+ %else
+-        --with-gxx-include-dir="\\\${prefix}/target%{_stm_target_include_dir}/c++/%{version}" \
++        --with-gxx-include-dir="\\\${prefix}/../../cdkroot%{_stm_target_include_dir}/c++/%{version}" \
+ %endif
+         --enable-__cxa_atexit \
+ %if "%{_stm_target_fpu}" == "no"
+@@ -237,8 +237,8 @@
+ %endif
+         && true
+ 
+-%pmake all
+-%pmake -C gcc proto
++%make all
++%make -C gcc proto
+ 
+ ##############################################################################
+ %install
+@@ -316,14 +316,16 @@
+ 	xargs --no-run-if-empty --verbose rm
+ # Remove some installed files we don't ship, to keep rpm happy
+ rm %{buildroot}%{_stm_cross_bin_dir}/%{_stm_target_toolprefix}gccbug
+-rm %{buildroot}%{_stm_cross_info_dir}/cppinternals.info.gz
+-rm %{buildroot}%{_stm_cross_info_dir}/gccinstall.info.gz
+-rm %{buildroot}%{_stm_cross_info_dir}/gccint.info.gz
+-rm -f %{buildroot}%{_stm_cross_info_dir}/dir.*
++rm %{buildroot}%{_stm_cross_info_dir}/cppinternals.info.gz || true
++rm %{buildroot}%{_stm_cross_info_dir}/gccinstall.info.gz || true
++rm %{buildroot}%{_stm_cross_info_dir}/gccint.info.gz || true
++rm -f %{buildroot}%{_stm_cross_info_dir}/dir.* || true
+ rm -r %{buildroot}%{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
+ rm -f %{buildroot}%{_stm_cross_lib_dir}/libiberty.a
+ rm -f  %{buildroot}%{_stm_cross_dir}/lib64/libiberty.a
+ rm -r %{buildroot}%{_stm_cross_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
++rm %{buildroot}%{_stm_cross_info_dir}/cpp.info* || true
++rm %{buildroot}%{_stm_cross_info_dir}/gcc.info* || true
+ 
+ %unfixincludes  %{buildroot}%{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}/include
+ 
+@@ -424,10 +426,6 @@
+ %{_stm_cross_targetconf_dir}/bin/cpp
+ %{_stm_cross_sharedstate_dir}/locale/*/LC_MESSAGES/cpplib.mo
+ 
+-%files -n %{_cpp_pkgname}-doc
+-%defattr(-,root,root)
+-%{_stm_cross_info_dir}/cpp.info.gz
+-
+ %files -n %{_gpp_pkgname}
+ %defattr(-,root,root)
+ %{_stm_cross_bin_dir}/%{_stm_target_toolprefix}g++
+@@ -447,7 +445,6 @@
+ 
+ %files -n %{_gcc_pkgname}-doc
+ %defattr(-,root,root)
+-%{_stm_cross_info_dir}/gcc.info.gz
+ %{_stm_cross_man_dir}/man7/*
+ 
+ %files -n %{_libgcc_pkgname}
+@@ -460,22 +457,6 @@
+ %{_stm_cross_target_dir}/lib/m4-nofpu/libgcc_s-%{version}.so.1
+ %endif 
+ 
+-%post -n %{_cpp_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir \
+-	%{_stm_cross_info_dir}/cpp.info
+-
+-%preun -n %{_cpp_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir --remove \
+-	%{_stm_cross_info_dir}/cpp.info
+-
+-%post -n %{_gcc_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir \
+-	%{_stm_cross_info_dir}/gcc.info
+-
+-%preun -n %{_gcc_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir --remove \
+-	%{_stm_cross_info_dir}/gcc.info
+-
+ %changelog
+ * Thu May 28 2009 Melwyn Lobo <melwyn.lobo@st.com> 48
+ - [Spec: Enabled OMP support for cortex]

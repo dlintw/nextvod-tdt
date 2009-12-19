@@ -1,0 +1,45 @@
+######################################################################
+# /etc/network/interfaces -- configuration file for ifup(8), ifdown(8)
+#
+# A "#" character in the very first column makes the rest of the line
+# be ignored. Blank lines are ignored. Lines may be indented freely.
+# A "\" character at the very end of the line indicates the next line
+# should be treated as a continuation of the current one.
+#
+# The "pre-up", "up", "down" and "post-down" options are valid for all 
+# interfaces, and may be specified multiple times. All other options
+# may only be specified once.
+#
+# See the interfaces(5) manpage for information on what options are 
+# available.
+######################################################################
+
+# We always want the loopback interface.
+
+auto lo
+iface lo inet loopback
+
+# Ethernet
+auto eth0
+iface eth0 inet dhcp
+
+#TO BE CONFIGURED VIA U-BOOT
+#auto eth0
+#iface eth0 inet static
+#	#pre-up modprobe -f smsc911x tx_dma=256 rx_dma=256
+#	address 192.168.1.210
+#	network 192.168.1.0
+#	netmask 255.255.255.0
+#	broadcast 192.168.1.255
+#	gateway 192.168.1.1
+
+# An example ethernet card setup: (broadcast and gateway are optional)
+#
+# auto eth0
+# iface eth0 inet static
+#     address 192.168.0.42
+#     network 192.168.0.0
+#     netmask 255.255.255.0
+#     broadcast 192.168.0.255
+#     gateway 192.168.0.1
+

@@ -1,0 +1,183 @@
+                                           ..,,,uuuuuuux- 
+                                      .XJ$$$$$$$$$$$$$R"
+                                     :<???????$$$P???"     ... uuuux ,ucdL
+                                     '''''` :<$$$: .dWWW>:;$$::$$F":J$$"''
+      ,uuuouuu,                 .uu xcd:x$u.:J$$$ :J$P9$>;$$F.<$$h=`?$h
+     :$$$$$$$$$$b,   .uz  ucd xJ$$$:J$6d$$F':$$$F:J$P;3$>J$P.:3$,,,;J$$E
+    :d$$$$$$$$$$$$c::$$F;$$FJ$$P":<$$$$P` :J$$$:J$P???$>$$??:????`???"
+   ::?"'<Xio::??$$$>J$$ :t$P;$P`  :3$$P$$u::$$$P:??' `?F'
+  ''   :d$$P  `:9$$>$$F;J$><$C,,u;$$P:?$$h:3$$>
+      :<$$$'   <8$$>$$X<J$$:<$$$$F:??' `"":J$$$
+      :3$$P   :d$$$:$$$$$P `:???'       :<P???"
+     ::$$$' .d$$$$'`????"              '::::
+    .:d$$6ud$$$$F
+.;cJJ$$$$$$$PF'
+::9$$$$$$$PF"
+`'?????""''
+               ,,, ::::::::::::..
+           ,z$$$$$ :::::::::::::::::.
+         e$$$$$$$$ ::::::::::::::::::::
+       d$$$$$$$$$$;`::::::::::::::::::::
+      ::."$$$$$$$$$ :::::::::::::::::::::
+     :::::."$$$$$$$ ::::::::::::::::::::
+    ::::::::."$$$$$b ::''''''''':::::::'
+    `:::::::::`$$P" . :''''<<<<<<;.  `'
+      `:::::::: "".,.----=--..`'<<<<<<;
+        `:::'',-'` .::::::::::`'- `<<<<;      .::.
+          `,-`.::::::::::'  .. `::.      .:::::::::
+        ,-'.:::::::::::' dMMMMMMx :::::` .`::::::::
+      ,'.::::::::::::: dMMMMMMMMMM ``` JMMM `:::::
+    ,'.:::::::::::' . MMP',ccc "MMM Mb MMMMM `:::
+; :::::::::::' nM MM',$$$$$$b "Mb4M,M c,`? :'
+; ::::::::::: xMMMMM'J$$$$$$$$b )MMMMM.`$$.
+' :::`::::::: dMMMMM'J$$$$$$$$$$F MMMMMM $$$.
+   :: <`::::: JMMMMM',$$$$$$$$$$$P MMMMMM $$$$
+  `:::`bc,.. ,edMMMM $$$$$$$$$$$$F MMMMMM $$$$  .
+   ` ,nMMMMMMMMTMMMM P""?$$$$$$$$".MTT4MM ?$$F;P""?x_
+   ,d)MMMMMMP'dMMMMM      $$$$$$P  .cCc.    $   cCc L~
+    ,MMMMMMM ,c, 4MMr      $$$$$  .CCCC>   4   CCC> L"
+    P)MMMMM> $$?$ "MM      $$$$"  CCCCC'   ,,  CC> % `
+   ' MMMTMMM `b $$c.?b     $$$"   `CCC'-""___,,,,,__
+     M"       `?, ??$c,,,,,,cc$7= _,cc$$$$PP"""""??$$$$
+     "          `"b,_ "?$$$$$$$$$$P"" .. ,d"
+                   `?$b `,,,,,,.`;;;;;;'j"
+                    n ?$c`;;;;;;;`',;;; F
+               ,;-;MM "$b;;;;;,,;;;'j"
+           ,!!!!!  MMMM,`?$c,_`` _,,cd'
+          !!!!!!!; MMMMMMn, `"""""''
+       .  !!!!!!!!!, `"TT';!!!!>
+   ,;!!!> !!!!!!!!!!!!!   `<!!!! !;,
+!!!!!!!!! '!!!!!!!!!!!  !!!  !!> !!!!!!;;
+
+
+
+TDT Open Source Package
+------------------------
+
+This package contains most of the sources to build complete TDT images
+for the following settopboxes:
+
+- ufs910
+- ufs922
+- tf7700
+- fortis hdbox (still very buggy)
+
+Host Installation & Building:
+------------------------------
+
+- To build an image you need to install some packages on your host system.
+
+          * git
+          * ccache
+          * rpm
+          * make
+          * automake 1.8
+          * autoconf
+          * patch
+          * gcc
+          * cpp (auch gcc oder c++)
+          * tar
+          * bzip2
+          * gzip
+          * ncurses-devel (libncurses5-dev bei debian)
+          * flex
+          * bison
+          * gawk
+          * e2fsprogs-devel
+          * texinfo
+          * gettext
+          * gettext-devel (gibts nich bei debian?)
+          * cfv
+          * fakeroot
+          * xfsprogs-devel (xfslibs-dev bei debian)
+          * zlib1g-dev (zlib-devel)
+          * libtool
+          * g++
+          * swig
+          * pkg-config
+	  
+
+- For ubuntu-hosts you have to link the sh to bash:
+
+ln -s /bin/bash /bin/sh
+(delete an existing /bin/sh before)
+
+- Now clone your git repository from the server...
+
+git clone Servername\make.git
+
+- now change to the build directory:
+
+cd dt/cvs/cdk
+
+- For debian-based systems only:
+
+export PATH=$PATH:/sbin:/usr/sbin
+
+
+- and type in one of the following commands to configure the build enviroment:
+
+./make.sh (ufs910)
+./make_ufs922.sh
+./make_tf7700.sh
+./make_hdbox.sh
+
+
+- if there are no errors (missing packages) type:
+
+make yaud-enigma2
+
+to build an enigma2 image. This will probably take very long (min 2h max 6h)
+
+- after finishing the build you can find the nfs-root in the following directory
+
+tufsbox/release
+
+
+- the kernel is located in the boot subfolder of the release directory
+
+tufsbox/release/boot/uImage
+
+PROBLEMS:
+---------
+
+- openSuSE 11.0: If you have trouble compiling lirc, remove all occurance of lirc/lircd in
+cvs/cdk/make/contrib-libs.mk cvs/cdk/make/release.mk cvs/cdk/make/yaud.mk
+
+- if you have problems like this
+
+In Datei, eingefügt von ../../lib/base/smartptr.h:4,
+                 von ../../lib/base/eptrlist.h:7,
+                 von ../../lib/base/ebase.h:12,
+                 von enigma_python_wrap.cxx:2807:
+../../lib/base/object.h:166:4: Warnung: #warning use non optimized implementation of refcounting.
+enigma_python_wrap.cxx: In function »int SWIG_AsPtr_std_string(PyObject*, std::string**)«:
+enigma_python_wrap.cxx:3131: Warnung: Dereferenzierung eines Type-Pun-Zeigers verletzt strict-aliasing-Regeln
+enigma_python_wrap.cxx: In function »RESULT SwigFromPython(ePtr<gPixmap>&, PyObject*)«:
+enigma_python_wrap.cxx:3455: Warnung: Dereferenzierung eines Type-Pun-Zeigers verletzt strict-aliasing-Regeln
+enigma_python_wrap.cxx:3455: Fehler: »SWIGTYPE_p_ePtrTgPixmap_t« wurde in diesem Gültigkeitsbereich nicht definiert
+enigma_python_wrap.cxx: In function »PyObject* New_iRecordableServicePtr(const ePtr<iRecordableService>&)«:
+
+you have to use an older swig version (e.g. 1.3.33)
+
+IMPORTANT DIRECTORIES:
+-----------------------
+
+tdt/cvs/cdk               - the build directory
+tdt/cvs/cdk/linux         - a link to the kernel directory (will be installed from build)
+
+tdt/cvs/apps/enigma2      - e2 source code
+tdt/cvs/apps/misc/tools   - tools like evremote2, fp_control etc
+
+tdt/cvs/driver/frontends  - frontend and tuner driver
+tdt/cvs/driver/cic        - ci controller driver
+tdt/cvs/driver/player2    - STM's great player patched by TDT
+tdt/cvs/driver/multicom   - the copo/fw commuincation driver
+tdt/cvs/driver/avs        - av switch driver
+tdt/cvs/driver/stgfb      - patch stmfb version
+tdt/cvs/driver/e2_proc    - the e2 proc main part
+tdt/cvs/driver/vfd        - ufs910 vfd driver
+tdt/cvs/driver/nuvoton    - fp driver for hdbox
+tdt/cvs/driver/micom      - fp driver for ufs922
+tdt/cvs/driver/tffp       - fp driver for tf7700
+tdt/cvs/driver/ufs922_fan - ufs922 fan control driver

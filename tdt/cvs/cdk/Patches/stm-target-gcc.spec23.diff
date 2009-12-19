@@ -1,0 +1,11 @@
+*** stm-target-gcc.spec 2009-05-29 01:05:04.000000000 +0200
+--- stm-target-gcc.spec-new     2009-06-02 20:31:24.000000000 +0200
+***************
+*** 314,319 ****
+--- 314,320 ----
+  rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_man_dir}/man7
+  rm -r %{buildroot}%{_gccdir}/install-tools
+  rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
++ rm -rf %{buildroot}%{_gccdir}/include/ssl
+
+  %unfixincludes %{buildroot}%{_gccdir}/include

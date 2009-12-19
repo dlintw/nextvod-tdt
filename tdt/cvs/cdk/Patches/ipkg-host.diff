@@ -1,0 +1,12 @@
+--- ipkg-host/ipkg-0.99.163/pkg.c	2006-04-20 22:29:28.000000000 +0200
++++ ipkg-host/ipkg-0.99.163/pkg.c-new	2008-01-14 20:18:48.000000000 +0100
+@@ -1438,6 +1438,9 @@
+      setenv("PKG_ROOT",
+ 	    pkg->dest ? pkg->dest->root_dir : conf->default_dest->root_dir, 1);
+ 
++     setenv("HHL_CROSS_TARGET_DIR",
++	    pkg->dest ? pkg->dest->root_dir : conf->default_dest->root_dir, 1);
++
+      if (! file_exists(path)) {
+ 	  free(path);
+ 	  return 0;

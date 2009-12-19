@@ -1,0 +1,170 @@
+*** linux-sh4-2.6.23.17_stm23_0119-orig/arch/sh/kernel/cpu/sh4/setup-stb7100.c	2009-06-06 20:17:15.000000000 +0200
+--- linux-sh4/arch/sh/kernel/cpu/sh4/setup-stb7100.c	2009-06-10 23:17:19.000000000 +0200
+***************
+*** 292,299 ****
+  static char i2c_st[] = "i2c_st";
+  static char spi_st[] = "spi_st_ssc";
+  static struct platform_device stssc_devices[] = {
+! 	STSSC_DEVICE(0x18040000, 119, 2, 0, 1, 2),
+! 	STSSC_DEVICE(0x18041000, 118, 3, 0, 1, 2),
+  	STSSC_DEVICE(0x18042000, 117, 4, 0, 1, 0xff),
+  };
+  
+--- 292,299 ----
+  static char i2c_st[] = "i2c_st";
+  static char spi_st[] = "spi_st_ssc";
+  static struct platform_device stssc_devices[] = {
+! 	STSSC_DEVICE(0x18040000, 119, 2, 0, 1, 0xff),
+! 	STSSC_DEVICE(0x18041000, 118, 3, 0, 1, 0xff),
+  	STSSC_DEVICE(0x18042000, 117, 4, 0, 1, 0xff),
+  };
+  
+*** linux-sh4-2.6.23.17_stm23_0119-orig/arch/sh/boards/st/mb442/setup.c	2009-06-06 20:17:14.000000000 +0200
+--- linux-sh4/arch/sh/boards/st/mb442/setup.c	2009-06-11 18:09:12.000000000 +0200
+***************
+*** 19,36 ****
+  #include <linux/mtd/mtd.h>
+  #include <linux/mtd/physmap.h>
+  #include <linux/mtd/partitions.h>
+  #include <linux/phy.h>
+  #include <linux/lirc.h>
+  #include <asm/irl.h>
+  
+! static int ascs[2] __initdata = { 2, 3 };
+  
+  void __init mb442_setup(char** cmdline_p)
+  {
+  	printk("STMicroelectronics STb7100 Reference board initialisation\n");
+  
+  	stx7100_early_device_init();
+! 	stb7100_configure_asc(ascs, 2, 0);
+  }
+  
+  static struct plat_stm_pwm_data pwm_private_info = {
+--- 19,62 ----
+  #include <linux/mtd/mtd.h>
+  #include <linux/mtd/physmap.h>
+  #include <linux/mtd/partitions.h>
++ #include <linux/bpa2.h>
+  #include <linux/phy.h>
+  #include <linux/lirc.h>
+  #include <asm/irl.h>
+  
+! /* Dagobert: ufs922 uses the micom device 
+!  * so we dont need uart3
+!  */
+! static int ascs[2] __initdata = { 2};
+! 
+! const char *LMI_VID_partalias[] = { "BPA2_Region1", "coredisplay-video", "gfx-memory", "v4l2-video-buffers", NULL };
+! const char *LMI_SYS_partalias[] = { "BPA2_Region0", "bigphysarea", "v4l2-coded-video-buffers", NULL };
+! 
+! static struct bpa2_partition_desc bpa2_parts_table[] = {
+! 	{
+! 		.name  = "LMI_VID",
+! 		.start = 0x10800000,
+! 		.size  = 0x03800000,
+! 		.flags = 0,
+! 		.aka   = LMI_VID_partalias
+! 	},
+! 	{
+! 		.name  = "LMI_SYS",
+! 		.start = 0,
+! 		.size  = 0x01600000,
+! 		.flags = 0,
+! 		.aka   = LMI_SYS_partalias
+! 	}
+! };
+! 
+  
+  void __init mb442_setup(char** cmdline_p)
+  {
+  	printk("STMicroelectronics STb7100 Reference board initialisation\n");
+  
+  	stx7100_early_device_init();
+!  	stb7100_configure_asc(ascs, 1, 0);
+!  	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
+  }
+  
+  static struct plat_stm_pwm_data pwm_private_info = {
+***************
+*** 40,46 ****
+  static struct plat_ssc_data ssc_private_info = {
+  	.capability  =
+  		ssc0_has(SSC_I2C_CAPABILITY) |
+! 		ssc1_has(SSC_SPI_CAPABILITY) |
+  		ssc2_has(SSC_I2C_CAPABILITY),
+  };
+  
+--- 66,72 ----
+  static struct plat_ssc_data ssc_private_info = {
+  	.capability  =
+  		ssc0_has(SSC_I2C_CAPABILITY) |
+! 		ssc1_has(SSC_I2C_CAPABILITY) |
+  		ssc2_has(SSC_I2C_CAPABILITY),
+  };
+  
+***************
+*** 113,124 ****
+--- 139,154 ----
+  
+  static int mb442_phy_reset(void* bus)
+  {
++ /* Dagobert: */
++    if (phy_reset_pin != NULL)
++    {
+  	stpio_set_pin(phy_reset_pin, 1);
+  	udelay(1);
+  	stpio_set_pin(phy_reset_pin, 0);
+  	udelay(1);
+  	stpio_set_pin(phy_reset_pin, 1);
+  
++    }
+  	return 1;
+  }
+  
+***************
+*** 175,192 ****
+  
+  	vpp_pio = stpio_request_set_pin(2, 7, "flash_VPP", STPIO_OUT, 0);
+  
+  	phy_reset_pin = stpio_request_set_pin(2, 4, "ste100p_reset",
+  					      STPIO_OUT, 1);
+  	stx7100_configure_ethernet(0, 0, 0);
+  
+! 	/* Reset the SMSC 91C111 Ethernet chip */
+  	smc91x_reset = stpio_request_set_pin(2, 6, "smc91x_reset",
+  					     STPIO_OUT, 0);
+  	udelay(1);
+  	stpio_set_pin(smc91x_reset, 1);
+  	udelay(1);
+  	stpio_set_pin(smc91x_reset, 0);
+! 
+  	return platform_add_devices(mb442_devices,
+  				    ARRAY_SIZE(mb442_devices));
+  }
+--- 205,229 ----
+  
+  	vpp_pio = stpio_request_set_pin(2, 7, "flash_VPP", STPIO_OUT, 0);
+  
++ 	/* Dagobert: 2, 4 is Tuner B on ufs922: is there really a reset needed?
++ 	 * on stlinux22 this is not needed.
++ 	 * TODO: identify reset pin for ufs922 if any
++ 	 
+  	phy_reset_pin = stpio_request_set_pin(2, 4, "ste100p_reset",
+  					      STPIO_OUT, 1);
++ 	*/
++ 	phy_reset_pin = NULL;
++ 	
+  	stx7100_configure_ethernet(0, 0, 0);
+  
+! 	/* Reset the SMSC 91C111 Ethernet chip 
+  	smc91x_reset = stpio_request_set_pin(2, 6, "smc91x_reset",
+  					     STPIO_OUT, 0);
+  	udelay(1);
+  	stpio_set_pin(smc91x_reset, 1);
+  	udelay(1);
+  	stpio_set_pin(smc91x_reset, 0);
+! 	*/
+  	return platform_add_devices(mb442_devices,
+  				    ARRAY_SIZE(mb442_devices));
+  }

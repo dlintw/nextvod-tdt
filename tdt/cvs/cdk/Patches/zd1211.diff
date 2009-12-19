@@ -1,0 +1,406 @@
+--- ZD1211LnxDrv_2_15_0_0/Makefile	2006-07-07 09:42:52.000000000 +0200
++++ ZD1211LnxDrv_2_15_0_0/Makefile-new	2007-11-25 08:33:22.000000000 +0100
+@@ -1,273 +1,113 @@
+-#
+-# .zd1211 - USB2.0 802.11b/g driver for Zydas ZD1211 chipsets
+-#
+-#
+-#
+-
+-CC=gcc
+-CPP=g++
+-LD=ld
+-rM=rm -f -r
+-
+-# if the kernel is 2.6.x, trun on this
+-KERN_26=y
+-KERNEL_SOURCE=/usr/src/linux-2.6.9
+-
+-# if the kernel is 2.4.x, trun on this
+-#KERN_24=y
+-#KERNEL_SOURCE=/usr/src/linux-2.4.25
+-
+-SRC_DIR=src
+-DEFINES=-D__KERNEL__ -DMODULE=1
+-
+-
+-KERNRELEASE := $(shell uname -r;)
+-MODPATH := /lib/modules/$(KERNRELEASE)
+-
+-
+-
+-ifeq ($(KERN_26), y)
+-
+-ifeq ($(ZD1211REV_B),1)
+-MODULE = zd1211b.ko
+-endif
+-ifeq ($(ZD1211REV_B),0)
+-MODULE = zd1211.ko
+-endif
+-
+-INCLUDES=-I$(KERNEL_SOURCE)/include -I$(SRC_DIR)/include/ -I$(SRC_DIR)
+-
+-EXTRA_CFLAGS += -I$(PWD)/src/include
+-
+-ifndef CONFIG_FRAME_POINTER
+-EXTRA_CFLAGS += -fomit-frame-pointer
+-endif
+-         
+-ifdef CONFIG_SMP
+-EXTRA_CFLAGS += -D__SMP__ -DSMP
+-endif
+-
+-KDIR := /lib/modules/$(shell uname -r)/build
+-PWD := $(shell pwd)
+-
+-WLAN_SRC=$(PWD)
+-
+-
+-EXTRA_CFLAGS += -O2 -Wall -Wstrict-prototypes -pipe -Wno-unused
+-#EXTRA_CFLAGS += -Wa,-a,-ad -g
+-EXTRA_CFLAGS += -DZDCONF_WE_STAT_SUPPORT=1
+-EXTRA_CFLAGS += -DHOST_IF_USB
+-EXTRA_CFLAGS += -DAMAC
+-EXTRA_CFLAGS += -DGCCK
+-EXTRA_CFLAGS += -DOFDM
+-EXTRA_CFLAGS += -DHOSTAPD_SUPPORT
+-EXTRA_CFLAGS += -DUSE_EP4_SET_REG
+-EXTRA_CFLAGS += -DDOWNLOADFIRMWARE
+-EXTRA_CFLAGS += -DfTX_GAIN_OFDM=0
+-EXTRA_CFLAGS += -DfNEW_CODE_MAP=1
+-EXTRA_CFLAGS += -DfWRITE_WORD_REG=1
+-EXTRA_CFLAGS += -DfREAD_MUL_REG=1
+-EXTRA_CFLAGS += -DENHANCE_RX=1
+-
+-EXTRA_CFLAGS += -DZDCONF_MENUDBG
+-EXTRA_CFLAGS += -DZDCONF_APDBG
+-EXTRA_CFLAGS += -DPRODUCTION
+-EXTRA_CFLAGS += -DZDCONF_BANDEDGE_ADJUST
+-EXTRA_CFLAGS += -DZDCONF_SES_SUPPORT=1
+-#EXTRA_CFLAGS += -DZDCONF_PORTING_BIGENDIAN
+-
+-
+-ifeq ($(ZD1211REV_B),1)
+-	EXTRA_CFLAGS += -DZD1211B
+-    EXTRA_CFLAGS += -DZDCONF_LP_SUPPORT=1
+-endif
+-ifeq ($(ZD1211REV_B),0)
+-	EXTRA_CFLAGS += -DZD1211
+-    EXTRA_CFLAGS += -DZDCONF_LP_SUPPORT=0
+-endif
+-#EXTRA_CFLAGS += $(INCLUDES)
+-
+-ifeq ($(ZD1211REV_B),1)
+-	obj-m := zd1211b.o
+-endif
+-ifeq ($(ZD1211REV_B),0)
+-	obj-m := zd1211.o
+-endif
+-zd1211-objs := $(SRC_DIR)/zd1205.o \
+-$(SRC_DIR)/zdreq.o \
+-$(SRC_DIR)/zdasocsvc.o \
+-$(SRC_DIR)/zdauthreq.o \
+-$(SRC_DIR)/zdauthrsp.o \
+-$(SRC_DIR)/zdmmrx.o \
+-$(SRC_DIR)/zdshared.o \
+-$(SRC_DIR)/zdhci.o \
+-$(SRC_DIR)/zdglobal.o \
+-$(SRC_DIR)/zdencrypt.o \
+-$(SRC_DIR)/zdpmfilter.o \
+-$(SRC_DIR)/zdpsmon.o \
+-$(SRC_DIR)/zdsynch.o \
+-$(SRC_DIR)/zdbuf.o \
+-$(SRC_DIR)/zd1205_proc.o \
+-$(SRC_DIR)/zdhw.o \
+-$(SRC_DIR)/zddebug.o \
+-$(SRC_DIR)/zdtkipseed.o \
+-$(SRC_DIR)/zdmic.o \
+-$(SRC_DIR)/zddebug2.o \
+-$(SRC_DIR)/zdlpmgt.o \
+-$(SRC_DIR)/zdturbo_burst.o \
+-$(SRC_DIR)/zdusb.o  \
+-$(SRC_DIR)/zdmisc.o 
+-ifeq ($(ZD1211REV_B),1)
+-zd1211-objs += $(SRC_DIR)/zd1211.o
+-zd1211b-objs = $(zd1211-objs)
+-endif
+-ifeq ($(ZD1211REV_B),0)
+-zd1211-objs += $(SRC_DIR)/zd1211.o
+-endif
+-
+-all:
+-
+-ifneq ($(KERNELRELEASE),)
+-
+-else
+-ifndef ZD1211REV_B
+-		make both
+-else
+-		@echo -e $(KDIR)
+-		@echo -e $(PWD)
+-		@echo -e $(EXTRA_CFLAGS)
+-		@echo -e $(zd1211-objs)
+-		$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
+-endif
+-
+-endif
+-
+-else # kernel 2.4
+-
+-INCLUDES=-I$(KERNEL_SOURCE)/include -I$(SRC_DIR)/include/ -I$(SRC_DIR)
+-ifeq ($(ZD1211REV_B),1)
+-	MODULE = zd1211b.o
+-endif
+-ifeq ($(ZD1211REV_B),0)
+-	MODULE = zd1211.o
+-endif
+-
+-OBJECTS=$(SRC_DIR)/zd1205.o \
+-    $(SRC_DIR)/zdasocsvc.o \
+-    $(SRC_DIR)/zdauthreq.o \
+-    $(SRC_DIR)/zdauthrsp.o \
+-    $(SRC_DIR)/zdmmrx.o \
+-    $(SRC_DIR)/zdshared.o \
+-    $(SRC_DIR)/zdhci.o \
+-    $(SRC_DIR)/zdglobal.o \
+-    $(SRC_DIR)/zdencrypt.o \
+-    $(SRC_DIR)/zdpmfilter.o \
+-    $(SRC_DIR)/zdpsmon.o \
+-    $(SRC_DIR)/zdsynch.o \
+-    $(SRC_DIR)/zdbuf.o \
+-    $(SRC_DIR)/zd1205_proc.o \
+-    $(SRC_DIR)/zdhw.o \
+-    $(SRC_DIR)/zddebug.o \
+-    $(SRC_DIR)/zdtkipseed.o \
+-    $(SRC_DIR)/zdmic.o \
+-	$(SRC_DIR)/zddebug2.o \
+-    $(SRC_DIR)/zdreq.o \
+-	$(SRC_DIR)/zdlpmgt.o \
+-	$(SRC_DIR)/zdturbo_burst.o \
+-    $(SRC_DIR)/zdusb.o  \
+-    $(SRC_DIR)/zdmisc.o
+-    OBJECTS += $(SRC_DIR)/zd1211.o
+-
+-CFLAGS=-O -Wall -Wstrict-prototypes -pipe  -Wno-unused#-Wa,-a,-ad -g
+-
+-ifdef CONFIG_MODVERSIONS
+-CFLAGS += -DMODVERSIONS -include $(KERNEL_SOURCE)/include/linux/modversions.h   #kernel 2.4
+-endif
+-
+-ifndef CONFIG_FRAME_POINTER
+-CFLAGS += -fomit-frame-pointer
+-endif
+-
+-ifdef CONFIG_SMP
+-CFLAGS += -D__SMP__ -DSMP
+-endif
+-
+-CFLAGS += -DZDCONF_WE_STAT_SUPPORT=1
+-CFLAGS += -DHOST_IF_USB
+-CFLAGS += -DAMAC
+-CFLAGS += -DGCCK
+-CFLAGS += -DOFDM
+-CFLAGS += -DHOSTAPD_SUPPORT
+-CFLAGS += -DUSE_EP4_SET_REG
+-CFLAGS += -DDOWNLOADFIRMWARE
+-CFLAGS += -DfTX_GAIN_OFDM=0
+-CFLAGS += -DfNEW_CODE_MAP=1
+-CFLAGS += -DfWRITE_WORD_REG=1
+-CFLAGS += -DfREAD_MUL_REG=1
+-CFLAGS += -DZDCONF_MENUDBG
+-CFLAGS += -DZDCONF_APDBG
+-CFLAGS += -DZDCONF_SES_SUPPORT=1
+-#CFLAGS += -DZDCONF_PORTING_BIGENDIAN
+-ifeq ($(ZD1211REV_B),1)
+-	CFLAGS += -DZD1211B
+-    CFLAGS += -DZDCONF_LP_SUPPORT=1
+-endif
+-ifeq ($(ZD1211REV_B),0)
+-	CFLAGS += -DZD1211
+-    CFLAGS += -DZDCONF_LP_SUPPORT=0
+-endif
+-CFLAGS += -DENHANCE_RX=1
+-
+-ifndef ZD1211REV_B
+-all:
+-	make both
+-else
+-all: $(MODULE)
+-endif
+-
+-$(MODULE): $(OBJECTS)
+-	$(LD) -static  -r $(OBJECTS) -o $(MODULE)
+-	chmod -x $(MODULE)
+-
+-%.o: %.c
+-	$(CC) -static $(CFLAGS) $(INCLUDES) $(DEFINES) $(DEBUG) -c $< -o $@                              
+-    
+-endif
+-both:
+-	make clean
+-	make ZD1211REV_B=0
+-	make ZD1211REV_B=0 install
+-	make clean
+-	make ZD1211REV_B=1
+-	make ZD1211REV_B=1 install
+-
+-inst:
+-	make
+-	make install
+-
+-	
+-ifndef ZD1211REV_B
+-install: 
+-	@echo "'make' compile & install the driver"
+-	@echo "'make install' isn't required"
+-else
+-install: all
+-	mkdir -p $(MODPATH)/net
+-	cp $(MODULE) $(MODPATH)/net
+-	depmod -a
+-endif
+-
+-debug:
+-	gcc -o apdbg apdbg.c
+-	chmod +x apdbg
+-	cp ./apdbg /sbin/apdbg   
+-	make -C Menudbg
+-	mv Menudbg/menudbg .
+-	chmod +x menudbg
+-	cp ./menudbg /sbin
+-	gcc -DPKT_SEND_FUNCTION -o winevl_iface Winevl_iface/pkt_send.c Winevl_iface/winevl_bridge.c
+-
+-clean:
+-	rm -rf .tmp_versions .*.cmd *.ko *.mod.c *.mod.o *.o $(SRC_DIR)/*.o  $(SRC_DIR)/.*.o.cmd menudbg apdbg winevl_iface
+-
+-
++#
++# .zd1211 - USB2.0 802.11b/g driver for Zydas ZD1211 chipsets
++#
++#
++#
++ifeq ($(KERNELRELEASE),)
++ifeq ($(ZD1211B),y)
++CONFIG_ZD1211B	:= m
++endif
++ifeq ($(ZD1211B),n)
++CONFIG_ZD1211	:= m
++endif
++ifeq ($(ZD1211B),)
++include .config
++endif
++default:
++	$(MAKE) -C $(KERNEL_LOCATION) M=$(shell pwd) CONFIG_ZD1211B=$(CONFIG_ZD1211B) CONFIG_ZD1211=$(CONFIG_ZD1211) KBUILD_VERBOSE=1 CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
++
++install:
++	$(MAKE) -C $(KERNEL_LOCATION) M=$(shell pwd) INSTALL_MOD_PATH=$(INSTALL_MOD_PATH) modules_install
++
++clean:
++	$(MAKE) -C $(KERNEL_LOCATION) M=$(shell pwd) clean
++
++.config:
++	@echo CONFIG_ZD1211B=m	> .config; \
++	echo "# CONFIG_ZD1211 is not set"	>> .config
++else
++ifeq ($(CONFIG_ZD1211B),m)
++obj-m	:= zd1211b.o
++endif
++ifeq ($(CONFIG_ZD1211),m)
++obj-m	:= zd1211.o
++endif
++
++SRC_DIR=src
++EXTRA_CFLAGS	:= -Isrc/include
++
++ifeq ($(CONFIG_ZD1211B),m)
++EXTRA_CFLAGS	+= -DZD1211B
++EXTRA_CFLAGS	+= -DZDCONF_LP_SUPPORT=1
++endif
++ifeq ($(CONFIG_ZD1211),m)
++EXTRA_CFLAGS	+= -DZD1211
++EXTRA_CFLAGS	+= -DZDCONF_LP_SUPPORT=0
++endif
++
++#EXTRA_CFLAGS	+= $(INCLUDES)
++DEFINES=-D__KERNEL__ -DMODULE=1
++ifndef CONFIG_FRAME_POINTER
++EXTRA_CFLAGS	+= -fomit-frame-pointer
++endif
++ifdef CONFIG_SMP
++EXTRA_CFLAGS	+= -D__SMP__ -DSMP
++endif
++
++zd1211-objs	:= $(SRC_DIR)/zd1205.o \
++$(SRC_DIR)/zdreq.o \
++$(SRC_DIR)/zdasocsvc.o \
++$(SRC_DIR)/zdauthreq.o \
++$(SRC_DIR)/zdauthrsp.o \
++$(SRC_DIR)/zdmmrx.o \
++$(SRC_DIR)/zdshared.o \
++$(SRC_DIR)/zdhci.o \
++$(SRC_DIR)/zdglobal.o \
++$(SRC_DIR)/zdencrypt.o \
++$(SRC_DIR)/zdpmfilter.o \
++$(SRC_DIR)/zdpsmon.o \
++$(SRC_DIR)/zdsynch.o \
++$(SRC_DIR)/zdbuf.o \
++$(SRC_DIR)/zd1205_proc.o \
++$(SRC_DIR)/zdhw.o \
++$(SRC_DIR)/zddebug.o \
++$(SRC_DIR)/zdtkipseed.o \
++$(SRC_DIR)/zdmic.o \
++$(SRC_DIR)/zddebug2.o \
++$(SRC_DIR)/zdlpmgt.o \
++$(SRC_DIR)/zdturbo_burst.o \
++$(SRC_DIR)/zdusb.o  \
++$(SRC_DIR)/zdmisc.o
++
++ifeq ($(CONFIG_ZD1211B),m)
++zd1211-objs	+= $(SRC_DIR)/zd1211.o
++zd1211b-objs	= $(zd1211-objs)
++endif
++ifeq ($(CONFIG_ZD1211),y)
++zd1211-objs	+= $(SRC_DIR)/zd1211.o
++endif
++
++EXTRA_CFLAGS	+= -O2 -Wall -Wstrict-prototypes -pipe -Wno-unused
++#EXTRA_CFLAGS	+= -Wa,-a,-ad -g
++EXTRA_CFLAGS	+= -DZDCONF_WE_STAT_SUPPORT=1
++EXTRA_CFLAGS	+= -DHOST_IF_USB
++EXTRA_CFLAGS	+= -DAMAC
++EXTRA_CFLAGS	+= -DGCCK
++EXTRA_CFLAGS	+= -DOFDM
++EXTRA_CFLAGS	+= -DHOSTAPD_SUPPORT
++EXTRA_CFLAGS	+= -DUSE_EP4_SET_REG
++EXTRA_CFLAGS	+= -DDOWNLOADFIRMWARE
++EXTRA_CFLAGS	+= -DfTX_GAIN_OFDM=0
++EXTRA_CFLAGS	+= -DfNEW_CODE_MAP=1
++EXTRA_CFLAGS	+= -DfWRITE_WORD_REG=1
++EXTRA_CFLAGS	+= -DfREAD_MUL_REG=1
++EXTRA_CFLAGS	+= -DENHANCE_RX=1
++
++EXTRA_CFLAGS	+= -DZDCONF_MENUDBG
++EXTRA_CFLAGS	+= -DZDCONF_APDBG
++EXTRA_CFLAGS	+= -DPRODUCTION
++EXTRA_CFLAGS	+= -DZDCONF_BANDEDGE_ADJUST
++EXTRA_CFLAGS	+= -DZDCONF_SES_SUPPORT=1
++#EXTRA_CFLAGS	+= -DZDCONF_PORTING_BIGENDIAN
++
++endif
+--- ZD1211LnxDrv_2_15_0_0/src/zd1205.c	2006-07-12 14:48:49.000000000 +0200
++++ ZD1211LnxDrv_2_15_0_0/src/zd1205.c-new	2007-11-26 10:48:07.000000000 +0100
+@@ -469,10 +469,10 @@
+ 		mdelay(ms);
+ }
+ 
+-asmlinkage _syscall3(int,write,int,fd,const char *,buf,off_t,count)
+-asmlinkage _syscall3(int,read,int,fd,char *,buf,off_t,count)
+-asmlinkage _syscall3(int,open,const char *,file,int,flag,int,mode)
+-asmlinkage _syscall1(int,close,int,fd)
++//asmlinkage _syscall3(int,write,int,fd,const char *,buf,off_t,count)
++//asmlinkage _syscall3(int,read,int,fd,char *,buf,off_t,count)
++//asmlinkage _syscall3(int,open,const char *,file,int,flag,int,mode)
++//asmlinkage _syscall1(int,close,int,fd)
+ #endif
+ const U16 dot11A_Channel[]={36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140,184,188,192,196,8,12,16,34,38,42,46,149,153,157,161,165};
+ const U16 dot11A_Channel_Amount=sizeof(dot11A_Channel)/sizeof(U16);

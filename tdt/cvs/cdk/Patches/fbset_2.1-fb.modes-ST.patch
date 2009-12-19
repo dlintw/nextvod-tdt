@@ -1,0 +1,187 @@
+--- fbset-2.1/etc/fb.modes.ATI.orig	2006-02-22 21:45:41.000000000 +0000
++++ fbset-2.1/etc/fb.modes.ATI	2006-02-22 21:32:07.000000000 +0000
+@@ -30,7 +30,7 @@
+ 
+ mode "640x480-60"
+     # D: 25.175 MHz, H: 31.469 kHz, V: 59.94 Hz
+-    geometry 640 480 640 480 8
++    geometry 640 480 640 480 16
+     timings 39722 48 16 33 10 96 2
+ endmode
+  
+@@ -1001,3 +1001,175 @@
+     timings 5051 304 40 42 3 136 5
+ endmode
+ 
++
++################################################
++# SD Interlaced modes
++
++mode "720x480-59i"
++    # D: 13.500 MHz, H: 15.734 kHz, V: 59.940 Hz
++    geometry 720 480 720 480 16
++    timings 74074 55 19 26 13 64 6
++    laced true
++endmode
++
++
++# Alias for above
++mode "NTSC"
++    # D: 13.500 MHz, H: 15.734 kHz, V: 59.940 Hz
++    geometry 720 480 720 480 16
++    timings 74074 55 19 26 13 64 6
++    laced true
++endmode
++
++
++mode "720x480-60i"
++    # D: 13.514 MHz, H: 15.750 kHz, V: 60.000 Hz
++    geometry 720 480 720 480 16
++    timings 74000 58 16 34 5 64 6
++    laced true
++endmode
++
++
++mode "720x576-50i" 
++    # D: 13.500 MHz, H: 15.625 kHz, V: 50.000 Hz
++    geometry 720 576 720 576 16
++    timings 74074 68 12 38 5 64 6
++    laced true
++endmode
++
++
++# Alias for above
++mode "PAL" 
++    # D: 13.500 MHz, H: 15.625 kHz, V: 50.000 Hz
++    geometry 720 576 720 576 16
++    timings 74074 68 12 38 5 64 6
++    laced true
++endmode
++
++################################################
++# SD Square Pixel Modes (supported on STi5528 only)
++
++mode "640x480-60i"
++    # D: 12.285 MHz, H: 15.750 kHz, V: 60.000 Hz
++    geometry 640 480 640 480 16
++    timings 81400 81 0 39 0 59 6
++    laced true
++endmode
++
++
++mode "640x480-59i"
++    # D: 12.273 MHz, H: 15.734 kHz, V: 59.940 Hz
++    geometry 640 480 640 480 16
++    timings 81481 81 0 39 0 59 6
++    laced true
++endmode
++
++
++mode "768x576-50i"
++    # D: 14.750 MHz, H: 15.625 kHz, V: 50.000 Hz
++    geometry 768 576 768 576 16
++    timings 67796 105 0 43 0 71 6
++    laced true
++endmode
++
++################################################
++# SD Progressive modes
++
++mode "720x576-50"
++    # D: 27.000 MHz, H: 31.250 kHz, V: 50.000 Hz
++    geometry 720 576 720 576 16
++    timings 37037 68 12 34 10 64 5
++endmode
++
++
++mode "720x480-59"
++    # D: 27.000 MHz, H: 31.469 kHz, V: 59.940 Hz
++    geometry 720 480 720 480 16
++    timings 37037 60 16 30 9 62 6
++endmode
++
++
++mode "720x480-60"
++    # D: 27.027 MHz, H: 31.500 kHz, V: 60.000 Hz
++    geometry 720 480 720 480 16
++    timings 37000 60 16 30 9 62 6
++endmode
++
++
++mode "720x483-59"
++    # D: 27.000 MHz, H: 31.469 kHz, V: 59.940 Hz
++    geometry 720 483 720 483 16
++    timings 37037 60 16 30 6 62 6
++endmode
++
++
++mode "720x483-60"
++    # D: 27.027 MHz, H: 31.500 kHz, V: 60.000 Hz
++    geometry 720 483 720 483 16
++    timings 37000 60 16 30 6 62 6
++endmode
++
++################################################
++# HD Modes
++
++mode "1280x720-59"
++    # D: 74.178 MHz, H: 44.957 kHz, V: 59.942 Hz
++    geometry 1280 720 1280 720 16
++    timings 13481 220 110 20 5 40 5
++    hsync high
++    vsync high
++endmode
++
++
++mode "1280x720-60"
++    # D: 74.250 MHz, H: 45.000 kHz, V: 60.000 Hz
++    geometry 1280 720 1280 720 16
++    timings 13468 220 110 20 5 40 5
++    hsync high
++    vsync high
++endmode
++
++
++mode "1280x720-50"
++    # D: 74.250 MHz, H: 37.500 kHz, V: 50.000 Hz
++    geometry 1280 720 1280 720 16
++    timings 13468 220 440 20 5 40 5
++    hsync high
++    vsync high
++endmode
++
++
++mode "1920x1080-59i"
++    # D: 74.178 MHz, H: 33.717 kHz, V: 59.942 Hz
++    geometry 1920 1080 1920 1080 16
++    timings 13481 148 88 35 5 44 5
++    laced true
++    hsync high
++    vsync high
++endmode
++
++
++mode "1920x1080-60i"
++    # D: 74.250 MHz, H: 33.750 kHz, V: 60.000 Hz
++    geometry 1920 1080 1920 1080 16
++    timings 13468 148 88 35 5 44 5
++    laced true
++    hsync high
++    vsync high
++endmode
++
++
++# SMPTE 274M style 1920x1080 interlaced @ 50Hz
++mode "1920x1080-50i"
++    # D: 74.250 MHz, H: 28.125 kHz, V: 50.000 Hz
++    geometry 1920 1080 1920 1080 16
++    timings 13468 148 528 35 5 44 5
++    hsync high
++    vsync high
++    laced true
++endmode
++
++
++################################################
++
++

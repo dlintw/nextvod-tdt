@@ -1,0 +1,36 @@
+diff -Naur busybox-1.2.1/examples/inittabBB busybox-1.2.1-stm/examples/inittabBB
+--- busybox-1.2.1/examples/inittabBB	1970-01-01 01:00:00.000000000 +0100
++++ busybox-1.2.1-stm/examples/inittabBB	2006-08-15 16:00:12.913383000 +0100
+@@ -0,0 +1,8 @@
++# Example Busybox inittab
++::sysinit:/etc/init.d/rcSBB
++ttyAS0::askfirst:/bin/sh
++ttyAS1::askfirst:/bin/sh
++::ctrlaltdel:/sbin/reboot
++::shutdown:/sbin/swapoff -a
++::shutdown:/bin/umount -a -r
++::restart:/sbin/init
+diff -Naur busybox-1.2.1/examples/rcSBB busybox-1.2.1-stm/examples/rcSBB
+--- busybox-1.2.1/examples/rcSBB	1970-01-01 01:00:00.000000000 +0100
++++ busybox-1.2.1-stm/examples/rcSBB	2006-08-15 16:00:12.919384000 +0100
+@@ -0,0 +1,4 @@
++#!/bin/sh
++# example rcS script
++echo "Welcome to STLinux!"
++#/sbin/ifconfig eth0 192.168.1.1
+diff -Naur busybox-1.2.1/init/init.c busybox-1.2.1-stm/init/init.c
+--- busybox-1.2.1/init/init.c	2006-06-30 23:42:12.000000000 +0100
++++ busybox-1.2.1-stm/init/init.c	2006-08-15 16:04:37.505173000 +0100
+@@ -90,9 +90,10 @@
+ 
+ #define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+ 
+-#define INITTAB      "/etc/inittab"	/* inittab file location */
++#define INITTAB      "/etc/inittabBB"	/* inittab file location */
++#define INITTAB_FALLBACK      "/etc/inittab"	/* inittab file fallback location */
+ #ifndef INIT_SCRIPT
+-#define INIT_SCRIPT  "/etc/init.d/rcS"	/* Default sysinit script. */
++#define INIT_SCRIPT  "/etc/init.d/rcSBB"	/* Default sysinit script. */
+ #endif
+ 
+ #define MAXENV	16		/* Number of env. vars */
