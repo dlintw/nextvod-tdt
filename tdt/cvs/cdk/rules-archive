@@ -115,7 +115,7 @@ libdvdcss-1.2.10.tar.gz;http://download.videolan.org/pub/libdvdcss/1.2.10
 #libdvdnav-0.1.10.tar.gz;ftp://ftp.videolan.org/pub/videolan/contrib
 libdvdnav-4.1.3.tar.bz2;http://www1.mplayerhq.hu/MPlayer/releases/dvdnav
 libdvdread-4.1.3.tar.bz2;http://www1.mplayerhq.hu/MPlayer/releases/dvdnav
-pyOpenSSL-0.8.tar.gz;http://puzzle.dl.sourceforge.net/sourceforge/pyopenssl
+pyOpenSSL-0.8.tar.gz;http://downloads.sourceforge.net/project/pyopenssl/pyopenssl/0.8/
 #
 # net apps
 #
