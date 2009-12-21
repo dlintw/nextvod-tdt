@@ -15,6 +15,7 @@ zypper refresh
 # Install older versions
 zypper install bash=3.2-112.1
 zypper install rpm=4.4.2-199.1
+zypper install patch=2.5.9-260.1
 
 # Most important packages
 zypper install -y subversion \
