@@ -31,7 +31,7 @@ ipkg-utils-050831.tar.gz;ftp://ftp.handhelds.org/packages/ipkg-utils
 # root
 #
 busybox-1.11.2.tar.bz2;http://www.busybox.net/downloads
-lsb_3.2-12.tar.gz;ftp://ftp.cs.rose-hulman.edu/debian/pool/main/l/lsb
+lsb_3.2-12.tar.gz;ftp://ftp.debian.hu/debian/pool/main/l/lsb/
 # lsb_3.2-12.tar.gz;http://ftp.de.debian.org/debian/pool/main/l/lsb
 ipkg-0.99.163.tar.gz;http://www.handhelds.org/download/packages/ipkg
 module-init-tools-3.3-pre1.tar.bz2;http://www.kernel.org/pub/linux/utils/kernel/module-init-tools
