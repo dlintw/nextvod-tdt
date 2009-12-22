@@ -28,7 +28,8 @@
 
 #include "global.h"
 
-#define E2TIMERSXML "/usr/local/share/enigma2/timers.xml"
+/* #define E2TIMERSXML "/usr/local/share/enigma2/timers.xml" */
+#define E2TIMERSXML "/etc/enigma2/timers.xml"
 
 #define CONFIG "/etc/vdstandby.cfg"
 char * sDisplayStd = "%a %d %H:%M:%S";
