@@ -122,7 +122,7 @@ demux_avi_printf("%s::%d\n",__FUNCTION__, __LINE__);
 	      float delay=0;
 	      if(((sh_audio_t*)(ds->sh))->wf->nAvgBytesPerSec)
 	          delay=(float)priv->pts_corr_bytes/((sh_audio_t*)(ds->sh))->wf->nAvgBytesPerSec;
-	      demux_avi_printf("XXX initial  v_pts=%5.3f  a_pos=%d (%5.3f) \n",priv->avi_audio_pts,priv->pts_corr_bytes,delay);
+	      printf("XXX initial  v_pts=%5.3f  a_pos=%d (%5.3f) \n",priv->avi_audio_pts,priv->pts_corr_bytes,delay);
 	      //priv->pts_correction=-priv->avi_audio_pts+delay;
 	      priv->pts_correction=delay-priv->avi_audio_pts;
 	      //priv->avi_audio_pts+=priv->pts_correction;
@@ -628,13 +628,13 @@ void demux_seek_avi(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int
     sh_audio_t *sh_audio=d_audio->sh;
     sh_video_t *sh_video=d_video->sh;
     float skip_audio_secs=0;
+    audio_delay=priv->pts_correction;
     printf("\n\n seek:%f %f\n\n",rel_seek_secs,audio_delay);
   //FIXME: OFF_T - Didn't check AVI case yet (avi files can't be >2G anyway?)
   //================= seek in AVI ==========================
     int rel_seek_frames=rel_seek_secs*sh_video->fps;
-    int video_chunk_pos=d_video->pos;
+    int video_chunk_pos=priv->idx_pos;
     int i;
-
       if(flags&SEEK_ABSOLUTE){
 	// seek absolute
 	video_chunk_pos=0;
@@ -669,7 +669,6 @@ void demux_seek_avi(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int
         }
       }
       priv->idx_pos_a=priv->idx_pos_v=priv->idx_pos=video_chunk_pos;
-
       // re-calc video pts:
       d_video->pack_no=0;
       for(i=0;i<video_chunk_pos;i++){
