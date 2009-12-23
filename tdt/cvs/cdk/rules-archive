@@ -31,7 +31,7 @@ ipkg-utils-050831.tar.gz;ftp://ftp.handhelds.org/packages/ipkg-utils
 # root
 #
 busybox-1.11.2.tar.bz2;http://www.busybox.net/downloads
-lsb_3.2-12.tar.gz;ftp://ftp.cs.rose-hulman.edu/debian/pool/main/l/lsb
+lsb_3.2-12.tar.gz;ftp://ftp.debian.hu/debian/pool/main/l/lsb/
 # lsb_3.2-12.tar.gz;http://ftp.de.debian.org/debian/pool/main/l/lsb
 ipkg-0.99.163.tar.gz;http://www.handhelds.org/download/packages/ipkg
 module-init-tools-3.3-pre1.tar.bz2;http://www.kernel.org/pub/linux/utils/kernel/module-init-tools
@@ -115,7 +115,7 @@ libdvdcss-1.2.10.tar.gz;http://download.videolan.org/pub/libdvdcss/1.2.10
 #libdvdnav-0.1.10.tar.gz;ftp://ftp.videolan.org/pub/videolan/contrib
 libdvdnav-4.1.3.tar.bz2;http://www1.mplayerhq.hu/MPlayer/releases/dvdnav
 libdvdread-4.1.3.tar.bz2;http://www1.mplayerhq.hu/MPlayer/releases/dvdnav
-pyOpenSSL-0.8.tar.gz;http://puzzle.dl.sourceforge.net/sourceforge/pyopenssl
+pyOpenSSL-0.8.tar.gz;http://downloads.sourceforge.net/project/pyopenssl/pyopenssl/0.8/
 #
 # net apps
 #
