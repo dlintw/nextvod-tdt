@@ -1,5 +1,15 @@
---- linux/drivers/net/smsc_911x/smsc911x.c	2009-10-10 16:43:29.000000000 +0200
-+++ linux/drivers/net/smsc_911x/smsc911x.c	2009-11-02 11:49:46.000000000 +0100
+--- linux/drivers/net/smsc_911x/Makefile        2009-10-14 19:28:00.000000000 +0200
++++ linux/drivers/net/smsc_911x/Makefile        2009-10-27 08:14:33.000000000 +0100
+@@ -2,5 +2,4 @@
+
+ obj-$(CONFIG_SMSC911x) := smsc911x.o
+
+-CFLAGS_smsc911x.o += -DPLATFORM_SOURCE=\"st40.c\" -DUSE_ST40_STMICRO
+-CFLAGS_smsc911x.o += -DUSE_DEBUG
++CFLAGS_smsc911x.o += -DUSE_ST40_STMICRO
+
+--- linux/drivers/net/smsc_911x/smsc911x.c	2009-11-22 20:49:32.000000000 +0100
++++ linux/drivers/net/smsc_911x/smsc911x.c	2009-11-22 22:15:58.000000000 +0100
 @@ -21,14 +21,10 @@
   *   see readme.txt for programmers guide
   */
@@ -779,10 +789,11 @@
  typedef unsigned long VL_KEY;
  typedef struct _VERIFIABLE_LOCK {
  	spinlock_t Lock;
-@@ -523,133 +377,85 @@
+@@ -523,133 +377,96 @@
  VL_KEY Vl_WaitForLock(PVERIFIABLE_LOCK pVl,DWORD *pdwIntFlags);
  void Vl_ReleaseLock(PVERIFIABLE_LOCK pVl,VL_KEY keyCode,DWORD *pdwIntFlags);
  
++#define VERSION 			27
 +#define USE_STAT //aktiviere Statistik
 +#define USE_RX_PIO_AND_DMA //aktiviere PIO + DMA für RX
 +#define USE_TX_PIO_AND_DMA //aktiviere PIO + DMA fuer TX
@@ -792,13 +803,16 @@
 +#define DEAS				15
 +#define LINK_POLL_SEC			5
 +#define LINK_MODE			0x7FUL
-+#define TX_FIF_SZ			0x00030000UL
-+#define AFCCFG				0x00A5219FUL //tx_fif_sz 3000 - rxfifo 12480
++#define TX_FIF_SZ			0x00030000UL //tx_fif_sz 3000 - rxfifo 12480
++#define AFCCFG				0x0082419FUL
 +
-+static struct proc_dir_entry *smsc_dir, *smsc_rx, *smsc_tx, *smsc_tx_wait, *smsc_deas, *smsc_info, *smsc_speed,
++static struct proc_dir_entry *smsc_dir, *smsc_deas, *smsc_info, *smsc_speed, *smsc_rx_tasklet,
 +#ifdef USE_STAT
 +	*smsc_stat,
 +	*smsc_throughput,
++	*smsc_rx,
++	*smsc_tx,
++	*smsc_tx_wait,
 +#endif
 +#ifdef USE_TX_PIO_AND_DMA
 +	*smsc_tx_pio,
@@ -807,6 +821,14 @@
 +	*smsc_rx_pio,
 +#endif
 +*smsc_tx_fifo, *smsc_afc_cfg;
++
++#ifdef USE_STAT
++struct _procstat {
++	int rx_len;
++        BYTE rx_paket;
++	int tx_len;
++};
++#endif
 +
  typedef struct _PRIVATE_DATA {
 -	DWORD dwLanBase;
@@ -892,6 +914,7 @@
 -	spinlock_t GpTimerLock;
 -
 -	BOOLEAN Running;
++	BYTE rx_tasklet;
 +#ifdef USE_STAT
  	struct net_device_stats stats;
 -
@@ -900,11 +923,9 @@
 -#ifdef USE_LED1_WORK_AROUND
 -	DWORD NotUsingExtPhy;
 +	BOOLEAN stat;
++	struct _procstat *procstat;
 +        BYTE rx_count;
-+        int rx_len[50];
-+        BYTE rx_len_paket[50];
 +        BYTE tx_count;
-+        int tx_len[50];
 +        int tx_wait_fifo_dma;
 +        int tx_wait_fifo_pio;
 +	struct timer_list ThroughputTimer;
@@ -965,11 +986,11 @@
  
  } PRIVATE_DATA, *PPRIVATE_DATA;
  
-+static int __init init_procfs_smsc(PPRIVATE_DATA privateData);
++static int __init init_procfs_smsc(PPRIVATE_DATA pD);
  
  /*
   ****************************************************************************
-@@ -660,61 +466,60 @@
+@@ -660,64 +477,63 @@
   ****************************************************************************
   *
   */
@@ -1027,6 +1048,11 @@
 -	#define WUCSR_MPR_			(0x00000020UL)
 -	#define WUCSR_WAKE_EN_		(0x00000004UL)
 -	#define WUCSR_MPEN_			(0x00000002UL)
+-
+-BOOLEAN Mac_Initialize(PPRIVATE_DATA privateData);
+-static BOOLEAN MacNotBusy(PPRIVATE_DATA privateData,VL_KEY keyCode);
+-DWORD Mac_GetRegDW(PPRIVATE_DATA privateData,DWORD dwRegOffset,VL_KEY keyCode);
+-void Mac_SetRegDW(PPRIVATE_DATA privateData,DWORD dwRegOffset,DWORD dwVal,VL_KEY keyCode);
 +/* MAC_CR - MAC Control Register */
 +#define MAC_CR_RXALL_		(0x80000000UL)
 +#define MAC_CR_HBDIS_		(0x10000000UL)
@@ -1078,12 +1104,14 @@
 +#define WUCSR_MPR_		(0x00000020UL)
 +#define WUCSR_WAKE_EN_		(0x00000004UL)
 +#define WUCSR_MPEN_		(0x00000002UL)
++
++static BOOLEAN MacNotBusy(PPRIVATE_DATA pD,VL_KEY keyCode);
++DWORD Mac_GetRegDW(PPRIVATE_DATA pD,DWORD dwRegOffset,VL_KEY keyCode);
++void Mac_SetRegDW(PPRIVATE_DATA pD,DWORD dwRegOffset,DWORD dwVal,VL_KEY keyCode);
  
--BOOLEAN Mac_Initialize(PPRIVATE_DATA privateData);
- static BOOLEAN MacNotBusy(PPRIVATE_DATA privateData,VL_KEY keyCode);
- DWORD Mac_GetRegDW(PPRIVATE_DATA privateData,DWORD dwRegOffset,VL_KEY keyCode);
- void Mac_SetRegDW(PPRIVATE_DATA privateData,DWORD dwRegOffset,DWORD dwVal,VL_KEY keyCode);
-@@ -727,358 +532,96 @@
+ /*
+  ****************************************************************************
+@@ -727,4436 +543,958 @@
   *	Phy register offsets and bit definitions
   *
   */
@@ -1214,14 +1242,14 @@
 -void Phy_GetLinkMode(
 -	PPRIVATE_DATA privateData,
 -	VL_KEY keyCode);
-+BOOLEAN Phy_Initialize(PPRIVATE_DATA privateData);
-+void Phy_SetLink(PPRIVATE_DATA privateData);
-+WORD Phy_GetRegW(PPRIVATE_DATA privateData,
++BOOLEAN Phy_Initialize(PPRIVATE_DATA pD);
++void Phy_SetLink(PPRIVATE_DATA pD);
++WORD Phy_GetRegW(PPRIVATE_DATA pD,
 +	DWORD dwRegIndex, VL_KEY keyCode);
-+void Phy_SetRegW(PPRIVATE_DATA privateData,
++void Phy_SetRegW(PPRIVATE_DATA pD,
 +	DWORD dwRegIndex, WORD wVal, VL_KEY keyCode);
-+inline void Phy_UpdateLinkMode(PPRIVATE_DATA privateData);
-+inline void Phy_GetLinkMode(PPRIVATE_DATA privateData,VL_KEY keyCode);
++inline void Phy_UpdateLinkMode(PPRIVATE_DATA pD);
++inline void Phy_GetLinkMode(PPRIVATE_DATA pD,VL_KEY keyCode);
  void Phy_CheckLink(unsigned long ptr);
 -
 -TIME_SPAN Gpt_FreeRunCompare(DWORD time1,DWORD time2);
@@ -1257,10 +1285,12 @@
 -
 -static DWORD Tx_GetTxStatusCount(
 -	PPRIVATE_DATA privateData);
++#ifdef USE_STAT
 +void Get_Throughput(unsigned long ptr);
-+void Tx_Initialize(PPRIVATE_DATA privateData);
-+inline void Tx_StopQueue(PPRIVATE_DATA privateData,DWORD dwSource);
-+inline void Tx_WakeQueue(PPRIVATE_DATA privateData,DWORD dwSource);
++#endif
++void Tx_Initialize(PPRIVATE_DATA pD);
++inline void Tx_StopQueue(PPRIVATE_DATA pD,DWORD dwSource);
++inline void Tx_WakeQueue(PPRIVATE_DATA pD,DWORD dwSource);
  static void Tx_DmaCompletionCallback(void* param);
 -static DWORD Tx_CompleteTx(
 -	PPRIVATE_DATA privateData);
@@ -1283,19 +1313,25 @@
 -static DWORD Rx_PopRxStatus(
 -	PPRIVATE_DATA privateData);
 -void Rx_CountErrors(PPRIVATE_DATA privateData,DWORD dwRxStatus);
-+void Rx_Initialize(PPRIVATE_DATA privateData);
-+inline static DWORD Rx_PopRxStatus(PPRIVATE_DATA privateData);
- void Rx_FastForward(PPRIVATE_DATA privateData,DWORD dwDwordCount);
+-void Rx_FastForward(PPRIVATE_DATA privateData,DWORD dwDwordCount);
 -void Rx_ProcessPackets(PPRIVATE_DATA privateData);
 -void Rx_BeginMulticastUpdate (PPRIVATE_DATA privateData);
++void Rx_Initialize(PPRIVATE_DATA pD);
++inline static DWORD Rx_PopRxStatus(PPRIVATE_DATA pD);
++void Rx_FastForward(PPRIVATE_DATA pD,DWORD dwDwordCount);
++inline void Rx_ProcessPackets(PPRIVATE_DATA pD);
++static void Rx_DmaCompletionCallback(void* param);
++void Rx_ReceiverOff(PPRIVATE_DATA pD);
++void Rx_ReceiverOn(PPRIVATE_DATA pD);
++BOOLEAN Lan_Initialize(PPRIVATE_DATA pD);
++void Lan_SetIntDeas(PPRIVATE_DATA pD, int deas);
+ 
+ unsigned long Rx_TaskletParameter=0;
 -
--unsigned long Rx_TaskletParameter=0;
--
--void Rx_ProcessPacketsTasklet(unsigned long data);
--DECLARE_TASKLET(Rx_Tasklet,Rx_ProcessPacketsTasklet,0);
--
-+inline void Rx_ProcessPackets(PPRIVATE_DATA privateData);
- static void Rx_DmaCompletionCallback(void* param);
+ void Rx_ProcessPacketsTasklet(unsigned long data);
+ DECLARE_TASKLET(Rx_Tasklet,Rx_ProcessPacketsTasklet,0);
+ 
+-static void Rx_DmaCompletionCallback(void* param);
 -
 -BOOLEAN RxStop_HandleInterrupt(
 -	PPRIVATE_DATA privateData,
@@ -1494,14 +1530,10 @@
 -DWORD max_work_load=0xFFFFFFFFUL;
 -module_param(max_work_load,ulong,0);
 -MODULE_PARM_DESC(max_work_load,"See Readme.txt");
-+void Rx_ReceiverOff(PPRIVATE_DATA privateData);
-+void Rx_ReceiverOn(PPRIVATE_DATA privateData);
-+BOOLEAN Lan_Initialize(PPRIVATE_DATA privateData);
-+void Lan_SetIntDeas(PPRIVATE_DATA privateData, int deas);
- 
+-
  MODULE_LICENSE("GPL");
  
-@@ -1086,4077 +629,834 @@
+ int Smsc911x_init_module(void);
  void Smsc911x_cleanup_module(void);
  int Smsc911x_init(struct net_device *dev);
  int Smsc911x_open(struct net_device *dev);
@@ -1741,7 +1773,7 @@
 -	DWORD dwLanBase=0UL;
 -	DWORD dwIdRev=0UL;
 -	DWORD dwFpgaRev=0UL;
- 	PPRIVATE_DATA privateData=NULL;
+-	PPRIVATE_DATA privateData=NULL;
 -	PPLATFORM_DATA platformData=NULL;
 -	BOOLEAN platformInitialized=FALSE;
 -	int result=-ENODEV;
@@ -1752,26 +1784,23 @@
 -		result=-EFAULT;
 -		goto DONE;
 -	}
++	PPRIVATE_DATA pD=NULL;
  
 -	if(dev->priv!=NULL) {
 -		SMSC_WARNING("dev->priv!=NULL, going to overwrite pointer");
 -	}
-+	if(dev==NULL)
-+		return -EFAULT;
-+
- 	dev->priv=kmalloc(sizeof(PRIVATE_DATA),GFP_KERNEL);
+-	dev->priv=kmalloc(sizeof(PRIVATE_DATA),GFP_KERNEL);
 -	if(dev->priv==NULL) {
 -		SMSC_WARNING("Unable to allocate PRIVATE_DATA");
 -		result=-ENOMEM;
 -		goto DONE;
 -	}
-+	if(dev->priv==NULL)
-+		return -ENOMEM;
-+
- 	memset(dev->priv,0,sizeof(PRIVATE_DATA));
- 	privateData=(PPRIVATE_DATA)(dev->priv);
+-	memset(dev->priv,0,sizeof(PRIVATE_DATA));
+-	privateData=(PPRIVATE_DATA)(dev->priv);
 -	platformData=&(privateData->PlatformData);
--
++	if(dev==NULL)
++		return -EFAULT;
+ 
 -	dwLanBase=Platform_Initialize(
 -		platformData,
 -		lan_base,bus_width);
@@ -1783,13 +1812,18 @@
 -	}
 -	platformInitialized=TRUE;
 -	SMSC_TRACE("dwLanBase=0x%08lX",dwLanBase);
--
++	dev->priv=kmalloc(sizeof(PRIVATE_DATA),GFP_KERNEL);
++	if(dev->priv==NULL)
++		return -ENOMEM;
+ 
 -	if(check_mem_region(dwLanBase,LAN_REGISTER_EXTENT)!=0) {
 -		SMSC_WARNING("  Memory Region specified (0x%08lX to 0x%08lX) is not available.",
 -			dwLanBase,dwLanBase+LAN_REGISTER_EXTENT-1UL);
 -		result=-ENOMEM;
 -		goto DONE;
 -	}
++	memset(dev->priv,0,sizeof(PRIVATE_DATA));
++	pD=(PPRIVATE_DATA)(dev->priv);
  
 -	privateData->dwLanBase=dwLanBase;
 -	dwIdRev=Lan_GetRegDW(ID_REV);
@@ -1941,11 +1975,12 @@
 +	if(check_mem_region(PLATFORM_CSBASE,LAN_REGISTER_EXTENT)!=0)
 +		return -ENOMEM;
  
++	pD->rx_tasklet=0;
 +#ifdef USE_TX_PIO_AND_DMA
-+	privateData->tx_pio=1;
++	pD->tx_pio=1;
 +#endif
 +#ifdef USE_RX_PIO_AND_DMA
-+	privateData->rx_pio=0;
++	pD->rx_pio=0;
 +#endif
  	ether_setup(dev);
 -	dev->open=				Smsc911x_open;
@@ -1959,21 +1994,23 @@
 +	dev->hard_start_xmit=Smsc911x_hard_start_xmit;
 +#ifdef USE_STAT
 +	dev->get_stats=Smsc911x_get_stats;
-+	privateData->stat=0;
++	pD->stat=0;
 +#endif
  
  	// set an invalid MAC address (so we can observe if its value is changed)
  	memset(dev->dev_addr, 0xff, 6);
  
  	SET_MODULE_OWNER(dev);
--
++	pD->dev=dev;
++	sprintf(pD->ifName,"%s",dev->name);
+ 
 -	privateData->dwIdRev=dwIdRev;
 -	privateData->dwFpgaRev=dwFpgaRev&(0x000000FFUL);
- 	privateData->dev=dev;
+-	privateData->dev=dev;
 -
- 	sprintf(privateData->ifName,"%s",dev->name);
+-	sprintf(privateData->ifName,"%s",dev->name);
 -	result=0;
- 
+-
 -DONE:
 -	if(result!=0) {
 -		if(dev!=NULL) {
@@ -1988,7 +2025,7 @@
 -	}
 -	SMSC_TRACE("<--Smsc911x_init(), result=%d",result);
 -	return result;
-+	init_procfs_smsc(privateData);
++	init_procfs_smsc(pD);
 +	return 0;
  }
  
@@ -1996,7 +2033,7 @@
  {
 -	int i;
 -	int result=-ENODEV;
- 	PPRIVATE_DATA privateData=NULL;
+-	PPRIVATE_DATA privateData=NULL;
 -	PPLATFORM_DATA platformData=NULL;
 -	BOOLEAN acquired_mem_region=FALSE;
 -	BOOLEAN acquired_isr=FALSE;
@@ -2013,13 +2050,14 @@
 -		goto DONE;
 -	}
 -	platformData=&(privateData->PlatformData);
++	PPRIVATE_DATA pD=NULL;
  
 -	for (i = 0; i < GPT_SCHEDULE_DEPTH; i++) {
 -		privateData->GptFunction [i] = NULL;
 -	}
 -	privateData->Gpt_scheduled_slot_index = GPT_SCHEDULE_DEPTH;
-+	privateData=(PPRIVATE_DATA)(dev->priv);
-+	if(dev==NULL || privateData==NULL)
++	pD=(PPRIVATE_DATA)(dev->priv);
++	if(dev==NULL || pD==NULL)
 +		return -EFAULT;
  
  	//get memory region
@@ -2033,8 +2071,10 @@
 -	acquired_mem_region=TRUE;
 +	if(check_mem_region(PLATFORM_CSBASE,LAN_REGISTER_EXTENT)!=0)
 +		return -ENOMEM;
++
++	request_mem_region(PLATFORM_CSBASE,LAN_REGISTER_EXTENT,"SMSC_LAN911x");
  
--	//initialize the LAN911x
+ 	//initialize the LAN911x
 -	{
 -		DWORD dwIntCfg=0;
 -		if(irq_pol) {
@@ -2050,11 +2090,11 @@
 -			goto DONE;
 -		}
 -	}
-+	request_mem_region(PLATFORM_CSBASE,LAN_REGISTER_EXTENT,"SMSC_LAN911x");
++	if(!Lan_Initialize(pD))
++		return -ENODEV;
  
 -	spin_lock_init(&(privateData->GpTimerLock));
-+	//initialize the LAN911x
-+	if(!Lan_Initialize(privateData))
++	if(!Platform_RequestIRQ(Smsc911x_ISR,pD))
 +		return -ENODEV;
  
 -	if(!Platform_RequestIRQ(platformData,irq,Smsc911x_ISR,privateData)) {
@@ -2062,8 +2102,11 @@
 -		goto DONE;
 -	}
 -	acquired_isr=TRUE;
-+	if(!Platform_RequestIRQ(Smsc911x_ISR,privateData))
-+		return -ENODEV;
++	//get mac address
++	DWORD dwHigh16=0xFFFFFFFFUL;
++	DWORD dwLow32=0xFFFFFFFFUL;
++	DWORD dwIntFlags=0;
++	VL_KEY keyCode;
  
 -	//must now test the IRQ connection to the ISR
 -	SMSC_TRACE("Testing ISR using IRQ %ld",Platform_CurrentIRQ(platformData));
@@ -2081,16 +2124,6 @@
 -		}
 -	}
 -	SMSC_TRACE("ISR passed test using IRQ %ld",Platform_CurrentIRQ(platformData));
-+	//get mac address
-+	DWORD dwHigh16=0xFFFFFFFFUL;
-+	DWORD dwLow32=0xFFFFFFFFUL;
-+	DWORD dwIntFlags=0;
-+	VL_KEY keyCode;
- 
--	if(!Mac_Initialize(privateData)) {
--		SMSC_WARNING("Failed Mac_Initialize");
--		result=-ENODEV;
--		goto DONE;
 +	// if the dev_addr has been set use via set_mac_address then let this override everything
 +	if (!(dev->dev_addr[0] == 0xff && dev->dev_addr[1] == 0xff &&
 +	      dev->dev_addr[2] == 0xff && dev->dev_addr[3] == 0xff &&
@@ -2098,7 +2131,42 @@
 +		dwLow32 = dev->dev_addr[0]       | dev->dev_addr[1] <<  8 |
 +		                dev->dev_addr[2] << 16 | dev->dev_addr[3] << 24;
 +		dwHigh16 = dev->dev_addr[4]       | dev->dev_addr[5] <<  8;
- 	}
++	}
++
++	keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
++	if(dwHigh16==0xFFFFFFFF) {
++		dwHigh16=Mac_GetRegDW(pD,ADDRH,keyCode);
++		dwLow32=Mac_GetRegDW(pD,ADDRL,keyCode);
++		if((dwHigh16==0x0000FFFFUL)&&(dwLow32==0xFFFFFFFF))
++		{
++			dwHigh16=0x00000070UL;
++			dwLow32=0x110F8000UL;
++			Mac_SetRegDW(pD,ADDRH,dwHigh16,keyCode);
++			Mac_SetRegDW(pD,ADDRL,dwLow32,keyCode);
++		}
++	} else {
++		Mac_SetRegDW(pD,ADDRH,dwHigh16,keyCode);
++		Mac_SetRegDW(pD,ADDRL,dwLow32,keyCode);
++	}
++	Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
++	dev->dev_addr[0]=LOBYTE(LOWORD(dwLow32));
++	dev->dev_addr[1]=HIBYTE(LOWORD(dwLow32));
++	dev->dev_addr[2]=LOBYTE(HIWORD(dwLow32));
++	dev->dev_addr[3]=HIBYTE(HIWORD(dwLow32));
++	dev->dev_addr[4]=LOBYTE(LOWORD(dwHigh16));
++	dev->dev_addr[5]=HIBYTE(LOWORD(dwHigh16));
++	
++	netif_carrier_off(dev);
++	if(!Phy_Initialize(pD))
++		return -ENODEV;
++        pD->dwTxDmaCh=Platform_RequestDmaChannel();
++	pD->dwRxDmaCh=Platform_RequestDmaChannelSg();
+ 
+-	if(!Mac_Initialize(privateData)) {
+-		SMSC_WARNING("Failed Mac_Initialize");
+-		result=-ENODEV;
+-		goto DONE;
+-	}
 -	{//get mac address
 -		DWORD dwHigh16=0;
 -		DWORD dwLow32=0;
@@ -2113,6 +2181,8 @@
 -			                dev->dev_addr[2] << 16 | dev->dev_addr[3] << 24;
 -			mac_addr_hi16 = dev->dev_addr[4]       | dev->dev_addr[5] <<  8;
 -		}
++	Tx_Initialize(pD);
++	Rx_Initialize(pD);
  
 -		keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
 -		if(mac_addr_hi16==0xFFFFFFFF) {
@@ -2130,22 +2200,29 @@
 -				SMSC_TRACE("Mac Address is read from LAN911x as 0x%04lX%08lX",
 -					dwHigh16,dwLow32);
 -			}
--		} else {
++	netif_start_queue(dev);
++	Tx_StopQueue(pD,0x01UL);
++	return 0;
++}
++
++irqreturn_t Smsc911x_ISR(int Irq, void *dev_id, struct pt_regs *regs)
++{
++	PPRIVATE_DATA pD=(PPRIVATE_DATA)dev_id;
++
++	if(Lan_GetRegDW(INT_STS)&INT_STS_RSFL_) {
++		if(pD->rx_tasklet) {
++			Lan_ClrBitsDW(INT_CFG,INT_CFG_IRQ_EN_);
++			Rx_TaskletParameter=(unsigned long)pD;
++			tasklet_schedule(&Rx_Tasklet);
+ 		} else {
 -			//SMSC_ASSERT((mac_addr_hi16&0xFFFF8000UL)==0);
 -			dwHigh16=mac_addr_hi16;
 -			dwLow32=mac_addr_lo32;
-+	keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
-+	if(dwHigh16==0xFFFFFFFF) {
-+		dwHigh16=Mac_GetRegDW(privateData,ADDRH,keyCode);
-+		dwLow32=Mac_GetRegDW(privateData,ADDRL,keyCode);
-+		if((dwHigh16==0x0000FFFFUL)&&(dwLow32==0xFFFFFFFF))
-+		{
-+			dwHigh16=0x00000070UL;
-+			dwLow32=0x110F8000UL;
- 			Mac_SetRegDW(privateData,ADDRH,dwHigh16,keyCode);
- 			Mac_SetRegDW(privateData,ADDRL,dwLow32,keyCode);
+-			Mac_SetRegDW(privateData,ADDRH,dwHigh16,keyCode);
+-			Mac_SetRegDW(privateData,ADDRL,dwLow32,keyCode);
 -			SMSC_TRACE("Mac Address is set by parameter to 0x%04lX%08lX",
 -				dwHigh16,dwLow32);
++                	Rx_ProcessPackets(pD);
  		}
 -		Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
 -		dev->dev_addr[0]=LOBYTE(LOWORD(dwLow32));
@@ -2154,23 +2231,16 @@
 -		dev->dev_addr[3]=HIBYTE(HIWORD(dwLow32));
 -		dev->dev_addr[4]=LOBYTE(LOWORD(dwHigh16));
 -		dev->dev_addr[5]=HIBYTE(LOWORD(dwHigh16));
-+	} else {
-+		Mac_SetRegDW(privateData,ADDRH,dwHigh16,keyCode);
-+		Mac_SetRegDW(privateData,ADDRL,dwLow32,keyCode);
- 	}
--
+-	}
++		return IRQ_RETVAL(TRUE);
++        }
+ 
 -	privateData->MulticastUpdatePending = FALSE;
--
++	return IRQ_RETVAL(FALSE);
++}
+ 
 -#ifdef USE_PHY_WORK_AROUND
-+	Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
-+	dev->dev_addr[0]=LOBYTE(LOWORD(dwLow32));
-+	dev->dev_addr[1]=HIBYTE(LOWORD(dwLow32));
-+	dev->dev_addr[2]=LOBYTE(HIWORD(dwLow32));
-+	dev->dev_addr[3]=HIBYTE(HIWORD(dwLow32));
-+	dev->dev_addr[4]=LOBYTE(LOWORD(dwHigh16));
-+	dev->dev_addr[5]=HIBYTE(LOWORD(dwHigh16));
-+	
- 	netif_carrier_off(dev);
+-	netif_carrier_off(dev);
 -	if(!Phy_Initialize(
 -		privateData,
 -		phy_addr,
@@ -2181,16 +2251,23 @@
 -		goto DONE;
 -	}
 -#endif
--
++void Phy_SetLink(PPRIVATE_DATA pD)
++{
++	DWORD dwIntFlags=0;
++	VL_KEY keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
++	WORD wTemp=Phy_GetRegW(pD, PHY_ANEG_ADV, keyCode);
+ 
 -	{
 -		DWORD dwRxDmaCh=rx_dma;
 -		DWORD dwTxDmaCh=tx_dma;
 -		privateData->RxDmaChReserved=FALSE;
--
-+	if(!Phy_Initialize(privateData))
-+		return -ENODEV;
-+        privateData->dwTxDmaCh=Platform_RequestDmaChannel();
-+	privateData->dwRxDmaCh=Platform_RequestDmaChannelSg();
++	wTemp&=~PHY_ANEG_ADV_PAUSE_;
++	wTemp|=PHY_ANEG_ADV_ASYMP_|PHY_ANEG_ADV_SYMP_;
+ 
++	wTemp&=~PHY_ANEG_ADV_SPEED_;
++	wTemp|=PHY_ANEG_ADV_10H_|PHY_ANEG_ADV_10F_;
++	wTemp|=PHY_ANEG_ADV_100H_|PHY_ANEG_ADV_100F_;
++	Phy_SetRegW(pD,PHY_ANEG_ADV,wTemp,keyCode);
  
 -		if(rx_dma==TRANSFER_REQUEST_DMA) {
 -			dwRxDmaCh=Platform_RequestDmaChannelSg(&(privateData->PlatformData));
@@ -2210,21 +2287,39 @@
 -		Tx_Initialize(privateData,dwTxDmaCh,dma_threshold);
 -		Rx_Initialize(privateData,dwRxDmaCh,dma_threshold);
 -	}
-+	Tx_Initialize(privateData);
-+	Rx_Initialize(privateData);
++	Phy_SetRegW(pD, PHY_BCR, PHY_BCR_AUTO_NEG_ENABLE_|
++		PHY_BCR_RESTART_AUTO_NEG_, keyCode);
++	Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
++}
  
 -#ifndef LINUX_2_6_OR_NEWER
 -	MOD_INC_USE_COUNT;
 -#endif
 -	privateData->Running=TRUE;
- 	netif_start_queue(dev);
- 	Tx_StopQueue(privateData,0x01UL);
-+	return 0;
-+}
- 
-+irqreturn_t Smsc911x_ISR(int Irq, void *dev_id, struct pt_regs *regs)
+-	netif_start_queue(dev);
+-	Tx_StopQueue(privateData,0x01UL);
++BOOLEAN Phy_Initialize(PPRIVATE_DATA pD)
 +{
-+	PPRIVATE_DATA privateData=(PPRIVATE_DATA)dev_id;
++	DWORD dwTemp=0;
++	WORD wTemp=0;
++	DWORD dwLoopCount;
+ 
++	DWORD dwIntFlags=0;
++	VL_KEY keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
++	dwTemp=Phy_GetRegW(pD,PHY_ID_2,keyCode);
++	dwTemp=Phy_GetRegW(pD,PHY_ID_1,keyCode);
++
++	pD->man_speed=0;
++	pD->dwLinkSpeed=LINK_OFF;
++	//reset the PHY
++	Phy_SetRegW(pD,PHY_BCR,PHY_BCR_RESET_,keyCode);
++	dwLoopCount=100000;
++	do {
++		udelay(10);
++		wTemp=Phy_GetRegW(pD,PHY_BCR,keyCode);
++		dwLoopCount--;
++	} while((dwLoopCount>0) && (wTemp&PHY_BCR_RESET_));
++	Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
  
 -	Lan_EnableInterrupt(privateData,INT_EN_GPT_INT_EN_);
 -#ifndef USE_PHY_WORK_AROUND
@@ -2239,18 +2334,39 @@
 -		goto DONE;
 -	}
 -#endif
--
++	if(wTemp&PHY_BCR_RESET_)
++		return FALSE;
+ 
 -	result=0;
-+	if(Lan_GetRegDW(INT_STS)&INT_STS_RSFL_) {
-+                Rx_ProcessPackets(privateData);
-+		return IRQ_RETVAL(TRUE);
-+        }
++	Phy_SetLink(pD);
  
 -DONE:
 -	if(result!=0) {
 -#ifndef LINUX_2_6_OR_NEWER
 -		MOD_DEC_USE_COUNT;
--#endif
++	init_timer(&(pD->LinkPollingTimer));
++	pD->LinkPollingTimer.function=Phy_CheckLink;
++	pD->LinkPollingTimer.data=(unsigned long)pD;
++	pD->LinkPollingTimer.expires=jiffies+(HZ*LINK_POLL_SEC);
++	add_timer(&(pD->LinkPollingTimer));
++
++#ifdef USE_STAT
++	init_timer(&(pD->ThroughputTimer));
++        pD->ThroughputTimer.function=Get_Throughput;
++        pD->ThroughputTimer.data=(unsigned long)pD;
++	pD->old_jiffies=0;
++	pD->old_rx_bytes=0;
++	pD->old_rx_packets=0;
++	pD->old_tx_bytes=0;
++	pD->old_tx_packets=0;
++	pD->akt_jiffies=0;
++	pD->akt_rx_bytes=0;
++	pD->akt_rx_packets=0;
++	pD->akt_tx_bytes=0;
++	pD->akt_tx_packets=0;
++	pD->rx_fifo_avg=100000;
++	pD->rx_fifo_avg_packets=0;
+ #endif
 -		if(privateData!=NULL) {
 -			if(privateData->TxDmaChReserved) {
 -				Platform_ReleaseDmaChannel(platformData,
@@ -2274,11 +2390,12 @@
 -	}
 -	SMSC_TRACE("<--Smsc911x_open, result=%d",result);
 -	return result;
-+	return IRQ_RETVAL(FALSE);
++
++	return TRUE;
  }
  
 -int Smsc911x_stop(struct net_device *dev)
-+void Phy_SetLink(PPRIVATE_DATA privateData)
++WORD Phy_GetRegW(PPRIVATE_DATA pD, DWORD dwRegIndex, VL_KEY keyCode)
  {
 -	int result=0;
 -	PPRIVATE_DATA privateData=NULL;
@@ -2294,56 +2411,41 @@
 -		result=-EFAULT;
 -		goto DONE;
 -	}
-+	DWORD dwIntFlags=0;
-+	VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
-+	WORD wTemp=Phy_GetRegW(privateData, PHY_ANEG_ADV, keyCode);
- 
+-
 -	privateData->StopLinkPolling=TRUE;
 -	del_timer_sync(&(privateData->LinkPollingTimer));
-+	wTemp&=~PHY_ANEG_ADV_PAUSE_;
-+	wTemp|=PHY_ANEG_ADV_ASYMP_|PHY_ANEG_ADV_SYMP_;
++	DWORD dwAddr=0;
++	int i=0;
  
 -	Lan_DisableInterrupt(privateData,INT_EN_GPT_INT_EN_);
-+	wTemp&=~PHY_ANEG_ADV_SPEED_;
-+	wTemp|=PHY_ANEG_ADV_10H_|PHY_ANEG_ADV_10F_;
-+	wTemp|=PHY_ANEG_ADV_100H_|PHY_ANEG_ADV_100F_;
-+	Phy_SetRegW(privateData,PHY_ANEG_ADV,wTemp,keyCode);
++	// confirm MII not busy
++	if ((Mac_GetRegDW(pD, MII_ACC,keyCode) & MII_ACC_MII_BUSY_) != 0UL)
++		return 0;
  
 -	Tx_UpdateTxCounters(privateData);
 -	privateData->Running=FALSE;
 -	Lan_DisableIRQ(privateData);
-+	Phy_SetRegW(privateData, PHY_BCR, PHY_BCR_AUTO_NEG_ENABLE_|
-+		PHY_BCR_RESTART_AUTO_NEG_, keyCode);
-+	Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
-+}
++	// set the address, index & direction (read from PHY)
++	dwAddr = ((1&0x1FUL)<<11) | ((dwRegIndex & 0x1FUL)<<6);
++	Mac_SetRegDW(pD, MII_ACC, dwAddr,keyCode);
  
 -	Tx_CompleteDma(privateData);
-+BOOLEAN Phy_Initialize(PPRIVATE_DATA privateData)
-+{
-+	DWORD dwTemp=0;
-+	WORD wTemp=0;
-+	DWORD dwLoopCount;
++	// wait for read to complete w/ timeout
++	for(i=0;i<100;i++)
++		if ((Mac_GetRegDW(pD, MII_ACC,keyCode) & MII_ACC_MII_BUSY_) == 0UL)
++			return ((WORD)Mac_GetRegDW(pD, MII_DATA,keyCode));
  
 -	Tx_StopQueue(privateData,0x01UL);
-+	DWORD dwIntFlags=0;
-+	VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
-+	dwTemp=Phy_GetRegW(privateData,PHY_ID_2,keyCode);
-+	dwTemp=Phy_GetRegW(privateData,PHY_ID_1,keyCode);
++	return 0xFFFFU;
++}
  
 -#ifndef LINUX_2_6_OR_NEWER
 -	MOD_DEC_USE_COUNT;
 -#endif
-+	privateData->man_speed=0;
-+	privateData->dwLinkSpeed=LINK_OFF;
-+	//reset the PHY
-+	Phy_SetRegW(privateData,PHY_BCR,PHY_BCR_RESET_,keyCode);
-+	dwLoopCount=100000;
-+	do {
-+		udelay(10);
-+		wTemp=Phy_GetRegW(privateData,PHY_BCR,keyCode);
-+		dwLoopCount--;
-+	} while((dwLoopCount>0) && (wTemp&PHY_BCR_RESET_));
-+	Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
++void Phy_SetRegW(PPRIVATE_DATA pD, DWORD dwRegIndex,WORD wVal, VL_KEY keyCode)
++{
++	DWORD dwAddr=0;
++	int i=0;
  
 -	if(privateData->TxDmaChReserved) {
 -		Platform_ReleaseDmaChannel(
@@ -2357,12 +2459,14 @@
 -			privateData->dwRxDmaCh);
 -		privateData->RxDmaChReserved=FALSE;
 -	}
-+	if(wTemp&PHY_BCR_RESET_)
-+		return FALSE;
++	// confirm MII not busy
++	if ((Mac_GetRegDW(pD, MII_ACC,keyCode) & MII_ACC_MII_BUSY_) != 0UL)
++		return;
  
 -	Platform_FreeIRQ(&(privateData->PlatformData));
 -	release_mem_region(privateData->dwLanBase,LAN_REGISTER_EXTENT);
-+	Phy_SetLink(privateData);
++	// put the data to write in the MAC
++	Mac_SetRegDW(pD, MII_DATA, (DWORD)wVal,keyCode);
  
 -	{
 -		const DWORD dwLanBase=privateData->dwLanBase;
@@ -2383,38 +2487,22 @@
 -		memcpy(privateData->ifName,ifName,SMSC_IF_NAME_SIZE);
 -		memcpy(&(privateData->PlatformData),&platformDataBackup,sizeof(PLATFORM_DATA));
 -	}
-+	init_timer(&(privateData->LinkPollingTimer));
-+	privateData->LinkPollingTimer.function=Phy_CheckLink;
-+	privateData->LinkPollingTimer.data=(unsigned long)privateData;
-+	privateData->LinkPollingTimer.expires=jiffies+(HZ*LINK_POLL_SEC);
-+	add_timer(&(privateData->LinkPollingTimer));
++	// set the address, index & direction (write to PHY)
++	dwAddr = ((1&0x1FUL)<<11) | ((dwRegIndex & 0x1FUL)<<6) | MII_ACC_MII_WRITE_;
++	Mac_SetRegDW(pD, MII_ACC, dwAddr,keyCode);
  
 -DONE:
 -	SMSC_TRACE("<--Smsc911x_stop, result=%d",result);
 -	return result;
-+	init_timer(&(privateData->ThroughputTimer));
-+        privateData->ThroughputTimer.function=Get_Throughput;
-+        privateData->ThroughputTimer.data=(unsigned long)privateData;
-+	privateData->old_jiffies=0;
-+	privateData->old_rx_bytes=0;
-+	privateData->old_rx_packets=0;
-+	privateData->old_tx_bytes=0;
-+	privateData->old_tx_packets=0;
-+	privateData->akt_jiffies=0;
-+	privateData->akt_rx_bytes=0;
-+	privateData->akt_rx_packets=0;
-+	privateData->akt_tx_bytes=0;
-+	privateData->akt_tx_packets=0;
-+	privateData->rx_fifo_avg=100000;
-+	privateData->rx_fifo_avg_packets=0;
-+
-+	return TRUE;
++	// wait for write to complete w/ timeout
++	for(i=0;i<100;i++)
++		if ((Mac_GetRegDW(pD, MII_ACC,keyCode) & MII_ACC_MII_BUSY_) == 0UL)
++			return;
  }
  
 -int Smsc911x_hard_start_xmit(
 -	struct sk_buff *skb, struct net_device * const dev)
-+WORD Phy_GetRegW(PPRIVATE_DATA privateData, DWORD dwRegIndex, VL_KEY keyCode)
- {
+-{
 -	int result=0;
 -	PPRIVATE_DATA privateData=NULL;
 -//	SMSC_TRACE("-->Smsc911x_hard_start_xmit(skb=0x%08lX,dev=0x%08lX)",(DWORD)skb,(DWORD)dev);
@@ -2435,15 +2523,26 @@
 -	}
 -	privateData=(PPRIVATE_DATA)(dev->priv);
 -//	SET_GPIO(GP_TX);
--
++inline void Phy_UpdateLinkMode(PPRIVATE_DATA pD)
++{
++	DWORD dwOldLinkSpeed=pD->dwLinkSpeed;
++	DWORD dwIntFlags=0;
++	VL_KEY keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
+ 
 -	Tx_SendSkb(privateData,skb);
--
++	Phy_GetLinkMode(pD,keyCode);
+ 
 -//	CLEAR_GPIO(GP_TX);
 -DONE:
 -//	SMSC_TRACE("<--Smsc911x_hard_start_xmit, result=%d",result);
 -	return result;
 -}
--
++	if(dwOldLinkSpeed!=pD->dwLinkSpeed) {
++		if(pD->dwLinkSpeed!=LINK_OFF) {
++			DWORD dwRegVal;
++			WORD linkPartner;
++			WORD localLink;
+ 
 -struct net_device_stats * Smsc911x_get_stats(struct net_device * const dev)
 -{
 -	PPRIVATE_DATA privateData=NULL;
@@ -4457,7 +4556,21 @@
 -				Lan_SetRegDW(TX_DATA_FIFO,dwTxCmdA);
 -				Lan_SetRegDW(TX_DATA_FIFO,dwTxCmdB);
 -				if(!Platform_DmaStartXfer(platformData,&(privateData->TxDmaXfer), Tx_DmaCompletionCallback, privateData))
--				{
++			dwRegVal=Mac_GetRegDW(pD,MAC_CR,keyCode);
++			dwRegVal&=~(MAC_CR_FDPX_|MAC_CR_RCVOWN_);
++			localLink=Phy_GetRegW(pD,4,keyCode);
++			linkPartner=Phy_GetRegW(pD,5,keyCode);
++			switch(pD->dwLinkSpeed) {
++			case LINK_SPEED_10FD:
++			case LINK_SPEED_100FD:
++				dwRegVal|=MAC_CR_FDPX_;
++				if(((localLink&linkPartner)&((WORD)0x0400U)) != ((WORD)0U)) {
++					//Enable PAUSE receive and transmit
++					Mac_SetRegDW(pD,FLOW,0xFFFF0002UL,keyCode);
++					Lan_SetBitsDW(AFC_CFG,(AFCCFG&0x0000000FUL));
++				} else if(((localLink&((WORD)0x0C00U))==((WORD)0x0C00U)) &&
++						((linkPartner&((WORD)0x0C00U))==((WORD)0x0800U)))
+ 				{
 -					SMSC_WARNING("Failed Platform_DmaStartXfer");
 -				}
 -
@@ -4477,7 +4590,22 @@
 -			dwFreeSpace&=TX_FIFO_INF_TDFREE_;
 -			if(dwFreeSpace<TX_FIFO_LOW_THRESHOLD) {
 -				SMSC_WARNING("Tx DATA FIFO LOW, space available = %ld",dwFreeSpace);
--			}
++					//Enable PAUSE receive, disable PAUSE transmit
++					Mac_SetRegDW(pD,FLOW,0xFFFF0002UL,keyCode);
++					Lan_ClrBitsDW(AFC_CFG,0x0000000FUL);
++				} else {
++					//Disable PAUSE receive and transmit
++					Mac_SetRegDW(pD,FLOW,0UL,keyCode);
++					Lan_ClrBitsDW(AFC_CFG,0x0000000FUL);
++				};break;
++			case LINK_SPEED_10HD:
++			case LINK_SPEED_100HD:
++				dwRegVal|=MAC_CR_RCVOWN_;
++				Mac_SetRegDW(pD,FLOW,0UL,keyCode);
++				Lan_SetBitsDW(AFC_CFG,0x0000000FUL);
++				break;
++			default:break;
+ 			}
 -			dwTxCmdA=
 -				((((DWORD)(skb->data))&0x03UL)<<16) | //DWORD alignment adjustment
 -				TX_CMD_A_INT_FIRST_SEG_ | TX_CMD_A_INT_LAST_SEG_ |
@@ -4546,7 +4674,7 @@
 -void Tx_UpdateTxCounters(
 -	PPRIVATE_DATA privateData)
 -{
--
+ 
 -	DWORD dwTxStatus=0;
 -	SMSC_ASSERT(privateData!=NULL);
 -	spin_lock(&(privateData->TxCounterLock));
@@ -4558,7 +4686,10 @@
 -		} else if(dwTxStatus&0x00007080UL) {
 -			SMSC_WARNING("Tx Status reserved bits are high");
 -			privateData->stats.tx_errors++;
--		} else {
++			Mac_SetRegDW(pD, MAC_CR,dwRegVal,keyCode);
++			netif_carrier_on(pD->dev);
++			Tx_WakeQueue(pD,0x01);
+ 		} else {
 -			if(dwTxStatus&0x00008000UL) {
 -				privateData->stats.tx_errors++;
 -			} else {
@@ -4588,14 +4719,9 @@
 -	PPRIVATE_DATA privateData)
 -{
 -	DWORD dwTimeOut=100000;
-+	DWORD dwAddr=0;
-+	int i=0;
- 
+-
 -	SMSC_ASSERT(privateData!=NULL);
-+	// confirm MII not busy
-+	if ((Mac_GetRegDW(privateData, MII_ACC,keyCode) & MII_ACC_MII_BUSY_) != 0UL)
-+		return 0;
- 
+-
 -	while ((privateData->TxSkb) && (dwTimeOut)) {
 -		udelay(10);
 -		dwTimeOut--;
@@ -4603,10 +4729,7 @@
 -	if (dwTimeOut == 0)
 -		SMSC_WARNING("Timed out waiting for Tx DMA complete");
 -}
-+	// set the address, index & direction (read from PHY)
-+	dwAddr = ((1&0x1FUL)<<11) | ((dwRegIndex & 0x1FUL)<<6);
-+	Mac_SetRegDW(privateData, MII_ACC, dwAddr,keyCode);
- 
+-
 -void Rx_Initialize(
 -	PPRIVATE_DATA privateData,
 -	DWORD dwRxDmaCh,
@@ -4668,11 +4791,7 @@
 -	} else {
 -		Lan_SetIntDeas(privateData,privateData->RxFlowParameters.IntDeas);
 -	}
-+	// wait for read to complete w/ timeout
-+	for(i=0;i<100;i++)
-+		if ((Mac_GetRegDW(privateData, MII_ACC,keyCode) & MII_ACC_MII_BUSY_) == 0UL)
-+			return ((WORD)Mac_GetRegDW(privateData, MII_DATA,keyCode));
- 
+-
 -	//initially the receiver is off
 -	//  a following link up detection will turn the receiver on
 -	privateData->dwRxOffCount=1;
@@ -4693,12 +4812,10 @@
 -	}
 -	privateData->RxInterrupts|=INT_EN_RXDFH_INT_EN_;
 -	Lan_EnableInterrupt(privateData,privateData->RxInterrupts);
-+	return 0xFFFFU;
- }
- 
+-}
+-
 -static void Rx_HandleOverrun(PPRIVATE_DATA privateData)
-+void Phy_SetRegW(PPRIVATE_DATA privateData, DWORD dwRegIndex,WORD wVal, VL_KEY keyCode)
- {
+-{
 -	if(privateData->dwGeneration==0) {
 -		if(privateData->RxOverrun==FALSE) {
 -			Rx_ReceiverOff(privateData);
@@ -4711,34 +4828,28 @@
 -			privateData->RxUnloadPacketProgress=0;
 -			privateData->RxOverrun=TRUE;
 -			privateData->RxOverrunCount++;
--		}
++			Tx_StopQueue(pD,0x01);
++			netif_carrier_off(pD->dev);
++			Mac_SetRegDW(pD,FLOW,0UL,keyCode);
++			Lan_ClrBitsDW(AFC_CFG,0x0000000FUL);
+ 		}
 -	} else {
 -		privateData->RxOverrunCount++;
 -	}
 -}
-+	DWORD dwAddr=0;
-+	int i=0;
- 
+-
 -static void Rx_HandOffSkb(
 -	PPRIVATE_DATA privateData,
 -	struct sk_buff *skb)
 -{
 -	int result=0;
-+	// confirm MII not busy
-+	if ((Mac_GetRegDW(privateData, MII_ACC,keyCode) & MII_ACC_MII_BUSY_) != 0UL)
-+		return;
- 
+-
 -	skb->dev=privateData->dev;
 -	skb->protocol= eth_type_trans(skb,privateData->dev);
 -	skb->ip_summed = CHECKSUM_NONE;
-+	// put the data to write in the MAC
-+	Mac_SetRegDW(privateData, MII_DATA, (DWORD)wVal,keyCode);
- 
+-
 -	result=netif_rx(skb);
-+	// set the address, index & direction (write to PHY)
-+	dwAddr = ((1&0x1FUL)<<11) | ((dwRegIndex & 0x1FUL)<<6) | MII_ACC_MII_WRITE_;
-+	Mac_SetRegDW(privateData, MII_ACC, dwAddr,keyCode);
- 
+-
 -	switch(result)
 -	{
 -	case NET_RX_SUCCESS:
@@ -4755,22 +4866,18 @@
 -		privateData->RxCongestedCount++;
 -		SMSC_WARNING("Unknown return value from netif_rx, result=%d",result);
 -		break;
--	}
-+	// wait for write to complete w/ timeout
-+	for(i=0;i<100;i++)
-+		if ((Mac_GetRegDW(privateData, MII_ACC,keyCode) & MII_ACC_MII_BUSY_) == 0UL)
-+			return;
+ 	}
++	Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
  }
  
 -void Rx_CompleteMulticastUpdate (PPRIVATE_DATA privateData)
-+inline void Phy_UpdateLinkMode(PPRIVATE_DATA privateData)
++#ifdef USE_STAT
++void Get_Throughput(unsigned long ptr)
  {
 -	DWORD local_MACCR;
 -	VL_KEY keyCode=0;
-+	DWORD dwOldLinkSpeed=privateData->dwLinkSpeed;
- 	DWORD dwIntFlags=0;
-+	VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
- 
+-	DWORD dwIntFlags=0;
+-
 -	keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
 -	if (privateData->MulticastUpdatePending) {
 -		SET_GPIO(GP_COMPLETE_MULTICAST_UPDATE);
@@ -4785,11 +4892,22 @@
 -		CLEAR_GPIO(GP_COMPLETE_MULTICAST_UPDATE);
 -	}
 -	Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
--}
-+	Phy_GetLinkMode(privateData,keyCode);
++	PPRIVATE_DATA pD=(PPRIVATE_DATA)ptr;
++	if(pD==NULL)
++                return;
++	
++	pD->akt_jiffies=jiffies;
++	pD->akt_rx_bytes=pD->stats.rx_bytes;
++	pD->akt_rx_packets=pD->stats.rx_packets;
++	pD->akt_tx_bytes=pD->stats.tx_bytes;
++	pD->akt_tx_packets=pD->stats.tx_packets;
++	pD->rx_fifo_avg=pD->rx_fifo_avg+100000;
+ }
++#endif
  
 -void Rx_BeginMulticastUpdate (PPRIVATE_DATA privateData)
--{
++void Phy_CheckLink(unsigned long ptr)
+ {
 -	DWORD startTime, currentTime;
 -	DWORD timeout;
 -	DWORD flags;
@@ -4816,43 +4934,7 @@
 -				currentTime=Lan_GetRegDW(FREE_RUN);
 -				if (currentTime-startTime >= 25UL)
 -					break;
-+	if(dwOldLinkSpeed!=privateData->dwLinkSpeed) {
-+		if(privateData->dwLinkSpeed!=LINK_OFF) {
-+			DWORD dwRegVal;
-+			WORD linkPartner;
-+			WORD localLink;
-+
-+			dwRegVal=Mac_GetRegDW(privateData,MAC_CR,keyCode);
-+			dwRegVal&=~(MAC_CR_FDPX_|MAC_CR_RCVOWN_);
-+			localLink=Phy_GetRegW(privateData,4,keyCode);
-+			linkPartner=Phy_GetRegW(privateData,5,keyCode);
-+			switch(privateData->dwLinkSpeed) {
-+			case LINK_SPEED_10FD:
-+			case LINK_SPEED_100FD:
-+				dwRegVal|=MAC_CR_FDPX_;
-+				if(((localLink&linkPartner)&((WORD)0x0400U)) != ((WORD)0U)) {
-+					//Enable PAUSE receive and transmit
-+					Mac_SetRegDW(privateData,FLOW,0xFFFF0002UL,keyCode);
-+					Lan_SetBitsDW(AFC_CFG,(AFCCFG&0x0000000FUL));
-+				} else if(((localLink&((WORD)0x0C00U))==((WORD)0x0C00U)) &&
-+						((linkPartner&((WORD)0x0C00U))==((WORD)0x0800U)))
-+				{
-+					//Enable PAUSE receive, disable PAUSE transmit
-+					Mac_SetRegDW(privateData,FLOW,0xFFFF0002UL,keyCode);
-+					Lan_ClrBitsDW(AFC_CFG,0x0000000FUL);
-+				} else {
-+					//Disable PAUSE receive and transmit
-+					Mac_SetRegDW(privateData,FLOW,0UL,keyCode);
-+					Lan_ClrBitsDW(AFC_CFG,0x0000000FUL);
-+				};break;
-+			case LINK_SPEED_10HD:
-+			case LINK_SPEED_100HD:
-+				dwRegVal|=MAC_CR_RCVOWN_;
-+				Mac_SetRegDW(privateData,FLOW,0UL,keyCode);
-+				Lan_SetBitsDW(AFC_CFG,0x0000000FUL);
-+				break;
-+			default:break;
- 			}
+-			}
 -			timeout--;
 -		}
 -		if(timeout==0) {
@@ -4864,21 +4946,14 @@
 -			//  then Rx stop is only 99.6%  reliable
 -			//  Therefor we must schedule Gpt callback as
 -			//  back up
- 
+-
 -			// using 18*(100uS) because we already waited 200uS
 -			Gpt_ScheduleCallBack(privateData,GptCB_RxCompleteMulticast, 18UL);
-+			Mac_SetRegDW(privateData, MAC_CR,dwRegVal,keyCode);
-+			netif_carrier_on(privateData->dev);
-+			Tx_WakeQueue(privateData,0x01);
- 		} else {
+-		} else {
 -			//Rx is stopped
 -			Lan_SetRegDW(INT_STS,INT_STS_RXSTOP_INT_);//clear interrupt signal
 -			Rx_CompleteMulticastUpdate(privateData);
-+			Tx_StopQueue(privateData,0x01);
-+			netif_carrier_off(privateData->dev);
-+			Mac_SetRegDW(privateData,FLOW,0UL,keyCode);
-+			Lan_ClrBitsDW(AFC_CFG,0x0000000FUL);
- 		}
+-		}
 -	} else {
 -		// for generation 0 we can't rely on Rx stop because
 -		// the receiver may have already been stopped due to
@@ -4889,16 +4964,17 @@
 -		// and we must assume a worse case of 10Mb speed
 -
 -		Gpt_ScheduleCallBack(privateData,GptCB_RxCompleteMulticast, 20UL);
- 	}
+-	}
 -	local_irq_restore (flags);
 -	CLEAR_GPIO(GP_BEGIN_MULTICAST_UPDATE);
-+	Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
- }
+-}
++	PPRIVATE_DATA pD=(PPRIVATE_DATA)ptr;
++	if(pD==NULL)
++		return;
  
 -static DWORD Rx_PopRxStatus(
 -	PPRIVATE_DATA privateData)
-+void Get_Throughput(unsigned long ptr)
- {
+-{
 -	DWORD result=Lan_GetRegDW(RX_FIFO_INF);
 -	if((privateData->RxCongested==FALSE)||
 -		((privateData->RxCongested==TRUE)&&((result&0x00FF0000UL)==0UL)))
@@ -5027,21 +5103,13 @@
 -		privateData->LastReasonForReleasingCPU=2;//High Congestion
 -	}
 -	return result;
-+	PPRIVATE_DATA privateData=(PPRIVATE_DATA)ptr;
-+	if(privateData==NULL)
-+                return;
-+	
-+	privateData->akt_jiffies=jiffies;
-+	privateData->akt_rx_bytes=privateData->stats.rx_bytes;
-+	privateData->akt_rx_packets=privateData->stats.rx_packets;
-+	privateData->akt_tx_bytes=privateData->stats.tx_bytes;
-+	privateData->akt_tx_packets=privateData->stats.tx_packets;
-+	privateData->rx_fifo_avg=privateData->rx_fifo_avg+100000;
- }
+-}
++	//must call this twice
++	Phy_UpdateLinkMode(pD);
++	Phy_UpdateLinkMode(pD);
  
 -void Rx_CountErrors(PPRIVATE_DATA privateData,DWORD dwRxStatus)
-+void Phy_CheckLink(unsigned long ptr)
- {
+-{
 -	BOOLEAN crcError=FALSE;
 -	if(dwRxStatus&0x00008000UL) {
 -		privateData->stats.rx_errors++;
@@ -5059,13 +5127,13 @@
 -			privateData->stats.multicast++;
 -		}
 -	}
--}
-+	PPRIVATE_DATA privateData=(PPRIVATE_DATA)ptr;
-+	if(privateData==NULL)
-+		return;
++	pD->LinkPollingTimer.expires=jiffies+(HZ*LINK_POLL_SEC);
++	add_timer(&(pD->LinkPollingTimer));
+ }
  
 -void Rx_FastForward(PPRIVATE_DATA privateData,DWORD dwDwordCount)
--{
++inline void Phy_GetLinkMode(PPRIVATE_DATA pD, VL_KEY keyCode)
+ {
 -	privateData->RxFastForwardCount++;
 -	if((dwDwordCount>=4)
 -		&& (
@@ -5085,13 +5153,15 @@
 -			dwTimeOut--;
 -		}
 -		if(dwTimeOut==0) {
-+	//must call this twice
-+	Phy_UpdateLinkMode(privateData);
-+	Phy_UpdateLinkMode(privateData);
- 
+-
 -			SMSC_WARNING("timed out waiting for RX FFWD to finish, RX_DP_CTRL=0x%08lX",
 -				Lan_GetRegDW(RX_DP_CTRL));
--		}
++	pD->dwLinkSpeed=LINK_OFF;
++	if(Phy_GetRegW(pD, PHY_BSR, keyCode)&PHY_BSR_LINK_STATUS_) {
++		if(pD->man_speed!=0) {
++			pD->dwLinkSpeed=(DWORD)pD->man_speed;
++			return;
+ 		}
 -	} else {
 -		while(dwDwordCount) {
 -			DWORD dwTemp=Lan_GetRegDW(RX_DATA_FIFO);
@@ -5099,36 +5169,27 @@
 -			dwDwordCount--;
 -		}
 -	}
-+	privateData->LinkPollingTimer.expires=jiffies+(HZ*LINK_POLL_SEC);
-+	add_timer(&(privateData->LinkPollingTimer));
- }
- 
+-}
+-
 -//Rx_ReceiverOff, and Rx_ReceiverOn use a reference counter
 -//  because they are used in both the Rx code and the link management count
 -void Rx_ReceiverOff(PPRIVATE_DATA privateData)
-+inline void Phy_GetLinkMode(PPRIVATE_DATA privateData, VL_KEY keyCode)
- {
+-{
 -	DWORD dwIntFlags=0;
 -	VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
 -	if(privateData->dwRxOffCount==0) {
 -		DWORD dwMacCr=Mac_GetRegDW(privateData,MAC_CR,keyCode);
 -		if(!(dwMacCr&MAC_CR_RXEN_)) {
 -			SMSC_WARNING("Rx_ReceiverOff: Receiver is already Off");
-+	privateData->dwLinkSpeed=LINK_OFF;
-+	if(Phy_GetRegW(privateData, PHY_BSR, keyCode)&PHY_BSR_LINK_STATUS_) {
-+		if(privateData->man_speed!=0) {
-+			privateData->dwLinkSpeed=(DWORD)privateData->man_speed;
-+			return;
-+		}
-+		WORD wRegLPA=Phy_GetRegW(privateData, PHY_ANEG_LPA, keyCode);
++		WORD wRegLPA=Phy_GetRegW(pD, PHY_ANEG_LPA, keyCode);
 +		if(wRegLPA&PHY_ANEG_LPA_100FDX_) {
-+			privateData->dwLinkSpeed=LINK_SPEED_100FD;
++			pD->dwLinkSpeed=LINK_SPEED_100FD;
 +		} else if(wRegLPA&PHY_ANEG_LPA_100HDX_) {
-+			privateData->dwLinkSpeed=LINK_SPEED_100HD;
++			pD->dwLinkSpeed=LINK_SPEED_100HD;
 +		} else if(wRegLPA&PHY_ANEG_LPA_10FDX_) {
-+			privateData->dwLinkSpeed=LINK_SPEED_10FD;
++			pD->dwLinkSpeed=LINK_SPEED_10FD;
 +		} else if(wRegLPA&PHY_ANEG_LPA_10HDX_) {
-+			privateData->dwLinkSpeed=LINK_SPEED_10HD;
++			pD->dwLinkSpeed=LINK_SPEED_10HD;
  		}
 -		dwMacCr&=(~MAC_CR_RXEN_);
 -		Mac_SetRegDW(privateData,MAC_CR,dwMacCr,keyCode);
@@ -5141,7 +5202,7 @@
 -//Rx_ReceiverOff, and Rx_ReceiverOn use a reference counter
 -//  because they are used in both the Rx code and the link management count
 -void Rx_ReceiverOn(PPRIVATE_DATA privateData, VL_KEY callerKeyCode)
-+static BOOLEAN MacNotBusy(PPRIVATE_DATA privateData, VL_KEY keyCode)
++static BOOLEAN MacNotBusy(PPRIVATE_DATA pD, VL_KEY keyCode)
  {
 -	DWORD dwIntFlags=0;
 -	VL_KEY keyCode=0;
@@ -5184,7 +5245,7 @@
 - * interrupt handler when the status register has INT_STS_RSFL_ set, or RxOverrun is set.
 - */
 -void Rx_ProcessPackets(PPRIVATE_DATA privateData)
-+DWORD Mac_GetRegDW(PPRIVATE_DATA privateData,DWORD dwRegOffset,VL_KEY keyCode)
++DWORD Mac_GetRegDW(PPRIVATE_DATA pD,DWORD dwRegOffset,VL_KEY keyCode)
  {
 -	DWORD dwRxStatus=0;
 -	PPLATFORM_DATA platformData=NULL;
@@ -5286,13 +5347,10 @@
 -			privateData->RxSkbs[packets] = skb;
 -			skb_reserve(skb,PLATFORM_CACHE_LINE_BYTES-14);
 -			skb_put(skb,dwPacketLength-4UL);
-+	DWORD dwTemp=0;
- 
+-
 -			privateData->stats.rx_packets++;
 -			privateData->stats.rx_bytes+=dwPacketLength;
-+	// wait until not busy
-+	if (Lan_GetRegDW(MAC_CSR_CMD) & MAC_CSR_CMD_CSR_BUSY_)
-+		return 0xFFFFFFFFUL;
++	DWORD dwTemp=0;
  
 -			sg=&privateData->RxSgs[packets];
 -			sg->page = virt_to_page(skb->head);
@@ -5303,11 +5361,9 @@
 -			privateData->RxPacketReadCount++;
 -			privateData->RxDmaReadCount++;
 -		}
-+	// send the MAC Cmd w/ offset
-+	Lan_SetRegDW(MAC_CSR_CMD, ((dwRegOffset & 0x000000FFUL) |
-+		MAC_CSR_CMD_CSR_BUSY_ | MAC_CSR_CMD_R_NOT_W_));
-+	dwTemp=Lan_GetRegDW(BYTE_TEST);//to flush previous write
-+	dwTemp=dwTemp;
++	// wait until not busy
++	if (Lan_GetRegDW(MAC_CSR_CMD) & MAC_CSR_CMD_CSR_BUSY_)
++		return 0xFFFFFFFFUL;
  
 -		if (packets != 0) {
 -			dmaXfer.dwLanReg=privateData->dwLanBase+RX_DATA_FIFO;
@@ -5333,31 +5389,37 @@
 -	}
 -	Lan_SetRegDW(INT_STS,INT_STS_RSFL_);
 -//	CLEAR_GPIO(GP_RX);
+-}
++	// send the MAC Cmd w/ offset
++	Lan_SetRegDW(MAC_CSR_CMD, ((dwRegOffset & 0x000000FFUL) |
++		MAC_CSR_CMD_CSR_BUSY_ | MAC_CSR_CMD_R_NOT_W_));
++	dwTemp=Lan_GetRegDW(BYTE_TEST);//to flush previous write
++	dwTemp=dwTemp;
+ 
+-void Rx_ProcessPacketsTasklet(unsigned long data)
+-{
+-    PPRIVATE_DATA privateData=(PPRIVATE_DATA)Rx_TaskletParameter;
+-	data=data;//make lint happy
+-	if(privateData==NULL) {
+-		SMSC_WARNING("Rx_ProcessPacketsTasklet(privateData==NULL)");
+-		return;
+-	}
+-	Rx_ProcessPackets(privateData);
+-	Lan_EnableIRQ(privateData);
 +	// wait for the read to happen, w/ timeout
-+	if (!MacNotBusy(privateData,keyCode))
++	if (!MacNotBusy(pD,keyCode))
 +		return 0xFFFFFFFFUL;
 +	else
 +		return Lan_GetRegDW(MAC_CSR_DATA);
  }
  
--void Rx_ProcessPacketsTasklet(unsigned long data)
-+void Mac_SetRegDW(PPRIVATE_DATA privateData,DWORD dwRegOffset,DWORD dwVal,VL_KEY keyCode)
- {
--    PPRIVATE_DATA privateData=(PPRIVATE_DATA)Rx_TaskletParameter;
--	data=data;//make lint happy
--	if(privateData==NULL) {
--		SMSC_WARNING("Rx_ProcessPacketsTasklet(privateData==NULL)");
-+	if (Lan_GetRegDW(MAC_CSR_CMD) & MAC_CSR_CMD_CSR_BUSY_)
- 		return;
--	}
--	Rx_ProcessPackets(privateData);
--	Lan_EnableIRQ(privateData);
--}
--
 -static void Rx_DmaCompletionCallback(void* param)
--{
++void Mac_SetRegDW(PPRIVATE_DATA pD,DWORD dwRegOffset,DWORD dwVal,VL_KEY keyCode)
+ {
 -	PPRIVATE_DATA privateData = param;
 -	int i;
++	if (Lan_GetRegDW(MAC_CSR_CMD) & MAC_CSR_CMD_CSR_BUSY_)
++		return;
  
 -	BUG_ON(privateData->RxSkbsCount == 0);
 -	for (i=0; i<privateData->RxSkbsCount; i++) {
@@ -5380,13 +5442,13 @@
 -	privateData->RxSkbsCount = 0;
 -	Lan_EnableInterrupt(privateData,privateData->RxInterrupts);
 +	// wait for the write to complete, w/ timeout
-+	MacNotBusy(privateData,keyCode);
++	MacNotBusy(pD,keyCode);
  }
  
 -BOOLEAN Rx_HandleInterrupt(
 -	PPRIVATE_DATA privateData,
 -	DWORD dwIntSts)
-+void Tx_Initialize(PPRIVATE_DATA privateData)
++void Tx_Initialize(PPRIVATE_DATA pD)
  {
 -	BOOLEAN result=FALSE;
 -	SMSC_ASSERT(privateData!=NULL);
@@ -5399,17 +5461,13 @@
 -		Lan_SetRegDW(INT_STS,INT_STS_RXE_);
 -		result=TRUE;
 -	}
-+	DWORD dwRegVal=0;
- 
+-
 -	if(dwIntSts&INT_STS_RXDFH_INT_) {
 -		privateData->stats.rx_dropped+=Lan_GetRegDW(RX_DROP);
 -		Lan_SetRegDW(INT_STS,INT_STS_RXDFH_INT_);
 -		result=TRUE;
 -	}
-+	dwRegVal=Lan_GetRegDW(HW_CFG);
-+	dwRegVal&=(HW_CFG_TX_FIF_SZ_|0x00000FFFUL);
-+	dwRegVal|=HW_CFG_SF_;
-+	Lan_SetRegDW(HW_CFG,dwRegVal);
++	DWORD dwRegVal=0;
  
 -	if(privateData->dwGeneration==0) {
 -		if(dwIntSts&(INT_STS_RDFL_)) {
@@ -5424,7 +5482,10 @@
 -			result=TRUE;
 -		}
 -	}
-+	Platform_DmaInitialize();
++	dwRegVal=Lan_GetRegDW(HW_CFG);
++	dwRegVal&=(HW_CFG_TX_FIF_SZ_|0x00000FFFUL);
++	dwRegVal|=HW_CFG_SF_;
++	Lan_SetRegDW(HW_CFG,dwRegVal);
  
 -	if((!(dwIntSts&INT_STS_RSFL_))&&(privateData->RxOverrun==FALSE)) {
 -		return result;
@@ -5437,19 +5498,21 @@
 -		 */
 -		return result;
 -	}
-+	DWORD dwIntFlags=0;
-+	VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
-+	DWORD dwMacCr=Mac_GetRegDW(privateData,MAC_CR,keyCode);
-+	dwMacCr|=(MAC_CR_TXEN_|MAC_CR_HBDIS_);
-+	Mac_SetRegDW(privateData,MAC_CR,dwMacCr,keyCode);
-+	Lan_SetRegDW(TX_CFG,TX_CFG_TX_ON_|TX_CFG_TXSAO_);
-+	Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
++	Platform_DmaInitialize();
  
 -	result=TRUE;
-+	privateData->TxSkb=NULL;
-+	spin_lock_init(&(privateData->TxSkbLock));
-+	privateData->dwTxQueueDisableMask=0;
-+	spin_lock_init(&(privateData->TxQueueLock));
++	DWORD dwIntFlags=0;
++	VL_KEY keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
++	DWORD dwMacCr=Mac_GetRegDW(pD,MAC_CR,keyCode);
++	dwMacCr|=(MAC_CR_TXEN_|MAC_CR_HBDIS_);
++	Mac_SetRegDW(pD,MAC_CR,dwMacCr,keyCode);
++	Lan_SetRegDW(TX_CFG,TX_CFG_TX_ON_|TX_CFG_TXSAO_);
++	Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
++
++	pD->TxSkb=NULL;
++	spin_lock_init(&(pD->TxSkbLock));
++	pD->dwTxQueueDisableMask=0;
++	spin_lock_init(&(pD->TxQueueLock));
 +}
  
 -	if(privateData->MeasuringRxThroughput==FALSE) {
@@ -5468,14 +5531,14 @@
 -	}
 -	return result;
 +inline void Tx_StopQueue(
-+	PPRIVATE_DATA privateData,DWORD dwSource)
++	PPRIVATE_DATA pD,DWORD dwSource)
 +{
 +	DWORD intFlags=0;
-+	spin_lock_irqsave(&(privateData->TxQueueLock),intFlags);
-+	if(privateData->dwTxQueueDisableMask==0)
-+		netif_stop_queue(privateData->dev);
-+	privateData->dwTxQueueDisableMask|=dwSource;
-+	spin_unlock_irqrestore(&(privateData->TxQueueLock),intFlags);
++	spin_lock_irqsave(&(pD->TxQueueLock),intFlags);
++	if(pD->dwTxQueueDisableMask==0)
++		netif_stop_queue(pD->dev);
++	pD->dwTxQueueDisableMask|=dwSource;
++	spin_unlock_irqrestore(&(pD->TxQueueLock),intFlags);
  }
  
 -BOOLEAN RxStop_HandleInterrupt(
@@ -5494,14 +5557,14 @@
 -	}
 -	return result;
 +inline void Tx_WakeQueue(
-+	PPRIVATE_DATA privateData,DWORD dwSource)
++	PPRIVATE_DATA pD,DWORD dwSource)
 +{
 +	DWORD intFlags=0;
-+	spin_lock_irqsave(&(privateData->TxQueueLock),intFlags);
-+	privateData->dwTxQueueDisableMask&=(~dwSource);
-+	if(privateData->dwTxQueueDisableMask==0)
-+		netif_wake_queue(privateData->dev);
-+	spin_unlock_irqrestore(&(privateData->TxQueueLock),intFlags);
++	spin_lock_irqsave(&(pD->TxQueueLock),intFlags);
++	pD->dwTxQueueDisableMask&=(~dwSource);
++	if(pD->dwTxQueueDisableMask==0)
++		netif_wake_queue(pD->dev);
++	spin_unlock_irqrestore(&(pD->TxQueueLock),intFlags);
  }
  
 -//returns hash bit number for given MAC address
@@ -5534,12 +5597,12 @@
 -		((crc&0x10UL)>>3)|
 -		((crc&0x20UL)>>5);
 -	return result;
-+        PPRIVATE_DATA privateData=(PPRIVATE_DATA)(dev->priv);
++        PPRIVATE_DATA pD=(PPRIVATE_DATA)(dev->priv);
 +        if(dev==NULL || dev->priv==NULL)
 +                return NULL;
 +
-+        privateData->stats.rx_dropped+=Lan_GetRegDW(RX_DROP);
-+        return &(privateData->stats);
++        pD->stats.rx_dropped+=Lan_GetRegDW(RX_DROP);
++        return &(pD->stats);
  }
 +#endif
  
@@ -5551,23 +5614,33 @@
 -	VL_KEY keyCode=0;
 -	DWORD dwIntFlags=0;
 -	SMSC_ASSERT(dev!=NULL);
-+	PPRIVATE_DATA privateData=(PPRIVATE_DATA)(dev->priv);
++	PPRIVATE_DATA pD=(PPRIVATE_DATA)(dev->priv);
 +        if(skb==NULL || dev==NULL || dev->priv==NULL)
 +                return -EFAULT;
  
 -	privateData=((PPRIVATE_DATA)(dev->priv));
 -    	SMSC_ASSERT(privateData!=NULL);
 -	keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
-+#ifdef USE_TX_PIO_AND_DMA
-+	if(skb->len > MAX_TX_PIO || privateData->tx_pio==0)
-+	{
-+#endif
-+		DWORD skb32start=(((DWORD)(skb->data))&(PLATFORM_CACHE_LINE_BYTES_M1));
- 
+-
 -	if(dev->flags & IFF_PROMISC) {
 -//		SMSC_TRACE("Promiscuous Mode Enabled");
 -		privateData->set_bits_mask = MAC_CR_PRMS_;
 -		privateData->clear_bits_mask = (MAC_CR_MCPAS_ | MAC_CR_HPFILT_);
+-
+-		privateData->HashHi = 0UL;
+-		privateData->HashLo = 0UL;
+-		goto PREPARE;
+-	}
++#ifdef USE_TX_PIO_AND_DMA
++	if(skb->len > MAX_TX_PIO || pD->tx_pio==0)
++	{
++#endif
++		DWORD skb32start=(((DWORD)(skb->data))&(PLATFORM_CACHE_LINE_BYTES_M1));
+ 
+-	if(dev->flags & IFF_ALLMULTI) {
+-//		SMSC_TRACE("Receive all Multicast Enabled");
+-		privateData->set_bits_mask = MAC_CR_MCPAS_;
+-		privateData->clear_bits_mask = (MAC_CR_PRMS_ | MAC_CR_HPFILT_);
 -
 -		privateData->HashHi = 0UL;
 -		privateData->HashLo = 0UL;
@@ -5579,24 +5652,7 @@
 +			(skb32start))&
 +			(~(PLATFORM_CACHE_LINE_BYTES_M1)));
  
--	if(dev->flags & IFF_ALLMULTI) {
--//		SMSC_TRACE("Receive all Multicast Enabled");
--		privateData->set_bits_mask = MAC_CR_MCPAS_;
--		privateData->clear_bits_mask = (MAC_CR_PRMS_ | MAC_CR_HPFILT_);
--
--		privateData->HashHi = 0UL;
--		privateData->HashLo = 0UL;
--		goto PREPARE;
--	}
 +		 __flush_purge_region((void *)pdwBuf, dwDwCnt);
- 
-+		Lan_SetRegDW(TX_DATA_FIFO,
-+                	(0x02UL<<24)|    		//32 byte end alignment
-+                        ((skb32start)<<16) |
-+                        TX_CMD_A_INT_FIRST_SEG_ |
-+                        TX_CMD_A_INT_LAST_SEG_ |
-+                        ((DWORD)(skb->len)));
-+		Lan_SetRegDW(TX_DATA_FIFO, ((DWORD)(skb->len)));
  
 -	if(dev->mc_count>0) {
 -		DWORD dwHashH=0;
@@ -5642,21 +5698,27 @@
 -	{
 -		privateData->set_bits_mask = 0L;
 -		privateData->clear_bits_mask = (MAC_CR_PRMS_ | MAC_CR_MCPAS_ | MAC_CR_HPFILT_);
-+		Tx_StopQueue(privateData,0x04UL);
-+		dma_params_comp_cb(&tx_transfer,
-+                           (void (*)(unsigned long))Tx_DmaCompletionCallback,
-+                           (unsigned long)privateData,
-+                           STM_DMA_CB_CONTEXT_ISR);
-+		dma_params_addrs(&tx_transfer,
-+				PHYSADDR(pdwBuf),
-+				PHYSADDR(BASE_AND_TX_DATA_FIFO),
-+				dwDwCnt);
++		Lan_SetRegDW(TX_DATA_FIFO,
++                	(0x02UL<<24)|    		//32 byte end alignment
++                        ((skb32start)<<16) |
++                        TX_CMD_A_INT_FIRST_SEG_ |
++                        TX_CMD_A_INT_LAST_SEG_ |
++                        ((DWORD)(skb->len)));
++		Lan_SetRegDW(TX_DATA_FIFO, ((DWORD)(skb->len)));
  
 -		// SMSC_TRACE("Receive own packets only.");
 -		privateData->HashHi = 0UL;
 -		privateData->HashLo = 0UL;
 -	}
-+        	dma_compile_list(privateData->dwTxDmaCh, &tx_transfer, GFP_ATOMIC);
++		Tx_StopQueue(pD,0x04UL);
++		dma_params_comp_cb(&tx_transfer,
++                           (void (*)(unsigned long))Tx_DmaCompletionCallback,
++                           (unsigned long)pD,
++                           STM_DMA_CB_CONTEXT_ISR);
++		dma_params_addrs(&tx_transfer,
++				PHYSADDR(pdwBuf),
++				PHYSADDR(BASE_AND_TX_DATA_FIFO),
++				dwDwCnt);
  
 -PREPARE:
 -	if(privateData->dwGeneration<=1) {
@@ -5681,24 +5743,26 @@
 -	Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
 -	return;
 -}
-+		while(((*(volatile DWORD *)(PLATFORM_CSBASE+TX_FIFO_INF))&TX_FIFO_INF_TDFREE_) < skb->len) {
-+               		//printk("DMA Tx DATA FIFO LOW, space needet = %ld",skb->len);
-+#ifdef USE_STAT
-+			int mcount=0;
-+			if(mcount==0 && privateData->stat) {
-+				privateData->tx_wait_fifo_dma++;
-+				mcount=1;
-+			}
-+#endif
-+        	}
++        	dma_compile_list(pD->dwTxDmaCh, &tx_transfer, GFP_ATOMIC);
  
 -void Eeprom_EnableAccess(PPRIVATE_DATA privateData)
 -{
 -	SMSC_ASSERT(privateData!=NULL);
 -	if(debug_mode&0x04UL) {
 -		Lan_SetRegDW(GPIO_CFG,(g_GpioSetting&0xFF0FFFFFUL));
-+        	dma_xfer_list(privateData->dwTxDmaCh,&tx_transfer);
-+		privateData->TxSkb=skb;
++		while(((*(volatile DWORD *)(PLATFORM_CSBASE+TX_FIFO_INF))&TX_FIFO_INF_TDFREE_) < skb->len) {
++               		//printk("DMA Tx DATA FIFO LOW, space needet = %ld",skb->len);
++#ifdef USE_STAT
++			int mcount=0;
++			if(mcount==0 && pD->stat) {
++				pD->tx_wait_fifo_dma++;
++				mcount=1;
++			}
++#endif
++        	}
++
++        	dma_xfer_list(pD->dwTxDmaCh,&tx_transfer);
++		pD->TxSkb=skb;
 +#ifdef USE_TX_PIO_AND_DMA
  	} else {
 -		Lan_ClrBitsDW(GPIO_CFG,0x00F00000UL);
@@ -5718,8 +5782,8 @@
 +               		//printk("DMA Tx DATA FIFO LOW, space needet = %ld",skb->len);
 +#ifdef USE_STAT
 +			int mcount=0;
-+			if(mcount==0 && privateData->stat) {
-+				privateData->tx_wait_fifo_pio++;
++			if(mcount==0 && pD->stat) {
++				pD->tx_wait_fifo_pio++;
 +				mcount=1;
 +			}
 +#endif
@@ -5732,12 +5796,12 @@
  	}
 +#endif
 +#ifdef USE_STAT
-+        if(privateData->stat) {
-+        	if(privateData->tx_count==50) privateData->tx_count=0;
-+               	privateData->tx_len[privateData->tx_count]=(int)skb->len;
-+                privateData->tx_count++;
-+        	privateData->stats.tx_packets++;
-+        	privateData->stats.tx_bytes+=skb->len;
++        if(pD->stat) {
++        	if(pD->tx_count==50) pD->tx_count=0;
++               	pD->procstat[pD->tx_count].tx_len=(int)skb->len;
++                pD->tx_count++;
++        	pD->stats.tx_packets++;
++        	pD->stats.tx_bytes+=skb->len;
 +        }
 +#endif
 +	return 0;
@@ -5749,30 +5813,30 @@
 -	SMSC_ASSERT(privateData!=NULL);
 -	return (Lan_GetRegDW(E2P_CMD)&
 -		E2P_CMD_MAC_ADDR_LOADED_)?TRUE:FALSE;
-+	PPRIVATE_DATA privateData = param;
++	PPRIVATE_DATA pD = param;
 +
-+	dev_kfree_skb(privateData->TxSkb);
-+	privateData->TxSkb = NULL;
-+	Tx_WakeQueue(privateData,0x04UL);
++	dev_kfree_skb(pD->TxSkb);
++	pD->TxSkb = NULL;
++	Tx_WakeQueue(pD,0x04UL);
  }
  
 -BOOLEAN Eeprom_IsBusy(PPRIVATE_DATA privateData)
-+void Rx_Initialize(PPRIVATE_DATA privateData)
++void Rx_Initialize(PPRIVATE_DATA pD)
  {
 -	SMSC_ASSERT(privateData!=NULL);
 -	return (Lan_GetRegDW(E2P_CMD)&
 -		E2P_CMD_EPC_BUSY_)?TRUE:FALSE;
 +	Platform_DmaInitialize_sg();
-+	Lan_SetIntDeas(privateData, DEAS);
++	Lan_SetIntDeas(pD, DEAS);
 +
 +	Lan_SetRegDW(RX_CFG,0x80001200UL);
-+	Rx_ReceiverOn(privateData);
++	Rx_ReceiverOn(pD);
 +
 +	Lan_SetBitsDW(INT_EN,INT_EN_RSFL_EN_);
  }
  
 -BOOLEAN Eeprom_Timeout(PPRIVATE_DATA privateData)
-+inline static DWORD Rx_PopRxStatus(PPRIVATE_DATA privateData)
++inline static DWORD Rx_PopRxStatus(PPRIVATE_DATA pD)
  {
 -	SMSC_ASSERT(privateData!=NULL);
 -	return (Lan_GetRegDW(E2P_CMD)&
@@ -5785,7 +5849,7 @@
 -BOOLEAN Eeprom_ReadLocation(
 -	PPRIVATE_DATA privateData,
 -	BYTE address, BYTE * data)
-+void Rx_FastForward(PPRIVATE_DATA privateData,DWORD dwDwordCount)
++void Rx_FastForward(PPRIVATE_DATA pD,DWORD dwDwordCount)
  {
 -	DWORD timeout=100000;
 -	DWORD temp=0;
@@ -5823,14 +5887,14 @@
 -	(*data)=(BYTE)(Lan_GetRegDW(E2P_DATA));
 -	return TRUE;
 +#ifdef USE_STAT
-+	if(privateData->stat)
-+		privateData->stats.rx_errors++;
++	if(pD->stat)
++		pD->stats.rx_errors++;
 +#endif
  }
  
 -BOOLEAN Eeprom_EnableEraseAndWrite(
 -	PPRIVATE_DATA privateData)
-+void Rx_ReceiverOff(PPRIVATE_DATA privateData)
++void Rx_ReceiverOff(PPRIVATE_DATA pD)
  {
 -	DWORD timeout=100000;
 -	SMSC_ASSERT(privateData!=NULL);
@@ -5852,16 +5916,16 @@
 -	}
 -	return TRUE;
 +	DWORD dwIntFlags=0;
-+	VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
-+	DWORD dwMacCr=Mac_GetRegDW(privateData,MAC_CR,keyCode);
++	VL_KEY keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
++	DWORD dwMacCr=Mac_GetRegDW(pD,MAC_CR,keyCode);
 +	dwMacCr&=(~MAC_CR_RXEN_);
-+	Mac_SetRegDW(privateData,MAC_CR,dwMacCr,keyCode);
-+	Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
++	Mac_SetRegDW(pD,MAC_CR,dwMacCr,keyCode);
++	Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
  }
  
 -BOOLEAN Eeprom_DisableEraseAndWrite(
 -	PPRIVATE_DATA privateData)
-+void Rx_ReceiverOn(PPRIVATE_DATA privateData)
++void Rx_ReceiverOn(PPRIVATE_DATA pD)
  {
 -	DWORD timeout=100000;
 -	SMSC_ASSERT(privateData!=NULL);
@@ -5883,16 +5947,16 @@
 -	}
 -	return TRUE;
 +	DWORD dwIntFlags=0;
-+	VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
-+	DWORD dwMacCr=Mac_GetRegDW(privateData,MAC_CR,keyCode);
++	VL_KEY keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
++	DWORD dwMacCr=Mac_GetRegDW(pD,MAC_CR,keyCode);
 +	dwMacCr|=MAC_CR_RXEN_;
-+	Mac_SetRegDW(privateData,MAC_CR,dwMacCr,keyCode);
-+	Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
++	Mac_SetRegDW(pD,MAC_CR,dwMacCr,keyCode);
++	Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
  }
  
 -BOOLEAN Eeprom_WriteLocation(
 -	PPRIVATE_DATA privateData,BYTE address,BYTE data)
-+inline void Rx_ProcessPackets(PPRIVATE_DATA privateData)
++void Rx_ProcessPacketsTasklet(unsigned long data)
  {
 -	DWORD timeout=100000;
 -	SMSC_ASSERT(privateData!=NULL);
@@ -5903,6 +5967,16 @@
 -	Lan_SetRegDW(E2P_DATA,((DWORD)data));
 -	Lan_SetRegDW(E2P_CMD,
 -		(E2P_CMD_EPC_BUSY_|E2P_CMD_EPC_CMD_WRITE_|((DWORD)address)));
++    PPRIVATE_DATA pD=(PPRIVATE_DATA)Rx_TaskletParameter;
++        if(pD==NULL)
++                return;
++        Rx_ProcessPackets(pD);
++	Lan_SetBitsDW(INT_CFG,INT_CFG_IRQ_EN_);
++}
++
++
++inline void Rx_ProcessPackets(PPRIVATE_DATA pD)
++{
 +	DWORD dwRxStatus;
 +#ifdef USE_RX_PIO_AND_DMA
 +	DWORD dwRxStatusPio=0;
@@ -5913,53 +5987,53 @@
 +#endif
 +	BYTE packets;
 +	int dwPacketLength=0;
-+	privateData->RxDropOnCallback = 0;
++	pD->RxDropOnCallback = 0;
 +
 +	for (packets=0;
 +	     (packets < MAX_RX_SKBS) &&
-+		     ((dwRxStatus=Rx_PopRxStatus(privateData))!=0);
++		     ((dwRxStatus=Rx_PopRxStatus(pD))!=0);
 +	     packets++) {
 +
-+		struct sk_buff *skb;
-+		struct scatterlist* sg;
 +		dwPacketLength=((dwRxStatus&0x3FFF0000UL)>>16);
 +#ifdef USE_RX_PIO_AND_DMA
 +		dwRxStatusPio=dwRxStatus;
 +#endif
-+		skb=alloc_skb(dwPacketLength+2*PLATFORM_CACHE_LINE_BYTES, GFP_ATOMIC);
-+		if((dwRxStatus&RX_STS_ES_)!=0 || skb==NULL) {
-+			privateData->RxDropOnCallback = dwPacketLength;
++		pD->RxSkbs[packets]=alloc_skb(dwPacketLength+2*PLATFORM_CACHE_LINE_BYTES, GFP_ATOMIC);
++		if((dwRxStatus&RX_STS_ES_)!=0 || pD->RxSkbs[packets]==NULL) {
++			pD->RxDropOnCallback = dwPacketLength;
 +			break;
 +		}
 +#ifdef USE_STAT
-+                if(privateData->stat) {
-+                        if(privateData->rx_count==50) privateData->rx_count=0;
-+                        privateData->rx_len[privateData->rx_count]=(int)dwPacketLength;
-+                        privateData->rx_len_paket[privateData->rx_count]=(int)packets;
-+                        privateData->rx_count++;
-+                	privateData->stats.rx_packets++;
-+                	privateData->stats.rx_bytes+=dwPacketLength;
-+			if(privateData->rx_fifo_avg<100000) {
++                if(pD->stat) {
++                        if(pD->rx_count==50) pD->rx_count=0;
++			pD->procstat[pD->rx_count].rx_len=dwPacketLength;
++			pD->procstat[pD->rx_count].rx_paket=packets;
++                        pD->rx_count++;
++                	pD->stats.rx_packets++;
++                	pD->stats.rx_bytes+=dwPacketLength;
++			if(pD->rx_fifo_avg<100000) {
 +				rx_fifo_avg+=dwPacketLength;
 +				rx_fifo_avg_packets++;
 +			}
 +                }
 +#endif
-+		privateData->RxSkbs[packets] = skb;
-+		skb_reserve(skb,PLATFORM_CACHE_LINE_BYTES_M14);
-+		skb_put(skb,dwPacketLength-4UL);
++		skb_reserve(pD->RxSkbs[packets],PLATFORM_CACHE_LINE_BYTES_M14);
++		skb_put(pD->RxSkbs[packets],dwPacketLength-4UL);
 +
-+		sg=&privateData->RxSgs[packets];
-+		sg->page = virt_to_page(skb->head);
-+		sg->offset = (long)skb->head & ~PAGE_MASK;
-+		sg->length = (dwPacketLength+
++//nit2005
++		//pD->RxSgs1=kmalloc(sizeof(pD->RxSgs1), GFP_KERNEL);	
++
++                pD->RxSgs[packets].page = virt_to_page(pD->RxSkbs[packets]->head);
++                pD->RxSgs[packets].offset = (long)pD->RxSkbs[packets]->head & ~PAGE_MASK;
++                pD->RxSgs[packets].length = (dwPacketLength+
 +                             (PLATFORM_CACHE_LINE_BYTES_M14)+
 +                             PLATFORM_CACHE_LINE_BYTES_M1)&
 +                             (~(PLATFORM_CACHE_LINE_BYTES_M1));
++
 +	}
 +#ifdef USE_RX_PIO_AND_DMA
 +//nit2005 Fehlerhaft
-+	if (packets == 1 && dwPacketLength < MAX_TX_PIO && privateData->rx_pio) {
++	if (packets == 1 && dwPacketLength < MAX_TX_PIO && pD->rx_pio) {
 +                Lan_SetRegDW(RX_CFG,0x00000200UL);
 +                struct sk_buff *skb=NULL;
 +                skb=alloc_skb(dwPacketLength+2, GFP_ATOMIC);
@@ -5989,13 +6063,13 @@
 -	if(Lan_GetRegDW(E2P_CMD)&E2P_CMD_EPC_BUSY_) {
 -		SMSC_WARNING("Eeprom_EraseAll: Busy at start");
 -		return FALSE;
-+			skb->dev=privateData->dev;
-+			skb->protocol=eth_type_trans(skb,privateData->dev);
++			skb->dev=pD->dev;
++			skb->protocol=eth_type_trans(skb,pD->dev);
 +			skb->ip_summed=CHECKSUM_NONE;
 +			netif_rx(skb);
 +                } else {
 +			dwPacketLength=(dwPacketLength+5)>>2;
-+			Rx_FastForward(privateData,dwPacketLength);
++			Rx_FastForward(pD,dwPacketLength);
 +                }
 +		Lan_SetRegDW(RX_CFG,0x80001200UL);
  	}
@@ -6010,8 +6084,9 @@
 +        	struct stm_dma_params *param;
 +		DWORD sg_addr;
 +
++       		Lan_ClrBitsDW(INT_EN,INT_EN_RSFL_EN_);
 +	        DWORD dwLanPhysAddr = PHYSADDR(BASE_AND_RX_DATA_FIFO);
-+        	sg = (struct scatterlist*)(DWORD*)privateData->RxSgs;
++        	sg = (struct scatterlist*)(DWORD*)pD->RxSgs;
 +        	int sg_count = dma_map_sg(NULL, sg, packets, DMA_FROM_DEVICE);
 +
 +        	param = rx_transfer_paced;
@@ -6039,11 +6114,11 @@
 +		dma_params_link(param, NULL);
 +		dma_params_comp_cb(rx_transfer_paced,
 +                           (void (*)(unsigned long))Rx_DmaCompletionCallback,
-+                           (unsigned long)privateData, STM_DMA_CB_CONTEXT_ISR);
-+		dma_compile_list(privateData->dwRxDmaCh, rx_transfer_paced, GFP_ATOMIC);
-+		dma_xfer_list(privateData->dwRxDmaCh,rx_transfer_paced);
++                           (unsigned long)pD, STM_DMA_CB_CONTEXT_ISR);
++		dma_compile_list(pD->dwRxDmaCh, rx_transfer_paced, GFP_ATOMIC);
++		dma_xfer_list(pD->dwRxDmaCh,rx_transfer_paced);
 +#else
-+        	int sg_count = dma_map_sg(NULL, (struct scatterlist*)(DWORD*)privateData->RxSgs,
++        	int sg_count = dma_map_sg(NULL, (struct scatterlist*)(DWORD*)pD->RxSgs,
 +			packets, DMA_FROM_DEVICE);
  
 -	while((timeout>0)&&
@@ -6053,35 +6128,34 @@
 -		timeout--;
 +        	dma_params_comp_cb(&rx_transfer_sg,
 +			(void (*)(unsigned long))Rx_DmaCompletionCallback,
-+			(unsigned long)privateData,
++			(unsigned long)pD,
 +			STM_DMA_CB_CONTEXT_ISR);
 +		dma_params_addrs(&rx_transfer_sg, 
 +			(PHYSADDR(BASE_AND_RX_DATA_FIFO))+(1<<16), 0, 0);
-+		dma_params_sg(&rx_transfer_sg, (struct scatterlist*)(DWORD*)privateData->RxSgs, sg_count);
-+		dma_compile_list(privateData->dwRxDmaCh, &rx_transfer_sg, GFP_ATOMIC);
++		dma_params_sg(&rx_transfer_sg, (struct scatterlist*)(DWORD*)pD->RxSgs, sg_count);
++		dma_compile_list(pD->dwRxDmaCh, &rx_transfer_sg, GFP_ATOMIC);
 +
-+		dma_xfer_list(privateData->dwRxDmaCh, &rx_transfer_sg);
++		dma_xfer_list(pD->dwRxDmaCh, &rx_transfer_sg);
 +#endif
-+		privateData->RxSkbsCount = packets;
-+       		Lan_ClrBitsDW(INT_EN,INT_EN_RSFL_EN_);
++		pD->RxSkbsCount = packets;
 +
-+	} else if (privateData->RxDropOnCallback != 0) {
++	} else if (pD->RxDropOnCallback != 0) {
 +		Lan_SetRegDW(RX_CFG,0x00000200UL);
-+		Rx_FastForward(privateData,(privateData->RxDropOnCallback+5)>>2);
++		Rx_FastForward(pD,(pD->RxDropOnCallback+5)>>2);
 +		Lan_SetRegDW(RX_CFG,0x80001200UL);
  	}
 -	if(timeout==0) {
 -		return FALSE;
 +	Lan_SetRegDW(INT_STS,INT_STS_RSFL_);
 +#ifdef USE_STAT
-+        if(privateData->stat) { 
-+		if(privateData->rx_fifo_avg<100000) {
-+			if(privateData->rx_fifo_avg==0) {
-+				privateData->rx_fifo_avg=rx_fifo_avg;
-+				privateData->rx_fifo_avg_packets=rx_fifo_avg_packets;
++        if(pD->stat) { 
++		if(pD->rx_fifo_avg<100000) {
++			if(pD->rx_fifo_avg==0) {
++				pD->rx_fifo_avg=rx_fifo_avg;
++				pD->rx_fifo_avg_packets=rx_fifo_avg_packets;
 +			} else {
-+				privateData->rx_fifo_avg=(privateData->rx_fifo_avg+rx_fifo_avg)/2;
-+				privateData->rx_fifo_avg_packets=(privateData->rx_fifo_avg_packets+rx_fifo_avg_packets)/2;
++				pD->rx_fifo_avg=(pD->rx_fifo_avg+rx_fifo_avg)/2;
++				pD->rx_fifo_avg_packets=(pD->rx_fifo_avg_packets+rx_fifo_avg_packets)/2;
 +			}
 +		}
  	}
@@ -6101,7 +6175,7 @@
 -	}
 -	Lan_SetRegDW(E2P_CMD,
 -		(E2P_CMD_EPC_BUSY_|E2P_CMD_EPC_CMD_RELOAD_));
-+	PPRIVATE_DATA privateData = param;
++	PPRIVATE_DATA pD = param;
 +	int i;
  
 -	while((timeout>0)&&
@@ -6112,11 +6186,11 @@
 -	}
 -	if(timeout==0) {
 -		return FALSE;
-+	for (i=0; i<privateData->RxSkbsCount; i++) {
-+		privateData->RxSkbs[i]->dev=privateData->dev;
-+	        privateData->RxSkbs[i]->protocol=eth_type_trans(privateData->RxSkbs[i],privateData->dev);
-+       		privateData->RxSkbs[i]->ip_summed=CHECKSUM_NONE;
-+        	netif_rx(privateData->RxSkbs[i]);
++	for (i=0; i<pD->RxSkbsCount; i++) {
++		pD->RxSkbs[i]->dev=pD->dev;
++	        pD->RxSkbs[i]->protocol=eth_type_trans(pD->RxSkbs[i],pD->dev);
++       		pD->RxSkbs[i]->ip_summed=CHECKSUM_NONE;
++        	netif_rx(pD->RxSkbs[i]);
  	}
 -	return TRUE;
 -}
@@ -6155,8 +6229,7 @@
 -		if(!Eeprom_WriteLocation(privateData,6,HIBYTE(LOWORD(dwHi16)))) goto DONE;
 -	}
 -	if(!Eeprom_DisableEraseAndWrite(privateData)) goto DONE;
-+	privateData->RxSkbsCount = 0;
-+        Lan_SetBitsDW(INT_EN,INT_EN_RSFL_EN_);
++	pD->RxSkbsCount = 0;
  
 -	if(!Eeprom_Reload(privateData)) goto DONE;
 -	if(!Eeprom_IsMacAddressLoaded(privateData)) goto DONE;
@@ -6166,15 +6239,16 @@
 -		if(dwHi16!=Mac_GetRegDW(privateData,ADDRH,keyCode)) goto DONE;
 -		if(dwLo32!=Mac_GetRegDW(privateData,ADDRL,keyCode)) goto DONE;
 -		Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
-+	if (privateData->RxDropOnCallback != 0) {
++	if (pD->RxDropOnCallback != 0) {
 +		Lan_SetRegDW(RX_CFG,0x00000200UL);
-+		Rx_FastForward(privateData,(privateData->RxDropOnCallback+5)>>2);
++		Rx_FastForward(pD,(pD->RxDropOnCallback+5)>>2);
 +		Lan_SetRegDW(RX_CFG,0x80001200UL);
  	}
 -	result=TRUE;
 -DONE:
 -	Eeprom_DisableAccess(privateData);
 -	return result;
++        Lan_SetBitsDW(INT_EN,INT_EN_RSFL_EN_);
  }
  
 -volatile DWORD g_GpioSetting=0x00000000UL;
@@ -6187,7 +6261,7 @@
 -	DWORD dwIntCfg,
 -	DWORD dwTxFifSz,
 -	DWORD dwAfcCfg)
-+BOOLEAN Lan_Initialize(PPRIVATE_DATA privateData)
++BOOLEAN Lan_Initialize(PPRIVATE_DATA pD)
  {
 -	BOOLEAN result=FALSE;
  	DWORD dwTimeOut=0;
@@ -6205,7 +6279,7 @@
  	while(dwResetCount>0) {
  		Lan_SetRegDW(HW_CFG,HW_CFG_SRST_);
  		dwTimeOut=1000000;
-@@ -5166,399 +1466,685 @@
+@@ -5166,399 +1504,722 @@
  			dwTimeOut--;
  		} while((dwTimeOut>0)&&(dwTemp&HW_CFG_SRST_));
  		if(dwTemp&HW_CFG_SRST_) {
@@ -6310,13 +6384,14 @@
  	Lan_SetRegDW(INT_STS,0xFFFFFFFFUL);
 -	dwIntCfg|=INT_CFG_IRQ_EN_;
 -	Lan_SetRegDW(INT_CFG,dwIntCfg);
-+	Lan_SetRegDW(INT_CFG,INT_CFG_IRQ_EN_|INT_CFG_IRQ_POL_|INT_CFG_IRQ_TYPE_);
- 
- 	Vl_InitLock(&(privateData->MacPhyLock));
+-
+-	Vl_InitLock(&(privateData->MacPhyLock));
 -	spin_lock_init(&(privateData->IntEnableLock));
 -	privateData->LanInitialized=TRUE;
--
++	Lan_SetRegDW(INT_CFG,INT_CFG_IRQ_EN_|INT_CFG_IRQ_POL_|INT_CFG_IRQ_TYPE_);
+ 
 -	result=TRUE;
++	Vl_InitLock(&(pD->MacPhyLock));
  
 -DONE:
 -	SMSC_TRACE("<--Lan_Initialize");
@@ -6325,7 +6400,7 @@
  }
  
 -void Lan_EnableInterrupt(PPRIVATE_DATA privateData,DWORD dwIntEnMask)
-+void Lan_SetIntDeas(PPRIVATE_DATA privateData,int deas)
++void Lan_SetIntDeas(PPRIVATE_DATA pD,int deas)
  {
 -	DWORD dwIntFlags=0;
 -	SMSC_ASSERT(privateData!=NULL);
@@ -6446,11 +6521,12 @@
 +                        off_t off, int count,
 +                        int *eof, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int len=0;
 + DWORD dwIntFlags=0;
-+ VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
-+ WORD wTemp=(Phy_GetRegW(privateData,PHY_SPECIAL,keyCode)&PHY_SPECIAL_SPD_);
++ len+=sprintf(page+len,"driver version: %d\n", VERSION);
++ VL_KEY keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
++ WORD wTemp=(Phy_GetRegW(pD,PHY_SPECIAL,keyCode)&PHY_SPECIAL_SPD_);
 + if(wTemp==PHY_SPECIAL_SPD_10HALF_)
 +	len+=sprintf(page+len,"speed: 10Base-T HD\n");
 + if(wTemp==PHY_SPECIAL_SPD_10FULL_)
@@ -6460,10 +6536,10 @@
 + if(wTemp==PHY_SPECIAL_SPD_100FULL_)
 +	len+=sprintf(page+len,"speed: 100Base-TX FD\n");
 +
-+ wTemp=Phy_GetRegW(privateData,PHY_BSR,keyCode);
++ wTemp=Phy_GetRegW(pD,PHY_BSR,keyCode);
 + len+=sprintf(page+len,"link: %d\n",(wTemp&PHY_BSR_LINK_STATUS_)>>2);
 +
-+ wTemp=Phy_GetRegW(privateData,PHY_ANEG_LPA,keyCode);
++ wTemp=Phy_GetRegW(pD,PHY_ANEG_LPA,keyCode);
 + len+=sprintf(page+len,"link partner supports 100Base-TX FD: %d\n",
 +	(wTemp&PHY_ANEG_LPA_100FDX_)>>8);
 + len+=sprintf(page+len,"link partner supports 100Base-TX HD: %d\n",
@@ -6472,12 +6548,12 @@
 +	(wTemp&PHY_ANEG_LPA_10FDX_)>>6);
 + len+=sprintf(page+len,"link partner supports 10Base-T HD: %d\n",
 +	(wTemp&PHY_ANEG_LPA_10HDX_)>>5);
-+ len+=sprintf(page+len,"link partner supports pausefame (asym): %d\n",
++ len+=sprintf(page+len,"link partner supports pauseframe (asym): %d\n",
 +	(wTemp&PHY_ANEG_LPA_ASYMP_)>>11);
-+ len+=sprintf(page+len,"link partner supports pausefame (sym): %d\n",
++ len+=sprintf(page+len,"link partner supports pauseframe (sym): %d\n",
 +	(wTemp&PHY_ANEG_LPA_SYMP_)>>10);
 +
-+ Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
++ Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
 +
 + return len;
 +}
@@ -6495,8 +6571,8 @@
 +static int proc_write_deas(struct file *file, const char *buffer,
 +                        unsigned long count, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
-+ Lan_SetIntDeas(privateData, (BYTE)simple_strtoul(buffer, NULL, 10));
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
++ Lan_SetIntDeas(pD, (BYTE)simple_strtoul(buffer, NULL, 10));
 + return count;
 +}
 +
@@ -6505,16 +6581,16 @@
 +                        off_t off, int count,
 +                        int *eof, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int len=0;
-+ if(privateData->stat==0) {
++ if(pD->stat==0) {
 +	len+=sprintf(page+len,"statistic not aktive (stat=0)\n");
 +	return len;
 + }
-+ len+=sprintf(page+len,"wait for tx fifo free (dma): %d\n",privateData->tx_wait_fifo_dma);
-+ len+=sprintf(page+len,"wait for tx fiio free (pio): %d\n",privateData->tx_wait_fifo_pio);
-+ privateData->tx_wait_fifo_dma=0;
-+ privateData->tx_wait_fifo_pio=0;
++ len+=sprintf(page+len,"wait for tx fifo free (dma): %d\n",pD->tx_wait_fifo_dma);
++ len+=sprintf(page+len,"wait for tx fiio free (pio): %d\n",pD->tx_wait_fifo_pio);
++ pD->tx_wait_fifo_dma=0;
++ pD->tx_wait_fifo_pio=0;
 + return len;
 +}
 +
@@ -6522,20 +6598,20 @@
 +                        off_t off, int count,
 +                        int *eof, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int len=0,i;
-+ if(privateData->stat==0) {
++ if(pD->stat==0) {
 +	len+=sprintf(page+len,"statistic not aktive (stat=0)\n");
 +	return len;
 + }
 + for(i=0;i<50;i++)
 + {
 +  len+=sprintf(page+len,"len: %d, count: %d\n",
-+        privateData->rx_len[i],privateData->rx_len_paket[i]+1);
-+  privateData->rx_len[i]=0;
-+  privateData->rx_len_paket[i]=0;
++        pD->procstat[i].rx_len,pD->procstat[i].rx_paket);
++  pD->procstat[i].rx_len=0;
++  pD->procstat[i].rx_paket=0;
 + }
-+ privateData->rx_count=0;
++ pD->rx_count=0;
 + return len;
 +}
 +
@@ -6543,18 +6619,18 @@
 +                        off_t off, int count,
 +                        int *eof, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int len=0,i;
-+ if(privateData->stat==0) {
++ if(pD->stat==0) {
 +	len+=sprintf(page+len,"statistic not aktive (stat=0)\n");
 +	return len;
 + }
 + for(i=0;i<50;i++)
 + {
-+	len+=sprintf(page+len,"len: %d\n",privateData->tx_len[i]);
-+	privateData->tx_len[i]=0;
++	len+=sprintf(page+len,"len: %d\n",pD->procstat[i].tx_len);
++	pD->procstat[i].tx_len=0;
 + }
-+ privateData->tx_count=0;
++ pD->tx_count=0;
 + return len;
 +}
 +
@@ -6562,18 +6638,30 @@
 +                        off_t off, int count,
 +                        int *eof, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int len=0;
-+ len=sprintf(page,"value (0-1): %d\n",privateData->stat);
++ len=sprintf(page,"value (0-1): %d\n",pD->stat);
 + return len;
 +}
 +
 +static int proc_write_stat(struct file *file, const char *buffer,
 +                        unsigned long count, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
-+ privateData->stat=(BOOLEAN)simple_strtoul(buffer, NULL, 10);
-+ if(privateData->stat>1) privateData->stat=1;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
++ int oldstat=pD->stat;
++ pD->stat=(BOOLEAN)simple_strtoul(buffer, NULL, 10);
++
++ if(pD->stat>1) pD->stat=1;
++
++ if(pD->stat==0 && oldstat==1) {
++        kfree(pD->procstat);
++ }
++ if(pD->stat==1 && oldstat==0) {
++ 	pD->procstat=kmalloc(50*sizeof(*pD->procstat),GFP_KERNEL);
++ 	if(pD->procstat==NULL)
++		pD->stat=0;
++	memset(pD->procstat, 0, 50*sizeof(*pD->procstat));
++ }
 + return count;
 +}
 +
@@ -6581,22 +6669,22 @@
 +                        off_t off, int count,
 +                        int *eof, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int len=0;
-+ if(privateData->stat==0) {
++ if(pD->stat==0) {
 +	len+=sprintf(page+len,"statistic not aktive (stat=0)\n");
 +	return len;
 + }
-+ if(timer_pending(&(privateData->ThroughputTimer))) {
++ if(timer_pending(&(pD->ThroughputTimer))) {
 +	len+=sprintf(page+len,"throughput check running, please wait\n");
 +	return len;
 + }
 +
-+ BYTE sec_diff=(privateData->akt_jiffies-privateData->old_jiffies)/HZ;
-+ DWORD rx_diff=privateData->akt_rx_bytes-privateData->old_rx_bytes;
-+ DWORD tx_diff=privateData->akt_tx_bytes-privateData->old_tx_bytes;
-+ DWORD rx_diff_packets=privateData->akt_rx_packets-privateData->old_rx_packets;
-+ DWORD tx_diff_packets=privateData->akt_tx_packets-privateData->old_tx_packets;
++ BYTE sec_diff=(pD->akt_jiffies-pD->old_jiffies)/HZ;
++ DWORD rx_diff=pD->akt_rx_bytes-pD->old_rx_bytes;
++ DWORD tx_diff=pD->akt_tx_bytes-pD->old_tx_bytes;
++ DWORD rx_diff_packets=pD->akt_rx_packets-pD->old_rx_packets;
++ DWORD tx_diff_packets=pD->akt_tx_packets-pD->old_tx_packets;
 + if(sec_diff<1) sec_diff=1;
 + if(rx_diff_packets<1) rx_diff_packets=1;
 + if(tx_diff_packets<1) tx_diff_packets=1;
@@ -6647,10 +6735,10 @@
 +        default:break;
 + }
 + len+=sprintf(page+len,"rx data (average fifo utilization): %ld Bytes (%ld.%ld %%)\n",
-+	privateData->rx_fifo_avg-100000, (DWORD)((privateData->rx_fifo_avg-100000)/rx_fifo_1p), 
-+	getrest((privateData->rx_fifo_avg-100000),rx_fifo_1p));
-+ len+=sprintf(page+len,"rx packet (average fifo utilization): %ld Packets\n\n",
-+	privateData->rx_fifo_avg_packets);
++	pD->rx_fifo_avg-100000, (DWORD)((pD->rx_fifo_avg-100000)/rx_fifo_1p), 
++	getrest((pD->rx_fifo_avg-100000),rx_fifo_1p));
++ len+=sprintf(page+len,"rx packet (average fifo utilization): %d Packets\n\n",
++	pD->rx_fifo_avg_packets);
 +
 + len+=sprintf(page+len,"rx summary: %ld Bytes (%ld.%ld Kb) (%ld.%ld Mb)\n", rx_diff,
 +	rx_diff/1024, getrest(rx_diff,1024),
@@ -6665,27 +6753,27 @@
 +static int proc_write_throughput(struct file *file, const char *buffer,
 +                        unsigned long count, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int sec=(int)simple_strtoul(buffer, NULL, 10);
 + if(sec==0) return count;
 + if(sec>60) return count;
-+ if(privateData->stat==0) return count;
++ if(pD->stat==0) return count;
 +
-+ privateData->old_jiffies=jiffies;
-+ privateData->old_rx_bytes=privateData->stats.rx_bytes;
-+ privateData->old_rx_packets=privateData->stats.rx_packets;
-+ privateData->old_tx_bytes=privateData->stats.tx_bytes;
-+ privateData->old_tx_packets=privateData->stats.tx_packets;
-+ privateData->akt_jiffies=privateData->old_jiffies;
-+ privateData->akt_rx_bytes=privateData->old_rx_bytes;
-+ privateData->akt_rx_packets=privateData->stats.rx_packets;
-+ privateData->akt_tx_bytes=privateData->old_tx_bytes;
-+ privateData->akt_tx_packets=privateData->stats.tx_packets;
-+ privateData->rx_fifo_avg=0;
-+ privateData->rx_fifo_avg_packets=0;
++ pD->old_jiffies=jiffies;
++ pD->old_rx_bytes=pD->stats.rx_bytes;
++ pD->old_rx_packets=pD->stats.rx_packets;
++ pD->old_tx_bytes=pD->stats.tx_bytes;
++ pD->old_tx_packets=pD->stats.tx_packets;
++ pD->akt_jiffies=pD->old_jiffies;
++ pD->akt_rx_bytes=pD->old_rx_bytes;
++ pD->akt_rx_packets=pD->stats.rx_packets;
++ pD->akt_tx_bytes=pD->old_tx_bytes;
++ pD->akt_tx_packets=pD->stats.tx_packets;
++ pD->rx_fifo_avg=0;
++ pD->rx_fifo_avg_packets=0;
 +
-+ privateData->ThroughputTimer.expires=jiffies+(HZ*sec);
-+ add_timer(&(privateData->ThroughputTimer));
++ pD->ThroughputTimer.expires=jiffies+(HZ*sec);
++ add_timer(&(pD->ThroughputTimer));
 +
 + return count;
 +}
@@ -6696,18 +6784,18 @@
 +                        off_t off, int count,
 +                        int *eof, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int len=0;
-+ len=sprintf(page,"value (0-1): %d\n",privateData->tx_pio);
++ len=sprintf(page,"value (0-1): %d\n",pD->tx_pio);
 + return len;
 +}
 +
 +static int proc_write_tx_pio(struct file *file, const char *buffer,
 +                        unsigned long count, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
-+ privateData->tx_pio=(BOOLEAN)simple_strtoul(buffer, NULL, 10);
-+ if(privateData->tx_pio>1) privateData->tx_pio=1;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
++ pD->tx_pio=(BOOLEAN)simple_strtoul(buffer, NULL, 10);
++ if(pD->tx_pio>1) pD->tx_pio=1;
 + return count;
 +}
 +#endif
@@ -6717,18 +6805,18 @@
 +                        off_t off, int count,
 +                        int *eof, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int len=0;
-+ len=sprintf(page,"value (0-1): %d\n",privateData->rx_pio);
++ len=sprintf(page,"value (0-1): %d\n",pD->rx_pio);
 + return len;
 +}
 +
 +static int proc_write_rx_pio(struct file *file, const char *buffer,
 +                        unsigned long count, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
-+ privateData->rx_pio=(BOOLEAN)simple_strtoul(buffer, NULL, 10);
-+ if(privateData->rx_pio>1) privateData->rx_pio=1;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
++ pD->rx_pio=(BOOLEAN)simple_strtoul(buffer, NULL, 10);
++ if(pD->rx_pio>1) pD->rx_pio=1;
 + return count;
 +}
 +#endif
@@ -6765,14 +6853,14 @@
 +                        unsigned long count, void *data)
 +{
 + DWORD afccfg=AFCCFG, dwRegVal, tx_fifo_sz;
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 +
 + tx_fifo_sz=(DWORD)simple_strtoul(buffer, NULL, 10);
 + switch(tx_fifo_sz) {
-+        case 2:afccfg=0x00B226A0;break;
-+        case 3:afccfg=0x00A52190;break;
-+        case 4:afccfg=0x00992790;break;
-+        case 5:afccfg=0x008C2740;break;
++        case 2:afccfg=0x008C46A0;break;
++        case 3:afccfg=0x00824190;break;
++        case 4:afccfg=0x00783C90;break;
++        case 5:afccfg=0x006E3740;break;
 +        case 6:afccfg=0x00643280;break;
 +        case 7:afccfg=0x005A2D70;break;
 +        case 8:afccfg=0x00502870;break;
@@ -6784,8 +6872,8 @@
 +        case 14:afccfg=0x00060320;break;
 +        default:return count;break;
 + }
-+ Rx_ReceiverOff(privateData);
-+ Tx_StopQueue(privateData,0x01UL);
++ Rx_ReceiverOff(pD);
++ Tx_StopQueue(pD,0x01UL);
 + udelay(1000);
 +
 + dwRegVal=Lan_GetRegDW(HW_CFG);
@@ -6798,8 +6886,8 @@
 + dwRegVal|=afccfg;
 + Lan_SetRegDW(AFC_CFG,afccfg);
 +
-+ Tx_WakeQueue(privateData,0x01UL);
-+ Rx_ReceiverOn(privateData);
++ Tx_WakeQueue(pD,0x01UL);
++ Rx_ReceiverOn(pD);
 + return count;
 +}
 +
@@ -6823,7 +6911,7 @@
 +static int proc_write_afc_cfg(struct file *file, const char *buffer,
 +                        unsigned long count, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + DWORD dwIntFlags=0, dwRegVal=Lan_GetRegDW(AFC_CFG)&0x000000FEUL;
 + char z[]="000";
 +
@@ -6844,11 +6932,11 @@
 +	return count;
 + }
 +
-+ VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
-+ if(buffer[6]=='1') Mac_SetRegDW(privateData,FLOW,0xFFFF0002UL,keyCode);
-+ if(buffer[6]=='0') Mac_SetRegDW(privateData,FLOW,0,keyCode);
++ VL_KEY keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
++ if(buffer[6]=='1') Mac_SetRegDW(pD,FLOW,0xFFFF0002UL,keyCode);
++ if(buffer[6]=='0') Mac_SetRegDW(pD,FLOW,0,keyCode);
 + Lan_SetRegDW(AFC_CFG,dwRegVal);
-+ Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
++ Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
 + return count;
 +}
 +
@@ -6856,14 +6944,14 @@
 +                        off_t off, int count,
 +                        int *eof, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + int len=0, speed;
 +
-+ if(privateData->man_speed==LINK_OFF) speed=0;
-+ if(privateData->man_speed==LINK_SPEED_100FD) speed=1;
-+ if(privateData->man_speed==LINK_SPEED_100HD) speed=2;
-+ if(privateData->man_speed==LINK_SPEED_10FD) speed=3;
-+ if(privateData->man_speed==LINK_SPEED_10HD) speed=4;
++ if(pD->man_speed==LINK_OFF) speed=0;
++ if(pD->man_speed==LINK_SPEED_100FD) speed=1;
++ if(pD->man_speed==LINK_SPEED_100HD) speed=2;
++ if(pD->man_speed==LINK_SPEED_10FD) speed=3;
++ if(pD->man_speed==LINK_SPEED_10HD) speed=4;
 +
 + len=sprintf(page,"value (0=auto, 1=100FD, 2=100HD, 3=10FD, 4=10HD): %d\n",speed);
 + return len;
@@ -6872,7 +6960,7 @@
 +static int proc_write_speed(struct file *file, const char *buffer,
 +                        unsigned long count, void *data)
 +{
-+ PPRIVATE_DATA privateData=(PPRIVATE_DATA)data;
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
 + WORD wTemp=0;
 + DWORD dwIntFlags=0;
 + int speed;
@@ -6880,35 +6968,54 @@
 + speed=(BYTE)simple_strtoul(buffer, NULL, 10);
 + if(speed>4) return count;
 +
-+ VL_KEY keyCode=Vl_WaitForLock(&(privateData->MacPhyLock),&dwIntFlags);
++ VL_KEY keyCode=Vl_WaitForLock(&(pD->MacPhyLock),&dwIntFlags);
 +
-+ if(speed==0) privateData->man_speed=0;
-+ if(speed==1) privateData->man_speed=LINK_SPEED_100FD;
-+ if(speed==2) privateData->man_speed=LINK_SPEED_100HD;
-+ if(speed==3) privateData->man_speed=LINK_SPEED_10FD;
-+ if(speed==4) privateData->man_speed=LINK_SPEED_10HD;
++ if(speed==0) pD->man_speed=0;
++ if(speed==1) pD->man_speed=LINK_SPEED_100FD;
++ if(speed==2) pD->man_speed=LINK_SPEED_100HD;
++ if(speed==3) pD->man_speed=LINK_SPEED_10FD;
++ if(speed==4) pD->man_speed=LINK_SPEED_10HD;
 +
 + if(speed!=0) {
 +	if(speed==1 || speed==3) wTemp|=PHY_BCR_DUPLEX_MODE_;
 +	if(speed==1 || speed==2) wTemp|=PHY_BCR_SPEED_SELECT_;
-+	Phy_SetRegW(privateData,PHY_BCR,wTemp,keyCode);
++	Phy_SetRegW(pD,PHY_BCR,wTemp,keyCode);
 + }
 +
-+ Vl_ReleaseLock(&(privateData->MacPhyLock),keyCode,&dwIntFlags);
-+ if(speed==0) Phy_SetLink(privateData);
++ Vl_ReleaseLock(&(pD->MacPhyLock),keyCode,&dwIntFlags);
++ if(speed==0) Phy_SetLink(pD);
 +
 + return count;
 +}
 +
++static int proc_read_rx_tasklet(char *page, char **start,
++                        off_t off, int count,
++                        int *eof, void *data)
++{
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
++ int len=0;
++ len=sprintf(page,"value (0-1): %d\n",pD->rx_tasklet);
++ return len;
++}
 +
-+static int __init init_procfs_smsc(PPRIVATE_DATA privateData)
++static int proc_write_rx_tasklet(struct file *file, const char *buffer,
++                        unsigned long count, void *data)
++{
++ PPRIVATE_DATA pD=(PPRIVATE_DATA)data;
++ pD->rx_tasklet=(BOOLEAN)simple_strtoul(buffer, NULL, 10);
++
++ if(pD->rx_tasklet>1) pD->rx_tasklet=1;
++ return count;
++}
++
++static int __init init_procfs_smsc(PPRIVATE_DATA pD)
 +{
 + smsc_dir=proc_mkdir("smsc911x",NULL);
 + if(smsc_dir==NULL)
 +        return -ENOMEM;
 +
 + smsc_info=create_proc_read_entry("info",0444,smsc_dir,proc_read_info,NULL);
-+ smsc_info->data=privateData;
++ smsc_info->data=pD;
 +
 + smsc_deas=create_proc_entry("deas",0644,smsc_dir);
 + smsc_deas->read_proc=proc_read_deas;
@@ -6916,53 +7023,58 @@
 +
 +#ifdef USE_STAT
 + smsc_tx_wait=create_proc_read_entry("tx_wait",0444,smsc_dir,proc_read_smsc_tx_wait,NULL);
-+ smsc_tx_wait->data=privateData;
++ smsc_tx_wait->data=pD;
 +
 + smsc_tx=create_proc_read_entry("tx_log",0444,smsc_dir,proc_read_smsc_tx,NULL);
-+ smsc_tx->data=privateData;
++ smsc_tx->data=pD;
 +
 + smsc_rx=create_proc_read_entry("rx_log",0444,smsc_dir,proc_read_smsc_rx,NULL);
-+ smsc_rx->data=privateData;
++ smsc_rx->data=pD;
 +
 + smsc_stat=create_proc_entry("stat",0644,smsc_dir);
 + smsc_stat->read_proc=proc_read_stat;
 + smsc_stat->write_proc=proc_write_stat;
-+ smsc_stat->data=privateData;
++ smsc_stat->data=pD;
 +
 + smsc_throughput=create_proc_entry("throughput",0644,smsc_dir);
 + smsc_throughput->read_proc=proc_read_throughput;
 + smsc_throughput->write_proc=proc_write_throughput;
-+ smsc_throughput->data=privateData;
++ smsc_throughput->data=pD;
 +#endif
 +
 +#ifdef USE_TX_PIO_AND_DMA
 + smsc_tx_pio=create_proc_entry("tx_pio",0644,smsc_dir);
 + smsc_tx_pio->read_proc=proc_read_tx_pio;
 + smsc_tx_pio->write_proc=proc_write_tx_pio;
-+ smsc_tx_pio->data=privateData;
++ smsc_tx_pio->data=pD;
 +#endif
 +
 +#ifdef USE_RX_PIO_AND_DMA
 + smsc_rx_pio=create_proc_entry("rx_pio",0644,smsc_dir);
 + smsc_rx_pio->read_proc=proc_read_rx_pio;
 + smsc_rx_pio->write_proc=proc_write_rx_pio;
-+ smsc_rx_pio->data=privateData;
++ smsc_rx_pio->data=pD;
 +#endif
 +
 + smsc_tx_fifo=create_proc_entry("fifo",0644,smsc_dir);
 + smsc_tx_fifo->read_proc=proc_read_tx_fifo;
 + smsc_tx_fifo->write_proc=proc_write_tx_fifo;
-+ smsc_tx_fifo->data=privateData;
++ smsc_tx_fifo->data=pD;
 +
 + smsc_afc_cfg=create_proc_entry("rx_afc_cfg",0644,smsc_dir);
 + smsc_afc_cfg->read_proc=proc_read_afc_cfg;
 + smsc_afc_cfg->write_proc=proc_write_afc_cfg;
-+ smsc_afc_cfg->data=privateData;
++ smsc_afc_cfg->data=pD;
 +
 + smsc_speed=create_proc_entry("setspeed",0644,smsc_dir);
 + smsc_speed->read_proc=proc_read_speed;
 + smsc_speed->write_proc=proc_write_speed;
-+ smsc_speed->data=privateData;
++ smsc_speed->data=pD;
++
++ smsc_rx_tasklet=create_proc_entry("rx_tasklet",0644,smsc_dir);
++ smsc_rx_tasklet->read_proc=proc_read_rx_tasklet;
++ smsc_rx_tasklet->write_proc=proc_write_rx_tasklet;
++ smsc_rx_tasklet->data=pD;
 +
 + return TRUE;
 +}
