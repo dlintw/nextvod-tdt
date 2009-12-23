@@ -34,9 +34,8 @@ bool cDemux::Open(DMX_CHANNEL_TYPE pes_type, void * hVideoBuffer , int uBufferSi
 {
 	printf("%s:%s - pes_type=%s hVideoBuffer= uBufferSize=%d\n", FILENAME, __FUNCTION__, 
 		aDMXCHANNELTYPE[pes_type], uBufferSize);
-
 	type = pes_type;
-	
+
 	char filename[128];
 	sprintf(filename, "/dev/dvb/adapter%d/demux%d", privateData->adapter, privateData->demux);
 	privateData->m_fd_demux = open(filename, O_RDWR);
@@ -51,7 +50,7 @@ bool cDemux::Open(DMX_CHANNEL_TYPE pes_type, void * hVideoBuffer , int uBufferSi
 	if (ioctl(privateData->m_fd_demux, DMX_SET_SOURCE, &n) < 0)
 		printf("DMX_SET_SOURCE failed(%m)");
 
-	if (ioctl(privateData->m_fd_demux, DMX_SET_BUFFER_SIZE, uBufferSize*8) < 0)
+	if (ioctl(privateData->m_fd_demux, DMX_SET_BUFFER_SIZE, uBufferSize/*Dagobert???*8*/) < 0)
 		printf("DMX_SET_BUFFER_SIZE failed(%m)");
 	
 	return true;
@@ -59,23 +58,38 @@ bool cDemux::Open(DMX_CHANNEL_TYPE pes_type, void * hVideoBuffer , int uBufferSi
 
 void cDemux::Close(void)
 {
-	printf("%s:%s (type=%s)\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type]);
+	printf("%s:%s (type=%s) Pid %d\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type], pid);
 	
 	close(privateData->m_fd_demux);
 }
 
 bool cDemux::Start(void)
 {
-	printf("%s:%s (type=%s)\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type]);
+	printf("%s:%s (type=%s) Pid %d\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type], pid);
 		
-	ioctl(privateData->m_fd_demux, DMX_START);
-		
+#ifdef do_not_start_immediate
+/*
+Dagobert/Donald: We must start the pesFilter with flag
+immediate, otherwise the player crashes on zapping.
+Since we dont find this "bug" we ignore the "manual"
+start of the filter, because starting two times the
+same filter leads to stop_feed call in the dvbapi
+before it will be restarted. And this leads to a
+stopping of Video in the player ;)
+*/
+        if (ioctl(privateData->m_fd_demux , DMX_START) < 0)
+        {
+                printf("failed (%m)");
+                return false;
+        }		
+#endif
+        printf("ok\n");
 	return 0;
 }
 
 bool cDemux::Stop(void)
 {
-	printf("%s:%s (type=%s)\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type]);
+	printf("%s:%s (type=%s) Pid %d\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type], pid);
 	
 	ioctl(privateData->m_fd_demux, DMX_STOP);
 	
@@ -195,7 +209,7 @@ bool cDemux::pesFilter(const unsigned short Pid)
 	pes.pid      = Pid;
 	pes.input    = DMX_IN_FRONTEND;
 	pes.output   = DMX_OUT_DECODER;
-	
+        pes.flags    = DMX_IMMEDIATE_START;	
 
 	if(     type == DMX_VIDEO_CHANNEL)
 		pes.pes_type = privateData->demux ? DMX_PES_VIDEO1 : DMX_PES_VIDEO0; /* FIXME */
@@ -208,16 +222,14 @@ bool cDemux::pesFilter(const unsigned short Pid)
 		return false;
 	}
 
-	pes.flags    = DMX_IMMEDIATE_START;
-	
-	//printf("%s:%s (type=%s) - DMX_SET_PES_FILTER(0x%02x) - ", FILENAME, __FUNCTION__, pid);
 	if (ioctl(privateData->m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
 	{
 		printf("failed (%m)\n");
 		return false;
 	}
+
 	printf("ok\n");
-	
+
 	return true;
 }
 
