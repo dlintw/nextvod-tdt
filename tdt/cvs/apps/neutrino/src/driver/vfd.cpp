@@ -58,7 +58,9 @@ CVFD::CVFD()
 
 	has_lcd = 1;
 #ifdef __sh__
-	fd = open("/dev/vfd", O_RDONLY);
+	fd = open("/dev/vfd", O_RDWR);
+	if(fd < 0)
+		fd = open("/dev/fplarge", O_RDWR);
 #else
 	fd = open("/dev/display", O_RDONLY);
 #endif

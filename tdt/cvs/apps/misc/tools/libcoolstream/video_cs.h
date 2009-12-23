@@ -95,7 +95,9 @@ typedef enum {
 } VIDEO_STD;
 
 #ifndef CS_VIDEO_PDATA
-#define CS_VIDEO_PDATA void
+typedef struct {
+	int m_fd;
+} CS_VIDEO_PDATA;
 #endif
 
 class cVideo

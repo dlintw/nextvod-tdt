@@ -1,7 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
+#include <sys/select.h>
 
 #include "video_cs.h"
 #include <linux/dvb/video.h>
@@ -13,13 +17,19 @@ static const char * FILENAME = "video_cs.cpp";
 cVideo * videoDecoder = NULL;
 unsigned int system_rev = 0x07;
 
-typedef struct {
-	int m_fd_video;
-} tPrivate;
+
 
 #ifndef VIDEO_FLUSH
 #define VIDEO_FLUSH                     _IO('o',  82)
 #endif
+
+// this are taken from e2, the player converts them to falid values
+#define VIDEO_STREAMTYPE_MPEG2 0
+#define VIDEO_STREAMTYPE_MPEG4_H264 1
+#define VIDEO_STREAMTYPE_VC1 3
+#define VIDEO_STREAMTYPE_MPEG4_Part2 4
+#define VIDEO_STREAMTYPE_VC1_SM 5
+#define VIDEO_STREAMTYPE_MPEG1 6
 
 //EVIL END
 
@@ -43,38 +53,9 @@ cVideo::cVideo(int mode, void * hChannel, void * hBuffer)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
-		/*CS_VIDEO_PDATA * privateData;
-		VIDEO_FORMAT	    StreamType;
-		VIDEO_DEFINITION       VideoDefinition;
-		DISPLAY_AR DisplayAR;
-		VIDEO_PLAY_MODE SyncMode;
-		DISPLAY_AR_MODE                ARMode;
-		VIDEO_DB_DR eDbDr;
-		DISPLAY_AR PictureAR;
-		VIDEO_FRAME_RATE FrameRate;
-		bool interlaced;
+	privateData = (CS_VIDEO_PDATA*)malloc(sizeof(CS_VIDEO_PDATA));
 
-		unsigned int uDRMDisplayDelay;
-		unsigned int uVideoPTSDelay;
-		int StcPts;
-		bool started;
-		unsigned int bStandby;
-		bool blank;
-		bool playing;
-		bool auto_format;
-		int uFormatIndex;
-		int pic_width, pic_height;
-		int jpeg_width, jpeg_height;
-		int video_width, video_height;
-
-		bool receivedDRMDelay;
-		bool receivedVideoDelay;
-		int cfd; // control driver fd
-		analog_mode_t analog_mode;
-
-		vfd_icon mode_icon;*/
-	
-	
+	privateData->m_fd = open("/dev/dvb/adapter0/video0", O_RDWR);
 	
 	
 	
@@ -82,6 +63,10 @@ cVideo::cVideo(int mode, void * hChannel, void * hBuffer)
 
 cVideo::~cVideo(void) {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+
+	close(privateData->m_fd);
+
+	free(privateData);
 }
 
 void * cVideo::GetDRM(void)
@@ -143,29 +128,21 @@ int cVideo::Start(void * PcrChannel, unsigned short PcrPid, unsigned short Video
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
-	int fd = open("/dev/dvb/adapter0/video0", O_RDWR);
-	
-	if (ioctl(fd, VIDEO_SELECT_SOURCE, VIDEO_SOURCE_DEMUX) < 0)
+	if (ioctl(privateData->m_fd, VIDEO_SELECT_SOURCE, VIDEO_SOURCE_DEMUX) < 0)
 		printf("VIDEO_SELECT_SOURCE failed(%m)");
 	
-	if (ioctl(fd, VIDEO_PLAY, 1) < 0)
+	if (ioctl(privateData->m_fd, VIDEO_PLAY, 1) < 0)
 		printf("VIDEO_PLAY failed(%m)");
 		
-	close(fd);
-	
 	return true;
 }
 
 int cVideo::Stop(bool blank)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
-	
-	int fd = open("/dev/dvb/adapter0/video0", O_RDWR);
 
-	if (ioctl(fd, VIDEO_STOP, 1) < 0)
+	if (ioctl(privateData->m_fd, VIDEO_STOP, 1) < 0)
 		printf("VIDEO_STOP failed(%m)");
-		
-	close(fd);
 	
 	return true;
 }
@@ -174,13 +151,9 @@ bool cVideo::Pause(void)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
-	int fd = open("/dev/dvb/adapter0/video0", O_RDWR);
-
-	if (ioctl(fd, VIDEO_FREEZE, 1) < 0)
+	if (ioctl(privateData->m_fd, VIDEO_FREEZE, 1) < 0)
 		printf("VIDEO_FREEZE failed(%m)");
 		
-	close(fd);
-	
 	return true;
 }
 
@@ -188,13 +161,9 @@ bool cVideo::Resume(void)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
-	int fd = open("/dev/dvb/adapter0/video0", O_RDWR);
-	
-	if (ioctl(fd, VIDEO_CONTINUE, 1) < 0)
+	if (ioctl(privateData->m_fd, VIDEO_CONTINUE, 1) < 0)
 		printf("VIDEO_CONTINUE failed(%m)");
 		
-	close(fd);
-	
 	return true;
 }
 
@@ -206,13 +175,9 @@ int64_t cVideo::GetPTS(void) { printf("%s:%s\n", FILENAME, __FUNCTION__); return
 int cVideo::Flush(void)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
-	
-	int fd = open("/dev/dvb/adapter0/video0", O_RDWR);
-	
-	if (ioctl(fd, VIDEO_FLUSH, 1) < 0)
-		printf("VIDEO_FLUSH failed(%m)");
-	
-	close(fd);
+
+	if (ioctl(privateData->m_fd, VIDEO_CLEAR_BUFFER, 1) < 0)
+		printf("VIDEO_CLEAR_BUFFER failed(%m)");
 	
 	return 0;
 }
@@ -260,6 +225,25 @@ int cVideo::SetStreamType(VIDEO_FORMAT type) {
 
 	printf("%s:%s - type=%s\n", FILENAME, __FUNCTION__, aVIDEOFORMAT[type]);
 	
+	int streamtype = VIDEO_STREAMTYPE_MPEG2;
+
+	switch(type)
+	{
+	default:
+	case VIDEO_FORMAT_MPEG2:
+		streamtype = VIDEO_STREAMTYPE_MPEG2;
+		break;
+	case VIDEO_FORMAT_MPEG4:
+		streamtype = VIDEO_STREAMTYPE_MPEG4_H264;
+		break;
+	case VIDEO_FORMAT_VC1:
+		streamtype = VIDEO_STREAMTYPE_VC1;
+		break;
+	}
+
+	if (ioctl(privateData->m_fd, VIDEO_SET_STREAMTYPE, streamtype) < 0)
+		printf("VIDEO_SET_STREAMTYPE failed(%m)");
+
 	return 0;
 }
 
@@ -336,9 +320,9 @@ void cVideo::SetVideoMode(analog_mode_t mode)
 	};
 
 	if(mode && 0x80 != 0x80)
-		printf("%s:%s\n", FILENAME, __FUNCTION__, aANALOGMODESCART[mode&0x7F]);
+		printf("%s:%s - mode=%s\n", FILENAME, __FUNCTION__, aANALOGMODESCART[mode&0x7F]);
 	else	
-		printf("%s:%s\n", FILENAME, __FUNCTION__, aANALOGMODECINCH[mode&0x7F]);
+		printf("%s:%s - mode=%s\n", FILENAME, __FUNCTION__, aANALOGMODECINCH[mode&0x7F]);
 }
 
 //6

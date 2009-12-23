@@ -19,7 +19,11 @@
 #define MAX_DMX_UNITS 4 //DMX_NUM_TSS_INPUTS_REVB
 
 #ifndef CS_DMX_PDATA
-#define CS_DMX_PDATA void
+typedef struct {
+	int m_fd_demux;
+	int demux;
+	int adapter;
+} CS_DMX_PDATA;
 #endif
 
 #include "cs_types.h"

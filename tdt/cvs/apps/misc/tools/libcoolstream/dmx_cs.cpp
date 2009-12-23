@@ -17,12 +17,6 @@ cDemux *videoDemux = NULL;
 cDemux *audioDemux = NULL;
 cDemux *pcrDemux = NULL;
 
-typedef struct {
-	int m_fd_demux;
-	int demux;
-	int adapter;
-} tPrivate;
-
 //EVIL END
 
 static char * aDMXCHANNELTYPE[] = {
@@ -44,17 +38,20 @@ bool cDemux::Open(DMX_CHANNEL_TYPE pes_type, void * hVideoBuffer , int uBufferSi
 	type = pes_type;
 	
 	char filename[128];
-	sprintf(filename, "/dev/dvb/adapter%d/demux%d", ((tPrivate*)privateData)->adapter, ((tPrivate*)privateData)->demux);
-	((tPrivate*)privateData)->m_fd_demux = open(filename, O_RDWR);
+	sprintf(filename, "/dev/dvb/adapter%d/demux%d", privateData->adapter, privateData->demux);
+	privateData->m_fd_demux = open(filename, O_RDWR);
 
-	if(((tPrivate*)privateData)->m_fd_demux <= 0)
+	if(privateData->m_fd_demux <= 0)
 	{
 		printf("%s:%s - open failed\n", FILENAME, __FUNCTION__);
 		return false;
 	}
-		
 	
-	if (ioctl(((tPrivate*)privateData)->m_fd_demux, DMX_SET_BUFFER_SIZE, uBufferSize*8) < 0)
+	int n = DMX_SOURCE_FRONT0;
+	if (ioctl(privateData->m_fd_demux, DMX_SET_SOURCE, &n) < 0)
+		printf("DMX_SET_SOURCE failed(%m)");
+
+	if (ioctl(privateData->m_fd_demux, DMX_SET_BUFFER_SIZE, uBufferSize*8) < 0)
 		printf("DMX_SET_BUFFER_SIZE failed(%m)");
 	
 	return true;
@@ -64,14 +61,14 @@ void cDemux::Close(void)
 {
 	printf("%s:%s (type=%s)\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type]);
 	
-	close(((tPrivate*)privateData)->m_fd_demux);
+	close(privateData->m_fd_demux);
 }
 
 bool cDemux::Start(void)
 {
 	printf("%s:%s (type=%s)\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type]);
 		
-	ioctl(((tPrivate*)privateData)->m_fd_demux, DMX_START);
+	ioctl(privateData->m_fd_demux, DMX_START);
 		
 	return 0;
 }
@@ -80,7 +77,7 @@ bool cDemux::Stop(void)
 {
 	printf("%s:%s (type=%s)\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type]);
 	
-	ioctl(((tPrivate*)privateData)->m_fd_demux, DMX_STOP);
+	ioctl(privateData->m_fd_demux, DMX_STOP);
 	
 	return true;
 }
@@ -102,17 +99,17 @@ int cDemux::Read(unsigned char *buff, int len, int Timeout)
 		
 		fd_set     rfds;
 		FD_ZERO(&rfds);
-		FD_SET(((tPrivate*)privateData)->m_fd_demux, &rfds);
+		FD_SET(privateData->m_fd_demux, &rfds);
 		
 		/* select returns 0 if timeout, 1 if input available, -1 if error. */
-		vSelectRtv = select (((tPrivate*)privateData)->m_fd_demux + 1,
+		vSelectRtv = select (privateData->m_fd_demux + 1,
              &rfds , NULL, NULL, &timeout);
 	}
 	if(vSelectRtv == 1) {
-		int ret = read(((tPrivate*)privateData)->m_fd_demux, buff, len);
+		int ret = read(privateData->m_fd_demux, buff, len);
 		
-		printf("%s:%s (type=%s) - buff= len=%d, Timeout=%d ->> ret: %d\n", FILENAME, __FUNCTION__, 
-		aDMXCHANNELTYPE[type], len, Timeout, ret);
+		/*printf("%s:%s (type=%s) - buff= len=%d, Timeout=%d ->> ret: %d\n", FILENAME, __FUNCTION__, 
+		aDMXCHANNELTYPE[type], len, Timeout, ret);*/
 		
 		return ret;
 	}
@@ -134,7 +131,8 @@ bool cDemux::sectionFilter(unsigned short Pid, const unsigned char * const Tid,
 	printf("%s:%s (type=%s) - Pid=%d Tid= Mask= len=%d Timeout=%d nMask=\n", FILENAME, __FUNCTION__,
 		aDMXCHANNELTYPE[type], Pid, len, Timeout);
 	
-	if(Tid != NULL) {
+
+	/*if(Tid != NULL) {
 		printf("Tid {\n");
 		for(int i = 0; i < DMX_FILTER_SIZE; i++)
 			printf("\t%d (%02x)\n", Tid[i], Tid[i]);
@@ -153,16 +151,16 @@ bool cDemux::sectionFilter(unsigned short Pid, const unsigned char * const Tid,
 		for(int i = 0; i < DMX_FILTER_SIZE; i++)
 			printf("\t%d (%02x)\n", nMask[i], nMask[i]);
 		printf("}\n");
-	}
+	}*/
 	
 	pid = Pid;
 	
 	dmx_sct_filter_params sct;
 	memset(&sct, 0, sizeof(dmx_sct_filter_params));
 	sct.pid     = pid;
-	sct.timeout = Timeout;
+	sct.timeout = 0;//Timeout;
 	sct.flags   = DMX_IMMEDIATE_START;
-	
+
 	//There seems to be something wrong, the given array is not 0 initialisied
 	//So just copy the first entry
 	if(Tid)
@@ -171,9 +169,14 @@ bool cDemux::sectionFilter(unsigned short Pid, const unsigned char * const Tid,
 		memcpy(sct.filter.mask, Mask/*mask.mask*/, /*DMX_FILTER_SIZE*/len * sizeof(unsigned char));
 	if(nMask)
 		memcpy(sct.filter.mode, nMask/*mask.mode*/, /*DMX_FILTER_SIZE*/len * sizeof(unsigned char));
-	
-	ioctl(((tPrivate*)privateData)->m_fd_demux, DMX_SET_FILTER, &sct);
-	
+
+	if (ioctl(privateData->m_fd_demux, DMX_SET_FILTER, &sct) < 0)
+	{
+		printf("failed (%m)\n");
+		return false;
+	}
+	printf("ok\n");
+
 	return true;
 }
 
@@ -181,13 +184,7 @@ bool cDemux::pesFilter(const unsigned short Pid)
 {
 	printf("%s:%s (type=%s) - Pid=%d\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type], Pid);
 	
-/*
-	dmx_cs.cpp:pesFilter (type=DMX_PCR_ONLY_CHANNEL) - Pid=3327
-	dmx_cs.cpp:pesFilter (type=DMX_AUDIO_CHANNEL) - Pid=3328
-	dmx_cs.cpp:pesFilter (type=DMX_VIDEO_CHANNEL) - Pid=3327
-*/
-
-	if(((tPrivate*)privateData)->m_fd_demux <= 0)
+	if(privateData->m_fd_demux <= 0)
 		return false;
 
 	struct dmx_pes_filter_params pes;
@@ -201,18 +198,20 @@ bool cDemux::pesFilter(const unsigned short Pid)
 	
 
 	if(     type == DMX_VIDEO_CHANNEL)
-		pes.pes_type = ((tPrivate*)privateData)->demux ? DMX_PES_VIDEO1 : DMX_PES_VIDEO0; /* FIXME */
+		pes.pes_type = privateData->demux ? DMX_PES_VIDEO1 : DMX_PES_VIDEO0; /* FIXME */
 	else if(type == DMX_AUDIO_CHANNEL)
-		pes.pes_type = ((tPrivate*)privateData)->demux ? DMX_PES_AUDIO1 : DMX_PES_AUDIO0; /* FIXME */
+		pes.pes_type = privateData->demux ? DMX_PES_AUDIO1 : DMX_PES_AUDIO0; /* FIXME */
 	else if(type == DMX_PCR_ONLY_CHANNEL)
-		pes.pes_type = ((tPrivate*)privateData)->demux ? DMX_PES_PCR1 : DMX_PES_PCR0; /* FIXME */
-	else 
+		pes.pes_type = privateData->demux ? DMX_PES_PCR1 : DMX_PES_PCR0; /* FIXME */
+	else {
 		printf("##################################### HELP #####################\n");
+		return false;
+	}
 
-	pes.flags    = 0;
+	pes.flags    = DMX_IMMEDIATE_START;
 	
 	//printf("%s:%s (type=%s) - DMX_SET_PES_FILTER(0x%02x) - ", FILENAME, __FUNCTION__, pid);
-	if (ioctl(((tPrivate*)privateData)->m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
+	if (ioctl(privateData->m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
 	{
 		printf("failed (%m)\n");
 		return false;
@@ -269,7 +268,7 @@ void cDemux::getSTC(int64_t * STC)
 	memset(&stc, 0, sizeof(dmx_stc));
 	stc.num = 0/*num*/;
 	stc.base = 1;
-	ioctl(((tPrivate*)privateData)->m_fd_demux, DMX_GET_STC, &stc);
+	ioctl(privateData->m_fd_demux, DMX_GET_STC, &stc);
 	*STC = (int64_t)stc.stc;
 }
 
@@ -280,17 +279,19 @@ cDemux::cDemux(int num)
 	
 	SyncMode = AVSYNC_DISABLED;
 	
-	privateData = (void*)malloc(sizeof(tPrivate));
+	privateData = (CS_DMX_PDATA*)malloc(sizeof(CS_DMX_PDATA));
 	
-	((tPrivate*)privateData)->demux = num;
-	((tPrivate*)privateData)->adapter = 0;
+	// This is a good idea but does unfortunatly not work with our drivers
+	//privateData->demux = num;
+	privateData->demux = 0;
+	privateData->adapter = 0;
 }
 
 cDemux::~cDemux()
 {
 	printf("%s:%s (type=%s)\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type]);
 	
-	close(((tPrivate*)privateData)->m_fd_demux);
+	close(privateData->m_fd_demux);
 	
 	free(privateData);
 }

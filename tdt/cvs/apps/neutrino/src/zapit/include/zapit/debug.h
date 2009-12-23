@@ -33,7 +33,6 @@
 #else
 #define DEBUG	1
 #endif
-#define DEBUG	1
 
 /*
  * Suppress warnings when GCC is in -pedantic mode and not -std=c99
@@ -47,7 +46,7 @@ extern int zapit_debug;
 
 #define DBG(fmt, args...)					\
 	do {							\
-		if (/*zapit_debug*/true)					\
+		if (zapit_debug)					\
 			fprintf(stdout, "[%s:%s:%d] " fmt,	\
 				__FILE__, __FUNCTION__,		\
 				__LINE__ , ## args);		\
@@ -88,7 +87,7 @@ extern int zapit_debug;
 	if (fd >= 0) { 						\
 		if ((_r = ::cmd(fd, args)) < 0)			\
 			ERROR(#cmd"(fd, "#args")");		\
-		else if (/*zapit_debug*/true)					\
+		else if (zapit_debug)					\
 			INFO(#cmd"(fd, "#args")");		\
 	}							\
 	else { _r = fd; } 					\

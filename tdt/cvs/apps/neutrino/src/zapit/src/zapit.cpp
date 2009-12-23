@@ -63,6 +63,10 @@
 #include <audio_cs.h>
 #include <video_cs.h>
 
+#ifdef __sh__
+#include <driver/framebuffer.h>
+#endif
+
 /* globals */
 int zapit_ready;
 int abort_zapit;
@@ -1844,16 +1848,23 @@ in record mode we stop onle cam1, while cam continue to decrypt recording channe
 	if (playbackStopForced)
 		return -1;
 
+#ifdef __sh__
+	if (pcrDemux)
+		pcrDemux->Stop();
+	if (audioDemux)
+		audioDemux->Stop();
+#endif
 	if (videoDemux)
 		videoDemux->Stop();
+#ifndef __sh__
 	if (audioDemux)
 		audioDemux->Stop();
 	if (pcrDemux)
 		pcrDemux->Stop();
+#endif
 	if (audioDecoder) {
 		audioDecoder->Stop();
 	}
-
 	if (videoDecoder)
 		videoDecoder->Stop(standby ? false : true);
 
@@ -2016,6 +2027,9 @@ int zapit_main_thread(void *data)
 
 	videoDecoder = new cVideo(2, videoDemux->getChannel(), videoDemux->getBuffer());//PAL
 	videoDecoder->SetVideoSystem(video_mode);
+#ifdef __sh__
+	CFrameBuffer::getInstance()->resize(video_mode);
+#endif
 	//videoDecoder = new cVideo(video_mode, videoDemux->getChannel(), videoDemux->getBuffer());//PAL
 
 	audioDemux = new cDemux();

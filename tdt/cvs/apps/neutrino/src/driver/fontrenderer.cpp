@@ -432,6 +432,14 @@ void Font::RenderString(int x, int y, const int width, const char *text, const u
 			spread_by = 1;
 	}
 
+#ifdef __sh__
+//I dont want to blit every character on its own
+	int minX = 6000;
+	int minY = 6000;
+	int maxX = 0;
+	int maxY = 0;
+#endif
+
 	for (; *text; text++)
 	{
 		FTC_SBit glyph;
@@ -526,6 +534,23 @@ void Font::RenderString(int x, int y, const int width, const char *text, const u
 			d += stride;
 			#endif
 		}
+
+#ifdef __sh__
+
+		int srcX = x - glyph->left;
+		int srcY = y - glyph->top;
+		int srcW = w + spread_by;
+		int srcH = h;
+
+		if(w != 0 && h != 0) {
+			minX = srcX<minX?srcX:minX;
+			minY = srcY<minY?srcY:minY;
+
+			maxX = (srcX+srcW)>maxX?(srcX+srcW):maxX;
+			maxY = (srcY+srcH)>maxY?(srcY+srcH):maxY;
+		}
+#endif
+
 		x+=glyph->xadvance+1;
 		//x+=glyph->xadvance;
 		if(pen1>x)
@@ -533,6 +558,12 @@ void Font::RenderString(int x, int y, const int width, const char *text, const u
 		pen1=x;
 		lastindex=index;
 	}
+#ifdef __sh__
+if(minX != 6000 && minY != 6000) {
+	printf("%s %d %d %d %d (%d %d)\n", __FUNCTION__, minX, minY, maxX, maxY, maxX-minX, maxY-minY);
+	frameBuffer->blit(minX, minY, maxX-minX, maxY-minY);
+}
+#endif
 //printf("RenderStat: %d %d %d \n", renderer->cacheManager->num_nodes, renderer->cacheManager->num_bytes, renderer->cacheManager->max_bytes);
 	pthread_mutex_unlock( &renderer->render_mutex );
 }
