@@ -128,6 +128,23 @@ if [ ! -e /var/etc/.firstboot ]; then
       /usr/local/bin/neutrino
       rtv=$?
       echo "neutrino ended <- RTV: " $rtv
+      case "$rtv" in
+		0) echo "0"
+		   echo "Box restart"
+      		   reboot;;
+		1) echo "1"
+		   echo "SHUTDOWN"
+		   case "$var" in
+			0) fp_control -e
+                           umount -a;;
+  			1|3) fp_control -e #please check if this works for ufs910 14W
+                             echo "0" > /proc/progress
+		             showiframe -p /boot/bootlogo.mvi &;;
+		   esac;;           
+		*) echo "*"
+		   echo "Unexpected error"
+                   reboot;;
+      esac
    done 
 fi
 
