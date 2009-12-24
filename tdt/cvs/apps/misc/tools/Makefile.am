@@ -12,4 +12,5 @@ SUBDIRS = \
 	ustslave \
 	tffpctl \
 	tfd2mtd \
-	hotplug
+	hotplug \
+	libcoolstream

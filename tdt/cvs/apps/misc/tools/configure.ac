@@ -22,4 +22,5 @@ ustslave/Makefile
 tffpctl/Makefile
 tfd2mtd/Makefile
 hotplug/Makefile
+libcoolstream/Makefile
 ])
