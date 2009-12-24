@@ -24,7 +24,7 @@
 #include "mp4.h"
 
 
-
+pthread_mutex_t mutex;
 static const char FILENAME[] = "mp4.c";
 
 static Mp4Info_t*       Mp4Info      = NULL;
@@ -518,9 +518,9 @@ static void PlayH264Mp4File (Context_t* Context)
 	
 	off_t               AudioPosition;
 	//unsigned int        SampleSize              = 0;
-	static  unsigned long long  AudioPts                = 0ull;
-	static  int                 AudioChunk              = 0;
-	static  int                 AudioSample             = 0;
+	unsigned long long  AudioPts                = 0ull;
+	int                 AudioChunk              = 0;
+	int                 AudioSample             = 0;
 
 
 	if (Mp4Info->VideoTrack != -1)
@@ -544,6 +544,10 @@ static void PlayH264Mp4File (Context_t* Context)
 
 
 	while(Context->playback->isPlaying) {
+
+		//IF MOVIE IS PAUSE, WAIT 
+		while (Context->playback->isPaused) {printf("paused\n"); usleep(100000);}
+		pthread_mutex_lock(&mutex);
 		// Values are recalculated in case we have skipped
 		VideoChunk          = VideoTrack->ChunkToPlay;
 		AudioChunk          = AudioTrack->ChunkToPlay;
@@ -560,9 +564,6 @@ static void PlayH264Mp4File (Context_t* Context)
 					for (AudioSample=AudioTrack->SampleToPlay; AudioSample<(AudioTrack->Chunk[AudioChunk].FirstSample+AudioTrack->Chunk[AudioChunk].SampleCount); AudioSample++) {
 			
 						if (!Context->playback->isPlaying)return;
-					
-						//IF MOVIE IS PAUSE, WAIT 
-						while (Context->playback->isPaused) {printf("paused\n"); usleep(100000);}
 			
 						SampleSize = AudioTrack->Samples[AudioSample].Length;
 						AudioPosition       = AudioTrack->Samples[AudioSample].Offset;
@@ -591,9 +592,6 @@ static void PlayH264Mp4File (Context_t* Context)
 				if (VideoChunk < VideoTrack->ChunkCount) {
 					for (VideoSample=VideoTrack->SampleToPlay; VideoSample<(VideoTrack->Chunk[VideoChunk].FirstSample+VideoTrack->Chunk[VideoChunk].SampleCount); VideoSample++) {
 						if (!Context->playback->isPlaying)return;
-
-						//IF MOVIE IS PAUSE, WAIT 
-						while (Context->playback->isPaused) {printf("paused\n"); usleep(100000);}
 	
 						SampleSize = VideoTrack->Samples[VideoSample].Length;
 						VideoPosition   = VideoTrack->Samples[VideoSample].Offset;
@@ -609,10 +607,11 @@ static void PlayH264Mp4File (Context_t* Context)
             				}
 					VideoTrack->SampleToPlay    = VideoSample;
 					VideoChunk++;
-					VideoTrack->ChunkToPlay     = VideoChunk;		
+					VideoTrack->ChunkToPlay     = VideoChunk;
 				}
 			}
 		}
+	pthread_mutex_unlock(&mutex);
 	}
 }
 /*}}}  */
@@ -635,6 +634,7 @@ static int StartMp4 (Context_t* context)
 	int Status = 0;
     //Context->StartOffset        = 0;
 	printf(" start %X\n", myftello(context,Mp4File));
+	pthread_mutex_init(&mutex,0);
     Mp4Info     = (Mp4Info_t*)malloc (sizeof(Mp4Info_t));
     if (Mp4Info == NULL)
     {
@@ -1266,6 +1266,83 @@ static PlayerStatus_t SeekMp4 (Context_t* context, bool Forward)
 }
 /*}}}  */
 
+void seek_mp4(Context_t  *Context,float rel_seek_secs,float audio_delay,int flags){
+	Mp4Track_t*         VideoTrack              = NULL;
+	unsigned long long  targetPts                = 0ull;
+	unsigned long long  VideoPts                = 0ull;
+	unsigned int        SampleSize              = 0;
+	int                 VideoChunk              = 0;
+	int                 VideoSample             = 0;
+
+	Mp4Track_t*         AudioTrack              = NULL;
+	//Context_t*    Context                 = (Context_t*)ThreadParam;
+	// make shure the playthread has enuogh time to go in pause mode
+	// TODO: use a mutex
+	pthread_mutex_lock(&mutex);
+	printf("SeekMP4: %f sec\n",rel_seek_secs);
+	unsigned long long  AudioPts                = 0ull;
+	int                 AudioChunk              = 0;
+	int                 AudioSample             = 0;
+
+
+	if (Mp4Info->VideoTrack != -1)
+	{
+		VideoTrack                      = &Mp4Info->Track[Mp4Info->VideoTrack];
+		printf("SeekMP4: pos: %d \n",VideoTrack->Samples[VideoTrack->SampleToPlay].Pts);
+		targetPts=VideoTrack->Samples[VideoTrack->SampleToPlay].Pts+(rel_seek_secs*90000);
+		printf("SeekMP4: target: %d \n",targetPts);
+		VideoTrack->ChunkToPlay         = 0;
+		VideoTrack->SampleToPlay        = 0;
+		VideoChunk                      = 1;    /* Force to be different from ChunkToPlay so reload pts */
+		VideoTrack->Pts                 = 0ull;
+	}
+
+	if ((Mp4Info->AudioTrack != -1) && (AudioTrack == NULL))
+	{
+		// printf ("%s: Initialising AudioTrack\n", __FUNCTION__);
+		AudioTrack                      = &Mp4Info->Track[Mp4Info->AudioTrack];
+		AudioTrack->ChunkToPlay         = 0;
+		AudioTrack->SampleToPlay        = 0;
+		AudioChunk                      = 1;    /* Force to be different from ChunkToPlay so reload pts */
+		//AudioTrack->Pts                 = FindHeader (Context);
+	}
+
+	VideoChunk          = VideoTrack->ChunkToPlay;
+	AudioChunk          = AudioTrack->ChunkToPlay;
+	
+	if (Context->playback->isVideo) {
+		while(VideoPts<targetPts)
+		if (VideoChunk < VideoTrack->ChunkCount) {
+			for (VideoSample=VideoTrack->SampleToPlay; VideoSample<(VideoTrack->Chunk[VideoChunk].FirstSample+VideoTrack->Chunk[VideoChunk].SampleCount); VideoSample++) {
+				SampleSize = VideoTrack->Samples[VideoSample].Length;
+				VideoPts = VideoTrack->Samples[VideoSample].Pts;
+			}
+			VideoTrack->SampleToPlay    = VideoSample;
+			VideoChunk++;
+			VideoTrack->ChunkToPlay     = VideoChunk;		
+		}else break;
+		printf("videoPTS: %d ",VideoPts);
+		printf("chunk:%d ",VideoChunk);
+		printf("sample:%d\n",VideoSample);
+	}
+	if (Context->playback->isAudio) {
+		while(AudioPts<targetPts)
+		if (AudioChunk < AudioTrack->ChunkCount) {
+			for (AudioSample=AudioTrack->SampleToPlay; AudioSample<(AudioTrack->Chunk[AudioChunk].FirstSample+AudioTrack->Chunk[AudioChunk].SampleCount); AudioSample++) {
+				SampleSize = AudioTrack->Samples[AudioSample].Length;
+				AudioPts = AudioTrack->Samples[AudioSample].Pts;
+			}
+			AudioTrack->SampleToPlay    = AudioSample;
+			AudioChunk++;
+			AudioTrack->ChunkToPlay     = AudioChunk;
+		}else break;
+		printf("audioPTS: %d ",AudioPts);
+		printf("chunk:%d ",AudioChunk);
+		printf("sample:%d\n",AudioSample);
+	}
+	pthread_mutex_unlock(&mutex);
+}
+
 static double Mp4GetLength() {
 
     if (Mp4Info->VideoTrack != -1)
@@ -1276,7 +1353,7 @@ static double Mp4GetLength() {
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	//printf("%s::%s\n", FILENAME, __FUNCTION__);
 
 	switch(command) {
 		case CONTAINER_INIT: {
@@ -1290,6 +1367,10 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 		}
 		case CONTAINER_STOP: {
 			StopMp4(context);
+			break;
+		}
+		case CONTAINER_SEEK: {
+			seek_mp4 (context, (float)*((float*)argument), 0.0, 0);
 			break;
 		}
 		case CONTAINER_LENGTH: {
