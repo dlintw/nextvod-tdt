@@ -48,7 +48,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare: Patches/enigma2-nightly.diff
 	git pull $(appsdir)/enigma2-nightly master;\
 	[ -d "$(appsdir)/enigma2-nightly" ] || \
 	git clone git://git.opendreambox.org/git/enigma2.git $(appsdir)/enigma2-nightly;\
-	[ "$$REVISION" == "" ] || cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd -
+	[ "$$REVISION" == "" ] || cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd "$(buildprefix)"
 
 	cd $(appsdir)/enigma2-nightly && patch -p1 <../../cdk/$(word 1,$^)
 	touch $@
