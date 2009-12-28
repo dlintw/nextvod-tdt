@@ -1,0 +1,62 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: <o.endriss@gmx.de>\n"
+"POT-Creation-Date: 2009-07-04 12:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: remote.c:38
+msgid "Remote control"
+msgstr ""
+
+#: remote.c:217 remote.c:761
+#, c-format
+msgid "%s: %s"
+msgstr ""
+
+#: remote.c:239
+msgid "Error uploading keymap"
+msgstr ""
+
+#: remote.c:320
+msgid "Press any key to use pre-loaded keymap"
+msgstr ""
+
+#: remote.c:325
+msgid "User-supplied keymap will be used"
+msgstr ""
+
+#: remote.c:331
+msgid "Remote control test - press and hold down any key"
+msgstr ""
+
+#: remote.c:350
+msgid "RC5 protocol detected"
+msgstr ""
+
+#: remote.c:374
+msgid "RC5 protocol detected (inverted signal)"
+msgstr ""
+
+#: remote.c:385
+msgid "RCMM protocol detected"
+msgstr ""
+
+#: remote.c:396
+msgid "RCMM protocol detected (inverted signal)"
+msgstr ""
+
+#: remote.c:404
+msgid "No remote control detected"
+msgstr ""

@@ -1,0 +1,51 @@
+remote.o: remote.c ../../../include/vdr/plugin.h \
+  ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+  ../../../include/vdr/menuitems.h ../../../include/vdr/osdbase.h \
+  ../../../include/vdr/config.h ../../../include/vdr/font.h \
+  ../../../include/vdr/osd.h ../../../include/vdr/skins.h \
+  ../../../include/vdr/channels.h ../../../include/vdr/sources.h \
+  ../../../include/vdr/thread.h ../../../include/vdr/epg.h \
+  ../../../include/vdr/keys.h ../../../include/vdr/recording.h \
+  ../../../include/vdr/timers.h ../../../include/vdr/themes.h \
+  ../../../include/vdr/lirc.h ../../../include/vdr/remote.h i18n.h \
+  ../../../include/vdr/i18n.h remote.h ../../../include/vdr/remote.h \
+  ../../../include/vdr/thread.h remotetcp.h ../../../include/vdr/svdrp.h \
+  ttystatus.h ../../../include/vdr/status.h ../../../include/vdr/device.h \
+  ../../../include/vdr/ci.h ../../../include/vdr/dvbsubtitle.h \
+  ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+  ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+  ../../../include/vdr/ringbuffer.h ../../../include/vdr/sdt.h \
+  ../../../include/vdr/sections.h ../../../include/vdr/spu.h \
+  ../../../include/vdr/player.h
+ttystatus.o: ttystatus.c ../../../include/vdr/plugin.h \
+  ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+  ../../../include/vdr/menuitems.h ../../../include/vdr/osdbase.h \
+  ../../../include/vdr/config.h ../../../include/vdr/font.h \
+  ../../../include/vdr/osd.h ../../../include/vdr/skins.h \
+  ../../../include/vdr/channels.h ../../../include/vdr/sources.h \
+  ../../../include/vdr/thread.h ../../../include/vdr/epg.h \
+  ../../../include/vdr/keys.h ../../../include/vdr/recording.h \
+  ../../../include/vdr/timers.h ../../../include/vdr/themes.h \
+  ../../../include/vdr/status.h ../../../include/vdr/device.h \
+  ../../../include/vdr/ci.h ../../../include/vdr/dvbsubtitle.h \
+  ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+  ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+  ../../../include/vdr/ringbuffer.h ../../../include/vdr/sdt.h \
+  ../../../include/vdr/sections.h ../../../include/vdr/spu.h \
+  ../../../include/vdr/player.h ttystatus.h
+remotetcp.o: remotetcp.c remote.h ../../../include/vdr/remote.h \
+  ../../../include/vdr/keys.h ../../../include/vdr/config.h \
+  ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+  ../../../include/vdr/font.h ../../../include/vdr/thread.h \
+  ../../../include/vdr/thread.h remotetcp.h ../../../include/vdr/svdrp.h \
+  ../../../include/vdr/recording.h ../../../include/vdr/channels.h \
+  ../../../include/vdr/sources.h ../../../include/vdr/epg.h \
+  ../../../include/vdr/timers.h ttystatus.h ../../../include/vdr/status.h \
+  ../../../include/vdr/device.h ../../../include/vdr/ci.h \
+  ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/osd.h \
+  ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+  ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+  ../../../include/vdr/ringbuffer.h ../../../include/vdr/sdt.h \
+  ../../../include/vdr/sections.h ../../../include/vdr/spu.h \
+  ../../../include/vdr/player.h ../../../include/vdr/osdbase.h \
+  ../../../include/vdr/skins.h ../../../include/vdr/themes.h
