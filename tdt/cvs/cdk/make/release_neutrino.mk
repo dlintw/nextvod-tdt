@@ -557,22 +557,9 @@ endif
 	rm -f $(prefix)/release_neutrino/usr/lib/*.la
 	find $(prefix)/release_neutrino/usr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#######################################################################################
+########  Webif symlinked to correct path  ############################################
+	mkdir -p $(prefix)/release_neutrino/share/tuxbox
+	( cd $(prefix)/release_neutrino/share/tuxbox && ln -s /usr/local/share/neutrino )
 #######################################################################################
 #######################################################################################
 #######################################################################################
