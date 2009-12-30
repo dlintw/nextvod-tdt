@@ -541,7 +541,9 @@ endif
 	rm $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y/{Y_Baselib.js.gz,Y_VLC.js.gz}
 
 
-#######################################################################################
+####### ImageInfo added by pinky1981 ##################################################
+	echo "duckbox-rev#: " > $(prefix)/release_neutrino/etc/imageinfo
+	git log --pretty=format:'' | wc -l >> $(prefix)/release_neutrino/etc/imageinfo
 #######################################################################################
 
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/lib
