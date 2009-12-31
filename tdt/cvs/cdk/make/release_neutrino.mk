@@ -482,7 +482,7 @@ endif
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/tuxtxt
 
 
-######## WebIf conf folder creating by pinky1981 ######################################
+#######################################################################################
 	mkdir -p $(prefix)/release_neutrino/tuxbox/config
 #######################################################################################
 #######################################################################################
@@ -541,7 +541,7 @@ endif
 	rm $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y/{Y_Baselib.js.gz,Y_VLC.js.gz}
 
 
-####### ImageInfo added by pinky1981 ##################################################
+#######################################################################################
 	echo "duckbox-rev#: " > $(prefix)/release_neutrino/etc/imageinfo
 	git log --pretty=format:'' | wc -l >> $(prefix)/release_neutrino/etc/imageinfo
 #######################################################################################
