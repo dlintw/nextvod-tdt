@@ -469,11 +469,13 @@ endif
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/bin
 	cp -p $(targetprefix)/usr/sbin/vsftpd $(prefix)/release_neutrino/usr/bin/
 if ENABLE_TF7700
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/ 
+#	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/ 
+	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 endif
 
 if ENABLE_UFS910
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+#	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 endif
 
 	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release_neutrino/usr/bin/
