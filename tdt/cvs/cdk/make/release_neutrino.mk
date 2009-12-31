@@ -484,6 +484,9 @@ endif
 
 #######################################################################################
 	mkdir -p $(prefix)/release_neutrino/tuxbox/config
+	mkdir -p $(prefix)/release_neutrino/var/tuxbox/config
+	mkdir -p $(prefix)/release_neutrino/share/tuxbox
+	( cd $(prefix)/release_neutrino/share/tuxbox && ln -s /usr/local/share/neutrino )
 #######################################################################################
 #######################################################################################
 #######################################################################################
