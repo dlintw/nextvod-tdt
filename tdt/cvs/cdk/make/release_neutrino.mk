@@ -533,13 +533,15 @@ endif
 	cp -aR $(targetprefix)/usr/local/share/neutrino $(prefix)/release_neutrino/usr/local/share/
 #	TODO: HACK
 	cp -aR $(targetprefix)/$(targetprefix)/usr/local/share/neutrino/* $(prefix)/release_neutrino/usr/local/share/neutrino
-######## changed by pinky 1981 ######################################################################
+#######################################################################################
 #	cp -aR $(targetprefix)/usr/local/share/fonts $(prefix)/release_neutrino/usr/local/share/
 	mkdir -p $(prefix)/release_neutrino/usr/local/share/fonts
 	cp -aR $(targetprefix)/usr/local/share/fonts/micron.ttf $(prefix)/release_neutrino/usr/local/share/fonts/neutrino.ttf
 	cp $(appsdir)/neutrino/src/nhttpd/web/{Y_Baselib.js,Y_VLC.js} $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y/
 	rm $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y/{Y_Baselib.js.gz,Y_VLC.js.gz}
-
+#######################################################################################
+	cp $(buildprefix)/root/bin/gotosleep $(prefix)/release_neutrino/bin/
+#######################################################################################
 
 #######################################################################################
 	echo "duckbox-rev#: " > $(prefix)/release_neutrino/etc/imageinfo
