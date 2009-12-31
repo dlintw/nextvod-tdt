@@ -571,6 +571,10 @@ endif
 	rm -f $(prefix)/release_neutrino/usr/lib/*.la
 	find $(prefix)/release_neutrino/usr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
 
+######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/neutrino #############
+	cp -RP $(buildprefix)/own_build/neutrino/* $(prefix)/release_neutrino/
+######################################################################################
+
 if STM22
 	cp $(kernelprefix)/linux/arch/sh/boot/uImage $(prefix)/release_neutrino/boot/
 else
