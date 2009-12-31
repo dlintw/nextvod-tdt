@@ -547,7 +547,7 @@ endif
 #######################################################################################
 	cp $(buildprefix)/root/bin/gotosleep $(prefix)/release_neutrino/bin/
 #######################################################################################
-
+	cp -p $(buildprefix)/root/bin/stfbshot $(prefix)/release_neutrino/bin/
 #######################################################################################
 	echo "duckbox-rev#: " > $(prefix)/release_neutrino/etc/imageinfo
 	git log --pretty=format:'' | wc -l >> $(prefix)/release_neutrino/etc/imageinfo
