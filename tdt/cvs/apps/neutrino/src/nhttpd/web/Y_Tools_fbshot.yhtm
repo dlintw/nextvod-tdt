@@ -11,27 +11,10 @@ function do_snapshot()
 function do_snapshot2()
 {
 	var _shot = document.getElementById("shot");
-	var filename = id("file").value;
-	dbox_exec_command("{=if-file-exists:/var/bin/fbshot~/var/bin/fbshot~fbshot=} -q /tmp/"+filename+".png");
+	dbox_exec_command("/bin/fbshot bmp /tmp");
 	show_waitbox(false);
 	show_obj("shot", true);
-	_shot.src = "/tmp/"+filename+".png?"+Math.random();
-}
-function do_dboxshot()
-{
-	show_waitbox(true);
-	window.setTimeout("do_dboxshot2()", 500);
-}
-function do_dboxshot2()
-{
-	var _shot = document.getElementById("shot");
-	var filename = id("file").value;
-	var res = dbox_exec_command("{=if-file-exists:/var/bin/dboxshot~/var/bin/dboxshot~dboxshot=} /tmp/"+filename+".bmp");
-	if(res != "")
-		dbox_exec_command("{=if-file-exists:/var/bin/dboxshot~/var/bin/dboxshot~dboxshot=} /tmp/"+filename+".bmp");
-	show_waitbox(false);
-	show_obj("shot", true);
-	_shot.src = "/tmp/"+filename+".bmp?"+Math.random();
+	_shot.src = "/tmp/dump.bmp";
 }
 function do_clearshot()
 {
@@ -40,8 +23,8 @@ function do_clearshot()
 function do_clearshot2()
 {
 	var _shot = document.getElementById("shot");
-	dbox_exec_command("rm /tmp/*.png");
 	dbox_exec_command("rm /tmp/*.bmp");
+	dbox_exec_command("rm /tmp/*.png");
 }
 //]]>
 </script>
@@ -53,12 +36,8 @@ function do_clearshot2()
 	{=var-set:help_url=Neutrino:yWeb:BoxControl#OSD_Screenshot=}{=var-set:menu=OSD Screenshot=}{=include-block:Y_Blocks.txt;work_menu=}</div></div>
 	<div class="work_box_body">
 		<button name="snapshot" onclick="do_snapshot()">Snapshot</button>
-		{=var-set:dboxshot={=if-file-exists:/bin/dboxshot~true~{=if-file-exists:/var/bin/dboxshot~true~false=}=}=}
-		{=if-equal:{=var-get:dboxshot=}~true~
-		<button name="dboxshot" onclick="do_dboxshot()">dboxshot</button>
-		=}
 		<button name="clearshot" onclick="do_clearshot()">Delete Screenshots</button>
-		&nbsp;Filename:<input type="text" value="a" id="file" size="16"/>
+		&nbsp;Filename:<input type="text" value="dump.bmp" id="file" size="16"/>
 		<br/>
 		<img id="shot" src="" style="visibility:hidden;"/>
 	</div>
