@@ -28,7 +28,9 @@ typedef enum
 } AUDIO_FORMAT;
 
 #ifndef CS_AUDIO_PDATA
-#define CS_AUDIO_PDATA void
+typedef struct {
+	int m_fd;
+} CS_AUDIO_PDATA;
 #endif
 
 #include "cs_types.h"
@@ -84,7 +86,7 @@ class cAudio
 		int Stop(void);
 		bool Pause(bool Pcm = true);
 		bool Resume(bool Pcm = true);
-		void SetStreamType(AUDIO_FORMAT type) { StreamType = type; };
+		void SetStreamType(AUDIO_FORMAT type);
 		AUDIO_FORMAT GetStreamType(void) { return StreamType; }
 		bool ReceivedAudioDelay(void) { return receivedDelay; }
 		void SetReceivedAudioDelay(bool set = false) { receivedDelay = set; }
