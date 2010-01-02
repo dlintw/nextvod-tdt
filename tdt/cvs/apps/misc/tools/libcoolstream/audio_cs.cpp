@@ -19,6 +19,11 @@ cAudio * audioDecoder = NULL;
 #define AUDIO_BYPASS_ON 0
 #define AUDIO_BYPASS_OFF 1
 
+// this are taken from e2, the player converts them to falid values
+#define AUDIO_STREAMTYPE_AC3 0; //AUDIO_ENCODING_AC3
+#define AUDIO_STREAMTYPE_MPEG 1; //AUDIO_ENCODING_MPEG2
+#define AUDIO_STREAMTYPE_DTS 2; //AUDIO_ENCODING_DTS
+
 //EVIL END
 
 
@@ -159,7 +164,8 @@ int cAudio::disableBypass(void)
 	return 0;
 }
 
-/* volume, min = 0, max = 255 */
+/* volume, min = 0, max = 100 */
+/* e2 sets 0 to 63 */
 int cAudio::setVolume(unsigned int left, unsigned int right)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
@@ -167,7 +173,7 @@ int cAudio::setVolume(unsigned int left, unsigned int right)
 	volume = left;
 
 	char sVolume[4];
-	sprintf(sVolume, "%d", volume);
+	sprintf(sVolume, "%d", (int)(63-(int)(volume * 0.63)));
 
 	int fd = open("/proc/stb/avs/0/volume", O_RDWR);
 	write(fd, sVolume, strlen(sVolume));
@@ -217,6 +223,41 @@ bool cAudio::Resume(bool Pcm)
 	
 	return true;
 }
+
+void cAudio::SetStreamType(AUDIO_FORMAT type)
+{
+	char *aAUDIOFORMAT[] = {
+		"AUDIO_FMT_AUTO",
+		"AUDIO_FMT_MPEG",
+		"AUDIO_FMT_MP3",
+		"AUDIO_FMT_DOLBY_DIGITAL",
+		"AUDIO_FMT_AAC",
+		"AUDIO_FMT_AAC_PLUS",
+		"AUDIO_FMT_DD_PLUS",
+		"AUDIO_FMT_DTS",
+		"AUDIO_FMT_AVS",
+		"AUDIO_FMT_MLP",
+		"AUDIO_FMT_WMA",
+	};
+
+	printf("%s:%s - type=%s\n", FILENAME, __FUNCTION__, aAUDIOFORMAT[type]);
+
+	int bypass = AUDIO_STREAMTYPE_MPEG;
+
+	switch(type)
+	{
+	case AUDIO_FMT_DOLBY_DIGITAL: 	bypass = AUDIO_STREAMTYPE_AC3;  break;
+	case AUDIO_FMT_DTS: 		bypass = AUDIO_STREAMTYPE_DTS;  break;
+	case AUDIO_FMT_MPEG: default:	bypass = AUDIO_STREAMTYPE_MPEG; break;
+	}
+
+	// Normaly the encoding should be set using AUDIO_SET_ENCODING
+	// But as we implemented the behavior to bypass (cause of e2) this is correct here
+	if (ioctl(privateData->m_fd, AUDIO_SET_BYPASS_MODE, bypass) < 0)
+		printf("AUDIO_SET_BYPASS_MODE(%m)");
+
+	StreamType = type;
+};
 
 void cAudio::SetSyncMode(AVSYNC_TYPE Mode)
 {

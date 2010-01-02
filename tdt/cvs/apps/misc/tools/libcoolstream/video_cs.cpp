@@ -9,6 +9,8 @@
 
 #include "video_cs.h"
 #include <linux/dvb/video.h>
+#include <linux/fb.h>
+#include <linux/stmfb.h>
 
 static const char * FILENAME = "video_cs.cpp";
 
@@ -273,6 +275,48 @@ void cVideo::StopPicture()
 void cVideo::Standby(unsigned int bOn)
 {
 	printf("%s:%s - bOn=%d\n", FILENAME, __FUNCTION__, bOn);
+
+	int fd_avs = open("/proc/stb/avs/0/standby", O_RDWR);
+	int fd_hdmi  = open("/dev/fb0",   O_RDWR);
+
+	struct stmfbio_output_configuration outputConfig = {0};
+	outputConfig.outputid = 1;
+	if(ioctl(fd_hdmi, STMFBIO_GET_OUTPUT_CONFIG, &outputConfig)<0)
+		printf("Getting current output configuration failed\n");
+  
+	outputConfig.caps = 0;
+	outputConfig.activate = STMFBIO_ACTIVATE_IMMEDIATE;
+	outputConfig.analogue_config = 0;
+
+	outputConfig.caps |= STMFBIO_OUTPUT_CAPS_HDMI_CONFIG;
+
+	if (bOn) {
+		outputConfig.hdmi_config |= STMFBIO_OUTPUT_HDMI_DISABLED;
+	} else {
+		outputConfig.hdmi_config &= ~STMFBIO_OUTPUT_HDMI_DISABLED;
+	}
+
+	if(outputConfig.caps != STMFBIO_OUTPUT_CAPS_NONE)
+	{
+		if(ioctl(fd_hdmi, STMFBIO_SET_OUTPUT_CONFIG, &outputConfig)<0)
+			printf("setting output configuration failed\n");
+	}
+
+	int fd_avs_input = open("/proc/stb/avs/0/input", O_RDWR);
+
+	if (bOn)
+	{
+		write(fd_avs, "on", 2);
+		write(fd_avs_input, "encoder", 7);
+	}
+	else
+	{
+		write(fd_avs, "off", 3);
+		write(fd_avs_input, "scart", 5);
+	}
+	close(fd_avs_input);
+	close(fd_avs);
+	close(fd_hdmi);
 }
 
 void cVideo::Pig(int x, int y, int w, int h, int osd_w, int osd_h)
@@ -300,6 +344,16 @@ void cVideo::SetTVAV(bool onoff)
 void cVideo::SetWideScreen(bool onoff)
 {
 	printf("%s:%s - onoff=%s\n", FILENAME, __FUNCTION__, onoff?"true":"false");
+
+	const char *wss_auto_off="auto(4:3_off)";
+	const char *wss_auto="auto";
+
+	int fd = open("/proc/stb/denc/0/wss", O_RDWR);
+	if(onoff)
+		write(fd, wss_auto, strlen(wss_auto));
+	else
+		write(fd, wss_auto_off, strlen(wss_auto_off));
+	close(fd);
 }
 
 //9

@@ -86,7 +86,7 @@ class cAudio
 		int Stop(void);
 		bool Pause(bool Pcm = true);
 		bool Resume(bool Pcm = true);
-		void SetStreamType(AUDIO_FORMAT type) { StreamType = type; };
+		void SetStreamType(AUDIO_FORMAT type);
 		AUDIO_FORMAT GetStreamType(void) { return StreamType; }
 		bool ReceivedAudioDelay(void) { return receivedDelay; }
 		void SetReceivedAudioDelay(bool set = false) { receivedDelay = set; }
