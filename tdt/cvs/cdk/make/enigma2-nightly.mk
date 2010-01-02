@@ -26,9 +26,10 @@ $(appsdir)/enigma2-nightly/config.status: bootstrap freetype expat fontconfig li
 			$(if $(TF7700),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_TF7700 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-tf7700) \
 			$(if $(FLASH_UFS910),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FLASH_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
 
-$(DEPDIR)/enigma2-nightly.do_prepare: Patches/enigma2-nightly.diff
+$(DEPDIR)/enigma2-nightly.do_prepare:
 
 	REVISION=""; \
+	DIFF="0"; \
 	rm -rf $(appsdir)/enigma2-nightly; \
 	clear; \
 	echo "Choose between the following revisions:"; \
@@ -40,17 +41,17 @@ $(DEPDIR)/enigma2-nightly.do_prepare: Patches/enigma2-nightly.diff
 	echo "2a) Mon, 21 Dec 2009 15:04 - bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
-	[ "$$REPLY" == "1a" ] && REVISION="2.6.0"; \
-	[ "$$REPLY" == "1b" ] && REVISION="2.6.1"; \
-	[ "$$REPLY" == "2a" ] && REVISION="bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
+	[ "$$REPLY" == "0" ] && DIFF="1"; \
+	[ "$$REPLY" == "1a" ] && DIFF="0"; REVISION="2.6.0"; \
+	[ "$$REPLY" == "1b" ] && DIFF="0"; REVISION="2.6.1"; \
+	[ "$$REPLY" == "2a" ] && DIFF="0"; REVISION="bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
 	echo "Revision: " $$REVISION; \
 	[ -d "$(appsdir)/enigma2-nightly" ] && \
 	git pull $(appsdir)/enigma2-nightly master;\
 	[ -d "$(appsdir)/enigma2-nightly" ] || \
-	git clone git://git.opendreambox.org/git/enigma2.git $(appsdir)/enigma2-nightly;\
-	[ "$$REVISION" == "" ] || cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd "$(buildprefix)"
-
-	cd $(appsdir)/enigma2-nightly && patch -p1 <../../cdk/$(word 1,$^)
+	git clone git://git.opendreambox.org/git/enigma2.git $(appsdir)/enigma2-nightly; \
+	[ "$$REVISION" == "" ] || (cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd "$(buildprefix)"); \
+	cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-nightly.$$DIFF.diff"
 	touch $@
 
 $(DEPDIR)/enigma2-nightly.do_compile: $(appsdir)/enigma2-nightly/config.status
