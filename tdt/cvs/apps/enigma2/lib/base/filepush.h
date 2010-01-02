@@ -54,7 +54,12 @@ protected:
 private:
 	iFilePushScatterGather *m_sg;
 	int m_stop;
+#if defined(__sh__)
+	//nit2005, align buffer to standard blocksize of 188
+	unsigned char m_buffer[348*188];
+#else
 	unsigned char m_buffer[65536];
+#endif
 	int m_buf_start, m_buf_end, m_filter_end;
 	int m_fd_dest;
 	int m_send_pvr_commit;
