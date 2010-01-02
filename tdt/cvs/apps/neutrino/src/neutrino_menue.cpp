@@ -330,6 +330,9 @@ void CVideoSettings::nextMode(void)
 
 	g_settings.video_Mode = VIDEOMENU_VIDEOMODE_OPTIONS[curmode].key;
 	videoDecoder->SetVideoSystem(g_settings.video_Mode);
+#ifdef __sh__
+		frameBuffer->resize(g_settings.video_Mode);
+#endif
 	//videoDecoder->SetVideoMode((analog_mode_t) g_settings.analog_mode);//FIXME
 	ShowHintUTF(LOCALE_VIDEOMENU_VIDEOMODE, text, 450, 2);
 }
@@ -409,12 +412,18 @@ bool CVideoSettings::changeNotify(const neutrino_locale_t OptionName, void *)
 	else if (ARE_LOCALES_EQUAL(OptionName, LOCALE_VIDEOMENU_VIDEOMODE))
 	{
 		videoDecoder->SetVideoSystem(g_settings.video_Mode);
+#ifdef __sh__
+		frameBuffer->resize(g_settings.video_Mode);
+#endif
 		//videoDecoder->SetVideoMode((analog_mode_t) g_settings.analog_mode);//FIXME
 		if(prev_video_mode != g_settings.video_Mode) {
 			frameBuffer->paintBackground();
 			if(ShowMsgUTF(LOCALE_MESSAGEBOX_INFO, g_Locale->getText(LOCALE_VIDEOMODE_OK), CMessageBox::mbrNo, CMessageBox::mbYes | CMessageBox::mbNo, "info.raw") != CMessageBox::mbrYes) {
 				g_settings.video_Mode = prev_video_mode;
 				videoDecoder->SetVideoSystem(g_settings.video_Mode);
+#ifdef __sh__
+		frameBuffer->resize(g_settings.video_Mode);
+#endif
 				//videoDecoder->SetVideoMode((analog_mode_t) g_settings.analog_mode);//FIXME
 			} else
 				prev_video_mode = g_settings.video_Mode;
@@ -696,7 +705,7 @@ void CNeutrinoApp::InitMainMenu(CMenuWidget &mainMenu, CMenuWidget &mainSettings
         mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_REBOOT, true, NULL, this, "reboot",
 					CRCInput::convertDigitToKey(shortcut++)));
 
-	//mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_SHUTDOWN, true, NULL, this, "shutdown", CRCInput::RC_standby, "power.raw"));//FIXME
+	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_SHUTDOWN, true, NULL, this, "shutdown", CRCInput::RC_standby, "power.raw"));//FIXME
 
 	mainMenu.addItem( new CMenuSeparator(CMenuSeparator::LINE) );
 	mainMenu.addItem( new CMenuForwarder(LOCALE_DBOXINFO, true, NULL, new CDBoxInfoWidget, NULL, CRCInput::convertDigitToKey(shortcut++)));

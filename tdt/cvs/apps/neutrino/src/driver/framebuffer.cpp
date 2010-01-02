@@ -45,6 +45,14 @@
 #include <global.h>
 //#include <cnxtfb.h>
 #include <video_cs.h>
+
+#ifdef __sh__
+#include <linux/stmfb.h> 
+
+#define DEFAULT_XRES 1280
+#define DEFAULT_YRES 720
+#endif 
+
 extern cVideo * videoDecoder;
 
 extern CPictureViewer * g_PicViewer;
@@ -153,6 +161,9 @@ CFrameBuffer* CFrameBuffer::getInstance()
 
 void CFrameBuffer::init(const char * const fbDevice)
 {
+#ifdef __sh__
+printf("%s\n", __FUNCTION__);
+#endif
 	fd = open(fbDevice, O_RDWR);
 	if(!fd) fd = open(fbDevice, O_RDWR);
 
@@ -182,6 +193,13 @@ void CFrameBuffer::init(const char * const fbDevice)
 		perror("mmap");
 		goto nolfb;
 	}
+
+#if defined(__sh__) 
+printf("fb: 0x%08x\n", lfb);
+	//we use 2MB at the end of the buffer, the rest does the blitter 
+	lfb += 1920*1080;   
+printf("fb: 0x%08x\n", lfb);
+#endif 
 
 #ifdef USE_NEVIS_GXA
 	/* Open 7dev/mem for HW-register access */
@@ -352,6 +370,9 @@ t_fb_var_screeninfo *CFrameBuffer::getScreenInfo()
 
 int CFrameBuffer::setMode(unsigned int nxRes, unsigned int nyRes, unsigned int nbpp)
 {
+#ifdef __sh__
+printf("%s\n", __FUNCTION__);
+#endif
 	if (!available&&!active)
 		return -1;
 
@@ -380,9 +401,16 @@ int CFrameBuffer::setMode(unsigned int nxRes, unsigned int nyRes, unsigned int n
 	}
 #endif
 
+#ifdef __sh__
+	xRes = DEFAULT_XRES;
+	yRes = DEFAULT_YRES;
+	bpp  = 32;
+	stride = xRes * 4;
+#else
 	xRes = screeninfo.xres;
 	yRes = screeninfo.yres;
 	bpp  = screeninfo.bits_per_pixel;
+
 	fb_fix_screeninfo fix;
 
 	if (ioctl(fd, FBIOGET_FSCREENINFO, &fix)<0) {
@@ -391,12 +419,15 @@ int CFrameBuffer::setMode(unsigned int nxRes, unsigned int nyRes, unsigned int n
 	}
 
 	stride = fix.line_length;
+
+#endif
 printf("FB: %dx%dx%d line lenght %d\n", xRes, yRes, bpp, stride);
 
 	memset(getFrameBufferPointer(), 0, stride * yRes);
         if (ioctl(fd, FBIOBLANK, FB_BLANK_UNBLANK) < 0) {
                 printf("screen unblanking failed\n");
         }
+
 	return 0;
 }
 
@@ -699,6 +730,10 @@ void CFrameBuffer::paintBoxRel(const int x, const int y, const int dx, const int
     }
 #endif
 #endif /* USE_NEVIS_GXA */
+#ifdef __sh__
+//printf("%s - %d %d %d %d - %d\n", __FUNCTION__, x, y, dx, dy, type);
+    blit(x, y, dx, dy);
+#endif
 }
 
 void CFrameBuffer::paintVLine(int x, int ya, int yb, const fb_pixel_t col)
@@ -724,6 +759,10 @@ void CFrameBuffer::paintVLine(int x, int ya, int yb, const fb_pixel_t col)
 		pos += stride;
 	}
 #endif	/* USE_NEVIS_GXA */
+#ifdef __sh__
+//printf("%s\n", __FUNCTION__);
+    blit(x, ya, 1, dy);
+#endif
 }
 
 void CFrameBuffer::paintVLineRel(int x, int y, int dy, const fb_pixel_t col)
@@ -759,6 +798,10 @@ void CFrameBuffer::paintVLineRel(int x, int y, int dy, const fb_pixel_t col)
 	}
 #endif
 #endif /* USE_NEVIS_GXA */
+#ifdef __sh__
+//printf("%s\n", __FUNCTION__);
+    blit(x, y, 1, dy);
+#endif
 }
 
 void CFrameBuffer::paintHLine(int xa, int xb, int y, const fb_pixel_t col)
@@ -783,6 +826,10 @@ void CFrameBuffer::paintHLine(int xa, int xb, int y, const fb_pixel_t col)
 	for (int i = 0; i < dx; i++)
 		*(dest++) = col;
 #endif /* USE_NEVIS_GXA */
+#ifdef __sh__
+//printf("%s\n", __FUNCTION__);
+    blit(xa, y, dx, 1);
+#endif
 }
 
 void CFrameBuffer::paintHLineRel(int x, int dx, int y, const fb_pixel_t col)
@@ -805,6 +852,10 @@ void CFrameBuffer::paintHLineRel(int x, int dx, int y, const fb_pixel_t col)
 	for (int i = 0; i < dx; i++)
 		*(dest++) = col;
 #endif /* USE_NEVIS_GXA */
+#ifdef __sh__
+//printf("%s\n", __FUNCTION__);
+    blit(x, y, dx, 1);
+#endif
 }
 
 void CFrameBuffer::setIconBasePath(const std::string & iconPath)
@@ -855,6 +906,12 @@ bool CFrameBuffer::paintIcon8(const std::string & filename, const int x, const i
 		d += stride;
 	}
 	close(fd);
+
+#ifdef __sh__
+//printf("%s: %d %d\n", __FUNCTION__, width, height);
+    blit(x, y, width, height);
+#endif
+
 	return true;
 }
 
@@ -919,6 +976,12 @@ bool CFrameBuffer::paintIcon(const std::string & filename, const int x, const in
 	}
 
 	close(fd);
+
+#ifdef __sh__
+//printf("%s: %d %d\n", __FUNCTION__, width, height);
+    blit(x, y, width, height);
+#endif
+
 	return true;
 }
 
@@ -1063,6 +1126,12 @@ void CFrameBuffer::paintLine(int xa, int ya, int xb, int yb, const fb_pixel_t co
 			paintPixel (x, y, col);
 		}
 	}
+
+#ifdef __sh__
+//printf("%s\n", __FUNCTION__);
+    blit(xa, ya, dx, dy);
+#endif
+
 }
 
 void CFrameBuffer::setBackgroundColor(const fb_pixel_t color)
@@ -1188,6 +1257,11 @@ bool CFrameBuffer::loadBackground(const std::string & filename, const unsigned c
 		}
 	backgroundFilename = filename;
 
+#ifdef __sh__
+//printf("%s\n", __FUNCTION__);
+    blit();
+#endif
+
 	return true;
 }
 
@@ -1276,6 +1350,11 @@ void CFrameBuffer::paintBackgroundBoxRel(int x, int y, int dx, int dy)
 			bkpos += BACKGROUNDIMAGEWIDTH;
 		}
 	}
+
+#ifdef __sh__
+//printf("%s\n", __FUNCTION__);
+    blit(x, y, dx, dy);
+#endif
 }
 
 void CFrameBuffer::paintBackground()
@@ -1285,13 +1364,22 @@ void CFrameBuffer::paintBackground()
 
 	if (useBackgroundPaint && (background != NULL))
 	{
+#ifdef __sh__
+		for (int i = 0; i < yRes; i++)
+#else
 		for (int i = 0; i < 576; i++)
+#endif
 			memcpy(((uint8_t *)getFrameBufferPointer()) + i * stride, (background + i * BACKGROUNDIMAGEWIDTH), BACKGROUNDIMAGEWIDTH * sizeof(fb_pixel_t));
 	}
 	else
 	{
 		paintBoxRel(0, 0, xRes, yRes, backgroundColor);
 	}
+
+#ifdef __sh__
+//printf("%s\n", __FUNCTION__);
+    blit();
+#endif
 }
 
 void CFrameBuffer::SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp)
@@ -1338,6 +1426,11 @@ void CFrameBuffer::RestoreScreen(int x, int y, int dx, int dy, fb_pixel_t * cons
 		fbpos += stride;
 		bkpos += dx;
 	}
+
+#ifdef __sh__
+//printf("%s\n", __FUNCTION__);
+    blit(x, y, dx, dy);
+#endif
 }
 
 void CFrameBuffer::switch_signal (int signal)
@@ -1407,3 +1500,138 @@ void CFrameBuffer::showFrame(const std::string & filename)
 	else
 		videoDecoder->ShowPicture((iconBasePath + filename).c_str());
 }
+
+#if defined(__sh__) 
+void CFrameBuffer::blit()
+{
+	//blit(0, 0, DEFAULT_XRES, DEFAULT_YRES);
+
+	STMFBIO_BLT_DATA  bltData; 
+	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA)); 
+
+	bltData.operation  = BLT_OP_COPY; 
+	bltData.srcOffset  = 1920*1080*4; 
+	bltData.srcPitch   = DEFAULT_XRES * 4; 
+
+	bltData.dstOffset  = 0; 
+	bltData.dstPitch   = xDestRes * 4; 
+
+	bltData.src_top    = 0; 
+	bltData.src_left   = 0; 
+	bltData.src_right  = DEFAULT_XRES; 
+	bltData.src_bottom = DEFAULT_YRES; 
+
+	bltData.dst_top    = 0; 
+	bltData.dst_left   = 0; 
+	bltData.dst_right  = xDestRes; 
+	bltData.dst_bottom = yDestRes; 
+
+	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
+	{ 
+		perror("FBIO_BLIT"); 
+	} 
+}
+
+void CFrameBuffer::blit(int x, int y, int dx, int dy)
+{
+	if(dx > 0 && dy > 0) {
+		int srcXa = x<10?0:x-10;
+		int srcYa = y<10?0:y-10;
+
+		int srcXb = x + dx + 20;
+		int srcYb = y + dy + 20;
+
+		int desXa = srcXa * xFactor;
+		int desYa = srcYa * yFactor;
+
+		int desXb = srcXb * xFactor;
+		int desYb = srcYb * yFactor;
+
+		//printf("### BLIT %d %d %d %d (%d %d)-> %d %d %d %d ###\n", srcXa, srcYa, srcXb, srcYb, dx, dy,
+		//	desXa, desYa, desXb, desYb);
+
+		STMFBIO_BLT_DATA  bltData; 
+		memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA)); 
+
+		bltData.operation  = BLT_OP_COPY; 
+		bltData.srcOffset  = 1920*1080*4; 
+		bltData.srcPitch   = DEFAULT_XRES * 4; 
+
+		bltData.src_left   = srcXa; 
+		bltData.src_top    = srcYa; 
+		bltData.src_right  = srcXb; 
+		bltData.src_bottom = srcYb; 
+
+		bltData.dstOffset  = 0; 
+		bltData.dstPitch   = xDestRes * 4; 
+
+		bltData.dst_left   = desXa; 
+		bltData.dst_top    = desYa; 
+		bltData.dst_right  = desXb; 
+		bltData.dst_bottom = desYb; 
+
+		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
+		{ 
+			perror("FBIO_BLIT"); 
+		} 
+	}
+}
+
+void CFrameBuffer::resize(int format)
+{
+	char *aVideoSystems[][2] = {
+	{"VIDEO_STD_NTSC", "pal"},
+	{"VIDEO_STD_SECAM", "pal"},
+	{"VIDEO_STD_PAL", "pal"},
+	{"VIDEO_STD_480P", "480p"},
+	{"VIDEO_STD_576P", "576p50"},
+	{"VIDEO_STD_720P60", "720p60"},
+	{"VIDEO_STD_1080I60", "1080i60"},
+	{"VIDEO_STD_720P50", "720p50"},
+	{"VIDEO_STD_1080I50", "1080i50"},
+	{"VIDEO_STD_1080P30", "1080p30"},
+	{"VIDEO_STD_1080P24", "1080p24"},
+	{"VIDEO_STD_1080P25", "1080p25"},
+	{"VIDEO_STD_AUTO" "1080i50"},
+	};
+
+printf("###RESIZE###\n");
+	printf("video_system=%s\n", aVideoSystems[format][0]);
+
+	int iaVideoSystems[][2] = {
+	{720, 576},
+	{720, 576},
+	{720, 576},
+	{640, 480},
+	{720, 576},
+	{1280, 720},
+	{1920, 1080},
+	{1280, 720},
+	{1920, 1080},
+	{1920, 1080},
+	{1920, 1080},
+	{1920, 1080},
+	{1920, 1080},
+	};
+
+	xDestRes = iaVideoSystems[format][0];
+	yDestRes = iaVideoSystems[format][1];
+
+
+	xFactor = xDestRes;
+	xFactor = xFactor / xRes;
+
+	yFactor = yDestRes;
+	yFactor = yFactor / yRes;
+
+/*
+xFactor = xDestRes / xRes;
+yFactor = yDestRes / yRes;
+*/
+
+printf("Factor: %f %f\n", xFactor, yFactor);
+
+	blit();
+}
+#endif
+

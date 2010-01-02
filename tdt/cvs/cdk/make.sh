@@ -64,3 +64,4 @@ echo "Performing configure..." && \
 echo "-----------------------" && \
 echo && \
 ./configure $CONFIGPARAM
+./touch.sh

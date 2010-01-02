@@ -1914,6 +1914,7 @@ void CNeutrinoApp::SetupFrameBuffer()
 		dprintf(DEBUG_NORMAL, "Error while setting framebuffer mode\n");
 		exit(-1);
 	}
+	frameBuffer->resize(g_settings.video_Mode);
 	//make 1..8 transparent for dummy painting
 	//for(int count =0;count<256;count++)
 	for(int count =0;count<8;count++)
@@ -3470,8 +3471,11 @@ void CNeutrinoApp::ExitRun(const bool write_si, int retcode)
 		if(g_settings.epg_save /* && timeset && g_Sectionsd->getIsTimeSet ()*/) {
 			saveEpg();
 		}
-
+#ifndef __sh__
 		if(retcode) {
+#else
+		if(0) {
+#endif
 			neutrino_msg_t      msg;
 			neutrino_msg_data_t data;
 

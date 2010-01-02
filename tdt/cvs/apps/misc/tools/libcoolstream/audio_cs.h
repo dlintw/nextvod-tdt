@@ -28,7 +28,9 @@ typedef enum
 } AUDIO_FORMAT;
 
 #ifndef CS_AUDIO_PDATA
-#define CS_AUDIO_PDATA void
+typedef struct {
+	int m_fd;
+} CS_AUDIO_PDATA;
 #endif
 
 #include "cs_types.h"

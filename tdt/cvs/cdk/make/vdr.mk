@@ -30,6 +30,10 @@ $(DEPDIR)/vdr: vdr.do_compile
 	cp -rd $(targetprefix)/var/vdr/remote.conf $(prefix)/release_vdr/var/vdr/
 	cp -rd $(targetprefix)/var/vdr/sources.conf $(prefix)/release_vdr/var/vdr/
 	cp -rd $(targetprefix)/var/vdr/channels.conf $(prefix)/release_vdr/var/vdr/
+##########################################################################################
+	mkdir -p $(prefix)/release_vdr/etc/init.d
+	cp $(buildprefix)/root/release/rcS_vdr_ufs910 $(prefix)/release_vdr/etc/init.d/rcS
+	chmod 755 $(prefix)/release_vdr/etc/init.d/rcS
 
 vdr-clean:
 	-rm .deps/vdr

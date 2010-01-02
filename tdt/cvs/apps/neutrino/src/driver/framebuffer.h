@@ -85,6 +85,10 @@ class CFrameBuffer
 		std::string     backgroundFilename;
 		bool            useBackgroundPaint;
 		unsigned int	xRes, yRes, stride, bpp;
+#ifdef __sh__
+		unsigned int	xDestRes, yDestRes;
+		double          xFactor, yFactor;
+#endif
 		t_fb_var_screeninfo screeninfo, oldscreen;
 		fb_cmap cmap;
 		__u16 red[256], green[256], blue[256], trans[256];
@@ -195,6 +199,11 @@ class CFrameBuffer
 		void ClearFrameBuffer();
 		void showFrame(const std::string & filename);
 		bool loadBackgroundPic(const std::string & filename, bool show = true);
+#ifdef __sh__
+		void blit();
+		void blit(int x, int y, int dx, int dy);
+		void resize(int format);
+#endif
 };
 
 

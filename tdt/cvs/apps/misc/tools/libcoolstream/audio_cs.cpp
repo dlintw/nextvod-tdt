@@ -1,12 +1,23 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
+#include <sys/select.h>
 
 #include "audio_cs.h"
+#include <linux/dvb/audio.h>
 
 static const char * FILENAME = "audio_cs.cpp";
 
 //EVIL
 
 cAudio * audioDecoder = NULL;
+
+#define AUDIO_BYPASS_ON 0
+#define AUDIO_BYPASS_OFF 1
 
 //EVIL END
 
@@ -29,7 +40,10 @@ cAudio::cAudio(void * hBuffer, void * encHD, void * encSD)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 
-	privateData = NULL;
+	privateData = (CS_AUDIO_PDATA*)malloc(sizeof(CS_AUDIO_PDATA));
+	privateData->m_fd = open("/dev/dvb/adapter0/audio0", O_RDWR);
+
+
 	cEncodedDataOnSPDIF = 0;
 	cEncodedDataOnHDMI = 0;
 	Muted = false;
@@ -49,6 +63,8 @@ cAudio::cAudio(void * hBuffer, void * encHD, void * encSD)
 	hdmiDD = false;
 	spdifDD = false;
 	hasMuteScheduled = false;
+
+
 }
 
 
@@ -88,6 +104,8 @@ int cAudio::mute(void)
 	
 	Muted = true;
 	
+	SetMute(Muted);
+
 	return 0;
 }
 
@@ -97,6 +115,8 @@ int cAudio::unmute(void)
 	
 	Muted = false;
 	
+	SetMute(Muted);
+
 	return 0;
 }
 
@@ -106,6 +126,14 @@ int cAudio::SetMute(int enable)
 	
 	Muted = enable?true:false;
 	
+	char sMuted[4];
+	sprintf(sMuted, "%d", Muted);
+
+
+	int fd = open("/proc/stb/audio/j1_mute", O_RDWR);
+	write(fd, sMuted, strlen(sMuted));
+	close(fd);
+
 	return 0;
 }
 
@@ -115,6 +143,9 @@ int cAudio::enableBypass(void)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
+	if (ioctl(privateData->m_fd, AUDIO_SET_BYPASS_MODE, AUDIO_BYPASS_ON) < 0)
+		printf("AUDIO_SET_BYPASS_MODE failed(%m)");
+
 	return 0;
 }
 
@@ -122,6 +153,9 @@ int cAudio::disableBypass(void)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
+	if (ioctl(privateData->m_fd, AUDIO_SET_BYPASS_MODE, AUDIO_BYPASS_OFF) < 0)
+		printf("AUDIO_SET_BYPASS_MODE failed(%m)");
+
 	return 0;
 }
 
@@ -131,6 +165,13 @@ int cAudio::setVolume(unsigned int left, unsigned int right)
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
 	volume = left;
+
+	char sVolume[4];
+	sprintf(sVolume, "%d", volume);
+
+	int fd = open("/proc/stb/avs/0/volume", O_RDWR);
+	write(fd, sVolume, strlen(sVolume));
+	close(fd);
 	
 	return 0;
 }
@@ -141,6 +182,9 @@ int cAudio::Start(void)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
+	if (ioctl(privateData->m_fd, AUDIO_PLAY, 1) < 0)
+		printf("AUDIO_PLAY failed(%m)");
+
 	return 0;
 }
 
@@ -148,26 +192,50 @@ int cAudio::Stop(void)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
+	if (ioctl(privateData->m_fd, AUDIO_STOP, 1) < 0)
+		printf("AUDIO_STOP failed(%m)");
+
 	return 0;
 }
 
 bool cAudio::Pause(bool Pcm)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
-	
+
+	if (ioctl(privateData->m_fd, AUDIO_PAUSE, 1) < 0)
+		printf("AUDIO_PAUSE failed(%m)");
+
 	return true;
 }
 
 bool cAudio::Resume(bool Pcm)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+
+	if (ioctl(privateData->m_fd, AUDIO_CONTINUE, 1) < 0)
+		printf("AUDIO_CONTINUE failed(%m)");
 	
 	return true;
 }
 
 void cAudio::SetSyncMode(AVSYNC_TYPE Mode)
 {
-	printf("%s:%s\n", FILENAME, __FUNCTION__);
+	char *aAVSYNCTYPE[] = {
+		"AUDIO_SYNC_WITH_PTS",
+		"AUDIO_NO_SYNC",
+		"AUDIO_SYNC_AUDIO_MASTER"
+	};
+
+	printf("%s:%s - Mode=%s\n", FILENAME, __FUNCTION__, aAVSYNCTYPE[Mode]);
+
+	int sync = 1;
+
+	if(Mode == AUDIO_NO_SYNC)
+		sync = 0;
+
+	if (ioctl(privateData->m_fd, AUDIO_SET_AV_SYNC, sync) < 0)
+		printf("AUDIO_SET_AV_SYNC(%m)");
+
 }
 
 
@@ -183,6 +251,8 @@ int cAudio::setSource(int source)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
+
+
 	return 0;
 }
 
@@ -250,11 +320,30 @@ bool cAudio::IsHdmiDDSupported()
 void cAudio::SetHdmiDD(bool enable)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+
+
+	int fd = open("/proc/stb/hdmi/audio_source", O_RDWR);
+	if(enable) {
+		// do i have to enable bypass for that ?
+		// enableBypass();
+
+		write(fd, "spdif", strlen("spdif"));
+	}
+	else
+		write(fd, "pcm", strlen("pcm"));
+	close(fd);
+
+
 }
 
 void cAudio::SetSpdifDD(bool enable)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+
+	if(enable)
+		enableBypass();
+	else
+		disableBypass();
 }
 
 void cAudio::ScheduleMute(bool On)

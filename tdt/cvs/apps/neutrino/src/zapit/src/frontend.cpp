@@ -598,7 +598,9 @@ int CFrontend::setFrontend(const struct dvb_frontend_parameters *feparams, bool 
 		TIMER_INIT();
 		TIMER_START();
 
+		//our api is not able to receive such events
 		//tuned = true;
+		//usleep(300000);
 		getEvent();
 
 		TIMER_STOP("[fe0] tuning took");
