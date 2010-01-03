@@ -22,8 +22,8 @@ $(DEPDIR)/vdr: vdr.do_compile
 	mkdir -p $(prefix)/release_vdr/var/vdr
 	cp -rd $(targetprefix)/usr/include/boost/shared_container_iterator.hpp $(prefix)/release_vdr/usr/include/boost/
 	cp -rd $(targetprefix)/usr/lib/libfontconfi* $(prefix)/release_vdr/usr/lib/
-	cp -rd $(targetprefix)/usr/lib/vdr/libvdr-remote.so.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
-	cp -rd $(targetprefix)/usr/lib/vdr/libvdr-vfd.so.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
+	cp -rd $(targetprefix)/usr/lib/vdr/lib* $(prefix)/release_vdr/usr/lib/vdr/
+#	cp -rd $(targetprefix)/usr/lib/vdr/libvdr-vfd.so.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
 	cp -rd $(targetprefix)/usr/local/bin/vdr $(prefix)/release_vdr/usr/local/bin/
 	cp -rd $(targetprefix)/usr/local/bin/runvdr $(prefix)/release_vdr/usr/local/bin/
 	cp -rd $(targetprefix)/usr/share/locale/* $(prefix)/release_vdr/usr/share/locale
