@@ -128,7 +128,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    until false
    do
       echo "starting vdr ->"
-      /usr/local/bin/vdr -P "vfd" -P "remote -i /dev/input/event0" # -P "sc"
+      /usr/local/bin/vdr -P "vfd" -P "remote -i /dev/input/event0 -i /dev/input/event1" # -P "sc"
       rtv=$?
       echo "VDR ended <- RTV: " $rtv
    done 
