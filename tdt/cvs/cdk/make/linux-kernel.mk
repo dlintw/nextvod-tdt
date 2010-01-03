@@ -40,7 +40,7 @@ FLASHUFS910PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/ufs910_smsc_p0041.patch \
 		Patches/ufs910_i2c_p0041.patch \
 		Patches/ufs910_setup_p0041.patch \
-		Patches/ufs910_stboards_p0041.patch
+		Patches/ufs910_stboards_p0041_flash.patch
 
 # IMPORTANT: it is expected that only one define is set
 CUBEMOD=$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)
