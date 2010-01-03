@@ -74,6 +74,12 @@
 #define KEY_BOTTOMRIGHT  0x1a5
 #endif
 
+#ifdef __sh__
+#ifndef KEY_GAMES
+#define KEY_GAMES               0x1a1
+#endif
+#endif
+
 typedef uint32_t neutrino_msg_t;
 typedef uint32_t neutrino_msg_data_t;
 
@@ -152,11 +158,25 @@ class CRCInput
 			RC_right        = KEY_RIGHT,        /* /include/linux/input.h: #define KEY_RIGHT               106   */
 			RC_down         = KEY_DOWN,         /* /include/linux/input.h: #define KEY_DOWN                108   */
 			RC_spkr         = KEY_MUTE,         /* /include/linux/input.h: #define KEY_MUTE                113   */
+#ifdef __sh__
+#ifdef PLATFORM_TF7700
+			RC_minus        = KEY_PREVIOUS,   /* /include/linux/input.h: #define KEY_VOLUMEDOWN          114   */
+			RC_plus         = KEY_NEXT,     /* /include/linux/input.h: #define KEY_VOLUMEUP            115   */
+#else
 			RC_minus        = KEY_VOLUMEDOWN,   /* /include/linux/input.h: #define KEY_VOLUMEDOWN          114   */
 			RC_plus         = KEY_VOLUMEUP,     /* /include/linux/input.h: #define KEY_VOLUMEUP            115   */
+#endif
+#else
+			RC_minus        = KEY_VOLUMEDOWN,   /* /include/linux/input.h: #define KEY_VOLUMEDOWN          114   */
+			RC_plus         = KEY_VOLUMEUP,     /* /include/linux/input.h: #define KEY_VOLUMEUP            115   */
+#endif
 			RC_standby      = KEY_POWER,        /* /include/linux/input.h: #define KEY_POWER               116   */
 			RC_help         = KEY_HELP,         /* /include/linux/input.h: #define KEY_HELP                138   */
+#ifdef __sh__
 			RC_home         = KEY_HOME,         /* /include/linux/input.h: #define KEY_HOME                102   */
+#else
+			RC_home         = KEY_EXIT,         /* /include/linux/input.h: #define KEY_HOME                102   */
+#endif
 			RC_setup        = KEY_MENU,        /* /include/linux/input.h: #define KEY_SETUP               141   */
 			RC_topleft	= KEY_TOPLEFT,
 			RC_topright	= KEY_TOPRIGHT,
@@ -179,7 +199,15 @@ class CRCInput
 			RC_text = KEY_TEXT,
 			RC_info = KEY_INFO,
 			RC_epg	= KEY_EPG,
+#ifdef __sh__
+#ifdef PLATFORM_TF7700
+			RC_recall = KEY_BACK,
+#else
 			RC_recall = KEY_LAST,
+#endif
+#else
+			RC_recall = KEY_LAST,
+#endif
 			RC_favorites = KEY_FAVORITES,
 			RC_sat = KEY_SAT,
 			RC_sat2 = KEY_SAT2,
@@ -191,10 +219,19 @@ class CRCInput
 			RC_stop		= KEY_STOP,
 			RC_timeshift	= KEY_TIME,
 			RC_mode		= KEY_MODE,
-//			RC_games	= KEY_GAMES,
+			RC_games	= KEY_GAMES,
+#ifdef __sh__
+#ifdef PLATFORM_TF7700
+			RC_next		= 0xFFFFFFF0,
+			RC_prev		= 0xFFFFFFF1,
+#else
 			RC_next		= KEY_NEXT,
 			RC_prev		= KEY_PREVIOUS,
-
+#endif
+#else
+			RC_next		= KEY_NEXT,
+			RC_prev		= KEY_PREVIOUS,
+#endif
 			RC_timeout	= 0xFFFFFFFF,
 			RC_nokey	= 0xFFFFFFFE
 		};

@@ -1428,8 +1428,8 @@ const char * CRCInput::getSpecialKeyName(const unsigned int key)
 				return "record";
 			case RC_pause:
 				return "pause";
-			/*case RC_games:
-				return "games";*/
+			case RC_games:
+				return "games";
 			case RC_next:
 				return "next";
 			case RC_prev:
