@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2008-02-28 15:00+0200\n"
 "Last-Translator: Vladimír Bárta <vladimir.barta@k2atmitec.cz>, Jiøí Dobrý <jdobry@centrum.cz>\n"
 "Language-Team: Czech\n"
@@ -228,6 +228,9 @@ msgstr "U¾ivatel8"
 
 msgid "Key$User9"
 msgstr "U¾ivatel9"
+
+msgid "Recording started"
+msgstr "Zaèalo nahrávání"
 
 msgid "Disk"
 msgstr "Disk"
@@ -992,9 +995,6 @@ msgstr "Nedìle"
 
 msgid "Upcoming recording!"
 msgstr "Brzo zaène nahrávání!"
-
-msgid "Recording started"
-msgstr "Zaèalo nahrávání"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "Vypnutí VDR bude odlo¾eno - vypnete klávesou Power"

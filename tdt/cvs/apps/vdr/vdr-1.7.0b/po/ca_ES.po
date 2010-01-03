@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2008-03-02 19:02+0100\n"
 "Last-Translator: Luca Olivetti <luca@ventoso.org>\n"
 "Language-Team: Catalanian\n"
@@ -230,6 +230,9 @@ msgstr "Usuari 8"
 
 msgid "Key$User9"
 msgstr "Usuari 9"
+
+msgid "Recording started"
+msgstr "Gravació començada"
 
 msgid "Disk"
 msgstr "Disc"
@@ -994,9 +997,6 @@ msgstr "Diumenge"
 
 msgid "Upcoming recording!"
 msgstr "Gravació a punt d'iniciar!"
-
-msgid "Recording started"
-msgstr "Gravació començada"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "VDR s'apagarà més tard, prem Power per a forçar"

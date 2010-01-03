@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2008-03-18 17:04+0100\n"
 "Last-Translator: anonymous\n"
 "Language-Team: Portuguese\n"
@@ -227,6 +227,9 @@ msgstr "Definida8"
 
 msgid "Key$User9"
 msgstr "Definida9"
+
+msgid "Recording started"
+msgstr "Gravação iniciada"
 
 msgid "Disk"
 msgstr "Disco"
@@ -991,9 +994,6 @@ msgstr "Domingo"
 
 msgid "Upcoming recording!"
 msgstr "Gravação agendada!"
-
-msgid "Recording started"
-msgstr "Gravação iniciada"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "VDR vai desligar mais tarde - pressione On/Off para forçar"

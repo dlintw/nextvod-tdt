@@ -1,0 +1,136 @@
+VDR Plugin 'admin' Revision History
+-----------------------------------
+
+2008-04-09: Version 0.8.0
+ 
+- Switch from i18n to gettext for vdr-1.5.x
+
+
+2008-01-08: Version 0.7.5
+ 
+- Added 2 Parameters (--oldstyle, --idx2def)
+  For different handling of List Elements ( see README )
+  and backwards compatibility (use --oldstyle for pre 0.7.0 behaviour)
+
+
+2008-01-03: Version 0.7.4
+ 
+- Added Italian translation ( Thanks to Diego )
+
+
+2007-12-11: Version 0.7.3
+ 
+- Another Bugfix ( Thanks to RalfW )
+
+
+2007-12-01: Version 0.7.2
+ 
+- Bugfix for selecting last list item ( Thanks to OnTecNo )
+
+
+2007-11-21: Version 0.7.1
+ 
+- Bugfix
+
+
+2007-11-21: Version 0.7.0
+ 
+- Changed handling of Lists ( using Value instead if index )
+  To convert an old admin.conf to a new just start setsdmconf.sh
+- All Scripts adapted to Gen2VDR 2.0  
+
+
+2007-03-10: Version 0.6.2
+ 
+- Bugfix preventing a crash when new String is longer than old one.
+
+
+2007-01-18: Version 0.6.1
+
+- Added Keys for saving and restarting
+- several internal changes.
+
+
+2007-01-09: Version 0.6.0
+
+- Minor bugfixes
+- Added new Variable Type F for non-editable Fields
+- New values for choices (a-z,A-Z,0-9,-f,-d,-F,-D)
+- Major changes in gentoo scripts
+
+
+2006-12-28: Version 0.5.1
+
+- Fixed a bug when value is an empty string ( reported by UweS )
+
+
+2006-04-30: Version 0.5.0
+
+- Now the admin.sh script will be executed with these parameter:
+   -init  : During initialization ( vdr startup )
+   -start : When opening the Admin Menu
+   -save  : After saving the changes in the menu
+- Changes for vdr Version 1.4.0 ( won't work with an older version )
+- removed parameter for config directory
+- added a title for submenues
+  (suggested by Ronny Kornexl)
+
+
+2006-03-07: Version 0.4.1
+
+- No longer writing leading blanks for numeric values
+- Updated Gentoo scripts
+
+  
+2005-12-07: Version 0.4.0
+
+- Added option to create a Mainmenu entry
+  (suggested by Ronny Kornexl)
+
+
+2005-11-24: Version 0.3.3
+
+- Added Navigation via numbers on first menu page.
+  (suggested by Ronny Kornexl)
+
+
+2005-11-11: Version 0.3.2
+
+- Added init script setadmin.sh
+
+
+2005-10-05: Version 0.3.1
+
+- Added support for internationalization.
+  (suggested by Ronny Kornexl)
+
+
+2005-02-25: Version 0.3.0
+
+- Default for directory of config files changed to plugins/admin
+- Adding script cfgvar.sh for writing variables to /etc/conf.d/vdr
+
+
+2005-01-18: Version 0.2.4
+
+- Parameter -d for directory of config files implemented
+
+
+2004-11-03: Version 0.2.3
+
+- Minor fixes for Gentoo scripting
+
+
+2004-10-21: Version 0.2.2
+
+- Updated scripts and renamed scriptpath to gentoo instead of scripts.
+
+
+2004-08-12: Version 0.2.0
+
+- Added Submenues and comment lines.
+
+
+2004-02-25: Version 0.1.0
+
+- Initial revision.

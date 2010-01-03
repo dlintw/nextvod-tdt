@@ -1,0 +1,70 @@
+This is a "plugin" for the Video Disk Recorder (VDR).
+
+Written by:                  Helmut Auer < helmut at helmutauer dot de >
+
+Project's homepage:          none
+
+Latest version available at: http://htpc-forum.de/index.php?url=downloads.php
+
+See the file COPYING for license information.
+
+Description: This is a VDR plugin for adminstrative tasks( e.g. network settings ).
+
+optionale Parameter:
+   -o, --oldstyle  Value fuer ein List Element ist der Index
+                   (Standard ist der String)
+   -i, --idx2def   Schreibt den Index eines List Elements
+                   anstelle des default-Eintrages
+     
+Saemtliche Scripte und die ConfigDatei werden unter plugins/admin unter dem VDR-Config Verzeichnis
+erwartet.
+
+Beim Starten von VDR wird das Admin-Script admin.sh mit dem Paramater "-init" ausgefuehrt,
+Beim Starten des Plugins mit "-start" beim Sichern der Einstellungen mit dem Paramater "-save".
+
+Dieses durchsucht beim Speichern das ConfigFile(admin.conf) und startet dann die zugehoerigen Skripte.
+Die aktuellen Skripte sehen vor, dass erst NACH beenden von VDR die Aenderungen aktiv werden.
+
+Aufbau des config  files:
+
+# <script>:<name>:<value>:<type>:<length|default>:<choices>:<description>:
+
+Typ ist A,F,I,B oder L
+
+A=Alphabetic:
+  length - Laenge in Bytes
+  choices - Gueltige Zeichen (z.B a-z,A-Z,0-9)
+            Sondervariablen: -f,-d (existing file/directory)
+			     -F,-D (file/directory name)
+
+F=Alphabetic but not editable:
+  length - Laenge in Bytes
+  choices - Gueltige Zeichen
+
+I=Integer
+  default - Standarwert (wird nicht vom Plugin benutzt)
+  choices - minValue,maxValue
+            d.h. 0,5 bedeutet Werte von 0-5
+
+B=Bool
+  default - Standarwert (wird nicht vom Plugin benutzt)
+  choices - wert1,wert2
+
+L=Liste
+  value   - String(default) oder Index(mit --oldstyle)
+  default - Standarwert (wird nicht vom Plugin benutzt)
+            oder Index(mit --idx2def)
+  choices - wert1,wert2.....wertN
+
+Gueltige Zeilen in der admin.conf beginnen mit:
+
+"/" - Variable ( mit / beginnt der SkriptName )
+
+":" - Submenu ( Steht ein Begriff hinter dem ':' dann ists der Titel des Submenues,
+      falls nur ein ':' vorkommt wird das begonnene Submenu beendet.
+      Rekursive Submenues werden nicht unterstuetzt, d.h durch ein neues Submenu wird
+      das vorherige beendet.
+
+"-" - Kommentarzeile die so im OSD angezeigt wird (ohne fuehrendes -)
+
+Alle uebrigen Zeilen werden ueberlesen :-)

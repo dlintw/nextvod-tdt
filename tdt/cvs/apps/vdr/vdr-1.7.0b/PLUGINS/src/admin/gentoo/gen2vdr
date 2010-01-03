@@ -1,0 +1,36 @@
+# Set VDR Paramters - should be last script because some Parameters ca be changed via Plugins
+# e.g. em84xx sets WATCHDOG to 0
+#
+vdropts=""
+if [ -n "${VDR_USER}" ] ; then
+   vdropts="${vdropts} -u ${VDR_USER}"
+else
+   vdropts="${vdropts} -u root"
+fi   
+[ -n "${GRAB_DIR}" ]     && vdropts="${vdropts} --grab=${GRAB_DIR}"
+[ -n "${WATCHDOG}" ]     && vdropts="${vdropts} -w ${WATCHDOG}"
+[ -n "${VDR_CONFIG_DIR}" ]   && vdropts="${vdropts} --config=${VDR_CONFIG_DIR}"
+[ -n "${VDR_SHUTDOWN_SCR}" ] && vdropts="${vdropts} --shutdown='${VDR_SHUTDOWN_SCR}'"
+[ -n "${EPG_FILE}" ]     && vdropts="${vdropts} --epgfile=${EPG_FILE}"
+[ -n "${LOGLEVEL}" ]     && vdropts="${vdropts} --log=${LOGLEVEL}"
+[ -n "${VIDEO}" ]        && vdropts="${vdropts} --video=${VIDEO}"
+[ -n "${RUNVDR_RECORD}" ]  && vdropts="${vdropts} --record='${RUNVDR_RECORD}'"
+[ -n "${PORT}" ]         && vdropts="${vdropts} --port=${PORT}"
+[ -n "${VDR_LIB_DIR}" ]  && vdropts="${vdropts} --lib=${VDR_LIB_DIR}"
+[ -n "${AUDIO}" -a "${AUDIO}" != "Aus" ] && vdropts="${vdropts} --audio='${AUDIO}'"
+if [ -n "${DEVICE}" ] ; then
+   for i in ${DEVICE}; do 
+      vdropts="${vdropts} --device=${i}"
+   done
+fi   
+
+INIT_ACTION="/etc/vdr.d/scripts/g2v_init.sh"
+EXIT_ACTION="/etc/vdr.d/scripts/g2v_exit.sh"
+RESTART_ACTION="/etc/vdr.d/scripts/g2v_restart.sh"
+RECORD_ACTION="/etc/vdr.d/scripts/g2v_record.sh"
+
+#PLUGIN_NAME=""
+#PLUGIN_PARAMETERS=""
+
+VDR_PARAMETERS="$vdropts"
+

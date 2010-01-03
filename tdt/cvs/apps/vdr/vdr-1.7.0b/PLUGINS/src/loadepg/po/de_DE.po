@@ -1,0 +1,49 @@
+# VDR plugin language source file.
+# Copyright (C) 2007 Klaus Schmidinger <kls@cadsoft.de>
+# This file is distributed under the same license as the VDR package.
+# Klaus Schmidinger <kls@cadsoft.de>, 2000
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: VDR 1.5.7\n"
+"Report-Msgid-Bugs-To: <dpluca@libero.it>\n"
+"POT-Creation-Date: 2008-02-10 10:06+0100\n"
+"PO-Revision-Date: 2008-02-10 08:58+0100\n"
+"Last-Translator: Klaus Schmidinger <kls@cadsoft.de>\n"
+"Language-Team: <vdr@linuxtv.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Load EPG Data sent to Mediahighway receivers"
+msgstr "Lade EPG Daten (Mediahighway)"
+
+msgid "LoadEPG"
+msgstr "Lade EPG"
+
+msgid "Select a provider and press Ok"
+msgstr "Auswahl des Providers mit Ok"
+
+msgid "Wait load epg data"
+msgstr "Bitte warten, lade epg daten"
+
+msgid "No data epg available"
+msgstr "Keine EPG Daten verfügbar"
+
+msgid "Use file channels equivalences"
+msgstr ""
+
+msgid "No"
+msgstr "Nein"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "DVB-S device for scanning"
+msgstr "DVB-S device fürs scannen"
+
+msgid "Invalid provider number"
+msgstr "Unzulässige provider nummer"
+
+msgid "The plugin is already active"
+msgstr "Das Plugin ist bereits aktiv"

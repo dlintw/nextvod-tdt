@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2008-02-26 17:20+0100\n"
 "Last-Translator: Johan Schuring <johan.schuring@vetteblei.nl>\n"
 "Language-Team: Dutch\n"
@@ -231,6 +231,9 @@ msgstr "Gebruiker8"
 
 msgid "Key$User9"
 msgstr "Gebruiker9"
+
+msgid "Recording started"
+msgstr "Opname is gestart!"
 
 msgid "Disk"
 msgstr "Schijf"
@@ -995,9 +998,6 @@ msgstr "Zondag"
 
 msgid "Upcoming recording!"
 msgstr "Opname start binnenkort!"
-
-msgid "Recording started"
-msgstr "Opname is gestart!"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "VDR zal later uitschakelen - Druk 'Power' om te forceren"

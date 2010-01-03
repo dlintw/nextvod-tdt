@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2008-03-12 18:25+0100\n"
 "Last-Translator: Magnus Andersson <svankan@bahnhof.se>\n"
 "Language-Team: Swedish\n"
@@ -230,6 +230,9 @@ msgstr "Användare8"
 
 msgid "Key$User9"
 msgstr "Användare9"
+
+msgid "Recording started"
+msgstr "Inspelningen har startat"
 
 msgid "Disk"
 msgstr "Disk"
@@ -994,9 +997,6 @@ msgstr "Söndag"
 
 msgid "Upcoming recording!"
 msgstr "strax inspelning..."
-
-msgid "Recording started"
-msgstr "Inspelningen har startat"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "VDR kommer att stängas av senare - tryck på/av för att stänga av nu"

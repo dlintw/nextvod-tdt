@@ -1,0 +1,64 @@
+This is a "plugin" for the Video Disk Recorder (VDR).
+
+Written by:                  kikko77 <kikko77@altervista.org
+
+Project's homepage:          http://kikko77.altervista.org
+
+Latest version available at: http://kikko77.altervista.org
+
+See the file COPYING for license information.
+
+Description:
+
+This plugin show same features of the vdr-box system like :
+-kernel version
+-cpu type
+-cpu frequency
+-cpu usage
+-cpu free
+-total memory
+-memory free
+-memory usage
+
+
+
+******************************* WARNING *******************************
+
+This plugin work only with vdr-1.3.">7"
+
+***********************************************************************
+
+ATTENTION:
+from the sysinfo 0.0.4 you mast castomize the sript file sysinfo.sh 
+and put it into a /usr/bin or /usr/local/bin, i save into the source my 
+personal sysinfosensors.sh for samples, the value output from this file 
+must is :
+
+12345RPM
+
+or 
+
+12°C
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+A special thanks for Klaus, for him work on vdr...
+
+Same thanks for:
+- lukkino (or dpluca) for the cpu usage script and for the test.
+- Pizzak for the 2 cpu system and for the clean kernel version
+- 999 and Ashura for the c/c++ code help.
+- The "Parinya Thipchart" software house for the software "MinGW Developer Studio" 
+- All the user of the italian #vdr channel in the irc.azzurra.net server
+
+This is my first plugin for vdr, and the third c++ program, pardon to me for the bug or the error...
+
+
+
+-lpthread

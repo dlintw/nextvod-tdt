@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2007-12-01 21:42+0200\n"
 "Last-Translator: István Füley <ifuley@tigercomp.ro>\n"
 "Language-Team: Hungarian\n"
@@ -230,6 +230,9 @@ msgstr "Felhasználó8"
 
 msgid "Key$User9"
 msgstr "Felhasználó9"
+
+msgid "Recording started"
+msgstr "A felvétel elindítva"
 
 msgid "Disk"
 msgstr "Lemez"
@@ -994,9 +997,6 @@ msgstr "Vasárnap"
 
 msgid "Upcoming recording!"
 msgstr "Felvétel rögtön kezdõdik!"
-
-msgid "Recording started"
-msgstr "A felvétel elindítva"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "A VDR késõbb fog leállni - Kikapcs gombbal kényszerített leállítás"

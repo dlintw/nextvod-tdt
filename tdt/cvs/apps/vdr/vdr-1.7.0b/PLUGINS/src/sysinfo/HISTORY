@@ -1,0 +1,42 @@
+VDR Plugin 'sysinfo' Revision History
+-------------------------------------
+
+2006-05-01: Version 0.1.0a
+- Update the sysinfo version in the sysinfoosd.c file (Thanks Anonymous user on my web site)
+- Currect HISTORY file at this row:
+  "Minor release change because it's ready for vdr-1.4 (test with vdr-1.4.49)"
+  naturally the version of vdr was 1.3.49 (Thanks Anonymous user on my web site)
+- Update the calls to some function with the class name like 
+  "cSysInfoOsd::DrawMenu();" (Thanks Anonymous user on my web site)
+- Remove reference to DVB dir (Thanks C.Y.M on vdr mail list)
+
+2006-04-30: Version 0.1.0
+- Update APIVERSION Makefile
+- Minor release change because it's ready for vdr-1.4 (test with vdr-1.3.49)
+
+2005-04-13: Version 0.0.4a
+- Fix bat echo into sysinfo.sh (suggested by Ronny Kornexl)
+- Clean some bad file (suggested by Ronny Kornexl)
+
+2005-04-02: Version 0.0.4
+- Show the video disk space (using df -h command) 
+- Add the multilanguage via i18n.h file
+- The dimension and position of the plugin-osd ore taken from the vdr-osd (min width=550, min height=420)
+*** NOTE REPLACE THE FILE sysinfosensors.sh with new sysinfo.sh PLEASE ***
+
+2004-10-29: Version 0.0.3
+- Show the temperature of Main board and cpu (required i2c and lm_sensor and customize sysinfosensors.sh)
+- Show the fan rpm (required i2c and lm_sensor and customize sysinfosensors.sh)
+- Ok button now exit plugin
+- sysinfo version now is display on osd
+
+2004-10-07: Version 0.0.2
+- Kernel version now is clean
+- Fix 2 cpu system (now the 2 cpu system is so show 2 x CPUTYPE)
+- Now the refresh time is variable, set it in plugin option (for slow system usage hight refresh)
+
+2004-10-07: Version 0.0.1a
+- Bug fix
+
+2004-10-07: Version 0.0.1
+- Initial revision.

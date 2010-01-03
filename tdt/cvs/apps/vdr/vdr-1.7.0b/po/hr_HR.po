@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2008-03-17 19:00+0100\n"
 "Last-Translator: Adrian Caval <anrxc@sysphere.org>\n"
 "Language-Team: Croatian\n"
@@ -229,6 +229,9 @@ msgstr "Korisnik8"
 
 msgid "Key$User9"
 msgstr "Korisnik9"
+
+msgid "Recording started"
+msgstr "Snimanje zapoèelo"
 
 msgid "Disk"
 msgstr "Disk"
@@ -993,9 +996,6 @@ msgstr "Nedjelja"
 
 msgid "Upcoming recording!"
 msgstr "Obnovljena snimka!"
-
-msgid "Recording started"
-msgstr "Snimanje zapoèelo"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "VDR æe se iskljuèiti kasnije - pritisnite Power za prisilno iskljuèenje"

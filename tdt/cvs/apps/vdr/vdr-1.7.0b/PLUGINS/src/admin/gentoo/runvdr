@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+source /etc/vdr.d/conf/gen2vdr.cfg
+source /etc/vdr.d/conf/vdr
+
+export LD_ASSUME_KERNEL="2.4.1"
+
+LOG_OUTPUT="| logger -s 2>&1"
+
+[ -e $STOPVDR_FILE ] && rm -f $STOPVDR_FILE
+
+build_all() {
+  [ ! -d $RUNVDR_PATH ] && mkdir -p $RUNVDR_PATH
+  rm -f $RUNVDR_RUN $RUNVDR_RESTART $RUNVDR_INIT $RUNVDR_EXIT >/dev/null 2>&1
+  echo "#!/bin/sh" > $RUNVDR_RECORD
+  chmod +x $RUNVDR_RECORD
+  ALL_PLG_PARMS=""
+  ALL_VDR_PARMS=""
+  #set -x
+  for i in /etc/vdr.d/[0-9]* ; do
+    RECORD_ACTION=""
+    INIT_ACTION=""
+    EXIT_ACTION=""
+    RESTART_ACTION=""
+    PLUGIN_NAME=""
+    PLUGIN_PARAMETERS=""
+    VDR_PARAMETERS=""
+    
+    logger -s "Will build: ${i}"
+    
+    . ${i}
+    
+    # Setup this
+    
+    [ "${INIT_ACTION}"     != "" ] && echo ${INIT_ACTION}  >> $RUNVDR_INIT
+    [ "${EXIT_ACTION}"     != "" ] && echo ${EXIT_ACTION}  >> $RUNVDR_EXIT
+    [ "${RESTART_ACTION}"  != "" ] && echo ${RESTART_ACTION}  >> $RUNVDR_RESTART
+    [ "${RECORD_ACTION}"   != "" ] && echo "${RECORD_ACTION} \"\$1\" \"\$2\""   >> $RUNVDR_RECORD
+    [ "${PLUGIN_NAME}"     != "" ] && ALL_PLG_PARMS="$ALL_PLG_PARMS --plugin='${PLUGIN_NAME} ${PLUGIN_PARAMETERS}'"
+    [ "${VDR_PARAMETERS}"  != "" ] && ALL_VDR_PARMS="$ALL_VDR_PARMS ${VDR_PARAMETERS}"
+  done
+  # Build runvdr script
+  echo "touch $VDR_START_FILE" > $RUNVDR_RUN
+  echo "logger -s \"Starting $VDR_EXEC $ALL_VDR_PARMS $ALL_PLG_PARMS\"" >> $RUNVDR_RUN
+  echo $VDR_EXEC $ALL_VDR_PARMS $ALL_PLG_PARMS $LOG_OUTPUT >> $RUNVDR_RUN  
+}
+
+
+build_all
+[ -e $RUNVDR_INIT ] &&  . $RUNVDR_INIT
+while [ ! -e $STOPVDR_FILE ] && [ ! -e /tmp/.shutdown ] ; do
+  . $RUNVDR_RUN
+  logger -s "VDR wurde beendet - RC: $?"
+  if [ ! -e $STOPVDR_FILE ]; then
+    [ -e $RUNVDR_RESTART ] &&  . $RUNVDR_RESTART
+    [ ! -e $RUNVDR_RUN ] && build_all
+    [ -e $RUNVDR_INIT ] &&  . $RUNVDR_INIT
+  fi
+done
+
+[ -e $RUNVDR_EXIT ] &&  . $RUNVDR_EXIT

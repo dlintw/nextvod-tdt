@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2008-03-21 08:44+0800\n"
 "Last-Translator: Nan Feng <nfgx@21cn.com>\n"
 "Language-Team: Chinese\n"
@@ -230,6 +230,9 @@ msgstr "用户8"
 
 msgid "Key$User9"
 msgstr "用户9"
+
+msgid "Recording started"
+msgstr "记录开始！"
 
 msgid "Disk"
 msgstr "磁盘"
@@ -994,9 +997,6 @@ msgstr "星期天"
 
 msgid "Upcoming recording!"
 msgstr "即将的记录！"
-
-msgid "Recording started"
-msgstr "记录开始！"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "VDR即将关闭 - 按电源强制关闭"

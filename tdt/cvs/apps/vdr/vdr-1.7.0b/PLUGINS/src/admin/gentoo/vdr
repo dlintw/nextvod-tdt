@@ -1,0 +1,289 @@
+# Netzwerk aktivieren (Nein,Ja,Manuell)
+NET="Nein"
+
+# DHCP (Nein,Ja)
+DHCP="1"
+
+# Name des VDR-PC's (a-zA-Z0-9_-)
+HOSTNAME="vdr01"
+
+# IP-Adresse (0-9.)
+IPADR="10.0.2.15"
+
+# Gateway (Router) (0-9.)
+GATEWAY="192.168.1.1"
+
+# Nameserver (0-9.)
+NAMESERVER="10.0.2.3"
+
+# Subnetmask (0-9.)
+SUBNET="255.255.0.0"
+
+# Name der Arbeitsgruppe (a-zA-Z0-9._-)
+WORKGROUP="VDR"
+
+# Samba aktivieren (Nein,Ja)
+SAMBA="1"
+
+# SSH aktivieren (Nein,Ja)
+SSH="1"
+
+# NFS-Server aktivieren (Nein,Ja)
+NFS="0"
+
+# NFS schreibgeschuetzt (Nein,Ja)
+NFS_RO="1"
+
+# FritzBox Anrufmonitor (Nein,Ja)
+FRITZWATCH="0"
+
+# VDRADMIN automatisch starten (Nein,Ja)
+VDRADMIN="0"
+
+# XXV automatisch starten (Nein,Ja)
+XXV="0"
+
+# Uhrzeit per Internet stellen (Nein,Ja)
+NTP="0"
+
+# FTP aktivieren (Nein,Ja)
+FTP="0"
+
+# Telnet aktivieren (Nein,Ja)
+TELNET="0"
+
+# WakeOnLAN per ethtool aktivieren (Nein,Ja)
+WAKEONLAN="1"
+
+# Minimal freier Plattenplatz (0,99)
+MIN_DISK_FREE="20"
+
+# Tastatur Layout (Deutsch,US)
+KBD_LAYOUT="Deutsch"
+
+# Spracheinstellung (Deutsch,Englisch)
+LANGUAGE="Deutsch"
+
+# Anzahl DVB-Karten (0,9)
+DVB_CARD_NUM="0"
+
+# CD/DVD langsam drehen (Aus,hdparm,speedcontrol,speednec)
+DISC_SLOWDOWN="Aus"
+
+# CD/DVD Geschwindigkeit (1,50)
+DISC_SPEED="6"
+
+# CD/DVD/USB automatisch mounten (Nein,Ja)
+AUTOMOUNT="1"
+
+# CD/DVD automatisch starten (Nein,Ja)
+DISC_AUTORUN="0"
+
+# ALSA aktivieren (Nein,Ja)
+ALSA="1"
+
+# ACPI aktivieren (Nein,Ja)
+ACPI="1"
+
+# VESA Framebuffer aktivieren (Nein,Ja)
+VESAFB="0"
+
+# BOOT-Splash (mit VESAFB) (Nein,Ja)
+BOOTSPLASH="0"
+
+# FSCK alle x Wochen (0,99)
+FSCK_WEEK="0"
+
+# Shutdown-Variante (Halt,PowerOffKernel,STR,Shutdown)
+SHUTDOWN_METHOD="Halt"
+
+# Wakeup-Methode (Aus,ACPI,NVRAM)
+WAKEUP_METHOD="Aus"
+
+# Wakeupreserve in Sekunden (0,9999)
+WAKEUP_RESERVE="300"
+
+# NVRAM Board - BIOS (a-zA-Z0-9_-)
+NVRAM_BOARD=""
+
+# Tgl Wakeup-Zeit (0,23)
+WAKEUP_HOUR="5"
+
+# Tgl Dauer (0=Aus) (0,120)
+WAKEUP_DURATION="0"
+
+# EPG-Daten bei Wakeup (Aus,TVMovie,EPGScan)
+EPGSCAN="Aus"
+
+# DailyWakeup Limit(Stunden) (0,99)
+STR_WU_LIMIT="5"
+
+# ManualWakeup Limit(Tage) (0,9)
+STR_MAN_LIMIT="1"
+
+# Parameter --directisa fuer rtc (Nein,Ja)
+DIRECTISA_RTC="0"
+
+# Parameter --directisa fuer nvram (Nein,Ja)
+DIRECTISA_NVRAM="0"
+
+# Empfangsart (SAT,Kabel,DVB-T)
+RCV="SAT"
+
+# Tastatur/Fernbedienung (Tastatur,ActivyFB,SMT7020FB,ALDI41666-186-325,ALDI4688-065-260,ALDI4689-336,ALDI6461-327,ALDI6461-376,Kingman-120,Kingman-175,Kingman-336,LIDL-001,LIDL-001VCR,LIDL-054,MedionX10,Nokia-MB,Nexus,RR801-HA,Other)
+LIRC="Tastatur"
+
+# Schnittmarken erkennen (NOAD) (Nie,Nach Aufnahme,Live,Immer)
+SET_MARKS="Nie"
+
+# Schnittmarken sharen (Nein,Ja)
+SHAREMARKS="0"
+
+# LogLevel (0=Aus,3=Alles) (0,3)
+LOG="3"
+
+# Shutdown trotz Logged-On User (Nein,Ja)
+IGNORE_USER="1"
+
+# Watchdog Timeout in Sekunden (0,999)
+WATCHDOG="60"
+
+# VDR Prioritaet(-20=Max) (-20,19)
+VDR_NICE="0"
+
+# GUI (FreeVo/KDE) (Aus,FreeVo,XFCE,KDE)
+GUI="Aus"
+
+# FreeVo Skin (rain,basic,bluestar,blurr,crystal,dark,image,info,mediaportal,noia,Panorama,geexbox)
+FREEVO_SKIN="rain"
+
+# FreeVo DVD-Player (Mplayer,Xine)
+FREEVO_DVD="Mplayer"
+
+# Bildanzeigedauer (0,20)
+FREEVO_IMAGEDURATION="5"
+
+# OSD Rand horizontal (0,999)
+FREEVO_OSDX="0"
+
+# OSD Rand vertikal (0,999)
+FREEVO_OSDY="0"
+
+# CD/DVD Status (Nein,Ja)
+FREEVO_SHOW_CDSTATUS="1"
+
+# Freier Plattenplatz (Nein,Ja)
+FREEVO_SHOW_DISKFREE="0"
+
+# CPU Auslastung (Nein,Ja)
+FREEVO_SHOW_PROCSTAT="0"
+
+# Datum/Uhrzeit (Nein,Ja)
+FREEVO_SHOW_CLOCK="0"
+
+# Verschieben horizontal (0,999)
+OPERA_OFFSETX="0"
+
+# Verschieben vertikal (0,999)
+OPERA_OFFSETY="0"
+
+# Strecken horiziontal (-999,999)
+OPERA_ZOOMX="0"
+
+# Strecken vertikal (-999,999)
+OPERA_ZOOMY="0"
+
+# Signal des VideoOut (RGB,SVIDEO)
+VIDEO_OUT="RGB"
+
+# MediaPortal TVOut nutzen (Nein,Ja)
+MP_TVOUT="0"
+
+# Konsole umschalten(Tastatur-Steuerung) (Nein,Ja)
+GUI_SWITCH_CONSOLE="0"
+
+# DVB/TV-Out umschalten(MP/Activy) (Nein,Ja)
+GUI_SWITCH_OUTPUT="0"
+
+# SPDIF Direktausgabe (Aus,ac3dec -C)
+AUDIO="Aus"
+
+# Aufloesung (640x480,720x576,800x600,1024x768,Other)
+SCREEN_RESOLUTION="640x480"
+
+# Master Lautstaerke (0,100)
+ACT_MASTERVOL="100"
+
+# VDR Basis Lautstaerke (0,100)
+ACT_VDR_BASEVOL="70"
+
+# FreeVo Basis Lautstaerke (0,100)
+ACT_FREEVO_BASEVOL="90"
+
+# DVB Signal durchschleifen (Nein,Ja)
+GUI_LOOP_OUTPUT="0"
+
+# TDK Out Lautstaerke erhoehen (0,1)
+ACTIVY_AUDIO_OUT_GAIN="0"
+
+# TDK In Lautstaerke erhoehen (0,3)
+ACTIVY_AUDIO_IN_GAIN="0"
+
+# Cinch Ausgabe (Var1,Var2)
+ACTIVY_LINEOUT="0"
+
+# DVB Helligkeit (0,3)
+ACTIVY_BRIGHT_DVB="3"
+
+# TVOut Helligkeit (0,3)
+ACTIVY_BRIGHT_TVOUT="3"
+
+# RGB Schaltsignal (Nein,Ja)
+RGB_SIGNAL="0"
+
+# AV Schaltsignal (Nein,Ja)
+AV_SIGNAL="0"
+
+# Overlay Modus (Aus,WEAVEMODE,BOBMODE)
+ACTIVY_OVERLAY="Aus"
+
+# DoubleBuffer (LCD) (Nein,Ja)
+ACTIVY_OVL_DOUBLEBUFFER="0"
+
+# Overscan (0,20)
+ACTIVY_OVL_OVERSCAN="0"
+
+# Loesche Hintergrund (Nein,Ja)
+ACTIVY_OVL_BLANK="0"
+
+# Breite (640,1920)
+ACTIVY_OVL_WIDTH="720"
+
+# Hoehe (480,1080)
+ACTIVY_OVL_HEIGHT="576"
+
+# Versatz horizontal (0,1920)
+ACTIVY_OVL_OFFSETX="0"
+
+# Versatz vertikal (0,1080)
+ACTIVY_OVL_OFFSETY="0"
+
+# Breite verringern (0,1920)
+ACTIVY_OVL_SHRINKX="0"
+
+# Hoehe verringern (0,1080)
+ACTIVY_OVL_SHRINKY="0"
+
+# BitClip horizontal (0,1920)
+ACTIVY_OVL_BITCLIPX="0"
+
+# BitClip vertikal (0,1080)
+ACTIVY_OVL_BITCLIPY="0"
+
+# Breite Original (640,1920)
+ACTIVY_OVL_SRCWIDTH="720"
+
+# Hoehe Original (480,1080)
+ACTIVY_OVL_SRCHEIGHT="576"
+
+PLUGINS="admin cdda xineliboutput"

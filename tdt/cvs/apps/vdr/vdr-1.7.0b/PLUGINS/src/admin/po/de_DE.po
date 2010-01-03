@@ -1,0 +1,49 @@
+# VDR plugin language source file.
+# Copyright (C) 2007 Klaus Schmidinger <kls@cadsoft.de>
+# This file is distributed under the same license as the VDR package.
+# Klaus Schmidinger <kls@cadsoft.de>, 2000
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: VDR 1.5.7\n"
+"Report-Msgid-Bugs-To: <helmut@helmutauer.de>\n"
+"POT-Creation-Date: 2008-04-09 15:34+0200\n"
+"PO-Revision-Date: 2008-04-09 15:01+0200\n"
+"Last-Translator: Klaus Schmidinger <kls@cadsoft.de>\n"
+"Language-Team: <vdr@linuxtv.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Administrative tasks"
+msgstr "Administrative Aufgaben"
+
+msgid "Menu entry"
+msgstr "Eintrag im Menu"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "SaveExit"
+msgstr "Sp+Verlassen"
+
+msgid "SaveRestart"
+msgstr "Sp+Neustart"
+
+msgid "Config file not found"
+msgstr "Konfigurationsdatei nicht vorhanden"
+
+msgid "PageUp"
+msgstr "Seite zurueck"
+
+msgid "PageDown"
+msgstr "Seite vor"
+
+msgid "Save changes?"
+msgstr "Änderungen speichern?"
+
+msgid "Saving settings"
+msgstr "Einstellungen werden gespeichert"
+
+msgid "Recording - restart VDR anyway?"
+msgstr "Aufnahme läuft - dennoch VDR neu starten?"

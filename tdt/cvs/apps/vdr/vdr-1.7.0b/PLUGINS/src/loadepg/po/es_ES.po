@@ -1,0 +1,49 @@
+# VDR plugin language source file.
+# Copyright (C) 2007 Klaus Schmidinger <kls@cadsoft.de>
+# This file is distributed under the same license as the VDR package.
+# Ruben Nunez Francisco <ruben.nunez@tang-it.com>, 2002
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: VDR 1.5.7\n"
+"Report-Msgid-Bugs-To: <dpluca@libero.it>\n"
+"POT-Creation-Date: 2008-02-10 10:06+0100\n"
+"PO-Revision-Date: 2008-02-10 08:58+0100\n"
+"Last-Translator: Ruben Nunez Francisco <ruben.nunez@tang-it.com>\n"
+"Language-Team: <vdr@linuxtv.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Load EPG Data sent to Mediahighway receivers"
+msgstr "Carga datos de EPG de receptores MediaHighway"
+
+msgid "LoadEPG"
+msgstr "LoadEPG"
+
+msgid "Select a provider and press Ok"
+msgstr "Seleccionar proveedor y pulsar OK"
+
+msgid "Wait load epg data"
+msgstr "Espera mientras se carga el EPG"
+
+msgid "No data epg available"
+msgstr "No hay datos de EPG disponibles"
+
+msgid "Use file channels equivalences"
+msgstr "Utilizar fichero de equivalencias de canales"
+
+msgid "No"
+msgstr "No"
+
+msgid "Yes"
+msgstr "Si"
+
+msgid "DVB-S device for scanning"
+msgstr "Dispositivo DVB-S para la busqueda"
+
+msgid "Invalid provider number"
+msgstr "Numero de proveedor invalido"
+
+msgid "The plugin is already active"
+msgstr "El plugin ya esta activo"

@@ -1,0 +1,52 @@
+# VDR plugin language source file.
+# Copyright (C) 2007 Klaus Schmidinger <kls@cadsoft.de>
+# This file is distributed under the same license as the VDR package.
+# Hannu Savolainen <hannu@opensound.com>, 2002
+# Jaakko Hyvätti <jaakko@hyvatti.iki.fi>, 2002
+# Niko Tarnanen <niko.tarnanen@hut.fi>, 2003
+# Rolf Ahrenberg <rahrenbe@cc.hut.fi>, 2003
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: VDR 1.5.7\n"
+"Report-Msgid-Bugs-To: <helmut@helmutauer.de>\n"
+"POT-Creation-Date: 2008-04-09 15:34+0200\n"
+"PO-Revision-Date: 2008-04-09 15:01+0200\n"
+"Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
+"Language-Team: <vdr@linuxtv.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Administrative tasks"
+msgstr ""
+
+msgid "Menu entry"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "SaveExit"
+msgstr ""
+
+msgid "SaveRestart"
+msgstr ""
+
+msgid "Config file not found"
+msgstr ""
+
+msgid "PageUp"
+msgstr ""
+
+msgid "PageDown"
+msgstr ""
+
+msgid "Save changes?"
+msgstr ""
+
+msgid "Saving settings"
+msgstr ""
+
+msgid "Recording - restart VDR anyway?"
+msgstr ""

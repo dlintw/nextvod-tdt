@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2008-02-28 00:33+0100\n"
 "Last-Translator: Oktay Yolgeçen <oktay_73@yahoo.de>\n"
 "Language-Team: Turkish\n"
@@ -227,6 +227,9 @@ msgstr "Kullanýcý8"
 
 msgid "Key$User9"
 msgstr "Kullanýcý9"
+
+msgid "Recording started"
+msgstr "Kayýt baþlandý"
 
 msgid "Disk"
 msgstr "Disk"
@@ -991,9 +994,6 @@ msgstr "Pazar"
 
 msgid "Upcoming recording!"
 msgstr "Çekim yakýnda baþlýyor!"
-
-msgid "Recording started"
-msgstr "Kayýt baþlandý"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "VDR daha sonra kapanacak - zorlamak için Kapat'a bas"

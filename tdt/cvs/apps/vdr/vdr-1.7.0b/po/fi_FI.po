@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@cadsoft.de>\n"
-"POT-Creation-Date: 2008-04-12 14:19+0200\n"
+"POT-Creation-Date: 2009-12-31 21:00+0100\n"
 "PO-Revision-Date: 2007-08-15 15:52+0200\n"
 "Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
 "Language-Team: Finnish\n"
@@ -230,6 +230,9 @@ msgstr "Lisänäppäin 8"
 
 msgid "Key$User9"
 msgstr "Lisänäppäin 9"
+
+msgid "Recording started"
+msgstr "Tallennus aloitettu"
 
 msgid "Disk"
 msgstr "Levy"
@@ -994,9 +997,6 @@ msgstr "Sunnuntai"
 
 msgid "Upcoming recording!"
 msgstr "Tallennus on alkamassa!"
-
-msgid "Recording started"
-msgstr "Tallennus aloitettu"
 
 msgid "VDR will shut down later - press Power to force"
 msgstr "VDR sammuu myöhemmin - pakota virtanäppäimellä"

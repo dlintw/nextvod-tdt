@@ -1,0 +1,48 @@
+Sort Recordings patch for VDR
+-----------------------------
+Copyright (C) 2005      Frank99 @vdr-portal.de
+Copyright (C) 2006-2008 Christoph Haubrich
+
+Released under the same license as VDR itself, for details see vdr.c or
+http://firefly.vdr-developer.org/patches
+
+This patch changes the sort behaviour of the recordings menu. It is based
+on the patch available here: http://www.vdr-portal.de/board/thread.php?threadid=36031
+Required for this patch is the liemikuutio-patch for VDR which can be found here:
+http://www.saunalahti.fi/%7Erahrenbe/vdr/patches/
+
+There are four sorting modes available after this patch is applied:
+
+mode   behaviour for      behaviour for
+       main directory     sub directories
+--------------------------------------------------------------------------
+  0    alphabetically     if special character(*) is found alphabetically,
+                          else by date
+  1    by date            if special character(*) is found alphabetically,
+                          else by date
+  2    alphabetically     alphabetically
+  3    by date            by date
+
+(*) if the name of a  subdirectory ends with one of ".-$" (dot, hyphen, dollar sign) 
+    it is sorted alphabetically in sort mode 0 and 1
+
+Sort mode 0 with none of the special characters at the end of any subdir 
+corresponds to the default sorting mode of the original VDR.
+
+The sorting mode can be switched through in the recording menu with the '0' key 
+(0->1->2->3->0->...), a default for startup can be set in the setup->recordings menu.
+
+Additionally the sort order (ascending/descending) can be toggled by the '9' key
+(which is always set to ascending after a restart)
+
+If you like the to see subdirectories before recordings you can select to put 
+directories first in the setup->recordings menu. 
+
+If you would like the sorting to ignore a leading '%' (as normally displayed before
+cutted recordings) you can achive this by setting the environment variable LC_COLLATE
+properly (eg. LC_COLLATE=de_DE@euo in runvdr for germany).
+
+History:
+2006-08-13 v3, sortrec release for VDR 1.4.1 and liemikuutio 1.8
+2007-01-28 v3a, moved #ifdef from optimized-rename-patch to sortrec
+2008-03-29 v3b, removed ASCII-170 and ASCII-183 to make sortrec Utf8-ready
