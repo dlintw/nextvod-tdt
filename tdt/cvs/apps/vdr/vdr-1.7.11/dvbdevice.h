@@ -15,8 +15,13 @@
 #include <linux/dvb/version.h>
 #include "device.h"
 
+#ifdef __sh__
+#if DVB_API_VERSION != 3 || DVB_API_VERSION_MINOR != 2
+#error VDR requires Linux DVB driver API version 3.2 or higher!
+#else
 #if DVB_API_VERSION < 5
 #error VDR requires Linux DVB driver API version 5.0 or higher!
+#endif
 #endif
 
 #define MAXDVBDEVICES  8

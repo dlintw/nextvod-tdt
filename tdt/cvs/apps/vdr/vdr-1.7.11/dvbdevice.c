@@ -151,6 +151,9 @@ static unsigned int FrequencyToHz(unsigned int f)
 
 bool cDvbTuner::SetFrontend(void)
 {
+#ifdef __sh__
+  dvbfe_params Frontend;
+#else
 #define MAXFRONTENDCMDS 16
 #define SETCMD(c, d) { Frontend[CmdSeq.num].cmd = (c);\
                        Frontend[CmdSeq.num].u.data = (d);\
@@ -160,7 +163,9 @@ bool cDvbTuner::SetFrontend(void)
                           }\
                      }
   dtv_property Frontend[MAXFRONTENDCMDS];
+#endif
   memset(&Frontend, 0, sizeof(Frontend));
+#ifndef __sh__
   dtv_properties CmdSeq;
   memset(&CmdSeq, 0, sizeof(CmdSeq));
   CmdSeq.props = Frontend;
@@ -170,6 +175,7 @@ bool cDvbTuner::SetFrontend(void)
      return false;
      }
   CmdSeq.num = 0;
+#endif
 
   if (frontendType == SYS_DVBS || frontendType == SYS_DVBS2) {
      unsigned int frequency = channel.Frequency();
@@ -227,17 +233,30 @@ bool cDvbTuner::SetFrontend(void)
      frequency = abs(frequency); // Allow for C-band, where the frequency is less than the LOF
 
      // DVB-S/DVB-S2 (common parts)
+#ifdef __sh__
+     Frontend.delivery = dvbfe_delsys(channel.System());
+     Frontend.frequency = frequency * 1000UL;
+     Frontend.inversion = fe_spectral_inversion_t(channel.Inversion());
+#else
      SETCMD(DTV_DELIVERY_SYSTEM, channel.System());
      SETCMD(DTV_FREQUENCY, frequency * 1000UL);
      SETCMD(DTV_MODULATION, channel.Modulation());
      SETCMD(DTV_SYMBOL_RATE, channel.Srate() * 1000UL);
      SETCMD(DTV_INNER_FEC, channel.CoderateH());
      SETCMD(DTV_INVERSION, channel.Inversion());
+#endif
      if (channel.System() == SYS_DVBS2) {
         if (frontendType == SYS_DVBS2) {
            // DVB-S2
+#ifdef __sh__
+           Frontend.delsys.dvbs2.modulation = dvbfe_modulation(channel.Modulation());
+           Frontend.delsys.dvbs2.symbol_rate = channel.Srate() * 1000UL;
+           Frontend.delsys.dvbs2.fec = dvbfe_fec(channel.CoderateH());
+           Frontend.delsys.dvbs2.rolloff = dvbfe_rolloff(channel.RollOff());
+#else
            SETCMD(DTV_PILOT, PILOT_AUTO);
            SETCMD(DTV_ROLLOFF, channel.RollOff());
+#endif
            }
         else {
            esyslog("ERROR: frontend %d/%d doesn't provide DVB-S2", adapter, frontend);
@@ -246,12 +265,20 @@ bool cDvbTuner::SetFrontend(void)
         }
      else {
         // DVB-S
+#ifdef __sh__
+        Frontend.delsys.dvbs.modulation = dvbfe_modulation(channel.Modulation());
+        Frontend.delsys.dvbs.symbol_rate = channel.Srate() * 1000UL;
+        Frontend.delsys.dvbs.fec = dvbfe_fec(channel.CoderateH());
+        Frontend.delsys.dvbs.rolloff = dvbfe_rolloff(ROLLOFF_35);
+#else
         SETCMD(DTV_ROLLOFF, ROLLOFF_35); // DVB-S always has a ROLLOFF of 0.35
+#endif
         }
 
      tuneTimeout = DVBS_TUNE_TIMEOUT;
      lockTimeout = DVBS_LOCK_TIMEOUT;
      }
+#ifndef __sh__
   else if (frontendType == SYS_DVBC_ANNEX_AC || frontendType == SYS_DVBC_ANNEX_B) {
      // DVB-C
      SETCMD(DTV_DELIVERY_SYSTEM, frontendType);
@@ -280,15 +307,29 @@ bool cDvbTuner::SetFrontend(void)
      tuneTimeout = DVBT_TUNE_TIMEOUT;
      lockTimeout = DVBT_LOCK_TIMEOUT;
      }
+#endif
   else {
      esyslog("ERROR: attempt to set channel with unknown DVB frontend type");
      return false;
      }
+#ifdef __sh__
+  dvbfe_info feinfo;
+  feinfo.delivery = Frontend.delivery;
+  if (ioctl(fd_frontend, FE_GET_INFO, &feinfo) < 0) { //switch system
+     esyslog("ERROR: frontend %d/%d: %m", adapter, frontend);
+     return false;
+     }
+  if (ioctl(fd_frontend, FE_SET_PARAMS, &Frontend) < 0) {
+     esyslog("ERROR: frontend %d/%d: %m", adapter, frontend);
+     return false;
+     }
+#else
   SETCMD(DTV_TUNE, 0);
   if (ioctl(fd_frontend, FE_SET_PROPERTY, &CmdSeq) < 0) {
      esyslog("ERROR: frontend %d/%d: %m", adapter, frontend);
      return false;
      }
+#endif
   return true;
 }
 
