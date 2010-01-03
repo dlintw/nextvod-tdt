@@ -14,6 +14,7 @@ $(DEPDIR)/vdr: vdr.do_compile
 	cp $(appsdir)/vdr/vdr-1.7.0b/PLUGINS/src/remote/misc/remote.conf $(targetprefix)/var/vdr
 	cp $(appsdir)/vdr/vdr-1.7.0b/sources.conf $(targetprefix)/var/vdr
 	cp $(appsdir)/vdr/vdr-1.7.0b/channels.conf $(targetprefix)/var/vdr
+	cp $(appsdir)/vdr/vdr-1.7.0b/keymacros.conf $(targetprefix)/var/vdr
 	cp -rd $(appsdir)/vdr/fonts $(targetprefix)/usr/share
 	mkdir -p $(prefix)/release_vdr/usr/include/boost/
 	mkdir -p $(prefix)/release_vdr/usr/lib/vdr/
