@@ -16374,3 +16374,622 @@ diff -Nur enigma2-nightly.org/main/Makefile.am enigma2-nightly/main/Makefile.am
  
  enigma2$(EXEEXT): $(enigma2_OBJECTS) $(enigma2_DEPENDENCIES) $(enigma2_LDADD_WHOLE)
  #	@rm -f enigma2$(EXEEXT)
+
+diff -Nur enigma2-nightly.org/mytest.py enigma2-nightly.org/mytest.py
+--- enigma2-nightly.org/mytest.py	2010-01-03 23:16:22.500600000 +0100
++++ enigma2-nightly.org/mytest.py	2010-01-03 23:18:41.332599958 +0100
+@@ -301,4 +301,8 @@
+ 		self.pushCurrent()
+ 		dlg = self.current_dialog = self.instantiateDialog(screen, *arguments, **kwargs)
++#+++>
++		if dlg is None:
++			return
++#+++<
+ 		dlg.isTmp = True
+ 		dlg.callback = None
+@@ -369,4 +373,8 @@
+ 		if action == "shutdown":
+ 			self.shutdown()
++#+++>
++		elif action == "standby":
++			self.standby()
++#+++<
+ 		elif action == "show_menu":
+ 			print "Show shutdown Menu"
+@@ -501,8 +509,15 @@
+ 		from time import strftime
+ 		startTime = wakeupList[0]
+-		if (startTime[0] - nowTime) < 270: # no time to switch box back on
+-			wptime = nowTime + 30  # so switch back on in 30 seconds
+-		else:
+-			wptime = startTime[0] - 240
++#+++>
++#-		if (startTime[0] - nowTime) < 270: # no time to switch box back on
++#-			wptime = nowTime + 30  # so switch back on in 30 seconds
++#-		else:
++#-			wptime = startTime[0] - 240
++
++	        if (startTime[0] - nowTime) < 330: # no time to switch box back on
++		       wptime = nowTime + 30  # so switch back on in 30 seconds
++	        else:
++		       wptime = startTime[0] - 300
++#+++<
+ 		if not config.misc.useTransponderTime.value:
+ 			print "dvb time sync disabled... so set RTC now to current linux time!", strftime("%Y/%m/%d %H:%M", localtime(nowTime))
+
+diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/lib/python/Screens/InfoBar.py
+--- enigma2-nightly.org/lib/python/Screens/InfoBar.py	2010-01-03 23:16:22.500600000 +0100
++++ enigma2-nightly.org/lib/python/Screens/InfoBar.py	2010-01-03 23:18:41.332599958 +0100
+@@ -7,15 +7,31 @@
+ 
+ profile("LOAD:enigma")
+-from enigma import iPlayableService
++#--->
++#-from enigma import iPlayableService
++#---<
++#+++>
++from enigma import iServiceInformation, iPlayableService 
++#+++<
+ 
+ profile("LOAD:InfoBarGenerics")
++
++#-from Screens.InfoBarGenerics import InfoBarShowHide, \
++#-	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarRdsDecoder, \
++#-	InfoBarEPG, InfoBarSeek, InfoBarInstantRecord, \
++#-	InfoBarAudioSelection, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, \
++#-	InfoBarSubserviceSelection, InfoBarShowMovies, InfoBarTimeshift,  \
++#-	InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView, \
++#-	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions, \
++#-	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman
++#+++>
+ from Screens.InfoBarGenerics import InfoBarShowHide, \
+ 	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarRdsDecoder, \
+ 	InfoBarEPG, InfoBarSeek, InfoBarInstantRecord, \
+-	InfoBarAudioSelection, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, \
+-	InfoBarSubserviceSelection, InfoBarShowMovies, InfoBarTimeshift,  \
++	InfoBarAudioSelection, InfoBarExtendedAudioSelection, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, \
++	InfoBarAspectSelection, InfoBarResolutionSelection, InfoBarSubserviceSelection, InfoBarShowMovies, InfoBarTimeshift,  \
+ 	InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView, \
+ 	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions, \
+-	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman
++	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarSleepTimer, InfoBarServiceErrorPopupSupport, InfoBarJobman
++#+++<
+ 
+ profile("LOAD:InitBar_Components")
+@@ -29,7 +45,17 @@
+ class InfoBar(InfoBarBase, InfoBarShowHide,
+ 	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder,
+-	InfoBarInstantRecord, InfoBarAudioSelection, 
++#--->
++#-	InfoBarInstantRecord, InfoBarAudioSelection, 
++#---<
++#+++>
++	InfoBarInstantRecord, InfoBarAudioSelection, InfoBarExtendedAudioSelection, 
++#+++<
+ 	HelpableScreen, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish,
+-	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek,
++#--->
++#-	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek,
++#---<
++#+++>
++	InfoBarAspectSelection, InfoBarResolutionSelection, InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek,
++#+++<
+ 	InfoBarSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions,
+ 	InfoBarPiP, InfoBarPlugins, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarJobman,
+@@ -46,16 +72,32 @@
+ 				"showRadio": (self.showRadio, _("Show the radio player...")),
+ 				"showTv": (self.showTv, _("Show the tv player...")),
++#+++>
++				"toogleTvRadio": (self.toogleTvRadio, _("toggels betwenn tv and radio...")), 
++				"volumeUp": (self._volUp, _("...")), 
++				"volumeDown": (self._volDown, _("...")), 
++#+++<
+ 			}, prio=2)
+ 		
+ 		self.allowPiP = True
+-		
++#--->
++#-		for x in HelpableScreen, \
++#-				InfoBarBase, InfoBarShowHide, \
++#-				InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder, \
++#-				InfoBarInstantRecord, InfoBarAudioSelection, \
++#-				InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarSubserviceSelection, \
++#-				InfoBarTimeshift, InfoBarSeek, InfoBarSummarySupport, InfoBarTimeshiftState, \
++#-				InfoBarTeletextPlugin, InfoBarExtensions, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, \
++#-				InfoBarPlugins, InfoBarServiceErrorPopupSupport:
++#---<
++#+++>
+ 		for x in HelpableScreen, \
+ 				InfoBarBase, InfoBarShowHide, \
+ 				InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder, \
+-				InfoBarInstantRecord, InfoBarAudioSelection, \
+-				InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarSubserviceSelection, \
++				InfoBarInstantRecord, InfoBarAudioSelection, InfoBarExtendedAudioSelection, \
++				InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarAspectSelection, InfoBarResolutionSelection, InfoBarSubserviceSelection, \
+ 				InfoBarTimeshift, InfoBarSeek, InfoBarSummarySupport, InfoBarTimeshiftState, \
+ 				InfoBarTeletextPlugin, InfoBarExtensions, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, \
+-				InfoBarPlugins, InfoBarServiceErrorPopupSupport:
++				InfoBarSleepTimer, InfoBarPlugins, InfoBarServiceErrorPopupSupport:
++#+++<		
+ 			x.__init__(self)
+ 
+@@ -71,4 +113,32 @@
+ 		assert InfoBar.instance is None, "class InfoBar is a singleton class and just one instance of this class is allowed!"
+ 		InfoBar.instance = self
++
++#+++>
++		# I know that this is not nice but i dont know how to directly access VolumneControl
++		from Screens.Volume import Volume
++		self.volumeDialog = session.instantiateDialog(Volume)
++		from enigma import eTimer
++		self.hideVolTimer = eTimer()
++		self.hideVolTimer.callback.append(self.volHide)
++		
++	def volHide(self):
++		self.volumeDialog.hide()
++
++	def _volUp(self):
++		print "_volUp"
++		from enigma import eDVBVolumecontrol
++		eDVBVolumecontrol.getInstance().volumeUp()
++		self.volumeDialog.setValue(eDVBVolumecontrol.getInstance().getVolume())
++		self.volumeDialog.show()
++		self.hideVolTimer.start(3000, True)
++		
++	def _volDown(self):
++		print "_volDown"
++		from enigma import eDVBVolumecontrol
++		eDVBVolumecontrol.getInstance().volumeDown()
++		self.volumeDialog.setValue(eDVBVolumecontrol.getInstance().getVolume())
++		self.volumeDialog.show()
++		self.hideVolTimer.start(3000, True)
++#+++<
+ 
+ 	def __onClose(self):
+@@ -90,4 +160,22 @@
+ 		self.onExecBegin.remove(self.__checkServiceStarted)
+ 
++#+++>
++	def toogleTvRadio(self): 
++		service = self.session.nav.getCurrentService() 
++		info = service.info() 
++		AudioPID = info.getInfo(iServiceInformation.sAudioPID) 
++		VideoPID = info.getInfo(iServiceInformation.sVideoPID) 
++
++		print "sAudioPID", AudioPID 
++		print "sVideoPID", VideoPID 
++               
++		if VideoPID == -1: 
++			print "radio->tv" 
++			self.showTv2() 
++		else: 
++			print "tv->radio" 
++			self.showRadio2() 
++#+++<
++
+ 	def serviceStarted(self):  #override from InfoBarShowHide
+ 		new = self.servicelist.newServicePlayed()
+@@ -112,4 +200,17 @@
+ 			from Screens.ChannelSelection import ChannelSelectionRadio
+ 			self.session.openWithCallback(self.ChannelSelectionRadioClosed, ChannelSelectionRadio, self)
++
++#+++>
++	def showTv2(self):
++		self.showTvChannelList(False)
++
++	def showRadio2(self):
++		if config.usage.e1like_radio_mode.value:
++			self.showRadioChannelList(False)
++ 		else:
++ 			self.rds_display.hide() # in InfoBarRdsDecoder
++ 			from Screens.ChannelSelection import ChannelSelectionRadio
++ 			self.session.openWithCallback(self.ChannelSelectionRadioClosed, ChannelSelectionRadio, self)
++#+++<
+ 
+ 	def ChannelSelectionRadioClosed(self, *arg):
+@@ -214,4 +315,9 @@
+ 		if answer in ("quit", "quitanddeleteconfirmed"):
+ 			config.movielist.last_videodir.cancel()
++#+++> 
++                        # make sure that playback is unpaused otherwise the  
++                        # player driver might stop working 
++                        self.setSeekState(self.SEEK_STATE_PLAY) 
++#+++<
+ 			self.close()
+ 		elif answer == "movielist":
+@@ -220,4 +326,9 @@
+ 			from Screens.MovieSelection import MovieSelection
+ 			self.session.openWithCallback(self.movieSelected, MovieSelection, ref)
++#+++> 
++                        # make sure that playback is unpaused otherwise the  
++                        # player driver might stop working 
++                        self.setSeekState(self.SEEK_STATE_PLAY) 
++#+++<
+ 			self.session.nav.stopService()
+ 		elif answer == "restart":
+
+diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py
+--- enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py	2010-01-03 23:16:22.500600000 +0100
++++ enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py	2010-01-03 23:18:41.332599958 +0100
+@@ -54,4 +54,7 @@
+ 	STATE_SHOWING = 2
+ 	STATE_SHOWN = 3
++#+++>
++	STATE_EPG = 4
++#+++<
+ 
+ 	def __init__(self):
+@@ -104,10 +107,32 @@
+ 			self.hide()
+ 
++#+++>
++	def epg(self): 
++		self.__state = self.STATE_EPG 
++		self.hide() 
++		self.hideTimer.stop() 
++		self.openEventView() 
++#+++<
++
+ 	def toggleShow(self):
+-		if self.__state == self.STATE_SHOWN:
+-			self.hide()
+-			self.hideTimer.stop()
+-		elif self.__state == self.STATE_HIDDEN:
+-			self.show()
++#--->
++#-		if self.__state == self.STATE_SHOWN:
++#-			self.hide()
++#-			self.hideTimer.stop()
++#-		elif self.__state == self.STATE_HIDDEN:
++#-			self.show()
++#---<
++#+++>
++		if self.__state == self.STATE_SHOWN: 
++			print "self.STATE_SHOWN" 
++			self.epg() 
++		elif self.__state == self.STATE_HIDDEN: 
++			print "self.STATE_HIDDEN" 
++			self.show() 
++		elif self.__state == self.STATE_EPG: 
++			print "self.STATE_EPG" 
++			self.hide() 
++			self.hideTimer.stop() 
++#+++<
+ 
+ 	def lockShow(self):
+@@ -1357,4 +1382,15 @@
+ 
+ # depends on InfoBarExtensions
++
++class InfoBarSleepTimer:
++	def __init__(self):
++		self.addExtension((self.getSleepTimerName, self.showSleepTimerSetup, lambda: True), "1")
++
++	def getSleepTimerName(self):
++		return _("Sleep Timer")
++
++	def showSleepTimerSetup(self):
++		self.session.open(SleepTimerEdit)
++
+ class InfoBarPiP:
+ 	def __init__(self):
+@@ -1717,4 +1753,142 @@
+ 			self.audioChannel.selectChannel(mode[1])
+ 		del self.audioChannel
++
++#+++>
++class InfoBarExtendedAudioSelection:
++	STATE_HIDDEN = 0 
++	STATE_AUDIO = 1 
++	STATE_SUBSERVICE = 2 
++
++	def __init__(self):
++		self["ExtendedAudioSelectionAction"] = HelpableActionMap(self, "InfobarExtendedAudioSelectionActions",
++			{
++				"audioSelection": (self.EXtoggleYellow, _("Audio Options...")),
++			})
++		self.__state = self.STATE_HIDDEN 
++
++	def EXdoAudio(self): 
++		self.__state = self.STATE_AUDIO 
++		self.EXaudioSelection() 
++
++	def EXdoSubService(self): 
++		self.__state = self.STATE_SUBSERVICE 
++		self.subserviceSelection() 
++
++	def EXdoHide(self): 
++		self.__state = self.STATE_HIDDEN 
++
++	def EXtoggleYellow(self, arg=""): 
++		print self.__state 
++		if self.__state == self.STATE_HIDDEN: 
++			print "self.STATE_HIDDEN" 
++			self.EXdoAudio() 
++		elif self.__state == self.STATE_AUDIO: 
++			print "self.STATE_AUDIO" 
++			self.EXdoSubService() 
++		elif self.__state == self.STATE_SUBSERVICE: 
++			print "self.STATE_SUBSERVICE" 
++			self.EXdoHide() 
++
++	def EXaudioSelection(self):
++		service = self.session.nav.getCurrentService()
++		self.audioTracks = audio = service and service.audioTracks()
++		n = audio and audio.getNumberOfTracks() or 0
++		tlist = []
++		if n > 0:
++			self.audioChannel = service.audioChannel()
++
++			for x in range(n):
++				i = audio.getTrackInfo(x)
++				language = i.getLanguage()
++				description = i.getDescription()
++
++				if LanguageCodes.has_key(language):
++					language = LanguageCodes[language][0]
++
++				if len(description):
++					description += " (" + language + ")"
++				else:
++					description = language
++
++				tlist.append((description, x))
++
++			tlist.sort(key=lambda x: x[0])
++
++			selectedAudio = self.audioTracks.getCurrentTrack()
++
++			selection = 0
++
++			for x in tlist:
++				if x[1] != selectedAudio:
++					selection += 1
++				else:
++					break
++
++			if SystemInfo["CanDownmixAC3"]:
++				tlist = [(_("AC3 downmix") + " - " +[_("Off"), _("On")][config.av.downmix_ac3.value and 1 or 0], "CALLFUNC", self.EXchangeAC3Downmix),
++					([_("Left"), _("Stereo"), _("Right")][self.audioChannel.getCurrentChannel()], "mode"),
++					("Subservice", "subservice"),#"CALLFUNC", self.toggleYellow), 
++					("--", "")] + tlist
++				keys = [ "red", "green", "yellow", "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] + [""]*n
++				selection += 4
++			else:
++				tlist = [([_("Left"), _("Stereo"), _("Right")][self.audioChannel.getCurrentChannel()], "mode"), ("Subservice", "subservice"), ("--", "")] + tlist
++				keys = [ "red", "yellow", "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] + [""]*n
++				selection += 3
++			self.session.openWithCallback(self.EXaudioSelected, ChoiceBox, title=_("Select audio track"), list = tlist, selection = selection, keys = keys)
++		else:
++			del self.audioTracks
++
++	def EXchangeAC3Downmix(self, arg):
++		choicelist = self.session.current_dialog["list"]
++		list = choicelist.list
++		t = list[0][1]
++		list[0][1]=(t[0], t[1], t[2], t[3], t[4], t[5], t[6],
++			_("AC3 downmix") + " - " +[_("On"), _("Off")][config.av.downmix_ac3.value and 1 or 0])
++		choicelist.setList(list)
++		if config.av.downmix_ac3.value:
++			config.av.downmix_ac3.value = False
++		else:
++			config.av.downmix_ac3.value = True
++		config.av.downmix_ac3.save()
++
++	def EXaudioSelected(self, audio):
++		if audio is not None:
++			if isinstance(audio[1], str):
++				if audio[1] == "subservice":
++					service = self.session.nav.getCurrentService()
++					#subservices = service and service.subServices()
++					if service.subServices().getNumberOfSubservices() > 0:
++						#del self.audioChannel
++						#del self.audioTracks
++						self.EXtoggleYellow()
++
++				elif audio[1] == "mode":
++					keys = ["red", "green", "yellow"]
++					selection = self.audioChannel.getCurrentChannel()
++					tlist = [(_("left"), 0), (_("stereo"), 1), (_("right"), 2)]
++					self.session.openWithCallback(self.EXmodeSelected, ChoiceBox, title=_("Select audio mode"), list = tlist, selection = selection, keys = keys)
++					
++			else: #if isinstance(audio[1], str):
++				del self.audioChannel
++				if self.session.nav.getCurrentService().audioTracks().getNumberOfTracks() > audio[1]:
++					self.audioTracks.selectTrack(audio[1])
++
++		try:
++			del self.audioChannel
++		except AttributeError:
++			print "no such Attribute"
++		try:
++			del self.audioTracks
++		except AttributeError:
++			print "no such Attribute"
++			
++		self.EXdoHide() 
++
++	def EXmodeSelected(self, mode):
++		if mode is not None:
++			self.audioChannel.selectChannel(mode[1])
++		del self.audioChannel
++#+++<
+ 
+ class InfoBarSubserviceSelection:
+@@ -1794,14 +1968,41 @@
+ 
+ 			if self.bouquets and len(self.bouquets):
+-				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
++#--->
++#-				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
++#---<
++#+++>
++				keys = ["red", "blue", "yellow", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
++#+++<
+ 				if config.usage.multibouquet.value:
+-					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
++#--->
++#-					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
++#---<
++#+++>
++					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("Exit", "exit"), ("--", "")] + tlist
++#+++<
+ 				else:
+-					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to favourites"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
++#--->
++#-					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to favourites"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
++#---<
++#+++>
++					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to favourites"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("Exit", "exit"), ("--", "")] + tlist
++#+++<
++#--->
++#-				selection += 3
++#---<
++#+++>
++				selection += 4
++#+++<
++			else:
++#--->
++#-				tlist = [(_("Quickzap"), "quickzap", service.subServices()), ("--", "")] + tlist
++#-				keys = ["red", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
++#-				selection += 2
++#---<
++#+++>
++				tlist = [(_("Quickzap"), "quickzap", service.subServices()), ("Exit", "exit"), ("--", "")] + tlist
++				keys = ["red", "yellow", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
+ 				selection += 3
+-			else:
+-				tlist = [(_("Quickzap"), "quickzap", service.subServices()), ("--", "")] + tlist
+-				keys = ["red", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
+-				selection += 2
++#+++<
+ 
+ 			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
+@@ -1843,4 +2044,127 @@
+ 		else:
+ 			del self.selectedSubservice
++
++#+++>
++class InfoBarAspectSelection: 
++	STATE_HIDDEN = 0 
++	STATE_ASPECT = 1 
++	STATE_RESOLUTION = 2 
++	def __init__(self): 
++		self["AspectSelectionAction"] = HelpableActionMap(self, "InfobarAspectSelectionActions", 
++			{ 
++				"aspectSelection": (self.ExGreen_toggleGreen, _("Aspect list...")), 
++			}) 
++
++		self.__ExGreen_state = self.STATE_HIDDEN 
++
++	def ExGreen_doAspect(self): 
++		self.__ExGreen_state = self.STATE_ASPECT 
++		self.aspectSelection() 
++
++	def ExGreen_doResolution(self): 
++		self.__ExGreen_state = self.STATE_RESOLUTION 
++		self.resolutionSelection() 
++
++	def ExGreen_doHide(self): 
++		self.__ExGreen_state = self.STATE_HIDDEN 
++
++	def ExGreen_toggleGreen(self, arg=""): 
++		print self.__ExGreen_state 
++		if self.__ExGreen_state == self.STATE_HIDDEN: 
++			print "self.STATE_HIDDEN" 
++			self.ExGreen_doAspect() 
++		elif self.__ExGreen_state == self.STATE_ASPECT: 
++			print "self.STATE_ASPECT" 
++			self.ExGreen_doResolution() 
++		elif self.__ExGreen_state == self.STATE_RESOLUTION: 
++			print "self.STATE_RESOLUTION" 
++			self.ExGreen_doHide() 
++
++	def aspectSelection(self): 
++		selection = 0 
++		tlist = [] 
++		tlist.append(("Resolution", "resolution")) 
++		tlist.append(("", "")) 
++		tlist.append(("Letterbox", "letterbox")) 
++		tlist.append(("PanScan", "panscan")) 
++		tlist.append(("Non Linear", "non")) 
++		tlist.append(("Bestfit", "bestfit")) 
++
++		mode = open("/proc/stb/video/policy").read()[:-1] 
++		print mode 
++		for x in range(len(tlist)): 
++			if tlist[x][1] == mode: 
++				selection = x 
++
++		keys = ["green", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] 
++
++
++		self.session.openWithCallback(self.aspectSelected, ChoiceBox, title=_("Please select an aspect ratio..."), list = tlist, selection = selection, keys = keys) 
++	def aspectSelected(self, aspect): 
++		if not aspect is None: 
++			if isinstance(aspect[1], str): 
++				if aspect[1] == "resolution":
++					self.ExGreen_toggleGreen()
++				else:
++					open("/proc/stb/video/policy", "w").write(aspect[1]) 
++					self.ExGreen_doHide()
++		return 
++
++class InfoBarResolutionSelection: 
++	def __init__(self): 
++		return
++
++	def resolutionSelection(self): 
++
++		xresString = open("/proc/stb/vmpeg/0/xres", "r").read()
++		yresString = open("/proc/stb/vmpeg/0/yres", "r").read()
++		fpsString = open("/proc/stb/vmpeg/0/framerate", "r").read()
++		xres = int(xresString, 16)
++		yres = int(yresString, 16)
++		fps = int(fpsString, 16)
++		fpsFloat = float(fps)
++		fpsFloat = fpsFloat/1000
++
++
++		selection = 0 
++		tlist = [] 
++		tlist.append(("Exit", "exit")) 
++		tlist.append(("Auto(not available)", "auto")) 
++		tlist.append(("Video: " + str(xres) + "x" + str(yres) + "@" + str(fpsFloat) + "hz", "")) 
++		tlist.append(("--", "")) 
++		tlist.append(("576i", "576i50")) 
++		tlist.append(("576p", "576p50")) 
++		tlist.append(("720p", "720p50")) 
++		tlist.append(("1080i", "1080i50")) 
++		tlist.append(("1080p@23.976hz", "1080p23")) 
++		tlist.append(("1080p@24hz", "1080p24")) 
++		tlist.append(("1080p@25hz", "1080p25")) 
++		
++
++		keys = ["green", "yellow", "blue", "", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] 
++
++		mode = open("/proc/stb/video/videomode").read()[:-1] 
++		print mode 
++		for x in range(len(tlist)): 
++			if tlist[x][1] == mode: 
++				selection = x 
++
++		self.session.openWithCallback(self.ResolutionSelected, ChoiceBox, title=_("Please select a resolution..."), list = tlist, selection = selection, keys = keys) 
++
++	def ResolutionSelected(self, Resolution): 
++		if not Resolution is None: 
++			if isinstance(Resolution[1], str): 
++				if Resolution[1] == "exit":
++					self.ExGreen_toggleGreen()
++				elif Resolution[1] != "auto":
++					open("/proc/stb/video/videomode", "w").write(Resolution[1]) 
++					from enigma import gFBDC
++					gFBDC.getInstance().setResolution(-1, -1)
++					self.ExGreen_toggleGreen()
++		return 
++
++
++
++#+++<
+ 
+ class InfoBarAdditionalInfo:
