@@ -61,6 +61,9 @@ public:
   virtual eVideoSystem GetVideoSystem(void);
   virtual void GetVideoSize(int &Width, int &Height, double &VideoAspect);
   virtual void GetOsdSize(int &Width, int &Height, double &PixelAspect);
+#ifdef __sh__
+  virtual void SetVideoStreamtype(int VideoStreamtype);
+#endif
 
 // Track facilities
 

@@ -16,6 +16,7 @@
 #include "device.h"
 
 #ifdef __sh__
+/* Only Version 3.2 is implemented so far */
 #if DVB_API_VERSION != 3 || DVB_API_VERSION_MINOR != 2
 #error VDR requires Linux DVB driver API version 3.2 or higher!
 #else

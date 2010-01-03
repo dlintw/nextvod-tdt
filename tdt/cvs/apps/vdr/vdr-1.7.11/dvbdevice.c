@@ -152,6 +152,9 @@ static unsigned int FrequencyToHz(unsigned int f)
 bool cDvbTuner::SetFrontend(void)
 {
 #ifdef __sh__
+/* Function downgraded to LinuxDvb Version 3.2
+ * the __sh__ defindes should be changed to #ifdef VERSION_3_2 sometimes in the future
+ */
   dvbfe_params Frontend;
 #else
 #define MAXFRONTENDCMDS 16
@@ -313,6 +316,9 @@ bool cDvbTuner::SetFrontend(void)
      return false;
      }
 #ifdef __sh__
+  /* I don't know if the FE_GET_INFO is necessary, 
+   * but this is used in the old version of this funtion
+   */
   dvbfe_info feinfo;
   feinfo.delivery = Frontend.delivery;
   if (ioctl(fd_frontend, FE_GET_INFO, &feinfo) < 0) { //switch system

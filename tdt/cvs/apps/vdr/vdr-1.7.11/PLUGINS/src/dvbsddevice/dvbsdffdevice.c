@@ -300,6 +300,30 @@ void cDvbSdFfDevice::GetOsdSize(int &Width, int &Height, double &PixelAspect)
   cDevice::GetOsdSize(Width, Height, PixelAspect);
 }
 
+#ifdef __sh__
+/** 
+  * SetVideoStreamtype()
+  * Calls the LinuxDvbApi to set the Video Encoding, MPEG2 or H264.
+  * int VideoStreamtype: Represents the streamtype as defined in pat/pmt
+  */
+void cDvbSdFfDevice:SetVideoStreamtype(int VideoStreamtype) {
+//video streamtype 2=mpeeg2 27=h264
+
+  const int MPEG2 = 2;
+  const int H264 = 27;
+
+  int streamtype = VIDEO_STREAMTYPE_MPEG2;
+
+  int vtype = VideoStreamtype/*Channel->Vtype()*/;
+  if(vtype == MPEG2)
+     streamtype = VIDEO_STREAMTYPE_MPEG2;
+  else if(vtype == H264)
+     streamtype = VIDEO_STREAMTYPE_H264;
+  
+  CHECK(ioctl(fd_video, VIDEO_SET_STREAMTYPE, streamtype));
+}
+#endif
+
 bool cDvbSdFfDevice::SetAudioBypass(bool On)
 {
   if (setTransferModeForDolbyDigital != 1)
@@ -435,6 +459,11 @@ bool cDvbSdFfDevice::SetChannelDevice(const cChannel *Channel, bool LiveView)
      }
   else if (StartTransferMode)
      cControl::Launch(new cTransferControl(this, Channel->GetChannelID(), vpid, Channel->Apids(), Channel->Dpids(), Channel->Spids()));
+
+#ifdef __sh__
+  // Hopefully setting the Video Streamtype here is correct.
+  SetVideoStreamtype(Channel->Vtype());
+#endif
 
   return true;
 }
@@ -758,6 +787,14 @@ int cDvbSdFfDevice::PlayTsAudio(const uchar *Data, int Length)
 
 bool cDvbSdFfDeviceProbe::Probe(int Adapter, int Frontend)
 {
+#ifdef __sh__
+  // It seems that we dont have these entries, so fall back
+  // TODO: This should be changed to be target independend
+  if (Adapter > 0 || Frontend > 0 /* FIXME: On DualTuner boxes we got two Fronteds */)
+     return false;
+
+  new cDvbSdFfDevice(Adapter, Frontend);
+#else
   static uint32_t SubsystemIds[] = {
     0x110A0000, // Fujitsu Siemens DVB-C
     0x13C20000, // Technotrend/Hauppauge WinTV DVB-S rev1.X or Fujitsu Siemens DVB-C
@@ -795,5 +832,6 @@ bool cDvbSdFfDeviceProbe::Probe(int Adapter, int Frontend)
          return true;
          }
       }
+#endif
   return false; 
 }
