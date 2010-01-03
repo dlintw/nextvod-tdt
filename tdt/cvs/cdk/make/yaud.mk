@@ -82,11 +82,11 @@ yaud-enigma: yaud-none lirc stslave \
 		boot-elf misc-cp remote firstboot enigma
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-yaud-vdr: yaud-none lirc stslave openssl openssl-dev \
+yaud-vdr: yaud-none stslave openssl openssl-dev \
 		boot-elf misc-cp remote firstboot vdr
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-yaud-neutrino: yaud-none lirc stslave\
+yaud-neutrino: yaud-none stslave\
 		boot-elf hotplug remote firstboot neutrino release_neutrino
 	@TUXBOX_YAUD_CUSTOMIZE@
 
