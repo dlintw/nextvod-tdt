@@ -21,6 +21,8 @@ $(DEPDIR)/vdr: vdr.do_compile
 	mkdir -p $(prefix)/release_vdr/usr/local/bin/
 	mkdir -p $(prefix)/release_vdr/usr/share/locale/
 	mkdir -p $(prefix)/release_vdr/var/vdr
+	mkdir -p $(prefix)/release_vdr/bin
+	cp -rd $(targetprefix)/bin/fp_control $(prefix)/release_vdr/bin/
 	cp -rd $(targetprefix)/usr/include/boost/shared_container_iterator.hpp $(prefix)/release_vdr/usr/include/boost/
 	cp -rd $(targetprefix)/usr/lib/libfontconfi* $(prefix)/release_vdr/usr/lib/
 	cp -rd $(targetprefix)/usr/lib/vdr/lib* $(prefix)/release_vdr/usr/lib/vdr/
@@ -31,6 +33,7 @@ $(DEPDIR)/vdr: vdr.do_compile
 	cp -rd $(targetprefix)/var/vdr/remote.conf $(prefix)/release_vdr/var/vdr/
 	cp -rd $(targetprefix)/var/vdr/sources.conf $(prefix)/release_vdr/var/vdr/
 	cp -rd $(targetprefix)/var/vdr/channels.conf $(prefix)/release_vdr/var/vdr/
+	cp -rd $(targetprefix)/var/vdr/keymacros.conf $(prefix)/release_vdr/var/vdr/
 ##########################################################################################
 	mkdir -p $(prefix)/release_vdr/etc/init.d
 	cp $(buildprefix)/root/release/rcS_vdr_ufs910 $(prefix)/release_vdr/etc/init.d/rcS
