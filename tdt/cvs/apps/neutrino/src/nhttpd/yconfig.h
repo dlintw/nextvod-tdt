@@ -217,7 +217,7 @@
 #define AUTHUSER			"root"
 #define AUTHPASSWORD			"oxmox"
 #define PRIVATEDOCUMENTROOT		"/shares/mss-hdd/Install/web"
-#define PUBLICDOCUMENTROOT		"/var/httpd"
+#define PUBLICDOCUMENTROOT		"/usr/local/share/neutrino/httpd-y"
 #define HOSTEDDOCUMENTROOT		"/mnt/hosted"
 
 #define SSL_PEMFILE			HTTPD_CONFIGDIR "/server.pem"

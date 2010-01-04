@@ -411,16 +411,43 @@ CBaseDec::RetCode CMP3Dec::Decoder(FILE *InputFp, const int OutputFd,
 	 * Stream structure.
 	 */
 
+#ifdef __sh__
+//0 playing
+//1 entering pause
+//2 pausing
+//3 leaving pause
+	int inPause = 0;
+#endif
 	/* This is the decoding loop. */
 	do
 	{
 		int secondsToJump = *secondsToSkip;
+
+#ifdef __sh__
+		if(inPause == 1) {
+			inPause = 2;
+			audioDecoder->Pause();
+		} else if(inPause == 3) {
+			inPause = 0;
+			audioDecoder->Resume();
+		}
+#endif
 		if(*state==PAUSE)
 		{
+#ifdef __sh__
+			if(inPause == 0)
+				inPause = 1;
+#endif
 			// in pause mode do nothing
 			usleep(100000);
 			continue;
 		}
+#ifdef __sh__
+		if(inPause == 2 && *state==PLAY) {
+			inPause = 3;
+			continue;
+		}
+#endif
 		/* The input bucket must be filled if it becomes empty or if
 		 * it's the first execution of the loop.
 		 */

@@ -510,6 +510,14 @@ int parse_pmt(CZapitChannel * const channel)
 			delete channel->getCaPmt();
 		channel->setCaPmt(caPmt);
 	}
+
+
+#ifdef __sh__
+//Dagobert: I'd like to have the capmt, I have no use for the raw pmt
+//and make my own capmt :D I'm to lazy ;)
+        ci->SendCaPMT(caPmt); 
+#endif
+
 #if 0
 	//Quick&Dirty Hack to support Premiere's EPG not only on the portal but on the subchannels as well
 	if (channel->getOriginalNetworkId() == 0x0085) {

@@ -5,7 +5,7 @@ INCLUDES = \
         -I$(top_srcdir)/lib \
 	-I$(top_srcdir)/src/zapit/include \
 	-I$(top_srcdir)/lib/libconfigfile \
-	-I$(top_srcdir)/lib/libcoolstream \
+	-I$(top_srcdir)/../misc/tools/libcoolstream \
         @FREETYPE_CFLAGS@ \
         @VORBISIDEC_CFLAGS@ \
 	-I$(top_srcdir)/include

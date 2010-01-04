@@ -11,8 +11,16 @@
 
 #include <string>
 
+#include <common.h>
+extern OutputHandler_t		OutputHandler;
+extern PlaybackHandler_t	PlaybackHandler;
+extern ContainerHandler_t	ContainerHandler;
+extern ManagerHandler_t		ManagerHandler;
+
 #ifndef CS_PLAYBACK_PDATA
-#define CS_PLAYBACK_PDATA void
+typedef struct {
+	int nothing;
+} CS_PLAYBACK_PDATA;
 #endif
 
 typedef enum {
@@ -27,6 +35,9 @@ class cPlayback
 		pthread_cond_t read_cond;
 		pthread_mutex_t mutex;
 		CS_PLAYBACK_PDATA * privateData;
+#ifdef __sh__
+		Context_t * player;
+#endif
 		bool enabled;
 		bool paused;
 		bool playing;
@@ -53,11 +64,11 @@ class cPlayback
 		bool GetPosition(int &position, int &duration);
 		bool GetOffset(off64_t &offset);
 		bool SetPosition(int position, bool absolute = false);
-		bool IsPlaying(void) const { return playing; }
-		bool IsEnabled(void) const { return enabled; }
+		bool IsPlaying(void) const;
+		bool IsEnabled(void) const;
 		void * GetHandle(void);
 		void * GetDmHandle(void);
-		int GetCurrPlaybackSpeed(void) const { return nPlaybackSpeed; }
+		int GetCurrPlaybackSpeed(void) const;
 		void FindAllPids(uint16_t *apids, unsigned short *ac3flags, uint16_t *numpida, std::string *language);
 		//
 		cPlayback(int num = 0);

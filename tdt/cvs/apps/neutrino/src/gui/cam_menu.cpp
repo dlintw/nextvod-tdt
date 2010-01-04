@@ -150,6 +150,8 @@ int CCAMMenuHandler::handleCamMsg (const neutrino_msg_t msg, neutrino_msg_data_t
 	MMI_MENU_LIST_INFO * pMenu = &Menu;
 	MMI_ENGUIRY_INFO * pMmiEnquiry = &MmiEnquiry;
 
+printf("CCAMMenuHandler::handleCamMsg >\n");
+
 //printf("CCAMMenuHandler::handleCamMsg: msg 0x%x data 0x%x\n", msg, data);
 
 	if(msg == NeutrinoMessages::EVT_CI_INSERTED) {
@@ -209,8 +211,14 @@ int CCAMMenuHandler::handleCamMsg (const neutrino_msg_t msg, neutrino_msg_data_t
 		if(msg != NeutrinoMessages::EVT_CI_MMI_MENU)
 			sublevel = true;
 
+		if(msg != NeutrinoMessages::EVT_CI_MMI_MENU)
+                   printf("NeutrinoMessages::EVT_CI_MMI_MENU \n");
+		else
+                   printf("NeutrinoMessages::EVT_CI_MMI_LIST \n");
+		
 		memcpy(pMenu, (MMI_MENU_LIST_INFO*) data, sizeof(MMI_MENU_LIST_INFO));
 		free((void *)data);
+
 		curslot = pMenu->slot;
 
 		printf("CCAMMenuHandler::handleCamMsg: slot %d menu ready, title %s choices %d\n", curslot, convertDVBUTF8(pMenu->title, strlen(pMenu->title), 0).c_str(), pMenu->choice_nb);
@@ -282,7 +290,11 @@ printf("CCAMMenuHandler::handleCamMsg: bottom: %s\n", pMenu->bottom);
 
 		if(selected >= 0) {
 			printf("CCAMMenuHandler::handleCamMsg: selected %d:%s sublevel %s\n", selected, pMenu->choice_item[i], sublevel ? "yes" : "no");
+#ifdef __sh__
+			ci->CI_MenuAnswer(curslot, selected+1);
+#else
 			CI_MenuAnswer(curslot, selected+1);
+#endif
 			timeoutEnd = CRCInput::calcTimeoutEnd(10);
 			return 1;
 		} else {
@@ -310,10 +322,18 @@ printf("CCAMMenuHandler::handleCamMsg: bottom: %s\n", pMenu->bottom);
 
 		if((int) strlen(cPIN) != pMmiEnquiry->answerlen) {
 			printf("CCAMMenuHandler::handleCamMsg: wrong input len\n");
+#ifdef __sh__
+			ci->CI_Answer(curslot, (unsigned char *) cPIN, 0);
+#else
 			CI_Answer(curslot, (unsigned char *) cPIN, 0);
+#endif
 			return 0;
 		} else {
+#ifdef __sh__
+			ci->CI_Answer(curslot, (unsigned char *) cPIN, pMmiEnquiry->answerlen);
+#else
 			CI_Answer(curslot, (unsigned char *) cPIN, pMmiEnquiry->answerlen);
+#endif
 			return 1;
 		}
 	}
@@ -327,7 +347,12 @@ printf("CCAMMenuHandler::handleCamMsg: bottom: %s\n", pMenu->bottom);
 			hintBox = NULL;
 		}
 #endif
+
+#ifdef __sh__
+		ci->CI_CloseMMI(curslot);
+#else
 		CI_CloseMMI(curslot);
+#endif
 		return 0;
 	}
 	else if(msg == NeutrinoMessages::EVT_CI_MMI_TEXT) {
@@ -335,6 +360,8 @@ printf("CCAMMenuHandler::handleCamMsg: bottom: %s\n", pMenu->bottom);
 		printf("CCAMMenuHandler::handleCamMsg: text\n");
 	} else
 		ret = -1;
+
+printf("CCAMMenuHandler::handleCamMsg <\n");
 //printf("CCAMMenuHandler::handleCamMsg: return %d\n", ret);
 	return ret;
 }
@@ -351,7 +378,11 @@ int CCAMMenuHandler::doMenu (int slot)
 
 		timeoutEnd = CRCInput::calcTimeoutEnd(10);
 
+#ifdef __sh__
+		ci->CI_EnterMenu(slot);
+#else
 		CI_EnterMenu(slot);
+#endif
 		while(true) {
 			if(hintBox)
 				delete hintBox;
@@ -370,7 +401,12 @@ int CCAMMenuHandler::doMenu (int slot)
 				sleep(5);
 				delete hintBox;
 				hintBox = NULL;
+
+#ifdef __sh__
+				ci->CI_CloseMMI(slot);
+#else
 				CI_CloseMMI(slot);
+#endif
 				return menu_return::RETURN_REPAINT;
 			} 
 			/* -1 = not our event, 0 = back to top menu, 1 = continue loop, 2 = quit */
@@ -392,7 +428,11 @@ int CCAMMenuHandler::doMenu (int slot)
 			}
 		}
 	}
+#ifdef __sh__
+	ci->CI_CloseMMI(slot);
+#else
 	CI_CloseMMI(slot);
+#endif
 	if(hintBox) {
 		delete hintBox;
 		hintBox = NULL;

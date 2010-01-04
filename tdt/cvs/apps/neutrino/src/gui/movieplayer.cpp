@@ -73,12 +73,18 @@
 #include <sys/timeb.h>
 
 #include <video_cs.h>
+#ifdef __sh__
+#include <audio_cs.h>
+#endif
 #include <playback_cs.h>
 
 int dvbsub_start(int pid);
 int dvbsub_pause();
 
 extern cVideo * videoDecoder;
+#ifdef __sh__
+extern cAudio * audioDecoder;
+#endif
 static cPlayback *playback;
 
 extern CRemoteControl *g_RemoteControl;	/* neutrino.cpp */
@@ -243,6 +249,9 @@ void CMoviePlayerGui::cutNeutrino()
 	CNeutrinoApp::getInstance()->handleMsg(NeutrinoMessages::CHANGEMODE, NeutrinoMessages::mode_ts);
 	m_LastMode = (CNeutrinoApp::getInstance()->getLastMode() | NeutrinoMessages::norezap);
 
+	audioDecoder->Close();
+	videoDecoder->Close();
+
 	stopped = true;
 }
 
@@ -250,6 +259,9 @@ void CMoviePlayerGui::restoreNeutrino()
 {
 	if (!stopped)
 		return;
+
+	audioDecoder->Open();
+	videoDecoder->Open();
 
 	g_Zapit->setStandby(false);
 	g_Sectionsd->setPauseScanning(false);

@@ -62,6 +62,7 @@ void CEventServer::unRegisterEvent(const int fd)
 
 void CEventServer::sendEvent(const unsigned int eventID, const initiators initiatorID, const void* eventbody, const unsigned int eventbodysize)
 {
+printf("CEventServer::sendEvent >\n");
 	eventClientMap notifyClients = eventData[eventID];
 
 	for(eventClientMap::iterator pos = notifyClients.begin(); pos != notifyClients.end(); pos++)
@@ -70,6 +71,7 @@ void CEventServer::sendEvent(const unsigned int eventID, const initiators initia
 		eventClient client = pos->second;
 		sendEvent2Client(eventID, initiatorID, &client, eventbody, eventbodysize);
 	}
+printf("CEventServer::sendEvent <\n");
 }
 
 
@@ -77,6 +79,8 @@ bool CEventServer::sendEvent2Client(const unsigned int eventID, const initiators
 {
 	struct sockaddr_un servaddr;
 	int clilen, sock_fd;
+
+printf("CEventServer::sendEvent2Client >\n");
 
 	memset(&servaddr, 0, sizeof(struct sockaddr_un));
 	servaddr.sun_family = AF_UNIX;
@@ -86,6 +90,7 @@ bool CEventServer::sendEvent2Client(const unsigned int eventID, const initiators
 	if ((sock_fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 	{
 		perror("[eventserver]: socket");
+printf("CEventServer::sendEvent2Client <\n");
 		return false;
 	}
 
@@ -95,6 +100,7 @@ bool CEventServer::sendEvent2Client(const unsigned int eventID, const initiators
 		snprintf(errmsg, 128, "[eventserver]: connect (%s)", ClientData->udsName);
 		perror(errmsg);
 		close(sock_fd);
+printf("CEventServer::sendEvent2Client <\n");
 		return false;
 	}
 
@@ -111,5 +117,6 @@ bool CEventServer::sendEvent2Client(const unsigned int eventID, const initiators
 //		printf ("[eventserver]: eventbody sent 0x%x - peventbody= %x eventbody= %x\n", written, (unsigned)eventbody, *(unsigned*)eventbody );
 	}
 	close(sock_fd);
+printf("CEventServer::sendEvent2Client <\n");
 	return true;
 }

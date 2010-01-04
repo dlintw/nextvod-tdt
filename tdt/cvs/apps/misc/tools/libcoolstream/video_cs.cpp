@@ -57,18 +57,35 @@ cVideo::cVideo(int mode, void * hChannel, void * hBuffer)
 	
 	privateData = (CS_VIDEO_PDATA*)malloc(sizeof(CS_VIDEO_PDATA));
 
-	privateData->m_fd = open("/dev/dvb/adapter0/video0", O_RDWR);
-	
-	
-	
+	Open();
 }
 
-cVideo::~cVideo(void) {
+cVideo::~cVideo(void)
+{
+	printf("%s:%s\n", FILENAME, __FUNCTION__);
+
+	Close();
+
+	free(privateData);
+}
+
+bool cVideo::Open()
+{
+	printf("%s:%s\n", FILENAME, __FUNCTION__);
+
+	privateData->m_fd = open("/dev/dvb/adapter0/video0", O_RDWR);
+	if(privateData->m_fd > 0)
+		return true;
+	return false;
+}
+
+bool cVideo::Close()
+{
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 
 	close(privateData->m_fd);
 
-	free(privateData);
+	return true;
 }
 
 void * cVideo::GetDRM(void)

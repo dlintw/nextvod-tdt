@@ -16,7 +16,9 @@ INCLUDES = \
 	-I$(top_srcdir)/lib/libupnpclient \
 	@FREETYPE_CFLAGS@ \
 	@LIBCS_CFLAGS@ \
-	-I$(top_srcdir)/include
+	-I$(top_srcdir)/include \ 
+	-I$(top_srcdir)/../misc/tools/libcoolstream \ 
+	-I$(top_srcdir)/../misc/tools 
 
 bin_PROGRAMS = neutrino
 
@@ -31,6 +33,7 @@ neutrino_LDADD = \
 	gui/widget/libneutrino_gui_widget2.a \
 	driver/pictureviewer/libneutrino_pictureviewer.a \
 	system/libneutrino_system.a \
+	-lcoolstream \ 
 	driver/libneutrino_driver.a \
 	gui/movieinfo.o \
 	driver/audiodec/libneutrino_driver_audiodec.a \
@@ -63,7 +66,7 @@ neutrino_LDADD = \
 	@LIBCS_LIBS@ \
 	-lgif \
 	-ljpeg \
-	-lcoolstream \
+	-leplayer2 \ 
 	-lrt -lpthread
 	
 #		$(top_builddir)/lib/libtuxtxt/libtuxtxt.a

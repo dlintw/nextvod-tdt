@@ -30,6 +30,10 @@ typedef enum
 #ifndef CS_AUDIO_PDATA
 typedef struct {
 	int m_fd;
+	int uNoOfChannels;
+	int uSampleRate;
+	int uBitsPerSample;
+	int bLittleEndian;
 } CS_AUDIO_PDATA;
 #endif
 
@@ -92,6 +96,11 @@ class cAudio
 		void SetReceivedAudioDelay(bool set = false) { receivedDelay = set; }
 		unsigned int GetAudioDelay(void) { return (StreamType == AUDIO_FMT_DOLBY_DIGITAL) ? uAudioDolbyPTSDelay : uAudioMpegPTSDelay; }
 		void SetSyncMode(AVSYNC_TYPE Mode);
+
+#ifdef __sh__
+		bool Open();
+		bool Close();
+#endif
 
 		/* stream source */
 		int getSource(void);

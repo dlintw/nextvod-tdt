@@ -11,12 +11,14 @@ INCLUDES = \
 	-I$(top_srcdir)/lib/libnet \
 	-I$(top_srcdir)/lib/libconfigfile \
 	-I$(top_srcdir)/lib/xmltree \
-	-I$(top_srcdir)/lib/libcoolstream \
+	-I$(top_srcdir)/../misc/tools/libcoolstream \
+	-I$(top_srcdir)/../misc/tools \
 	-I$(top_srcdir)/lib/libupnpclient \
 	@CURL_CFLAGS@ \
 	@FREETYPE_CFLAGS@ \
 	-I$(top_srcdir)/lib \
-	-I$(top_srcdir)/include
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/../misc/tools/libeplayer2/include
 
 noinst_LIBRARIES = libtimerlist.a libneutrino_gui.a libneutrino_gui2.a
 

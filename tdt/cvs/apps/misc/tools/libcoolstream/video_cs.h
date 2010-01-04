@@ -181,6 +181,11 @@ class cVideo
 		int64_t GetPTS(void);
 
 		int Flush(void);
+
+#ifdef __sh__
+		bool Open();
+		bool Close();
+#endif
 		
 		/* set video_system */
 		int SetVideoSystem(int video_system, bool remember = true);

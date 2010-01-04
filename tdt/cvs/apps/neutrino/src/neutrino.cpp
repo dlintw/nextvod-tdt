@@ -1914,7 +1914,9 @@ void CNeutrinoApp::SetupFrameBuffer()
 		dprintf(DEBUG_NORMAL, "Error while setting framebuffer mode\n");
 		exit(-1);
 	}
+#ifndef __sh__
 	frameBuffer->resize(g_settings.video_Mode);
+#endif
 	//make 1..8 transparent for dummy painting
 	//for(int count =0;count<256;count++)
 	for(int count =0;count<8;count++)
