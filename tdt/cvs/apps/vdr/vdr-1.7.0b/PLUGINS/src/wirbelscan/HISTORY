@@ -1,0 +1,79 @@
+VDR Plugin 'wirbelscan' Revision History
+----------------------------------------
+
+2006-10-28: Version 0.0.1
+
+- Initial revision. Alpha Status up to now.
+
+
+2006-12-01: Version 0.0.2
+
+- removed unused header from common.c
+- added missing setup property 'logfile' in setup (menusetup.c)
+- added some internationalization (i18n.c)
+- fixed compiler warning in satfrequencies.c and frequencies.c
+- setting liveView=true if dvb card used is not free;
+  either the only card or receiving/recording. (scanner.c)
+- moved "memset(&frontend_status,0, sizeof(frontend_status));"
+  into GetStatus(void) (scanner.c) to be shure that
+  frontend_status is *always* resetted.
+- while scanning now the channels.conf is cleared 
+  (and refilled after last scan with the old channel data)
+- Added EITScanner.ForceScan(); at the End of dvb scans to
+  enshure Adding channels.
+- now switching to all new transponders after last scan
+- changed transponder scan routines in scanner.c
+- now tuning (by purpose!) to a invalid transponder before
+  tuning to other data; this should enshure that tuning is successful.
+- slightly changed cUpdateThread::Action()
+- osd: remains now open while scanning
+- osd: removed inversion setting dvb-c
+- osd: added symbolrate setting dvb-c
+- osd: added stop scan button
+- speed up dvb-t scan
+- speed up dvb-s scan
+- fixed d(const int level, const char *fmt, ...) for syslog
+
+
+- still Alpha Status.
+
+
+2006-12-XX: Version 0.0.2a
+
+- now deleting transponders Searchlist in AfterScan(void)
+- fixed osd handling during scan (OK, Back)
+- scanning not possible if recordings are running.
+- added Channels.SetModified() in AfterScan to avoid duplicate channels. -> has to be checked.
+
+2007-02-XX: Version 0.0.2b
+
+- first SVDRP support: S_TERR, S_CABL, S_SAT, S_PVR, S_STOP
+
+
+2007-09-03: Version 0.0.3-20070903
+
+- changed device handling to lowlevel functions
+- new SVDRP functions: M_AUTO, M64, M128, M256, SR_AUTO, SR6900, SR6875 
+- started Internationalization with xgettext as in VDR>=1.5.7
+- fixed compiling on vdr-1.5.x
+- started freq offset support for DVB-T (france)
+- changes to frequency tables (see above and cSatFreqlist)
+- fixed wrong message  in cTerrScanner "C %d has lock.." into "T %d has lock.."
+- fixed wrong internationalization "PVR x50 scan done"
+- PVR x50 support for external input scan
+- new function stopScanners
+- new functions DoScan and DoStop for SVDRP support
+- DVB-C added missing Symbolrate 6111 (only manual mode)
+- now using Skins.QueueMessage instead of Skins.Message
+
+2008-05-12: Version 0.0.4-20080512
+- added some Copyright Remark to README as proposed from Debian VDR Packaging Team
+- removed PAL SE1 105250/107500
+  see http://de.wikipedia.org/wiki/Kabelfernsehen:
+  "Der Sonderkanal S01 kann wegen der Überschneidung mit dem UKW-Radio-Frequenzband nicht genutzt werden"
+- added 73.00 MHz for DVB-C PAL
+- italian translations (Gringo <vdr-italian@tiscali.it>)
+- removed obsolete ptv plugin option
+- minor changes to osd
+- now start searching dvb devices at highest device number (often first device at dvb-c is a full-featured card -> QAM256 problems).
+

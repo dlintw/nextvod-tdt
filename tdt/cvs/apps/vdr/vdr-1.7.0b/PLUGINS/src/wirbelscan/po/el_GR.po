@@ -1,0 +1,149 @@
+# VDR plugin language source file.
+# Copyright (C) 2007 Klaus Schmidinger <kls@cadsoft.de>
+# This file is distributed under the same license as the VDR package.
+# Dimitrios Dimitrakos <mail@dimitrios.de>, 2002
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: VDR 1.5.7\n"
+"Report-Msgid-Bugs-To: <handygewinnspiel AT gmx DOT de>\n"
+"POT-Creation-Date: 2010-01-03 20:49+0100\n"
+"PO-Revision-Date: 2007-09-03 18:38+0200\n"
+"Last-Translator: Dimitrios Dimitrakos <mail@dimitrios.de>\n"
+"Language-Team: <vdr@linuxtv.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-7\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Plugin.WIRBELSCAN$Scan is already running!!"
+msgstr "Scan is already running!!"
+
+msgid "Plugin.WIRBELSCAN$DVB-T scan started."
+msgstr "DVB-T scan started."
+
+msgid "Plugin.WIRBELSCAN$DVB-C scan started."
+msgstr "DVB-C scan started."
+
+msgid "Plugin.WIRBELSCAN$DVB-S scan started."
+msgstr "DVB-S scan started."
+
+msgid "Plugin.WIRBELSCAN$PVR x50 scan started."
+msgstr "PVR x50 scan started."
+
+msgid "Plugin:"
+msgstr ""
+
+msgid "wirbelscan-0.0.4a"
+msgstr ""
+
+msgid " "
+msgstr ""
+
+msgid "Description:"
+msgstr ""
+
+#, fuzzy
+msgid "dvb c/t/s/analog scan for VDR"
+msgstr "dvb c/t/s/analog scan"
+
+msgid "Written by:"
+msgstr ""
+
+msgid "Winfried Koehler <handygewinnspiel#gmx#de>"
+msgstr ""
+
+msgid "Homepage:"
+msgstr ""
+
+msgid "http://wirbel.htpc-forum.de"
+msgstr ""
+
+msgid "License:"
+msgstr ""
+
+msgid "GPLv2 or higher,"
+msgstr ""
+
+msgid "See the file COPYING for further license information."
+msgstr ""
+
+msgid "About wirbelscan Plugin.."
+msgstr ""
+
+msgid "Plugin.WIRBELSCAN$AUTO"
+msgstr "AUTO"
+
+msgid "Plugin.WIRBELSCAN$ALL (slow)"
+msgstr "ALL (slow)"
+
+msgid "Plugin.WIRBELSCAN$Off"
+msgstr "Off"
+
+msgid "Plugin.WIRBELSCAN$Stop"
+msgstr "Stop"
+
+msgid "Plugin.WIRBELSCAN$Start"
+msgstr "Start"
+
+msgid "Plugin.WIRBELSCAN$About"
+msgstr ""
+
+msgid "Plugin.WIRBELSCAN$Setup"
+msgstr "Setup"
+
+msgid "Plugin.WIRBELSCAN$Scan Settings"
+msgstr "Scan Settings"
+
+msgid "Plugin.WIRBELSCAN$verbosity"
+msgstr "verbosity"
+
+msgid "Plugin.WIRBELSCAN$logfile"
+msgstr "logfile"
+
+msgid "Plugin.WIRBELSCAN$Country"
+msgstr "Country"
+
+msgid "Plugin.WIRBELSCAN$Source Type"
+msgstr "Source Type"
+
+msgid "Plugin.WIRBELSCAN$DVB-T"
+msgstr "DVB-T"
+
+msgid "Plugin.WIRBELSCAN$DVB-C"
+msgstr "DVB-C"
+
+msgid "Plugin.WIRBELSCAN$Symbolrate"
+msgstr "Symbolrate"
+
+msgid "Plugin.WIRBELSCAN$QAM"
+msgstr "QAM"
+
+msgid "Plugin.WIRBELSCAN$DVB-S"
+msgstr "DVB-S"
+
+msgid "Plugin.WIRBELSCAN$Satellite"
+msgstr "Satellite"
+
+msgid "Plugin.WIRBELSCAN$Analog PVR x50"
+msgstr "Analog PVR x50"
+
+msgid "Plugin.WIRBELSCAN$channel syntax"
+msgstr "channel syntax"
+
+msgid "Plugin.WIRBELSCAN$CANNOT SCAN - Timers on Schedule!"
+msgstr "CANNOT SCAN - Timers on Schedule!"
+
+msgid "Plugin.WIRBELSCAN$DVB-T scan done."
+msgstr "DVB-T scan done."
+
+msgid "Plugin.WIRBELSCAN$DVB-C scan done."
+msgstr "DVB-C scan done."
+
+msgid "Plugin.WIRBELSCAN$DVB-S scan done."
+msgstr "DVB-S scan done."
+
+msgid "Plugin.WIRBELSCAN$PVR x50 scan done."
+msgstr "PVR x50 scan done."
+
+msgid "dvb c/t/s/analog scan"
+msgstr "dvb c/t/s/analog scan"

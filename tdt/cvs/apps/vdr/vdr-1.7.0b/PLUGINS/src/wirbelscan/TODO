@@ -1,0 +1,2 @@
+1. fix devices für softdevice
+2. fix crash if other plugins are blocking (i.e. arghdirector, femon)
