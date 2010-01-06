@@ -83,7 +83,7 @@ yaud-enigma: yaud-none lirc stslave \
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 yaud-vdr: yaud-none stslave openssl openssl-dev \
-		boot-elf misc-cp remote firstboot vdr
+		boot-elf misc-cp remote firstboot vdr release_vdr
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 yaud-neutrino: yaud-none stslave\
