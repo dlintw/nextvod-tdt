@@ -39,6 +39,11 @@ AC_ARG_ENABLE(debug,
 	,[enable_debug=no])
 AM_CONDITIONAL(DEBUG,test "$enable_debug" = "yes")
 
+AC_ARG_ENABLE(enable_vdr1711,
+	AS_HELP_STRING(--enable-vdr1711,	set up the CDK to use vdr 1.7.11),
+	,[enable_vrd1711=no])
+AM_CONDITIONAL(ENABLE_VDR1711,test "$enable_vdr1711" = "yes")
+
 AC_ARG_WITH(cpu,
 	[  --with-cpu=MODEL        cpu model [[sh4]]],
 	[CPU_MODEL="$withval"],[CPU_MODEL="sh4"])
@@ -810,6 +815,7 @@ STLinux 2.2:	       $enable_stm22
 STLinux 2.3:	       $enable_stm23
 Patchlevel P0040:      $enable_p0040
 Patchlevel P0041:      $enable_p0041
+vdr VDR 1.7.11:        $enable_vdr1711
 flash rules:	       $enable_flashrules
 ccache:		       $enable_ccache
 target prefix:	       $targetprefix
