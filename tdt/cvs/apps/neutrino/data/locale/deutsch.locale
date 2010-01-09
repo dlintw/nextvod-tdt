@@ -1,3 +1,174 @@
+apidselector.head Sprachauswahl
+audio.srs_algo Typ
+audio.srs_algo_light leicht
+audio.srs_algo_normal normal
+audio.srs_iq SRS TruVolume algo
+audio.srs_nmgr Noise manager
+audio.srs_volume Referenzlautstärke
+audiomenu.analogout Analog-Ausgang
+audiomenu.avs avs
+audiomenu.avs_control Lautstärkesteuerung avs/ost
+audiomenu.avsync A/V sync
+audiomenu.avsync_am Audio master
+audiomenu.clockrec
+audiomenu.dolbydigital Dolby Digital automatisch
+audiomenu.hdmi_dd DD über HDMI
+audiomenu.head Audio-Einstellungen
+audiomenu.lirc lirc
+audiomenu.monoleft mono links
+audiomenu.monoright mono rechts
+audiomenu.ost ost
+audiomenu.PCMOffset Lautstärkeabsenkung PCM
+audiomenu.spdif_dd DD über SPDIF
+audiomenu.stereo stereo
+audioplayer.add Hinzufügen
+audioplayer.add_ic Icecast
+audioplayer.add_loc Lokale Radioliste
+audioplayer.add_sc Shoutcast
+audioplayer.artist_title Interpret, Titel
+audioplayer.building_search_index Erstelle Suchindex
+audioplayer.button_select_title_by_id Suche n. ID
+audioplayer.button_select_title_by_name Suche n. Name
+audioplayer.defdir Start-Verz.
+audioplayer.delete Löschen
+audioplayer.deleteall Alle löschen
+audioplayer.display_order Anzeige
+audioplayer.enable_sc_metadata Aktiviere Shoutcast Meta-Daten Parsing
+audioplayer.fastforward schneller Vorl.
+audioplayer.follow Selektiere akt. Spur
+audioplayer.head Audio Playlist
+audioplayer.highprio Hohe Decodier-Priorität
+audioplayer.jump_backwards rückw. springen
+audioplayer.jump_dialog_hint1 Bitte Sprungziel eingeben
+audioplayer.jump_dialog_hint2 (relativ, in Sekunden)
+audioplayer.jump_dialog_title Sprungziel eingeben
+audioplayer.jump_forwards vorw. springen
+audioplayer.keylevel Tasten-Umschaltung
+audioplayer.load_radio_stations Lade Internetradios
+audioplayer.name Audioplayer
+audioplayer.pause Pause
+audioplayer.play Abspielen
+audioplayer.playing Aktueller Titel
+audioplayer.playlist_fileerror_msg Datei kann nicht erstellt werden:
+audioplayer.playlist_fileoverwrite_msg Soll diese Datei überschrieben werden:
+audioplayer.playlist_fileoverwrite_title Überschreiben?
+audioplayer.playlist_name Dateiname der Playlist
+audioplayer.playlist_name_hint1 Geben Sie den Dateinamen der Playlist ein
+audioplayer.playlist_name_hint2 Die Erweiterung .m3u wird automatisch angehängt
+audioplayer.reading_files Lese die Dateien ein
+audioplayer.receiving_list Empfange Liste, bitte warten...
+audioplayer.repeat_on Repeatmodus aktivieren
+audioplayer.rewind schneller Rückl.
+audioplayer.save_playlist Playlist speichern
+audioplayer.screensaver_timeout Bildschirmschoner (min, 0=aus)
+audioplayer.select_title_by_name Titelsuche nach Name (SMS)
+audioplayer.show_playlist Playlist anzeigen
+audioplayer.shuffle Shuffle
+audioplayer.spectrum LCD Skala
+audioplayer.stop Stop
+audioplayer.title_artist Titel, Interpret
+audioplayerpicsettings.general Audioplayer / Bildbetrachter
+AUDIOSelectMenue.head Auswahl der Tonspur
+bookmarkmanager.delete Löschen
+bookmarkmanager.name Bookmarks
+bookmarkmanager.rename Umbenennen
+bookmarkmanager.select Auswählen
+bouqueteditor.add Hinzufügen
+bouqueteditor.bouquetname Name des Bouquets
+bouqueteditor.delete Löschen
+bouqueteditor.discardingchanges Änderungen werden verworfen. Bitte warten ...
+bouqueteditor.hide Verstecken
+bouqueteditor.lock Sperren
+bouqueteditor.move Verschieben
+bouqueteditor.name Bouquet-Verwaltung
+bouqueteditor.newbouquetname Neuer Name des Bouquets
+bouqueteditor.rename Umbenennen
+bouqueteditor.return Fertig
+bouqueteditor.savechanges? Sollen die Änderungen gespeichert werden?
+bouqueteditor.savingchanges Änderungen werden gespeichert. Bitte warten ...
+bouqueteditor.switch Kanal aufnehmen/entfernen
+bouqueteditor.switchmode TV/Radio
+bouquetlist.head Bouquets
+cablesetup.provider Kabelanbieter
+cam.empty CI Steckplatz leer
+cam.init_ok CI Modul initalisiert
+cam.inserted CI Modul hinzugefügt
+cam.removed CI Modul entfernt
+cam.settings CI Module
+cam.timeout CI Modul Timeout
+cam.waiting Warte auf CI Modul
+channellist.current_tp Aktueller Transponder
+channellist.edit Bearbeiten
+channellist.epgtext_align_left links
+channellist.epgtext_align_right rechts
+channellist.extended erweiterte Kanalliste
+channellist.favs Favoriten
+channellist.head Alle Kanäle
+channellist.history Historie
+channellist.make_hdlist Erstelle Listen von HD Kanälen
+channellist.nonefound Es wurden keine Kanäle gefunden!\nFühren Sie bitte eine Kanalsuche durch\n(MENU-Taste -> Service)
+channellist.provs Provider
+channellist.sats Satelliten
+channellist.since seit %02d:%02d
+channellist.start ab %02d:%02d
+colorchooser.alpha alpha
+colorchooser.blue blau
+colorchooser.green grün
+colorchooser.red rot
+colormenu.background Hintergrundfarbe
+colormenu.fade Menüs ausblenden
+colormenu.font Schriftgröße
+colormenu.gtx_alpha Transparenz (GTX)
+colormenu.head Farb-Einstellungen
+colormenu.menucolors Menüfarben
+colormenu.statusbar Statusbalken
+colormenu.textcolor Textfarbe
+colormenu.themeselect Theme auswählen
+colormenu.timing OSD Timeouts
+colormenusetup.head Menüfarben
+colormenusetup.menucontent Fensterinhalt
+colormenusetup.menucontent_inactive Fensterinhalt deaktiviert
+colormenusetup.menucontent_selected Fensterinhalt selektiert
+colormenusetup.menuhead Titelleiste
+colorstatusbar.head Statusbalken-Farben
+colorstatusbar.text Statusbalken
+colorthememenu.classic_theme Klassik
+colorthememenu.dblue_theme DarkBlue Theme
+colorthememenu.dvb2k_theme DVB2000 Theme
+colorthememenu.gray Grau Theme
+colorthememenu.head Theme auswählen
+colorthememenu.neutrino_theme Neutrino Theme
+colorthememenu.red_theme Simply Red
+cpu.freq CPU Frequenz
+cpu.freq_default Standard Frequenz
+cpu.freq_normal Normale Frequenz
+cpu.freq_standby Standby Frequenz
+date.Apr  Apr
+date.Aug  Aug
+date.Dec  Dez
+date.Feb  Feb
+date.Fri  Fr
+date.Jan  Jan
+date.Jul  Jul
+date.Jun  Jun
+date.Mar  Mär
+date.May  Mai
+date.Mon  Mo
+date.Nov  Nov
+date.Oct  Okt
+date.Sat  Sa
+date.Sep  Sep
+date.Sun  So
+date.Thu  Do
+date.Tue  Di
+date.Wed  Mi
+epgextended.actors Darsteller
+epgextended.director Regie
+epgextended.guests Gäste
+epgextended.original_title Original Titel
+epgextended.presenter Moderator
+epgextended.year_of_production Produktionsjahr
+epglist.noevents Keine EPG-Information verfügbar
 EPGMenu.epgplus Vorschau Übersicht
 EPGMenu.eventinfo Info zur Sendung
 EPGMenu.eventlist Vorschau aktuelles Programm
@@ -10,7 +181,7 @@ EPGPlus.change_font_size Schriftgröße ändern
 EPGPlus.change_font_style Schriftstil
 EPGPlus.change_size Größe ändern
 EPGPlus.channelentry_font Kanäle
-EPGPlus.channelentry_separationlineheight Höhe Line zwischen Kanaleinträgen
+EPGPlus.channelentry_separationlineheight Höhe der Linie zwischen Kanaleinträgen
 EPGPlus.channelentry_width Breite der Kanalnamen
 EPGPlus.channelevententry_font Sendungen
 EPGPlus.edit_fonts Schriften einstellen
@@ -18,7 +189,7 @@ EPGPlus.edit_sizes Abmessungen einstellen
 EPGPlus.font_style_bold Fett
 EPGPlus.font_style_italic Kursiv
 EPGPlus.font_style_regular Normal
-EPGPlus.footer_fontbouquetchannelname Selektierter Bouquet~/Kanalname
+EPGPlus.footer_fontbouquetchannelname Selektierter Bouquet-/Kanalname
 EPGPlus.footer_fontbuttons Buttons
 EPGPlus.footer_fonteventdescription Titel 1 selekt. Sendung
 EPGPlus.footer_fonteventshortdescription Titel 2 selekt. Sendung
@@ -42,11 +213,239 @@ EPGPlus.settings Einstellungen
 EPGPlus.slider_width Breite des Sliders
 EPGPlus.stretch_mode Stretch Mode
 EPGPlus.swap_mode Blättern
-EPGPlus.timeline_fontdate Zeitscala Datum
-EPGPlus.timeline_fonttime Zeitscala Zeit
+EPGPlus.timeline_fontdate Zeitskala Datum
+EPGPlus.timeline_fonttime Zeitskala Zeit
 EPGPlus.vergap1_width Breite ver. Lücke 1
 EPGPlus.vergap2_width Breite ver. Lücke 2
 EPGPlus.view_mode Modus
+epgviewer.More_Screenings Weitere Termine auf diesem Kanal
+epgviewer.nodetailed Keine ausführlichen Informationen verfügbar
+epgviewer.notfound keine Programminformationen (EPG) gefunden
+eventfinder.head Suche in EPG
+eventfinder.keyword Stichwort
+eventfinder.search Suche
+eventfinder.search_within_epg Suche innerhalb EPG
+eventfinder.search_within_list Suche innerhalb Liste
+eventfinder.searching Suche nach Stichwort in EPG...
+eventfinder.start_search Suche beginnen
+eventlistbar.channelswitch Umschalten
+eventlistbar.eventsort Sortieren
+eventlistbar.recordevent Aufnehmen
+extra.add_to_bouquet dem Bouquet hinzufuegen
+extra.audio_run_player Audio Taste startet Player
+extra.auto_delete Automatische Löschung
+extra.auto_timeshift Automatische Aufnahme, Sekunden (0 = deaktiviert)
+extra.auto_to_record Timeshift zu den Aufnahmen hinzufügen
+extra.cache_txt Teletext zwischenspeichern
+extra.chadded Der aktuelle Kanal wird dem selektierter Bouquet hinzugefügt....\n
+extra.chalreadyinbq Der aktueller Kanal ist bereits in selektiertem Bouquet....\n
+extra.clear_log Logdatei löschen
+extra.dboxinfo Box Info
+extra.east Osten
+extra.english Englisch
+extra.fec_1_2 1/2
+extra.fec_2_3 2/3
+extra.fec_3_4 3/4
+extra.fec_5_6 5/6
+extra.fec_7_8 7/8
+extra.fec_s2_8psk_1_2 1/2 s2 8psk
+extra.fec_s2_8psk_2_3 3/2 s2 8psk
+extra.fec_s2_8psk_3_4 3/4 s2 8psk
+extra.fec_s2_8psk_3_5 3/5 s2 8psk
+extra.fec_s2_8psk_4_5 4/5 s2 8psk
+extra.fec_s2_8psk_5_6 5/6 s2 8psk
+extra.fec_s2_8psk_7_8 7/8 s2 8psk
+extra.fec_s2_8psk_8_9 8/9 s2 8psk
+extra.fec_s2_8psk_9_10 9/10 s2 8psk
+extra.fec_s2_qpsk_1_2 1/2 s2 qpsk
+extra.fec_s2_qpsk_2_3 3/2 s2 qpsk
+extra.fec_s2_qpsk_3_4 3/4 s2 qpsk
+extra.fec_s2_qpsk_3_5 3/5 s2 qpsk
+extra.fec_s2_qpsk_4_5 4/5 s2 qpsk
+extra.fec_s2_qpsk_5_6 5/6 s2 qpsk
+extra.fec_s2_qpsk_7_8 7/8 s2 qpsk
+extra.fec_s2_qpsk_8_9 8/9 s2 qpsk
+extra.fec_s2_qpsk_9_10 9/10 s2 qpsk
+extra.hw_sect Hardware Sektionen
+extra.key_click Tasten-Klick
+extra.key_list_end Ende
+extra.key_list_start Anfang
+extra.key_plugin One-touch-Plugin
+extra.key_timeshift Timeshift
+extra.key_unlock Entsperrtaste
+extra.ladirection Breitengrad-Ausrichtung
+extra.latitude Breitengrad
+extra.loadcolors Lade Farben von
+extra.loadconfig Lade Einstellungen von
+extra.loadkeys Lade Tastenbelegung von
+extra.lodirection Längengrad-Ausrichtung
+extra.logo Logo Nummer
+extra.longitude Längengrad
+extra.manual_scan Manual Ansehen
+extra.menu_left_exit "links" = Menu zurück
+extra.north Norden
+extra.record_time Timeshift Aufnahmezeit in Stunden
+extra.rotor_swap Rotor dreht Ost/West
+extra.savecolors Speichere Farben als
+extra.saveconfig Speichere Einstellungen als
+extra.savekeys Speichere Tastenbelegung als
+extra.scan_fast Schnell
+extra.scan_full Vollständig
+extra.scan_mode Scan Modus
+extra.sms_channel Sms-Modus Kanal
+extra.south Süden
+extra.spts_mode SPTS Modus
+extra.start_tostandby Starten zum Standby
+extra.temp_timeshift Temporäres Timeshift
+extra.timeshift_pause Timeshift Pause
+extra.timezone Zeit-Zone
+extra.tp_fec FEC
+extra.tp_freq Frequenz
+extra.tp_mod Modulation
+extra.tp_mod_128 QAM/128
+extra.tp_mod_16 QAM/16
+extra.tp_mod_256 QAM/256
+extra.tp_mod_32 QAM/32
+extra.tp_mod_64 QAM/64
+extra.tp_pol Polarization
+extra.tp_pol_h H
+extra.tp_rate Symbolrate
+extra.tp.pol_v V
+extra.update_dir Update-Verzeichnis
+extra.use_gotoxx Benutze gotoXX
+extra.use_log Loge nach /tmp/log
+extra.west Westen
+extra.zap_cycle Zap Zyklen
+extra.zapit_backup Sichere Kanelliste nach /tmp
+extra.zapit_fast_zap Fast Zap
+extra.zapit_fe_timeout Tune timeout
+extra.zapit_hvoltage High (13.5/18.5) Voltage
+extra.zapit_make_bouquet Mache restliche Kanalliste
+extra.zapit_menu Zapit Optionen
+extra.zapit_motor_speed Rotor Geschwindigkeit (10 = 1deg/sec)
+extra.zapit_restore Stelle Kanalliste wieder von /tmp wieder her
+extra.zapit_rezap_time Re-Zap bei EMU Umschaltzeit
+extra.zapit_save_last_chan Speicher letzten Kanal
+extra.zapit_scan_sdt Scan SDT für Updates
+extra.zapit_scanpids Scan/Benutze Pids
+extra.zapit_sdt_changed Kanalliste wird neu geladen.
+extra.zapit_sort_names Sortiere Kanal nach Name
+extra.zapit_write_names Schreibe Kanalname
+fan_speed CPU Lüftergeschw.
+favorites.addchannel Der aktuelle Kanal wird dem Bouquet \n"Meine Favoriten" hinzugefügt. \nDie Speicherung benötigt einen Moment...
+favorites.bouquetname Meine Favoriten
+favorites.bqcreated Bouquet "Meine Favoriten" wurde angelegt...\n
+favorites.chadded Der aktuelle Kanal wurde Ihren Favoriten hinzugefügt...\n
+favorites.chalreadyinbq Der aktuelle Kanal ist bereits in Ihren Favoriten...\n
+favorites.copy Kopiere Bouquet zu Favoriten
+favorites.finalhint \nHinzugefügte Kanäle können mit\nder Bouquetverwaltung korrigiert werden.\n
+favorites.menueadd Kanal Favoriten hinzufügen
+favorites.nobouquets Favoriten sind nur mit aktivierten Bouquets möglich.
+filebrowser.delete Löschen
+filebrowser.denydirectoryleave Startverzeichnis absolut
+filebrowser.dodelete1 Soll
+filebrowser.dodelete2 gelöscht werden ?
+filebrowser.filter.active Filter an
+filebrowser.filter.inactive Filter aus
+filebrowser.head Dateibrowser
+filebrowser.mark Markieren
+filebrowser.nextpage Seite vor
+filebrowser.prevpage Seite zurück
+filebrowser.scan Durchsuche Verzeichnisse
+filebrowser.select Auswählen
+filebrowser.showrights Dateirechte anzeigen
+filebrowser.sort.date (Datum)
+filebrowser.sort.name (Dateiname)
+filebrowser.sort.namedirsfirst (Dateiname2)
+filebrowser.sort.size (Größe)
+filebrowser.sort.type (Typ)
+filesystem.is.utf8 Dateisystem
+filesystem.is.utf8.option.iso8859.1 ISO-8859-1
+filesystem.is.utf8.option.utf8 UTF-8
+flashupdate.actionreadflash lese Flash
+flashupdate.cantopenfile kann Datei nicht öffnen
+flashupdate.cantopenmtd kann das MTD-Device nicht öffnen
+flashupdate.checkupdate nach neuer Version suchen
+flashupdate.currentreleasecycle Releasezyklus
+flashupdate.currentversion_sep Installierte Version
+flashupdate.currentversiondate Datum
+flashupdate.currentversionsnapshot ImageTyp
+flashupdate.currentversiontime Uhrzeit
+flashupdate.erasefailed Flash löschen fehlgeschlagen
+flashupdate.erasing lösche Flash
+flashupdate.experimentalimage Sie haben einen Snapshot ausgewählt, bitte beachten Sie,\ndass diese Version ungetestet ist und u.U. Ihre Box\nnach dem Update nicht mehr funktionsfähig ist.\n\nSoll diese Version wirklich installiert werden?
+flashupdate.expertfunctions Experten-Funktionen
+flashupdate.fileis0bytes die Dateigröße ist 0 Byte
+flashupdate.fileselector Datei-Auswahl
+flashupdate.flashreadyreboot Das Image wurde erfolgreich geflasht.\nIhre Box wird jetzt neu gestartet.
+flashupdate.getinfofile lade Versionsinfo
+flashupdate.getinfofileerror kann Info nicht laden
+flashupdate.getupdatefile lade Update
+flashupdate.getupdatefileerror kann Update nicht laden
+flashupdate.globalprogress Gesamtstatus:
+flashupdate.head Aktualisierung
+flashupdate.md5check Imageprüfung
+flashupdate.md5sumerror Das Image ist fehlerhaft
+flashupdate.msgbox Es wurde folgendes neues file gefunden:\nDatum: %s, %s\nBasisImage: %s\nTyp: %s\n\nWollen Sie diese Version jetzt herunterladen\nund installieren?
+flashupdate.msgbox_manual Es wurde ein neues Image gefunden:\nDatum: %s, %s\nBasisImage: %s\nImageTyp: %s\n\nWollen Sie diese Version jetzt installieren?
+flashupdate.mtdselector Partitions-Auswahl
+flashupdate.programmingflash programmiere Flash
+flashupdate.proxypassword Passwort
+flashupdate.proxypassword_hint1 Geben sie das Proxy-Passwort ein
+flashupdate.proxypassword_hint2 Ein leerer Eintrag bedeutet keine Authentifizierung
+flashupdate.proxyserver Proxyname
+flashupdate.proxyserver_hint1 Geben Sie den Proxynamen oder IP ein (Host:Port)
+flashupdate.proxyserver_hint2 Ein leerer Eintrag bedeutet kein Proxy
+flashupdate.proxyserver_sep Proxyserver
+flashupdate.proxyusername Benutzername
+flashupdate.proxyusername_hint1 Geben Sie den Proxy-Benutzernamen ein
+flashupdate.proxyusername_hint2 Ein leerer Eintrag bedeutet keine Authentifizierung
+flashupdate.readflash ganzes Flashimage auslesen
+flashupdate.readflashmtd einzelne Partition auslesen
+flashupdate.ready fertig
+flashupdate.reallyflashmtd Wollen Sie den Flashvorgang wirklich durchführen?\n\nFalls ein Fehler auftritt oder das Image nicht\nfunktionfähig ist, wird Ihre box nicht mehr booten.\n\nImagename: %s\nZiel: %s
+flashupdate.savesuccess Das Image wurde erfolgreich unter dem\nDateinamen %s gespeichert.
+flashupdate.selectimage Verfügbare Images/Files
+flashupdate.squashfs.noversion Bei SquashFS Updates werden Versionsüberprüfungen derzeit nur bei Web-Updates unterstützt.\nWollen Sie das ausgewählt Image wirklich installieren?
+flashupdate.titlereadflash Flash auslesen
+flashupdate.titlewriteflash Flash schreiben
+flashupdate.updatemode Updatemodus
+flashupdate.updatemode_internet Internet
+flashupdate.updatemode_manual manuell (ftp)
+flashupdate.url_file Konfigfile
+flashupdate.versioncheck Versionsüberprüfung
+flashupdate.writeflash ganzes Flashimage einspielen
+flashupdate.writeflashmtd einzelne Partition einspielen
+flashupdate.wrongbase Abweichende release Info\nFortfahren?
+fontmenu.channellist Kanalliste
+fontmenu.epg EPG
+fontmenu.eventlist Eventlist
+fontmenu.gamelist Gameliste
+fontmenu.head Schriftgrössen Einstellungen
+fontmenu.infobar Infobar
+fontsize.channel_num_zap Direktauswahl
+fontsize.channellist Kanalliste
+fontsize.channellist_descr Beschreibung
+fontsize.channellist_number Nummer
+fontsize.epg_date EPG Datum
+fontsize.epg_info1 EPG Info 1
+fontsize.epg_info2 EPG Info 2
+fontsize.epg_title EPG Titel
+fontsize.eventlist_datetime Eventlist Datum / Zeit
+fontsize.eventlist_itemlarge Eventlist groß
+fontsize.eventlist_itemsmall Eventlist klein
+fontsize.eventlist_title Eventlist Titel
+fontsize.filebrowser_item Dateibrowser-Eintrag
+fontsize.gamelist_itemlarge groß
+fontsize.gamelist_itemsmall klein
+fontsize.hint Font wird initialisiert,\nbitte warten...
+fontsize.infobar_channame Infobar Kanal
+fontsize.infobar_info Infobar Info
+fontsize.infobar_number Infobar Nummer
+fontsize.infobar_small Infobar klein
+fontsize.menu Menutext
+fontsize.menu_info Menu Info
+fontsize.menu_title Menu Titel
 GENRE.ARTS.0 Kunst / Kultur
 GENRE.ARTS.1 Darstellende Künste
 GENRE.ARTS.10 Kunst-/Kultur-Magazin
@@ -123,259 +522,42 @@ GENRE.TRAVEL_HOBBIES.5 Kochen
 GENRE.TRAVEL_HOBBIES.6 Einkauf
 GENRE.TRAVEL_HOBBIES.7 Garten
 GENRE.UNKNOWN Unbekannt
-apids.hint_1 Geben Sie die zu streamenden APIDs ein,
-apids.hint_2 getrennt durch ' ' in hexadezimaler Form
-apidselector.head Sprachauswahl
-audiomenu.PCMOffset Lautstärkeabsenkung PCM
-audiomenu.analogout Analog-Ausgang
-audiomenu.avs avs
-audiomenu.avs_control Volume Steuerung avs/ost
-audiomenu.dolbydigital Dolby Digital automatisch
-audiomenu.head Audio-Einstellungen
-audiomenu.lirc lirc
-audiomenu.monoleft mono links
-audiomenu.monoright mono rechts
-audiomenu.ost ost
-audiomenu.stereo stereo
-audioplayer.add Hinzufügen
-audioplayer.artist_title Interpret, Titel
-audioplayer.building_search_index Erstelle Suchindex
-audioplayer.button_select_title_by_id Suche n. ID
-audioplayer.button_select_title_by_name Suche n. Name
-audioplayer.defdir Start-Verz.
-audioplayer.delete Löschen
-audioplayer.deleteall Alle löschen
-audioplayer.display_order Anzeige
-audioplayer.enable_sc_metadata Aktiviere Shoutcast Meta-Daten Parsing
-audioplayer.fastforward schneller Vorl.
-audioplayer.follow Selektiere akt. Track
-audioplayer.head Audio Playlist
-audioplayer.highprio Hohe Decodier-Priorität
-audioplayer.id3scan Scanne ID3-Tags
-audioplayer.jump_backwards rückw. springen
-audioplayer.jump_dialog_hint1 Bitte Sprungziel eingeben
-audioplayer.jump_dialog_hint2 (relativ, in Sekunden)
-audioplayer.jump_dialog_title Sprungziel eingeben
-audioplayer.jump_forwards vorw. springen
-audioplayer.keylevel Tasten-Umschaltung
-audioplayer.name Audioplayer
-audioplayer.pause Pause
-audioplayer.play Abspielen
-audioplayer.playing Aktueller Track
-audioplayer.playlist_fileerror_msg Datei kann nicht erstellt werden:
-audioplayer.playlist_fileerror_title Fehler
-audioplayer.playlist_fileoverwrite_msg Soll diese Datei überschrieben werden:
-audioplayer.playlist_fileoverwrite_title Überschreiben?
-audioplayer.playlist_name Dateiname der Playlist
-audioplayer.playlist_name_hint1 Geben Sie den Dateinamen der Playlist ein
-audioplayer.playlist_name_hint2 Die Erweiterung .m3u wird automatisch angehängt
-audioplayer.reading_files Lese die Dateien ein
-audioplayer.repeat_on Repeatmodus aktivieren
-audioplayer.rewind schneller Rückl.
-audioplayer.save_playlist Playlist speichern
-audioplayer.screensaver_timeout Bildschirmschoner (min, 0=aus)
-audioplayer.select_title_by_name Titelsuche nach Name (SMS)
-audioplayer.show_playlist Playlist anzeigen
-audioplayer.shuffle Shuffle
-audioplayer.stop Stop
-audioplayer.title_artist Titel, Interpret
-audioplayerpicsettings.general Audioplayer / Bildbetrachter
-bookmarkmanager.delete Löschen
-bookmarkmanager.name Bookmarks
-bookmarkmanager.rename Umbenennen
-bookmarkmanager.select Auswählen
-bouqueteditor.add Hinzufügen
-bouqueteditor.bouquetname Name des Bouquets
-bouqueteditor.delete Löschen
-bouqueteditor.discardingchanges Änderungen werden verworfen. Bitte warten ...
-bouqueteditor.hide Verstecken
-bouqueteditor.lock Sperren
-bouqueteditor.move Verschieben
-bouqueteditor.name Bouquet-Verwaltung
-bouqueteditor.newbouquetname Neuer Name des Bouquets
-bouqueteditor.rename Umbenennen
-bouqueteditor.return Fertig
-bouqueteditor.savechanges? Sollen die Änderungen gespeichert werden?
-bouqueteditor.savingchanges Änderungen werden gespeichert. Bitte warten ...
-bouqueteditor.switch Kanal aufnehmen/entfernen
-bouqueteditor.switchmode TV/Radio
-bouquetlist.head Bouquets
-cablesetup.provider Kabelanbieter
-channellist.epgtext_align_left links
-channellist.epgtext_align_right rechts
-channellist.extended erweiterte Kanalliste
-channellist.head Alle Kanäle
-channellist.nonefound Es wurden keine Kanäle gefunden!\nFühren Sie bitte eine Kanalsuche durch\n(MENU-Taste -> Service)
-channellist.since seit %02d:%02d
-channellist.start ab %02d:%02d
-colorchooser.alpha alpha
-colorchooser.blue blau
-colorchooser.green grün
-colorchooser.red rot
-colormenu.background Hintergrundfarbe
-colormenu.fade Menüs faden
-colormenu.font Schriftgröße
-colormenu.gtx_alpha Transparenz (GTX)
-colormenu.head Farb-Einstellungen
-colormenu.menucolors Menüfarben
-colormenu.statusbar Statusbalken
-colormenu.textcolor Textfarbe
-colormenu.themeselect Theme auswählen
-colormenu.timing OSD Timeouts
-colormenusetup.head Menüfarben
-colormenusetup.menucontent Fensterinhalt
-colormenusetup.menucontent_inactive Fensterinhalt deaktiviert
-colormenusetup.menucontent_selected Fensterinhalt selektiert
-colormenusetup.menuhead Titelleiste
-colorstatusbar.head Statusbalken-Farben
-colorstatusbar.text Statusbalken
-colorthememenu.classic_theme Klassik
-colorthememenu.dblue_theme DarkBlue Theme
-colorthememenu.dvb2k_theme DVB2000 Theme
-colorthememenu.head Theme auswählen
-colorthememenu.neutrino_theme Neutrino Theme
-date.Apr  Apr
-date.Aug  Aug
-date.Dec  Dez
-date.Feb  Feb
-date.Fri  Fr
-date.Jan  Jan
-date.Jul  Jul
-date.Jun  Jun
-date.Mar  Mär
-date.May  Mai
-date.Mon  Mo
-date.Nov  Nov
-date.Oct  Okt
-date.Sat  Sa
-date.Sep  Sep
-date.Sun  So
-date.Thu  Do
-date.Tue  Di
-date.Wed  Mi
-epglist.head Vorschau - %s
-epglist.noevents Keine EPG-Information verfügbar.
-epgviewer.More_Screenings Weitere Termine auf diesem Kanal
-epgviewer.nodetailed Keine ausführlichen Informationen verfügbar
-epgviewer.notfound keine Programminformationen (EPG) gefunden
-eventlistbar.channelswitch Umschalten
-eventlistbar.eventsort Sortieren
-eventlistbar.recordevent Aufnehmen
-favorites.addchannel Der aktuelle Kanal wird dem Bouquet \n"Meine Favoriten" hinzugefügt. \nDie Speicherung benötigt einen Moment...
-favorites.bouquetname Meine Favoriten
-favorites.bqcreated Bouquet "Meine Favoriten" wurde angelegt...\n
-favorites.chadded Der aktuelle Kanal wurde Ihren Favoriten hinzugefügt...\n
-favorites.chalreadyinbq Der aktuelle Kanal ist bereits in Ihren Favoriten...\n
-favorites.finalhint \nVersehentlich hinzugefügte Kanäle können mit\nder Bouquetverwaltung korrigiert werden.\n
-favorites.menueadd Kanal Favoriten hinzufügen
-favorites.nobouquets Favoriten sind nur mit aktivierten Bouquets möglich.
-filebrowser.delete Löschen
-filebrowser.denydirectoryleave Startverzeichnis absolut
-filebrowser.dodelete1 Soll
-filebrowser.dodelete2 gelöscht werden ?
-filebrowser.filter.active Filter an
-filebrowser.filter.inactive Filter aus
-filebrowser.head Filebrowser
-filebrowser.mark Markieren
-filebrowser.nextpage Seite vor
-filebrowser.prevpage Seite zurück
-filebrowser.scan Durchsuche Verzeichnisse
-filebrowser.select Auswählen
-filebrowser.showrights Dateirechte anzeigen
-filebrowser.sort.date (Datum)
-filebrowser.sort.name (Dateiname)
-filebrowser.sort.namedirsfirst (Dateiname2)
-filebrowser.sort.size (Größe)
-filebrowser.sort.type (Typ)
-filesystem.is.utf8 Dateisystem
-filesystem.is.utf8.option.iso8859.1 ISO-8859-1
-filesystem.is.utf8.option.utf8 UTF-8
-flashupdate.actionreadflash lese Flash
-flashupdate.cantopenfile kann Datei nicht öffnen
-flashupdate.cantopenmtd kann das MTD-Device nicht öffnen
-flashupdate.checkupdate nach neuer Version suchen
-flashupdate.currentreleasecycle Releasezyklus
-flashupdate.currentversion_sep Installierte Version
-flashupdate.currentversiondate Datum
-flashupdate.currentversionsnapshot ImageTyp
-flashupdate.currentversiontime Uhrzeit
-flashupdate.erasefailed Flash löschen fehlgeschlagen
-flashupdate.erasing lösche Flash
-flashupdate.experimentalimage Sie haben einen Snapshot ausgewählt, bitte beachten Sie,\ndass diese Version ungetestet ist und u.U. Ihre Box\nnach dem Update nicht mehr funktionsfähig ist.\n\nSoll diese Version wirklich installiert werden?
-flashupdate.expertfunctions Experten-Funktionen
-flashupdate.fileis0bytes die Dateigröße ist 0 Byte
-flashupdate.fileselector Datei-Auswahl
-flashupdate.flashreadyreboot Das Image wurde erfolgreich geflasht.\nIhre Box wird jetzt neu gestartet.
-flashupdate.getinfofile lade Versioninfo
-flashupdate.getinfofileerror kann Info nicht laden
-flashupdate.getupdatefile lade Update
-flashupdate.getupdatefileerror kann Update nicht laden
-flashupdate.globalprogress Gesamtstatus:
-flashupdate.head Aktualisierung
-flashupdate.md5check Imageprüfung
-flashupdate.md5sumerror Das Image ist fehlerhaft
-flashupdate.msgbox Es wurde folgendes neues file gefunden:\nDatum: %s, %s\nBasisImage: %s\nTyp: %s\n\nWollen Sie diese Version jetzt herunterladen\nund installieren?
-flashupdate.msgbox_manual Es wurde ein neues Image gefunden:\nDatum: %s, %s\nBasisImage: %s\nImageTyp: %s\n\nWollen Sie diese Version jetzt installieren?
-flashupdate.mtdselector Partitions-Auswahl
-flashupdate.programmingflash programmiere Flash
-flashupdate.proxypassword Passwort
-flashupdate.proxypassword_hint1 Geben sie das Proxy-Passwort ein
-flashupdate.proxypassword_hint2 Ein leerer Eintrag bedeutet keine Authentifizierung
-flashupdate.proxyserver Proxyname
-flashupdate.proxyserver_hint1 Geben Sie den Proxynamen oder IP ein (Host:Port)
-flashupdate.proxyserver_hint2 Ein leerer Eintrag bedeutet kein Proxy
-flashupdate.proxyserver_sep Proxyserver
-flashupdate.proxyusername Benutzername
-flashupdate.proxyusername_hint1 Geben Sie den Proxy-Benutzernamen ein
-flashupdate.proxyusername_hint2 Ein leerer Eintrag bedeutet keine Authentifizierung
-flashupdate.readflash ganzes Flashimage auslesen
-flashupdate.readflashmtd einzelne Partition auslesen
-flashupdate.ready fertig
-flashupdate.reallyflashmtd Wollen Sie den Flashvorgang wirklich durchführen?\n\nFalls ein Fehler auftritt oder das Image nicht\nfunktionfähig ist, wird Ihre box nicht mehr booten.\n\nImagename: %s\nZiel: %s
-flashupdate.savesuccess Das Image wurde erfolgreich unter dem\nDateinamen %s gespeichert.
-flashupdate.selectimage Verfügbare Images/Files
-flashupdate.squashfs.noversion Bei SquashFS Updates werden Versionsüberprüfungen derzeit nur bei Web-Updates unterstützt.\nWollen Sie das ausgewählt Image wirklich installieren?
-flashupdate.titlereadflash Flash auslesen
-flashupdate.titlewriteflash Flash schreiben
-flashupdate.updatemode Updatemodus
-flashupdate.updatemode_internet internet
-flashupdate.updatemode_manual manuell (ftp)
-flashupdate.url_file Konfigfile
-flashupdate.versioncheck Versionsüberprüfung
-flashupdate.writeflash ganzes Flashimage einspielen
-flashupdate.writeflashmtd einzelne Partition einspielen
-flashupdate.wrongbase Abweichende release Info\nFortfahren? 
-fontmenu.channellist Kanalliste
-fontmenu.epg EPG
-fontmenu.eventlist Eventlist
-fontmenu.gamelist Gameliste
-fontmenu.head Schriftgrössen Einstellungen
-fontmenu.infobar Infobar
-fontsize.channel_num_zap Direktauswahl
-fontsize.channellist Kanalliste
-fontsize.channellist_descr Beschreibung
-fontsize.channellist_number Nummer
-fontsize.epg_date EPG Datum
-fontsize.epg_info1 EPG Info 1
-fontsize.epg_info2 EPG Info 2
-fontsize.epg_title EPG Titel
-fontsize.eventlist_datetime Eventlist Datum / Zeit
-fontsize.eventlist_itemlarge Eventlist groß
-fontsize.eventlist_itemsmall Eventlist klein
-fontsize.eventlist_title Eventlist Titel
-fontsize.filebrowser_item Dateibrowser-Eintrag
-fontsize.gamelist_itemlarge groß
-fontsize.gamelist_itemsmall klein
-fontsize.hint Font wird initialisiert,\nbitte warten...
-fontsize.infobar_channame Infobar Kanal
-fontsize.infobar_info Infobar Info
-fontsize.infobar_number Infobar Nummer
-fontsize.infobar_small Infobar klein
-fontsize.menu Menutext
-fontsize.menu_info Menu Info
-fontsize.menu_title Menu Titel
 gtxalpha.alpha1 Alpha 1
 gtxalpha.alpha2 Alpha 2
+hdd_10min 10 min.
+hdd_1min 1 min.
+hdd_20min 20 min.
+hdd_30min 30 min.
+hdd_5min 5 min.
+hdd_60min 60 min.
+hdd_activate Aktiviere Einstellungen
+hdd_check Prüfe Dateiesystem
+hdd_check_failed HDD Prüfung fehlgeschlagen !
+hdd_ext3 Ext3fs
+hdd_fast Schnell
+hdd_format Formatiere HDD
+hdd_format_failed HDD formatieren fehlgeschlagen !
+hdd_format_warn Möchten Sie wirklich formatieren ? Sie verlieren alle Daten !
+hdd_fs Dateisystem
+hdd_manage Verwalten
+hdd_middle Mitte
+hdd_noise Lärm
+hdd_not_found Keine HDD gefunden
+hdd_reiser Reiserfs
+hdd_settings HDD Einstellungen
+hdd_sleep Schlaf Zeit
+hdd_slow Langsam
+hdd_umount_warn HDD unmount fehlgeschlagen !
+imageinfo.creator Ersteller:
+imageinfo.date Datum:
+imageinfo.dokumentation Dokus:
+imageinfo.forum Forum:
+imageinfo.head Image Info:
+imageinfo.homepage Homepage:
+imageinfo.image Image:
+imageinfo.license Lizenz:
+imageinfo.version Version:
+inetradio.name Internetradio
 infoviewer.epgnotload Informationen noch nicht geladen...
 infoviewer.epgwait Warte auf EPG-Informationen...
 infoviewer.eventlist EPG/Vorschau
@@ -393,7 +575,6 @@ infoviewer.subservice Bildregie
 infoviewer.waittime Warte auf Uhrzeit...
 ipsetup.hint_1 Benutzen Sie 0..9 oder hoch/runter
 ipsetup.hint_2 OK speichert, LAME! bricht ab
-keybindingmenu.RC Fernbedienung
 keybindingmenu.addrecord Aufnahme-Timer hinzufügen
 keybindingmenu.addremind Umschalt-Timer hinzufügen
 keybindingmenu.allchannels_on_ok Kanalliste
@@ -412,6 +593,7 @@ keybindingmenu.modechange Modus wechsel
 keybindingmenu.pagedown Seite runterblättern
 keybindingmenu.pageup Seite hochblättern
 keybindingmenu.quickzap Schnellumschaltung
+keybindingmenu.RC Fernbedienung
 keybindingmenu.repeatblock Wiederholungsverzögerung
 keybindingmenu.repeatblockgeneric Anfangsverzögerung
 keybindingmenu.sort Sortierreihenfolge ändern
@@ -421,17 +603,18 @@ keybindingmenu.tvradiomode Fernseh-/Radio-Modus
 keybindingmenu.zaphistory Zapping-History Bouquet
 keychooser.head Neue Taste einstellen
 keychooser.text1 Bitte Taste drücken
-keychooser.text2 Zum Abbrechen warten..
+keychooser.text2 Zum Abbrechen warten...
 keychoosermenu.currentkey Derzeitige Taste
 keychoosermenu.setnew Neue Taste einstellen
 keychoosermenu.setnone Keine Taste
 languagesetup.head Spracheinstellungen
 languagesetup.select Sprache
-lcdcontroler.brightness normale Helligkeit 
+lcdcontroler.brightness normale Helligkeit
 lcdcontroler.brightnessstandby Standby Helligkeit
 lcdcontroler.contrast Kontrast
-lcdcontroler.head VFD Einstellungen
 lcdmenu.autodimm Automatisch dimmen
+lcdmenu.dim_brightness Helligkeit nach Dimm-Timeout
+lcdmenu.dim_time Dimm-Timeout
 lcdmenu.head VFD Einstellungen
 lcdmenu.inverse Invertieren
 lcdmenu.lcdcontroler Kontrast / Helligkeit
@@ -441,6 +624,7 @@ lcdmenu.statusline.both Lautstärke / Fortschritt
 lcdmenu.statusline.playtime Sendungsfortschritt
 lcdmenu.statusline.volume Lautstärke
 mainmenu.audioplayer Audioplayer
+mainmenu.clearsectionsd Lösche EPG Cache
 mainmenu.games Spiele
 mainmenu.head Hauptmenü
 mainmenu.movieplayer Movieplayer
@@ -459,18 +643,18 @@ mainmenu.shutdown Ausschalten
 mainmenu.sleeptimer SleepTimer
 mainmenu.tvmode TV-Modus
 mainsettings.audio Audio
-mainsettings.osd OSD Einstellungen
-mainsettings.colors Farben / Themes / Schrift
 mainsettings.head Einstellungen
 mainsettings.keybinding Tasten Einstellungen
 mainsettings.language Sprache
 mainsettings.lcd VFD-Display
 mainsettings.misc Diverse Einstellungen
 mainsettings.network Netzwerk
+mainsettings.osd OSD Einstellungen
 mainsettings.recording Aufnahme
 mainsettings.savesettingsnow Einstellungen jetzt speichern
 mainsettings.savesettingsnow_hint Einstellungen werden jetzt gespeichert,\nbitte warten...
 mainsettings.streaming Movieplayer
+mainsettings.timezone Zeitzone
 mainsettings.video Video
 menu.back Zurück
 messagebox.back Zurück
@@ -482,8 +666,25 @@ messagebox.no Nein
 messagebox.yes Ja
 miscsettings.bootinfo Infos beim Booten anzeigen
 miscsettings.bootmenu Bootmenü anzeigen
+miscsettings.channellist Kanalliste
+miscsettings.channellist_epgtext_align Ausrichtung des Programmtextes
 miscsettings.driver_boot Treiber- und Bootoptionen
-miscsettings.fb_destination EXPERT! Boot-Konsole
+miscsettings.epg_cache EPG-Cache (Tage)
+miscsettings.epg_cache_hint1 EPG-Daten im Voraus cachen?
+miscsettings.epg_cache_hint2 Angabe in Tagen
+miscsettings.epg_dir EPG Speicherverzeichnis
+miscsettings.epg_extendedcache EPG Long Description (Stunden)
+miscsettings.epg_extendedcache_hint1 Wie lange in die Zukunft sollen EPG extended descriptions
+miscsettings.epg_extendedcache_hint2 gecached werden? (in Stunden)
+miscsettings.epg_head EPG Einstellungen
+miscsettings.epg_max_events Max. Events
+miscsettings.epg_max_events_hint1 Wieviele Events sollen max. gespeichert werden?
+miscsettings.epg_max_events_hint2 Standard 6000, 0 (ohne Limit)
+miscsettings.epg_old_events EPG verwerfen nach (Std.)
+miscsettings.epg_old_events_hint1 Wie lange abgelaufene EPG-Daten aufheben?
+miscsettings.epg_old_events_hint2 Angabe in Stunden
+miscsettings.epg_save EPG zwischenspeichern?
+miscsettings.fb_destination EXPERTE! Boot-Konsole
 miscsettings.general Allgemein
 miscsettings.head Diverse Einstellungen
 miscsettings.hwsections HW-Sections verwenden
@@ -491,16 +692,166 @@ miscsettings.infobar_sat_display Infobar Satellitenanzeige
 miscsettings.noaviawatchdog AVIA-Watchdog aktivieren
 miscsettings.noenxwatchdog eNX-Watchdog aktivieren
 miscsettings.pmtupdate PMT Update verwenden
+miscsettings.shutdown_count Ausschalten nach
+miscsettings.shutdown_count_hint1 Zeit (in Minuten) zum Wechsel vom Standby
+miscsettings.shutdown_count_hint2 in tiefen Standby (0 = off).
 miscsettings.shutdown_real Standbymodus
 miscsettings.shutdown_real_rcdelay Verzögerter Shutdown
-miscsettings.shutdown_count Komplett ausschalten nach
 miscsettings.sptsmode SPTS-Mode Treiber laden
-miscsettings.startbhdriver BH-Mode Treiber laden
+miscsettings.virtual_zap_mode Virtual Zap
+motorcontrol.calc_positions (Neu)-Berechne(n)) Positionen
+motorcontrol.disable_limit Deaktiviere (soft) Limit
+motorcontrol.drive_mode Fahr Modus
+motorcontrol.drive_mode_auto Fahr Modus/automatischer Stop
+motorcontrol.east_limit Setze östliches (soft) Limit
+motorcontrol.enable_limit Aktiviere (soft) Limit
+motorcontrol.goto Gehe zu Motor Position (a)
+motorcontrol.halt Stope Motor
 motorcontrol.head Motor-Setup
+motorcontrol.install_menu Motor Installation
+motorcontrol.motor_pos (a) Motor Position:
+motorcontrol.movement (b) Bewegung:
+motorcontrol.msec Millisekunden
+motorcontrol.no_mode keine Sorge
+motorcontrol.notdef Not used
+motorcontrol.pos_decrease Motor Position runter (a)
+motorcontrol.pos_increase Motor Position rauf (a)
+motorcontrol.ref_position Gehe zu Referenz Position
+motorcontrol.sat_pos Satellitenposition (Step Mode):
+motorcontrol.settings Motor Einstellungen
+motorcontrol.status Status
+motorcontrol.step_decrease Schrittweite runter (c)
+motorcontrol.step_drive Umschalten Schrittsetzungs/Fahr Modus (b)
+motorcontrol.step_east Fahre/Schrittsetze Motor nach Osten (b,c)
+motorcontrol.step_increase Schrittweite rauf (c)
+motorcontrol.step_mode Schrittsetzungs Modus
+motorcontrol.step_size (c) Schrittweite:
+motorcontrol.step_west Fahre/Schrittsetze Motor nach Westen (b,c)
+motorcontrol.stop_moving Stope bei guten Signal(moving)
+motorcontrol.stop_stopped Stope bei schlechtem Signal(stopped)
+motorcontrol.store Speichere Motor Position (a)
+motorcontrol.timed_mode Zeitgesteuerter Schrittweiten Modus
+motorcontrol.user_menu Benutzermenü
+motorcontrol.west_limit Setze westliches (soft) Limit
+moviebrowser.book_clear_all Lösche alle
+moviebrowser.book_head Markierungen
+moviebrowser.book_lastmoviestop letzter Wiedergabestop:
+moviebrowser.book_movieend Filmende:
+moviebrowser.book_moviestart Filstart:
+moviebrowser.book_name Name:
+moviebrowser.book_new Neue Markierung
+moviebrowser.book_position Position:
+moviebrowser.book_type Sprung (<0 zurück , >0 vor):
+moviebrowser.book_type_backward Wiederholung
+moviebrowser.book_type_forward Überspringen
+moviebrowser.browser_frame_high Anzeigehöhe oberes Fenster [Punkte]
+moviebrowser.browser_row_head Spalten Einstellungen
+moviebrowser.browser_row_item Spalteninfo
+moviebrowser.browser_row_nr Anzahl Spalten
+moviebrowser.browser_row_width Spaltenbreite [Punkte]
+moviebrowser.dir Pfad
+moviebrowser.dir_head Zusätzliche Verzeichnisse
+moviebrowser.edit_book Bookmark Ändern
+moviebrowser.edit_book_name_info1 Neuer Markierungsname
+moviebrowser.edit_book_name_info2 book name info2
+moviebrowser.edit_book_pos_info1 Neue Position (s)
+moviebrowser.edit_book_pos_info2
+moviebrowser.edit_book_type_info1 Neue Sprunglänge (s)
+moviebrowser.edit_book_type_info2 <0 zurück , >0 vor, 0: kein
+moviebrowser.edit_serie Name der Serie
+moviebrowser.error_no_movies Keine Filme gefunden
+moviebrowser.foot_filter Filter:
+moviebrowser.foot_play Film starten
+moviebrowser.foot_sort Sortieren:
+moviebrowser.head TS Filmarchiv
+moviebrowser.head_filter Filme nach Kategorie filtern:
+moviebrowser.head_playlist Zuletzt gesehen:
+moviebrowser.head_recordlist Zuletzt aufgenommen:
+moviebrowser.hide_series Verstecke Serien
+moviebrowser.hint_jumpbackward Rücksprung in 5 s\n '0' zum Weitersehen
+moviebrowser.hint_jumpforward Werbung überspringen in 5 s\n '0' zum Ansehen
+moviebrowser.hint_movieend Filmende in 5 s\n '0' zum Weitersehen
+moviebrowser.hint_newbook_backward Neue Wiederholung\n 'blue' für Endposition
+moviebrowser.hint_newbook_forward Neuer Werbesprung\n 'blue' für Endposition
+moviebrowser.info_audio Audio
+moviebrowser.info_channel Kanel
+moviebrowser.info_filename Name
+moviebrowser.info_genre_major Genre
+moviebrowser.info_genre_minor Genre
+moviebrowser.info_head Film Informationen
+moviebrowser.info_head_update Inhalte in allen sichtbaren Filminfos speichern
+moviebrowser.info_info1 Info 1
+moviebrowser.info_length Spieldauer (Min)
+moviebrowser.info_parental_lockage Altersfreigabe
+moviebrowser.info_parental_lockage_0year immer
+moviebrowser.info_parental_lockage_12year 12 Jahre
+moviebrowser.info_parental_lockage_16year 16 Jahre
+moviebrowser.info_parental_lockage_18year 18 Jahre
+moviebrowser.info_parental_lockage_6year 6 Jahre
+moviebrowser.info_parental_lockage_always nie
+moviebrowser.info_path Verzeichnis
+moviebrowser.info_prevplaydate Letzte Wiedergabe
+moviebrowser.info_prodcountry Land
+moviebrowser.info_prodyear Jahr
+moviebrowser.info_quality Qualität
+moviebrowser.info_recorddate Aufnahmedatum
+moviebrowser.info_serie Serie
+moviebrowser.info_size Dateigrösse (MB)
+moviebrowser.info_title Titel
+moviebrowser.info_videoformat Bild
+moviebrowser.last_play_max_items Zeilen 'zuletzt aufgenommen'
+moviebrowser.last_record_max_items Zeilen 'zuletzt gesehen'
+moviebrowser.load_default Lade Voreinstellung
+moviebrowser.menu_directories_head Verzeichnisse
+moviebrowser.menu_help_head Hilfe
+moviebrowser.menu_main_bookmarks Markierungen
+moviebrowser.menu_main_head Einstellungen
+moviebrowser.menu_nfs_head NFS Einstellung
+moviebrowser.menu_parental_lock_activated aktiviert
+moviebrowser.menu_parental_lock_activated_no nein
+moviebrowser.menu_parental_lock_activated_no_temp nein (temporär)
+moviebrowser.menu_parental_lock_activated_yes ja
+moviebrowser.menu_parental_lock_head Jugendschutz
+moviebrowser.menu_parental_lock_rate_head Filme sperren ab
+moviebrowser.menu_save Veränderungen speichern
+moviebrowser.menu_save_all Starte Übernahme in allen sichtbaren Filminfos
+moviebrowser.option_browser Anzeigeoptionen
+moviebrowser.reload_at_start Filminfos neu laden bei Start
+moviebrowser.remount_at_start Filmdepot verbinden bei Start
+moviebrowser.scan_for_movies Suche Filme ...
+moviebrowser.serie_auto_create Serien automatisch zuordnen
+moviebrowser.serie_head Serie
+moviebrowser.serie_name Name ändern
+moviebrowser.short_audio Audio
+moviebrowser.short_book Marker
+moviebrowser.short_channel Kanal
+moviebrowser.short_country Land
+moviebrowser.short_filename Name
+moviebrowser.short_format Format
+moviebrowser.short_genre_major Genre
+moviebrowser.short_genre_minor Genre
+moviebrowser.short_info1 Info 1
+moviebrowser.short_info2 Info 2
+moviebrowser.short_length Min
+moviebrowser.short_parental_lockage FSK
+moviebrowser.short_path Pfad
+moviebrowser.short_prevplaydate Zuletzt
+moviebrowser.short_prodyear Jahr
+moviebrowser.short_quality * (Qualität)
+moviebrowser.short_recorddate Datum
+moviebrowser.short_serie Serie
+moviebrowser.short_size MB
+moviebrowser.short_title Title
+moviebrowser.start_head Film starten von Position:
+moviebrowser.start_record_start Aufnahmestart
+moviebrowser.update_if_dest_empty_only Übernehmen nur wenn Ziel leer
+moviebrowser.use_dir Verzeichnis verwenden
+moviebrowser.use_movie_dir Wiedergabeverzeichnis verwenden
+moviebrowser.use_rec_dir Aufnahmeverzeichnis verwenden
 movieplayer.bookmark Bookmarks
 movieplayer.bookmarkname Bookmark Name
 movieplayer.bookmarkname_hint1 Geben Sie den Namen für das neue Bookmark ein
-movieplayer.bookmarkname_hint2 
+movieplayer.bookmarkname_hint2
 movieplayer.buffering Puffern...
 movieplayer.defdir Start-Verz.
 movieplayer.defplugin Start-Plugin
@@ -514,33 +865,42 @@ movieplayer.nostreamingserver Es konnte keine Verbindung\nzum Streamingserver he
 movieplayer.pesplayback PES Abspielen (Experimentell)
 movieplayer.pleasewait Bitte warten Sie.\nDie Verbindung zum Streamingserver wird hergestellt.
 movieplayer.toomanybookmarks Sie haben bereits zu viele Bookmarks angelegt.\nEs muß erst ein anderes gelöscht werden.
-movieplayer.tshelp1 Stop 
-movieplayer.tshelp10 ca. 10 Minuten zurück 
-movieplayer.tshelp11 ca. 10 Minuten vor 
-movieplayer.tshelp12 Hilfe: http://www.giggo.de/dbox2/movieplayer.html\n 
-movieplayer.tshelp2 Auswahl der Tonspur 
-movieplayer.tshelp3 Pause/Weiter 
-movieplayer.tshelp4 Bookmark setzen 
-movieplayer.tshelp5 Zeit einblenden 
-movieplayer.tshelp6 ca. 1 Minute zurück 
-movieplayer.tshelp7 ca. 1 Minute vor 
-movieplayer.tshelp8 ca. 5 Minuten zurück 
-movieplayer.tshelp9 ca. 5 Minuten vor 
+movieplayer.tshelp1 Stop
+movieplayer.tshelp10 ca. 10 Minuten zurück
+movieplayer.tshelp11 ca. 10 Minuten vor
+movieplayer.tshelp12 Hilfe: http://www.giggo.de/dbox2/movieplayer.html\n
+movieplayer.tshelp2 Auswahl der Tonspur
+movieplayer.tshelp3 Pause/Weiter
+movieplayer.tshelp4 Bookmark setzen
+movieplayer.tshelp5 Zeit einblenden
+movieplayer.tshelp6 ca. 1 Minute zurück
+movieplayer.tshelp7 ca. 1 Minute vor
+movieplayer.tshelp8 ca. 5 Minuten zurück
+movieplayer.tshelp9 ca. 5 Minuten vor
 movieplayer.tsplayback TS Abspielen
 movieplayer.vcdplayback (S)VCD
-movieplayer.vlchelp1 Stop 
-movieplayer.vlchelp10 ca. 10 Minuten zurück 
-movieplayer.vlchelp11 ca. 10 Minuten vor 
-movieplayer.vlchelp12 Hilfe: http://www.giggo.de/dbox2/movieplayer.html\n 
-movieplayer.vlchelp2 Resync 
-movieplayer.vlchelp3 Pause/Weiter 
-movieplayer.vlchelp4 Bookmark setzen 
-movieplayer.vlchelp5 Zeit einblenden 
-movieplayer.vlchelp6 ca. 1 Minute zurück 
-movieplayer.vlchelp7 ca. 1 Minute vor 
-movieplayer.vlchelp8 ca. 5 Minuten zurück 
-movieplayer.vlchelp9 ca. 5 Minuten vor 
+movieplayer.vlchelp1 Stop
+movieplayer.vlchelp10 ca. 10 Minuten zurück
+movieplayer.vlchelp11 ca. 10 Minuten vor
+movieplayer.vlchelp12 Hilfe: http://www.giggo.de/dbox2/movieplayer.html\n
+movieplayer.vlchelp2 Resync
+movieplayer.vlchelp3 Pause/Weiter
+movieplayer.vlchelp4 Bookmark setzen
+movieplayer.vlchelp5 Zeit einblenden
+movieplayer.vlchelp6 ca. 1 Minute zurück
+movieplayer.vlchelp7 ca. 1 Minute vor
+movieplayer.vlchelp8 ca. 5 Minuten zurück
+movieplayer.vlchelp9 ca. 5 Minuten vor
 movieplayer.wrongvlcversion Funktion ist mit der benutzten Version des VLC nicht möglich
+mpkey.audio Audio-Track
+mpkey.bookmark Speichere Bookmark
+mpkey.forward Vorlauf
+mpkey.pause Pause
+mpkey.play Play
+mpkey.plugin Starte Plugin
+mpkey.rewind Rücklauf
+mpkey.stop Stop
+mpkey.time Zeitanzeige
 networkmenu.broadcast Broadcast
 networkmenu.dhcp DHCP
 networkmenu.gateway Standard Gateway
@@ -549,18 +909,19 @@ networkmenu.ipaddress IP-Adresse
 networkmenu.mount NFS/CIFS/FTPFS
 networkmenu.nameserver Nameserver
 networkmenu.netmask Netzmaske
-networkmenu.ntpenable Syncronisieren via
+networkmenu.ntpenable Synchronisieren via
 networkmenu.ntprefresh NTP/DVB-Refresh
-networkmenu.ntprefresh_hint1 NTP/DVB-Time-Sync in minuten
+networkmenu.ntprefresh_hint1 NTP/DVB-Time-Sync in Minuten
 networkmenu.ntprefresh_hint2 braucht reboot oder epg-reset
 networkmenu.ntpserver NTP-Server
 networkmenu.ntpserver_hint1 NTP-Server Beispiel: ntp1.ptb.de
 networkmenu.ntpserver_hint2 braucht reboot oder epg-reset
-networkmenu.ntptitle Time-Syncronisation
+networkmenu.ntptitle Time-Synchronisation
 networkmenu.setupnow Netzwerkeinstellungen jetzt zuweisen
 networkmenu.setuponstartup Beim Starten Netzwerk setzen
 networkmenu.show aktive Netzwerkeinstellungen zeigen
 networkmenu.test Netzwerk testen
+neutrino_starting Neutrino wird gestartet...
 nfs.alreadymounted Verzeichnis bereits gemountet.
 nfs.automount Beim Start mounten
 nfs.dir Verzeichnis/Freigabe
@@ -568,10 +929,10 @@ nfs.ip Server IP
 nfs.localdir lokales Verzeichnis
 nfs.mount Netzwerk Verzeichnis mounten
 nfs.mount_options Mount-Optionen
-nfs.mountok Mount erfolgreich
 nfs.mounterror Mount-Fehler
 nfs.mounterror_notsup Dateisystem-Typ wird nicht unterstützt.
 nfs.mountnow Jetzt mounten
+nfs.mountok Mount erfolgreich
 nfs.mounttimeout Mount-Fehler: Timeout
 nfs.password Passwort
 nfs.remount Verzeichnisse erneut mounten
@@ -584,7 +945,7 @@ nfs.umounterror Umount-Fehler
 nfs.username Benutzername
 nfsmenu.head NFS/CIFS/FTPFS Einstellungen
 nvod.percentage (%d%% vorbei)
-nvod.starting (Beginn in %d min)
+nvod.starting (Beginn in %d Min.)
 nvodselector.directormode Bildregie-Modus
 nvodselector.head Anfangszeit auswählen
 nvodselector.subservice Perspektiven
@@ -593,6 +954,7 @@ options.fb framebuffer
 options.null null
 options.off aus
 options.on ein
+options.on.without_messages ohne Meldungen
 options.serial seriell
 parentallock.changepin PIN-Code festlegen
 parentallock.changepin_hint1 Geben Sie hier Ihren neuen PIN-Code ein!
@@ -608,6 +970,8 @@ parentallock.never Nie
 parentallock.onsignal Bei gesendeter Vorsperre
 parentallock.parentallock Jugendschutz
 parentallock.prompt PIN-Eingabe
+pictureviewer.decode_server_ip Dekodiere Server IP
+pictureviewer.decode_server_port Dekodiere Server Port
 pictureviewer.defdir Start-Verz.
 pictureviewer.head Bildbetrachter
 pictureviewer.help1 Menu-Modus
@@ -615,8 +979,8 @@ pictureviewer.help10 Anzeige-Modus
 pictureviewer.help11 Bild neu einlesen
 pictureviewer.help12 vorheriges Bild
 pictureviewer.help13 nachstes Bild
-pictureviewer.help14 Zoom out
-pictureviewer.help15 Zoom in
+pictureviewer.help14 herauszoomen
+pictureviewer.help15 heranzoomen
 pictureviewer.help16 Scroll hoch
 pictureviewer.help17 Scroll links
 pictureviewer.help18 Scroll rechts
@@ -650,9 +1014,13 @@ pinprotection.head PIN-Abfrage
 pinprotection.wrongcode Geben Sie den Code nocheinmal ein!
 plugins.result Pluginausgabe
 rclock.lockmsg Die Fernbedienung der Coolstream wird gesperrt.\n Um die Sperre aufzuheben, bitte\n <ROT> und <MENU> auf der Fernbedienung\n druecken.
-rclock.menueadd FB sperren 
+rclock.menueadd FB sperren
 rclock.title Fernbedienung sperren
 rclock.unlockmsg Fernbedienung reaktiviert...
+recordingmenu.apids Voreinstellung für Tonspuren
+recordingmenu.apids_ac3 AC3 Tonspuren aufnehmen
+recordingmenu.apids_alt Alternative Tonspuren aufn.
+recordingmenu.apids_std Standard Tonspur aufnehmen
 recordingmenu.choose_direct_rec_dir Bei Sofortaufn. Verzeichnisauswahl
 recordingmenu.defdir Aufnahmeverzeichnis
 recordingmenu.epg_for_filename lange Dateinamen (mit EPG-Daten)
@@ -662,8 +1030,10 @@ recordingmenu.head Aufnahme Einstellungen
 recordingmenu.help Aufnahmegeräte:\n-----------------------\nServer:\nauf PC mit Hilfe eines Streaming-Programmes\n\n(analoger) Videorekorder:\nüber VCR-Ausgang\n\nDirekt (Datei):\nauf ein per NFS gemountetes Verzeichnis\noder eine interne Festplatte\nTS: SPTS-Mode Treiber laden(dbox2)\nPES: SPTS-Mode Treiber nicht laden(dbox2)\n\n\nMaximale Dateigröße:\n----------------------\nNFS V2: 2 GB (2048 MB)\nNFS V3: fast unendlich (0 MB)\nFAT: 2 GB (2048 MB)\nFAT32: 4 GB (4096 MB)
 recordingmenu.no_scart Unterdrücke Scart-Umschaltung
 recordingmenu.off aus
+recordingmenu.record_in_spts_mode in SPTS-Modus aufnehmen
 recordingmenu.recording_type Aufnahme Gerät
 recordingmenu.ringbuffers Anz. Ringpuffer
+recordingmenu.save_in_channeldir Speichere im Kanalverzeichnis
 recordingmenu.server Server
 recordingmenu.server_ip Aufnahmeserver IP
 recordingmenu.server_mac Mac Adresse
@@ -673,26 +1043,65 @@ recordingmenu.setupnow Einstellungen jetzt übernehmen
 recordingmenu.splitsize Max. Dateigröße (MB)
 recordingmenu.stopplayback Playback anhalten
 recordingmenu.stopsectionsd Sectionsd anhalten
-recordingmenu.stream_vtxt_pid teletext aufzeichnen
+recordingmenu.stream_pmt_pid PMT aufnehmen
+recordingmenu.stream_vtxt_pid Teletext aufzeichnen
+recordingmenu.tsdir Timeshiftverzeichnis
 recordingmenu.use_fdatasync Synchrones Schreiben (fdatasync)
 recordingmenu.use_o_sync Synchrones Schreiben (O_SYNC)
 recordingmenu.vcr Videorekorder
+recordingmenu.zap_on_announce Umschalten bei Ankündigung
 recordtimer.announce Die Aufnahme beginnt in wenigen Minuten.
 repeatblocker.hint_1 Mindestzeit (in ms) zwischen 2 Tastendrücken
 repeatblocker.hint_2 0 schaltet den Blocker aus (Rot ist " ")
+reset_all Werkseinstellungen zurücksetzen
+reset_channels Lösche Kanäle
+reset_confirm Sind Sie sich sicher?
+reset_settings Zurückstellen auf Werkseinstellungen
+rfmod.carrier Unterträger-Frequenz
+rfmod.carrier4500 4.5
+rfmod.carrier5500 5.5
+rfmod.carrier6000 6.0
+rfmod.carrier6500 6.5
+rfmod.channel Kanal
+rfmod.enable Ton aktivieren
+rfmod.finetune Feintuning
+rfmod.rfmod RF Modulator
+rfmod.standby Modulator aktivieren
+rfmod.test Testmuster
+satsetup.auto_scan Ausgewählten Satelliten scannen
+satsetup.auto_scan_all Alle Satelliten scannen
+satsetup.comm_input Commited Input
 satsetup.diseqc DiSEqC
+satsetup.diseqc_advanced Erweiterte Auswahl
+satsetup.diseqc_com_uncom Commited/Uncommited
+satsetup.diseqc_input Diseqc Einspeisung
+satsetup.diseqc_order Einspeisungsfolge
+satsetup.diseqc_uncom_com Uncommited/Commited
 satsetup.diseqc10 DiSEqC 1.0
 satsetup.diseqc11 DiSEqC 1.1
 satsetup.diseqc12 DiSEqC 1.2
 satsetup.diseqcrepeat DiSEqC-Wiederholungen
+satsetup.do_scan Satelliten scannen
 satsetup.extended DiSEqC-Einstellungen
 satsetup.extended_motor Motor-Einstellungen
+satsetup.lofh LNB High Offset
+satsetup.lofl LNB Low Offset
+satsetup.lofs LNB Switch Offset
+satsetup.manual_scan Manueller Frequenzscan
 satsetup.minidiseqc Mini-DiSEqC
+satsetup.motor_pos Rotor-Position
 satsetup.motorcontrol Manuelle Motor-Einstellung
 satsetup.nodiseqc Kein DiSEqC
+satsetup.sat_setup Einstellen LNB-Konfiguration
 satsetup.satellite Satellit
 satsetup.savesettingsnow Einstellungen jetzt speichern
 satsetup.smatvremote SMATV Remote Tuning
+satsetup.uncomm_input Uncommited
+satsetup.usals_repeat USALS command repeat
+satsetup.use_nit Benutze NIT
+satsetup.use_usals Benutze USALS
+scants.abort_body Scanvorgang wirklich abbrechen?
+scants.abort_header Breche Scan ab
 scants.actcable Kabel:
 scants.actsatellite Satellit:
 scants.bouquet Bouquets
@@ -711,33 +1120,42 @@ scants.numberofradioservices Radio
 scants.numberoftotalservices Gesamt
 scants.numberoftvservices TV
 scants.provider Anbieter:
-scants.startnow Kanalsuche starten
-scants.test Empfang Test
-scants.transponders Transponder:
 scants.select_tp Wählen Sie Transponder
+scants.startnow Kanalsuche starten
+scants.test Empfangstest
+scants.transponders Transponder:
+scrambled_channel Verschlüsselung aktiv
 screensetup.lowerright grün = Bildrand unten, rechts
 screensetup.upperleft rot = Bildrand oben, links
+servicemenu.getplugins Plugins neu laden
+servicemenu.getplugins_hint Plugins werden neu geladen,\nbitte warten...
 servicemenu.head Service
+servicemenu.imageinfo Image-Info
 servicemenu.reload Kanallisten neu laden
 servicemenu.reload_hint Kanallisten werden neu geladen,\nbitte warten...
+servicemenu.restart Neutrino neu starten
+servicemenu.restart_failed Neustart von Neutrino schlug fehl
+servicemenu.restart_hint Neutrino wird neu gestartet...
+servicemenu.restart_refused_recording Aufnahme läuft. Restart nicht möglich.
 servicemenu.scants Kanalsuche
 servicemenu.ucodecheck UCodes überprüfen
 servicemenu.update Software-Aktualisierung
 settings.help Help
 settings.missingoptionsconffile Die Neutrino-Einstellungen wurden erweitert.\nDie neuen Werte werden auf Standard gesetzt.
 settings.noconffile Die Neutrino-Einstellungen wurden nicht\ngefunden. Es werden Standardwerte benutzt.
-settings.pos_bottom_left unten links 
-settings.pos_bottom_right unten rechts 
-settings.pos_top_left oben links 
-settings.pos_top_right oben rechts 
-shutdowntimer.announce Die Box wird in 1 min runtergefahren.\nShutdown abbrechen?
-sleeptimerbox.announce Sleeptimer in 1 min
+settings.pos_bottom_left unten links
+settings.pos_bottom_right unten rechts
+settings.pos_top_left oben links
+settings.pos_top_right oben rechts
+shutdown.recoding_query Aufnahme läuft. Trotzdem beenden?
+shutdowntimer.announce Die Box wird in 1 Min. runtergefahren.\nShutdown abbrechen?
+sleeptimerbox.announce Sleeptimer in 1 Min.
 sleeptimerbox.hint1 Ausschaltzeit in Min. (000=aus)
-sleeptimerbox.hint2 Die box schaltet sich nach dieser Zeit aus.
+sleeptimerbox.hint2 Die Box schaltet sich nach dieser Zeit aus.
 sleeptimerbox.title Sleeptimer
 streamfeatures.head Features
-streaminfo.aratio Verhältnis
-streaminfo.aratio_unknown Verhältnis: unbekannt
+streaminfo.aratio Bildschirmformat
+streaminfo.aratio_unknown Bildschirmformat: unbekannt
 streaminfo.audiotype Audiotyp
 streaminfo.audiotype_unknown Audiotyp: unbekannt
 streaminfo.bitrate Bitrate
@@ -766,17 +1184,19 @@ streamingmenu.server_ip Streamingserver IP
 streamingmenu.server_port Streamingserver Port
 streamingmenu.streaming_audiorate Datenrate Audio
 streamingmenu.streaming_force_avi_rawaudio Erzwinge AC3 bei avi
-streamingmenu.streaming_force_transcode_video Transcod. auch mpg/vcd Video
+streamingmenu.streaming_force_transcode_video Transkod. auch mpg/vcd Video
 streamingmenu.streaming_resolution Auflösung
 streamingmenu.streaming_server_cddrive DVD Laufwerk
 streamingmenu.streaming_server_startdir Verzeichnis (VLC)
-streamingmenu.streaming_transcode_audio Transcod. Audio (dvd/vcd/mpg)
+streamingmenu.streaming_transcode_audio Transkod. Audio (dvd/vcd/mpg)
 streamingmenu.streaming_transcode_video_codec MPEG Video Codec
 streamingmenu.streaming_type Streamingserver
 streamingmenu.streaming_videorate Datenrate Video
 streamingserver.noconnect Keine Verbindung zum Streamingserver.\nAufnahme wird abgebrochen.
 stringinput.caps Groß-/Kleinbuchstaben
 stringinput.clear Alles löschen
+subtitles.head Untertitel
+subtitles.stop Stop Untertitel
 timer.eventrecord.msg Die Sendung wurde zur Aufnahme vorgemerkt.
 timer.eventrecord.title Aufnahme vormerken
 timer.eventtimed.msg Die Sendung wurde vorgemerkt.
@@ -785,6 +1205,7 @@ timerbar.channelswitch Umschalten
 timerbar.recordevent Aufnehmen
 timerlist.alarmtime Alarmzeit
 timerlist.apids Audio PIDs
+timerlist.apids_dflt Voreingestellte Tonspuren aufn.
 timerlist.bouquetselect Bouquet wählen
 timerlist.channel Kanal
 timerlist.channelselect Kanal wählen
@@ -798,6 +1219,7 @@ timerlist.modetv TV Kanäle
 timerlist.modify Bearbeiten
 timerlist.name Timerliste
 timerlist.new Neuer Timer
+timerlist.overlapping_timer Timer überschneiden sich. Neuen Timer trotzdem anlegen?
 timerlist.plugin Plugin
 timerlist.program.unknown Programm unbekannt
 timerlist.recording_dir Aufnahmeverzeichnis
@@ -861,364 +1283,11 @@ ucodecheck.avia600 Avia 600
 ucodecheck.cam-alpha Cam-Alpha
 ucodecheck.head UCode Überprüfung
 ucodecheck.ucode UCode
-ucodes.failure Achtung, die µCodes wurden NICHT gefunden!\n\nBitte per FTP (oder DBox-BootManager)\nuploaden, und die box neu starten!
-videomenu.csync Sync.-Korrektur
-videomenu.head Video-Einstellungen
-videomenu.rgb_centering RGB-Zentrierung
-videomenu.screensetup Bildbereich einstellen
-videomenu.vcrswitch Scart-Eingang automatisch
-videomenu.videoformat Bildschirmformat
-videomenu.videoformat_169 16:9
-videomenu.videoformat_43 4:3
-videomenu.43mode 4:3 Content mode
-videomenu.panscan Pan&Scan
-videomenu.letterbox Letterbox
-videomenu.fullscreen Full screen
-videomenu.videoformat_autodetect automatisch
-videomenu.videosignal Video Signalart
-videomenu.videosignal_composite CVBS
-videomenu.videosignal_rgb RGB
-videomenu.videosignal_svideo S-Video
-videomenu.videosignal_yuv_c YPbPr auf component
-videomenu.videosignal_yuv_v YPbPr auf SCART
-zaptotimer.announce In einer Minute wird umgeschaltet.
-extra.auto Auto
-extra.valid Valid
-extra.all Alle
-extra.sep_extra Extras
-extra.save_settings Einstellungen speichern
-extra.dvbsnoop DVB Stream Info
-extra.dvbsnoop_pat Zeige PAT
-extra.dvbsnoop_cat Zeige CAT
-extra.dvbsnoop_tsdt Zeige TSDT
-extra.dvbsnoop_nit Zeige NIT
-extra.dvbsnoop_sdt Zeige SDT
-extra.dvbsnoop_eit Zeige EIT
-extra.dvbsnoop_rst Zeige RST
-extra.dvbsnoop_tdt Zeige TDT
-extra.dvbsnoop_sit Zeige SIT
-extra.dvbsnoop_pid Zeige manual PID
-extra.dvbsnoop_scan Scan PIDs
-extra.dvbsnoop_band Zeige pid Bandbreite
-extra.logview Lass Log sehen
-extra.english Englisch
-extra.dboxinfo Box Info
-extra.scan_mode Scan Modus
-extra.start_tostandby Starten zum Standby
-extra.rotor_swap Rotor dreht Ost/West
-extra.use_log Loge nach /tmp/log
-extra.spts_mode SPTS Modus
-extra.hw_sect Hardware Sectionen
-extra.logo Logo Nummer
-extra.scan_full Total
-extra.scan_fast Schnell
-hdd_slow Langsam
-hdd_middle Mitte
-hdd_fast Schnell
-hdd_ext3 Ext3fs
-hdd_reiser Reiserfs
-hdd_1min 1 min.
-hdd_5min 5 min.
-hdd_10min 10 min.
-hdd_20min 20 min.
-hdd_30min 30 min.
-hdd_60min 60 min.
-extra.logo1 1
-extra.logo2 2
-extra.logo3 3
-hdd_sleep Schlaf Zeit
-hdd_noise Laerm
-hdd_activate Aktiviere Einstellungen
-hdd_fs Filesystem
-hdd_format Formatiere HDD
-hdd_check Check Dateiesysteem
-hdd_settings HDD Einstellungen
-extra.clear_log Logdatei löschen
-extra.zap_cycle Zap Zyklen
-extra.sms_channel Sms-Modus Kanal
-extra.manual_scan Manual Ansehen
-extra.tp_freq Frequenz
-extra.tp_rate Symbolrate
-extra.tp_pol Polarization
-extra.tp.pol_v V
-extra.tp_pol_h H
-extra.tp_fec FEC
-extra.fec_1_2 1/2
-extra.fec_2_3 2/3
-extra.fec_3_4 3/4
-extra.fec_5_6 5/6
-extra.fec_7_8 7/8
-extra.timezone Zeit-Zone
-extra.zapit_menu Zapit Optionen
-extra.zapit_make_bouquet Mache restliche Kanalliste
-extra.zapit_save_last_chan Speicher letzten Kanal
-extra.zapit_motor_speed Rotor Geschwindigkeit (10 = 1deg/sec)
-extra.zapit_fe_timeout Tune timeout 
-extra.add_to_bouquet dem Bouquet hinzufuegen
-extra.chadded Der aktuelle Kanal wird dem selektierter Bouquet hinzugefügt....\n
-extra.chalreadyinbq Der aktueller Kanal ist bereits in selektiertem Bouquet....\n
-extra.menu_left_exit "links" = Menu zurück
-extra.zapit_write_names Schreibe Kanalname
-extra.update_dir Update-Verzeichnis 
-extra.zapit_fast_zap Fast Zap
-extra.cache Cache
-extra.debug Debug
-extra.zapit_sort_names Sort Kanal nach Name
-extra.zapit_delete Lösche Kanal
-extra.zapit_backup Sichere Kanelliste nach /tmp
-extra.zapit_restore Stelle Kanalliste wieder von /tmp wieder her
-pictureviewer.decode_server_ip Decode Server IP
-pictureviewer.decode_server_port Decode Server Port
-scants.abort_body Scanvorgang wirklich abbrechen?
-scants.abort_header Breche Scan ab
-recordingmenu.record_in_spts_mode in SPTS-Modus aufnehmen
-servicemenu.getplugins Plugins neu laden
-servicemenu.getplugins_hint Plugins werden neu geladen,\nbitte warten...
-zapit.scantype Service-Auswahl
-zapit.scantype.all Alle Services
-zapit.scantype.radio Nur Radio
-zapit.scantype.tv Nur TV
-zapit.scantype.tvradio Nur TV & Radio
-colorthememenu.red_theme Simply Red
-lcdmenu.dim_brightness Helligkeit nach Dimm-Timeout
-lcdmenu.dim_time Dimm-Timeout
-timerlist.overlapping_timer Timer überschneiden sich. Neuen Timer trotzdem anlegen?
-extra.audio_run_player Audio Taste startet Player
-mpkey.rewind Rücklauf
-mpkey.forward Vorlauf
-mpkey.pause Pause
-mpkey.stop Stop
-mpkey.play Play
-mpkey.audio Audio-Track
-mpkey.time Zeitanzeige
-mpkey.bookmark Speichere Bookmark
-mpkey.plugin Starte Plugin
-extra.key_click Tasten-Klick
-extra.loadcolors Lade Farben von
-extra.savecolors Speicher Farben als
-extra.loadkeys Lade Tastenbelegung von
-extra.savekeys Speichere Tastenbelegung als
-extra.loadconfig Lade Einstellungen von
-extra.saveconfig Speichere Einstellungen als
-videomenu.videomode Videosystem
-videomenu.videomode_ntsc NTSC
-videomenu.videomode_pal PAL
-videomenu.videomode_palm PAL-M
-extra.key_timeshift Timeshift
-extra.key_plugin One-touch-Plugin
-extra.timeshift_pause Timeshift Pause
-rfmod.rfmod RF Modulator
-rfmod.carrier Unterträger-Frequenz
-rfmod.carrier4500 4.5
-rfmod.carrier5500 5.5
-rfmod.carrier6000 6.0
-rfmod.carrier6500 6.5
-rfmod.enable Sound aktivieren
-rfmod.channel Kanal
-rfmod.finetune Feintuning
-rfmod.standby Modulator aktivieren
-rfmod.test Testpattern
-extra.zapit_scanpids Scan/Use Pids
-extra.zapit_hvoltage High (13.5/18.5) Voltage
-extra.key_unlock Entsperrtaste
-servicemenu.imageinfo Image-Info
-imageinfo.creator Ersteller:
-imageinfo.date Datum:
-imageinfo.dokumentation Dokus:
-imageinfo.forum Forum:
-imageinfo.head Image Info:
-imageinfo.homepage Homepage:
-imageinfo.image Image:
-imageinfo.license Lizenz:
-imageinfo.version Version:
-extra.cache_txt Teletext zwischenspeichern
-extra.use_gotoxx Benutze gotoXX
-extra.latitude Breitengrad
-extra.longitude Längengrad
-extra.ladirection Breitengrad-Ausrichtung
-extra.lodirection Längengrad-Ausrichtung
-extra.south Süden
-extra.north Norden 
-extra.east Osten 
-extra.west Westen
-epgextended.actors Darsteller
-epgextended.director Regie
-epgextended.guests Gäste
-epgextended.original_title Original Titel
-epgextended.presenter Moderator
-epgextended.year_of_production Produktionsjahr
-recordingmenu.save_in_channeldir Speichere im Kanalverzeichnis
-servicemenu.restart Neutrino neu starten
-servicemenu.restart_failed Neustart von Neutrino schlug fehl
-servicemenu.restart_hint Neutrino wird neu gestartet...
-servicemenu.restart_refused_recording Aufnahme läuft. Restart nicht möglich.
-extra.tp_mod Modulation
-extra.tp_mod_16 QAM/16
-extra.tp_mod_32 QAM/32
-extra.tp_mod_64 QAM/64
-extra.tp_mod_128 QAM/128
-extra.tp_mod_256 QAM/256
-moviebrowser.book_head Markierungen
-moviebrowser.book_lastmoviestop letzter Wiedergabestop:
-moviebrowser.book_movieend Filmende:
-moviebrowser.book_moviestart Filstart:
-moviebrowser.book_name Name:
-moviebrowser.book_new Neue Markierung
-moviebrowser.book_position Position:
-moviebrowser.book_type Sprung (<0 zurück , >0 vor):
-moviebrowser.book_type_backward Wiederholung
-moviebrowser.book_type_forward Überspringen
-moviebrowser.edit_book Bookmark Ändern
-moviebrowser.edit_book_name_info1 Neuer Markierungsname
-moviebrowser.edit_book_name_info2 
-moviebrowser.edit_book_pos_info1 Neue Position (s)
-moviebrowser.edit_book_pos_info2 
-moviebrowser.edit_book_type_info1 Neue Sprunglänge (s)
-moviebrowser.edit_book_type_info2 <0 zurück , >0 vor, 0: kein
-moviebrowser.edit_serie Name der Serie
-moviebrowser.error_no_movies Keine Filme gefunden
-moviebrowser.foot_filter Filter:
-moviebrowser.foot_play Film starten
-moviebrowser.foot_sort Sortieren:
-moviebrowser.head TS Filmarchiv
-moviebrowser.head_filter Filme nach Kategorie filtern:
-moviebrowser.head_playlist Zuletzt gesehen:
-moviebrowser.head_recordlist Zuletzt aufgenommen:
-moviebrowser.hint_jumpbackward Rücksprung in 5 s\n '0' zum Weitersehen
-moviebrowser.hint_jumpforward Werbung überspringen in 5 s\n '0' zum Ansehen
-moviebrowser.hint_movieend Filmende in 5 s\n '0' zum Weitersehen 
-moviebrowser.hint_newbook_backward Neue Wiederholung\n 'blue' für Endposition
-moviebrowser.hint_newbook_forward Neuer Werbesprung\n 'blue' für Endposition
-moviebrowser.info_audio Audio
-moviebrowser.info_channel Kanel
-moviebrowser.info_filename Name
-moviebrowser.info_genre_major Genre
-moviebrowser.info_genre_minor Genre
-moviebrowser.info_head Film Informationen
-moviebrowser.info_info1 Info 1
-moviebrowser.info_info2 Info 2
-moviebrowser.info_length Spieldauer (Min)
-moviebrowser.info_parental_lockage Altersfreigabe
-moviebrowser.info_parental_lockage_0year immer
-moviebrowser.info_parental_lockage_12year 12 Jahre
-moviebrowser.info_parental_lockage_16year 16 Jahre
-moviebrowser.info_parental_lockage_18year 18 Jahre
-moviebrowser.info_parental_lockage_6year 6 Jahre
-moviebrowser.info_parental_lockage_always nie 
-moviebrowser.info_path Verzeichnis
-moviebrowser.info_prevplaydate Letzte Wiedergabe
-moviebrowser.info_prodcountry Land
-moviebrowser.info_prodyear Jahr
-moviebrowser.info_quality Qualität
-moviebrowser.info_recorddate Aufnahmedatum
-moviebrowser.info_serie Serie
-moviebrowser.info_size Dateigrösse (MB)
-moviebrowser.info_title Titel
-moviebrowser.info_videoformat Bild
-moviebrowser.menu_directories_head Verzeichnisse
-moviebrowser.menu_help_head Hilfe
-moviebrowser.menu_main_bookmarks Markierungen
-moviebrowser.menu_main_head Einstellungen
-moviebrowser.menu_main_movieinfo Film-Info
-moviebrowser.menu_main_saveandback Speichern und verlassen
-moviebrowser.menu_nfs_head NFS Einstellung
-moviebrowser.menu_parental_lock_activated aktiviert
-moviebrowser.menu_parental_lock_activated_no nein
-moviebrowser.menu_parental_lock_activated_yes ja
-moviebrowser.menu_parental_lock_activated_no_temp nein (temporär)
-moviebrowser.menu_parental_lock_head Jugendschutz
-moviebrowser.menu_parental_lock_rate_head Filme sperren ab
-moviebrowser.scan_for_movies Suche Filme ...
-moviebrowser.serie_existingname Vorhandene Serie
-moviebrowser.serie_head Serie
-moviebrowser.serie_name Name ändern
-moviebrowser.short_audio Audio
-moviebrowser.short_book Marker
-moviebrowser.short_channel Kanal
-moviebrowser.short_country Land
-moviebrowser.short_filename Name
-moviebrowser.short_format Format
-moviebrowser.short_genre_major Genre
-moviebrowser.short_genre_minor Genre
-moviebrowser.short_info1 Info 1
-moviebrowser.short_info2 Info 2
-moviebrowser.short_length Min
-moviebrowser.short_parental_lockage FSK
-moviebrowser.short_path Pfad
-moviebrowser.short_prevplaydate Zuletzt
-moviebrowser.short_prodyear Jahr
-moviebrowser.short_quality * (Qualität)
-moviebrowser.short_recorddate Datum
-moviebrowser.short_serie Serie
-moviebrowser.short_size MB
-moviebrowser.short_title Title
-moviebrowser.start_head Film starten von Position:
-moviebrowser.start_record_start Aufnahmestart
-options.on.without_messages ohne Msg
-extra.zapit_scan_sdt Scan SDT für Updates
-extra.zapit_sdt_changed Kanalliste wird neu geladen.
-miscsettings.channellist Kanalliste
-miscsettings.channellist_epgtext_align Ausrichtung des Programmtextes
-miscsettings.epg_head EPG Einstellungen
-miscsettings.epg_cache EPG-Cache (Tage)
-miscsettings.epg_cache_hint1 EPG-Daten im Voraus cachen?
-miscsettings.epg_cache_hint2 Angabe in Tagen
-miscsettings.epg_dir EPG Speicherverzeichnis
-miscsettings.epg_max_events Max. Events
-miscsettings.epg_max_events_hint1 Wieviele Events sollen max. gespeichert werden?
-miscsettings.epg_max_events_hint2 Standard 6000, 0 (ohne Limit)
-miscsettings.epg_old_events EPG verwerfen nach (Std.)
-miscsettings.epg_old_events_hint1 Wie lange abgelaufene EPG-Daten aufheben?
-miscsettings.epg_old_events_hint2 Angabe in Stunden
-miscsettings.epg_save EPG zwischenspeichern?
-miscsettings.virtual_zap_mode Virtual Zap
-shutdown.recoding_query Aufnahme läuft. Trotzdem beenden?
-recordingmenu.apids Voreinstellung für Tonspuren
-recordingmenu.apids_ac3 AC3 Tonspuren aufnehmen
-recordingmenu.apids_alt Alternative Tonspuren aufn.
-recordingmenu.apids_std Standard Tonspur aufnehmen
-recordingmenu.stream_pmt_pid PMT aufnehmen
-recordingmenu.zap_on_announce Umschalten bei Ankündigung
-timerlist.apids_dflt Voreingestellte Tonspuren aufn.
-videomenu.osd OSD
-videomenu.tv-scart TV Scart
-videomenu.vcr-scart VCR Scart
-videomenu.vcrsignal VCR-Ausgang Signalart
-videomenu.vcrsignal_composite CVBS
-videomenu.vcrsignal_svideo S-Video
-moviebrowser.option_browser Anzeigeoptionen
-moviebrowser.book_clear_all Lösche alle
-moviebrowser.menu_save Veränderungen speichern
-moviebrowser.menu_save_all Starte Übernahme in allen sichtbaren Filminfos
-moviebrowser.info_head_update Inhalte in allen sichtbaren Filminfos speichern
-moviebrowser.update_if_dest_empty_only Übernehmen nur wenn Ziel leer
-moviebrowser.serie_auto_create Serien automatisch zuordnen
-moviebrowser.load_default Lade Voreinstellung
-moviebrowser.browser_row_head Spalten Einstellungen
-moviebrowser.browser_row_nr Anzahl Spalten
-moviebrowser.browser_row_item Spalteninfo
-moviebrowser.browser_row_width Spaltenbreite [Punkte]
-moviebrowser.reload_at_start Filminfos neu laden bei Start
-moviebrowser.remount_at_start Filmdepot verbinden bei Start
-moviebrowser.dir_head Zusätzliche Verzeichnisse
-moviebrowser.dir Pfad
-moviebrowser.use_dir Verzeichnis verwenden
-moviebrowser.use_rec_dir Aufnahmeverzeichnis verwenden
-moviebrowser.use_movie_dir Wiedergabeverzeichnis verwenden
-moviebrowser.hide_series Verstecke Serien
-moviebrowser.last_record_max_items Zeilen 'zuletzt gesehen'
-moviebrowser.last_play_max_items Zeilen 'zuletzt aufgenommen'
-moviebrowser.browser_frame_high Anzeigehöhe oberes Fenster [Punkte]
-extra.auto_timeshift Automatische Ausnahme, Sekunden (0 = deaktiviert)
-extra.auto_delete Automatische Löschung
-extra.auto_to_record Timeshift zu den Aufnahmen hinzufügen
-extra.record_time Timeshift Aufnahmezeit in Stunden
-audioplayer.spectrum LCD Skala
-extra.temp_timeshift Temporäres Timeshift
-AUDIOSelectMenue.head Auswahl der Tonspur
-infoviewer.languages Audio
-mainmenu.clearsectionsd Lösche EPG Cache
-moviebrowser.edit_book_name_info2
+ucodes.failure Achtung, die µCodes wurden NICHT gefunden!\n\nBitte per FTP (oder DBox-BootManager)\nuploaden, und die Box neu starten!
+upnpbrowser.head UPnP Browser
+upnpbrowser.noservers Keine UPnP Server gefunden
+upnpbrowser.rescan Suche wiederholen
+upnpbrowser.scanning Suche nach UPnP Servern
 usermenu.button_blue Benutzermenü 'blau'
 usermenu.button_green Benutzermenü 'grün'
 usermenu.button_red Benutzermenü 'rot'
@@ -1226,98 +1295,55 @@ usermenu.button_yellow Benutzermenü 'gelb'
 usermenu.head Benutzermenü
 usermenu.item_bar ---- Trennung ----
 usermenu.item_epg_misc EPG Funktionen
-usermenu.item_none 
+usermenu.item_none
 usermenu.item_vtxt Videotext
 usermenu.name Name
-extra.fec_s2_qpsk_1_2 1/2 s2 qpsk
-extra.fec_s2_qpsk_2_3 3/2 s2 qpsk
-extra.fec_s2_qpsk_3_4 3/4 s2 qpsk
-extra.fec_s2_qpsk_5_6 5/6 s2 qpsk
-extra.fec_s2_qpsk_7_8 7/8 s2 qpsk
-extra.fec_s2_qpsk_8_9 8/9 s2 qpsk
-extra.fec_s2_qpsk_3_5 3/5 s2 qpsk
-extra.fec_s2_qpsk_4_5 4/5 s2 qpsk
-extra.fec_s2_qpsk_9_10 9/10 s2 qpsk
-extra.fec_s2_8psk_1_2 1/2 s2 8psk
-extra.fec_s2_8psk_2_3 3/2 s2 8psk
-extra.fec_s2_8psk_3_4 3/4 s2 8psk
-extra.fec_s2_8psk_5_6 5/6 s2 8psk
-extra.fec_s2_8psk_7_8 7/8 s2 8psk
-extra.fec_s2_8psk_8_9 8/9 s2 8psk
-extra.fec_s2_8psk_3_5 3/5 s2 8psk
-extra.fec_s2_8psk_4_5 4/5 s2 8psk
-extra.fec_s2_8psk_9_10 9/10 s2 8psk
-channellist.edit Bearbeiten
-channellist.favs Favoriten
-channellist.provs Provider
-channellist.sats Satelliten
-channellist.history History
-channellist.current_tp Aktueller Transponder
 video_mode_ok Video-Einstellungen ok ?
-moviebrowser.edit_book_name_info2 book name info2
-satsetup.sat_setup Setup LNB-Konfiguration
-satsetup.do_scan Satelliten scannen
-satsetup.lofl LNB Low Offset
-satsetup.lofh LNB High Offset
-satsetup.lofs LNB Switch Offset
-satsetup.diseqc_input Diseqc Einspeisung
-satsetup.uncomm_input Uncommited 
-satsetup.motor_pos Rotor-Position
-satsetup.auto_scan Ausgewählten Satelliten scannen 
-satsetup.auto_scan_all Alle Satelliten scannen
-satsetup.manual_scan Manuller Frequenzscan
-satsetup.use_nit Benutze NIT
-satsetup.diseqc_advanced Erweiterte Auswahl
-satsetup.diseqc_order Einspeisungsfolge
-satsetup.diseqc_com_uncom Commited/Uncommited
-satsetup.diseqc_uncom_com Uncommited/Commited
-satsetup.comm_input Commited Input
-satsetup.use_usals Benutze Usals
-motorcontrol.user_menu Benutzermenü
-motorcontrol.install_menu Motor Installation
-motorcontrol.step_west Fahre/Schrittsetze Motor nach Westen (b,c)
-motorcontrol.step_east Fahre/Schrittsetze Motor nach Osten (b,c)
-motorcontrol.halt Stope Motor
-motorcontrol.west_limit Setze westliches (soft) Limit
-motorcontrol.east_limit Setze östliches (soft) Limit
-motorcontrol.enable_limit Aktiviere (soft) Limit
-motorcontrol.disable_limit Deaktiviere (soft) Limit
-motorcontrol.ref_position Gehe zu Referenz Position
-motorcontrol.calc_positions (Neu)-Berechne(n)) Positionen
-motorcontrol.pos_increase Motor Position rauf (a)
-motorcontrol.pos_decrease Motor Position runter (a)
-motorcontrol.step_drive Umschalten Schrittsetzungs/Fahr Modus (b)
-motorcontrol.store Speichere Motor Position (a)
-motorcontrol.step_increase Schrittweite rauf (c)
-motorcontrol.step_decrease Schrittweite runter (c)
-motorcontrol.goto Gehe zu Motor Position (a)
-motorcontrol.notdef Not used
-motorcontrol.motor_pos (a) Motor Position:
-motorcontrol.settings Motor Einstellungen
-motorcontrol.movement (b) Bewegung:
-motorcontrol.step_mode Schrittsetzungs Modus
-motorcontrol.drive_mode Fahr Modus
-motorcontrol.drive_mode_auto Fahr Modus/automatischer Stop
-motorcontrol.timed_mode Zeitgesteuerter Schrittweiten Modus
-motorcontrol.step_size (c) Schrittweite:
-motorcontrol.stop_moving Stope bei guten Signal(moving)
-motorcontrol.stop_stopped Stope bei schlechtem Signal(stopped)
-motorcontrol.no_mode keine Sorge
-motorcontrol.msec Millisekunden
-motorcontrol.status Status
-motorcontrol.sat_pos Satellitenposition (Step Mode):
-mainsettings.timezone Zeitzone
-scrambled_channel Verschlüsselung aktiv
-neutrino_starting Neutrino wird gestartet...
-reset_channels Lösche Kanäle
-reset_settings Zurückstellen auf Werkseinstellungen 
-reset_all Werkseinstellungen zurücksetzen
-reset_confirm Sind Sie sich sicher?
-cam.settings CI CAM
-cam.empty Steckplatz leer
-cam.inserted In der Steckplatz befindet sich ein Cam
-cam.removed CAM von der Steckplatz entfernt
-cam.init_ok CAM Initialisierung vollendet
-subtitles.head Untertitel
-subtitles.stop Stop Untertitel
-favorites.copy Kopiere Bouquet zu Favoriten
+videomenu.43mode 4:3 Content mode
+videomenu.analog_hd_rgb_cinch RGB auf Cinch (HD)
+videomenu.analog_hd_rgb_scart RGB auf Scart (HD)
+videomenu.analog_hd_yprpb_cinch YPbPr auf Cinch (HD)
+videomenu.analog_hd_yprpb_scart YPbPr auf Scart (HD)
+videomenu.analog_mode Analog Video Output
+videomenu.analog_sd_rgb_cinch RGB auf Cinch (SD)
+videomenu.analog_sd_rgb_scart RGB auf Scart (SD)
+videomenu.analog_sd_yprpb_cinch YPbPr auf Cinch (SD)
+videomenu.analog_sd_yprpb_scart YPbPr auf Scart (SD)
+videomenu.auto Auto
+videomenu.cinch Cinch
+videomenu.csync Sync.-Korrektur
+videomenu.dbdr MPEG2 de-block/de-ring
+videomenu.dbdr_both de-block+de-ring
+videomenu.dbdr_deblock de-block
+videomenu.dbdr_none nichts
+videomenu.enabled_modes VF Tastenmodus aktiviert
+videomenu.fullscreen Vollbild
+videomenu.head Video-Einstellungen
+videomenu.letterbox Letterbox
+videomenu.osd OSD
+videomenu.panscan Pan&Scan
+videomenu.panscan2 14:9 Pan&Scan
+videomenu.rgb_centering RGB-Zentrierung
+videomenu.scart Scart
+videomenu.screensetup Bildbereich einstellen
+videomenu.tv-scart TV Scart
+videomenu.vcr-scart VCR Scart
+videomenu.vcrsignal VCR-Ausgang Signalart
+videomenu.vcrsignal_composite CVBS
+videomenu.vcrsignal_svideo S-Video
+videomenu.vcrswitch Scart-Eingang automatisch
+videomenu.videoformat Bildschirmformat
+videomenu.videoformat_149 14:9
+videomenu.videoformat_169 16:9
+videomenu.videoformat_43 4:3
+videomenu.videoformat_autodetect Autoerkennung
+videomenu.videomode Videosystem
+videomenu.videomode_ntsc NTSC
+videomenu.videomode_pal PAL
+videomenu.videomode_palm PAL-M
+zapit.scantype Service-Auswahl
+zapit.scantype.all Alle Services
+zapit.scantype.radio Nur Radio
+zapit.scantype.tv Nur TV
+zapit.scantype.tvradio Nur TV & Radio
+zaptotimer.announce In einer Minute wird umgeschaltet.
