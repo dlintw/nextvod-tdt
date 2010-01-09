@@ -178,9 +178,6 @@ void cRecord::DMXThread()
 
 printf("%s:%s >\n", __FILE__, __FUNCTION__);
 
-//fixme: it crashes when accessing dvrfd :-/ :-/ :-/
-printf("%s:%s fd = %d\n", __FILE__, __FUNCTION__, dvrfd);
-
         pfd.fd = dvrfd;
         pfd.events = POLLIN|POLLERR;
 	pfd.revents = 0;

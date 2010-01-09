@@ -81,6 +81,7 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 		FILENAME, __FUNCTION__, filename, vpid, vtype, apid, ac3);
 
 	//create playback path
+	mAudioStream=0;
 	char file[400] = {""};
 
 	if(!strncmp("http://", filename, 7))
@@ -168,13 +169,55 @@ bool cPlayback::Stop(void)
 bool cPlayback::SetAPid(unsigned short pid, bool ac3)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
-	
+	int i=pid;
+	if(pid!=mAudioStream){
+		if(player && player->playback)
+				player->playback->Command(player, PLAYBACK_SWITCH_AUDIO, (void*)&i);
+		mAudioStream=pid;
+	}
 	return true;
 }
 
 bool cPlayback::SetSpeed(int speed)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+	if(player && player->playback) {
+		int result = 0;
+		int ratio=1;
+		switch(speed) {
+				case 2: 
+					ratio = 2;
+					break;
+				case 3:
+					ratio = 4;
+					break;
+				case 4:
+					ratio = 8;
+					break;
+				case 5: //16x
+					ratio = 48;
+					break;
+				case 6: //32x
+					ratio = 96;
+					break;
+				case 7: //64x
+					ratio = 192;
+					break;
+				case 8: //128x
+					ratio = 384;
+					break;
+			}
+		
+		if(speed > 1){
+			result = player->playback->Command(player, PLAYBACK_FASTFORWARD, (void*)&ratio);
+		}else if(speed == 0){
+			player->playback->Command(player, PLAYBACK_PAUSE, NULL);
+		}else{
+			result = player->playback->Command(player, PLAYBACK_CONTINUE, NULL);
+		}
+		if (result != 0)
+			return false;
+		}
 	return true;
 }
 
@@ -228,7 +271,10 @@ bool cPlayback::GetOffset(off64_t &offset)
 
 bool cPlayback::SetPosition(int position, bool absolute)
 {
-	printf("%s:%s\n", FILENAME, __FUNCTION__);
+	printf("%s:%s %d\n", FILENAME, __FUNCTION__,position);
+	float pos = (position/1000.0);
+	if(player && player->playback)
+		player->playback->Command(player, PLAYBACK_SEEK, (void*)&pos);
 	return true;
 }
 
@@ -247,6 +293,40 @@ void * cPlayback::GetDmHandle(void)
 void cPlayback::FindAllPids(uint16_t *apids, unsigned short *ac3flags, uint16_t *numpida, std::string *language)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+	if(player && player->manager && player->manager->audio) {
+		char ** TrackList = NULL;
+		player->manager->audio->Command(player, MANAGER_LIST, &TrackList);
+		if (TrackList != NULL) {
+			printf("AudioTrack List\n");
+			int i = 0,j=0;
+			for (i = 0,j=0; TrackList[i] != NULL; i+=2,j++) {
+				printf("\t%s - %s\n", TrackList[i], TrackList[i+1]);
+				apids[j]=j;
+				// atUnknown, atMPEG, atMP3, atAC3, atDTS, atAAC, atPCM, atOGG, atFLAC
+				if(     !strncmp("A_MPEG/L3",   TrackList[i+1], 9))
+					ac3flags[j] = 4;
+				else if(!strncmp("A_AC3",       TrackList[i+1], 5))
+					ac3flags[j] = 1;
+				else if(!strncmp("A_DTS",       TrackList[i+1], 5))
+					ac3flags[j] = 6;
+				else if(!strncmp("A_AAC",       TrackList[i+1], 5))
+					ac3flags[j] = 5;
+				else if(!strncmp("A_PCM",       TrackList[i+1], 5))
+					ac3flags[j] = 0; 	//todo
+				else if(!strncmp("A_VORBIS",    TrackList[i+1], 8))
+					ac3flags[j] = 0;	//todo
+				else if(!strncmp("A_FLAC",      TrackList[i+1], 6))
+					ac3flags[j] = 0;	//todo
+				else
+					ac3flags[j] = 0;	//todo
+				language[j]=TrackList[i];
+				free(TrackList[i]);
+				free(TrackList[i+1]);
+			}
+			free(TrackList);
+			*numpida=j;
+		}
+		}
 }
  
 //

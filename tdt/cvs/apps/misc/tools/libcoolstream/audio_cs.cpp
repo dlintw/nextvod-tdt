@@ -291,22 +291,8 @@ void cAudio::SetStreamType(AUDIO_FORMAT type)
 
 void cAudio::SetSyncMode(AVSYNC_TYPE Mode)
 {
-	char *aAVSYNCTYPE[] = {
-		"AUDIO_SYNC_WITH_PTS",
-		"AUDIO_NO_SYNC",
-		"AUDIO_SYNC_AUDIO_MASTER"
-	};
-
-	printf("%s:%s - Mode=%s\n", FILENAME, __FUNCTION__, aAVSYNCTYPE[Mode]);
-
-	int sync = 1;
-
-	if(Mode == AUDIO_NO_SYNC)
-		sync = 0;
-
-	if (ioctl(privateData->m_fd, AUDIO_SET_AV_SYNC, sync) < 0)
-		printf("AUDIO_SET_AV_SYNC(%m)");
-
+//Dagobert: noop here all will be done in video_cs.cpp ->SetSyncMode
+	printf("%s:%s\n", FILENAME, __FUNCTION__);
 }
 
 
@@ -568,6 +554,7 @@ void cAudio::getAudioInfo(int &type, int &layer, int& freq, int &bitrate, int &m
 void cAudio::SetSRS(int iq_enable, int nmgr_enable, int iq_mode, int iq_level)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+//DolbyDigital on/off
 }
 
 bool cAudio::IsHdmiDDSupported()
