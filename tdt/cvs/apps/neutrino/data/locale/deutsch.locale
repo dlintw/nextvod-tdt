@@ -2,15 +2,15 @@ apidselector.head Sprachauswahl
 audio.srs_algo Typ
 audio.srs_algo_light leicht
 audio.srs_algo_normal normal
-audio.srs_iq SRS TruVolume algo
-audio.srs_nmgr Noise manager
-audio.srs_volume Referenzlautstärke
+audio.srs_iq PCM Lautstärke angleichen
+audio.srs_nmgr Rauschunterdrückung
+audio.srs_volume Lautstärkeanhebung
 audiomenu.analogout Analog-Ausgang
 audiomenu.avs avs
 audiomenu.avs_control Lautstärkesteuerung avs/ost
 audiomenu.avsync A/V sync
 audiomenu.avsync_am Audio master
-audiomenu.clockrec
+audiomenu.clockrec Uhrzeit Aufnehmen
 audiomenu.dolbydigital Dolby Digital automatisch
 audiomenu.hdmi_dd DD über HDMI
 audiomenu.head Audio-Einstellungen
@@ -20,7 +20,7 @@ audiomenu.monoright mono rechts
 audiomenu.ost ost
 audiomenu.PCMOffset Lautstärkeabsenkung PCM
 audiomenu.spdif_dd DD über SPDIF
-audiomenu.stereo stereo
+audiomenu.stereo Stereo
 audioplayer.add Hinzufügen
 audioplayer.add_ic Icecast
 audioplayer.add_loc Lokale Radioliste
@@ -234,7 +234,7 @@ eventlistbar.recordevent Aufnehmen
 extra.add_to_bouquet dem Bouquet hinzufuegen
 extra.audio_run_player Audio Taste startet Player
 extra.auto_delete Automatische Löschung
-extra.auto_timeshift Automatische Aufnahme, Sekunden (0 = deaktiviert)
+extra.auto_timeshift Autom. Aufnahme, Sek. (0 = deakt.)
 extra.auto_to_record Timeshift zu den Aufnahmen hinzufügen
 extra.cache_txt Teletext zwischenspeichern
 extra.chadded Der aktuelle Kanal wird dem selektierter Bouquet hinzugefügt....\n
@@ -284,7 +284,7 @@ extra.longitude Längengrad
 extra.manual_scan Manual Ansehen
 extra.menu_left_exit "links" = Menu zurück
 extra.north Norden
-extra.record_time Timeshift Aufnahmezeit in Stunden
+extra.record_time Timeshift max. in Std.
 extra.rotor_swap Rotor dreht Ost/West
 extra.savecolors Speichere Farben als
 extra.saveconfig Speichere Einstellungen als
@@ -313,7 +313,7 @@ extra.tp_rate Symbolrate
 extra.tp.pol_v V
 extra.update_dir Update-Verzeichnis
 extra.use_gotoxx Benutze gotoXX
-extra.use_log Loge nach /tmp/log
+extra.use_log Log nach /tmp/log
 extra.west Westen
 extra.zap_cycle Zap Zyklen
 extra.zapit_backup Sichere Kanelliste nach /tmp
@@ -541,11 +541,11 @@ hdd_format_warn Möchten Sie wirklich formatieren ? Sie verlieren alle Daten !
 hdd_fs Dateisystem
 hdd_manage Verwalten
 hdd_middle Mitte
-hdd_noise Lärm
+hdd_noise HDD-Speed
 hdd_not_found Keine HDD gefunden
 hdd_reiser Reiserfs
 hdd_settings HDD Einstellungen
-hdd_sleep Schlaf Zeit
+hdd_sleep HDD-Standby
 hdd_slow Langsam
 hdd_umount_warn HDD unmount fehlgeschlagen !
 imageinfo.creator Ersteller:
@@ -673,9 +673,9 @@ miscsettings.epg_cache EPG-Cache (Tage)
 miscsettings.epg_cache_hint1 EPG-Daten im Voraus cachen?
 miscsettings.epg_cache_hint2 Angabe in Tagen
 miscsettings.epg_dir EPG Speicherverzeichnis
-miscsettings.epg_extendedcache EPG Long Description (Stunden)
-miscsettings.epg_extendedcache_hint1 Wie lange in die Zukunft sollen EPG extended descriptions
-miscsettings.epg_extendedcache_hint2 gecached werden? (in Stunden)
+miscsettings.epg_extendedcache erweitertes EPG (Std.)
+miscsettings.epg_extendedcache_hint1 Wie lange soll erweitertes EPG im voraus
+miscsettings.epg_extendedcache_hint2 gespeichert werden? (in Std.)
 miscsettings.epg_head EPG Einstellungen
 miscsettings.epg_max_events Max. Events
 miscsettings.epg_max_events_hint1 Wieviele Events sollen max. gespeichert werden?
@@ -695,7 +695,7 @@ miscsettings.pmtupdate PMT Update verwenden
 miscsettings.shutdown_count Ausschalten nach
 miscsettings.shutdown_count_hint1 Zeit (in Minuten) zum Wechsel vom Standby
 miscsettings.shutdown_count_hint2 in tiefen Standby (0 = off).
-miscsettings.shutdown_real Standbymodus
+miscsettings.shutdown_real Standbymodus aktivieren
 miscsettings.shutdown_real_rcdelay Verzögerter Shutdown
 miscsettings.sptsmode SPTS-Mode Treiber laden
 miscsettings.virtual_zap_mode Virtual Zap
@@ -1299,7 +1299,7 @@ usermenu.item_none
 usermenu.item_vtxt Videotext
 usermenu.name Name
 video_mode_ok Video-Einstellungen ok ?
-videomenu.43mode 4:3 Content mode
+videomenu.43mode 4:3 Inhalt anzeigen als
 videomenu.analog_hd_rgb_cinch RGB auf Cinch (HD)
 videomenu.analog_hd_rgb_scart RGB auf Scart (HD)
 videomenu.analog_hd_yprpb_cinch YPbPr auf Cinch (HD)
@@ -1310,9 +1310,9 @@ videomenu.analog_sd_rgb_scart RGB auf Scart (SD)
 videomenu.analog_sd_yprpb_cinch YPbPr auf Cinch (SD)
 videomenu.analog_sd_yprpb_scart YPbPr auf Scart (SD)
 videomenu.auto Auto
-videomenu.cinch Cinch
+videomenu.cinch YUV
 videomenu.csync Sync.-Korrektur
-videomenu.dbdr MPEG2 de-block/de-ring
+videomenu.dbdr MPEG2 Anpassung
 videomenu.dbdr_both de-block+de-ring
 videomenu.dbdr_deblock de-block
 videomenu.dbdr_none nichts
@@ -1322,7 +1322,7 @@ videomenu.head Video-Einstellungen
 videomenu.letterbox Letterbox
 videomenu.osd OSD
 videomenu.panscan Pan&Scan
-videomenu.panscan2 14:9 Pan&Scan
+videomenu.panscan2 Bestfit
 videomenu.rgb_centering RGB-Zentrierung
 videomenu.scart Scart
 videomenu.screensetup Bildbereich einstellen
@@ -1337,7 +1337,7 @@ videomenu.videoformat_149 14:9
 videomenu.videoformat_169 16:9
 videomenu.videoformat_43 4:3
 videomenu.videoformat_autodetect Autoerkennung
-videomenu.videomode Videosystem
+videomenu.videomode Auflösung
 videomenu.videomode_ntsc NTSC
 videomenu.videomode_pal PAL
 videomenu.videomode_palm PAL-M
