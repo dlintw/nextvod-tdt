@@ -1,0 +1,181 @@
+video_cs.lo: video_cs.cpp \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/stdio.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/features.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/cdefs.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/wordsize.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/gnu/stubs.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.1.1/include/stddef.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/types.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/typesizes.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/libio.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/_G_config.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/wchar.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/wchar.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/gconv.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.1.1/include/stdarg.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/stdio_lim.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/sys_errlist.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/stdlib.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/waitflags.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/waitstatus.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/endian.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/endian.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/xlocale.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/types.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/time.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/select.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/select.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/sigset.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/time.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/sysmacros.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/pthreadtypes.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/alloca.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/fcntl.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/fcntl.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/uio.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/stat.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/stat.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/string.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/unistd.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/posix_opt.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/environments.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/confname.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/getopt.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/ioctl.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/ioctls.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/asm/ioctls.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/asm/ioctl.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/asm-generic/ioctl.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/ioctl-types.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/ttydefaults.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/time.h \
+  video_cs.h coolstream/cs_vfd.h coolstream/control.h \
+  coolstream/tsrouter.h cs_types.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/linux/dvb/video.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/linux/compiler.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/stdint.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/linux/fb.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/asm/types.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/linux/stmfb.h
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/stdio.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/features.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/cdefs.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/wordsize.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/gnu/stubs.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.1.1/include/stddef.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/types.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/typesizes.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/libio.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/_G_config.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/wchar.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/wchar.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/gconv.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.1.1/include/stdarg.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/stdio_lim.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/sys_errlist.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/stdlib.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/waitflags.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/waitstatus.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/endian.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/endian.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/xlocale.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/types.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/time.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/select.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/select.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/sigset.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/time.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/sysmacros.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/pthreadtypes.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/alloca.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/fcntl.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/fcntl.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/uio.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/stat.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/stat.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/string.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/unistd.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/posix_opt.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/environments.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/confname.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/getopt.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/ioctl.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/ioctls.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/asm/ioctls.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/asm/ioctl.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/asm-generic/ioctl.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/ioctl-types.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/ttydefaults.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/time.h:
+
+video_cs.h:
+
+coolstream/cs_vfd.h:
+
+coolstream/control.h:
+
+coolstream/tsrouter.h:
+
+cs_types.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/linux/dvb/video.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/linux/compiler.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/stdint.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/linux/fb.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/asm/types.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/linux/stmfb.h:

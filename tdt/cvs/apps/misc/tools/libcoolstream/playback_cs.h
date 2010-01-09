@@ -46,6 +46,7 @@ class cPlayback
 		int video_type;
 		int nPlaybackSpeed;
 		int mSpeed;
+		int mAudioStream;
 		playmode_t playMode;
 		//
 		void Attach(void);

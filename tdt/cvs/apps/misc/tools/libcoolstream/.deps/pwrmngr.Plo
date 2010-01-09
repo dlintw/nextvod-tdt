@@ -1,0 +1,52 @@
+pwrmngr.lo: pwrmngr.cpp \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/stdio.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/features.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/cdefs.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/wordsize.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/gnu/stubs.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.1.1/include/stddef.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/types.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/typesizes.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/libio.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/_G_config.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/wchar.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/wchar.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/gconv.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.1.1/include/stdarg.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/stdio_lim.h \
+  /home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/sys_errlist.h \
+  pwrmngr.h
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/stdio.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/features.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/sys/cdefs.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/wordsize.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/gnu/stubs.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.1.1/include/stddef.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/types.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/typesizes.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/libio.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/_G_config.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/wchar.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/wchar.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/gconv.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.1.1/include/stdarg.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/stdio_lim.h:
+
+/home/juppi/newE2/tdt/tdt/tufsbox/cdkroot/usr/include/bits/sys_errlist.h:
+
+pwrmngr.h:

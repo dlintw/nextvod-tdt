@@ -121,9 +121,132 @@ void cVideo::SetAudioHandle(void * handle)
 }
 
 /* aspect ratio */
-int cVideo::getAspectRatio(void) { printf("%s:%s\n", FILENAME, __FUNCTION__); return 0; }
-void cVideo::getPictureInfo(int &width, int &height, int &rate) { printf("%s:%s\n", FILENAME, __FUNCTION__); }
-int cVideo::setAspectRatio(int aspect, int mode) { printf("%s:%s\n", FILENAME, __FUNCTION__); return 0; }
+int cVideo::getAspectRatio(void) 
+{ 
+   printf("%s:%s\n", FILENAME, __FUNCTION__); 
+   return 0; 
+}
+
+int cVideo::setAspectRatio(int aspect, int mode) 
+{ 
+    int         n, fd;
+    bool        is43 = true;
+    unsigned char buffer[128];
+    
+    printf("%s:%s %d %d\n", FILENAME, __FUNCTION__, aspect, mode); 
+
+    if (aspect != -1)
+    {
+        char* sAspect[] =
+	{
+	   "4:3", /* 1 */
+	   "14:9", //not supported
+	   "16:9"
+        }; 
+
+        fd = open("/proc/stb/video/aspect", O_WRONLY);
+	
+//aspect starts with 1 :-/
+	aspect--;
+	
+	is43 = (aspect == 1) ? true : false;
+	
+	write(fd, sAspect[aspect], strlen(sAspect[aspect]));
+
+        close(fd);
+    } else
+    {
+        fd = open("/proc/stb/video/aspect", O_RDONLY);
+        n = read(fd, buffer, 128);
+	
+	if (n > 0)
+	{
+	   if (strcmp("4:3", (const char*) buffer) == 0)
+	      is43 = true;
+	   else
+	      is43 = false;
+	}
+
+        close(fd);
+    }
+    
+    if (mode != -1)
+    {
+	
+        fd = open("/proc/stb/video/policy", O_WRONLY);
+	
+	if (is43)
+	{     
+          char* sMode[][2] =
+	  {
+	     {"panscan"      , "letterbox"}, /* 0 */ 
+	     {"letterbox"    , "panscan"}, /* fixme: former pillarbox */
+	     {"fullscreen"   , "nonlinear"},
+	     {"panscan 14:9" , "bestfit"} /* fixme: must change this to scale in menu */
+          };
+          printf("aspect43: set %s\n", sMode[mode][1]);  
+	  write(fd, sMode[mode][1], strlen((const char*) sMode[mode][1]));
+        } else
+	{
+          char* sMode[][2] =
+	  {
+	     {"panscan"      , "panscan"}, /* 0 */ 
+	     {"letterbox"    , "letterbox"},
+	     {"fullscreen"   , "nonlinear"},
+	     {"panscan 14:9" , "bestfit"} /* fixme: must change this to scale in menu */
+          };
+          printf("aspect169: set %s\n", sMode[mode][1]);  
+	  write(fd, sMode[mode][1], strlen((const char*) sMode[mode][1]));
+	}
+        close(fd);
+    
+    }
+
+    return 0; 
+}
+
+void cVideo::getPictureInfo(int &width, int &height, int &rate) 
+{ 
+   unsigned char buffer[128];
+   int n, fd;
+
+   printf("%s:%s\n", FILENAME, __FUNCTION__); 
+   
+   rate = 0;
+   fd = open("/proc/stb/vmpeg/0/framerate", O_RDONLY);
+   n = read(fd, buffer, 128);
+   close(fd);
+   
+   if (n > 0)
+   {
+       rate = atoi((const char*) buffer);
+   }
+
+//fixme revise this
+
+   width = 0;
+   fd = open("/proc/stb/vmpeg/0/dst_width", O_RDONLY);
+   n = read(fd, buffer, 128);
+   close(fd);
+   
+   if (n > 0)
+   {
+       width = atoi((const char*)buffer);
+   }
+
+   height = 0;
+   fd = open("/proc/stb/vmpeg/0/dst_height", O_RDONLY);
+   n = read(fd, buffer, 128);
+   close(fd);
+   
+   if (n > 0)
+   {
+       height = atoi((const char*)buffer);
+   }
+
+   printf("%s:%s < w %d, h %d, r %d\n", FILENAME, __FUNCTION__, width, height, rate); 
+ 
+}
 
 /* cropping mode */
 int cVideo::getCroppingMode(void) { printf("%s:%s\n", FILENAME, __FUNCTION__); return 0; }
@@ -131,7 +254,12 @@ int cVideo::setCroppingMode(void) { printf("%s:%s\n", FILENAME, __FUNCTION__); r
 
 /* stream source */
 int cVideo::getSource(void) { printf("%s:%s\n", FILENAME, __FUNCTION__); return 0; }
-int cVideo::setSource(void) { printf("%s:%s\n", FILENAME, __FUNCTION__); return 0; }
+
+int cVideo::setSource(void) 
+{ 
+   printf("%s:%s\n", FILENAME, __FUNCTION__); 
+   return 0; 
+}
 
 /* blank on freeze */
 int cVideo::getBlank(void) { printf("%s:%s\n", FILENAME, __FUNCTION__); return 0; }
@@ -160,7 +288,7 @@ int cVideo::Stop(bool blank)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 
-	if (ioctl(privateData->m_fd, VIDEO_STOP, 1) < 0)
+	if (ioctl(privateData->m_fd, VIDEO_STOP, blank ? 1:0) < 0)
 		printf("VIDEO_STOP failed(%m)");
 	
 	return true;
@@ -269,13 +397,55 @@ int cVideo::SetStreamType(VIDEO_FORMAT type) {
 //7
 void cVideo::SetSyncMode(AVSYNC_TYPE mode)
 {
+        int clock;
+	
 	char *aAVSYNCTYPE[] = {
 	"AVSYNC_DISABLED",
 	"AVSYNC_ENABLED",
 	"AVSYNC_AUDIO_IS_MASTER",
 	};
 
+        char* av_modes[] = {
+	"disapply",
+	"apply"
+	
+	};
+
+        char* master_clock[] = {
+	"video",
+	"audio"
+	};
+      
 	printf("%s:%s - mode=%s\n", FILENAME, __FUNCTION__, aAVSYNCTYPE[mode]);
+
+	int fd = open("/proc/stb/stream/policy/AV_SYNC", O_RDWR);
+
+        if (fd > 0)  
+        {
+           if ((mode == 0) || (mode == 1))
+	   {
+	      write(fd, av_modes[mode], strlen(av_modes[mode]));
+	      clock = 0;
+	   } else
+           {
+	      write(fd, av_modes[1], strlen(av_modes[1]));
+	      clock = 1;
+	   }
+	   close(fd);
+        }
+	else
+	   printf("error %m\n");
+	
+        printf("set master clock = %s\n", master_clock[clock]);
+
+	fd = open("/proc/stb/stream/policy/MASTER_CLOCK", O_RDWR);
+        if (fd > 0)  
+        {
+	   write(fd, master_clock[clock], strlen(master_clock[clock]));
+	   close(fd);
+        }
+	else
+	   printf("error %m\n");
 }
 
 //8
