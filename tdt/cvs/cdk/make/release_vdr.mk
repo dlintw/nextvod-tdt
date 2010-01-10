@@ -9,7 +9,7 @@ $(DEPDIR)/%release_vdr:
 	$(INSTALL_DIR) $(prefix)/release_vdr/dev && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/dev.static && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/etc && \
-	$(INSTALL_DIR) $(prefix)/release_vdr/etc/fonts && \
+	$(INSTALL_DIR) $(prefix)/release_vdr/etc/onts && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/etc/init.d && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/etc/network && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/etc/network/if-down.d && \
@@ -530,6 +530,10 @@ endif
 #	cp -aR $(targetprefix)/$(targetprefix)/usr/local/share/vdr/* $(prefix)/release_vdr/usr/local/share/vdr
 #	cp -aR $(targetprefix)/usr/local/share/fonts $(prefix)/release_vdr/usr/local/share/
 #	ln -s /usr/local/share/fonts/micron.ttf $(prefix)/release_vdr/usr/local/share/fonts/vdr.ttf
+	mkdir -p $(prefix)/release_vdr/usr/share/
+	mkdir -p $(prefix)/release_vdr/etc/fonts
+	cp - $(targetprefix)/usr/share/fonts/seg.ttf $(prefix)/release_vdr/usr/share/
+	cp - $(targetprefix)/etc/fonts/fonts.conf $(prefix)/release_vdr/etc/fonts/
 
 
 #######################################################################################
@@ -537,8 +541,9 @@ endif
 
 	$(INSTALL_DIR) $(prefix)/release_vdr/usr/lib
 
+	mkdir -p $(prefix)/release_vdr/usr/local/lib
 	cp -R $(targetprefix)/usr/lib/* $(prefix)/release_vdr/usr/lib/
-	cp -R $(targetprefix)/usr/local/lib/* $(prefix)/release_vdr/usr/lib/
+#	cp -R $(targetprefix)/usr/local/lib/* $(prefix)/release_vdr/usr/lib/
 	cp -rd $(targetprefix)/usr/lib/libfontconfi* $(prefix)/release_vdr/usr/lib/
 	mkdir -p $(prefix)/release_vdr/usr/lib/vdr/
 	cp -rd $(targetprefix)/usr/lib/vdr/libvdr-remote.so.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
@@ -582,6 +587,7 @@ endif
 	cp -rd $(targetprefix)/var/vdr/remote.conf $(prefix)/release_vdr/var/vdr/
 	cp -rd $(targetprefix)/var/vdr/sources.conf $(prefix)/release_vdr/var/vdr/
 	cp -rd $(targetprefix)/var/vdr/channels.conf $(prefix)/release_vdr/var/vdr/
+	cp -rd $(targetprefix)/var/vdr/keymacros.conf $(prefix)/release_vdr/var/vdr/
 
 #######################################################################################
 #######################################################################################
