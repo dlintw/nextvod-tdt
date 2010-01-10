@@ -530,10 +530,10 @@ endif
 #	cp -aR $(targetprefix)/$(targetprefix)/usr/local/share/vdr/* $(prefix)/release_vdr/usr/local/share/vdr
 #	cp -aR $(targetprefix)/usr/local/share/fonts $(prefix)/release_vdr/usr/local/share/
 #	ln -s /usr/local/share/fonts/micron.ttf $(prefix)/release_vdr/usr/local/share/fonts/vdr.ttf
-	mkdir -p $(prefix)/release_vdr/usr/share/
+	mkdir -p $(prefix)/release_vdr/usr/share/fonts
 	mkdir -p $(prefix)/release_vdr/etc/fonts
-	cp - $(targetprefix)/usr/share/fonts/seg.ttf $(prefix)/release_vdr/usr/share/
-	cp - $(targetprefix)/etc/fonts/fonts.conf $(prefix)/release_vdr/etc/fonts/
+	cp -d $(buildprefix)/root/usr/share/fonts/seg.ttf $(prefix)/release_vdr/usr/share/fonts/vdr.ttf
+	cp -d $(targetprefix)/etc/fonts/fonts.conf $(prefix)/release_vdr/etc/fonts/
 
 
 #######################################################################################
