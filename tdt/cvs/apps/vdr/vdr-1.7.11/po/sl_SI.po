@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2008-02-28 19:44+0100\n"
 "Last-Translator: Matjaz Thaler <matjaz.thaler@guest.arnes.si>\n"
 "Language-Team: Slovenian\n"
@@ -494,6 +494,9 @@ msgstr "Frekvenca"
 msgid "Vpid"
 msgstr "Vpid"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -614,6 +617,9 @@ msgstr "Veljavnost"
 msgid "File"
 msgstr "Datoteka"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Prvi dan"
 
@@ -692,6 +698,41 @@ msgstr "Predvajaj"
 msgid "Button$Rewind"
 msgstr "Na zaèetek"
 
+#, fuzzy
+msgid "Rename recording"
+msgstr "Izbri¹i posnetek?"
+
+#, fuzzy
+msgid "Date"
+msgstr "Srate"
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+#, fuzzy
+msgid "PES"
+msgstr "VPS"
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+#, fuzzy
+msgid "Delete marks information?"
+msgstr "Izbri¹i posnetek?"
+
+#, fuzzy
+msgid "Delete resume information?"
+msgstr "Izbri¹i posnetek?"
+
+msgid "Error while accessing recording!"
+msgstr "Napaka pri dostopu do posnetka!"
+
 msgid "Recordings"
 msgstr "Posnetki"
 
@@ -700,9 +741,6 @@ msgstr "Odpri"
 
 msgid "Commands"
 msgstr "Ukazi"
-
-msgid "Error while accessing recording!"
-msgstr "Napaka pri dostopu do posnetka!"
 
 msgid "Delete recording?"
 msgstr "Izbri¹i posnetek?"
@@ -803,6 +841,10 @@ msgstr "Meni gumb zapre meni"
 msgid "Setup.OSD$Recording directories"
 msgstr "Direktoriji za posnetke"
 
+#, fuzzy
+msgid "Setup.OSD$Main menu command position"
+msgstr "Pozicija informacije o kanalu"
+
 msgid "EPG"
 msgstr "Programski vodnik"
 
@@ -817,6 +859,9 @@ msgstr "Nivo za popravilo EPG napak"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Prika¾i stare EPG podatke (min)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Nastavi sistemski èas"
@@ -1006,6 +1051,18 @@ msgstr "Najveèja velikost datoteke (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Razdeli urejene datoteke"
 
+#, fuzzy
+msgid "Setup.Recording$Show date"
+msgstr "Razdeli urejene datoteke"
+
+#, fuzzy
+msgid "Setup.Recording$Show time"
+msgstr "Èas pavze (d)"
+
+#, fuzzy
+msgid "Setup.Recording$Show length"
+msgstr "Uporabi VPS"
+
 msgid "Replay"
 msgstr "Predvajanje"
 
@@ -1153,6 +1210,20 @@ msgstr "Prepi¹i"
 
 msgid "Button$Insert"
 msgstr "Vstavi"
+
+msgid "Rename$Up"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Down"
+msgstr "Dol"
+
+msgid "Rename$Previous"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Next"
+msgstr "Naprej"
 
 msgid "Plugin"
 msgstr "Vstavek"

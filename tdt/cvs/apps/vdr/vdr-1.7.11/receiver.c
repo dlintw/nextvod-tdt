@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "tools.h"
 
-cReceiver::cReceiver(tChannelID ChannelID, int Priority, int Pid, const int *Pids1, const int *Pids2, const int *Pids3)
+cReceiver::cReceiver(tChannelID ChannelID, int Priority, int Pid, const int *Pids1, const int *Pids2, const int *Pids3, const int *Pids4)
 {
   device = NULL;
   channelID = ChannelID;
@@ -31,6 +31,10 @@ cReceiver::cReceiver(tChannelID ChannelID, int Priority, int Pid, const int *Pid
   if (Pids3) {
      while (*Pids3 && numPids < MAXRECEIVEPIDS)
            pids[numPids++] = *Pids3++;
+     }
+  if (Pids4) {
+     while (*Pids4 && numPids < MAXRECEIVEPIDS)
+           pids[numPids++] = *Pids4++;
      }
   if (numPids >= MAXRECEIVEPIDS)
      dsyslog("too many PIDs in cReceiver");

@@ -130,11 +130,21 @@ void cNitFilter::Process(u_short Pid, u_char Tid, const u_char *Data, int Length
                  char Polarization = Polarizations[sd->getPolarization()];
                  static int CodeRates[] = { FEC_NONE, FEC_1_2, FEC_2_3, FEC_3_4, FEC_5_6, FEC_7_8, FEC_8_9, FEC_3_5, FEC_4_5, FEC_9_10, FEC_AUTO, FEC_AUTO, FEC_AUTO, FEC_AUTO, FEC_AUTO, FEC_NONE };
                  int CodeRate = CodeRates[sd->getFecInner()];
+#ifdef __sh__
+                 static int Modulations[] = { DVBFE_MOD_AUTO, DVBFE_MOD_QPSK, DVBFE_MOD_8PSK, DVBFE_MOD_QAM16 };
+#else
                  static int Modulations[] = { QAM_AUTO, QPSK, PSK_8, QAM_16 };
+#endif
                  int Modulation = Modulations[sd->getModulationType()];
+#ifdef __sh__
+                 int System = sd->getModulationSystem() ? DVBFE_DELSYS_DVBS2 : DVBFE_DELSYS_DVBS;
+                 static int RollOffs[] = { DVBFE_ROLLOFF_35, DVBFE_ROLLOFF_25, DVBFE_ROLLOFF_20, DVBFE_ROLLOFF_UNKNOWN };
+                 int RollOff = sd->getModulationSystem() ? RollOffs[sd->getRollOff()] : DVBFE_ROLLOFF_UNKNOWN;
+#else
                  int System = sd->getModulationSystem() ? SYS_DVBS2 : SYS_DVBS;
                  static int RollOffs[] = { ROLLOFF_35, ROLLOFF_25, ROLLOFF_20, ROLLOFF_AUTO };
                  int RollOff = sd->getModulationSystem() ? RollOffs[sd->getRollOff()] : ROLLOFF_AUTO;
+#endif
                  int SymbolRate = BCD2INT(sd->getSymbolRate()) / 10;
                  if (ThisNIT >= 0) {
                     for (int n = 0; n < NumFrequencies; n++) {

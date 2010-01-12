@@ -79,6 +79,7 @@ private:
   void CmdPLUG(const char *Option);
   void CmdPUTE(const char *Option);
   void CmdREMO(const char *Option);
+  void CmdRENR(const char *Option);
   void CmdSCAN(const char *Option);
   void CmdSTAT(const char *Option);
   void CmdUPDT(const char *Option);

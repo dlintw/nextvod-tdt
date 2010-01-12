@@ -658,11 +658,8 @@ Version 1.6
                          4:3.
 
   Use Dolby Digital = yes
-                         Turns recording of the Dolby Digital audio channels on
-                         or off. This may be useful if you don't have the equipment
-                         to replay Dolby Digital audio and want to save disk space.
-                         If turned off, Dolby Digital tracks also don't appear in the
-                         "Audio" menu.
+                         Dolby Digital tracks don't appear in the "Audio" menu, if
+                         turned off.
 
   Update channels = 5    Controls the automatic channel update function. '0' means
                          no update, '1' will only update channel names, '2' will

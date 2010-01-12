@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2008-03-02 19:02+0100\n"
 "Last-Translator: Luca Olivetti <luca@ventoso.org>\n"
 "Language-Team: Spanish\n"
@@ -494,6 +494,9 @@ msgstr "Frecuencia"
 msgid "Vpid"
 msgstr "Vpid"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -614,6 +617,9 @@ msgstr "Duración"
 msgid "File"
 msgstr "Fichero"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Primer día"
 
@@ -692,6 +698,41 @@ msgstr "Reproducir"
 msgid "Button$Rewind"
 msgstr "Rebobinar"
 
+#, fuzzy
+msgid "Rename recording"
+msgstr "¿Eliminar grabacion?"
+
+#, fuzzy
+msgid "Date"
+msgstr "T.símbolos"
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+#, fuzzy
+msgid "PES"
+msgstr "VPS"
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+#, fuzzy
+msgid "Delete marks information?"
+msgstr "¿Eliminar grabacion?"
+
+#, fuzzy
+msgid "Delete resume information?"
+msgstr "¿Eliminar grabacion?"
+
+msgid "Error while accessing recording!"
+msgstr "¡Error al acceder a la grabación!"
+
 msgid "Recordings"
 msgstr "Grabaciones"
 
@@ -700,9 +741,6 @@ msgstr "Abrir"
 
 msgid "Commands"
 msgstr "Órdenes"
-
-msgid "Error while accessing recording!"
-msgstr "¡Error al acceder a la grabación!"
 
 msgid "Delete recording?"
 msgstr "¿Eliminar grabacion?"
@@ -803,6 +841,10 @@ msgstr "Cerrar al pulsar botón de menú"
 msgid "Setup.OSD$Recording directories"
 msgstr "Mostrar directorios de grabaciones"
 
+#, fuzzy
+msgid "Setup.OSD$Main menu command position"
+msgstr "Posición para información de canal"
+
 msgid "EPG"
 msgstr "Guía de Programación"
 
@@ -817,6 +859,9 @@ msgstr "Nivel de corrección de EPG"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Mostrar datos antiguos de EPG (m)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Ajustar reloj de sistema"
@@ -1006,6 +1051,18 @@ msgstr "Tamaño máximo de fichero (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Partir ficheros editados"
 
+#, fuzzy
+msgid "Setup.Recording$Show date"
+msgstr "Partir ficheros editados"
+
+#, fuzzy
+msgid "Setup.Recording$Show time"
+msgstr "Duración en modo pausa (días)"
+
+#, fuzzy
+msgid "Setup.Recording$Show length"
+msgstr "Usar servicio VPS"
+
 msgid "Replay"
 msgstr "Opciones de reproducción"
 
@@ -1153,6 +1210,20 @@ msgstr "Sobreescribir"
 
 msgid "Button$Insert"
 msgstr "Insertar"
+
+msgid "Rename$Up"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Down"
+msgstr "Abajo"
+
+msgid "Rename$Previous"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Next"
+msgstr "Siguiente"
 
 msgid "Plugin"
 msgstr "Plugin"

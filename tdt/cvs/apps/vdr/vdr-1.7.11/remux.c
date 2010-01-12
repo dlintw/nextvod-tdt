@@ -215,6 +215,30 @@ int cPatPmtGenerator::MakeSubtitlingDescriptor(uchar *Target, const char *Langua
   return i;
 }
 
+int cPatPmtGenerator::MakeTeletextDescriptor(uchar *Target, cChannel *Channel)
+{
+  int i = 0, j = 0;
+  Target[i++] = SI::TeletextDescriptorTag;
+  int l = i;
+  Target[i++] = 0x00; // length
+  for (int n = 0; Channel->TPages(n); n++) {
+      const char *Language = Channel->Tlang(n);
+      int Pages = Channel->TPages(n);
+      Target[i++] = *Language++;
+      Target[i++] = *Language++;
+      Target[i++] = *Language++;
+      Target[i++] = ((Pages >> 13) & 0xf8) | ((Pages >> 8) & 0x7); // teletext type & magazine number
+      Target[i++] = Pages & 0xff; // teletext page number
+      j++;
+      }
+  if (j > 0) {
+     Target[l] = j * 5; // update length
+     IncEsInfoLength(i);
+     return i;
+     }
+  return 0;
+}
+
 int cPatPmtGenerator::MakeLanguageDescriptor(uchar *Target, const char *Language)
 {
   int i = 0;
@@ -296,6 +320,7 @@ void cPatPmtGenerator::GeneratePmt(cChannel *Channel)
   if (Channel) {
      int Vpid = Channel->Vpid();
      int Ppid = 0x1FFF; // no PCR pid
+     int Tpid = Channel->Tpid();
      uchar *p = buf;
      int i = 0;
      p[i++] = 0x02; // table id
@@ -330,6 +355,10 @@ void cPatPmtGenerator::GeneratePmt(cChannel *Channel)
          i += MakeStream(buf + i, 0x06, Channel->Spid(n));
          i += MakeSubtitlingDescriptor(buf + i, Channel->Slang(n), Channel->SubtitlingType(n), Channel->CompositionPageId(n), Channel->AncillaryPageId(n));
          }
+     if (Tpid) {
+        i += MakeStream(buf + i, 0x06, Tpid);
+        i += MakeTeletextDescriptor(buf + i, Channel);
+        }
 
      int sl = i - SectionLength - 2 + 4; // -2 = SectionLength storage, +4 = length of CRC
      buf[SectionLength] |= (sl >> 8) & 0x0F;

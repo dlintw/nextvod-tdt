@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2008-03-02 19:02+0100\n"
 "Last-Translator: Luca Olivetti <luca@ventoso.org>\n"
 "Language-Team: Catalanian\n"
@@ -496,6 +496,9 @@ msgstr "Freqüència"
 msgid "Vpid"
 msgstr "PID Vídeo"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -616,6 +619,9 @@ msgstr "Durada"
 msgid "File"
 msgstr "Arxiu"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Primer dia"
 
@@ -694,6 +700,41 @@ msgstr "Reproduir"
 msgid "Button$Rewind"
 msgstr "Enrera"
 
+#, fuzzy
+msgid "Rename recording"
+msgstr "Esborrar gravació?"
+
+#, fuzzy
+msgid "Date"
+msgstr "Srate"
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+#, fuzzy
+msgid "PES"
+msgstr "VPS"
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+#, fuzzy
+msgid "Delete marks information?"
+msgstr "Esborrar gravació?"
+
+#, fuzzy
+msgid "Delete resume information?"
+msgstr "Esborrar gravació?"
+
+msgid "Error while accessing recording!"
+msgstr "Error a l'accedir a la gravació!"
+
 msgid "Recordings"
 msgstr "Veure programes gravats"
 
@@ -702,9 +743,6 @@ msgstr "Obrir"
 
 msgid "Commands"
 msgstr "Ordres"
-
-msgid "Error while accessing recording!"
-msgstr "Error a l'accedir a la gravació!"
 
 msgid "Delete recording?"
 msgstr "Esborrar gravació?"
@@ -805,6 +843,10 @@ msgstr "Tecla menu tanca"
 msgid "Setup.OSD$Recording directories"
 msgstr "Gravacions en subcarpetes"
 
+#, fuzzy
+msgid "Setup.OSD$Main menu command position"
+msgstr "Posició de la informació del canal"
+
 msgid "EPG"
 msgstr "Guia de Programes"
 
@@ -819,6 +861,9 @@ msgstr "Nivell de correcció de la Guia"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Temps manteniment EPG (min)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Ajustar l'hora del sistema"
@@ -1008,6 +1053,18 @@ msgstr "Mida màxima de l'arxiu (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Separar arxius"
 
+#, fuzzy
+msgid "Setup.Recording$Show date"
+msgstr "Separar arxius"
+
+#, fuzzy
+msgid "Setup.Recording$Show time"
+msgstr "Durada de la pausa (d)"
+
+#, fuzzy
+msgid "Setup.Recording$Show length"
+msgstr "Fer servir VPS"
+
 msgid "Replay"
 msgstr "Opcions de Reproducció"
 
@@ -1155,6 +1212,20 @@ msgstr "Sobrescriure"
 
 msgid "Button$Insert"
 msgstr "Inserir"
+
+msgid "Rename$Up"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Down"
+msgstr "Avall"
+
+msgid "Rename$Previous"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Next"
+msgstr "Següent"
 
 msgid "Plugin"
 msgstr "Plugin"

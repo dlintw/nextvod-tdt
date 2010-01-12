@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2008-12-15 14:37+0100\n"
 "Last-Translator: Oleg Roitburd <oleg@roitburd.de>\n"
 "Language-Team: Russian\n"
@@ -494,6 +494,9 @@ msgstr "Частота"
 msgid "Vpid"
 msgstr "Vpid (видео)"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -614,6 +617,9 @@ msgstr "Срок хранения"
 msgid "File"
 msgstr "Файл"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Первый день"
 
@@ -692,6 +698,36 @@ msgstr "Воспроизвести"
 msgid "Button$Rewind"
 msgstr "Назад"
 
+msgid "Rename recording"
+msgstr "Переименовать запись"
+
+msgid "Date"
+msgstr ""
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+msgid "PES"
+msgstr ""
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Delete marks information?"
+msgstr ""
+
+msgid "Delete resume information?"
+msgstr ""
+
+msgid "Error while accessing recording!"
+msgstr "Ошибка доступа к записи!"
+
 msgid "Recordings"
 msgstr "Записи"
 
@@ -700,9 +736,6 @@ msgstr "Открыть"
 
 msgid "Commands"
 msgstr "Команды"
-
-msgid "Error while accessing recording!"
-msgstr "Ошибка доступа к записи!"
 
 msgid "Delete recording?"
 msgstr "Стереть запись?"
@@ -803,6 +836,9 @@ msgstr "Кнопку Меню закрыть"
 msgid "Setup.OSD$Recording directories"
 msgstr "Каталоги хранения записей"
 
+msgid "Setup.OSD$Main menu command position"
+msgstr "Размещение команд в главном меню"
+
 msgid "EPG"
 msgstr "Телегид"
 
@@ -817,6 +853,9 @@ msgstr "Уровень коррекции ошибок"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Хранение устаревших данных (мин)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Установить системное время"
@@ -1006,6 +1045,15 @@ msgstr "Макс. размер видеофайла (Мб)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Делить отредактированные файлы"
 
+msgid "Setup.Recording$Show date"
+msgstr "Показывать дату"
+
+msgid "Setup.Recording$Show time"
+msgstr "Показывать время записи"
+
+msgid "Setup.Recording$Show length"
+msgstr "Показывать продолжительность записи"
+
 msgid "Replay"
 msgstr "Воспроизведение"
 
@@ -1153,6 +1201,18 @@ msgstr "Замена"
 
 msgid "Button$Insert"
 msgstr "Вставка"
+
+msgid "Rename$Up"
+msgstr ""
+
+msgid "Rename$Down"
+msgstr ""
+
+msgid "Rename$Previous"
+msgstr ""
+
+msgid "Rename$Next"
+msgstr ""
 
 msgid "Plugin"
 msgstr "Модуль"

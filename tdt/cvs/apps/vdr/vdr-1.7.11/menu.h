@@ -35,6 +35,8 @@ class cMenuEditTimer : public cOsdMenu {
 private:
   cTimer *timer;
   cTimer data;
+  char name[MaxFileName];
+  char path[MaxFileName];
   int channel;
   bool addIfConfirmed;
   cMenuEditDateItem *firstday;
@@ -163,6 +165,7 @@ private:
   eOSState Delete(void);
   eOSState Info(void);
   eOSState Commands(eKeys Key = kNone);
+  eOSState Rename(void);
 protected:
   cRecording *GetRecording(cMenuRecordingItem *Item);
 public:
@@ -217,6 +220,9 @@ private:
   int lastCurrent, lastTotal;
   bool lastPlay, lastForward;
   int lastSpeed;
+  int lastSkipSeconds;
+  eKeys lastSkipKey;
+  cTimeMs lastSkipTimeout;
   time_t timeoutShow;
   bool timeSearchActive, timeSearchHide;
   int timeSearchTime, timeSearchPos;

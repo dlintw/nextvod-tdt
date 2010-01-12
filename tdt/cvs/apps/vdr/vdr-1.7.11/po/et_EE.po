@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2007-08-12 14:17+0200\n"
 "Last-Translator: Arthur Konovalov <artlov@gmail.com>\n"
 "Language-Team: Estonian\n"
@@ -493,6 +493,9 @@ msgstr "Sagedus"
 msgid "Vpid"
 msgstr "Vpid"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -613,6 +616,9 @@ msgstr "Eluiga"
 msgid "File"
 msgstr "Fail"
 
+msgid "Path"
+msgstr "Tee"
+
 msgid "First day"
 msgstr "Esimene päev"
 
@@ -691,6 +697,36 @@ msgstr "Start"
 msgid "Button$Rewind"
 msgstr "Algusesse"
 
+msgid "Rename recording"
+msgstr "Ümbernimetamine"
+
+msgid "Date"
+msgstr "Kuupäev"
+
+msgid "Length"
+msgstr "Kestus"
+
+msgid "Format"
+msgstr "Formaat"
+
+msgid "PES"
+msgstr "PES"
+
+msgid "TS"
+msgstr "TS"
+
+msgid "Size"
+msgstr "Suurus"
+
+msgid "Delete marks information?"
+msgstr "Kustutada märkide info?"
+
+msgid "Delete resume information?"
+msgstr "Kustutada jätkamise info?"
+
+msgid "Error while accessing recording!"
+msgstr "Salvestuse taasesitus nurjus!"
+
 msgid "Recordings"
 msgstr "Salvestused"
 
@@ -699,9 +735,6 @@ msgstr "Avada"
 
 msgid "Commands"
 msgstr "Käsud"
-
-msgid "Error while accessing recording!"
-msgstr "Salvestuse taasesitus nurjus!"
 
 msgid "Delete recording?"
 msgstr "Kustutada salvestus?"
@@ -802,6 +835,9 @@ msgstr "Sulgemine Menüü klahviga"
 msgid "Setup.OSD$Recording directories"
 msgstr "Kausta nime salvestamine"
 
+msgid "Setup.OSD$Main menu command position"
+msgstr "Käsu asukoht peamenüüs"
+
 msgid "EPG"
 msgstr "EPG"
 
@@ -816,6 +852,9 @@ msgstr "EPG veaparandustase"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Vana EPG viide (min)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr "Edenemisriba"
 
 msgid "Setup.EPG$Set system time"
 msgstr "Kella sünkroniseerimine"
@@ -1005,6 +1044,15 @@ msgstr "Maks. failisuurus (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Failide jupitamine"
 
+msgid "Setup.Recording$Show date"
+msgstr "Salvestuse kuupäev"
+
+msgid "Setup.Recording$Show time"
+msgstr "Salvestuse kellaaeg"
+
+msgid "Setup.Recording$Show length"
+msgstr "Salvestuse kestus"
+
 msgid "Replay"
 msgstr "Taasesitus"
 
@@ -1152,6 +1200,18 @@ msgstr "Asenda (OVR)"
 
 msgid "Button$Insert"
 msgstr "Lisa (INS)"
+
+msgid "Rename$Up"
+msgstr "Üles"
+
+msgid "Rename$Down"
+msgstr "Alla"
+
+msgid "Rename$Previous"
+msgstr "Eelmine"
+
+msgid "Rename$Next"
+msgstr "Järgmine"
 
 msgid "Plugin"
 msgstr "Laiendusmoodul"

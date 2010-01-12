@@ -21,20 +21,51 @@
 // --- Channel Parameter Maps ------------------------------------------------
 
 const tChannelParameterMap InversionValues[] = {
+#ifdef __sh__
+  {   0, DVBFE_INVERSION_OFF, trNOOP("off") },
+  {   1, DVBFE_INVERSION_ON,  trNOOP("on") },
+  { 999, DVBFE_INVERSION_AUTO },
+#else
   {   0, INVERSION_OFF,  trNOOP("off") },
   {   1, INVERSION_ON,   trNOOP("on") },
   { 999, INVERSION_AUTO, trNOOP("auto") },
+#endif
   {  -1, 0, NULL }
   };
 
 const tChannelParameterMap BandwidthValues[] = {
+#ifdef __sh__
+  {   5, DVBFE_BANDWIDTH_5_MHZ, "5 MHz" },
+  {   6, DVBFE_BANDWIDTH_6_MHZ, "6 MHz" },
+  {   7, DVBFE_BANDWIDTH_7_MHZ, "7 MHz" },
+  {   8, DVBFE_BANDWIDTH_8_MHZ, "8 MHz" },
+  { 999, DVBFE_BANDWIDTH_AUTO },
+#else
   {   6, 6000000, "6 MHz" },
   {   7, 7000000, "7 MHz" },
   {   8, 8000000, "8 MHz" },
+#endif
   {  -1, 0, NULL }
   };
 
 const tChannelParameterMap CoderateValues[] = {
+#ifdef __sh__
+  {   0, DVBFE_FEC_NONE, trNOOP("none") },
+  {  12, DVBFE_FEC_1_2,  "1/2" },
+  {  13, DVBFE_FEC_1_3,  "1/3" },
+  {  14, DVBFE_FEC_1_4,  "1/4" },
+  {  23, DVBFE_FEC_2_3,  "2/3" },
+  {  25, DVBFE_FEC_2_5,  "2/5" },
+  {  34, DVBFE_FEC_3_4,  "3/4" },
+  {  35, DVBFE_FEC_3_5,  "3/5" },
+  {  45, DVBFE_FEC_4_5,  "4/5" },
+  {  56, DVBFE_FEC_5_6,  "5/6" },
+  {  67, DVBFE_FEC_6_7,  "6/7" },
+  {  78, DVBFE_FEC_7_8,  "7/8" },
+  {  89, DVBFE_FEC_8_9,  "8/9" },
+  { 910, DVBFE_FEC_9_10, "9/10" },
+  { 999, DVBFE_FEC_AUTO, trNOOP("auto") },
+#else
   {   0, FEC_NONE, trNOOP("none") },
   {  12, FEC_1_2,  "1/2" },
   {  23, FEC_2_3,  "2/3" },
@@ -47,10 +78,34 @@ const tChannelParameterMap CoderateValues[] = {
   {  89, FEC_8_9,  "8/9" },
   { 910, FEC_9_10, "9/10" },
   { 999, FEC_AUTO, trNOOP("auto") },
+#endif
   {  -1, 0, NULL }
   };
 
 const tChannelParameterMap ModulationValues[] = {
+#ifdef __sh__
+  {   0, DVBFE_MOD_NONE,    trNOOP("none") },
+  {   4, DVBFE_MOD_QAM4,    "QAM4" },
+  {  16, DVBFE_MOD_QAM16,   "QAM16" },
+  {  32, DVBFE_MOD_QAM32,   "QAM32" },
+  {  64, DVBFE_MOD_QAM64,   "QAM64" },
+  { 128, DVBFE_MOD_QAM128,  "QAM128" },
+  { 256, DVBFE_MOD_QAM256,  "QAM256" },
+  { 512, DVBFE_MOD_QAM512,  "QAM512" },
+  {1024, DVBFE_MOD_QAM1024, "QAM1024" },
+  {   1, DVBFE_MOD_BPSK,    "BPSK" },
+  {   2, DVBFE_MOD_QPSK,    "QPSK" },
+  {   3, DVBFE_MOD_OQPSK,   "OQPSK" },
+  {   5, DVBFE_MOD_8PSK,    "8PSK" },
+  {   6, DVBFE_MOD_16APSK,  "16APSK" },
+  {   7, DVBFE_MOD_32APSK,  "32APSK" },
+  {   8, DVBFE_MOD_OFDM,    "OFDM" },
+  {   9, DVBFE_MOD_COFDM,   "COFDM" },
+  {  10, DVBFE_MOD_VSB8,    "VSB8" },
+  {  11, DVBFE_MOD_VSB16,   "VSB16" },
+  { 998, DVBFE_MOD_QAMAUTO, "QAMAUTO" },
+  { 999, DVBFE_MOD_AUTO },
+#else
   {  16, QAM_16,   "QAM16" },
   {  32, QAM_32,   "QAM32" },
   {  64, QAM_64,   "QAM64" },
@@ -62,45 +117,79 @@ const tChannelParameterMap ModulationValues[] = {
   {  10, VSB_8,    "VSB8" },
   {  11, VSB_16,   "VSB16" },
   { 998, QAM_AUTO, "QAMAUTO" },
+#endif
   {  -1, 0, NULL }
   };
 
 const tChannelParameterMap SystemValues[] = {
+#ifdef __sh__
+  {   0, DVBFE_DELSYS_DVBS,  "DVB-S" },
+  {   1, DVBFE_DELSYS_DVBS2, "DVB-S2" },
+#else
   {   0, SYS_DVBS,  "DVB-S" },
   {   1, SYS_DVBS2, "DVB-S2" },
+#endif
   {  -1, 0, NULL }
   };
 
 const tChannelParameterMap TransmissionValues[] = {
+#ifdef __sh__
+  {   2, DVBFE_TRANSMISSION_MODE_2K, "2K" },
+  {   4, DVBFE_TRANSMISSION_MODE_4K, "4K" },
+  {   8, DVBFE_TRANSMISSION_MODE_8K, "8K" },
+  { 999, DVBFE_TRANSMISSION_MODE_AUTO, trNOOP("auto") },
+#else
   {   2, TRANSMISSION_MODE_2K,   "2K" },
   {   8, TRANSMISSION_MODE_8K,   "8K" },
   { 999, TRANSMISSION_MODE_AUTO, trNOOP("auto") },
+#endif
   {  -1, 0, NULL }
   };
 
 const tChannelParameterMap GuardValues[] = {
+#ifdef __sh__
+  {   4, DVBFE_GUARD_INTERVAL_1_4,  "1/4" },
+  {   8, DVBFE_GUARD_INTERVAL_1_8,  "1/8" },
+  {  16, DVBFE_GUARD_INTERVAL_1_16, "1/16" },
+  {  32, DVBFE_GUARD_INTERVAL_1_32, "1/32" },
+  { 999, DVBFE_GUARD_INTERVAL_AUTO, trNOOP("auto") },
+#else
   {   4, GUARD_INTERVAL_1_4,  "1/4" },
   {   8, GUARD_INTERVAL_1_8,  "1/8" },
   {  16, GUARD_INTERVAL_1_16, "1/16" },
   {  32, GUARD_INTERVAL_1_32, "1/32" },
   { 999, GUARD_INTERVAL_AUTO, trNOOP("auto") },
+#endif
   {  -1, 0, NULL }
   };
 
 const tChannelParameterMap HierarchyValues[] = {
+#ifdef __sh__
+  {   0, DVBFE_HIERARCHY_OFF, trNOOP("off") },
+  {   1, DVBFE_HIERARCHY_ON,  trNOOP("on") },
+  { 999, DVBFE_HIERARCHY_AUTO, trNOOP("auto") },
+#else
   {   0, HIERARCHY_NONE, trNOOP("none") },
   {   1, HIERARCHY_1,    "1" },
   {   2, HIERARCHY_2,    "2" },
   {   4, HIERARCHY_4,    "4" },
   { 999, HIERARCHY_AUTO, trNOOP("auto") },
+#endif
   {  -1, 0, NULL }
   };
 
 const tChannelParameterMap RollOffValues[] = {
+#ifdef __sh__
+  {   0, DVBFE_ROLLOFF_UNKNOWN },
+  {  20, DVBFE_ROLLOFF_20, "0.20" },
+  {  25, DVBFE_ROLLOFF_25, "0.25" },
+  {  35, DVBFE_ROLLOFF_35, "0.35" },
+#else
   {   0, ROLLOFF_AUTO, trNOOP("auto") },
   {  20, ROLLOFF_20, "0.20" },
   {  25, ROLLOFF_25, "0.25" },
   {  35, ROLLOFF_35, "0.35" },
+#endif
   {  -1, 0, NULL }
   };
 
@@ -189,6 +278,18 @@ cChannel::cChannel(void)
   provider = strdup("");
   portalName = strdup("");
   memset(&__BeginData__, 0, (char *)&__EndData__ - (char *)&__BeginData__);
+#ifdef __sh__
+  inversion    = DVBFE_INVERSION_AUTO;
+  bandwidth    = DVBFE_BANDWIDTH_AUTO;
+  coderateH    = DVBFE_FEC_AUTO;
+  coderateL    = DVBFE_FEC_AUTO;
+  modulation   = DVBFE_MOD_AUTO;
+  system       = DVBFE_DELSYS_DVBS;
+  transmission = DVBFE_TRANSMISSION_MODE_AUTO;
+  guard        = DVBFE_GUARD_INTERVAL_AUTO;
+  hierarchy    = DVBFE_HIERARCHY_AUTO;
+  rollOff      = DVBFE_ROLLOFF_UNKNOWN;
+#else
   inversion    = INVERSION_AUTO;
   bandwidth    = 8000000;
   coderateH    = FEC_AUTO;
@@ -199,6 +300,7 @@ cChannel::cChannel(void)
   guard        = GUARD_INTERVAL_AUTO;
   hierarchy    = HIERARCHY_AUTO;
   rollOff      = ROLLOFF_AUTO;
+#endif
   modification = CHANNELMOD_NONE;
   schedule     = NULL;
   linkChannels = NULL;
@@ -551,6 +653,15 @@ void cChannel::SetSubtitlingDescriptors(uchar *SubtitlingTypes, uint16_t *Compos
      }
 }
 
+void cChannel::SetTPidData(char TLangs[][MAXLANGCODE2], int TPages[])
+{
+  for (int i = manualtpages; i < MAXTPAGES; i++) {
+      tpages[i] = TPages[i];
+      strn0cpy(tlangs[i], TLangs[i], MAXLANGCODE2);
+      }
+  tpages[MAXTPAGES] = 0;
+}
+
 void cChannel::SetCaIds(const int *CaIds)
 {
   if (caids[0] && caids[0] <= CA_USER_MAX)
@@ -758,11 +869,20 @@ cString cChannel::ToText(const cChannel *Channel)
         q += IntArrayToString(q, Channel->dpids, 10, Channel->dlangs);
         }
      *q = 0;
+     const int TBufferSize = 5 + 1 + (MAXTPAGES * (MAXLANGCODE2 + 5 + 1)) + 10; // 5 digits plus delimiting ',' or ';' plus optional '=cod+cod', +10: paranoia
+     char tpidbuf[TBufferSize];
+     q = tpidbuf;
+     q += snprintf(q, sizeof(tpidbuf), "%d", Channel->tpid);
+     if (Channel->manualtpages > 0) {
+        q += snprintf(q, sizeof(tpidbuf) - (q - tpidbuf), ";");
+        for (int i = 0; i < Channel->manualtpages; ++i)
+            q += snprintf(q, sizeof(tpidbuf) - (q - tpidbuf), "%d%s%s", Channel->tpages[i], *Channel->tlangs[i] ? "=" : "", *Channel->tlangs[i] ? Channel->tlangs[i] : "");
+        }
      char caidbuf[MAXCAIDS * 5 + 10]; // 5: 4 digits plus delimiting ',', 10: paranoia
      q = caidbuf;
      q += IntArrayToString(q, Channel->caids, 16);
      *q = 0;
-     buffer = cString::sprintf("%s:%d:%s:%s:%d:%s:%s:%d:%s:%d:%d:%d:%d\n", FullName, Channel->frequency, *Channel->ParametersToString(), *cSource::ToString(Channel->source), Channel->srate, vpidbuf, apidbuf, Channel->tpid, caidbuf, Channel->sid, Channel->nid, Channel->tid, Channel->rid);
+     buffer = cString::sprintf("%s:%d:%s:%s:%d:%s:%s:%s:%s:%d:%d:%d:%d\n", FullName, Channel->frequency, *Channel->ParametersToString(), *cSource::ToString(Channel->source), Channel->srate, vpidbuf, apidbuf, tpidbuf, caidbuf, Channel->sid, Channel->nid, Channel->tid, Channel->rid);
      }
   return buffer;
 }
@@ -796,8 +916,9 @@ bool cChannel::Parse(const char *s)
      char *parambuf = NULL;
      char *vpidbuf = NULL;
      char *apidbuf = NULL;
+     char *tpidbuf = NULL;
      char *caidbuf = NULL;
-     int fields = sscanf(s, "%a[^:]:%d :%a[^:]:%a[^:] :%d :%a[^:]:%a[^:]:%d :%a[^:]:%d :%d :%d :%d ", &namebuf, &frequency, &parambuf, &sourcebuf, &srate, &vpidbuf, &apidbuf, &tpid, &caidbuf, &sid, &nid, &tid, &rid);
+     int fields = sscanf(s, "%a[^:]:%d :%a[^:]:%a[^:] :%d :%a[^:]:%a[^:]:%a[^:]:%a[^:]:%d :%d :%d :%d ", &namebuf, &frequency, &parambuf, &sourcebuf, &srate, &vpidbuf, &apidbuf, &tpidbuf, &caidbuf, &sid, &nid, &tid, &rid);
      if (fields >= 9) {
         if (fields == 9) {
            // allow reading of old format
@@ -879,7 +1000,35 @@ bool cChannel::Parse(const char *s)
                     }
               dpids[NumDpids] = 0;
               }
-
+           if (tpidbuf) {
+              char *p;
+              manualtpages = 0;
+              // 2001;150=deu,151=fin
+              if ((p = strchr(tpidbuf, ';')) != NULL) {
+                 char *q, *strtok_next;
+                 *p++ = 0;
+                 while ((q = strtok_r(p, ",", &strtok_next)) != NULL) {
+                       if (manualtpages < MAXTPAGES) {
+                          int page;
+                          char *l = strchr(q, '=');
+                          if (l) {
+                             *l++ = 0;
+                             strn0cpy(tlangs[manualtpages], l, MAXLANGCODE2);
+                             }
+                          if (sscanf(q, "%d", &page) == 1)
+                             tpages[manualtpages++] = (page & 0xFF) | (0x02 << 16); // set subtitling type
+                          else
+                             esyslog("ERROR: invalid Teletext page!"); // no need to set ok to 'false'
+                          }
+                       else
+                          esyslog("ERROR: too many Teletext pages!"); // no need to set ok to 'false'
+                       p = NULL;
+                       }
+                 tpages[manualtpages] = 0;
+                 }
+              if (sscanf(tpidbuf, "%d", &tpid) != 1)
+                 return false;
+              }
            if (caidbuf) {
               char *p = caidbuf;
               char *q;
@@ -916,6 +1065,7 @@ bool cChannel::Parse(const char *s)
         free(sourcebuf);
         free(vpidbuf);
         free(apidbuf);
+        free(tpidbuf);
         free(caidbuf);
         free(namebuf);
         if (!GetChannelID().Valid()) {

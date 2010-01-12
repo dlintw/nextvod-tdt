@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2008-02-26 17:20+0100\n"
 "Last-Translator: Johan Schuring <johan.schuring@vetteblei.nl>\n"
 "Language-Team: Dutch\n"
@@ -497,6 +497,9 @@ msgstr "Frequentie"
 msgid "Vpid"
 msgstr "Vpid"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -617,6 +620,9 @@ msgstr "Bewaarduur"
 msgid "File"
 msgstr "Bestandnaam"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Eerste dag"
 
@@ -695,6 +701,41 @@ msgstr "Afspelen"
 msgid "Button$Rewind"
 msgstr "Naar begin"
 
+#, fuzzy
+msgid "Rename recording"
+msgstr "Opname verwijderen?"
+
+#, fuzzy
+msgid "Date"
+msgstr "Srate"
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+#, fuzzy
+msgid "PES"
+msgstr "VPS"
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+#, fuzzy
+msgid "Delete marks information?"
+msgstr "Opname verwijderen?"
+
+#, fuzzy
+msgid "Delete resume information?"
+msgstr "Opname verwijderen?"
+
+msgid "Error while accessing recording!"
+msgstr "Fout bij lezen opname!"
+
 msgid "Recordings"
 msgstr "Opnames"
 
@@ -703,9 +744,6 @@ msgstr "Openen"
 
 msgid "Commands"
 msgstr "Commando's"
-
-msgid "Error while accessing recording!"
-msgstr "Fout bij lezen opname!"
 
 msgid "Delete recording?"
 msgstr "Opname verwijderen?"
@@ -806,6 +844,10 @@ msgstr "Menu toets sluit ook af"
 msgid "Setup.OSD$Recording directories"
 msgstr "Opname mappen"
 
+#, fuzzy
+msgid "Setup.OSD$Main menu command position"
+msgstr "Kanaal info positie"
+
 msgid "EPG"
 msgstr "EPG"
 
@@ -820,6 +862,9 @@ msgstr "EPG foutcorrectieniveau"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Oude EPG data tonen (min)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Systeem klok instellen"
@@ -1009,6 +1054,18 @@ msgstr "Maximale omvang video file (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Bewerkte files opdelen"
 
+#, fuzzy
+msgid "Setup.Recording$Show date"
+msgstr "Bewerkte files opdelen"
+
+#, fuzzy
+msgid "Setup.Recording$Show time"
+msgstr "Pauze levensduur (d)"
+
+#, fuzzy
+msgid "Setup.Recording$Show length"
+msgstr "VPS gebruiken"
+
 msgid "Replay"
 msgstr "Afspelen"
 
@@ -1156,6 +1213,20 @@ msgstr "Overschrijven"
 
 msgid "Button$Insert"
 msgstr "Invoegen"
+
+msgid "Rename$Up"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Down"
+msgstr "Omlaag"
+
+msgid "Rename$Previous"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Next"
+msgstr "Volgende"
 
 msgid "Plugin"
 msgstr "Plugin"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2008-03-17 19:00+0100\n"
 "Last-Translator: Adrian Caval <anrxc@sysphere.org>\n"
 "Language-Team: Croatian\n"
@@ -495,6 +495,9 @@ msgstr "Frekvencija"
 msgid "Vpid"
 msgstr "Vpid"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -615,6 +618,9 @@ msgstr "Trajanje"
 msgid "File"
 msgstr "Datoteka"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Prvi dan"
 
@@ -693,6 +699,41 @@ msgstr "Start"
 msgid "Button$Rewind"
 msgstr "Na poèetak"
 
+#, fuzzy
+msgid "Rename recording"
+msgstr "Obrisati snimku?"
+
+#, fuzzy
+msgid "Date"
+msgstr "Srate"
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+#, fuzzy
+msgid "PES"
+msgstr "VPS"
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+#, fuzzy
+msgid "Delete marks information?"
+msgstr "Obrisati snimku?"
+
+#, fuzzy
+msgid "Delete resume information?"
+msgstr "Obrisati snimku?"
+
+msgid "Error while accessing recording!"
+msgstr "Gre¹ka pri pristupanju snimke!"
+
 msgid "Recordings"
 msgstr "Snimke"
 
@@ -701,9 +742,6 @@ msgstr "Otvori"
 
 msgid "Commands"
 msgstr "Naredbe"
-
-msgid "Error while accessing recording!"
-msgstr "Gre¹ka pri pristupanju snimke!"
 
 msgid "Delete recording?"
 msgstr "Obrisati snimku?"
@@ -804,6 +842,10 @@ msgstr "Tipka Izbornik zatvara"
 msgid "Setup.OSD$Recording directories"
 msgstr "Imenik za snimke"
 
+#, fuzzy
+msgid "Setup.OSD$Main menu command position"
+msgstr "Pozicija informacija o programu"
+
 msgid "EPG"
 msgstr "EPG (elektronski programski vodiè)"
 
@@ -818,6 +860,9 @@ msgstr "Razina popravka EPG gre¹aka"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Vrijeme EPG zadr¾avanja (min)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Podesi sistemsko vrijeme"
@@ -1007,6 +1052,18 @@ msgstr "Maksimalna velièina datoteke (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Podijeli ureðene datoteke"
 
+#, fuzzy
+msgid "Setup.Recording$Show date"
+msgstr "Podijeli ureðene datoteke"
+
+#, fuzzy
+msgid "Setup.Recording$Show time"
+msgstr "Trajanje pauze (d)"
+
+#, fuzzy
+msgid "Setup.Recording$Show length"
+msgstr "Koristi VPS"
+
 msgid "Replay"
 msgstr "Reprodukcija"
 
@@ -1154,6 +1211,20 @@ msgstr "Prepi¹i"
 
 msgid "Button$Insert"
 msgstr "Umetni"
+
+msgid "Rename$Up"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Down"
+msgstr "Dolje"
+
+msgid "Rename$Previous"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Next"
+msgstr "Sljedeæe"
 
 msgid "Plugin"
 msgstr "Dodatak"

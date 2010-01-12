@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.7.9\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2009-10-17 14:19+0200\n"
 "Last-Translator: Valdemaras Pipiras <varas@ambernet.lt>\n"
 "Language-Team: Lithuanian\n"
@@ -493,6 +493,9 @@ msgstr "Dažnis"
 msgid "Vpid"
 msgstr "Vpid (video)"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -613,6 +616,9 @@ msgstr "Galiojimas"
 msgid "File"
 msgstr "Failas"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Pirma diena"
 
@@ -691,6 +697,41 @@ msgstr "Groti"
 msgid "Button$Rewind"
 msgstr "Atsukti"
 
+#, fuzzy
+msgid "Rename recording"
+msgstr "Ištrinti įrašą?"
+
+#, fuzzy
+msgid "Date"
+msgstr "Perdavimo greitis (Symbol rate)"
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+#, fuzzy
+msgid "PES"
+msgstr "VPS"
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+#, fuzzy
+msgid "Delete marks information?"
+msgstr "Ištrinti įrašą?"
+
+#, fuzzy
+msgid "Delete resume information?"
+msgstr "Ištrinti įrašą?"
+
+msgid "Error while accessing recording!"
+msgstr "Klaida atidarant įrašą!"
+
 msgid "Recordings"
 msgstr "Įrašai"
 
@@ -699,9 +740,6 @@ msgstr "Atidaryti"
 
 msgid "Commands"
 msgstr "Komandos"
-
-msgid "Error while accessing recording!"
-msgstr "Klaida atidarant įrašą!"
 
 msgid "Delete recording?"
 msgstr "Ištrinti įrašą?"
@@ -802,6 +840,10 @@ msgstr "Uždaryti Meniu mygtuku"
 msgid "Setup.OSD$Recording directories"
 msgstr "Įrašų katalogai"
 
+#, fuzzy
+msgid "Setup.OSD$Main menu command position"
+msgstr "Kanalo informacijos lango pozicija"
+
 msgid "EPG"
 msgstr "Elektroninis programų gidas (EPG)"
 
@@ -816,6 +858,9 @@ msgstr "EPG klaidų taisymo lygis"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Pasenusių EPG duomenų saugojomas (min)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Nustatyti sistemos laiką"
@@ -1005,6 +1050,18 @@ msgstr "Maks. video failo dydis (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Suskaidyti koreguotus failus"
 
+#, fuzzy
+msgid "Setup.Recording$Show date"
+msgstr "Suskaidyti koreguotus failus"
+
+#, fuzzy
+msgid "Setup.Recording$Show time"
+msgstr "Atidėtos peržiūroso saugojimas (d)"
+
+#, fuzzy
+msgid "Setup.Recording$Show length"
+msgstr "Naudoti VPS"
+
 msgid "Replay"
 msgstr "Pakartoti"
 
@@ -1152,6 +1209,20 @@ msgstr "Perrąšyti"
 
 msgid "Button$Insert"
 msgstr "Įterpti"
+
+msgid "Rename$Up"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Down"
+msgstr "Į apačią"
+
+msgid "Rename$Previous"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Next"
+msgstr "Sekantis"
 
 msgid "Plugin"
 msgstr "Įskiepas"

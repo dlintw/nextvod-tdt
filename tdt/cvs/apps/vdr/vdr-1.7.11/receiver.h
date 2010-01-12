@@ -38,10 +38,10 @@ protected:
                ///< will be delivered only ONCE, so the cReceiver must make sure that
                ///< it will be able to buffer the data if necessary.
 public:
-  cReceiver(tChannelID ChannelID, int Priority, int Pid, const int *Pids1 = NULL, const int *Pids2 = NULL, const int *Pids3 = NULL);
+  cReceiver(tChannelID ChannelID, int Priority, int Pid, const int *Pids1 = NULL, const int *Pids2 = NULL, const int *Pids3 = NULL, const int *Pids4 = NULL);
                ///< Creates a new receiver for the channel with the given ChannelID with
                ///< the given Priority. Pid is a single PID (typically the video PID), while
-               ///< Pids1...Pids3 are pointers to zero terminated lists of PIDs.
+               ///< Pids1...Pids4 are pointers to zero terminated lists of PIDs.
                ///< If any of these PIDs are 0, they will be silently ignored.
                ///< The total number of non-zero PIDs must not exceed MAXRECEIVEPIDS.
                ///< Priority may be any value in the range -99..99. Negative values indicate

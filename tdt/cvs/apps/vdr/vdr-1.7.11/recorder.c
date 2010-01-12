@@ -21,8 +21,8 @@
 
 // --- cRecorder -------------------------------------------------------------
 
-cRecorder::cRecorder(const char *FileName, tChannelID ChannelID, int Priority, int VPid, const int *APids, const int *DPids, const int *SPids)
-:cReceiver(ChannelID, Priority, VPid, APids, Setup.UseDolbyDigital ? DPids : NULL, SPids)
+cRecorder::cRecorder(const char *FileName, tChannelID ChannelID, int Priority, int VPid, const int *APids, const int *DPids, const int *SPids, const int *EPids)
+:cReceiver(ChannelID, Priority, VPid, APids, DPids, SPids, EPids)
 ,cThread("recording")
 ,recordingInfo(FileName)
 {

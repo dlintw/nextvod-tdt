@@ -90,32 +90,46 @@ public:
 
 class cMenuEditStrItem : public cMenuEditItem {
 private:
-  char *value;
-  int length;
-  const char *allowed;
-  int pos, offset;
+  int offset;
   bool insert, newchar, uppercase;
-  int lengthUtf8;
-  uint *valueUtf8;
   uint *allowedUtf8;
   uint *charMapUtf8;
   uint *currentCharUtf8;
   eKeys lastKey;
   cTimeMs autoAdvanceTimeout;
-  void SetHelpKeys(void);
   uint *IsAllowed(uint c);
   void AdvancePos(void);
-  virtual void Set(void);
   uint Inc(uint c, bool Up);
   void Insert(void);
   void Delete(void);
 protected:
+  char *value;
+  int length;
+  uint *valueUtf8;
+  int lengthUtf8;
+  const char *allowed;
+  int pos;
+  void SetHelpKeys(void);
+  virtual void Set(void);
   void EnterEditMode(void);
   void LeaveEditMode(bool SaveValue = false);
   bool InEditMode(void) { return valueUtf8 != NULL; }
 public:
   cMenuEditStrItem(const char *Name, char *Value, int Length, const char *Allowed = NULL);
   ~cMenuEditStrItem();
+  virtual eOSState ProcessKey(eKeys Key);
+  };
+
+class cMenuEditRecPathItem : public cMenuEditStrItem {
+protected:
+  char base[MaxFileName];
+  virtual void SetHelpKeys(void);
+  void SetBase(const char* Path);
+  void FindNextLevel();
+  void Find(bool Next);
+public:
+  cMenuEditRecPathItem(const char* Name, char* Path, int Length);
+  ~cMenuEditRecPathItem();
   virtual eOSState ProcessKey(eKeys Key);
   };
 

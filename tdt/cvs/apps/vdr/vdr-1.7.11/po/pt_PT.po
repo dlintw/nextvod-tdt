@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2008-03-18 17:04+0100\n"
 "Last-Translator: anonymous\n"
 "Language-Team: Portuguese\n"
@@ -493,6 +493,9 @@ msgstr "Frequência"
 msgid "Vpid"
 msgstr "Vpid"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -613,6 +616,9 @@ msgstr "Duração"
 msgid "File"
 msgstr "Ficheiro"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Primeiro dia"
 
@@ -691,6 +697,41 @@ msgstr "Reproduzir"
 msgid "Button$Rewind"
 msgstr "Rebobinar"
 
+#, fuzzy
+msgid "Rename recording"
+msgstr "Apagar a gravação?"
+
+#, fuzzy
+msgid "Date"
+msgstr "Srate"
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+#, fuzzy
+msgid "PES"
+msgstr "VPS"
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+#, fuzzy
+msgid "Delete marks information?"
+msgstr "Apagar a gravação?"
+
+#, fuzzy
+msgid "Delete resume information?"
+msgstr "Apagar a gravação?"
+
+msgid "Error while accessing recording!"
+msgstr "Erro ao aceder à gravação!"
+
 msgid "Recordings"
 msgstr "Gravações"
 
@@ -699,9 +740,6 @@ msgstr "Abrir"
 
 msgid "Commands"
 msgstr "Comandos"
-
-msgid "Error while accessing recording!"
-msgstr "Erro ao aceder à gravação!"
 
 msgid "Delete recording?"
 msgstr "Apagar a gravação?"
@@ -802,6 +840,10 @@ msgstr "Tecla Menu fecha"
 msgid "Setup.OSD$Recording directories"
 msgstr "Directorias de gravação"
 
+#, fuzzy
+msgid "Setup.OSD$Main menu command position"
+msgstr "Posição de info dos canais"
+
 msgid "EPG"
 msgstr "Guia de programação"
 
@@ -816,6 +858,9 @@ msgstr "Nível de correcção EPG"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Tempo de Linger de EPG (min)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Acertar hora do sistema"
@@ -1005,6 +1050,18 @@ msgstr "Tamanho máximo dos ficheiros de video (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Dividir ficheiros editados"
 
+#, fuzzy
+msgid "Setup.Recording$Show date"
+msgstr "Dividir ficheiros editados"
+
+#, fuzzy
+msgid "Setup.Recording$Show time"
+msgstr "Validade da pausa"
+
+#, fuzzy
+msgid "Setup.Recording$Show length"
+msgstr "Usar VPS"
+
 msgid "Replay"
 msgstr "Opções de reprodução"
 
@@ -1152,6 +1209,20 @@ msgstr "Substituir"
 
 msgid "Button$Insert"
 msgstr "Inserir"
+
+msgid "Rename$Up"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Down"
+msgstr "Baixo"
+
+msgid "Rename$Previous"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Next"
+msgstr "Seguinte"
 
 msgid "Plugin"
 msgstr "Plugin"

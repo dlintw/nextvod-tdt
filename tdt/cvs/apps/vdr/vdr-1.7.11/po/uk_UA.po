@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.7.7\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2009-05-31 13:17+0200\n"
 "Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: Ukrainian\n"
@@ -493,6 +493,9 @@ msgstr "Частота"
 msgid "Vpid"
 msgstr "Vpid (відео)"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -613,6 +616,9 @@ msgstr "Строк зберігання"
 msgid "File"
 msgstr "Файл"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Перший день"
 
@@ -691,6 +697,41 @@ msgstr "Програвати"
 msgid "Button$Rewind"
 msgstr "Назад"
 
+#, fuzzy
+msgid "Rename recording"
+msgstr "Витерти запис?"
+
+#, fuzzy
+msgid "Date"
+msgstr "Симв. швидкість"
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+#, fuzzy
+msgid "PES"
+msgstr "VPS поправка"
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+#, fuzzy
+msgid "Delete marks information?"
+msgstr "Витерти запис?"
+
+#, fuzzy
+msgid "Delete resume information?"
+msgstr "Витерти запис?"
+
+msgid "Error while accessing recording!"
+msgstr "Помилка доступу до запису!"
+
 msgid "Recordings"
 msgstr "Записи"
 
@@ -699,9 +740,6 @@ msgstr "Відкрити"
 
 msgid "Commands"
 msgstr "Команди"
-
-msgid "Error while accessing recording!"
-msgstr "Помилка доступу до запису!"
 
 msgid "Delete recording?"
 msgstr "Витерти запис?"
@@ -802,6 +840,10 @@ msgstr "Кнопку Меню закрити"
 msgid "Setup.OSD$Recording directories"
 msgstr "Каталоги зберігання записів"
 
+#, fuzzy
+msgid "Setup.OSD$Main menu command position"
+msgstr "Положення вікна інформації про канал"
+
 msgid "EPG"
 msgstr "Телегід"
 
@@ -816,6 +858,9 @@ msgstr "Рівень корекції помилок"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Зберігання застарілих даних (хв)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Встановити системий час"
@@ -1005,6 +1050,18 @@ msgstr "Макс. размір відеофайлу (Мб)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Ділити відредаговані файли"
 
+#, fuzzy
+msgid "Setup.Recording$Show date"
+msgstr "Ділити відредаговані файли"
+
+#, fuzzy
+msgid "Setup.Recording$Show time"
+msgstr "Зберігання відкладеного перегляду (дні)"
+
+#, fuzzy
+msgid "Setup.Recording$Show length"
+msgstr "Використовувати сигнали VPS"
+
 msgid "Replay"
 msgstr "Перегляд"
 
@@ -1152,6 +1209,20 @@ msgstr "Заміна"
 
 msgid "Button$Insert"
 msgstr "Вставка"
+
+msgid "Rename$Up"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Down"
+msgstr "Вниз"
+
+msgid "Rename$Previous"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Next"
+msgstr "Вперед"
 
 msgid "Plugin"
 msgstr "Модуль"

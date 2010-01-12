@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2008-03-12 18:25+0100\n"
 "Last-Translator: Magnus Andersson <svankan@bahnhof.se>\n"
 "Language-Team: Swedish\n"
@@ -496,6 +496,9 @@ msgstr "Frekvens"
 msgid "Vpid"
 msgstr "VPID"
 
+msgid "Vtype"
+msgstr ""
+
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -616,6 +619,9 @@ msgstr "Livstid"
 msgid "File"
 msgstr "Filnamn"
 
+msgid "Path"
+msgstr ""
+
 msgid "First day"
 msgstr "Första dag"
 
@@ -694,6 +700,41 @@ msgstr "Spela upp"
 msgid "Button$Rewind"
 msgstr "Återspolning"
 
+#, fuzzy
+msgid "Rename recording"
+msgstr "Ta bort inspelningen?"
+
+#, fuzzy
+msgid "Date"
+msgstr "Srate"
+
+msgid "Length"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+#, fuzzy
+msgid "PES"
+msgstr "VPS"
+
+msgid "TS"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+#, fuzzy
+msgid "Delete marks information?"
+msgstr "Ta bort inspelningen?"
+
+#, fuzzy
+msgid "Delete resume information?"
+msgstr "Ta bort inspelningen?"
+
+msgid "Error while accessing recording!"
+msgstr "Inspelningen går inte att läsa!"
+
 msgid "Recordings"
 msgstr "Inspelningar"
 
@@ -702,9 +743,6 @@ msgstr "Öppna"
 
 msgid "Commands"
 msgstr "Kommandon"
-
-msgid "Error while accessing recording!"
-msgstr "Inspelningen går inte att läsa!"
 
 msgid "Delete recording?"
 msgstr "Ta bort inspelningen?"
@@ -805,6 +843,10 @@ msgstr "Menyknappen stänger"
 msgid "Setup.OSD$Recording directories"
 msgstr "Kataloger för inspelningar"
 
+#, fuzzy
+msgid "Setup.OSD$Main menu command position"
+msgstr "Placering av kanalinformation"
+
 msgid "EPG"
 msgstr "EPG"
 
@@ -819,6 +861,9 @@ msgstr "Nivå för EPG bugfix"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Visa gammal information (min)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Ställ in systemtid"
@@ -1008,6 +1053,18 @@ msgstr "Maximal filstorlek för inspelning (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Dela upp redigerade filer"
 
+#, fuzzy
+msgid "Setup.Recording$Show date"
+msgstr "Dela upp redigerade filer"
+
+#, fuzzy
+msgid "Setup.Recording$Show time"
+msgstr "Livstid för direktinspelning (dagar)"
+
+#, fuzzy
+msgid "Setup.Recording$Show length"
+msgstr "Använd VPS"
+
 msgid "Replay"
 msgstr "Uppspelning"
 
@@ -1155,6 +1212,20 @@ msgstr "Skriv över"
 
 msgid "Button$Insert"
 msgstr "Infoga"
+
+msgid "Rename$Up"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Down"
+msgstr "Ner"
+
+msgid "Rename$Previous"
+msgstr ""
+
+#, fuzzy
+msgid "Rename$Next"
+msgstr "Nästa"
 
 msgid "Plugin"
 msgstr "Modul"

@@ -983,7 +983,8 @@ void cDevice::EnsureSubtitleTrack(void)
      int LanguagePreference = INT_MAX; // higher than the maximum possible value
      for (int i = ttSubtitleFirst; i <= ttSubtitleLast; i++) {
          const tTrackId *TrackId = GetTrack(eTrackType(i));
-         if (TrackId && TrackId->id && I18nIsPreferredLanguage(Setup.SubtitleLanguages, TrackId->language, LanguagePreference))
+         if (TrackId && TrackId->id && (I18nIsPreferredLanguage(Setup.SubtitleLanguages, TrackId->language, LanguagePreference) ||
+             ((i == ttSubtitleFirst + 8) && !(*TrackId->language) && (LanguagePreference == INT_MAX))))
             PreferredTrack = eTrackType(i);
          }
      // Make sure we're set to an available subtitle track:

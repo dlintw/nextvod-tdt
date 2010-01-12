@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-03 15:10+0100\n"
+"POT-Creation-Date: 2010-01-11 14:24+0100\n"
 "PO-Revision-Date: 2007-08-15 15:52+0200\n"
 "Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
 "Language-Team: Finnish\n"
@@ -496,6 +496,9 @@ msgstr "Taajuus"
 msgid "Vpid"
 msgstr "Kuva-PID"
 
+msgid "Vtype"
+msgstr "Kuvatyyppi"
+
 msgid "Ppid"
 msgstr "PCR-PID"
 
@@ -616,6 +619,9 @@ msgstr "Elinik‰"
 msgid "File"
 msgstr "Tiedosto"
 
+msgid "Path"
+msgstr "Polku"
+
 msgid "First day"
 msgstr "1. p‰iv‰"
 
@@ -694,6 +700,36 @@ msgstr "Toista"
 msgid "Button$Rewind"
 msgstr "Alkuun"
 
+msgid "Rename recording"
+msgstr "Nime‰ tallenne"
+
+msgid "Date"
+msgstr "P‰iv‰ys"
+
+msgid "Length"
+msgstr "Pituus"
+
+msgid "Format"
+msgstr "Tiedostomuoto"
+
+msgid "PES"
+msgstr "PES"
+
+msgid "TS"
+msgstr "TS"
+
+msgid "Size"
+msgstr "Koko"
+
+msgid "Delete marks information?"
+msgstr "Poista tallenteen merkinn‰t?"
+
+msgid "Delete resume information?"
+msgstr "Poista tallenteen paluutiedot?"
+
+msgid "Error while accessing recording!"
+msgstr "Tallenteen toistaminen ep‰onnistui!"
+
 msgid "Recordings"
 msgstr "Tallenteet"
 
@@ -702,9 +738,6 @@ msgstr "Avaa"
 
 msgid "Commands"
 msgstr "Komennot"
-
-msgid "Error while accessing recording!"
-msgstr "Tallenteen toistaminen ep‰onnistui!"
 
 msgid "Delete recording?"
 msgstr "Poistetaanko tallenne?"
@@ -805,6 +838,9 @@ msgstr "Sulje valikkon‰pp‰imell‰"
 msgid "Setup.OSD$Recording directories"
 msgstr "N‰yt‰ tallennehakemistot"
 
+msgid "Setup.OSD$Main menu command position"
+msgstr "Komentojen sijainti p‰‰valikossa"
+
 msgid "EPG"
 msgstr "Ohjelmaopas"
 
@@ -819,6 +855,9 @@ msgstr "Ohjelmaoppaan korjaustaso"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Vanha tieto n‰kyy (min)"
+
+msgid "Setup.EPG$Show progress bar"
+msgstr "N‰yt‰ aikajana"
 
 msgid "Setup.EPG$Set system time"
 msgstr "Tahdista kellonaika"
@@ -1008,6 +1047,15 @@ msgstr "Suurin tiedostokoko (Mt)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Jaottele muokatut tallenteet"
 
+msgid "Setup.Recording$Show date"
+msgstr "N‰yt‰ tallenteen p‰iv‰ys"
+
+msgid "Setup.Recording$Show time"
+msgstr "N‰yt‰ tallenteen ajankohta"
+
+msgid "Setup.Recording$Show length"
+msgstr "N‰yt‰ tallenteen kesto"
+
 msgid "Replay"
 msgstr "Toisto"
 
@@ -1155,6 +1203,18 @@ msgstr "Korvaa"
 
 msgid "Button$Insert"
 msgstr "Lis‰‰"
+
+msgid "Rename$Up"
+msgstr "Ylemm‰s"
+
+msgid "Rename$Down"
+msgstr "Alemmas"
+
+msgid "Rename$Previous"
+msgstr "Edellinen"
+
+msgid "Rename$Next"
+msgstr "Seuraava"
 
 msgid "Plugin"
 msgstr "Laajennos"

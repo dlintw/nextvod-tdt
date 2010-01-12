@@ -19,6 +19,7 @@
 #include "tools.h"
 
 extern bool VfatFileSystem;
+extern bool DirOrderState;
 extern int InstanceId;
 
 void RemoveDeletedRecordings(void);
@@ -104,7 +105,7 @@ public:
   virtual int Compare(const cListObject &ListObject) const;
   const char *Name(void) const { return name; }
   const char *FileName(void) const;
-  const char *Title(char Delimiter = ' ', bool NewIndicator = false, int Level = -1) const;
+  const char *Title(char Delimiter = ' ', bool NewIndicator = false, int Level = -1, bool Original = true) const;
   const cRecordingInfo *Info(void) const { return info; }
   const char *PrefixFileName(char Prefix);
   int HierarchyLevels(void) const;
@@ -123,6 +124,9 @@ public:
   bool Undelete(void);
        // Changes the file name so that it will be visible in the "Recordings" menu again and
        // not processed by cRemoveDeletedRecordingsThread.
+       // Returns false in case of error
+  bool Rename(const char *newName);
+       // Changes the file name
        // Returns false in case of error
   };
 
@@ -248,6 +252,8 @@ public:
   bool StoreResume(int Index) { return resumeFile.Save(Index); }
   bool IsStillRecording(void);
   void Delete(void);
+  static int Length(const char *FileName, bool IsPesRecording = false);
+       ///< Calculates the recording length without reading the index.
   };
 
 class cFileName {
