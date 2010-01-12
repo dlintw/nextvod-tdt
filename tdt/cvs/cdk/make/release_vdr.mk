@@ -546,8 +546,13 @@ endif
 #	cp -R $(targetprefix)/usr/local/lib/* $(prefix)/release_vdr/usr/lib/
 	cp -rd $(targetprefix)/usr/lib/libfontconfi* $(prefix)/release_vdr/usr/lib/
 	mkdir -p $(prefix)/release_vdr/usr/lib/vdr/
-	cp -rd $(targetprefix)/usr/lib/vdr/libvdr-remote.so.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
-	cp -rd $(targetprefix)/usr/lib/vdr/libvdr-vfd.so.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
+if ENABLE_VDR1711
+	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.11 $(prefix)/release_vdr/usr/lib/vdr/
+	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.11 $(prefix)/release_vdr/usr/lib/vdr/
+else
+	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
+	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
+endif
 	rm -rf $(prefix)/release_vdr/usr/lib/alsa-lib
 	rm -rf $(prefix)/release_vdr/usr/lib/alsaplayer
 	rm -rf $(prefix)/release_vdr/usr/lib/engines
