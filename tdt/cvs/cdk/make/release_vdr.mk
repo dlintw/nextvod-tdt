@@ -9,7 +9,7 @@ $(DEPDIR)/%release_vdr:
 	$(INSTALL_DIR) $(prefix)/release_vdr/dev && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/dev.static && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/etc && \
-	$(INSTALL_DIR) $(prefix)/release_vdr/etc/onts && \
+	$(INSTALL_DIR) $(prefix)/release_vdr/etc/fonts && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/etc/init.d && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/etc/network && \
 	$(INSTALL_DIR) $(prefix)/release_vdr/etc/network/if-down.d && \
