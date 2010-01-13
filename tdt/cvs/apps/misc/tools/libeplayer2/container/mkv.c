@@ -4082,7 +4082,7 @@ void MkvGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		}
 
 		while (current != NULL) {
-			context->output->video->Write(context, current->buffer, current->len, Pts, track->private_data, track->private_size, (unsigned int)((float)((float)1000000.0)/((float)track->v_frate)), "video");
+			context->output->video->Write(context, current->buffer, current->len, Pts, track->private_data, track->private_size, track->v_frate, "video");
 
 			current = current->next;
 			Pts = INVALID_PTS_VALUE;

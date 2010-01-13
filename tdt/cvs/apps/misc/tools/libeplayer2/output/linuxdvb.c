@@ -1046,28 +1046,8 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
 			if(!strcmp (Encoding, "V_MPEG2") || !strcmp (Encoding, "V_MPEG2/H264"))
 				mpeg2(PLAYERData, DataLength, Pts);
 			else if(!strcmp (Encoding, "V_MPEG4/ISO/AVC")){
-				switch((int)FrameRate){
-					case 41708:
-						// 23.976fps
-						TimeDelta = 23976;
-						TimeScale = 1000;
-						break;
-					case 40000:
-						//FIXME asyncron!!!
-						// 24.976fps
-						TimeDelta = 25000;
-						TimeScale = 1000;
-						break;
-					case 33367:
-						// 29.976fps
-						TimeDelta = 30000;
-						TimeScale = 1000;
-						break;
-					default:
-						TimeDelta = 23976;
-						TimeScale = 1000;
-						break;
-				}
+				TimeDelta = FrameRate*1000.0;
+				TimeScale = 1000;
 				h264(PLAYERData, DataLength, Pts, Private, PrivateLength,TimeDelta,TimeScale);
 			}
  			else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC") || !strcmp (Encoding, "V_MKV/XVID"))
