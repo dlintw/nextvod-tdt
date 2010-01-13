@@ -160,6 +160,8 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 		case OUTPUT_SWITCH: {
 			if (context->playback->isAudio)
 				return context->output->audio->Command(context, OUTPUT_SWITCH, "audio");
+			if (context->playback->isVideo)
+				return context->output->video->Command(context, OUTPUT_SWITCH, "video");
 			break;
 		}
 		default:

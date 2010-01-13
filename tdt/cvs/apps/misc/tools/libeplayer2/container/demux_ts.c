@@ -39,6 +39,7 @@ int ts_prog;
 int ts_keep_broken=0;
 off_t ts_probe = 0;
 int audio_substream_id = -1;
+static unsigned int video_format;
 extern char *dvdsub_lang, *audio_lang;	//for -alang
 
 typedef enum
@@ -2471,9 +2472,11 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 		{
 			case 1:
 				pmt->es[idx].type = VIDEO_MPEG1;
+				video_format = VIDEO_MPEG1;
 				break;
 			case 2:
 				pmt->es[idx].type = VIDEO_MPEG2;
+				video_format = VIDEO_MPEG2;
 				break;
 			case 3:
 			case 4:
@@ -2485,6 +2488,7 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 				break;
 			case 0x10:
 				pmt->es[idx].type = VIDEO_MPEG4;
+				video_format = VIDEO_MPEG4;
 				break;
 			case 0x0f:
 			case 0x11:
@@ -2492,6 +2496,7 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 				break;
 			case 0x1b:
 				pmt->es[idx].type = VIDEO_H264;
+				video_format = VIDEO_H264;
 				break;
 			case 0x12:
 				pmt->es[idx].type = SL_PES_STREAM;
@@ -2510,6 +2515,7 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 				break;
 			case 0xEA:
 				pmt->es[idx].type = VIDEO_VC1;
+				video_format = VIDEO_VC1;
 				break;
 			default:
 				demux_ts_printf("UNKNOWN ES TYPE=0x%x\n", es_type);
@@ -3517,7 +3523,7 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
 
     demuxer->stream->fd = context->playback->fd;
 
-    read(demuxer->stream->fd,demuxer->stream->buffer,2048);//soviel ??
+    //read(demuxer->stream->fd,demuxer->stream->buffer,2048);//soviel ??
 
     printf("%s::%d\n", __FUNCTION__, __LINE__);
     demuxer->audio->id = -1;
@@ -3529,13 +3535,13 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
     demuxer->stream->sector_size	= 0;
     demuxer->stream->buf_pos		= 0;
     demuxer->stream->buf_len		= 2048;
-    demuxer->stream->pos		= 2048;
+    demuxer->stream->pos		= 0;//2048;
     demuxer->stream->start_pos	= 0;
     demuxer->stream->end_pos		= 0;
     demuxer->stream->eof		= 0;
     demuxer->stream->cache_pid	= 0;
 
-    ts_check_file_dmx(demuxer);
+    //ts_check_file_dmx(demuxer);
     ret = demux_open_ts(demuxer);
     //printf("ret = %d\n",ret);
 
@@ -3622,18 +3628,40 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	const demux_stream_t * sub = demuxer->sub;
 	unsigned long long int Pts = 0;
 
+	//FIXME
+	if(!sh_video->format == video_format)
+	{
 
+		Track_t Video = {
+		"und",
+		"V_MPEG2/H264",
+		0,
+		};
+		context->manager->video->Command(context, MANAGER_DEL, NULL);
+		context->manager->video->Command(context, MANAGER_ADD, &Video);
+
+		context->output->video->Command(context, OUTPUT_SWITCH, "video");
+
+
+		sh_video->format = video_format;
+		printf("video_format 0x%02x,sh_video->format 0x%02x\n",video_format,sh_video->format);
+
+	}
 	 if (audio->first != NULL) {
 		demux_packet_t * current = audio->first;
 		//printf("audio current->flags = 0x%02x\n",current->flags);
-		if (!(current->flags&0x10)) {  //current frame isn't a keyframe
+		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts = INVALID_PTS_VALUE;
 		} else {
 			//printf("\tKEYFRAME,                    ");
 			Pts = (current->pts * 90000);
-		}
-
+		}*/
+		//FIXME
+		if(sh_video->format == 0x10000005 || video_format == 0x10000005)
+			Pts = INVALID_PTS_VALUE;
+		else
+			Pts = current->pts * 90000;
         if (aStartPts == 0) {
             aStartPts = Pts;
             Pts = 0;
@@ -3647,21 +3675,25 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			
 			isFirstAudioFrame=0;
 			current = current->next;
-			Pts = INVALID_PTS_VALUE;
+			//Pts = INVALID_PTS_VALUE;
 		}
 	}
 
     if (video->first != NULL) {
 		demux_packet_t * current = video->first;
 		//printf("video current->flags = 0x%02x\n",current->flags);
-		if (!(current->flags&0x10)) {  //current frame isn't a keyframe
+		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts = INVALID_PTS_VALUE;
 		} else {
 			//printf("\tKEYFRAME,                    ");
 			Pts = (current->pts * 90000);
-		}
-
+		}*/
+		//FIXME
+		if(sh_video->format == 0x10000005 || video_format == 0x10000005)
+			Pts = INVALID_PTS_VALUE;
+		else
+			Pts = current->pts * 90000;
         if (vStartPts == 0) {
             vStartPts = Pts;
             Pts = 0;
@@ -3672,7 +3704,7 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			context->output->video->Write(context, current->buffer, current->len, Pts, 0, 0, 0, "video");
 
 			current = current->next;
-			Pts = INVALID_PTS_VALUE;
+			//Pts = INVALID_PTS_VALUE;
 		}
 	}
 }

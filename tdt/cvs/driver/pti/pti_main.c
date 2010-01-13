@@ -43,6 +43,11 @@
 int debug ;
 #define dprintk(x...) do { if (debug) printk(KERN_WARNING x); } while (0)
 
+#ifdef __TDT__
+unsigned int dma_0_buffer_base;
+unsigned int dma_0_buffer_top;
+#endif
+
 #define TAG_COUNT 4
 #define AUX_COUNT 20
 
@@ -89,6 +94,10 @@ static void (*demultiplex_dvb_packets)(struct dvb_demux* demux, const u8 *buf, i
 #define DMA_POLLING_INTERVAL msecs_to_jiffies(2)
 #define HEADER_SIZE (6)
 #define PACKET_SIZE (188+HEADER_SIZE)
+
+#ifdef __TDT__
+#define PACKET_SIZE_WO_HEADER (188)
+#endif
 
 #define PTI_BUFFER_SIZE (PACKET_SIZE * 4096) /*(188*1024)*/
 
@@ -170,6 +179,10 @@ static void stpti_setup_dma(struct pti_internal *pti)
   writel( virt_to_phys(pti->back_buffer), pti->pti_io + PTI_DMA_0_WRITE);
   writel( virt_to_phys(pti->back_buffer), pti->pti_io + PTI_DMA_0_READ );
   writel( virt_to_phys(pti->back_buffer + PTI_BUFFER_SIZE - 1), pti->pti_io + PTI_DMA_0_TOP );
+#ifdef __TDT__
+	dma_0_buffer_base = virt_to_phys(pti->back_buffer);
+	dma_0_buffer_top = virt_to_phys(pti->back_buffer) + PTI_BUFFER_SIZE;
+#endif
 
   writel( 0x8, pti->pti_io + PTI_DMA_0_SETUP ); /* 8 word burst */
 }
@@ -269,7 +282,7 @@ static int stream_injector(void *user_data)
 	u8 vpidhigh=0; //high byte of the video stream to check
   u8 vpidlow=0x65; //low byte of the video stream to check
 	u8 apidhigh=0; //high byte of the audio stream to check 
-	u8 vpidlow=0x67; //low byte of the audio stream to check
+	u8 apidlow=0x66; //low byte of the audio stream to check
 	int vc=99; //video count
 	int ac=99; //audio count
 	u8 tc; //temp count
@@ -321,7 +334,11 @@ static int stream_injector(void *user_data)
 	if(demultiplex_dvb_packets != NULL)
 	{
 	  u8 *pFrom = &internal->back_buffer[offset];
-	  static u8 auxbuf[TAG_COUNT][(PACKET_SIZE - HEADER_SIZE) * AUX_COUNT];
+#ifdef __TDT__
+	  static u8 auxbuf[TAG_COUNT][PACKET_SIZE_WO_HEADER * AUX_COUNT];
+#else
+		static u8 auxbuf[TAG_COUNT][(PACKET_SIZE - HEADER_SIZE) * AUX_COUNT];
+#endif
 	  u8 *pTo[TAG_COUNT] = {auxbuf[0],auxbuf[1],auxbuf[2],auxbuf[3]};
 	  int count1[TAG_COUNT] = {0, 0, 0, 0};
 	  int n;
@@ -349,10 +366,10 @@ static int stream_injector(void *user_data)
 					printk("[STREAMCHECK] first byte of packet not 0x47\n");
 					
 				//check count of the choised videostream
-				if((pFrom[7]&0x00011111)==vpidhigh && pFrom[8]==vpidlow) {
+				if((pFrom[7]&0x1f)==vpidhigh && pFrom[8]==vpidlow) {
 					prv++;
 					if(prv>20000) {
-						printk("[STREAMCHECK] 20000 video PIDs found 0x%x%x\n",(pFrom[7]&0x00011111),pFrom[8]);
+						printk("[STREAMCHECK] 20000 video PIDs found 0x%x%x\n",(pFrom[7]&0x1f),pFrom[8]);
   					prv=0;
 					}
 					tc=pFrom[9];
@@ -364,17 +381,17 @@ static int stream_injector(void *user_data)
 						vc++;
 						if(vc>15) vc=0;
 						if(vc!=tc) {
-							printk("[STREAMCHECK] invalide video count - count=%d, packetcount=%d, pid=0x%x%x\n",vc,tc,(pFrom[7]&0x00011111),pFrom[8]);
+							printk("[STREAMCHECK] invalide video count - count=%d, packetcount=%d, pid=0x%x%x\n",vc,tc,(pFrom[7]&0x1f),pFrom[8]);
 							vc=tc;
 						}
 					}
 				}
 				
 				//check count of the choised audiostream
-				if((pFrom[7]&0x00011111)==apidhigh && pFrom[8]==apidlow) {
+				if((pFrom[7]&0x1f)==apidhigh && pFrom[8]==apidlow) {
 					pra++;
 					if(pra>20000) {
-						printk("[STREAMCHECK] 20000 audio PID found 0x%x%x\n",(pFrom[7]&0x00011111),pFrom[8]);
+						printk("[STREAMCHECK] 20000 audio PID found 0x%x%x\n",(pFrom[7]&0x1f),pFrom[8]);
 						pra=0;
 					}
 					tc=pFrom[9];
@@ -386,15 +403,20 @@ static int stream_injector(void *user_data)
 						ac++;
 						if(ac>15) ac=0;
 						if(ac!=tc) {
-							printk("[STREAMCHECK] invalide audio count - count=%d, packetcount=%d, pid=0x%x%x\n",ac,tc,(pFrom[7]&0x00011111),pFrom[8]);
+							printk("[STREAMCHECK] invalide audio count - count=%d, packetcount=%d, pid=0x%x%x\n",ac,tc,(pFrom[7]&0x1f),pFrom[8]);
 							ac=tc;
 						}
 					}
 				}
 #endif
-	      memmove(pTo[tag], pFrom + HEADER_SIZE,
+#ifdef __TDT__
+	      memmove(pTo[tag], pFrom + HEADER_SIZE, PACKET_SIZE_WO_HEADER);
+	      pTo[tag] += PACKET_SIZE_WO_HEADER;
+#else
+				memmove(pTo[tag], pFrom + HEADER_SIZE,
 		      PACKET_SIZE - HEADER_SIZE);
 	      pTo[tag] += PACKET_SIZE - HEADER_SIZE;
+#endif
 	      count1[tag]++;
 	      if(count1[tag] >= AUX_COUNT)
 	      {
@@ -431,6 +453,101 @@ static int stream_injector(void *user_data)
    lots of packets (presumably > 500) even if the buffer is not full.
    Therefore, it is important that the polling process always does its work
    on time. */
+#ifdef __TDT__
+static void process_pti_dma(unsigned long data)
+{
+  unsigned int pti_rp, pti_wp, num_packets, pti_status;
+  bool buffer_round=0;
+        
+	/* Load the read and write pointers, so we know where we are in the buffers */
+	pti_rp   = readl(internal->pti_io + PTI_DMA_0_READ);
+	pti_wp   = readl(internal->pti_io + PTI_DMA_0_WRITE);
+	
+	//align dma write pointer to packet size
+	pti_wp = pti_wp - ((pti_wp - dma_0_buffer_base) % PACKET_SIZE);
+	  
+	/* Read status registers */
+	pti_status = readl(internal->pti_io + PTI_IIF_FIFO_COUNT);
+	
+	/* Error if we overflow */
+	if (pti_status & PTI_IIF_FIFO_FULL) 
+	{
+		internal->err_count++;
+		printk(KERN_WARNING "%s: IIF Overflow\n",__FUNCTION__);
+	}
+	  
+	/* If the PTI had to drop packets because we couldn't process in time error */
+	if (*internal->discard) 
+	{ 
+		printk(KERN_WARNING "%s: PTI had to discard %u packets %u %u\n",__func__,
+			*internal->discard,*internal->pread,*internal->pwrite);
+	
+		internal->err_count++;
+		stpti_reset_dma(internal);
+		stpti_start_dma(internal);
+	} else
+	{	  
+		/* If we get to the bottom of the buffer wrap the pointer back to the top */
+		if ((pti_rp & ~0xf) == (dma_0_buffer_top & ~0xf)) pti_rp = dma_0_buffer_base;
+	
+		/* Calculate the amount of bytes used in the buffer */
+		if (pti_rp <= pti_wp) num_packets = (pti_wp - pti_rp) / PACKET_SIZE;
+		else 
+		{
+			num_packets = ((dma_0_buffer_top - pti_rp) + (pti_wp - dma_0_buffer_base)) / PACKET_SIZE;
+			internal->loop_count2++;
+			internal->packet_count = 0;
+			buffer_round=1;
+		}
+	
+		/* If we have some packets */
+		if (num_packets)
+		{
+			/* And the PTI has acknowledged the updated the packets */
+			if (!*internal->pread)
+			{
+				/* Increment the loop counter */
+				internal->loop_count++;
+	
+				/* Increment the packet_count, by the number of packets we have processed */
+				internal->packet_count+=num_packets;
+	
+				/* Now update the read pointer in the DMA engine */
+				writel(pti_wp, internal->pti_io + PTI_DMA_0_READ );
+	
+				/* Now tell the firmware how many packets we have read */
+				PtiWrite(internal->pread,num_packets);
+
+				/* notify the injector thread */
+				if(buffer_round) {
+					unsigned int num_packets1 = (dma_0_buffer_top - pti_rp) / PACKET_SIZE;
+					workQueue[writeIndex].offset = pti_rp - dma_0_buffer_base;
+					workQueue[writeIndex].count = num_packets1;
+					writeIndex = (writeIndex + 1) % QUEUE_SIZE;
+					up(&workSem);
+
+					workQueue[writeIndex].offset = 0;
+					workQueue[writeIndex].count = num_packets-num_packets1;
+					writeIndex = (writeIndex + 1) % QUEUE_SIZE;
+					up(&workSem);
+				}
+				else {
+					workQueue[writeIndex].offset = pti_rp - dma_0_buffer_base;
+					workQueue[writeIndex].count = num_packets;
+					writeIndex = (writeIndex + 1) % QUEUE_SIZE;
+					up(&workSem);
+				}
+			} // not read
+		} // num_packet
+	} // discard	  
+
+	/* reschedule the timer */
+	ptiTimer.expires = jiffies + DMA_POLLING_INTERVAL;
+	add_timer(&ptiTimer);
+}
+
+#else  
+ 
 static void process_pti_dma(unsigned long data)
 {
     unsigned int pti_rp, pti_wp, pti_base, pti_top, size_first, num_packets,
@@ -542,6 +659,7 @@ static void process_pti_dma(unsigned long data)
 	ptiTimer.expires = jiffies + DMA_POLLING_INTERVAL;
 	add_timer(&ptiTimer);
 }
+#endif
 
 /********************************************************/
 

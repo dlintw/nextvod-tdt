@@ -326,6 +326,7 @@ int LinuxDvbPts(Context_t  *context, unsigned long long int* pts) {
 int LinuxDvbSwitch(Context_t  *context, char * type) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	unsigned char audio = !strcmp("audio", type);
+	unsigned char video = !strcmp("video", type);
 
 	printf("%s::%s a%d\n", FILENAME, __FUNCTION__, audio);
 
@@ -349,6 +350,24 @@ int LinuxDvbSwitch(Context_t  *context, char * type) {
                 		ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_AUTO);
 
 			ioctl(audiofd, AUDIO_PLAY, NULL); 
+			free(Encoding);
+		}
+		if (video && videofd != -1) {
+			char * Encoding = NULL;
+			context->manager->video->Command(context, MANAGER_GETENCODING, &Encoding);
+	
+			ioctl(videofd, VIDEO_STOP ,NULL);
+			ioctl(videofd, VIDEO_CLEAR_BUFFER ,NULL);
+			printf("%s::%s V %s\n", FILENAME, __FUNCTION__, Encoding);
+			if(!strcmp (Encoding, "V_MPEG2"))
+				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
+			else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC") || !strcmp (Encoding, "V_MKV/XVID"))
+				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_MPEG4P2);
+ 			else if(!strcmp (Encoding, "V_MPEG4/ISO/AVC") || !strcmp (Encoding, "V_MPEG2/H264"))
+				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_H264);
+            		else
+                		ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
+			ioctl(videofd, VIDEO_PLAY, NULL); 
 			free(Encoding);
 		}
 	return 0;
@@ -1027,28 +1046,8 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
 			if(!strcmp (Encoding, "V_MPEG2") || !strcmp (Encoding, "V_MPEG2/H264"))
 				mpeg2(PLAYERData, DataLength, Pts);
 			else if(!strcmp (Encoding, "V_MPEG4/ISO/AVC")){
-				switch((int)FrameRate){
-					case 41708:
-						// 23.976fps
-						TimeDelta = 23976;
-						TimeScale = 1000;
-						break;
-					case 40000:
-						//FIXME asyncron!!!
-						// 24.976fps
-						TimeDelta = 25000;
-						TimeScale = 1000;
-						break;
-					case 33367:
-						// 29.976fps
-						TimeDelta = 30000;
-						TimeScale = 1000;
-						break;
-					default:
-						TimeDelta = 23976;
-						TimeScale = 1000;
-						break;
-				}
+				TimeDelta = FrameRate*1000.0;
+				TimeScale = 1000;
 				h264(PLAYERData, DataLength, Pts, Private, PrivateLength,TimeDelta,TimeScale);
 			}
  			else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC") || !strcmp (Encoding, "V_MKV/XVID"))

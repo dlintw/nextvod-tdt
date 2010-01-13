@@ -521,7 +521,7 @@ static void PlayH264Mp4File (Context_t* Context)
 	unsigned long long  AudioPts                = 0ull;
 	int                 AudioChunk              = 0;
 	int                 AudioSample             = 0;
-
+	float		    frameRate		    = 0;
 
 	if (Mp4Info->VideoTrack != -1)
 	{
@@ -530,6 +530,9 @@ static void PlayH264Mp4File (Context_t* Context)
 		VideoTrack->SampleToPlay        = 0;
 		VideoChunk                      = 1;    /* Force to be different from ChunkToPlay so reload pts */
 		VideoTrack->Pts                 = 0ull;
+		/* Quack: find framerate */
+		frameRate			= VideoTrack-> TimeScale;
+		while(frameRate>100.0)frameRate/=10.0;
 	}
 
 	if ((Mp4Info->AudioTrack != -1) && (AudioTrack == NULL))
@@ -541,8 +544,7 @@ static void PlayH264Mp4File (Context_t* Context)
 		AudioChunk                      = 1;    /* Force to be different from ChunkToPlay so reload pts */
 		//AudioTrack->Pts                 = FindHeader (Context);
 	}
-
-
+	
 	while(Context->playback->isPlaying) {
 
 		//IF MOVIE IS PAUSE, WAIT 
@@ -600,8 +602,7 @@ static void PlayH264Mp4File (Context_t* Context)
 	
 						myfseeko(Context, Mp4File, VideoPosition, SEEK_SET);
 						myfread(Context, Data, 1, SampleSize, Mp4File);
-	
-						Context->output->video->Write(Context, Data, SampleSize, VideoPts, VideoTrack->SequenceData, VideoTrack->SequenceDataLength, 0, "video");
+						Context->output->video->Write(Context, Data, SampleSize, VideoPts, VideoTrack->SequenceData, VideoTrack->SequenceDataLength, frameRate, "video");
 	
 						free(Data);
             				}
