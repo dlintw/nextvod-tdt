@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-11 14:24+0100\n"
+"POT-Creation-Date: 2010-01-03 15:10+0100\n"
 "PO-Revision-Date: 2007-08-12 14:17+0200\n"
 "Last-Translator: Mogens Elneff <mogens@elneff.dk>\n"
 "Language-Team: Danish\n"
@@ -493,9 +493,6 @@ msgstr "Frekvens"
 msgid "Vpid"
 msgstr "Vpid"
 
-msgid "Vtype"
-msgstr ""
-
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -616,9 +613,6 @@ msgstr "Levetid"
 msgid "File"
 msgstr "Fil"
 
-msgid "Path"
-msgstr ""
-
 msgid "First day"
 msgstr "Første dag"
 
@@ -697,41 +691,6 @@ msgstr "Afspil"
 msgid "Button$Rewind"
 msgstr "Forfra"
 
-#, fuzzy
-msgid "Rename recording"
-msgstr "Slet optagelse?"
-
-#, fuzzy
-msgid "Date"
-msgstr "Srate"
-
-msgid "Length"
-msgstr ""
-
-msgid "Format"
-msgstr ""
-
-#, fuzzy
-msgid "PES"
-msgstr "VPS"
-
-msgid "TS"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-#, fuzzy
-msgid "Delete marks information?"
-msgstr "Slet optagelse?"
-
-#, fuzzy
-msgid "Delete resume information?"
-msgstr "Slet optagelse?"
-
-msgid "Error while accessing recording!"
-msgstr "Fejl ved læsning af optagelse!"
-
 msgid "Recordings"
 msgstr "Optagelser"
 
@@ -740,6 +699,9 @@ msgstr "Åbn"
 
 msgid "Commands"
 msgstr "Kommandoer"
+
+msgid "Error while accessing recording!"
+msgstr "Fejl ved læsning af optagelse!"
 
 msgid "Delete recording?"
 msgstr "Slet optagelse?"
@@ -840,10 +802,6 @@ msgstr "Menu taste lukker"
 msgid "Setup.OSD$Recording directories"
 msgstr "Optagelser i foldere"
 
-#, fuzzy
-msgid "Setup.OSD$Main menu command position"
-msgstr "Placering af kanalinfo"
-
 msgid "EPG"
 msgstr "EPG"
 
@@ -858,9 +816,6 @@ msgstr "Niveau for EPG fejlrettelse"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Vise gammel EPG info (min)"
-
-msgid "Setup.EPG$Show progress bar"
-msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Indstil system tid"
@@ -1050,18 +1005,6 @@ msgstr "Max. video filstørrelse (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Opdel redigerede filer"
 
-#, fuzzy
-msgid "Setup.Recording$Show date"
-msgstr "Opdel redigerede filer"
-
-#, fuzzy
-msgid "Setup.Recording$Show time"
-msgstr "Pause levetid (d)"
-
-#, fuzzy
-msgid "Setup.Recording$Show length"
-msgstr "Anvend VPS"
-
 msgid "Replay"
 msgstr "Afspilning"
 
@@ -1209,20 +1152,6 @@ msgstr "Overskriv"
 
 msgid "Button$Insert"
 msgstr "Indsæt"
-
-msgid "Rename$Up"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Down"
-msgstr "Ned"
-
-msgid "Rename$Previous"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Next"
-msgstr "Fremad"
 
 msgid "Plugin"
 msgstr "Plugin"

@@ -66,7 +66,6 @@
 #define MAX_LINK_LEVEL  6
 
 bool VfatFileSystem = false;
-bool DirOrderState = false;
 int InstanceId = 0;
 
 cRecordings DeletedRecordings(true);
@@ -827,8 +826,6 @@ int cRecording::GetResume(void) const
 int cRecording::Compare(const cListObject &ListObject) const
 {
   cRecording *r = (cRecording *)&ListObject;
-  if (DirOrderState)
-     return strcasecmp(FileName(), r->FileName());
   return strcasecmp(SortName(), r->SortName());
 }
 
@@ -847,7 +844,7 @@ const char *cRecording::FileName(void) const
   return fileName;
 }
 
-const char *cRecording::Title(char Delimiter, bool NewIndicator, int Level, bool Original) const
+const char *cRecording::Title(char Delimiter, bool NewIndicator, int Level) const
 {
   char New = NewIndicator && IsNew() ? '*' : ' ';
   free(titleBuffer);
@@ -860,7 +857,6 @@ const char *cRecording::Title(char Delimiter, bool NewIndicator, int Level, bool
         s++;
      else
         s = name;
-     if (Original) {
      titleBuffer = strdup(cString::sprintf("%02d.%02d.%02d%c%02d:%02d%c%c%s",
                             t->tm_mday,
                             t->tm_mon + 1,
@@ -871,27 +867,6 @@ const char *cRecording::Title(char Delimiter, bool NewIndicator, int Level, bool
                             New,
                             Delimiter,
                             s));
-        }
-     else {
-        cString RecLength("---");
-        if (Setup.ShowRecLength && FileName()) {
-           int length = cIndexFile::Length(FileName(), IsPesRecording());
-           if (length >= 0)
-              RecLength = cString::sprintf("%d'", length / SecondsToFrames(60, framesPerSecond));
-           }
-        cString RecDate = cString::sprintf("%02d.%02d.%02d", t->tm_mday, t->tm_mon + 1, t->tm_year % 100);
-        cString RecTime = cString::sprintf("%02d:%02d", t->tm_hour, t->tm_min);
-        cString RecDelimiter = cString::sprintf("%c", Delimiter);
-        titleBuffer = strdup(cString::sprintf("%s%s%s%c%s%s%s%s",
-                               (Setup.ShowRecDate ? *RecDate        : ""),
-                               (Setup.ShowRecDate && Setup.ShowRecTime ? *RecDelimiter : ""),
-                               (Setup.ShowRecTime ? *RecTime        : ""),
-                               New,
-                               (Setup.ShowRecTime || Setup.ShowRecDate ? *RecDelimiter : ""),
-                               (Setup.ShowRecLength ? *RecLength    : ""),
-                               (Setup.ShowRecLength ? *RecDelimiter : ""),
-                               s));
-        }
      // let's not display a trailing '~':
      if (!NewIndicator)
         stripspace(titleBuffer);
@@ -1026,42 +1001,6 @@ bool cRecording::Undelete(void)
 void cRecording::ResetResume(void) const
 {
   resume = RESUME_NOT_INITIALIZED;
-}
-
-bool cRecording::Rename(const char *newName)
-{
-  bool result = false;
-  struct tm tm_r;
-  struct tm *t = localtime_r(&start, &tm_r);
-  char *localNewName = ExchangeChars(strdup(newName), true);
-  const char *fmt = isPesRecording ? NAMEFORMATPES : NAMEFORMATTS;
-  int ch = isPesRecording ? priority : channel;
-  int ri = isPesRecording ? lifetime : instanceId;
-  char *newFileName = strdup(cString::sprintf(fmt, VideoDirectory, localNewName, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, ch, ri));
-  free(localNewName);
-  if (strcmp(FileName(), newFileName)) {
-     if (access(newFileName, F_OK) == 0) {
-        isyslog("recording %s already exists", newFileName);
-        }
-     else {
-        isyslog("renaming recording %s to %s", FileName(), newFileName);
-        result = MakeDirs(newFileName, true);
-        if (result)
-           result = RenameVideoFile(FileName(), newFileName);
-        if (result) {
-           free(fileName);
-           fileName = strdup(newFileName);
-           free(name);
-           name = strdup(newName);
-           free(sortBuffer);
-           sortBuffer = NULL;
-           free(titleBuffer);
-           titleBuffer = NULL;
-           }
-        }
-     }
-  free(newFileName);
-  return result;
 }
 
 // --- cRecordings -----------------------------------------------------------
@@ -1839,15 +1778,6 @@ bool GenerateIndex(const char *FileName)
   else
      fprintf(stderr, "'%s' is not a directory\n", FileName);
   return false;
-}
-
-int cIndexFile::Length(const char *FileName, bool IsPesRecording)
-{
-  struct stat buf;
-  cString fullname = cString::sprintf("%s%s", FileName, IsPesRecording ? INDEXFILESUFFIX ".vdr" : INDEXFILESUFFIX);
-  if (FileName && *fullname && access(fullname, R_OK) == 0 && stat(fullname, &buf) == 0)
-     return buf.st_size ? (buf.st_size - 1) / sizeof(tIndexTs) + 1 : 0;
-  return -1;
 }
 
 // --- cFileName -------------------------------------------------------------

@@ -19,7 +19,6 @@
 /* Only Version 3.2 is implemented so far */
 #if DVB_API_VERSION != 3 || DVB_API_VERSION_MINOR != 2
 #error VDR requires Linux DVB driver API version 3.2 or higher!
-#endif
 #else
 #if DVB_API_VERSION < 5
 #error VDR requires Linux DVB driver API version 5.0 or higher!
@@ -59,13 +58,9 @@ public:
 protected:
   int adapter, frontend;
 private:
-  int numProvidedSystems;
-#ifdef __sh__
-  dvbfe_delsys frontendType;
-#else
-  fe_delivery_system frontendType;
   dvb_frontend_info frontendInfo;
-#endif
+  int numProvidedSystems;
+  fe_delivery_system frontendType;
   int fd_dvr, fd_ca;
 public:
   cDvbDevice(int Adapter, int Frontend);
@@ -91,7 +86,6 @@ protected:
   virtual bool SetChannelDevice(const cChannel *Channel, bool LiveView);
 public:
   virtual bool HasLock(int TimeoutMs = 0);
-  virtual void ChannelIsLocked();
 
 // PID handle facilities
 

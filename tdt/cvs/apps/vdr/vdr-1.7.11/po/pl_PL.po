@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-11 14:24+0100\n"
+"POT-Creation-Date: 2010-01-03 15:10+0100\n"
 "PO-Revision-Date: 2008-03-09 12:59+0100\n"
 "Last-Translator: Michael Rakowski <mrak@gmx.de>\n"
 "Language-Team:  Polish\n"
@@ -494,9 +494,6 @@ msgstr "Czêstotliwo¶æ"
 msgid "Vpid"
 msgstr "Vpid"
 
-msgid "Vtype"
-msgstr ""
-
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -617,9 +614,6 @@ msgstr "Czas ¿ycia"
 msgid "File"
 msgstr "Plik"
 
-msgid "Path"
-msgstr ""
-
 msgid "First day"
 msgstr "Pierwszy dzieñ"
 
@@ -698,41 +692,6 @@ msgstr "Odtwórz"
 msgid "Button$Rewind"
 msgstr "Pocz±tek"
 
-#, fuzzy
-msgid "Rename recording"
-msgstr "Usun±æ nagranie?"
-
-#, fuzzy
-msgid "Date"
-msgstr "Srate"
-
-msgid "Length"
-msgstr ""
-
-msgid "Format"
-msgstr ""
-
-#, fuzzy
-msgid "PES"
-msgstr "VPS"
-
-msgid "TS"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-#, fuzzy
-msgid "Delete marks information?"
-msgstr "Usun±æ nagranie?"
-
-#, fuzzy
-msgid "Delete resume information?"
-msgstr "Usun±æ nagranie?"
-
-msgid "Error while accessing recording!"
-msgstr "Bl±d podczas dostêpu do nagrania!"
-
 msgid "Recordings"
 msgstr "Nagrania"
 
@@ -741,6 +700,9 @@ msgstr "Otwórz"
 
 msgid "Commands"
 msgstr "Polecenia"
+
+msgid "Error while accessing recording!"
+msgstr "Bl±d podczas dostêpu do nagrania!"
 
 msgid "Delete recording?"
 msgstr "Usun±æ nagranie?"
@@ -841,10 +803,6 @@ msgstr "Przycisk Menu zamyka"
 msgid "Setup.OSD$Recording directories"
 msgstr "Katalogi nagrañ"
 
-#, fuzzy
-msgid "Setup.OSD$Main menu command position"
-msgstr "Pozycja informacji o kanale"
-
 msgid "EPG"
 msgstr "EPG"
 
@@ -859,9 +817,6 @@ msgstr "Stopieñ poprawek b³êdów EPG"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Czas przechowywania EPG (min)"
-
-msgid "Setup.EPG$Show progress bar"
-msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Ustawiaj czas systemowy"
@@ -1051,18 +1006,6 @@ msgstr "Maksymalny rozmiar pliku (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Dziel edytowane pliki"
 
-#, fuzzy
-msgid "Setup.Recording$Show date"
-msgstr "Dziel edytowane pliki"
-
-#, fuzzy
-msgid "Setup.Recording$Show time"
-msgstr "Czas ¿ycia pauzy (d)"
-
-#, fuzzy
-msgid "Setup.Recording$Show length"
-msgstr "U¿ywaj VPS"
-
 msgid "Replay"
 msgstr "Odtwarzanie"
 
@@ -1210,20 +1153,6 @@ msgstr "Nadpisz"
 
 msgid "Button$Insert"
 msgstr "Wstaw"
-
-msgid "Rename$Up"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Down"
-msgstr "Na dó³"
-
-msgid "Rename$Previous"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Next"
-msgstr "Dalej"
 
 msgid "Plugin"
 msgstr "Wtyczka"

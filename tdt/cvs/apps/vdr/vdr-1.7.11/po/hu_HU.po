@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-11 14:24+0100\n"
+"POT-Creation-Date: 2010-01-03 15:10+0100\n"
 "PO-Revision-Date: 2007-12-01 21:42+0200\n"
 "Last-Translator: István Füley <ifuley@tigercomp.ro>\n"
 "Language-Team: Hungarian\n"
@@ -496,9 +496,6 @@ msgstr "Frekvencia"
 msgid "Vpid"
 msgstr "Vpid"
 
-msgid "Vtype"
-msgstr ""
-
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -619,9 +616,6 @@ msgstr "Élettartam"
 msgid "File"
 msgstr "File"
 
-msgid "Path"
-msgstr ""
-
 msgid "First day"
 msgstr "Elsõ nap"
 
@@ -700,41 +694,6 @@ msgstr "Lejátszani"
 msgid "Button$Rewind"
 msgstr "Vissza az elejére"
 
-#, fuzzy
-msgid "Rename recording"
-msgstr "Felvétel törlése?"
-
-#, fuzzy
-msgid "Date"
-msgstr "Srate"
-
-msgid "Length"
-msgstr ""
-
-msgid "Format"
-msgstr ""
-
-#, fuzzy
-msgid "PES"
-msgstr "VPS"
-
-msgid "TS"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-#, fuzzy
-msgid "Delete marks information?"
-msgstr "Felvétel törlése?"
-
-#, fuzzy
-msgid "Delete resume information?"
-msgstr "Felvétel törlése?"
-
-msgid "Error while accessing recording!"
-msgstr "Hiba a felvétel hozzáférésénél"
-
 msgid "Recordings"
 msgstr "Felvett adások"
 
@@ -743,6 +702,9 @@ msgstr "Kinyitni"
 
 msgid "Commands"
 msgstr "Parancsok"
+
+msgid "Error while accessing recording!"
+msgstr "Hiba a felvétel hozzáférésénél"
 
 msgid "Delete recording?"
 msgstr "Felvétel törlése?"
@@ -843,10 +805,6 @@ msgstr "A menü gomb zár"
 msgid "Setup.OSD$Recording directories"
 msgstr "Felvételek listája"
 
-#, fuzzy
-msgid "Setup.OSD$Main menu command position"
-msgstr "Adásinformáció poziciója"
-
 msgid "EPG"
 msgstr "EPG"
 
@@ -861,9 +819,6 @@ msgstr "EPG hibaelhárítás"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Régi EPG adatok megmutatása (perc)"
-
-msgid "Setup.EPG$Show progress bar"
-msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Az idõ beállítása"
@@ -1053,18 +1008,6 @@ msgstr "Max. video File-terjedelem (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Feldolgozott File-k felosztása"
 
-#, fuzzy
-msgid "Setup.Recording$Show date"
-msgstr "Feldolgozott File-k felosztása"
-
-#, fuzzy
-msgid "Setup.Recording$Show time"
-msgstr "Szünet élettartama"
-
-#, fuzzy
-msgid "Setup.Recording$Show length"
-msgstr "VPS-t használni"
-
 msgid "Replay"
 msgstr "Lejátszás"
 
@@ -1212,20 +1155,6 @@ msgstr "Átírni"
 
 msgid "Button$Insert"
 msgstr "Beilleszteni"
-
-msgid "Rename$Up"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Down"
-msgstr "Le"
-
-msgid "Rename$Previous"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Next"
-msgstr "Elõre"
 
 msgid "Plugin"
 msgstr "Plugin"

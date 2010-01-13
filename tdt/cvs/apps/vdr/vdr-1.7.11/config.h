@@ -36,10 +36,6 @@
 // plugins to work with newer versions of the core VDR as long as no
 // VDR header files have changed.
 
-#define LIEMIKUUTIO  129
-
-#define MAINMENUHOOKSVERSNUM 1.0
-
 #define MAXPRIORITY 99
 #define MAXLIFETIME 99
 
@@ -277,7 +273,6 @@ public:
   int InitialChannel;
   int InitialVolume;
   int EmergencyExit;
-  int ShowRecDate, ShowRecTime, ShowRecLength, ShowProgressBar, MenuCmdPosition;
   int __EndData__;
   cSetup(void);
   cSetup& operator= (const cSetup &s);

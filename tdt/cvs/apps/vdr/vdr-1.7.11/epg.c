@@ -443,6 +443,8 @@ void cEvent::Dump(FILE *f, const char *Prefix, bool InfoOnly) const
      if (components) {
         for (int i = 0; i < components->NumComponents(); i++) {
             tComponent *p = components->Component(i);
+            if (!Setup.UseDolbyDigital && p->stream == 0x02 && p->type == 0x05)
+               continue;
             fprintf(f, "%sX %s\n", Prefix, *p->ToString());
             }
         }

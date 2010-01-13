@@ -77,7 +77,6 @@ cOsdMenu::cOsdMenu(const char *Title, int c0, int c1, int c2, int c3, int c4)
 {
   isMenu = true;
   digit = 0;
-  key_nr = -1;
   hasHotkeys = false;
   title = NULL;
   SetTitle(Title);
@@ -120,7 +119,7 @@ const char *cOsdMenu::hk(const char *s)
         digit = -1; // prevents automatic hotkeys - input already has them
      if (digit >= 0) {
         digit++;
-        buffer = cString::sprintf(" %2d%s %s", digit, (digit > 9) ? "" : " ", s);
+        buffer = cString::sprintf(" %c %s", (digit < 10) ? '0' + digit : ' ' , s);
         s = buffer;
         }
      }
@@ -450,62 +449,20 @@ void cOsdMenu::Mark(void)
      }
 }
 
-#define MENUKEY_TIMEOUT 1500
-
 eOSState cOsdMenu::HotKey(eKeys Key)
 {
-  bool match = false;
-  bool highlight = false;
-  int  item_nr;
-  int  i;
-
-  if (Key == kNone) {
-     if (lastActivity.TimedOut())
-        Key = kOk;
-     else
-        return osContinue;
-     }
-  else {
-     lastActivity.Set(MENUKEY_TIMEOUT);
-     }
-  for (cOsdItem *item = Last(); item; item = Prev(item)) {
+  for (cOsdItem *item = First(); item; item = Next(item)) {
       const char *s = item->Text();
-      i = 0;
-      item_nr = 0;
-      if (s && (s = skipspace(s)) != '\0' && '0' <= s[i] && s[i] <= '9') {
-         do {
-            item_nr = item_nr * 10 + (s[i] - '0');
-            }
-         while ( !((s[++i] == '\t')||(s[i] == ' ')) && (s[i] != '\0') && ('0' <= s[i]) && (s[i] <= '9'));
-         if ((Key == kOk) && (item_nr == key_nr)) {
+      if (s && (s = skipspace(s)) != NULL) {
+         if (*s == Key - k1 + '1') {
             current = item->Index();
             RefreshCurrent();
             Display();
             cRemote::Put(kOk, true);
-            key_nr = -1;
             break;
-            }
-         else if (Key != kOk) {
-            if (!highlight && (item_nr == (Key - k0))) {
-               highlight = true;
-               current = item->Index();
-               }
-            if (!match && (key_nr == -1) && ((item_nr / 10) == (Key - k0))) {
-               match = true;
-               key_nr = (Key - k0);
-               }
-            else if (((key_nr == -1) && (item_nr == (Key - k0))) || (!match && (key_nr >= 0) && (item_nr == (10 * key_nr + Key - k0)))) {
-               current = item->Index();
-               cRemote::Put(kOk, true);
-               key_nr = -1;
-               break;
-               }
             }
          }
       }
-  if ((!match) && (Key != kNone)) {
-     key_nr = -1;
-     }
   return osContinue;
 }
 
@@ -544,8 +501,8 @@ eOSState cOsdMenu::ProcessKey(eKeys Key)
         }
      }
   switch (Key) {
-    case kNone:
-    case k0...k9: return hasHotkeys ? HotKey(Key) : osUnknown;
+    case k0:      return osUnknown;
+    case k1...k9: return hasHotkeys ? HotKey(Key) : osUnknown;
     case kUp|k_Repeat:
     case kUp:   CursorUp();   break;
     case kDown|k_Repeat:

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-11 14:24+0100\n"
+"POT-Creation-Date: 2010-01-03 15:10+0100\n"
 "PO-Revision-Date: 2007-08-12 14:17+0200\n"
 "Last-Translator: Dimitrios Dimitrakos <mail@dimitrios.de>\n"
 "Language-Team: Greek\n"
@@ -493,9 +493,6 @@ msgstr "Συχνότητα"
 msgid "Vpid"
 msgstr "Bίντεο PID"
 
-msgid "Vtype"
-msgstr ""
-
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -616,9 +613,6 @@ msgstr "Διέρκεια Παραμονής"
 msgid "File"
 msgstr "Αρχείο"
 
-msgid "Path"
-msgstr ""
-
 msgid "First day"
 msgstr "Πρώτη μέρα"
 
@@ -697,41 +691,6 @@ msgstr "Αναπαραγωγή"
 msgid "Button$Rewind"
 msgstr "Μεταφορά στην Αρχή"
 
-#, fuzzy
-msgid "Rename recording"
-msgstr "Διαγραφή εγγραφής?"
-
-#, fuzzy
-msgid "Date"
-msgstr "Srate"
-
-msgid "Length"
-msgstr ""
-
-msgid "Format"
-msgstr ""
-
-#, fuzzy
-msgid "PES"
-msgstr "VPS"
-
-msgid "TS"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-#, fuzzy
-msgid "Delete marks information?"
-msgstr "Διαγραφή εγγραφής?"
-
-#, fuzzy
-msgid "Delete resume information?"
-msgstr "Διαγραφή εγγραφής?"
-
-msgid "Error while accessing recording!"
-msgstr "Πρόβλημα στήν προσπέλαση εγγραφής!"
-
 msgid "Recordings"
 msgstr "Εγγραφές"
 
@@ -740,6 +699,9 @@ msgstr "Ανοιγμα"
 
 msgid "Commands"
 msgstr "Εντολές"
+
+msgid "Error while accessing recording!"
+msgstr "Πρόβλημα στήν προσπέλαση εγγραφής!"
 
 msgid "Delete recording?"
 msgstr "Διαγραφή εγγραφής?"
@@ -840,10 +802,6 @@ msgstr ""
 msgid "Setup.OSD$Recording directories"
 msgstr "Φάκελοι εγγραφών"
 
-#, fuzzy
-msgid "Setup.OSD$Main menu command position"
-msgstr "Θέση πληροφορίας καναλιών"
-
 msgid "EPG"
 msgstr "Ηλεκτρονικός οδηγός προγράμματος"
 
@@ -858,9 +816,6 @@ msgstr "Βαθμός διόρθωσης οδηγού EPG"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Ένδειξη ξεπερασμένων πληροφοριών (λεπτά)"
-
-msgid "Setup.EPG$Show progress bar"
-msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Συντονισμός ώρας υπολογιστή"
@@ -1050,18 +1005,6 @@ msgstr "Μέγιστο μέγεθος αρχείου (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Διαμέλισμός επεξεργασμένων αρχείων"
 
-#, fuzzy
-msgid "Setup.Recording$Show date"
-msgstr "Διαμέλισμός επεξεργασμένων αρχείων"
-
-#, fuzzy
-msgid "Setup.Recording$Show time"
-msgstr "Διάρκεια διαλείματος"
-
-#, fuzzy
-msgid "Setup.Recording$Show length"
-msgstr "Χρήση VPS"
-
 msgid "Replay"
 msgstr "Αναπαραγωγή"
 
@@ -1209,19 +1152,6 @@ msgstr "Αντικατάσταση"
 
 msgid "Button$Insert"
 msgstr "Εισαγωγή"
-
-msgid "Rename$Up"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Down"
-msgstr "Κάτω"
-
-msgid "Rename$Previous"
-msgstr ""
-
-msgid "Rename$Next"
-msgstr ""
 
 msgid "Plugin"
 msgstr "Επέκταση"

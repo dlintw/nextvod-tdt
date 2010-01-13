@@ -12,7 +12,7 @@
 // --- cTransfer -------------------------------------------------------------
 
 cTransfer::cTransfer(tChannelID ChannelID, int VPid, const int *APids, const int *DPids, const int *SPids)
-:cReceiver(ChannelID, -1, VPid, APids, DPids, SPids)
+:cReceiver(ChannelID, -1, VPid, APids, Setup.UseDolbyDigital ? DPids : NULL, SPids)
 {
   patPmtGenerator.SetChannel(Channels.GetByChannelID(ChannelID));
 }

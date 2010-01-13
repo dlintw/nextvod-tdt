@@ -341,9 +341,6 @@ void cPatFilter::Process(u_short Pid, u_char Tid, const u_char *Data, int Length
         char DLangs[MAXDPIDS][MAXLANGCODE2] = { "" };
         char SLangs[MAXSPIDS][MAXLANGCODE2] = { "" };
         int Tpid = 0;
-        char TLangs[MAXTPAGES][MAXLANGCODE2] = { "" };
-        int TPages[MAXTPAGES + 1] = { 0 };
-        int NumTPages = 0;
         int NumApids = 0;
         int NumDpids = 0;
         int NumSpids = 0;
@@ -429,19 +426,8 @@ void cPatFilter::Process(u_short Pid, u_char Tid, const u_char *Data, int Length
                                     NumSpids++;
                                     }
                                  break;
-                            case SI::TeletextDescriptorTag: {
+                            case SI::TeletextDescriptorTag:
                                  Tpid = esPid;
-                                 SI::TeletextDescriptor *sd = (SI::TeletextDescriptor *)d;
-                                 SI::TeletextDescriptor::Teletext ttxt;
-                                 for (SI::Loop::Iterator it; sd->teletextLoop.getNext(ttxt, it); ) {
-                                     if ((NumTPages < MAXTPAGES) && ttxt.languageCode[0] && ((ttxt.getTeletextType() == 0x02) || (ttxt.getTeletextType() == 0x05))) {
-                                        char *s = TLangs[NumTPages];
-                                        strn0cpy(s, I18nNormalizeLanguageCode(ttxt.languageCode), MAXLANGCODE1);
-                                        TPages[NumTPages] = (ttxt.getTeletextPageNumber() & 0xff) | ((ttxt.getTeletextMagazineNumber() & 0xff) << 8) | ((ttxt.getTeletextType() & 0xff) << 16);
-                                        }
-                                     NumTPages++;
-                                     }
-                                 }
                                  break;
                             case SI::ISO639LanguageDescriptorTag: {
                                  SI::ISO639LanguageDescriptor *ld = (SI::ISO639LanguageDescriptor *)d;
@@ -472,7 +458,6 @@ void cPatFilter::Process(u_short Pid, u_char Tid, const u_char *Data, int Length
             }
         if (Setup.UpdateChannels >= 2) {
            Channel->SetPids(Vpid, Ppid, Vtype, Apids, ALangs, Dpids, DLangs, Spids, SLangs, Tpid);
-           Channel->SetTPidData(TLangs, TPages);
            Channel->SetCaIds(CaDescriptors->CaIds());
            Channel->SetSubtitlingDescriptors(SubtitlingTypes, CompositionPageIds, AncillaryPageIds);
            }
