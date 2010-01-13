@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-11 14:24+0100\n"
+"POT-Creation-Date: 2010-01-03 15:10+0100\n"
 "PO-Revision-Date: 2008-02-28 00:33+0100\n"
 "Last-Translator: Oktay Yolgeçen <oktay_73@yahoo.de>\n"
 "Language-Team: Turkish\n"
@@ -493,9 +493,6 @@ msgstr "Frekans"
 msgid "Vpid"
 msgstr "Vpid"
 
-msgid "Vtype"
-msgstr ""
-
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -616,9 +613,6 @@ msgstr "Ömrü"
 msgid "File"
 msgstr "Kütük"
 
-msgid "Path"
-msgstr ""
-
 msgid "First day"
 msgstr "Ýlk gün"
 
@@ -697,41 +691,6 @@ msgstr "Göster"
 msgid "Button$Rewind"
 msgstr "Baslangýç"
 
-#, fuzzy
-msgid "Rename recording"
-msgstr "Kayýtý sil?"
-
-#, fuzzy
-msgid "Date"
-msgstr "Srate"
-
-msgid "Length"
-msgstr ""
-
-msgid "Format"
-msgstr ""
-
-#, fuzzy
-msgid "PES"
-msgstr "VPS"
-
-msgid "TS"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-#, fuzzy
-msgid "Delete marks information?"
-msgstr "Kayýtý sil?"
-
-#, fuzzy
-msgid "Delete resume information?"
-msgstr "Kayýtý sil?"
-
-msgid "Error while accessing recording!"
-msgstr "Kayýt okuma hatasý!"
-
 msgid "Recordings"
 msgstr "Kayýtlar"
 
@@ -740,6 +699,9 @@ msgstr "Aç"
 
 msgid "Commands"
 msgstr "Komutlar"
+
+msgid "Error while accessing recording!"
+msgstr "Kayýt okuma hatasý!"
 
 msgid "Delete recording?"
 msgstr "Kayýtý sil?"
@@ -840,10 +802,6 @@ msgstr "Menü düðmesi kapatýyor"
 msgid "Setup.OSD$Recording directories"
 msgstr "Kayýt dizinleri"
 
-#, fuzzy
-msgid "Setup.OSD$Main menu command position"
-msgstr "Kanal bilgi pozisyonu"
-
 msgid "EPG"
 msgstr "EPG"
 
@@ -858,9 +816,6 @@ msgstr "EPG hata çözümleme ölçüsü"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Eski EPG göster (dak)"
-
-msgid "Setup.EPG$Show progress bar"
-msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Bilgisayar saatini ayarla"
@@ -1050,18 +1005,6 @@ msgstr "Maksimum Video kütük büyüklügü (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Düzenlenmiþ kütükleri ayýr"
 
-#, fuzzy
-msgid "Setup.Recording$Show date"
-msgstr "Düzenlenmiþ kütükleri ayýr"
-
-#, fuzzy
-msgid "Setup.Recording$Show time"
-msgstr "Duraklama ömrü (gün)"
-
-#, fuzzy
-msgid "Setup.Recording$Show length"
-msgstr "VPS kullan"
-
 msgid "Replay"
 msgstr "Tekrar"
 
@@ -1209,20 +1152,6 @@ msgstr "Üstüne yaz"
 
 msgid "Button$Insert"
 msgstr "Ekle"
-
-msgid "Rename$Up"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Down"
-msgstr "Aþaðý"
-
-msgid "Rename$Previous"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Next"
-msgstr "Sonraki"
 
 msgid "Plugin"
 msgstr "Eklenti"

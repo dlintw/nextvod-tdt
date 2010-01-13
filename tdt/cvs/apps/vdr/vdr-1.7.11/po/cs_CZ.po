@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-11 14:24+0100\n"
+"POT-Creation-Date: 2010-01-03 15:10+0100\n"
 "PO-Revision-Date: 2008-02-28 15:00+0200\n"
 "Last-Translator: Vladimír Bárta <vladimir.barta@k2atmitec.cz>, Jiøí Dobrý <jdobry@centrum.cz>\n"
 "Language-Team: Czech\n"
@@ -494,9 +494,6 @@ msgstr "Frekvence"
 msgid "Vpid"
 msgstr "Vpid"
 
-msgid "Vtype"
-msgstr ""
-
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -617,9 +614,6 @@ msgstr "®ivotnost"
 msgid "File"
 msgstr "Soubor"
 
-msgid "Path"
-msgstr ""
-
 msgid "First day"
 msgstr "První den"
 
@@ -698,41 +692,6 @@ msgstr "Pøehrát"
 msgid "Button$Rewind"
 msgstr "Na zaèátek"
 
-#, fuzzy
-msgid "Rename recording"
-msgstr "Smazat nahrávku?"
-
-#, fuzzy
-msgid "Date"
-msgstr "Srate"
-
-msgid "Length"
-msgstr ""
-
-msgid "Format"
-msgstr ""
-
-#, fuzzy
-msgid "PES"
-msgstr "VPS"
-
-msgid "TS"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-#, fuzzy
-msgid "Delete marks information?"
-msgstr "Smazat nahrávku?"
-
-#, fuzzy
-msgid "Delete resume information?"
-msgstr "Smazat nahrávku?"
-
-msgid "Error while accessing recording!"
-msgstr "Chyba pøi pøístupu k nahrávkám!"
-
 msgid "Recordings"
 msgstr "Nahrávky"
 
@@ -741,6 +700,9 @@ msgstr "Otevøít"
 
 msgid "Commands"
 msgstr "Pøíkazy"
+
+msgid "Error while accessing recording!"
+msgstr "Chyba pøi pøístupu k nahrávkám!"
 
 msgid "Delete recording?"
 msgstr "Smazat nahrávku?"
@@ -841,10 +803,6 @@ msgstr "Klávesa Menu zavírá"
 msgid "Setup.OSD$Recording directories"
 msgstr "Seznam nahrávek"
 
-#, fuzzy
-msgid "Setup.OSD$Main menu command position"
-msgstr "Pozice informace o kanálu"
-
 msgid "EPG"
 msgstr "EPG"
 
@@ -859,9 +817,6 @@ msgstr "EPG úroveò chyb"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Ukazovat star¹í EPG data (min)"
-
-msgid "Setup.EPG$Show progress bar"
-msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "Nastavit systémový èas"
@@ -1051,18 +1006,6 @@ msgstr "Maximální velikost nahrávky (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Dìlit editované soubory"
 
-#, fuzzy
-msgid "Setup.Recording$Show date"
-msgstr "Dìlit editované soubory"
-
-#, fuzzy
-msgid "Setup.Recording$Show time"
-msgstr "®ivotnost pøeru¹ení (d)"
-
-#, fuzzy
-msgid "Setup.Recording$Show length"
-msgstr "Pou¾ívat VPS"
-
 msgid "Replay"
 msgstr "Pøehrávání"
 
@@ -1210,20 +1153,6 @@ msgstr "Pøepsat"
 
 msgid "Button$Insert"
 msgstr "Vlo¾it"
-
-msgid "Rename$Up"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Down"
-msgstr "Dolù"
-
-msgid "Rename$Previous"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Next"
-msgstr "Dále"
 
 msgid "Plugin"
 msgstr "Modul"

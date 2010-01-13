@@ -15,14 +15,13 @@ CXX      ?= g++
 CXXFLAGS ?= -g -O2 -Wall -Woverloaded-virtual -Wno-parentheses
 
 LSIDIR   = ./libsi
-DESTDIR ?= $(prefix)
-#PREFIX  ?= /usr/local
-MANDIR   = /usr/local/man
-BINDIR   = /usr/local/bin
+DESTDIR ?=
+PREFIX  ?= /usr/local
+MANDIR   = $(PREFIX)/share/man
+BINDIR   = $(PREFIX)/bin
 LOCDIR   = ./locale
-LIBS     = -ljpeg -lpthread -ldl -lrt -lfreetype -lfontconfig
-
-INCLUDES = -I $(prefix)/usr/include/freetype2
+LIBS     = -ljpeg -lpthread -ldl -lcap -lrt -lfreetype -lfontconfig
+INCLUDES = -I/usr/include/freetype2
 
 PLUGINDIR= ./PLUGINS
 PLUGINLIBDIR= $(PLUGINDIR)/lib
@@ -65,7 +64,7 @@ DEFINES += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
 
 DEFINES += -DVIDEODIR=\"$(VIDEODIR)\"
 DEFINES += -DCONFDIR=\"$(CONFDIR)\"
-DEFINES += -DPLUGINDIR=\"$(PLUGINLIBDIR_RUN)\"
+DEFINES += -DPLUGINDIR=\"$(PLUGINLIBDIR)\"
 DEFINES += -DLOCDIR=\"$(LOCDIR)\"
 
 # The version numbers of VDR and the plugin API (taken from VDR's "config.h"):
@@ -164,8 +163,8 @@ install: install-bin install-conf install-doc install-plugins install-i18n
 # VDR binary:
 
 install-bin: vdr
-	@mkdir -p $(BINDIR)
-	@cp vdr runvdr $(BINDIR)
+	@mkdir -p $(DESTDIR)$(BINDIR)
+	@cp --remove-destination vdr runvdr svdrpsend.pl $(DESTDIR)$(BINDIR)
 
 # Configuration files:
 
@@ -187,8 +186,8 @@ install-doc:
 # Plugins:
 
 install-plugins: plugins
-	@mkdir -p $(prefix)/$(PLUGINLIBDIR_RUN)
-	@cp --remove-destination $(PLUGINDIR)/lib/lib*-*.so.$(APIVERSION) $(prefix)/$(PLUGINLIBDIR_RUN)
+	@mkdir -p $(DESTDIR)$(PLUGINLIBDIR)
+	@cp --remove-destination $(PLUGINDIR)/lib/lib*-*.so.$(APIVERSION) $(DESTDIR)$(PLUGINLIBDIR)
 
 # Source documentation:
 

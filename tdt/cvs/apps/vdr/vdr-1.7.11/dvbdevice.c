@@ -35,11 +35,7 @@ private:
   int tuneTimeout;
   int lockTimeout;
   time_t lastTimeoutReport;
-#ifdef __sh__
-  dvbfe_delsys frontendType;
-#else
   fe_delivery_system frontendType;
-#endif
   cChannel channel;
   const char *diseqcCommands;
   eTunerStatus tunerStatus;
@@ -50,22 +46,14 @@ private:
   bool SetFrontend(void);
   virtual void Action(void);
 public:
-#ifdef __sh__
-  cDvbTuner(int Fd_Frontend, int Adapter, int Frontend, dvbfe_delsys FrontendType);
-#else
   cDvbTuner(int Fd_Frontend, int Adapter, int Frontend, fe_delivery_system FrontendType);
-#endif
   virtual ~cDvbTuner();
   bool IsTunedTo(const cChannel *Channel) const;
   void Set(const cChannel *Channel);
   bool Locked(int TimeoutMs = 0);
   };
 
-#ifdef __sh__
-cDvbTuner::cDvbTuner(int Fd_Frontend, int Adapter, int Frontend, dvbfe_delsys FrontendType)
-#else
 cDvbTuner::cDvbTuner(int Fd_Frontend, int Adapter, int Frontend, fe_delivery_system FrontendType)
-#endif
 {
   fd_frontend = Fd_Frontend;
   adapter = Adapter;
@@ -76,11 +64,7 @@ cDvbTuner::cDvbTuner(int Fd_Frontend, int Adapter, int Frontend, fe_delivery_sys
   lastTimeoutReport = 0;
   diseqcCommands = NULL;
   tunerStatus = tsIdle;
-#ifdef __sh__
-  if (frontendType & (DVBFE_DELSYS_DVBS | DVBFE_DELSYS_DVBS2))
-#else
   if (frontendType == SYS_DVBS || frontendType == SYS_DVBS2)
-#endif
      CHECK(ioctl(fd_frontend, FE_SET_VOLTAGE, SEC_VOLTAGE_13)); // must explicitly turn on LNB power
   SetDescription("tuner on frontend %d/%d", adapter, frontend);
   Start();
@@ -111,9 +95,7 @@ bool cDvbTuner::IsTunedTo(const cChannel *Channel) const
   ST("CST", Modulation);
   ST(" S ", RollOff);
   ST(" S ", System);
-#ifndef __sh__
   ST("CS ", Srate);
-#endif
   ST("  T", Transmission);
   ST("  T", Hierarchy);
   return true;
@@ -169,7 +151,12 @@ static unsigned int FrequencyToHz(unsigned int f)
 
 bool cDvbTuner::SetFrontend(void)
 {
-#ifndef __sh__
+#ifdef __sh__
+/* Function downgraded to LinuxDvb Version 3.2
+ * the __sh__ defindes should be changed to #ifdef VERSION_3_2 sometimes in the future
+ */
+  dvbfe_params Frontend;
+#else
 #define MAXFRONTENDCMDS 16
 #define SETCMD(c, d) { Frontend[CmdSeq.num].cmd = (c);\
                        Frontend[CmdSeq.num].u.data = (d);\
@@ -179,7 +166,9 @@ bool cDvbTuner::SetFrontend(void)
                           }\
                      }
   dtv_property Frontend[MAXFRONTENDCMDS];
+#endif
   memset(&Frontend, 0, sizeof(Frontend));
+#ifndef __sh__
   dtv_properties CmdSeq;
   memset(&CmdSeq, 0, sizeof(CmdSeq));
   CmdSeq.props = Frontend;
@@ -189,14 +178,9 @@ bool cDvbTuner::SetFrontend(void)
      return false;
      }
   CmdSeq.num = 0;
+#endif
 
   if (frontendType == SYS_DVBS || frontendType == SYS_DVBS2) {
-#else
-  dvbfe_params Frontend;
-  memset(&Frontend, 0, sizeof(Frontend));
-
-  if (frontendType & (DVBFE_DELSYS_DVBS | DVBFE_DELSYS_DVBS2)) {
-#endif
      unsigned int frequency = channel.Frequency();
      if (Setup.DiSEqC) {
         cDiseqc *diseqc = Diseqcs.Get(channel.Source(), channel.Frequency(), channel.Polarization());
@@ -251,67 +235,53 @@ bool cDvbTuner::SetFrontend(void)
         }
      frequency = abs(frequency); // Allow for C-band, where the frequency is less than the LOF
 
+     // DVB-S/DVB-S2 (common parts)
 #ifdef __sh__
      Frontend.delivery = dvbfe_delsys(channel.System());
      Frontend.frequency = frequency * 1000UL;
      Frontend.inversion = fe_spectral_inversion_t(channel.Inversion());
-     if (Frontend.delivery == DVBFE_DELSYS_DVBS) {
-        //Frontend.delsys.dvbs.modulation = dvbfe_modulation(channel.Modulation());
-        Frontend.delsys.dvbs.modulation = DVBFE_MOD_QPSK;
-        Frontend.delsys.dvbs.symbol_rate = channel.Srate() * 1000UL;
-        Frontend.delsys.dvbs.fec = dvbfe_fec(channel.CoderateH());
-        printf("DVB-S: modulation=%u, symbol_rate=%u, fec=%u\n", Frontend.delsys.dvbs.modulation, Frontend.delsys.dvbs.symbol_rate, Frontend.delsys.dvbs.fec);
 #else
-     // DVB-S/DVB-S2 (common parts)
      SETCMD(DTV_DELIVERY_SYSTEM, channel.System());
      SETCMD(DTV_FREQUENCY, frequency * 1000UL);
-     SETCMD(DTV_MODULATION, DVBFE_MOD_QPSK);
      SETCMD(DTV_MODULATION, channel.Modulation());
      SETCMD(DTV_SYMBOL_RATE, channel.Srate() * 1000UL);
      SETCMD(DTV_INNER_FEC, channel.CoderateH());
      SETCMD(DTV_INVERSION, channel.Inversion());
+#endif
      if (channel.System() == SYS_DVBS2) {
         if (frontendType == SYS_DVBS2) {
            // DVB-S2
+#ifdef __sh__
+           Frontend.delsys.dvbs2.modulation = dvbfe_modulation(channel.Modulation());
+           Frontend.delsys.dvbs2.symbol_rate = channel.Srate() * 1000UL;
+           Frontend.delsys.dvbs2.fec = dvbfe_fec(channel.CoderateH());
+           Frontend.delsys.dvbs2.rolloff = dvbfe_rolloff(channel.RollOff());
+#else
            SETCMD(DTV_PILOT, PILOT_AUTO);
            SETCMD(DTV_ROLLOFF, channel.RollOff());
+#endif
            }
         else {
            esyslog("ERROR: frontend %d/%d doesn't provide DVB-S2", adapter, frontend);
            return false;
            }
-#endif
         }
      else {
-#ifdef __sh__
-        Frontend.delsys.dvbs2.modulation = dvbfe_modulation(channel.Modulation());
-        Frontend.delsys.dvbs2.symbol_rate = channel.Srate() * 1000UL;
-        Frontend.delsys.dvbs2.fec = dvbfe_fec(channel.CoderateH());
-        Frontend.delsys.dvbs2.rolloff = dvbfe_rolloff(channel.RollOff());
-        printf("DVB-S2: modulation=%u, symbol_rate=%u, fec=%u\n", Frontend.delsys.dvbs2.modulation, Frontend.delsys.dvbs2.symbol_rate, Frontend.delsys.dvbs2.fec);
-#else
         // DVB-S
+#ifdef __sh__
+        Frontend.delsys.dvbs.modulation = dvbfe_modulation(channel.Modulation());
+        Frontend.delsys.dvbs.symbol_rate = channel.Srate() * 1000UL;
+        Frontend.delsys.dvbs.fec = dvbfe_fec(channel.CoderateH());
+        Frontend.delsys.dvbs.rolloff = dvbfe_rolloff(ROLLOFF_35);
+#else
         SETCMD(DTV_ROLLOFF, ROLLOFF_35); // DVB-S always has a ROLLOFF of 0.35
 #endif
         }
 
      tuneTimeout = DVBS_TUNE_TIMEOUT;
      lockTimeout = DVBS_LOCK_TIMEOUT;
-#ifdef __sh__
-     dvbfe_info feinfo;
-     feinfo.delivery = Frontend.delivery;
-     CHECK(ioctl(fd_frontend, DVBFE_GET_INFO, &feinfo)); //switch system
-#endif
      }
-#ifdef __sh__
-  else if (frontendType & DVBFE_DELSYS_DVBC) {
-     Frontend.delivery = DVBFE_DELSYS_DVBC;
-     Frontend.frequency = FrequencyToHz(channel.Frequency());
-     Frontend.inversion = fe_spectral_inversion_t(channel.Inversion());
-     Frontend.delsys.dvbc.symbol_rate = channel.Srate() * 1000UL;
-     Frontend.delsys.dvbc.fec = dvbfe_fec(channel.CoderateH());
-     Frontend.delsys.dvbc.modulation = dvbfe_modulation(channel.Modulation());
-#else
+#ifndef __sh__
   else if (frontendType == SYS_DVBC_ANNEX_AC || frontendType == SYS_DVBC_ANNEX_B) {
      // DVB-C
      SETCMD(DTV_DELIVERY_SYSTEM, frontendType);
@@ -320,29 +290,10 @@ bool cDvbTuner::SetFrontend(void)
      SETCMD(DTV_SYMBOL_RATE, channel.Srate() * 1000UL);
      SETCMD(DTV_INNER_FEC, channel.CoderateH());
      SETCMD(DTV_MODULATION, channel.Modulation());
-#endif
 
      tuneTimeout = DVBC_TUNE_TIMEOUT;
      lockTimeout = DVBC_LOCK_TIMEOUT;
-#ifdef __sh__
-     dvbfe_info feinfo;
-     feinfo.delivery = Frontend.delivery;
-     CHECK(ioctl(fd_frontend, DVBFE_GET_INFO, &feinfo)); //switch system
-#endif
      }
-#ifdef __sh__
-  else if (frontendType & DVBFE_DELSYS_DVBT) {
-     Frontend.delivery = DVBFE_DELSYS_DVBT;
-     Frontend.frequency = FrequencyToHz(channel.Frequency());
-     Frontend.inversion = fe_spectral_inversion_t(channel.Inversion());
-     Frontend.delsys.dvbt.bandwidth = dvbfe_bandwidth(channel.Bandwidth());
-     Frontend.delsys.dvbt.code_rate_HP = dvbfe_fec(channel.CoderateH());
-     Frontend.delsys.dvbt.code_rate_LP = dvbfe_fec(channel.CoderateL());
-     Frontend.delsys.dvbt.constellation = dvbfe_modulation(channel.Modulation());
-     Frontend.delsys.dvbt.transmission_mode = dvbfe_transmission_mode(channel.Transmission());
-     Frontend.delsys.dvbt.guard_interval = dvbfe_guard_interval(channel.Guard());
-     Frontend.delsys.dvbt.hierarchy = dvbfe_hierarchy(channel.Hierarchy());
-#else
   else if (frontendType == SYS_DVBT) {
      // DVB-T
      SETCMD(DTV_DELIVERY_SYSTEM, frontendType);
@@ -355,29 +306,36 @@ bool cDvbTuner::SetFrontend(void)
      SETCMD(DTV_TRANSMISSION_MODE, channel.Transmission());
      SETCMD(DTV_GUARD_INTERVAL, channel.Guard());
      SETCMD(DTV_HIERARCHY, channel.Hierarchy());
-#endif
+
      tuneTimeout = DVBT_TUNE_TIMEOUT;
      lockTimeout = DVBT_LOCK_TIMEOUT;
-#ifdef __sh__
-     dvbfe_info feinfo;
-     feinfo.delivery = Frontend.delivery;
-     CHECK(ioctl(fd_frontend, DVBFE_GET_INFO, &feinfo)); //switch system
-#endif
      }
+#endif
   else {
      esyslog("ERROR: attempt to set channel with unknown DVB frontend type");
      return false;
      }
 #ifdef __sh__
-   //CHECK(ioctl(fd_frontend, DVBFE_SET_DELSYS, &Frontend.delivery));
-   if (ioctl(fd_frontend, DVBFE_SET_PARAMS, &Frontend) < 0) {
-#else
-  SETCMD(DTV_TUNE, 0);
-  if (ioctl(fd_frontend, FE_SET_PROPERTY, &CmdSeq) < 0) {
-#endif
+  /* I don't know if the FE_GET_INFO is necessary, 
+   * but this is used in the old version of this funtion
+   */
+  dvbfe_info feinfo;
+  feinfo.delivery = Frontend.delivery;
+  if (ioctl(fd_frontend, FE_GET_INFO, &feinfo) < 0) { //switch system
      esyslog("ERROR: frontend %d/%d: %m", adapter, frontend);
      return false;
      }
+  if (ioctl(fd_frontend, FE_SET_PARAMS, &Frontend) < 0) {
+     esyslog("ERROR: frontend %d/%d: %m", adapter, frontend);
+     return false;
+     }
+#else
+  SETCMD(DTV_TUNE, 0);
+  if (ioctl(fd_frontend, FE_SET_PROPERTY, &CmdSeq) < 0) {
+     esyslog("ERROR: frontend %d/%d: %m", adapter, frontend);
+     return false;
+     }
+#endif
   return true;
 }
 
@@ -447,35 +405,22 @@ void cDvbTuner::Action(void)
 int cDvbDevice::setTransferModeForDolbyDigital = 1;
 
 const char *DeliverySystems[] = {
-#ifdef __sh__
-  "DVBS",
-#else
   "UNDEFINED",
   "DVB-C",
   "DVB-C",
   "DVB-T",
-#endif
   "DSS",
-#ifdef __sh__
-  "DVBS2",
-  "DVBC",
-  "DVBT",
-  "DVBH",
-#else
   "DVB-S",
   "DVB-S2",
   "DVB-H",
   "ISDBT",
   "ISDBS",
   "ISDBC",
-#endif
   "ATSC",
-#ifndef __sh__
   "ATSCMH",
   "DMBTH",
   "CMMB",
   "DAB",
-#endif
   NULL
   };
 
@@ -485,25 +430,18 @@ cDvbDevice::cDvbDevice(int Adapter, int Frontend)
   frontend = Frontend;
   ciAdapter = NULL;
   dvbTuner = NULL;
-#ifdef __sh__
-  frontendType = DVBFE_DELSYS_DUMMY;
-#else
   frontendType = SYS_UNDEFINED;
-#endif
   numProvidedSystems = 0;
 
   // Devices that are present on all card types:
 
   int fd_frontend = DvbOpen(DEV_DVB_FRONTEND, adapter, frontend, O_RDWR | O_NONBLOCK);
 
-/* todo for sh */
-#ifndef __sh__
   // Common Interface:
 
   fd_ca = DvbOpen(DEV_DVB_CA, adapter, frontend, O_RDWR);
   if (fd_ca >= 0)
      ciAdapter = cDvbCiAdapter::CreateCiAdapter(this, fd_ca);
-#endif
 
   // The DVR device (will be opened and closed as needed):
 
@@ -512,25 +450,6 @@ cDvbDevice::cDvbDevice(int Adapter, int Frontend)
   // We only check the devices that must be present - the others will be checked before accessing them://XXX
 
   if (fd_frontend >= 0) {
-#ifdef __sh__
-     if (ioctl(fd_frontend, DVBFE_GET_DELSYS, &frontendType) >= 0) {
-        const char **DeliverySystem = DeliverySystems;
-        cString ds;
-        for (int i = 0; i < 32; i++) {
-            if (frontendType & (1u << i)) {
-               numProvidedSystems++;
-               if (*DeliverySystem)
-                  ds = cString::sprintf("%s %s", *ds ? *ds : "", *DeliverySystem);
-               else
-                  esyslog("ERROR: unknown delivery system %d", i);
-               }
-            if (*DeliverySystem)
-               DeliverySystem++;
-            }
-        if (*ds)
-           isyslog("device %d provides:%s", CardIndex() + 1, *ds);
-        dvbTuner = new cDvbTuner(fd_frontend, adapter, frontend, frontendType);
-#else
      if (ioctl(fd_frontend, FE_GET_INFO, &frontendInfo) >= 0) {
         switch (frontendInfo.type) {
           case FE_QPSK: frontendType = (frontendInfo.caps & FE_CAN_2G_MODULATION) ? SYS_DVBS2 : SYS_DVBS; break;
@@ -539,11 +458,9 @@ cDvbDevice::cDvbDevice(int Adapter, int Frontend)
           case FE_ATSC: frontendType = SYS_ATSC; break;
           default: esyslog("ERROR: unknown frontend type %d on frontend %d/%d", frontendInfo.type, adapter, frontend);
           }
-#endif
         }
      else
         LOG_ERROR;
-#ifndef __sh__
      if (frontendType != SYS_UNDEFINED) {
         numProvidedSystems++;
         if (frontendType == SYS_DVBS2)
@@ -551,7 +468,6 @@ cDvbDevice::cDvbDevice(int Adapter, int Frontend)
         isyslog("frontend %d/%d provides %s (\"%s\")", adapter, frontend, DeliverySystems[frontendType], frontendInfo.name);
         dvbTuner = new cDvbTuner(fd_frontend, adapter, frontend, frontendType);
         }
-#endif
      }
   else
      esyslog("ERROR: can't open DVB device %d/%d", adapter, frontend);
@@ -729,15 +645,9 @@ bool cDvbDevice::ProvidesSource(int Source) const
 {
   int type = Source & cSource::st_Mask;
   return type == cSource::stNone
-#ifdef __sh__
-      || type == cSource::stCable && (frontendType & DVBFE_DELSYS_DVBC)
-      || type == cSource::stSat   && (frontendType & (DVBFE_DELSYS_DVBS | DVBFE_DELSYS_DVBS2))
-      || type == cSource::stTerr  && (frontendType & DVBFE_DELSYS_DVBT);
-#else
       || type == cSource::stCable && (frontendType == SYS_DVBC_ANNEX_AC || frontendType == SYS_DVBC_ANNEX_B)
       || type == cSource::stSat   && (frontendType == SYS_DVBS || frontendType == SYS_DVBS2)
       || type == cSource::stTerr  && (frontendType == SYS_DVBT);
-#endif
 }
 
 bool cDvbDevice::ProvidesTransponder(const cChannel *Channel) const
@@ -746,11 +656,7 @@ bool cDvbDevice::ProvidesTransponder(const cChannel *Channel) const
      return false; // doesn't provide source
   if (!cSource::IsSat(Channel->Source()))
      return true; // source is sufficient for non sat
-#ifdef __sh__
-  if (!(frontendType & Channel->System()))
-#else
   if (frontendType == SYS_DVBS && Channel->System() == SYS_DVBS2)
-#endif
      return false; // requires modulation system which frontend doesn't provide
   return !Setup.DiSEqC || Diseqcs.Get(Channel->Source(), Channel->Frequency(), Channel->Polarization());
 }
@@ -807,26 +713,7 @@ bool cDvbDevice::SetChannelDevice(const cChannel *Channel, bool LiveView)
 
 bool cDvbDevice::HasLock(int TimeoutMs)
 {
-#ifdef __sh__
-  static bool lock = false;
-  if ((dvbTuner ? dvbTuner->Locked(TimeoutMs) : false)  && !lock) {
-     printf("cDvbDevice : HasLock We've got a LOCK!!!\n");
-     lock = true;
-     ChannelIsLocked();
-     }
-  else if(!(dvbTuner ? dvbTuner->Locked(TimeoutMs) : false) && lock) {
-     lock = false;
-     printf("cDvbDevice : HasLock LOST LOCK!!!\n");
-     }
-  else if(!(dvbTuner ? dvbTuner->Locked(TimeoutMs) : false))
-     printf("cDvbDevice : HasLock NO LOCK!!!\n");
-#endif
   return dvbTuner ? dvbTuner->Locked(TimeoutMs) : false;
-}
-
-void cDvbDevice::ChannelIsLocked()
-{
-  // basic
 }
 
 void cDvbDevice::SetTransferModeForDolbyDigital(int Mode)

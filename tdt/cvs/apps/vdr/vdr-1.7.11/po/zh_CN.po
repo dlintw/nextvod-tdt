@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-11 14:24+0100\n"
+"POT-Creation-Date: 2010-01-03 15:10+0100\n"
 "PO-Revision-Date: 2009-09-23 23:50+0800\n"
 "Last-Translator: Nan Feng <nfgx@21cn.com>\n"
 "Language-Team: Chinese\n"
@@ -496,9 +496,6 @@ msgstr "频率"
 msgid "Vpid"
 msgstr "Vpid"
 
-msgid "Vtype"
-msgstr ""
-
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -619,9 +616,6 @@ msgstr "终生"
 msgid "File"
 msgstr "文件"
 
-msgid "Path"
-msgstr ""
-
 msgid "First day"
 msgstr "第一天"
 
@@ -700,41 +694,6 @@ msgstr "播放"
 msgid "Button$Rewind"
 msgstr "重放"
 
-#, fuzzy
-msgid "Rename recording"
-msgstr "是否删除录像？"
-
-#, fuzzy
-msgid "Date"
-msgstr "符号率"
-
-msgid "Length"
-msgstr ""
-
-msgid "Format"
-msgstr ""
-
-#, fuzzy
-msgid "PES"
-msgstr "VPS"
-
-msgid "TS"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-#, fuzzy
-msgid "Delete marks information?"
-msgstr "是否删除录像？"
-
-#, fuzzy
-msgid "Delete resume information?"
-msgstr "是否删除录像？"
-
-msgid "Error while accessing recording!"
-msgstr "存取录像错误！"
-
 msgid "Recordings"
 msgstr "录像回放列表"
 
@@ -743,6 +702,9 @@ msgstr "打开"
 
 msgid "Commands"
 msgstr "常用操作命令"
+
+msgid "Error while accessing recording!"
+msgstr "存取录像错误！"
 
 msgid "Delete recording?"
 msgstr "是否删除录像？"
@@ -843,10 +805,6 @@ msgstr "菜单关闭结束"
 msgid "Setup.OSD$Recording directories"
 msgstr "录像目录"
 
-#, fuzzy
-msgid "Setup.OSD$Main menu command position"
-msgstr "频道信息位置"
-
 msgid "EPG"
 msgstr "电子节目单设置"
 
@@ -861,9 +819,6 @@ msgstr "节目单问题修复级别"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "节目单停留时间 (min)"
-
-msgid "Setup.EPG$Show progress bar"
-msgstr ""
 
 msgid "Setup.EPG$Set system time"
 msgstr "设置系统时间"
@@ -1053,18 +1008,6 @@ msgstr "最大的视频文件容量 (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "分离编辑文件"
 
-#, fuzzy
-msgid "Setup.Recording$Show date"
-msgstr "分离编辑文件"
-
-#, fuzzy
-msgid "Setup.Recording$Show time"
-msgstr "暂停终身 (d)"
-
-#, fuzzy
-msgid "Setup.Recording$Show length"
-msgstr "使用VPS"
-
 msgid "Replay"
 msgstr "回放设置"
 
@@ -1212,20 +1155,6 @@ msgstr "覆盖"
 
 msgid "Button$Insert"
 msgstr "插入"
-
-msgid "Rename$Up"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Down"
-msgstr "下"
-
-msgid "Rename$Previous"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Next"
-msgstr "下一段"
 
 msgid "Plugin"
 msgstr "插件"

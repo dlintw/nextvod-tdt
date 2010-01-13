@@ -170,7 +170,6 @@ protected:
   int MakeStream(uchar *Target, uchar Type, int Pid);
   int MakeAC3Descriptor(uchar *Target);
   int MakeSubtitlingDescriptor(uchar *Target, const char *Language, uchar SubtitlingType, uint16_t CompositionPageId, uint16_t AncillaryPageId);
-  int MakeTeletextDescriptor(uchar *Target, cChannel *Channel);
   int MakeLanguageDescriptor(uchar *Target, const char *Language);
   int MakeCRC(uchar *Target, const uchar *Data, int Length);
   void GeneratePmtPid(cChannel *Channel);

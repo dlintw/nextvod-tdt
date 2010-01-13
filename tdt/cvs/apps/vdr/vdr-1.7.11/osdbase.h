@@ -95,8 +95,6 @@ private:
   char *status;
   int digit;
   bool hasHotkeys;
-  int key_nr;
-  cTimeMs lastActivity;
 protected:
   void SetDisplayMenu(void);
   cSkinDisplayMenu *DisplayMenu(void) { return displayMenu; }

@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-11 14:24+0100\n"
+"POT-Creation-Date: 2010-01-03 15:10+0100\n"
 "PO-Revision-Date: 2008-02-27 18:14+0100\n"
 "Last-Translator: Jean-Claude Repetto <jc@repetto.org>\n"
 "Language-Team: French\n"
@@ -499,9 +499,6 @@ msgstr "Fréquence"
 msgid "Vpid"
 msgstr "PID Vidéo"
 
-msgid "Vtype"
-msgstr ""
-
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -622,9 +619,6 @@ msgstr "Durée de vie"
 msgid "File"
 msgstr "Fichier"
 
-msgid "Path"
-msgstr "Chemin"
-
 msgid "First day"
 msgstr "Premier jour"
 
@@ -703,36 +697,6 @@ msgstr "Lire"
 msgid "Button$Rewind"
 msgstr "Retour"
 
-msgid "Rename recording"
-msgstr "Renommer l'enregistrement"
-
-msgid "Date"
-msgstr "Date"
-
-msgid "Length"
-msgstr "Longueur"
-
-msgid "Format"
-msgstr "Format"
-
-msgid "PES"
-msgstr "PES"
-
-msgid "TS"
-msgstr "TS"
-
-msgid "Size"
-msgstr "Taille"
-
-msgid "Delete marks information?"
-msgstr "Effacer les informations de marquage"
-
-msgid "Delete resume information?"
-msgstr "Effacer les informations de reprise"
-
-msgid "Error while accessing recording!"
-msgstr "Impossible d'accéder à l'enregistrement"
-
 msgid "Recordings"
 msgstr "Enregistrements"
 
@@ -741,6 +705,9 @@ msgstr "Ouvrir"
 
 msgid "Commands"
 msgstr "Commandes"
+
+msgid "Error while accessing recording!"
+msgstr "Impossible d'accéder à l'enregistrement"
 
 msgid "Delete recording?"
 msgstr "Supprimer l'enregistrement ?"
@@ -841,9 +808,6 @@ msgstr "Menu bouton fermé"
 msgid "Setup.OSD$Recording directories"
 msgstr "Dossiers d'enregistrements"
 
-msgid "Setup.OSD$Main menu command position"
-msgstr "Position des commandes dans le menu"
-
 msgid "EPG"
 msgstr "Guide des programmes"
 
@@ -858,9 +822,6 @@ msgstr "Niveau de correction EPG"
 
 msgid "Setup.EPG$EPG linger time (min)"
 msgstr "Montrer l'EPG périmé (min)"
-
-msgid "Setup.EPG$Show progress bar"
-msgstr "Montrer la barre de progression"
 
 msgid "Setup.EPG$Set system time"
 msgstr "Ajuster l'heure du système"
@@ -1050,15 +1011,6 @@ msgstr "Taille maxi des fichiers (Mo)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Séparer les séquences éditées"
 
-msgid "Setup.Recording$Show date"
-msgstr "Montrer la date d'enregistrement"
-
-msgid "Setup.Recording$Show time"
-msgstr "Montrer l'heure d'enregistrement"
-
-msgid "Setup.Recording$Show length"
-msgstr "Montrer la longueur de l'enregistrement"
-
 msgid "Replay"
 msgstr "Lecture"
 
@@ -1206,18 +1158,6 @@ msgstr "Ecraser"
 
 msgid "Button$Insert"
 msgstr "Insérer"
-
-msgid "Rename$Up"
-msgstr "Haut"
-
-msgid "Rename$Down"
-msgstr "Bas"
-
-msgid "Rename$Previous"
-msgstr "Précédent"
-
-msgid "Rename$Next"
-msgstr "Suivant"
 
 msgid "Plugin"
 msgstr "Plugin"

@@ -32,9 +32,7 @@
 #include <pwd.h>
 #include <signal.h>
 #include <stdlib.h>
-#ifndef __sh__
 #include <sys/capability.h>
-#endif
 #include <sys/prctl.h>
 #include <termios.h>
 #include <unistd.h>
@@ -116,7 +114,6 @@ static bool SetUser(const char *UserName, bool UserDump)//XXX name?
 
 static bool DropCaps(void)
 {
-#ifndef __sh__
   // drop all capabilities except selected ones
   cap_t caps = cap_from_text("= cap_sys_nice,cap_sys_time=ep");
   if (!caps) {
@@ -129,7 +126,6 @@ static bool DropCaps(void)
      return false;
      }
   cap_free(caps);
-#endif
   return true;
 }
 

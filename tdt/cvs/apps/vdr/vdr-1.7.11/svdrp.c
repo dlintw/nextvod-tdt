@@ -304,8 +304,6 @@ const char *HelpPages[] = {
   "REMO [ on | off ]\n"
   "    Turns the remote control on or off. Without a parameter, the current\n"
   "    status of the remote control is reported.",
-  "RENR <number> <new name>\n"
-  "    Rename recording. Number must be the Number as returned by LSTR command.",
   "SCAN\n"
   "    Forces an EPG scan. If this is a single DVB device system, the scan\n"
   "    will be done on the primary device unless it is currently recording.",
@@ -1495,36 +1493,6 @@ void cSVDRP::CmdSCAN(const char *Option)
   Reply(250, "EPG scan triggered");
 }
 
-void cSVDRP::CmdRENR(const char *Option)
-{
-  bool recordings = Recordings.Update(true);
-  if (recordings) {
-     if (*Option) {
-        char *tail;
-        int n = strtol(Option, &tail, 10);
-        cRecording *recording = Recordings.Get(n - 1);
-        if (recording && tail && tail != Option) {
-           char *oldName = strdup(recording->Name());
-           tail = skipspace(tail);
-           if (recording->Rename(tail)) {
-              Reply(250, "Renamed \"%s\" to \"%s\"", oldName, recording->Name());
-              Recordings.ChangeState();
-              Recordings.TouchUpdate();
-              }
-           else
-              Reply(501, "Renaming \"%s\" to \"%s\" failed", oldName, tail);
-           free(oldName);
-           }
-        else
-          Reply(501, "Recording not found or wrong syntax");
-        }
-     else
-        Reply(501, "Missing Input settings");
-     }
-  else
-     Reply(550, "No recordings available");
-}
-						
 void cSVDRP::CmdSTAT(const char *Option)
 {
   if (*Option) {
@@ -1640,7 +1608,6 @@ void cSVDRP::Execute(char *Cmd)
   else if (CMD("PLUG"))  CmdPLUG(s);
   else if (CMD("PUTE"))  CmdPUTE(s);
   else if (CMD("REMO"))  CmdREMO(s);
-  else if (CMD("RENR"))  CmdRENR(s);
   else if (CMD("SCAN"))  CmdSCAN(s);
   else if (CMD("STAT"))  CmdSTAT(s);
   else if (CMD("UPDT"))  CmdUPDT(s);

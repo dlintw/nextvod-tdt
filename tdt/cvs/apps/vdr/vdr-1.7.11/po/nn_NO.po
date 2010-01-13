@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2010-01-11 14:24+0100\n"
+"POT-Creation-Date: 2010-01-03 15:10+0100\n"
 "PO-Revision-Date: 2007-08-12 14:17+0200\n"
 "Last-Translator: Truls Slevigen <truls@slevigen.no>\n"
 "Language-Team: Norwegian\n"
@@ -494,9 +494,6 @@ msgstr "Frekvens"
 msgid "Vpid"
 msgstr "Vpid"
 
-msgid "Vtype"
-msgstr ""
-
 msgid "Ppid"
 msgstr "Ppid"
 
@@ -617,9 +614,6 @@ msgstr "Levetid"
 msgid "File"
 msgstr "Filnavn"
 
-msgid "Path"
-msgstr ""
-
 msgid "First day"
 msgstr "Første dag"
 
@@ -698,40 +692,6 @@ msgstr "Spill av"
 msgid "Button$Rewind"
 msgstr "Spol tilbake"
 
-#, fuzzy
-msgid "Rename recording"
-msgstr "Slette opptak?"
-
-#, fuzzy
-msgid "Date"
-msgstr "Srate"
-
-msgid "Length"
-msgstr ""
-
-msgid "Format"
-msgstr ""
-
-msgid "PES"
-msgstr ""
-
-msgid "TS"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-#, fuzzy
-msgid "Delete marks information?"
-msgstr "Slette opptak?"
-
-#, fuzzy
-msgid "Delete resume information?"
-msgstr "Slette opptak?"
-
-msgid "Error while accessing recording!"
-msgstr "Feil under lesing av opptak!"
-
 msgid "Recordings"
 msgstr "Opptak"
 
@@ -740,6 +700,9 @@ msgstr "Åpne"
 
 msgid "Commands"
 msgstr "Kommandoer"
+
+msgid "Error while accessing recording!"
+msgstr "Feil under lesing av opptak!"
 
 msgid "Delete recording?"
 msgstr "Slette opptak?"
@@ -840,10 +803,6 @@ msgstr ""
 msgid "Setup.OSD$Recording directories"
 msgstr "Kataloger til opptak"
 
-#, fuzzy
-msgid "Setup.OSD$Main menu command position"
-msgstr "Posisjon på kanalinformasjon"
-
 msgid "EPG"
 msgstr "Programoversikt"
 
@@ -857,9 +816,6 @@ msgid "Setup.EPG$EPG bugfix level"
 msgstr "Nivå for EPG-feilretting"
 
 msgid "Setup.EPG$EPG linger time (min)"
-msgstr ""
-
-msgid "Setup.EPG$Show progress bar"
 msgstr ""
 
 msgid "Setup.EPG$Set system time"
@@ -1050,18 +1006,6 @@ msgstr "Maksimal størrelse på videofiler (MB)"
 msgid "Setup.Recording$Split edited files"
 msgstr "Splitt redigerte filer"
 
-#, fuzzy
-msgid "Setup.Recording$Show date"
-msgstr "Splitt redigerte filer"
-
-#, fuzzy
-msgid "Setup.Recording$Show time"
-msgstr "Splitt redigerte filer"
-
-#, fuzzy
-msgid "Setup.Recording$Show length"
-msgstr "Prioritetsgrense HovedDVB"
-
 msgid "Replay"
 msgstr "Spill av"
 
@@ -1208,19 +1152,6 @@ msgid "Button$Overwrite"
 msgstr ""
 
 msgid "Button$Insert"
-msgstr ""
-
-msgid "Rename$Up"
-msgstr ""
-
-#, fuzzy
-msgid "Rename$Down"
-msgstr "Ned"
-
-msgid "Rename$Previous"
-msgstr ""
-
-msgid "Rename$Next"
 msgstr ""
 
 msgid "Plugin"
