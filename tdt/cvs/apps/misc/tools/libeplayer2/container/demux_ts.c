@@ -39,7 +39,7 @@ int ts_prog;
 int ts_keep_broken=0;
 off_t ts_probe = 0;
 int audio_substream_id = -1;
-static unsigned int video_format;
+static unsigned int video_format = 0;
 extern char *dvdsub_lang, *audio_lang;	//for -alang
 
 typedef enum
@@ -3627,25 +3627,57 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	const demux_stream_t * audio = demuxer->audio;
 	const demux_stream_t * sub = demuxer->sub;
 	unsigned long long int Pts = 0;
+	unsigned int video_format_changed = 0;
 
 	//FIXME
-	if(!sh_video->format == video_format)
+	if (!video_format) // initialize
+		if (sh_video->format) {
+			video_format = sh_video->format;
+			printf("%s::%s video_format init with 0x%02x\n", FILENAME, __FUNCTION__, video_format);
+		}
+	  
+	if(sh_video->format != video_format) // changed?
 	{
-
-		Track_t Video = {
-		"und",
-		"V_MPEG2/H264",
-		0,
-		};
-		context->manager->video->Command(context, MANAGER_DEL, NULL);
-		context->manager->video->Command(context, MANAGER_ADD, &Video);
-
-		context->output->video->Command(context, OUTPUT_SWITCH, "video");
-
-
+		video_format_changed = 1;
+		printf("%s::%s: change videoformat 0x%02x to 0x%02x\n", FILENAME, __FUNCTION__, sh_video->format, video_format);
 		sh_video->format = video_format;
-		printf("video_format 0x%02x,sh_video->format 0x%02x\n",video_format,sh_video->format);
+	  
+		if(sh_video->format == 0x10000001 || sh_video->format == 0x10000002)
+		{
+		    Track_t Video = {
+			    "und",
+			    "V_MPEG2",
+			    0,
+		    };
 
+		    context->manager->video->Command(context, MANAGER_DEL, NULL);
+		    context->manager->video->Command(context, MANAGER_ADD, &Video);
+		    context->output->video->Command(context, OUTPUT_SWITCH, "video");
+		}
+		else if(sh_video->format == 0x10000004)
+		{
+		    Track_t Video = {
+			    "und",
+			    "V_MS/VFW/FOURCC",
+			    0,
+		    };
+
+		    context->manager->video->Command(context, MANAGER_DEL, NULL);
+		    context->manager->video->Command(context, MANAGER_ADD, &Video);
+		    context->output->video->Command(context, OUTPUT_SWITCH, "video");
+		}
+		else if(sh_video->format == 0x10000005)
+		{
+		    Track_t Video = {
+			    "und",
+			    "V_MPEG2/H264",
+			    0,
+		    };
+
+		    context->manager->video->Command(context, MANAGER_DEL, NULL);
+		    context->manager->video->Command(context, MANAGER_ADD, &Video);
+		    context->output->video->Command(context, OUTPUT_SWITCH, "video");
+		}
 	}
 	 if (audio->first != NULL) {
 		demux_packet_t * current = audio->first;
@@ -3658,14 +3690,15 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			Pts = (current->pts * 90000);
 		}*/
 		//FIXME
-		if(sh_video->format == 0x10000005 || video_format == 0x10000005)
+		if(video_format_changed)
 			Pts = INVALID_PTS_VALUE;
 		else
 			Pts = current->pts * 90000;
-        if (aStartPts == 0) {
-            aStartPts = Pts;
-            Pts = 0;
-        } else if(Pts != INVALID_PTS_VALUE) Pts -= aStartPts;
+		
+		if (aStartPts == 0) {
+			aStartPts = Pts;
+			Pts = 0;
+		} else if(Pts != INVALID_PTS_VALUE) Pts -= aStartPts;
 
 		//printf("a current->pts=%f Pts=%llu\n", current->pts, Pts);
 		while (current != NULL) {
@@ -3679,7 +3712,7 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		}
 	}
 
-    if (video->first != NULL) {
+	if (video->first != NULL) {
 		demux_packet_t * current = video->first;
 		//printf("video current->flags = 0x%02x\n",current->flags);
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
@@ -3690,14 +3723,15 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			Pts = (current->pts * 90000);
 		}*/
 		//FIXME
-		if(sh_video->format == 0x10000005 || video_format == 0x10000005)
+		if(video_format_changed)
 			Pts = INVALID_PTS_VALUE;
 		else
 			Pts = current->pts * 90000;
-        if (vStartPts == 0) {
-            vStartPts = Pts;
-            Pts = 0;
-        } else if(Pts != INVALID_PTS_VALUE) Pts -= vStartPts;
+        
+		if (vStartPts == 0) {
+			vStartPts = Pts;
+			Pts = 0;
+		} else if(Pts != INVALID_PTS_VALUE) Pts -= vStartPts;
 
 		//printf("v current->pts=%f Pts=%llu\n", current->pts, Pts);
 		while (current != NULL) {
@@ -3809,6 +3843,8 @@ static int TSStop(Context_t *context) {
     free (demuxer);   
     demuxer = NULL;  
 
+    video_format = 0;
+    
     return 0;
 }
 
