@@ -16714,7 +16714,19 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  	def lockShow(self):
-@@ -1357,4 +1382,16 @@
+@@ -1280,5 +1305,10 @@
+ 	def updateExtensions(self):
+ 		self.extensionsList = []
+-		self.availableKeys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow", "blue" ]
++#--->
++#-		self.availableKeys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow", "blue" ]
++#---<
++#+++>
++		self.availableKeys = [ "red", "green", "yellow", "blue", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" ]
++#+++<
+ 		self.extensionKeys = {}
+ 		for x in self.list:
+@@ -1357,4 +1387,16 @@
  
  # depends on InfoBarExtensions
 +
@@ -16731,7 +16743,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
  class InfoBarPiP:
  	def __init__(self):
-@@ -1717,4 +1754,142 @@
+@@ -1717,4 +1759,142 @@
  			self.audioChannel.selectChannel(mode[1])
  		del self.audioChannel
 +
@@ -16874,7 +16886,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  class InfoBarSubserviceSelection:
-@@ -1794,14 +1969,41 @@
+@@ -1794,14 +1974,41 @@
  
  			if self.bouquets and len(self.bouquets):
 -				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
@@ -16923,7 +16935,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
-@@ -1843,4 +2045,127 @@
+@@ -1843,4 +2050,127 @@
  		else:
  			del self.selectedSubservice
 +
