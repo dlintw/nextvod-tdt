@@ -3443,23 +3443,80 @@ diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightl
 diff -Nur enigma2-nightly.org/lib/python/Components/Renderer/Progress.py enigma2-nightly/lib/python/Components/Renderer/Progress.py
 --- enigma2-nightly.org/lib/python/Components/Renderer/Progress.py	2009-12-12 23:16:22.424599000 +0100
 +++ enigma2-nightly/lib/python/Components/Renderer/Progress.py	2009-12-12 23:44:58.000000000 +0100
-@@ -17,8 +17,14 @@
- 			(self.range, self.value) = ((0, 1), 0)
- 			return
+@@ -14,24 +14,58 @@
+ 
+ 	def changed(self, what):
+-		if what[0] == self.CHANGED_CLEAR:
+-			(self.range, self.value) = ((0, 1), 0)
+-			return
++#--->
++#-		if what[0] == self.CHANGED_CLEAR:
++#-			(self.range, self.value) = ((0, 1), 0)
++#-			return
++#-
++#-		range = self.source.range or 100
++#-		value = self.source.value
++#-		if value is None:
++#-			value = 0
++#-		(self.range, self.value) = ((0, range), value)
++#---<
++#+++>
++		try:
++			if what[0] == self.CHANGED_CLEAR:
++				(self.range, self.value) = ((0, 1), 0)
++				return
  
 -		range = self.source.range or 100
 -		value = self.source.value
-+#--->  CAUSE OF CRASH!
-+#-		range = self.source.range or 100 
-+#-		value = self.source.value 
-+#---<
-+#+++>  CAUSE OF CRASH!
-+		range = (self.source and self.source.range) or 100
-+		value = (self.source and self.source.value) or 0
+-		if value is None:
+-			value = 0
+-		(self.range, self.value) = ((0, range), value)
++
++			range = (self.source and self.source.range) or 100
++			value = (self.source and self.source.value) or 0
++
++			if value is None:
++				value = 0
++			(self.range, self.value) = ((0, range), value)
++		except:
++			None
 +#+++<
- 		if value is None:
- 			value = 0
- 		(self.range, self.value) = ((0, range), value)
+ 
+ 	GUI_WIDGET = eSlider
+ 
+ 	def postWidgetCreate(self, instance):
+-		instance.setRange(self.__start, self.__end)
+-
++#--->
++#-		instance.setRange(self.__start, self.__end)
++#---<
++#+++>
++		try:
++			instance.setRange(self.__start, self.__end)
++		except:
++			None
++#+++<
+ 	def setRange(self, range):
+-		(self.__start, self.__end) = range
+-		if self.instance is not None:
+-			self.instance.setRange(self.__start, self.__end)
+-
++#--->
++#-		(self.__start, self.__end) = range
++#-		if self.instance is not None:
++#-			self.instance.setRange(self.__start, self.__end)
++#---<
++#+++>
++		try:
++			(self.__start, self.__end) = range
++			if self.instance is not None:
++				self.instance.setRange(self.__start, self.__end)
++		except:
++			None
++#+++<
+ 	def getRange(self):
+ 		return (self.__start, self.__end)
+
 diff -Nur enigma2-nightly.org/lib/python/Components/TunerInfo.py enigma2-nightly/lib/python/Components/TunerInfo.py
 --- enigma2-nightly.org/lib/python/Components/TunerInfo.py	2009-12-12 23:16:22.428599000 +0100
 +++ enigma2-nightly/lib/python/Components/TunerInfo.py	2009-12-12 23:48:36.000000000 +0100
@@ -17025,80 +17082,3 @@ diff -Nur enigma2-nightly.org/lib/python/Components/VolumeControl.py enigma2-nig
 +#+++>
 +				self.volctrl.setVolume(vol, vol)
 +#+++<
-
-diff -Nur enigma2-nightly.org/lib/python/Components/Renderer/Progress.py enigma2-nightly.org/lib/python/Components/Renderer/Progress.py
---- enigma2-nightly.org/lib/python/Components/Renderer/Progress.py	2010-01-14 23:16:22.500600000 +0100
-+++ enigma2-nightly.org/lib/python/Components/Renderer/Progress.py	2010-01-14 23:18:41.332599958 +0100
-@@ -14,24 +14,58 @@
- 
- 	def changed(self, what):
--		if what[0] == self.CHANGED_CLEAR:
--			(self.range, self.value) = ((0, 1), 0)
--			return
-+#--->
-+#-		if what[0] == self.CHANGED_CLEAR:
-+#-			(self.range, self.value) = ((0, 1), 0)
-+#-			return
-+#-
-+#-		range = self.source.range or 100
-+#-		value = self.source.value
-+#-		if value is None:
-+#-			value = 0
-+#-		(self.range, self.value) = ((0, range), value)
-+#---<
-+#+++>
-+		try:
-+			if what[0] == self.CHANGED_CLEAR:
-+				(self.range, self.value) = ((0, 1), 0)
-+				return
- 
--		range = self.source.range or 100
--		value = self.source.value
--		if value is None:
--			value = 0
--		(self.range, self.value) = ((0, range), value)
-+
-+			range = (self.source and self.source.range) or 100
-+			value = (self.source and self.source.value) or 0
-+
-+			if value is None:
-+				value = 0
-+			(self.range, self.value) = ((0, range), value)
-+		except:
-+			None
-+#+++<
- 
- 	GUI_WIDGET = eSlider
- 
- 	def postWidgetCreate(self, instance):
--		instance.setRange(self.__start, self.__end)
--
-+#--->
-+#-		instance.setRange(self.__start, self.__end)
-+#---<
-+#+++>
-+		try:
-+			instance.setRange(self.__start, self.__end)
-+		except:
-+			None
-+#+++<
- 	def setRange(self, range):
--		(self.__start, self.__end) = range
--		if self.instance is not None:
--			self.instance.setRange(self.__start, self.__end)
--
-+#--->
-+#-		(self.__start, self.__end) = range
-+#-		if self.instance is not None:
-+#-			self.instance.setRange(self.__start, self.__end)
-+#---<
-+#+++>
-+		try:
-+			(self.__start, self.__end) = range
-+			if self.instance is not None:
-+				self.instance.setRange(self.__start, self.__end)
-+		except:
-+			None
-+#+++<
- 	def getRange(self):
- 		return (self.__start, self.__end)
