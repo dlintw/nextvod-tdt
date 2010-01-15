@@ -1145,7 +1145,6 @@ static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
 static pthread_t PlayThread;
-static int isFirstAudioFrame = 1;
 
 demuxer_desc_t demuxer_desc_mpeg_ps = {
   "MPEG PS demuxer",
@@ -1218,7 +1217,6 @@ void MpgInit(Context_t *context, char * filename) {
     demuxer->video->id = -1;
     //demuxer->video_play = 0;
     demuxer->stream->start_pos	= 0;
-    //TRICK: bei file gehen mehr mpg.....aber bei mvcd und svcd gibt es probleme??
     demuxer->stream->type		= STREAMTYPE_FILE;//STREAMTYPE_STREAM;
     demuxer->stream->flags		= 6;
     demuxer->stream->sector_size	= 0;
@@ -1231,16 +1229,18 @@ void MpgInit(Context_t *context, char * filename) {
     demuxer->stream->cache_pid	= 0;
 
     demux_mpg_pes_probe(demuxer);
+    ps_probe=1;
     ret = demux_mpg_ps_open(demuxer);
+
     printf("ret = %d\n",ret);
     printf("DEMUXER=%s\n",demuxer->desc->name);
     sh_audio=demuxer->audio->sh;
     printf("AUDIO 0x%02x\n",sh_audio->format);
-//Trick: warum bekommen ich keine info bei sh_video->format??
+
     sh_video=demuxer->video->sh;
     printf("VIDEO 0x%08X\n",sh_video->format);
 
-    if(sh_video->format == 0x10000001 || sh_video->format == 0x10000002 || sh_video->format == 0x00)
+    if(sh_video->format == 0x10000001 || sh_video->format == 0x10000002)
     {
         Track_t Video = {
                 "und",
@@ -1292,58 +1292,104 @@ void MpgInit(Context_t *context, char * filename) {
         context->manager->audio->Command(context, MANAGER_ADD, &Audio);
 
     }
+    else if(sh_audio->format == 0x2001) //dts
+    {
+
+        Track_t Audio = {
+                "und",
+                "A_DTS",
+                0,
+        };
+        context->manager->audio->Command(context, MANAGER_ADD, &Audio);
+    }
 }
 
+static unsigned long long int aStartPts = 0;
+static unsigned long long int vStartPts = 0;
 #define INVALID_PTS_VALUE                       0x200000000ull
 void MpgGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	const demux_stream_t * video = demuxer->video;
 	const demux_stream_t * audio = demuxer->audio;
 	const demux_stream_t * sub = demuxer->sub;
+	unsigned long long int Pts_audio = 0;
+	unsigned long long int Pts_video = 0;
+	unsigned int aPtsInit = 0;
+	unsigned int vPtsInit = 0;
+	demux_packet_t * current_audio = NULL;
+	demux_packet_t * current_video = NULL;	
 
-	unsigned long long int Pts = 0;
-
-//FIXME
-//Trick: bei video ist ab und zu current->pts = 0 und das ist falsch........
-
-	 if (audio->first != NULL) {
-		demux_packet_t * current = audio->first;
-		//printf("audio current->flags = 0x%02x\n",current->flags);
-		if (!(current->flags&0x10)) {  //current frame isn't a keyframe
-		//	printf("\tNORMALFRAME,                 ");
-			Pts = INVALID_PTS_VALUE;
+	if (audio->first != NULL) {
+		current_audio = audio->first;
+		
+		if (current_audio->flags)	// fixme : always zero?
+		  printf("audio current_audio->flags = 0x%02x\n",current_audio->flags);
+		if (!(current_audio->flags&0x10)) {  //current frame isn't a keyframe
+			//printf("\tNORMALFRAME,                 ");
+			Pts_audio = INVALID_PTS_VALUE;
 		} else {
-		//	printf("\tKEYFRAME,                    ");
-			Pts = (current->pts * 90000);
+			//printf("\tKEYFRAME,                    ");
+			Pts_audio = (current_audio->pts * 90000);
 		}
-		//printf("a current->pts=%f Pts=%llu \n", current->pts, Pts);
-		while (current != NULL) {
-			//printf("AUDIODATA\n");
-			//HexdumpAVI(current->buffer, current->len);
-			context->output->audio->Write(context, current->buffer, current->len, current->pts,NULL, 0, 0, "audio");
-			
-			isFirstAudioFrame=0;
-			current = current->next;
-			Pts = INVALID_PTS_VALUE;
+
+		if (aStartPts == 0) {
+			aPtsInit = 1;			
+			aStartPts = Pts_audio;
+			Pts_audio = 0;
+		} else if (Pts_audio != INVALID_PTS_VALUE) {
+			Pts_audio -= aStartPts;
 		}
-	} else if (video->first != NULL) {
-		demux_packet_t * current = video->first;
-		//printf("video current->flags = 0x%02x\n",current->flags);
-		if (!(current->flags&0x10)) {  //current frame isn't a keyframe
-		//	printf("\tvideo NORMALFRAME,                 ");
-			Pts = INVALID_PTS_VALUE;
+	}
+	
+	if (video->first != NULL) {	  
+		current_video = video->first;
+		
+		if (current_video->flags)	// fixme : always zero?
+		  printf("video current->flags = 0x%02x\n",current_video->flags);
+		if (!(current_video->flags&0x10)) {  //current frame isn't a keyframe
+			//printf("\tNORMALFRAME,                 ");
+			Pts_video = INVALID_PTS_VALUE;
 		} else {
-		//	printf("\tvideo KEYFRAME,                    ");
-			Pts = (current->pts * 90000);
+			//printf("\tKEYFRAME,                    ");
+			Pts_video = (current_video->pts * 90000);
 		}
 
-		//printf("v current->pts=%f Pts=%llu\n", current->pts, Pts);
-
-		while (current != NULL) {
-			context->output->video->Write(context, current->buffer, current->len, current->pts, 0, 0, 0, "video");
-
-			current = current->next;
-			Pts = INVALID_PTS_VALUE;
+		if (vStartPts == 0) {
+			vPtsInit = 1;
+			vStartPts = Pts_video;
+			Pts_video = 0;
+		} else if(Pts_video != INVALID_PTS_VALUE) {
+			Pts_video -= vStartPts;
 		}
+	}
+
+	if (aPtsInit && vStartPts) {  // audio found first time, video known?
+		if (vStartPts < aStartPts) {
+			aStartPts = vStartPts;
+		} else {
+			vStartPts = aStartPts;
+		}		  		  
+	}
+	
+	if (vPtsInit && aStartPts) {  // video found first time, audio known?
+		if (vStartPts < aStartPts) {
+			aStartPts = vStartPts;
+		} else {
+			vStartPts = aStartPts;
+		}		  		  
+	}
+
+	while (current_audio != NULL) {
+
+		context->output->audio->Write(context, current_audio->buffer, current_audio->len, Pts_audio, NULL, 0, 0, "audio");
+
+		current_audio = current_audio->next;
+	}
+
+	while (current_video != NULL) {
+	
+		context->output->video->Write(context, current_video->buffer, current_video->len, Pts_video, 0, 0, 0, "video");
+
+		current_video = current_video->next;
 	}
 }
 
@@ -1351,8 +1397,6 @@ void MpgGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 
 static void MpgThread(Context_t *context) {
 	printf("%s::%d\n", __FUNCTION__, __LINE__);
-
-	isFirstAudioFrame=1;
 
 
     while(context->playback->isPlaying && 
@@ -1390,7 +1434,7 @@ static int MpgPlay(Context_t *context) {
     if (PlayThread == NULL) {
 	  pthread_attr_t attr;
 	  pthread_attr_init(&attr);
-	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE/*PTHREAD_CREATE_DETACHED*/);
           if(error=pthread_create(&PlayThread, &attr, (void *)&MpgThread, context) != 0)
           {
             fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
@@ -1405,7 +1449,7 @@ static int MpgStop(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
     int result=0;
-    if(PlayThread!=NULL)result = pthread_join (PlayThread, NULL);
+    if(PlayThread!=NULL)result = pthread_attr_destroy(PlayThread);//pthread_join (PlayThread, NULL);
     if(result != 0) 
     {
           printf("ERROR: Stop PlayThread\n");
