@@ -3443,23 +3443,80 @@ diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightl
 diff -Nur enigma2-nightly.org/lib/python/Components/Renderer/Progress.py enigma2-nightly/lib/python/Components/Renderer/Progress.py
 --- enigma2-nightly.org/lib/python/Components/Renderer/Progress.py	2009-12-12 23:16:22.424599000 +0100
 +++ enigma2-nightly/lib/python/Components/Renderer/Progress.py	2009-12-12 23:44:58.000000000 +0100
-@@ -17,8 +17,14 @@
- 			(self.range, self.value) = ((0, 1), 0)
- 			return
+@@ -14,24 +14,58 @@
+ 
+ 	def changed(self, what):
+-		if what[0] == self.CHANGED_CLEAR:
+-			(self.range, self.value) = ((0, 1), 0)
+-			return
++#--->
++#-		if what[0] == self.CHANGED_CLEAR:
++#-			(self.range, self.value) = ((0, 1), 0)
++#-			return
++#-
++#-		range = self.source.range or 100
++#-		value = self.source.value
++#-		if value is None:
++#-			value = 0
++#-		(self.range, self.value) = ((0, range), value)
++#---<
++#+++>
++		try:
++			if what[0] == self.CHANGED_CLEAR:
++				(self.range, self.value) = ((0, 1), 0)
++				return
  
 -		range = self.source.range or 100
 -		value = self.source.value
-+#--->  CAUSE OF CRASH!
-+#-		range = self.source.range or 100 
-+#-		value = self.source.value 
-+#---<
-+#+++>  CAUSE OF CRASH!
-+		range = (self.source and self.source.range) or 100
-+		value = (self.source and self.source.value) or 0
+-		if value is None:
+-			value = 0
+-		(self.range, self.value) = ((0, range), value)
++
++			range = (self.source and self.source.range) or 100
++			value = (self.source and self.source.value) or 0
++
++			if value is None:
++				value = 0
++			(self.range, self.value) = ((0, range), value)
++		except:
++			None
 +#+++<
- 		if value is None:
- 			value = 0
- 		(self.range, self.value) = ((0, range), value)
+ 
+ 	GUI_WIDGET = eSlider
+ 
+ 	def postWidgetCreate(self, instance):
+-		instance.setRange(self.__start, self.__end)
+-
++#--->
++#-		instance.setRange(self.__start, self.__end)
++#---<
++#+++>
++		try:
++			instance.setRange(self.__start, self.__end)
++		except:
++			None
++#+++<
+ 	def setRange(self, range):
+-		(self.__start, self.__end) = range
+-		if self.instance is not None:
+-			self.instance.setRange(self.__start, self.__end)
+-
++#--->
++#-		(self.__start, self.__end) = range
++#-		if self.instance is not None:
++#-			self.instance.setRange(self.__start, self.__end)
++#---<
++#+++>
++		try:
++			(self.__start, self.__end) = range
++			if self.instance is not None:
++				self.instance.setRange(self.__start, self.__end)
++		except:
++			None
++#+++<
+ 	def getRange(self):
+ 		return (self.__start, self.__end)
+
 diff -Nur enigma2-nightly.org/lib/python/Components/TunerInfo.py enigma2-nightly/lib/python/Components/TunerInfo.py
 --- enigma2-nightly.org/lib/python/Components/TunerInfo.py	2009-12-12 23:16:22.428599000 +0100
 +++ enigma2-nightly/lib/python/Components/TunerInfo.py	2009-12-12 23:48:36.000000000 +0100
@@ -16657,7 +16714,19 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  	def lockShow(self):
-@@ -1357,4 +1382,16 @@
+@@ -1280,5 +1305,10 @@
+ 	def updateExtensions(self):
+ 		self.extensionsList = []
+-		self.availableKeys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow", "blue" ]
++#--->
++#-		self.availableKeys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow", "blue" ]
++#---<
++#+++>
++		self.availableKeys = [ "red", "green", "yellow", "blue", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" ]
++#+++<
+ 		self.extensionKeys = {}
+ 		for x in self.list:
+@@ -1357,4 +1387,16 @@
  
  # depends on InfoBarExtensions
 +
@@ -16674,7 +16743,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
  class InfoBarPiP:
  	def __init__(self):
-@@ -1717,4 +1754,142 @@
+@@ -1717,4 +1759,142 @@
  			self.audioChannel.selectChannel(mode[1])
  		del self.audioChannel
 +
@@ -16817,7 +16886,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  class InfoBarSubserviceSelection:
-@@ -1794,14 +1969,41 @@
+@@ -1794,14 +1974,41 @@
  
  			if self.bouquets and len(self.bouquets):
 -				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
@@ -16866,7 +16935,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
-@@ -1843,4 +2045,127 @@
+@@ -1843,4 +2050,127 @@
  		else:
  			del self.selectedSubservice
 +
@@ -16994,3 +17063,34 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  class InfoBarAdditionalInfo:
+
+diff -Nur enigma2-nightly.org/lib/python/Components/VolumeControl.py enigma2-nightly.org/lib/python/Components/VolumeControl.py
+--- enigma2-nightly.org/lib/python/Components/VolumeControl.py	2010-01-14 23:16:22.500600000 +0100
++++ enigma2-nightly.org/lib/python/Components/VolumeControl.py	2010-01-14 23:18:41.332599958 +0100
+@@ -68,5 +68,13 @@
+ 
+ 	def volMute(self, showMuteSymbol=True, force=False):
+-		vol = self.volctrl.getVolume()
++#--->
++#-		vol = self.volctrl.getVolume()
++#---<
++#+++>
++		if config.audio.volume.value != 0:
++			vol = config.audio.volume.value
++		else:
++			vol = self.volctrl.getVolume()
++#+++<
+ 		if vol or force:
+ 			self.volctrl.volumeToggleMute()
+@@ -75,5 +83,11 @@
+ 					self.muteDialog.show()
+ 				self.volumeDialog.setValue(0)
++#+++>
++				self.volctrl.setVolume(0,0)
++#+++<
+ 			else:
+ 				self.muteDialog.hide()
+ 				self.volumeDialog.setValue(vol)
++#+++>
++				self.volctrl.setVolume(vol, vol)
++#+++<
