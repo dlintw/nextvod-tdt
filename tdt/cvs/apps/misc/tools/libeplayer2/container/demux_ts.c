@@ -3919,7 +3919,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 	return 0;
 }
 
-static char *TSCapabilities[] = { "ts", "m2ts", "trp", "vob", "mts", "rec", NULL };
+static char *TSCapabilities[] = { "ts", "m2ts", "trp", "mts", "rec", NULL };
 
 Container_t TSContainer = {
 	"TS",

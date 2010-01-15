@@ -1500,7 +1500,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 	return 0;
 }
 
-static char *MPGCapabilities[] = { "mpg", "mpeg", "MPG", "MPEG",NULL };
+static char *MPGCapabilities[] = { "mpg", "mpeg", "vob", "MPG", "MPEG", "VOB", NULL };
 
 Container_t MPGContainer = {
 	"Mpg",
