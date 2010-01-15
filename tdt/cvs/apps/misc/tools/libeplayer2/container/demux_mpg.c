@@ -1424,6 +1424,8 @@ static void MpgThread(Context_t *context) {
 	//printf("%s <--\n", __FUNCTION__);
 
     }
+	aStartPts = 0;
+	vStartPts = 0;
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 }
 
@@ -1434,7 +1436,7 @@ static int MpgPlay(Context_t *context) {
     if (PlayThread == NULL) {
 	  pthread_attr_t attr;
 	  pthread_attr_init(&attr);
-	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE/*PTHREAD_CREATE_DETACHED*/);
+	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
           if(error=pthread_create(&PlayThread, &attr, (void *)&MpgThread, context) != 0)
           {
             fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
@@ -1449,7 +1451,7 @@ static int MpgStop(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
     int result=0;
-    if(PlayThread!=NULL)result = pthread_attr_destroy(PlayThread);//pthread_join (PlayThread, NULL);
+    if(PlayThread!=NULL)result = pthread_join (PlayThread, NULL);
     if(result != 0) 
     {
           printf("ERROR: Stop PlayThread\n");
