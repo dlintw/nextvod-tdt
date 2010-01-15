@@ -529,6 +529,8 @@ int cAudio::WriteClip(unsigned char * buffer, int size)
 
 		write(privateData->m_fd, injectBuffer, injectBufferSize);
 	}
+	free(injectBuffer);
+
 	return size;
 }
 
