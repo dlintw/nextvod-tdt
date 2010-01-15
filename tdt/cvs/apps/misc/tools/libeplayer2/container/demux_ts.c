@@ -3489,6 +3489,7 @@ static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
 static pthread_t PlayThread;
 static int isFirstAudioFrame = 1;
+static int isFirstVideoFrame = 1;
 
 void TSInit(Context_t *context, char * filename) {
 
@@ -3626,10 +3627,14 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	const demux_stream_t * video = demuxer->video;
 	const demux_stream_t * audio = demuxer->audio;
 	const demux_stream_t * sub = demuxer->sub;
-	unsigned long long int Pts = 0;
+	unsigned long long int Pts_audio = 0;
+	unsigned long long int Pts_video = 0;
 	unsigned int video_format_changed = 0;
+	unsigned int aPtsInit = 0;
+	unsigned int vPtsInit = 0;
+	demux_packet_t * current_audio = NULL;
+	demux_packet_t * current_video = NULL;	
 
-	//FIXME
 	if (!video_format) // initialize
 		if (sh_video->format) {
 			video_format = sh_video->format;
@@ -3679,9 +3684,12 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		    context->output->video->Command(context, OUTPUT_SWITCH, "video");
 		}
 	}
-	 if (audio->first != NULL) {
-		demux_packet_t * current = audio->first;
-		//printf("audio current->flags = 0x%02x\n",current->flags);
+	
+	if (audio->first != NULL) {
+		current_audio = audio->first;
+		
+		if (current_audio->flags)	// fixme : always zero?
+		  printf("audio current_audio->flags = 0x%02x\n",current_audio->flags);
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts = INVALID_PTS_VALUE;
@@ -3689,57 +3697,92 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			//printf("\tKEYFRAME,                    ");
 			Pts = (current->pts * 90000);
 		}*/
-		//FIXME
 		if(video_format_changed)
-			Pts = INVALID_PTS_VALUE;
+			Pts_audio = INVALID_PTS_VALUE;
 		else
-			Pts = current->pts * 90000;
+			Pts_audio = current_audio->pts * 90000;
 		
 		if (aStartPts == 0) {
-			aStartPts = Pts;
-			Pts = 0;
-		} else if(Pts != INVALID_PTS_VALUE) Pts -= aStartPts;
-
-		//printf("a current->pts=%f Pts=%llu\n", current->pts, Pts);
-		while (current != NULL) {
-			//printf("AUDIODATA\n");
-			//HexdumpAVI(current->buffer, current->len);
-			context->output->audio->Write(context, current->buffer, current->len, Pts, NULL, 0, 0, "audio");
-			
-			isFirstAudioFrame=0;
-			current = current->next;
-			//Pts = INVALID_PTS_VALUE;
+			aPtsInit = 1;			
+			aStartPts = Pts_audio;
+			Pts_audio = 0;
+		} else if (Pts_audio != INVALID_PTS_VALUE) {
+			Pts_audio -= aStartPts;
+		}
+	}
+	
+	if (video->first != NULL) {	  
+		current_video = video->first;
+		
+		if (current_video->flags)	// fixme : always zero?
+		  printf("video current->flags = 0x%02x\n",current_video->flags);
+		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
+			//printf("\tNORMALFRAME,                 ");
+			Pts = INVALID_PTS_VALUE;
+		} else {
+			//printf("\tKEYFRAME,                    ");
+			Pts = (current->pts * 90000);
+		}*/
+		if(video_format_changed)
+			Pts_video = INVALID_PTS_VALUE;
+		else
+			Pts_video = current_video->pts * 90000;
+        
+		if (vStartPts == 0) {
+			vPtsInit = 1;
+			vStartPts = Pts_video;
+			Pts_video = 0;
+		} else if(Pts_video != INVALID_PTS_VALUE) {
+			Pts_video -= vStartPts;
 		}
 	}
 
-	if (video->first != NULL) {
-		demux_packet_t * current = video->first;
-		//printf("video current->flags = 0x%02x\n",current->flags);
-		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
-			//printf("\tNORMALFRAME,                 ");
-			Pts = INVALID_PTS_VALUE;
+	if (aPtsInit && vStartPts) {  // audio found first time, video known?
+		if (vStartPts < aStartPts) {
+			aStartPts = vStartPts;
 		} else {
-			//printf("\tKEYFRAME,                    ");
-			Pts = (current->pts * 90000);
-		}*/
-		//FIXME
-		if(video_format_changed)
-			Pts = INVALID_PTS_VALUE;
-		else
-			Pts = current->pts * 90000;
-        
-		if (vStartPts == 0) {
-			vStartPts = Pts;
-			Pts = 0;
-		} else if(Pts != INVALID_PTS_VALUE) Pts -= vStartPts;
+			vStartPts = aStartPts;
+		}		  		  
+	}
+	
+	if (vPtsInit && aStartPts) {  // video found first time, audio known?
+		if (vStartPts < aStartPts) {
+			aStartPts = vStartPts;
+		} else {
+			vStartPts = aStartPts;
+		}		  		  
+	}
+	
+	// FIXME: What if the stream doesn't contain either video or audio?
+	
+	// once we have video and audio in sync, write whatever we have
+	// we will skip the initial round when we have both, that's ok and safer
+	while (current_audio != NULL) {
+		//printf("AUDIODATA\n");
+		//HexdumpAVI(current->buffer, current->len);
 
-		//printf("v current->pts=%f Pts=%llu\n", current->pts, Pts);
-		while (current != NULL) {
-			context->output->video->Write(context, current->buffer, current->len, Pts, 0, 0, 0, "video");
-
-			current = current->next;
-			//Pts = INVALID_PTS_VALUE;
+		if (isFirstVideoFrame) {
+			printf("Skipping audio->Write as no video yet!\n");
+		} else {
+			context->output->audio->Write(context, current_audio->buffer, current_audio->len, Pts_audio, NULL, 0, 0, "audio");
 		}
+
+		isFirstAudioFrame=0;
+		current_audio = current_audio->next;
+		//Pts_audio = INVALID_PTS_VALUE;
+	}
+
+	while (current_video != NULL) {
+	  
+		if (isFirstAudioFrame) {
+			printf("Skipping video->Write as no audio yet!\n");
+		} else {
+			context->output->video->Write(context, current_video->buffer, current_video->len, Pts_video, 0, 0, 0, "video");
+		}
+
+		isFirstVideoFrame=0;
+		current_video = current_video->next;
+		//Pts_video = INVALID_PTS_VALUE;
 	}
 }
 
@@ -3747,38 +3790,37 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 
 static void TSThread(Context_t *context) {
 	printf("%s::%d\n", __FUNCTION__, __LINE__);
+	
+	while(context->playback->isPlaying && 
+		    demux_ts_fill_buffer(demuxer,ds)) {
+	    //printf("%s -->\n", __FUNCTION__);
 
+
+	    //IF MOVIE IS PAUSE, WAIT 
+	    while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
+
+	    TSGenerateParcel(context, demuxer);
+
+	    if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
+		    printf("SUBTITLE");
+		ds_free_packs(demuxer->sub);
+	    } 
+
+	    if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
+		ds_free_packs(demuxer->audio);
+	    }
+
+	    if (demuxer->video != NULL && demuxer->video->first != NULL) {
+		ds_free_packs(demuxer->video);
+	    }    
+	    //printf("%s <--\n", __FUNCTION__);
+
+	}
+
+	aStartPts = 0;
+	vStartPts = 0;
 	isFirstAudioFrame=1;
-
-
-    while(context->playback->isPlaying && 
-		demux_ts_fill_buffer(demuxer,ds)) {
-	//printf("%s -->\n", __FUNCTION__);
-
-
-        //IF MOVIE IS PAUSE, WAIT 
-        while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
-
-	TSGenerateParcel(context, demuxer);
-
-        if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
-		printf("SUBTITLE");
-            ds_free_packs(demuxer->sub);
-        } 
-
-        if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
-            ds_free_packs(demuxer->audio);
-        }
-
-        if (demuxer->video != NULL && demuxer->video->first != NULL) {
-            ds_free_packs(demuxer->video);
-        }    
-	//printf("%s <--\n", __FUNCTION__);
-
-    }
-
-    aStartPts = 0;
-    vStartPts = 0;
+	isFirstVideoFrame=1;
 
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 }
