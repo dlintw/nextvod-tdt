@@ -486,13 +486,20 @@ endif
 #######################################################################################
 	mkdir -p $(prefix)/release_neutrino/tuxbox/config
 	mkdir -p $(prefix)/release_neutrino/var/plugins
-	mkdir -p $(prefix)/release_neutrino/lib/tuxbox/plugins
-	mkdir -p $(prefix)/release_neutrino/usr/local/share/neutrino/icons/logo
+	mkdir -p $(prefix)/release_neutrino/lib/tuxbox
+	mkdir -p $(prefix)/release_neutrino/usr/lib/tuxbox
 	mkdir -p $(prefix)/release_neutrino/var/tuxbox/config
 	mkdir -p $(prefix)/release_neutrino/share/tuxbox
-	mkdir -p $(prefix)/release_neutrino/var/share/icons/logo
-	( cd $(prefix)/release_neutrino/ && ln -s /var/share/icons/logo logos )
+	mkdir -p $(prefix)/release_neutrino/var/share/icons
+	mkdir -p $(prefix)/release_neutrino/var/usr/local/share/config
 	( cd $(prefix)/release_neutrino/share/tuxbox && ln -s /usr/local/share/neutrino )
+	( cd $(prefix)/release_neutrino/var/share/icons/ && ln -s /usr/local/share/neutrino/icons/logo )
+	( cd $(prefix)/release_neutrino/ && ln -s /usr/local/share/neutrino/icons/logo logos )
+	( cd $(prefix)/release_neutrino/lib && ln -s libcrypto.so.0.9.7 libcrypto.so.0.9.8 )
+	( cd $(prefix)/release_neutrino/lib/tuxbox && ln -s /var/plugins )
+	( cd $(prefix)/release_neutrino/var/tuxbox && ln -s /var/plugins )
+	( cd $(prefix)/release_neutrino/usr/lib/tuxbox && ln -s /var/plugins )
+
 #######################################################################################
 #######################################################################################
 #######################################################################################
@@ -569,6 +576,11 @@ endif
 	rm -f $(prefix)/release_neutrino/usr/lib/*.a
 	rm -f $(prefix)/release_neutrino/usr/lib/*.o
 	rm -f $(prefix)/release_neutrino/usr/lib/*.la
+	mkdir -p $(prefix)/release_neutrino/usr/local/share/neutrino/icons/logo
+	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y && ln -s /usr/local/share/neutrino/icons/logo )
+	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y && ln -s /usr/local/share/neutrino/icons/logo logos )
+	( cd $(prefix)/release_neutrino/usr/local/share/neutrino && ln -s /usr/local/share/neutrino/httpd-y httpd )
+	( cd $(prefix)/release_neutrino/var && ln -s /usr/local/share/neutrino/httpd-y httpd )
 	find $(prefix)/release_neutrino/usr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
 
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/neutrino #############
