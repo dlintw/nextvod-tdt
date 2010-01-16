@@ -520,7 +520,6 @@ endif
 
 	$(INSTALL_DIR) $(prefix)/release_vdr/usr/local/bin
 	cp -rd $(targetprefix)/usr/local/bin/vdr $(prefix)/release_vdr/usr/local/bin/
-	cp -rd $(targetprefix)/usr/local/bin/runvdr $(prefix)/release_vdr/usr/local/bin/
 	find $(prefix)/release_vdr/usr/local/bin/ -name  vdr -exec sh4-linux-strip --strip-unneeded {} \;
 
 #######################################################################################

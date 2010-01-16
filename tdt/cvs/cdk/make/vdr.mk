@@ -41,7 +41,6 @@ endif
 	cp -rd $(targetprefix)/usr/lib/vdr/lib* $(prefix)/release_vdr/usr/lib/vdr/
 #	cp -rd $(targetprefix)/usr/lib/vdr/libvdr-vfd.so.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
 	cp -rd $(targetprefix)/usr/local/bin/vdr $(prefix)/release_vdr/usr/local/bin/
-	cp -rd $(targetprefix)/usr/local/bin/runvdr $(prefix)/release_vdr/usr/local/bin/
 	cp -rd $(targetprefix)/usr/share/locale/* $(prefix)/release_vdr/usr/share/locale
 	cp -rd $(targetprefix)/var/vdr/remote.conf $(prefix)/release_vdr/var/vdr/
 	cp -rd $(targetprefix)/var/vdr/sources.conf $(prefix)/release_vdr/var/vdr/
