@@ -1,0 +1,21 @@
+# plugins.load
+# Put vdr plugins that should be loaded at vdr start in this file .
+# Plugin defintion format: <plugin name> [plugin params]
+#
+# ! Inside definition lines comments are NOT allowed.
+# ! Don't use double quotes in definition lines.
+#
+# version: 2010-01-13 @expected
+
+# UFS9xx front panel display
+vfd
+
+# shows infos about the system
+#sysinfo
+
+# dvb scan
+#wirbelscan
+
+###
+# put config lines above here
+#
