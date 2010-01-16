@@ -88,6 +88,9 @@ $(DEPDIR)/%release_vdr:
 	echo "576i50" > $(prefix)/release_vdr/etc/videomode && \
 	cp $(buildprefix)/root/release/rcS_vdr$(if $(TF7700),_$(TF7700))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_vdr/etc/init.d/rcS && \
 	chmod 755 $(prefix)/release_vdr/etc/init.d/rcS && \
+	cp $(buildprefix)/root/var/vdr/plugins.load $(prefix)/release_vdr/var/vdr/ && \
+	cp $(buildprefix)/root/usr/local/bin/runvdr $(prefix)/release_vdr/var/vdr/ && \
+	cp $(buildprefix)/root/usr/local/bin/vdrshutdown $(prefix)/release_vdr/var/vdr/ && \
 	cp $(buildprefix)/root/release/mountvirtfs $(prefix)/release_vdr/etc/init.d/ && \
 	cp $(buildprefix)/root/release/mme_check $(prefix)/release_vdr/etc/init.d/ && \
 	cp $(buildprefix)/root/release/mountall $(prefix)/release_vdr/etc/init.d/ && \

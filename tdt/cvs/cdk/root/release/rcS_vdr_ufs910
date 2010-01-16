@@ -1,5 +1,4 @@
 #!/bin/sh
-#!/bin/sh
 
 MODDIR=/lib/modules
 
@@ -125,13 +124,14 @@ if [ ! -e /var/etc/.firstboot ]; then
 
 #   echo 720p50 >/proc/stb/video/videomode
 #   echo "bestfit" > /proc/stb/video/policy
-   until false
-   do
-      echo "starting vdr ->"
-      /usr/local/bin/vdr -s "/bin/fp_control -e" -P "vfd" -P "remote -i /dev/input/event0 -i /dev/input/event1" # -P "sc"
-      rtv=$?
-      echo "VDR ended <- RTV: " $rtv
-   done 
+
+   # start vdr run script
+   # for plugin configuration see: /var/vdr/plugins.load
+   /usr/local/bin/runvdr &
+
+   # exit now from here,
+   # all further processing is done in runvdr script, to free memory of rcS
+   exit
 fi
 
 
