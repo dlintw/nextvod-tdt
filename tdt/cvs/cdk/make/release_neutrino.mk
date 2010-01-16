@@ -582,7 +582,7 @@ endif
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino && ln -s /usr/local/share/neutrino/httpd-y httpd )
 	( cd $(prefix)/release_neutrino/var && ln -s /usr/local/share/neutrino/httpd-y httpd )
 	find $(prefix)/release_neutrino/usr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
-
+#
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/neutrino #############
 #	rm $(prefix)/release_neutrino/bin/mount
 	cp -RP $(buildprefix)/own_build/neutrino/* $(prefix)/release_neutrino/
