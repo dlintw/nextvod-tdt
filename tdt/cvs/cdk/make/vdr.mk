@@ -50,6 +50,9 @@ endif
 ##########################################################################################
 	mkdir -p $(prefix)/release_vdr/etc/init.d
 	cp $(buildprefix)/root/release/rcS_vdr_ufs910 $(prefix)/release_vdr/etc/init.d/rcS
+	cp $(buildprefix)/root/usr/local/bin/runvdr $(prefix)/release_vdr/usr/local/bin
+	cp $(buildprefix)/root/usr/local/bin/vdrshutdown $(prefix)/release_vdr/usr/local/bin
+	cp $(buildprefix)/root/release/rcS_vdr_ufs910 $(prefix)/release_vdr/etc/init.d/rcS
 	chmod 755 $(prefix)/release_vdr/etc/init.d/rcS
 
 vdr-clean:
