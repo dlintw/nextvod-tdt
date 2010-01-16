@@ -1,0 +1,61 @@
+#!/bin/sh
+
+# VDR shutdown script
+# this script is passed to vdr via the "-s <command>" parameter
+#
+# see: runvdr script (/var/vdr/runvdr)
+#
+# version: 2010-01-13 @expected
+
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+KILLCMD="killall -q -TERM vdr"
+
+# terminate vdr and verify vdr shutdown,
+# that all the vdr *.conf files was be written to disk
+cnt=0
+VDRALIVE=""
+while [ $cnt -lt 5 ]; do
+   let cnt++
+   $KILLCMD
+   sleep 3
+   VDRALIVE=`ps ax`
+   echo "$VDRALIVE" | grep "/vdr " >/dev/nul
+   if [ "$?" -ne 0 ]; then
+	  # vdr is down, now we can use /dev/vfd
+      echo "VDR shutdown..." > /dev/vfd
+      break
+   fi
+done
+
+# check if vdr is down, and kill -9 if not
+#VDRALIVE=`ps ax`
+echo "$VDRALIVE" | grep "/vdr " >/dev/nul
+if [ "$?" -eq 0 ]; then
+   echo killall -q -9 vdr
+   sleep 5
+fi
+
+# box shutdown
+echo "GOOD BYE" >/dev/vfd
+sync
+sleep 1
+fp_control -e
+umount -a
+
+# box shutdown commands depends on boxtype.
+# this could be activated,
+# if "fp_control -e" does not work on 14w boxes
+#
+#BOXTYPE=`cat /proc/boxtype`
+#case $BOXTYPE in
+#0)
+#  fp_control -e
+#  umount -a
+#  ;;
+#1)
+#  fp_control -e
+#  umount -a
+#  ;;
+#esac
