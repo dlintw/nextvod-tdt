@@ -16743,7 +16743,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
  class InfoBarPiP:
  	def __init__(self):
-@@ -1717,4 +1759,142 @@
+@@ -1717,4 +1759,143 @@
  			self.audioChannel.selectChannel(mode[1])
  		del self.audioChannel
 +
@@ -16868,10 +16868,11 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +				if self.session.nav.getCurrentService().audioTracks().getNumberOfTracks() > audio[1]:
 +					self.audioTracks.selectTrack(audio[1])
 +
-+		try:
-+			del self.audioChannel
-+		except AttributeError:
-+			print "no such Attribute"
++		else:
++			try:
++				del self.audioChannel
++			except AttributeError:
++				print "no such Attribute"
 +		try:
 +			del self.audioTracks
 +		except AttributeError:
@@ -16886,7 +16887,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  class InfoBarSubserviceSelection:
-@@ -1794,14 +1974,41 @@
+@@ -1794,14 +1975,41 @@
  
  			if self.bouquets and len(self.bouquets):
 -				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
@@ -16935,7 +16936,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
-@@ -1843,4 +2050,127 @@
+@@ -1843,4 +2051,127 @@
  		else:
  			del self.selectedSubservice
 +
