@@ -1970,6 +1970,7 @@ do
 		do
 			mkdir -p dvb/adapter$i
 			makedev dvb/adapter$i/video0	c 212 `math 64 \* $i + 0` $video
+			makedev dvb/adapter$i/video1	c 212 `math 64 \* $i + 16` $video
 			makedev dvb/adapter$i/audio0    c 212 `math 64 \* $i + 1` $video
 			makedev dvb/adapter$i/frontend0 c 212 `math 64 \* $i + 3` $video
 			makedev dvb/adapter$i/frontend1 c 212 `math 64 \* $i + 19` $video
