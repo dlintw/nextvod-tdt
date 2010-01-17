@@ -3380,30 +3380,209 @@ diff -Nur enigma2-nightly.org/lib/gdi/stmfb.cpp enigma2-nightly/lib/gdi/stmfb.cp
 +}
 +
 diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/lib/python/Components/Harddisk.py
---- enigma2-nightly.org/lib/python/Components/Harddisk.py	2009-12-12 23:16:22.420599000 +0100
-+++ enigma2-nightly/lib/python/Components/Harddisk.py	2009-12-12 23:46:13.000000000 +0100
-@@ -41,9 +41,16 @@
- 			tmp = readFile(self.sysfsPath('dev')).split(':')
- 			s_major = int(tmp[0])
- 			s_minor = int(tmp[1])
--			for disc in listdir("/dev/discs"):
--				dev_path = path.realpath('/dev/discs/' + disc)
--				disk_path = dev_path + '/disc'
+--- enigma2-nightly.org/lib/python/Components/Harddisk.py	2010-01-17 23:16:22.420599000 +0100
++++ enigma2-nightly/lib/python/Components/Harddisk.py	2010-01-17 23:46:13.000000000 +0100
+@@ -1,8 +1,25 @@
+-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access
+-from Tools.Directories import SCOPE_HDD, resolveFilename
 +#--->
-+#-			for disc in listdir("/dev/discs"):
-+#-				dev_path = path.realpath('/dev/discs/' + disc)
-+#-				disk_path = dev_path + '/disc'
++#-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access
++#-from Tools.Directories import SCOPE_HDD, resolveFilename
 +#---<
 +#+++>
-+			for disc in ['sda', 'sdb', 'sdc', 'sdd', 'sr0', 'sr1']:
-+				dev_path = '/dev/'+ disc
-+				disk_path = dev_path
++from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access, readlink, remove, path as os_path
++from Tools.Directories import SCOPE_HDD, resolveFilename, removeDir
 +#+++<
+ from Tools.CList import CList
+ from SystemInfo import SystemInfo
+ import time
+ from Components.Console import Console
++#+++>
++from enigma import eConsoleAppContainer, evfd
++import os
++
++def tryOpen(filename):
++	try:
++		procFile = open(filename)
++	except IOError:
++		return ""
++	return procFile
++#+++<
+ 
+ def readFile(filename):
+@@ -18,4 +35,5 @@
+ 	def __init__(self, device):
+ 		self.device = device
++
+ 
+ 		if access("/dev/.udev", 0):
+@@ -25,5 +43,7 @@
+ 		else:
+ 			print "Unable to determine structure of /dev"
+-
++#+++>
++			self.type = self.DEVTYPE_UDEV
++#+++<
+ 		self.max_idle_time = 0
+ 		self.idle_running = False
+@@ -33,5 +53,6 @@
+ 		self.disk_path = ''
+ 		self.phys_path = path.realpath(self.sysfsPath('device'))
+-
++		
++		print "[Harddisk] found: ", self.phys_path
+ 		if self.type == self.DEVTYPE_UDEV:
+ 			self.dev_path = '/dev/' + self.device
+@@ -44,5 +65,5 @@
+ 			for disc in listdir("/dev/discs"):
+ 				dev_path = path.realpath('/dev/discs/' + disc)
+-				disk_path = dev_path + '/disc'
++ 				disk_path = dev_path + '/disc'
  				try:
  					rdev = stat(disk_path).st_rdev
- 				except OSError:
-@@ -452,7 +459,12 @@
- 		try:
+@@ -172,11 +193,20 @@
+ 			parts = line.strip().split(" ")
+ 			if path.realpath(parts[0]).startswith(self.dev_path):
+-				cmd = ' ' . join([cmd, parts[1]])
+-
++#--->			
++#-				cmd = ' ' . join([cmd, parts[1]])
++#---<
++#+++>
++				cmd = ' -fl ' . join([cmd, parts[1]])
++#+++<
+ 		res = system(cmd)
+ 		return (res >> 8)
+ 
+ 	def createPartition(self):
+-		cmd = 'printf "0,\n;\n;\n;\ny\n" | /sbin/sfdisk -f ' + self.disk_path
++#--->
++#-		cmd = 'printf "0,\n;\n;\n;\ny\n" | /sbin/sfdisk -f ' + self.disk_path
++#---<
++#+++>
++		cmd = 'echo "0,\n;\n;\n;\ny\n" | /sbin/sfdisk -f ' + self.disk_path
++#+++<
+ 		res = system(cmd)
+ 		return (res >> 8)
+@@ -186,6 +216,19 @@
+ 		if self.diskSize() > 4 * 1024:
+ 			cmd += "-T largefile "
+-		cmd += "-m0 -O dir_index " + self.partitionPath("1")
+-		res = system(cmd)
++
++		cmd += "-m0 -O dir_index -L RECORD " + self.partitionPath("1")
++		print "cmd", cmd
++#--->
++#-		res = system(cmd)
++#---<
++#+++>
++		print "[Harddisk] mkfs: ", cmd
++		if os.path.exists("/sbin/cmd") is True:
++			self.container = eConsoleAppContainer()
++			self.container.execute("/sbin/cmd " + cmd)
++			res = 0
++		else:	
++			res = system(cmd)
++#+++<
+ 		return (res >> 8)
+ 
+@@ -203,5 +246,5 @@
+ 			parts = line.strip().split(" ")
+ 			if path.realpath(parts[0]) == self.partitionPath("1"):
+-				cmd = "/bin/mount -t ext3 " + parts[0]
++				cmd = "/bin/mount -t ext3 " + parts[0] + " /media/hdd"
+ 				res = system(cmd)
+ 				break
+@@ -220,5 +263,16 @@
+ 		# TODO: we could check if the fs is actually ext3
+ 		cmd = "/sbin/fsck.ext3 -f -p " + self.partitionPath("1")
+-		res = system(cmd)
++#--->
++#-		res = system(cmd)
++#---<
++#+++>		
++		print "[Harddisk] fsck: ", cmd
++		if os.path.exists("/sbin/cmd") is True:
++			self.container = eConsoleAppContainer()
++			self.container.execute("/sbin/cmd " + cmd)
++			res = 0
++		else:	
++			res = system(cmd)
++#+++<
+ 		return (res >> 8)
+ 
+@@ -392,26 +446,45 @@
+ 		return False
+ 
++#--->
++#-DEVICEDB =  \
++#-	{"dm8000":
++#-		{
++#-			# dm8000:
++#-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": "Front USB Slot",
++#-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.2/1-1.2:1.0": "Back, upper USB Slot",
++#-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.3/1-1.3:1.0": "Back, lower USB Slot",
++#-			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0/host1/target1:0:0/1:0:0:0": "DVD Drive",
++#-		},
++#-	"dm800":
++#-	{
++#-		# dm800:
++#-		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": "Upper USB Slot",
++#-		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": "Lower USB Slot",
++#-	},
++#-	"dm7025":
++#-	{
++#-		# dm7025:
++#-		"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "CF Card Slot", #hdc
++#-		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
++#-	}
++#-	}
++#---<
++#+++>
+ DEVICEDB =  \
+-	{"dm8000":
++	{"ufs910":
+ 		{
+-			# dm8000:
+-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": "Front USB Slot",
+-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.2/1-1.2:1.0": "Back, upper USB Slot",
+-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.3/1-1.3:1.0": "Back, lower USB Slot",
+-			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0/host1/target1:0:0/1:0:0:0": "DVD Drive",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.4/1-1.4:1.0": "Front USB Slot",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.3/1-1.3:1.0": "Back, upper USB Slot",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0": "Back, lower USB Slot",
+ 		},
+-	"dm800":
+-	{
+-		# dm800:
+-		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": "Upper USB Slot",
+-		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": "Lower USB Slot",
+-	},
+-	"dm7025":
+-	{
+-		# dm7025:
+-		"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "CF Card Slot", #hdc
+-		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
++	"UFS922":
++		{
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.1/1-1.1:1.0/": "Back, upper USB Slot",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0/": "Back, lower USB Slot",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.3/1-1.3:1.0/": "Front USB Slot",
++		}	
+ 	}
+-	}
++#+++<
++
+ 
+ class HarddiskManager:
+@@ -438,4 +511,6 @@
+ 					("/media/ram", _("Ram Disk")),
+ 					("/media/usb", _("USB Stick")),
++					("/media/upnp", _("UPNP Stick")),
++					("/media/ftp", _("FTP Stick")),
+ 					("/", _("Internal Flash"))
+ 				]
+@@ -453,5 +528,10 @@
  			removable = bool(int(readFile(devpath + "/removable")))
  			dev = int(readFile(devpath + "/dev").split(':')[0])
 -			if dev in (7, 31): # loop, mtdblock
@@ -3411,11 +3590,39 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
 +#-			if dev in (7, 31): # loop, mtdblock
 +#---<
 +#+++>
-+			if dev in [1, 7, 31]: # ram, loop, mtdblock 
++			if dev in [1, 7, 31, 253]: # ram, loop, mtdblock, ramzswap
 +#+++<
  				blacklisted = True
  			if blockdev[0:2] == 'sr':
- 				is_cdrom = True
+@@ -513,4 +593,11 @@
+ 				physdev = dev
+ 				print "couldn't determine blockdev physdev for device", device
++#+++>		
++		else:
++			dev, part = self.splitDeviceName(device)
++		if part is not 0:
++			print "[Harddisk] start automount"
++			#Automount(device,"mount")
++#+++<		
+ 
+ 		# device is the device name, without /dev
+@@ -545,4 +632,10 @@
+ 					break
+ 			SystemInfo["Harddisk"] = len(self.hdd) > 0
++#+++>
++		dev, part = self.splitDeviceName(device)
++		if part is not 0:
++			print "[Harddisk] start auto umount"
++			#Automount(device,"umount")
++#+++<
+ 
+ 	def HDDCount(self):
+@@ -614,4 +707,4 @@
+ 				self.partitions.remove(x)
+ 				self.on_partition_list_change("remove", x)
+-
++		
+ harddiskmanager = HarddiskManager()
 diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightly/lib/python/Components/NimManager.py
 --- enigma2-nightly.org/lib/python/Components/NimManager.py	2009-12-12 23:16:22.424599000 +0100
 +++ enigma2-nightly/lib/python/Components/NimManager.py	2009-12-12 23:45:45.000000000 +0100
