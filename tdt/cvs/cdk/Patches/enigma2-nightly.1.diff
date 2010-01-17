@@ -17094,3 +17094,15 @@ diff -Nur enigma2-nightly.org/lib/python/Components/VolumeControl.py enigma2-nig
 +#+++>
 +				self.volctrl.setVolume(vol, vol)
 +#+++<
+
+diff -Nur enigma2-nightly.org/lib/python/Components/UsageConfig.py enigma2-nightly.org/lib/python/Components/UsageConfig.py
+--- enigma2-nightly.org/lib/python/Components/UsageConfig.py	2010-01-17 23:16:22.500600000 +0100
++++ enigma2-nightly.org/lib/python/Components/UsageConfig.py	2010-01-17 23:18:41.332599958 +0100
+@@ -48,4 +48,7 @@
+ 	config.usage.on_long_powerpress = ConfigSelection(default = "show_menu", choices = [
+ 		("show_menu", _("show shutdown menu")),
++#+++>
++		("standby", _("immediate standby")),
++#+++<
+ 		("shutdown", _("immediate shutdown")) ] )
+ 
