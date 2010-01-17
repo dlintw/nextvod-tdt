@@ -188,7 +188,7 @@ void processCommand (Context_t * context, int argc, char* argv[])
                    
 	        /* set the frontcontroller timer from args */
                 if (((Model_t*)context->m)->SetTimerManual)
-                    ((Model_t*)context->m)->SetTime(context, &theGMTTime);
+                    ((Model_t*)context->m)->SetTimerManual(context, &theGMTTime);
 		    
 		i += 2;    
 	    } else
