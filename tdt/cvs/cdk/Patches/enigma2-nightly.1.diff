@@ -3424,18 +3424,25 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
 +#+++<
  
  def readFile(filename):
-@@ -18,4 +35,5 @@
- 	def __init__(self, device):
+@@ -19,11 +36,14 @@
  		self.device = device
-+
  
- 		if access("/dev/.udev", 0):
-@@ -25,5 +43,7 @@
- 		else:
- 			print "Unable to determine structure of /dev"
+-		if access("/dev/.udev", 0):
+-			self.type = self.DEVTYPE_UDEV
+-		elif access("/dev/.devfsd", 0):
+-			self.type = self.DEVTYPE_DEVFS
+-		else:
+-			print "Unable to determine structure of /dev"
 -
++#--->
++#-		if access("/dev/.udev", 0):
++#-			self.type = self.DEVTYPE_UDEV
++#-		elif access("/dev/.devfsd", 0):
++#-			self.type = self.DEVTYPE_DEVFS
++#-		else:
++#-			print "Unable to determine structure of /dev"
 +#+++>
-+			self.type = self.DEVTYPE_UDEV
++		self.type = self.DEVTYPE_UDEV
 +#+++<
  		self.max_idle_time = 0
  		self.idle_running = False
