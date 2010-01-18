@@ -155,13 +155,27 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.h enigma2-nightly/lib/base/filep
  	virtual void getNextSourceSpan(off_t current_offset, size_t bytes_read, off_t &start, size_t &size)=0;
  	virtual ~iFilePushScatterGather() {}
 +#if defined(__sh__)
-+//Changes in this file are cause e2 doesnt tell the player to play reverse
-+//No idea how this is handeld in dm drivers
++	//Changes in this file are cause e2 doesnt tell the player to play reverse
++	//No idea how this is handeld in dm drivers
 +	virtual int getSkipMode()=0;
 +#endif
  };
  
  class eFilePushThread: public eThread, public Object
+@@ -51,7 +56,12 @@
+ private:
+ 	iFilePushScatterGather *m_sg;
+ 	int m_stop;
+-	unsigned char m_buffer[65536];
++#if defined(__sh__)
++        //align buffer to standard blocksize of 188
++        unsigned char m_buffer[348*188];
++#else
++        unsigned char m_buffer[65536];
++#endif
+ 	int m_buf_start, m_buf_end, m_filter_end;
+ 	int m_fd_dest;
+ 	int m_send_pvr_commit;
 diff -Nur enigma2-nightly.org/lib/base/ioprio.cpp enigma2-nightly/lib/base/ioprio.cpp
 --- enigma2-nightly.org/lib/base/ioprio.cpp	2009-12-12 23:16:22.400599000 +0100
 +++ enigma2-nightly/lib/base/ioprio.cpp	2009-12-12 23:37:38.000000000 +0100
