@@ -3488,8 +3488,6 @@ static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
 static pthread_t PlayThread;
-static int isFirstAudioFrame = 1;
-static int isFirstVideoFrame = 1;
 
 void TSInit(Context_t *context, char * filename) {
 
@@ -3638,13 +3636,13 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	if (!video_format) // initialize
 		if (sh_video->format) {
 			video_format = sh_video->format;
-			printf("%s::%s video_format init with 0x%02x\n", FILENAME, __FUNCTION__, video_format);
+			printf("%s::%s video format init with 0x%02x\n", FILENAME, __FUNCTION__, video_format);
 		}
 	  
 	if(sh_video->format != video_format) // changed?
 	{
 		video_format_changed = 1;
-		printf("%s::%s: change videoformat 0x%02x to 0x%02x\n", FILENAME, __FUNCTION__, sh_video->format, video_format);
+		printf("%s::%s: change video format 0x%02x to 0x%02x\n", FILENAME, __FUNCTION__, sh_video->format, video_format);
 		sh_video->format = video_format;
 	  
 		if(sh_video->format == 0x10000001 || sh_video->format == 0x10000002)
@@ -3689,7 +3687,8 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		current_audio = audio->first;
 		
 		if (current_audio->flags)	// fixme : always zero?
-		  printf("audio current_audio->flags = 0x%02x\n",current_audio->flags);
+			printf("audio current_audio->flags = 0x%02x\n",current_audio->flags);
+		
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts = INVALID_PTS_VALUE;
@@ -3697,6 +3696,7 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			//printf("\tKEYFRAME,                    ");
 			Pts = (current->pts * 90000);
 		}*/
+		
 		if(video_format_changed)
 			Pts_audio = INVALID_PTS_VALUE;
 		else
@@ -3715,7 +3715,8 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		current_video = video->first;
 		
 		if (current_video->flags)	// fixme : always zero?
-		  printf("video current->flags = 0x%02x\n",current_video->flags);
+			printf("video current->flags = 0x%02x\n",current_video->flags);
+		
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts = INVALID_PTS_VALUE;
@@ -3723,6 +3724,7 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			//printf("\tKEYFRAME,                    ");
 			Pts = (current->pts * 90000);
 		}*/
+		
 		if(video_format_changed)
 			Pts_video = INVALID_PTS_VALUE;
 		else
@@ -3753,36 +3755,19 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		}		  		  
 	}
 	
-	// FIXME: What if the stream doesn't contain either video or audio?
-	
-	// once we have video and audio in sync, write whatever we have
-	// we will skip the initial round when we have both, that's ok and safer
 	while (current_audio != NULL) {
 		//printf("AUDIODATA\n");
 		//HexdumpAVI(current->buffer, current->len);
 
-		if (isFirstVideoFrame) {
-			printf("Skipping audio->Write as no video yet!\n");
-		} else {
-			context->output->audio->Write(context, current_audio->buffer, current_audio->len, Pts_audio, NULL, 0, 0, "audio");
-		}
+		context->output->audio->Write(context, current_audio->buffer, current_audio->len, Pts_audio, NULL, 0, 0, "audio");
 
-		isFirstAudioFrame=0;
 		current_audio = current_audio->next;
-		//Pts_audio = INVALID_PTS_VALUE;
 	}
 
-	while (current_video != NULL) {
-	  
-		if (isFirstAudioFrame) {
-			printf("Skipping video->Write as no audio yet!\n");
-		} else {
-			context->output->video->Write(context, current_video->buffer, current_video->len, Pts_video, 0, 0, 0, "video");
-		}
+	while (current_video != NULL) {	  
+		context->output->video->Write(context, current_video->buffer, current_video->len, Pts_video, 0, 0, 0, "video");
 
-		isFirstVideoFrame=0;
 		current_video = current_video->next;
-		//Pts_video = INVALID_PTS_VALUE;
 	}
 }
 
@@ -3791,36 +3776,32 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 static void TSThread(Context_t *context) {
 	printf("%s::%d\n", __FUNCTION__, __LINE__);
 	
-	while(context->playback->isPlaying && 
-		    demux_ts_fill_buffer(demuxer,ds)) {
+	while(context->playback->isPlaying && demux_ts_fill_buffer(demuxer,ds)) {
 	    //printf("%s -->\n", __FUNCTION__);
 
-
 	    //IF MOVIE IS PAUSE, WAIT 
-	    while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
+		while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
 
-	    TSGenerateParcel(context, demuxer);
+		TSGenerateParcel(context, demuxer);
 
-	    if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
-		    printf("SUBTITLE");
-		ds_free_packs(demuxer->sub);
-	    } 
+		if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
+			printf("SUBTITLE");
+			ds_free_packs(demuxer->sub);
+		} 
 
-	    if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
-		ds_free_packs(demuxer->audio);
-	    }
+		if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
+			ds_free_packs(demuxer->audio);
+		}
 
-	    if (demuxer->video != NULL && demuxer->video->first != NULL) {
-		ds_free_packs(demuxer->video);
-	    }    
-	    //printf("%s <--\n", __FUNCTION__);
+		if (demuxer->video != NULL && demuxer->video->first != NULL) {
+			ds_free_packs(demuxer->video);
+		}    
+		//printf("%s <--\n", __FUNCTION__);
 
 	}
 
 	aStartPts = 0;
 	vStartPts = 0;
-	isFirstAudioFrame=1;
-	isFirstVideoFrame=1;
 
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 }
@@ -3890,6 +3871,10 @@ static int TSStop(Context_t *context) {
     return 0;
 }
 
+static int TSGetLength(demuxer_t *demuxer,double * length) {
+	return -1;	// FIXME
+}
+
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
@@ -3911,8 +3896,16 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			demux_seek_ts (demuxer, (float)*((float*)argument), 0.0, 0);
 			break;
 		}
+		case CONTAINER_LENGTH: {
+			double length = 0;
+			if (demuxer != NULL && TSGetLength(demuxer, &length)!=0)
+				*((double*)argument) = (double)0;
+			else
+				*((double*)argument) = (double)length;
+			break;
+		}		
 		default:
-			printf("ConatinerCmd not supported!");
+			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
 			break;
 	}
 

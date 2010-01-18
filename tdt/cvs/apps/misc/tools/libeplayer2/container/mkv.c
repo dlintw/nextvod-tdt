@@ -33,6 +33,8 @@ extern "C" {
 int debug = 0;
 #define dprintf(x...) do { if (debug)printf(x); } while (0)
 
+#define IGNORE_TRACKS	// prevent incompatible tracks to be added
+
 int correct_pts=1;
 
 /*
@@ -524,7 +526,7 @@ typedef struct mkv_demuxer
  * \param elsize size of one array element
  */
 static void grow_array(void **array, int nelem, size_t elsize) {
-    dprintf("ufs910player demux_mkv.c grow_array\n\n");
+    dprintf("mkv.c grow_array\n\n");
     if (!(nelem & 31))
         *array = realloc(*array, (nelem + 32) * elsize);
 }
@@ -532,7 +534,7 @@ static void grow_array(void **array, int nelem, size_t elsize) {
 static mkv_track_t *
 demux_mkv_find_track_by_num (mkv_demuxer_t *d, int n, int type)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_find_track_by_num\n\n");
+    dprintf("mkv.c demux_mkv_find_track_by_num\n\n");
     int i, id;
 
 	for (i=0, id=0; i < d->num_tracks; i++)
@@ -546,7 +548,7 @@ demux_mkv_find_track_by_num (mkv_demuxer_t *d, int n, int type)
 static mkv_track_t *
 demux_mkv_find_track_by_language (mkv_demuxer_t *d, char *language, int type)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_find_track_by_language\n\n");
+    dprintf("mkv.c demux_mkv_find_track_by_language\n\n");
     int i, len;
 
     language += strspn(language,",");
@@ -565,7 +567,7 @@ demux_mkv_find_track_by_language (mkv_demuxer_t *d, char *language, int type)
 static void
 add_cluster_position (mkv_demuxer_t *mkv_d, uint64_t position)
 {
-    dprintf("ufs910player demux_mkv.c add_cluster_position\n\n");
+    dprintf("mkv.c add_cluster_position\n\n");
     int i = mkv_d->num_cluster_pos;
 
     while (i--)
@@ -581,7 +583,7 @@ add_cluster_position (mkv_demuxer_t *mkv_d, uint64_t position)
 static int
 aac_get_sample_rate_index (uint32_t sample_rate)
 {
-    dprintf("ufs910player demux_mkv.c aac_get_sample_rate_index\n\n");
+    dprintf("mkv.c aac_get_sample_rate_index\n\n");
     if (92017 <= sample_rate)
         return 0;
     else if (75132 <= sample_rate)
@@ -612,7 +614,7 @@ aac_get_sample_rate_index (uint32_t sample_rate)
 static int
 vobsub_parse_size (sh_sub_t *sh, const char *start)
 {
-    dprintf("ufs910player demux_mkv.c vobsub_parse_size\n\n");
+    dprintf("mkv.c vobsub_parse_size\n\n");
     if (sscanf(&start[6], "%dx%d", &sh->width, &sh->height) == 2)
     {
         dprintf("[mkv] VobSub size: %ux%u\n",sh->width, sh->height);
@@ -624,7 +626,7 @@ vobsub_parse_size (sh_sub_t *sh, const char *start)
 static int
 vobsub_parse_palette (sh_sub_t *sh, const char *start)
 {
-    dprintf("ufs910player demux_mkv.c vobsub_parse_palette\n\n");
+    dprintf("mkv.c vobsub_parse_palette\n\n");
     int i, r, g, b, y, u, v, tmp;
 
     start += 8;
@@ -667,7 +669,7 @@ vobsub_parse_palette (sh_sub_t *sh, const char *start)
 static int
 vobsub_parse_custom_colors (sh_sub_t *sh, const char *start)
 {
-    dprintf("ufs910player demux_mkv.c vobsub_parse_custom_colors\n\n");
+    dprintf("mkv.c vobsub_parse_custom_colors\n\n");
     int use_custom_colors, i;
 
     use_custom_colors = 0;
@@ -709,7 +711,7 @@ vobsub_parse_custom_colors (sh_sub_t *sh, const char *start)
 static int
 vobsub_parse_forced_subs (sh_sub_t *sh, const char *start)
 {
-    dprintf("ufs910player demux_mkv.c vobsub_parse_forced_subs\n\n");
+    dprintf("mkv.c vobsub_parse_forced_subs\n\n");
     start += 12;
     while (isspace(*start))
         start++;
@@ -734,7 +736,7 @@ vobsub_parse_forced_subs (sh_sub_t *sh, const char *start)
 static void
 free_cached_dps (demuxer_t *demuxer)
 {
-    dprintf("ufs910player demux_mkv.c free_cached_dps\n\n");
+    dprintf("mkv.c free_cached_dps\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     mkv_track_t *track;
     int i, k;
@@ -755,7 +757,7 @@ free_cached_dps (demuxer_t *demuxer)
 static int
 demux_mkv_parse_idx (mkv_track_t *t)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_parse_idx\n\n");
+    dprintf("mkv.c demux_mkv_parse_idx\n\n");
     int things_found, last;
     char *buf, *pos, *start;
 
@@ -814,7 +816,7 @@ static int
 demux_mkv_decode (mkv_track_t *track, uint8_t *src, uint8_t **dest,
                   uint32_t *size, uint32_t type)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_decode\n\n");
+    dprintf("mkv.c demux_mkv_decode\n\n");
     int i, result;
     int modified = 0;
 
@@ -836,7 +838,7 @@ demux_mkv_decode (mkv_track_t *track, uint8_t *src, uint8_t **dest,
 
         if (track->encodings[i].comp_algo == 2)
         {
-            dprintf("------------------------mplayer demux_mkv.c demux_mkv_decode\n\n");
+            dprintf("------------------------mplayer mkv.c demux_mkv_decode\n\n");
             // lzo encoded track 
             int dstlen = *size * 3;
 
@@ -873,7 +875,7 @@ long int Duration = 0;
 static int
 demux_mkv_read_info (demuxer_t *demuxer,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_info\n\n");
+    dprintf("mkv.c demux_mkv_read_info\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     //stream_t *s = demuxer->stream;
     uint64_t length, l;
@@ -925,7 +927,7 @@ demux_mkv_read_info (demuxer_t *demuxer,stream_t *s)
 static void
 demux_mkv_free_encodings(mkv_content_encoding_t *encodings, int numencodings)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_free_encodings\n\n");
+    dprintf("mkv.c demux_mkv_free_encodings\n\n");
     while (numencodings-- > 0)
         free(encodings[numencodings].comp_settings);
     free(encodings);
@@ -934,7 +936,7 @@ demux_mkv_free_encodings(mkv_content_encoding_t *encodings, int numencodings)
 static int
 demux_mkv_read_trackencodings (demuxer_t *demuxer, mkv_track_t *track,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_trackencodings\n\n");
+    dprintf("mkv.c demux_mkv_read_trackencodings\n\n");
     //stream_t *s = demuxer->stream;
     mkv_content_encoding_t *ce, e;
     uint64_t len, length, l;
@@ -1083,7 +1085,7 @@ err_out:
 static int
 demux_mkv_read_trackaudio (demuxer_t *demuxer, mkv_track_t *track,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_trackaudio\n\n");
+    dprintf("mkv.c demux_mkv_read_trackaudio\n\n");
     //stream_t *s = demuxer->stream;
     uint64_t len, length, l;
     int il;
@@ -1139,7 +1141,7 @@ demux_mkv_read_trackaudio (demuxer_t *demuxer, mkv_track_t *track,stream_t *s)
 static int
 demux_mkv_read_trackvideo (demuxer_t *demuxer, mkv_track_t *track,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_trackvideo\n\n");
+    dprintf("mkv.c demux_mkv_read_trackvideo\n\n");
     //stream_t *s = demuxer->stream;
     uint64_t len, length, l;
     int il;
@@ -1218,7 +1220,7 @@ demux_mkv_read_trackvideo (demuxer_t *demuxer, mkv_track_t *track,stream_t *s)
 
 static void
 demux_mkv_free_trackentry(mkv_track_t *track) {
-    dprintf("ufs910player demux_mkv.c demux_mkv_free_trackentry\n\n");
+    dprintf("mkv.c demux_mkv_free_trackentry\n\n");
     if (track->name)
         free (track->name);
     if (track->codec_id)
@@ -1240,15 +1242,78 @@ demux_mkv_free_trackentry(mkv_track_t *track) {
     free(track);
 }
 #define A_AC3 20
+
+int getKathreinUfs910BoxType() {
+    char vType;
+    int vFdBox = open("/proc/boxtype", O_RDONLY);
+
+    read (vFdBox, &vType, 1);
+
+    close(vFdBox);
+
+    return vType=='0'?0:vType=='1'||vType=='3'?1:-1;
+}
+
+int getModel()
+{
+    int         vFd             = -1;
+    const int   cSize           = 128;
+    char        vName[129]      = "Unknown";
+    int         vLen            = -1;
+    eBoxType    vBoxType        = Unknown;
+    
+    printf("%s::%s\n", FILENAME, __FUNCTION__);
+    
+    vFd = open("/proc/stb/info/model", O_RDONLY);
+    vLen = read (vFd, vName, cSize);
+
+    close(vFd);
+    
+    if(vLen > 0) {
+        vName[vLen-1] = '\0';
+        
+        printf("Model: %s\n", vName);
+        
+        if(!strncasecmp(vName,"ufs910", 6)) {
+            switch(getKathreinUfs910BoxType())
+            {
+                case 0:
+                    vBoxType = Ufs910_1W;
+                    break;
+                case 1:
+                    vBoxType = Ufs910_14W;
+                    break;
+                default:
+                    vBoxType = Unknown;
+                    break;
+            }
+        } else if(!strncasecmp(vName,"ufs922", 6))
+            vBoxType = Ufs922;
+        else if(!strncasecmp(vName,"tf7700hdpvr", 11))
+            vBoxType = Tf7700;
+        else if(!strncasecmp(vName,"hdbox", 5))
+            vBoxType = HdBox;
+        else
+            vBoxType = Unknown;
+    }
+    
+    printf("vBoxType: %d\n", vBoxType);
+    
+    return vBoxType;    
+}
+
+static eBoxType boxType = Unknown;
+
 static int
 demux_mkv_read_trackentry (demuxer_t *demuxer,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_trackentry\n\n");
+    dprintf("mkv.c demux_mkv_read_trackentry\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     //stream_t *s = demuxer->stream;
     mkv_track_t *track;
     uint64_t len, length, l;
     int il;
+    int skip_track = 0;
 
     track = calloc (1, sizeof (*track));
     /* set default values */
@@ -1416,18 +1481,80 @@ demux_mkv_read_trackentry (demuxer_t *demuxer,stream_t *s)
         length -= l + il;
     }
 
-    mkv_d->tracks[mkv_d->num_tracks++] = track;
-    return len;
+#ifdef IGNORE_TRACKS
+	// Don't add unsupported tracks to track list
+	if (track->type == MATROSKA_TRACK_AUDIO) {
+		if( !strcmp (track->codec_id, MKV_A_AAC_2MAIN)
+		 || !strcmp (track->codec_id, MKV_A_AAC_2LC)
+		 || !strcmp (track->codec_id, MKV_A_AAC_2SBR)
+		 || !strcmp (track->codec_id, MKV_A_AAC_2SSR)
+		 || !strcmp (track->codec_id, MKV_A_AAC_4MAIN)
+		 || !strcmp (track->codec_id, MKV_A_AAC_4LC)
+		 || !strcmp (track->codec_id, MKV_A_AAC_4SBR)
+		 || !strcmp (track->codec_id, MKV_A_AAC_4SSR)
+		 || !strcmp (track->codec_id, MKV_A_AAC_4LTP)
+		 || !strcmp (track->codec_id, MKV_A_AAC)
+		 || !strcmp (track->codec_id, MKV_A_AC3)
+//		 || !strcmp (track->codec_id, MKV_A_EAC3)
+		 || !strcmp (track->codec_id, MKV_A_DTS)
+//		 || !strcmp (track->codec_id, MKV_A_MP2)
+		 || !strcmp (track->codec_id, MKV_A_MP3)
+		 || !strcmp (track->codec_id, MKV_A_PCM)
+		 || !strcmp (track->codec_id, MKV_A_PCM_BE)
+		 || !strcmp (track->codec_id, MKV_A_VORBIS)
+		 || !strcmp (track->codec_id, MKV_A_ACM)
+		 || !strcmp (track->codec_id, MKV_A_REAL28)
+		 || !strcmp (track->codec_id, MKV_A_REALATRC)
+		 || !strcmp (track->codec_id, MKV_A_REALCOOK)
+		 || !strcmp (track->codec_id, MKV_A_REALDNET)
+		 || !strcmp (track->codec_id, MKV_A_REALSIPR)
+		 || !strcmp (track->codec_id, MKV_A_QDMC)
+		 || !strcmp (track->codec_id, MKV_A_QDMC2)
+//		 || !strcmp (track->codec_id, MKV_A_FLAC)
+		 || !strcmp (track->codec_id, MKV_A_WMA)
+		) {
+			printf("%s::%s Added Audio Codec %s to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+		}
+		else {
+			printf("%s::%s Unknown Audio Codec %s not added to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+			skip_track = 1;
+		}
+	} else if (track->type == MATROSKA_TRACK_VIDEO) {
+		if (boxType == Unknown)
+			boxType = getModel();
+		printf("%s::%s Added Video Codec %s to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+	}
+#else
+	if (track->type == MATROSKA_TRACK_AUDIO) {
+		printf("%s::%s Added Audio Codec %s to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+	} else if (track->type == MATROSKA_TRACK_VIDEO) {
+		printf("%s::%s Added Video Codec %s to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+	}
+#endif
+	
+	if (!skip_track) {
+		mkv_d->tracks = realloc (mkv_d->tracks,(mkv_d->num_tracks+1)*sizeof (*mkv_d->tracks));
+		if (mkv_d->tracks == NULL) {
+			printf("%s::%s realloc failed!\n", FILENAME, __FUNCTION__);
+			goto err_out;
+		}
+
+		mkv_d->tracks[mkv_d->num_tracks++] = track;
+	} else {
+		demux_mkv_free_trackentry(track);
+	}
+	
+	return len;
 
 err_out:
-    demux_mkv_free_trackentry(track);
-    return 0;
+	demux_mkv_free_trackentry(track);
+	return 0;
 }
 
 static int
 demux_mkv_read_tracks (demuxer_t *demuxer,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_tracks\n\n");
+    dprintf("mkv.c demux_mkv_read_tracks\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     //stream_t *s = demuxer->stream;
     uint64_t length, l;
@@ -1443,7 +1570,6 @@ demux_mkv_read_tracks (demuxer_t *demuxer,stream_t *s)
         {
             case MATROSKA_ID_TRACKENTRY:
                 dprintf("[mkv] | + a track...\n");
-                mkv_d->tracks = realloc (mkv_d->tracks,(mkv_d->num_tracks+1)*sizeof (*mkv_d->tracks));
                 l = demux_mkv_read_trackentry (demuxer,s);
                 if (l == 0)
                     return 1;
@@ -1461,7 +1587,7 @@ int index_mode;
 static int
 demux_mkv_read_cues (demuxer_t *demuxer,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_cues\n\n");
+    dprintf("mkv.c demux_mkv_read_cues\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     //stream_t *s = demuxer->stream;
     uint64_t length, l, time, track, pos;
@@ -1574,7 +1700,7 @@ demux_mkv_read_cues (demuxer_t *demuxer,stream_t *s)
 static int
 demux_mkv_read_chapters (demuxer_t *demuxer, stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_chapters\n\n");
+    dprintf("mkv.c demux_mkv_read_chapters\n\n");
     //stream_t *s = demuxer->stream;
     uint64_t length, l;
     int il;
@@ -1710,7 +1836,7 @@ demux_mkv_read_chapters (demuxer_t *demuxer, stream_t *s)
 static int
 demux_mkv_read_tags (demuxer_t *demuxer)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_tags\n\n");
+    dprintf("mkv.c demux_mkv_read_tags\n\n");
     ebml_read_skip (demuxer->stream, NULL);
     return 0;
 }
@@ -1718,7 +1844,7 @@ demux_mkv_read_tags (demuxer_t *demuxer)
 static int
 demux_mkv_read_attachments (demuxer_t *demuxer,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_attachments\n\n");
+    dprintf("mkv.c demux_mkv_read_attachments\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     //stream_t *s = demuxer->stream;
     uint64_t length, l;
@@ -1835,7 +1961,7 @@ demux_mkv_read_attachments (demuxer_t *demuxer,stream_t *s)
 static int
 demux_mkv_read_seekhead (demuxer_t *demuxer,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_read_seekhead\n\n");
+    dprintf("mkv.c demux_mkv_read_seekhead\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     //stream_t *s = demuxer->stream;
     uint64_t length, l, seek_pos, saved_pos, num;
@@ -1968,7 +2094,7 @@ demux_mkv_open_sub (demuxer_t *demuxer, mkv_track_t *track, int sid);
 static void
 display_create_tracks (demuxer_t *demuxer)
 {
-    dprintf("ufs910player demux_mkv.c display_create_tracks\n\n");
+    dprintf("mkv.c display_create_tracks\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *)demuxer->priv;
     int i, vid=0, aid=0, sid=0;
 
@@ -2031,7 +2157,7 @@ static const videocodec_info_t vinfo[] = {
 static int
 demux_mkv_open_video (demuxer_t *demuxer, mkv_track_t *track, int vid)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_open_video\n");
+    dprintf("mkv.c demux_mkv_open_video\n");
     //printf("filename = %s, synced = %d, type = %d, file_format = %d, seekable = %d, num_chapters = %d\n",demuxer->filename,demuxer->synced,demuxer->type,demuxer->file_format,demuxer->seekable,demuxer->num_chapters);
     BITMAPINFOHEADER *bih;
     void *ImageDesc = NULL;
@@ -2186,7 +2312,7 @@ demux_mkv_open_video (demuxer_t *demuxer, mkv_track_t *track, int vid)
 static int
 demux_mkv_open_audio (demuxer_t *demuxer, mkv_track_t *track, int aid)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_open_audio\n\n");
+    dprintf("mkv.c demux_mkv_open_audio\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     sh_audio_t *sh_a = new_sh_audio_aid(demuxer, track->tnum, aid);
     demux_packet_t *dp;
@@ -2489,7 +2615,7 @@ demux_mkv_open_audio (demuxer_t *demuxer, mkv_track_t *track, int aid)
 static void
 demux_mkv_parse_vobsub_data (demuxer_t *demuxer)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_parse_vobsub_data\n\n");
+    dprintf("mkv.c demux_mkv_parse_vobsub_data\n\n");
     mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     mkv_track_t *track;
     int i, m;
@@ -2522,7 +2648,7 @@ demux_mkv_parse_vobsub_data (demuxer_t *demuxer)
 static int
 demux_mkv_open_sub (demuxer_t *demuxer, mkv_track_t *track, int sid)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_open_sub\n\n");
+    dprintf("mkv.c demux_mkv_open_sub\n\n");
     if (track->subtitle_type != MATROSKA_SUBTYPE_UNKNOWN)
     {
         sh_sub_t *sh = new_sh_sub_sid(demuxer, track->tnum, sid);
@@ -2543,7 +2669,7 @@ demux_mkv_open_sub (demuxer_t *demuxer, mkv_track_t *track, int sid)
 }
 static int demux_mkv_reverse_id(mkv_demuxer_t *d, int num, int type)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_reverse_id\n\n");
+    dprintf("mkv.c demux_mkv_reverse_id\n\n");
     int i, id;
 
     for (i=0, id=0; i < d->num_tracks; i++)
@@ -2560,7 +2686,7 @@ static int
 demux_mkv_read_block_lacing (uint8_t *buffer, uint64_t *size,
                              uint8_t *laces, uint32_t **all_lace_sizes)
 {
-//dprintf("ufs910player demux_mkv.c demux_mkv_read_block_lacing\n\n");
+//dprintf("mkv.c demux_mkv_read_block_lacing\n\n");
   uint32_t total = 0, *lace_size;
   uint8_t flags;
   int i;
@@ -2645,7 +2771,7 @@ demux_mkv_read_block_lacing (uint8_t *buffer, uint64_t *size,
 handle_subtitles(demuxer_t *demuxer, mkv_track_t *track, unsigned char *block,
                  int64_t size, uint64_t block_duration, uint64_t timecode)
 {
-printf("ufs910player demux_mkv.c handle_subtitles\n\n");
+printf("mkv.c handle_subtitles\n\n");
   demux_packet_t *dp;
   unsigned char *ptr1;
   int i;
@@ -2721,7 +2847,7 @@ handle_subtitles(demuxer_t *demuxer, mkv_track_t *track, char *block,
 
 static float real_fix_timestamp(mkv_track_t *track, unsigned char *s,
                                 int timestamp) {
-dprintf("ufs910player demux_mkv.c real_fix_timestamp\n\n");
+dprintf("mkv.c real_fix_timestamp\n\n");
   float v_pts;
   uint32_t buffer = (s[0] << 24) + (s[1] << 16) + (s[2] << 8) + s[3];
   int kf = timestamp;
@@ -2776,7 +2902,7 @@ static void
 handle_realvideo (demuxer_t *demuxer, mkv_track_t *track, uint8_t *buffer,
                   uint32_t size, int block_bref)
 {
-dprintf("ufs910player demux_mkv.c handle_realvideo\n\n");
+dprintf("mkv.c handle_realvideo\n\n");
   mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
   demux_packet_t *dp;
   uint32_t timestamp = mkv_d->last_pts * 1000;
@@ -2829,7 +2955,7 @@ static void
 handle_realaudio (demuxer_t *demuxer, mkv_track_t *track, uint8_t *buffer,
                   uint32_t size, int block_bref)
 {
-dprintf("ufs910player demux_mkv.c handle_realaudio\n\n");
+dprintf("mkv.c handle_realaudio\n\n");
   mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
   int sps = track->sub_packet_size;
   int sph = track->sub_packet_h;
@@ -2943,7 +3069,7 @@ dprintf("ufs910player demux_mkv.c handle_realaudio\n\n");
 static void
 flush_cached_dps (demuxer_t *demuxer, mkv_track_t *track/*,demux_stream_t *video*/)
 {
-dprintf("ufs910player demux_mkv.c flush_cached_dps\n");
+dprintf("mkv.c flush_cached_dps\n");
   int i, ok;
 
   if (track->num_cached_dps == 0)
@@ -2989,7 +3115,7 @@ static void
 handle_video_bframes (demuxer_t *demuxer, mkv_track_t *track, uint8_t *buffer,
                       uint32_t size, int block_bref, int block_fref/*,demux_stream_t *audio,demux_stream_t *video,demux_stream_t *sub*/)
 {
-dprintf("ufs910player demux_mkv.c handle_video_bframes->\n");
+dprintf("mkv.c handle_video_bframes->\n");
   mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
   demux_packet_t *dp;
 
@@ -3014,7 +3140,7 @@ dprintf("ufs910player demux_mkv.c handle_video_bframes->\n");
   track->num_cached_dps++;
   if (dp->pts > track->max_pts)
     track->max_pts = dp->pts;
-dprintf("ufs910player demux_mkv.c handle_video_bframes-<\n");
+dprintf("mkv.c handle_video_bframes-<\n");
 }
 
 int WriteDataToDevice (int Device, unsigned char *Data, int DataLength)
@@ -3227,7 +3353,7 @@ dprintf("handle_block-< 0\n");
 
 int demux_mkv_open (demuxer_t *demuxer,stream_t *s)
 {
-    dprintf("ufs910player demux_mkv.c demux_mkv_open\n\n");
+    dprintf("mkv.c demux_mkv_open\n\n");
 
     int i, version, cont = 0;
     char *str;
@@ -3499,12 +3625,12 @@ dprintf("HELLO2\n");
 
 int demux_mkv_fill_buffer (demuxer_t *demuxer, demux_stream_t *ds/*, stream_t *s,demux_stream_t *audio,demux_stream_t *video,demux_stream_t *sub,PlayerContext_t *Context*/)
 {
-dprintf("ufs910player demux_mkv.c demux_mkv_fill_buffer\n\n");
+dprintf("mkv.c demux_mkv_fill_buffer\n\n");
   mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
   stream_t *s = demuxer->stream;
   uint64_t l;
   int il, tmp;
-dprintf("ufs910player demux_mkv.c demux_mkv_fill_buffer\n\n");
+dprintf("mkv.c demux_mkv_fill_buffer\n\n");
   while (1)
     {
 //dprintf("cluster_size=%u\n", mkv_d->cluster_size);
@@ -3904,24 +4030,26 @@ void MkvInit(Context_t *context, char * filename) {
     	demuxer->stream->end_pos = lseek(demuxer->stream->fd, 0L, SEEK_END);
     	lseek(demuxer->stream->fd, pos, SEEK_SET);
     } else {
-	    demuxer->stream->type		= STREAMTYPE_STREAM;
+	    demuxer->stream->type	= STREAMTYPE_STREAM;
 	    demuxer->stream->end_pos = 0;
 	}
 
-    demuxer->stream->flags		= 6;
-    demuxer->stream->sector_size	= 0;
-    demuxer->stream->buf_pos		= 0;
-    demuxer->stream->buf_len		= 2048;
-    demuxer->stream->pos		= 2048;
-    demuxer->stream->start_pos	= 0;
-    demuxer->stream->eof		= 0;
-    demuxer->stream->cache_pid	= 0;
+	demuxer->stream->flags		= 6;
+	demuxer->stream->sector_size	= 0;
+	demuxer->stream->buf_pos	= 0;
+	demuxer->stream->buf_len	= 2048;
+	demuxer->stream->pos		= 2048;
+	demuxer->stream->start_pos	= 0;
+	demuxer->stream->eof		= 0;
+	demuxer->stream->cache_pid	= 0;
   
 	ret=demux_mkv_open(demuxer,demuxer->stream);
 
 	mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
-	sh_video=demuxer->video->sh;
-	printf("\nVIDEO 0x%02x\n",sh_video->format);
+	if (demuxer->video && demuxer->video->sh) {
+		sh_video=demuxer->video->sh;
+		printf("\nVIDEO 0x%02x\n",sh_video->format);
+	}
 
 	for (i = 0; i < mkv_d->num_tracks; i++) {
         	if (mkv_d->tracks[i] != NULL && mkv_d->tracks[i]->type == MATROSKA_TRACK_AUDIO) {
@@ -3963,6 +4091,15 @@ void MkvInit(Context_t *context, char * filename) {
 				};
 				context->manager->video->Command(context, MANAGER_ADD, &Video);
 			}
+			else if(sh_video->format == 0x31435657) // VC-1
+			{
+				Track_t Video = {
+					mkv_d->tracks[i]->language,
+					"V_MS/VFW/FOURCC",
+					i,
+				};
+				context->manager->video->Command(context, MANAGER_ADD, &Video);
+			}			
 			else if(sh_video->format == 0x34504D46 || sh_video->format == 0x34706D66 || sh_video->format == 0x58564944 || sh_video->format == 0x78766964
 			     || sh_video->format == 0x31564944 || sh_video->format == 0x31766964 || sh_video->format == 0x5334504D || sh_video->format == 0x7334706D
 			     || sh_video->format == 0x3253344D || sh_video->format == 0x3273346D || sh_video->format == 0x64697678 || sh_video->format == 0x44495658
@@ -4044,7 +4181,7 @@ void MkvGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		}
 	}
 
-    if (audio->first != NULL) {
+	if (audio->first != NULL) {
 		demux_packet_t * current = audio->first;
 		if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
@@ -4062,7 +4199,7 @@ void MkvGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		}
 	}
 
-    if (video->first != NULL) {
+	if (video->first != NULL) {
 		demux_packet_t * current = video->first;
 		if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
@@ -4076,10 +4213,10 @@ void MkvGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		int i;
 
 		for (i=0; i<mkv_d->num_tracks; i++)
-		if (mkv_d->tracks[i]->tnum == num) {
-			track = mkv_d->tracks[i];
-			break;
-		}
+			if (mkv_d->tracks[i]->tnum == num) {
+				track = mkv_d->tracks[i];
+				break;
+			}
 
 		while (current != NULL) {
 			context->output->video->Write(context, current->buffer, current->len, Pts, track->private_data, track->private_size, track->v_frate, "video");
@@ -4088,7 +4225,6 @@ void MkvGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			Pts = INVALID_PTS_VALUE;
 		}
 	}
-	//printf("%s::%s <-\n", FILENAME, __FUNCTION__);
 }
 
 
@@ -4097,12 +4233,13 @@ static void MkvThread(Context_t *context) {
     printf("%s::%s\n", FILENAME, __FUNCTION__);
 
     while(context->playback->isPlaying) {
-if (context->playback->isSeeking || whileSeeking) {
-usleep(100000);
-continue;
-}
+	if (context->playback->isSeeking || whileSeeking) {
+		usleep(100000);
+		continue;
+	}
+	
     	if (!demux_mkv_fill_buffer(demuxer,ds)) {
-printf("ARGH!\n");
+		printf("ARGH!\n");
     		if (context->playback->isSeeking || whileSeeking)
     			continue;
     		else
@@ -4113,32 +4250,32 @@ printf("ARGH!\n");
 
             //IF MOVIE IS PAUSE, WAIT 
             if(context->playback->isPaused && (context->playback->isSeeking || whileSeeking))
-				{printf("ignoring buffer seeking\n"); continue;}
+		{printf("ignoring buffer seeking\n"); continue;}
 
-			while (context->playback->isPaused)
-				{printf("paused\n"); usleep(100000);}
+		while (context->playback->isPaused)
+			{printf("paused\n"); usleep(100000);}
             //while (context->playback->isSeeking) {printf("paused\n"); usleep(100000);}
             
-		    MkvGenerateParcel(context, demuxer);
+		MkvGenerateParcel(context, demuxer);
 
-            if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
-                ds_free_packs(demuxer->sub);
-            } 
+		if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
+			ds_free_packs(demuxer->sub);
+		} 
 
-            if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
-                ds_free_packs(demuxer->audio);
-            }
+		if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
+			ds_free_packs(demuxer->audio);
+		}
 
-            if (demuxer->video != NULL && demuxer->video->first != NULL) {
-                ds_free_packs(demuxer->video);
-            }    
+		if (demuxer->video != NULL && demuxer->video->first != NULL) {
+			ds_free_packs(demuxer->video);
+		}    
 
 		    //printf("%s::%s <--\n", FILENAME, __FUNCTION__);
 
-		}
+	}
 
     }
- 
+
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 }
 
@@ -4291,14 +4428,21 @@ static int MkvSwitchSubtitle(demuxer_t *demuxer, int* arg) {
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+	int  ret = 0;
+	
 	switch(command) {
 		case CONTAINER_INIT: {
 			char * FILENAME = (char *)argument;
 			MkvInit(context, FILENAME);
 			break;
 		}
-		case CONTAINER_PLAY: {
-			MkvPlay(context);
+		case CONTAINER_PLAY: {		  
+			if ( (demuxer->video && demuxer->video->sh) || (demuxer->audio && demuxer->audio->sh) ) { // we need audio or video for playback
+				MkvPlay(context);
+			} else {
+				printf("%s::%s No audio and video tracks!\n", FILENAME, __FUNCTION__, command);
+				ret = -1;
+			}
 			break;
 		}
 		case CONTAINER_STOP: {
@@ -4317,23 +4461,23 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 				*((double*)argument) = (double)length;
 			break;
 		}
-        case CONTAINER_SWITCH_AUDIO: {
-            if (demuxer)
-			    MkvSwitchAudio(demuxer, (int*) argument);
-			break;
-		}
-        case CONTAINER_SWITCH_SUBTITLE: {
-            printf("%s::%s CONTAINER_SWITCH_SUBTITLE id=%d\n", FILENAME, __FUNCTION__, *((int*) argument));
-            if (demuxer)
-			    MkvSwitchSubtitle(demuxer, (int*) argument);
+		case CONTAINER_SWITCH_AUDIO: {
+			if (demuxer)
+				MkvSwitchAudio(demuxer, (int*) argument);
+				break;
+			}
+		case CONTAINER_SWITCH_SUBTITLE: {
+			printf("%s::%s CONTAINER_SWITCH_SUBTITLE id=%d\n", FILENAME, __FUNCTION__, *((int*) argument));
+			if (demuxer)
+				MkvSwitchSubtitle(demuxer, (int*) argument);
 			break;
 		}
 		default:
-			printf("ConatinerCmd not supported!");
+			printf("%s::%s ContainerCmd 0x%02X not supported!\n", FILENAME, __FUNCTION__, command);
 			break;
 	}
 
-	return 0;
+	return ret;
 }
 
 static char *MkvCapabilities[] = { "mkv", NULL };

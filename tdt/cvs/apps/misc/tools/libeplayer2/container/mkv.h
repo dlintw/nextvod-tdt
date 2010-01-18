@@ -194,6 +194,7 @@ int sub_utf8;
 #define MKV_A_AAC_4LTP   "A_AAC/MPEG4/LTP"
 #define MKV_A_AAC        "A_AAC"
 #define MKV_A_AC3        "A_AC3"
+#define MKV_A_EAC3       "A_EAC3"
 #define MKV_A_DTS        "A_DTS"
 #define MKV_A_MP2        "A_MPEG/L2"
 #define MKV_A_MP3        "A_MPEG/L3"
@@ -209,6 +210,7 @@ int sub_utf8;
 #define MKV_A_QDMC       "A_QUICKTIME/QDMC"
 #define MKV_A_QDMC2      "A_QUICKTIME/QDM2"
 #define MKV_A_FLAC       "A_FLAC"
+#define MKV_A_WMA        "A_WMA"
 
 #define MKV_V_MSCOMP     "V_MS/VFW/FOURCC"
 #define MKV_V_REALV10    "V_REAL/RV10"

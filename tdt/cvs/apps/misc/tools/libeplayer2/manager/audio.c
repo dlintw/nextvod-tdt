@@ -80,7 +80,7 @@ static int Command(Context_t  *context, ManagerCmd_t command, void * argument) {
 			break;
 		}
 		case MANAGER_GET: {
-            printf("%s::%s MANAGER_GET\n", FILENAME, __FUNCTION__);
+			printf("%s::%s MANAGER_GET\n", FILENAME, __FUNCTION__);
 			if (TrackCount > 0)
 				*((int*)argument) = (int)Tracks[CurrentTrack].Id;
 			else 
@@ -103,7 +103,7 @@ static int Command(Context_t  *context, ManagerCmd_t command, void * argument) {
 		}
 		case MANAGER_SET: {
 			int id = *((int*)argument);
-            printf("%s::%s MANAGER_SET id=%d\n", FILENAME, __FUNCTION__, id);
+			printf("%s::%s MANAGER_SET id=%d\n", FILENAME, __FUNCTION__, id);
 			if (id < TrackCount)
 				CurrentTrack = id;
 			break;
@@ -113,7 +113,7 @@ static int Command(Context_t  *context, ManagerCmd_t command, void * argument) {
 			break;
 		}
 		default:
-			printf("ConatinerCmd not supported!");
+			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
 			break;
 	}
 
