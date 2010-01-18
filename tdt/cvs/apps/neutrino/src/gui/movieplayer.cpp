@@ -208,6 +208,7 @@ void CMoviePlayerGui::Init(void)
 	tsfilefilter.addFilter("mpg");
 	tsfilefilter.addFilter("mpeg");
 	tsfilefilter.addFilter("m2p");
+	tsfilefilter.addFilter("mp4");
 	tsfilefilter.addFilter("mpv");
 	tsfilefilter.addFilter("vob");
 	tsfilefilter.addFilter("m2ts");
@@ -218,6 +219,7 @@ void CMoviePlayerGui::Init(void)
 	vlcfilefilter.addFilter("m2p");
 	vlcfilefilter.addFilter("avi");
 	vlcfilefilter.addFilter("vob");
+	vlcfilefilter.addFilter("mp4");
 	pesfilefilter.addFilter("mpv");
 	filebrowser->Filter = &tsfilefilter;
 	rct = 0;
