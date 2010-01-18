@@ -21,7 +21,6 @@ VDRBINDIR="/usr/local/bin"
 VDRPRG="$VDRBINDIR/vdr"
 # vdr standard params
 VDRCMD="$VDRPRG -w 60 -s $VDRBINDIR/vdrshutdown"
-
 # vdr killcommand
 KILLCMD="killall -q -TERM vdr"
 
