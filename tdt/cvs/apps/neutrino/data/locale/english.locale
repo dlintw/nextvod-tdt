@@ -69,6 +69,7 @@ audioplayer.stop Stop
 audioplayer.title_artist Title, Artist
 audioplayerpicsettings.general audioplayer / picviewer
 AUDIOSelectMenue.head Audio Selection
+AUDIOSelectMenue.no_tracks No Audio Tracks available
 bookmarkmanager.delete delete
 bookmarkmanager.name bookmarks
 bookmarkmanager.rename rename
