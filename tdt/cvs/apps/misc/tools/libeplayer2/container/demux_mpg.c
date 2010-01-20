@@ -1145,6 +1145,7 @@ static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
 static pthread_t PlayThread;
+static int TSMPEG = 0;
 
 demuxer_desc_t demuxer_desc_mpeg_ps = {
   "MPEG PS demuxer",
@@ -1228,18 +1229,36 @@ void MpgInit(Context_t *context, char * filename) {
     demuxer->stream->eof		= 0;
     demuxer->stream->cache_pid	= 0;
 
-    demux_mpg_pes_probe(demuxer);
-    ps_probe=1;
-    ret = demux_mpg_ps_open(demuxer);
+    ret=demux_mpg_pes_probe(demuxer);
+    //FIXME
+    if(ret == 0){
+	ret=ts_mpg(demuxer);
+        printf("ret =%d\n",ret);
+	if(ret == 0)// NO MPG OR TS
+		return -1;//FIXME
+	if (demuxer->video && demuxer->video->sh && demuxer->audio && demuxer->audio->sh) {
+		sh_audio=demuxer->audio->sh;
+		printf("TS AUDIO 0x%02x\n",sh_audio->format);
 
-    printf("ret = %d\n",ret);
-    printf("DEMUXER=%s\n",demuxer->desc->name);
-    sh_audio=demuxer->audio->sh;
-    printf("AUDIO 0x%02x\n",sh_audio->format);
+		sh_video=demuxer->video->sh;
+		printf("TS VIDEO 0x%08X\n",sh_video->format);
+	}
+	TSMPEG = 1;
+    }
+    else{
+	ps_probe=1;
+	ret = demux_mpg_ps_open(demuxer);
 
-    sh_video=demuxer->video->sh;
-    printf("VIDEO 0x%08X\n",sh_video->format);
+	printf("ret = %d\n",ret);
+	if (demuxer->video && demuxer->video->sh && demuxer->audio && demuxer->audio->sh) {
+		printf("DEMUXER=%s\n",demuxer->desc->name);
+		sh_audio=demuxer->audio->sh;
+		printf("MPG AUDIO 0x%02x\n",sh_audio->format);
 
+		sh_video=demuxer->video->sh;
+		printf("MPG VIDEO 0x%08X\n",sh_video->format);
+	}
+    }
     if(sh_video->format == 0x10000001 || sh_video->format == 0x10000002)
     {
         Track_t Video = {
@@ -1399,31 +1418,61 @@ static void MpgThread(Context_t *context) {
 	printf("%s::%d\n", __FUNCTION__, __LINE__);
 
 
-    while(context->playback->isPlaying && 
-		demux_mpg_fill_buffer(demuxer,ds)) {
-	//printf("%s -->\n", __FUNCTION__);
+	if (TSMPEG == 0){
+		while(context->playback->isPlaying && 
+			demux_mpg_fill_buffer(demuxer,ds)) 
+		{
+			//printf("%s -->\n", __FUNCTION__);
 
 
-        //IF MOVIE IS PAUSE, WAIT 
-        while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
+			//IF MOVIE IS PAUSE, WAIT 
+			while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
 
-	MpgGenerateParcel(context, demuxer);
+			MpgGenerateParcel(context, demuxer);
 
-        if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
-		printf("SUBTITLE");
-            ds_free_packs(demuxer->sub);
-        } 
+			if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
+				printf("SUBTITLE");
+				ds_free_packs(demuxer->sub);
+			}
 
-        if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
-            ds_free_packs(demuxer->audio);
-        }
+			if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
+				ds_free_packs(demuxer->audio);
+			}
 
-        if (demuxer->video != NULL && demuxer->video->first != NULL) {
-            ds_free_packs(demuxer->video);
-        }    
-	//printf("%s <--\n", __FUNCTION__);
+			if (demuxer->video != NULL && demuxer->video->first != NULL) {
+				ds_free_packs(demuxer->video);
+			}
+			//printf("%s <--\n", __FUNCTION__);
 
-    }
+		}
+	} else{
+		while(context->playback->isPlaying && 
+			demux_ts_fill_buffer(demuxer,ds)) 
+		{
+			//printf("%s -->\n", __FUNCTION__);
+
+
+			//IF MOVIE IS PAUSE, WAIT 
+			while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
+
+			MpgGenerateParcel(context, demuxer);
+
+			if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
+				printf("SUBTITLE");
+				ds_free_packs(demuxer->sub);
+			}
+
+			if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
+				ds_free_packs(demuxer->audio);
+			}
+
+			if (demuxer->video != NULL && demuxer->video->first != NULL) {
+				ds_free_packs(demuxer->video);
+			}
+			//printf("%s <--\n", __FUNCTION__);
+
+		}
+	}
 	aStartPts = 0;
 	vStartPts = 0;
 	context->playback->Command(context, PLAYBACK_TERM, NULL);

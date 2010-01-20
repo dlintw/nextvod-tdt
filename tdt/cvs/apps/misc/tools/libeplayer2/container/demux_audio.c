@@ -908,7 +908,6 @@ static int AUDIOGetInfo(demuxer_t *demuxer,char ** infoString) {
 
         for(n = 0; info && info[2*n] != NULL; n++) {
             if(!strcasecmp(*infoString, info[2*n])) {
-                free(*infoString);
 		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
 	            *infoString = strdup(info[2*n+1]);
             }

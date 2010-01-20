@@ -3294,14 +3294,14 @@ static void demux_seek_ts(demuxer_t *demuxer, float rel_seek_secs, float audio_d
 }
 
 
-static int demux_ts_fill_buffer(demuxer_t * demuxer, demux_stream_t *ds)
+int demux_ts_fill_buffer(demuxer_t * demuxer, demux_stream_t *ds)
 {
 	ES_stream_t es;
 	ts_priv_t *priv = (ts_priv_t *)demuxer->priv;
 	
 	return -ts_parse(demuxer, &es, priv->packet, 0);
 }
-
+extern int demux_ts_fill_buffer(demuxer_t * demuxer, demux_stream_t *ds);
 
 static int ts_check_file_dmx(demuxer_t *demuxer)
 {
@@ -3476,6 +3476,15 @@ static int demux_ts_control(demuxer_t *demuxer, int cmd, void *arg)
 }
 ////////////////////////////////////////////////////////////////7
 ////////////////////////////////////////////////////////////////7
+
+int ts_mpg(const demuxer_t *demuxer)
+{
+	int ret = 0;
+
+	ret=demux_open_ts(demuxer);
+	return ret;
+}
+extern int ts_mpg(const demuxer_t *demuxer);
 
 #include "common.h"
 #include "container.h"
