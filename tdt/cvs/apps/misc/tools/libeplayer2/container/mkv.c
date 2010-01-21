@@ -4371,6 +4371,7 @@ demux_close_mkv (demuxer_t *demuxer)
 static int MkvStop(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
+	int error;
 	int result=0;
 	int i;
 	
@@ -4379,7 +4380,7 @@ static int MkvStop(Context_t *context) {
 		
 		if(result != 0)
 		{
-		      printf("ERROR: Stop PlayThread\n");
+		      printf("ERROR: Stop PlayThread error:%d:%s\n", error,strerror(error));
 		}
 		PlayThread = NULL;
 		usleep(100000);
@@ -4504,7 +4505,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			if ( (demuxer->video && demuxer->video->sh) || (demuxer->audio && demuxer->audio->sh) ) { // we need audio or video for playback
 				ret =  MkvPlay(context);
 			} else {
-				printf("%s::%s No audio and video tracks!\n", FILENAME, __FUNCTION__, command);
+				printf("%s::%s No audio and video tracks!\n", FILENAME, __FUNCTION__);
 				ret = -1;
 			}
 			break;
@@ -4528,8 +4529,8 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 		case CONTAINER_SWITCH_AUDIO: {
 			if (demuxer)
 				MkvSwitchAudio(demuxer, (int*) argument);
-				break;
-			}
+			break;
+		}
 		case CONTAINER_SWITCH_SUBTITLE: {
 			printf("%s::%s CONTAINER_SWITCH_SUBTITLE id=%d\n", FILENAME, __FUNCTION__, *((int*) argument));
 			if (demuxer)
