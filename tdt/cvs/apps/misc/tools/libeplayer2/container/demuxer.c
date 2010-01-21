@@ -52,6 +52,7 @@ sh_sub_t *new_sh_sub_sid(demuxer_t *demuxer, int id, int sid) {
 void free_sh_sub(sh_sub_t *sh) {
     demuxer_printf("DEMUXER: freeing sh_sub at %p\n", sh);
     free(sh);
+    sh = NULL;
 }
 
 sh_audio_t* new_sh_audio_aid(demuxer_t *demuxer,int id,int aid){
@@ -84,8 +85,10 @@ void free_sh_audio(demuxer_t *demuxer, int id) {
     sh_audio_t *sh = demuxer->a_streams[id];
     demuxer->a_streams[id] = NULL;
     demuxer_printf("DEMUXER: freeing sh_audio at %p\n",sh);
-    if(sh->wf) free(sh->wf);
+    free(sh->wf);
+    sh->wf = NULL;
     free(sh);
+    sh = NULL;
 }
 
 sh_video_t* new_sh_video_vid(demuxer_t *demuxer,int id,int vid){demuxer_printf("new_sh_video_vid->\n");
@@ -111,8 +114,10 @@ demuxer_printf("new_sh_video_vid 2\n");
 
 void free_sh_video(sh_video_t* sh){
     demuxer_printf("DEMUXER: freeing sh_video at %p\n",sh);
-    if(sh->bih) free(sh->bih);
+    free(sh->bih);
+    sh->bih = NULL;
     free(sh);
+    sh = NULL;
 }
 void ds_add_packet(demux_stream_t *ds,demux_packet_t* dp){
 //printf("ds_add_packet\n");
@@ -343,27 +348,36 @@ void ds_read_packet(demux_stream_t *ds, stream_t *stream, int len, double pts, o
     ds_add_packet(ds,dp);
 }
 
+// Reset and set internal data but do not free the instance
 void ds_free_packs(demux_stream_t *ds){
-  demux_packet_t *dp=ds->first;
-  while(dp){
-    demux_packet_t *dn=dp->next;
-    free_demux_packet(dp);
-    dp=dn;
-  }
-  if(ds->asf_packet){
-    // free unfinished .asf fragments:
-    free(ds->asf_packet->buffer);
-    free(ds->asf_packet);
-    ds->asf_packet=NULL;
-  }
-  ds->first=ds->last=NULL;
-  ds->packs=0; // !!!!!
-  ds->bytes=0;
-  if(ds->current) free_demux_packet(ds->current);
-  ds->current=NULL;
-  ds->buffer=NULL;
-  ds->buffer_pos=ds->buffer_size;
-  ds->pts=0; ds->pts_bytes=0;
+  
+	if (ds != NULL) {
+		demux_packet_t *dp=ds->first;
+		
+		while(dp){
+			demux_packet_t *dn=dp->next;
+			free_demux_packet(dp);
+			dp=dn;
+		}
+		
+		if(ds->asf_packet){
+			// free unfinished .asf fragments:
+			free(ds->asf_packet->buffer);
+			ds->asf_packet->buffer = NULL;
+			free(ds->asf_packet);
+			ds->asf_packet=NULL;
+		}
+		
+		ds->first=ds->last=NULL;
+		ds->packs=0; // !!!!!
+		ds->bytes=0;
+		
+		free_demux_packet(ds->current);
+		
+		ds->buffer=NULL;
+		ds->buffer_pos=ds->buffer_size;
+		ds->pts=0; ds->pts_bytes=0;		
+	}
 }
 
 void demux_flush(demuxer_t *demuxer)

@@ -1075,26 +1075,34 @@ static void demux_close_ts(demuxer_t * demuxer)
 	
 	if(priv)
 	{
-		if(priv->pat.section.buffer)
-			free(priv->pat.section.buffer);
-		if(priv->pat.progs)
-			free(priv->pat.progs);
+		free(priv->pat.section.buffer);
+		priv->pat.section.buffer = NULL;
+		
+		free(priv->pat.progs);
+		priv->pat.progs = NULL;
 	
-		if(priv->pmt)
+		if(priv->pmt != NULL)
 		{	
 			for(i = 0; i < priv->pmt_cnt; i++)
 			{
-				if(priv->pmt[i].section.buffer)
-					free(priv->pmt[i].section.buffer);
-				if(priv->pmt[i].es)
-					free(priv->pmt[i].es);
+				free(priv->pmt[i].section.buffer);
+				priv->pmt[i].section.buffer = NULL;
+			
+				free(priv->pmt[i].es);
+				priv->pmt[i].es = NULL;
 			}
 			free(priv->pmt);
+			priv->pmt = NULL;
 		}
-		for(i=0;i<NB_PID_MAX;i++)free(priv->ts.pids[i]);
-		free(priv);
+		
+		for(i=0;i<NB_PID_MAX;i++) {
+			free(priv->ts.pids[i]);
+			priv->ts.pids[i] = NULL;
+		}
+		
+		free(priv);		
+		demuxer->priv=NULL;
 	}
-	demuxer->priv=NULL;
 }
 
 
@@ -3498,7 +3506,7 @@ static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
 static pthread_t PlayThread;
 
-void TSInit(Context_t *context, char * filename) {
+int TSInit(Context_t *context, char * filename) {
 
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
@@ -3553,7 +3561,7 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
     ret = demux_open_ts(demuxer);
     //printf("ret = %d\n",ret);
 
-    if(!demuxer->video->sh == NULL){
+    if(demuxer->video->sh){
     	sh_video=demuxer->video->sh;
     	printf("VIDEO 0x%02x\n",sh_video->format);
 
@@ -3794,17 +3802,16 @@ static void TSThread(Context_t *context) {
 		TSGenerateParcel(context, demuxer);
 
 		if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
-			printf("SUBTITLE");
 			ds_free_packs(demuxer->sub);
-		} 
-
+		}
+		
 		if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
 			ds_free_packs(demuxer->audio);
 		}
-
+		
 		if (demuxer->video != NULL && demuxer->video->first != NULL) {
 			ds_free_packs(demuxer->video);
-		}    
+		}
 		//printf("%s <--\n", __FUNCTION__);
 
 	}
@@ -3818,66 +3825,82 @@ static void TSThread(Context_t *context) {
 
 static int TSPlay(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-    int error;
-    if (PlayThread == NULL) {
-	  pthread_attr_t attr;
-	  pthread_attr_init(&attr);
-	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-          if(error=pthread_create(&PlayThread, &attr, (void *)&TSThread, context) != 0)
-          {
-            fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
-	    PlayThread = NULL;
-            return -1;
-          }
-    }
-    return 0;
+
+	int error;
+	int ret = 0;
+	pthread_attr_t attr;
+
+	if (PlayThread == NULL) {
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+		if(error=pthread_create(&PlayThread, &attr, (void *)&TSThread, context) != 0) {
+			fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
+			PlayThread = NULL;
+			ret = -1;
+		}
+	}
+	
+	return ret;
 }
 
 static int TSStop(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
-    int result=0;
-    if(PlayThread!=0)result = pthread_join (PlayThread, NULL);
-    if(result != 0) 
-    {
-          printf("ERROR: Stop PlayThread\n");
-    }
+	int i;
+	int result=0;
+	
+	if(PlayThread != NULL) {
+		result = pthread_join (PlayThread, NULL);
+	
+		if(result != 0) {
+		      printf("ERROR: Stop PlayThread\n");
+		}
+		
+		PlayThread = NULL;
+		usleep(100000);
+	}
 
-	PlayThread = NULL;
+	if (demuxer != NULL) {
 
-    usleep(100000);
+		demux_close_ts(demuxer);
 
-    demux_close_ts(demuxer);
+		free(demuxer->stream);
+		demuxer->stream = NULL;
 
-    free (ds);
-    ds = NULL;
-    free (demuxer->stream);
-    demuxer->stream = NULL;
-    free (demuxer->sub);
-    demuxer->sub = NULL;
-    free (demuxer->video);
-    demuxer->video = NULL;
-    free (demuxer->audio);
-    demuxer->audio = NULL;
-    int i;
-    for(i=0;i<MAX_A_STREAMS;i++){
-	free(demuxer->a_streams[i]);
-	demuxer->a_streams[i]=NULL;
-    }
-    for(i=0;i<MAX_V_STREAMS;i++){
-	free(demuxer->v_streams[i]);
-	demuxer->v_streams[i]=NULL;
-    }
-    for(i=0;i<MAX_S_STREAMS;i++){
-	free(demuxer->s_streams[i]);
-	demuxer->s_streams[i]=NULL;
-    }
-    free (demuxer);   
-    demuxer = NULL;  
+		free(demuxer->sub);
+		demuxer->sub = NULL;
 
-    video_format = 0;
-    
-    return 0;
+		free(demuxer->video);
+		demuxer->video = NULL;
+	
+		free(demuxer->audio);
+		demuxer->audio = NULL;
+		
+		for(i=0;i<MAX_A_STREAMS;i++){
+			free(demuxer->a_streams[i]);
+			demuxer->a_streams[i]=NULL;
+		}
+		
+		for(i=0;i<MAX_V_STREAMS;i++){
+			free(demuxer->v_streams[i]);
+			demuxer->v_streams[i]=NULL;
+		}
+		
+		for(i=0;i<MAX_S_STREAMS;i++){
+			free(demuxer->s_streams[i]);
+			demuxer->s_streams[i]=NULL;
+		}
+		
+		free(demuxer);   
+		demuxer = NULL;
+	}
+
+	free(ds);
+	ds = NULL;
+
+	video_format = 0;
+
+	return 0;
 }
 
 static int TSGetLength(demuxer_t *demuxer,double * length) {
@@ -3886,6 +3909,8 @@ static int TSGetLength(demuxer_t *demuxer,double * length) {
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	
+	int ret = 0;
 
 	switch(command) {
 		case CONTAINER_INIT: {
@@ -3894,7 +3919,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		case CONTAINER_PLAY: {
-			TSPlay(context);
+			ret = TSPlay(context);
 			break;
 		}
 		case CONTAINER_STOP: {
@@ -3918,7 +3943,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 	}
 
-	return 0;
+	return ret;
 }
 
 static char *TSCapabilities[] = { "ts", "m2ts", "trp", "mts", "rec", NULL };

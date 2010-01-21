@@ -206,8 +206,8 @@ static inline void resize_demux_packet(demux_packet_t* dp, int len)
   }
   else
   {
-     if(dp->buffer) free(dp->buffer);
-     dp->buffer=NULL;
+     free(dp->buffer);
+     dp->buffer = NULL;
   }
   dp->len=len;
   if (dp->buffer)
@@ -217,17 +217,21 @@ static inline void resize_demux_packet(demux_packet_t* dp, int len)
 }
 
 static inline void free_demux_packet(demux_packet_t* dp){
-  if (dp->master==NULL){  //dp is a master packet
-    dp->refcount--;
-    if (dp->refcount==0){
-      if (dp->buffer) free(dp->buffer);
-      free(dp);
-    }
-    return;
-  }
-  // dp is a clone:
-  free_demux_packet(dp->master);
-  free(dp);
+	if (dp != NULL) {
+		if (dp->master==NULL) {  //dp is a master packet
+		      dp->refcount--;
+		      if (dp->refcount==0) {
+				free(dp->buffer);
+				dp->buffer = NULL;
+				free(dp);
+				dp = NULL;
+		      }
+		} else { // dp is a clone
+			free_demux_packet(dp->master);
+			free(dp);
+			dp = NULL;
+		}
+	}
 }
 
 static inline int avi_stream_id(unsigned int id){
