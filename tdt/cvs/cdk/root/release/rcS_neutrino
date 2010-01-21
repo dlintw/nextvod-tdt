@@ -131,7 +131,7 @@ if [ ! -e /var/etc/.firstboot ]; then
       case "$rtv" in
 		0) echo "0"
 		   echo "Box restart"
-      		   reboot;;
+      		   reboot -f;;
 		1) echo "1"
 		   echo "SHUTDOWN"
 		   case "$var" in
