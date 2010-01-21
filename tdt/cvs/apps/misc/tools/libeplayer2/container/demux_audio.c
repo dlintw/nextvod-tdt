@@ -62,6 +62,7 @@ static void free_mp3_hdrs(mp3_hdr_t **list) {
   while (*list) {
     tmp = (*list)->next;
     free(*list);
+    *list=NULL;
     *list = tmp;
   }
 }
@@ -100,6 +101,7 @@ static mp3_hdr_t *add_mp3_hdr(mp3_hdr_t **list, off_t st_pos,
       // wasn't valid!
       tmp = (*list)->next;
       free(*list);
+      *list = NULL;
       *list = tmp;
     } else {
       (*list)->cons_hdrs++;
@@ -673,12 +675,10 @@ static void demux_audio_seek(demuxer_t *demuxer,float rel_seek_secs,float audio_
 }
 
 static void demux_close_audio(demuxer_t* demuxer) {
-  da_priv_t* priv = demuxer->priv;
+	da_priv_t* priv = demuxer->priv;
 
-  if(!priv)
-    return;
-  free(priv);
-  demuxer->priv = NULL;
+	free(priv);
+	demuxer->priv = NULL;
 }
 
 ////////////////////////////////////////////////////////////////7
@@ -696,7 +696,7 @@ static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static pthread_t PlayThread;
 //static int isFirstAudioFrame = 1;
 
-void AUDIOInit(Context_t *context, char * filename) {
+int AUDIOInit(Context_t *context, char * filename) {
 
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
@@ -793,14 +793,13 @@ void AUDIOGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		Pts = (current->pts * 90000);
 		//printf("a current->pts=%f Pts=%llu\n", current->pts, Pts);
 		
-		while (current != NULL) {
-		
+		while (current != NULL) {		
 			context->output->audio->Write(context, current->buffer, current->len, Pts, NULL, 0, 0, "audio");
 
 			current = current->next;
 			Pts = INVALID_PTS_VALUE;
 		}
-		}
+	}
 }
 
 
@@ -808,88 +807,93 @@ void AUDIOGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 static void AUDIOThread(Context_t *context) {
 	printf("%s::%d\n", __FUNCTION__, __LINE__);
 
-    while(context->playback->isPlaying && 
-		demux_audio_fill_buffer(ds->demuxer,ds)) {
-	    //printf("%s -->\n", __FUNCTION__);
+	while(context->playback->isPlaying && 
+		    demux_audio_fill_buffer(ds->demuxer,ds)) {
+		//printf("%s -->\n", __FUNCTION__);
 
 
-        //IF MOVIE IS PAUSE, WAIT 
-        while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
+	    //IF MOVIE IS PAUSE, WAIT 
+	    while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
 
-	    AUDIOGenerateParcel(context, ds->demuxer);
+		AUDIOGenerateParcel(context, ds->demuxer);
 
-        if (ds != NULL && ds->first != NULL) {
-            ds_free_packs(ds);
-        }
- 
-	//printf("%s <--\n", __FUNCTION__);
+	    if (ds != NULL && ds->first != NULL) {
+		ds_free_packs(ds);
+	    }
+    
+	    //printf("%s <--\n", __FUNCTION__);
 
-    }
+	}
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 }
 
 
 static int AUDIOPlay(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-    int error;
-    if (PlayThread == NULL) {
-	  pthread_attr_t attr;
-	  pthread_attr_init(&attr);
-	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-          if(error=pthread_create(&PlayThread, &attr, (void *)&AUDIOThread, context) != 0)
-          {
-            fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
-	    PlayThread = NULL;
-            return -1;
-          }
-    }
-    return 0;
+
+	int error;
+	int ret = 0;
+	pthread_attr_t attr;
+	
+	if (PlayThread == NULL) {
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+		if(error=pthread_create(&PlayThread, &attr, (void *)&AUDIOThread, context) != 0)
+		{
+			fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
+			PlayThread = NULL;
+			ret = -1;
+		}
+	}
+	
+	return ret;
 }
 
 static int AUDIOStop(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
-    int result;
-    if(PlayThread != NULL) { //Thread still active
-        result = pthread_join (PlayThread, NULL);
-        if(result != 0) 
-        {
-              printf("ERROR: Stop PlayThread\n");
-        }
+	int result;
+	if(PlayThread != NULL) { //Thread still active
+		result = pthread_join (PlayThread, NULL);
+		if(result != 0) 
+		{
+			printf("ERROR: Stop PlayThread\n");
+		}
 
-        PlayThread = NULL;
-        usleep(100000);
-    }
+		PlayThread = NULL;
+		usleep(100000);
+	}
 
-    if(ds != NULL) {
-        if(ds->demuxer != NULL) {
-            demux_close_audio(ds->demuxer);
-            if(ds->demuxer->stream != NULL)
-                free (ds->demuxer->stream);
-            ds->demuxer->stream = NULL;
-            if(ds->demuxer->audio != NULL)
-                free (ds->demuxer->audio);
-            ds->demuxer->audio = NULL;
-            if(ds->demuxer != NULL)
-                free (ds->demuxer);  
-            ds->demuxer = NULL;
-        }
-        free (ds); 
-        ds = NULL;
-    }
+	if(ds != NULL) {
+		if(ds->demuxer != NULL) {
+			demux_close_audio(ds->demuxer);
+			
+			free(ds->demuxer->stream);
+			ds->demuxer->stream = NULL;
+		
+			free(ds->demuxer->audio);
+			ds->demuxer->audio = NULL;
+			
+			free(ds->demuxer);  
+			ds->demuxer = NULL;
+		}
+		
+		free(ds); 
+		ds = NULL;
+	}
 
-    return 0;
+	return 0;
 }
 
 static int AUDIOGetLength(demuxer_t *demuxer,double * length) {
 	//printf("%s::%s\n", FILENAME, __FUNCTION__);
     
-    int audio_length = 0;
+	int audio_length = 0;
 
-    if(demuxer->audio != NULL && demuxer->audio->sh != NULL) {
-	    sh_audio_t *sh_audio = demuxer->audio->sh;
-	    audio_length = sh_audio->i_bps ? demuxer->movi_end / sh_audio->i_bps : 0;
-    }
+	if(demuxer->audio != NULL && demuxer->audio->sh != NULL) {
+		sh_audio_t *sh_audio = demuxer->audio->sh;
+		audio_length = sh_audio->i_bps ? demuxer->movi_end / sh_audio->i_bps : 0;
+	}
           
 	if (audio_length <= 0) return -1;
 	
@@ -921,6 +925,8 @@ static int AUDIOGetInfo(demuxer_t *demuxer,char ** infoString) {
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
 	//printf("%s::%s\n", FILENAME, __FUNCTION__);
 
+	int ret = 0;
+	
 	switch(command) {
 		case CONTAINER_INIT: {
 			char * FILENAME = (char *)argument;
@@ -928,7 +934,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		case CONTAINER_PLAY: {
-			AUDIOPlay(context);
+			ret = AUDIOPlay(context);
 			break;
 		}
 		case CONTAINER_STOP: {
@@ -936,8 +942,8 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		case CONTAINER_SEEK: {
-            if (ds && ds->demuxer)
-			    demux_audio_seek (ds->demuxer, (float)*((float*)argument), 0.0, 0);
+			if (ds && ds->demuxer)
+				demux_audio_seek (ds->demuxer, (float)*((float*)argument), 0.0, 0);
 			break;
 		}
 		case CONTAINER_LENGTH: {
@@ -954,11 +960,11 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		default:
-			printf("%s::%s ConatinerCmd not supported! %d\n", FILENAME, __FUNCTION__, command);
+			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
 			break;
 	}
 
-	return 0;
+	return ret;
 }
 
 static char *AUDIOCapabilities[] = { "mp3", "wav", "flac", NULL };
