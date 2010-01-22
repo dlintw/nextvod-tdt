@@ -11,7 +11,7 @@
 
 #include <string>
 
-#define DEMUX_POLL_TIMEOUT 5000  // timeout in ms
+#define DEMUX_POLL_TIMEOUT 0  // timeout in ms
 #define MAX_FILTER_LENGTH 16    // maximum number of filters
 #ifndef DMX_FILTER_SIZE
 #define DMX_FILTER_SIZE MAX_FILTER_LENGTH
@@ -61,7 +61,7 @@ class cDemux
 		void Close(void);
 		bool Start(void);
 		bool Stop(void);
-		int Read(unsigned char *buff, int len, int Timeout = 5);
+		int Read(unsigned char *buff, int len, int Timeout = 0);
 		void SignalRead(int len);
 		unsigned short GetPID(void) { return pid; }
 		const unsigned char *GetFilterTID(void) { return tid; }
