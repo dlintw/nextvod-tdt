@@ -910,8 +910,11 @@ void CMoviePlayerGui::PlayFile(void)
 					}
 					printf("******************* Timeshift %d, position %d, seek to %d seconds\n", timeshift, position, startposition/1000);
 				}
+
+/* FIXME - removed for now as the seeking doesn't work and prevents TSArchive from working
 				if(!is_file_player && startposition >= 0)//FIXME no jump for file at start yet
 					playback->SetPosition(startposition, true);
+*/
 
 				if(timeshift == 3) {
 					playback->SetSpeed(-1);
