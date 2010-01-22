@@ -172,7 +172,7 @@ bool cDemux::sectionFilter(unsigned short Pid, const unsigned char * const Tid,
 	dmx_sct_filter_params sct;
 	memset(&sct, 0, sizeof(dmx_sct_filter_params));
 	sct.pid     = pid;
-	sct.timeout = 0;//Timeout;
+	sct.timeout = Timeout;
 	sct.flags   = DMX_IMMEDIATE_START;
 
 	//There seems to be something wrong, the given array is not 0 initialisied
