@@ -1,0 +1,569 @@
+/*
+ * setup_extra.cpp
+ *
+ * Copyright (C) 2003 Andreas Monzner <ghostrider@tuxbox.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id: setup_extra.cpp,v 1.82 2009/03/05 07:30:46 coronas Exp $
+ */
+#include <enigma.h>
+#include <enigma_main.h>
+#include <setup_extra.h>
+#include <setupengrab.h>
+#include <setupnetwork.h>
+#include <software_update.h>
+#include <setup_rc.h>
+#include <swapmanager.h>
+#include <lib/dvb/decoder.h>
+#include <lib/gui/emessage.h>
+#include <lib/system/info.h>
+
+#ifndef TUXTXT_CFG_STANDALONE
+extern "C" int  tuxtxt_stop();
+extern "C" void tuxtxt_close();
+extern "C" int  tuxtxt_init();
+extern "C" int  tuxtxt_start(int tpid);
+#endif
+
+eExpertSetup::eExpertSetup()
+	:eSetupWindow(_("Expert Setup"), 12, 470)
+{
+	init_eExpertSetup();
+}
+
+void eExpertSetup::init_eExpertSetup()
+{
+	cmove(ePoint(135, 100));
+
+	int lockWebIf=1;
+	if ( eConfig::getInstance()->getKey("/ezap/webif/lockWebIf", lockWebIf) )
+		eConfig::getInstance()->setKey("/ezap/webif/lockWebIf", lockWebIf);
+
+	int showSatPos=1;
+	if ( eConfig::getInstance()->getKey("/extras/showSatPos", showSatPos) )
+		eConfig::getInstance()->setKey("/extras/showSatPos", showSatPos);
+
+	int entry=0;
+#ifndef DISABLE_NETWORK
+	if (eSystemInfo::getInstance()->hasNetwork())
+	{
+		CONNECT((new eListBoxEntryMenu(&list, _("Communication Setup"), eString().sprintf("(%d) %s", ++entry, _("open communication setup")) ))->selected, eExpertSetup::communication_setup);
+		CONNECT((new eListBoxEntryMenu(&list, _("Ngrab Streaming Setup"), eString().sprintf("(%d) %s", ++entry, _("open ngrab server setup")) ))->selected, eExpertSetup::ngrab_setup);
+		switch (eSystemInfo::getInstance()->getHwType())
+		{
+		case eSystemInfo::DM7020:
+		case eSystemInfo::DM600PVR:
+		case eSystemInfo::DM500PLUS:
+			break;
+		default:
+			CONNECT((new eListBoxEntryMenu(&list, _("Software Update"), eString().sprintf("(%d) %s", ++entry, _("open software update")) ))->selected, eExpertSetup::software_update);
+		}
+	}
+	int startSamba=1;
+	if ( eConfig::getInstance()->getKey("/elitedvb/network/samba", startSamba) )
+		eConfig::getInstance()->setKey("/elitedvb/network/samba", startSamba);
+#endif
+	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control"), eString().sprintf("(%d) %s", ++entry, _("open remote control setup")) ))->selected, eExpertSetup::rc_setup);
+#ifndef DISABLE_HDD
+#ifndef DISABLE_FILE
+	CONNECT((new eListBoxEntryMenu(&list, _("Swap Manager"), eString().sprintf("(%d) %s", ++entry, _("open swapspace setup")) ))->selected, eExpertSetup::swapmanager);
+#endif
+#endif
+	if ( eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DM7000 )
+		CONNECT((new eListBoxEntryMenu(&list, _("Factory reset"), eString().sprintf("(%d) %s", ++entry, _("all settings will set to factory defaults")) ))->selected, eExpertSetup::factory_reset);
+		CONNECT((new eListBoxEntryMenu(&list, _("User reset"), eString().sprintf("(%d) %s", ++entry, _("all settings will set to user defaults")) ))->selected, eExpertSetup::user_reset);		
+		CONNECT((new eListBoxEntryMenu(&list, _("Reload setting"), eString().sprintf("(%d) %s", ++entry, _("settings will reload")) ))->selected, eExpertSetup::reload_setting);
+	new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	list.setFlags(list.getFlags()|eListBoxBase::flagNoPageMovement);
+#ifndef DISABLE_FILE
+	if ( eSystemInfo::getInstance()->canRecordTS() && !eDVB::getInstance()->recorder )
+	{
+		record_split_size = new eListBoxEntryMulti(&list, _("record split size (left, right)"));
+		record_split_size->add("         650MB        >", 650*1024);
+		record_split_size->add("<        700MB        >", 700*1024);
+		record_split_size->add("<        800MB        >", 800*1024);
+		record_split_size->add("<         1GB         >", 1024*1024);
+		record_split_size->add("<        1,5GB        >", 1536*1024);
+		record_split_size->add("<         2GB         >", 2*1024*1024);
+		record_split_size->add("<         4GB         >", 4*1024*1024);
+		record_split_size->add("<         8GB         >", 8*1024*1024);
+		record_split_size->add("<        16GB         ", 16*1024*1024);
+		int splitsize=0;
+		if (eConfig::getInstance()->getKey("/extras/record_splitsize", splitsize))
+			splitsize=1024*1024; // 1G
+		record_split_size->setCurrent(splitsize);
+		CONNECT( list.selchanged, eExpertSetup::selChanged );
+	}
+
+	// Timeroffset (Anfang)
+	timeroffsetstart = new eListBoxEntryMulti( &list, (_("Change timer offset [start] (left, right)")));
+	timeroffsetstart->add( (eString)"  " + eString().sprintf(_("Timer offset [start] %d min"), 0) + (eString)" >", 0);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 1) + (eString)" >", 1);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 2) + (eString)" >", 2);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 3) + (eString)" >", 3);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 4) + (eString)" >", 4);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 5) + (eString)" >", 5);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 6) + (eString)" >", 6);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 7) + (eString)" >", 7);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 8) + (eString)" >", 8);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 9) + (eString)" >", 9);
+	timeroffsetstart->add( (eString)"< " + eString().sprintf(_("Timer offset [start] %d min"), 10) + (eString)"  ", 10);
+	int offsetstart=0;
+	if (eConfig::getInstance()->getKey("/enigma/timeroffset", offsetstart) )
+		offsetstart=0; // 0 Minutes
+	timeroffsetstart->setCurrent(offsetstart);
+	CONNECT(list.selchanged, eExpertSetup::startoffsetChanged );
+
+
+	// Timeroffset (Ende)
+	timeroffsetend = new eListBoxEntryMulti( &list, (_("Change timer offset [end] (left, right)")));
+	timeroffsetend->add( (eString)"  " + eString().sprintf(_("Timer offset [end] %d min"), 0) + (eString)" >", 0);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 1) + (eString)" >", 1);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 2) + (eString)" >", 2);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 3) + (eString)" >", 3);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 4) + (eString)" >", 4);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 5) + (eString)" >", 5);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 6) + (eString)" >", 6);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 7) + (eString)" >", 7);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 8) + (eString)" >", 8);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 9) + (eString)" >", 9);
+	timeroffsetend->add( (eString)"< " + eString().sprintf(_("Timer offset [end] %d min"), 10) + (eString)"  ", 10);
+	int offsetend=0;
+	if (eConfig::getInstance()->getKey("/enigma/timeroffset2", offsetend) )
+		offsetend=0; // 0 Minutes
+	timeroffsetend->setCurrent(offsetend);
+	CONNECT(list.selchanged, eExpertSetup::endoffsetChanged );
+
+	timerenddefaultaction = new eListBoxEntryMulti( &list, _("Default action on timer end (left, right)"));
+
+	timerenddefaultaction->add( eString().sprintf("%s: %s%s",_("Action on timer end"),_("Nothing")," >").c_str(), 0 );
+	
+	if ( eSystemInfo::getInstance()->canShutdown() )
+	{
+		timerenddefaultaction->add( eString().sprintf("< %s: %s >", _("Action on timer end"), _("Standby")).c_str(), ePlaylistEntry::doGoSleep );
+		timerenddefaultaction->add( eString().sprintf("< %s: %s", _("Action on timer end"), _("Shutdown")).c_str(), ePlaylistEntry::doShutdown );
+	}
+	else
+	{
+		timerenddefaultaction->add( eString().sprintf("< %s: %s", _("Action on timer end"), _("Standby")).c_str(), ePlaylistEntry::doGoSleep );
+	}
+
+	int defaultaction = 0;
+	if (eConfig::getInstance()->getKey("/enigma/timerenddefaultaction", defaultaction) )
+		defaultaction = 0;
+	timerenddefaultaction->setCurrent(defaultaction);
+	
+	CONNECT(list.selchanged, eExpertSetup::timerenddefaultactionChanged );
+	new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	new eListBoxEntryCheck(&list, _("disable AC3 recording"), "/enigma/noac3recording", _("don't record AC3 audio track"));
+	new eListBoxEntryCheck(&list, _("disable teletext recording"), "/enigma/nottxrecording", _("don't record teletext track"));
+	new eListBoxEntryCheck(&list, _("disable timestamp detection"), "/enigma/notimestampdetect", _("don't try to detect duration from DVB timestamps when replaying recordings"));
+	new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+#endif
+	if ( eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DM7000 )
+		CONNECT((new eListBoxEntryCheck(&list,_("Enable fast zapping"),"/elitedvb/extra/fastzapping",_("enables faster zapping.. but with visible sync")))->selected, eExpertSetup::fastZappingChanged );
+	CONNECT((new eListBoxEntryCheck(&list, _("Use http authentification"), "/ezap/webif/lockWebIf", _("enables the http (user/password) authentification")))->selected, eExpertSetup::reinitializeHTTPServer );
+	CONNECT((new eListBoxEntryCheck(&list, _("Don't open serial port"), "/ezap/extra/disableSerialOutput", _("don't write debug messages to /dev/tts/0")))->selected, eExpertSetup::reinitializeHTTPServer );
+	new eListBoxEntryCheck(&list, _("Use EPG cache for Infobar"), "/ezap/osd/useEPGCache", _("use the EPG cache for the infobar if the EIT is unavailable"));
+	new eListBoxEntryCheck(&list, _("Auto bouquet change"), "/elitedvb/extra/autobouquetchange", _("change into next bouquet when end of current bouquet is reached"));
+	new eListBoxEntryCheck(&list, _("Auto reconnect cahandler"), "/elitedvb/extra/cahandlerReconnect", _("try to reconnect when an external cahandler connection was lost"));
+#ifndef DISABLE_NETWORK
+	if ( eSystemInfo::getInstance()->getHwType() == eSystemInfo::DM7000 ||
+	    eSystemInfo::getInstance()->getHwType() == eSystemInfo::DM7020  ||
+	    eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DGS_R900 )
+		new eListBoxEntryCheck(&list, _("Enable file sharing"), "/elitedvb/network/samba", _("start file sharing(samba) on startup"));
+#endif
+#ifndef TUXTXT_CFG_STANDALONE
+	CONNECT((new eListBoxEntryCheck(&list, _("Disable teletext caching"), "/ezap/extra/teletext_caching", _("don't cache teletext pages in background")))->selected, eExpertSetup::tuxtxtCachingChanged );
+	new eListBoxEntryCheck(&list, _("Disable internal teletext"), "/ezap/teletext/use_external", _("use external tuxtxt plugin"));
+#endif
+	new eListBoxEntryCheck(&list, _("Enable Zapping History"), "/elitedvb/extra/extzapping", _("don't care about actual mode when zapping in history list"));
+	if ( eSystemInfo::getInstance()->getHwType() < eSystemInfo::DM5600 )
+		new eListBoxEntryCheck(&list, _("Disable Standby"), "/extras/fastshutdown", _("Box goes directly into Deep-Standby"));
+
+#ifdef ENABLE_MHW_EPG
+	int mhwepg=1;
+	if ( eConfig::getInstance()->getKey("/extras/mhwepg", mhwepg) )
+		eConfig::getInstance()->setKey("/extras/mhwepg", mhwepg);
+	new eListBoxEntryCheck(&list, _("Enable MHW EPG"), "/extras/mhwepg", _("Mediahighway EPG, activate swap space when using with multiple operators"));
+#endif
+#ifdef HAVE_DREAMBOX_HARDWARE
+	if ( eSystemInfo::getInstance()->getHwType() == eSystemInfo::DM7000||
+	    eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DGS_R900 ) 
+	{
+		int corefilesDisable = 0;
+		if (access("/var/etc/.no_corefiles", R_OK) == 0)
+			corefilesDisable = 1;
+		eConfig::getInstance()->setKey("/extras/corefiles_disable", corefilesDisable);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable CoreFiles"), "/extras/corefiles_disable", _("don't create 'Corefiles' after an Enigma crash")))->selected, eExpertSetup::fileToggle,"/var/etc/.no_corefiles");
+#ifdef ENABLE_EXPERT_WEBIF
+		int dontMountHDD = 0;
+		if (access("/var/etc/.dont_mount_hdd", R_OK) == 0)
+			dontMountHDD = 1;
+		eConfig::getInstance()->setKey("/extras/dont_mount_hdd", dontMountHDD);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable HDD mount"), "/extras/dont_mount_hdd", _("don't mount the HDD via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_mount_hdd");
+#endif
+		new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );	
+
+		int dontStartSecure = 0;
+	        if (access("/var/etc/.dont_start_secure", R_OK) == 0)
+			dontStartSecure = 1;
+		eConfig::getInstance()->setKey("/extras/dont_start_secure", dontStartSecure);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable Secure start"), "/extras/dont_start_secure", _("don't start the switch securesw channel via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_secure");
+
+#if 0 
+	        int handleTwo=0;
+		if ( eConfig::getInstance()->getKey("/ezap/ci/handleTwoServices", handleTwo) )
+			eConfig::getInstance()->setKey("/ezap/ci/handleTwoServices", handleTwo);
+		new eListBoxEntryCheck(&list, _("Enable Two Service"), "/ezap/ci/handleTwoServices", _("can your CI descramble two services at the same time?"));
+	
+		int dontStartCrond = 0;
+		if (access("/var/etc/.dont_start_crond", R_OK) == 0)
+			dontStartCrond = 1;
+		eConfig::getInstance()->setKey("/extras/dont_start_crond", dontStartCrond);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable Crond start"), "/extras/dont_start_crond", _("don't start the Crond via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_crond");
+
+		int dontStartDropbear = 0;
+		if (access("/var/etc/.dont_start_dropbear", R_OK) == 0)
+			dontStartDropbear = 1;
+		eConfig::getInstance()->setKey("/extras/dont_start_dropbear", dontStartDropbear);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable Dropbear start"), "/extras/dont_start_dropbear", _("don't start the Dropbear via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_dropbear");
+
+		int dontStartInetd = 0;
+		if (access("/var/etc/.dont_start_inetd", R_OK) == 0)
+			dontStartInetd = 1;
+		eConfig::getInstance()->setKey("/extras/dont_start_inetd", dontStartInetd);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable Inetd start"), "/extras/dont_start_inetd", _("don't start the inetd (telnet,ftp)  via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_inetd");
+
+		int dontStartFirewall = 0;
+		if (access("/var/etc/.dont_start_firewall", R_OK) == 0)
+			dontStartFirewall = 1;
+		eConfig::getInstance()->setKey("/extras/dont_start_firewall", dontStartFirewall);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable Firewall start"), "/extras/dont_start_firewall", _("don't start the Firewall via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_firewall");
+
+		int dontStartNat = 0;
+		if (access("/var/etc/.dont_start_nat", R_OK) == 0)
+			dontStartNat = 1;
+		eConfig::getInstance()->setKey("/extras/dont_start_nat", dontStartNat);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable Nat start"), "/extras/dont_start_nat", _("don't start the Nat via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_nat");
+        
+	        int dontStartPpp = 0;
+		if (access("/var/etc/.dont_start_ppp", R_OK) == 0)
+			dontStartPpp = 1;
+		eConfig::getInstance()->setKey("/extras/dont_start_ppp", dontStartPpp);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable PPP start"), "/extras/dont_start_ppp", _("don't start the PPP via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_ppp");
+
+	        int dontStartNfsd = 0;
+		if (access("/var/etc/.dont_start_nfs", R_OK) == 0)
+			dontStartNfsd = 1;
+
+		eConfig::getInstance()->setKey("/extras/dont_start_nfs", dontStartNfsd);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable NFSD start"), "/extras/dont_start_nfs", _("don't start the NFSD via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_nfs");
+#endif
+	}
+#endif
+#ifndef DISABLE_FILE
+	int autoplay=1;
+	if ( eConfig::getInstance()->getKey("/ezap/extra/autoplay", autoplay) )
+		eConfig::getInstance()->setKey("/ezap/extra/autoplay", autoplay);
+	new eListBoxEntryCheck(&list, _("Enable Filemode Autoplay"), "/ezap/extra/autoplay", _("continue playing last selected movie when entering Filemode"));
+#endif
+#ifndef HAVE_DREAMBOX_HARDWARE
+	new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+//Boot-info
+	int bootInfo = 0;
+	if (access("/var/etc/.boot_info", R_OK) == 0)
+		bootInfo = 1;
+	eConfig::getInstance()->setKey("/extras/bootinfo", bootInfo);
+	CONNECT_2_1((new eListBoxEntryCheck(&list, _("Show Boot-Info"), "/extras/bootinfo", _("Show Boot-Infos (IP, etc.)")))->selected, eExpertSetup::fileToggle,"/var/etc/.boot_info");
+//HW-Sections
+	int hwSectionsDisable = 0;
+	if (access("/var/etc/.hw_sections", R_OK) == 0)
+		hwSectionsDisable = 1;
+	eConfig::getInstance()->setKey("/extras/hw_sections_disable", hwSectionsDisable);
+	CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable HW_Sections"), "/extras/hw_sections_disable", _("don't use hardware section filtering")))->selected, eExpertSetup::fileToggle,"/var/etc/.hw_sections");
+//Watchdog
+	int watchdogDisable = 0;
+	if (access("/var/etc/.no_watchdog", R_OK) == 0)
+		watchdogDisable = 1;
+	eConfig::getInstance()->setKey("/extras/watchdog_disable", watchdogDisable);
+	CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable Watchdog"), "/extras/watchdog_disable", _("don't use the Watchdog")))->selected, eExpertSetup::fileToggle,"/var/etc/.no_watchdog");
+//ENX-Watchdog - Philips and Sagem
+	if ( eSystemInfo::getInstance()->getHwType() != eSystemInfo::dbox2Nokia )
+	{
+		int enxWatchdogDisable = 0;
+		if (access("/var/etc/.no_enxwatchdog", R_OK) == 0)
+			enxWatchdogDisable = 1;
+		eConfig::getInstance()->setKey("/extras/enxwatchdog_disable", enxWatchdogDisable);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable ENX-Watchdog"), "/extras/enxwatchdog_disable", _("don't use the ENX-Watchdog")))->selected, eExpertSetup::fileToggle,"/var/etc/.no_enxwatchdog");
+	}
+//SPTS-Recording
+	int sptsMode = 0;
+	if (access("/var/etc/.spts_mode", R_OK) == 0)
+		sptsMode = 1;
+	eConfig::getInstance()->setKey("/extras/spts_mode", sptsMode);
+	CONNECT_2_1((new eListBoxEntryCheck(&list, _("Enable SPTS-Mode"), "/extras/spts_mode", _("use SPTS-Mode (enables TS-recording)")))->selected, eExpertSetup::fileToggle,"/var/etc/.spts_mode");
+//File I/O-Options
+	int OSyncDisable = 0;
+	if (access("/var/etc/.no_o_sync", R_OK) == 0)
+		OSyncDisable = 1;
+	eConfig::getInstance()->setKey("/extras/O_SYNC_disable", OSyncDisable);
+	CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable O_SYNC"), "/extras/O_SYNC_disable", _("The file/recording is not opened for synchronous I/O")))->selected, eExpertSetup::fileToggle,"/var/etc/.no_o_sync");
+//Alternative Frontenddriver for Philips
+	if ( eSystemInfo::getInstance()->getHwType() == eSystemInfo::dbox2Philips )
+	{
+		int tda80xx = 0;
+		if (access("/var/etc/.tda80xx", R_OK) == 0)
+			tda80xx = 1;
+		eConfig::getInstance()->setKey("/extras/tda80xx", tda80xx);
+		CONNECT_2_1((new eListBoxEntryCheck(&list, _("New Philips driver"), "/extras/tda80xx", _("use tda80xx driver for Philips boxes")))->selected, eExpertSetup::fileToggle,"/var/etc/.tda80xx");
+	}
+#endif
+	setHelpID(92);
+}
+
+void eExpertSetup::fileToggle(bool newState, const char* filename)
+{
+	FILE* test;
+	test = fopen(filename,"r");
+	if (test != NULL)
+	{
+		fclose(test);
+		::unlink(filename);
+	}
+	else
+	{
+		eString cmd = "touch ";
+		cmd += filename;
+		system(cmd.c_str());
+	}
+}
+
+#ifndef TUXTXT_CFG_STANDALONE
+void eExpertSetup::tuxtxtCachingChanged(bool b)
+{
+	if ( b )
+	{
+		if (Decoder::current.tpid != -1)
+			tuxtxt_stop();
+		tuxtxt_close();
+	}
+	else
+	{
+		tuxtxt_init();
+		if (Decoder::current.tpid != -1)
+			tuxtxt_start(Decoder::current.tpid);
+	}
+}
+#endif
+
+#ifndef DISABLE_FILE
+void eExpertSetup::selChanged(eListBoxEntryMenu* e)
+{
+	if ( eSystemInfo::getInstance()->canRecordTS() &&
+		e == (eListBoxEntryMenu*)record_split_size )
+		eConfig::getInstance()->setKey("/extras/record_splitsize", (int)e->getKey());
+}
+#endif
+
+void eExpertSetup::startoffsetChanged(eListBoxEntryMenu* e)
+{
+	if ( e == (eListBoxEntryMenu*)timeroffsetstart )
+		eConfig::getInstance()->setKey("/enigma/timeroffset", (int)e->getKey() );
+}
+
+void eExpertSetup::endoffsetChanged(eListBoxEntryMenu* e)
+{
+	if ( e== (eListBoxEntryMenu*)timeroffsetend )
+		eConfig::getInstance()->setKey("/enigma/timeroffset2", (int)e->getKey() );
+}
+
+void eExpertSetup::timerenddefaultactionChanged(eListBoxEntryMenu* e)
+{
+	if ( e == (eListBoxEntryMenu*)timerenddefaultaction )
+		eConfig::getInstance()->setKey("/enigma/timerenddefaultaction", (int)e->getKey() );
+}
+
+void eExpertSetup::reinitializeHTTPServer(bool)
+{
+	eZap::getInstance()->reconfigureHTTPServer();
+}
+
+void eExpertSetup::fastZappingChanged(bool b)
+{
+	Decoder::setFastZap(b);
+}
+
+#ifndef DISABLE_NETWORK
+void eExpertSetup::communication_setup()
+{
+	hide();
+	eZapNetworkSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+
+void eExpertSetup::ngrab_setup()
+{
+	hide();
+	ENgrabSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+
+void eExpertSetup::software_update()
+{
+	hide();
+	eSoftwareUpdate setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+
+#endif
+
+void eExpertSetup::rc_setup()
+{
+	hide();
+	eZapRCSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+#ifndef DISABLE_HDD
+#ifndef DISABLE_FILE
+void eExpertSetup::swapmanager()
+{
+	hide();
+	eSwapManager setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+#endif
+#endif
+
+//implemented in upgrade.cpp
+extern bool erase(char mtd[30], const char *titleText);
+
+void eExpertSetup::factory_reset()
+{
+	hide();
+	int ret = eMessageBox::ShowBox(
+		_("When you do a factory reset, you will lose ALL your configuration data\n"
+			"(including bouquets, services, satellite data ...)\n"
+			"After completion of factory reset, your receiver will restart automatically!\n\n"
+			"Really do a factory reset?"),
+		_("Factory reset"),
+		eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
+		eMessageBox::btNo );
+	if ( ret == eMessageBox::btYes ) 
+	{
+		switch( eSystemInfo::getInstance()->getHwType() )
+		{
+			case eSystemInfo::DM500PLUS:
+			case eSystemInfo::DM600PVR:
+			case eSystemInfo::DM7020:
+				system("rm -R /etc/enigma && killall -9 enigma");
+				break;
+			case eSystemInfo::DGS_R900:			
+			case eSystemInfo::DGS_R910:						
+			case eSystemInfo::DGS_R9000:			
+			case eSystemInfo::DGS_R91:			
+				system("/usr/local/sbin/default.sh");
+				system(" killall -9 enigma");
+				break;
+			case eSystemInfo::DM7000:
+			case eSystemInfo::DM500:
+			case eSystemInfo::DM5620:
+			case eSystemInfo::DM5600:
+			case eSystemInfo::TR_DVB272S:
+				erase("/dev/mtd/1", _("Factory reset..."));
+				system("reboot");
+				break;
+			default: 
+				eDebug("factory reset not implemented for this hardware!!\n");
+		}
+	}
+	show();
+}
+void eExpertSetup::user_reset()
+{
+	hide();
+	int ret = eMessageBox::ShowBox(
+		_("When you do a user reset, you will lose ALL configuration data\n"
+			"(including bouquets, services, satellite data ...)\n"
+			"After completion of user reset, your receiver will restart automatically!\n\n"
+			"Really do a user reset?"),
+		_("User reset"),
+		eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
+		eMessageBox::btNo );
+	if ( ret == eMessageBox::btYes ) 
+	{
+		switch( eSystemInfo::getInstance()->getHwType() )
+		{
+			case eSystemInfo::DGS_R900:			
+			case eSystemInfo::DGS_R910:						
+			case eSystemInfo::DGS_R9000:							
+			case eSystemInfo::DGS_R91:			
+			system("/usr/local/sbin/user.sh");
+				system(" killall -9 enigma");
+				break;
+			default: 
+				eDebug("user reset not implemented for this hardware!!\n");
+		}
+	}
+	show();
+}
+void eExpertSetup::reload_setting()
+{
+	eMessageBox *mc;
+	mc = new eMessageBox(_("Reloading Settings.\nPlease wait..."),_("Information"), eMessageBox::iconInfo);
+	mc->show();
+	if (eDVB::getInstance())
+	{
+		if (eDVB::getInstance()->settings)
+		{
+			eDVB::getInstance()->settings->loadServices();
+			eDVB::getInstance()->settings->loadBouquets();
+			eZap::getInstance()->getServiceSelector()->actualize();
+			eServiceReference::loadLockedList((eZapMain::getInstance()->getEplPath()+"/services.locked").c_str());
+		}
+	}
+        mc->hide(); 
+}

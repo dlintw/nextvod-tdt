@@ -1,0 +1,881 @@
+diff -r 5471f174bb4f configure.ac
+--- a/configure.ac	Sat May 09 01:40:05 2009 +0200
++++ b/configure.ac	Wed May 27 22:29:48 2009 +0200
+@@ -103,6 +103,8 @@ CPPFLAGS="$CPPFLAGS -DDEBUG"
+ #CPPFLAGS="$CPPFLAGS -DENABLE_EXPERT_WEBIF"
+ #CPPFLAGS="$CPPFLAGS -DENABLE_SQLITE"
+ #CPPFLAGS="$CPPFLAGS -DTUXTXT_CFG_STANDALONE"
++CPPFLAGS="$CPPFLAGS -DDISABLE_LCD"
++#CPPFLAGS="$CPPFLAGS -DDISABLE_CI"
+ #CPPFLAGS="$CPPFLAGS -DTUXTXT_DEBUG"
+ 
+ CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS $ID3TAG_CFLAGS $MAD_CFLAGS $MD5SUM_CFLAGS $TUXTXT_CFLAGS"
+diff -r 5471f174bb4f include/lib/dvb/decoder.h
+--- a/include/lib/dvb/decoder.h	Sat May 09 01:40:05 2009 +0200
++++ b/include/lib/dvb/decoder.h	Wed May 27 22:29:48 2009 +0200
+@@ -28,7 +28,7 @@ class Decoder
+ {
+ 	static struct fd
+ 	{
+-		static int video, audio, demux_video, demux_audio, demux_pcr, demux_vtxt, mpeg, demux_video_pti, demux_audio_pti;
++		static int video, audio, demux_video, demux_audio, demux_pcr, demux_vtxt, mpeg;
+ 	} fd;
+ public:
+ 	static decoderParameters current;
+diff -r 5471f174bb4f include/lib/dvb/esection.h
+--- a/include/lib/dvb/esection.h	Sat May 09 01:40:05 2009 +0200
++++ b/include/lib/dvb/esection.h	Wed May 27 22:29:48 2009 +0200
+@@ -17,8 +17,8 @@
+ #define DEMUX0 "/dev/dvb/card0/demux0"
+ #define DEMUX1 "/dev/dvb/card0/demux1"
+ #else
+-#define DEMUX0 "/dev/dvb/adapter1/demux0"
+-#define DEMUX1 "/dev/dvb/adapter1/demux1"
++#define DEMUX0 "/dev/dvb/adapter0/demux0"
++#define DEMUX1 "/dev/dvb/adapter0/demux1"
+ #endif
+ 
+ class eSectionReader
+diff -r 5471f174bb4f include/lib/dvb/frontend.h
+--- a/include/lib/dvb/frontend.h	Sat May 09 01:40:05 2009 +0200
++++ b/include/lib/dvb/frontend.h	Wed May 27 22:29:48 2009 +0200
+@@ -25,8 +25,8 @@
+ #include <linux/dvb/dmx.h>
+ #include <linux/dvb/frontend.h>
+ #include <linux/dvb/video.h>
+-#define DEMOD_DEV "/dev/dvb/adapter1/frontend0"
+-#define SEC_DEV "/dev/dvb/adapter1/sec0"
++#define DEMOD_DEV "/dev/dvb/adapter0/frontend0"
++#define SEC_DEV "/dev/dvb/adapter0/sec0"
+ #define CodeRate fe_code_rate_t
+ #define SpectralInversion fe_spectral_inversion_t
+ #define Modulation fe_modulation_t
+@@ -114,8 +114,6 @@ class eFrontend: public Object
+ 	FrontendParameters front;
+ #else
+ 	struct dvb_frontend_parameters front;
+-	struct dtv_property p[9];
+-	struct dtv_properties cmdseq;
+ #endif
+ 
+ 	eFrontend(int type, const char *demod=DEMOD_DEV, const char *sec=SEC_DEV);
+@@ -185,14 +183,10 @@ public:
+ 	/** begins the tune operation and emits a "tunedIn"-signal */
+ 	int tune_qpsk(eTransponder *transponder, 
+ 			uint32_t Frequency, 		// absolute frequency in kHz
+-			int polarisation, 		// polarisation (polHor, polVert, ...)
++			int polarisation, 			// polarisation (polHor, polVert, ...)
+ 			uint32_t SymbolRate, 		// symbolrate in symbols/s (e.g. 27500000)
+-			uint8_t FEC_inner,		// FEC_inner according to ETSI (-1 for none, 0 for auto, but please don't use that)
+-			int Inversion,			// spectral invesion on(1)/off(0)
+-			int system,
+-			int modulation,
+-			int rolloff,
+-			int pilot,
++			uint8_t FEC_inner,			// FEC_inner according to ETSI (-1 for none, 0 for auto, but please don't use that)
++			int Inversion,					// spectral invesion on(1)/off(0)
+ 			eSatellite &sat);       // complete satellite data... diseqc.. lnb ..switch
+ 
+ 	int tune_qam(eTransponder *transponder,
+diff -r 5471f174bb4f lib/driver/eavswitch.cpp
+--- a/lib/driver/eavswitch.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/driver/eavswitch.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -8,7 +8,7 @@
+ #include <ost/video.h>
+ #else
+ #define VIDEO_DEV "/dev/dvb/adapter0/video0"
+-#define AUDIO_DEV "/dev/dvb/adapter0/audio1"
++#define AUDIO_DEV "/dev/dvb/adapter0/audio0"
+ #include <linux/dvb/audio.h>
+ #include <linux/dvb/video.h>
+ #include <alsa/asoundlib.h>
+diff -r 5471f174bb4f lib/driver/rcinput.cpp
+--- a/lib/driver/rcinput.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/driver/rcinput.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -20,10 +20,10 @@ void eRCDeviceInputDev::handleCode(int r
+ 	
+ 	if (km == eRCInput::kmAll)
+ 		return;
+-	
++
+ 	if (km == eRCInput::kmAscii)
+ 	{
+-//		eDebug("filtering.. %d", ev->code);
++		eDebug("filtering.. %d", ev->code);
+ 		bool filtered = ( ev->code > 0 && ev->code < 61 );
+ 		switch (ev->code)
+ 		{
+diff -r 5471f174bb4f lib/dvb/Makefile.am
+--- a/lib/dvb/Makefile.am	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/Makefile.am	Wed May 27 22:29:48 2009 +0200
+@@ -11,4 +11,4 @@ libenigma_dvb_a_SOURCES = \
+ 	settings.cpp dvbscan.cpp service.cpp servicecache.cpp servicedvb.cpp \
+ 	servicestructure.cpp cahandler.cpp servicefile.cpp servicemp3.cpp \
+ 	serviceplaylist.cpp dvbci.cpp subtitling.cpp subtitle.cpp \
+-	servicejpg.cpp serviceexternal.cpp timestampts.cpp dvrloop.cpp
++	servicejpg.cpp serviceexternal.cpp timestampts.cpp 
+diff -r 5471f174bb4f lib/dvb/decoder.cpp
+--- a/lib/dvb/decoder.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/decoder.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -14,7 +14,6 @@
+ #define VIDEO_DEV "/dev/dvb/adapter0/video0"
+ #define AUDIO_DEV "/dev/dvb/adapter0/audio0"
+ #define DEMUX_DEV "/dev/dvb/adapter0/demux0"
+-#define DEMUX_DEV_PTI "/dev/dvb/adapter1/demux0"
+ #define audioStatus audio_status
+ #define videoStatus video_status
+ #define pesType pes_type
+@@ -67,9 +66,7 @@ int Decoder::fd::video;
+ int Decoder::fd::video;
+ int Decoder::fd::audio;
+ int Decoder::fd::demux_video;
+-int Decoder::fd::demux_video_pti;
+ int Decoder::fd::demux_audio;
+-int Decoder::fd::demux_audio_pti;
+ int Decoder::fd::demux_pcr;
+ int Decoder::fd::demux_vtxt;
+ int Decoder::fd::mpeg;
+@@ -141,7 +138,6 @@ int Decoder::Initialize()
+ 	parms.restart_camd=0;
+ 	current=parms;
+ 	fd.video = fd.audio = fd.demux_video = fd.demux_audio = fd.demux_pcr = fd.demux_vtxt = fd.mpeg = -1;
+-	fd.demux_video_pti = fd.demux_audio_pti = -1;
+ #ifndef TUXTXT_CFG_STANDALONE
+ 	int disable_background_caching=0;
+ 	eConfig::getInstance()->getKey("/ezap/extra/teletext_caching", disable_background_caching);
+@@ -328,14 +324,6 @@ int Decoder::Set()
+ 				eDebug("fd.demux_audio opened");*/
+ 		}
+ 
+-		if (fd.demux_audio_pti == -1)
+-		{
+-			fd.demux_audio_pti=open(DEMUX_DEV_PTI, O_RDWR);
+-			if (fd.demux_audio_pti<0)
+-				eDebug("fd.demux_audio_pti couldn't be opened");
+-/*			else
+-				eDebug("fd.demux_audio_pti opened");*/
+-		}
+ 
+ 		if ( fd.audio == -1 )  // open audio dev... if not open..
+ 		{
+@@ -364,11 +352,6 @@ int Decoder::Set()
+ 			else
+ 				eDebug("ok");
+ 
+-			eDebugNoNewLine("DEMUX_STOP - audio_pti - ");				
+-			if (::ioctl(fd.demux_audio_pti, DMX_STOP)<0)
+-				eDebug("failed (%m)");
+-			else
+-				eDebug("ok");
+ 		}
+ 
+ 		if ( (changed & 0x0F) != 2 )  // only apid changed
+@@ -401,14 +384,6 @@ int Decoder::Set()
+ /*			else
+ 					eDebug("fd.demux_video opened");*/
+ 			}
+-			if (fd.demux_video_pti == -1)
+-			{
+-				fd.demux_video_pti=open(DEMUX_DEV_PTI, O_RDWR);
+-				if (fd.demux_video_pti<0)
+-					eDebug("fd.demux_video_pti couldn't be opened");
+-/*			else
+-					eDebug("fd.demux_video_pti opened");*/
+-			}
+ 			if ( vstatus.playState != VIDEO_STOPPED /*current.vpid != -1*/ )
+ 			{
+ 				eDebugNoNewLine("DEMUX_STOP - video - ");
+@@ -417,11 +392,6 @@ int Decoder::Set()
+ 				else
+ 					eDebug("ok");
+ 
+-				eDebugNoNewLine("DEMUX_STOP - video_pti - ");
+-				if (::ioctl(fd.demux_video_pti, DMX_STOP)<0)
+-					eDebug("failed (%m)");
+-				else
+-					eDebug("ok");
+ 			}
+ 			// DEMUX STOP PCR
+ 			if (fd.demux_pcr == -1)
+@@ -455,10 +425,12 @@ int Decoder::Set()
+ 				audioStreamSource_t n =
+ 					( parms.vpid != -1 && parms.pcrpid == -1) ?
+ 						AUDIO_SOURCE_MEMORY : AUDIO_SOURCE_DEMUX;
++	
+ 				if ( astatus.streamSource != n )
+ 				{
++					n = AUDIO_SOURCE_DEMUX; 											
+ 					eDebugNoNewLine("AUDIO_SELECT_SOURCE - ");
+-					if (::ioctl(fd.audio, AUDIO_SELECT_SOURCE, AUDIO_SOURCE_DEMUX)<0)
++					if (::ioctl(fd.audio, AUDIO_SELECT_SOURCE, n)<0)
+ 						eDebug("failed (%m)");
+ 					else
+ 						eDebug("ok");
+@@ -479,10 +451,9 @@ int Decoder::Set()
+ 				videoStreamSource_t n =
+ 					( parms.apid != -1 && parms.pcrpid == -1 ) ?
+ 							VIDEO_SOURCE_MEMORY : VIDEO_SOURCE_DEMUX;
+-				n = VIDEO_SOURCE_DEMUX; 							
+ 				if ( vstatus.streamSource != n )
+ 				{
+-                                        
++					n = VIDEO_SOURCE_DEMUX; 							                                        
+ 					eDebugNoNewLine("VIDEO_SELECT_SOURCE - ");
+ 					if (::ioctl(fd.video, VIDEO_SELECT_SOURCE, n)<0)
+ 						eDebug("failed (%m)");
+@@ -505,20 +476,11 @@ int Decoder::Set()
+ 				else
+ 					eDebug("ok");
+ 
+-				pes_filter.output	 = DMX_OUT_TS_TAP;				
+-				eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - video_pti - ", parms.vpid);
+-				if (::ioctl(fd.demux_video_pti, DMX_SET_PES_FILTER, &pes_filter)<0)
+-					eDebug("failed (%m)");
+-				else
+-					eDebug("ok");
+-
+ 			}
+ 			else  // we have no vpid
+ 			{
+ 				close(fd.demux_video);
+-				close(fd.demux_video_pti);
+ 				fd.demux_video=-1;
+-				fd.demux_video_pti=-1;
+ //				eDebug("fd.demux_video closed");
+ 			}
+ 
+@@ -661,20 +623,11 @@ int Decoder::Set()
+ 			else
+ 				eDebug("ok");
+ 
+-			pes_filter.output	 = DMX_OUT_TS_TAP;			
+-			eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - audio_pti - ", parms.apid);
+-			if (::ioctl(fd.demux_audio_pti, DMX_SET_PES_FILTER, &pes_filter)<0)
+-				eDebug("failed (%m)");
+-			else
+-				eDebug("ok");
+-
+ 		}
+ 		else  // we have no apid
+ 		{
+ 			close(fd.demux_audio);
+-			close(fd.demux_audio_pti);
+ 			fd.demux_audio=-1;
+-			fd.demux_audio_pti=-1;
+ //			eDebug("fd.demux_audio closed");
+ 		}
+ 		if ( (changed & 0x0F) != 2 )  //  only apid changed
+@@ -703,11 +656,6 @@ int Decoder::Set()
+ 				else
+ 						eDebug("ok");
+ 
+-				eDebugNoNewLine("DMX_START (video_pti) - ");
+-				if (::ioctl(fd.demux_video_pti, DMX_START)<0)
+-					eDebug("failed (%m)");
+-				else
+-						eDebug("ok");
+ 			}
+ 			if ( parms.vpid != -1 )
+ 			{
+@@ -723,7 +671,7 @@ int Decoder::Set()
+ 				close(fd.video);
+ 				fd.video = -1;
+ 			}
+-/*			if ( parms.apid != -1 )
++			if ( parms.apid != -1 )
+ 			{
+ 				eDebugNoNewLine("AUDIO_PLAY - ");
+ 				if (::ioctl(fd.audio, AUDIO_PLAY)<0)
+@@ -731,13 +679,14 @@ int Decoder::Set()
+ 				else
+ 					eDebug("ok");
+ 			}
++
+ 			else  // no apid
+ 			{
+ 				close(fd.audio);
+ 				fd.audio = -1;
+-//				eDebug("fd.audio closed");
++				eDebug("fd.audio closed");
+ 			}
+-*/
++
+ 		}
+ 
+ 		if ( parms.apid != -1 )
+@@ -748,11 +697,6 @@ int Decoder::Set()
+ 			else
+ 				eDebug("ok");
+ 
+-			eDebugNoNewLine("DMX_START (audio_pti) - ");				
+-			if (::ioctl(fd.demux_audio_pti, DMX_START)<0)
+-				eDebug("failed (%m)");
+-			else
+-				eDebug("ok");
+ 		}
+ 	}
+ 
+diff -r 5471f174bb4f lib/dvb/dvb.cpp
+--- a/lib/dvb/dvb.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/dvb.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -89,7 +89,8 @@ int eTransponder::satellite::tune(eTrans
+ 		return -ENOENT;
+ 	} 
+ 	
+-	return eFrontend::getInstance()->tune_qpsk(trans, frequency, polarisation, symbol_rate, fec, inversion, system, modulation, rolloff, pilot, *sat );
++//	return eFrontend::getInstance()->tune_qpsk(trans, frequency, polarisation, symbol_rate, fec, inversion, system, modulation, rolloff, pilot, *sat );
++	return eFrontend::getInstance()->tune_qpsk(trans, frequency, polarisation, symbol_rate, fec, inversion, *sat );
+ }
+ 
+ void eTransponder::terrestrial::set(const TerrestrialDeliverySystemDescriptor *descriptor)
+diff -r 5471f174bb4f lib/dvb/dvbci.cpp
+--- a/lib/dvb/dvbci.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/dvbci.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -39,16 +39,16 @@ void eDVBCI::init_eDVBCI()
+ 	eDebug("[DVBCI] start");
+ 
+ 	if (instance_count == 1)
+-		fd=::open("/dev/dvb/adapter0/ca0",O_RDWR|O_NONBLOCK);
++		fd=::open("/dev/dvb/adapter0/ci0",O_RDWR|O_NONBLOCK);
+ 	else
+-		fd=::open("/dev/dvb/adapter0/ca1",O_RDWR|O_NONBLOCK);
++		fd=::open("/dev/dvb/adapter0/ci1",O_RDWR|O_NONBLOCK);
+ 		
+ 	if (fd<0)
+ 	{
+ 		if (instance_count == 1)
+-			eDebug("[DVBCI] error opening /dev/dvb/adapter0/ca0");
++			eDebug("[DVBCI] error opening /dev/dvb/adapter0/ci0");
+ 		else
+-			eDebug("[DVBCI] error opening /dev/dvb/adapter0/ca1");
++			eDebug("[DVBCI] error opening /dev/dvb/adapter0/ci1");
+ 
+ 		state=stateError;
+ 	}
+diff -r 5471f174bb4f lib/dvb/dvbservice.cpp
+--- a/lib/dvb/dvbservice.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/dvbservice.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -9,7 +9,6 @@
+ #include <lib/dvb/decoder.h>
+ #include <lib/dvb/iso639.h>
+ #include <lib/dvb/frontend.h>
+-#include <lib/dvb/dvrloop.h>
+ #ifndef DISABLE_CI
+ 	#include <lib/dvb/dvbci.h>
+ #endif
+@@ -25,7 +24,7 @@
+ #define DEMUX1_DEV "/dev/dvb/card0/demux1"
+ #else
+ #include <linux/dvb/dmx.h>
+-#define DEMUX1_DEV "/dev/dvb/adapter1/demux1"
++#define DEMUX1_DEV "/dev/dvb/adapter0/demux1"
+ #endif
+ 
+ std::set<eDVBCaPMTClient*> eDVBCaPMTClientHandler::capmtclients;
+@@ -217,7 +216,6 @@ void eDVBServiceController::handleEvent(
+ 		break;
+ 	case eDVBServiceEvent::eventServiceSwitch:
+ 	{
+-	        eDVRLoop::getInstance()->playStream(0);
+ 		if (!service.path.size()) // a normal service, not a replay
+ 		{
+ 			if (!dvb.settings->getTransponders())
+@@ -389,7 +387,6 @@ void eDVBServiceController::handleEvent(
+ 		service_state=ENOENT;
+ 		dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceFailed));
+ //		transponder=0;
+-	        eDVRLoop::getInstance()->playStream(0);
+ 		break;
+ 	case eDVBServiceEvent::eventServiceGotPAT:
+ 	{
+@@ -407,7 +404,6 @@ void eDVBServiceController::handleEvent(
+ #ifndef DISABLE_FILE
+ 			if ( service.path ) // recorded ts
+ 			{
+-			        eDVRLoop::getInstance()->playStream(0);
+ 				// we try to find manual the correct sid
+ 				int fd = open( service.path.c_str(), O_RDONLY|O_LARGEFILE );
+ 				if ( fd < 0 )
+@@ -597,8 +593,6 @@ void eDVBServiceController::PMTready(int
+ {
+ 	eDebug("PMTready (%d)", error);
+ 	dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceGotPMT));
+-        if ( !service.path )
+-		eDVRLoop::getInstance()->playStream(1);
+ }
+ 
+ void eDVBServiceController::EITready(int error)
+diff -r 5471f174bb4f lib/dvb/esection.cpp
+--- a/lib/dvb/esection.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/esection.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -67,6 +67,11 @@ int eSectionReader::open(int pid, __u8 *
+ 		if (::ioctl(handle, DMX_SET_BUFFER_SIZE, 128*1024) < 0 )
+ 			eDebug("DMX_SET_BUFFER_SIZE failed (%m)");
+ 	}
++
++	int n = DMX_SOURCE_FRONT0;
++	if (::ioctl(handle, DMX_SET_SOURCE, &n)<0)
++			eDebug("DMX_SET_SOURCE failed! - %m");
++
+ #endif
+ 
+ 	secFilterParams.pid=pid;
+diff -r 5471f174bb4f lib/dvb/frontend.cpp
+--- a/lib/dvb/frontend.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/frontend.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -26,8 +26,6 @@
+ // for check if in background a recording is running
+ #include <lib/dvb/edvb.h>
+ #include <lib/system/math.h>
+- 
+-#include <linux/dvb/stm_ioctls.h> // proprietary STM extensions
+ 
+ eFrontend* eFrontend::frontend;
+ 
+@@ -170,21 +168,12 @@ int eFrontend::setFrontend()
+ {
+ 	if (type == eSystemInfo::feUnknown)
+ 		return -1;
+-#ifndef DVB_NG_API
+ 	if (ioctl(fd, FE_SET_FRONTEND, &front)<0)
+ 	{
+ 		eDebug("FE_SET_FRONTEND failed (%m)");
+ 		return -1;
+ 	}
+ 	eDebug("FE_SET_FRONTEND OK");
+-#else
+-	if (ioctl(fd, FE_SET_PROPERTY, &cmdseq)<0)
+-	{
+-		eDebug("FE_SET_PROPERTY failed (%m)");
+-		return -1;
+-	}
+-	eDebug("FE_SET_PROPERTY OK");
+-#endif
+ #if HAVE_DVB_API_VERSION >= 3
+ 	// API V3 drivers have no working TIMEDOUT event.. 
+ 	timeout.start(3000,true);   
+@@ -205,8 +194,8 @@ void eFrontend::tuneOK()
+ 		eSatellite * sat = eTransponderList::getInstance()->findSatellite(transponder->satellite.orbital_position);
+ 		if (sat)
+ 		{
+-    			if(curRotorPos == 10000)
+-				needreset=2;
++			if (curRotorPos==10000)
++			    	needreset=2;
+ 			eLNB *lnb = sat->getLNB();
+ 			if (lnb && lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2)
+ 			{
+@@ -289,6 +278,7 @@ void eFrontend::tuneFailed()
+ 
+ void eFrontend::readFeEvent(int what)
+ {
++    eDebug("[FE] what = %d", what);         
+ #if HAVE_DVB_API_VERSION < 3
+ 	FrontendEvent ev;
+ 	memset(&ev, 0, sizeof(FrontendEvent));
+@@ -301,10 +291,10 @@ void eFrontend::readFeEvent(int what)
+ 		eDebug("FE_GET_EVENT failed(%m)");
+ 		return;
+ 	}
+-	eDebug("[FE] what %d  event (status %d)",what, ev.status);	
++
+ 	if ( !transponder )
+ 	{
+-		eDebug("[FE] no transponder .. ignore FE Events");
++//		eDebug("[FE] no transponder .. ignore FE Events");
+ 		return;
+ 	}
+ #if HAVE_DVB_API_VERSION < 3 
+@@ -459,20 +449,10 @@ static CodeRate etsiToDvbApiFEC(int fec)
+ 		return FEC_5_6;
+ 	case 5:
+ 		return FEC_7_8;
+-	case 6:
+-		return FEC_8_9;
+-	case 7:
+-		return FEC_3_5;
+-	case 8:
+-		return FEC_4_5;
+-	case 9:
+-		return FEC_9_10;
+ 	default:
+ 		break;
+ 	}
+ 	return FEC_AUTO;
+-
+-
+ }
+ 
+ static Modulation etsiToDvbApiModulation(int mod)
+@@ -888,7 +868,7 @@ int eFrontend::SendSequence( const eSecC
+ 		curContTone = eSecCmdSequence::TONE_OFF;
+ 		wait=1;
+ 	}
+-#ifndef DVB_NG_API
++
+ 	if (seq.increasedVoltage)
+ 	{
+ //		eDebug("enable high voltage");
+@@ -899,7 +879,6 @@ int eFrontend::SendSequence( const eSecC
+ 			return ret;
+ 		}
+ 	} 
+-#endif
+ //	eDebug("curVoltage = %d, new Voltage = %d", curContTone, seq.voltage);
+ 	if ( seq.voltage != curVoltage )
+ 	{
+@@ -1395,7 +1374,6 @@ double calcSatHourangle( double Azimuth,
+ 
+ void eFrontend::updateTransponder()
+ {
+-
+ 	if (type == eSystemInfo::feUnknown)
+ 		return;
+ 	if (!transponder)
+@@ -1414,6 +1392,7 @@ void eFrontend::updateTransponder()
+ 		eDebug("FE_GET_FRONTEND (%m)");
+ 		return;
+ 	}
++
+ 	if ((type==eSystemInfo::feSatellite) && (transponder->satellite.valid))
+ 	{
+ 		unsigned int freq, inv, sr;
+@@ -1467,7 +1446,6 @@ void eFrontend::updateTransponder()
+ 		// FIXME
+ #endif
+ 	}
+-eDebug("[%s] freq = %d",__FUNCTION__, transponder->satellite.frequency );
+ }
+ 
+ void eFrontend::tune_all(eTransponder *trans) // called from within tune_qpsk, tune_qam, tune_ofdm
+@@ -1485,16 +1463,8 @@ int eFrontend::tune_qpsk(eTransponder *t
+ 		uint32_t SymbolRate,		// symbolrate in symbols/s (e.g. 27500000)
+ 		uint8_t FEC_inner,			// FEC_inner (-1 for none, 0 for auto, but please don't use that)
+ 		int Inversion,				// spectral inversion, INVERSION_OFF / _ON / _AUTO (but please...)
+-                int system,				// system DVB-S /DVB-S2
+-                int modulation,
+-                int rolloff,
+-                int pilot,
+ 		eSatellite &sat)			// Satellite Data.. LNB, DiSEqC, switch..
+ {
+-//	eDebug("[%s] eFrontend %d/%d/%d/%d/none/%d/%d/%d"
+-//	,__FUNCTION__, Frequency, SymbolRate, polarisation, FEC_inner, modulation, system,rolloff);
+-
+-
+ 	if (type != eSystemInfo::feSatellite)
+ 		return -1;
+ 	tune_all(trans);
+@@ -1996,12 +1966,6 @@ send:
+ 	// delete allocated memory
+ 	delete [] commands;
+ 
+-	// clear property cache	
+-	p[0].cmd = DTV_CLEAR;
+-	cmdseq.num = 1;
+-	cmdseq.props = p;
+-	setFrontend();
+-
+ // fill in Frontend data
+ #if HAVE_DVB_API_VERSION < 3
+ 	front.Inversion=(Inversion == 2 ? INVERSION_AUTO :
+@@ -2014,73 +1978,6 @@ send:
+ 	front.u.qpsk.fec_inner=etsiToDvbApiFEC(FEC_inner);
+ 	front.u.qpsk.symbol_rate=SymbolRate;
+ #endif
+-        int sys;
+-        switch ( system )
+-        {
+-    	    case 0:
+-    	        sys = 4;
+-    	        break;
+-    	    case 1:
+-    	        sys = 5;
+-    	        break;
+-    	    default:
+-    	        sys = system;        
+-        } 
+-        
+-        int fec;
+-        switch ( front.u.qpsk.fec_inner )
+-        {
+-    	    case 0:
+-        	fec = 9;
+-    	    case 4:
+-        	fec = 5;	
+-    	    case 6:
+-                fec = 8;
+-    	    case 7:
+-                fec = 10;
+-    	    case 8:
+-                fec = 4;
+-    	    case 9:
+-        	fec = 11;
+-    	    break; 
+-    	    default:
+-    	        fec = front.u.qpsk.fec_inner;
+-    	} 
+-    	
+-    	int mod;
+-    	switch( modulation )
+-    	{
+-    	    case 1:
+-    		mod = 0;   
+-    		break;
+-    	    case 2:
+-    	        mod = 9;
+-    	        break;
+-    	    default:
+-    	        mod = modulation;
+-    	}
+-    	
+-//	eDebug("[%s] delivery %x/%d/%d/%d/none/%d/%d/%d"
+-//	,__FUNCTION__, front.frequency , front.u.qpsk.symbol_rate, polarisation, fec, mod, sys ,rolloff);
+-
+-// hodnoty pro dvb s
+-//	p[0].cmd = DTV_DELIVERY_SYSTEM,  p[0].u.data = 4;
+-//	p[2].cmd = DTV_MODULATION,	 p[2].u.data = 0;
+-//	p[6].cmd = DTV_ROLLOFF,		 p[6].u.data = 0;
+-//	p[7].cmd = DTV_PILOT,            p[7].u.data = 2; 
+-
+-	p[0].cmd = DTV_DELIVERY_SYSTEM,  p[0].u.data = sys;
+-	p[1].cmd = DTV_FREQUENCY,        p[1].u.data = front.frequency; 
+-	p[2].cmd = DTV_MODULATION,	 p[2].u.data = mod;
+-	p[3].cmd = DTV_SYMBOL_RATE,	 p[3].u.data = front.u.qpsk.symbol_rate;
+-	p[4].cmd = DTV_INNER_FEC,	 p[4].u.data = fec;
+-	p[5].cmd = DTV_INVERSION,	 p[5].u.data = Inversion;
+-	p[6].cmd = DTV_ROLLOFF,		 p[6].u.data = rolloff;
+-	p[7].cmd = DTV_PILOT,            p[7].u.data = pilot; 
+-        p[8].cmd = DTV_TUNE,		 p[8].u.data = 0;               
+-
+-	cmdseq.num = 9;
+-	cmdseq.props = p;
+ 
+ 	if (finalTune)
+ 		return setFrontend();
+diff -r 5471f174bb4f lib/dvb/record.cpp
+--- a/lib/dvb/record.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/record.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -26,8 +26,8 @@
+ //		#define DVR_DEV "/dev/dvb/adapter0/dvr0"
+ //		#define DEMUX1_DEV "/dev/dvb/adapter0/demux0"
+ //	#else
+-		#define DVR_DEV "/dev/dvb/adapter1/dvr1"
+-		#define DEMUX1_DEV "/dev/dvb/adapter1/demux1"
++		#define DVR_DEV "/dev/dvb/adapter0/dvr1"
++		#define DEMUX1_DEV "/dev/dvb/adapter0/demux1"
+ //	#endif
+ #endif
+ 
+diff -r 5471f174bb4f lib/dvb/servicedvb.cpp
+--- a/lib/dvb/servicedvb.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/servicedvb.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -16,7 +16,6 @@
+ #include <lib/dvb/servicefile.h>
+ #include <lib/dvb/dvb.h>
+ #include <lib/dvb/decoder.h>
+-#include <lib/dvb/dvrloop.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+ #include <errno.h>
+@@ -259,12 +258,12 @@ void eDVRPlayerThread::init_eDVRPlayerTh
+ 	}
+ 	while( dvrfd < 0 );
+ #else
+-        eDVRLoop::getInstance()->playStream(0);
+ 	if ((dvrfd = ::open("/dev/dvb/adapter0/dvr0", O_WRONLY|O_NONBLOCK)) == -1) 
+ 	{
+ 		eDebug("couldn't open /dev/dvb/adapter0/dvr0 (%m)");
+ 		state=stateError;
+ 	}
++	
+ #endif
+ 	outputsn=new eSocketNotifier(this, dvrfd, eSocketNotifier::Write, 0);
+ 	CONNECT(outputsn->activated, eDVRPlayerThread::outputReady);
+diff -r 5471f174bb4f lib/dvb/servicemp3.cpp
+--- a/lib/dvb/servicemp3.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/servicemp3.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -25,7 +25,7 @@
+ #define AUDIO_DEV "/dev/dvb/card0/audio0"
+ #else
+ #include <linux/dvb/audio.h>
+-#define AUDIO_DEV "/dev/dvb/adapter0/audio1"
++#define AUDIO_DEV "/dev/dvb/adapter0/audio0"
+ #endif
+ 
+ /*
+diff -r 5471f174bb4f lib/dvb/subtitling.cpp
+--- a/lib/dvb/subtitling.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/dvb/subtitling.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -25,8 +25,8 @@
+ #include <linux/dvb/video.h>
+ #include <linux/dvb/audio.h>
+ #define VIDEO_DEV "/dev/dvb/adapter0/video0"
+-#define AUDIO_DEV "/dev/dvb/adapter0/audio1"
+-#define DEMUX_DEV "/dev/dvb/adapter1/demux1"
++#define AUDIO_DEV "/dev/dvb/adapter0/audio0"
++#define DEMUX_DEV "/dev/dvb/adapter0/demux0"
+ #define audioStatus audio_status
+ #define videoStatus video_status
+ #define pesType pes_type
+diff -r 5471f174bb4f lib/gdi/fb.cpp
+--- a/lib/gdi/fb.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/gdi/fb.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -130,28 +130,43 @@ int fbClass::SetMode(unsigned int nxRes,
+ 		printf("fb failed\n");
+ 	}
+ 	stride=fix.line_length;
+-//	memset(lfb, 0, stride*yRes);
++//	memset(lfb, 0, 4*yRes);
+ 	memset(mmap(0, fix.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0),1, fix.smem_len);
+ 	return 0;
+ }
+ 
+ void fbClass::blit()
+ {
++        int yResFB_top, yResFB_bottom, xResFB_left, xResFB_right;
++        
++        switch(xResFB)
++        {
++        case 720:
++                yResFB_top=5; yResFB_bottom=570; xResFB_left=10; xResFB_right=715;
++                break;
++        case 1280:        
++                yResFB_top=90; yResFB_bottom=610; xResFB_left=150; xResFB_right=1150;
++                break;
++        case 1920:
++                yResFB_top=200; yResFB_bottom=720; xResFB_left=400; xResFB_right=1380;
++                break;
++        }
++                 
+ 	STMFBIO_BLT_DATA  bltData;
+ 	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA));
+ 	bltData.operation  = BLT_OP_COPY;
+ 	bltData.srcOffset  = 1920*1080*4;
+-	bltData.srcPitch   = xRes * 4;
++	bltData.srcPitch   = xRes*4;
+ 	bltData.dstOffset  = 0;
+ 	bltData.dstPitch   = xResFB*4;
+ 	bltData.src_top    = 0;
+ 	bltData.src_left   = 0;
+ 	bltData.src_right  = xRes;
+ 	bltData.src_bottom = yRes;
+-	bltData.dst_top    = 0;
+-	bltData.dst_left   = 0;
+-	bltData.dst_right  = xResFB;
+-	bltData.dst_bottom = yResFB;
++	bltData.dst_top    = 0;//yResFB_top;
++	bltData.dst_bottom = yResFB;//_bottom;	
++	bltData.dst_left   = 0;//xResFB_left;
++	bltData.dst_right  = xResFB;//_right;
+ 	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0)
+ 	{
+ 		perror("FBIO_BLIT");
+diff -r 5471f174bb4f lib/gdi/gfbdc.cpp
+--- a/lib/gdi/gfbdc.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/gdi/gfbdc.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -107,9 +107,8 @@ void gFBDC::exec(gOpcode *o)
+ 		setPalette();
+ 		break;
+ 	}
+-        case gOpcode::flush:
++        case gOpcode::end:        	
+         	fb->blit();
+-                break;  
+ 	default:
+ 		gPixmapDC::exec(o);
+ 		break;
+diff -r 5471f174bb4f lib/gdi/grc.cpp
+--- a/lib/gdi/grc.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/gdi/grc.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -266,10 +266,10 @@ void gPainter::flush()
+ 
+ void gPainter::end()
+ {
+-	gOpcode o;
++	if ( dc.islocked() )
++		return;
++        gOpcode o;
+ 	o.dc=&dc;
+-//FIXME vymaz posledniho fragmentu ( zpusobi chybu v ca driveru ???)
+-	flush();  
+ 	o.opcode=gOpcode::end;
+ 	rc.submit(o);
+ }
+diff -r 5471f174bb4f lib/system/info.cpp
+--- a/lib/system/info.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/lib/system/info.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -22,21 +22,24 @@ eSystemInfo::eSystemInfo()
+ 	,haskeyboard(0) ,canmeasurelnbcurrent(0), hasnegfilter(0)
+ 	,canupdateTransponder(0), canshutdown(1), canrecordts(0)
+ 	,alphaincrement(10), hasstandbywakeuptimer(0), cantimeshift(0)
+-	,hasscartswitch(1)
++	,hasscartswitch(0)
+ {
+ 	init_eSystemInfo();
+ }
+ void eSystemInfo::init_eSystemInfo()
+ {
++
+ 	instance=this;
+ #if HAVE_DVB_API_VERSION >= 3
+ 	int fd=::open(DEMOD_DEV, O_RDONLY);
+ 	fetype = feUnknown;
++	
+ 	if (fd>=0)
+ 	{
+ 		dvb_frontend_info info;
+ 		if ( ::ioctl(fd, FE_GET_INFO, &info) >= 0 )
+ 		{
++
+ 			switch (info.type)
+ 			{
+ 				case FE_QPSK:
+@@ -62,6 +65,7 @@ void eSystemInfo::init_eSystemInfo()
+ 	switch (tuxbox_get_submodel())
+ 	{
+ 		case TUXBOX_SUBMODEL_RELOOK_910:
++		case 60:
+ 		        eDebug("IPBOX 910"); 		
+ 			caids.insert(0x4a70);								        
+ 			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;		
+@@ -122,6 +126,7 @@ void eSystemInfo::init_eSystemInfo()
+ 			}
+ 			break;
+ 		default:
++		        eDebug("Unknown"); 		
+ 			hwtype = Unknown;
+ 			break;
+ 	}
+diff -r 5471f174bb4f src/enigma_info.cpp
+--- a/src/enigma_info.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/src/enigma_info.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -94,6 +94,7 @@ public:
+ public:
+ 	eAboutScreen()
+ 	{
++
+ 		setHelpID(43);
+ 
+ 		machine=new eLabel(this);
+diff -r 5471f174bb4f src/enigma_plugins.cpp
+--- a/src/enigma_plugins.cpp	Sat May 09 01:40:05 2009 +0200
++++ b/src/enigma_plugins.cpp	Wed May 27 22:29:48 2009 +0200
+@@ -639,7 +639,10 @@ void ePluginThread::start()
+ 				}
+ 
+ 				if (needfb)
++				{
+ 					MakeParam(P_ID_FBUFFER, fbClass::getInstance()->lock());
++					Decoder::clearScreen(); 
++				}		
+ 
+ 				if (needoffsets)
+ 				{
+@@ -687,6 +690,7 @@ void ePluginThread::thread()
+ 	PluginExec execPlugin = (PluginExec) dlsym(libhandle[argc-1], "plugin_exec");
+ 	execPlugin(first);
+ 	eDebug("execute plugin finished");
++	Decoder::Resume(2);   
+ }
+ 
+ void ePluginThread::recv_msg(const int &)

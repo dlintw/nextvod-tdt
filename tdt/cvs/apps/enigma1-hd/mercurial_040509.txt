@@ -1,0 +1,226 @@
+changeset:   44:dd528a633c89
+tag:         tip
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Mon May 04 07:10:26 2009 +0200
+summary:     setupvideo: fix obnova menu - fragmenty pozadi
+
+changeset:   43:d6ef06ada3ee
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Sat May 02 19:55:46 2009 +0200
+summary:     readme sisyfos : k dokonceni
+
+changeset:   42:e59601a22e39
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Sat May 02 17:40:32 2009 +0200
+summary:     lib/gdi: uprava pro zobrazeni skinu ve vsech videomodech
+
+changeset:   41:bf902e2b9d2c
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Thu Apr 23 09:30:10 2009 +0200
+summary:     setupvideo: zmena videomodu bez restartu enigmy
+
+changeset:   40:3813c917bc57
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Fri Apr 17 09:37:06 2009 +0200
+summary:     upgrade: fix zobrazeni infobar pri stahovani sw z inetu
+
+changeset:   39:d942b46a98b7
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Thu Apr 16 17:38:39 2009 +0200
+summary:     subtitles: dvb titulky z demuxu ok, doresit zobrazovani v subtitle
+
+changeset:   38:f5a30381045e
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Thu Apr 16 08:37:26 2009 +0200
+summary:     flashtool: fix pro zobrazeni progress-bar
+
+changeset:   37:5e145ebba1bf
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Thu Apr 16 01:47:22 2009 +0200
+summary:     flashtool: nastaveni fb na aktualni hodnotu z /etc/videomode
+
+changeset:   36:5ed7cd135c2a
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Wed Apr 15 22:34:19 2009 +0200
+summary:     flashtool:uprava pro 720 a 1080 HD
+
+changeset:   35:1a03a15200bb
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Wed Apr 15 14:50:32 2009 +0200
+summary:     flashtool: uprava pro update firmware pres inet
+
+changeset:   34:071c381c7388
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Tue Apr 14 13:55:32 2009 +0200
+summary:     setup_extra: doplneno user reset a reload setting
+
+changeset:   33:699e0d6dc249
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Sun Apr 12 08:09:58 2009 +0200
+summary:     frontend: fix ladeni tuneru(pri prepnuti mezi sat -service not found)
+
+changeset:   32:4309df5a42e4
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Sat Apr 11 23:25:50 2009 +0200
+summary:     cahandler: add /tmp/pmt.tmp
+
+changeset:   31:9c79cf456031
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Sat Apr 11 20:42:03 2009 +0200
+summary:     edvb, dvbservices: fix video_type pri nahravani a prehravani
+
+changeset:   30:269d64d0a021
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Fri Apr 10 10:18:13 2009 +0200
+summary:     dvbscan: doplneno auto scanovani HD kanalu ze satellites.xml
+
+changeset:   29:c062a08e37ca
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Wed Apr 08 07:24:09 2009 +0200
+summary:     enigma_main: disable scart switch; setup_extra: add factory user reset
+
+changeset:   28:7106407c87fe
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Tue Apr 07 14:01:40 2009 +0200
+summary:     hotplug: uprava pro mountovani usb /usr/local/sbin/mount.sh umount.sh
+
+changeset:   27:72c3c4f64144
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Mon Apr 06 19:18:11 2009 +0200
+summary:     streaminfo: zpet /proc/bus/bitstream; frontend: fix increase voltage; streamwd: isanamorph = 3
+
+changeset:   26:dc6d04c3d543
+user:        JIRKA <jirka@sisyfos-band.cz>
+date:        Thu Apr 02 21:33:31 2009 +0200
+summary:     lib/dvb: add DVBS2 , setting version 3, rucni scannovani DVBS2, uprava decoderu audio source, povolen FE_GET_FRONTEND,
+
+changeset:   25:bdbc1c7de7da
+user:        root@localhost
+date:        Tue Mar 31 17:18:53 2009 +0200
+summary:     configure: DVB_NG_API; frontend: nastaveni pres PROPERTY
+
+changeset:   24:246d9e7fdbda
+user:        root@localhost
+date:        Tue Mar 31 00:05:03 2009 +0200
+summary:     easwitch: uprava hlasitosti - scart-hdmi; pictureviewer: uprava pictureviewer pro 32fb
+
+changeset:   23:8de75ca2627e
+user:        root@localhost
+date:        Mon Mar 30 14:01:58 2009 +0200
+summary:     dvbservices: doplneno dekodovani MPEG4, videotype 27
+
+changeset:   22:88a0712bd1ea
+user:        root@localhost
+date:        Mon Mar 30 10:16:16 2009 +0200
+summary:     oprava pro TUXTXT_CFG_STANDALONE; setup_lcd: uprava
+
+changeset:   21:ffc4d7d79d78
+user:        root@localhost
+date:        Sun Mar 29 20:48:32 2009 +0200
+summary:     enigma_main, enigma_standby, enigma_lcd, info: doplneno haslcd, add LCD menu
+
+changeset:   20:e7cb68b3202f
+user:        root@localhost
+date:        Sun Mar 29 14:55:27 2009 +0200
+summary:     enigma_lcd: add service name; enigma_standby: add time standby
+
+changeset:   19:d44ebcb76ed4
+user:        root@localhost
+date:        Sat Mar 28 19:40:08 2009 +0100
+summary:     enigma_main: add servicename na LCD display
+
+changeset:   18:fcc7564561e3
+user:        root@localhost
+date:        Sat Mar 28 17:50:06 2009 +0100
+summary:     enigma_info, enigma_dyn: uprava pro /dev/sdx; setup_harddisk: vytvoreni adr movie
+
+changeset:   17:c316432581dd
+user:        root@localhost
+date:        Sat Mar 28 15:29:08 2009 +0100
+summary:     externi dvrloop ovladani pres /tmp/dvrloop.socket
+
+changeset:   16:e56ff8c44dd3
+user:        root@localhost
+date:        Sat Mar 28 10:31:05 2009 +0100
+summary:     uprava expert menu, doplneni indentifikace DGS_R910
+
+changeset:   15:f9948283ddb6
+user:        root@localhost
+date:        Fri Mar 27 11:04:25 2009 +0100
+summary:     uprava BE na LE pro prehravani mp3 a ogg
+
+changeset:   14:e4c3adf0545d
+user:        root@localhost
+date:        Fri Mar 27 09:45:02 2009 +0100
+summary:     enigma_main: add shutdown, restart
+
+changeset:   13:02d3b0554fb7
+user:        root@localhost
+date:        Fri Mar 27 08:09:29 2009 +0100
+summary:     add lib/dvb/dvrloop.cpp
+
+changeset:   12:32651e34deb3
+user:        root@localhost
+date:        Fri Mar 27 07:58:20 2009 +0100
+summary:     add interni dvr_loop
+
+changeset:   11:2500496ae39a
+user:        root@localhost
+date:        Fri Mar 27 00:07:06 2009 +0100
+summary:     add restart enigmy po zmene videoformatu
+
+changeset:   10:9493a42ad145
+user:        root@localhost
+date:        Thu Mar 26 17:57:44 2009 +0100
+summary:     upraveno prepinani A/V 16:9, 4:3, LETTER_BOX,
+
+changeset:   9:22e927209549
+user:        root@localhost
+date:        Wed Mar 25 11:19:15 2009 +0100
+summary:     doplneno A/V menu o polozku videoformat
+
+changeset:   8:9db6dc75ac75
+user:        root@localhost
+date:        Wed Mar 25 09:47:57 2009 +0100
+summary:     uprava nastaveni harddisku pro SATA
+
+changeset:   7:58869de7969f
+user:        root@localhost
+date:        Tue Mar 24 22:34:37 2009 +0100
+summary:     add alsa pro ovladani hlasitosti
+
+changeset:   6:a980475675f8
+user:        root@localhost
+date:        Tue Mar 24 14:40:40 2009 +0100
+summary:     zakazano spousteni submenu v CI menu
+
+changeset:   5:684a75d2b32b
+user:        root@localhost
+date:        Tue Mar 24 14:17:21 2009 +0100
+summary:     povolen CI modul
+
+changeset:   4:6e914673180c
+user:        root@localhost
+date:        Tue Mar 24 08:16:01 2009 +0100
+summary:     uprava fb pro hdmi vystup
+
+changeset:   3:062a5dcb035c
+user:        root@localhost
+date:        Mon Mar 23 22:56:43 2009 +0100
+summary:     decoder, framebuffer 32 bits, info - add IPBOX 910
+
+changeset:   2:2b65426945d1
+user:        root@localhost
+date:        Mon Mar 23 22:23:28 2009 +0100
+summary:     patch for sh4 only
+
+changeset:   1:9760811b13f7
+user:        HoP <hop@sisyfos-band.org>
+date:        Mon Mar 23 20:53:22 2009 +0100
+summary:     Pridan soubor README.sisyfos, kam muzeme psat poznamky
+
+changeset:   0:5673d1dfb08e
+user:        mr. vrba <vrba@sisyfos-band.org>
+date:        Mon Mar 23 22:02:05 2009 +0100
+summary:     Originalni zdrojaky z CVS (cvs.tuxbox.org)
+
