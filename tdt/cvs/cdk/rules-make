@@ -29,8 +29,8 @@ host_python;2.6;host-python-2.6;Python-2.6.tar.bz2:python.diff;extract:Python-2.
 #
 # root
 #
-# busybox;1.15.3;busybox-1.15.3;busybox-1.15.3.tar.bz2:busybox-initfiles.patch:busybox.diff;extract:busybox-1.15.3.tar.bz2;patch:busybox-initfiles.patch
-busybox;1.15.3;busybox-1.15.3;busybox-1.15.3.tar.bz2:busybox.diff;extract:busybox-1.15.3.tar.bz2
+# busybox;1.11.2;busybox-1.11.2;busybox-1.11.2.tar.bz2:busybox-initfiles.patch:busybox.diff;extract:busybox-1.11.2.tar.bz2;patch:busybox-initfiles.patch
+busybox;1.11.2;busybox-1.11.2;busybox-1.11.2.tar.bz2:busybox.diff;extract:busybox-1.11.2.tar.bz2
 lsb;3.2-12;lsb-3.2;lsb_3.2-12.tar.gz;extract:lsb_3.2-12.tar.gz
 ipkg;0.99.163;ipkg-0.99.163;ipkg-0.99.163.tar.gz;extract:ipkg-0.99.163.tar.gz
 module_init_tools;3.3-pre1;module-init-tools-3.3-pre1;module-init-tools-3.3-pre1.tar.bz2;extract:module-init-tools-3.3-pre1.tar.bz2

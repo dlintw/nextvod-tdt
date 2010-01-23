@@ -599,7 +599,7 @@ TUXBOX_RULES_MAKE(host_python)
 # root
 #
 TUXBOX_RULES_MAKE(busybox)
-TUXBOX_RULES_MAKE(busybox1153)
+#TUXBOX_RULES_MAKE(busybox1153)
 TUXBOX_RULES_MAKE(lsb)
 TUXBOX_RULES_MAKE(ipkg)
 TUXBOX_RULES_MAKE(module_init_tools)
