@@ -152,6 +152,13 @@ int cAudio::unmute(void)
 	
 	SetMute(Muted);
 
+	char sVolume[4];
+	int fd = open("/proc/stb/avs/0/volume", O_RDWR);
+	read(fd, sVolume, 4);
+
+	write(fd, sVolume, strlen(sVolume));
+	close(fd);
+
 	return 0;
 }
 
