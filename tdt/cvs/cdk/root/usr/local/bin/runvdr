@@ -7,7 +7,7 @@
 # There are additional required files to this script:
 # $VDRCONFDIR/plugins.conf
 #
-# version: 2010-01-13 @expected
+# version: 2010-01-18 @expected
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
@@ -24,19 +24,11 @@ VDRCMD="$VDRPRG -w 60 -s $VDRBINDIR/vdrshutdown"
 # vdr killcommand
 KILLCMD="killall -q -TERM vdr"
 
-# boxtype
-BOXTYPE=`cat /proc/boxtype`
 # plugin load file contains optional plugins
 PLUGINCFG="$VDRCONFDIR/plugins.load"
 
 # build plugin load configuration
 PLUGINS=""
-# device parameter of remote-plugin depends on boxtype
-case "$BOXTYPE" in
-0) PLUGINS="-P \"remote -i /dev/input/event0\"" ;;
-1|3) PLUGINS="-P \"remote -i /dev/input/event1\"" ;;
-esac
-
 # read optional plugins from config file
 if [ -e $PLUGINCFG ]; then
    while read PLUGINENTRY; do

@@ -1,0 +1,154 @@
+hotplug.o hotplug.o: hotplug.c \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdio.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/features.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/cdefs.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/wordsize.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/gnu/stubs.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/stddef.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/types.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/typesizes.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/libio.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/_G_config.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/wchar.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/wchar.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/gconv.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/stdarg.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stdio_lim.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sys_errlist.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stdio.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdlib.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/types.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/time.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/endian.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/endian.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/select.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/select.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sigset.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/time.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/sysmacros.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/pthreadtypes.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/alloca.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/string.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/string.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/string2.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/socket.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/uio.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/uio.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/socket.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/limits.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/syslimits.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/limits.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/posix1_lim.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/local_lim.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/linux/limits.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/posix2_lim.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sockaddr.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/socket.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/sockios.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/un.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/unistd.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/posix_opt.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/confname.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/getopt.h
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdio.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/features.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/cdefs.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/wordsize.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/gnu/stubs.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/stddef.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/types.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/typesizes.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/libio.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/_G_config.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/wchar.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/wchar.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/gconv.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/stdarg.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stdio_lim.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sys_errlist.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stdio.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdlib.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/types.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/time.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/endian.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/endian.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/select.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/select.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sigset.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/time.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/sysmacros.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/pthreadtypes.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/alloca.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/string.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/string.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/string2.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/socket.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/uio.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/uio.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/socket.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/limits.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/syslimits.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/limits.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/posix1_lim.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/local_lim.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/linux/limits.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/posix2_lim.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sockaddr.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/socket.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/sockios.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/un.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/unistd.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/posix_opt.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/confname.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/getopt.h:

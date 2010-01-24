@@ -5,7 +5,10 @@
 # ! Inside definition lines comments are NOT allowed.
 # ! Don't use double quotes in definition lines.
 #
-# version: 2010-01-13 @expected
+# version: 2010-01-18 @expected
+
+# remote control receiver plugin
+remote -i /dev/input/event0
 
 # UFS9xx front panel display
 vfd

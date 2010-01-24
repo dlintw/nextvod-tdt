@@ -1,0 +1,6806 @@
+# created by Enigma Language Editor 0.2
+# 			 (c) 10/2002 ole <olest@gmx.net>
+# *************************************
+# *	 use/modify on your own risk!		*
+# *************************************
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tuxbox-enigma 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-05-01 22:08+0200\n"
+"PO-Revision-Date: 2007-02-04 21:38+0100\n"
+"Last-Translator: Özcan Kaymak <o.kaymak@gmail.com>\n"
+"Language-Team: Turkish / Özcan Kaymak <o.kaymak@gmail.nl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: chk_blue2.esml:316
+msgid "FF "
+msgstr "ileri"
+
+#: default.esml:910
+msgid "&#53;"
+msgstr ""
+
+#: default.esml:410
+msgid "here you can change your sat/lnb mapping"
+msgstr "uydu/LNB eşlemesini burada değiştirebilirsiniz"
+
+#: default.esml:1036
+msgid "Push OK to select Filesize"
+msgstr ""
+
+#: default.esml:445 src/enigma_scan.cpp:53
+msgid "Satfind"
+msgstr "Uydu bulma"
+
+#: chk_blue2.esml:315
+msgid "Pause "
+msgstr "Durakla "
+
+#: default.esml:1002
+msgid "set amount of transparency when in semi-transparent mode"
+msgstr ""
+
+#: default.esml:472
+msgid "motor power input difference between running and not running"
+msgstr "motor giriş gücünün dönme ve dönmeme arasındaki fark"
+
+#: default.esml:436
+msgid "send the complete DiSEqC sequence twice"
+msgstr "tüm DiSEqC dizisini iki defa gönder"
+
+#: default.esml:460 default.esml:508 default.esml:612 src/rotorconfig.cpp:597
+msgid "Satellite:"
+msgstr "Uydu:"
+
+#: default.esml:1005
+msgid "use truetype font instead of standard font"
+msgstr ""
+
+#: default.esml:976
+#, fuzzy
+msgid "max. recording time (minutes):"
+msgstr "kayıt süresi ayarla (dakika olarak)"
+
+#: default.esml:437
+msgid "send no DiSEqC when only Hi/Lo or H/V changes"
+msgstr "H/V veya Hi/Lo değişiminde DiSEqC gönderme"
+
+#: default.esml:679
+msgid "SNR"
+msgstr "SNR"
+
+#: default.esml:995
+#, fuzzy
+msgid "Service:"
+msgstr "Servisler"
+
+#: default.esml:435
+msgid "Uncommitted Switch:"
+msgstr "Kesinleşmemiş Anahtar:"
+
+#: default.esml:618 default.esml:636 default.esml:655
+msgid "enable/disable inversion here (ok)"
+msgstr "evirme aç/kapa (ok)"
+
+#: default.esml:439
+msgid "prev. page"
+msgstr "önceki sayfa"
+
+#: default.esml:412
+msgid "LOF/L:"
+msgstr "LOF/L:"
+
+#: default.esml:781 src/timer.cpp:2728
+msgid "Wednesday"
+msgstr "Çarşamba"
+
+#: default.esml:997
+msgid "switch to 16:9 mode when displaying teletext pages"
+msgstr ""
+
+#: default.esml:880
+msgid "Partition Check"
+msgstr "Bölüm Denetimi"
+
+#: default.esml:822 default.esml:846
+msgid "enter recording end time (0..9, left, right, ok)"
+msgstr "kayıt sonlama saatini girin (0..9, sol, sağ, ok)"
+
+#: default.esml:786 default.esml:790
+msgid "select year (ok)"
+msgstr "yıl seç (ok)"
+
+#: default.esml:417
+msgid "increased voltage"
+msgstr "artırılmış voltaj"
+
+#: default.esml:1003
+#, fuzzy
+msgid "Language:"
+msgstr "Lisanlar"
+
+#: default.esml:448 default.esml:682
+msgid "LOCK"
+msgstr "KİLİT"
+
+#: default.esml:667
+msgid "choose the code rate HP (left, right)"
+msgstr "'code rate HP' seç (sol, sağ)"
+
+#: default.esml:998
+#, fuzzy
+msgid "switch to 16:9 in split screen mode"
+msgstr "Dosya kipine geç"
+
+#: default.esml:418
+msgid "turn 12V output on (for 12V relais) (ok)"
+msgstr "12V çıkışını aç (12V rele için) (ok)"
+
+#: default.esml:540
+msgid "enable/disable use BAT for scan (if exists)"
+msgstr "taramak için BAT kullan (mevcut ise) aç/kapa"
+
+#: default.esml:1012
+#, fuzzy
+msgid "Title:"
+msgstr "isim"
+
+#: default.esml:602
+msgid "Skin Selector"
+msgstr "Görünüm Seçeneği"
+
+#: default.esml:582
+msgid "transponder scanned:"
+msgstr "taranan transponder:"
+
+#: default.esml:992
+msgid "teletext page number (100 - 899)"
+msgstr ""
+
+#: default.esml:774
+msgid "press ok to change event name manually"
+msgstr "olay ismini el ile değiştirmek için ok tuşla"
+
+#: default.esml:845
+msgid "recording end time:"
+msgstr "kayıt sonlama saati:"
+
+#: default.esml:471
+msgid "Use motor input power for running detection.. else use timeout"
+msgstr ""
+"Motor giriş gücünü hız denetimi için kullan... yok ise zaman aşımını kullan"
+
+#: default.esml:554
+msgid "no circ polariz."
+msgstr "dairesel polarizasyon yok"
+
+#: default.esml:492 default.esml:513
+msgid "Direction:"
+msgstr "Yön:"
+
+#: default.esml:1004
+msgid "set the language of the displayed pages"
+msgstr ""
+
+#: default.esml:617 default.esml:635
+msgid "MHz"
+msgstr "MHz"
+
+#: default.esml:581
+msgid "services scanned     :"
+msgstr "taranan servisler :"
+
+#: default.esml:869
+msgid "standby timeout (min):"
+msgstr ""
+
+#: default.esml:605 src/parentallock.cpp:109 src/setup_lcd.cpp:118
+#: src/setup_keyboard.cpp:59 src/setup_osd.cpp:276 src/setup_rc.cpp:127
+#: src/setup_timezone.cpp:51 src/setupengrab.cpp:106 src/setupnetwork.cpp:653
+#: src/setupvideo.cpp:220 src/setupvideo.cpp:504 src/tpeditwindow.cpp:116
+#: src/tpeditwindow.cpp:162
+msgid "save changes and return"
+msgstr "değişiklikleri hafızaya al ve geri git"
+
+#: default.esml:564
+msgid "aborts the transponder scan"
+msgstr "transponder taramasını durdurur"
+
+#: default.esml:496 default.esml:765 default.esml:931 default.esml:968
+msgid "remove"
+msgstr "sil"
+
+#: default.esml:470 default.esml:505
+msgid "Motor Config"
+msgstr "Motor Yapılandırma"
+
+#: default.esml:496
+msgid "remove selected entry"
+msgstr "seçilen öğeyi sil"
+
+#: default.esml:926
+msgid "abc &lt;-&gt; ABC"
+msgstr ""
+
+#: default.esml:920
+msgid "&lt;"
+msgstr ""
+
+#: default.esml:428
+msgid "select DiSEqC mode (ok)"
+msgstr "DiSEqC kipini seç (ok)"
+
+#: default.esml:438
+msgid "Swap Commands"
+msgstr "Komutlar Takası"
+
+#: default.esml:416
+msgid "enter LNB threshold frequency (0..9, ok)"
+msgstr "LNB eşik frekansını girin (0..9, ok)"
+
+#: default.esml:521
+msgid "close motor setup"
+msgstr "motor kurulumunu kapat"
+
+#: default.esml:487
+msgid "insert rotor memory cell for this orbital position"
+msgstr "bu yörünge konumu için motordaki hafıza hücresini ekleyin"
+
+#: default.esml:553 default.esml:572
+msgid "add only unscrambled services"
+msgstr "sadece şifresiz servisleri ekle"
+
+#: default.esml:564 default.esml:895
+msgid "abort"
+msgstr "iptal et"
+
+#: default.esml:1001
+#, fuzzy
+msgid "Transparency:"
+msgstr "Transponder:"
+
+#: default.esml:873
+msgid "select filsystem to format"
+msgstr "format için dosya sistemi seç"
+
+#: default.esml:883
+msgid "close window"
+msgstr "pencereyi kapat "
+
+#: default.esml:456 default.esml:681
+msgid "BER"
+msgstr "BER"
+
+#: default.esml:981 default.esml:982
+msgid "set directory where timeshift files will be stored"
+msgstr ""
+
+#: default.esml:515
+msgid "Recalc Params:"
+msgstr "Tekrar Hesaplama Parametreleri:"
+
+#: default.esml:1014
+#, fuzzy
+msgid "Search in:"
+msgstr "arama"
+
+#: default.esml:616 default.esml:634 default.esml:653
+msgid "enter transponder frequeny (0..9, left, right)"
+msgstr "transponder frekansını girin (0..9,sol, sağ)"
+
+#: default.esml:874
+#, fuzzy
+msgid "save settings"
+msgstr "Sistem Kurulumu"
+
+#: default.esml:495 default.esml:766 default.esml:966
+msgid "add"
+msgstr "ekle"
+
+#: default.esml:543
+msgid "start the transponder scan"
+msgstr "transponder taramasını başlat"
+
+#: default.esml:543 default.esml:555 default.esml:574 default.esml:597
+msgid "start scan"
+msgstr "taramayı başlat"
+
+#: default.esml:867
+msgid "check"
+msgstr "kontrol et"
+
+#: default.esml:865
+msgid "send harddisk to standby immediately"
+msgstr ""
+
+#: default.esml:695 default.esml:702 default.esml:709 default.esml:717
+#: default.esml:728 default.esml:739
+msgid "Services"
+msgstr "Servisler"
+
+#: default.esml:1035
+#, fuzzy
+msgid "Filesize:"
+msgstr ""
+"\n"
+"Dosya boyutu: %d MB"
+
+#: default.esml:1020 src/epgsearch.cpp:255 src/epgsearch.cpp:256
+#, fuzzy
+msgid "Genre:"
+msgstr "tür"
+
+#: default.esml:1017
+msgid "Search options:"
+msgstr ""
+
+#: default.esml:912
+msgid "&#54;"
+msgstr ""
+
+#: default.esml:906
+msgid "&#51;"
+msgstr ""
+
+#: default.esml:664
+msgid "Coderate LP:"
+msgstr "Coderate LP:"
+
+#: default.esml:1029 src/setup_extra.cpp:82 src/swapmanager.cpp:299
+#: src/swapmanager.cpp:334 src/swapmanager.cpp:344 src/swapmanager.cpp:370
+#: src/swapmanager.cpp:390 src/swapmanager.cpp:406
+msgid "Swap Manager"
+msgstr ""
+
+#: default.esml:999 src/setup_lcd.cpp:69 src/setup_osd.cpp:217
+msgid "Brightness:"
+msgstr "Parlaklık:"
+
+#: stone.esml:463 silver.esml:470
+msgid "subservices"
+msgstr "alt servisler"
+
+#: default.esml:661
+msgid "choose the bandwidth (left, right)"
+msgstr "bant genişliğini seç (sol, sağ)"
+
+#: default.esml:1022
+#, fuzzy
+msgid "Close"
+msgstr "kapat"
+
+#: default.esml:979
+msgid "activate permanent timeshift"
+msgstr ""
+
+#: default.esml:871
+msgid "acoustic management:"
+msgstr ""
+
+#: default.esml:924
+msgid "&gt;"
+msgstr ""
+
+#: default.esml:787 default.esml:791
+msgid "select month (ok)"
+msgstr "ay seç (ok)"
+
+#: default.esml:1023
+#, fuzzy
+msgid "Start"
+msgstr "Cts"
+
+#: default.esml:481
+msgid "enter your latitude (0..9, +, -, ok)"
+msgstr "enlem girin (0..9, +, -, ok)"
+
+#: default.esml:429
+msgid "DiSEqC Mode:"
+msgstr "DiSEqC Kipi:"
+
+#: default.esml:402
+msgid "LNB Configuration"
+msgstr "LNB Yapılandırma"
+
+#: default.esml:561 default.esml:580 src/scan.cpp:692
+msgid "scanning..."
+msgstr "taranıyor..."
+
+#: default.esml:518
+msgid "calc param 3 (see your motor manual or let it 00)"
+msgstr ""
+"hesaplama parametresi 3 (motor kılavuzuna bakın veya 00 olarak bırakın)"
+
+#: default.esml:680
+msgid "AGC"
+msgstr "AGC"
+
+#: default.esml:1040
+#, fuzzy
+msgid "Start Swap"
+msgstr "taramayı başlat"
+
+#: default.esml:434
+msgid "select uncommitted input"
+msgstr "işlenmemiş anahtar girişini seç"
+
+#: default.esml:471
+msgid "Use Motor Input Power"
+msgstr "Motor Giriş Gücü kullan"
+
+#: default.esml:475
+msgid "when the motor support this, then use"
+msgstr "motor bunu destekliyorsa, bunu kullanın"
+
+#: default.esml:775
+msgid "Starttime"
+msgstr "Başlama saati"
+
+#: default.esml:654
+msgid "KHz"
+msgstr "KHz"
+
+#: default.esml:380
+msgid "HTTP Download"
+msgstr "HTTP Download"
+
+#: default.esml:439
+msgid "goto prev page (LNB)"
+msgstr "önceki sayfaya git (LNB)"
+
+#: default.esml:997
+msgid "16:9 mode in normal view"
+msgstr ""
+
+#: default.esml:475
+msgid "Use gotoXX Function"
+msgstr "GotoXX İşlevini kullan"
+
+#: default.esml:994
+#, fuzzy
+msgid "add page"
+msgstr "işaret ekle"
+
+#: default.esml:928
+msgid "vol+"
+msgstr "ses+"
+
+#: default.esml:660
+msgid "Bandwidth:"
+msgstr "Bant genişliği:"
+
+#: default.esml:777
+msgid "for a multiple event enable this"
+msgstr "çoklu olay için bunu etkinleştirin"
+
+#: default.esml:979
+msgid "activate timeshift"
+msgstr ""
+
+#: default.esml:764
+msgid "press ok to select another event"
+msgstr "başka olay seçmek için ok tuşlayın"
+
+#: default.esml:824 default.esml:836 default.esml:848
+msgid "shutdown  "
+msgstr "tam kapatma"
+
+#: default.esml:463 default.esml:511
+msgid "Transponder:"
+msgstr "Transponder:"
+
+#: default.esml:996
+#, fuzzy
+msgid "select teletext service"
+msgstr "servisi sil"
+
+#: default.esml:390
+msgid "22Khz"
+msgstr "22Khz"
+
+#: default.esml:847
+msgid "o'clock"
+msgstr "saat"
+
+#: default.esml:414
+msgid "LOF/H:"
+msgstr "LOF/H:"
+
+#: default.esml:1005
+msgid "use truetype font"
+msgstr ""
+
+#: default.esml:977
+msgid "set number of seconds recording is delayed after switching channel"
+msgstr ""
+
+#: default.esml:1019
+msgid "Select this option if you want to make this epg search case sensitive"
+msgstr ""
+
+#: default.esml:904
+msgid "&#50;"
+msgstr ""
+
+#: default.esml:803 src/enigma_info.cpp:43
+msgid "About..."
+msgstr "Hakkında..."
+
+#: default.esml:766
+msgid "add new Timer (ok)"
+msgstr "yeni zamanlayıcı (ok)"
+
+#: default.esml:1019
+msgid "Case Sensitive"
+msgstr ""
+
+#: default.esml:795
+msgid "to change service press ok"
+msgstr "servis değiştirmek için tuşla (ok)"
+
+#: default.esml:1030
+#, fuzzy
+msgid "Filename:"
+msgstr "Dosya adı:"
+
+#: default.esml:990
+#, fuzzy
+msgid "Favourites:"
+msgstr "Favoriler (TV)"
+
+#: default.esml:914
+msgid "&#55;"
+msgstr ""
+
+#: default.esml:797
+msgid "scan EPG"
+msgstr "EPG tara"
+
+#: default.esml:1023
+msgid "Begin EPG Search"
+msgstr ""
+
+#: stone.esml:464 silver.esml:471 src/enigma_main.cpp:3209
+msgid "audio track"
+msgstr "ses seçimi"
+
+#: default.esml:785
+msgid "Su"
+msgstr "Paz"
+
+#: default.esml:395
+msgid "new"
+msgstr "yeni"
+
+#: default.esml:833
+msgid "duration:"
+msgstr "süre:"
+
+#: default.esml:993
+#, fuzzy
+msgid "remove selected page from favourites"
+msgstr "seçilen uyduyu sil"
+
+#: default.esml:437
+msgid "Fast DiSEqC"
+msgstr "Hızlı DiseqC"
+
+#: default.esml:781 src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Wed"
+msgstr "Çrş"
+
+#: default.esml:978
+msgid "set maximum number of recorded minutes"
+msgstr ""
+
+#: default.esml:477
+msgid "Longitude:"
+msgstr "Boylam:"
+
+#: default.esml:479 default.esml:482 default.esml:493
+msgid "choose direction"
+msgstr "yön seç"
+
+#: default.esml:859
+msgid "capacity:"
+msgstr "kapasite:"
+
+#: default.esml:665
+msgid "choose the code rate LP (left, right)"
+msgstr "'code rate LP' seç (sol, sağ)"
+
+#: default.esml:516
+msgid "calc param 1 (see your motor manual or let it 00)"
+msgstr ""
+"hesaplama parametresi 1 (motor kılavuzuna bakın veya 00 olarak bırakın)"
+
+#: default.esml:521
+msgid "prev page"
+msgstr "önceki sayfa"
+
+#: default.esml:782 src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Thu"
+msgstr "Prş"
+
+#: default.esml:662
+msgid "Transm. Mode:"
+msgstr "İletim Kipi:"
+
+#: default.esml:418
+msgid "12V output on"
+msgstr "12v cıkışı açık"
+
+#: default.esml:836
+msgid "shutdown the box to deepstandby (ok)"
+msgstr "tam kapatmadan sonra derin hazır bekleme durumuna geç (ok)"
+
+#: default.esml:793
+msgid "edit the end time (0..9, left, right)"
+msgstr "sonlama saatini düzenle (0..9, sol, sağ)"
+
+#: default.esml:780 src/timer.cpp:2728
+msgid "Tuesday"
+msgstr "Salı"
+
+#: default.esml:821
+msgid "recording duration:"
+msgstr "kayıt süresi:"
+
+#: default.esml:767
+msgid "delete expired timer (ok)"
+msgstr "zamanaşımına uğramış zamanlayıcıyı sil (ok)"
+
+#: default.esml:464 default.esml:512
+msgid "choose the Transponder you wish to find"
+msgstr "bulmak istediğiniz Transponderi seçin"
+
+#: default.esml:966
+msgid "add new Transponder to selected sat (ok)"
+msgstr "seçilen uyduya yeni Transponder ekle (ok)"
+
+#: default.esml:1021
+msgid "Select a genre if you want to search for a genre"
+msgstr ""
+
+#: default.esml:998
+msgid "16:9 mode on splitscreen"
+msgstr ""
+
+#: default.esml:782 src/timer.cpp:2729
+msgid "Thursday"
+msgstr "Perşembe"
+
+#: default.esml:838
+msgid "set sleeptimer and close window (ok)"
+msgstr "uyuma zamanlayıcısını ayarla ve pencereyi kapat (ok)"
+
+#: default.esml:395
+msgid "add a new Satellite"
+msgstr "yeni Uydu ekle"
+
+#: default.esml:523
+msgid "open transponder scan"
+msgstr "transponder taramasını aç"
+
+#: default.esml:823 default.esml:835
+msgid "min"
+msgstr "dak"
+
+#: default.esml:473
+msgid "mA"
+msgstr "mA"
+
+#: default.esml:499
+msgid "goto advanced motor setup"
+msgstr "gelişmiş motor kurulumuna git"
+
+#: default.esml:778 src/timer.cpp:2728
+msgid "Monday"
+msgstr "Pazartesi"
+
+#: default.esml:866
+msgid "format"
+msgstr "format"
+
+#: default.esml:555 default.esml:574
+msgid "starts the transponder scan"
+msgstr "transponder taramasını başlatır"
+
+#: default.esml:965
+msgid "sat"
+msgstr "uydu"
+
+#: default.esml:391
+msgid "Voltage"
+msgstr "Voltaj"
+
+#: default.esml:663
+msgid "choose the transmission mode (left, right)"
+msgstr "iletim kipi seç (sol, sağ)"
+
+#: default.esml:688
+msgid "Help"
+msgstr "Yardım"
+
+#: default.esml:929
+msgid "insert"
+msgstr "araya ekle"
+
+#: default.esml:1033 default.esml:1034
+msgid "Push OK to select directory"
+msgstr ""
+
+#: default.esml:797
+msgid "search event name for this beg-/end time in epg"
+msgstr "bu başlama/sonlama saatine göre olay ismini epg de ara"
+
+#: default.esml:974
+#, fuzzy
+msgid "setup timeshifting"
+msgstr "saat ayarlarını aç"
+
+#: default.esml:394 default.esml:419 default.esml:440 default.esml:498
+#: default.esml:605 src/parentallock.cpp:104 src/scan.cpp:1762
+#: src/setup_lcd.cpp:113 src/setup_keyboard.cpp:54 src/setup_osd.cpp:271
+#: src/setup_rc.cpp:122 src/setup_rfmod.cpp:144 src/setup_timezone.cpp:46
+#: src/setupengrab.cpp:101 src/setupnetwork.cpp:648 src/setupnetwork.cpp:1122
+#: src/setupvideo.cpp:215 src/setupvideo.cpp:499 src/tpeditwindow.cpp:110
+#: src/tpeditwindow.cpp:159
+msgid "save"
+msgstr "hafızaya al"
+
+#: default.esml:780 src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Tue"
+msgstr "Sal"
+
+#: chk_blue2.esml:314
+msgid "Play "
+msgstr "Oynat"
+
+#: default.esml:461 default.esml:509
+msgid "choose the Satellite you wish to find"
+msgstr "bulmak istediğiniz Uyduyu seçin"
+
+#: default.esml:484
+msgid "choose entry to edit or remove"
+msgstr "silmek veya düzenlemek istediğiniz öğeyi seçin"
+
+#: default.esml:806
+msgid "processor: "
+msgstr "işlemci: "
+
+#: default.esml:776
+msgid "Endtime"
+msgstr "Sonlama saati"
+
+#: default.esml:908
+msgid "&#52;"
+msgstr ""
+
+#: default.esml:495
+msgid "add to table/existing will be overwritten"
+msgstr "tabloya ekle/mevcut ise üstüne yazılır"
+
+#: default.esml:807
+msgid "frontend: "
+msgstr "alıcı: "
+
+#: default.esml:918
+msgid "&#57;"
+msgstr ""
+
+#: default.esml:373 default.esml:451
+msgid "AGC:"
+msgstr "AGC:"
+
+#: default.esml:1032
+#, fuzzy
+msgid "Directory:"
+msgstr "Yön:"
+
+#: default.esml:1038
+#, fuzzy
+msgid "Stop Swap"
+msgstr "Dur"
+
+#: default.esml:544
+msgid "enter manual pids"
+msgstr "el ile PID'leri gir"
+
+#: default.esml:427
+msgid "Toneburst:"
+msgstr "Toneburst:"
+
+#: default.esml:825 default.esml:837 default.esml:849 default.esml:865
+msgid "standby  "
+msgstr "hazır bekleme durumu"
+
+#: default.esml:622 default.esml:640
+msgid "FEC:"
+msgstr "FEC:"
+
+#: default.esml:453 default.esml:683
+msgid "SYNC"
+msgstr "Eşzamanlama"
+
+#: default.esml:480
+msgid "Latitude:"
+msgstr "Enlem:"
+
+#: default.esml:603
+msgid "Skins:"
+msgstr "Görünümler:"
+
+#: default.esml:813
+msgid "ok"
+msgstr "ok"
+
+#: default.esml:621
+msgid "choose polarity (left, right)"
+msgstr "polarizasyon seç (sol, sağ)"
+
+#: default.esml:618 default.esml:636 default.esml:655
+msgid "Inv:"
+msgstr "Ters:"
+
+#: default.esml:1039
+msgid "Create Swap-File"
+msgstr ""
+
+#: default.esml:789
+msgid "edit the start time (0..9, left, right)"
+msgstr "başlama saatini düzenle (0..9, sol, sağ)"
+
+#: default.esml:411
+msgid "enter LNB lowband offset frequency (0..9, ok)"
+msgstr "LNB alçakbant offset frekansını girin (0..9, ok)"
+
+#: default.esml:1031
+msgid "Push OK to select Filename"
+msgstr ""
+
+#: chk_blue2.esml:318
+msgid "Record "
+msgstr "Kayıt"
+
+#: default.esml:989
+#, fuzzy
+msgid "Teletext Settings"
+msgstr "Saat Ayarları"
+
+#: default.esml:639 default.esml:657
+msgid "choose modulation (left, right)"
+msgstr "kiplenim seç (sol, sağ)"
+
+#: default.esml:783 src/timer.cpp:2729
+msgid "Friday"
+msgstr "Cuma"
+
+#: default.esml:902
+msgid "&#49;"
+msgstr ""
+
+#: default.esml:779
+msgid "select what todo after event"
+msgstr "olay sonrası yapılacağı seç"
+
+#: default.esml:489 src/tpeditwindow.cpp:75
+msgid "Orbital Position:"
+msgstr "Yörünge Konumu:"
+
+#: default.esml:1013
+msgid "Enter title for epg searching"
+msgstr ""
+
+#: default.esml:433
+msgid "DiSEqC Repeats:"
+msgstr "DiSEqC Tekrarları:"
+
+#: default.esml:413
+msgid "enter LNB highband offset frequency (0..9, ok)"
+msgstr "LNB yüksekbant offset frekansını girin (0..9, ok)"
+
+#: default.esml:824 default.esml:848
+msgid "shutdown the box after recording (ok)"
+msgstr "kayıt sonrası tamamen box'u kapat (ok)"
+
+#: default.esml:1015
+msgid ""
+"Select this option if you want to search the title only in selected channel"
+msgstr ""
+
+#: default.esml:954
+msgid "Please choose your DiSEqC-Configuration:"
+msgstr "Lütfen DiSEqC-Yapılandırmasını seçin:"
+
+#: default.esml:820 default.esml:844
+msgid "Stop Record"
+msgstr "Kayıtı Durdur"
+
+#: default.esml:767
+msgid "cleanup"
+msgstr "temizle"
+
+#: default.esml:506
+msgid "Mode:"
+msgstr "Kip:"
+
+#: default.esml:627 default.esml:645
+msgid "KSymb/s"
+msgstr "KSymb/s"
+
+#: default.esml:870
+msgid "set harddisk standby timeout (0 - 20; 0 = disabled)"
+msgstr ""
+
+#: default.esml:1016 src/sselect.cpp:470
+msgid "All Services"
+msgstr "Tüm Servisler"
+
+#: default.esml:585
+msgid "Progress:"
+msgstr "İlerleme:"
+
+#: default.esml:370 default.esml:446
+msgid "SNR:"
+msgstr "SNR:"
+
+#: default.esml:386 src/enigma_scan.cpp:52
+msgid "Satellite Configuration"
+msgstr "Uydu Yapılandırma"
+
+#: default.esml:796
+msgid "save data and close window"
+msgstr "verileri hafızaya al ve pencereyi kapat"
+
+#: default.esml:415
+msgid "Threshold:"
+msgstr "Eşik:"
+
+#: default.esml:440
+msgid "save changes"
+msgstr "değişiklikleri hafızaya al"
+
+#: stone.esml:465 silver.esml:472
+msgid "plugins"
+msgstr "eklentiler"
+
+#: default.esml:967
+msgid "edit selected transponder (ok)"
+msgstr "seçilen transponderi düzenle (ok)"
+
+#: default.esml:522
+msgid "save in motor"
+msgstr "motorun hafızasına al"
+
+#: default.esml:968
+#, fuzzy
+msgid "remove selected transponder"
+msgstr "seçilen transponderi düzenle (ok)"
+
+#: default.esml:620
+msgid "Polarity:"
+msgstr "Polarizasyon:"
+
+#: default.esml:867
+msgid "do a filesystem check"
+msgstr "dosya sistemini kontrol et"
+
+#: default.esml:866
+msgid "initialize the disk for use with the dreambox"
+msgstr "disk'i dreambox için kullanmak üzere parafe et"
+
+#: default.esml:389
+msgid "LNB"
+msgstr "LNB"
+
+#: default.esml:778
+msgid "Mo"
+msgstr "Pzt"
+
+#: default.esml:430
+msgid "select DiSEqC parameter (ok)"
+msgstr "DiSEqC parametresi seç (ok)"
+
+#: default.esml:883
+msgid "close"
+msgstr "kapat"
+
+#: default.esml:615 default.esml:633 default.esml:652
+msgid "Frequency:"
+msgstr "Frekans:"
+
+#: default.esml:626 default.esml:644
+msgid "enter symbol rate (0..9, left, right)"
+msgstr "sembol hızı girin (0..9, sol, sağ)"
+
+#: default.esml:874 default.esml:983 src/rotorconfig.cpp:508
+#: src/rotorconfig.cpp:524 src/rotorconfig.cpp:528 src/rotorconfig.cpp:857
+msgid "store"
+msgstr "hafızaya al"
+
+#: default.esml:1000
+msgid "set brightness of the displayed teletext page"
+msgstr ""
+
+#: default.esml:938
+msgid "press ok to enter the name"
+msgstr "ok tuşlayın ve ismi girin"
+
+#: default.esml:666
+msgid "Coderate HP:"
+msgstr "Coderate HP:"
+
+#: default.esml:765
+msgid "delete the current selected timer (ok)"
+msgstr "şimdiki seçilmiş zamanlayıcıyı sil (ok)"
+
+#: default.esml:426
+msgid "select MiniDiSEqC parameter (ok)"
+msgstr "MiniDiSEqC parametresi seç (ok)"
+
+#: default.esml:810
+msgid "Software Version:"
+msgstr "Yazılım Sürümü:"
+
+#: default.esml:478
+msgid "enter your longitude (0..9, +, -, ok)"
+msgstr "boylam girin (0..9, +, -, ok)"
+
+#: default.esml:927
+msgid "abc2 &lt;-&gt; 2abc"
+msgstr ""
+
+#: default.esml:396
+msgid "remove the selected Satellite"
+msgstr "seçilen Uyduyu sil"
+
+#: default.esml:837
+msgid "goto standby (ok)"
+msgstr "hazır bekleme durumuna geç (ok)"
+
+#: default.esml:613
+msgid "choose wished satellite (ok)"
+msgstr "istenilen uyduyu seç (ok)"
+
+#: default.esml:993
+#, fuzzy
+msgid "remove page"
+msgstr "önceki sayfa"
+
+#: default.esml:868
+msgid "show extended configuration"
+msgstr "genişletilmiş yapılandırma göster"
+
+#: default.esml:983
+#, fuzzy
+msgid "store timeshift settings and leave"
+msgstr "ayarları hafizaya al ve RF kurulumundan çık"
+
+#: default.esml:507
+msgid "choose what you want to do"
+msgstr "ne yapmak istediğinizi seçin"
+
+#: default.esml:1037
+#, fuzzy
+msgid "Delete Swap-File"
+msgstr "Dosyayı Sil"
+
+#: default.esml:785 src/timer.cpp:2728
+msgid "Sunday"
+msgstr "Pazar"
+
+#: default.esml:486
+msgid "Number in motor:"
+msgstr "Motordaki numara:"
+
+#: default.esml:857
+msgid "model:"
+msgstr "model:"
+
+#: default.esml:396
+msgid "erase"
+msgstr "sil"
+
+#: default.esml:388
+msgid "Sat/Position"
+msgstr "Uydu/Konum"
+
+#: default.esml:409
+msgid "Sat/LNB mapping:"
+msgstr "Uydu/LNB eşlemesi:"
+
+#: default.esml:419
+msgid "save changes and use current selected LNB for the chosen satellite"
+msgstr "değişiklikleri hafızaya al ve şimdiki LNB'yi seçilen uydu için kullan"
+
+#: default.esml:498
+msgid ""
+"save changes and use the selected LNB (in first page) for the choosen "
+"satellite"
+msgstr ""
+"değişiklikleri hafızaya al ve seçilen LNB'yi (önceki sayfada) seçilen uydu "
+"için kullan"
+
+#: default.esml:431
+msgid "DiSEqC Parameter:"
+msgstr "DiSEqC Parametresi:"
+
+#: default.esml:417
+msgid "0,5V higher LNB Voltage (for long cables) (ok)"
+msgstr "0,5V daha yüksek LNB voltajı (uzun kablolar için) (ok)"
+
+#: default.esml:638
+msgid "Modulation:"
+msgstr "Kiplenim:"
+
+#: default.esml:539
+msgid "enable/disable check ONIT on any transponder"
+msgstr "herhangi transponderde ONIT kontrolünü aç/kapa"
+
+#: default.esml:808
+msgid "harddisk: "
+msgstr "harddisk:"
+
+#: default.esml:812
+msgid "FP Version:"
+msgstr "FP Sürümü:"
+
+#: default.esml:863
+msgid "status:"
+msgstr "durum:"
+
+#: default.esml:540
+msgid "use BAT"
+msgstr "BAT kullan"
+
+#: default.esml:832
+msgid "Set Sleeptimer"
+msgstr "Uyuma Zamanlayıcısını ayarla"
+
+#: default.esml:596
+msgid "press ok to change"
+msgstr "değiştirmek için ok tuşla"
+
+#: default.esml:1016
+msgid "Select this option if you want to search the title in all services"
+msgstr ""
+
+#: default.esml:962
+msgid "Transponders"
+msgstr "Transponderler"
+
+#: chk_blue2.esml:313
+msgid "FR "
+msgstr "FR "
+
+#: default.esml:826 default.esml:850
+msgid "set recording end time and close window (ok)"
+msgstr "kayıt sonlama saatini ayarla ve pencereyi kapat (ok)"
+
+#: default.esml:394
+msgid "close Satellite Configuration"
+msgstr "Uydu Kurulumu kapat"
+
+#: default.esml:757 default.esml:763 stone.esml:462 silver.esml:469
+msgid "EPG"
+msgstr "EPG"
+
+#: default.esml:967
+msgid "edit"
+msgstr "düzenleme"
+
+#: default.esml:784
+msgid "Sa"
+msgstr "Cts"
+
+#: default.esml:861
+msgid "connected:"
+msgstr "bağlandı:"
+
+#: default.esml:420 default.esml:499
+msgid "next page"
+msgstr "sonraki sayfa"
+
+#: default.esml:625 default.esml:643
+msgid "Symbol Rate:"
+msgstr "Sembol Hızı:"
+
+#: default.esml:994
+msgid "add page to favourites"
+msgstr ""
+
+#: default.esml:826 default.esml:838 default.esml:850
+msgid "set"
+msgstr "ayarla"
+
+#: default.esml:514
+msgid "press left or right to move motor"
+msgstr "motoru çevirmek için sağa veya sola tuşlayın"
+
+#: default.esml:517
+msgid "calc param 2 (see your motor manual or let it 00)"
+msgstr ""
+"hesaplama parametresi 2 (motor kılavuzuna bakın veya 00 olarak bırakın)"
+
+#: default.esml:794
+msgid "select the timer type (ok)"
+msgstr "zamanlayıcı türü seçin (ok)"
+
+#: default.esml:1018
+msgid "Select this option if you want to search the exact title"
+msgstr ""
+
+#: default.esml:550 default.esml:570
+msgid "choose satellite/cable provider (ok)"
+msgstr "uydu/kablo sayğlayıcısı seçin (ok)"
+
+#: default.esml:539
+msgid "use ONIT"
+msgstr "ONIT kullan"
+
+#: default.esml:523 src/enigma_tuxtxt.cpp:112
+msgid "search"
+msgstr "arama"
+
+#: default.esml:519
+msgid "Counter(Movement)"
+msgstr "Sayaç (Hareket)"
+
+#: default.esml:542
+msgid "enable/disable initiate network search"
+msgstr "network arama başlatılamasını aç/kapa"
+
+#: default.esml:658
+msgid "Guard:"
+msgstr "Koruma:"
+
+#: default.esml:1011 src/enigma_main.cpp:5330 src/epgsearch.cpp:259
+#: src/epgwindow.cpp:347 src/epgwindow.cpp:411 src/sselect.cpp:80
+#: src/sselect.cpp:1937
+#, fuzzy
+msgid "EPG Search"
+msgstr "EPG Biçemi"
+
+#: chk_blue2.esml:317
+msgid "Stop "
+msgstr "Dur"
+
+#: default.esml:387
+msgid "select your configuration here"
+msgstr "yapılandırmayı buradan seçin"
+
+#: default.esml:1018
+msgid "Exact match"
+msgstr ""
+
+#: default.esml:916
+msgid "&#56;"
+msgstr ""
+
+#: default.esml:432
+msgid "select DiSEqC repeats (ok)"
+msgstr "DiSEqC tekrarı seç (ok)"
+
+#: default.esml:623 default.esml:641 default.esml:659
+msgid "choose the FEC (left, right)"
+msgstr "FEC seçin (sol, sağ)"
+
+#: default.esml:945 src/system_settings.cpp:64
+msgid "OSD Language"
+msgstr "Ekran Lisanı"
+
+#: default.esml:889
+msgid "Software upgrade..."
+msgstr "Yazılım güncelleme.."
+
+#: default.esml:953
+msgid "DiSEqC..."
+msgstr "DiSEqC..."
+
+#: default.esml:604
+msgid "select skin and press ok or choose save"
+msgstr "görünümü seç ve ok tuşla veya hafızaya al'ı seç"
+
+#: default.esml:980
+msgid "activate pause button"
+msgstr ""
+
+#: default.esml:788 default.esml:792
+msgid "select day (ok)"
+msgstr "günü seç (ok)"
+
+#: default.esml:1022
+#, fuzzy
+msgid "Closes EPG search window"
+msgstr "yardım penceresini kapat "
+
+#: default.esml:554
+msgid "change circular to linear polarization"
+msgstr "dairesel polarizasyonu doğrusal polarizasyona değiştir"
+
+#: default.esml:420
+msgid "goto next page (DiSEqC)"
+msgstr "sonraki sayfaya geç (DiSEqC)"
+
+#: default.esml:965
+msgid "select sat(up/down), ok(edit), green(add new), red(delete)"
+msgstr "uydu seçimi(yukarı/aşağı), ok(düzenle), yeşil(yeni ekle), kırmızı(sil)"
+
+#: default.esml:980
+msgid "use yellow button as pause button"
+msgstr ""
+
+#: default.esml:922
+msgid "&#48;"
+msgstr ""
+
+#: default.esml:773
+msgid "Timer Edit"
+msgstr "Zamanlayıcı Düzenleme"
+
+#: default.esml:796
+msgid "apply"
+msgstr "uygula"
+
+#: default.esml:783
+msgid "Fr"
+msgstr "Cum"
+
+#: default.esml:544
+msgid "enter pids"
+msgstr "pid'leri gir"
+
+#: default.esml:777
+msgid "Repeated timer"
+msgstr "Tekrarlanan zamalayıcı"
+
+#: default.esml:510
+msgid "enter stored satellite pos"
+msgstr "hafızaya alınmış uydu konumunu gir"
+
+#: default.esml:436
+msgid "Sequence repeat"
+msgstr "Sıralama tekrarı"
+
+#: default.esml:881
+msgid "status output:"
+msgstr "konum cıkışı:"
+
+#: default.esml:856 src/setup_harddisk.cpp:545
+msgid "Harddisk"
+msgstr "Harddisk"
+
+#: default.esml:520
+msgid "bla"
+msgstr "bla"
+
+#: default.esml:825 default.esml:849
+msgid "goto standby after recording (ok)"
+msgstr "kayıt tan sonra hazır bekleme durumuna geç (ok)"
+
+#: default.esml:975
+msgid "delay (seconds):"
+msgstr ""
+
+#: default.esml:541 default.esml:553 default.esml:572
+msgid "only Free"
+msgstr "sadece Şifresiz"
+
+#: default.esml:656
+msgid "Constellation:"
+msgstr "Takımyıldız:"
+
+#: default.esml:872
+msgid "set automatic acoustic management (0 - 254)"
+msgstr ""
+
+#: default.esml:784 src/timer.cpp:2729
+msgid "Saturday"
+msgstr "Cumartesi"
+
+#: default.esml:834
+msgid "(0..9, left, right, ok)"
+msgstr "(0..9, sol, sağ, ok)"
+
+#: default.esml:930
+msgid "vol-"
+msgstr "ses-"
+
+#: default.esml:438
+msgid "swaps committed and uncommitted DiSEqC Commands"
+msgstr "kesinleşmiş ve kesinleşmemiş DISEqC komutları arasında değiştir"
+
+#: default.esml:542
+msgid "network search"
+msgstr "ağ arama"
+
+#: default.esml:541
+msgid "add only not scrambled services"
+msgstr "sadece şifresiz servisleri ekle"
+
+#: lib/dvb/dvbci.cpp:66 lib/dvb/dvbci.cpp:115 lib/dvb/dvbci.cpp:133
+#: lib/dvb/dvbci.cpp:1292
+msgid "no module"
+msgstr "modül yok"
+
+#: lib/dvb/dvbwidgets.cpp:66
+msgid "horizontal"
+msgstr "Yatay (H)"
+
+#: lib/dvb/dvbwidgets.cpp:67
+msgid "vertical"
+msgstr "Dikey (V)"
+
+#: lib/dvb/dvbwidgets.cpp:71 lib/dvb/dvbwidgets.cpp:80
+msgid "Auto"
+msgstr "Otomatik"
+
+#: lib/dvb/dvbwidgets.cpp:72 lib/dvb/dvbwidgets.cpp:82
+msgid "16-QAM"
+msgstr "16-QAM"
+
+#: lib/dvb/dvbwidgets.cpp:73
+msgid "32-QAM"
+msgstr "32-QAM"
+
+#: lib/dvb/dvbwidgets.cpp:74 lib/dvb/dvbwidgets.cpp:83
+msgid "64-QAM"
+msgstr "64-QAM"
+
+#: lib/dvb/dvbwidgets.cpp:75
+msgid "128-QAM"
+msgstr "128-QAM"
+
+#: lib/dvb/dvbwidgets.cpp:76
+msgid "256-QAM"
+msgstr "256-QAM"
+
+#: lib/dvb/dvbwidgets.cpp:81 lib/dvb/dvbwidgets.cpp:194
+msgid "QPSK"
+msgstr "QPSK"
+
+#: lib/dvb/dvbwidgets.cpp:182
+#, fuzzy
+msgid "DVBS"
+msgstr "CVBS"
+
+#: lib/dvb/dvbwidgets.cpp:183
+msgid "S2"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:195
+#, fuzzy
+msgid "8PSK"
+msgstr "QPSK"
+
+#: lib/dvb/dvbwidgets.cpp:196 lib/dvb/dvbwidgets.cpp:210
+#: lib/dvb/dvbwidgets.cpp:218
+msgid "AUTO"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:207
+msgid "35"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:208
+msgid "25"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:209
+msgid "20"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:219
+msgid "ON"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:220
+#, fuzzy
+msgid "OFF"
+msgstr "ileri"
+
+#: lib/dvb/service.cpp:202 lib/dvb/service.cpp:230 src/enigma_bouquet.cpp:221
+#: src/enigma_main.cpp:4668 src/enigma_main.cpp:4680 src/parentallock.cpp:131
+#: src/parentallock.cpp:163 src/timer.cpp:2447
+msgid "parental"
+msgstr "ebeveyni"
+
+#: lib/dvb/servicedvb.cpp:1074
+msgid "Providers (TV)"
+msgstr "Sağlayıcı (TV)"
+
+#: lib/dvb/servicedvb.cpp:1078
+msgid "Providers (Radio)"
+msgstr "Sağlayıcı (Radyo)"
+
+#: lib/dvb/servicedvb.cpp:1082
+msgid "Providers (Data)"
+msgstr "Sağlayıcı (Data)"
+
+#: lib/dvb/servicedvb.cpp:1087
+msgid "All services (TV)"
+msgstr "Tüm servisler (TV)"
+
+#: lib/dvb/servicedvb.cpp:1091
+msgid "All services (Radio)"
+msgstr "Tüm servisler (Radyo)"
+
+#: lib/dvb/servicedvb.cpp:1095
+msgid "All services (Data)"
+msgstr "Tüm servisler (Data)"
+
+#: lib/dvb/servicedvb.cpp:1102
+msgid "Satellites (TV)"
+msgstr "Uydu (TV)"
+
+#: lib/dvb/servicedvb.cpp:1106
+msgid "Satellites (Radio)"
+msgstr "Uydu (Radyo)"
+
+#: lib/dvb/servicedvb.cpp:1110
+msgid "Satellites (Data)"
+msgstr "Uydu (data)"
+
+#: lib/dvb/servicedvb.cpp:1530
+msgid " - provider"
+msgstr "- sağlayıcı"
+
+#: lib/dvb/servicedvb.cpp:1538
+msgid " - services"
+msgstr "- servisler"
+
+#: lib/dvb/servicedvb.cpp:1546
+msgid " - new found"
+msgstr "- yeni bulunan"
+
+#: lib/dvb/servicedvb.cpp:1550
+msgid "current transponder"
+msgstr "şimdiki transponder"
+
+#: lib/dvb/servicemp3.cpp:191
+msgid "Connecting..."
+msgstr "Bağlanıyor..."
+
+#: lib/dvb/servicemp3.cpp:410
+msgid "buffering..."
+msgstr "arabelleğe alınıyor..."
+
+#: lib/dvb/servicemp3.cpp:567
+msgid "playing..."
+msgstr "oynatılıyor..."
+
+#: lib/dvb/serviceplaylist.cpp:156
+#, c-format
+msgid " (%d entries)"
+msgstr "(%d öğe)"
+
+#: lib/dvb/servicestructure.cpp:14
+msgid "root node"
+msgstr "kök düğüm"
+
+#: lib/dvb/servicestructure.cpp:15 src/enigma_mainmenu.cpp:54
+#: src/enigma_mainmenu.cpp:197
+msgid "TV mode"
+msgstr "TV Kipi"
+
+#: lib/dvb/servicestructure.cpp:16
+msgid "Radio Mode"
+msgstr "Radyo Kipi"
+
+#: lib/dvb/servicestructure.cpp:18
+msgid "File Mode"
+msgstr "Dosya Kipi"
+
+#: lib/dvb/servicestructure.cpp:20
+msgid "TV/Radio"
+msgstr "TV/Radyo"
+
+#: lib/dvb/servicestructure.cpp:21 src/enigma_main.cpp:8317
+#: src/sselect.cpp:476 src/sselect.cpp:483
+msgid "Bouquets"
+msgstr "Buketler"
+
+#: lib/gui/emessage.cpp:124
+msgid "OK"
+msgstr "OK"
+
+#: lib/gui/emessage.cpp:125
+msgid "Cancel"
+msgstr "İptal"
+
+#: lib/gui/emessage.cpp:126
+msgid "Yes"
+msgstr "Evet"
+
+#: lib/gui/emessage.cpp:127
+msgid "No"
+msgstr "Hayır"
+
+#: lib/gui/listbox.cpp:869
+msgid "no description available"
+msgstr "tanımlama mevcut değil"
+
+#: lib/gui/textinput.cpp:19
+msgid "enable/disable capslock"
+msgstr "büyük harf kilidini aç/kapa"
+
+#: lib/gui/textinput.cpp:20
+msgid "put numbers before/after characters"
+msgstr "karakterlerden önce/sonra numara yazın"
+
+#: lib/gui/textinput.cpp:21
+msgid "insert blank at cursor position"
+msgstr "imleçdeki konumu boşalt"
+
+#: lib/gui/textinput.cpp:22
+msgid "remove the character at the cursor position"
+msgstr "imleçdeki karakteri sil"
+
+#: lib/gui/textinput.cpp:23
+msgid "remove the character before the cursor position"
+msgstr "imleçden önceki karakteri sil"
+
+#: lib/gui/textinput.cpp:24
+msgid "shows the textinputfield help"
+msgstr "metin giriş alanı yardımını gösterir"
+
+#: lib/gui/textinput.cpp:35
+msgid "press ok to save (help is available)"
+msgstr "hafızaya almak için ok tuşlayın (yardım mevcut)"
+
+#: lib/gui/textinput.cpp:60
+msgid "press ok to save"
+msgstr "hafızaya almak için ok tuşlayın"
+
+#: lib/picviewer/pictureviewer.cpp:119
+#, fuzzy
+msgid "display next picture"
+msgstr "test-resmini göster"
+
+#: lib/picviewer/pictureviewer.cpp:120
+#, fuzzy
+msgid "display previous picture"
+msgstr "bir önceki öğeyi seçin"
+
+#: lib/picviewer/pictureviewer.cpp:121
+msgid "start slideshow"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:122
+msgid "stop slideshow"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:123
+msgid "toggle fit to screen width/fit to screen"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:124
+msgid "zoom out"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:125
+#, fuzzy
+msgid "zoom in"
+msgstr "dak"
+
+#: lib/picviewer/pictureviewer.cpp:126
+msgid "toggle 16/9 mode"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:127
+msgid "move picture up"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:128
+msgid "move picture left"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:129
+msgid "move picture right"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:130
+msgid "move picture down"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:138
+#, fuzzy
+msgid "Loading slide... please wait."
+msgstr "Tarama devam etmekte... lütfen bekleyin"
+
+#: src/channelinfo.cpp:78 src/epgsearch.cpp:152
+msgid "Movie"
+msgstr "Film"
+
+#: src/channelinfo.cpp:78 src/epgsearch.cpp:154
+msgid "Adventure"
+msgstr "Macera"
+
+#: src/channelinfo.cpp:78 src/epgsearch.cpp:155
+msgid "SciFi"
+msgstr "Bilim Kurgu"
+
+#: src/channelinfo.cpp:78 src/epgsearch.cpp:156
+msgid "Comedy"
+msgstr "Komedi"
+
+#: src/channelinfo.cpp:79 src/epgsearch.cpp:157
+msgid "Soap"
+msgstr "Pembe Dizi"
+
+#: src/channelinfo.cpp:79 src/epgsearch.cpp:158
+msgid "Romance"
+msgstr "Aşk"
+
+#: src/channelinfo.cpp:79 src/epgsearch.cpp:159
+msgid "Serious"
+msgstr "Ciddi"
+
+#: src/channelinfo.cpp:79 src/epgsearch.cpp:160
+msgid "Adult"
+msgstr "Yetişkin"
+
+#: src/channelinfo.cpp:82 src/epgsearch.cpp:161
+msgid "News"
+msgstr "Haber"
+
+#: src/channelinfo.cpp:82
+msgid "Weather"
+msgstr "Hava Durumu"
+
+#: src/channelinfo.cpp:82
+msgid "Magazine"
+msgstr "Magazin"
+
+#: src/channelinfo.cpp:82
+msgid "Documentary"
+msgstr "Belgesel"
+
+#: src/channelinfo.cpp:82
+msgid "Discussion"
+msgstr "Tartışma"
+
+#: src/channelinfo.cpp:86 src/epgsearch.cpp:162
+msgid "Show"
+msgstr "Show"
+
+#: src/channelinfo.cpp:86
+msgid "Game Show"
+msgstr "Oyun Show"
+
+#: src/channelinfo.cpp:86
+msgid "Variety"
+msgstr "Çeşitlilik"
+
+#: src/channelinfo.cpp:86
+msgid "Talk"
+msgstr "Sohbet"
+
+#: src/channelinfo.cpp:90 src/epgsearch.cpp:163
+msgid "Sports"
+msgstr "Spor"
+
+#: src/channelinfo.cpp:90
+msgid "Special Event"
+msgstr "Özel Olay"
+
+#: src/channelinfo.cpp:90
+msgid "Sports Mag."
+msgstr "Spor Magazin"
+
+#: src/channelinfo.cpp:90
+msgid "Football"
+msgstr "Futbol"
+
+#: src/channelinfo.cpp:90
+msgid "Tennis"
+msgstr "Tenis"
+
+#: src/channelinfo.cpp:90
+msgid "Team Sports"
+msgstr "Takim Sporları"
+
+#: src/channelinfo.cpp:91
+msgid "Athletics"
+msgstr "Atletizm"
+
+#: src/channelinfo.cpp:91
+msgid "Motor Sports"
+msgstr "Motor Sporları"
+
+#: src/channelinfo.cpp:91
+msgid "Water Sports"
+msgstr "Su Sporları"
+
+#: src/channelinfo.cpp:91
+msgid "Winter Sports"
+msgstr "Kış Sporları"
+
+#: src/channelinfo.cpp:91
+msgid "Equestrian"
+msgstr "Binicilik"
+
+#: src/channelinfo.cpp:92
+msgid "Martial Sports"
+msgstr "Dövüş Sporları"
+
+#: src/channelinfo.cpp:95 src/epgsearch.cpp:164
+msgid "Children"
+msgstr "Çocuk"
+
+#: src/channelinfo.cpp:95
+msgid "Pre-School"
+msgstr "Eğitim Öncesi"
+
+#: src/channelinfo.cpp:95
+msgid "Age 6-14"
+msgstr "6-14 yaş"
+
+#: src/channelinfo.cpp:95
+msgid "Age 10-16"
+msgstr "10-16 yaş"
+
+#: src/channelinfo.cpp:95
+msgid "School"
+msgstr "Eğitim"
+
+#: src/channelinfo.cpp:96
+msgid "Cartoons"
+msgstr "Çizgi Film"
+
+#: src/channelinfo.cpp:100 src/epgsearch.cpp:165
+msgid "Music"
+msgstr "Müzik"
+
+#: src/channelinfo.cpp:100
+msgid "Rock/Pop"
+msgstr "Rock/Pop"
+
+#: src/channelinfo.cpp:100
+msgid "Classical"
+msgstr "Klasik"
+
+#: src/channelinfo.cpp:100
+msgid "Folk"
+msgstr "Folklör"
+
+#: src/channelinfo.cpp:100
+msgid "Jazz"
+msgstr "Caz"
+
+#: src/channelinfo.cpp:100
+msgid "Musical"
+msgstr "Müzikal"
+
+#: src/channelinfo.cpp:100
+msgid "Ballet"
+msgstr "Bale"
+
+#: src/channelinfo.cpp:104 src/epgsearch.cpp:166
+msgid "Culture"
+msgstr "Kültür"
+
+#: src/channelinfo.cpp:104
+msgid "Perf. Arts"
+msgstr "Uygulanan Sanatlar"
+
+#: src/channelinfo.cpp:104
+msgid "Fine Arts"
+msgstr "İnce Sanatlar"
+
+#: src/channelinfo.cpp:104
+msgid "Religion"
+msgstr "Din"
+
+#: src/channelinfo.cpp:104
+msgid "Pop. Arts"
+msgstr "Popüler Sanatlar"
+
+#: src/channelinfo.cpp:104
+msgid "Literature"
+msgstr "Edebiyat"
+
+#: src/channelinfo.cpp:105
+msgid "Film"
+msgstr "Film"
+
+#: src/channelinfo.cpp:105
+msgid "Experimental"
+msgstr "Deneysel"
+
+#: src/channelinfo.cpp:105
+msgid "Press"
+msgstr "Basın"
+
+#: src/channelinfo.cpp:105
+msgid "New Media"
+msgstr "Yeni Medya"
+
+#: src/channelinfo.cpp:105
+msgid "Art Mag."
+msgstr "Sanat Magazin"
+
+#: src/channelinfo.cpp:105
+msgid "Fashion"
+msgstr "Moda"
+
+#: src/channelinfo.cpp:108 src/epgsearch.cpp:167
+msgid "Social"
+msgstr "Sosyal"
+
+#: src/channelinfo.cpp:108
+msgid "Soc. Mag."
+msgstr "Sosyal Magazin"
+
+#: src/channelinfo.cpp:108
+msgid "Economics"
+msgstr "Ekonomi"
+
+#: src/channelinfo.cpp:108
+msgid "Remark. People"
+msgstr "Özel İnsanlar"
+
+#: src/channelinfo.cpp:112 src/epgsearch.cpp:168
+msgid "Education"
+msgstr "Eğitim"
+
+#: src/channelinfo.cpp:112
+msgid "Nature"
+msgstr "Doğa"
+
+#: src/channelinfo.cpp:112
+msgid "Technology"
+msgstr "Teknoloji"
+
+#: src/channelinfo.cpp:112
+msgid "Medicine"
+msgstr "Tıp"
+
+#: src/channelinfo.cpp:112
+msgid "Expeditions"
+msgstr "Sefer"
+
+#: src/channelinfo.cpp:112
+msgid "Spiritual"
+msgstr "Ruhani"
+
+#: src/channelinfo.cpp:113
+msgid "Further Ed."
+msgstr "Ek Eğitim"
+
+#: src/channelinfo.cpp:113
+msgid "Languages"
+msgstr "Lisanlar"
+
+#: src/channelinfo.cpp:116 src/epgsearch.cpp:169
+msgid "Hobbies"
+msgstr "Hobiler"
+
+#: src/channelinfo.cpp:116
+msgid "Travel"
+msgstr "Seyahat"
+
+#: src/channelinfo.cpp:116
+msgid "Handicraft"
+msgstr "El Becerisi"
+
+#: src/channelinfo.cpp:116
+msgid "Motoring"
+msgstr "Motor"
+
+#: src/channelinfo.cpp:116
+msgid "Fitness"
+msgstr "Sağlık"
+
+#: src/channelinfo.cpp:116
+msgid "Cooking"
+msgstr "Aşçılık"
+
+#: src/channelinfo.cpp:117
+msgid "Shopping"
+msgstr "Alışveriş"
+
+#: src/channelinfo.cpp:117
+msgid "Gardening"
+msgstr "Bahçecilik"
+
+#: src/channelinfo.cpp:120
+msgid "Orig. Lang."
+msgstr "Orj. Lisan"
+
+#: src/channelinfo.cpp:120
+msgid "B&W"
+msgstr "S&B"
+
+#: src/channelinfo.cpp:120
+msgid "Unpublished"
+msgstr "Yayımlanmamış"
+
+#: src/channelinfo.cpp:120 src/epgsearch.cpp:170
+msgid "Live"
+msgstr "Canlı"
+
+#: src/channelinfo.cpp:257
+msgid "no data for this service avail"
+msgstr "bu servis için veri mevcut değil"
+
+#: src/channelinfo.cpp:292
+#, c-format
+msgid ""
+"\n"
+"Filesize: %d MB"
+msgstr ""
+"\n"
+"Dosya boyutu: %d MB"
+
+#: src/channelinfo.cpp:293 src/swapmanager.cpp:56 src/swapmanager.cpp:57
+#: src/swapmanager.cpp:58 src/swapmanager.cpp:80
+#, c-format
+msgid "Filename: "
+msgstr "Dosya adı:"
+
+#: src/engrab.cpp:37 src/enigma_event.cpp:201 src/enigma_event.cpp:209
+#: src/enigma_event.cpp:395 src/enigma_event.cpp:404 src/timer.cpp:2384
+msgid "no description is available"
+msgstr "tanımlama mevcut değil"
+
+#: src/enigma.cpp:310
+msgid ""
+"Welcome to enigma.\n"
+"\n"
+"Please do a transponder scan first.\n"
+"(mainmenu > setup > channels > transponder scan)"
+msgstr ""
+"Enigma'ya hoş geldiniz.\n"
+"\n"
+"Lütfen önce transponder taraması yapın.\n"
+"(anamenü >kurulum > kanallar >transponder tarama)"
+
+#: src/enigma.cpp:312
+msgid "First start of enigma"
+msgstr "Enigma'nın ilk açılışı"
+
+#: src/enigma.cpp:536
+msgid "It's now safe to unplug power!"
+msgstr ""
+
+#: src/enigma.cpp:537
+#, fuzzy
+msgid "Shutdown finished"
+msgstr "Tarama tamamlandı"
+
+#: src/enigma.cpp:564
+msgid "Please wait... your Dreambox is shutting down!"
+msgstr ""
+
+#: src/enigma.cpp:565
+#, fuzzy
+msgid "Shutdown..."
+msgstr "Tam Kapatma"
+
+#: src/enigma_bouquet.cpp:19
+msgid "Bouquet Type"
+msgstr "Buket Çeşidi"
+
+#: src/enigma_bouquet.cpp:26
+msgid "TV"
+msgstr "Tv"
+
+#: src/enigma_bouquet.cpp:27
+msgid "Radio"
+msgstr "Radyo"
+
+#: src/enigma_bouquet.cpp:29
+msgid "File"
+msgstr "Dosya"
+
+#: src/enigma_bouquet.cpp:43 src/enigma_setup.cpp:45
+msgid "Service Organising"
+msgstr "Servis Düzenleme"
+
+#: src/enigma_bouquet.cpp:51
+msgid "Create new bouquet"
+msgstr "Yeni buket oluştur"
+
+#: src/enigma_bouquet.cpp:51
+msgid "create new empty bouquet"
+msgstr "yeni boş buket oluştur"
+
+#: src/enigma_bouquet.cpp:52
+msgid "Add services to bouquet"
+msgstr "Bukete servis ekle"
+
+#: src/enigma_bouquet.cpp:52
+msgid "add multiple services to a specific bouquet"
+msgstr "belirli bukete birçok servis ekle"
+
+#: src/enigma_bouquet.cpp:53
+msgid "Edit bouquets"
+msgstr "Buketleri düzenle"
+
+#: src/enigma_bouquet.cpp:53
+msgid "sort,rename,delete services/bouquets "
+msgstr "servisleri/buketleri düzenle,yeniden adlandır,sil "
+
+#: src/enigma_bouquet.cpp:57
+msgid "Lock/Unlock Services"
+msgstr "Servisleri Kilitle/Aç"
+
+#: src/enigma_bouquet.cpp:57
+msgid "lock,unlock services (parental locking)"
+msgstr "servisleri kilitle/aç (ebeveyn kilidi)"
+
+#: src/enigma_ci.cpp:34
+msgid "Common Interface Modules"
+msgstr "Common Interface Modüller"
+
+#: src/enigma_ci.cpp:42
+msgid "Common Interface Module"
+msgstr "Common Interface Modül"
+
+#: src/enigma_ci.cpp:48 src/enigma_ci.cpp:77
+msgid "Reset"
+msgstr "Sıfırla"
+
+#: src/enigma_ci.cpp:51 src/enigma_ci.cpp:80
+msgid "reset the Common Interface module"
+msgstr "Common Interface modülü sıfırla"
+
+#: src/enigma_ci.cpp:57 src/enigma_ci.cpp:86
+msgid "Init"
+msgstr "Parafe"
+
+#: src/enigma_ci.cpp:60 src/enigma_ci.cpp:89
+msgid "send the ca-pmt to CI"
+msgstr "ca-pmt'yi CI'ye gönder"
+
+#: src/enigma_ci.cpp:66 src/enigma_ci.cpp:95
+msgid "waiting for module"
+msgstr "modülü bekliyor"
+
+#: src/enigma_ci.cpp:69 src/enigma_ci.cpp:98
+msgid "enter Common Interface menu (mmi)"
+msgstr "Common Interface kurulumuna gir (mmi)"
+
+#: src/enigma_ci.cpp:112
+msgid "can handle two services"
+msgstr "iki servis kullanabilir"
+
+#: src/enigma_ci.cpp:113
+msgid "can your CI descramble two services at the same time?"
+msgstr "CI'niz aynı anda iki servisin şifresini çözebilir mi?"
+
+#: src/enigma_ci.cpp:171 src/enigma_ci.cpp:177
+msgid "resetting....please wait"
+msgstr "sıfırlanıyor.....lütfen bekleyin"
+
+#: src/enigma_ci.cpp:223
+msgid "Common Interface Module - mmi"
+msgstr "Common Interface Modül - mmi"
+
+#: src/enigma_ci.cpp:224
+msgid "waiting for CI answer..."
+msgstr "CI modülden cevap bekleniyor..."
+
+#: src/enigma_dyn.cpp:2166
+msgid "External Message"
+msgstr "Harici Mesaj"
+
+#: src/enigma_epg.cpp:86
+msgid "press 1 ... 6 to select count of visible hours"
+msgstr "görünür saatlerin sayısını seçmek için 1 ... 6'ya bas "
+
+#: src/enigma_event.cpp:21
+msgid "enigma event view"
+msgstr "enigma olay görünümü"
+
+#: src/enigma_event.cpp:22
+msgid "closes the Event View"
+msgstr "Olay Görünümünü kapat"
+
+#: src/enigma_event.cpp:194 src/enigma_event.cpp:385 src/streaminfo.cpp:597
+#: src/streaminfo.cpp:655
+msgid "no information is available"
+msgstr "bilgi mevcut değil"
+
+#: src/enigma_event.cpp:319
+#, c-format
+msgid "Original duration: %d min"
+msgstr "Orjinal süre: %d dak"
+
+#: src/enigma_info.cpp:39
+msgid "Infos"
+msgstr "Bilgiler"
+
+#: src/enigma_info.cpp:42 src/streaminfo.cpp:566
+msgid "Streaminfo"
+msgstr "Stream Bilgisi"
+
+#: src/enigma_info.cpp:42
+msgid "open the Streaminfo"
+msgstr "Stream Bilgisini aç"
+
+#: src/enigma_info.cpp:43
+msgid "open the about dialog"
+msgstr "hakkında ekranını aç"
+
+#: src/enigma_info.cpp:154
+msgid "Frontend: Satellite"
+msgstr "Alıcı: Uydu"
+
+#: src/enigma_info.cpp:157
+msgid "Frontend: Cable"
+msgstr "Alıcı: Kablo"
+
+#: src/enigma_info.cpp:160
+msgid "Frontend: Terrestrial"
+msgstr "Alıcı: Karasal"
+
+#: src/enigma_info.cpp:163
+msgid "Frontend: Unknown"
+msgstr "Alıcı: bilinmeyen"
+
+#: src/enigma_info.cpp:226 src/streaminfo.cpp:347 src/streaminfo.cpp:358
+#: src/streaminfo.cpp:370 src/streaminfo.cpp:382 src/streaminfo.cpp:394
+#: src/streaminfo.cpp:490 src/streaminfo.cpp:529
+msgid "none"
+msgstr "hiçbiri"
+
+#: src/enigma_info.cpp:232 src/epgsearch.cpp:120 src/timer.cpp:2790
+#: src/upgrade.cpp:293
+msgid "unknown"
+msgstr "bilinmeyen"
+
+#: src/enigma_info.cpp:237
+msgid "release"
+msgstr "sürüm"
+
+#: src/enigma_info.cpp:238
+msgid "beta"
+msgstr "beta"
+
+#: src/enigma_info.cpp:239
+msgid "internal"
+msgstr "iç"
+
+#: src/enigma_main.cpp:88
+msgid "enigma Zapp"
+msgstr "enigma Zapp"
+
+#: src/enigma_main.cpp:89
+msgid "show main menu"
+msgstr "ana menüyü göster"
+
+#: src/enigma_main.cpp:90
+msgid "go to standby (press)"
+msgstr "hazır bekleme durumuna geç (tuşlayın)"
+
+#: src/enigma_main.cpp:91
+msgid "go to standby without menu (press)"
+msgstr "hazır bekleme durumuna menüsüz geç (tuşlayın)"
+
+#: src/enigma_main.cpp:92
+msgid "go to standby (repeat)"
+msgstr "hazır bekleme durumuna geç (tekrarla)"
+
+#: src/enigma_main.cpp:93
+msgid "go to standby (release)"
+msgstr "hazır bekleme durumuna geç (bırak)"
+
+#: src/enigma_main.cpp:95
+msgid "show infobar"
+msgstr "bilgi bar'ı göster"
+
+#: src/enigma_main.cpp:96
+msgid "hide infobar"
+msgstr "bilgi bar'ı sakla"
+
+#: src/enigma_main.cpp:97
+msgid "show infobar or EPG"
+msgstr "bilgi bar'ı veya EPG'yi göster"
+
+#: src/enigma_main.cpp:98
+msgid "show service selector"
+msgstr "servis seçeneğini göster"
+
+#: src/enigma_main.cpp:99
+msgid "show subservices/NVOD"
+msgstr "altservisler/NVOD göster"
+
+#: src/enigma_main.cpp:100 src/enigma_main.cpp:101
+msgid "show audio selector"
+msgstr "ses seçeneğini göster"
+
+#: src/enigma_main.cpp:102
+msgid "show Videotext"
+msgstr "Videotext'i göster"
+
+#: src/enigma_main.cpp:103
+msgid "show extension Plugins"
+msgstr "Eklentileri göster"
+
+#: src/enigma_main.cpp:104
+msgid "show epg schedule list"
+msgstr "epg zaman çizelge listesini göster"
+
+#: src/enigma_main.cpp:105
+msgid "show extended info"
+msgstr "genişletilmiş bilgiyi göster"
+
+#: src/enigma_main.cpp:106
+msgid "zap to next subService"
+msgstr "sonraki altservise zapla"
+
+#: src/enigma_main.cpp:107
+msgid "zap to prev subService"
+msgstr "önceki altservise zapla"
+
+#: src/enigma_main.cpp:108
+msgid "quickzap next"
+msgstr "sonrakine hızlı zapla"
+
+#: src/enigma_main.cpp:109
+msgid "quickzap prev"
+msgstr "öncekine hızlı zapla"
+
+#: src/enigma_main.cpp:111
+msgid "playlist/history next"
+msgstr "sonraki oynatma listesi/tarihçe"
+
+#: src/enigma_main.cpp:112
+msgid "playlist/history prev"
+msgstr "önceki oynatma listesi/tarihçe"
+
+#: src/enigma_main.cpp:114
+msgid "service list and down"
+msgstr "servis listesi ve aşağı"
+
+#: src/enigma_main.cpp:115
+msgid "service list and up"
+msgstr "servis listesi ve yukarı"
+
+#: src/enigma_main.cpp:117 src/enigma_main.cpp:174
+msgid "volume up"
+msgstr "sesi çoğalt"
+
+#: src/enigma_main.cpp:118 src/enigma_main.cpp:175
+msgid "volume down"
+msgstr "sesi azalt"
+
+#: src/enigma_main.cpp:119 src/enigma_main.cpp:176
+msgid "toggle mute flag"
+msgstr "sessiz işaretini değiştir"
+
+#: src/enigma_main.cpp:121 src/enigma_main.cpp:134
+msgid "stop playback"
+msgstr "oynatmayı durdur"
+
+#: src/enigma_main.cpp:122 src/enigma_main.cpp:135
+msgid "pause playback"
+msgstr "oynatmayı duraklat"
+
+#: src/enigma_main.cpp:123 src/enigma_main.cpp:136
+msgid "resume playback"
+msgstr "oynatmaya devam et"
+
+#: src/enigma_main.cpp:124 src/enigma_main.cpp:137 src/enigma_main.cpp:3423
+msgid "record"
+msgstr "kayıt"
+
+#: src/enigma_main.cpp:126 src/enigma_main.cpp:139
+msgid "start skipping forward"
+msgstr "ileri atlamayı başlat"
+
+#: src/enigma_main.cpp:127 src/enigma_main.cpp:140
+msgid "repeat skipping forward"
+msgstr "ileri atlamayı tekrarla"
+
+#: src/enigma_main.cpp:128 src/enigma_main.cpp:141
+msgid "stop skipping forward"
+msgstr "ileri atlamayı durdur"
+
+#: src/enigma_main.cpp:130 src/enigma_main.cpp:143
+msgid "start skipping reverse"
+msgstr "geriye atlamayı başlat"
+
+#: src/enigma_main.cpp:131 src/enigma_main.cpp:144
+msgid "repeat skipping reverse"
+msgstr "geriye atlamayı tekarla"
+
+#: src/enigma_main.cpp:132 src/enigma_main.cpp:145
+msgid "stop skipping reverse"
+msgstr "geriye atlamayı durdur"
+
+#: src/enigma_main.cpp:147
+msgid "open the serviceselector and show bouquets"
+msgstr "servis seçeneğini aç ve buketleri göster"
+
+#: src/enigma_main.cpp:148
+msgid "open the serviceselector and show provider"
+msgstr "servis seçeneğini aç ve sağlayıcıyı göster"
+
+#: src/enigma_main.cpp:149
+msgid "open the serviceselector and show recorded movies"
+msgstr "servis seçeneğini aç ve kayıtlı filmleri göster"
+
+#: src/enigma_main.cpp:150
+msgid "open the serviceselector and shows the playlist"
+msgstr "servis seçeneğini aç ve oynatma listesini göster"
+
+#: src/enigma_main.cpp:152 src/sselect.cpp:141
+msgid "switch to TV mode"
+msgstr "TV kipine geç"
+
+#: src/enigma_main.cpp:153 src/sselect.cpp:142
+msgid "switch to Radio mode"
+msgstr "Radyo kipine geç"
+
+#: src/enigma_main.cpp:154 src/sselect.cpp:143
+msgid "switch to File mode"
+msgstr "Dosya kipine geç"
+
+#: src/enigma_main.cpp:156
+msgid "toggle DVR panel"
+msgstr "DVR panelini değiştir"
+
+#: src/enigma_main.cpp:157
+msgid "toggle index mark"
+msgstr "dizin işaretini değiştir"
+
+#: src/enigma_main.cpp:159
+msgid "seek to next index mark"
+msgstr "sonraki dizin işaretini ara"
+
+#: src/enigma_main.cpp:160
+msgid "seek to previous index mark"
+msgstr "önceki dizin işaretini ara"
+
+#: src/enigma_main.cpp:340
+msgid " to "
+msgstr " a "
+
+#: src/enigma_main.cpp:350
+msgid " Euro lost)"
+msgstr " Euro kayıp)"
+
+#: src/enigma_main.cpp:391
+msgid "not valid!"
+msgstr "geçersiz!"
+
+#: src/enigma_main.cpp:409
+msgid "NVOD"
+msgstr "NVOD"
+
+#: src/enigma_main.cpp:520
+msgid "Video"
+msgstr "Görüntü"
+
+#: src/enigma_main.cpp:664 src/enigma_main.cpp:933
+msgid "Audio"
+msgstr "Ses"
+
+#: src/enigma_main.cpp:684 src/enigma_main.cpp:953
+msgid "   Left Mono  >"
+msgstr "   Sol Mono  >"
+
+#: src/enigma_main.cpp:685 src/enigma_main.cpp:954
+msgid "<  Stereo  >"
+msgstr "<  Stereo  >"
+
+#: src/enigma_main.cpp:686 src/enigma_main.cpp:955
+msgid "<  Right Mono  "
+msgstr "<  Sağ Mono   "
+
+#: src/enigma_main.cpp:716
+msgid "Audiotrack(AC3)"
+msgstr "Ses seçimi(AC3)"
+
+#: src/enigma_main.cpp:716
+msgid "Audiotrack"
+msgstr "Ses seçimi"
+
+#: src/enigma_main.cpp:880
+#, c-format
+msgid "Teletext Page %03x (%s)"
+msgstr ""
+
+#: src/enigma_main.cpp:993
+msgid "no subtitles"
+msgstr "alt yazı mevcut değil"
+
+#: src/enigma_main.cpp:1035
+msgid "multiple Services"
+msgstr "çoklu Servisler"
+
+#: src/enigma_main.cpp:1050 src/enigma_main.cpp:1101 src/enigma_main.cpp:1115
+msgid "enable quickzap"
+msgstr "hızlızap'ı etkinleştir"
+
+#: src/enigma_main.cpp:1058
+msgid "add to bouquet"
+msgstr "buket'e ekle"
+
+#: src/enigma_main.cpp:1097
+msgid "disable quickzap"
+msgstr "hızlızap'ı devreden çıkar"
+
+#: src/enigma_main.cpp:1199
+msgid "Channel"
+msgstr "Kanal"
+
+#: src/enigma_main.cpp:1204
+msgid "Channel:"
+msgstr "Kanal:"
+
+#: src/enigma_main.cpp:1279
+#, c-format
+msgid "Please wait while the motor is turning to %d.%d°%c ...."
+msgstr "Motor %d.%d%c yönüne dönerken lütfen bekleyiniz...."
+
+#: src/enigma_main.cpp:1279
+msgid "Message"
+msgstr "Mesaj"
+
+#: src/enigma_main.cpp:1381
+msgid "recorded movies"
+msgstr "kayıtlı filmler"
+
+#: src/enigma_main.cpp:1502
+msgid "Bouquets (TV)"
+msgstr "Buketler (TV)"
+
+#: src/enigma_main.cpp:1513
+msgid "Bouquets (File)"
+msgstr "Buketler (Dosya)"
+
+#: src/enigma_main.cpp:1525
+msgid "Bouquets (Radio)"
+msgstr "Buketler (Radyo)"
+
+#: src/enigma_main.cpp:1574
+msgid "Favourites (TV)"
+msgstr "Favoriler (TV)"
+
+#: src/enigma_main.cpp:1580
+msgid "Favourites (Radio)"
+msgstr "Favoriler (Radyo)"
+
+#: src/enigma_main.cpp:1586
+msgid "Favourites (File)"
+msgstr "Favoriler (Dosya)"
+
+#: src/enigma_main.cpp:2026
+msgid "please wait while initializing Common Interface ..."
+msgstr "Common Interface parafe edilirken lütfen bekleyiniz ..."
+
+#: src/enigma_main.cpp:2113
+msgid "rewind one minute"
+msgstr ""
+
+#: src/enigma_main.cpp:2114
+msgid "rewind six minutes"
+msgstr ""
+
+#: src/enigma_main.cpp:2115
+msgid "rewind nine minutes"
+msgstr ""
+
+#: src/enigma_main.cpp:2116
+msgid "enter number of minutes to rewind"
+msgstr ""
+
+#: src/enigma_main.cpp:2117
+msgid "fast forward one minute"
+msgstr ""
+
+#: src/enigma_main.cpp:2118
+msgid "fast forward six minutes"
+msgstr ""
+
+#: src/enigma_main.cpp:2119
+msgid "fast forward nine minutes"
+msgstr ""
+
+#: src/enigma_main.cpp:2120
+msgid "enter number of minutes to fast forward"
+msgstr ""
+
+#: src/enigma_main.cpp:2355 src/enigma_main.cpp:2358 src/enigma_main.cpp:2478
+#: src/enigma_main.cpp:2481
+msgid "no EPG available"
+msgstr "EPG mevcut değil"
+
+#: src/enigma_main.cpp:3140
+msgid "ShutdownTimer"
+msgstr "Kapatma Zamalayıcısı"
+
+#: src/enigma_main.cpp:3140
+msgid "SleepTimer"
+msgstr "Uyuma Zamalayıcısı"
+
+#: src/enigma_main.cpp:3209
+#, fuzzy
+msgid "Pause"
+msgstr "Durakla "
+
+#: src/enigma_main.cpp:3423
+msgid "Sorry, you cannot record this service."
+msgstr "Maalesef bu servisi kayıt edemezsiniz."
+
+#: src/enigma_main.cpp:3628
+msgid "Show recorded movies?"
+msgstr "Kayıt edilmiş filmler gösterilsinmi?"
+
+#: src/enigma_main.cpp:3628
+msgid "recording finished"
+msgstr "kayıt tamamlandı"
+
+#: src/enigma_main.cpp:3951
+msgid "Shutdown your Receiver now?"
+msgstr "Alıcıyı tam kapatmak istermisiniz?"
+
+#: src/enigma_main.cpp:3951 src/enigma_main.cpp:3971
+msgid "Timer Message"
+msgstr "Zamanlayıcı Mesajı"
+
+#: src/enigma_main.cpp:3971
+msgid "Go to Standby now?"
+msgstr "Şimdi Hazır Bekleme Durumuna geçilsin mi?"
+
+#: src/enigma_main.cpp:4028 src/enigma_main.cpp:4091
+msgid "Enter new name:"
+msgstr "Yeni ismi girin:"
+
+#: src/enigma_main.cpp:4029 src/enigma_main.cpp:4092
+msgid "Rename entry"
+msgstr "Öğeyi yeniden adlandır"
+
+#: src/enigma_main.cpp:4154
+msgid "Sorry, you cannot delete this service."
+msgstr "Maalesef bu servisi silemesiniz."
+
+#: src/enigma_main.cpp:4154
+msgid "delete service"
+msgstr "servisi sil"
+
+#: src/enigma_main.cpp:4178 src/enigma_main.cpp:4300 src/sselect.cpp:2238
+#, c-format
+msgid ""
+"You are trying to delete '%s'.\n"
+"Really do this?"
+msgstr ""
+"'%s' silmeyi calışıyorsunuz.\n"
+"Gerçekten silinsin mi?"
+
+#: src/enigma_main.cpp:4179
+msgid "Delete recorded stream"
+msgstr "Kayıt edilmiş stream'i sil"
+
+#: src/enigma_main.cpp:4207
+msgid ""
+"This is a complete Bouquet!\n"
+"Really delete?"
+msgstr ""
+"Bu bir tüm Buket!\n"
+"Gerçekten silmek istiyormusunuz?"
+
+#: src/enigma_main.cpp:4208
+msgid "Delete bouquet"
+msgstr "Buketi Sil"
+
+#: src/enigma_main.cpp:4301
+msgid "Delete File"
+msgstr "Dosyayı Sil"
+
+#: src/enigma_main.cpp:4370
+msgid "Enter new Filename:"
+msgstr "Yeni dosya adı girin:"
+
+#: src/enigma_main.cpp:4371
+msgid "Rename File"
+msgstr "Dosyayı yeniden adlandır"
+
+#: src/enigma_main.cpp:4403
+msgid "Enter new name for the bouquet:"
+msgstr "Buket için yeni isim girin:"
+
+#: src/enigma_main.cpp:4404
+msgid "Rename bouquet"
+msgstr "Buketi yeniden adlandır"
+
+#: src/enigma_main.cpp:4429
+msgid "Enter name for the new bouquet:"
+msgstr "Yeni buket için isim girin:"
+
+#: src/enigma_main.cpp:4430
+msgid "Add new bouquet"
+msgstr "Yeni buket ekle"
+
+#: src/enigma_main.cpp:4485
+msgid "unnamed"
+msgstr "adlandırılmamış"
+
+#: src/enigma_main.cpp:4486
+msgid "Enter marker name:"
+msgstr "İşaretleyici ismi girin:"
+
+#: src/enigma_main.cpp:4487
+msgid "create marker"
+msgstr "işaretleyici oluştur"
+
+#: src/enigma_main.cpp:4528
+msgid "unnamed bouquet"
+msgstr "adlandırılmamış buket"
+
+#: src/enigma_main.cpp:5013 src/enigma_main.cpp:5014
+msgid "This directory doesn't contain anything playable!"
+msgstr "Bu dizinde oynatılabilecek hiç birşey bulunmamakta!"
+
+#: src/enigma_main.cpp:5014
+msgid "Play"
+msgstr "Oynat"
+
+#: src/enigma_main.cpp:5330 src/epgwindow.cpp:411 src/sselect.cpp:1937
+#, fuzzy
+msgid " was not found!"
+msgstr "- yeni bulunan"
+
+#: src/enigma_main.cpp:5589
+msgid ""
+"A timer based recording is currently in progress!\n"
+"This stops the timer, and recording!"
+msgstr ""
+"Zamanlayıcı bazlı kayıt şu anda yürürlükte!\n"
+"Bu zamanlayıcıyı ve kayıtı durdurur!"
+
+#: src/enigma_main.cpp:5599
+msgid ""
+"A recording is currently in progress!\n"
+"This stops the recording!"
+msgstr ""
+"Şu anda kayıt devam etmekte!\n"
+"Bu kayıt'ı durdurur!"
+
+#: src/enigma_main.cpp:5611
+msgid ""
+"A timer event is currently in progress!\n"
+"This stops the timer event!"
+msgstr ""
+"Şu an zamanlayıcı olay yürülükte!\n"
+"Bu zamanlayıcı olayını durdurur!"
+
+#: src/enigma_main.cpp:5619
+msgid "Really do this?"
+msgstr "Bunun gerçekten yapılmasını istiyormusunuz?"
+
+#: src/enigma_main.cpp:5714
+msgid "please wait until the timer has started the recording (max 10 seconds)"
+msgstr ""
+"lütfen kayıt'ın zamanlayıcı tarafından başlatılmasını bekleyiniz (azami 10 "
+"saniye)"
+
+#: src/enigma_main.cpp:5715
+msgid "information"
+msgstr "bilgi"
+
+#: src/enigma_main.cpp:6493
+msgid "Record failed due to inaccessable storage."
+msgstr "Ulaşılamıyan hardisk'ten dolayı kayıt başarılamadı."
+
+#: src/enigma_main.cpp:6495
+msgid ""
+"Record stopped due to full harddisk. Delete some recordings and try again."
+msgstr ""
+"Harddisk dolu olduğundan kayıt durduruldu. Bazı kayıt'ları silerek tekrar "
+"deneyin."
+
+#: src/enigma_main.cpp:6497
+msgid ""
+"Record failed due to an write error during recording. Check for filesystem "
+"corruption."
+msgstr "Kayıt işlemi başarısız. Dosya sistemini kontrol edin."
+
+#: src/enigma_main.cpp:6499
+msgid "record failed"
+msgstr "kayıt başarısız"
+
+#: src/enigma_main.cpp:6774 src/enigma_main.cpp:6775
+msgid "One moment please..."
+msgstr "Lütfen bekleyiniz..."
+
+#: src/enigma_main.cpp:6775 src/enigma_main.cpp:6779 src/enigma_main.cpp:6787
+#: src/enigma_main.cpp:6794 src/enigma_main.cpp:6800 src/enigma_main.cpp:6805
+#: src/enigma_main.cpp:6810 src/timer.cpp:2307
+msgid "switch"
+msgstr "değiştir"
+
+#: src/enigma_main.cpp:6778 src/enigma_main.cpp:6779
+msgid "Service could not be found !"
+msgstr "Aradığınız servis bulunamadı ! "
+
+#: src/enigma_main.cpp:6786 src/enigma_main.cpp:6787
+msgid "This service could not be descrambled"
+msgstr "Bu servis'in şifresi çözülemiyor"
+
+#: src/enigma_main.cpp:6793 src/enigma_main.cpp:6794
+msgid "This service doesn't currently send a signal"
+msgstr "Bu servis'te şu anda sinyal yok"
+
+#: src/enigma_main.cpp:6798 src/enigma_main.cpp:6800
+msgid "This content could not be displayed"
+msgstr "Bu içerik ekranda gösterilemiyor"
+
+#: src/enigma_main.cpp:6803 src/enigma_main.cpp:6805
+msgid "NVOD Service - please select a starttime"
+msgstr "NVOD Servisi - lütfen başlama zamanını seçiniz"
+
+#: src/enigma_main.cpp:6808 src/enigma_main.cpp:6810
+msgid "Unknown error!!"
+msgstr "Bilinmeyen hata!!"
+
+#: src/enigma_main.cpp:7348 src/sselect.cpp:482
+msgid "Playlist"
+msgstr "Oynatma Listesi"
+
+#: src/enigma_main.cpp:7350
+msgid "History"
+msgstr "Tarihçe"
+
+#: src/enigma_main.cpp:7806
+msgid "Service Menu"
+msgstr "Servis Menüsü"
+
+#: src/enigma_main.cpp:7823 src/sselect.cpp:139
+msgid "add service to playlist"
+msgstr "servisi oynatma listesine ekle"
+
+#: src/enigma_main.cpp:7823
+msgid "add selected service to the playlist"
+msgstr "seçilen servisi oynatma listesine ekle"
+
+#: src/enigma_main.cpp:7835
+#, fuzzy
+msgid "remove all 'new found' flags"
+msgstr "'yeni bulunan' işaretini kaldır"
+
+#: src/enigma_main.cpp:7835
+#, fuzzy
+msgid "select to remove all 'new found' flags from this satellite"
+msgstr "'yeni bulunan' işaretini kaldırmak için seçin"
+
+#: src/enigma_main.cpp:7841
+msgid "remove 'new found flag'"
+msgstr "'yeni bulunan' işaretini kaldır"
+
+#: src/enigma_main.cpp:7841
+msgid "select to remove the 'new found flag'"
+msgstr "'yeni bulunan' işaretini kaldırmak için seçin"
+
+#: src/enigma_main.cpp:7844
+msgid "create new bouquet"
+msgstr "yeni buket oluştur"
+
+#: src/enigma_main.cpp:7844
+msgid "select to create a new bouquet"
+msgstr "yeni buket oluşturmak için seçin"
+
+#: src/enigma_main.cpp:7856
+msgid "duplicate bouquet"
+msgstr "buketi kopyala"
+
+#: src/enigma_main.cpp:7856
+msgid "duplicate the complete bouquet with all content"
+msgstr "seçilen buketi tamamıyla kopyala"
+
+#: src/enigma_main.cpp:7862 src/enigma_main.cpp:7923 src/enigma_main.cpp:7928
+#: src/enigma_main.cpp:7946
+msgid "add to specific bouquet"
+msgstr "belirtilecek bukete ekle"
+
+#: src/enigma_main.cpp:7862
+msgid "add the selected service to another bouquet"
+msgstr "seçilen servisi başka bukete ekle"
+
+#: src/enigma_main.cpp:7864
+msgid "add marker"
+msgstr "işaret ekle"
+
+#: src/enigma_main.cpp:7864
+msgid "create a new marker in the current bouquet"
+msgstr "şimdiki buketin içinde işaret oluştur"
+
+#: src/enigma_main.cpp:7873 src/enigma_main.cpp:7888 src/enigma_main.cpp:7930
+#: src/enigma_plugins.cpp:93 src/sselect.cpp:461
+msgid "rename"
+msgstr "yeniden adlandır"
+
+#: src/enigma_main.cpp:7873
+msgid "rename the current selected bouquet"
+msgstr "seçilen buketi yeniden adlandır"
+
+#: src/enigma_main.cpp:7888 src/enigma_main.cpp:7930
+msgid "rename the current selected service/movie"
+msgstr "seçilen servisi/filmi yeniden adlandır"
+
+#: src/enigma_main.cpp:7892 src/enigma_main.cpp:7931 src/sselect.cpp:459
+msgid "delete"
+msgstr "sil"
+
+#: src/enigma_main.cpp:7892 src/enigma_main.cpp:7931
+msgid "delete the current selected service/movie"
+msgstr "seçilen servisi/filmi sil"
+
+#: src/enigma_main.cpp:7898
+msgid "set as startup service"
+msgstr "açılış servisi olarak ayarla"
+
+#: src/enigma_main.cpp:7898
+msgid "currently selected service will be selected on startup"
+msgstr "seçilen servis açılışta seçilmiş olacaktır "
+
+#: src/enigma_main.cpp:7899 src/enigma_main.cpp:7934
+msgid "reset startup service"
+msgstr "açılış servisini kaldır"
+
+#: src/enigma_main.cpp:7899
+msgid "last selected service will be selected on startup"
+msgstr "en son seçilen servis açılışta seçilecektir"
+
+#: src/enigma_main.cpp:7906 src/enigma_plugins.cpp:87
+msgid "disable move mode"
+msgstr "kaydırma kipini devreden çıkar"
+
+#: src/enigma_main.cpp:7906 src/enigma_plugins.cpp:87
+msgid "switch move mode off"
+msgstr "kaydırma kipini kapat"
+
+#: src/enigma_main.cpp:7908 src/enigma_plugins.cpp:89
+msgid "enable move mode"
+msgstr "kaydırma kipini etkinleştir"
+
+#: src/enigma_main.cpp:7908 src/enigma_plugins.cpp:89
+msgid "activate mode to simply change the entry order"
+msgstr "kolayca öğenin sıralamasını değiştirme kipini aktifleştir"
+
+#: src/enigma_main.cpp:7917
+msgid "copy to bouquet list"
+msgstr "buket listesine kopyala"
+
+#: src/enigma_main.cpp:7917
+msgid "copy the selected provider to the bouquet list"
+msgstr "seçilen sağlayıcıyı buket listesine kopyala"
+
+#: src/enigma_main.cpp:7923 src/enigma_main.cpp:7928
+msgid "add the selected service to a selectable bouquet"
+msgstr "seçilen servisi belirtilecek bukete ekle"
+
+#: src/enigma_main.cpp:7933
+msgid "set as startup"
+msgstr "açılış servisi yap"
+
+#: src/enigma_main.cpp:7933
+msgid "set the current selected service/movie as startup service"
+msgstr "şimdiki seçilen servisi/filmi açılış servisi yap"
+
+#: src/enigma_main.cpp:7934
+msgid "reset startup"
+msgstr "açılış servisini kaldır"
+
+#: src/enigma_main.cpp:7946
+msgid "add the selected file to a selectable bouquet"
+msgstr "seçilen dosyayı belirtilecek bukete ekle"
+
+#: src/enigma_main.cpp:7948
+msgid "delete file"
+msgstr "dosyayı sil"
+
+#: src/enigma_main.cpp:7948
+msgid "delete the selected file (and all corresponding ts files"
+msgstr "seçilen dosyayı sil (karşılığı olan diğer dosyalar dahil)"
+
+#: src/enigma_main.cpp:7949
+msgid "rename file"
+msgstr "dosyayı yeniden adlandır"
+
+#: src/enigma_main.cpp:7949
+msgid "rename the selected file (and all corresponding ts files"
+msgstr "seçilen dosyayı yeniden adlandır (karşılığı olan diğer dosyalar dahil)"
+
+#: src/enigma_main.cpp:7963
+msgid "disable edit mode"
+msgstr "düzenle kipini devreden çıkar"
+
+#: src/enigma_main.cpp:7963
+msgid "disable the edit mode"
+msgstr "düzenleme kipini devreden çıkar"
+
+#: src/enigma_main.cpp:7965
+msgid "enable edit mode"
+msgstr "düzenle kipini etkinleştir"
+
+#: src/enigma_main.cpp:7965
+msgid "activate mode to simply add many services to a selectable bouquet"
+msgstr "belirli bukete kolayca birçok servis ekleme kipini aktifleştir"
+
+#: src/enigma_main.cpp:7975
+msgid "unlock"
+msgstr "kilidi aç"
+
+#: src/enigma_main.cpp:7975
+msgid "do parental-unlock the selected service or file"
+msgstr "seçili servisi/dosyayı ebeveyn kilidinden çıkar"
+
+#: src/enigma_main.cpp:7977
+msgid "lock"
+msgstr "kilitle"
+
+#: src/enigma_main.cpp:7977
+msgid "do parentallock the selected service or file"
+msgstr "seçili servisi/dosyayı ebeveyn kilidine dahil et"
+
+#: src/enigma_main.cpp:7981
+msgid "disable parental lock"
+msgstr "ebeveyn kilidini devreden çıkar"
+
+#: src/enigma_main.cpp:7981
+msgid "temporary disable the parental locking"
+msgstr "geçici olarak ebeveyn kilidini etkisizleştir"
+
+#: src/enigma_main.cpp:7983
+msgid "enable parental lock"
+msgstr "ebeveyn kilidini etkinleştir"
+
+#: src/enigma_main.cpp:7983
+msgid "re-enable the parental locking"
+msgstr "ebeveyn kilidini tekrar etkinleştir"
+
+#: src/enigma_main.cpp:8001
+msgid "Shutdown/Standby Menu"
+msgstr "Kapatma/Hazır Bekleme Durumu Menüsü"
+
+#: src/enigma_main.cpp:8012 src/enigma_main.cpp:8015 src/enigma_main.cpp:8026
+msgid "reboot now"
+msgstr "şimdi yeniden çalıştır"
+
+#: src/enigma_main.cpp:8012 src/enigma_main.cpp:8022
+msgid "restart your dreambox"
+msgstr "dreambox'u yeniden çalıştır"
+
+#: src/enigma_main.cpp:8015
+msgid "restart your receiver"
+msgstr "alıcıyı yeniden çalıştır"
+
+#: src/enigma_main.cpp:8021 src/enigma_main.cpp:8025 src/enigma_main.cpp:8029
+msgid "shutdown now"
+msgstr "şimdi tam kapan"
+
+#: src/enigma_main.cpp:8021
+msgid "shutdown your dreambox"
+msgstr "dreambox'u tam kapat"
+
+#: src/enigma_main.cpp:8022 src/enigma_main.cpp:8030
+msgid "restart"
+msgstr "yeniden çalıştır"
+
+#: src/enigma_main.cpp:8025
+#, fuzzy
+msgid "shutdown your box"
+msgstr "boxu tam kapat"
+
+#: src/enigma_main.cpp:8026
+#, fuzzy
+msgid "restart your box"
+msgstr "boxunuzu yeniden çalıştırın"
+
+#: src/enigma_main.cpp:8029
+msgid "shutdown your dbox-2"
+msgstr "boxu tam kapat"
+
+#: src/enigma_main.cpp:8030
+msgid "restart your dbox-2"
+msgstr "boxunuzu yeniden çalıştırın"
+
+#: src/enigma_main.cpp:8034
+msgid "goto standby"
+msgstr "hazır bekleme durumuna geç"
+
+#: src/enigma_main.cpp:8034
+msgid "goto standby mode"
+msgstr "hazır bekleme durumuna geç"
+
+#: src/enigma_main.cpp:8035
+msgid "set sleeptimer"
+msgstr "uyuma zamanlayıcı saati ayarla"
+
+#: src/enigma_main.cpp:8035
+msgid "set a sleep timer"
+msgstr "uyuma zamanlayıcı saati ayarla"
+
+#: src/enigma_main.cpp:8156
+msgid "Record Menu"
+msgstr "Kayıt Menüsü"
+
+#: src/enigma_main.cpp:8166
+msgid "stop record now"
+msgstr "bu kayıt'ı şimdi durdur"
+
+#: src/enigma_main.cpp:8166
+msgid "immediate stop the recording"
+msgstr "kayıt'ı anında durdur"
+
+#: src/enigma_main.cpp:8168
+msgid "set record duration"
+msgstr "kayıt süresi ayarla"
+
+#: src/enigma_main.cpp:8168
+msgid "set the recording time (in minutes)"
+msgstr "kayıt süresi ayarla (dakika olarak)"
+
+#: src/enigma_main.cpp:8169
+msgid "set record stop time"
+msgstr "kayıt durdurma saatini ayarla"
+
+#: src/enigma_main.cpp:8169
+msgid "set the recording end time"
+msgstr "kayıt sonlama saatini ayarla"
+
+#: src/enigma_main.cpp:8175
+#, c-format
+msgid "add timeshift to recording (%d min) "
+msgstr ""
+
+#: src/enigma_main.cpp:8176
+msgid "add recorded timeshift at beginning of this recording"
+msgstr ""
+
+#: src/enigma_main.cpp:8281
+msgid "press ok to start edit mode"
+msgstr "düzenle kipini başlatmak için ok tuşlayın"
+
+#: src/enigma_mainmenu.cpp:26
+msgid "enigma mainmenu"
+msgstr "enigma ana menü"
+
+#: src/enigma_mainmenu.cpp:27
+msgid "close the mainmenu"
+msgstr "ana menüyü kapat"
+
+#: src/enigma_mainmenu.cpp:28
+msgid "select previous entry"
+msgstr "bir önceki öğeyi seçin"
+
+#: src/enigma_mainmenu.cpp:29
+msgid "select next entry"
+msgstr "bir sonraki öğeyi seçin"
+
+#: src/enigma_mainmenu.cpp:57 src/enigma_mainmenu.cpp:198
+msgid "Radio mode"
+msgstr "Radyo kipi"
+
+#: src/enigma_mainmenu.cpp:61 src/enigma_mainmenu.cpp:200
+msgid "File mode"
+msgstr "Dosya kipi"
+
+#: src/enigma_mainmenu.cpp:64 src/enigma_mainmenu.cpp:83
+#: src/enigma_mainmenu.cpp:207 src/enigma_mainmenu.cpp:217
+#: src/rotorconfig.cpp:918 src/setup_extra.cpp:492 src/timer.cpp:2773
+msgid "Information"
+msgstr "Bilgiler"
+
+#: src/enigma_mainmenu.cpp:67 src/enigma_mainmenu.cpp:209
+#: src/setup_extra.cpp:157 src/timer.cpp:2208 src/timer.cpp:2210
+msgid "Shutdown"
+msgstr "Tam Kapatma"
+
+#: src/enigma_mainmenu.cpp:70 src/enigma_mainmenu.cpp:86
+#: src/enigma_mainmenu.cpp:205 src/enigma_mainmenu.cpp:215
+#: src/enigma_setup.cpp:37
+msgid "Setup"
+msgstr "Kurulum"
+
+#: src/enigma_mainmenu.cpp:73 src/enigma_mainmenu.cpp:206
+#: src/enigma_plugins.cpp:117
+msgid "Games"
+msgstr "Oyunlar"
+
+#: src/enigma_mainmenu.cpp:76 src/enigma_mainmenu.cpp:89
+#: src/enigma_mainmenu.cpp:204 src/enigma_mainmenu.cpp:214
+msgid "Timer"
+msgstr "Zamanlayıcı"
+
+#: src/enigma_mainmenu.cpp:79 src/enigma_mainmenu.cpp:92
+#: src/enigma_mainmenu.cpp:202 src/enigma_mainmenu.cpp:212
+msgid "VCR"
+msgstr "VCR"
+
+#: src/enigma_mainmenu.cpp:98 src/enigma_mainmenu.cpp:106
+#: src/enigma_mainmenu.cpp:369
+msgid "Mainmenu"
+msgstr "Ana Menü"
+
+#: src/enigma_mainmenu.cpp:305 src/parentallock.cpp:151
+#: src/parentallock.cpp:163
+msgid "setup"
+msgstr "kurulum"
+
+#: src/enigma_plugins.cpp:77
+#, fuzzy
+msgid "Plugin Menu"
+msgstr "Eklentiler"
+
+#: src/enigma_plugins.cpp:93
+#, fuzzy
+msgid "rename the selected plugin"
+msgstr "seçilen Uyduyu sil"
+
+#: src/enigma_plugins.cpp:99
+msgid "number buttons first"
+msgstr ""
+
+#: src/enigma_plugins.cpp:99
+msgid "use number buttons as first shortcuts"
+msgstr ""
+
+#: src/enigma_plugins.cpp:101
+msgid "color buttons first"
+msgstr ""
+
+#: src/enigma_plugins.cpp:101
+msgid "use color buttons as first shortcuts"
+msgstr ""
+
+#: src/enigma_plugins.cpp:117
+msgid "Plugins"
+msgstr "Eklentiler"
+
+#: src/enigma_plugins.cpp:123
+msgid "select plugin and press ok"
+msgstr "eklentiyi seçin ve ok tuşlayın"
+
+#: src/enigma_plugins.cpp:210
+#, c-format
+msgid "Couldn't read plugin directory %s"
+msgstr "Eklenti dizini %s okunamıyor"
+
+#: src/enigma_plugins.cpp:214 src/enigma_plugins.cpp:357 src/scan.cpp:1909
+#: src/scan.cpp:1961 src/scan.cpp:2073 src/sselect.cpp:2245
+msgid "Error"
+msgstr "Hata"
+
+#: src/enigma_plugins.cpp:327
+msgid "E: currently another plugin is running..."
+msgstr "E: başka eklenti çalışıyor..."
+
+#: src/enigma_plugins.cpp:334
+#, c-format
+msgid "plugin '%s' not found"
+msgstr "eklenti '%s' bulunamadı"
+
+#: src/enigma_plugins.cpp:337
+msgid "E: no name given"
+msgstr "E: isim belirtilmemiş"
+
+#: src/enigma_plugins.cpp:357
+#, c-format
+msgid "Cannot execute %s (check rights)"
+msgstr "%s çalıştırılamıyor (hakları kontrol et)"
+
+#: src/enigma_plugins.cpp:418
+#, fuzzy
+msgid "Enter new name for the plugin:"
+msgstr "Buket için yeni isim girin:"
+
+#: src/enigma_plugins.cpp:419
+#, fuzzy
+msgid "Rename plugin"
+msgstr "Dosyayı yeniden adlandır"
+
+#: src/enigma_plugins.cpp:755
+#, c-format
+msgid "Output from %s"
+msgstr "%s çıktısı"
+
+#: src/enigma_plugins.cpp:780
+#, c-format
+msgid "Executing %s. Please wait..."
+msgstr "%s çalıştırılıyor. Lütfen bekleyin..."
+
+#: src/enigma_plugins.cpp:783
+#, c-format
+msgid "Could not execute %s"
+msgstr "%s çalıştırılamıyor"
+
+#: src/enigma_tuxtxt.cpp:33
+msgid "enigma tuxtxt"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:34
+#, fuzzy
+msgid "toggle double height"
+msgstr "sessiz işaretini değiştir"
+
+#: src/enigma_tuxtxt.cpp:35
+msgid "toggle splitscreen mode"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:36
+msgid "toggle transparency"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:37
+#, fuzzy
+msgid "toggle hidden information"
+msgstr "genişletilmiş olay bilgisini göster"
+
+#: src/enigma_tuxtxt.cpp:126
+#, fuzzy
+msgid "automatic"
+msgstr "otomatik tarama için"
+
+#: src/enigma_tuxtxt.cpp:127
+msgid "Czech/Slovak"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:128
+msgid "English"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:129
+#, fuzzy
+msgid "Estonian"
+msgstr "Binicilik"
+
+#: src/enigma_tuxtxt.cpp:130
+#, fuzzy
+msgid "French"
+msgstr "Frekans:"
+
+#: src/enigma_tuxtxt.cpp:131
+msgid "German"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:132
+msgid "Italian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:133
+msgid "Latvian/Lithuanian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:134
+#, fuzzy
+msgid "Polish"
+msgstr "Eklentiler"
+
+#: src/enigma_tuxtxt.cpp:135
+msgid "Portuguese/Spanish"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:136
+#, fuzzy
+msgid "Romanian"
+msgstr "Aşk"
+
+#: src/enigma_tuxtxt.cpp:137
+msgid "Serbian/Croatian/Slovenian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:138
+msgid "Swedish/Finnish/Hungarian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:139
+msgid "Turkish"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:140
+msgid "Serbian/Croatian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:141
+msgid "Russian/Bulgarian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:142
+msgid "Ukranian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:143
+#, fuzzy
+msgid "Greek"
+msgstr "Üç"
+
+#: src/enigma_tuxtxt.cpp:144
+msgid "Hebrew"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:145
+msgid "Arabic"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:259
+#, fuzzy
+msgid "no services on this transponder"
+msgstr "şimdiki transponder"
+
+#: src/enigma_tuxtxt.cpp:337
+msgid "Searching for Teletext services on this Transponder"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:337
+#, fuzzy
+msgid "Search"
+msgstr "arama"
+
+#: src/enigma_tuxtxt.cpp:612
+#, fuzzy
+msgid "switch to direct page selecting mode"
+msgstr "Dosya kipine geç"
+
+#: src/enigma_tuxtxt.cpp:613
+#, fuzzy
+msgid "show previously selected page"
+msgstr "servis seçimi menüsünü göster"
+
+#: src/enigma_tuxtxt.cpp:614
+#, fuzzy
+msgid "go to next favourite page"
+msgstr "sonraki paylaşıma git"
+
+#: src/enigma_scan.cpp:40 src/enigma_setup.cpp:47
+msgid "Service Searching"
+msgstr "Servis Arama"
+
+#: src/enigma_scan.cpp:52
+msgid "open satellite config"
+msgstr "Uydu yapılandırmasını aç"
+
+#: src/enigma_scan.cpp:53
+msgid "open the satfinder"
+msgstr "uydu bulucuyu göster"
+
+#: src/enigma_scan.cpp:54
+msgid "Motor Setup"
+msgstr "Motor Kurulum"
+
+#: src/enigma_scan.cpp:54
+msgid "open Motor Setup"
+msgstr "Motor Kurulumu aç"
+
+#: src/enigma_scan.cpp:55 src/tpeditwindow.cpp:147
+msgid "Transponder Edit"
+msgstr "Transponder Düzenle"
+
+#: src/enigma_scan.cpp:55
+msgid "for automatic scan"
+msgstr "otomatik tarama için"
+
+#: src/enigma_scan.cpp:59 src/satfind.cpp:71
+msgid "Signalfind"
+msgstr "Sinyal bulma"
+
+#: src/enigma_scan.cpp:59
+msgid "open the signalfinder"
+msgstr "sinyal bulucuyu aç"
+
+#: src/enigma_scan.cpp:60 src/scan.cpp:43
+msgid "Disable 5V"
+msgstr "5V'u etkisizleştir"
+
+#: src/enigma_scan.cpp:60 src/scan.cpp:43
+msgid "disable 5V for passive terrerstrial antennas"
+msgstr "karasal antenler için 5V'u etkisizleştir"
+
+#: src/enigma_scan.cpp:65 src/scan.cpp:47
+msgid "Automatic Transponder Scan"
+msgstr "Otomatik Transponder Tarama"
+
+#: src/enigma_scan.cpp:65 src/scan.cpp:47
+msgid "open automatic transponder scan"
+msgstr "otomatik transponder taramayı aç"
+
+#: src/enigma_scan.cpp:67 src/scan.cpp:49
+msgid "Automatic Multisat Scan"
+msgstr "Otomatik Çokuydulu Tarama"
+
+#: src/enigma_scan.cpp:67 src/scan.cpp:49
+msgid "open automatic multisat transponder scan"
+msgstr "otomatik çokuydulu taramayı aç"
+
+#: src/enigma_scan.cpp:69
+msgid "Manual Transponder Scan"
+msgstr "El ile Transponder Tarama"
+
+#: src/enigma_scan.cpp:69 src/scan.cpp:50
+msgid "open manual transponder scan"
+msgstr "el ile transponder taramayı aç"
+
+#: src/enigma_scan.cpp:146
+msgid ""
+"DiSEqC 1.2 is enabled on more than one LNB, please select the LNB the motor "
+"is connected to"
+msgstr ""
+"DiSEqC 1.2 birden fazla LNB ile etkinleşmiş. Lütfen motora bağlı olan LNB "
+"seçin."
+
+#: src/enigma_scan.cpp:146 src/setupnetwork.cpp:943
+msgid "Info"
+msgstr "Bilgi"
+
+#: src/enigma_scan.cpp:157
+msgid ""
+"Found no LNB with DiSEqC 1.2 enabled,\n"
+"please goto Satellite Config first, and enable DiSEqC 1.2"
+msgstr ""
+"DiSEqC 1.2 ile çalışan LNB etkinleşmemiş,\n"
+"lütfen uydu ayarına gidin ve DiSEqC 1.2 etkinleştirin."
+
+#: src/enigma_scan.cpp:157 src/rotorconfig.cpp:692 src/rotorconfig.cpp:898
+msgid "Warning"
+msgstr "Uyarı"
+
+#: src/enigma_scan.cpp:196
+msgid "Select LNB"
+msgstr "LNB seçeneği"
+
+#: src/enigma_scan.cpp:207
+#, c-format
+msgid "use LNB %d for Motor"
+msgstr "LNB %d motor için kullan"
+
+#: src/enigma_setup.cpp:45
+msgid "open service organising"
+msgstr "servis düzenlemesini aç"
+
+#: src/enigma_setup.cpp:47
+msgid "open service searching"
+msgstr "servis aramayı aç"
+
+#: src/enigma_setup.cpp:49 src/system_settings.cpp:37
+msgid "System Settings"
+msgstr "Sistem Kurulumu"
+
+#: src/enigma_setup.cpp:49
+msgid "open system settings"
+msgstr "sistem ayalarını aç"
+
+#: src/enigma_setup.cpp:52
+msgid "Common Interface"
+msgstr "CI modül girişi"
+
+#: src/enigma_setup.cpp:52
+msgid "open common interface menu"
+msgstr "CI modül girişi kurulumunu aç"
+
+#: src/enigma_setup.cpp:54
+msgid "Parental Lock"
+msgstr "Ebeveyn Kilidi"
+
+#: src/enigma_setup.cpp:54
+msgid "open parental setup"
+msgstr "ebeveyn kurulumunu aç"
+
+#: src/enigma_setup.cpp:56 src/setup_extra.cpp:42
+msgid "Expert Setup"
+msgstr "Uzman Kurulum"
+
+#: src/enigma_setup.cpp:56
+msgid "open expert setup"
+msgstr "uzman kurulumu aç"
+
+#: src/enigma_setup.cpp:60
+#, fuzzy
+msgid "Timeshift"
+msgstr "Zamanlayıcı Listesi"
+
+#: src/enigma_setup.cpp:60
+#, fuzzy
+msgid "open timeshift setup"
+msgstr "uzman kurulumu aç"
+
+#: src/epgactions.h:14
+msgid "EPG selector"
+msgstr "EPG seçeneği"
+
+#: src/epgactions.h:15
+msgid "add this event as DVR Event to timer list"
+msgstr "bu olayı DVR (kayıt) olarak zamanlayıcı listesine ekle"
+
+#: src/epgactions.h:16
+msgid "add this event as NGRAB Event to timer list"
+msgstr "bu olayı NGRAB olarak zamanlayıcı listesine ekle"
+
+#: src/epgactions.h:17
+msgid "add this event as simple Switch Event to timer list"
+msgstr ""
+"bu olayı basit Kanal Değiştirme Olayı olarak zamanlayıcı listesine ekle"
+
+#: src/epgactions.h:18
+msgid "remove this event from timer list"
+msgstr "bu olayı zamanlayıcı listesinden sil"
+
+#: src/epgactions.h:19
+msgid "show extended event information"
+msgstr "genişletilmiş olay bilgisini göster"
+
+#: src/epgactions.h:20
+#, fuzzy
+msgid "search for event information"
+msgstr "genişletilmiş olay bilgisini göster"
+
+#: src/epgsearch.cpp:153
+#, fuzzy
+msgid "Thriller"
+msgstr "Zamanlayıcı"
+
+#: src/epgsearch.cpp:241
+#, fuzzy
+msgid "all services"
+msgstr "Tüm Servisler"
+
+#: src/epgsearch.cpp:250 src/epgsearch.cpp:255
+#, fuzzy
+msgid "Searching for "
+msgstr "Tarama devam etmekte"
+
+#: src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Sun"
+msgstr "Paz"
+
+#: src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Mon"
+msgstr "Pzt"
+
+#: src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Fri"
+msgstr "Cum"
+
+#: src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Sat"
+msgstr "Cts"
+
+#: src/epgwindow.cpp:182
+msgid "EPG - "
+msgstr "EPG -"
+
+#: src/helpwindow.cpp:20
+msgid "Help window"
+msgstr "Yardım penceresi"
+
+#: src/helpwindow.cpp:21
+msgid "close the help window"
+msgstr "yardım penceresini kapat "
+
+#: src/helpwindow.cpp:22
+msgid "scroll up"
+msgstr "yukarıya kaydır"
+
+#: src/helpwindow.cpp:23
+msgid "scroll down"
+msgstr "aşağıya kaydır"
+
+#: src/parentallock.cpp:29
+msgid "please enter pin:"
+msgstr "lütfen şifreyi girin:"
+
+#: src/parentallock.cpp:53
+msgid "Parental setup"
+msgstr "Ebeveyn kilidi kurulumu"
+
+#: src/parentallock.cpp:60
+msgid "Parental lock"
+msgstr "Ebeveyn kilidi"
+
+#: src/parentallock.cpp:63
+msgid "enable/disable parental lock"
+msgstr "ebeveyn kilidini aç/kapa"
+
+#: src/parentallock.cpp:67 src/parentallock.cpp:84
+msgid "change PIN"
+msgstr "Şifre değişimi"
+
+#: src/parentallock.cpp:70
+msgid "change Parental PIN (ok)"
+msgstr "Ebeveyn şifre değiştir (ok)"
+
+#: src/parentallock.cpp:77
+msgid "Setup lock"
+msgstr "Kurulum kilidi"
+
+#: src/parentallock.cpp:80
+msgid "enable/disable setup lock"
+msgstr "kurulum kilidini aç/kapa"
+
+#: src/parentallock.cpp:87
+msgid "change Setup PIN (ok)"
+msgstr "şifre değişimi (ok)"
+
+#: src/parentallock.cpp:94
+msgid "Hide locked services"
+msgstr "Kilitlenmiş servisleri sakla"
+
+#: src/parentallock.cpp:97
+msgid "don't show locked services in any list"
+msgstr "kilitlenmiş servisleri herhangi bir listede gösterme"
+
+#: src/parentallock.cpp:179
+#, c-format
+msgid "New %s PIN"
+msgstr "Yeni %s şifre"
+
+#: src/parentallock.cpp:186
+#, c-format
+msgid "Reenter %s PIN"
+msgstr "Şifreyi %s tekrarla"
+
+#: src/parentallock.cpp:194
+msgid ""
+"The PINs are not equal!\n"
+"\n"
+"Do you want to retry?"
+msgstr ""
+"Şifreler eşit değil!\n"
+"\n"
+"Yeniden denemek istermisiniz?"
+
+#: src/parentallock.cpp:195 src/parentallock.cpp:270
+msgid "PIN validation failed"
+msgstr "Şifre onaylama hatali"
+
+#: src/parentallock.cpp:209
+msgid "PIN change completed"
+msgstr "Şifre değişimi tamamlandı"
+
+#: src/parentallock.cpp:210
+msgid "PIN changed"
+msgstr "Şifre değişti"
+
+#: src/parentallock.cpp:258
+#, c-format
+msgid "current %s PIN"
+msgstr "şu anki %s şifreniz"
+
+#: src/parentallock.cpp:269
+msgid ""
+"The entered PIN is incorrect.\n"
+"Do you want to retry?"
+msgstr ""
+"Girdiğiniz şifre yanlış.\n"
+"Yeniden denemek istermisiniz?"
+
+#: src/rotorconfig.cpp:54 src/rotorconfig.cpp:98 src/tpeditwindow.cpp:87
+msgid "East"
+msgstr "Doğu"
+
+#: src/rotorconfig.cpp:55 src/rotorconfig.cpp:99 src/tpeditwindow.cpp:88
+msgid "West"
+msgstr "Batı"
+
+#: src/rotorconfig.cpp:69
+msgid "North"
+msgstr "Kuzey"
+
+#: src/rotorconfig.cpp:70
+msgid "South"
+msgstr "Güney"
+
+#: src/rotorconfig.cpp:119 src/tpeditwindow.cpp:77
+msgid "enter orbital position without dot (19.2° = 192)"
+msgstr "yörünge konumunu noktasız gir (19.2° = 192)"
+
+#: src/rotorconfig.cpp:287 src/rotorconfig.cpp:344
+msgid "delete me"
+msgstr "beni sil"
+
+#: src/rotorconfig.cpp:381 src/rotorconfig.cpp:384
+msgid "drive Motor East"
+msgstr "motoru doğuya hareket ettir"
+
+#: src/rotorconfig.cpp:382
+msgid "drive Motor East.. one step"
+msgstr "motoru doğuya hareket ettir.. bir adım"
+
+#: src/rotorconfig.cpp:383
+msgid "stop Motor drive East"
+msgstr "doğuya hareket eden motoru durdur"
+
+#: src/rotorconfig.cpp:385
+msgid "drive Motor West.. one step"
+msgstr "motoru batıya hareket ettir.. bir adım"
+
+#: src/rotorconfig.cpp:386
+msgid "stop Motor drive West"
+msgstr "batıya hareket eden motoru durdur"
+
+#: src/rotorconfig.cpp:462
+msgid "position"
+msgstr "konum"
+
+#: src/rotorconfig.cpp:462
+msgid "store new sat positions"
+msgstr "yeni uydu konumunu hafızaya al"
+
+#: src/rotorconfig.cpp:463
+msgid "drive to stored pos"
+msgstr "hafizaya alınmış konuma hareket ettir"
+
+#: src/rotorconfig.cpp:463
+msgid "drive to stored position"
+msgstr "hafizaya alınmış konuma hareket ettir"
+
+#: src/rotorconfig.cpp:464
+msgid "drive to satellite"
+msgstr "uyduya hareket ettir"
+
+#: src/rotorconfig.cpp:464
+msgid "drive to stored satellite"
+msgstr "hafızaya alınmış uyduya hareket ettir"
+
+#: src/rotorconfig.cpp:465
+msgid "drive to 0°"
+msgstr "0 noktasına hareket ettir"
+
+#: src/rotorconfig.cpp:465
+msgid "drives to 0"
+msgstr "0 noktasına hareket ediyor"
+
+#: src/rotorconfig.cpp:466
+msgid "recalculate"
+msgstr "yeniden hesapla"
+
+#: src/rotorconfig.cpp:466
+msgid "recalculate stored positions rel. to current pos"
+msgstr "hafizaya alınmış konumuları şu anki konuma göre yeniden hesapla"
+
+#: src/rotorconfig.cpp:467
+msgid "set east limit"
+msgstr "doğu sınırı olarak hafızaya al"
+
+#: src/rotorconfig.cpp:467
+msgid "set east soft limit"
+msgstr "batı doğu sınırı olarak hafızaya al"
+
+#: src/rotorconfig.cpp:468
+msgid "set west limit"
+msgstr "batı sınırı olarak hafızaya al"
+
+#: src/rotorconfig.cpp:468
+msgid "set west soft limit"
+msgstr "batı soft sınırı olarak hafızaya al"
+
+#: src/rotorconfig.cpp:469
+msgid "disable limits"
+msgstr "sınırları etkisizleştir"
+
+#: src/rotorconfig.cpp:469 src/rotorconfig.cpp:531
+msgid "disable soft limits"
+msgstr "soft sınırlarını etkisizleştir"
+
+#: src/rotorconfig.cpp:470
+msgid "enable limits"
+msgstr "sınırları etkinleştir"
+
+#: src/rotorconfig.cpp:470 src/rotorconfig.cpp:535
+msgid "enable soft limits"
+msgstr "soft sınırları etkinleştir"
+
+#: src/rotorconfig.cpp:507
+msgid "store current pos in motor"
+msgstr "şimdiki motor konumunu hafızaya al"
+
+#: src/rotorconfig.cpp:511
+msgid "drive motor to stored pos"
+msgstr "motoru hafızaya alınmış konuma hareket ettir"
+
+#: src/rotorconfig.cpp:512 src/rotorconfig.cpp:516 src/rotorconfig.cpp:540
+msgid "go"
+msgstr "git"
+
+#: src/rotorconfig.cpp:515
+msgid "drive motor to reference position"
+msgstr "motoru dayanak konumuna hareket ettir"
+
+#: src/rotorconfig.cpp:519
+msgid "recalculate all stored positions"
+msgstr "hafızadaki bütün konumuları tekrar hesapla"
+
+#: src/rotorconfig.cpp:520
+msgid "recalc"
+msgstr "tekrar hesapla"
+
+#: src/rotorconfig.cpp:523
+msgid "store current pos as east soft limit"
+msgstr "şimdiki konumu doğu sınırını olarak hafızaya al"
+
+#: src/rotorconfig.cpp:527
+msgid "store current pos as west soft limit"
+msgstr "şimdiki konumu batı sınırını olarak hafızaya al"
+
+#: src/rotorconfig.cpp:532 src/rotorconfig.cpp:536
+msgid "do it"
+msgstr "yap"
+
+#: src/rotorconfig.cpp:539
+msgid "drive motor to satellite"
+msgstr "motoru uyduya hareket ettir"
+
+#: src/rotorconfig.cpp:691
+msgid ""
+"Wrong use of this function can corrupt all stored sat positions.\n"
+"Are you sure you want to use this function?"
+msgstr ""
+"Bu işlevin yanlış kullanımı, bütün hafızlanmış uydu konumlarını bozabilir.\n"
+"Bu işlevi kullanmak istediğinizden eminmisiniz?"
+
+#: src/rotorconfig.cpp:757
+msgid "one step East..."
+msgstr "bir adım doğuya.."
+
+#: src/rotorconfig.cpp:766
+msgid "one step west..."
+msgstr "bir adım batıya..."
+
+#: src/rotorconfig.cpp:780
+msgid "turning to east..."
+msgstr "doğuya dönüyor.."
+
+#: src/rotorconfig.cpp:791
+msgid "turning to west..."
+msgstr "batıya dönüyor..."
+
+#: src/rotorconfig.cpp:804
+msgid "<    Stop    >"
+msgstr "<  Dur  >"
+
+#: src/rotorconfig.cpp:845
+msgid "Storage Location:"
+msgstr "Hafıza Yeri:"
+
+#: src/rotorconfig.cpp:847
+msgid "change storage Location or store"
+msgstr "bellek yerini değiştir veya hafızaya al"
+
+#: src/rotorconfig.cpp:898
+#, c-format
+msgid ""
+"%d.%d°%c is currently stored at location %d!\n"
+"When you store this now at Location %d, we must remove the old Location.\n"
+"Are you sure you want to do this?"
+msgstr ""
+"%d.%d%c şu anda hafızadaki yeri %d!\n"
+"Eğer bunu %d yerine hafızaya alırsanız, eski yer silinecektir.\n"
+"Bunu yapmak istiyormusunuz?"
+
+#: src/rotorconfig.cpp:916
+#, c-format
+msgid ""
+"Store %d.%d°%c at location %d.\n"
+"If you want another location, then say no and change the location manually.\n"
+"Are you sure you want to store at this location?"
+msgstr ""
+"%d.%d%c 'yi %d mevkide hafızaya al.\n"
+"Eğer baska yere hafızaya almak istiyorsanız, hayır seçimi yapın ve yeri el "
+"ile değiştirin.\n"
+"Bu mevki de hafızaya almak istiyormusunuz?"
+
+#: src/satconfig.cpp:64
+msgid "one single satellite"
+msgstr "tek uydu"
+
+#: src/satconfig.cpp:64
+msgid "one directly connected LNB"
+msgstr "doğrudan bağlı tek LNB"
+
+#: src/satconfig.cpp:65
+msgid "2 satellites via Toneburst"
+msgstr "Toneburst ile 2 uydu"
+
+#: src/satconfig.cpp:65
+msgid "2 LNBs via Toneburst Signal"
+msgstr "Toneburst Sinyal ile 2 LNB"
+
+#: src/satconfig.cpp:66
+msgid "2 satellites via 22Khz (only Highband)"
+msgstr "22Khz ile 2 uydu (yalnız yüksekbant için)"
+
+#: src/satconfig.cpp:66
+msgid "2 LNBs via 22Khz Signal.. special for old analog switches"
+msgstr "22Khz sinyal ile 2 LNB.. özellikle eski analog anahtarlar için"
+
+#: src/satconfig.cpp:67
+msgid "2 satellites via DiSEqC A/B"
+msgstr "DiSEqC A/B ile 2 uydu"
+
+#: src/satconfig.cpp:67
+msgid "2 LNBs via DiSEqC"
+msgstr "DiSEqC ile 2 LNB"
+
+#: src/satconfig.cpp:68
+msgid "4 satellites via DiSEqC OPT A/B"
+msgstr "DiSEqC A/B ile 4 uydu"
+
+#: src/satconfig.cpp:68
+msgid "4 LNBs via DiSEqC"
+msgstr "DiSEqC ile 4 LNB"
+
+#: src/satconfig.cpp:69
+msgid "many satellites via DiSEqC Rotor"
+msgstr "DiSEqC Motor ile çoklu uydu"
+
+#: src/satconfig.cpp:69
+msgid "1 LNB with DiSEqC Rotor"
+msgstr "DiSEqC Motor ile 1 LNB"
+
+#: src/satconfig.cpp:70
+msgid "non-standard user defined configuration..."
+msgstr "standart dışı kullanıcı tarafından tanımlanmış yapılandırma..."
+
+#: src/satconfig.cpp:70
+msgid "special"
+msgstr "özel"
+
+#: src/satconfig.cpp:136
+msgid ""
+"Configuration contains some elements\n"
+"which don't fit into new DiSEqC-Type. Drop these items?"
+msgstr ""
+"Ayarlarda DiSEqC-Tipine uymayan bölümler var.\n"
+"Bunlar silinsin mi?"
+
+#: src/satconfig.cpp:136
+msgid "Change DiSEqC-Type..."
+msgstr "DiSEqC-Tipini değiştir..."
+
+#: src/satconfig.cpp:330
+msgid "direct connection"
+msgstr "doğrudan bağlantı"
+
+#: src/satconfig.cpp:738
+msgid "press ok to select another satellite"
+msgstr "başka uydu seçimi için ok tuşlayın"
+
+#: src/satconfig.cpp:753
+msgid "press ok to goto LNB config"
+msgstr "LNB yapılandırmasına girmek için ok tuşlayın"
+
+#: src/satconfig.cpp:771
+msgid "press ok to select another 22kHz mode"
+msgstr "başka 22kHz kipi için ok tuşlayın"
+
+#: src/satconfig.cpp:772
+msgid "22kHz signal is automatically switched"
+msgstr "22kHz sinyali otomatik olarak değişti"
+
+#: src/satconfig.cpp:773
+msgid "22kHz is always enabled (high band)"
+msgstr "22kHz herzaman etkin (yüksek bant)"
+
+#: src/satconfig.cpp:774
+msgid "22kHz is always disabled (low band)"
+msgstr "22kHz herzaman etkisiz (alçak bant)"
+
+#: src/satconfig.cpp:784
+msgid "press ok to select another LNB Voltage mode"
+msgstr "başka LNB Voltaj kipi seçmek için ok tuşlayınız"
+
+#: src/satconfig.cpp:785
+msgid "Voltage is automatically changed"
+msgstr "Voltaj otomatik olarak değişti"
+
+#: src/satconfig.cpp:786
+msgid "Voltage is always 14V (vertical)"
+msgstr "Voltaj herzaman 14V (dikey)"
+
+#: src/satconfig.cpp:787
+msgid "Voltage is always 18V (horizontal)"
+msgstr "Voltaj herzaman 18V (yatay)"
+
+#: src/satconfig.cpp:788
+msgid "Voltage is always off"
+msgstr "Voltaj herzaman kapalı"
+
+#: src/satconfig.cpp:1155 src/satconfig.cpp:1201 src/satconfig.cpp:1211
+msgid "None"
+msgstr "Hiçbiri"
+
+#: src/satconfig.cpp:1155
+msgid "sends no tone burst"
+msgstr "tone burst gönderme"
+
+#: src/satconfig.cpp:1156
+msgid "sends modulated tone burst"
+msgstr "ayarlı tone burst gönder "
+
+#: src/satconfig.cpp:1157
+msgid "sends unmodulated tone burst"
+msgstr "ayarsız tone burst gönder"
+
+#: src/satconfig.cpp:1164
+msgid "Disable DiSEqC"
+msgstr "DiSEqC'i etkisizleştir"
+
+#: src/satconfig.cpp:1165
+msgid "Use DiSEqC Version 1.0"
+msgstr "DiSEqC 1.0 versiyonunu kullan"
+
+#: src/satconfig.cpp:1166
+msgid "Use DiSEqC Version 1.1"
+msgstr "DiSEqC 1.1 versiyonunu kullan"
+
+#: src/satconfig.cpp:1167
+msgid "Use DiSEqC Version 1.2"
+msgstr "DiSEqC 1.2 versiyonunu kullan"
+
+#: src/satconfig.cpp:1175
+msgid "sends DiSEqC cmd A/A"
+msgstr "DiSEqC A/A komutu gönder"
+
+#: src/satconfig.cpp:1176
+msgid "sends DiSEqC cmd A/B"
+msgstr "DiSEqC A/B komutu gönder"
+
+#: src/satconfig.cpp:1177
+msgid "sends DiSEqC cmd B/A"
+msgstr "DiSEqC B/A komutu gönder"
+
+#: src/satconfig.cpp:1178
+msgid "sends DiSEqC cmd B/B"
+msgstr "DiSEqC B/B komutu gönder"
+
+#: src/satconfig.cpp:1179
+msgid "sends no committed DiSEqC cmd"
+msgstr "kesinleşmiş DISEqC komutu gönderme"
+
+#: src/satconfig.cpp:1180
+msgid "sends switch cmd 1"
+msgstr "1. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1181
+msgid "sends switch cmd 2"
+msgstr "2. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1182
+msgid "sends switch cmd 3"
+msgstr "3. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1183
+msgid "sends switch cmd 4"
+msgstr "4. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1184
+msgid "sends switch cmd 5"
+msgstr "5. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1185
+msgid "sends switch cmd 6"
+msgstr "6. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1186
+msgid "sends switch cmd 7"
+msgstr "7. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1187
+msgid "sends switch cmd 8"
+msgstr "8. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1188
+msgid "sends switch cmd 9"
+msgstr "9. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1189
+msgid "sends switch cmd 10"
+msgstr "10. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1190
+msgid "sends switch cmd 11"
+msgstr "11. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1191
+msgid "sends switch cmd 12"
+msgstr "12. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1192
+msgid "sends switch cmd 13"
+msgstr "13. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1193
+msgid "sends switch cmd 14"
+msgstr "14. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1194
+msgid "sends switch cmd 15"
+msgstr "15. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1195
+msgid "sends switch cmd 16"
+msgstr "16. anahtar komutu gönder"
+
+#: src/satconfig.cpp:1201
+msgid "sends no DiSEqC repeats"
+msgstr "DiSEqC tekrarlaması gönderme"
+
+#: src/satconfig.cpp:1202
+msgid "One"
+msgstr "Bir"
+
+#: src/satconfig.cpp:1202
+msgid "sends one repeat"
+msgstr "tekrarlamanın birini gönder"
+
+#: src/satconfig.cpp:1203
+msgid "Two"
+msgstr "İki"
+
+#: src/satconfig.cpp:1203
+msgid "sends two repeats"
+msgstr "tekrarlamanın ikisini gönder"
+
+#: src/satconfig.cpp:1204
+msgid "Three"
+msgstr "Üç"
+
+#: src/satconfig.cpp:1204
+msgid "sends three repeats"
+msgstr "tekrarlamanın üçünü gönder"
+
+#: src/satconfig.cpp:1211
+msgid "sends no uncommitted switch command"
+msgstr "kesinleşmemiş anahtar komutunu gönderme"
+
+#: src/satconfig.cpp:1212
+msgid "Input 1"
+msgstr "1. giriş"
+
+#: src/satconfig.cpp:1212
+msgid "select uncommitted switch Input 1"
+msgstr "kesinleşmemiş anahtarın 1. girişini seç"
+
+#: src/satconfig.cpp:1213
+msgid "Input 2"
+msgstr "2. giriş"
+
+#: src/satconfig.cpp:1213
+msgid "select uncommitted switch Input 2"
+msgstr "kesinleşmemiş anahtarın 2. girişini seç"
+
+#: src/satconfig.cpp:1214
+msgid "Input 3"
+msgstr "3. giriş"
+
+#: src/satconfig.cpp:1214
+msgid "select uncommitted switch Input 3"
+msgstr "kesinleşmemiş anahtarın 3. girişini seç"
+
+#: src/satconfig.cpp:1215
+msgid "Input 4"
+msgstr "4. giriş"
+
+#: src/satconfig.cpp:1215
+msgid "select uncommitted switch Input 4"
+msgstr "kesinleşmemiş anahtarın 4. girişini seç"
+
+#: src/satconfig.cpp:1216
+msgid "Input 5"
+msgstr "5. giriş"
+
+#: src/satconfig.cpp:1216
+msgid "select uncommitted switch Input 5"
+msgstr "kesinleşmemiş anahtarın 5. girişini seç"
+
+#: src/satconfig.cpp:1217
+msgid "Input 6"
+msgstr "6. giriş"
+
+#: src/satconfig.cpp:1217
+msgid "select uncommitted switch Input 6"
+msgstr "kesinleşmemiş anahtarın 6. girişini seç"
+
+#: src/satconfig.cpp:1218
+msgid "Input 7"
+msgstr "7. giriş"
+
+#: src/satconfig.cpp:1218
+msgid "select uncommitted switch Input 7"
+msgstr "kesinleşmemiş anahtarın 7. girişini seç"
+
+#: src/satconfig.cpp:1219
+msgid "Input 8"
+msgstr "8. giriş"
+
+#: src/satconfig.cpp:1219
+msgid "select uncommitted switch Input 8"
+msgstr "kesinleşmemiş anahtarın 8. girişini seç"
+
+#: src/satconfig.cpp:1220
+msgid "Input 9"
+msgstr "9. giriş"
+
+#: src/satconfig.cpp:1220
+msgid "select uncommitted switch Input 9"
+msgstr "kesinleşmemiş anahtarın 9. girişini seç"
+
+#: src/satconfig.cpp:1221
+msgid "Input 10"
+msgstr "10. giriş"
+
+#: src/satconfig.cpp:1221
+msgid "select uncommitted switch Input 10"
+msgstr "kesinleşmemiş anahtarın 10. girişini seç"
+
+#: src/satconfig.cpp:1222
+msgid "Input 11"
+msgstr "11. giriş"
+
+#: src/satconfig.cpp:1222
+msgid "select uncommitted switch Input 11"
+msgstr "kesinleşmemiş anahtarın 11. girişini seç"
+
+#: src/satconfig.cpp:1223
+msgid "Input 12"
+msgstr "12. giriş"
+
+#: src/satconfig.cpp:1223
+msgid "select uncommitted switch Input 12"
+msgstr "kesinleşmemiş anahtarın 12. girişini seç"
+
+#: src/satconfig.cpp:1224
+msgid "Input 13"
+msgstr "13. giriş"
+
+#: src/satconfig.cpp:1224
+msgid "select uncommitted switch Input 13"
+msgstr "kesinleşmemiş anahtarın 13. girişini seç"
+
+#: src/satconfig.cpp:1225
+msgid "Input 14"
+msgstr "14. giriş"
+
+#: src/satconfig.cpp:1225
+msgid "select uncommitted switch Input 14"
+msgstr "kesinleşmemiş anahtarın 14. girişini seç"
+
+#: src/satconfig.cpp:1226
+msgid "Input 15"
+msgstr "15. giriş"
+
+#: src/satconfig.cpp:1226
+msgid "select uncommitted switch Input 15"
+msgstr "kesinleşmemiş anahtarın 15. girişini seç"
+
+#: src/satconfig.cpp:1227
+msgid "Input 16"
+msgstr "16. giriş"
+
+#: src/satconfig.cpp:1227
+msgid "select uncommitted switch Input 16"
+msgstr "kesinleşmemiş anahtarın 16. girişini seç"
+
+#: src/satfind.cpp:72
+msgid "Region:"
+msgstr "Bölge:"
+
+#: src/scan.cpp:50
+msgid "manual scan.."
+msgstr "el ile tarama.."
+
+#: src/scan.cpp:236
+msgid "Waiting for tuner lock on:"
+msgstr "Alıcı kilitlenmesi bekleniyor:"
+
+#: src/scan.cpp:375
+msgid ""
+"To begin searching for a valid satellite press OK, or choose your desired "
+"satellite manually and press OK"
+msgstr ""
+"Uydu aramayı başlatmak için OK tuşlayın, veya istenilen uyduyu el ile seçin "
+"ve OK tuşlayın."
+
+#: src/scan.cpp:378
+msgid ""
+"To begin searching for a valid cable provider press OK, or choose your "
+"desired cable provider manually and press OK"
+msgstr ""
+"Aramayı başlatmak için OK tuşlayın, veya kablolu yayın sağlayıcısını el ile "
+"seçin ve OK tuşlayın."
+
+#: src/scan.cpp:381
+msgid ""
+"To begin searching for a valid transponder press OK, or choose your desired "
+"location manually and press OK"
+msgstr ""
+"Aramayı başlatmak için OK tuşlayın, veya uyduyu el ile seçin ve OK tuşlayın."
+
+#: src/scan.cpp:473
+msgid ""
+"A valid transponder has been found. Verify that the right network is selected"
+msgstr "Geçerli transponder tespit edildi."
+
+#: src/scan.cpp:555
+msgid ""
+"All known transponders have been tried, but no lock was possible. Verify "
+"antenna-/cable-setup or try manual search if its some obscure satellite/"
+"network."
+msgstr ""
+"Bütün bilinen transponderler denendi, fakat hiçbir transponder'a "
+"kilitlenemedi. Uydu anteninizi/kablonuzu kontrol ediniz veya el ile tarama "
+"yaptırın."
+
+#: src/scan.cpp:563
+msgid ""
+"All known transponders have been tried, but no lock was possible. Verify "
+"antenna-/cable-setup or try another satellite/network."
+msgstr ""
+"Bütün bilinen transponderler denendi, fakat hiçbir transponder'a "
+"kilitlenemedi. Uydu anteninizi/kablonuzu kontrol ediniz veya başka uydu "
+"deneyiniz."
+
+#: src/scan.cpp:572
+msgid "Search in progress "
+msgstr "Tarama devam etmekte"
+
+#: src/scan.cpp:746
+#, c-format
+msgid "%02i minutes and %02i seconds left"
+msgstr "%02i dakika ve %02i saniye kaldı"
+
+#: src/scan.cpp:748
+#, c-format
+msgid "%02i seconds left"
+msgstr "%02i saniye kaldı"
+
+#: src/scan.cpp:822
+msgid "Vertical"
+msgstr "Dikey (V)"
+
+#: src/scan.cpp:888
+msgid "[only free]"
+msgstr "[yalnız şifresiz]"
+
+#: src/scan.cpp:889
+msgid "[all]"
+msgstr "[hepsi]"
+
+#: src/scan.cpp:889
+msgid "[nothing]"
+msgstr "[hiçbiri]"
+
+#: src/scan.cpp:991
+msgid "Transponder Scan"
+msgstr "Transponder Tarama"
+
+#: src/scan.cpp:1284
+msgid "Waiting for tuner lock... please wait"
+msgstr "Alıcı kilitlenmesi için bekleniyor... lütfen bekleyin"
+
+#: src/scan.cpp:1337 src/scan.cpp:1405
+msgid "Scan is in progress... please wait"
+msgstr "Tarama devam etmekte... lütfen bekleyin"
+
+#: src/scan.cpp:1368 src/scan.cpp:1421
+#, c-format
+msgid ""
+"The transponder scan has finished and found \n"
+"   %i new Transponders,\n"
+"   %i new TV Services,\n"
+"   %i new Radio Services and\n"
+"   %i new Data Services.\n"
+"%i Transponders with %i Services scanned."
+msgstr ""
+"Transponder taraması tamamlandı ve\n"
+" %i yeni Transponder,\n"
+" %i yeni TV kanalı,\n"
+" %i yeni Radyo kanalı ve\n"
+" %i yeni Data Servisi bulundu.\n"
+"%i Transponderde %i servis tarandı."
+
+#: src/scan.cpp:1433
+msgid "Done."
+msgstr "Tamamlandı."
+
+#: src/scan.cpp:1441
+msgid "Scan is in finished, press ok to close window"
+msgstr "Tarama tamamlandı, pencereyi kapatmak için ok tuşlayın"
+
+#: src/scan.cpp:1449
+#, c-format
+msgid ""
+"Do you want\n"
+"to scan another\n"
+"%s?"
+msgstr ""
+"Başka %s taratmak\n"
+"istiyormusunuz?"
+
+#: src/scan.cpp:1449
+#, c-format
+msgid "Transponder"
+msgstr "Transponder"
+
+#: src/scan.cpp:1449
+#, c-format
+msgid "Satellite"
+msgstr "Uydu"
+
+#: src/scan.cpp:1450
+msgid "Scan finished"
+msgstr "Tarama tamamlandı"
+
+#: src/scan.cpp:1554
+msgid "Manual PIDs"
+msgstr "El ile PID'ler"
+
+#: src/scan.cpp:1576
+msgid "to enter service name press OK"
+msgstr "servis ismi girmek için OK tuşlayın"
+
+#: src/scan.cpp:1577
+msgid "enter service name"
+msgstr "servis ismi gir"
+
+#: src/scan.cpp:1592
+msgid "to enter provider name press OK"
+msgstr "sağlayıcı ismi girmek için OK tuşlayın"
+
+#: src/scan.cpp:1593
+msgid "enter provider name"
+msgstr "sağlayıcı ismi gir"
+
+#: src/scan.cpp:1608
+msgid "to enter video pid press OK"
+msgstr "video pid girmek için OK tuşlayın"
+
+#: src/scan.cpp:1609
+msgid "enter video pid"
+msgstr "video pid gir"
+
+#: src/scan.cpp:1622
+msgid "to enter pcr pid press OK"
+msgstr "PCR pid'i girmek için OK tuşlayın"
+
+#: src/scan.cpp:1623
+msgid "enter pcr pid (in most case the same pid as the video pid)"
+msgstr "PCR pid'i gir (genellikle video pid ile aynıdır)"
+
+#: src/scan.cpp:1638
+msgid "to enter audio pid press OK"
+msgstr "ses (audio) pid'i girmek için OK tuşlayın"
+
+#: src/scan.cpp:1639
+msgid "enter audio pid"
+msgstr "ses (audio) pid'i gir"
+
+#: src/scan.cpp:1645
+msgid "is AC3 Pid"
+msgstr "AC3 pid'i dir"
+
+#: src/scan.cpp:1646
+msgid "set this check when the entered audio pid is a ac3 audio pid"
+msgstr ""
+"girilen ses (audio) pid'i AC3 ses (audio) pid'i ise bu kutuyu işaretleyin"
+
+#: src/scan.cpp:1661
+msgid "to enter (video) text pid press OK"
+msgstr "(video) text pid girmek için OK tuşlayın"
+
+#: src/scan.cpp:1662
+msgid "enter (video) text pid"
+msgstr "(video) text pid gir"
+
+#: src/scan.cpp:1675
+msgid "to enter service id press OK"
+msgstr "service id girmek için OK tuşlayın"
+
+#: src/scan.cpp:1676
+msgid "enter service id"
+msgstr "servis id gir"
+
+#: src/scan.cpp:1691
+msgid "to enter tsid (transport stream id) press OK"
+msgstr "TSID (transport stream id) girmek için OK tuşlayın"
+
+#: src/scan.cpp:1692
+msgid "enter tsid (transport stream id)"
+msgstr "TSID (transport stream id) gir"
+
+#: src/scan.cpp:1705
+msgid "to enter onid (original network id) press OK"
+msgstr "ONID (original network id) girmek için OK tuşlayın"
+
+#: src/scan.cpp:1706
+msgid "enter onid (original network id)"
+msgstr "ONID gir (orjinal şebeke id)"
+
+#: src/scan.cpp:1714
+msgid "no DVB"
+msgstr "DVB yok"
+
+#: src/scan.cpp:1715
+msgid "don't read PAT/PMT/SDT for this service (only use cached pids)"
+msgstr "bu servis için PAT/PMT/SDT okuma (yalnız önbellek pid'leri kullan)"
+
+#: src/scan.cpp:1721
+msgid "use sdt"
+msgstr "sdt kullan"
+
+#: src/scan.cpp:1722
+msgid ""
+"update name/provider/service type with content of the sdt (and auto remove "
+"service)"
+msgstr ""
+"isim/sağlayıcı/servis türünü sdt içeriği ile güncelle (ve servisi otomatik "
+"olarak sil)"
+
+#: src/scan.cpp:1728
+msgid "hold name"
+msgstr "ismi koru"
+
+#: src/scan.cpp:1729
+msgid "don't update the service name with content of the sdt"
+msgstr "servis ismini sdt'nin içeriği ile güncelleştirme "
+
+#: src/scan.cpp:1742
+msgid "read NIT"
+msgstr "NIT oku"
+
+#: src/scan.cpp:1743
+msgid "read tsid and onid from the nit (this can take up to 10 seconds)"
+msgstr "TSID ve ONID leri NIT ten oku (azami 10 saniye sürebilir)"
+
+#: src/scan.cpp:1752
+msgid "test values"
+msgstr "girilen değerleri test et"
+
+#: src/scan.cpp:1753
+msgid "test entered values"
+msgstr "girilen değerleri test et"
+
+#: src/scan.cpp:1763
+msgid ""
+"save data and close window (the new channel could be found in the all "
+"services list)"
+msgstr ""
+"verileri kaydet ve pencereyi kapa (yeni kanalı 'tüm servisler' listesinde "
+"bulabilirsiniz)"
+
+#: src/scan.cpp:1908
+msgid ""
+"Reading NIT failed... this transponder have no NIT..\n"
+"so you can use random values for tsid and onid or set both to 0"
+msgstr ""
+"NIT okuması hatalı... bu transponderde NIT yok..\n"
+"TSID ve ONID için rasgele değer girin veya ikisini de 0 girin"
+
+#: src/scan.cpp:1960
+msgid ""
+"No NIT Entry for current transponder values found...\n"
+"so you can use random values for tsid and onid or set both to 0"
+msgstr ""
+"Şimdiki transponderde NIT değerleri bulunamadı...\n"
+"TSID ve ONID için rasgele değer girin veya ikisini de 0 girin"
+
+#: src/scan.cpp:2072
+msgid ""
+"A transponder with the same tsid / onid but other frequency/pol/... already "
+"exist.. create a new transponder with the same data is no possible.. please "
+"do change tsid and/or onid"
+msgstr ""
+"Aynı TSID/ONID ama başka frekans ile transponder zaten mevcut.. aynı veriler "
+"ile yeni transponder oluşturulamaz.. lütfen TSID ve/veya ONID değiştirin"
+
+#: src/scan.cpp:2125
+#, c-format
+msgid ""
+"A service named '%s' with this sid/onid/tsid/namespace is already exist\n"
+"in provider '%s'.\n"
+"Should i use this service name and provider name?"
+msgstr ""
+"'%s' isimli servis bu sid/onid/tsid/namespace ile '%s' sağlayıcısında zaten "
+"mevcut.\n"
+"Bu servis ismi ile sağlayıcı isminin kullanılmasını istermisiniz?"
+
+#: src/scan.cpp:2127
+msgid "Service already exist"
+msgstr "Servis zaten mevcut"
+
+#: src/scan.cpp:2212
+msgid "show/enter values as hexadecimal"
+msgstr "değerleri onaltılık değer olarak göster/gir"
+
+#: src/scan.cpp:2218
+msgid "show/enter values as decimal"
+msgstr "değerleri ondalık değer olarak göster/gir"
+
+#: src/setup_extra.cpp:63
+msgid "Communication Setup"
+msgstr "İletişim Kurulumu"
+
+#: src/setup_extra.cpp:63
+msgid "open communication setup"
+msgstr "İletişim kurulumunu aç"
+
+#: src/setup_extra.cpp:64
+msgid "Ngrab Streaming Setup"
+msgstr "Ngrab Streaming ayarları"
+
+#: src/setup_extra.cpp:64
+msgid "open ngrab server setup"
+msgstr "ngrab server kurulumunu aç"
+
+#: src/setup_extra.cpp:72 src/software_update.cpp:29
+msgid "Software Update"
+msgstr "Yazılım Güncelleme"
+
+#: src/setup_extra.cpp:72
+msgid "open software update"
+msgstr "yazılım güncellemeyi aç"
+
+#: src/setup_extra.cpp:79
+msgid "Remote Control"
+msgstr "Uzaktan Kumanda"
+
+#: src/setup_extra.cpp:79
+msgid "open remote control setup"
+msgstr "uzaktan kumanda kurulumunu aç"
+
+#: src/setup_extra.cpp:82
+#, fuzzy
+msgid "open swapspace setup"
+msgstr "ebeveyn kurulumunu aç"
+
+#: src/setup_extra.cpp:86 src/setup_extra.cpp:434
+msgid "Factory reset"
+msgstr "Fabrika ayarlarına dönme"
+
+#: src/setup_extra.cpp:86
+msgid "all settings will set to factory defaults"
+msgstr "bütün ayarlar fabrika ayarlarına dönecek"
+
+#: src/setup_extra.cpp:87 src/setup_extra.cpp:472
+#, fuzzy
+msgid "User reset"
+msgstr "Fabrika ayarlarına dönme"
+
+#: src/setup_extra.cpp:87
+#, fuzzy
+msgid "all settings will set to user defaults"
+msgstr "bütün ayarlar fabrika ayarlarına dönecek"
+
+#: src/setup_extra.cpp:88
+#, fuzzy
+msgid "Reload setting"
+msgstr "Sistem Kurulumu"
+
+#: src/setup_extra.cpp:88
+msgid "settings will reload"
+msgstr ""
+
+#: src/setup_extra.cpp:94
+msgid "record split size (left, right)"
+msgstr "kayıt dosyası bölünme boyutu (sol, sağ)"
+
+#: src/setup_extra.cpp:112
+#, fuzzy
+msgid "Change timer offset [start] (left, right)"
+msgstr "'code rate HP' seç (sol, sağ)"
+
+#: src/setup_extra.cpp:113 src/setup_extra.cpp:114 src/setup_extra.cpp:115
+#: src/setup_extra.cpp:116 src/setup_extra.cpp:117 src/setup_extra.cpp:118
+#: src/setup_extra.cpp:119 src/setup_extra.cpp:120 src/setup_extra.cpp:121
+#: src/setup_extra.cpp:122 src/setup_extra.cpp:123
+#, c-format
+msgid "Timer offset [start] %d min"
+msgstr ""
+
+#: src/setup_extra.cpp:132
+#, fuzzy
+msgid "Change timer offset [end] (left, right)"
+msgstr "bilgi barı zaman aşımı (sol, sağ)"
+
+#: src/setup_extra.cpp:133 src/setup_extra.cpp:134 src/setup_extra.cpp:135
+#: src/setup_extra.cpp:136 src/setup_extra.cpp:137 src/setup_extra.cpp:138
+#: src/setup_extra.cpp:139 src/setup_extra.cpp:140 src/setup_extra.cpp:141
+#: src/setup_extra.cpp:142 src/setup_extra.cpp:143
+#, c-format
+msgid "Timer offset [end] %d min"
+msgstr ""
+
+#: src/setup_extra.cpp:150
+#, fuzzy
+msgid "Default action on timer end (left, right)"
+msgstr "sonlama saatini düzenle (0..9, sol, sağ)"
+
+#: src/setup_extra.cpp:152 src/setup_extra.cpp:156 src/setup_extra.cpp:157
+#: src/setup_extra.cpp:161
+#, c-format
+msgid "Action on timer end"
+msgstr ""
+
+#: src/setup_extra.cpp:152 src/timer.cpp:2202
+msgid "Nothing"
+msgstr "Hiçbir şey"
+
+#: src/setup_extra.cpp:156 src/setup_extra.cpp:161 src/timer.cpp:2203
+msgid "Standby"
+msgstr "Hazır Bekleme Durumu"
+
+#: src/setup_extra.cpp:171
+#, fuzzy
+msgid "disable AC3 recording"
+msgstr "kayıt'ı anında durdur"
+
+#: src/setup_extra.cpp:171
+msgid "don't record AC3 audio track"
+msgstr ""
+
+#: src/setup_extra.cpp:172
+#, fuzzy
+msgid "disable teletext recording"
+msgstr "Teletekst ara belleğini etkisizleştir"
+
+#: src/setup_extra.cpp:172
+msgid "don't record teletext track"
+msgstr ""
+
+#: src/setup_extra.cpp:173
+msgid "disable timestamp detection"
+msgstr ""
+
+#: src/setup_extra.cpp:173
+msgid ""
+"don't try to detect duration from DVB timestamps when replaying recordings"
+msgstr ""
+
+#: src/setup_extra.cpp:177
+msgid "Enable fast zapping"
+msgstr "Hızlı zap'ı etkinleştir"
+
+#: src/setup_extra.cpp:177
+msgid "enables faster zapping.. but with visible sync"
+msgstr ""
+"hızlı zap'ı etkinleştirir.. fakat görünebilir eşzamanlama problemi oluşur"
+
+#: src/setup_extra.cpp:178
+msgid "Use http authentification"
+msgstr "Http gerçekliliği kullan"
+
+#: src/setup_extra.cpp:178
+msgid "enables the http (user/password) authentification"
+msgstr "http gerçekliliği etkinleştirir (kullanıcı/şifre)"
+
+#: src/setup_extra.cpp:179
+msgid "Don't open serial port"
+msgstr "Serial portu açma"
+
+#: src/setup_extra.cpp:179
+msgid "don't write debug messages to /dev/tts/0"
+msgstr "dev/tts/0'a debug mesajları yazma"
+
+#: src/setup_extra.cpp:180
+msgid "Use EPG cache for Infobar"
+msgstr ""
+
+#: src/setup_extra.cpp:180
+msgid "use the EPG cache for the infobar if the EIT is unavailable"
+msgstr ""
+
+#: src/setup_extra.cpp:181
+msgid "Auto bouquet change"
+msgstr "Otomatik buket değişimi"
+
+#: src/setup_extra.cpp:181
+msgid "change into next bouquet when end of current bouquet is reached"
+msgstr "şimdiki buketin sonuna ulaşıldığında, sonraki bukete geç"
+
+#: src/setup_extra.cpp:182
+msgid "Auto reconnect cahandler"
+msgstr "'Ca Handler' e otomatik tekrar bağlan"
+
+#: src/setup_extra.cpp:182
+msgid "try to reconnect when an external cahandler connection was lost"
+msgstr "harici 'Ca handler' bağlantısı koptuğunda tekrar bağlanmaya çalış"
+
+#: src/setup_extra.cpp:187
+msgid "Enable file sharing"
+msgstr "Dosya paylaşımını (Samba) etkinleştir"
+
+#: src/setup_extra.cpp:187
+msgid "start file sharing(samba) on startup"
+msgstr "açılışta doya paylaşımını (samba) etkinleştir"
+
+#: src/setup_extra.cpp:190
+msgid "Disable teletext caching"
+msgstr "Teletekst ara belleğini etkisizleştir"
+
+#: src/setup_extra.cpp:190
+msgid "don't cache teletext pages in background"
+msgstr "teletekst sayfalarını arkaplanda ara belleğe alma"
+
+#: src/setup_extra.cpp:191
+#, fuzzy
+msgid "Disable internal teletext"
+msgstr "Teletekst ara belleğini etkisizleştir"
+
+#: src/setup_extra.cpp:191
+#, fuzzy
+msgid "use external tuxtxt plugin"
+msgstr "harici EPG eklentisini aç"
+
+#: src/setup_extra.cpp:193
+msgid "Enable Zapping History"
+msgstr "Zap tarihçesini etkinleştir"
+
+#: src/setup_extra.cpp:193
+msgid "don't care about actual mode when zapping in history list"
+msgstr "tarihçe listesinde zaplarken fiili kipi hesaba katma"
+
+#: src/setup_extra.cpp:195
+msgid "Disable Standby"
+msgstr "Hazır bekleme durumunu etkisizleştir"
+
+#: src/setup_extra.cpp:195
+msgid "Box goes directly into Deep-Standby"
+msgstr "Box hemen Derin-Hazır Bekleme Durumu'na geçer"
+
+#: src/setup_extra.cpp:200
+msgid "Enable MHW EPG"
+msgstr "MHW EPG'yi etkinleştir"
+
+#: src/setup_extra.cpp:200
+msgid ""
+"Mediahighway EPG, activate swap space when using with multiple operators"
+msgstr "MHW EPG, çoklu işleci kullanıldığında getir götür alanını etkinleştir"
+
+#: src/setup_extra.cpp:210
+msgid "Disable CoreFiles"
+msgstr "'CoreFiles'ı etkisizleştir"
+
+#: src/setup_extra.cpp:210
+msgid "don't create 'Corefiles' after an Enigma crash"
+msgstr "Enigma çöküştüğünde 'CoreFiles' oluşturma"
+
+#: src/setup_extra.cpp:216
+msgid "Disable HDD mount"
+msgstr "HDD oluşturusunu etkisizleştir"
+
+#: src/setup_extra.cpp:216
+msgid "don't mount the HDD via 'rcS'"
+msgstr "HDD yi 'rcS' vasıtasıyla oluşturma"
+
+#: src/setup_extra.cpp:224
+msgid "Enable Filemode Autoplay"
+msgstr "Dosya Kipi otomatik oynatma"
+
+#: src/setup_extra.cpp:224
+msgid "continue playing last selected movie when entering Filemode"
+msgstr "Dosya Kipine girildiğinde en son seçilen dosyayı oynat"
+
+#: src/setup_extra.cpp:233
+msgid "Show Boot-Info"
+msgstr "Önyükleyici bilgilerini göster"
+
+#: src/setup_extra.cpp:233
+msgid "Show Boot-Infos (IP, etc.)"
+msgstr "Önyükleyici bilgilerini göster (IP, vs.)"
+
+#: src/setup_extra.cpp:239
+msgid "Disable HW_Sections"
+msgstr "HW_Sections'i etkisizleştir"
+
+#: src/setup_extra.cpp:239
+msgid "don't use hardware section filtering"
+msgstr "Donanım bölüm eleyicisi kullanma"
+
+#: src/setup_extra.cpp:245
+msgid "Disable Watchdog"
+msgstr "Watchdog'i etkisizleştir"
+
+#: src/setup_extra.cpp:245
+msgid "don't use the Watchdog"
+msgstr "Watchdog kullanma"
+
+#: src/setup_extra.cpp:253
+msgid "Disable ENX-Watchdog"
+msgstr "ENX-Watchdog'u etkisizleştir"
+
+#: src/setup_extra.cpp:253
+msgid "don't use the ENX-Watchdog"
+msgstr "\"ENX-Watchdog'u kullanma"
+
+#: src/setup_extra.cpp:260
+msgid "Enable SPTS-Mode"
+msgstr "SPTS-Kipini etkinleştir"
+
+#: src/setup_extra.cpp:260
+msgid "use SPTS-Mode (enables TS-recording)"
+msgstr "SPTS-Kipi kullan (TS-kaydını etkinleştirir)"
+
+#: src/setup_extra.cpp:266
+msgid "Disable O_SYNC"
+msgstr "O_SYNC'i etkisizleştir"
+
+#: src/setup_extra.cpp:266
+msgid "The file/recording is not opened for synchronous I/O"
+msgstr "Bu dosya/kayıt eşzamanlı I/O için açılmamıştır"
+
+#: src/setup_extra.cpp:274
+msgid "New Philips driver"
+msgstr "Yeni Philips sürücüsü"
+
+#: src/setup_extra.cpp:274
+msgid "use tda80xx driver for Philips boxes"
+msgstr "Philips box'lar için tda80xx- sürücüsünü kullan"
+
+#: src/setup_extra.cpp:430
+msgid ""
+"When you do a factory reset, you will lose ALL your configuration data\n"
+"(including bouquets, services, satellite data ...)\n"
+"After completion of factory reset, your receiver will restart "
+"automatically!\n"
+"\n"
+"Really do a factory reset?"
+msgstr ""
+"Eğer fabrika ayarlarına geri dönerseniz BÜTÜN yapılandırmalarınız "
+"silinecektir\n"
+"(buketler, kanallar ve uydu ayarlari ... dahil)\n"
+"Fabrika ayarlarına geri döndükten sonra alıcı otomatik olarak yeniden "
+"açılacaktır!\n"
+"\n"
+"Fabrika ayarlarına dönmek istediğinzden eminmisiniz?"
+
+#: src/setup_extra.cpp:455
+msgid "Factory reset..."
+msgstr "Fabrika ayarlarına geri dön..."
+
+#: src/setup_extra.cpp:468
+#, fuzzy
+msgid ""
+"When you do a user reset, you will lose ALL configuration data\n"
+"(including bouquets, services, satellite data ...)\n"
+"After completion of user reset, your receiver will restart automatically!\n"
+"\n"
+"Really do a user reset?"
+msgstr ""
+"Eğer fabrika ayarlarına geri dönerseniz BÜTÜN yapılandırmalarınız "
+"silinecektir\n"
+"(buketler, kanallar ve uydu ayarlari ... dahil)\n"
+"Fabrika ayarlarına geri döndükten sonra alıcı otomatik olarak yeniden "
+"açılacaktır!\n"
+"\n"
+"Fabrika ayarlarına dönmek istediğinzden eminmisiniz?"
+
+#: src/setup_extra.cpp:492
+#, fuzzy
+msgid ""
+"Reloading Settings.\n"
+"Please wait..."
+msgstr "%s çalıştırılıyor. Lütfen bekleyin..."
+
+#: src/setup_harddisk.cpp:192
+msgid "Harddisk Setup"
+msgstr "Harddisk Kurulumu"
+
+#: src/setup_harddisk.cpp:340
+msgid "Are you SURE that you want to format this disk?\n"
+msgstr "Harddiski format etmek istediğinizden eminmisiniz?\n"
+
+#: src/setup_harddisk.cpp:341 src/setup_harddisk.cpp:351
+#: src/setup_harddisk.cpp:367 src/setup_harddisk.cpp:382
+#: src/setup_harddisk.cpp:486 src/setup_harddisk.cpp:495
+msgid "formatting harddisk..."
+msgstr "harddisk formatlanıyor..."
+
+#: src/setup_harddisk.cpp:349
+msgid ""
+"There's data on this harddisk.\n"
+"You will lose that data. Proceed?"
+msgstr ""
+"Harddiskte veri var.\n"
+"Devam ederseniz verileri kaybedersiniz. Devam edilsinmi?"
+
+#: src/setup_harddisk.cpp:366
+msgid ""
+"please wait while initializing harddisk.\n"
+"This might take some minutes.\n"
+msgstr ""
+"lütfen bekleyin harddisk parafe ediliyor.\n"
+"Bir kaç dakika zaman alabilir.\n"
+
+#: src/setup_harddisk.cpp:381
+msgid "sorry, couldn't find sfdisk utility to partition harddisk."
+msgstr "maalesef harddiski bölmek için 'sfdisk' bulunamadı."
+
+#: src/setup_harddisk.cpp:485
+msgid "creating filesystem failed."
+msgstr "dosya sistemi oluşturulamadı."
+
+#: src/setup_harddisk.cpp:494
+msgid "successfully formatted your disk!"
+msgstr "harddisk başarı ile formatlandı!"
+
+#: src/setup_harddisk.cpp:531
+msgid "(error reading information)"
+msgstr "(bilgi okunurken hata oluştu)"
+
+#: src/setup_harddisk.cpp:533
+msgid "uninitialized - format it to use!"
+msgstr "parafe edilmemiş - kullanabilmek için format yapınız!"
+
+#: src/setup_harddisk.cpp:535
+#, c-format
+msgid "in use, %d.%03d GB (~%d minutes) free"
+msgstr "kullanılan, %d.%03d GB (~%d dakika) boş"
+
+#: src/setup_harddisk.cpp:537
+msgid "initialized, but unknown filesystem"
+msgstr "parafe edilidi, ama bilinmeyen dosya sistemi"
+
+#: src/setup_harddisk.cpp:545
+msgid "The settings have been saved successfully"
+msgstr ""
+
+#: src/setup_harddisk.cpp:670
+msgid "could not unmount the filesystem... "
+msgstr "dosya sistemi kaldırılamıyor... "
+
+#: src/setup_harddisk.cpp:671 src/setup_harddisk.cpp:684
+#: src/setup_harddisk.cpp:708 src/setup_harddisk.cpp:732
+#: src/setup_harddisk.cpp:752
+msgid "check filesystem..."
+msgstr "dosya sistemini kontrol et..."
+
+#: src/setup_harddisk.cpp:683
+msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
+msgstr ""
+"maalesef ext3 dosya sistemini kontrol etmek için 'fsck.ext3' bulunamadı."
+
+#: src/setup_harddisk.cpp:707
+#, fuzzy
+msgid "sorry, couldn't find fsck.vfat utility to check the vfat filesystem."
+msgstr ""
+"maalesef ext3 dosya sistemini kontrol etmek için 'fsck.ext3' bulunamadı."
+
+#: src/setup_harddisk.cpp:731
+msgid ""
+"sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."
+msgstr ""
+"maalesef reiserfs dosya sistemini kontrol etmek için 'reiserfsck' bulunamadı."
+
+#: src/setup_harddisk.cpp:751
+msgid "not supported filesystem for check."
+msgstr "kontrol edilebilmesi için desteklenmeyen dosya sistemi."
+
+#: src/setup_lcd.cpp:55
+msgid "LC-Display Setup"
+msgstr "LC-Ekran Ayarı"
+
+#: src/setup_lcd.cpp:79
+msgid "Standby:"
+msgstr "Hazır Bekleme Durumu:"
+
+#: src/setup_lcd.cpp:87
+msgid "set LCD brightness ( left / right )"
+msgstr "LCD ekranının parlaklığını ayarla (sol/sağ)"
+
+#: src/setup_lcd.cpp:101
+msgid "set LCD brightness for Standby Mode ( left / right )"
+msgstr "LCD ekranının Hazır Bekleme Durumundaki parlaklığını ayarla (sol/sağ)"
+
+#: src/setup_keyboard.cpp:36 src/system_settings.cpp:60
+msgid "Keyboard Setup"
+msgstr "Klavye Kurulum"
+
+#: src/setup_keyboard.cpp:43
+msgid "Keyboard Mapping:"
+msgstr "Klavye Eşlemesi:"
+
+#: src/setup_keyboard.cpp:50
+msgid "select your keyboard mapping (ok)"
+msgstr "klavye eşlemesini seçiniz (ok)"
+
+#: src/setup_osd.cpp:44
+msgid "PluginOffsetActions"
+msgstr "PluginOffsetActions"
+
+#: src/setup_osd.cpp:45
+msgid "enable set the leftTop Point of the rectangle"
+msgstr "sol üst dikdörtgeninin ayarın etkinleştir"
+
+#: src/setup_osd.cpp:46
+msgid "enable set the rightBottom Point of the rectangle"
+msgstr "sağ alt dikdörtgeninin ayarını etkinleştir"
+
+#: src/setup_osd.cpp:47
+msgid "saves the current positions"
+msgstr "şimdiki konumuları hafızaya alır"
+
+#: src/setup_osd.cpp:174
+msgid ""
+"here you can center the tuxtxt rectangle...\n"
+"press red to select the left top edge\n"
+"press green to select the right bottom edge\n"
+"use the cursor keys to move the selected edges"
+msgstr ""
+"burada tuxtxt dikdörtgenini merkezlenir...\n"
+"sol üst köşeyi seçmek için kırmızyı tuşlayın\n"
+"sağ alt köşeyi seçmek için yeşili tuşlayın\n"
+"imleç yönlendirme tuşlarını kullanarak seçilen köşeyi hareket ettirin"
+
+#: src/setup_osd.cpp:195 src/setup_osd_extra.cpp:8 src/system_settings.cpp:63
+msgid "OSD Settings"
+msgstr "OSD Kurulum"
+
+#: src/setup_osd.cpp:203
+msgid "Alpha:"
+msgstr "Şeffaflık:"
+
+#: src/setup_osd.cpp:211
+msgid "change the transparency correction"
+msgstr "şeffaflık düzeltmesini değiştir"
+
+#: src/setup_osd.cpp:224
+msgid "change the brightness correction"
+msgstr "parlaklık düzeltmesini değiştir"
+
+#: src/setup_osd.cpp:230
+msgid "Contrast:"
+msgstr "Kontrast:"
+
+#: src/setup_osd.cpp:237
+msgid "change the contrast"
+msgstr "kontrastı değiştir"
+
+#: src/setup_osd.cpp:242
+msgid "Show Mainmenu like Listbox"
+msgstr "Ana menüyü liste kutusu gibi göster"
+
+#: src/setup_osd.cpp:243
+msgid "show the Mainmenu in normal listbox style"
+msgstr "Ana menüyü normal liste kutusu biçeminde göster"
+
+#: src/setup_osd.cpp:251
+msgid "Change skin"
+msgstr "Görünümü değiştir"
+
+#: src/setup_osd.cpp:257
+msgid "press ok to open skin selector"
+msgstr "Görünüm seçeneğini açmak için ok tuşlayın"
+
+#: src/setup_osd.cpp:261
+msgid "TuxText position"
+msgstr "TuxText konumu"
+
+#: src/setup_osd.cpp:262
+msgid "here you can center the Tuxtxt (builtin videotext)"
+msgstr "burada Tuxtxt'in konumu merkezlenir (dahili teletext)"
+
+#: src/setup_osd.cpp:282
+#, fuzzy
+msgid "additional settings"
+msgstr "A/V ayarlarını aç"
+
+#: src/setup_osd.cpp:288
+#, fuzzy
+msgid "open additional settings"
+msgstr "saat ayarlarını aç"
+
+#: src/setup_osd.cpp:354
+msgid ""
+"You have to restart enigma to apply the new skin\n"
+"Restart now?"
+msgstr ""
+"Yeni görünümün uygulamanması için cihazınız yeniden calıştırlması "
+"gerekmektedir.\n"
+"Şimdi yeniden calıştırlsın mı?"
+
+#: src/setup_osd.cpp:354
+msgid "Skin changed"
+msgstr "Görünüm değişti"
+
+#: src/setup_osd_extra.cpp:23
+msgid "infobar timeout (left, right)"
+msgstr "bilgi barı zaman aşımı (sol, sağ)"
+
+#: src/setup_osd_extra.cpp:24 src/setup_osd_extra.cpp:25
+#: src/setup_osd_extra.cpp:26 src/setup_osd_extra.cpp:27
+#: src/setup_osd_extra.cpp:28 src/setup_osd_extra.cpp:29
+#: src/setup_osd_extra.cpp:30 src/setup_osd_extra.cpp:31
+#: src/setup_osd_extra.cpp:32 src/setup_osd_extra.cpp:33
+#: src/setup_osd_extra.cpp:34
+#, c-format
+msgid "Infobar timeout %d sec"
+msgstr "Bilgi barı zaman aşımı %d saniye"
+
+#: src/setup_osd_extra.cpp:40
+#, fuzzy
+msgid "show infobar on service switch"
+msgstr "bilgi bar'ı veya EPG'yi göster"
+
+#: src/setup_osd_extra.cpp:40
+msgid "show infobar when switching to another service"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:41
+msgid "Serviceselector help buttons"
+msgstr "Servis seçimi yardım butonları"
+
+#: src/setup_osd_extra.cpp:41
+msgid "show colored help buttons in service selector"
+msgstr "servis seçeneğinde renkli yardım butonları göster"
+
+#: src/setup_osd_extra.cpp:43
+msgid "Show Sat position"
+msgstr "Uydu konumunu göster"
+
+#: src/setup_osd_extra.cpp:43
+msgid "show sat position in the infobar"
+msgstr "uydu konumunu bilgi barinda göster"
+
+#: src/setup_osd_extra.cpp:44
+msgid "Skip confirmations"
+msgstr "Onaylamaları atlat"
+
+#: src/setup_osd_extra.cpp:44
+msgid "enable/disable confirmations"
+msgstr "onaylama aç/kapa"
+
+#: src/setup_osd_extra.cpp:45
+msgid "Hide error windows"
+msgstr "hata pencerelerini gizle"
+
+#: src/setup_osd_extra.cpp:45
+msgid "don't show zap error messages"
+msgstr "zap hata mesajlarını gösterme"
+
+#: src/setup_osd_extra.cpp:46
+msgid "Auto show Infobar"
+msgstr "Bilgi barını otomatik göster"
+
+#: src/setup_osd_extra.cpp:46
+msgid "always show infobar when new event info is avail"
+msgstr "yeni olay bilgisi mevcut olduğunda, herzaman bilgi barını göster"
+
+#: src/setup_osd_extra.cpp:47
+msgid "Show remaining Time"
+msgstr "Kalan zamanı göster"
+
+#: src/setup_osd_extra.cpp:47
+msgid "show event remaining time in the infobar"
+msgstr "bilgi barında olayın kalan zamanını göster"
+
+#: src/setup_osd_extra.cpp:48
+msgid "Hide shortcut icons"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:48
+msgid "hide shortcut icons in menus"
+msgstr ""
+
+#: src/setup_rc.cpp:45
+msgid "Remotecontrol Setup"
+msgstr "Uzaktan kumanda ayarları"
+
+#: src/setup_rc.cpp:56
+msgid "Repeat Rate:"
+msgstr "Tekrarlama Derecesi:"
+
+#: src/setup_rc.cpp:61
+msgid "Repeat Delay:"
+msgstr "Tekrarlama Geciktirmesi:"
+
+#: src/setup_rc.cpp:69
+msgid ""
+"change remote control repeat rate\n"
+"left => less, right => more (... repeats)"
+msgstr ""
+"uzaktan kumandanın tekrarlama derecesi\n"
+"sol => azalt, sağ => çoğalt (... tekrarı)"
+
+#: src/setup_rc.cpp:76
+msgid ""
+"change remote control repeat delay\n"
+"left => shorter, right => longer (...delay)"
+msgstr ""
+"uzaktan kumandanın tekrarlama geciktirmesi\n"
+"sol => kısalt, sağ => uzat (...geciktirme)"
+
+#: src/setup_rc.cpp:86
+msgid "select your favourite RC style (ok)"
+msgstr "favori uzaktan kumanda biçemini seçiniz (ok)"
+
+#: src/setup_rc.cpp:108
+msgid "Next Char Timeout:"
+msgstr "Sonraki Harfe Zaman Aşımı:"
+
+#: src/setup_rc.cpp:117
+msgid "cursor to next char timeout(msek) in textinputfields"
+msgstr "metin giriş alanlarında imleçin sonraki harfe zaman aşımı (msan)"
+
+#: src/setup_rfmod.cpp:27
+msgid "UHF-Modulator Setup"
+msgstr "UHF-Modulatör kurulumu"
+
+#: src/setup_rfmod.cpp:34
+msgid "UHF Modulator on"
+msgstr "UHF Modulatör açık"
+
+#: src/setup_rfmod.cpp:37
+msgid "enable UHF Modulator"
+msgstr "UHF Modulatör'ü etkinleştir"
+
+#: src/setup_rfmod.cpp:43 src/setup_rfmod.cpp:165
+msgid "Test Pattern"
+msgstr "Test Örneği"
+
+#: src/setup_rfmod.cpp:46
+msgid "enable test pattern"
+msgstr "test örneğini etkinleştir"
+
+#: src/setup_rfmod.cpp:53
+msgid "Sound enable"
+msgstr "Sesi etkinleştir"
+
+#: src/setup_rfmod.cpp:56
+msgid "enable Sound"
+msgstr "sesi etkinleştir"
+
+#: src/setup_rfmod.cpp:63
+msgid "Sound Subcarrier:"
+msgstr "Ses Alt Kanalı:"
+
+#: src/setup_rfmod.cpp:75
+msgid "4.5 MHz"
+msgstr "4.5 MHz"
+
+#: src/setup_rfmod.cpp:76
+msgid "5.5 MHz"
+msgstr "5.5 MHz"
+
+#: src/setup_rfmod.cpp:77
+msgid "6.0 MHz"
+msgstr "6.0 MHz"
+
+#: src/setup_rfmod.cpp:78
+msgid "6.5 MHz"
+msgstr "6.5 MHz"
+
+#: src/setup_rfmod.cpp:88
+msgid "change sound subcarrier frequency"
+msgstr "ses alt kanalı frekansını değiştir"
+
+#: src/setup_rfmod.cpp:92
+msgid "Channel Nr.:"
+msgstr "Kanal No:"
+
+#: src/setup_rfmod.cpp:113
+msgid "change channel"
+msgstr "kanal değiştir"
+
+#: src/setup_rfmod.cpp:117
+msgid "Fine Tune:"
+msgstr "İnce Ayar:"
+
+#: src/setup_rfmod.cpp:140
+msgid "250Khz steps"
+msgstr "250Khz adım"
+
+#: src/setup_rfmod.cpp:149
+msgid "save settings and leave rf setup"
+msgstr "ayarları hafizaya al ve RF kurulumundan çık"
+
+#: src/setup_rfmod.cpp:165
+msgid "if you can read this your rfmod will not work."
+msgstr "eğer bunu okuyabiliyorsanız rfmod calışmayacaktır."
+
+#: src/setup_timezone.cpp:26
+msgid "Time Zone Setup"
+msgstr "Saat Dilimi Kurulumu"
+
+#: src/setup_timezone.cpp:35
+msgid "Time Zone:"
+msgstr "Saat Dilimi:"
+
+#: src/setup_timezone.cpp:40
+msgid "select your time zone (ok)"
+msgstr "saat dilimi seç (ok)"
+
+#: src/setup_timezone.cpp:95
+msgid ""
+"You have to restart enigma to apply the new Timezone\n"
+"Restart now?"
+msgstr ""
+"Yeni saat diliminin etkin olması için cihazı yeniden çalıştırılması "
+"gerekmektedir.\n"
+"Yeniden çalıştırılsın mı?"
+
+#: src/setup_timezone.cpp:95
+msgid "Timezone changed"
+msgstr "Saat Dilimi değişti"
+
+#: src/setupengrab.cpp:29
+msgid "Ngrab Server"
+msgstr "Ngrab Server"
+
+#: src/setupengrab.cpp:53
+msgid "enter IP Adress of the Ngrab Server (0..9, left, right)"
+msgstr "Ngrab server için IP adresini gir (0..9,sol,sağ)"
+
+#: src/setupengrab.cpp:65
+msgid "enter ngrab server port (standard is 4000)"
+msgstr "Ngrab server portunu gir (standart 4000)"
+
+#: src/setupengrab.cpp:76
+msgid "enter MAC address of server (for wake on lan)"
+msgstr "server'ın MAC adresini gir (LAN da uyanma için)"
+
+#: src/setupengrab.cpp:95
+msgid "detect MAC Adress"
+msgstr "MAC adresi algıla"
+
+#: src/setupengrab.cpp:96
+msgid "try to autodetect server MAC address"
+msgstr "MAC adresini otomatik algılamayı dene"
+
+#: src/setupengrab.cpp:185
+msgid "Please check your NGrab Server or the IP"
+msgstr "NGrab server veya IP adresini kontrol ediniz"
+
+#: src/setupengrab.cpp:186
+msgid "HW Address(MAC) detection failed"
+msgstr "HW Adresi(MAC) algılanamadı"
+
+#: src/setupnetwork.cpp:390
+msgid "Communication setup"
+msgstr "İletişim kurulumu"
+
+#: src/setupnetwork.cpp:461
+msgid "enter IP Address of the box (0..9, left, right)"
+msgstr "box'un IP adresini gir (0..9,sol,sağ)"
+
+#: src/setupnetwork.cpp:469
+msgid "get Network data from a DHCP Server in the local Network"
+msgstr "ağ verilerini yerel ağdaki DHCP Server'dan al"
+
+#: src/setupnetwork.cpp:482
+msgid "enter netmask of your network (0..9, left, right)"
+msgstr "ağ ayarının netmask'ını gir (0..9, sol, sağ)"
+
+#: src/setupnetwork.cpp:496
+msgid "press ok to change connection type"
+msgstr "bağlanti türünü değiştirmek için ok tuşlayın"
+
+#: src/setupnetwork.cpp:502 src/setupnetwork.cpp:510
+msgid "LAN"
+msgstr "LAN"
+
+#: src/setupnetwork.cpp:502 src/setupnetwork.cpp:510
+msgid "communicate to Local Area Network"
+msgstr "LAN ile iletişim kur"
+
+#: src/setupnetwork.cpp:504 src/setupnetwork.cpp:511
+msgid "WAN(PPPoE)"
+msgstr "WAN(PPPoE)"
+
+#: src/setupnetwork.cpp:504 src/setupnetwork.cpp:511
+msgid "communicate to the Internet via DSL"
+msgstr "DSL ile internete bağlanma"
+
+#: src/setupnetwork.cpp:520
+msgid "T-Online User press ok here"
+msgstr "T-Online Kullanıcı iseniz, burada ok tuşlayın"
+
+#: src/setupnetwork.cpp:534
+msgid "enter your domain name server (0..9, left, right)"
+msgstr "DNS gir (0..9, sol, sağ)"
+
+#: src/setupnetwork.cpp:540
+msgid "Login:"
+msgstr "Kullanıcı:"
+
+#: src/setupnetwork.cpp:552
+msgid "press ok to edit your provider login name"
+msgstr "sağlayıcının kullanıcı adını düzenlemek için ok tuşlayın"
+
+#: src/setupnetwork.cpp:569
+msgid "enter your gateways IP Address (0..9, left, right)"
+msgstr "gateway'in IP adresini gir (0..9, sol, sağ)"
+
+#: src/setupnetwork.cpp:575
+msgid "Password:"
+msgstr "Şifre:"
+
+#: src/setupnetwork.cpp:584
+msgid "press ok to edit your provider password"
+msgstr "sağlayıcının şifresini düzenlemek için ok tuşlayın"
+
+#: src/setupnetwork.cpp:590
+msgid "Enable Network"
+msgstr "Ağı etkinleştir"
+
+#: src/setupnetwork.cpp:593
+msgid "enable/disable network (ok)"
+msgstr "ağ ayarlarını aç/kapa (ok)"
+
+#: src/setupnetwork.cpp:604
+msgid "enter port of the Web Interface (0..9, left, right)"
+msgstr "Web Arayüz'ünün portunu gir (0..9,sol,sağ)"
+
+#: src/setupnetwork.cpp:615
+msgid "reject incoming connections on port 80"
+msgstr "port 80'den gelen bağlantıyı reddet"
+
+#: src/setupnetwork.cpp:629
+msgid "reject incoming connections on port 23"
+msgstr "port 23'den gelen bağlantıyı reddet"
+
+#: src/setupnetwork.cpp:636
+msgid "reject incoming connections on ports 137,138,139"
+msgstr "137,138,139 portlarından gelen bağlantıyı reddet"
+
+#: src/setupnetwork.cpp:643
+msgid "reject incoming connections on ports 21"
+msgstr "port 21'den gelen bağlantıyı reddet"
+
+#: src/setupnetwork.cpp:661
+msgid "mounts"
+msgstr "oluşturular"
+
+#: src/setupnetwork.cpp:666
+msgid "here you can setup nfs/cifs mounts"
+msgstr "nfs/cifs oluşturma kurulumunu burada yapabilirsiniz"
+
+#: src/setupnetwork.cpp:993
+msgid "enter IP Address (0..9, left, right)"
+msgstr "IP adresini girin (0..9,sol,sağ)"
+
+#: src/setupnetwork.cpp:1000
+msgid "press ok to change mount type"
+msgstr "oluşturma türü değiştirmek için ok tuşlayın"
+
+#: src/setupnetwork.cpp:1005
+msgid "Samba File System(to mount share from another Dreambox)"
+msgstr "Samba Dosya Sistemi (başka Dreambox'tan paylaşım oluşturmak için)"
+
+#: src/setupnetwork.cpp:1026
+msgid "enter name of the local mount point with trailing slash"
+msgstr "yerel oluşturma noktasının adını (bölü işareti kullanarak) yazın"
+
+#: src/setupnetwork.cpp:1035
+msgid "press ok to change mount options"
+msgstr "oluşturma seçeneklerini değiştirmek için ok tuşlayın"
+
+#: src/setupnetwork.cpp:1061
+msgid "press ok to edit extra options"
+msgstr "ekstra seçenek düzenlemek için ok tuşlayın"
+
+#: src/setupnetwork.cpp:1071
+msgid "press ok to edit username"
+msgstr "kullanıcı ismini düzenlemek için ok tuşlayın"
+
+#: src/setupnetwork.cpp:1081
+msgid "press ok to edit password"
+msgstr "şifre düzenlemek için ok tuşlayın"
+
+#: src/setupnetwork.cpp:1086
+msgid "enable/disable automount (ok)"
+msgstr "otomatik oluşturma aç/kapat (ok)"
+
+#: src/setupnetwork.cpp:1095
+msgid "go to previous share"
+msgstr "önceki paylaşıma git"
+
+#: src/setupnetwork.cpp:1103
+msgid "press ok to unmount this share"
+msgstr "bu paylaşımı kaldırmak için ok tuşlayın"
+
+#: src/setupnetwork.cpp:1113
+msgid "press ok to mount this share"
+msgstr "bu paylaşımı oluşturmak için ok tuşlayıın"
+
+#: src/setupnetwork.cpp:1123
+msgid "press ok to save this share"
+msgstr "bu paylaşımı hafızaya almak için ok tuşlayıın"
+
+#: src/setupnetwork.cpp:1134
+msgid "go to next share"
+msgstr "sonraki paylaşıma git"
+
+#: src/setupnetwork.cpp:1185
+msgid "enter the name of the share without trailing slash"
+msgstr "paylaşımın adını (bölme işareti kullanmadan) yazın"
+
+#: src/setupnetwork.cpp:1188
+msgid "enter the name of the share (//DreamBOX/harddisk)"
+msgstr "paylaşımın adını yazın (//DreamBOX/harddisk)"
+
+#: src/setupnetwork.cpp:1307 src/setupnetwork.cpp:1345
+msgid "invalid or missing dir or local dir"
+msgstr "geçersiz veya eksik dizin veya yerel dizin"
+
+#: src/setupnetwork.cpp:1325
+msgid "NFS/CIFS-Entry stored. Further entry?\n"
+msgstr "NFS/CIFS-Öğe hafızaya alındı. Başka öğe?\n"
+
+#: src/setupnetwork.cpp:1326
+msgid "NFS/CIFS-Setup..."
+msgstr "NFS/CIFS-düzeni..."
+
+#: src/setupnetwork.cpp:1352
+msgid "NFS/CIFS mount error already mounted"
+msgstr "NFS/CIFS oluşturma hatası, zaten oluşturulmuş"
+
+#: src/setupvideo.cpp:72 src/setupvideo.cpp:284 src/system_settings.cpp:47
+msgid "A/V Settings"
+msgstr "A/V Ayarları"
+
+#: src/setupvideo.cpp:77
+#, fuzzy
+msgid "Video Format:"
+msgstr "Ekran boyutu:"
+
+#: src/setupvideo.cpp:87
+msgid "576p-PAL"
+msgstr ""
+
+#: src/setupvideo.cpp:88
+msgid "576p-NTSC"
+msgstr ""
+
+#: src/setupvideo.cpp:89
+msgid "720p50"
+msgstr ""
+
+#: src/setupvideo.cpp:90
+msgid "720p60"
+msgstr ""
+
+#: src/setupvideo.cpp:91
+msgid "1080i50"
+msgstr ""
+
+#: src/setupvideo.cpp:92
+msgid "1080i60"
+msgstr ""
+
+#: src/setupvideo.cpp:95
+#, fuzzy
+msgid "choose video format ( left, right )"
+msgstr "renk format seçeneği (sol, sağ)"
+
+#: src/setupvideo.cpp:101
+msgid "Color Format:"
+msgstr "Renk Formatı:"
+
+#: src/setupvideo.cpp:111
+msgid "CVBS"
+msgstr "CVBS"
+
+#: src/setupvideo.cpp:112
+msgid "RGB"
+msgstr "RGB"
+
+#: src/setupvideo.cpp:113
+msgid "YPbPr"
+msgstr "YPbPr"
+
+#: src/setupvideo.cpp:120
+msgid "choose color format ( left, right )"
+msgstr "renk format seçeneği (sol, sağ)"
+
+#: src/setupvideo.cpp:124
+msgid "Aspect Ratio:"
+msgstr "Görünüm Oranı:"
+
+#: src/setupvideo.cpp:134
+msgid "choose aspect ratio ( left, right )"
+msgstr "görünüm oranı seçeneği (sol, sağ)"
+
+#: src/setupvideo.cpp:135
+msgid "4:3 letterbox"
+msgstr "4:3 letterbox"
+
+#: src/setupvideo.cpp:136
+msgid "4:3 panscan"
+msgstr "4:3 panscan"
+
+#: src/setupvideo.cpp:137
+msgid "16:9"
+msgstr "16:9"
+
+#: src/setupvideo.cpp:140
+msgid "always 16:9"
+msgstr "daima 16:9"
+
+#: src/setupvideo.cpp:147 src/setupvideo.cpp:457
+msgid "TV System:"
+msgstr "TV Sistemi:"
+
+#: src/setupvideo.cpp:170 src/setupvideo.cpp:481
+msgid "choose TV system ( left, right )"
+msgstr "TV sistem seçeneği (sol, sağ)"
+
+#: src/setupvideo.cpp:190
+msgid "Disable WSS on 4:3"
+msgstr "4:3 de WSS'i etkisizleştir"
+
+#: src/setupvideo.cpp:191
+msgid "don't send WSS signal when A-ratio is 4:3"
+msgstr "A-orani 4:3 ise WSS sinyali gönderme"
+
+#: src/setupvideo.cpp:198
+msgid "AC3 default output"
+msgstr "AC3 varsayılan çıkış"
+
+#: src/setupvideo.cpp:201
+msgid "enable/disable ac3 default output (ok)"
+msgstr "ac3 varsayılan çıkış aç/kapa (ok)"
+
+#: src/setupvideo.cpp:207
+msgid "Auto VCR switching"
+msgstr "Otomatik VCR anahtarı"
+
+#: src/setupvideo.cpp:210
+msgid "auto switch to VCR connector"
+msgstr "VCR konnektörü için otomatik anahtar"
+
+#: src/setupvideo.cpp:226
+msgid "test"
+msgstr "test"
+
+#: src/setupvideo.cpp:231
+msgid "show testpicture"
+msgstr "test-resmini göster"
+
+#: src/setupvideo.cpp:283
+msgid "Yes to restart GUI for new video setting."
+msgstr ""
+
+#: src/setupvideo.cpp:452
+msgid "TV System Wizard"
+msgstr "TV Sistem Sihirbazı"
+
+#: src/software_update.cpp:38
+msgid "Internet Update"
+msgstr "Internet Güncelleme"
+
+#: src/software_update.cpp:38
+msgid "open internet update"
+msgstr "internet güncellemeyi aç"
+
+#: src/software_update.cpp:39
+msgid "Manual Update"
+msgstr "El ile Güncelleme"
+
+#: src/software_update.cpp:39
+msgid "open manual update"
+msgstr "el ile güncellemeyi aç"
+
+#: src/software_update.cpp:41
+msgid "Expert Flash Save/Restore"
+msgstr "Uzman Flash Hafızaya alma/Geri yükleme"
+
+#: src/software_update.cpp:41
+msgid "open expert flash tool"
+msgstr "uzman flash tool aç"
+
+#: src/software_update.cpp:63
+#, fuzzy
+msgid ""
+"Upload your Image via FTP or Samba to the '/tmp' folder.Then rename it to "
+"'flash_img_kernel_root' and press ok.In the upcomming list select 'manual "
+"update' and follow the instructions."
+msgstr ""
+"İmageni FTP veya Samba yolu ile '/tmp' klasörüne yükle. Sonra ismini 'root."
+"cramfs' olarak yeniden adlandır ve OK'e tuşla. Gelecek listeden 'el ile "
+"güncelleme' yi seçerek talimatları uygula."
+
+#: src/software_update.cpp:65
+msgid "Manual update"
+msgstr "El ile güncelleştirme"
+
+#: src/sselect.cpp:55
+msgid "EPG Style Selector"
+msgstr "EPG Biçem Seçeneği"
+
+#: src/sselect.cpp:56
+msgid "open the EPG with selected style"
+msgstr "seçilen biçem ile EPG'yi aç"
+
+#: src/sselect.cpp:63
+msgid "EPG Style"
+msgstr "EPG Biçemi"
+
+#: src/sselect.cpp:78
+msgid "Channel EPG"
+msgstr "Kanal EPG'si"
+
+#: src/sselect.cpp:78
+msgid "open EPG for selected Channel"
+msgstr "seçilen kanal için EPG'yi aç"
+
+#: src/sselect.cpp:79
+msgid "Multi EPG"
+msgstr "Çoklu EPG"
+
+#: src/sselect.cpp:79
+msgid "open EPG for next five channels"
+msgstr "bir sonraki ilk beş kanal için EPG'yi aç"
+
+#: src/sselect.cpp:80
+msgid "Search event in EPG cache"
+msgstr ""
+
+#: src/sselect.cpp:86
+msgid "External EPG"
+msgstr "Harici EPG"
+
+#: src/sselect.cpp:86
+msgid "open external plugin EPG"
+msgstr "harici EPG eklentisini aç"
+
+#: src/sselect.cpp:133
+msgid "service selector"
+msgstr "servis seçimi"
+
+#: src/sselect.cpp:134
+msgid "switch to next bouquet"
+msgstr "sonraki bukete geç"
+
+#: src/sselect.cpp:135
+msgid "switch to previous bouquet"
+msgstr "önceki bukete geç"
+
+#: src/sselect.cpp:136
+msgid "go up a directory"
+msgstr "bir üst dizine çık"
+
+#: src/sselect.cpp:137
+msgid "shows the EPG selector for the highlighted channel"
+msgstr "seçilen kanalın EPG'sini gösterir"
+
+#: src/sselect.cpp:138
+msgid "show service selector menu"
+msgstr "servis seçimi menüsünü göster"
+
+#: src/sselect.cpp:140
+msgid "add service to a specific bouquet"
+msgstr "servisi belirli bukete ekle"
+
+#: src/sselect.cpp:144
+msgid "toggle between classic and multi column style"
+msgstr "klasik ve çoklu kolon biçemi arasında değiştir"
+
+#: src/sselect.cpp:145 src/sselect.cpp:1722 src/sselect.cpp:1732
+msgid "toggle focus between service and bouquet list (in combi column style)"
+msgstr ""
+"servis ve buket listesi arasında odaklamayı değiştir (birleştirilmiş kolon "
+"biçeminde)"
+
+#: src/sselect.cpp:146
+msgid "go to the prev Marker if exist.. else goto first service"
+msgstr "mevcut ise önceki işaret'e git.. değil ise ilk servise git"
+
+#: src/sselect.cpp:147
+msgid "go to the next Marker if exist.. else goto last service"
+msgstr "mevcut ise sonraki işaret'e git.. değil ise son servise git"
+
+#: src/sselect.cpp:149
+msgid "show all services"
+msgstr "bütün servisleri göster"
+
+#: src/sselect.cpp:150
+msgid "show satellite list"
+msgstr "uydu listesini göster"
+
+#: src/sselect.cpp:151
+msgid "show provider list"
+msgstr "sağlayıcı listesini göster"
+
+#: src/sselect.cpp:152
+msgid "show bouquet list"
+msgstr "buket listesini göster"
+
+#: src/sselect.cpp:154
+msgid "delete selected entry"
+msgstr "seçilen öğeyi sil"
+
+#: src/sselect.cpp:155
+msgid "mark selected entry for move"
+msgstr "seçilen öğeyi hareket ettirmek için işaretleyin"
+
+#: src/sselect.cpp:156
+msgid "rename selected entry"
+msgstr "seçilen öğeyi yeniden adlandır"
+
+#: src/sselect.cpp:157
+msgid "create new marker entry"
+msgstr "yeni işaretleyici öğe oluştur"
+
+#: src/sselect.cpp:368
+msgid "[GO UP]"
+msgstr "[YUKARI ÇIK]"
+
+#: src/sselect.cpp:370
+msgid "(removed service)"
+msgstr "(silinmiş servis)"
+
+#: src/sselect.cpp:460
+msgid "mark"
+msgstr "işaret"
+
+#: src/sselect.cpp:462
+msgid "marker"
+msgstr "işaretleyici"
+
+#: src/sselect.cpp:472
+msgid "Satellites"
+msgstr "Uydular"
+
+#: src/sselect.cpp:475
+msgid "Providers"
+msgstr "Sağlayıcılar"
+
+#: src/sselect.cpp:480 src/sselect.cpp:2197
+msgid "Root"
+msgstr "Ana Dizin"
+
+#: src/sselect.cpp:481
+msgid "Movies"
+msgstr "Filmler"
+
+#: src/sselect.cpp:995
+msgid "Select No or press Abort to lock/unlock the complete directory"
+msgstr "Hayır seçiniz veya İptal tuşlayarak tüm dizini kilitle/aç"
+
+#: src/sselect.cpp:995
+msgid "Enter Directory"
+msgstr "Dizin'e Gir"
+
+#: src/sselect.cpp:1712
+#, fuzzy
+msgid "toggle between now and next epg entries in single column list"
+msgstr ""
+"servis ve buket listesi arasında odaklamayı değiştir (birleştirilmiş kolon "
+"biçeminde)"
+
+#: src/sselect.cpp:2198
+#, fuzzy
+msgid "Select"
+msgstr "LNB seçeneği"
+
+#: src/sselect.cpp:2199
+#, fuzzy
+msgid "New Directory"
+msgstr "Dizin'e Gir"
+
+#: src/sselect.cpp:2200 src/sselect.cpp:2239
+#, fuzzy
+msgid "Delete"
+msgstr "sil"
+
+#: src/sselect.cpp:2216
+#, fuzzy
+msgid "Enter name of new directory:"
+msgstr "Yeni buket için isim girin:"
+
+#: src/sselect.cpp:2217
+#, fuzzy
+msgid "Create Directory"
+msgstr "Dizin'e Gir"
+
+#: src/sselect.cpp:2226
+#, fuzzy
+msgid "Error creating directory"
+msgstr "bir üst dizine çık"
+
+#: src/streaminfo.cpp:166
+msgid "album"
+msgstr "albüm"
+
+#: src/streaminfo.cpp:168
+msgid "title"
+msgstr "isim"
+
+#: src/streaminfo.cpp:170
+msgid "artist"
+msgstr "sanatçı"
+
+#: src/streaminfo.cpp:172
+msgid "genre"
+msgstr "tür"
+
+#: src/streaminfo.cpp:174
+msgid "year"
+msgstr "yıl"
+
+#: src/streaminfo.cpp:176
+msgid "composer"
+msgstr "besteci"
+
+#: src/streaminfo.cpp:178
+msgid "track"
+msgstr "şarkı"
+
+#: src/streaminfo.cpp:180
+msgid "length"
+msgstr "süre"
+
+#: src/streaminfo.cpp:401
+msgid "Video format:"
+msgstr "Ekran boyutu:"
+
+#: src/streaminfo.cpp:485
+msgid "supported coding systems:"
+msgstr "desteklenen şifre sistemleri:"
+
+#: src/streaminfo.cpp:525
+msgid "Systems used in service:"
+msgstr "Servis'te kullanılan şifre sistemleri:"
+
+#: src/streaminfo.cpp:566
+msgid "Record mode - read manual"
+msgstr "Kayıt kipi - el kitabını okuyunuz"
+
+#: src/streaminfo.cpp:676
+msgid "Service information (right)"
+msgstr "Servis bilgisi (sağ)"
+
+#: src/streaminfo.cpp:677
+msgid "Scrambled system information (left, right)"
+msgstr "Şifre sistemi bilgisi (sol, sağ)"
+
+#: src/streaminfo.cpp:678
+msgid "Transponder information (left)"
+msgstr "Transponder bilgisi (sol)"
+
+#: src/swapmanager.cpp:92 src/swapmanager.cpp:93 src/swapmanager.cpp:94
+#: src/swapmanager.cpp:95 src/swapmanager.cpp:96 src/swapmanager.cpp:97
+#: src/swapmanager.cpp:98 src/swapmanager.cpp:99 src/swapmanager.cpp:100
+#: src/swapmanager.cpp:232
+#, fuzzy, c-format
+msgid "Filesize: %d MB"
+msgstr ""
+"\n"
+"Dosya boyutu: %d MB"
+
+#: src/swapmanager.cpp:246
+msgid "Not found"
+msgstr ""
+
+#: src/swapmanager.cpp:247 src/swapmanager.cpp:256
+msgid "Inactive"
+msgstr ""
+
+#: src/swapmanager.cpp:255 src/swapmanager.cpp:264
+msgid "Found"
+msgstr ""
+
+#: src/swapmanager.cpp:265
+#, fuzzy
+msgid "Active"
+msgstr "Canlı"
+
+#: src/swapmanager.cpp:268 src/swapmanager.cpp:338
+#, c-format
+msgid "Swap-File: %s"
+msgstr ""
+
+#: src/swapmanager.cpp:269
+#, c-format
+msgid "Swap-Status: %s"
+msgstr ""
+
+#: src/swapmanager.cpp:299
+msgid ""
+"The swapfile will now be created. This may take some time depending on the "
+"size of your swapfile"
+msgstr ""
+
+#: src/swapmanager.cpp:334
+msgid "The swapfile has been created!"
+msgstr ""
+
+#: src/swapmanager.cpp:344
+#, c-format
+msgid "There has been an error during creation!"
+msgstr ""
+
+#: src/swapmanager.cpp:370
+#, fuzzy, c-format
+msgid "Error during activation!"
+msgstr "(bilgi okunurken hata oluştu)"
+
+#: src/swapmanager.cpp:390
+#, fuzzy, c-format
+msgid "Error during inactivation!"
+msgstr "(bilgi okunurken hata oluştu)"
+
+#: src/swapmanager.cpp:400
+msgid "Swapfile has been deleted!"
+msgstr ""
+
+#: src/swapmanager.cpp:406
+#, c-format
+msgid "File has not been deleted due to an error!"
+msgstr ""
+
+#: src/timer.cpp:288 src/timer.cpp:2159
+msgid "Timerlist"
+msgstr "Zamanlayıcı Listesi"
+
+#: src/timer.cpp:1587
+msgid ""
+"You would delete the running event..\n"
+"this stops the timer mode (recording)!"
+msgstr ""
+"Yürürlükte olan olayı siliyorsunuz...\n"
+"bu zamanlayıcı kipini durdurur (kayıtı)!"
+
+#: src/timer.cpp:1588
+msgid "Delete the event from the timer list"
+msgstr "Bu olayı Zamanlayıcı Listesinden sil"
+
+#: src/timer.cpp:1589
+msgid "Really delete this event?"
+msgstr "Bu olayı gerçekten silmek istiyormusunuz?"
+
+#: src/timer.cpp:1593
+msgid ""
+"You would update the running event.. \n"
+"this stops the timer mode (recording)!"
+msgstr ""
+"Yürürlükte olan olayı güncelleştiriyorsunuz...\n"
+"bu zamanlayıcı kipini durdurur (kayıtı)!"
+
+#: src/timer.cpp:1594
+msgid "Update event in timer list"
+msgstr "Zamanlayıcı Listesindeki olayı güncelleştir"
+
+#: src/timer.cpp:1595 src/timer.cpp:2559
+msgid "Really update this event?"
+msgstr "Bu olayı gerçekten güncelleştirmek istiyormusunuz?"
+
+#: src/timer.cpp:1740
+msgid "This event is already in the timerlist."
+msgstr "Bu olay zaten Zamanlayıcı Listesinde mevcut."
+
+#: src/timer.cpp:1741 src/timer.cpp:1786
+msgid "Add event to timerlist"
+msgstr "Zamanlayıcı Listesine olayı ekle"
+
+#: src/timer.cpp:1778
+msgid "The Endtime overlaps with another event in the timerlist"
+msgstr "Sonlanma saati Zamanlayıcı Listesine'ki başka bir olay ile çakışıyor"
+
+#: src/timer.cpp:1778
+msgid "Set Stop Time"
+msgstr "Sonlanma Saatini ayarla"
+
+#: src/timer.cpp:1784
+msgid ""
+"This event cannot added to the timerlist.\n"
+"The event overlaps with another event in the timerlist\n"
+"Please check the timerlist manually."
+msgstr ""
+"Bu olay Zamanlayıcı Listesine alınamıyor.\n"
+"Bu olay Zamanlayıcı Listesine'ki başka bir olay ile çakışıyor\n"
+"Lütfen el ile Zamanlayıcı Listesini kontrol edin."
+
+#: src/timer.cpp:1861
+msgid "timerView"
+msgstr "Zamanlayıcı Görünümü"
+
+#: src/timer.cpp:1862
+msgid "add new event to Timerlist"
+msgstr "Zamanlayıcı Listesine yeni olay ekle"
+
+#: src/timer.cpp:1863
+msgid "remove this entry from timer list"
+msgstr "bu öğeyi zamanlayıcı listesinden sil"
+
+#: src/timer.cpp:2066
+msgid "Timer list"
+msgstr "Zamanlayıcı listesi"
+
+#: src/timer.cpp:2152 src/timer.cpp:2154
+#, fuzzy, c-format
+msgid "free space"
+msgstr "önceki sayfa"
+
+#: src/timer.cpp:2170
+msgid "Timer Edit View"
+msgstr "Zamanlayıcı Düzenleme Görünümü"
+
+#: src/timer.cpp:2171
+msgid "increase the event begin time in 1 minute steps"
+msgstr "olay başlama saatini 1 dakika'lık adım ile artır"
+
+#: src/timer.cpp:2172
+msgid "decrease the event begin time in 1 minute steps"
+msgstr "olay başlama saatini 1 dakika'lık adım ile azalt"
+
+#: src/timer.cpp:2173
+msgid "increase the event end time in 1 minute steps"
+msgstr "olay sonlama saatini 1 dakika'lık adım ile artır"
+
+#: src/timer.cpp:2174
+msgid "decrease the event end time in 1 minute steps"
+msgstr "olay sonlama saatini 1 dakika'lık adım ile azalt"
+
+#: src/timer.cpp:2183
+msgid "January"
+msgstr "Ocak"
+
+#: src/timer.cpp:2183
+msgid "February"
+msgstr "Şubat"
+
+#: src/timer.cpp:2183
+msgid "March"
+msgstr "Mart"
+
+#: src/timer.cpp:2184
+msgid "April"
+msgstr "Nisan"
+
+#: src/timer.cpp:2184
+msgid "May"
+msgstr "Mayıs"
+
+#: src/timer.cpp:2184
+msgid "June"
+msgstr "Haziran"
+
+#: src/timer.cpp:2184
+msgid "July"
+msgstr "Temmuz"
+
+#: src/timer.cpp:2185
+msgid "August"
+msgstr "Ağustos"
+
+#: src/timer.cpp:2185
+msgid "September"
+msgstr "Eylül"
+
+#: src/timer.cpp:2185
+msgid "October"
+msgstr "Ekim"
+
+#: src/timer.cpp:2186
+msgid "November"
+msgstr "Kasım"
+
+#: src/timer.cpp:2186
+msgid "December"
+msgstr "Aralık"
+
+#: src/timer.cpp:2202
+msgid "do nothing"
+msgstr "hiçbir şey yapma"
+
+#: src/timer.cpp:2203
+msgid "put box into standby"
+msgstr "dreambox'u hazır bekleme durumuna getir"
+
+#: src/timer.cpp:2208
+#, fuzzy
+msgid "shutdown the box"
+msgstr "tam kapatma"
+
+#: src/timer.cpp:2210
+msgid "put box into deep standby"
+msgstr "dreambox'u derin hazır bekleme durumuna getir"
+
+#: src/timer.cpp:2310
+msgid "record DVR"
+msgstr "DVR kayıt"
+
+#: src/timer.cpp:2314
+msgid "Ngrab"
+msgstr "Ngrab"
+
+#: src/timer.cpp:2320
+msgid "Record VCR"
+msgstr "VCR kayıt"
+
+#: src/timer.cpp:2411
+msgid "unknown service"
+msgstr "bilinmeyen servis"
+
+#: src/timer.cpp:2557
+msgid ""
+"The new endtime is before now time!\n"
+"This stops the running timer(recording)\n"
+msgstr ""
+"Yeni sonlama saati şimdiki saatten önce!\n"
+"Bu yürülükteki zamanlayıcıyı (kayıtı) durdurur\n"
+
+#: src/timer.cpp:2563 src/timer.cpp:2575 src/timer.cpp:2585 src/timer.cpp:2603
+msgid "Update event in timerlist"
+msgstr "Zamanlayıcı listesindeki olayları güncelle"
+
+#: src/timer.cpp:2574
+msgid "New endtime are now adjusted"
+msgstr "Yeni sonlama saati şimdi ayarlandı"
+
+#: src/timer.cpp:2584
+msgid "The event has already finished... you can not change endtime!"
+msgstr "Bu olay tamamlandı... sonlama saatini değiştiremezsiniz!"
+
+#: src/timer.cpp:2603
+msgid ""
+"Invalid begin or end time.!\n"
+"Please check time and date"
+msgstr ""
+"Geçersiz başlama veya sonlama saati!\n"
+"Lütfen saati ve tarihi kontrol edin"
+
+#: src/timer.cpp:2773
+msgid ""
+"Sorry, you can not add a time shifted service manually to the timer.\n"
+"Please close the Timer and use the EPG of the service you wish to add!"
+msgstr ""
+"Maalesef bu zaman kaydırmalı servisi el ile zamanlayıcıya ekleyemezsiniz.\n"
+"Lütfen zamanlayıcı ayarını kapatın ve istediğiniz servisin EPG'sini "
+"kullanarak ekleyin!"
+
+#: src/timer.cpp:2830
+msgid "no description found"
+msgstr "tanımlama bulunamadı"
+
+#: src/tpeditwindow.cpp:61
+msgid "Satellite Edit"
+msgstr "Uydu Düzenleme"
+
+#: src/tpeditwindow.cpp:67
+msgid "press ok to change satellite name"
+msgstr "uydu ismi değiştirmek için ok tuşlayın"
+
+#: src/tpeditwindow.cpp:85
+msgid "press ok to change direction"
+msgstr "yön değiştirmek için ok tuşlayın"
+
+#: src/tpeditwindow.cpp:94
+msgid "Network search"
+msgstr "Şebeke tarama"
+
+#: src/tpeditwindow.cpp:95
+msgid ""
+"scan Network Information Table(s)\n"
+"this is recommend"
+msgstr ""
+"Şebeke Bilgi Tablosunu tara\n"
+"bu tavsiye edilir"
+
+#: src/tpeditwindow.cpp:100
+msgid "Extended networks search"
+msgstr "Genişletilmiş şebeke tarama"
+
+#: src/tpeditwindow.cpp:101
+msgid ""
+"scan NITs of other transponders\n"
+"this is slower, but sometimes needed)"
+msgstr ""
+"Diğer transponderlerin NIT'leri tara\n"
+"bu yavaştır, fakat bazen gereklidir"
+
+#: src/tpeditwindow.cpp:106
+msgid "Use BAT"
+msgstr "BAT kullan"
+
+#: src/tpeditwindow.cpp:107
+msgid "use Provider DVB Bouquet Tables if exist"
+msgstr "eğer mevcut ise, Sağlayıcı DVB Buket Tablosunu kullan"
+
+#: src/tpeditwindow.cpp:186
+msgid "add new Network"
+msgstr "yeni Şebeke ekle"
+
+#: src/tpeditwindow.cpp:187
+msgid "remove selected Network"
+msgstr "seçilen Şebekeyi sil"
+
+#: src/tpeditwindow.cpp:258
+msgid "Save changed Transponders?"
+msgstr "Transponder değişikleri hafızaya alınsın mı?"
+
+#: src/tpeditwindow.cpp:259
+msgid "Transponders changed"
+msgstr "Transponderler değişti"
+
+#: src/tpeditwindow.cpp:267
+msgid "Transponders couldn't be written to file!"
+msgstr "Transponderler kayıt edilemedi!"
+
+#: src/tpeditwindow.cpp:268
+msgid "Write Error"
+msgstr "Yazma Hatası"
+
+#: src/tpeditwindow.cpp:445
+msgid "new Satellite"
+msgstr "yeni Uydu"
+
+#: src/tpeditwindow.cpp:474
+msgid "Really delete the selected satellite?"
+msgstr "Seçtiğiniz uyduyu gerçekten silmek istiyormusunuz?"
+
+#: src/tpeditwindow.cpp:475
+#, c-format
+msgid "Delete %s"
+msgstr "Sil %s"
+
+#: src/upgrade.cpp:166
+msgid "Please select the software version to upgrade to:"
+msgstr "Lütfen güncellenecek sürümü seçin:"
+
+#: src/upgrade.cpp:203
+msgid "manual upload"
+msgstr "el ile yükleme"
+
+#: src/upgrade.cpp:221
+msgid "downloading catalog..."
+msgstr "katalog indiriliyor..."
+
+#: src/upgrade.cpp:241
+msgid "downloading changelog..."
+msgstr "yenilik bilgileri indiriliyor..."
+
+#: src/upgrade.cpp:266
+msgid "downloading image..."
+msgstr "image indiriliyor..."
+
+#: src/upgrade.cpp:324
+msgid "Please select version to upgrade or LAME! to abort"
+msgstr "Lütfen güncellenecek sürümü seçin veya LAME! ile sonlandırın"
+
+#: src/upgrade.cpp:445 src/upgrade.cpp:529 src/upgrade.cpp:540
+msgid "Error!"
+msgstr "Hata!"
+
+#: src/upgrade.cpp:502
+msgid "Download aborted."
+msgstr "Download iptal edildi."
+
+#: src/upgrade.cpp:521
+msgid "checking consistency of file..."
+msgstr "dosya tutarlılığı kontrol ediliyor..."
+
+#: src/upgrade.cpp:525 src/upgrade.cpp:528
+msgid "write error while downloading..."
+msgstr "download esnasında yazma hatası..."
+
+#: src/upgrade.cpp:536 src/upgrade.cpp:539
+msgid "Data error. The checksum didn't match."
+msgstr "Veri hatası. Kontrol hesaplanması uyuşmuyor."
+
+#: src/upgrade.cpp:545
+msgid "Checksum OK. Ready to upgrade."
+msgstr "Kontrol hesaplanması OK. Güncelleme işlemi için hazır."
+
+#: src/upgrade.cpp:548
+msgid "Are you sure you want to upgrade to this new version?"
+msgstr "Bu sürüme güncellemek istediğinizden eminmisiniz?"
+
+#: src/upgrade.cpp:549
+msgid "Ready to upgrade"
+msgstr "Güncelleme işlemi için hazır"
+
+#: src/upgrade.cpp:587
+msgid "Can't read flashimage.img!"
+msgstr "flashimage.img okunamıyor!"
+
+#: src/upgrade.cpp:587 src/upgrade.cpp:597 src/upgrade.cpp:718
+#: src/upgrade.cpp:726
+msgid "Flash"
+msgstr "Flash"
+
+#: src/upgrade.cpp:597
+msgid "flashimage.img has filesize of 0byte!"
+msgstr "flashimage.img'nin boyutu 0 byte!"
+
+#: src/upgrade.cpp:625 src/upgrade.cpp:704
+msgid "Please wait... do NOT switch off the receiver!"
+msgstr "Lütfen bekleyin...  Alıcıyı kapatmayın!"
+
+#: src/upgrade.cpp:626 src/upgrade.cpp:705
+msgid "upgrade in progress"
+msgstr "güncelleme devam etmekte"
+
+#: src/upgrade.cpp:629 src/upgrade.cpp:715
+msgid "Erasing Flash..."
+msgstr "Flash siliniyor..."
+
+#: src/upgrade.cpp:654 src/upgrade.cpp:738
+msgid "Writing Software to Flash..."
+msgstr "Yazılım Flash'a yazılıyor..."
+
+#: src/upgrade.cpp:718
+msgid "Erase error!"
+msgstr "Silme hatası!"
+
+#: src/upgrade.cpp:726
+msgid "Can't open mtd!"
+msgstr "Mtd açılamıyor!"
+
+#: src/upgrade.cpp:762
+msgid ""
+"upgrade successful!\n"
+"restarting..."
+msgstr ""
+"güncelleme başarı ile tamamlanmıştır!\n"
+"tekrar açılıyor..."
+
+#: src/upgrade.cpp:763
+msgid "upgrade ok"
+msgstr "güncelleme tamam"
+
+#: src/upgrade.cpp:822
+msgid "This is the currently installed release."
+msgstr "Bu kurulu olan sürümdür."
+
+#: src/upgrade.cpp:825
+msgid "This is an older release."
+msgstr "Bu sürüm şimdikinden eskidir."
+
+#: src/upgrade.cpp:828
+msgid "No changelog data available."
+msgstr "Yenilik verileri mevcut değil."
+
+#: src/upgrade.cpp:842
+msgid "No new features were added in this release."
+msgstr "Bu sürümde yenilikler eklenmemiştir."
+
+#: src/upgrade.cpp:845
+msgid "The following new features were added in this release:\n"
+msgstr "Bu sürümdeki yenilikler:\n"
+
+#: src/wizard_fpupdate.cpp:13
+msgid ""
+"New Software for the frontprocessor is avail.\n"
+"Your Dreambox must upgrade now!\n"
+"DO NOT TURN OFF THE POWER DURING UPDATE !!!."
+msgstr ""
+"Yeni frontprocesor yazılımı mevcut.\n"
+"Dreambox'unuz şimdi güncellenmesi gerekmektedir !\n"
+"GÜNCELLEME ESNASINDA CEREYANI KAPATMAYIN !!!"
+
+#: src/wizard_fpupdate.cpp:16
+msgid "New software avail"
+msgstr "Yeni yazılım mevcut"
+
+#: src/wizard_fpupdate.cpp:21
+msgid ""
+"Upgrading frontprocessor...\n"
+"DO NOT TURN OFF THE POWER!\n"
+"THE DREAMBOX WILL AUTOMATICALLY REBOOT!\n"
+msgstr ""
+"Frontprocessor güncelleniyor...\n"
+"CEREYANI KAPATMAYIN !\n"
+"DREAMBOX OTOMATİK OLARAK KAPANIP AÇILACAK !\n"
+
+#: src/wizard_fpupdate.cpp:24
+msgid "Upgrade in process..."
+msgstr "Güncelleme devam ediyor..."
+
+#: src/wizard_language.cpp:177
+msgid "Choose your language..."
+msgstr "Lisan seçimini yapın..."
+
+#: src/wizard_language.cpp:178
+msgid "press up/down/ok"
+msgstr "yukarı/aşağı/ok tuşlayın"
+
+#: src/wizard_scan.cpp:120
+msgid "Direct connection to one LNB"
+msgstr "Tek LNB ile doğrudan bağlantı"
+
+#: src/wizard_scan.cpp:123
+msgid "Simple DiSEqC (2 LNBs/satellites)"
+msgstr "Basit DiSEqC (2 LNB/uydu)"
+
+#: src/wizard_scan.cpp:126
+msgid "Complex configuration (including DiSEqC 1.2)"
+msgstr "Kompleks yapılandırma (DiSEqC 1.2 dahil)"
+
+#: src/system_settings.cpp:45 src/time_settings.cpp:32
+msgid "Time Settings"
+msgstr "Saat Ayarları"
+
+#: src/system_settings.cpp:45
+msgid "open time settings"
+msgstr "saat ayarlarını aç"
+
+#: src/system_settings.cpp:47
+msgid "open A/V settings"
+msgstr "A/V ayarlarını aç"
+
+#: src/system_settings.cpp:50
+msgid "UHF Modulator"
+msgstr "UHF Modulatör"
+
+#: src/system_settings.cpp:50
+msgid "open UHF-Modulator setup"
+msgstr "UHF-Modulatör kurulumunu aç"
+
+#: src/system_settings.cpp:55
+msgid "Harddisc Setup"
+msgstr "Harddisk Kurulum"
+
+#: src/system_settings.cpp:55
+msgid "open harddisc setup"
+msgstr "harddisk kurulumunu aç"
+
+#: src/system_settings.cpp:60
+msgid "open keyboard setup"
+msgstr "klavye kurulumunu aç"
+
+#: src/system_settings.cpp:63
+msgid "open on screen display settings"
+msgstr "ekranüstü görünüm ayarlarını aç"
+
+#: src/system_settings.cpp:64
+msgid "open language selector"
+msgstr "lisan seçeneğini aç"
+
+#: src/system_settings.cpp:67
+msgid "LCD Settings"
+msgstr "LCD ayarları"
+
+#: src/system_settings.cpp:67
+msgid "open LCD settings"
+msgstr "LCD ayarlarını aç"
+
+#: src/system_settings.cpp:130
+msgid "sorry, no harddisks found!"
+msgstr "maalesef, harddisk bulunamadı!"
+
+#: src/system_settings.cpp:130
+msgid "Harddisk setup..."
+msgstr "Harddisk kurulumu..."
+
+#: src/time_settings.cpp:40
+msgid "Timezone Configuration"
+msgstr "Saat dilimi ayarları"
+
+#: src/time_settings.cpp:40
+msgid "open timezone selector"
+msgstr "saat dilimi seçeneğini aç"
+
+#: src/time_settings.cpp:41
+msgid "Time Correction"
+msgstr "Saat Düzeltme"
+
+#: src/time_settings.cpp:41
+msgid "open time correction window"
+msgstr "saat düzeltme penceresini aç"
+
+#: src/time_settings.cpp:76
+msgid "To change time correction you must tune first to any transponder"
+msgstr ""
+"Saat düzeltmesi yapabilmek için herhangi bir transponder ayarlanması "
+"gerekmektedir"
+
+#: src/time_settings.cpp:76
+msgid "time correction change error"
+msgstr "saat düzeltmesinde hata oluştu"
+
+#~ msgid "sorry, couldn't find fsck.ext2 utility to check the ext2 filesystem."
+#~ msgstr ""
+#~ "maalesef ext2 dosya sistemini kontrol etmek için 'fsck.ext2' bulunamadı."
+
+#~ msgid "set LCD contrast ( left / right )"
+#~ msgstr "LCD ekranının kontrastını ayarla (sol/sağ)"
+
+#~ msgid "Inverted: "
+#~ msgstr "Ters:"
+
+#~ msgid "enable/disable inverted LCD (ok)"
+#~ msgstr "ters LCD aç/kapa (ok)"
+
+#~ msgid "SVideo"
+#~ msgstr "S-Video"

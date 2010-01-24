@@ -533,6 +533,8 @@ static int PlaybackClose(Context_t  *context) {
 }
 
 static int PlaybackPlay(Context_t  *context) {
+	int exec;
+	int ret = 0;
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	if (!context->playback->isPlaying) {
 		context->playback->AVSync = 1;
@@ -545,11 +547,15 @@ static int PlaybackPlay(Context_t  *context) {
 		context->playback->isForwarding = 0;
 		context->playback->Speed        = 1;
 
-		context->container->selectedContainer->Command(context, CONTAINER_PLAY, NULL);
+		exec = context->container->selectedContainer->Command(context, CONTAINER_PLAY, NULL);
+		if (exec != 0) {
+			printf("%s::%s CONTAINER_PLAY failed!\n", FILENAME, __FUNCTION__);
+			ret = -1;
+		}
 	} else
-        return -1;
+		ret = -1;
 
-	return 0;
+	return ret;
 }
 
 static int PlaybackPause(Context_t  *context) {
@@ -594,7 +600,7 @@ static int PlaybackStop(Context_t  *context) {
 		context->playback->Speed        = 0;
 
 		context->output->Command(context, OUTPUT_STOP, NULL);
-        context->container->selectedContainer->Command(context, CONTAINER_STOP, NULL);
+		context->container->selectedContainer->Command(context, CONTAINER_STOP, NULL);
 
         //PlaybackClose(context);
 	} else

@@ -110,7 +110,7 @@ static int Command(Context_t  *context, ManagerCmd_t command, void * argument) {
 			break;
 		}
 		default:
-			printf("ConatinerCmd not supported!");
+			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
 			break;
 	}
 

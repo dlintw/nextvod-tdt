@@ -77,6 +77,8 @@ void cPlayback::Close(void)
 //Used by Fileplay
 bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned short apid, bool ac3)
 {
+	bool ret = false;
+	
 	printf("%s:%s - filename=%s vpid=%u vtype=%d apid=%u ac3=%d\n", 
 		FILENAME, __FUNCTION__, filename, vpid, vtype, apid, ac3);
 
@@ -131,13 +133,15 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 
 		if(player && player->output && player->playback) {
         		player->output->Command(player, OUTPUT_OPEN, NULL);
-        		player->playback->Command(player, PLAYBACK_PLAY, NULL);
-
-			return true;
+			
+			if ( player->playback->Command(player, PLAYBACK_PLAY, NULL) == 0 ) // playback.c uses "int = 0" for "true"
+				ret = true;
 		}
 	}
-		
-	return false;
+
+	printf("%s:%s - return=%d\n", FILENAME, __FUNCTION__, ret);
+
+	return ret;
 }
 
 //Used by Fileplay

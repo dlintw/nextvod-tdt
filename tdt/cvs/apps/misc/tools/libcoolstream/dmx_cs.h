@@ -11,7 +11,7 @@
 
 #include <string>
 
-#define DEMUX_POLL_TIMEOUT 0  // timeout in ms
+#define DEMUX_POLL_TIMEOUT 5000  // timeout in ms
 #define MAX_FILTER_LENGTH 16    // maximum number of filters
 #ifndef DMX_FILTER_SIZE
 #define DMX_FILTER_SIZE MAX_FILTER_LENGTH

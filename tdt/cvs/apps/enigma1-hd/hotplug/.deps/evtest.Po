@@ -1,0 +1,145 @@
+evtest.o evtest.o: evtest.c \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdlib.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/features.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/cdefs.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/wordsize.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/gnu/stubs.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/stddef.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/types.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/types.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/typesizes.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/time.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/endian.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/endian.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/select.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/select.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sigset.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/time.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/sysmacros.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/pthreadtypes.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/alloca.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdio.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/libio.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/_G_config.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/wchar.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/wchar.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/gconv.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/stdarg.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stdio_lim.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sys_errlist.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stdio.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/ioctl.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/ioctls.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/ioctls.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/ioctl.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm-generic/ioctl.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/ioctl-types.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/ttydefaults.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/stat.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stat.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/types.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/fcntl.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/fcntl.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/unistd.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/posix_opt.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/confname.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/getopt.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdint.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/linux/input.h \
+  /opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/time.h
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdlib.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/features.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/cdefs.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/wordsize.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/gnu/stubs.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/stddef.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/types.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/types.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/typesizes.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/time.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/endian.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/endian.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/select.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/select.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sigset.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/time.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/sysmacros.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/pthreadtypes.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/alloca.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdio.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/libio.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/_G_config.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/wchar.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/wchar.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/gconv.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/lib/gcc/sh4-linux/4.2.1/include/stdarg.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stdio_lim.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/sys_errlist.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stdio.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/ioctl.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/ioctls.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/ioctls.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/ioctl.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm-generic/ioctl.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/ioctl-types.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/ttydefaults.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/stat.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/stat.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/asm/types.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/fcntl.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/fcntl.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/unistd.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/posix_opt.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/bits/confname.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/getopt.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/stdint.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/linux/input.h:
+
+/opt/STM/STLinux-2.3/devkit/sh4/target/usr/include/sys/time.h:

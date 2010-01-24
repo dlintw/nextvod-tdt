@@ -331,9 +331,9 @@ int CAudioPlayerGui::exec(CMenuTarget* parent, const std::string &)
 	m_frameBuffer->paintBackground();
 
 	// Restore last mode
-	//t_channel_id channel_id=CNeutrinoApp::getInstance()->channelList->getActiveChannel_ChannelID();
-	//g_Zapit->zapTo_serviceID(channel_id);
-	//g_Zapit->setStandby(false);
+	t_channel_id channel_id=CNeutrinoApp::getInstance()->channelList->getActiveChannel_ChannelID();
+	g_Zapit->zapTo_serviceID(channel_id);
+	g_Zapit->setStandby(false);
 
 	puts("[audioplayer.cpp] executing " AUDIOPLAYER_END_SCRIPT "."); 
 	if (system(AUDIOPLAYER_END_SCRIPT) != 0) 

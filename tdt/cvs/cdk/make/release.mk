@@ -468,6 +468,9 @@ endif
 	find $(prefix)/release/usr/lib/python2.6/ -name *.la -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
 
+######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/enigma2 #############
+	cp -RP $(buildprefix)/own_build/enigma2/* $(prefix)/release/
+
 if STM22
 	cp $(kernelprefix)/linux/arch/sh/boot/uImage $(prefix)/release/boot/
 else

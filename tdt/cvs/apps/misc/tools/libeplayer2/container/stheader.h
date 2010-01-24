@@ -120,4 +120,6 @@ void free_sh_video(sh_video_t *sh);
 int video_read_properties(sh_video_t *sh_video);
 int video_read_frame(sh_video_t* sh_video,float* frame_time_ptr,unsigned char** start,int force_fps);
 
+typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, HdBox} eBoxType;
+
 #endif /* EPLAYER_STHEADER_H */

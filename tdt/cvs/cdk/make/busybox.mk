@@ -1,5 +1,5 @@
 #
-# BUSYBOX
+# busybox
 #
 $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	@PREPARE_busybox@

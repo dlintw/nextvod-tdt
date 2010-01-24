@@ -1,0 +1,6540 @@
+# created by Enigma Language Editor 0.2
+# 			 (c) 10/2002 ole <olest@gmx.net>
+# *************************************
+# *	 use/modify on your own risk!		*
+# *************************************
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tuxbox-enigma 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-05-01 22:08+0200\n"
+"PO-Revision-Date: Thu Aug 11 13:47:25 CEST 2005\n"
+"Last-Translator: unknown\n"
+"Language-Team: Urdu / rizwan@portalen.no\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: chk_blue2.esml:316
+msgid "FF "
+msgstr ""
+
+#: default.esml:910
+msgid "&#53;"
+msgstr ""
+
+#: default.esml:410
+msgid "here you can change your sat/lnb mapping"
+msgstr ""
+
+#: default.esml:1036
+msgid "Push OK to select Filesize"
+msgstr ""
+
+#: default.esml:445 src/enigma_scan.cpp:53
+msgid "Satfind"
+msgstr ""
+
+#: chk_blue2.esml:315
+msgid "Pause "
+msgstr ""
+
+#: default.esml:1002
+msgid "set amount of transparency when in semi-transparent mode"
+msgstr ""
+
+#: default.esml:472
+msgid "motor power input difference between running and not running"
+msgstr ""
+
+#: default.esml:436
+msgid "send the complete DiSEqC sequence twice"
+msgstr ""
+
+#: default.esml:460 default.esml:508 default.esml:612 src/rotorconfig.cpp:597
+msgid "Satellite:"
+msgstr ""
+
+#: default.esml:1005
+msgid "use truetype font instead of standard font"
+msgstr ""
+
+#: default.esml:976
+msgid "max. recording time (minutes):"
+msgstr ""
+
+#: default.esml:437
+msgid "send no DiSEqC when only Hi/Lo or H/V changes"
+msgstr ""
+
+#: default.esml:679
+msgid "SNR"
+msgstr ""
+
+#: default.esml:995
+msgid "Service:"
+msgstr ""
+
+#: default.esml:435
+msgid "Uncommitted Switch:"
+msgstr ""
+
+#: default.esml:618 default.esml:636 default.esml:655
+msgid "enable/disable inversion here (ok)"
+msgstr ""
+
+#: default.esml:439
+msgid "prev. page"
+msgstr ""
+
+#: default.esml:412
+msgid "LOF/L:"
+msgstr ""
+
+#: default.esml:781 src/timer.cpp:2728
+msgid "Wednesday"
+msgstr ""
+
+#: default.esml:997
+msgid "switch to 16:9 mode when displaying teletext pages"
+msgstr ""
+
+#: default.esml:880
+msgid "Partition Check"
+msgstr ""
+
+#: default.esml:822 default.esml:846
+msgid "enter recording end time (0..9, left, right, ok)"
+msgstr ""
+
+#: default.esml:786 default.esml:790
+msgid "select year (ok)"
+msgstr ""
+
+#: default.esml:417
+msgid "increased voltage"
+msgstr ""
+
+#: default.esml:1003
+msgid "Language:"
+msgstr ""
+
+#: default.esml:448 default.esml:682
+msgid "LOCK"
+msgstr ""
+
+#: default.esml:667
+msgid "choose the code rate HP (left, right)"
+msgstr ""
+
+#: default.esml:998
+msgid "switch to 16:9 in split screen mode"
+msgstr ""
+
+#: default.esml:418
+msgid "turn 12V output on (for 12V relais) (ok)"
+msgstr ""
+
+#: default.esml:540
+msgid "enable/disable use BAT for scan (if exists)"
+msgstr ""
+
+#: default.esml:1012
+msgid "Title:"
+msgstr ""
+
+#: default.esml:602
+msgid "Skin Selector"
+msgstr ""
+
+#: default.esml:582
+msgid "transponder scanned:"
+msgstr ""
+
+#: default.esml:992
+msgid "teletext page number (100 - 899)"
+msgstr ""
+
+#: default.esml:774
+msgid "press ok to change event name manually"
+msgstr ""
+
+#: default.esml:845
+msgid "recording end time:"
+msgstr ""
+
+#: default.esml:471
+msgid "Use motor input power for running detection.. else use timeout"
+msgstr ""
+
+#: default.esml:554
+msgid "no circ polariz."
+msgstr ""
+
+#: default.esml:492 default.esml:513
+msgid "Direction:"
+msgstr ""
+
+#: default.esml:1004
+msgid "set the language of the displayed pages"
+msgstr ""
+
+#: default.esml:617 default.esml:635
+msgid "MHz"
+msgstr ""
+
+#: default.esml:581
+msgid "services scanned     :"
+msgstr ""
+
+#: default.esml:869
+msgid "standby timeout (min):"
+msgstr ""
+
+#: default.esml:605 src/parentallock.cpp:109 src/setup_lcd.cpp:118
+#: src/setup_keyboard.cpp:59 src/setup_osd.cpp:276 src/setup_rc.cpp:127
+#: src/setup_timezone.cpp:51 src/setupengrab.cpp:106 src/setupnetwork.cpp:653
+#: src/setupvideo.cpp:220 src/setupvideo.cpp:504 src/tpeditwindow.cpp:116
+#: src/tpeditwindow.cpp:162
+msgid "save changes and return"
+msgstr ""
+
+#: default.esml:564
+msgid "aborts the transponder scan"
+msgstr ""
+
+#: default.esml:496 default.esml:765 default.esml:931 default.esml:968
+msgid "remove"
+msgstr ""
+
+#: default.esml:470 default.esml:505
+msgid "Motor Config"
+msgstr ""
+
+#: default.esml:496
+msgid "remove selected entry"
+msgstr ""
+
+#: default.esml:926
+msgid "abc &lt;-&gt; ABC"
+msgstr ""
+
+#: default.esml:920
+msgid "&lt;"
+msgstr ""
+
+#: default.esml:428
+msgid "select DiSEqC mode (ok)"
+msgstr ""
+
+#: default.esml:438
+msgid "Swap Commands"
+msgstr ""
+
+#: default.esml:416
+msgid "enter LNB threshold frequency (0..9, ok)"
+msgstr ""
+
+#: default.esml:521
+msgid "close motor setup"
+msgstr ""
+
+#: default.esml:487
+msgid "insert rotor memory cell for this orbital position"
+msgstr ""
+
+#: default.esml:553 default.esml:572
+msgid "add only unscrambled services"
+msgstr ""
+
+#: default.esml:564 default.esml:895
+msgid "abort"
+msgstr ""
+
+#: default.esml:1001
+msgid "Transparency:"
+msgstr ""
+
+#: default.esml:873
+msgid "select filsystem to format"
+msgstr ""
+
+#: default.esml:883
+msgid "close window"
+msgstr ""
+
+#: default.esml:456 default.esml:681
+msgid "BER"
+msgstr ""
+
+#: default.esml:981 default.esml:982
+msgid "set directory where timeshift files will be stored"
+msgstr ""
+
+#: default.esml:515
+msgid "Recalc Params:"
+msgstr ""
+
+#: default.esml:1014
+msgid "Search in:"
+msgstr ""
+
+#: default.esml:616 default.esml:634 default.esml:653
+msgid "enter transponder frequeny (0..9, left, right)"
+msgstr ""
+
+#: default.esml:874
+msgid "save settings"
+msgstr ""
+
+#: default.esml:495 default.esml:766 default.esml:966
+msgid "add"
+msgstr ""
+
+#: default.esml:543
+msgid "start the transponder scan"
+msgstr ""
+
+#: default.esml:543 default.esml:555 default.esml:574 default.esml:597
+msgid "start scan"
+msgstr ""
+
+#: default.esml:867
+msgid "check"
+msgstr ""
+
+#: default.esml:865
+msgid "send harddisk to standby immediately"
+msgstr ""
+
+#: default.esml:695 default.esml:702 default.esml:709 default.esml:717
+#: default.esml:728 default.esml:739
+msgid "Services"
+msgstr ""
+
+#: default.esml:1035
+msgid "Filesize:"
+msgstr ""
+
+#: default.esml:1020 src/epgsearch.cpp:255 src/epgsearch.cpp:256
+msgid "Genre:"
+msgstr ""
+
+#: default.esml:1017
+msgid "Search options:"
+msgstr ""
+
+#: default.esml:912
+msgid "&#54;"
+msgstr ""
+
+#: default.esml:906
+msgid "&#51;"
+msgstr ""
+
+#: default.esml:664
+msgid "Coderate LP:"
+msgstr ""
+
+#: default.esml:1029 src/setup_extra.cpp:82 src/swapmanager.cpp:299
+#: src/swapmanager.cpp:334 src/swapmanager.cpp:344 src/swapmanager.cpp:370
+#: src/swapmanager.cpp:390 src/swapmanager.cpp:406
+msgid "Swap Manager"
+msgstr ""
+
+#: default.esml:999 src/setup_lcd.cpp:69 src/setup_osd.cpp:217
+msgid "Brightness:"
+msgstr ""
+
+#: stone.esml:463 silver.esml:470
+msgid "subservices"
+msgstr ""
+
+#: default.esml:661
+msgid "choose the bandwidth (left, right)"
+msgstr ""
+
+#: default.esml:1022
+msgid "Close"
+msgstr ""
+
+#: default.esml:979
+msgid "activate permanent timeshift"
+msgstr ""
+
+#: default.esml:871
+msgid "acoustic management:"
+msgstr ""
+
+#: default.esml:924
+msgid "&gt;"
+msgstr ""
+
+#: default.esml:787 default.esml:791
+msgid "select month (ok)"
+msgstr ""
+
+#: default.esml:1023
+msgid "Start"
+msgstr ""
+
+#: default.esml:481
+msgid "enter your latitude (0..9, +, -, ok)"
+msgstr ""
+
+#: default.esml:429
+msgid "DiSEqC Mode:"
+msgstr ""
+
+#: default.esml:402
+msgid "LNB Configuration"
+msgstr ""
+
+#: default.esml:561 default.esml:580 src/scan.cpp:692
+msgid "scanning..."
+msgstr ""
+
+#: default.esml:518
+msgid "calc param 3 (see your motor manual or let it 00)"
+msgstr ""
+
+#: default.esml:680
+msgid "AGC"
+msgstr ""
+
+#: default.esml:1040
+msgid "Start Swap"
+msgstr ""
+
+#: default.esml:434
+msgid "select uncommitted input"
+msgstr ""
+
+#: default.esml:471
+msgid "Use Motor Input Power"
+msgstr ""
+
+#: default.esml:475
+msgid "when the motor support this, then use"
+msgstr ""
+
+#: default.esml:775
+msgid "Starttime"
+msgstr ""
+
+#: default.esml:654
+msgid "KHz"
+msgstr ""
+
+#: default.esml:380
+msgid "HTTP Download"
+msgstr ""
+
+#: default.esml:439
+msgid "goto prev page (LNB)"
+msgstr ""
+
+#: default.esml:997
+msgid "16:9 mode in normal view"
+msgstr ""
+
+#: default.esml:475
+msgid "Use gotoXX Function"
+msgstr ""
+
+#: default.esml:994
+msgid "add page"
+msgstr ""
+
+#: default.esml:928
+msgid "vol+"
+msgstr ""
+
+#: default.esml:660
+msgid "Bandwidth:"
+msgstr ""
+
+#: default.esml:777
+msgid "for a multiple event enable this"
+msgstr ""
+
+#: default.esml:979
+msgid "activate timeshift"
+msgstr ""
+
+#: default.esml:764
+msgid "press ok to select another event"
+msgstr ""
+
+#: default.esml:824 default.esml:836 default.esml:848
+msgid "shutdown  "
+msgstr ""
+
+#: default.esml:463 default.esml:511
+msgid "Transponder:"
+msgstr ""
+
+#: default.esml:996
+msgid "select teletext service"
+msgstr ""
+
+#: default.esml:390
+msgid "22Khz"
+msgstr ""
+
+#: default.esml:847
+msgid "o'clock"
+msgstr ""
+
+#: default.esml:414
+msgid "LOF/H:"
+msgstr ""
+
+#: default.esml:1005
+msgid "use truetype font"
+msgstr ""
+
+#: default.esml:977
+msgid "set number of seconds recording is delayed after switching channel"
+msgstr ""
+
+#: default.esml:1019
+msgid "Select this option if you want to make this epg search case sensitive"
+msgstr ""
+
+#: default.esml:904
+msgid "&#50;"
+msgstr ""
+
+#: default.esml:803 src/enigma_info.cpp:43
+msgid "About..."
+msgstr ""
+
+#: default.esml:766
+msgid "add new Timer (ok)"
+msgstr ""
+
+#: default.esml:1019
+msgid "Case Sensitive"
+msgstr ""
+
+#: default.esml:795
+msgid "to change service press ok"
+msgstr ""
+
+#: default.esml:1030
+msgid "Filename:"
+msgstr ""
+
+#: default.esml:990
+msgid "Favourites:"
+msgstr ""
+
+#: default.esml:914
+msgid "&#55;"
+msgstr ""
+
+#: default.esml:797
+msgid "scan EPG"
+msgstr ""
+
+#: default.esml:1023
+msgid "Begin EPG Search"
+msgstr ""
+
+#: stone.esml:464 silver.esml:471 src/enigma_main.cpp:3209
+msgid "audio track"
+msgstr ""
+
+#: default.esml:785
+msgid "Su"
+msgstr ""
+
+#: default.esml:395
+msgid "new"
+msgstr ""
+
+#: default.esml:833
+msgid "duration:"
+msgstr ""
+
+#: default.esml:993
+msgid "remove selected page from favourites"
+msgstr ""
+
+#: default.esml:437
+msgid "Fast DiSEqC"
+msgstr ""
+
+#: default.esml:781 src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Wed"
+msgstr ""
+
+#: default.esml:978
+msgid "set maximum number of recorded minutes"
+msgstr ""
+
+#: default.esml:477
+msgid "Longitude:"
+msgstr ""
+
+#: default.esml:479 default.esml:482 default.esml:493
+msgid "choose direction"
+msgstr ""
+
+#: default.esml:859
+msgid "capacity:"
+msgstr ""
+
+#: default.esml:665
+msgid "choose the code rate LP (left, right)"
+msgstr ""
+
+#: default.esml:516
+msgid "calc param 1 (see your motor manual or let it 00)"
+msgstr ""
+
+#: default.esml:521
+msgid "prev page"
+msgstr ""
+
+#: default.esml:782 src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Thu"
+msgstr ""
+
+#: default.esml:662
+msgid "Transm. Mode:"
+msgstr ""
+
+#: default.esml:418
+msgid "12V output on"
+msgstr ""
+
+#: default.esml:836
+msgid "shutdown the box to deepstandby (ok)"
+msgstr ""
+
+#: default.esml:793
+msgid "edit the end time (0..9, left, right)"
+msgstr ""
+
+#: default.esml:780 src/timer.cpp:2728
+msgid "Tuesday"
+msgstr ""
+
+#: default.esml:821
+msgid "recording duration:"
+msgstr ""
+
+#: default.esml:767
+msgid "delete expired timer (ok)"
+msgstr ""
+
+#: default.esml:464 default.esml:512
+msgid "choose the Transponder you wish to find"
+msgstr ""
+
+#: default.esml:966
+msgid "add new Transponder to selected sat (ok)"
+msgstr ""
+
+#: default.esml:1021
+msgid "Select a genre if you want to search for a genre"
+msgstr ""
+
+#: default.esml:998
+msgid "16:9 mode on splitscreen"
+msgstr ""
+
+#: default.esml:782 src/timer.cpp:2729
+msgid "Thursday"
+msgstr ""
+
+#: default.esml:838
+msgid "set sleeptimer and close window (ok)"
+msgstr ""
+
+#: default.esml:395
+msgid "add a new Satellite"
+msgstr ""
+
+#: default.esml:523
+msgid "open transponder scan"
+msgstr ""
+
+#: default.esml:823 default.esml:835
+msgid "min"
+msgstr ""
+
+#: default.esml:473
+msgid "mA"
+msgstr ""
+
+#: default.esml:499
+msgid "goto advanced motor setup"
+msgstr ""
+
+#: default.esml:778 src/timer.cpp:2728
+msgid "Monday"
+msgstr ""
+
+#: default.esml:866
+msgid "format"
+msgstr ""
+
+#: default.esml:555 default.esml:574
+msgid "starts the transponder scan"
+msgstr ""
+
+#: default.esml:965
+msgid "sat"
+msgstr ""
+
+#: default.esml:391
+msgid "Voltage"
+msgstr ""
+
+#: default.esml:663
+msgid "choose the transmission mode (left, right)"
+msgstr ""
+
+#: default.esml:688
+msgid "Help"
+msgstr ""
+
+#: default.esml:929
+msgid "insert"
+msgstr ""
+
+#: default.esml:1033 default.esml:1034
+msgid "Push OK to select directory"
+msgstr ""
+
+#: default.esml:797
+msgid "search event name for this beg-/end time in epg"
+msgstr ""
+
+#: default.esml:974
+msgid "setup timeshifting"
+msgstr ""
+
+#: default.esml:394 default.esml:419 default.esml:440 default.esml:498
+#: default.esml:605 src/parentallock.cpp:104 src/scan.cpp:1762
+#: src/setup_lcd.cpp:113 src/setup_keyboard.cpp:54 src/setup_osd.cpp:271
+#: src/setup_rc.cpp:122 src/setup_rfmod.cpp:144 src/setup_timezone.cpp:46
+#: src/setupengrab.cpp:101 src/setupnetwork.cpp:648 src/setupnetwork.cpp:1122
+#: src/setupvideo.cpp:215 src/setupvideo.cpp:499 src/tpeditwindow.cpp:110
+#: src/tpeditwindow.cpp:159
+msgid "save"
+msgstr ""
+
+#: default.esml:780 src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Tue"
+msgstr ""
+
+#: chk_blue2.esml:314
+msgid "Play "
+msgstr ""
+
+#: default.esml:461 default.esml:509
+msgid "choose the Satellite you wish to find"
+msgstr ""
+
+#: default.esml:484
+msgid "choose entry to edit or remove"
+msgstr ""
+
+#: default.esml:806
+msgid "processor: "
+msgstr ""
+
+#: default.esml:776
+msgid "Endtime"
+msgstr ""
+
+#: default.esml:908
+msgid "&#52;"
+msgstr ""
+
+#: default.esml:495
+msgid "add to table/existing will be overwritten"
+msgstr ""
+
+#: default.esml:807
+msgid "frontend: "
+msgstr ""
+
+#: default.esml:918
+msgid "&#57;"
+msgstr ""
+
+#: default.esml:373 default.esml:451
+msgid "AGC:"
+msgstr ""
+
+#: default.esml:1032
+msgid "Directory:"
+msgstr ""
+
+#: default.esml:1038
+msgid "Stop Swap"
+msgstr ""
+
+#: default.esml:544
+msgid "enter manual pids"
+msgstr ""
+
+#: default.esml:427
+msgid "Toneburst:"
+msgstr ""
+
+#: default.esml:825 default.esml:837 default.esml:849 default.esml:865
+msgid "standby  "
+msgstr ""
+
+#: default.esml:622 default.esml:640
+msgid "FEC:"
+msgstr ""
+
+#: default.esml:453 default.esml:683
+msgid "SYNC"
+msgstr ""
+
+#: default.esml:480
+msgid "Latitude:"
+msgstr ""
+
+#: default.esml:603
+msgid "Skins:"
+msgstr ""
+
+#: default.esml:813
+msgid "ok"
+msgstr ""
+
+#: default.esml:621
+msgid "choose polarity (left, right)"
+msgstr ""
+
+#: default.esml:618 default.esml:636 default.esml:655
+msgid "Inv:"
+msgstr ""
+
+#: default.esml:1039
+msgid "Create Swap-File"
+msgstr ""
+
+#: default.esml:789
+msgid "edit the start time (0..9, left, right)"
+msgstr ""
+
+#: default.esml:411
+msgid "enter LNB lowband offset frequency (0..9, ok)"
+msgstr ""
+
+#: default.esml:1031
+msgid "Push OK to select Filename"
+msgstr ""
+
+#: chk_blue2.esml:318
+msgid "Record "
+msgstr ""
+
+#: default.esml:989
+msgid "Teletext Settings"
+msgstr ""
+
+#: default.esml:639 default.esml:657
+msgid "choose modulation (left, right)"
+msgstr ""
+
+#: default.esml:783 src/timer.cpp:2729
+msgid "Friday"
+msgstr ""
+
+#: default.esml:902
+msgid "&#49;"
+msgstr ""
+
+#: default.esml:779
+msgid "select what todo after event"
+msgstr ""
+
+#: default.esml:489 src/tpeditwindow.cpp:75
+msgid "Orbital Position:"
+msgstr ""
+
+#: default.esml:1013
+msgid "Enter title for epg searching"
+msgstr ""
+
+#: default.esml:433
+msgid "DiSEqC Repeats:"
+msgstr ""
+
+#: default.esml:413
+msgid "enter LNB highband offset frequency (0..9, ok)"
+msgstr ""
+
+#: default.esml:824 default.esml:848
+msgid "shutdown the box after recording (ok)"
+msgstr ""
+
+#: default.esml:1015
+msgid ""
+"Select this option if you want to search the title only in selected channel"
+msgstr ""
+
+#: default.esml:954
+msgid "Please choose your DiSEqC-Configuration:"
+msgstr ""
+
+#: default.esml:820 default.esml:844
+msgid "Stop Record"
+msgstr ""
+
+#: default.esml:767
+msgid "cleanup"
+msgstr ""
+
+#: default.esml:506
+msgid "Mode:"
+msgstr ""
+
+#: default.esml:627 default.esml:645
+msgid "KSymb/s"
+msgstr ""
+
+#: default.esml:870
+msgid "set harddisk standby timeout (0 - 20; 0 = disabled)"
+msgstr ""
+
+#: default.esml:1016 src/sselect.cpp:470
+msgid "All Services"
+msgstr ""
+
+#: default.esml:585
+msgid "Progress:"
+msgstr ""
+
+#: default.esml:370 default.esml:446
+msgid "SNR:"
+msgstr ""
+
+#: default.esml:386 src/enigma_scan.cpp:52
+msgid "Satellite Configuration"
+msgstr ""
+
+#: default.esml:796
+msgid "save data and close window"
+msgstr ""
+
+#: default.esml:415
+msgid "Threshold:"
+msgstr ""
+
+#: default.esml:440
+msgid "save changes"
+msgstr ""
+
+#: stone.esml:465 silver.esml:472
+msgid "plugins"
+msgstr ""
+
+#: default.esml:967
+msgid "edit selected transponder (ok)"
+msgstr ""
+
+#: default.esml:522
+msgid "save in motor"
+msgstr ""
+
+#: default.esml:968
+msgid "remove selected transponder"
+msgstr ""
+
+#: default.esml:620
+msgid "Polarity:"
+msgstr ""
+
+#: default.esml:867
+msgid "do a filesystem check"
+msgstr ""
+
+#: default.esml:866
+msgid "initialize the disk for use with the dreambox"
+msgstr ""
+
+#: default.esml:389
+msgid "LNB"
+msgstr ""
+
+#: default.esml:778
+msgid "Mo"
+msgstr ""
+
+#: default.esml:430
+msgid "select DiSEqC parameter (ok)"
+msgstr ""
+
+#: default.esml:883
+msgid "close"
+msgstr ""
+
+#: default.esml:615 default.esml:633 default.esml:652
+msgid "Frequency:"
+msgstr ""
+
+#: default.esml:626 default.esml:644
+msgid "enter symbol rate (0..9, left, right)"
+msgstr ""
+
+#: default.esml:874 default.esml:983 src/rotorconfig.cpp:508
+#: src/rotorconfig.cpp:524 src/rotorconfig.cpp:528 src/rotorconfig.cpp:857
+msgid "store"
+msgstr ""
+
+#: default.esml:1000
+msgid "set brightness of the displayed teletext page"
+msgstr ""
+
+#: default.esml:938
+msgid "press ok to enter the name"
+msgstr ""
+
+#: default.esml:666
+msgid "Coderate HP:"
+msgstr ""
+
+#: default.esml:765
+msgid "delete the current selected timer (ok)"
+msgstr ""
+
+#: default.esml:426
+msgid "select MiniDiSEqC parameter (ok)"
+msgstr ""
+
+#: default.esml:810
+msgid "Software Version:"
+msgstr ""
+
+#: default.esml:478
+msgid "enter your longitude (0..9, +, -, ok)"
+msgstr ""
+
+#: default.esml:927
+msgid "abc2 &lt;-&gt; 2abc"
+msgstr ""
+
+#: default.esml:396
+msgid "remove the selected Satellite"
+msgstr ""
+
+#: default.esml:837
+msgid "goto standby (ok)"
+msgstr ""
+
+#: default.esml:613
+msgid "choose wished satellite (ok)"
+msgstr ""
+
+#: default.esml:993
+msgid "remove page"
+msgstr ""
+
+#: default.esml:868
+msgid "show extended configuration"
+msgstr ""
+
+#: default.esml:983
+msgid "store timeshift settings and leave"
+msgstr ""
+
+#: default.esml:507
+msgid "choose what you want to do"
+msgstr ""
+
+#: default.esml:1037
+msgid "Delete Swap-File"
+msgstr ""
+
+#: default.esml:785 src/timer.cpp:2728
+msgid "Sunday"
+msgstr ""
+
+#: default.esml:486
+msgid "Number in motor:"
+msgstr ""
+
+#: default.esml:857
+msgid "model:"
+msgstr ""
+
+#: default.esml:396
+msgid "erase"
+msgstr ""
+
+#: default.esml:388
+msgid "Sat/Position"
+msgstr ""
+
+#: default.esml:409
+msgid "Sat/LNB mapping:"
+msgstr ""
+
+#: default.esml:419
+msgid "save changes and use current selected LNB for the chosen satellite"
+msgstr ""
+
+#: default.esml:498
+msgid ""
+"save changes and use the selected LNB (in first page) for the choosen "
+"satellite"
+msgstr ""
+
+#: default.esml:431
+msgid "DiSEqC Parameter:"
+msgstr ""
+
+#: default.esml:417
+msgid "0,5V higher LNB Voltage (for long cables) (ok)"
+msgstr ""
+
+#: default.esml:638
+msgid "Modulation:"
+msgstr ""
+
+#: default.esml:539
+msgid "enable/disable check ONIT on any transponder"
+msgstr ""
+
+#: default.esml:808
+msgid "harddisk: "
+msgstr ""
+
+#: default.esml:812
+msgid "FP Version:"
+msgstr ""
+
+#: default.esml:863
+msgid "status:"
+msgstr ""
+
+#: default.esml:540
+msgid "use BAT"
+msgstr ""
+
+#: default.esml:832
+msgid "Set Sleeptimer"
+msgstr ""
+
+#: default.esml:596
+msgid "press ok to change"
+msgstr ""
+
+#: default.esml:1016
+msgid "Select this option if you want to search the title in all services"
+msgstr ""
+
+#: default.esml:962
+msgid "Transponders"
+msgstr ""
+
+#: chk_blue2.esml:313
+msgid "FR "
+msgstr ""
+
+#: default.esml:826 default.esml:850
+msgid "set recording end time and close window (ok)"
+msgstr ""
+
+#: default.esml:394
+msgid "close Satellite Configuration"
+msgstr ""
+
+#: default.esml:757 default.esml:763 stone.esml:462 silver.esml:469
+msgid "EPG"
+msgstr ""
+
+#: default.esml:967
+msgid "edit"
+msgstr ""
+
+#: default.esml:784
+msgid "Sa"
+msgstr ""
+
+#: default.esml:861
+msgid "connected:"
+msgstr ""
+
+#: default.esml:420 default.esml:499
+msgid "next page"
+msgstr ""
+
+#: default.esml:625 default.esml:643
+msgid "Symbol Rate:"
+msgstr ""
+
+#: default.esml:994
+msgid "add page to favourites"
+msgstr ""
+
+#: default.esml:826 default.esml:838 default.esml:850
+msgid "set"
+msgstr ""
+
+#: default.esml:514
+msgid "press left or right to move motor"
+msgstr ""
+
+#: default.esml:517
+msgid "calc param 2 (see your motor manual or let it 00)"
+msgstr ""
+
+#: default.esml:794
+msgid "select the timer type (ok)"
+msgstr ""
+
+#: default.esml:1018
+msgid "Select this option if you want to search the exact title"
+msgstr ""
+
+#: default.esml:550 default.esml:570
+msgid "choose satellite/cable provider (ok)"
+msgstr ""
+
+#: default.esml:539
+msgid "use ONIT"
+msgstr ""
+
+#: default.esml:523 src/enigma_tuxtxt.cpp:112
+msgid "search"
+msgstr ""
+
+#: default.esml:519
+msgid "Counter(Movement)"
+msgstr ""
+
+#: default.esml:542
+msgid "enable/disable initiate network search"
+msgstr ""
+
+#: default.esml:658
+msgid "Guard:"
+msgstr ""
+
+#: default.esml:1011 src/enigma_main.cpp:5330 src/epgsearch.cpp:259
+#: src/epgwindow.cpp:347 src/epgwindow.cpp:411 src/sselect.cpp:80
+#: src/sselect.cpp:1937
+msgid "EPG Search"
+msgstr ""
+
+#: chk_blue2.esml:317
+msgid "Stop "
+msgstr ""
+
+#: default.esml:387
+msgid "select your configuration here"
+msgstr ""
+
+#: default.esml:1018
+msgid "Exact match"
+msgstr ""
+
+#: default.esml:916
+msgid "&#56;"
+msgstr ""
+
+#: default.esml:432
+msgid "select DiSEqC repeats (ok)"
+msgstr ""
+
+#: default.esml:623 default.esml:641 default.esml:659
+msgid "choose the FEC (left, right)"
+msgstr ""
+
+#: default.esml:945 src/system_settings.cpp:64
+msgid "OSD Language"
+msgstr ""
+
+#: default.esml:889
+msgid "Software upgrade..."
+msgstr ""
+
+#: default.esml:953
+msgid "DiSEqC..."
+msgstr ""
+
+#: default.esml:604
+msgid "select skin and press ok or choose save"
+msgstr ""
+
+#: default.esml:980
+msgid "activate pause button"
+msgstr ""
+
+#: default.esml:788 default.esml:792
+msgid "select day (ok)"
+msgstr ""
+
+#: default.esml:1022
+msgid "Closes EPG search window"
+msgstr ""
+
+#: default.esml:554
+msgid "change circular to linear polarization"
+msgstr ""
+
+#: default.esml:420
+msgid "goto next page (DiSEqC)"
+msgstr ""
+
+#: default.esml:965
+msgid "select sat(up/down), ok(edit), green(add new), red(delete)"
+msgstr ""
+
+#: default.esml:980
+msgid "use yellow button as pause button"
+msgstr ""
+
+#: default.esml:922
+msgid "&#48;"
+msgstr ""
+
+#: default.esml:773
+msgid "Timer Edit"
+msgstr ""
+
+#: default.esml:796
+msgid "apply"
+msgstr ""
+
+#: default.esml:783
+msgid "Fr"
+msgstr ""
+
+#: default.esml:544
+msgid "enter pids"
+msgstr ""
+
+#: default.esml:777
+msgid "Repeated timer"
+msgstr ""
+
+#: default.esml:510
+msgid "enter stored satellite pos"
+msgstr ""
+
+#: default.esml:436
+msgid "Sequence repeat"
+msgstr ""
+
+#: default.esml:881
+msgid "status output:"
+msgstr ""
+
+#: default.esml:856 src/setup_harddisk.cpp:545
+msgid "Harddisk"
+msgstr ""
+
+#: default.esml:520
+msgid "bla"
+msgstr ""
+
+#: default.esml:825 default.esml:849
+msgid "goto standby after recording (ok)"
+msgstr ""
+
+#: default.esml:975
+msgid "delay (seconds):"
+msgstr ""
+
+#: default.esml:541 default.esml:553 default.esml:572
+msgid "only Free"
+msgstr ""
+
+#: default.esml:656
+msgid "Constellation:"
+msgstr ""
+
+#: default.esml:872
+msgid "set automatic acoustic management (0 - 254)"
+msgstr ""
+
+#: default.esml:784 src/timer.cpp:2729
+msgid "Saturday"
+msgstr ""
+
+#: default.esml:834
+msgid "(0..9, left, right, ok)"
+msgstr ""
+
+#: default.esml:930
+msgid "vol-"
+msgstr ""
+
+#: default.esml:438
+msgid "swaps committed and uncommitted DiSEqC Commands"
+msgstr ""
+
+#: default.esml:542
+msgid "network search"
+msgstr ""
+
+#: default.esml:541
+msgid "add only not scrambled services"
+msgstr ""
+
+#: lib/dvb/dvbci.cpp:66 lib/dvb/dvbci.cpp:115 lib/dvb/dvbci.cpp:133
+#: lib/dvb/dvbci.cpp:1292
+msgid "no module"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:66
+msgid "horizontal"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:67
+msgid "vertical"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:71 lib/dvb/dvbwidgets.cpp:80
+msgid "Auto"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:72 lib/dvb/dvbwidgets.cpp:82
+msgid "16-QAM"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:73
+msgid "32-QAM"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:74 lib/dvb/dvbwidgets.cpp:83
+msgid "64-QAM"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:75
+msgid "128-QAM"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:76
+msgid "256-QAM"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:81 lib/dvb/dvbwidgets.cpp:194
+msgid "QPSK"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:182
+msgid "DVBS"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:183
+msgid "S2"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:195
+msgid "8PSK"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:196 lib/dvb/dvbwidgets.cpp:210
+#: lib/dvb/dvbwidgets.cpp:218
+msgid "AUTO"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:207
+msgid "35"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:208
+msgid "25"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:209
+msgid "20"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:219
+msgid "ON"
+msgstr ""
+
+#: lib/dvb/dvbwidgets.cpp:220
+msgid "OFF"
+msgstr ""
+
+#: lib/dvb/service.cpp:202 lib/dvb/service.cpp:230 src/enigma_bouquet.cpp:221
+#: src/enigma_main.cpp:4668 src/enigma_main.cpp:4680 src/parentallock.cpp:131
+#: src/parentallock.cpp:163 src/timer.cpp:2447
+msgid "parental"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1074
+msgid "Providers (TV)"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1078
+msgid "Providers (Radio)"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1082
+msgid "Providers (Data)"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1087
+msgid "All services (TV)"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1091
+msgid "All services (Radio)"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1095
+msgid "All services (Data)"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1102
+msgid "Satellites (TV)"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1106
+msgid "Satellites (Radio)"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1110
+msgid "Satellites (Data)"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1530
+msgid " - provider"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1538
+msgid " - services"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1546
+msgid " - new found"
+msgstr ""
+
+#: lib/dvb/servicedvb.cpp:1550
+msgid "current transponder"
+msgstr ""
+
+#: lib/dvb/servicemp3.cpp:191
+msgid "Connecting..."
+msgstr ""
+
+#: lib/dvb/servicemp3.cpp:410
+msgid "buffering..."
+msgstr ""
+
+#: lib/dvb/servicemp3.cpp:567
+msgid "playing..."
+msgstr ""
+
+#: lib/dvb/serviceplaylist.cpp:156
+#, c-format
+msgid " (%d entries)"
+msgstr ""
+
+#: lib/dvb/servicestructure.cpp:14
+msgid "root node"
+msgstr ""
+
+#: lib/dvb/servicestructure.cpp:15 src/enigma_mainmenu.cpp:54
+#: src/enigma_mainmenu.cpp:197
+msgid "TV mode"
+msgstr ""
+
+#: lib/dvb/servicestructure.cpp:16
+msgid "Radio Mode"
+msgstr ""
+
+#: lib/dvb/servicestructure.cpp:18
+msgid "File Mode"
+msgstr ""
+
+#: lib/dvb/servicestructure.cpp:20
+msgid "TV/Radio"
+msgstr ""
+
+#: lib/dvb/servicestructure.cpp:21 src/enigma_main.cpp:8317
+#: src/sselect.cpp:476 src/sselect.cpp:483
+msgid "Bouquets"
+msgstr ""
+
+#: lib/gui/emessage.cpp:124
+msgid "OK"
+msgstr ""
+
+#: lib/gui/emessage.cpp:125
+msgid "Cancel"
+msgstr ""
+
+#: lib/gui/emessage.cpp:126
+msgid "Yes"
+msgstr ""
+
+#: lib/gui/emessage.cpp:127
+msgid "No"
+msgstr ""
+
+#: lib/gui/listbox.cpp:869
+msgid "no description available"
+msgstr ""
+
+#: lib/gui/textinput.cpp:19
+msgid "enable/disable capslock"
+msgstr ""
+
+#: lib/gui/textinput.cpp:20
+msgid "put numbers before/after characters"
+msgstr ""
+
+#: lib/gui/textinput.cpp:21
+msgid "insert blank at cursor position"
+msgstr ""
+
+#: lib/gui/textinput.cpp:22
+msgid "remove the character at the cursor position"
+msgstr ""
+
+#: lib/gui/textinput.cpp:23
+msgid "remove the character before the cursor position"
+msgstr ""
+
+#: lib/gui/textinput.cpp:24
+msgid "shows the textinputfield help"
+msgstr ""
+
+#: lib/gui/textinput.cpp:35
+msgid "press ok to save (help is available)"
+msgstr ""
+
+#: lib/gui/textinput.cpp:60
+msgid "press ok to save"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:119
+msgid "display next picture"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:120
+msgid "display previous picture"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:121
+msgid "start slideshow"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:122
+msgid "stop slideshow"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:123
+msgid "toggle fit to screen width/fit to screen"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:124
+msgid "zoom out"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:125
+msgid "zoom in"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:126
+msgid "toggle 16/9 mode"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:127
+msgid "move picture up"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:128
+msgid "move picture left"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:129
+msgid "move picture right"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:130
+msgid "move picture down"
+msgstr ""
+
+#: lib/picviewer/pictureviewer.cpp:138
+msgid "Loading slide... please wait."
+msgstr ""
+
+#: src/channelinfo.cpp:78 src/epgsearch.cpp:152
+msgid "Movie"
+msgstr ""
+
+#: src/channelinfo.cpp:78 src/epgsearch.cpp:154
+msgid "Adventure"
+msgstr ""
+
+#: src/channelinfo.cpp:78 src/epgsearch.cpp:155
+msgid "SciFi"
+msgstr ""
+
+#: src/channelinfo.cpp:78 src/epgsearch.cpp:156
+msgid "Comedy"
+msgstr ""
+
+#: src/channelinfo.cpp:79 src/epgsearch.cpp:157
+msgid "Soap"
+msgstr ""
+
+#: src/channelinfo.cpp:79 src/epgsearch.cpp:158
+msgid "Romance"
+msgstr ""
+
+#: src/channelinfo.cpp:79 src/epgsearch.cpp:159
+msgid "Serious"
+msgstr ""
+
+#: src/channelinfo.cpp:79 src/epgsearch.cpp:160
+msgid "Adult"
+msgstr ""
+
+#: src/channelinfo.cpp:82 src/epgsearch.cpp:161
+msgid "News"
+msgstr ""
+
+#: src/channelinfo.cpp:82
+msgid "Weather"
+msgstr ""
+
+#: src/channelinfo.cpp:82
+msgid "Magazine"
+msgstr ""
+
+#: src/channelinfo.cpp:82
+msgid "Documentary"
+msgstr ""
+
+#: src/channelinfo.cpp:82
+msgid "Discussion"
+msgstr ""
+
+#: src/channelinfo.cpp:86 src/epgsearch.cpp:162
+msgid "Show"
+msgstr ""
+
+#: src/channelinfo.cpp:86
+msgid "Game Show"
+msgstr ""
+
+#: src/channelinfo.cpp:86
+msgid "Variety"
+msgstr ""
+
+#: src/channelinfo.cpp:86
+msgid "Talk"
+msgstr ""
+
+#: src/channelinfo.cpp:90 src/epgsearch.cpp:163
+msgid "Sports"
+msgstr ""
+
+#: src/channelinfo.cpp:90
+msgid "Special Event"
+msgstr ""
+
+#: src/channelinfo.cpp:90
+msgid "Sports Mag."
+msgstr ""
+
+#: src/channelinfo.cpp:90
+msgid "Football"
+msgstr ""
+
+#: src/channelinfo.cpp:90
+msgid "Tennis"
+msgstr ""
+
+#: src/channelinfo.cpp:90
+msgid "Team Sports"
+msgstr ""
+
+#: src/channelinfo.cpp:91
+msgid "Athletics"
+msgstr ""
+
+#: src/channelinfo.cpp:91
+msgid "Motor Sports"
+msgstr ""
+
+#: src/channelinfo.cpp:91
+msgid "Water Sports"
+msgstr ""
+
+#: src/channelinfo.cpp:91
+msgid "Winter Sports"
+msgstr ""
+
+#: src/channelinfo.cpp:91
+msgid "Equestrian"
+msgstr ""
+
+#: src/channelinfo.cpp:92
+msgid "Martial Sports"
+msgstr ""
+
+#: src/channelinfo.cpp:95 src/epgsearch.cpp:164
+msgid "Children"
+msgstr ""
+
+#: src/channelinfo.cpp:95
+msgid "Pre-School"
+msgstr ""
+
+#: src/channelinfo.cpp:95
+msgid "Age 6-14"
+msgstr ""
+
+#: src/channelinfo.cpp:95
+msgid "Age 10-16"
+msgstr ""
+
+#: src/channelinfo.cpp:95
+msgid "School"
+msgstr ""
+
+#: src/channelinfo.cpp:96
+msgid "Cartoons"
+msgstr ""
+
+#: src/channelinfo.cpp:100 src/epgsearch.cpp:165
+msgid "Music"
+msgstr ""
+
+#: src/channelinfo.cpp:100
+msgid "Rock/Pop"
+msgstr ""
+
+#: src/channelinfo.cpp:100
+msgid "Classical"
+msgstr ""
+
+#: src/channelinfo.cpp:100
+msgid "Folk"
+msgstr ""
+
+#: src/channelinfo.cpp:100
+msgid "Jazz"
+msgstr ""
+
+#: src/channelinfo.cpp:100
+msgid "Musical"
+msgstr ""
+
+#: src/channelinfo.cpp:100
+msgid "Ballet"
+msgstr ""
+
+#: src/channelinfo.cpp:104 src/epgsearch.cpp:166
+msgid "Culture"
+msgstr ""
+
+#: src/channelinfo.cpp:104
+msgid "Perf. Arts"
+msgstr ""
+
+#: src/channelinfo.cpp:104
+msgid "Fine Arts"
+msgstr ""
+
+#: src/channelinfo.cpp:104
+msgid "Religion"
+msgstr ""
+
+#: src/channelinfo.cpp:104
+msgid "Pop. Arts"
+msgstr ""
+
+#: src/channelinfo.cpp:104
+msgid "Literature"
+msgstr ""
+
+#: src/channelinfo.cpp:105
+msgid "Film"
+msgstr ""
+
+#: src/channelinfo.cpp:105
+msgid "Experimental"
+msgstr ""
+
+#: src/channelinfo.cpp:105
+msgid "Press"
+msgstr ""
+
+#: src/channelinfo.cpp:105
+msgid "New Media"
+msgstr ""
+
+#: src/channelinfo.cpp:105
+msgid "Art Mag."
+msgstr ""
+
+#: src/channelinfo.cpp:105
+msgid "Fashion"
+msgstr ""
+
+#: src/channelinfo.cpp:108 src/epgsearch.cpp:167
+msgid "Social"
+msgstr ""
+
+#: src/channelinfo.cpp:108
+msgid "Soc. Mag."
+msgstr ""
+
+#: src/channelinfo.cpp:108
+msgid "Economics"
+msgstr ""
+
+#: src/channelinfo.cpp:108
+msgid "Remark. People"
+msgstr ""
+
+#: src/channelinfo.cpp:112 src/epgsearch.cpp:168
+msgid "Education"
+msgstr ""
+
+#: src/channelinfo.cpp:112
+msgid "Nature"
+msgstr ""
+
+#: src/channelinfo.cpp:112
+msgid "Technology"
+msgstr ""
+
+#: src/channelinfo.cpp:112
+msgid "Medicine"
+msgstr ""
+
+#: src/channelinfo.cpp:112
+msgid "Expeditions"
+msgstr ""
+
+#: src/channelinfo.cpp:112
+msgid "Spiritual"
+msgstr ""
+
+#: src/channelinfo.cpp:113
+msgid "Further Ed."
+msgstr ""
+
+#: src/channelinfo.cpp:113
+msgid "Languages"
+msgstr ""
+
+#: src/channelinfo.cpp:116 src/epgsearch.cpp:169
+msgid "Hobbies"
+msgstr ""
+
+#: src/channelinfo.cpp:116
+msgid "Travel"
+msgstr ""
+
+#: src/channelinfo.cpp:116
+msgid "Handicraft"
+msgstr ""
+
+#: src/channelinfo.cpp:116
+msgid "Motoring"
+msgstr ""
+
+#: src/channelinfo.cpp:116
+msgid "Fitness"
+msgstr ""
+
+#: src/channelinfo.cpp:116
+msgid "Cooking"
+msgstr ""
+
+#: src/channelinfo.cpp:117
+msgid "Shopping"
+msgstr ""
+
+#: src/channelinfo.cpp:117
+msgid "Gardening"
+msgstr ""
+
+#: src/channelinfo.cpp:120
+msgid "Orig. Lang."
+msgstr ""
+
+#: src/channelinfo.cpp:120
+msgid "B&W"
+msgstr ""
+
+#: src/channelinfo.cpp:120
+msgid "Unpublished"
+msgstr ""
+
+#: src/channelinfo.cpp:120 src/epgsearch.cpp:170
+msgid "Live"
+msgstr ""
+
+#: src/channelinfo.cpp:257
+msgid "no data for this service avail"
+msgstr ""
+
+#: src/channelinfo.cpp:292
+#, c-format
+msgid ""
+"\n"
+"Filesize: %d MB"
+msgstr ""
+
+#: src/channelinfo.cpp:293 src/swapmanager.cpp:56 src/swapmanager.cpp:57
+#: src/swapmanager.cpp:58 src/swapmanager.cpp:80
+#, c-format
+msgid "Filename: "
+msgstr ""
+
+#: src/engrab.cpp:37 src/enigma_event.cpp:201 src/enigma_event.cpp:209
+#: src/enigma_event.cpp:395 src/enigma_event.cpp:404 src/timer.cpp:2384
+msgid "no description is available"
+msgstr ""
+
+#: src/enigma.cpp:310
+msgid ""
+"Welcome to enigma.\n"
+"\n"
+"Please do a transponder scan first.\n"
+"(mainmenu > setup > channels > transponder scan)"
+msgstr ""
+
+#: src/enigma.cpp:312
+msgid "First start of enigma"
+msgstr ""
+
+#: src/enigma.cpp:536
+msgid "It's now safe to unplug power!"
+msgstr ""
+
+#: src/enigma.cpp:537
+msgid "Shutdown finished"
+msgstr ""
+
+#: src/enigma.cpp:564
+msgid "Please wait... your Dreambox is shutting down!"
+msgstr ""
+
+#: src/enigma.cpp:565
+msgid "Shutdown..."
+msgstr ""
+
+#: src/enigma_bouquet.cpp:19
+msgid "Bouquet Type"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:26
+msgid "TV"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:27
+msgid "Radio"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:29
+msgid "File"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:43 src/enigma_setup.cpp:45
+msgid "Service Organising"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:51
+msgid "Create new bouquet"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:51
+msgid "create new empty bouquet"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:52
+msgid "Add services to bouquet"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:52
+msgid "add multiple services to a specific bouquet"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:53
+msgid "Edit bouquets"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:53
+msgid "sort,rename,delete services/bouquets "
+msgstr ""
+
+#: src/enigma_bouquet.cpp:57
+msgid "Lock/Unlock Services"
+msgstr ""
+
+#: src/enigma_bouquet.cpp:57
+msgid "lock,unlock services (parental locking)"
+msgstr ""
+
+#: src/enigma_ci.cpp:34
+msgid "Common Interface Modules"
+msgstr ""
+
+#: src/enigma_ci.cpp:42
+msgid "Common Interface Module"
+msgstr ""
+
+#: src/enigma_ci.cpp:48 src/enigma_ci.cpp:77
+msgid "Reset"
+msgstr ""
+
+#: src/enigma_ci.cpp:51 src/enigma_ci.cpp:80
+msgid "reset the Common Interface module"
+msgstr ""
+
+#: src/enigma_ci.cpp:57 src/enigma_ci.cpp:86
+msgid "Init"
+msgstr ""
+
+#: src/enigma_ci.cpp:60 src/enigma_ci.cpp:89
+msgid "send the ca-pmt to CI"
+msgstr ""
+
+#: src/enigma_ci.cpp:66 src/enigma_ci.cpp:95
+msgid "waiting for module"
+msgstr ""
+
+#: src/enigma_ci.cpp:69 src/enigma_ci.cpp:98
+msgid "enter Common Interface menu (mmi)"
+msgstr ""
+
+#: src/enigma_ci.cpp:112
+msgid "can handle two services"
+msgstr ""
+
+#: src/enigma_ci.cpp:113
+msgid "can your CI descramble two services at the same time?"
+msgstr ""
+
+#: src/enigma_ci.cpp:171 src/enigma_ci.cpp:177
+msgid "resetting....please wait"
+msgstr ""
+
+#: src/enigma_ci.cpp:223
+msgid "Common Interface Module - mmi"
+msgstr ""
+
+#: src/enigma_ci.cpp:224
+msgid "waiting for CI answer..."
+msgstr ""
+
+#: src/enigma_dyn.cpp:2166
+msgid "External Message"
+msgstr ""
+
+#: src/enigma_epg.cpp:86
+msgid "press 1 ... 6 to select count of visible hours"
+msgstr ""
+
+#: src/enigma_event.cpp:21
+msgid "enigma event view"
+msgstr ""
+
+#: src/enigma_event.cpp:22
+msgid "closes the Event View"
+msgstr ""
+
+#: src/enigma_event.cpp:194 src/enigma_event.cpp:385 src/streaminfo.cpp:597
+#: src/streaminfo.cpp:655
+msgid "no information is available"
+msgstr ""
+
+#: src/enigma_event.cpp:319
+#, c-format
+msgid "Original duration: %d min"
+msgstr ""
+
+#: src/enigma_info.cpp:39
+msgid "Infos"
+msgstr ""
+
+#: src/enigma_info.cpp:42 src/streaminfo.cpp:566
+msgid "Streaminfo"
+msgstr ""
+
+#: src/enigma_info.cpp:42
+msgid "open the Streaminfo"
+msgstr ""
+
+#: src/enigma_info.cpp:43
+msgid "open the about dialog"
+msgstr ""
+
+#: src/enigma_info.cpp:154
+msgid "Frontend: Satellite"
+msgstr ""
+
+#: src/enigma_info.cpp:157
+msgid "Frontend: Cable"
+msgstr ""
+
+#: src/enigma_info.cpp:160
+msgid "Frontend: Terrestrial"
+msgstr ""
+
+#: src/enigma_info.cpp:163
+msgid "Frontend: Unknown"
+msgstr ""
+
+#: src/enigma_info.cpp:226 src/streaminfo.cpp:347 src/streaminfo.cpp:358
+#: src/streaminfo.cpp:370 src/streaminfo.cpp:382 src/streaminfo.cpp:394
+#: src/streaminfo.cpp:490 src/streaminfo.cpp:529
+msgid "none"
+msgstr ""
+
+#: src/enigma_info.cpp:232 src/epgsearch.cpp:120 src/timer.cpp:2790
+#: src/upgrade.cpp:293
+msgid "unknown"
+msgstr ""
+
+#: src/enigma_info.cpp:237
+msgid "release"
+msgstr ""
+
+#: src/enigma_info.cpp:238
+msgid "beta"
+msgstr ""
+
+#: src/enigma_info.cpp:239
+msgid "internal"
+msgstr ""
+
+#: src/enigma_main.cpp:88
+msgid "enigma Zapp"
+msgstr ""
+
+#: src/enigma_main.cpp:89
+msgid "show main menu"
+msgstr ""
+
+#: src/enigma_main.cpp:90
+msgid "go to standby (press)"
+msgstr ""
+
+#: src/enigma_main.cpp:91
+msgid "go to standby without menu (press)"
+msgstr ""
+
+#: src/enigma_main.cpp:92
+msgid "go to standby (repeat)"
+msgstr ""
+
+#: src/enigma_main.cpp:93
+msgid "go to standby (release)"
+msgstr ""
+
+#: src/enigma_main.cpp:95
+msgid "show infobar"
+msgstr ""
+
+#: src/enigma_main.cpp:96
+msgid "hide infobar"
+msgstr ""
+
+#: src/enigma_main.cpp:97
+msgid "show infobar or EPG"
+msgstr ""
+
+#: src/enigma_main.cpp:98
+msgid "show service selector"
+msgstr ""
+
+#: src/enigma_main.cpp:99
+msgid "show subservices/NVOD"
+msgstr ""
+
+#: src/enigma_main.cpp:100 src/enigma_main.cpp:101
+msgid "show audio selector"
+msgstr ""
+
+#: src/enigma_main.cpp:102
+msgid "show Videotext"
+msgstr ""
+
+#: src/enigma_main.cpp:103
+msgid "show extension Plugins"
+msgstr ""
+
+#: src/enigma_main.cpp:104
+msgid "show epg schedule list"
+msgstr ""
+
+#: src/enigma_main.cpp:105
+msgid "show extended info"
+msgstr ""
+
+#: src/enigma_main.cpp:106
+msgid "zap to next subService"
+msgstr ""
+
+#: src/enigma_main.cpp:107
+msgid "zap to prev subService"
+msgstr ""
+
+#: src/enigma_main.cpp:108
+msgid "quickzap next"
+msgstr ""
+
+#: src/enigma_main.cpp:109
+msgid "quickzap prev"
+msgstr ""
+
+#: src/enigma_main.cpp:111
+msgid "playlist/history next"
+msgstr ""
+
+#: src/enigma_main.cpp:112
+msgid "playlist/history prev"
+msgstr ""
+
+#: src/enigma_main.cpp:114
+msgid "service list and down"
+msgstr ""
+
+#: src/enigma_main.cpp:115
+msgid "service list and up"
+msgstr ""
+
+#: src/enigma_main.cpp:117 src/enigma_main.cpp:174
+msgid "volume up"
+msgstr ""
+
+#: src/enigma_main.cpp:118 src/enigma_main.cpp:175
+msgid "volume down"
+msgstr ""
+
+#: src/enigma_main.cpp:119 src/enigma_main.cpp:176
+msgid "toggle mute flag"
+msgstr ""
+
+#: src/enigma_main.cpp:121 src/enigma_main.cpp:134
+msgid "stop playback"
+msgstr ""
+
+#: src/enigma_main.cpp:122 src/enigma_main.cpp:135
+msgid "pause playback"
+msgstr ""
+
+#: src/enigma_main.cpp:123 src/enigma_main.cpp:136
+msgid "resume playback"
+msgstr ""
+
+#: src/enigma_main.cpp:124 src/enigma_main.cpp:137 src/enigma_main.cpp:3423
+msgid "record"
+msgstr ""
+
+#: src/enigma_main.cpp:126 src/enigma_main.cpp:139
+msgid "start skipping forward"
+msgstr ""
+
+#: src/enigma_main.cpp:127 src/enigma_main.cpp:140
+msgid "repeat skipping forward"
+msgstr ""
+
+#: src/enigma_main.cpp:128 src/enigma_main.cpp:141
+msgid "stop skipping forward"
+msgstr ""
+
+#: src/enigma_main.cpp:130 src/enigma_main.cpp:143
+msgid "start skipping reverse"
+msgstr ""
+
+#: src/enigma_main.cpp:131 src/enigma_main.cpp:144
+msgid "repeat skipping reverse"
+msgstr ""
+
+#: src/enigma_main.cpp:132 src/enigma_main.cpp:145
+msgid "stop skipping reverse"
+msgstr ""
+
+#: src/enigma_main.cpp:147
+msgid "open the serviceselector and show bouquets"
+msgstr ""
+
+#: src/enigma_main.cpp:148
+msgid "open the serviceselector and show provider"
+msgstr ""
+
+#: src/enigma_main.cpp:149
+msgid "open the serviceselector and show recorded movies"
+msgstr ""
+
+#: src/enigma_main.cpp:150
+msgid "open the serviceselector and shows the playlist"
+msgstr ""
+
+#: src/enigma_main.cpp:152 src/sselect.cpp:141
+msgid "switch to TV mode"
+msgstr ""
+
+#: src/enigma_main.cpp:153 src/sselect.cpp:142
+msgid "switch to Radio mode"
+msgstr ""
+
+#: src/enigma_main.cpp:154 src/sselect.cpp:143
+msgid "switch to File mode"
+msgstr ""
+
+#: src/enigma_main.cpp:156
+msgid "toggle DVR panel"
+msgstr ""
+
+#: src/enigma_main.cpp:157
+msgid "toggle index mark"
+msgstr ""
+
+#: src/enigma_main.cpp:159
+msgid "seek to next index mark"
+msgstr ""
+
+#: src/enigma_main.cpp:160
+msgid "seek to previous index mark"
+msgstr ""
+
+#: src/enigma_main.cpp:340
+msgid " to "
+msgstr ""
+
+#: src/enigma_main.cpp:350
+msgid " Euro lost)"
+msgstr ""
+
+#: src/enigma_main.cpp:391
+msgid "not valid!"
+msgstr ""
+
+#: src/enigma_main.cpp:409
+msgid "NVOD"
+msgstr ""
+
+#: src/enigma_main.cpp:520
+msgid "Video"
+msgstr ""
+
+#: src/enigma_main.cpp:664 src/enigma_main.cpp:933
+msgid "Audio"
+msgstr ""
+
+#: src/enigma_main.cpp:684 src/enigma_main.cpp:953
+msgid "   Left Mono  >"
+msgstr ""
+
+#: src/enigma_main.cpp:685 src/enigma_main.cpp:954
+msgid "<  Stereo  >"
+msgstr ""
+
+#: src/enigma_main.cpp:686 src/enigma_main.cpp:955
+msgid "<  Right Mono  "
+msgstr ""
+
+#: src/enigma_main.cpp:716
+msgid "Audiotrack(AC3)"
+msgstr ""
+
+#: src/enigma_main.cpp:716
+msgid "Audiotrack"
+msgstr ""
+
+#: src/enigma_main.cpp:880
+#, c-format
+msgid "Teletext Page %03x (%s)"
+msgstr ""
+
+#: src/enigma_main.cpp:993
+msgid "no subtitles"
+msgstr ""
+
+#: src/enigma_main.cpp:1035
+msgid "multiple Services"
+msgstr ""
+
+#: src/enigma_main.cpp:1050 src/enigma_main.cpp:1101 src/enigma_main.cpp:1115
+msgid "enable quickzap"
+msgstr ""
+
+#: src/enigma_main.cpp:1058
+msgid "add to bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:1097
+msgid "disable quickzap"
+msgstr ""
+
+#: src/enigma_main.cpp:1199
+msgid "Channel"
+msgstr ""
+
+#: src/enigma_main.cpp:1204
+msgid "Channel:"
+msgstr ""
+
+#: src/enigma_main.cpp:1279
+#, c-format
+msgid "Please wait while the motor is turning to %d.%d°%c ...."
+msgstr ""
+
+#: src/enigma_main.cpp:1279
+msgid "Message"
+msgstr ""
+
+#: src/enigma_main.cpp:1381
+msgid "recorded movies"
+msgstr ""
+
+#: src/enigma_main.cpp:1502
+msgid "Bouquets (TV)"
+msgstr ""
+
+#: src/enigma_main.cpp:1513
+msgid "Bouquets (File)"
+msgstr ""
+
+#: src/enigma_main.cpp:1525
+msgid "Bouquets (Radio)"
+msgstr ""
+
+#: src/enigma_main.cpp:1574
+msgid "Favourites (TV)"
+msgstr ""
+
+#: src/enigma_main.cpp:1580
+msgid "Favourites (Radio)"
+msgstr ""
+
+#: src/enigma_main.cpp:1586
+msgid "Favourites (File)"
+msgstr ""
+
+#: src/enigma_main.cpp:2026
+msgid "please wait while initializing Common Interface ..."
+msgstr ""
+
+#: src/enigma_main.cpp:2113
+msgid "rewind one minute"
+msgstr ""
+
+#: src/enigma_main.cpp:2114
+msgid "rewind six minutes"
+msgstr ""
+
+#: src/enigma_main.cpp:2115
+msgid "rewind nine minutes"
+msgstr ""
+
+#: src/enigma_main.cpp:2116
+msgid "enter number of minutes to rewind"
+msgstr ""
+
+#: src/enigma_main.cpp:2117
+msgid "fast forward one minute"
+msgstr ""
+
+#: src/enigma_main.cpp:2118
+msgid "fast forward six minutes"
+msgstr ""
+
+#: src/enigma_main.cpp:2119
+msgid "fast forward nine minutes"
+msgstr ""
+
+#: src/enigma_main.cpp:2120
+msgid "enter number of minutes to fast forward"
+msgstr ""
+
+#: src/enigma_main.cpp:2355 src/enigma_main.cpp:2358 src/enigma_main.cpp:2478
+#: src/enigma_main.cpp:2481
+msgid "no EPG available"
+msgstr ""
+
+#: src/enigma_main.cpp:3140
+msgid "ShutdownTimer"
+msgstr ""
+
+#: src/enigma_main.cpp:3140
+msgid "SleepTimer"
+msgstr ""
+
+#: src/enigma_main.cpp:3209
+msgid "Pause"
+msgstr ""
+
+#: src/enigma_main.cpp:3423
+msgid "Sorry, you cannot record this service."
+msgstr ""
+
+#: src/enigma_main.cpp:3628
+msgid "Show recorded movies?"
+msgstr ""
+
+#: src/enigma_main.cpp:3628
+msgid "recording finished"
+msgstr ""
+
+#: src/enigma_main.cpp:3951
+msgid "Shutdown your Receiver now?"
+msgstr ""
+
+#: src/enigma_main.cpp:3951 src/enigma_main.cpp:3971
+msgid "Timer Message"
+msgstr ""
+
+#: src/enigma_main.cpp:3971
+msgid "Go to Standby now?"
+msgstr ""
+
+#: src/enigma_main.cpp:4028 src/enigma_main.cpp:4091
+msgid "Enter new name:"
+msgstr ""
+
+#: src/enigma_main.cpp:4029 src/enigma_main.cpp:4092
+msgid "Rename entry"
+msgstr ""
+
+#: src/enigma_main.cpp:4154
+msgid "Sorry, you cannot delete this service."
+msgstr ""
+
+#: src/enigma_main.cpp:4154
+msgid "delete service"
+msgstr ""
+
+#: src/enigma_main.cpp:4178 src/enigma_main.cpp:4300 src/sselect.cpp:2238
+#, c-format
+msgid ""
+"You are trying to delete '%s'.\n"
+"Really do this?"
+msgstr ""
+
+#: src/enigma_main.cpp:4179
+msgid "Delete recorded stream"
+msgstr ""
+
+#: src/enigma_main.cpp:4207
+msgid ""
+"This is a complete Bouquet!\n"
+"Really delete?"
+msgstr ""
+
+#: src/enigma_main.cpp:4208
+msgid "Delete bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:4301
+msgid "Delete File"
+msgstr ""
+
+#: src/enigma_main.cpp:4370
+msgid "Enter new Filename:"
+msgstr ""
+
+#: src/enigma_main.cpp:4371
+msgid "Rename File"
+msgstr ""
+
+#: src/enigma_main.cpp:4403
+msgid "Enter new name for the bouquet:"
+msgstr ""
+
+#: src/enigma_main.cpp:4404
+msgid "Rename bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:4429
+msgid "Enter name for the new bouquet:"
+msgstr ""
+
+#: src/enigma_main.cpp:4430
+msgid "Add new bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:4485
+msgid "unnamed"
+msgstr ""
+
+#: src/enigma_main.cpp:4486
+msgid "Enter marker name:"
+msgstr ""
+
+#: src/enigma_main.cpp:4487
+msgid "create marker"
+msgstr ""
+
+#: src/enigma_main.cpp:4528
+msgid "unnamed bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:5013 src/enigma_main.cpp:5014
+msgid "This directory doesn't contain anything playable!"
+msgstr ""
+
+#: src/enigma_main.cpp:5014
+msgid "Play"
+msgstr ""
+
+#: src/enigma_main.cpp:5330 src/epgwindow.cpp:411 src/sselect.cpp:1937
+msgid " was not found!"
+msgstr ""
+
+#: src/enigma_main.cpp:5589
+msgid ""
+"A timer based recording is currently in progress!\n"
+"This stops the timer, and recording!"
+msgstr ""
+
+#: src/enigma_main.cpp:5599
+msgid ""
+"A recording is currently in progress!\n"
+"This stops the recording!"
+msgstr ""
+
+#: src/enigma_main.cpp:5611
+msgid ""
+"A timer event is currently in progress!\n"
+"This stops the timer event!"
+msgstr ""
+
+#: src/enigma_main.cpp:5619
+msgid "Really do this?"
+msgstr ""
+
+#: src/enigma_main.cpp:5714
+msgid "please wait until the timer has started the recording (max 10 seconds)"
+msgstr ""
+
+#: src/enigma_main.cpp:5715
+msgid "information"
+msgstr ""
+
+#: src/enigma_main.cpp:6493
+msgid "Record failed due to inaccessable storage."
+msgstr ""
+
+#: src/enigma_main.cpp:6495
+msgid ""
+"Record stopped due to full harddisk. Delete some recordings and try again."
+msgstr ""
+
+#: src/enigma_main.cpp:6497
+msgid ""
+"Record failed due to an write error during recording. Check for filesystem "
+"corruption."
+msgstr ""
+
+#: src/enigma_main.cpp:6499
+msgid "record failed"
+msgstr ""
+
+#: src/enigma_main.cpp:6774 src/enigma_main.cpp:6775
+msgid "One moment please..."
+msgstr ""
+
+#: src/enigma_main.cpp:6775 src/enigma_main.cpp:6779 src/enigma_main.cpp:6787
+#: src/enigma_main.cpp:6794 src/enigma_main.cpp:6800 src/enigma_main.cpp:6805
+#: src/enigma_main.cpp:6810 src/timer.cpp:2307
+msgid "switch"
+msgstr ""
+
+#: src/enigma_main.cpp:6778 src/enigma_main.cpp:6779
+msgid "Service could not be found !"
+msgstr ""
+
+#: src/enigma_main.cpp:6786 src/enigma_main.cpp:6787
+msgid "This service could not be descrambled"
+msgstr ""
+
+#: src/enigma_main.cpp:6793 src/enigma_main.cpp:6794
+msgid "This service doesn't currently send a signal"
+msgstr ""
+
+#: src/enigma_main.cpp:6798 src/enigma_main.cpp:6800
+msgid "This content could not be displayed"
+msgstr ""
+
+#: src/enigma_main.cpp:6803 src/enigma_main.cpp:6805
+msgid "NVOD Service - please select a starttime"
+msgstr ""
+
+#: src/enigma_main.cpp:6808 src/enigma_main.cpp:6810
+msgid "Unknown error!!"
+msgstr ""
+
+#: src/enigma_main.cpp:7348 src/sselect.cpp:482
+msgid "Playlist"
+msgstr ""
+
+#: src/enigma_main.cpp:7350
+msgid "History"
+msgstr ""
+
+#: src/enigma_main.cpp:7806
+msgid "Service Menu"
+msgstr ""
+
+#: src/enigma_main.cpp:7823 src/sselect.cpp:139
+msgid "add service to playlist"
+msgstr ""
+
+#: src/enigma_main.cpp:7823
+msgid "add selected service to the playlist"
+msgstr ""
+
+#: src/enigma_main.cpp:7835
+msgid "remove all 'new found' flags"
+msgstr ""
+
+#: src/enigma_main.cpp:7835
+msgid "select to remove all 'new found' flags from this satellite"
+msgstr ""
+
+#: src/enigma_main.cpp:7841
+msgid "remove 'new found flag'"
+msgstr ""
+
+#: src/enigma_main.cpp:7841
+msgid "select to remove the 'new found flag'"
+msgstr ""
+
+#: src/enigma_main.cpp:7844
+msgid "create new bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7844
+msgid "select to create a new bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7856
+msgid "duplicate bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7856
+msgid "duplicate the complete bouquet with all content"
+msgstr ""
+
+#: src/enigma_main.cpp:7862 src/enigma_main.cpp:7923 src/enigma_main.cpp:7928
+#: src/enigma_main.cpp:7946
+msgid "add to specific bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7862
+msgid "add the selected service to another bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7864
+msgid "add marker"
+msgstr ""
+
+#: src/enigma_main.cpp:7864
+msgid "create a new marker in the current bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7873 src/enigma_main.cpp:7888 src/enigma_main.cpp:7930
+#: src/enigma_plugins.cpp:93 src/sselect.cpp:461
+msgid "rename"
+msgstr ""
+
+#: src/enigma_main.cpp:7873
+msgid "rename the current selected bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7888 src/enigma_main.cpp:7930
+msgid "rename the current selected service/movie"
+msgstr ""
+
+#: src/enigma_main.cpp:7892 src/enigma_main.cpp:7931 src/sselect.cpp:459
+msgid "delete"
+msgstr ""
+
+#: src/enigma_main.cpp:7892 src/enigma_main.cpp:7931
+msgid "delete the current selected service/movie"
+msgstr ""
+
+#: src/enigma_main.cpp:7898
+msgid "set as startup service"
+msgstr ""
+
+#: src/enigma_main.cpp:7898
+msgid "currently selected service will be selected on startup"
+msgstr ""
+
+#: src/enigma_main.cpp:7899 src/enigma_main.cpp:7934
+msgid "reset startup service"
+msgstr ""
+
+#: src/enigma_main.cpp:7899
+msgid "last selected service will be selected on startup"
+msgstr ""
+
+#: src/enigma_main.cpp:7906 src/enigma_plugins.cpp:87
+msgid "disable move mode"
+msgstr ""
+
+#: src/enigma_main.cpp:7906 src/enigma_plugins.cpp:87
+msgid "switch move mode off"
+msgstr ""
+
+#: src/enigma_main.cpp:7908 src/enigma_plugins.cpp:89
+msgid "enable move mode"
+msgstr ""
+
+#: src/enigma_main.cpp:7908 src/enigma_plugins.cpp:89
+msgid "activate mode to simply change the entry order"
+msgstr ""
+
+#: src/enigma_main.cpp:7917
+msgid "copy to bouquet list"
+msgstr ""
+
+#: src/enigma_main.cpp:7917
+msgid "copy the selected provider to the bouquet list"
+msgstr ""
+
+#: src/enigma_main.cpp:7923 src/enigma_main.cpp:7928
+msgid "add the selected service to a selectable bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7933
+msgid "set as startup"
+msgstr ""
+
+#: src/enigma_main.cpp:7933
+msgid "set the current selected service/movie as startup service"
+msgstr ""
+
+#: src/enigma_main.cpp:7934
+msgid "reset startup"
+msgstr ""
+
+#: src/enigma_main.cpp:7946
+msgid "add the selected file to a selectable bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7948
+msgid "delete file"
+msgstr ""
+
+#: src/enigma_main.cpp:7948
+msgid "delete the selected file (and all corresponding ts files"
+msgstr ""
+
+#: src/enigma_main.cpp:7949
+msgid "rename file"
+msgstr ""
+
+#: src/enigma_main.cpp:7949
+msgid "rename the selected file (and all corresponding ts files"
+msgstr ""
+
+#: src/enigma_main.cpp:7963
+msgid "disable edit mode"
+msgstr ""
+
+#: src/enigma_main.cpp:7963
+msgid "disable the edit mode"
+msgstr ""
+
+#: src/enigma_main.cpp:7965
+msgid "enable edit mode"
+msgstr ""
+
+#: src/enigma_main.cpp:7965
+msgid "activate mode to simply add many services to a selectable bouquet"
+msgstr ""
+
+#: src/enigma_main.cpp:7975
+msgid "unlock"
+msgstr ""
+
+#: src/enigma_main.cpp:7975
+msgid "do parental-unlock the selected service or file"
+msgstr ""
+
+#: src/enigma_main.cpp:7977
+msgid "lock"
+msgstr ""
+
+#: src/enigma_main.cpp:7977
+msgid "do parentallock the selected service or file"
+msgstr ""
+
+#: src/enigma_main.cpp:7981
+msgid "disable parental lock"
+msgstr ""
+
+#: src/enigma_main.cpp:7981
+msgid "temporary disable the parental locking"
+msgstr ""
+
+#: src/enigma_main.cpp:7983
+msgid "enable parental lock"
+msgstr ""
+
+#: src/enigma_main.cpp:7983
+msgid "re-enable the parental locking"
+msgstr ""
+
+#: src/enigma_main.cpp:8001
+msgid "Shutdown/Standby Menu"
+msgstr ""
+
+#: src/enigma_main.cpp:8012 src/enigma_main.cpp:8015 src/enigma_main.cpp:8026
+msgid "reboot now"
+msgstr ""
+
+#: src/enigma_main.cpp:8012 src/enigma_main.cpp:8022
+msgid "restart your dreambox"
+msgstr ""
+
+#: src/enigma_main.cpp:8015
+msgid "restart your receiver"
+msgstr ""
+
+#: src/enigma_main.cpp:8021 src/enigma_main.cpp:8025 src/enigma_main.cpp:8029
+msgid "shutdown now"
+msgstr ""
+
+#: src/enigma_main.cpp:8021
+msgid "shutdown your dreambox"
+msgstr ""
+
+#: src/enigma_main.cpp:8022 src/enigma_main.cpp:8030
+msgid "restart"
+msgstr ""
+
+#: src/enigma_main.cpp:8025
+msgid "shutdown your box"
+msgstr ""
+
+#: src/enigma_main.cpp:8026
+msgid "restart your box"
+msgstr ""
+
+#: src/enigma_main.cpp:8029
+msgid "shutdown your dbox-2"
+msgstr ""
+
+#: src/enigma_main.cpp:8030
+msgid "restart your dbox-2"
+msgstr ""
+
+#: src/enigma_main.cpp:8034
+msgid "goto standby"
+msgstr ""
+
+#: src/enigma_main.cpp:8034
+msgid "goto standby mode"
+msgstr ""
+
+#: src/enigma_main.cpp:8035
+msgid "set sleeptimer"
+msgstr ""
+
+#: src/enigma_main.cpp:8035
+msgid "set a sleep timer"
+msgstr ""
+
+#: src/enigma_main.cpp:8156
+msgid "Record Menu"
+msgstr ""
+
+#: src/enigma_main.cpp:8166
+msgid "stop record now"
+msgstr ""
+
+#: src/enigma_main.cpp:8166
+msgid "immediate stop the recording"
+msgstr ""
+
+#: src/enigma_main.cpp:8168
+msgid "set record duration"
+msgstr ""
+
+#: src/enigma_main.cpp:8168
+msgid "set the recording time (in minutes)"
+msgstr ""
+
+#: src/enigma_main.cpp:8169
+msgid "set record stop time"
+msgstr ""
+
+#: src/enigma_main.cpp:8169
+msgid "set the recording end time"
+msgstr ""
+
+#: src/enigma_main.cpp:8175
+#, c-format
+msgid "add timeshift to recording (%d min) "
+msgstr ""
+
+#: src/enigma_main.cpp:8176
+msgid "add recorded timeshift at beginning of this recording"
+msgstr ""
+
+#: src/enigma_main.cpp:8281
+msgid "press ok to start edit mode"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:26
+msgid "enigma mainmenu"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:27
+msgid "close the mainmenu"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:28
+msgid "select previous entry"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:29
+msgid "select next entry"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:57 src/enigma_mainmenu.cpp:198
+msgid "Radio mode"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:61 src/enigma_mainmenu.cpp:200
+msgid "File mode"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:64 src/enigma_mainmenu.cpp:83
+#: src/enigma_mainmenu.cpp:207 src/enigma_mainmenu.cpp:217
+#: src/rotorconfig.cpp:918 src/setup_extra.cpp:492 src/timer.cpp:2773
+msgid "Information"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:67 src/enigma_mainmenu.cpp:209
+#: src/setup_extra.cpp:157 src/timer.cpp:2208 src/timer.cpp:2210
+msgid "Shutdown"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:70 src/enigma_mainmenu.cpp:86
+#: src/enigma_mainmenu.cpp:205 src/enigma_mainmenu.cpp:215
+#: src/enigma_setup.cpp:37
+msgid "Setup"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:73 src/enigma_mainmenu.cpp:206
+#: src/enigma_plugins.cpp:117
+msgid "Games"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:76 src/enigma_mainmenu.cpp:89
+#: src/enigma_mainmenu.cpp:204 src/enigma_mainmenu.cpp:214
+msgid "Timer"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:79 src/enigma_mainmenu.cpp:92
+#: src/enigma_mainmenu.cpp:202 src/enigma_mainmenu.cpp:212
+msgid "VCR"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:98 src/enigma_mainmenu.cpp:106
+#: src/enigma_mainmenu.cpp:369
+msgid "Mainmenu"
+msgstr ""
+
+#: src/enigma_mainmenu.cpp:305 src/parentallock.cpp:151
+#: src/parentallock.cpp:163
+msgid "setup"
+msgstr ""
+
+#: src/enigma_plugins.cpp:77
+msgid "Plugin Menu"
+msgstr ""
+
+#: src/enigma_plugins.cpp:93
+msgid "rename the selected plugin"
+msgstr ""
+
+#: src/enigma_plugins.cpp:99
+msgid "number buttons first"
+msgstr ""
+
+#: src/enigma_plugins.cpp:99
+msgid "use number buttons as first shortcuts"
+msgstr ""
+
+#: src/enigma_plugins.cpp:101
+msgid "color buttons first"
+msgstr ""
+
+#: src/enigma_plugins.cpp:101
+msgid "use color buttons as first shortcuts"
+msgstr ""
+
+#: src/enigma_plugins.cpp:117
+msgid "Plugins"
+msgstr ""
+
+#: src/enigma_plugins.cpp:123
+msgid "select plugin and press ok"
+msgstr ""
+
+#: src/enigma_plugins.cpp:210
+#, c-format
+msgid "Couldn't read plugin directory %s"
+msgstr ""
+
+#: src/enigma_plugins.cpp:214 src/enigma_plugins.cpp:357 src/scan.cpp:1909
+#: src/scan.cpp:1961 src/scan.cpp:2073 src/sselect.cpp:2245
+msgid "Error"
+msgstr ""
+
+#: src/enigma_plugins.cpp:327
+msgid "E: currently another plugin is running..."
+msgstr ""
+
+#: src/enigma_plugins.cpp:334
+#, c-format
+msgid "plugin '%s' not found"
+msgstr ""
+
+#: src/enigma_plugins.cpp:337
+msgid "E: no name given"
+msgstr ""
+
+#: src/enigma_plugins.cpp:357
+#, c-format
+msgid "Cannot execute %s (check rights)"
+msgstr ""
+
+#: src/enigma_plugins.cpp:418
+msgid "Enter new name for the plugin:"
+msgstr ""
+
+#: src/enigma_plugins.cpp:419
+msgid "Rename plugin"
+msgstr ""
+
+#: src/enigma_plugins.cpp:755
+#, c-format
+msgid "Output from %s"
+msgstr ""
+
+#: src/enigma_plugins.cpp:780
+#, c-format
+msgid "Executing %s. Please wait..."
+msgstr ""
+
+#: src/enigma_plugins.cpp:783
+#, c-format
+msgid "Could not execute %s"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:33
+msgid "enigma tuxtxt"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:34
+msgid "toggle double height"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:35
+msgid "toggle splitscreen mode"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:36
+msgid "toggle transparency"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:37
+msgid "toggle hidden information"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:126
+msgid "automatic"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:127
+msgid "Czech/Slovak"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:128
+msgid "English"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:129
+msgid "Estonian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:130
+msgid "French"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:131
+msgid "German"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:132
+msgid "Italian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:133
+msgid "Latvian/Lithuanian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:134
+msgid "Polish"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:135
+msgid "Portuguese/Spanish"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:136
+msgid "Romanian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:137
+msgid "Serbian/Croatian/Slovenian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:138
+msgid "Swedish/Finnish/Hungarian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:139
+msgid "Turkish"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:140
+msgid "Serbian/Croatian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:141
+msgid "Russian/Bulgarian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:142
+msgid "Ukranian"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:143
+msgid "Greek"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:144
+msgid "Hebrew"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:145
+msgid "Arabic"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:259
+msgid "no services on this transponder"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:337
+msgid "Searching for Teletext services on this Transponder"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:337
+msgid "Search"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:612
+msgid "switch to direct page selecting mode"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:613
+msgid "show previously selected page"
+msgstr ""
+
+#: src/enigma_tuxtxt.cpp:614
+msgid "go to next favourite page"
+msgstr ""
+
+#: src/enigma_scan.cpp:40 src/enigma_setup.cpp:47
+msgid "Service Searching"
+msgstr ""
+
+#: src/enigma_scan.cpp:52
+msgid "open satellite config"
+msgstr ""
+
+#: src/enigma_scan.cpp:53
+msgid "open the satfinder"
+msgstr ""
+
+#: src/enigma_scan.cpp:54
+msgid "Motor Setup"
+msgstr ""
+
+#: src/enigma_scan.cpp:54
+msgid "open Motor Setup"
+msgstr ""
+
+#: src/enigma_scan.cpp:55 src/tpeditwindow.cpp:147
+msgid "Transponder Edit"
+msgstr ""
+
+#: src/enigma_scan.cpp:55
+msgid "for automatic scan"
+msgstr ""
+
+#: src/enigma_scan.cpp:59 src/satfind.cpp:71
+msgid "Signalfind"
+msgstr ""
+
+#: src/enigma_scan.cpp:59
+msgid "open the signalfinder"
+msgstr ""
+
+#: src/enigma_scan.cpp:60 src/scan.cpp:43
+msgid "Disable 5V"
+msgstr ""
+
+#: src/enigma_scan.cpp:60 src/scan.cpp:43
+msgid "disable 5V for passive terrerstrial antennas"
+msgstr ""
+
+#: src/enigma_scan.cpp:65 src/scan.cpp:47
+msgid "Automatic Transponder Scan"
+msgstr ""
+
+#: src/enigma_scan.cpp:65 src/scan.cpp:47
+msgid "open automatic transponder scan"
+msgstr ""
+
+#: src/enigma_scan.cpp:67 src/scan.cpp:49
+msgid "Automatic Multisat Scan"
+msgstr ""
+
+#: src/enigma_scan.cpp:67 src/scan.cpp:49
+msgid "open automatic multisat transponder scan"
+msgstr ""
+
+#: src/enigma_scan.cpp:69
+msgid "Manual Transponder Scan"
+msgstr ""
+
+#: src/enigma_scan.cpp:69 src/scan.cpp:50
+msgid "open manual transponder scan"
+msgstr ""
+
+#: src/enigma_scan.cpp:146
+msgid ""
+"DiSEqC 1.2 is enabled on more than one LNB, please select the LNB the motor "
+"is connected to"
+msgstr ""
+
+#: src/enigma_scan.cpp:146 src/setupnetwork.cpp:943
+msgid "Info"
+msgstr ""
+
+#: src/enigma_scan.cpp:157
+msgid ""
+"Found no LNB with DiSEqC 1.2 enabled,\n"
+"please goto Satellite Config first, and enable DiSEqC 1.2"
+msgstr ""
+
+#: src/enigma_scan.cpp:157 src/rotorconfig.cpp:692 src/rotorconfig.cpp:898
+msgid "Warning"
+msgstr ""
+
+#: src/enigma_scan.cpp:196
+msgid "Select LNB"
+msgstr ""
+
+#: src/enigma_scan.cpp:207
+#, c-format
+msgid "use LNB %d for Motor"
+msgstr ""
+
+#: src/enigma_setup.cpp:45
+msgid "open service organising"
+msgstr ""
+
+#: src/enigma_setup.cpp:47
+msgid "open service searching"
+msgstr ""
+
+#: src/enigma_setup.cpp:49 src/system_settings.cpp:37
+msgid "System Settings"
+msgstr ""
+
+#: src/enigma_setup.cpp:49
+msgid "open system settings"
+msgstr ""
+
+#: src/enigma_setup.cpp:52
+msgid "Common Interface"
+msgstr ""
+
+#: src/enigma_setup.cpp:52
+msgid "open common interface menu"
+msgstr ""
+
+#: src/enigma_setup.cpp:54
+msgid "Parental Lock"
+msgstr ""
+
+#: src/enigma_setup.cpp:54
+msgid "open parental setup"
+msgstr ""
+
+#: src/enigma_setup.cpp:56 src/setup_extra.cpp:42
+msgid "Expert Setup"
+msgstr ""
+
+#: src/enigma_setup.cpp:56
+msgid "open expert setup"
+msgstr ""
+
+#: src/enigma_setup.cpp:60
+msgid "Timeshift"
+msgstr ""
+
+#: src/enigma_setup.cpp:60
+msgid "open timeshift setup"
+msgstr ""
+
+#: src/epgactions.h:14
+msgid "EPG selector"
+msgstr ""
+
+#: src/epgactions.h:15
+msgid "add this event as DVR Event to timer list"
+msgstr ""
+
+#: src/epgactions.h:16
+msgid "add this event as NGRAB Event to timer list"
+msgstr ""
+
+#: src/epgactions.h:17
+msgid "add this event as simple Switch Event to timer list"
+msgstr ""
+
+#: src/epgactions.h:18
+msgid "remove this event from timer list"
+msgstr ""
+
+#: src/epgactions.h:19
+msgid "show extended event information"
+msgstr ""
+
+#: src/epgactions.h:20
+msgid "search for event information"
+msgstr ""
+
+#: src/epgsearch.cpp:153
+msgid "Thriller"
+msgstr ""
+
+#: src/epgsearch.cpp:241
+msgid "all services"
+msgstr ""
+
+#: src/epgsearch.cpp:250 src/epgsearch.cpp:255
+msgid "Searching for "
+msgstr ""
+
+#: src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Sun"
+msgstr ""
+
+#: src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Mon"
+msgstr ""
+
+#: src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Fri"
+msgstr ""
+
+#: src/epgwindow.cpp:120 src/timer.cpp:222
+msgid "Sat"
+msgstr ""
+
+#: src/epgwindow.cpp:182
+msgid "EPG - "
+msgstr ""
+
+#: src/helpwindow.cpp:20
+msgid "Help window"
+msgstr ""
+
+#: src/helpwindow.cpp:21
+msgid "close the help window"
+msgstr ""
+
+#: src/helpwindow.cpp:22
+msgid "scroll up"
+msgstr ""
+
+#: src/helpwindow.cpp:23
+msgid "scroll down"
+msgstr ""
+
+#: src/parentallock.cpp:29
+msgid "please enter pin:"
+msgstr ""
+
+#: src/parentallock.cpp:53
+msgid "Parental setup"
+msgstr ""
+
+#: src/parentallock.cpp:60
+msgid "Parental lock"
+msgstr ""
+
+#: src/parentallock.cpp:63
+msgid "enable/disable parental lock"
+msgstr ""
+
+#: src/parentallock.cpp:67 src/parentallock.cpp:84
+msgid "change PIN"
+msgstr ""
+
+#: src/parentallock.cpp:70
+msgid "change Parental PIN (ok)"
+msgstr ""
+
+#: src/parentallock.cpp:77
+msgid "Setup lock"
+msgstr ""
+
+#: src/parentallock.cpp:80
+msgid "enable/disable setup lock"
+msgstr ""
+
+#: src/parentallock.cpp:87
+msgid "change Setup PIN (ok)"
+msgstr ""
+
+#: src/parentallock.cpp:94
+msgid "Hide locked services"
+msgstr ""
+
+#: src/parentallock.cpp:97
+msgid "don't show locked services in any list"
+msgstr ""
+
+#: src/parentallock.cpp:179
+#, c-format
+msgid "New %s PIN"
+msgstr ""
+
+#: src/parentallock.cpp:186
+#, c-format
+msgid "Reenter %s PIN"
+msgstr ""
+
+#: src/parentallock.cpp:194
+msgid ""
+"The PINs are not equal!\n"
+"\n"
+"Do you want to retry?"
+msgstr ""
+
+#: src/parentallock.cpp:195 src/parentallock.cpp:270
+msgid "PIN validation failed"
+msgstr ""
+
+#: src/parentallock.cpp:209
+msgid "PIN change completed"
+msgstr ""
+
+#: src/parentallock.cpp:210
+msgid "PIN changed"
+msgstr ""
+
+#: src/parentallock.cpp:258
+#, c-format
+msgid "current %s PIN"
+msgstr ""
+
+#: src/parentallock.cpp:269
+msgid ""
+"The entered PIN is incorrect.\n"
+"Do you want to retry?"
+msgstr ""
+
+#: src/rotorconfig.cpp:54 src/rotorconfig.cpp:98 src/tpeditwindow.cpp:87
+msgid "East"
+msgstr ""
+
+#: src/rotorconfig.cpp:55 src/rotorconfig.cpp:99 src/tpeditwindow.cpp:88
+msgid "West"
+msgstr ""
+
+#: src/rotorconfig.cpp:69
+msgid "North"
+msgstr ""
+
+#: src/rotorconfig.cpp:70
+msgid "South"
+msgstr ""
+
+#: src/rotorconfig.cpp:119 src/tpeditwindow.cpp:77
+msgid "enter orbital position without dot (19.2° = 192)"
+msgstr ""
+
+#: src/rotorconfig.cpp:287 src/rotorconfig.cpp:344
+msgid "delete me"
+msgstr ""
+
+#: src/rotorconfig.cpp:381 src/rotorconfig.cpp:384
+msgid "drive Motor East"
+msgstr ""
+
+#: src/rotorconfig.cpp:382
+msgid "drive Motor East.. one step"
+msgstr ""
+
+#: src/rotorconfig.cpp:383
+msgid "stop Motor drive East"
+msgstr ""
+
+#: src/rotorconfig.cpp:385
+msgid "drive Motor West.. one step"
+msgstr ""
+
+#: src/rotorconfig.cpp:386
+msgid "stop Motor drive West"
+msgstr ""
+
+#: src/rotorconfig.cpp:462
+msgid "position"
+msgstr ""
+
+#: src/rotorconfig.cpp:462
+msgid "store new sat positions"
+msgstr ""
+
+#: src/rotorconfig.cpp:463
+msgid "drive to stored pos"
+msgstr ""
+
+#: src/rotorconfig.cpp:463
+msgid "drive to stored position"
+msgstr ""
+
+#: src/rotorconfig.cpp:464
+msgid "drive to satellite"
+msgstr ""
+
+#: src/rotorconfig.cpp:464
+msgid "drive to stored satellite"
+msgstr ""
+
+#: src/rotorconfig.cpp:465
+msgid "drive to 0°"
+msgstr ""
+
+#: src/rotorconfig.cpp:465
+msgid "drives to 0"
+msgstr ""
+
+#: src/rotorconfig.cpp:466
+msgid "recalculate"
+msgstr ""
+
+#: src/rotorconfig.cpp:466
+msgid "recalculate stored positions rel. to current pos"
+msgstr ""
+
+#: src/rotorconfig.cpp:467
+msgid "set east limit"
+msgstr ""
+
+#: src/rotorconfig.cpp:467
+msgid "set east soft limit"
+msgstr ""
+
+#: src/rotorconfig.cpp:468
+msgid "set west limit"
+msgstr ""
+
+#: src/rotorconfig.cpp:468
+msgid "set west soft limit"
+msgstr ""
+
+#: src/rotorconfig.cpp:469
+msgid "disable limits"
+msgstr ""
+
+#: src/rotorconfig.cpp:469 src/rotorconfig.cpp:531
+msgid "disable soft limits"
+msgstr ""
+
+#: src/rotorconfig.cpp:470
+msgid "enable limits"
+msgstr ""
+
+#: src/rotorconfig.cpp:470 src/rotorconfig.cpp:535
+msgid "enable soft limits"
+msgstr ""
+
+#: src/rotorconfig.cpp:507
+msgid "store current pos in motor"
+msgstr ""
+
+#: src/rotorconfig.cpp:511
+msgid "drive motor to stored pos"
+msgstr ""
+
+#: src/rotorconfig.cpp:512 src/rotorconfig.cpp:516 src/rotorconfig.cpp:540
+msgid "go"
+msgstr ""
+
+#: src/rotorconfig.cpp:515
+msgid "drive motor to reference position"
+msgstr ""
+
+#: src/rotorconfig.cpp:519
+msgid "recalculate all stored positions"
+msgstr ""
+
+#: src/rotorconfig.cpp:520
+msgid "recalc"
+msgstr ""
+
+#: src/rotorconfig.cpp:523
+msgid "store current pos as east soft limit"
+msgstr ""
+
+#: src/rotorconfig.cpp:527
+msgid "store current pos as west soft limit"
+msgstr ""
+
+#: src/rotorconfig.cpp:532 src/rotorconfig.cpp:536
+msgid "do it"
+msgstr ""
+
+#: src/rotorconfig.cpp:539
+msgid "drive motor to satellite"
+msgstr ""
+
+#: src/rotorconfig.cpp:691
+msgid ""
+"Wrong use of this function can corrupt all stored sat positions.\n"
+"Are you sure you want to use this function?"
+msgstr ""
+
+#: src/rotorconfig.cpp:757
+msgid "one step East..."
+msgstr ""
+
+#: src/rotorconfig.cpp:766
+msgid "one step west..."
+msgstr ""
+
+#: src/rotorconfig.cpp:780
+msgid "turning to east..."
+msgstr ""
+
+#: src/rotorconfig.cpp:791
+msgid "turning to west..."
+msgstr ""
+
+#: src/rotorconfig.cpp:804
+msgid "<    Stop    >"
+msgstr ""
+
+#: src/rotorconfig.cpp:845
+msgid "Storage Location:"
+msgstr ""
+
+#: src/rotorconfig.cpp:847
+msgid "change storage Location or store"
+msgstr ""
+
+#: src/rotorconfig.cpp:898
+#, c-format
+msgid ""
+"%d.%d°%c is currently stored at location %d!\n"
+"When you store this now at Location %d, we must remove the old Location.\n"
+"Are you sure you want to do this?"
+msgstr ""
+
+#: src/rotorconfig.cpp:916
+#, c-format
+msgid ""
+"Store %d.%d°%c at location %d.\n"
+"If you want another location, then say no and change the location manually.\n"
+"Are you sure you want to store at this location?"
+msgstr ""
+
+#: src/satconfig.cpp:64
+msgid "one single satellite"
+msgstr ""
+
+#: src/satconfig.cpp:64
+msgid "one directly connected LNB"
+msgstr ""
+
+#: src/satconfig.cpp:65
+msgid "2 satellites via Toneburst"
+msgstr ""
+
+#: src/satconfig.cpp:65
+msgid "2 LNBs via Toneburst Signal"
+msgstr ""
+
+#: src/satconfig.cpp:66
+msgid "2 satellites via 22Khz (only Highband)"
+msgstr ""
+
+#: src/satconfig.cpp:66
+msgid "2 LNBs via 22Khz Signal.. special for old analog switches"
+msgstr ""
+
+#: src/satconfig.cpp:67
+msgid "2 satellites via DiSEqC A/B"
+msgstr ""
+
+#: src/satconfig.cpp:67
+msgid "2 LNBs via DiSEqC"
+msgstr ""
+
+#: src/satconfig.cpp:68
+msgid "4 satellites via DiSEqC OPT A/B"
+msgstr ""
+
+#: src/satconfig.cpp:68
+msgid "4 LNBs via DiSEqC"
+msgstr ""
+
+#: src/satconfig.cpp:69
+msgid "many satellites via DiSEqC Rotor"
+msgstr ""
+
+#: src/satconfig.cpp:69
+msgid "1 LNB with DiSEqC Rotor"
+msgstr ""
+
+#: src/satconfig.cpp:70
+msgid "non-standard user defined configuration..."
+msgstr ""
+
+#: src/satconfig.cpp:70
+msgid "special"
+msgstr ""
+
+#: src/satconfig.cpp:136
+msgid ""
+"Configuration contains some elements\n"
+"which don't fit into new DiSEqC-Type. Drop these items?"
+msgstr ""
+
+#: src/satconfig.cpp:136
+msgid "Change DiSEqC-Type..."
+msgstr ""
+
+#: src/satconfig.cpp:330
+msgid "direct connection"
+msgstr ""
+
+#: src/satconfig.cpp:738
+msgid "press ok to select another satellite"
+msgstr ""
+
+#: src/satconfig.cpp:753
+msgid "press ok to goto LNB config"
+msgstr ""
+
+#: src/satconfig.cpp:771
+msgid "press ok to select another 22kHz mode"
+msgstr ""
+
+#: src/satconfig.cpp:772
+msgid "22kHz signal is automatically switched"
+msgstr ""
+
+#: src/satconfig.cpp:773
+msgid "22kHz is always enabled (high band)"
+msgstr ""
+
+#: src/satconfig.cpp:774
+msgid "22kHz is always disabled (low band)"
+msgstr ""
+
+#: src/satconfig.cpp:784
+msgid "press ok to select another LNB Voltage mode"
+msgstr ""
+
+#: src/satconfig.cpp:785
+msgid "Voltage is automatically changed"
+msgstr ""
+
+#: src/satconfig.cpp:786
+msgid "Voltage is always 14V (vertical)"
+msgstr ""
+
+#: src/satconfig.cpp:787
+msgid "Voltage is always 18V (horizontal)"
+msgstr ""
+
+#: src/satconfig.cpp:788
+msgid "Voltage is always off"
+msgstr ""
+
+#: src/satconfig.cpp:1155 src/satconfig.cpp:1201 src/satconfig.cpp:1211
+msgid "None"
+msgstr ""
+
+#: src/satconfig.cpp:1155
+msgid "sends no tone burst"
+msgstr ""
+
+#: src/satconfig.cpp:1156
+msgid "sends modulated tone burst"
+msgstr ""
+
+#: src/satconfig.cpp:1157
+msgid "sends unmodulated tone burst"
+msgstr ""
+
+#: src/satconfig.cpp:1164
+msgid "Disable DiSEqC"
+msgstr ""
+
+#: src/satconfig.cpp:1165
+msgid "Use DiSEqC Version 1.0"
+msgstr ""
+
+#: src/satconfig.cpp:1166
+msgid "Use DiSEqC Version 1.1"
+msgstr ""
+
+#: src/satconfig.cpp:1167
+msgid "Use DiSEqC Version 1.2"
+msgstr ""
+
+#: src/satconfig.cpp:1175
+msgid "sends DiSEqC cmd A/A"
+msgstr ""
+
+#: src/satconfig.cpp:1176
+msgid "sends DiSEqC cmd A/B"
+msgstr ""
+
+#: src/satconfig.cpp:1177
+msgid "sends DiSEqC cmd B/A"
+msgstr ""
+
+#: src/satconfig.cpp:1178
+msgid "sends DiSEqC cmd B/B"
+msgstr ""
+
+#: src/satconfig.cpp:1179
+msgid "sends no committed DiSEqC cmd"
+msgstr ""
+
+#: src/satconfig.cpp:1180
+msgid "sends switch cmd 1"
+msgstr ""
+
+#: src/satconfig.cpp:1181
+msgid "sends switch cmd 2"
+msgstr ""
+
+#: src/satconfig.cpp:1182
+msgid "sends switch cmd 3"
+msgstr ""
+
+#: src/satconfig.cpp:1183
+msgid "sends switch cmd 4"
+msgstr ""
+
+#: src/satconfig.cpp:1184
+msgid "sends switch cmd 5"
+msgstr ""
+
+#: src/satconfig.cpp:1185
+msgid "sends switch cmd 6"
+msgstr ""
+
+#: src/satconfig.cpp:1186
+msgid "sends switch cmd 7"
+msgstr ""
+
+#: src/satconfig.cpp:1187
+msgid "sends switch cmd 8"
+msgstr ""
+
+#: src/satconfig.cpp:1188
+msgid "sends switch cmd 9"
+msgstr ""
+
+#: src/satconfig.cpp:1189
+msgid "sends switch cmd 10"
+msgstr ""
+
+#: src/satconfig.cpp:1190
+msgid "sends switch cmd 11"
+msgstr ""
+
+#: src/satconfig.cpp:1191
+msgid "sends switch cmd 12"
+msgstr ""
+
+#: src/satconfig.cpp:1192
+msgid "sends switch cmd 13"
+msgstr ""
+
+#: src/satconfig.cpp:1193
+msgid "sends switch cmd 14"
+msgstr ""
+
+#: src/satconfig.cpp:1194
+msgid "sends switch cmd 15"
+msgstr ""
+
+#: src/satconfig.cpp:1195
+msgid "sends switch cmd 16"
+msgstr ""
+
+#: src/satconfig.cpp:1201
+msgid "sends no DiSEqC repeats"
+msgstr ""
+
+#: src/satconfig.cpp:1202
+msgid "One"
+msgstr ""
+
+#: src/satconfig.cpp:1202
+msgid "sends one repeat"
+msgstr ""
+
+#: src/satconfig.cpp:1203
+msgid "Two"
+msgstr ""
+
+#: src/satconfig.cpp:1203
+msgid "sends two repeats"
+msgstr ""
+
+#: src/satconfig.cpp:1204
+msgid "Three"
+msgstr ""
+
+#: src/satconfig.cpp:1204
+msgid "sends three repeats"
+msgstr ""
+
+#: src/satconfig.cpp:1211
+msgid "sends no uncommitted switch command"
+msgstr ""
+
+#: src/satconfig.cpp:1212
+msgid "Input 1"
+msgstr ""
+
+#: src/satconfig.cpp:1212
+msgid "select uncommitted switch Input 1"
+msgstr ""
+
+#: src/satconfig.cpp:1213
+msgid "Input 2"
+msgstr ""
+
+#: src/satconfig.cpp:1213
+msgid "select uncommitted switch Input 2"
+msgstr ""
+
+#: src/satconfig.cpp:1214
+msgid "Input 3"
+msgstr ""
+
+#: src/satconfig.cpp:1214
+msgid "select uncommitted switch Input 3"
+msgstr ""
+
+#: src/satconfig.cpp:1215
+msgid "Input 4"
+msgstr ""
+
+#: src/satconfig.cpp:1215
+msgid "select uncommitted switch Input 4"
+msgstr ""
+
+#: src/satconfig.cpp:1216
+msgid "Input 5"
+msgstr ""
+
+#: src/satconfig.cpp:1216
+msgid "select uncommitted switch Input 5"
+msgstr ""
+
+#: src/satconfig.cpp:1217
+msgid "Input 6"
+msgstr ""
+
+#: src/satconfig.cpp:1217
+msgid "select uncommitted switch Input 6"
+msgstr ""
+
+#: src/satconfig.cpp:1218
+msgid "Input 7"
+msgstr ""
+
+#: src/satconfig.cpp:1218
+msgid "select uncommitted switch Input 7"
+msgstr ""
+
+#: src/satconfig.cpp:1219
+msgid "Input 8"
+msgstr ""
+
+#: src/satconfig.cpp:1219
+msgid "select uncommitted switch Input 8"
+msgstr ""
+
+#: src/satconfig.cpp:1220
+msgid "Input 9"
+msgstr ""
+
+#: src/satconfig.cpp:1220
+msgid "select uncommitted switch Input 9"
+msgstr ""
+
+#: src/satconfig.cpp:1221
+msgid "Input 10"
+msgstr ""
+
+#: src/satconfig.cpp:1221
+msgid "select uncommitted switch Input 10"
+msgstr ""
+
+#: src/satconfig.cpp:1222
+msgid "Input 11"
+msgstr ""
+
+#: src/satconfig.cpp:1222
+msgid "select uncommitted switch Input 11"
+msgstr ""
+
+#: src/satconfig.cpp:1223
+msgid "Input 12"
+msgstr ""
+
+#: src/satconfig.cpp:1223
+msgid "select uncommitted switch Input 12"
+msgstr ""
+
+#: src/satconfig.cpp:1224
+msgid "Input 13"
+msgstr ""
+
+#: src/satconfig.cpp:1224
+msgid "select uncommitted switch Input 13"
+msgstr ""
+
+#: src/satconfig.cpp:1225
+msgid "Input 14"
+msgstr ""
+
+#: src/satconfig.cpp:1225
+msgid "select uncommitted switch Input 14"
+msgstr ""
+
+#: src/satconfig.cpp:1226
+msgid "Input 15"
+msgstr ""
+
+#: src/satconfig.cpp:1226
+msgid "select uncommitted switch Input 15"
+msgstr ""
+
+#: src/satconfig.cpp:1227
+msgid "Input 16"
+msgstr ""
+
+#: src/satconfig.cpp:1227
+msgid "select uncommitted switch Input 16"
+msgstr ""
+
+#: src/satfind.cpp:72
+msgid "Region:"
+msgstr ""
+
+#: src/scan.cpp:50
+msgid "manual scan.."
+msgstr ""
+
+#: src/scan.cpp:236
+msgid "Waiting for tuner lock on:"
+msgstr ""
+
+#: src/scan.cpp:375
+msgid ""
+"To begin searching for a valid satellite press OK, or choose your desired "
+"satellite manually and press OK"
+msgstr ""
+
+#: src/scan.cpp:378
+msgid ""
+"To begin searching for a valid cable provider press OK, or choose your "
+"desired cable provider manually and press OK"
+msgstr ""
+
+#: src/scan.cpp:381
+msgid ""
+"To begin searching for a valid transponder press OK, or choose your desired "
+"location manually and press OK"
+msgstr ""
+
+#: src/scan.cpp:473
+msgid ""
+"A valid transponder has been found. Verify that the right network is selected"
+msgstr ""
+
+#: src/scan.cpp:555
+msgid ""
+"All known transponders have been tried, but no lock was possible. Verify "
+"antenna-/cable-setup or try manual search if its some obscure satellite/"
+"network."
+msgstr ""
+
+#: src/scan.cpp:563
+msgid ""
+"All known transponders have been tried, but no lock was possible. Verify "
+"antenna-/cable-setup or try another satellite/network."
+msgstr ""
+
+#: src/scan.cpp:572
+msgid "Search in progress "
+msgstr ""
+
+#: src/scan.cpp:746
+#, c-format
+msgid "%02i minutes and %02i seconds left"
+msgstr ""
+
+#: src/scan.cpp:748
+#, c-format
+msgid "%02i seconds left"
+msgstr ""
+
+#: src/scan.cpp:822
+msgid "Vertical"
+msgstr ""
+
+#: src/scan.cpp:888
+msgid "[only free]"
+msgstr ""
+
+#: src/scan.cpp:889
+msgid "[all]"
+msgstr ""
+
+#: src/scan.cpp:889
+msgid "[nothing]"
+msgstr ""
+
+#: src/scan.cpp:991
+msgid "Transponder Scan"
+msgstr ""
+
+#: src/scan.cpp:1284
+msgid "Waiting for tuner lock... please wait"
+msgstr ""
+
+#: src/scan.cpp:1337 src/scan.cpp:1405
+msgid "Scan is in progress... please wait"
+msgstr ""
+
+#: src/scan.cpp:1368 src/scan.cpp:1421
+#, c-format
+msgid ""
+"The transponder scan has finished and found \n"
+"   %i new Transponders,\n"
+"   %i new TV Services,\n"
+"   %i new Radio Services and\n"
+"   %i new Data Services.\n"
+"%i Transponders with %i Services scanned."
+msgstr ""
+
+#: src/scan.cpp:1433
+msgid "Done."
+msgstr ""
+
+#: src/scan.cpp:1441
+msgid "Scan is in finished, press ok to close window"
+msgstr ""
+
+#: src/scan.cpp:1449
+#, c-format
+msgid ""
+"Do you want\n"
+"to scan another\n"
+"%s?"
+msgstr ""
+
+#: src/scan.cpp:1449
+#, c-format
+msgid "Transponder"
+msgstr ""
+
+#: src/scan.cpp:1449
+#, c-format
+msgid "Satellite"
+msgstr ""
+
+#: src/scan.cpp:1450
+msgid "Scan finished"
+msgstr ""
+
+#: src/scan.cpp:1554
+msgid "Manual PIDs"
+msgstr ""
+
+#: src/scan.cpp:1576
+msgid "to enter service name press OK"
+msgstr ""
+
+#: src/scan.cpp:1577
+msgid "enter service name"
+msgstr ""
+
+#: src/scan.cpp:1592
+msgid "to enter provider name press OK"
+msgstr ""
+
+#: src/scan.cpp:1593
+msgid "enter provider name"
+msgstr ""
+
+#: src/scan.cpp:1608
+msgid "to enter video pid press OK"
+msgstr ""
+
+#: src/scan.cpp:1609
+msgid "enter video pid"
+msgstr ""
+
+#: src/scan.cpp:1622
+msgid "to enter pcr pid press OK"
+msgstr ""
+
+#: src/scan.cpp:1623
+msgid "enter pcr pid (in most case the same pid as the video pid)"
+msgstr ""
+
+#: src/scan.cpp:1638
+msgid "to enter audio pid press OK"
+msgstr ""
+
+#: src/scan.cpp:1639
+msgid "enter audio pid"
+msgstr ""
+
+#: src/scan.cpp:1645
+msgid "is AC3 Pid"
+msgstr ""
+
+#: src/scan.cpp:1646
+msgid "set this check when the entered audio pid is a ac3 audio pid"
+msgstr ""
+
+#: src/scan.cpp:1661
+msgid "to enter (video) text pid press OK"
+msgstr ""
+
+#: src/scan.cpp:1662
+msgid "enter (video) text pid"
+msgstr ""
+
+#: src/scan.cpp:1675
+msgid "to enter service id press OK"
+msgstr ""
+
+#: src/scan.cpp:1676
+msgid "enter service id"
+msgstr ""
+
+#: src/scan.cpp:1691
+msgid "to enter tsid (transport stream id) press OK"
+msgstr ""
+
+#: src/scan.cpp:1692
+msgid "enter tsid (transport stream id)"
+msgstr ""
+
+#: src/scan.cpp:1705
+msgid "to enter onid (original network id) press OK"
+msgstr ""
+
+#: src/scan.cpp:1706
+msgid "enter onid (original network id)"
+msgstr ""
+
+#: src/scan.cpp:1714
+msgid "no DVB"
+msgstr ""
+
+#: src/scan.cpp:1715
+msgid "don't read PAT/PMT/SDT for this service (only use cached pids)"
+msgstr ""
+
+#: src/scan.cpp:1721
+msgid "use sdt"
+msgstr ""
+
+#: src/scan.cpp:1722
+msgid ""
+"update name/provider/service type with content of the sdt (and auto remove "
+"service)"
+msgstr ""
+
+#: src/scan.cpp:1728
+msgid "hold name"
+msgstr ""
+
+#: src/scan.cpp:1729
+msgid "don't update the service name with content of the sdt"
+msgstr ""
+
+#: src/scan.cpp:1742
+msgid "read NIT"
+msgstr ""
+
+#: src/scan.cpp:1743
+msgid "read tsid and onid from the nit (this can take up to 10 seconds)"
+msgstr ""
+
+#: src/scan.cpp:1752
+msgid "test values"
+msgstr ""
+
+#: src/scan.cpp:1753
+msgid "test entered values"
+msgstr ""
+
+#: src/scan.cpp:1763
+msgid ""
+"save data and close window (the new channel could be found in the all "
+"services list)"
+msgstr ""
+
+#: src/scan.cpp:1908
+msgid ""
+"Reading NIT failed... this transponder have no NIT..\n"
+"so you can use random values for tsid and onid or set both to 0"
+msgstr ""
+
+#: src/scan.cpp:1960
+msgid ""
+"No NIT Entry for current transponder values found...\n"
+"so you can use random values for tsid and onid or set both to 0"
+msgstr ""
+
+#: src/scan.cpp:2072
+msgid ""
+"A transponder with the same tsid / onid but other frequency/pol/... already "
+"exist.. create a new transponder with the same data is no possible.. please "
+"do change tsid and/or onid"
+msgstr ""
+
+#: src/scan.cpp:2125
+#, c-format
+msgid ""
+"A service named '%s' with this sid/onid/tsid/namespace is already exist\n"
+"in provider '%s'.\n"
+"Should i use this service name and provider name?"
+msgstr ""
+
+#: src/scan.cpp:2127
+msgid "Service already exist"
+msgstr ""
+
+#: src/scan.cpp:2212
+msgid "show/enter values as hexadecimal"
+msgstr ""
+
+#: src/scan.cpp:2218
+msgid "show/enter values as decimal"
+msgstr ""
+
+#: src/setup_extra.cpp:63
+msgid "Communication Setup"
+msgstr ""
+
+#: src/setup_extra.cpp:63
+msgid "open communication setup"
+msgstr ""
+
+#: src/setup_extra.cpp:64
+msgid "Ngrab Streaming Setup"
+msgstr ""
+
+#: src/setup_extra.cpp:64
+msgid "open ngrab server setup"
+msgstr ""
+
+#: src/setup_extra.cpp:72 src/software_update.cpp:29
+msgid "Software Update"
+msgstr ""
+
+#: src/setup_extra.cpp:72
+msgid "open software update"
+msgstr ""
+
+#: src/setup_extra.cpp:79
+msgid "Remote Control"
+msgstr ""
+
+#: src/setup_extra.cpp:79
+msgid "open remote control setup"
+msgstr ""
+
+#: src/setup_extra.cpp:82
+msgid "open swapspace setup"
+msgstr ""
+
+#: src/setup_extra.cpp:86 src/setup_extra.cpp:434
+msgid "Factory reset"
+msgstr ""
+
+#: src/setup_extra.cpp:86
+msgid "all settings will set to factory defaults"
+msgstr ""
+
+#: src/setup_extra.cpp:87 src/setup_extra.cpp:472
+msgid "User reset"
+msgstr ""
+
+#: src/setup_extra.cpp:87
+msgid "all settings will set to user defaults"
+msgstr ""
+
+#: src/setup_extra.cpp:88
+msgid "Reload setting"
+msgstr ""
+
+#: src/setup_extra.cpp:88
+msgid "settings will reload"
+msgstr ""
+
+#: src/setup_extra.cpp:94
+msgid "record split size (left, right)"
+msgstr ""
+
+#: src/setup_extra.cpp:112
+msgid "Change timer offset [start] (left, right)"
+msgstr ""
+
+#: src/setup_extra.cpp:113 src/setup_extra.cpp:114 src/setup_extra.cpp:115
+#: src/setup_extra.cpp:116 src/setup_extra.cpp:117 src/setup_extra.cpp:118
+#: src/setup_extra.cpp:119 src/setup_extra.cpp:120 src/setup_extra.cpp:121
+#: src/setup_extra.cpp:122 src/setup_extra.cpp:123
+#, c-format
+msgid "Timer offset [start] %d min"
+msgstr ""
+
+#: src/setup_extra.cpp:132
+msgid "Change timer offset [end] (left, right)"
+msgstr ""
+
+#: src/setup_extra.cpp:133 src/setup_extra.cpp:134 src/setup_extra.cpp:135
+#: src/setup_extra.cpp:136 src/setup_extra.cpp:137 src/setup_extra.cpp:138
+#: src/setup_extra.cpp:139 src/setup_extra.cpp:140 src/setup_extra.cpp:141
+#: src/setup_extra.cpp:142 src/setup_extra.cpp:143
+#, c-format
+msgid "Timer offset [end] %d min"
+msgstr ""
+
+#: src/setup_extra.cpp:150
+msgid "Default action on timer end (left, right)"
+msgstr ""
+
+#: src/setup_extra.cpp:152 src/setup_extra.cpp:156 src/setup_extra.cpp:157
+#: src/setup_extra.cpp:161
+#, c-format
+msgid "Action on timer end"
+msgstr ""
+
+#: src/setup_extra.cpp:152 src/timer.cpp:2202
+msgid "Nothing"
+msgstr ""
+
+#: src/setup_extra.cpp:156 src/setup_extra.cpp:161 src/timer.cpp:2203
+msgid "Standby"
+msgstr ""
+
+#: src/setup_extra.cpp:171
+msgid "disable AC3 recording"
+msgstr ""
+
+#: src/setup_extra.cpp:171
+msgid "don't record AC3 audio track"
+msgstr ""
+
+#: src/setup_extra.cpp:172
+msgid "disable teletext recording"
+msgstr ""
+
+#: src/setup_extra.cpp:172
+msgid "don't record teletext track"
+msgstr ""
+
+#: src/setup_extra.cpp:173
+msgid "disable timestamp detection"
+msgstr ""
+
+#: src/setup_extra.cpp:173
+msgid ""
+"don't try to detect duration from DVB timestamps when replaying recordings"
+msgstr ""
+
+#: src/setup_extra.cpp:177
+msgid "Enable fast zapping"
+msgstr ""
+
+#: src/setup_extra.cpp:177
+msgid "enables faster zapping.. but with visible sync"
+msgstr ""
+
+#: src/setup_extra.cpp:178
+msgid "Use http authentification"
+msgstr ""
+
+#: src/setup_extra.cpp:178
+msgid "enables the http (user/password) authentification"
+msgstr ""
+
+#: src/setup_extra.cpp:179
+msgid "Don't open serial port"
+msgstr ""
+
+#: src/setup_extra.cpp:179
+msgid "don't write debug messages to /dev/tts/0"
+msgstr ""
+
+#: src/setup_extra.cpp:180
+msgid "Use EPG cache for Infobar"
+msgstr ""
+
+#: src/setup_extra.cpp:180
+msgid "use the EPG cache for the infobar if the EIT is unavailable"
+msgstr ""
+
+#: src/setup_extra.cpp:181
+msgid "Auto bouquet change"
+msgstr ""
+
+#: src/setup_extra.cpp:181
+msgid "change into next bouquet when end of current bouquet is reached"
+msgstr ""
+
+#: src/setup_extra.cpp:182
+msgid "Auto reconnect cahandler"
+msgstr ""
+
+#: src/setup_extra.cpp:182
+msgid "try to reconnect when an external cahandler connection was lost"
+msgstr ""
+
+#: src/setup_extra.cpp:187
+msgid "Enable file sharing"
+msgstr ""
+
+#: src/setup_extra.cpp:187
+msgid "start file sharing(samba) on startup"
+msgstr ""
+
+#: src/setup_extra.cpp:190
+msgid "Disable teletext caching"
+msgstr ""
+
+#: src/setup_extra.cpp:190
+msgid "don't cache teletext pages in background"
+msgstr ""
+
+#: src/setup_extra.cpp:191
+msgid "Disable internal teletext"
+msgstr ""
+
+#: src/setup_extra.cpp:191
+msgid "use external tuxtxt plugin"
+msgstr ""
+
+#: src/setup_extra.cpp:193
+msgid "Enable Zapping History"
+msgstr ""
+
+#: src/setup_extra.cpp:193
+msgid "don't care about actual mode when zapping in history list"
+msgstr ""
+
+#: src/setup_extra.cpp:195
+msgid "Disable Standby"
+msgstr ""
+
+#: src/setup_extra.cpp:195
+msgid "Box goes directly into Deep-Standby"
+msgstr ""
+
+#: src/setup_extra.cpp:200
+msgid "Enable MHW EPG"
+msgstr ""
+
+#: src/setup_extra.cpp:200
+msgid ""
+"Mediahighway EPG, activate swap space when using with multiple operators"
+msgstr ""
+
+#: src/setup_extra.cpp:210
+msgid "Disable CoreFiles"
+msgstr ""
+
+#: src/setup_extra.cpp:210
+msgid "don't create 'Corefiles' after an Enigma crash"
+msgstr ""
+
+#: src/setup_extra.cpp:216
+msgid "Disable HDD mount"
+msgstr ""
+
+#: src/setup_extra.cpp:216
+msgid "don't mount the HDD via 'rcS'"
+msgstr ""
+
+#: src/setup_extra.cpp:224
+msgid "Enable Filemode Autoplay"
+msgstr ""
+
+#: src/setup_extra.cpp:224
+msgid "continue playing last selected movie when entering Filemode"
+msgstr ""
+
+#: src/setup_extra.cpp:233
+msgid "Show Boot-Info"
+msgstr ""
+
+#: src/setup_extra.cpp:233
+msgid "Show Boot-Infos (IP, etc.)"
+msgstr ""
+
+#: src/setup_extra.cpp:239
+msgid "Disable HW_Sections"
+msgstr ""
+
+#: src/setup_extra.cpp:239
+msgid "don't use hardware section filtering"
+msgstr ""
+
+#: src/setup_extra.cpp:245
+msgid "Disable Watchdog"
+msgstr ""
+
+#: src/setup_extra.cpp:245
+msgid "don't use the Watchdog"
+msgstr ""
+
+#: src/setup_extra.cpp:253
+msgid "Disable ENX-Watchdog"
+msgstr ""
+
+#: src/setup_extra.cpp:253
+msgid "don't use the ENX-Watchdog"
+msgstr ""
+
+#: src/setup_extra.cpp:260
+msgid "Enable SPTS-Mode"
+msgstr ""
+
+#: src/setup_extra.cpp:260
+msgid "use SPTS-Mode (enables TS-recording)"
+msgstr ""
+
+#: src/setup_extra.cpp:266
+msgid "Disable O_SYNC"
+msgstr ""
+
+#: src/setup_extra.cpp:266
+msgid "The file/recording is not opened for synchronous I/O"
+msgstr ""
+
+#: src/setup_extra.cpp:274
+msgid "New Philips driver"
+msgstr ""
+
+#: src/setup_extra.cpp:274
+msgid "use tda80xx driver for Philips boxes"
+msgstr ""
+
+#: src/setup_extra.cpp:430
+msgid ""
+"When you do a factory reset, you will lose ALL your configuration data\n"
+"(including bouquets, services, satellite data ...)\n"
+"After completion of factory reset, your receiver will restart "
+"automatically!\n"
+"\n"
+"Really do a factory reset?"
+msgstr ""
+
+#: src/setup_extra.cpp:455
+msgid "Factory reset..."
+msgstr ""
+
+#: src/setup_extra.cpp:468
+msgid ""
+"When you do a user reset, you will lose ALL configuration data\n"
+"(including bouquets, services, satellite data ...)\n"
+"After completion of user reset, your receiver will restart automatically!\n"
+"\n"
+"Really do a user reset?"
+msgstr ""
+
+#: src/setup_extra.cpp:492
+msgid ""
+"Reloading Settings.\n"
+"Please wait..."
+msgstr ""
+
+#: src/setup_harddisk.cpp:192
+msgid "Harddisk Setup"
+msgstr ""
+
+#: src/setup_harddisk.cpp:340
+msgid "Are you SURE that you want to format this disk?\n"
+msgstr ""
+
+#: src/setup_harddisk.cpp:341 src/setup_harddisk.cpp:351
+#: src/setup_harddisk.cpp:367 src/setup_harddisk.cpp:382
+#: src/setup_harddisk.cpp:486 src/setup_harddisk.cpp:495
+msgid "formatting harddisk..."
+msgstr ""
+
+#: src/setup_harddisk.cpp:349
+msgid ""
+"There's data on this harddisk.\n"
+"You will lose that data. Proceed?"
+msgstr ""
+
+#: src/setup_harddisk.cpp:366
+msgid ""
+"please wait while initializing harddisk.\n"
+"This might take some minutes.\n"
+msgstr ""
+
+#: src/setup_harddisk.cpp:381
+msgid "sorry, couldn't find sfdisk utility to partition harddisk."
+msgstr ""
+
+#: src/setup_harddisk.cpp:485
+msgid "creating filesystem failed."
+msgstr ""
+
+#: src/setup_harddisk.cpp:494
+msgid "successfully formatted your disk!"
+msgstr ""
+
+#: src/setup_harddisk.cpp:531
+msgid "(error reading information)"
+msgstr ""
+
+#: src/setup_harddisk.cpp:533
+msgid "uninitialized - format it to use!"
+msgstr ""
+
+#: src/setup_harddisk.cpp:535
+#, c-format
+msgid "in use, %d.%03d GB (~%d minutes) free"
+msgstr ""
+
+#: src/setup_harddisk.cpp:537
+msgid "initialized, but unknown filesystem"
+msgstr ""
+
+#: src/setup_harddisk.cpp:545
+msgid "The settings have been saved successfully"
+msgstr ""
+
+#: src/setup_harddisk.cpp:670
+msgid "could not unmount the filesystem... "
+msgstr ""
+
+#: src/setup_harddisk.cpp:671 src/setup_harddisk.cpp:684
+#: src/setup_harddisk.cpp:708 src/setup_harddisk.cpp:732
+#: src/setup_harddisk.cpp:752
+msgid "check filesystem..."
+msgstr ""
+
+#: src/setup_harddisk.cpp:683
+msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
+msgstr ""
+
+#: src/setup_harddisk.cpp:707
+msgid "sorry, couldn't find fsck.vfat utility to check the vfat filesystem."
+msgstr ""
+
+#: src/setup_harddisk.cpp:731
+msgid ""
+"sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."
+msgstr ""
+
+#: src/setup_harddisk.cpp:751
+msgid "not supported filesystem for check."
+msgstr ""
+
+#: src/setup_lcd.cpp:55
+msgid "LC-Display Setup"
+msgstr ""
+
+#: src/setup_lcd.cpp:79
+msgid "Standby:"
+msgstr ""
+
+#: src/setup_lcd.cpp:87
+msgid "set LCD brightness ( left / right )"
+msgstr ""
+
+#: src/setup_lcd.cpp:101
+msgid "set LCD brightness for Standby Mode ( left / right )"
+msgstr ""
+
+#: src/setup_keyboard.cpp:36 src/system_settings.cpp:60
+msgid "Keyboard Setup"
+msgstr ""
+
+#: src/setup_keyboard.cpp:43
+msgid "Keyboard Mapping:"
+msgstr ""
+
+#: src/setup_keyboard.cpp:50
+msgid "select your keyboard mapping (ok)"
+msgstr ""
+
+#: src/setup_osd.cpp:44
+msgid "PluginOffsetActions"
+msgstr ""
+
+#: src/setup_osd.cpp:45
+msgid "enable set the leftTop Point of the rectangle"
+msgstr ""
+
+#: src/setup_osd.cpp:46
+msgid "enable set the rightBottom Point of the rectangle"
+msgstr ""
+
+#: src/setup_osd.cpp:47
+msgid "saves the current positions"
+msgstr ""
+
+#: src/setup_osd.cpp:174
+msgid ""
+"here you can center the tuxtxt rectangle...\n"
+"press red to select the left top edge\n"
+"press green to select the right bottom edge\n"
+"use the cursor keys to move the selected edges"
+msgstr ""
+
+#: src/setup_osd.cpp:195 src/setup_osd_extra.cpp:8 src/system_settings.cpp:63
+msgid "OSD Settings"
+msgstr ""
+
+#: src/setup_osd.cpp:203
+msgid "Alpha:"
+msgstr ""
+
+#: src/setup_osd.cpp:211
+msgid "change the transparency correction"
+msgstr ""
+
+#: src/setup_osd.cpp:224
+msgid "change the brightness correction"
+msgstr ""
+
+#: src/setup_osd.cpp:230
+msgid "Contrast:"
+msgstr ""
+
+#: src/setup_osd.cpp:237
+msgid "change the contrast"
+msgstr ""
+
+#: src/setup_osd.cpp:242
+msgid "Show Mainmenu like Listbox"
+msgstr ""
+
+#: src/setup_osd.cpp:243
+msgid "show the Mainmenu in normal listbox style"
+msgstr ""
+
+#: src/setup_osd.cpp:251
+msgid "Change skin"
+msgstr ""
+
+#: src/setup_osd.cpp:257
+msgid "press ok to open skin selector"
+msgstr ""
+
+#: src/setup_osd.cpp:261
+msgid "TuxText position"
+msgstr ""
+
+#: src/setup_osd.cpp:262
+msgid "here you can center the Tuxtxt (builtin videotext)"
+msgstr ""
+
+#: src/setup_osd.cpp:282
+msgid "additional settings"
+msgstr ""
+
+#: src/setup_osd.cpp:288
+msgid "open additional settings"
+msgstr ""
+
+#: src/setup_osd.cpp:354
+msgid ""
+"You have to restart enigma to apply the new skin\n"
+"Restart now?"
+msgstr ""
+
+#: src/setup_osd.cpp:354
+msgid "Skin changed"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:23
+msgid "infobar timeout (left, right)"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:24 src/setup_osd_extra.cpp:25
+#: src/setup_osd_extra.cpp:26 src/setup_osd_extra.cpp:27
+#: src/setup_osd_extra.cpp:28 src/setup_osd_extra.cpp:29
+#: src/setup_osd_extra.cpp:30 src/setup_osd_extra.cpp:31
+#: src/setup_osd_extra.cpp:32 src/setup_osd_extra.cpp:33
+#: src/setup_osd_extra.cpp:34
+#, c-format
+msgid "Infobar timeout %d sec"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:40
+msgid "show infobar on service switch"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:40
+msgid "show infobar when switching to another service"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:41
+msgid "Serviceselector help buttons"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:41
+msgid "show colored help buttons in service selector"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:43
+msgid "Show Sat position"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:43
+msgid "show sat position in the infobar"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:44
+msgid "Skip confirmations"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:44
+msgid "enable/disable confirmations"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:45
+msgid "Hide error windows"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:45
+msgid "don't show zap error messages"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:46
+msgid "Auto show Infobar"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:46
+msgid "always show infobar when new event info is avail"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:47
+msgid "Show remaining Time"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:47
+msgid "show event remaining time in the infobar"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:48
+msgid "Hide shortcut icons"
+msgstr ""
+
+#: src/setup_osd_extra.cpp:48
+msgid "hide shortcut icons in menus"
+msgstr ""
+
+#: src/setup_rc.cpp:45
+msgid "Remotecontrol Setup"
+msgstr ""
+
+#: src/setup_rc.cpp:56
+msgid "Repeat Rate:"
+msgstr ""
+
+#: src/setup_rc.cpp:61
+msgid "Repeat Delay:"
+msgstr ""
+
+#: src/setup_rc.cpp:69
+msgid ""
+"change remote control repeat rate\n"
+"left => less, right => more (... repeats)"
+msgstr ""
+
+#: src/setup_rc.cpp:76
+msgid ""
+"change remote control repeat delay\n"
+"left => shorter, right => longer (...delay)"
+msgstr ""
+
+#: src/setup_rc.cpp:86
+msgid "select your favourite RC style (ok)"
+msgstr ""
+
+#: src/setup_rc.cpp:108
+msgid "Next Char Timeout:"
+msgstr ""
+
+#: src/setup_rc.cpp:117
+msgid "cursor to next char timeout(msek) in textinputfields"
+msgstr ""
+
+#: src/setup_rfmod.cpp:27
+msgid "UHF-Modulator Setup"
+msgstr ""
+
+#: src/setup_rfmod.cpp:34
+msgid "UHF Modulator on"
+msgstr ""
+
+#: src/setup_rfmod.cpp:37
+msgid "enable UHF Modulator"
+msgstr ""
+
+#: src/setup_rfmod.cpp:43 src/setup_rfmod.cpp:165
+msgid "Test Pattern"
+msgstr ""
+
+#: src/setup_rfmod.cpp:46
+msgid "enable test pattern"
+msgstr ""
+
+#: src/setup_rfmod.cpp:53
+msgid "Sound enable"
+msgstr ""
+
+#: src/setup_rfmod.cpp:56
+msgid "enable Sound"
+msgstr ""
+
+#: src/setup_rfmod.cpp:63
+msgid "Sound Subcarrier:"
+msgstr ""
+
+#: src/setup_rfmod.cpp:75
+msgid "4.5 MHz"
+msgstr ""
+
+#: src/setup_rfmod.cpp:76
+msgid "5.5 MHz"
+msgstr ""
+
+#: src/setup_rfmod.cpp:77
+msgid "6.0 MHz"
+msgstr ""
+
+#: src/setup_rfmod.cpp:78
+msgid "6.5 MHz"
+msgstr ""
+
+#: src/setup_rfmod.cpp:88
+msgid "change sound subcarrier frequency"
+msgstr ""
+
+#: src/setup_rfmod.cpp:92
+msgid "Channel Nr.:"
+msgstr ""
+
+#: src/setup_rfmod.cpp:113
+msgid "change channel"
+msgstr ""
+
+#: src/setup_rfmod.cpp:117
+msgid "Fine Tune:"
+msgstr ""
+
+#: src/setup_rfmod.cpp:140
+msgid "250Khz steps"
+msgstr ""
+
+#: src/setup_rfmod.cpp:149
+msgid "save settings and leave rf setup"
+msgstr ""
+
+#: src/setup_rfmod.cpp:165
+msgid "if you can read this your rfmod will not work."
+msgstr ""
+
+#: src/setup_timezone.cpp:26
+msgid "Time Zone Setup"
+msgstr ""
+
+#: src/setup_timezone.cpp:35
+msgid "Time Zone:"
+msgstr ""
+
+#: src/setup_timezone.cpp:40
+msgid "select your time zone (ok)"
+msgstr ""
+
+#: src/setup_timezone.cpp:95
+msgid ""
+"You have to restart enigma to apply the new Timezone\n"
+"Restart now?"
+msgstr ""
+
+#: src/setup_timezone.cpp:95
+msgid "Timezone changed"
+msgstr ""
+
+#: src/setupengrab.cpp:29
+msgid "Ngrab Server"
+msgstr ""
+
+#: src/setupengrab.cpp:53
+msgid "enter IP Adress of the Ngrab Server (0..9, left, right)"
+msgstr ""
+
+#: src/setupengrab.cpp:65
+msgid "enter ngrab server port (standard is 4000)"
+msgstr ""
+
+#: src/setupengrab.cpp:76
+msgid "enter MAC address of server (for wake on lan)"
+msgstr ""
+
+#: src/setupengrab.cpp:95
+msgid "detect MAC Adress"
+msgstr ""
+
+#: src/setupengrab.cpp:96
+msgid "try to autodetect server MAC address"
+msgstr ""
+
+#: src/setupengrab.cpp:185
+msgid "Please check your NGrab Server or the IP"
+msgstr ""
+
+#: src/setupengrab.cpp:186
+msgid "HW Address(MAC) detection failed"
+msgstr ""
+
+#: src/setupnetwork.cpp:390
+msgid "Communication setup"
+msgstr ""
+
+#: src/setupnetwork.cpp:461
+msgid "enter IP Address of the box (0..9, left, right)"
+msgstr ""
+
+#: src/setupnetwork.cpp:469
+msgid "get Network data from a DHCP Server in the local Network"
+msgstr ""
+
+#: src/setupnetwork.cpp:482
+msgid "enter netmask of your network (0..9, left, right)"
+msgstr ""
+
+#: src/setupnetwork.cpp:496
+msgid "press ok to change connection type"
+msgstr ""
+
+#: src/setupnetwork.cpp:502 src/setupnetwork.cpp:510
+msgid "LAN"
+msgstr ""
+
+#: src/setupnetwork.cpp:502 src/setupnetwork.cpp:510
+msgid "communicate to Local Area Network"
+msgstr ""
+
+#: src/setupnetwork.cpp:504 src/setupnetwork.cpp:511
+msgid "WAN(PPPoE)"
+msgstr ""
+
+#: src/setupnetwork.cpp:504 src/setupnetwork.cpp:511
+msgid "communicate to the Internet via DSL"
+msgstr ""
+
+#: src/setupnetwork.cpp:520
+msgid "T-Online User press ok here"
+msgstr ""
+
+#: src/setupnetwork.cpp:534
+msgid "enter your domain name server (0..9, left, right)"
+msgstr ""
+
+#: src/setupnetwork.cpp:540
+msgid "Login:"
+msgstr ""
+
+#: src/setupnetwork.cpp:552
+msgid "press ok to edit your provider login name"
+msgstr ""
+
+#: src/setupnetwork.cpp:569
+msgid "enter your gateways IP Address (0..9, left, right)"
+msgstr ""
+
+#: src/setupnetwork.cpp:575
+msgid "Password:"
+msgstr ""
+
+#: src/setupnetwork.cpp:584
+msgid "press ok to edit your provider password"
+msgstr ""
+
+#: src/setupnetwork.cpp:590
+msgid "Enable Network"
+msgstr ""
+
+#: src/setupnetwork.cpp:593
+msgid "enable/disable network (ok)"
+msgstr ""
+
+#: src/setupnetwork.cpp:604
+msgid "enter port of the Web Interface (0..9, left, right)"
+msgstr ""
+
+#: src/setupnetwork.cpp:615
+msgid "reject incoming connections on port 80"
+msgstr ""
+
+#: src/setupnetwork.cpp:629
+msgid "reject incoming connections on port 23"
+msgstr ""
+
+#: src/setupnetwork.cpp:636
+msgid "reject incoming connections on ports 137,138,139"
+msgstr ""
+
+#: src/setupnetwork.cpp:643
+msgid "reject incoming connections on ports 21"
+msgstr ""
+
+#: src/setupnetwork.cpp:661
+msgid "mounts"
+msgstr ""
+
+#: src/setupnetwork.cpp:666
+msgid "here you can setup nfs/cifs mounts"
+msgstr ""
+
+#: src/setupnetwork.cpp:993
+msgid "enter IP Address (0..9, left, right)"
+msgstr ""
+
+#: src/setupnetwork.cpp:1000
+msgid "press ok to change mount type"
+msgstr ""
+
+#: src/setupnetwork.cpp:1005
+msgid "Samba File System(to mount share from another Dreambox)"
+msgstr ""
+
+#: src/setupnetwork.cpp:1026
+msgid "enter name of the local mount point with trailing slash"
+msgstr ""
+
+#: src/setupnetwork.cpp:1035
+msgid "press ok to change mount options"
+msgstr ""
+
+#: src/setupnetwork.cpp:1061
+msgid "press ok to edit extra options"
+msgstr ""
+
+#: src/setupnetwork.cpp:1071
+msgid "press ok to edit username"
+msgstr ""
+
+#: src/setupnetwork.cpp:1081
+msgid "press ok to edit password"
+msgstr ""
+
+#: src/setupnetwork.cpp:1086
+msgid "enable/disable automount (ok)"
+msgstr ""
+
+#: src/setupnetwork.cpp:1095
+msgid "go to previous share"
+msgstr ""
+
+#: src/setupnetwork.cpp:1103
+msgid "press ok to unmount this share"
+msgstr ""
+
+#: src/setupnetwork.cpp:1113
+msgid "press ok to mount this share"
+msgstr ""
+
+#: src/setupnetwork.cpp:1123
+msgid "press ok to save this share"
+msgstr ""
+
+#: src/setupnetwork.cpp:1134
+msgid "go to next share"
+msgstr ""
+
+#: src/setupnetwork.cpp:1185
+msgid "enter the name of the share without trailing slash"
+msgstr ""
+
+#: src/setupnetwork.cpp:1188
+msgid "enter the name of the share (//DreamBOX/harddisk)"
+msgstr ""
+
+#: src/setupnetwork.cpp:1307 src/setupnetwork.cpp:1345
+msgid "invalid or missing dir or local dir"
+msgstr ""
+
+#: src/setupnetwork.cpp:1325
+msgid "NFS/CIFS-Entry stored. Further entry?\n"
+msgstr ""
+
+#: src/setupnetwork.cpp:1326
+msgid "NFS/CIFS-Setup..."
+msgstr ""
+
+#: src/setupnetwork.cpp:1352
+msgid "NFS/CIFS mount error already mounted"
+msgstr ""
+
+#: src/setupvideo.cpp:72 src/setupvideo.cpp:284 src/system_settings.cpp:47
+msgid "A/V Settings"
+msgstr ""
+
+#: src/setupvideo.cpp:77
+msgid "Video Format:"
+msgstr ""
+
+#: src/setupvideo.cpp:87
+msgid "576p-PAL"
+msgstr ""
+
+#: src/setupvideo.cpp:88
+msgid "576p-NTSC"
+msgstr ""
+
+#: src/setupvideo.cpp:89
+msgid "720p50"
+msgstr ""
+
+#: src/setupvideo.cpp:90
+msgid "720p60"
+msgstr ""
+
+#: src/setupvideo.cpp:91
+msgid "1080i50"
+msgstr ""
+
+#: src/setupvideo.cpp:92
+msgid "1080i60"
+msgstr ""
+
+#: src/setupvideo.cpp:95
+msgid "choose video format ( left, right )"
+msgstr ""
+
+#: src/setupvideo.cpp:101
+msgid "Color Format:"
+msgstr ""
+
+#: src/setupvideo.cpp:111
+msgid "CVBS"
+msgstr ""
+
+#: src/setupvideo.cpp:112
+msgid "RGB"
+msgstr ""
+
+#: src/setupvideo.cpp:113
+msgid "YPbPr"
+msgstr ""
+
+#: src/setupvideo.cpp:120
+msgid "choose color format ( left, right )"
+msgstr ""
+
+#: src/setupvideo.cpp:124
+msgid "Aspect Ratio:"
+msgstr ""
+
+#: src/setupvideo.cpp:134
+msgid "choose aspect ratio ( left, right )"
+msgstr ""
+
+#: src/setupvideo.cpp:135
+msgid "4:3 letterbox"
+msgstr ""
+
+#: src/setupvideo.cpp:136
+msgid "4:3 panscan"
+msgstr ""
+
+#: src/setupvideo.cpp:137
+msgid "16:9"
+msgstr ""
+
+#: src/setupvideo.cpp:140
+msgid "always 16:9"
+msgstr ""
+
+#: src/setupvideo.cpp:147 src/setupvideo.cpp:457
+msgid "TV System:"
+msgstr ""
+
+#: src/setupvideo.cpp:170 src/setupvideo.cpp:481
+msgid "choose TV system ( left, right )"
+msgstr ""
+
+#: src/setupvideo.cpp:190
+msgid "Disable WSS on 4:3"
+msgstr ""
+
+#: src/setupvideo.cpp:191
+msgid "don't send WSS signal when A-ratio is 4:3"
+msgstr ""
+
+#: src/setupvideo.cpp:198
+msgid "AC3 default output"
+msgstr ""
+
+#: src/setupvideo.cpp:201
+msgid "enable/disable ac3 default output (ok)"
+msgstr ""
+
+#: src/setupvideo.cpp:207
+msgid "Auto VCR switching"
+msgstr ""
+
+#: src/setupvideo.cpp:210
+msgid "auto switch to VCR connector"
+msgstr ""
+
+#: src/setupvideo.cpp:226
+msgid "test"
+msgstr ""
+
+#: src/setupvideo.cpp:231
+msgid "show testpicture"
+msgstr ""
+
+#: src/setupvideo.cpp:283
+msgid "Yes to restart GUI for new video setting."
+msgstr ""
+
+#: src/setupvideo.cpp:452
+msgid "TV System Wizard"
+msgstr ""
+
+#: src/software_update.cpp:38
+msgid "Internet Update"
+msgstr ""
+
+#: src/software_update.cpp:38
+msgid "open internet update"
+msgstr ""
+
+#: src/software_update.cpp:39
+msgid "Manual Update"
+msgstr ""
+
+#: src/software_update.cpp:39
+msgid "open manual update"
+msgstr ""
+
+#: src/software_update.cpp:41
+msgid "Expert Flash Save/Restore"
+msgstr ""
+
+#: src/software_update.cpp:41
+msgid "open expert flash tool"
+msgstr ""
+
+#: src/software_update.cpp:63
+msgid ""
+"Upload your Image via FTP or Samba to the '/tmp' folder.Then rename it to "
+"'flash_img_kernel_root' and press ok.In the upcomming list select 'manual "
+"update' and follow the instructions."
+msgstr ""
+
+#: src/software_update.cpp:65
+msgid "Manual update"
+msgstr ""
+
+#: src/sselect.cpp:55
+msgid "EPG Style Selector"
+msgstr ""
+
+#: src/sselect.cpp:56
+msgid "open the EPG with selected style"
+msgstr ""
+
+#: src/sselect.cpp:63
+msgid "EPG Style"
+msgstr ""
+
+#: src/sselect.cpp:78
+msgid "Channel EPG"
+msgstr ""
+
+#: src/sselect.cpp:78
+msgid "open EPG for selected Channel"
+msgstr ""
+
+#: src/sselect.cpp:79
+msgid "Multi EPG"
+msgstr ""
+
+#: src/sselect.cpp:79
+msgid "open EPG for next five channels"
+msgstr ""
+
+#: src/sselect.cpp:80
+msgid "Search event in EPG cache"
+msgstr ""
+
+#: src/sselect.cpp:86
+msgid "External EPG"
+msgstr ""
+
+#: src/sselect.cpp:86
+msgid "open external plugin EPG"
+msgstr ""
+
+#: src/sselect.cpp:133
+msgid "service selector"
+msgstr ""
+
+#: src/sselect.cpp:134
+msgid "switch to next bouquet"
+msgstr ""
+
+#: src/sselect.cpp:135
+msgid "switch to previous bouquet"
+msgstr ""
+
+#: src/sselect.cpp:136
+msgid "go up a directory"
+msgstr ""
+
+#: src/sselect.cpp:137
+msgid "shows the EPG selector for the highlighted channel"
+msgstr ""
+
+#: src/sselect.cpp:138
+msgid "show service selector menu"
+msgstr ""
+
+#: src/sselect.cpp:140
+msgid "add service to a specific bouquet"
+msgstr ""
+
+#: src/sselect.cpp:144
+msgid "toggle between classic and multi column style"
+msgstr ""
+
+#: src/sselect.cpp:145 src/sselect.cpp:1722 src/sselect.cpp:1732
+msgid "toggle focus between service and bouquet list (in combi column style)"
+msgstr ""
+
+#: src/sselect.cpp:146
+msgid "go to the prev Marker if exist.. else goto first service"
+msgstr ""
+
+#: src/sselect.cpp:147
+msgid "go to the next Marker if exist.. else goto last service"
+msgstr ""
+
+#: src/sselect.cpp:149
+msgid "show all services"
+msgstr ""
+
+#: src/sselect.cpp:150
+msgid "show satellite list"
+msgstr ""
+
+#: src/sselect.cpp:151
+msgid "show provider list"
+msgstr ""
+
+#: src/sselect.cpp:152
+msgid "show bouquet list"
+msgstr ""
+
+#: src/sselect.cpp:154
+msgid "delete selected entry"
+msgstr ""
+
+#: src/sselect.cpp:155
+msgid "mark selected entry for move"
+msgstr ""
+
+#: src/sselect.cpp:156
+msgid "rename selected entry"
+msgstr ""
+
+#: src/sselect.cpp:157
+msgid "create new marker entry"
+msgstr ""
+
+#: src/sselect.cpp:368
+msgid "[GO UP]"
+msgstr ""
+
+#: src/sselect.cpp:370
+msgid "(removed service)"
+msgstr ""
+
+#: src/sselect.cpp:460
+msgid "mark"
+msgstr ""
+
+#: src/sselect.cpp:462
+msgid "marker"
+msgstr ""
+
+#: src/sselect.cpp:472
+msgid "Satellites"
+msgstr ""
+
+#: src/sselect.cpp:475
+msgid "Providers"
+msgstr ""
+
+#: src/sselect.cpp:480 src/sselect.cpp:2197
+msgid "Root"
+msgstr ""
+
+#: src/sselect.cpp:481
+msgid "Movies"
+msgstr ""
+
+#: src/sselect.cpp:995
+msgid "Select No or press Abort to lock/unlock the complete directory"
+msgstr ""
+
+#: src/sselect.cpp:995
+msgid "Enter Directory"
+msgstr ""
+
+#: src/sselect.cpp:1712
+msgid "toggle between now and next epg entries in single column list"
+msgstr ""
+
+#: src/sselect.cpp:2198
+msgid "Select"
+msgstr ""
+
+#: src/sselect.cpp:2199
+msgid "New Directory"
+msgstr ""
+
+#: src/sselect.cpp:2200 src/sselect.cpp:2239
+msgid "Delete"
+msgstr ""
+
+#: src/sselect.cpp:2216
+msgid "Enter name of new directory:"
+msgstr ""
+
+#: src/sselect.cpp:2217
+msgid "Create Directory"
+msgstr ""
+
+#: src/sselect.cpp:2226
+msgid "Error creating directory"
+msgstr ""
+
+#: src/streaminfo.cpp:166
+msgid "album"
+msgstr ""
+
+#: src/streaminfo.cpp:168
+msgid "title"
+msgstr ""
+
+#: src/streaminfo.cpp:170
+msgid "artist"
+msgstr ""
+
+#: src/streaminfo.cpp:172
+msgid "genre"
+msgstr ""
+
+#: src/streaminfo.cpp:174
+msgid "year"
+msgstr ""
+
+#: src/streaminfo.cpp:176
+msgid "composer"
+msgstr ""
+
+#: src/streaminfo.cpp:178
+msgid "track"
+msgstr ""
+
+#: src/streaminfo.cpp:180
+msgid "length"
+msgstr ""
+
+#: src/streaminfo.cpp:401
+msgid "Video format:"
+msgstr ""
+
+#: src/streaminfo.cpp:485
+msgid "supported coding systems:"
+msgstr ""
+
+#: src/streaminfo.cpp:525
+msgid "Systems used in service:"
+msgstr ""
+
+#: src/streaminfo.cpp:566
+msgid "Record mode - read manual"
+msgstr ""
+
+#: src/streaminfo.cpp:676
+msgid "Service information (right)"
+msgstr ""
+
+#: src/streaminfo.cpp:677
+msgid "Scrambled system information (left, right)"
+msgstr ""
+
+#: src/streaminfo.cpp:678
+msgid "Transponder information (left)"
+msgstr ""
+
+#: src/swapmanager.cpp:92 src/swapmanager.cpp:93 src/swapmanager.cpp:94
+#: src/swapmanager.cpp:95 src/swapmanager.cpp:96 src/swapmanager.cpp:97
+#: src/swapmanager.cpp:98 src/swapmanager.cpp:99 src/swapmanager.cpp:100
+#: src/swapmanager.cpp:232
+#, c-format
+msgid "Filesize: %d MB"
+msgstr ""
+
+#: src/swapmanager.cpp:246
+msgid "Not found"
+msgstr ""
+
+#: src/swapmanager.cpp:247 src/swapmanager.cpp:256
+msgid "Inactive"
+msgstr ""
+
+#: src/swapmanager.cpp:255 src/swapmanager.cpp:264
+msgid "Found"
+msgstr ""
+
+#: src/swapmanager.cpp:265
+msgid "Active"
+msgstr ""
+
+#: src/swapmanager.cpp:268 src/swapmanager.cpp:338
+#, c-format
+msgid "Swap-File: %s"
+msgstr ""
+
+#: src/swapmanager.cpp:269
+#, c-format
+msgid "Swap-Status: %s"
+msgstr ""
+
+#: src/swapmanager.cpp:299
+msgid ""
+"The swapfile will now be created. This may take some time depending on the "
+"size of your swapfile"
+msgstr ""
+
+#: src/swapmanager.cpp:334
+msgid "The swapfile has been created!"
+msgstr ""
+
+#: src/swapmanager.cpp:344
+#, c-format
+msgid "There has been an error during creation!"
+msgstr ""
+
+#: src/swapmanager.cpp:370
+#, c-format
+msgid "Error during activation!"
+msgstr ""
+
+#: src/swapmanager.cpp:390
+#, c-format
+msgid "Error during inactivation!"
+msgstr ""
+
+#: src/swapmanager.cpp:400
+msgid "Swapfile has been deleted!"
+msgstr ""
+
+#: src/swapmanager.cpp:406
+#, c-format
+msgid "File has not been deleted due to an error!"
+msgstr ""
+
+#: src/timer.cpp:288 src/timer.cpp:2159
+msgid "Timerlist"
+msgstr ""
+
+#: src/timer.cpp:1587
+msgid ""
+"You would delete the running event..\n"
+"this stops the timer mode (recording)!"
+msgstr ""
+
+#: src/timer.cpp:1588
+msgid "Delete the event from the timer list"
+msgstr ""
+
+#: src/timer.cpp:1589
+msgid "Really delete this event?"
+msgstr ""
+
+#: src/timer.cpp:1593
+msgid ""
+"You would update the running event.. \n"
+"this stops the timer mode (recording)!"
+msgstr ""
+
+#: src/timer.cpp:1594
+msgid "Update event in timer list"
+msgstr ""
+
+#: src/timer.cpp:1595 src/timer.cpp:2559
+msgid "Really update this event?"
+msgstr ""
+
+#: src/timer.cpp:1740
+msgid "This event is already in the timerlist."
+msgstr ""
+
+#: src/timer.cpp:1741 src/timer.cpp:1786
+msgid "Add event to timerlist"
+msgstr ""
+
+#: src/timer.cpp:1778
+msgid "The Endtime overlaps with another event in the timerlist"
+msgstr ""
+
+#: src/timer.cpp:1778
+msgid "Set Stop Time"
+msgstr ""
+
+#: src/timer.cpp:1784
+msgid ""
+"This event cannot added to the timerlist.\n"
+"The event overlaps with another event in the timerlist\n"
+"Please check the timerlist manually."
+msgstr ""
+
+#: src/timer.cpp:1861
+msgid "timerView"
+msgstr ""
+
+#: src/timer.cpp:1862
+msgid "add new event to Timerlist"
+msgstr ""
+
+#: src/timer.cpp:1863
+msgid "remove this entry from timer list"
+msgstr ""
+
+#: src/timer.cpp:2066
+msgid "Timer list"
+msgstr ""
+
+#: src/timer.cpp:2152 src/timer.cpp:2154
+#, c-format
+msgid "free space"
+msgstr ""
+
+#: src/timer.cpp:2170
+msgid "Timer Edit View"
+msgstr ""
+
+#: src/timer.cpp:2171
+msgid "increase the event begin time in 1 minute steps"
+msgstr ""
+
+#: src/timer.cpp:2172
+msgid "decrease the event begin time in 1 minute steps"
+msgstr ""
+
+#: src/timer.cpp:2173
+msgid "increase the event end time in 1 minute steps"
+msgstr ""
+
+#: src/timer.cpp:2174
+msgid "decrease the event end time in 1 minute steps"
+msgstr ""
+
+#: src/timer.cpp:2183
+msgid "January"
+msgstr ""
+
+#: src/timer.cpp:2183
+msgid "February"
+msgstr ""
+
+#: src/timer.cpp:2183
+msgid "March"
+msgstr ""
+
+#: src/timer.cpp:2184
+msgid "April"
+msgstr ""
+
+#: src/timer.cpp:2184
+msgid "May"
+msgstr ""
+
+#: src/timer.cpp:2184
+msgid "June"
+msgstr ""
+
+#: src/timer.cpp:2184
+msgid "July"
+msgstr ""
+
+#: src/timer.cpp:2185
+msgid "August"
+msgstr ""
+
+#: src/timer.cpp:2185
+msgid "September"
+msgstr ""
+
+#: src/timer.cpp:2185
+msgid "October"
+msgstr ""
+
+#: src/timer.cpp:2186
+msgid "November"
+msgstr ""
+
+#: src/timer.cpp:2186
+msgid "December"
+msgstr ""
+
+#: src/timer.cpp:2202
+msgid "do nothing"
+msgstr ""
+
+#: src/timer.cpp:2203
+msgid "put box into standby"
+msgstr ""
+
+#: src/timer.cpp:2208
+msgid "shutdown the box"
+msgstr ""
+
+#: src/timer.cpp:2210
+msgid "put box into deep standby"
+msgstr ""
+
+#: src/timer.cpp:2310
+msgid "record DVR"
+msgstr ""
+
+#: src/timer.cpp:2314
+msgid "Ngrab"
+msgstr ""
+
+#: src/timer.cpp:2320
+msgid "Record VCR"
+msgstr ""
+
+#: src/timer.cpp:2411
+msgid "unknown service"
+msgstr ""
+
+#: src/timer.cpp:2557
+msgid ""
+"The new endtime is before now time!\n"
+"This stops the running timer(recording)\n"
+msgstr ""
+
+#: src/timer.cpp:2563 src/timer.cpp:2575 src/timer.cpp:2585 src/timer.cpp:2603
+msgid "Update event in timerlist"
+msgstr ""
+
+#: src/timer.cpp:2574
+msgid "New endtime are now adjusted"
+msgstr ""
+
+#: src/timer.cpp:2584
+msgid "The event has already finished... you can not change endtime!"
+msgstr ""
+
+#: src/timer.cpp:2603
+msgid ""
+"Invalid begin or end time.!\n"
+"Please check time and date"
+msgstr ""
+
+#: src/timer.cpp:2773
+msgid ""
+"Sorry, you can not add a time shifted service manually to the timer.\n"
+"Please close the Timer and use the EPG of the service you wish to add!"
+msgstr ""
+
+#: src/timer.cpp:2830
+msgid "no description found"
+msgstr ""
+
+#: src/tpeditwindow.cpp:61
+msgid "Satellite Edit"
+msgstr ""
+
+#: src/tpeditwindow.cpp:67
+msgid "press ok to change satellite name"
+msgstr ""
+
+#: src/tpeditwindow.cpp:85
+msgid "press ok to change direction"
+msgstr ""
+
+#: src/tpeditwindow.cpp:94
+msgid "Network search"
+msgstr ""
+
+#: src/tpeditwindow.cpp:95
+msgid ""
+"scan Network Information Table(s)\n"
+"this is recommend"
+msgstr ""
+
+#: src/tpeditwindow.cpp:100
+msgid "Extended networks search"
+msgstr ""
+
+#: src/tpeditwindow.cpp:101
+msgid ""
+"scan NITs of other transponders\n"
+"this is slower, but sometimes needed)"
+msgstr ""
+
+#: src/tpeditwindow.cpp:106
+msgid "Use BAT"
+msgstr ""
+
+#: src/tpeditwindow.cpp:107
+msgid "use Provider DVB Bouquet Tables if exist"
+msgstr ""
+
+#: src/tpeditwindow.cpp:186
+msgid "add new Network"
+msgstr ""
+
+#: src/tpeditwindow.cpp:187
+msgid "remove selected Network"
+msgstr ""
+
+#: src/tpeditwindow.cpp:258
+msgid "Save changed Transponders?"
+msgstr ""
+
+#: src/tpeditwindow.cpp:259
+msgid "Transponders changed"
+msgstr ""
+
+#: src/tpeditwindow.cpp:267
+msgid "Transponders couldn't be written to file!"
+msgstr ""
+
+#: src/tpeditwindow.cpp:268
+msgid "Write Error"
+msgstr ""
+
+#: src/tpeditwindow.cpp:445
+msgid "new Satellite"
+msgstr ""
+
+#: src/tpeditwindow.cpp:474
+msgid "Really delete the selected satellite?"
+msgstr ""
+
+#: src/tpeditwindow.cpp:475
+#, c-format
+msgid "Delete %s"
+msgstr ""
+
+#: src/upgrade.cpp:166
+msgid "Please select the software version to upgrade to:"
+msgstr ""
+
+#: src/upgrade.cpp:203
+msgid "manual upload"
+msgstr ""
+
+#: src/upgrade.cpp:221
+msgid "downloading catalog..."
+msgstr ""
+
+#: src/upgrade.cpp:241
+msgid "downloading changelog..."
+msgstr ""
+
+#: src/upgrade.cpp:266
+msgid "downloading image..."
+msgstr ""
+
+#: src/upgrade.cpp:324
+msgid "Please select version to upgrade or LAME! to abort"
+msgstr ""
+
+#: src/upgrade.cpp:445 src/upgrade.cpp:529 src/upgrade.cpp:540
+msgid "Error!"
+msgstr ""
+
+#: src/upgrade.cpp:502
+msgid "Download aborted."
+msgstr ""
+
+#: src/upgrade.cpp:521
+msgid "checking consistency of file..."
+msgstr ""
+
+#: src/upgrade.cpp:525 src/upgrade.cpp:528
+msgid "write error while downloading..."
+msgstr ""
+
+#: src/upgrade.cpp:536 src/upgrade.cpp:539
+msgid "Data error. The checksum didn't match."
+msgstr ""
+
+#: src/upgrade.cpp:545
+msgid "Checksum OK. Ready to upgrade."
+msgstr ""
+
+#: src/upgrade.cpp:548
+msgid "Are you sure you want to upgrade to this new version?"
+msgstr ""
+
+#: src/upgrade.cpp:549
+msgid "Ready to upgrade"
+msgstr ""
+
+#: src/upgrade.cpp:587
+msgid "Can't read flashimage.img!"
+msgstr ""
+
+#: src/upgrade.cpp:587 src/upgrade.cpp:597 src/upgrade.cpp:718
+#: src/upgrade.cpp:726
+msgid "Flash"
+msgstr ""
+
+#: src/upgrade.cpp:597
+msgid "flashimage.img has filesize of 0byte!"
+msgstr ""
+
+#: src/upgrade.cpp:625 src/upgrade.cpp:704
+msgid "Please wait... do NOT switch off the receiver!"
+msgstr ""
+
+#: src/upgrade.cpp:626 src/upgrade.cpp:705
+msgid "upgrade in progress"
+msgstr ""
+
+#: src/upgrade.cpp:629 src/upgrade.cpp:715
+msgid "Erasing Flash..."
+msgstr ""
+
+#: src/upgrade.cpp:654 src/upgrade.cpp:738
+msgid "Writing Software to Flash..."
+msgstr ""
+
+#: src/upgrade.cpp:718
+msgid "Erase error!"
+msgstr ""
+
+#: src/upgrade.cpp:726
+msgid "Can't open mtd!"
+msgstr ""
+
+#: src/upgrade.cpp:762
+msgid ""
+"upgrade successful!\n"
+"restarting..."
+msgstr ""
+
+#: src/upgrade.cpp:763
+msgid "upgrade ok"
+msgstr ""
+
+#: src/upgrade.cpp:822
+msgid "This is the currently installed release."
+msgstr ""
+
+#: src/upgrade.cpp:825
+msgid "This is an older release."
+msgstr ""
+
+#: src/upgrade.cpp:828
+msgid "No changelog data available."
+msgstr ""
+
+#: src/upgrade.cpp:842
+msgid "No new features were added in this release."
+msgstr ""
+
+#: src/upgrade.cpp:845
+msgid "The following new features were added in this release:\n"
+msgstr ""
+
+#: src/wizard_fpupdate.cpp:13
+msgid ""
+"New Software for the frontprocessor is avail.\n"
+"Your Dreambox must upgrade now!\n"
+"DO NOT TURN OFF THE POWER DURING UPDATE !!!."
+msgstr ""
+
+#: src/wizard_fpupdate.cpp:16
+msgid "New software avail"
+msgstr ""
+
+#: src/wizard_fpupdate.cpp:21
+msgid ""
+"Upgrading frontprocessor...\n"
+"DO NOT TURN OFF THE POWER!\n"
+"THE DREAMBOX WILL AUTOMATICALLY REBOOT!\n"
+msgstr ""
+
+#: src/wizard_fpupdate.cpp:24
+msgid "Upgrade in process..."
+msgstr ""
+
+#: src/wizard_language.cpp:177
+msgid "Choose your language..."
+msgstr ""
+
+#: src/wizard_language.cpp:178
+msgid "press up/down/ok"
+msgstr ""
+
+#: src/wizard_scan.cpp:120
+msgid "Direct connection to one LNB"
+msgstr ""
+
+#: src/wizard_scan.cpp:123
+msgid "Simple DiSEqC (2 LNBs/satellites)"
+msgstr ""
+
+#: src/wizard_scan.cpp:126
+msgid "Complex configuration (including DiSEqC 1.2)"
+msgstr ""
+
+#: src/system_settings.cpp:45 src/time_settings.cpp:32
+msgid "Time Settings"
+msgstr ""
+
+#: src/system_settings.cpp:45
+msgid "open time settings"
+msgstr ""
+
+#: src/system_settings.cpp:47
+msgid "open A/V settings"
+msgstr ""
+
+#: src/system_settings.cpp:50
+msgid "UHF Modulator"
+msgstr ""
+
+#: src/system_settings.cpp:50
+msgid "open UHF-Modulator setup"
+msgstr ""
+
+#: src/system_settings.cpp:55
+msgid "Harddisc Setup"
+msgstr ""
+
+#: src/system_settings.cpp:55
+msgid "open harddisc setup"
+msgstr ""
+
+#: src/system_settings.cpp:60
+msgid "open keyboard setup"
+msgstr ""
+
+#: src/system_settings.cpp:63
+msgid "open on screen display settings"
+msgstr ""
+
+#: src/system_settings.cpp:64
+msgid "open language selector"
+msgstr ""
+
+#: src/system_settings.cpp:67
+msgid "LCD Settings"
+msgstr ""
+
+#: src/system_settings.cpp:67
+msgid "open LCD settings"
+msgstr ""
+
+#: src/system_settings.cpp:130
+msgid "sorry, no harddisks found!"
+msgstr ""
+
+#: src/system_settings.cpp:130
+msgid "Harddisk setup..."
+msgstr ""
+
+#: src/time_settings.cpp:40
+msgid "Timezone Configuration"
+msgstr ""
+
+#: src/time_settings.cpp:40
+msgid "open timezone selector"
+msgstr ""
+
+#: src/time_settings.cpp:41
+msgid "Time Correction"
+msgstr ""
+
+#: src/time_settings.cpp:41
+msgid "open time correction window"
+msgstr ""
+
+#: src/time_settings.cpp:76
+msgid "To change time correction you must tune first to any transponder"
+msgstr ""
+
+#: src/time_settings.cpp:76
+msgid "time correction change error"
+msgstr ""

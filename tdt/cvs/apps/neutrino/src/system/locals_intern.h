@@ -1351,6 +1351,7 @@ const char *locale_real_names[] = {
 	"cpu.freq",
 	"cpu.freq_normal",
 	"cpu.freq_standby",
-	"cpu.freq_default"
+	"cpu.freq_default",
+	"AUDIOSelectMenue.no_tracks",
 };
 #endif

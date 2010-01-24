@@ -95,6 +95,7 @@ $(DEPDIR)/%release_neutrino:
 	cp $(buildprefix)/root/release/vsftpd $(prefix)/release_neutrino/etc/init.d/ && \
 	cp $(buildprefix)/root/release/bootclean.sh $(prefix)/release_neutrino/etc/init.d/ && \
 	cp $(buildprefix)/root/release/networking $(prefix)/release_neutrino/etc/init.d/ && \
+	cp $(buildprefix)/root/release/getfb.awk $(prefix)/release_neutrino/etc/init.d/ && \
 	cp $(buildprefix)/root/bootscreen/bootlogo.mvi $(prefix)/release_neutrino/boot/ && \
 	cp -rd $(targetprefix)/lib/* $(prefix)/release_neutrino/lib/ && \
 	rm -f $(prefix)/release_neutrino/lib/*.a && \
@@ -587,7 +588,7 @@ endif
 #	rm $(prefix)/release_neutrino/bin/mount
 	cp -RP $(buildprefix)/own_build/neutrino/* $(prefix)/release_neutrino/
 
-#if ENABLE_UFS910
+#if ENABLE_FLASH_UFS910
 ######### FOR FLASHBUILDING UFS-910 with mount -o bind /var/etc /etc #################
 #	rm $(prefix)/release_neutrino/boot/bootlogo.mvi
 #	cp -RP $(prefix)/release_neutrino/etc $(prefix)/release_neutrino/var/
@@ -599,7 +600,7 @@ endif
 #	mkdir -p $(prefix)/release_neutrino/var/usr/local/share
 #	mv $(prefix)/release_neutrino/usr/local/share/config $(prefix)/release_neutrino/var/usr/local/share/
 #	mv $(prefix)/release_neutrino/usr/local/share/neutrino $(prefix)/release_neutrino/var/usr/local/share/
-#	( cd $(prefix)/release_neutrino/usr/local/share && ln -s /var/usr/local/share/config && ln -s /var/usr/local/share/neutrino )
+#	( cd $(prefix)/release_neutrino/usr/local/share && ln -s /var/usr/local/share/config && ln -s /var/usr/local/share/neutrino && ln -s /var/usr/local/share/operations )
 #	rm -rf $(prefix)/release_neutrino/tuxbox
 #	( cd $(prefix)/release_neutrino/ && ln -s /var/tuxbox )
 #	rm -rf $(prefix)/release_neutrino/lib/tuxbox
@@ -617,6 +618,7 @@ endif
 #	rm $(prefix)/release_neutrino/bin/{showiframe,stslave,tfd2mtd,tffpctl}
 #	rm $(prefix)/release_neutrino/usr/bin/showiframe
 #	( cd $(prefix)/release_neutrino/sbin && ln -sf mke2fs mkfs.ext2 && ln -sf mke2fs mkfs.ext3 )
+#	( cd $(prefix)/release_neutrino/bin && ln -sf busybox pidof )
 #endif
 
 if STM22

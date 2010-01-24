@@ -124,7 +124,7 @@ portmap_6.0-9.diff.gz;http://debian.osuosl.org/debian/pool/main/p/portmap/
 nfs-utils-1.1.1.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/nfs
 nfs-utils_1.1.1-12.diff.gz;http://ftp.de.debian.org/debian/pool/main/n/nfs-utils
 autofs-4.1.4.tar.bz2;ftp://ftp.kernel.org/pub/linux/daemons/autofs/v4
-vsftpd-2.0.7.tar.gz;ftp://vsftpd.beasts.org/users/cevans
+vsftpd-2.0.7.tar.gz;ftp://ftp.uni-kassel.de/Mirrors/ftp.fhh.opensource-mirror.de/gentoo/distfiles
 netkit-ftp-0.17.tar.gz;ftp://ftp.uk.linux.org/pub/linux/Networking/netkit
 samba-3.0.28.tar.gz;http://us1.samba.org/samba/ftp
 netio126.zip;http://freshmeat.net/redir/netio/18673/url_zip

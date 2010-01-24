@@ -1075,26 +1075,34 @@ static void demux_close_ts(demuxer_t * demuxer)
 	
 	if(priv)
 	{
-		if(priv->pat.section.buffer)
-			free(priv->pat.section.buffer);
-		if(priv->pat.progs)
-			free(priv->pat.progs);
+		free(priv->pat.section.buffer);
+		priv->pat.section.buffer = NULL;
+		
+		free(priv->pat.progs);
+		priv->pat.progs = NULL;
 	
-		if(priv->pmt)
+		if(priv->pmt != NULL)
 		{	
 			for(i = 0; i < priv->pmt_cnt; i++)
 			{
-				if(priv->pmt[i].section.buffer)
-					free(priv->pmt[i].section.buffer);
-				if(priv->pmt[i].es)
-					free(priv->pmt[i].es);
+				free(priv->pmt[i].section.buffer);
+				priv->pmt[i].section.buffer = NULL;
+			
+				free(priv->pmt[i].es);
+				priv->pmt[i].es = NULL;
 			}
 			free(priv->pmt);
+			priv->pmt = NULL;
 		}
-		for(i=0;i<NB_PID_MAX;i++)free(priv->ts.pids[i]);
-		free(priv);
+		
+		for(i=0;i<NB_PID_MAX;i++) {
+			free(priv->ts.pids[i]);
+			priv->ts.pids[i] = NULL;
+		}
+		
+		free(priv);		
+		demuxer->priv=NULL;
 	}
-	demuxer->priv=NULL;
 }
 
 
@@ -3294,14 +3302,14 @@ static void demux_seek_ts(demuxer_t *demuxer, float rel_seek_secs, float audio_d
 }
 
 
-static int demux_ts_fill_buffer(demuxer_t * demuxer, demux_stream_t *ds)
+int demux_ts_fill_buffer(demuxer_t * demuxer, demux_stream_t *ds)
 {
 	ES_stream_t es;
 	ts_priv_t *priv = (ts_priv_t *)demuxer->priv;
 	
 	return -ts_parse(demuxer, &es, priv->packet, 0);
 }
-
+extern int demux_ts_fill_buffer(demuxer_t * demuxer, demux_stream_t *ds);
 
 static int ts_check_file_dmx(demuxer_t *demuxer)
 {
@@ -3477,6 +3485,15 @@ static int demux_ts_control(demuxer_t *demuxer, int cmd, void *arg)
 ////////////////////////////////////////////////////////////////7
 ////////////////////////////////////////////////////////////////7
 
+int ts_mpg(const demuxer_t *demuxer)
+{
+	int ret = 0;
+
+	ret=demux_open_ts(demuxer);
+	return ret;
+}
+extern int ts_mpg(const demuxer_t *demuxer);
+
 #include "common.h"
 #include "container.h"
 #include "manager.h"
@@ -3488,10 +3505,8 @@ static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
 static pthread_t PlayThread;
-static int isFirstAudioFrame = 1;
-static int isFirstVideoFrame = 1;
 
-void TSInit(Context_t *context, char * filename) {
+int TSInit(Context_t *context, char * filename) {
 
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
@@ -3546,7 +3561,7 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
     ret = demux_open_ts(demuxer);
     //printf("ret = %d\n",ret);
 
-    if(!demuxer->video->sh == NULL){
+    if(demuxer->video->sh){
     	sh_video=demuxer->video->sh;
     	printf("VIDEO 0x%02x\n",sh_video->format);
 
@@ -3638,13 +3653,13 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	if (!video_format) // initialize
 		if (sh_video->format) {
 			video_format = sh_video->format;
-			printf("%s::%s video_format init with 0x%02x\n", FILENAME, __FUNCTION__, video_format);
+			printf("%s::%s video format init with 0x%02x\n", FILENAME, __FUNCTION__, video_format);
 		}
 	  
 	if(sh_video->format != video_format) // changed?
 	{
 		video_format_changed = 1;
-		printf("%s::%s: change videoformat 0x%02x to 0x%02x\n", FILENAME, __FUNCTION__, sh_video->format, video_format);
+		printf("%s::%s: change video format 0x%02x to 0x%02x\n", FILENAME, __FUNCTION__, sh_video->format, video_format);
 		sh_video->format = video_format;
 	  
 		if(sh_video->format == 0x10000001 || sh_video->format == 0x10000002)
@@ -3689,7 +3704,8 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		current_audio = audio->first;
 		
 		if (current_audio->flags)	// fixme : always zero?
-		  printf("audio current_audio->flags = 0x%02x\n",current_audio->flags);
+			printf("audio current_audio->flags = 0x%02x\n",current_audio->flags);
+		
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts = INVALID_PTS_VALUE;
@@ -3697,6 +3713,7 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			//printf("\tKEYFRAME,                    ");
 			Pts = (current->pts * 90000);
 		}*/
+		
 		if(video_format_changed)
 			Pts_audio = INVALID_PTS_VALUE;
 		else
@@ -3715,7 +3732,8 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		current_video = video->first;
 		
 		if (current_video->flags)	// fixme : always zero?
-		  printf("video current->flags = 0x%02x\n",current_video->flags);
+			printf("video current->flags = 0x%02x\n",current_video->flags);
+		
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts = INVALID_PTS_VALUE;
@@ -3723,6 +3741,7 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			//printf("\tKEYFRAME,                    ");
 			Pts = (current->pts * 90000);
 		}*/
+		
 		if(video_format_changed)
 			Pts_video = INVALID_PTS_VALUE;
 		else
@@ -3753,36 +3772,19 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		}		  		  
 	}
 	
-	// FIXME: What if the stream doesn't contain either video or audio?
-	
-	// once we have video and audio in sync, write whatever we have
-	// we will skip the initial round when we have both, that's ok and safer
 	while (current_audio != NULL) {
 		//printf("AUDIODATA\n");
 		//HexdumpAVI(current->buffer, current->len);
 
-		if (isFirstVideoFrame) {
-			printf("Skipping audio->Write as no video yet!\n");
-		} else {
-			context->output->audio->Write(context, current_audio->buffer, current_audio->len, Pts_audio, NULL, 0, 0, "audio");
-		}
+		context->output->audio->Write(context, current_audio->buffer, current_audio->len, Pts_audio, NULL, 0, 0, "audio");
 
-		isFirstAudioFrame=0;
 		current_audio = current_audio->next;
-		//Pts_audio = INVALID_PTS_VALUE;
 	}
 
-	while (current_video != NULL) {
-	  
-		if (isFirstAudioFrame) {
-			printf("Skipping video->Write as no audio yet!\n");
-		} else {
-			context->output->video->Write(context, current_video->buffer, current_video->len, Pts_video, 0, 0, 0, "video");
-		}
+	while (current_video != NULL) {	  
+		context->output->video->Write(context, current_video->buffer, current_video->len, Pts_video, 0, 0, 0, "video");
 
-		isFirstVideoFrame=0;
 		current_video = current_video->next;
-		//Pts_video = INVALID_PTS_VALUE;
 	}
 }
 
@@ -3791,36 +3793,31 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 static void TSThread(Context_t *context) {
 	printf("%s::%d\n", __FUNCTION__, __LINE__);
 	
-	while(context->playback->isPlaying && 
-		    demux_ts_fill_buffer(demuxer,ds)) {
+	while(context->playback->isPlaying && demux_ts_fill_buffer(demuxer,ds)) {
 	    //printf("%s -->\n", __FUNCTION__);
 
-
 	    //IF MOVIE IS PAUSE, WAIT 
-	    while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
+		while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
 
-	    TSGenerateParcel(context, demuxer);
+		TSGenerateParcel(context, demuxer);
 
-	    if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
-		    printf("SUBTITLE");
-		ds_free_packs(demuxer->sub);
-	    } 
-
-	    if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
-		ds_free_packs(demuxer->audio);
-	    }
-
-	    if (demuxer->video != NULL && demuxer->video->first != NULL) {
-		ds_free_packs(demuxer->video);
-	    }    
-	    //printf("%s <--\n", __FUNCTION__);
+		if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
+			ds_free_packs(demuxer->sub);
+		}
+		
+		if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
+			ds_free_packs(demuxer->audio);
+		}
+		
+		if (demuxer->video != NULL && demuxer->video->first != NULL) {
+			ds_free_packs(demuxer->video);
+		}
+		//printf("%s <--\n", __FUNCTION__);
 
 	}
 
 	aStartPts = 0;
 	vStartPts = 0;
-	isFirstAudioFrame=1;
-	isFirstVideoFrame=1;
 
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 }
@@ -3828,70 +3825,92 @@ static void TSThread(Context_t *context) {
 
 static int TSPlay(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-    int error;
-    if (PlayThread == NULL) {
-	  pthread_attr_t attr;
-	  pthread_attr_init(&attr);
-	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-          if(error=pthread_create(&PlayThread, &attr, (void *)&TSThread, context) != 0)
-          {
-            fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
-	    PlayThread = NULL;
-            return -1;
-          }
-    }
-    return 0;
+
+	int error;
+	int ret = 0;
+	pthread_attr_t attr;
+
+	if (PlayThread == NULL) {
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+		if(error=pthread_create(&PlayThread, &attr, (void *)&TSThread, context) != 0) {
+			fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
+			PlayThread = NULL;
+			ret = -1;
+		}
+	}
+	
+	return ret;
 }
 
 static int TSStop(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 
-    int result=0;
-    if(PlayThread!=0)result = pthread_join (PlayThread, NULL);
-    if(result != 0) 
-    {
-          printf("ERROR: Stop PlayThread\n");
-    }
+	int i;
+	int result=0;
+	
+	if(PlayThread != NULL) {
+		result = pthread_join (PlayThread, NULL);
+	
+		if(result != 0) {
+		      printf("ERROR: Stop PlayThread\n");
+		}
+		
+		PlayThread = NULL;
+		usleep(100000);
+	}
 
-	PlayThread = NULL;
+	if (demuxer != NULL) {
 
-    usleep(100000);
+		demux_close_ts(demuxer);
 
-    demux_close_ts(demuxer);
+		free(demuxer->stream);
+		demuxer->stream = NULL;
 
-    free (ds);
-    ds = NULL;
-    free (demuxer->stream);
-    demuxer->stream = NULL;
-    free (demuxer->sub);
-    demuxer->sub = NULL;
-    free (demuxer->video);
-    demuxer->video = NULL;
-    free (demuxer->audio);
-    demuxer->audio = NULL;
-    int i;
-    for(i=0;i<MAX_A_STREAMS;i++){
-	free(demuxer->a_streams[i]);
-	demuxer->a_streams[i]=NULL;
-    }
-    for(i=0;i<MAX_V_STREAMS;i++){
-	free(demuxer->v_streams[i]);
-	demuxer->v_streams[i]=NULL;
-    }
-    for(i=0;i<MAX_S_STREAMS;i++){
-	free(demuxer->s_streams[i]);
-	demuxer->s_streams[i]=NULL;
-    }
-    free (demuxer);   
-    demuxer = NULL;  
+		free(demuxer->sub);
+		demuxer->sub = NULL;
 
-    video_format = 0;
-    
-    return 0;
+		free(demuxer->video);
+		demuxer->video = NULL;
+	
+		free(demuxer->audio);
+		demuxer->audio = NULL;
+		
+		for(i=0;i<MAX_A_STREAMS;i++){
+			free(demuxer->a_streams[i]);
+			demuxer->a_streams[i]=NULL;
+		}
+		
+		for(i=0;i<MAX_V_STREAMS;i++){
+			free(demuxer->v_streams[i]);
+			demuxer->v_streams[i]=NULL;
+		}
+		
+		for(i=0;i<MAX_S_STREAMS;i++){
+			free(demuxer->s_streams[i]);
+			demuxer->s_streams[i]=NULL;
+		}
+		
+		free(demuxer);   
+		demuxer = NULL;
+	}
+
+	free(ds);
+	ds = NULL;
+
+	video_format = 0;
+
+	return 0;
+}
+
+static int TSGetLength(demuxer_t *demuxer,double * length) {
+	return -1;	// FIXME
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	
+	int ret = 0;
 
 	switch(command) {
 		case CONTAINER_INIT: {
@@ -3900,7 +3919,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		case CONTAINER_PLAY: {
-			TSPlay(context);
+			ret = TSPlay(context);
 			break;
 		}
 		case CONTAINER_STOP: {
@@ -3911,12 +3930,20 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			demux_seek_ts (demuxer, (float)*((float*)argument), 0.0, 0);
 			break;
 		}
+		case CONTAINER_LENGTH: {
+			double length = 0;
+			if (demuxer != NULL && TSGetLength(demuxer, &length)!=0)
+				*((double*)argument) = (double)0;
+			else
+				*((double*)argument) = (double)length;
+			break;
+		}		
 		default:
-			printf("ConatinerCmd not supported!");
+			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
 			break;
 	}
 
-	return 0;
+	return ret;
 }
 
 static char *TSCapabilities[] = { "ts", "m2ts", "trp", "mts", "rec", NULL };

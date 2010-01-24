@@ -69,6 +69,7 @@ audioplayer.stop Stop
 audioplayer.title_artist Titel, Interpret
 audioplayerpicsettings.general Audioplayer / Bildbetrachter
 AUDIOSelectMenue.head Auswahl der Tonspur
+AUDIOSelectMenue.no_tracks Keine Tonspuren verfügbar
 bookmarkmanager.delete Löschen
 bookmarkmanager.name Bookmarks
 bookmarkmanager.rename Umbenennen

@@ -140,6 +140,8 @@ bool showaudioselectdialog = false;
 
 void checkAspectRatio(int vdec, bool init);
 
+static const char FILENAME[] = "movieplayer.cpp";
+
 bool get_movie_info_apid_name(int apid, MI_MOVIE_INFO * movie_info, std::string * apidtitle)
 {
 	if (movie_info == NULL || apidtitle == NULL)
@@ -208,6 +210,7 @@ void CMoviePlayerGui::Init(void)
 	tsfilefilter.addFilter("mpg");
 	tsfilefilter.addFilter("mpeg");
 	tsfilefilter.addFilter("m2p");
+	tsfilefilter.addFilter("mp4");
 	tsfilefilter.addFilter("mpv");
 	tsfilefilter.addFilter("vob");
 	tsfilefilter.addFilter("m2ts");
@@ -218,6 +221,7 @@ void CMoviePlayerGui::Init(void)
 	vlcfilefilter.addFilter("m2p");
 	vlcfilefilter.addFilter("avi");
 	vlcfilefilter.addFilter("vob");
+	vlcfilefilter.addFilter("mp4");
 	pesfilefilter.addFilter("mpv");
 	filebrowser->Filter = &tsfilefilter;
 	rct = 0;
@@ -767,79 +771,87 @@ void CMoviePlayerGui::PlayFile(void)
 
 		if (showaudioselectdialog) {
 			CMenuWidget APIDSelector(LOCALE_APIDSELECTOR_HEAD, "audio.raw", 300);
-			APIDSelector.addItem(GenericMenuSeparator);
-			CAPIDSelectExec *APIDChanger = new CAPIDSelectExec;
-			bool enabled;
-			bool defpid;
+			
 			if(is_file_player && !g_numpida){
 				playback->FindAllPids(g_apids, g_ac3flags, &g_numpida, g_language);
 			}
-			for (unsigned int count = 0; count < g_numpida; count++) {
-				bool name_ok;
-				char apidnumber[10];
-				sprintf(apidnumber, "%d %X", count + 1, g_apids[count]);
-				enabled = true;
-				defpid = g_currentapid ? (g_currentapid == g_apids[count]) : (count == 0);
-				std::string apidtitle = "Stream ";
-				if(!is_file_player){
-					name_ok = get_movie_info_apid_name(g_apids[count], p_movie_info, &apidtitle);
-				}
-				else if (!g_language[count].empty()){
-					apidtitle = g_language[count];
-					name_ok = true;
-				}
-				if (!name_ok)
-					apidtitle = "Stream ";
+			
+			if (g_numpida > 0) {
 
-				switch(g_ac3flags[count])
-				{
-					case 1: /*AC3,EAC3*/
-						if (apidtitle.find("AC3") < 0 || is_file_player)
-							apidtitle.append(" (AC3)");
-						break;
-					case 2: /*teletext*/
-						apidtitle.append(" (Teletext)");
-						enabled = false;
-						break;
-					case 3: /*MP2*/
-						apidtitle.append(" (MP2)");
-						break;
-					case 4: /*MP3*/
-						apidtitle.append(" (MP3)");
-						break;
-					case 5: /*AAC*/
-						apidtitle.append(" (AAC)");
-						break;
-					case 6: /*DTS*/
-						apidtitle.append(" (DTS)");
-						enabled = false;
-					break;
-					case 7: /*MLP*/
-						apidtitle.append(" (MLP)");
-						break;
-					default:
-						break;
-				}
-				if (!name_ok)
-					apidtitle.append(apidnumber);
+				APIDSelector.addItem(GenericMenuSeparator);
+				CAPIDSelectExec *APIDChanger = new CAPIDSelectExec;
+				bool enabled;
+				bool defpid;
+				for (unsigned int count = 0; count < g_numpida; count++) {
+					bool name_ok;
+					char apidnumber[10];
+					sprintf(apidnumber, "%d %X", count + 1, g_apids[count]);
+					enabled = true;
+					defpid = g_currentapid ? (g_currentapid == g_apids[count]) : (count == 0);
+					std::string apidtitle = "Stream ";
+					if(!is_file_player){
+						name_ok = get_movie_info_apid_name(g_apids[count], p_movie_info, &apidtitle);
+					}
+					else if (!g_language[count].empty()){
+						apidtitle = g_language[count];
+						name_ok = true;
+					}
+					if (!name_ok)
+						apidtitle = "Stream ";
 
-				APIDSelector.addItem(new CMenuForwarderNonLocalized(apidtitle.c_str(), enabled, NULL, APIDChanger, apidnumber, CRCInput::convertDigitToKey(count + 1)), defpid);
-			}
+					switch(g_ac3flags[count])
+					{
+						case 1: /*AC3,EAC3*/
+							if (apidtitle.find("AC3") < 0 || is_file_player)
+								apidtitle.append(" (AC3)");
+							break;
+						case 2: /*teletext*/
+							apidtitle.append(" (Teletext)");
+							enabled = false;
+							break;
+						case 3: /*MP2*/
+							apidtitle.append(" (MP2)");
+							break;
+						case 4: /*MP3*/
+							apidtitle.append(" (MP3)");
+							break;
+						case 5: /*AAC*/
+							apidtitle.append(" (AAC)");
+							break;
+						case 6: /*DTS*/
+							apidtitle.append(" (DTS)");
+							enabled = false;
+						break;
+						case 7: /*MLP*/
+							apidtitle.append(" (MLP)");
+							break;
+						default:
+							break;
+					}
+					if (!name_ok)
+						apidtitle.append(apidnumber);
 
-			apidchanged = 0;
-			APIDSelector.exec(NULL, "");
-			if (apidchanged) {
-				if (g_currentapid == 0) {
-					g_currentapid = g_apids[0];
-					g_currentac3 = g_ac3flags[0];
+					APIDSelector.addItem(new CMenuForwarderNonLocalized(apidtitle.c_str(), enabled, NULL, APIDChanger, apidnumber, CRCInput::convertDigitToKey(count + 1)), defpid);
 				}
-				playback->SetAPid(g_currentapid, g_currentac3);
+
 				apidchanged = 0;
+				APIDSelector.exec(NULL, "");
+				if (apidchanged) {
+					if (g_currentapid == 0) {
+						g_currentapid = g_apids[0];
+						g_currentac3 = g_ac3flags[0];
+					}
+					playback->SetAPid(g_currentapid, g_currentac3);
+					apidchanged = 0;
+				}
+				delete APIDChanger;
+				showaudioselectdialog = false;
+				CVFD::getInstance()->setMode(CVFD::MODE_MENU_UTF8);
+				update_lcd = true;
+			} else {
+				DisplayErrorMessage(g_Locale->getText(LOCALE_AUDIOSELECTMENUE_NO_TRACKS)); // UTF-8
+				showaudioselectdialog = false;
 			}
-			delete APIDChanger;
-			showaudioselectdialog = false;
-			CVFD::getInstance()->setMode(CVFD::MODE_MENU_UTF8);
-			update_lcd = true;
 		}
 
 		if (FileTime.IsVisible() /*FIXME && playstate == CMoviePlayerGui::PLAY */ ) {
@@ -852,7 +864,7 @@ void CMoviePlayerGui::PlayFile(void)
 		}
 
 		if (start_play) {
-			printf("Startplay at %d seconds\n", startposition/1000);
+			printf("%s::%s Startplay at %d seconds\n", FILENAME, __FUNCTION__, startposition/1000);
 			start_play = false;
 			if (playstate >= CMoviePlayerGui::PLAY) {
 				playstate = CMoviePlayerGui::STOPPED;
@@ -865,6 +877,7 @@ void CMoviePlayerGui::PlayFile(void)
 			printf("IS FILE PLAYER: %s\n", is_file_player ?  "true": "false" );
 
 			if(!playback->Start((char *)filename, g_vpid, g_vtype, g_currentapid, g_currentac3)) {
+				printf("%s::%s Starting Playback failed!\n", FILENAME, __FUNCTION__);
 				playback->Close();
 				restoreNeutrino();
 			} else {
@@ -897,8 +910,11 @@ void CMoviePlayerGui::PlayFile(void)
 					}
 					printf("******************* Timeshift %d, position %d, seek to %d seconds\n", timeshift, position, startposition/1000);
 				}
+
+/* FIXME - removed for now as the seeking doesn't work and prevents TSArchive from working
 				if(!is_file_player && startposition >= 0)//FIXME no jump for file at start yet
 					playback->SetPosition(startposition, true);
+*/
 
 				if(timeshift == 3) {
 					playback->SetSpeed(-1);

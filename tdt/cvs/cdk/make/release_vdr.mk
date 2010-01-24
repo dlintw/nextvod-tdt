@@ -571,6 +571,9 @@ endif
 	rm -f $(prefix)/release_vdr/usr/lib/*.la
 	find $(prefix)/release_vdr/usr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
 
+######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/vdr #############
+	cp -RP $(buildprefix)/own_build/vdr/* $(prefix)/release_vdr/
+
 #######################################################################################
 #######################################################################################
 
