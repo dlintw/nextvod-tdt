@@ -586,7 +586,7 @@ endif
 #
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/neutrino #############
 #	rm $(prefix)/release_neutrino/bin/mount
-#	cp -RP $(buildprefix)/own_build/neutrino/* $(prefix)/release_neutrino/
+	cp -RP $(buildprefix)/own_build/neutrino/* $(prefix)/release_neutrino/
 
 #if ENABLE_FLASH_UFS910
 ######### FOR FLASHBUILDING UFS-910 with mount -o bind /var/etc /etc #################
@@ -623,7 +623,7 @@ endif
 
 if STM22
 	cp $(kernelprefix)/linux/arch/sh/boot/uImage $(prefix)/release_neutrino/boot/
-#	cp $(buildprefix)/own_build/neutrino/boot/uImage $(prefix)/release_neutrino/boot/
+	cp $(buildprefix)/own_build/neutrino/boot/uImage $(prefix)/release_neutrino/boot/
 else
 	cp $(kernelprefix)/linux-sh4/arch/sh/boot/uImage $(prefix)/release_neutrino/boot/
 endif
