@@ -623,7 +623,7 @@ endif
 
 if STM22
 	cp $(kernelprefix)/linux/arch/sh/boot/uImage $(prefix)/release_neutrino/boot/
-	cp $(buildprefix)/own_build/neutrino/boot/uImage $(prefix)/release_neutrino/boot/
+#	cp $(buildprefix)/own_build/neutrino/boot/uImage $(prefix)/release_neutrino/boot/
 else
 	cp $(kernelprefix)/linux-sh4/arch/sh/boot/uImage $(prefix)/release_neutrino/boot/
 endif
