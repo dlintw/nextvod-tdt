@@ -815,20 +815,17 @@
  /* HP-UX requires that this be included to pick up MDCD, MCTS, MDSR,
   * MDTR, MRI, and MRTS (appearantly used internally by some things
 
- 
- 
- 
 --- python-2.6-old/Modules/gcmodule.c	2008-10-29 19:05:13.000000000 +0100
 +++ python-2.6/Modules/gcmodule.c	2008-10-29 14:49:25.000000000 +0100
-@@ -277,7 +277,7 @@
-		 * generation being collected, which can be recognized
-		 * because only they have positive gc_refs.
-		 */
+@@ -274,7 +274,7 @@
+ 		 * generation being collected, which can be recognized
+ 		 * because only they have positive gc_refs.
+ 		 */
 -		assert(gc->gc.gc_refs != 0); /* else refcount was too small */
 +		//assert(gc->gc.gc_refs != 0); /* else refcount was too small */
-		if (gc->gc.gc_refs > 0)
-			gc->gc.gc_refs--;
-	}
+ 		if (gc->gc.gc_refs > 0)
+ 			gc->gc.gc_refs--;
+ 	}
 @@ -378,7 +378,7 @@
                           */
                          PyObject *op = FROM_GC(gc);
@@ -838,6 +835,3 @@
                          gc->gc.gc_refs = GC_REACHABLE;
                          (void) traverse(op,
                                          (visitproc)visit_reachable,
-
-
-
