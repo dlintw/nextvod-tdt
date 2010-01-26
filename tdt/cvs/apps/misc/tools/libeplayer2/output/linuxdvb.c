@@ -17,6 +17,15 @@
 #include "output.h"
 #include "stm_ioctls.h"
 
+#ifndef DEBUG
+#define DEBUG	// FIXME: until this is set properly by Makefile
+#endif
+
+#ifdef DEBUG
+int debugdvb = 0;
+#define dprintf(x...) do { if (debugdvb)printf(x); } while (0)
+#endif
+
 static const char FILENAME[] 	= "linuxdvb.c";
 
 static const char VIDEODEV[] 	= "/dev/dvb/adapter0/video0";
@@ -32,12 +41,32 @@ static pthread_t PtsThread;
 unsigned long long int sCURRENT_PTS = 0;
 static const unsigned int cSLEEPTIME = 500000;
 
+pthread_mutex_t LinuxDVBmutex;
+
+void getLinuxDVBMutex(char *filename, char *function, int line) {
+#ifdef DEBUG
+//	printf("%s::%s::%d requesting mutex\n",filename, function, line);
+#endif
+	pthread_mutex_lock(&LinuxDVBmutex);
+#ifdef DEBUG
+//	printf("%s::%s::%d received mutex\n",filename, function, line);
+#endif  
+}
+
+void releaseLinuxDVBMutex(char *filename, char *function, int line) {
+	pthread_mutex_unlock(&LinuxDVBmutex);
+#ifdef DEBUG
+//	printf("%s::%s::%d released mutex\n", filename, function, line);
+#endif  
+}
+
 int LinuxDvbOpen(Context_t  *context, char * type) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);	
+#endif
 
 	if (video && videofd == -1) {
 		videofd = open(VIDEODEV, O_RDWR);
@@ -59,11 +88,12 @@ int LinuxDvbOpen(Context_t  *context, char * type) {
 }
 
 int LinuxDvbClose(Context_t  *context, char * type) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif
 
 	if (video && videofd != -1) {
 		close(videofd);
@@ -83,6 +113,9 @@ int LinuxDvbClose(Context_t  *context, char * type) {
 
 int LinuxDvbPlay(Context_t  *context, char * type) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	
+	int ret = -1;
+	
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
@@ -130,37 +163,71 @@ int LinuxDvbPlay(Context_t  *context, char * type) {
 			free(Encoding);
 		}
 		
-		LinuxDvbPtsStart(context);
+		ret = LinuxDvbPtsStart(context);
 	//}
 
-	return 0;
+	return ret;
 }
 
 int LinuxDvbStop(Context_t  *context, char * type) {
+#ifdef DEBUG  
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
+
+	int ret = 0;
+	int wait_time = 20;
+	
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+	
+	while ( (PtsThread != NULL) && (wait_time--) > 0 ) {
+#ifdef DEBUG  
+		printf("%s::%s Waiting for LinuxDVB thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
+#endif
+		usleep(cSLEEPTIME);
+	}
 
-	//if (context->playback->isPlaying || context->playback->isPaused) {
+#ifdef DEBUG  
+		printf("%s::%s LinuxDVB thread is terminated\n", FILENAME, __FUNCTION__);
+#endif
+
+	getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+	
+//	if ( context && context->playback && (context->playback->isPlaying || context->playback->isPaused) ) {
 		if (video && videofd != -1) {
+#ifdef DEBUG  
+			printf("%s::%s doing video ioctl!\n", FILENAME, __FUNCTION__);
+#endif	  
 			ioctl(videofd, VIDEO_CLEAR_BUFFER ,0);
 			ioctl(videofd, VIDEO_STOP, NULL);
 		}
 		if (audio && audiofd != -1) {
+#ifdef DEBUG  
+			printf("%s::%s doing audio ioctl!\n", FILENAME, __FUNCTION__);
+#endif	  
 			ioctl(audiofd, AUDIO_CLEAR_BUFFER ,0);
 			ioctl(audiofd, AUDIO_STOP, NULL);
 		}
-	//}
-	int result=0;
-    	if(PtsThread!=NULL)result = pthread_join (PtsThread, NULL);
-    	if(result != 0) 
-    	{
-          printf("ERROR: Stop PtsThread\n");
-    	}	
-	PtsThread=NULL;
-	return 0;
+/*	} else {
+#ifdef DEBUG  
+		printf("%s::%s not doing ioctl!\n", FILENAME, __FUNCTION__);
+#endif	  
+	}
+*/	
+	releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+
+	if (wait_time == 0) {
+#ifdef DEBUG  
+		printf("%s::%s Timeout waiting for LinuxDVB thread!\n", FILENAME, __FUNCTION__);
+#endif
+		ret = -1;
+	} else {
+		ret = 0;
+	}
+	
+	return ret;
 }
 
 int LinuxDvbPause(Context_t  *context, char * type) {
@@ -170,6 +237,8 @@ int LinuxDvbPause(Context_t  *context, char * type) {
 
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
 
+	getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+	
 	//if (!context->playback->isPaused) {
 		if (video && videofd != -1) {
 			ioctl(videofd, VIDEO_FREEZE, NULL);
@@ -178,12 +247,13 @@ int LinuxDvbPause(Context_t  *context, char * type) {
 			ioctl(audiofd, AUDIO_PAUSE, NULL);
 		}
 	//}
+	releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+
 
 	return 0;
 }
 
 int LinuxDvbContinue(Context_t  *context, char * type) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
@@ -198,121 +268,211 @@ int LinuxDvbContinue(Context_t  *context, char * type) {
 		}
 	//}
 
+#ifdef DEBUG
+	printf("%s::%s exiting\n", FILENAME, __FUNCTION__);
+#endif
+
 	return 0;
 }
 
 int LinuxDvbFlush(Context_t  *context, char * type) {
-	printf("%s::%s ->\n", FILENAME, __FUNCTION__);
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG		  
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif	
 
 	//if (context->playback->isPlaying || context->playback->isPaused) {
-		if (video && videofd != -1) {
-			ioctl(videofd, VIDEO_FLUSH ,NULL);
-			ioctl(videofd, VIDEO_STOP, NULL);
-		}
-		if (audio && audiofd != -1) {
-			ioctl(audiofd, AUDIO_FLUSH ,NULL);
-			ioctl(audiofd, AUDIO_STOP, NULL);
+		if ( (video && videofd != -1) || (audio && audiofd != -1) ) {	// trick to create only one Mutex
+			getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+			
+			if (video && videofd != -1) {
+				ioctl(videofd, VIDEO_FLUSH ,NULL);
+				ioctl(videofd, VIDEO_STOP, NULL);
+			}
+			
+			if (audio && audiofd != -1) {
+				ioctl(audiofd, AUDIO_FLUSH ,NULL);
+				ioctl(audiofd, AUDIO_STOP, NULL);
+			}
+			
+			releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 		}
 	//}
-    printf("%s::%s <-\n", FILENAME, __FUNCTION__);
+
+#ifdef DEBUG
+	printf("%s::%s exiting\n", FILENAME, __FUNCTION__);
+#endif
 	return 0;
 }
 
 int LinuxDvbFastForward(Context_t  *context, char * type) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	int ret = 0;
+	
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
-
+#endif	
+	
 	//if (context->playback->isPlaying && !context->playback->isPaused) {
-		if (video && videofd != -1) {
-			ioctl(videofd, VIDEO_FAST_FORWARD, context->playback->Speed);
-		}
-		if (audio && audiofd != -1) {
-        //not supported
-		//	ioctl(audiofd, AUDIO_FAST_FORWARD, context->playback->Speed);
-            return -1;
+		if ( (video && videofd != -1) || (audio && audiofd != -1) ) {	// trick to create only one Mutex
+			getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+			
+			if (video && videofd != -1) {
+				ioctl(videofd, VIDEO_FAST_FORWARD, context->playback->Speed);
+			}
+			if (audio && audiofd != -1) { //not supported
+			//	ioctl(audiofd, AUDIO_FAST_FORWARD, context->playback->Speed);
+				ret = -1;
+			}
+			
+			releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 		}
 	//}
 
-	return 0;
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+
+	return ret;
 }
 
 int LinuxDvbAVSync(Context_t  *context, char * type) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif
 
 	if (audio && audiofd != -1) {
+		getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 		ioctl(audiofd, AUDIO_SET_AV_SYNC, context->playback->AVSync);
+		releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 	}
 
 	return 0;
 }
 
 int LinuxDvbClear(Context_t  *context, char * type) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif
 
 	//if (context->playback->isPlaying || context->playback->isPaused) {
-		if (video && videofd != -1) {
-			ioctl(videofd, VIDEO_CLEAR_BUFFER ,0);
-		}
-		if (audio && audiofd != -1) {
-			ioctl(audiofd, AUDIO_CLEAR_BUFFER ,0);
+		if ( (video && videofd != -1) || (audio && audiofd != -1) ) {	// trick to create only one Mutex
+			getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+			if (video && videofd != -1) {
+				ioctl(videofd, VIDEO_CLEAR_BUFFER ,0);
+			}
+			if (audio && audiofd != -1) {
+				ioctl(audiofd, AUDIO_CLEAR_BUFFER ,0);
+			}
+			releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 		}
 	//}
+
+#ifdef DEBUG
+	printf("%s::%s exiting\n", FILENAME, __FUNCTION__);
+#endif
 
 	return 0;
 }
 
 static void LinuxDvbPtsThread(Context_t *context) {
-	printf("%s::%d\n", __FUNCTION__, __LINE__);
-	//unsigned long long int VideoTime = 0;
+#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
-    while(context->playback->isPlaying /*videofd != -1 || audiofd != -1*/) {
-    
+	while ( context->playback->isCreationPhase ) {
+#ifdef DEBUG
+//		printf("%s::%s Thread waiting for end of init phase...\n", FILENAME, __FUNCTION__);
+#endif		    	  
+	}
+
+#ifdef DEBUG
+	printf("%s::%s Running!\n", FILENAME, __FUNCTION__);
+#endif		    	  
+
+	while ( context && context->playback && context->playback->isPlaying /*videofd != -1 || audiofd != -1*/) {
+	  
+		getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+	  
 		if (videofd != -1)
-			ioctl(videofd, VIDEO_GET_PTS, (void*)&sCURRENT_PTS);
+			  ioctl(videofd, VIDEO_GET_PTS, (void*)&sCURRENT_PTS);
 		else if (audiofd != -1)
 			ioctl(audiofd, AUDIO_GET_PTS, (void*)&sCURRENT_PTS);
-    	else 
-    		sCURRENT_PTS = 0;
-    		
-    	usleep(cSLEEPTIME);
-    }
+		else 
+			sCURRENT_PTS = 0;
+
+		releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+		
+		usleep(cSLEEPTIME);
+	}
+
+#ifdef DEBUG
+	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
+#endif
+
+	PtsThread = NULL;
 }
 
-
 static int LinuxDvbPtsStart(Context_t *context) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-    int error;
-    //if (PtsThread == NULL) {
-	  pthread_attr_t attr;
-	  pthread_attr_init(&attr);
-	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-          if(error=pthread_create(&PtsThread, &attr, (void *)&LinuxDvbPtsThread, context) != 0)
-          {
-            fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
-	    PtsThread=NULL;
-            return -1;
-          }
-    //}
-    return 0;
+#endif
+	int error;
+	int ret = 0;
+
+	if ( context && context->playback && context->playback->isCreationPhase ) {
+#ifdef DEBUG
+		printf("%s::%s is Creation Phase\n", FILENAME, __FUNCTION__);
+#endif  
+	} else {
+#ifdef DEBUG
+		printf("%s::%s is NOT Creation Phase\n", FILENAME, __FUNCTION__);
+#endif  	  
+	}
+	
+	if (PtsThread == NULL) {
+		pthread_attr_t attr;
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+		if(error=pthread_create(&PtsThread, &attr, (void *)&LinuxDvbPtsThread, context) != 0) {
+#ifdef DEBUG
+			printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
+#endif
+			PtsThread=NULL;
+			ret = -1;
+		} else {
+#ifdef DEBUG
+			printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
+#endif
+		}
+	} else {
+#ifdef DEBUG
+		printf("%s::%s PtsThread already exists, ignoring creation!\n", FILENAME, __FUNCTION__);
+#endif
+		ret = 0; // FIXME?
+	}
+
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+
+	return ret;
 }
 
 int LinuxDvbPts(Context_t  *context, unsigned long long int* pts) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	//if (context->playback->isPlaying) {
 		*((unsigned long long int *)pts)=(unsigned long long int)sCURRENT_PTS;
@@ -324,52 +484,82 @@ int LinuxDvbPts(Context_t  *context, unsigned long long int* pts) {
 }
 
 int LinuxDvbSwitch(Context_t  *context, char * type) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	unsigned char audio = !strcmp("audio", type);
 	unsigned char video = !strcmp("video", type);
 
-	printf("%s::%s a%d\n", FILENAME, __FUNCTION__, audio);
+#ifdef DEBUG
+	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif
+
+	if ( (video && videofd != -1) || (audio && audiofd != -1) ) {	// trick to create only one Mutex
+		getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 
 		if (audio && audiofd != -1) {
 			char * Encoding = NULL;
-			context->manager->audio->Command(context, MANAGER_GETENCODING, &Encoding);
-	
-			ioctl(audiofd, AUDIO_STOP ,NULL);
-			ioctl(audiofd, AUDIO_CLEAR_BUFFER ,NULL);
-			printf("%s::%s A %s\n", FILENAME, __FUNCTION__, Encoding);
+			if (context && context->manager && context->manager->audio) {
+				context->manager->audio->Command(context, MANAGER_GETENCODING, &Encoding);
+		
+				ioctl(audiofd, AUDIO_STOP ,NULL);
+				ioctl(audiofd, AUDIO_CLEAR_BUFFER ,NULL);
+#ifdef DEBUG
+				printf("%s::%s A %s\n", FILENAME, __FUNCTION__, Encoding);
+#endif
 
-			if(!strcmp (Encoding, "A_AC3"))
-				ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_AC3);
-			else if(!strcmp (Encoding, "A_MP3") || !strcmp (Encoding, "A_MPEG/L3"))
-				ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_MP3);
- 			else if(!strcmp (Encoding, "A_DTS"))
-				ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_DTS);
-			else if(!strcmp (Encoding, "A_AAC"))
-				ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_AAC);
-            		else
-                		ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_AUTO);
+				if(!strcmp (Encoding, "A_AC3"))
+					ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_AC3);
+				else if(!strcmp (Encoding, "A_MP3") || !strcmp (Encoding, "A_MPEG/L3"))
+					ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_MP3);
+				else if(!strcmp (Encoding, "A_DTS"))
+					ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_DTS);
+				else if(!strcmp (Encoding, "A_AAC"))
+					ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_AAC);
+				else
+					ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_AUTO);
 
-			ioctl(audiofd, AUDIO_PLAY, NULL); 
-			free(Encoding);
+				ioctl(audiofd, AUDIO_PLAY, NULL); 
+				free(Encoding);
+			}
+#ifdef DEBUG
+			else
+				printf("%s::%s no context for Audio\n", FILENAME, __FUNCTION__);
+#endif
 		}
+		
 		if (video && videofd != -1) {
 			char * Encoding = NULL;
-			context->manager->video->Command(context, MANAGER_GETENCODING, &Encoding);
-	
-			ioctl(videofd, VIDEO_STOP ,NULL);
-			ioctl(videofd, VIDEO_CLEAR_BUFFER ,NULL);
-			printf("%s::%s V %s\n", FILENAME, __FUNCTION__, Encoding);
-			if(!strcmp (Encoding, "V_MPEG2"))
-				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
-			else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC") || !strcmp (Encoding, "V_MKV/XVID"))
-				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_MPEG4P2);
- 			else if(!strcmp (Encoding, "V_MPEG4/ISO/AVC") || !strcmp (Encoding, "V_MPEG2/H264"))
-				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_H264);
-            		else
-                		ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
-			ioctl(videofd, VIDEO_PLAY, NULL); 
-			free(Encoding);
+			if (context && context->manager && context->manager->video) {
+				context->manager->video->Command(context, MANAGER_GETENCODING, &Encoding);
+		
+				ioctl(videofd, VIDEO_STOP ,NULL);
+				ioctl(videofd, VIDEO_CLEAR_BUFFER ,NULL);
+#ifdef DEBUG
+				printf("%s::%s V %s\n", FILENAME, __FUNCTION__, Encoding);
+#endif
+				if(!strcmp (Encoding, "V_MPEG2"))
+					ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
+				else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC") || !strcmp (Encoding, "V_MKV/XVID"))
+					ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_MPEG4P2);
+				else if(!strcmp (Encoding, "V_MPEG4/ISO/AVC") || !strcmp (Encoding, "V_MPEG2/H264"))
+					ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_H264);
+				else
+					ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
+				ioctl(videofd, VIDEO_PLAY, NULL); 
+				free(Encoding);
+			} 
+#ifdef DEBUG
+			else
+				printf("%s::%s no context for Video\n", FILENAME, __FUNCTION__);
+#endif
 		}
+	
+		releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+	
+	} 
+
+#ifdef DEBUG
+	printf("%s::%s exiting\n", FILENAME, __FUNCTION__);
+#endif
+
 	return 0;
 }
 
@@ -1077,7 +1267,11 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
 }
 
 static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
+#endif
+	
+	int ret = 0;
 
 	switch(command) {
 		case OUTPUT_OPEN: {
@@ -1086,30 +1280,30 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 		}
 		case OUTPUT_CLOSE: {
 			LinuxDvbClose(context, (char*)argument);
-            h264InitialHeaderRequired = 1;
-            wmaInitialHeaderRequired = 1;
-            sCURRENT_PTS = 0;
+			h264InitialHeaderRequired = 1;
+			wmaInitialHeaderRequired = 1;
+			sCURRENT_PTS = 0;
 			break;
 		}
-		case OUTPUT_PLAY: {
-            h264InitialHeaderRequired = 1;
-            wmaInitialHeaderRequired = 1;
-            sCURRENT_PTS = 0;
+		case OUTPUT_PLAY: {	// 4
+			h264InitialHeaderRequired = 1;
+			wmaInitialHeaderRequired = 1;
+			sCURRENT_PTS = 0;
 			LinuxDvbPlay(context, (char*)argument);
 			break;
 		}
 		case OUTPUT_STOP: {
 			LinuxDvbStop(context, (char*)argument);
-            h264InitialHeaderRequired = 1;
-            wmaInitialHeaderRequired = 1;
-            sCURRENT_PTS = 0;
+			h264InitialHeaderRequired = 1;
+			wmaInitialHeaderRequired = 1;
+			sCURRENT_PTS = 0;
 			break;
 		}
 		case OUTPUT_FLUSH: {
 			LinuxDvbFlush(context, (char*)argument);
-            h264InitialHeaderRequired = 1;
-            wmaInitialHeaderRequired = 1;
-            sCURRENT_PTS = 0;
+			h264InitialHeaderRequired = 1;
+			wmaInitialHeaderRequired = 1;
+			sCURRENT_PTS = 0;
 			break;
 		}
 		case OUTPUT_PAUSE: {
@@ -1143,12 +1337,17 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 			break;
 		}
 		default:
-			printf("OutputCmd not supported!");
+#ifdef DEBUG		  
+			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
+#endif	
 			break;
 	}
 
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
 
-	return 0;
+	return ret;
 }
 
 static char *LinuxDvbCapabilities[] = { "audio", "video", NULL };
@@ -1160,3 +1359,4 @@ struct Output_s LinuxDvbOutput = {
 	LinuxDvbCapabilities,
 
 };
+

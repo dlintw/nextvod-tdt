@@ -18,43 +18,50 @@ static void printContainerCapabilities() {
 
 static int selectContainer(Context_t  *context, char * extension) {
 	int i, j;
+	int ret = -1;
+	
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	for (i = 0; AvailableContainer[i] != NULL; i++)	
 		for (j = 0; AvailableContainer[i]->Capabilities[j] != NULL; j++)
 			if (!strcasecmp(AvailableContainer[i]->Capabilities[j], extension)) {
 				context->container->selectedContainer = AvailableContainer[i];
-				return 0;
+				printf("Selected Container: %s\n", context->container->selectedContainer->Name);
+				ret = 0;
 				break;
 			}
-			
-	return -1;
+	
+	if (ret != 0) {
+		printf("No Container found :-(\n");
+	}
+	
+	return ret;
 }
 
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	
+	int ret = 0;
 
 	switch(command) {
 		case CONTAINER_ADD: {
-			int ret = selectContainer(context, (char*) argument);
-			printf("ret=%d\n", ret);
-			return ret;
+			ret = selectContainer(context, (char*) argument);
 			break;
 		}
 		case CONTAINER_CAPABILITIES: {
 			printContainerCapabilities();
 			break;
 		}
-        case CONTAINER_DEL: {
+		case CONTAINER_DEL: {
 			context->container->selectedContainer = NULL;
 			break;
 		}
 		default:
-			printf("%s::%s ConatinerCmd not supported! %d\n", FILENAME, __FUNCTION__, command);
+			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
 			break;
 	}
 
-	return 0;
+	return ret;
 }
 
 extern Container_t SrtContainer;

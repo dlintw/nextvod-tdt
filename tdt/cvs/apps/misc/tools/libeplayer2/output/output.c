@@ -2,6 +2,8 @@
 #include "common.h"
 #include "output.h"
 
+#define DEBUG	// FIXME: until this is set properly by Makefile
+
 static const char FILENAME[] = "output.c";
 
 static void printOutputCapabilities() {
@@ -41,30 +43,40 @@ static void OutputDel(Context_t  *context, char * port) {
     else if (!strcmp("video", port))
         context->output->video = NULL;
     else if (!strcmp("subtitle", port))
-        context->output->subtitle = NULL;;
+        context->output->subtitle = NULL;
 
 }
 
 static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
-
+#ifdef DEBUG
+	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
+#endif
+	
+	int ret = 0;
+	
 	switch(command) {
 		case OUTPUT_OPEN: {
-			if (context->playback->isVideo)
-				context->output->video->Command(context, OUTPUT_OPEN, "video");
-			if (context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_OPEN, "audio");
-			if (context->playback->isSubtitle)
-				context->output->subtitle->Command(context, OUTPUT_OPEN, "subtitle");
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					context->output->video->Command(context, OUTPUT_OPEN, "video");
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_OPEN, "audio");
+				if (context->playback->isSubtitle)
+					context->output->subtitle->Command(context, OUTPUT_OPEN, "subtitle");
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_CLOSE: {
-			if (context->playback->isVideo)
-				context->output->video->Command(context, OUTPUT_CLOSE, "video");
-			if (context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_CLOSE, "audio");
-			if (context->playback->isSubtitle)
-				context->output->subtitle->Command(context, OUTPUT_CLOSE, "subtitle");
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					context->output->video->Command(context, OUTPUT_CLOSE, "video");
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_CLOSE, "audio");
+				if (context->playback->isSubtitle)
+					context->output->subtitle->Command(context, OUTPUT_CLOSE, "subtitle");
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_ADD: {
@@ -79,97 +91,136 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 			printOutputCapabilities();
 			break;
 		}
-		case OUTPUT_PLAY: {
-			if (context->playback->isVideo)
-				context->output->video->Command(context, OUTPUT_PLAY, "video");
-			if (context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_PLAY, "audio");
-			if (context->playback->isSubtitle)
-				context->output->subtitle->Command(context, OUTPUT_PLAY, "subtitle");
+		case OUTPUT_PLAY: { // 4
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					ret = context->output->video->Command(context, OUTPUT_PLAY, "video");
+				
+				if (!ret) {	// success or not executed, dunn care
+					if (context->playback->isAudio)
+						ret = context->output->audio->Command(context, OUTPUT_PLAY, "audio");
+					
+					if (!ret) {	// success or not executed, dunn care
+						if (context->playback->isSubtitle)
+							ret = context->output->subtitle->Command(context, OUTPUT_PLAY, "subtitle");
+					}
+				}
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_STOP: {
-			if (context->playback->isVideo)
-				context->output->video->Command(context, OUTPUT_STOP, "video");
-			if (context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_STOP, "audio");
-			if (context->playback->isSubtitle)
-				context->output->subtitle->Command(context, OUTPUT_STOP, "subtitle");
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					context->output->video->Command(context, OUTPUT_STOP, "video");
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_STOP, "audio");
+				if (context->playback->isSubtitle)
+					context->output->subtitle->Command(context, OUTPUT_STOP, "subtitle");
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_FLUSH: {
-			if (context->playback->isVideo)
-				context->output->video->Command(context, OUTPUT_FLUSH, "video");
-			if (context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_FLUSH, "audio");
-			//if (context->playback->isSubtitle)
-			//	context->output->subtitle->Command(context, OUTPUT_FLUSH, "subtitle");
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					context->output->video->Command(context, OUTPUT_FLUSH, "video");
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_FLUSH, "audio");
+				//if (context->playback->isSubtitle)
+				//	context->output->subtitle->Command(context, OUTPUT_FLUSH, "subtitle");
+			} else
+				ret = -1;
 			break;
 		}
-		case OUTPUT_PAUSE: {
-			if (context->playback->isVideo)
-				context->output->video->Command(context, OUTPUT_PAUSE, "video");
-			if (context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_PAUSE, "audio");
-			//if (context->playback->isSubtitle)
-			//	context->output->subtitle->Command(context, OUTPUT_PAUSE, "subtitle");
+		case OUTPUT_PAUSE: {	// 6
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					context->output->video->Command(context, OUTPUT_PAUSE, "video");
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_PAUSE, "audio");
+				//if (context->playback->isSubtitle)
+				//	context->output->subtitle->Command(context, OUTPUT_PAUSE, "subtitle");
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_FASTFORWARD: {
-			if (context->playback->isVideo)
-				context->output->video->Command(context, OUTPUT_FASTFORWARD, "video");
-			if (context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_FASTFORWARD, "audio");
-			//if (context->playback->isSubtitle)
-			//	context->output->subtitle->Command(context, OUTPUT_PAUSE, "subtitle");
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					context->output->video->Command(context, OUTPUT_FASTFORWARD, "video");
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_FASTFORWARD, "audio");
+				//if (context->playback->isSubtitle)
+				//	context->output->subtitle->Command(context, OUTPUT_PAUSE, "subtitle");
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_CONTINUE: {
-			if (context->playback->isVideo)
-				context->output->video->Command(context, OUTPUT_CONTINUE, "video");
-			if (context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_CONTINUE, "audio");
-			//if (context->playback->isSubtitle)
-			//	context->output->subtitle->Command(context, OUTPUT_CONTINUE, "subtitle");
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					context->output->video->Command(context, OUTPUT_CONTINUE, "video");
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_CONTINUE, "audio");
+				//if (context->playback->isSubtitle)
+				//	context->output->subtitle->Command(context, OUTPUT_CONTINUE, "subtitle");
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_AVSYNC: {
-			if (context->playback->isVideo && context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_AVSYNC, "audio");
-
+			if (context && context->playback ) {
+				if (context->playback->isVideo && context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_AVSYNC, "audio");
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_CLEAR: {
-			if (context->playback->isVideo)
-				context->output->video->Command(context, OUTPUT_CLEAR, "video");
-			if (context->playback->isAudio)
-				context->output->audio->Command(context, OUTPUT_CLEAR, "audio");
-			//if (context->playback->isSubtitle)
-			//	context->output->subtitle->Command(context, OUTPUT_CLEAR, "subtitle");
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					context->output->video->Command(context, OUTPUT_CLEAR, "video");
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_CLEAR, "audio");
+				//if (context->playback->isSubtitle)
+				//	context->output->subtitle->Command(context, OUTPUT_CLEAR, "subtitle");
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_PTS: {
-			if (context->playback->isVideo)
-				return context->output->video->Command(context, OUTPUT_PTS, argument);
-			if (context->playback->isAudio)
-				return context->output->audio->Command(context, OUTPUT_PTS, argument);
-			//if (context->playback->isSubtitle)
-			//	return context->output->subtitle->Command(context, OUTPUT_PTS, "subtitle");
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					return context->output->video->Command(context, OUTPUT_PTS, argument);
+				if (context->playback->isAudio)
+					return context->output->audio->Command(context, OUTPUT_PTS, argument);
+				//if (context->playback->isSubtitle)
+				//	return context->output->subtitle->Command(context, OUTPUT_PTS, "subtitle");
+			} else
+				ret = -1;
 			break;
 		}
 		case OUTPUT_SWITCH: {
-			if (context->playback->isAudio)
-				return context->output->audio->Command(context, OUTPUT_SWITCH, "audio");
-			if (context->playback->isVideo)
-				return context->output->video->Command(context, OUTPUT_SWITCH, "video");
+			if (context && context->playback ) {
+				if (context->playback->isAudio)
+					return context->output->audio->Command(context, OUTPUT_SWITCH, "audio");
+				if (context->playback->isVideo)
+					return context->output->video->Command(context, OUTPUT_SWITCH, "video");
+			} else
+				ret = -1;
 			break;
 		}
 		default:
-			printf("OutputCmd not supported! %d\n", command);
+			printf("%s::%s OutputCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
 			break;
 	}
 
-	return 0;
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+
+	return ret;
 }
 
 OutputHandler_t OutputHandler = {

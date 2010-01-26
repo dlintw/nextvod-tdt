@@ -1,4 +1,4 @@
-#include <string.h>
+// #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/socket.h>
@@ -9,6 +9,10 @@
 
 #include "playback.h"
 #include "common.h"
+
+#ifndef DEBUG
+#define DEBUG	// FIXME: until this is set properly by Makefile
+#endif
 
 static const char FILENAME[] = "playback.c";
 
@@ -76,7 +80,7 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 
 	struct hostent* h = gethostbyname(host);
 	if (h == NULL || h->h_addr_list == NULL){
-		printf("hotlookup failed\n");
+		printf("hostlookup failed\n");
 		return NULL;
 	}
 	int fd = socket(PF_INET, SOCK_STREAM, 0);
@@ -376,7 +380,9 @@ static pthread_t DummyThread1;
 static pthread_t DummyThread2;
 static pthread_t DummyThread3;
 static void DummyThread(Context_t *context) {
+#ifdef DEBUG
 	printf("dummy thread started\n");
+#endif	
 	usleep(10000);
 }
 
@@ -394,17 +400,17 @@ static int PlaybackOpen(Context_t  *context, char * uri) {
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
         if(error=pthread_create(&DummyThread1, &attr, (void *)&DummyThread, NULL) != 0)
         {
-           fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
+           fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,error,strerror(error));
 	   DummyThread1 = NULL;
         }
 	if(error=pthread_create(&DummyThread2, &attr, (void *)&DummyThread, NULL) != 0)
         {
-           fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
+           fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,error,strerror(error));
 	   DummyThread2 = NULL;
         }
 	if(error=pthread_create(&DummyThread2, &attr, (void *)&DummyThread, NULL) != 0)
         {
-           fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
+           fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,error,strerror(error));
 	   DummyThread2 = NULL;
         }
 	printf("joining dummy threads\n");
@@ -524,37 +530,62 @@ static int PlaybackClose(Context_t  *context) {
 
         close(context->playback->fd);
 
-        context->playback->isPaused     = 0;
-		context->playback->isPlaying    = 0;
-		context->playback->isForwarding = 0;
-		context->playback->Speed        = 0;
+	context->playback->isPaused     = 0;
+	context->playback->isPlaying    = 0;
+	context->playback->isForwarding = 0;
+	context->playback->Speed        = 0;
 
 	return 0;
 }
 
 static int PlaybackPlay(Context_t  *context) {
-	int exec;
 	int ret = 0;
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
+
 	if (!context->playback->isPlaying) {
 		context->playback->AVSync = 1;
 		context->output->Command(context, OUTPUT_AVSYNC, NULL);
 
-		context->output->Command(context, OUTPUT_PLAY, NULL);
+		context->playback->isCreationPhase = 1;	// allows the created thread to go into wait mode
+		ret = context->output->Command(context, OUTPUT_PLAY, NULL);
 
-		context->playback->isPlaying    = 1;
-		context->playback->isPaused     = 0;
-		context->playback->isForwarding = 0;
-		context->playback->Speed        = 1;
+		if (ret != 0) {
+#ifdef DEBUG
+			printf("%s::%s OUTPUT_PLAY failed!\n", FILENAME, __FUNCTION__);
+#endif
+#ifdef DEBUG
+			printf("%s::%s clearing isCreationPhase!\n", FILENAME, __FUNCTION__);
+#endif
+			context->playback->isCreationPhase = 0;	// allow thread to go into next state
+		} else {
+			context->playback->isPlaying    = 1;
+			context->playback->isPaused     = 0;
+			context->playback->isForwarding = 0;
+			context->playback->Speed        = 1;
 
-		exec = context->container->selectedContainer->Command(context, CONTAINER_PLAY, NULL);
-		if (exec != 0) {
-			printf("%s::%s CONTAINER_PLAY failed!\n", FILENAME, __FUNCTION__);
-			ret = -1;
+#ifdef DEBUG
+			printf("%s::%s clearing isCreationPhase!\n", FILENAME, __FUNCTION__);
+#endif
+			context->playback->isCreationPhase = 0;	// allow thread to go into next state
+
+			ret = context->container->selectedContainer->Command(context, CONTAINER_PLAY, NULL);
+			if (ret != 0) {
+#ifdef DEBUG
+				printf("%s::%s CONTAINER_PLAY failed!\n", FILENAME, __FUNCTION__);
+#endif
+			}
+		
 		}
+
 	} else
 		ret = -1;
-
+	
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+	
 	return ret;
 }
 
@@ -610,21 +641,30 @@ static int PlaybackStop(Context_t  *context) {
 }
 
 static int PlaybackTerminate(Context_t  *context) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-	if (context->playback->isPlaying) {
+#endif	
+	int ret = 0;
+	
+	if ( context && context->playback && context->playback->isPlaying ) {
         //First Flush and than delete container, else e2 cant read length of file anymore
 		context->output->Command(context, OUTPUT_FLUSH, NULL);
-        context->container->selectedContainer->Command(context, CONTAINER_STOP, NULL);
+		ret = context->container->selectedContainer->Command(context, CONTAINER_STOP, NULL);
 
-        context->playback->isPaused     = 0;
+		context->playback->isPaused     = 0;
 		context->playback->isPlaying    = 0;
 		context->playback->isForwarding = 0;
 		context->playback->Speed        = 0;
 
         //PlaybackClose(context);
 	} else
-        return -1;
-	return 0;
+		ret = -1;
+
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+	
+	return ret;
 }
 
 static int PlaybackFastForward(Context_t  *context,int* speed) {
@@ -687,17 +727,24 @@ static int PlaybackSeek(Context_t  *context, float * pos) {
 }
 
 static int PlaybackPts(Context_t  *context, unsigned long long int* pts) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG  
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif	
 
-    *pts = 0;
+	int ret = 0;
+	
+	*pts = 0;
 
 	if (context->playback->isPlaying) {
 		context->output->Command(context, OUTPUT_PTS, pts);
 	} else
-        return -1;
+		ret = -1;
 		
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
 	
-	return 0;
+	return ret;
 }
 
 static int PlaybackLength(Context_t  *context, double* length) {
@@ -748,132 +795,163 @@ static int PlaybackSwitchAudio(Context_t  *context, int* track) {
 }
 
 static int PlaybackSwitchSubtitle(Context_t  *context, int* track) {
+#ifdef DEBUG  
 	printf("%s::%s Track: %d\n", FILENAME, __FUNCTION__, *track);
+#endif	
 
-    int curtrackid = 0;
-    int nextrackid = 0;
+	int curtrackid = 0;
+	int nextrackid = 0;
+	int ret = 0;
 
-	if (context->playback->isPlaying) {
-        if (context->manager && context->manager->subtitle) {
-            context->manager->subtitle->Command(context, MANAGER_GET, &curtrackid);
-            context->manager->subtitle->Command(context, MANAGER_SET, track);
-            context->manager->subtitle->Command(context, MANAGER_GET, &nextrackid);
-        } else return -1;
+	if (context && context->playback && context->playback->isPlaying ) {
+		if (context->manager && context->manager->subtitle) {
+			context->manager->subtitle->Command(context, MANAGER_GET, &curtrackid);
+			context->manager->subtitle->Command(context, MANAGER_SET, track);
+			context->manager->subtitle->Command(context, MANAGER_GET, &nextrackid);
 
-	    printf("%s::%s nextrackid: %d != curtrackid: %d\n", FILENAME, __FUNCTION__, nextrackid, curtrackid);
+#ifdef DEBUG  
+			printf("%s::%s nextrackid: %d != curtrackid: %d\n", FILENAME, __FUNCTION__, nextrackid, curtrackid);
+#endif
 
-        if(nextrackid != curtrackid) {
+			if(nextrackid != curtrackid) {
 
-            //PlaybackPause(context);
-                
-            if (context->container && context->container->selectedContainer)
-                context->container->selectedContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &nextrackid);
-            else return -1;
-           
-            if(nextrackid==100){
-            	if (context->container && context->container->textSrtContainer)
-                	context->container->textSrtContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &nextrackid);
-            }
-            else if(nextrackid==200){
-            	if (context->container && context->container->textSsaContainer)
-            	    context->container->textSsaContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &nextrackid);
-            }
-            if (context->output && context->output->subtitle)
-	            context->output->subtitle->Command(context, OUTPUT_SWITCH, (void*)"subtitle");
-            else return -1;
-            //PlaybackContinue(context);
-        }
+				//PlaybackPause(context);
+
+				if (context->container && context->container->selectedContainer) {
+					context->container->selectedContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &nextrackid);
+
+					if(nextrackid==100){
+						if (context->container && context->container->textSrtContainer)
+							context->container->textSrtContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &nextrackid);
+					}
+					else if(nextrackid==200){
+						if (context->container && context->container->textSsaContainer)
+							context->container->textSsaContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &nextrackid);
+					}
+					
+					if (context->output && context->output->subtitle)
+						context->output->subtitle->Command(context, OUTPUT_SWITCH, (void*)"subtitle");
+					else
+						ret = -1;
+				} else
+					ret = -1;
+				
+				//PlaybackContinue(context);
+			}
+			   
+		} else
+			ret = -1;
 	} else
-        return -1;
-		
+		ret = -1;
 	
-	return 0;
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+
+	return ret;
 }
 
 static int PlaybackInfo(Context_t  *context, char** infoString) {
+#ifdef DEBUG	
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
+
+	int ret = 0;
 
 	if (context->playback->isPlaying) {
 		if (context->container && context->container->selectedContainer)
 		    context->container->selectedContainer->Command(context, CONTAINER_INFO, infoString);
 	} else
-        return -1;
-		
-	return 0;
+		ret = -1;
+
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+	return ret;
 }
 
 static int Command(Context_t  *context, PlaybackCmd_t command, void * argument) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
+#endif
+	int ret = -1;
 
 	switch(command) {
 		case PLAYBACK_OPEN: {
-			return PlaybackOpen(context, (char*)argument);
+			ret = PlaybackOpen(context, (char*)argument);
 			break;
 		}
 		case PLAYBACK_CLOSE: {
-			return PlaybackClose(context);
+			ret = PlaybackClose(context);
 			break;
 		}
 		case PLAYBACK_PLAY: {
-			return PlaybackPlay(context);
+			ret = PlaybackPlay(context);
 			break;
 		}
 		case PLAYBACK_STOP: {
-			return PlaybackStop(context);
+			ret = PlaybackStop(context);
 			break;
 		}
-		case PLAYBACK_PAUSE: {
-			return PlaybackPause(context);
+		case PLAYBACK_PAUSE: {	// 4
+			ret = PlaybackPause(context);
 			break;
 		}
 		case PLAYBACK_CONTINUE: {
-			return PlaybackContinue(context);
+			ret = PlaybackContinue(context);
 			break;
 		}
 		case PLAYBACK_TERM: {
-			return PlaybackTerminate(context);
+			ret = PlaybackTerminate(context);
 			break;
 		}
 		case PLAYBACK_FASTFORWARD: {
-			return PlaybackFastForward(context,(int*)argument);
+			ret = PlaybackFastForward(context,(int*)argument);
 			break;
 		}
 		case PLAYBACK_SEEK: {
-			return PlaybackSeek(context, (float*)argument);
+			ret = PlaybackSeek(context, (float*)argument);
 			break;
 		}
-		case PLAYBACK_PTS: {
-			return PlaybackPts(context, (unsigned long long int*)argument);
+		case PLAYBACK_PTS: { // 10
+			ret = PlaybackPts(context, (unsigned long long int*)argument);
 			break;
 		}
-		case PLAYBACK_LENGTH: {
-			return PlaybackLength(context, (double*)argument);
+		case PLAYBACK_LENGTH: { // 11
+			ret = PlaybackLength(context, (double*)argument);
 			break;
 		}
 		case PLAYBACK_SWITCH_AUDIO: {
-			return PlaybackSwitchAudio(context, (int*)argument);
+			ret = PlaybackSwitchAudio(context, (int*)argument);
 			break;
 		}
 		case PLAYBACK_SWITCH_SUBTITLE: {
-			return PlaybackSwitchSubtitle(context, (int*)argument);
+			ret = PlaybackSwitchSubtitle(context, (int*)argument);
 			break;
 		}
-        case PLAYBACK_INFO: {
-			return PlaybackInfo(context, (char**)argument);
+		case PLAYBACK_INFO: {
+			ret = PlaybackInfo(context, (char**)argument);
 			break;
 		}
 		default:
-			printf("%s::%s PlaybackCmd not supported! %d\n", FILENAME, __FUNCTION__, command);
+#ifdef DEBUG
+			printf("%s::%s PlaybackCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
+#endif
 			break;
 	}
 
-	return -1;
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+
+	return ret;
 }
 
 
 PlaybackHandler_t PlaybackHandler = {
 	"Playback",
 	-1,
+	0,
 	0,
 	0,
 	0,

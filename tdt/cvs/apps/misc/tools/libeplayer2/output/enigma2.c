@@ -13,6 +13,10 @@
 #include "common.h"
 #include "output.h"
 
+#ifndef DEBUG
+#define DEBUG	// FIXME: until this is set properly by Makefile
+#endif
+
 static const char FILENAME[] = "enigma2.c";
 
 /*
@@ -351,6 +355,8 @@ void Enigma2SignalConnectBuffer(void* smp3)
 
 static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	
+	int ret = 0;
 
 	switch(command) {
 		case OUTPUT_OPEN: {
@@ -369,18 +375,18 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 			Enigma2Stop(context);
 			break;
 		}
-        case OUTPUT_SWITCH: {
+		case OUTPUT_SWITCH: {
 			//Enigma2Switch(context, (char*)argument);
 			break;
 		}
-        case 222: { //Subtitle function register hack
-            Enigma2SignalConnect(argument);
-            break;
-        }
-        case 223: { //Subtitle buffer register hack
-            Enigma2SignalConnectBuffer(argument);
-            break;
-        }
+		case 222: { //Subtitle function register hack
+		    Enigma2SignalConnect(argument);
+		    break;
+		}
+		case 223: { //Subtitle buffer register hack
+		    Enigma2SignalConnectBuffer(argument);
+		    break;
+		}
 		/*case OUTPUT_FLUSH: {
 			Enigma2Flush(context, (char*)argument);
 			break;
@@ -395,12 +401,17 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 		}*/
 
 		default:
-			printf("OutputCmd not supported!");
+#ifdef DEBUG
+			printf("%s::%s OutputCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
+#endif
 			break;
 	}
 
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
 
-	return 0;
+	return ret;
 }
 
 
@@ -413,3 +424,4 @@ struct Output_s Enigma2Output = {
 	Enigma2Capabilitis,
 
 };
+
