@@ -30,7 +30,8 @@ UFS922PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/tune.patch \
 		Patches/usbwait123.patch \
 		Patches/jffs2-lzma.patch \
-		Patches/sumversion_ubuntu.patch
+		Patches/sumversion_ubuntu.patch \
+		Patches/ufs922_stboards_p0041.patch
 
 TF7700PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/ufs922_stasc_p0041.patch \
