@@ -23,7 +23,14 @@ FORTISPATCHES_41 = $(COMMONPATCHES_41) \
 UFS922PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/ufs922_stasc_p0041.patch \
 		Patches/ufs922_stmmac_p0041.patch \
-		Patches/ufs922_setup_p0041.patch
+		Patches/ufs922_setup_p0041.patch \
+		Patches/fat.patch \
+		Patches/fuse.patch \
+		Patches/net.patch \
+		Patches/tune.patch \
+		Patches/usbwait123.patch \
+		Patches/jffs2-lzma.patch \
+		Patches/sumversion_ubuntu.patch
 
 TF7700PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/ufs922_stasc_p0041.patch \
