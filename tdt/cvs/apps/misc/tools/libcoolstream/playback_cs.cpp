@@ -139,6 +139,10 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 		}
 	}
 
+	//pause playback in case of timeshift
+	//FIXME: no picture on tv
+	player->playback->Command(player, PLAYBACK_PAUSE, NULL);
+
 	printf("%s:%s - return=%d\n", FILENAME, __FUNCTION__, ret);
 
 	return ret;
@@ -189,32 +193,32 @@ bool cPlayback::SetSpeed(int speed)
 		int result = 0;
 		int ratio=1;
 		switch(speed) {
-				case 2: 
-					ratio = 2;
-					break;
-				case 3:
-					ratio = 4;
-					break;
-				case 4:
-					ratio = 8;
-					break;
-				case 5: //16x
-					ratio = 48;
-					break;
-				case 6: //32x
-					ratio = 96;
-					break;
-				case 7: //64x
-					ratio = 192;
-					break;
-				case 8: //128x
-					ratio = 384;
-					break;
-			}
+			case 2: 
+				ratio = 2;
+				break;
+			case 3:
+				ratio = 4;
+				break;
+			case 4:
+				ratio = 8;
+				break;
+			case 5: //16x
+				ratio = 48;
+				break;
+			case 6: //32x
+				ratio = 96;
+				break;
+			case 7: //64x
+				ratio = 192;
+				break;
+			case 8: //128x
+				ratio = 384;
+				break;
+		}
 		
 		if(speed > 1){
 			result = player->playback->Command(player, PLAYBACK_FASTFORWARD, (void*)&ratio);
-		}else if(speed == 0){
+		}else if(speed == 0 || speed == -1){
 			player->playback->Command(player, PLAYBACK_PAUSE, NULL);
 		}else{
 			result = player->playback->Command(player, PLAYBACK_CONTINUE, NULL);
@@ -234,9 +238,9 @@ bool cPlayback::GetSpeed(int &speed) const
 // in milliseconds
 bool cPlayback::GetPosition(int &position, int &duration)
 {
-	printf("%s:%s\n", FILENAME, __FUNCTION__);
+	printf("%s:%s %d %d\n", FILENAME, __FUNCTION__, position, duration);
 
-
+/*
 	if (player && player->playback && !player->playback->isPlaying) {
 		printf("cPlayback::%s !!!!EOF!!!! < -1\n", __func__);
 		position = duration + 1000;
@@ -245,24 +249,29 @@ bool cPlayback::GetPosition(int &position, int &duration)
 		// this is stupid, neutrino is realy realy stupid!
 		return false;
 	} 
+*/
 
 	unsigned long long int vpts = 0;
 	if(player && player->playback)
 		player->playback->Command(player, PLAYBACK_PTS, &vpts);
 
-	if(vpts <= 0) return false;
-
-	/* len is in nanoseconds. we have 90 000 pts per second. */
-	position = vpts/90;
+	if(vpts <= 0) {
+		//printf("ERROR: vpts==0");
+	} else {
+		/* len is in nanoseconds. we have 90 000 pts per second. */
+		position = vpts/90;
+	}
 
 	double length = 0;
 
 	if(player && player->playback)
 		player->playback->Command(player, PLAYBACK_LENGTH, &length);
 
-	if(length <= 0) return false;
-
-	duration = length*1000.0;
+	if(length <= 0) {
+		duration = duration+1000;
+	} else {
+		duration = length*1000.0;
+	}
 
 	return true;
 }

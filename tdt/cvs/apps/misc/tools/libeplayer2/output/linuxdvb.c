@@ -112,22 +112,23 @@ int LinuxDvbClose(Context_t  *context, char * type) {
 }
 
 int LinuxDvbPlay(Context_t  *context, char * type) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
-	
 	int ret = -1;
-	
+		
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif
 
 	//if (!context->playback->isPlaying) {
 		if (video && videofd != -1) {
 			char * Encoding = NULL;
 			context->manager->video->Command(context, MANAGER_GETENCODING, &Encoding);
 
+#ifdef DEBUG
 			printf("%s::%s V %s\n", FILENAME, __FUNCTION__, Encoding);
-
+#endif
 			if(!strcmp (Encoding, "V_MPEG2"))
 				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
 			else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC") || !strcmp (Encoding, "V_MKV/XVID"))
@@ -144,8 +145,9 @@ int LinuxDvbPlay(Context_t  *context, char * type) {
 			char * Encoding = NULL;
 			context->manager->audio->Command(context, MANAGER_GETENCODING, &Encoding);
 
+#ifdef DEBUG
 			printf("%s::%s A %s\n", FILENAME, __FUNCTION__, Encoding);
-
+#endif
 			if(!strcmp (Encoding, "A_AC3"))
 				ioctl( audiofd, AUDIO_SET_ENCODING, (void*)AUDIO_ENCODING_AC3);
 			else if(!strcmp (Encoding, "A_MP3") || !strcmp (Encoding, "A_MPEG/L3") || !strcmp (Encoding, "A_MS/ACM"))
@@ -189,24 +191,26 @@ int LinuxDvbStop(Context_t  *context, char * type) {
 		usleep(cSLEEPTIME);
 	}
 
+	if (wait_time == 0) {
+#ifdef DEBUG  
+		printf("%s::%s Timeout waiting for LinuxDVB thread!\n", FILENAME, __FUNCTION__);
+#endif
+		ret = -1;
+	} else {
 #ifdef DEBUG  
 		printf("%s::%s LinuxDVB thread is terminated\n", FILENAME, __FUNCTION__);
 #endif
+		ret = 0;
+	}
 
 	getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 	
 //	if ( context && context->playback && (context->playback->isPlaying || context->playback->isPaused) ) {
 		if (video && videofd != -1) {
-#ifdef DEBUG  
-			printf("%s::%s doing video ioctl!\n", FILENAME, __FUNCTION__);
-#endif	  
 			ioctl(videofd, VIDEO_CLEAR_BUFFER ,0);
 			ioctl(videofd, VIDEO_STOP, NULL);
 		}
 		if (audio && audiofd != -1) {
-#ifdef DEBUG  
-			printf("%s::%s doing audio ioctl!\n", FILENAME, __FUNCTION__);
-#endif	  
 			ioctl(audiofd, AUDIO_CLEAR_BUFFER ,0);
 			ioctl(audiofd, AUDIO_STOP, NULL);
 		}
@@ -217,25 +221,17 @@ int LinuxDvbStop(Context_t  *context, char * type) {
 	}
 */	
 	releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
-
-	if (wait_time == 0) {
-#ifdef DEBUG  
-		printf("%s::%s Timeout waiting for LinuxDVB thread!\n", FILENAME, __FUNCTION__);
-#endif
-		ret = -1;
-	} else {
-		ret = 0;
-	}
 	
 	return ret;
 }
 
 int LinuxDvbPause(Context_t  *context, char * type) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif
 
 	getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 	
@@ -257,7 +253,9 @@ int LinuxDvbContinue(Context_t  *context, char * type) {
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif
 
 	//if (context->playback->isPaused || context->playback->isForwarding) {
 		if (video && videofd != -1) {
@@ -430,15 +428,13 @@ static int LinuxDvbPtsStart(Context_t *context) {
 	int error;
 	int ret = 0;
 
+#ifdef DEBUG
 	if ( context && context->playback && context->playback->isCreationPhase ) {
-#ifdef DEBUG
 		printf("%s::%s is Creation Phase\n", FILENAME, __FUNCTION__);
-#endif  
 	} else {
-#ifdef DEBUG
 		printf("%s::%s is NOT Creation Phase\n", FILENAME, __FUNCTION__);
-#endif  	  
 	}
+#endif  
 	
 	if (PtsThread == NULL) {
 		pthread_attr_t attr;
@@ -543,6 +539,7 @@ int LinuxDvbSwitch(Context_t  *context, char * type) {
 					ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_H264);
 				else
 					ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
+				
 				ioctl(videofd, VIDEO_PLAY, NULL); 
 				free(Encoding);
 			} 
@@ -675,8 +672,10 @@ int MKV_InsertPesHeader (unsigned char *data, int size, unsigned char stream_id,
 {
     MKV_BitPacker_t ld2 = {data, 0, 32};
 
+#ifdef DEBUG
     if (size>MAX_PES_PACKET_SIZE)
         dprintf("%s: Packet bigger than 63.9K eeeekkkkk\n",__FUNCTION__);
+#endif
 
     MKV_PutBits(&ld2,0x0  ,8);
     MKV_PutBits(&ld2,0x0  ,8);
@@ -1036,9 +1035,11 @@ static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long in
         unsigned int    InitialHeaderLength     = 0;
         unsigned int    ParametersLength;
 
+#ifdef DEBUG
         if (avcCHeader->Version != 1)
             printf ("%s: Error unknown avcC version (%x). Expect problems.\n",__FUNCTION__, avcCHeader->Version);
-
+#endif
+	
 #define NALU_TYPE_PLAYER2_CONTAINER_PARAMETERS          24
 #define CONTAINER_PARAMETERS_VERSION                    0x00
 
@@ -1080,6 +1081,7 @@ static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long in
 
         NalLengthBytes  = (avcCHeader->NalLengthMinusOne & 0x03) + 1;
         ParamSets       = avcCHeader->NumParamSets & 0x1f;
+#ifdef DEBUG
         printf( "%s: avcC contents:\n", __FUNCTION__);
         printf( "    version:                       %d\n", avcCHeader->Version);
         printf( "    profile:                       %d\n", avcCHeader->Profile);
@@ -1087,11 +1089,14 @@ static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long in
         printf( "    level:                         %d\n", avcCHeader->Level);
         printf( "    nal length bytes:              %d\n", NalLengthBytes);
         printf( "    number of sequence param sets: %d\n", ParamSets);
+#endif
 
         ParamOffset     = 0;
         for (i = 0; i < ParamSets; i++) {
             unsigned int  PsLength = (avcCHeader->Params[ParamOffset] << 8) + avcCHeader->Params[ParamOffset+1];
+#ifdef DEBUG
             dprintf( "        sps %d has length           %d\n", i, PsLength);
+#endif
 
             if (HeaderLength + InitialHeaderLength + sizeof(Head) > PacketStartSIZE) {
                 PacketStart = realloc(PacketStart, HeaderLength + InitialHeaderLength + sizeof(Head));
@@ -1113,12 +1118,15 @@ static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long in
         }
 
         ParamSets                       = avcCHeader->Params[ParamOffset];
+#ifdef DEBUG
         dprintf( "    number of picture param sets:  %d\n", ParamSets);
-        ParamOffset++;
+#endif
+	ParamOffset++;
         for (i = 0; i < ParamSets; i++) {
             unsigned int  PsLength      = (avcCHeader->Params[ParamOffset] << 8) + avcCHeader->Params[ParamOffset+1];
+#ifdef DEBUG
             dprintf ("        pps %d has length           %d\n", i, PsLength);
-
+#endif
             if (HeaderLength + InitialHeaderLength + sizeof(Head) > PacketStartSIZE) {
                 PacketStart = realloc(PacketStart, HeaderLength + InitialHeaderLength + sizeof(Head));
                 PacketStartSIZE = HeaderLength + InitialHeaderLength + sizeof(Head);
@@ -1167,9 +1175,11 @@ static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long in
         //printf("NalStart = %u + NalLength = %u > SampleSize = %u\n", NalStart, NalLength, SampleSize);
 
         if (NalStart + NalLength > SampleSize) {
+#ifdef DEBUG
             printf("%s: nal length past end of buffer - size %u frame offset %u left %u\n",__FUNCTION__,
                 NalLength, NalStart , SampleSize - NalStart );
-            NalStart    = SampleSize;
+#endif
+	    NalStart    = SampleSize;
         } else {
             NalStart               += NalLength + NalLengthBytes;
             while (NalLength > 0) {
@@ -1219,51 +1229,63 @@ static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long in
 
 static int Write(Context_t  *context, const unsigned char *PLAYERData, const int DataLength, const unsigned long long int Pts, const unsigned char *Private, const int PrivateLength, float FrameRate, char * type) {
 
-	//printf("%s::%s DataLength=%u PrivateLength=%u Pts=%llu\n", FILENAME, __FUNCTION__, DataLength, PrivateLength, Pts);
+	int ret = 0;
+	int result;
+	
+//	printf("%s::%s DataLength=%u PrivateLength=%u Pts=%llu FrameRate=%f\n", FILENAME, __FUNCTION__, DataLength, PrivateLength, Pts, FrameRate);
 
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 	unsigned int TimeDelta;
 	unsigned int TimeScale;
-	//printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+//	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
 
 	if (video) {
 			char * Encoding = NULL;
 			context->manager->video->Command(context, MANAGER_GETENCODING, &Encoding);
 
-	//printf("%s::%s %s\n", FILENAME, __FUNCTION__, Encoding);
+//	printf("%s::%s Encoding = %s\n", FILENAME, __FUNCTION__, Encoding);
 
 			if(!strcmp (Encoding, "V_MPEG2") || !strcmp (Encoding, "V_MPEG2/H264"))
-				mpeg2(PLAYERData, DataLength, Pts);
+				result = mpeg2(PLAYERData, DataLength, Pts);
 			else if(!strcmp (Encoding, "V_MPEG4/ISO/AVC")){
 				TimeDelta = FrameRate*1000.0;
 				TimeScale = 1000;
-				h264(PLAYERData, DataLength, Pts, Private, PrivateLength,TimeDelta,TimeScale);
+				result = h264(PLAYERData, DataLength, Pts, Private, PrivateLength,TimeDelta,TimeScale);
 			}
  			else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC") || !strcmp (Encoding, "V_MKV/XVID"))
-				divx(PLAYERData, DataLength, Pts, FrameRate);
+				result = divx(PLAYERData, DataLength, Pts, FrameRate);
+			else {
+#ifdef DEBUG
+			  printf("unknown video codec %s\n",Encoding);
+#endif
+			}
 			free(Encoding);
 	} else if (audio) {
 			char * Encoding = NULL;
 			context->manager->audio->Command(context, MANAGER_GETENCODING, &Encoding);
 
-	//printf("%s::%s %s\n", FILENAME, __FUNCTION__, Encoding);
+//	printf("%s::%s Encoding = %s\n", FILENAME, __FUNCTION__, Encoding);
 
 			if(!strcmp (Encoding, "A_AC3"))
-				ac3(PLAYERData, DataLength, Pts);
+				result = ac3(PLAYERData, DataLength, Pts);
 			else if(!strcmp (Encoding, "A_MP3") || !strcmp (Encoding, "A_MPEG/L3") || !strcmp (Encoding, "A_MS/ACM"))
-				mp3(PLAYERData, DataLength, Pts);
+				result = mp3(PLAYERData, DataLength, Pts);
 			else if(!strcmp (Encoding, "A_AAC"))
-				aac_mpeg4 (PLAYERData, DataLength, Pts, Private, PrivateLength);
+				result = aac_mpeg4 (PLAYERData, DataLength, Pts, Private, PrivateLength);
  			else if(!strcmp (Encoding, "A_DTS"))
-				dts(PLAYERData, DataLength, Pts);
+				result = dts(PLAYERData, DataLength, Pts);
  			else if(!strcmp (Encoding, "A_WMA"))
-				wma(PLAYERData, DataLength, Pts, Private, PrivateLength);
-			else printf("unknown audio codec %s\n",Encoding);
+				result = wma(PLAYERData, DataLength, Pts, Private, PrivateLength);
+			else {
+#ifdef DEBUG
+			  printf("unknown audio codec %s\n",Encoding);
+#endif
+			}
 			free(Encoding);
 	}
 
-	return 0;
+	return ret;
 }
 
 static int Command(Context_t  *context, OutputCmd_t command, void * argument) {

@@ -3298,10 +3298,11 @@ static void demux_seek_ts(demuxer_t *demuxer, float rel_seek_secs, float audio_d
 		ds_fill_buffer(d_video);
 
 	if(sh_audio != NULL)
-	{
 		ds_fill_buffer(d_audio);
-	}
 
+/*
+	// sync_video_packet not working
+	// infinite loop in demuxer.c->demux_pattern_3()
 	while(sh_video != NULL)
 	{
 		if(sh_audio && !d_audio->eof && d_video->pts && d_audio->pts)
@@ -3332,12 +3333,13 @@ static void demux_seek_ts(demuxer_t *demuxer, float rel_seek_secs, float audio_d
 
 		if(!i || !skip_video_packet(d_video)) break; // EOF?
 	}
+*/	
 	
 	releaseTSMutex(FILENAME, __FUNCTION__,__LINE__);
 	whileSeeking = 0;
 
 #ifdef DEBUG
-	printf("%s::%s exiting\n");
+	printf("%s::%s exiting\n", FILENAME, __FUNCTION__);
 #endif
 }
 
@@ -3546,11 +3548,11 @@ static sh_video_t *sh_video = NULL;
 static pthread_t PlayThread;
 
 int TSInit(Context_t *context, char * filename) {
-
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	getTSMutex(FILENAME, __FUNCTION__,__LINE__);
-	
 
 	int ret = 0;
 	int i = 0;
@@ -3640,7 +3642,7 @@ int TSInit(Context_t *context, char * filename) {
 			context->manager->video->Command(context, MANAGER_ADD, &Video);
 		} else {
 #ifdef DEBUG
-			printf("%s::%s Unknown video format 0x%02x\n",sh_video->format);
+			printf("%s::%s Unknown video format 0x%02x\n", FILENAME, __FUNCTION__,sh_video->format);
 #endif
 		}
 	}
@@ -3675,7 +3677,7 @@ int TSInit(Context_t *context, char * filename) {
 			context->manager->audio->Command(context, MANAGER_ADD, &Audio);
 		} else {
 #ifdef DEBUG
-			printf("%s::%s Unknown audio format 0x%02x\n",sh_video->format);
+			printf("%s::%s Unknown audio format 0x%02x\n", FILENAME, __FUNCTION__,sh_audio->format);
 #endif
 		}
 	}

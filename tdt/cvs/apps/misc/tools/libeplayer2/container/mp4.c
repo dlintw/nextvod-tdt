@@ -1022,11 +1022,11 @@ static int StartMp4 (Context_t* context)
                                 myfread(context, Mp4Info->Track[TrackSelect].SequenceData, 1, EntryLength - (sizeof(unsigned int) * 2), Mp4File);
                                 //Context->Video->Encoding = VIDEO_ENCODING_H264;
                                 Track_t Video = {
-									"und",
-									"V_MPEG4/ISO/AVC",
-									TrackSelect,
-								};
-								context->manager->video->Command(context, MANAGER_ADD, &Video);
+					"und",
+					"V_MPEG4/ISO/AVC",
+					TrackSelect,
+				};
+				context->manager->video->Command(context, MANAGER_ADD, &Video);
                             }
                         }
                         else if ((RecordType == CodeToInteger('m','p','4','a')) && (Mp4Info->Track[TrackSelect].Type == CodeToInteger('s','o','u','n')))

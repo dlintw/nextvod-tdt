@@ -47,18 +47,18 @@ pthread_mutex_t MKVmutex;
 
 void getMKVMutex(char *filename, char *function, int line) {
 #ifdef DEBUG
-	printf("%s::%s::%d requesting mutex\n",filename, function, line);
+	dprintf("%s::%s::%d requesting mutex\n",filename, function, line);
 #endif
 	pthread_mutex_lock(&MKVmutex);
 #ifdef DEBUG
-	printf("%s::%s::%d received mutex\n",filename, function, line);
+	dprintf("%s::%s::%d received mutex\n",filename, function, line);
 #endif  
 }
 
 void releaseMKVMutex(char *filename, char *function, int line) {
 	pthread_mutex_unlock(&MKVmutex);
 #ifdef DEBUG
-	printf("%s::%s::%d released mutex\n",filename, function, line);
+	dprintf("%s::%s::%d released mutex\n",filename, function, line);
 #endif  
 }
 
