@@ -18,6 +18,16 @@
 //#define MAX_PS_PACKETSIZE 2048
 #define MAX_PS_PACKETSIZE (224*1024)
 
+#define UNKNOWN 0
+#define VIDEO_MPEG1	0x10000001
+#define VIDEO_MPEG2	0x10000002
+#define VIDEO_MPEG4	0x10000004
+#define VIDEO_H264	0x10000005
+#define AUDIO_MP2	0x50
+#define AUDIO_A52	0x2000
+#define AUDIO_LPCM_BE	0x10001
+#define AUDIO_AAC	mmioFOURCC('M', 'P', '4', 'A')
+
 #ifndef DEBUG
 #define DEBUG	// FIXME: until this is set properly by Makefile
 #endif
@@ -91,27 +101,27 @@ static int parse_psm(demuxer_t *demux, int len) {
       int idoffset = id - 0xB0;
       switch(type) {
         case 0x1:
-          priv->es_map[idoffset] = 0x10000001;
+          priv->es_map[idoffset] = VIDEO_MPEG1;
           break;
         case 0x2:
-          priv->es_map[idoffset] = 0x10000002;
+          priv->es_map[idoffset] = VIDEO_MPEG2;
           break;
         case 0x3:
         case 0x4:
-          priv->es_map[idoffset] = 0x50;
+          priv->es_map[idoffset] = AUDIO_MP2;
           break;
         case 0x0f:
         case 0x11:
-          priv->es_map[idoffset] = mmioFOURCC('M', 'P', '4', 'A');
+          priv->es_map[idoffset] = AUDIO_AAC;
           break;
         case 0x10:
-          priv->es_map[idoffset] = 0x10000004;
+          priv->es_map[idoffset] = VIDEO_MPEG4;
           break;
         case 0x1b:
-          priv->es_map[idoffset] = 0x10000005;
+          priv->es_map[idoffset] = VIDEO_H264;
           break;
         case 0x81:
-          priv->es_map[idoffset] = 0x2000;
+          priv->es_map[idoffset] = AUDIO_A52;
           break;
       }
 #ifdef DEBUG
