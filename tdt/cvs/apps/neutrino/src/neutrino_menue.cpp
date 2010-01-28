@@ -1540,12 +1540,16 @@ void CNeutrinoApp::InitMiscSettings(CMenuWidget &miscSettings)
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_FILEBROWSER_SHOWRIGHTS        , &g_settings.filebrowser_showrights        , MESSAGEBOX_NO_YES_OPTIONS              , MESSAGEBOX_NO_YES_OPTION_COUNT              , true ));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_FILEBROWSER_DENYDIRECTORYLEAVE, &g_settings.filebrowser_denydirectoryleave, MESSAGEBOX_NO_YES_OPTIONS              , MESSAGEBOX_NO_YES_OPTION_COUNT              , true ));
 	// miscSettings.addItem(new CMenuForwarder(LOCALE_EXTRA_KEY_PLUGIN, true, g_settings.onekey_plugin,this,"onekeyplugin"));
+	FILE* rd = fopen("/proc/stb/fan/fan_ctrl", "r");
+	if (rd!=NULL)
+	{
 	funNotifier = new CFanControlNotifier();
 	//miscSettings.addItem(new CMenuOptionNumberChooser(LOCALE_FAN_SPEED, &g_settings.fan_speed, true, 0, 14, funNotifier, 0, 0, LOCALE_OPTIONS_OFF) );
 	miscSettings.addItem(GenericMenuSeparatorLine);
-	miscSettings.addItem(new CMenuOptionNumberChooser(LOCALE_FAN_SPEED, &g_settings.fan_speed, true, 1, 14, funNotifier, 0, 0, LOCALE_OPTIONS_OFF) );
+	miscSettings.addItem(new CMenuOptionNumberChooser(LOCALE_FAN_SPEED, &g_settings.fan_speed, true, 1, 5, funNotifier, 0, 0, LOCALE_OPTIONS_OFF) );
 	funNotifier->changeNotify(NONEXISTANT_LOCALE, (void*) &g_settings.fan_speed);
-
+	fclose(rd);
+	}
 	CCpuFreqNotifier * cpuNotifier = new CCpuFreqNotifier();
 #if 0
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_CPU_FREQ_NORMAL, &g_settings.cpufreq, CPU_FREQ_OPTIONS, CPU_FREQ_OPTION_COUNT, true, cpuNotifier));

@@ -934,23 +934,29 @@ int CDataResetNotifier::exec(CMenuTarget* parent, const std::string& actionKey)
 
 bool CFanControlNotifier::changeNotify(const neutrino_locale_t, void * data)
 {
-	int cfd, ret;
-	//unsigned char speed = (unsigned char) g_settings.fan_speed;
-	unsigned int speed = * (int *) data;
+        int cfd, ret;
+        //unsigned char speed = (unsigned char) g_settings.fan_speed;
+        unsigned int speed = * (int *) data;
 
-	printf("FAN Speed %d\n", speed);
-	cfd = open("/dev/cs_control", O_RDONLY);
-	if(cfd < 0) {
-		perror("Cannot open /dev/cs_control");
-		return false;
-	}
-	ret = ioctl(cfd, IOC_CONTROL_PWM_SPEED, speed);
-	close(cfd);
-	if(ret < 0) {
-		perror("IOC_CONTROL_PWM_SPEED");
-		return false;
-	}
-	return true;
+        printf("FAN Speed %d\n", speed);
+
+        switch(speed)
+        {
+        case 1:
+                system("echo 115 > /proc/stb/fan/fan_ctrl"); 
+                break;
+        case 2:
+                system("echo 130 > /proc/stb/fan/fan_ctrl");   
+                break;             
+        case 3:
+                system("echo 145 > /proc/stb/fan/fan_ctrl");                
+                break;
+        case 4:
+                system("echo 160 > /proc/stb/fan/fan_ctrl");                
+                break;
+        case 5:
+                system("echo 170 > /proc/stb/fan/fan_ctrl");                
+        }
 }
 
 extern cCpuFreqManager * cpuFreq;
