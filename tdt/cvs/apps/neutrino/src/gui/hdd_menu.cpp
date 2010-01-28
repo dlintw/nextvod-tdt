@@ -61,7 +61,7 @@
 
 #include <gui/hdd_menu.h>
 #include <mymenu.h>
-
+extern CFanControlNotifier * funNotifier;
 int safe_mkdir(char * path);
 
 static int my_filter(const struct dirent * dent)
@@ -101,7 +101,15 @@ int CHDDMenuHandler::doMenu ()
 
 	hddmenu->addItem( new CMenuOptionChooser(LOCALE_HDD_SLEEP, &g_settings.hdd_sleep, HDD_SLEEP_OPTIONS, HDD_SLEEP_OPTION_COUNT, true));
 	hddmenu->addItem( new CMenuOptionChooser(LOCALE_HDD_NOISE, &g_settings.hdd_noise, HDD_NOISE_OPTIONS, HDD_NOISE_OPTION_COUNT, true));
-
+	FILE* rd = fopen("/proc/stb/fan/fan_ctrl", "r");
+	if (rd!=NULL)
+	{
+	funNotifier = new CFanControlNotifier();
+	hddmenu->addItem(new CMenuOptionNumberChooser(LOCALE_FAN_SPEED, &g_settings.fan_speed, true, 1, 5, funNotifier, 0, 0, LOCALE_OPTIONS_OFF) );
+	hddmenu->addItem(GenericMenuSeparatorLine);
+	funNotifier->changeNotify(NONEXISTANT_LOCALE, (void*) &g_settings.fan_speed);
+	fclose(rd);
+	}
 	hddmenu->addItem(new CMenuForwarder(LOCALE_HDD_ACTIVATE, true, "", new CHDDDestExec()));
 
 	//if(n > 0)
