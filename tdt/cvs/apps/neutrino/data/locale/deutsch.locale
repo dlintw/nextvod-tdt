@@ -332,7 +332,7 @@ extra.zapit_scanpids Scan/Benutze Pids
 extra.zapit_sdt_changed Kanalliste wird neu geladen.
 extra.zapit_sort_names Sortiere Kanal nach Name
 extra.zapit_write_names Schreibe Kanalname
-fan_speed Lüftergeschw. (1=min, 5=max)
+fan_speed Lüfter-Speed (1=min, 5=max)
 favorites.addchannel Der aktuelle Kanal wird dem Bouquet \n"Meine Favoriten" hinzugefügt. \nDie Speicherung benötigt einen Moment...
 favorites.bouquetname Meine Favoriten
 favorites.bqcreated Bouquet "Meine Favoriten" wurde angelegt...\n
