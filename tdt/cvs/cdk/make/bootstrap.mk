@@ -53,7 +53,7 @@ $(hostprefix)/ccache-bin/gcc: | $(CCACHE)
 HOST_RPMCONFIG		:= host-rpmconfig
 
 if STM22
-HOST_RPMCONFIG_VERSION	:= 2.2-9
+HOST_RPMCONFIG_VERSION	:= 2.2-10
 
 RPMS/noarch/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).noarch.rpm: \
 		Archive/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).src.rpm
