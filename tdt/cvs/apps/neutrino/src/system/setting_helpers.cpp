@@ -957,6 +957,7 @@ bool CFanControlNotifier::changeNotify(const neutrino_locale_t, void * data)
         case 5:
                 system("echo 170 > /proc/stb/fan/fan_ctrl");                
         }
+	return true;
 }
 
 extern cCpuFreqManager * cpuFreq;
