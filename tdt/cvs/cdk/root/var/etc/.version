@@ -1,7 +1,7 @@
-version=rev-227-g9d72eac
-comment=Erstellt durch GIT
-imagename=Neutrino for UFS
-homepage=http://gitorious.org/open-duckbox-project-sh4
-creator=git-developer
-docs=http://gitorious.org/open-duckbox-project-sh4/pages/Home
+comment=Erstellt durch GIT 
+imagename=Neutrino for UFS 
+homepage=http://gitorious.org/open-duckbox-project-sh4 
+creator=git-developer 
+docs=http://gitorious.org/open-duckbox-project-sh4/pages/Home 
 forum=http://kathi-forum.de
+version=rev-229-gd442232
