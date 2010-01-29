@@ -1373,7 +1373,9 @@ int getModel()
     int         vLen            = -1;
     eBoxType    vBoxType        = Unknown;
     
+#ifdef DEBUG
     printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif    
     
     vFd = open("/proc/stb/info/model", O_RDONLY);
     vLen = read (vFd, vName, cSize);
@@ -1383,8 +1385,10 @@ int getModel()
     if(vLen > 0) {
         vName[vLen-1] = '\0';
         
+#ifdef DEBUG
         printf("Model: %s\n", vName);
-        
+#endif
+
         if(!strncasecmp(vName,"ufs910", 6)) {
             switch(getKathreinUfs910BoxType())
             {
@@ -1408,8 +1412,10 @@ int getModel()
             vBoxType = Unknown;
     }
     
+#ifdef DEBUG
     printf("vBoxType: %d\n", vBoxType);
-    
+#endif
+
     return vBoxType;    
 }
 
@@ -1432,7 +1438,9 @@ demux_mkv_read_trackentry (demuxer_t *demuxer,stream_t *s)
     /* set default values */
     track->default_track = 1;
     track->name = 0;
+#ifdef DEBUG
 	printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif	
     track->language = strdup("eng");
 
     len = length = ebml_read_length (s, &il);
@@ -1656,29 +1664,41 @@ demux_mkv_read_trackentry (demuxer_t *demuxer,stream_t *s)
 //		 || !strcmp (track->codec_id, MKV_A_FLAC)
 		 || !strcmp (track->codec_id, MKV_A_WMA)
 		) {
+#ifdef DEBUG
 			printf("%s::%s Added Audio Codec %s to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+#endif			
 		}
 		else {
+#ifdef DEBUG
 			printf("%s::%s Unknown Audio Codec %s not added to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+#endif			
 			skip_track = 1;
 		}
 	} else if (track->type == MATROSKA_TRACK_VIDEO) {
 		if (boxType == Unknown)
 			boxType = getModel();
+#ifdef DEBUG
 		printf("%s::%s Added Video Codec %s to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+#endif		
 	}
 #else
 	if (track->type == MATROSKA_TRACK_AUDIO) {
+#ifdef DEBUG
 		printf("%s::%s Added Audio Codec %s to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+#endif		
 	} else if (track->type == MATROSKA_TRACK_VIDEO) {
+#ifdef DEBUG
 		printf("%s::%s Added Video Codec %s to track list\n", FILENAME, __FUNCTION__, track->codec_id);
+#endif		
 	}
 #endif
 	
 	if (!skip_track) {
 		mkv_d->tracks = realloc (mkv_d->tracks,(mkv_d->num_tracks+1)*sizeof (*mkv_d->tracks));
 		if (mkv_d->tracks == NULL) {
+#ifdef DEBUG
 			printf("%s::%s realloc failed!\n", FILENAME, __FUNCTION__);
+#endif			
 			goto err_out;
 		}
 
@@ -1951,7 +1971,9 @@ demux_mkv_read_chapters (demuxer_t *demuxer, stream_t *s)
                             }
 
                             if (!name){
+#ifdef DEBUG
                                 printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif				
 				name = strdup("(unnamed)");
 			    }
                             cid = demuxer_add_chapter(demuxer, name, start, end);
@@ -3846,7 +3868,9 @@ dprintf("HELLO2\n");
         /* playback: only show subtitles if the user explicitely wants them. */
         track = NULL;
         if (demuxer->sub->id >= 0){
+#ifdef DEBUG
 		printf("demuxer->sub->id = %d", demuxer->sub->id);
+#endif		
             track = demux_mkv_find_track_by_num (mkv_d, demuxer->sub->id,MATROSKA_TRACK_SUBTITLE);
         }
         else if (dvdsub_lang != NULL)
@@ -3854,7 +3878,9 @@ dprintf("HELLO2\n");
 
         if (track)
         {
+#ifdef DEBUG
             printf("DEMUX_MKV_WillDisplaySubtitleTrack %d\n", track->tnum);
+#endif	    
             dvdsub_id = demux_mkv_reverse_id(mkv_d, track->tnum, MATROSKA_TRACK_SUBTITLE);
             demuxer->sub->id = track->tnum;
             demuxer->sub->sh = demuxer->s_streams[track->tnum];
@@ -4122,7 +4148,9 @@ static int whileSeeking = 0;
 static void
 demux_mkv_seek (demuxer_t *demuxer, float rel_seek_secs, float audio_delay, int flags)
 {
+#ifdef DEBUG
 	printf("%s::%s rel_seek_secs=%f\n", FILENAME, __FUNCTION__, rel_seek_secs);
+#endif	
 
 	whileSeeking = 1;
 	getMKVMutex(FILENAME, __FUNCTION__,__LINE__);
@@ -4131,7 +4159,9 @@ demux_mkv_seek (demuxer_t *demuxer, float rel_seek_secs, float audio_delay, int 
 	
 	if (!(flags & SEEK_FACTOR))  /* time in secs */
 	{
+#ifdef DEBUG
 		printf("%s::%s TimeInSecs\n", FILENAME, __FUNCTION__);
+#endif		
 
 		mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
 		stream_t *s = demuxer->stream;
@@ -4242,9 +4272,13 @@ demux_mkv_seek (demuxer_t *demuxer, float rel_seek_secs, float audio_delay, int 
 
 		demux_mkv_fill_buffer(demuxer, NULL);
 	    } else if ((demuxer->movi_end <= 0) || !(flags & SEEK_ABSOLUTE)) {
+#ifdef DEBUG
 		printf("[mkv] seek unsupported flags\n");
+#endif		
 	    } else {
+#ifdef DEBUG
 		printf("%s::%s ???\n", FILENAME, __FUNCTION__);
+#endif		
 		mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
 		stream_t *s = demuxer->stream;
 		uint64_t target_filepos;
@@ -4253,7 +4287,9 @@ demux_mkv_seek (demuxer_t *demuxer, float rel_seek_secs, float audio_delay, int 
 
 		if (mkv_d->indexes == NULL)  /* no index was found */
 		{                       /* I'm lazy... */
+#ifdef DEBUG
 			printf("[mkv] seek unsupported flags\n");
+#endif			
 			releaseMKVMutex(FILENAME, __FUNCTION__,__LINE__);
 			whileSeeking = 0;
 			return;
@@ -4310,7 +4346,9 @@ static pthread_t PlayThread;
 
 int MkvInit(Context_t *context, char * filename) {
 
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif	
 
 	getMKVMutex(FILENAME, __FUNCTION__,__LINE__);
 
@@ -4371,7 +4409,9 @@ int MkvInit(Context_t *context, char * filename) {
 	
 	if (demuxer->video && demuxer->video->sh) {
 		sh_video=demuxer->video->sh;
+#ifdef DEBUG
 		printf("\nVIDEO 0x%02x\n",sh_video->format);
+#endif
 	}
 
 	for (i = 0; i < mkv_d->num_tracks; i++) {
@@ -4803,8 +4843,10 @@ static int MkvGetLength(demuxer_t *demuxer,double * length) {
 }
 
 static int MkvSwitchAudio(demuxer_t *demuxer, int* arg) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-    
+#endif
+
 	if (demuxer && demuxer->priv && demuxer->audio) {
 
 		getMKVMutex(FILENAME, __FUNCTION__,__LINE__);
@@ -4819,12 +4861,17 @@ static int MkvSwitchAudio(demuxer_t *demuxer, int* arg) {
 		    
 		    mkv_track_t *track = mkv_d->tracks[aid];//demux_mkv_find_track_by_num (mkv_d, aid, MATROSKA_TRACK_AUDIO);
 		    if (track) {
+#ifdef DEBUG
 			printf("%s::%s track = %s\n", FILENAME, __FUNCTION__, track->codec_id);
+#endif			
 			demuxer->audio->id = track->tnum;
 			sh = demuxer->a_streams[demuxer->audio->id];
 			ds_free_packs(demuxer->audio);
-		    } else
+		    } else {
+#ifdef DEBUG
 			printf("%s::%s track == NULL\n", FILENAME, __FUNCTION__);
+#endif			
+		    }
 		
 		}
 		
@@ -4837,7 +4884,9 @@ static int MkvSwitchAudio(demuxer_t *demuxer, int* arg) {
 }
 
 static int MkvSwitchSubtitle(demuxer_t *demuxer, int* arg) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	if (demuxer && demuxer->priv) {
 	  

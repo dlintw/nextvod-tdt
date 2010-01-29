@@ -20,8 +20,35 @@
 #include "stheader.h"
 #include "aviheader.h"
 
+#ifndef DEBUG
+#define DEBUG	// FIXME: until this is set properly by Makefile
+#endif
+
+#ifdef DEBUG
 int demux_avi_debug = 0;
 #define demux_avi_printf(x...) do { if (demux_avi_debug)printf(x); } while (0)
+#endif
+
+static const char FILENAME[] = "avi.c";
+
+pthread_mutex_t AVImutex;
+
+void getAVIMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+#ifdef DEBUG
+//	printf("%s::%s::%d requesting mutex\n",filename, function, line);
+#endif
+	pthread_mutex_lock(&AVImutex);
+#ifdef DEBUG
+//	printf("%s::%s::%d received mutex\n",filename, function, line);
+#endif  
+}
+
+void releaseAVIMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+	pthread_mutex_unlock(&AVImutex);
+#ifdef DEBUG
+//	printf("%s::%s::%d released mutex\n",filename, function, line);
+#endif  
+}
 
 demuxer_t* init_avi_with_ogg(demuxer_t* demuxer);
 int demux_ogg_open(demuxer_t* demuxer);
@@ -33,8 +60,9 @@ int pts_from_bps=1;
 demux_stream_t* demux_avi_select_stream(demuxer_t *demux,unsigned int id){
 
   int stream_id=avi_stream_id(id);
+#ifdef DEBUG
 demux_avi_printf("%s::%d id=%u stream_id=%d\n",__FUNCTION__, __LINE__, id, stream_id);
-
+#endif
 
   if(demux->video->id==-1)
     if(demux->v_streams[stream_id])
@@ -49,7 +77,9 @@ demux_avi_printf("%s::%d id=%u stream_id=%d\n",__FUNCTION__, __LINE__, id, strea
         sh_audio_t* sh;
 	avi_priv_t *priv=demux->priv;
         sh=demux->audio->sh=demux->a_streams[stream_id];
+#ifdef DEBUG
         demux_avi_printf("Auto-selected AVI audio ID = %d\n",demux->audio->id);
+#endif	
 	if(sh->wf){
 	  priv->audio_block_size=sh->wf->nBlockAlign;
 	  if(!priv->audio_block_size){
@@ -62,7 +92,9 @@ demux_avi_printf("%s::%d id=%u stream_id=%d\n",__FUNCTION__, __LINE__, id, strea
 	    // workaround old mencoder's bug:
 	    if(sh->audio.dwSampleSize==1 && sh->audio.dwScale==1 &&
 	       (sh->wf->nBlockAlign==1152 || sh->wf->nBlockAlign==576)){
+#ifdef DEBUG
 		demux_avi_printf("WorkAroundBlockAlignHeaderBug\n");
+#endif
 		priv->audio_block_size=1;
 	    }
 	  }
@@ -75,19 +107,26 @@ demux_avi_printf("%s::%d id=%u stream_id=%d\n",__FUNCTION__, __LINE__, id, strea
   if(stream_id==demux->video->id){
       if(!demux->video->sh){
         demux->video->sh=demux->v_streams[stream_id];
+#ifdef DEBUG
         demux_avi_printf("Auto-selected AVI video ID = %d\n",demux->video->id);
+#endif
       }
       return demux->video;
   }
   if(id!=mmioFOURCC('J','U','N','K')){
      // unknown
+#ifdef DEBUG
      demux_avi_printf("Unknown chunk: %.4s (%X)\n",(char *) &id,id);
+#endif     
      //abort();
   }
   return NULL;
 }
 
-static int valid_fourcc(unsigned int id){printf("log demux_avi 2\n");
+static int valid_fourcc(unsigned int id){
+#ifdef DEBUG  
+  printf("log demux_avi 2\n");
+#endif  
     static const char valid[] = "0123456789abcdefghijklmnopqrstuvwxyz"
                                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ_";
     unsigned char* fcc=(unsigned char*)(&id);
@@ -108,12 +147,16 @@ static int choose_chunk_len(unsigned int len1,unsigned int len2){printf("log dem
 }
 
 static int demux_avi_read_packet(demuxer_t *demux,demux_stream_t *ds,unsigned int id,unsigned int len,int idxpos,int flags){
+#ifdef DEBUG
 demux_avi_printf("%s::%d\n",__FUNCTION__, __LINE__);
+#endif
   avi_priv_t *priv=demux->priv;
   int skip;
   float pts=0;
   
+#ifdef DEBUG
   demux_avi_printf("demux_avi.read_packet: %X\n",id);
+#endif  
 
   if(ds==demux->audio){
       if(priv->pts_corrected==0){
@@ -122,7 +165,9 @@ demux_avi_printf("%s::%d\n",__FUNCTION__, __LINE__);
 	      float delay=0;
 	      if(((sh_audio_t*)(ds->sh))->wf->nAvgBytesPerSec)
 	          delay=(float)priv->pts_corr_bytes/((sh_audio_t*)(ds->sh))->wf->nAvgBytesPerSec;
+#ifdef DEBUG
 	      printf("XXX initial  v_pts=%5.3f  a_pos=%d (%5.3f) \n",priv->avi_audio_pts,priv->pts_corr_bytes,delay);
+#endif	      
 	      //priv->pts_correction=-priv->avi_audio_pts+delay;
 	      priv->pts_correction=delay-priv->avi_audio_pts;
 	      //priv->avi_audio_pts+=priv->pts_correction;
@@ -162,10 +207,14 @@ demux_avi_printf("%s::%d\n",__FUNCTION__, __LINE__);
   
   skip=(len+1)&(~1); // total bytes in this chunk
   
+#ifdef DEBUG
 demux_avi_printf("%s::%d\n",__FUNCTION__, __LINE__);
+#endif
 
   if(ds){
+#ifdef DEBUG
     demux_avi_printf("DEMUX_AVI: Read %d data bytes from packet %04X\n",len,id);
+#endif    
     ds_read_packet(ds,demux->stream,len,pts,idxpos,flags);
     skip-=len;
   }
@@ -173,7 +222,9 @@ demux_avi_printf("%s::%d\n",__FUNCTION__, __LINE__);
   if (avi_stream_id(id) > 99 && id != mmioFOURCC('J','U','N','K'))
     skip = FFMIN(skip, 65536);
   if(skip){
+#ifdef DEBUG
     demux_avi_printf("DEMUX_AVI: Skipping %d bytes from packet %04X\n",skip,id);
+#endif    
     stream_skip(demux->stream,skip);
   }
   return ds?1:0;
@@ -182,7 +233,9 @@ demux_avi_printf("%s::%d\n",__FUNCTION__, __LINE__);
 static uint32_t avi_find_id(stream_t *stream) {
   uint32_t id = stream_read_dword_le(stream);
   if (!id) {
+#ifdef DEBUG
     demux_avi_printf("Incomplete stream? Trying resync.\n");
+#endif    
     do {
       id = stream_read_dword_le(stream);
       if (stream_eof(stream)) return 0;
@@ -216,13 +269,17 @@ do{
     }
 //printf("%s::%d\n", __FUNCTION__, __LINE__);
     if(!demux_avi_select_stream(demux,idx->ckid)){
+#ifdef DEBUG
       demux_avi_printf("Skip chunk %.4s (0x%X)  \n",(char *)&idx->ckid,(unsigned int)idx->ckid);
+#endif      
       continue; // skip this chunk
     }
 //printf("%s::%d\n", __FUNCTION__, __LINE__);
     pos = (off_t)priv->idx_offset+AVI_IDX_OFFSET(idx);
     if((pos<demux->movi_start || pos>=demux->movi_end) && (demux->movi_end>demux->movi_start) && (demux->stream->flags & STREAM_SEEK)){
+#ifdef DEBUG
       demux_avi_printf("ChunkOffset out of range!   idx=0x%"PRIX64"  \n",(int64_t)pos);
+#endif      
       continue;
     }
     stream_seek(demux->stream,pos);
@@ -236,7 +293,9 @@ do{
 //printf("%s::%d\n", __FUNCTION__, __LINE__);
     
     if(id!=idx->ckid){
+#ifdef DEBUG
       demux_avi_printf("ChunkID mismatch! raw=%.4s idx=%.4s  \n",(char *)&id,(char *)&idx->ckid);
+#endif
       if(valid_fourcc(idx->ckid))
           id=idx->ckid;	// use index if valid
       else
@@ -244,7 +303,9 @@ do{
     }
     len=stream_read_dword_le(demux->stream);
     if((len!=idx->dwChunkLength)&&((len+1)!=idx->dwChunkLength)){
+#ifdef DEBUG
       demux_avi_printf("ChunkSize mismatch! raw=%d idx=%d  \n",len,idx->dwChunkLength);
+#endif
       if(len>0x200000 && idx->dwChunkLength>0x200000) continue; // both values bad :(
       len=choose_chunk_len(idx->dwChunkLength,len);
     }
@@ -270,7 +331,9 @@ do{
   if(ds)
     if(ds->packs+1>=MAX_PACKS || ds->bytes+len>=MAX_PACK_BYTES){
 	// this packet will cause a buffer overflow, switch to -ni mode!!!
+#ifdef DEBUG
 	demux_avi_printf("SwitchToNi\n");
+#endif
 	if(priv->idx_size>0){
 	    // has index
 	    //demux->type=DEMUXER_TYPE_AVI_NI;
@@ -313,7 +376,9 @@ do{
   if(ds==demux->audio) idx_pos=priv->idx_pos_a++; else
                        idx_pos=priv->idx_pos++;
   
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
   if(priv->idx_size>0 && idx_pos<priv->idx_size){
     off_t pos;
     idx=&((AVIINDEXENTRY *)priv->idx)[idx_pos];
@@ -323,13 +388,17 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
       continue;
     }
     if(ds && demux_avi_select_stream(demux,idx->ckid)!=ds){
+#ifdef DEBUG
       demux_avi_printf("Skip chunk %.4s (0x%X)  \n",(char *)&idx->ckid,(unsigned int)idx->ckid);
+#endif      
       continue; // skip this chunk
     }
 
     pos = priv->idx_offset+AVI_IDX_OFFSET(idx);
     if((pos<demux->movi_start || pos>=demux->movi_end) && (demux->movi_end>demux->movi_start)){
+#ifdef DEBUG
       demux_avi_printf("ChunkOffset out of range!  current=0x%"PRIX64"  idx=0x%"PRIX64"  \n",(int64_t)demux->filepos,(int64_t)pos);
+#endif
       continue;
     }
     stream_seek(demux->stream,pos);
@@ -339,7 +408,9 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
     if(stream_eof(demux->stream)) return 0;
 
     if(id!=idx->ckid){
+#ifdef DEBUG
       demux_avi_printf("ChunkID mismatch! raw=%.4s idx=%.4s  \n",(char *)&id,(char *)&idx->ckid);
+#endif
       if(valid_fourcc(idx->ckid))
           id=idx->ckid;	// use index if valid
       else
@@ -347,13 +418,17 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
     }
     len=stream_read_dword_le(demux->stream);
     if((len!=idx->dwChunkLength)&&((len+1)!=idx->dwChunkLength)){
+#ifdef DEBUG
       demux_avi_printf("ChunkSize mismatch! raw=%d idx=%d  \n",len,idx->dwChunkLength);
+#endif      
       if(len>0x200000 && idx->dwChunkLength>0x200000) continue; // both values bad :(
       len=choose_chunk_len(idx->dwChunkLength,len);
     }
     if(!(idx->dwFlags&AVIIF_KEYFRAME)) flags=0;
   } else return 0;
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
   ret=demux_avi_read_packet(demux,demux_avi_select_stream(demux,id),id,len,idx_pos,flags);
 } while(ret!=1);
   return 1;
@@ -363,7 +438,11 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
 // return value:
 //     0 = EOF or no stream found
 //     1 = successfully read a packet
-int demux_avi_fill_buffer_nini(demuxer_t *demux,demux_stream_t* ds){printf("log demux_avi 8\n");
+int demux_avi_fill_buffer_nini(demuxer_t *demux,demux_stream_t* ds){
+#ifdef DEBUG
+  printf("log demux_avi 8\n");
+#endif
+
 avi_priv_t *priv=demux->priv;
 unsigned int id=0;
 unsigned int len;
@@ -395,12 +474,16 @@ do{
   }
   
   if(id==mmioFOURCC('R','I','F','F')){
+#ifdef DEBUG
       demux_avi_printf("additional RIFF header...\n");
+#endif
       id=stream_read_dword_le(demux->stream);      // "AVIX"
       continue;
   }
   
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
   if(ds==demux_avi_select_stream(demux,id)){
     // read it!
     ret=demux_avi_read_packet(demux,ds,id,len,priv->idx_pos-1,0);
@@ -409,7 +492,9 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
     int skip=(len+1)&(~1); // total bytes in this chunk
     stream_skip(demux->stream,skip);
   }
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
 } while(ret!=1);
   fpos[0]=stream_tell(demux->stream);
   return 1;
@@ -423,7 +508,9 @@ int force_ni=0;     // force non-interleaved AVI parsing
 void read_avi_header(demuxer_t *demuxer,int index_mode);
 
 static demuxer_t* demux_open_avi(demuxer_t* demuxer, int next){
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
     demux_stream_t *d_audio=demuxer->audio;
     demux_stream_t *d_video=demuxer->video;
     sh_audio_t *sh_audio=NULL;
@@ -450,18 +537,28 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
   read_avi_header(demuxer,(demuxer->stream->flags & STREAM_SEEK_BW)?index_mode:-2);
 
   if(demuxer->audio->id>=0 && !demuxer->a_streams[demuxer->audio->id]){
+#ifdef DEBUG
       demux_avi_printf("InvalidAudioStreamNosound %p\n",demuxer->audio->id);
+#endif      
       demuxer->audio->id=-2; // disabled
   }
   if(demuxer->video->id>=0 && !demuxer->v_streams[demuxer->video->id]){
+#ifdef DEBUG
       demux_avi_printf("InvalidAudioStreamUsingDefault %p\n",demuxer->video->id);
+#endif
       demuxer->video->id=-1; // autodetect
   }
+#ifdef DEBUG
   printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif	    
   stream_reset(demuxer->stream);
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif	    
   stream_seek(demuxer->stream,demuxer->movi_start);
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif	    
   priv->idx_pos=0;
   priv->idx_pos_a=0;
   priv->idx_pos_v=0;
@@ -479,10 +576,12 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
     else
       priv->idx_offset=0;
 #endif
-    demux_avi_printf("AVI index offset: 0x%X (movi=0x%X idx0=0x%X idx1=0x%X)\n",
+#ifdef DEBUG
+    demux_avi_printf("AVI index offset: 0x%X (movi=0x%X idx0=0x%X idx1=0x%X)\n",		     
 	    (int)priv->idx_offset,(int)demuxer->movi_start,
 	    (int)((AVIINDEXENTRY *)priv->idx)[0].dwChunkOffset,
 	    (int)((AVIINDEXENTRY *)priv->idx)[1].dwChunkOffset);
+#endif	    
   }
   
   if(priv->idx_size>0){
@@ -504,7 +603,9 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
         }
       }
       if(v_pos==-1){
+#ifdef DEBUG
         demux_avi_printf("AVI_NI: MissingVideoStream\n");
+#endif
 	return NULL;
       }
       if(a_pos==-1){
@@ -520,7 +621,9 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
   } else {
       // no index
       if(force_ni){
+#ifdef DEBUG
           demux_avi_printf("UsingNINI\n");
+#endif	  
           //demuxer->type=DEMUXER_TYPE_AVI_NINI; // HACK!!!!
           //demuxer->desc=&demuxer_desc_avi_nini; // HACK!!!!
 	  priv->idx_pos_a=
@@ -530,42 +633,58 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
       demuxer->seekable=0;
   }
 
+#ifdef DEBUG
     demux_avi_printf("%s::%d packs=%u\n", __FUNCTION__, __LINE__, d_video->packs);
+#endif    
   if(next == 0){
     if(!ds_fill_buffer(d_video)){
+#ifdef DEBUG
        demux_avi_printf("AVI: MissingVideoStreamBug\n");
+#endif       
        return NULL;
     }
   }else if(next == 1){
     if(!ds_fill_buffer2(d_video,demuxer)){
+#ifdef DEBUG
        demux_avi_printf("AVI: MissingVideoStreamBug\n");
+#endif       
        return NULL;
     }
   }
+#ifdef DEBUG
     demux_avi_printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif    
 
   sh_video=d_video->sh;sh_video->ds=d_video;
   if(d_audio->id!=-2){
+#ifdef DEBUG
     demux_avi_printf("AVI: Searching for audio stream (id:%d)\n",d_audio->id);
+#endif
     if(next == 0){
       if(!priv->audio_streams || !ds_fill_buffer(d_audio)){
+#ifdef DEBUG
         demux_avi_printf("AVI: MissingAudioStream\n");
+#endif
         d_audio->sh=sh_audio=NULL;
       } else {
         sh_audio=d_audio->sh;sh_audio->ds=d_audio;
       }
     }else if(next == 1){
       if(!priv->audio_streams || !ds_fill_buffer2(d_audio,demuxer)){
+#ifdef DEBUG
         demux_avi_printf("AVI: MissingAudioStream\n");
-        d_audio->sh=sh_audio=NULL;
+#endif
+	d_audio->sh=sh_audio=NULL;
       } else {
         sh_audio=d_audio->sh;sh_audio->ds=d_audio;
       }
     }
   }
 
+#ifdef DEBUG
     demux_avi_printf("%s::%d\n", __FUNCTION__, __LINE__);
-
+#endif
+    
   // calculating audio/video bitrate:
   if(priv->idx_size>0){
     // we have index, let's count 'em!
@@ -586,7 +705,9 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
 	asamples+=(len+priv->audio_block_size-1)/priv->audio_block_size;
       }
     }
+#ifdef DEBUG
     demux_avi_printf("AVI video size=%"PRId64" (%u) audio size=%"PRId64" (%u)\n",vsize,vsamples,asize,asamples);
+#endif    
     priv->numberofframes=vsamples;
     sh_video->i_bps=((float)vsize/(float)vsamples)*(float)sh_video->video.dwRate/(float)sh_video->video.dwScale;
     if(sh_audio) sh_audio->i_bps=((float)asize/(float)asamples)*(float)sh_audio->audio.dwRate/(float)sh_audio->audio.dwScale;
@@ -599,7 +720,9 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
       // bad video header, try to get number of frames from audio
       if(sh_audio && sh_audio->wf->nAvgBytesPerSec) priv->numberofframes=sh_video->fps*sh_audio->audio.dwLength/sh_audio->audio.dwRate*sh_audio->audio.dwScale;
     if(priv->numberofframes<=1){
+#ifdef DEBUG
       demux_avi_printf("CouldntDetFNo\n");
+#endif      
       priv->numberofframes=0;
     }          
 
@@ -612,7 +735,9 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
       }
     }
     vsize=demuxer->movi_end-demuxer->movi_start-asize-8*priv->numberofframes;
+#ifdef DEBUG
     demux_avi_printf("AVI video size=%"PRId64" (%u)  audio size=%"PRId64"\n",vsize,priv->numberofframes,asize);
+#endif    
     sh_video->i_bps=(float)vsize/(sh_video->frametime*priv->numberofframes);
   }
 
@@ -620,6 +745,7 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
   
 }
 
+static int whileSeeking = 0;
 
 void demux_seek_avi(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int flags){
     avi_priv_t *priv=demuxer->priv;
@@ -629,13 +755,19 @@ void demux_seek_avi(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int
     sh_video_t *sh_video=d_video->sh;
     float skip_audio_secs=0;
     audio_delay=priv->pts_correction;
+#ifdef DEBUG
     printf("\n\n seek:%f %f\n\n",rel_seek_secs,audio_delay);
+#endif    
   //FIXME: OFF_T - Didn't check AVI case yet (avi files can't be >2G anyway?)
   //================= seek in AVI ==========================
     int rel_seek_frames=rel_seek_secs*sh_video->fps;
     int video_chunk_pos=priv->idx_pos;
     int i;
-      if(flags&SEEK_ABSOLUTE){
+
+	whileSeeking = 1;
+	getAVIMutex(FILENAME, __FUNCTION__,__LINE__);
+
+     if(flags&SEEK_ABSOLUTE){
 	// seek absolute
 	video_chunk_pos=0;
       }
@@ -680,7 +812,9 @@ void demux_seek_avi(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int
       priv->avi_video_pts=d_video->pack_no*(float)sh_video->video.dwScale/(float)sh_video->video.dwRate;
       d_video->pos=video_chunk_pos;
       
+#ifdef DEBUG
       demux_avi_printf("V_SEEK:  pack=%d  pts=%5.3f  chunk=%d  \n",d_video->pack_no,priv->avi_video_pts,video_chunk_pos);
+#endif      
 
 // ------------ STEP 2: seek audio, find the right chunk & pos ------------
 
@@ -719,8 +853,10 @@ void demux_seek_avi(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int
 	  audio_chunk_pos=i;
 	  skip_audio_bytes=curr_audio_pos-d_audio->dpos;
 
+#ifdef DEBUG
           demux_avi_printf("SEEK: i=%d (max:%d) dpos=%d (wanted:%d)  \n",
 	      i,chunk_max,(int)d_audio->dpos,curr_audio_pos);
+#endif	      
 	      
 	} else {
 	    // VBR audio
@@ -779,9 +915,11 @@ void demux_seek_avi(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int
 	    priv->idx_pos=(audio_chunk_pos<video_chunk_pos)?audio_chunk_pos:video_chunk_pos;
 	}
 
+#ifdef DEBUG
           demux_avi_printf("SEEK: idx=%d  (a:%d v:%d)  v.skip=%d  a.skip=%d/%4.3f  \n",
             (int)priv->idx_pos,audio_chunk_pos,video_chunk_pos,
             (int)priv->skip_video_frames,skip_audio_bytes,skip_audio_secs);
+#endif
 
           if(skip_audio_bytes){
             demux_read_data(d_audio,NULL,skip_audio_bytes);
@@ -790,6 +928,8 @@ void demux_seek_avi(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int
       }
 	d_video->pts=priv->avi_video_pts; // OSD
 
+	releaseAVIMutex(FILENAME, __FUNCTION__,__LINE__);
+	whileSeeking = 0;
 }
 
 
@@ -806,7 +946,9 @@ void demux_close_avi(demuxer_t *demuxer) {
 
 
 static int demux_avi_control(demuxer_t *demuxer,int cmd, void *arg){
+#ifdef DEBUG
     demux_avi_printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif    
     avi_priv_t *priv=demuxer->priv;
     demux_stream_t *d_video=demuxer->video;
     sh_video_t *sh_video=d_video->sh;
@@ -863,7 +1005,10 @@ static int demux_avi_control(demuxer_t *demuxer,int cmd, void *arg){
 
 
 static int avi_check_file(demuxer_t *demuxer)
-{printf("log demux_avi 13\n");
+{
+#ifdef DEBUG
+  printf("log demux_avi 13\n");
+#endif  
   int id=stream_read_dword_le(demuxer->stream); // "RIFF"
 
   if((id==mmioFOURCC('R','I','F','F')) || (id==mmioFOURCC('O','N','2',' '))) {
@@ -875,7 +1020,9 @@ static int avi_check_file(demuxer_t *demuxer)
     if(id==mmioFOURCC('A','V','I',0x19))
       return DEMUXER_TYPE_AVI;
     if(id==mmioFOURCC('O','N','2','f')){
+#ifdef DEBUG
       demux_avi_printf("ON2AviFormat\n");
+#endif      
       return DEMUXER_TYPE_AVI;
     }
   }
@@ -885,7 +1032,10 @@ static int avi_check_file(demuxer_t *demuxer)
 
 
 static demuxer_t* demux_open_hack_avi(demuxer_t *demuxer, int next)
-{printf("log demux_avi 14\n");
+{
+#ifdef DEBUG
+  printf("log demux_avi 14\n");
+#endif  
    sh_audio_t* sh_a;
 
    demuxer = demux_open_avi(demuxer,next);
@@ -901,7 +1051,9 @@ static demuxer_t* demux_open_hack_avi(demuxer_t *demuxer, int next)
       demuxer->stream = new_ds_stream(demuxer->audio);
       od = new_demuxer(demuxer->stream,DEMUXER_TYPE_OGG,-1,-2,-2,NULL);
       if(!demux_ogg_open(od)) {
+#ifdef DEBUG
         demux_avi_printf("ErrorOpeningOGGDemuxer\n");
+#endif	
         free_stream(demuxer->stream);
         demuxer->audio->id = -2;
       } else
@@ -919,7 +1071,6 @@ static demuxer_t* demux_open_hack_avi(demuxer_t *demuxer, int next)
 #include "container.h"
 #include "manager.h"
 #include "utils.h"
-static const char FILENAME[] = "avi.c";
 
 static demuxer_t *demuxer = NULL;
 static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
@@ -947,10 +1098,12 @@ const demuxer_desc_t demuxer_desc_avi = {
 //Trick: VID-3F.avi geht nicht!
 //	 VID-3I.avi 720p stottert!
 //	 VID-3J.avi 1080p not support!
-void AviInit(Context_t *context, char * filename) {
-
+int AviInit(Context_t *context, char * filename) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
+	getAVIMutex(FILENAME, __FUNCTION__,__LINE__);
 
 	int ret = 0;
 	int i = 0;
@@ -970,20 +1123,26 @@ void AviInit(Context_t *context, char * filename) {
     ds = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
     memset (ds,0,sizeof(demux_stream_t));
 
+#ifdef DEBUG
     printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
 
     demuxer->stream = (stream_t*)malloc ( sizeof(stream_t));
     memset (demuxer->stream,0,sizeof(stream_t));
 /*    demuxer->stream = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
     memset (demuxer->stream,0,sizeof(demux_stream_t));*/
 
+#ifdef DEBUG
     printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
 
     demuxer->stream->fd = context->playback->fd;
 
     read(demuxer->stream->fd,demuxer->stream->buffer,2048);//soviel ??
 
+#ifdef DEBUG
     printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
 
     demuxer->desc = &demuxer_desc_avi;
     demuxer->audio->id = -1;
@@ -1013,11 +1172,14 @@ void AviInit(Context_t *context, char * filename) {
     ret=avi_check_file(demuxer);
     if(ret == DEMUXER_TYPE_AVI)
     {
+#ifdef DEBUG
 	printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
 	demux_open_hack_avi(demuxer,0);
 	if(demuxer->audio->sh == NULL){
+#ifdef DEBUG
 		printf("%s::%d\n", __FUNCTION__, __LINE__);
-
+#endif
 		demux_flush(demuxer);
 		demuxer->audio->id = -1;
 		demuxer->video->id = -1;
@@ -1035,11 +1197,15 @@ void AviInit(Context_t *context, char * filename) {
 		demuxer->stream->eof		= 0;
 		demuxer->stream->cache_pid	= 0;
 		demux_open_hack_avi(demuxer,1);
+#ifdef DEBUG
 		printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif		
 	}
 	if(!demuxer->audio->sh == NULL){
 		sh_audio=demuxer->audio->sh;
+#ifdef DEBUG
 		printf("AUDIO 0x%02x\n",sh_audio->format);
+#endif		
 		for(i= 0;i<MAX_A_STREAMS;i++){
 			if(demuxer->a_streams[i]==NULL)continue;
 			if(((sh_audio_t *)demuxer->a_streams[i])->format == 0x55) //mp3
@@ -1084,12 +1250,18 @@ void AviInit(Context_t *context, char * filename) {
 	}
 	if(!demuxer->video->sh == NULL){
 		sh_video=demuxer->video->sh;
+#ifdef DEBUG
 		printf("VIDEO 0x%02x\n",sh_video->format);
+#endif
 		video_format=le2me_32(sh_video->bih->biCompression);
+#ifdef DEBUG
 		printf("VIDEO:  [%.4s] 0x%02x\n",(char *)&video_format,video_format);
+#endif
 		if(video_format==0x3167706d)
 		{
+#ifdef DEBUG
 			printf("VIDEOFORMAT = MPEG1 not support\n");
+#endif
 			/*printf("VIDEOFORMAT = MPEG1\n");
 			Track_t Video = {
 				"und",
@@ -1101,12 +1273,16 @@ void AviInit(Context_t *context, char * filename) {
 		}
 		else if(video_format==0x33564944) // xvid: ob diese nummern alle in avi gibt ??
 		{
+#ifdef DEBUG
 			printf("VIDEOFORMAT = DIVX3 not support\n");
+#endif
 		}
 		else if(video_format==0x44495658 || video_format==0x30355844 || video_format==0x3334504D || video_format==0x3334706D || video_format==0x35766964
 		     || video_format==0x36564944 || video_format==0x36766964 || video_format==0x31345041 || video_format==0x58564944 || video_format==0x78766964 || video_format==0x64697678)
 		{
+#ifdef DEBUG
 			printf("VIDEOFORMAT = DIVX4/5 or XVID\n");
+#endif
 			Track_t Video = {
 				"und",
 				"V_MS/VFW/FOURCC",
@@ -1117,7 +1293,9 @@ void AviInit(Context_t *context, char * filename) {
 		}
 		else if(video_format == 0x34363248 || video_format == 0x34363268) // h264 !!bei avi geht h264 über V_MPEG2!!
 		{
+#ifdef DEBUG
 			printf("VIDEOFORMAT = H264\n");
+#endif
 			Track_t Video = {
 				"und",
 				"V_MPEG2/H264",
@@ -1145,17 +1323,24 @@ void AviInit(Context_t *context, char * filename) {
 		demuxer->sub->id = mkv_d->tracks[SubTrackID]->tnum;*/
 
     }
+	releaseAVIMutex(FILENAME, __FUNCTION__,__LINE__);
+    
+	return 0; // FIXME
 }
 void HexdumpAVI(unsigned char *Data, int length)
 {
     int            k;
     for (k = 0; k < length; k++)
     {
-    printf("%02x ", Data[k]);
+#ifdef DEBUG
+    printf("%02x ", Data[k]);    
         if (((k+1)&31)==0)
         printf("\n");
+#endif    
     }
+#ifdef DEBUG
 printf("\n");
+#endif
 }
 #define INVALID_PTS_VALUE                       0x200000000ull
 void AviGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
@@ -1209,102 +1394,194 @@ void AviGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 
 
 static void AviThread(Context_t *context) {
-	printf("%s::%d\n", __FUNCTION__, __LINE__);
+#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
+	
+	while ( context->playback->isCreationPhase ) {
+#ifdef DEBUG
+		printf("%s::%s Thread waiting for end of init phase...\n", FILENAME, __FUNCTION__);
+#endif
+	}
+
+#ifdef DEBUG
+	printf("%s::%s Running!\n", FILENAME, __FUNCTION__);
+#endif
 
 	isFirstAudioFrame=1;
+	
+	while ( context && context->playback && context->playback->isPlaying ) {
+	    //printf("%s -->\n", __FUNCTION__);
 
+		//IF AUDIO IS PAUSED, WAIT
+		if (context->playback->isPaused) {
+#ifdef DEBUG
+			printf("%s::%s paused\n", FILENAME, __FUNCTION__);
+#endif
+			usleep(100000);
+			continue;
+		}
 
-    while(context->playback->isPlaying && 
-		demux_avi_fill_buffer(demuxer,ds)) {
-	//printf("%s -->\n", __FUNCTION__);
+		if (context->playback->isSeeking || whileSeeking) {
+#ifdef DEBUG
+			printf("%s::%s seeking\n", FILENAME, __FUNCTION__);
+#endif
+			usleep(100000);			
+			continue;
+		}
 
+		getAVIMutex(FILENAME, __FUNCTION__,__LINE__);
 
-        //IF MOVIE IS PAUSE, WAIT 
-        while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
+		if ( !demux_avi_fill_buffer(demuxer,ds) ) {
+#ifdef DEBUG
+			printf("%s::%s demux_avi_fill_buffer failed!\n", FILENAME, __FUNCTION__);
+#endif
+			releaseAVIMutex(FILENAME, __FUNCTION__,__LINE__);
+			
+			break;
+		} else {		
+			AviGenerateParcel(context, demuxer);
 
-	AviGenerateParcel(context, demuxer);
+			if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
+				ds_free_packs(demuxer->sub);
+			}
+			
+			if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
+				ds_free_packs(demuxer->audio);
+			}
+			
+			if (demuxer->video != NULL && demuxer->video->first != NULL) {
+				ds_free_packs(demuxer->video);
+			}
+			//printf("%s <--\n", __FUNCTION__);
 
-        if (demuxer->sub != NULL && demuxer->sub->first != NULL) {
-		printf("SUBTITLE");
-            ds_free_packs(demuxer->sub);
-        } 
+			releaseAVIMutex(FILENAME, __FUNCTION__,__LINE__);
+		}
+	}
 
-        if (demuxer->audio != NULL && demuxer->audio->first != NULL) {
-            ds_free_packs(demuxer->audio);
-        }
+	//context->playback->Command(context, PLAYBACK_TERM, NULL);
 
-        if (demuxer->video != NULL && demuxer->video->first != NULL) {
-            ds_free_packs(demuxer->video);
-        }    
-	//printf("%s <--\n", __FUNCTION__);
-
-    }
-	context->playback->Command(context, PLAYBACK_TERM, NULL);
+#ifdef DEBUG
+	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
+#endif
+	
+	PlayThread = NULL;	
 }
 
 
 static int AviPlay(Context_t *context) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-    int error;
-    if (PlayThread == NULL) {
-	  pthread_attr_t attr;
-	  pthread_attr_init(&attr);
-	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-          if(error=pthread_create(&PlayThread, &attr, (void *)&AviThread, context) != 0)
-          {
-            fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
-	    PlayThread = NULL;
-            return -1;
-          }
-    }
-    return 0;
+#endif
+
+	int error;
+	int ret = 0;
+	pthread_attr_t attr;
+
+	if ( context && context->playback && context->playback->isPlaying ) {
+#ifdef DEBUG
+		printf("%s::%s is Playing\n", FILENAME, __FUNCTION__);
+#endif  
+	} else {
+#ifdef DEBUG
+		printf("%s::%s is NOT Playing\n", FILENAME, __FUNCTION__);
+#endif
+	}
+	
+	if (PlayThread == NULL) {
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+		if((error=pthread_create(&PlayThread, &attr, (void *)&AviThread, context)) != 0) {
+#ifdef DEBUG
+			  printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
+#endif
+			  PlayThread = NULL;
+			  ret = -1;
+		} else {
+#ifdef DEBUG		  
+			  printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
+#endif
+		}
+	} else {
+#ifdef DEBUG
+		printf("%s::%s A thread already exists!\n", FILENAME, __FUNCTION__);
+#endif
+		ret = -1;
+	}
+	
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+
+	return ret;    
 }
 
 static int AviStop(Context_t *context) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
-    int result=0;
-    if(PlayThread!=NULL)result = pthread_join (PlayThread, NULL);
-    if(result != 0) 
-    {
-          printf("ERROR: Stop PlayThread\n");
-    }
+	int i;
+	int ret = 0;
+	int wait_time = 20;
+	
+	while ( (PlayThread != NULL) && (wait_time--) > 0 ) {
+#ifdef DEBUG  
+		printf("%s::%s Waiting for AVI thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
+#endif
+		usleep(100000);
+	}
 
-	PlayThread = NULL;
+	if (wait_time == 0) {
+#ifdef DEBUG  
+		printf("%s::%s Timeout waiting for AVI thread!\n", FILENAME, __FUNCTION__);
+#endif
+		ret = -1;
+	} else {
+		getAVIMutex(FILENAME, __FUNCTION__,__LINE__);
+		
+		if (demuxer) {		  
+			demux_close_avi(demuxer);
 
-    usleep(100000);
+			free(demuxer->stream);
+			demuxer->stream = NULL;
 
-    demux_close_avi(demuxer);
+			free(demuxer->sub);
+			demuxer->sub = NULL;
 
-    free (ds);
-    ds = NULL;
-    free (demuxer->stream);
-    demuxer->stream = NULL;
-    free (demuxer->sub);
-    demuxer->sub = NULL;
-    free (demuxer->video);
-    demuxer->video = NULL;
-    free (demuxer->audio);
-    demuxer->audio = NULL;
-    int i;
-    for(i=0;i<MAX_A_STREAMS;i++){
-	free(demuxer->a_streams[i]);
-	demuxer->a_streams[i]=NULL;
-    }
-    for(i=0;i<MAX_V_STREAMS;i++){
-	free(demuxer->v_streams[i]);
-	demuxer->v_streams[i]=NULL;
-    }
-    for(i=0;i<MAX_S_STREAMS;i++){
-	free(demuxer->s_streams[i]);
-	demuxer->s_streams[i]=NULL;
-    }
-    free(demuxer->info);
-    demuxer->info=NULL;
-    free (demuxer);   
-    demuxer = NULL;
+			free(demuxer->video);
+			demuxer->video = NULL;
+		
+			free(demuxer->audio);
+			demuxer->audio = NULL;
+			
+			for(i=0;i<MAX_A_STREAMS;i++){
+				free(demuxer->a_streams[i]);
+				demuxer->a_streams[i]=NULL;
+			}
+			
+			for(i=0;i<MAX_V_STREAMS;i++){
+				free(demuxer->v_streams[i]);
+				demuxer->v_streams[i]=NULL;
+			}
+			
+			for(i=0;i<MAX_S_STREAMS;i++){
+				free(demuxer->s_streams[i]);
+				demuxer->s_streams[i]=NULL;
+			}
+			
+			free(demuxer);   
+			demuxer = NULL;
+		}
 
-    return 0;
+		free(ds);
+		ds = NULL;
+
+		releaseAVIMutex(FILENAME, __FUNCTION__,__LINE__);
+	}
+
+	return ret;    
 }
 
 static int AviGetLength(demuxer_t *demuxer,double * length) {
@@ -1322,50 +1599,57 @@ static int AviGetLength(demuxer_t *demuxer,double * length) {
 }
 
 static int AviSwitchAudio(demuxer_t *demuxer, int* arg) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-    
+#endif
 
-    if (demuxer && demuxer->priv) {
+	getAVIMutex(FILENAME, __FUNCTION__,__LINE__);
+	
+	if (demuxer && demuxer->priv) {
 
-        //mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
+	    //mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
 
-        sh_audio_t *sh = demuxer->a_streams[demuxer->audio->id];
-        int aid = *(int*)arg;
-        /*if (aid < 0)
-            aid = (sh->aid + 1) % mkv_d->last_aid;
-        if (aid != sh->aid) */{
-            
-           
-           
+	    sh_audio_t *sh = demuxer->a_streams[demuxer->audio->id];
+	    int aid = *(int*)arg;
+	    /*if (aid < 0)
+		aid = (sh->aid + 1) % mkv_d->last_aid;
+	    if (aid != sh->aid) */{
 
-                printf("%s::%s track %d\n", FILENAME, __FUNCTION__,aid);
-                demuxer->audio->id = aid;
-                sh = demuxer->a_streams[demuxer->audio->id];
-                ds_free_packs(demuxer->audio);
-           
+#ifdef DEBUG
+		    printf("%s::%s track %d\n", FILENAME, __FUNCTION__,aid);
+#endif		   
+		    demuxer->audio->id = aid;
+		    sh = demuxer->a_streams[demuxer->audio->id];
+		    ds_free_packs(demuxer->audio);
+	      
 
-        }
-        //*(int*)arg = sh->aid;
-    } //else
-        //*(int*)arg = -2;
+	    }
+	    //*(int*)arg = sh->aid;
+	} //else
+	    //*(int*)arg = -2;
+	
+	releaseAVIMutex(FILENAME, __FUNCTION__,__LINE__);
+	
     return 0;
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
 	//printf("%s::%s\n", FILENAME, __FUNCTION__);
 
+	int ret = 0;
+	
 	switch(command) {
 		case CONTAINER_INIT: {
 			char * FILENAME = (char *)argument;
-			AviInit(context, FILENAME);
+			ret = AviInit(context, FILENAME);
 			break;
 		}
 		case CONTAINER_PLAY: {
-			AviPlay(context);
+			ret = AviPlay(context);
 			break;
 		}
 		case CONTAINER_STOP: {
-			AviStop(context);
+			ret = AviStop(context);
 			break;
 		}
 		case CONTAINER_SEEK: {
@@ -1382,15 +1666,17 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 		}
 		case CONTAINER_SWITCH_AUDIO: {
            		if (demuxer)
-			    AviSwitchAudio(demuxer, (int*) argument);
+			    ret = AviSwitchAudio(demuxer, (int*) argument);
 			break;
 		}
 		default:
-			printf("ConatinerCmd not supported!");
+#ifdef DEBUG
+			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
+#endif
 			break;
 	}
 
-	return 0;
+	return ret;
 }
 
 static char *AviCapabilities[] = { "avi", NULL };

@@ -17,8 +17,35 @@
 
 #include "intreadwrite.h"
 
+#ifndef DEBUG
+#define DEBUG	// FIXME: until this is set properly by Makefile
+#endif
+
+#ifdef DEBUG
 int demux_asf_debug = 0;
 #define demux_asf_printf(x...) do { if (demux_asf_debug)printf(x); } while (0)
+#endif
+
+static const char FILENAME[] = "demux_asf.c";
+
+pthread_mutex_t ASFmutex;
+
+void getASFMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+#ifdef DEBUG
+//	printf("%s::%s::%d requesting mutex\n",filename, function, line);
+#endif
+	pthread_mutex_lock(&ASFmutex);
+#ifdef DEBUG
+//	printf("%s::%s::%d received mutex\n",filename, function, line);
+#endif  
+}
+
+void releaseASFMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+	pthread_mutex_unlock(&ASFmutex);
+#ifdef DEBUG
+//	printf("%s::%s::%d released mutex\n",filename, function, line);
+#endif  
+}
 
 // defined at asfheader.c:
 
@@ -89,11 +116,15 @@ static void init_priv (struct asf_priv* asf){
 
 static void demux_asf_append_to_packet(demux_packet_t* dp,unsigned char *data,int len,int offs)
 {
+#ifdef DEBUG
   if(dp->len!=offs && offs!=-1) demux_asf_printf("warning! fragment.len=%d BUT next fragment offset=%d  \n",dp->len,offs);
+#endif  
   dp->buffer=realloc(dp->buffer,dp->len+len+MP_INPUT_BUFFER_PADDING_SIZE);
   fast_memcpy(dp->buffer+dp->len,data,len);
   memset(dp->buffer+dp->len+len, 0, MP_INPUT_BUFFER_PADDING_SIZE);
+#ifdef DEBUG
   demux_asf_printf("data appended! %d+%d\n",dp->len,len);
+#endif
   dp->len+=len;
 }
 
@@ -107,8 +138,10 @@ static int demux_asf_read_packet(demuxer_t *demux,unsigned char *data,int len,in
     demux_stream_t *ds=NULL;
     int close_seg=0;
   
+#ifdef DEBUG
     demux_asf_printf("demux_asf.read_packet: id=%d seq=%d len=%d\n",id,seq,len);
     printf("TIME = %u\n", time);  
+#endif
 
     if(demux->video->id==-1)
         if(demux->v_streams[id])
@@ -118,36 +151,50 @@ static int demux_asf_read_packet(demuxer_t *demux,unsigned char *data,int len,in
         if(demux->a_streams[id])
             demux->audio->id=id;
 
+#ifdef DEBUG
     printf("%s::%d %d %d %d\n", __FUNCTION__, __LINE__, id, demux->audio->id, demux->video->id);
+#endif
 
     if(id==demux->audio->id) {
+#ifdef DEBUG
         printf("%s::%d\n", __FUNCTION__, __LINE__);
-        // audio
+#endif
+	// audio
         ds=demux->audio;
         if(!ds->sh) {
             ds->sh=demux->a_streams[id];
+#ifdef DEBUG
             demux_asf_printf("Auto-selected ASF audio ID = %d\n",ds->id);
-        }
+#endif
+	}
     } else if(id==demux->video->id) {
 
+#ifdef DEBUG
         printf("%s::%d\n", __FUNCTION__, __LINE__);
-        // video
+#endif
+	// video
         ds=demux->video;
         if(!ds->sh) {
             ds->sh=demux->v_streams[id];
+#ifdef DEBUG
             demux_asf_printf("Auto-selected ASF video ID = %d\n",ds->id);
-        }
+#endif
+	}
     }
   
     if(ds) {
+#ifdef DEBUG
         printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
 
         // create new packet:
         { 
             demux_packet_t* dp;
             if(offs>0) {
+#ifdef DEBUG
                 demux_asf_printf("warning!  broken fragment, %d bytes missing  \n",offs);
-                return 0;
+#endif
+		return 0;
             }
 
             dp=new_demux_packet(len);
@@ -164,13 +211,20 @@ static int demux_asf_read_packet(demuxer_t *demux,unsigned char *data,int len,in
             ds->asf_packet=dp;
             ds->asf_seq=seq;
             // we are ready now.
+#ifdef DEBUG
             printf("%s::%d\n", __FUNCTION__, __LINE__);
-            //return 1;
+#endif
+	    //return 1;
         }
 
+#ifdef DEBUG
         printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
+
         if(ds->asf_packet) {
+#ifdef DEBUG
             printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif	    
 
             ds_add_packet(ds,ds->asf_packet);
             ds->asf_packet=NULL;
@@ -203,7 +257,9 @@ static int demux_asf_read_packet(demuxer_t *demux,unsigned char *data,int len,in
             }*/
         }
     }
+#ifdef DEBUG
     printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
     return 0;
 }
 
@@ -430,9 +486,11 @@ static int demux_asf_fill_buffer(demuxer_t *demux, demux_stream_t *ds){
 	    
         if(((flags>>5)&3)!=0) {
             // Explicit (absoulte) packet size
+#ifdef DEBUG
             demux_asf_printf("Explicit packet size specified: %d  \n",plen);
             if(plen>asf->packetsize) 
                 demux_asf_printf("Warning! plen>packetsize! (%d>%d)  \n",plen,asf->packetsize);
+#endif	    
         } else {
             // Padding (relative) size
             plen=asf->packetsize-padding;
@@ -451,9 +509,11 @@ static int demux_asf_fill_buffer(demuxer_t *demux, demux_stream_t *ds){
             segs=p[0] & 0x3F;
             ++p;
         }
+#ifdef DEBUG
         printf("%08"PRIu64":  flag=%u  seq=%u  plen=%u  pad=%u  time=%u  dur=%u\n",
               (uint64_t)demux->filepos,flags,sequence,plen,padding,time,duration);
-
+#endif
+	      
         for(seg=0;seg<segs;seg++) {
             //ASF_segmhdr_t* sh;
             unsigned char streamno;
@@ -466,7 +526,9 @@ static int demux_asf_fill_buffer(demuxer_t *demux, demux_stream_t *ds){
             int keyframe = 0;
 
             if(p>=p_end) {
+#ifdef DEBUG
                 demux_asf_printf("Warning! invalid packet 1, aborting parsing...\n");
+#endif
                 break;
             }
 //LOG
@@ -510,8 +572,10 @@ static int demux_asf_fill_buffer(demuxer_t *demux, demux_stream_t *ds){
                             get_payload_extension_data(demux, &p, streamno, seq, &keyframe, &time2);
                         p+=rlen-4;
                     } else {
+#ifdef DEBUG
                         demux_asf_printf("unknown segment type (rlen): 0x%02X  \n",rlen);
-                        time2=0; // unknown
+#endif
+			time2=0; // unknown
                         p+=rlen;
                     }
             }
@@ -526,10 +590,14 @@ static int demux_asf_fill_buffer(demuxer_t *demux, demux_stream_t *ds){
             }
 
             if(len<0 || (p+len)>p_end) {
+#ifdef DEBUG
                 demux_asf_printf("ASF_parser: warning! segment len=%d\n",len);
+#endif
                 len = p_end - p;
             }
+#ifdef DEBUG
             demux_asf_printf("  seg #%d: streamno=%d  seq=%d  type=%02X  len=%d\n",seg,streamno,seq,rlen,len);
+#endif
 
             switch(rlen){
                 case 0x01:
@@ -543,16 +611,19 @@ static int demux_asf_fill_buffer(demuxer_t *demux, demux_stream_t *ds){
                         if(len2 > len - 1 || len2 < 0) break; // Not enough data
                         len2 = FFMIN(len2, asf->packetsize);
 
+#ifdef DEBUG
                         printf("%d len2=%d, stremno=%d, seq=%d, x=%d, duration=%d, -1, keyframe=%d\n", __LINE__,len2,streamno,seq,x,duration,keyframe);
+#endif
                             demux_asf_read_packet(demux,p,len2,streamno,seq,x,duration,-1,keyframe);
-
                         p+=len2;
                         len-=len2+1;
                         ++seq;
                     }
 
                     if(len!=0) {
+#ifdef DEBUG
                         demux_asf_printf("ASF_parser: warning! groups total != len\n");
+#endif		    
                     }
                     break;
                 default:
@@ -562,7 +633,9 @@ static int demux_asf_fill_buffer(demuxer_t *demux, demux_stream_t *ds){
                     if (!asf->asf_is_dvr_ms || asf->found_first_key_frame) {
                         len = FFMIN(len, asf->packetsize);
 
+#ifdef DEBUG
                         printf("%d len=%d, stremno=%d, seq=%d, time2=%d, duration=%d, x=%d, keyframe=%d\n", __LINE__,len,streamno,seq,time2,duration,x,keyframe);
+#endif			    
                             demux_asf_read_packet(demux,p,len,streamno,seq,time2,duration,x,keyframe);
                     }
                     p+=len;
@@ -571,14 +644,17 @@ static int demux_asf_fill_buffer(demuxer_t *demux, demux_stream_t *ds){
         } // for segs
             return 1; // success
     }
-    
+#ifdef DEBUG
     demux_asf_printf("%08"PRIX64":  UNKNOWN TYPE  %02X %02X %02X %02X %02X...\n",(int64_t)demux->filepos,asf->packet[0],asf->packet[1],asf->packet[2],asf->packet[3],asf->packet[4]);
+#endif    
     return 0;
 }
 
 #include "stheader.h"
 
 //void skip_audio_frame(sh_audio_t *sh_audio);
+
+static int whileSeeking = 0;
 
 static void demux_seek_asf(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int flags){
     struct asf_priv* asf = demuxer->priv;
@@ -589,6 +665,9 @@ static void demux_seek_asf(demuxer_t *demuxer,float rel_seek_secs,float audio_de
 
   //FIXME: OFF_T - didn't test ASF case yet (don't have a large asf...)
   //FIXME: reports good or bad to steve@daviesfam.org please
+
+	whileSeeking = 1;
+	getASFMutex(FILENAME, __FUNCTION__,__LINE__);
 
   //================= seek in ASF ==========================
     float p_rate=asf->packetrate; // packets / sec
@@ -629,7 +708,12 @@ static void demux_seek_asf(demuxer_t *demuxer,float rel_seek_secs,float audio_de
 	if(!ds_fill_buffer(d_video)) break; // skip frame.  EOF?
     }
 
+	releaseASFMutex(FILENAME, __FUNCTION__,__LINE__);
+	whileSeeking = 0;
 
+#ifdef DEBUG
+	printf("%s::%s exiting\n", FILENAME, __FUNCTION__);
+#endif
 }
 
 static int demux_asf_control(demuxer_t *demuxer,int cmd, void *arg){
@@ -662,19 +746,29 @@ static demuxer_t* demux_open_asf(demuxer_t* demuxer)
     //---- ASF header:
     if(!asf) return NULL;
     init_priv(asf);
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
     if (!read_asf_header(demuxer,asf))
         return NULL;
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
     stream_reset(demuxer->stream);
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
     stream_seek(demuxer->stream,demuxer->movi_start);
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
 //    demuxer->idx_pos=0;
 //    demuxer->endpos=avi_header.movi_end;
     if(demuxer->video->id != -2) {
         if(!ds_fill_buffer(demuxer->video)){
+#ifdef DEBUG
             demux_asf_printf("ASF: MissingVideoStream\n");
+#endif
             demuxer->video->sh=NULL;
             //printf("ASF: missing video stream!? contact the author, it may be a bug :(\n");
         } else {
@@ -687,12 +781,18 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
             }
         }
     }
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
+#endif
     if(demuxer->audio->id!=-2){
+#ifdef DEBUG
 printf("%s::%d\n", __FUNCTION__, __LINE__);
         demux_asf_printf("ASFSearchingForAudioStream %p\n",demuxer->audio->id);
-        if(!ds_fill_buffer(demuxer->audio)){
+#endif
+	if(!ds_fill_buffer(demuxer->audio)){
+#ifdef DEBUG
             demux_asf_printf("ASF: MissingAudioStream\n");
+#endif	    
             demuxer->audio->sh=NULL;
         } else {
             sh_audio=demuxer->audio->sh;sh_audio->ds=demuxer->audio;
@@ -730,7 +830,6 @@ static void demux_close_asf(demuxer_t *demuxer) {
 #include "container.h"
 #include "manager.h"
 //#include "utils.h"
-static const char FILENAME[] = "demux_asf.c";
 
 //static demuxer_t *demuxer = NULL;
 static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
@@ -739,13 +838,15 @@ static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static pthread_t PlayThread;
 //static int isFirstAudioFrame = 1;
 
-void ASFInit(Context_t *context, char * filename) {
-
+int ASFInit(Context_t *context, char * filename) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-
+#endif
 	int ret = 0;
 	int i = 0;
 
+	getASFMutex(FILENAME, __FUNCTION__,__LINE__);
+	
 	ds = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
     memset (ds,0,sizeof(demux_stream_t));
 
@@ -835,6 +936,10 @@ ds->demuxer->audio->id = 1;
 		context->manager->audio->Command(context, MANAGER_ADD, &Audio);
 		break;}
 	}*/
+
+	releaseASFMutex(FILENAME, __FUNCTION__,__LINE__);
+
+	return 0; // FIXME
 }
 
 
@@ -877,112 +982,209 @@ void ASFGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 
 
 static void ASFThread(Context_t *context) {
-	printf("%s::%d\n", __FUNCTION__, __LINE__);
+#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
+	
+	while ( context->playback->isCreationPhase ) {
+#ifdef DEBUG
+		printf("%s::%s Thread waiting for end of init phase...\n", FILENAME, __FUNCTION__);
+#endif
+	}
 
-    while(context->playback->isPlaying && 
-		demux_asf_fill_buffer(ds->demuxer,ds)) {
+#ifdef DEBUG
+	printf("%s::%s Running!\n", FILENAME, __FUNCTION__);
+#endif
+
+	while ( context && context->playback && context->playback->isPlaying ) {
 	    //printf("%s -->\n", __FUNCTION__);
 
+		//IF MOVIE IS PAUSED, WAIT
+		if (context->playback->isPaused) {
+#ifdef DEBUG
+			printf("%s::%s paused\n", FILENAME, __FUNCTION__);
+#endif
+			usleep(100000);
+			continue;
+		}
 
-        //IF MOVIE IS PAUSE, WAIT 
-        while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
+		if (context->playback->isSeeking || whileSeeking) {
+#ifdef DEBUG
+			printf("%s::%s seeking\n", FILENAME, __FUNCTION__);
+#endif
+			usleep(100000);			
+			continue;
+		}
 
-	    ASFGenerateParcel(context, ds->demuxer);
+		getASFMutex(FILENAME, __FUNCTION__,__LINE__);
 
-        if (ds != NULL && ds->first != NULL) {
-            ds_free_packs(ds);
-        }
-            if (ds->demuxer->sub != NULL && ds->demuxer->sub->first != NULL) {
-                ds_free_packs(ds->demuxer->sub);
-            } 
+		if ( !demux_asf_fill_buffer(ds->demuxer,ds) ) {
+#ifdef DEBUG
+			printf("%s::%s demux_asf_fill_buffer failed!\n", FILENAME, __FUNCTION__);
+#endif
+			releaseASFMutex(FILENAME, __FUNCTION__,__LINE__);
+			
+			break;
+		} else {		
+			ASFGenerateParcel(context, ds->demuxer);
 
-            if (ds->demuxer->audio != NULL && ds->demuxer->audio->first != NULL) {
-                ds_free_packs(ds->demuxer->audio);
-            }
+			if (ds->demuxer->sub != NULL && ds->demuxer->sub->first != NULL) {
+				ds_free_packs(ds->demuxer->sub);
+			}
+			
+			if (ds->demuxer->audio != NULL && ds->demuxer->audio->first != NULL) {
+				ds_free_packs(ds->demuxer->audio);
+			}
+			
+			if (ds->demuxer->video != NULL && ds->demuxer->video->first != NULL) {
+				ds_free_packs(ds->demuxer->video);
+			}
+			//printf("%s <--\n", __FUNCTION__);
 
-            if (ds->demuxer->video != NULL && ds->demuxer->video->first != NULL) {
-                ds_free_packs(ds->demuxer->video);
-            }    
- 
-	//printf("%s <--\n", __FUNCTION__);
+			releaseASFMutex(FILENAME, __FUNCTION__,__LINE__);
+		}
+	}
 
-    }
-	context->playback->Command(context, PLAYBACK_TERM, NULL);
+	//context->playback->Command(context, PLAYBACK_TERM, NULL);
+
+#ifdef DEBUG
+	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
+#endif
+	
+	PlayThread = NULL;	
 }
 
 
 static int ASFPlay(Context_t *context) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-    int error;
-    if (PlayThread == NULL) {
-	  pthread_attr_t attr;
-	  pthread_attr_init(&attr);
-	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-          if(error=pthread_create(&PlayThread, &attr, (void *)&ASFThread, context) != 0)
-          {
-            fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
-	    PlayThread = NULL;
-            return -1;
-          }
-    }
-    return 0;
+#endif
+
+	int error;
+	int ret = 0;
+	pthread_attr_t attr;
+
+#ifdef DEBUG
+	if ( context && context->playback && context->playback->isPlaying ) {
+		printf("%s::%s is Playing\n", FILENAME, __FUNCTION__);
+	} else {
+		printf("%s::%s is NOT Playing\n", FILENAME, __FUNCTION__);
+	}
+#endif
+	
+	if (PlayThread == NULL) {
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+		if((error=pthread_create(&PlayThread, &attr, (void *)&ASFThread, context)) != 0) {
+#ifdef DEBUG
+			  printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
+#endif
+			  PlayThread = NULL;
+			  ret = -1;
+		} else {
+#ifdef DEBUG
+			  printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
+#endif
+		}
+	} else {
+#ifdef DEBUG
+		printf("%s::%s A thread already exists!\n", FILENAME, __FUNCTION__);
+#endif
+		ret = -1;
+	}
+	
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+
+	return ret;    
 }
 
 static int ASFStop(Context_t *context) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
-    if(PlayThread != NULL) { //Thread still active
-        int result;
-        result = pthread_join (PlayThread, NULL);
-        if(result != 0) 
-        {
-              printf("ERROR: Stop PlayThread\n");
-        }
+	int i;
+	int ret = 0;
+	int wait_time = 20;
+	
+	while ( (PlayThread != NULL) && (wait_time--) > 0 ) {
+#ifdef DEBUG  
+		printf("%s::%s Waiting for ASF thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
+#endif
+		usleep(100000);
+	}
 
-	    PlayThread = NULL;
+	if (wait_time == 0) {
+#ifdef DEBUG  
+		printf("%s::%s Timeout waiting for ASF thread!\n", FILENAME, __FUNCTION__);
+#endif
+		ret = -1;
+	} else {
+		getASFMutex(FILENAME, __FUNCTION__,__LINE__);
+		
+		if (ds && ds->demuxer) {		  
+			demux_close_asf(ds->demuxer);
 
-        usleep(100000);
-    }
+			free(ds->demuxer->stream);
+			ds->demuxer->stream = NULL;
 
-    if(ds != NULL) {
-        if(ds->demuxer != NULL) {
-            demux_close_asf(ds->demuxer);
-            if(ds->demuxer->stream != NULL)
-                free (ds->demuxer->stream);
-            ds->demuxer->stream = NULL;
-            if(ds->demuxer->audio != NULL)
-                free (ds->demuxer->audio);
-            ds->demuxer->audio = NULL;
-            if(ds->demuxer->video != NULL)
-                free (ds->demuxer->video);
-            ds->demuxer->video = NULL;
-            if(ds->demuxer != NULL)
-                free (ds->demuxer);  
-            ds->demuxer = NULL;
-        }
-        if(ds != NULL)
-            free (ds); 
-        ds = NULL;
-    }
+			free(ds->demuxer->sub);
+			ds->demuxer->sub = NULL;
 
-    return 0;
+			free(ds->demuxer->video);
+			ds->demuxer->video = NULL;
+		
+			free(ds->demuxer->audio);
+			ds->demuxer->audio = NULL;
+			
+			for(i=0;i<MAX_A_STREAMS;i++){
+				free(ds->demuxer->a_streams[i]);
+				ds->demuxer->a_streams[i]=NULL;
+			}
+			
+			for(i=0;i<MAX_V_STREAMS;i++){
+				free(ds->demuxer->v_streams[i]);
+				ds->demuxer->v_streams[i]=NULL;
+			}
+			
+			for(i=0;i<MAX_S_STREAMS;i++){
+				free(ds->demuxer->s_streams[i]);
+				ds->demuxer->s_streams[i]=NULL;
+			}
+			
+			free(ds->demuxer);   
+			ds->demuxer = NULL;
+		}
+
+		free(ds);
+		ds = NULL;
+
+		releaseASFMutex(FILENAME, __FUNCTION__,__LINE__);
+	}
+
+	return ret;
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
 	//printf("%s::%s\n", FILENAME, __FUNCTION__);
 
+	int ret = 0;
+	
 	switch(command) {
 		case CONTAINER_INIT: {
 			char * FILENAME = (char *)argument;
-			ASFInit(context, FILENAME);
+			ret = ASFInit(context, FILENAME);
 			break;
 		}
 		case CONTAINER_PLAY: {
-			ASFPlay(context);
+			ret = ASFPlay(context);
 			break;
 		}
 		case CONTAINER_STOP: {
-			ASFStop(context);
+			ret = ASFStop(context);
 			break;
 		}
 		case CONTAINER_SEEK: {
@@ -1004,11 +1206,13 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		default:
-			printf("%s::%s ConatinerCmd not supported! %d\n", FILENAME, __FUNCTION__, command);
+#ifdef DEBUG
+			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
+#endif
 			break;
 	}
 
-	return 0;
+	return ret;
 }
 
 static char *ASFCapabilities[] = { "asf", "wmv", "wma", NULL };
