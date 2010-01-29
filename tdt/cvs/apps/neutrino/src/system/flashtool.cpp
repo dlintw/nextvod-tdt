@@ -126,6 +126,10 @@ bool CFlashTool::readFromMTD( const std::string & filename, int globalProgressEn
 		write( fd2, &buf, block);
 		fsize -= block;
 		char prog = char(100-(100./filesize*fsize));
+
+		printf( "\rReading %s to %s %2u %% complete.\n",
+		                 mtdDevice.c_str(), filename.c_str(), prog );
+		
 		if(statusViewer)
 		{
 			statusViewer->showLocalStatus(prog);
@@ -225,6 +229,10 @@ bool CFlashTool::program( const std::string & filename, int globalProgressEndEra
 		write( fd2, &buf, block);
 		fsize -= block;
 		char prog = char(100-(100./filesize*fsize));
+
+		printf( "\rFlashing %s to %s %2u %% complete.\n",
+		                 filename.c_str(), mtdDevice.c_str(), prog );
+
 		if(statusViewer)
 		{
 			statusViewer->showLocalStatus(prog);
@@ -340,7 +348,10 @@ void CFlashTool::reboot()
 //-----------------------------------------------------------------------------------------------------------------
 CFlashVersionInfo::CFlashVersionInfo(const std::string & versionString)
 {
-	//SBBBYYYYMMTTHHMM -- formatsting
+
+	for(int i = 0; i < 20; i++)
+	releaseCycle[i] = versionString[i];
+/*	//SBBBYYYYMMTTHHMM -- formatsting
 
 	// recover type
 	snapshot = versionString[0];
@@ -348,14 +359,14 @@ CFlashVersionInfo::CFlashVersionInfo(const std::string & versionString)
 	// recover release cycle version
 	releaseCycle[0] = versionString[1];
 	releaseCycle[1] = '.';
-/*
+
 	if (versionString[2] == '0')
 	{
 		releaseCycle[2] = versionString[3];
 		releaseCycle[3] = 0;
 	}
 	else 
-*/
+
 	{
 		releaseCycle[2] = versionString[2];
 		releaseCycle[3] = versionString[3];
@@ -381,7 +392,7 @@ CFlashVersionInfo::CFlashVersionInfo(const std::string & versionString)
 	time[2] = ':';
 	time[3] = versionString[14];
 	time[4] = versionString[15];
-	time[5] = 0;
+	time[5] = 0; */
 }
 
 const char * const CFlashVersionInfo::getDate(void) const

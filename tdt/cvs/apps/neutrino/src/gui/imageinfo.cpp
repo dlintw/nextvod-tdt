@@ -88,7 +88,7 @@ int CImageInfo::exec(CMenuTarget* parent, const std::string &)
 	paint();
 
  	//paint_pig( width-170, y, 215, 170);
- 	paint_pig (width - width/3 - 10, y + 10, width/3, height/3);
+ 	//paint_pig (width - width/3 - 10, y + 10, width/3, height/3);
 
 	neutrino_msg_t msg;
 
@@ -156,26 +156,26 @@ void CImageInfo::paint()
 
 
 	CConfigFile config('\t');
-	config.loadConfig("/.version");
+	config.loadConfig("/var/etc/.version");
 
 	const char * imagename = config.getString("imagename", "Neutrino").c_str();
 	const char * homepage  = config.getString("homepage",  "n/a").c_str();
 	const char * creator   = config.getString("creator",   "n/a").c_str();
 	const char * version   = config.getString("version",   "no version").c_str();
 	const char * docs      = config.getString("docs",   "man neutrino").c_str();
-	const char * forum     = config.getString("forum",   "http://forum.tuxbox.org").c_str();
+	const char * forum     = config.getString("forum",   "http://kathi-forum.de").c_str();
 
 	static CFlashVersionInfo versionInfo(version);
 	const char * releaseCycle = versionInfo.getReleaseCycle();
-	sprintf((char*) imagedate, "%s  %s", versionInfo.getDate(), versionInfo.getTime());
+//	sprintf((char*) imagedate, "%s  %s", versionInfo.getDate(), versionInfo.getTime());
 
 	ypos += iheight;
 	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_IMAGE));
 	paintLine(xpos+125, font_info, imagename);
 
-	ypos += iheight;
-	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_DATE));
-	paintLine(xpos+125, font_info, imagedate);
+//	ypos += iheight;
+//	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_DATE));
+//	paintLine(xpos+125, font_info, imagedate);
 
 	ypos += iheight;
 	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_VERSION));

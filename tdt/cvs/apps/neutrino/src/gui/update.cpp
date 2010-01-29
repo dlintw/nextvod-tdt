@@ -563,7 +563,10 @@ void CFlashExpert::showMTDSelector(const std::string & actionkey)
 	for(int x=0;x<mtdInfo->getMTDCount();x++) {
 		char sActionKey[20];
 		sprintf(sActionKey, "%s%d", actionkey.c_str(), x);
+                if ( x != 0 && x != 6 ) 
+		{
 		mtdselector->addItem(new CMenuForwarderNonLocalized(mtdInfo->getMTDName(x).c_str(), true, NULL, this, sActionKey));
+		}
 	}
 	mtdselector->exec(NULL,"");
 	delete mtdselector;

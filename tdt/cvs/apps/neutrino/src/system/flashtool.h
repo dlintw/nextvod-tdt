@@ -74,7 +74,7 @@ class CFlashVersionInfo
 	
 	char date[11];
 	char time[6];
-	char releaseCycle[5];
+	char releaseCycle[20];
 	
  public:
 	char snapshot;
