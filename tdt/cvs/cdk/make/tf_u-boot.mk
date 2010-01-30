@@ -14,7 +14,7 @@ RPMS/noarch/$(U_BOOT_PREFIX)-$(U_BOOT_VERSION).noarch.rpm: \
 	mv SPECS/stm-$(HOST_U_BOOT).spec SPECS/stm-$(HOST_U_BOOT).spec_ && \
 	sed -e "s/if_target_cpu sh/if 1/g" SPECS/stm-$(HOST_U_BOOT).spec_ > SPECS/stm-$(HOST_U_BOOT).spec && \
 	rm SPECS/stm-$(HOST_U_BOOT).spec_ && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --define "_stm_short_build_id 23" --define "_stm_pkg_prefix stlinux23" --target=sh --define "_stm_uboot_dir $(BUILDPREFIX)/u-boot" SPECS/stm-$(HOST_U_BOOT).spec
+	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --define "_stm_short_build_id 23" --define "_stm_target_name sh4" --define "_stm_pkg_prefix stlinux23" --target=sh --define "_stm_uboot_dir $(BUILDPREFIX)/u-boot" SPECS/stm-$(HOST_U_BOOT).spec
 
 $(DEPDIR)/u-boot.do_prepare:  RPMS/noarch/$(U_BOOT_PREFIX)-$(U_BOOT_VERSION).noarch.rpm $(BUILDPREFIX)/Patches/u-boot-1.3.1_stm23_0043_tf7700.patch
 # FIXME: "rpm -e" does not remove files
