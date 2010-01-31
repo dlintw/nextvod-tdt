@@ -98,9 +98,26 @@ if [ ! -e /var/etc/.firstboot ]; then
    until false
    do
       echo "starting neutrino ->"
-      /usr/local/bin/neutrino
+      /usr/local/bin/neutrino -f -u
       rtv=$?
       echo "neutrino ended <- RTV: " $rtv
+      case "$rtv" in
+		0) echo "0"
+		   echo "SHUTDOWN"
+		   sync
+		   umount -a -l -f;;
+		1) echo "1"
+		   echo "SHUTDOWN"
+		   sync
+		   fp_control -e
+		   umount -a -l -f;;
+		2) echo "2"
+		   echo "BOX RESTART"
+		   reboot -f;;
+		*) echo "*"
+		   echo "Unexpected error"
+                   reboot;;
+      esac
    done 
 fi
 
