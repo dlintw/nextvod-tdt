@@ -526,11 +526,11 @@ $(flashprefix)/mtdblock3.var-stock-hdbox.enigma2: $(flashprefix)/var-stock-hdbox
 	rm $@* >/dev/null 2>&1 || true
 #	( dir=$(flashprefix) && \
 #		echo "cp -rd $(stockdir)/.dat/* $< || true" > $$dir/.fakeroot && \
-#		echo "$(MKJFFS2) -e 0x10000 -r $< -o $@" >> $$dir/.fakeroot && \
+#		echo "$(MKJFFS2) -e 0x20000 -r $< -o $@" >> $$dir/.fakeroot && \
 #		chmod 755 $$dir/.fakeroot && \
 #		$(FAKEROOT) -- $$dir/.fakeroot && \
 #		rm $$dir/.fakeroot )
-	$(MKJFFS2) -e 0x10000 -r $< -o $@
+	$(MKJFFS2) -e 0x20000 -r $< -o $@
 	chmod 644 $@
 	@FILESIZE=$$(stat -c%s $@); \
 	hdbox_data_partition_size=`echo -e "$(HDBOX_DATA_PARTITION_SIZE)" | tr '[a-f]' '[A-F]' | cut  -b3-`; \

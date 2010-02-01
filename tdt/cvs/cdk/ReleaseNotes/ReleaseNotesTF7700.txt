@@ -215,6 +215,13 @@ Team Ducktales
 Changelog
 ---------
 
+Version 0.5.1
+---------------------------------------
++ Fix: fixed the issue with the second recording starting while playback is
+       active
++ Fix: improved the interactions between recording and playback (e.g.
+       timeshift)
+
 Version 0.5.0
 ---------------------------------------
 + Change: separated kernel modules and updated the Player driver (stream

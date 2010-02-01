@@ -1202,12 +1202,12 @@
 + },
 +{
 + .name = "Kernel",
-+ .size =   0x00200000,	//kernel 0x40000-0x1fffff 2MB
++ .size =   0x00200000,	//kernel 0x40000-0x23ffff 2MB
 + .offset = 0x00040000,
 + },
 +{
 + .name = "ROOT SQUASHFS",
-+ .size =   0x00a00000, //root 0x240000-0xcffff 10,0MB
++ .size =   0x00a00000, //root 0x240000-0xc3ffff 10,0MB
 + .offset = 0x00240000,
 + },
 +{
@@ -1223,7 +1223,7 @@
 +{
 + .name = "ALL without bootloader",
 + .size =   0x01FC0000,
-+ .offset = 0x00020000,
++ .offset = 0x00040000,
 + }
  };
 +

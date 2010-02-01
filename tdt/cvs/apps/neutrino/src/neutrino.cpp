@@ -3968,7 +3968,7 @@ int CNeutrinoApp::exec(CMenuTarget* parent, const std::string & actionKey)
 	{
 		FILE *f = fopen("/tmp/.reboot", "w");
 		fclose(f);
-		ExitRun(true);
+		ExitRun(true, 2);
 		unlink("/tmp/.reboot");
 		returnval = menu_return::RETURN_NONE;
 	}
