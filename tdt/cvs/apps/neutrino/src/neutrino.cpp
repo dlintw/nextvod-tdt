@@ -157,10 +157,10 @@ uint32_t scrambled_timer;
 char recDir[255];
 char timeshiftDir[255];
 
-/*extern int  tuxtxt_init();
+extern int  tuxtxt_init();
 extern void tuxtxt_start(int tpid);
 extern int  tuxtxt_stop();
-extern void tuxtxt_close();*/
+extern void tuxtxt_close();
 
 int dvbsub_init();
 int dvbsub_stop();
@@ -2208,8 +2208,8 @@ void CNeutrinoApp::InitZapper()
 		g_InfoViewer->lcdUpdateTimer = g_RCInput->addTimer( LCD_UPDATE_TIME_RADIO_MODE, false );
 		radioMode(false);
 	}
-	//if(g_settings.cacheTXT)
-	//	tuxtxt_init();
+	if(g_settings.cacheTXT)
+		tuxtxt_init();
 	if(channelList->getSize() && live_channel_id) {
 		channelList->adjustToChannelID(live_channel_id);
 		CVFD::getInstance ()->showServicename(channelList->getActiveChannelName());
@@ -2217,8 +2217,8 @@ void CNeutrinoApp::InitZapper()
 		g_Sectionsd->setServiceChanged(live_channel_id&0xFFFFFFFFFFFFULL, true );
 		g_Zapit->getPIDS(g_RemoteControl->current_PIDs);
 		if(g_settings.cacheTXT)
-			//if(g_RemoteControl->current_PIDs.PIDs.vtxtpid != 0)
-			//	tuxtxt_start(g_RemoteControl->current_PIDs.PIDs.vtxtpid);
+			if(g_RemoteControl->current_PIDs.PIDs.vtxtpid != 0)
+				tuxtxt_start(g_RemoteControl->current_PIDs.PIDs.vtxtpid);
 		g_RCInput->postMsg(NeutrinoMessages::SHOW_INFOBAR, 0);
 	}
 }
@@ -2561,7 +2561,7 @@ int CNeutrinoApp::run(int argc, char **argv)
 	return 0;
 }
 
-//int tuxtx_main(int _rc, void * _fb, int pid, int x, int y, int w, int h);
+int tuxtx_main(int _rc, void * _fb, int pid, int x, int y, int w, int h);
 
 void CNeutrinoApp::RealRun(CMenuWidget &mainMenu)
 {
@@ -2594,8 +2594,8 @@ void CNeutrinoApp::RealRun(CMenuWidget &mainMenu)
 				if(g_settings.mode_clock)
 					InfoClock->StopClock();
 
-				/*tuxtx_main(g_RCInput->getFileHandle(), frameBuffer->getFrameBufferPointer(), g_RemoteControl->current_PIDs.PIDs.vtxtpid,
-					frameBuffer->getScreenX(), frameBuffer->getScreenY(), frameBuffer->getScreenWidth(), frameBuffer->getScreenHeight());*/
+				tuxtx_main(g_RCInput->getFileHandle(), frameBuffer->getFrameBufferPointer(), g_RemoteControl->current_PIDs.PIDs.vtxtpid,
+					frameBuffer->getScreenX(), frameBuffer->getScreenY(), frameBuffer->getScreenWidth(), frameBuffer->getScreenHeight());
 
 				frameBuffer->paintBackground();
 				//if(!g_settings.cacheTXT)
@@ -3968,7 +3968,7 @@ int CNeutrinoApp::exec(CMenuTarget* parent, const std::string & actionKey)
 	{
 		FILE *f = fopen("/tmp/.reboot", "w");
 		fclose(f);
-		ExitRun(true, 2);
+		ExitRun(true);
 		unlink("/tmp/.reboot");
 		returnval = menu_return::RETURN_NONE;
 	}
@@ -4038,10 +4038,10 @@ int CNeutrinoApp::exec(CMenuTarget* parent, const std::string & actionKey)
 		zapitCfg.gotoXXLongitude = strtod(zapit_long, NULL);
 
 		setZapitConfig(&zapitCfg);
-		//if(g_settings.cacheTXT) {
-		//	tuxtxt_init();
-		//} else
-		//	tuxtxt_close();
+		if(g_settings.cacheTXT) {
+			tuxtxt_init();
+		} else
+			tuxtxt_close();
 
 		//g_Sectionsd->setEventsAreOldInMinutes((unsigned short) (g_settings.epg_old_hours*60));
 		//g_Sectionsd->setHoursToCache((unsigned short) (g_settings.epg_cache_days*24));
@@ -4402,8 +4402,8 @@ bool CNeutrinoApp::changeNotify(const neutrino_locale_t OptionName, void *data)
 void stop_daemons(bool stopall)
 {
 	dvbsub_close();
-	//tuxtxt_stop();
-	//uxtxt_close();
+	tuxtxt_stop();
+	tuxtxt_close();
 
 	printf("httpd shutdown\n");
 	pthread_cancel(nhttpd_thread);

@@ -43,6 +43,7 @@ flash-stock-fosquashfs: \
 
 kernel-cramfs.ubimage: $(flashprefix)/mtdblock1.kernel-cramfs.ubimage.update
 kernel-squashfs.ubimage: $(flashprefix)/mtdblock1.kernel-squashfs.ubimage.update
+kernel-squashfs-hdbox.ubimage: $(flashprefix)/mtdblock1.kernel-squashfs-hdbox.ubimage.update
 kernel-jffs2.ubimage: $(flashprefix)/mtdblock1.kernel-jffs2.ubimage.update
 kernel-focramfs.ubimage: $(flashprefix)/mtdblock1.kernel-focramfs.ubimage.update
 kernel-fosquashfs.ubimage: $(flashprefix)/mtdblock1.kernel-fosquashfs.ubimage.update
@@ -55,10 +56,12 @@ root-stock.tgz: $(flashprefix)/sdax.root-stock.tgz
 root-stock.focramfs: $(flashprefix)/mtdblock3.root-stock.focramfs.update
 root-stock.fosquashfs: $(flashprefix)/mtdblock3.root-stock.fosquashfs.update
 root-stock.enigma2: $(flashprefix)/mtdblock3.root-stock.enigma2.update
+root-stock-hdbox.enigma2: $(flashprefix)/mtdblock2.root-stock-hdbox.enigma2.update
 app-stock.squashfs: $(flashprefix)/mtdblock4.app-stock.squashfs.update
 app-stock.enigma2: $(flashprefix)/mtdblock4.app-stock.enigma2.update
 var-stock.jffs2: $(flashprefix)/mtdblock6.var-stock.jffs2.update
 var-stock.enigma2: $(flashprefix)/mtdblock6.var-stock.enigma2.update
+var-stock-hdbox.enigma2: $(flashprefix)/mtdblock3.var-stock-hdbox.enigma2.update
 data-stock.jffs2: $(flashprefix)/mtdblock6.data-stock.jffs2.update
 
 #flash-null-cramfs: $(flashprefix)/null-cramfs.img

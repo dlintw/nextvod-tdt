@@ -85,3 +85,20 @@ $(flashprefix)/mtdblock6.data-stock.jffs2.update: \
 	make update_header PARTITION=.dat FILEIMAGE=$<
 	@TUXBOX_CUSTOMIZE@
 
+####### hdbox mtd1: $mtdblock.$partition-$mtdtype.ubimage (default: .ker)
+$(flashprefix)/mtdblock1.kernel-squashfs-hdbox.ubimage.update: \
+			$(flashprefix)/mtdblock1.kernel-squashfs-hdbox.ubimage
+	make update_header PARTITION=.ker FILEIMAGE=$<
+	@TUXBOX_CUSTOMIZE@
+
+####### hdbox mtd2: $mtdblock.$partition-$gui.$fstype (default: root)
+$(flashprefix)/mtdblock2.root-stock-hdbox.enigma2.update: \
+			$(flashprefix)/mtdblock2.root-stock-hdbox.enigma2
+	make update_header PARTITION=root FILEIMAGE=$<
+	@TUXBOX_CUSTOMIZE@
+
+####### hdbox mtd3: $mtdblock.$partition-$gui.$fstype (default: .dat)
+$(flashprefix)/mtdblock3.var-stock-hdbox.enigma2.update: \
+		$(flashprefix)/mtdblock3.var-stock-hdbox.enigma2
+	make update_header PARTITION=.var FILEIMAGE=$<
+	@TUXBOX_CUSTOMIZE@

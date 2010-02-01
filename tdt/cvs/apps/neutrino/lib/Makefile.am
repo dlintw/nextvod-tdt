@@ -9,7 +9,5 @@ SUBDIRS = \
 	libnet \
 	xmltree \
 	libdvbsub \
-	libupnpclient
-	
-	
-#		libtuxtxt
+	libupnpclient \
+	libtuxtxt

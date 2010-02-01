@@ -42,13 +42,13 @@
 
 #include <driver/encoding.h>
 
-/*#ifndef TUXTXT_CFG_STANDALONE
+#ifndef TUXTXT_CFG_STANDALONE
 extern int  tuxtxt_init();
 extern void tuxtxt_start(int tpid);
 extern int  tuxtxt_stop();
 extern void tuxtxt_close();
 extern void dvbsub_pause(bool pause);
-#endif*/
+#endif
 //FIXME: auto-timeshift
 extern bool autoshift;
 extern uint32_t shift_timer;
@@ -284,11 +284,11 @@ int CRemoteControl::handleMsg(const neutrino_msg_t msg, neutrino_msg_data_t data
 			sectionsd_setPrivatePid( current_PIDs.PIDs.privatepid );
 			//tuxtxt
 #if 1
-			//tuxtxt_stop();
+			tuxtxt_stop();
 			if(g_settings.cacheTXT) {
 				printf("TuxTXT pid: %X\n", current_PIDs.PIDs.vtxtpid);
-				//if(current_PIDs.PIDs.vtxtpid != 0)
-				//	tuxtxt_start(current_PIDs.PIDs.vtxtpid);
+				if(current_PIDs.PIDs.vtxtpid != 0)
+					tuxtxt_start(current_PIDs.PIDs.vtxtpid);
 			}
 #endif
 			t_channel_id * p = new t_channel_id;

@@ -88,3 +88,15 @@ endif
 #		flash-bc \
 #		flash-netkit_ftp \
 #
+
+$(flashprefix)/root-hdbox: bootstrap $(wildcard root-local.sh) config.status \
+		$(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
+		$(AUTOFS_ADAPTED_ETC_FILES:%=root/etc/%) \
+		$(VSFTPD_ADAPTED_ETC_FILES:%=root/etc/%) \
+		$(SAMBA_ADAPTED_ETC_FILES:%=root/etc/%) \
+		| $(flashprefix)
+	rm -rf $@
+	rm -rf $(flashprefix)-rpmdb
+	cp -rf $(prefix)/release $@/
+	@TUXBOX_CUSTOMIZE@
+	@FLASHROOTDIR_MODIFIED@

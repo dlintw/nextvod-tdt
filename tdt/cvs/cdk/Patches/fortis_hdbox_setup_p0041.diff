@@ -842,7 +842,7 @@
 + 	&wdt_device,
 + 	&ssc_device,
 + 	&rtc_device,
-+ 	&physmap_flash,
++ 	//&physmap_flash,
 + 	&fdma_710x_device,
 + 	&alsa_710x_device_pcm0,
 + 	&alsa_710x_device_pcm1,
@@ -919,3 +919,314 @@
   	{4,0,4,1}
   };
   
+*** linux/drivers/serial/stasc.c	2010-01-08 12:43:32.000000000 +0100
+--- Patchit/stasc.c	2010-01-21 18:53:15.640294076 +0100
+***************
+*** 140,145 ****
+--- 140,153 ----
+  {
+  	unsigned long status;
+  
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	status = asc_in(port, STA);
+  	if (status & ASC_STA_TE)
+  		return TIOCSER_TEMT;
+***************
+*** 169,174 ****
+--- 177,190 ----
+   */
+  static void asc_start_tx(struct uart_port *port)
+  {
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	if (asc_dma_enabled(port))
+  		asc_fdma_start_tx(port);
+  	else
+***************
+*** 180,185 ****
+--- 196,209 ----
+   */
+  static void asc_stop_tx(struct uart_port *port)
+  {
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	if (asc_dma_enabled(port))
+  		asc_fdma_stop_tx(port);
+  	else
+***************
+*** 191,196 ****
+--- 215,228 ----
+   */
+  static void asc_stop_rx(struct uart_port *port)
+  {
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	if (asc_dma_enabled(port))
+  		asc_fdma_stop_rx(port);
+  	else
+***************
+*** 219,224 ****
+--- 251,264 ----
+   */
+  static int asc_startup(struct uart_port *port)
+  {
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	asc_request_irq(port);
+  	asc_transmit_chars(port);
+  	asc_enable_rx_interrupts(port);
+***************
+*** 228,233 ****
+--- 268,281 ----
+  
+  static void asc_shutdown(struct uart_port *port)
+  {
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return;
++ 
+  	if (asc_dma_enabled(port))
+  		asc_disable_fdma(port);
+  	asc_disable_tx_interrupts(port);
+***************
+*** 241,246 ****
+--- 289,302 ----
+  	struct asc_port *ascport = &asc_ports[port->line];
+  	unsigned int baud;
+  
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	baud = uart_get_baud_rate(port, termios, old, 0,
+  				  port->uartclk/16);
+  
+***************
+*** 266,271 ****
+--- 322,335 ----
+  /* Set type field if successful */
+  static void asc_config_port(struct uart_port *port, int flags)
+  {
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	if (!port->membase)
+  		port->membase = ioremap_nocache(port->mapbase,4096);
+  	if (!port->membase)
+***************
+*** 437,442 ****
+--- 501,514 ----
+  	struct clk *clk;
+  	unsigned long rate;
+  
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	rate = port->uartclk;
+  
+  	if (baud < 19200) {
+***************
+*** 457,462 ****
+--- 529,542 ----
+  	unsigned int ctrl_val;
+  	unsigned long flags;
+  
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return;
++ 
+  	/* wait for end of current transmission */
+  	while (!asc_tx_empty(port)){};
+  
+***************
+*** 541,546 ****
+--- 621,634 ----
+  {
+  	unsigned long status;
+  
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	status = asc_in(port, STA);
+  	if (status & ASC_STA_THE) {
+  		return FIFO_SIZE/2;
+***************
+*** 563,568 ****
+--- 651,664 ----
+  	unsigned long intenable;
+  	unsigned char c;
+  
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return;
++ 
+  	txroom = asc_hw_txroom(port);
+  
+  	if ((txroom != 0) && port->x_char) {
+***************
+*** 730,735 ****
+--- 826,839 ----
+  
+  static int asc_request_irq(struct uart_port *port)
+  {
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return 0;
++ 
+  	if (request_irq(port->irq, asc_interrupt, SA_INTERRUPT,
+  			"asc", port)) {
+  		printk(KERN_ERR "asc: cannot allocate irq.\n");
+***************
+*** 740,745 ****
+--- 844,857 ----
+  
+  static void asc_free_irq(struct uart_port *port)
+  {
++ /* TDT: Dont know how to do this correct. We need ASC2 (ttyAS0) for
++  * the frontpanel but dont want to use ttyAS0 as communication device.
++  * we have our own devices. removing ttyAS0 complete does not work
++  * so I try to disable it.
++  */
++ 	if (port->line == 0)
++ 	   return;
++ 
+  	free_irq(port->irq, port);
+  }
+  
+--- linux/drivers/mtd/maps/stboards.c.org	2010-01-19 18:52:44.938889698 +0100
++++ linux/drivers/mtd/maps/stboards.c	2010-01-23 11:41:48.645160273 +0100
+@@ -54,8 +54,8 @@
+ #define ONBOARD_SIZE (8*1024*1024)
+ #define ONBOARD_BANKWIDTH 2
+ #elif defined(CONFIG_SH_STB7100_REF)
+-#define ONBOARD_SIZE (8*1024*1024)
+-#define ONBOARD_BANKWIDTH 2
++#define ONBOARD_SIZE (32*1024*1024)
++#define ONBOARD_BANKWIDTH 2
+ #elif defined(CONFIG_SH_STB5202_REF)
+ #define ONBOARD_SIZE (32*1024*1024)
+ #define ONBOARD_BANKWIDTH 2
+@@ -127,25 +127,39 @@
+ };
+ #endif
+ 
+-static struct mtd_partition onboard_partitions[3] = {
+-	{
+-	 .name = "Boot firmware",
+-	 .size = 0x00040000,
+-	 .offset = 0x00000000,
+-	 /* mask_flags: MTD_WRITEABLE *//* force read-only */
+-	 },
+-	{
+-	 .name = "Kernel",
+-	 .size = 0x00100000,
+-	 .offset = 0x00040000,
+-
+-	 },
+-	{
+-	 .name = "Root FS",
+-	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
+-	 .offset = 0x00140000,
+-	 }
++static struct mtd_partition onboard_partitions[6] = {
++{
++ .name = "Boot Firmware",
++ .size =   0x00020000,	//u-boot 0x00000000-0xa001ffff  128k
++ .offset = 0x00000000,
++ },
++{
++ .name = "Kernel",
++ .size =   0x00200000,	//kernel 0x40000-0x1fffff 2MB
++ .offset = 0x00040000,
++ },
++{
++ .name = "ROOT SQUASHFS",
++ .size =   0x00a00000, //root 0x240000-0xcffff 10,0MB
++ .offset = 0x00240000,
++ },
++{
++ .name = "VAR-JFFS2",
++ .size =   0x013C0000,  //0xa40000-0x1dfffff 19,5MB
++ .offset = 0x00C40000,
++ },
++{
++ .name = "Boot Config",
++ .size =   0x00020000,	//boot config 0xa0020000-0xa003ffff  128k
++ .offset = 0x00020000,
++},
++{
++ .name = "ALL without bootloader",
++ .size =   0x01FC0000,
++ .offset = 0x00020000,
++ }
+ };
++
+ static struct mtd_partition *parsed_parts;
+ static const char *probes[] = { "cmdlinepart", NULL };
+ 

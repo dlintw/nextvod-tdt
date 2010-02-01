@@ -20,6 +20,7 @@ from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from enigma import eTimer
 from re import compile as re_compile, search as re_search
 from time import time, localtime, strftime
+import os,sys,statvfs
 
 my_global_session = None
 debug = False
@@ -50,6 +51,17 @@ ioRecBothOff = struct.pack('LLB', 0x3000, 0x0, 0x0)
 ioEthBothOff = struct.pack('LLB', 0x0c000000, 0x0, 0x0)
 ioEthLeftOn = struct.pack('LLB', 0x08000000, 0x0, 0xe)
 ioEthRightOn = struct.pack('LLB', 0x04000000, 0x0,0xb)
+ioHddClear =	struct.pack('LLB', 0x0, 0xff8000,0x0)
+ioHddUsage = (	struct.pack('LLB', 0x0, 0x006000,0xf),	# HDD empty
+		struct.pack('LLB', 0x0, 0x00e000,0xf),
+		struct.pack('LLB', 0x0, 0x01e000,0xf),
+		struct.pack('LLB', 0x0, 0x03e000,0xf),
+		struct.pack('LLB', 0x0, 0x07e000,0xf),
+		struct.pack('LLB', 0x0, 0x0fe000,0xf),
+		struct.pack('LLB', 0x0, 0x1fe000,0xf),
+		struct.pack('LLB', 0x0, 0x3fe000,0xf),
+		struct.pack('LLB', 0x0, 0x7fe000,0xf))	# HDD full
+ioHddFull = struct.pack('LLB', 0x0, 0x800000,0x6)	# "HDD full" flashing
 ioColonOn = struct.pack('LLB', 0x4, 0x0,0x3)
 ioColonOff = struct.pack('LLB', 0x4, 0x0,0x0)
 ioBrightnessCmd = 0x40013a05
@@ -59,6 +71,7 @@ ioTypematicDelayCmd = 0x40013a0d
 ioTypematicRateCmd = 0x40013a0e
 ioScrollModeCmd = 0x40033a15
 ioAllcapsCmd = 0x40013a14
+hddCheckPeriod = 10
 
 class TopfieldVFDSetup(ConfigListScreen, Screen):
 	skin = """
@@ -138,6 +151,8 @@ class TopfieldVFD:
 		self.txCount = 0
 		self.clock = 0
 		self.valuesSet = 0
+		self.hddUsed = 10 # initialize with an invalid value
+		self.hddCheckCounter = hddCheckPeriod
 		self.ethEnabled = config.plugins.TopfieldVFD.showEthernet.getValue()
 		self.clockEnabled = config.plugins.TopfieldVFD.showClock.getValue()
 		self.setValues()
@@ -251,6 +266,25 @@ class TopfieldVFD:
                 except AttributeError:
                         None
 
+	def displayHddUsed(self):
+		# determine the HDD usage
+		f = os.statvfs("/hdd")
+
+		# there are 8 HDD segments in the VFD
+		used = (f.f_blocks - f.f_bavail) * 8 / f.f_blocks
+		if self.hddUsed != used:
+		  try:
+			fd = open("/dev/fpc")
+			if self.hddUsed > used:
+				fcntl.ioctl(fd.fileno(), ioIconCmd, ioHddClear)
+			fcntl.ioctl(fd.fileno(), ioIconCmd, ioHddUsage[used])
+			if used == 8:
+				fcntl.ioctl(fd.fileno(), ioIconCmd, ioHddFull)
+			fd.close();
+		  except IOError,e:
+			self.hddUsed = used # dummy operation
+		  self.hddUsed = used
+
 	def handleTimer(self):
 		#print "[ TopfieldVFD timer ]"
 		if self.valuesSet == 0:
@@ -266,6 +300,13 @@ class TopfieldVFD:
 					if debug:
 						print "TopfieldVFD: handleTimer (clock) ", e
 			
+		# check HDD periodically
+		if self.hddCheckCounter < hddCheckPeriod:
+			self.hddCheckCounter += 1
+		else:
+			self.hddCheckCounter = 0
+			self.displayHddUsed()
+			   
 		if self.ethEnabled == False:
 			return
 			

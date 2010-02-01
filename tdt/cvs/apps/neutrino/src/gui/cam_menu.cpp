@@ -150,7 +150,7 @@ int CCAMMenuHandler::handleCamMsg (const neutrino_msg_t msg, neutrino_msg_data_t
 	MMI_MENU_LIST_INFO * pMenu = &Menu;
 	MMI_ENGUIRY_INFO * pMmiEnquiry = &MmiEnquiry;
 
-printf("CCAMMenuHandler::handleCamMsg >\n");
+//printf("CCAMMenuHandler::handleCamMsg >\n");
 
 //printf("CCAMMenuHandler::handleCamMsg: msg 0x%x data 0x%x\n", msg, data);
 
@@ -361,7 +361,7 @@ printf("CCAMMenuHandler::handleCamMsg: bottom: %s\n", pMenu->bottom);
 	} else
 		ret = -1;
 
-printf("CCAMMenuHandler::handleCamMsg <\n");
+//printf("CCAMMenuHandler::handleCamMsg <\n");
 //printf("CCAMMenuHandler::handleCamMsg: return %d\n", ret);
 	return ret;
 }

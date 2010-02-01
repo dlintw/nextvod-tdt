@@ -28,7 +28,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    echo "init stmfb"
    insmod $MODDIR/stmcore-display-stx7109c3.ko
-   insmod $MODDIR/stmfb.ko display0=720x576-32@60:12m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
+   insmod $MODDIR/stmfb.ko display0=720x576-32@50:12m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
 
    echo "LOADING MODULES"   
    fp_control -c
@@ -75,8 +75,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    mknod /dev/rc c 147 1 
 
    #toggleFeedback 0 = false, 1 = true
-   #maxRate (same key) = 2, maxDelay (determine new key) = 400
-   /bin/evremote2 0 2 400 &
+   #maxRate (same key) = 2, maxDelay (determine new key) = 500
+   /bin/evremote2 0 2 500 &
 
    #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
    #mount /dev/sr0 /media/dvd

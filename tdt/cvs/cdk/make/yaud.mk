@@ -114,6 +114,13 @@ flash-ufs910-enigma2: yaud-none lirc stslave \
 		var-stock.enigma2
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+flash-hdbox-enigma2: yaud-none lirc \
+		boot-elf hotplug remote firstboot enigma2 enigma2-misc release \
+		kernel-squashfs-hdbox.ubimage \
+		root-stock-hdbox.enigma2 \
+		var-stock-hdbox.enigma2
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 yaud-none:	bare-os \
 		libdvdcss \
 		libdvdread \

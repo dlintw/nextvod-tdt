@@ -48,7 +48,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    echo "init player"
    insmod $MODDIR/mmelog.ko
-   insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
+   insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER1;
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/stm_v4l2.ko
    insmod $MODDIR/pseudocard.ko
@@ -73,7 +73,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    mknod /dev/rc c 147 1 
    #maxRate (same key) = 3, maxDelay (determine new key) = 150
-   /bin/evremote2 3 150 &
+   /bin/evremote2 3 300 &
 
    #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
    #mount /dev/sr0 /media/dvd

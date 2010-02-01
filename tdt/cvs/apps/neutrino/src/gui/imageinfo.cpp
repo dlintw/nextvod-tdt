@@ -163,7 +163,7 @@ void CImageInfo::paint()
 	const char * creator   = config.getString("creator",   "n/a").c_str();
 	const char * version   = config.getString("version",   "no version").c_str();
 	const char * docs      = config.getString("docs",   "man neutrino").c_str();
-	const char * forum     = config.getString("forum",   "http://kathi-forum.de").c_str();
+	const char * forum     = config.getString("forum",   "http://gitorious.org/open-duckbox-project-sh4").c_str();
 
 	static CFlashVersionInfo versionInfo(version);
 	const char * releaseCycle = versionInfo.getReleaseCycle();

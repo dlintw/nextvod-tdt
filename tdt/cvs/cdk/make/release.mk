@@ -125,7 +125,8 @@ release_ufs910:
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
-	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
+	mv $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 
 
 release_tf7700: release_common_utils
@@ -156,6 +157,15 @@ release_tf7700: release_common_utils
 $(DEPDIR)/min-release $(DEPDIR)/std-release $(DEPDIR)/max-release $(DEPDIR)/ipk-release $(DEPDIR)/release: \
 $(DEPDIR)/%release: release_base release_$(TF7700)$(UFS910)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)
 	touch $@
+
+
+release-clean:
+	rm -f $(DEPDIR)/release
+	rm -f $(DEPDIR)/release_base
+	rm -f $(DEPDIR)/release_$(TF7700)$(UFS910)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)
+	rm -f $(DEPDIR)/release_common_utils
+	rm -f $(DEPDIR)/release_cube_common
+
 
 # the following target creates the common file base
 release_base:

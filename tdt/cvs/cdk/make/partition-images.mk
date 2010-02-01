@@ -456,3 +456,87 @@ $(flashprefix)/root-%.disk.tar: $(flashprefix)/root-%-disk
 		rm $$dir/.fakeroot )
 	chmod 644 $@
 	@TUXBOX_CUSTOMIZE@
+################################################################################
+###################### HDBOX FLASH #############################################
+################################################################################
+HDBOX_KERNEL_PARTITION_SIZE=0x200000
+
+$(flashprefix)/mtdblock1.kernel-squashfs-hdbox.ubimage: \
+			linux-kernel.do_compile | $(flashprefix)
+	rm $@* >/dev/null 2>&1 || true
+#	$(INSTALL) -m644 @DIR_linux@/arch/sh/boot/uImage $@
+	$(INSTALL) -m644 $(KERNEL_DIR)/arch/sh/boot/uImage $@
+	@FILESIZE=$$(stat -c%s $@); \
+	kernel_partition_size=`echo -e "$(HDBOX_KERNEL_PARTITION_SIZE)" | tr '[a-f]' '[A-F]' | cut  -b3-`; \
+	KERNELSIZE=`echo -e "ibase=16;$$hdbox_kernel_partition_size" | bc`; \
+	if [ $$FILESIZE -gt $$KERNELSIZE ]; \
+		then echo "fatal error: File $@ too large ($$FILESIZE > $$KERNELSIZE, $(HDBOX_KERNEL_PARTITION_SIZE))"; \
+		rm $@; exit 1; \
+	fi
+	@TUXBOX_CUSTOMIZE@
+
+HDBOX_ROOT_PARTITION_SIZE=0xa00000
+$(flashprefix)/mtdblock2.root-stock-hdbox.enigma2: $(flashprefix)/root-stock-hdbox-enigma2 $(MKSQUASHFS)
+#$(flashprefix)/mtdblock.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
+	rm $@* >/dev/null 2>&1 || true
+	( dir=$(flashprefix) && \
+		echo "cd $</dev" > $$dir/.fakeroot && \
+		echo "mknod -m 0600 console c 5 1" >> $$dir/.fakeroot && \
+		echo "chown root:tty console" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
+		echo "chown root:root null" >> $$dir/.fakeroot && \
+		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
+		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
+		echo "mknod -m 0660 vfd c 147 0" >> $$dir/.fakeroot && \
+		echo "MAKEDEV=\"$(flashprefix)/root-hdbox/sbin/MAKEDEV -p $(flashprefix)/root-hdbox/etc/passwd -g $(flashprefix)/root-hdbox/etc/group\"" >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} std' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} hda hdb' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} sda sdb sdc sdd' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} scd0 scd1' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} st0 st1' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} sg' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} ptyp ptyq' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} console' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} lp par audio fb rtc lirc st200 alsasnd' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} ppp busmice' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} ttyAS1 ttyAS2 ttyAS3' >> $$dir/.fakeroot && \
+		echo 'ln -sf /dev/input/mouse0 mouse' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} input i2c mtd' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} dvb' >> $$dir/.fakeroot && \
+		echo "mkdir pts" >> $$dir/.fakeroot && \
+		echo "mkdir shm" >> $$dir/.fakeroot && \
+		echo "$(MKSQUASHFS) $< $@ -noappend" >> $$dir/.fakeroot && \
+		chmod 755 $$dir/.fakeroot && \
+		$(FAKEROOT) -- $$dir/.fakeroot && \
+		rm $$dir/.fakeroot )
+#	$(MKSQUASHFS) $< $@ -noappend -le -force-uid 0 -force-gid 0 -all-root
+	chmod 644 $@
+	@FILESIZE=$$(stat -c%s $@); \
+	hdbox_root_partition_size=`echo -e "$(HDBOX_ROOT_PARTITION_SIZE)" | tr '[a-f]' '[A-F]' | cut  -b3-`; \
+	ROOTSIZE=`echo -e "ibase=16;$$hdbox_root_partition_size" | bc`; \
+	if [ $$FILESIZE -gt $$ROOTSIZE ]; \
+		then echo "fatal error: File $@ too large ($$FILESIZE > $$ROOTSIZE, $(HDBOX_ROOT_PARTITION_SIZE))"; \
+		rm $@; exit 1; \
+	fi
+	@TUXBOX_CUSTOMIZE@
+
+HDBOX_DATA_PARTITION_SIZE=0x13C0000
+$(flashprefix)/mtdblock3.var-stock-hdbox.enigma2: $(flashprefix)/var-stock-hdbox-enigma2 $(MKJFFS2) config.status
+	rm $@* >/dev/null 2>&1 || true
+#	( dir=$(flashprefix) && \
+#		echo "cp -rd $(stockdir)/.dat/* $< || true" > $$dir/.fakeroot && \
+#		echo "$(MKJFFS2) -e 0x10000 -r $< -o $@" >> $$dir/.fakeroot && \
+#		chmod 755 $$dir/.fakeroot && \
+#		$(FAKEROOT) -- $$dir/.fakeroot && \
+#		rm $$dir/.fakeroot )
+	$(MKJFFS2) -e 0x10000 -r $< -o $@
+	chmod 644 $@
+	@FILESIZE=$$(stat -c%s $@); \
+	hdbox_data_partition_size=`echo -e "$(HDBOX_DATA_PARTITION_SIZE)" | tr '[a-f]' '[A-F]' | cut  -b3-`; \
+	DATASIZE=`echo -e "ibase=16;$$hdbox_data_partition_size" | bc`; \
+	if [ $$FILESIZE -gt $$DATASIZE ]; \
+		then echo "fatal error: File $@ too large ($$FILESIZE > $$DATASIZE, $(HDBOX_DATA_PARTITION_SIZE))"; \
+		rm $@; exit 1; \
+	fi
+	@TUXBOX_CUSTOMIZE@

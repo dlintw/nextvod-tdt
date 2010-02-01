@@ -503,3 +503,74 @@ $(flashprefix)/root-enigma2-%: \
 	touch $@
 	@TUXBOX_CUSTOMIZE@
 
+####### HDBOX root
+
+$(flashprefix)/root-stock-hdbox-enigma2: \
+		$(flashprefix)/root-hdbox
+	rm -rf $@
+	cp -rd $< $@
+
+	rm -rf $@/var/*
+	rm -rf $@/etc/init.d/rcS
+	cp -rd $(buildprefix)/root/release/rcS_fortis_hdbox_flash_e2 $@/etc/init.d/rcS
+#	cd $@/etc && sed -i -e "s|^proc|/dev/mtdblock3     /var     jffs2     defaults     0 0\nproc|g" fstab
+	sed -i -e "s/\/bin\/stslave -t stb7100.0 -R \/boot\/video.elf/\/bin\/ustslave \/dev\/st231-0 \/boot\/video.elf/g" $@/etc/init.d/rcS
+	sed -i -e "s/\/bin\/stslave -t stb7100.1 -R \/boot\/audio.elf/\/bin\/ustslave \/dev\/st231-1 \/boot\/audio.elf/g" $@/etc/init.d/rcS
+#	echo "/dev/mtdblock3     /var     jffs2     defaults     0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/run            tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/lock           tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/tmp            tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/log            tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/lib/urandom    tmpfs   defaults                        0 0" >> $@/etc/fstab
+
+	rm $@/boot/uImage
+#	rm $@/bin/{stslave,devinit,hdmi-control,hdmi-info}
+	rm $@/usr/share/fonts/{valis_enigma.ttf,valis_lcd.ttf,ae_AlMateen.ttf,md_khmurabi_10.ttf,seg_internat.ttf,goodtime.ttf,nmsbd.ttf}
+	rm -Rf  $@/usr/lib/python2.6
+	ln -s /var/usr/lib/python2.6 $@/usr/lib/python2.6
+	ln -s /var/lib/init $@/lib/init
+	rm -Rf  $@/usr/lib/enigma2/python
+	ln -s /var/usr/lib/enigma2/python $@/usr/lib/enigma2/python
+	rm -Rf  $@/usr/local/share/enigma2
+	ln -s /var/usr/local/share/enigma2 $@/usr/local/share/enigma2
+	rm -Rf  $@/etc/enigma2
+	ln -s /var/etc/enigma2 $@/etc/enigma2
+	rm -Rf  $@/etc/resolv.conf
+	ln -s /var/etc/resolv.conf $@/etc/resolv.conf
+	rm -Rf  $@/etc/network
+	ln -s /var/etc/network $@/etc/network
+	rm $@/usr/local/bin/enigma2
+	ln -s /var/usr/local/bin/enigma2 $@/usr/local/bin/enigma2
+	rm -Rf $@/rbin/splash*
+	find $@/ -name libncurses* -exec rm {} \;
+	find $@/ -name libfbsp* -exec rm {} \;
+#	find $@/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
+	@TUXBOX_CUSTOMIZE@
+
+$(flashprefix)/var-stock-hdbox-enigma2: \
+		$(flashprefix)/root-hdbox
+	rm -rf $@
+	cp -rd $</var $@
+#	-cp -rd $(flashprefix)/root-hdbox/var/* $@
+	mkdir $@/{usr,lock,lib,log,run,tmp}
+	mkdir $@/lib/init
+	mkdir $@/usr/{lib,local}
+	mkdir $@/usr/lib/enigma2
+	mkdir $@/usr/local/{share,bin}
+	cp -rf  $</usr/lib/python2.6 $@/usr/lib/
+	cp -rf  $</usr/lib/enigma2/python $@/usr/lib/enigma2
+	cp -rf  $</usr/local/share/enigma2 $@/usr/local/share/
+	cp -rf  $</etc/enigma2 $@/etc/
+	cp -rf  $</etc/resolv.conf $@/etc/
+	cp -rf  $</etc/network $@/etc/
+	cp -rf  $</usr/local/bin/enigma2 $@/usr/local/bin/
+	rm $@/etc/.firstboot
+#	rm -rf $@/usr/lib/enigma2/python/Plugins/Extensions/*
+#	find $@/ -name *.pyo -exec rm {} \;
+
+#	rm -f $@/bin/*
+#	rm -rd $@/etc/*
+#	$(target)-strip --remove-section=.comment --remove-section=.note $@/bin/* 2>/dev/null || /bin/true && \
+#	$(target)-strip $@/lib/* 2>/dev/null || /bin/true && \
+	touch $@
+	@TUXBOX_CUSTOMIZE@

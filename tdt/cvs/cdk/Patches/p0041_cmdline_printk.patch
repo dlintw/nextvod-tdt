@@ -1,5 +1,5 @@
-*** linux/kernel/printk.c	2009-11-17 21:34:25.000000000 +0100
---- PRINTK/printk.c	2009-11-17 21:35:52.000000000 +0100
+*** linux/kernel/printk.c	2010-01-21 18:29:54.552204439 +0100
+--- Patchit/printk.c	2010-01-21 18:27:04.920036761 +0100
 ***************
 *** 122,127 ****
 --- 122,128 ----
@@ -24,14 +24,14 @@
 + 
 + static int __init printk_cmdline_opt(char *str)
 + {
-+ 	if (*str)
-+ 		return 0;
-+ 	use_printk = 1;
-+ 	return 1;
++         if (get_option(&str, &use_printk)){
++                 printk(KERN_NOTICE "use_printk per bootargs: %d\n", use_printk);
++                 return 1;
++         }
++         else
++                 return 0;
 + }
-+ 
-+ __setup("printk", printk_cmdline_opt);
-+ 
++ __setup("printk=", printk_cmdline_opt);
 + 
   __attribute__((weak)) unsigned long long printk_clock(void)
   {

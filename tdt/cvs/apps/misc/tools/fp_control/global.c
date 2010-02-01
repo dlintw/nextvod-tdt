@@ -41,7 +41,7 @@ unsigned long int read_e2_timers(time_t curTime)
 	char              line[1000];
 	FILE              *fd = fopen (E2TIMERSXML, "r");
 
-	if (fd)
+	if (fd > 0)
 	{
 		while(fgets(line, 999, fd) != NULL)
 		{
@@ -55,6 +55,9 @@ unsigned long int read_e2_timers(time_t curTime)
 				recordTime = (tmp < recordTime && tmp > curTime ? tmp : recordTime);
 			}
 		}
+	} else
+	{
+	    printf("error reading %s\n", E2TIMERSXML);
 	}
 
 	if (recordTime == 3000000000ul)
