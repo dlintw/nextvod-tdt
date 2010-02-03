@@ -41,6 +41,28 @@
 #include <daemonc/remotecontrol.h>
 extern CRemoteControl * g_RemoteControl; /* neutrino.cpp */
 
+
+#ifdef __sh__
+//hacky: should be done as member functions
+//konfetti: let us share the device with evremote and fp_control
+//it does currently not support more than one user (see e.g. micom)
+int openDevice()
+{
+	int fd = open("/dev/vfd", O_RDWR);
+	if(fd < 0)
+		fd = open("/dev/fplarge", O_RDWR);
+
+        return fd;
+}
+
+void closeDevice(int fd)
+{
+	if (fd)
+	   close(fd);
+}
+
+#endif
+
 CVFD::CVFD()
 {
 #ifdef VFD_UPDATE
@@ -57,25 +79,25 @@ CVFD::CVFD()
 #endif // VFD_UPDATE
 
 	has_lcd = 1;
-#ifdef __sh__
-	fd = open("/dev/vfd", O_RDWR);
-	if(fd < 0)
-		fd = open("/dev/fplarge", O_RDWR);
-#else
+
+#ifndef __sh__
 	fd = open("/dev/display", O_RDONLY);
-#endif
+
 	if(fd < 0) {
 		perror("/dev/display");
 		has_lcd = 0;
 	}
+#endif	
 	text[0] = 0;
 	clearClock = 0;
 }
 
 CVFD::~CVFD()
 {
+#ifndef __sh__
 	if(fd > 0)
 		close(fd);
+#endif
 }
 
 CVFD* CVFD::getInstance()
@@ -158,9 +180,15 @@ void CVFD::setlcdparameter(int dimm, const int power)
 	brightness = dimm;
 
 printf("CVFD::setlcdparameter dimm %d power %d\n", dimm, power);
+#ifdef __sh__
+        fd = openDevice();
+#endif
 	int ret = ioctl(fd, IOC_VFD_SET_BRIGHT, dimm);
 	if(ret < 0)
 		perror("IOC_VFD_SET_BRIGHT");
+#ifdef __sh__
+        closeDevice(fd);
+#endif
 }
 
 void CVFD::setlcdparameter(void)
@@ -540,17 +568,29 @@ void CVFD::Unlock()
 void CVFD::Clear()
 {
 	if(!has_lcd) return;
+#ifdef __sh__
+        fd = openDevice();
+#endif
 	int ret = ioctl(fd, IOC_VFD_CLEAR_ALL, 0);
 	if(ret < 0)
 		perror("IOC_VFD_SET_TEXT");
+#ifdef __sh__
+        closeDevice(fd);
+#endif
 }
 
 void CVFD::ShowIcon(vfd_icon icon, bool show)
 {
 //printf("CVFD::ShowIcon %s %x\n", show ? "show" : "hide", (int) icon);
+#ifdef __sh__
+        fd = openDevice();
+#endif
 	int ret = ioctl(fd, show ? IOC_VFD_SET_ICON : IOC_VFD_CLEAR_ICON, icon);
 	if(ret < 0)
 		perror(show ? "IOC_VFD_SET_ICON" : "IOC_VFD_CLEAR_ICON");
+#ifdef __sh__
+        closeDevice(fd);
+#endif
 }
 
 void CVFD::ShowText(char * str)
@@ -574,7 +614,9 @@ printf("CVFD::ShowText: [%s]\n", str);
 //printf("****************************** CVFD::ShowText: %s\n", str);
 	//FIXME !! 
 #ifdef __sh__
+        fd = openDevice();
 	ret = write(fd , str, len>16?16:len);
+        closeDevice(fd);
 #else
 	ret = ioctl(fd, IOC_VFD_SET_TEXT, len ? str : NULL);
 #endif
