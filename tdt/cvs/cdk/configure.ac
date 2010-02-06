@@ -24,6 +24,16 @@ AC_ARG_ENABLE(stm22,
 	,[enable_stm22=no])
 AM_CONDITIONAL(STM22,test "$enable_stm22" = "yes")
 
+AC_ARG_ENABLE(stm23,
+	AS_HELP_STRING(--enable-stm23,	set up the CDK to use the STLinux 2.3),
+	,[enable_stm23=no])
+AM_CONDITIONAL(STM23,test "$enable_stm23" = "yes")
+
+AC_ARG_ENABLE(havana,
+	AS_HELP_STRING(--enable-havana,	set up the CDK to use the STLinux 2.3 Havana),
+	,[enable_havana=no])
+AM_CONDITIONAL(STM23_HAVANA,test "$enable_havana" = "yes")
+
 AC_ARG_ENABLE(p0040,
 	AS_HELP_STRING(--enable-p0040,	set up the CDK to use the STLinux 2.2 with patchlevel 0040),
 	,[enable_p0040=no])
@@ -204,6 +214,14 @@ AC_ARG_ENABLE(ufs910,
 	esac],[enable_ufs910=no])
 AM_CONDITIONAL(ENABLE_UFS910,test "$enable_ufs910" = "yes")
 AC_SUBST(UFS910)
+
+AC_ARG_ENABLE(ufs912,
+	AS_HELP_STRING(--enable-ufs912,    enable kathrein ufs912 stuff),
+	[case "${enableval}" in
+		yes) UFS912=ufs912 ;;
+	esac],[enable_ufs912=no])
+AM_CONDITIONAL(ENABLE_UFS912,test "$enable_ufs912" = "yes")
+AC_SUBST(UFS912)
 
 AC_ARG_ENABLE(cuberevo,
 	AS_HELP_STRING(--enable-cuberevo,    enable cuberevo stuff),
@@ -814,6 +832,7 @@ kernelversion:	       $KERNELVERSION
 localversion:          $KERNELSTMLABEL
 STLinux 2.2:	       $enable_stm22
 STLinux 2.3:	       $enable_stm23
+STLinux 2.3_Havana:    $enable_havana
 Patchlevel P0040:      $enable_p0040
 Patchlevel P0041:      $enable_p0041
 vdr VDR 1.7.11:        $enable_vdr1711
