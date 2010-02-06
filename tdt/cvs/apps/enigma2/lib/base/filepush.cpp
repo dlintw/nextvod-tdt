@@ -207,9 +207,9 @@ void eFilePushThread::thread()
 			if (m_send_pvr_commit && !already_empty)
 			{
 				eDebug("sending PVR commit");
+#if !defined(__sh__)				
 				struct pollfd pfd[1] = {m_fd_dest, POLLHUP};
 				poll(pfd, 1, 10000);
-#if !defined(__sh__)				
 				sleep(5); /* HACK to allow ES buffer to drain */
 #endif
 				already_empty = 1;
