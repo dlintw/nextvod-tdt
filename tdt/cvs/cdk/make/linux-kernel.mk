@@ -127,7 +127,30 @@ endif
 
 #endof STM22
 else
+if STM23
 
+if STM23_HAVANA
+
+$(DEPDIR)/linux-kernel.do_prepare:
+	git clone git://git.stlinux.com/havana/com.st.havana.kernel.git $(KERNEL_DIR); 
+	touch $@
+
+
+$(DEPDIR)/linux-kernel.do_compile: \
+		bootstrap-cross \
+		linux-kernel.do_prepare \
+		Patches/mb618se_defconfig \
+		config.status \
+		| $(HOST_U_BOOT_TOOLS)
+	-rm $(DEPDIR)/linux-kernel*.do_compile
+	cd $(KERNEL_DIR) && \
+		export PATH=$(hostprefix)/bin:$(PATH) && \
+		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
+		@M4@ ../$(word 3,$^)	> .config && \
+		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
+	touch $@
+#endof stm23_havana
+else
 ##################################################################################
 #stlinux23
 
@@ -292,7 +315,9 @@ $(DEPDIR)/linux-kernel.do_compile: \
 	touch $@
 
 #endof STM23
-endif 
+endif
+endif
+endif
 
 NFS_FLASH_SED_CONF=$(foreach param,XCONFIG_NFS_FS XCONFIG_LOCKD XCONFIG_SUNRPC,-e s"/^.*$(param)[= ].*/$(param)=m/")
 
