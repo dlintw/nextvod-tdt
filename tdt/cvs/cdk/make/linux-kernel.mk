@@ -18,7 +18,15 @@ COMMONPATCHES_41 = \
 FORTISPATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/fortis_hdbox_setup_p0041.diff \
 		Patches/fortis_hdbox_dvb.diff \
-		Patches/fortis_hdbox_sound.patch
+		Patches/fortis_hdbox_sound.patch \
+		Patches/fat.patch \
+		Patches/fuse.patch \
+		Patches/net.patch \
+		Patches/tune.patch \
+		Patches/usbwait123.patch \
+		Patches/jffs2-lzma.patch \
+		Patches/ftdi_sio.c.patch \
+		Patches/fortis_stboards_p0041.patch
 
 UFS922PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/ufs922_stasc_p0041.patch \
@@ -30,18 +38,32 @@ UFS922PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/tune.patch \
 		Patches/usbwait123.patch \
 		Patches/jffs2-lzma.patch \
+		Patches/ftdi_sio.c.patch \
 		Patches/ufs922_stboards_p0041.patch
 
 TF7700PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/ufs922_stasc_p0041.patch \
-		Patches/tf7700_setup_p0041.patch
+		Patches/tf7700_setup_p0041.patch \
+		Patches/fat.patch \
+		Patches/fuse.patch \
+		Patches/net.patch \
+		Patches/tune.patch \
+		Patches/usbwait123.patch \
+		Patches/jffs2-lzma.patch \
+		Patches/ftdi_sio.c.patch
 
 UFS910PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/ufs910_smsc_p0041.patch \
 		Patches/ufs910_i2c_p0041.patch \
 		Patches/ufs910_setup_p0041.patch \
-		Patches/ufs910_stboards_p0041.patch \
-		Patches/ufs910_nits_net.patch
+		Patches/fat.patch \
+		Patches/fuse.patch \
+		Patches/net.patch \
+		Patches/tune.patch \
+		Patches/usbwait123.patch \
+		Patches/jffs2-lzma.patch \
+		Patches/ftdi_sio.c.patch \
+		Patches/ufs910_stboards_p0041.patch
 
 FLASHUFS910PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/ufs910_smsc_p0041.patch \
