@@ -132,7 +132,18 @@ if STM23
 if STM23_HAVANA
 
 $(DEPDIR)/linux-kernel.do_prepare:
+	rm -rf $(KERNEL_DIR)
 	git clone git://git.stlinux.com/havana/com.st.havana.kernel.git $(KERNEL_DIR); 
+
+	$(INSTALL) -m644 Patches/mb618se_defconfig $(KERNEL_DIR)/.config
+
+	-rm $(KERNEL_DIR)/localversion*
+	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
+	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig
+	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/asm
+	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/linux/version.h
+	rm $(KERNEL_DIR)/.config
+
 	touch $@
 
 
