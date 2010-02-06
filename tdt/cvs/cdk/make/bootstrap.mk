@@ -181,7 +181,7 @@ $(HOST_MTD_UTILS): RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSIO
 # BOOTSTRAP-HOST
 #
 $(DEPDIR)/bootstrap-host: | \
-		$(CCACHE_BIN) host-rpmconfig host-distributionutils host-filesystem host-autotools host-mtd-utils host-python
+		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils host-filesystem host-autotools host-mtd-utils host-python
 	[ "x$*" = "x" ] && touch -r RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).sh4.rpm $@ || true
 
 
@@ -221,7 +221,7 @@ $(HOST_MTD_UTILS): RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSIO
 # BOOTSTRAP-HOST
 #
 $(DEPDIR)/bootstrap-host: | \
-		$(CCACHE_BIN) host-rpmconfig host-distributionutils host-filesystem host-autotools host-mtd-utils host-python
+		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils host-filesystem host-autotools host-mtd-utils host-python
 	[ "x$*" = "x" ] && touch -r RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).sh4.rpm $@ || true
 
 
