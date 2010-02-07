@@ -16703,8 +16703,8 @@ diff -Nur enigma2-nightly.org/mytest.py enigma2-nightly.org/mytest.py
  			print "dvb time sync disabled... so set RTC now to current linux time!", strftime("%Y/%m/%d %H:%M", localtime(nowTime))
 
 diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/lib/python/Screens/InfoBar.py
---- enigma2-nightly.org/lib/python/Screens/InfoBar.py	2010-01-03 23:16:22.500600000 +0100
-+++ enigma2-nightly.org/lib/python/Screens/InfoBar.py	2010-01-03 23:18:41.332599958 +0100
+--- enigma2-nightly.org/lib/python/Screens/InfoBar.py	2010-02-07 23:16:22.500600000 +0100
++++ enigma2-nightly.org/lib/python/Screens/InfoBar.py	2010-02-07 23:18:41.332599958 +0100
 @@ -7,15 +7,31 @@
  
  profile("LOAD:enigma")
@@ -16798,7 +16798,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +#+++<		
  			x.__init__(self)
  
-@@ -71,4 +113,32 @@
+@@ -71,4 +113,39 @@
  		assert InfoBar.instance is None, "class InfoBar is a singleton class and just one instance of this class is allowed!"
  		InfoBar.instance = self
 +
@@ -16809,6 +16809,9 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +		from enigma import eTimer
 +		self.hideVolTimer = eTimer()
 +		self.hideVolTimer.callback.append(self.volHide)
++		from Components.config import config, ConfigSubsection, ConfigInteger
++		config.audio = ConfigSubsection()
++		config.audio.volume = ConfigInteger(default = 100, limits = (0, 100))
 +		
 +	def volHide(self):
 +		self.volumeDialog.hide()
@@ -16820,7 +16823,9 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +		self.volumeDialog.setValue(eDVBVolumecontrol.getInstance().getVolume())
 +		self.volumeDialog.show()
 +		self.hideVolTimer.start(3000, True)
-+		
++		config.audio.volume.value = eDVBVolumecontrol.getInstance().getVolume()
++		config.audio.volume.save()
++
 +	def _volDown(self):
 +		print "_volDown"
 +		from enigma import eDVBVolumecontrol
@@ -16828,10 +16833,12 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +		self.volumeDialog.setValue(eDVBVolumecontrol.getInstance().getVolume())
 +		self.volumeDialog.show()
 +		self.hideVolTimer.start(3000, True)
++		config.audio.volume.value = eDVBVolumecontrol.getInstance().getVolume()
++		config.audio.volume.save()
 +#+++<
  
  	def __onClose(self):
-@@ -90,4 +160,22 @@
+@@ -90,4 +167,22 @@
  		self.onExecBegin.remove(self.__checkServiceStarted)
  
 +#+++>
@@ -16854,7 +16861,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +
  	def serviceStarted(self):  #override from InfoBarShowHide
  		new = self.servicelist.newServicePlayed()
-@@ -112,4 +200,17 @@
+@@ -112,4 +207,17 @@
  			from Screens.ChannelSelection import ChannelSelectionRadio
  			self.session.openWithCallback(self.ChannelSelectionRadioClosed, ChannelSelectionRadio, self)
 +
@@ -16872,7 +16879,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +#+++<
  
  	def ChannelSelectionRadioClosed(self, *arg):
-@@ -214,4 +315,9 @@
+@@ -214,4 +322,9 @@
  		if answer in ("quit", "quitanddeleteconfirmed"):
  			config.movielist.last_videodir.cancel()
 +#+++> 
@@ -16882,7 +16889,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +#+++<
  			self.close()
  		elif answer == "movielist":
-@@ -220,4 +326,9 @@
+@@ -220,4 +333,9 @@
  			from Screens.MovieSelection import MovieSelection
  			self.session.openWithCallback(self.movieSelected, MovieSelection, ref)
 +#+++> 
