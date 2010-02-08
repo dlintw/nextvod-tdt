@@ -17349,4 +17349,20 @@ diff -Nur enigma2-nightly.org/lib/python/Components/UsageConfig.py enigma2-night
 +		("standby", _("immediate standby")),
 +#+++<
  		("shutdown", _("immediate shutdown")) ] )
+			
+diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp
+--- enigma2-nightly/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp	2010-02-04 19:39:55.000000000 -0500
++++ enigma2-nightly/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp	2010-02-04 19:43:14.000000000 -0500
+@@ -595,7 +595,11 @@
+ 
+ 	if (!m_pixmap)
+ 	{
++#ifdef __sh__
++		m_pixmap = new gPixmap(size, 32, 0); /* don't use accel with sh4 cpu */
++#else
+ 		m_pixmap = new gPixmap(size, 32, 1); /* allocate accel surface (if possible) */
++#endif
+ #ifdef DDVD_SUPPORTS_GET_BLIT_DESTINATION
+ 		ddvd_set_lfb_ex(m_ddvdconfig, (unsigned char *)m_pixmap->surface->data, size.width(), size.height(), 4, size.width()*4, 1);
+ #else
  
