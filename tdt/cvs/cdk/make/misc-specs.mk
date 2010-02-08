@@ -285,6 +285,7 @@ RPMS/sh4/$(STLINUX)-sh4-$(ALSAPLAYER)-$(ALSAPLAYER_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(ALSAPLAYER_DEV)-$(ALSAPLAYER_VERSION).sh4.rpm: \
 		libmad libid3tag Archive/$(STLINUX)-target-$(ALSAPLAYER)-$(ALSAPLAYER_VERSION).src.rpm
 	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	export PKG_CONFIG_PATH=$(targetprefix)/usr/include/pkgconfig && \
 	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(ALSAPLAYER).spec
 
