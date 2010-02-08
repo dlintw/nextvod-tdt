@@ -170,6 +170,7 @@ RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm: \
 		Archive/stlinux23-target-$(GCC)-$(GCC_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
 	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(GCC).spec < ../Patches/stm-target-$(GCC).spec23.diff )
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb  --clean --target=sh4-linux SPECS/stm-target-$(GCC).spec
 endif
 

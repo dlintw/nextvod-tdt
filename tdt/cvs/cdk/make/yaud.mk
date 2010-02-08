@@ -92,11 +92,11 @@ yaud-neutrino: yaud-none stslave\
 
 if STM22
 yaud-enigma2: yaud-none lirc stslave\
-		boot-elf hotplug remote firstboot enigma2 enigma2-misc splashutils release
+		boot-elf hotplug remote firstboot enigma2 enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 else
 yaud-enigma2: yaud-none lirc \
-		boot-elf remote firstboot enigma2 enigma2-misc splashutils release
+		boot-elf remote firstboot enigma2 enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
