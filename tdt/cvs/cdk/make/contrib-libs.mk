@@ -100,6 +100,7 @@ $(DEPDIR)/lirc.do_prepare: bootstrap @DEPENDS_lirc@
 $(DEPDIR)/lirc.do_compile: $(DEPDIR)/lirc.do_prepare
 	cd @DIR_lirc@ && \
 		$(BUILDENV) \
+		ac_cv_path_LIBUSB_CONFIG= \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
