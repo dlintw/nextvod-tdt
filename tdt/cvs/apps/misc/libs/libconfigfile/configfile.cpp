@@ -1,5 +1,5 @@
 /*
- * $Id: configfile.cpp,v 1.19 2003/11/23 19:16:03 obi Exp $
+ * $Id: configfile.cpp,v 1.23 2009/11/06 22:33:00 rhabarber1848 Exp $
  *
  * configuration object for the d-box 2 linux project
  *
@@ -28,6 +28,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cstdlib> // atoi...
 
 #include <sys/stat.h>
 
@@ -47,7 +48,7 @@ void CConfigFile::clear()
 //
 // public file operation methods
 //
-const bool CConfigFile::loadConfig(const char * const filename)
+bool CConfigFile::loadConfig(const char * const filename)
 {
 	std::ifstream configFile(filename);
 
@@ -82,12 +83,12 @@ const bool CConfigFile::loadConfig(const char * const filename)
 	}
 }
 
-const bool CConfigFile::loadConfig(const std::string & filename)
+bool CConfigFile::loadConfig(const std::string & filename)
 {
 	return loadConfig(filename.c_str());
 }
 
-const bool CConfigFile::saveConfig(const char * const filename)
+bool CConfigFile::saveConfig(const char * const filename)
 {
 	std::ofstream configFile(filename);
 
@@ -111,7 +112,7 @@ const bool CConfigFile::saveConfig(const char * const filename)
 	}
 }
 
-const bool CConfigFile::saveConfig(const std::string & filename)
+bool CConfigFile::saveConfig(const std::string & filename)
 {
 	return saveConfig(filename.c_str());
 }
@@ -162,8 +163,8 @@ bool CConfigFile::getBool(const std::string & key, const bool defaultVal)
 {
 	if (configData.find(key) == configData.end())
 	{
+		unknownKeyQueryedFlag = true;
 		if (saveDefaults) {
-			unknownKeyQueryedFlag = true;
 			storeBool(key, defaultVal);
 		}
 		else {
@@ -181,10 +182,11 @@ int32_t CConfigFile::getInt32(const char * const key, const int32_t defaultVal)
 
 int32_t CConfigFile::getInt32(const std::string & key, const int32_t defaultVal)
 {
-	if (configData.find(key) == configData.end())
+	//an empty string returns always 0. in this case return the default value!
+	if (configData.find(key) == configData.end() || configData[key].empty())
 	{
+		unknownKeyQueryedFlag = true;
 		if (saveDefaults) {
-			unknownKeyQueryedFlag = true;
 			storeInt32(key, defaultVal);
 		}
 		else {
@@ -202,10 +204,11 @@ int64_t CConfigFile::getInt64(const char * const key, const int64_t defaultVal)
 
 int64_t CConfigFile::getInt64(const std::string & key, const int64_t defaultVal)
 {
-	if (configData.find(key) == configData.end())
+	//an empty string returns always 0. in this case return the default value!
+	if (configData.find(key) == configData.end() || configData[key].empty())
 	{
+		unknownKeyQueryedFlag = true;
 		if (saveDefaults) {
-			unknownKeyQueryedFlag = true;
 			storeInt64(key, defaultVal);
 		}
 		else {
@@ -225,8 +228,8 @@ std::string CConfigFile::getString(const std::string & key, const std::string & 
 {
 	if (configData.find(key) == configData.end())
 	{
+		unknownKeyQueryedFlag = true;
 		if (saveDefaults) {
-			unknownKeyQueryedFlag = true;
 			storeString(key, defaultVal);
 		}
 		else {

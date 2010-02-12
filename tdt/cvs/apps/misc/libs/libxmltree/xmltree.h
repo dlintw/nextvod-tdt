@@ -2,34 +2,7 @@
  *
  * XMLTree API header
  *
- * $Id: xmltree.h,v 1.1 2002/01/18 20:22:39 tmbinc Exp $
- *
- * Changelog:
- * $Log: xmltree.h,v $
- * Revision 1.1  2002/01/18 20:22:39  tmbinc
- * initial checkin
- *
- * Revision 1.1.1.1  2001/10/07 13:01:15  tmbinc
- * Import of ezap2-200110070
- *
- * Revision 1.4  1999/02/26 13:17:22  cvs
- * - thousands of bugs fixed (really)
- * - modifications in the XML part
- * - added a new object for testing, cpiwButton (usable already, see
- *   win32/ts.cpp)
- * - modified ts.cpp to create a pseudo-GUI again (for testing the
- *   buttons)
- * - ts now exits on a click in the windows
- * - ts has no titlebar anymore (will soon by replace by a special
- *   widget)
- *
- * (ryg)
- *
- * Revision 1.3  1999/01/25 18:05:27  cvs
- * ARG! tmb, next time you look bevor you say shit, okay? (ryg)
- *
- * Revision 1.1  1999/01/24 16:01:15  cvs
- * First release of the XMLTree API (ryg)
+ * $Id: xmltree.h,v 1.3 2009/11/22 15:36:38 rhabarber1848 Exp $
  *
  */
 
@@ -107,8 +80,8 @@ class XMLTreeNode
     XMLTreeNode  *GetParent() const { return parent; };
 
     XMLAttribute *GetAttributes() const { return attributes; }
-    XMLAttribute *GetAttribute(char *name) const;
-    char         *GetAttributeValue(char *name) const;
+    XMLAttribute *GetAttribute(const char *name) const;
+    char         *GetAttributeValue(const char *name) const;
 
     matchmode     GetMatchingMode() const { return mmode; }
 
