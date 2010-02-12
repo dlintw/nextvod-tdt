@@ -48,6 +48,7 @@ ncurses;
 libz;make:install:prefix=TARGETS/usr;install:-m644:libz.a:TARGETS/usr/lib
 libreadline;make:install:DESTDIR=TARGETS
 #freetype;make:install:libdir=TARGETS/usr/lib:includedir=TARGETS/usr/include:bindir=TARGETS/usr/bin:prefix=TARGETS/usr
+freetype_old;make:install:DESTDIR=BUILD/freetype-2.1.4/install_dir
 freetype;rewrite-pkgconfig:builds/unix/freetype2.pc;make:install:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libfreetype.la
 lirc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblirc_client.la
 jpeg;make:install:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libjpeg.la

@@ -60,6 +60,29 @@ $(DEPDIR)/%libreadline: $(DEPDIR)/libreadline.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
+# FREETYPE_OLD
+#
+$(DEPDIR)/freetype-old.do_prepare: bootstrap @DEPENDS_freetype_old@
+	@PREPARE_freetype_old@
+	touch $@
+
+$(DEPDIR)/freetype-old.do_compile: $(DEPDIR)/freetype-old.do_prepare
+	cd @DIR_freetype_old@ && \
+		$(BUILDENV) \
+		./configure \
+			--build=$(build) \
+			--host=$(target) \
+			--prefix=/usr && \
+		$(MAKE) all
+	touch $@
+
+$(DEPDIR)/freetype-old: $(DEPDIR)/freetype-old.do_compile
+	cd @DIR_freetype_old@ && \
+		@INSTALL_freetype_old@
+#	@DISTCLEANUP_freetype_old@
+	@[ "x$*" = "x" ] && touch $@ || true
+
+#
 # FREETYPE
 #
 $(DEPDIR)/freetype.do_prepare: bootstrap @DEPENDS_freetype@
