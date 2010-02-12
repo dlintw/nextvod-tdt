@@ -2,37 +2,7 @@
  *
  * XMLTree API implementation
  *
- * $Id: xmltree.cpp,v 1.2 2003/03/14 05:13:04 obi Exp $
- *
- * Changelog:
- * $Log: xmltree.cpp,v $
- * Revision 1.2  2003/03/14 05:13:04  obi
- * compileable with -W -Werror
- *
- * Revision 1.1  2002/01/18 20:22:39  tmbinc
- * initial checkin
- *
- * Revision 1.1.1.1  2001/10/07 13:01:18  tmbinc
- * Import of ezap2-200110070
- *
- * Revision 1.4  1999/02/26 13:17:21  cvs
- * - thousands of bugs fixed (really)
- * - modifications in the XML part
- * - added a new object for testing, cpiwButton (usable already, see
- *   win32/ts.cpp)
- * - modified ts.cpp to create a pseudo-GUI again (for testing the
- *   buttons)
- * - ts now exits on a click in the windows
- * - ts has no titlebar anymore (will soon by replace by a special
- *   widget)
- *
- * (ryg)
- *
- * Revision 1.3  1999/01/25 18:05:27  cvs
- * ARG! tmb, next time you look bevor you say shit, okay? (ryg)
- *
- * Revision 1.1  1999/01/24 16:01:14  cvs
- * First release of the XMLTree API (ryg)
+ * $Id: xmltree.cpp,v 1.4 2009/11/22 15:36:38 rhabarber1848 Exp $
  *
  */
  
@@ -187,7 +157,7 @@ XMLTreeNode::~XMLTreeNode()
   next=0;
 }
 
-XMLAttribute *XMLTreeNode::GetAttribute(char *name) const
+XMLAttribute *XMLTreeNode::GetAttribute(const char *name) const
 {
   XMLAttribute *a;
 
@@ -213,7 +183,7 @@ XMLAttribute *XMLTreeNode::GetAttribute(char *name) const
   return 0;
 }
 
-char *XMLTreeNode::GetAttributeValue(char *name) const
+char *XMLTreeNode::GetAttributeValue(const char *name) const
 {
   XMLAttribute *a;
 
