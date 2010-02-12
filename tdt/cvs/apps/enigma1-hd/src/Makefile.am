@@ -53,7 +53,7 @@ enigma_LDADD = \
 	@SQLITE_LIBS@ \
 	@FRIBIDI_LIBS@ \
 	@ALSA_LIBS@ \
-	-ldl -lpthread -lcrypt -lresolv -ljpeg -lungif
+	-ldl -lpthread -lcrypt -lresolv -ljpeg -lgif
 
 enigma$(EXEEXT): $(enigma_OBJECTS) $(enigma_DEPENDENCIES) $(enigma_LDADD_WHOLE)
 	@rm -f enigma$(EXEEXT)
