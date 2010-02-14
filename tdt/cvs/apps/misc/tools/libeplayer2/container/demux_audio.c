@@ -14,8 +14,14 @@
 #include <pthread.h>
 #include <errno.h>
 
+#ifndef DEBUG
+#define DEBUG	// FIXME: until this is set properly by Makefile
+#endif
+
+#ifdef DEBUG
 int demux_audio_debug = 0;
 #define demux_audio_printf(x...) do { if (demux_audio_debug)printf(x); } while (0)
+#endif
 
 #define MP3 1
 #define WAV 2
@@ -52,6 +58,28 @@ typedef struct mp3_hdr {
 void print_wave_header(WAVEFORMATEX *h, int verbose_level);
 
 int hr_mp3_seek = 0;
+
+pthread_mutex_t Audiomutex;
+
+void getAudioMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+	#ifdef DEBUG
+	demux_audio_printf("%s::%s::%d requesting mutex\n",filename, function, line);
+	#endif
+	
+	pthread_mutex_lock(&Audiomutex);
+	
+	#ifdef DEBUG
+	demux_audio_printf("%s::%s::%d received mutex\n",filename, function, line);
+	#endif  
+}
+
+void releaseAudioMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+	pthread_mutex_unlock(&Audiomutex);
+	
+	#ifdef DEBUG
+	demux_audio_printf("%s::%s::%d released mutex\n",filename, function, line);
+	#endif  
+}
 
 /**
  * \brief free a list of MP3 header descriptions
@@ -95,7 +123,11 @@ static mp3_hdr_t *add_mp3_hdr(mp3_hdr_t **list, off_t st_pos,
   mp3_hdr_t *tmp;
   int in_list = 0;
   while (*list && (*list)->next_frame_pos <= st_pos) {
-  printf("%s::%d\n", __FUNCTION__, __LINE__);
+    
+    #ifdef DEBUG  
+    printf("%s::%d\n", __FUNCTION__, __LINE__);
+    #endif
+  
     if (((*list)->next_frame_pos < st_pos) || ((*list)->mp3_chans != mp3_chans)
          || ((*list)->mp3_freq != mp3_freq) || ((*list)->mpa_layer != mpa_layer) ) {
       // wasn't valid!
@@ -119,7 +151,11 @@ static mp3_hdr_t *add_mp3_hdr(mp3_hdr_t **list, off_t st_pos,
       list = &((*list)->next);
     }
   }
+
+  #ifdef DEBUG  
   printf("%s::%d\n", __FUNCTION__, __LINE__);
+  #endif
+  
   if (!in_list) { // does not belong into an existing chain, insert
     // find right position to insert to keep sorting
     while (*list && (*list)->next_frame_pos <= st_pos + mp3_flen)
@@ -266,14 +302,18 @@ static int demux_audio_open(demuxer_t* demuxer) {
   da_priv_t* priv;
   
   s = demuxer->stream;
-printf("%s::%d\n", __FUNCTION__, __LINE__);
+
   stream_read(s, hdr, HDR_SIZE);
-  printf("%s::%d\n", __FUNCTION__, __LINE__);
+
   while(n < 30000 && !s->eof) {
   	//printf("%s::%d n=%d eof=%d %4s\n", __FUNCTION__, __LINE__, n,s->eof, hdr);
     int mp3_freq, mp3_chans, mp3_flen, mpa_layer, mpa_spf, mpa_br;
     st_pos = stream_tell(s) - HDR_SIZE;
+    
+    #ifdef DEBUG  
     printf("%s::%d st_pos=%u\n", __FUNCTION__, __LINE__, st_pos);
+    #endif
+    
     step = 1;
 
     if( hdr[0] == 'R' && hdr[1] == 'I' && hdr[2] == 'F' && hdr[3] == 'F' ) {
@@ -290,12 +330,11 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
       // empty the buffer
 	step = 4;
     } else if( hdr[0] == 'I' && hdr[1] == 'D' && hdr[2] == '3' && (hdr[3] >= 2)) {
-    	printf("%s::%d ID3\n", __FUNCTION__, __LINE__);
       int len;
       stream_skip(s,2);
       stream_read(s,hdr,4);
       len = (hdr[0]<<21) | (hdr[1]<<14) | (hdr[2]<<7) | hdr[3];
-      printf("%s::%d ID3 %d\n", __FUNCTION__, __LINE__, len);
+
       stream_skip(s,len);
       step = 4;
     } else if( hdr[0] == 'f' && hdr[1] == 'm' && hdr[2] == 't' && hdr[3] == ' ' ) {
@@ -320,14 +359,14 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
     stream_read(s, &hdr[HDR_SIZE - step], step);
     n++;
   }
-printf("%s::%d\n", __FUNCTION__, __LINE__);
-  free_mp3_hdrs(&mp3_hdrs);
+
+free_mp3_hdrs(&mp3_hdrs);
 
   if(!frmt)
     return 0;
 
   sh_audio = new_sh_audio(demuxer,0);
-printf("%s::%d\n", __FUNCTION__, __LINE__);
+
   switch(frmt) {
   case MP3:
     sh_audio->format = (mp3_found->mpa_layer < 3 ? 0x50 : 0x55);
@@ -347,42 +386,55 @@ printf("%s::%d\n", __FUNCTION__, __LINE__);
     sh_audio->i_bps = sh_audio->wf->nAvgBytesPerSec;
     free(mp3_found);
     mp3_found = NULL;
-printf("%s::%d s->end_pos = %d\n", __FUNCTION__, __LINE__, s->end_pos);
+    
+    #ifdef DEBUG  
+    printf("%s::%d s->end_pos = %d\n", __FUNCTION__, __LINE__, s->end_pos);
+    #endif
+    
     if(s->end_pos && (s->flags & STREAM_SEEK) == STREAM_SEEK) {
       char tag[4];
       stream_seek(s,s->end_pos-128);
       stream_read(s,tag,3);
       tag[3] = '\0';
       if(strcmp(tag,"TAG")) {
-	    demuxer->movi_end = s->end_pos;
-printf("demuxer->movi_end = s->end_pos = %d\n", demuxer->movi_end);
+		demuxer->movi_end = s->end_pos;
+		
+		#ifdef DEBUG  
+		printf("demuxer->movi_end = s->end_pos = %d\n", demuxer->movi_end);
+		#endif
       } else {
-	    char buf[31];
-	    uint8_t g;
-	    demuxer->movi_end = stream_tell(s)-3;
-printf("demuxer->movi_end = stream_tell(s)-3; = %d\n", demuxer->movi_end);
-	    stream_read(s,buf,30);
-    	buf[30] = '\0';
-    	demux_info_add(demuxer,"Title",buf);
-    	stream_read(s,buf,30);
-    	buf[30] = '\0';
-    	demux_info_add(demuxer,"Artist",buf);
-    	stream_read(s,buf,30);
-    	buf[30] = '\0';
-    	demux_info_add(demuxer,"Album",buf);
-    	stream_read(s,buf,4);
-    	buf[4] = '\0';
-    	demux_info_add(demuxer,"Year",buf);
-    	stream_read(s,buf,30);
-    	buf[30] = '\0';
-    	demux_info_add(demuxer,"Comment",buf);
-    	if(buf[28] == 0 && buf[29] != 0) {
-    	  uint8_t trk = (uint8_t)buf[29];
-    	  sprintf(buf,"%d",trk);
-    	  demux_info_add(demuxer,"Track",buf);
-    	}
-    	g = stream_read_char(s);
-    	demux_info_add(demuxer,"Genre",genres[g]);
+		char buf[31];
+		uint8_t g;
+		demuxer->movi_end = stream_tell(s)-3;
+		
+		#ifdef DEBUG  
+		printf("demuxer->movi_end = stream_tell(s)-3; = %d\n", demuxer->movi_end);
+		#endif
+		
+		stream_read(s,buf,30);
+		buf[30] = '\0';
+		demux_info_add(demuxer,"Title",buf);
+		stream_read(s,buf,30);
+		buf[30] = '\0';
+		demux_info_add(demuxer,"Artist",buf);
+		stream_read(s,buf,30);
+		buf[30] = '\0';
+		demux_info_add(demuxer,"Album",buf);
+		stream_read(s,buf,4);
+		buf[4] = '\0';
+		demux_info_add(demuxer,"Year",buf);
+		stream_read(s,buf,30);
+		buf[30] = '\0';
+		demux_info_add(demuxer,"Comment",buf);
+		
+		if(buf[28] == 0 && buf[29] != 0) {
+			uint8_t trk = (uint8_t)buf[29];
+			sprintf(buf,"%d",trk);
+			demux_info_add(demuxer,"Track",buf);
+		}
+		
+		g = stream_read_char(s);
+		demux_info_add(demuxer,"Genre",genres[g]);
       }
     }
 
@@ -394,12 +446,20 @@ printf("demuxer->movi_end = stream_tell(s)-3; = %d\n", demuxer->movi_end);
     int l;
     l = stream_read_dword_le(s);
     if(l < 16) {
-      demux_audio_printf("[demux_audio] Bad wav header length: too short (%d)!!!\n",l);
-      l = 16;
+      
+	#ifdef DEBUG  
+	demux_audio_printf("[demux_audio] Bad wav header length: too short (%d)!!!\n",l);
+	#endif
+	
+	l = 16;
     }
     if(l > MAX_WAVHDR_LEN) {
-      demux_audio_printf("[demux_audio] Bad wav header length: too long (%d)!!!\n",l);
-      l = 16;
+      
+	#ifdef DEBUG  
+	demux_audio_printf("[demux_audio] Bad wav header length: too long (%d)!!!\n",l);
+	#endif
+	
+	l = 16;
     }
     sh_audio->wf = w = malloc(l > sizeof(WAVEFORMATEX) ? l : sizeof(WAVEFORMATEX));
     w->wFormatTag = sh_audio->format = stream_read_word_le(s);
@@ -416,8 +476,10 @@ printf("demuxer->movi_end = stream_tell(s)-3; = %d\n", demuxer->movi_end);
       w->cbSize = stream_read_word_le(s);
       l -= 2;
       if (l < w->cbSize) {
-        demux_audio_printf("[demux_audio] truncated extradata (%d < %d)\n",
-               l,w->cbSize);
+	#ifdef DEBUG  
+        demux_audio_printf("[demux_audio] truncated extradata (%d < %d)\n",l,w->cbSize);
+	#endif
+	
         w->cbSize = l;
       }
       stream_read(s,(char*)((char*)(w)+sizeof(WAVEFORMATEX)),w->cbSize);
@@ -448,34 +510,52 @@ printf("demuxer->movi_end = stream_tell(s)-3; = %d\n", demuxer->movi_end);
 	    if((buf[i] == 0xff) && (buf[i+1] == 0x1f) && (buf[i+2] == 0x00) &&
 	       (buf[i+3] == 0xe8) && ((buf[i+4] & 0xfe) == 0xf0) && (buf[i+5] == 0x07)) {
 		sh_audio->format = 0x2001;
+		
+		#ifdef DEBUG  
 		demux_audio_printf("[demux_audio] DTS audio in wav, 14 bit, LE\n");
+		#endif
+		
 		break;
 	    }
 	    // DTS, 14 bit, BE
 	    if((buf[i] == 0x1f) && (buf[i+1] == 0xff) && (buf[i+2] == 0xe8) &&
 	       (buf[i+3] == 0x00) && (buf[i+4] == 0x07) && ((buf[i+5] & 0xfe) == 0xf0)) {
 		sh_audio->format = 0x2001;
+		
+		#ifdef DEBUG  
 		demux_audio_printf("[demux_audio] DTS audio in wav, 14 bit, BE\n");
+		#endif
+		
 		break;
 	    }
 	    // DTS, 16 bit, BE
 	    if((buf[i] == 0x7f) && (buf[i+1] == 0xfe) && (buf[i+2] == 0x80) &&
 	       (buf[i+3] == 0x01)) {
 		sh_audio->format = 0x2001;
+		
+		#ifdef DEBUG  
 		demux_audio_printf("[demux_audio] DTS audio in wav, 16 bit, BE\n");
+		#endif
+		
 		break;
 	    }
 	    // DTS, 16 bit, LE
 	    if((buf[i] == 0xfe) && (buf[i+1] == 0x7f) && (buf[i+2] == 0x01) &&
 	       (buf[i+3] == 0x80)) {
 		sh_audio->format = 0x2001;
+		
+		#ifdef DEBUG  
 		demux_audio_printf("[demux_audio] DTS audio in wav, 16 bit, LE\n");
+		#endif
+		
 		break;
 	    }
 	}
+	
+	#ifdef DEBUG  
 	if (sh_audio->format == 0x2001)
 	    demux_audio_printf("[demux_audio] DTS sync offset = %u\n", i);
-
+	#endif
     }
     stream_seek(s,demuxer->movi_start);  
   } break;
@@ -513,21 +593,28 @@ printf("demuxer->movi_end = stream_tell(s)-3; = %d\n", demuxer->movi_end);
 
   if(stream_tell(s) != demuxer->movi_start)
   {
-    demux_audio_printf("demux_audio: seeking from 0x%X to start pos 0x%X\n",
-            (int)stream_tell(s), (int)demuxer->movi_start);
+    #ifdef DEBUG  
+    demux_audio_printf("demux_audio: seeking from 0x%X to start pos 0x%X\n", (int)stream_tell(s), (int)demuxer->movi_start);
+    #endif
+    
     stream_seek(s,demuxer->movi_start);
     if (stream_tell(s) != demuxer->movi_start) {
-      demux_audio_printf("demux_audio: seeking failed, now at 0x%X!\n",
-              (int)stream_tell(s));
+      #ifdef DEBUG  
+      demux_audio_printf("demux_audio: seeking failed, now at 0x%X!\n", (int)stream_tell(s));
+      #endif
+      
       if (next_frame_pos) {
-        demux_audio_printf("demux_audio: seeking to 0x%X instead\n",
-                (int)next_frame_pos);
+	#ifdef DEBUG  
+        demux_audio_printf("demux_audio: seeking to 0x%X instead\n", (int)next_frame_pos);
+	#endif
         stream_seek(s, next_frame_pos);
       }
     }
   }
 
+  #ifdef DEBUG  
   printf("demux_audio: audio data 0x%X - 0x%X  \n",(int)demuxer->movi_start,(int)demuxer->movi_end);
+  #endif
 
   return DEMUXER_TYPE_AUDIO;
 }
@@ -595,14 +682,14 @@ static int demux_audio_fill_buffer(demuxer_t *demuxer, demux_stream_t *ds) {
     break;
   }
   default:
+    #ifdef DEBUG  
     demux_audio_printf("DEMUX_AUDIO_UnknownFormat %p\n",priv->frmt);
+    #endif
     return 0;
   }
-//printf("%s::%d\n", __FUNCTION__, __LINE__);
   resize_demux_packet(dp, l);
   dp->pts = this_pts;
   ds_add_packet(ds, dp);
-  //printf("%s::%d\n", __FUNCTION__, __LINE__);
   return 1;
 }
 
@@ -626,52 +713,68 @@ static void high_res_mp3_seek(demuxer_t *demuxer,float time) {
   }
 }
 
+static int whileSeeking = 0;
+
 static void demux_audio_seek(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int flags){
-  sh_audio_t* sh_audio;
-  stream_t* s;
-  int64_t base,pos;
-  float len;
-  da_priv_t* priv;
+	sh_audio_t* sh_audio;
+	stream_t* s;
+	int64_t base,pos;
+	float len;
+	da_priv_t* priv;
 
-  if(!(sh_audio = demuxer->audio->sh))
-    return;
-  s = demuxer->stream;
-  priv = demuxer->priv;
+	if(!(sh_audio = demuxer->audio->sh))
+		return;
 
-  if(priv->frmt == MP3 && hr_mp3_seek && !(flags & SEEK_FACTOR)) {
-    len = (flags & SEEK_ABSOLUTE) ? rel_seek_secs - priv->next_pts : rel_seek_secs;
-    if(len < 0) {
-      stream_seek(s,demuxer->movi_start);
-      len = priv->next_pts + len;
-      priv->next_pts = 0;
-    }
-    if(len > 0)
-      high_res_mp3_seek(demuxer,len);
-    return;
-  }
+	#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	#endif
 
-  base = flags&SEEK_ABSOLUTE ? demuxer->movi_start : stream_tell(s);
-  if(flags&SEEK_FACTOR)
-    pos = base + ((demuxer->movi_end - demuxer->movi_start)*rel_seek_secs);
-  else
-    pos = base + (rel_seek_secs*sh_audio->i_bps);
+	whileSeeking = 1;
+	getAudioMutex(FILENAME, __FUNCTION__,__LINE__);
+	
+	s = demuxer->stream;
+	priv = demuxer->priv;
 
-  if(demuxer->movi_end && pos >= demuxer->movi_end) {
-     pos = demuxer->movi_end;
-  } else if(pos < demuxer->movi_start)
-    pos = demuxer->movi_start;
+	if(priv->frmt == MP3 && hr_mp3_seek && !(flags & SEEK_FACTOR)) {
+		len = (flags & SEEK_ABSOLUTE) ? rel_seek_secs - priv->next_pts : rel_seek_secs;
+		if(len < 0) {
+			stream_seek(s,demuxer->movi_start);
+			len = priv->next_pts + len;
+			priv->next_pts = 0;
+		}
+		if(len > 0)
+			high_res_mp3_seek(demuxer,len);
+		
+		releaseAudioMutex(FILENAME, __FUNCTION__,__LINE__);
+		whileSeeking = 0;
+		return;
+	}
 
-  priv->next_pts = (pos-demuxer->movi_start)/(double)sh_audio->i_bps;
-  
-  switch(priv->frmt) {
-  case WAV:
-    pos -= (pos - demuxer->movi_start) %
-            (sh_audio->wf->nBlockAlign ? sh_audio->wf->nBlockAlign :
-             (sh_audio->channels * sh_audio->samplesize));
-    break;
-  }
+	base = flags&SEEK_ABSOLUTE ? demuxer->movi_start : stream_tell(s);
+	if(flags&SEEK_FACTOR)
+		pos = base + ((demuxer->movi_end - demuxer->movi_start)*rel_seek_secs);
+	else
+		pos = base + (rel_seek_secs*sh_audio->i_bps);
 
-  stream_seek(s,pos);
+	if(demuxer->movi_end && pos >= demuxer->movi_end) {
+		pos = demuxer->movi_end;
+	} else if(pos < demuxer->movi_start)
+		pos = demuxer->movi_start;
+
+	priv->next_pts = (pos-demuxer->movi_start)/(double)sh_audio->i_bps;
+
+	switch(priv->frmt) {
+		case WAV:
+			pos -= (pos - demuxer->movi_start) %
+			(sh_audio->wf->nBlockAlign ? sh_audio->wf->nBlockAlign :
+			(sh_audio->channels * sh_audio->samplesize));
+		break;
+	}
+
+	stream_seek(s,pos);
+
+	releaseAudioMutex(FILENAME, __FUNCTION__,__LINE__);
+	whileSeeking = 0;
 }
 
 static void demux_close_audio(demuxer_t* demuxer) {
@@ -697,61 +800,55 @@ static pthread_t PlayThread;
 //static int isFirstAudioFrame = 1;
 
 int AUDIOInit(Context_t *context, char * filename) {
-
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	#endif
 
+	getAudioMutex(FILENAME, __FUNCTION__,__LINE__);
+	
 	int ret = 0;
 	int i = 0;
 
 	ds = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
-    memset (ds,0,sizeof(demux_stream_t));
+	memset (ds,0,sizeof(demux_stream_t));
 
-    ds->demuxer = (demuxer_t*)malloc ( sizeof(demuxer_t));
-    memset (ds->demuxer,0,sizeof(demuxer_t));
+	ds->demuxer = (demuxer_t*)malloc ( sizeof(demuxer_t));
+	memset (ds->demuxer,0,sizeof(demuxer_t));
 
-    ds->demuxer->audio = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
-    memset (ds->demuxer->audio,0,sizeof(demux_stream_t));
-    
-//printf("%s::%d\n", __FUNCTION__, __LINE__);
+	ds->demuxer->audio = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
+	memset (ds->demuxer->audio,0,sizeof(demux_stream_t));
+	
+	ds->demuxer->stream = (stream_t*)malloc ( sizeof(stream_t));
+	memset (ds->demuxer->stream,0,sizeof(stream_t));
 
-    ds->demuxer->stream = (stream_t*)malloc ( sizeof(stream_t));
-    memset (ds->demuxer->stream,0,sizeof(stream_t));
+	ds->demuxer->stream->fd = context->playback->fd;
 
-//printf("%s::%d\n", __FUNCTION__, __LINE__);
+	read(ds->demuxer->stream->fd,ds->demuxer->stream->buffer,2048);//soviel ??
 
-    ds->demuxer->stream->fd = context->playback->fd;
-
-    read(ds->demuxer->stream->fd,ds->demuxer->stream->buffer,2048);//soviel ??
-
-//printf("%s::%d\n", __FUNCTION__, __LINE__);
-
-    ds->demuxer->stream->start_pos	= 0;
-    
-    ds->demuxer->stream->flags		= 6;
-    ds->demuxer->stream->sector_size	= 0;
-    ds->demuxer->stream->buf_pos	= 0;
-    ds->demuxer->stream->buf_len	= 2048;
-    ds->demuxer->stream->pos		= 2048;
-    ds->demuxer->stream->start_pos	= 0;
-   
-    if(context->playback->isFile) {
-    	ds->demuxer->stream->type		= STREAMTYPE_FILE;
-    	long pos = lseek(ds->demuxer->stream->fd, 0L, SEEK_CUR);
-    	ds->demuxer->stream->end_pos = lseek(ds->demuxer->stream->fd, 0L, SEEK_END);
-    	lseek(ds->demuxer->stream->fd, pos, SEEK_SET);
-    } else {
-	    ds->demuxer->stream->type		= STREAMTYPE_STREAM;
-	    ds->demuxer->stream->end_pos = 0;
+	ds->demuxer->stream->start_pos	 = 0;
+	ds->demuxer->stream->flags	 = 6;
+	ds->demuxer->stream->sector_size = 0;
+	ds->demuxer->stream->buf_pos	 = 0;
+	ds->demuxer->stream->buf_len	 = 2048;
+	ds->demuxer->stream->pos	 = 2048;
+	ds->demuxer->stream->start_pos	 = 0;
+      
+	if(context->playback->isFile) {
+	    ds->demuxer->stream->type = STREAMTYPE_FILE;
+	    long pos = lseek(ds->demuxer->stream->fd, 0L, SEEK_CUR);
+	    ds->demuxer->stream->end_pos = lseek(ds->demuxer->stream->fd, 0L, SEEK_END);
+	    lseek(ds->demuxer->stream->fd, pos, SEEK_SET);
+	} else {
+		ds->demuxer->stream->type = STREAMTYPE_STREAM;
+		ds->demuxer->stream->end_pos = 0;
 	}
     
-    ds->demuxer->stream->eof		= 0;
-    ds->demuxer->stream->cache_pid	= 0;
-    
-	//printf("%s::%d\n", __FUNCTION__, __LINE__);
-    demux_audio_open(ds->demuxer);
-    //printf("%s::%d\n", __FUNCTION__, __LINE__);
-        
-    da_priv_t* priv = ds->demuxer->priv;
+	ds->demuxer->stream->eof	= 0;
+	ds->demuxer->stream->cache_pid	= 0;
+	
+	demux_audio_open(ds->demuxer);
+	    
+	da_priv_t* priv = ds->demuxer->priv;
 
   	switch(priv->frmt) {
   	case MP3 : {
@@ -779,6 +876,10 @@ int AUDIOInit(Context_t *context, char * filename) {
 		context->manager->audio->Command(context, MANAGER_ADD, &Audio);
 		break;}
 	}
+	
+	releaseAudioMutex(FILENAME, __FUNCTION__,__LINE__);
+	
+	return 0; // FIXME
 }
 
 #define INVALID_PTS_VALUE                       0x200000000ull
@@ -802,87 +903,179 @@ void AUDIOGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	}
 }
 
-
-
 static void AUDIOThread(Context_t *context) {
-	printf("%s::%d\n", __FUNCTION__, __LINE__);
-
-	while(context->playback->isPlaying && 
-		    demux_audio_fill_buffer(ds->demuxer,ds)) {
-		//printf("%s -->\n", __FUNCTION__);
-
-
-	    //IF MOVIE IS PAUSE, WAIT 
-	    while (context->playback->isPaused) {printf("paused\n"); usleep(100000);}
-
-		AUDIOGenerateParcel(context, ds->demuxer);
-
-	    if (ds != NULL && ds->first != NULL) {
-		ds_free_packs(ds);
-	    }
-    
-	    //printf("%s <--\n", __FUNCTION__);
-
+	#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	#endif
+	
+	while ( context->playback->isCreationPhase ) {
+		#ifdef DEBUG
+		printf("%s::%s Thread waiting for end of init phase...\n", FILENAME, __FUNCTION__);
+		#endif
 	}
-	context->playback->Command(context, PLAYBACK_TERM, NULL);
+
+	#ifdef DEBUG
+	printf("%s::%s Running!\n", FILENAME, __FUNCTION__);
+	#endif
+
+	while ( context && context->playback && context->playback->isPlaying ) {
+	    //printf("%s -->\n", __FUNCTION__);
+
+		//IF MOVIE IS PAUSED, WAIT
+		if (context->playback->isPaused) {
+			#ifdef DEBUG
+			printf("%s::%s paused\n", FILENAME, __FUNCTION__);
+			#endif
+			
+			usleep(100000);
+			continue;
+		}
+
+		if (context->playback->isSeeking || whileSeeking) {
+			#ifdef DEBUG
+			printf("%s::%s seeking\n", FILENAME, __FUNCTION__);
+			#endif
+			
+			usleep(100000);			
+			continue;
+		}
+
+		getAudioMutex(FILENAME, __FUNCTION__,__LINE__);
+
+		if ( !demux_audio_fill_buffer(ds->demuxer,ds) ) {
+			#ifdef DEBUG
+			printf("%s::%s demux_ts_fill_buffer failed!\n", FILENAME, __FUNCTION__);
+			#endif
+			
+			releaseAudioMutex(FILENAME, __FUNCTION__,__LINE__);
+			
+			break;
+		} else {		
+			AUDIOGenerateParcel(context, ds->demuxer);
+
+			if (ds->demuxer->sub != NULL && ds->demuxer->sub->first != NULL) {
+				ds_free_packs(ds->demuxer->sub);
+			}
+			
+			if (ds->demuxer->audio != NULL && ds->demuxer->audio->first != NULL) {
+				ds_free_packs(ds->demuxer->audio);
+			}
+			
+			if (ds->demuxer->video != NULL && ds->demuxer->video->first != NULL) {
+				ds_free_packs(ds->demuxer->video);
+			}
+			//printf("%s <--\n", __FUNCTION__);
+
+			releaseAudioMutex(FILENAME, __FUNCTION__,__LINE__);
+		}
+	}
+
+	usleep(100000);
+
+	#ifdef DEBUG
+	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
+	#endif
+	
+	PlayThread = NULL;
 }
 
 
 static int AUDIOPlay(Context_t *context) {
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	#endif
 
 	int error;
 	int ret = 0;
 	pthread_attr_t attr;
+
+	#ifdef DEBUG
+	if ( context && context->playback && context->playback->isPlaying ) {
+		printf("%s::%s is Playing\n", FILENAME, __FUNCTION__);
+	} else {
+		printf("%s::%s is NOT Playing\n", FILENAME, __FUNCTION__);
+	}
+	#endif
 	
 	if (PlayThread == NULL) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-		if(error=pthread_create(&PlayThread, &attr, (void *)&AUDIOThread, context) != 0)
-		{
-			fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
-			PlayThread = NULL;
-			ret = -1;
+
+		if((error=pthread_create(&PlayThread, &attr, (void *)&AUDIOThread, context)) != 0) {
+			  #ifdef DEBUG
+			  printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
+			  #endif
+			  
+			  PlayThread = NULL;
+			  ret = -1;
+		} else {
+			  #ifdef DEBUG		  
+			  printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
+			  #endif
 		}
+	} else {
+		#ifdef DEBUG
+		printf("%s::%s A thread already exists!\n", FILENAME, __FUNCTION__);
+		#endif
+		
+		ret = -1;
 	}
 	
-	return ret;
+	#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+	#endif
+
+	return ret;	
 }
 
 static int AUDIOStop(Context_t *context) {
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	#endif
 
-	int result;
-	if(PlayThread != NULL) { //Thread still active
-		result = pthread_join (PlayThread, NULL);
-		if(result != 0) 
-		{
-			printf("ERROR: Stop PlayThread\n");
-		}
-
-		PlayThread = NULL;
+	int ret = 0;
+	int wait_time = 20;
+	
+	while ( (PlayThread != NULL) && (wait_time--) > 0 ) {
+		#ifdef DEBUG  
+		printf("%s::%s Waiting for TS thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
+		#endif
+		
 		usleep(100000);
 	}
 
-	if(ds != NULL) {
-		if(ds->demuxer != NULL) {
-			demux_close_audio(ds->demuxer);
-			
-			free(ds->demuxer->stream);
-			ds->demuxer->stream = NULL;
+	if (wait_time == 0) {
+		#ifdef DEBUG  
+		printf("%s::%s Timeout waiting for TS thread!\n", FILENAME, __FUNCTION__);
+		#endif
 		
-			free(ds->demuxer->audio);
-			ds->demuxer->audio = NULL;
+		ret = -1;
+	} else {
+		if(ds != NULL) {
+		  
+			getAudioMutex(FILENAME, __FUNCTION__,__LINE__);
 			
-			free(ds->demuxer);  
-			ds->demuxer = NULL;
+			if(ds->demuxer != NULL) {
+				demux_close_audio(ds->demuxer);
+
+				free(ds->demuxer->stream);
+				ds->demuxer->stream = NULL;
+			
+				free(ds->demuxer->audio);
+				ds->demuxer->audio = NULL;
+				
+				free(ds->demuxer);  
+				ds->demuxer = NULL;
+			}
+
+			free(ds);
+			ds = NULL;
+
+			releaseAudioMutex(FILENAME, __FUNCTION__,__LINE__);
 		}
-		
-		free(ds); 
-		ds = NULL;
 	}
 
-	return 0;
+	return ret;	
 }
 
 static int AUDIOGetLength(demuxer_t *demuxer,double * length) {
@@ -904,26 +1097,33 @@ static int AUDIOGetLength(demuxer_t *demuxer,double * length) {
 }
 
 static int AUDIOGetInfo(demuxer_t *demuxer,char ** infoString) {
+	#ifdef DEBUG  
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+	#endif
     
-    if(demuxer && demuxer->info) {
-        char **info = demuxer->info;
-        int n = 0;
+	if(demuxer && demuxer->info) {
+		char **info = demuxer->info;
+		int n = 0;
 
-        for(n = 0; info && info[2*n] != NULL; n++) {
-            if(!strcasecmp(*infoString, info[2*n])) {
-		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
-	            *infoString = strdup(info[2*n+1]);
-            }
-        }
-    }
+		for(n = 0; info && info[2*n] != NULL; n++) {
+			if(!strcasecmp(*infoString, info[2*n])) {
+				#ifdef DEBUG  
+				printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+				#endif
+			
+				*infoString = strdup(info[2*n+1]);
+			}
+		}
+	}
 		
 	return 0;
 
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+	#ifdef DEBUG  
+	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
+	#endif
 
 	int ret = 0;
 	
@@ -960,7 +1160,9 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		default:
+			#ifdef DEBUG  
 			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
+			#endif
 			break;
 	}
 
