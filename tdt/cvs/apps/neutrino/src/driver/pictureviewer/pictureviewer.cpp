@@ -497,6 +497,8 @@ bool CPictureViewer::DisplayImage (const std::string & name, int posx, int posy,
 	fb_display (m_NextPic_Buffer, m_NextPic_X, m_NextPic_Y, 0, 0, m_NextPic_XPos, m_NextPic_YPos, false, convertSetupAlpha2Alpha(g_settings.infobar_alpha));
 	ret = true;
   }
+  //j00zek we need below to refresh buffer and properly display pictures and logos
+  CFrameBuffer::getInstance ()-> blit(posx, posy, width, height);
   return ret;
 }
 
