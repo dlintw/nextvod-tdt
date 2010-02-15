@@ -953,17 +953,10 @@ static void AUDIOThread(Context_t *context) {
 		} else {		
 			AUDIOGenerateParcel(context, ds->demuxer);
 
-			if (ds->demuxer->sub != NULL && ds->demuxer->sub->first != NULL) {
-				ds_free_packs(ds->demuxer->sub);
+			if (ds != NULL && ds->first != NULL) {
+				ds_free_packs(ds);
 			}
-			
-			if (ds->demuxer->audio != NULL && ds->demuxer->audio->first != NULL) {
-				ds_free_packs(ds->demuxer->audio);
-			}
-			
-			if (ds->demuxer->video != NULL && ds->demuxer->video->first != NULL) {
-				ds_free_packs(ds->demuxer->video);
-			}
+
 			//printf("%s <--\n", __FUNCTION__);
 
 			releaseAudioMutex(FILENAME, __FUNCTION__,__LINE__);
