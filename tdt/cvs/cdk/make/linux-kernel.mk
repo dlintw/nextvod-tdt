@@ -148,8 +148,6 @@ $(DEPDIR)/linux-kernel.do_prepare: $(KERNEL_DEPENDS)
 endif
 
 #endof STM22
-else
-if STM23
 
 if STM23_HAVANA
 
@@ -183,7 +181,10 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
 #endof stm23_havana
+endif
+
 else
+
 ##################################################################################
 #stlinux23
 
@@ -348,9 +349,7 @@ $(DEPDIR)/linux-kernel.do_compile: \
 	touch $@
 
 #endof STM23
-endif
-endif
-endif
+endif 
 
 NFS_FLASH_SED_CONF=$(foreach param,XCONFIG_NFS_FS XCONFIG_LOCKD XCONFIG_SUNRPC,-e s"/^.*$(param)[= ].*/$(param)=m/")
 
@@ -406,7 +405,7 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	$(INSTALL) -m644 $(KERNEL_DIR)/System.map $(prefix)/$*cdkroot/boot/System.map-sh4-$(KERNELVERSION) && \
 	$(INSTALL) -m644 $(KERNEL_DIR)/COPYING $(prefix)/$*cdkroot/boot/LICENSE
 	cp $(KERNEL_DIR)/arch/sh/boot/uImage $(prefix)/$*cdkroot/boot/
-if STM22
+#if STM22
 	echo -e "ST Linux Distribution - Binary Kernel\n \
 	CPU: sh4\n \
 	$(if $(FORTIS_HDBOX),PLATFORM: stb7109ref\n) \
@@ -425,8 +424,8 @@ if STM22
 	$(MAKE) -C $(KERNEL_DIR) INSTALL_MOD_PATH=$(prefix)/$*cdkroot modules_install && \
 	rm $(prefix)/$*cdkroot/lib/modules/$(KERNELVERSION)/build || true && \
 	rm $(prefix)/$*cdkroot/lib/modules/$(KERNELVERSION)/source || true 
-else
-endif
+#else
+#endif
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 

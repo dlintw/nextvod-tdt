@@ -86,9 +86,15 @@ yaud-vdr: yaud-none stslave openssl openssl-dev \
 		boot-elf misc-cp remote firstboot vdr release_vdr
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+if STM22
 yaud-neutrino: yaud-none stslave\
 		boot-elf hotplug remote firstboot neutrino release_neutrino
 	@TUXBOX_YAUD_CUSTOMIZE@
+else
+yaud-neutrino: yaud-none stslave\
+		boot-elf remote firstboot neutrino release_neutrino
+	@TUXBOX_YAUD_CUSTOMIZE@
+endif
 
 if STM22
 yaud-enigma2: yaud-none lirc stslave\
@@ -100,9 +106,15 @@ yaud-enigma2: yaud-none lirc \
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
+if STM22
 yaud-enigma2-nightly: yaud-none lirc stslave\
 		boot-elf hotplug remote firstboot enigma2-nightly enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
+else
+yaud-enigma2-nightly: yaud-none lirc stslave\
+		boot-elf remote firstboot enigma2-nightly enigma2-misc release
+	@TUXBOX_YAUD_CUSTOMIZE@
+endif
 
 #work yet!!!
 flash-ufs910-enigma2: yaud-none lirc stslave \
