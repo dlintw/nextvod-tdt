@@ -16501,3 +16501,19 @@ diff -Nur enigma2-nightly.org/main/Makefile.am enigma2-nightly/main/Makefile.am
  
  enigma2$(EXEEXT): $(enigma2_OBJECTS) $(enigma2_DEPENDENCIES) $(enigma2_LDADD_WHOLE)
  #	@rm -f enigma2$(EXEEXT)
+diff -Nur enigma2-nightly.org/RecordTimer.py enigma2-nightly/RecordTimer.py
+--- enigma2-nightly.org/RecordTimer.py	2010-02-16 19:28:48.000000000 +0100
++++ enigma2-nightly/RecordTimer.py	2010-02-16 19:32:07.000000000 +0100
+@@ -292,6 +292,12 @@
+ 						RecordTimerEntry.TryQuitMainloop() # start shutdown handling without screen
+ 					else:
+ 						Notifications.AddNotificationWithCallback(self.sendTryQuitMainloopNotification, MessageBox, _("A finished record timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20)
++                        elif self.afterEvent == AFTEREVENT.AUTO:
++                                if not Screens.Standby.inTryQuitMainloop: # not a shutdown messagebox is open
++                                        timerStart = open("/proc/stb/fp/was_timer_wakeup").read()
++                                        if timerStart[:1] == "1":
++						Notifications.AddNotificationWithCallback(self.sendTryQuitMainloopNotification, MessageBox, _("A finished record timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20) 
++
+ 			return True
+ 
+ 	def setAutoincreaseEnd(self, entry = None):
