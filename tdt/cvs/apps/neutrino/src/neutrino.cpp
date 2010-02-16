@@ -779,7 +779,7 @@ int CNeutrinoApp::loadSetup(const char * fname)
 	g_settings.standby_cpufreq = 50;
 
 	g_settings.make_hd_list = configfile.getInt32("make_hd_list", 1);
-	//fb-alphawerte für gtx
+	//fb-alphawerte fï¿½r gtx
 	g_settings.gtx_alpha1 = configfile.getInt32( "gtx_alpha1", 255);
 	g_settings.gtx_alpha2 = configfile.getInt32( "gtx_alpha2", 1);
 
@@ -932,6 +932,9 @@ printf("***************************** rec dir %s timeshift dir %s\n", g_settings
 		}
 	}
 	g_settings.record_hours = configfile.getInt32( "record_hours", 4 );
+
+	g_settings.scale_display_type = configfile.getBool("scale_display_type", 0 );
+	
 	g_settings.filesystem_is_utf8              = configfile.getBool("filesystem_is_utf8"                 , true );
 
 	//recording (server + vcr)
@@ -1277,7 +1280,7 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setInt32( "standby_cpufreq", g_settings.standby_cpufreq);
 
 	configfile.setInt32( "make_hd_list", g_settings.make_hd_list);
-	//fb-alphawerte für gtx
+	//fb-alphawerte fï¿½r gtx
 	configfile.setInt32( "gtx_alpha1", g_settings.gtx_alpha1 );
 	configfile.setInt32( "gtx_alpha2", g_settings.gtx_alpha2 );
 
@@ -1404,6 +1407,9 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setString( "network_nfs_moviedir", g_settings.network_nfs_moviedir);
 	configfile.setString( "network_nfs_recordingdir", g_settings.network_nfs_recordingdir);
 	configfile.setString( "timeshiftdir", g_settings.timeshiftdir);
+
+	configfile.setBool  ("scale_display_type"                 , g_settings.scale_display_type             );
+	
 	configfile.setBool  ("filesystem_is_utf8"                 , g_settings.filesystem_is_utf8             );
 
 	//recording (server + vcr)

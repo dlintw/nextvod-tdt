@@ -1101,6 +1101,9 @@ satsetup.uncomm_input Uncommited
 satsetup.usals_repeat USALS command repeat
 satsetup.use_nit Benutze NIT
 satsetup.use_usals Benutze USALS
+scale.display_type Balkenanzeige
+scale.display_type_dots Punkte
+scale.display_type_full Linien
 scants.abort_body Scanvorgang wirklich abbrechen?
 scants.abort_header Breche Scan ab
 scants.actcable Kabel:

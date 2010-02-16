@@ -1303,7 +1303,7 @@ void CNeutrinoApp::InitServiceSettings(CMenuWidget &service, CMenuWidget &scanSe
 		updateSettings->addItem(GenericMenuBack);
 		updateSettings->addItem(GenericMenuSeparatorLine);
 
-		//experten-funktionen für mtd lesen/schreiben
+		//experten-funktionen fï¿½r mtd lesen/schreiben
 		CMenuWidget* mtdexpert = new CMenuWidget(LOCALE_FLASHUPDATE_EXPERTFUNCTIONS, "softupdate.raw");
 		mtdexpert->addItem(GenericMenuSeparator);
 		mtdexpert->addItem(GenericMenuBack);
@@ -1319,7 +1319,7 @@ void CNeutrinoApp::InitServiceSettings(CMenuWidget &service, CMenuWidget &scanSe
 			mtdexpert->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_WRITEFLASHMTD, true, NULL, fe, "writeflashmtd"));
 		mtdexpert->addItem(GenericMenuSeparatorLine);
 
-		CStringInputSMS * updateSettings_url_file = new CStringInputSMS(LOCALE_FLASHUPDATE_URL_FILE, g_settings.softupdate_url_file, 30, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-. ");
+		CStringInputSMS * updateSettings_url_file = new CStringInputSMS(LOCALE_FLASHUPDATE_URL_FILE, g_settings.softupdate_url_file, 30, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "abcdefghijklmnopqrstuvwxyz0123456789!""ï¿½$%&/()=?-. ");
 		mtdexpert->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_URL_FILE, true, g_settings.softupdate_url_file, updateSettings_url_file));
 
 		updateSettings->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_EXPERTFUNCTIONS, true, NULL, mtdexpert, "", CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED));
@@ -1352,10 +1352,10 @@ void CNeutrinoApp::InitServiceSettings(CMenuWidget &service, CMenuWidget &scanSe
 		CStringInputSMS * updateSettings_proxy = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYSERVER, g_settings.softupdate_proxyserver, 23, LOCALE_FLASHUPDATE_PROXYSERVER_HINT1, LOCALE_FLASHUPDATE_PROXYSERVER_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789-.: ");
 		updateSettings->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_PROXYSERVER, true, g_settings.softupdate_proxyserver, updateSettings_proxy));
 
-		CStringInputSMS * updateSettings_proxyuser = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYUSERNAME, g_settings.softupdate_proxyusername, 23, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT1, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-. ");
+		CStringInputSMS * updateSettings_proxyuser = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYUSERNAME, g_settings.softupdate_proxyusername, 23, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT1, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""ï¿½$%&/()=?-. ");
 		updateSettings->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_PROXYUSERNAME, true, g_settings.softupdate_proxyusername, updateSettings_proxyuser));
 
-		CStringInputSMS * updateSettings_proxypass = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYPASSWORD, g_settings.softupdate_proxypassword, 20, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT1, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-. ");
+		CStringInputSMS * updateSettings_proxypass = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYPASSWORD, g_settings.softupdate_proxypassword, 20, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT1, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""ï¿½$%&/()=?-. ");
 		updateSettings->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_PROXYPASSWORD, true, g_settings.softupdate_proxypassword, updateSettings_proxypass));
 
 		updateSettings->addItem(GenericMenuSeparatorLine);
@@ -1423,6 +1423,13 @@ const CMenuOptionChooser::keyval MISCSETTINGS_FB_DESTINATION_OPTIONS[MISCSETTING
 	{ 0, LOCALE_OPTIONS_NULL   },
 	{ 1, LOCALE_OPTIONS_SERIAL },
 	{ 2, LOCALE_OPTIONS_FB     }
+};
+
+#define MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT 2
+const CMenuOptionChooser::keyval MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTIONS[MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT] =
+{
+	{ 0, LOCALE_SCALE_DISPLAY_TYPE_DOTS },
+	{ 1, LOCALE_SCALE_DISPLAY_TYPE_FULL }
 };
 
 #define MISCSETTINGS_FILESYSTEM_IS_UTF8_OPTION_COUNT 2
@@ -1493,6 +1500,10 @@ void CNeutrinoApp::InitMiscSettings(CMenuWidget &miscSettings)
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_EXTRA_CACHE_TXT,  (int *)&g_settings.cacheTXT, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_MISCSETTINGS_VIRTUAL_ZAP_MODE, &g_settings.virtual_zap_mode, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 
+printf("a\n"); // bc
+	miscSettings.addItem(new CMenuOptionChooser(LOCALE_SCALE_DISPLAY_TYPE            , &g_settings.scale_display_type            , MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTIONS, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT, true ));
+printf("b\n"); // bc		
+	
 	//channellist
 	miscSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_MISCSETTINGS_CHANNELLIST));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_MISCSETTINGS_CHANNELLIST_EPGTEXT_ALIGN, &g_settings.channellist_epgtext_align_right, CHANNELLIST_EPGTEXT_ALIGN_RIGHT_OPTIONS, CHANNELLIST_EPGTEXT_ALIGN_RIGHT_OPTIONS_COUNT, true));
@@ -1535,7 +1546,7 @@ void CNeutrinoApp::InitMiscSettings(CMenuWidget &miscSettings)
 	miscSettings.addItem(m1);
 #endif
 
-	miscSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_FILEBROWSER_HEAD));
+	miscSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_FILEBROWSER_HEAD));	
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_FILESYSTEM_IS_UTF8            , &g_settings.filesystem_is_utf8            , MISCSETTINGS_FILESYSTEM_IS_UTF8_OPTIONS, MISCSETTINGS_FILESYSTEM_IS_UTF8_OPTION_COUNT, true ));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_FILEBROWSER_SHOWRIGHTS        , &g_settings.filebrowser_showrights        , MESSAGEBOX_NO_YES_OPTIONS              , MESSAGEBOX_NO_YES_OPTION_COUNT              , true ));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_FILEBROWSER_DENYDIRECTORYLEAVE, &g_settings.filebrowser_denydirectoryleave, MESSAGEBOX_NO_YES_OPTIONS              , MESSAGEBOX_NO_YES_OPTION_COUNT              , true ));
@@ -1569,10 +1580,10 @@ void CNeutrinoApp::InitLanguageSettings(CMenuWidget &languageSettings)
 	int n;
 	//		printf("scanning locale dir now....(perhaps)\n");
 
-	char *pfad[] = {(char *) DATADIR "/neutrino/locale",(char *) "/var/tuxbox/config/locale"};
+	char *path[] = {(char *) DATADIR "/neutrino/locale",(char *) "/var/tuxbox/config/locale"};
 
 	for(int p = 0;p < 2;p++) {
-		n = scandir(pfad[p], &namelist, 0, alphasort);
+		n = scandir(path[p], &namelist, 0, alphasort);
 		if(n < 0) {
 			perror("loading locales: scandir");
 		} else {
@@ -1965,10 +1976,10 @@ void CNeutrinoApp::InitStreamingSettings(CMenuWidget &streamingSettings)
 
 	CIPInput * streamingSettings_server_ip = new CIPInput(LOCALE_STREAMINGMENU_SERVER_IP, g_settings.streaming_server_ip, LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2);
 	CStringInput * streamingSettings_server_port = new CStringInput(LOCALE_STREAMINGMENU_SERVER_PORT, g_settings.streaming_server_port, 6, LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2,"0123456789 ");
- 	CStringInputSMS * cddriveInput = new CStringInputSMS(LOCALE_STREAMINGMENU_STREAMING_SERVER_CDDRIVE, g_settings.streaming_server_cddrive, 20, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-:\\ ");
+ 	CStringInputSMS * cddriveInput = new CStringInputSMS(LOCALE_STREAMINGMENU_STREAMING_SERVER_CDDRIVE, g_settings.streaming_server_cddrive, 20, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "abcdefghijklmnopqrstuvwxyz0123456789!""ï¿½$%&/()=?-:\\ ");
 	CStringInput * streamingSettings_videorate = new CStringInput(LOCALE_STREAMINGMENU_STREAMING_VIDEORATE, g_settings.streaming_videorate, 5, LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2,"0123456789 ");
 	CStringInput * streamingSettings_audiorate = new CStringInput(LOCALE_STREAMINGMENU_STREAMING_AUDIORATE, g_settings.streaming_audiorate, 5, LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2,"0123456789 ");
-	CStringInputSMS * startdirInput = new CStringInputSMS(LOCALE_STREAMINGMENU_STREAMING_SERVER_STARTDIR, g_settings.streaming_server_startdir, 30, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE,"abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-:\\ ");
+	CStringInputSMS * startdirInput = new CStringInputSMS(LOCALE_STREAMINGMENU_STREAMING_SERVER_STARTDIR, g_settings.streaming_server_startdir, 30, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE,"abcdefghijklmnopqrstuvwxyz0123456789!""ï¿½$%&/()=?-:\\ ");
 
 	CMenuForwarder* mf1 = new CMenuForwarder(LOCALE_STREAMINGMENU_SERVER_IP                , (g_settings.streaming_type==1), g_settings.streaming_server_ip      , streamingSettings_server_ip);
 	CMenuForwarder* mf2 = new CMenuForwarder(LOCALE_STREAMINGMENU_SERVER_PORT              , (g_settings.streaming_type==1), g_settings.streaming_server_port    , streamingSettings_server_port);
@@ -2637,7 +2648,7 @@ void CNeutrinoApp::SelectAPID()
 #if 0
 	if( g_RemoteControl->current_PIDs.APIDs.size()> 1 )
 	{
-		// wir haben APIDs für diesen Kanal!
+		// wir haben APIDs fï¿½r diesen Kanal!
 
 		CMenuWidget APIDSelector(LOCALE_APIDSELECTOR_HEAD, "audio.raw", 300);
 		APIDSelector.addItem(GenericMenuSeparator);

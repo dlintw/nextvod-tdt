@@ -1101,6 +1101,9 @@ satsetup.uncomm_input Uncommited input
 satsetup.usals_repeat USALS command repeat
 satsetup.use_nit Use NIT
 satsetup.use_usals Use usals
+scale.display_type Bar type
+scale.display_type_dots Dots
+scale.display_type_full Lines
 scants.abort_body Should the search really be aborted?
 scants.abort_header Abortion of channel scan
 scants.actcable Cable:
