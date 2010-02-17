@@ -78,7 +78,14 @@ CUBEPATCHES_041 = $(COMMONPATCHES_41) \
 		Patches/cuberevo_fdma_p0041.patch \
 		Patches/cuberevo_i2c_p0041.patch \
 		Patches/cuberevo_rtl8201_p0041.patch \
-		Patches/$(CUBEMOD)_setup_p0041.patch
+		Patches/$(CUBEMOD)_setup_p0041.patch \
+		Patches/fat.patch \
+		Patches/fuse.patch \
+		Patches/net.patch \
+		Patches/tune.patch \
+		Patches/usbwait123.patch \
+		Patches/jffs2-lzma.patch \
+		Patches/ftdi_sio.c.patch
 
 KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 			$(if $(UFS922),$(UFS922PATCHES_41)) \

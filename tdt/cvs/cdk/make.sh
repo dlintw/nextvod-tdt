@@ -36,12 +36,13 @@ echo "3) Kathrein UFS-912"
 echo "4) Kathrein UFS-922"
 echo "5) Topfield 7700 HDPVR"
 echo "6) Fortis based (HDBOX)"
+echo "7) Cuberevo (IPBOX)"
 case $1 in
-	1|2|3|4|5|6) REPLY=$1
+	1|2|3|4|5|6|7) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-6)? ";;
+	read -p "Select target (1-7)? ";;
 esac
 
 [ "$REPLY" == "1" ] && CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
@@ -50,7 +51,8 @@ esac
 [ "$REPLY" == "4" ] && CONFIGPARAM="$CONFIGPARAM --enable-ufs922"
 [ "$REPLY" == "5" ] && CONFIGPARAM="$CONFIGPARAM --enable-tf7700"
 [ "$REPLY" == "6" ] && CONFIGPARAM="$CONFIGPARAM --enable-fortis_hdbox"
-[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
+[ "$REPLY" == "7" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo"
+[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" -o "$REPLY" == "7" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
 
 ##############################################
 REPLY=N
