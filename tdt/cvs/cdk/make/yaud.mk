@@ -87,11 +87,11 @@ yaud-vdr: yaud-none stslave openssl openssl-dev \
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 if STM22
-yaud-neutrino: yaud-none stslave\
+yaud-neutrino: yaud-none lirc stslave\
 		boot-elf hotplug remote firstboot neutrino release_neutrino
 	@TUXBOX_YAUD_CUSTOMIZE@
 else
-yaud-neutrino: yaud-none stslave\
+yaud-neutrino: yaud-none lirc stslave\
 		boot-elf remote firstboot neutrino release_neutrino
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif

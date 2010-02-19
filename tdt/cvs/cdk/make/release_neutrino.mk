@@ -477,8 +477,10 @@ if ENABLE_TF7700
 endif
 
 if ENABLE_UFS910
-#	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
-	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	cp -dp $(buildprefix)/root/etc/lircd.conf $(prefix)/release_neutrino/etc/
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/ 
+#	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 endif
 
 	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release_neutrino/usr/bin/
