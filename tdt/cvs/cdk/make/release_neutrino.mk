@@ -470,6 +470,7 @@ endif
 
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/bin
+	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/lib
 	cp -p $(targetprefix)/usr/sbin/vsftpd $(prefix)/release_neutrino/usr/bin/
 if ENABLE_TF7700
 #	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/ 
