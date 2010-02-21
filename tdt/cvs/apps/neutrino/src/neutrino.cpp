@@ -806,7 +806,7 @@ int CNeutrinoApp::loadSetup(const char * fname)
 	g_settings.standby_cpufreq = 50;
 
 	g_settings.make_hd_list = configfile.getInt32("make_hd_list", 1);
-	//fb-alphawerte f�r gtx
+	//fb-alpha values for gtx
 	g_settings.gtx_alpha1 = configfile.getInt32( "gtx_alpha1", 255);
 	g_settings.gtx_alpha2 = configfile.getInt32( "gtx_alpha2", 1);
 
@@ -1314,7 +1314,7 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setInt32( "standby_cpufreq", g_settings.standby_cpufreq);
 
 	configfile.setInt32( "make_hd_list", g_settings.make_hd_list);
-	//fb-alphawerte f�r gtx
+	//fb-alpha values for gtx
 	configfile.setInt32( "gtx_alpha1", g_settings.gtx_alpha1 );
 	configfile.setInt32( "gtx_alpha2", g_settings.gtx_alpha2 );
 
