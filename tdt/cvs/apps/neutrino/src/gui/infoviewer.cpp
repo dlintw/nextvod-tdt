@@ -63,6 +63,10 @@
 #include <zapit/frontend_c.h>
 #include <video_cs.h>
 
+#ifndef DUCKBOX
+#define DUCKBOX
+#endif
+
 void sectionsd_getEventsServiceKey(t_channel_id serviceUniqueKey, CChannelEventList &eList, char search = 0, std::string search_text = "");
 void sectionsd_getCurrentNextServiceKey(t_channel_id uniqueServiceKey, CSectionsdClient::responseGetCurrentNextInfoChannelID& current_next );
 
@@ -367,6 +371,22 @@ void CInfoViewer::showTitle (const int ChanNum, const std::string & Channel, con
 			frameBuffer->paintBackgroundBox (ChanInfoX, BoxEndInfoY, BoxEndX, BoxEndInfoY + BOTTOM_BAR_OFFSET);
 
 		frameBuffer->paintBox (ChanInfoX, BoxEndInfoY-2, BoxEndX, BoxEndY-20, COL_BLACK);
+		
+		#ifdef DUCKBOX
+		if(g_settings.scale_display_type == 0) {
+			{ // FIXME
+				int xcnt = (BoxEndX - ChanInfoX) / 4;
+				int ycnt = (BoxEndY - BoxEndInfoY - 18) / 4;
+				for(int i = 0; i < xcnt; i++) {
+					for(int j = 0; j < ycnt; j++)
+						frameBuffer->paintBoxRel (ChanInfoX + i*4, BoxEndInfoY + j*4, 2, 2, COL_INFOBAR_PLUS_1);
+				}
+			}
+		} else {
+			frameBuffer->paintBox (ChanInfoX, BoxEndInfoY-2, BoxEndX, BoxEndY-20, COL_INFOBAR_PLUS_0);
+			frameBuffer->paintBox (BoxEndX - 300, BoxEndInfoY-2, BoxEndX, BoxEndY-20, COL_BLACK);
+		}
+		#else
 		{ // FIXME
 			int xcnt = (BoxEndX - ChanInfoX) / 4;
 			int ycnt = (BoxEndY - BoxEndInfoY - 18) / 4;
@@ -375,6 +395,8 @@ void CInfoViewer::showTitle (const int ChanNum, const std::string & Channel, con
 					frameBuffer->paintBoxRel (ChanInfoX + i*4, BoxEndInfoY + j*4, 2, 2, COL_INFOBAR_PLUS_1);
 			}
 		}
+		#endif
+		
 		frameBuffer->paintBox (ChanInfoX, BoxEndY-20, BoxEndX, BoxEndY, COL_INFOBAR_BUTTONS_BACKGROUND, ROUND_RADIUS, 2); //round
 
 		showSNR();

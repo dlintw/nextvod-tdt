@@ -34,6 +34,10 @@
 #include <config.h>
 #endif
 
+#ifndef DUCKBOX
+#define DUCKBOX
+#endif
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -189,7 +193,7 @@ const CMenuOptionChooser::keyval VIDEOMENU_VIDEOSIGNAL_HD1_OPTIONS[VIDEOMENU_VID
 	{ ANALOG_SD_RGB_SCART,   LOCALE_VIDEOMENU_ANALOG_MODE_SD_RGB_SCART   }, /* composite + RGB (for both SCART and Cinch) */
 	{ ANALOG_SD_RGB_CINCH,   LOCALE_VIDEOMENU_ANALOG_MODE_SD_RGB_CINCH   }, /* composite + RGB (for both SCART and Cinch) */
 	{ ANALOG_SD_YPRPB_SCART, LOCALE_VIDEOMENU_ANALOG_MODE_SD_YPRPB_SCART }, /* YPbPr SCART (with wrongly connected Cinch) */
-	{ ANALOG_SD_YPRPB_CINCH, LOCALE_VIDEOMENU_ANALOG_MODE_SD_YPRPB_CINCH },  /* YPbPr Cinch (with wrongly connected SCART) */
+	{ ANALOG_SD_YPRPB_CINCH, LOCALE_VIDEOMENU_ANALOG_MODE_SD_YPRPB_CINCH }, /* YPbPr Cinch (with wrongly connected SCART) */
 	{ ANALOG_HD_RGB_SCART,   LOCALE_VIDEOMENU_ANALOG_MODE_HD_RGB_SCART   },
 	{ ANALOG_HD_RGB_CINCH,   LOCALE_VIDEOMENU_ANALOG_MODE_HD_RGB_CINCH   },
 	{ ANALOG_HD_YPRPB_SCART, LOCALE_VIDEOMENU_ANALOG_MODE_HD_YPRPB_SCART },
@@ -209,10 +213,20 @@ const CMenuOptionChooser::keyval VIDEOMENU_VIDEOSIGNAL_HD1PLUS_SCART_OPTIONS[VID
 const CMenuOptionChooser::keyval VIDEOMENU_VIDEOSIGNAL_HD1PLUS_CINCH_OPTIONS[VIDEOMENU_VIDEOSIGNAL_HD1PLUS_CINCH_OPTION_COUNT] =
 {
 	{ ANALOG_SD_RGB_CINCH,   LOCALE_VIDEOMENU_ANALOG_MODE_SD_RGB_CINCH   }, /* composite + RGB (for both SCART and Cinch) */
-	{ ANALOG_SD_YPRPB_CINCH, LOCALE_VIDEOMENU_ANALOG_MODE_SD_YPRPB_CINCH },  /* YPbPr Cinch (with wrongly connected SCART) */
+	{ ANALOG_SD_YPRPB_CINCH, LOCALE_VIDEOMENU_ANALOG_MODE_SD_YPRPB_CINCH }, /* YPbPr Cinch (with wrongly connected SCART) */
 	{ ANALOG_HD_RGB_CINCH,   LOCALE_VIDEOMENU_ANALOG_MODE_HD_RGB_CINCH   },
 	{ ANALOG_HD_YPRPB_CINCH, LOCALE_VIDEOMENU_ANALOG_MODE_HD_YPRPB_CINCH }
 };
+
+#ifdef DUCKBOX
+#define VIDEOMENU_HDMI_COLOR_SPACE_OPTION_COUNT 3
+const CMenuOptionChooser::keyval VIDEOMENU_HDMI_COLOR_SPACE_OPTIONS[VIDEOMENU_HDMI_COLOR_SPACE_OPTION_COUNT] =
+{
+	 { 0, NONEXISTANT_LOCALE, "RGB" },
+	 { 1, NONEXISTANT_LOCALE, "YUV" },
+	 { 2, NONEXISTANT_LOCALE, "422" }
+};
+#endif
 
 #define VIDEOMENU_VCRSIGNAL_OPTION_COUNT 2
 const CMenuOptionChooser::keyval VIDEOMENU_VCRSIGNAL_OPTIONS[VIDEOMENU_VCRSIGNAL_OPTION_COUNT] =
@@ -280,6 +294,10 @@ CVideoSettings::CVideoSettings() : CMenuWidget(LOCALE_VIDEOMENU_HEAD, "video.raw
 		addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_SCART, &g_settings.analog_mode1, VIDEOMENU_VIDEOSIGNAL_HD1PLUS_SCART_OPTIONS, VIDEOMENU_VIDEOSIGNAL_HD1PLUS_SCART_OPTION_COUNT, true, this));
 		addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_CINCH, &g_settings.analog_mode2, VIDEOMENU_VIDEOSIGNAL_HD1PLUS_CINCH_OPTIONS, VIDEOMENU_VIDEOSIGNAL_HD1PLUS_CINCH_OPTION_COUNT, true, this));
 	}
+	
+	#ifdef DUCKBOX
+	addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_HDMI_COLOR_SPACE, &g_settings.hdmi_color_space, VIDEOMENU_HDMI_COLOR_SPACE_OPTIONS, VIDEOMENU_HDMI_COLOR_SPACE_OPTION_COUNT, true, this));
+	#endif
 
 	addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_VIDEOFORMAT, &g_settings.video_Format, VIDEOMENU_VIDEOFORMAT_OPTIONS, VIDEOMENU_VIDEOFORMAT_OPTION_COUNT, true, this));
 	addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_43MODE, &g_settings.video_43mode, VIDEOMENU_43MODE_OPTIONS, VIDEOMENU_43MODE_OPTION_COUNT, true, this));
@@ -429,6 +447,29 @@ bool CVideoSettings::changeNotify(const neutrino_locale_t OptionName, void *)
 				prev_video_mode = g_settings.video_Mode;
 		}
 	}
+	#ifdef DUCKBOX
+	else if (ARE_LOCALES_EQUAL(OptionName, LOCALE_VIDEOMENU_HDMI_COLOR_SPACE)) {
+		switch (g_settings.hdmi_color_space) {
+			case 0:
+				// system("/bin/stfbset -H RGB"); // FIXME: Change once 'stfbset' is available
+				system("/bin/stfbcontrol hr");
+				break;
+			  
+			case 1:
+				// system("/bin/stfbset -H YUV"); // FIXME: Change once 'stfbset' is available
+				system("/bin/stfbcontrol hy");
+				break;
+			  
+			case2:
+				// system("/bin/stfbset -H 422"); // FIXME: Change once 'stfbset' is available
+				printf("Unsupported in stfbcontrol\n");
+				break;
+				
+			default:
+				printf("Unknown hdmi_color_space setting\n");
+		}
+	}
+	#endif
 
 	return true;
 };
@@ -1303,7 +1344,7 @@ void CNeutrinoApp::InitServiceSettings(CMenuWidget &service, CMenuWidget &scanSe
 		updateSettings->addItem(GenericMenuBack);
 		updateSettings->addItem(GenericMenuSeparatorLine);
 
-		//expert-function for mtd read/write
+		//experten-funktionen f�r mtd lesen/schreiben
 		CMenuWidget* mtdexpert = new CMenuWidget(LOCALE_FLASHUPDATE_EXPERTFUNCTIONS, "softupdate.raw");
 		mtdexpert->addItem(GenericMenuSeparator);
 		mtdexpert->addItem(GenericMenuBack);
@@ -1319,7 +1360,7 @@ void CNeutrinoApp::InitServiceSettings(CMenuWidget &service, CMenuWidget &scanSe
 			mtdexpert->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_WRITEFLASHMTD, true, NULL, fe, "writeflashmtd"));
 		mtdexpert->addItem(GenericMenuSeparatorLine);
 
-		CStringInputSMS * updateSettings_url_file = new CStringInputSMS(LOCALE_FLASHUPDATE_URL_FILE, g_settings.softupdate_url_file, 30, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-. ");
+		CStringInputSMS * updateSettings_url_file = new CStringInputSMS(LOCALE_FLASHUPDATE_URL_FILE, g_settings.softupdate_url_file, 30, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "abcdefghijklmnopqrstuvwxyz0123456789!""�$%&/()=?-. ");
 		mtdexpert->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_URL_FILE, true, g_settings.softupdate_url_file, updateSettings_url_file));
 
 		updateSettings->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_EXPERTFUNCTIONS, true, NULL, mtdexpert, "", CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED));
@@ -1352,10 +1393,10 @@ void CNeutrinoApp::InitServiceSettings(CMenuWidget &service, CMenuWidget &scanSe
 		CStringInputSMS * updateSettings_proxy = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYSERVER, g_settings.softupdate_proxyserver, 23, LOCALE_FLASHUPDATE_PROXYSERVER_HINT1, LOCALE_FLASHUPDATE_PROXYSERVER_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789-.: ");
 		updateSettings->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_PROXYSERVER, true, g_settings.softupdate_proxyserver, updateSettings_proxy));
 
-		CStringInputSMS * updateSettings_proxyuser = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYUSERNAME, g_settings.softupdate_proxyusername, 23, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT1, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-. ");
+		CStringInputSMS * updateSettings_proxyuser = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYUSERNAME, g_settings.softupdate_proxyusername, 23, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT1, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""�$%&/()=?-. ");
 		updateSettings->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_PROXYUSERNAME, true, g_settings.softupdate_proxyusername, updateSettings_proxyuser));
 
-		CStringInputSMS * updateSettings_proxypass = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYPASSWORD, g_settings.softupdate_proxypassword, 20, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT1, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-. ");
+		CStringInputSMS * updateSettings_proxypass = new CStringInputSMS(LOCALE_FLASHUPDATE_PROXYPASSWORD, g_settings.softupdate_proxypassword, 20, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT1, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""�$%&/()=?-. ");
 		updateSettings->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_PROXYPASSWORD, true, g_settings.softupdate_proxypassword, updateSettings_proxypass));
 
 		updateSettings->addItem(GenericMenuSeparatorLine);
@@ -1425,12 +1466,14 @@ const CMenuOptionChooser::keyval MISCSETTINGS_FB_DESTINATION_OPTIONS[MISCSETTING
 	{ 2, LOCALE_OPTIONS_FB     }
 };
 
+#ifdef DUCKBOX
 #define MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT 2
 const CMenuOptionChooser::keyval MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTIONS[MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT] =
 {
 	{ 0, LOCALE_SCALE_DISPLAY_TYPE_DOTS },
 	{ 1, LOCALE_SCALE_DISPLAY_TYPE_FULL }
 };
+#endif
 
 #define MISCSETTINGS_FILESYSTEM_IS_UTF8_OPTION_COUNT 2
 const CMenuOptionChooser::keyval MISCSETTINGS_FILESYSTEM_IS_UTF8_OPTIONS[MISCSETTINGS_FILESYSTEM_IS_UTF8_OPTION_COUNT] =
@@ -1500,9 +1543,9 @@ void CNeutrinoApp::InitMiscSettings(CMenuWidget &miscSettings)
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_EXTRA_CACHE_TXT,  (int *)&g_settings.cacheTXT, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_MISCSETTINGS_VIRTUAL_ZAP_MODE, &g_settings.virtual_zap_mode, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 
-printf("a\n"); // bc
-	miscSettings.addItem(new CMenuOptionChooser(LOCALE_SCALE_DISPLAY_TYPE            , &g_settings.scale_display_type            , MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTIONS, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT, true ));
-printf("b\n"); // bc		
+	#ifdef DUCKBOX
+	miscSettings.addItem(new CMenuOptionChooser(LOCALE_SCALE_DISPLAY_TYPE, &g_settings.scale_display_type, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTIONS, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT, true ));
+	#endif
 	
 	//channellist
 	miscSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_MISCSETTINGS_CHANNELLIST));
@@ -1976,10 +2019,10 @@ void CNeutrinoApp::InitStreamingSettings(CMenuWidget &streamingSettings)
 
 	CIPInput * streamingSettings_server_ip = new CIPInput(LOCALE_STREAMINGMENU_SERVER_IP, g_settings.streaming_server_ip, LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2);
 	CStringInput * streamingSettings_server_port = new CStringInput(LOCALE_STREAMINGMENU_SERVER_PORT, g_settings.streaming_server_port, 6, LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2,"0123456789 ");
- 	CStringInputSMS * cddriveInput = new CStringInputSMS(LOCALE_STREAMINGMENU_STREAMING_SERVER_CDDRIVE, g_settings.streaming_server_cddrive, 20, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-:\\ ");
+ 	CStringInputSMS * cddriveInput = new CStringInputSMS(LOCALE_STREAMINGMENU_STREAMING_SERVER_CDDRIVE, g_settings.streaming_server_cddrive, 20, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "abcdefghijklmnopqrstuvwxyz0123456789!""�$%&/()=?-:\\ ");
 	CStringInput * streamingSettings_videorate = new CStringInput(LOCALE_STREAMINGMENU_STREAMING_VIDEORATE, g_settings.streaming_videorate, 5, LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2,"0123456789 ");
 	CStringInput * streamingSettings_audiorate = new CStringInput(LOCALE_STREAMINGMENU_STREAMING_AUDIORATE, g_settings.streaming_audiorate, 5, LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2,"0123456789 ");
-	CStringInputSMS * startdirInput = new CStringInputSMS(LOCALE_STREAMINGMENU_STREAMING_SERVER_STARTDIR, g_settings.streaming_server_startdir, 30, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE,"abcdefghijklmnopqrstuvwxyz0123456789!""§$%&/()=?-:\\ ");
+	CStringInputSMS * startdirInput = new CStringInputSMS(LOCALE_STREAMINGMENU_STREAMING_SERVER_STARTDIR, g_settings.streaming_server_startdir, 30, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE,"abcdefghijklmnopqrstuvwxyz0123456789!""�$%&/()=?-:\\ ");
 
 	CMenuForwarder* mf1 = new CMenuForwarder(LOCALE_STREAMINGMENU_SERVER_IP                , (g_settings.streaming_type==1), g_settings.streaming_server_ip      , streamingSettings_server_ip);
 	CMenuForwarder* mf2 = new CMenuForwarder(LOCALE_STREAMINGMENU_SERVER_PORT              , (g_settings.streaming_type==1), g_settings.streaming_server_port    , streamingSettings_server_port);
@@ -2648,7 +2691,7 @@ void CNeutrinoApp::SelectAPID()
 #if 0
 	if( g_RemoteControl->current_PIDs.APIDs.size()> 1 )
 	{
-		// we have APIDs for this channel!
+		// wir haben APIDs f�r diesen Kanal!
 
 		CMenuWidget APIDSelector(LOCALE_APIDSELECTOR_HEAD, "audio.raw", 300);
 		APIDSelector.addItem(GenericMenuSeparator);

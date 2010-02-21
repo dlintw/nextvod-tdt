@@ -38,6 +38,10 @@
 
 #include <string>
 
+#ifndef DUCKBOX
+#define DUCKBOX
+#endif
+
 #define VIDEOMENU_VIDEOMODE_OPTION_COUNT 12
 
 struct SNeutrinoSettings
@@ -51,6 +55,9 @@ struct SNeutrinoSettings
 	unsigned char video_csync;
 	char current_volume;
 	int channel_mode;
+	#ifdef DUCKBOX
+	int hdmi_color_space;
+	#endif
 
 	//misc
 	int shutdown_real;
@@ -62,6 +69,9 @@ struct SNeutrinoSettings
 	int infobar_subchan_disp_pos;
 	int misc_spts;
 	int fan_speed;
+	#ifdef DUCKBOX
+	int scale_display_type;
+	#endif
 
 	//audio
 	int audio_AnalogMode;
@@ -230,7 +240,6 @@ struct SNeutrinoSettings
 	int streaming_transcode_video_codec;
 	int streaming_resolution;
 
-	int scale_display_type;
 	int filesystem_is_utf8;
 	// default plugin for ts-movieplayer (red button)
 	std::string movieplayer_plugin;

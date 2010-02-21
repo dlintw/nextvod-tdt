@@ -36,6 +36,10 @@
 
 #define NEUTRINO_CPP
 
+#ifndef DUCKBOX
+#define DUCKBOX
+#endif
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -747,6 +751,29 @@ int CNeutrinoApp::loadSetup(const char * fname)
 	prev_video_mode = g_settings.video_Mode;
 	g_settings.analog_mode1 = configfile.getInt32("analog_mode1", 0); // default RGB
 	g_settings.analog_mode2 = configfile.getInt32("analog_mode2", 0); // default RGB
+	
+	#ifdef DUCKBOX
+	g_settings.hdmi_color_space = configfile.getInt32("hdmi_color_space", 0); // default RGB
+	switch (g_settings.hdmi_color_space) {
+		case 0:
+			// system("/bin/stfbset -H RGB"); // FIXME: Change once 'stfbset' is available
+			system("/bin/stfbcontrol hr");
+			break;
+		  
+		case 1:
+			// system("/bin/stfbset -H YUV"); // FIXME: Change once 'stfbset' is available
+			system("/bin/stfbcontrol hy");
+			break;
+		  
+		case2:
+			// system("/bin/stfbset -H 422"); // FIXME: Change once 'stfbset' is available
+			printf("Unsupported in stfbcontrol\n");
+			break;
+			
+		default:
+			printf("Unknown hdmi_color_space setting\n");
+	}
+	#endif
 
 	g_settings.video_Format = configfile.getInt32("video_Format", 3);
 	g_settings.video_43mode = configfile.getInt32("video_43mode", 0);
@@ -779,7 +806,7 @@ int CNeutrinoApp::loadSetup(const char * fname)
 	g_settings.standby_cpufreq = 50;
 
 	g_settings.make_hd_list = configfile.getInt32("make_hd_list", 1);
-	//fb-alpha values for gtx
+	//fb-alphawerte f�r gtx
 	g_settings.gtx_alpha1 = configfile.getInt32( "gtx_alpha1", 255);
 	g_settings.gtx_alpha2 = configfile.getInt32( "gtx_alpha2", 1);
 
@@ -933,7 +960,9 @@ printf("***************************** rec dir %s timeshift dir %s\n", g_settings
 	}
 	g_settings.record_hours = configfile.getInt32( "record_hours", 4 );
 
+	#ifdef DUCKBOX
 	g_settings.scale_display_type = configfile.getBool("scale_display_type", 0 );
+	#endif
 	
 	g_settings.filesystem_is_utf8              = configfile.getBool("filesystem_is_utf8"                 , true );
 
@@ -1255,6 +1284,11 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setInt32( "video_Mode", g_settings.video_Mode );
 	configfile.setInt32( "analog_mode1", g_settings.analog_mode1 );
 	configfile.setInt32( "analog_mode2", g_settings.analog_mode2 );
+	
+	#ifdef DUCKBOX
+	configfile.setInt32( "hdmi_color_space", g_settings.hdmi_color_space );
+	#endif
+	
 	configfile.setInt32( "video_Format", g_settings.video_Format );
 	configfile.setInt32( "video_43mode", g_settings.video_43mode );
 	configfile.setInt32( "current_volume", g_settings.current_volume );
@@ -1280,7 +1314,7 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setInt32( "standby_cpufreq", g_settings.standby_cpufreq);
 
 	configfile.setInt32( "make_hd_list", g_settings.make_hd_list);
-	//fb-alpha values for gtx
+	//fb-alphawerte f�r gtx
 	configfile.setInt32( "gtx_alpha1", g_settings.gtx_alpha1 );
 	configfile.setInt32( "gtx_alpha2", g_settings.gtx_alpha2 );
 
@@ -1408,7 +1442,9 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setString( "network_nfs_recordingdir", g_settings.network_nfs_recordingdir);
 	configfile.setString( "timeshiftdir", g_settings.timeshiftdir);
 
-	configfile.setBool  ("scale_display_type"                 , g_settings.scale_display_type             );
+	#ifdef DUCKBOX
+	configfile.setBool  ("scale_display_type"                 , g_settings.scale_display_type );
+	#endif
 	
 	configfile.setBool  ("filesystem_is_utf8"                 , g_settings.filesystem_is_utf8             );
 
