@@ -461,7 +461,7 @@ bool CVideoSettings::changeNotify(const neutrino_locale_t OptionName, void *)
 				system("/bin/stfbcontrol hy");
 				break;
 			  
-			case2:
+			case 2:
 				// system("/bin/stfbset -H 422"); // FIXME: Change once 'stfbset' is available
 				printf("Unsupported in stfbcontrol\n");
 				break;

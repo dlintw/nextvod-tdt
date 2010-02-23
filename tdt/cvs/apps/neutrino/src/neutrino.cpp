@@ -765,7 +765,7 @@ int CNeutrinoApp::loadSetup(const char * fname)
 			system("/bin/stfbcontrol hy");
 			break;
 		  
-		case2:
+		case 2:
 			// system("/bin/stfbset -H 422"); // FIXME: Change once 'stfbset' is available
 			printf("Unsupported in stfbcontrol\n");
 			break;
