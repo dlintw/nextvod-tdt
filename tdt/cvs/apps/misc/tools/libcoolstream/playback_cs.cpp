@@ -142,7 +142,7 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 	//pause playback in case of timeshift
 	//FIXME: no picture on tv
 	player->playback->Command(player, PLAYBACK_PAUSE, NULL);
-
+	playing=true;
 	printf("%s:%s - return=%d\n", FILENAME, __FUNCTION__, ret);
 
 	return ret;
@@ -151,7 +151,8 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 //Used by Fileplay
 bool cPlayback::Stop(void)
 {
-	printf("%s:%s\n", FILENAME, __FUNCTION__);
+	printf("%s:%s playing %d\n", FILENAME, __FUNCTION__, playing);
+	if(playing==false) return false;
 
 	if(player && player->playback && player->output) {
 		player->playback->Command(player, PLAYBACK_STOP, NULL);
@@ -171,6 +172,7 @@ bool cPlayback::Stop(void)
 	if(player != NULL)
 		player = NULL;
 
+	playing=false;
 	return true;
 }
 
@@ -188,7 +190,9 @@ bool cPlayback::SetAPid(unsigned short pid, bool ac3)
 
 bool cPlayback::SetSpeed(int speed)
 {
-	printf("%s:%s\n", FILENAME, __FUNCTION__);
+	printf("%s:%s playing %d\n", FILENAME, __FUNCTION__,playing);
+
+	if(playing==false) return false;
 	if(player && player->playback) {
 		int result = 0;
 		int ratio=1;
@@ -239,7 +243,7 @@ bool cPlayback::GetSpeed(int &speed) const
 bool cPlayback::GetPosition(int &position, int &duration)
 {
 	printf("%s:%s %d %d\n", FILENAME, __FUNCTION__, position, duration);
-
+	if(playing==false) return false;
 /*
 	if (player && player->playback && !player->playback->isPlaying) {
 		printf("cPlayback::%s !!!!EOF!!!! < -1\n", __func__);
@@ -285,6 +289,7 @@ bool cPlayback::GetOffset(off64_t &offset)
 bool cPlayback::SetPosition(int position, bool absolute)
 {
 	printf("%s:%s %d\n", FILENAME, __FUNCTION__,position);
+	if(playing==false) return false;
 	float pos = (position/1000.0);
 	if(player && player->playback)
 		player->playback->Command(player, PLAYBACK_SEEK, (void*)&pos);
@@ -346,6 +351,7 @@ void cPlayback::FindAllPids(uint16_t *apids, unsigned short *ac3flags, uint16_t 
 cPlayback::cPlayback(int num)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+	playing=false;
 }
 
 cPlayback::~cPlayback()

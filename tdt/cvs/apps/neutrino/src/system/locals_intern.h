@@ -927,6 +927,9 @@ const char *locale_real_names[] = {
 	"satsetup.use_nit",
 	"satsetup.use_usals",
 	"satsetup.usals_repeat",
+	"scale.display_type", 		// DUCKBOX
+	"scale.display_type_dots", 	// DUCKBOX
+	"scale.display_type_full", 	// DUCKBOX
 	"scants.abort_body",
 	"scants.abort_header",
 	"scants.actcable",
@@ -1152,6 +1155,7 @@ const char *locale_real_names[] = {
 	"videomenu.analog_hd_rgb_cinch",
 	"videomenu.analog_hd_yprpb_scart",
 	"videomenu.analog_hd_yprpb_cinch",
+	"videomenu.hdmi_color_space",		// DUCKBOX
 	"videomenu.scart",
 	"videomenu.cinch",
 	"videomenu.dbdr",

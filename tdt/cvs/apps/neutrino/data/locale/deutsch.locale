@@ -1101,6 +1101,9 @@ satsetup.uncomm_input Uncommited
 satsetup.usals_repeat USALS command repeat
 satsetup.use_nit Benutze NIT
 satsetup.use_usals Benutze USALS
+scale.display_type Balkenanzeige
+scale.display_type_dots Punkte
+scale.display_type_full Linien
 scants.abort_body Scanvorgang wirklich abbrechen?
 scants.abort_header Breche Scan ab
 scants.actcable Kabel:
@@ -1319,6 +1322,7 @@ videomenu.dbdr_deblock de-block
 videomenu.dbdr_none nichts
 videomenu.enabled_modes VF Tastenmodus aktiviert
 videomenu.fullscreen Vollbild
+videomenu.hdmi_color_space HDMI Farbraum
 videomenu.head Video-Einstellungen
 videomenu.letterbox Letterbox
 videomenu.osd OSD

@@ -1,7 +1,7 @@
 #!/bin/sh
-touch .deps/lirc .deps/lirc.do_prepare .deps/lirc.do_compile; \
-mkdir -p ./../../tufsbox/cdkroot/usr/bin; \
-touch ./../../tufsbox/cdkroot/usr/bin/lircd; \
+#touch .deps/lirc .deps/lirc.do_prepare .deps/lirc.do_compile; \
+#mkdir -p ./../../tufsbox/cdkroot/usr/bin; \
+#touch ./../../tufsbox/cdkroot/usr/bin/lircd; \
 mkdir -p ./root/boot; \
 touch ./root/boot/video_7109.elf ./root/boot/video_7100.elf ./root/boot/audio.elf; \
 mkdir -p ./../../tufsbox/cdkroot/lib/modules/2.6.17.14_stm22_0041/extra/player2/linux/drivers/sound/pseudocard; \

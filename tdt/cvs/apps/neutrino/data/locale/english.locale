@@ -1101,6 +1101,9 @@ satsetup.uncomm_input Uncommited input
 satsetup.usals_repeat USALS command repeat
 satsetup.use_nit Use NIT
 satsetup.use_usals Use usals
+scale.display_type Bar type
+scale.display_type_dots Dots
+scale.display_type_full Lines
 scants.abort_body Should the search really be aborted?
 scants.abort_header Abortion of channel scan
 scants.actcable Cable:
@@ -1294,7 +1297,7 @@ usermenu.button_green User menu green
 usermenu.button_red User menu red
 usermenu.button_yellow User menu yellow
 usermenu.head User menu
-usermenu.item_bar ---- Boarder ----
+usermenu.item_bar ---- Border ----
 usermenu.item_epg_misc EPG functions
 usermenu.item_none Nothing
 usermenu.item_vtxt Videotext
@@ -1319,6 +1322,7 @@ videomenu.dbdr_deblock de-block
 videomenu.dbdr_none none
 videomenu.enabled_modes VF key enabled modes
 videomenu.fullscreen Full screen
+videomenu.hdmi_color_space HDMI Color Space
 videomenu.head Video Settings
 videomenu.letterbox Letterbox
 videomenu.osd OSD

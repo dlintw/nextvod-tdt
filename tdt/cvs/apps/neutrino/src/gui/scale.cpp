@@ -17,6 +17,10 @@
 #include <sys/timeb.h>
 #include <sys/param.h>
 
+#ifndef DUCKBOX
+#define DUCKBOX
+#endif
+
 #define RED_BAR 40
 #define YELLOW_BAR 70
 #define GREEN_BAR 100
@@ -31,6 +35,10 @@
 #define RED    0xFF0000
 #define GREEN  0x00FF00
 #define YELLOW 0xFFFF00
+
+#ifdef DUCKBOX
+#define WHITE  0xFFFFFF
+#endif
 
 inline unsigned int make16color(__u32 rgb)
 {
@@ -81,39 +89,102 @@ void CScale::paint (int x, int y, int pcr)
 	if (pcr > percent) {
 
 		for (i = 0; (i < red) && (i < maxi); i++) {
-		  step = 255/red;
-		  if(inverse) rgb = GREEN + ((unsigned char)(step*i) << 16); // adding red
-		  else rgb = RED + ((unsigned char)(step*i) << 8); // adding green
-		  color = make16color(rgb);
-		  for(j = 0; j <= hcnt; j++ ) {
-			frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
-		  }
+			#ifdef DUCKBOX
+			if (!g_settings.scale_display_type) {
+				step = 255/red;
+				if(inverse) rgb = GREEN + ((unsigned char)(step*i) << 16); // adding red
+				else        rgb = RED   + ((unsigned char)(step*i) <<  8); // adding green
+			} else
+				rgb = WHITE;
+			
+			color = make16color(rgb);
+			#else
+			step = 255/red;
+			if(inverse) rgb = GREEN + ((unsigned char)(step*i) << 16); // adding red
+			else        rgb = RED   + ((unsigned char)(step*i) <<  8); // adding green
+			color = make16color(rgb);		  
+			#endif
+			
+			for(j = 0; j <= hcnt; j++ ) {
+			      #ifdef DUCKBOX
+			      if (!g_settings.scale_display_type)
+				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
+			      else			  
+				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, ITEMW, ITEMW, color);
+			      #else
+			      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
+			      #endif
+			}
 		}
-//printf("hcnt %d yellow %d i %d\n", hcnt, yellow, i); fflush(stdout);
+
 		for (; (i < yellow) && (i < maxi); i++) {
-		  step = 255/yellow/2;
-		  if(inverse) rgb = YELLOW - (((unsigned char)step*(b++)) << 8); // removing green
-		  else rgb = YELLOW - ((unsigned char)(step*(b++)) << 16); // removing red
-		  color = make16color(rgb);
-//printf("YELLOW: or %08X diff %08X result %08X\n", YELLOW, ((unsigned char)(step*(b-1)) << 16), color);
-		  for(j = 0; j <= hcnt; j++ ) {
-			frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
-		  }
+			#ifdef DUCKBOX
+			if (!g_settings.scale_display_type) {
+				step = 255/yellow/2;
+				if(inverse) rgb = YELLOW - (((unsigned char)step*(b++)) <<  8); // removing green
+				else        rgb = YELLOW - ((unsigned char)(step*(b++)) << 16); // removing red
+			} else
+				rgb = WHITE;
+
+			color = make16color(rgb);		    
+			#else
+			step = 255/yellow/2;
+			if(inverse) rgb = YELLOW - (((unsigned char)step*(b++)) <<  8); // removing green
+			else        rgb = YELLOW - ((unsigned char)(step*(b++)) << 16); // removing red
+			color = make16color(rgb);
+			#endif
+			
+			for(j = 0; j <= hcnt; j++ ) {
+			      #ifdef DUCKBOX
+			      if (!g_settings.scale_display_type)
+				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
+			      else
+				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, ITEMW, ITEMW, color);
+			      #else
+			      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
+			      #endif
+			}
 		}
 		for (; (i < green) && (i < maxi); i++) {
-		  step = 255/green;
-		  if(inverse) rgb = YELLOW - ((unsigned char) (step*(b++)) << 8); // removing green
-		  else rgb = YELLOW - ((unsigned char) (step*(b++)) << 16); // removing red
-		  color = make16color(rgb);
-		  for(j = 0; j <= hcnt; j++ ) {
-			frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
-		  }
+			#ifdef DUCKBOX
+			if (!g_settings.scale_display_type) {
+				step = 255/green;
+				if(inverse) rgb = YELLOW - ((unsigned char) (step*(b++)) <<  8); // removing green
+				else        rgb = YELLOW - ((unsigned char) (step*(b++)) << 16); // removing red
+			} else
+				rgb = WHITE;
+			  
+			color = make16color(rgb);
+			#else
+			step = 255/green;
+			if(inverse) rgb = YELLOW - ((unsigned char) (step*(b++)) <<  8); // removing green
+			else        rgb = YELLOW - ((unsigned char) (step*(b++)) << 16); // removing red
+			color = make16color(rgb);
+			#endif
+			
+			for(j = 0; j <= hcnt; j++ ) {
+			      #ifdef DUCKBOX
+			      if (!g_settings.scale_display_type)
+				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
+			      else
+				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, ITEMW, ITEMW, color);
+			      #else
+			      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
+			      #endif
+			}
 		}
 	}
 	for(i = maxi; i < total; i++) {
-	  for(j = 0; j <= hcnt; j++ ) {
-		frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, COL_INFOBAR_PLUS_3);//fill passive
-	  }
+		for(j = 0; j <= hcnt; j++ ) {
+		      #ifdef DUCKBOX
+		      if (!g_settings.scale_display_type)
+			      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, COL_INFOBAR_PLUS_3);//fill passive
+		      else
+			      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, ITEMW, ITEMW, COL_INFOBAR_PLUS_3);//fill passive
+		      #else
+		      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, COL_INFOBAR_PLUS_3);//fill passive
+		      #endif
+		}
 	}
 	percent = pcr;
   }

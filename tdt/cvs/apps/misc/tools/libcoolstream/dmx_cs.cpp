@@ -209,17 +209,25 @@ bool cDemux::pesFilter(const unsigned short Pid)
 	pes.pid      = Pid;
 	pes.input    = DMX_IN_FRONTEND;
 	pes.output   = DMX_OUT_DECODER;
-        pes.flags    = DMX_IMMEDIATE_START;	
+	pes.flags    = DMX_IMMEDIATE_START;	
 
-	if(     type == DMX_VIDEO_CHANNEL)
-		pes.pes_type = privateData->demux ? DMX_PES_VIDEO1 : DMX_PES_VIDEO0; /* FIXME */
-	else if(type == DMX_AUDIO_CHANNEL)
-		pes.pes_type = privateData->demux ? DMX_PES_AUDIO1 : DMX_PES_AUDIO0; /* FIXME */
-	else if(type == DMX_PCR_ONLY_CHANNEL)
-		pes.pes_type = privateData->demux ? DMX_PES_PCR1 : DMX_PES_PCR0; /* FIXME */
-	else {
-		printf("##################################### HELP #####################\n");
-		return false;
+	switch(type) {
+		case DMX_VIDEO_CHANNEL:
+			pes.pes_type = privateData->demux ? DMX_PES_VIDEO1 : DMX_PES_VIDEO0; /* FIXME */
+			break;
+		case DMX_AUDIO_CHANNEL:
+			pes.pes_type = privateData->demux ? DMX_PES_AUDIO1 : DMX_PES_AUDIO0; /* FIXME */
+			break;
+		case DMX_PCR_ONLY_CHANNEL:
+			pes.pes_type = privateData->demux ? DMX_PES_PCR1 : DMX_PES_PCR0; /* FIXME */
+			break;
+		case DMX_PES_CHANNEL:
+			pes.output   = DMX_OUT_TAP;
+			pes.pes_type = DMX_PES_OTHER;
+			break;
+		default:
+			printf("[%s] %s # HELP # unknown pesFilter type %s\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type]);
+			return false;
 	}
 
 	if (ioctl(privateData->m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
@@ -228,7 +236,7 @@ bool cDemux::pesFilter(const unsigned short Pid)
 		return false;
 	}
 
-	printf("ok\n");
+	printf("[%s] %s ok\n", FILENAME, __FUNCTION__);
 
 	return true;
 }

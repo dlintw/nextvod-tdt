@@ -36,7 +36,14 @@ echo "3) Kathrein UFS-912"
 echo "4) Kathrein UFS-922"
 echo "5) Topfield 7700 HDPVR"
 echo "6) Fortis based (HDBOX)"
-read -p "Select target (1-5)? "
+echo "7) Cuberevo (IPBOX)"
+case $1 in
+	1|2|3|4|5|6|7) REPLY=$1
+	echo -e "\nSelected target: $REPLY\n"
+	;;
+	*)
+	read -p "Select target (1-7)? ";;
+esac
 
 [ "$REPLY" == "1" ] && CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
 [ "$REPLY" == "2" ] && CONFIGPARAM="$CONFIGPARAM --enable-flash_ufs910"
@@ -44,19 +51,21 @@ read -p "Select target (1-5)? "
 [ "$REPLY" == "4" ] && CONFIGPARAM="$CONFIGPARAM --enable-ufs922"
 [ "$REPLY" == "5" ] && CONFIGPARAM="$CONFIGPARAM --enable-tf7700"
 [ "$REPLY" == "6" ] && CONFIGPARAM="$CONFIGPARAM --enable-fortis_hdbox"
-[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
+[ "$REPLY" == "7" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo"
+[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" -o "$REPLY" == "7" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
 
 ##############################################
-
-read -p "Building for stm23(instable) instead of stm22(stable) (y/N/h)? "
+REPLY=N
+read -p "Building for stm23(instable) instead of stm22(stable) (y/N/h)? " -t 5
 [ "$REPLY" == "y" -o "$REPLY" == "Y" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23"
 [ "$REPLY" == "h" -o "$REPLY" == "H" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23 --enable-havana"
 [ "$REPLY" == "y" -o "$REPLY" == "Y" -o "$REPLY" == "h"  -o "$REPLY" == "H"  ] || CONFIGPARAM="$CONFIGPARAM --enable-stm22 --enable-p0041"
-
+echo -e "\nSelected option: $REPLY\n"
 ##############################################
-
-read -p "Activate debug (y/N)? "
+REPLY=N
+read -p "Activate debug (y/N)? " -t 5
 [ "$REPLY" == "y" -o "$REPLY" == "Y" ] && CONFIGPARAM="$CONFIGPARAM --enable-debug"
+echo -e "\nSelected option: $REPLY\n"
 
 ##############################################
 
