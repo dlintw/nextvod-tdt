@@ -28,10 +28,6 @@
 #define AUDIO_LPCM_BE	0x10001
 #define AUDIO_AAC	mmioFOURCC('M', 'P', '4', 'A')
 
-#ifndef DEBUG
-#define DEBUG	// FIXME: until this is set properly by Makefile
-#endif
-
 static const char FILENAME[] = "demux_mpg.c";
 
 #ifdef DEBUG
@@ -42,20 +38,22 @@ int demux_mpg_debug = 0;
 pthread_mutex_t MPGmutex;
 
 void getMPGMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
-#ifdef DEBUG
+	#ifdef DEBUG
 //	printf("%s::%s::%d requesting mutex\n",filename, function, line);
-#endif
+	#endif
+
 	pthread_mutex_lock(&MPGmutex);
-#ifdef DEBUG
+
+	#ifdef DEBUG
 //	printf("%s::%s::%d received mutex\n",filename, function, line);
-#endif  
+	#endif
 }
 
 void releaseMPGMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	pthread_mutex_unlock(&MPGmutex);
-#ifdef DEBUG
+	#ifdef DEBUG
 //	printf("%s::%s::%d released mutex\n",filename, function, line);
-#endif  
+	#endif
 }
 
 typedef struct mpg_demuxer {
@@ -601,15 +599,22 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
       return -1;  // invalid packet !!!!!!
     }
   }
-  if(mpeg_pts_error) demux_mpg_printf("  {PTS_err:%d}  \n",mpeg_pts_error);
-  demux_mpg_printf(" => len=%d\n",len);
+
+	#ifdef DEBUG
+	if(mpeg_pts_error) demux_mpg_printf("  {PTS_err:%d}  \n",mpeg_pts_error);
+	#endif
+
+	#ifdef DEBUG
+	demux_mpg_printf(" => len=%d\n",len);
+	#endif
 
 //  if(len<=0 || len>MAX_PS_PACKETSIZE) return -1;  // Invalid packet size
   if(len<=0 || len>MAX_PS_PACKETSIZE){
-#ifdef DEBUG
-    demux_mpg_printf("Invalid PS data len: %d\n",len);
-#endif    
-    return -1;  // invalid packet !!!!!!
+	#ifdef DEBUG
+    	demux_mpg_printf("Invalid PS data len: %d\n",len);
+	#endif
+
+	return -1;  // invalid packet !!!!!!
   }
 
   if(id>=0x1C0 && id<=0x1DF){
@@ -650,16 +655,16 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
   }
 
   if(ds){
-#ifdef DEBUG
-    demux_mpg_printf("DEMUX_MPG: Read %d data bytes from packet %04X\n",len,id);    
+	#ifdef DEBUG
+    	demux_mpg_printf("DEMUX_MPG: Read %d data bytes from packet %04X\n",len,id);    
 //    printf("packet start = 0x%X  \n",stream_tell(demux->stream)-packet_start_pos);
-#endif
+	#endif
 
     dp=new_demux_packet(len);
     if(!dp) {
-#ifdef DEBUG
-      demux_mpg_printf("DEMUX_MPG ERROR: couldn't create demux_packet(%d bytes)\n",len);
-#endif
+	#ifdef DEBUG
+      	demux_mpg_printf("DEMUX_MPG ERROR: couldn't create demux_packet(%d bytes)\n",len);
+	#endif
       stream_skip(demux->stream,len);
       return 0;
     }
@@ -803,12 +808,12 @@ static int demux_mpg_probe(demuxer_t *demuxer) {
             file_format=DEMUXER_TYPE_H264_ES;
         } else
         {
-#ifdef DEBUG
-          if(demuxer->synced==2)
-            demux_mpg_printf("MPEG: MSGTR_MissingVideoStreamBug\n");
-          else
-            demux_mpg_printf("NotSystemStream\n");
-#endif
+		#ifdef DEBUG
+	        if(demuxer->synced==2)
+            		demux_mpg_printf("MPEG: MSGTR_MissingVideoStreamBug\n");
+          	else
+            		demux_mpg_printf("NotSystemStream\n");
+		#endif
 	}
   }
   //FIXME this shouldn't be necessary
@@ -960,40 +965,46 @@ do{
   } else {
     update_stats(head);
 
-#ifdef DEBUG
-    if(head>=0x100 && head<0x1B0)
-      demux_mpg_printf("Opps... elementary video packet found: %03X\n",head);
-    else if((head>=0x1C0 && head<0x1F0) || head==0x1BD)
-      demux_mpg_printf("Opps... PES packet found: %03X\n",head);
-#endif
+	#ifdef DEBUG
+	if(head>=0x100 && head<0x1B0)
+		demux_mpg_printf("Opps... elementary video packet found: %03X\n",head);
+	else if((head>=0x1C0 && head<0x1F0) || head==0x1BD)
+		demux_mpg_printf("Opps... PES packet found: %03X\n",head);
+	#endif
 
     if(((num_elementary_packets100>50 && num_elementary_packets101>50) ||
         (num_elementary_packetsPES>50)) && skipped>4000000){
-#ifdef DEBUG
+	#ifdef DEBUG
         demux_mpg_printf("sync_mpeg_ps: seems to be ES/PES stream...\n");
-#endif
+	#endif
+
         demux->stream->eof=1;
         break;
     }
     if(num_mp3audio_packets>100 && num_elementary_packets100<10){
-#ifdef DEBUG
+	#ifdef DEBUG
         demux_mpg_printf("sync_mpeg_ps: seems to be MP3 stream...\n");
-#endif
+	#endif
+
 	demux->stream->eof=1;
         break;
     }
   }
 } while(ret!=1);
-#ifdef DEBUG
-  demux_mpg_printf("demux: %d bad bytes skipped\n",skipped);
-#endif  
-  if(demux->stream->eof){
-#ifdef DEBUG
-    demux_mpg_printf("MPEG Stream reached EOF\n");
-#endif
-    return 0;
-  }
-  return 1;
+
+	#ifdef DEBUG
+	demux_mpg_printf("demux: %d bad bytes skipped\n",skipped);
+	#endif  
+
+	if(demux->stream->eof) {
+		#ifdef DEBUG
+		demux_mpg_printf("MPEG Stream reached EOF\n");
+		#endif
+
+		return 0;
+	}
+
+	return 1;
 }
 
 //extern void skip_audio_frame(sh_audio_t *sh_audio);
@@ -1122,9 +1133,9 @@ int demux_mpg_control(demuxer_t *demuxer,int cmd, void *arg){
     switch(cmd) {
 	case DEMUXER_CTRL_GET_TIME_LENGTH:
             if(stream_control(demuxer->stream, STREAM_CTRL_GET_TIME_LENGTH, arg) != STREAM_UNSUPPORTED) {
-#ifdef DEBUG	      
+#ifdef DEBUG
               demux_mpg_printf("\r\nDEMUX_MPG_CTRL, (%.3lf)\r\n", *((double*)arg));
-#endif	      
+#endif
               return DEMUXER_CTRL_GUESS;
             }
             if (mpg_d && mpg_d->has_valid_timestamps) {
@@ -1303,9 +1314,10 @@ demuxer_desc_t demuxer_desc_mpeg_pes = {
   demux_mpg_control,
 };
 int MpgInit(Context_t *context, char * filename) {
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
+
 	getMPGMutex(FILENAME, __FUNCTION__,__LINE__);
 
 	int ret = 0;
@@ -1349,38 +1361,39 @@ int MpgInit(Context_t *context, char * filename) {
     demuxer->audio->id = -1;
     demuxer->video->id = -1;
     //demuxer->video_play = 0;
-    demuxer->stream->start_pos	= 0;
+    demuxer->stream->start_pos		= 0;
     demuxer->stream->type		= STREAMTYPE_FILE;//STREAMTYPE_STREAM;
     demuxer->stream->flags		= 6;
     demuxer->stream->sector_size	= 0;
     demuxer->stream->buf_pos		= 0;
     demuxer->stream->buf_len		= 2048;
     demuxer->stream->pos		= 2048;
-    demuxer->stream->start_pos	= 0;
+    demuxer->stream->start_pos		= 0;
     demuxer->stream->end_pos		= 0;
     demuxer->stream->eof		= 0;
-    demuxer->stream->cache_pid	= 0;
+    demuxer->stream->cache_pid		= 0;
 
     ret=demux_mpg_pes_probe(demuxer);
     //FIXME
     if(ret == 0){
 	ret=ts_mpg(demuxer);
-#ifdef DEBUG
+	#ifdef DEBUG
         printf("ret =%d\n",ret);
-#endif
+	#endif
 	
 	if(ret == 0)// NO MPG OR TS
 		return -1;//FIXME
 	if (demuxer->video && demuxer->video->sh && demuxer->audio && demuxer->audio->sh) {
 		sh_audio=demuxer->audio->sh;
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		printf("TS AUDIO 0x%02x\n",sh_audio->format);
-#endif
+		#endif
 
 		sh_video=demuxer->video->sh;
-#ifdef DEBUG
+		#ifdef DEBUG
 		printf("TS VIDEO 0x%08X\n",sh_video->format);
-#endif
+		#endif
 	}
 	TSMPEG = 1;
     }
@@ -1388,22 +1401,26 @@ int MpgInit(Context_t *context, char * filename) {
 	ps_probe=1;
 	ret = demux_mpg_ps_open(demuxer);
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("ret = %d\n",ret);
-#endif
+	#endif
+
 	if (demuxer->video && demuxer->video->sh && demuxer->audio && demuxer->audio->sh) {
-#ifdef DEBUG
+		#ifdef DEBUG
 		printf("DEMUXER=%s\n",demuxer->desc->name);
-#endif
+		#endif
+
 		sh_audio=demuxer->audio->sh;
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		printf("MPG AUDIO 0x%02x\n",sh_audio->format);
-#endif
+		#endif
 
 		sh_video=demuxer->video->sh;
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		printf("MPG VIDEO 0x%08X\n",sh_video->format);
-#endif
+		#endif
 	}
     }
     if(sh_video->format == 0x10000001 || sh_video->format == 0x10000002)
@@ -1489,10 +1506,11 @@ void MpgGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	if (audio->first != NULL) {
 		current_audio = audio->first;
 		
-#ifdef DEBUG
+		#ifdef DEBUG
 		if (current_audio->flags)	// fixme : always zero?
 			printf("audio current_audio->flags = 0x%02x\n",current_audio->flags);
-#endif		
+		#endif
+
 		if (!(current_audio->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts_audio = INVALID_PTS_VALUE;
@@ -1513,10 +1531,11 @@ void MpgGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	if (video->first != NULL) {	  
 		current_video = video->first;
 		
-#ifdef DEBUG
+		#ifdef DEBUG
 		if (current_video->flags)	// fixme : always zero?
 			printf("video current->flags = 0x%02x\n",current_video->flags);
-#endif		
+		#endif
+
 		if (!(current_video->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts_video = INVALID_PTS_VALUE;
@@ -1568,36 +1587,38 @@ void MpgGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 
 
 static void MpgThread(Context_t *context) {
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 
 	while ( context->playback->isCreationPhase ) {
-#ifdef DEBUG
+		#ifdef DEBUG
 		printf("%s::%s Thread waiting for end of init phase...\n", FILENAME, __FUNCTION__);
-#endif
+		#endif
 	}
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s Running!\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 
 	while ( context && context->playback && context->playback->isPlaying ) {
 	    //printf("%s -->\n", __FUNCTION__);
 	    
 		//IF MOVIE IS PAUSED, WAIT
 		if (context->playback->isPaused) {
-#ifdef DEBUG
+			#ifdef DEBUG
 			printf("%s::%s paused\n", FILENAME, __FUNCTION__);
-#endif
+			#endif
+
 			usleep(100000);
 			continue;
 		}
 
 		if (context->playback->isSeeking || whileSeeking) {
-#ifdef DEBUG
+			#ifdef DEBUG
 			printf("%s::%s seeking\n", FILENAME, __FUNCTION__);
-#endif
+			#endif
+
 			usleep(100000);			
 			continue;
 		}
@@ -1606,18 +1627,20 @@ static void MpgThread(Context_t *context) {
 
 		if (TSMPEG == 0) {
 			if ( !demux_mpg_fill_buffer(demuxer,ds) ) {
-#ifdef DEBUG
+				#ifdef DEBUG
 				printf("%s::%s demux_mpg_fill_buffer failed!\n", FILENAME, __FUNCTION__);
-#endif
+				#endif
+
 				releaseMPGMutex(FILENAME, __FUNCTION__,__LINE__);
 				
 				break;
 			}
 		} else {
 			if ( !demux_ts_fill_buffer(demuxer,ds) ) {
-#ifdef DEBUG
+				#ifdef DEBUG
 				printf("%s::%s demux_ts_fill_buffer failed!\n", FILENAME, __FUNCTION__);
-#endif
+				#endif
+
 				releaseMPGMutex(FILENAME, __FUNCTION__,__LINE__);
 				
 				break;
@@ -1646,80 +1669,84 @@ static void MpgThread(Context_t *context) {
 
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
-#endif
+	#endif
 	
 	PlayThread = NULL;
 }
 
 
 static int MpgPlay(Context_t *context) {
-#ifdef DEBUG		  
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 
 	int error;
 	int ret = 0;
 	pthread_attr_t attr;
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	if ( context && context->playback && context->playback->isPlaying ) {
 		printf("%s::%s is Playing\n", FILENAME, __FUNCTION__);
 	} else {
 		printf("%s::%s is NOT Playing\n", FILENAME, __FUNCTION__);
 	}
-#endif  	  
+	#endif  	  
 	
 	if (PlayThread == NULL) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
 		if((error=pthread_create(&PlayThread, &attr, (void *)&MpgThread, context)) != 0) {
-#ifdef DEBUG
-			  printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
-#endif
-			  PlayThread = NULL;
-			  ret = -1;
+			#ifdef DEBUG
+			printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
+			#endif
+
+			PlayThread = NULL;
+			ret = -1;
 		} else {
-#ifdef DEBUG		  
-			  printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
-#endif
+			#ifdef DEBUG		  
+			printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
+			#endif
 		}
 	} else {
-#ifdef DEBUG
+		#ifdef DEBUG
 		printf("%s::%s A thread already exists!\n", FILENAME, __FUNCTION__);
-#endif
+		#endif
+
 		ret = -1;
 	}
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
-#endif
+	#endif
 
 	return ret;	
 }
 
 static int MpgStop(Context_t *context) {
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 
 	int i;
 	int ret = 0;
 	int wait_time = 20;
 	
 	while ( (PlayThread != NULL) && (wait_time--) > 0 ) {
-#ifdef DEBUG  
+		#ifdef DEBUG  
 		printf("%s::%s Waiting for MPG thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
-#endif
+		#endif
+
 		usleep(100000);
 	}
 
 	if (wait_time == 0) {
-#ifdef DEBUG  
+		#ifdef DEBUG  
 		printf("%s::%s Timeout waiting for MPG thread!\n", FILENAME, __FUNCTION__);
-#endif
+		#endif
+
 		ret = -1;
 	} else {
 	  
@@ -1767,9 +1794,10 @@ static int MpgStop(Context_t *context) {
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
+
 	int ret = 0;
 	
 	switch(command) {
@@ -1790,11 +1818,13 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			demux_seek_mpg (demuxer, 100.0, 100, 0);
 			break;
 		}
-		default:
-#ifdef DEBUG
+		default: {
+			#ifdef DEBUG
 			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
-#endif
+			#endif
+
 			break;
+		}
 	}
 
 	return ret;

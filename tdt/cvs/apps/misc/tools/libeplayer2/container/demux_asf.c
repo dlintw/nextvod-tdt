@@ -17,10 +17,6 @@
 
 #include "intreadwrite.h"
 
-#ifndef DEBUG
-#define DEBUG	// FIXME: until this is set properly by Makefile
-#endif
-
 #ifdef DEBUG
 int demux_asf_debug = 0;
 #define demux_asf_printf(x...) do { if (demux_asf_debug)printf(x); } while (0)

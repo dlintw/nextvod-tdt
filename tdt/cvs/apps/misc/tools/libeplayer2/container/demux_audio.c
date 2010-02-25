@@ -14,10 +14,6 @@
 #include <pthread.h>
 #include <errno.h>
 
-#ifndef DEBUG
-#define DEBUG	// FIXME: until this is set properly by Makefile
-#endif
-
 #ifdef DEBUG
 int demux_audio_debug = 0;
 #define demux_audio_printf(x...) do { if (demux_audio_debug)printf(x); } while (0)

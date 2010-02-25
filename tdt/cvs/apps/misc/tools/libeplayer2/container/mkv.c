@@ -32,10 +32,6 @@ extern "C" {
 
 #define IGNORE_TRACKS	// prevent incompatible tracks to be added
 
-#ifndef DEBUG
-#define DEBUG	// FIXME: until this is set properly by Makefile
-#endif
-
 #ifdef DEBUG
 int debugmkv = 0;
 #define dprintf(x...) do { if (debugmkv)printf(x); } while (0)

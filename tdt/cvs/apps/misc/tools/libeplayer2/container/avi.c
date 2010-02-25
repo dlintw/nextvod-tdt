@@ -20,10 +20,6 @@
 #include "stheader.h"
 #include "aviheader.h"
 
-#ifndef DEBUG
-#define DEBUG	// FIXME: until this is set properly by Makefile
-#endif
-
 #ifdef DEBUG
 int demux_avi_debug = 0;
 #define demux_avi_printf(x...) do { if (demux_avi_debug)printf(x); } while (0)

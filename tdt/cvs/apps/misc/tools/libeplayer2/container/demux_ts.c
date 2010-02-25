@@ -13,10 +13,6 @@
 #include "ms_hdr.h"
 #include "mpeg_hdr.h"
 
-#ifndef DEBUG
-#define DEBUG	// FIXME: until this is set properly by Makefile
-#endif
-
 #ifdef DEBUG
 int debugts = 0;
 #define demux_ts_printf(x...) do { if (debugts)printf(x); } while (0)
@@ -240,20 +236,23 @@ typedef struct {
 pthread_mutex_t TSmutex;
 
 void getTSMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
-#ifdef DEBUG
+	#ifdef DEBUG
 //	printf("%s::%s::%d requesting mutex\n",filename, function, line);
-#endif
+	#endif
+
 	pthread_mutex_lock(&TSmutex);
-#ifdef DEBUG
+
+	#ifdef DEBUG
 //	printf("%s::%s::%d received mutex\n",filename, function, line);
-#endif  
+	#endif  
 }
 
 void releaseTSMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	pthread_mutex_unlock(&TSmutex);
-#ifdef DEBUG
+
+	#ifdef DEBUG
 //	printf("%s::%s::%d released mutex\n",filename, function, line);
-#endif  
+	#endif  
 }
 
 static int ts_parse(demuxer_t *demuxer, ES_stream_t *es, unsigned char *packet, int probe);
@@ -269,9 +268,10 @@ static uint8_t get_packet_size(const unsigned char *buf, int size)
 	{
 		if (buf[i * TS_PACKET_SIZE] != 0x47)
 		{
-#ifdef DEBUG		  
+			#ifdef DEBUG
 			demux_ts_printf("GET_PACKET_SIZE, pos %d, char: %2x\n", i, buf[i * TS_PACKET_SIZE]);
-#endif
+			#endif
+
 			goto try_fec;
 		}
 	}
@@ -281,9 +281,10 @@ try_fec:
 	for(i=0; i<NUM_CONSECUTIVE_TS_PACKETS; i++)
 	{
 		if (buf[i * TS_FEC_PACKET_SIZE] != 0x47){
-#ifdef DEBUG		  
+			#ifdef DEBUG
 			demux_ts_printf("GET_PACKET_SIZE, pos %d, char: %2x\n", i, buf[i * TS_PACKET_SIZE]);
-#endif			
+			#endif
+
 			goto try_philips;
 		}
 	}
@@ -321,11 +322,13 @@ static void ts_add_stream(demuxer_t * demuxer, ES_stream_t *es)
 			priv->ts.streams[es->pid].id = priv->last_aid;
 			priv->ts.streams[es->pid].sh = sh;
 			priv->ts.streams[es->pid].type = TYPE_AUDIO;
-#ifdef DEBUG		  
+
+			#ifdef DEBUG
 			demux_ts_printf("\r\nADDED AUDIO PID %d, type: %x stream n. %d\r\n", es->pid, sh->format, priv->last_aid);
 			if (lang && lang[0])
 				demux_ts_printf("ID_AID_%d_LANG=%s\n", es->pid, lang);
-#endif			
+			#endif
+
 			priv->last_aid++;
 		}
 
@@ -348,9 +351,11 @@ static void ts_add_stream(demuxer_t * demuxer, ES_stream_t *es)
 			priv->ts.streams[es->pid].id = priv->last_vid;
 			priv->ts.streams[es->pid].sh = sh;
 			priv->ts.streams[es->pid].type = TYPE_VIDEO;
-#ifdef DEBUG		  
+
+			#ifdef DEBUG
 			demux_ts_printf("\r\nADDED VIDEO PID %d, type: %x stream n. %d\r\n", es->pid, sh->format, priv->last_vid);
-#endif			
+			#endif
+
 			priv->last_vid++;
 
 
@@ -361,12 +366,14 @@ static void ts_add_stream(demuxer_t * demuxer, ES_stream_t *es)
 				sh->bih->biSize= sizeof(BITMAPINFOHEADER) + es->extradata_len;
 				sh->bih->biCompression = sh->format;
 				memcpy(sh->bih + 1, es->extradata, es->extradata_len);
-#ifdef DEBUG		  
+
+				#ifdef DEBUG
 				demux_ts_printf("EXTRADATA(%d BYTES): \n", es->extradata_len);
 				for(i = 0;i < es->extradata_len; i++)
 					demux_ts_printf("%02x ", (int) es->extradata[i]);
 				demux_ts_printf("\n");
-#endif				
+				#endif
+
 				if(parse_avc_sps(es->extradata, es->extradata_len, &w, &h))
 				{
 					sh->bih->biWidth = w;
@@ -387,9 +394,9 @@ static int ts_check_file(demuxer_t * demuxer)
 	off_t pos = 0;
 	off_t init_pos;
 
-#ifdef DEBUG		  
+	#ifdef DEBUG
 	demux_ts_printf("Checking for MPEG-TS...\n");
-#endif	
+	#endif
 
 	init_pos = stream_tell(demuxer->stream);
 	is_ts = 0;
@@ -407,9 +414,10 @@ static int ts_check_file(demuxer_t * demuxer)
 
 		if(c != 0x47)
 		{
-#ifdef DEBUG		  
+			#ifdef DEBUG
 			demux_ts_printf("THIS DOESN'T LOOK LIKE AN MPEG-TS FILE!\n");
-#endif	
+			#endif
+
 			is_ts = 0;
 			done = 1;
 			continue;
@@ -421,9 +429,10 @@ static int ts_check_file(demuxer_t * demuxer)
 
 		if(_read < buf_size-1)
 		{
-#ifdef DEBUG		  
+			#ifdef DEBUG
 			demux_ts_printf("COULDN'T READ ENOUGH DATA, EXITING TS_CHECK\n");
-#endif	
+			#endif
+
 			stream_reset(demuxer->stream);
 			return 0;
 		}
@@ -442,9 +451,10 @@ static int ts_check_file(demuxer_t * demuxer)
 		}
 	}
 
-#ifdef DEBUG		  
+	#ifdef DEBUG
 	demux_ts_printf("TRIED UP TO POSITION %"PRIu64", FOUND %x, packet_size= %d, SEEMS A TS? %d\n", (uint64_t) pos, c, size, is_ts);
-#endif	
+	#endif
+
 	stream_seek(demuxer->stream, pos);
 
 	if(! is_ts)
@@ -461,19 +471,22 @@ static int ts_check_file(demuxer_t * demuxer)
 	{
 		ptr = &(buf[size * count]);
 		pid = ((ptr[1] & 0x1f) << 8) | ptr[2];
-#ifdef DEBUG		  
+
+		#ifdef DEBUG
 		demux_ts_printf("BUF: %02x %02x %02x %02x, PID %d, SIZE: %d \n",				
-		ptr[0], ptr[1], ptr[2], ptr[3], pid, size);
-#endif
+			ptr[0], ptr[1], ptr[2], ptr[3], pid, size);
+		#endif
 
 		if((pid == 8191) || (pid < 16))
 			continue;
 
 		cc[pid] = (ptr[3] & 0xf);
 		cc_ok = (last_cc[pid] < 0) || ((((last_cc[pid] + 1) & 0x0f) == cc[pid]));
-#ifdef DEBUG		  
+
+		#ifdef DEBUG
 		demux_ts_printf("PID %d, COMPARE CC %d AND LAST_CC %d\n", pid, cc[pid], last_cc[pid]);
-#endif		
+		#endif
+
 		if(! cc_ok)
 			//return 0;
 			bad++;
@@ -483,14 +496,14 @@ static int ts_check_file(demuxer_t * demuxer)
 		last_cc[pid] = cc[pid];
 	}
 
-#ifdef DEBUG		  
+	#ifdef DEBUG
 	demux_ts_printf("GOOD CC: %d, BAD CC: %d\n", good, bad);
-#endif	
+	#endif
 
 	if(good >= bad)
-			return size;
+		return size;
 	else
-			return 0;
+		return 0;
 }
 
 
@@ -576,9 +589,10 @@ static inline int pid_match_lang(ts_priv_t *priv, uint16_t pid, char *lang)
 			if(pmt->es[j].pid != pid)
 				continue;
 
-#ifdef DEBUG		  
+			#ifdef DEBUG
 			demux_ts_printf("CMP LANG %s AND %s, pids: %d %d\n",pmt->es[j].lang, lang, pmt->es[j].pid, pid);
-#endif			
+			#endif
+
 			if(strncmp(pmt->es[j].lang, lang, 3) == 0)
 			{
 				return 1;
@@ -665,9 +679,10 @@ static int a52_check(char *buf, int len)
 			cnt++;
 	}
 
-#ifdef DEBUG		  
+	#ifdef DEBUG
 	demux_ts_printf("A52_CHECK(%d input bytes), found %d frame syncwords of %d bytes length\n", len, ok, frame_length);	
-#endif	
+	#endif
+
 	return ok;
 }
 
@@ -696,9 +711,11 @@ static off_t ts_detect_streams(demuxer_t *demuxer, tsdemux_init_t *param)
 	has_tables = 0;
 	memset(pes_priv1, 0, sizeof(pes_priv1));
 	init_pos = stream_tell(demuxer->stream);
-#ifdef DEBUG		  
+
+	#ifdef DEBUG
 	demux_ts_printf("PROBING UP TO %"PRIu64", PROG: %d\n", (uint64_t) param->probe, param->prog);
-#endif	
+	#endif
+
 	end_pos = init_pos + (param->probe ? param->probe : TS_MAX_PROBE_SIZE);
 	while(1)
 	{
@@ -743,20 +760,22 @@ static off_t ts_detect_streams(demuxer_t *demuxer, tsdemux_init_t *param)
 
 			if(is_video)
 			{
-#ifdef DEBUG		  
+				#ifdef DEBUG
 				demux_ts_printf("ID_VIDEO_ID=%d\n", es.pid);
-#endif				
+				#endif
+
     				chosen_pid = (req_vpid == es.pid);
 				if((! chosen_pid) && (req_vpid > 0))
 					continue;
 			}
 			else if(is_audio)
 			{
-#ifdef DEBUG		  
+				#ifdef DEBUG
 				demux_ts_printf("ID_AUDIO_ID=%d\n", es.pid);				
 				if (es.lang[0] > 0)
 					demux_ts_printf("ID_AID_%d_LANG=%s\n", es.pid, es.lang);
-#endif				
+				#endif
+
 				if(req_apid > 0)
 				{
 					chosen_pid = (req_apid == es.pid);
@@ -774,11 +793,12 @@ static off_t ts_detect_streams(demuxer_t *demuxer, tsdemux_init_t *param)
 			}
 			else if(is_sub)
 			{
-#ifdef DEBUG		  
+				#ifdef DEBUG
 				demux_ts_printf("ID_SUBTITLE_ID=%d\n", es.pid);
 				if (es.lang[0] > 0)
 					demux_ts_printf("ID_SID_%d_LANG=%s\n", es.pid, es.lang);
-#endif				
+				#endif
+
 				chosen_pid = (req_spid == es.pid);
 				if((! chosen_pid) && (req_spid > 0))
 					continue;
@@ -829,9 +849,9 @@ static off_t ts_detect_streams(demuxer_t *demuxer, tsdemux_init_t *param)
 			}
 
 
-#ifdef DEBUG		  
+			#ifdef DEBUG
 			demux_ts_printf("TYPE: %x, PID: %d, PROG FOUND: %d\n", es.type, es.pid, param->prog);
-#endif
+			#endif
 
 			if(is_video)
 			{
@@ -891,7 +911,7 @@ static off_t ts_detect_streams(demuxer_t *demuxer, tsdemux_init_t *param)
 						
 	if(video_found)
 	{
-#ifdef DEBUG		  
+		#ifdef DEBUG
 		if(param->vtype == VIDEO_MPEG1)
 			demux_ts_printf("VIDEO MPEG1(pid=%d) ", param->vpid);
 		else if(param->vtype == VIDEO_MPEG2)
@@ -904,61 +924,63 @@ static off_t ts_detect_streams(demuxer_t *demuxer, tsdemux_init_t *param)
 			demux_ts_printf("VIDEO VC1(pid=%d) ", param->vpid);
 		else if(param->vtype == VIDEO_AVC)
 			demux_ts_printf("VIDEO AVC(NAL-H264, pid=%d) ", param->vpid);
-#endif		
+		#endif
 	}
 	else
 	{
 		param->vtype = UNKNOWN;
 		//WE DIDN'T MATCH ANY VIDEO STREAM
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("NO VIDEO! ");
-#endif		
+		#endif
 	}
 
 	if(param->atype == AUDIO_MP2) {
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("AUDIO MPA(pid=%d)", param->apid);
-#endif		
+		#endif
 	} else if(param->atype == AUDIO_A52) {
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("AUDIO A52(pid=%d)", param->apid);
-#endif		
+		#endif
 	} else if(param->atype == AUDIO_DTS) {
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("AUDIO DTS(pid=%d)", param->apid);
-#endif		
+		#endif
 	} else if(param->atype == AUDIO_LPCM_BE) {
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("AUDIO LPCM(pid=%d)", param->apid);
-#endif		
+		#endif
 	} else if(param->atype == AUDIO_AAC) {
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("AUDIO AAC(pid=%d)", param->apid);
-#endif		
+		#endif
 	} else if(param->atype == AUDIO_TRUEHD) {
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("AUDIO TRUEHD(pid=%d)", param->apid);
-#endif		
+		#endif
 	} else
 	{
 		audio_found = 0;
 		param->atype = UNKNOWN;
 		//WE DIDN'T MATCH ANY AUDIO STREAM, SO WE FORCE THE DEMUXER TO IGNORE AUDIO
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("NO AUDIO! ");
-#endif
+		#endif
 	}
 
-	if(IS_SUB(param->stype))
-#ifdef DEBUG
+	if(IS_SUB(param->stype)) {
+		#ifdef DEBUG
 		demux_ts_printf(" SUB %s(pid=%d) ", (param->stype==SPU_DVD ? "DVD" : param->stype==SPU_DVB ? "DVB" : "Teletext"), param->spid);
-#endif
-	else
+		#endif
+	} else
 	{
 		param->stype = UNKNOWN;
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf(" NO SUBS (yet)! ");
-#endif		
+		#endif		
 	}
 
 	if(video_found || audio_found)
@@ -972,12 +994,16 @@ static off_t ts_detect_streams(demuxer_t *demuxer, tsdemux_init_t *param)
 
 		if(demuxer->stream->eof && (ret == 0))
 			ret = init_pos;
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf(" PROGRAM N. %d\n", param->prog);
-#endif		
+		#endif
 	}
-	else
+	else {
+		#ifdef DEBUG
 		demux_ts_printf("\n");
+		#endif
+	}
 
 
 	for(i=0; i<8192; i++)
@@ -1027,10 +1053,10 @@ static demuxer_t *demux_open_ts(demuxer_t * demuxer)
 	tsdemux_init_t params;
 	ts_priv_t * priv = demuxer->priv;
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("DEMUX OPEN, AUDIO_ID: %d, VIDEO_ID: %d, SUBTITLE_ID: %d,\n",
 		demuxer->audio->id, demuxer->video->id, demuxer->sub->id);
-#endif		
+	#endif
 
 
 	demuxer->type= DEMUXER_TYPE_MPEG_TS;
@@ -1045,9 +1071,10 @@ static demuxer_t *demux_open_ts(demuxer_t * demuxer)
 	priv = calloc(1, sizeof(ts_priv_t));
 	if(priv == NULL)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("DEMUX_OPEN_TS, couldn't allocate enough memory for ts->priv, exit\n");
-#endif
+		#endif
+
 		return NULL;
 	}
 
@@ -1127,10 +1154,9 @@ static demuxer_t *demux_open_ts(demuxer_t * demuxer)
 	}
 
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("Opened TS demuxer, audio: %x(pid %d), video: %x(pid %d)...POS=%"PRIu64", PROBE=%"PRIu64"\n", params.atype, demuxer->audio->id, params.vtype, demuxer->video->id, (uint64_t) start_pos, ts_probe);
-#endif	
-
+	#endif
 
 	start_pos = (start_pos <= priv->ts.packet_size ? 0 : start_pos - priv->ts.packet_size);
 	demuxer->movi_start = start_pos;
@@ -1214,9 +1240,11 @@ static int mp4_parse_sl_packet(pmt_t *pmt, uint8_t *buf, uint16_t packet_len, in
 	uint8_t au_start = 0, au_end = 0, rap_flag = 0, ocr_flag = 0, padding = 0,  padding_bits = 0, idle = 0;
 	
 	pes_es->is_synced = 0;
-#ifdef DEBUG
+
+	#ifdef DEBUG
 	demux_ts_printf("mp4_parse_sl_packet, pid: %d, pmt: %pm, packet_len: %d\n", pid, pmt, packet_len);	
-#endif	
+	#endif
+
 	if(! pmt || !packet_len)
 		return 0;
 	
@@ -1243,9 +1271,9 @@ static int mp4_parse_sl_packet(pmt_t *pmt, uint8_t *buf, uint16_t packet_len, in
 		return -1;
 		
 	//now es is the complete es_descriptor of out mp4 ES stream
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("ID: %d, FLAGS: 0x%x, subtype: %x\n", es->id, sl->flags, pes_es->subtype);
-#endif	
+	#endif
 	
 	n = 0;
 	if(sl->au_start)
@@ -1290,17 +1318,19 @@ static int mp4_parse_sl_packet(pmt_t *pmt, uint8_t *buf, uint16_t packet_len, in
 	if(ocr_flag)
 	{
 		n += sl->ocr_len;
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("OCR: %d bits\n", sl->ocr_len);
-#endif		
+		#endif
 	}
 	
 	if(packet_len * 8 <= n)
 		return -1;
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("\nAU_START: %d, AU_END: %d\n", au_start, au_end);
-#endif	
+	#endif
+
 	if(au_start)
 	{
 		int dts_flag = 0, cts_flag = 0, ib_flag = 0;
@@ -1328,9 +1358,10 @@ static int mp4_parse_sl_packet(pmt_t *pmt, uint8_t *buf, uint16_t packet_len, in
 		if(dts_flag && (sl->ts_len > 0))
 		{
 			n += sl->ts_len;
-#ifdef DEBUG
+
+			#ifdef DEBUG
 			demux_ts_printf("DTS: %d bits\n", sl->ts_len);
-#endif			
+			#endif
 		}
 		if(packet_len * 8 <= n+8)
 			return -1;
@@ -1351,9 +1382,10 @@ static int mp4_parse_sl_packet(pmt_t *pmt, uint8_t *buf, uint16_t packet_len, in
 			}
 			
 			pes_es->pts = (float) v / (float) sl->ts_resolution;
-#ifdef DEBUG
+
+			#ifdef DEBUG
 			demux_ts_printf("CTS: %d bits, value: %"PRIu64"/%d = %.3f\n", sl->ts_len, v, sl->ts_resolution, pes_es->pts);
-#endif			
+			#endif
 		}
 		
 		
@@ -1370,9 +1402,10 @@ static int mp4_parse_sl_packet(pmt_t *pmt, uint8_t *buf, uint16_t packet_len, in
 			if(packet_len * 8 <= n+8)
 				return -1;
 		}
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("AU_LEN: %u (%d bits)\n", pl_size, sl->au_len);
-#endif		
+		#endif
+
 		if(ib_flag)
 			n += sl->instant_bitrate_len;
 	}
@@ -1381,10 +1414,10 @@ static int mp4_parse_sl_packet(pmt_t *pmt, uint8_t *buf, uint16_t packet_len, in
 	if(0 < pl_size && pl_size < pes_es->payload_size)
 		pes_es->payload_size = pl_size;
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("mp4_parse_sl_packet, n=%d, m=%d, size from pes hdr: %u, sl hdr size: %u, RAP FLAGS: %d/%d\n", 
 		n, m, pes_es->payload_size, pl_size, (int) rap_flag, (int) sl->random_accesspoint_only);
-#endif		
+	#endif
 	
 	return m;
 }
@@ -1442,9 +1475,11 @@ static int parse_pes_extension_fields(unsigned char *p, int pkt_len)
 		if((l == 0x81) && (skip < pkt_len))
 		{
 			int ssid = p[skip];
-#ifdef DEBUG
+
+			#ifdef DEBUG
 			demux_ts_printf("SUBSTREAM_ID=%d (0x%02X)\n", ssid, ssid);
-#endif			
+			#endif
+
 			return ssid;
 		}
 	}
@@ -1461,15 +1496,16 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 	uint32_t       pkt_len, pes_is_aligned;
 
 	//Here we are always at the start of a PES packet
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("pes_parse2(%p, %d): \n", buf, (uint32_t) packet_len);
-#endif	
+	#endif
 
 	if(packet_len == 0 || packet_len > 184)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("pes_parse2, BUFFER LEN IS TOO SMALL OR TOO BIG: %d EXIT\n", packet_len);
-#endif		
+		#endif
+
 		return 0;
 	}
 
@@ -1477,23 +1513,26 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 	pkt_len = packet_len;
 
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("pes_parse2: HEADER %02x %02x %02x %02x\n", p[0], p[1], p[2], p[3]);
-#endif	
+	#endif
+
 	if (p[0] || p[1] || (p[2] != 1))
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("pes_parse2: error HEADER %02x %02x %02x (should be 0x000001) \n", p[0], p[1], p[2]);
-#endif		
+		#endif
+
 		return 0 ;
 	}
 
 	packet_len -= 6;
 	if(packet_len==0)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("pes_parse2: packet too short: %d, exit\n", packet_len);
-#endif		
+		#endif
+
 		return 0;
 	}
 
@@ -1501,7 +1540,6 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 	pes_is_aligned = (p[6] & 4);
 
 	stream_id  = p[3];
-
 
 	if (p[7] & 0x80)
 	{ 	/* pts available */
@@ -1522,17 +1560,20 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 
 	if (header_len + 9 > pkt_len) //9 are the bytes read up to the header_length field
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("demux_ts: illegal value for PES_header_data_length (0x%02x)\n", header_len);
-#endif		
+		#endif
+
 		return 0;
 	}
 	
 	if(stream_id==0xfd)
 	{
 		int ssid = parse_pes_extension_fields(p, pkt_len);
+
 		if((audio_substream_id!=-1) && (ssid != audio_substream_id))
 			return 0;
+
 		if(ssid == 0x72)
 			es->type  = type_from_pmt = AUDIO_TRUEHD;
 	}
@@ -1547,10 +1588,10 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 	es->is_synced = 1;	//only for SL streams we have to make sure it's really true, see below
 	if (stream_id == 0xbd)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("pes_parse2: audio buf = %02X %02X %02X %02X %02X %02X %02X %02X, 80: %d\n",
 			p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[0] & 0x80);
-#endif
+		#endif
 
 		/*
 		* we check the descriptor tag first because some stations
@@ -1564,9 +1605,10 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 			(p[0] == 0x0B && p[1] == 0x77)		/* A52 - syncword */
 		)
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("A52 RAW OR SYNCWORD\n");
-#endif			
+			#endif
+
 			es->start = p;
 			es->size  = packet_len;
 			es->type  = AUDIO_A52;
@@ -1597,9 +1639,10 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 		}
 		else if (pes_is_aligned && (p[0] & 0xF8) == 0x80)
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("A52 WITH HEADER\n");
-#endif			
+			#endif
+
 			es->start   = p+4;
 			es->size    = packet_len - 4;
 			es->type    = AUDIO_A52;
@@ -1629,9 +1672,10 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 		}
 		else
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("PES_PRIVATE1\n");
-#endif			
+			#endif
+
 			es->start   = p;
 			es->size    = packet_len;
 			es->type    = (type_from_pmt == UNKNOWN ? PES_PRIVATE1 : type_from_pmt);
@@ -1651,9 +1695,10 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 		if(es->payload_size)
 			es->payload_size -= packet_len;
 
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("pes_parse2: M2V size %d\n", es->size);
-#endif		
+		#endif
+
 		return 1;
 	}
 	else if ((stream_id == 0xfa))
@@ -1672,14 +1717,17 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 				//if(pes_is_aligned)
 				//{
 					l = mp4_parse_sl_packet(pmt, p, packet_len, pid, es);
-#ifdef DEBUG
+
+					#ifdef DEBUG
 					demux_ts_printf("L=%d, TYPE=%x\n", l, type_from_pmt);
-#endif					
+					#endif
+
 					if(l < 0)
 					{
-#ifdef DEBUG
+						#ifdef DEBUG
 						demux_ts_printf("pes_parse2: couldn't parse SL header, passing along full PES payload\n");
-#endif						
+						#endif
+
 						l = 0;
 					}
 				//}
@@ -1690,6 +1738,7 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 
 			if(es->payload_size)
 				es->payload_size -= packet_len;
+
 			return 1;
 		}
 	}
@@ -1718,9 +1767,9 @@ static int pes_parse2(unsigned char *buf, uint16_t packet_len, ES_stream_t *es, 
 	}
 	else
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("pes_parse2: unknown packet, id: %x\n", stream_id);
-#endif		
+		#endif
 	}
 
 	es->is_synced = 0;
@@ -1734,7 +1783,9 @@ static int ts_sync(stream_t *stream)
 {
 	int c=0;
 
+	#ifdef DEBUG
 	//demux_ts_printf("TS_SYNC \n");
+	#endif
 
 	while(((c=stream_read_char(stream)) != 0x47) && ! stream->eof);
 
@@ -1801,9 +1852,10 @@ static int collect_section(ts_section_t *section, int is_start, unsigned char *b
 	uint16_t tlen;
 	int skip, tid;
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("COLLECT_SECTION, start: %d, size: %d, collected: %d\n", is_start, size, section->buffer_len);
-#endif	
+	#endif
+
 	if(! is_start && !section->buffer_len)
 		return 0;
 	
@@ -1820,9 +1872,10 @@ static int collect_section(ts_section_t *section, int is_start, unsigned char *b
 	
 	if(size + section->buffer_len > 4096+256)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("COLLECT_SECTION, excessive len: %d + %d\n", section->buffer_len, size);
-#endif		
+		#endif
+
 		return 0;
 	}
 
@@ -1839,14 +1892,17 @@ static int collect_section(ts_section_t *section, int is_start, unsigned char *b
 	ptr = &(section->buffer[skip + 1]);
 	tid = ptr[0];
 	tlen = ((ptr[1] & 0x0f) << 8) | ptr[2];
-#ifdef DEBUG
+
+	#ifdef DEBUG
 	demux_ts_printf("SKIP: %d+1, TID: %d, TLEN: %d, COLLECTED: %d\n", skip, tid, tlen, section->buffer_len);
-#endif		
+	#endif
+
 	if(section->buffer_len < (skip+1+3+tlen))
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("DATA IS NOT ENOUGH, NEXT TIME\n");
-#endif		
+		#endif
+
 		return 0;
 	}
 	
@@ -1882,9 +1938,9 @@ static int parse_pat(ts_priv_t * priv, int is_start, unsigned char *buff, int si
 	priv->pat.last_section_number = ptr[7];
 
 	//check_crc32(0xFFFFFFFFL, ptr, priv->pat.buffer_len - 4, &ptr[priv->pat.buffer_len - 4]);
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("PARSE_PAT: section_len: %d, section %d/%d\n", priv->pat.section_length, priv->pat.section_number, priv->pat.last_section_number);
-#endif
+	#endif
 
 	entries = (int) (priv->pat.section_length - 9) / 4;	//entries per section
 
@@ -1900,9 +1956,10 @@ static int parse_pat(ts_priv_t * priv, int is_start, unsigned char *buff, int si
 			tmp = realloc_struct(priv->pat.progs, priv->pat.progs_cnt+1, sizeof(struct pat_progs_t));
 			if(tmp == NULL)
 			{
-#ifdef DEBUG
+				#ifdef DEBUG
 				demux_ts_printf("PARSE_PAT: COULDN'T REALLOC %d bytes, NEXT\n", sz);
-#endif
+				#endif
+
 				break;
 			}
 			priv->pat.progs = tmp;
@@ -1912,11 +1969,12 @@ static int parse_pat(ts_priv_t * priv, int is_start, unsigned char *buff, int si
 
 		priv->pat.progs[idx].id = progid;
 		priv->pat.progs[idx].pmt_pid = ((base[2]  & 0x1F) << 8) | base[3];
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("PROG: %d (%d-th of %d), PMT: %d\n", priv->pat.progs[idx].id, i+1, entries, priv->pat.progs[idx].pmt_pid);
 		demux_ts_printf("PROGRAM_ID=%d (0x%02X), PMT_PID: %d(0x%02X)\n",
 			progid, progid, priv->pat.progs[idx].pmt_pid, priv->pat.progs[idx].pmt_pid);
-#endif			
+		#endif			
 	}
 
 	return 1;
@@ -1948,24 +2006,27 @@ static uint16_t get_mp4_desc_len(uint8_t *buf, int *len)
 	//uint16_t i = 0, size = 0;
 	int i = 0, j, size = 0;
 	
-#ifdef DEBUG	
+	#ifdef DEBUG
 	demux_ts_printf("PARSE_MP4_DESC_LEN(%d), bytes: ", *len);
-#endif
+	#endif
+
 	j = FFMIN(*len, 4);
 	while(i < j)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf(" %x ", buf[i]);
-#endif		
+		#endif
+
 		size |= (buf[i] & 0x7f);
 		if(!(buf[i] & 0x80))
 			break;
 		size <<= 7;
 		i++;
 	}
-#ifdef DEBUG
+
+	#ifdef DEBUG
 	demux_ts_printf(", SIZE=%d\n", size);
-#endif	
+	#endif
 	
 	*len = i+1;
 	return size;
@@ -1977,16 +2038,18 @@ static uint16_t parse_mp4_slconfig_descriptor(uint8_t *buf, int len, void *elem)
 	int i = 0;
 	mp4_es_descr_t *es;
 	mp4_sl_config_t *sl;
-	
-#ifdef DEBUG
+
+	#ifdef DEBUG
 	demux_ts_printf("PARSE_MP4_SLCONFIG_DESCRIPTOR(%d)\n", len);
-#endif	
+	#endif
+
 	es = (mp4_es_descr_t *) elem;
 	if(!es)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("argh! NULL elem passed, skip\n");
-#endif		
+		#endif		
+
 		return len;
 	}
 	sl = &(es->sl);
@@ -2057,10 +2120,10 @@ static uint16_t parse_mp4_slconfig_descriptor(uint8_t *buf, int len, void *elem)
 	else	//no support for fixed durations atm
 		sl->timescale = sl->au_duration = sl->cts_duration = 0;
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("MP4SLCONFIG(len=0x%x), predef: %d, flags: %x, use_ts: %d, tslen: %d, timescale: %d, dts: %"PRIu64", cts: %"PRIu64"\n", 
 		len, buf[0], sl->flags, sl->use_ts, sl->ts_len, sl->timescale, (uint64_t) sl->dts, (uint64_t) sl->cts);
-#endif		
+	#endif
 	
 	return len;
 }
@@ -2073,15 +2136,17 @@ static uint16_t parse_mp4_decoder_config_descriptor(pmt_t *pmt, uint8_t *buf, in
 	mp4_es_descr_t *es;
 	mp4_decoder_config_t *dec;
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("PARSE_MP4_DECODER_CONFIG_DESCRIPTOR(%d)\n", len);
-#endif	
+	#endif
+
 	es = (mp4_es_descr_t *) elem;
 	if(!es)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("argh! NULL elem passed, skip\n");
-#endif		
+		#endif
+
 		return len;
 	}
 	dec = (mp4_decoder_config_t*) &(es->decoder);
@@ -2137,9 +2202,9 @@ static uint16_t parse_mp4_decoder_config_descriptor(pmt_t *pmt, uint8_t *buf, in
 	if(len > 13)
 		parse_mp4_descriptors(pmt, &buf[13], len-13, dec);
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("MP4DECODER(0x%x), object_type: 0x%x, stream_type: 0x%x\n", len, dec->object_type, dec->stream_type);
-#endif	
+	#endif
 	
 	return len;
 }
@@ -2149,30 +2214,33 @@ static uint16_t parse_mp4_decoder_specific_descriptor(uint8_t *buf, int len, voi
 	int i;
 	mp4_decoder_config_t *dec;
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("PARSE_MP4_DECODER_SPECIFIC_DESCRIPTOR(%d)\n", len);
-#endif	
+	#endif
+
 	dec = (mp4_decoder_config_t *) elem;
 	if(!dec)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("argh! NULL elem passed, skip\n");
-#endif
+		#endif
+
 		return len;
 	}
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("MP4 SPECIFIC INFO BYTES: \n");
 	for(i=0; i<len; i++)
 		demux_ts_printf("%02x ", buf[i]);
 	demux_ts_printf("\n");
-#endif
+	#endif
 
 	if(len > MAX_EXTRADATA_SIZE)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("DEMUX_TS, EXTRADATA SUSPICIOUSLY BIG: %d, REFUSED\r\n", len);
-#endif
+		#endif
+
 		return len;
 	}
 	memcpy(dec->buf, buf, len);
@@ -2187,16 +2255,19 @@ static uint16_t parse_mp4_es_descriptor(pmt_t *pmt, uint8_t *buf, int len)
 	uint8_t flag;
 	mp4_es_descr_t es, *target_es = NULL, *tmp;
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("PARSE_MP4ES: len=%d\n", len);
-#endif	
+	#endif
+
 	memset(&es, 0, sizeof(mp4_es_descr_t));
 	while(i < len)
 	{
 		es.id = (buf[i] << 8) | buf[i+1];
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("MP4ES_ID: %d\n", es.id);
-#endif		
+		#endif
+
 		i += 2;
 		flag = buf[i];
 		i++;
@@ -2208,9 +2279,11 @@ static uint16_t parse_mp4_es_descriptor(pmt_t *pmt, uint8_t *buf, int len)
 			i += 2;
 		
 		j = parse_mp4_descriptors(pmt, &buf[i], len-i, &es);
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("PARSE_MP4ES, types after parse_mp4_descriptors: 0x%x, 0x%x\n", es.decoder.object_type, es.decoder.stream_type);
-#endif		
+		#endif
+
 		if(es.decoder.object_type != UNKNOWN && es.decoder.stream_type != UNKNOWN)
 		{
 			found = 0;
@@ -2237,9 +2310,10 @@ static uint16_t parse_mp4_es_descriptor(pmt_t *pmt, uint8_t *buf, int len)
 				pmt->mp4es_cnt++;
 			}
 			memcpy(target_es, &es, sizeof(mp4_es_descr_t));
-#ifdef DEBUG
+
+			#ifdef DEBUG
 			demux_ts_printf("MP4ES_CNT: %d, ID=%d\n", pmt->mp4es_cnt, target_es->id);
-#endif			
+			#endif
 		}
 
 		i += j;
@@ -2254,15 +2328,18 @@ static void parse_mp4_object_descriptor(pmt_t *pmt, uint8_t *buf, int len, void 
 	
 	i=0;
 	id = (buf[0] << 2) | ((buf[1] & 0xc0) >> 6);
-#ifdef DEBUG
+
+	#ifdef DEBUG
 	demux_ts_printf("PARSE_MP4_OBJECT_DESCRIPTOR: len=%d, OD_ID=%d\n", len, id);
-#endif	
+	#endif
+
 	if(buf[1] & 0x20)
 	{
 		i += buf[2] + 1;	//url
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("URL\n");
-#endif
+		#endif
 	}
 	else
 	{
@@ -2271,9 +2348,11 @@ static void parse_mp4_object_descriptor(pmt_t *pmt, uint8_t *buf, int len, void 
 		while(i < len)
 		{
 			j = parse_mp4_descriptors(pmt, &(buf[i]), len-i, elem);
-#ifdef DEBUG
+
+			#ifdef DEBUG
 			demux_ts_printf("OBJD, NOW i = %d, j=%d, LEN=%d\n", i, j, len);
-#endif
+			#endif
+
 			i += j;
 		}
 	}
@@ -2286,16 +2365,19 @@ static void parse_mp4_iod(pmt_t *pmt, uint8_t *buf, int len, void *elem)
 	mp4_od_t *iod = &(pmt->iod);
 	
 	iod->id = (buf[0] << 2) | ((buf[1] & 0xc0) >> 6);
-#ifdef DEBUG
+
+	#ifdef DEBUG
 	demux_ts_printf("PARSE_MP4_IOD: len=%d, IOD_ID=%d\n", len, iod->id);
-#endif
+	#endif
+
 	i = 2;
 	if(buf[1] & 0x20)
 	{
 		i += buf[2] + 1;	//url
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("URL\n");
-#endif
+		#endif
 	}
 	else
 	{
@@ -2303,9 +2385,11 @@ static void parse_mp4_iod(pmt_t *pmt, uint8_t *buf, int len, void *elem)
 		while(i < len)
 		{
 			j = parse_mp4_descriptors(pmt, &(buf[i]), len-i, elem);
-#ifdef DEBUG
+
+			#ifdef DEBUG
 			demux_ts_printf("IOD, NOW i = %d, j=%d, LEN=%d\n", i, j, len);
-#endif
+			#endif
+
 			i += j;
 		}
 	}
@@ -2315,9 +2399,10 @@ static int parse_mp4_descriptors(pmt_t *pmt, uint8_t *buf, int len, void *elem)
 {
 	int tag, descr_len, i = 0, j = 0;
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("PARSE_MP4_DESCRIPTORS, len=%d\n", len);
-#endif	
+	#endif
+
 	if(! len)
 		return len;
 	
@@ -2326,14 +2411,17 @@ static int parse_mp4_descriptors(pmt_t *pmt, uint8_t *buf, int len, void *elem)
 		tag = buf[i];
 		j = len - i -1;
 		descr_len = get_mp4_desc_len(&(buf[i+1]), &j);
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("TAG=%d (0x%x), DESCR_len=%d, len=%d, j=%d\n", tag, tag, descr_len, len, j);
-#endif
+		#endif
+
 		if(descr_len > len - j+1)
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("descriptor is too long, exit\n");
-#endif
+			#endif
+
 			return len;
 		}
 		i += j+1;
@@ -2359,9 +2447,11 @@ static int parse_mp4_descriptors(pmt_t *pmt, uint8_t *buf, int len, void *elem)
 				parse_mp4_slconfig_descriptor(&buf[i], descr_len, elem);
 				break;
 			default:
-#ifdef DEBUG			  
+				{
+				#ifdef DEBUG
 				demux_ts_printf("Unsupported mp4 descriptor 0x%x\n", tag);
-#endif
+				#endif
+				}
 		}
 		i += descr_len;
 	}
@@ -2396,14 +2486,16 @@ static int parse_program_descriptors(pmt_t *pmt, uint8_t *buf, uint16_t len)
 
 	while(len > 0)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("PROG DESCR, TAG=%x, LEN=%d(%x)\n", buf[i], buf[i+1], buf[i+1]);
-#endif
+		#endif
+
 		if(buf[i+1] > len-2)
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("ERROR, descriptor len is too long, skipping\n");
-#endif
+			#endif
+
 			return olen;
 		}
 
@@ -2431,14 +2523,17 @@ static int parse_descriptors(struct pmt_es_t *es, uint8_t *ptr)
 	while(len > 2)
 	{
 		descr_len = ptr[j+1];
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("...descr id: 0x%x, len=%d\n", ptr[j], descr_len);
-#endif
+		#endif
+
 		if(descr_len > len)
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("INVALID DESCR LEN for tag %02x: %d vs %d max, EXIT LOOP\n", ptr[j], descr_len, len);
-#endif
+			#endif
+
 			return -1;
 		}
 
@@ -2448,9 +2543,10 @@ static int parse_descriptors(struct pmt_es_t *es, uint8_t *ptr)
 			if(es->type == 0x6)
 			{
 				es->type = AUDIO_A52;
-#ifdef DEBUG
+
+				#ifdef DEBUG
 				demux_ts_printf("DVB A52 Descriptor\n");
-#endif
+				#endif
 			}
 		}
 		else if(ptr[j] == 0x7b)	//DVB DTS Descriptor
@@ -2458,9 +2554,9 @@ static int parse_descriptors(struct pmt_es_t *es, uint8_t *ptr)
 			if(es->type == 0x6)
 			{
 				es->type = AUDIO_DTS;
-#ifdef DEBUG
+				#ifdef DEBUG
 				demux_ts_printf("DVB DTS Descriptor\n");
-#endif
+				#endif
 			}
 		}
 		else if(ptr[j] == 0x56) // Teletext
@@ -2475,14 +2571,15 @@ static int parse_descriptors(struct pmt_es_t *es, uint8_t *ptr)
 		{
 			uint8_t subtype;
 
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("Subtitling Descriptor\n");
-#endif
+			#endif
+
 			if(descr_len < 8)
 			{
-#ifdef DEBUG
+				#ifdef DEBUG
 				demux_ts_printf("Descriptor length too short for DVB Subtitle Descriptor: %d, SKIPPING\n", descr_len);
-#endif
+				#endif
 			}
 			else
 			{
@@ -2503,9 +2600,10 @@ static int parse_descriptors(struct pmt_es_t *es, uint8_t *ptr)
 		}
 		else if(ptr[j] == 0x50)	//Component Descriptor
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("Component Descriptor\n");
-#endif
+			#endif
+
 			memcpy(es->lang, &ptr[j+5], 3);
 			es->lang[3] = 0;
 		}
@@ -2513,20 +2611,22 @@ static int parse_descriptors(struct pmt_es_t *es, uint8_t *ptr)
 		{
 			memcpy(es->lang, &ptr[j+2], 3);
 			es->lang[3] = 0;
-#ifdef DEBUG
+
+			#ifdef DEBUG
 			demux_ts_printf("Language Descriptor: %s\n", es->lang);
-#endif
+			#endif
 		}
 		else if(ptr[j] == 0x5)	//Registration Descriptor (looks like e fourCC :) )
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("Registration Descriptor\n");
-#endif
+			#endif
+
 			if(descr_len < 4)
 			{
-#ifdef DEBUG
+				#ifdef DEBUG
 				demux_ts_printf("Registration Descriptor length too short: %d, SKIPPING\n", descr_len);
-#endif
+				#endif
 			}
 			else
 			{
@@ -2553,22 +2653,25 @@ static int parse_descriptors(struct pmt_es_t *es, uint8_t *ptr)
 				}
 				else
 					es->type = UNKNOWN;
-#ifdef DEBUG
+
+				#ifdef DEBUG
 				demux_ts_printf("FORMAT %s\n", es->format_descriptor);
-#endif
+				#endif
 			}
 		}
 		else if(ptr[j] == 0x1e)
 		{
 			es->mp4_es_id = (ptr[j+2] << 8) | ptr[j+3];
-#ifdef DEBUG
+
+			#ifdef DEBUG
 			demux_ts_printf("SL Descriptor: ES_ID: %d(%x), pid: %d\n", es->mp4_es_id, es->mp4_es_id, es->pid);
-#endif
+			#endif
 		}
-		else
-#ifdef DEBUG
+		else {
+			#ifdef DEBUG
 			demux_ts_printf("Unknown descriptor 0x%x, SKIPPING\n", ptr[j]);
-#endif
+			#endif
+		}
 
 		len -= 2 + descr_len;
 		j += 2 + descr_len;
@@ -2588,14 +2691,17 @@ static int parse_sl_section(pmt_t *pmt, ts_section_t *section, int is_start, uns
 	ptr = &(section->buffer[skip]);
 	tid = ptr[0];
 	len = ((ptr[1] & 0x0f) << 8) | ptr[2];
-#ifdef DEBUG
+
+	#ifdef DEBUG
 	demux_ts_printf("TABLEID: %d (av. %d), skip=%d, LEN: %d\n", tid, section->buffer_len, skip, len);
-#endif
+	#endif
+
 	if(len > 4093 || section->buffer_len < len || tid != 5)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("SECTION TOO LARGE or wrong section type, EXIT\n");
-#endif
+		#endif
+
 		return 0;
 	}
 	
@@ -2628,9 +2734,10 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 		tmp = realloc_struct(priv->pmt, priv->pmt_cnt + 1, sizeof(pmt_t));
 		if(tmp == NULL)
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("PARSE_PMT: COULDN'T REALLOC %d bytes, NEXT\n", sz);
-#endif
+			#endif
+
 			return 0;
 		}
 		priv->pmt = tmp;
@@ -2649,10 +2756,10 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 		
 	base = &(section->buffer[skip]);
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("FILL_PMT(prog=%d), PMT_len: %d, IS_START: %d, TS_PID: %d, SIZE=%d, M=%d, ES_CNT=%d, IDX=%d, PMT_PTR=%p\n",
 		progid, pmt->section.buffer_len, is_start, pid, size, m, pmt->es_cnt, idx, pmt);
-#endif
+	#endif
 
 	pmt->table_id = base[0];
 	if(pmt->table_id != 2)
@@ -2667,9 +2774,10 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 	pmt->prog_descr_length = ((base[10] & 0xf) << 8 ) | base[11];
 	if(pmt->prog_descr_length > pmt->section_length - 9)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("PARSE_PMT, INVALID PROG_DESCR LENGTH (%d vs %d)\n", pmt->prog_descr_length, pmt->section_length - 9);
-#endif
+		#endif
+
 		return -1;
 	}
 
@@ -2695,9 +2803,10 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 			tmp_es = realloc_struct(pmt->es, pmt->es_cnt + 1, sizeof(struct pmt_es_t));
 			if(tmp_es == NULL)
 			{
-#ifdef DEBUG
+				#ifdef DEBUG
 				demux_ts_printf("PARSE_PMT, COULDN'T ALLOCATE %d bytes for PMT_ES\n", sz);
-#endif
+				#endif
+
 				continue;
 			}
 			pmt->es = tmp_es;
@@ -2711,15 +2820,17 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 
 		if(pmt->es[idx].descr_length > section_bytes - 5)
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("PARSE_PMT, ES_DESCR_LENGTH TOO LARGE %d > %d, EXIT\n",
 				pmt->es[idx].descr_length, section_bytes - 5);
-#endif
+			#endif
+
 			return -1;
 		}
 
 
 		pmt->es[idx].pid = es_pid;
+
 		if(es_type != 0x6)
 			pmt->es[idx].type = UNKNOWN;
 		else
@@ -2777,9 +2888,10 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 				video_format = VIDEO_VC1;
 				break;
 			default:
-#ifdef DEBUG
+				#ifdef DEBUG
 				demux_ts_printf("UNKNOWN ES TYPE=0x%x\n", es_type);
-#endif				
+				#endif				
+
 				pmt->es[idx].type = UNKNOWN;
 		}
 		
@@ -2792,20 +2904,21 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 		}
 
 		section_bytes -= 5 + pmt->es[idx].descr_length;
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("PARSE_PMT(%d INDEX %d), STREAM: %d, FOUND pid=0x%x (%d), type=0x%x, ES_DESCR_LENGTH: %d, bytes left: %d\n",
 			progid, idx, es_count, pmt->es[idx].pid, pmt->es[idx].pid, pmt->es[idx].type, pmt->es[idx].descr_length, section_bytes);
-#endif			
-
+		#endif			
 
 		es_base += 5 + pmt->es[idx].descr_length;
 
 		es_count++;
 	}
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("----------------------------\n");
-#endif	
+	#endif
+
 	return 1;
 }
 
@@ -2910,9 +3023,11 @@ static int fill_packet(demuxer_t *demuxer, demux_stream_t *ds, demux_packet_t **
 		ret = *dp_offset;
 		resize_demux_packet(*dp, ret);	//shrinked to the right size
 		ds_add_packet(ds, *dp);
-#ifdef DEBUG
+
+		#ifdef DEBUG
 		demux_ts_printf("ADDED %d  bytes to %s fifo, PTS=%.3f\n", ret, (ds == demuxer->audio ? "audio" : (ds == demuxer->video ? "video" : "sub")), (*dp)->pts);
-#endif		
+		#endif
+
 		if(si)
 		{
 			float diff = (*dp)->pts - si->last_pts;
@@ -2937,7 +3052,7 @@ static int fill_packet(demuxer_t *demuxer, demux_stream_t *ds, demux_packet_t **
 					priv->vbitrate = (uint32_t) ((float) si->size / dur);
 			}
 		}
-	}else if(*dp!=NULL)free_demux_packet(*dp);
+	} else if(*dp!=NULL)free_demux_packet(*dp);
 
 	*dp = NULL;
 	*dp_offset = 0;
@@ -2949,9 +3064,9 @@ static int fill_extradata(mp4_decoder_config_t * mp4_dec, ES_stream_t *tss)
 {
 	uint8_t *tmp;
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_ts_printf("MP4_dec: %p, pid: %d\n", mp4_dec, tss->pid);
-#endif
+	#endif
 		
 	if(mp4_dec->buf_size > tss->extradata_alloc)
 	{
@@ -2963,9 +3078,10 @@ static int fill_extradata(mp4_decoder_config_t * mp4_dec, ES_stream_t *tss)
 	}
 	memcpy(tss->extradata, mp4_dec->buf, mp4_dec->buf_size);
 	tss->extradata_len = mp4_dec->buf_size;
-#ifdef DEBUG
+
+	#ifdef DEBUG
 	demux_ts_printf("EXTRADATA: %p, alloc=%d, len=%d\n", tss->extradata, tss->extradata_alloc, tss->extradata_len);
-#endif
+	#endif
 	
 	return tss->extradata_len;
 }
@@ -3020,15 +3136,18 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 
 		if(! ts_sync(stream))
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("TS_PARSE: COULDN'T SYNC\n");
-#endif
+			#endif
+
 			return 0;
 		}
 
 		len = stream_read(stream, &packet[1], 3);
+
 		if (len != 3)
 			return 0;
+
 		buf_size -= 4;
 
 		if((packet[1]  >> 7) & 0x01)	//transport error
@@ -3211,9 +3330,10 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 						if(asgn)
 						{
 							demuxer->sub->id = tss->pid;
-#ifdef DEBUG
+
+							#ifdef DEBUG
 							demux_ts_printf("CHOSEN SUBs pid 0x%x (%d) FROM PROG %d\n", tss->pid, tss->pid, priv->prog);
-#endif
+							#endif
 						}
 					}
 				}
@@ -3251,9 +3371,10 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 					fprintf(stderr, "fill_buffer, NEW_ADD_PACKET(%d)FAILED\n", *buffer_size);
 					continue;
 				}
-#ifdef DEBUG
+
+				#ifdef DEBUG
 				demux_ts_printf("CREATED DP(%d)\n", *buffer_size);
-#endif
+				#endif
 			}
 		}
 
@@ -3275,9 +3396,10 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 		len = stream_read(stream, p, buf_size);
 		if(len < buf_size)
 		{
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("\r\nts_parse() couldn't read enough data: %d < %d\r\n", len, buf_size);
-#endif
+			#endif
+
 			continue;
 		}
 		stream_skip(stream, junk);
@@ -3296,9 +3418,11 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 				if(pmt->mp4es[k].decoder.object_type == MP4_OD && pmt->mp4es[k].decoder.stream_type == MP4_OD)
 					mp4_es_id = pmt->mp4es[k].id;
 			}
-#ifdef DEBUG
+
+			#ifdef DEBUG
 			demux_ts_printf("MP4ESID: %d\n", mp4_es_id);
-#endif
+			#endif
+
 			for(k = 0; k < pmt->es_cnt; k++)
 			{
 				if(pmt->es[k].mp4_es_id == mp4_es_id)
@@ -3319,10 +3443,11 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 					parse_pmt(priv, progid, pid, is_start, &packet[base], buf_size);
 					continue;
 				}
-				else
-#ifdef DEBUG
+				else {
+					#ifdef DEBUG
 					demux_ts_printf("Argh! Data pid %d used in the PMT, Skipping PMT parsing!\n", pid);
-#endif
+					#endif
+				}
 			}
 		}
 
@@ -3333,9 +3458,9 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 		{
 			uint8_t *lang = NULL;
 
-#ifdef DEBUG
+			#ifdef DEBUG
 			demux_ts_printf("IS_START\n");
-#endif
+			#endif
 
 			len = pes_parse2(p, buf_size, es, pid_type, pmt, pid);
 			if(! len)
@@ -3372,10 +3497,10 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 				else
 					tss->pts = tss->last_pts = es->pts;
 
-#ifdef DEBUG
+				#ifdef DEBUG
 				demux_ts_printf("ts_parse, NEW pid=%d, PSIZE: %u, type=%X, start=%p, len=%d\n",
 					es->pid, es->payload_size, es->type, es->start, es->size);
-#endif
+				#endif
 
 				demuxer->filepos = stream_tell(demuxer->stream) - es->size;
 
@@ -3501,9 +3626,9 @@ static void demux_seek_ts(demuxer_t *demuxer, float rel_seek_secs, float audio_d
 
 	//================= seek in MPEG-TS ==========================
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 
 	whileSeeking = 1;
 	getTSMutex(FILENAME, __FUNCTION__,__LINE__);
@@ -3516,9 +3641,10 @@ static void demux_seek_ts(demuxer_t *demuxer, float rel_seek_secs, float audio_d
 	video_stats = (sh_video != NULL);
 	if(video_stats)
 	{
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_ts_printf("IBPS: %d, vb: %d\r\n", sh_video->i_bps, priv->vbitrate);
-#endif		
+		#endif
+
 		if(priv->vbitrate)
 			video_stats = priv->vbitrate;
 		else
@@ -3592,9 +3718,9 @@ static void demux_seek_ts(demuxer_t *demuxer, float rel_seek_secs, float audio_d
 	releaseTSMutex(FILENAME, __FUNCTION__,__LINE__);
 	whileSeeking = 0;
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s exiting\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 }
 
 
@@ -3700,9 +3826,10 @@ static int demux_ts_control(demuxer_t *demuxer, int cmd, void *arg)
 				ds->id = priv->ts.streams[i].id;
 				ds->sh = sh;
 				ds_free_packs(ds);
-#ifdef DEBUG
+
+				#ifdef DEBUG
 				demux_ts_printf("\r\ndemux_ts, switched to audio pid %d, id: %d, sh: %p\r\n", i, ds->id, sh);
-#endif
+				#endif
 			}
 
 			*((int*)arg) = ds->id;
@@ -3804,9 +3931,9 @@ static sh_video_t *sh_video = NULL;
 static pthread_t PlayThread;
 
 int TSInit(Context_t *context, char * filename) {
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 
 	getTSMutex(FILENAME, __FUNCTION__,__LINE__);
 
@@ -3828,24 +3955,25 @@ int TSInit(Context_t *context, char * filename) {
 	ds = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
 	memset (ds,0,sizeof(demux_stream_t));
 
-#ifdef DEBUG
-    printf("%s::%d\n", __FUNCTION__, __LINE__);
-#endif
+	#ifdef DEBUG
+   	printf("%s::%d\n", __FUNCTION__, __LINE__);
+	#endif
 
 	demuxer->stream = (stream_t*)malloc ( sizeof(stream_t));
 	memset (demuxer->stream,0,sizeof(stream_t));
 
-#ifdef DEBUG
-    printf("%s::%d\n", __FUNCTION__, __LINE__);
-#endif
+	#ifdef DEBUG
+    	printf("%s::%d\n", __FUNCTION__, __LINE__);
+	#endif
 
 	demuxer->stream->fd = context->playback->fd;
 
 	//read(demuxer->stream->fd,demuxer->stream->buffer,2048);//soviel ??
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%d\n", __FUNCTION__, __LINE__);
-#endif	
+	#endif
+
 	demuxer->audio->id = -1;
 	demuxer->video->id = -1;
 	//demuxer->video_play = 0;
@@ -3853,11 +3981,11 @@ int TSInit(Context_t *context, char * filename) {
 	demuxer->stream->type		= STREAMTYPE_FILE;//STREAMTYPE_STREAM;
 	demuxer->stream->flags		= 6;
 	demuxer->stream->sector_size	= 0;
-	demuxer->stream->buf_pos		= 0;
-	demuxer->stream->buf_len		= 2048;
+	demuxer->stream->buf_pos	= 0;
+	demuxer->stream->buf_len	= 2048;
 	demuxer->stream->pos		= 0;//2048;
 	demuxer->stream->start_pos	= 0;
-	demuxer->stream->end_pos		= 0;
+	demuxer->stream->end_pos	= 0;
 	demuxer->stream->eof		= 0;
 	demuxer->stream->cache_pid	= 0;
 
@@ -3867,9 +3995,9 @@ int TSInit(Context_t *context, char * filename) {
 
 	if(demuxer->video->sh){
 		sh_video=demuxer->video->sh;
-#ifdef DEBUG
+		#ifdef DEBUG
 		printf("VIDEO 0x%02x\n",sh_video->format);
-#endif		
+		#endif		
 
 		if(sh_video->format == 0x10000001 || sh_video->format == 0x10000002)
 		{
@@ -3901,16 +4029,16 @@ int TSInit(Context_t *context, char * filename) {
 
 			context->manager->video->Command(context, MANAGER_ADD, &Video);
 		} else {
-#ifdef DEBUG
+			#ifdef DEBUG
 			printf("%s::%s Unknown video format 0x%02x\n", FILENAME, __FUNCTION__,sh_video->format);
-#endif
+			#endif
 		}
 	}
 	if(!demuxer->audio->sh == NULL){
 		sh_audio=demuxer->audio->sh;
-#ifdef DEBUG
+		#ifdef DEBUG
 		printf("AUDIO 0x%02x\n",sh_audio->format);
-#endif
+		#endif
 
 		if(sh_audio->format == 0x55 || sh_audio->format == 0x50) //mp3
 		{
@@ -3938,9 +4066,9 @@ int TSInit(Context_t *context, char * filename) {
 			};
 			context->manager->audio->Command(context, MANAGER_ADD, &Audio);
 		} else {
-#ifdef DEBUG
+			#ifdef DEBUG
 			printf("%s::%s Unknown audio format 0x%02x\n", FILENAME, __FUNCTION__,sh_audio->format);
-#endif
+			#endif
 		}
 	}
     
@@ -3968,17 +4096,20 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	if (!video_format) // initialize
 		if (sh_video->format) {
 			video_format = sh_video->format;
-#ifdef DEBUG			
+
+			#ifdef DEBUG
 			printf("%s::%s video format init with 0x%02x\n", FILENAME, __FUNCTION__, video_format);
-#endif
+			#endif
 		}
 	  
 	if(sh_video->format != video_format) // changed?
 	{
 		video_format_changed = 1;
-#ifdef DEBUG			
+
+		#ifdef DEBUG			
 		printf("%s::%s: change video format 0x%02x to 0x%02x\n", FILENAME, __FUNCTION__, sh_video->format, video_format);
-#endif
+		#endif
+
 		sh_video->format = video_format;
 	  
 		if(sh_video->format == 0x10000001 || sh_video->format == 0x10000002)
@@ -4023,9 +4154,9 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		current_audio = audio->first;
 
 		if (current_audio->flags) {	// fixme : always zero?
-#ifdef DEBUG		
+			#ifdef DEBUG
 			printf("audio current_audio->flags = 0x%02x\n",current_audio->flags);
-#endif
+			#endif
 		}
 		
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
@@ -4054,9 +4185,9 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		current_video = video->first;
 		
 		if (current_video->flags) {	// fixme : always zero?
-#ifdef DEBUG		
+			#ifdef DEBUG
 			printf("video current->flags = 0x%02x\n",current_video->flags);
-#endif
+			#endif
 		}
 		
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
@@ -4118,36 +4249,38 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 
 
 static void TSThread(Context_t *context) {
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 	
 	while ( context->playback->isCreationPhase ) {
-#ifdef DEBUG
+		#ifdef DEBUG
 		printf("%s::%s Thread waiting for end of init phase...\n", FILENAME, __FUNCTION__);
-#endif
+		#endif
 	}
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s Running!\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 
 	while ( context && context->playback && context->playback->isPlaying ) {
 	    //printf("%s -->\n", __FUNCTION__);
 
 		//IF MOVIE IS PAUSED, WAIT
 		if (context->playback->isPaused) {
-#ifdef DEBUG
+			#ifdef DEBUG
 			printf("%s::%s paused\n", FILENAME, __FUNCTION__);
-#endif
+			#endif
+
 			usleep(100000);
 			continue;
 		}
 
 		if (context->playback->isSeeking || whileSeeking) {
-#ifdef DEBUG
+			#ifdef DEBUG
 			printf("%s::%s seeking\n", FILENAME, __FUNCTION__);
-#endif
+			#endif
+
 			usleep(100000);			
 			continue;
 		}
@@ -4155,9 +4288,10 @@ static void TSThread(Context_t *context) {
 		getTSMutex(FILENAME, __FUNCTION__,__LINE__);
 
 		if ( !demux_ts_fill_buffer(demuxer,ds) ) {
-#ifdef DEBUG
+			#ifdef DEBUG
 			printf("%s::%s demux_ts_fill_buffer failed!\n", FILENAME, __FUNCTION__);
-#endif
+			#endif
+
 			releaseTSMutex(FILENAME, __FUNCTION__,__LINE__);
 			
 			break;
@@ -4186,80 +4320,84 @@ static void TSThread(Context_t *context) {
 
 	//context->playback->Command(context, PLAYBACK_TERM, NULL);
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
-#endif
+	#endif
 	
 	PlayThread = NULL;
 }
 
 
 static int TSPlay(Context_t *context) {
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 
 	int error;
 	int ret = 0;
 	pthread_attr_t attr;
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	if ( context && context->playback && context->playback->isPlaying ) {
 		printf("%s::%s is Playing\n", FILENAME, __FUNCTION__);
 	} else {
 		printf("%s::%s is NOT Playing\n", FILENAME, __FUNCTION__);
 	}
-#endif
+	#endif
 	
 	if (PlayThread == NULL) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
 		if((error=pthread_create(&PlayThread, &attr, (void *)&TSThread, context)) != 0) {
-#ifdef DEBUG
-			  printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
-#endif
-			  PlayThread = NULL;
-			  ret = -1;
+			#ifdef DEBUG
+			printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
+			#endif
+
+			PlayThread = NULL;
+			ret = -1;
 		} else {
-#ifdef DEBUG		  
-			  printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
-#endif
+			#ifdef DEBUG		  
+			printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
+			#endif
 		}
 	} else {
-#ifdef DEBUG
+		#ifdef DEBUG
 		printf("%s::%s A thread already exists!\n", FILENAME, __FUNCTION__);
-#endif
+		#endif
+
 		ret = -1;
 	}
 	
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
-#endif
+	#endif
 
 	return ret;
 }
 
 static int TSStop(Context_t *context) {
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
+	#endif
 
 	int i;
 	int ret = 0;
 	int wait_time = 20;
 	
 	while ( (PlayThread != NULL) && (wait_time--) > 0 ) {
-#ifdef DEBUG  
+		#ifdef DEBUG  
 		printf("%s::%s Waiting for TS thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
-#endif
+		#endif
+
 		usleep(100000);
 	}
 
 	if (wait_time == 0) {
-#ifdef DEBUG  
+		#ifdef DEBUG  
 		printf("%s::%s Timeout waiting for TS thread!\n", FILENAME, __FUNCTION__);
-#endif
+		#endif
+
 		ret = -1;
 	} else {
 		getTSMutex(FILENAME, __FUNCTION__,__LINE__);
@@ -4314,9 +4452,9 @@ static int TSGetLength(demuxer_t *demuxer,double * length) {
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
-#endif
+	#endif
 	
 	int ret = 0;
 
@@ -4347,15 +4485,16 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}		
 		default:
-#ifdef DEBUG
+			#ifdef DEBUG
 			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
-#endif
+			#endif
+
 			break;
 	}
 
-#ifdef DEBUG
+	#ifdef DEBUG
 	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
-#endif
+	#endif
 
 	return ret;
 }
