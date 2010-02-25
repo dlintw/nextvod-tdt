@@ -83,6 +83,9 @@ include make/osd910.mk
 # Include vdr gui targets
 include make/vdr.mk
 
+# Include enigma1-hd gui targets
+include make/enigma1-hd.mk
+
 # Essential, and some less essential, libraries
 #include make/tuxbox_libs.mk
 

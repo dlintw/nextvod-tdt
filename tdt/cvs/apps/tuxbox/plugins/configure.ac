@@ -22,7 +22,8 @@ fi
 TUXBOX_APPS_LIB_CONFIG(CURL,curl-config)
 
 # needed by tuxmail
-TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
+#TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
+TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-old-config)
 TUXBOX_APPS_LIB_PKGCONFIG(PNG,libpng)
 
 # needed by enigma-demo

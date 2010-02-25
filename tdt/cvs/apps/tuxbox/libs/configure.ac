@@ -15,7 +15,9 @@ if test "$BOXTYPE" != "tripledragon"; then
 	TUXBOX_APPS_DRIVER
 	TUXBOX_APPS_DVB
 fi
-TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
+#TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
+TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-old-config)
+
 TUXBOX_APPS_LIB_PKGCONFIG(PNG,libpng)
 
 if test "$BOXTYPE" = "dbox2"; then

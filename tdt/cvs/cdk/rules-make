@@ -79,6 +79,7 @@ libmad;0.15.1b;libmad-0.15.1b;libmad-0.15.1b.tar.gz:libmad.diff;extract:libmad-0
 libid3tag;0.15.1b;libid3tag-0.15.1b;libid3tag-0.15.1b.tar.gz:libid3tag.diff;extract:libid3tag-0.15.1b.tar.gz;patch:libid3tag.diff
 libxml2;2.6.30;libxml2-2.6.30;libxml2-2.6.30.tar.gz;extract:libxml2-2.6.30.tar.gz
 libxslt;1.1.24;libxslt-1.1.24;libxslt-1.1.24.tar.gz;extract:libxslt-1.1.24.tar.gz
+libvorbisidec;1.0.2+svn16259;libvorbisidec-1.0.2+svn16259;libvorbisidec_1.0.2+svn16259.orig.tar.gz:tremor.diff;extract:libvorbisidec_1.0.2+svn16259.orig.tar.gz;patch:tremor.diff
 glib2;2.8.3;glib-2.8.3;glib-2.8.3.tar.gz;extract:glib-2.8.3.tar.gz
 libiconv;1.11;libiconv-1.11;libiconv-1.11.tar.gz;extract:libiconv-1.11.tar.gz
 libmng;1.0.10;libmng-1.0.10;libmng-1.0.10.tar.bz2;extract:libmng-1.0.10.tar.bz2

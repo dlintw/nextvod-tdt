@@ -79,6 +79,15 @@ $(DEPDIR)/freetype-old.do_compile: $(DEPDIR)/freetype-old.do_prepare
 $(DEPDIR)/freetype-old: $(DEPDIR)/freetype-old.do_compile
 	cd @DIR_freetype_old@ && \
 		@INSTALL_freetype_old@
+	cd freetype-2.1.4; \
+		$(INSTALL_DIR) $(crossprefix)/bin; \
+		cp install_dir/usr/bin/freetype-config $(crossprefix)/bin/freetype-old-config; \
+		$(INSTALL_DIR) $(targetprefix)/usr/include/freetype-old; \
+		$(CP_RD) install_dir/usr/include/* $(targetprefix)/usr/include/freetype-old/; \
+		$(INSTALL_DIR) $(targetprefix)/usr/lib/freetype-old; \
+		$(CP_RD) install_dir/usr/lib/libfreetype.{a,la,so*} $(targetprefix)/usr/lib/freetype-old/; \
+		sed 's,-I$${prefix}/include/freetype2,-I$(targetprefix)/usr/include/freetype-old -I$(targetprefix)/usr/include/freetype-old/freetype2,g' -i $(crossprefix)/bin/freetype-old-config; \
+		sed 's,/usr/include/freetype2/,$(targetprefix)/usr/include/freetype-old/freetype2/,g' -i $(crossprefix)/bin/freetype-old-config
 #	@DISTCLEANUP_freetype_old@
 	@[ "x$*" = "x" ] && touch $@ || true
 
@@ -501,6 +510,30 @@ $(flashprefix)/root-enigma2/usr/lib/libxsltmod.so: \
 	rm $*/usr/lib/python2.6/site-packages/libxsltmod.a && \
 	touch $@ && \
 	@TUXBOX_CUSTOMIZE@
+
+#
+# LIBVORBISIDEC
+#
+
+$(DEPDIR)/libvorbisidec.do_prepare: @DEPENDS_libvorbisidec@
+	@PREPARE_libvorbisidec@
+	touch $@
+
+$(DEPDIR)/libvorbisidec.do_compile: bootstrap $(DEPDIR)/libvorbisidec.do_prepare
+	cd @DIR_libvorbisidec@ && \
+		$(BUILDENV) \
+		./autogen.sh \
+			--build=$(build) \
+			--host=$(target) \
+			--prefix=/usr && \
+		$(MAKE)
+	touch $@
+
+$(DEPDIR)/libvorbisidec: $(DEPDIR)/libvorbisidec.do_compile
+	cd @DIR_libvorbisidec@ && \
+		@INSTALL_libvorbisidec@
+#	@DISTCLEANUP_libvorbisidec@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
 # GLIB2
