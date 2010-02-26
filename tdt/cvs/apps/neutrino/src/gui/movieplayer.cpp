@@ -202,6 +202,8 @@ void CMoviePlayerGui::Init(void)
 	bookmarkmanager = 0;
 
 	tsfilefilter.addFilter("ts");
+	tsfilefilter.addFilter("trp");
+	tsfilefilter.addFilter("rec");
 	tsfilefilter.addFilter("avi");
 	tsfilefilter.addFilter("mkv");
 	tsfilefilter.addFilter("wav");
@@ -209,6 +211,7 @@ void CMoviePlayerGui::Init(void)
 	tsfilefilter.addFilter("aiff");
 	tsfilefilter.addFilter("mpg");
 	tsfilefilter.addFilter("mpeg");
+	tsfilefilter.addFilter("dat");
 	tsfilefilter.addFilter("m2p");
 	tsfilefilter.addFilter("mp4");
 	tsfilefilter.addFilter("mpv");
