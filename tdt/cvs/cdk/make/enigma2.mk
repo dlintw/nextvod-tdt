@@ -25,7 +25,8 @@ $(appsdir)/enigma2/config.status: bootstrap freetype expat fontconfig libpng jpe
 			$(if $(UFS922),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_UFS922 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(TF7700),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_TF7700 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-tf7700) \
 			$(if $(FLASH_UFS910),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FLASH_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") 
+			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
+			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-hl101)
 
 $(DEPDIR)/enigma2.do_compile: $(appsdir)/enigma2/config.status
 	cd $(appsdir)/enigma2 && \
@@ -76,6 +77,13 @@ if ENABLE_TF7700
 	cd $(targetprefix)/usr/local/share/enigma2/ && mv -f keymap_tf7700.xml keymap.xml
 else
 	rm -f $(targetprefix)/usr/local/share/enigma2/keymap_tf7700.xml
+endif
+if ENABLE_HL101
+	cp -dp root/bin/stslave_stm23 $(targetprefix)/bin/stslave_stm23
+	cp -dp root/usr/bin/lircd $(targetprefix)/usr/bin/lircd
+	cp -dp root/etc/lircd_hl101.conf $(targetprefix)/etc/lircd.conf
+else
+	$(INSTALL_FILE) root/etc/lircd.conf $(targetprefix)/etc/
 endif
 	touch $@
 

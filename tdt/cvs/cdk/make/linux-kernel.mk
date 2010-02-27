@@ -52,6 +52,18 @@ TF7700PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/jffs2-lzma.patch \
 		Patches/ftdi_sio.c.patch
 
+HL101PATCHES_41 = $(COMMONPATCHES_41) \
+		Patches/ufs922_stasc_p0041.patch \
+		Patches/hl101_stmmac_p0041.patch \
+		Patches/hl101_setup_p0041.patch \
+		Patches/hl101_linuxdvb_p0041.patch \
+		Patches/fat.patch \
+		Patches/fuse.patch \
+		Patches/net.patch \
+		Patches/tune.patch \
+		Patches/usbwait123.patch \
+		Patches/jffs2-lzma.patch \
+		Patches/ftdi_sio.c.patch
 UFS910PATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/ufs910_smsc_p0041.patch \
 		Patches/ufs910_i2c_p0041.patch \
@@ -88,6 +100,7 @@ CUBEPATCHES_041 = $(COMMONPATCHES_41) \
 		Patches/ftdi_sio.c.patch
 
 KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
+			$(if $(HL101),$(HL101PATCHES_41)) \
 			$(if $(UFS922),$(UFS922PATCHES_41)) \
 			$(if $(CUBEMOD),$(CUBEPATCHES_041)) \
 			$(if $(UFS910),$(UFS910PATCHES_41)) \
@@ -95,7 +108,7 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 			$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41))
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS922)$(TF7700)$(CUBEMOD)$(FORTIS_HDBOX)$(FLASH_UFS910)
+MODNAME = $(UFS910)$(UFS922)$(TF7700)$(HL101)$(CUBEMOD)$(FORTIS_HDBOX)$(FLASH_UFS910)
 
 if STM22
 ##################################################################################
@@ -217,6 +230,8 @@ $(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-
 		$(if $(UFS910),Patches/ufs910_setup_stlinux23.patch) \
 		$(if $(UFS910),Patches/ufs910_pcmplayer_stlinux23.patch) \
 		$(if $(UFS910),Patches/ufs910_reboot_stlinux23.patch) \
+		$(if $(HL101),Patches/hl101_setup_stlinux23.patch) \
+		$(if $(HL101),Patches/hl101_dvb_stm23.patch) \
 		$(if $(CUBEREVO),Patches/cuberevo_patches_stlinux23.patch) \
 		$(if $(CUBEREVO),Patches/cuberevo_rtl8201_stlinux23.patch) \
 		$(if $(CUBEREVO),Patches/$(CUBEREVO)_setup_stlinux23.patch) \
@@ -278,6 +293,11 @@ if ENABLE_TF7700
 #	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
 	$(INSTALL) -m644 Patches/linux-$(subst _stm23_,-,$(KERNELVERSION))_$(TF7700).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
+if ENABLE_HL101
+	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
+	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(HL101).config${DEBUG_STR} $(KERNEL_DIR)/.config
+else
 if ENABLE_CUBEREVO
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
@@ -332,6 +352,7 @@ endif
 endif
 endif
 endif
+endif
 	-rm $(KERNEL_DIR)/localversion*
 	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig
@@ -344,7 +365,7 @@ endif
 $(DEPDIR)/linux-kernel.do_compile: \
 		bootstrap-cross \
 		linux-kernel.do_prepare \
-		Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(FLASH_UFS910),_$(FLASH_UFS910)).config \
+		Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(FLASH_UFS910),_$(FLASH_UFS910)).config${DEBUG_STR} \
 		config.status \
 		| $(HOST_U_BOOT_TOOLS)
 	-rm $(DEPDIR)/linux-kernel*.do_compile
@@ -386,7 +407,7 @@ $(DEPDIR)/linux-kernel.%.do_compile: \
 		bootstrap-cross \
 		linux-kernel.do_prepare \
 		Patches/linux-sh4-$(KERNELVERSION).stboards.c.m4 \
-		Patches/linux-$(subst _stm22_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(UFS922),_$(UFS922))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)).config \
+		Patches/linux-$(subst _stm22_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(UFS922),_$(UFS922))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)).config \
 		config.status \
 		| $(DEPDIR)/$(HOST_U_BOOT_TOOLS)
 	-rm $(DEPDIR)/linux-kernel*.do_compile
@@ -418,6 +439,7 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	$(if $(FORTIS_HDBOX),PLATFORM: stb7109ref\n) \
 	$(if $(UFS922),PLATFORM: stb7109ref\n) \
 	$(if $(TF7700),PLATFORM: stb7109ref\n) \
+	$(if $(HL101),PLATFORM: stb7109ref\n) \
 	$(if $(UFS910),PLATFORM: stb7100ref\n) \
 	$(if $(FLASH_UFS910),PLATFORM: stb7100ref\n) \
 	$(if $(CUBEREVO),PLATFORM: stb7109ref\n) \
@@ -443,6 +465,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
+		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \
@@ -458,6 +481,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		INSTALL_MOD_PATH=$(targetprefix) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
+		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \

@@ -11,7 +11,11 @@ $(DEPDIR)/boot-elf:
 
 $(DEPDIR)/misc-cp:
 	cp $(buildprefix)/root/sbin/hotplug $(targetprefix)/sbin
+if ENABLE_HL101
+	cp $(buildprefix)/root/etc/lircd_hl101.conf $(targetprefix)/etc/lircd.conf
+else
 	cp $(buildprefix)/root/etc/lircd.conf $(targetprefix)/etc
+endif
 	cp -rd $(buildprefix)/root/etc/hotplug $(targetprefix)/etc
 	cp -rd $(buildprefix)/root/etc/hotplug.d $(targetprefix)/etc
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -22,7 +26,11 @@ $(DEPDIR)/firstboot:
 	@[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/remote:
+if ENABLE_HL101
+	cp $(buildprefix)/root/etc/lircd_hl101.conf $(targetprefix)/etc/lircd.conf
+else
 	cp $(buildprefix)/root/etc/lircd.conf $(targetprefix)/etc/
+endif
 	@[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/misc-e2:

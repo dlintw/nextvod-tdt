@@ -26,6 +26,7 @@ typedef struct RemoteControl_s {
 extern RemoteControl_t Ufs910_1W_RC;
 extern RemoteControl_t Ufs910_14W_RC;
 extern RemoteControl_t Tf7700_RC;
+extern RemoteControl_t Hl101_RC;
 extern RemoteControl_t UFS922_RC;
 extern RemoteControl_t HDBOX_RC;
 
@@ -33,6 +34,7 @@ static RemoteControl_t * AvailableRemoteControls[] = {
 	&Ufs910_1W_RC,
 	&Ufs910_14W_RC,
 	&Tf7700_RC,
+	&Hl101_RC,
 	&UFS922_RC,
 	&HDBOX_RC,
 	NULL

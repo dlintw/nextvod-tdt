@@ -15,7 +15,7 @@ ETC_RW_FILES += hosts issue.net motd profile resolv.conf \
 BUSYBOX_ADAPTED_ETC_FILES =
 ETC_RW_FILES += shells shells.conf init.d/httpd
 
-INITSCRIPTS_ADAPTED_ETC_FILES = hostname init.d/mountvirtfs init.d/checkroot.sh init.d/mountall.sh init.d/rcS$(if $(TF7700),_$(TF7700))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) vdstandby.cfg
+INITSCRIPTS_ADAPTED_ETC_FILES = hostname init.d/mountvirtfs init.d/checkroot.sh init.d/mountall.sh init.d/rcS$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) vdstandby.cfg
 ETC_RW_FILES +=  nologin hostname \
 		default/halt default/tmpfs \
 		init.d/bootmisc.sh \

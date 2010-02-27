@@ -145,6 +145,8 @@ int getModel()
             vBoxType = Ufs922;
         else if(!strncasecmp(vName,"tf7700hdpvr", 11))
             vBoxType = Tf7700;
+        else if(!strncasecmp(vName,"hl101", 5))
+            vBoxType = Hl101;
         else if(!strncasecmp(vName,"hdbox", 5))
             vBoxType = HdBox;
         else

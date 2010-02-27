@@ -198,6 +198,13 @@ AC_ARG_ENABLE(tf7700,
 	esac],[enable_tf7700=no])
 AM_CONDITIONAL(ENABLE_TF7700,test "$enable_tf7700" = "yes")
 AC_SUBST(TF7700)
+AC_ARG_ENABLE(hl101,
+	AS_HELP_STRING(--enable-hl101,    enable spider box hl101 stuff),
+	[case "${enableval}" in
+		yes) HL101=hl101 ;;
+	esac],[enable_hl101=no])
+AM_CONDITIONAL(ENABLE_HL101,test "$enable_hl101" = "yes")
+AC_SUBST(HL101)
 
 AC_ARG_ENABLE(ufs922,
 	AS_HELP_STRING(--enable-ufs922,    enable kathrein ufs922 stuff),
@@ -865,6 +872,7 @@ stock directory:       $stockdir
 ipkg build directory:  $ipkgbuilddir
 Fortis/hdbox stuff:    $enable_fortis_hdbox
 topfield stuff:	       $enable_tf7700
+spider box hl101 stuff:	$enable_hl101
 ufs910 stuff:	       $enable_ufs910
 ufs910 flash:          $enable_flash_ufs910
 ufs922 stuff:	       $enable_ufs922
