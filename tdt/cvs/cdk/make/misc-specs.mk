@@ -114,13 +114,15 @@ BINUTILS := binutils
 BINUTILS_DEV      := binutils-dev
 
 #BINUTILS_VERSION  := 2.18.50.0.8-34
-BINUTILS_VERSION  := 2.18-34
+#BINUTILS_VERSION  := 2.18-34
+BINUTILS_VERSION  := 2.18.50.0.8-38
 #http://www.stlinux.com/pub/stlinux/2.3/updates/SRPMS/stlinux23-target-binutils-2.18-34.src.rpm
 
 RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS)-$(BINUTILS_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS_DEV)-$(BINUTILS_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(BINUTILS)-$(BINUTILS_VERSION).src.rpm
 	rpm --rcfile localrc --nosignature -Uhv $< && \
+	export PATH=$(hostprefix)/bin:$(PATH) &&  \
 	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BINUTILS).spec
 
 $(BINUTILS): RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS)-$(BINUTILS_VERSION).sh4.rpm
