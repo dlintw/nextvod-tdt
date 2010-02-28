@@ -2340,7 +2340,8 @@ int CNeutrinoApp::run(int argc, char **argv)
 	CVFD::getInstance()->init(font.filename, font.name);
 
 	CVFD::getInstance()->Clear();
-	CVFD::getInstance()->ShowText((char *) g_Locale->getText(LOCALE_NEUTRINO_STARTING));
+	// disable Neutrino start message we can use a bootvideo...
+	// CVFD::getInstance()->ShowText((char *) g_Locale->getText(LOCALE_NEUTRINO_STARTING));
 
 	init_cs_api();
 
