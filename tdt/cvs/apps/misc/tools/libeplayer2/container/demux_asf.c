@@ -1041,13 +1041,13 @@ static void ASFThread(Context_t *context) {
 		}
 	}
 
-	//context->playback->Command(context, PLAYBACK_TERM, NULL);
+	PlayThread = NULL;	// prevent locking situation when calling PLAYBACK_TERM
+
+	context->playback->Command(context, PLAYBACK_TERM, NULL);
 
 #ifdef DEBUG
 	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
 #endif
-	
-	PlayThread = NULL;	
 }
 
 
@@ -1107,9 +1107,9 @@ static int ASFStop(Context_t *context) {
 	int wait_time = 20;
 	
 	while ( (PlayThread != NULL) && (wait_time--) > 0 ) {
-#ifdef DEBUG  
+		#ifdef DEBUG  
 		printf("%s::%s Waiting for ASF thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
-#endif
+		#endif
 		usleep(100000);
 	}
 
@@ -1165,7 +1165,9 @@ static int ASFStop(Context_t *context) {
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+	#ifdef DEBUG
+	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
+	#endif
 
 	int ret = 0;
 	
@@ -1202,11 +1204,16 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		default:
-#ifdef DEBUG
+			#ifdef DEBUG
 			printf("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
-#endif
+			#endif
+
 			break;
 	}
+
+	#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+	#endif
 
 	return ret;
 }

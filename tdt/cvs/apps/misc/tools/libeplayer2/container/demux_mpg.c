@@ -76,9 +76,10 @@ static int parse_psm(demuxer_t *demux, int len) {
   unsigned int plen, prog_len, es_map_len;
   mpg_demuxer_t *priv = (mpg_demuxer_t *) demux->priv;
   
-#ifdef DEBUG
-  demux_mpg_printf("PARSE_PSM, len=%d\n", len);
-#endif  
+	#ifdef DEBUG
+	demux_mpg_printf("PARSE_PSM, len=%d\n", len);
+	#endif
+
   if(! len || len > 1018)
     return 0;
   
@@ -122,9 +123,11 @@ static int parse_psm(demuxer_t *demux, int len) {
           priv->es_map[idoffset] = AUDIO_A52;
           break;
       }
-#ifdef DEBUG
-      printf("PSM ES, id=0x%x, type=%x, stype: %x\n", id, type, priv->es_map[idoffset]);
-#endif      
+
+	#ifdef DEBUG
+      	printf("PSM ES, id=0x%x, type=%x, stype: %x\n", id, type, priv->es_map[idoffset]);
+	#endif
+
     }
     plen = stream_read_word(demux->stream);		//length of elementary stream descriptors
     plen = FFMIN(plen, es_map_len);			//sanity check
@@ -278,9 +281,11 @@ static unsigned long long read_mpeg_timestamp(stream_t *s,int c){
     return 0; // invalid pts
   }
   pts=(((uint64_t)((c>>1)&7))<<30)|((d>>1)<<15)|(e>>1);
-#ifdef DEBUG
-  demux_mpg_printf(" pts {%"PRIu64"}",pts);
-#endif  
+
+	#ifdef DEBUG
+	demux_mpg_printf(" pts {%"PRIu64"}",pts);
+	#endif
+
   return pts;
 }
 
@@ -318,9 +323,9 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
   demux_packet_t* dp;
   mpg_demuxer_t *priv = (mpg_demuxer_t *) demux->priv;
 
-#ifdef DEBUG
-  demux_mpg_printf("demux_read_packet: %X\n",id);
-#endif  
+	#ifdef DEBUG
+	demux_mpg_printf("demux_read_packet: %X\n",id);
+	#endif
 
 //  if(id==0x1F0){
 //    demux->synced=0; // force resync after 0x1F0
@@ -333,21 +338,27 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
   if(id==0x1BF) return -1; // private2
 
   len=stream_read_word(demux->stream);
-#ifdef DEBUG
-  demux_mpg_printf("PACKET len=%d",len);
-#endif  
+
+	#ifdef DEBUG
+	demux_mpg_printf("PACKET len=%d",len);
+	#endif
+
 //  if(len==62480){ demux->synced=0;return -1;} /* :) */
   if(len==0 || len>MAX_PS_PACKETSIZE){
-#ifdef DEBUG
-    demux_mpg_printf("Invalid PS packet len: %d\n",len);
-#endif
+
+	#ifdef DEBUG
+	demux_mpg_printf("Invalid PS packet len: %d\n",len);
+	#endif
+
     return -2;  // invalid packet !!!!!!
   }
 
   mpeg_pts_error=0;
-#ifdef DEBUG
-  demux_mpg_printf("\t id= 0x%02x\n",id);
-#endif  
+
+	#ifdef DEBUG
+	demux_mpg_printf("\t id= 0x%02x\n",id);
+	#endif
+
   if(id==0x1BC) {
     parse_psm(demux, len);
     return 0;
@@ -390,13 +401,16 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
     c=stream_read_char(demux->stream);
     hdrlen=c;
     len-=2;
-#ifdef DEBUG
-    demux_mpg_printf("  hdrlen=%d  (len=%d)",hdrlen,len);
-#endif    
+
+	#ifdef DEBUG
+	demux_mpg_printf("  hdrlen=%d  (len=%d)",hdrlen,len);
+	#endif
+
     if(hdrlen>len){
-#ifdef DEBUG
-      demux_mpg_printf("demux_mpg: invalid header length  \n");
-#endif
+	#ifdef DEBUG
+	demux_mpg_printf("demux_mpg: invalid header length  \n");
+	#endif
+
       return -1;
     }
     if(pts_flags==2 && hdrlen>=5){
@@ -419,16 +433,18 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
       hdrlen--;
 
       if((c & 0x0F) != 0x0F) {
-#ifdef DEBUG
-        demux_mpg_printf("demux_mpg: pes_extension_flag2 not set, discarding pes packet\n");
-#endif	
+	#ifdef DEBUG
+	demux_mpg_printf("demux_mpg: pes_extension_flag2 not set, discarding pes packet\n");
+	#endif
+
         return -1;
       }
       if(c & 0x80) { //pes_private_data_flag
         if(hdrlen<16) {
-#ifdef DEBUG
-          demux_mpg_printf("demux_mpg: not enough pes_private_data bytes: %d < 16, discarding pes packet\n", hdrlen);
-#endif	  
+		#ifdef DEBUG
+		demux_mpg_printf("demux_mpg: not enough pes_private_data bytes: %d < 16, discarding pes packet\n", hdrlen);
+		#endif
+
           return -1;
         }
         stream_skip(demux->stream, 16);
@@ -440,10 +456,10 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
           return -1;
         hdrlen--;
         if(l < 0 || hdrlen < l) {
-#ifdef DEBUG
-          demux_mpg_printf("demux_mpg: not enough pack_header bytes: hdrlen: %d < skip: %d, discarding pes packet\n",
-                                   hdrlen, l);
-#endif				   
+		#ifdef DEBUG
+		demux_mpg_printf("demux_mpg: not enough pack_header bytes: hdrlen: %d < skip: %d, discarding pes packet\n", hdrlen, l);
+		#endif
+
           return -1;
         }
         stream_skip(demux->stream, l);
@@ -451,9 +467,10 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
       }
       if(c & 0x20) { //program_packet_sequence_counter_flag
         if(hdrlen < 2) {
-#ifdef DEBUG
-          demux_mpg_printf("demux_mpg: not enough program_packet bytes: hdrlen: %d, discarding pes packet\n", hdrlen);
-#endif
+		#ifdef DEBUG
+		demux_mpg_printf("demux_mpg: not enough program_packet bytes: hdrlen: %d, discarding pes packet\n", hdrlen);
+		#endif
+
 	  return -1;
         }
         stream_skip(demux->stream, 2);
@@ -467,17 +484,19 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
       c=stream_read_char(demux->stream); //pes_extension2 flag
       hdrlen--;
       if(c!=0x81)  {
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_mpg_printf("demux_mpg: unknown pes_extension2 format, len is > 1  \n");
-#endif
+	#endif
+
 	return -1;
       }
       c=stream_read_char(demux->stream); //pes_extension2 payload === substream id
       hdrlen--;
       if(c<0x55 || c>0x5F)   {
-#ifdef DEBUG
+		#ifdef DEBUG
 		demux_mpg_printf("demux_mpg: unknown vc1 substream_id: 0x%x  \n", c);
-#endif		
+		#endif
+
 		return -1;
       }
       pes_ext2_subid=c;
@@ -530,9 +549,10 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
         if(!demux->s_streams[aid]){
             sh_sub_t *sh = new_sh_sub(demux, aid);
             if (sh) sh->type = 'v';
-#ifdef DEBUG
-            demux_mpg_printf("==> Found subtitle: %d\n",aid);
-#endif	    
+
+		#ifdef DEBUG
+		demux_mpg_printf("==> Found subtitle: %d\n",aid);
+		#endif
         }
 
         if(demux->sub->id > -1)
@@ -578,24 +598,27 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
           hdr[2]=stream_read_char(demux->stream);
 //          printf("[%02X] ",c);
           len-=3;
-#ifdef DEBUG
-          if(len<=0) demux_mpg_printf("End of packet while searching for PCM header\n");
-#endif	  
+
+	#ifdef DEBUG
+	if(len<=0) demux_mpg_printf("End of packet while searching for PCM header\n");
+	#endif
+
         }
 //        printf("  \n");
       } //  if(demux->audio->id==aid)
 
       } else {
-#ifdef DEBUG
+	#ifdef DEBUG
 	demux_mpg_printf("Unknown 0x1BD substream: 0x%02X  \n",aid);
-#endif
+	#endif
       }
     } //if(id==0x1BD)
   } else {
     if(c!=0x0f){
-#ifdef DEBUG
-      demux_mpg_printf("  {ERROR5,c=%d}  \n",c);
-#endif      
+	#ifdef DEBUG
+	demux_mpg_printf("  {ERROR5,c=%d}  \n",c);
+	#endif
+
       return -1;  // invalid packet !!!!!!
     }
   }
@@ -627,10 +650,11 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
       if(priv && ds->sh) {
         sh_audio_t *sh = (sh_audio_t *)ds->sh;
         if(priv->es_map[id - 0x1B0])
-          sh->format = priv->es_map[id - 0x1B0];
-#ifdef DEBUG
-          demux_mpg_printf("ASSIGNED TO STREAM %d CODEC %x\n", id, priv->es_map[id - 0x1B0]);
-#endif	  
+          	sh->format = priv->es_map[id - 0x1B0];
+
+		#ifdef DEBUG
+		demux_mpg_printf("ASSIGNED TO STREAM %d CODEC %x\n", id, priv->es_map[id - 0x1B0]);
+		#endif
       }
     }
   } else
@@ -645,10 +669,11 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
       if(priv && ds->sh) {
         sh_video_t *sh = (sh_video_t *)ds->sh;
         if(priv->es_map[id - 0x1B0]) {
-          sh->format = priv->es_map[id - 0x1B0];
-#ifdef DEBUG
-          demux_mpg_printf("ASSIGNED TO STREAM %d CODEC %x\n", id, priv->es_map[id - 0x1B0]);
-#endif
+          	sh->format = priv->es_map[id - 0x1B0];
+
+		#ifdef DEBUG
+          	demux_mpg_printf("ASSIGNED TO STREAM %d CODEC %x\n", id, priv->es_map[id - 0x1B0]);
+		#endif
 	}
       }
     }
@@ -665,6 +690,7 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
 	#ifdef DEBUG
       	demux_mpg_printf("DEMUX_MPG ERROR: couldn't create demux_packet(%d bytes)\n",len);
 	#endif
+
       stream_skip(demux->stream,len);
       return 0;
     }
@@ -688,9 +714,11 @@ static int demux_mpg_read_packet(demuxer_t *demux,int id){
 //    if(ds==demux->sub) parse_dvdsub(ds->last->buffer,ds->last->len);
     return 1;
   }
-#ifdef DEBUG
-  demux_mpg_printf("DEMUX_MPG: Skipping %d data bytes from packet %04X\n",len,id);
-#endif
+
+	#ifdef DEBUG
+	demux_mpg_printf("DEMUX_MPG: Skipping %d data bytes from packet %04X\n",len,id);
+	#endif
+
   if(len<=2356) stream_skip(demux->stream,len);
   return 0;
 }
@@ -770,16 +798,16 @@ static int demux_mpg_probe(demuxer_t *demuxer) {
   if(demux_mpg_open(demuxer))
     file_format=DEMUXER_TYPE_MPEG_PS;
   else {
-#ifdef DEBUG
-    demux_mpg_printf("MPEG packet stats: p100: %d  p101: %d p1B6: %d p12x: %d sli: %d a: %d b: %d c: %d idr: %d sps: %d pps: %d PES: %d  MP3: %d, synced: %d\n",
-     num_elementary_packets100,num_elementary_packets101,
-     num_elementary_packets1B6,num_elementary_packets12x,
-     num_h264_slice, num_h264_dpa,
-     num_h264_dpb, num_h264_dpc=0,
-     num_h264_idr, num_h264_sps=0,
-     num_h264_pps,
-     num_elementary_packetsPES,num_mp3audio_packets, demuxer->synced);
-#endif		     
+	#ifdef DEBUG
+	demux_mpg_printf("MPEG packet stats: p100: %d  p101: %d p1B6: %d p12x: %d sli: %d a: %d b: %d c: %d idr: %d sps: %d pps: %d PES: %d  MP3: %d, synced: %d\n",
+	num_elementary_packets100,num_elementary_packets101,
+	num_elementary_packets1B6,num_elementary_packets12x,
+	num_h264_slice, num_h264_dpa,
+	num_h264_dpb, num_h264_dpc=0,
+	num_h264_idr, num_h264_sps=0,
+	num_h264_pps,
+	num_elementary_packetsPES,num_mp3audio_packets, demuxer->synced);
+	#endif     
 
      //MPEG packet stats: p100: 458  p101: 458  PES: 0  MP3: 1103  (.m2v)
      if(num_mp3audio_packets>50 && num_mp3audio_packets>2*num_elementary_packets100
@@ -934,9 +962,11 @@ do{
   }
   if(stream_eof(demux->stream)) break;
   // sure: head=0x000001XX
-#ifdef DEBUG
-  demux_mpg_printf("*** head=0x%X\n",head);
-#endif
+
+	#ifdef DEBUG
+	demux_mpg_printf("*** head=0x%X\n",head);
+	#endif
+
   if(demux->synced==0){
     if(head==0x1BA) demux->synced=1; //else
 //    if(head==0x1BD || (head>=0x1C0 && head<=0x1EF)) demux->synced=3; // PES?
@@ -944,9 +974,11 @@ do{
   if(demux->synced==1){
     if(head==0x1BB || head==0x1BD || (head>=0x1C0 && head<=0x1EF)){
       demux->synced=2;
-#ifdef DEBUG
-      demux_mpg_printf("system stream synced at 0x%"PRIX64" (%"PRId64")!\n",(int64_t)demux->filepos,(int64_t)demux->filepos);
-#endif
+
+	#ifdef DEBUG
+      	demux_mpg_printf("system stream synced at 0x%"PRIX64" (%"PRId64")!\n",(int64_t)demux->filepos,(int64_t)demux->filepos);
+	#endif
+
       num_elementary_packets100=0; // requires for re-sync!
       num_elementary_packets101=0; // requires for re-sync!
     } else demux->synced=0;
@@ -956,9 +988,10 @@ do{
       if(!ret)
         if(--max_packs==0){
           demux->stream->eof=1;
-#ifdef DEBUG
-          demux_mpg_printf("DoesntContainSelectedStream\n");
-#endif
+		#ifdef DEBUG
+          	demux_mpg_printf("DoesntContainSelectedStream\n");
+		#endif
+
 	  return 0;
         }
       if(demux->synced==3) demux->synced=(ret==1)?2:0; // PES detect
@@ -994,7 +1027,7 @@ do{
 
 	#ifdef DEBUG
 	demux_mpg_printf("demux: %d bad bytes skipped\n",skipped);
-	#endif  
+	#endif
 
 	if(demux->stream->eof) {
 		#ifdef DEBUG
@@ -1133,9 +1166,10 @@ int demux_mpg_control(demuxer_t *demuxer,int cmd, void *arg){
     switch(cmd) {
 	case DEMUXER_CTRL_GET_TIME_LENGTH:
             if(stream_control(demuxer->stream, STREAM_CTRL_GET_TIME_LENGTH, arg) != STREAM_UNSUPPORTED) {
-#ifdef DEBUG
-              demux_mpg_printf("\r\nDEMUX_MPG_CTRL, (%.3lf)\r\n", *((double*)arg));
-#endif
+		#ifdef DEBUG
+              	demux_mpg_printf("\r\nDEMUX_MPG_CTRL, (%.3lf)\r\n", *((double*)arg));
+		#endif
+
               return DEMUXER_CTRL_GUESS;
             }
             if (mpg_d && mpg_d->has_valid_timestamps) {
@@ -1224,9 +1258,10 @@ static demuxer_t* demux_mpg_ps_open(demuxer_t* demuxer)
 
     if(demuxer->audio->id!=-2) {
         if(!ds_fill_buffer2(demuxer->audio,demuxer)){
-#ifdef DEBUG
+		#ifdef DEBUG
             demux_mpg_printf("MPEG: MissingAudioStream\n");
-#endif	    
+		#endif
+
             demuxer->audio->sh=NULL;
         } else {
             sh_audio=demuxer->audio->sh;sh_audio->ds=demuxer->audio;
@@ -1248,13 +1283,14 @@ static demuxer_t* demux_mpg_ps_open(demuxer_t* demuxer)
         ds_free_packs(demuxer->video);
         demuxer->stream->eof=0;
         stream_seek(demuxer->stream, pos);
-#ifdef DEBUG
+
+	#ifdef DEBUG
         demux_mpg_printf("MPEG packet stats: p100: %d  p101: %d p1B6: %d p12x: %d sli: %d a: %d b: %d c: %d idr: %d sps: %d pps: %d\n",			 
             num_elementary_packets100, num_elementary_packets101,
             num_elementary_packets1B6, num_elementary_packets12x,
             num_h264_slice, num_h264_dpa, num_h264_dpb, num_h264_dpc,
             num_h264_idr, num_h264_sps, num_h264_pps);
-#endif	    
+	#endif
 
         if(num_elementary_packets1B6>3 && num_elementary_packets12x>=1 &&
             num_elementary_packets100<=num_elementary_packets12x)
@@ -1337,25 +1373,25 @@ int MpgInit(Context_t *context, char * filename) {
     ds = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
     memset (ds,0,sizeof(demux_stream_t));
 
-#ifdef DEBUG
+	#ifdef DEBUG
     printf("%s::%d\n", __FUNCTION__, __LINE__);
-#endif
+	#endif
 
     demuxer->stream = (stream_t*)malloc ( sizeof(stream_t));
     memset (demuxer->stream,0,sizeof(stream_t));
 
 
-#ifdef DEBUG
+	#ifdef DEBUG
     printf("%s::%d\n", __FUNCTION__, __LINE__);
-#endif
+	#endif
 
     demuxer->stream->fd = context->playback->fd;
 
     read(demuxer->stream->fd,demuxer->stream->buffer,2048);//soviel ??
 
-#ifdef DEBUG
+	#ifdef DEBUG
     printf("%s::%d\n", __FUNCTION__, __LINE__);
-#endif
+	#endif
     
     demuxer->desc = &demuxer_desc_mpeg_pes;
     demuxer->audio->id = -1;
@@ -1667,13 +1703,13 @@ static void MpgThread(Context_t *context) {
 	aStartPts = 0;
 	vStartPts = 0;
 
+	PlayThread = NULL;	// prevent locking situation when calling PLAYBACK_TERM
+
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 
 	#ifdef DEBUG
 	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
 	#endif
-	
-	PlayThread = NULL;
 }
 
 
@@ -1692,7 +1728,7 @@ static int MpgPlay(Context_t *context) {
 	} else {
 		printf("%s::%s is NOT Playing\n", FILENAME, __FUNCTION__);
 	}
-	#endif  	  
+	#endif
 	
 	if (PlayThread == NULL) {
 		pthread_attr_init(&attr);

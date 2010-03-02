@@ -4318,13 +4318,13 @@ static void TSThread(Context_t *context) {
 	aStartPts = 0;
 	vStartPts = 0;
 
-	//context->playback->Command(context, PLAYBACK_TERM, NULL);
+	PlayThread = NULL;	// prevent locking situation when calling PLAYBACK_TERM
+
+	context->playback->Command(context, PLAYBACK_TERM, NULL);
 
 	#ifdef DEBUG
 	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
 	#endif
-	
-	PlayThread = NULL;
 }
 
 
