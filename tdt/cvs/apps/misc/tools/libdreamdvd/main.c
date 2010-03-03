@@ -1521,8 +1521,14 @@ send_message:
 					else
 					{
 						int y_source = ddvd_have_ntsc ? 480 : 576; // correct ntsc overlay
+#ifdef __sh__
+						//i don't know, but without change, dvd buttons not correct
+						int x_offset = (dvd_aspect == 0 && (tv_aspect == DDVD_16_9 || tv_aspect == DDVD_16_10) && tv_mode == DDVD_LETTERBOX) ? (int)(ddvd_screeninfo_xres - ddvd_screeninfo_xres/1.33)>>1 : 0; // correct 16:9 letterbox overlay
+						int y_offset = (dvd_aspect == 0 && (tv_aspect == DDVD_16_9 || tv_aspect == DDVD_16_10) && tv_mode == DDVD_PAN_SCAN) ?  ( ddvd_screeninfo_yres > 576 ? (int)(ddvd_screeninfo_yres*1.16 - ddvd_screeninfo_yres)>>1 : (int)(ddvd_screeninfo_yres*1.26 - ddvd_screeninfo_yres)>>1 ) : 0; // correct 16:9 panscan (pillarbox) overlay
+#else
 						int x_offset = (dvd_aspect == 0 && (tv_aspect == DDVD_16_9 || tv_aspect == DDVD_16_10) && tv_mode == DDVD_PAN_SCAN) ? (int)(ddvd_screeninfo_xres - ddvd_screeninfo_xres/1.33)>>1 : 0; // correct 16:9 panscan (pillarbox) overlay
 						int y_offset = (dvd_aspect == 0 && (tv_aspect == DDVD_16_9 || tv_aspect == DDVD_16_10) && tv_mode == DDVD_LETTERBOX) ?  ( ddvd_screeninfo_yres > 576 ? (int)(ddvd_screeninfo_yres*1.16 - ddvd_screeninfo_yres)>>1 : (int)(ddvd_screeninfo_yres*1.21 - ddvd_screeninfo_yres)>>1 ) : 0; // correct 16:9 letterbox overlay
+#endif
 						uint64_t start=ddvd_get_time();
 						if (x_offset != 0 || y_offset != 0 || y_source != ddvd_screeninfo_yres || ddvd_screeninfo_xres != 720)
 							blit_area = ddvd_resize_pixmap(ddvd_lbb2, 720, y_source, ddvd_screeninfo_xres, ddvd_screeninfo_yres, x_offset, y_offset, blit_area.x_start, blit_area.x_end, blit_area.y_start, blit_area.y_end, ddvd_screeninfo_bypp); // resize
@@ -2182,8 +2188,14 @@ key_play:
 			blit_area.y_start = last_spu_return.y_start;
 			blit_area.y_end = last_spu_return.y_end;
 			int y_source = ddvd_have_ntsc ? 480 : 576; // correct ntsc overlay
+#ifdef __sh__
+			//i don't know, but without change, dvd buttons not correct
+			int x_offset = (dvd_aspect == 0 && (tv_aspect == DDVD_16_9 || tv_aspect == DDVD_16_10) && tv_mode == DDVD_LETTERBOX) ? (int)(ddvd_screeninfo_xres - ddvd_screeninfo_xres/1.33)>>1 : 0; // correct 16:9 letterbox overlay
+			int y_offset = (dvd_aspect == 0 && (tv_aspect == DDVD_16_9 || tv_aspect == DDVD_16_10) && tv_mode == DDVD_PAN_SCAN) ?  ( ddvd_screeninfo_yres > 576 ? (int)(ddvd_screeninfo_yres*1.16 - ddvd_screeninfo_yres)>>1 : (int)(ddvd_screeninfo_yres*1.26 - ddvd_screeninfo_yres)>>1 ) : 0; // correct 16:9 panscan (pillarbox) overlay
+#else
 			int x_offset = (dvd_aspect == 0 && (tv_aspect == DDVD_16_9 || tv_aspect == DDVD_16_10) && tv_mode == DDVD_PAN_SCAN) ? (int)(ddvd_screeninfo_xres - ddvd_screeninfo_xres/1.33)>>1 : 0; // correct 16:9 panscan (pillarbox) overlay
 			int y_offset = (dvd_aspect == 0 && (tv_aspect == DDVD_16_9 || tv_aspect == DDVD_16_10) && tv_mode == DDVD_LETTERBOX) ?  ( ddvd_screeninfo_yres > 576 ? (int)(ddvd_screeninfo_yres*1.16 - ddvd_screeninfo_yres)>>1 : (int)(ddvd_screeninfo_yres*1.21 - ddvd_screeninfo_yres)>>1 ) : 0; // correct 16:9 letterbox overlay
+#endif
 			uint64_t start=ddvd_get_time();
 			if (x_offset != 0 || y_offset != 0 || y_source != ddvd_screeninfo_yres || ddvd_screeninfo_xres != 720)
 				blit_area = ddvd_resize_pixmap_spu(ddvd_lbb2, 720, y_source, ddvd_screeninfo_xres, ddvd_screeninfo_yres, x_offset, y_offset, blit_area.x_start, blit_area.x_end, blit_area.y_start, blit_area.y_end, ddvd_screeninfo_bypp); // resize
