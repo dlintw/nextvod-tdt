@@ -17365,6 +17365,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/DVDPlayer/src/servic
  #ifdef DDVD_SUPPORTS_GET_BLIT_DESTINATION
  		ddvd_set_lfb_ex(m_ddvdconfig, (unsigned char *)m_pixmap->surface->data, size.width(), size.height(), 4, size.width()*4, 1);
  #else
+
 diff -Nur enigma2-nightly.org/RecordTimer.py enigma2-nightly/RecordTimer.py
 --- enigma2-nightly.org/RecordTimer.py	2010-02-16 19:28:48.000000000 +0100
 +++ enigma2-nightly/RecordTimer.py	2010-02-16 19:32:07.000000000 +0100
@@ -17381,3 +17382,52 @@ diff -Nur enigma2-nightly.org/RecordTimer.py enigma2-nightly/RecordTimer.py
  			return True
  
  	def setAutoincreaseEnd(self, entry = None):
+
+diff -Nur enigma2-nightly.org/lib/dvb/subtitle.cpp
+--- enigma2-nightly/lib/dvb/subtitle.cpp	2010-03-02 01:44:44.000000000 -0500
++++ enigma2-nightly/lib/dvb/subtitle.cpp	2010-03-02 01:45:57.000000000 -0500
+@@ -502,7 +502,12 @@
+ 		region->height |= *segment++;
+ 		processed_length += 2;
+ 
++#ifdef __sh__
++		//deaktiviate accel, hardware accel blit for sh is not implemented
++		region->buffer = new gPixmap(eSize(region->width, region->height), 8, 0);
++#else
+ 		region->buffer = new gPixmap(eSize(region->width, region->height), 8, 1);
++#endif
+ 		memset(region->buffer->surface->data, 0, region->height * region->buffer->surface->stride);
+ //		eDebug("new buffer %p", &(*region->buffer));
+
+diff -Nur enigma2-nightly.org/lib/gui/esubtitle.cpp
+--- enigma2-nightly/lib/gui/esubtitle.cpp	2010-03-02 01:48:33.000000000 -0500
++++ enigma2-nightly/lib/gui/esubtitle.cpp	2010-03-02 01:48:07.000000000 -0500
+@@ -210,7 +210,13 @@
+ 			{
+ 				eRect r = eRect(it->m_position, it->m_pixmap->size());
+ 				r.scale(size().width(), m_dvb_page.m_display_size.width(), size().height(),  m_dvb_page.m_display_size.height());
++#ifdef __sh__
++				//deaktivate scale for dvb subtitle
++				//with scale there are display problems
++				painter.blitScale(it->m_pixmap, r, eRect(), 0, 0);
++#else
+ 				painter.blitScale(it->m_pixmap, r);
++#endif
+ 			}
+ 		}
+ 		return 0;
+
+diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp
+--- enigma2-nightly/lib/gdi/gpixmap.cpp	2010-03-02 23:06:31.000000000 -0500
++++ enigma2-nightly/lib/gdi/gpixmap.cpp	2010-03-02 23:08:40.000000000 -0500
+@@ -326,7 +326,10 @@
+ 		if (flag & blitScale)
+ 		{
+ 			eWarning("unimplemented: scale on non-accel surfaces");
++//hardware accel-blit for sh4 not implemented, so we must do it here
++#ifndef __sh__
+ 			continue;
++#endif
+ 		}
+ 
+ 		if ((surface->bpp == 8) && (src.surface->bpp==8))
