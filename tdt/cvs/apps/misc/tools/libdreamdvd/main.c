@@ -2606,6 +2606,14 @@ static struct ddvd_spu_return ddvd_spu_decode_data(const uint8_t * buffer, int l
 }
 
 // blit to argb in 32bit mode
+#ifdef __sh__
+#define alpha_composite(composite, fg, alpha, bg) {  \
+    unsigned short temp = ((unsigned short)(fg)*(unsigned short)(alpha) +   \
+    (unsigned short)(bg)*(unsigned short)(255 - (unsigned short)(alpha)) +  \
+    (unsigned short)128);  \
+    (composite) = (unsigned char)((temp + (temp >> 8)) >> 8);  \
+}
+#endif
 static void ddvd_blit_to_argb(void *_dst, const void *_src, int pix)
 {
 	unsigned long *dst = _dst;
@@ -2613,13 +2621,26 @@ static void ddvd_blit_to_argb(void *_dst, const void *_src, int pix)
 	while (pix--) {
 		int p = (*src++);
 		int a, r, g, b;
+#ifdef __sh__
+		int r1, g1, b1;
+#endif
 		if (p == 0) {
 			r = g = b = a = 0;	//clear screen (transparency)
 		} else {
+#ifdef __sh__
+			a = 0xFF - (ddvd_tr[p] >> 8);
+			r1 = ddvd_rd[p] >> 8;
+			g1 = ddvd_gn[p] >> 8;
+			b1 = ddvd_bl[p] >> 8;
+      alpha_composite(r, r1, a, 0);
+      alpha_composite(g, g1, a, 0);
+      alpha_composite(b, b1, a, 0);
+#else
 			a = 0xFF - (ddvd_tr[p] >> 8);
 			r = ddvd_rd[p] >> 8;
 			g = ddvd_gn[p] >> 8;
 			b = ddvd_bl[p] >> 8;
+#endif
 		}
 		*dst++ = (a << 24) | (r << 16) | (g << 8) | (b << 0);
 	}
