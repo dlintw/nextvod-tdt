@@ -36,8 +36,11 @@
 
 #include <linux/version.h>
 
+#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
+#include <linux/compiler.h>
+#endif
+
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,7)
-//#include <linux/compiler.h>
 #include <mtd/mtd-user.h>
 #else
 #include <mtd/mtd-user.h>
