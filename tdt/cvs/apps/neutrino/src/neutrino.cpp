@@ -1221,6 +1221,37 @@ printf("***************************** rec dir %s timeshift dir %s\n", g_settings
 		g_settings.screen_width = frameBuffer->getScreenWidth(true);
 		g_settings.screen_height = frameBuffer->getScreenHeight(true);
 	}
+
+	#ifdef DUCKBOX
+	std::string name, zone;
+	if(strlen(g_settings.timezone) > 0) {
+		printf("Setting timezone to: %s\n", g_settings.timezone);
+
+		xmlDocPtr parser = parseXmlFile("/etc/timezone.xml");
+		if (parser != NULL) {
+		        xmlNodePtr search = xmlDocGetRootElement(parser)->xmlChildrenNode;
+		        while (search) {
+		                if (!strcmp(xmlGetName(search), "zone")) {
+		                        name = xmlGetAttribute(search, (char *) "name");
+		                        zone = xmlGetAttribute(search, (char *) "zone");
+					if(!strcmp(g_settings.timezone, name.c_str())) {
+						printf("Timezone: %s -> %s\n", name.c_str(), zone.c_str());
+						std::string cmd = "cp /usr/share/zoneinfo/" + zone + " /etc/localtime";
+						printf("exec %s\n", cmd.c_str());
+						system(cmd.c_str());
+
+						cmd = ":" + zone;
+						setenv("TZ", cmd.c_str(), 1);
+						break;
+					}
+		                }
+		                search = search->xmlNextNode;
+		        }
+		        xmlFreeDoc(parser);
+		}
+	}
+	#endif
+
 	if(erg)
 		configfile.setModifiedFlag(true);
 	return erg;
