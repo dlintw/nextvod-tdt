@@ -219,19 +219,24 @@ else
 DEBUG_STR=
 endif
 
+if ENABLE_HL101
+STM23_DVB_PATCH = Patches/linuxdvb_stm23_api5.patch
+else
+STM23_DVB_PATCH = Patches/linuxdvb_stm23.patch
+endif
+
 $(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.noarch.rpm \
 		Patches/cpp_stm23.patch \
-		Patches/linuxdvb_stm23.patch \
 		Patches/time_stlinux23.diff \
 		Patches/fdma_stm23.patch \
 		Patches/sound_stm23.diff \
+		$(STM23_DVB_PATCH) \
 		$(if $(UFS922),Patches/ufs922_stmmac_stlinux23.patch) \
 		$(if $(UFS922),Patches/ufs922_setup_stlinux23.patch) \
 		$(if $(UFS910),Patches/ufs910_setup_stlinux23.patch) \
 		$(if $(UFS910),Patches/ufs910_pcmplayer_stlinux23.patch) \
 		$(if $(UFS910),Patches/ufs910_reboot_stlinux23.patch) \
 		$(if $(HL101),Patches/hl101_setup_stlinux23.patch) \
-		$(if $(HL101),Patches/hl101_dvb_stm23.patch) \
 		$(if $(CUBEREVO),Patches/cuberevo_patches_stlinux23.patch) \
 		$(if $(CUBEREVO),Patches/cuberevo_rtl8201_stlinux23.patch) \
 		$(if $(CUBEREVO),Patches/$(CUBEREVO)_setup_stlinux23.patch) \
@@ -295,7 +300,7 @@ if ENABLE_TF7700
 else
 if ENABLE_HL101
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
+#	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
 	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(HL101).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
 if ENABLE_CUBEREVO

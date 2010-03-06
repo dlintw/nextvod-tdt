@@ -28,12 +28,18 @@ $(appsdir)/enigma2/config.status: bootstrap freetype expat fontconfig libpng jpe
 			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-hl101)
 
+$(DEPDIR)/enigma2.do_prepare:
+if ENABLE_HL101
+	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches/e2_api5.patch
+endif
+	touch $@
+
 $(DEPDIR)/enigma2.do_compile: $(appsdir)/enigma2/config.status
 	cd $(appsdir)/enigma2 && \
 		$(MAKE) all
 	touch $@
 
-$(DEPDIR)/enigma2: enigma2.do_compile
+$(DEPDIR)/enigma2: enigma2.do_prepare enigma2.do_compile
 	$(MAKE) -C $(appsdir)/enigma2 install DESTDIR=$(targetprefix)
 	$(target)-strip $(targetprefix)/usr/local/bin/enigma2
 	touch $@
@@ -89,6 +95,7 @@ endif
 
 enigma2-clean enigma2-distclean:
 	rm -f $(DEPDIR)/enigma2
+	rm -f $(DEPDIR)/enigma2.do_prepare
 	rm -f $(DEPDIR)/enigma2.do_compile
 	cd $(appsdir)/enigma2 && \
 		$(MAKE) distclean
