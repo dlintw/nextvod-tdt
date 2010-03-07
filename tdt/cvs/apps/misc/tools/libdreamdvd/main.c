@@ -28,6 +28,11 @@
 #include "a52dec.h"
 #include <asm/types.h>
 
+#ifdef __sh__
+//aktivate LPCM Support
+#define HARDWARE_SUPPORT_LPCM
+#endif
+
 /*
  * local helper functions
  */
@@ -1015,10 +1020,22 @@ send_message:
 					{
 						if (audio_type != DDVD_MPEG) {
 							//printf("Switch to MPEG Audio\n");
+#ifdef __sh__
+							//stop audio bevor change encoding
+							if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
+                perror("AUDIO_STOP");
+							if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
+                perror("AUDIO_CLEAR_BUFFER");
+#endif
 							if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
 								perror("AUDIO_SET_AV_SYNC");
 							if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 1) < 0)
 								perror("AUDIO_SET_BYPASS_MODE");
+#ifdef __sh__
+							//start audio after encoding set
+							if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
+                perror("AUDIO_PLAY");
+#endif
 							audio_type = DDVD_MPEG;
 						}
 
@@ -1037,6 +1054,13 @@ send_message:
 					{
 						if (audio_type != DDVD_LPCM) {
 							//printf("Switch to LPCM Audio\n");
+#ifdef __sh__
+							//stop audio bevor change encoding
+							if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
+                perror("AUDIO_STOP");
+							if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
+                perror("AUDIO_CLEAR_BUFFER");
+#endif
 							if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
 								perror("AUDIO_SET_AV_SYNC");
 #ifdef HARDWARE_SUPPORT_LPCM
@@ -1045,6 +1069,11 @@ send_message:
 							if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 0) < 0)
 #endif
 								perror("AUDIO_SET_BYPASS_MODE");
+#ifdef __sh__
+							//start audio after encoding set
+							if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
+                perror("AUDIO_PLAY");
+#endif
 							audio_type = DDVD_LPCM;
 							ddvd_lpcm_count = 0;
 						}
@@ -1106,10 +1135,22 @@ send_message:
 					} else if ((buf[14 + 3]) == 0xBD && (buf[14 + buf[14 + 8] + 9]) == 0x88 + audio_id) {	// dts audio
 						if (audio_type != DDVD_DTS) {
 							//printf("Switch to DTS Audio (thru)\n");
+#ifdef __sh__
+							//stop audio bevor change encoding
+							if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
+                perror("AUDIO_STOP");
+							if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
+                perror("AUDIO_CLEAR_BUFFER");
+#endif
 							if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
 								perror("AUDIO_SET_AV_SYNC");
 							if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 5) < 0)
 								perror("AUDIO_SET_BYPASS_MODE");
+#ifdef __sh__
+							//start audio after encoding set
+							if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
+                perror("AUDIO_PLAY");
+#endif
 							audio_type = DDVD_DTS;
 						}
 
@@ -1132,6 +1173,13 @@ send_message:
 #else
 							if (ac3thru || !have_liba52) {	// !have_liba52 and !ac3thru should never happen, but who knows ;)
 #endif
+#ifdef __sh__
+								//stop audio bevor change encoding
+								if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
+              	  perror("AUDIO_STOP");
+								if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
+              	  perror("AUDIO_CLEAR_BUFFER");
+#endif
 								if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
 									perror("AUDIO_SET_AV_SYNC");
 #ifdef CONVERT_TO_DVB_COMPLIANT_AC3
@@ -1140,11 +1188,28 @@ send_message:
 								if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 3) < 0)	// AC3 VOB
 #endif
 									perror("AUDIO_SET_BYPASS_MODE");
+#ifdef __sh__
+								//start audio after encoding set
+								if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
+                	perror("AUDIO_PLAY");
+#endif
 							} else {
+#ifdef __sh__
+								//stop audio bevor change encoding
+								if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
+              	  perror("AUDIO_STOP");
+								if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
+              	  perror("AUDIO_CLEAR_BUFFER");
+#endif
 								if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
 									perror("AUDIO_SET_AV_SYNC");
 								if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 1) < 0)
 									perror("AUDIO_SET_BYPASS_MODE");
+#ifdef __sh__
+								//start audio after encoding set
+								if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
+                	perror("AUDIO_PLAY");
+#endif
 							}
 							audio_type = DDVD_AC3;
 						}
