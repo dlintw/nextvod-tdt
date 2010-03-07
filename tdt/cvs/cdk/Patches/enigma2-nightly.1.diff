@@ -17350,23 +17350,6 @@ diff -Nur enigma2-nightly.org/lib/python/Components/UsageConfig.py enigma2-night
 +#+++<
  		("shutdown", _("immediate shutdown")) ] )
  
-
-diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp
---- enigma2-nightly/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp	2010-02-04 19:39:55.000000000 -0500
-+++ enigma2-nightly/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp	2010-02-04 19:43:14.000000000 -0500
-@@ -595,7 +595,11 @@
- 
- 	if (!m_pixmap)
- 	{
-+#ifdef __sh__
-+		m_pixmap = new gPixmap(size, 32, 0); /* don't use accel with sh4 cpu */
-+#else
- 		m_pixmap = new gPixmap(size, 32, 1); /* allocate accel surface (if possible) */
-+#endif
- #ifdef DDVD_SUPPORTS_GET_BLIT_DESTINATION
- 		ddvd_set_lfb_ex(m_ddvdconfig, (unsigned char *)m_pixmap->surface->data, size.width(), size.height(), 4, size.width()*4, 1);
- #else
-
 diff -Nur enigma2-nightly.org/RecordTimer.py enigma2-nightly/RecordTimer.py
 --- enigma2-nightly.org/RecordTimer.py	2010-02-16 19:28:48.000000000 +0100
 +++ enigma2-nightly/RecordTimer.py	2010-02-16 19:32:07.000000000 +0100
@@ -17433,8 +17416,8 @@ diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp
  		if ((surface->bpp == 8) && (src.surface->bpp==8))
  		
 diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp
---- enigma2-nightly/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp	2010-02-04 19:39:55.000000000 -0500
-+++ enigma2-nightly/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp	2010-02-04 19:43:14.000000000 -0500
+--- enigma2-nightly/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp  2010-02-04 19:39:55.000000000 -0500
++++ enigma2-nightly/lib/python/Plugins/Extensions/DVDPlayer/src/servicedvd.cpp  2010-02-04 19:43:14.000000000 -0500
 @@ -23,6 +23,11 @@
  
  // eServiceFactoryDVD
@@ -17459,7 +17442,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/DVDPlayer/src/servic
  
  #ifdef DDVD_SUPPORTS_GET_BLIT_DESTINATION
  				ddvd_get_blit_destination(m_ddvdconfig, &x_offset, &y_offset, &width, &height);
-@@ -591,7 +600,13 @@
+@@ -591,11 +600,21 @@
  	m_subtitle_widget = new eSubtitleWidget(parent);
  	m_subtitle_widget->resize(parent->size());
  
@@ -17473,3 +17456,11 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/DVDPlayer/src/servic
  
  	if (!m_pixmap)
  	{
++#ifdef __sh__
++		m_pixmap = new gPixmap(size, 32, 0); /* don't use accel with sh4 cpu */
++#else
+ 		m_pixmap = new gPixmap(size, 32, 1); /* allocate accel surface (if possible) */
++#endif
+ #ifdef DDVD_SUPPORTS_GET_BLIT_DESTINATION
+ 		ddvd_set_lfb_ex(m_ddvdconfig, (unsigned char *)m_pixmap->surface->data, size.width(), size.height(), 4, size.width()*4, 1);
+ #else
