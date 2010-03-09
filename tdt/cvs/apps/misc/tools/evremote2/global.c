@@ -129,6 +129,8 @@ int checkTuxTxt(const int cCode)
             };
 
             if(connect(sSockethandle,(struct sockaddr *)&vAddr,sizeof(vAddr))!=0) {
+                close (sSockethandle);
+        				sSockethandle = -1;
                 fprintf(stderr, "connect failed!\n");
                 return 0;
             }
@@ -139,9 +141,9 @@ int checkTuxTxt(const int cCode)
             sprintf(vTmpS, "%08d", cCode);
 
             if (write(sSockethandle, (void *) vTmpS, sizeof("00000000")) <= 0)
-                fprintf(stderr, "Error while forwarding!");
+                fprintf(stderr, "Error while forwarding!\n");
         } else
-            fprintf(stderr, "Error while forwarding!-");
+            fprintf(stderr, "Error while forwarding!\n");
         return 1;
     }
 
