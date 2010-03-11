@@ -1,4 +1,4 @@
-/* 
+/*
 $Id: swapmanager.cpp, V1.00 2008/01/08 21:23:00 Dre
 Swap Manager for Enigma 1
 Copyright (C) 2007 - 2008 Dre
@@ -82,7 +82,7 @@ void eSwapManager::init_eSwapManager()
 		path = s.substr(0, pos+1);
 	}
 
-	
+
 	tb_path=new eTextInputField(this);tb_path->setName("path");
 	tb_path->setText(path);
 	bt_seldir=new eButton(this); bt_seldir->setName("seldir");
@@ -167,13 +167,14 @@ void eSwapManager::getBoxType()
 		case eSystemInfo::DM600PVR:
 		case eSystemInfo::DM7020:
 			mntbase = "/media/";
-			break; 
-		case eSystemInfo::DGS_R900:		
-		case eSystemInfo::DGS_R910:				
-		case eSystemInfo::DGS_R9000:		
-		case eSystemInfo::DGS_R91:						
+			break;
+		case eSystemInfo::DGS_R900:
+		case eSystemInfo::DGS_R910:
+		case eSystemInfo::DGS_R9000:
+		case eSystemInfo::DGS_R91:
+		case eSystemInfo::HL101:
 			mntbase = "/hdd/";
-			break; 
+			break;
 
 	}
 }
@@ -232,7 +233,7 @@ void eSwapManager::getSize()
 		used=sw.st_size;
 		used/=(1024*1024);
 
-	if( used > 1024 ) 
+	if( used > 1024 )
 	{
 		new eListBoxEntryText( *cb_size, eString().sprintf("%d MB", used), (void*)used, 0, eString().sprintf(_("Filesize: %d MB"), used));
 	}
@@ -298,7 +299,7 @@ void eSwapManager::searchSwap(eListBoxEntryText *seltype)
 void eSwapManager::createSwap()
 {
 	int bytesize=(int)cb_size->getCurrent()->getKey() * 1024;
-	
+
 	store = tb_path->getText() + cb_file->getCurrent()->getText();
 
 	info = new eMessageBox (_("The swapfile will now be created. This may take some time depending on the size of your swapfile"), _("Swap Manager"), 0);
@@ -337,9 +338,9 @@ void eSwapManager::appClosed(int)
 	if(created == byte)
 	{
 		eMessageBox::ShowBox((eString().sprintf(_("The swapfile has been created!"))), _("Swap Manager"), eMessageBox::btOK);
-	
+
 		searchSwap(NULL);
-	
+
 		lb_found->setText(eString().sprintf(_("Swap-File: %s"), found.c_str()));
 		int mkvalue = ( system(eString().sprintf("mkswap %s", store.c_str() ).c_str()) == 0) ? 1 : 0;
 		eConfig::getInstance()->setKey("/extras/mkswap", mkvalue);

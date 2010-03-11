@@ -33,13 +33,12 @@ void eSystemInfo::init_eSystemInfo()
 #if HAVE_DVB_API_VERSION >= 3
 	int fd=::open(DEMOD_DEV, O_RDONLY);
 	fetype = feUnknown;
-	
+
 	if (fd>=0)
 	{
 		dvb_frontend_info info;
 		if ( ::ioctl(fd, FE_GET_INFO, &info) >= 0 )
 		{
-
 			switch (info.type)
 			{
 				case FE_QPSK:
@@ -55,163 +54,202 @@ void eSystemInfo::init_eSystemInfo()
 			}
 		}
 		else
-			eDebug("FE_GET_INFO failed (%m)");
+			eDebug("[SystemInfo] HW type: FE_GET_INFO failed (%m)");
 		::close (fd);
 	}
 	else
-		eDebug("open demod failed (%m)");
+		eDebug("[SystemInfo] HW type: open demod failed (%m)");
 	std::set<int> caids;
 	hasnegfilter=1;
 	eString tuner=getTuner("Name").c_str();
-	eDebug("%s", tuner.c_str());
-	switch (tuxbox_get_submodel())
+	eString cpu = getCpu("cpu type").c_str();
+	eString cpuFamily = getCpu("cpu family").c_str();
+
+	if(!strncmp("sh4", cpuFamily.c_str(), 3))
 	{
-		case TUXBOX_SUBMODEL_RELOOK_900:
-//		case 60:
-		        eDebug("IPBOX 900"); 		
-			caids.insert(0x4a70);								        
-			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;		
-			manufactstr="AB-COM";
-			helpstr="ipbox";
+		switch (getBoxModel())
+		{
+		case HL101:
+		    eDebug("[SystemInfo] HW type: HL101");
+			caids.insert(0x4a70);
+			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+			manufactstr="Spider";
+			helpstr="hl101";
 			cpustr="STi7101, 265MHz";
 			haskeyboard=1;
-                        modelstr="AB IPBox 900HD";
-                        if(!strncmp(" Conexant", tuner.c_str(), 9))
-                    	    tunerstr = "Conexant cx24116 DVB S2";
-		        else if (!strncmp(" ST STV0903", tuner.c_str(), 11))
-		    	    tunerstr = "ST STV0903 DVB S2";
-                        else if (!strncmp(" Zarlink", tuner.c_str(), 8))
-                            tunerstr = "Zarlink ZL10353 DVB T";
-                        else if (!strncmp(" Philips", tuner.c_str(), 8))
-                            tunerstr = "Philips TDA1023 DVB C";
-                        else 
-                            tunerstr = "Unknown";
-			hwtype = DGS_R900;
-			midstr="60";
+			modelstr="SpiderBox HL101 HD";
+			if(!strncmp(" STB0899 Multistandard", tuner.c_str(), 22))
+				tunerstr = "ST STB0899 DVB S2";
+			else if (!strncmp(" ST STV0903", tuner.c_str(), 11))
+				tunerstr = "ST STV0903 DVB S2";
+			else if (!strncmp(" Zarlink", tuner.c_str(), 8))
+				tunerstr = "Zarlink ZL10353 DVB T";
+			else if (!strncmp(" Philips", tuner.c_str(), 8))
+				tunerstr = "Philips TDA1023 DVB C";
+			else
+				tunerstr = "Unknown";
+			midstr="91";
 			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
-			hasstandbywakeuptimer = 1;			
-			hasci=1;
-			hasscartswitch = 0;
-			break;
-		case TUXBOX_SUBMODEL_RELOOK_910:	
-//		case 70:
-		        eDebug("IPBOX 910"); 		
-			caids.insert(0x4a70);								        
-			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;		
-			manufactstr="AB-COM";
-			helpstr="ipbox";
-			cpustr="STi7101, 265MHz";
-			haskeyboard=1;
-                        modelstr="AB IPBox 910HD";
-                        if(!strncmp(" Conexant", tuner.c_str(), 9))
-                    	    tunerstr = "Conexant cx24116 DVB S2";
-		        else if (!strncmp(" ST STV0903", tuner.c_str(), 11))
-		    	    tunerstr = "ST STV0903 DVB S2";
-                        else if (!strncmp(" Zarlink", tuner.c_str(), 8))
-                            tunerstr = "Zarlink ZL10353 DVB T";
-                        else if (!strncmp(" Philips", tuner.c_str(), 8))
-                            tunerstr = "Philips TDA1023 DVB C";
-                        else 
-                            tunerstr = "Unknown";
-			hwtype = DGS_R910;
-			midstr="70";
-			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
-			hasstandbywakeuptimer = 1;			
-			hasci=1;
-			hasscartswitch = 0;
-			break;
-		case TUXBOX_SUBMODEL_RELOOK_9000:	
-//		case 80:
-		        eDebug("IPBOX 9000"); 		
-			caids.insert(0x4a70);								        
-			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;		
-			manufactstr="AB-COM";
-			helpstr="ipbox";
-			cpustr="STi7101, 265MHz";
-			haskeyboard=1;
-                        modelstr="AB IPBox 9000HD";
-                        if(!strncmp(" Conexant", tuner.c_str(), 9))
-                    	    tunerstr = "Conexant cx24116 DVB S2";
-		        else if (!strncmp(" ST STV0903", tuner.c_str(), 11))
-		    	    tunerstr = "ST STV0903 DVB S2";
-                        else if (!strncmp(" Zarlink", tuner.c_str(), 8))
-                            tunerstr = "Zarlink ZL10353 DVB T";
-                        else if (!strncmp(" Philips", tuner.c_str(), 8))
-                            tunerstr = "Philips TDA1023 DVB C";
-                        else 
-                            tunerstr = "Unknown";
-			hwtype = DGS_R9000;
-			midstr="80";
-			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
-			hasstandbywakeuptimer = 1;			
+			hasstandbywakeuptimer = 0;
 			hasci=1;
 			hasscartswitch = 1;
 			break;
-		case TUXBOX_SUBMODEL_RELOOK_91:				
-//		case 90:
-		        eDebug("IPBOX 91"); 		
-			caids.insert(0x4a70);								        
-			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;		
+		case DGS_R900:
+		    eDebug("[SystemInfo] HW type: IPBOX 900");
+			caids.insert(0x4a70);
+			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
 			manufactstr="AB-COM";
 			helpstr="ipbox";
 			cpustr="STi7101, 265MHz";
 			haskeyboard=1;
-                        modelstr="AB IPBox 91HD";
-		        tunerstr = "ST STV0903 DVB S2";
-                    	hwtype = DGS_R91;
+            modelstr="AB IPBox 900HD";
+            if(!strncmp(" Conexant", tuner.c_str(), 9))
+            	tunerstr = "Conexant cx24116 DVB S2";
+            else if (!strncmp(" ST STV0903", tuner.c_str(), 11))
+            	tunerstr = "ST STV0903 DVB S2";
+            else if (!strncmp(" Zarlink", tuner.c_str(), 8))
+            	tunerstr = "Zarlink ZL10353 DVB T";
+            else if (!strncmp(" Philips", tuner.c_str(), 8))
+            	tunerstr = "Philips TDA1023 DVB C";
+            else
+            	tunerstr = "Unknown";
+			midstr="60";
+			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
+			hasstandbywakeuptimer = 1;
+			hasci=1;
+			hasscartswitch = 0;
+			break;
+		case DGS_R910:
+		    eDebug("[SystemInfo] HW type: IPBOX 910");
+			caids.insert(0x4a70);
+			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+			manufactstr="AB-COM";
+			helpstr="ipbox";
+			cpustr="STi7101, 265MHz";
+			haskeyboard=1;
+            modelstr="AB IPBox 910HD";
+            if(!strncmp(" Conexant", tuner.c_str(), 9))
+        	    tunerstr = "Conexant cx24116 DVB S2";
+            else if (!strncmp(" ST STV0903", tuner.c_str(), 11))
+            	tunerstr = "ST STV0903 DVB S2";
+            else if (!strncmp(" Zarlink", tuner.c_str(), 8))
+                tunerstr = "Zarlink ZL10353 DVB T";
+            else if (!strncmp(" Philips", tuner.c_str(), 8))
+                tunerstr = "Philips TDA1023 DVB C";
+            else
+                tunerstr = "Unknown";
+			midstr="70";
+			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
+			hasstandbywakeuptimer = 1;
+			hasci=1;
+			hasscartswitch = 0;
+			break;
+		case DGS_R9000:
+		    eDebug("[SystemInfo] HW type: IPBOX 9000");
+			caids.insert(0x4a70);
+			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+			manufactstr="AB-COM";
+			helpstr="ipbox";
+			cpustr="STi7101, 265MHz";
+			haskeyboard=1;
+            modelstr="AB IPBox 9000HD";
+            if(!strncmp(" Conexant", tuner.c_str(), 9))
+        	    tunerstr = "Conexant cx24116 DVB S2";
+            else if (!strncmp(" ST STV0903", tuner.c_str(), 11))
+            	tunerstr = "ST STV0903 DVB S2";
+            else if (!strncmp(" Zarlink", tuner.c_str(), 8))
+                tunerstr = "Zarlink ZL10353 DVB T";
+            else if (!strncmp(" Philips", tuner.c_str(), 8))
+                tunerstr = "Philips TDA1023 DVB C";
+            else
+                tunerstr = "Unknown";
+			midstr="80";
+			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
+			hasstandbywakeuptimer = 1;
+			hasci=1;
+			hasscartswitch = 1;
+			break;
+		case DGS_R91:
+		    eDebug("[SystemInfo] HW type: IPBOX 91");
+			caids.insert(0x4a70);
+			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+			manufactstr="AB-COM";
+			helpstr="ipbox";
+			cpustr="STi7101, 265MHz";
+			haskeyboard=1;
+			modelstr="AB IPBox 91HD";
+			tunerstr = "ST STV0903 DVB S2";
 			midstr="90";
 			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
-			hasstandbywakeuptimer = 1;			
+			hasstandbywakeuptimer = 1;
 			hasci=0;
 			hasscartswitch = 0;
 			break;
-		case TUXBOX_SUBMODEL_DREAMBOX_DM7000:
-			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
-			canupdateTransponder = canrecordts = hashdd =
-			haslcd = canmeasurelnbcurrent =
-			hasci = 1;
-			hwtype = DM7000;
-//			caids.insert(0x4a70);
-			midstr="5";
-			helpstr="dreambox";
-			modelstr="DM7000";
-			cpustr="STB04500, 252MHz";
-			break;
-		case TUXBOX_SUBMODEL_DBOX2:
-			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
-			caids.insert(0x1702);
-			caids.insert(0x1722);
-			caids.insert(0x1762);
-			canrecordts=1;
-			hasstandbywakeuptimer=haslcd=1;
-			helpstr="dbox2";
-			modelstr="d-Box 2";
-			cpustr="XPC823, 66MHz";
-			switch ( tuxbox_get_vendor() )
-			{
-				case TUXBOX_VENDOR_NOKIA:
-					hwtype = dbox2Nokia;
-					midstr="1";
-					manufactstr="Nokia";
-					break;
-				case TUXBOX_VENDOR_PHILIPS:
-					midstr="2";
-					hwtype = dbox2Philips;
-					manufactstr="Philips";
-					break;
-				case TUXBOX_VENDOR_SAGEM:
-					midstr="3";
-					hwtype = dbox2Sagem;
-					manufactstr="Sagem";
-					break;
-				default:
-					hwtype = Unknown;
-			}
-			break;
 		default:
-		        eDebug("Unknown"); 		
+			eDebug("[SystemInfo] HW type: Unknown");
 			hwtype = Unknown;
 			break;
+		}
+		if(hwtype!=Unknown)
+		{
+			eDebug("[SystemInfo] Manufacure: %s", manufactstr);
+			eDebug("[SystemInfo] Model: %s", modelstr);
+			eDebug("[SystemInfo] CPU: %s", cpustr);
+			eDebug("[SystemInfo] Tuner: %s", tunerstr);
+		}
+	}
+	else
+	{
+		switch (tuxbox_get_submodel())
+		{
+			case TUXBOX_SUBMODEL_DREAMBOX_DM7000:
+				defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+				canupdateTransponder = canrecordts = hashdd =
+				haslcd = canmeasurelnbcurrent =
+				hasci = 1;
+				hwtype = DM7000;
+	//			caids.insert(0x4a70);
+				midstr="5";
+				helpstr="dreambox";
+				modelstr="DM7000";
+				cpustr="STB04500, 252MHz";
+				break;
+			case TUXBOX_SUBMODEL_DBOX2:
+				defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+				caids.insert(0x1702);
+				caids.insert(0x1722);
+				caids.insert(0x1762);
+				canrecordts=1;
+				hasstandbywakeuptimer=haslcd=1;
+				helpstr="dbox2";
+				modelstr="d-Box 2";
+				cpustr="XPC823, 66MHz";
+				switch ( tuxbox_get_vendor() )
+				{
+					case TUXBOX_VENDOR_NOKIA:
+						hwtype = dbox2Nokia;
+						midstr="1";
+						manufactstr="Nokia";
+						break;
+					case TUXBOX_VENDOR_PHILIPS:
+						midstr="2";
+						hwtype = dbox2Philips;
+						manufactstr="Philips";
+						break;
+					case TUXBOX_VENDOR_SAGEM:
+						midstr="3";
+						hwtype = dbox2Sagem;
+						manufactstr="Sagem";
+						break;
+					default:
+						hwtype = Unknown;
+				}
+				break;
+			default:
+			        eDebug("[SystemInfo] HW type: Unknown");
+				hwtype = Unknown;
+				break;
+		}
 	}
 
 #else
@@ -463,6 +501,7 @@ eString eSystemInfo::getInfo(const char *info, bool dreambox)
 	return result;
 }
 #endif
+
 #if HAVE_DVB_API_VERSION >= 3
 eString eSystemInfo::getTuner(const char *info)
 {
@@ -486,8 +525,91 @@ eString eSystemInfo::getTuner(const char *info)
 		}
 	}
 	fclose(f);
-	eDebug("[%s] result %s", __FUNCTION__, result.c_str());
+	//eDebug("[%s] %s: %s", __FUNCTION__, info, result.c_str());
 	return result;
+}
+
+eString eSystemInfo::getCpu(const char *info)
+{
+	FILE *f=0;
+	f=fopen("/proc/cpuinfo", "rt");
+	if (!f)
+		return "";
+	eString result;
+	while (1)
+	{
+		char buffer[128];
+		if (!fgets(buffer, 128, f))
+			break;
+		if (strlen(buffer))
+			buffer[strlen(buffer)-1]=0;
+		if (strstr(buffer, info))
+		{
+			result = eString(strchr(buffer, ':')+2);
+			break;
+		}
+	}
+	fclose(f);
+	//eDebug("[%s] %s: %s", __FUNCTION__, info, result.c_str());
+	return result;
+}
+
+/* from fp_control */
+int eSystemInfo::getKathreinUfs910BoxType()
+{
+    char vType;
+    int vFdBox = open("/proc/boxtype", O_RDONLY);
+
+    read (vFdBox, &vType, 1);
+
+    close(vFdBox);
+
+    return vType=='0'?0:vType=='1'||vType=='3'?1:-1;
+}
+
+int eSystemInfo::getBoxModel()
+{
+    int         vFd             = -1;
+    const int   cSize           = 128;
+    char        vName[129]      = "Unknown";
+    int         vLen            = -1;
+    int	    	vBoxType        = Unknown;
+
+    vFd = open("/proc/stb/info/model", O_RDONLY);
+    vLen = read (vFd, vName, cSize);
+
+    close(vFd);
+
+    if(vLen > 0) {
+        vName[vLen-1] = '\0';
+
+        if(!strncasecmp(vName,"ufs910", 6)) {
+            switch(getKathreinUfs910BoxType())
+            {
+                case 0:
+                	vBoxType = UFS9101W;
+                    break;
+                case 1:
+                	vBoxType = UFS91014W;
+                    break;
+                default:
+                	vBoxType = Unknown;
+                    break;
+            }
+        } else if(!strncasecmp(vName,"ufs922", 6))
+        	vBoxType = UFS922;
+        else if(!strncasecmp(vName,"tf7700hdpvr", 11))
+        	vBoxType = TF7700;
+        else if(!strncasecmp(vName,"hl101", 5))
+        	vBoxType = HL101;
+        else if(!strncasecmp(vName,"hdbox", 5))
+        	vBoxType = HDBOX;
+        else
+        	vBoxType = Unknown;
+    }
+
+    hwtype = vBoxType;
+    return vBoxType;
 }
 #endif
 

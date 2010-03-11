@@ -84,7 +84,7 @@ void eExpertSetup::init_eExpertSetup()
 #endif
 	if ( eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DM7000 )
 		CONNECT((new eListBoxEntryMenu(&list, _("Factory reset"), eString().sprintf("(%d) %s", ++entry, _("all settings will set to factory defaults")) ))->selected, eExpertSetup::factory_reset);
-		CONNECT((new eListBoxEntryMenu(&list, _("User reset"), eString().sprintf("(%d) %s", ++entry, _("all settings will set to user defaults")) ))->selected, eExpertSetup::user_reset);		
+		CONNECT((new eListBoxEntryMenu(&list, _("User reset"), eString().sprintf("(%d) %s", ++entry, _("all settings will set to user defaults")) ))->selected, eExpertSetup::user_reset);
 		CONNECT((new eListBoxEntryMenu(&list, _("Reload setting"), eString().sprintf("(%d) %s", ++entry, _("settings will reload")) ))->selected, eExpertSetup::reload_setting);
 	new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	list.setFlags(list.getFlags()|eListBoxBase::flagNoPageMovement);
@@ -150,7 +150,7 @@ void eExpertSetup::init_eExpertSetup()
 	timerenddefaultaction = new eListBoxEntryMulti( &list, _("Default action on timer end (left, right)"));
 
 	timerenddefaultaction->add( eString().sprintf("%s: %s%s",_("Action on timer end"),_("Nothing")," >").c_str(), 0 );
-	
+
 	if ( eSystemInfo::getInstance()->canShutdown() )
 	{
 		timerenddefaultaction->add( eString().sprintf("< %s: %s >", _("Action on timer end"), _("Standby")).c_str(), ePlaylistEntry::doGoSleep );
@@ -165,7 +165,7 @@ void eExpertSetup::init_eExpertSetup()
 	if (eConfig::getInstance()->getKey("/enigma/timerenddefaultaction", defaultaction) )
 		defaultaction = 0;
 	timerenddefaultaction->setCurrent(defaultaction);
-	
+
 	CONNECT(list.selchanged, eExpertSetup::timerenddefaultactionChanged );
 	new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	new eListBoxEntryCheck(&list, _("disable AC3 recording"), "/enigma/noac3recording", _("don't record AC3 audio track"));
@@ -202,7 +202,7 @@ void eExpertSetup::init_eExpertSetup()
 #endif
 #ifdef HAVE_DREAMBOX_HARDWARE
 	if ( eSystemInfo::getInstance()->getHwType() == eSystemInfo::DM7000||
-	    eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DGS_R900 ) 
+	    eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DGS_R900 )
 	{
 		int corefilesDisable = 0;
 		if (access("/var/etc/.no_corefiles", R_OK) == 0)
@@ -216,7 +216,7 @@ void eExpertSetup::init_eExpertSetup()
 		eConfig::getInstance()->setKey("/extras/dont_mount_hdd", dontMountHDD);
 		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable HDD mount"), "/extras/dont_mount_hdd", _("don't mount the HDD via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_mount_hdd");
 #endif
-		new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );	
+		new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 
 		int dontStartSecure = 0;
 	        if (access("/var/etc/.dont_start_secure", R_OK) == 0)
@@ -224,12 +224,12 @@ void eExpertSetup::init_eExpertSetup()
 		eConfig::getInstance()->setKey("/extras/dont_start_secure", dontStartSecure);
 		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable Secure start"), "/extras/dont_start_secure", _("don't start the switch securesw channel via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_secure");
 
-#if 0 
+#if 0
 	        int handleTwo=0;
 		if ( eConfig::getInstance()->getKey("/ezap/ci/handleTwoServices", handleTwo) )
 			eConfig::getInstance()->setKey("/ezap/ci/handleTwoServices", handleTwo);
 		new eListBoxEntryCheck(&list, _("Enable Two Service"), "/ezap/ci/handleTwoServices", _("can your CI descramble two services at the same time?"));
-	
+
 		int dontStartCrond = 0;
 		if (access("/var/etc/.dont_start_crond", R_OK) == 0)
 			dontStartCrond = 1;
@@ -259,7 +259,7 @@ void eExpertSetup::init_eExpertSetup()
 			dontStartNat = 1;
 		eConfig::getInstance()->setKey("/extras/dont_start_nat", dontStartNat);
 		CONNECT_2_1((new eListBoxEntryCheck(&list, _("Disable Nat start"), "/extras/dont_start_nat", _("don't start the Nat via 'rcS'")))->selected, eExpertSetup::fileToggle,"/var/etc/.dont_start_nat");
-        
+
 	        int dontStartPpp = 0;
 		if (access("/var/etc/.dont_start_ppp", R_OK) == 0)
 			dontStartPpp = 1;
@@ -492,7 +492,7 @@ void eExpertSetup::factory_reset()
 		_("Factory reset"),
 		eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
 		eMessageBox::btNo );
-	if ( ret == eMessageBox::btYes ) 
+	if ( ret == eMessageBox::btYes )
 	{
 		switch( eSystemInfo::getInstance()->getHwType() )
 		{
@@ -501,10 +501,11 @@ void eExpertSetup::factory_reset()
 			case eSystemInfo::DM7020:
 				system("rm -R /etc/enigma && killall -9 enigma");
 				break;
-			case eSystemInfo::DGS_R900:			
-			case eSystemInfo::DGS_R910:						
-			case eSystemInfo::DGS_R9000:			
-			case eSystemInfo::DGS_R91:			
+			case eSystemInfo::DGS_R900:
+			case eSystemInfo::DGS_R910:
+			case eSystemInfo::DGS_R9000:
+			case eSystemInfo::DGS_R91:
+			case eSystemInfo::HL101:
 				system("/usr/local/sbin/default.sh");
 				system(" killall -9 enigma");
 				break;
@@ -516,7 +517,7 @@ void eExpertSetup::factory_reset()
 				erase("/dev/mtd/1", _("Factory reset..."));
 				system("reboot");
 				break;
-			default: 
+			default:
 				eDebug("factory reset not implemented for this hardware!!\n");
 		}
 	}
@@ -533,18 +534,19 @@ void eExpertSetup::user_reset()
 		_("User reset"),
 		eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
 		eMessageBox::btNo );
-	if ( ret == eMessageBox::btYes ) 
+	if ( ret == eMessageBox::btYes )
 	{
 		switch( eSystemInfo::getInstance()->getHwType() )
 		{
-			case eSystemInfo::DGS_R900:			
-			case eSystemInfo::DGS_R910:						
-			case eSystemInfo::DGS_R9000:							
-			case eSystemInfo::DGS_R91:			
+			case eSystemInfo::DGS_R900:
+			case eSystemInfo::DGS_R910:
+			case eSystemInfo::DGS_R9000:
+			case eSystemInfo::DGS_R91:
+			case eSystemInfo::HL101:
 			system("/usr/local/sbin/user.sh");
 				system(" killall -9 enigma");
 				break;
-			default: 
+			default:
 				eDebug("user reset not implemented for this hardware!!\n");
 		}
 	}
@@ -565,5 +567,5 @@ void eExpertSetup::reload_setting()
 			eServiceReference::loadLockedList((eZapMain::getInstance()->getEplPath()+"/services.locked").c_str());
 		}
 	}
-        mc->hide(); 
+        mc->hide();
 }

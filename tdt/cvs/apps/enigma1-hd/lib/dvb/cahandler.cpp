@@ -56,7 +56,7 @@ void eDVBCAHandler::leaveTransponder( eTransponder* t )
 	if ( t )
 	{
 		const char *msg = "\x9f\x80\x3f\x04\x83\x02\x03\x01";
-		
+
 		/* send msg to the listening client */
 		eUnixDomainSocket socket(eApp);
 		socket.connectToPath(PMT_CLIENT_SOCKET);
@@ -139,7 +139,7 @@ void eDVBCAHandler::handlePMT( const eServiceReferenceDVB &service, PMT *pmt )
 			eDebug("[eDVBCAHandler] dont send the self pmt version");
 			return;
 		}
-		
+
 		bool isUpdate = (it->getCAPMTVersion() >= 0);
 
 		/* prepare the data */
@@ -147,7 +147,7 @@ void eDVBCAHandler::handlePMT( const eServiceReferenceDVB &service, PMT *pmt )
 
 		/* send the data to the listening client */
 		it->sendCAPMT();
-		
+
 		/* send the data to allinone */
 		it->sendAllinonesw();
 
@@ -173,7 +173,7 @@ void eDVBCAHandler::handlePMT( const eServiceReferenceDVB &service, PMT *pmt )
 		}
 	}
 }
- 
+
 CAService::CAService( const eServiceReferenceDVB &service )
 	: eUnixDomainSocket(eApp), lastPMTVersion(-1), me(service), capmt(NULL), retry(eApp)
 {
@@ -227,10 +227,11 @@ void CAService::buildCAPMT( PMT *pmt )
 	{
 		case eSystemInfo::DM7000:
 		case eSystemInfo::DM7020:
-		case eSystemInfo::DGS_R900:		
-		case eSystemInfo::DGS_R910:				
-		case eSystemInfo::DGS_R9000:		
-		case eSystemInfo::DGS_R91:		
+		case eSystemInfo::DGS_R900:
+		case eSystemInfo::DGS_R910:
+		case eSystemInfo::DGS_R9000:
+		case eSystemInfo::DGS_R91:
+		case eSystemInfo::HL101:
 			capmt[25]=0x03;  // descramble on demux0 and demux1
 			capmt[26]=0x01;  // get section data from demux1
 			break;
@@ -318,7 +319,7 @@ void CAService::buildCAPMT( PMT *pmt )
 
 	capmt[4]=((wp-6)>>8) & 0xff;
 	capmt[5]=(wp-6) & 0xff;
-	
+
 	//PMT PATCH TEST...
 	if(FILE *f_pmt=fopen("/tmp/pmt.tmp","wt"))
 	{
@@ -355,12 +356,12 @@ void CAService::sendCAPMT()
 void CAService::sendAllinonesw()
 {
 		const char *msg = "\x9f\x80\x32";
-		
-		// send msg to the listening client 
+
+		// send msg to the listening client
 		eUnixDomainSocket socket(eApp);
 		socket.connectToPath(PMT_ALLINONESW_SOCKET);
 		if (socket.state() == eSocket::Connection) socket.writeBlock(msg, strlen(msg));
-	
+
 }
 int CAService::writeCAPMTObject(eSocket *socket, int list_management)
 {

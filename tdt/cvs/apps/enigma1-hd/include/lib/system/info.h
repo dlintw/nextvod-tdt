@@ -18,19 +18,44 @@ class eString;
 class eSystemInfo
 {
 	static eSystemInfo *instance;
-	int hashdd, hasci, hasrfmod, haslcd, hasnetwork, haskeyboard, 
-		canmeasurelnbcurrent, hwtype, fetype, hasnegfilter, 
-		canupdateTransponder, canshutdown, canrecordts, defaulttimertype, 
+	int hashdd, hasci, hasrfmod, haslcd, hasnetwork, haskeyboard,
+		canmeasurelnbcurrent, hwtype, fetype, hasnegfilter,
+		canupdateTransponder, canshutdown, canrecordts, defaulttimertype,
 		alphaincrement, hasstandbywakeuptimer, cantimeshift, hasscartswitch;
 	std::set<int> caids;
 	const char *helpstr, *midstr, *modelstr, *manufactstr, *cpustr, *tunerstr;
 	eString getInfo(const char *info, bool dreambox=false);
-	eString getTuner(const char *info);	
+	eString getTuner(const char *info);
+	eString getCpu(const char *info);
+	int getKathreinUfs910BoxType();
+	int getBoxModel();
 	void init_eSystemInfo();
 public:
 	static eSystemInfo *getInstance() { return instance; }
 	eSystemInfo();
-	enum { dbox2Nokia, dbox2Sagem, dbox2Philips, DM7000, DM7020, DM5600, DM5620, DM500, DM600PVR, TR_DVB272S, DM500PLUS, DGS_R900, DGS_R910, DGS_R9000, DGS_R91,Unknown };
+	enum
+	{
+		dbox2Nokia,
+		dbox2Sagem,
+		dbox2Philips,
+		DM7000, DM7020,
+		DM5600, DM5620,
+		DM500, DM600PVR,
+		TR_DVB272S,
+		DM500PLUS,
+		DGS_R900,
+		DGS_R910,
+		DGS_R9000,
+		DGS_R91,
+		UFS9101W,
+		UFS91014W,
+		UFS922,
+		TF7700,
+		HL101,
+		HDBOX,
+		Unknown
+	};
+
 	enum { feSatellite, feCable, feTerrestrial, feUnknown };
 
 	const char *getHelpStr() { return helpstr; }
@@ -45,7 +70,7 @@ public:
 	int hasRFMod() { return hasrfmod; }
 	int hasLCD() { return haslcd; }
 	int hasNetwork() { return hasnetwork; }
-	int hasKeyboard() { return haskeyboard; }	
+	int hasKeyboard() { return haskeyboard; }
 	int canMeasureLNBCurrent() { return canmeasurelnbcurrent; }
 	int canShutdown() { return canshutdown; }
 	int canRecordTS() { return canrecordts; }

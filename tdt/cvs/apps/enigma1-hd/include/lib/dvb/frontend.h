@@ -39,6 +39,56 @@
 #include <lib/base/ebase.h>
 #include <lib/base/estring.h>
 
+#define FEC_S2_QPSK_1_2 (fe_code_rate_t)(FEC_AUTO+1)		//10
+#define FEC_S2_QPSK_2_3 (fe_code_rate_t)(FEC_S2_QPSK_1_2+1)	//11
+#define FEC_S2_QPSK_3_4 (fe_code_rate_t)(FEC_S2_QPSK_2_3+1)	//12
+#define FEC_S2_QPSK_5_6 (fe_code_rate_t)(FEC_S2_QPSK_3_4+1)	//13
+#define FEC_S2_QPSK_7_8 (fe_code_rate_t)(FEC_S2_QPSK_5_6+1)	//14
+#define FEC_S2_QPSK_8_9 (fe_code_rate_t)(FEC_S2_QPSK_7_8+1)	//15
+#define FEC_S2_QPSK_3_5 (fe_code_rate_t)(FEC_S2_QPSK_8_9+1)	//16
+#define FEC_S2_QPSK_4_5 (fe_code_rate_t)(FEC_S2_QPSK_3_5+1)	//17
+#define FEC_S2_QPSK_9_10 (fe_code_rate_t)(FEC_S2_QPSK_4_5+1)	//18
+
+#define FEC_S2_8PSK_1_2 (fe_code_rate_t)(FEC_S2_QPSK_9_10+1)	//19
+#define FEC_S2_8PSK_2_3 (fe_code_rate_t)(FEC_S2_8PSK_1_2+1)	//20
+#define FEC_S2_8PSK_3_4 (fe_code_rate_t)(FEC_S2_8PSK_2_3+1)	//21
+#define FEC_S2_8PSK_5_6 (fe_code_rate_t)(FEC_S2_8PSK_3_4+1)	//22
+#define FEC_S2_8PSK_7_8 (fe_code_rate_t)(FEC_S2_8PSK_5_6+1)	//23
+#define FEC_S2_8PSK_8_9 (fe_code_rate_t)(FEC_S2_8PSK_7_8+1)	//24
+#define FEC_S2_8PSK_3_5 (fe_code_rate_t)(FEC_S2_8PSK_8_9+1)	//25
+#define FEC_S2_8PSK_4_5 (fe_code_rate_t)(FEC_S2_8PSK_3_5+1)	//26
+#define FEC_S2_8PSK_9_10 (fe_code_rate_t)(FEC_S2_8PSK_4_5+1)	//27
+
+static inline fe_modulation_t dvbs_get_modulation(fe_code_rate_t fec)
+{
+	if((fec < FEC_S2_QPSK_1_2) || (fec < FEC_S2_8PSK_1_2))
+		return QPSK;
+	else
+#if HAVE_DVB_API_VERSION < 5
+		return PSK8;
+#else
+		return PSK_8;
+#endif
+}
+
+#if HAVE_DVB_API_VERSION >= 5
+static inline fe_delivery_system_t dvbs_get_delsys(fe_code_rate_t fec)
+{
+	if(fec < FEC_S2_QPSK_1_2)
+		return SYS_DVBS;
+	else
+		return SYS_DVBS2;
+}
+
+static inline fe_rolloff_t dvbs_get_rolloff(fe_delivery_system_t delsys)
+{
+	if(delsys == SYS_DVBS2)
+		return ROLLOFF_25;
+	else
+		return ROLLOFF_35;
+}
+#endif
+
 class eLNB;
 class eTransponder;
 class eSatellite;
@@ -87,12 +137,14 @@ class eFrontend: public Object
 			lastToneBurst,
 			lastRotorCmd,
 			lastSmatvFreq,
+			fenumber,
 			curRotorPos;    // current Orbital Position
+	bool tuned;
 
 	eLNB *lastLNB;
 	eTransponder *transponder;
 	static eFrontend *frontend;
-	eTimer rotorTimer1, rotorTimer2, 
+	eTimer rotorTimer1, rotorTimer2,
 #if HAVE_DVB_API_VERSION >=3
 				timeout,
 #endif
@@ -112,6 +164,9 @@ class eFrontend: public Object
 ///////////////////
 #if HAVE_DVB_API_VERSION < 3
 	FrontendParameters front;
+#elif HAVE_DVB_API_VERSION >=5
+	struct dvb_frontend_parameters front;
+	dvb_frontend_info info;
 #else
 	struct dvb_frontend_parameters front;
 	struct dvbfe_params fe_params;
@@ -139,6 +194,7 @@ public:
 	void disableRotor() { noRotorCmd = 1, lastRotorCmd=-1; } // no more rotor cmd is sent when tune
 	void enableRotor() { noRotorCmd = 0, lastRotorCmd=-1; }  // rotor cmd is sent when tune
 	int sendDiSEqCCmd( int addr, int cmd, eString params="", int frame=0xE0 );
+	void getDelSys(int f, int m, char * &fec, char * &sys, char * &mod);
 
 	Signal1<void, int> s_RotorRunning;
 	Signal0<void> s_RotorStopped, s_RotorTimeout;
@@ -162,7 +218,7 @@ public:
 	int Locked() { return Status()&FE_HAS_LOCK; }
 	void InitDiSEqC();
 	int readInputPower();
-  
+
 	uint32_t BER();
 	/**
 	 * \brief Returns the signal strength (or AGC).
@@ -182,7 +238,7 @@ public:
 		polHor=0, polVert, polLeft, polRight
 	};
 	/** begins the tune operation and emits a "tunedIn"-signal */
-	int tune_qpsk(eTransponder *transponder, 
+	int tune_qpsk(eTransponder *transponder,
 			uint32_t Frequency, 		// absolute frequency in kHz
 			int polarisation, 		// polarisation (polHor, polVert, ...)
 			uint32_t SymbolRate, 		// symbolrate in symbols/s (e.g. 27500000)
@@ -216,6 +272,7 @@ public:
 	int savePower();
 
 	void setTerrestrialAntennaVoltage(bool state);
+	struct dvb_frontend_event getEvent(void);
 };
 
 

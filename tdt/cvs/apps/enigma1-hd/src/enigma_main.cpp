@@ -4,7 +4,7 @@
 #include <iomanip>
 //#include <stdio.h>
 #include <dirent.h>
-                              
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/vfs.h>
@@ -100,7 +100,7 @@ struct enigmaMainActions
 		showAudioOrPause(map, "showAudioOrPause", _("show audio selector"), eAction::prioDialog),
 		showAudio(map, "showAudio", _("show audio selector"), eAction::prioDialog),
 		pluginVTXT(map, "pluginVTXT", _("show Videotext"), eAction::prioDialog),
- 		pluginAll(map, "pluginAll", _("show allinone Plugins"), eAction::prioDialog),		
+ 		pluginAll(map, "pluginAll", _("show allinone Plugins"), eAction::prioDialog),
 		pluginExt(map, "pluginExt", _("show extension Plugins"), eAction::prioDialog),
 		showEPGList(map, "showEPGList", _("show epg schedule list"), eAction::prioDialog),
 		showEPG(map, "showEPG", _("show extended info"), eAction::prioDialog),
@@ -215,13 +215,13 @@ void eZapSeekIndices::save()
 {
 	if (!changed)
 		return;
-	
+
 	if (!index.size())
 	{
 		unlink(filename.c_str());
 		return;
 	}
-		
+
 	FILE *f=fopen(filename.c_str(), "wt");
 	if (!f)
 		return;
@@ -730,7 +730,7 @@ int ePSAudioSelector::eventHandler(const eWidgetEvent &e)
 			int cur = eAVSwitch::getInstance()->getAudioChannel();
 			while ( cur != curSel )
 			{
-				m_stereo_mono->moveSelection( 
+				m_stereo_mono->moveSelection(
 					curSel > cur ? eListBoxBase::dirUp : eListBoxBase::dirDown
 					,false );
 				curSel = (int)m_stereo_mono->getCurrent()->getKey();
@@ -823,7 +823,7 @@ void eAudioSelector::addSubtitle(const PMTEntry *entry)
 			}
 			break;
 		}
-		
+
 	}
 end:
 	//new eListBoxEntryText(m_subtitles, description, (void*)entry, eTextPara::dirCenter );
@@ -901,7 +901,7 @@ int eAudioSelector::eventHandler(const eWidgetEvent &e)
 			int cur = eAVSwitch::getInstance()->getAudioChannel();
 			while ( cur != curSel )
 			{
-				m_stereo_mono->moveSelection( 
+				m_stereo_mono->moveSelection(
 					curSel > cur ? eListBoxBase::dirUp : eListBoxBase::dirDown
 					,false );
 				curSel = (int)m_stereo_mono->getCurrent()->getKey();
@@ -1440,7 +1440,7 @@ void eZapMain::destroyUserBouquets( bool save )
 		saveUserBouquets();
 	}
 
-	// save and destroy userTVBouquetList	
+	// save and destroy userTVBouquetList
 	for (std::list<ePlaylistEntry>::iterator it(userTVBouquets->getList().begin()); it != userTVBouquets->getList().end(); it++ )
 	{
 		eServicePlaylistHandler::getInstance()->removePlaylist(it->service);
@@ -1543,7 +1543,7 @@ void eZapMain::loadUserBouquets( bool destroy )
 				break;
 			case modeFile:
 				parentList = userFileBouquets;
-				parentRef = userFileBouquetsRef;	
+				parentRef = userFileBouquetsRef;
 				break;
 		}
 		for ( std::list<ePlaylistEntry>::iterator it(parentList->getList().begin()); it != parentList->getList().end(); it++, i++)
@@ -2181,7 +2181,7 @@ void eZapMain::setEPGButton(bool b)
 		ButtonRedDis->hide();
 		ButtonRedEn->show();
 		isEPG = 1;
-		
+
 		int eitcache=0;
 		(eConfig::getInstance()->getKey("/ezap/osd/useEPGCache", eitcache));
 		if (eitcache) gotEIT();
@@ -2394,7 +2394,7 @@ int eZapMain::setEITcache()
 	{
 		timeMap::const_iterator It;
 		int tsidonid = (ref.getTransportStreamID().get()<<16)|ref.getOriginalNetworkID().get();
-		
+
 		eString nowtext, nexttext, nowtime="", nexttime="", descr;
 		int val=0, p=0;
 
@@ -2428,7 +2428,7 @@ int eZapMain::setEITcache()
 						val|=2;
 					break;
 			}
- 
+
 			tm *t=event.start_time!=-1?localtime(&event.start_time):0;
 			eString start="";
 			if (t && event.duration)
@@ -2953,7 +2953,7 @@ void eZapMain::volumeUp()
 	else
 #endif
 	if ( eZapStandby::getInstance() )
-		eAVSwitch::getInstance()->changeVCRVolume(0, -2);	
+		eAVSwitch::getInstance()->changeVCRVolume(0, -2);
 	else
 		eAVSwitch::getInstance()->changeVolume(0, -2);
 
@@ -2976,7 +2976,7 @@ void eZapMain::volumeDown()
 			default:
 				return;
 		}
-	
+
 #if 0
 	if (eAudioDynamicCompression::getInstance() &&
 			eAudioDynamicCompression::getInstance()->getEnable())
@@ -2987,10 +2987,10 @@ void eZapMain::volumeDown()
 				oldval = 0;
 			eAudioDynamicCompression::getInstance()->setMax(oldval);
 		}
-	else 
+	else
 #endif
 	if ( eZapStandby::getInstance() )
-		eAVSwitch::getInstance()->changeVCRVolume(0, +2);	
+		eAVSwitch::getInstance()->changeVCRVolume(0, +2);
 	else
 		eAVSwitch::getInstance()->changeVolume(0, +2);
 
@@ -3204,7 +3204,7 @@ void eZapMain::showSNR()
 	p_ber->setPerc((int)log2(ber));
 	lsnr_num->setText(eString().sprintf("%d%%",snr));
 	lsync_num->setText(eString().sprintf("%d%%",agc));
-	lber_num->setText(eString().sprintf("%d",ber)); 
+	lber_num->setText(eString().sprintf("%d",ber));
 }
 /* SNR,AGC,BER DISPLAY end */
 
@@ -3224,7 +3224,7 @@ void eZapMain::showInfobar(bool startTimeout)
 	eConfig::getInstance()->getKey("/enigma/timeshift/activatepausebutton", tmp );
 	unsigned char pause = (unsigned char) tmp;
 	AudioOrPause->setText(pause ? _("Pause") : _("audio track"));
-		
+
 
 	if ( !isVisible() && eApp->looplevel() == 1 &&
 		( !currentFocus || currentFocus == this ) )
@@ -3241,16 +3241,16 @@ void eZapMain::showInfobar(bool startTimeout)
 	if(!snrTimer)
 	{
 		snrTimer=new eTimer(eApp);
-		snrTimer->start(1000,false); 
+		snrTimer->start(1000,false);
 		CONNECT(snrTimer->timeout,eZapMain::showSNR);
 	}
 /* SNR,AGC DISPLAY end */
-        if(!fullTimer) 
+        if(!fullTimer)
 	{
 		fullTimer=new eTimer(eApp);
-		fullTimer->start(1000,false); 
-		CONNECT(fullTimer->timeout,eZapMain::showFullTime);		
-        }    
+		fullTimer->start(1000,false);
+		CONNECT(fullTimer->timeout,eZapMain::showFullTime);
+        }
 }
 void eZapMain::hideInfobar()
 {
@@ -3281,7 +3281,7 @@ void eZapMain::play()
 		return;
 
 	// disable skipping
-	if(skipping) 
+	if(skipping)
 		endSkip();
 
 	switch (handler->getState())
@@ -3350,12 +3350,13 @@ void eZapMain::pause()
 						record();
 						break;
 			                case eSystemInfo::DGS_R910:
-			                case eSystemInfo::DGS_R900:			                
+			                case eSystemInfo::DGS_R900:
 			                case eSystemInfo::DGS_R91:
 			                case eSystemInfo::DGS_R9000:
-			            		break; 
+			                case eSystemInfo::HL101:
+			            		break;
 					default:
-                                                eDebug("[%s] timeshift", __FUNCTION__);
+                        eDebug("[%s] timeshift", __FUNCTION__);
 						record();
 						Decoder::setAutoFlushScreen(0);
 						Decoder::Pause(2);  // freeze frame
@@ -3623,7 +3624,7 @@ int eZapMain::recordDVR(int onoff, int user, time_t evtime, const char *timer_de
 			if (mustUnlock)
 				eEPGCache::getInstance()->Unlock();
 		}
-		eMessageBox msg(servicename + " - " + descr,_("record"), 
+		eMessageBox msg(servicename + " - " + descr,_("record"),
 		eMessageBox::btOK|eMessageBox::iconInfo, eMessageBox::btOK, 5 );
 		msg.show();
 		msg.exec();
@@ -3646,7 +3647,7 @@ int eZapMain::recordDVR(int onoff, int user, time_t evtime, const char *timer_de
 #ifndef DISABLE_LCD
 		// if standby disable lcdMain
 		if(state & stateSleeping)
-		{ 
+		{
 			lcdmain.lcdMain->hide();
 			lcdmain.lcdStandby->show();
 		}
@@ -3679,7 +3680,7 @@ void eZapMain::startSkip(int dir)
 	int firstskip = !skipping;
 
 	if(!skipping) // first call?
-	{ 
+	{
 		skipcounter=0;
 		skipspeed=0;
 		handler=eServiceInterface::getInstance()->getService();
@@ -3687,7 +3688,7 @@ void eZapMain::startSkip(int dir)
 		{
 			switch (handler->getState())
 			{
-				case eServiceHandler::statePause: 
+				case eServiceHandler::statePause:
 					pause();// continue playing in preparation for skipping
 					break;
 				case eServiceHandler::stateStopped:
@@ -3719,7 +3720,7 @@ void eZapMain::startSkip(int dir)
 					return;
 			}
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekBegin, 0));
-			seekstart=handler->getPosition(eServiceHandler::posQueryCurrent); // Startpunkt für Zeitausgabe
+			seekstart=handler->getPosition(eServiceHandler::posQueryCurrent); // Startpunkt fï¿½r Zeitausgabe
 			seekpos=seekstart;
 		}
 	}
@@ -3727,7 +3728,7 @@ void eZapMain::startSkip(int dir)
 	if (dir == skipForward)
 		skipspeed++;
 	else
-		skipspeed--; 
+		skipspeed--;
 
 	if (skipspeed > 4)
 		skipspeed=4;
@@ -3735,9 +3736,9 @@ void eZapMain::startSkip(int dir)
 		skipspeed=-4;
 
 	if(!skipping && handler)
-	{ 
+	{
 		if(!skipTimer)
-		{ 
+		{
 			skipTimer=new eTimer(eApp);
 			skipTimer->start((skipspeed>=0)?250:500,false); // 1/4 sec. forward 1/2 sec. back (but bigger distance)
 			CONNECT(skipTimer->timeout,eZapMain::skipLoop); // enable timer
@@ -3764,17 +3765,17 @@ void eZapMain::startSkip(int dir)
 	}
 
 	if(skipWidget && skipLabel1)
-	{ 
+	{
 		eString s;
 		s=(skipspeed<0)?"<<":">>";
-		switch(abs(skipspeed))  
+		switch(abs(skipspeed))
 		{
 			case 1: s=s+"  8x"; break; // very estimate :-)
 			case 2: s=s+" 16x"; break;
 			case 3: s=s+" 32x"; break;
 			case 4: s=s+" 64x"; break;
 		}
-		if(timeshift) 
+		if(timeshift)
 			s="(ts) "+s;
 		skipLabel1->setText(s);
 	}
@@ -3796,20 +3797,20 @@ void eZapMain::skipLoop()
 	speed = skipspeed * faktor;
 
 	switch(speed)
-	{ 
-		case  1: 
+	{
+		case  1:
 			time = (skipspeed<0) ? 2 : 1;
 			break; //Seconds
-		case  2: 
+		case  2:
 			time = (skipspeed<0) ? 4 : 2;
 			break; //back must more!
-		case  3: 
+		case  3:
 			time = (skipspeed<0) ? 8 : 4;
 			break;
-		case  4: 
+		case  4:
 			time = (skipspeed<0) ? 16 : 8;
 			break;
-		default: 
+		default:
 			time = 0;
 	}
 
@@ -3820,7 +3821,7 @@ void eZapMain::skipLoop()
 		{
 			// view relative skip time
 			pos=handler->getPosition(eServiceHandler::posQueryCurrent);
-			diff=abs(pos-seekstart); 
+			diff=abs(pos-seekstart);
 			int std=diff/3600;
 			int min=(diff-(std*3600))/60;
 			int sec=diff-(std*3600)-(min*60);
@@ -3829,7 +3830,7 @@ void eZapMain::skipLoop()
 				skipLabel2->setText(eString().sprintf("%c%02d:%02d:%02d",(pos>seekstart)?'+':'-',std,min,sec));
 
 			if(skipspeed<0 && pos < (time<<2) ) //back and begin reached
-			{ 
+			{
 				endSkip();
 				handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekReal, 0));
 				updateProgress();
@@ -3861,12 +3862,12 @@ void eZapMain::repeatSkip(int dir)
 {
 	static int aktiv;
 
-	if (skipping) 
+	if (skipping)
 		endSkip();	// break skipping, if active
 	else
 		return;
 
-	if(aktiv) 
+	if(aktiv)
 		return;		// not more...
 
 	eServiceReference &ref = eServiceInterface::getInstance()->service;
@@ -3896,8 +3897,8 @@ void eZapMain::repeatSkip(int dir)
 		if (handler)
 		{
 			int time=atoi(dlg.getEditText().c_str())*60; // Seconds
-			
-			if(dir!=skipForward) 
+
+			if(dir!=skipForward)
 				time = -time;
 
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekBegin));
@@ -3928,9 +3929,9 @@ void eZapMain::endSkip(void)
 		delete skipTimer;
 		skipTimer=0;
 	}
-	
+
 	if(skipWidget)
-	{ 
+	{
 		delete skipWidget;
 		skipWidget=0;
 	}
@@ -3941,7 +3942,7 @@ void eZapMain::endSkip(void)
 
 	if (handler)
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekEnd));
-		
+
 	if (isVisible() && doHideInfobar())
 		timeout.start(2000, 1);
 }
@@ -4406,7 +4407,7 @@ void eZapMain::renameFile( eServiceSelector *sel )
 	if ( b != eString::npos )
 		fname.erase(b);
 
-	TextEditWindow wnd(_("Enter new Filename:"),"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 -_äöüÄÖÜ");
+	TextEditWindow wnd(_("Enter new Filename:"),"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 -_ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 	wnd.setText(_("Rename File"));
 	wnd.show();
 	wnd.setEditText(fname);
@@ -4627,7 +4628,7 @@ struct eServiceHandlerDVB_removeNewFoundFlag
 				 )
 			 )
 			s->dvb->dxflags &= ~eServiceDVB::dxNewFound;
-			
+
 	}
 };
 
@@ -5268,7 +5269,7 @@ void eZapMain::runVTXT()
 	{
 		hideInfobar();
 		rdstext_decoder.rass_interactive();
-	} 
+	}
 	else if (isVT)
 	{
 #ifndef TUXTXT_CFG_STANDALONE
@@ -5310,7 +5311,7 @@ void eZapMain::runPluginAllinone()
 	doubleklickTimerConnection.disconnect();
 	int setuppin=0;
 	eConfig::getInstance()->getKey("/elitedvb/pins/setuplock", setuppin);
- 		
+
  	if ( checkPin( setuppin, _("setup") ) )
 	{
 		hide();
@@ -5323,13 +5324,13 @@ void eZapMain::runPluginAllinone()
  		    show();
 		}
 		while(i==-1);
-	}	
+	}
 }
 
 void eZapMain::showSelectorStyleEPG()
 {
 	if ( doubleklickTimer.isActive() )
-	{		
+	{
 		doubleklickTimer.stop();
 		doubleklickTimerConnection.disconnect();
 		hide();
@@ -5343,7 +5344,7 @@ void eZapMain::showSelectorStyleEPG()
 		{
 			case 1:
 				showEPGList((eServiceReferenceDVB&)eServiceInterface::getInstance()->service);
-				break;			
+				break;
 			case 2:
 				showMultiEPG();
 				break;
@@ -5425,7 +5426,7 @@ void eZapMain::showCurrentStyleEPG()
 {
 	if ( doubleklickTimerConnection.connected() )
 		doubleklickTimerConnection.disconnect();
-		
+
 	int lastEPGStyle=1;
 	eConfig::getInstance()->getKey("/ezap/lastEPGStyle", lastEPGStyle);
 
@@ -5720,8 +5721,8 @@ void eZapMain::blinkRecord()
 		// handle clock-blinking when record is active..
 		if(lcdmain.lcdMain->Clock->isVisible()){
 			lcdmain.lcdMain->Clock->hide();
-          		system("echo 'recording...' > /dev/dbox/fp0");			
-          	}	
+          		system("echo 'recording...' > /dev/dbox/fp0");
+          	}
 		else {
 		        lcdmain.lcdMain->Clock->show();
           		system("echo 'RECORDING...' > /dev/dbox/fp0");
@@ -5752,7 +5753,7 @@ void eZapMain::blinkRecord()
 				{
 					int min = fds/33;
 
-					if (Decoder::current.vpid==-1) //Radiorecording 
+					if (Decoder::current.vpid==-1) //Radiorecording
 						min = fds/2;//One minute mp2-audio equals roughly 2MB
 
 					if (min<60)
@@ -5797,16 +5798,16 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			if (strcmp(event.action->getIdentifier(),"ok") == 0)
 			{
 				// Toggle Infobar while skipping
-				if (isVisible()) 
-					hideInfobar(); 
-				else 
+				if (isVisible())
+					hideInfobar();
+				else
 					showInfobar();
 				startMessages();
 				return 1;
-			}			
+			}
 			else if(
 				event.action != &i_enigmaMainActions->discrete_startSkipForward
-				&& dvrfunctions && event.action != &i_enigmaMainActions->startSkipForward && 
+				&& dvrfunctions && event.action != &i_enigmaMainActions->startSkipForward &&
 				event.action != &i_enigmaMainActions->discrete_repeatSkipForward
 				&& dvrfunctions && event.action != &i_enigmaMainActions->repeatSkipForward &&
 				event.action != &i_enigmaMainActions->discrete_stopSkipForward
@@ -5951,7 +5952,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if (event.action == &i_enigmaMainActions->toggleMute)
 			toggleMute();
 #ifndef DISABLE_FILE
-		else if (event.action == &i_enigmaMainActions->discrete_play 
+		else if (event.action == &i_enigmaMainActions->discrete_play
 			|| (dvrfunctions && event.action == &i_enigmaMainActions->play))
 			play();
 		else if (event.action == &i_enigmaMainActions->discrete_stop
@@ -5965,10 +5966,10 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			else
 				stop();
 		}
-		else if (event.action == &i_enigmaMainActions->discrete_pause 
+		else if (event.action == &i_enigmaMainActions->discrete_pause
 			|| (dvrfunctions && event.action == &i_enigmaMainActions->pause))
 			pause();
-		else if (event.action == &i_enigmaMainActions->discrete_record 
+		else if (event.action == &i_enigmaMainActions->discrete_record
 			|| (dvrfunctions && event.action == &i_enigmaMainActions->record))
 		{
 			if ( state & stateRecording && !(state & stateInTimerMode) )
@@ -6082,7 +6083,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 				if ( playlist->current == playlist->getConstList().end() )
 					playlist->current = swap;
 
-				if ( playlist->current == swap ) // end of history? 
+				if ( playlist->current == swap ) // end of history?
 					--swap;  // swap with previous entry
 				else // middle of history
 				{
@@ -6277,7 +6278,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 				}
 				if (time)
 				{
-					if (skipping) 
+					if (skipping)
 						endSkip();
 					handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekBegin));
 					handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSkip,time*1000));
@@ -6473,10 +6474,10 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		if (serviceFlags & eServiceHandler::flagSupportPosition)
 			progresstimer.start(1000);
 		else
-		{ 
+		{
 #ifndef DISABLE_FILE
 			// disable skipping
-			if(skipping) 
+			if(skipping)
 				endSkip();
 #endif
 			progresstimer.stop();
@@ -6500,7 +6501,7 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		startService(ref, err);
 
 		rdstext_decoder.clear_service();
-		
+
 // SHOW PICTURE
 		switch(mode)
 		{
@@ -6553,7 +6554,7 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 				message_notifier.send(eZapMain::messageNoRecordSpaceLeft);
 		} else
 			recordDVR(0, 0);  // stop Recording
-		
+
 		const char *message;
 		if (freespace < 0)
 			message=_("Record failed due to inaccessable storage.");
@@ -6561,14 +6562,14 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 			message=_("Record stopped due to full harddisk. Delete some recordings and try again.");
 		else
 			message=_("Record failed due to an write error during recording. Check for filesystem corruption.");
-		
+
 		postMessage(eZapMessage(1, _("record failed"), message, -1), 0);
 		break;
 	}
 	case eServiceEvent::evtEnd:
 	{
 		// disable skipping
-		if(skipping) 
+		if(skipping)
 			endSkip();
 		int serviceFlags = eServiceInterface::getInstance()->getService()->getFlags();
 		if (playlist->current != playlist->getConstList().end())
@@ -6730,7 +6731,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		return;
 
 	eService *service=eServiceInterface::getInstance()->addRef(_serviceref);
-	
+
 #ifndef DISABLE_FILE
 			/* enable indices when we have something to store them. */
 	if (_serviceref.path.size())
@@ -6740,7 +6741,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		indices_enabled = 1;
 	} else
 		indices_enabled = 0;
-#endif	
+#endif
 
 	if (_serviceref.type == eServiceReference::idDVB )
 	{
@@ -6957,14 +6958,14 @@ void eZapMain::gotEIT()
 	EIT *eit=sapi->getEIT();
 	int old_start=cur_start;
 	int cache=0, cset=0;
-	eConfig::getInstance()->getKey("/ezap/osd/useEPGCache", cache);	
+	eConfig::getInstance()->getKey("/ezap/osd/useEPGCache", cache);
 
 	if (isEPG && cache)
 		cset = setEITcache();
 	else
 		setEIT(eit);
 
-	if (eit || cset)	
+	if (eit || cset)
 	{
 		int state=0;
 		if (old_start != cur_start)
@@ -6978,7 +6979,7 @@ void eZapMain::gotEIT()
 
 				if ( doHideInfobar() && isVisible() )
 				{
-					eConfig::getInstance()->getKey("/enigma/timeoutInfobar", 
+					eConfig::getInstance()->getKey("/enigma/timeoutInfobar",
 									timeoutInfobar);
 					timeout.start((sapi->getState() == eServiceHandler::statePlaying) ?
 						(timeoutInfobar * 1000) - 1000 :
@@ -6987,7 +6988,7 @@ void eZapMain::gotEIT()
 			}
 		}
 		if (eit)
-			eit->unlock();		
+			eit->unlock();
 	}
 	else
 		eDebug("no eit");
@@ -7073,7 +7074,7 @@ void eZapMain::timeOut()
 
 void eZapMain::leaveService()
 {
-	timeshift=0;          
+	timeshift=0;
 
 #ifndef DISABLE_FILE
 	// disable skipping
@@ -7083,7 +7084,7 @@ void eZapMain::leaveService()
 #endif
 
 	cur_start=cur_duration=cur_event_id=-1;
-	
+
 	ButtonGreenDis->show();
 	ButtonGreenEn->hide();
 	ButtonYellowDis->show();
@@ -7110,7 +7111,7 @@ void eZapMain::leaveService()
 	EINext->setText("");
 	EINextDuration->setText("");
 	EINextTime->setText("");
-	
+
 	Progress->hide();
 #ifndef DISABLE_FILE
 	if (indices_enabled)
@@ -7150,7 +7151,7 @@ void eZapMain::clockUpdate()
                         eString time = "echo '"+s+"' > /dev/dbox/fp0";
 			system(time.c_str());
 		}
-		else 
+		else
 		{
 			lcdmain.lcdMain->Clock->setText(s);
 			lcdmain.lcdStandby->Clock->setText(s);
@@ -7311,7 +7312,7 @@ void eZapMain::nextMessage()
 		if (!showonly)
 			hide();
 		int flags = 0;
-		switch (msg.getIcon()) 
+		switch (msg.getIcon())
 		{
 			case 1:
 				flags = eMessageBox::iconInfo;
@@ -7328,7 +7329,7 @@ void eZapMain::nextMessage()
 		}
 		if (!showonly)
 			flags |= eMessageBox::btOK;
-			
+
 		pMsg = new eMessageBox(msg.getBody(), msg.getCaption(), flags);
 		pMsg->show();
 		if (!showonly)
@@ -7708,10 +7709,10 @@ void eZapMain::toggleIndexmark()
 {
 	if (!indices_enabled)
 		return;
-	
+
 	if (!(serviceFlags & eServiceHandler::flagIsSeekable))
 		return;
-	
+
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
 		return;
@@ -7893,7 +7894,7 @@ void eServiceContextMenu::init_eServiceContextMenu(const eServiceReference &ref,
 	/* i think it is not so good to rename normal providers
 	if ( ref.data[0]==-3 ) // rename Provider
 		new eListBoxEntryText(&list, _("rename"), (void*)7);*/
-	
+
 	// remove newflag from satellite
 	if ( ref && (ref.flags & eServiceReference::isDirectory)
 		&& (ref.type == eServiceReference::idDVB)
@@ -7906,7 +7907,7 @@ void eServiceContextMenu::init_eServiceContextMenu(const eServiceReference &ref,
 	eServiceDVB *service = eTransponderList::getInstance()->searchService(ref);
 	if ( service && service->dxflags & eServiceDVB::dxNewFound )
 		prev = new eListBoxEntryText(&list, _("remove 'new found flag'"), (void*)16, 0, _("select to remove the 'new found flag'"));
-	
+
 	// create new bouquet
 	prev = new eListBoxEntryText(&list, _("create new bouquet"), (void*)6, 0, _("select to create a new bouquet"));
 
@@ -7959,7 +7960,7 @@ void eServiceContextMenu::init_eServiceContextMenu(const eServiceReference &ref,
 			prev = new eListBoxEntryText(&list, _("delete"), (void*)1, 0, _("delete the current selected service/movie"));
 
 			prev = new eListBoxEntryTextSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
-			
+
 			if ( ref.type == eServiceReference::idDVB )
 			{
 				prev = new eListBoxEntryText(&list, _("set as startup service"), (void*)17, 0, _("currently selected service will be selected on startup"));
@@ -8088,11 +8089,12 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 			new eListBoxEntryText(&list, _("shutdown now"), (void*)1, 0, _("shutdown your dreambox"));
 			new eListBoxEntryText(&list, _("restart"), (void*)4, 0, _("restart your dreambox"));
 			break;
-		case eSystemInfo::DGS_R900:		
-		case eSystemInfo::DGS_R910:				
-		case eSystemInfo::DGS_R9000:		
-		case eSystemInfo::DGS_R91:		
-			new eListBoxEntryText(&list, _("shutdown now"), (void*)1, 0, _("shutdown your box"));		
+		case eSystemInfo::DGS_R900:
+		case eSystemInfo::DGS_R910:
+		case eSystemInfo::DGS_R9000:
+		case eSystemInfo::DGS_R91:
+		case eSystemInfo::HL101:
+			new eListBoxEntryText(&list, _("shutdown now"), (void*)1, 0, _("shutdown your box"));
 			new eListBoxEntryText(&list, _("reboot now"), (void*)4, 0, _("restart your box"));
 			break;
 		case eSystemInfo::dbox2Nokia ... eSystemInfo::dbox2Philips:
@@ -8411,7 +8413,7 @@ void UserBouquetSelector::selected( eListBoxEntryText *sel )
 SkipEditWindow::SkipEditWindow( const char *InputFieldDescr)
 {
 	int fsize=eSkin::getActive()->queryValue("fontsize", 20)+4;
-	
+
 	cmove(ePoint(20, 160));
 	cresize(eSize(160, fsize+8));
 

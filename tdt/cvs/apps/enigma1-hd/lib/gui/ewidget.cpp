@@ -57,13 +57,13 @@ eWidget::~eWidget()
 		if (getTLW()->focus == this)
 			eFatal("focus still held.");
 	}
-		
+
 	if (shortcut)
 		getTLW()->actionListener.remove(this);
 
 	if (parent && !parent->childlist.empty())
 		parent->childlist.remove(this);
-	
+
 	while (!childlist.empty())
 		delete childlist.front();
 }
@@ -106,7 +106,7 @@ void eWidget::takeFocus()
 	ASSERT (parent);
 		// childs shouldnt receive global focus
 	ASSERT (!parent->parent);
-	
+
 	if (!have_focus)
 	{
 		oldTLfocus=currentFocus;
@@ -222,15 +222,15 @@ void eWidget::cmove(const ePoint& nposition)
 }
 
 void eWidget::valign()
-{ 
+{
 	unsigned int v_tvsystem;
 	eConfig::getInstance()->getKey("/elitedvb/video/tvsystem", v_tvsystem );
-	
+
 	if ( v_tvsystem==2)
 	{
 		move(ePoint((720-size.width())/2, (480-size.height())/2 )); // NTSC: 720x480
   	}
-	else 
+	else
 	{
 		move(ePoint((720-size.width())/2, (576-size.height())/2)); // PAL: 720x576
   	}
@@ -316,7 +316,7 @@ int eWidget::event(const eWidgetEvent &event)
 				if (target==this)
 					break;
 				target=target->parent;
-			} 
+			}
 		}
 	}
 	return 0;
@@ -409,13 +409,13 @@ void eWidget::hide()
 {
 	if (!(state&stateShow))
 		return;
-	
+
 	if (state&stateVisible)
 	{
 		willHideChildren();
 		clear();	// hide -> immer erasen. dieses Hide ist IMMER explizit.
 	}
-	state&=~stateShow; 
+	state&=~stateShow;
 	checkFocus();
 }
 
@@ -516,7 +516,7 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 			for (std::set<eString>::const_iterator si(styles.begin()); si != styles.end(); ++si)
 				(*i)->findAction(prio, *evt.key, 0, *si);
 		}
-		
+
 		for (eActionPrioritySet::iterator i(prio.begin()); i != prio.end(); ++i)
 		{
 			if (i->first)
@@ -742,7 +742,7 @@ void eWidget::focusNext(int dir)
 				m2+=ePoint(0, _focusList.current()->getSize().height()/2);
 				break;
 			}
-			
+
 			int xd=m1.x()-m2.x();
 			int yd=m1.y()-m2.y();
 #define METHOD 0

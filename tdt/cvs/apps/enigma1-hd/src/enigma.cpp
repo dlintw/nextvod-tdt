@@ -123,7 +123,7 @@ void eZap::init_eZap(int argc, char **argv)
 #endif
 
 	instance = this;
-	
+
 	init = new eInit();
 
 	FILE *pluginlist = fopen(CONFIGDIR "/enigma/plugins", "rb");
@@ -249,14 +249,27 @@ void eZap::init_eZap(int argc, char **argv)
 		eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcdboxbuttons.xml");
 #endif
 #else
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdbox_inputdev.xml") )
-		eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcdbox_inputdev.xml");
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcgeneric_inputdev.xml") )
-		eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcgeneric_inputdev.xml");
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdreambox_inputdev.xml") )
-		eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcdreambox_inputdev.xml");
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcipbox_inputdev.xml") )
-		eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcipbox_inputdev.xml");
+	switch( eSystemInfo::getInstance()->getHwType() )
+	{
+		case eSystemInfo::HL101:
+		{
+			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rc_hl101.xml") )
+			if ( eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rc_hl101.xml") )
+			eFatal("couldn't load RC Mapping file for SpiderBox HL101");
+			break;
+		}
+		//FIXME add for other models
+		default:
+			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdbox_inputdev.xml") )
+				eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcdbox_inputdev.xml");
+			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcgeneric_inputdev.xml") )
+				eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcgeneric_inputdev.xml");
+			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdreambox_inputdev.xml") )
+				eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcdreambox_inputdev.xml");
+			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcipbox_inputdev.xml") )
+				eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcipbox_inputdev.xml");
+	}
+
 #endif // HAVE_DVB_API_VERSION < 3
 
 	for(std::map<eString,eRCDevice*>::iterator i(eRCInput::getInstance()->getDevices().begin());
@@ -279,7 +292,7 @@ void eZap::init_eZap(int argc, char **argv)
 #endif
 
 	reconfigureHTTPServer();
-	
+
 #ifdef ENABLE_EXPERT_WEBIF
 	eMountMgr *mountMgr = new eMountMgr();
 	mountMgr->automountMountPoints();
@@ -299,7 +312,7 @@ void eZap::init_eZap(int argc, char **argv)
 	free(swapfilename);
 #endif
 #endif
-        system("/etc/init.d/bootlogo stop"); 
+        system("/etc/init.d/bootlogo stop");
 	eDebug("[ENIGMA] ok, beginning mainloop");
 	if (eConfig::getInstance()->getKey("/elitedvb/system/bootCount", bootcount))
 	{
@@ -326,13 +339,13 @@ void eZap::init_eZap(int argc, char **argv)
 	    int videoformat = 5;
             eString videomod = "Welcome to ABCOM enigma HD.\n\n"
 				"Yes to select videomode: 1080i\n";
-            while(1){   
+      while(1){
 		FILE *f=fopen("/etc/videomode", "w");
 		if (f){
 		    fprintf(f,"%d", videoformat);
 		}
 		fclose(f);
-	        fbClass::getInstance()->fbset();			
+	        fbClass::getInstance()->fbset();
 
 		eMessageBox msg(videomod,
 				_("First start of enigma"),
@@ -342,20 +355,19 @@ void eZap::init_eZap(int argc, char **argv)
 		msg.hide();
 		if ( res == eMessageBox::btYes ){
 			break;
-		}	
+		}
 
 		if (videoformat == 0){
 		        videoformat = 5;
 		        videomod = "Welcome to ABCOM enigma HD.\n\n"
 				"Yes to select videomode: 1080i\n";
-		} else { 
-			videoformat = 0;   
+		} else {
+			videoformat = 0;
 			videomod = "Welcome to ABCOM enigma HD.\n\n"
 				"Yes to select videomode: 576i\n";
-		}	
-			 
-	    }	
-        }
+		}
+	  }
+    }
 
 
 	if ( bootcount == 1 )
@@ -392,10 +404,9 @@ void eZap::init_eZap(int argc, char **argv)
 			system("/usr/local/sbin/user.sh");
 			system(" killall -9 enigma");
 
-                } 
-        
-         }    	    
-        
+        }
+    }
+
 	if ( bootcount < 2 || bootcount > 30 )
 	{
 		eMessageBox msg (_("Welcome to ABCOM enigma.\n\n"
@@ -418,8 +429,8 @@ void eZap::init_eZap(int argc, char **argv)
 				setup.hide();
 			}
 			eConfig::getInstance()->setKey("/elitedvb/system/bootCount", 2);
-		}	
-         }    	    
+		}
+	}
 
 
          init->setRunlevel(eAutoInitNumbers::main);

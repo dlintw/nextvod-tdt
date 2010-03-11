@@ -57,11 +57,11 @@ eAction *eActionMap::findAction(const char *id) const
 	return 0;
 }
 
-eActionMap::eActionMap(const char *identifier, char *description): 
+eActionMap::eActionMap(const char *identifier, char *description):
 		identifier(identifier), description(description)
 {
 	eActionMapList::getInstance()->addActionMap(identifier, this);
-} 
+}
 
 eActionMap::~eActionMap()
 {
@@ -83,7 +83,7 @@ void eActionMap::loadXML(eRCDevice *device, eKeymap &keymap, const XMLTreeNode *
 			action=findAction(name);
 		if (!action)
 		{
-			eWarning("please specify a valid action with name=. valid actions are:");
+			eWarning("please specify a valid action with name=%s valid actions are:", name);
 			for (actionList::iterator i(actions.begin()); i != actions.end(); ++i)
 				eWarning("  %s (%s)", (*i)->getIdentifier(), (*i)->getDescription());
 			eFatal("but NOT %s", name);
@@ -112,7 +112,7 @@ void eActionMap::loadXML(eRCDevice *device, eKeymap &keymap, const XMLTreeNode *
 			picture=i->second.second;
 		} else
 			sscanf(code, "%x", &icode);
-	
+
 		const char *flags=xaction->GetAttributeValue("flags");
 		if (!flags || !*flags)
 			flags="b";
@@ -139,7 +139,7 @@ void eActionMapList::init_eActionMapList()
 		instance=this;
 	char * tmp;
 	currentStyles.insert("");
-	
+
 	if ( eConfig::getInstance()->getKey("/ezap/rc/style", tmp ) )
 		currentStyles.insert("default");
 	else
@@ -178,7 +178,7 @@ int eActionMapList::loadXML(const char *filename)
 
 	XMLTreeParser *parser=new XMLTreeParser("ISO-8859-1");
 	char buf[2048];
-	
+
 	int done;
 	do
 	{
@@ -242,11 +242,15 @@ int eActionMapList::loadDevice(eRCDevice *device)
 		/* Don't load any mappings for (ascii) console */
 	if (device->getIdentifier() == "Console")
 		return 0;
-		
+
 	XMLTreeNode *node=searchDevice(device->getIdentifier());
+	eDebug("found RC device: '%s'", device->getDescription());
 
 	if (!node)
+	{
 		node=searchDevice("generic");
+		eWarning("fallback to generic  (%s)", device->getDescription());
+	}
 
 	if (!node)
 	{
@@ -261,6 +265,7 @@ int eActionMapList::loadDevice(eRCDevice *device)
 		{
 			eActionMap *am=0;
 			const char *name=xam->GetAttributeValue("name");
+			eDebug("+ActionMap: %s", name);
 			if (name)
 				am=findActionMap(name);
 			if (!am)

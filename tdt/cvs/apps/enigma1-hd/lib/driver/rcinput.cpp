@@ -17,13 +17,13 @@ void eRCDeviceInputDev::handleCode(int rccode)
 		return;
 
 	int km = iskeyboard ? input->getKeyboardMode() : eRCInput::kmNone;
-	
+
 	if (km == eRCInput::kmAll)
 		return;
 
 	if (km == eRCInput::kmAscii)
 	{
-//		eDebug("filtering.. %d", ev->code);
+		//eDebug("filtering.. %d", ev->code);
 		bool filtered = ( ev->code > 0 && ev->code < 61 );
 		switch (ev->code)
 		{
