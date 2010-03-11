@@ -10,7 +10,7 @@
 #include </dream/driver/include/ost/dmx.h>
 #include </dream/driver/include/ost/video.h>
 
-#define VIDEO_DEV "/dev/dvb/card0/video0"
+#define VIDEO_DEV "/dev/dvb/adapter0/video0"
 #define VIDEO_SET_AUTOFLUSH     _IOW('o', 2, int)
 
 void showframe(char * fname)
@@ -38,10 +38,11 @@ void showframe(char * fname)
 static int displayIFrame(const char *frame, int len)
 {
 	int fdv, fdvideo, i;
-        fdv=open("/dev/video", O_WRONLY);
-        if (fdv < 0) {
+
+	fdv=open("/dev/video", O_WRONLY);
+	if (fdv < 0) {
 		printf("cant open /dev/video\n");
-                return -1;
+		return -1;
 	}
 
         fdvideo = open(VIDEO_DEV, O_RDWR);

@@ -23,6 +23,8 @@
 #define __zapit_frontend_h__
 
 #include <inttypes.h>
+#include <linux/dvb/version.h>
+#include <linux/dvb/frontend.h>
 #include "types.h"
 #include "channel.h"
 
@@ -50,14 +52,15 @@ static inline fe_modulation_t dvbs_get_modulation(fe_code_rate_t fec)
 {
 	if((fec < FEC_S2_QPSK_1_2) || (fec < FEC_S2_8PSK_1_2))
 		return QPSK;
-	else 
-#ifdef __sh__
+	else
+#if DVB_API_VERSION < 5
 		return PSK8;
 #else
 		return PSK_8;
 #endif
 }
-#ifndef __sh__
+
+#if DVB_API_VERSION >= 5
 static inline fe_delivery_system_t dvbs_get_delsys(fe_code_rate_t fec)
 {
 	if(fec < FEC_S2_QPSK_1_2)

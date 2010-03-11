@@ -52,7 +52,8 @@ extern CEventServer *eventServer;
 #define EAST	0
 #define WEST	1
 #define USALS
-#ifndef __sh__
+
+#if DVB_API_VERSION >= 5
 static struct dtv_property clr_cmdargs[] = {
 	{ DTV_CLEAR,		{}, { 0			} },
 };
@@ -109,6 +110,7 @@ static struct dtv_properties dvbc_cmdseq = {
 	sizeof(dvbc_cmdargs) / sizeof(struct dtv_property), dvbc_cmdargs
 };
 #endif
+
 #define FREQUENCY	0
 #define MODULATION	1
 #define INVERSION	2
@@ -561,11 +563,11 @@ void CFrontend::getDelSys(int f, int m, char *&fec, char *&sys, char *&mod)
 
 int CFrontend::setFrontend(const struct dvb_frontend_parameters *feparams, bool nowait)
 {
-#ifdef __sh__
+#if DVB_API_VERSION < 5
 
 	{
 		struct dvb_frontend_event ev;
-	
+
 		TIMER_INIT();
 		TIMER_START();
 		struct pollfd pfd;
@@ -581,7 +583,7 @@ int CFrontend::setFrontend(const struct dvb_frontend_parameters *feparams, bool 
 		}
 		TIMER_STOP("[fe0] clear events took");
 	}
-	
+
 	tuned = false;
 
 	{
@@ -593,7 +595,7 @@ int CFrontend::setFrontend(const struct dvb_frontend_parameters *feparams, bool 
 		}
 		TIMER_STOP("[fe0] FE_SET_FRONTEND took");
 	}
-	
+
 	{
 		TIMER_INIT();
 		TIMER_START();
@@ -896,7 +898,7 @@ void CFrontend::setDiseqcType(const diseqc_t newDiseqcType)
 		sendDiseqcReset();
 	}
 #else
-	
+
 	if (diseqcType != newDiseqcType) {
 		sendDiseqcPowerOn();
 		sendDiseqcReset();
@@ -935,7 +937,7 @@ void CFrontend::sendMotorCommand(uint8_t cmdtype, uint8_t address, uint8_t comma
 		sendDiseqcCommand(&cmd, 50);
 
 	printf("[fe%d] motor command sent.\n", fenumber);
-	
+
 }
 
 void CFrontend::positionMotor(uint8_t motorPosition)
@@ -1180,7 +1182,7 @@ void CFrontend::setDiseqc(int sat_no, const uint8_t pol, const uint32_t frequenc
 
 		delay = 0;
 		if (diseqcType == DISEQC_1_1) {	/* setup the uncommited switch first */
-			
+
 			delay = 60;	// delay for 1.0 after 1.1 command
 			cmd.msg[2] = 0x39;	/* port group = uncommited switches */
 #if 1
@@ -1199,7 +1201,7 @@ void CFrontend::setDiseqc(int sat_no, const uint8_t pol, const uint32_t frequenc
 #endif
 		}
 		if (diseqcType >= DISEQC_1_0) {	/* DISEQC 1.0 */
-			
+
 			usleep(delay * 1000);
 			//cmd.msg[0] |= 0x01;	/* repeated transmission */
 			cmd.msg[2] = 0x38;	/* port group = commited switches */
