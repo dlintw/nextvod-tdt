@@ -4409,7 +4409,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/plu
 diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2009-12-11 21:40:12.000000000 +0100
-@@ -0,0 +1,6709 @@
+@@ -0,0 +1,6720 @@
 +/******************************************************************************
 + *                      <<< TuxTxt - Teletext Plugin >>>                      *
 + *                                                                            *
@@ -4437,6 +4437,9 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +#include <sys/time.h>
 +#include <unistd.h>
 +
++
++//aktivate or deaktivate Menu Key
++#define CONFIG_MENU
 +
 +int log_level = 0;
 +
@@ -6247,7 +6250,9 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +			case RC_MINUS:	 SwitchScreenMode(-1);prevscreenmode = screenmode; break;
 +			case RC_MUTE:	 SwitchTranspMode();	break;
 +			case RC_HELP:	 SwitchHintMode();		break;
++#ifdef CONFIG_MENU
 +			case RC_DBOX:	 ConfigMenu(0);			break;
++#endif
 +			}
 +		}
 +
@@ -6608,8 +6613,10 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +
 +		if (auto_national)
 +			national_subset = pid_table[0].national_subset;
++#ifdef CONFIG_MENU
 +		if (pids_found > 1)
 +			ConfigMenu(1);
++#endif
 +		else
 +		{
 +			tuxtxt_cache.vtxtpid = pid_table[0].vtxt_pid;
@@ -7069,6 +7076,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +/******************************************************************************
 + * ConfigMenu                                                                 *
 + ******************************************************************************/
++#ifdef CONFIG_MENU
 +#if TUXTXT_DEBUG
 +void charpage()
 +{
@@ -7359,12 +7367,13 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +
 +	/* set blocking mode */
 +	blocking = 1;
++	blit();
 +
 +	/* loop */
 +	do {
 +		if (GetRCCode() == 1)
 +		{
-+
++			//blit();
 +			if (
 +#if (RC_1 > 0)
 +				RCCode >= RC_1 && /* generates a warning... */
@@ -7898,6 +7907,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +				} /* RC_OK */
 +				break;
 +			}
++			blit();
 +		}
 +		//UpdateLCD(); /* update number of cached pages */
 +	} while ((RCCode != RC_HOME) && (RCCode != RC_DBOX) && (RCCode != RC_MUTE));
@@ -7912,6 +7922,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +
 +	debugf(5, "%s: <\n", __func__);
 +}
++#endif
 +
 +/******************************************************************************
 + * PageInput                                                                  *
