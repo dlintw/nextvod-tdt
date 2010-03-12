@@ -363,6 +363,7 @@ struct dvb_frontend_event eFrontend::getEvent(void)
 	return event;
 }
 
+#if HAVE_DVB_API_VERSION >= 5
 void eFrontend::getDelSys(int f, int m, char *&fec, char *&sys, char *&mod)
 {
 	if (info.type == FE_QPSK) {
@@ -456,6 +457,7 @@ void eFrontend::getDelSys(int f, int m, char *&fec, char *&sys, char *&mod)
 	}
 }
 
+#endif
 int eFrontend::setFrontend()
 {
 	if (type == eSystemInfo::feUnknown)

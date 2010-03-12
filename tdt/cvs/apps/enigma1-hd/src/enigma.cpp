@@ -258,6 +258,20 @@ void eZap::init_eZap(int argc, char **argv)
 			eFatal("couldn't load RC Mapping file for SpiderBox HL101");
 			break;
 		}
+		case eSystemInfo::UFS9101W:
+		{
+			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcufs9101w.xml") )
+			if ( eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcufs9101w.xml") )
+			eFatal("couldn't load RC Mapping file for Kathrein UFS910 1W");
+			break;
+		}
+		case eSystemInfo::UFS91014W:
+		{
+			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcufs91014w.xml") )
+			if ( eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcufs91014w.xml") )
+			eFatal("couldn't load RC Mapping file for Kathrein UFS910 14W");
+			break;
+		}
 		//FIXME add for other models
 		default:
 			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdbox_inputdev.xml") )

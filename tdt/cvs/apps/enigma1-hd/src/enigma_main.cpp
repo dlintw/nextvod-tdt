@@ -3355,6 +3355,8 @@ void eZapMain::pause()
 			                case eSystemInfo::DGS_R9000:
 			                case eSystemInfo::HL101:
 			            		break;
+			                case eSystemInfo::UFS9101W ... eSystemInfo::UFS91014W:
+						break;
 					default:
                         eDebug("[%s] timeshift", __FUNCTION__);
 						record();
@@ -8097,6 +8099,9 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 			new eListBoxEntryText(&list, _("shutdown now"), (void*)1, 0, _("shutdown your box"));
 			new eListBoxEntryText(&list, _("reboot now"), (void*)4, 0, _("restart your box"));
 			break;
+		case eSystemInfo::UFS9101W ... eSystemInfo::UFS91014W:
+			new eListBoxEntryText(&list, _("shutdown now"), (void*)1, 0, _("shutdown your box"));
+			new eListBoxEntryText(&list, _("reboot now"), (void*)4, 0, _("restart your box"));
 		case eSystemInfo::dbox2Nokia ... eSystemInfo::dbox2Philips:
 			new eListBoxEntryText(&list, _("shutdown now"), (void*)1, 0, _("shutdown your dbox-2"));
 			new eListBoxEntryText(&list, _("restart"), (void*)4, 0, _("restart your dbox-2"));

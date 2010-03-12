@@ -94,6 +94,42 @@ void eSystemInfo::init_eSystemInfo()
 			hasci=1;
 			hasscartswitch = 1;
 			break;
+		case UFS9101W:
+		    eDebug("[SystemInfo] HW type: UFS9101W");
+			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+			manufactstr="Kathrein";
+			helpstr="ufs9101w";
+			cpustr="STi7100, 265MHz";
+			haskeyboard=1;
+			modelstr="Kathrein UFS910 1W";
+			if(!strncmp(" Conexant", tuner.c_str(), 9))
+				tunerstr = "Conexant cx24116 DVB S2";
+			else
+				tunerstr = "Unknown";
+			midstr="92";
+			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
+			hasstandbywakeuptimer = 1;
+			hasci=1;
+			hasscartswitch = 1;
+			break;
+		case UFS91014W:
+		    eDebug("[SystemInfo] HW type: UFS91014W");
+			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+			manufactstr="Kathrein";
+			helpstr="ufs91014w";
+			cpustr="STi7100, 265MHz";
+			haskeyboard=1;
+			modelstr="Kathrein UFS910 14W";
+			if(!strncmp(" Conexant", tuner.c_str(), 9))
+				tunerstr = "Conexant cx24116 DVB S2";
+			else
+				tunerstr = "Unknown";
+			midstr="92";
+			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
+			hasstandbywakeuptimer = 0;
+			hasci=1;
+			hasscartswitch = 1;
+			break;
 		case DGS_R900:
 		    eDebug("[SystemInfo] HW type: IPBOX 900");
 			caids.insert(0x4a70);
