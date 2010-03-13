@@ -1,7 +1,7 @@
 # tuxbox/libtuxbox
 
 # This file serves as a marker for libtuxbox
-$(targetprefix)/lib/pkgconfig/tuxbox.pc:
+$(targetprefix)/usr/lib/pkgconfig/tuxbox.pc:
 	$(MAKE) libtuxbox
 
 $(appsdir)/tuxbox/libtuxbox/config.status: bootstrap
