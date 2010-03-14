@@ -250,3 +250,22 @@
   	}
   
   	if ((ret = register_netdev(dev))) {
+*** linux-sh4-2.6.23.17_stm23_0119_orig/drivers/usb/storage/usb.c	Sun Mar 14 03:16:37 2010
+--- linux-sh4/drivers/usb/storage/usb.c	Sun Mar 14 02:35:09 2010
+***************
+*** 107,113 ****
+  MODULE_DESCRIPTION("USB Mass Storage driver for Linux");
+  MODULE_LICENSE("GPL");
+  
+! static unsigned int delay_use = 5;
+  module_param(delay_use, uint, S_IRUGO | S_IWUSR);
+  MODULE_PARM_DESC(delay_use, "seconds to delay before using a new device");
+  
+--- 107,113 ----
+  MODULE_DESCRIPTION("USB Mass Storage driver for Linux");
+  MODULE_LICENSE("GPL");
+  
+! static unsigned int delay_use = 0;
+  module_param(delay_use, uint, S_IRUGO | S_IWUSR);
+  MODULE_PARM_DESC(delay_use, "seconds to delay before using a new device");
+  
