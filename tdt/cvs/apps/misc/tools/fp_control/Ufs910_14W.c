@@ -180,7 +180,7 @@ void startPseudoStandby(Context_t* context, tUFS910Private* private)
 	printf("%s\n", __func__);
 
         setLed(context, 1, 0);
-        setLed(context, 2, 0);
+        setLed(context, 2, 1);
         setLed(context, 3, 0);
 
         if (private->nfs == 0)
@@ -279,13 +279,7 @@ static int init(Context_t* context)
     private->fd_red = open("/sys/class/leds/ufs910\\:red/brightness", O_WRONLY);
     private->fd_yellow = open("/sys/class/leds/ufs910\\:yellow/brightness", O_WRONLY);
     
-    private->vfd = open(cVFD_DEVICE, O_RDWR);
-      
-    if (private->vfd < 0)
-    {
-       fprintf(stderr, "cannot open %s\n", cVFD_DEVICE);
-       perror("");
-    }
+    private->vfd = vFd;
     
     checkConfig(&private->display, &private->display_custom, &private->timeFormat, &private->wakeupDecrement);
 
@@ -489,21 +483,25 @@ static int Sleep(Context_t* context, time_t* wakeUpGMT)
 	
 static int setText(Context_t* context, char* theText)
 {
-   struct vfd_ioctl_data vData;
-   
-   printf("%s\n", __func__);
+    struct vfd_ioctl_data data;
 
-   strncpy((char*) vData.data, theText, cMAXCharsUFS910);
-   vData.data[cMAXCharsUFS910] = '\0';
-   vData.length = strlen((char*) vData.data);
-   
-   if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-   {
-      perror("standby: ");
-      return -1;
-   }
+    tUFS910Private* private = (tUFS910Private*) 
+        ((Model_t*)context->m)->private;
 
-   return 0;   
+    memset ( data.data, ' ', 63 );
+    
+    memcpy ( data.data, theText, strlen(theText) );	
+
+    data.start = 0;
+    data.length = strlen(theText);
+
+    if (ioctl ( private->vfd, VFDDISPLAYCHARS, &data ) < 0)
+    {
+       perror("settext: ");
+       return -1;
+    }
+
+    return 0;   
 }
 	
 static int setLed(Context_t* context, int which, int on)
