@@ -520,7 +520,7 @@ static int setLed(Context_t* context, int which, int on)
       write (private->fd_red, on == 0 ? "0" : "1", 1);
    else
    if (which == 3)
-      write (private->fd_red, on == 0 ? "0" : "1", 1);
+      write (private->fd_yellow, on == 0 ? "0" : "1", 1);
    else
       return -1;
    return 0;
