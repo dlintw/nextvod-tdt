@@ -4,6 +4,11 @@
 
 # USE AS ROOT (sudo su)
 
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root (sudo $0)" 1>&2
+  exit 1
+fi
+    
 # Most important packages
 zypper install -y subversion \
 git-core \
@@ -23,8 +28,4 @@ swig \
 make \
 gcc \
 gcc-c++
-
-
-
-
 

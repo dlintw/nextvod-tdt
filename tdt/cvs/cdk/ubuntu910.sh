@@ -1,10 +1,10 @@
 #!/bin/bash
 # USE AS ROOT (sudo su)
 
-# Insert old RPM repositories 
-echo "deb http://de.archive.ubuntu.com/ubuntu/ jaunty main restricted" >> /etc/apt/sources.list
-echo "deb-src http://de.archive.ubuntu.com/ubuntu/ jaunty main restricted" >> /etc/apt/sources.list
-apt-get update
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root (sudo $0)" 1>&2
+  exit 1
+fi
 
 # Link sh to bash instead of dash
 rm -f /bin/sh
