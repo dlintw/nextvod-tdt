@@ -101,9 +101,6 @@ CONFIGURE_OPTS = \
         --with-dvbincludes=$(driverdir)/dvb/include \
         --with-target=cdk
 
-export DRPM 
-export DRPMBUILD 
-
 if ENABLE_CCACHE
 CONFIGURE_OPTS += --enable-ccache
 endif
