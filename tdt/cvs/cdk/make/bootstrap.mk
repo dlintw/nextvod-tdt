@@ -58,6 +58,8 @@ HOST_RPMCONFIG_VERSION	:= 2.2-10
 RPMS/noarch/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).noarch.rpm: \
 		Archive/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $< && \
+	( cd SPECS; patch -p1 stm-$(HOST_RPMCONFIG)-2.2.spec < ../Patches/stm-$(HOST_RPMCONFIG).spec22.diff ) && \
+	( cd SOURCES; cp ../Patches/stm-host-rpmconfig-compress_man-allways-true.patch . ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_RPMCONFIG)-2.2.spec
 
 $(HOST_RPMCONFIG): RPMS/noarch/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).noarch.rpm
@@ -65,7 +67,7 @@ $(HOST_RPMCONFIG): RPMS/noarch/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VER
 		--relocate /opt/STM/STLinux-2.2=$(prefix) $< && \
 	touch .deps/$(notdir $@)
 else
-HOST_RPMCONFIG_VERSION	:= 2.3-15
+HOST_RPMCONFIG_VERSION	:= 2.3-16
 
 RPMS/noarch/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).noarch.rpm: \
 		Archive/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).src.rpm
@@ -89,6 +91,7 @@ HOST_BASE_PASSWD_VERSION	:= 3.5.9-3
 RPMS/sh4/$(STLINUX)-$(HOST_BASE_PASSWD)-$(HOST_BASE_PASSWD_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-$(HOST_BASE_PASSWD)-$(HOST_BASE_PASSWD_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $< && \
+	( cd SPECS; patch -p1 stm-$(HOST_BASE_PASSWD).spec < ../Patches/stm-$(HOST_BASE_PASSWD).spec22.diff ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_BASE_PASSWD).spec
 else
 HOST_BASE_PASSWD_VERSION	:= 3.5.9-6
@@ -109,12 +112,12 @@ $(HOST_BASE_PASSWD): RPMS/sh4/$(STLINUX)-$(HOST_BASE_PASSWD)-$(HOST_BASE_PASSWD_
 HOST_DISTRIBUTIONUTILS		:= host-distributionutils
 HOST_DISTRIBUTIONUTILS_VERSION	:= 2.8.4-4
 
-RPMS/i386/$(STLINUX)-$(HOST_DISTRIBUTIONUTILS)-$(HOST_DISTRIBUTIONUTILS_VERSION).i386.rpm: \
+RPMS/${host_arch}/$(STLINUX)-$(HOST_DISTRIBUTIONUTILS)-$(HOST_DISTRIBUTIONUTILS_VERSION).${host_arch}.rpm: \
 		Archive/$(STM_SRC)-$(HOST_DISTRIBUTIONUTILS)-$(HOST_DISTRIBUTIONUTILS_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $< && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_DISTRIBUTIONUTILS).spec
 
-$(HOST_DISTRIBUTIONUTILS): RPMS/i386/$(STLINUX)-$(HOST_DISTRIBUTIONUTILS)-$(HOST_DISTRIBUTIONUTILS_VERSION).i386.rpm
+$(HOST_DISTRIBUTIONUTILS): RPMS/${host_arch}/$(STLINUX)-$(HOST_DISTRIBUTIONUTILS)-$(HOST_DISTRIBUTIONUTILS_VERSION).${host_arch}.rpm
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
@@ -251,26 +254,26 @@ CROSS_DISTRIBUTIONUTILS		:= cross-sh4-distributionutils
 if STM22
 CROSS_DISTRIBUTIONUTILS_VERSION	:= 1.14-3
 
-RPMS/i386/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).i386.rpm: \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).${host_arch}.rpm: \
 		Archive/$(STLINUX)-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS))-$(CROSS_DISTRIBUTIONUTILS_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $< && \
 	( cd SPECS; patch -p1 stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec < ../Patches/stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec22.diff ) && \
 	( cd SOURCES; cp ../Patches/hardhatutils-srcdir.diff . ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec
 
-$(CROSS_DISTRIBUTIONUTILS): RPMS/i386/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).i386.rpm
+$(CROSS_DISTRIBUTIONUTILS): RPMS/${host_arch}/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).${host_arch}.rpm
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	$(LN_SF) $(hostprefix)/bin/target-initdconfig $(crossprefix)/bin/target-initdconfig
 	touch .deps/$(notdir $@)
 else
 CROSS_DISTRIBUTIONUTILS_VERSION	:= 1.14-5
 
-RPMS/i386/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).i386.rpm: \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).${host_arch}.rpm: \
 		Archive/$(STLINUX)-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS))-$(CROSS_DISTRIBUTIONUTILS_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $< && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec
 
-$(CROSS_DISTRIBUTIONUTILS): RPMS/i386/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).i386.rpm
+$(CROSS_DISTRIBUTIONUTILS): RPMS/${host_arch}/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).${host_arch}.rpm
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 endif
@@ -284,8 +287,8 @@ CROSS_BINUTILS_DEV	:= cross-sh4-binutils-dev
 if STM22
 CROSS_BINUTILS_VERSION	:= 2.17.50.0.4-13
 
-RPMS/i386/$(STLINUX)-$(CROSS_BINUTILS)-$(CROSS_BINUTILS_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_BINUTILS_DEV)-$(CROSS_BINUTILS_VERSION).i386.rpm: \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_BINUTILS)-$(CROSS_BINUTILS_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_BINUTILS_DEV)-$(CROSS_BINUTILS_VERSION).${host_arch}.rpm: \
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_BINUTILS))-$(CROSS_BINUTILS_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $< && \
 	( cd SPECS; patch -p1 stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS))-sh4processed.spec < ../Patches/stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS))-sh4processed.spec22.diff ) && \
@@ -296,19 +299,19 @@ else
 CROSS_BINUTILS_VERSION	:= 2.18.50.0.8-34
 #stlinux23-cross-binutils-2.18-33.src.rpm
 
-RPMS/i386/$(STLINUX)-$(CROSS_BINUTILS)-$(CROSS_BINUTILS_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_BINUTILS_DEV)-$(CROSS_BINUTILS_VERSION).i386.rpm: \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_BINUTILS)-$(CROSS_BINUTILS_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_BINUTILS_DEV)-$(CROSS_BINUTILS_VERSION).${host_arch}.rpm: \
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_BINUTILS))-$(CROSS_BINUTILS_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $< && \
 	( cd SPECS; patch -p1 stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec < ../Patches/stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec23.diff ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
 endif
 
-$(CROSS_BINUTILS): RPMS/i386/$(STLINUX)-$(CROSS_BINUTILS)-$(CROSS_BINUTILS_VERSION).i386.rpm
+$(CROSS_BINUTILS): RPMS/${host_arch}/$(STLINUX)-$(CROSS_BINUTILS)-$(CROSS_BINUTILS_VERSION).${host_arch}.rpm
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
-$(CROSS_BINUTILS_DEV): RPMS/i386/$(STLINUX)-$(CROSS_BINUTILS_DEV)-$(CROSS_BINUTILS_VERSION).i386.rpm
+$(CROSS_BINUTILS_DEV): RPMS/${host_arch}/$(STLINUX)-$(CROSS_BINUTILS_DEV)-$(CROSS_BINUTILS_VERSION).${host_arch}.rpm
 	@rpm  $(DRPM) --ignorearch --nodeps --noscripts -Uhv $< && \
 	touch .deps/$(notdir $@)
 
@@ -337,11 +340,11 @@ if STM22
 CROSS_GCC_VERSION	:= 4.1.1-23
 CROSS_GCC_RAWVERSION	:= 4.1.1
 
-RPMS/i386/$(STLINUX)-$(CROSS_GCC)-$(CROSS_GCC_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_CPP)-$(CROSS_GCC_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_G++)-$(CROSS_GCC_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_PROTOIZE)-$(CROSS_GCC_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_LIBGCC)-$(CROSS_GCC_VERSION).i386.rpm: \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_GCC)-$(CROSS_GCC_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_CPP)-$(CROSS_GCC_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_G++)-$(CROSS_GCC_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_PROTOIZE)-$(CROSS_GCC_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_LIBGCC)-$(CROSS_GCC_VERSION).${host_arch}.rpm: \
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GCC))-$(CROSS_GCC_VERSION).src.rpm \
 		| Archive/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 		Archive/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm \
@@ -360,11 +363,11 @@ else
 CROSS_GCC_VERSION	:= 4.2.4-49
 CROSS_GCC_RAWVERSION	:= 4.2.4
 
-RPMS/i386/$(STLINUX)-$(CROSS_GCC)-$(CROSS_GCC_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_CPP)-$(CROSS_GCC_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_G++)-$(CROSS_GCC_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_PROTOIZE)-$(CROSS_GCC_VERSION).i386.rpm \
-RPMS/i386/$(STLINUX)-$(CROSS_LIBGCC)-$(CROSS_GCC_VERSION).i386.rpm: \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_GCC)-$(CROSS_GCC_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_CPP)-$(CROSS_GCC_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_G++)-$(CROSS_GCC_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_PROTOIZE)-$(CROSS_GCC_VERSION).${host_arch}.rpm \
+RPMS/${host_arch}/$(STLINUX)-$(CROSS_LIBGCC)-$(CROSS_GCC_VERSION).${host_arch}.rpm: \
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GCC))-$(CROSS_GCC_VERSION).src.rpm \
 		| Archive/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 		Archive/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm \
@@ -380,34 +383,34 @@ RPMS/i386/$(STLINUX)-$(CROSS_LIBGCC)-$(CROSS_GCC_VERSION).i386.rpm: \
 	rpm  $(DRPM) -ev $(STLINUX)-sh4-$(GLIBC)
 endif
 
-$(CROSS_GCC): RPMS/i386/$(STLINUX)-$(CROSS_GCC)-$(CROSS_GCC_VERSION).i386.rpm
+$(CROSS_GCC): RPMS/${host_arch}/$(STLINUX)-$(CROSS_GCC)-$(CROSS_GCC_VERSION).${host_arch}.rpm
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	sh4-linux-objcopy -v --redefine-sym __ic_invalidate_syscall=__ic_invalidate $(prefix)/devkit/sh4/lib/gcc/sh4-linux/$(CROSS_GCC_RAWVERSION)/libgcc.a && \
 	touch .deps/$(notdir $@)
 
-$(CROSS_CPP): RPMS/i386/$(STLINUX)-$(CROSS_CPP)-$(CROSS_GCC_VERSION).i386.rpm
+$(CROSS_CPP): RPMS/${host_arch}/$(STLINUX)-$(CROSS_CPP)-$(CROSS_GCC_VERSION).${host_arch}.rpm
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
-$(CROSS_G++): RPMS/i386/$(STLINUX)-$(CROSS_G++)-$(CROSS_GCC_VERSION).i386.rpm
+$(CROSS_G++): RPMS/${host_arch}/$(STLINUX)-$(CROSS_G++)-$(CROSS_GCC_VERSION).${host_arch}.rpm
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
 $(DEPDIR)/min-$(CROSS_LIBGCC) $(DEPDIR)/std-$(CROSS_LIBGCC) $(DEPDIR)/max-$(CROSS_LIBGCC) \
 $(DEPDIR)/$(CROSS_LIBGCC): \
-$(DEPDIR)/%$(CROSS_LIBGCC): RPMS/i386/$(STLINUX)-$(CROSS_LIBGCC)-$(CROSS_GCC_VERSION).i386.rpm | $(DEPDIR)/%$(GLIBC)
+$(DEPDIR)/%$(CROSS_LIBGCC): RPMS/${host_arch}/$(STLINUX)-$(CROSS_LIBGCC)-$(CROSS_GCC_VERSION).${host_arch}.rpm | $(DEPDIR)/%$(GLIBC)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb  $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-$(CROSS_PROTOIZE): RPMS/i386/$(STLINUX)-$(CROSS_PROTOIZE)-$(CROSS_GCC_VERSION).i386.rpm
+$(CROSS_PROTOIZE): RPMS/${host_arch}/$(STLINUX)-$(CROSS_PROTOIZE)-$(CROSS_GCC_VERSION).${host_arch}.rpm
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
 #flash-cross-sh4-libgcc: $(flashprefix)/root/lib/libgcc_s-$(CROSS_GCC_RAWVERSION).so.1
 #
-#$(flashprefix)/root/lib/libgcc_s-$(CROSS_GCC_RAWVERSION).so.1: RPMS/i386/stlinux20-$(CROSS_LIBGCC)-$(CROSS_GCC_VERSION).i386.rpm
+#$(flashprefix)/root/lib/libgcc_s-$(CROSS_GCC_RAWVERSION).so.1: RPMS/${host_arch}/stlinux20-$(CROSS_LIBGCC)-$(CROSS_GCC_VERSION).${host_arch}.rpm
 #	@rpm --dbpath $(flashprefix)-rpmdb  $(DRPM) --ignorearch --nodeps  -Uhv \
 #		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $<
 #	touch $@
@@ -419,7 +422,7 @@ $(CROSS_PROTOIZE): RPMS/i386/$(STLINUX)-$(CROSS_PROTOIZE)-$(CROSS_GCC_VERSION).i
 $(DEPDIR)/bootstrap-cross: | \
 		bootstrap-host cross-sh4-distributionutils cross-sh4-filesystem cross-sh4-binutils cross-sh4-binutils-dev \
 		cross-sh4-cpp cross-sh4-gcc cross-sh4-g++
-	[ "x$*" = "x" ] && touch -r RPMS/i386/$(STLINUX)-$(CROSS_G++)-$(CROSS_GCC_VERSION).i386.rpm $@ || true
+	[ "x$*" = "x" ] && touch -r RPMS/${host_arch}/$(STLINUX)-$(CROSS_G++)-$(CROSS_GCC_VERSION).${host_arch}.rpm $@ || true
 
 $(DEPDIR)/setup-cross-doc: \
 	cross-binutils-doc cross-sh4-cpp-doc cross-sh4-gcc-doc cross-sh4-g++-doc

@@ -59,3 +59,13 @@
         --with-sysroot=%{_stm_cross_target_dir}
  make
  
+--- old/stm-cross-binutils-sh4processed.spec	2010-02-27 23:56:23.298950406 +0100
++++ new/stm-cross-binutils-sh4processed.spec	2010-02-27 23:57:10.007453778 +0100
+@@ -60,6 +60,7 @@
+ %prep
+ %target_check
+ %setup -n binutils-%{binutils_version}
++%define _default_patch_fuzz 2
+ %patch -p1
+ #@arm@%patch0 -p1
+ #@sh4@%patch0 -p1

@@ -51,15 +51,15 @@ KERNELHEADERS_VERSION	:= 2.6.23.17_stm23_0119-41
 
 RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm: \
 		 Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-kernel-headers-kbuild.spec < ../Patches/stm-target-kernel-headers-kbuild.spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-kernel-headers-kbuild.spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-kernel-headers-kbuild.spec
 endif
 
 #RPMS/noarch/stlinux22-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm: \
 #		Archive/stlinux22-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm
-#	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-#	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(KERNELHEADERS).spec
+#	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+#	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(KERNELHEADERS).spec
 ##	( cd SPECS; patch -p1 stm-target-$(KERNELHEADERS).spec < ../Patches/stm-target-$(KERNELHEADERS).spec.diff ) && \
 ##
 #
@@ -69,7 +69,7 @@ else
 $(DEPDIR)/max-$(KERNELHEADERS) \
 $(DEPDIR)/$(KERNELHEADERS): \
 $(DEPDIR)/%$(KERNELHEADERS): RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	touch $@
 endif
@@ -86,9 +86,9 @@ GLIBC_RAWVERSION	:= 2.5
 RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSION).src.rpm | filesystem
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(GLIBC)-sh4processed.spec < ../Patches/stm-target-$(GLIBC)-sh4processed.spec22.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(GLIBC)-sh4processed.spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(GLIBC)-sh4processed.spec
 else
 
 #stlinux23
@@ -100,21 +100,21 @@ GLIBC_RAWVERSION	:= 2.6.1
 RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSION).src.rpm | filesystem
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(GLIBC).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(GLIBC).spec
 endif
 
 $(DEPDIR)/min-$(GLIBC) $(DEPDIR)/std-$(GLIBC) $(DEPDIR)/max-$(GLIBC) \
 $(DEPDIR)/$(GLIBC): \
 $(DEPDIR)/%$(GLIBC): RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm | $(DEPDIR)/%filesystem
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps  -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(GLIBC_DEV) $(DEPDIR)/std-$(GLIBC_DEV) $(DEPDIR)/max-$(GLIBC_DEV) \
 $(DEPDIR)/$(GLIBC_DEV): \
 $(DEPDIR)/%$(GLIBC_DEV): $(DEPDIR)/%$(GLIBC) RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
@@ -128,7 +128,7 @@ $(DEPDIR)/%$(GLIBC_DEV): $(DEPDIR)/%$(GLIBC) RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV
 flash-glibc: $(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so
 
 $(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so: RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps  -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
@@ -154,9 +154,9 @@ RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(GCC)-$(GCC_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(GCC)-sh4processed.spec < ../Patches/stm-target-$(GCC)-sh4processed.spec22.diff )
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb  --clean --target=sh4-linux SPECS/stm-target-$(GCC)-sh4processed.spec
+	rpmbuild $(DRPMBUILD) -bb  --clean --target=sh4-linux SPECS/stm-target-$(GCC)-sh4processed.spec
 else
 
 #stlinux23
@@ -168,40 +168,42 @@ RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm: \
 		Archive/stlinux23-target-$(GCC)-$(GCC_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(GCC).spec < ../Patches/stm-target-$(GCC).spec23.diff )
 	export PATH=$(hostprefix)/bin:$(PATH) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb  --clean --target=sh4-linux SPECS/stm-target-$(GCC).spec
+	rpmbuild $(DRPMBUILD) -bb  --clean --target=sh4-linux SPECS/stm-target-$(GCC).spec
 endif
 
 $(DEPDIR)/min-$(GCC) $(DEPDIR)/std-$(GCC) $(DEPDIR)/max-$(GCC) $(DEPDIR)/$(GCC): \
 $(DEPDIR)/%$(GCC): $(DEPDIR)/%$(GLIBC_DEV) RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(LIBSTDC) $(DEPDIR)/std-$(LIBSTDC) $(DEPDIR)/max-$(LIBSTDC) $(DEPDIR)/$(LIBSTDC): \
 $(DEPDIR)/%$(LIBSTDC): $(DEPDIR)/%$(CROSS_LIBGCC) RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(LIBSTDC_DEV) $(DEPDIR)/std-$(LIBSTDC_DEV) $(DEPDIR)/max-$(LIBSTDC_DEV) $(DEPDIR)/$(LIBSTDC_DEV): \
 $(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
+	sed -i "/^libdir/s|'/usr/lib'|'$(targetprefix)/usr/lib'|" $(targetprefix)/usr/lib/lib{std,sup}c++.la
+	sed -i "/^dependency_libs/s|-L/usr/lib -L/lib ||" $(targetprefix)/usr/lib/lib{std,sup}c++.la
 
 $(DEPDIR)/min-$(LIBGCC) $(DEPDIR)/std-$(LIBGCC) $(DEPDIR)/max-$(LIBGCC) $(DEPDIR)/$(LIBGCC): \
 $(DEPDIR)/%$(LIBGCC): RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 #flash-libstdc++: $(flashprefix)/root/usr/lib/libstdc++.so.6.0.3
 #
 #$(flashprefix)/root/usr/lib/libstdc++.so.6.0.3: RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm
-#	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps  -Uhv \
+#	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 #		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 #	touch $@
 #	@FLASHROOTDIR_MODIFIED@
@@ -226,13 +228,13 @@ RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP)-$(LIBTERMCAP_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP_DEV)-$(LIBTERMCAP_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP_DOC)-$(LIBTERMCAP_VERSION).sh4.rpm: \
 		Archive/$(STM_SRC)-target-$(LIBTERMCAP)-$(LIBTERMCAP_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(LIBTERMCAP).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(LIBTERMCAP).spec
 
 $(DEPDIR)/min-$(LIBTERMCAP) $(DEPDIR)/std-$(LIBTERMCAP) $(DEPDIR)/max-$(LIBTERMCAP) \
 $(DEPDIR)/$(LIBTERMCAP): \
 $(DEPDIR)/%$(LIBTERMCAP): bootstrap RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP)-$(LIBTERMCAP_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch  -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	ln -sf libtermcap.so.2 $(prefix)/$*cdkroot/usr/lib/libtermcap.so && \
 	$(INSTALL) -m 644 $(buildprefix)/root/etc/termcap $(prefix)/$*cdkroot/etc && \
@@ -242,7 +244,7 @@ $(DEPDIR)/%$(LIBTERMCAP): bootstrap RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP)-$(LIBT
 $(DEPDIR)/min-$(LIBTERMCAP_DEV) $(DEPDIR)/std-$(LIBTERMCAP_DEV) $(DEPDIR)/max-$(LIBTERMCAP_DEV) \
 $(DEPDIR)/$(LIBTERMCAP_DEV): \
 $(DEPDIR)/%$(LIBTERMCAP_DEV): $(DEPDIR)/%$(LIBTERMCAP) RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP_DEV)-$(LIBTERMCAP_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch  -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -250,7 +252,7 @@ $(DEPDIR)/%$(LIBTERMCAP_DEV): $(DEPDIR)/%$(LIBTERMCAP) RPMS/sh4/$(STLINUX)-sh4-$
 $(DEPDIR)/min-$(LIBTERMCAP_DOC) $(DEPDIR)/std-$(LIBTERMCAP_DOC) $(DEPDIR)/max-$(LIBTERMCAP_DOC) \
 $(DEPDIR)/$(LIBTERMCAP_DOC): \
 $(DEPDIR)/%$(LIBTERMCAP_DOC): RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP_DOC)-$(LIBTERMCAP_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch  -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -259,7 +261,7 @@ if TARGETRULESET_FLASH
 flash-libtermcap: $(flashprefix)/root/usr/lib/libtermcap.so.$(LIBTERMCAP_RAWVERSION)
 
 $(flashprefix)/root/usr/lib/libtermcap.so.$(LIBTERMCAP_RAWVERSION): ncurses RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP)-$(LIBTERMCAP_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps  -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	$(INSTALL) -m 644 $(buildprefix)/root/etc/termcap $(flashprefix)/root/etc && \
 	touch $@
@@ -279,14 +281,14 @@ RPMS/sh4/$(STLINUX)-sh4-$(NCURSES)-$(NCURSES_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_BASE)-$(NCURSES_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_DEV)-$(NCURSES_VERSION).sh4.rpm: \
 		Archive/$(STM_SRC)-target-$(NCURSES)-$(NCURSES_VERSION).src.rpm | $(DEPDIR)/$(LIBSTDC_DEV)
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(NCURSES).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(NCURSES).spec
 	touch $(DEPDIR)/ncurses.do_compile
 
 $(DEPDIR)/min-$(NCURSES_BASE) $(DEPDIR)/std-$(NCURSES_BASE) $(DEPDIR)/max-$(NCURSES_BASE) \
 $(DEPDIR)/$(NCURSES_BASE): \
 $(DEPDIR)/%$(NCURSES_BASE): RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_BASE)-$(NCURSES_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch  -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $<)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -294,7 +296,7 @@ $(DEPDIR)/%$(NCURSES_BASE): RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_BASE)-$(NCURSES_VE
 $(DEPDIR)/min-$(NCURSES) $(DEPDIR)/std-$(NCURSES) $(DEPDIR)/max-$(NCURSES) \
 $(DEPDIR)/$(NCURSES): \
 $(DEPDIR)/%$(NCURSES): $(DEPDIR)/%$(NCURSES_BASE) RPMS/sh4/$(STLINUX)-sh4-$(NCURSES)-$(NCURSES_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch  -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -303,7 +305,7 @@ $(DEPDIR)/min-$(NCURSES_DEV) $(DEPDIR)/std-$(NCURSES_DEV) $(DEPDIR)/max-$(NCURSE
 $(DEPDIR)/$(NCURSES_DEV): \
 $(DEPDIR)/%$(NCURSES_DEV): $(DEPDIR)/%$(NCURSES_BASE) RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_DEV)-$(NCURSES_VERSION).sh4.rpm \
 		| RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_DEV)-$(NCURSES_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -319,7 +321,7 @@ $(eval $(call Packages,ncurses))
 #flash-ncurses-base: $(flashprefix)/root/usr/share/terminfo
 #
 #$(flashprefix)/root/usr/share/terminfo: RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_BASE)-$(NCURSES_VERSION).sh4.rpm
-#	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps  -Uhv \
+#	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 #		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 #	touch $@
 #	@FLASHROOTDIR_MODIFIED@
@@ -327,7 +329,7 @@ $(eval $(call Packages,ncurses))
 #flash-ncurses: flash-ncurses-base $(flashprefix)/root/lib/libncurses.so.5.4
 #
 #$(flashprefix)/root/lib/libncurses.so.5.4: RPMS/sh4/$(STLINUX)-sh4-$(NCURSES)-$(NCURSES_VERSION).sh4.rpm
-#	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps  -Uhv \
+#	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 #		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 #	touch $@
 #	@FLASHROOTDIR_MODIFIED@
@@ -341,21 +343,21 @@ if STM22
 BASE_PASSWD_VERSION	:= 3.5.9-6
 RPMS/sh4/$(STLINUX)-sh4-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BASE_PASSWD).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BASE_PASSWD).spec
 else
 BASE_PASSWD_VERSION	:= 3.5.9-7
 RPMS/sh4/$(STLINUX)-sh4-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BASE_PASSWD).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BASE_PASSWD).spec
 endif
 
 $(DEPDIR)/min-$(BASE_PASSWD) $(DEPDIR)/std-$(BASE_PASSWD) $(DEPDIR)/max-$(BASE_PASSWD) \
 $(DEPDIR)/$(BASE_PASSWD): \
 $(DEPDIR)/%$(BASE_PASSWD): $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
 		RPMS/sh4/$(STLINUX)-sh4-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps  --nopost -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  --nopost -Uhv \
 		--replacepkgs --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
         $(hostprefix)/bin/update-passwd -L -p $(prefix)/$*cdkroot/usr/share/base-passwd/passwd.master \
                	-g $(prefix)/$*cdkroot/usr/share/base-passwd/group.master -P $(prefix)/$*cdkroot/etc/passwd \
@@ -371,7 +373,7 @@ flash-base-passwd: $(flashprefix)/root/usr/sbin/update-passwd
 
 $(flashprefix)/root/usr/sbin/update-passwd: \
 		RPMS/sh4/$(STLINUX)-sh4-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps --nopost -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
 		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
         $(hostprefix)/bin/update-passwd -L -p $(flashprefix)/root/usr/share/base-passwd/passwd.master \
                	-g $(flashprefix)/root/usr/share/base-passwd/group.master -P $(flashprefix)/root/etc/passwd \
@@ -391,13 +393,14 @@ if STM22
 MAKEDEV_VERSION	:= 2.3.1-15
 RPMS/sh4/$(STLINUX)-sh4-$(MAKEDEV)-$(MAKEDEV_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(MAKEDEV)-$(MAKEDEV_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(MAKEDEV).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	( cd SPECS; patch -p1 stm-target-$(MAKEDEV).spec < ../Patches//stm-target-$(MAKEDEV).spec22.diff ) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(MAKEDEV).spec
 
 $(DEPDIR)/min-$(MAKEDEV) $(DEPDIR)/std-$(MAKEDEV) $(DEPDIR)/max-$(MAKEDEV) \
 $(DEPDIR)/$(MAKEDEV): \
 $(DEPDIR)/%$(MAKEDEV): root/sbin/MAKEDEV RPMS/sh4/$(STLINUX)-sh4-$(MAKEDEV)-$(MAKEDEV_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps --nopost -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	$(INSTALL) -m 755 root/sbin/MAKEDEV $(prefix)/$*cdkroot/sbin
 	[ "x$*" = "x" ] && touch $@ || true
@@ -439,13 +442,14 @@ else
 MAKEDEV_VERSION	:= 2.3.1-24
 RPMS/sh4/$(STLINUX)-sh4-$(MAKEDEV)-$(MAKEDEV_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(MAKEDEV)-$(MAKEDEV_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(MAKEDEV).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	( cd SPECS; patch -p1 stm-target-$(MAKEDEV).spec < ../Patches/stm-target-$(MAKEDEV).spec23.diff ) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(MAKEDEV).spec
 
 $(DEPDIR)/min-$(MAKEDEV) $(DEPDIR)/std-$(MAKEDEV) $(DEPDIR)/max-$(MAKEDEV) \
 $(DEPDIR)/$(MAKEDEV): \
 $(DEPDIR)/%$(MAKEDEV): root/sbin/MAKEDEV RPMS/sh4/$(STLINUX)-sh4-$(MAKEDEV)-$(MAKEDEV_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps --nopost -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	$(INSTALL) -m 755 root/sbin/MAKEDEV $(prefix)/$*cdkroot/sbin
 	[ "x$*" = "x" ] && touch $@ || true
@@ -485,7 +489,7 @@ if TARGETRULESET_FLASH
 flash-makedev: $(flashprefix)/root/sbin/MAKEDEV
 
 $(flashprefix)/root/sbin/MAKEDEV: root/sbin/MAKEDEV RPMS/sh4/$(STLINUX)-sh4-$(MAKEDEV)-$(MAKEDEV_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps --nopost -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
 		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	$(INSTALL) -m 755 root/sbin/MAKEDEV_flash $(flashprefix)/root/sbin/MAKEDEV
 	touch $@
@@ -501,20 +505,20 @@ if STM22
 BASE_FILES_VERSION	:= 2.0-4
 RPMS/sh4/$(STLINUX)-sh4-$(BASE_FILES)-$(BASE_FILES_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(BASE_FILES)-$(BASE_FILES_VERSION).src.rpm  
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BASE_FILES).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BASE_FILES).spec
 else
 BASE_FILES_VERSION	:= 2.0-7
 RPMS/sh4/$(STLINUX)-sh4-$(BASE_FILES)-$(BASE_FILES_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(BASE_FILES)-$(BASE_FILES_VERSION).src.rpm  
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BASE_FILES).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BASE_FILES).spec
 endif
 
 $(DEPDIR)/min-$(BASE_FILES) $(DEPDIR)/std-$(BASE_FILES) $(DEPDIR)/max-$(BASE_FILES) $(DEPDIR)/$(BASE_FILES): \
 $(DEPDIR)/%$(BASE_FILES): $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
 		RPMS/sh4/$(STLINUX)-sh4-$(BASE_FILES)-$(BASE_FILES_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch  -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
 		--replacepkgs --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	( cd root/etc && for i in $(BASE_FILES_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(prefix)/$*cdkroot/etc/$$i || true; \
@@ -529,7 +533,7 @@ flash-base-files: $(flashprefix)/root/etc/fstab
 
 $(flashprefix)/root/etc/fstab: $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
 		RPMS/sh4/$(STLINUX)-sh4-$(BASE_FILES)-$(BASE_FILES_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps  -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	( cd root/etc && for i in $(BASE_FILES_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; done ) && \
@@ -592,8 +596,8 @@ UDEV_VERSION := 054-6
 
 RPMS/sh4/$(STLINUX)-sh4-$(UDEV)-$(UDEV_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(UDEV)-$(UDEV_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(UDEV).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(UDEV).spec
 #	( cd SPECS; patch -p1 stm-target-$(UDEV).spec < ../Patches/stm-target-$(UDEV).spec.diff ) && \
 #
 else
@@ -601,13 +605,13 @@ UDEV_VERSION := 116-23
 
 RPMS/sh4/$(STLINUX)-sh4-$(UDEV)-$(UDEV_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(UDEV)-$(UDEV_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(UDEV).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(UDEV).spec
 endif
 
 $(DEPDIR)/min-$(UDEV) $(DEPDIR)/std-$(UDEV) $(DEPDIR)/max-$(UDEV) $(DEPDIR)/$(UDEV): \
 $(DEPDIR)/%$(UDEV): RPMS/sh4/$(STLINUX)-sh4-$(UDEV)-$(UDEV_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps --noscripts -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --noscripts -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	( export HHL_CROSS_TARGET_DIR=$(prefix)/$*cdkroot && cd $(prefix)/$*cdkroot/etc/init.d && \
 		for s in sysfs udev ; do \
@@ -628,15 +632,15 @@ HOTPLUG_VERSION := 2004_09_23-4
 
 RPMS/sh4/$(STLINUX)-sh4-$(HOTPLUG)-$(HOTPLUG_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(HOTPLUG)-$(HOTPLUG_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(HOTPLUG).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(HOTPLUG).spec
 else
 
 endif
 
 $(DEPDIR)/min-$(HOTPLUG) $(DEPDIR)/std-$(HOTPLUG) $(DEPDIR)/max-$(HOTPLUG) $(DEPDIR)/$(HOTPLUG): \
 $(DEPDIR)/%$(HOTPLUG): RPMS/sh4/$(STLINUX)-sh4-$(HOTPLUG)-$(HOTPLUG_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps --noscripts -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --noscripts -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	( export HHL_CROSS_TARGET_DIR=$(prefix)/$*cdkroot && cd $(prefix)/$*cdkroot/etc/init.d && \
 		for s in hotplug ; do \
@@ -648,7 +652,7 @@ $(DEPDIR)/%$(HOTPLUG): RPMS/sh4/$(STLINUX)-sh4-$(HOTPLUG)-$(HOTPLUG_VERSION).sh4
 flash-hotplug: $(flashprefix)/root/sbin/hotplug
 
 $(flashprefix)/root/sbin/hotplug: RPMS/sh4/$(STLINUX)-sh4-$(HOTPLUG)-$(HOTPLUG_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps --nopost -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
 		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	touch $@
 	@FLASHROOTDIR_MODIFIED@

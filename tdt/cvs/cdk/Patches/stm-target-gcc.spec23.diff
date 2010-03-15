@@ -1,11 +1,18 @@
-*** stm-target-gcc.spec 2009-05-29 01:05:04.000000000 +0200
---- stm-target-gcc.spec-new     2009-06-02 20:31:24.000000000 +0200
-***************
-*** 314,319 ****
---- 314,320 ----
-  rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_man_dir}/man7
-  rm -r %{buildroot}%{_gccdir}/install-tools
-  rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
-+ rm -rf %{buildroot}%{_gccdir}/include/ssl
-
-  %unfixincludes %{buildroot}%{_gccdir}/include
+--- old/stm-target-gcc.spec	2010-03-03 10:41:16.374735762 +0100
++++ new/stm-target-gcc.spec	2010-03-03 10:43:21.090764949 +0100
+@@ -136,6 +136,7 @@
+ 
+ %prep
+ %setup -n gcc-%{version} -q
++%define _default_patch_fuzz 2
+ 
+ %patch0 -p1
+ %patch1 -p1
+@@ -314,6 +315,7 @@
+ rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_man_dir}/man7
+ rm -r %{buildroot}%{_gccdir}/install-tools
+ rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
++rm -rf %{buildroot}%{_gccdir}/include/ssl
+ 
+ %unfixincludes %{buildroot}%{_gccdir}/include
+ 

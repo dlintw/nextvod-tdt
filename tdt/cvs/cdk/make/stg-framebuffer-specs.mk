@@ -9,11 +9,11 @@ HOST_STGFB_VERSION := 2.0_stm22_0006-22
 
 RPMS/noarch/$(STLINUX)-$(HOST_STGFB)-$(HOST_STGFB_VERSION).noarch.rpm: \
 		Archive/$(STLINUX)-$(HOST_STGFB)-$(HOST_STGFB_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $< && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-$(subst -source,,$(HOST_STGFB)).spec
+	rpm $(DRPM) --nosignature -Uhv $< && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(subst -source,,$(HOST_STGFB)).spec
 
 $(DEPDIR)/$(HOST_STGFB): RPMS/noarch/$(STLINUX)-$(HOST_STGFB)-$(HOST_STGFB_VERSION).noarch.rpm
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm $(DRPM) --ignorearch -Uhv \
 		--relocate $(buildprefix)/stgfb=$(buildprefix) --nodeps --noscripts $<
 	touch $@
 
@@ -34,8 +34,9 @@ $(DEPDIR)/%stgfb: $(DEPDIR)/stgfb.do_compile
 		$(MAKE) KERNELDIR=$(buildprefix)/linux \
 			INSTALL_MOD_PATH=$(prefix)/$*cdkroot \
 			INSTALL_MOD_DIR=stgfb \
+			KERNELVER=`cat $(buildprefix)/$(KERNEL_DIR)/include/config/kernel.release` \
 			$(MAKE_OPTS) modules_install && \
-		$(DEPMOD) -ae -F $(buildprefix)/linux/System.map -b $(prefix)/$*cdkroot -r $(KERNELVERSION)
+		$(DEPMOD) -ae -F $(buildprefix)/linux/System.map -b $(prefix)/$*cdkroot -r $(KERNELVER)
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -58,13 +59,13 @@ CONSOLE_DATA_VERSION := 1999.08.29-4
 
 RPMS/sh4/stlinux20-sh4-console-data-1999.08.29-4.sh4.rpm: \
 		Archive/stlinux22-target-$(CONSOLE_DATAA)-$(CONSOLE_DATA_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(CONSOLE_DATAA).spec < ../Patches/stm-target-$(CONSOLE_DATAA).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(CONSOLE_DATAA).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(CONSOLE_DATAA).spec
 
 $(DEPDIR)/min-$(CONSOLE_DATAA) $(DEPDIR)/std-$(CONSOLE_DATAA) $(DEPDIR)/max-$(CONSOLE_DATAA) $(DEPDIR)/$(CONSOLE_DATAA): \
 $(DEPDIR)/%$(CONSOLE_DATAA): RPMS/sh4/stlinux20-sh4-$(CONSOLE_DATAA)-$(CONSOLE_DATA_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -77,13 +78,13 @@ CONSOLE_TOOLS_VERSION := 0.2.3-6
 
 RPMS/sh4/stlinux20-sh4-console-tools-0.2.3-6.sh4.rpm: \
 		Archive/stlinux22-target-$(CONSOLE_TOOLS)-$(CONSOLE_TOOLS_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(CONSOLE_TOOLS).spec < ../Patches/stm-target-$(CONSOLE_TOOLS).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(CONSOLE_TOOLS).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(CONSOLE_TOOLS).spec
 
 $(DEPDIR)/min-$(CONSOLE_TOOLS) $(DEPDIR)/std-$(CONSOLE_TOOLS) $(DEPDIR)/max-$(CONSOLE_TOOLS) $(DEPDIR)/$(CONSOLE_TOOLS): \
 $(DEPDIR)/%$(CONSOLE_TOOLS): RPMS/sh4/stlinux20-sh4-$(CONSOLE_TOOLS)-$(CONSOLE_TOOLS_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -97,12 +98,12 @@ ICE := ICE
 ICE_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-ICE-6.8.1-2.sh4.rpm: \
 		Archive/stlinux20-target-$(ICE)-$(ICE_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(ICE).spec < ../Patches/stm-target-$(ICE).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(ICE).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(ICE).spec
 $(DEPDIR)/min-$(ICE) $(DEPDIR)/std-$(ICE) $(DEPDIR)/max-$(ICE) $(DEPDIR)/$(ICE): \
 $(DEPDIR)/%$(ICE): RPMS/sh4/stlinux20-sh4-$(ICE)-$(ICE_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -114,12 +115,12 @@ SM := SM
 SM_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-SM-6.8.1-2.sh4.rpm: \
 		Archive/stlinux20-target-$(SM)-$(SM_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(SM).spec < ../Patches/stm-target-$(SM).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(SM).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(SM).spec
 $(DEPDIR)/min-$(SM) $(DEPDIR)/std-$(SM) $(DEPDIR)/max-$(SM) $(DEPDIR)/$(SM): \
 $(DEPDIR)/%$(SM): RPMS/sh4/stlinux20-sh4-$(SM)-$(SM_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -131,12 +132,12 @@ XPROTO := Xproto
 XPROTO_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-Xproto-6.8.1-2.sh4.rpm: \
 		Archive/stlinux20-target-$(XPROTO)-$(XPROTO_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XPROTO).spec < ../Patches/stm-target-$(XPROTO).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XPROTO).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XPROTO).spec
 $(DEPDIR)/min-$(XPROTO) $(DEPDIR)/std-$(XPROTO) $(DEPDIR)/max-$(XPROTO) $(DEPDIR)/$(XPROTO): \
 $(DEPDIR)/%$(XPROTO): RPMS/sh4/stlinux20-sh4-$(XPROTO)-$(XPROTO_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -148,12 +149,12 @@ XEXTENSIONS := XExtensions
 XEXTENSIONS_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-XExtensions-6.8.1-2.sh4.rpm: \
 		Archive/stlinux20-target-$(XEXTENSIONS)-$(XEXTENSIONS_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XEXTENSIONS).spec < ../Patches/stm-target-$(XEXTENSIONS).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XEXTENSIONS).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XEXTENSIONS).spec
 $(DEPDIR)/min-$(XEXTENSIONS) $(DEPDIR)/std-$(XEXTENSIONS) $(DEPDIR)/max-$(XEXTENSIONS) $(DEPDIR)/$(XEXTENSIONS): \
 $(DEPDIR)/%$(XEXTENSIONS): RPMS/sh4/stlinux20-sh4-$(XEXTENSIONS)-$(XEXTENSIONS_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -166,12 +167,12 @@ XT_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-Xt-6.8.1-2.sh4.rpm: \
 		$(DEPDIR)/$(SM) \
 		Archive/stlinux20-target-$(XT)-$(XT_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XT).spec < ../Patches/stm-target-$(XT).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XT).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XT).spec
 $(DEPDIR)/min-$(XT) $(DEPDIR)/std-$(XT) $(DEPDIR)/max-$(XT) $(DEPDIR)/$(XT): \
 $(DEPDIR)/%$(XT): RPMS/sh4/stlinux20-sh4-$(XT)-$(XT_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -183,12 +184,12 @@ XTRANS := xtrans
 XTRANS_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-xtrans-6.8.1-2.sh4.rpm: \
 		Archive/stlinux20-target-$(XTRANS)-$(XTRANS_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XTRANS).spec < ../Patches/stm-target-$(XTRANS).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XTRANS).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XTRANS).spec
 $(DEPDIR)/min-$(XTRANS) $(DEPDIR)/std-$(XTRANS) $(DEPDIR)/max-$(XTRANS) $(DEPDIR)/$(XTRANS): \
 $(DEPDIR)/%$(XTRANS): RPMS/sh4/stlinux20-sh4-$(XTRANS)-$(XTRANS_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -201,12 +202,12 @@ XAU_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-Xau-6.8.1-2.sh4.rpm: \
 		$(DEPDIR)/$(XPROTO) \
 		Archive/stlinux20-target-$(XAU)-$(XAU_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XAU).spec < ../Patches/stm-target-$(XAU).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XAU).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XAU).spec
 $(DEPDIR)/min-$(XAU) $(DEPDIR)/std-$(XAU) $(DEPDIR)/max-$(XAU) $(DEPDIR)/$(XAU): \
 $(DEPDIR)/%$(XAU): $(DEPDIR)/%$(XPROTO) RPMS/sh4/stlinux20-sh4-$(XAU)-$(XAU_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -221,12 +222,12 @@ RPMS/sh4/stlinux20-sh4-X11-6.8.1-4.sh4.rpm: \
 		$(DEPDIR)/$(XEXTENSIONS) \
 		$(DEPDIR)/$(XTRANS) \
 		Archive/stlinux20-target-$(X11)-$(X11_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(X11).spec < ../Patches/stm-target-$(X11).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(X11).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(X11).spec
 $(DEPDIR)/min-$(X11) $(DEPDIR)/std-$(X11) $(DEPDIR)/max-$(X11) $(DEPDIR)/$(X11): \
 $(DEPDIR)/%$(X11): $(DEPDIR)/%$(XAU) RPMS/sh4/stlinux20-sh4-$(X11)-$(X11_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -240,11 +241,11 @@ LIRC_APPS := lirc-apps
 LIRC_APPS_VERSION := 0.7.2pre1-7
 RPMS/sh4/stlinux20-sh4-lirc-apps-0.7.2pre1-7.sh4.rpm: \
 		Archive/stlinux20-target-$(LIRC_APPS)-$(LIRC_APPS_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(LIRC_APPS).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(LIRC_APPS).spec
 $(DEPDIR)/min-$(LIRC_APPS) $(DEPDIR)/std-$(LIRC_APPS) $(DEPDIR)/max-$(LIRC_APPS) $(DEPDIR)/$(LIRC_APPS): \
 $(DEPDIR)/%$(LIRC_APPS): $(DEPDIR)/%$(X11) RPMS/sh4/stlinux20-sh4-$(LIRC_APPS)-$(LIRC_APPS_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -270,20 +271,20 @@ RPMS/sh4/$(STLINUX)-sh4-$(DIRECTFB)-$(DIRECTFB_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(DIRECTFB_DEV)-$(DIRECTFB_VERSION).sh4.rpm: \
 		freetype \
 		Archive/$(STLINUX)-target-$(DIRECTFB)-$(DIRECTFB_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(DIRECTFB).spec < ../Patches/stm-target-$(DIRECTFB).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(DIRECTFB).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(DIRECTFB).spec
 
 $(DEPDIR)/min-$(DIRECTFB) $(DEPDIR)/std-$(DIRECTFB) $(DEPDIR)/max-$(DIRECTFB) $(DEPDIR)/$(DIRECTFB): \
 $(DEPDIR)/%$(DIRECTFB):  %freetype %jpeg RPMS/sh4/$(STLINUX)-sh4-$(DIRECTFB)-$(DIRECTFB_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(DIRECTFB_DEV) $(DEPDIR)/std-$(DIRECTFB_DEV) $(DEPDIR)/max-$(DIRECTFB_DEV) $(DEPDIR)/$(DIRECTFB_DEV): \
 $(DEPDIR)/%$(DIRECTFB_DEV): $(DEPDIR)/%$(DIRECTFB) RPMS/sh4/$(STLINUX)-sh4-$(DIRECTFB_DEV)-$(DIRECTFB_VERSION).sh4.rpm
-	rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	perl -pi -e "s,^libdir=.*\$$,libdir='$(targetprefix)/usr/lib'," $(targetprefix)/usr/lib/libdirectfb.la && \
 	perl -pi -e "s,^prefix=.*\$$,prefix=$(targetprefix)/usr," $(targetprefix)/usr/lib/pkgconfig/directfb.pc && \
@@ -300,12 +301,12 @@ RPMS/sh4/stlinux20-sh4-directfb-examples-0.9.22_stcvs20050810-7.sh4.rpm: \
 		$(FREETYPE_DEV) \
 		$(DIRECTFB_DEV) \
 		Archive/stlinux20-target-directfb-examples-0.9.22_stcvs20050810-7.src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(DIRECTFB_EXAMPLES).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(DIRECTFB_EXAMPLES).spec
 
 $(DEPDIR)/min-$(DIRECTFB_EXAMPLES) $(DEPDIR)/std-$(DIRECTFB_EXAMPLES) $(DEPDIR)/max-$(DIRECTFB_EXAMPLES) $(DEPDIR)/$(DIRECTFB_EXAMPLES): \
 $(DEPDIR)/%$(DIRECTFB_EXAMPLES): $(DEPDIR)/%$(FREETYPE) RPMS/sh4/stlinux20-sh4-$(DIRECTFB_EXAMPLES)-$(DIRECTFB_EXAMPLES_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -314,12 +315,12 @@ $(DEPDIR)/%$(DIRECTFB_EXAMPLES): $(DEPDIR)/%$(FREETYPE) RPMS/sh4/stlinux20-sh4-$
 
 $(X11).do_clean:
 	for i in $(X11) $(XTRANS) $(XEXTENSIONS) $(XAU) $(XPROTO); do \
-		rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev stlinux20-sh4-$$i || true && \
+		rpm $(DRPM) -ev stlinux20-sh4-$$i || true && \
 		[ -f .deps/$$i ] && rm .deps/$$i || true; \
 	done
 
 $(DIRECTFB).do_clean:
 	for i in $(DIRECTFB) $(FREETYPE); do \
-		rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev stlinux20-sh4-$$i || true && \
+		rpm $(DRPM) -ev stlinux20-sh4-$$i || true && \
 		[ -f .deps/$$i ] && rm .deps/$$i || true; \
 	done

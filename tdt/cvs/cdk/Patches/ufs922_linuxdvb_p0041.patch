@@ -1,6 +1,6 @@
-diff -rcN linux/drivers/media/dvb/dvb-core//compat.h UFS922_Orig/linuxdvb/core//compat.h
-*** linux/drivers/media/dvb/dvb-core//compat.h	1970-01-01 01:00:00.000000000 +0100
---- UFS922_Orig/linuxdvb/core//compat.h	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/compat.h UFS922_Orig/drivers/media/dvb/dvb-core/compat.h
+*** linux/drivers/media/dvb/dvb-core/compat.h	1970-01-01 01:00:00.000000000 +0100
+--- UFS922_Orig/drivers/media/dvb/dvb-core/compat.h	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 0 ****
 --- 1,378 ----
@@ -382,9 +382,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//compat.h UFS922_Orig/linuxdvb/core//
 +  * c-basic-offset: 8
 +  * End:
 +  */
-diff -rcN linux/drivers/media/dvb/dvb-core//dmxdev.c UFS922_Orig/linuxdvb/core//dmxdev.c
-*** linux/drivers/media/dvb/dvb-core//dmxdev.c	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dmxdev.c	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dmxdev.c UFS922_Orig/drivers/media/dvb/dvb-core/dmxdev.c 
+*** linux/drivers/media/dvb/dvb-core/dmxdev.c	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig//drivers/media/dvb/dvb-core//dmxdev.c 2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 25,31 ****
   #include <linux/vmalloc.h>
@@ -449,9 +449,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dmxdev.c UFS922_Orig/linuxdvb/core//
   		if (!dmxdev->demux->get_pes_pids) {
   			ret = -EINVAL;
 --- 865,870 ----
-diff -rcN linux/drivers/media/dvb/dvb-core//dmxdev.h UFS922_Orig/linuxdvb/core//dmxdev.h
-*** linux/drivers/media/dvb/dvb-core//dmxdev.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dmxdev.h	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dmxdev.h UFS922_Orig/drivers/media/dvb/dvb-core/dmxdev.h
+*** linux/drivers/media/dvb/dvb-core/dmxdev.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dmxdev.h	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 30,36 ****
 --- 30,39 ----
@@ -493,9 +493,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dmxdev.h UFS922_Orig/linuxdvb/core//
   	spinlock_t lock;
   };
   
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_ca_en50221.c UFS922_Orig/linuxdvb/core//dvb_ca_en50221.c
-*** linux/drivers/media/dvb/dvb-core//dvb_ca_en50221.c	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvb_ca_en50221.c	2009-05-30 14:11:56.000000000 +0200
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_ca_en50221.c UFS922_Orig//drivers/media/dvb/dvb-core/dvb_ca_en50221.c
+*** linux/drivers/media/dvb/dvb-core/dvb_ca_en50221.c	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvb_ca_en50221.c	2009-05-30 14:11:56.000000000 +0200
 ***************
 *** 41,54 ****
   #include "dvb_ca_en50221.h"
@@ -1937,9 +1937,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_ca_en50221.c UFS922_Orig/linuxdv
   	}
   
   	if (signal_pending(current)) {
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_demux.c UFS922_Orig/linuxdvb/core//dvb_demux.c
-*** linux/drivers/media/dvb/dvb-core//dvb_demux.c	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvb_demux.c	2009-05-29 22:32:37.000000000 +0200
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media/dvb/dvb-core/dvb_demux.c
+*** linux/drivers/media/dvb/dvb-core/dvb_demux.c	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core//dvb_demux.c	2009-05-29 22:32:37.000000000 +0200
 ***************
 *** 335,363 ****
   }
@@ -2320,9 +2320,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_demux.c UFS922_Orig/linuxdvb/cor
   
   	demux->frontend = NULL;
   	mutex_unlock(&dvbdemux->mutex);
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_demux.h UFS922_Orig/linuxdvb/core//dvb_demux.h
-*** linux/drivers/media/dvb/dvb-core//dvb_demux.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvb_demux.h	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.h UFS922_Orig/drivers/media/dvb/dvb-core/dvb_demux.h
+*** linux/drivers/media/dvb/dvb-core/dvb_demux.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvb_demux.h	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 26,32 ****
 --- 26,35 ----
@@ -2350,9 +2350,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_demux.h UFS922_Orig/linuxdvb/cor
   	spinlock_t lock;
   };
   
-diff -rcN linux/drivers/media/dvb/dvb-core//dvbdev.c UFS922_Orig/linuxdvb/core//dvbdev.c
-*** linux/drivers/media/dvb/dvb-core//dvbdev.c	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvbdev.c	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvbdev.c UFS922_Orig/drivers/media/dvb/dvb-core/dvbdev.c
+*** linux/drivers/media/dvb/dvb-core/dvbdev.c	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvbdev.c 2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 27,39 ****
   #include <linux/module.h>
@@ -2647,9 +2647,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvbdev.c UFS922_Orig/linuxdvb/core//
   	cdev_del(&dvb_device_cdev);
   	unregister_chrdev_region(MKDEV(DVB_MAJOR, 0), MAX_DVB_MINORS);
 --- 437,442 ----
-diff -rcN linux/drivers/media/dvb/dvb-core//dvbdev.h UFS922_Orig/linuxdvb/core//dvbdev.h
-*** linux/drivers/media/dvb/dvb-core//dvbdev.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvbdev.h	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvbdev.h UFS922_Orig/drivers/media/dvb/dvb-core/dvbdev.h 
+*** linux/drivers/media/dvb/dvb-core/dvbdev.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvbdev.h	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 27,34 ****
   #include <linux/poll.h>
@@ -2737,9 +2737,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvbdev.h UFS922_Orig/linuxdvb/core//
 + #endif
 + 
   #endif /* #ifndef _DVBDEV_H_ */
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_filter.c UFS922_Orig/linuxdvb/core//dvb_filter.c
-*** linux/drivers/media/dvb/dvb-core//dvb_filter.c	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvb_filter.c	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_filter.c UFS922_Orig/drivers/media/dvb/dvb-core/dvb_filter.c
+*** linux/drivers/media/dvb/dvb-core/dvb_filter.c	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvb_filter.c	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 3,9 ****
   #include <linux/string.h>
@@ -2961,9 +2961,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_filter.c UFS922_Orig/linuxdvb/co
   static void init_mpg_picture( struct mpg_picture *pic, int chan, int32_t field_type)
   {
   	pic->picture_header = 0;
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_frontend.c UFS922_Orig/linuxdvb/core//dvb_frontend.c
-*** linux/drivers/media/dvb/dvb-core//dvb_frontend.c	2009-05-16 19:37:05.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvb_frontend.c	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_frontend.c UFS922_Orig/drivers/media/dvb/dvb-core/dvb_frontend.c
+*** linux/drivers/media/dvb/dvb-core/dvb_frontend.c	2009-05-16 19:37:05.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvb_frontend.c	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 9,14 ****
 --- 9,17 ----
@@ -4991,9 +4991,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_frontend.c UFS922_Orig/linuxdvb/
 + }
 + #endif
 + EXPORT_SYMBOL(dvb_frontend_detach);
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_frontend.h UFS922_Orig/linuxdvb/core//dvb_frontend.h
-*** linux/drivers/media/dvb/dvb-core//dvb_frontend.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvb_frontend.h	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_frontend.h UFS922_Orig/drivers/media/dvb/dvb-core/dvb_frontend.h
+*** linux/drivers/media/dvb/dvb-core/dvb_frontend.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvb_frontend.h	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 8,13 ****
 --- 8,16 ----
@@ -5277,9 +5277,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_frontend.h UFS922_Orig/linuxdvb/
 + 			    enum fe_type fe_type);
 + 
   #endif
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_math.c UFS922_Orig/linuxdvb/core//dvb_math.c
-*** linux/drivers/media/dvb/dvb-core//dvb_math.c	1970-01-01 01:00:00.000000000 +0100
---- UFS922_Orig/linuxdvb/core//dvb_math.c	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_math.c UFS922_Orig/drivers/media/dvb/dvb-core/dvb_math.c
+*** linux/drivers/media/dvb/dvb-core/dvb_math.c	1970-01-01 01:00:00.000000000 +0100
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvb_math.c	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 0 ****
 --- 1,145 ----
@@ -5428,9 +5428,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_math.c UFS922_Orig/linuxdvb/core
 + 	return (log * 646456993) >> 31;
 + }
 + EXPORT_SYMBOL(intlog10);
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_math.h UFS922_Orig/linuxdvb/core//dvb_math.h
-*** linux/drivers/media/dvb/dvb-core//dvb_math.h	1970-01-01 01:00:00.000000000 +0100
---- UFS922_Orig/linuxdvb/core//dvb_math.h	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_math.h UFS922_Orig/drivers/media/dvb/dvb-core/dvb_math.h
+*** linux/drivers/media/dvb/dvb-core/dvb_math.h	1970-01-01 01:00:00.000000000 +0100
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvb_math.h	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 0 ****
 --- 1,58 ----
@@ -5492,9 +5492,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_math.h UFS922_Orig/linuxdvb/core
 + extern unsigned int intlog10(u32 value);
 + 
 + #endif
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_net.c UFS922_Orig/linuxdvb/core//dvb_net.c
-*** linux/drivers/media/dvb/dvb-core//dvb_net.c	2009-05-16 19:37:05.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvb_net.c	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_net.c UFS922_Orig/drivers/media/dvb/dvb-core/dvb_net.c
+*** linux/drivers/media/dvb/dvb-core/dvb_net.c	2009-05-16 19:37:05.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvb_net.c	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 12,18 ****
    *                          Hilmar Linder <hlinder@cosy.sbg.ac.at>
@@ -6262,9 +6262,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_net.c UFS922_Orig/linuxdvb/core/
   	mutex_init(&priv->mutex);
   
   	net->base_addr = pid;
-diff -rcN linux/drivers/media/dvb/dvb-core//dvb_ringbuffer.c UFS922_Orig/linuxdvb/core//dvb_ringbuffer.c
-*** linux/drivers/media/dvb/dvb-core//dvb_ringbuffer.c	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//dvb_ringbuffer.c	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/dvb_ringbuffer.c UFS922_Orig/drivers/media/dvb/dvb-core/dvb_ringbuffer.c
+*** linux/drivers/media/dvb/dvb-core/dvb_ringbuffer.c	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/dvb_ringbuffer.c	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 26,32 ****
   
@@ -6275,9 +6275,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//dvb_ringbuffer.c UFS922_Orig/linuxdv
   #include <linux/kernel.h>
   #include <linux/module.h>
 --- 26,31 ----
-diff -rcN linux/drivers/media/dvb/dvb-core//Kconfig UFS922_Orig/linuxdvb/core//Kconfig
-*** linux/drivers/media/dvb/dvb-core//Kconfig	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//Kconfig	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core/Kconfig UFS922_Orig/drivers/media/dvb/dvb-core/Kconfig
+*** linux/drivers/media/dvb/dvb-core/Kconfig	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/Kconfig	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 9,11 ****
 --- 9,24 ----
@@ -6297,9 +6297,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//Kconfig UFS922_Orig/linuxdvb/core//K
 + 	  Note: You will need module-init-tools v3.2 or later for this feature.
 + 
 + 	  If unsure say Y.
-diff -rcN linux/drivers/media/dvb/dvb-core//Makefile UFS922_Orig/linuxdvb/core//Makefile
-*** linux/drivers/media/dvb/dvb-core//Makefile	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/core//Makefile	2009-02-10 19:24:55.000000000 +0100
+diff -rcN linux/drivers/media/dvb/dvb-core//Makefile UFS922_Orig/drivers/media/dvb/dvb-core/Makefile
+*** linux/drivers/media/dvb/dvb-core/Makefile	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/drivers/media/dvb/dvb-core/Makefile	2009-02-10 19:24:55.000000000 +0100
 ***************
 *** 2,9 ****
   # Makefile for the kernel DVB device drivers.
@@ -6319,9 +6319,9 @@ diff -rcN linux/drivers/media/dvb/dvb-core//Makefile UFS922_Orig/linuxdvb/core//
 ! 		 dvb_net.o dvb_ringbuffer.o dvb_math.o
   
   obj-$(CONFIG_DVB_CORE) += dvb-core.o
-diff -rcN linux/include/linux/dvb//audio.h UFS922_Orig/linuxdvb/include//audio.h
-*** linux/include/linux/dvb//audio.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/include//audio.h	2009-02-10 19:25:30.000000000 +0100
+diff -rcN linux/include/linux/dvb/audio.h UFS922_Orig/include/linux/dvb/audio.h
+*** linux/include/linux/dvb/audio.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/include/linux/dvb/audio.h	2009-02-10 19:25:30.000000000 +0100
 ***************
 *** 47,53 ****
   typedef enum {
@@ -6350,9 +6350,9 @@ diff -rcN linux/include/linux/dvb//audio.h UFS922_Orig/linuxdvb/include//audio.h
 + #define AUDIO_BILINGUAL_CHANNEL_SELECT _IO('o', 20)
   
   #endif /* _DVBAUDIO_H_ */
-diff -rcN linux/include/linux/dvb//ca.h UFS922_Orig/linuxdvb/include//ca.h
-*** linux/include/linux/dvb//ca.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/include//ca.h	2009-02-21 12:23:07.000000000 +0100
+diff -rcN linux/include/linux/dvb/ca.h UFS922_Orig/include/linux/dvb/ca.h
+*** linux/include/linux/dvb/ca.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/include/linux/dvb/ca.h	2009-02-21 12:23:07.000000000 +0100
 ***************
 *** 39,44 ****
 --- 39,46 ----
@@ -6364,9 +6364,9 @@ diff -rcN linux/include/linux/dvb//ca.h UFS922_Orig/linuxdvb/include//ca.h
   } ca_slot_info_t;
   
   
-diff -rcN linux/include/linux/dvb//dmx.h UFS922_Orig/linuxdvb/include//dmx.h
-*** linux/include/linux/dvb//dmx.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/include//dmx.h	2009-02-10 19:25:30.000000000 +0100
+diff -rcN linux/include/linux/dvb/dmx.h UFS922_Orig/include/linux/dvb/dmx.h
+*** linux/include/linux/dvb/dmx.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/include/linux/dvb/dmx.h	2009-02-10 19:25:30.000000000 +0100
 ***************
 *** 88,107 ****
   #define DMX_PES_PCR      DMX_PES_PCR0
@@ -6420,9 +6420,9 @@ diff -rcN linux/include/linux/dvb//dmx.h UFS922_Orig/linuxdvb/include//dmx.h
   #define DMX_GET_CAPS             _IOR('o', 48, dmx_caps_t)
   #define DMX_SET_SOURCE           _IOW('o', 49, dmx_source_t)
 --- 146,151 ----
-diff -rcN linux/include/linux/dvb//frontend.h UFS922_Orig/linuxdvb/include//frontend.h
-*** linux/include/linux/dvb//frontend.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/include//frontend.h	2009-02-10 19:25:30.000000000 +0100
+diff -rcN linux/include/linux/dvb/frontend.h UFS922_Orig/include/linux/dvb/frontend.h
+*** linux/include/linux/dvb/frontend.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/include/linux/dvb/frontend.h	2009-02-10 19:25:30.000000000 +0100
 ***************
 *** 7,12 ****
 --- 7,14 ----
@@ -6962,9 +6962,9 @@ diff -rcN linux/include/linux/dvb//frontend.h UFS922_Orig/linuxdvb/include//fron
 + #define FE_GET_EVENT		   _IOR('o', 78, struct dvb_frontend_event)
 + 
   #endif /*_DVBFRONTEND_H_*/
-diff -rcN linux/include/linux/dvb//version.h UFS922_Orig/linuxdvb/include//version.h
-*** linux/include/linux/dvb//version.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/include//version.h	2009-02-10 19:25:30.000000000 +0100
+diff -rcN linux/include/linux/dvb/version.h UFS922_Orig/include/linux/dvb/version.h
+*** linux/include/linux/dvb/version.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/include/linux/dvb/version.h	2009-02-10 19:25:30.000000000 +0100
 ***************
 *** 24,29 ****
   #define _DVBVERSION_H_
@@ -6980,9 +6980,9 @@ diff -rcN linux/include/linux/dvb//version.h UFS922_Orig/linuxdvb/include//versi
 ! #define DVB_API_VERSION_MINOR 2
   
   #endif /*_DVBVERSION_H_*/
-diff -rcN linux/include/linux/dvb//video.h UFS922_Orig/linuxdvb/include//video.h
-*** linux/include/linux/dvb//video.h	2006-06-18 03:49:35.000000000 +0200
---- UFS922_Orig/linuxdvb/include//video.h	2009-02-10 19:25:30.000000000 +0100
+diff -rcN linux/include/linux/dvb/video.h UFS922_Orig/include/linux/dvb/video.h
+*** linux/include/linux/dvb/video.h	2006-06-18 03:49:35.000000000 +0200
+--- UFS922_Orig/include/linux/dvb/video.h	2009-02-10 19:25:30.000000000 +0100
 ***************
 *** 80,93 ****
 --- 80,172 ----

@@ -80,7 +80,7 @@ endif
 #
 if ENABLE_TF7700
 $(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
-	rpm --rcfile /usr/lib/rpm/rpmrc:localrc --noscripts --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
+	rpm $(DRPM) --noscripts --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
 	touch $@
 else
 $(DEPDIR)/autofs.do_prepare: @DEPENDS_autofs@

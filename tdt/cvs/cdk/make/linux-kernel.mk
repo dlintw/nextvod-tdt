@@ -115,8 +115,9 @@ if STM22
 if P0041
 RPMS/noarch/stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.noarch.rpm: \
 		Archive/stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.src.rpm
-	rpm --rcfile localrc --nosignature --nodeps -Uhv $< && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -ba -v --clean --target=sh4-linux SPECS/stm-host-kernel.spec
+	rpm $(DRPM) --nosignature --nodeps -Uhv $< && \
+	( cd SPECS; patch -p1 stm-host-kernel.spec < ../Patches/stm-host-kernel.spec22.diff ) && \
+	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/stm-host-kernel.spec
 
 if DEBUG
 DEBUG_STR=.debug
@@ -127,12 +128,12 @@ endif
 echo DEBUG_STR=$DEBUG_STR
 
 $(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.noarch.rpm $(KERNELPATCHES_41)
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41 || true
+	@rpm $(DRPM) -ev stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41 || true
 	rm -rf $(KERNEL_DIR)
 	@echo "Preparing kernel for $(MODNAME)"
 #	@echo "Patches: $(filter ../Patches/%, $(^:Patches/%=../Patches/%))"
 	rm -rf linux
-	rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv $<
+	rpm $(DRPM) --ignorearch --nodeps -Uhv $<
 	cd $(KERNEL_DIR) && cat $(filter ../Patches/%, $(^:Patches/%=../Patches/%)) | patch -p1
 	$(INSTALL) -m644 Patches/linux-$(subst _stm22_,-,$(KERNELVERSION))_$(MODNAME).config${DEBUG_STR} $(KERNEL_DIR)/.config
 	-rm $(KERNEL_DIR)/localversion*
@@ -210,8 +211,9 @@ else
 
 RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.noarch.rpm: \
 		Archive/stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.src.rpm
-	rpm --rcfile localrc --nosignature --nodeps -Uhv $< && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -ba -v --clean --target=sh4-linux SPECS/stm-host-kernel-sh4.spec
+	rpm $(DRPM) --nosignature --nodeps -Uhv $< && \
+	( cd SPECS; patch -p1 stm-host-kernel-sh4.spec < ../Patches/stm-host-kernel.spec23.diff ) && \
+	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/stm-host-kernel-sh4.spec
 
 if DEBUG
 DEBUG_STR=.debug
@@ -269,10 +271,10 @@ $(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-
 #		$(if $(UFS910),Patches/ufs910_i2c_stm23.patch) \
 #		$(if $(UFS910),Patches/ufs910_setup_stm23.patch) \
 #		$(if $(UFS910),Patches/ufs910_stboards_stm23.patch) \
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119 || true
+	@rpm $(DRPM) -ev stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119 || true
 	rm -rf $(KERNEL_DIR)
 	rm -rf linux-sh4
-	rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv $<
+	rpm $(DRPM) --ignorearch --nodeps -Uhv $<
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 2,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 3,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 4,$^)
@@ -292,6 +294,9 @@ else
 if ENABLE_FLASH_UFS910
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
 	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(FLASH_UFS910).config${DEBUG_STR} $(KERNEL_DIR)/.config
+else
+if ENABLE_FORTIS_HDBOX
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(FORTIS_HDBOX).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
 if ENABLE_TF7700
 #	cd $(KERNEL_DIR) && patch -p1 <../$(word 13,$^)
@@ -346,6 +351,7 @@ if ENABLE_CUBEREVO_9500HD
 	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_9500HD).config{DEBUG_STR} $(KERNEL_DIR)/.config
 else
 
+endif
 endif
 endif
 endif
@@ -496,7 +502,8 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_2000HD),CUBEREVO_2000HD=$(CUBEREVO_2000HD)) \
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
 		install
-	$(DEPMOD) -ae -b $(targetprefix) -r $(KERNELVERSION)
+       KERNELVER=`cat $(buildprefix)/$(KERNEL_DIR)/include/config/kernel.release` \
+	$(DEPMOD) -ae -b $(targetprefix) -r $(KERNELVER)
 	touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
 

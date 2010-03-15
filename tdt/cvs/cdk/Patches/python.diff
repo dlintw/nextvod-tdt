@@ -835,3 +835,16 @@
                          gc->gc.gc_refs = GC_REACHABLE;
                          (void) traverse(op,
                                          (visitproc)visit_reachable,
+
+--- Python-2.6.old/Include/pyport.h    2008-06-11 09:41:16.000000000 +0200
++++ Python-2.6/Include/pyport.h        2010-01-03 18:54:44.000000000 +0100
+@@ -682,7 +682,7 @@
+  * rather than waiting for integer multiplication to trigger bogus
+  * overflows.
+  */
+-#error "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)."
++/* #error "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)." */
+ #endif
+
+ #ifdef __cplusplus
+

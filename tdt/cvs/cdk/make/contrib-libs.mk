@@ -139,6 +139,7 @@ $(DEPDIR)/lirc.do_compile: $(DEPDIR)/lirc.do_prepare
 			--prefix=/usr \
 			--sbindir=\$${exec_prefix}/bin \
 			--mandir=\$${prefix}/share/man \
+			--with-kerneldir=$(buildprefix)/$(KERNEL_DIR) \
 			--without-x \
 			--with-driver=userspace \
 			--with-syslog=LOG_DAEMON \
@@ -1189,7 +1190,7 @@ $(DEPDIR)/libdvdread.do_prepare: @DEPENDS_libdvdread@
 	touch $@
 
 $(DEPDIR)/libdvdread.do_compile: bootstrap libdvdread.do_prepare
-	libtoolize && \
+	libtoolize -c -f && \
 	cd @DIR_libdvdread@ && \
 		$(BUILDENV) \
 		./autogen.sh \

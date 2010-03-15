@@ -5,7 +5,6 @@ KATIDIR=${CURDIR%/cvs/cdk}
 export PATH=/usr/sbin:/sbin:$PATH
 
 CONFIGPARAM=" \
- --host=sh4-linux \
  --enable-maintainer-mode \
  --prefix=$KATIDIR/tufsbox \
  --with-cvsdir=$KATIDIR/cvs \
@@ -28,6 +27,25 @@ echo "
 "
 
 ##############################################
+
+# config.guess generates different answers for some packages 
+# Ensure that all packages use the same host by explicitly specifying it. 
+
+# First obtain the triplet 
+AM_VER=`automake --version | awk '{print $NF}' | grep -oEm1 "^[0-9]+.[0-9]+"` 
+host_alias=`/usr/share/automake-${AM_VER}/config.guess` 
+
+# Then undo Suse specific modifications, no harm to other distribution 
+case `echo ${host_alias} | cut -d '-' -f 1` in 
+  i?86) VENDOR=pc ;; 
+  *   ) VENDOR=unknown ;; 
+esac 
+host_alias=`echo ${host_alias} | sed -e "s/suse/${VENDOR}/"`
+
+# And add it to the config parameters. 
+CONFIGPARAM="${CONFIGPARAM} --host=${host_alias} --build=${host_alias}" 
+
+############################################## 
 
 echo "Targets:"
 echo "1) Kathrein UFS-910"
