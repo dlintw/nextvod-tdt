@@ -223,6 +223,8 @@ endif
 #
 $(DEPDIR)/e2fsprogs.do_prepare: bootstrap @DEPENDS_e2fsprogs@
 	@PREPARE_e2fsprogs@
+	cd @DIR_e2fsprogs@ && \
+	patch -p1 < ../Patches/e2fsprogs-relative-usrlib-path.patch
 	touch $@
 
 $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare

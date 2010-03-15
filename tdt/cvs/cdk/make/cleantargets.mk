@@ -200,12 +200,12 @@ $(LIST_CLEAN): \
 
 $(RPMLIST_CLEAN): \
 %-clean:
-	-rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev --nodeps $(STLINUX)-sh4-$(subst -clean,,$@)
+	-rpm $(DRPM) -ev --nodeps $(STLINUX)-sh4-$(subst -clean,,$@)
 	-$(DEPSCLEANUP_$*)
 
 %-clean:
-	-rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev --nodeps $(STLINUX)-$(subst -clean,,$@)
-	-rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev --nodeps $(STLINUX)-sh4-$(subst -clean,,$@)
+	-rpm $(DRPM) -ev --nodeps $(STLINUX)-$(subst -clean,,$@)
+	-rpm $(DRPM) -ev --nodeps $(STLINUX)-sh4-$(subst -clean,,$@)
 	-rm .deps/$(subst -clean,,$@)
 
 list-distclean:
@@ -218,14 +218,14 @@ $(LIST_DISTCLEAN): \
 
 $(RPMLIST_DISTCLEAN): \
 %-distclean:
-	-rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev --nodeps $(STLINUX)-sh4-$(subst -distclean,,$@)
+	-rpm $(DRPM) -ev --nodeps $(STLINUX)-sh4-$(subst -distclean,,$@)
 	-rm RPMS/sh4/$(STLINUX)-sh4-$(subst -distclean,,$@)*
 	-$(DEPSDISTCLEANUP_$*)
 
 %-distclean:
-	-rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev --nodeps $(STLINUX)-$(subst -distclean,,$@)
-	-rpm --rcfile /usr/lib/rpm/rpmrc:localrc -ev --nodeps $(STLINUX)-sh4-$(subst -distclean,,$@)
-	-rm RPMS/i386/$(STLINUX)-$(subst -distclean,,$@)*
+	-rpm $(DRPM) -ev --nodeps $(STLINUX)-$(subst -distclean,,$@)
+	-rpm $(DRPM) -ev --nodeps $(STLINUX)-sh4-$(subst -distclean,,$@)
+	-rm RPMS/${host_arch}/$(STLINUX)-$(subst -distclean,,$@)*
 	-rm RPMS/noarch/$(STLINUX)-$(subst -distclean,,$@)*
 	-rm RPMS/sh4/$(STLINUX)-$(subst -distclean,,$@)*
 	-rm RPMS/sh4/$(STLINUX)-sh4-$(subst -distclean,,$@)*

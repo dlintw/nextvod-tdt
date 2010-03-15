@@ -138,7 +138,7 @@ sub process_make_prepare (@)
       }
       elsif ( $_[1] =~ m#\.src\.rpm$# )
       {
-	$output .= "rpm --rcfile localrc -Uhv  Archive/" . $_[1];
+	$output .= "rpm \${DRPM} -Uhv  Archive/" . $_[1];
       }
       elsif ( $_[1] =~ m#\.cvs$# )
       {
@@ -202,7 +202,7 @@ sub process_make_prepare (@)
     }
     elsif ( $_[0] eq "rpmbuild" )
     {
-      $output .= "rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-" . $_[1] . ".spec ";
+      $output .= "rpmbuild \${DRPMBUILD} -bb -v --clean --target=sh4-linux SPECS/stm-" . $_[1] . ".spec ";
     }
     elsif ( $_[0] eq "move" )
     {
@@ -285,7 +285,7 @@ sub process_install_rule ($)
   }
   elsif ( $_ eq "rpminstall" )
   {
-    $output .= "rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv RPMS/sh4/" . join " ", @_;
+    $output .= "rpm \${DRPM} --ignorearch -Uhv RPMS/sh4/" . join " ", @_;
   }
   elsif ( $_ eq "shellconfigadd" )
   {
@@ -343,7 +343,7 @@ sub process_uninstall_rule ($)
   }
   elsif ( $_ eq "rpminstall" )
   {
-    $output .= "rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv RPMS/sh4/" . join " ", @_;
+    $output .= "rpm \${DRPM} --ignorearch -Uhv RPMS/sh4/" . join " ", @_;
   }
   elsif ( $_ eq "shellconfigdel" )
   {

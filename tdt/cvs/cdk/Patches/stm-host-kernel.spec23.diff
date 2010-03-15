@@ -1,0 +1,10 @@
+--- old/stm-host-kernel-sh4.spec	2010-03-02 22:05:52.636718851 +0100
++++ new/stm-host-kernel-sh4.spec	2010-03-02 22:07:13.538769503 +0100
+@@ -435,6 +435,7 @@
+ #
+ %prep
+ %setup -q -n linux-2.6.23
++%define _default_patch_fuzz 2
+ %patch0 -p1
+ %patch1 -p1
+ %patch2 -p1

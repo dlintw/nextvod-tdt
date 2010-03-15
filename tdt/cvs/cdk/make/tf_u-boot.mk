@@ -10,16 +10,16 @@ TFINSTALLER_DIR := tfinstaller
 
 RPMS/noarch/$(U_BOOT_PREFIX)-$(U_BOOT_VERSION).noarch.rpm: \
 		Archive/$(U_BOOT_PREFIX)-$(U_BOOT_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $< && \
+	rpm $(DRPM) --nosignature -Uhv $< && \
 	mv SPECS/stm-$(HOST_U_BOOT).spec SPECS/stm-$(HOST_U_BOOT).spec_ && \
 	sed -e "s/if_target_cpu sh/if 1/g" SPECS/stm-$(HOST_U_BOOT).spec_ > SPECS/stm-$(HOST_U_BOOT).spec && \
 	rm SPECS/stm-$(HOST_U_BOOT).spec_ && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --define "_stm_short_build_id 23" --define "_stm_target_name sh4" --define "_stm_pkg_prefix stlinux23" --target=sh --define "_stm_uboot_dir $(BUILDPREFIX)/u-boot" SPECS/stm-$(HOST_U_BOOT).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --define "_stm_short_build_id 23" --define "_stm_target_name sh4" --define "_stm_pkg_prefix stlinux23" --target=sh --define "_stm_uboot_dir $(BUILDPREFIX)/u-boot" SPECS/stm-$(HOST_U_BOOT).spec
 
 $(DEPDIR)/u-boot.do_prepare:  RPMS/noarch/$(U_BOOT_PREFIX)-$(U_BOOT_VERSION).noarch.rpm $(BUILDPREFIX)/Patches/u-boot-1.3.1_stm23_0043_tf7700.patch
 # FIXME: "rpm -e" does not remove files
 	rm -fr $(U_BOOT_DIR)
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv $< && \
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	(cd $(U_BOOT_DIR) && \
 		patch -p1 < $(lastword $^) && \
 		$(MAKE) tf7700_config )
@@ -75,9 +75,9 @@ U_BOOT_TOOLS_VERSION	:= 1.3.1_stm23-7
 
 RPMS/sh4/stlinux23-$(HOST_U_BOOT_TOOLS)-$(U_BOOT_TOOLS_VERSION).sh4.rpm: \
 		Archive/stlinux23-$(HOST_U_BOOT_TOOLS)-$(U_BOOT_TOOLS_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $< && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux --define "_stm_short_build_id 23" --define "_stm_pkg_prefix stlinux23" --define "_stm_uboot_dir $(BUILDPREFIX)/u-boot" SPECS/stm-$(HOST_U_BOOT_TOOLS).spec
+	rpm $(DRPM) --nosignature -Uhv $< && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux --define "_stm_short_build_id 23" --define "_stm_pkg_prefix stlinux23" --define "_stm_uboot_dir $(BUILDPREFIX)/u-boot" SPECS/stm-$(HOST_U_BOOT_TOOLS).spec
 
 $(DEPDIR)/$(HOST_U_BOOT_TOOLS): u-boot.do_prepare RPMS/sh4/stlinux23-$(HOST_U_BOOT_TOOLS)-$(U_BOOT_TOOLS_VERSION).sh4.rpm | bootstrap-cross
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv $(lastword $^) && \
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
 	touch $@

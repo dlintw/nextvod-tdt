@@ -1,6 +1,9 @@
 AC_INIT([tufsbox-cdk],[0])
 AC_PREREQ(2.59)
 
+AC_CANONICAL_HOST
+host_arch=`arch`
+AC_SUBST(host_arch)
 AC_CANONICAL_BUILD
 AC_SUBST(build)
 if test "$target_alias" = "" ; then
@@ -776,7 +779,7 @@ AC_SUBST(devkitprefix)
 AC_SUBST(rpmdbprefix)
 AC_SUBST(kernelprefix)
 #
-$INSTALL -d SOURCES SPECS BUILD SRPMS RPMS/{noarch,i386,sh4}
+$INSTALL -d SOURCES SPECS BUILD SRPMS RPMS/{noarch,${host_arch},sh4}
 test -f config && rm config || true
 ln -sf $configprefix/rpm config || true
 echo "%_topdir $buildprefix" >localmacros
@@ -784,7 +787,7 @@ echo "%_specdir %_topdir/SPECS" >>localmacros
 echo "%_sourcedir %_topdir/SOURCES" >>localmacros
 echo "%_builddir %_topdir/BUILD" >>localmacros
 echo "%_buildrootdir %_topdir/BUILDROOT" >>localmacros
-echo "%buildroot %_topdir/BUILDROOT/%{name}-%{version}-%{release}.i386" >>localmacros
+echo "%buildroot %_topdir/BUILDROOT/%{name}-%{version}-%{release}.${host_arch}" >>localmacros
 echo "%_rpmdir %_topdir/RPMS" >>localmacros
 echo "%_srcrpmdir %_topdir/SRPMS" >>localmacros
 echo "%_stm_install_prefix $prefix/.." >>localmacros
@@ -796,21 +799,36 @@ echo "%_stm_devkit_dir $devkitprefix" >>localmacros
 echo "%_stm_cross_target_dir $targetprefix" >>localmacros
 echo "%_stm_kernel_dir $kernelprefix" >>localmacros
 echo "%_stm_sources_dir $kernelprefix" >>localmacros
+echo "%_stm_host_arch ${host_arch}" >>localmacros
+echo "%_stm_host_cpu ${host_cpu}" >>localmacros 
+echo "%_stm_host_config ${host_alias}" >>localmacros
 echo "%_dbpath $rpmdbprefix" >>localmacros
-echo "macrofiles: /usr/lib/rpm/macros:$configprefix/rpm/hosts/i686-pc-linux-gnu:$configprefix/rpm/targets/sh4-linux:$configprefix/rpm/common:$buildprefix/localmacros" > localrc
 echo "%__bzip2 $BZIP2" >>localmacros
-#
 
-#IF YOU ARE USING AN OLD DISTRO
-DRPMBUILD="--rcfile /usr/lib/rpm/rpmrc:localrc"
-#NEW DISTROS
-#DRPMBUILD="--macros /usr/lib/rpm/macros:$configprefix/rpm/hosts/i686-pc-linux-gnu:$configprefix/rpm/targets/sh4-linux:$configprefix/rpm/common:$buildprefix/localmacros"
+# Determine how to pass options to rpm, depending on version and distribution
+macrofiles="/usr/lib/rpm/macros:$configprefix/rpm/targets/sh4-linux:$configprefix/rpm/common:$buildprefix/localmacros"
 
-#FOR DEBIAN BASED USE THIS LINE
-#DRPM="--force-debian $DRPMBUILD"
-#ELSE THIS LINE
-DRPM="$DRPMBUILD"
+RPMMAJOR=`rpm --version | awk '{print $NF}' | cut -d '.' -f 1`
+RPMMINOR=`rpm --version | awk '{print $NF}' | cut -d '.' -f 2`
 
+if test ${RPMMAJOR} -lt 4 -o ${RPMMINOR} -lt 7 ; then
+  #IF YOU ARE USING AN OLD DISTRO
+  echo "macrofiles: ${macrofiles}" > localrc
+  DRPMBUILD="--rcfile /usr/lib/rpm/rpmrc:localrc"
+else
+  #NEW DISTROS
+  DRPMBUILD="--macros ${macrofiles}"
+fi
+
+if test ${RPMMAJOR} -lt 4 -o ${RPMMINOR} -lt 7 ; then
+  DRPM=${DRPMBUILD}
+else
+  case `lsb_release -s -i` in
+    Ubuntu* | Debian* ) DRPM="--force-debian ${DRPMBUILD}" ;;
+    *) DRPM=${DRPMBUILD} ;;
+  esac
+fi
+	
 AC_SUBST(DRPM)
 AC_SUBST(DRPMBUILD)
 

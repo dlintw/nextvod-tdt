@@ -1,3 +1,8 @@
+export CFLAGS
+export CXXFLAGS
+
+export DRPM 
+export DRPMBUILD 
 
 if ENABLE_CCACHE
 PATH := $(hostprefix)/ccache-bin:$(crossprefix)/bin:$(PATH):/usr/sbin
@@ -96,6 +101,9 @@ CONFIGURE_OPTS = \
         --with-dvbincludes=$(driverdir)/dvb/include \
         --with-target=cdk
 
+export DRPM 
+export DRPMBUILD 
+
 if ENABLE_CCACHE
 CONFIGURE_OPTS += --enable-ccache
 endif
@@ -121,11 +129,11 @@ CONFIGURE = \
 
 min-query std-query max-query query: \
 %query:
-	rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc -qa
+	rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) -qa
 
 query-%:
-	@for i in sh4 noarch i386 ; do \
+	@for i in sh4 noarch ${host_arch} ; do \
 		FOUND=`ls RPMS/$$i | grep $*` || true && \
 		( for j in $$FOUND ; do \
 			echo "RPMS/$$i/$$j:" && \
-			rpm --rcfile /usr/lib/rpm/rpmrc:localrc -qplv --scripts RPMS/$$i/$$j || true; echo;done ) || true ; done
+			rpm $(DRPM) -qplv --scripts RPMS/$$i/$$j || true; echo;done ) || true ; done

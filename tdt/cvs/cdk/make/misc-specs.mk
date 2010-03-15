@@ -49,11 +49,11 @@ $(DEPDIR)/misc-e2:
 #SPLASHUTILS_VERSION := 1.3-3
 #RPMS/sh4/$(STLINUX)-sh4-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).sh4.rpm: \
 #		jpeg libmng Archive/$(STLINUX)-target-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).src.rpm
-#	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-#	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(SPLASHUTILS).spec
+#	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+#	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(SPLASHUTILS).spec
 #$(DEPDIR)/min-$(SPLASHUTILS) $(DEPDIR)/std-$(SPLASHUTILS) $(DEPDIR)/max-$(SPLASHUTILS) $(DEPDIR)/$(SPLASHUTILS): \
 #$(DEPDIR)/%$(SPLASHUTILS): RPMS/sh4/$(STLINUX)-sh4-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).sh4.rpm
-#	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+#	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 #		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 #	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 #	@TUXBOX_YAUD_CUSTOMIZE@
@@ -61,7 +61,7 @@ $(DEPDIR)/misc-e2:
 #flash-splashutils: $(flashprefix)/root/sbin/splash_util.static
 #
 #$(flashprefix)/root/sbin/splash_util.static: RPMS/sh4/$(STLINUX)-sh4-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).sh4.rpm
-#	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+#	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 #		--relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 #	cp root/etc/splash/luxisri.ttf $(flashprefix)/root/etc/splash/ && \
 #	touch $@ && \
@@ -74,13 +74,13 @@ SPLASHUTILS_VERSION := 1.5.3.2-4
 RPMS/sh4/$(STLINUX)-sh4-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).sh4.rpm: \
 		jpeg libmng freetype libpng Archive/stlinux23-target-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).src.rpm
 	export PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig && \
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(SPLASHUTILS).spec < ../Patches/stm-target-$(SPLASHUTILS).spec.diff ) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(SPLASHUTILS).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(SPLASHUTILS).spec
 
 $(DEPDIR)/min-$(SPLASHUTILS) $(DEPDIR)/std-$(SPLASHUTILS) $(DEPDIR)/max-$(SPLASHUTILS) $(DEPDIR)/$(SPLASHUTILS): \
 $(DEPDIR)/%$(SPLASHUTILS): RPMS/sh4/$(STLINUX)-sh4-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	cp root/etc/splash/luxisri.ttf $(targetprefix)/etc/splash/ && \
 	cp -rd root/etc/splash/{vdr,liquid,together}_theme $(targetprefix)/etc/splash/ && \
@@ -93,7 +93,7 @@ $(DEPDIR)/%$(SPLASHUTILS): RPMS/sh4/$(STLINUX)-sh4-$(SPLASHUTILS)-$(SPLASHUTILS_
 flash-splashutils: $(flashprefix)/root/sbin/fbsplashd
 
 $(flashprefix)/root/sbin/fbsplashd: RPMS/sh4/$(STLINUX)-sh4-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	cp root/etc/splash/luxisri.ttf $(flashprefix)/root/etc/splash/ && \
 	cp -rd root/etc/splash/{vdr,liquid,together}_theme $(flashprefix)/root/etc/splash/ && \
@@ -121,16 +121,16 @@ BINUTILS_VERSION  := 2.18.50.0.8-38
 RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS)-$(BINUTILS_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS_DEV)-$(BINUTILS_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(BINUTILS)-$(BINUTILS_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $< && \
+	rpm $(DRPM) --nosignature -Uhv $< && \
 	export PATH=$(hostprefix)/bin:$(PATH) &&  \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BINUTILS).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(BINUTILS).spec
 
 $(BINUTILS): RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS)-$(BINUTILS_VERSION).sh4.rpm
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv $< && \
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
 $(BINUTILS_DEV): RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS_DEV)-$(BINUTILS_VERSION).sh4.rpm
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps --noscripts -Uhv $< && \
+	@rpm $(DRPM) --ignorearch --nodeps --noscripts -Uhv $< && \
 	touch .deps/$(notdir $@)
 
 
@@ -143,12 +143,12 @@ STSLAVE_VERSION := 0.6-8
 
 RPMS/sh4/$(STLINUX)-sh4-$(STSLAVE)-$(STSLAVE_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(STSLAVE)-$(STSLAVE_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(STSLAVE).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(STSLAVE).spec
 
 $(DEPDIR)/min-$(STSLAVE) $(DEPDIR)/std-$(STSLAVE) $(DEPDIR)/max-$(STSLAVE) $(DEPDIR)/$(STSLAVE): \
 $(DEPDIR)/%$(STSLAVE): RPMS/sh4/$(STLINUX)-sh4-$(STSLAVE)-$(STSLAVE_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -157,12 +157,12 @@ STSLAVE_VERSION := 0.7-16
 
 RPMS/sh4/$(STLINUX)-sh4-$(STSLAVE)-$(STSLAVE_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(STSLAVE)-$(STSLAVE_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(STSLAVE).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(STSLAVE).spec
 
 $(DEPDIR)/min-$(STSLAVE) $(DEPDIR)/std-$(STSLAVE) $(DEPDIR)/max-$(STSLAVE) $(DEPDIR)/$(STSLAVE): \
 $(DEPDIR)/%$(STSLAVE): linux-kernel-headers binutils-dev RPMS/sh4/$(STLINUX)-sh4-$(STSLAVE)-$(STSLAVE_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -190,19 +190,19 @@ endif
 RPMS/sh4/$(STLINUX)-sh4-$(OPENSSL)-$(OPENSSL_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(OPENSSL_DEV)-$(OPENSSL_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(OPENSSL)-$(OPENSSL_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(OPENSSL).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(OPENSSL).spec
 
 $(DEPDIR)/min-$(OPENSSL) $(DEPDIR)/std-$(OPENSSL) $(DEPDIR)/max-$(OPENSSL) $(DEPDIR)/$(OPENSSL): \
 $(DEPDIR)/%$(OPENSSL): RPMS/sh4/$(STLINUX)-sh4-$(OPENSSL)-$(OPENSSL_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(OPENSSL_DEV) $(DEPDIR)/std-$(OPENSSL_DEV) $(DEPDIR)/max-$(OPENSSL_DEV) $(DEPDIR)/$(OPENSSL_DEV): \
 $(DEPDIR)/%$(OPENSSL_DEV): %$(OPENSSL) RPMS/sh4/$(STLINUX)-sh4-$(OPENSSL_DEV)-$(OPENSSL_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -215,27 +215,35 @@ ALSALIB_DEV := alsa-lib-dev
 if STM22
 ALSALIB_VERSION := 1.0.12-9
 ALSALIB_OPT := -sh4processed
-else
-ALSALIB_VERSION := 1.0.16-16
-ALSALIB_OPT :=
-endif
-
 RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB)-$(ALSALIB_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB_DEV)-$(ALSALIB_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(ALSALIB)-$(ALSALIB_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(ALSALIB)$(ALSALIB_OPT).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	( cd SPECS; patch -p1 stm-target-$(ALSALIB)$(ALSALIB_OPT).spec < ../Patches/stm-target-$(ALSALIB).spec22.diff ) && \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(ALSALIB)$(ALSALIB_OPT).spec
+else
+ALSALIB_VERSION := 1.0.16-16
+ALSALIB_OPT :=
+RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB)-$(ALSALIB_VERSION).sh4.rpm \
+RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB_DEV)-$(ALSALIB_VERSION).sh4.rpm: \
+		Archive/$(STLINUX)-target-$(ALSALIB)-$(ALSALIB_VERSION).src.rpm
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	( cd SPECS; patch -p1 stm-target-$(ALSALIB)$(ALSALIB_OPT).spec < ../Patches/stm-target-$(ALSALIB).spec23.diff ) && \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(ALSALIB)$(ALSALIB_OPT).spec
+endif
 
 $(DEPDIR)/min-$(ALSALIB) $(DEPDIR)/std-$(ALSALIB) $(DEPDIR)/max-$(ALSALIB) $(DEPDIR)/$(ALSALIB): \
 $(DEPDIR)/%$(ALSALIB): RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB)-$(ALSALIB_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(ALSALIB_DEV) $(DEPDIR)/std-$(ALSALIB_DEV) $(DEPDIR)/max-$(ALSALIB_DEV) $(DEPDIR)/$(ALSALIB_DEV): \
 $(DEPDIR)/%$(ALSALIB_DEV): %$(ALSALIB) RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB_DEV)-$(ALSALIB_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -243,7 +251,7 @@ $(DEPDIR)/%$(ALSALIB_DEV): %$(ALSALIB) RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB_DEV)-$(
 flash-alsa-lib: $(flashprefix)/root/usr/bin/aserver
 
 $(flashprefix)/root/usr/bin/aserver: RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB)-$(ALSALIB_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	touch $@ && \
 	@FLASHROOTDIR_MODIFIED@
@@ -259,12 +267,12 @@ endif
 
 RPMS/sh4/$(STLINUX)-sh4-$(ALSAUTILS)-$(ALSAUTILS_VERSION).sh4.rpm: \
 		$(NCURSES_DEV) $(ALSALIB_DEV) Archive/$(STLINUX)-target-$(ALSAUTILS)-$(ALSAUTILS_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(ALSAUTILS).spec
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(ALSAUTILS).spec
 
 $(DEPDIR)/min-$(ALSAUTILS) $(DEPDIR)/std-$(ALSAUTILS) $(DEPDIR)/max-$(ALSAUTILS) $(DEPDIR)/$(ALSAUTILS): \
 $(DEPDIR)/%$(ALSAUTILS): RPMS/sh4/$(STLINUX)-sh4-$(ALSAUTILS)-$(ALSAUTILS_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -273,7 +281,7 @@ $(DEPDIR)/%$(ALSAUTILS): RPMS/sh4/$(STLINUX)-sh4-$(ALSAUTILS)-$(ALSAUTILS_VERSIO
 flash-alsa-utils: $(flashprefix)/root/usr/bin/amixer
 
 $(flashprefix)/root/usr/bin/amixer: RPMS/sh4/$(STLINUX)-sh4-$(ALSAUTILS)-$(ALSAUTILS_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	rm -rf $(flashprefix)/root/usr/share/sounds/alsa && \
 	rmdir $(flashprefix)/root/usr/share/sounds && \
@@ -294,21 +302,21 @@ endif
 RPMS/sh4/$(STLINUX)-sh4-$(ALSAPLAYER)-$(ALSAPLAYER_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(ALSAPLAYER_DEV)-$(ALSAPLAYER_VERSION).sh4.rpm: \
 		libmad libid3tag Archive/$(STLINUX)-target-$(ALSAPLAYER)-$(ALSAPLAYER_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	export PKG_CONFIG_PATH=$(targetprefix)/usr/include/pkgconfig && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-target-$(ALSAPLAYER).spec
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(ALSAPLAYER).spec
 
 $(DEPDIR)/min-$(ALSAPLAYER) $(DEPDIR)/std-$(ALSAPLAYER) $(DEPDIR)/max-$(ALSAPLAYER) $(DEPDIR)/$(ALSAPLAYER): \
 $(DEPDIR)/%$(ALSAPLAYER): RPMS/sh4/$(STLINUX)-sh4-$(ALSAPLAYER)-$(ALSAPLAYER_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(ALSAPLAYER_DEV) $(DEPDIR)/std-$(ALSAPLAYER_DEV) $(DEPDIR)/max-$(ALSAPLAYER_DEV) $(DEPDIR)/$(ALSAPLAYER_DEV): \
 $(DEPDIR)/%$(ALSAPLAYER_DEV): RPMS/sh4/$(STLINUX)-sh4-$(ALSAPLAYER_DEV)-$(ALSAPLAYER_VERSION).sh4.rpm
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -317,7 +325,7 @@ $(DEPDIR)/%$(ALSAPLAYER_DEV): RPMS/sh4/$(STLINUX)-sh4-$(ALSAPLAYER_DEV)-$(ALSAPL
 flash-alsaplayer: $(flashprefix)/root/usr/bin/alsaplayer
 
 $(flashprefix)/root/usr/bin/alsaplayer: RPMS/sh4/$(STLINUX)-sh4-$(ALSAPLAYER)-$(ALSAPLAYER_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv \
+	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	touch $@ && \
 	@FLASHROOTDIR_MODIFIED@

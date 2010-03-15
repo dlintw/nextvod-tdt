@@ -2,7 +2,9 @@
 
 #$(appsdir)/misc/tools/config.status: bootstrap libpng
 $(appsdir)/misc/tools/config.status: bootstrap
-	cd $(appsdir)/misc/tools && $(CONFIGURE) --prefix=
+	cd $(appsdir)/misc/tools && \
+	libtoolize -f -c && \
+	$(CONFIGURE) --prefix=
 
 $(DEPDIR)/min-misc-tools $(DEPDIR)/std-misc-tools $(DEPDIR)/max-misc-tools $(DEPDIR)/misc-tools: \
 $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg $(appsdir)/misc/tools/config.status

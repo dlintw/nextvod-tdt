@@ -14,11 +14,11 @@ endif
 
 RPMS/noarch/$(STLINUX)-$(HOST_U_BOOT)-source-$(U_BOOT_VERSION).noarch.rpm: \
 		Archive/$(STLINUX)-$(HOST_U_BOOT)-source-$(U_BOOT_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $< && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_U_BOOT).spec
+	rpm $(DRPM) --nosignature -Uhv $< && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_U_BOOT).spec
 
 $(DEPDIR)/u-boot.do_prepare:  RPMS/noarch/$(STLINUX)-$(HOST_U_BOOT)-source-$(U_BOOT_VERSION).noarch.rpm
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv $< && \
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch $@
 
 if STM22
@@ -109,10 +109,10 @@ $(DEPDIR)/u-boot: $(DEPDIR)/u-boot.do_compile
 #stlinux20-host-u-boot ftp://ftp.stlinux.com/pub/stlinux/2.0/ST_Linux_2.0/SRPM_Distribution/sh4-SRPMS-updates/stlinux20-host-u-boot-sh4_stb7100ref_27-2.0-14.src.rpm
 HOST_U_BOOT_SH4_STB7100REF_27 := host-u-boot-sh4_stb7100ref_27
 RPMS/sh4/stlinux20-$(HOST_U_BOOT_SH4_STB7100REF_27)-2.0-14.sh4.rpm: Archive/stlinux20-$(HOST_U_BOOT_SH4_STB7100REF_27)-2.0-14.src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $< && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_U_BOOT_SH4_STB7100REF_27).spec
+	rpm $(DRPM) --nosignature -Uhv $< && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_U_BOOT_SH4_STB7100REF_27).spec
 $(HOST_U_BOOT_SH4_STB7100REF_27): RPMS/sh4/stlinux20-$(HOST_U_BOOT_SH4_STB7100REF_27)-2.0-14.sh4.rpm
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv $< && \
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 #ftp://ftp.stlinux.com/pub/stlinux/2.2/SRPMS/stlinux22-target-u-boot-sh4_stb7100ref_27-1.1.2_stm22_0017-1.src.rpm
 #ftp://ftp.stlinux.com/pub/stlinux/2.2/SRPMS/stlinux22-target-u-boot-sh4_stb7100ref_30-1.1.2_stm22_0017-1.src.rpm
@@ -133,14 +133,14 @@ endif
 
 RPMS/sh4/$(STLINUX)-$(HOST_U_BOOT_TOOLS)-$(U_BOOT_TOOLS_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-$(HOST_U_BOOT_TOOLS)-$(U_BOOT_TOOLS_VERSION).src.rpm
-	rpm --rcfile localrc --nosignature -Uhv $< && \
-	rpmbuild --rcfile /usr/lib/rpm/rpmrc:localrc -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_U_BOOT_TOOLS).spec
+	rpm $(DRPM) --nosignature -Uhv $< && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_U_BOOT_TOOLS).spec
 
 if STM22
 $(DEPDIR)/$(HOST_U_BOOT_TOOLS): RPMS/sh4/$(STLINUX)-$(HOST_U_BOOT_TOOLS)-$(U_BOOT_TOOLS_VERSION).sh4.rpm | bootstrap-cross
 else
 $(DEPDIR)/$(HOST_U_BOOT_TOOLS): u-boot.do_prepare RPMS/sh4/$(STLINUX)-$(HOST_U_BOOT_TOOLS)-$(U_BOOT_TOOLS_VERSION).sh4.rpm | bootstrap-cross
 endif
-	@rpm --rcfile /usr/lib/rpm/rpmrc:localrc --ignorearch --nodeps -Uhv $(lastword $^) && \
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
 	touch $@
 
