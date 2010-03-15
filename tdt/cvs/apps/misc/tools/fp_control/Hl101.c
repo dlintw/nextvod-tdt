@@ -527,6 +527,7 @@ static int Clear(Context_t* context)
       perror("clear: ");
       return -1;
    }
+	 return 0;
 }
 
 Model_t HL101_model = {

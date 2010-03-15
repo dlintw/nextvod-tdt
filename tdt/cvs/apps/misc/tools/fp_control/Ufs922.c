@@ -530,7 +530,8 @@ static int Clear(Context_t* context)
 
    for (i = 1; i <= 16 ; i++)
       setIcon(context, i, 0);
- 
+
+   return 0;
 }
 
 Model_t UFS922_model = {

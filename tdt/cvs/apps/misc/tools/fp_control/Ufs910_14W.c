@@ -644,7 +644,8 @@ static int Clear(Context_t* context)
 
    for (i = 1; i <= 16 ; i++)
       setIcon(context, i, 0);
- 
+
+   return 0;
 }
 
 Model_t Ufs910_14W_model = {
