@@ -1,0 +1,132 @@
+#!/bin/sh
+
+echo "[rcS] start"
+MODDIR=/lib/modules/2.6.23.17_stm23_0119
+
+if [ ! -e /dev/vfd ]; then
+    mknod -m 0660 /dev/vfd c 147 0
+fi
+insmod $MODDIR/extra/nuvoton.ko
+
+if [ -e /var/etc/.firstboot ]; then
+   echo "WAIT 1 min" > /dev/vfd
+   echo "WAIT 1 min"
+   rm /var/etc/.firstboot
+   touch /dev/.devfsd
+fi
+
+/etc/init.d/mountvirtfs start
+
+insmod $MODDIR/extra/e2_proc/e2_proc.ko
+
+if [ ! -e /var/etc/.firstboot ]; then
+
+  echo "Starting DEBUG Interface"
+   /etc/init.d/mountall start
+   /etc/init.d/hostname start
+
+  echo "starting telnetd"
+   /usr/sbin/telnetd -l /bin/login
+
+  echo "init stmfb"
+    insmod $MODDIR/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko
+    insmod $MODDIR/extra/stgfb/stmfb/stmfb.ko display0=720x576-32@60:12m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
+  
+  echo "STB7100-VIDEO"
+	/bin/stslave -t stb7100.0 -R /boot/video.elf
+  echo "STB7100-AUDIO"
+	/bin/stslave -t stb7100.1 -R /boot/audio.elf
+
+   echo "LOADING MODULES"
+   echo "LOADING MODULES" >/dev/vfd
+
+   echo "init embx"
+   insmod $MODDIR/extra/multicom/embxshell/embxshell.ko
+   insmod $MODDIR/extra/multicom/embxmailbox/embxmailbox.ko mailbox0=0xb9211000:136:set2 mailbox1=0xb9212000:0 ;
+   insmod $MODDIR/extra/multicom/embxshm/embxshm.ko mailbox0=shm:0:7:0x60000000:0:256:256:0:1024:0xa4000000:0x10000000 ;
+   insmod $MODDIR/extra/multicom/mme/mme_host.ko transport0=shm
+
+   echo "init AVS"
+   insmod $MODDIR/extra/avs/avs.ko type=stv6412
+
+   echo "init player"
+   insmod $MODDIR/extra/player2/linux/drivers/stm/mmelog/mmelog.ko
+   insmod $MODDIR/extra/player2/linux/drivers/media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER1;
+   insmod $MODDIR/extra/player2/linux/drivers/sound/ksound/ksound.ko
+   insmod $MODDIR/extra/player2/linux/drivers/stm/platform/p2div64.ko
+   insmod $MODDIR/extra/player2/linux/drivers/media/video/stm/stm_v4l2.ko
+   insmod $MODDIR/extra/player2/linux/drivers/sound/pseudocard/pseudocard.ko
+
+   insmod $MODDIR/extra/frontends/stv090x.ko
+   insmod $MODDIR/extra/cic/cimax.ko
+   insmod $MODDIR/extra/pti/pti.ko
+   insmod $MODDIR/extra/player2/linux/drivers/media/dvb/stm/dvb/stmdvb.ko
+   insmod $MODDIR/extra/player2/linux/drivers/stm/stm_monitor.ko
+   insmod $MODDIR/extra/player2/linux/drivers/media/dvb/stm/backend/player2.ko noaudiosync=1; discardlateframe=0; useoldaudiofw=1 ;
+   insmod $MODDIR/extra/player2/linux/drivers/media/dvb/stm/h264_preprocessor/sth264pp.ko
+   insmod $MODDIR/extra/player2/linux/drivers/media/dvb/stm/allocator/stmalloc.ko
+   insmod $MODDIR/extra/player2/linux/drivers/stm/platform/platform.ko
+
+   insmod $MODDIR/kernel/fs/cifs.ko
+
+   echo "init frontpanel"
+   insmod $MODDIR/extra/boxtype/boxtype.ko
+   insmod $MODDIR/extra/simu_button/simu_button.ko
+
+   mknod /dev/rc c 147 1
+   #maxRate (same key) = 3, maxDelay (determine new key) = 150
+   /bin/evremote2 3 300 &
+
+	echo "init cardreader"
+	mknod /dev/sci0 c 253 0
+	mknod /dev/sci1 c 253 1
+	insmod $MODDIR/sci-ng.ko
+
+   #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
+   #mount /dev/sr0 /media/dvd
+   #fix this later if we got to manage a marusys raw device driver
+
+  /etc/init.d/portmap start
+  /etc/init.d/vsftpd start
+  /usr/sbin/inetd
+
+   #timefix e2
+   date -s "121220001970"
+
+#   stfbcontrol a 255
+
+   echo "LOADING e2" > /dev/vfd
+   echo "LOADING e2"
+
+   until false
+   do
+      echo "starting e2->"
+      /usr/local/bin/enigma2
+      rtv=$?
+      echo "e2 ended <- RTV: " $rtv
+      case "$rtv" in
+		0) echo "0"
+		   echo "E2 ERROR"
+      		   reboot;;
+		1) echo "1"
+		   echo "SHUTDOWN"
+		   gotosleep ufs922
+                   umount -a;;
+		2) echo "2"
+		   echo "REBOOT"
+		   reboot;;
+		3) echo "3"
+		   echo "E2 RESTART"
+		   echo "0" > /proc/progress
+		   showiframe -p /boot/bootlogo.mvi &;;
+		*) echo "*"
+		   echo "ERROR"
+                   reboot;;
+      esac
+   done 
+fi
+
+#never reached
+echo "REBOOT HDBOX" > /dev/vfd
+echo "REBOOT HDBOX"
+reboot
