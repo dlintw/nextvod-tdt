@@ -84,6 +84,22 @@ static tButton cButtonHDBOX[] = {
     {"RIGHT"          , "02", KEY_RIGHT},
     {"DOWN"           , "01", KEY_DOWN},
     {"LEFT"           , "03", KEY_LEFT},
+	{"RECALL"         , "09", KEY_RECALL},
+	{"ZOOM"           , "0B", KEY_ZOOM},
+	{"VFORMAT"        , "0E", KEY_VFORMAT},
+	{"RESOLUTION"     , "0F", KEY_RESOLUTION},
+	{"TVRADIO"        , "1A", KEY_TVRADIO},
+	{"SLEEP"          , "1E", KEY_SLEEP},
+	{"OPEN"           , "40", KEY_OPEN},
+	{"FAV"            , "41", KEY_FAV},
+	{"CHECK"          , "42", KEY_CHECK},
+    {"UPUP"           , "43", KEY_UPUP},
+	{"DOWNDOWN"       , "44", KEY_DOWNDOWN},
+    {"NEXT"           , "4C", KEY_NEXT},
+	{"LAST"           , "50", KEY_LAST},
+	{"PIP"            , "51", KEY_PIP},
+	{"SWAP"           , "52", KEY_SWAP},
+    {"LIST"           , "53", KEY_LIST},
     {"0BUTTON"        , "10", KEY_0},
     {"1BUTTON"        , "11", KEY_1},
     {"2BUTTON"        , "12", KEY_2},
@@ -95,35 +111,20 @@ static tButton cButtonHDBOX[] = {
     {"8BUTTON"        , "18", KEY_8},
     {"9BUTTON"        , "19", KEY_9},
     {""               , ""  , KEY_NULL},
-/* additional:
-0x09 = recall
-0x0b = TEXT Zoom
-0x0e = vformat
-0x0f = resolution
-0x1a = tv/radio
-0x1e = sleep
-0x40 = Pfeil + Strich drunter (Archive/Aufnahmen)
-0x41 = FAV
-0x42 = hackentaste
-0x43 = <<P ???
-0x44 = P>> ???
-0x4c = titel vor
-0x50 = titel zurück
-0x51 = Bild Zoom; PIP
-0x52 = Subservice Swappen
-0x53 = Liste möglicher Subservices anzeigen
-*/
+
 };
 
 /* ***************** our fp button assignment **************** */
 
 static tButton cButtonHDBOXFrontpanel[] = {
-	{"VOLUMEUP"		, "04", KEY_VOLUMEUP},
+	{"STANDBY"	        , "00", KEY_POWER},
+	{"OK"	            , "06", KEY_OK},
+	{"MENU"		        , "05", KEY_MENU},
+	{"VOLUMEUP"		    , "04", KEY_VOLUMEUP},
 	{"VOLUMEDOWN"		, "03", KEY_VOLUMEDOWN},
 	{"CHANNELUP"		, "01", KEY_PAGEUP},
-	{"CHANNELDOWN"	        , "02", KEY_PAGEDOWN},
+	{"CHANNELDOWN"      , "02", KEY_PAGEDOWN},
 	{""	                , ""  , KEY_NULL}
-/* is there no power key on frontpanel? */
 };
 
 static int pInit(Context_t* context, int argc, char* argv[]) 
