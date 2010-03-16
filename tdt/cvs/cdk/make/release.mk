@@ -216,7 +216,7 @@ release_base:
 	touch $(prefix)/release/var/etc/.firstboot && \
 	cp -a $(targetprefix)/bin/* $(prefix)/release/bin/ && \
 if STM23
-	cp -a $(targetprefix)/bin/ustslave $(prefix)/release/bin/ustslave_stm23 && \
+	cp -a $(targetprefix)/bin/ustslave $(prefix)/release/bin/ustslave_stm23
 endif  
 	ln -s /bin/showiframe $(prefix)/release/usr/bin/showiframe && \
 	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/ && \
