@@ -833,7 +833,7 @@ AC_SUBST(DRPM)
 AC_SUBST(DRPMBUILD)
 
 test -d ../../Archive || mkdir ../../Archive
-ln -sf ../../Archive Archive
+ln -sf ../../Archive
 install -d $stockdir/{conf,root,.app,.eme,.dat}
 
 #
