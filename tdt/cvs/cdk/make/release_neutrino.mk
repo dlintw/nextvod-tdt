@@ -29,9 +29,9 @@ $(DEPDIR)/%release_neutrino:
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release_neutrino && \
 	touch $(prefix)/release_neutrino/var/etc/.firstboot && \
-	cp -a $(targetprefix)/bin/* $(prefix)/release_neutrino/bin/ && \
+	cp -a $(targetprefix)/bin/* $(prefix)/release_neutrino/bin/
 if STM23
-	cp -a $(targetprefix)/bin/ustslave $(prefix)/release_neutrino/bin/ustslave_stm23 && \
+	cp -a $(targetprefix)/bin/ustslave $(prefix)/release_neutrino/bin/ustslave_stm23
 endif
 	ln -s /bin/showiframe $(prefix)/release_neutrino/usr/bin/showiframe && \
 	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release_neutrino/sbin/ && \
