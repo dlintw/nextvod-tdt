@@ -3408,6 +3408,27 @@ diff -Nur enigma2-nightly.org/lib/gdi/gfbdc.cpp enigma2-nightly/lib/gdi/gfbdc.cp
  
  	surface.data_phys = fb->getPhysAddr();
  
+@@ -210,12 +235,19 @@
+ 	} else
+ 		m_enable_double_buffering = 0;
+ 
++#ifdef __sh__
++	eDebug("%dkB available for acceleration surfaces.", (fb->Available() - fb_size - (1920*1080*4))/1024);
++	eDebug("resolution: %d x %d x %d (stride: %d)", surface.x, surface.y, surface.bpp, fb->Stride());
++
++	if (gAccel::getInstance())
++		gAccel::getInstance()->setAccelMemorySpace(fb->lfb + fb_size, surface.data_phys + fb_size, fb->Available() - fb_size - (1920*1080*4));
++#else
+ 	eDebug("%dkB available for acceleration surfaces.", (fb->Available() - fb_size)/1024);
+ 	eDebug("resolution: %d x %d x %d (stride: %d)", surface.x, surface.y, surface.bpp, fb->Stride());
+ 
+ 	if (gAccel::getInstance())
+ 		gAccel::getInstance()->setAccelMemorySpace(fb->lfb + fb_size, surface.data_phys + fb_size, fb->Available() - fb_size);
+-
++#endif
+ 	if (!surface.clut.data)
+ 	{
+ 		surface.clut.colors = 256;
 diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp enigma2-nightly/lib/gdi/gpixmap.cpp
 --- enigma2-nightly.org/lib/gdi/gpixmap.cpp	2009-12-12 23:16:22.412600000 +0100
 +++ enigma2-nightly/lib/gdi/gpixmap.cpp	2009-12-12 23:43:28.000000000 +0100
