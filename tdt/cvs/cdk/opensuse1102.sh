@@ -12,7 +12,8 @@ fi
 # Most important packages
 zypper install -y subversion \
 git-core \
-ccache
+ccache \
+patch
 
 # The rest
 zypper install -y automake \
