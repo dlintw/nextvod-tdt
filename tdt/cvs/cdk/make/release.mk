@@ -214,7 +214,7 @@ release_base:
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release && \
 	touch $(prefix)/release/var/etc/.firstboot && \
-	cp -a $(targetprefix)/bin/* $(prefix)/release/bin/ && \
+	cp -a $(targetprefix)/bin/* $(prefix)/release/bin/
 if STM23
 	cp -a $(targetprefix)/bin/ustslave $(prefix)/release/bin/ustslave_stm23
 endif  
