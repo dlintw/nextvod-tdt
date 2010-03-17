@@ -214,10 +214,7 @@ release_base:
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release && \
 	touch $(prefix)/release/var/etc/.firstboot && \
-	cp -a $(targetprefix)/bin/* $(prefix)/release/bin/
-if STM23
-	cp -a $(targetprefix)/bin/ustslave $(prefix)/release/bin/ustslave_stm23
-endif  
+	cp -a $(targetprefix)/bin/* $(prefix)/release/bin/ && \
 	ln -s /bin/showiframe $(prefix)/release/usr/bin/showiframe && \
 	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release/sbin/ && \
@@ -286,10 +283,7 @@ endif
 	rm -f $(prefix)/release/lib/*.la && \
 	find $(prefix)/release/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
 if !STM22
-	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/etc/init.d/rcS && \
-	rm -f $(prefix)/release/bin/{stslave,ustslave}
-else
-	rm -f $(prefix)/release/bin/ustslave_stm23
+	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/etc/init.d/rcS
 endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/avs/avs.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/boxtype/boxtype.ko $(prefix)/release/lib/modules/
