@@ -28,5 +28,6 @@ libtool \
 swig \
 make \
 gcc \
-gcc-c++
+gcc-c++ \
+pkg-config
 

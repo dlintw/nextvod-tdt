@@ -13,7 +13,8 @@ COMMONPATCHES_41 = \
 		Patches/sched_p0041.patch \
 		Patches/timer_stm22.patch \
 		Patches/p0041_cmdline_printk.patch \
-		Patches/p0041_strcpy.patch
+		Patches/p0041_strcpy.patch \
+		Patches/kernel_depmod.patch
 
 FORTISPATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/fortis_hdbox_setup_p0041.diff \

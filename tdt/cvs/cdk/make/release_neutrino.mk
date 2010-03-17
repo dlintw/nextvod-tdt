@@ -29,7 +29,10 @@ $(DEPDIR)/%release_neutrino:
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release_neutrino && \
 	touch $(prefix)/release_neutrino/var/etc/.firstboot && \
-	cp -a $(targetprefix)/bin/* $(prefix)/release_neutrino/bin/ && \
+	cp -a $(targetprefix)/bin/* $(prefix)/release_neutrino/bin/
+if STM23
+	cp -a $(targetprefix)/bin/ustslave $(prefix)/release_neutrino/bin/ustslave_stm23
+endif
 	ln -s /bin/showiframe $(prefix)/release_neutrino/usr/bin/showiframe && \
 	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release_neutrino/sbin/ && \
@@ -107,10 +110,10 @@ $(DEPDIR)/%release_neutrino:
 	rm -f $(prefix)/release_neutrino/lib/*.la && \
 	find $(prefix)/release_neutrino/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
 if !STM22
-	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/etc/init.d/rcS && \
-	rm -f $(prefix)/release_neutrino/bin/{stslave,ustslave}
+	cp $(buildprefix)/root/release/rcS_stm23_neutrino$(if $(TF7700),_$(TF7700))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(HL101),_$(HL101))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/etc/init.d/rcS && \
+	rm -f $(prefix)/release/bin/{stslave,ustslave}
 else
-	rm -f $(prefix)/release_neutrino/bin/ustslave_stm23
+	rm -f $(prefix)/release/bin/ustslave_stm23
 endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/avs/avs.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/boxtype/boxtype.ko $(prefix)/release_neutrino/lib/modules/

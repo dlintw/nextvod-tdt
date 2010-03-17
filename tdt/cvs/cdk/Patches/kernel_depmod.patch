@@ -1,0 +1,11 @@
+--- old/Makefile	2010-03-17 01:08:34.950026319 +0100
++++ new/Makefile	2010-03-17 01:09:42.861020623 +0100
+@@ -283,7 +283,7 @@
+ OBJDUMP		= $(CROSS_COMPILE)objdump
+ AWK		= awk
+ GENKSYMS	= scripts/genksyms/genksyms
+-DEPMOD		= /sbin/depmod
++DEPMOD		= depmod
+ KALLSYMS	= scripts/kallsyms
+ PERL		= perl
+ CHECK		= sparse
