@@ -125,7 +125,7 @@ static int                 vFdLed;
 static int pInit(Context_t* context, int argc, char* argv[]) {
 
     int vHandle;
-    vFdLed  = open("/sys/class/leds/ufs910\:green/brightness", O_WRONLY);
+    vFdLed  = open("/sys/class/leds/ufs910:green/brightness", O_WRONLY);
     
     vAddr.sun_family = AF_UNIX;
     strcpy(vAddr.sun_path, "/dev/lircd");
