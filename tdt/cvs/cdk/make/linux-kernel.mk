@@ -14,7 +14,7 @@ COMMONPATCHES_41 = \
 		Patches/timer_stm22.patch \
 		Patches/p0041_cmdline_printk.patch \
 		Patches/p0041_strcpy.patch \
-		Patches/kernel_depmod.patch
+		Patches/kernel22_depmod.patch
 
 FORTISPATCHES_41 = $(COMMONPATCHES_41) \
 		Patches/fortis_hdbox_setup_p0041.diff \
@@ -260,7 +260,8 @@ $(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-
 		$(if $(CUBEREVO_2000HD),Patches/$(CUBEREVO_2000HD)_setup_stlinux23.patch) \
 		$(if $(CUBEREVO_9500HD),Patches/cuberevo_patches_stlinux23.patch) \
 		$(if $(CUBEREVO_9500HD),Patches/cuberevo_rtl8201_stlinux23.patch) \
-		$(if $(CUBEREVO_9500HD),Patches/$(CUBEREVO_9500HD)_setup_stlinux23.patch)
+		$(if $(CUBEREVO_9500HD),Patches/$(CUBEREVO_9500HD)_setup_stlinux23.patch) \
+		Patches/kernel23_depmod.patch
 #		Patches/nosquashfs3.1_stm23.patch \
 #		Patches/squashfs3.0_stm23.patch \
 #		Patches/squashfs3.0_lzma_stm23.patch \
@@ -365,6 +366,7 @@ endif
 endif
 endif
 endif
+	cd $(KERNEL_DIR) && patch -p1 < ../Patches/kernel23_depmod.patch
 	-rm $(KERNEL_DIR)/localversion*
 	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig
