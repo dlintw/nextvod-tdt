@@ -84,22 +84,22 @@ static tButton cButtonHDBOX[] = {
     {"RIGHT"          , "02", KEY_RIGHT},
     {"DOWN"           , "01", KEY_DOWN},
     {"LEFT"           , "03", KEY_LEFT},
-	{"RECALL"         , "09", KEY_RECALL},
-	{"ZOOM"           , "0B", KEY_ZOOM},
-	{"VFORMAT"        , "0E", KEY_VFORMAT},
-	{"RESOLUTION"     , "0F", KEY_RESOLUTION},
-	{"TVRADIO"        , "1A", KEY_TVRADIO},
-	{"SLEEP"          , "1E", KEY_SLEEP},
-	{"OPEN"           , "40", KEY_OPEN},
-	{"FAV"            , "41", KEY_FAV},
-	{"CHECK"          , "42", KEY_CHECK},
-    {"UPUP"           , "43", KEY_UPUP},
-	{"DOWNDOWN"       , "44", KEY_DOWNDOWN},
+    {"RECALL"         , "09", KEY_MEMO},
+    {"ZOOM"           , "0B", KEY_ZOOM},
+    {"VFORMAT"        , "0E", KEY_ANGLE},
+    {"RESOLUTION"     , "0F", KEY_SCREEN},
+    {"TVRADIO"        , "1A", KEY_MODE},
+    {"SLEEP"          , "1E", KEY_SLOW},
+    {"OPEN"           , "40", KEY_DIRECTORY},
+    {"FAV"            , "41", KEY_FAVORITES},
+    {"CHECK"          , "42", KEY_SELECT},
+    {"UPUP"           , "43", KEY_TEEN},
+    {"DOWNDOWN"       , "44", KEY_TWEN},
     {"NEXT"           , "4C", KEY_NEXT},
-	{"LAST"           , "50", KEY_LAST},
-	{"PIP"            , "51", KEY_PIP},
-	{"SWAP"           , "52", KEY_SWAP},
-    {"LIST"           , "53", KEY_LIST},
+    {"LAST"           , "50", KEY_PREVIOUS}, 
+    {"PIP"            , "51", KEY_OPTION},
+    {"SWAP"           , "52", KEY_GOTO},
+    {"LIST"           , "53", KEY_SUBTITLE},
     {"0BUTTON"        , "10", KEY_0},
     {"1BUTTON"        , "11", KEY_1},
     {"2BUTTON"        , "12", KEY_2},
@@ -118,12 +118,12 @@ static tButton cButtonHDBOX[] = {
 
 static tButton cButtonHDBOXFrontpanel[] = {
 	{"STANDBY"	        , "00", KEY_POWER},
-	{"OK"	            , "06", KEY_OK},
+	{"OK"	                , "06", KEY_OK},
 	{"MENU"		        , "05", KEY_MENU},
-	{"VOLUMEUP"		    , "04", KEY_VOLUMEUP},
+	{"VOLUMEUP"		, "04", KEY_VOLUMEUP},
 	{"VOLUMEDOWN"		, "03", KEY_VOLUMEDOWN},
 	{"CHANNELUP"		, "01", KEY_PAGEUP},
-	{"CHANNELDOWN"      , "02", KEY_PAGEDOWN},
+	{"CHANNELDOWN"          , "02", KEY_PAGEDOWN},
 	{""	                , ""  , KEY_NULL}
 };
 
@@ -217,7 +217,7 @@ static int pRead(Context_t* context)
        /* convert it to milliseconds */
        currentTime = tmp.tv_sec * 1000 + tmp.tv_nsec / 1000000;
 
-       /* printf("c %x l %x\n", vCurrentCode, private->vLastCode); */
+       printf("c %x l %x\n", vCurrentCode, private->vLastCode);
 
 /* fixme: to be observed if this should be distinguished between
  * frontpanel button and remote control. what about people
@@ -254,7 +254,7 @@ static int pRead(Context_t* context)
        break;
     } /* for later use we make a dummy while loop here */
     
-    printf("%s <\n", __func__);
+   /* printf("%s <\n", __func__); */
     
     return vCurrentCode;
 }
