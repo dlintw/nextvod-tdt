@@ -277,7 +277,7 @@ static int init(Context_t* context)
       
     private->fd_green = open("/sys/class/leds/ufs910\:green/brightness", O_WRONLY);
     private->fd_red = open("/sys/class/leds/ufs910\:red/brightness", O_WRONLY);
-    private->fd_yellow = open("/sys/class/leds/ufs910\:yellow/brightness", O_WRONLY);
+    private->fd_yellow = open("/sys/class/leds/ufs910\:orange/brightness", O_WRONLY);
     
     private->vfd = vFd;
     
