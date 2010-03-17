@@ -46,7 +46,7 @@
 + 	{
 + 		.name  = "LMI_SYS",
 + 		.start = 0,
-+ 		.size  = 0x00E00000,
++ 		.size  = 0x00E80000,
 + 		.flags = 0,
 + 		.aka   = LMI_SYS_partalias
 + 	}
