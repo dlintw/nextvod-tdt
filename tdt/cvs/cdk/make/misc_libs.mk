@@ -1,7 +1,7 @@
 # misc/libs
 
 # This file serves as a marker for misc_libs
-$(targetprefix)/lib/pkgconfig/tuxbox-xmltree.pc:
+$(targetprefix)/usr/lib/pkgconfig/tuxbox-xmltree.pc:
 	$(MAKE) misc_libs
 
 $(appsdir)/misc/libs/config.status: bootstrap libz
