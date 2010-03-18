@@ -2017,33 +2017,40 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   
   	default:
 ***************
-*** 370,376 ****
-  	((f)->feed.ts.is_filtering) &&					\
-  	(((f)->ts_type & (TS_PACKET|TS_PAYLOAD_ONLY)) == TS_PACKET))
+*** 365,416 ****
+  	}
+  }
   
+! #define DVR_FEED(f)							\
+! 	(((f)->type == DMX_TYPE_TS) &&					\
+! 	((f)->feed.ts.is_filtering) &&					\
+! 	(((f)->ts_type & (TS_PACKET|TS_PAYLOAD_ONLY)) == TS_PACKET))
+! 
 ! static void dvb_dmx_swfilter_packet(struct dvb_demux *demux, const u8 *buf)
   {
   	struct dvb_demux_feed *feed;
   	struct list_head *pos, *head = &demux->feed_list;
---- 385,391 ----
-  	((f)->feed.ts.is_filtering) &&					\
-  	(((f)->ts_type & (TS_PACKET|TS_PAYLOAD_ONLY)) == TS_PACKET))
+  	u16 pid = ts_pid(buf);
+- 	int dvr_done = 0;
   
-! static void dvb_dmx_swfilter_packet(struct dvb_demux *demux, const u8 *buf, int count)
-  {
-  	struct dvb_demux_feed *feed;
-  	struct list_head *pos, *head = &demux->feed_list;
-***************
-*** 389,416 ****
-  			continue;
+  	list_for_each(pos, head) {
+  		feed = list_entry(pos, struct dvb_demux_feed, list_head);
   
-  		if (feed->pid == pid) {
+! 		if ((feed->pid != pid) && (feed->pid != 0x2000))
+! 			continue;
+! 
+! 		/* copy each packet only once to the dvr device, even
+! 		 * if a PID is in multiple filters (e.g. video + PCR) */
+! 		if ((DVR_FEED(feed)) && (dvr_done++))
+! 			continue;
+! 
+! 		if (feed->pid == pid) {
 ! 			dvb_dmx_swfilter_packet_type(feed, buf);
-  			if (DVR_FEED(feed))
-  				continue;
-  		}
-  
-  		if (feed->pid == 0x2000)
+! 			if (DVR_FEED(feed))
+! 				continue;
+! 		}
+! 
+! 		if (feed->pid == 0x2000)
 ! 			feed->cb.ts(buf, 188, NULL, 0, &feed->feed.ts, DMX_OK);
   	}
   }
@@ -2063,20 +2070,28 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   }
   
   EXPORT_SYMBOL(dvb_dmx_swfilter_packets);
---- 404,450 ----
-  			continue;
+--- 380,434 ----
+  	}
+  }
   
-  		if (feed->pid == pid) {
+! static void dvb_dmx_swfilter_packet(struct dvb_demux *demux, const u8 *buf, int count)
+  {
+  	struct dvb_demux_feed *feed;
+  	struct list_head *pos, *head = &demux->feed_list;
+  	u16 pid = ts_pid(buf);
+  
+  	list_for_each(pos, head) {
+  		feed = list_entry(pos, struct dvb_demux_feed, list_head);
+  
+! 		if (feed->pid == pid)
 ! 			dvb_dmx_swfilter_packet_type(feed, buf, count);
-  			if (DVR_FEED(feed))
-  				continue;
-  		}
-  
-  		if (feed->pid == 0x2000)
+! 		else if (feed->pid == 0x2000)
 ! 			feed->cb.ts(buf, count, NULL, 0, &feed->feed.ts, DMX_OK);
   	}
   }
   
++ EXPORT_SYMBOL(dvb_dmx_swfilter_packet);
++ 
   void dvb_dmx_swfilter_packets(struct dvb_demux *demux, const u8 *buf,
   			      size_t count)
   {
@@ -2120,7 +2135,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   		demux->tsbufp = 0;
   		p += j;
   	}
---- 465,471 ----
+--- 449,455 ----
   		}
   		memcpy(&demux->tsbuf[i], buf, j);
   		if (demux->tsbuf[0] == 0x47)
@@ -2137,7 +2152,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   				p += 188;
   			} else {
   				i = count - p;
---- 473,479 ----
+--- 457,463 ----
   	while (p < count) {
   		if (buf[p] == 0x47) {
   			if (count - p >= 188) {
@@ -2170,7 +2185,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   				p += 204;
   			} else {
   				i = count - p;
---- 507,529 ----
+--- 491,513 ----
   			goto bailout;
   		}
   		memcpy(&demux->tsbuf[i], buf, j);
@@ -2204,7 +2219,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   
   	if (feed->state < DMX_STATE_GO) {
   		mutex_unlock(&demux->mutex);
---- 707,713 ----
+--- 691,697 ----
   	struct dvb_demux *demux = feed->demux;
   	int ret;
   
@@ -2222,7 +2237,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   
   	if (feed->state == DMX_STATE_FREE) {
   		mutex_unlock(&demux->mutex);
---- 781,787 ----
+--- 765,771 ----
   	struct dvb_demux *demux = (struct dvb_demux *)dmx;
   	struct dvb_demux_feed *feed = (struct dvb_demux_feed *)ts_feed;
   
@@ -2240,7 +2255,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   
   	if (!dvbdmx->stop_feed) {
   		mutex_unlock(&dvbdmx->mutex);
---- 948,954 ----
+--- 932,938 ----
   	struct dvb_demux *dvbdmx = dvbdmxfeed->demux;
   	int ret;
   
@@ -2258,7 +2273,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   
   	if (dvbdmxfilter->feed != dvbdmxfeed) {
   		mutex_unlock(&dvbdmx->mutex);
---- 973,979 ----
+--- 957,963 ----
   	struct dvb_demux_feed *dvbdmxfeed = (struct dvb_demux_feed *)feed;
   	struct dvb_demux *dvbdmx = dvbdmxfeed->demux;
   
@@ -2276,7 +2291,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   
   	if (dvbdmxfeed->state == DMX_STATE_FREE) {
   		mutex_unlock(&dvbdmx->mutex);
---- 1046,1052 ----
+--- 1030,1036 ----
   	struct dvb_demux_feed *dvbdmxfeed = (struct dvb_demux_feed *)feed;
   	struct dvb_demux *dvbdmx = (struct dvb_demux *)demux;
   
@@ -2294,7 +2309,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   
   	demux->frontend = frontend;
   	mutex_unlock(&dvbdemux->mutex);
---- 1155,1161 ----
+--- 1139,1145 ----
   	if (demux->frontend)
   		return -EINVAL;
   
@@ -2312,7 +2327,7 @@ diff -rcN linux/drivers/media/dvb/dvb-core/dvb_demux.c UFS922_Orig/drivers/media
   
   	demux->frontend = NULL;
   	mutex_unlock(&dvbdemux->mutex);
---- 1166,1172 ----
+--- 1150,1156 ----
   {
   	struct dvb_demux *dvbdemux = (struct dvb_demux *)demux;
   
