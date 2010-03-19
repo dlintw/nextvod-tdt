@@ -5543,3 +5543,14 @@ diff -rcN linux-sh4/include/linux/dvb/video.h UFS922_stm23_Patchdir/include/linu
 ! 		 dvb_ringbuffer.o dvb_math.o
   
   obj-$(CONFIG_DVB_CORE) += dvb-core.o
+--- linux-sh4/drivers/media/dvb/dvb-core/dvb_demux.c	2010-03-18 13:50:57.000000000 -0400
++++ linux-sh4/drivers/media/dvb/dvb-core/dvb_demux.c	2010-03-18 18:43:03.000000000 -0400
+@@ -414,6 +414,8 @@
+ 	}
+ }
+ 
++EXPORT_SYMBOL(dvb_dmx_swfilter_packet);
++
+ void dvb_dmx_swfilter_packets(struct dvb_demux *demux, const u8 *buf,
+ 			      size_t count)
+ {
