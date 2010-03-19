@@ -7594,3 +7594,14 @@ diff -Naur linux-orig/drivers/media/dvb/dvb-core/dvb_demux.c linux/drivers/media
  			feed->cb.ts(buf, count, NULL, 0, &feed->feed.ts, DMX_OK);
  	}
  }
+--- linux/drivers/media/dvb/dvb-core/dvb_demux.c	2010-03-18 12:18:24.000000000 -0400
++++ linux/drivers/media/dvb/dvb-core/dvb_demux.c	2010-03-18 12:19:04.000000000 -0400
+@@ -396,6 +396,8 @@
+ 	}
+ }
+ 
++EXPORT_SYMBOL(dvb_dmx_swfilter_packet);
++
+ void dvb_dmx_swfilter_packets(struct dvb_demux *demux, const u8 *buf,
+ 			      size_t count)
+ {
