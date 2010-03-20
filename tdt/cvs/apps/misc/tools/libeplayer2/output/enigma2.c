@@ -192,6 +192,9 @@ static void Enigma2SubtitleThread(Context_t *context) {
     long int                subMilliDuration    = 0;
     unsigned long long int  subPts              = 0;
     unsigned long long int  Pts                 = 0;
+    
+    //wait a little, so isPlaying is set
+    sleep(1);
 
     while ( context && 
             context->playback && 
