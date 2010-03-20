@@ -29,7 +29,6 @@ $(appsdir)/enigma2/config.status: bootstrap freetype expat fontconfig libpng jpe
 			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-hl101)
 
 $(DEPDIR)/enigma2.do_prepare:
-	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches//e2-progtest-m4.patch
 if ENABLE_HL101
 	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches/e2_api5.patch
 endif

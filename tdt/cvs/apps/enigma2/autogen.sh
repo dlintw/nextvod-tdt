@@ -50,7 +50,7 @@ fi
 echo "Generating configuration files for $package, please wait...."
 
 echo "  aclocal"
-aclocal
+aclocal -I m4
 echo "  libtoolize --automake"
 libtoolize --automake
 echo "  autoconf"
