@@ -909,7 +909,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/epgca
 +#else
 +//Dagobert: currently this happens sporadicly on ufs922 (with new skin). Not sure why
 +//we must observe this!
-+				eFatal("LINE %d descriptor not found in descriptor cache %08x!!!!!!", __LINE__, *(d-4));
++				eDebug("LINE %d descriptor not found in descriptor cache %08x!!!!!!", __LINE__, *(d-4));
 +#endif
 +			}
  			ByteSize -= 4;
