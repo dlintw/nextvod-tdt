@@ -302,7 +302,7 @@ static void SrtSubtitleThread(Context_t *context) {
                 
                 Text[-1] = '\0';
             } else {
-                int length = strlen(Text) /* \0 -> \n */ + strlen(Data) + 1 /* \0 */;
+                int length = strlen(Text) /* \0 -> \n */ + strlen(Data) + 2 /* \0 */;
                 //printf("Alloc: %d\n", length);
 		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
                 char * tmpText = strdup(Text);
