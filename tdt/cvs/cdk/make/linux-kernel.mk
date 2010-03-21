@@ -314,43 +314,43 @@ if ENABLE_CUBEREVO
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO).config{DEBUG_STR} $(KERNEL_DIR)/.config
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
 if ENABLE_CUBEREVO_MINI
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_MINI).config{DEBUG_STR} $(KERNEL_DIR)/.config
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_MINI).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
 if ENABLE_CUBEREVO_MINI2
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_MINI2).config{DEBUG_STR} $(KERNEL_DIR)/.config
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_MINI2).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
 if ENABLE_CUBEREVO_MINI_FTA
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_MINI_FTA).config{DEBUG_STR} $(KERNEL_DIR)/.config
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_MINI_FTA).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
 if ENABLE_CUBEREVO_250HD
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_250HD).config{DEBUG_STR} $(KERNEL_DIR)/.config
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_250HD).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
 if ENABLE_CUBEREVO_2000HD
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_2000HD).config{DEBUG_STR} $(KERNEL_DIR)/.config
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_2000HD).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
 if ENABLE_CUBEREVO_9500HD
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
 	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_9500HD).config{DEBUG_STR} $(KERNEL_DIR)/.config
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_9500HD).config${DEBUG_STR} $(KERNEL_DIR)/.config
 else
 
 endif
