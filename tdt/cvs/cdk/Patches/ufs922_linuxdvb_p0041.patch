@@ -7605,3 +7605,14 @@ diff -Naur linux-orig/drivers/media/dvb/dvb-core/dvb_demux.c linux/drivers/media
  void dvb_dmx_swfilter_packets(struct dvb_demux *demux, const u8 *buf,
  			      size_t count)
  {
+ 
+--- linux/drivers/media/dvb/dvb-core/dvb_demux.h	2010-03-21 22:41:52.000000000 -0400
++++ linux/drivers/media/dvb/dvb-core/dvb_demux.h	2010-03-21 22:45:32.000000000 -0400
+@@ -138,6 +138,7 @@
+ 
+ int dvb_dmx_init(struct dvb_demux *dvbdemux);
+ void dvb_dmx_release(struct dvb_demux *dvbdemux);
++static void dvb_dmx_swfilter_packet(struct dvb_demux *demux, const u8 *buf, int count);
+ void dvb_dmx_swfilter_packets(struct dvb_demux *dvbdmx, const u8 *buf,
+ 			      size_t count);
+ void dvb_dmx_swfilter(struct dvb_demux *demux, const u8 *buf, size_t count);
