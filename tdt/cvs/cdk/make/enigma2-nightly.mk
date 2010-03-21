@@ -44,9 +44,9 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
 	[ "$$REPLY" == "0" ] && DIFF="1"; \
-	[ "$$REPLY" == "1a" ] && DIFF="0"; REVISION="2.6.0"; \
-	[ "$$REPLY" == "1b" ] && DIFF="0"; REVISION="2.6.1"; \
-	[ "$$REPLY" == "2a" ] && DIFF="0"; REVISION="bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
+	[ "$$REPLY" == "1a" ] && DIFF="0" && REVISION="2.6.0"; \
+	[ "$$REPLY" == "1b" ] && DIFF="0" && REVISION="2.6.1"; \
+	[ "$$REPLY" == "2a" ] && DIFF="0" && REVISION="bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
 	echo "Revision: " $$REVISION; \
 	[ -d "$(appsdir)/enigma2-nightly" ] && \
 	git pull $(appsdir)/enigma2-nightly master;\
