@@ -3385,9 +3385,6 @@ diff -Nur enigma2-nightly.org/lib/gdi/gfbdc.cpp enigma2-nightly/lib/gdi/gfbdc.cp
  	fb->SetMode(m_xres, m_yres, 32);
  
 +#if defined(__sh__) 
-+	for (int y=0; y<m_yres; y++)    // make whole screen transparent 
-+		memset(fb->lfb+ y * m_xres * 4, 0x00, m_xres * 4); 
-+
 +	surface.type = 0; 
 +	surface.x = m_xres; 
 +	surface.y = m_yres; 
@@ -3395,7 +3392,10 @@ diff -Nur enigma2-nightly.org/lib/gdi/gfbdc.cpp enigma2-nightly/lib/gdi/gfbdc.cp
 +	surface.bypp = 4; 
 +	surface.stride = m_xres * 4; 
 +	surface.data = fb->lfb; 
-+	surface.offset = 0; 
++	surface.offset = 0;
++
++	for (int y=0; y<m_yres; y++)    // make whole screen transparent 
++		memset(fb->lfb+ y * m_xres * 4, 0x00, m_xres * 4);
 +#else 
  	for (int y=0; y<m_yres; y++)	// make whole screen transparent
  		memset(fb->lfb+y*fb->Stride(), 0x00, fb->Stride());
