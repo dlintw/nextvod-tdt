@@ -241,6 +241,7 @@ STM23_DVB_PATCH = Patches/linuxdvb_stm23_api5.patch
 else
 STM23_DVB_PATCH = Patches/linuxdvb_stm23.patch
 endif
+endif
 
 $(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.noarch.rpm \
 		Patches/cpp_stm23.patch \
