@@ -209,6 +209,14 @@ AC_ARG_ENABLE(hl101,
 AM_CONDITIONAL(ENABLE_HL101,test "$enable_hl101" = "yes")
 AC_SUBST(HL101)
 
+AC_ARG_ENABLE(vip2,
+	AS_HELP_STRING(--enable-vip2,    enable edision argus vip2 stuff),
+	[case "${enableval}" in
+		yes) VIP2=vip2 ;;
+	esac],[enable_vip2=no])
+AM_CONDITIONAL(ENABLE_VIP2,test "$enable_vip2" = "yes")
+AC_SUBST(VIP2)
+
 AC_ARG_ENABLE(ufs922,
 	AS_HELP_STRING(--enable-ufs922,    enable kathrein ufs922 stuff),
 	[case "${enableval}" in
@@ -890,7 +898,8 @@ stock directory:       $stockdir
 ipkg build directory:  $ipkgbuilddir
 Fortis/hdbox stuff:    $enable_fortis_hdbox
 topfield stuff:	       $enable_tf7700
-spider box hl101 stuff:	$enable_hl101
+spider-box hl101 stuff:	$enable_hl101
+edision argus vip2 stuff:	$enable_vip2
 ufs910 stuff:	       $enable_ufs910
 ufs910 flash:          $enable_flash_ufs910
 ufs922 stuff:	       $enable_ufs922

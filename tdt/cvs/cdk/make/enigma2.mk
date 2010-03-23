@@ -27,9 +27,13 @@ $(appsdir)/enigma2/config.status: bootstrap freetype expat fontconfig libpng jpe
 			$(if $(FLASH_UFS910),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FLASH_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-hl101)
+			$(if $(VIP2),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_VIP2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-vip2)
 
 $(DEPDIR)/enigma2.do_prepare:
 if ENABLE_HL101
+	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches/e2_api5.patch
+endif
+if ENABLE_VIP2
 	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches/e2_api5.patch
 endif
 	touch $@
@@ -85,11 +89,17 @@ else
 	rm -f $(targetprefix)/usr/local/share/enigma2/keymap_tf7700.xml
 endif
 if ENABLE_HL101
-	cp -dp root/bin/stslave_stm23 $(targetprefix)/bin/stslave_stm23
+	cp -dp root/bin/stslave $(targetprefix)/bin/stslave
 	cp -dp root/usr/bin/lircd $(targetprefix)/usr/bin/lircd
 	cp -dp root/etc/lircd_hl101.conf $(targetprefix)/etc/lircd.conf
 else
+if ENABLE_VIP2
+	cp -dp root/bin/stslave $(targetprefix)/bin/stslave
+	cp -dp root/usr/bin/lircd $(targetprefix)/usr/bin/lircd
+	cp -dp root/etc/lircd_vip2.conf $(targetprefix)/etc/lircd.conf
+else
 	$(INSTALL_FILE) root/etc/lircd.conf $(targetprefix)/etc/
+endif
 endif
 	touch $@
 

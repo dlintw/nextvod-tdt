@@ -56,12 +56,13 @@ echo "5) Topfield 7700 HDPVR"
 echo "6) Fortis based (HDBOX)"
 echo "7) Cuberevo (IPBOX)"
 echo "8) SpiderBox HL-101"
+echo "9) Edision argus VIP2"
 case $1 in
-	1|2|3|4|5|6|7|8) REPLY=$1
+	1|2|3|4|5|6|7|8|9) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-8)? ";;
+	read -p "Select target (1-9)? ";;
 esac
 
 [ "$REPLY" == "1" ] && CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
@@ -72,7 +73,8 @@ esac
 [ "$REPLY" == "6" ] && CONFIGPARAM="$CONFIGPARAM --enable-fortis_hdbox"
 [ "$REPLY" == "7" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo"
 [ "$REPLY" == "8" ] && CONFIGPARAM="$CONFIGPARAM --enable-hl101"
-[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" -o "$REPLY" == "7" -o "$REPLY" == "8" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
+[ "$REPLY" == "9" ] && CONFIGPARAM="$CONFIGPARAM --enable-vip2"
+[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" -o "$REPLY" == "7" -o "$REPLY" == "8" -o "$REPLY" == "9" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
 
 ##############################################
 REPLY=N

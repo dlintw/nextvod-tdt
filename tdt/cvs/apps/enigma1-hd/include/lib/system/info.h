@@ -52,6 +52,7 @@ public:
 		UFS922,
 		TF7700,
 		HL101,
+		VIP2,
 		HDBOX,
 		Unknown
 	};

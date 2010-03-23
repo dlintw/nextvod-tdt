@@ -258,6 +258,13 @@ void eZap::init_eZap(int argc, char **argv)
 			eFatal("couldn't load RC Mapping file for SpiderBox HL101");
 			break;
 		}
+		case eSystemInfo::VIP2:
+		{
+			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rc_vip2.xml") )
+			if ( eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rc_vip2.xml") )
+			eFatal("couldn't load RC Mapping file for Edision argus vip2");
+			break;
+		}
 		case eSystemInfo::UFS9101W:
 		{
 			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcufs9101w.xml") )

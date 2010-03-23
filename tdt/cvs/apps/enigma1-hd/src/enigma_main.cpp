@@ -3354,6 +3354,7 @@ void eZapMain::pause()
 			                case eSystemInfo::DGS_R91:
 			                case eSystemInfo::DGS_R9000:
 			                case eSystemInfo::HL101:
+			                case eSystemInfo::VIP2:
 			            		break;
 			                case eSystemInfo::UFS9101W ... eSystemInfo::UFS91014W:
 						break;
@@ -8096,6 +8097,7 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 		case eSystemInfo::DGS_R9000:
 		case eSystemInfo::DGS_R91:
 		case eSystemInfo::HL101:
+		case eSystemInfo::VIP2:
 			new eListBoxEntryText(&list, _("shutdown now"), (void*)1, 0, _("shutdown your box"));
 			new eListBoxEntryText(&list, _("reboot now"), (void*)4, 0, _("restart your box"));
 			break;

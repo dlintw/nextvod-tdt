@@ -506,6 +506,7 @@ void eExpertSetup::factory_reset()
 			case eSystemInfo::DGS_R9000:
 			case eSystemInfo::DGS_R91:
 			case eSystemInfo::HL101:
+			case eSystemInfo::VIP2:
 				system("/usr/local/sbin/default.sh");
 				system(" killall -9 enigma");
 				break;
@@ -543,6 +544,7 @@ void eExpertSetup::user_reset()
 			case eSystemInfo::DGS_R9000:
 			case eSystemInfo::DGS_R91:
 			case eSystemInfo::HL101:
+			case eSystemInfo::VIP2:
 			system("/usr/local/sbin/user.sh");
 				system(" killall -9 enigma");
 				break;

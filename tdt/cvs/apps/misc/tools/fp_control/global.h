@@ -24,12 +24,12 @@ struct vfd_ioctl_data {
 	unsigned char length;
 };
 
-typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, HdBox} eBoxType;
+typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox} eBoxType;
 
 typedef struct Context_s {
 	void* /* Model_t */  *m; /* instance data */
 	int                  fd; /* filedescriptor of fd */
-	
+
 } Context_t;
 
 typedef struct Model_s {
@@ -62,6 +62,7 @@ extern Model_t Ufs910_14W_model;
 extern Model_t UFS922_model;
 extern Model_t HDBOX_model;
 extern Model_t HL101_model;
+extern Model_t VIP2_model;
 
 static Model_t * AvailableModels[] = {
 	&Ufs910_1W_model,
@@ -69,6 +70,7 @@ static Model_t * AvailableModels[] = {
 	&UFS922_model,
 	&HDBOX_model,
 	&HL101_model,
+	&VIP2_model,
 	NULL
 };
 

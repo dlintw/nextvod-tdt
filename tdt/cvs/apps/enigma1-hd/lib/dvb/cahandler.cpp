@@ -232,6 +232,7 @@ void CAService::buildCAPMT( PMT *pmt )
 		case eSystemInfo::DGS_R9000:
 		case eSystemInfo::DGS_R91:
 		case eSystemInfo::HL101:
+		case eSystemInfo::VIP2:
 			capmt[25]=0x03;  // descramble on demux0 and demux1
 			capmt[26]=0x01;  // get section data from demux1
 			break;

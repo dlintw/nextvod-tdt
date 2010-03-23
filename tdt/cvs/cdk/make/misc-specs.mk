@@ -14,8 +14,13 @@ $(DEPDIR)/misc-cp:
 if ENABLE_HL101
 	cp $(buildprefix)/root/etc/lircd_hl101.conf $(targetprefix)/etc/lircd.conf
 else
+if ENABLE_VIP2
+	cp $(buildprefix)/root/etc/lircd_vip2.conf $(targetprefix)/etc/lircd.conf
+else
 	cp $(buildprefix)/root/etc/lircd.conf $(targetprefix)/etc
 endif
+endif
+
 	cp -rd $(buildprefix)/root/etc/hotplug $(targetprefix)/etc
 	cp -rd $(buildprefix)/root/etc/hotplug.d $(targetprefix)/etc
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -29,7 +34,11 @@ $(DEPDIR)/remote:
 if ENABLE_HL101
 	cp $(buildprefix)/root/etc/lircd_hl101.conf $(targetprefix)/etc/lircd.conf
 else
+if ENABLE_VIP2
+	cp $(buildprefix)/root/etc/lircd_vip2.conf $(targetprefix)/etc/lircd.conf
+else
 	cp $(buildprefix)/root/etc/lircd.conf $(targetprefix)/etc/
+endif
 endif
 	@[ "x$*" = "x" ] && touch $@ || true
 

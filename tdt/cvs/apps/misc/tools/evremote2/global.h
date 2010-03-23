@@ -10,13 +10,13 @@
 
 #include "map.h"
 
-typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, HdBox} eBoxType;
+typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox} eBoxType;
 typedef enum {RemoteControl, FrontPanel} eKeyType;
 
 typedef struct Context_s {
 	void* /* RemoteControl_t */  *r; /* instance data */
 	int                          fd; /* filedescriptor of fd */
-	
+
 } Context_t;
 
 int getInternalCode(tButton * cButtons, const char cCode[3]);

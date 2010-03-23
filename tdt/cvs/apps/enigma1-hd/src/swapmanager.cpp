@@ -173,6 +173,7 @@ void eSwapManager::getBoxType()
 		case eSystemInfo::DGS_R9000:
 		case eSystemInfo::DGS_R91:
 		case eSystemInfo::HL101:
+		case eSystemInfo::VIP2:
 			mntbase = "/hdd/";
 			break;
 

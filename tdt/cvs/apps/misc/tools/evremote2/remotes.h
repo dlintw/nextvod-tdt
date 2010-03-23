@@ -16,7 +16,7 @@ typedef struct RemoteControl_s {
 	int (* Shutdown) (Context_t* context);
 	int (* Read) (Context_t* context);
 	int (* Notification) (Context_t* context, const int on);
-		
+
         void/*tButton*/ * RemoteControl;
 	void/*tButton*/ * Frontpanel;
 
@@ -27,6 +27,7 @@ extern RemoteControl_t Ufs910_1W_RC;
 extern RemoteControl_t Ufs910_14W_RC;
 extern RemoteControl_t Tf7700_RC;
 extern RemoteControl_t Hl101_RC;
+extern RemoteControl_t Vip2_RC;
 extern RemoteControl_t UFS922_RC;
 extern RemoteControl_t HDBOX_RC;
 
@@ -35,6 +36,7 @@ static RemoteControl_t * AvailableRemoteControls[] = {
 	&Ufs910_14W_RC,
 	&Tf7700_RC,
 	&Hl101_RC,
+	&Vip2_RC,
 	&UFS922_RC,
 	&HDBOX_RC,
 	NULL

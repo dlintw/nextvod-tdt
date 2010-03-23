@@ -94,6 +94,31 @@ void eSystemInfo::init_eSystemInfo()
 			hasci=1;
 			hasscartswitch = 1;
 			break;
+		case VIP2:
+		    eDebug("[SystemInfo] HW type: VIP2");
+			caids.insert(0x4a70);
+			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+			manufactstr="EDISION";
+			helpstr="vip2";
+			cpustr="STi7101, 265MHz";
+			haskeyboard=1;
+			modelstr="EDISION Argus vip2";
+			if(!strncmp(" STB0899 Multistandard", tuner.c_str(), 22))
+				tunerstr = "ST STB0899 DVB S2";
+			else if (!strncmp(" ST STV0903", tuner.c_str(), 11))
+				tunerstr = "ST STV0903 DVB S2";
+			else if (!strncmp(" Zarlink", tuner.c_str(), 8))
+				tunerstr = "Zarlink ZL10353 DVB T";
+			else if (!strncmp(" Philips", tuner.c_str(), 8))
+				tunerstr = "Philips TDA1023 DVB C";
+			else
+				tunerstr = "Unknown";
+			midstr="91";
+			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
+			hasstandbywakeuptimer = 0;
+			hasci=1;
+			hasscartswitch = 1;
+			break;
 		case UFS9101W:
 		    eDebug("[SystemInfo] HW type: UFS9101W");
 			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
@@ -638,6 +663,8 @@ int eSystemInfo::getBoxModel()
         	vBoxType = TF7700;
         else if(!strncasecmp(vName,"hl101", 5))
         	vBoxType = HL101;
+        else if(!strncasecmp(vName,"vip2", 4))
+        	vBoxType = VIP2;
         else if(!strncasecmp(vName,"hdbox", 5))
         	vBoxType = HDBOX;
         else
