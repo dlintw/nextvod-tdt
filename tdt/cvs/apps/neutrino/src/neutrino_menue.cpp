@@ -2387,10 +2387,11 @@ void CNeutrinoApp::InitLcdSettings(CMenuWidget &lcdSettings)
 
 	lcdSettings.addItem(GenericMenuSeparatorLine);
 	lcdSettings.addItem(new CMenuForwarder(LOCALE_LCDMENU_LCDCONTROLER, true, NULL, lcdsliders));
-
+#if 0
 	lcdSettings.addItem(GenericMenuSeparatorLine);
 	CMenuOptionChooser* oj = new CMenuOptionChooser(LOCALE_LCDMENU_STATUSLINE, &g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME], LCDMENU_STATUSLINE_OPTIONS, LCDMENU_STATUSLINE_OPTION_COUNT, true);
 	lcdSettings.addItem(oj);
+#endif
 }
 
 #define KEYBINDINGMENU_BOUQUETHANDLING_OPTION_COUNT 3
