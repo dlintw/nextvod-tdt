@@ -823,8 +823,10 @@ void CMoviePlayerGui::PlayFile(void)
 							break;
 						case 6: /*DTS*/
 							apidtitle.append(" (DTS)");
+#ifndef __sh__
 							enabled = false;
-						break;
+#endif
+							break;
 						case 7: /*MLP*/
 							apidtitle.append(" (MLP)");
 							break;
