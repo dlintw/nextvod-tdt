@@ -1,7 +1,7 @@
 /*
  * Hl101.c
  *
- * (c) 2009 dagobert@teamducktales
+ * (c) 2010 duckbox project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

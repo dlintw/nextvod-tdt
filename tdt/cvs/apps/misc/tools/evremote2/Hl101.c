@@ -1,7 +1,7 @@
 /*
  * Hl101.c
  *
- * (c) 2009 teamducktales
+ * (c) 2010 duckbox project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,6 @@ static tButton cButtonsSpideroxHL101[] = {
  * use the private structure of RemoteControl_t
  */
 static struct sockaddr_un  vAddr;
-int ioctl_fd = -1;
 
 static int pInit(Context_t* context, int argc, char* argv[]) {
 
@@ -160,6 +159,7 @@ static int pRead(Context_t* context ) {
 static int pNotification(Context_t* context, const int cOn) {
 
     struct proton_ioctl_data vfd_data;
+    int ioctl_fd = -1;
 
     if(cOn)
     {
