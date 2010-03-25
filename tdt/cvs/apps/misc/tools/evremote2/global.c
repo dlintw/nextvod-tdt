@@ -104,7 +104,7 @@ int getInternalCodeHex(tButton * cButtons, const unsigned char cCode) {
 }
 
 
-
+static int tuxtxt_exit_count = 0;
 static int sSockethandle = -1;
 #define SocketName "/tmp/rc.socket"
 
@@ -114,6 +114,17 @@ int checkTuxTxt(const int cCode)
     
     if ( (vTmpO = open("/tmp/block.tmp", O_RDONLY)) >= 0) {
         close(vTmpO);
+        
+        //workaround if tuxtxt hangs
+        if(cCode == KEY_HOME) //EXIT
+        {
+            tuxtxt_exit_count++;
+            if(tuxtxt_exit_count > 1)
+            {
+                tuxtxt_exit_count = 0;
+                system("killall tuxtxt; sleep 3; killall -9 tuxtxt; rm -f /tmp/block.tmp");
+            }
+        }
 
         fprintf(stderr, "Forwarding to Socket-> %u\n", sSockethandle);
     
@@ -147,6 +158,7 @@ int checkTuxTxt(const int cCode)
         return 1;
     }
 
+    tuxtxt_exit_count = 0;
     if (sSockethandle != -1) {
         close (sSockethandle);
         sSockethandle = -1;
