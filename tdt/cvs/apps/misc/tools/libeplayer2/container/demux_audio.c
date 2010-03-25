@@ -960,12 +960,15 @@ static void AUDIOThread(Context_t *context) {
 	}
 
 	usleep(100000);
-
+	
+	PlayThread = NULL;
+	
+	if(context && context->playback)
+	   context->playback->Command(context, PLAYBACK_TERM, NULL);
+	   
 	#ifdef DEBUG
 	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
 	#endif
-	
-	PlayThread = NULL;
 }
 
 
