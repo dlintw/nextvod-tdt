@@ -13,7 +13,8 @@ ln -s /bin/bash /bin/sh
 # Most important packages
 apt-get -y install subversion \
 git-core \
-ccache
+ccache \
+rpm
 
 # The rest
 apt-get -y install \
