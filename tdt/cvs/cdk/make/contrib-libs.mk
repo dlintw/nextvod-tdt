@@ -85,7 +85,7 @@ $(DEPDIR)/freetype-old: $(DEPDIR)/freetype-old.do_compile
 		$(INSTALL_DIR) $(targetprefix)/usr/include/freetype-old; \
 		$(CP_RD) install_dir/usr/include/* $(targetprefix)/usr/include/freetype-old/; \
 		$(INSTALL_DIR) $(targetprefix)/usr/lib/freetype-old; \
-		$(CP_RD) install_dir/usr/lib/libfreetype.{a,la,so*} $(targetprefix)/usr/lib/freetype-old/; \
+		$(CP_RD) install_dir/usr/lib/libfreetype.{a,so*} $(targetprefix)/usr/lib/freetype-old/; \
 		sed 's,-I$${prefix}/include/freetype2,-I$(targetprefix)/usr/include/freetype-old -I$(targetprefix)/usr/include/freetype-old/freetype2,g' -i $(crossprefix)/bin/freetype-old-config; \
 		sed 's,/usr/include/freetype2/,$(targetprefix)/usr/include/freetype-old/freetype2/,g' -i $(crossprefix)/bin/freetype-old-config
 #	@DISTCLEANUP_freetype_old@
