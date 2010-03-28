@@ -52,7 +52,7 @@ PACKAGES="\
 
 $INSTALL $PACKAGES
 
-i# Link sh to bash instead of dash on Ubuntu (and possibly others)
+# Link sh to bash instead of dash on Ubuntu (and possibly others)
 /bin/sh --version 2>/dev/null | grep bash -s -q
 if [ ! "$?" -eq "0" ]; then
 	echo
