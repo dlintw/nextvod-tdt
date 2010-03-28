@@ -2,7 +2,7 @@ AC_INIT([tufsbox-cdk],[0])
 AC_PREREQ(2.59)
 
 AC_CANONICAL_HOST
-host_arch=`arch`
+host_arch=`which arch > /dev/null 2>&1 && arch || uname -m`
 AC_SUBST(host_arch)
 AC_CANONICAL_BUILD
 AC_SUBST(build)
