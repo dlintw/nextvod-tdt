@@ -56,11 +56,13 @@ root-stock.tgz: $(flashprefix)/sdax.root-stock.tgz
 root-stock.focramfs: $(flashprefix)/mtdblock3.root-stock.focramfs.update
 root-stock.fosquashfs: $(flashprefix)/mtdblock3.root-stock.fosquashfs.update
 root-stock.enigma2: $(flashprefix)/mtdblock3.root-stock.enigma2.update
+root-stock.neutrino: $(flashprefix)/mtdblock2.root-stock.neutrino.update
 root-stock-hdbox.enigma2: $(flashprefix)/mtdblock2.root-stock-hdbox.enigma2.update
 app-stock.squashfs: $(flashprefix)/mtdblock4.app-stock.squashfs.update
 app-stock.enigma2: $(flashprefix)/mtdblock4.app-stock.enigma2.update
 var-stock.jffs2: $(flashprefix)/mtdblock6.var-stock.jffs2.update
 var-stock.enigma2: $(flashprefix)/mtdblock6.var-stock.enigma2.update
+var-stock.neutrino: $(flashprefix)/mtdblock3.var-stock.neutrino.update
 var-stock-hdbox.enigma2: $(flashprefix)/mtdblock3.var-stock-hdbox.enigma2.update
 data-stock.jffs2: $(flashprefix)/mtdblock6.data-stock.jffs2.update
 
@@ -83,6 +85,7 @@ flash-stock-cramfs-full: stock-cramfs.img
 flash-stock-squashfs-full: stock-squashfs.img
 flash-stock-jffs2-full: stock-jffs2.img
 flash-all-enigma2-full: stock-enigma2.img
+flash-all-neutrino-full: stock-neutrino.img
 flash-enigma2-disk: enigma2-disk.tgz
 
 stock-cramfs.img: $(flashprefix)/stock-cramfs.img \
@@ -126,5 +129,10 @@ stock-enigma2.img: $(flashprefix)/stock-enigma2.img \
 		root-stock.enigma2 \
 		app-stock.enigma2 \
 		var-stock.enigma2
+
+stock-neutrino.img: $(flashprefix)/stock-neutrino.img \
+		kernel-squashfs.ubimage \
+		root-stock.neutrino \
+		var-stock.neutrino
 
 enigma2-disk.tgz: $(flashprefix)/enigma2-disk.tgz

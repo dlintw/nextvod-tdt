@@ -41,6 +41,13 @@ $(flashprefix)/mtdblock2.%-stock.enigma2.update: \
 	make update_header PARTITION=conf FILEIMAGE=$<
 	@TUXBOX_CUSTOMIZE@
 
+####### mtd2-neutrino:
+$(flashprefix)/mtdblock2.root-stock.neutrino.update: \
+$(flashprefix)/mtdblock2.%-stock.neutrino.update: \
+		$(flashprefix)/mtdblock2.root-stock.neutrino
+	make update_header PARTITION=root FILEIMAGE=$<
+	@TUXBOX_CUSTOMIZE@
+
 ####### mtd3: $mtdblock.$partition-$gui.$fstype (default: root)
 $(flashprefix)/mtdblock3.root-stock.cramfs.update \
 $(flashprefix)/mtdblock3.root-stock.squashfs.update \
@@ -53,6 +60,12 @@ $(flashprefix)/mtdblock3.root-stock.%.update: \
 	make update_header PARTITION=root FILEIMAGE=$<
 	@TUXBOX_CUSTOMIZE@
 
+####### mtd3-neutrino:
+$(flashprefix)/mtdblock3.var-stock.neutrino.update: \
+$(flashprefix)/mtdblock3.var-stock.%.update: \
+		$(flashprefix)/mtdblock3.var-stock.%
+	make update_header PARTITION=var FILEIMAGE=$<
+	@TUXBOX_CUSTOMIZE@
 
 ####### mtd4: $mtdblock.$partition-$gui.$fstype (default: .app)
 $(flashprefix)/mtdblock4.app-stock.cramfs.update \

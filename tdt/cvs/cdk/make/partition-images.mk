@@ -295,6 +295,54 @@ $(flashprefix)/mtdblock3.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
 	fi
 	@TUXBOX_CUSTOMIZE@
 
+#######mtd2-neutrino for ufs910-beta!
+$(flashprefix)/mtdblock2.root-stock.neutrino: \
+$(flashprefix)/mtdblock2.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
+#######NEW NEUTRINO ROOT PARTITION SIZE:
+ROOT_PARTITION_SIZE=0x8e0000 ####look at ufs910_stboards_p0041_flash.patch
+	rm $@* >/dev/null 2>&1 || true
+	( dir=$(flashprefix) && \
+		echo "cd $</dev" > $$dir/.fakeroot && \
+		echo "mknod -m 0600 console c 5 1" >> $$dir/.fakeroot && \
+		echo "chown root:tty console" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
+		echo "chown root:root null" >> $$dir/.fakeroot && \
+		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
+		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
+		echo "mknod -m 0660 vfd c 147 0" >> $$dir/.fakeroot && \
+		echo "MAKEDEV=\"$(flashprefix)/../cdkroot/sbin/MAKEDEV -p $(flashprefix)/../cdkroot/etc/passwd -g $(flashprefix)/../cdkroot/etc/group\"" >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} std' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} hda hdb' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} sda sdb sdc sdd' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} scd0 scd1' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} st0 st1' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} sg' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} ptyp ptyq' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} console' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} lp par audio fb rtc lirc st200 alsasnd' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} ppp busmice' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} ttyAS1 ttyAS2 ttyAS3' >> $$dir/.fakeroot && \
+		echo 'ln -sf /dev/input/mouse0 mouse' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} input i2c mtd' >> $$dir/.fakeroot && \
+		echo '$${MAKEDEV} dvb' >> $$dir/.fakeroot && \
+		echo "mkdir pts" >> $$dir/.fakeroot && \
+		echo "mkdir shm" >> $$dir/.fakeroot && \
+		echo "$(MKSQUASHFS) $< $@ -noappend" >> $$dir/.fakeroot && \
+		chmod 755 $$dir/.fakeroot && \
+		$(FAKEROOT) -- $$dir/.fakeroot && \
+		rm $$dir/.fakeroot )
+#	$(MKSQUASHFS) $< $@ -noappend -le -force-uid 0 -force-gid 0 -all-root
+	chmod 644 $@
+	@FILESIZE=$$(stat -c%s $@); \
+	root_partition_size=`echo -e "$(ROOT_PARTITION_SIZE)" | tr '[a-f]' '[A-F]' | cut  -b3-`; \
+	ROOTSIZE=`echo -e "ibase=16;$$root_partition_size" | bc`; \
+	if [ $$FILESIZE -gt $$ROOTSIZE ]; \
+		then echo "fatal error: File $@ too large ($$FILESIZE > $$ROOTSIZE, $(ROOT_PARTITION_SIZE))"; \
+		rm $@; exit 1; \
+	fi
+	@TUXBOX_CUSTOMIZE@
+
 ####### mtd4: $mtdblock.$partition-$gui.$fstype (default: .app)
 #Default Size: 6291456d, 600000h
 #APP_PARTITION_SIZE to be calculated from ROOT_PARTITION_SIZE and DATA_PARTITION_SIZE
@@ -388,6 +436,25 @@ $(flashprefix)/mtdblock6.var-stock.enigma2: $(flashprefix)/var-stock-enigma2 $(M
 	chmod 644 $@
 	@FILESIZE=$$(stat -c%s $@); \
 	data_partition_size=`echo -e "$(DATA_PARTITION_SIZE)" | tr '[a-f]' '[A-F]' | cut  -b3-`; \
+	DATASIZE=`echo -e "ibase=16;$$data_partition_size" | bc`; \
+	if [ $$FILESIZE -gt $$DATASIZE ]; \
+		then echo "fatal error: File $@ too large ($$FILESIZE > $$DATASIZE, $(DATA_PARTITION_SIZE))"; \
+		rm $@; exit 1; \
+	fi
+	@TUXBOX_CUSTOMIZE@
+
+########NEW NEUTRINO VAR PARTITION SIZE:
+NEUTRINO_VAR_PARTITION_SIZE=0x580000 ####look at ufs910_stboards_p0041_flash.patch
+$(flashprefix)/mtdblock3.var-stock.neutrino: $(flashprefix)/var-stock-neutrino $(MKJFFS2) config.status
+	rm $@* >/dev/null 2>&1 || true
+	( dir=$(flashprefix) && \
+		echo "$(MKJFFS2) -e 0x10000 --pad=$(NEUTRINO_VAR_PARTITION_SIZE) -r $< -o $@" >> $$dir/.fakeroot && \
+		chmod 755 $$dir/.fakeroot && \
+		$(FAKEROOT) -- $$dir/.fakeroot && \
+		rm $$dir/.fakeroot )
+	chmod 644 $@
+	@FILESIZE=$$(stat -c%s $@); \
+	data_partition_size=`echo -e "$(--pad=$(NEUTRINO_VAR_PARTITION_SIZE))" | tr '[a-f]' '[A-F]' | cut  -b3-`; \
 	DATASIZE=`echo -e "ibase=16;$$data_partition_size" | bc`; \
 	if [ $$FILESIZE -gt $$DATASIZE ]; \
 		then echo "fatal error: File $@ too large ($$FILESIZE > $$DATASIZE, $(DATA_PARTITION_SIZE))"; \

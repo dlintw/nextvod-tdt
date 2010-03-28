@@ -59,6 +59,20 @@ $(flashprefix)/stock-%.img: \
 		--part app=$(word 4,$+) \
 		--part data=$(word 5,$+)
 	@TUXBOX_CUSTOMIZE@
+
+##NEUTRINO PART:
+$(flashprefix)/stock-neutrino.img: \
+$(flashprefix)/stock-%.img: \
+		$(flashprefix)/mtdblock1.kernel-squashfs.ubimage \
+		$(flashprefix)/mtdblock2.root-stock.neutrino \
+		$(flashprefix)/mtdblock3.var-stock.neutrino
+	$(hostappsdir)/flash/flashmanage.stock.pl -i $@ -o build \
+		--rootsize=$(ROOT_PARTITION_SIZE) \
+		--datasize=$(DATA_PARTITION_SIZE) \
+		--part kernel=$< \
+		--part root=$(word 2,$+) \
+		--part data=$(word 3,$+)
+	@TUXBOX_CUSTOMIZE@
 	
 $(flashprefix)/enigma2-disk.tgz: \
 $(flashprefix)/enigma2-%.tgz: \

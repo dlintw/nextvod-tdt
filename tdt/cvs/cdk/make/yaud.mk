@@ -90,9 +90,21 @@ if STM22
 yaud-neutrino: yaud-none lirc stslave\
 		boot-elf hotplug remote firstboot neutrino release_neutrino
 	@TUXBOX_YAUD_CUSTOMIZE@
+flash-ufs910-neutrino: yaud-none stslave \
+		yaud-neutrino \
+		kernel-squashfs.ubimage \
+		root-stock.neutrino \
+		var-stock.neutrino
+	@TUXBOX_YAUD_CUSTOMIZE@
 else
 yaud-neutrino: yaud-none lirc stslave\
 		boot-elf remote firstboot neutrino release_neutrino
+	@TUXBOX_YAUD_CUSTOMIZE@
+flash-ufs910-neutrino: yaud-none stslave \
+		yaud-neutrino \
+		kernel-squashfs.ubimage \
+		root-stock.neutrino \
+		var-stock.neutrino
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 

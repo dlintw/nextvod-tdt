@@ -300,6 +300,57 @@ $(flashprefix)/root-stock-%: \
 	find $@/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
 	@TUXBOX_CUSTOMIZE@
 
+$(flashprefix)/root-stock-neutrino: \
+$(flashprefix)/root-stock-%: \
+			$(flashprefix)/root $(flashprefix)/root-stock $(flashprefix)/root-stock-squashfs
+	rm -rf $@
+	$(INSTALL) -d $@/{dev,lib,usr,var}
+	mkdir  $@/boot
+	cp -rd $(prefix)/release_neutrino/boot/{audio.elf,video.elf} $@/boot/
+	cp -rd $(prefix)/release_neutrino/{bin,etc,hdd,lib,media,mnt,proc,ram,sbin,share,sys,tmp,tuxbox,usr} $@/
+	rm -rf $@/var
+	mkdir $@/var
+	mkdir $@/root
+	mkdir $@/dev.static
+	rm -rf $@/etc/init.d/rcS
+	cp -rd $(buildprefix)/root/release/rcS_neutrino_fortis_hdbox $@/etc/init.d/rcS
+#	cd $@/etc && sed -i -e "s|^proc|/dev/mtdblock3     /var     jffs2     defaults     0 0\nproc|g" fstab
+#	echo "/dev/mtdblock3     /var     jffs2     defaults     0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/run            tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/lock           tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/tmp            tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/log            tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/lib/urandom    tmpfs   defaults                        0 0" >> $@/etc/fstab
+	sed -e 's/echo fortis hdbox/echo fortis hdbox\nmount -t jffs2 -o noatime \/dev\/mtdblock3 \/var >\/dev\/null 2>\&1/g' -i $@/etc/init.d/rcS
+	sed -e 's/\/usr\/local\/bin\/neutrino/\/usr\/local\/bin\/neutrino -f -u/g' -i $@/etc/init.d/rcS
+	rm -f $@/usr/bin/{ip*,ir*}
+	rm -f $@/usr/lib/{libalsaplayer.so,libalsaplayer.so.0,libalsaplayer.so.0.0.2,libasound.so,libasound.so.2,libasound.so.2.0.0}
+	rm -f $@/usr/lib/{libcrypto.so,libcrypto.so.0.9.8,libfontconfig.so,libfontconfig.so.1,libfontconfig.so.1.3.0,libform.so,libform.so.5,libform.so.5.5}
+	rm -f $@/usr/lib/{libncurses.so,libncurses.so.5,libreadline.so,libreadline.so.5,libreadline.so.5.2,libssl.so,libssl.so.0.9.8,xml2Conf.sh,xsltConf.sh}
+	rm -f $@/usr/lib/{libdvdnavmini.so,libdvdnavmini.so.4,libdvdnavmini.so.4.1.2,libfbsplashrender.so,libfbsplashrender.so.1,libfbsplashrender.so.1.0.0}
+	rm -f $@/usr/lib/{libfbsplash.so,libfbsplash.so.1,libfbsplash.so.1.0.0,liblcms.so,liblcms.so.1,liblcms.so.1.0.16}
+	rm -rf $@/usr/local/share/config
+	( cd $@/usr/local/share && ln -sf /var/tuxbox/config config )
+	rm -rf $@/etc/network
+	ln -sf /var/etc/network $@/etc/network
+	rm -f $@/etc/resolv.conf
+	ln -sf /var/etc/resolv.conf $@/etc/resolv.conf
+	rm -f $@/etc/{group,host.conf,hostname,hosts,localtime,passwd,profile,protocols,videomode,vsftpd.conf}
+	ln -sf /var/etc/group $@/etc/group
+	ln -sf /var/etc/host.conf $@/etc/host.conf
+	ln -sf /var/etc/hostname $@/etc/hostname
+	ln -sf /var/etc/hosts $@/etc/hosts
+	ln -sf /var/etc/passwd $@/etc/passwd
+	ln -sf /var/etc/profile $@/etc/profile
+	ln -sf /var/etc/protocols $@/etc/protocols
+	ln -sf /var/etc/videomode $@/etc/videomode
+	ln -sf /var/etc/vsftpd.conf $@/etc/vsftpd.conf
+	ln -sf /var/etc/localtime $@/etc/localtime
+	find $@/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
+	find $@/lib/ -name  *.so -exec sh4-linux-strip --strip-unneeded {} \;
+	@TUXBOX_CUSTOMIZE@
+
+
 ####### var and data
 
 $(flashprefix)/var-stock-jffs2: \
@@ -448,6 +499,32 @@ $(flashprefix)/var-%-enigma2: \
 	rm -f $@/epython/enigma2/python/Plugins/SystemPlugins/Videomode/{*.py,*.pyo}
 	$(target)-strip --remove-section=.comment --remove-section=.note $@/bin/* 2>/dev/null || /bin/true && \
 	$(target)-strip $@/lib/* 2>/dev/null || /bin/true && \
+	touch $@
+	@TUXBOX_CUSTOMIZE@
+
+
+$(flashprefix)/var-stock-neutrino: \
+$(flashprefix)/var-%-neutrino: \
+		$(flashprefix)/root $(flashprefix)/root-stock
+	rm -rf $@
+	mkdir $@
+	cp -rd $(prefix)/release_neutrino/var/{plugins,share,tuxbox} $@
+	cp -rd $(prefix)/release_neutrino/usr/local/share/config/* $@/tuxbox/config
+	cp -rd $(prefix)/release_neutrino/usr/local/share/config/zapit $@/tuxbox/config/zapit
+	cp -rd $(prefix)/release_neutrino/etc $@/etc
+#	sed -e "s|^proc|/dev/mtdblock3     /var     jffs2     defaults     0 0\nproc|g" -i $@/etc/fstab
+	echo "tmpfs         /var/run            tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/lock           tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/tmp            tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/log            tmpfs   defaults                        0 0" >> $@/etc/fstab
+	echo "tmpfs         /var/lib/urandom    tmpfs   defaults                        0 0" >> $@/etc/fstab
+	sed -e 's/fortis/octagon/g' -i $@/etc/hostname
+	mkdir $@/run
+	mkdir $@/bin
+	mkdir $@/lock
+	mkdir $@/tmp
+	mkdir $@/log
+	mkdir -p $@/lib/urandom
 	touch $@
 	@TUXBOX_CUSTOMIZE@
 
