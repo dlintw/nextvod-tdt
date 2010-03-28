@@ -1,6 +1,6 @@
 # sh4-duckbox/enigma1-hd
 
-$(appsdir)/enigma1-hd/config.status: bare-os freetype-old libid3tag libmad libpng libsigc libfribidi libvorbisidec \
+$(appsdir)/enigma1-hd/config.status: bare-os freetype-old libid3tag libmad libpng libgif libsigc libfribidi libvorbisidec \
 			curl alsa-lib alsa-lib-dev alsa-utils alsaplayer alsaplayer-dev \
 			$(targetprefix)/usr/lib/pkgconfig/tuxbox.pc $(targetprefix)/usr/lib/pkgconfig/tuxbox-xmltree.pc $(targetprefix)/usr/include/tuxbox/plugin.h \
 			$(targetprefix)/usr/lib/pkgconfig/tuxbox-tuxtxt.pc \
@@ -15,7 +15,7 @@ $(appsdir)/enigma1-hd/config.status: bare-os freetype-old libid3tag libmad libpn
 			LDFLAGS="-L$(targetprefix)/usr/lib/freetype-old"
 
 enigma1-hd.do_compile: $(appsdir)/enigma1-hd/config.status
-	$(MAKE) -C $(appsdir)/enigma1-hd
+	$(MAKE) -C $(appsdir)/enigma1-hd all install DESTDIR=$(targetprefix)
 
 #enigma1-hd: lirc enigma1-hd.do_compile
 #	$(MAKE) -C $(appsdir)/enigma1-hd install DESTDIR=$(targetprefix)
