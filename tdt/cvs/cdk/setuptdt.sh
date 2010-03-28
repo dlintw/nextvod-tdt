@@ -52,9 +52,14 @@ PACKAGES="\
 
 $INSTALL $PACKAGES
 
-if [ "$UBUNTU" == "1" ]; then
-	# Link sh to bash instead of dash
-	rm -f /bin/sh
-	ln -s /bin/bash /bin/sh
+i# Link sh to bash instead of dash on Ubuntu (and possibly others)
+/bin/sh --version 2>/dev/null | grep bash -s -q
+if [ ! "$?" -eq "0" ]; then
+	echo
+	read -p "/bin/sh should link to /bin/bash, adjust it (Y/n)? "
+	if [ -z "$REPLY" -o "$REPLY" == "Y" -o "$REPLY" == "y" ]; then
+		rm -f /bin/sh
+		ln -s /bin/bash /bin/sh
+	fi
 fi
 
