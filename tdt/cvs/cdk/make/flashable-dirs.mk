@@ -320,7 +320,7 @@ $(flashprefix)/root-stock-%: \
 	echo "tmpfs         /var/tmp            tmpfs   defaults                        0 0" >> $@/etc/fstab
 	echo "tmpfs         /var/log            tmpfs   defaults                        0 0" >> $@/etc/fstab
 	echo "tmpfs         /var/lib/urandom    tmpfs   defaults                        0 0" >> $@/etc/fstab
-	sed -e 's/MODDIR=\/lib\/modulesMODDIR=\/lib\/modules\nmount -t jffs2 -o noatime \/dev\/mtdblock3 \/var >\/dev\/null 2>\&1/g' -i $@/etc/init.d/rcS
+	sed -e 's/MODDIR=\/lib\/modules/MODDIR=\/lib\/modules\nmount -t jffs2 -o noatime \/dev\/mtdblock3 \/var >\/dev\/null 2>\&1/g' -i $@/etc/init.d/rcS
 	rm -f $@/usr/bin/{ip*,ir*}
 	rm -f $@/usr/lib/{libalsaplayer.so,libalsaplayer.so.0,libalsaplayer.so.0.0.2,libasound.so,libasound.so.2,libasound.so.2.0.0}
 	rm -f $@/usr/lib/{libcrypto.so,libcrypto.so.0.9.8,libfontconfig.so,libfontconfig.so.1,libfontconfig.so.1.3.0,libform.so,libform.so.5,libform.so.5.5}
