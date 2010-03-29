@@ -4,6 +4,7 @@ if [ "$1" == -h ] || [ "$1" == --help ]; then
  echo "Parameter 1: target system (1-9)"
  echo "Parameter 2: kernel (1-4)"
  echo "Parameter 3: debug (Y/N)"
+ exit
 fi
 
 CURDIR=`pwd`
