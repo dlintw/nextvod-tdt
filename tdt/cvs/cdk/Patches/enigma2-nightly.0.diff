@@ -1108,7 +1108,7 @@ diff -Nur enigma2-nightly_orig/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/epgc
 +#else
 +//Dagobert: currently this happens sporadicly on ufs922 (with new skin). Not sure why
 +//we must observe this!
-+				eFatal("LINE %d descriptor not found in descriptor cache %08x!!!!!!", __LINE__, *(d-4));
++				eDebug("LINE %d descriptor not found in descriptor cache %08x!!!!!!", __LINE__, *(d-4));
 +#endif
 +			}
  			ByteSize -= 4;
@@ -3253,17 +3253,79 @@ diff -Nur enigma2-nightly_orig/lib/gdi/accel.cpp enigma2-nightly/lib/gdi/accel.c
  #ifdef ATI_ACCEL
  	ati_accel_close();
  #endif
-@@ -87,6 +110,15 @@
+@@ -87,6 +110,77 @@
  
  int gAccel::blit(gSurface *dst, const gSurface *src, const eRect &p, const eRect &area, int flags)
  {
 +#ifdef STMFB_ACCEL
-+	eDebug( "src: %4d %4d %4d %4d\tdst: %4d %4d %4d %4d\n"
-+			"area: %4d %4d %4d %4d\tp: %4d %4d %4d %4d\n",
-+			src->data_phys, src->x, src->y, src->stride,
-+			dst->data_phys, dst->x, dst->y, dst->stride, 
++	//eDebug( "src: %4d %4d %4d %4d\tdst: %4d %4d %4d %4d\n"
++	//		"area: %4d %4d %4d %4d\tp: %4d %4d %4d %4d\n",
++	//		src->data_phys, src->x, src->y, src->stride,
++	//		dst->data_phys, dst->x, dst->y, dst->stride, 
++	//		area.left(), area.top(), area.width(), area.height(),
++	//		p.x(), p.y(), p.width(), p.height());
++
++	int src_format = 0;
++	void *data = 0;
++     	int data_phys = 0;
++
++	if (src->bpp == 32)
++		src_format = 0;
++	else if ((src->bpp == 8) && (dst->bpp == 32))
++	{
++		src_format = 1;
++        	if(accelAlloc(data, data_phys, area.height() * area.width() * 4))
++			return -1;
++
++		__u8 *srcptr=(__u8*)src->data;
++		__u8 *dstptr=(__u8*)data;
++		__u32 pal[256];
++
++		for (int i=0; i<256; ++i)
++		{
++			if (src->clut.data && (i<src->clut.colors))
++				pal[i]=(src->clut.data[i].a<<24)|(src->clut.data[i].r<<16)|(src->clut.data[i].g<<8)|(src->clut.data[i].b);
++			else
++				pal[i]=0x010101*i;
++			if((pal[i]&0xFF000000) >= 0xE0000000)
++				pal[i] = 0xFF000000;
++			pal[i]^=0xFF000000;
++		}
++		srcptr+=area.left()*src->bypp+area.top()*src->stride;
++
++		for (int y=0; y<area.height(); y++)
++		{
++			int width=area.width();
++			unsigned char *psrc=(unsigned char*)srcptr;
++			__u32 *pdst=(__u32*)dstptr;
++
++			while (width--)
++				*pdst++=pal[*psrc++];
++
++			srcptr+=src->stride;
++			dstptr+=area.width() * 4;
++		}
++	} else {
++		if(data_phys)
++			accelFree(data_phys);
++		return -1;
++	}
++
++	if(data_phys)
++	{
++		stmfb_accel_blit(
++			data_phys, 0, 0, area.width() * 4, src_format,
++			dst->data_phys, dst->x, dst->y, dst->stride,
++			0, 0, area.width(), area.height(),
++			p.x(), p.y(), p.width(), p.height());
++		accelFree(data_phys);
++	} else {
++		stmfb_accel_blit(
++			src->data_phys, src->x, src->y, src->stride, src_format,
++			dst->data_phys, dst->x, dst->y, dst->stride,
 +			area.left(), area.top(), area.width(), area.height(),
 +			p.x(), p.y(), p.width(), p.height());
++	}
 +	return 0;
 +#endif
  #ifdef ATI_ACCEL
@@ -3272,18 +3334,23 @@ diff -Nur enigma2-nightly_orig/lib/gdi/accel.cpp enigma2-nightly/lib/gdi/accel.c
 diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
 --- enigma2-nightly_orig/lib/gdi/fb.cpp	2010-03-12 04:26:05.000000000 +0200
 +++ enigma2-nightly/lib/gdi/fb.cpp	2010-03-12 04:41:11.000000000 +0200
-@@ -70,6 +70,10 @@
+@@ -70,6 +70,15 @@
  		perror("mmap");
  		goto nolfb;
  	}
 +#if defined(__sh__) 
 +	//we use 2MB at the end of the buffer, the rest does the blitter 
++	lfb_direct = lfb;     
 +	lfb += 1920*1080*4;     
++	topDiff = 0;
++	leftDiff = 0;
++	rightDiff = 0;
++	bottomDiff = 0;
 +#endif 
  
  	showConsole(0);
- 
-@@ -83,6 +87,9 @@
+
+@@ -83,6 +92,9 @@
  
  int fbClass::showConsole(int state)
  {
@@ -3293,7 +3360,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
  	int fd=open("/dev/vc/0", O_RDWR);
  	if(fd>=0)
  	{
-@@ -92,13 +99,18 @@
+@@ -92,13 +104,18 @@
  		}
  		close(fd);
  	}
@@ -3312,7 +3379,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
  	screeninfo.height=0;
  	screeninfo.width=0;
  	screeninfo.xoffset=screeninfo.yoffset=0;
-@@ -129,6 +141,7 @@
+@@ -129,6 +146,7 @@
  		break;
  	}
  
@@ -3320,7 +3387,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
  	if (ioctl(fd, FBIOPUT_VSCREENINFO, &screeninfo)<0)
  	{
  		// try single buffering
-@@ -143,6 +156,7 @@
+@@ -143,6 +161,7 @@
  		eDebug(" - double buffering not available.");
  	} else
  		eDebug(" - double buffering available!");
@@ -3328,7 +3395,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
  	
  	m_number_of_pages = screeninfo.yres_virtual / nyRes;
  	
-@@ -154,6 +168,10 @@
+@@ -154,6 +173,10 @@
  			nxRes, nyRes, nbpp,
  			screeninfo.xres, screeninfo.yres, screeninfo.bits_per_pixel);
  	}
@@ -3339,7 +3406,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
  	xRes=screeninfo.xres;
  	yRes=screeninfo.yres;
  	bpp=screeninfo.bits_per_pixel;
-@@ -164,7 +182,9 @@
+@@ -164,7 +187,9 @@
  		printf("fb failed\n");
  	}
  	stride=fix.line_length;
@@ -3349,7 +3416,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
  	return 0;
  }
  
-@@ -183,10 +203,32 @@
+@@ -183,10 +208,32 @@
  
  void fbClass::blit()
  {
@@ -3365,10 +3432,10 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
 +	bltData.src_left   = 0; 
 +	bltData.src_right  = xResFB; 
 +	bltData.src_bottom = yResFB; 
-+	bltData.dst_top    = 0; 
-+	bltData.dst_left   = 0; 
-+	bltData.dst_right  = xRes; 
-+	bltData.dst_bottom = yRes; 
++	bltData.dst_top    = 0 + topDiff; 
++	bltData.dst_left   = 0 + leftDiff; 
++	bltData.dst_right  = xRes + rightDiff; 
++	bltData.dst_bottom = yRes + bottomDiff;
 +	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
 +	{ 
 +		perror("FBIO_BLIT"); 
@@ -3382,7 +3449,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
  }
  
  fbClass::~fbClass()
-@@ -231,19 +273,23 @@
+@@ -231,19 +278,62 @@
  
  void fbClass::enableManualBlit()
  {
@@ -3406,10 +3473,49 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.cpp enigma2-nightly/lib/gdi/fb.cpp
 +#endif
  }
  
++#if defined(__sh__) 
++void fbClass::clearFBblit()
++{
++	//set real frambuffer transparent
++	memset(lfb_direct, 0x00, xRes * yRes * 4);
++	blit();
++}
++
++int fbClass::getFBdiff(int ret)
++{
++	if(ret == 0)
++		return topDiff;
++	else if(ret == 1)
++		return leftDiff;
++	else if(ret == 2)
++		return rightDiff;
++	else if(ret == 3)
++		return bottomDiff;
++	else
++		return -1;
++
++}
++
++void fbClass::setFBdiff(int top, int left, int right, int bottom)
++{
++	if(top < 0) top = 0;
++	if(top > yRes) top = yRes;
++	topDiff = top;
++	if(left < 0) left = 0;
++	if(left > xRes) left = xRes;
++	leftDiff = left;
++	if(right > 0) right = 0;
++	if(-right > xRes) right = -xRes;
++	rightDiff = right;
++	if(bottom > 0) bottom = 0;
++	if(-bottom > yRes) bottom = -yRes;
++	bottomDiff = bottom;
++}
++#endif
 diff -Nur enigma2-nightly_orig/lib/gdi/fb.h enigma2-nightly/lib/gdi/fb.h
 --- enigma2-nightly_orig/lib/gdi/fb.h	2010-03-12 04:26:05.000000000 +0200
 +++ enigma2-nightly/lib/gdi/fb.h	2010-03-12 04:41:11.000000000 +0200
-@@ -4,10 +4,16 @@
+@@ -4,10 +4,18 @@
  #include <lib/base/eerror.h>
  #include <linux/fb.h>
  
@@ -3422,11 +3528,13 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.h enigma2-nightly/lib/gdi/fb.h
  	unsigned int xRes, yRes, stride, bpp;
 +#if defined(__sh__) 
 +	unsigned int xResFB, yResFB; 
-+#endif 
++	int topDiff, leftDiff, rightDiff, bottomDiff; 
++	unsigned char *lfb_direct;
++#endif
  	int available;
  	struct fb_var_screeninfo screeninfo, oldscreen;
  	fb_cmap cmap;
-@@ -19,7 +25,11 @@
+@@ -19,7 +27,11 @@
  	int m_number_of_pages;
  	int m_phys_mem;
  #ifdef SWIG
@@ -3438,7 +3546,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.h enigma2-nightly/lib/gdi/fb.h
  	~fbClass();
  public:
  #else
-@@ -41,7 +51,11 @@
+@@ -41,7 +53,11 @@
  	unsigned int Stride() { return stride; }
  	fb_cmap *CMAP() { return &cmap; }
  
@@ -3450,6 +3558,18 @@ diff -Nur enigma2-nightly_orig/lib/gdi/fb.h enigma2-nightly/lib/gdi/fb.h
  	~fbClass();
  	
  			// low level gfx stuff
+@@ -52,6 +68,11 @@
+ 	int lock();
+ 	void unlock();
+ 	int islocked() { return locked; }
++#if defined(__sh__) 
++	void clearFBblit();
++	int getFBdiff(int ret);
++	void setFBdiff(int top, int right, int left, int bottom);
++#endif
+ };
+ 
+ #endif
 diff -Nur enigma2-nightly_orig/lib/gdi/gfbdc.cpp enigma2-nightly/lib/gdi/gfbdc.cpp
 --- enigma2-nightly_orig/lib/gdi/gfbdc.cpp	2010-03-12 04:26:05.000000000 +0200
 +++ enigma2-nightly/lib/gdi/gfbdc.cpp	2010-03-12 04:41:11.000000000 +0200
@@ -3476,9 +3596,6 @@ diff -Nur enigma2-nightly_orig/lib/gdi/gfbdc.cpp enigma2-nightly/lib/gdi/gfbdc.c
  	fb->SetMode(m_xres, m_yres, 32);
  
 +#if defined(__sh__) 
-+	for (int y=0; y<m_yres; y++)    // make whole screen transparent 
-+		memset(fb->lfb+ y * m_xres * 4, 0x00, m_xres * 4); 
-+
 +	surface.type = 0; 
 +	surface.x = m_xres; 
 +	surface.y = m_yres; 
@@ -3486,7 +3603,10 @@ diff -Nur enigma2-nightly_orig/lib/gdi/gfbdc.cpp enigma2-nightly/lib/gdi/gfbdc.c
 +	surface.bypp = 4; 
 +	surface.stride = m_xres * 4; 
 +	surface.data = fb->lfb; 
-+	surface.offset = 0; 
++	surface.offset = 0;
++
++	for (int y=0; y<m_yres; y++)    // make whole screen transparent 
++		memset(fb->lfb+ y * m_xres * 4, 0x00, m_xres * 4);
 +#else 
  	for (int y=0; y<m_yres; y++)	// make whole screen transparent
  		memset(fb->lfb+y*fb->Stride(), 0x00, fb->Stride());
@@ -3499,6 +3619,27 @@ diff -Nur enigma2-nightly_orig/lib/gdi/gfbdc.cpp enigma2-nightly/lib/gdi/gfbdc.c
  
  	surface.data_phys = fb->getPhysAddr();
  
+@@ -210,12 +235,19 @@
+ 	} else
+ 		m_enable_double_buffering = 0;
+ 
++#ifdef __sh__
++	eDebug("%dkB available for acceleration surfaces.", (fb->Available() - fb_size - (1920*1080*4))/1024);
++	eDebug("resolution: %d x %d x %d (stride: %d)", surface.x, surface.y, surface.bpp, fb->Stride());
++
++	if (gAccel::getInstance())
++		gAccel::getInstance()->setAccelMemorySpace(fb->lfb + fb_size, surface.data_phys + fb_size, fb->Available() - fb_size - (1920*1080*4));
++#else
+ 	eDebug("%dkB available for acceleration surfaces.", (fb->Available() - fb_size)/1024);
+ 	eDebug("resolution: %d x %d x %d (stride: %d)", surface.x, surface.y, surface.bpp, fb->Stride());
+ 
+ 	if (gAccel::getInstance())
+ 		gAccel::getInstance()->setAccelMemorySpace(fb->lfb + fb_size, surface.data_phys + fb_size, fb->Available() - fb_size);
+-
++#endif
+ 	if (!surface.clut.data)
+ 	{
+ 		surface.clut.colors = 256;
 diff -Nur enigma2-nightly_orig/lib/gdi/gpixmap.cpp enigma2-nightly/lib/gdi/gpixmap.cpp
 --- enigma2-nightly_orig/lib/gdi/gpixmap.cpp	2010-03-12 04:26:05.000000000 +0200
 +++ enigma2-nightly/lib/gdi/gpixmap.cpp	2010-03-12 04:41:11.000000000 +0200
@@ -3538,7 +3679,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/gpixmap.cpp enigma2-nightly/lib/gdi/gpixm
 diff -Nur enigma2-nightly_orig/lib/gdi/stmfb.cpp enigma2-nightly/lib/gdi/stmfb.cpp
 --- enigma2-nightly_orig/lib/gdi/stmfb.cpp	1970-01-01 02:00:00.000000000 +0200
 +++ enigma2-nightly/lib/gdi/stmfb.cpp	2010-03-12 04:41:11.000000000 +0200
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,75 @@
 +/*
 +  Interface to the Dreambox dm800/dm8000 proprietary accel interface.
 +*/
@@ -3550,6 +3691,7 @@ diff -Nur enigma2-nightly_orig/lib/gdi/stmfb.cpp enigma2-nightly/lib/gdi/stmfb.c
 +#include <linux/fb.h>
 +#include <sys/mman.h>
 +#include <sys/ioctl.h>
++#include <linux/stmfb.h>
 +
 +
 +#include <lib/base/ebase.h>
@@ -3581,7 +3723,28 @@ diff -Nur enigma2-nightly_orig/lib/gdi/stmfb.cpp enigma2-nightly/lib/gdi/stmfb.c
 +		int src_x, int src_y, int width, int height,
 +		int dst_x, int dst_y, int dwidth, int dheight)
 +{
++	STMFBIO_BLT_DATA bltData;
++	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA));
 +
++	bltData.operation  = BLT_OP_COPY;
++	bltData.srcOffset  = (src_addr - dst_addr) + (1920*1080*4);
++	bltData.srcPitch   = src_stride;
++	bltData.src_left   = src_x;
++	bltData.src_top    = src_y;
++	bltData.src_right  = src_x + width;
++	bltData.src_bottom = src_y + height;
++
++	bltData.dstOffset  = 1920*1080*4;
++	bltData.dstPitch   = dst_stride;
++	bltData.dst_left   = dst_x;
++	bltData.dst_top    = dst_y;
++	bltData.dst_right  = dst_x + dwidth;
++	bltData.dst_bottom = dst_y + dheight;
++
++	if (ioctl(fb_fd, STMFBIO_BLT, &bltData ) < 0)
++	{
++		eDebug("Error ioctl FBIO_BLIT");
++	}
 +}
 +
 +void stmfb_accel_fill(
@@ -16865,3 +17028,17 @@ diff -Nur enigma2-nightly_orig/main/enigma.cpp enigma2-nightly/main/enigma.cpp
  	
  	printf("executing main\n");
  	
+diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp
+--- enigma2-nightly/lib/gdi/gpixmap.cpp	2010-03-02 23:06:31.000000000 -0500
++++ enigma2-nightly/lib/gdi/gpixmap.cpp	2010-03-02 23:08:40.000000000 -0500
+@@ -326,7 +326,10 @@
+ 		if (flag & blitScale)
+ 		{
+ 			eWarning("unimplemented: scale on non-accel surfaces");
++//if accel blit fails, do direkt blit
++#ifndef __sh__
+ 			continue;
++#endif
+ 		}
+ 
+ 		if ((surface->bpp == 8) && (src.surface->bpp==8))
