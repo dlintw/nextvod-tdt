@@ -49,15 +49,24 @@ else
 KERNELHEADERS		:= linux-kernel-headers
 if P0123
 KERNELHEADERS_VERSION	:= 2.6.23.17_stm23_0123-41
+
+RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm: \
+                 Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm
+        rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+        ( cd SPECS; patch -p1 stm-target-kernel-headers-kbuild.spec < ../Patches/stm-target-kernel-headers-kbuild_0123.spec.diff ) && \
+        rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-kernel-headers-kbuild.spec
+
 else
+
 KERNELHEADERS_VERSION	:= 2.6.23.17_stm23_0119-41
-endif
 
 RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm: \
 		 Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-kernel-headers-kbuild.spec < ../Patches/stm-target-kernel-headers-kbuild.spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-kernel-headers-kbuild.spec
+
+endif
 endif
 
 #RPMS/noarch/stlinux22-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm: \
