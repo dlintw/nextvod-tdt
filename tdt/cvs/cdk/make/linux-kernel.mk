@@ -421,6 +421,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 	cp $(driverdir)/stgfb/stmfb/Linux/video/stmfb.h $(targetprefix)/usr/include/linux
 	$(MAKE) -C $(driverdir) \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
+		$(if $(UFS910),UFS910=$(UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
@@ -438,6 +439,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		BIN_DEST=$(targetprefix)/bin \
 		INSTALL_MOD_PATH=$(targetprefix) \
+		$(if $(UFS910),UFS910=$(UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
