@@ -58,6 +58,7 @@ PACKAGES="\
 	libtool \
 	swig \
 	dialog \
+	wget \
 	${UBUNTU:+rpm}                                    ${FEDORA:+rpm-build} \
 	${UBUNTU:+lsb-release}     ${SUSE:+lsb-release}   ${FEDORA:+redhat-lsb} \
 	${UBUNTU:+git-core}        ${SUSE:+git-core}      ${FEDORA:+git} \
