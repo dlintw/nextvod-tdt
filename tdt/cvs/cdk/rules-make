@@ -18,6 +18,8 @@ linuxp0040;2.6.17.14_stm22_0040;linux-2.6.17.14_stm22_0040;stlinux22-host-kernel
 linuxp0041;2.6.17.14_stm22_0041;linux-2.6.17.14_stm22_0041;stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.src.rpm
 #linuxp0040;2.6.17.14_stm22_0040;linux-2.6.17;linux-2.6.17.tar.bz2:linux-2.6.17.14_stm22_0040-stm.diff:nosquashfs3.1.patch:squashfs3.0.patch:squashfs3.0_lzma.patch:linux-sh4-2.6.17.14_stm22_0037.mini_fo.diff:linux-sh4-2.6.17.14_stm22_0040.vfddriver.diff:linux-sh4-2.6.17.14_stm22_0040.diff;remove:linux;extract:linux-2.6.17.tar.bz2;patch:linux-2.6.17.14_stm22_0040-stm.diff;patch:linux-sh4-2.6.17.14_stm22_0037.mini_fo.diff;patch:linux-sh4-2.6.17.14_stm22_0040.vfddriver.diff;patch:linux-sh4-2.6.17.14_stm22_0040.diff;link:linux-2.6.17:linux
 linux23;2.6.23.17_stm23_0119;linux-sh4-2.6.23.17_stm23_0119;stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.src.rpm
+linuxp0119;2.6.23.17_stm23_0119;linux-sh4-2.6.23.17_stm23_0119;stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.src.rpm
+linuxp0123;2.6.23.17_stm23_0123;linux-sh4-2.6.23.17_stm23_0123;stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0123-123.src.rpm
 squashfs;3.0;mksquashfs;squashfs3.0.tar.gz:mksquashfs_lzma.diff:lzma442.tar.bz2:lzma_zlib-stream.diff;dircreate:mksquashfs;extract:lzma442.tar.bz2;patch:lzma_zlib-stream.diff;extract:squashfs3.0.tar.gz;patch:mksquashfs_lzma.diff
 ccache;2.4;ccache-2.4;ccache-2.4.tar.gz;extract:ccache-2.4.tar.gz
 cramfs;1.1;cramfs-1.1;cramfs-1.1.tar.gz;extract:cramfs-1.1.tar.gz

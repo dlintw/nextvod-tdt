@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ "$1" == -h ] || [ "$1" == --help ]; then
+ echo "Parameter 1: target system (1-9)"
+ echo "Parameter 2: kernel (1-4)"
+ echo "Parameter 3: debug (Y/N)"
+fi
+
 CURDIR=`pwd`
 KATIDIR=${CURDIR%/cvs/cdk}
 export PATH=/usr/sbin:/sbin:$PATH
@@ -77,17 +83,36 @@ esac
 [ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" -o "$REPLY" == "7" -o "$REPLY" == "8" -o "$REPLY" == "9" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
 
 ##############################################
-REPLY=N
-read -p "Building for stm23(instable) instead of stm22(stable) (y/N/h)? " -t 5
-[ "$REPLY" == "y" -o "$REPLY" == "Y" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23"
-[ "$REPLY" == "h" -o "$REPLY" == "H" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23 --enable-havana"
-[ "$REPLY" == "y" -o "$REPLY" == "Y" -o "$REPLY" == "h"  -o "$REPLY" == "H"  ] || CONFIGPARAM="$CONFIGPARAM --enable-stm22 --enable-p0041"
-echo -e "\nSelected option: $REPLY\n"
+
+echo "Kernel:"
+echo "1) STM 22 P0041"
+echo "2) STM 23 P0119 (instable)"
+echo "3) STM 23 P0119 with Havana (instable)"
+echo "4) STM 23 P0123 (instable)"
+case $2 in
+        1|2|3|4) REPLY=$2
+        echo -e "\nSelected kernel: $REPLY\n"
+        ;;
+        *)
+        read -p "Select kernel (1-4)? ";;
+esac
+
+[ "$REPLY" == "1" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm22 --enable-p0041"
+[ "$REPLY" == "2" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23 --enable-p0119"
+[ "$REPLY" == "3" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23 --enable-p0119 --enable-havana"
+[ "$REPLY" == "4" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23 --enable-p0123"
+[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" ] || CONFIGPARAM="$CONFIGPARAM --enable-stm22 --enable-p0041"
+
 ##############################################
-REPLY=N
-read -p "Activate debug (y/N)? " -t 5
+if [ "$3" ]; then 
+ REPLY="$3"
+ echo "Activate debug (y/N)? "
+ echo -e "\nSelected option: $REPLY\n"
+else
+ REPLY=N
+ read -p "Activate debug (y/N)? "
+fi
 [ "$REPLY" == "y" -o "$REPLY" == "Y" ] && CONFIGPARAM="$CONFIGPARAM --enable-debug"
-echo -e "\nSelected option: $REPLY\n"
 
 ##############################################
 

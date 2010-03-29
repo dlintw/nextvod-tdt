@@ -47,6 +47,16 @@ AC_ARG_ENABLE(p0041,
 	,[enable_p0041=no])
 AM_CONDITIONAL(P0041,test "$enable_p0041" = "yes")
 
+AC_ARG_ENABLE(p0119,
+        AS_HELP_STRING(--enable-p0119,  set up the CDK to use the STLinux 2.3 with patchlevel 0119),
+        ,[enable_p0119=no])
+AM_CONDITIONAL(P0119,test "$enable_p0119" = "yes")
+
+AC_ARG_ENABLE(p0123,
+        AS_HELP_STRING(--enable-p0123,  set up the CDK to use the STLinux 2.3 with patchlevel 0123),
+        ,[enable_p0123=no])
+AM_CONDITIONAL(P0123,test "$enable_p0123" = "yes")
+
 AC_ARG_ENABLE(debug,
 	AS_HELP_STRING(--enable-debug,	set up the CDK to use debug kernel configs),
 	,[enable_debug=no])
@@ -593,10 +603,13 @@ AC_SUBST(DISTCLEANUP)
 #
 AC_SUBST(KERNELVERSION)
 AC_SUBST(KERNELSTMLABEL)
+AC_SUBST(KERNELLABEL)
 TUXBOX_RULES_MAKE(linux)
 TUXBOX_RULES_MAKE(linuxp0040)
 TUXBOX_RULES_MAKE(linuxp0041)
 TUXBOX_RULES_MAKE(linux23)
+TUXBOX_RULES_MAKE(linuxp0119)
+TUXBOX_RULES_MAKE(linuxp0123)
 
 if test "$enable_stm22" = "yes"; then
 	if test "$enable_p0040" == "yes"; then
@@ -610,9 +623,15 @@ if test "$enable_stm22" = "yes"; then
 		KERNELSTMLABEL="_${VERSION_linux#*_}"
 	fi
 else
-	KERNELVERSION=${VERSION_linux23}
-	#KERNELSTMLABEL="_${VERSION_linux23#*_}"
-	KERNELSTMLABEL="_stm23_0119"
+	if test "$enable_p0123" == "yes"; then
+		KERNELVERSION=${VERSION_linuxp0123}
+		KERNELSTMLABEL="_${VERSION_linuxp0123#*_}"
+		KERNELLABEL="123"
+	else
+		KERNELVERSION=${VERSION_linuxp0119}
+		KERNELSTMLABEL="_${VERSION_linuxp0119#*_}"
+		KERNELLABEL="119"
+	fi
 fi
 
 #TUXBOX_RULES_MAKE_EXDIR(binutils)
@@ -870,6 +889,8 @@ STLinux 2.3:	       $enable_stm23
 STLinux 2.3_Havana:    $enable_havana
 Patchlevel P0040:      $enable_p0040
 Patchlevel P0041:      $enable_p0041
+Patchlevel P0119:      $enable_p0119
+Patchlevel P0123:      $enable_p0123
 vdr VDR 1.7.11:        $enable_vdr1711
 flash rules:	       $enable_flashrules
 ccache:		       $enable_ccache

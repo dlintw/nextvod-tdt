@@ -119,6 +119,76 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 			$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_41)) \
 			$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41))
 
+############ Patches Kernel 23 ###############
+
+if P0123
+PATCH_STR=_0123
+endif
+
+if ENABLE_HL101
+STM23_DVB_PATCH = Patches/linuxdvb_stm23_api5.patch
+else
+if ENABLE_VIP2
+STM23_DVB_PATCH = Patches/linuxdvb_stm23_api5.patch
+else
+STM23_DVB_PATCH = Patches/linuxdvb_stm23$(PATCH_STR).patch
+endif
+endif
+
+COMMONPATCHES_23 = \
+                Patches/cpp_stm23$(PATCH_STR).patch \
+                Patches/time_stlinux23$(PATCH_STR).diff \
+                $(if $(P0123),Patches/mtd_stm23$(PATCH_STR).patch) \
+                $(if $(P0119),Patches/fdma_stm23.patch) \
+                Patches/sound_stm23$(PATCH_STR).diff \
+                $(if $(P0123),Patches/stm23_strcpy$(PATCH_STR).patch) \
+                $(STM23_DVB_PATCH) \
+                $(if $(P0119),Patches/kernel23_depmod.patch)
+#               Patches/nosquashfs3.1_stm23.patch \
+#               Patches/squashfs3.0_stm23.patch \
+#               Patches/squashfs3.0_lzma_stm23.patch \
+#               Patches/linux-sh4-2.6.17.14_stm22_0037.mini_fo.diff \
+#               Patches/do-printk.patch
+
+UFS922PATCHES_23 = $(COMMONPATCHES_23) \
+               $(if $(P0119),Patches/ufs922_stmmac_stlinux23.patch) \
+               $(if $(P0119),Patches/ufs922_setup_stlinux23.patch)
+
+# TF7700PATCHES_23 = $(COMMONPATCHES_23) \
+#               $(if $(P0119),Patches/ufs922_stasc_stm23.patch) \
+#               $(if $(P0119),Patches/tf7700_setup_stm23.patch) 
+
+HL101PATCHES_23 = $(COMMONPATCHES_23) \
+                $(if $(P0119),Patches/hl101_setup_stlinux23.patch)
+
+VIP2PATCHES_23 = $(COMMONPATCHES_23) \
+                $(if $(P0119),Patches/vip2_setup_stlinux23.patch)
+
+UFS910PATCHES_23 = $(COMMONPATCHES_23) \
+                Patches/ufs910_setup_stlinux23$(PATCH_STR).patch \
+                Patches/ufs910_pcmplayer_stlinux23.patch \
+                Patches/ufs910_reboot_stlinux23.patch
+#               Patches/ufs910_smsc_stm23.patch \
+#               Patches/ufs910_i2c_stm23.patch \
+#               Patches/ufs910_setup_stm23.patch \
+#               Patches/ufs910_stboards_stm23.patch
+
+CUBEPATCHES_023 = $(COMMONPATCHES_23) \
+                $(if $(P0119),Patches/cuberevo_patches_stlinux23.patch) \
+                $(if $(P0119),Patches/cuberevo_rtl8201_stlinux23.patch) \
+                $(if $(P0119),Patches/Patches/$(CUBEMOD)_setup_stlinux23.patch)
+
+KERNELPATCHES_23 =      $(if $(TF7700),$(TF7700PATCHES_23)) \
+                        $(if $(HL101),$(HL101PATCHES_23)) \
+                        $(if $(VIP2),$(VIP2PATCHES_23)) \
+                        $(if $(UFS922),$(UFS922PATCHES_23)) \
+                        $(if $(CUBEMOD),$(CUBEPATCHES_023)) \
+                        $(if $(UFS910),$(UFS910PATCHES_23)) \
+                        $(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_23)) \
+                        $(if $(FORTIS_HDBOX),$(FORTISPATCHES_23))
+
+############ Patches Kernel 23 End ###############
+
 # IMPORTANT: it is expected that only one define is set
 MODNAME = $(UFS910)$(UFS922)$(TF7700)$(HL101)$(VIP2)$(CUBEMOD)$(FORTIS_HDBOX)$(FLASH_UFS910)
 
@@ -221,8 +291,8 @@ else
 ##################################################################################
 #stlinux23
 
-RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.noarch.rpm: \
-		Archive/stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.src.rpm
+RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL).noarch.rpm: \
+		Archive/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL).src.rpm
 	rpm $(DRPM) --nosignature --nodeps -Uhv $< && \
 	( cd SPECS; patch -p1 stm-host-kernel-sh4.spec < ../Patches/stm-host-kernel.spec23.diff ) && \
 	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/stm-host-kernel-sh4.spec
@@ -233,163 +303,13 @@ else
 DEBUG_STR=
 endif
 
-if ENABLE_HL101
-STM23_DVB_PATCH = Patches/linuxdvb_stm23_api5.patch
-else
-if ENABLE_VIP2
-STM23_DVB_PATCH = Patches/linuxdvb_stm23_api5.patch
-else
-STM23_DVB_PATCH = Patches/linuxdvb_stm23.patch
-endif
-endif
-
-$(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.noarch.rpm \
-		Patches/cpp_stm23.patch \
-		Patches/time_stlinux23.diff \
-		Patches/fdma_stm23.patch \
-		Patches/sound_stm23.diff \
-		$(STM23_DVB_PATCH) \
-		$(if $(UFS922),Patches/ufs922_stmmac_stlinux23.patch) \
-		$(if $(UFS922),Patches/ufs922_setup_stlinux23.patch) \
-		$(if $(UFS910),Patches/ufs910_setup_stlinux23.patch) \
-		$(if $(UFS910),Patches/ufs910_pcmplayer_stlinux23.patch) \
-		$(if $(UFS910),Patches/ufs910_reboot_stlinux23.patch) \
-		$(if $(HL101),Patches/hl101_setup_stlinux23.patch) \
-		$(if $(VIP2),Patches/vip2_setup_stlinux23.patch) \
-		$(if $(CUBEREVO),Patches/cuberevo_patches_stlinux23.patch) \
-		$(if $(CUBEREVO),Patches/cuberevo_rtl8201_stlinux23.patch) \
-		$(if $(CUBEREVO),Patches/$(CUBEREVO)_setup_stlinux23.patch) \
-		$(if $(CUBEREVO_MINI),Patches/cuberevo_patches_stlinux23.patch) \
-		$(if $(CUBEREVO_MINI),Patches/cuberevo_rtl8201_stlinux23.patch) \
-		$(if $(CUBEREVO_MINI),Patches/$(CUBEREVO_MINI)_setup_stlinux23.patch) \
-		$(if $(CUBEREVO_MINI2),Patches/cuberevo_patches_stlinux23.patch) \
-		$(if $(CUBEREVO_MINI2),Patches/cuberevo_rtl8201_stlinux23.patch) \
-		$(if $(CUBEREVO_MINI2),Patches/$(CUBEREVO_MINI2)_setup_stlinux23.patch) \
-		$(if $(CUBEREVO_MINI_FTA),Patches/cuberevo_patches_stlinux23.patch) \
-		$(if $(CUBEREVO_MINI_FTA),Patches/cuberevo_rtl8201_stlinux23.patch) \
-		$(if $(CUBEREVO_MINI_FTA),Patches/$(CUBEREVO_MINI_FTA)_setup_stlinux23.patch) \
-		$(if $(CUBEREVO_250HD),Patches/cuberevo_patches_stlinux23.patch) \
-		$(if $(CUBEREVO_250HD),Patches/cuberevo_rtl8201_stlinux23.patch) \
-		$(if $(CUBEREVO_250HD),Patches/$(CUBEREVO_250HD)_setup_stlinux23.patch) \
-		$(if $(CUBEREVO_2000HD),Patches/cuberevo_patches_stlinux23.patch) \
-		$(if $(CUBEREVO_2000HD),Patches/cuberevo_rtl8201_stlinux23.patch) \
-		$(if $(CUBEREVO_2000HD),Patches/$(CUBEREVO_2000HD)_setup_stlinux23.patch) \
-		$(if $(CUBEREVO_9500HD),Patches/cuberevo_patches_stlinux23.patch) \
-		$(if $(CUBEREVO_9500HD),Patches/cuberevo_rtl8201_stlinux23.patch) \
-		$(if $(CUBEREVO_9500HD),Patches/$(CUBEREVO_9500HD)_setup_stlinux23.patch) \
-		Patches/kernel23_depmod.patch
-#		Patches/nosquashfs3.1_stm23.patch \
-#		Patches/squashfs3.0_stm23.patch \
-#		Patches/squashfs3.0_lzma_stm23.patch \
-#		Patches/linux-sh4-2.6.17.14_stm22_0037.mini_fo.diff \
-#		Patches/do-printk.patch \
-#		$(if $(TF7700),Patches/ufs922_stasc_stm23.patch) \
-#		$(if $(TF7700),Patches/tf7700_setup_stm23.patch) \
-#		$(if $(UFS910),Patches/ufs910_smsc_stm23.patch) \
-#		$(if $(UFS910),Patches/ufs910_i2c_stm23.patch) \
-#		$(if $(UFS910),Patches/ufs910_setup_stm23.patch) \
-#		$(if $(UFS910),Patches/ufs910_stboards_stm23.patch) \
-	@rpm $(DRPM) -ev stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119 || true
+$(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL).noarch.rpm $(KERNELPATCHES_23)
+	@rpm $(DRPM) -ev stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL) || true
 	rm -rf $(KERNEL_DIR)
 	rm -rf linux-sh4
-	rpm $(DRPM) --ignorearch --nodeps -Uhv $<
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 2,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 3,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 4,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 5,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 6,$^)
-if ENABLE_UFS922
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(UFS922).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_UFS910
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 9,$^)
-	$(INSTALL) -m644 Patches/linux-$(subst _stm23_,-,sh4-$(KERNELVERSION))_$(UFS910).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_FLASH_UFS910
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(FLASH_UFS910).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_FORTIS_HDBOX
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(FORTIS_HDBOX).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_TF7700
-#	cd $(KERNEL_DIR) && patch -p1 <../$(word 13,$^)
-#	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-$(subst _stm23_,-,$(KERNELVERSION))_$(TF7700).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_HL101
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-#	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(HL101).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_VIP2
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-#	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(VIP2).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_CUBEREVO
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_CUBEREVO_MINI
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_MINI).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_CUBEREVO_MINI2
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_MINI2).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_CUBEREVO_MINI_FTA
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_MINI_FTA).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_CUBEREVO_250HD
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_250HD).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_CUBEREVO_2000HD
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_2000HD).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-if ENABLE_CUBEREVO_9500HD
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 7,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(word 8,$^)
-	cd $(KERNEL_DIR) && patch -p1 <../$(lastword $^)
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(CUBEREVO_9500HD).config${DEBUG_STR} $(KERNEL_DIR)/.config
-else
-
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-
-	cd $(KERNEL_DIR) && patch -p1 < ../Patches/kernel23_depmod.patch
+	rpm $(DRPM) --force --ignorearch --nodeps -Uhv $<
+	cd $(KERNEL_DIR) && cat $(filter ../Patches/%, $(^:Patches/%=../Patches/%)) | patch -p1
+	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(MODNAME).config${DEBUG_STR} $(KERNEL_DIR)/.config
 	-rm $(KERNEL_DIR)/localversion*
 	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig

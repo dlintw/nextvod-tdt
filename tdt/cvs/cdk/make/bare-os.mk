@@ -47,7 +47,11 @@ else
 #KERNELHEADERS_VERSION	:= 2.6.16.16-26
 #Archive/stlinux23-sh4-linux-kernel-headers-2.6.23.17_stm23_0116-39.noarch.rpm
 KERNELHEADERS		:= linux-kernel-headers
+if P0123
+KERNELHEADERS_VERSION	:= 2.6.23.17_stm23_0123-41
+else
 KERNELHEADERS_VERSION	:= 2.6.23.17_stm23_0119-41
+endif
 
 RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm: \
 		 Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm

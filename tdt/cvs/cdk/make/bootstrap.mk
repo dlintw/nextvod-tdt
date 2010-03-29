@@ -17,9 +17,22 @@ KERNEL_PREPARE = @PREPARE_linux@
 endif
 endif
 else
+if P0119
+KERNEL_DEPENDS = @DEPENDS_linux23@
+KERNEL_DIR = @DIR_linuxp0119@
+KERNEL_PREPARE = @PREPARE_linux23@
+else
+if P0123
+KERNEL_DEPENDS = @DEPENDS_linux23@
+KERNEL_DIR = @DIR_linuxp0123@
+KERNEL_PREPARE = @PREPARE_linux23@
+else
 KERNEL_DEPENDS = @DEPENDS_linux23@
 KERNEL_DIR = @DIR_linux23@
 KERNEL_PREPARE = @PREPARE_linux23@
+#endof P0119/123
+endif
+endif
 #endof STM22
 endif
 
