@@ -162,24 +162,26 @@ void CImageInfo::paint()
 	const char * homepage  = config.getString("homepage",  "n/a").c_str();
 	const char * creator   = config.getString("creator",   "n/a").c_str();
 	const char * version   = config.getString("version",   "no version").c_str();
+	const char * git       = config.getString("git",   "unknown git revision").c_str();
 	const char * docs      = config.getString("docs",   "man neutrino").c_str();
 	const char * forum     = config.getString("forum",   "http://gitorious.org/open-duckbox-project-sh4").c_str();
 
 	static CFlashVersionInfo versionInfo(version);
 	const char * releaseCycle = versionInfo.getReleaseCycle();
-//	sprintf((char*) imagedate, "%s  %s", versionInfo.getDate(), versionInfo.getTime());
+	sprintf((char*) imagedate, "%s  %s", versionInfo.getDate(), versionInfo.getTime());
 
 	ypos += iheight;
 	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_IMAGE));
 	paintLine(xpos+125, font_info, imagename);
 
-//	ypos += iheight;
-//	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_DATE));
-//	paintLine(xpos+125, font_info, imagedate);
+	ypos += iheight;
+	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_DATE));
+	paintLine(xpos+125, font_info, imagedate);
 
 	ypos += iheight;
 	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_VERSION));
 	paintLine(xpos+125, font_info, releaseCycle);
+	paintLine(xpos+125, font_info, git);
 
 	ypos += iheight;
 	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_CREATOR));
