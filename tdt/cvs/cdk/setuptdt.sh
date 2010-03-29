@@ -14,6 +14,7 @@ UBUNTU=
 FEDORA=
 SUSE=
 
+# Try to detect the distribution
 if `which lsb_release > /dev/null 2>&1`; then 
 	case `lsb_release -s -i` in
 		Debian*) UBUNTU=1; INSTALL="apt-get -y install";;
@@ -21,7 +22,10 @@ if `which lsb_release > /dev/null 2>&1`; then
 		SUSE*)   SUSE=1;   INSTALL="zypper install -y";;
 		Ubuntu*) UBUNTU=1; INSTALL="apt-get -y install";;
 	esac
-else
+fi
+
+# Not detected by lsb_release, try release files
+if [ -z "$FEDORA$SUSE$UBUNTU" ]; then
 	if   [ -f /etc/redhat-release ]; then FEDORA=1; INSTALL="yum install -y"; 
 	elif [ -f /etc/fedora-release ]; then FEDORA=1; INSTALL="yum install -y"; 
 	elif [ -f /etc/SuSE-release ];   then SUSE=1;   INSTALL="zypper install -y";
@@ -29,6 +33,7 @@ else
 	fi
 fi
 
+# still not detected, display error and let the user manually install
 if [ -z "$FEDORA$SUSE$UBUNTU" ]; then
 	echo
 	echo "Cannot determine which OS distribution you use," 
@@ -36,8 +41,8 @@ if [ -z "$FEDORA$SUSE$UBUNTU" ]; then
 	echo "Please report this fact in the AAF or Kathi-forums"
 	echo
 	echo "Try installing the following packages: "
-	# determine dist base on package system, Suse should be last
-        # because the others may also have rpm installed.
+	# determine probable distribution, based on package system, 
+	# Suse should be last because the others may also have rpm installed.
 	{ `which apt-get > /dev/null 2>&1` && UBUNTU=1; } || \
 	{ `which yum     > /dev/null 2>&1` && FEDORA=1; } || \
 	SUSE=2
