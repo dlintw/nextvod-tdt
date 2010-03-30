@@ -73,7 +73,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/simu_button.ko
 
    mknod /dev/rc c 147 1 
-   /bin/evremote ufs922 &
+   /bin/evremote2 ufs922 &
 
    #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
    #mount /dev/sr0 /media/dvd
