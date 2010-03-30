@@ -152,16 +152,16 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.h enigma2-nightly/lib/base/filep
 diff -Nur enigma2-nightly.org/lib/base/ioprio.cpp enigma2-nightly/lib/base/ioprio.cpp
 --- enigma2-nightly.org/lib/base/ioprio.cpp	2009-12-12 23:16:22.400599000 +0100
 +++ enigma2-nightly/lib/base/ioprio.cpp	2009-12-12 23:37:38.000000000 +0100
-@@ -27,6 +27,9 @@
- #elif defined(__mips__)
- #define __NR_ioprio_set		4284
- #define __NR_ioprio_get		4285
-+#elif defined(__sh__) 
-+#define __NR_ioprio_set         288 
-+#define __NR_ioprio_get         289 
- #else
- #error "Unsupported arch"
- #endif
+@@ -28,6 +28,9 @@
+	#elif defined(__mips__)
+		#define __NR_ioprio_set		4284
+		#define __NR_ioprio_get		4285
++	#elif defined(__sh__) 
++		#define __NR_ioprio_set         288 
++		#define __NR_ioprio_get         289 
+	#else
+		#error "Unsupported arch"
+	#endif
 diff -Nur enigma2-nightly.org/lib/base/object.h enigma2-nightly/lib/base/object.h
 --- enigma2-nightly.org/lib/base/object.h	2009-12-12 23:16:22.400599000 +0100
 +++ enigma2-nightly/lib/base/object.h	2009-12-12 23:37:22.000000000 +0100
@@ -15717,7 +15717,7 @@ diff -Nur enigma2-nightly.org/main/enigma.cpp enigma2-nightly/main/enigma.cpp
 +#endif  
  	
  	printf("executing main\n");
-
+	
 diff -Nur enigma2-nightly.org/main/Makefile.am enigma2-nightly/main/Makefile.am
 --- enigma2-nightly.org/main/Makefile.am	2009-12-12 23:16:22.500600000 +0100
 +++ enigma2-nightly/main/Makefile.am	2009-12-12 23:18:41.332599958 +0100
@@ -15801,7 +15801,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
  from Screens.InfoBarGenerics import InfoBarShowHide, \
  	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarRdsDecoder, \
  	InfoBarEPG, InfoBarSeek, InfoBarInstantRecord, \
--	InfoBarAudioSelection, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, \
+-	InfoBarAudioSelection, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarUnhandledKey, \
 -	InfoBarSubserviceSelection, InfoBarShowMovies, InfoBarTimeshift,  \
 +	InfoBarAudioSelection, InfoBarExtendedAudioSelection, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, \
 +	InfoBarAspectSelection, InfoBarResolutionSelection, InfoBarSubserviceSelection, InfoBarShowMovies, InfoBarTimeshift,  \
@@ -15822,7 +15822,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +#+++>
 +	InfoBarInstantRecord, InfoBarAudioSelection, InfoBarExtendedAudioSelection, 
 +#+++<
- 	HelpableScreen, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish,
+ 	HelpableScreen, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarUnhandledKey,
 -	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek,
 +#--->
 +#-	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek,
@@ -15858,7 +15858,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
  		for x in HelpableScreen, \
  				InfoBarBase, InfoBarShowHide, \
  				InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder, \
--				InfoBarInstantRecord, InfoBarAudioSelection, \
+-				InfoBarInstantRecord, InfoBarAudioSelection, InfoBarUnhandledKey, \
 -				InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarSubserviceSelection, \
 +				InfoBarInstantRecord, InfoBarAudioSelection, InfoBarExtendedAudioSelection, \
 +				InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarAspectSelection, InfoBarResolutionSelection, InfoBarSubserviceSelection, \
@@ -15950,9 +15950,9 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +#+++<
  
  	def ChannelSelectionRadioClosed(self, *arg):
-@@ -214,4 +322,9 @@
+@@ -213,4 +305,9 @@
+
  		if answer in ("quit", "quitanddeleteconfirmed"):
- 			config.movielist.last_videodir.cancel()
 +#+++> 
 +                        # make sure that playback is unpaused otherwise the  
 +                        # player driver might stop working 
@@ -15960,7 +15960,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +#+++<
  			self.close()
  		elif answer == "movielist":
-@@ -220,4 +333,9 @@
+@@ -219,4 +333,9 @@
  			from Screens.MovieSelection import MovieSelection
  			self.session.openWithCallback(self.movieSelected, MovieSelection, ref)
 +#+++> 
@@ -15970,11 +15970,10 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 +#+++<
  			self.session.nav.stopService()
  		elif answer == "restart":
-
 diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py
 --- enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py	2010-01-26 23:16:22.500600000 +0100
 +++ enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py	2010-03-10 23:18:41.332599958 +0100
-@@ -43,4 +43,8 @@
+@@ -45,4 +45,8 @@
  from Menu import MainMenu, mdom
  
 +#+++>
@@ -15983,7 +15982,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
  class InfoBarDish:
  	def __init__(self):
-@@ -54,4 +58,7 @@
+@@ -89,4 +93,7 @@
  	STATE_SHOWING = 2
  	STATE_SHOWN = 3
 +#+++>
@@ -15991,7 +15990,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  	def __init__(self):
-@@ -104,10 +111,32 @@
+@@ -139,10 +146,32 @@
  			self.hide()
  
 +#+++>
@@ -16029,7 +16028,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  	def lockShow(self):
-@@ -1280,5 +1309,10 @@
+@@ -1321,5 +1350,10 @@
  	def updateExtensions(self):
  		self.extensionsList = []
 -		self.availableKeys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow", "blue" ]
@@ -16041,7 +16040,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  		self.extensionKeys = {}
  		for x in self.list:
-@@ -1357,4 +1391,16 @@
+@@ -1398,4 +1432,16 @@
  
  # depends on InfoBarExtensions
 +
@@ -16058,7 +16057,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
  class InfoBarPiP:
  	def __init__(self):
-@@ -1717,4 +1763,151 @@
+@@ -1787,4 +1833,151 @@
  			self.audioChannel.selectChannel(mode[1])
  		del self.audioChannel
 +
@@ -16210,7 +16209,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  class InfoBarSubserviceSelection:
-@@ -1794,14 +1987,41 @@
+@@ -1864,14 +2057,41 @@
  
  			if self.bouquets and len(self.bouquets):
 -				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
@@ -16259,7 +16258,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
-@@ -1843,4 +2063,127 @@
+@@ -1913,4 +2133,127 @@
  		else:
  			del self.selectedSubservice
 +
@@ -16387,7 +16386,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  class InfoBarAdditionalInfo:
-@@ -2168,5 +2511,20 @@
+@@ -2240,5 +2583,20 @@
  
  	def startTeletext(self):
 -		self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
@@ -16444,7 +16443,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/VolumeControl.py enigma2-nig
 diff -Nur enigma2-nightly.org/lib/python/Components/UsageConfig.py enigma2-nightly.org/lib/python/Components/UsageConfig.py
 --- enigma2-nightly.org/lib/python/Components/UsageConfig.py	2010-01-17 23:16:22.500600000 +0100
 +++ enigma2-nightly.org/lib/python/Components/UsageConfig.py	2010-01-17 23:18:41.332599958 +0100
-@@ -48,4 +48,7 @@
+@@ -52,4 +52,7 @@
  	config.usage.on_long_powerpress = ConfigSelection(default = "show_menu", choices = [
  		("show_menu", _("show shutdown menu")),
 +#+++>
@@ -17661,3 +17660,4 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
 +//#else
 +//#warning gstreamer not available, not building media player
 +//#endif
+
