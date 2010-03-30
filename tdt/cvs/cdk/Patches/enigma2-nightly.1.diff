@@ -3556,257 +3556,6 @@ diff -Nur enigma2-nightly.org/lib/gdi/stmfb.cpp enigma2-nightly/lib/gdi/stmfb.cp
 +//	printf("unimplemented bcm_accel_fill\n");
 +}
 +
-diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/lib/python/Components/Harddisk.py
---- enigma2-nightly.org/lib/python/Components/Harddisk.py	2010-01-17 23:16:22.420599000 +0100
-+++ enigma2-nightly/lib/python/Components/Harddisk.py	2010-01-17 23:46:13.000000000 +0100
-@@ -1,8 +1,25 @@
--from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access
--from Tools.Directories import SCOPE_HDD, resolveFilename
-+#--->
-+#-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access
-+#-from Tools.Directories import SCOPE_HDD, resolveFilename
-+#---<
-+#+++>
-+from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access, readlink, remove, path as os_path
-+from Tools.Directories import SCOPE_HDD, resolveFilename, removeDir
-+#+++<
- from Tools.CList import CList
- from SystemInfo import SystemInfo
- import time
- from Components.Console import Console
-+#+++>
-+from enigma import eConsoleAppContainer, evfd
-+import os
-+
-+def tryOpen(filename):
-+	try:
-+		procFile = open(filename)
-+	except IOError:
-+		return ""
-+	return procFile
-+#+++<
- 
- def readFile(filename):
-@@ -19,11 +36,14 @@
- 		self.device = device
- 
--		if access("/dev/.udev", 0):
--			self.type = self.DEVTYPE_UDEV
--		elif access("/dev/.devfsd", 0):
--			self.type = self.DEVTYPE_DEVFS
--		else:
--			print "Unable to determine structure of /dev"
--
-+#--->
-+#-		if access("/dev/.udev", 0):
-+#-			self.type = self.DEVTYPE_UDEV
-+#-		elif access("/dev/.devfsd", 0):
-+#-			self.type = self.DEVTYPE_DEVFS
-+#-		else:
-+#-			print "Unable to determine structure of /dev"
-+#+++>
-+		self.type = self.DEVTYPE_UDEV
-+#+++<
- 		self.max_idle_time = 0
- 		self.idle_running = False
-@@ -33,5 +53,6 @@
- 		self.disk_path = ''
- 		self.phys_path = path.realpath(self.sysfsPath('device'))
--
-+		
-+		print "[Harddisk] found: ", self.phys_path
- 		if self.type == self.DEVTYPE_UDEV:
- 			self.dev_path = '/dev/' + self.device
-@@ -44,5 +65,5 @@
- 			for disc in listdir("/dev/discs"):
- 				dev_path = path.realpath('/dev/discs/' + disc)
--				disk_path = dev_path + '/disc'
-+ 				disk_path = dev_path + '/disc'
- 				try:
- 					rdev = stat(disk_path).st_rdev
-@@ -172,11 +193,20 @@
- 			parts = line.strip().split(" ")
- 			if path.realpath(parts[0]).startswith(self.dev_path):
--				cmd = ' ' . join([cmd, parts[1]])
--
-+#--->			
-+#-				cmd = ' ' . join([cmd, parts[1]])
-+#---<
-+#+++>
-+				cmd = ' -fl ' . join([cmd, parts[1]])
-+#+++<
- 		res = system(cmd)
- 		return (res >> 8)
- 
- 	def createPartition(self):
--		cmd = 'printf "0,\n;\n;\n;\ny\n" | /sbin/sfdisk -f ' + self.disk_path
-+#--->
-+#-		cmd = 'printf "0,\n;\n;\n;\ny\n" | /sbin/sfdisk -f ' + self.disk_path
-+#---<
-+#+++>
-+		cmd = 'echo "0,\n;\n;\n;\ny\n" | /sbin/sfdisk -f ' + self.disk_path
-+#+++<
- 		res = system(cmd)
- 		return (res >> 8)
-@@ -186,6 +216,19 @@
- 		if self.diskSize() > 4 * 1024:
- 			cmd += "-T largefile "
--		cmd += "-m0 -O dir_index " + self.partitionPath("1")
--		res = system(cmd)
-+
-+		cmd += "-m0 -O dir_index -L RECORD " + self.partitionPath("1")
-+		print "cmd", cmd
-+#--->
-+#-		res = system(cmd)
-+#---<
-+#+++>
-+		print "[Harddisk] mkfs: ", cmd
-+		if os.path.exists("/sbin/cmd") is True:
-+			self.container = eConsoleAppContainer()
-+			self.container.execute("/sbin/cmd " + cmd)
-+			res = 0
-+		else:	
-+			res = system(cmd)
-+#+++<
- 		return (res >> 8)
- 
-@@ -203,5 +246,5 @@
- 			parts = line.strip().split(" ")
- 			if path.realpath(parts[0]) == self.partitionPath("1"):
--				cmd = "/bin/mount -t ext3 " + parts[0]
-+				cmd = "/bin/mount -t ext3 " + parts[0] + " /media/hdd"
- 				res = system(cmd)
- 				break
-@@ -220,5 +263,16 @@
- 		# TODO: we could check if the fs is actually ext3
- 		cmd = "/sbin/fsck.ext3 -f -p " + self.partitionPath("1")
--		res = system(cmd)
-+#--->
-+#-		res = system(cmd)
-+#---<
-+#+++>		
-+		print "[Harddisk] fsck: ", cmd
-+		if os.path.exists("/sbin/cmd") is True:
-+			self.container = eConsoleAppContainer()
-+			self.container.execute("/sbin/cmd " + cmd)
-+			res = 0
-+		else:	
-+			res = system(cmd)
-+#+++<
- 		return (res >> 8)
- 
-@@ -392,26 +446,45 @@
- 		return False
- 
-+#--->
-+#-DEVICEDB =  \
-+#-	{"dm8000":
-+#-		{
-+#-			# dm8000:
-+#-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": "Front USB Slot",
-+#-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.2/1-1.2:1.0": "Back, upper USB Slot",
-+#-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.3/1-1.3:1.0": "Back, lower USB Slot",
-+#-			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0/host1/target1:0:0/1:0:0:0": "DVD Drive",
-+#-		},
-+#-	"dm800":
-+#-	{
-+#-		# dm800:
-+#-		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": "Upper USB Slot",
-+#-		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": "Lower USB Slot",
-+#-	},
-+#-	"dm7025":
-+#-	{
-+#-		# dm7025:
-+#-		"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "CF Card Slot", #hdc
-+#-		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
-+#-	}
-+#-	}
-+#---<
-+#+++>
- DEVICEDB =  \
--	{"dm8000":
-+	{"ufs910":
- 		{
--			# dm8000:
--			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": "Front USB Slot",
--			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.2/1-1.2:1.0": "Back, upper USB Slot",
--			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.3/1-1.3:1.0": "Back, lower USB Slot",
--			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0/host1/target1:0:0/1:0:0:0": "DVD Drive",
-+			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.4/1-1.4:1.0": "Front USB Slot",
-+			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.3/1-1.3:1.0": "Back, upper USB Slot",
-+			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0": "Back, lower USB Slot",
- 		},
--	"dm800":
--	{
--		# dm800:
--		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": "Upper USB Slot",
--		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": "Lower USB Slot",
--	},
--	"dm7025":
--	{
--		# dm7025:
--		"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "CF Card Slot", #hdc
--		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
-+	"UFS922":
-+		{
-+			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.1/1-1.1:1.0/": "Back, upper USB Slot",
-+			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0/": "Back, lower USB Slot",
-+			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.3/1-1.3:1.0/": "Front USB Slot",
-+		}	
- 	}
--	}
-+#+++<
-+
- 
- class HarddiskManager:
-@@ -438,4 +511,6 @@
- 					("/media/ram", _("Ram Disk")),
- 					("/media/usb", _("USB Stick")),
-+					("/media/upnp", _("UPNP Stick")),
-+					("/media/ftp", _("FTP Stick")),
- 					("/", _("Internal Flash"))
- 				]
-@@ -453,5 +528,10 @@
- 			removable = bool(int(readFile(devpath + "/removable")))
- 			dev = int(readFile(devpath + "/dev").split(':')[0])
--			if dev in (7, 31): # loop, mtdblock
-+#--->
-+#-			if dev in (7, 31): # loop, mtdblock
-+#---<
-+#+++>
-+			if dev in [1, 7, 31, 253]: # ram, loop, mtdblock, ramzswap
-+#+++<
- 				blacklisted = True
- 			if blockdev[0:2] == 'sr':
-@@ -513,4 +593,11 @@
- 				physdev = dev
- 				print "couldn't determine blockdev physdev for device", device
-+#+++>		
-+		else:
-+			dev, part = self.splitDeviceName(device)
-+		if part is not 0:
-+			print "[Harddisk] start automount"
-+			#Automount(device,"mount")
-+#+++<		
- 
- 		# device is the device name, without /dev
-@@ -545,4 +632,10 @@
- 					break
- 			SystemInfo["Harddisk"] = len(self.hdd) > 0
-+#+++>
-+		dev, part = self.splitDeviceName(device)
-+		if part is not 0:
-+			print "[Harddisk] start auto umount"
-+			#Automount(device,"umount")
-+#+++<
- 
- 	def HDDCount(self):
-@@ -614,4 +707,4 @@
- 				self.partitions.remove(x)
- 				self.on_partition_list_change("remove", x)
--
-+		
- harddiskmanager = HarddiskManager()
 diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightly/lib/python/Components/NimManager.py
 --- enigma2-nightly.org/lib/python/Components/NimManager.py	2009-12-12 23:16:22.424599000 +0100
 +++ enigma2-nightly/lib/python/Components/NimManager.py	2009-12-12 23:45:45.000000000 +0100
@@ -3830,84 +3579,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightl
 +#+++<
  					else:
  						currCO = currLnb.commandOrder.value
- 
-diff -Nur enigma2-nightly.org/lib/python/Components/Renderer/Progress.py enigma2-nightly/lib/python/Components/Renderer/Progress.py
---- enigma2-nightly.org/lib/python/Components/Renderer/Progress.py	2009-12-12 23:16:22.424599000 +0100
-+++ enigma2-nightly/lib/python/Components/Renderer/Progress.py	2009-12-12 23:44:58.000000000 +0100
-@@ -14,24 +14,58 @@
- 
- 	def changed(self, what):
--		if what[0] == self.CHANGED_CLEAR:
--			(self.range, self.value) = ((0, 1), 0)
--			return
-+#--->
-+#-		if what[0] == self.CHANGED_CLEAR:
-+#-			(self.range, self.value) = ((0, 1), 0)
-+#-			return
-+#-
-+#-		range = self.source.range or 100
-+#-		value = self.source.value
-+#-		if value is None:
-+#-			value = 0
-+#-		(self.range, self.value) = ((0, range), value)
-+#---<
-+#+++>
-+		try:
-+			if what[0] == self.CHANGED_CLEAR:
-+				(self.range, self.value) = ((0, 1), 0)
-+				return
- 
--		range = self.source.range or 100
--		value = self.source.value
--		if value is None:
--			value = 0
--		(self.range, self.value) = ((0, range), value)
-+
-+			range = (self.source and self.source.range) or 100
-+			value = (self.source and self.source.value) or 0
-+
-+			if value is None:
-+				value = 0
-+			(self.range, self.value) = ((0, range), value)
-+		except:
-+			None
-+#+++<
- 
- 	GUI_WIDGET = eSlider
- 
- 	def postWidgetCreate(self, instance):
--		instance.setRange(self.__start, self.__end)
--
-+#--->
-+#-		instance.setRange(self.__start, self.__end)
-+#---<
-+#+++>
-+		try:
-+			instance.setRange(self.__start, self.__end)
-+		except:
-+			None
-+#+++<
- 	def setRange(self, range):
--		(self.__start, self.__end) = range
--		if self.instance is not None:
--			self.instance.setRange(self.__start, self.__end)
--
-+#--->
-+#-		(self.__start, self.__end) = range
-+#-		if self.instance is not None:
-+#-			self.instance.setRange(self.__start, self.__end)
-+#---<
-+#+++>
-+		try:
-+			(self.__start, self.__end) = range
-+			if self.instance is not None:
-+				self.instance.setRange(self.__start, self.__end)
-+		except:
-+			None
-+#+++<
- 	def getRange(self):
- 		return (self.__start, self.__end)
-
+ 						
 diff -Nur enigma2-nightly.org/lib/python/Components/TunerInfo.py enigma2-nightly/lib/python/Components/TunerInfo.py
 --- enigma2-nightly.org/lib/python/Components/TunerInfo.py	2009-12-12 23:16:22.428599000 +0100
 +++ enigma2-nightly/lib/python/Components/TunerInfo.py	2009-12-12 23:48:36.000000000 +0100
@@ -15860,801 +15532,6 @@ diff -Nur enigma2-nightly.org/lib/service/servicedvbrecord.cpp enigma2-nightly/l
  		if (fd == -1)
  		{
  			eDebug("eDVBServiceRecord - can't open recording file!");
-diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/service/servicemp3.cpp
---- enigma2-nightly.org/lib/service/servicemp3.cpp	2009-12-12 23:16:22.496600000 +0100
-+++ enigma2-nightly/lib/service/servicemp3.cpp	2009-12-13 00:07:10.000000000 +0100
-@@ -1,4 +1,5 @@
--#ifdef HAVE_GSTREAMER
--
-+//#if not defined(__sh__)
-+//#ifdef HAVE_GSTREAMER
-+//#endif
- 	/* note: this requires gstreamer 0.10.x and a big list of plugins. */
- 	/* it's currently hardcoded to use a big-endian alsasink as sink. */
-@@ -12,9 +13,18 @@
- #include <lib/base/init_num.h>
- #include <lib/base/init.h>
-+#if not defined(__sh__)
- #include <gst/gst.h>
- #include <gst/pbutils/missing-plugins.h>
-+#endif
- #include <sys/stat.h>
- /* for subtitles */
- #include <lib/gui/esubtitle.h>
-+#if not defined(__sh__)
-+#ifndef GST_SEEK_FLAG_SKIP
-+#warning Compiling for legacy gstreamer, things will break
-+#define GST_SEEK_FLAG_SKIP 0
-+#define GST_TAG_HOMEPAGE ""
-+#endif
-+#endif
- 
- // eServiceFactoryMP3
-@@ -30,5 +40,7 @@
- 		extensions.push_back("mp2");
- 		extensions.push_back("mp3");
-+#if not defined(__sh__)
- 		extensions.push_back("ogg");
-+#endif
- 		extensions.push_back("mpg");
- 		extensions.push_back("vob");
-@@ -40,8 +52,20 @@
- 		extensions.push_back("divx");
- 		extensions.push_back("dat");
-+#if not defined(__sh__)
- 		extensions.push_back("flac");
-+#endif
- 		extensions.push_back("mp4");
-+#if not defined(__sh__)
- 		extensions.push_back("mov");
-+#endif
- 		extensions.push_back("m4a");
-+#if defined(__sh__)
-+		extensions.push_back("mpeg");
-+		extensions.push_back("m2ts");
-+		extensions.push_back("trp");
-+		extensions.push_back("vdr");
-+		extensions.push_back("wma");
-+		extensions.push_back("mts");
-+#endif
- 		sc->addServiceFactory(eServiceFactoryMP3::id, this, extensions);
- 	}
-@@ -194,5 +218,7 @@
- 	m_seekTimeout = eTimer::create(eApp);
- 	m_subtitle_sync_timer = eTimer::create(eApp);
-+#if not defined(__sh__)
- 	m_stream_tags = 0;
-+#endif
- 	m_currentAudioStream = -1;
- 	m_currentSubtitleStream = 0;
-@@ -203,5 +229,7 @@
- 	CONNECT(m_seekTimeout->timeout, eServiceMP3::seekTimeoutCB);
- 	CONNECT(m_subtitle_sync_timer->timeout, eServiceMP3::pushSubtitles);
-+#if not defined(__sh__)
- 	CONNECT(m_pump.recv_msg, eServiceMP3::gstPoll);
-+#endif
- 	m_aspect = m_width = m_height = m_framerate = m_progressive = -1;
- 
-@@ -214,4 +242,5 @@
- 		ext = filename;
- 
-+#if not defined(__sh__)
- 	sourceStream sourceinfo;
- 	sourceinfo.is_video = FALSE;
-@@ -337,8 +366,145 @@
- 
- 	setBufferSize(m_buffer_size);
-+#else
-+    player = (Context_t*) malloc(sizeof(Context_t));
-+
-+    if(player) {
-+	    player->playback	= &PlaybackHandler;
-+	    player->output		= &OutputHandler;
-+	    player->container	= &ContainerHandler;
-+	    player->manager		= &ManagerHandler;
-+
-+    	printf("%s\n", player->output->Name);
-+    }
-+
-+	//Registration of output devices
-+    if(player && player->output) {
-+	    player->output->Command(player,OUTPUT_ADD, (void*)"audio");
-+	    player->output->Command(player,OUTPUT_ADD, (void*)"video");
-+	    player->output->Command(player,OUTPUT_ADD, (void*)"subtitle");
-+    }
-+
-+    //create playback path
-+    char file[400] = {""};
-+
-+    if(!strncmp("http://", m_ref.path.c_str(), 7))
-+        ;
-+    else if(!strncmp("file://", m_ref.path.c_str(), 7))
-+        ;
-+    else
-+        strcat(file, "file://");
-+
-+    strcat(file, m_ref.path.c_str());
-+
-+    //try to open file
-+	if(player && player->playback && player->playback->Command(player, PLAYBACK_OPEN, file) >= 0) {
-+
-+        //VIDEO
-+            //We dont have to register video tracks, or do we ?
-+
-+        //AUDIO
-+        if(player && player->manager && player->manager->audio) {
-+            char ** TrackList = NULL;
-+		    player->manager->audio->Command(player, MANAGER_LIST, &TrackList);
-+		    if (TrackList != NULL) {
-+			    printf("AudioTrack List\n");
-+			    int i = 0;
-+			    for (i = 0; TrackList[i] != NULL; i+=2) {
-+				    printf("\t%s - %s\n", TrackList[i], TrackList[i+1]);
-+                    audioStream audio;
-+
-+                    audio.language_code = TrackList[i];
-+
-+                    // atUnknown, atMPEG, atMP3, atAC3, atDTS, atAAC, atPCM, atOGG, atFLAC
-+                    if(     !strncmp("A_MPEG/L3",   TrackList[i+1], 9))
-+                        audio.type = atMP3;
-+                    else if(!strncmp("A_AC3",       TrackList[i+1], 5))
-+                        audio.type = atAC3;
-+                    else if(!strncmp("A_DTS",       TrackList[i+1], 5))
-+                        audio.type = atDTS;
-+                    else if(!strncmp("A_AAC",       TrackList[i+1], 5))
-+                        audio.type = atAAC;
-+                    else if(!strncmp("A_PCM",       TrackList[i+1], 5))
-+                        audio.type = atPCM;
-+                    else if(!strncmp("A_VORBIS",    TrackList[i+1], 8))
-+                        audio.type = atOGG;
-+                    else if(!strncmp("A_FLAC",      TrackList[i+1], 6))
-+                        audio.type = atFLAC;
-+                    else
-+		                audio.type = atUnknown;
-+                    
-+		            m_audioStreams.push_back(audio);
-+
-+				    free(TrackList[i]);
-+                    free(TrackList[i+1]);
-+			    }
-+			    free(TrackList);
-+		    }
-+        }
-+
-+        //SUB
-+        if(player && player->manager && player->manager->subtitle) {
-+            char ** TrackList = NULL;
-+		    player->manager->subtitle->Command(player, MANAGER_LIST, &TrackList);
-+		    if (TrackList != NULL) {
-+			    printf("SubtitleTrack List\n");
-+			    int i = 0;
-+			    for (i = 0; TrackList[i] != NULL; i+=2) {
-+				    printf("\t%s - %s\n", TrackList[i], TrackList[i+1]);
-+                    subtitleStream sub;
-+
-+                    sub.language_code = TrackList[i];
-+
-+                    //  stPlainText, stSSA, stSRT
-+                    if(     !strncmp("S_TEXT/SSA",  TrackList[i+1], 10) || 
-+                            !strncmp("S_SSA",       TrackList[i+1], 5))
-+                        sub.type = stSSA;
-+                    else if(!strncmp("S_TEXT/ASS",  TrackList[i+1], 10) || 
-+                            !strncmp("S_AAS",       TrackList[i+1], 5))
-+                        sub.type = stSSA;
-+                    else if(!strncmp("S_TEXT/SRT",  TrackList[i+1], 10) || 
-+                            !strncmp("S_SRT",       TrackList[i+1], 5))
-+                        sub.type = stSRT;
-+                    else
-+		                sub.type = stPlainText;
-+
-+		            m_subtitleStreams.push_back(sub);
-+
-+				    free(TrackList[i]);
-+                    free(TrackList[i+1]);
-+			    }
-+			    free(TrackList);
-+		    }
-+        }
-+
-+		m_event(this, evStart);
-+    } else {
-+        //Creation failed, no playback support for insert file, so delete playback context
-+
-+        //FIXME: How to tell e2 that we failed?
-+
-+        if(player && player->output) {
-+            player->output->Command(player,OUTPUT_DEL, (void*)"audio");
-+	        player->output->Command(player,OUTPUT_DEL, (void*)"video");
-+	        player->output->Command(player,OUTPUT_DEL, (void*)"subtitle");
-+        }
-+
-+        if(player && player->playback)
-+            player->playback->Command(player,PLAYBACK_CLOSE, NULL);
-+
-+        if(player)
-+            free(player);
-+        player = NULL;
-+
-+    }
-+	
-+	//m_state = stRunning;
-+	eDebug("eServiceMP3-<\n");
-+#endif
- }
- 
- eServiceMP3::~eServiceMP3()
- {
-+#if not defined(__sh__)
- 	// disconnect subtitle callback
- 	GstElement *sink;
-@@ -349,13 +515,13 @@
- 		gst_object_unref(sink);
- 	}
--
-+#endif
- 	delete m_subtitle_widget;
--
-+#if not defined(__sh__)
- 	// disconnect sync handler callback
- 	gst_bus_set_sync_handler(gst_pipeline_get_bus (GST_PIPELINE (m_gst_playbin)), NULL, NULL);
--
-+#endif
- 	if (m_state == stRunning)
- 		stop();
--
-+#if not defined(__sh__)
- 	if (m_stream_tags)
- 		gst_tag_list_free(m_stream_tags);
-@@ -366,4 +532,20 @@
- 		eDebug("eServiceMP3::destruct!");
- 	}
-+#else
-+//Trick
-+/*    if(player && player->output) {
-+        player->output->Command(player,OUTPUT_DEL, (void*)"audio");
-+        player->output->Command(player,OUTPUT_DEL, (void*)"video");
-+        player->output->Command(player,OUTPUT_DEL, (void*)"subtitle");
-+    }
-+
-+    if(player && player->playback)
-+        player->playback->Command(player,PLAYBACK_CLOSE, NULL);
-+
-+    if(player)
-+        free(player);
-+    player = NULL;
-+*/
-+#endif
- }
- 
-@@ -373,4 +555,7 @@
- {
- 	connection = new eConnection((iPlayableService*)this, m_event.connect(event));
-+#if defined(__sh__)
-+	m_event(this, evSeekableStatusChanged);
-+#endif
- 	return 0;
- }
-@@ -378,7 +563,14 @@
- RESULT eServiceMP3::start()
- {
-+#if not defined(__sh__)
- 	ASSERT(m_state == stIdle);
--
-+#else	
-+	if(m_state != stIdle) {
-+		eDebug("eServiceMP3::%s < m_state != stIdle", __func__);
-+		return -1;
-+	}
-+#endif
- 	m_state = stRunning;
-+#if not defined(__sh__)
- 	if (m_gst_playbin)
- 	{
-@@ -386,5 +578,10 @@
- 		gst_element_set_state (m_gst_playbin, GST_STATE_PLAYING);
- 	}
--
-+#else
-+	if(player && player->output && player->playback) {
-+        player->output->Command(player, OUTPUT_OPEN, NULL);
-+        player->playback->Command(player, PLAYBACK_PLAY, NULL);
-+    }
-+#endif
- 	m_event(this, evStart);
- 
-@@ -394,11 +591,37 @@
- RESULT eServiceMP3::stop()
- {
-+#if not defined(__sh__)
- 	ASSERT(m_state != stIdle);
--
-+#else
-+	if(m_state == stIdle) {
-+		eDebug("eServiceMP3::%s < m_state == stIdle", __func__);
-+		return -1;
-+	}
-+#endif
- 	if (m_state == stStopped)
- 		return -1;
- 
- 	eDebug("eServiceMP3::stop %s", m_ref.path.c_str());
-+#if not defined(__sh__)
- 	gst_element_set_state(m_gst_playbin, GST_STATE_NULL);
-+#else
-+	if(player && player->playback && player->output) {
-+        player->playback->Command(player, PLAYBACK_STOP, NULL);
-+        player->output->Command(player, OUTPUT_CLOSE, NULL);
-+    }
-+	//Trick
-+	if(player && player->output) {
-+		player->output->Command(player,OUTPUT_DEL, (void*)"audio");
-+		player->output->Command(player,OUTPUT_DEL, (void*)"video");
-+		player->output->Command(player,OUTPUT_DEL, (void*)"subtitle");
-+	}
-+
-+	if(player && player->playback)
-+		player->playback->Command(player,PLAYBACK_CLOSE, NULL);
-+	if(player)
-+		free(player);
-+	if(player != NULL)
-+		player = NULL;
-+#endif
- 	m_state = stStopped;
- 
-@@ -414,4 +637,8 @@
- {
- 	ptr=this;
-+#if defined(__sh__)
-+	m_event((iPlayableService*)this, evSeekableStatusChanged);
-+	m_event((iPlayableService*)this, evUpdatedInfo);
-+#endif
- 	return 0;
- }
-@@ -419,14 +646,29 @@
- RESULT eServiceMP3::setSlowMotion(int ratio)
- {
-+#if not defined(__sh__)
- 	if (!ratio)
- 		return 0;
- 	eDebug("eServiceMP3::setSlowMotion ratio=%f",1/(float)ratio);
- 	return trickSeek(1/(float)ratio);
-+#else
-+	return 0;
-+#endif
- }
- 
- RESULT eServiceMP3::setFastForward(int ratio)
- {
-+#if not defined(__sh__)
- 	eDebug("eServiceMP3::setFastForward ratio=%i",ratio);
- 	return trickSeek(ratio);
-+#else
-+	if(player && player->playback) {
-+        	int result = 0;
-+        	if(ratio > 1) result = player->playback->Command(player, PLAYBACK_FASTFORWARD, (void*)&ratio);
-+    		else result = player->playback->Command(player, PLAYBACK_CONTINUE, NULL);
-+        	if (result != 0)
-+            		return -1;
-+    	}
-+	return 0;
-+#endif
- }
- 
-@@ -456,4 +698,5 @@
- RESULT eServiceMP3::pause()
- {
-+#if not defined(__sh__)
- 	if (!m_gst_playbin || m_state != stRunning)
- 		return -1;
-@@ -461,4 +704,8 @@
- 	gst_element_set_state(m_gst_playbin, GST_STATE_PAUSED);
- 
-+#else
-+	if(player && player->playback)
-+        player->playback->Command(player, PLAYBACK_PAUSE, NULL);
-+#endif
- 	return 0;
- }
-@@ -466,9 +713,13 @@
- RESULT eServiceMP3::unpause()
- {
-+#if not defined(__sh__)
- 	if (!m_gst_playbin || m_state != stRunning)
- 		return -1;
- 
- 	gst_element_set_state(m_gst_playbin, GST_STATE_PLAYING);
--
-+#else
-+    if(player && player->playback)
-+        player->playback->Command(player, PLAYBACK_CONTINUE, NULL);
-+#endif
- 	return 0;
- }
-@@ -483,4 +734,5 @@
- RESULT eServiceMP3::getLength(pts_t &pts)
- {
-+#if not defined(__sh__)
- 	if (!m_gst_playbin)
- 		return -1;
-@@ -497,4 +749,15 @@
- 	
- 	pts = len / 11111;
-+#else
-+    double length = 0;
-+
-+	if(player && player->playback)
-+        player->playback->Command(player, PLAYBACK_LENGTH, &length);
-+
-+    if(length <= 0)
-+        return -1;
-+
-+	pts = length * 90000;
-+#endif
- 	return 0;
- }
-@@ -502,4 +765,5 @@
- RESULT eServiceMP3::seekToImpl(pts_t to)
- {
-+#if not defined(__sh__)
- 		/* convert pts to nanoseconds */
- 	gint64 time_nanoseconds = to * 11111LL;
-@@ -511,5 +775,6 @@
- 		return -1;
- 	}
--
-+#else
-+#endif
- 	return 0;
- }
-@@ -519,4 +784,5 @@
- 	RESULT ret = -1;
- 
-+#if not defined(__sh__)
- 	if (m_gst_playbin) {
- 		eSingleLocker l(m_subs_to_pull_lock); // this is needed to dont handle incomming subtitles during seek!
-@@ -527,9 +793,10 @@
- 		}
- 	}
--
-+#else
-+#endif
- 	return ret;
- }
- 
--
-+#if not defined(__sh__)
- RESULT eServiceMP3::trickSeek(gdouble ratio)
- {
-@@ -572,8 +839,10 @@
- 	return 0;
- }
-+#endif
- 
- 
- RESULT eServiceMP3::seekRelative(int direction, pts_t to)
- {
-+#if not defined(__sh__)
- 	if (!m_gst_playbin)
- 		return -1;
-@@ -585,5 +854,9 @@
- 		ppos = 0;
- 	seekTo(ppos);
--	
-+#else
-+    float pos = direction*(to/90000.0);
-+    if(player && player->playback)
-+        player->playback->Command(player, PLAYBACK_SEEK, (void*)&pos);
-+#endif	
- 	return 0;
- }
-@@ -591,4 +864,5 @@
- RESULT eServiceMP3::getPlayPosition(pts_t &pts)
- {
-+#if not defined(__sh__)
- 	GstFormat fmt = GST_FORMAT_TIME;
- 	gint64 pos;
-@@ -625,4 +899,22 @@
- 	/* pos is in nanoseconds. we have 90 000 pts per second. */
- 	pts = pos / 11111;
-+#else
-+	if (player && player->playback && !player->playback->isPlaying) {
-+		eDebug("eServiceMP3::%s !!!!EOF!!!! < -1", __func__);
-+        if(m_state == stRunning)
-+		    m_event((iPlayableService*)this, evEOF);
-+        pts = 0;
-+		return -1;
-+	} 
-+    unsigned long long int vpts = 0;
-+    if(player && player->playback)
-+        player->playback->Command(player, PLAYBACK_PTS, &vpts);
-+
-+    if(vpts<=0)return -1;
-+
-+	/* len is in nanoseconds. we have 90 000 pts per second. */
-+	pts = vpts>0?vpts:pts;;
-+
-+#endif
- 	return 0;
- }
-@@ -663,5 +955,7 @@
- int eServiceMP3::getInfo(int w)
- {
-+#if not defined(__sh__)
- 	const gchar *tag = 0;
-+#endif
- 
- 	switch (w)
-@@ -703,5 +997,7 @@
- 	case sTagChannelMode:
- 	case sUser+12:
-+#if not defined(__sh__)
- 		return resIsString;
-+#endif
- 	case sTagTrackGain:
- 	case sTagTrackPeak:
-@@ -714,4 +1010,5 @@
- 	case sTagAttachment:
- 		return resIsPyObject;
-+#if not defined(__sh__)
- 	case sTagTrackNumber:
- 		tag = GST_TAG_TRACK_NUMBER;
-@@ -747,8 +1044,9 @@
- 		tag = "has-crc";
- 		break;
-+#endif
- 	default:
- 		return resNA;
- 	}
--
-+#if not defined(__sh__)
- 	if (!m_stream_tags || !tag)
- 		return 0;
-@@ -757,4 +1055,5 @@
- 	if (gst_tag_list_get_uint(m_stream_tags, tag, &value))
- 		return (int) value;
-+#endif
- 
- 	return 0;
-@@ -763,4 +1062,5 @@
- std::string eServiceMP3::getInfoString(int w)
- {
-+#if not defined(__sh__)
- 	if ( !m_stream_tags && w < sUser && w > 26 )
- 		return "";
-@@ -875,7 +1175,54 @@
- 		return res;
- 	}
-+#else
-+	char * tag = NULL;
-+	switch (w)
-+	{
-+	case sTagTitle:
-+		tag = strdup("Title");
-+		break;
-+	case sTagArtist:
-+		tag = strdup("Artist");
-+		break;
-+	case sTagAlbum:
-+		tag = strdup("Album");
-+		break;
-+	case sTagComment:
-+		tag = strdup("Comment");
-+		break;
-+	case sTagTrackNumber:
-+		tag = strdup("Track");
-+		break;
-+	case sTagGenre:
-+		tag = strdup("Genre");
-+		break;
-+	case sTagDate:
-+		tag = strdup("Year");
-+		break;
-+
-+	case sTagVideoCodec:
-+		tag = strdup("VideoType");
-+		break;
-+	case sTagAudioCodec:
-+		tag = strdup("AudioType");
-+		break;
-+
-+	default:
-+		return "";
-+	}
-+
-+	if (player && player->playback) {
-+        player->playback->Command(player, PLAYBACK_INFO, &tag);
-+
-+		std::string res = tag;
-+        free(tag);
-+		return res;
-+	}
-+    free(tag);
-+#endif
- 	return "";
- }
- 
-+#if not defined(__sh__)
- PyObject *eServiceMP3::getInfoObject(int w)
- {
-@@ -937,4 +1284,5 @@
- 	return 0;
- }
-+#endif
- 
- RESULT eServiceMP3::audioChannel(ePtr<iAudioChannelSelection> &ptr)
-@@ -963,6 +1311,8 @@
- int eServiceMP3::getCurrentTrack()
- {
-+#if not defined(__sh__)
- 	if (m_currentAudioStream == -1)
- 		g_object_get (G_OBJECT (m_gst_playbin), "current-audio", &m_currentAudioStream, NULL);
-+#endif
- 	return m_currentAudioStream;
- }
-@@ -987,4 +1337,5 @@
- int eServiceMP3::selectAudioStream(int i)
- {
-+#if not defined(__sh__)
- 	int current_audio;
- 	g_object_set (G_OBJECT (m_gst_playbin), "current-audio", i, NULL);
-@@ -997,4 +1348,11 @@
- 	}
- 	return -1;
-+#else
-+	if(i!=m_currentAudioStream){
-+		if(player && player->playback)
-+            player->playback->Command(player, PLAYBACK_SWITCH_AUDIO, (void*)&i);
-+		m_currentAudioStream=i;
-+	}
-+#endif
- }
- 
-@@ -1014,4 +1372,5 @@
-  	if (i >= m_audioStreams.size())
- 		return -2;
-+#if not defined(__sh__)
- 		info.m_description = m_audioStreams[i].codec;
- /*	if (m_audioStreams[i].type == atMPEG)
-@@ -1033,4 +1392,20 @@
- 	else
- 		info.m_description = "???";*/
-+#else
-+	if (m_audioStreams[i].type == atMPEG)
-+		info.m_description = "MPEG";
-+	else if (m_audioStreams[i].type == atMP3)
-+		info.m_description = "MP3";
-+	else if (m_audioStreams[i].type == atAC3)
-+		info.m_description = "AC3";
-+	else if (m_audioStreams[i].type == atAAC)
-+		info.m_description = "AAC";
-+	else if (m_audioStreams[i].type == atDTS)
-+		info.m_description = "DTS";
-+	else if (m_audioStreams[i].type == atPCM)
-+		info.m_description = "PCM";
-+	else if (m_audioStreams[i].type == atOGG)
-+		info.m_description = "OGG";
-+#endif
- 	if (info.m_language.empty())
- 		info.m_language = m_audioStreams[i].language_code;
-@@ -1038,4 +1413,5 @@
- }
- 
-+#if not defined(__sh__)
- void eServiceMP3::gstBusCall(GstBus *bus, GstMessage *msg)
- {
-@@ -1374,6 +1750,7 @@
- }
- 
-+#endif
- eAutoInitPtr<eServiceFactoryMP3> init_eServiceFactoryMP3(eAutoInitNumbers::service+1, "eServiceFactoryMP3");
--
-+#if not defined(__sh__)
- void eServiceMP3::gstCBsubtitleAvail(GstElement *appsink, gpointer user_data)
- {
-@@ -1422,7 +1799,28 @@
- 		eDebug("no subtitle sink!");
- }
-+#else
-+void eServiceMP3::eplayerCBsubtitleAvail(long int duration_ms, size_t len, char * buffer, void* user_data)
-+{
-+	eDebug("eServiceMP3::%s >", __func__);
-+	unsigned char tmp[len+1];
-+	memcpy(tmp, buffer, len);
-+	tmp[len] = 0;
-+	eDebug("gstCBsubtitleAvail: %s", tmp);
-+	eServiceMP3 *_this = (eServiceMP3*)user_data;
-+	if ( _this->m_subtitle_widget )
-+	{
-+		ePangoSubtitlePage page;
-+		gRGB rgbcol(0xD0,0xD0,0xD0);
-+		page.m_elements.push_back(ePangoSubtitlePageElement(rgbcol, (const char*)tmp));
-+		page.m_timeout = duration_ms;
-+		(_this->m_subtitle_widget)->setPage(page);
-+	}
-+	eDebug("eServiceMP3::%s <", __func__);
-+}
-+#endif
- 
- void eServiceMP3::pushSubtitles()
- {
-+#if not defined(__sh__)
- 	ePangoSubtitlePage page;
- 	pts_t running_pts;
-@@ -1469,4 +1867,5 @@
- 	if (m_subtitle_pages.empty())
- 		pullSubtitle();
-+#endif
- }
- 
-@@ -1493,7 +1892,9 @@
- 	if (m_currentSubtitleStream != pid)
- 	{
-+#if not defined(__sh__)
- 		eSingleLocker l(m_subs_to_pull_lock);
- 		g_object_set (G_OBJECT (m_gst_playbin), "current-text", pid, NULL);
- 		m_currentSubtitleStream = pid;
-+#endif
- 		m_subs_to_pull = 0;
- 		m_subtitle_pages.clear();
-@@ -1504,8 +1905,12 @@
- 	m_subtitle_widget->resize(parent->size()); /* full size */
- 
-+#if not defined(__sh__)
- 	g_object_get (G_OBJECT (m_gst_playbin), "current-text", &text_pid, NULL);
- 
- 	eDebug ("eServiceMP3::switched to subtitle stream %i", text_pid);
--
-+#else
-+	if(player && player->playback)
-+       player->playback->Command(player, PLAYBACK_SWITCH_SUBTITLE, (void*)&pid);
-+#endif
- 	return 0;
- 
-@@ -1522,4 +1927,9 @@
- 	delete m_subtitle_widget;
- 	m_subtitle_widget = 0;
-+#if defined(__sh__)
-+    int pid = -1;
-+    if(player && player->playback)
-+       player->playback->Command(player, PLAYBACK_SWITCH_SUBTITLE, (void*)&pid);
-+#endif
- 	return 0;
- }
-@@ -1534,4 +1944,13 @@
- {
- 	eDebug("eServiceMP3::getSubtitleList");
-+#if defined(__sh__)
-+    if( player &&
-+        player->output &&
-+        player->output->subtitle) {
-+
-+        player->output->subtitle->Command(player, (OutputCmd_t)222, (void*)eplayerCBsubtitleAvail);
-+        player->output->subtitle->Command(player, (OutputCmd_t)223, (void*) this);
-+    }
-+#endif
- 
- 	ePyObject l = PyList_New(0);
-@@ -1576,10 +1995,12 @@
- {
- 	m_buffer_size = size;
-+#if not defined(__sh__)
- 	g_object_set (G_OBJECT (m_gst_playbin), "buffer-size", m_buffer_size, NULL);
--	return 0;
--}
--
--
--#else
--#warning gstreamer not available, not building media player
--#endif
-+#endif
-+	return 0;
-+}
-+
-+
-+//#else
-+//#warning gstreamer not available, not building media player
-+//#endif
-+
 diff -Nur enigma2-nightly.org/lib/service/servicemp3.h enigma2-nightly/lib/service/servicemp3.h
 --- enigma2-nightly.org/lib/service/servicemp3.h	2009-12-12 23:16:22.500600000 +0100
 +++ enigma2-nightly/lib/service/servicemp3.h	2009-12-13 00:41:07.000000000 +0100
@@ -17578,7 +16455,6 @@ diff -Nur enigma2-nightly.org/RecordTimer.py enigma2-nightly/RecordTimer.py
 +#+++<
  			return True
  
-
 diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp
 --- enigma2-nightly/lib/gdi/gpixmap.cpp	2010-03-02 23:06:31.000000000 -0500
 +++ enigma2-nightly/lib/gdi/gpixmap.cpp	2010-03-02 23:08:40.000000000 -0500
@@ -17593,3 +16469,1128 @@ diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp
  		}
  
  		if ((surface->bpp == 8) && (src.surface->bpp==8))
+
+diff -Nur enigma2-nightly.org/lib/python/Components/Renderer/Progress.py enigma2-nightly/lib/python/Components/Renderer/Progress.py
+--- enigma2-nightly.org/lib/python/Components/Renderer/Progress.py	2009-12-12 23:16:22.424599000 +0100
++++ enigma2-nightly/lib/python/Components/Renderer/Progress.py	2009-12-12 23:44:58.000000000 +0100
+@@ -14,24 +14,58 @@
+ 
+ 	def changed(self, what):
+-		if what[0] == self.CHANGED_CLEAR:
+-			(self.range, self.value) = ((0, 1), 0)
+-			return
++#--->
++#-		if what[0] == self.CHANGED_CLEAR:
++#-			(self.range, self.value) = ((0, 1), 0)
++#-			return
++#-
++#-		range = self.source.range or 100
++#-		value = self.source.value
++#-		if value is None:
++#-			value = 0
++#-		(self.range, self.value) = ((0, range), value)
++#---<
++#+++>
++		try:
++			if what[0] == self.CHANGED_CLEAR:
++				(self.range, self.value) = ((0, 1), 0)
++				return
+ 
+-		range = self.source.range or 100
+-		value = self.source.value
+-		if value is None:
+-			value = 0
+-		(self.range, self.value) = ((0, range), value)
++
++			range = (self.source and self.source.range) or 100
++			value = (self.source and self.source.value) or 0
++
++			if value is None:
++				value = 0
++			(self.range, self.value) = ((0, range), value)
++		except:
++			None
++#+++<
+ 
+ 	GUI_WIDGET = eSlider
+ 
+ 	def postWidgetCreate(self, instance):
+-		instance.setRange(self.__start, self.__end)
+-
++#--->
++#-		instance.setRange(self.__start, self.__end)
++#---<
++#+++>
++		try:
++			instance.setRange(self.__start, self.__end)
++		except:
++			None
++#+++<
+ 	def setRange(self, range):
+-		(self.__start, self.__end) = range
+-		if self.instance is not None:
+-			self.instance.setRange(self.__start, self.__end)
+-
++#--->
++#-		(self.__start, self.__end) = range
++#-		if self.instance is not None:
++#-			self.instance.setRange(self.__start, self.__end)
++#---<
++#+++>
++		try:
++			(self.__start, self.__end) = range
++			if self.instance is not None:
++				self.instance.setRange(self.__start, self.__end)
++		except:
++			None
++#+++<
+ 	def getRange(self):
+ 		return (self.__start, self.__end)
+
+diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/lib/python/Components/Harddisk.py
+--- enigma2-nightly.org/lib/python/Components/Harddisk.py	2010-01-17 23:16:22.420599000 +0100
++++ enigma2-nightly/lib/python/Components/Harddisk.py	2010-01-17 23:46:13.000000000 +0100
+@@ -1,8 +1,25 @@
+-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access
+-from Tools.Directories import SCOPE_HDD, resolveFilename
++#--->
++#-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access
++#-from Tools.Directories import SCOPE_HDD, resolveFilename
++#---<
++#+++>
++from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access, readlink, remove, path as os_path
++from Tools.Directories import SCOPE_HDD, resolveFilename, removeDir
++#+++<
+ from Tools.CList import CList
+ from SystemInfo import SystemInfo
+ import time
+ from Components.Console import Console
++#+++>
++from enigma import eConsoleAppContainer, evfd
++import os
++
++def tryOpen(filename):
++	try:
++		procFile = open(filename)
++	except IOError:
++		return ""
++	return procFile
++#+++<
+ 
+ def readFile(filename):
+@@ -19,11 +36,14 @@
+ 		self.device = device
+ 
+-		if access("/dev/.udev", 0):
+-			self.type = self.DEVTYPE_UDEV
+-		elif access("/dev/.devfsd", 0):
+-			self.type = self.DEVTYPE_DEVFS
+-		else:
+-			print "Unable to determine structure of /dev"
+-
++#--->
++#-		if access("/dev/.udev", 0):
++#-			self.type = self.DEVTYPE_UDEV
++#-		elif access("/dev/.devfsd", 0):
++#-			self.type = self.DEVTYPE_DEVFS
++#-		else:
++#-			print "Unable to determine structure of /dev"
++#+++>
++		self.type = self.DEVTYPE_UDEV
++#+++<
+ 		self.max_idle_time = 0
+ 		self.idle_running = False
+@@ -33,5 +53,6 @@
+ 		self.disk_path = ''
+ 		self.phys_path = path.realpath(self.sysfsPath('device'))
+-
++		
++		print "[Harddisk] found: ", self.phys_path
+ 		if self.type == self.DEVTYPE_UDEV:
+ 			self.dev_path = '/dev/' + self.device
+@@ -44,5 +65,5 @@
+ 			for disc in listdir("/dev/discs"):
+ 				dev_path = path.realpath('/dev/discs/' + disc)
+-				disk_path = dev_path + '/disc'
++ 				disk_path = dev_path + '/disc'
+ 				try:
+ 					rdev = stat(disk_path).st_rdev
+@@ -172,11 +193,20 @@
+ 			parts = line.strip().split(" ")
+ 			if path.realpath(parts[0]).startswith(self.dev_path):
+-				cmd = ' ' . join([cmd, parts[1]])
+-
++#--->			
++#-				cmd = ' ' . join([cmd, parts[1]])
++#---<
++#+++>
++				cmd = ' -fl ' . join([cmd, parts[1]])
++#+++<
+ 		res = system(cmd)
+ 		return (res >> 8)
+ 
+ 	def createPartition(self):
+-		cmd = 'printf "0,\n;\n;\n;\ny\n" | /sbin/sfdisk -f ' + self.disk_path
++#--->
++#-		cmd = 'printf "0,\n;\n;\n;\ny\n" | /sbin/sfdisk -f ' + self.disk_path
++#---<
++#+++>
++		cmd = 'echo "0,\n;\n;\n;\ny\n" | /sbin/sfdisk -f ' + self.disk_path
++#+++<
+ 		res = system(cmd)
+ 		return (res >> 8)
+@@ -186,6 +216,19 @@
+ 		if self.diskSize() > 4 * 1024:
+ 			cmd += "-T largefile "
+-		cmd += "-m0 -O dir_index " + self.partitionPath("1")
+-		res = system(cmd)
++
++		cmd += "-m0 -O dir_index -L RECORD " + self.partitionPath("1")
++		print "cmd", cmd
++#--->
++#-		res = system(cmd)
++#---<
++#+++>
++		print "[Harddisk] mkfs: ", cmd
++		if os.path.exists("/sbin/cmd") is True:
++			self.container = eConsoleAppContainer()
++			self.container.execute("/sbin/cmd " + cmd)
++			res = 0
++		else:	
++			res = system(cmd)
++#+++<
+ 		return (res >> 8)
+ 
+@@ -203,5 +246,5 @@
+ 			parts = line.strip().split(" ")
+ 			if path.realpath(parts[0]) == self.partitionPath("1"):
+-				cmd = "/bin/mount -t ext3 " + parts[0]
++				cmd = "/bin/mount -t ext3 " + parts[0] + " /media/hdd"
+ 				res = system(cmd)
+ 				break
+@@ -220,5 +263,16 @@
+ 		# TODO: we could check if the fs is actually ext3
+ 		cmd = "/sbin/fsck.ext3 -f -p " + self.partitionPath("1")
+-		res = system(cmd)
++#--->
++#-		res = system(cmd)
++#---<
++#+++>		
++		print "[Harddisk] fsck: ", cmd
++		if os.path.exists("/sbin/cmd") is True:
++			self.container = eConsoleAppContainer()
++			self.container.execute("/sbin/cmd " + cmd)
++			res = 0
++		else:	
++			res = system(cmd)
++#+++<
+ 		return (res >> 8)
+ 
+@@ -392,26 +446,45 @@
+ 		return False
+ 
++#--->
++#-DEVICEDB =  \
++#-	{"dm8000":
++#-		{
++#-			# dm8000:
++#-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": "Front USB Slot",
++#-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.2/1-1.2:1.0": "Back, upper USB Slot",
++#-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.3/1-1.3:1.0": "Back, lower USB Slot",
++#-			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0/host1/target1:0:0/1:0:0:0": "DVD Drive",
++#-		},
++#-	"dm800":
++#-	{
++#-		# dm800:
++#-		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": "Upper USB Slot",
++#-		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": "Lower USB Slot",
++#-	},
++#-	"dm7025":
++#-	{
++#-		# dm7025:
++#-		"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "CF Card Slot", #hdc
++#-		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
++#-	}
++#-	}
++#---<
++#+++>
+ DEVICEDB =  \
+-	{"dm8000":
++	{"ufs910":
+ 		{
+-			# dm8000:
+-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": "Front USB Slot",
+-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.2/1-1.2:1.0": "Back, upper USB Slot",
+-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.3/1-1.3:1.0": "Back, lower USB Slot",
+-			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0/host1/target1:0:0/1:0:0:0": "DVD Drive",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.4/1-1.4:1.0": "Front USB Slot",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.3/1-1.3:1.0": "Back, upper USB Slot",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0": "Back, lower USB Slot",
+ 		},
+-	"dm800":
+-	{
+-		# dm800:
+-		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": "Upper USB Slot",
+-		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": "Lower USB Slot",
+-	},
+-	"dm7025":
+-	{
+-		# dm7025:
+-		"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "CF Card Slot", #hdc
+-		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
++	"UFS922":
++		{
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.1/1-1.1:1.0/": "Back, upper USB Slot",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0/": "Back, lower USB Slot",
++			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.3/1-1.3:1.0/": "Front USB Slot",
++		}	
+ 	}
+-	}
++#+++<
++
+ 
+ class HarddiskManager:
+@@ -438,4 +511,6 @@
+ 					("/media/ram", _("Ram Disk")),
+ 					("/media/usb", _("USB Stick")),
++					("/media/upnp", _("UPNP Stick")),
++					("/media/ftp", _("FTP Stick")),
+ 					("/", _("Internal Flash"))
+ 				]
+@@ -453,5 +528,10 @@
+ 			removable = bool(int(readFile(devpath + "/removable")))
+ 			dev = int(readFile(devpath + "/dev").split(':')[0])
+-			if dev in (7, 31): # loop, mtdblock
++#--->
++#-			if dev in (7, 31): # loop, mtdblock
++#---<
++#+++>
++			if dev in [1, 7, 31, 253]: # ram, loop, mtdblock, ramzswap
++#+++<
+ 				blacklisted = True
+ 			if blockdev[0:2] == 'sr':
+@@ -513,4 +593,11 @@
+ 				physdev = dev
+ 				print "couldn't determine blockdev physdev for device", device
++#+++>		
++		else:
++			dev, part = self.splitDeviceName(device)
++		if part is not 0:
++			print "[Harddisk] start automount"
++			#Automount(device,"mount")
++#+++<		
+ 
+ 		# device is the device name, without /dev
+@@ -545,4 +632,10 @@
+ 					break
+ 			SystemInfo["Harddisk"] = len(self.hdd) > 0
++#+++>
++		dev, part = self.splitDeviceName(device)
++		if part is not 0:
++			print "[Harddisk] start auto umount"
++			#Automount(device,"umount")
++#+++<
+ 
+ 	def HDDCount(self):
+@@ -614,4 +707,4 @@
+ 				self.partitions.remove(x)
+ 				self.on_partition_list_change("remove", x)
+-
++		
+ harddiskmanager = HarddiskManager()
+
+diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/service/servicemp3.cpp
+--- enigma2-nightly.org/lib/service/servicemp3.cpp	2009-12-12 23:16:22.496600000 +0100
++++ enigma2-nightly/lib/service/servicemp3.cpp	2009-12-13 00:07:10.000000000 +0100
+@@ -1,4 +1,5 @@
+-#ifdef HAVE_GSTREAMER
+-
++//#if not defined(__sh__)
++//#ifdef HAVE_GSTREAMER
++//#endif
+ 	/* note: this requires gstreamer 0.10.x and a big list of plugins. */
+ 	/* it's currently hardcoded to use a big-endian alsasink as sink. */
+@@ -12,9 +13,18 @@
+ #include <lib/base/init_num.h>
+ #include <lib/base/init.h>
++#if not defined(__sh__)
+ #include <gst/gst.h>
+ #include <gst/pbutils/missing-plugins.h>
++#endif
+ #include <sys/stat.h>
+ /* for subtitles */
+ #include <lib/gui/esubtitle.h>
++#if not defined(__sh__)
++#ifndef GST_SEEK_FLAG_SKIP
++#warning Compiling for legacy gstreamer, things will break
++#define GST_SEEK_FLAG_SKIP 0
++#define GST_TAG_HOMEPAGE ""
++#endif
++#endif
+ 
+ // eServiceFactoryMP3
+@@ -30,5 +40,7 @@
+ 		extensions.push_back("mp2");
+ 		extensions.push_back("mp3");
++#if not defined(__sh__)
+ 		extensions.push_back("ogg");
++#endif
+ 		extensions.push_back("mpg");
+ 		extensions.push_back("vob");
+@@ -40,8 +52,20 @@
+ 		extensions.push_back("divx");
+ 		extensions.push_back("dat");
++#if not defined(__sh__)
+ 		extensions.push_back("flac");
++#endif
+ 		extensions.push_back("mp4");
++#if not defined(__sh__)
+ 		extensions.push_back("mov");
++#endif
+ 		extensions.push_back("m4a");
++#if defined(__sh__)
++		extensions.push_back("mpeg");
++		extensions.push_back("m2ts");
++		extensions.push_back("trp");
++		extensions.push_back("vdr");
++		extensions.push_back("wma");
++		extensions.push_back("mts");
++#endif
+ 		sc->addServiceFactory(eServiceFactoryMP3::id, this, extensions);
+ 	}
+@@ -194,5 +218,7 @@
+ 	m_seekTimeout = eTimer::create(eApp);
+ 	m_subtitle_sync_timer = eTimer::create(eApp);
++#if not defined(__sh__)
+ 	m_stream_tags = 0;
++#endif
+ 	m_currentAudioStream = -1;
+ 	m_currentSubtitleStream = 0;
+@@ -203,5 +229,7 @@
+ 	CONNECT(m_seekTimeout->timeout, eServiceMP3::seekTimeoutCB);
+ 	CONNECT(m_subtitle_sync_timer->timeout, eServiceMP3::pushSubtitles);
++#if not defined(__sh__)
+ 	CONNECT(m_pump.recv_msg, eServiceMP3::gstPoll);
++#endif
+ 	m_aspect = m_width = m_height = m_framerate = m_progressive = -1;
+ 
+@@ -214,4 +242,5 @@
+ 		ext = filename;
+ 
++#if not defined(__sh__)
+ 	sourceStream sourceinfo;
+ 	sourceinfo.is_video = FALSE;
+@@ -337,8 +366,145 @@
+ 
+ 	setBufferSize(m_buffer_size);
++#else
++    player = (Context_t*) malloc(sizeof(Context_t));
++
++    if(player) {
++	    player->playback	= &PlaybackHandler;
++	    player->output		= &OutputHandler;
++	    player->container	= &ContainerHandler;
++	    player->manager		= &ManagerHandler;
++
++    	printf("%s\n", player->output->Name);
++    }
++
++	//Registration of output devices
++    if(player && player->output) {
++	    player->output->Command(player,OUTPUT_ADD, (void*)"audio");
++	    player->output->Command(player,OUTPUT_ADD, (void*)"video");
++	    player->output->Command(player,OUTPUT_ADD, (void*)"subtitle");
++    }
++
++    //create playback path
++    char file[400] = {""};
++
++    if(!strncmp("http://", m_ref.path.c_str(), 7))
++        ;
++    else if(!strncmp("file://", m_ref.path.c_str(), 7))
++        ;
++    else
++        strcat(file, "file://");
++
++    strcat(file, m_ref.path.c_str());
++
++    //try to open file
++	if(player && player->playback && player->playback->Command(player, PLAYBACK_OPEN, file) >= 0) {
++
++        //VIDEO
++            //We dont have to register video tracks, or do we ?
++
++        //AUDIO
++        if(player && player->manager && player->manager->audio) {
++            char ** TrackList = NULL;
++		    player->manager->audio->Command(player, MANAGER_LIST, &TrackList);
++		    if (TrackList != NULL) {
++			    printf("AudioTrack List\n");
++			    int i = 0;
++			    for (i = 0; TrackList[i] != NULL; i+=2) {
++				    printf("\t%s - %s\n", TrackList[i], TrackList[i+1]);
++                    audioStream audio;
++
++                    audio.language_code = TrackList[i];
++
++                    // atUnknown, atMPEG, atMP3, atAC3, atDTS, atAAC, atPCM, atOGG, atFLAC
++                    if(     !strncmp("A_MPEG/L3",   TrackList[i+1], 9))
++                        audio.type = atMP3;
++                    else if(!strncmp("A_AC3",       TrackList[i+1], 5))
++                        audio.type = atAC3;
++                    else if(!strncmp("A_DTS",       TrackList[i+1], 5))
++                        audio.type = atDTS;
++                    else if(!strncmp("A_AAC",       TrackList[i+1], 5))
++                        audio.type = atAAC;
++                    else if(!strncmp("A_PCM",       TrackList[i+1], 5))
++                        audio.type = atPCM;
++                    else if(!strncmp("A_VORBIS",    TrackList[i+1], 8))
++                        audio.type = atOGG;
++                    else if(!strncmp("A_FLAC",      TrackList[i+1], 6))
++                        audio.type = atFLAC;
++                    else
++		                audio.type = atUnknown;
++                    
++		            m_audioStreams.push_back(audio);
++
++				    free(TrackList[i]);
++                    free(TrackList[i+1]);
++			    }
++			    free(TrackList);
++		    }
++        }
++
++        //SUB
++        if(player && player->manager && player->manager->subtitle) {
++            char ** TrackList = NULL;
++		    player->manager->subtitle->Command(player, MANAGER_LIST, &TrackList);
++		    if (TrackList != NULL) {
++			    printf("SubtitleTrack List\n");
++			    int i = 0;
++			    for (i = 0; TrackList[i] != NULL; i+=2) {
++				    printf("\t%s - %s\n", TrackList[i], TrackList[i+1]);
++                    subtitleStream sub;
++
++                    sub.language_code = TrackList[i];
++
++                    //  stPlainText, stSSA, stSRT
++                    if(     !strncmp("S_TEXT/SSA",  TrackList[i+1], 10) || 
++                            !strncmp("S_SSA",       TrackList[i+1], 5))
++                        sub.type = stSSA;
++                    else if(!strncmp("S_TEXT/ASS",  TrackList[i+1], 10) || 
++                            !strncmp("S_AAS",       TrackList[i+1], 5))
++                        sub.type = stSSA;
++                    else if(!strncmp("S_TEXT/SRT",  TrackList[i+1], 10) || 
++                            !strncmp("S_SRT",       TrackList[i+1], 5))
++                        sub.type = stSRT;
++                    else
++		                sub.type = stPlainText;
++
++		            m_subtitleStreams.push_back(sub);
++
++				    free(TrackList[i]);
++                    free(TrackList[i+1]);
++			    }
++			    free(TrackList);
++		    }
++        }
++
++		m_event(this, evStart);
++    } else {
++        //Creation failed, no playback support for insert file, so delete playback context
++
++        //FIXME: How to tell e2 that we failed?
++
++        if(player && player->output) {
++            player->output->Command(player,OUTPUT_DEL, (void*)"audio");
++	        player->output->Command(player,OUTPUT_DEL, (void*)"video");
++	        player->output->Command(player,OUTPUT_DEL, (void*)"subtitle");
++        }
++
++        if(player && player->playback)
++            player->playback->Command(player,PLAYBACK_CLOSE, NULL);
++
++        if(player)
++            free(player);
++        player = NULL;
++
++    }
++	
++	//m_state = stRunning;
++	eDebug("eServiceMP3-<\n");
++#endif
+ }
+ 
+ eServiceMP3::~eServiceMP3()
+ {
++#if not defined(__sh__)
+ 	// disconnect subtitle callback
+ 	GstElement *sink;
+@@ -349,13 +515,13 @@
+ 		gst_object_unref(sink);
+ 	}
+-
++#endif
+ 	delete m_subtitle_widget;
+-
++#if not defined(__sh__)
+ 	// disconnect sync handler callback
+ 	gst_bus_set_sync_handler(gst_pipeline_get_bus (GST_PIPELINE (m_gst_playbin)), NULL, NULL);
+-
++#endif
+ 	if (m_state == stRunning)
+ 		stop();
+-
++#if not defined(__sh__)
+ 	if (m_stream_tags)
+ 		gst_tag_list_free(m_stream_tags);
+@@ -366,4 +532,20 @@
+ 		eDebug("eServiceMP3::destruct!");
+ 	}
++#else
++//Trick
++/*    if(player && player->output) {
++        player->output->Command(player,OUTPUT_DEL, (void*)"audio");
++        player->output->Command(player,OUTPUT_DEL, (void*)"video");
++        player->output->Command(player,OUTPUT_DEL, (void*)"subtitle");
++    }
++
++    if(player && player->playback)
++        player->playback->Command(player,PLAYBACK_CLOSE, NULL);
++
++    if(player)
++        free(player);
++    player = NULL;
++*/
++#endif
+ }
+ 
+@@ -373,4 +555,7 @@
+ {
+ 	connection = new eConnection((iPlayableService*)this, m_event.connect(event));
++#if defined(__sh__)
++	m_event(this, evSeekableStatusChanged);
++#endif
+ 	return 0;
+ }
+@@ -378,7 +563,14 @@
+ RESULT eServiceMP3::start()
+ {
++#if not defined(__sh__)
+ 	ASSERT(m_state == stIdle);
+-
++#else	
++	if(m_state != stIdle) {
++		eDebug("eServiceMP3::%s < m_state != stIdle", __func__);
++		return -1;
++	}
++#endif
+ 	m_state = stRunning;
++#if not defined(__sh__)
+ 	if (m_gst_playbin)
+ 	{
+@@ -386,5 +578,10 @@
+ 		gst_element_set_state (m_gst_playbin, GST_STATE_PLAYING);
+ 	}
+-
++#else
++	if(player && player->output && player->playback) {
++        player->output->Command(player, OUTPUT_OPEN, NULL);
++        player->playback->Command(player, PLAYBACK_PLAY, NULL);
++    }
++#endif
+ 	m_event(this, evStart);
+ 
+@@ -394,11 +591,37 @@
+ RESULT eServiceMP3::stop()
+ {
++#if not defined(__sh__)
+ 	ASSERT(m_state != stIdle);
+-
++#else
++	if(m_state == stIdle) {
++		eDebug("eServiceMP3::%s < m_state == stIdle", __func__);
++		return -1;
++	}
++#endif
+ 	if (m_state == stStopped)
+ 		return -1;
+ 
+ 	eDebug("eServiceMP3::stop %s", m_ref.path.c_str());
++#if not defined(__sh__)
+ 	gst_element_set_state(m_gst_playbin, GST_STATE_NULL);
++#else
++	if(player && player->playback && player->output) {
++        player->playback->Command(player, PLAYBACK_STOP, NULL);
++        player->output->Command(player, OUTPUT_CLOSE, NULL);
++    }
++	//Trick
++	if(player && player->output) {
++		player->output->Command(player,OUTPUT_DEL, (void*)"audio");
++		player->output->Command(player,OUTPUT_DEL, (void*)"video");
++		player->output->Command(player,OUTPUT_DEL, (void*)"subtitle");
++	}
++
++	if(player && player->playback)
++		player->playback->Command(player,PLAYBACK_CLOSE, NULL);
++	if(player)
++		free(player);
++	if(player != NULL)
++		player = NULL;
++#endif
+ 	m_state = stStopped;
+ 
+@@ -414,4 +637,8 @@
+ {
+ 	ptr=this;
++#if defined(__sh__)
++	m_event((iPlayableService*)this, evSeekableStatusChanged);
++	m_event((iPlayableService*)this, evUpdatedInfo);
++#endif
+ 	return 0;
+ }
+@@ -419,14 +646,29 @@
+ RESULT eServiceMP3::setSlowMotion(int ratio)
+ {
++#if not defined(__sh__)
+ 	if (!ratio)
+ 		return 0;
+ 	eDebug("eServiceMP3::setSlowMotion ratio=%f",1/(float)ratio);
+ 	return trickSeek(1/(float)ratio);
++#else
++	return 0;
++#endif
+ }
+ 
+ RESULT eServiceMP3::setFastForward(int ratio)
+ {
++#if not defined(__sh__)
+ 	eDebug("eServiceMP3::setFastForward ratio=%i",ratio);
+ 	return trickSeek(ratio);
++#else
++	if(player && player->playback) {
++        	int result = 0;
++        	if(ratio > 1) result = player->playback->Command(player, PLAYBACK_FASTFORWARD, (void*)&ratio);
++    		else result = player->playback->Command(player, PLAYBACK_CONTINUE, NULL);
++        	if (result != 0)
++            		return -1;
++    	}
++	return 0;
++#endif
+ }
+ 
+@@ -456,4 +698,5 @@
+ RESULT eServiceMP3::pause()
+ {
++#if not defined(__sh__)
+ 	if (!m_gst_playbin || m_state != stRunning)
+ 		return -1;
+@@ -461,4 +704,8 @@
+ 	gst_element_set_state(m_gst_playbin, GST_STATE_PAUSED);
+ 
++#else
++	if(player && player->playback)
++        player->playback->Command(player, PLAYBACK_PAUSE, NULL);
++#endif
+ 	return 0;
+ }
+@@ -466,9 +713,13 @@
+ RESULT eServiceMP3::unpause()
+ {
++#if not defined(__sh__)
+ 	if (!m_gst_playbin || m_state != stRunning)
+ 		return -1;
+ 
+ 	gst_element_set_state(m_gst_playbin, GST_STATE_PLAYING);
+-
++#else
++    if(player && player->playback)
++        player->playback->Command(player, PLAYBACK_CONTINUE, NULL);
++#endif
+ 	return 0;
+ }
+@@ -483,4 +734,5 @@
+ RESULT eServiceMP3::getLength(pts_t &pts)
+ {
++#if not defined(__sh__)
+ 	if (!m_gst_playbin)
+ 		return -1;
+@@ -497,4 +749,15 @@
+ 	
+ 	pts = len / 11111;
++#else
++    double length = 0;
++
++	if(player && player->playback)
++        player->playback->Command(player, PLAYBACK_LENGTH, &length);
++
++    if(length <= 0)
++        return -1;
++
++	pts = length * 90000;
++#endif
+ 	return 0;
+ }
+@@ -502,4 +765,5 @@
+ RESULT eServiceMP3::seekToImpl(pts_t to)
+ {
++#if not defined(__sh__)
+ 		/* convert pts to nanoseconds */
+ 	gint64 time_nanoseconds = to * 11111LL;
+@@ -511,5 +775,6 @@
+ 		return -1;
+ 	}
+-
++#else
++#endif
+ 	return 0;
+ }
+@@ -519,4 +784,5 @@
+ 	RESULT ret = -1;
+ 
++#if not defined(__sh__)
+ 	if (m_gst_playbin) {
+ 		eSingleLocker l(m_subs_to_pull_lock); // this is needed to dont handle incomming subtitles during seek!
+@@ -527,9 +793,10 @@
+ 		}
+ 	}
+-
++#else
++#endif
+ 	return ret;
+ }
+ 
+-
++#if not defined(__sh__)
+ RESULT eServiceMP3::trickSeek(gdouble ratio)
+ {
+@@ -572,8 +839,10 @@
+ 	return 0;
+ }
++#endif
+ 
+ 
+ RESULT eServiceMP3::seekRelative(int direction, pts_t to)
+ {
++#if not defined(__sh__)
+ 	if (!m_gst_playbin)
+ 		return -1;
+@@ -585,5 +854,9 @@
+ 		ppos = 0;
+ 	seekTo(ppos);
+-	
++#else
++    float pos = direction*(to/90000.0);
++    if(player && player->playback)
++        player->playback->Command(player, PLAYBACK_SEEK, (void*)&pos);
++#endif	
+ 	return 0;
+ }
+@@ -591,4 +864,5 @@
+ RESULT eServiceMP3::getPlayPosition(pts_t &pts)
+ {
++#if not defined(__sh__)
+ 	GstFormat fmt = GST_FORMAT_TIME;
+ 	gint64 pos;
+@@ -625,4 +899,22 @@
+ 	/* pos is in nanoseconds. we have 90 000 pts per second. */
+ 	pts = pos / 11111;
++#else
++	if (player && player->playback && !player->playback->isPlaying) {
++		eDebug("eServiceMP3::%s !!!!EOF!!!! < -1", __func__);
++        if(m_state == stRunning)
++		    m_event((iPlayableService*)this, evEOF);
++        pts = 0;
++		return -1;
++	} 
++    unsigned long long int vpts = 0;
++    if(player && player->playback)
++        player->playback->Command(player, PLAYBACK_PTS, &vpts);
++
++    if(vpts<=0)return -1;
++
++	/* len is in nanoseconds. we have 90 000 pts per second. */
++	pts = vpts>0?vpts:pts;;
++
++#endif
+ 	return 0;
+ }
+@@ -663,5 +955,7 @@
+ int eServiceMP3::getInfo(int w)
+ {
++#if not defined(__sh__)
+ 	const gchar *tag = 0;
++#endif
+ 
+ 	switch (w)
+@@ -703,5 +997,7 @@
+ 	case sTagChannelMode:
+ 	case sUser+12:
++#if not defined(__sh__)
+ 		return resIsString;
++#endif
+ 	case sTagTrackGain:
+ 	case sTagTrackPeak:
+@@ -714,4 +1010,5 @@
+ 	case sTagAttachment:
+ 		return resIsPyObject;
++#if not defined(__sh__)
+ 	case sTagTrackNumber:
+ 		tag = GST_TAG_TRACK_NUMBER;
+@@ -747,8 +1044,9 @@
+ 		tag = "has-crc";
+ 		break;
++#endif
+ 	default:
+ 		return resNA;
+ 	}
+-
++#if not defined(__sh__)
+ 	if (!m_stream_tags || !tag)
+ 		return 0;
+@@ -757,4 +1055,5 @@
+ 	if (gst_tag_list_get_uint(m_stream_tags, tag, &value))
+ 		return (int) value;
++#endif
+ 
+ 	return 0;
+@@ -763,4 +1062,5 @@
+ std::string eServiceMP3::getInfoString(int w)
+ {
++#if not defined(__sh__)
+ 	if ( !m_stream_tags && w < sUser && w > 26 )
+ 		return "";
+@@ -875,7 +1175,54 @@
+ 		return res;
+ 	}
++#else
++	char * tag = NULL;
++	switch (w)
++	{
++	case sTagTitle:
++		tag = strdup("Title");
++		break;
++	case sTagArtist:
++		tag = strdup("Artist");
++		break;
++	case sTagAlbum:
++		tag = strdup("Album");
++		break;
++	case sTagComment:
++		tag = strdup("Comment");
++		break;
++	case sTagTrackNumber:
++		tag = strdup("Track");
++		break;
++	case sTagGenre:
++		tag = strdup("Genre");
++		break;
++	case sTagDate:
++		tag = strdup("Year");
++		break;
++
++	case sTagVideoCodec:
++		tag = strdup("VideoType");
++		break;
++	case sTagAudioCodec:
++		tag = strdup("AudioType");
++		break;
++
++	default:
++		return "";
++	}
++
++	if (player && player->playback) {
++        player->playback->Command(player, PLAYBACK_INFO, &tag);
++
++		std::string res = tag;
++        free(tag);
++		return res;
++	}
++    free(tag);
++#endif
+ 	return "";
+ }
+ 
++#if not defined(__sh__)
+ PyObject *eServiceMP3::getInfoObject(int w)
+ {
+@@ -937,4 +1284,5 @@
+ 	return 0;
+ }
++#endif
+ 
+ RESULT eServiceMP3::audioChannel(ePtr<iAudioChannelSelection> &ptr)
+@@ -963,6 +1311,8 @@
+ int eServiceMP3::getCurrentTrack()
+ {
++#if not defined(__sh__)
+ 	if (m_currentAudioStream == -1)
+ 		g_object_get (G_OBJECT (m_gst_playbin), "current-audio", &m_currentAudioStream, NULL);
++#endif
+ 	return m_currentAudioStream;
+ }
+@@ -987,4 +1337,5 @@
+ int eServiceMP3::selectAudioStream(int i)
+ {
++#if not defined(__sh__)
+ 	int current_audio;
+ 	g_object_set (G_OBJECT (m_gst_playbin), "current-audio", i, NULL);
+@@ -997,4 +1348,11 @@
+ 	}
+ 	return -1;
++#else
++	if(i!=m_currentAudioStream){
++		if(player && player->playback)
++            player->playback->Command(player, PLAYBACK_SWITCH_AUDIO, (void*)&i);
++		m_currentAudioStream=i;
++	}
++#endif
+ }
+ 
+@@ -1014,4 +1372,5 @@
+  	if (i >= m_audioStreams.size())
+ 		return -2;
++#if not defined(__sh__)
+ 		info.m_description = m_audioStreams[i].codec;
+ /*	if (m_audioStreams[i].type == atMPEG)
+@@ -1033,4 +1392,20 @@
+ 	else
+ 		info.m_description = "???";*/
++#else
++	if (m_audioStreams[i].type == atMPEG)
++		info.m_description = "MPEG";
++	else if (m_audioStreams[i].type == atMP3)
++		info.m_description = "MP3";
++	else if (m_audioStreams[i].type == atAC3)
++		info.m_description = "AC3";
++	else if (m_audioStreams[i].type == atAAC)
++		info.m_description = "AAC";
++	else if (m_audioStreams[i].type == atDTS)
++		info.m_description = "DTS";
++	else if (m_audioStreams[i].type == atPCM)
++		info.m_description = "PCM";
++	else if (m_audioStreams[i].type == atOGG)
++		info.m_description = "OGG";
++#endif
+ 	if (info.m_language.empty())
+ 		info.m_language = m_audioStreams[i].language_code;
+@@ -1038,4 +1413,5 @@
+ }
+ 
++#if not defined(__sh__)
+ void eServiceMP3::gstBusCall(GstBus *bus, GstMessage *msg)
+ {
+@@ -1374,6 +1750,7 @@
+ }
+ 
++#endif
+ eAutoInitPtr<eServiceFactoryMP3> init_eServiceFactoryMP3(eAutoInitNumbers::service+1, "eServiceFactoryMP3");
+-
++#if not defined(__sh__)
+ void eServiceMP3::gstCBsubtitleAvail(GstElement *appsink, gpointer user_data)
+ {
+@@ -1422,7 +1799,28 @@
+ 		eDebug("no subtitle sink!");
+ }
++#else
++void eServiceMP3::eplayerCBsubtitleAvail(long int duration_ms, size_t len, char * buffer, void* user_data)
++{
++	eDebug("eServiceMP3::%s >", __func__);
++	unsigned char tmp[len+1];
++	memcpy(tmp, buffer, len);
++	tmp[len] = 0;
++	eDebug("gstCBsubtitleAvail: %s", tmp);
++	eServiceMP3 *_this = (eServiceMP3*)user_data;
++	if ( _this->m_subtitle_widget )
++	{
++		ePangoSubtitlePage page;
++		gRGB rgbcol(0xD0,0xD0,0xD0);
++		page.m_elements.push_back(ePangoSubtitlePageElement(rgbcol, (const char*)tmp));
++		page.m_timeout = duration_ms;
++		(_this->m_subtitle_widget)->setPage(page);
++	}
++	eDebug("eServiceMP3::%s <", __func__);
++}
++#endif
+ 
+ void eServiceMP3::pushSubtitles()
+ {
++#if not defined(__sh__)
+ 	ePangoSubtitlePage page;
+ 	pts_t running_pts;
+@@ -1469,4 +1867,5 @@
+ 	if (m_subtitle_pages.empty())
+ 		pullSubtitle();
++#endif
+ }
+ 
+@@ -1493,7 +1892,9 @@
+ 	if (m_currentSubtitleStream != pid)
+ 	{
++#if not defined(__sh__)
+ 		eSingleLocker l(m_subs_to_pull_lock);
+ 		g_object_set (G_OBJECT (m_gst_playbin), "current-text", pid, NULL);
+ 		m_currentSubtitleStream = pid;
++#endif
+ 		m_subs_to_pull = 0;
+ 		m_subtitle_pages.clear();
+@@ -1504,8 +1905,12 @@
+ 	m_subtitle_widget->resize(parent->size()); /* full size */
+ 
++#if not defined(__sh__)
+ 	g_object_get (G_OBJECT (m_gst_playbin), "current-text", &text_pid, NULL);
+ 
+ 	eDebug ("eServiceMP3::switched to subtitle stream %i", text_pid);
+-
++#else
++	if(player && player->playback)
++       player->playback->Command(player, PLAYBACK_SWITCH_SUBTITLE, (void*)&pid);
++#endif
+ 	return 0;
+ 
+@@ -1522,4 +1927,9 @@
+ 	delete m_subtitle_widget;
+ 	m_subtitle_widget = 0;
++#if defined(__sh__)
++    int pid = -1;
++    if(player && player->playback)
++       player->playback->Command(player, PLAYBACK_SWITCH_SUBTITLE, (void*)&pid);
++#endif
+ 	return 0;
+ }
+@@ -1534,4 +1944,13 @@
+ {
+ 	eDebug("eServiceMP3::getSubtitleList");
++#if defined(__sh__)
++    if( player &&
++        player->output &&
++        player->output->subtitle) {
++
++        player->output->subtitle->Command(player, (OutputCmd_t)222, (void*)eplayerCBsubtitleAvail);
++        player->output->subtitle->Command(player, (OutputCmd_t)223, (void*) this);
++    }
++#endif
+ 
+ 	ePyObject l = PyList_New(0);
+@@ -1576,10 +1995,12 @@
+ {
+ 	m_buffer_size = size;
++#if not defined(__sh__)
+ 	g_object_set (G_OBJECT (m_gst_playbin), "buffer-size", m_buffer_size, NULL);
+-	return 0;
+-}
+-
+-
+-#else
+-#warning gstreamer not available, not building media player
+-#endif
++#endif
++	return 0;
++}
++
++
++//#else
++//#warning gstreamer not available, not building media player
++//#endif
++
