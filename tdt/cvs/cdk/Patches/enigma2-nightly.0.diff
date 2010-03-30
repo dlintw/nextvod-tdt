@@ -16136,12 +16136,12 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +			if SystemInfo["CanDownmixAC3"]:
 +				tlist = [(_("AC3 downmix") + " - " +[_("Off"), _("On")][config.av.downmix_ac3.value and 1 or 0], "CALLFUNC", self.EXchangeAC3Downmix),
 +					([_("Left"), _("Stereo"), _("Right")][self.audioChannel.getCurrentChannel()], "mode"),
-+					("Subservice", "subservice"),#"CALLFUNC", self.toggleYellow), 
++					("_(Subservice"), "subservice"),#"CALLFUNC", self.toggleYellow), 
 +					("--", "")] + tlist
 +				keys = [ "red", "green", "yellow", "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] + [""]*n
 +				selection += 4
 +			else:
-+				tlist = [([_("Left"), _("Stereo"), _("Right")][self.audioChannel.getCurrentChannel()], "mode"), ("Subservice", "subservice"), ("--", "")] + tlist
++				tlist = [([_("Left"), _("Stereo"), _("Right")][self.audioChannel.getCurrentChannel()], "mode"), (_("Subservice"), "subservice"), ("--", "")] + tlist
 +				keys = [ "red", "yellow", "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] + [""]*n
 +				selection += 3
 +			self.session.openWithCallback(self.EXaudioSelected, ChoiceBox, title=_("Select audio track"), list = tlist, selection = selection, keys = keys)
@@ -16302,7 +16302,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +	def aspectSelection(self): 
 +		selection = 0 
 +		tlist = [] 
-+		tlist.append(("Resolution", "resolution")) 
++		tlist.append((_("Resolution"), "resolution")) 
 +		tlist.append(("", "")) 
 +		tlist.append(("Letterbox", "letterbox")) 
 +		tlist.append(("PanScan", "panscan")) 
@@ -16347,8 +16347,8 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
 +		selection = 0 
 +		tlist = [] 
-+		tlist.append(("Exit", "exit")) 
-+		tlist.append(("Auto(not available)", "auto")) 
++		tlist.append((_("Exit"), "exit")) 
++		tlist.append((_("Auto(not available)"), "auto")) 
 +		tlist.append(("Video: " + str(xres) + "x" + str(yres) + "@" + str(fpsFloat) + "hz", "")) 
 +		tlist.append(("--", "")) 
 +		tlist.append(("576i", "576i50")) 
