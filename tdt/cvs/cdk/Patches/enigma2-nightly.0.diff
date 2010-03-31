@@ -38,7 +38,7 @@ diff -Nur enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
  AM_PATH_PYTHON()
  AC_PYTHON_DEVEL
  #AM_PATH_XINE(1.1.0,, AC_MSG_ERROR([*** Please install xine-lib (devel) first ***]))
-@@ -115,8 +124,6 @@
+@@ -117,8 +122,6 @@
  lib/python/Components/Sources/Makefile
  lib/python/Screens/Makefile
  lib/python/Plugins/Makefile
@@ -47,7 +47,7 @@ diff -Nur enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
  lib/python/Plugins/Extensions/CutListEditor/Makefile
  lib/python/Plugins/Extensions/CutListEditor/meta/Makefile
  lib/python/Plugins/Extensions/DVDBurn/Makefile
-@@ -131,15 +138,12 @@
+@@ -133,15 +140,12 @@
  lib/python/Plugins/Extensions/MediaPlayer/meta/Makefile
  lib/python/Plugins/Extensions/MediaScanner/Makefile
  lib/python/Plugins/Extensions/MediaScanner/meta/Makefile
@@ -63,7 +63,7 @@ diff -Nur enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
  lib/python/Plugins/SystemPlugins/CleanupWizard/Makefile
  lib/python/Plugins/SystemPlugins/CleanupWizard/meta/Makefile
  lib/python/Plugins/SystemPlugins/CommonInterfaceAssignment/Makefile
-@@ -178,6 +182,11 @@
+@@ -180,6 +184,11 @@
  lib/python/Plugins/SystemPlugins/Videomode/meta/Makefile
  lib/python/Plugins/SystemPlugins/WirelessLan/Makefile
  lib/python/Plugins/SystemPlugins/WirelessLan/meta/Makefile
@@ -16072,7 +16072,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  	def lockShow(self):
-@@ -1321,5 +1350,10 @@
+@@ -1327,5 +1356,10 @@
  	def updateExtensions(self):
  		self.extensionsList = []
 -		self.availableKeys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow", "blue" ]
@@ -16084,7 +16084,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  		self.extensionKeys = {}
  		for x in self.list:
-@@ -1398,4 +1432,16 @@
+@@ -1404,4 +1438,16 @@
  
  # depends on InfoBarExtensions
 +
@@ -16101,7 +16101,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
  class InfoBarPiP:
  	def __init__(self):
-@@ -1787,4 +1833,151 @@
+@@ -1793,4 +1839,151 @@
  			self.audioChannel.selectChannel(mode[1])
  		del self.audioChannel
 +
@@ -16253,7 +16253,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  class InfoBarSubserviceSelection:
-@@ -1864,14 +2057,41 @@
+@@ -1870,14 +2063,41 @@
  
  			if self.bouquets and len(self.bouquets):
 -				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
@@ -16302,7 +16302,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
-@@ -1913,4 +2133,127 @@
+@@ -1919,4 +2139,127 @@
  		else:
  			del self.selectedSubservice
 +
@@ -16430,7 +16430,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  class InfoBarAdditionalInfo:
-@@ -2240,5 +2583,20 @@
+@@ -2246,5 +2589,20 @@
  
  	def startTeletext(self):
 -		self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
@@ -16997,7 +16997,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	sourceStream sourceinfo;
  	sourceinfo.is_video = FALSE;
  	sourceinfo.audiotype = atUnknown;
-@@ -360,10 +383,147 @@
+@@ -359,10 +382,147 @@
  	}
  
  	setBufferSize(m_buffer_size);
@@ -17145,7 +17145,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	// disconnect subtitle callback
  	GstElement *sink;
  	g_object_get (G_OBJECT (m_gst_playbin), "text-sink", &sink, NULL);
-@@ -372,23 +532,42 @@
+@@ -371,23 +531,42 @@
  		g_signal_handler_disconnect (sink, m_subs_to_pull_handler_id);
  		gst_object_unref(sink);
  	}
@@ -17190,7 +17190,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  }
  
  DEFINE_REF(eServiceMP3);
-@@ -396,20 +575,35 @@
+@@ -395,20 +574,35 @@
  RESULT eServiceMP3::connectEvent(const Slot2<void,iPlayableService*,int> &event, ePtr<eConnection> &connection)
  {
  	connection = new eConnection((iPlayableService*)this, m_event.connect(event));
@@ -17228,7 +17228,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	m_event(this, evStart);
  
  	return 0;
-@@ -417,13 +611,39 @@
+@@ -416,13 +610,39 @@
  
  RESULT eServiceMP3::stop()
  {
@@ -17269,7 +17269,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	m_state = stStopped;
  
  	return 0;
-@@ -437,21 +657,40 @@
+@@ -436,21 +656,40 @@
  RESULT eServiceMP3::pause(ePtr<iPauseableService> &ptr)
  {
  	ptr=this;
@@ -17310,7 +17310,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  }
  
  void eServiceMP3::seekTimeoutCB()
-@@ -460,7 +699,7 @@
+@@ -459,7 +698,7 @@
  	getPlayPosition(ppos);
  	getLength(len);
  	ppos += 90000*m_currentTrickRatio;
@@ -17319,7 +17319,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	if (ppos < 0)
  	{
  		ppos = 0;
-@@ -479,21 +718,30 @@
+@@ -478,21 +717,30 @@
  		// iPausableService
  RESULT eServiceMP3::pause()
  {
@@ -17351,7 +17351,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	return 0;
  }
  
-@@ -506,6 +754,7 @@
+@@ -505,6 +753,7 @@
  
  RESULT eServiceMP3::getLength(pts_t &pts)
  {
@@ -17359,7 +17359,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -514,17 +763,29 @@
+@@ -513,17 +762,29 @@
  
  	GstFormat fmt = GST_FORMAT_TIME;
  	gint64 len;
@@ -17391,7 +17391,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  		/* convert pts to nanoseconds */
  	gint64 time_nanoseconds = to * 11111LL;
  	if (!gst_element_seek (m_gst_playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-@@ -534,7 +795,8 @@
+@@ -533,7 +794,8 @@
  		eDebug("eServiceMP3::seekTo failed");
  		return -1;
  	}
@@ -17401,7 +17401,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	return 0;
  }
  
-@@ -542,6 +804,7 @@
+@@ -541,6 +803,7 @@
  {
  	RESULT ret = -1;
  
@@ -17409,7 +17409,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	if (m_gst_playbin) {
  		eSingleLocker l(m_subs_to_pull_lock); // this is needed to dont handle incomming subtitles during seek!
  		if (!(ret = seekToImpl(to)))
-@@ -551,10 +814,12 @@
+@@ -550,10 +813,12 @@
  		}
  	}
  
@@ -17423,7 +17423,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  RESULT eServiceMP3::trickSeek(gdouble ratio)
  {
  	if (!m_gst_playbin)
-@@ -595,10 +860,12 @@
+@@ -594,10 +859,12 @@
  
  	return 0;
  }
@@ -17436,7 +17436,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -608,12 +875,17 @@
+@@ -607,12 +874,17 @@
  	if (ppos < 0)
  		ppos = 0;
  	seekTo(ppos);
@@ -17455,7 +17455,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	GstFormat fmt = GST_FORMAT_TIME;
  	gint64 pos;
  	GstElement *sink;
-@@ -648,6 +920,24 @@
+@@ -647,6 +919,24 @@
  
  	/* pos is in nanoseconds. we have 90 000 pts per second. */
  	pts = pos / 11111;
@@ -17480,8 +17480,8 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	return 0;
  }
  
-@@ -659,6 +949,9 @@
- 
+@@ -658,6 +948,9 @@
+
  RESULT eServiceMP3::isCurrentlySeekable()
  {
 +#ifdef __sh__
@@ -17490,7 +17490,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	int ret = 3; // seeking and fast/slow winding possible
  	GstElement *sink;
  
-@@ -684,6 +977,7 @@
+@@ -683,6 +976,7 @@
  	}
  
  	return ret;
@@ -17498,7 +17498,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  }
  
  RESULT eServiceMP3::info(ePtr<iServiceInformation>&i)
-@@ -709,7 +1003,9 @@
+@@ -708,7 +1002,9 @@
  
  int eServiceMP3::getInfo(int w)
  {
@@ -17508,7 +17508,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  
  	switch (w)
  	{
-@@ -749,7 +1045,9 @@
+@@ -748,7 +1044,9 @@
  	case sTagKeywords:
  	case sTagChannelMode:
  	case sUser+12:
@@ -17518,7 +17518,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	case sTagTrackGain:
  	case sTagTrackPeak:
  	case sTagAlbumGain:
-@@ -760,6 +1058,7 @@
+@@ -759,6 +1057,7 @@
  	case sTagPreviewImage:
  	case sTagAttachment:
  		return resIsPyObject;
@@ -17526,7 +17526,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	case sTagTrackNumber:
  		tag = GST_TAG_TRACK_NUMBER;
  		break;
-@@ -793,22 +1092,25 @@
+@@ -792,22 +1091,25 @@
  	case sTagCRC:
  		tag = "has-crc";
  		break;
@@ -17554,7 +17554,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	if ( !m_stream_tags && w < sUser && w > 26 )
  		return "";
  	const gchar *tag = 0;
-@@ -837,7 +1139,7 @@
+@@ -836,7 +1138,7 @@
  		if (gst_tag_list_get_date(m_stream_tags, GST_TAG_DATE, &date))
  		{
  			gchar res[5];
@@ -17563,7 +17563,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  			return (std::string)res;
  		}
  		break;
-@@ -921,9 +1223,56 @@
+@@ -920,9 +1222,56 @@
  		g_free(value);
  		return res;
  	}
@@ -17620,7 +17620,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  PyObject *eServiceMP3::getInfoObject(int w)
  {
  	const gchar *tag = 0;
-@@ -983,6 +1332,7 @@
+@@ -982,6 +1331,7 @@
  
  	return 0;
  }
@@ -17628,7 +17628,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  
  RESULT eServiceMP3::audioChannel(ePtr<iAudioChannelSelection> &ptr)
  {
-@@ -1015,8 +1365,10 @@
+@@ -1014,8 +1364,10 @@
  
  int eServiceMP3::getCurrentTrack()
  {
@@ -17639,7 +17639,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	return m_currentAudioStream;
  }
  
-@@ -1039,6 +1391,7 @@
+@@ -1038,6 +1390,7 @@
  
  int eServiceMP3::selectAudioStream(int i)
  {
@@ -17647,7 +17647,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	int current_audio;
  	g_object_set (G_OBJECT (m_gst_playbin), "current-audio", i, NULL);
  	g_object_get (G_OBJECT (m_gst_playbin), "current-audio", &current_audio, NULL);
-@@ -1049,6 +1402,13 @@
+@@ -1048,6 +1401,13 @@
  		return 0;
  	}
  	return -1;
@@ -17661,7 +17661,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  }
  
  int eServiceMP3::getCurrentChannel()
-@@ -1066,6 +1426,7 @@
+@@ -1065,6 +1425,7 @@
  {
   	if (i >= m_audioStreams.size())
  		return -2;
@@ -17669,7 +17669,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  		info.m_description = m_audioStreams[i].codec;
  /*	if (m_audioStreams[i].type == atMPEG)
  		info.m_description = "MPEG";
-@@ -1085,11 +1446,28 @@
+@@ -1084,11 +1445,28 @@
  		info.m_description = "FLAC";
  	else
  		info.m_description = "???";*/
@@ -17698,7 +17698,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  void eServiceMP3::gstBusCall(GstBus *bus, GstMessage *msg)
  {
  	if (!msg)
-@@ -1121,14 +1499,14 @@
+@@ -1120,14 +1498,14 @@
  
  			GstState old_state, new_state;
  			gst_message_parse_state_changed(msg, &old_state, &new_state, NULL);
@@ -17717,7 +17717,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  			switch(transition)
  			{
  				case GST_STATE_CHANGE_NULL_TO_READY:
-@@ -1188,7 +1566,7 @@
+@@ -1187,7 +1565,7 @@
  		{
  			gchar *debug;
  			GError *inf;
@@ -17726,7 +17726,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  			gst_message_parse_info (msg, &inf, &debug);
  			g_free (debug);
  			if ( inf->domain == GST_STREAM_ERROR && inf->code == GST_STREAM_ERROR_DECODE )
-@@ -1203,7 +1581,7 @@
+@@ -1202,7 +1580,7 @@
  		{
  			GstTagList *tags, *result;
  			gst_message_parse_tag(msg, &tags);
@@ -17735,7 +17735,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  			result = gst_tag_list_merge(m_stream_tags, tags, GST_TAG_MERGE_REPLACE);
  			if (result)
  			{
-@@ -1211,7 +1589,7 @@
+@@ -1210,7 +1588,7 @@
  					gst_tag_list_free(m_stream_tags);
  				m_stream_tags = result;
  			}
@@ -17744,7 +17744,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  			const GValue *gv_image = gst_tag_list_get_value_index(tags, GST_TAG_IMAGE, 0);
  			if ( gv_image )
  			{
-@@ -1281,7 +1659,7 @@
+@@ -1280,7 +1658,7 @@
  			}
  
  			for (i = 0; i < n_text; i++)
@@ -17753,7 +17753,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  				gchar *g_lang;
  // 				gchar *g_type;
  // 				GstPad* pad = 0;
-@@ -1407,11 +1785,11 @@
+@@ -1406,11 +1784,11 @@
  
  void eServiceMP3::gstPoll(const int &msg)
  {
@@ -17768,7 +17768,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  		   proplerly. */
  	if (msg == 1)
  	{
-@@ -1427,9 +1805,9 @@
+@@ -1426,9 +1804,9 @@
  	else
  		pullSubtitle();
  }
@@ -17780,7 +17780,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  void eServiceMP3::gstCBsubtitleAvail(GstElement *appsink, gpointer user_data)
  {
  	eServiceMP3 *_this = (eServiceMP3*)user_data;
-@@ -1476,9 +1854,30 @@
+@@ -1475,9 +1853,30 @@
  	else
  		eDebug("no subtitle sink!");
  }
@@ -17811,7 +17811,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	ePangoSubtitlePage page;
  	pts_t running_pts;
  	while ( !m_subtitle_pages.empty() )
-@@ -1523,6 +1922,7 @@
+@@ -1522,6 +1921,7 @@
  	}
  	if (m_subtitle_pages.empty())
  		pullSubtitle();
@@ -17819,7 +17819,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  }
  
  RESULT eServiceMP3::enableSubtitles(eWidget *parent, ePyObject tuple)
-@@ -1547,9 +1947,11 @@
+@@ -1546,9 +1946,11 @@
  
  	if (m_currentSubtitleStream != pid)
  	{
@@ -17831,7 +17831,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  		m_subs_to_pull = 0;
  		m_subtitle_pages.clear();
  	}
-@@ -1558,9 +1960,14 @@
+@@ -1557,9 +1959,14 @@
  	m_subtitle_widget = new eSubtitleWidget(parent);
  	m_subtitle_widget->resize(parent->size()); /* full size */
  
@@ -17846,7 +17846,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  
  	return 0;
  
-@@ -1576,6 +1983,11 @@
+@@ -1575,6 +1982,11 @@
  	m_subtitle_pages.clear();
  	delete m_subtitle_widget;
  	m_subtitle_widget = 0;
@@ -17858,7 +17858,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	return 0;
  }
  
-@@ -1588,6 +2000,15 @@
+@@ -1587,6 +1999,15 @@
  PyObject *eServiceMP3::getSubtitleList()
  {
  	eDebug("eServiceMP3::getSubtitleList");
@@ -17874,7 +17874,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  
  	ePyObject l = PyList_New(0);
  	int stream_count[sizeof(subtype_t)];
-@@ -1630,7 +2051,9 @@
+@@ -1629,7 +2050,9 @@
  int eServiceMP3::setBufferSize(int size)
  {
  	m_buffer_size = size;
@@ -17884,7 +17884,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	return 0;
  }
  
-@@ -1646,6 +2069,7 @@
+@@ -1645,6 +2068,7 @@
  
  void eServiceMP3::setAC3Delay(int delay)
  {
@@ -17892,7 +17892,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	ac3_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1679,10 +2103,12 @@
+@@ -1678,10 +2102,12 @@
  			gst_object_unref(sink);
  		}
  	}
@@ -17905,7 +17905,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	pcm_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1723,8 +2149,9 @@
+@@ -1722,8 +2148,9 @@
  			gst_object_unref(sink);
  		}
  	}
