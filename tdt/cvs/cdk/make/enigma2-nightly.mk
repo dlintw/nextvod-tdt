@@ -42,7 +42,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	echo "1b) Thu, 19 Nov 2009 22:53 - 2.6.1"; \
 	echo "---- REVISIONS ----"; \
 	echo "2a) Mon, 21 Dec 2009 15:04 - bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
-	echo "2b) Tue, 01 Apr 2010 01:40 - 5807686a79350632f38e4161c942ae59cf2f63ce"; \
+	echo "2b) Wed, 31 Mar 2010 21:53 - 5807686a79350632f38e4161c942ae59cf2f63ce"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
 	[ "$$REPLY" == "0" ] && DIFF="0"; \
