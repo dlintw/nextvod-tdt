@@ -42,12 +42,14 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	echo "1b) Thu, 19 Nov 2009 22:53 - 2.6.1"; \
 	echo "---- REVISIONS ----"; \
 	echo "2a) Mon, 21 Dec 2009 15:04 - bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
+	echo "2b) Tue, 01 Apr 2010 01:40 - 5807686a79350632f38e4161c942ae59cf2f63ce"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
 	[ "$$REPLY" == "0" ] && DIFF="0"; \
 	[ "$$REPLY" == "1a" ] && DIFF="1" && REVISION="2.6.0"; \
 	[ "$$REPLY" == "1b" ] && DIFF="1" && REVISION="2.6.1"; \
 	[ "$$REPLY" == "2a" ] && DIFF="1" && REVISION="bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
+	[ "$$REPLY" == "2b" ] && DIFF="2" && REVISION="5807686a79350632f38e4161c942ae59cf2f63ce"; \
 	echo "Revision: " $$REVISION; \
 	[ -d "$(appsdir)/enigma2-nightly" ] && \
 	git pull $(appsdir)/enigma2-nightly master;\
