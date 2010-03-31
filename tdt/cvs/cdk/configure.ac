@@ -828,7 +828,7 @@ echo "%_stm_kernel_dir $kernelprefix" >>localmacros
 echo "%_stm_sources_dir $kernelprefix" >>localmacros
 echo "%_stm_host_arch ${host_arch}" >>localmacros
 echo "%_stm_host_cpu ${host_cpu}" >>localmacros 
-echo "%_stm_host_config ${host_alias}" >>localmacros
+echo "%_stm_host_config ${host_alias:-${host}}" >>localmacros
 echo "%_dbpath $rpmdbprefix" >>localmacros
 echo "%__bzip2 $BZIP2" >>localmacros
 
