@@ -15680,18 +15680,63 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.h enigma2-nightly/lib/servi
 diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
 --- enigma2-nightly.org/main/bsod.cpp	2009-12-12 23:16:22.500600000 +0100
 +++ enigma2-nightly/main/bsod.cpp	2009-12-12 23:19:55.585100263 +0100
-@@ -15,7 +15,11 @@
+@@ -15,7 +15,13 @@
  
  /************************************************/
  
 +#if defined(__sh__)  
 +#define CRASH_EMAILADDR "nobody" 
++int stopFBspinner = 0;
++int stopFBgui = 0;
 +#else 
  #define CRASH_EMAILADDR "crashlog@dream-multimedia-tv.de"
 +#endif
  #define STDBUFFER_SIZE 512
  #define RINGBUFFER_SIZE 16384
  static char ringbuffer[RINGBUFFER_SIZE];
+@@ -446,6 +452,31 @@
+ {
+ 	ucontext_t *uc = (ucontext_t*)ctx;
+ 
++#if defined(__sh__)  
++        if(signum == SIGUSR1 && stopFBspinner == 0)
++        {
++                //stop output of spinner
++                stopFBspinner = 1;
++                return;
++        }
++        else
++        {
++                stopFBspinner = 0;
++                return;
++        }
++        if(signum == SIGUSR2 && stopFBgui == 0)
++        {
++                //stop output of gui 
++                stopFBgui = 1;
++                return;
++        }
++        else
++        {
++                stopFBgui = 0;
++                return;
++        }
++#endif
++
+ #ifndef NO_OOPS_SUPPORT
+ 	oops(uc->uc_mcontext, signum == SIGSEGV || signum == SIGABRT);
+ #endif
+@@ -467,6 +498,10 @@
+ 	sigaction(SIGILL, &act, 0);
+ 	sigaction(SIGBUS, &act, 0);
+ 	sigaction(SIGABRT, &act, 0);
++#if defined(__sh__)  
++        sigaction(SIGUSR1, &act, 0);
++        sigaction(SIGUSR2, &act, 0);
++#endif
+ }
+ 
+ void bsodLogInit()
 diff -Nur enigma2-nightly.org/main/enigma.cpp enigma2-nightly/main/enigma.cpp
 --- enigma2-nightly.org/main/enigma.cpp	2009-12-12 23:16:22.500600000 +0100
 +++ enigma2-nightly/main/enigma.cpp	2009-12-12 23:20:35.880600970 +0100
@@ -17874,4 +17919,51 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
 +//#else
 +//#warning gstreamer not available, not building media player
 +//#endif
+--- enigma2-nightly.org/lib/gdi/grc.cpp	2010-03-30 19:26:09.000000000 -0400
++++ enigma2-nightly.org/lib/gdi/grc.cpp	2010-03-30 19:34:30.000000000 -0400
+@@ -4,6 +4,11 @@
+ #include <lib/base/init.h>
+ #include <lib/base/init_num.h>
+ 
++#if defined(__sh__)
++extern int stopFBspinner;
++extern int stopFBgui;
++#endif
++
+ #ifndef SYNC_PAINT
+ void *gRC::thread_wrapper(void *ptr)
+ {
+@@ -125,7 +130,12 @@
+ 				m_compositing->Release();
+ 			} else if(o.dc)
+ 			{
++#if defined(__sh__)
++				if(stopFBgui == 0)
++					o.dc->exec(&o);
++#else
+ 				o.dc->exec(&o);
++#endif
+ 				// o.dc is a gDC* filled with grabref... so we must release it here
+ 				o.dc->Release();
+ 			}
+@@ -175,9 +185,19 @@
+ 
+ 				if (!idle)
+ 				{
++#if defined(__sh__)
++					if(stopFBspinner == 0)
++					{
++						if (!m_spinner_enabled)
++							eDebug("main thread is non-idle! display spinner!");
++						enableSpinner();
++					} else
++						disableSpinner();
++#else
+ 					if (!m_spinner_enabled)
+ 						eDebug("main thread is non-idle! display spinner!");
+ 					enableSpinner();
++#endif
+ 				} else
+ 					disableSpinner();
+ 			}
 
