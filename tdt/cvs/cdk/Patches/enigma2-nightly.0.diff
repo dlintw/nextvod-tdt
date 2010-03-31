@@ -5774,7 +5774,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	unlink ("/tmp/rc.socket");
 +
 +	//aktivate E2 framebuffer output
-+	system("killall -USR2 enigma2");
++	system("if [ -e /tmp/.e2fbstop ]; then killall -USR2 enigma2; fi");
 +
 + 	debugf(1, "Tuxtxt dies with signal %d\n", signo);
 +
@@ -5946,7 +5946,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	close(bfd);
 +
 +	//deaktivate E2 framebuffer output
-+	system("killall -USR1 enigma2");
++	system("if [ -e /tmp/.e2fbstop ]; then killall -USR1 enigma2; fi");
 +
 +	/* initialisations */
 +	if (Init() == 0)
@@ -6112,7 +6112,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	unlink ("/tmp/rc.socket");
 +
 +	//aktivate E2 framebuffer output
-+	system("killall -USR2 enigma2");
++	system("if [ -e /tmp/.e2fbstop ]; then killall -USR2 enigma2; fi");
 +
 +	debugf(1, "%s: <\n", __func__);
 +
