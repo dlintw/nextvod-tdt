@@ -37,19 +37,15 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	clear; \
 	echo "Choose between the following revisions:"; \
 	echo " 0) Newest (Can fail due to outdated patch)"; \
-	echo "---- TAGS ----"; \
-	echo "1a) Mon,  2 Nov 2009 15:00 - 2.6.0"; \
-	echo "1b) Thu, 19 Nov 2009 22:53 - 2.6.1"; \
 	echo "---- REVISIONS ----"; \
-	echo "2a) Mon, 21 Dec 2009 15:04 - bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
-	echo "2b) Wed, 31 Mar 2010 21:53 - 5807686a79350632f38e4161c942ae59cf2f63ce"; \
+	echo "1) Mon, 21 Dec 2009 15:04 - bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
+	echo "2) Wed, 31 Mar 2010 21:53 - 5807686a79350632f38e4161c942ae59cf2f63ce"; \
+	echo "3) current inactive... comming soon, here is the next stable (case 3 == DIFF=3), (case 4 == DIFF=4) this is better"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
 	[ "$$REPLY" == "0" ] && DIFF="0"; \
-	[ "$$REPLY" == "1a" ] && DIFF="1" && REVISION="2.6.0"; \
-	[ "$$REPLY" == "1b" ] && DIFF="1" && REVISION="2.6.1"; \
-	[ "$$REPLY" == "2a" ] && DIFF="1" && REVISION="bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
-	[ "$$REPLY" == "2b" ] && DIFF="2" && REVISION="5807686a79350632f38e4161c942ae59cf2f63ce"; \
+	[ "$$REPLY" == "1" ] && DIFF="1" && REVISION="bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
+	[ "$$REPLY" == "2" ] && DIFF="2" && REVISION="5807686a79350632f38e4161c942ae59cf2f63ce"; \
 	echo "Revision: " $$REVISION; \
 	[ -d "$(appsdir)/enigma2-nightly" ] && \
 	git pull $(appsdir)/enigma2-nightly master;\
