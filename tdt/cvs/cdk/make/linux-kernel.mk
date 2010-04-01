@@ -121,7 +121,7 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 
 ############ Patches Kernel 23 ###############
 
-if P0123
+if ENABLE_P0123
 PATCH_STR=_0123
 endif
 
