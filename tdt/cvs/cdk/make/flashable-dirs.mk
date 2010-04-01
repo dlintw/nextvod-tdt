@@ -307,20 +307,18 @@ $(flashprefix)/root-stock-%: \
 	$(INSTALL) -d $@/{dev,lib,usr,var}
 	mkdir  $@/boot
 	cp -rd $(prefix)/release_neutrino/boot/{audio.elf,video.elf} $@/boot/
-	cp -rd $(prefix)/release_neutrino/{bin,etc,hdd,lib,media,mnt,proc,ram,sbin,share,sys,tmp,tuxbox,usr} $@/
+	cp -rd $(prefix)/release_neutrino/{bin,hdd,lib,media,mnt,proc,ram,sbin,share,sys,tmp,tuxbox,usr} $@/
 	rm -rf $@/var
 	mkdir $@/var
 	mkdir $@/root
 	mkdir $@/dev.static
-	rm -rf $@/etc/init.d/rcS
-	cp -rd $(buildprefix)/root/release/rcS_neutrino $@/etc/init.d/rcS
-#	echo "/dev/mtdblock3     /var     jffs2     defaults     0 0" >> $@/etc/fstab
-	echo "tmpfs         /var/run            tmpfs   defaults                        0 0" >> $@/etc/fstab
-	echo "tmpfs         /var/lock           tmpfs   defaults                        0 0" >> $@/etc/fstab
-	echo "tmpfs         /var/tmp            tmpfs   defaults                        0 0" >> $@/etc/fstab
-	echo "tmpfs         /var/log            tmpfs   defaults                        0 0" >> $@/etc/fstab
-	echo "tmpfs         /var/lib/urandom    tmpfs   defaults                        0 0" >> $@/etc/fstab
-	sed -e 's/MODDIR=\/lib\/modules/MODDIR=\/lib\/modules\nmount -t jffs2 -o noatime \/dev\/mtdblock3 \/var >\/dev\/null 2>\&1/g' -i $@/etc/init.d/rcS
+	mkdir -p $@/etc/init.d
+	echo "#!/bin/sh" > $@/etc/init.d/rcS
+	echo "mount -t jffs2 -o noatime /dev/mtdblock3 /var >/dev/null 2>&1" >> $@/etc/init.d/rcS
+	echo "mount --bind /var/etc /etc" >> $@/etc/init.d/rcS
+	echo "/etc/init.d/rcS" >> $@/etc/init.d/rcS
+	chmod 755 $@/etc/init.d/rcS
+	cp -rd $(prefix)/release_neutrino/etc/inittab $@/etc/inittab
 	rm -f $@/usr/bin/{ip*,ir*}
 	rm -f $@/usr/lib/{libalsaplayer.so,libalsaplayer.so.0,libalsaplayer.so.0.0.2,libasound.so,libasound.so.2,libasound.so.2.0.0}
 	rm -f $@/usr/lib/{libcrypto.so,libcrypto.so.0.9.8,libfontconfig.so,libfontconfig.so.1,libfontconfig.so.1.3.0,libform.so,libform.so.5,libform.so.5.5}
@@ -329,21 +327,6 @@ $(flashprefix)/root-stock-%: \
 	rm -f $@/usr/lib/{libfbsplash.so,libfbsplash.so.1,libfbsplash.so.1.0.0,liblcms.so,liblcms.so.1,liblcms.so.1.0.16}
 	rm -rf $@/usr/local/share/config
 	( cd $@/usr/local/share && ln -sf /var/tuxbox/config config )
-	rm -rf $@/etc/network
-	ln -sf /var/etc/network $@/etc/network
-	rm -f $@/etc/resolv.conf
-	ln -sf /var/etc/resolv.conf $@/etc/resolv.conf
-	rm -f $@/etc/{group,host.conf,hostname,hosts,localtime,passwd,profile,protocols,videomode,vsftpd.conf}
-	ln -sf /var/etc/group $@/etc/group
-	ln -sf /var/etc/host.conf $@/etc/host.conf
-	ln -sf /var/etc/hostname $@/etc/hostname
-	ln -sf /var/etc/hosts $@/etc/hosts
-	ln -sf /var/etc/passwd $@/etc/passwd
-	ln -sf /var/etc/profile $@/etc/profile
-	ln -sf /var/etc/protocols $@/etc/protocols
-	ln -sf /var/etc/videomode $@/etc/videomode
-	ln -sf /var/etc/vsftpd.conf $@/etc/vsftpd.conf
-	ln -sf /var/etc/localtime $@/etc/localtime
 	find $@/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
 	find $@/lib/ -name  *.so -exec sh4-linux-strip --strip-unneeded {} \;
 	@TUXBOX_CUSTOMIZE@
@@ -510,7 +493,6 @@ $(flashprefix)/var-%-neutrino: \
 	cp -rd $(prefix)/release_neutrino/usr/local/share/config/* $@/tuxbox/config
 	cp -rd $(prefix)/release_neutrino/usr/local/share/config/zapit $@/tuxbox/config/zapit
 	cp -rd $(prefix)/release_neutrino/etc $@/etc
-#	sed -e "s|^proc|/dev/mtdblock3     /var     jffs2     defaults     0 0\nproc|g" -i $@/etc/fstab
 	echo "tmpfs         /var/run            tmpfs   defaults                        0 0" >> $@/etc/fstab
 	echo "tmpfs         /var/lock           tmpfs   defaults                        0 0" >> $@/etc/fstab
 	echo "tmpfs         /var/tmp            tmpfs   defaults                        0 0" >> $@/etc/fstab
