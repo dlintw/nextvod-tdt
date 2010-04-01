@@ -68,16 +68,18 @@
 
 extern int allow_flash;
 
-#define gTmpPath "/var/update/"
+#define gTmpPath "/tmp"
 #define gUserAgent "neutrino/softupdater 1.0"
 
-#define LIST_OF_UPDATES_LOCAL_FILENAME "coolstream.list"
+#define LIST_OF_UPDATES_LOCAL_FILENAME "update.list"
 #define UPDATE_LOCAL_FILENAME          "update.img"
 #define RELEASE_CYCLE                  "1.0"
 #define FILEBROWSER_UPDATE_FILTER      "img"
 
-#define MTD_OF_WHOLE_IMAGE             0
-#define MTD_DEVICE_OF_UPDATE_PART      "/dev/mtd2"
+//#define MTD_OF_WHOLE_IMAGE             7
+//highest mtd device from /proc/mtd will be used for flash without bootloader
+#define MTD_DEVICE_OF_UPDATE_ROOT_PART "/dev/mtd2"
+#define MTD_DEVICE_OF_UPDATE_VAR_PART  "/dev/mtd3"
 
 CFlashUpdate::CFlashUpdate()
 	:CProgressWindow()
@@ -389,7 +391,13 @@ int CFlashUpdate::exec(CMenuTarget* parent, const std::string &)
 	showGlobalStatus(40);
 
 	CFlashTool ft;
-	ft.setMTDDevice(MTD_DEVICE_OF_UPDATE_PART);
+	//TODO: ROOT / VAR
+	/*if(flashmtd==MTD_DEVICE_OF_UPDATE_ROOT_PART)
+		ft.setMTDDevice(MTD_DEVICE_OF_UPDATE_ROOT_PART);
+	elese if(flashmtd==MTD_DEVICE_OF_UPDATE_VAR_PART)
+		ft.setMTDDevice(MTD_DEVICE_OF_UPDATE_VAR_PART);*/
+
+	ft.setMTDDevice(MTD_DEVICE_OF_UPDATE_ROOT_PART);
 	ft.setStatusViewer(this);
 
 	showStatusMessageUTF(g_Locale->getText(LOCALE_FLASHUPDATE_MD5CHECK)); // UTF-8
@@ -493,7 +501,9 @@ void CFlashExpert::readmtd(int readmtd)
 
 	if (readmtd == -1) {
 		filename = "/tmp/flashimage.img"; // US-ASCII (subset of UTF-8 and ISO8859-1)
-		readmtd = MTD_OF_WHOLE_IMAGE;
+		//readmtd = MTD_OF_WHOLE_IMAGE;
+		CMTDInfo* mtdInfo =CMTDInfo::getInstance();
+		readmtd = (mtdInfo->getMTDCount()-1);
 	}
 	setTitle(LOCALE_FLASHUPDATE_TITLEREADFLASH);
 	paint();
@@ -634,8 +644,12 @@ int CFlashExpert::exec(CMenuTarget* parent, const std::string & actionKey)
 			selectedMTD = iWritemtd;
 			showFileSelector("");
 		} else {
-			if(selectedMTD==-1) {
-				writemtd(actionKey, MTD_OF_WHOLE_IMAGE);
+			if(selectedMTD==-1) 
+			{
+				CMTDInfo* mtdInfo =CMTDInfo::getInstance();
+				selectedMTD = (mtdInfo->getMTDCount()-1);
+				writemtd(actionKey, selectedMTD);
+				selectedMTD=-1;
 			} else {
 				writemtd(actionKey, selectedMTD);
 				selectedMTD=-1;
