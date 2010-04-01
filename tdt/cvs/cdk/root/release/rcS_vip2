@@ -50,7 +50,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
    
    echo "init frontends"
-   insmod $MODDIR/fe-core.ko
+   insmod $MODDIR/fe-core.ko #demod1=stv090x tuner1=sharp7306 demod2=stv090x tuner2=sharp7306;
 
    echo "init drivers"
    insmod $MODDIR/pti.ko
