@@ -142,6 +142,7 @@ COMMONPATCHES_23 = \
                 $(if $(P0119),Patches/fdma_stm23.patch) \
                 Patches/sound_stm23$(PATCH_STR).diff \
                 $(if $(P0123),Patches/stm23_strcpy$(PATCH_STR).patch) \
+                $(if $(P0123),Patches/stm23_asm_mov_0xffffff.patch) \
                 $(STM23_DVB_PATCH) \
                 $(if $(P0119),Patches/kernel23_depmod.patch)
 #               Patches/nosquashfs3.1_stm23.patch \
