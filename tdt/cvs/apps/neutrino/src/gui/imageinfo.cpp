@@ -181,6 +181,9 @@ void CImageInfo::paint()
 	ypos += iheight;
 	paintLine(xpos    , font_info, g_Locale->getText(LOCALE_IMAGEINFO_VERSION));
 	paintLine(xpos+125, font_info, releaseCycle);
+
+	ypos += iheight;
+	paintLine(xpos    , font_info, "GIT:");
 	paintLine(xpos+125, font_info, git);
 
 	ypos += iheight;
