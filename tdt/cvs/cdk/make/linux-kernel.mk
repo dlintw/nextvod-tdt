@@ -121,7 +121,7 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 
 ############ Patches Kernel 23 ###############
 
-if P0123
+if ENABLE_P0123
 PATCH_STR=_0123
 endif
 
@@ -157,7 +157,7 @@ UFS922PATCHES_23 = $(COMMONPATCHES_23) \
 
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \
                $(if $(P0119),Patches/ufs922_stasc_stm23.patch) \
-               $(if $(P0119),Patches/tf7700_setup_stm23.patch) 
+               Patches/tf7700_setup_stm23$(PATCH_STR).patch 
 
 HL101PATCHES_23 = $(COMMONPATCHES_23) \
                 $(if $(P0119),Patches/hl101_setup_stlinux23.patch)
@@ -175,9 +175,9 @@ UFS910PATCHES_23 = $(COMMONPATCHES_23) \
 #               Patches/ufs910_stboards_stm23.patch
 
 CUBEPATCHES_023 = $(COMMONPATCHES_23) \
-                $(if $(P0119),Patches/cuberevo_patches_stlinux23.patch) \
-                $(if $(P0119),Patches/cuberevo_rtl8201_stlinux23.patch) \
-                $(if $(P0119),Patches/Patches/$(CUBEMOD)_setup_stlinux23.patch)
+                Patches/cuberevo_patches_stlinux23$(PATCH_STR).patch) \
+                Patches/cuberevo_rtl8201_stlinux23$(PATCH_STR).patch) \
+                Patches/Patches/$(CUBEMOD)_setup_stlinux23$(PATCH_STR).patch)
 
 KERNELPATCHES_23 =      $(if $(TF7700),$(TF7700PATCHES_23)) \
                         $(if $(HL101),$(HL101PATCHES_23)) \

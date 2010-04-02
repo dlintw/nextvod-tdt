@@ -4,4 +4,5 @@ homepage=http://gitorious.org/open-duckbox-project-sh4
 creator=git-developer 
 docs=http://gitorious.org/open-duckbox-project-sh4/pages/Home 
 forum=http://gitorious.org/open-duckbox-project-sh4
-version=rev-229-gd442232
+version=0515201004020818
+git=rev-515-g1f37c33

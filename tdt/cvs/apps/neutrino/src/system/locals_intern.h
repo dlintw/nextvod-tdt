@@ -411,6 +411,7 @@ const char *locale_real_names[] = {
 	"fontsize.menu_title",
 	"gtxalpha.alpha1",
 	"gtxalpha.alpha2",
+	"infobar.bar_color",
 	"infoviewer.epgnotload",
 	"infoviewer.epgwait",
 	"infoviewer.eventlist",

@@ -49,13 +49,19 @@ AM_CONDITIONAL(P0041,test "$enable_p0041" = "yes")
 
 AC_ARG_ENABLE(p0119,
         AS_HELP_STRING(--enable-p0119,  set up the CDK to use the STLinux 2.3 with patchlevel 0119),
-        ,[enable_p0119=no])
-AM_CONDITIONAL(P0119,test "$enable_p0119" = "yes")
+	[case "${enableval}" in
+		yes) P0119=p0119 ;;
+	esac], [enable_p0119=no])
+AM_CONDITIONAL(ENABLE_P0119,test "$enable_p0119" = "yes")
+AC_SUBST(P0119)
 
 AC_ARG_ENABLE(p0123,
         AS_HELP_STRING(--enable-p0123,  set up the CDK to use the STLinux 2.3 with patchlevel 0123),
-        ,[enable_p0123=no])
-AM_CONDITIONAL(P0123,test "$enable_p0123" = "yes")
+	[case "${enableval}" in
+		yes) P0123=p0123 ;;
+	esac], [enable_p0123=no])
+AM_CONDITIONAL(ENABLE_P0123,test "$enable_p0123" = "yes")
+AC_SUBST(P0123)
 
 AC_ARG_ENABLE(debug,
 	AS_HELP_STRING(--enable-debug,	set up the CDK to use debug kernel configs),
@@ -211,6 +217,7 @@ AC_ARG_ENABLE(tf7700,
 	esac],[enable_tf7700=no])
 AM_CONDITIONAL(ENABLE_TF7700,test "$enable_tf7700" = "yes")
 AC_SUBST(TF7700)
+
 AC_ARG_ENABLE(hl101,
 	AS_HELP_STRING(--enable-hl101,    enable spider box hl101 stuff),
 	[case "${enableval}" in

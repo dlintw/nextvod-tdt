@@ -1,0 +1,383 @@
+--- linux-sh4-2.6.23.17_stm23_0123/arch/sh/boards/st/mb442/Makefile	2010-03-29 21:22:03.000000000 +0200
++++ linux-sh4-2 .6.23.17_stm23_0123-orig/arch/sh/boards/st/mb442/Makefile	2010-04-01 21:47:24.205466388 +0200
+@@ -2,4 +2,4 @@
+ # Makefile for STMicroelectronics STb7100 Reference board
+ #
+ 
+-obj-y := setup.o mach.o
++obj-y := setup.o mach.o epld.o
+--- linux-sh4-2.6.23.17_stm23_0123/arch/sh/boards/st/mb442/common.h	1970-01-01 01:00:00.000000000 +0100
++++ linux-sh4-2 .6.23.17_stm23_0123-orig/arch/sh/boards/st/mb442/common.h	2010-03-29 21:22:29.000000000 +0200
+@@ -0,0 +1,24 @@
++#ifndef __ARCH_SH_BOARDS_ST_COMMON_COMMON_H
++#define __ARCH_SH_BOARDS_ST_COMMON_COMMON_H
++
++#include <linux/platform_device.h>
++
++/* epld.c */
++
++struct plat_epld_data {
++	int opsize;
++};
++
++void epld_write(unsigned long value, unsigned long offset);
++unsigned long epld_read(unsigned long offset);
++void epld_early_init(struct platform_device *device);
++
++/* harp.c */
++
++void harp_init_irq(void);
++
++/* peripheral boards callbacks */
++
++void mbxxx_configure_audio_pins(void);
++
++#endif
+--- linux-sh4-2.6.23.17_stm23_0123/arch/sh/boards/st/mb442/epld.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-sh4-2 .6.23.17_stm23_0123-orig/arch/sh/boards/st/mb442/epld.c	2010-03-29 21:22:09.000000000 +0200
+@@ -0,0 +1,76 @@
++/*
++ * Copyright (C) 2007 STMicroelectronics Limited
++ * Author: Stuart Menefy <stuart.menefy@st.com>
++ *
++ * May be copied or modified under the terms of the GNU General Public
++ * License.  See linux/COPYING for more information.
++ */
++
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/io.h>
++#include "common.h"
++
++#define DRIVER_NAME "epld"
++
++static void __iomem *epld_base;
++static int epld_opsize;
++
++void epld_write(unsigned long value, unsigned long offset)
++{
++	if (epld_opsize == 16)
++		writew(value, epld_base + offset);
++	else
++		writeb(value, epld_base + offset);
++}
++
++unsigned long epld_read(unsigned long offset)
++{
++	if (epld_opsize == 16)
++		return readw(epld_base + offset);
++	else
++		return readb(epld_base + offset);
++}
++
++void __init epld_early_init(struct platform_device *pdev)
++{
++	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
++	struct plat_epld_data *data = pdev->dev.platform_data;
++
++	epld_base = ioremap(pdev->resource[0].start, size);
++	if (!epld_base)
++		panic("Unable to ioremap EPLD");
++
++	if (data)
++		epld_opsize = data->opsize;
++}
++
++static int __init epld_probe(struct platform_device *pdev)
++{
++	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
++
++	if (!request_mem_region(pdev->resource[0].start, size, pdev->name))
++		return -EBUSY;
++
++	if (epld_base)
++		return 0;
++
++	epld_early_init(pdev);
++
++	return 0;
++}
++
++static struct platform_driver epld_driver = {
++	.probe		= epld_probe,
++	.driver	= {
++		.name	= DRIVER_NAME,
++		.owner	= THIS_MODULE,
++	},
++};
++
++static int __init epld_init(void)
++{
++	return platform_driver_register(&epld_driver);
++}
++
++arch_initcall(epld_init);
+--- linux-sh4-2.6.23.17_stm23_0123/arch/sh/boards/st/mb442/setup.c	2010-03-29 21:22:10.000000000 +0200
++++ linux-sh4-2 .6.23.17_stm23_0123-orig/arch/sh/boards/st/mb442/setup.c	2010-04-01 19:26:27.415875159 +0200
+@@ -19,18 +19,41 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/physmap.h>
+ #include <linux/mtd/partitions.h>
++#include <linux/bpa2.h>
+ #include <linux/phy.h>
+ #include <linux/lirc.h>
+ #include <asm/irl.h>
+ 
+ static int ascs[2] __initdata = { 2, 3 };
+ 
++const char *LMI_VID_partalias[] = { "BPA2_Region1", "coredisplay-video", "gfx-memory", "v4l2-video-buffers", NULL };
++const char *LMI_SYS_partalias[] = { "BPA2_Region0", "bigphysarea", "v4l2-coded-video-buffers", NULL };
++ 
++static struct bpa2_partition_desc bpa2_parts_table[] = {
++{
++	.name  = "LMI_VID",
++	.start = 0x10800000,
++	.size  = 0x03800000,
++	.flags = 0,
++	.aka   = LMI_VID_partalias
++},
++{
++	.name  = "LMI_SYS",
++	.start = 0,
++	.size  = 0x01600000,
++	.flags = 0,
++	.aka   = LMI_SYS_partalias
++}
++};
++
+ void __init mb442_setup(char** cmdline_p)
+ {
+-	printk("STMicroelectronics STb7100 Reference board initialisation\n");
++	printk("Topfield TF7700 initialization\n");
+ 
++	static struct stpio_pin *usbpower, *pin;
+ 	stx7100_early_device_init();
+-	stb7100_configure_asc(ascs, 2, 0);
++	stb7100_configure_asc(ascs, 1, 0);
++	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
+ }
+ 
+ static struct plat_stm_pwm_data pwm_private_info = {
+@@ -40,7 +63,7 @@
+ static struct plat_ssc_data ssc_private_info = {
+ 	.capability  =
+ 		ssc0_has(SSC_I2C_CAPABILITY) |
+-		ssc1_has(SSC_SPI_CAPABILITY) |
++		ssc1_has(SSC_I2C_CAPABILITY) |
+ 		ssc2_has(SSC_I2C_CAPABILITY),
+ };
+ 
+@@ -147,10 +170,30 @@
+ 	 }
+ };
+ 
++static struct platform_device pdiusbd12_device = {
++	.name           = "pdiusbd12",
++	.id             = -1,
++	.num_resources  = 2,
++	.resource       = (struct resource[]) {
++		{
++	                .start = 0xa2000000,
++		        .end   = 0xa200ffff,
++	        	.flags  = IORESOURCE_MEM,
++		},
++		{
++			.name   = "usbirq",
++	        	.start  = IRL0_IRQ,
++	        	.end    = IRL0_IRQ,
++	        	.flags  = IORESOURCE_IRQ,
++		},
++	},
++};
++
+ static struct platform_device *mb442_devices[] __initdata = {
+ 	&smc91x_device,
+ 	&physmap_flash,
+ 	&mb442_phy_device,
++	&pdiusbd12_device,
+ };
+ 
+ /* Configuration based on Futarque-RC signals train. */
+@@ -168,7 +211,7 @@
+ 
+ 	stx7100_configure_sata();
+ 	stx7100_configure_pwm(&pwm_private_info);
+-	stx7100_configure_ssc(&ssc_private_info);
++	//stx7100_configure_pwm(&pwm_private_info);
+ 	stx7100_configure_usb();
+ 	stx7100_configure_lirc(&lirc_scd);
+ 	stx7100_configure_pata(3, 1, IRL1_IRQ);
+--- linux-sh4-2.6.23.17_stm23_0123/arch/sh/kernel/cpu/sh4/setup-stb7100.c	2010-03-29 21:22:29.000000000 +0200
++++ linux-sh4-2 .6.23.17_stm23_0123-orig/arch/sh/kernel/cpu/sh4/setup-stb7100.c	2010-03-31 19:37:23.726891912 +0200
+@@ -296,8 +296,8 @@
+ static char i2c_st[] = "i2c_st";
+ static char spi_st[] = "spi_st_ssc";
+ static struct platform_device stssc_devices[] = {
+-	STSSC_DEVICE(0x18040000, 119, 2, 0, 1, 2),
+-	STSSC_DEVICE(0x18041000, 118, 3, 0, 1, 2),
++	STSSC_DEVICE(0x18040000, 119, 2, 0, 1, 0xff),
++	STSSC_DEVICE(0x18041000, 118, 3, 0, 2, 0xff),
+ 	STSSC_DEVICE(0x18042000, 117, 4, 0, 1, 0xff),
+ };
+ 
+--- linux-sh4-2.6.23.17_stm23_0123/drivers/mtd/maps/Makefile	2007-10-09 22:31:38.000000000 +0200
++++ linux-sh4-2 .6.23.17_stm23_0123-orig/drivers/mtd/maps/Makefile	2010-03-31 19:39:41.302204065 +0200
+@@ -71,3 +71,4 @@
+ obj-$(CONFIG_MTD_OMAP_NOR)	+= omap_nor.o
+ obj-$(CONFIG_MTD_MTX1)		+= mtx-1_flash.o
+ obj-$(CONFIG_MTD_TQM834x)	+= tqm834x.o
++obj-$(if $(TF7700),y)		+= tf7700.o
+--- linux-sh4-2.6.23.17_stm23_0123/drivers/mtd/maps/tf7700.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-sh4-2 .6.23.17_stm23_0123-orig/drivers/mtd/maps/tf7700.c	2010-03-31 20:46:53.430227932 +0200
+@@ -0,0 +1,139 @@
++#include <linux/module.h>
++#include <linux/types.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <asm/io.h>
++#include <asm/errno.h>
++#include <linux/mtd/mtd.h>
++#include <linux/mtd/map.h>
++#include <linux/mtd/partitions.h>
++
++#define EPLD_FLASH 0x400000
++#define FLASH_ADDR 0x00000000
++#define FLASH_SIZE (8*1024*1024)
++#define FLASH_BANKWIDTH 2
++
++extern void epld_write(unsigned long value, unsigned long offset);
++
++static void mtd_set_vpp(struct map_info *map, int vpp)
++{
++	if (vpp)
++	{
++		epld_write(3, EPLD_FLASH);
++	}
++	else
++	{
++		epld_write(2, EPLD_FLASH);
++	}
++}
++
++static struct mtd_info *flash_mtd;
++
++static struct map_info flash_map = {
++	.name = "Flash",
++	.size = FLASH_SIZE,
++	.bankwidth = FLASH_BANKWIDTH,
++	.set_vpp = mtd_set_vpp,
++};
++
++static struct mtd_partition flash_partitions[] = {
++	{
++	 .name = "TF Boot Loader",
++	 .size = 0x00030000,
++	 .offset = 0x00000000,
++	 .mask_flags = MTD_WRITEABLE
++	 },
++	{ 
++	 .name = "U-Boot",
++	 .size = 0x00020000,
++	 .offset = MTDPART_OFS_NXTBLK,
++	 },
++	{ 
++	 .name = "U-Boot Settings",
++	 .size = 0x00010000,
++	 .offset = MTDPART_OFS_NXTBLK,
++	 },
++	{
++	 .name = "TF Kernel",
++	 .size = 0x00200000, 
++	 .offset = MTDPART_OFS_NXTBLK,
++	 }, 
++	{ 
++	 .name = "Root FS (unused)",
++	 .size = MTDPART_SIZ_FULL,
++	 .offset = MTDPART_OFS_NXTBLK
++	 }, 
++	{
++	 .name   = "TF Firmware (overwrites U-Boot and Kernel!)",
++	 .offset = 0x00030000,
++	 .size   = 0x00790000,
++	 }, 
++	{
++	 .name   = "TF Settings",
++	 .offset = 0x007c0000,
++	 .size   = 0x00020000,
++	 },
++	{
++	 .name   = "TF Defaults",
++	 .offset = 0x007e0000,
++	 .size   = 0x00020000,
++	 } 
++};
++
++static struct mtd_partition *parsed_parts;
++static const char *probes[] = { "cmdlinepart", NULL };
++
++int __init init_tf7700_flash(void)
++{
++	int nr_parts = 0;
++
++	flash_map.phys = FLASH_ADDR;
++	flash_map.size = FLASH_SIZE;
++	flash_map.virt =
++	    (unsigned long *)ioremap(flash_map.phys, flash_map.size);
++	if (flash_map.virt == 0) {
++		printk(KERN_ERR "Failed to ioremap onboard Flash\n");
++	}
++	else
++	{
++#ifndef CONFIG_MTD_COMPLEX_MAPPINGS
++		simple_map_init(&flash_map);
++#endif
++		flash_mtd = do_map_probe("cfi_probe", &flash_map);
++		if (flash_mtd != NULL) {
++			flash_mtd->owner = THIS_MODULE;
++#ifdef CONFIG_MTD_CMDLINE_PARTS
++			nr_parts =
++			    parse_mtd_partitions(flash_mtd, probes,
++						 &parsed_parts, 0);
++#endif
++			if (nr_parts <= 0)
++				add_mtd_partitions(flash_mtd,
++						   flash_partitions,
++						   ARRAY_SIZE
++						   (flash_partitions));
++			else
++				add_mtd_partitions(flash_mtd, parsed_parts,
++						   nr_parts);
++		} else {
++			iounmap((void *)flash_map.virt);
++		}
++	}
++
++	return -ENXIO;
++}
++
++static void __exit cleanup_tf7700_flash(void)
++{
++	if (flash_mtd) {
++		del_mtd_partitions(flash_mtd);
++		map_destroy(flash_mtd);
++	}
++	if (flash_map.virt != 0) {
++		iounmap((void *)flash_map.virt);
++		flash_map.virt = 0;
++	}
++}
++
++module_init(init_tf7700_flash);
++module_exit(cleanup_tf7700_flash);
+--- linux-sh4-2.6.23.17_stm23_0123/drivers/usb/storage/usb.c	2007-10-09 22:31:38.000000000 +0200
++++ linux-sh4-2 .6.23.17_stm23_0123-orig/drivers/usb/storage/usb.c	2010-03-31 20:00:01.763477145 +0200
+@@ -107,7 +107,7 @@
+ MODULE_DESCRIPTION("USB Mass Storage driver for Linux");
+ MODULE_LICENSE("GPL");
+ 
+-static unsigned int delay_use = 5;
++static unsigned int delay_use = 0;
+ module_param(delay_use, uint, S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(delay_use, "seconds to delay before using a new device");
+ 
+
