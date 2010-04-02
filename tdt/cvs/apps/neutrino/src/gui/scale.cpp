@@ -32,13 +32,11 @@
 #define ITEMW 4
 #define POINT 2
 
+#define WHITE  0xFFFFFF
 #define RED    0xFF0000
 #define GREEN  0x00FF00
 #define YELLOW 0xFFFF00
-
-#ifdef DUCKBOX
-#define WHITE  0xFFFFFF
-#endif
+#define BLUE   0x0000FF
 
 inline unsigned int make16color(__u32 rgb)
 {
@@ -95,7 +93,7 @@ void CScale::paint (int x, int y, int pcr)
 				if(inverse) rgb = GREEN + ((unsigned char)(step*i) << 16); // adding red
 				else        rgb = RED   + ((unsigned char)(step*i) <<  8); // adding green
 			} else
-				rgb = WHITE;
+				rgb = g_settings.infobar_barcolor;
 			
 			color = make16color(rgb);
 			#else
@@ -124,9 +122,9 @@ void CScale::paint (int x, int y, int pcr)
 				if(inverse) rgb = YELLOW - (((unsigned char)step*(b++)) <<  8); // removing green
 				else        rgb = YELLOW - ((unsigned char)(step*(b++)) << 16); // removing red
 			} else
-				rgb = WHITE;
+				rgb = g_settings.infobar_barcolor;
 
-			color = make16color(rgb);		    
+			color = make16color(rgb);
 			#else
 			step = 255/yellow/2;
 			if(inverse) rgb = YELLOW - (((unsigned char)step*(b++)) <<  8); // removing green
@@ -152,7 +150,7 @@ void CScale::paint (int x, int y, int pcr)
 				if(inverse) rgb = YELLOW - ((unsigned char) (step*(b++)) <<  8); // removing green
 				else        rgb = YELLOW - ((unsigned char) (step*(b++)) << 16); // removing red
 			} else
-				rgb = WHITE;
+				rgb = g_settings.infobar_barcolor;
 			  
 			color = make16color(rgb);
 			#else

@@ -1544,10 +1544,6 @@ void CNeutrinoApp::InitMiscSettings(CMenuWidget &miscSettings)
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_EXTRA_CACHE_TXT,  (int *)&g_settings.cacheTXT, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_MISCSETTINGS_VIRTUAL_ZAP_MODE, &g_settings.virtual_zap_mode, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 
-	#ifdef DUCKBOX
-	miscSettings.addItem(new CMenuOptionChooser(LOCALE_SCALE_DISPLAY_TYPE, &g_settings.scale_display_type, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTIONS, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT, true ));
-	#endif
-	
 	//channellist
 	miscSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_MISCSETTINGS_CHANNELLIST));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_MISCSETTINGS_CHANNELLIST_EPGTEXT_ALIGN, &g_settings.channellist_epgtext_align_right, CHANNELLIST_EPGTEXT_ALIGN_RIGHT_OPTIONS, CHANNELLIST_EPGTEXT_ALIGN_RIGHT_OPTIONS_COUNT, true));
@@ -2256,6 +2252,11 @@ void CNeutrinoApp::InitColorSettings(CMenuWidget &colorSettings, CMenuWidget &fo
 
 	colorSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_VIDEOMENU_OSD));
 	colorSettings.addItem(new CMenuForwarder(LOCALE_TIMING_HEAD, true, NULL, colorSettings_timing));
+
+	#ifdef DUCKBOX
+	colorSettings.addItem(new CMenuOptionChooser(LOCALE_SCALE_DISPLAY_TYPE, &g_settings.scale_display_type, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTIONS, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT, true ));
+	#endif
+
 	colorSettings.addItem(new CMenuForwarder(LOCALE_VIDEOMENU_SCREENSETUP, true, NULL, ScreenSetup));//, NULL, CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED));
 #if 0
 	colorSettings.addItem(GenericMenuSeparatorLine);
@@ -2322,17 +2323,16 @@ void CNeutrinoApp::InitColorSettingsMenuColors(CMenuWidget &colorSettings_menuCo
 void CNeutrinoApp::InitColorSettingsStatusBarColors(CMenuWidget &colorSettings_statusbarColors)
 {
 	colorSettings_statusbarColors.addItem(GenericMenuSeparator);
-
 	colorSettings_statusbarColors.addItem(GenericMenuBack);
 
-	CColorChooser* chInfobarcolor = new CColorChooser(LOCALE_COLORMENU_BACKGROUND, &g_settings.infobar_red, &g_settings.infobar_green, &g_settings.infobar_blue,
-																	  &g_settings.infobar_alpha, colorSetupNotifier);
-	CColorChooser* chInfobarTextcolor = new CColorChooser(LOCALE_COLORMENU_TEXTCOLOR, &g_settings.infobar_Text_red, &g_settings.infobar_Text_green, &g_settings.infobar_Text_blue,
-																			NULL, colorSetupNotifier);
+	CColorChooser * chInfobarcolor = new CColorChooser(LOCALE_COLORMENU_BACKGROUND, &g_settings.infobar_red, &g_settings.infobar_green, &g_settings.infobar_blue, &g_settings.infobar_alpha, colorSetupNotifier);
+	CColorChooser * chInfobarTextcolor = new CColorChooser(LOCALE_COLORMENU_TEXTCOLOR, &g_settings.infobar_Text_red, &g_settings.infobar_Text_green, &g_settings.infobar_Text_blue, NULL, colorSetupNotifier);
+	CColorChooser * chInfobarBarColor = new CColorChooser(LOCALE_INFOBAR_BAR_COLOR, &g_settings.infobar_barcolor_red, &g_settings.infobar_barcolor_green, &g_settings.infobar_barcolor_blue, NULL, colorSetupNotifier);
 
-	colorSettings_statusbarColors.addItem( new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_COLORSTATUSBAR_TEXT));
-	colorSettings_statusbarColors.addItem( new CMenuForwarder(LOCALE_COLORMENU_BACKGROUND, true, NULL, chInfobarcolor ));
-	colorSettings_statusbarColors.addItem( new CMenuForwarder(LOCALE_COLORMENU_TEXTCOLOR, true, NULL, chInfobarTextcolor ));
+	colorSettings_statusbarColors.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_COLORSTATUSBAR_TEXT));
+	colorSettings_statusbarColors.addItem(new CMenuForwarder(LOCALE_COLORMENU_BACKGROUND, true, NULL, chInfobarcolor));
+	colorSettings_statusbarColors.addItem(new CMenuForwarder(LOCALE_COLORMENU_TEXTCOLOR, true, NULL, chInfobarTextcolor));
+	colorSettings_statusbarColors.addItem(new CMenuForwarder(LOCALE_INFOBAR_BAR_COLOR, true, NULL, chInfobarBarColor));
 }
 
 void CNeutrinoApp::InitColorSettingsTiming(CMenuWidget &colorSettings_timing)
