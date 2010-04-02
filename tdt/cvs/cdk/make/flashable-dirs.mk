@@ -308,6 +308,7 @@ $(flashprefix)/root-stock-%: \
 	mkdir  $@/boot
 	cp -rd $(prefix)/release_neutrino/boot/{audio.elf,video.elf} $@/boot/
 	cp -rd $(prefix)/release_neutrino/{bin,hdd,lib,media,mnt,proc,ram,sbin,share,sys,tmp,tuxbox,usr} $@/
+	cp -rd $(buildprefix)/root/var/etc/.version $@/
 	rm -rf $@/var
 	mkdir $@/var
 	mkdir $@/root
@@ -493,6 +494,7 @@ $(flashprefix)/var-%-neutrino: \
 	cp -rd $(prefix)/release_neutrino/usr/local/share/config/* $@/tuxbox/config
 	cp -rd $(prefix)/release_neutrino/usr/local/share/config/zapit $@/tuxbox/config/zapit
 	cp -rd $(prefix)/release_neutrino/etc $@/etc
+	ln -sf /.version $@/etc/.version
 	echo "tmpfs         /var/run            tmpfs   defaults                        0 0" >> $@/etc/fstab
 	echo "tmpfs         /var/lock           tmpfs   defaults                        0 0" >> $@/etc/fstab
 	echo "tmpfs         /var/tmp            tmpfs   defaults                        0 0" >> $@/etc/fstab
