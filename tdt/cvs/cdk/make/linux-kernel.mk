@@ -175,9 +175,9 @@ UFS910PATCHES_23 = $(COMMONPATCHES_23) \
 #               Patches/ufs910_stboards_stm23.patch
 
 CUBEPATCHES_023 = $(COMMONPATCHES_23) \
-                Patches/cuberevo_patches_stlinux23$(PATCH_STR).patch) \
-                Patches/cuberevo_rtl8201_stlinux23$(PATCH_STR).patch) \
-                Patches/Patches/$(CUBEMOD)_setup_stlinux23$(PATCH_STR).patch)
+                Patches/cuberevo_patches_stlinux23$(PATCH_STR).patch \
+                Patches/cuberevo_rtl8201_stlinux23$(PATCH_STR).patch \
+                Patches/$(CUBEMOD)_setup_stlinux23$(PATCH_STR).patch
 
 KERNELPATCHES_23 =      $(if $(TF7700),$(TF7700PATCHES_23)) \
                         $(if $(HL101),$(HL101PATCHES_23)) \
