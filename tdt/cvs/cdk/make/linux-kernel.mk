@@ -157,7 +157,7 @@ UFS922PATCHES_23 = $(COMMONPATCHES_23) \
 
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \
                $(if $(P0119),Patches/ufs922_stasc_stm23.patch) \
-               $(if $(P0119),Patches/tf7700_setup_stm23.patch) 
+               Patches/tf7700_setup_stm23$(PATCH_STR).patch 
 
 HL101PATCHES_23 = $(COMMONPATCHES_23) \
                 $(if $(P0119),Patches/hl101_setup_stlinux23.patch)

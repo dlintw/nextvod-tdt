@@ -4,8 +4,6 @@ EXTRA_DIST = rcdboxnew.xml rcdboxold.xml rcdboxbuttons.xml help.xml \
 	rcufs9101w.xml rcufs91014w.xml \
 	keymappings.xml rcdreambox_keyboard.xml
 
-# rc_vip2.xml
-
 install-data-local:
 	install -d $(DESTDIR)$(TUXBOXDATADIR)/enigma/resources
 	install -m 0644 $(EXTRA_DIST) $(DESTDIR)$(TUXBOXDATADIR)/enigma/resources
