@@ -179,7 +179,7 @@ release_tf7700: release_common_utils
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/bin/gotosleep
 	rm -f $(prefix)/release/etc/network/interfaces
-	echo "config.usage.hdd_standby=0" >> $(prefix)/release/usr/local/share/enigma2/settings
+	echo "config.usage.hdd_standby=0" >> $(prefix)/release/etc/enigma2/settings
 
 
 #
