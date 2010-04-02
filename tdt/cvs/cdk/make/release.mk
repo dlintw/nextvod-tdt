@@ -173,7 +173,7 @@ release_tf7700: release_common_utils
 
 
 #	install autofs
-	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
+#	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
 	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
