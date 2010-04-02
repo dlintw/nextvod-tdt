@@ -907,6 +907,11 @@ int CNeutrinoApp::loadSetup(const char * fname)
 	g_settings.infobar_Text_green = configfile.getInt32( "infobar_Text_green", 0x64 );
 	g_settings.infobar_Text_blue = configfile.getInt32( "infobar_Text_blue", 0x64 );
 
+	g_settings.infobar_barcolor = configfile.getInt32("infobar_barcolor", 0x999900);
+	g_settings.infobar_barcolor_red = configfile.getInt32("infobar_barcolor_red", 66);
+	g_settings.infobar_barcolor_green = configfile.getInt32("infobar_barcolor_green", 66);
+	g_settings.infobar_barcolor_blue = configfile.getInt32("infobar_barcolor_blue", 0);
+
 	//network
 	for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++) {
 		sprintf(cfg_key, "network_nfs_ip_%d", i);
@@ -1443,6 +1448,12 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setInt32( "infobar_Text_red", g_settings.infobar_Text_red );
 	configfile.setInt32( "infobar_Text_green", g_settings.infobar_Text_green );
 	configfile.setInt32( "infobar_Text_blue", g_settings.infobar_Text_blue );
+
+	g_settings.infobar_barcolor = convertSetupColor2RGB(*(&g_settings.infobar_barcolor_red), *(&g_settings.infobar_barcolor_green), *(&g_settings.infobar_barcolor_blue));
+	configfile.setInt32("infobar_barcolor", g_settings.infobar_barcolor);
+	configfile.setInt32("infobar_barcolor_red", g_settings.infobar_barcolor_red);
+	configfile.setInt32("infobar_barcolor_green", g_settings.infobar_barcolor_green);
+	configfile.setInt32("infobar_barcolor_blue", g_settings.infobar_barcolor_blue);
 
 	//network
 	for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++) {
@@ -4600,6 +4611,12 @@ void CNeutrinoApp::loadColors(const char * fname)
 	g_settings.infobar_Text_red = tconfig.getInt32( "infobar_Text_red", 0x64 );
 	g_settings.infobar_Text_green = tconfig.getInt32( "infobar_Text_green", 0x64 );
 	g_settings.infobar_Text_blue = tconfig.getInt32( "infobar_Text_blue", 0x64 );
+
+	g_settings.infobar_barcolor = tconfig.getInt32("infobar_barcolor", 0x999900);
+	g_settings.infobar_barcolor_red = tconfig.getInt32("infobar_barcolor_red", 66);
+	g_settings.infobar_barcolor_green = tconfig.getInt32("infobar_barcolor_green", 66);
+	g_settings.infobar_barcolor_blue = tconfig.getInt32("infobar_barcolor_blue", 0);
+
 	for (int i = 0; i < LCD_SETTING_COUNT; i++)
 		g_settings.lcd_setting[i] = tconfig.getInt32(lcd_setting[i].name, lcd_setting[i].default_value);
 	strcpy(g_settings.lcd_setting_dim_time, tconfig.getString("lcd_dim_time","0").c_str());
@@ -4666,6 +4683,12 @@ void CNeutrinoApp::saveColors(const char * fname)
 	tconfig.setInt32( "infobar_Text_red", g_settings.infobar_Text_red );
 	tconfig.setInt32( "infobar_Text_green", g_settings.infobar_Text_green );
 	tconfig.setInt32( "infobar_Text_blue", g_settings.infobar_Text_blue );
+
+	tconfig.setInt32("infobar_barcolor", g_settings.infobar_barcolor);
+	tconfig.setInt32("infobar_barcolor_red", g_settings.infobar_barcolor_red);
+	tconfig.setInt32("infobar_barcolor_green", g_settings.infobar_barcolor_green);
+	tconfig.setInt32("infobar_barcolor_blue", g_settings.infobar_barcolor_blue);
+
 	for (int i = 0; i < LCD_SETTING_COUNT; i++)
 		tconfig.setInt32(lcd_setting[i].name, g_settings.lcd_setting[i]);
 	tconfig.setString("lcd_dim_time", g_settings.lcd_setting_dim_time);
