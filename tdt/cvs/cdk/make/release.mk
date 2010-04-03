@@ -28,6 +28,7 @@ release_cube_common:
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 
 	rm -f $(prefix)/release/lib/modules/simu_button.ko
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
@@ -48,11 +49,11 @@ release_cuberevo_2000hd: release_common_utils release_cube_common
 	
 release_cuberevo_250hd: release_common_utils release_cube_common
 	echo "cuberevo-250hd" > $(prefix)/release/etc/hostname
-    cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	
 release_cuberevo_mini_fta: release_common_utils release_cube_common
 	echo "cuberevo-mini-fta" > $(prefix)/release/etc/hostname
-    cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	
 release_cuberevo_mini2: release_common_utils release_cube_common
 	echo "cuberevo-mini2" > $(prefix)/release/etc/hostname
