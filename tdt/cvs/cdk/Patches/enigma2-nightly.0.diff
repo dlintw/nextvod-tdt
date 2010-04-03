@@ -18082,3 +18082,19 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
 +fi
 +AC_SUBST($1)dnl
 +])
+--- enigma2-nightly.orig/configure.ac	2010-04-03 23:45:11.000000000 +0200
++++ enigma2-nightly/configure.ac	2010-04-03 23:47:27.000000000 +0200
+@@ -67,10 +67,11 @@
+ TUXBOX_APPS_LIB_PKGCONFIG(XML2,libxml-2.0)
+ 
+ # ok, we are in trouble: XMLCCWRAP only defines C++ symbols. So let's just check if linking works,
+-# and assume everything will be ok. Then just check for the "exit" symbol, which should be always there.
++# and assume everything will be ok. Then just check for the "main" symbol, which should be always there.
++# This check fails if the user decides to use the --pedantic CFLAG
+ AC_LANG_SAVE
+ AC_LANG_CPLUSPLUS
+-TUXBOX_APPS_LIB_SYMBOL(XMLCCWRAP, xmlccwrap, exit)
++TUXBOX_APPS_LIB_SYMBOL(XMLCCWRAP, xmlccwrap, main)
+ AC_LANG_RESTORE
+ 
+ if test "$withsdl" = "yes" ; then
