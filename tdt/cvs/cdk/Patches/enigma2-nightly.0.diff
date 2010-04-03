@@ -22,7 +22,7 @@ diff -Nur enigma2-nightly.org/acinclude.m4 enigma2-nightly/acinclude.m4
 diff -Nur enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
 --- enigma2-nightly.org/configure.ac	2009-12-12 23:16:22.333099000 +0100
 +++ enigma2-nightly/configure.ac	2009-12-13 00:08:06.000000000 +0100
-@@ -22,6 +22,15 @@
+@@ -22,6 +22,26 @@
  fi
  AM_CONDITIONAL(HAVE_DDVDLIB, test "$have_ddvdlib" = "yes")
  
@@ -35,6 +35,17 @@ diff -Nur enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
 +                *) AC_MSG_ERROR([bad value ${enableval} for --enable-tf7700]) ;;
 +        esac])
 +AM_CONDITIONAL([ENABLE_TF7700], [test x$enable_tf7700 = xtrue])
++
++AC_ARG_ENABLE([cuberevo],
++        [AS_HELP_STRING(--enable-cuberevo,    enable cuberevo stuff)],
++#	AC_MSG_ERROR([bad value I${enableval}I for --enable-cuberevo]))
++        [case "${enableval}" in
++                yes) enable_cuberevo=true ;;
++                no) enable_cuberevo=false ;;
++                *) AC_MSG_ERROR([bad value ${enableval} for --enable-cuberevo]) ;;
++        esac])
++AM_CONDITIONAL([ENABLE_CUBEREVO], [test x$enable_cuberevo = xtrue])
++
  AM_PATH_PYTHON()
  AC_PYTHON_DEVEL
  #AM_PATH_XINE(1.1.0,, AC_MSG_ERROR([*** Please install xine-lib (devel) first ***]))
@@ -63,11 +74,12 @@ diff -Nur enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
  lib/python/Plugins/SystemPlugins/CleanupWizard/Makefile
  lib/python/Plugins/SystemPlugins/CleanupWizard/meta/Makefile
  lib/python/Plugins/SystemPlugins/CommonInterfaceAssignment/Makefile
-@@ -180,6 +184,11 @@
+@@ -180,6 +184,12 @@
  lib/python/Plugins/SystemPlugins/Videomode/meta/Makefile
  lib/python/Plugins/SystemPlugins/WirelessLan/Makefile
  lib/python/Plugins/SystemPlugins/WirelessLan/meta/Makefile
 +lib/python/Plugins/Extensions/TopfieldVFD/Makefile
++lib/python/Plugins/Extensions/CuberevoVFD/Makefile
 +lib/python/Plugins/SystemPlugins/Tuxtxt/Makefile
 +lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/Makefile
 +lib/python/Plugins/SystemPlugins/VFD-Icons/Makefile 
@@ -712,7 +724,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/demux.cpp enigma2-nightly/lib/dvb/demux.cp
 diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
 --- enigma2-nightly.org/lib/dvb/dvb.cpp	2009-12-12 23:16:22.404599000 +0100
 +++ enigma2-nightly/lib/dvb/dvb.cpp	2009-12-13 11:49:35.249764000 +0100
-@@ -96,6 +96,18 @@
+@@ -96,6 +96,32 @@
  		m_boxtype = DM800;
  	else if (!strncmp(tmp, "dm500hd\n", rd))
  		m_boxtype = DM500HD;
@@ -727,16 +739,32 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
 +		m_boxtype = HDBOX;
 +	else if (!strncmp(tmp, "hl101\n", rd))
 +		m_boxtype = HL101;
++	else if (!strncmp(tmp, "cuberevo\n", rd))
++		m_boxtype = CUBEREVO;
++	else if (!strncmp(tmp, "cuberevo-9500hd\n", rd))
++		m_boxtype = CUBEREVO_9500HD;
++	else if (!strncmp(tmp, "cuberevo-mini\n", rd))
++		m_boxtype = CUBEREVO_MINI;
++	else if (!strncmp(tmp, "cuberevo-mini2\n", rd))
++		m_boxtype = CUBEREVO_MINI2;
++	else if (!strncmp(tmp, "cuberevo-2000hd\n", rd))
++		m_boxtype = CUBEREVO_2000HD;
++	else if (!strncmp(tmp, "cuberevo-250hd\n", rd))
++		m_boxtype = CUBEREVO_250HD;
++	else if (!strncmp(tmp, "cuberevo-mini-fta\n", rd))
++		m_boxtype = CUBEREVO_MINI_FTA;
 +#endif
  	else {
  		eDebug("boxtype detection via /proc/stb/info not possible... use fallback via demux count!\n");
  		if (m_demux.size() == 3)
-@@ -540,7 +552,56 @@
+@@ -540,7 +552,58 @@
  			}
  		}
  	}
 +#if defined(__sh__)
-+	else if (m_boxtype == UFS910 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX || m_boxtype == HL101 )
++	else if (m_boxtype == UFS910 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX || m_boxtype == HL101 ||
++		m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || 
++		m_boxtype == CUBEREVO_MINI_FTA || m_boxtype == CUBEREVO_250HD || m_boxtype == CUBEREVO_2000HD || m_boxtype == CUBEREVO_9500HD )
 +	{
 +		for (; i != m_demux.end(); ++i, ++n)
 +		{
@@ -812,7 +840,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.h enigma2-nightly/lib/dvb/dvb.h
  	int avail, busy;
  
 +#if defined(__sh__)
-+	enum { DM7025, DM800, DM500HD, DM8000, UFS910, UFS922, TF7700HDPVR, HDBOX, HL101};
++	enum { DM7025, DM800, DM500HD, DM8000, UFS910, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD};
 +#else
  	enum { DM7025, DM800, DM500HD, DM8000 };
 +#endif
@@ -3638,7 +3666,7 @@ diff -Nur enigma2-nightly.org/lib/python/Makefile.am enigma2-nightly/lib/python/
 diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/Makefile.am enigma2-nightly/lib/python/Plugins/Extensions/Makefile.am
 --- enigma2-nightly.org/lib/python/Plugins/Extensions/Makefile.am	2009-12-12 23:16:22.452629000 +0100
 +++ enigma2-nightly/lib/python/Plugins/Extensions/Makefile.am	2009-12-12 23:57:20.000000000 +0100
-@@ -1,6 +1,9 @@
+@@ -1,6 +1,14 @@
  installdir = $(pkglibdir)/python/Plugins/Extensions
  
 -SUBDIRS = TuxboxPlugins CutListEditor PicturePlayer MediaScanner MediaPlayer GraphMultiEPG SocketMMI DVDPlayer DVDBurn Modem
@@ -3647,6 +3675,11 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/Makefile.am enigma2-
 +if ENABLE_TF7700
 +SUBDIRS += TopfieldVFD
 +endif
++
++if ENABLE_CUBEREVO
++SUBDIRS += CuberevoVFD
++endif
++
  install_PYTHON =	\
  	__init__.py
 diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/TopfieldVFD/__init__.py enigma2-nightly/lib/python/Plugins/Extensions/TopfieldVFD/__init__.py
@@ -18098,3 +18131,269 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  AC_LANG_RESTORE
  
  if test "$withsdl" = "yes" ; then
+ 
+diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/__init__.py enigma2-nightly/lib/python/Plugins/Extensions/TopfieldVFD/__init__.py
+--- enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/__init__.py	1970-01-01 01:00:00.000000000 +0100
++++ enigma2-nightly/lib/python/Plugins/Extensions/CuberevoVFD/__init__.py	2009-12-13 10:15:06.057264790 +0100
+@@ -0,0 +1,2 @@
++
++
+diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/Makefile.am enigma2-nightly/lib/python/Plugins/Extensions/CuberevoVFD/Makefile.am
+--- enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/Makefile.am	1970-01-01 01:00:00.000000000 +0100
++++ enigma2-nightly/lib/python/Plugins/Extensions/CuberevoVFD/Makefile.am	2009-11-29 17:44:06.000000000 +0100
+@@ -0,0 +1,7 @@
++installdir = $(LIBDIR)/enigma2/python/Plugins/Extensions/CuberevoVFD
++
++install_PYTHON =	\
++	__init__.py \
++	plugin.py
++
++ 
+diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py enigma2-nightly/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py
+--- enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py	1970-01-01 01:00:00.000000000 +0100
++++ enigma2-nightly/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py	2009-12-02 10:26:12.000000000 +0100
+@@ -0,0 +1,244 @@
++from Screens.Screen import Screen
++from Screens.MessageBox import MessageBox
++from Plugins.Plugin import PluginDescriptor
++from Tools import Notifications
++from Components.Pixmap import Pixmap, MovingPixmap
++from Components.ActionMap import ActionMap, NumberActionMap
++from Components.Label import Label
++from Components.Button import Button
++from Components.Console import Console
++from Components.ConfigList import ConfigList
++from Components.config import config, configfile, ConfigSubsection, ConfigEnableDisable, \
++     getConfigListEntry, ConfigInteger, ConfigSelection
++from Components.ConfigList import ConfigListScreen
++from Plugins.Plugin import PluginDescriptor
++import ServiceReference
++from enigma import iPlayableService, eServiceCenter, iServiceInformation
++from enigma import evfd
++from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
++from re import compile as re_compile, search as re_search
++from enigma import evfd
++
++my_global_session = None
++
++config.plugins.CuberevoVFD = ConfigSubsection()
++config.plugins.CuberevoVFD.scroll = ConfigSelection(default = "once", choices = [("never"), ("once"), ("always")])
++config.plugins.CuberevoVFD.brightness = ConfigSelection(default = "bright", choices = [("dark"), ("medium"), ("bright")])
++config.plugins.CuberevoVFD.showClock = ConfigEnableDisable(default = True)
++config.plugins.CuberevoVFD.setLed = ConfigEnableDisable(default = False)
++config.plugins.CuberevoVFD.setFan = ConfigEnableDisable(default = True)
++
++class CuberevoVFDSetup(ConfigListScreen, Screen):
++	skin = """
++		<screen position="100,100" size="550,400" title="CuberevoVFD Setup" >
++		<widget name="config" position="20,10" size="460,350" scrollbarMode="showOnDemand" />
++		<ePixmap position="140,350" size="140,40" pixmap="skin_default/buttons/green.png" alphatest="on" />
++		<ePixmap position="280,350" size="140,40" pixmap="skin_default/buttons/red.png" alphatest="on" />
++		<widget name="key_green" position="140,350" size="140,40" font="Regular;20" backgroundColor="#1f771f" zPosition="2" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
++		<widget name="key_red" position="280,350" size="140,40" font="Regular;20" backgroundColor="#9f1313" zPosition="2" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
++		</screen>"""
++
++
++	def __init__(self, session, args = None):
++		Screen.__init__(self, session)
++		self.onClose.append(self.abort)
++		
++		# create elements for the menu list
++		self.list = [ ]
++		self.list.append(getConfigListEntry(_("Show clock"), config.plugins.CuberevoVFD.showClock))
++		self.list.append(getConfigListEntry(_("Set led"), config.plugins.CuberevoVFD.setLed))
++		self.list.append(getConfigListEntry(_("Brightness"), config.plugins.CuberevoVFD.brightness))
++		self.list.append(getConfigListEntry(_("Scroll long strings"), config.plugins.CuberevoVFD.scroll))
++		self.list.append(getConfigListEntry(_("Set fan"), config.plugins.CuberevoVFD.setFan))
++		ConfigListScreen.__init__(self, self.list)
++
++		self.Console = Console()
++                self["key_red"] = Button(_("Cancel"))
++                self["key_green"] = Button(_("Save"))
++                                
++		# DO NOT ASK.
++		self["setupActions"] = ActionMap(["SetupActions"],
++		{
++			"save": self.save,
++			"cancel": self.cancel,
++			"ok": self.save,
++		}, -2)
++
++	def abort(self):
++		print "aborting"
++
++	def save(self):
++		# save all settings
++		for x in self["config"].list:
++			x[1].save()
++
++		if config.plugins.CuberevoVFD.showClock.getValue():
++			cubeVfd.enableClock()
++		else:
++			cubeVfd.disableClock()
++
++		# enable/disable fan activity
++                if config.plugins.CuberevoVFD.setFan.getValue():
++                	cubeVfd.enableFan()
++                else:
++                	cubeVfd.disableFan()
++		# enable/disable led activity
++                if config.plugins.CuberevoVFD.setLed.getValue():
++                	cubeVfd.enableLed()
++                else:
++                	cubeVfd.disableLed()
++       
++	        # set the brightness
++        	brightness = 3
++                if config.plugins.CuberevoVFD.brightness.getValue() == "dark":
++                	brightness = 1
++                elif config.plugins.CuberevoVFD.brightness.getValue() == "bright":
++                	brightness = 7
++                evfd.getInstance().vfd_set_brightness(brightness)
++                
++	        # set the the scroll mode
++	      	if config.plugins.CuberevoVFD.scroll.value == "once":
++			scrollMode = 1
++		elif config.plugins.CuberevoVFD.scroll.value == "always":
++			scrollMode = 2
++		else:
++			scrollMode = 0
++                evfd.getInstance().vfd_set_ani(scrollMode)
++
++		configfile.save()
++
++		self.close()
++
++	def cancel(self):
++                for x in self["config"].list:
++			x[1].cancel()
++		self.close()
++
++
++class CuberevoVFD:
++	def __init__(self, session):
++		#print "CuberevoVFD initializing"
++	        self.session = session
++	        self.service = None
++	        self.onClose = [ ]
++	        self.__event_tracker = ServiceEventTracker(screen=self,eventmap=
++	                {
++                                iPlayableService.evSeekableStatusChanged: self.__evSeekableStatusChanged,
++                                iPlayableService.evStart: self.__evStart,
++	                })
++		self.Console = Console()
++		self.tsEnabled = False
++		self.fanEnabled = config.plugins.CuberevoVFD.setFan.getValue()
++		self.ledEnabled = config.plugins.CuberevoVFD.setLed.getValue()
++		self.clockEnabled = config.plugins.CuberevoVFD.showClock.getValue()
++		if self.fanEnabled == False:
++			self.disableFan()
++		else:
++			self.enableFan()
++		if self.ledEnabled == False:
++			self.disableLed()
++		else:
++			self.enableLed()
++		if config.plugins.CuberevoVFD.scroll.value == "once":
++			scrollMode = 1
++		elif config.plugins.CuberevoVFD.scroll.value == "always":
++			scrollMode = 2
++		else:
++			scrollMode = 0
++                evfd.getInstance().vfd_set_ani(scrollMode)
++
++	def enableClock(self):
++		self.clockEnabled = True
++	        
++	def disableClock(self):
++		self.clockEnabled = False
++
++	def enableLed(self):
++		self.ledEnabled = True
++                evfd.getInstance().vfd_set_light(self.ledEnabled)
++	        
++	def disableLed(self):
++		self.ledEnabled = False
++                evfd.getInstance().vfd_set_light(self.ledEnabled)
++
++	def enableFan(self):
++		self.fanEnabled = True
++		evfd.getInstance().vfd_set_fan(self.fanEnabled)
++	        
++	def disableFan(self):
++		self.fanEnabled = False
++		evfd.getInstance().vfd_set_fan(self.fanEnabled)
++
++        def regExpMatch(self, pattern, string):
++                if string is None:
++                        return None
++                try:
++                        return pattern.search(string).group()
++                except AttributeError:
++                        None
++	
++	def __evStart(self):
++	        self.__evSeekableStatusChanged()
++	
++	def getTimeshiftState(self):
++		service = self.session.nav.getCurrentService()
++		if service is None:
++		        return False
++		timeshift = service.timeshift()
++		if timeshift is None:
++		        return False
++		return True
++
++	def __evSeekableStatusChanged(self):
++	        tmp = self.getTimeshiftState()
++	        if tmp == self.tsEnabled:
++	        	return
++	        if tmp:
++	                print "[Timeshift enabled]"
++	                evfd.getInstance().vfd_set_icon(0x1A,True)
++	        else:
++	                print "[Timeshift disabled]"
++	                evfd.getInstance().vfd_set_icon(0x1A,False)
++		self.tsEnabled = tmp
++		
++	def shutdown(self):
++		self.abort()
++
++	def abort(self):
++		print "CuberevoVFD aborting"
++
++def main(session, **kwargs):
++	session.open(CuberevoVFDSetup)
++
++cubeVfd = None
++gReason = -1
++mySession = None
++
++def controlcubeVfd():
++	global cubeVfd
++	global gReason
++	global mySession
++
++        if gReason == 0 and mySession != None and cubeVfd == None:
++		print "Starting CuberevoVFD"
++		cubeVfd = CuberevoVFD(mySession)
++	elif gReason == 1 and cubeVfd != None:
++		print "Stopping CuberevoVFD"
++		cubeVfd = None
++
++def autostart(reason, **kwargs):
++	global cubeVfd
++	global gReason
++	global mySession
++
++	if kwargs.has_key("session"):
++                global my_global_session
++                mySession = kwargs["session"]
++	else:
++		gReason = reason
++	controlcubeVfd()
++
++def Plugins(**kwargs):
++ 	return [ PluginDescriptor(name="CuberevoVFD", description="Change VFD display settings", where = PluginDescriptor.WHERE_PLUGINMENU, fnc=main),
++ 		PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart) ]
++

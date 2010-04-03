@@ -31,10 +31,10 @@ release_cube_common:
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release/bin/vdstandby
 	chmod 777 $(prefix)/release/bin/vdstandby
-	cp $(kernelprefix)/linux/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
-	cp $(kernelprefix)/linux/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
-	cp $(kernelprefix)/linux/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
-if !STM22	
+if !STM22
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
 	cp -f $(buildprefix)/root/bin/ustslave_stm23 $(prefix)/release/bin/ustslave_stm23
 	chmod 777 $(prefix)/release/bin/ustslave_stm23
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release/bin/cubefpctl
