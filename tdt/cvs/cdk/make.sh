@@ -55,39 +55,42 @@ CONFIGPARAM="${CONFIGPARAM} --host=${host_alias} --build=${host_alias}"
 ############################################## 
 
 echo "Targets:"
-echo "1) Kathrein UFS-910"
-echo "2) Kathrein UFS-910-FLASH"
-echo "3) Kathrein UFS-912"
-echo "4) Kathrein UFS-922"
-echo "5) Topfield 7700 HDPVR"
-echo "6) Fortis based (HDBOX)"
-echo "7) Cuberevo (IPBOX 9000)"
-echo "8) SpiderBox HL-101"
-echo "9) Edision argus VIP2"
-echo "a) Cuberevo mini (IPBOX 900)"
-echo "b) Cuberevo mini2 (IPBOX 910)"
-echo "c) Cuberevo 250 (IPBOX 91)"
+echo " 1) Kathrein UFS-910"
+echo " 2) Kathrein UFS-910-FLASH"
+echo " 3) Kathrein UFS-912"
+echo " 4) Kathrein UFS-922"
+echo " 5) Topfield 7700 HDPVR"
+echo " 6) Fortis based (HDBOX)"
+echo " 7) SpiderBox HL-101"
+echo " 8) Edision argus VIP2"
+echo " 9) Cuberevo (IPBOX 9000)"
+echo "10) Cuberevo mini (IPBOX 900)"
+echo "11) Cuberevo mini2 (IPBOX 910)"
+echo "12) Cuberevo 250 (IPBOX 91)"
 case $1 in
-	1|2|3|4|5|6|7|8|9|a|b|c) REPLY=$1
+	[0-9] | 1[0-2]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-9)? ";;
+	read -p "Select target (1-12)? ";;
 esac
 
-[ "$REPLY" == "1" ] && CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
-[ "$REPLY" == "2" ] && CONFIGPARAM="$CONFIGPARAM --enable-flash_ufs910"
-[ "$REPLY" == "3" ] && CONFIGPARAM="$CONFIGPARAM --enable-ufs912"
-[ "$REPLY" == "4" ] && CONFIGPARAM="$CONFIGPARAM --enable-ufs922"
-[ "$REPLY" == "5" ] && CONFIGPARAM="$CONFIGPARAM --enable-tf7700"
-[ "$REPLY" == "6" ] && CONFIGPARAM="$CONFIGPARAM --enable-fortis_hdbox"
-[ "$REPLY" == "7" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo"
-[ "$REPLY" == "8" ] && CONFIGPARAM="$CONFIGPARAM --enable-hl101"
-[ "$REPLY" == "9" ] && CONFIGPARAM="$CONFIGPARAM --enable-vip2"
-[ "$REPLY" == "a" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo_mini"
-[ "$REPLY" == "b" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo_mini2"
-[ "$REPLY" == "c" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo_250hd"
-[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" -o "$REPLY" == "7" -o "$REPLY" == "8" -o "$REPLY" == "9" -o "$REPLY" == "a" -o "$REPLY" == "b" -o "$REPLY" == "c" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
+case "$REPLY" in
+	 1) TARGET="--enable-ufs910";;
+	 2) TARGET="--enable-flash_ufs910";;
+	 3) TARGET="--enable-ufs912";;
+	 4) TARGET="--enable-ufs922";;
+	 5) TARGET="--enable-tf7700";;
+	 6) TARGET="--enable-fortis_hdbox";;
+	 7) TARGET="--enable-hl101";;
+	 8) TARGET="--enable-vip2";;
+	 9) TARGET="--enable-cuberevo";;
+	10) TARGET="--enable-cuberevo_mini";;
+	11) TARGET="--enable-cuberevo_mini2";;
+	12) TARGET="--enable-cuberevo_250hd";;
+	 *) TARGET="--enable-ufs910";;
+esac
+CONFIGPARAM="$CONFIGPARAM $TARGET"
 
 ##############################################
 
@@ -104,11 +107,14 @@ case $2 in
         read -p "Select kernel (1-4)? ";;
 esac
 
-[ "$REPLY" == "1" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm22 --enable-p0041"
-[ "$REPLY" == "2" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23 --enable-p0119"
-[ "$REPLY" == "3" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23 --enable-p0119 --enable-havana"
-[ "$REPLY" == "4" ] && CONFIGPARAM="$CONFIGPARAM --enable-stm23 --enable-p0123"
-[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" ] || CONFIGPARAM="$CONFIGPARAM --enable-stm22 --enable-p0041"
+case "$REPLY" in
+	1) KERNEL="--enable-stm22 --enable-p0041";;
+	2) KERNEL="--enable-stm23 --enable-p0119";;
+	3) KERNEL="--enable-stm23 --enable-p0119 --enable-havana";;
+	4) KERNEL="--enable-stm23 --enable-p0123";;
+	*) KERNEL="--enable-stm22 --enable-p0041";;
+esac
+CONFIGPARAM="$CONFIGPARAM $KERNEL"
 
 ##############################################
 if [ "$3" ]; then 
