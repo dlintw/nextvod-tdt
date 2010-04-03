@@ -15690,11 +15690,12 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.h enigma2-nightly/lib/servi
 diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
 --- enigma2-nightly.org/main/bsod.cpp	2009-12-12 23:16:22.500600000 +0100
 +++ enigma2-nightly/main/bsod.cpp	2009-12-12 23:19:55.585100263 +0100
-@@ -15,7 +15,12 @@
+@@ -15,7 +15,13 @@
  
  /************************************************/
  
 +#if defined(__sh__)  
++#include <fcntl.h>
 +#define CRASH_EMAILADDR "nobody" 
 +int stopFBgui = 0;
 +#else 
@@ -15725,13 +15726,15 @@ diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
  #ifndef NO_OOPS_SUPPORT
  	oops(uc->uc_mcontext, signum == SIGSEGV || signum == SIGABRT);
  #endif
-@@ -467,6 +498,10 @@
+@@ -467,6 +498,12 @@
  	sigaction(SIGILL, &act, 0);
  	sigaction(SIGBUS, &act, 0);
  	sigaction(SIGABRT, &act, 0);
 +#if defined(__sh__)  
 +        sigaction(SIGUSR1, &act, 0);
 +        sigaction(SIGUSR2, &act, 0);
++        int fd = open ("/tmp/.e2fbstopOk", O_RDWR | O_CREAT | O_TRUNC);
++        close(fd);
 +#endif
  }
  
