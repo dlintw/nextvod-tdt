@@ -23,10 +23,9 @@ release_common_utils:
 	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
 
 
-# auxiliary targets for cube specific builds	
+
 release_cube_common:
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release/etc/init.d/halt
-	# no source !!! cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 
@@ -65,24 +64,6 @@ release_cuberevo_mini: release_common_utils release_cube_common
 	
 release_cuberevo: release_common_utils release_cube_common
 	echo "cuberevo" > $(prefix)/release/etc/hostname
-
-	
-release_cube_common:
-	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release/etc/init.d/halt
-	# no source !!! cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
-
-	rm -f $(prefix)/release/lib/modules/simu_button.ko
-	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
-	rm -f $(prefix)/release/bin/tffpctl
-	rm -f $(prefix)/release/bin/vfdctl
-	rm -f $(prefix)/release/bin/evremote
-	rm -f $(prefix)/release/bin/tfd2mtd
-
-
-
 
 release_ufs922:
 	echo "ufs922" > $(prefix)/release/etc/hostname 
