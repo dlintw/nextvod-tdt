@@ -61,11 +61,14 @@ echo "3) Kathrein UFS-912"
 echo "4) Kathrein UFS-922"
 echo "5) Topfield 7700 HDPVR"
 echo "6) Fortis based (HDBOX)"
-echo "7) Cuberevo (IPBOX)"
+echo "7) Cuberevo (IPBOX 9000)"
 echo "8) SpiderBox HL-101"
 echo "9) Edision argus VIP2"
+echo "a) Cuberevo mini (IPBOX 900)"
+echo "b) Cuberevo mini2 (IPBOX 910)"
+echo "c) Cuberevo 250 (IPBOX 91)"
 case $1 in
-	1|2|3|4|5|6|7|8|9) REPLY=$1
+	1|2|3|4|5|6|7|8|9|a|b|c) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
@@ -81,7 +84,10 @@ esac
 [ "$REPLY" == "7" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo"
 [ "$REPLY" == "8" ] && CONFIGPARAM="$CONFIGPARAM --enable-hl101"
 [ "$REPLY" == "9" ] && CONFIGPARAM="$CONFIGPARAM --enable-vip2"
-[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" -o "$REPLY" == "7" -o "$REPLY" == "8" -o "$REPLY" == "9" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
+[ "$REPLY" == "a" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo_mini"
+[ "$REPLY" == "b" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo_mini2"
+[ "$REPLY" == "c" ] && CONFIGPARAM="$CONFIGPARAM --enable-cuberevo_250hd"
+[ "$REPLY" == "1" -o "$REPLY" == "2" -o "$REPLY" == "3" -o "$REPLY" == "4" -o "$REPLY" == "5" -o "$REPLY" == "6" -o "$REPLY" == "7" -o "$REPLY" == "8" -o "$REPLY" == "9" -o "$REPLY" == "a" -o "$REPLY" == "b" -o "$REPLY" == "c" ] || CONFIGPARAM="$CONFIGPARAM --enable-ufs910"
 
 ##############################################
 
