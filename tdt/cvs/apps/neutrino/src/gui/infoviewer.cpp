@@ -788,7 +788,9 @@ int CInfoViewer::handleMsg (const neutrino_msg_t msg, neutrino_msg_data_t data)
 		showIcon_VTXT ();
 		showIcon_SubT();
 		showIcon_CA_Status (0);
-	  }
+		// we need to give EMU a second to get proper decoding status when zapping
+		usleep(1220000);
+		showIcon_CA_Status (0); 	  }
 	}
 	return messages_return::handled;
   } else if (msg == NeutrinoMessages::EVT_ZAP_GOT_SUBSERVICES) {
@@ -1307,25 +1309,39 @@ void CInfoViewer::paint_ca_icons(int caid, char * icon)
 }
 
 static char * gray = (char *) "white";
-//static char * green = (char *) "green";
+static char * green = (char *) "green";
 static char * white = (char *) "yellow";
 extern int pmt_caids[10];
 
 void CInfoViewer::showIcon_CA_Status (int notfirst)
 {
-#if 0
  FILE *f;
  char input[256];
- char buf[256];
- int acaid = 0;
+ char *buf;
  int py = BoxEndY - InfoHeightY_Info;
-#endif
- int i;
+ int i = 0;
+ int acaid = 0;
  int caids[] = { 0x1700, 0x0100, 0x0500, 0x1800, 0xB00, 0xD00, 0x900, 0x2600, 0x4a00, 0x0E00 };
-
  if(!notfirst) {
-	 for(i=0; i < (int)(sizeof(caids)/sizeof(int)); i++) {
-		 paint_ca_icons(caids[i], (char *) (pmt_caids[i] ? white : gray));
-	 }
+	f = fopen("/tmp/ecm.info", "rt");
+	if (f != NULL) {
+		buf = (char*) malloc(50);
+		if (buf) {
+			if (fgets(buf, 50, f) != NULL) {
+				while (buf[i] != '0')
+					i++;
+				sscanf(&buf[i], "%X", &acaid);
+			}
+			free(buf);
+		}
+		fclose(f);
+	}
+
+	for(i=0; i < (int)(sizeof(caids)/sizeof(int)); i++) {
+			if ((caids[i] & 0xFF00) == (acaid & 0xFF00) || (caids[i] == 0x1700 && (acaid & 0xFF00) == 0x0600)) {
+				paint_ca_icons(caids[i], green); }
+			else
+				paint_ca_icons(caids[i], (char *) (pmt_caids[i] ? white : gray));
+			}
  }
 }
