@@ -23,50 +23,10 @@ release_common_utils:
 	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
 
 
-release_cuberevo_9500hd: release_common_utils release_cube_common
-	echo "cuberevo-9500hd" > $(prefix)/release/etc/hostname
-
-
-release_cuberevo_2000hd: release_common_utils release_cube_common
-	echo "cuberevo-2000hd" > $(prefix)/release/etc/hostname
-
-
-release_cuberevo_250hd: release_common_utils release_cube_common cube_skin_extra
-	echo "cuberevo-250hd" > $(prefix)/release/etc/hostname
-
-
-cube_skin_extra:
-	cp $(targetprefix)/usr/local/share/enigma2/skin_default/rc_small.png $(prefix)/release/usr/local/share/enigma2/skin_default/rc.png
-	cp $(targetprefix)/usr/local/share/enigma2/skin_default/rcold_small.png $(prefix)/release/usr/local/share/enigma2/skin_default/rcold.png
-	cp $(targetprefix)/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/img/rc_small.png $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/img/rc.png
-	cp $(targetprefix)/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/img/rcold_small.png $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/img/rcold.png
-	cp $(targetprefix)/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/gfx/remotecontrol_static_small.jpg $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/gfx/remotecontrol_static.jpg
-	cp $(targetprefix)/usr/local/share/enigma2/rcpositions_small.xml $(prefix)/release/usr/local/share/enigma2/rcpositions.xml
-	cp $(targetprefix)/usr/local/share/enigma2/keymap_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
-
-
-release_cuberevo_mini_fta: release_common_utils release_cube_common cube_skin_extra
-	echo "cuberevo-mini-fta" > $(prefix)/release/etc/hostname
-
-
-release_cuberevo_mini2: release_common_utils release_cube_common
-	echo "cuberevo-mini2" > $(prefix)/release/etc/hostname
-#	obviously the following two links are not desired
-	rm -f $(prefix)/release/sbin/reboot
-	rm -f $(prefix)/release/sbin/poweroff
-
-
-release_cuberevo_mini: release_common_utils release_cube_common
-	echo "cuberevo-mini" > $(prefix)/release/etc/hostname
-
-
-release_cuberevo: release_common_utils release_cube_common
-	echo "cuberevo" > $(prefix)/release/etc/hostname
-
-
+# auxiliary targets for cube specific builds	
 release_cube_common:
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release/etc/init.d/halt
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release/lib/modules/
+	# no source !!! cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 
@@ -77,19 +37,51 @@ release_cube_common:
 	rm -f $(prefix)/release/bin/evremote
 	rm -f $(prefix)/release/bin/tfd2mtd
 
-	rm -f $(prefix)/release/usr/local/share/enigma2/skin_default/rc_dream.png
-	rm -f $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/img/rc_dream.png
-	rm -f $(prefix)/release/usr/local/share/enigma2/skin_default/rcold_dream.png
-	rm -f $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/img/rcold_dream.png
-	rm -f $(prefix)/release/usr/local/share/enigma2/skin_default/rc_small.png
-	rm -f $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/img/rc_small.png
-	rm -f $(prefix)/release/usr/local/share/enigma2/skin_default/rcold_small.png
-	rm -f $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/img/rcold_small.png
-	rm -f $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/gfx/remotecontrol_static_small.jpg
-	rm -f $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data/gfx/remotecontrol_static_dream.jpg
-	rm -f $(prefix)/release/usr/local/share/enigma2/rcpositions_dream.xml
-	rm -f $(prefix)/release/usr/local/share/enigma2/rcpositions_small.xml
-	rm -f $(prefix)/release/usr/local/share/enigma2/keymap_small.xml
+	
+	
+release_cuberevo_9500hd: release_common_utils release_cube_common
+	echo "cuberevo-9500hd" > $(prefix)/release/etc/hostname
+
+	
+release_cuberevo_2000hd: release_common_utils release_cube_common
+	echo "cuberevo-2000hd" > $(prefix)/release/etc/hostname
+
+	
+release_cuberevo_250hd: release_common_utils release_cube_common
+	echo "cuberevo-250hd" > $(prefix)/release/etc/hostname
+    cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+	
+release_cuberevo_mini_fta: release_common_utils release_cube_common
+	echo "cuberevo-mini-fta" > $(prefix)/release/etc/hostname
+    cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+	
+release_cuberevo_mini2: release_common_utils release_cube_common
+	echo "cuberevo-mini2" > $(prefix)/release/etc/hostname
+
+	
+release_cuberevo_mini: release_common_utils release_cube_common
+	echo "cuberevo-mini" > $(prefix)/release/etc/hostname
+
+	
+release_cuberevo: release_common_utils release_cube_common
+	echo "cuberevo" > $(prefix)/release/etc/hostname
+
+	
+release_cube_common:
+	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release/etc/init.d/halt
+	# no source !!! cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+
+	rm -f $(prefix)/release/lib/modules/simu_button.ko
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release/bin/tffpctl
+	rm -f $(prefix)/release/bin/vfdctl
+	rm -f $(prefix)/release/bin/evremote
+	rm -f $(prefix)/release/bin/tfd2mtd
+
+
 
 
 release_ufs922:
