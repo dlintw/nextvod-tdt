@@ -4385,7 +4385,7 @@ static int TSStop(Context_t *context) {
 	int ret = 0;
 	int wait_time = 20;
 	
-	while ( (PlayThread != NULL) && (wait_time--) > 0 ) {
+	while ( (PlayThread != NULL) && (--wait_time) > 0 ) {
 		#ifdef DEBUG  
 		printf("%s::%s Waiting for TS thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 		#endif

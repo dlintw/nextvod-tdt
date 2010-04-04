@@ -184,7 +184,7 @@ int LinuxDvbStop(Context_t  *context, char * type) {
 
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
 	
-	while ( (PtsThread != NULL) && (wait_time--) > 0 ) {
+	while ( (PtsThread != NULL) && (--wait_time) > 0 ) {
 #ifdef DEBUG  
 		printf("%s::%s Waiting for LinuxDVB thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 #endif

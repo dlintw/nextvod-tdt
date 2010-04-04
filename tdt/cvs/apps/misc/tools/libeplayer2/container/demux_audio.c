@@ -1028,9 +1028,9 @@ static int AUDIOStop(Context_t *context) {
 	int ret = 0;
 	int wait_time = 20;
 	
-	while ( (PlayThread != NULL) && (wait_time--) > 0 ) {
+	while ( (PlayThread != NULL) && (--wait_time) > 0 ) {
 		#ifdef DEBUG  
-		printf("%s::%s Waiting for TS thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
+		printf("%s::%s Waiting for Audio thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 		#endif
 		
 		usleep(100000);
@@ -1038,7 +1038,7 @@ static int AUDIOStop(Context_t *context) {
 
 	if (wait_time == 0) {
 		#ifdef DEBUG  
-		printf("%s::%s Timeout waiting for TS thread!\n", FILENAME, __FUNCTION__);
+		printf("%s::%s Timeout waiting for Audio thread!\n", FILENAME, __FUNCTION__);
 		#endif
 		
 		ret = -1;
