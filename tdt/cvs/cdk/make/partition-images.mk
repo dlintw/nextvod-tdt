@@ -299,7 +299,8 @@ $(flashprefix)/mtdblock3.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
 $(flashprefix)/mtdblock2.root-stock.neutrino: \
 $(flashprefix)/mtdblock2.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
 #######NEW NEUTRINO ROOT PARTITION SIZE:
-ROOT_PARTITION_SIZE=0x8e0000 ####look at ufs910_stboards_p0041_flash.patch
+#ROOT_PARTITION_SIZE=0x8e0000 ####look at ufs910_stboards_p0041_flash.patch
+#ROOT_PARTITION_SIZE= (via configure)
 	rm $@* >/dev/null 2>&1 || true
 	( dir=$(flashprefix) && \
 		echo "cd $</dev" > $$dir/.fakeroot && \
@@ -444,17 +445,18 @@ $(flashprefix)/mtdblock6.var-stock.enigma2: $(flashprefix)/var-stock-enigma2 $(M
 	@TUXBOX_CUSTOMIZE@
 
 ########NEW NEUTRINO VAR PARTITION SIZE:
-NEUTRINO_VAR_PARTITION_SIZE=0x580000 ####look at ufs910_stboards_p0041_flash.patch
+#NEUTRINO_VAR_PARTITION_SIZE=0x580000 ####look at ufs910_stboards_p0041_flash.patch
+#DATA_PARTITION_SIZE= (via configure)
 $(flashprefix)/mtdblock3.var-stock.neutrino: $(flashprefix)/var-stock-neutrino $(MKJFFS2) config.status
 	rm $@* >/dev/null 2>&1 || true
 	( dir=$(flashprefix) && \
-		echo "$(MKJFFS2) -e 0x10000 --pad=$(NEUTRINO_VAR_PARTITION_SIZE) -r $< -o $@" >> $$dir/.fakeroot && \
+		echo "$(MKJFFS2) -e 0x10000 --pad=$(DATA_PARTITION_SIZE) -r $< -o $@" >> $$dir/.fakeroot && \
 		chmod 755 $$dir/.fakeroot && \
 		$(FAKEROOT) -- $$dir/.fakeroot && \
 		rm $$dir/.fakeroot )
 	chmod 644 $@
 	@FILESIZE=$$(stat -c%s $@); \
-	data_partition_size=`echo -e "$(--pad=$(NEUTRINO_VAR_PARTITION_SIZE))" | tr '[a-f]' '[A-F]' | cut  -b3-`; \
+	data_partition_size=`echo -e "$(--pad=$(DATA_PARTITION_SIZE))" | tr '[a-f]' '[A-F]' | cut  -b3-`; \
 	DATASIZE=`echo -e "ibase=16;$$data_partition_size" | bc`; \
 	if [ $$FILESIZE -gt $$DATASIZE ]; \
 		then echo "fatal error: File $@ too large ($$FILESIZE > $$DATASIZE, $(DATA_PARTITION_SIZE))"; \
