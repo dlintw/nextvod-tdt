@@ -151,7 +151,7 @@ int getModel()
             vBoxType = Vip2;
         else if(!strncasecmp(vName,"hdbox", 5))
             vBoxType = HdBox;
-	else if(!strncasecmp(vName,"octagon1008", 5))
+	else if(!strncasecmp(vName,"octagon1008", 11))
             vBoxType = HdBox;
         else
             vBoxType = Unknown;
