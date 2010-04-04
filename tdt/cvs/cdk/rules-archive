@@ -18,6 +18,7 @@ linux-2.6.23.1.tar.bz2;ftp://ftp.de.kernel.org/pub/linux/kernel/v2.6
 #stlinux23-host-kernel-source-sh4-2.6.23.1_stm23_0102-102.src.rpm;ftp://ftp.stlinux.com/pub/stlinux/2.3/SRPMS
 stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0119-119.src.rpm;ftp://ftp.stlinux.com/pub/stlinux/2.3/updates/SRPMS/
 stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0123-123.src.rpm;ftp://ftp.stlinux.com/pub/stlinux/2.3/updates/SRPMS/
+stlinux24-host-kernel-source-sh4-2.6.32.10_stm24_0201-201.src.rpm;ftp://ftp.stlinux.com/pub/stlinux/2.4/SRPMS/
 squashfs3.0.tar.gz;http://heanet.dl.sourceforge.net/sourceforge/squashfs
 lzma442.tar.bz2;http://heanet.dl.sourceforge.net/sourceforge/sevenzip
 #sqlzma3.3-fixed.tar.bz2;http://www.squashfs-lzma.org/dl

@@ -6,6 +6,8 @@ URL2=ftp://ftp.stlinux.com/pub/stlinux/2.2/STLinux/sh4
 URL2U=ftp://ftp.stlinux.com/pub/stlinux/2.2/updates/RPMS/sh4
 URL3=ftp://ftp.stlinux.com/pub/stlinux/2.3/STLinux/sh4
 URL3U=ftp://ftp.stlinux.com/pub/stlinux/2.3/updates/RPMS/sh4
+URL4=ftp://ftp.stlinux.com/pub/stlinux/2.4/STLinux/sh4
+URL4U=ftp://ftp.stlinux.com/pub/stlinux/2.4/updates/RPMS/sh4
 
 
 URLSH=http://ftp.stlinux.com/pub/stlinux/2.0/ST_Linux_2.0/SRPM_Distribution/host-SRPMS
@@ -18,6 +20,8 @@ URL2S=ftp://ftp.stlinux.com/pub/stlinux/2.2/SRPMS
 URL2SU=ftp://ftp.stlinux.com/pub/stlinux/2.2/updates/SRPMS
 URL3S=ftp://ftp.stlinux.com/pub/stlinux/2.3/SRPMS
 URL3SU=ftp://ftp.stlinux.com/pub/stlinux/2.3/updates/SRPMS
+URL4S=ftp://ftp.stlinux.com/pub/stlinux/2.4/SRPMS
+URL4SU=ftp://ftp.stlinux.com/pub/stlinux/2.4/updates/SRPMS
 
 Archive/bash-3.1-16.1.i386.rpm:
 	[ ! -f Archive/$(notdir $@) ] && \
@@ -31,6 +35,9 @@ Archive/stlinux22-sh4-%.sh4.rpm:
 Archive/stlinux23-sh4-%.sh4.rpm:
 	[ ! -f Archive/$(notdir $@) ] && \
 	(cd Archive && $(WGET) $(URL3)/$(notdir $@) || $(WGET) $(URL3U)/$(notdir $@)) || true
+Archive/stlinux24-sh4-%.sh4.rpm:
+	[ ! -f Archive/$(notdir $@) ] && \
+	(cd Archive && $(WGET) $(URL4)/$(notdir $@) || $(WGET) $(URL4U)/$(notdir $@)) || true
 
 Archive/stlinux20-host-%.src.rpm:
 	[ ! -f Archive/$(notdir $@) ] && \
@@ -41,6 +48,9 @@ Archive/stlinux22-host-%.src.rpm:
 Archive/stlinux23-host-%.src.rpm:
 	[ ! -f Archive/$(notdir $@) ] && \
 	(cd Archive && $(WGET) $(URL3S)/$(notdir $@) || $(WGET) $(URL3SU)/$(notdir $@)) || true
+Archive/stlinux24-host-%.src.rpm:
+	[ ! -f Archive/$(notdir $@) ] && \
+	(cd Archive && $(WGET) $(URL4S)/$(notdir $@) || $(WGET) $(URL4SU)/$(notdir $@)) || true
 Archive/stlinux20-cross-%.src.rpm:
 	[ ! -f Archive/$(notdir $@) ] && \
 	(cd Archive && $(WGET) $(URLSH)/$(notdir $@) || $(WGET) $(URLSHU)/$(notdir $@)) || true
@@ -50,6 +60,9 @@ Archive/stlinux22-cross-%.src.rpm:
 Archive/stlinux23-cross-%.src.rpm:
 	[ ! -f Archive/$(notdir $@) ] && \
 	(cd Archive && $(WGET) $(URL3S)/$(notdir $@) || $(WGET) $(URL3SU)/$(notdir $@)) || true
+Archive/stlinux24-cross-%.src.rpm:
+	[ ! -f Archive/$(notdir $@) ] && \
+	(cd Archive && $(WGET) $(URL4S)/$(notdir $@) || $(WGET) $(URL4SU)/$(notdir $@)) || true
 Archive/stlinux20-target-%.src.rpm:
 	[ ! -f Archive/$(notdir $@) ] && \
 	(cd Archive && $(WGET) $(URLS)/$(notdir $@) || $(WGET) $(URLSU)/$(notdir $@)) || true
@@ -59,3 +72,6 @@ Archive/stlinux22-target-%.src.rpm:
 Archive/stlinux23-target-%.src.rpm:
 	[ ! -f Archive/$@ ] && \
 	(cd Archive && $(WGET) $(URL3S)/$(notdir $@) || $(WGET) $(URL3SU)/$(notdir $@)) || true
+Archive/stlinux24-target-%.src.rpm:
+	[ ! -f Archive/$@ ] && \
+	(cd Archive && $(WGET) $(URL4S)/$(notdir $@) || $(WGET) $(URL4SU)/$(notdir $@)) || true

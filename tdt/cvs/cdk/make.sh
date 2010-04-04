@@ -68,7 +68,7 @@ echo "10) Cuberevo mini (IPBOX 900)"
 echo "11) Cuberevo mini2 (IPBOX 910)"
 echo "12) Cuberevo 250 (IPBOX 91)"
 case $1 in
-	[0-9] | 1[0-2]) REPLY=$1
+	[1-9] | 1[0-2]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
@@ -95,16 +95,17 @@ CONFIGPARAM="$CONFIGPARAM $TARGET"
 ##############################################
 
 echo "Kernel:"
-echo "1) STM 22 P0041"
-echo "2) STM 23 P0119 (instable)"
-echo "3) STM 23 P0119 with Havana (instable)"
-echo "4) STM 23 P0123 (instable)"
+echo " 1) STM 22 P0041"
+echo " 2) STM 23 P0119 (instable)"
+echo " 3) STM 23 P0119 with Havana (instable)"
+echo " 4) STM 23 P0123 (instable)"
+#echo " 5) STM 24 P0201 (not working)"
 case $2 in
-        1|2|3|4) REPLY=$2
+        [1-5]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
-        read -p "Select kernel (1-4)? ";;
+        read -p "Select kernel (1-5)? ";;
 esac
 
 case "$REPLY" in
@@ -112,6 +113,7 @@ case "$REPLY" in
 	2) KERNEL="--enable-stm23 --enable-p0119";;
 	3) KERNEL="--enable-stm23 --enable-p0119 --enable-havana";;
 	4) KERNEL="--enable-stm23 --enable-p0123";;
+	5) KERNEL="--enable-stm24 --enable-p0201";;
 	*) KERNEL="--enable-stm22 --enable-p0041";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"

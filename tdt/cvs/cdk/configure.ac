@@ -37,6 +37,11 @@ AC_ARG_ENABLE(havana,
 	,[enable_havana=no])
 AM_CONDITIONAL(STM23_HAVANA,test "$enable_havana" = "yes")
 
+AC_ARG_ENABLE(stm24,
+	AS_HELP_STRING(--enable-stm24,	set up the CDK to use the STLinux 2.4),
+	,[enable_stm24=no])
+AM_CONDITIONAL(STM24,test "$enable_stm24" = "yes")
+
 AC_ARG_ENABLE(p0040,
 	AS_HELP_STRING(--enable-p0040,	set up the CDK to use the STLinux 2.2 with patchlevel 0040),
 	,[enable_p0040=no])
@@ -62,6 +67,14 @@ AC_ARG_ENABLE(p0123,
 	esac], [enable_p0123=no])
 AM_CONDITIONAL(ENABLE_P0123,test "$enable_p0123" = "yes")
 AC_SUBST(P0123)
+
+AC_ARG_ENABLE(p0201,
+        AS_HELP_STRING(--enable-p0201,  set up the CDK to use the STLinux 2.4 with patchlevel 0201),
+	[case "${enableval}" in
+		yes) P0201=p0201 ;;
+	esac], [enable_p0201=no])
+AM_CONDITIONAL(ENABLE_P0201,test "$enable_p0201" = "yes")
+AC_SUBST(P0201)
 
 AC_ARG_ENABLE(debug,
 	AS_HELP_STRING(--enable-debug,	set up the CDK to use debug kernel configs),
@@ -617,6 +630,8 @@ TUXBOX_RULES_MAKE(linuxp0041)
 TUXBOX_RULES_MAKE(linux23)
 TUXBOX_RULES_MAKE(linuxp0119)
 TUXBOX_RULES_MAKE(linuxp0123)
+TUXBOX_RULES_MAKE(linux24)
+TUXBOX_RULES_MAKE(linuxp0201)
 
 if test "$enable_stm22" = "yes"; then
 	if test "$enable_p0040" == "yes"; then
@@ -630,6 +645,7 @@ if test "$enable_stm22" = "yes"; then
 		KERNELSTMLABEL="_${VERSION_linux#*_}"
 	fi
 else
+if test "$enable_stm23" = "yes"; then
 	if test "$enable_p0123" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0123}
 		KERNELSTMLABEL="_${VERSION_linuxp0123#*_}"
@@ -639,6 +655,17 @@ else
 		KERNELSTMLABEL="_${VERSION_linuxp0119#*_}"
 		KERNELLABEL="119"
 	fi
+else
+	#if test "$enable_p0201" == "yes"; then
+		KERNELVERSION=${VERSION_linuxp0201}
+		KERNELSTMLABEL="_${VERSION_linuxp0201#*_}"
+		KERNELLABEL="201"
+	#else
+	#	KERNELVERSION=${VERSION_linuxp0201}
+	#	KERNELSTMLABEL="_${VERSION_linuxp0201#*_}"
+	#	KERNELLABEL="201"
+	#fi
+fi
 fi
 
 #TUXBOX_RULES_MAKE_EXDIR(binutils)
@@ -894,10 +921,12 @@ localversion:          $KERNELSTMLABEL
 STLinux 2.2:	       $enable_stm22
 STLinux 2.3:	       $enable_stm23
 STLinux 2.3_Havana:    $enable_havana
+STLinux 2.4:	       $enable_stm24
 Patchlevel P0040:      $enable_p0040
 Patchlevel P0041:      $enable_p0041
 Patchlevel P0119:      $enable_p0119
 Patchlevel P0123:      $enable_p0123
+Patchlevel P0201:      $enable_p0201
 vdr VDR 1.7.11:        $enable_vdr1711
 flash rules:	       $enable_flashrules
 ccache:		       $enable_ccache

@@ -1,0 +1,12 @@
+--- SPECS/stm-cross-binutils.spec.orig	2010-04-04 05:33:43.000000000 +0200
++++ SPECS/stm-cross-binutils.spec	2010-04-04 05:34:05.000000000 +0200
+@@ -51,9 +51,7 @@
+ binary and object files.  They may be used in conjunction with a compiler
+ and various libraries to build programs for Linux.
+ 
+-%if ! %{nohostbuilddeps}
+ BuildRequires: autoconf, bison, flex, gettext, texinfo
+-%endif
+ BuildRequires: %{_stm_pkg_prefix}-host-rpmconfig
+ 
+ # Cross Package

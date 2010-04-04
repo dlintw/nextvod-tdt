@@ -1,0 +1,34 @@
+--- SPECS/stm-host-rpmconfig.spec.orig	2010-04-04 15:09:50.000000000 +0200
++++ SPECS/stm-host-rpmconfig.spec	2010-04-04 15:11:39.000000000 +0200
+@@ -1,6 +1,15 @@
++# These four macros would normally be defined in config/rpm/common,
++# but as we are currently building that file define our own version here.
++
++%define _stm_build_id           2.4
++%define _stm_short_build_id     24
++%define _stm_install_prefix     /opt/STM
++%define _stm_pkg_prefix         stlinux24
+ %define _build_cpu		sh4_uclibc
+ %define _stm_base_prefix	%{_stm_install_prefix}/STLinux-%{_stm_build_id}
+ %define _stm_config_dir		%{_stm_base_prefix}/config
++# Quick and dirty workaround. RPM complains about unpackaged files.
++%define _unpackaged_files_terminate_build 0
+ 
+ Vendor: STMicroelectronics Limited
+ Distribution: Base
+@@ -11,6 +20,7 @@
+ Version: %{_stm_build_id}
+ Release: 21 
+ Source0: stm-host-rpmconfig-%{version}-%{_build_cpu}.tar.gz
++Patch0: stm-host-rpmconfig-skip-cvs.patch
+ License: GPL
+ Group: Development/Tools
+ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+@@ -26,6 +36,7 @@
+ 
+ %prep
+ %setup -q -n rpmconfig-%{version}
++%patch0 -p1
+ 
+ %install
+ make	RPMCONFIGDIR=%{buildroot}%{_stm_config_dir}/rpm \

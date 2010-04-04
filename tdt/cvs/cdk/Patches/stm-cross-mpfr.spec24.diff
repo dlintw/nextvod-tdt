@@ -1,0 +1,12 @@
+--- SPECS/stm-cross-mpfr.spec.orig	2010-04-04 07:35:17.000000000 +0200
++++ SPECS/stm-cross-mpfr.spec	2010-04-04 07:35:44.000000000 +0200
+@@ -7,9 +7,6 @@
+ Group	  	: Development/Tools
+ Buildroot 	: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-%{_stm_target_arch}-XXXXXX)
+ Prefix	  	: %{_stm_install_prefix}
+-%if ! %{nohostbuilddeps}
+ BuildRequires	: gmp-devel 
+-%endif
+ BuildArch       : %{_stm_host_arch}
+ %define _pkgname %{_stm_pkg_prefix}-cross-%{_stm_target_arch}-mpfr
+ 

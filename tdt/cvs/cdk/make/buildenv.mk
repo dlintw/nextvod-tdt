@@ -30,10 +30,17 @@ ETC_RW_FILES =
 
 if STM22
 STLINUX := stlinux22
-else
-STLINUX := stlinux23
-endif
 STM_SRC := stlinux23
+else !STM22
+if STM23
+STLINUX := stlinux23
+STM_SRC := $(STLINUX)
+else !STM23
+# STM24
+STLINUX := stlinux24
+STM_SRC := $(STLINUX)
+endif !STM23
+endif !STM22
 
 BUILDENV := \
 	CC=$(target)-gcc \
