@@ -136,15 +136,16 @@ endif
 endif
 
 COMMONPATCHES_23 = \
-                Patches/cpp_stm23$(PATCH_STR).patch \
-                Patches/time_stlinux23$(PATCH_STR).diff \
-                $(if $(P0123),Patches/mtd_stm23$(PATCH_STR).patch) \
+                Patches/cpp_stm23.patch \
+                Patches/time_stlinux23.diff \
+                Patches/mtd_stm23.patch) \
                 $(if $(P0119),Patches/fdma_stm23.patch) \
                 Patches/sound_stm23$(PATCH_STR).diff \
                 $(if $(P0123),Patches/stm23_strcpy$(PATCH_STR).patch) \
                 $(if $(P0123),Patches/stm23_asm_mov_0xffffff.patch) \
                 $(STM23_DVB_PATCH) \
-                $(if $(P0119),Patches/kernel23_depmod.patch)
+                $(if $(P0119),Patches/kernel23_depmod.patch) \
+				Patches/cmdline_printk_stm23.patch
 #               Patches/nosquashfs3.1_stm23.patch \
 #               Patches/squashfs3.0_stm23.patch \
 #               Patches/squashfs3.0_lzma_stm23.patch \

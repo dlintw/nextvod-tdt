@@ -4872,9 +4872,9 @@ diff -rcN linux-sh4/drivers/media/dvb/dvb-core/dvb_net.h UFS922_stm23_Patchdir/d
   };
   
 --- 36,41 ----
-diff -rcN linux-sh4/include/linux/dvb//ca.h UFS922_stm23_Patchdir/dvb/include//ca.h
-*** linux-sh4/include/linux/dvb//ca.h	2007-10-09 22:31:38.000000000 +0200
---- UFS922_stm23_Patchdir/dvb/include//ca.h	2009-06-02 22:37:50.000000000 +0200
+diff -rcN linux-sh4/include/linux/dvb/ca.h UFS922_stm23_Patchdir/dvb/include/ca.h
+*** linux-sh4/include/linux/dvb/ca.h	2007-10-09 22:31:38.000000000 +0200
+--- UFS922_stm23_Patchdir/dvb/include/ca.h	2009-06-02 22:37:50.000000000 +0200
 ***************
 *** 39,44 ****
 --- 39,46 ----
@@ -4886,9 +4886,9 @@ diff -rcN linux-sh4/include/linux/dvb//ca.h UFS922_stm23_Patchdir/dvb/include//c
   } ca_slot_info_t;
   
   
-diff -rcN linux-sh4/include/linux/dvb//frontend.h UFS922_stm23_Patchdir/dvb/include//frontend.h
-*** linux-sh4/include/linux/dvb//frontend.h	2007-10-09 22:31:38.000000000 +0200
---- UFS922_stm23_Patchdir/dvb/include//frontend.h	2009-06-02 22:37:50.000000000 +0200
+diff -rcN linux-sh4/include/linux/dvb/frontend.h UFS922_stm23_Patchdir/dvb/include//frontend.h
+*** linux-sh4/include/linux/dvb/frontend.h	2007-10-09 22:31:38.000000000 +0200
+--- UFS922_stm23_Patchdir/dvb/include/frontend.h	2009-06-02 22:37:50.000000000 +0200
 ***************
 *** 7,12 ****
 --- 7,14 ----
@@ -5428,9 +5428,9 @@ diff -rcN linux-sh4/include/linux/dvb//frontend.h UFS922_stm23_Patchdir/dvb/incl
 + #define FE_GET_EVENT		   _IOR('o', 78, struct dvb_frontend_event)
 + 
   #endif /*_DVBFRONTEND_H_*/
-diff -rcN linux-sh4/include/linux/dvb//video.h UFS922_stm23_Patchdir/dvb/include//video.h
-*** linux-sh4/include/linux/dvb//video.h	2007-10-09 22:31:38.000000000 +0200
---- UFS922_stm23_Patchdir/dvb/include//video.h	2009-06-02 22:37:50.000000000 +0200
+diff -rcN linux-sh4/include/linux/dvb/video.h UFS922_stm23_Patchdir/dvb/include/video.h
+*** linux-sh4/include/linux/dvb/video.h	2007-10-09 22:31:38.000000000 +0200
+--- UFS922_stm23_Patchdir/dvb/include/video.h	2009-06-02 22:37:50.000000000 +0200
 ***************
 *** 29,35 ****
   #ifdef __KERNEL__
@@ -5545,7 +5545,7 @@ diff -rcN linux-sh4/include/linux/dvb//video.h UFS922_stm23_Patchdir/dvb/include
   obj-$(CONFIG_DVB_CORE) += dvb-core.o
 diff -Naur linux-orig/drivers/media/dvb/dvb-core/dmxdev.c linux/drivers/media/dvb/dvb-core/dmxdev.c
 --- linux-orig/drivers/media/dvb/dvb-core/dmxdev.c	2009-06-07 14:13:04.000000000 +0200
-+++ linux/drivers/media/dvb/dvb-core/dmxdev.c	2009-06-20 17:20:04.000000000 +0200
++++ linux-sh4/drivers/media/dvb/dvb-core/dmxdev.c	2009-06-20 17:20:04.000000000 +0200
 @@ -379,11 +379,18 @@
  	switch (dmxdevfilter->type) {
  	case DMXDEV_TYPE_SEC:
@@ -5965,7 +5965,7 @@ diff -Naur linux-orig/drivers/media/dvb/dvb-core/dmxdev.c linux/drivers/media/dv
  			ret = -EINVAL;
 diff -Naur linux-orig/drivers/media/dvb/dvb-core/dmxdev.h linux/drivers/media/dvb/dvb-core/dmxdev.h
 --- linux-orig/drivers/media/dvb/dvb-core/dmxdev.h	2009-06-07 14:13:04.000000000 +0200
-+++ linux/drivers/media/dvb/dvb-core/dmxdev.h	2009-06-20 16:51:53.000000000 +0200
++++ linux-sh4/drivers/media/dvb/dvb-core/dmxdev.h	2009-06-20 16:51:53.000000000 +0200
 @@ -62,15 +62,20 @@
  	} filter;
  
