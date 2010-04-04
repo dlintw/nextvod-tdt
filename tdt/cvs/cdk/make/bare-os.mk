@@ -150,49 +150,51 @@ GCC		:= gcc
 LIBSTDC		:= libstdc++
 LIBSTDC_DEV	:= libstdc++-dev
 LIBGCC		:= libgcc
-
 if STM22
-GCC_VERSION	:= 4.1.1-26
+GCC_VERSION := 4.1.1-26
+GCC_SPEC := SPECS/stm-target-$(GCC)-sh4processed.spec
+GCC_SPEC_PATCH := Patches/stm-target-$(GCC)-sh4processed.spec22.diff
+GCC_PATCHES :=
+else !STM22
+if STM23
+GCC_VERSION := 4.2.4-50
+GCC_SPEC := SPECS/stm-target-$(GCC).spec
+GCC_SPEC_PATCH := Patches/stm-target-$(GCC).spec23.diff
+GCC_PATCHES :=
+else !STM23
+#stm24
+GCC_VERSION := 4.3.4-66
+GCC_SPEC := SPECS/stm-target-$(GCC).spec
+GCC_SPEC_PATCH := 
+GCC_PATCHES :=
+endif !STM23
+endif !STM22
+GCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm
+LIBSTDC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm
+LIBSTDC_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm
+LIBGCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
 
-RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm \
-RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm \
-RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm \
-RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm: \
+$(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM):
 		Archive/$(STLINUX)-target-$(GCC)-$(GCC_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	( cd SPECS; patch -p1 stm-target-$(GCC)-sh4processed.spec < ../Patches/stm-target-$(GCC)-sh4processed.spec22.diff )
-	rpmbuild $(DRPMBUILD) -bb  --clean --target=sh4-linux SPECS/stm-target-$(GCC)-sh4processed.spec
-else !STM22
-
-#stlinux23
-
-GCC_VERSION := 4.2.4-50
-
-RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm \
-RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm \
-RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm \
-RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm: \
-		Archive/stlinux23-target-$(GCC)-$(GCC_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
-	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	( cd SPECS; patch -p1 stm-target-$(GCC).spec < ../Patches/stm-target-$(GCC).spec23.diff )
-	export PATH=$(hostprefix)/bin:$(PATH) && \
-	rpmbuild $(DRPMBUILD) -bb  --clean --target=sh4-linux SPECS/stm-target-$(GCC).spec
-endif !STM22
+	( [ ! -z "$(GCC_SPEC_PATCH)" ] && patch -p1 $(GCC_SPEC) < "$(GCC_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(GCC_PATCHES)" ] && cp $(GCC_PATCHES) SOURCES/ || true ) && \
+	rpmbuild $(DRPMBUILD) -bb --clean --target=sh4-linux $(GCC_SPEC)
 
 $(DEPDIR)/min-$(GCC) $(DEPDIR)/std-$(GCC) $(DEPDIR)/max-$(GCC) $(DEPDIR)/$(GCC): \
-$(DEPDIR)/%$(GCC): $(DEPDIR)/%$(GLIBC_DEV) RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm
+$(DEPDIR)/%$(GCC): $(DEPDIR)/%$(GLIBC_DEV) $(GCC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(LIBSTDC) $(DEPDIR)/std-$(LIBSTDC) $(DEPDIR)/max-$(LIBSTDC) $(DEPDIR)/$(LIBSTDC): \
-$(DEPDIR)/%$(LIBSTDC): $(DEPDIR)/%$(CROSS_LIBGCC) RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm
+$(DEPDIR)/%$(LIBSTDC): $(DEPDIR)/%$(CROSS_LIBGCC) $(LIBSTDC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(LIBSTDC_DEV) $(DEPDIR)/std-$(LIBSTDC_DEV) $(DEPDIR)/max-$(LIBSTDC_DEV) $(DEPDIR)/$(LIBSTDC_DEV): \
-$(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm
+$(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) $(LIBSTDC_DEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
@@ -200,7 +202,7 @@ $(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) RPMS/sh4/$(STLINUX)-sh4-$(LIBST
 	sed -i "/^dependency_libs/s|-L/usr/lib -L/lib ||" $(targetprefix)/usr/lib/lib{std,sup}c++.la
 
 $(DEPDIR)/min-$(LIBGCC) $(DEPDIR)/std-$(LIBGCC) $(DEPDIR)/max-$(LIBGCC) $(DEPDIR)/$(LIBGCC): \
-$(DEPDIR)/%$(LIBGCC): RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
+$(DEPDIR)/%$(LIBGCC): $(LIBGCC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
