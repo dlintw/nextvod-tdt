@@ -103,7 +103,7 @@ $(HOST_RPMCONFIG_RPM): Archive/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VER
 		$(HOST_RPMCONFIG_SPEC_PATCH) $(HOST_RPMCONFIG_PATCHES) \
 		$(HOST_FILESYSTEM)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_RPMCONFIG_SPEC_PATCH)" ] && patch $(HOST_RPMCONFIG_SPEC) < "$(HOST_RPMCONFIG_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_RPMCONFIG_SPEC_PATCH)" ] && patch -p1 $(HOST_RPMCONFIG_SPEC) < "$(HOST_RPMCONFIG_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_RPMCONFIG_PATCHES)" ] && cp $(HOST_RPMCONFIG_PATCHES) SOURCES/ || true ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_RPMCONFIG_SPEC)
 
@@ -140,7 +140,7 @@ HOST_BASE_PASSWD_RPM := RPMS/sh4/$(STLINUX)-$(HOST_BASE_PASSWD)-$(HOST_BASE_PASS
 $(HOST_BASE_PASSWD_RPM) : Archive/$(STLINUX)-$(HOST_BASE_PASSWD)-$(HOST_BASE_PASSWD_VERSION).src.rpm \
 		$(HOST_BASE_PASSWD_SPEC_PATCH) $(HOST_BASE_PASSWD_PATCHES)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_BASE_PASSWD_SPEC_PATCH)" ] && patch $(HOST_BASE_PASSWD_SPEC) < "$(HOST_BASE_PASSWD_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_BASE_PASSWD_SPEC_PATCH)" ] && patch -p1 $(HOST_BASE_PASSWD_SPEC) < "$(HOST_BASE_PASSWD_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_BASE_PASSWD_PATCHES)" ] && cp $(HOST_BASE_PASSWD_PATCHES) SOURCES/ || true ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_BASE_PASSWD_SPEC)
 
@@ -176,7 +176,7 @@ HOST_DISTRIBUTIONUTILS_RPM := RPMS/$(host_arch)/$(STLINUX)-$(HOST_DISTRIBUTIONUT
 $(HOST_DISTRIBUTIONUTILS_RPM): Archive/$(STM_SRC)-$(HOST_DISTRIBUTIONUTILS)-$(HOST_DISTRIBUTIONUTILS_VERSION).src.rpm \
 		$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH) $(HOST_DISTRIBUTIONUTILS_PATCHES)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)" ] && patch $(HOST_DISTRIBUTIONUTILS_SPEC) < "$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)" ] && patch -p1 $(HOST_DISTRIBUTIONUTILS_SPEC) < "$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_DISTRIBUTIONUTILS_PATCHES)" ] && cp $(HOST_DISTRIBUTIONUTILS_PATCHES) SOURCES/ || true ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_DISTRIBUTIONUTILS_SPEC) 
 
@@ -198,7 +198,7 @@ HOST_FILESYSTEM := host-filesystem
 # $(HOST_FILESYSTEM_RPM): Archive/$(STLINUX)-$(HOST_FILESYSTEM)-$(HOST_FILESYSTEM_VERSION).src.rpm \
 # 		$(HOST_FILESYSTEM_SPEC_PATCH) $(HOST_FILESYSTEM_PATCHES)
 # 	rpm  $(DRPM) --nosignature -Uhv $< && \
-# 	( [ ! -z "$(HOST_FILESYSTEM_SPEC_PATCH)" ] && patch $(HOST_FILESYSTEM_SPEC) < "$(HOST_FILESYSTEM_SPEC_PATCH)" || true ) && \
+# 	( [ ! -z "$(HOST_FILESYSTEM_SPEC_PATCH)" ] && patch -p1 $(HOST_FILESYSTEM_SPEC) < "$(HOST_FILESYSTEM_SPEC_PATCH)" || true ) && \
 # 	( [ ! -z "$(HOST_FILESYSTEM_PASSWD_PATCHES)" ] && cp $(HOST_FILESYSTEM_PATCHES) SOURCES/ || true ) && \
 # 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_FILESYSTEM_SPEC)
 # 
@@ -246,7 +246,7 @@ HOST_AUTOTOOLS_RPM := RPMS/sh4/$(STLINUX)-$(HOST_AUTOTOOLS)-$(HOST_AUTOTOOLS_VER
 $(HOST_AUTOTOOLS_RPM): Archive/$(STLINUX)-$(HOST_AUTOTOOLS)-$(HOST_AUTOTOOLS_VERSION).src.rpm \
 		$(HOST_AUTOTOOLS_SPEC_PATCH) $(HOST_AUTOTOOLS_PATCHES)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_AUTOTOOLS_SPEC_PATCH)" ] && patch $(HOST_AUTOTOOLS_SPEC) < "$(HOST_AUTOTOOLS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_AUTOTOOLS_SPEC_PATCH)" ] && patch -p1 $(HOST_AUTOTOOLS_SPEC) < "$(HOST_AUTOTOOLS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_AUTOTOOLS_PASSWD_PATCHES)" ] && cp $(HOST_AUTOTOOLS_PATCHES) SOURCES/ || true ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_AUTOTOOLS_SPEC)
 
@@ -280,7 +280,7 @@ HOST_MTD_UTILS_RPM := RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VER
 $(HOST_MTD_UTILS_RPM): Archive/$(STM_SRC)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).src.rpm \
 		$(HOST_MTD_UTILS_SPEC_PATCH) $(HOST_MTD_UTILS_PATCHES)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_MTD_UTILS_SPEC_PATCH)" ] && patch $(HOST_MTD_UTILS_SPEC) < "$(HOST_MTD_UTILS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_MTD_UTILS_SPEC_PATCH)" ] && patch -p1 $(HOST_MTD_UTILS_SPEC) < "$(HOST_MTD_UTILS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_MTD_UTILS_PATCHES)" ] && cp $(HOST_MTD_UTILS_PATCHES) SOURCES/ || true ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_MTD_UTILS_SPEC)
 
@@ -366,7 +366,7 @@ CROSS_DISTRIBUTIONUTILS_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_DISTRIBUTION
 $(CROSS_DISTRIBUTIONUTILS_RPM): Archive/$(STLINUX)-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS))-$(CROSS_DISTRIBUTIONUTILS_VERSION).src.rpm \
 		$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH) $(CROSS_DISTRIBUTIONUTILS_PATCHES)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH)" ] && patch $(CROSS_DISTRIBUTIONUTILS_SPEC) < "$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH)" ] && patch -p1 $(CROSS_DISTRIBUTIONUTILS_SPEC) < "$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(CROSS_DISTRIBUTIONUTILS_PATCHES)" ] && cp $(CROSS_DISTRIBUTIONUTILS_PATCHES) SOURCES/ || true ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(CROSS_DISTRIBUTIONUTILS_SPEC)
 
@@ -401,7 +401,7 @@ else !STM23
 # STM24
 CROSS_BINUTILS_VERSION := 2.19.1-41
 CROSS_BINUTILS_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
-CROSS_BINUTILS_SPEC_PATCH := Patches/stm-cross-binutils.spec24.diff
+CROSS_BINUTILS_SPEC_PATCH :=
 CROSS_BINUTILS_PATCHES := 
 endif !STM23
 endif !STM22
@@ -412,7 +412,7 @@ $(CROSS_BINUTILS_RPM) $(CROSS_BINUTILS_DEV_RPM): \
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_BINUTILS))-$(CROSS_BINUTILS_VERSION).src.rpm \
 		$(CROSS_BINUTILS_SPEC_PATCH) $(CROSS_BINUTILS_PATCHES)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_BINUTILS_SPEC_PATCH)" ] && patch $(CROSS_BINUTILS_SPEC) < "$(CROSS_BINUTILS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_BINUTILS_SPEC_PATCH)" ] && patch -p1 $(CROSS_BINUTILS_SPEC) < "$(CROSS_BINUTILS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(CROSS_BINUTILS_PATCHES)" ] && cp $(CROSS_BINUTILS_PATCHES) SOURCES/ || true ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(CROSS_BINUTILS_SPEC)
 
@@ -437,10 +437,34 @@ $(DEPDIR)/kernel-headers: linux-kernel.do_prepare
 	touch $@
 
 #
+# CROSS GMP
+#
+if STM24
+CROSS_GMP := cross-sh4-gmp
+CROSS_GMP_VERSION := 4.3.2-4
+CROSS_GMP_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_GMP)).spec
+CROSS_GMP_SPEC_PATCH :=
+CROSS_GMP_PATCHES :=
+CROSS_GMP_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GMP)-$(CROSS_GMP_VERSION).$(host_arch).rpm
+
+$(CROSS_GMP_RPM) $(CROSS_GMP_DEV_RPM): \
+		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GMP))-$(CROSS_GMP_VERSION).src.rpm \
+		$(CROSS_GMP_SPEC_PATCH) $(CROSS_GMP_PATCHES)
+	rpm  $(DRPM) --nosignature -Uhv $< && \
+	( [ ! -z "$(CROSS_GMP_SPEC_PATCH)" ] && patch -p1 $(CROSS_GMP_SPEC) < "$(CROSS_GMP_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_GMP_PATCHES)" ] && cp $(CROSS_GMP_PATCHES) SOURCES/ || true ) && \
+	rpmbuild  $(DRPMBUILD) -bb -v --target=sh4-linux $(CROSS_GMP_SPEC)
+
+$(CROSS_GMP): $(CROSS_GMP_RPM)
+	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
+	touch .deps/$(notdir $@)
+endif STM24
+
+#
 # CROSS MPFR
 #
 if STM24
-CROSS_MPFR := cross-mpfr
+CROSS_MPFR := cross-sh4-mpfr
 CROSS_MPFR_VERSION := 2.4.2-4
 CROSS_MPFR_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_MPFR)).spec
 CROSS_MPFR_SPEC_PATCH := Patches/stm-cross-mpfr.spec24.diff
@@ -450,42 +474,12 @@ CROSS_MPFR_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_MPFR)-$(CROSS_MPFR_VERSIO
 $(CROSS_MPFR_RPM): Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_MPFR))-$(CROSS_MPFR_VERSION).src.rpm \
 		$(CROSS_MPFR_SPEC_PATCH) $(CROSS_MPFR_PATCHES)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_MPFR_SPEC_PATCH)" ] && patch $(CROSS_MPFR_SPEC) < "$(CROSS_MPFR_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_MPFR_SPEC_PATCH)" ] && patch -p1 $(CROSS_MPFR_SPEC) < "$(CROSS_MPFR_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(CROSS_MPFR_PATCHES)" ] && cp $(CROSS_MPFR_PATCHES) SOURCES/ || true ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(CROSS_MPFR_SPEC)
 
-$(CROSS_MPFR): $(CROSS_MPFR_RPM)
-	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
-	touch .deps/$(notdir $@)
-endif STM24
-
-#
-# CROSS GMP
-#
-if STM24
-CROSS_GMP := cross-gmp
-CROSS_GMP_DEV := $(CROSS_GMP)-dev
-CROSS_GMP_VERSION := 4.3.2-4
-CROSS_GMP_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_GMP)).spec
-CROSS_GMP_SPEC_PATCH :=
-CROSS_GMP_PATCHES :=
-CROSS_GMP_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GMP)-$(CROSS_GMP_VERSION).$(host_arch).rpm
-CROSS_GMP_DEV_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GMP_DEV)-$(CROSS_GMP_VERSION).$(host_arch).rpm
-
-$(CROSS_GMP_RPM) $(CROSS_GMP_DEV_RPM): \
-		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GMP))-$(CROSS_GMP_VERSION).src.rpm \
-		$(CROSS_GMP_SPEC_PATCH) $(CROSS_GMP_PATCHES)
-	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_GMP_SPEC_PATCH)" ] && patch $(CROSS_GMP_SPEC) < "$(CROSS_GMP_SPEC_PATCH)" || true ) && \
-	( [ ! -z "$(CROSS_GMP_PATCHES)" ] && cp $(CROSS_GMP_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(CROSS_GMP_SPEC)
-
-$(CROSS_GMP): $(CROSS_GMP_RPM)
-	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
-	touch .deps/$(notdir $@)
-
-$(CROSS_GMP_DEV): $(CROSS_GMP_DEV_RPM) $(CROSS_GMP)
-	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
+$(CROSS_MPFR): $(CROSS_GMP) $(CROSS_MPFR_RPM)
+	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
 	touch .deps/$(notdir $@)
 endif STM24
 
@@ -515,7 +509,7 @@ else !STM23
 CROSS_GCC_VERSION := 4.3.4-63
 CROSS_GCC_RAWVERSION := 4.3.4
 CROSS_GCC_SPEC := SPECS/stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
-CROSS_GCC_SPEC_PATCH :=
+CROSS_GCC_SPEC_PATCH := Patches/stm-cross-gcc.spec24.diff
 CROSS_GCC_PATCHES := 
 endif !STM23
 endif !STM22
@@ -536,15 +530,15 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 	rpm  $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
 		--relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 2,$|)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_GCC_SPEC_PATCH)" ] && patch $(CROSS_GCC_SPEC) < "$(CROSS_GCC_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_GCC_SPEC_PATCH)" ] && patch -p1 $(CROSS_GCC_SPEC) < "$(CROSS_GCC_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(CROSS_GCC_PATCHES)" ] && cp $(CROSS_GCC_PATCHES) SOURCES/ || true ) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(CROSS_GCC_SPEC) 
 	rpm $(DRPM) -ev $(STLINUX)-sh4-$(GLIBC_DEV) && \
 	rpm $(DRPM) -ev $(STLINUX)-sh4-$(GLIBC)
 
 if STM24
-$(CROSS_GCC): $(CROSS_GCC_RPM)
-	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
+$(CROSS_GCC): $(CROSS_MPFR) $(CROSS_GCC_RPM)
+	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
 	touch .deps/$(notdir $@)
 else !STM24
 $(CROSS_GCC): $(CROSS_GCC_RPM)

@@ -66,7 +66,7 @@ KERNELHEADERS_RPM := RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS
 $(KERNELHEADERS_RPM): Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm \
 		$(KERNELHEADERS_SPEC_PATCH) $(KERNELHEADERS_PATCHES)
 	rpm $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(KERNELHEADERS_SPEC_PATCH)" ] && patch $(KERNELHEADERS_SPEC) < "$(KERNELHEADERS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(KERNELHEADERS_SPEC_PATCH)" ] && patch -p1 $(KERNELHEADERS_SPEC) < "$(KERNELHEADERS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(KERNELHEADERS_PATCHES)" ] && cp $(KERNELHEADERS_PATCHES) SOURCES/ || true ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(KERNELHEADERS_SPEC)
 
@@ -112,7 +112,7 @@ GLIBC_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm
 $(GLIBC_RPM) $(GLIBC_DEV_RPM): Archive/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSION).src.rpm \
 		$(GLIBC_SPEC_PATCH) $(GLIBC_PATCHES) | filesystem
 	rpm $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(GLIBC_SPEC_PATCH)" ] && patch $(GLIBC_SPEC) < "$(GLIBC_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(GLIBC_SPEC_PATCH)" ] && patch -p1 $(GLIBC_SPEC) < "$(GLIBC_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(GLIBC_PATCHES)" ] && cp $(GLIBC_PATCHES) SOURCES/ || true ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux $(GLIBC_SPEC)
 

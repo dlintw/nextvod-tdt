@@ -1,0 +1,20 @@
+--- SPECS/stm-cross-gcc.spec.orig	2010-04-04 18:15:57.000000000 +0200
++++ SPECS/stm-cross-gcc.spec	2010-04-04 20:49:34.000000000 +0200
+@@ -57,6 +57,9 @@
+ 
+ %define _gccdir %{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}
+ 
++# Quick and dirty workaround. RPM complains about unpackaged files.
++%define _unpackaged_files_terminate_build 0
++
+ %description
+ This is the GNU C compiler, a fairly portable optimizing compiler which
+ supports multiple languages.  This package includes support for C, and
+@@ -199,7 +202,6 @@
+ 
+ %build
+ %cross_setup
+-export CC="gcc -m32"
+ 
+ %cross_configure \
+         --disable-checking \
