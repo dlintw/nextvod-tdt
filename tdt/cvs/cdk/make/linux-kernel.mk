@@ -339,7 +339,7 @@ else !STM23
 
 HOST_KERNEL_SOURCE := host-kernel-source
 HOST_KERNEL_SOURCE_VERSION := 2.6.32.10
-HOST_KERNEL_SOURCE_SPEC := SPECS/stm-host-kernel-sh4.spec
+HOST_KERNEL_SOURCE_SPEC := stm-host-kernel-sh4.spec
 HOST_KERNEL_SOURCE_SPEC_PATCH :=
 HOST_KERNEL_SOURCE_PATCHES :=
 HOST_KERNEL_SOURCE_RPM := RPMS/noarch/$(STLINUX)-$(HOST_KERNEL_SOURCE)-sh4-$(HOST_KERNEL_SOURCE_VERSION)$(KERNELSTMLABEL)-$(KERNELLABEL).noarch.rpm
@@ -347,9 +347,9 @@ HOST_KERNEL_SOURCE_RPM := RPMS/noarch/$(STLINUX)-$(HOST_KERNEL_SOURCE)-sh4-$(HOS
 $(HOST_KERNEL_SOURCE_RPM): \
 		Archive/$(STLINUX)-$(HOST_KERNEL_SOURCE)-sh4-$(HOST_KERNEL_SOURCE_VERSION)$(KERNELSTMLABEL)-$(KERNELLABEL).src.rpm
 	rpm $(DRPM) --nosignature --nodeps -Uhv $< && \
-        ( [ ! -z "$(HOST_KERNEL_SOURCE_SPEC_PATCH)" ] && patch -p1 $(HOST_KERNEL_SOURCE_SPEC) < "$(HOST_KERNEL_SOURCE_SPEC_PATCH)" || true ) && \
+        ( [ ! -z "$(HOST_KERNEL_SOURCE_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(HOST_KERNEL_SOURCE_SPEC) < "../Patches/$(HOST_KERNEL_SOURCE_SPEC_PATCH)" || true ) && \
         ( [ ! -z "$(HOST_KERNEL_SOURCE_PATCHES)" ] && cp $(HOST_KERNEL_SOURCE_PATCHES) SOURCES/ || true ) && \
-	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux $(HOST_KERNEL_SOURCE_SPEC)
+	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/$(HOST_KERNEL_SOURCE_SPEC)
 
 if DEBUG
 DEBUG_STR=.debug

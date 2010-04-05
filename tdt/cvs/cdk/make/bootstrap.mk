@@ -80,32 +80,33 @@ $(hostprefix)/ccache-bin/gcc: | $(CCACHE)
 HOST_RPMCONFIG := host-rpmconfig
 if STM22
 HOST_RPMCONFIG_VERSION := 2.2-10
-HOST_RPMCONFIG_SPEC := SPECS/stm-$(HOST_RPMCONFIG)-2.2.spec
-HOST_RPMCONFIG_SPEC_PATCH := Patches/stm-$(HOST_RPMCONFIG).spec22.diff
-HOST_RPMCONFIG_PATCHES := Patches/stm-host-rpmconfig-compress_man-allways-true.patch
+HOST_RPMCONFIG_SPEC := stm-$(HOST_RPMCONFIG)-2.2.spec
+HOST_RPMCONFIG_SPEC_PATCH := stm-$(HOST_RPMCONFIG).spec22.diff
+HOST_RPMCONFIG_PATCHES := stm-host-rpmconfig-compress_man-allways-true.patch
 else !STM22
 if STM23
 HOST_RPMCONFIG_VERSION := 2.3-16
-HOST_RPMCONFIG_SPEC := SPECS/stm-$(HOST_RPMCONFIG).spec
+HOST_RPMCONFIG_SPEC := stm-$(HOST_RPMCONFIG).spec
 HOST_RPMCONFIG_SPEC_PATCH := 
 HOST_RPMCONFIG_PATCHES := 
 else !STM23
 # STM24
 HOST_RPMCONFIG_VERSION := 2.4-21
-HOST_RPMCONFIG_SPEC := SPECS/stm-$(HOST_RPMCONFIG).spec
-HOST_RPMCONFIG_SPEC_PATCH := Patches/stm-$(HOST_RPMCONFIG).spec24.diff
-HOST_RPMCONFIG_PATCHES := Patches/stm-host-rpmconfig-skip-cvs.patch
+HOST_RPMCONFIG_SPEC := stm-$(HOST_RPMCONFIG).spec
+HOST_RPMCONFIG_SPEC_PATCH := stm-$(HOST_RPMCONFIG).spec24.diff
+HOST_RPMCONFIG_PATCHES := stm-host-rpmconfig-skip-cvs.patch
 endif !STM23
 endif !STM22
 HOST_RPMCONFIG_RPM := RPMS/noarch/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).noarch.rpm
 
 $(HOST_RPMCONFIG_RPM): Archive/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).src.rpm \
-		$(HOST_RPMCONFIG_SPEC_PATCH) $(HOST_RPMCONFIG_PATCHES) \
+		$(if $(HOST_RPMCONFIG_SPEC_PATCH),Patches/$(HOST_RPMCONFIG_SPEC_PATCH)) \
+		$(if $(HOST_RPMCONFIG_PATCHES),$(patsubst %,Patches/%,$(HOST_RPMCONFIG_PATCHES))) \
 		$(HOST_FILESYSTEM)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_RPMCONFIG_SPEC_PATCH)" ] && patch -p1 $(HOST_RPMCONFIG_SPEC) < "$(HOST_RPMCONFIG_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_RPMCONFIG_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(HOST_RPMCONFIG_SPEC) < "../Patches/$(HOST_RPMCONFIG_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_RPMCONFIG_PATCHES)" ] && cp $(HOST_RPMCONFIG_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_RPMCONFIG_SPEC)
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_RPMCONFIG_SPEC)
 
 $(HOST_RPMCONFIG): $(HOST_RPMCONFIG_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv \
@@ -118,19 +119,19 @@ $(HOST_RPMCONFIG): $(HOST_RPMCONFIG_RPM)
 HOST_BASE_PASSWD := host-base-passwd
 if STM22
 HOST_BASE_PASSWD_VERSION := 3.5.9-3
-HOST_BASE_PASSWD_SPEC := SPECS/stm-$(HOST_BASE_PASSWD).spec
-HOST_BASE_PASSWD_SPEC_PATCH := Patches/stm-$(HOST_BASE_PASSWD).spec22.diff
+HOST_BASE_PASSWD_SPEC := stm-$(HOST_BASE_PASSWD).spec
+HOST_BASE_PASSWD_SPEC_PATCH := stm-$(HOST_BASE_PASSWD).spec22.diff
 HOST_BASE_PASSWD_PATCHES := 
 else !STM22
 if STM23
 HOST_BASE_PASSWD_VERSION := 3.5.9-6
-HOST_BASE_PASSWD_SPEC := SPECS/stm-$(HOST_BASE_PASSWD).spec
+HOST_BASE_PASSWD_SPEC := stm-$(HOST_BASE_PASSWD).spec
 HOST_BASE_PASSWD_SPEC_PATCH :=
 HOST_BASE_PASSWD_PATCHES :=
 else !STM23
 # STM24
 HOST_BASE_PASSWD_VERSION := 3.5.9-7
-HOST_BASE_PASSWD_SPEC := SPECS/stm-$(HOST_BASE_PASSWD).spec
+HOST_BASE_PASSWD_SPEC := stm-$(HOST_BASE_PASSWD).spec
 HOST_BASE_PASSWD_SPEC_PATCH :=
 HOST_BASE_PASSWD_PATCHES :=
 endif !STM23
@@ -138,11 +139,12 @@ endif !STM22
 HOST_BASE_PASSWD_RPM := RPMS/sh4/$(STLINUX)-$(HOST_BASE_PASSWD)-$(HOST_BASE_PASSWD_VERSION).sh4.rpm
 
 $(HOST_BASE_PASSWD_RPM) : Archive/$(STLINUX)-$(HOST_BASE_PASSWD)-$(HOST_BASE_PASSWD_VERSION).src.rpm \
-		$(HOST_BASE_PASSWD_SPEC_PATCH) $(HOST_BASE_PASSWD_PATCHES)
+		$(if $(HOST_BASE_PASSWD_SPEC_PATCH),Patches/$(HOST_BASE_PASSWD_SPEC_PATCH)) \
+		$(if $(HOST_BASE_PASSWD_PATCHES),$(patsubst %,Patches/%,$(HOST_BASE_PASSWD_PATCHES)))
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_BASE_PASSWD_SPEC_PATCH)" ] && patch -p1 $(HOST_BASE_PASSWD_SPEC) < "$(HOST_BASE_PASSWD_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_BASE_PASSWD_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(HOST_BASE_PASSWD_SPEC) < "../Patches/$(HOST_BASE_PASSWD_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_BASE_PASSWD_PATCHES)" ] && cp $(HOST_BASE_PASSWD_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_BASE_PASSWD_SPEC)
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_BASE_PASSWD_SPEC)
 
 $(HOST_BASE_PASSWD): $(HOST_BASE_PASSWD_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
@@ -154,19 +156,19 @@ $(HOST_BASE_PASSWD): $(HOST_BASE_PASSWD_RPM)
 HOST_DISTRIBUTIONUTILS := host-distributionutils
 if STM22
 HOST_DISTRIBUTIONUTILS_VERSION := 2.8.4-4
-HOST_DISTRIBUTIONUTILS_SPEC := SPECS/stm-$(HOST_DISTRIBUTIONUTILS).spec
+HOST_DISTRIBUTIONUTILS_SPEC := stm-$(HOST_DISTRIBUTIONUTILS).spec
 HOST_DISTRIBUTIONUTILS_SPEC_PATCH := 
 HOST_DISTRIBUTIONUTILS_PATCHES := 
 else !STM22
 if STM23
 HOST_DISTRIBUTIONUTILS_VERSION := 2.8.4-4
-HOST_DISTRIBUTIONUTILS_SPEC := SPECS/stm-$(HOST_DISTRIBUTIONUTILS).spec
+HOST_DISTRIBUTIONUTILS_SPEC := stm-$(HOST_DISTRIBUTIONUTILS).spec
 HOST_DISTRIBUTIONUTILS_SPEC_PATCH := 
 HOST_DISTRIBUTIONUTILS_PATCHES := 
 else !STM23
 # STM24
 HOST_DISTRIBUTIONUTILS_VERSION := 2.8.4-5
-HOST_DISTRIBUTIONUTILS_SPEC := SPECS/stm-$(HOST_DISTRIBUTIONUTILS).spec
+HOST_DISTRIBUTIONUTILS_SPEC := stm-$(HOST_DISTRIBUTIONUTILS).spec
 HOST_DISTRIBUTIONUTILS_SPEC_PATCH := 
 HOST_DISTRIBUTIONUTILS_PATCHES := 
 endif !STM23
@@ -174,11 +176,12 @@ endif !STM22
 HOST_DISTRIBUTIONUTILS_RPM := RPMS/$(host_arch)/$(STLINUX)-$(HOST_DISTRIBUTIONUTILS)-$(HOST_DISTRIBUTIONUTILS_VERSION).$(host_arch).rpm
 
 $(HOST_DISTRIBUTIONUTILS_RPM): Archive/$(STM_SRC)-$(HOST_DISTRIBUTIONUTILS)-$(HOST_DISTRIBUTIONUTILS_VERSION).src.rpm \
-		$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH) $(HOST_DISTRIBUTIONUTILS_PATCHES)
+		$(if $(HOST_DISTRIBUTIONUTILS_SPEC_PATCH),Patches/$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)) \
+		$(if $(HOST_DISTRIBUTIONUTILS_PATCHES),$(patsubst %,Patches/%,$(HOST_DISTRIBUTIONUTILS_PATCHES)))
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)" ] && patch -p1 $(HOST_DISTRIBUTIONUTILS_SPEC) < "$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(HOST_DISTRIBUTIONUTILS_SPEC) < "../Patches/$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_DISTRIBUTIONUTILS_PATCHES)" ] && cp $(HOST_DISTRIBUTIONUTILS_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_DISTRIBUTIONUTILS_SPEC) 
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_DISTRIBUTIONUTILS_SPEC) 
 
 $(HOST_DISTRIBUTIONUTILS): $(HOST_DISTRIBUTIONUTILS_RPM) 
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
@@ -190,17 +193,18 @@ $(HOST_DISTRIBUTIONUTILS): $(HOST_DISTRIBUTIONUTILS_RPM)
 HOST_FILESYSTEM := host-filesystem
 # if STM24
 # HOST_FILESYSTEM_VERSION := 1.0-7
-# HOST_FILESYSTEM_SPEC := SPECS/stm-$(HOST_FILESYSTEM).spec
+# HOST_FILESYSTEM_SPEC := stm-$(HOST_FILESYSTEM).spec
 # HOST_FILESYSTEM_SPEC_PATCH := 
 # HOST_FILESYSTEM_PATCHES := 
 # HOST_FILESYSTEM_RPM := RPMS/sh4/$(STLINUX)-$(HOST_FILESYSTEM)-$(HOST_FILESYSTEM_VERSION).sh4.rpm
 # 
 # $(HOST_FILESYSTEM_RPM): Archive/$(STLINUX)-$(HOST_FILESYSTEM)-$(HOST_FILESYSTEM_VERSION).src.rpm \
-# 		$(HOST_FILESYSTEM_SPEC_PATCH) $(HOST_FILESYSTEM_PATCHES)
+#		$(if $(HOST_FILESYSTEM_SPEC_PATCH),Patches/$(HOST_FILESYSTEM_SPEC_PATCH)) \
+#		$(if $(HOST_FILESYSTEM_PATCHES),$(patsubst %,Patches/%,$(HOST_FILESYSTEM_PATCHES)))
 # 	rpm  $(DRPM) --nosignature -Uhv $< && \
-# 	( [ ! -z "$(HOST_FILESYSTEM_SPEC_PATCH)" ] && patch -p1 $(HOST_FILESYSTEM_SPEC) < "$(HOST_FILESYSTEM_SPEC_PATCH)" || true ) && \
+# 	( [ ! -z "$(HOST_FILESYSTEM_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(HOST_FILESYSTEM_SPEC) < "../Patches/$(HOST_FILESYSTEM_SPEC_PATCH)" || true ) && \
 # 	( [ ! -z "$(HOST_FILESYSTEM_PASSWD_PATCHES)" ] && cp $(HOST_FILESYSTEM_PATCHES) SOURCES/ || true ) && \
-# 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_FILESYSTEM_SPEC)
+# 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_FILESYSTEM_SPEC)
 # 
 # $(HOST_FILESYSTEM): $(HOST_FILESYSTEM_RPM)
 # 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
@@ -224,19 +228,19 @@ $(HOST_FILESYSTEM):
 HOST_AUTOTOOLS := host-autotools
 if STM22
 HOST_AUTOTOOLS_VERSION := 2.0-8
-HOST_AUTOTOOLS_SPEC := SPECS/stm-$(HOST_AUTOTOOLS).spec
+HOST_AUTOTOOLS_SPEC := stm-$(HOST_AUTOTOOLS).spec
 HOST_AUTOTOOLS_SPEC_PATCH := 
 HOST_AUTOTOOLS_PATCHES := 
 else !STM22
 if STM23
 HOST_AUTOTOOLS_VERSION := 2.0-14
-HOST_AUTOTOOLS_SPEC := SPECS/stm-$(HOST_AUTOTOOLS).spec
+HOST_AUTOTOOLS_SPEC := stm-$(HOST_AUTOTOOLS).spec
 HOST_AUTOTOOLS_SPEC_PATCH := 
 HOST_AUTOTOOLS_PATCHES := 
 else !STM23
 # STM24
 HOST_AUTOTOOLS_VERSION := dev-20091012-2
-HOST_AUTOTOOLS_SPEC := SPECS/stm-$(HOST_AUTOTOOLS)-dev.spec
+HOST_AUTOTOOLS_SPEC := stm-$(HOST_AUTOTOOLS)-dev.spec
 HOST_AUTOTOOLS_SPEC_PATCH := 
 HOST_AUTOTOOLS_PATCHES := 
 endif !STM23
@@ -244,11 +248,12 @@ endif !STM22
 HOST_AUTOTOOLS_RPM := RPMS/sh4/$(STLINUX)-$(HOST_AUTOTOOLS)-$(HOST_AUTOTOOLS_VERSION).sh4.rpm
 
 $(HOST_AUTOTOOLS_RPM): Archive/$(STLINUX)-$(HOST_AUTOTOOLS)-$(HOST_AUTOTOOLS_VERSION).src.rpm \
-		$(HOST_AUTOTOOLS_SPEC_PATCH) $(HOST_AUTOTOOLS_PATCHES)
+		$(if $(HOST_AUTOTOOLS_SPEC_PATCH),Patches/$(HOST_AUTOTOOLS_SPEC_PATCH)) \
+		$(if $(HOST_AUTOTOOLS_PATCHES),$(patsubst %,Patches/%,$(HOST_AUTOTOOLS_PATCHES)))
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_AUTOTOOLS_SPEC_PATCH)" ] && patch -p1 $(HOST_AUTOTOOLS_SPEC) < "$(HOST_AUTOTOOLS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_AUTOTOOLS_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(HOST_AUTOTOOLS_SPEC) < "../Patches/$(HOST_AUTOTOOLS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_AUTOTOOLS_PASSWD_PATCHES)" ] && cp $(HOST_AUTOTOOLS_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_AUTOTOOLS_SPEC)
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_AUTOTOOLS_SPEC)
 
 $(HOST_AUTOTOOLS): $(HOST_AUTOTOOLS_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
@@ -262,13 +267,13 @@ if !STM24
 HOST_MTD_UTILS := host-mtd-utils
 if STM22
 HOST_MTD_UTILS_VERSION := 1.0.1-8
-HOST_MTD_UTILS_SPEC := SPECS/stm-$(HOST_MTD_UTILS).spec
+HOST_MTD_UTILS_SPEC := stm-$(HOST_MTD_UTILS).spec
 HOST_MTD_UTILS_SPEC_PATCH := 
 HOST_MTD_UTILS_PATCHES := 
 else !STM22
 if STM23
 HOST_MTD_UTILS_VERSION	:= 1.0.1-8
-HOST_MTD_UTILS_SPEC := SPECS/stm-$(HOST_MTD_UTILS).spec
+HOST_MTD_UTILS_SPEC := stm-$(HOST_MTD_UTILS).spec
 HOST_MTD_UTILS_SPEC_PATCH := 
 HOST_MTD_UTILS_PATCHES := 
 else !STM23
@@ -278,16 +283,17 @@ endif !STM22
 HOST_MTD_UTILS_RPM := RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).sh4.rpm
 
 $(HOST_MTD_UTILS_RPM): Archive/$(STM_SRC)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).src.rpm \
-		$(HOST_MTD_UTILS_SPEC_PATCH) $(HOST_MTD_UTILS_PATCHES)
+		$(if $(HOST_MTD_UTILS_SPEC_PATCH),Patches/$(HOST_MTD_UTILS_SPEC_PATCH)) \
+		$(if $(HOST_MTD_UTILS_PATCHES),$(patsubst %,Patches/%,Patches/$(HOST_MTD_UTILS_PATCHES)))
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(HOST_MTD_UTILS_SPEC_PATCH)" ] && patch -p1 $(HOST_MTD_UTILS_SPEC) < "$(HOST_MTD_UTILS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(HOST_MTD_UTILS_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(HOST_MTD_UTILS_SPEC) < "../Patches/$(HOST_MTD_UTILS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(HOST_MTD_UTILS_PATCHES)" ] && cp $(HOST_MTD_UTILS_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(HOST_MTD_UTILS_SPEC)
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_MTD_UTILS_SPEC)
 
 $(HOST_MTD_UTILS): $(HOST_MTD_UTILS_RPM) 
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
-	
+
 endif !STM24
 
 if STM23
@@ -344,19 +350,19 @@ cross-sh4-filesystem:
 CROSS_DISTRIBUTIONUTILS := cross-sh4-distributionutils
 if STM22
 CROSS_DISTRIBUTIONUTILS_VERSION	:= 1.14-3
-CROSS_DISTRIBUTIONUTILS_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec
-CROSS_DISTRIBUTIONUTILS_SPEC_PATCH := Patches/stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec22.diff
-CROSS_DISTRIBUTIONUTILS_PATCHES := Patches/hardhatutils-srcdir.diff
+CROSS_DISTRIBUTIONUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec
+CROSS_DISTRIBUTIONUTILS_SPEC_PATCH := stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec22.diff
+CROSS_DISTRIBUTIONUTILS_PATCHES := hardhatutils-srcdir.diff
 else !STM22
 if STM23
 CROSS_DISTRIBUTIONUTILS_VERSION	:= 1.14-5
-CROSS_DISTRIBUTIONUTILS_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec
+CROSS_DISTRIBUTIONUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec
 CROSS_DISTRIBUTIONUTILS_SPEC_PATCH :=
 CROSS_DISTRIBUTIONUTILS_PATCHES :=
 else !STM23
 # STM24
 CROSS_DISTRIBUTIONUTILS_VERSION	:= 1.14-6
-CROSS_DISTRIBUTIONUTILS_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec
+CROSS_DISTRIBUTIONUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS)).spec
 CROSS_DISTRIBUTIONUTILS_SPEC_PATCH :=
 CROSS_DISTRIBUTIONUTILS_PATCHES :=
 endif !STM23
@@ -364,11 +370,12 @@ endif !STM22
 CROSS_DISTRIBUTIONUTILS_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).$(host_arch).rpm 
 
 $(CROSS_DISTRIBUTIONUTILS_RPM): Archive/$(STLINUX)-$(subst cross-sh4,cross,$(CROSS_DISTRIBUTIONUTILS))-$(CROSS_DISTRIBUTIONUTILS_VERSION).src.rpm \
-		$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH) $(CROSS_DISTRIBUTIONUTILS_PATCHES)
+		$(if $(HOST_DISTRIBUTIONUTILS_SPEC_PATCH),Patches/$(HOST_DISTRIBUTIONUTILS_SPEC_PATCH)) \
+		$(if $(HOST_DISTRIBUTIONUTILS_PATCHES),$(patsubst %,Patches/%,$(HOST_DISTRIBUTIONUTILS_PATCHES)))
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH)" ] && patch -p1 $(CROSS_DISTRIBUTIONUTILS_SPEC) < "$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(CROSS_DISTRIBUTIONUTILS_SPEC) < "../Patches/$(CROSS_DISTRIBUTIONUTILS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(CROSS_DISTRIBUTIONUTILS_PATCHES)" ] && cp $(CROSS_DISTRIBUTIONUTILS_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(CROSS_DISTRIBUTIONUTILS_SPEC)
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(CROSS_DISTRIBUTIONUTILS_SPEC)
 
 if STM22
 $(CROSS_DISTRIBUTIONUTILS): $(CROSS_DISTRIBUTIONUTILS_RPM) 
@@ -388,19 +395,19 @@ CROSS_BINUTILS := cross-sh4-binutils
 CROSS_BINUTILS_DEV := $(CROSS_BINUTILS)-dev
 if STM22
 CROSS_BINUTILS_VERSION := 2.17.50.0.4-13
-CROSS_BINUTILS_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS))-sh4processed.spec
-CROSS_BINUTILS_SPEC_PATCH := Patches/stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS))-sh4processed.spec22.diff
-CROSS_BINUTILS_PATCHES := Patches/cross-binutils.diff
+CROSS_BINUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS))-sh4processed.spec
+CROSS_BINUTILS_SPEC_PATCH := stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS))-sh4processed.spec22.diff
+CROSS_BINUTILS_PATCHES := cross-binutils.diff
 else !STM22
 if STM23
 CROSS_BINUTILS_VERSION := 2.18.50.0.8-34
-CROSS_BINUTILS_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
-CROSS_BINUTILS_SPEC_PATCH := Patches/stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec23.diff
+CROSS_BINUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
+CROSS_BINUTILS_SPEC_PATCH := stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec23.diff
 CROSS_BINUTILS_PATCHES := 
 else !STM23
 # STM24
 CROSS_BINUTILS_VERSION := 2.19.1-41
-CROSS_BINUTILS_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
+CROSS_BINUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
 CROSS_BINUTILS_SPEC_PATCH :=
 CROSS_BINUTILS_PATCHES := 
 endif !STM23
@@ -410,11 +417,12 @@ CROSS_BINUTILS_DEV_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_BINUTILS_DEV)-$(C
 
 $(CROSS_BINUTILS_RPM) $(CROSS_BINUTILS_DEV_RPM): \
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_BINUTILS))-$(CROSS_BINUTILS_VERSION).src.rpm \
-		$(CROSS_BINUTILS_SPEC_PATCH) $(CROSS_BINUTILS_PATCHES)
+		$(if $(CROSS_BINUTILS_SPEC_PATCH),Patches/$(CROSS_BINUTILS_SPEC_PATCH)) \
+		$(if $(CROSS_BINUTILS_PATCHES),$(patsubst %,Patches/%,$(CROSS_BINUTILS_PATCHES)))
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_BINUTILS_SPEC_PATCH)" ] && patch -p1 $(CROSS_BINUTILS_SPEC) < "$(CROSS_BINUTILS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_BINUTILS_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(CROSS_BINUTILS_SPEC) < "../Patches/$(CROSS_BINUTILS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(CROSS_BINUTILS_PATCHES)" ] && cp $(CROSS_BINUTILS_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(CROSS_BINUTILS_SPEC)
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(CROSS_BINUTILS_SPEC)
 
 $(CROSS_BINUTILS): $(CROSS_BINUTILS_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
@@ -442,18 +450,19 @@ $(DEPDIR)/kernel-headers: linux-kernel.do_prepare
 if STM24
 CROSS_GMP := cross-sh4-gmp
 CROSS_GMP_VERSION := 4.3.2-4
-CROSS_GMP_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_GMP)).spec
+CROSS_GMP_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_GMP)).spec
 CROSS_GMP_SPEC_PATCH :=
 CROSS_GMP_PATCHES :=
 CROSS_GMP_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GMP)-$(CROSS_GMP_VERSION).$(host_arch).rpm
 
 $(CROSS_GMP_RPM) $(CROSS_GMP_DEV_RPM): \
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GMP))-$(CROSS_GMP_VERSION).src.rpm \
-		$(CROSS_GMP_SPEC_PATCH) $(CROSS_GMP_PATCHES)
+		$(if $(CROSS_GMP_SPEC_PATCH),Patches/$(CROSS_GMP_SPEC_PATCH)) \
+		$(if $(CROSS_GMP_PATCHES),$(patsubst %,Patches/%,$(CROSS_GMP_PATCHES)))
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_GMP_SPEC_PATCH)" ] && patch -p1 $(CROSS_GMP_SPEC) < "$(CROSS_GMP_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_GMP_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(CROSS_GMP_SPEC) < "../Patches/$(CROSS_GMP_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(CROSS_GMP_PATCHES)" ] && cp $(CROSS_GMP_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --target=sh4-linux $(CROSS_GMP_SPEC)
+	rpmbuild  $(DRPMBUILD) -bb -v --target=sh4-linux SPECS/$(CROSS_GMP_SPEC)
 
 $(CROSS_GMP): $(CROSS_GMP_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
@@ -466,17 +475,18 @@ endif STM24
 if STM24
 CROSS_MPFR := cross-sh4-mpfr
 CROSS_MPFR_VERSION := 2.4.2-4
-CROSS_MPFR_SPEC := SPECS/stm-$(subst cross-sh4,cross,$(CROSS_MPFR)).spec
-CROSS_MPFR_SPEC_PATCH := Patches/stm-cross-mpfr.spec24.diff
+CROSS_MPFR_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_MPFR)).spec
+CROSS_MPFR_SPEC_PATCH := stm-cross-mpfr.spec24.diff
 CROSS_MPFR_PATCHES :=
 CROSS_MPFR_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_MPFR)-$(CROSS_MPFR_VERSION).$(host_arch).rpm
 
 $(CROSS_MPFR_RPM): Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_MPFR))-$(CROSS_MPFR_VERSION).src.rpm \
-		$(CROSS_MPFR_SPEC_PATCH) $(CROSS_MPFR_PATCHES)
+		$(if $(CROSS_MPFR_SPEC_PATCH),Patches/$(CROSS_MPFR_SPEC_PATCH)) \
+		$(if $(CROSS_MPFR_PATCHES),$(patsubst %,Patches/%,$(CROSS_MPFR_PATCHES)))
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_MPFR_SPEC_PATCH)" ] && patch -p1 $(CROSS_MPFR_SPEC) < "$(CROSS_MPFR_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_MPFR_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(CROSS_MPFR_SPEC) < "../Patches/$(CROSS_MPFR_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(CROSS_MPFR_PATCHES)" ] && cp $(CROSS_MPFR_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(CROSS_MPFR_SPEC)
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(CROSS_MPFR_SPEC)
 
 $(CROSS_MPFR): $(CROSS_GMP) $(CROSS_MPFR_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
@@ -494,22 +504,22 @@ CROSS_LIBGCC := cross-sh4-libgcc
 if STM22
 CROSS_GCC_VERSION := 4.1.1-23
 CROSS_GCC_RAWVERSION := 4.1.1
-CROSS_GCC_SPEC := SPECS/stm-$(subst cross-sh4-,cross-,$(CROSS_GCC))-sh4processed.spec
-CROSS_GCC_SPEC_PATCH := Patches/stm-$(subst cross-sh4-,cross-,$(CROSS_GCC))-sh4processed.spec22.diff
+CROSS_GCC_SPEC := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC))-sh4processed.spec
+CROSS_GCC_SPEC_PATCH := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC))-sh4processed.spec22.diff
 CROSS_GCC_PATCHES := 
 else !STM22
 if STM23
 CROSS_GCC_VERSION := 4.2.4-49
 CROSS_GCC_RAWVERSION := 4.2.4
-CROSS_GCC_SPEC := SPECS/stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
-CROSS_GCC_SPEC_PATCH := Patches/stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec23.diff
+CROSS_GCC_SPEC := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
+CROSS_GCC_SPEC_PATCH := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec23.diff
 CROSS_GCC_PATCHES := 
 else !STM23
 # STM24
 CROSS_GCC_VERSION := 4.3.4-63
 CROSS_GCC_RAWVERSION := 4.3.4
-CROSS_GCC_SPEC := SPECS/stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
-CROSS_GCC_SPEC_PATCH := Patches/stm-cross-gcc.spec24.diff
+CROSS_GCC_SPEC := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
+CROSS_GCC_SPEC_PATCH := stm-cross-gcc.spec24.diff
 CROSS_GCC_PATCHES := 
 endif !STM23
 endif !STM22
@@ -524,15 +534,16 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 		| Archive/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 		Archive/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm \
 		kernel-headers \
-		$(CROSS_GCC_SPEC_PATCH) $(CROSS_GCC_PATCHES)
+		$(if $(CROSS_GCC_SPEC_PATCH),Patches/$(CROSS_GCC_SPEC_PATCH)) \
+		$(if $(CROSS_GCC_PATCHES),$(patsubst %,Patches/%,$(CROSS_GCC_PATCHES)))
 	rpm  $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
 		--relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 1,$|) && \
 	rpm  $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
 		--relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 2,$|)
 	rpm  $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(CROSS_GCC_SPEC_PATCH)" ] && patch -p1 $(CROSS_GCC_SPEC) < "$(CROSS_GCC_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(CROSS_GCC_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(CROSS_GCC_SPEC) < "../Patches/$(CROSS_GCC_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(CROSS_GCC_PATCHES)" ] && cp $(CROSS_GCC_PATCHES) SOURCES/ || true ) && \
-	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(CROSS_GCC_SPEC) 
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(CROSS_GCC_SPEC) 
 	rpm $(DRPM) -ev $(STLINUX)-sh4-$(GLIBC_DEV) && \
 	rpm $(DRPM) -ev $(STLINUX)-sh4-$(GLIBC)
 
@@ -580,7 +591,7 @@ $(CROSS_PROTOIZE): $(CROSS_PROTOIZE_RPM)
 #
 $(DEPDIR)/bootstrap-cross: | \
 		bootstrap-host $(CROSS_DISTRIBUTIONUTILS) cross-sh4-filesystem $(CROSS_BINUTILS) $(CROSS_BINUTILS_DEV) \
-		$(CROSS_CPP) $(CROSS_GCC) $(CROSS_G++)
+		$(CROSS_GMP) $(CROSS_MPFR) $(CROSS_CPP) $(CROSS_GCC) $(CROSS_G++)
 	[ "x$*" = "x" ] && touch -r $(CROSS_G++_RPM) $@ || true
 
 $(DEPDIR)/setup-cross-doc: \

@@ -44,19 +44,19 @@ if !STM22
 KERNELHEADERS := linux-kernel-headers
 if ENABLE_P0119
 KERNELHEADERS_VERSION := 2.6.23.17_stm23_0119-41
-KERNELHEADERS_SPEC := SPECS/stm-target-kernel-headers-kbuild.spec 
-KERNELHEADERS_SPEC_PATCH := Patches/stm-target-kernel-headers-kbuild_0123.spec.diff
+KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec 
+KERNELHEADERS_SPEC_PATCH := stm-target-kernel-headers-kbuild_0123.spec.diff
 KERNELHEADERS_PATCHES :=
 else !ENABLE_P0119
 if ENABLE_P0123
 KERNELHEADERS_VERSION := 2.6.23.17_stm23_0123-41
-KERNELHEADERS_SPEC := SPECS/stm-target-kernel-headers-kbuild.spec
-KERNELHEADERS_SPEC_PATCH := Patches/stm-target-kernel-headers-kbuild_0123.spec.diff
+KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec
+KERNELHEADERS_SPEC_PATCH := stm-target-kernel-headers-kbuild_0123.spec.diff
 KERNELHEADERS_PATCHES :=
 else !ENABLE_P0123
 # STM24
 KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
-KERNELHEADERS_SPEC := SPECS/stm-target-kernel-headers-kbuild.spec 
+KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec 
 KERNELHEADERS_SPEC_PATCH := 
 KERNELHEADERS_PATCHES :=
 endif !ENABLE_P0123
@@ -64,11 +64,12 @@ endif !ENABLE_P0119
 KERNELHEADERS_RPM := RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm
 
 $(KERNELHEADERS_RPM): Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm \
-		$(KERNELHEADERS_SPEC_PATCH) $(KERNELHEADERS_PATCHES)
+		$(if $(KERNELHEADERS_SPEC_PATCH),Patches/$(KERNELHEADERS_SPEC_PATCH)) \
+		$(if $(KERNELHEADERS_PATCHES),$(patsubst %,Patches/%,$(KERNELHEADERS_PATCHES)))
 	rpm $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(KERNELHEADERS_SPEC_PATCH)" ] && patch -p1 $(KERNELHEADERS_SPEC) < "$(KERNELHEADERS_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(KERNELHEADERS_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(KERNELHEADERS_SPEC) < "../Patches/$(KERNELHEADERS_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(KERNELHEADERS_PATCHES)" ] && cp $(KERNELHEADERS_PATCHES) SOURCES/ || true ) && \
-	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux $(KERNELHEADERS_SPEC)
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(KERNELHEADERS_SPEC)
 
 $(DEPDIR)/max-$(KERNELHEADERS) \
 $(DEPDIR)/$(KERNELHEADERS): \
@@ -87,21 +88,21 @@ GLIBC_DEV := $(GLIBC)-dev
 if STM22
 GLIBC_VERSION := 2.5-27
 GLIBC_RAWVERSION := 2.5
-GLIBC_SPEC := SPECS/stm-target-$(GLIBC)-sh4processed.spec
-GLIBC_SPEC_PATCH := Patches/stm-target-$(GLIBC)-sh4processed.spec22.diff
+GLIBC_SPEC := stm-target-$(GLIBC)-sh4processed.spec
+GLIBC_SPEC_PATCH := stm-target-$(GLIBC)-sh4processed.spec22.diff
 GLIBC_PATCHES :=
 else !STM22
 if STM23
 GLIBC_VERSION := 2.6.1-53
 GLIBC_RAWVERSION := 2.6.1
-GLIBC_SPEC := SPECS/stm-target-$(GLIBC).spec
+GLIBC_SPEC := stm-target-$(GLIBC).spec
 GLIBC_SPEC_PATCH :=
 GLIBC_PATCHES :=
 else !STM23
 # STM24
 GLIBC_VERSION := 2.10.1-7
 GLIBC_RAWVERSION := 2.10.1
-GLIBC_SPEC := SPECS/stm-target-$(GLIBC).spec
+GLIBC_SPEC := stm-target-$(GLIBC).spec
 GLIBC_SPEC_PATCH :=
 GLIBC_PATCHES :=
 endif !STM23
@@ -110,11 +111,12 @@ GLIBC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm
 GLIBC_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm
 
 $(GLIBC_RPM) $(GLIBC_DEV_RPM): Archive/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSION).src.rpm \
-		$(GLIBC_SPEC_PATCH) $(GLIBC_PATCHES) | filesystem
+		$(if $(GLIBC_SPEC_PATCH),Patches/$(GLIBC_SPEC_PATCH)) \
+		$(if $(GLIBC_PATCHES),$(patsubst %,Patches/%,$(GLIBC_PATCHES))) filesystem
 	rpm $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(GLIBC_SPEC_PATCH)" ] && patch -p1 $(GLIBC_SPEC) < "$(GLIBC_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(GLIBC_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(GLIBC_SPEC) < "../Patches/$(GLIBC_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(GLIBC_PATCHES)" ] && cp $(GLIBC_PATCHES) SOURCES/ || true ) && \
-	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux $(GLIBC_SPEC)
+	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/$(GLIBC_SPEC)
 
 $(DEPDIR)/min-$(GLIBC) $(DEPDIR)/std-$(GLIBC) $(DEPDIR)/max-$(GLIBC) \
 $(DEPDIR)/$(GLIBC): \
@@ -152,19 +154,19 @@ LIBSTDC_DEV	:= libstdc++-dev
 LIBGCC		:= libgcc
 if STM22
 GCC_VERSION := 4.1.1-26
-GCC_SPEC := SPECS/stm-target-$(GCC)-sh4processed.spec
-GCC_SPEC_PATCH := Patches/stm-target-$(GCC)-sh4processed.spec22.diff
+GCC_SPEC := stm-target-$(GCC)-sh4processed.spec
+GCC_SPEC_PATCH := stm-target-$(GCC)-sh4processed.spec22.diff
 GCC_PATCHES :=
 else !STM22
 if STM23
 GCC_VERSION := 4.2.4-50
-GCC_SPEC := SPECS/stm-target-$(GCC).spec
-GCC_SPEC_PATCH := Patches/stm-target-$(GCC).spec23.diff
+GCC_SPEC := stm-target-$(GCC).spec
+GCC_SPEC_PATCH := stm-target-$(GCC).spec23.diff
 GCC_PATCHES :=
 else !STM23
 #stm24
 GCC_VERSION := 4.3.4-66
-GCC_SPEC := SPECS/stm-target-$(GCC).spec
+GCC_SPEC := stm-target-$(GCC).spec
 GCC_SPEC_PATCH := 
 GCC_PATCHES :=
 endif !STM23
@@ -177,9 +179,9 @@ LIBGCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
 $(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM):
 		Archive/$(STLINUX)-target-$(GCC)-$(GCC_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	( [ ! -z "$(GCC_SPEC_PATCH)" ] && patch -p1 $(GCC_SPEC) < "$(GCC_SPEC_PATCH)" || true ) && \
+	( [ ! -z "$(GCC_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(GCC_SPEC) < "../Patches/$(GCC_SPEC_PATCH)" || true ) && \
 	( [ ! -z "$(GCC_PATCHES)" ] && cp $(GCC_PATCHES) SOURCES/ || true ) && \
-	rpmbuild $(DRPMBUILD) -bb --clean --target=sh4-linux $(GCC_SPEC)
+	rpmbuild $(DRPMBUILD) -bb --clean --target=sh4-linux SPECS/$(GCC_SPEC)
 
 $(DEPDIR)/min-$(GCC) $(DEPDIR)/std-$(GCC) $(DEPDIR)/max-$(GCC) $(DEPDIR)/$(GCC): \
 $(DEPDIR)/%$(GCC): $(DEPDIR)/%$(GLIBC_DEV) $(GCC_RPM)
