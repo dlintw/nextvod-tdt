@@ -408,10 +408,10 @@ static int PlaybackOpen(Context_t  *context, char * uri) {
            fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,error,strerror(error));
 	   DummyThread2 = NULL;
         }
-	if(error=pthread_create(&DummyThread2, &attr, (void *)&DummyThread, NULL) != 0)
+	if(error=pthread_create(&DummyThread3, &attr, (void *)&DummyThread, NULL) != 0)
         {
            fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,error,strerror(error));
-	   DummyThread2 = NULL;
+	   DummyThread3 = NULL;
         }
 	printf("joining dummy threads\n");
 	if(DummyThread1!=NULL)error = pthread_join (DummyThread1, NULL);
