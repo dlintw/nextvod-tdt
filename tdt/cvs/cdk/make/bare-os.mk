@@ -68,7 +68,7 @@ $(KERNELHEADERS_RPM): Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS
 		$(if $(KERNELHEADERS_PATCHES),$(patsubst %,Patches/%,$(KERNELHEADERS_PATCHES)))
 	rpm $(DRPM) --nosignature -Uhv $< && \
 	( [ ! -z "$(KERNELHEADERS_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(KERNELHEADERS_SPEC) < "../Patches/$(KERNELHEADERS_SPEC_PATCH)" || true ) && \
-	( [ ! -z "$(KERNELHEADERS_PATCHES)" ] && cp $(KERNELHEADERS_PATCHES) SOURCES/ || true ) && \
+	( [ ! -z "$(KERNELHEADERS_PATCHES)" ] && cd Patches && cp $(KERNELHEADERS_PATCHES) ../SOURCES/ || true ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(KERNELHEADERS_SPEC)
 
 $(DEPDIR)/max-$(KERNELHEADERS) \
@@ -115,7 +115,7 @@ $(GLIBC_RPM) $(GLIBC_DEV_RPM): Archive/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSIO
 		$(if $(GLIBC_PATCHES),$(patsubst %,Patches/%,$(GLIBC_PATCHES))) filesystem
 	rpm $(DRPM) --nosignature -Uhv $< && \
 	( [ ! -z "$(GLIBC_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(GLIBC_SPEC) < "../Patches/$(GLIBC_SPEC_PATCH)" || true ) && \
-	( [ ! -z "$(GLIBC_PATCHES)" ] && cp $(GLIBC_PATCHES) SOURCES/ || true ) && \
+	( [ ! -z "$(GLIBC_PATCHES)" ] && cd Patches && cp $(GLIBC_PATCHES) ../SOURCES/ || true ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/$(GLIBC_SPEC)
 
 $(DEPDIR)/min-$(GLIBC) $(DEPDIR)/std-$(GLIBC) $(DEPDIR)/max-$(GLIBC) \
@@ -180,7 +180,7 @@ $(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM):
 		Archive/$(STLINUX)-target-$(GCC)-$(GCC_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( [ ! -z "$(GCC_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(GCC_SPEC) < "../Patches/$(GCC_SPEC_PATCH)" || true ) && \
-	( [ ! -z "$(GCC_PATCHES)" ] && cp $(GCC_PATCHES) SOURCES/ || true ) && \
+	( [ ! -z "$(GCC_PATCHES)" ] && cd Patches && cp $(GCC_PATCHES) ../SOURCES/ || true ) && \
 	rpmbuild $(DRPMBUILD) -bb --clean --target=sh4-linux SPECS/$(GCC_SPEC)
 
 $(DEPDIR)/min-$(GCC) $(DEPDIR)/std-$(GCC) $(DEPDIR)/max-$(GCC) $(DEPDIR)/$(GCC): \

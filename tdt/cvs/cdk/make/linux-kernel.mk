@@ -348,7 +348,7 @@ $(HOST_KERNEL_SOURCE_RPM): \
 		Archive/$(STLINUX)-$(HOST_KERNEL_SOURCE)-sh4-$(HOST_KERNEL_SOURCE_VERSION)$(KERNELSTMLABEL)-$(KERNELLABEL).src.rpm
 	rpm $(DRPM) --nosignature --nodeps -Uhv $< && \
         ( [ ! -z "$(HOST_KERNEL_SOURCE_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(HOST_KERNEL_SOURCE_SPEC) < "../Patches/$(HOST_KERNEL_SOURCE_SPEC_PATCH)" || true ) && \
-        ( [ ! -z "$(HOST_KERNEL_SOURCE_PATCHES)" ] && cp $(HOST_KERNEL_SOURCE_PATCHES) SOURCES/ || true ) && \
+        ( [ ! -z "$(HOST_KERNEL_SOURCE_PATCHES)" ] && cd Patches && cp $(HOST_KERNEL_SOURCE_PATCHES) ../SOURCES/ || true ) && \
 	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/$(HOST_KERNEL_SOURCE_SPEC)
 
 if DEBUG
