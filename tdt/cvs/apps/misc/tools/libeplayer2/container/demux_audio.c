@@ -14,6 +14,8 @@
 #include <pthread.h>
 #include <errno.h>
 
+int audio_stop = 0;
+
 #ifdef DEBUG
 int demux_audio_debug = 0;
 #define demux_audio_printf(x...) do { if (demux_audio_debug)printf(x); } while (0)
@@ -633,6 +635,7 @@ static int demux_audio_fill_buffer(demuxer_t *demuxer, demux_stream_t *ds) {
   case MP3 :
     while(1) {
       uint8_t hdr[4];
+      if(audio_stop) return 0;
       stream_read(s,hdr,4);
       if (s->eof)
         return 0;
@@ -989,6 +992,7 @@ static int AUDIOPlay(Context_t *context) {
 	}
 	#endif
 	
+	audio_stop = 0;
 	if (PlayThread == NULL) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
@@ -1028,6 +1032,7 @@ static int AUDIOStop(Context_t *context) {
 	int ret = 0;
 	int wait_time = 20;
 	
+	audio_stop = 1;
 	while ( (PlayThread != NULL) && (--wait_time) > 0 ) {
 		#ifdef DEBUG  
 		printf("%s::%s Waiting for Audio thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
