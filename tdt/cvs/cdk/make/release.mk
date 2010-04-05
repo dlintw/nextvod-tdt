@@ -26,7 +26,9 @@ release_common_utils:
 
 release_cube_common:
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release/etc/init.d/halt
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	chmod 777 $(prefix)/release/etc/init.d/halt
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release/etc/init.d/reboot
+	chmod 777 $(prefix)/release/etc/init.d/reboot
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release/bin/vdstandby
