@@ -103,7 +103,7 @@ else !STM23
 GLIBC_VERSION := 2.10.1-7
 GLIBC_RAWVERSION := 2.10.1
 GLIBC_SPEC := stm-target-$(GLIBC).spec
-GLIBC_SPEC_PATCH :=
+GLIBC_SPEC_PATCH := stm-target-$(GLIBC).spec24.diff
 GLIBC_PATCHES :=
 endif !STM23
 endif !STM22

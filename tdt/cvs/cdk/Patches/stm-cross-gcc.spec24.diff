@@ -1,5 +1,5 @@
---- SPECS/stm-cross-gcc.spec.orig	2010-04-04 18:15:57.000000000 +0200
-+++ SPECS/stm-cross-gcc.spec	2010-04-04 20:49:34.000000000 +0200
+--- SPECS/stm-cross-gcc.spec.orig	2010-04-04 21:14:49.938823249 +0200
++++ SPECS/stm-cross-gcc.spec	2010-04-04 21:16:09.690797520 +0200
 @@ -57,6 +57,9 @@
  
  %define _gccdir %{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}
@@ -10,7 +10,15 @@
  %description
  This is the GNU C compiler, a fairly portable optimizing compiler which
  supports multiple languages.  This package includes support for C, and
-@@ -199,7 +202,6 @@
+@@ -140,6 +143,7 @@
+ ##############################################################################
+ %prep
+ %setup -n gcc-%{version} -q
++%define _default_patch_fuzz 2
+ 
+ # Common patches
+ %if "%{_stm_target_arch}" != "cortex"
+@@ -199,7 +203,6 @@
  
  %build
  %cross_setup
