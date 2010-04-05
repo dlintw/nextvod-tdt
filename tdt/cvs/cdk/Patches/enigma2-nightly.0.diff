@@ -18397,3 +18397,226 @@ diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.p
 + 	return [ PluginDescriptor(name="CuberevoVFD", description="Change VFD display settings", where = PluginDescriptor.WHERE_PLUGINMENU, fnc=main),
 + 		PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart) ]
 +
+
+--- enigma2-nightly/lib/dvb/decoder.cpp	2010-04-05 00:35:37.000000000 -0400
++++ enigma2-nightly/lib/dvb/decoder.cpp	2010-04-05 00:47:05.000000000 -0400
+@@ -40,6 +40,10 @@
+ #define VIDEO_GET_PTS              _IOR('o', 57, __u64)
+ #endif
+ 
++#ifdef __sh__
++int old_bypass = -1;
++#endif
++
+ DEFINE_REF(eDVBAudio);
+ 
+ eDVBAudio::eDVBAudio(eDVBDemux *demux, int dev)
+@@ -166,7 +170,11 @@
+ 	pes.input    = DMX_IN_FRONTEND;
+ 	pes.output   = DMX_OUT_DECODER;
+ 	pes.pes_type = m_dev ? DMX_PES_AUDIO1 : DMX_PES_AUDIO0; /* FIXME */
++#ifdef __sh__
++	pes.flags    = DMX_IMMEDIATE_START;
++#else
+ 	pes.flags    = 0;
++#endif
+ 	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - audio - ", pid);
+ 	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
+ 	{
+@@ -174,6 +182,7 @@
+ 		return -errno;
+ 	}
+ 	eDebug("ok");
++#if !defined(__sh__)
+ 	eDebugNoNewLine("DEMUX_START - audio - ");
+ 	if (::ioctl(m_fd_demux, DMX_START) < 0)
+ 	{
+@@ -181,6 +190,7 @@
+ 		return -errno;
+ 	}
+ 	eDebug("ok");
++#endif
+ 	int bypass = 0;
+ 
+ 	switch (type)
+@@ -205,12 +215,21 @@
+ 		break;
+ 	}
+ 
++#ifdef __sh__
++if(old_bypass != bypass)
++{
++#endif
+ 	eDebugNoNewLine("AUDIO_SET_BYPASS(%d) - ", bypass);
+ 	if (::ioctl(m_fd, AUDIO_SET_BYPASS_MODE, bypass) < 0)
+ 		eDebug("failed (%m)");
+ 	else
+ 		eDebug("ok");
++#ifdef __sh__
++}
++#endif
++#if !defined(__sh__)
+ 	freeze();  // why freeze here?!? this is a problem when only a pid change is requested... because of the unfreeze logic in Decoder::setState
++#endif
+ 	eDebugNoNewLine("AUDIO_PLAY - ");
+ 	if (::ioctl(m_fd, AUDIO_PLAY) < 0)
+ 		eDebug("failed (%m)");
+@@ -436,7 +455,11 @@
+ 	pes.input    = DMX_IN_FRONTEND;
+ 	pes.output   = DMX_OUT_DECODER;
+ 	pes.pes_type = m_dev ? DMX_PES_VIDEO1 : DMX_PES_VIDEO0; /* FIXME */
++#ifdef __sh__
++	pes.flags    = DMX_IMMEDIATE_START;
++#else
+ 	pes.flags    = 0;
++#endif
+ 	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - video - ", pid);
+ 	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
+ 	{
+@@ -444,6 +467,7 @@
+ 		return -errno;
+ 	}
+ 	eDebug("ok");
++#if !defined(__sh__)
+ 	eDebugNoNewLine("DEMUX_START - video - ");
+ 	if (::ioctl(m_fd_demux, DMX_START) < 0)
+ 	{
+@@ -452,6 +476,7 @@
+ 	}
+ 	eDebug("ok");
+ 	freeze();  // why freeze here?!? this is a problem when only a pid change is requested... because of the unfreeze logic in Decoder::setState
++#endif
+ 	eDebugNoNewLine("VIDEO_PLAY - ");
+ 	if (::ioctl(m_fd, VIDEO_PLAY) < 0)
+ 		eDebug("failed (%m)");
+@@ -750,7 +775,11 @@
+ 	pes.input    = DMX_IN_FRONTEND;
+ 	pes.output   = DMX_OUT_DECODER;
+ 	pes.pes_type = m_dev ? DMX_PES_PCR1 : DMX_PES_PCR0; /* FIXME */
++#ifdef __sh__
++	pes.flags    = DMX_IMMEDIATE_START;
++#else
+ 	pes.flags    = 0;
++#endif
+ 	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - pcr - ", pid);
+ 	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
+ 	{
+@@ -758,6 +787,7 @@
+ 		return -errno;
+ 	}
+ 	eDebug("ok");
++#if !defined(__sh__)
+ 	eDebugNoNewLine("DEMUX_START - pcr - ");
+ 	if (::ioctl(m_fd_demux, DMX_START) < 0)
+ 	{
+@@ -765,6 +795,7 @@
+ 		return -errno;
+ 	}
+ 	eDebug("ok");
++#endif
+ 	return 0;
+ }
+ #endif
+@@ -810,7 +841,11 @@
+ 	pes.input    = DMX_IN_FRONTEND;
+ 	pes.output   = DMX_OUT_DECODER;
+ 	pes.pes_type = m_dev ? DMX_PES_TELETEXT1 : DMX_PES_TELETEXT0; // FIXME
++#ifdef __sh__
++	pes.flags    = DMX_IMMEDIATE_START;
++#else
+ 	pes.flags    = 0;
++#endif
+ 
+ 	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - ttx - ", pid);
+ 	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
+@@ -819,6 +854,7 @@
+ 		return -errno;
+ 	}
+ 	eDebug("ok");
++#if !defined(__sh__)
+ 	eDebugNoNewLine("DEMUX_START - ttx - ");
+ 	if (::ioctl(m_fd_demux, DMX_START) < 0)
+ 	{
+@@ -826,6 +862,7 @@
+ 		return -errno;
+ 	}
+ 	eDebug("ok");
++#endif
+ 	return 0;
+ }
+ 
+@@ -934,6 +971,7 @@
+ 		m_changed &= ~changeAudio;
+ 	}
+ #else
++#if !defined(__sh__)
+ 	if (m_changed & changePCR)
+ 	{
+ 		if (m_pcr)
+@@ -952,7 +990,9 @@
+ 	if (m_changed & changeAudio)
+ 	{
+ 		if (m_audio)
++{
+ 			m_audio->stop();
++}
+ 		m_audio = 0;
+ 	}
+ 	if (m_changed & changeText)
+@@ -961,10 +1001,14 @@
+ 			m_text->stop();
+ 		m_text = 0;
+ 	}
++#endif
+ 	if (m_changed & changePCR)
+ 	{
+ 		if ((m_pcrpid >= 0) && (m_pcrpid < 0x1FFF))
+ 		{
++#ifdef __sh__
++			if(!m_pcr)
++#endif
+ 			m_pcr = new eDVBPCR(m_demux, m_decoder);
+ 			if (m_pcr->startPid(m_pcrpid))
+ 				res = -1;
+@@ -975,6 +1019,9 @@
+ 	{
+ 		if ((m_apid >= 0) && (m_apid < 0x1FFF) && !noaudio)
+ 		{
++#ifdef __sh__
++			if(!m_audio)
++#endif
+ 			m_audio = new eDVBAudio(m_demux, m_decoder);
+ 			if (m_audio->startPid(m_apid, m_atype))
+ 				res = -1;
+@@ -985,6 +1032,9 @@
+ 	{
+ 		if ((m_vpid >= 0) && (m_vpid < 0x1FFF))
+ 		{
++#ifdef __sh__
++			if(!m_video)
++#endif
+ 			m_video = new eDVBVideo(m_demux, m_decoder);
+ 			m_video->connectEvent(slot(*this, &eTSMPEGDecoder::video_event), m_video_event_conn);
+ 			if (m_video->startPid(m_vpid, m_vtype))
+@@ -996,6 +1046,9 @@
+ 	{
+ 		if ((m_textpid >= 0) && (m_textpid < 0x1FFF) && !nott)
+ 		{
++#ifdef __sh__
++			if(!m_text)
++#endif
+ 			m_text = new eDVBTText(m_demux, m_decoder);
+ 			if (m_text->startPid(m_textpid))
+ 				res = -1;
+@@ -1111,9 +1164,11 @@
+ eTSMPEGDecoder::~eTSMPEGDecoder()
+ {
+ 	finishShowSinglePic();
++#if !defined(__sh__)
+ 	m_vpid = m_apid = m_pcrpid = m_textpid = pidNone;
+ 	m_changed = -1;
+ 	setState();
++#endif
+ }
+ 
+ RESULT eTSMPEGDecoder::setVideoPID(int vpid, int type)
