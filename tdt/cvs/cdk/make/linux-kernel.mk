@@ -138,7 +138,7 @@ endif
 COMMONPATCHES_23 = \
                 Patches/cpp_stm23.patch \
                 Patches/time_stlinux23.diff \
-                Patches/mtd_stm23.patch) \
+                Patches/mtd_stm23.patch \
                 $(if $(P0119),Patches/fdma_stm23.patch) \
                 Patches/sound_stm23$(PATCH_STR).diff \
                 $(if $(P0123),Patches/stm23_strcpy$(PATCH_STR).patch) \
