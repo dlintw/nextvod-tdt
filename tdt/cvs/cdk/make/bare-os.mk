@@ -37,104 +37,110 @@ $(DEPDIR)/%filesystem: bootstrap-cross
 	$(INSTALL) -d $(targetprefix)/var/bin
 	[ "x$*" = "x" ] && touch $@ || true
 
-if !STM22
+if STM22
+
+else
 #
 # KERNELHEADERS
 #
-KERNELHEADERS := linux-kernel-headers
-if ENABLE_P0119
-KERNELHEADERS_VERSION := 2.6.23.17_stm23_0119-41
-KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec 
-KERNELHEADERS_SPEC_PATCH := stm-target-kernel-headers-kbuild_0123.spec.diff
-KERNELHEADERS_PATCHES :=
-else !ENABLE_P0119
+#KERNELHEADERS		:= kernel-headers
+#KERNELHEADERS_VERSION	:= 2.6.16.16-26
+#Archive/stlinux23-sh4-linux-kernel-headers-2.6.23.17_stm23_0116-39.noarch.rpm
+KERNELHEADERS		:= linux-kernel-headers
 if ENABLE_P0123
-KERNELHEADERS_VERSION := 2.6.23.17_stm23_0123-41
-KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec
-KERNELHEADERS_SPEC_PATCH := stm-target-kernel-headers-kbuild_0123.spec.diff
-KERNELHEADERS_PATCHES :=
-else !ENABLE_P0123
-# STM24
-KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
-KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec 
-KERNELHEADERS_SPEC_PATCH := 
-KERNELHEADERS_PATCHES :=
-endif !ENABLE_P0123
-endif !ENABLE_P0119
-KERNELHEADERS_RPM := RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm
+KERNELHEADERS_VERSION	:= 2.6.23.17_stm23_0123-41
 
-$(KERNELHEADERS_RPM): Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm \
-		$(if $(KERNELHEADERS_SPEC_PATCH),Patches/$(KERNELHEADERS_SPEC_PATCH)) \
-		$(if $(KERNELHEADERS_PATCHES),$(patsubst %,Patches/%,$(KERNELHEADERS_PATCHES)))
-	rpm $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(KERNELHEADERS_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(KERNELHEADERS_SPEC) < "../Patches/$(KERNELHEADERS_SPEC_PATCH)" || true ) && \
-	( [ ! -z "$(KERNELHEADERS_PATCHES)" ] && cd Patches && cp $(KERNELHEADERS_PATCHES) ../SOURCES/ || true ) && \
-	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(KERNELHEADERS_SPEC)
+RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm: \
+		Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	( cd SPECS; patch -p1 stm-target-kernel-headers-kbuild.spec < ../Patches/stm-target-kernel-headers-kbuild_0123.spec.diff ) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-kernel-headers-kbuild.spec
 
+else
+
+KERNELHEADERS_VERSION	:= 2.6.23.17_stm23_0119-41
+
+RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm: \
+		Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	( cd SPECS; patch -p1 stm-target-kernel-headers-kbuild.spec < ../Patches/stm-target-kernel-headers-kbuild.spec.diff ) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-kernel-headers-kbuild.spec
+
+endif
+endif
+
+#RPMS/noarch/stlinux22-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm: \
+#		Archive/stlinux22-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm
+#	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+#	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(KERNELHEADERS).spec
+##	( cd SPECS; patch -p1 stm-target-$(KERNELHEADERS).spec < ../Patches/stm-target-$(KERNELHEADERS).spec.diff ) && \
+##
+#
+if STM22
+
+else
 $(DEPDIR)/max-$(KERNELHEADERS) \
 $(DEPDIR)/$(KERNELHEADERS): \
-$(DEPDIR)/%$(KERNELHEADERS): $(KERNELHEADERS_RPM)
+$(DEPDIR)/%$(KERNELHEADERS): RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(KERNELHEADERS_RPM)
+		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	touch $@
-
-endif !STM22
-
+endif
 #
 # GLIBC
 #
-GLIBC := glibc
-GLIBC_DEV := $(GLIBC)-dev
-if STM22
-GLIBC_VERSION := 2.5-27
-GLIBC_RAWVERSION := 2.5
-GLIBC_SPEC := stm-target-$(GLIBC)-sh4processed.spec
-GLIBC_SPEC_PATCH := stm-target-$(GLIBC)-sh4processed.spec22.diff
-GLIBC_PATCHES :=
-else !STM22
-if STM23
-GLIBC_VERSION := 2.6.1-53
-GLIBC_RAWVERSION := 2.6.1
-GLIBC_SPEC := stm-target-$(GLIBC).spec
-GLIBC_SPEC_PATCH :=
-GLIBC_PATCHES :=
-else !STM23
-# STM24
-GLIBC_VERSION := 2.10.1-7
-GLIBC_RAWVERSION := 2.10.1
-GLIBC_SPEC := stm-target-$(GLIBC).spec
-GLIBC_SPEC_PATCH := stm-target-$(GLIBC).spec24.diff
-GLIBC_PATCHES :=
-endif !STM23
-endif !STM22
-GLIBC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm
-GLIBC_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm
+GLIBC		:= glibc
+GLIBC_DEV	:= glibc-dev
 
-$(GLIBC_RPM) $(GLIBC_DEV_RPM): Archive/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSION).src.rpm \
-		$(if $(GLIBC_SPEC_PATCH),Patches/$(GLIBC_SPEC_PATCH)) \
-		$(if $(GLIBC_PATCHES),$(patsubst %,Patches/%,$(GLIBC_PATCHES))) filesystem
-	rpm $(DRPM) --nosignature -Uhv $< && \
-	( [ ! -z "$(GLIBC_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(GLIBC_SPEC) < "../Patches/$(GLIBC_SPEC_PATCH)" || true ) && \
-	( [ ! -z "$(GLIBC_PATCHES)" ] && cd Patches && cp $(GLIBC_PATCHES) ../SOURCES/ || true ) && \
-	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/$(GLIBC_SPEC)
+if STM22
+GLIBC_VERSION		:= 2.5-27
+GLIBC_RAWVERSION	:= 2.5
+
+RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
+RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm: \
+		Archive/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSION).src.rpm | filesystem
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	( cd SPECS; patch -p1 stm-target-$(GLIBC)-sh4processed.spec < ../Patches/stm-target-$(GLIBC)-sh4processed.spec22.diff ) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(GLIBC)-sh4processed.spec
+else
+
+#stlinux23
+
+#GLIBC_VERSION		:= 2.6.1-52
+GLIBC_VERSION		:= 2.6.1-53
+GLIBC_RAWVERSION	:= 2.6.1
+
+RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
+RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm: \
+		Archive/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSION).src.rpm | filesystem
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/stm-target-$(GLIBC).spec
+endif
 
 $(DEPDIR)/min-$(GLIBC) $(DEPDIR)/std-$(GLIBC) $(DEPDIR)/max-$(GLIBC) \
 $(DEPDIR)/$(GLIBC): \
-$(DEPDIR)/%$(GLIBC): $(GLIBC_RPM) | $(DEPDIR)/%filesystem
+$(DEPDIR)/%$(GLIBC): RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm | $(DEPDIR)/%filesystem
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(GLIBC_DEV) $(DEPDIR)/std-$(GLIBC_DEV) $(DEPDIR)/max-$(GLIBC_DEV) \
 $(DEPDIR)/$(GLIBC_DEV): \
-$(DEPDIR)/%$(GLIBC_DEV): $(DEPDIR)/%$(GLIBC) $(GLIBC_DEV_RPM)
+$(DEPDIR)/%$(GLIBC_DEV): $(DEPDIR)/%$(GLIBC) RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
+#Wrote: RPMS/sh4/stlinux23-sh4-glibc-prof-2.5-27.sh4.rpm
+#Wrote: RPMS/sh4/stlinux23-sh4-glibc-locales-2.5-27.sh4.rpm
+#Wrote: RPMS/sh4/stlinux23-sh4-glibc-i18ndata-2.5-27.sh4.rpm
+#Wrote: RPMS/sh4/stlinux23-sh4-glibc-nscd-2.5-27.sh4.rpm
+#Wrote: RPMS/sh4/stlinux23-sh4-glibc-doc-2.5-27.sh4.rpm
+
+
 flash-glibc: $(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so
 
-$(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so: $(GLIBC_RPM)
+$(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so: RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	touch $@
@@ -152,51 +158,49 @@ GCC		:= gcc
 LIBSTDC		:= libstdc++
 LIBSTDC_DEV	:= libstdc++-dev
 LIBGCC		:= libgcc
-if STM22
-GCC_VERSION := 4.1.1-26
-GCC_SPEC := stm-target-$(GCC)-sh4processed.spec
-GCC_SPEC_PATCH := stm-target-$(GCC)-sh4processed.spec22.diff
-GCC_PATCHES :=
-else !STM22
-if STM23
-GCC_VERSION := 4.2.4-50
-GCC_SPEC := stm-target-$(GCC).spec
-GCC_SPEC_PATCH := stm-target-$(GCC).spec23.diff
-GCC_PATCHES :=
-else !STM23
-#stm24
-GCC_VERSION := 4.3.4-66
-GCC_SPEC := stm-target-$(GCC).spec
-GCC_SPEC_PATCH := 
-GCC_PATCHES :=
-endif !STM23
-endif !STM22
-GCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm
-LIBSTDC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm
-LIBSTDC_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm
-LIBGCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
 
-$(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM): \
+if STM22
+GCC_VERSION	:= 4.1.1-26
+
+RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm \
+RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm \
+RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm \
+RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm: \
 		Archive/$(STLINUX)-target-$(GCC)-$(GCC_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	( [ ! -z "$(GCC_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(GCC_SPEC) < "../Patches/$(GCC_SPEC_PATCH)" || true ) && \
-	( [ ! -z "$(GCC_PATCHES)" ] && cd Patches && cp $(GCC_PATCHES) ../SOURCES/ || true ) && \
-	rpmbuild $(DRPMBUILD) -bb --clean --target=sh4-linux SPECS/$(GCC_SPEC)
+	( cd SPECS; patch -p1 stm-target-$(GCC)-sh4processed.spec < ../Patches/stm-target-$(GCC)-sh4processed.spec22.diff )
+	rpmbuild $(DRPMBUILD) -bb  --clean --target=sh4-linux SPECS/stm-target-$(GCC)-sh4processed.spec
+else
+
+#stlinux23
+
+GCC_VERSION := 4.2.4-50
+
+RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm \
+RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm \
+RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm \
+RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm: \
+		Archive/stlinux23-target-$(GCC)-$(GCC_VERSION).src.rpm | $(DEPDIR)/$(GLIBC_DEV)
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	( cd SPECS; patch -p1 stm-target-$(GCC).spec < ../Patches/stm-target-$(GCC).spec23.diff )
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb  --clean --target=sh4-linux SPECS/stm-target-$(GCC).spec
+endif
 
 $(DEPDIR)/min-$(GCC) $(DEPDIR)/std-$(GCC) $(DEPDIR)/max-$(GCC) $(DEPDIR)/$(GCC): \
-$(DEPDIR)/%$(GCC): $(DEPDIR)/%$(GLIBC_DEV) $(GCC_RPM)
+$(DEPDIR)/%$(GCC): $(DEPDIR)/%$(GLIBC_DEV) RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(LIBSTDC) $(DEPDIR)/std-$(LIBSTDC) $(DEPDIR)/max-$(LIBSTDC) $(DEPDIR)/$(LIBSTDC): \
-$(DEPDIR)/%$(LIBSTDC): $(DEPDIR)/%$(CROSS_LIBGCC) $(LIBSTDC_RPM)
+$(DEPDIR)/%$(LIBSTDC): $(DEPDIR)/%$(CROSS_LIBGCC) RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(LIBSTDC_DEV) $(DEPDIR)/std-$(LIBSTDC_DEV) $(DEPDIR)/max-$(LIBSTDC_DEV) $(DEPDIR)/$(LIBSTDC_DEV): \
-$(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) $(LIBSTDC_DEV_RPM)
+$(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
@@ -204,7 +208,7 @@ $(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) $(LIBSTDC_DEV_RPM)
 	sed -i "/^dependency_libs/s|-L/usr/lib -L/lib ||" $(targetprefix)/usr/lib/lib{std,sup}c++.la
 
 $(DEPDIR)/min-$(LIBGCC) $(DEPDIR)/std-$(LIBGCC) $(DEPDIR)/max-$(LIBGCC) $(DEPDIR)/$(LIBGCC): \
-$(DEPDIR)/%$(LIBGCC): $(LIBGCC_RPM)
+$(DEPDIR)/%$(LIBGCC): RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true

@@ -136,16 +136,15 @@ endif
 endif
 
 COMMONPATCHES_23 = \
-                Patches/cpp_stm23.patch \
-                Patches/time_stlinux23.diff \
-                Patches/mtd_stm23.patch \
+                Patches/cpp_stm23$(PATCH_STR).patch \
+                Patches/time_stlinux23$(PATCH_STR).diff \
+                $(if $(P0123),Patches/mtd_stm23$(PATCH_STR).patch) \
                 $(if $(P0119),Patches/fdma_stm23.patch) \
                 Patches/sound_stm23$(PATCH_STR).diff \
                 $(if $(P0123),Patches/stm23_strcpy$(PATCH_STR).patch) \
                 $(if $(P0123),Patches/stm23_asm_mov_0xffffff.patch) \
                 $(STM23_DVB_PATCH) \
-                $(if $(P0119),Patches/kernel23_depmod.patch) \
-				Patches/cmdline_printk_stm23.patch
+                $(if $(P0119),Patches/kernel23_depmod.patch)
 #               Patches/nosquashfs3.1_stm23.patch \
 #               Patches/squashfs3.0_stm23.patch \
 #               Patches/squashfs3.0_lzma_stm23.patch \
@@ -244,13 +243,15 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
 
-else !P0041
+else
 $(DEPDIR)/linux-kernel.do_prepare: $(KERNEL_DEPENDS)
 	$(KERNEL_PREPARE)
 	touch $@
 
-endif !P0041
-else !STM22
+#endof P0041
+endif
+
+#endof STM22
 
 if STM23_HAVANA
 
@@ -283,9 +284,10 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		@M4@ ../$(word 3,$^)	> .config && \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
+#endof stm23_havana
+endif
 
-else !STM23_HAVANA
-if STM23
+else
 
 ##################################################################################
 #stlinux23
@@ -303,7 +305,6 @@ DEBUG_STR=
 endif
 
 $(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL).noarch.rpm $(KERNELPATCHES_23)
-	echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 	@rpm $(DRPM) -ev stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL) || true
 	rm -rf $(KERNEL_DIR)
 	rm -rf linux-sh4
@@ -333,63 +334,8 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
 
-else !STM23
-
-# STM24
-
-HOST_KERNEL_SOURCE := host-kernel-source
-HOST_KERNEL_SOURCE_VERSION := 2.6.32.10
-HOST_KERNEL_SOURCE_SPEC := stm-host-kernel-sh4.spec
-HOST_KERNEL_SOURCE_SPEC_PATCH :=
-HOST_KERNEL_SOURCE_PATCHES :=
-HOST_KERNEL_SOURCE_RPM := RPMS/noarch/$(STLINUX)-$(HOST_KERNEL_SOURCE)-sh4-$(HOST_KERNEL_SOURCE_VERSION)$(KERNELSTMLABEL)-$(KERNELLABEL).noarch.rpm
-
-$(HOST_KERNEL_SOURCE_RPM): \
-		Archive/$(STLINUX)-$(HOST_KERNEL_SOURCE)-sh4-$(HOST_KERNEL_SOURCE_VERSION)$(KERNELSTMLABEL)-$(KERNELLABEL).src.rpm
-	rpm $(DRPM) --nosignature --nodeps -Uhv $< && \
-        ( [ ! -z "$(HOST_KERNEL_SOURCE_SPEC_PATCH)" ] && cd SPECS && patch -p1 $(HOST_KERNEL_SOURCE_SPEC) < "../Patches/$(HOST_KERNEL_SOURCE_SPEC_PATCH)" || true ) && \
-        ( [ ! -z "$(HOST_KERNEL_SOURCE_PATCHES)" ] && cd Patches && cp $(HOST_KERNEL_SOURCE_PATCHES) ../SOURCES/ || true ) && \
-	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/$(HOST_KERNEL_SOURCE_SPEC)
-
-if DEBUG
-DEBUG_STR=.debug
-else
-DEBUG_STR=
-endif
-
-$(DEPDIR)/linux-kernel.do_prepare: $(HOST_KERNEL_SOURCE_RPM) $(KERNELPATCHES_24)
-	@rpm $(DRPM) -ev stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL) || true
-	rm -rf $(KERNEL_DIR)
-	rm -rf linux-sh4
-	rpm $(DRPM) --force --ignorearch --nodeps -Uhv $<
-	cd $(KERNEL_DIR) && cat $(filter ../Patches/%, $(^:Patches/%=../Patches/%)) /dev/null | patch -p1
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm24_,-,$(KERNELVERSION))_$(MODNAME).config${DEBUG_STR} $(KERNEL_DIR)/.config
-	-rm $(KERNEL_DIR)/localversion*
-	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
-	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig
-	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/asm
-	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/linux/version.h
-	rm $(KERNEL_DIR)/.config
-	touch $@
-
-#dagobert: without stboard ->not sure if we need this
-$(DEPDIR)/linux-kernel.do_compile: \
-		bootstrap-cross \
-		linux-kernel.do_prepare \
-		Patches/linux-sh4-$(subst _stm24_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX)).config${DEBUG_STR} \
-		config.status \
-		| $(HOST_U_BOOT_TOOLS)
-	-rm $(DEPDIR)/linux-kernel*.do_compile
-	cd $(KERNEL_DIR) && \
-	export PATH=$(hostprefix)/bin:$(PATH) && \
-	$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
-	@M4@ ../$(word 3,$^) > .config && \
-	$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
-	touch $@
-
-endif !STM23
-endif !STM23_HAVANA
-endif !STM22
+#endof STM23
+endif 
 
 NFS_FLASH_SED_CONF=$(foreach param,XCONFIG_NFS_FS XCONFIG_LOCKD XCONFIG_SUNRPC,-e s"/^.*$(param)[= ].*/$(param)=m/")
 
