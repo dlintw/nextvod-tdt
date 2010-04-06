@@ -13,9 +13,9 @@
 #include "common.h"
 #include "output.h"
 
-#ifndef DEBUG
-#define DEBUG	// FIXME: until this is set properly by Makefile
-#endif
+//#ifndef DEBUG
+//#define DEBUG	// FIXME: until this is set properly by Makefile
+//#endif
 
 static const char FILENAME[] = "enigma2.c";
 
@@ -52,7 +52,9 @@ void replace_all(char ** string, char * search, char * replace) {
 
         strcpy(tempString, newString);
     }
-	printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
     if(newString[0] != '\0')
         *string = strdup(newString);
     else
@@ -61,21 +63,27 @@ void replace_all(char ** string, char * search, char * replace) {
 }
 
 int Enigma2ParseASS (char **Line) {
+#ifdef DEBUG
     printf("%s::%s -> Text=%s\n",  FILENAME, __FUNCTION__, *Line);
-	printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
     char * Text = strdup(*Line);
     int i;
     char *ptr1;
     
     ptr1 = Text;
     for (i=0; i < 8 && *ptr1 != '\0'; ptr1++) {
-        //printf("%s",ptr1);
+#ifdef DEBUG
+        printf("%s",ptr1);
+#endif
         if (*ptr1 == ',')
             i++;
     }
 
     free(*Line);
-	printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
     *Line = strdup(ptr1);
     free(Text);
 
@@ -84,12 +92,16 @@ int Enigma2ParseASS (char **Line) {
     replace_all(Line, "{\\i1}", "<i>");
     replace_all(Line, "{\\i0}", "</i>");
 
+#ifdef DEBUG
     printf("%s::%s <- Text=%s\n",  FILENAME, __FUNCTION__, *Line);
+#endif
     return;
 }
 
 int Enigma2ParseSRT (char **Line) {
-    //printf("%s::%s -> Text=%s\n",  FILENAME, __FUNCTION__, *Line);
+#ifdef DEBUG
+    printf("%s::%s -> Text=%s\n",  FILENAME, __FUNCTION__, *Line);
+#endif
 
     replace_all(Line, "\x0d", "");
     replace_all(Line, "\n\n", "\\N");
@@ -103,12 +115,16 @@ int Enigma2ParseSRT (char **Line) {
     replace_all(Line, "Ü", "Ue");
     replace_all(Line, "ß", "ss");
 
-    //printf("%s::%s <- Text=%s\n",  FILENAME, __FUNCTION__, *Line);
+#ifdef DEBUG
+    printf("%s::%s <- Text=%s\n",  FILENAME, __FUNCTION__, *Line);
+#endif
     return;
 }
 
 int Enigma2ParseSSA (char **Line) {
-    //printf("%s::%s -> Text=%s\n",  FILENAME, __FUNCTION__, *Line);
+#ifdef DEBUG
+    printf("%s::%s -> Text=%s\n",  FILENAME, __FUNCTION__, *Line);
+#endif
 
     replace_all(Line, "\x0d", "");
     replace_all(Line, "\n\n", "\\N");
@@ -122,7 +138,9 @@ int Enigma2ParseSSA (char **Line) {
     replace_all(Line, "Ü", "Ue");
     replace_all(Line, "ß", "ss");
 
-    //printf("%s::%s <- Text=%s\n",  FILENAME, __FUNCTION__, *Line);
+#ifdef DEBUG
+    printf("%s::%s <- Text=%s\n",  FILENAME, __FUNCTION__, *Line);
+#endif
     return;
 }
 
@@ -132,7 +150,9 @@ void (*_fkt) (long int, size_t, char *, void *);
 
 int eplayerCreateSubtitleSink()
 {
+#ifdef DEBUG
     printf("eplayerCreateSubtitleSink->\n");
+#endif
   
     return 0;
 }
@@ -150,7 +170,9 @@ static int freeSubPointer = 0;
 
 
 void addSub(Context_t  *context, char ** text, unsigned long long int pts, unsigned long int milliDuration) {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
 
     if(context && context->playback && !context->playback->isPlaying)
         return;
@@ -163,8 +185,10 @@ void addSub(Context_t  *context, char ** text, unsigned long long int pts, unsig
 
         sleep(1);
     }
-    //printf("from mkv: %s pts:%lld milliDuration:%lld\n",text,pts,milliDuration);
-	printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+    printf("from mkv: %s pts:%lld milliDuration:%lld\n",text,pts,milliDuration);
+		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
     subPuffer[freeSubPointer].text = strdup(text);
     subPuffer[freeSubPointer].pts = pts;
     subPuffer[freeSubPointer].milliDuration = milliDuration;
@@ -175,14 +199,18 @@ void addSub(Context_t  *context, char ** text, unsigned long long int pts, unsig
 }
 
 int getNextSub(char ** text, unsigned long long int * pts, long int * milliDuration) {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
     if (subPuffer[nextSubPointer].text == NULL || 
         subPuffer[nextSubPointer].pts == 0 || 
         subPuffer[nextSubPointer].milliDuration == 0) {
 
         return -1;
     }
-	printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
     *text = strdup(subPuffer[nextSubPointer].text);
     free(subPuffer[nextSubPointer].text);
     subPuffer[nextSubPointer].text = NULL;
@@ -195,13 +223,17 @@ int getNextSub(char ** text, unsigned long long int * pts, long int * milliDurat
 
     nextSubPointer++;
     nextSubPointer%=PUFFERSIZE;
-    //printf("nextSubPointer %d\n",nextSubPointer);
+#ifdef DEBUG
+    printf("nextSubPointer %d\n",nextSubPointer);
+#endif
 
     return 0;
 } 
 
 static void Enigma2SubtitleThread(Context_t *context) {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
     char *                  subText             = NULL;
     long int                subMilliDuration    = 0;
     unsigned long long int  subPts              = 0;
@@ -234,7 +266,9 @@ static void Enigma2SubtitleThread(Context_t *context) {
                 continue;
             }
                 
+#ifdef DEBUG
             printf("%s::%s %llu < %llu\n", FILENAME, __FUNCTION__, Pts, subPts);
+#endif
 
             while ( context && 
                     context->playback && 
@@ -243,7 +277,9 @@ static void Enigma2SubtitleThread(Context_t *context) {
 
                 unsigned long int diff = subPts - Pts;
                 diff = (diff*1000)/90.0;
+#ifdef DEBUG
                 printf("DIFF: %d\n", diff);
+#endif
                 if(diff > 100)
                     usleep(diff);
 
@@ -251,7 +287,9 @@ static void Enigma2SubtitleThread(Context_t *context) {
                     context->playback->Command(context, PLAYBACK_PTS, &Pts);
                 else return;
 
+#ifdef DEBUG
                 printf("%s::%s cur: %llu wanted: %llu\n", FILENAME, __FUNCTION__, Pts, subPts);
+#endif
             }
 
             if (    context && 
@@ -261,8 +299,10 @@ static void Enigma2SubtitleThread(Context_t *context) {
 
                 if(_fkt != NULL)
                   _fkt(subMilliDuration, strlen(subText), subText, _smp3);
+#ifdef DEBUG
                 else
                   printf("%s::%s \{%ld\} \[%d\] \"%s\"\n", FILENAME,__FUNCTION__, subMilliDuration, strlen(subText), subText);
+#endif
 
                 free(subText);
             }
@@ -277,16 +317,19 @@ static void Enigma2SubtitleThread(Context_t *context) {
 
 
 static int Write(Context_t  *context, const unsigned char *PLAYERData, const int DataLength, const unsigned long long int Pts, const unsigned char *Private, const int PrivateLength, float Duration, char * type) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	char * Encoding = NULL;
 	char * Text = strdup(PLAYERData);
 
 	context->manager->subtitle->Command(context, MANAGER_GETENCODING, &Encoding);
 
+#ifdef DEBUG
 	printf("%s::%s %s\n",       FILENAME, __FUNCTION__, Encoding);
 	printf("%s::%s %s [%d]\n",  FILENAME, __FUNCTION__, Text, DataLength);
-
+#endif
 
     if(     !strncmp("S_TEXT/SSA",  Encoding, 10) || 
             !strncmp("S_SSA",       Encoding, 5))
@@ -299,8 +342,10 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
         Enigma2ParseSRT(&Text);
     else
         ;
-
-    //printf("%s::%s %s\n",  FILENAME, __FUNCTION__, Text);
+        
+#ifdef DEBUG
+    printf("%s::%s %s\n",  FILENAME, __FUNCTION__, Text);
+#endif
 
     addSub(context, Text, Pts, Duration * 1000);
     free(Text);
@@ -310,7 +355,9 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
 }
 
 static int Enigma2Open(context) {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
     //Reset all
     nextSubPointer = 0;
     freeSubPointer = 0;
@@ -325,7 +372,9 @@ static int Enigma2Open(context) {
 }
 
 static int Enigma2Close(context) {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
     //Reset all
     nextSubPointer = 0;
     freeSubPointer = 0;
@@ -340,7 +389,9 @@ static int Enigma2Close(context) {
 }
 
 static int Enigma2Play(context) {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
@@ -350,7 +401,9 @@ static int Enigma2Play(context) {
 }
 
 static int Enigma2Stop(context) {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
     //pthread_join (&thread_sub, NULL, &sub_loop, NULL);
 
     return 0;
@@ -358,20 +411,26 @@ static int Enigma2Stop(context) {
 
 void Enigma2SignalConnect(void (*fkt) (long int, size_t, char *, void *))
 {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
 
     _fkt = fkt;
 }
 
 void Enigma2SignalConnectBuffer(void* smp3)
 {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
 
     _smp3 = smp3;   
 }
 
 static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	
 	int ret = 0;
 

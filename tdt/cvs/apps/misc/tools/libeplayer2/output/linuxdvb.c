@@ -17,9 +17,9 @@
 #include "output.h"
 #include "stm_ioctls.h"
 
-#ifndef DEBUG
-#define DEBUG	// FIXME: until this is set properly by Makefile
-#endif
+//#ifndef DEBUG
+//#define DEBUG	// FIXME: until this is set properly by Makefile
+//#endif
 
 #ifdef DEBUG
 int debugdvb = 0;
@@ -45,18 +45,18 @@ pthread_mutex_t LinuxDVBmutex;
 
 void getLinuxDVBMutex(char *filename, char *function, int line) {
 #ifdef DEBUG
-//	printf("%s::%s::%d requesting mutex\n",filename, function, line);
+	printf("%s::%s::%d requesting mutex\n",filename, function, line);
 #endif
 	pthread_mutex_lock(&LinuxDVBmutex);
 #ifdef DEBUG
-//	printf("%s::%s::%d received mutex\n",filename, function, line);
+	printf("%s::%s::%d received mutex\n",filename, function, line);
 #endif  
 }
 
 void releaseLinuxDVBMutex(char *filename, char *function, int line) {
 	pthread_mutex_unlock(&LinuxDVBmutex);
 #ifdef DEBUG
-//	printf("%s::%s::%d released mutex\n", filename, function, line);
+	printf("%s::%s::%d released mutex\n", filename, function, line);
 #endif  
 }
 
@@ -182,8 +182,10 @@ int LinuxDvbStop(Context_t  *context, char * type) {
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 
+#ifdef DEBUG
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
-	
+#endif	
+
 	while ( (PtsThread != NULL) && (--wait_time) > 0 ) {
 #ifdef DEBUG  
 		printf("%s::%s Waiting for LinuxDVB thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
@@ -390,7 +392,7 @@ static void LinuxDvbPtsThread(Context_t *context) {
 
 	while ( context->playback->isCreationPhase ) {
 #ifdef DEBUG
-//		printf("%s::%s Thread waiting for end of init phase...\n", FILENAME, __FUNCTION__);
+		printf("%s::%s Thread waiting for end of init phase...\n", FILENAME, __FUNCTION__);
 #endif		    	  
 	}
 
@@ -749,7 +751,9 @@ int MKV_InsertPesHeader (unsigned char *data, int size, unsigned char stream_id,
 #define SPDIF_AUDIO_PACKET_SIZE         (1024 * sizeof(unsigned int) * 2) // stereo 32bit samples.
 static int dts(unsigned char *PLAYERData, int DataLength, unsigned long long int Pts)
 {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+		printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
     int i = 0;
     unsigned char               PesHeader[PES_AUDIO_HEADER_SIZE];
     memset (PesHeader, '0', PES_AUDIO_HEADER_SIZE);
@@ -783,7 +787,9 @@ static int dts(unsigned char *PLAYERData, int DataLength, unsigned long long int
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static int mp3 (unsigned char *PLAYERData, int DataLength, unsigned long long int Pts)
 {
-	//printf("%s::%s %llu\n", FILENAME, __FUNCTION__, Pts);
+#ifdef DEBUG
+		printf("%s::%s %llu\n", FILENAME, __FUNCTION__, Pts);
+#endif
 
     unsigned char  PesHeader[PES_MAX_HEADER_SIZE];
 
@@ -797,7 +803,9 @@ static int mp3 (unsigned char *PLAYERData, int DataLength, unsigned long long in
 
     free(PacketStart);
 
-    //printf("mp3_Write-< len=%d\n", len);
+#ifdef DEBUG
+    printf("mp3_Write-< len=%d\n", len);
+#endif
     return len;
 }
 
@@ -809,7 +817,9 @@ static int wmaInitialHeaderRequired = 1;
 
 static int wma (unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, void *private_data, unsigned int private_size)
 {
-	//printf("%s::%s %llu\n", FILENAME, __FUNCTION__, Pts);
+#ifdef DEBUG
+		printf("%s::%s %llu\n", FILENAME, __FUNCTION__, Pts);
+#endif
 
     int len = 0;
 
@@ -844,7 +854,9 @@ static int wma (unsigned char *PLAYERData, int DataLength, unsigned long long in
         free(PacketStart);
     }
 
-    //printf("wma-< len=%d\n", len);
+#ifdef DEBUG
+    printf("wma-< len=%d\n", len);
+#endif
     return len;
 }
 
@@ -853,7 +865,9 @@ static int wma (unsigned char *PLAYERData, int DataLength, unsigned long long in
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static int ac3 (const unsigned char *PLAYERData, const int DataLength, unsigned long long int Pts)
 {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+		printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
     unsigned char  PesHeader[PES_MAX_HEADER_SIZE];
 
@@ -877,10 +891,14 @@ static unsigned char DefaultAACHeader[]    =  { 0xff, 0xf1, /*0x00, 0x00*/0x50, 
 
 int aac_mpeg4 (const unsigned char *PLAYERData, const int DataLength, unsigned long long int Pts, void *private_data, unsigned int private_size)
 {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+		printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
     if(private_data==NULL)
     {
-      //printf("private_data = NULL\n");
+#ifdef DEBUG
+      printf("private_data = NULL\n");
+#endif
       private_data=DefaultAACHeader;
       private_size=7;
     }
@@ -912,7 +930,9 @@ int aac_mpeg4 (const unsigned char *PLAYERData, const int DataLength, unsigned l
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static int mpeg2(unsigned char *PLAYERData, int DataLength, long long int Pts)
 {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+		printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
     unsigned char               PesHeader[PES_MAX_HEADER_SIZE];
     int len = 0;
 
@@ -922,7 +942,9 @@ static int mpeg2(unsigned char *PLAYERData, int DataLength, long long int Pts)
     while(1) {
         int PacketLength = (DataLength-Position)<=MAX_PES_PACKET_SIZE?(DataLength-Position):MAX_PES_PACKET_SIZE;
         int Remaining = DataLength - Position - PacketLength;
-        //dprintf("PacketLength=%d, Remaining=%d, Position=%d\n", PacketLength, Remaining, Position);
+#ifdef DEBUG
+        printf("PacketLength=%d, Remaining=%d, Position=%d\n", PacketLength, Remaining, Position);
+#endif
         int HeaderLength = MKV_InsertPesHeader (PesHeader, PacketLength, 0xe0, Pts, 0);
             unsigned char* PacketStart = malloc(PacketLength + HeaderLength);
         memcpy (PacketStart, PesHeader, HeaderLength);
@@ -944,8 +966,10 @@ static int mpeg2(unsigned char *PLAYERData, int DataLength, long long int Pts)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static int divx(unsigned char *PLAYERData, int DataLength, long long int Pts, unsigned int mpf)
 {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
-    //printf("\tmpf=%f\n", mpf);
+#ifdef DEBUG
+		printf("%s::%s\n", FILENAME, __FUNCTION__);
+    printf("\tmpf=%f\n", mpf);
+#endif
     unsigned char  PesHeader[PES_MAX_HEADER_SIZE];
 
     //XVID IS LIKE DIVX5    
@@ -987,7 +1011,9 @@ static int divx(unsigned char *PLAYERData, int DataLength, long long int Pts, un
 
     free(PacketStart);
 
-    //dprintf("xvid_Write-< len=%d\n", len);
+#ifdef DEBUG
+    printf("xvid_Write-< len=%d\n", len);
+#endif
     return len;
 }
 
@@ -1013,7 +1039,9 @@ const unsigned char Head[]                  = {0, 0, 0, 1};
 
 static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, void *private_data, unsigned int private_size, unsigned int TimeDelta, unsigned int TimeScale)
 {
-	//printf("%s::%s %d %d\n", FILENAME, __FUNCTION__,TimeDelta,TimeScale);
+#ifdef DEBUG
+		printf("%s::%s %d %d\n", FILENAME, __FUNCTION__,TimeDelta,TimeScale);
+#endif
 
     //unsigned int            TimeDelta = 23976;
     //unsigned int            TimeScale = 1000;
@@ -1172,7 +1200,9 @@ static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long in
         (NalLengthBytes == 3) ? (NalData[0] << 16) | (NalData[1] <<  8) |  NalData[2] :
                                 (NalData[0] << 24) | (NalData[1] << 16) | (NalData[2] << 8) | NalData[3];
 
-        //printf("NalStart = %u + NalLength = %u > SampleSize = %u\n", NalStart, NalLength, SampleSize);
+#ifdef DEBUG
+        printf("NalStart = %u + NalLength = %u > SampleSize = %u\n", NalStart, NalLength, SampleSize);
+#endif
 
         if (NalStart + NalLength > SampleSize) {
 #ifdef DEBUG
@@ -1204,7 +1234,9 @@ static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long in
 
                 PacketLength   += ExtraLength;
 
-//printf ("%s:  pts=%llu\n", __FUNCTION__, VideoPts);
+#ifdef DEBUG
+								printf ("%s:  pts=%llu\n", __FUNCTION__, VideoPts);
+#endif
 
                 HeaderLength    = MKV_InsertPesHeader (PesHeader, PacketLength, MPEG_VIDEO_PES_START_CODE, VideoPts, 0);
                                         
@@ -1232,19 +1264,25 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
 	int ret = 0;
 	int result;
 	
-//	printf("%s::%s DataLength=%u PrivateLength=%u Pts=%llu FrameRate=%f\n", FILENAME, __FUNCTION__, DataLength, PrivateLength, Pts, FrameRate);
+#ifdef DEBUG
+	printf("%s::%s DataLength=%u PrivateLength=%u Pts=%llu FrameRate=%f\n", FILENAME, __FUNCTION__, DataLength, PrivateLength, Pts, FrameRate);
+#endif
 
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
 	unsigned int TimeDelta;
 	unsigned int TimeScale;
-//	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#ifdef DEBUG
+	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif
 
 	if (video) {
 			char * Encoding = NULL;
 			context->manager->video->Command(context, MANAGER_GETENCODING, &Encoding);
 
-//	printf("%s::%s Encoding = %s\n", FILENAME, __FUNCTION__, Encoding);
+#ifdef DEBUG
+			printf("%s::%s Encoding = %s\n", FILENAME, __FUNCTION__, Encoding);
+#endif
 
 			if(!strcmp (Encoding, "V_MPEG2") || !strcmp (Encoding, "V_MPEG2/H264"))
 				result = mpeg2(PLAYERData, DataLength, Pts);
@@ -1265,7 +1303,9 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
 			char * Encoding = NULL;
 			context->manager->audio->Command(context, MANAGER_GETENCODING, &Encoding);
 
-//	printf("%s::%s Encoding = %s\n", FILENAME, __FUNCTION__, Encoding);
+#ifdef DEBUG
+			printf("%s::%s Encoding = %s\n", FILENAME, __FUNCTION__, Encoding);
+#endif
 
 			if(!strcmp (Encoding, "A_AC3"))
 				result = ac3(PLAYERData, DataLength, Pts);

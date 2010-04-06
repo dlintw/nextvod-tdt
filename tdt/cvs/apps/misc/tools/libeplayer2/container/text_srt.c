@@ -9,6 +9,10 @@
 #include <pthread.h>
 #include <errno.h>
 
+//#ifndef DEBUG
+//#define DEBUG	// FIXME: until this is set properly by Makefile
+//#endif
+
 static const char FILENAME[] = "text_srt.c";
 #define TEXTSRTOFFSET 100
 
@@ -28,14 +32,18 @@ static int TrackCount = 0;
 static int CurrentTrack = -1; //no as default.
 
 static void SrtManagerAdd(Context_t  *context, SrtTrack_t track) {
+#ifdef DEBUG
 	printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, track.File, track.Id);
+#endif
 
 	if (Tracks == NULL) {
 		Tracks = malloc(sizeof(SrtTrack_t) * TRACKWRAP);
 	}
 	
 	if (TrackCount < TRACKWRAP) {
+#ifdef DEBUG
 		printf("2strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 		Tracks[TrackCount].File       = strdup(track.File);
         Tracks[TrackCount].Id         = track.Id;
         TrackCount++;
@@ -46,16 +54,20 @@ static void SrtManagerAdd(Context_t  *context, SrtTrack_t track) {
 
 static char ** SrtManagerList(Context_t  *context) {
 	char ** tracklist = NULL;
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	if (Tracks != NULL) {
 		int i = 0, j = 0;
 		tracklist = malloc(sizeof(char *) * ((TrackCount*2) + 1));
 		for (i = 0, j = 0; i < TrackCount; i++, j+=2) {
-		printf("2strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
-            tracklist[j]    = strdup(Tracks[i].Id);
+#ifdef DEBUG
+			printf("2strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
+      tracklist[j]    = strdup(Tracks[i].Id);
 			tracklist[j+1]    = strdup(Tracks[i].File);
 		}
-        tracklist[j] = NULL;
+    tracklist[j] = NULL;
 	}
 
 	return tracklist;
@@ -83,10 +95,14 @@ static void getExtension(char * FILENAMEname, char ** extension) {
 
 	int i = 0;
 	int stringlength = (int) strlen(FILENAMEname);
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	for (i = 0; stringlength - i > 0; i++) {
 		if (FILENAMEname[stringlength - i - 1] == '.') {
+#ifdef DEBUG
 			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 			*extension = strdup(FILENAMEname+(stringlength - i));
 			break;
 		}
@@ -94,26 +110,32 @@ static void getExtension(char * FILENAMEname, char ** extension) {
 }
 
 static void getParentFolder(char * Filename, char ** folder) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	int i = 0;
 	int stringlength = strlen(Filename);
 
 	for (i = 0; stringlength - i > 0; i++) {
 		if (Filename[stringlength - i - 1] == '/') {
-            char* sTmp = (char *)malloc(stringlength - i);
+      char* sTmp = (char *)malloc(stringlength - i);
 			strncpy(sTmp, Filename, stringlength - i - 1);
-            sTmp[stringlength - i -1] = '\0';
-		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
-            *folder = strdup(sTmp);
-            free(sTmp);
+      sTmp[stringlength - i -1] = '\0';
+#ifdef DEBUG
+			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
+      *folder = strdup(sTmp);
+      free(sTmp);
 			break;
 		}
 	}
 }
 
 static void SrtGetSubtitle(Context_t  *context, char * Filename) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+		printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
     struct dirent *dirzeiger;
     DIR  *  dir;
@@ -128,32 +150,41 @@ static void SrtGetSubtitle(Context_t  *context, char * Filename) {
 
     FilenameLength = strlen(Filename);
 
+#ifdef DEBUG
     printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, Filename, FilenameLength);
+#endif
 
     getParentFolder(Filename, &FilenameFolder);
     FilenameFolderLength = strlen(FilenameFolder);
 
+#ifdef DEBUG
     printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameFolder, FilenameFolderLength);
+#endif
 
     getExtension(Filename, &FilenameExtension);
     FilenameExtensionLength = strlen(FilenameExtension);
 
+#ifdef DEBUG
     printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameExtension, FilenameExtensionLength);
+#endif
 
     FilenameShortLength = FilenameLength - FilenameFolderLength - 1 /* / */ - FilenameExtensionLength - 1 /* . */;
     FilenameShort = (char*) malloc(FilenameShortLength + 1 /* \0 */);
     strncpy(FilenameShort, Filename + (strlen(FilenameFolder) + 1 /* / */), FilenameShortLength);
     FilenameShort[FilenameShortLength] = '\0';
 
+#ifdef DEBUG
     printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameShort, FilenameShortLength);
-
     printf("%s\n%s | %s | %s\n", Filename, FilenameFolder, FilenameShort, FilenameExtension);
+#endif
 
     if((dir=opendir(FilenameFolder)) != NULL) {
         while((dirzeiger=readdir(dir)) != NULL) {
             char * extension = NULL;
 
+#ifdef DEBUG
             printf("%s\n",(*dirzeiger).d_name);
+#endif
             getExtension((*dirzeiger).d_name, &extension);
 
             if(extension != NULL) {
@@ -169,10 +200,14 @@ static void SrtGetSubtitle(Context_t  *context, char * Filename) {
                     name[nameLength] = '\0';
                     
                     getExtension(name, &subExtension);
+#ifdef DEBUG
                     printf("%s %s\n",name, subExtension);
+#endif
 
                     if(subExtension == NULL) {
-			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+												printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
                         language = strdup("und");
 
                     } else {
@@ -182,15 +217,21 @@ static void SrtGetSubtitle(Context_t  *context, char * Filename) {
                         tmpName[tmpLength] = '\0';
 
                         free(name);
-			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+												printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
                         name = strdup(tmpName);
                         free(tmpName);
-			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+												printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
                         language = strdup(subExtension);
                         free(subExtension);
                     }
 
+#ifdef DEBUG
                     printf("%s %s %d\n",name, FilenameShort, FilenameShortLength);
+#endif
 
                     if(!strncmp(name, FilenameShort, FilenameShortLength)) {
                         char * absSubtitleFilenam = (char*) malloc(strlen(FilenameFolder) + 1 + strlen((*dirzeiger).d_name));
@@ -237,10 +278,14 @@ static int SrtOpenSubtitle(Context_t *context, int trackid) {
 
     trackid %= TEXTSRTOFFSET;
 
+#ifdef DEBUG
     printf("%s::%s %s\n", FILENAME, __FUNCTION__, Tracks[trackid].File);
+#endif
 
     fsub = fopen(Tracks[trackid].File, "rb");
+#ifdef DEBUG
     printf("%s::%s %s\n", FILENAME, __FUNCTION__, fsub?"fsub!=NULL":"fsub==NULL");
+#endif
     if(!fsub)
         return -1;
 
@@ -259,7 +304,9 @@ static int SrtCloseSubtitle(Context_t *context) {
 
 
 static void SrtSubtitleThread(Context_t *context) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+		printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
     int pos = 0;
     char  Data[MAXLINELENGTH];
     unsigned long long int Pts = 0;
@@ -267,7 +314,9 @@ static void SrtSubtitleThread(Context_t *context) {
     char * Text = NULL;
 
     while(context->playback->isPlaying && fsub && fgets(Data, MAXLINELENGTH, fsub)) {
-	//printf("%s::%s pos=%d\n", FILENAME, __FUNCTION__, pos);
+#ifdef DEBUG
+				printf("%s::%s pos=%d\n", FILENAME, __FUNCTION__, pos);
+#endif
         if(pos == 0) {
             //int numScene = 0;
             //ret = sscanf(line, "%li", &numScene);
@@ -285,11 +334,17 @@ static void SrtSubtitleThread(Context_t *context) {
             pos++;
 
         } else if(pos == 2) {
-            //printf("Data[0] = %d \'%c\'\n", Data[0], Data[0]);
+#ifdef DEBUG
+            printf("Data[0] = %d \'%c\'\n", Data[0], Data[0]);
+#endif
             if(Data[0] == '\n' || Data[0] == '\0' || Data[0] == 13 /* ^M */) {
-                //printf("--> Text= \"%s\"\n", Text);
+#ifdef DEBUG
+                printf("--> Text= \"%s\"\n", Text);
+#endif
                 context->output->subtitle->Write(context, Text, strlen(Text), Pts, NULL, 0, Duration, "subtitle");
-                //printf("<-- Text= \"%s\"\n", Text);
+#ifdef DEBUG
+                printf("<-- Text= \"%s\"\n", Text);
+#endif
                 free(Text);
                 Text = NULL;
                 pos = 0;
@@ -297,14 +352,18 @@ static void SrtSubtitleThread(Context_t *context) {
             }
             
             if(!Text) {
-		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+								printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
                 Text = strdup(Data);
                 
                 Text[-1] = '\0';
             } else {
                 int length = strlen(Text) /* \0 -> \n */ + strlen(Data) + 2 /* \0 */;
-                //printf("Alloc: %d\n", length);
-		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+                printf("Alloc: %d\n", length);
+								printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
                 char * tmpText = strdup(Text);
                 free(Text);
                 Text = (char*)malloc(length);
@@ -325,7 +384,9 @@ static void SrtSubtitleThread(Context_t *context) {
 }
 
 static int SrtPlay(Context_t *context) {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
 
     int curtrackid = -1;
     context->manager->subtitle->Command(context, MANAGER_GET, &curtrackid);
@@ -360,7 +421,9 @@ static int SrtDel(Context_t *context) {
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	switch(command) {
 		case CONTAINER_INIT: {
@@ -377,13 +440,17 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		case CONTAINER_SWITCH_SUBTITLE: {
-            printf("%s::%s CONTAINER_SWITCH_SUBTITLE id=%d\n", FILENAME, __FUNCTION__, *((int*) argument));
+#ifdef DEBUG
+        printf("%s::%s CONTAINER_SWITCH_SUBTITLE id=%d\n", FILENAME, __FUNCTION__, *((int*) argument));
+#endif
 
 		    SrtSwitchSubtitle(context, (int*) argument);
 			break;
 		}
 		default:
+#ifdef DEBUG
 			printf("%s::%s ConatinerCmd not supported! %d\n", FILENAME, __FUNCTION__, command);
+#endif
 			break;
 	}
 

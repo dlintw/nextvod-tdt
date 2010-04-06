@@ -2,25 +2,31 @@
 #include "common.h"
 #include "output.h"
 
-#define DEBUG	// FIXME: until this is set properly by Makefile
+//#ifndef DEBUG
+//#define DEBUG	// FIXME: until this is set properly by Makefile
+//#endif
 
 static const char FILENAME[] = "output.c";
 
 static void printOutputCapabilities() {
 	int i, j;
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	printf("Capabilities:\n");
 	for (i = 0; AvailableOutput[i] != NULL; i++)	{
 		printf("\t%s : ", AvailableOutput[i]->Name);
 		for (j = 0; AvailableOutput[i]->Capabilities[j] != NULL; j++)
-			printf("%s ", AvailableOutput[i]->Capabilities[j]);
+		printf("%s ", AvailableOutput[i]->Capabilities[j]);
 		printf("\n");
 	}
 }
 
 static void OutputAdd(Context_t  *context, char * port) {
 	int i, j;
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	for (i = 0; AvailableOutput[i] != NULL; i++)	
 		for (j = 0; AvailableOutput[i]->Capabilities[j] != NULL; j++)
 			if (!strcmp(AvailableOutput[i]->Capabilities[j], port)) {
@@ -36,7 +42,9 @@ static void OutputAdd(Context_t  *context, char * port) {
 
 static void OutputDel(Context_t  *context, char * port) {
 	int i, j;
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
     if (!strcmp("audio", port))
         context->output->audio = NULL;
@@ -212,7 +220,9 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 			break;
 		}
 		default:
+#ifdef DEBUG
 			printf("%s::%s OutputCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
+#endif
 			break;
 	}
 

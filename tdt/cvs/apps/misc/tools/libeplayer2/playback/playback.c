@@ -10,9 +10,9 @@
 #include "playback.h"
 #include "common.h"
 
-#ifndef DEBUG
-#define DEBUG	// FIXME: until this is set properly by Makefile
-#endif
+//#ifndef DEBUG
+//#define DEBUG	// FIXME: until this is set properly by Makefile
+//#endif
 
 static const char FILENAME[] = "playback.c";
 
@@ -73,10 +73,12 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 		//host = host.substr(0, dp);
 		host[dp]='\0';
 	}
-	//printf("URL: %s\n",url);
-	//printf("Host: %s\n",host);
-	//printf("URI: %s\n",uri);
-	//printf("Port: %d\n",port);
+#ifdef DEBUG
+	printf("URL: %s\n",url);
+	printf("Host: %s\n",host);
+	printf("URI: %s\n",uri);
+	printf("Port: %d\n",port);
+#endif
 
 	struct hostent* h = gethostbyname(host);
 	if (h == NULL || h->h_addr_list == NULL){
@@ -93,7 +95,9 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 	addr.sin_addr.s_addr = *((in_addr_t*)h->h_addr_list[0]);
 	addr.sin_port = htons(port);
 
+#ifdef DEBUG
 	printf("connecting to %s\n", url);
+#endif
 
 	if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
 		printf("connect failed for: %s\n", url);
@@ -125,7 +129,9 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 	strcat(request,"Accept: */*\r\n");
 	strcat(request,"Connection: close\r\n");
 	strcat(request,"\r\n");
+#ifdef DEBUG
 	printf("sending:\n%s",request);
+#endif
 	write(fd, request, strlen(request));
 
 	int rc,ext_found=0;
@@ -133,7 +139,9 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 	char* linebuf = (char*)malloc(1000);
 
 	rc = getline(&linebuf, &buflen, fd);
+#ifdef DEBUG
 	printf("RECV(%d): %s\n", rc, linebuf);
+#endif
 	if (rc <= 0)
 	{
 		close(fd);
@@ -146,8 +154,10 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 	char statusmsg[100];
 	rc = sscanf(linebuf, "%99s %d %99s", proto, &statuscode, statusmsg);
 	if (statuscode == 303){
+#ifdef DEBUG
 		printf("redirecting.\n");
 		printf("got: %s\n",linebuf);
+#endif
 		while (rc > 0)
 		{
 			rc = getline(&linebuf, &buflen, fd);
@@ -157,7 +167,9 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 				context->playback->uri=strdup(linebuf+10);
 				return openHttpConnection(context, content,off);
 			}
+#ifdef DEBUG
 			printf("RECV(%d): %s\n", rc, linebuf);
+#endif
 		}
 		free(linebuf);
 		close(fd);
@@ -165,21 +177,29 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 	}
 	if (rc != 3 || (statuscode != 200 && statuscode != 206)) {
 		printf("wrong response: \"200 OK\" expected.\n");
+#ifdef DEBUG
 		printf("got: %s\n",linebuf);
+#endif
 		while (rc > 0)
 		{
 			rc = getline(&linebuf, &buflen, fd);
+#ifdef DEBUG
 			printf("RECV(%d): %s\n", rc, linebuf);
+#endif
 		}
 		free(linebuf);
 		close(fd);
 		return NULL;
-	}	
+	}
+#ifdef DEBUG
 	printf("proto=%s, code=%d, msg=%s\n", proto, statuscode, statusmsg);
+#endif
 	while (rc > 0)
 	{
 		rc = getline(&linebuf, &buflen, fd);
+#ifdef DEBUG
 		printf("RECV(%d): %s\n", rc, linebuf);
+#endif
 		if(!strncmp("Content-Length: ", linebuf, 16)){
 				long int pos;
 				sscanf(linebuf+16,"%ld",&pos);
@@ -187,31 +207,41 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 		}
 		if(rc == 24) { //ContentType
 			int ret = 0;
+#ifdef DEBUG
 			printf("Content-Type: ");
+#endif
 			if(!(ret = strncmp("audio/mpeg", linebuf+14, 10))) {
+#ifdef DEBUG
 				printf("mp3");
 				printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 				*content = strdup("mp3");
 				ext_found=1;
 			} else  {
-				printf("Unknown (%s) %d", linebuf, ret);
+				printf("Content-Type Unknown (%s) %d", linebuf, ret);
 			}
 			printf("\n");
 		} else if(rc == 23) {
 			int ret = 0;
+#ifdef DEBUG
 			printf("Content-Type: ");
+#endif
 			if(!(ret = strncmp("audio/mpeg", linebuf+13, 10))) {
+#ifdef DEBUG
 				printf("mp3");
 				printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 				*content = strdup("mp3");
 				ext_found=1;
 			}if(!(ret = strncmp("video/mp4", linebuf+14, 9))) {
+#ifdef DEBUG
 				printf("mp4");
 				printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 				*content = strdup("mp4");
 				ext_found=1;
 			} else  {
-				printf("Unknown (%s) %d", linebuf, ret);
+				printf("Content-Type Unknown (%s) %d", linebuf, ret);
 			}
 			printf("\n");
 		} else {
@@ -221,7 +251,9 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 	free(linebuf);
 	if(!ext_found){
 		//default mp3
+#ifdef DEBUG
 		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 		*content = strdup("mp3");
 	}
 	return fd;
@@ -260,10 +292,12 @@ static int openMmsConnection(char* url, char** content)
 		//host = host.substr(0, dp);
 		host[dp]='\0';
 	}
+#ifdef DEBUG
 	printf("URL: %s\n",url);
 	printf("Host: %s\n",host);
 	printf("URI: %s\n",uri);
 	printf("Port: %d\n",port);
+#endif
 
 	struct hostent* h = gethostbyname(host);
 	if (h == NULL || h->h_addr_list == NULL){
@@ -280,13 +314,17 @@ static int openMmsConnection(char* url, char** content)
 	addr.sin_addr.s_addr = *((in_addr_t*)h->h_addr_list[0]);
 	addr.sin_port = htons(port);
 
+#ifdef DEBUG
 	printf("connecting to %s\n", url);
+#endif
 
 	if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
 		printf("connect failed for: %s\n", url);
 		return NULL;
 	}
+#ifdef DEBUG
 	printf("connected!\n");
+#endif
 	char request[1024];
 	strcpy(request,"GET ");
 	strcat(request,uri);
@@ -297,7 +335,9 @@ static int openMmsConnection(char* url, char** content)
 	strcat(request,"Accept: */*\n");
 	strcat(request,"Connection: close\n");
 	strcat(request,"\n");
+#ifdef DEBUG
 	printf("sending:\n%s",request);
+#endif
 	write(fd, request, strlen(request));
 
 	int rc;
@@ -305,7 +345,9 @@ static int openMmsConnection(char* url, char** content)
 	char* linebuf = (char*)malloc(1000);
 
 	rc = getline(&linebuf, &buflen, fd);
+#ifdef DEBUG
 	printf("RECV(%d): %s\n", rc, linebuf);
+#endif
 	if (rc <= 0)
 	{
 		close(fd);
@@ -319,25 +361,35 @@ static int openMmsConnection(char* url, char** content)
 	rc = sscanf(linebuf, "%99s %d %99s", proto, &statuscode, statusmsg);
 	if (rc != 3 || statuscode != 200) {
 		printf("wrong response: \"200 OK\" expected.\n");
+#ifdef DEBUG
 		printf("got: %s\n",linebuf);
+#endif
 		free(linebuf);
 		close(fd);
 		return NULL;
 	}	
+#ifdef DEBUG
 	printf("proto=%s, code=%d, msg=%s\n", proto, statuscode, statusmsg);
+#endif
 	while (rc > 0)
 	{
 		rc = getline(&linebuf, &buflen, fd);
-		//printf("RECV(%d): %s\n", rc, linebuf);
+#ifdef DEBUG
+		printf("RECV(%d): %s\n", rc, linebuf);
+#endif
 		if(rc == 24) { //ContentType
 			int ret = 0;
+#ifdef DEBUG
 			printf("Content-Type: ");
+#endif
 			if(!(ret = strncmp("audio/mpeg", linebuf+14, 10))) {
+#ifdef DEBUG
 				printf("mp3");
 				printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 				*content = strdup("mp3");
 			} else  {
-				printf("Unknown (%s) %d", linebuf, ret);
+				printf("Content-Type Unknown (%s) %d", linebuf, ret);
 			}
 			printf("\n");
 		}
@@ -351,10 +403,14 @@ static void getExtension(char * FILENAMEname, char ** extension) {
 
 	int i = 0;
 	int stringlength = (int) strlen(FILENAMEname);
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	for (i = 0; stringlength - i > 0; i++) {
 		if (FILENAMEname[stringlength - i - 1] == '.') {
+#ifdef DEBUG
 			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 			*extension = strdup(FILENAMEname+(stringlength - i));
 			break;
 		}
@@ -362,7 +418,9 @@ static void getExtension(char * FILENAMEname, char ** extension) {
 }
 
 static void getParentFolder(char * Filename, char ** folder) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	int i = 0;
 	int stringlength = (int) strlen(Filename);
@@ -387,7 +445,9 @@ static void DummyThread(Context_t *context) {
 }
 
 static int PlaybackOpen(Context_t  *context, char * uri) {
+#ifdef DEBUG
 	printf("%s::%s URI=%s\n", FILENAME, __FUNCTION__, uri);
+#endif
 	/* make sure that 3 thread are created
 	   if the first file we play is a file without subtitles (no subtitles thread is created)
 	   on playback of the second file pthread_create fails with cannot allocate memory
@@ -413,7 +473,9 @@ static int PlaybackOpen(Context_t  *context, char * uri) {
            fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,error,strerror(error));
 	   DummyThread3 = NULL;
         }
+#ifdef DEBUG
 	printf("joining dummy threads\n");
+#endif
 	if(DummyThread1!=NULL)error = pthread_join (DummyThread1, NULL);
 	if(DummyThread2!=NULL)error = pthread_join (DummyThread2, NULL);
 	if(DummyThread3!=NULL)error = pthread_join (DummyThread3, NULL);
@@ -427,7 +489,9 @@ static int PlaybackOpen(Context_t  *context, char * uri) {
 
 		    context->playback->fd = open(uri+7, O_RDONLY);
 		    if(context->playback->fd == -1) {
+#ifdef DEBUG
 			    printf("context->playback->fd == -1!\n");
+#endif
 			    return -1;
 		    }
 
@@ -458,9 +522,13 @@ static int PlaybackOpen(Context_t  *context, char * uri) {
 		    context->playback->isHttp = 1;
 		
 		    context->playback->fd = openHttpConnection(context, &extension,0);
-		    //printf("context->playback->fd = %d\n", context->playback->fd);
+#ifdef DEBUG
+		    printf("context->playback->fd = %d\n", context->playback->fd);
+#endif
 		    if(context->playback->fd == 0) {
+#ifdef DEBUG
 			    printf("context->playback->fd == 0!\n");
+#endif
 			    return -1;
 		    }
 
@@ -483,9 +551,13 @@ static int PlaybackOpen(Context_t  *context, char * uri) {
 		    context->playback->isHttp = 1;
 		
 		    context->playback->fd = openMmsConnection(uri, &extension);
-		    //printf("context->playback->fd = %d\n", context->playback->fd);
+#ifdef DEBUG
+		    printf("context->playback->fd = %d\n", context->playback->fd);
+#endif
 		    if(context->playback->fd == 0) {
+#ifdef DEBUG
 			    printf("context->playback->fd == 0!\n");
+#endif
 			    return -1;
 		    }
 
@@ -513,7 +585,9 @@ static int PlaybackOpen(Context_t  *context, char * uri) {
 }
 
 static int PlaybackClose(Context_t  *context) {
-	printf("%s::%s \n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+				printf("%s::%s \n", FILENAME, __FUNCTION__);
+#endif
 
         context->container->Command(context, CONTAINER_DEL, NULL);
 
@@ -590,7 +664,9 @@ static int PlaybackPlay(Context_t  *context) {
 }
 
 static int PlaybackPause(Context_t  *context) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	if (context->playback->isPlaying && !context->playback->isPaused) {
 		context->output->Command(context, OUTPUT_PAUSE, NULL);
 
@@ -605,7 +681,9 @@ static int PlaybackPause(Context_t  *context) {
 }
 
 static int PlaybackContinue(Context_t  *context) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	if (context->playback->isPlaying && 
         (context->playback->isPaused || context->playback->isForwarding)) {
 
@@ -622,7 +700,9 @@ static int PlaybackContinue(Context_t  *context) {
 }
 
 static int PlaybackStop(Context_t  *context) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	if (context->playback->isPlaying) {
 
 		context->playback->isPaused     = 0;
@@ -699,7 +779,9 @@ static int PlaybackFastForward(Context_t  *context,int* speed) {
 			break;
 	}
 
+#ifdef DEBUG
 	printf("%s::%s Speed: %d x {%d}\n", FILENAME, __FUNCTION__, *speed, context->playback->Speed);
+#endif
 
 		context->output->Command(context, OUTPUT_FASTFORWARD, NULL);
 	} else
@@ -708,7 +790,9 @@ static int PlaybackFastForward(Context_t  *context,int* speed) {
 }
 
 static int PlaybackSeek(Context_t  *context, float * pos) {
+#ifdef DEBUG
 	printf("%s::%s pos: %f\n", FILENAME, __FUNCTION__, *pos);
+#endif
 
 	if (!context->playback->isHttp && context->playback->isPlaying && !context->playback->isForwarding) {
 		context->playback->isSeeking = 1;
@@ -748,7 +832,9 @@ static int PlaybackPts(Context_t  *context, unsigned long long int* pts) {
 }
 
 static int PlaybackLength(Context_t  *context, double* length) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+		printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
     *length = 0;
 
@@ -763,7 +849,9 @@ static int PlaybackLength(Context_t  *context, double* length) {
 }
 
 static int PlaybackSwitchAudio(Context_t  *context, int* track) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
     int curtrackid = 0;
     int nextrackid = 0;
