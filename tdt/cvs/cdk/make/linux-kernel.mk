@@ -110,6 +110,11 @@ CUBEPATCHES_041 = $(COMMONPATCHES_41) \
 		Patches/jffs2-lzma.patch \
 		Patches/ftdi_sio.c.patch
 
+HS5101PATCHES_41 = $(COMMONPATCHES_41) \
+                $(UFS910PATCHES_41) \
+                Patches/hs5101_setup_p0041.patch \
+                Patches/hs5101_stasc_p0041.patch
+
 KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 			$(if $(HL101),$(HL101PATCHES_41)) \
 			$(if $(VIP2),$(VIP2PATCHES_41)) \

@@ -89,7 +89,7 @@ case "$REPLY" in
 	10) TARGET="--enable-cuberevo_mini";;
 	11) TARGET="--enable-cuberevo_mini2";;
 	12) TARGET="--enable-cuberevo_250hd";;
-	13) TARGET="--enable-homecast5101 --enable-ufs910";;
+	13) TARGET="--enable-homecast5101";;
 	 *) TARGET="--enable-ufs910";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"
