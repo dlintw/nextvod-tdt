@@ -47,7 +47,6 @@ else
 	chmod 777 $(prefix)/release/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm22_041_cuberevo $(prefix)/release/lib/modules/fp.ko
 endif	
-	
 	rm -f $(prefix)/release/lib/modules/simu_button.ko
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/bin/tffpctl
@@ -55,32 +54,26 @@ endif
 	rm -f $(prefix)/release/bin/evremote
 	rm -f $(prefix)/release/bin/tfd2mtd
 
-	
-	
 release_cuberevo_9500hd: release_common_utils release_cube_common
 	echo "cuberevo-9500hd" > $(prefix)/release/etc/hostname
 
-	
 release_cuberevo_2000hd: release_common_utils release_cube_common
 	echo "cuberevo-2000hd" > $(prefix)/release/etc/hostname
 
-	
 release_cuberevo_250hd: release_common_utils release_cube_common
 	echo "cuberevo-250hd" > $(prefix)/release/etc/hostname
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
-	
+
 release_cuberevo_mini_fta: release_common_utils release_cube_common
 	echo "cuberevo-mini-fta" > $(prefix)/release/etc/hostname
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
-	
+
 release_cuberevo_mini2: release_common_utils release_cube_common
 	echo "cuberevo-mini2" > $(prefix)/release/etc/hostname
 
-	
 release_cuberevo_mini: release_common_utils release_cube_common
 	echo "cuberevo-mini" > $(prefix)/release/etc/hostname
 
-	
 release_cuberevo: release_common_utils release_cube_common
 	echo "cuberevo" > $(prefix)/release/etc/hostname
 
@@ -153,6 +146,19 @@ release_vip2: release_common_utils
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 
+release_hs5101:
+	echo "hs5101" > $(prefix)/release/etc/hostname
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button_hs5101/button.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/vfd_hs5101/vfd.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release/boot/video.elf
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
+
+	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
+	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
+
 release_tf7700: release_common_utils
 	echo "tf7700" > $(prefix)/release/etc/hostname 
 	cp -f $(targetprefix)/sbin/shutdown $(prefix)/release/sbin/
@@ -179,14 +185,14 @@ release_tf7700: release_common_utils
 # IMPORTANT: it is assumed that only one variable is set. Otherwise the target name won't be resolved.
 #
 $(DEPDIR)/min-release $(DEPDIR)/std-release $(DEPDIR)/max-release $(DEPDIR)/ipk-release $(DEPDIR)/release: \
-$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)
+$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
 	touch $@
 
 
 release-clean:
 	rm -f $(DEPDIR)/release
 	rm -f $(DEPDIR)/release_base
-	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)
+	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
 	rm -f $(DEPDIR)/release_common_utils
 	rm -f $(DEPDIR)/release_cube_common
 
@@ -275,7 +281,7 @@ release_base:
 	cp $(targetprefix)/etc/tuxbox/tuxtxt2.conf $(prefix)/release/etc/tuxbox/ && \
 	echo "576i50" > $(prefix)/release/etc/videomode && \
 	cp -R $(targetprefix)/etc/fonts/* $(prefix)/release/etc/fonts/ && \
-	cp $(buildprefix)/root/release/rcS$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/etc/init.d/rcS && \
+	cp $(buildprefix)/root/release/rcS$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(HOMECAST5101),_$(HOMECAST5101)) $(prefix)/release/etc/init.d/rcS && \
 	chmod 755 $(prefix)/release/etc/init.d/rcS && \
 	cp $(buildprefix)/root/release/mountvirtfs $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/mme_check $(prefix)/release/etc/init.d/ && \

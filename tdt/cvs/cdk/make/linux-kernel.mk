@@ -117,7 +117,8 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 			$(if $(CUBEMOD),$(CUBEPATCHES_041)) \
 			$(if $(UFS910),$(UFS910PATCHES_41)) \
 			$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_41)) \
-			$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41))
+			$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41)) \
+			$(if $(HOMECAST5101),$(HS5101PATCHES_41))
 
 ############ Patches Kernel 23 ###############
 
@@ -179,6 +180,9 @@ CUBEPATCHES_023 = $(COMMONPATCHES_23) \
                 Patches/cuberevo_rtl8201_stlinux23$(PATCH_STR).patch \
                 Patches/$(CUBEMOD)_setup_stlinux23$(PATCH_STR).patch
 
+HS5101PATCHES_23 = $(COMMONPATCHES_23) \
+		$(UFS910PATHCES_23)
+
 KERNELPATCHES_23 =      $(if $(TF7700),$(TF7700PATCHES_23)) \
                         $(if $(HL101),$(HL101PATCHES_23)) \
                         $(if $(VIP2),$(VIP2PATCHES_23)) \
@@ -186,12 +190,13 @@ KERNELPATCHES_23 =      $(if $(TF7700),$(TF7700PATCHES_23)) \
                         $(if $(CUBEMOD),$(CUBEPATCHES_023)) \
                         $(if $(UFS910),$(UFS910PATCHES_23)) \
                         $(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_23)) \
-                        $(if $(FORTIS_HDBOX),$(FORTISPATCHES_23))
+                        $(if $(FORTIS_HDBOX),$(FORTISPATCHES_23)) \
+                        $(if $(HOMECAST5101),$(HS5101PATCHES_23))
 
 ############ Patches Kernel 23 End ###############
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS922)$(TF7700)$(HL101)$(VIP2)$(CUBEMOD)$(FORTIS_HDBOX)$(FLASH_UFS910)
+MODNAME = $(UFS910)$(UFS922)$(TF7700)$(HL101)$(VIP2)$(CUBEMOD)$(FORTIS_HDBOX)$(FLASH_UFS910)$(HOMECAST5101)
 
 if STM22
 ##################################################################################
@@ -323,7 +328,7 @@ $(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-
 $(DEPDIR)/linux-kernel.do_compile: \
 		bootstrap-cross \
 		linux-kernel.do_prepare \
-		Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX)).config${DEBUG_STR} \
+		Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX)).config${DEBUG_STR}$(if $(HOMECAST5101),_$(HOMECAST5101)).config${DEBUG_STR} \
 		config.status \
 		| $(HOST_U_BOOT_TOOLS)
 	-rm $(DEPDIR)/linux-kernel*.do_compile
@@ -365,7 +370,7 @@ $(DEPDIR)/linux-kernel.%.do_compile: \
 		bootstrap-cross \
 		linux-kernel.do_prepare \
 		Patches/linux-sh4-$(KERNELVERSION).stboards.c.m4 \
-		Patches/linux-$(subst _stm22_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS922),_$(UFS922))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)).config \
+		Patches/linux-$(subst _stm22_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS922),_$(UFS922))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(HOMECAST5101),_$(HOMECAST5101)).config \
 		config.status \
 		| $(DEPDIR)/$(HOST_U_BOOT_TOOLS)
 	-rm $(DEPDIR)/linux-kernel*.do_compile
@@ -408,6 +413,7 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	$(if $(CUBEREVO_250HD),PLATFORM: stb7109ref\n) \
 	$(if $(CUBEREVO_2000HD),PLATFORM: stb7109ref\n) \
 	$(if $(CUBEREVO_9500HD),PLATFORM: stb7109ref\n) \
+	$(if $(HOMECAST5101),PLATFORM: stb7109ref\n) \
 	KERNEL VERSION: $(KERNELVERSION)\n" > $(prefix)/$*cdkroot/README.ST && \
 	$(MAKE) -C $(KERNEL_DIR) INSTALL_MOD_PATH=$(prefix)/$*cdkroot modules_install && \
 	rm $(prefix)/$*cdkroot/lib/modules/$(KERNELVERSION)/build || true && \
@@ -435,6 +441,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_250HD),CUBEREVO_250HD=$(CUBEREVO_250HD)) \
 		$(if $(CUBEREVO_2000HD),CUBEREVO_2000HD=$(CUBEREVO_2000HD)) \
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
+		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
 		CROSS_COMPILE=$(target)-
 	$(MAKE) -C $(driverdir) \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
@@ -453,6 +460,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_250HD),CUBEREVO_250HD=$(CUBEREVO_250HD)) \
 		$(if $(CUBEREVO_2000HD),CUBEREVO_2000HD=$(CUBEREVO_2000HD)) \
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
+		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
 		install
        KERNELVER=`cat $(buildprefix)/$(KERNEL_DIR)/include/config/kernel.release` \
 	$(DEPMOD) -ae -b $(targetprefix) -r $(KERNELVER)

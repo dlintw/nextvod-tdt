@@ -17,7 +17,11 @@ else
 if ENABLE_VIP2
 	cp $(buildprefix)/root/etc/lircd_vip2.conf $(targetprefix)/etc/lircd.conf
 else
+if ENABLE_HOMECAST5101
+	cp $(buildprefix)/root/etc/lircd_hs5101.conf $(targetprefix)/etc/lircd.conf
+else
 	cp $(buildprefix)/root/etc/lircd.conf $(targetprefix)/etc
+endif
 endif
 endif
 
@@ -37,7 +41,11 @@ else
 if ENABLE_VIP2
 	cp $(buildprefix)/root/etc/lircd_vip2.conf $(targetprefix)/etc/lircd.conf
 else
+if ENABLE_HOMECAST5101
+	cp $(buildprefix)/root/etc/lircd_hs5101.conf $(targetprefix)/etc/lircd.conf
+else
 	cp $(buildprefix)/root/etc/lircd.conf $(targetprefix)/etc/
+endif
 endif
 endif
 	@[ "x$*" = "x" ] && touch $@ || true

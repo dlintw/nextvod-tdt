@@ -335,6 +335,14 @@ AC_ARG_ENABLE(flash_ufs910,
 AM_CONDITIONAL(ENABLE_FLASH_UFS910,test "$enable_flash_ufs910" = "yes")
 AC_SUBST(FLASH_UFS910)
 
+AC_ARG_ENABLE(homecast5101,
+	AS_HELP_STRING(--enable-homecast5101,    enable homecast 5101 stuff),
+	[case "${enableval}" in
+		yes) HOMECAST5101=hs5101 ;;
+	esac],[enable_homecast5101=no])
+AM_CONDITIONAL(ENABLE_HOMECAST5101,test "$enable_homecast5101" = "yes")
+AC_SUBST(HOMECAST5101)
+
 AC_SUBST(CFLAGS)
 AC_SUBST(TARGET_CFLAGS)
 AC_SUBST(TARGET_CXXFLAGS)
@@ -968,6 +976,7 @@ cuberevo mini fta stuff: $enable_cuberevo_mini_fta
 cuberevo 250hd stuff:  $enable_cuberevo_250hd
 cuberevo 2000hd stuff: $enable_cuberevo_2000hd
 cuberevo 9500hd stuff: $enable_cuberevo_9500hd
+homecast 5101 stuff:   $enable_homecast5101
 XFS support for IDE:   $enable_xfs
 NFS server:            $enable_nfsserver
 Samba Clients:         $enable_cifs
