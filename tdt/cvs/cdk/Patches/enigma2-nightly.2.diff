@@ -17970,19 +17970,18 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
 
 --- enigma2-nightly/lib/dvb/decoder.cpp	2010-04-06 07:01:08.000000000 -0400
 +++ enigma2-nightly/lib/dvb/decoder.cpp	2010-04-06 07:05:49.000000000 -0400
-@@ -40,6 +40,11 @@
+@@ -40,6 +40,10 @@
  #define VIDEO_GET_PTS              _IOR('o', 57, __u64)
  #endif
  
 +#ifdef __sh__
-+int old_bypass = -1;
 +int old_m_state = -1;
 +#endif
 +
  DEFINE_REF(eDVBAudio);
  
  eDVBAudio::eDVBAudio(eDVBDemux *demux, int dev)
-@@ -166,7 +171,11 @@
+@@ -166,7 +170,11 @@
  	pes.input    = DMX_IN_FRONTEND;
  	pes.output   = DMX_OUT_DECODER;
  	pes.pes_type = m_dev ? DMX_PES_AUDIO1 : DMX_PES_AUDIO0; /* FIXME */
@@ -17994,7 +17993,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - audio - ", pid);
  	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
  	{
-@@ -174,6 +183,8 @@
+@@ -174,6 +182,8 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -18003,7 +18002,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	eDebugNoNewLine("DEMUX_START - audio - ");
  	if (::ioctl(m_fd_demux, DMX_START) < 0)
  	{
-@@ -181,6 +192,8 @@
+@@ -181,6 +191,8 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -18012,23 +18011,10 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	int bypass = 0;
  
  	switch (type)
-@@ -205,12 +218,23 @@
- 		break;
- 	}
- 
-+#ifdef __sh__
-+if(old_bypass != bypass)
-+{
-+#endif
- 	eDebugNoNewLine("AUDIO_SET_BYPASS(%d) - ", bypass);
- 	if (::ioctl(m_fd, AUDIO_SET_BYPASS_MODE, bypass) < 0)
+@@ -210,7 +222,10 @@
  		eDebug("failed (%m)");
  	else
  		eDebug("ok");
-+#ifdef __sh__
-+	old_bypass = bypass;
-+}
-+#endif
 +
 +#if !defined(__sh__)
  	freeze();  // why freeze here?!? this is a problem when only a pid change is requested... because of the unfreeze logic in Decoder::setState
@@ -18036,7 +18022,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	eDebugNoNewLine("AUDIO_PLAY - ");
  	if (::ioctl(m_fd, AUDIO_PLAY) < 0)
  		eDebug("failed (%m)");
-@@ -436,7 +460,11 @@
+@@ -436,7 +451,11 @@
  	pes.input    = DMX_IN_FRONTEND;
  	pes.output   = DMX_OUT_DECODER;
  	pes.pes_type = m_dev ? DMX_PES_VIDEO1 : DMX_PES_VIDEO0; /* FIXME */
@@ -18048,7 +18034,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - video - ", pid);
  	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
  	{
-@@ -444,6 +472,7 @@
+@@ -444,6 +463,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -18056,7 +18042,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	eDebugNoNewLine("DEMUX_START - video - ");
  	if (::ioctl(m_fd_demux, DMX_START) < 0)
  	{
-@@ -452,6 +481,7 @@
+@@ -452,6 +472,7 @@
  	}
  	eDebug("ok");
  	freeze();  // why freeze here?!? this is a problem when only a pid change is requested... because of the unfreeze logic in Decoder::setState
@@ -18064,7 +18050,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	eDebugNoNewLine("VIDEO_PLAY - ");
  	if (::ioctl(m_fd, VIDEO_PLAY) < 0)
  		eDebug("failed (%m)");
-@@ -750,7 +780,11 @@
+@@ -750,7 +771,11 @@
  	pes.input    = DMX_IN_FRONTEND;
  	pes.output   = DMX_OUT_DECODER;
  	pes.pes_type = m_dev ? DMX_PES_PCR1 : DMX_PES_PCR0; /* FIXME */
@@ -18076,7 +18062,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - pcr - ", pid);
  	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
  	{
-@@ -758,6 +792,7 @@
+@@ -758,6 +783,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -18084,7 +18070,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	eDebugNoNewLine("DEMUX_START - pcr - ");
  	if (::ioctl(m_fd_demux, DMX_START) < 0)
  	{
-@@ -765,6 +800,7 @@
+@@ -765,6 +791,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -18092,7 +18078,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	return 0;
  }
  #endif
-@@ -810,7 +846,11 @@
+@@ -810,7 +837,11 @@
  	pes.input    = DMX_IN_FRONTEND;
  	pes.output   = DMX_OUT_DECODER;
  	pes.pes_type = m_dev ? DMX_PES_TELETEXT1 : DMX_PES_TELETEXT0; // FIXME
@@ -18104,7 +18090,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  
  	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - ttx - ", pid);
  	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
-@@ -819,6 +859,7 @@
+@@ -819,6 +850,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -18112,7 +18098,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	eDebugNoNewLine("DEMUX_START - ttx - ");
  	if (::ioctl(m_fd_demux, DMX_START) < 0)
  	{
-@@ -826,6 +867,7 @@
+@@ -826,6 +858,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -18120,7 +18106,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  	return 0;
  }
  
-@@ -1004,8 +1046,13 @@
+@@ -1004,8 +1037,13 @@
  	}
  #endif
  
@@ -18134,7 +18120,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  					/* play, slowmotion, fast-forward */
  		int state_table[6][4] = 
  			{
-@@ -1045,6 +1092,9 @@
+@@ -1045,6 +1083,9 @@
  		}
  		m_changed &= ~changeState;
  	}
@@ -18144,7 +18130,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  
  	if (changed && !m_video && m_audio && m_radio_pic.length())
  		showSinglePic(m_radio_pic.c_str());
-@@ -1111,9 +1161,11 @@
+@@ -1111,9 +1152,11 @@
  eTSMPEGDecoder::~eTSMPEGDecoder()
  {
  	finishShowSinglePic();
