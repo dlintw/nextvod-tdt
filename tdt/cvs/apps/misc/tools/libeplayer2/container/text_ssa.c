@@ -13,7 +13,7 @@ static const char FILENAME[] = "text_ssa.c";
 #define TEXTSSAOFFSET 200
 
 #include "common.h"
-static pthread_t thread_sub = 0;
+static pthread_t thread_sub = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

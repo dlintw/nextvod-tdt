@@ -37,7 +37,7 @@ static int audiofd 	= -1;
 static int dvrfd 	= -1;
 
 static int LinuxDvbPtsStart(Context_t *context);
-static pthread_t PtsThread;
+static pthread_t PtsThread = NULL;
 unsigned long long int sCURRENT_PTS = 0;
 static const unsigned int cSLEEPTIME = 500000;
 

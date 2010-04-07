@@ -17,7 +17,7 @@ static const char FILENAME[] = "text_srt.c";
 #define TEXTSRTOFFSET 100
 
 #include "common.h"
-static pthread_t thread_sub = 0;
+static pthread_t thread_sub = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

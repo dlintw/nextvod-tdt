@@ -1316,7 +1316,7 @@ static demuxer_t *demuxer = NULL;
 static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
-static pthread_t PlayThread;
+static pthread_t PlayThread = NULL;
 static int TSMPEG = 0;
 
 demuxer_desc_t demuxer_desc_mpeg_ps = {

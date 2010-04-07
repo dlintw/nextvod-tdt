@@ -144,7 +144,7 @@ int Enigma2ParseSSA (char **Line) {
     return;
 }
 
-static pthread_t thread_sub = 0;
+static pthread_t thread_sub = NULL;
 void * _smp3 = NULL;
 void (*_fkt) (long int, size_t, char *, void *);
 

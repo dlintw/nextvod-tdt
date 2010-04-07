@@ -831,7 +831,7 @@ static void demux_close_asf(demuxer_t *demuxer) {
 static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 //static sh_audio_t *sh_audio = NULL;
 //static sh_video_t *sh_video = NULL;
-static pthread_t PlayThread;
+static pthread_t PlayThread = NULL;
 //static int isFirstAudioFrame = 1;
 
 int ASFInit(Context_t *context, char * filename) {

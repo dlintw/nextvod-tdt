@@ -4470,7 +4470,7 @@ static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 //static stream_t *s = NULL;
 //static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
-static pthread_t PlayThread;
+static pthread_t PlayThread = NULL;
 
 int MkvInit(Context_t *context, char * filename) {
 	#ifdef DEBUG
