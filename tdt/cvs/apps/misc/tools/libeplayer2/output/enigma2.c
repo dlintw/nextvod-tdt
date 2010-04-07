@@ -240,7 +240,12 @@ static void Enigma2SubtitleThread(Context_t *context) {
     unsigned long long int  Pts                 = 0;
     
     //wait a little, so isPlaying is set
-    sleep(1);
+    //sleep(1);
+    while ( context->playback->isCreationPhase ) {
+#ifdef DEBUG
+		printf("%s::%s Thread waiting for end of init phase...\n", FILENAME, __FUNCTION__);
+#endif
+		}
 
     while ( context && 
             context->playback && 

@@ -9,6 +9,10 @@
 #include <pthread.h>
 #include <errno.h>
 
+//#ifndef DEBUG
+//#define DEBUG	// FIXME: until this is set properly by Makefile
+//#endif
+
 static const char FILENAME[] = "text_ssa.c";
 #define TEXTSSAOFFSET 200
 
@@ -28,14 +32,18 @@ static int TrackCount = 0;
 static int CurrentTrack = -1; //no as default.
 
 static void SsaManagerAdd(Context_t  *context, SsaTrack_t track) {
+#ifdef DEBUG
 	printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, track.File, track.Id);
+#endif
 
 	if (Tracks == NULL) {
 		Tracks = malloc(sizeof(SsaTrack_t) * TRACKWRAP);
 	}
 	
 	if (TrackCount < TRACKWRAP) {
+#ifdef DEBUG
 		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 		Tracks[TrackCount].File       = strdup(track.File);
         Tracks[TrackCount].Id         = track.Id;
         TrackCount++;
@@ -46,12 +54,16 @@ static void SsaManagerAdd(Context_t  *context, SsaTrack_t track) {
 
 static char ** SsaManagerList(Context_t  *context) {
 	char ** tracklist = NULL;
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	if (Tracks != NULL) {
 		int i = 0, j = 0;
 		tracklist = malloc(sizeof(char *) * ((TrackCount*2) + 1));
 		for (i = 0, j = 0; i < TrackCount; i++, j+=2) {
+#ifdef DEBUG
 		printf("2strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
             tracklist[j]    = strdup(Tracks[i].Id);
 			tracklist[j+1]    = strdup(Tracks[i].File);
 		}
@@ -83,10 +95,14 @@ static void getExtension(char * FILENAMEname, char ** extension) {
 
 	int i = 0;
 	int stringlength = (int) strlen(FILENAMEname);
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 	for (i = 0; stringlength - i > 0; i++) {
 		if (FILENAMEname[stringlength - i - 1] == '.') {
+#ifdef DEBUG
 			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 			*extension = strdup(FILENAMEname+(stringlength - i));
 			break;
 		}
@@ -94,7 +110,9 @@ static void getExtension(char * FILENAMEname, char ** extension) {
 }
 
 static void getParentFolder(char * Filename, char ** folder) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	int i = 0;
 	int stringlength = strlen(Filename);
@@ -104,7 +122,9 @@ static void getParentFolder(char * Filename, char ** folder) {
             char* sTmp = (char *)malloc(stringlength - i);
 			strncpy(sTmp, Filename, stringlength - i - 1);
             sTmp[stringlength - i -1] = '\0';
+#ifdef DEBUG
 		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
             *folder = strdup(sTmp);
             free(sTmp);
 			break;
@@ -113,7 +133,9 @@ static void getParentFolder(char * Filename, char ** folder) {
 }
 
 static void SsaGetSubtitle(Context_t  *context, char * Filename) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
     struct dirent *dirzeiger;
     DIR  *  dir;
@@ -128,32 +150,41 @@ static void SsaGetSubtitle(Context_t  *context, char * Filename) {
 
     FilenameLength = strlen(Filename);
 
-    //printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, Filename, FilenameLength);
+#ifdef DEBUG
+    printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, Filename, FilenameLength);
+#endif
 
     getParentFolder(Filename, &FilenameFolder);
     FilenameFolderLength = strlen(FilenameFolder);
 
-    //printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameFolder, FilenameFolderLength);
+#ifdef DEBUG
+    printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameFolder, FilenameFolderLength);
+#endif
 
     getExtension(Filename, &FilenameExtension);
     FilenameExtensionLength = strlen(FilenameExtension);
 
-    //printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameExtension, FilenameExtensionLength);
+#ifdef DEBUG
+    printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameExtension, FilenameExtensionLength);
+#endif
 
     FilenameShortLength = FilenameLength - FilenameFolderLength - 1 /* / */ - FilenameExtensionLength - 1 /* . */;
     FilenameShort = (char*) malloc(FilenameShortLength + 1 /* \0 */);
     strncpy(FilenameShort, Filename + (strlen(FilenameFolder) + 1 /* / */), FilenameShortLength);
     FilenameShort[FilenameShortLength] = '\0';
 
-    //printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameShort, FilenameShortLength);
-
-    //printf("%s\n%s | %s | %s\n", Filename, FilenameFolder, FilenameShort, FilenameExtension);
+#ifdef DEBUG
+    printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameShort, FilenameShortLength);
+		printf("%s\n%s | %s | %s\n", Filename, FilenameFolder, FilenameShort, FilenameExtension);
+#endif
 
     if((dir=opendir(FilenameFolder)) != NULL) {
         while((dirzeiger=readdir(dir)) != NULL) {
             char * extension = NULL;
 
-            //printf("%s\n",(*dirzeiger).d_name);
+#ifdef DEBUG
+            printf("%s\n",(*dirzeiger).d_name);
+#endif
             getExtension((*dirzeiger).d_name, &extension);
 
             if(extension != NULL) {
@@ -169,10 +200,14 @@ static void SsaGetSubtitle(Context_t  *context, char * Filename) {
                     name[nameLength] = '\0';
                     
                     getExtension(name, &subExtension);
+#ifdef DEBUG
                     printf("%s %s\n",name, subExtension);
+#endif
 
                     if(subExtension == NULL) {
-			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+												printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
                         language = strdup("und");
 
                     } else {
@@ -182,15 +217,21 @@ static void SsaGetSubtitle(Context_t  *context, char * Filename) {
                         tmpName[tmpLength] = '\0';
 
                         free(name);
-			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+												printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
                         name = strdup(tmpName);
                         free(tmpName);
-			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#ifdef DEBUG
+												printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
                         language = strdup(subExtension);
                         free(subExtension);
                     }
 
+#ifdef DEBUG
                     printf("%s %s %d\n",name, FilenameShort, FilenameShortLength);
+#endif
 
                     if(!strncmp(name, FilenameShort, FilenameShortLength)) {
                         char * absSubtitleFilenam = (char*) malloc(strlen(FilenameFolder) + 1 + strlen((*dirzeiger).d_name));
@@ -236,10 +277,14 @@ static int SsaOpenSubtitle(Context_t *context, int trackid) {
 
     trackid %= TEXTSSAOFFSET;
 
+#ifdef DEBUG
     printf("%s::%s %s\n", FILENAME, __FUNCTION__, Tracks[trackid].File);
+#endif
 
     fssa = fopen(Tracks[trackid].File, "rb");
+#ifdef DEBUG
     printf("%s::%s %s\n", FILENAME, __FUNCTION__, fssa?"fssa!=NULL":"fssa==NULL");
+#endif
     if(!fssa)
         return -1;
 
@@ -310,15 +355,19 @@ char *SSAgetLine(FILE **fssa)
 }
 
 static void SsaSubtitleThread(Context_t *context) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+		printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
     int pos = 0;
     char  Data[MAXLINELENGTH];
     unsigned long long int Pts = 0;
     float Duration = 0;
     char * Text = NULL;
-
+    
     while(context->playback->isPlaying && fssa /*&& fgets(Data, MAXLINELENGTH, fssa)*/) {
-	//printf("%s::%s \n", FILENAME, __FUNCTION__);
+#ifdef DEBUG
+		printf("%s::%s \n", FILENAME, __FUNCTION__);
+#endif
 		int comma, lines;
 		static int max_comma = 32; /* let's use 32 for the case that the */
                     			   /*  amount of commas increase with newer SSA versions */
@@ -361,7 +410,9 @@ static void SsaSubtitleThread(Context_t *context) {
 		Pts = (hour1*3600 + min1*60 + sec1)*1000 + hunsec1;
 		Duration = (hour2*3600 + min2*60 + sec2) * 1000  + hunsec2 - Pts;
 		Pts = Pts * 90;
+#ifdef DEBUG
 		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
+#endif
 		Text=strdup(line2);
                 context->output->subtitle->Write(context, Text, strlen(Text), Pts, NULL, 0, Duration, "subtitle");
 
@@ -377,7 +428,9 @@ static void SsaSubtitleThread(Context_t *context) {
 }
 
 static int SsaPlay(Context_t *context) {
+#ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
+#endif
 
     int curtrackid = -1;
     context->manager->subtitle->Command(context, MANAGER_GET, &curtrackid);
@@ -413,7 +466,9 @@ static int SsaDel(Context_t *context) {
 }
 
 static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	switch(command) {
 		case CONTAINER_INIT: {
@@ -430,13 +485,17 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		case CONTAINER_SWITCH_SUBTITLE: {
-            printf("%s::%s CONTAINER_SWITCH_SUBTITLE id=%d\n", FILENAME, __FUNCTION__, *((int*) argument));
+#ifdef DEBUG
+        printf("%s::%s CONTAINER_SWITCH_SUBTITLE id=%d\n", FILENAME, __FUNCTION__, *((int*) argument));
+#endif
 
 		    SsaSwitchSubtitle(context, (int*) argument);
 			break;
 		}
 		default:
+#ifdef DEBUG
 			printf("%s::%s ConatinerCmd not supported! %d\n", FILENAME, __FUNCTION__, command);
+#endif
 			break;
 	}
 
