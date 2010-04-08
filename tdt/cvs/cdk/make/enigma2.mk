@@ -28,7 +28,7 @@ $(appsdir)/enigma2/config.status: bootstrap freetype expat fontconfig libpng jpe
 			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-hl101) \
 			$(if $(VIP2),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_VIP2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-vip2) \
-			$(if $(UFS910),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HS5101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
+			$(if $(HOMECAST5101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HS5101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
 
 $(DEPDIR)/enigma2.do_prepare:
 if ENABLE_HL101
