@@ -962,7 +962,7 @@ static void AUDIOThread(Context_t *context) {
 		}
 	}
 
-	usleep(100000);
+	usleep(500000);
 	
 	PlayThread = NULL;
 	

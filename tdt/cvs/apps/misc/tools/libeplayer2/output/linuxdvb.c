@@ -386,6 +386,7 @@ int LinuxDvbClear(Context_t  *context, char * type) {
 }
 
 static void LinuxDvbPtsThread(Context_t *context) {
+	int count;
 #ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
@@ -413,7 +414,17 @@ static void LinuxDvbPtsThread(Context_t *context) {
 
 		releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 		
-		usleep(cSLEEPTIME);
+		/* bei einer zu grossen sleeptime auf einmal, kann es vorkommen, das
+		   der thread nicht erkennt, wenn ein playback zu ende ist weil er im sleep wartet.
+			 Es kann dann passieren, das er durchlaeuft, weil schon der naechste playback
+			 gestartet wurde, das kann dann zum absturz fuehren */
+		count = 0;
+		while(context && context->playback && context->playback->isPlaying && count < 10)
+		{
+			count++;
+			usleep(100000);
+		}
+		//usleep(cSLEEPTIME);
 	}
 
 #ifdef DEBUG
