@@ -1,119 +1,121 @@
 COMMONPATCHES_41 = \
-		Patches/nosquashfs3.1.patch \
-		Patches/squashfs3.0.patch \
-		Patches/squashfs3.0_lzma.patch \
-		Patches/linux-sh4-2.6.17.14_stm22_0037.mini_fo.diff \
-		Patches/do-printk.patch \
-		Patches/ufs922_ktime_p0041.patch \
-		Patches/ufs922_hrtimer_p0041.patch \
-		Patches/ufs922_linuxdvb_p0041.patch \
-		Patches/ufs922_sound_p0041.patch \
-		Patches/ufs922_copo_p0041.patch \
-		Patches/ufs922_stm-dma_p0041.patch \
-		Patches/sched_p0041.patch \
-		Patches/timer_stm22.patch \
-		Patches/p0041_cmdline_printk.patch \
-		Patches/p0041_strcpy.patch \
-		Patches/kernel22_depmod.patch
+		linux-nosquashfs3.1_stm22.patch \
+		linux-squashfs3.0_stm22.patch \
+		linux-squashfs3.0_lzma_stm22.patch \
+		linux-mini_fo_stm22.patch \
+		linux-do-printk_stm22.patch \
+		linux-ufs922_ktime_stm22.patch \
+		linux-ufs922_hrtimer_stm22.patch \
+		linux-ufs922_linuxdvb_stm22.patch \
+		linux-ufs922_sound_stm22.patch \
+		linux-ufs922_copo_stm22.patch \
+		linux-ufs922_stm-dma_stm22.patch \
+		linux-sched_stm22.patch \
+		linux-timer_stm22.patch \
+		linux-cmdline_printk_stm22.patch \
+		linux-strcpy_stm22.patch \
+		linux-depmod_stm22.patch
 
 FORTISPATCHES_41 = $(COMMONPATCHES_41) \
-		Patches/fortis_hdbox_setup_p0041.diff \
-		Patches/fortis_hdbox_dvb.diff \
-		Patches/fortis_hdbox_sound.patch \
-		Patches/fat.patch \
-		Patches/fuse.patch \
-		Patches/net.patch \
-		Patches/tune.patch \
-		Patches/usbwait123.patch \
-		Patches/jffs2-lzma.patch \
-		Patches/ftdi_sio.c.patch \
-		Patches/fortis_stboards_p0041.patch
+		linux-fortis_hdbox_setup_stm22.patch \
+		linux-fortis_hdbox_dvb_stm22.patch \
+		linux-fortis_hdbox_sound_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch \
+		linux-fortis_stboards_stm22.patch
 
 UFS922PATCHES_41 = $(COMMONPATCHES_41) \
-		Patches/ufs922_stasc_p0041.patch \
-		Patches/ufs922_stmmac_p0041.patch \
-		Patches/ufs922_setup_p0041.patch \
-		Patches/fat.patch \
-		Patches/fuse.patch \
-		Patches/net.patch \
-		Patches/tune.patch \
-		Patches/usbwait123.patch \
-		Patches/jffs2-lzma.patch \
-		Patches/ftdi_sio.c.patch \
-		Patches/ufs922_stboards_p0041.patch
+		linux-ufs922_stasc_stm22.patch \
+		linux-ufs922_stmmac_stm22.patch \
+		linux-ufs922_setup_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch \
+		linux-ufs922_stboards_stm22.patch
 
 TF7700PATCHES_41 = $(COMMONPATCHES_41) \
-		Patches/ufs922_stasc_p0041.patch \
-		Patches/tf7700_setup_p0041.patch \
-		Patches/fat.patch \
-		Patches/fuse.patch \
-		Patches/net.patch \
-		Patches/tune.patch \
-		Patches/usbwait123.patch \
-		Patches/jffs2-lzma.patch \
-		Patches/ftdi_sio.c.patch
+		linux-ufs922_stasc_stm22.patch \
+		linux-tf7700_setup_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch
 
 HL101PATCHES_41 = $(COMMONPATCHES_41) \
-		Patches/ufs922_stasc_p0041.patch \
-		Patches/hl101_setup_p0041.patch \
-		Patches/linuxdvb_stm22_api5.patch \
-		Patches/fat.patch \
-		Patches/fuse.patch \
-		Patches/net.patch \
-		Patches/tune.patch \
-		Patches/usbwait123.patch \
-		Patches/jffs2-lzma.patch \
-		Patches/ftdi_sio.c.patch
+		linux-ufs922_stasc_stm22.patch \
+		linux-hl101_setup_stm22.patch \
+		linux-linuxdvb_api5_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch
+
 VIP2PATCHES_41 = $(COMMONPATCHES_41) \
-		Patches/ufs922_stasc_p0041.patch \
-		Patches/vip2_setup_p0041.patch \
-		Patches/linuxdvb_stm22_api5.patch \
-		Patches/fat.patch \
-		Patches/fuse.patch \
-		Patches/net.patch \
-		Patches/tune.patch \
-		Patches/usbwait123.patch \
-		Patches/jffs2-lzma.patch \
-		Patches/ftdi_sio.c.patch
+		linux-ufs922_stasc_stm22.patch \
+		linux-vip2_setup_stm22.patch\
+		linux-linuxdvb_api5_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch
+
 UFS910PATCHES_41 = $(COMMONPATCHES_41) \
-		Patches/ufs910_smsc_p0041.patch \
-		Patches/ufs910_i2c_p0041.patch \
-		Patches/ufs910_setup_p0041.patch \
-		Patches/fat.patch \
-		Patches/fuse.patch \
-		Patches/net.patch \
-		Patches/tune.patch \
-		Patches/usbwait123.patch \
-		Patches/jffs2-lzma.patch \
-		Patches/ftdi_sio.c.patch \
-		Patches/ufs910_stboards_p0041.patch
+		linux-ufs910_smsc_stm22.patch \
+		linux-ufs910_i2c_stm22.patch \
+		linux-ufs910_setup_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch \
+		linux-ufs910_stboards_stm22.patch
 
 FLASHUFS910PATCHES_41 = $(COMMONPATCHES_41) \
-		Patches/ufs910_smsc_p0041.patch \
-		Patches/ufs910_i2c_p0041.patch \
-		Patches/ufs910_setup_p0041.patch \
-		Patches/ufs910_stboards_p0041_flash.patch
+		linux-ufs910_smsc_stm22.patch \
+		linux-ufs910_i2c_stm22.patch \
+		linux-ufs910_setup_stm22.patch \
+		linux-ufs910_stboards_stm22.patch
 
 # IMPORTANT: it is expected that only one define is set
 CUBEMOD=$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)
 CUBEPATCHES_041 = $(COMMONPATCHES_41) \
-		Patches/cuberevo_patches_p0041.patch \
-		Patches/cuberevo_fdma_p0041.patch \
-		Patches/cuberevo_i2c_p0041.patch \
-		Patches/cuberevo_rtl8201_p0041.patch \
-		Patches/$(CUBEMOD)_setup_p0041.patch \
-		Patches/fat.patch \
-		Patches/fuse.patch \
-		Patches/net.patch \
-		Patches/tune.patch \
-		Patches/usbwait123.patch \
-		Patches/jffs2-lzma.patch \
-		Patches/ftdi_sio.c.patch
+		linux-cuberevo_patches_stm22.patch \
+		linux-cuberevo_fdma_stm22.patch \
+		linux-cuberevo_i2c_stm22.patch \
+		linux-cuberevo_rtl8201_stm22.patch \
+		linux-$(CUBEMOD)_setup_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch
 
 HS5101PATCHES_41 = $(COMMONPATCHES_41) \
                 $(UFS910PATCHES_41) \
-                Patches/hs5101_setup_p0041.patch \
-                Patches/hs5101_stasc_p0041.patch
+                linux-hs5101_setup_stm22.patch \
+                linux-hs5101_stasc_stm22.patch
 
 KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 			$(if $(HL101),$(HL101PATCHES_41)) \
@@ -127,76 +129,70 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 
 ############ Patches Kernel 23 ###############
 
+if ENABLE_P0119
+PATCH_STR=_0119
+else !ENABLE_P0119
 if ENABLE_P0123
 PATCH_STR=_0123
-endif
+endif ENABLE_P0123
+endif !ENABLE_P0119
 
 if ENABLE_HL101
-STM23_DVB_PATCH = Patches/linuxdvb_stm23_api5.patch
-else
+STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23_api5.patch
+else !ENABLE_HL101
 if ENABLE_VIP2
-STM23_DVB_PATCH = Patches/linuxdvb_stm23_api5.patch
-else
-STM23_DVB_PATCH = Patches/linuxdvb_stm23$(PATCH_STR).patch
-endif
-endif
+STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23_api5.patch
+else !ENABLE_VIP2
+STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23$(PATCH_STR).patch
+endif !ENABLE_VIP2
+endif !ENABLE_HL101
 
 COMMONPATCHES_23 = \
-                Patches/cpp_stm23$(PATCH_STR).patch \
-                Patches/time_stlinux23$(PATCH_STR).diff \
-                $(if $(P0123),Patches/mtd_stm23$(PATCH_STR).patch) \
-                $(if $(P0119),Patches/fdma_stm23.patch) \
-                Patches/sound_stm23$(PATCH_STR).diff \
-                $(if $(P0123),Patches/stm23_strcpy$(PATCH_STR).patch) \
-                $(if $(P0123),Patches/stm23_asm_mov_0xffffff.patch) \
-                $(STM23_DVB_PATCH) \
-                $(if $(P0119),Patches/kernel23_depmod.patch)
-#               Patches/nosquashfs3.1_stm23.patch \
-#               Patches/squashfs3.0_stm23.patch \
-#               Patches/squashfs3.0_lzma_stm23.patch \
-#               Patches/linux-sh4-2.6.17.14_stm22_0037.mini_fo.diff \
-#               Patches/do-printk.patch
+		linux-sh4-cpp_stm23.patch \
+		linux-sh4-time_stm23.patch \
+		$(if $(P0123),linux-sh4-mtd_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
+		$(if $(P0123),linux-sh4-strcpy_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-asm_mov_0xffffff_stm23$(PATCH_STR).patch) \
+		$(STM23_DVB_PATCH) \
+		$(if $(P0119),linux-sh4-depmod_stm23_0119.patch)
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
-               $(if $(P0119),Patches/ufs922_stmmac_stlinux23.patch) \
-               $(if $(P0119),Patches/ufs922_setup_stlinux23.patch)
+		$(if $(P0119),linux-sh4-ufs922_stmmac_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
 
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \
-               $(if $(P0119),Patches/ufs922_stasc_stm23.patch) \
-               Patches/tf7700_setup_stm23$(PATCH_STR).patch 
+		$(if $(P0119),linux-sh4-ufs922_stasc_stm23$(PATCH_STR).patch) \
+		tf7700_setup_stm23$(PATCH_STR).patch 
 
 HL101PATCHES_23 = $(COMMONPATCHES_23) \
-                $(if $(P0119),Patches/hl101_setup_stlinux23.patch)
+		$(if $(P0119),linux-sh4-hl101_setup_stm23$(PATCH_STR).patch)
 
 VIP2PATCHES_23 = $(COMMONPATCHES_23) \
-                $(if $(P0119),Patches/vip2_setup_stlinux23.patch)
+		$(if $(P0119),linux-sh4-vip2_setup_stm23$(PATCH_STR).patch)
 
 UFS910PATCHES_23 = $(COMMONPATCHES_23) \
-                Patches/ufs910_setup_stlinux23$(PATCH_STR).patch \
-                Patches/ufs910_pcmplayer_stlinux23.patch \
-                Patches/ufs910_reboot_stlinux23.patch
-#               Patches/ufs910_smsc_stm23.patch \
-#               Patches/ufs910_i2c_stm23.patch \
-#               Patches/ufs910_setup_stm23.patch \
-#               Patches/ufs910_stboards_stm23.patch
+		linux-sh4-ufs910_setup_stm23$(PATCH_STR).patch \
+		linux-sh4-ufs910_pcmplayer_stm23.patch \
+		linux-sh4-ufs910_reboot_stm23.patch
 
 CUBEPATCHES_023 = $(COMMONPATCHES_23) \
-                Patches/cuberevo_patches_stlinux23$(PATCH_STR).patch \
-                Patches/cuberevo_rtl8201_stlinux23$(PATCH_STR).patch \
-                Patches/$(CUBEMOD)_setup_stlinux23$(PATCH_STR).patch
+		linux-sh4-cuberevo_patches_stm23$(PATCH_STR).patch \
+		linux-sh4-cuberevo_rtl8201_stm23$(PATCH_STR).patch \
+		linux-sh4-$(CUBEMOD)_setup_stm23$(PATCH_STR).patch
 
-HS5101PATCHES_23 = $(COMMONPATCHES_23) \
-		$(UFS910PATHCES_23)
+HS5101PATCHES_23 = $(UFS910PATCHES_23)
 
-KERNELPATCHES_23 =      $(if $(TF7700),$(TF7700PATCHES_23)) \
-                        $(if $(HL101),$(HL101PATCHES_23)) \
-                        $(if $(VIP2),$(VIP2PATCHES_23)) \
-                        $(if $(UFS922),$(UFS922PATCHES_23)) \
-                        $(if $(CUBEMOD),$(CUBEPATCHES_023)) \
-                        $(if $(UFS910),$(UFS910PATCHES_23)) \
-                        $(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_23)) \
-                        $(if $(FORTIS_HDBOX),$(FORTISPATCHES_23)) \
-                        $(if $(HOMECAST5101),$(HS5101PATCHES_23))
+KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
+		$(if $(HL101),$(HL101PATCHES_23)) \
+		$(if $(VIP2),$(VIP2PATCHES_23)) \
+		$(if $(UFS922),$(UFS922PATCHES_23)) \
+		$(if $(CUBEMOD),$(CUBEPATCHES_023)) \
+		$(if $(UFS910),$(UFS910PATCHES_23)) \
+		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_23)) \
+		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_23)) \
+		$(if $(HOMECAST5101),$(HS5101PATCHES_23))
 
 ############ Patches Kernel 23 End ###############
 
@@ -214,13 +210,15 @@ RPMS/noarch/stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.noarch.rpm: \
 
 if DEBUG
 DEBUG_STR=.debug
-else
+else !DEBUG
 DEBUG_STR=
-endif
+endif !DEBUG
 
 echo DEBUG_STR=$DEBUG_STR
 
-$(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.noarch.rpm $(KERNELPATCHES_41)
+$(DEPDIR)/linux-kernel.do_prepare: \
+		RPMS/noarch/stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.noarch.rpm \
+		$(KERNELPATCHES_41:%=Patches/%)
 	@rpm $(DRPM) -ev stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41 || true
 	rm -rf $(KERNEL_DIR)
 	@echo "Preparing kernel for $(MODNAME)"
@@ -253,15 +251,12 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
 
-else
+else !P0041
 $(DEPDIR)/linux-kernel.do_prepare: $(KERNEL_DEPENDS)
 	$(KERNEL_PREPARE)
 	touch $@
 
-#endof P0041
-endif
-
-#endof STM22
+endif !P0041
 
 if STM23_HAVANA
 
@@ -294,10 +289,9 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		@M4@ ../$(word 3,$^)	> .config && \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
-#endof stm23_havana
-endif
+endif STM23_HAVANA
 
-else
+else !STM22
 
 ##################################################################################
 #stlinux23
@@ -310,11 +304,13 @@ RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNEL
 
 if DEBUG
 DEBUG_STR=.debug
-else
+else !DEBUG
 DEBUG_STR=
-endif
+endif !DEBUG
 
-$(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL).noarch.rpm $(KERNELPATCHES_23)
+$(DEPDIR)/linux-kernel.do_prepare: \
+		RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL).noarch.rpm \
+		$(KERNELPATCHES_23:%=Patches/%)
 	@rpm $(DRPM) -ev stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL) || true
 	rm -rf $(KERNEL_DIR)
 	rm -rf linux-sh4
@@ -333,7 +329,7 @@ $(DEPDIR)/linux-kernel.do_prepare: RPMS/noarch/stlinux23-host-kernel-source-sh4-
 $(DEPDIR)/linux-kernel.do_compile: \
 		bootstrap-cross \
 		linux-kernel.do_prepare \
-		Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX)).config${DEBUG_STR}$(if $(HOMECAST5101),_$(HOMECAST5101)).config${DEBUG_STR} \
+		Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(HOMECAST5101),_$(HOMECAST5101)).config${DEBUG_STR} \
 		config.status \
 		| $(HOST_U_BOOT_TOOLS)
 	-rm $(DEPDIR)/linux-kernel*.do_compile
@@ -344,8 +340,7 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
 
-#endof STM23
-endif 
+endif !STM22
 
 NFS_FLASH_SED_CONF=$(foreach param,XCONFIG_NFS_FS XCONFIG_LOCKD XCONFIG_SUNRPC,-e s"/^.*$(param)[= ].*/$(param)=m/")
 
@@ -467,7 +462,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
 		install
-       KERNELVER=`cat $(buildprefix)/$(KERNEL_DIR)/include/config/kernel.release` \
+	KERNELVER=`cat $(buildprefix)/$(KERNEL_DIR)/include/config/kernel.release` \
 	$(DEPMOD) -ae -b $(targetprefix) -r $(KERNELVER)
 	touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
