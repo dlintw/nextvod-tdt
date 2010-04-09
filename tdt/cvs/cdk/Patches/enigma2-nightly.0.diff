@@ -1222,7 +1222,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epgcach
 diff -Nur enigma2-nightly.org/lib/dvb/frontend.cpp enigma2-nightly/lib/dvb/frontend.cpp
 --- enigma2-nightly.org/lib/dvb/frontend.cpp	2009-12-12 23:16:22.408600000 +0100
 +++ enigma2-nightly/lib/dvb/frontend.cpp	2009-12-12 23:22:30.716600097 +0100
-@@ -2051,8 +2051,22 @@
+@@ -2058,8 +2058,22 @@
  					return -EINVAL;
  			}
  #if HAVE_DVB_API_VERSION < 5
