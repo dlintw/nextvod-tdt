@@ -32,6 +32,14 @@ AC_ARG_ENABLE([tf7700],
         esac])
 AM_CONDITIONAL([ENABLE_TF7700], [test x$enable_tf7700 = xtrue])
 
+AC_ARG_ENABLE([cuberevo],
+        [AS_HELP_STRING(--enable-cuberevo,    enable cuberevo stuff)],
+        [case "${enableval}" in
+                yes) enable_cuberevo=true ;;
+                no) enable_cuberevo=false ;;
+                *) AC_MSG_ERROR([bad value ${enableval} for --enable-cuberevo]) ;;
+        esac])
+AM_CONDITIONAL([ENABLE_CUBEREVO], [test x$enable_cuberevo = xtrue])
 
 AM_PATH_PYTHON()
 AC_PYTHON_DEVEL
