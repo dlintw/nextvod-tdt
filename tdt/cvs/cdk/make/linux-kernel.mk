@@ -13,8 +13,7 @@ COMMONPATCHES_41 = \
 		linux-sched_stm22.patch \
 		linux-timer_stm22.patch \
 		linux-cmdline_printk_stm22.patch \
-		linux-strcpy_stm22.patch \
-		linux-depmod_stm22.patch
+		linux-strcpy_stm22.patch
 
 FORTISPATCHES_41 = $(COMMONPATCHES_41) \
 		linux-fortis_hdbox_setup_stm22.patch \
@@ -155,8 +154,7 @@ COMMONPATCHES_23 = \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		$(if $(P0123),linux-sh4-strcpy_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-asm_mov_0xffffff_stm23$(PATCH_STR).patch) \
-		$(STM23_DVB_PATCH) \
-		$(if $(P0119),linux-sh4-depmod_stm23_0119.patch)
+		$(STM23_DVB_PATCH)
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs922_stmmac_stm23$(PATCH_STR).patch) \
