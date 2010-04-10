@@ -91,7 +91,7 @@ else !STM23
 HOST_RPMCONFIG_VERSION := 2.4-21
 HOST_RPMCONFIG_SPEC := stm-$(HOST_RPMCONFIG).spec
 HOST_RPMCONFIG_SPEC_PATCH := $(HOST_RPMCONFIG_SPEC)24.diff
-HOST_RPMCONFIG_PATCHES := stm-$(HOST_RPMCONFIG_SPEC)-skip-cvs.patch
+HOST_RPMCONFIG_PATCHES := stm-$(HOST_RPMCONFIG)-skip-cvs.patch
 # endif STM24
 endif !STM23
 endif !STM22
@@ -101,14 +101,14 @@ $(HOST_RPMCONFIG_RPM): \
 		$(if $(HOST_RPMCONFIG_SPEC_PATCH),Patches/$(HOST_RPMCONFIG_SPEC_PATCH)) \
 		$(if $(HOST_RPMCONFIG_PATCHES),$(HOST_RPMCONFIG_PATCHES:%=Patches/%)) \
  		Archive/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).src.rpm
-	rpm  $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(HOST_RPMCONFIG_SPEC_PATCH),( cd SPECS && patch -p1 $(HOST_RPMCONFIG_SPEC) < ../Patches/$(HOST_RPMCONFIG_SPEC_PATCH) ) &&) \
 	$(if $(HOST_RPMCONFIG_PATCHES),cp $(HOST_RPMCONFIG_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_RPMCONFIG_SPEC)
 
 $(HOST_RPMCONFIG): $(HOST_RPMCONFIG_RPM)
-	@rpm  $(DRPM) --ignorearch --nodeps -Uhv \
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(STM_RELOCATE)=$(prefix) $< && \
 	touch .deps/$(notdir $@)
 
