@@ -186,6 +186,7 @@ lib/python/Plugins/Extensions/WebInterface/src/WebChilds/Makefile
 lib/python/Plugins/Extensions/WebInterface/src/WebChilds/External/Makefile
 lib/python/Plugins/Extensions/WebInterface/src/web/Makefile
 lib/python/Plugins/Extensions/TopfieldVFD/Makefile
+lib/python/Plugins/Extensions/CuberevoVFD/Makefile
 lib/python/Tools/Makefile
 lib/service/Makefile
 lib/components/Makefile
