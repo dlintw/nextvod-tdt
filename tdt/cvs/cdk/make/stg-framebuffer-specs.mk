@@ -34,9 +34,8 @@ $(DEPDIR)/%stgfb: $(DEPDIR)/stgfb.do_compile
 		$(MAKE) KERNELDIR=$(buildprefix)/linux \
 			INSTALL_MOD_PATH=$(prefix)/$*cdkroot \
 			INSTALL_MOD_DIR=stgfb \
-			KERNELVER=`cat $(buildprefix)/$(KERNEL_DIR)/include/config/kernel.release` \
 			$(MAKE_OPTS) modules_install && \
-		$(DEPMOD) -ae -F $(buildprefix)/linux/System.map -b $(prefix)/$*cdkroot -r $(KERNELVER)
+		$(DEPMOD) -ae -F $(buildprefix)/linux/System.map -b $(prefix)/$*cdkroot -r $(KERNELVERSION)
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 

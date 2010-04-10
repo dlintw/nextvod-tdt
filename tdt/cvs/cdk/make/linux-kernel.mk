@@ -425,8 +425,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
 		install
-	KERNELVER=`cat $(buildprefix)/$(KERNEL_DIR)/include/config/kernel.release` \
-	$(DEPMOD) -ae -b $(targetprefix) -r $(KERNELVER)
+	$(DEPMOD) -ae -b $(targetprefix) -F $(buildprefix)/$(KERNEL_DIR)/System.map -r $(KERNELVERSION)
 	touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
 
