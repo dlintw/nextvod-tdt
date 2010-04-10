@@ -199,82 +199,55 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 # IMPORTANT: it is expected that only one define is set
 MODNAME = $(UFS910)$(UFS922)$(TF7700)$(HL101)$(VIP2)$(CUBEMOD)$(FORTIS_HDBOX)$(FLASH_UFS910)$(HOMECAST5101)
 
-if STM22
-##################################################################################
-if P0041
-RPMS/noarch/stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.noarch.rpm: \
-		Archive/stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.src.rpm
-	rpm $(DRPM) --nosignature --nodeps -Uhv $< && \
-	( cd SPECS; patch -p1 stm-host-kernel.spec < ../Patches/stm-host-kernel.spec22.diff ) && \
-	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/stm-host-kernel.spec
-
 if DEBUG
 DEBUG_STR=.debug
 else !DEBUG
 DEBUG_STR=
 endif !DEBUG
 
-echo DEBUG_STR=$DEBUG_STR
-
-$(DEPDIR)/linux-kernel.do_prepare: \
-		RPMS/noarch/stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41.noarch.rpm \
-		$(KERNELPATCHES_41:%=Patches/%)
-	@rpm $(DRPM) -ev stlinux22-host-kernel-source-2.6.17.14_stm22_0041-41 || true
-	rm -rf $(KERNEL_DIR)
-	@echo "Preparing kernel for $(MODNAME)"
-#	@echo "Patches: $(filter ../Patches/%, $(^:Patches/%=../Patches/%))"
-	rm -rf linux
-	rpm $(DRPM) --ignorearch --nodeps -Uhv $<
-	cd $(KERNEL_DIR) && cat $(filter ../Patches/%, $(^:Patches/%=../Patches/%)) | patch -p1
-	$(INSTALL) -m644 Patches/linux-$(subst _stm22_,-,$(KERNELVERSION))_$(MODNAME).config${DEBUG_STR} $(KERNEL_DIR)/.config
-	-rm $(KERNEL_DIR)/localversion*
-	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
-	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig
-	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/asm
-	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/linux/version.h
-	rm $(KERNEL_DIR)/.config
-	touch $@
-
-
-#dagobert: without stboard ->not sure if we need this
-$(DEPDIR)/linux-kernel.do_compile: \
-		bootstrap-cross \
-		linux-kernel.do_prepare \
-		Patches/linux-$(subst _stm22_,-,$(KERNELVERSION))_$(MODNAME).config${DEBUG_STR} \
-		config.status \
-		| $(HOST_U_BOOT_TOOLS)
-	-rm $(DEPDIR)/linux-kernel*.do_compile
-	cd $(KERNEL_DIR) && \
-		export PATH=$(hostprefix)/bin:$(PATH) && \
-		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
-		@M4@ ../$(word 3,$^)	> .config && \
-		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
-	touch $@
-
-else !P0041
-$(DEPDIR)/linux-kernel.do_prepare: $(KERNEL_DEPENDS)
-	$(KERNEL_PREPARE)
-	touch $@
-
-endif !P0041
+HOST_KERNEL := host-kernel
+if STM22
+HOST_KERNEL_VERSION := 2.6.17.14_stm22_0041-41
+HOST_KERNEL_SPEC := stm-$(HOST_KERNEL).spec
+HOST_KERNEL_SPEC_PATCH := $(HOST_KERNEL_SPEC)22.diff
+HOST_KERNEL_PATCHES := $(KERNELPATCHES_41)
+HOST_KERNEL_CONFIG := linux-$(subst _stm22_,-,$(KERNELVERSION))_$(MODNAME).config$(DEBUG_STR)
+HOST_KERNEL_SRC_RPM := $(STLINUX)-$(HOST_KERNEL)-source-$(HOST_KERNEL_VERSION).src.rpm
+HOST_KERNEL_RPM := RPMS/noarch/$(STLINUX)-$(HOST_KERNEL)-source-$(HOST_KERNEL_VERSION).noarch.rpm
+else !STM22
+if STM23
+HOST_KERNEL_VERSION := 2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL)
+HOST_KERNEL_SPEC := stm-$(HOST_KERNEL)-sh4.spec
+HOST_KERNEL_SPEC_PATCH := stm-$(HOST_KERNEL).spec23.diff
+HOST_KERNEL_PATCHES := $(KERNELPATCHES_23)
+HOST_KERNEL_CONFIG := linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(MODNAME).config$(DEBUG_STR)
+HOST_KERNEL_SRC_RPM := $(STLINUX)-$(HOST_KERNEL)-source-sh4-$(HOST_KERNEL_VERSION).src.rpm
+HOST_KERNEL_RPM := RPMS/noarch/$(STLINUX)-$(HOST_KERNEL)-source-sh4-$(HOST_KERNEL_VERSION).noarch.rpm
+else !STM23
+# if STM24
+HOST_KERNEL_VERSION := 2.6.32.10$(KERNELSTMLABEL)-$(KERNELLABEL)
+HOST_KERNEL_SPEC := stm-$(HOST_KERNEL)-sh4.spec
+HOST_KERNEL_SPEC_PATCH := stm-$(HOST_KERNEL).spec24.diff
+HOST_KERNEL_PATCHES := $(KERNELPATCHES_24)
+HOST_KERNEL_CONFIG := linux-sh4-$(subst _stm24_,-,$(KERNELVERSION))_$(MODNAME).config$(DEBUG_STR)
+HOST_KERNEL_SRC_RPM := $(STLINUX)-$(HOST_KERNEL)-source-sh4-$(HOST_KERNEL_VERSION).src.rpm
+HOST_KERNEL_RPM := RPMS/noarch/$(STLINUX)-$(HOST_KERNEL)-source-sh4-$(HOST_KERNEL_VERSION).noarch.rpm
+# endif STM24
+endif !STM23
+endif !STM22
 
 if STM23_HAVANA
-
 $(DEPDIR)/linux-kernel.do_prepare:
 	rm -rf $(KERNEL_DIR)
 	git clone git://git.stlinux.com/havana/com.st.havana.kernel.git $(KERNEL_DIR); 
-
 	$(INSTALL) -m644 Patches/mb618se_defconfig $(KERNEL_DIR)/.config
-
 	-rm $(KERNEL_DIR)/localversion*
 	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/asm
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/linux/version.h
 	rm $(KERNEL_DIR)/.config
-
 	touch $@
-
 
 $(DEPDIR)/linux-kernel.do_compile: \
 		bootstrap-cross \
@@ -289,34 +262,24 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		@M4@ ../$(word 3,$^)	> .config && \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
-endif STM23_HAVANA
 
-else !STM22
-
-##################################################################################
-#stlinux23
-
-RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL).noarch.rpm: \
-		Archive/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL).src.rpm
-	rpm $(DRPM) --nosignature --nodeps -Uhv $< && \
-	( cd SPECS; patch -p1 stm-host-kernel-sh4.spec < ../Patches/stm-host-kernel.spec23.diff ) && \
-	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/stm-host-kernel-sh4.spec
-
-if DEBUG
-DEBUG_STR=.debug
-else !DEBUG
-DEBUG_STR=
-endif !DEBUG
+else !STM23_HAVANA
+$(HOST_KERNEL_RPM): \
+		$(if $(HOST_KERNEL_SPEC_PATCH),Patches/$(HOST_KERNEL_SPEC_PATCH)) \
+		Archive/$(HOST_KERNEL_SRC_RPM)
+	rpm $(DRPM) --nosignature --nodeps -Uhv $(lastword $^) && \
+	$(if $(HOST_KERNEL_SPEC_PATCH),( cd SPECS; patch -p1 $(HOST_KERNEL_SPEC) < ../Patches/$(HOST_KERNEL_SPEC_PATCH) ) &&) \
+	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/$(HOST_KERNEL_SPEC)
 
 $(DEPDIR)/linux-kernel.do_prepare: \
-		RPMS/noarch/stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL).noarch.rpm \
-		$(KERNELPATCHES_23:%=Patches/%)
-	@rpm $(DRPM) -ev stlinux23-host-kernel-source-sh4-2.6.23.17$(KERNELSTMLABEL)-$(KERNELLABEL) || true
+		$(if $(HOST_KERNEL_PATCHES),$(HOST_KERNEL_PATCHES:%=Patches/%)) \
+		$(HOST_KERNEL_RPM)
+	@rpm $(DRPM) -ev $(HOST_KERNEL_SRC_RPM:%.src.rpm=%) || true
 	rm -rf $(KERNEL_DIR)
-	rm -rf linux-sh4
-	rpm $(DRPM) --force --ignorearch --nodeps -Uhv $<
-	cd $(KERNEL_DIR) && cat $(filter ../Patches/%, $(^:Patches/%=../Patches/%)) | patch -p1
-	$(INSTALL) -m644 Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))_$(MODNAME).config${DEBUG_STR} $(KERNEL_DIR)/.config
+	rm -rf linux{,-sh4}
+	rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^)
+	$(if $(HOST_KERNEL_PATCHES),cd $(KERNEL_DIR) && cat $(HOST_KERNEL_PATCHES:%=../Patches/%) | patch -p1)
+	$(INSTALL) -m644 Patches/$(HOST_KERNEL_CONFIG) $(KERNEL_DIR)/.config
 	-rm $(KERNEL_DIR)/localversion*
 	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig
@@ -329,18 +292,18 @@ $(DEPDIR)/linux-kernel.do_prepare: \
 $(DEPDIR)/linux-kernel.do_compile: \
 		bootstrap-cross \
 		linux-kernel.do_prepare \
-		Patches/linux-sh4-$(subst _stm23_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(HOMECAST5101),_$(HOMECAST5101)).config${DEBUG_STR} \
+		Patches/$(HOST_KERNEL_CONFIG) \
 		config.status \
 		| $(HOST_U_BOOT_TOOLS)
 	-rm $(DEPDIR)/linux-kernel*.do_compile
 	cd $(KERNEL_DIR) && \
 		export PATH=$(hostprefix)/bin:$(PATH) && \
 		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
-		@M4@ ../$(word 3,$^)	> .config && \
+		@M4@ ../Patches/$(HOST_KERNEL_CONFIG) > .config && \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
 
-endif !STM22
+endif !STM23_HAVANA
 
 NFS_FLASH_SED_CONF=$(foreach param,XCONFIG_NFS_FS XCONFIG_LOCKD XCONFIG_SUNRPC,-e s"/^.*$(param)[= ].*/$(param)=m/")
 
@@ -370,7 +333,7 @@ $(DEPDIR)/linux-kernel.%.do_compile: \
 		bootstrap-cross \
 		linux-kernel.do_prepare \
 		Patches/linux-sh4-$(KERNELVERSION).stboards.c.m4 \
-		Patches/linux-$(subst _stm22_,-,$(KERNELVERSION))$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS922),_$(UFS922))$(if $(FLASH_UFS910),_$(FLASH_UFS910))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(HOMECAST5101),_$(HOMECAST5101)).config \
+		Patches/$(HOST_KERNEL_CONFIG) \
 		config.status \
 		| $(DEPDIR)/$(HOST_U_BOOT_TOOLS)
 	-rm $(DEPDIR)/linux-kernel*.do_compile
@@ -379,7 +342,7 @@ $(DEPDIR)/linux-kernel.%.do_compile: \
 		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
 		@M4@ -Drootfs=$* --define=rootsize=$(ROOT_PARTITION_SIZE) --define=datasize=$(DATA_PARTITION_SIZE) ../$(word 3,$^) \
 					> drivers/mtd/maps/stboards.c && \
-		@M4@ --define=btldrdef=$* ../$(word 4,$^) \
+		@M4@ --define=btldrdef=$* ../Patches/$(HOST_KERNEL_CONFIG) \
 					> .config && \
 		sed $(NFS_FLASH_SED_CONF) -i .config && \
 		sed $(XFS_SED_CONF) $(NFSSERVER_SED_CONF) $(NTFS_SED_CONF) -i .config && \
