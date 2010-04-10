@@ -1,6 +1,6 @@
 --- SPECS/stm-host-rpmconfig.spec.orig	2010-04-04 15:09:50.000000000 +0200
 +++ SPECS/stm-host-rpmconfig.spec	2010-04-04 15:11:39.000000000 +0200
-@@ -1,6 +1,15 @@
+@@ -1,6 +1,17 @@
 +# These four macros would normally be defined in config/rpm/common,
 +# but as we are currently building that file define our own version here.
 +
@@ -11,6 +11,8 @@
  %define _build_cpu		sh4_uclibc
  %define _stm_base_prefix	%{_stm_install_prefix}/STLinux-%{_stm_build_id}
  %define _stm_config_dir		%{_stm_base_prefix}/config
++%define __find_requires	%{_topdir}/config/find-requires
++%define __find_provides	%{_topdir}/config/find-provides
 +# Quick and dirty workaround. RPM complains about unpackaged files.
 +%define _unpackaged_files_terminate_build 0
  
