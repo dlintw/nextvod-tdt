@@ -4,37 +4,42 @@ if P0040
 KERNEL_DEPENDS = @DEPENDS_linuxp0040@
 KERNEL_DIR = @DIR_linuxp0040@
 KERNEL_PREPARE = @PREPARE_linuxp0040@
-else
+else !P0040
 if P0041
 KERNEL_DEPENDS = @DEPENDS_linuxp0041@
 KERNEL_DIR = @DIR_linuxp0041@
 KERNEL_PREPARE = @PREPARE_linuxp0041@
-else
+else !P0041
 KERNEL_DEPENDS = @DEPENDS_linux@
 KERNEL_DIR = @DIR_linux@
 KERNEL_PREPARE = @PREPARE_linux@
-#endof P0040/41
-endif
-endif
-else
+endif !P0041
+endif !P0040
+else !STM22
+if STM23
 if ENABLE_P0119
 KERNEL_DEPENDS = @DEPENDS_linux23@
 KERNEL_DIR = @DIR_linuxp0119@
 KERNEL_PREPARE = @PREPARE_linux23@
-else
+else !ENABLE_P0119
 if ENABLE_P0123
 KERNEL_DEPENDS = @DEPENDS_linux23@
 KERNEL_DIR = @DIR_linuxp0123@
 KERNEL_PREPARE = @PREPARE_linux23@
-else
+else !ENABLE_P0123
 KERNEL_DEPENDS = @DEPENDS_linux23@
 KERNEL_DIR = @DIR_linux23@
 KERNEL_PREPARE = @PREPARE_linux23@
-#endof ENABLE_P0119/ENABLE_P123
-endif
-endif
-#endof STM22
-endif
+endif !ENABLE_P0123
+endif !ENABLE_P0119
+else !STM23
+# if STM24
+KERNEL_DEPENDS = @DEPENDS_linux24@
+KERNEL_DIR = @DIR_linuxp0201@
+KERNEL_PREPARE = @PREPARE_linux24@
+# endif STM24
+endif !STM23
+endif !STM22
 
 if STM22
 STM_RELOCATE := /opt/STM/STLinux-2.2
@@ -265,6 +270,8 @@ else !STM22
 ##	touch .deps/$(notdir $@)
 endif !STM22
 
+if STM24
+else !STM24
 #
 # HOST-MTD-UTILS
 #
@@ -304,13 +311,14 @@ $(HOST_MTD_UTILS_RPM): \
 $(HOST_MTD_UTILS): $(HOST_MTD_UTILS_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
+endif !STM24
 
 #
 # BOOTSTRAP-HOST
 #
 $(DEPDIR)/bootstrap-host: | \
-		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils host-filesystem host-autotools host-mtd-utils host-python
-	[ "x$*" = "x" ] && touch -r RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).sh4.rpm $@ || true
+		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils host-filesystem host-autotools $(HOST_MTD_UTILS) host-python
+	$(if $(HOST_MTD_UTILS_RPM),[ "x$*" = "x" ] && touch -r $(HOST_MTD_UTILS_RPM) $@ || true)
 
 #
 # BOOTSTRAP-CROSS
@@ -394,6 +402,10 @@ CROSS_BINUTILS_SPEC_PATCH := $(CROSS_BINUTILS_SPEC)23.diff
 CROSS_BINUTILS_PATCHES := cross-binutils.diff
 else !STM23
 # if STM24
+CROSS_BINUTILS_VERSION := 2.19.1-41
+CROSS_BINUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
+CROSS_BINUTILS_SPEC_PATCH := $(CROSS_BINUTILS_SPEC)23.diff
+CROSS_BINUTILS_PATCHES := cross-binutils.diff
 # endif STM24
 endif !STM23
 endif !STM22
@@ -429,6 +441,60 @@ $(DEPDIR)/kernel-headers: linux-kernel.do_prepare
 		cp -a include/asm-generic $(targetprefix)/usr/include && \
 		cp -a include/mtd $(targetprefix)/usr/include
 	touch $@
+
+
+#
+# CROSS GMP
+#
+if STM24
+CROSS_GMP := cross-sh4-gmp
+CROSS_GMP_VERSION := 4.3.2-4
+CROSS_GMP_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_GMP)).spec
+CROSS_GMP_SPEC_PATCH :=
+CROSS_GMP_PATCHES :=
+CROSS_GMP_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GMP)-$(CROSS_GMP_VERSION).$(host_arch).rpm
+
+$(CROSS_GMP_RPM): \
+		$(if $(CROSS_GMP_SPEC_PATCH),Patches/$(CROSS_GMP_SPEC_PATCH)) \
+		$(if $(CROSS_GMP_PATCHES),$(CROSS_GMP_PATCHES:%=Patches/%)) \
+		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GMP))-$(CROSS_GMP_VERSION).src.rpm
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(CROSS_GMP_SPEC_PATCH),( cd SPECS && patch -p1 $(CROSS_GMP_SPEC) < ../Patches/$(CROSS_GMP_SPEC_PATCH) ) &&) \
+	$(if $(CROSS_GMP_PATCHES),cp $(CROSS_GMP_PATCHES:%=Patches/%) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --target=sh4-linux SPECS/$(CROSS_GMP_SPEC)
+
+$(CROSS_GMP): $(CROSS_GMP_RPM)
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
+	touch .deps/$(notdir $@)
+endif STM24
+
+#
+# CROSS MPFR
+#
+if STM24
+CROSS_MPFR := cross-sh4-mpfr
+CROSS_MPFR_VERSION := 2.4.2-4
+CROSS_MPFR_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_MPFR)).spec
+CROSS_MPFR_SPEC_PATCH := $(CROSS_MPFR_SPEC)24.diff
+CROSS_MPFR_PATCHES :=
+CROSS_MPFR_RPM := RPMS/$(host_arch)/$(STLINUX)-$(CROSS_MPFR)-$(CROSS_MPFR_VERSION).$(host_arch).rpm
+
+$(CROSS_MPFR_RPM): \
+		$(if $(CROSS_MPFR_SPEC_PATCH),Patches/$(CROSS_MPFR_SPEC_PATCH)) \
+		$(if $(CROSS_MPFR_PATCHES),$(CROSS_MPFR_PATCHES:%=Patches/%)) \
+		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_MPFR))-$(CROSS_MPFR_VERSION).src.rpm \
+		| $(CROSS_GMP)
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(CROSS_MPFR_SPEC_PATCH),( cd SPECS && patch -p1 $(CROSS_MPFR_SPEC) < ../Patches/$(CROSS_MPFR_SPEC_PATCH) ) &&) \
+	$(if $(CROSS_MPFR_PATCHES),cp $(CROSS_MPFR_PATCHES:%=Patches/%) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(CROSS_MPFR_SPEC)
+
+$(CROSS_MPFR): $(CROSS_MPFR_RPM)
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
+	touch .deps/$(notdir $@)
+endif STM24
 
 #
 # CROSS GCC
@@ -473,6 +539,8 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GCC))-$(CROSS_GCC_VERSION).src.rpm \
 		| Archive/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 		Archive/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm \
+		$(if $(CROSS_MPFR),$(CROSS_MPFR)) \
+		$(if $(KERNELHEADERS),$(KERNELHEADERS)) \
 		kernel-headers
 	rpm $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
 		--relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 1,$|) && \
