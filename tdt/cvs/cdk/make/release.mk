@@ -25,10 +25,6 @@ release_common_utils:
 
 
 release_cube_common:
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
-	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release/etc/init.d/halt
 	chmod 777 $(prefix)/release/etc/init.d/halt
 	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release/etc/init.d/reboot
@@ -39,12 +35,17 @@ release_cube_common:
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release/bin/vdstandby
 	chmod 777 $(prefix)/release/bin/vdstandby
 if !STM22
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
 	cp -f $(buildprefix)/root/bin/ustslave_stm23 $(prefix)/release/bin/ustslave_stm23
 	chmod 777 $(prefix)/release/bin/ustslave_stm23
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release/bin/cubefpctl
 	chmod 777 $(prefix)/release/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123_cuberevo $(prefix)/release/lib/modules/fp.ko
 else
+	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release/bin/cubefpctl
 	chmod 777 $(prefix)/release/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm22_041_cuberevo $(prefix)/release/lib/modules/fp.ko
