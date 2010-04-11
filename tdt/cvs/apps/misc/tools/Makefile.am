@@ -12,5 +12,6 @@ SUBDIRS = \
 	ustslave \
 	tffpctl \
 	tfd2mtd \
+	gitVCInfo \
 	hotplug \
 	libcoolstream
