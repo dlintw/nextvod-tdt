@@ -1,5 +1,5 @@
---- SPECS/stm-host-rpmconfig.spec.orig	2010-04-04 15:09:50.000000000 +0200
-+++ SPECS/stm-host-rpmconfig.spec	2010-04-04 15:11:39.000000000 +0200
+--- SPECS/stm-host-rpmconfig.spec.orig	2010-04-10 20:25:15.000000000 +0200
++++ SPECS/stm-host-rpmconfig.spec	2010-04-10 20:36:04.000000000 +0200
 @@ -1,6 +1,17 @@
 +# These four macros would normally be defined in config/rpm/common,
 +# but as we are currently building that file define our own version here.
@@ -11,22 +11,22 @@
  %define _build_cpu		sh4_uclibc
  %define _stm_base_prefix	%{_stm_install_prefix}/STLinux-%{_stm_build_id}
  %define _stm_config_dir		%{_stm_base_prefix}/config
-+%define __find_requires	%{_topdir}/config/find-requires
-+%define __find_provides	%{_topdir}/config/find-provides
++%define __find_requires	/usr/lib/rpm/find-requires
++%define __find_provides	/usr/lib/rpm/find-provides
 +# Quick and dirty workaround. RPM complains about unpackaged files.
-+%define _unpackaged_files_terminate_build 0
++# %define _unpackaged_files_terminate_build 0
  
  Vendor: STMicroelectronics Limited
  Distribution: Base
-@@ -11,6 +20,7 @@
+@@ -11,6 +22,7 @@
  Version: %{_stm_build_id}
  Release: 21 
  Source0: stm-host-rpmconfig-%{version}-%{_build_cpu}.tar.gz
-+Patch0: stm-host-rpmconfig-skip-cvs.patch
++Patch0: stm-host-rpmconfig-ignore-skip-cvs-errors.patch
  License: GPL
  Group: Development/Tools
  BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-@@ -26,6 +36,7 @@
+@@ -26,24 +38,12 @@
  
  %prep
  %setup -q -n rpmconfig-%{version}
@@ -34,3 +34,55 @@
  
  %install
  make	RPMCONFIGDIR=%{buildroot}%{_stm_config_dir}/rpm \
+ 	install
+ 
+-%clean
+-rm -rf %{buildroot}
+-
+-
+-%post
+-if [ ${RPM_INSTALL_PREFIX} != %{_stm_install_prefix} ]; then
+- RELOCATION=${RPM_INSTALL_PREFIX}`expr %{_stm_config_dir}/rpm : '%{_stm_install_prefix}\(.*$\)'`
+- cd $RELOCATION
+- for i in common ; do
+-   sed "s,%{_stm_install_prefix},${RPM_INSTALL_PREFIX}," -i $i
+- done
+-fi
+-
+ # create config.cache files
+ for arch in arm arm_uclibc cortex sh4 sh4_uclibc st231 st240 ; do
+   sed -e "s,@PREFIX@,%{_stm_target_prefix},g" \
+@@ -66,10 +66,23 @@
+     -e "s,@PKGCONFIGDIR@,%{_stm_target_pkgconfig_dir},g" \
+     -e "s,@X11FONTDIR@,%{_stm_target_x11font_dir},g" \
+     -e "s,@TESTSDIR@,%{_stm_target_tests_dir},g" \
+-    < %{_stm_config_dir}/rpm/config.site.template > %{_stm_config_dir}/config.site.${arch}
+-  cat %{_stm_config_dir}/rpm/site_configs/config.site.${arch} >> %{_stm_config_dir}/config.site.${arch}
++    < %{buildroot}%{_stm_config_dir}/rpm/config.site.template > %{buildroot}%{_stm_config_dir}/config.site.${arch}
++  cat %{buildroot}%{_stm_config_dir}/rpm/site_configs/config.site.${arch} >> %{buildroot}%{_stm_config_dir}/config.site.${arch}
+ done
+ 
++%clean
++rm -rf %{buildroot}
++
++
++%post
++if [ ${RPM_INSTALL_PREFIX} != %{_stm_install_prefix} ]; then
++ RELOCATION=${RPM_INSTALL_PREFIX}`expr %{_stm_config_dir}/rpm : '%{_stm_install_prefix}\(.*$\)'`
++ cd $RELOCATION
++ for i in common ; do
++   sed "s,%{_stm_install_prefix},${RPM_INSTALL_PREFIX}," -i $i
++ done
++fi
++
+ %files
+ %defattr(-,root,root)
+ %dir %{_stm_config_dir}/rpm
+@@ -86,6 +99,7 @@
+ %{_stm_config_dir}/rpm/hosts/*
+ %{_stm_config_dir}/rpm/targets/*
+ %{_stm_config_dir}/rpm/site_configs/*
++%{_stm_config_dir}/config.site.*
+ 
+ %changelog
+ * Wed Mar 31 2010 Stuart Menefy <stuart.menefy@st.com> 21
