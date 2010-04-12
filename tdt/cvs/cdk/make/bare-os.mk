@@ -152,7 +152,7 @@ $(MPFR_RPM): \
 		| $(GMP)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(MPFR_SPEC_PATCH),( cd SPECS && patch -p1 $(MPFR_SPEC) < ../Patches/$(MPFR_SPEC_PATCH) ) &&) \
-	$(if $(MPFR_PATCHES),cp $(CROSS_MPFR_PATCHES:%=Patches/%) SOURCES/ &&) \
+	$(if $(MPFR_PATCHES),cp $(MPFR_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(MPFR_SPEC)
 
