@@ -301,8 +301,7 @@ $(flashprefix)/root-stock-%: \
 	@TUXBOX_CUSTOMIZE@
 
 $(flashprefix)/root-stock-neutrino: \
-$(flashprefix)/root-stock-%: \
-			$(flashprefix)/root $(flashprefix)/root-stock $(flashprefix)/root-stock-squashfs
+		$(flashprefix)/root-stock-neutrino
 	rm -rf $@
 	$(INSTALL) -d $@/{dev,lib,usr,var}
 	mkdir  $@/boot
@@ -486,8 +485,7 @@ $(flashprefix)/var-%-enigma2: \
 
 
 $(flashprefix)/var-stock-neutrino: \
-$(flashprefix)/var-%-neutrino: \
-		$(flashprefix)/root $(flashprefix)/root-stock
+		$(flashprefix)/var-stock-neutrino
 	rm -rf $@
 	mkdir $@
 	cp -rd $(prefix)/release_neutrino/var/{plugins,share,tuxbox} $@
