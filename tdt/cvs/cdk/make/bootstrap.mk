@@ -252,6 +252,32 @@ $(HOST_AUTOTOOLS): $(HOST_AUTOTOOLS_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
+if STM24
+#
+# HOST AUTOCONF
+#
+HOST_AUTOCONF := host-autoconf
+HOST_AUTOCONF_VERSION := 2.64-3
+HOST_AUTOCONF_SPEC := stm-$(HOST_AUTOCONF).spec
+HOST_AUTOCONF_SPEC_PATCH :=
+HOST_AUTOCONF_PATCHES :=
+HOST_AUTOCONF_RPM := RPMS/sh4/$(STLINUX)-$(HOST_AUTOCONF)-$(HOST_AUTOCONF_VERSION).sh4.rpm
+
+$(HOST_AUTOCONF_RPM): \
+		$(if $(HOST_AUTOCONF_SPEC_PATCH),Patches/$(HOST_AUTOCONF_SPEC_PATCH)) \
+		$(if $(HOST_AUTOCONF_PATCHES),$(HOST_AUTOCONF_PATCHES:%=Patches/%)) \
+		Archive/$(STLINUX)-$(HOST_AUTOCONF)-$(HOST_AUTOCONF_VERSION).src.rpm
+	rpm  $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(HOST_AUTOCONF_SPEC_PATCH),( cd SPECS && patch -p1 $(HOST_AUTOCONF_SPEC) < ../Patches/$(HOST_AUTOCONF_SPEC_PATCH) ) &&) \
+	$(if $(HOST_AUTOCONF_PATCHES),cp $(HOST_AUTOCONF_PATCHES:%=Patches/%) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_AUTOCONF_SPEC)
+
+$(HOST_AUTOCONF): $(HOST_AUTOCONF_RPM)
+	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
+	touch .deps/$(notdir $@)
+endif STM24
+
 if STM22
 else !STM22
 #
@@ -317,7 +343,7 @@ endif !STM24
 # BOOTSTRAP-HOST
 #
 $(DEPDIR)/bootstrap-host: | \
-		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils host-filesystem host-autotools $(HOST_MTD_UTILS) host-python
+		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils host-filesystem host-autotools $(HOST_AUTOCONF) $(HOST_MTD_UTILS) host-python
 	$(if $(HOST_MTD_UTILS_RPM),[ "x$*" = "x" ] && touch -r $(HOST_MTD_UTILS_RPM) $@ || true)
 
 #
@@ -399,13 +425,13 @@ if STM23
 CROSS_BINUTILS_VERSION := 2.18.50.0.8-34
 CROSS_BINUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
 CROSS_BINUTILS_SPEC_PATCH := $(CROSS_BINUTILS_SPEC)23.diff
-CROSS_BINUTILS_PATCHES := cross-binutils.diff
+CROSS_BINUTILS_PATCHES :=
 else !STM23
 # if STM24
 CROSS_BINUTILS_VERSION := 2.19.1-41
 CROSS_BINUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
-CROSS_BINUTILS_SPEC_PATCH := $(CROSS_BINUTILS_SPEC)23.diff
-CROSS_BINUTILS_PATCHES := cross-binutils.diff
+CROSS_BINUTILS_SPEC_PATCH :=
+CROSS_BINUTILS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
@@ -429,19 +455,6 @@ $(CROSS_BINUTILS): $(CROSS_BINUTILS_RPM)
 $(CROSS_BINUTILS_DEV): $(CROSS_BINUTILS_DEV_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps --noscripts -Uhv $< && \
 	touch .deps/$(notdir $@)
-
-#
-# KERNEL-HEADERS
-#
-$(DEPDIR)/kernel-headers: linux-kernel.do_prepare
-	cd $(KERNEL_DIR) && \
-		$(INSTALL) -d $(targetprefix)/usr/include && \
-		cp -a include/linux $(targetprefix)/usr/include && \
-		cp -a include/asm-sh $(targetprefix)/usr/include/asm && \
-		cp -a include/asm-generic $(targetprefix)/usr/include && \
-		cp -a include/mtd $(targetprefix)/usr/include
-	touch $@
-
 
 #
 # CROSS GMP
@@ -510,6 +523,7 @@ CROSS_GCC_RAWVERSION := 4.1.1
 CROSS_GCC_SPEC := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC))-sh4processed.spec
 CROSS_GCC_SPEC_PATCH := $(CROSS_GCC_SPEC)22.diff
 CROSS_GCC_PATCHES :=
+CROSS_GCC_KERNELHEADERS := kernel-headers
 else !STM22
 if STM23
 CROSS_GCC_VERSION := 4.2.4-49
@@ -517,6 +531,7 @@ CROSS_GCC_RAWVERSION := 4.2.4
 CROSS_GCC_SPEC := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
 CROSS_GCC_SPEC_PATCH := $(CROSS_GCC_SPEC)23.diff
 CROSS_GCC_PATCHES :=
+CROSS_GCC_KERNELHEADERS := kernel-headers
 else !STM23
 # if STM24
 CROSS_GCC_VERSION := 4.3.4-63
@@ -524,6 +539,7 @@ CROSS_GCC_RAWVERSION := 4.3.4
 CROSS_GCC_SPEC := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
 CROSS_GCC_SPEC_PATCH := $(CROSS_GCC_SPEC)24.diff
 CROSS_GCC_PATCHES :=
+CROSS_GCC_KERNELHEADERS := linux-kernel-headers
 # endif STM24
 endif !STM23
 endif !STM22
@@ -539,9 +555,7 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GCC))-$(CROSS_GCC_VERSION).src.rpm \
 		| Archive/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 		Archive/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm \
-		$(if $(CROSS_MPFR),$(CROSS_MPFR)) \
-		$(if $(KERNELHEADERS),$(KERNELHEADERS)) \
-		kernel-headers
+		$(CROSS_MPFR) $(CROSS_GCC_KERNELHEADERS)
 	rpm $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
 		--relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 1,$|) && \
 	rpm $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
@@ -551,8 +565,8 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 	$(if $(CROSS_GCC_PATCHES),cp $(CROSS_GCC_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(CROSS_GCC_SPEC)
-	rpm $(DRPM) -ev $(STLINUX)-sh4-$(GLIBC_DEV) && \
-	rpm $(DRPM) -ev $(STLINUX)-sh4-$(GLIBC)
+	rpm $(DRPM) --nodeps -ev $(STLINUX)-sh4-$(GLIBC_DEV) && \
+	rpm $(DRPM) --nodeps -ev $(STLINUX)-sh4-$(GLIBC)
 
 if STM24
 $(CROSS_GCC): $(CROSS_GCC_RPM)
@@ -575,7 +589,7 @@ $(CROSS_G++): $(CROSS_G++_RPM)
 
 $(DEPDIR)/min-$(CROSS_LIBGCC) $(DEPDIR)/std-$(CROSS_LIBGCC) $(DEPDIR)/max-$(CROSS_LIBGCC) \
 $(DEPDIR)/$(CROSS_LIBGCC): \
-$(DEPDIR)/%$(CROSS_LIBGCC): $(CROSS_LIBGCC_RPM) | $(DEPDIR)/%$(GLIBC)
+$(DEPDIR)/%$(CROSS_LIBGCC): $(CROSS_LIBGCC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb  $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
@@ -598,7 +612,7 @@ $(CROSS_PROTOIZE): $(CROSS_PROTOIZE_RPM)
 #
 $(DEPDIR)/bootstrap-cross: | \
 		bootstrap-host cross-sh4-distributionutils cross-sh4-filesystem cross-sh4-binutils cross-sh4-binutils-dev \
-		cross-sh4-cpp cross-sh4-gcc cross-sh4-g++
+		cross-sh4-cpp cross-sh4-gcc cross-sh4-g++ cross-sh4-libgcc
 	[ "x$*" = "x" ] && touch -r $(CROSS_G++_RPM) $@ || true
 
 $(DEPDIR)/setup-cross-doc: \

@@ -1,16 +1,6 @@
---- SPECS/stm-cross-gcc.spec.orig	2010-04-04 21:14:49.938823249 +0200
-+++ SPECS/stm-cross-gcc.spec	2010-04-04 21:16:09.690797520 +0200
-@@ -57,6 +57,9 @@
- 
- %define _gccdir %{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}
- 
-+# Quick and dirty workaround. RPM complains about unpackaged files.
-+%define _unpackaged_files_terminate_build 0
-+
- %description
- This is the GNU C compiler, a fairly portable optimizing compiler which
- supports multiple languages.  This package includes support for C, and
-@@ -140,6 +143,7 @@
+--- SPECS/stm-cross-gcc.spec.orig	2010-04-12 16:53:52.000000000 +0200
++++ SPECS/stm-cross-gcc.spec	2010-04-12 17:01:28.000000000 +0200
+@@ -140,6 +140,7 @@
  ##############################################################################
  %prep
  %setup -n gcc-%{version} -q
@@ -18,7 +8,7 @@
  
  # Common patches
  %if "%{_stm_target_arch}" != "cortex"
-@@ -199,7 +203,6 @@
+@@ -199,7 +200,6 @@
  
  %build
  %cross_setup
@@ -26,3 +16,75 @@
  
  %cross_configure \
          --disable-checking \
+@@ -236,7 +236,7 @@
+ %if_target_arch cortex
+         --with-gxx-include-dir="target%{_stm_target_include_dir}/c++/%{version}" \
+ %else
+-        --with-gxx-include-dir="\\\${prefix}/target%{_stm_target_include_dir}/c++/%{version}" \
++        --with-gxx-include-dir="\\\${prefix}/../../cdkroot%{_stm_target_include_dir}/c++/%{version}" \
+ %endif
+         --enable-__cxa_atexit \
+ %if "%{_stm_target_fpu}" == "no"
+@@ -336,14 +336,16 @@
+ 	xargs --no-run-if-empty --verbose rm
+ # Remove some installed files we don't ship, to keep rpm happy
+ rm %{buildroot}%{_stm_cross_bin_dir}/%{_stm_target_toolprefix}gccbug
+-rm %{buildroot}%{_stm_cross_info_dir}/cppinternals.info.gz
+-rm %{buildroot}%{_stm_cross_info_dir}/gccinstall.info.gz
+-rm %{buildroot}%{_stm_cross_info_dir}/gccint.info.gz
+-rm -f %{buildroot}%{_stm_cross_info_dir}/dir.*
++rm %{buildroot}%{_stm_cross_info_dir}/cppinternals.info.gz || true
++rm %{buildroot}%{_stm_cross_info_dir}/gccinstall.info.gz || true
++rm %{buildroot}%{_stm_cross_info_dir}/gccint.info.gz || true
++rm -f %{buildroot}%{_stm_cross_info_dir}/dir.* || true
+ rm -r %{buildroot}%{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
+ rm -f %{buildroot}%{_stm_cross_lib_dir}/libiberty.a
+ rm -f  %{buildroot}%{_stm_cross_dir}/lib64/libiberty.a
+ rm -r %{buildroot}%{_stm_cross_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
++rm %{buildroot}%{_stm_cross_info_dir}/cpp.info* || true
++rm %{buildroot}%{_stm_cross_info_dir}/gcc.info* || true
+ 
+ %unfixincludes  %{buildroot}%{_gccdir}
+ 
+@@ -459,10 +461,6 @@
+ %{_stm_cross_targetconf_dir}/bin/cpp
+ %{_stm_cross_sharedstate_dir}/locale/*/LC_MESSAGES/cpplib.mo
+ 
+-%files -n %{_cpp_pkgname}-doc
+-%defattr(-,root,root)
+-%{_stm_cross_info_dir}/cpp.info.gz
+-
+ %files -n %{_gpp_pkgname}
+ %defattr(-,root,root)
+ %{_stm_cross_bin_dir}/%{_stm_target_toolprefix}g++
+@@ -482,7 +480,6 @@
+ 
+ %files -n %{_gcc_pkgname}-doc
+ %defattr(-,root,root)
+-%{_stm_cross_info_dir}/gcc.info.gz
+ %{_stm_cross_man_dir}/man7/*
+ 
+ %files -n %{_libgcc_pkgname}
+@@ -495,22 +492,6 @@
+ %{_stm_cross_target_dir}/lib/m4-nofpu/libgcc_s-%{version}.so.1
+ %endif
+ 
+-%post -n %{_cpp_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir \
+-	%{_stm_cross_info_dir}/cpp.info
+-
+-%preun -n %{_cpp_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir --remove \
+-	%{_stm_cross_info_dir}/cpp.info
+-
+-%post -n %{_gcc_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir \
+-	%{_stm_cross_info_dir}/gcc.info
+-
+-%preun -n %{_gcc_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir --remove \
+-	%{_stm_cross_info_dir}/gcc.info
+-
+ %changelog
+ * Wed Mar 31 2010 Stuart Menefy <stuart.menefy@st.com> 63
+ - [Spec] Bump the release number for 2.4 product release.

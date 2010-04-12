@@ -38,12 +38,12 @@ GREP_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-GREP_RPM := RPMS/sh4/stlinux23-sh4-$(GREPX)-$(GREP_VERSION).sh4.rpm
+GREP_RPM := RPMS/sh4/$(STM_SRC)-sh4-$(GREPX)-$(GREP_VERSION).sh4.rpm
 
 $(GREP_RPM): \
 		$(if $(GREP_SPEC_PATCH),Patches/$(GREP_SPEC_PATCH)) \
 		$(if $(GREP_PATCHES),$(GREP_PATCHES:%=Patches/%)) \
-		Archive/stlinux23-target-$(GREPX)-$(GREP_VERSION).src.rpm
+		Archive/$(STM_SRC)-target-$(GREPX)-$(GREP_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(GREP_SPEC_PATCH),( cd SPECS && patch -p1 $(GREP_SPEC) < ../Patches/$(GREP_PATCH) ) &&) \
 	$(if $(GREP_PATCHES),cp $(GREP_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -424,7 +424,7 @@ $(DISTRIBUTIONUTILS_RPM) $(DISTRIBUTIONUTILS_DOC_RPM): \
 $(DEPDIR)/min-$(DISTRIBUTIONUTILS) $(DEPDIR)/std-$(DISTRIBUTIONUTILS) $(DEPDIR)/max-$(DISTRIBUTIONUTILS) \
 $(DEPDIR)/$(DISTRIBUTIONUTILS): \
 $(DEPDIR)/%$(DISTRIBUTIONUTILS): $(DISTRIBUTIONUTILS_RPM)
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@

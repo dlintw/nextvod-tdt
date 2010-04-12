@@ -195,6 +195,69 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 
 ############ Patches Kernel 23 End ###############
 
+#
+# KERNEL-HEADERS
+#
+$(DEPDIR)/kernel-headers: linux-kernel.do_prepare
+	cd $(KERNEL_DIR) && \
+		$(INSTALL) -d $(targetprefix)/usr/include && \
+		cp -a include/linux $(targetprefix)/usr/include && \
+		cp -a include/asm-sh $(targetprefix)/usr/include/asm && \
+		cp -a include/asm-generic $(targetprefix)/usr/include && \
+		cp -a include/mtd $(targetprefix)/usr/include
+	touch $@
+
+if STM22
+else !STM22
+KERNELHEADERS := linux-kernel-headers
+if STM23
+if ENABLE_P0119
+# STM23 && ENABLE_P0119
+KERNELHEADERS_VERSION := 2.6.23.17_stm23_0119-41
+KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec
+KERNELHEADERS_SPEC_PATCH := stm-target-kernel-headers-kbuild.spec.diff
+KERNELHEADERS_PATCHES :=
+else !ENABLE_P0119
+# STM23 && !ENABLE_P0119
+KERNELHEADERS_VERSION := 2.6.23.17_stm23_0123-41
+KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec
+KERNELHEADERS_SPEC_PATCH := stm-target-kernel-headers-kbuild_0123.spec.diff
+KERNELHEADERS_PATCHES :=
+endif !ENABLE_P0119
+else !STM23
+# if STM24
+KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
+KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec
+KERNELHEADERS_SPEC_PATCH :=
+KERNELHEADERS_PATCHES :=
+# endif STM24
+endif !STM23
+KERNELHEADERS_RPM := RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm
+
+$(KERNELHEADERS_RPM): \
+		$(if $(KERNELHEADERS_SPEC_PATCH),Patches/$(KERNELHEADERS_SPEC_PATCH)) \
+		$(if $(KERNELHEADERS_PATCHES),$(KERNELHEADERS_PATCHES:%=Patches/%)) \
+		Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(KERNELHEADERS_SPEC_PATCH),( cd SPECS && patch -p1 $(KERNELHEADERS_SPEC) < ../Patches/$(KERNELHEADERS_SPEC_PATCH) ) &&) \
+	$(if $(KERNELHEADERS_PATCHES),cp $(KERNELHEADERS_PATCHES:%=Patches/%) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(KERNELHEADERS_SPEC)
+
+$(DEPDIR)/max-$(KERNELHEADERS) \
+$(DEPDIR)/$(KERNELHEADERS): \
+$(DEPDIR)/%$(KERNELHEADERS): $(KERNELHEADERS_RPM)
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv \
+		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+	touch $@
+endif !STM22
+
+
+
+#
+# HOST-KERNEL
+#
+
 # IMPORTANT: it is expected that only one define is set
 MODNAME = $(UFS910)$(UFS922)$(TF7700)$(HL101)$(VIP2)$(CUBEMOD)$(FORTIS_HDBOX)$(FLASH_UFS910)$(HOMECAST5101)
 
