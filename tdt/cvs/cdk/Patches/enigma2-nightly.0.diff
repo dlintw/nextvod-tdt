@@ -4280,7 +4280,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/plu
 diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2009-12-11 21:40:12.000000000 +0100
-@@ -0,0 +1,6730 @@
+@@ -0,0 +1,6752 @@
 +/******************************************************************************
 + *                      <<< TuxTxt - Teletext Plugin >>>                      *
 + *                                                                            *
@@ -4328,6 +4328,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +/* current pig settings */
 +int left, top, width, height;
 +char aspect[16];
++char policy[16];
 +
 +int stride;
 +
@@ -5932,6 +5933,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +
 +	getCurrentPIGSettings(&left, &top, &width, &height);
 +        getCurrentASPECTSettings();
++        getCurrentPOLICYSettings();
 +        setCurrentASPECTSettings(0);
 +
 +#if !TUXTXT_CFG_STANDALONE
@@ -6549,6 +6551,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	if (screenmode)
 +		SwitchScreenMode(0); /* turn off divided screen */
 +        setCurrentASPECTSettings(1);
++        setCurrentPOLICYSettings(1);
 +
 +#if TUXTXT_CFG_STANDALONE
 +	tuxtxt_stop_thread();
@@ -8357,6 +8360,15 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	debugf(1, "%s: top %x, left %x, width %x, height %x\n", __func__, *left, *top, *width, *height);
 +}
 +
++void getCurrentPOLICYSettings()
++{
++        FILE* fd;
++
++        fd = fopen("/proc/stb/video/policy", "r");
++        fscanf(fd, "%s", policy);
++        fclose(fd);
++}
++
 +void getCurrentASPECTSettings()
 +{
 +	FILE* fd;
@@ -8387,6 +8399,16 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	fd = fopen("/proc/stb/vmpeg/0/dst_height", "w");
 +	fprintf(fd, "%x", height);
 +	fclose(fd);
++}
++
++void setCurrentPOLICYSettings(int reset)
++{
++        FILE* fd;
++
++        fd = fopen("/proc/stb/video/policy", "w");
++        if (reset == 1)
++           fprintf(fd, "%s", policy);
++        fclose(fd);
 +}
 +
 +void setCurrentASPECTSettings(int reset)
