@@ -881,6 +881,35 @@ $(flashprefix)/root/usr/bin/strace: $(STRACE_RPM)
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
 
+#
+# UTIL LINUX
+# 
+if STM24
+UTIL_LINUX = util-linux
+UTIL_LINUX_VERSION = 2.16.1-21
+UTIL_LINUX_SPEC = stm-target-$(UTIL_LINUX).spec
+UTIL_LINUX_SPEC_PATCH =
+UTIL_LINUX_PATCHES =
+UTIL_LINUX_RPM := RPMS/sh4/$(STLINUX)-sh4-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).sh4.rpm
+
+$(UTIL_LINUX_RPM): \
+		$(if $(UTIL_LINUX_SPEC_PATCH),Patches/$(UTIL_LINUX_SPEC_PATCH)) \
+		$(if $(UTIL_LINUX_PATCHES),$(UTIL_LINUX_PATCHES:%=Patches/%)) \
+		Archive/$(STLINUX)-target-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).src.rpm \
+		| $(NCURSES_DEV)
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(UTIL_LINUX_SPEC_PATCH),( cd SPECS && patch -p1 $(UTIL_LINUX_SPEC) < ../Patches/$(UTIL_LINUX_PATCH) ) &&) \
+	$(if $(UTIL_LINUX_PATCHES),cp $(UTIL_LINUX_PATCHES:%=Patches/%) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(UTIL_LINUX_SPEC)
+
+$(UTIL_LINUX): $(UTIL_LINUX_RPM)
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
+		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+endif STM24
+
 ##################################################################################################
 
 

@@ -799,6 +799,9 @@ $(DEPDIR)/%fbset: fbset.do_compile
 #
 # UTIL-LINUX
 #
+if STM24
+# for stm24, look in contrib-apps-specs.mk 
+else !STM24
 $(DEPDIR)/util-linux.do_prepare: @DEPENDS_util_linux@
 	@PREPARE_util_linux@
 	cd @DIR_util_linux@ && \
@@ -837,3 +840,5 @@ $(DEPDIR)/%util-linux: util-linux.do_compile
 #	@DISTCLEANUP_util_linux@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
+endif !STM24
+
