@@ -38,12 +38,15 @@ void getCurrentPIGSettings(int* left, int* top, int* width, int* height);
 void getCurrentASPECTSettings();
 void setCurrentPIGSettings(int left, int top, int width, int height);
 void setCurrentASPECTSettings(int reset);
+void getCurrentPOLICYSettings();
+void setCurrentPOLICYSettings(int reset);
 
 /*  BLITTING  */
 
 /* current pig settings */
 int left, top, width, height;
 char aspect[16];
+char policy[16];
 
 int stride;
 
@@ -1630,6 +1633,7 @@ int tuxtx_main(int _rc, void * _fb, int pid, int x, int y, int w, int h)
 
 	getCurrentPIGSettings(&left, &top, &width, &height);
         getCurrentASPECTSettings();
+        getCurrentPOLICYSettings();
         setCurrentASPECTSettings(0);
 
 //printf("to init tuxtxt\n");fflush(stdout);
@@ -2235,6 +2239,8 @@ void CleanUp()
 	/* hide and close pig */
 	if (screenmode)
 		SwitchScreenMode(0); /* turn off divided screen */
+		setCurrentASPECTSettings(1);
+		setCurrentPOLICYSettings(1);
 	//close(pig);
 
 #if TUXTXT_CFG_STANDALONE
@@ -3924,6 +3930,14 @@ void getCurrentPIGSettings(int* left, int* top, int* width, int* height)
 	fprintf(stderr, "%s: top %x, left %x, width %x, height %x\n", __func__, *left, *top, *width, *height);
 }
 
+void getCurrentPOLICYSettings()
+{
+	FILE* fd;
+	fd = fopen("/proc/stb/video/policy", "r");
+	fscanf(fd, "%s", policy);
+	fclose(fd);
+}
+
 void getCurrentASPECTSettings()
 {
 	FILE* fd;
@@ -3953,6 +3967,15 @@ void setCurrentPIGSettings(int left, int top, int width, int height)
 
 	fd = fopen("/proc/stb/vmpeg/0/dst_height", "w");
 	fprintf(fd, "%x", height);
+	fclose(fd);
+}
+
+void setCurrentPOLICYSettings(int reset)
+{
+	FILE* fd;
+	fd = fopen("/proc/stb/video/policy", "w");
+	if (reset == 1)
+	    fprintf(fd, "%s", policy);
 	fclose(fd);
 }
 
