@@ -440,7 +440,7 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	$(if $(CUBEREVO_9500HD),PLATFORM: stb7109ref\n) \
 	$(if $(HOMECAST5101),PLATFORM: stb7109ref\n) \
 	KERNEL VERSION: $(KERNELVERSION)\n" > $(prefix)/$*cdkroot/README.ST && \
-	$(MAKE) -C $(KERNEL_DIR) INSTALL_MOD_PATH=$(prefix)/$*cdkroot modules_install && \
+	$(MAKE) -C $(KERNEL_DIR) ARCH=sh INSTALL_MOD_PATH=$(prefix)/$*cdkroot modules_install && \
 	rm $(prefix)/$*cdkroot/lib/modules/$(KERNELVERSION)/build || true && \
 	rm $(prefix)/$*cdkroot/lib/modules/$(KERNELVERSION)/source || true 
 #else
@@ -449,9 +449,9 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
-#	$(MAKE) -C $(KERNEL_DIR) $(MAKE_OPTS) modules_prepare
+#	$(MAKE) -C $(KERNEL_DIR) $(MAKE_OPTS) ARCH=sh modules_prepare
 	cp $(driverdir)/stgfb/stmfb/Linux/video/stmfb.h $(targetprefix)/usr/include/linux
-	$(MAKE) -C $(driverdir) \
+	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
@@ -468,7 +468,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
 		CROSS_COMPILE=$(target)-
-	$(MAKE) -C $(driverdir) \
+	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		BIN_DEST=$(targetprefix)/bin \
 		INSTALL_MOD_PATH=$(targetprefix) \
@@ -493,7 +493,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 
 driver-clean:
 	rm -f $(DEPDIR)/driver
-	$(MAKE) -C $(driverdir) \
+	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		distclean
 
@@ -518,7 +518,7 @@ $(flashprefix)/root-fosquashfs/lib: \
 $(flashprefix)/root-%/lib: \
 		$(DEPDIR)/linux-kernel.%.do_compile
 	-rm -rf $(flashprefix)/root-$*
-	$(MAKE) -C $(KERNEL_DIR) INSTALL_MOD_PATH=$(flashprefix)/root-$* modules_install
+	$(MAKE) -C $(KERNEL_DIR) ARCH=sh INSTALL_MOD_PATH=$(flashprefix)/root-$* modules_install
 	-rm $(flashprefix)/root-$*/lib/modules/$(KERNELVERSION)/build
 	-rm $(flashprefix)/root-$*/lib/modules/$(KERNELVERSION)/source
 	@TUXBOX_CUSTOMIZE@
@@ -534,8 +534,8 @@ $(flashprefix)/root-%/lib: \
 	$(CP_D) root/boot/vid_*.elf $(dir $@)/boot/ && \
 	$(CP_D) root/firmware/dvb-fe-cx24116.fw $(dir $@)/lib/firmware/ && \
 	$(CP_D) root/firmware/dvb-fe-cx21143.fw $(dir $@)/lib/firmware/ && \
-	$(MAKE) -C $(KERNEL_DIR) INSTALL_MOD_PATH=$(flashprefix)/root-$* modules_install
-	$(MAKE) -C $(driverdir) KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) INSTALL_MOD_PATH=$(flashprefix)/root-$* install
+	$(MAKE) -C $(KERNEL_DIR) ARCH=sh INSTALL_MOD_PATH=$(flashprefix)/root-$* modules_install
+	$(MAKE) -C $(driverdir) ARCH=sh KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) INSTALL_MOD_PATH=$(flashprefix)/root-$* install
 	-rm $(flashprefix)/root-$*/lib/modules/$(KERNELVERSION)/build
 	-rm $(flashprefix)/root-$*/lib/modules/$(KERNELVERSION)/source
 	@TUXBOX_CUSTOMIZE@
