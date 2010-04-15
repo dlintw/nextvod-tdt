@@ -229,7 +229,7 @@ void CVFD::showTime(bool force)
 			if(force || ((hour != t->tm_hour) || (minute != t->tm_min))) {
 				hour = t->tm_hour;
 				minute = t->tm_min;
-				strftime(timestr, 20, "%H:%M", t);
+				strftime(timestr, 20, "%H:%M - %d.%m.%y", t);
 				ShowText((char *) timestr);
 			}
 		} 
