@@ -86,7 +86,7 @@ CPictureViewer::CFormathandler * CPictureViewer::fh_getsize (const char *name, i
 
 bool CPictureViewer::DecodeImage (const std::string & name, bool showBusySign, bool unscaled)
 {
-// dbout("DecodeImage {\n"); 
+ //dbout("DecodeImage {\n"); 
   if (name == m_NextPic_Name) {
 //      dbout("DecodeImage }\n"); 
 	return true;
@@ -113,9 +113,9 @@ bool CPictureViewer::DecodeImage (const std::string & name, bool showBusySign, b
 	  printf ("Error: malloc\n");
 	  return false;
 	}
-//      dbout("---Decoding Start(%d/%d)\n",x,y);
+     // dbout("---Decoding Start(%d/%d)\n",x,y);
 	if (fh->get_pic (name.c_str (), &m_NextPic_Buffer, &x, &y) == FH_ERROR_OK) {
-//          dbout("---Decoding Done\n");
+      // dbout("---Decoding Done\n");
 	  if ((x > (m_endx - m_startx) || y > (m_endy - m_starty)) && m_scaling != NONE && !unscaled) {
 		if ((m_aspect_ratio_correction * y * (m_endx - m_startx) / x) <= (m_endy - m_starty)) {
 		  imx = (m_endx - m_startx);
@@ -158,6 +158,7 @@ bool CPictureViewer::DecodeImage (const std::string & name, bool showBusySign, b
 		return false;
 	  }
 	  memset (m_NextPic_Buffer, 0, 3);
+
 	  m_NextPic_X = 1;
 	  m_NextPic_Y = 1;
 	  m_NextPic_XPos = 0;
@@ -185,7 +186,9 @@ bool CPictureViewer::DecodeImage (const std::string & name, bool showBusySign, b
   }
   m_NextPic_Name = name;
   hideBusy ();
-//   dbout("DecodeImage }\n"); 
+  CFrameBuffer::getInstance ()-> blit(m_startx, m_starty, m_endx - m_startx, m_endy - m_starty);//j00zek update screen to display decoded picture
+
+  //   dbout("DecodeImage }\n"); 
   return (m_NextPic_Buffer != NULL);
 }
 
@@ -388,6 +391,8 @@ void CPictureViewer::showBusy (int sx, int sy, int width, char r, char g, char b
   m_busy_width = width;
   m_busy_cpp = cpp;
   free (fb_buffer);
+  CFrameBuffer::getInstance ()-> blit(m_busy_x, m_busy_y, m_busy_width, m_busy_width);//j00zek let's update screen to display busy sign
+
 //  dbout("Show Busy}\n");
 }
 
