@@ -106,7 +106,7 @@ channellist.extended erweiterte Kanalliste
 channellist.favs Favoriten
 channellist.head Alle Kanäle
 channellist.history Historie
-channellist.make_hdlist Erstelle Listen von HD Kanälen
+channellist.make_hdlist HD Kanalliste erstellen
 channellist.nonefound Es wurden keine Kanäle gefunden!\nFühren Sie bitte eine Kanalsuche durch\n(MENU-Taste -> Service)
 channellist.provs Provider
 channellist.sats Satelliten
@@ -250,7 +250,7 @@ extra.fec_3_4 3/4
 extra.fec_5_6 5/6
 extra.fec_7_8 7/8
 extra.fec_s2_8psk_1_2 1/2 s2 8psk
-extra.fec_s2_8psk_2_3 3/2 s2 8psk
+extra.fec_s2_8psk_2_3 2/3 s2 8psk
 extra.fec_s2_8psk_3_4 3/4 s2 8psk
 extra.fec_s2_8psk_3_5 3/5 s2 8psk
 extra.fec_s2_8psk_4_5 4/5 s2 8psk
@@ -259,7 +259,7 @@ extra.fec_s2_8psk_7_8 7/8 s2 8psk
 extra.fec_s2_8psk_8_9 8/9 s2 8psk
 extra.fec_s2_8psk_9_10 9/10 s2 8psk
 extra.fec_s2_qpsk_1_2 1/2 s2 qpsk
-extra.fec_s2_qpsk_2_3 3/2 s2 qpsk
+extra.fec_s2_qpsk_2_3 2/3 s2 qpsk
 extra.fec_s2_qpsk_3_4 3/4 s2 qpsk
 extra.fec_s2_qpsk_3_5 3/5 s2 qpsk
 extra.fec_s2_qpsk_4_5 4/5 s2 qpsk
@@ -636,7 +636,7 @@ mainmenu.head Hauptmenü
 mainmenu.movieplayer Movieplayer
 mainmenu.pausesectionsd EPG auslesen
 mainmenu.pictureviewer Bildbetrachter
-mainmenu.radiomode Radio-Modus
+mainmenu.radiomode Radio-Modus/Uhr
 mainmenu.reboot Neustart
 mainmenu.recording Aufnehmen
 mainmenu.recording_start Start
@@ -647,7 +647,7 @@ mainmenu.service Service
 mainmenu.settings Einstellungen
 mainmenu.shutdown Ausschalten
 mainmenu.sleeptimer SleepTimer
-mainmenu.tvmode TV-Modus
+mainmenu.tvmode TV-Modus/Uhr
 mainsettings.audio Audio
 mainsettings.head Einstellungen
 mainsettings.keybinding Tasten Einstellungen

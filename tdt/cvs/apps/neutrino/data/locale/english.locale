@@ -250,7 +250,7 @@ extra.fec_3_4 3/4
 extra.fec_5_6 5/6
 extra.fec_7_8 7/8
 extra.fec_s2_8psk_1_2 1/2 s2 8psk
-extra.fec_s2_8psk_2_3 3/2 s2 8psk
+extra.fec_s2_8psk_2_3 2/3 s2 8psk
 extra.fec_s2_8psk_3_4 3/4 s2 8psk
 extra.fec_s2_8psk_3_5 3/5 s2 8psk
 extra.fec_s2_8psk_4_5 4/5 s2 8psk
@@ -636,7 +636,7 @@ mainmenu.head Main Menu
 mainmenu.movieplayer Movieplayer
 mainmenu.pausesectionsd Read EPG
 mainmenu.pictureviewer Picture viewer
-mainmenu.radiomode Radio-Mode
+mainmenu.radiomode Radio-Mode/Clock
 mainmenu.reboot Reboot
 mainmenu.recording Recording
 mainmenu.recording_start start
@@ -647,7 +647,7 @@ mainmenu.service Service
 mainmenu.settings Settings
 mainmenu.shutdown Shutdown
 mainmenu.sleeptimer SleepTimer
-mainmenu.tvmode TV-Mode
+mainmenu.tvmode TV-Mode/Clock
 mainsettings.audio Audio
 mainsettings.head Settings
 mainsettings.keybinding Key Setup
