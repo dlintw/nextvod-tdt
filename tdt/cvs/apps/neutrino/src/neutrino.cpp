@@ -907,6 +907,8 @@ int CNeutrinoApp::loadSetup(const char * fname)
 	g_settings.infobar_Text_green = configfile.getInt32( "infobar_Text_green", 0x64 );
 	g_settings.infobar_Text_blue = configfile.getInt32( "infobar_Text_blue", 0x64 );
 
+	//Infobar extended
+	g_settings.infobar_picon = configfile.getInt32("infobar_picon", 0);
 	g_settings.infobar_barcolor = configfile.getInt32("infobar_barcolor", 0x999900);
 	g_settings.infobar_barcolor_red = configfile.getInt32("infobar_barcolor_red", 66);
 	g_settings.infobar_barcolor_green = configfile.getInt32("infobar_barcolor_green", 66);
@@ -1449,6 +1451,8 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setInt32( "infobar_Text_green", g_settings.infobar_Text_green );
 	configfile.setInt32( "infobar_Text_blue", g_settings.infobar_Text_blue );
 
+	//Infobar extended
+	configfile.setInt32("infobar_picon", g_settings.infobar_picon);
 	g_settings.infobar_barcolor = convertSetupColor2RGB(*(&g_settings.infobar_barcolor_red), *(&g_settings.infobar_barcolor_green), *(&g_settings.infobar_barcolor_blue));
 	configfile.setInt32("infobar_barcolor", g_settings.infobar_barcolor);
 	configfile.setInt32("infobar_barcolor_red", g_settings.infobar_barcolor_red);
@@ -4612,6 +4616,7 @@ void CNeutrinoApp::loadColors(const char * fname)
 	g_settings.infobar_Text_green = tconfig.getInt32( "infobar_Text_green", 0x64 );
 	g_settings.infobar_Text_blue = tconfig.getInt32( "infobar_Text_blue", 0x64 );
 
+	//Infobar extended
 	g_settings.infobar_barcolor = tconfig.getInt32("infobar_barcolor", 0x999900);
 	g_settings.infobar_barcolor_red = tconfig.getInt32("infobar_barcolor_red", 66);
 	g_settings.infobar_barcolor_green = tconfig.getInt32("infobar_barcolor_green", 66);
@@ -4684,6 +4689,7 @@ void CNeutrinoApp::saveColors(const char * fname)
 	tconfig.setInt32( "infobar_Text_green", g_settings.infobar_Text_green );
 	tconfig.setInt32( "infobar_Text_blue", g_settings.infobar_Text_blue );
 
+	//Infobar extended
 	tconfig.setInt32("infobar_barcolor", g_settings.infobar_barcolor);
 	tconfig.setInt32("infobar_barcolor_red", g_settings.infobar_barcolor_red);
 	tconfig.setInt32("infobar_barcolor_green", g_settings.infobar_barcolor_green);

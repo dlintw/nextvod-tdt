@@ -560,6 +560,10 @@ imageinfo.license License:
 imageinfo.version Version:
 inetradio.name Internetradio
 infobar.bar_color Bar color
+infobar.picon Channel logo
+infobar.picon_big big
+infobar.picon_move instead SIG/SNR
+infobar.picon_normal normal
 infoviewer.epgnotload EPG not loaded....
 infoviewer.epgwait waiting for EPG...
 infoviewer.eventlist Event-List

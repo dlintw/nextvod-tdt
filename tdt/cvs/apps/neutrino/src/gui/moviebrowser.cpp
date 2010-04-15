@@ -69,7 +69,7 @@
 #include <gui/customcolor.h>
 
 extern CPictureViewer * g_PicViewer;
-#define PIC_W 52
+#define PIC_W 65
 #define PIC_H 39
 static CScale * timescale;
 #define ROUND_RADIUS 9

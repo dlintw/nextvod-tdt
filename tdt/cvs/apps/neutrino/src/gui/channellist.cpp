@@ -79,7 +79,7 @@ extern CBouquetList   * RADIOsatList;
 extern CBouquetList   * RADIOfavList;
 extern CBouquetList   * RADIOallList;
 
-#define PIC_W 52
+#define PIC_W 65
 #define PIC_H 39
 #define ROUND_RADIUS 9
 

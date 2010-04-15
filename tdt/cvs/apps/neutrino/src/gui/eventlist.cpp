@@ -59,7 +59,7 @@ extern t_channel_id live_channel_id;
 
 #include <algorithm>
 extern CPictureViewer * g_PicViewer;
-#define PIC_W 52
+#define PIC_W 65
 #define PIC_H 39
 
 #define ROUND_RADIUS 9

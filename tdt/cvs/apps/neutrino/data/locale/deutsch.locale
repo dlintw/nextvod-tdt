@@ -560,6 +560,10 @@ imageinfo.license Lizenz:
 imageinfo.version Version:
 inetradio.name Internetradio
 infobar.bar_color Balkenfarbe
+infobar.picon Senderlogo
+infobar.picon_big groß
+infobar.picon_move statt SIG/SNR
+infobar.picon_normal normal
 infoviewer.epgnotload Informationen noch nicht geladen...
 infoviewer.epgwait Warte auf EPG-Informationen...
 infoviewer.eventlist EPG/Vorschau

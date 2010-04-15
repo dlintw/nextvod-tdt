@@ -138,6 +138,8 @@ static CScale * hddscale;
 static CScale * varscale;
 extern bool timeset;
 
+bool logo_ok = false;
+
 CInfoViewer::CInfoViewer ()
 {
   Init();
@@ -322,8 +324,48 @@ void CInfoViewer::showTitle (const int ChanNum, const std::string & Channel, con
 	frameBuffer->paintBoxRel (BoxStartX + SHADOW_OFFSET, BoxStartY + SHADOW_OFFSET, ChanWidth, ChanHeight + 4, COL_INFOBAR_SHADOW_PLUS_0, ROUND_RADIUS, 3); // round
 	frameBuffer->paintBoxRel (BoxStartX, BoxStartY, ChanWidth, ChanHeight + 4, COL_INFOBAR_PLUS_0, ROUND_RADIUS, 3); // round
 
+	paintTime (show_dot, true);
+	showRecordIcon (show_dot);
+	show_dot = !show_dot;
+
+	char strChanNum[10];
+	sprintf (strChanNum, "%d", ChanNum);
+
+	int ChanNumWidth = 0;
+	logo_ok = false;
+	if(showButtonBar) {
+	    int P_W = 65;
+	    int P_H = 39;
+
+	    if (g_settings.infobar_picon) {
+		P_W = 100;
+		P_H = 60;
+	    }
+#define PIC_W P_W
+#define PIC_H P_H
+
+#define PIC_X (ChanNameX + 10)
+#define PIC_Y (ChanNameY + time_height - PIC_H)
+		if (g_settings.infobar_picon == 2) {
+		    logo_ok = g_PicViewer->DisplayLogo(channel_id, PIC_X-127, PIC_Y-16, PIC_W, PIC_H);
+		} else {
+		    logo_ok = g_PicViewer->DisplayLogo(channel_id, PIC_X, PIC_Y, PIC_W, PIC_H);
+		}
+		ChanNumWidth = PIC_W + 10;
+	}
+	if (ChanNum && (!logo_ok || g_settings.infobar_picon == 2)) {
+		int ChanNumHeight = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_NUMBER]->getHeight() + 5;
+		ChanNumWidth = 5 + g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_NUMBER]->getRenderWidth (strChanNum);
+		g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_NUMBER]->RenderString (ChanNameX + 5, ChanNameY + ChanNumHeight, ChanNumWidth, strChanNum, col_NumBoxText);
+	}
+	if (logo_ok && g_settings.infobar_picon < 2) {
+		ChannelName = "  "+ChannelName;
+		ChannelName = strChanNum+ChannelName;
+	}
+	g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_CHANNAME]->RenderString (ChanNameX + 10 + ChanNumWidth, ChanNameY + time_height, BoxEndX - (ChanNameX + 20) - time_width - LEFT_OFFSET - 5 - ChanNumWidth, ChannelName, COL_INFOBAR, 0, true);	// UTF-8
+
 	int ChanNumYPos = BoxStartY + ChanHeight;
-	if (g_settings.infobar_sat_display && satellitePosition != 0 && satellitePositions.size()) {
+	if ((g_settings.infobar_picon < 2 || !logo_ok) && g_settings.infobar_sat_display && satellitePosition != 0 && satellitePositions.size()) {
 		sat_iterator_t sit = satellitePositions.find(satellitePosition);
 
 		if(sit != satellitePositions.end()) {
@@ -336,29 +378,6 @@ void CInfoViewer::showTitle (const int ChanNum, const std::string & Channel, con
 		}
 		ChanNumYPos += 5;
 	}
-	paintTime (show_dot, true);
-	showRecordIcon (show_dot);
-	show_dot = !show_dot;
-
-	char strChanNum[10];
-	sprintf (strChanNum, "%d", ChanNum);
-
-	int ChanNumWidth = 0;
-	bool logo_ok = false;
-	if(showButtonBar) {
-#define PIC_W 52
-#define PIC_H 39
-#define PIC_X (ChanNameX + 10)
-#define PIC_Y (ChanNameY + time_height - PIC_H)
-		logo_ok = g_PicViewer->DisplayLogo(channel_id, PIC_X, PIC_Y, PIC_W, PIC_H);
-		ChanNumWidth = PIC_W + 10;
-	}
-	if (ChanNum && !logo_ok) {
-		int ChanNumHeight = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_NUMBER]->getHeight ();
-		ChanNumWidth = 5 + g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_NUMBER]->getRenderWidth (strChanNum);
-		g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_NUMBER]->RenderString (ChanNameX + 5, ChanNameY + ChanNumHeight, ChanNumWidth, strChanNum, col_NumBoxText);
-	}
-	g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_CHANNAME]->RenderString (ChanNameX + 10 + ChanNumWidth, ChanNameY + time_height, BoxEndX - (ChanNameX + 20) - time_width - LEFT_OFFSET - 5 - ChanNumWidth, ChannelName, COL_INFOBAR, 0, true);	// UTF-8
 
 	int ChanInfoY = BoxStartY + ChanHeight + 10;
 	ButtonWidth = (BoxEndX - ChanInfoX - ICON_OFFSET) >> 2;
@@ -903,8 +922,9 @@ CSectionsdClient::CurrentNextInfo CInfoViewer::getEPG (const t_channel_id for_ch
 
 #define get_set CNeutrinoApp::getInstance()->getScanSettings()
 
-void CInfoViewer::showSNR ()
-{
+void CInfoViewer::showSNR () {
+    if (g_settings.infobar_picon < 2 || (!logo_ok && g_settings.infobar_picon == 2)) {
+
   char percent[10];
   uint16_t ssig, ssnr;
   int sw, snr, sig, posx, posy;
@@ -961,6 +981,7 @@ void CInfoViewer::showSNR ()
 	  frameBuffer->paintBoxRel (posx, posy, sw, height-2, COL_INFOBAR_PLUS_0);
 	  g_SignalFont->RenderString (posx, posy + height, sw, percent, COL_INFOBAR);
 	}
+    }
   }
   if(is_visible) {
 	struct statfs s;

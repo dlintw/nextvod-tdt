@@ -2224,6 +2224,13 @@ void CNeutrinoApp::InitFontSettings(CMenuWidget &fontSettings)
 	fontSettings.addItem(new CMenuForwarder(LOCALE_OPTIONS_DEFAULT, true, NULL, this, font_sizes_groups[5].actionkey));
 }
 
+#define OPTIONS_OFF0_ON1_ON2_OPTION_COUNT 3
+const CMenuOptionChooser::keyval OPTIONS_OFF0_ON1_ON2_OPTIONS[OPTIONS_OFF0_ON1_ON2_OPTION_COUNT] = {
+	{ 0, LOCALE_INFOBAR_PICON_NORMAL },
+	{ 1, LOCALE_INFOBAR_PICON_BIG },
+	{ 2, LOCALE_INFOBAR_PICON_MOVE }
+};
+
 void CNeutrinoApp::InitColorSettings(CMenuWidget &colorSettings, CMenuWidget &fontSettings )
 {
 	CScreenSetup  * ScreenSetup = new CScreenSetup();
@@ -2252,6 +2259,8 @@ void CNeutrinoApp::InitColorSettings(CMenuWidget &colorSettings, CMenuWidget &fo
 
 	colorSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_VIDEOMENU_OSD));
 	colorSettings.addItem(new CMenuForwarder(LOCALE_TIMING_HEAD, true, NULL, colorSettings_timing));
+
+	colorSettings.addItem(new CMenuOptionChooser(LOCALE_INFOBAR_PICON, &g_settings.infobar_picon, OPTIONS_OFF0_ON1_ON2_OPTIONS, OPTIONS_OFF0_ON1_ON2_OPTION_COUNT, true));
 
 	#ifdef DUCKBOX
 	colorSettings.addItem(new CMenuOptionChooser(LOCALE_SCALE_DISPLAY_TYPE, &g_settings.scale_display_type, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTIONS, MISCSETTINGS_SCALE_DISPLAY_TYPE_OPTION_COUNT, true ));

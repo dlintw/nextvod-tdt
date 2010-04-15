@@ -53,7 +53,7 @@
 #include <gui/pictureviewer.h>
 
 extern CPictureViewer * g_PicViewer;
-#define PIC_W 52
+#define PIC_W 65
 #define PIC_H 39
 static CScale * timescale;
 

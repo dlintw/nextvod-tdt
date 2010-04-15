@@ -183,6 +183,8 @@ struct SNeutrinoSettings
 	unsigned char infobar_Text_green;
 	unsigned char infobar_Text_blue;
 
+	//infobar extended
+	int infobar_picon;
 	int infobar_barcolor;
 	unsigned char infobar_barcolor_red;
 	unsigned char infobar_barcolor_green;
