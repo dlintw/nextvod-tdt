@@ -3235,7 +3235,7 @@ bool CMovieBrowser::getMovieInfoItem(MI_MOVIE_INFO& movie_info, MB_INFO_ITEM ite
 					movie_info.audioPids[i].epgAudioPidName[0] == 'G' || // German
 					movie_info.audioPids[i].epgAudioPidName[0] == 'g' ||
 					movie_info.audioPids[i].epgAudioPidName[0] == 'M' || // for Mono, mono and Stereo, stereo we assume German ;)
-					movie_info.audioPids[i].epgAudioPidName[0] == 'n' || 
+					movie_info.audioPids[i].epgAudioPidName[0] == 'm' ||
 					(movie_info.audioPids[i].epgAudioPidName[0] == 'S' && movie_info.audioPids[i].epgAudioPidName[1] == 't' ) || 
 					(movie_info.audioPids[i].epgAudioPidName[0] == 's' && movie_info.audioPids[i].epgAudioPidName[1] == 't' ))
 				{
