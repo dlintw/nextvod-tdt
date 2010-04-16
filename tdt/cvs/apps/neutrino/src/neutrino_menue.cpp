@@ -2842,6 +2842,12 @@ bool CNeutrinoApp::showUserMenu(int button)
                 return 0;
         menu->addItem(GenericMenuSeparator);
 
+	if (button == SNeutrinoSettings::BUTTON_BLUE)
+	{
+	audioPlayer = new CAudioPlayerGui(true);
+	menu->addItem(new CMenuForwarder(LOCALE_INETRADIO_NAME, true, NULL, audioPlayer, NULL, CRCInput::RC_RED));
+	}
+
         // go through any postition number
         for(int pos = 0; pos < SNeutrinoSettings::ITEM_MAX ; pos++) {
                 // now compare pos with the position of any item. Add this item if position is the same
