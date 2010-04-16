@@ -2845,7 +2845,7 @@ bool CNeutrinoApp::showUserMenu(int button)
 	if (button == SNeutrinoSettings::BUTTON_BLUE)
 	{
 	audioPlayer = new CAudioPlayerGui(true);
-	menu->addItem(new CMenuForwarder(LOCALE_INETRADIO_NAME, true, NULL, audioPlayer, NULL, CRCInput::RC_RED));
+	menu->addItem(new CMenuForwarder(LOCALE_INETRADIO_NAME, true, NULL, audioPlayer, NULL, CRCInput::RC_red));
 	}
 
         // go through any postition number
