@@ -27,6 +27,10 @@
 #define STREAM_CTRL_GET_TIME_LENGTH 1
 #define STREAM_CTRL_GET_CURRENT_TIME 5
 
+#ifdef DEBUG
+#define dprintf(x...) do { printf(x); } while (0)
+#endif
+
 #define mmioFOURCC( ch0, ch1, ch2, ch3 )				\
 		( (uint32_t)(uint8_t)(ch0) | ( (uint32_t)(uint8_t)(ch1) << 8 ) |	\
 		( (uint32_t)(uint8_t)(ch2) << 16 ) | ( (uint32_t)(uint8_t)(ch3) << 24 ) )
@@ -172,7 +176,9 @@ inline static off_t stream_tell(stream_t *s){
 
 inline static int stream_seek(stream_t *s,off_t pos){
 
+#ifdef DEBUG
   dprintf("seek to 0x%qX\n",(long long)pos);
+#endif
 
   if(pos<s->pos){
     off_t x=pos-(s->pos-s->buf_len);
