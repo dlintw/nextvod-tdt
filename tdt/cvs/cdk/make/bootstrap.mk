@@ -278,6 +278,32 @@ $(HOST_AUTOCONF): $(HOST_AUTOCONF_RPM)
 	touch .deps/$(notdir $@)
 endif STM24
 
+if STM24
+#
+# HOST PKGCONFIG
+#
+HOST_PKGCONFIG := host-pkg-config
+HOST_PKGCONFIG_VERSION := 0.23-2
+HOST_PKGCONFIG_SPEC := stm-$(HOST_PKGCONFIG).spec
+HOST_PKGCONFIG_SPEC_PATCH :=
+HOST_PKGCONFIG_PATCHES :=
+HOST_PKGCONFIG_RPM := RPMS/sh4/$(STLINUX)-$(HOST_PKGCONFIG)-$(HOST_PKGCONFIG_VERSION).sh4.rpm
+
+$(HOST_PKGCONFIG_RPM): \
+		$(if $(HOST_PKGCONFIG_SPEC_PATCH),Patches/$(HOST_PKGCONFIG_SPEC_PATCH)) \
+		$(if $(HOST_PKGCONFIG_PATCHES),$(HOST_PKGCONFIG_PATCHES:%=Patches/%)) \
+		Archive/$(STLINUX)-$(HOST_PKGCONFIG)-$(HOST_PKGCONFIG_VERSION).src.rpm
+	rpm  $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(HOST_PKGCONFIG_SPEC_PATCH),( cd SPECS && patch -p1 $(HOST_PKGCONFIG_SPEC) < ../Patches/$(HOST_PKGCONFIG_SPEC_PATCH) ) &&) \
+	$(if $(HOST_PKGCONFIG_PATCHES),cp $(HOST_PKGCONFIG_PATCHES:%=Patches/%) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_PKGCONFIG_SPEC)
+
+$(HOST_PKGCONFIG): $(HOST_PKGCONFIG_RPM)
+	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
+	touch .deps/$(notdir $@)
+endif STM24
+
 if STM22
 else !STM22
 #
@@ -343,7 +369,9 @@ endif !STM24
 # BOOTSTRAP-HOST
 #
 $(DEPDIR)/bootstrap-host: | \
-		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils host-filesystem host-autotools $(HOST_AUTOCONF) $(HOST_MTD_UTILS) host-python
+		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils \
+		host-filesystem host-autotools $(HOST_AUTOCONF) $(HOST_PKGCONFIG) \
+		$(HOST_MTD_UTILS) host-python
 	$(if $(HOST_MTD_UTILS_RPM),[ "x$*" = "x" ] && touch -r $(HOST_MTD_UTILS_RPM) $@ || true)
 
 #

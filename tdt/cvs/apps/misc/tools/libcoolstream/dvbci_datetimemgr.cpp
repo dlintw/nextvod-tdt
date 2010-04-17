@@ -1,4 +1,5 @@
 /* DVB CI DateTime Manager */
+#include <stdio.h>
 
 #include "dvbci_datetimemgr.h"
 

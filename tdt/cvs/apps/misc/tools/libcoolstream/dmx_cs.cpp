@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
@@ -19,7 +20,7 @@ cDemux *pcrDemux = NULL;
 
 //EVIL END
 
-static char * aDMXCHANNELTYPE[] = {
+static const char * aDMXCHANNELTYPE[] = {
 	"",
    "DMX_VIDEO_CHANNEL",
    "DMX_AUDIO_CHANNEL",

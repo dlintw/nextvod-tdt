@@ -17,7 +17,7 @@
 static const char FILENAME[] = "playback.c";
 
 //little helper functions
-static int getline(char** pbuffer, size_t* pbufsize, int fd)
+static int playback_getline(char** pbuffer, size_t* pbufsize, int fd)
 {
 	size_t i = 0;
 	int rc;
@@ -138,7 +138,7 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 	size_t buflen = 1000;
 	char* linebuf = (char*)malloc(1000);
 
-	rc = getline(&linebuf, &buflen, fd);
+	rc = playback_getline(&linebuf, &buflen, fd);
 #ifdef DEBUG
 	printf("RECV(%d): %s\n", rc, linebuf);
 #endif
@@ -160,7 +160,7 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 #endif
 		while (rc > 0)
 		{
-			rc = getline(&linebuf, &buflen, fd);
+			rc = playback_getline(&linebuf, &buflen, fd);
 			if(!strncmp("Location: ", linebuf, 10)){
 				close(fd);
 				free(context->playback->uri);
@@ -182,7 +182,7 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 #endif
 		while (rc > 0)
 		{
-			rc = getline(&linebuf, &buflen, fd);
+			rc = playback_getline(&linebuf, &buflen, fd);
 #ifdef DEBUG
 			printf("RECV(%d): %s\n", rc, linebuf);
 #endif
@@ -196,7 +196,7 @@ int openHttpConnection(Context_t  *context, char** content,off_t off)
 #endif
 	while (rc > 0)
 	{
-		rc = getline(&linebuf, &buflen, fd);
+		rc = playback_getline(&linebuf, &buflen, fd);
 #ifdef DEBUG
 		printf("RECV(%d): %s\n", rc, linebuf);
 #endif
@@ -344,7 +344,7 @@ static int openMmsConnection(char* url, char** content)
 	size_t buflen = 1000;
 	char* linebuf = (char*)malloc(1000);
 
-	rc = getline(&linebuf, &buflen, fd);
+	rc = playback_getline(&linebuf, &buflen, fd);
 #ifdef DEBUG
 	printf("RECV(%d): %s\n", rc, linebuf);
 #endif
@@ -373,7 +373,7 @@ static int openMmsConnection(char* url, char** content)
 #endif
 	while (rc > 0)
 	{
-		rc = getline(&linebuf, &buflen, fd);
+		rc = playback_getline(&linebuf, &buflen, fd);
 #ifdef DEBUG
 		printf("RECV(%d): %s\n", rc, linebuf);
 #endif

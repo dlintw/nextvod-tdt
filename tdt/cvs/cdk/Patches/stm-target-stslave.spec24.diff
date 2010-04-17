@@ -1,0 +1,18 @@
+--- SPECS/stm-target-stslave.spec.orig	2010-04-17 14:07:08.000000000 +0200
++++ SPECS/stm-target-stslave.spec	2010-04-17 14:07:59.000000000 +0200
+@@ -9,6 +9,7 @@
+ Patch3		: stslave-fix-getenv.patch
+ Patch4		: stslave-0.7-empty_section.patch
+ Patch5		: stslave-0.7-uclibc.patch
++Patch6		: stm-target-stslave-missing_libz.patch
+ 
+ Group		: Development/System
+ License		: STMicroelectronics
+@@ -43,6 +44,7 @@
+ %if_target_arch_uclibc
+ %patch5 -p1
+ %endif
++%patch6 -p1
+ 
+ %build
+ %target_setup

@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <asm/types.h>
+#include <string.h>
 
 #include <linux/dvb/ca.h>
 #include <poll.h>
