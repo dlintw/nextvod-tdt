@@ -179,8 +179,8 @@ else !STM23
 # if STM24
 STSLAVE_VERSION := 0.7-18
 STSLAVE_SPEC := stm-target-$(STSLAVE).spec
-STSLAVE_SPEC_PATCH :=
-STSLAVE_PATCHES :=
+STSLAVE_SPEC_PATCH := $(STSLAVE_SPEC)24.diff
+STSLAVE_PATCHES := stm-target-$(STSLAVE)-missing_libz.patch
 # endif STM24
 endif !STM23
 endif !STM22
@@ -206,7 +206,7 @@ $(DEPDIR)/%$(STSLAVE): $(STSLAVE_RPM)
 else !STM22
 $(DEPDIR)/min-$(STSLAVE) $(DEPDIR)/std-$(STSLAVE) $(DEPDIR)/max-$(STSLAVE) $(DEPDIR)/$(STSLAVE): \
 $(DEPDIR)/%$(STSLAVE): linux-kernel-headers binutils-dev $(STSLAVE_RPM)
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -238,7 +238,7 @@ OPENSSL_SPEC_PATCH :=
 OPENSSL_PATCHES :=
 else !STM23
 # if STM24
-OPENSSL_VERSION := 0.9.81-16
+OPENSSL_VERSION := 0.9.8l-16
 OPENSSL_SPEC := stm-target-$(OPENSSL).spec
 OPENSSL_SPEC_PATCH :=
 OPENSSL_PATCHES :=
