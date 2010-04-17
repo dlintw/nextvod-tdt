@@ -331,7 +331,69 @@ void * streamts_live_thread(void *data)
 		perror("malloc");
 		return 0;
 	}
+#ifdef __sh__
+	cDemux * dmx[demuxfd_count];
+	for(int i = 0; i < demuxfd_count; i++) {
+		dmx[i] = new cDemux(1);
+		dmx[i]->Open(DMX_TP_CHANNEL, NULL, DMX_BUFFER_SIZE);
+		dmx[i]->pesFilter(pids[i]);
+		dmx[i]->Start();
+	}
+	
+       if(channel)
+       	cam0->setCaPmt(channel->getCaPmt(), 0, 3, true); // demux 0 + 1, update
 
+	size_t pos;
+	ssize_t r;
+	ssize_t todo;
+	int offset, pres;
+	struct pollfd pfd;
+	
+	int dvrfd = open("/dev/dvb/adapter0/dvr0", O_RDONLY|O_NONBLOCK);
+	if (dvrfd<1) {
+		perror("[streamts] dvrfd: ");
+		return 0;
+	}
+
+	pfd.fd = dvrfd;
+	pfd.events = POLLIN|POLLERR;
+	pfd.revents = 0;
+
+	while (!exit_flag) {
+		todo = IN_SIZE;
+		pos = 0;
+
+		if ((pres=poll (&pfd, 1, 15000))>0) {
+			if (!(pfd.revents&POLLIN)) {
+				printf ("[streamts]: PANIC: error reading from demux, bailing out\n");
+			}
+			while ((!exit_flag) && (todo)) {
+				r = read(dvrfd, buf+pos, todo);
+				if (r > 0) {
+					pos += r;
+					todo -= r;
+				}
+			}
+	
+			if(!exit_flag) {
+				offset = sync_byte_offset(buf, IN_SIZE);
+
+				if (offset == -1) 
+					continue;
+				
+				packet_stdout(fd, buf + offset, IN_SIZE - offset, NULL);
+			}	
+		} else if (!pres) {
+			printf ("[streamts]: timeout from demux\n");
+		}
+	}
+	close(dvrfd);
+	for(int i = 0; i < demuxfd_count; i++) {
+		dmx[i]->Stop();
+		dmx[i]->Close();
+		delete dmx[i];
+	}
+#else
 	cDemux * dmx = new cDemux(1);
 
 	dmx->Open(DMX_TP_CHANNEL, NULL, DMX_BUFFER_SIZE);
@@ -380,6 +442,7 @@ void * streamts_live_thread(void *data)
 		cam0->setCaPmt(channel->getCaPmt(), 0, 1, true); // demux 0, update
 
 	delete dmx;
+#endif //__sh__
 	free(buf);
 	close(fd);
 	return 0;
