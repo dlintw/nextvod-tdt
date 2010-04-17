@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "playback_cs.h"
 
@@ -36,7 +38,7 @@ void cPlayback::DMNotify(int Event, void *pTsBuf, void *Tag)
 //Used by Fileplay
 bool cPlayback::Open(playmode_t PlayMode)
 {
-	char *aPLAYMODE[] = {
+	const char *aPLAYMODE[] = {
 		"PLAYMODE_TS",
 		"PLAYMODE_FILE"
 	};

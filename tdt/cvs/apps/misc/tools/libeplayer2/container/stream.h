@@ -110,7 +110,9 @@ inline static int stream_read(stream_t *s,unsigned char* mem,int total){
       if(!cache_stream_fill_buffer(s)) return total-len; // EOF
       x=s->buf_len-s->buf_pos;
     }
+#ifdef DEBUG
     if(s->buf_pos>s->buf_len) dprintf("stream_read: WARNING! s->buf_pos>s->buf_len\n");
+#endif
     if(x>len) x=len;
     memcpy(mem,&s->buffer[s->buf_pos],x);
     s->buf_pos+=x; mem+=x; len-=x;

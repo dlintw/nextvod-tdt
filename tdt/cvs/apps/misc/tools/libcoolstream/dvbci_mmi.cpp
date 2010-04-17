@@ -1,10 +1,12 @@
 /* DVB CI MMI */
+#include <stdlib.h>
+#include <string.h>
+#include <string>
+
 #include "dvbci_mmi.h"
 
 #include <neutrinoMessages.h>
 #include <driver/rcinput.h>
-
-#include <string>
 
 extern CRCInput *g_RCInput;
 
