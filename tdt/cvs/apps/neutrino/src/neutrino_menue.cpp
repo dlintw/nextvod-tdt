@@ -693,21 +693,25 @@ void CNeutrinoApp::InitMainMenu(CMenuWidget &mainMenu, CMenuWidget &mainSettings
 	mainMenu.addItem(GenericMenuSeparatorLine);
 
 	mainMenu.addItem(new CMenuForwarder(LOCALE_UPNPBROWSER_HEAD, true, NULL, new CUpnpBrowserGui(), NULL, CRCInput::RC_yellow, NEUTRINO_ICON_BUTTON_YELLOW));
+	int shortcut = 1;
 	audioPlayer = new CAudioPlayerGui();
-	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_AUDIOPLAYER, true, NULL, audioPlayer, NULL, CRCInput::RC_1));
+	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_AUDIOPLAYER, true, NULL, audioPlayer, NULL, CRCInput::convertDigitToKey(shortcut++)));
+
+	audioPlayer = new CAudioPlayerGui(true);
+	mainMenu.addItem(new CMenuForwarder(LOCALE_INETRADIO_NAME, true, NULL, audioPlayer, NULL, CRCInput::convertDigitToKey(shortcut++)));
 
 	moviePlayerGui = new CMoviePlayerGui();
 	//mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_MOVIEPLAYER, true, NULL, &moviePlayer, NULL, CRCInput::RC_2));
 
 #if 0
-	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_MOVIEPLAYER, true, NULL, moviePlayerGui, "tsmoviebrowser", CRCInput::RC_2));
+	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_MOVIEPLAYER, true, NULL, moviePlayerGui, "tsmoviebrowser", CRCInput::convertDigitToKey(shortcut++)));
 #else
 	moviePlayer.addItem(GenericMenuSeparator);
 	moviePlayer.addItem(GenericMenuBack);
 	moviePlayer.addItem(GenericMenuSeparatorLine);
 	moviePlayer.addItem(new CMenuForwarder(LOCALE_MOVIEBROWSER_HEAD, true, NULL, moviePlayerGui, "tsmoviebrowser", CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED));
 	moviePlayer.addItem(new CMenuForwarder(LOCALE_MOVIEPLAYER_FILEPLAYBACK, true, NULL, moviePlayerGui, "fileplayback", CRCInput::RC_green, NEUTRINO_ICON_BUTTON_GREEN));
-	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_MOVIEPLAYER, true, NULL, &moviePlayer, NULL, CRCInput::RC_2));
+	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_MOVIEPLAYER, true, NULL, &moviePlayer, NULL, CRCInput::convertDigitToKey(shortcut++)));
 #endif
 #if 0
 	moviePlayer.addItem(GenericMenuSeparator);
@@ -730,8 +734,7 @@ void CNeutrinoApp::InitMainMenu(CMenuWidget &mainMenu, CMenuWidget &mainSettings
 	moviePlayer.addItem(new CMenuForwarder(LOCALE_NFSMENU_HEAD, true, NULL, new CNFSSmallMenu(), NULL, CRCInput::RC_setup, NEUTRINO_ICON_BUTTON_DBOX_SMALL));
 #endif
 
-	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_PICTUREVIEWER, true, NULL, new CPictureViewerGui(), NULL, CRCInput::RC_3));
-	int shortcut = 4;
+	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_PICTUREVIEWER, true, NULL, new CPictureViewerGui(), NULL, CRCInput::convertDigitToKey(shortcut++)));
 	if (g_PluginList->hasPlugin(CPlugins::P_TYPE_SCRIPT))
 		mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_SCRIPTS, true, NULL, new CPluginList(LOCALE_MAINMENU_SCRIPTS,CPlugins::P_TYPE_SCRIPT), "",
 		CRCInput::convertDigitToKey(shortcut++)));
@@ -751,7 +754,7 @@ void CNeutrinoApp::InitMainMenu(CMenuWidget &mainMenu, CMenuWidget &mainSettings
 	mainMenu.addItem(new CMenuForwarder(LOCALE_MAINMENU_SHUTDOWN, true, NULL, this, "shutdown", CRCInput::RC_standby, "power.raw"));//FIXME
 
 	mainMenu.addItem( new CMenuSeparator(CMenuSeparator::LINE) );
-	mainMenu.addItem( new CMenuForwarder(LOCALE_DBOXINFO, true, NULL, new CDBoxInfoWidget, NULL, CRCInput::convertDigitToKey(shortcut++)));
+	mainMenu.addItem( new CMenuForwarder(LOCALE_DBOXINFO, true, NULL, new CDBoxInfoWidget, NULL, CRCInput::RC_help, "help.raw"));
 
 	mainSettings.addItem(GenericMenuSeparator);
 	mainSettings.addItem(GenericMenuBack);
@@ -2841,12 +2844,6 @@ bool CNeutrinoApp::showUserMenu(int button)
         if (menu == NULL)
                 return 0;
         menu->addItem(GenericMenuSeparator);
-
-	if (button == SNeutrinoSettings::BUTTON_BLUE)
-	{
-	audioPlayer = new CAudioPlayerGui(true);
-	menu->addItem(new CMenuForwarder(LOCALE_INETRADIO_NAME, true, NULL, audioPlayer, NULL, CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED));
-	}
 
         // go through any postition number
         for(int pos = 0; pos < SNeutrinoSettings::ITEM_MAX ; pos++) {
