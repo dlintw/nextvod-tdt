@@ -3921,7 +3921,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/plu
 diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2009-12-11 21:40:12.000000000 +0100
-@@ -0,0 +1,6752 @@
+@@ -0,0 +1,6754 @@
 +/******************************************************************************
 + *                      <<< TuxTxt - Teletext Plugin >>>                      *
 + *                                                                            *
@@ -6490,19 +6490,19 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +
 +					for (byte = 0; byte < pid_table[pid_test].service_name_len; byte++)
 +					{
-+						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ï¿½')
++						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'Ä')
 +							SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5B;
-+						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ï¿½')
++						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ä')
 +							SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7B;
-+						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ï¿½')
++						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'Ö')
 +							SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5C;
-+						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ï¿½')
++						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ö')
 +							SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7C;
-+						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ï¿½')
++						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'Ü')
 +							SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5D;
-+						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ï¿½')
++						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ü')
 +							SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7D;
-+						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ï¿½')
++						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ß')
 +							SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7E;
 +						if (SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] >= 0x80 && SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] <= 0x9F)
 +							diff--;
@@ -6799,13 +6799,13 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	memcpy(&menu[Menu_Width*MenuLine[M_SC1] + Menu_Width - 5], &configonoff[menulanguage][screen_mode1  ? 3 : 0], 3);
 +	memcpy(&menu[Menu_Width*MenuLine[M_SC2] + Menu_Width - 5], &configonoff[menulanguage][screen_mode2  ? 3 : 0], 3);
 +
-+	menu[MenuLine[M_COL]*Menu_Width +  1] = (color_mode == 1  ? ' ' : 'ï¿½');
-+	menu[MenuLine[M_COL]*Menu_Width + 28] = (color_mode == 24 ? ' ' : 'ï¿½');
++	menu[MenuLine[M_COL]*Menu_Width +  1] = (color_mode == 1  ? ' ' : 'í');
++	menu[MenuLine[M_COL]*Menu_Width + 28] = (color_mode == 24 ? ' ' : 'î');
 +	memset(&menu[Menu_Width*MenuLine[M_COL] + 3             ], 0x7f,color_mode);
 +	memset(&menu[Menu_Width*MenuLine[M_COL] + 3+color_mode  ], 0x20,24-color_mode);
 +//	memcpy(&menu[Menu_Width*MenuLine[M_COL] + Menu_Width - 5], &configonoff[menulanguage][color_mode    ? 3 : 0], 3);
-+	menu[MenuLine[M_TRA]*Menu_Width +  1] = (trans_mode == 1  ? ' ' : 'ï¿½');
-+	menu[MenuLine[M_TRA]*Menu_Width + 28] = (trans_mode == 24 ? ' ' : 'ï¿½');
++	menu[MenuLine[M_TRA]*Menu_Width +  1] = (trans_mode == 1  ? ' ' : 'í');
++	menu[MenuLine[M_TRA]*Menu_Width + 28] = (trans_mode == 24 ? ' ' : 'î');
 +	memset(&menu[Menu_Width*MenuLine[M_TRA] + 3             ], 0x7f,trans_mode);
 +	memset(&menu[Menu_Width*MenuLine[M_TRA] + 3+trans_mode  ], 0x20,24-trans_mode);
 +
@@ -6940,8 +6940,8 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +					saveconfig = 1;
 +					color_mode--;
 +					if (color_mode < 1) color_mode = 1;
-+					menu[MenuLine[M_COL]*Menu_Width +  1] = (color_mode == 1  ? ' ' : 'ï¿½');
-+					menu[MenuLine[M_COL]*Menu_Width + 28] = (color_mode == 24 ? ' ' : 'ï¿½');
++					menu[MenuLine[M_COL]*Menu_Width +  1] = (color_mode == 1  ? ' ' : 'í');
++					menu[MenuLine[M_COL]*Menu_Width + 28] = (color_mode == 24 ? ' ' : 'î');
 +					memset(&menu[Menu_Width*MenuLine[M_COL] + 3             ], 0x7f,color_mode);
 +					memset(&menu[Menu_Width*MenuLine[M_COL] + 3+color_mode  ], 0x20,24-color_mode);
 +					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
@@ -6952,8 +6952,8 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +					saveconfig = 1;
 +					trans_mode--;
 +					if (trans_mode < 1) trans_mode = 1;
-+					menu[MenuLine[M_TRA]*Menu_Width +  1] = (trans_mode == 1  ? ' ' : 'ï¿½');
-+					menu[MenuLine[M_TRA]*Menu_Width + 28] = (trans_mode == 24 ? ' ' : 'ï¿½');
++					menu[MenuLine[M_TRA]*Menu_Width +  1] = (trans_mode == 1  ? ' ' : 'í');
++					menu[MenuLine[M_TRA]*Menu_Width + 28] = (trans_mode == 24 ? ' ' : 'î');
 +					memset(&menu[Menu_Width*MenuLine[M_TRA] + 3             ], 0x7f,trans_mode);
 +					memset(&menu[Menu_Width*MenuLine[M_TRA] + 3+trans_mode  ], 0x20,24-trans_mode);
 +					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
@@ -6994,12 +6994,12 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +							if (current_pid == 0)
 +							{
 +								menu[MenuLine[M_PID]*Menu_Width +  1] = ' ';
-+								menu[MenuLine[M_PID]*Menu_Width + 28] = 'ï¿½';
++								menu[MenuLine[M_PID]*Menu_Width + 28] = 'î';
 +							}
 +							else
 +							{
-+								menu[MenuLine[M_PID]*Menu_Width +  1] = 'ï¿½';
-+								menu[MenuLine[M_PID]*Menu_Width + 28] = 'ï¿½';
++								menu[MenuLine[M_PID]*Menu_Width +  1] = 'í';
++								menu[MenuLine[M_PID]*Menu_Width + 28] = 'î';
 +							}
 +						}
 +
@@ -7025,12 +7025,12 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +						if (national_subset == 0)
 +						{
 +							menu[MenuLine[M_NAT]*Menu_Width +  1] = ' ';
-+							menu[MenuLine[M_NAT]*Menu_Width + 28] = 'ï¿½';
++							menu[MenuLine[M_NAT]*Menu_Width + 28] = 'î';
 +						}
 +						else
 +						{
-+							menu[MenuLine[M_NAT]*Menu_Width +  1] = 'ï¿½';
-+							menu[MenuLine[M_NAT]*Menu_Width + 28] = 'ï¿½';
++							menu[MenuLine[M_NAT]*Menu_Width +  1] = 'í';
++							menu[MenuLine[M_NAT]*Menu_Width + 28] = 'î';
 +						}
 +
 +						Menu_Init(menu, current_pid, menuitem, hotindex);
@@ -7061,8 +7061,8 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +					saveconfig = 1;
 +					color_mode++;
 +					if (color_mode > 24) color_mode = 24;
-+					menu[MenuLine[M_COL]*Menu_Width +  1] = (color_mode == 1  ? ' ' : 'ï¿½');
-+					menu[MenuLine[M_COL]*Menu_Width + 28] = (color_mode == 24 ? ' ' : 'ï¿½');
++					menu[MenuLine[M_COL]*Menu_Width +  1] = (color_mode == 1  ? ' ' : 'í');
++					menu[MenuLine[M_COL]*Menu_Width + 28] = (color_mode == 24 ? ' ' : 'î');
 +					memset(&menu[Menu_Width*MenuLine[M_COL] + 3             ], 0x7f,color_mode);
 +					memset(&menu[Menu_Width*MenuLine[M_COL] + 3+color_mode  ], 0x20,24-color_mode);
 +					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
@@ -7073,8 +7073,8 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +					saveconfig = 1;
 +					trans_mode++;
 +					if (trans_mode > 24) trans_mode = 24;
-+					menu[MenuLine[M_TRA]*Menu_Width +  1] = (trans_mode == 1  ? ' ' : 'ï¿½');
-+					menu[MenuLine[M_TRA]*Menu_Width + 28] = (trans_mode == 24 ? ' ' : 'ï¿½');
++					menu[MenuLine[M_TRA]*Menu_Width +  1] = (trans_mode == 1  ? ' ' : 'í');
++					menu[MenuLine[M_TRA]*Menu_Width + 28] = (trans_mode == 24 ? ' ' : 'î');
 +					memset(&menu[Menu_Width*MenuLine[M_TRA] + 3             ], 0x7f,trans_mode);
 +					memset(&menu[Menu_Width*MenuLine[M_TRA] + 3+trans_mode  ], 0x20,24-trans_mode);
 +					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
@@ -7112,13 +7112,13 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +						{
 +							if (current_pid == pids_found - 1)
 +							{
-+								menu[MenuLine[M_PID]*Menu_Width +  1] = 'ï¿½';
++								menu[MenuLine[M_PID]*Menu_Width +  1] = 'í';
 +								menu[MenuLine[M_PID]*Menu_Width + 28] = ' ';
 +							}
 +							else
 +							{
-+								menu[MenuLine[M_PID]*Menu_Width +  1] = 'ï¿½';
-+								menu[MenuLine[M_PID]*Menu_Width + 28] = 'ï¿½';
++								menu[MenuLine[M_PID]*Menu_Width +  1] = 'í';
++								menu[MenuLine[M_PID]*Menu_Width + 28] = 'î';
 +							}
 +						}
 +
@@ -7142,13 +7142,13 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +
 +						if (national_subset == MAX_NATIONAL_SUBSET)
 +						{
-+							menu[MenuLine[M_NAT]*Menu_Width +  1] = 'ï¿½';
++							menu[MenuLine[M_NAT]*Menu_Width +  1] = 'í';
 +							menu[MenuLine[M_NAT]*Menu_Width + 28] = ' ';
 +						}
 +						else
 +						{
-+							menu[MenuLine[M_NAT]*Menu_Width +  1] = 'ï¿½';
-+							menu[MenuLine[M_NAT]*Menu_Width + 28] = 'ï¿½';
++							menu[MenuLine[M_NAT]*Menu_Width +  1] = 'í';
++							menu[MenuLine[M_NAT]*Menu_Width + 28] = 'î';
 +						}
 +
 +						Menu_Init(menu, current_pid, menuitem, hotindex);
@@ -8010,6 +8010,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +        fclose(fd);
 +}
 +
++
 +void getCurrentASPECTSettings()
 +{
 +	FILE* fd;
@@ -8051,6 +8052,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +           fprintf(fd, "%s", policy);
 +        fclose(fd);
 +}
++
 +
 +void setCurrentASPECTSettings(int reset)
 +{
@@ -8563,7 +8565,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 + ******************************************************************************/
 +
 +/* Dagobert:
-+ * So in this function is the problem with "ï¿½ï¿½ ...".
++ * So in this function is the problem with "ÄÜ ...".
 + * The tables in tuxtxt_def.h are of type unsigned int short int
 + * which is propably more than a char. So getting chars out of this
 + * array gives us values >=255 which are not what we want with our
@@ -8782,9 +8784,9 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	else if (national_subset_local == NAT_GR && Char >= 0x40 && Char <= 0x7E)	/* remap complete areas for greek */
 +		Char += 0x390 - 0x40;
 +	else if (national_subset_local == NAT_GR && Char == 0x3c)
-+		Char = 'ï¿½';
++		Char = '«';
 +	else if (national_subset_local == NAT_GR && Char == 0x3e)
-+		Char = 'ï¿½';
++		Char = '»';
 +	else if (national_subset_local == NAT_GR && Char >= 0x23 && Char <= 0x24)
 +		Char = nationaltable23[NAT_DE][Char-0x23]; /* #$ as in german option */
 +	else if (national_subset_local == NAT_RU && Char >= 0x40 && Char <= 0x7E) /* remap complete areas for cyrillic */
@@ -12801,22 +12803,22 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +// G2 Charset (0 = Latin, 1 = Cyrillic, 2 = Greek)
 +const unsigned short int G2table[3][6*16] =
 +{
-+	{ ' ' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'$' ,'ï¿½' ,'#' ,'ï¿½' ,'ï¿½' ,'\'','\"','ï¿½' ,8592,8594,8595,8593,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'x' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'\'','\"','ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,
-+	  ' ' ,'`' ,'ï¿½' ,710 ,732 ,'ï¿½' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,8482,9834,8364,8240,945 ,' ' ,' ' ,' ' ,8539,8540,8541,8542,
-+	  937 ,'ï¿½' ,272 ,'ï¿½' ,294 ,' ' ,306 ,319 ,321 ,'ï¿½' ,338 ,'ï¿½' ,'ï¿½' ,358 ,330 ,329 ,
-+	  1082,'ï¿½' ,273 ,'ï¿½' ,295 ,305 ,307 ,320 ,322 ,'ï¿½' ,339 ,'ï¿½' ,'ï¿½' ,359 ,951 ,0x7F},
-+	{ ' ' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'$' ,'ï¿½' ,' ' ,'ï¿½' ,' ' ,'\'','\"','ï¿½' ,8592,8594,8595,8593,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'x' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'\'','\"','ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,
-+	  ' ' ,'`' ,'ï¿½' ,710 ,732 ,'ï¿½' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,8482,9834,8364,8240,945 ,321 ,322 ,'ï¿½' ,8539,8540,8541,8542,
++	{ ' ' ,'¡' ,'¢' ,'£' ,'$' ,'¥' ,'#' ,'§' ,'¤' ,'\'','\"','«' ,8592,8594,8595,8593,
++	  '°' ,'±' ,'²' ,'³' ,'x' ,'µ' ,'¶' ,'·' ,'÷' ,'\'','\"','»' ,'¼' ,'½' ,'¾' ,'¿' ,
++	  ' ' ,'`' ,'´' ,710 ,732 ,'¯' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
++	  '­' ,'¹' ,'®' ,'©' ,8482,9834,8364,8240,945 ,' ' ,' ' ,' ' ,8539,8540,8541,8542,
++	  937 ,'Æ' ,272 ,'ª' ,294 ,' ' ,306 ,319 ,321 ,'Ø' ,338 ,'º' ,'Þ' ,358 ,330 ,329 ,
++	  1082,'æ' ,273 ,'ð' ,295 ,305 ,307 ,320 ,322 ,'ø' ,339 ,'ß' ,'þ' ,359 ,951 ,0x7F},
++	{ ' ' ,'¡' ,'¢' ,'£' ,'$' ,'¥' ,' ' ,'§' ,' ' ,'\'','\"','«' ,8592,8594,8595,8593,
++	  '°' ,'±' ,'²' ,'³' ,'x' ,'µ' ,'¶' ,'·' ,'÷' ,'\'','\"','»' ,'¼' ,'½' ,'¾' ,'¿' ,
++	  ' ' ,'`' ,'´' ,710 ,732 ,'¯' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
++	  '­' ,'¹' ,'®' ,'©' ,8482,9834,8364,8240,945 ,321 ,322 ,'ß' ,8539,8540,8541,8542,
 +	  'D' ,'E' ,'F' ,'G' ,'I' ,'J' ,'K' ,'L' ,'N' ,'Q' ,'R' ,'S' ,'U' ,'V' ,'W' ,'Z' ,
 +	  'd' ,'e' ,'f' ,'g' ,'i' ,'j' ,'k' ,'l' ,'n' ,'q' ,'r' ,'s' ,'u' ,'v' ,'w' ,'z' },
-+	{ ' ' ,'a' ,'b' ,'ï¿½' ,'e' ,'h' ,'i' ,'ï¿½' ,':' ,'\'','\"','k' ,8592,8594,8595,8593,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'x' ,'m' ,'n' ,'p' ,'ï¿½' ,'\'','\"','t' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'x' ,
-+	  ' ' ,'`' ,'ï¿½' ,710 ,732 ,'ï¿½' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
-+	  '?' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,8482,9834,8364,8240,945 ,906 ,910 ,911 ,8539,8540,8541,8542,
++	{ ' ' ,'a' ,'b' ,'£' ,'e' ,'h' ,'i' ,'§' ,':' ,'\'','\"','k' ,8592,8594,8595,8593,
++	  '°' ,'±' ,'²' ,'³' ,'x' ,'m' ,'n' ,'p' ,'÷' ,'\'','\"','t' ,'¼' ,'½' ,'¾' ,'x' ,
++	  ' ' ,'`' ,'´' ,710 ,732 ,'¯' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
++	  '?' ,'¹' ,'®' ,'©' ,8482,9834,8364,8240,945 ,906 ,910 ,911 ,8539,8540,8541,8542,
 +	  'C' ,'D' ,'F' ,'G' ,'J' ,'L' ,'Q' ,'R' ,'S' ,'U' ,'V' ,'W' ,'Y' ,'Z' ,902 ,905 ,
 +	  'c' ,'d' ,'f' ,'g' ,'j' ,'l' ,'q' ,'r' ,'s' ,'u' ,'v' ,'w' ,'y' ,'z' ,904 ,0x7F}
 +};
@@ -12834,20 +12836,20 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +
 +const unsigned short int nationaltable23[14][2] =
 +{
-+	{ '#', 'ï¿½' }, /* 0          */
++	{ '#', '¤' }, /* 0          */
 +	{ '#', 367 }, /* 1  CS/SK   */
-+	{ 'ï¿½', '$' }, /* 2    EN    */
-+	{ '#', 'ï¿½' }, /* 3    ET    */
-+	{ 'ï¿½', 'ï¿½' }, /* 4    FR    */
++	{ '£', '$' }, /* 2    EN    */
++	{ '#', 'õ' }, /* 3    ET    */
++	{ 'é', 'ï' }, /* 4    FR    */
 +	{ '#', '$' }, /* 5    DE    */
-+	{ 'ï¿½', '$' }, /* 6    IT    */
++	{ '£', '$' }, /* 6    IT    */
 +	{ '#', '$' }, /* 7  LV/LT   */
 +	{ '#', 329 }, /* 8    PL    */
-+	{ 'ï¿½', '$' }, /* 9  PT/ES   */
-+	{ '#', 'ï¿½' }, /* A    RO    */
-+	{ '#', 'ï¿½' }, /* B SR/HR/SL */
-+	{ '#', 'ï¿½' }, /* C SV/FI/HU */
-+	{ 'ï¿½', 287 }, /* D    TR   ? */
++	{ 'ç', '$' }, /* 9  PT/ES   */
++	{ '#', '¤' }, /* A    RO    */
++	{ '#', 'Ë' }, /* B SR/HR/SL */
++	{ '#', '¤' }, /* C SV/FI/HU */
++	{ '£', 287 }, /* D    TR   ? */
 +};
 +const unsigned short int nationaltable40[14] =
 +{
@@ -12855,50 +12857,50 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	269, /* 1  CS/SK   */
 +	'@', /* 2    EN    */
 +	352, /* 3    ET    */
-+	'ï¿½', /* 4    FR    */
-+	'ï¿½', /* 5    DE    */
-+	'ï¿½', /* 6    IT    */
++	'à', /* 4    FR    */
++	'§', /* 5    DE    */
++	'é', /* 6    IT    */
 +	352, /* 7  LV/LT   */
 +	261, /* 8    PL    */
-+	'ï¿½', /* 9  PT/ES   */
++	'¡', /* 9  PT/ES   */
 +	354, /* A    RO    */
 +	268, /* B SR/HR/SL */
-+	'ï¿½', /* C SV/FI/HU */
++	'É', /* C SV/FI/HU */
 +	304, /* D    TR    */
 +};
 +const unsigned short int nationaltable5b[14][6] =
 +{
 +	{ '[','\\', ']', '^', '_', '`' }, /* 0          */
-+	{ 357, 382, 'ï¿½', 'ï¿½', 345, 'ï¿½' }, /* 1  CS/SK   */
-+	{8592, 'ï¿½',8594,8593, '#', 173 }, /* 2    EN    */
-+	{ 'ï¿½', 'ï¿½', 381, 'ï¿½', 'ï¿½', 353 }, /* 3    ET    */
-+	{ 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', '#', 'ï¿½' }, /* 4    FR    */
-+	{ 'ï¿½', 'ï¿½', 'ï¿½', '^', '_', 'ï¿½' }, /* 5    DE    */
-+	{ 'ï¿½', 'ï¿½',8594,8593, '#', 'ï¿½' }, /* 6    IT    */
-+	{ 'ï¿½', 553, 381, 269, 363, 353 }, /* 7  LV/LT   */
-+	{ 437, 346, 321, 263, 'ï¿½', 281 }, /* 8    PL    */
-+	{ 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½' }, /* 9  PT/ES   */
-+	{ 'ï¿½', 350, 461, 'ï¿½', 305, 355 }, /* A    RO    */
-+	{ 262, 381, 272, 352, 'ï¿½', 269 }, /* B SR/HR/SL */
-+	{ 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', '_', 'ï¿½' }, /* C SV/FI/HU */
-+	{ 350, 'ï¿½', 'ï¿½', 'ï¿½', 486, 305 }, /* D    TR    */
++	{ 357, 382, 'ý', 'í', 345, 'é' }, /* 1  CS/SK   */
++	{8592, '½',8594,8593, '#', 173 }, /* 2    EN    */
++	{ 'Ä', 'Ö', 381, 'Ü', 'Õ', 353 }, /* 3    ET    */
++	{ 'ë', 'ê', 'ù', 'î', '#', 'è' }, /* 4    FR    */
++	{ 'Ä', 'Ö', 'Ü', '^', '_', '°' }, /* 5    DE    */
++	{ '°', 'ç',8594,8593, '#', 'ù' }, /* 6    IT    */
++	{ 'é', 553, 381, 269, 363, 353 }, /* 7  LV/LT   */
++	{ 437, 346, 321, 263, 'ó', 281 }, /* 8    PL    */
++	{ 'á', 'é', 'í', 'ó', 'ú', '¿' }, /* 9  PT/ES   */
++	{ 'Â', 350, 461, 'Î', 305, 355 }, /* A    RO    */
++	{ 262, 381, 272, 352, 'ë', 269 }, /* B SR/HR/SL */
++	{ 'Ä', 'Ö', 'Å', 'Ü', '_', 'é' }, /* C SV/FI/HU */
++	{ 350, 'Ö', 'Ç', 'Ü', 486, 305 }, /* D    TR    */
 +};
 +const unsigned short int nationaltable7b[14][4] =
 +{
 +	{ '{', '|', '}', '~' }, /* 0          */
-+	{ 'ï¿½', 283, 'ï¿½', 353 }, /* 1  CS/SK   */
-+	{ 'ï¿½',8214, 'ï¿½', 'ï¿½' }, /* 2    EN    */
-+	{ 'ï¿½', 'ï¿½', 382, 'ï¿½' }, /* 3    ET    */
-+	{ 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½' }, /* 4    FR    */
-+	{ 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½' }, /* 5    DE    */
-+	{ 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½' }, /* 6    IT    */
++	{ 'á', 283, 'ú', 353 }, /* 1  CS/SK   */
++	{ '¼',8214, '¾', '÷' }, /* 2    EN    */
++	{ 'ä', 'ö', 382, 'ü' }, /* 3    ET    */
++	{ 'â', 'ô', 'û', 'ç' }, /* 4    FR    */
++	{ 'ä', 'ö', 'ü', 'ß' }, /* 5    DE    */
++	{ 'à', 'ò', 'è', 'ì' }, /* 6    IT    */
 +	{ 261, 371, 382, 303 }, /* 7  LV/LT   */
 +	{ 380, 347, 322, 378 }, /* 8    PL    */
-+	{ 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½' }, /* 9  PT/ES   */
-+	{ 'ï¿½', 351, 462, 'ï¿½' }, /* A    RO    */
++	{ 'ü', 'ñ', 'è', 'à' }, /* 9  PT/ES   */
++	{ 'â', 351, 462, 'î' }, /* A    RO    */
 +	{ 263, 382, 273, 353 }, /* B SR/HR/SL */
-+	{ 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½' }, /* C SV/FI/HU */
-+	{ 351, 'ï¿½', 231, 'ï¿½' }, /* D    TR    */
++	{ 'ä', 'ö', 'å', 'ü' }, /* C SV/FI/HU */
++	{ 351, 'ö', 231, 'ü' }, /* D    TR    */
 +};
 +const unsigned short int arrowtable[] =
 +{
@@ -13408,22 +13410,22 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +/*
 +const unsigned short int G2table[3][6*16] =
 +{
-+	{ ' ' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'$' ,'ï¿½' ,'#' ,'ï¿½' ,'ï¿½' ,'\'','\"','ï¿½' ,8592,8594,8595,8593,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'x' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'\'','\"','ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,
-+	  ' ' ,'`' ,'ï¿½' ,710 ,732 ,'ï¿½' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,8482,9834,8364,8240,945 ,' ' ,' ' ,' ' ,8539,8540,8541,8542,
-+	  937 ,'ï¿½' ,272 ,'ï¿½' ,294 ,' ' ,306 ,319 ,321 ,'ï¿½' ,338 ,'ï¿½' ,'ï¿½' ,358 ,330 ,329 ,
-+	  1082,'ï¿½' ,273 ,'ï¿½' ,295 ,305 ,307 ,320 ,322 ,'ï¿½' ,339 ,'ï¿½' ,'ï¿½' ,359 ,951 ,0x7F},
-+	{ ' ' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'$' ,'ï¿½' ,' ' ,'ï¿½' ,' ' ,'\'','\"','ï¿½' ,8592,8594,8595,8593,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'x' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'\'','\"','ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,
-+	  ' ' ,'`' ,'ï¿½' ,710 ,732 ,'ï¿½' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,8482,9834,8364,8240,945 ,321 ,322 ,'ï¿½' ,8539,8540,8541,8542,
++	{ ' ' ,'¡' ,'¢' ,'£' ,'$' ,'¥' ,'#' ,'§' ,'¤' ,'\'','\"','«' ,8592,8594,8595,8593,
++	  '°' ,'±' ,'²' ,'³' ,'x' ,'µ' ,'¶' ,'·' ,'÷' ,'\'','\"','»' ,'¼' ,'½' ,'¾' ,'¿' ,
++	  ' ' ,'`' ,'´' ,710 ,732 ,'¯' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
++	  '­' ,'¹' ,'®' ,'©' ,8482,9834,8364,8240,945 ,' ' ,' ' ,' ' ,8539,8540,8541,8542,
++	  937 ,'Æ' ,272 ,'ª' ,294 ,' ' ,306 ,319 ,321 ,'Ø' ,338 ,'º' ,'Þ' ,358 ,330 ,329 ,
++	  1082,'æ' ,273 ,'ð' ,295 ,305 ,307 ,320 ,322 ,'ø' ,339 ,'ß' ,'þ' ,359 ,951 ,0x7F},
++	{ ' ' ,'¡' ,'¢' ,'£' ,'$' ,'¥' ,' ' ,'§' ,' ' ,'\'','\"','«' ,8592,8594,8595,8593,
++	  '°' ,'±' ,'²' ,'³' ,'x' ,'µ' ,'¶' ,'·' ,'÷' ,'\'','\"','»' ,'¼' ,'½' ,'¾' ,'¿' ,
++	  ' ' ,'`' ,'´' ,710 ,732 ,'¯' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
++	  '­' ,'¹' ,'®' ,'©' ,8482,9834,8364,8240,945 ,321 ,322 ,'ß' ,8539,8540,8541,8542,
 +	  'D' ,'E' ,'F' ,'G' ,'I' ,'J' ,'K' ,'L' ,'N' ,'Q' ,'R' ,'S' ,'U' ,'V' ,'W' ,'Z' ,
 +	  'd' ,'e' ,'f' ,'g' ,'i' ,'j' ,'k' ,'l' ,'n' ,'q' ,'r' ,'s' ,'u' ,'v' ,'w' ,'z' },
-+	{ ' ' ,'a' ,'b' ,'ï¿½' ,'e' ,'h' ,'i' ,'ï¿½' ,':' ,'\'','\"','k' ,8592,8594,8595,8593,
-+	  'ï¿½' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'x' ,'m' ,'n' ,'p' ,'ï¿½' ,'\'','\"','t' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,'x' ,
-+	  ' ' ,'`' ,'ï¿½' ,710 ,732 ,'ï¿½' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
-+	  '?' ,'ï¿½' ,'ï¿½' ,'ï¿½' ,8482,9834,8364,8240,945 ,906 ,910 ,911 ,8539,8540,8541,8542,
++	{ ' ' ,'a' ,'b' ,'£' ,'e' ,'h' ,'i' ,'§' ,':' ,'\'','\"','k' ,8592,8594,8595,8593,
++	  '°' ,'±' ,'²' ,'³' ,'x' ,'m' ,'n' ,'p' ,'÷' ,'\'','\"','t' ,'¼' ,'½' ,'¾' ,'x' ,
++	  ' ' ,'`' ,'´' ,710 ,732 ,'¯' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
++	  '?' ,'¹' ,'®' ,'©' ,8482,9834,8364,8240,945 ,906 ,910 ,911 ,8539,8540,8541,8542,
 +	  'C' ,'D' ,'F' ,'G' ,'J' ,'L' ,'Q' ,'R' ,'S' ,'U' ,'V' ,'W' ,'Y' ,'Z' ,902 ,905 ,
 +	  'c' ,'d' ,'f' ,'g' ,'j' ,'l' ,'q' ,'r' ,'s' ,'u' ,'v' ,'w' ,'y' ,'z' ,904 ,0x7F}
 +};
@@ -13554,7 +13556,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +};
 +
 +/* language dependent texts */
-+#define MAXMENULANGUAGE 8 /* 0 deutsch, 1 englisch, 2 franzï¿½sisch, 3 niederlï¿½ndisch, 4 griechisch, 5 italienisch, 6 polnisch, 7 schwedisch, 8 suomi */
++#define MAXMENULANGUAGE 8 /* 0 deutsch, 1 englisch, 2 französisch, 3 niederländisch, 4 griechisch, 5 italienisch, 6 polnisch, 7 schwedisch, 8 suomi */
 +const int menusubset[] =   { NAT_DE   , NAT_UK    , NAT_FR       , NAT_UK          , NAT_GR      , NAT_IT       , NAT_PL    , NAT_SW, NAT_SW };
 +
 +
@@ -13650,317 +13652,317 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	{
 +/*     0000000000111111111122222222223 */
 +/*     0123456789012345678901234567890 */
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½     Konfigurationsmen}     ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½1 Favoriten: Seite 111 dazu ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½                        ï¿½ï¿½"
-+		"ï¿½+-?                         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½2     Teletext-Auswahl      ï¿½ï¿½"
-+		"ï¿½ï¿½          suchen          ï¿½ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½      Bildschirmformat      ï¿½ï¿½"
-+		"ï¿½3  Standard-Modus 16:9      ï¿½ï¿½"
-+		"ï¿½4  TextBild-Modus 16:9      ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½5        Helligkeit         ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½6       Transparenz         ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½7  nationaler Zeichensatz   ï¿½ï¿½"
-+		"ï¿½automatische Erkennung      ï¿½ï¿½"
-+		"ï¿½ï¿½    DE    (#$@[\\]^_`{|}~) ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ Sprache/Language deutsch ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½   www.tuxtxt.net  x.xx   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
++		"àááááááááááááááááááááááááááááâè"
++		"ã     Konfigurationsmen}     äé"
++		"åææææææææææææææææææææææææææææçé"
++		"ã1 Favoriten: Seite 111 dazu äé"
++		"ãíîñò                        äé"
++		"ã+-?                         äé"
++		"ã                            äé"
++		"ã2     Teletext-Auswahl      äé"
++		"ãí          suchen          îäé"
++		"ã                            äé"
++		"ã      Bildschirmformat      äé"
++		"ã3  Standard-Modus 16:9      äé"
++		"ã4  TextBild-Modus 16:9      äé"
++		"ã                            äé"
++		"ã5        Helligkeit         äé"
++		"ãí                          îäé"
++		"ã6       Transparenz         äé"
++		"ãí                          îäé"
++		"ã7  nationaler Zeichensatz   äé"
++		"ãautomatische Erkennung      äé"
++		"ãí    DE    (#$@[\\]^_`{|}~) îäé"
++		"ãí Sprache/Language deutsch îäé"
++		"åæ   www.tuxtxt.net  x.xx   æçé"
++		"ëìììììììììììììììììììììììììììììê"
 +	},
 +/*     0000000000111111111122222222223 */
 +/*     0123456789012345678901234567890 */
 +	{
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½     Configuration menu     ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½1 Favorites:  add page 111  ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½                        ï¿½ï¿½"
-+		"ï¿½+-?                         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½2     Teletext selection    ï¿½ï¿½"
-+		"ï¿½ï¿½          search          ï¿½ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½        Screen format       ï¿½ï¿½"
-+		"ï¿½3 Standard mode 16:9        ï¿½ï¿½"
-+		"ï¿½4 Text/TV mode  16:9        ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½5        Brightness         ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½6       Transparency        ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½7   national characterset   ï¿½ï¿½"
-+		"ï¿½ automatic recognition      ï¿½ï¿½"
-+		"ï¿½ï¿½    DE    (#$@[\\]^_`{|}~) ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ Sprache/language english ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½   www.tuxtxt.net  x.xx   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
++		"àááááááááááááááááááááááááááááâè"
++		"ã     Configuration menu     äé"
++		"åææææææææææææææææææææææææææææçé"
++		"ã1 Favorites:  add page 111  äé"
++		"ãíîñò                        äé"
++		"ã+-?                         äé"
++		"ã                            äé"
++		"ã2     Teletext selection    äé"
++		"ãí          search          îäé"
++		"ã                            äé"
++		"ã        Screen format       äé"
++		"ã3 Standard mode 16:9        äé"
++		"ã4 Text/TV mode  16:9        äé"
++		"ã                            äé"
++		"ã5        Brightness         äé"
++		"ãí                          îäé"
++		"ã6       Transparency        äé"
++		"ãí                          îäé"
++		"ã7   national characterset   äé"
++		"ã automatic recognition      äé"
++		"ãí    DE    (#$@[\\]^_`{|}~) îäé"
++		"ãí Sprache/language english îäé"
++		"åæ   www.tuxtxt.net  x.xx   æçé"
++		"ëìììììììììììììììììììììììììììììê"
 +	},
 +/*     0000000000111111111122222222223 */
 +/*     0123456789012345678901234567890 */
 +	{
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½    Menu de configuration   ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½1 Favorites: ajout. page 111ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½                        ï¿½ï¿½"
-+		"ï¿½+-?                         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½2  Selection de teletext    ï¿½ï¿½"
-+		"ï¿½ï¿½        recherche         ï¿½ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½      Format de l'#cran     ï¿½ï¿½"
-+		"ï¿½3 Mode standard 16:9        ï¿½ï¿½"
-+		"ï¿½4 Texte/TV      16:9        ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½5          Clarte           ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½6       Transparence        ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½7     police nationale      ï¿½ï¿½"
-+		"ï¿½reconn. automatique         ï¿½ï¿½"
-+		"ï¿½ï¿½    DE    (#$@[\\]^_`{|}~) ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ Sprache/language francaisï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½   www.tuxtxt.net  x.xx   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
++		"àááááááááááááááááááááááááááááâè"
++		"ã    Menu de configuration   äé"
++		"åææææææææææææææææææææææææææææçé"
++		"ã1 Favorites: ajout. page 111äé"
++		"ãíîñò                        äé"
++		"ã+-?                         äé"
++		"ã                            äé"
++		"ã2  Selection de teletext    äé"
++		"ãí        recherche         îäé"
++		"ã                            äé"
++		"ã      Format de l'#cran     äé"
++		"ã3 Mode standard 16:9        äé"
++		"ã4 Texte/TV      16:9        äé"
++		"ã                            äé"
++		"ã5          Clarte           äé"
++		"ãí                          îäé"
++		"ã6       Transparence        äé"
++		"ãí                          îäé"
++		"ã7     police nationale      äé"
++		"ãreconn. automatique         äé"
++		"ãí    DE    (#$@[\\]^_`{|}~) îäé"
++		"ãí Sprache/language francaisîäé"
++		"åæ   www.tuxtxt.net  x.xx   æçé"
++		"ëìììììììììììììììììììììììììììììê"
 +	},
 +/*     0000000000111111111122222222223 */
 +/*     0123456789012345678901234567890 */
 +	{
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½      Configuratiemenu      ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½1 Favorieten: toev. pag 111 ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½                        ï¿½ï¿½"
-+		"ï¿½+-?                         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½2     Teletekst-selectie    ï¿½ï¿½"
-+		"ï¿½ï¿½          zoeken          ï¿½ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½     Beeldschermformaat     ï¿½ï¿½"
-+		"ï¿½3   Standaardmode 16:9      ï¿½ï¿½"
-+		"ï¿½4   Tekst/TV mode 16:9      ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½5        Helderheid         ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½6       Transparantie       ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½7    nationale tekenset     ï¿½ï¿½"
-+		"ï¿½automatische herkenning     ï¿½ï¿½"
-+		"ï¿½ï¿½    DE    (#$@[\\]^_`{|}~) ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ Sprache/Language nederl. ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½   www.tuxtxt.net  x.xx   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
++		"àááááááááááááááááááááááááááááâè"
++		"ã      Configuratiemenu      äé"
++		"åææææææææææææææææææææææææææææçé"
++		"ã1 Favorieten: toev. pag 111 äé"
++		"ãíîñò                        äé"
++		"ã+-?                         äé"
++		"ã                            äé"
++		"ã2     Teletekst-selectie    äé"
++		"ãí          zoeken          îäé"
++		"ã                            äé"
++		"ã     Beeldschermformaat     äé"
++		"ã3   Standaardmode 16:9      äé"
++		"ã4   Tekst/TV mode 16:9      äé"
++		"ã                            äé"
++		"ã5        Helderheid         äé"
++		"ãí                          îäé"
++		"ã6       Transparantie       äé"
++		"ãí                          îäé"
++		"ã7    nationale tekenset     äé"
++		"ãautomatische herkenning     äé"
++		"ãí    DE    (#$@[\\]^_`{|}~) îäé"
++		"ãí Sprache/Language nederl. îäé"
++		"åæ   www.tuxtxt.net  x.xx   æçé"
++		"ëìììììììììììììììììììììììììììììê"
 +	},
 +/*     0000000000111111111122222222223 */
 +/*     0123456789012345678901234567890 */
 +	{
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½      Lemo} quhl_seym       ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½1 Vaboq_:    pqo_h. sek. 111ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½                        ï¿½ï¿½"
-+		"ï¿½+-?                         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½2     Epikoc^ Teket]nt      ï¿½ï¿½"
-+		"ï¿½ï¿½        Amaf^tgsg         ï¿½ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½       Loqv^ oh|mgr         ï¿½ï¿½"
-+		"ï¿½3 Tq|por pq|tupor   16:9    ï¿½ï¿½"
-+		"ï¿½4 Tq|por eij. jeil. 16:9    ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½5       Kalpq|tgta          ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½6       Diav\\meia           ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½7    Ehmij^ tuposeiq\\       ï¿½ï¿½"
-+		"ï¿½aut|latg amacm~qisg         ï¿½ï¿½"
-+		"ï¿½ï¿½    DE    (#$@[\\]^_`{|}~) ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ Ck~ssa/Language ekkgmij\\ ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½   www.tuxtxt.net  x.xx   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
++		"àááááááááááááááááááááááááááááâè"
++		"ã      Lemo} quhl_seym       äé"
++		"åææææææææææææææææææææææææææææçé"
++		"ã1 Vaboq_:    pqo_h. sek. 111äé"
++		"ãíîñò                        äé"
++		"ã+-?                         äé"
++		"ã                            äé"
++		"ã2     Epikoc^ Teket]nt      äé"
++		"ãí        Amaf^tgsg         îäé"
++		"ã                            äé"
++		"ã       Loqv^ oh|mgr         äé"
++		"ã3 Tq|por pq|tupor   16:9    äé"
++		"ã4 Tq|por eij. jeil. 16:9    äé"
++		"ã                            äé"
++		"ã5       Kalpq|tgta          äé"
++		"ãí                          îäé"
++		"ã6       Diav\\meia           äé"
++		"ãí                          îäé"
++		"ã7    Ehmij^ tuposeiq\\       äé"
++		"ãaut|latg amacm~qisg         äé"
++		"ãí    DE    (#$@[\\]^_`{|}~) îäé"
++		"ãí Ck~ssa/Language ekkgmij\\ îäé"
++		"åæ   www.tuxtxt.net  x.xx   æçé"
++		"ëìììììììììììììììììììììììììììììê"
 +	},
 +/*     0000000000111111111122222222223 */
 +/*     0123456789012345678901234567890 */
 +	{
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½   Menu di configurazione   ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½1  Preferiti:  agg. pag.111 ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½                        ï¿½ï¿½"
-+		"ï¿½+-?                         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½2   Selezione televideo     ï¿½ï¿½"
-+		"ï¿½ï¿½         ricerca          ï¿½ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½      Formato schermo       ï¿½ï¿½"
-+		"ï¿½3  Modo standard 16:9       ï¿½ï¿½"
-+		"ï¿½4  Text/Mod.TV 16:9         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½5        Luminosit{         ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½6        Trasparenza        ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½7   nazionalita'caratteri   ï¿½ï¿½"
-+		"ï¿½ riconoscimento automatico  ï¿½ï¿½"
-+		"ï¿½ï¿½    DE    (#$@[\\]^_`{|}~) ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ Lingua/Language Italiana ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½   www.tuxtxt.net  x.xx   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
++		"àááááááááááááááááááááááááááááâè"
++		"ã   Menu di configurazione   äé"
++		"åææææææææææææææææææææææææææææçé"
++		"ã1  Preferiti:  agg. pag.111 äé"
++		"ãíîñò                        äé"
++		"ã+-?                         äé"
++		"ã                            äé"
++		"ã2   Selezione televideo     äé"
++		"ãí         ricerca          îäé"
++		"ã                            äé"
++		"ã      Formato schermo       äé"
++		"ã3  Modo standard 16:9       äé"
++		"ã4  Text/Mod.TV 16:9         äé"
++		"ã                            äé"
++		"ã5        Luminosit{         äé"
++		"ãí                          îäé"
++		"ã6        Trasparenza        äé"
++		"ãí                          îäé"
++		"ã7   nazionalita'caratteri   äé"
++		"ã riconoscimento automatico  äé"
++		"ãí    DE    (#$@[\\]^_`{|}~) îäé"
++		"ãí Lingua/Language Italiana îäé"
++		"åæ   www.tuxtxt.net  x.xx   æçé"
++		"ëìììììììììììììììììììììììììììììê"
 +	},
 +/*     0000000000111111111122222222223 */
 +/*     0123456789012345678901234567890 */
 +	{
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½        Konfiguracja        ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½1 Ulubione : kasuj  str. 111ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½                        ï¿½ï¿½"
-+		"ï¿½+-?                         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½2     Wyb_r telegazety      ï¿½ï¿½"
-+		"ï¿½ï¿½          szukaj          ï¿½ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½       Format obrazu        ï¿½ï¿½"
-+		"ï¿½3 Tryb standard 16:9        ï¿½ï¿½"
-+		"ï¿½4 Telegazeta/TV 16:9        ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½5          Jasno|^          ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½6      Prze~roczysto|^      ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½7 Znaki charakterystyczne   ï¿½ï¿½"
-+		"ï¿½ automatyczne rozpozn.      ï¿½ï¿½"
-+		"ï¿½ï¿½    DE    (#$@[\\]^_`{|}~) ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½  J`zyk/Language   polski ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½   www.tuxtxt.net  x.xx   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
++		"àááááááááááááááááááááááááááááâè"
++		"ã        Konfiguracja        äé"
++		"åææææææææææææææææææææææææææææçé"
++		"ã1 Ulubione : kasuj  str. 111äé"
++		"ãíîñò                        äé"
++		"ã+-?                         äé"
++		"ã                            äé"
++		"ã2     Wyb_r telegazety      äé"
++		"ãí          szukaj          îäé"
++		"ã                            äé"
++		"ã       Format obrazu        äé"
++		"ã3 Tryb standard 16:9        äé"
++		"ã4 Telegazeta/TV 16:9        äé"
++		"ã                            äé"
++		"ã5          Jasno|^          äé"
++		"ãí                          îäé"
++		"ã6      Prze~roczysto|^      äé"
++		"ãí                          îäé"
++		"ã7 Znaki charakterystyczne   äé"
++		"ã automatyczne rozpozn.      äé"
++		"ãí    DE    (#$@[\\]^_`{|}~) îäé"
++		"ãí  J`zyk/Language   polski îäé"
++		"åæ   www.tuxtxt.net  x.xx   æçé"
++		"ëìììììììììììììììììììììììììììììê"
 +	},
 +/*     0000000000111111111122222222223 */
 +/*     0123456789012345678901234567890 */
 +	{
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½     Konfigurationsmeny     ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½1 Favoriter: sida 111 ny    ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½                        ï¿½ï¿½"
-+		"ï¿½+-?                         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½2      TextTV v{ljaren      ï¿½ï¿½"
-+		"ï¿½ï¿½            s|k           ï¿½ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½        TV- format          ï¿½ï¿½"
-+		"ï¿½3 Standard l{ge 16:9        ï¿½ï¿½"
-+		"ï¿½4 Text/Bild l{ge  16:9      ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½5        Ljusstyrka         ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½6     Genomskinlighet       ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½7nationell teckenupps{ttningï¿½ï¿½"
-+		"ï¿½ automatisk igenk{nning     ï¿½ï¿½"
-+		"ï¿½ï¿½    DE    (#$@[\\]^_`{|}~) ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ Sprache/language svenska ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½   www.tuxtxt.net  x.xx   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
++		"àááááááááááááááááááááááááááááâè"
++		"ã     Konfigurationsmeny     äé"
++		"åææææææææææææææææææææææææææææçé"
++		"ã1 Favoriter: sida 111 ny    äé"
++		"ãíîñò                        äé"
++		"ã+-?                         äé"
++		"ã                            äé"
++		"ã2      TextTV v{ljaren      äé"
++		"ãí            s|k           îäé"
++		"ã                            äé"
++		"ã        TV- format          äé"
++		"ã3 Standard l{ge 16:9        äé"
++		"ã4 Text/Bild l{ge  16:9      äé"
++		"ã                            äé"
++		"ã5        Ljusstyrka         äé"
++		"ãí                          îäé"
++		"ã6     Genomskinlighet       äé"
++		"ãí                          îäé"
++		"ã7nationell teckenupps{ttningäé"
++		"ã automatisk igenk{nning     äé"
++		"ãí    DE    (#$@[\\]^_`{|}~) îäé"
++		"ãí Sprache/language svenska îäé"
++		"åæ   www.tuxtxt.net  x.xx   æçé"
++		"ëìììììììììììììììììììììììììììììê"
 +	},
 +/*     0000000000111111111122222222223 */
 +/*     0123456789012345678901234567890 */
 +	{
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½        Asetusvalikko       ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
-+		"ï¿½1 Suosikit: sivu 111 lis{{  ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½                        ï¿½ï¿½"
-+		"ï¿½+-?                         ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½2   Tekstikanavan valinta   ï¿½ï¿½"
-+		"ï¿½ï¿½          search          ï¿½ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½         N{ytt|tila         ï¿½ï¿½"
-+		"ï¿½3 Vakiotila     16:9        ï¿½ï¿½"
-+		"ï¿½4 Teksti/TV     16:9        ï¿½ï¿½"
-+		"ï¿½                            ï¿½ï¿½"
-+		"ï¿½5         Kirkkaus          ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½6       L{pin{kyvyys        ï¿½ï¿½"
-+		"ï¿½ï¿½                          ï¿½ï¿½ï¿½"
-+		"ï¿½7   kansallinen merkist|    ï¿½ï¿½"
-+		"ï¿½ automaattinen tunnistus    ï¿½ï¿½"
-+		"ï¿½ï¿½    DE    (#$@[\\]^_`{|}~) ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ Kieli            suomi   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½   www.tuxtxt.net  x.xx   ï¿½ï¿½ï¿½"
-+		"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
++		"àááááááááááááááááááááááááááááâè"
++		"ã        Asetusvalikko       äé"
++		"åææææææææææææææææææææææææææææçé"
++		"ã1 Suosikit: sivu 111 lis{{  äé"
++		"ãíîñò                        äé"
++		"ã+-?                         äé"
++		"ã                            äé"
++		"ã2   Tekstikanavan valinta   äé"
++		"ãí          search          îäé"
++		"ã                            äé"
++		"ã         N{ytt|tila         äé"
++		"ã3 Vakiotila     16:9        äé"
++		"ã4 Teksti/TV     16:9        äé"
++		"ã                            äé"
++		"ã5         Kirkkaus          äé"
++		"ãí                          îäé"
++		"ã6       L{pin{kyvyys        äé"
++		"ãí                          îäé"
++		"ã7   kansallinen merkist|    äé"
++		"ã automaattinen tunnistus    äé"
++		"ãí    DE    (#$@[\\]^_`{|}~) îäé"
++		"ãí Kieli            suomi   îäé"
++		"åæ   www.tuxtxt.net  x.xx   æçé"
++		"ëìììììììììììììììììììììììììììììê"
 +	},
 +};
 +
 +const char catchmenutext[][80] =
 +{
-+	{ "        ï¿½ï¿½ï¿½ï¿½ w{hlen   ï¿½ï¿½ anzeigen       "
++	{ "        íïðî w{hlen   ñò anzeigen       "
 +	  "0000000011110000000000110000000000000000" },
-+	{ "        ï¿½ï¿½ï¿½ï¿½ select   ï¿½ï¿½ show           "
++	{ "        íïðî select   ñò show           "
 +	  "0000000011110000000000110000000000000000" },
-+	{ "  ï¿½ï¿½ï¿½ï¿½ selectionner   ï¿½ï¿½ montrer        "
++	{ "  íïðî selectionner   ñò montrer        "
 +	  "0011110000000000000000110000000000000000" },
-+	{ "        ï¿½ï¿½ï¿½ï¿½ kiezen   ï¿½ï¿½ tonen          "
++	{ "        íïðî kiezen   ñò tonen          "
 +	  "0000000011110000000000110000000000000000" },
-+	{ "        ï¿½ï¿½ï¿½ï¿½ epikoc^  ï¿½ï¿½ pqobok^        "
++	{ "        íïðî epikoc^  ñò pqobok^        "
 +	  "0000000011110000000000110000000000000000" },
-+	{ "        ï¿½ï¿½ï¿½ï¿½seleziona ï¿½ï¿½ mostra         "
++	{ "        íïðîseleziona ñò mostra         "
 +	  "0000000011110000000000110000000000000000" },
-+	{ "        ï¿½ï¿½ï¿½ï¿½ wybiez   ï¿½ï¿½ wyswietl       "
++	{ "        íïðî wybiez   ñò wyswietl       "
 +	  "0000000011110000000000110000000000000000" },
-+	{ "        ï¿½ï¿½ï¿½ï¿½ v{lj     ï¿½ï¿½ visa           "
++	{ "        íïðî v{lj     ñò visa           "
 +     "0000000011110000000000110000000000000000" },
-+	{ "        ï¿½ï¿½ï¿½ï¿½ valitse  ï¿½ï¿½ n{yt{          "
++	{ "        íïðî valitse  ñò n{yt{          "
 +	  "0000000011110000000000110000000000000000" },
 +};
 +
 +const char message_3[][38] =
 +{
-+	{ "ï¿½   suche nach Teletext-Anbietern   ï¿½ï¿½" },
-+	{ "ï¿½  searching for teletext Services  ï¿½ï¿½" },
-+	{ "ï¿½  recherche des services teletext  ï¿½ï¿½" },
-+	{ "ï¿½ zoeken naar teletekst aanbieders  ï¿½ï¿½" },
-+	{ "ï¿½     amaf^tgsg voq]ym Teket]nt     ï¿½ï¿½" },
-+	{ "ï¿½     attesa opzioni televideo      ï¿½ï¿½" },
-+	{ "ï¿½  poszukiwanie sygna}u telegazety  ï¿½ï¿½" },
-+	{ "ï¿½    s|ker efter TextTV tj{nster    ï¿½ï¿½" },
-+	{ "ï¿½   etsit{{n Teksti-TV -palvelua    ï¿½ï¿½" },
++	{ "ã   suche nach Teletext-Anbietern   äé" },
++	{ "ã  searching for teletext Services  äé" },
++	{ "ã  recherche des services teletext  äé" },
++	{ "ã zoeken naar teletekst aanbieders  äé" },
++	{ "ã     amaf^tgsg voq]ym Teket]nt     äé" },
++	{ "ã     attesa opzioni televideo      äé" },
++	{ "ã  poszukiwanie sygna}u telegazety  äé" },
++	{ "ã    s|ker efter TextTV tj{nster    äé" },
++	{ "ã   etsit{{n Teksti-TV -palvelua    äé" },
 +};
-+const char message_3_blank[] = "ï¿½                                   ï¿½ï¿½";
++const char message_3_blank[] = "ã                                   äé";
 +const char message_7[][38] =
 +{
-+	{ "ï¿½ kein Teletext auf dem Transponder ï¿½ï¿½" },
-+	{ "ï¿½   no teletext on the transponder  ï¿½ï¿½" },
-+	{ "ï¿½ pas de teletext sur le transponderï¿½ï¿½" },
-+	{ "ï¿½ geen teletekst op de transponder  ï¿½ï¿½" },
-+	{ "ï¿½ jal]la Teket]nt ston amaletadot^  ï¿½ï¿½" },
-+	{ "ï¿½ nessun televideo sul trasponder   ï¿½ï¿½" },
-+	{ "ï¿½   brak sygna}u na transponderze   ï¿½ï¿½" },
-+	{ "ï¿½ ingen TextTV p} denna transponder ï¿½ï¿½" },
-+	{ "ï¿½    Ei Teksti-TV:t{ l{hettimell{   ï¿½ï¿½" },
++	{ "ã kein Teletext auf dem Transponder äé" },
++	{ "ã   no teletext on the transponder  äé" },
++	{ "ã pas de teletext sur le transponderäé" },
++	{ "ã geen teletekst op de transponder  äé" },
++	{ "ã jal]la Teket]nt ston amaletadot^  äé" },
++	{ "ã nessun televideo sul trasponder   äé" },
++	{ "ã   brak sygna}u na transponderze   äé" },
++	{ "ã ingen TextTV p} denna transponder äé" },
++	{ "ã    Ei Teksti-TV:t{ l{hettimell{   äé" },
 +};
 +const char message_8[][38] =
 +{
 +/*    00000000001111111111222222222233333333334 */
 +/*    01234567890123456789012345678901234567890 */
-+	{ "ï¿½  warte auf Empfang von Seite 100  ï¿½ï¿½" },
-+	{ "ï¿½ waiting for reception of page 100 ï¿½ï¿½" },
-+	{ "ï¿½ attentre la rï¿½ception de page 100 ï¿½ï¿½" },
-+	{ "ï¿½wachten op ontvangst van pagina 100ï¿½ï¿½" },
-+	{ "ï¿½     amal]my k^xg sek_dar 100      ï¿½ï¿½" },
-+	{ "ï¿½   attesa ricezione pagina 100     ï¿½ï¿½" },
-+	{ "ï¿½     oczekiwanie na stron` 100     ï¿½ï¿½" },
-+	{ "ï¿½  v{ntar p} mottagning av sida 100 ï¿½ï¿½" },
-+	{ "ï¿½        Odotetaan sivua 100        ï¿½ï¿½" },
++	{ "ã  warte auf Empfang von Seite 100  äé" },
++	{ "ã waiting for reception of page 100 äé" },
++	{ "ã attentre la réception de page 100 äé" },
++	{ "ãwachten op ontvangst van pagina 100äé" },
++	{ "ã     amal]my k^xg sek_dar 100      äé" },
++	{ "ã   attesa ricezione pagina 100     äé" },
++	{ "ã     oczekiwanie na stron` 100     äé" },
++	{ "ã  v{ntar p} mottagning av sida 100 äé" },
++	{ "ã        Odotetaan sivua 100        äé" },
 +};
 +const char message8pagecolumn[] = /* last(!) column of page to show in each language */
 +{
@@ -14079,16 +14081,16 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	{ white  , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MSGDRM3 */
 +	{ menu1  , blue  , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENUHIL0 5a Z */
 +	{ white  , blue  , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENUHIL1 58 X */
-+	{ menu2  , transp, C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENUHIL2 9b ï¿½ */
-+	{ menu2  , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU0 ab ï¿½ */
-+	{ yellow , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU1 a4 ï¿½ */
-+	{ menu2  , transp, C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU2 9b ï¿½ */
-+	{ menu2  , menu3 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU3 cb ï¿½ */
-+	{ cyan   , menu3 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU4 c7 ï¿½ */
-+	{ white  , menu3 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU5 c8 ï¿½ */
-+	{ white  , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU6 a8 ï¿½ */
-+	{ yellow , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_CATCHMENU0 a4 ï¿½ */
-+	{ white  , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}  /* ATR_CATCHMENU1 a8 ï¿½ */
++	{ menu2  , transp, C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENUHIL2 9b › */
++	{ menu2  , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU0 ab « */
++	{ yellow , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU1 a4 ¤ */
++	{ menu2  , transp, C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU2 9b › */
++	{ menu2  , menu3 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU3 cb Ë */
++	{ cyan   , menu3 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU4 c7 Ç */
++	{ white  , menu3 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU5 c8 È */
++	{ white  , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_MENU6 a8 ¨ */
++	{ yellow , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_CATCHMENU0 a4 ¤ */
++	{ white  , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}  /* ATR_CATCHMENU1 a8 ¨ */
 +};
 +/* buffers */
 +unsigned char  lcd_backbuffer[120*64 / 8];
