@@ -26,8 +26,6 @@
 #include <config.h>
 #endif
 
-#include <driver/vfd.h>
-
 #include <global.h>
 #include <neutrino.h>
 #include <system/settings.h>
@@ -39,26 +37,35 @@
 #include <math.h>
 
 #include <daemonc/remotecontrol.h>
+
 extern CRemoteControl * g_RemoteControl; /* neutrino.cpp */
 
-
 #ifdef __sh__
-//hacky: should be done as member functions
+struct vfd_ioctl_data {
+	unsigned char start_address;
+	unsigned char data[64];
+	unsigned char length;
+};
+
 //konfetti: let us share the device with evremote and fp_control
 //it does currently not support more than one user (see e.g. micom)
-int openDevice()
+void CVFD::openDevice()
 {
-	int fd = open("/dev/vfd", O_RDWR);
+	fd = open("/dev/vfd", O_RDWR);
 	if(fd < 0)
-		fd = open("/dev/fplarge", O_RDWR);
-
-        return fd;
+	{
+	    printf("failed to open vfd\n");
+	    fd = open("/dev/fplarge", O_RDWR);
+	    if (fd < 0)
+	      printf("failed to open fplarge\n");
+        }
 }
 
-void closeDevice(int fd)
+void CVFD::closeDevice()
 {
 	if (fd)
 	   close(fd);
+	fd = -1;
 }
 
 #endif
@@ -126,13 +133,19 @@ void CVFD::count_down() {
 }
 
 void CVFD::wake_up() {
+printf("CVFD::wake_up>\n");
 	if (atoi(g_settings.lcd_setting_dim_time) > 0) {
+printf("1\n");
 		timeout_cnt = atoi(g_settings.lcd_setting_dim_time);
 		atoi(g_settings.lcd_setting_dim_brightness) > 0 ?
 			setBrightness(g_settings.lcd_setting[SNeutrinoSettings::LCD_BRIGHTNESS]) : setPower(1);
 	}
 	else
+        {
+printf("2\n");
 		setPower(1);
+        }
+printf("CVFD::wake_up<\n");
 }
 
 void* CVFD::TimeThread(void *)
@@ -153,6 +166,7 @@ void CVFD::init(const char * fontfile, const char * fontname)
 {
 	//InitNewClock(); /FIXME
 
+printf("CVFD::init>\n");
 	brightness = -1;
 	setMode(MODE_TVRADIO);
 
@@ -160,6 +174,7 @@ void CVFD::init(const char * fontfile, const char * fontname)
 		perror("[lcdd]: pthread_create(TimeThread)");
 		return ;
 	}
+printf("CVFD::init<\n");
 }
 
 void CVFD::setlcdparameter(int dimm, const int power)
@@ -181,13 +196,18 @@ void CVFD::setlcdparameter(int dimm, const int power)
 
 printf("CVFD::setlcdparameter dimm %d power %d\n", dimm, power);
 #ifdef __sh__
-        fd = openDevice();
-#endif
+        openDevice();
+
+        struct vfd_ioctl_data data;
+	data.start_address = dimm;
+	
+	int ret = ioctl(fd, IOC_VFD_SET_BRIGHT, &data);
+
+        closeDevice();
+#else
 	int ret = ioctl(fd, IOC_VFD_SET_BRIGHT, dimm);
 	if(ret < 0)
 		perror("IOC_VFD_SET_BRIGHT");
-#ifdef __sh__
-        closeDevice(fd);
 #endif
 }
 
@@ -229,7 +249,7 @@ void CVFD::showTime(bool force)
 			if(force || ((hour != t->tm_hour) || (minute != t->tm_min))) {
 				hour = t->tm_hour;
 				minute = t->tm_min;
-				strftime(timestr, 20, "%H:%M - %d.%m.%y", t);
+				strftime(timestr, 20, "%H:%M", t);
 				ShowText((char *) timestr);
 			}
 		} 
@@ -516,10 +536,12 @@ int CVFD::getBrightnessStandby()
 
 void CVFD::setPower(int power)
 {
+printf("CVFD::setPower>\n");
 	if(!has_lcd) return;
 // old
 	//g_settings.lcd_setting[SNeutrinoSettings::LCD_POWER] = power;
 	//setlcdparameter();
+printf("CVFD::setPower<\n");
 }
 
 int CVFD::getPower()
@@ -567,29 +589,44 @@ void CVFD::Unlock()
 
 void CVFD::Clear()
 {
+printf("CVFD::Clear>\n");
 	if(!has_lcd) return;
 #ifdef __sh__
-        fd = openDevice();
-#endif
+        openDevice();
+
+        struct vfd_ioctl_data data;
+	data.start_address = 0x01;
+	data.length = 0x0;
+	
+	int ret = ioctl(fd, IOC_VFD_CLEAR_ALL, &data);
+#else
 	int ret = ioctl(fd, IOC_VFD_CLEAR_ALL, 0);
-	if(ret < 0)
-		perror("IOC_VFD_SET_TEXT");
-#ifdef __sh__
-        closeDevice(fd);
 #endif
+	if(ret < 0)
+		perror("IOC_VFD_CLEAR_ALL");
+#ifdef __sh__
+        closeDevice();
+#endif
+printf("CVFD::Clear<\n");
 }
 
 void CVFD::ShowIcon(vfd_icon icon, bool show)
 {
 //printf("CVFD::ShowIcon %s %x\n", show ? "show" : "hide", (int) icon);
 #ifdef __sh__
-        fd = openDevice();
-#endif
+        openDevice();
+
+        struct vfd_ioctl_data data;
+
+        data.data[0] = icon;
+	data.data[4] = show ? 1 : 0;
+	int ret = ioctl(fd, IOC_VFD_SET_ICON, &data);
+
+        closeDevice();
+#else
 	int ret = ioctl(fd, show ? IOC_VFD_SET_ICON : IOC_VFD_CLEAR_ICON, icon);
 	if(ret < 0)
 		perror(show ? "IOC_VFD_SET_ICON" : "IOC_VFD_CLEAR_ICON");
-#ifdef __sh__
-        closeDevice(fd);
 #endif
 }
 
@@ -598,7 +635,8 @@ void CVFD::ShowText(char * str)
 	int len = strlen(str);
 	int i, ret;
 
-printf("CVFD::ShowText: [%s]\n", str);
+        printf("CVFD::ShowText: [%s]\n", str);
+	
 	for(i = len-1; i > 0; i--) {
 		if(str[i] == ' ')
 			str[i] = 0;
@@ -607,21 +645,35 @@ printf("CVFD::ShowText: [%s]\n", str);
 	}
 
 	if(!strcmp(str, text) || len > 255)
+	{
+	        printf("CVFD::ShowText < %s - %s\n", str, text);
 		return;
-
+        }
+	
 	strcpy(text, str);
 	
 //printf("****************************** CVFD::ShowText: %s\n", str);
 	//FIXME !! 
 #ifdef __sh__
-        fd = openDevice();
+        openDevice();
+	
+	if (fd < 0)
+	   printf("opening vfd failes\n");
+	   
 	ret = write(fd , str, len>16?16:len);
-        closeDevice(fd);
+
+	if(ret < 0)
+		perror("write to vfd failed");
+
+        closeDevice();
+
 #else
 	ret = ioctl(fd, IOC_VFD_SET_TEXT, len ? str : NULL);
-#endif
+
 	if(ret < 0)
 		perror("IOC_VFD_SET_TEXT");
+#endif
+printf("CVFD::ShowText<\n");
 }
 
 #ifdef VFD_UPDATE

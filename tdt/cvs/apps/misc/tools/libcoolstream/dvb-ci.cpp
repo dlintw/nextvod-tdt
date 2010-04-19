@@ -99,7 +99,8 @@ void cDvbCi::CI_EnterMenu(unsigned char bSlotIndex)
 	
         for(it = slot_data.begin(); it != slot_data.end(); ++it)
         {
-	    if (strstr((*it)->name, "unknown module") != NULL)
+	    if ((strstr((*it)->name, "unknown module") != NULL) &&
+	        ((*it)->slot == bSlotIndex))
 	    {
 	       //the module has no real name, this is the matter if something while initializing went wrong
 	       //so let this take as a reset action for the module so we do not need to add a reset
@@ -593,34 +594,48 @@ void cDvbCi::slot_pollthread(void *c)
                        } else
 	               if (slot->camIsReady == true)
 		       {
-		          printf("cam status changed ->cam now _not_ present\n");
- 
-	 	          eDVBCISession::deleteSessions(slot);
+	                  ca_slot_info_t info;
+	   	           
+                          /* Dagobert: in this case let us ask if we the module
+			   * is really removed. on start-up of neutrino it happens 
+			   * that the status changed is reported twice. this leads 
+			   * to a misinterpreted state
+			   */
+			  if (ioctl(slot->fd, CA_GET_SLOT_INFO, &info) < 0)
+			     printf("IOCTL CA_GET_SLOT_INFO failed for slot %d\n", slot->slot);
+       
+	   	          if ((!info.flags & CA_CI_MODULE_READY))
+			  {
 
-		          slot->mmiSession = NULL;
-		          slot->hasMMIManager = false;
-		          slot->hasCAManager = false;
-		          slot->hasDateTime = false;
-		          slot->hasAppManager = false;
+		             printf("cam status changed ->cam now _not_ present\n");
 
-	                  slot->mmiOpened = false;
+	 	             eDVBCISession::deleteSessions(slot);
 
-	                  slot->init = false;
+		             slot->mmiSession = NULL;
+		             slot->hasMMIManager = false;
+		             slot->hasCAManager = false;
+		             slot->hasDateTime = false;
+		             slot->hasAppManager = false;
 
-        	          sprintf(slot->name, "unknown module %d", slot->slot);
-		          
-			  slot->status = eStatusNone;
+	                     slot->mmiOpened = false;
 
-                          if (g_RCInput)
-                             g_RCInput->postMsg(NeutrinoMessages::EVT_CI_REMOVED, 0);
+	                     slot->init = false;
 
-	                  while(slot->sendqueue.size())
-	                  {
-		             delete [] slot->sendqueue.top().data;
-		             slot->sendqueue.pop();
-	                  }
+        	             sprintf(slot->name, "unknown module %d", slot->slot);
 
-		          slot->camIsReady = false;
+			     slot->status = eStatusNone;
+
+                             if (g_RCInput)
+                        	g_RCInput->postMsg(NeutrinoMessages::EVT_CI_REMOVED, 0);
+
+	                     while(slot->sendqueue.size())
+	                     {
+		        	delete [] slot->sendqueue.top().data;
+		        	slot->sendqueue.pop();
+	                     }
+
+		             slot->camIsReady = false;
+                          }
 		          usleep(100000);		
                        }
 		    }

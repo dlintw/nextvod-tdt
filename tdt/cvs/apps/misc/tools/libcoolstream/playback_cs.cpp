@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "playback_cs.h"
 
 static const char * FILENAME = "playback_cs.cpp";
-
 
 //
 void cPlayback::Attach(void)
@@ -36,7 +37,7 @@ void cPlayback::DMNotify(int Event, void *pTsBuf, void *Tag)
 //Used by Fileplay
 bool cPlayback::Open(playmode_t PlayMode)
 {
-	char *aPLAYMODE[] = {
+	const char *aPLAYMODE[] = {
 		"PLAYMODE_TS",
 		"PLAYMODE_FILE"
 	};
@@ -68,8 +69,8 @@ bool cPlayback::Open(playmode_t PlayMode)
 void cPlayback::Close(void)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
-        
-//Dagobert: movieplayer does not call stop, it calls close ;)	
+
+//Dagobert: movieplayer does not call stop, it calls close ;)
 	Stop();
 
 }
@@ -79,7 +80,7 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 {
 	bool ret = false;
 	
-	printf("%s:%s - filename=%s vpid=%u vtype=%d apid=%u ac3=%d\n", 
+	printf("%s:%s - filename=%s vpid=%u vtype=%d apid=%u ac3=%d\n",
 		FILENAME, __FUNCTION__, filename, vpid, vtype, apid, ac3);
 
 	//create playback path
@@ -107,13 +108,12 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 				int i = 0;
 				for (i = 0; TrackList[i] != NULL; i+=2) {
 					printf("\t%s - %s\n", TrackList[i], TrackList[i+1]);
-
 					free(TrackList[i]);
 					free(TrackList[i+1]);
 				}
 				free(TrackList);
 			}
-        	}
+		}
 
 		//SUB
 		if(player && player->manager && player->manager->subtitle) {
@@ -132,7 +132,7 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 		}
 
 		if(player && player->output && player->playback) {
-        		player->output->Command(player, OUTPUT_OPEN, NULL);
+			player->output->Command(player, OUTPUT_OPEN, NULL);
 			
 			if ( player->playback->Command(player, PLAYBACK_PLAY, NULL) == 0 ) // playback.c uses "int = 0" for "true"
 				ret = true;
@@ -197,7 +197,7 @@ bool cPlayback::SetSpeed(int speed)
 		int result = 0;
 		int ratio=1;
 		switch(speed) {
-			case 2: 
+			case 2:
 				ratio = 2;
 				break;
 			case 3:
@@ -219,7 +219,7 @@ bool cPlayback::SetSpeed(int speed)
 				ratio = 384;
 				break;
 		}
-		
+
 		if(speed > 1){
 			result = player->playback->Command(player, PLAYBACK_FASTFORWARD, (void*)&ratio);
 		}else if(speed == 0 || speed == -1){
@@ -252,7 +252,7 @@ bool cPlayback::GetPosition(int &position, int &duration)
 
 		// this is stupid, neutrino is realy realy stupid!
 		return false;
-	} 
+	}
 */
 
 	unsigned long long int vpts = 0;
@@ -344,9 +344,9 @@ void cPlayback::FindAllPids(uint16_t *apids, unsigned short *ac3flags, uint16_t 
 			free(TrackList);
 			*numpida=j;
 		}
-		}
+	}
 }
- 
+
 //
 cPlayback::cPlayback(int num)
 {
@@ -355,7 +355,7 @@ cPlayback::cPlayback(int num)
 }
 
 cPlayback::~cPlayback()
-{ 
+{
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 }
 
@@ -376,4 +376,3 @@ int cPlayback::GetCurrPlaybackSpeed(void) const
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	return nPlaybackSpeed;
 }
-

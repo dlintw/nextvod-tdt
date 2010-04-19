@@ -197,7 +197,11 @@ static EMBX_MUTEX                 _mailboxSpinlockLock;
 #define IRQ_HANDLED 1
 #define IRQ_NONE 0
 #endif
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20)
 static int interruptDispatcher(int irq, void *param, struct pt_regs *regs)
+#else
+static irqreturn_t interruptDispatcher(int irq, void *param)
+#endif
 #elif defined __OS21__
 #define IRQ_HANDLED OS21_SUCCESS
 #define IRQ_NONE OS21_FAILURE

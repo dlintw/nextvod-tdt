@@ -1,4 +1,6 @@
 /* DVB CI CA Manager */
+#include <stdio.h>
+#include <stdint.h>
 
 #include "dvbci_camgr.h"
 

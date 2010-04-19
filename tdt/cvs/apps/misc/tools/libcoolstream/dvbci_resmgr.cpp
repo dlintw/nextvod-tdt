@@ -1,4 +1,5 @@
 /* DVB CI Resource Manager */
+#include <stdio.h>
 
 #include "dvbci_resmgr.h"
 

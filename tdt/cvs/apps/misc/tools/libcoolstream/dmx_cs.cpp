@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
@@ -19,7 +20,7 @@ cDemux *pcrDemux = NULL;
 
 //EVIL END
 
-static char * aDMXCHANNELTYPE[] = {
+static const char * aDMXCHANNELTYPE[] = {
 	"",
    "DMX_VIDEO_CHANNEL",
    "DMX_AUDIO_CHANNEL",
@@ -225,6 +226,10 @@ bool cDemux::pesFilter(const unsigned short Pid)
 			pes.output   = DMX_OUT_TAP;
 			pes.pes_type = DMX_PES_OTHER;
 			break;
+		case DMX_TP_CHANNEL:
+			pes.output   = DMX_OUT_TS_TAP;
+			pes.pes_type = DMX_PES_OTHER;
+			break;
 		default:
 			printf("[%s] %s # HELP # unknown pesFilter type %s\n", FILENAME, __FUNCTION__, aDMXCHANNELTYPE[type]);
 			return false;
@@ -232,11 +237,11 @@ bool cDemux::pesFilter(const unsigned short Pid)
 
 	if (ioctl(privateData->m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
 	{
-		printf("failed (%m)\n");
+		printf("%s:%s failed\n", FILENAME, __FUNCTION__);
 		return false;
 	}
 
-	printf("[%s] %s ok\n", FILENAME, __FUNCTION__);
+	printf("%s:%s ok\n", FILENAME, __FUNCTION__);
 
 	return true;
 }
@@ -275,9 +280,10 @@ void cDemux::addPid(unsigned short Pid)
 	
 	/*
 	DEMUX_ADD_PID impelemtation ?
+	not supported - only used in driver/streamts.cpp
 	*/
 	
-	pid = Pid;
+	//pid = Pid;
 }
 
 void cDemux::getSTC(int64_t * STC)

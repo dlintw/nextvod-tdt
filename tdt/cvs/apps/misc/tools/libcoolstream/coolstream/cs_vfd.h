@@ -51,6 +51,15 @@ typedef enum
     VFD_FLAG_SCROLL_SIO	 = 0x04		/* start/stop scrolling with empty screen (scroll in/out) */
 } vfd_flag;
 
+#ifdef __sh__
+
+#define IOC_VFD_SET_BRIGHT	0xc0425a03
+#define IOC_VFD_CLEAR_ALL	0xc0425a05 /* ??? */
+#define IOC_VFD_SET_TEXT	0xc0425a00
+#define IOC_VFD_SET_ICON	0xc0425a0a
+
+#else
+
 #define IOC_VFD_SET_BRIGHT	_IOW(0xDE,  1, unsigned char)	/* set the display brighness in 16 steps between 0 to 15 */
 #define IOC_VFD_CLEAR_ALL	_IOW(0xDE,  2, unsigned int)	/* clear the entire display (both text and icons) */
 #define IOC_VFD_SET_TEXT	_IOW(0xDE,  3, char*)		/* set a text to be displayed on the display. If arg == NULL, the text is cleared */
@@ -58,5 +67,7 @@ typedef enum
 #define IOC_VFD_CLEAR_ICON	_IOW(0xDE,  5, vfd_icon)	/* switch the given icon off */
 #define IOC_VFD_SET_OUTPUT	_IOW(0xDE,  6, unsigned char)	/* switch the given output on (supported by the controller, but not used in the hardware) */
 #define IOC_VFD_CLEAR_OUTPUT	_IOW(0xDE,  7, unsigned char)	/* switch the given output off (supported by the controller, but not used in the hardware) */
+
+#endif
 
 #endif /* __CS_VFD__ */

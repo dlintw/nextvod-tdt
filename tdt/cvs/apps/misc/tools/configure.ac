@@ -19,6 +19,7 @@ showiframe/Makefile
 stfbcontrol/Makefile
 streamproxy/Makefile
 ustslave/Makefile
+ustslave_stm23/Makefile
 tffpctl/Makefile
 tfd2mtd/Makefile
 gitVCInfo/Makefile

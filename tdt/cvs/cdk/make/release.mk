@@ -87,10 +87,25 @@ release_ufs922:
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ufs922_fan/fan_ctrl.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/bin/evremote
 	rm -f $(prefix)/release/bin/gotosleep
 
+release_ufs912:
+	echo "ufs912" > $(prefix)/release/etc/hostname 
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/micom/micom.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf 
+	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release/boot/audio.elf
+
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release/bin/evremote
+	rm -f $(prefix)/release/bin/gotosleep
 
 release_fortis_hdbox:
 	echo "fortis" > $(prefix)/release/etc/hostname 
@@ -98,10 +113,23 @@ release_fortis_hdbox:
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/bin/evremote
 
+release_octagon1008:
+#todo/fixme ->I have never tested this!
+	echo "octagon1008" > $(prefix)/release_neutrino/etc/hostname 
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/avl2108.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/nuvoton/nuvoton.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
+
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release_neutrino/bin/evremote
 
 release_ufs910:
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button/button.ko $(prefix)/release/lib/modules/
@@ -114,6 +142,8 @@ release_ufs910:
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	mv $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 
@@ -130,6 +160,8 @@ release_hl101: release_common_utils
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 
@@ -146,6 +178,8 @@ release_vip2: release_common_utils
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 
@@ -160,6 +194,8 @@ release_hs5101:
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 
 release_tf7700: release_common_utils
@@ -177,6 +213,8 @@ release_tf7700: release_common_utils
 #	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
 	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/
 
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/bin/gotosleep
 	rm -f $(prefix)/release/etc/network/interfaces
@@ -188,14 +226,14 @@ release_tf7700: release_common_utils
 # IMPORTANT: it is assumed that only one variable is set. Otherwise the target name won't be resolved.
 #
 $(DEPDIR)/min-release $(DEPDIR)/std-release $(DEPDIR)/max-release $(DEPDIR)/ipk-release $(DEPDIR)/release: \
-$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
+$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS912)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
 	touch $@
 
 
 release-clean:
 	rm -f $(DEPDIR)/release
 	rm -f $(DEPDIR)/release_base
-	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
+	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS912)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
 	rm -f $(DEPDIR)/release_common_utils
 	rm -f $(DEPDIR)/release_cube_common
 
@@ -284,7 +322,7 @@ release_base:
 	cp $(targetprefix)/etc/tuxbox/tuxtxt2.conf $(prefix)/release/etc/tuxbox/ && \
 	echo "576i50" > $(prefix)/release/etc/videomode && \
 	cp -R $(targetprefix)/etc/fonts/* $(prefix)/release/etc/fonts/ && \
-	cp $(buildprefix)/root/release/rcS$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(HOMECAST5101),_$(HOMECAST5101)) $(prefix)/release/etc/init.d/rcS && \
+	cp $(buildprefix)/root/release/rcS$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS912),_$(UFS912))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(HOMECAST5101),_$(HOMECAST5101)) $(prefix)/release/etc/init.d/rcS && \
 	chmod 755 $(prefix)/release/etc/init.d/rcS && \
 	cp $(buildprefix)/root/release/mountvirtfs $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/mme_check $(prefix)/release/etc/init.d/ && \
@@ -300,7 +338,10 @@ release_base:
 	rm -f $(prefix)/release/lib/*.la && \
 	find $(prefix)/release/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
 if !STM22
-	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/etc/init.d/rcS
+	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP2),_$(VIP2))$(if $(UFS912),_$(UFS912))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/etc/init.d/rcS
+	rm -f $(prefix)/release/bin/{stslave,ustslave}
+else
+	rm -f $(prefix)/release/bin/ustslave_stm23
 endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/avs/avs.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/boxtype/boxtype.ko $(prefix)/release/lib/modules/
@@ -329,6 +370,7 @@ if !ENABLE_VIP2
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release/lib/modules/
 endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release/lib/modules/
+#	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/lzo-kmod/lzo1x_compress.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/lzo-kmod/lzo1x_decompress.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/ramzswap.ko $(prefix)/release/lib/modules/

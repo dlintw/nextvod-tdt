@@ -13,39 +13,50 @@ ifeq ($(KERNELRELEASE),)
 DRIVER_TOPDIR:=$(shell pwd)
 include $(DRIVER_TOPDIR)/kernel.make
 else
-CFLAGS+=-D__TDT__
+CCFLAGSY+=-D__TDT__
+ifdef OCTAGON1008
+CCFLAGSY+=-DOCTAGON1008
+endif
 ifdef UFS910
-CFLAGS+=-DUFS910
+CCFLAGSY += -DUFS910
 endif
 ifdef CUBEREVO
-CFLAGS+=-DCUBEREVO
+CCFLAGSY += -DCUBEREVO
 endif
 ifdef CUBEREVO_MINI
-CFLAGS+=-DCUBEREVO_MINI
+CCFLAGSY += -DCUBEREVO_MINI
 endif
 ifdef CUBEREVO_MINI2
-CFLAGS+=-DCUBEREVO_MINI2
+CCFLAGSY += -DCUBEREVO_MINI2
 endif
 ifdef CUBEREVO_250HD
-CFLAGS+=-DCUBEREVO_250HD
+CCFLAGSY += -DCUBEREVO_250HD
 endif
 ifdef TF7700
-CFLAGS+=-DTF7700
+CCFLAGSY += -DTF7700
 endif
 ifdef HL101
-CFLAGS+=-DHL101
+CCFLAGSY += -DHL101
 endif
 ifdef VIP2
-CFLAGS+=-DVIP2
+CCFLAGSY += -DVIP2
 endif
 ifdef UFS922
-CFLAGS+=-DUFS922
+CCFLAGSY+=-DUFS922
+endif
+ifdef UFS912
+CCFLAGSY+=-DUFS912
 endif
 ifdef FORTIS_HDBOX
-CFLAGS+=-DFORTIS_HDBOX
+CCFLAGSY += -DFORTIS_HDBOX
 endif
 ifdef HOMECAST5101
-CFLAGS+=-DHOMECAST5101
+CCFLAGSY += -DHOMECAST5101
+endif
+ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
+ccflags-y += $(CCFLAGSY)
+else
+CFLAGS += $(CCFLAGSY)
 endif
 obj-y	:= avs/ 
 obj-y	+= multicom/
@@ -56,7 +67,9 @@ obj-y	+= simu_button/
 obj-y	+= e2_proc/
 obj-y	+= frontends/
 obj-y	+= pti/
+#obj-y	+= pti_np/
 obj-y	+= compcache/
+#obj-y	+= proc_register/
 ifndef VIP2
 obj-y	+= cic/
 endif
@@ -90,4 +103,11 @@ obj-y   += proton/
 endif
 ifdef VIP2
 obj-y   += aotom/
+endif
+ifdef UFS912
+obj-y	+= micom/
+#obj-y	+= cec/
+endif
+ifdef OCTAGON1008
+obj-y	+= nuvoton/
 endif

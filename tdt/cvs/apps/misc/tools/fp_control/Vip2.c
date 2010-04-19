@@ -552,4 +552,5 @@ Model_t VIP2_model = {
 	setLight,
         Exit,
 	NULL,
+	NULL,
 };

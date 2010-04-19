@@ -1,5 +1,9 @@
 /* DVB CI Transport Connection */
 
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+
 #include "dvbci_session.h"
 #include "dvbci_resmgr.h"
 #include "dvbci_appmgr.h"
@@ -410,7 +414,7 @@ void eDVBCISession::receiveData(tSlot *slot, const unsigned char *ptr, size_t le
 				}
 			}
 #ifdef __sh__
-			printf("1. Call receivedAPDU tag = 0x%2x, len = %d\n", tag, alen);
+			printf("1. Call receivedAPDU tag = 0x%2x, len = %d\n", (int) tag, alen);
 #endif
 			if (session->receivedAPDU(tag, pkt, alen))
 				session->action = 1;

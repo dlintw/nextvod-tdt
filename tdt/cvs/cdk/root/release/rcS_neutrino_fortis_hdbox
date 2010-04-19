@@ -62,8 +62,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
-
- #  showiframe -p /boot/bootlogo.mvi &
+   showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
 
    echo "init frontpanel"
@@ -85,7 +84,16 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/sbin/inetd
    #timefix e2
    date -s "121220001970"
-
+   # custom script
+   if [ -e /var/etc/rcS_local ]; then
+	/var/etc/rcS_local
+   fi
+   # downmix workaround
+    if [ -e  /var/etc/.downmix ]; then
+	echo downmix > /proc/stb/audio/ac3
+	echo downmix > /proc/stb/audio/ac3_choice
+    fi
+   
    stfbcontrol a 255
 
    echo "Load Neutrino" > /dev/vfd
@@ -93,25 +101,34 @@ if [ ! -e /var/etc/.firstboot ]; then
 
 until false
 do
+ killall -9 showiframe
  echo "starting neutrino ->"
  /usr/local/bin/neutrino
  rtv=$?
  echo "neutrino ended <- RTV: " $rtv
  case "$rtv" in
-     0|2) echo "Box restart"
-	reboot
-	sleep 5;;
+     0) echo "0"
+        echo "Box is going to sleep"
+	umount -a
+	gotosleep hdbox
+	;;
      1) echo "1"
 	echo "SHUTDOWN"
-	fp_control -e
-	sleep 5;;
+        case "$var" in
+          0) fp_control -e
+    	     umount -a;;
+    	1|3) fp_control -e please check if this works for ufs910 14W
+             echo "0" > /proc/progress
+        esac
+        ;;           
+     2) echo "Box is rebooting"
+        umount -a
+        reboot -f
+        ;;
      *) echo "*"
         echo "Unexpected error"
         reboot;;
+        
  esac
- done
+done
 fi
-#never reached
-echo "REBOOT HDBOX" > /dev/vfd
-echo "REBOOT HDBOX"
-reboot

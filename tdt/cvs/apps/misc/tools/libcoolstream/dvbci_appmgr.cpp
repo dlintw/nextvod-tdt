@@ -1,4 +1,6 @@
 /* DVB CI Application Manager */
+#include <stdio.h>
+#include <string.h>
 
 #include "dvbci_appmgr.h"
 

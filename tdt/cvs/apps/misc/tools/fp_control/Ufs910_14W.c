@@ -668,4 +668,5 @@ Model_t Ufs910_14W_model = {
 	setLight,
         Exit,
 	NULL,
+	NULL,
 };

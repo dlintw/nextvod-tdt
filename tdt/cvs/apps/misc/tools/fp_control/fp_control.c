@@ -294,7 +294,8 @@ void processCommand (Context_t * context, int argc, char* argv[])
 
 		   brightness = atoi(argv[i + 1]);
 
-	           /* set display icon */
+		   
+	           /* set display brightness */
                    if (((Model_t*)context->m)->SetBrightness)
                        ((Model_t*)context->m)->SetBrightness(context, brightness);
 
@@ -319,7 +320,7 @@ void processCommand (Context_t * context, int argc, char* argv[])
 
 		   on = atoi(argv[i + 1]);
 
-	           /* set display icon */
+	           /* set brightness on/off */
                    if (((Model_t*)context->m)->SetLight)
                        ((Model_t*)context->m)->SetLight(context, on);
 
@@ -331,6 +332,21 @@ void processCommand (Context_t * context, int argc, char* argv[])
 	           /* clear the display */
                    if (((Model_t*)context->m)->Clear)
                        ((Model_t*)context->m)->Clear(context);
+	    } else
+            if ((strcmp(argv[i], "-led") == 0) || (strcmp(argv[i], "--setLedBrightness") == 0))
+            {
+	        if (i + 1 <= argc)
+		{
+		   int brightness;
+		   
+		   brightness = atoi(argv[i + 1]);
+		   
+	           /* set led brightness */
+                   if (((Model_t*)context->m)->SetLedBrightness)
+                       ((Model_t*)context->m)->SetLedBrightness(context, brightness);
+		    
+	        }
+		i += 1;    
 	    } else
 	    {
                 usage(context, argv[0]);
@@ -404,10 +420,12 @@ int getModel()
             vBoxType = Vip2;
         else if(!strncasecmp(vName,"hdbox", 5))
             vBoxType = HdBox;
-	else if(!strncasecmp(vName,"octagon1008", 11))
-            vBoxType = HdBox;
         else if(!strncasecmp(vName,"hs5101", 6))
             vBoxType = Hs5101;
+        else if(!strncasecmp(vName,"octagon1008", 11))
+            vBoxType = HdBox;
+        else if(!strncasecmp(vName,"ufs912", 6))
+            vBoxType = Ufs912;
         else
             vBoxType = Unknown;
     }

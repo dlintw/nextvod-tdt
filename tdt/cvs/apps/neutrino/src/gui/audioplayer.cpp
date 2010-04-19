@@ -186,7 +186,7 @@ CAudioPlayerGui::CAudioPlayerGui(bool inetmode)
 {
 	m_frameBuffer = CFrameBuffer::getInstance();
 	m_visible = false;
-	m_inetmode = false;  //inetmode;//FIXME
+	m_inetmode = inetmode;
 
 	Init();
 }

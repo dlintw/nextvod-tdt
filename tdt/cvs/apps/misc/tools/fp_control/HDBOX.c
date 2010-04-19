@@ -54,6 +54,19 @@ typedef struct
 
 /* ******************* helper/misc functions ****************** */
 
+static void setMode(int fd)
+{
+   struct nuvoton_ioctl_data nuvoton;
+   
+   nuvoton.u.mode.compat = 1;
+   
+   if (ioctl(fd, VFDSETMODE, &nuvoton) < 0)
+   {
+      perror("setMode: ");
+   }
+   
+}
+
 unsigned long getNuvotonTime(char* nuvotonTimeString)
 {
 	unsigned int 	mjd 	= ((nuvotonTimeString[0] & 0xFF) * 256) + (nuvotonTimeString[1] & 0xFF);
@@ -435,6 +448,8 @@ static int setLed(Context_t* context, int which, int on)
    vData.u.led.led_nr = which;
    vData.u.led.on = on;
    
+   setMode(context->fd);
+
    if (ioctl(context->fd, VFDSETLED, &vData) < 0)
    {
       perror("setled: ");
@@ -450,6 +465,8 @@ static int setIcon (Context_t* context, int which, int on)
    vData.u.icon.icon_nr = which;
    vData.u.icon.on = on;
    
+   setMode(context->fd);
+
    if (ioctl(context->fd, VFDICONDISPLAYONOFF, &vData) < 0)
    {
       perror("seticon: ");
@@ -467,6 +484,8 @@ static int setBrightness(Context_t* context, int brightness)
 
    vData.u.brightness.level = brightness;
    
+   setMode(context->fd);
+
    if (ioctl(context->fd, VFDBRIGHTNESS, &vData) < 0)
    {
       perror("setbrightness: ");
@@ -517,7 +536,7 @@ static int Clear(Context_t* context)
 
    for (i = 1; i <= 16 ; i++)
       setIcon(context, i, 0);
-      
+
    return 0;
 }
 
@@ -542,5 +561,6 @@ Model_t HDBOX_model = {
 	getWakeupReason,
 	setLight,
         Exit,
+        NULL,
 	NULL,
 };

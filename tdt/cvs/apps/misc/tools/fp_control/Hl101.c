@@ -552,4 +552,5 @@ Model_t HL101_model = {
 	setLight,
         Exit,
 	NULL,
+	NULL,
 };

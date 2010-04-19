@@ -2,6 +2,9 @@
 
 MODDIR=/lib/modules
 
+insmod $MODDIR/vfd.ko       
+echo "    Welcome     " > /dev/vfd
+
 loadMME() {
    # mme bug workaround
    /bin/dd if=/dev/zero of=/dev/st231-0 bs=1024 count=4096
@@ -14,7 +17,6 @@ loadMME() {
 }
 
 if [ -e /var/etc/.firstboot ]; then
-   insmod $MODDIR/vfd.ko
    echo "WAIT 1 min" > /dev/vfd
    echo "WAIT 1 min"
    rm /var/etc/.firstboot
@@ -36,6 +38,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/login
 
+   #used by fp_control! otherwise crash
+   insmod $MODDIR/boxtype.ko
 
    echo "LOADING MODULES"   
    fp_control -c
@@ -57,8 +61,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo $(cat /proc/interrupts | grep mailbox)
    rm /etc/mme.tmp
 
-   insmod $MODDIR/vfd.ko       
-   echo "    Welcome     " > /dev/vfd
    echo "MME LOADED"
 
    echo "init AVS"
@@ -76,7 +78,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
    insmod $MODDIR/cx24116.ko
    insmod $MODDIR/cimax.ko
-   insmod $MODDIR/pti.ko
+   insmod $MODDIR/pti.ko camRouting=1
    insmod $MODDIR/stmdvb.ko
    insmod $MODDIR/stm_monitor.ko
    insmod $MODDIR/player2.ko
@@ -92,7 +94,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/bin/lircd
 
    echo "init frontpanel"
-   insmod $MODDIR/boxtype.ko
    insmod $MODDIR/simu_button.ko
    /bin/evremote2 &
    var=`cat /proc/boxtype`
