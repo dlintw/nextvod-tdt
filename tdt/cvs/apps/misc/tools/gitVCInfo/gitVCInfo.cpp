@@ -1,5 +1,43 @@
 /*
 	Thanks to rhabarber1848 tuxbox dbox2 cvs!!
+
+
+	This Application shows "typed" Image Informations (known from dbox2) in a text console over the framebuffer (on television)
+	CONFIG_FRAMEBUFFER_CONSOLE have to be enabled!!
+
+	It will look like this:
+
+
+                    ---------- Image Information ----------
+
+                    Image Version   : 5.1.5
+                    Image Type      : Release
+
+                    Creation Date   : 02.04.2010
+                    Creation Time   : 8:18
+                    Creator         : git-developer
+                    Image Name      : Neutrino for Duckbox -jffs2/ext2
+                    Homepage        : http://gitorious.org/open-duckbox-project-sh4
+
+                    ---------- Network Settings -----------
+
+                    Network State   : disabled
+                    DHCP State      : -- unknown --
+                    Root-Server     : intern
+                    IP Address      : 192.168.1.8
+                    Subnet Mask     : 255.255.255.0
+                    Broadcast       : 192.168.1.255
+                    Gateway         : 192.168.1.1
+                    Nameserver      : 192.168.178.1
+
+                    Linux Version 2.6.17.14_stm22_0041, gcc Version
+                    Built with the computer smog@redhat.desk
+
+                                Loading Neutrino ....
+
+
+	For "typing simulation" (delay between characters) you have to start gitVCInfo with -d!
+	smogm 2010
 */
 
 #include <stdio.h>
@@ -8,16 +46,23 @@
 #include <stdlib.h>
 #include <iostream>
 
-//TODO: find a way to put console into framebuffer...
-#define CONSOLE "/dev/vcs0" 
+//!!you have to set CONFIG_FRAMEBUFFER_CONSOLE in kernel!! thx bpanther
+#define CONSOLE "/dev/tty1"
+//where to find the version information (/etc/.version??):
 #define VERSION_FILE "/.version"
+//more information about your box:
 #define VERSION_FILE2 "/proc/version"
+//network informations:
 #define INTERFACES_FILE "/etc/network/interfaces"
 #define NAMENSSERVER_FILE "/etc/resolv.conf"
+//what is mounted into you filesystem, and how:
 #define MOUNTS_FILE "/proc/mounts"
+
+
 #define BUFFERSIZE 255
 #define BIGBUFFERSIZE 2000
 #define MAXOSD 2
+#define CHARDELAY 20000
 
 enum {VERSION, TYPE, DATE, TIME, CREATOR, NAME, WWW, NETW, DHCP, ROOT, IP, NETM, BROAD, GATEWAY, DNS, HEADLINE,
 		UNKNOWN, ENABLED, DISABLED, INTERN, LINUX, GCC, UPC, LOAD };
@@ -288,8 +333,9 @@ int main (int argc, char **argv)
 	{
 		for (unsigned int i = 0; i < strlen(message); i++) {
 			fputc(message[i], fb);
-			std::cout << message[i];
+			fputc(message[i], stdout);
 			fflush(fb);
+			fflush(stdout);
 		}
 	}
 	else
@@ -301,17 +347,11 @@ int main (int argc, char **argv)
 			fputc(message[i], stdout);
 			fflush(fb);
 			fflush(stdout);
-			usleep(20000);
+			usleep(CHARDELAY);
 		}
-		/*for (unsigned int i = 0; i < strlen(message2); i++) {
-			fputc(message2[i], fb);
-			fputc(message2[i], stdout);
-			fflush(fb);
-			fflush(stdout);
-			usleep(20000);
-		}*/
 	}
+	fputc('\n', fb);
+	fputc('\n', stdout);
 	fclose(fb);
-	//exit(0);
 	return 0;
 }
