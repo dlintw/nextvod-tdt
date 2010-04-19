@@ -889,24 +889,20 @@ macrofiles="/usr/lib/rpm/macros:$configprefix/rpm/targets/sh4-linux:$configprefi
 RPMMAJOR=`rpm --version | awk '{print $NF}' | cut -d '.' -f 1`
 RPMMINOR=`rpm --version | awk '{print $NF}' | cut -d '.' -f 2`
 
-if test ${RPMMAJOR} -lt 4 -o ${RPMMINOR} -lt 7 ; then
-  #IF YOU ARE USING AN OLD DISTRO
+if test ${RPMMAJOR} -lt 4 -o ${RPMMAJOR} -eq 4 -a ${RPMMINOR} -lt 7 ; then
+  # RPM < 4.7
   echo "macrofiles: ${macrofiles}" > localrc
   DRPMBUILD="--rcfile /usr/lib/rpm/rpmrc:localrc"
-else
-  #NEW DISTROS
-  DRPMBUILD="--macros ${macrofiles}"
-fi
-
-if test ${RPMMAJOR} -lt 4 -o ${RPMMINOR} -lt 7 ; then
   DRPM=${DRPMBUILD}
 else
+  # RPM > 4.7
+  DRPMBUILD="--macros ${macrofiles}"
   case `lsb_release -s -i` in
     Ubuntu* | Debian* ) DRPM="--force-debian ${DRPMBUILD}" ;;
     *) DRPM=${DRPMBUILD} ;;
   esac
 fi
-	
+
 AC_SUBST(DRPM)
 AC_SUBST(DRPMBUILD)
 
