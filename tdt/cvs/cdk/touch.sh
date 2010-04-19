@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mkdir -p root/boot;
-touch root/boot/{video_7109,video_7100,audio}.elf
+touch root/boot/{video_7109,video_7100,video_7111,audio,audio_7111}.elf
 
 CDKROOT=../../tufsbox/cdkroot
 
