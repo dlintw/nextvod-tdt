@@ -599,4 +599,5 @@ Model_t Hs5101_model = {
 	setLight,
         Exit,
 	NULL,
+	NULL,
 };

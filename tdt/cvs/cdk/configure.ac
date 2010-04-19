@@ -223,6 +223,14 @@ AC_ARG_ENABLE(fortis_hdbox,
 AM_CONDITIONAL(ENABLE_FORTIS_HDBOX,test "$enable_fortis_hdbox" = "yes")
 AC_SUBST(FORTIS_HDBOX)
 
+AC_ARG_ENABLE(octagon1008,
+	AS_HELP_STRING(--enable-octagon1008,    enable Octagon 1008 stuff),
+	[case "${enableval}" in
+		yes) OCTAGON1008=octagon1008 ;;
+	esac],[enable_octagon1008=no])
+AM_CONDITIONAL(ENABLE_OCTAGON1008,test "$enable_octagon1008" = "yes")
+AC_SUBST(OCTAGON1008)
+
 AC_ARG_ENABLE(tf7700,
 	AS_HELP_STRING(--enable-tf7700,    enable topfield tf7700 stuff),
 	[case "${enableval}" in
@@ -963,11 +971,13 @@ update http prefix:    $updatehttpprefix
 stock directory:       $stockdir
 ipkg build directory:  $ipkgbuilddir
 Fortis/hdbox stuff:    $enable_fortis_hdbox
+octagon1008 stuff:     $enable_octagon1008
 topfield stuff:	       $enable_tf7700
 spider-box hl101 stuff:	$enable_hl101
 edision argus vip2 stuff:	$enable_vip2
 ufs910 stuff:	       $enable_ufs910
 ufs910 flash:          $enable_flash_ufs910
+ufs912 stuff:	       $enable_ufs912
 ufs922 stuff:	       $enable_ufs922
 cuberevo stuff:	       $enable_cuberevo
 cuberevo mini stuff:   $enable_cuberevo_mini

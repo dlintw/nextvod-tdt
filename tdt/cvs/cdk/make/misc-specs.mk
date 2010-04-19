@@ -4,9 +4,10 @@ $(DEPDIR)/boot-elf:
 	cp $(buildprefix)/root/boot/audio.elf $(targetprefix)/boot
 	cp $(buildprefix)/root/boot/video_7100.elf $(targetprefix)/boot
 	cp $(buildprefix)/root/boot/video_7109.elf $(targetprefix)/boot
+	cp $(buildprefix)/root/boot/video_7111.elf $(targetprefix)/boot
+	cp $(buildprefix)/root/boot/audio_7111.elf $(targetprefix)/boot
 	$(INSTALL_DIR) $(targetprefix)/lib/firmware
-	cp $(buildprefix)/root/firmware/dvb-fe-cx24116.fw $(targetprefix)/lib/firmware/
-	cp $(buildprefix)/root/firmware/dvb-fe-cx21143.fw $(targetprefix)/lib/firmware/
+	cp $(buildprefix)/root/firmware/*.fw $(targetprefix)/lib/firmware/
 	@[ "x$*" = "x" ] && touch $@ || true
 
 if ENABLE_HL101

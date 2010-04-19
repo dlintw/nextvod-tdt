@@ -135,8 +135,10 @@ int LinuxDvbPlay(Context_t  *context, char * type) {
 				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_MPEG4P2);
  			else if(!strcmp (Encoding, "V_MPEG4/ISO/AVC") || !strcmp (Encoding, "V_MPEG2/H264"))
 				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_H264);
-            		else
-                		ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
+			else if(!strcmp (Encoding, "V_WMV"))
+				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_WMV);
+ 			else
+				ioctl( videofd, VIDEO_SET_ENCODING, (void*)VIDEO_ENCODING_AUTO);
 
 			ioctl(videofd, VIDEO_PLAY, NULL);
 			free(Encoding);
@@ -1270,6 +1272,175 @@ static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long in
     return len;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// wmv                                                                        //
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define PES_PRIVATE_DATA_FLAG                           0x80
+#define PES_PRIVATE_DATA_LENGTH                         8
+
+#define PES_LENGTH_BYTE_0                               5
+#define PES_LENGTH_BYTE_1                               4
+#define PES_FLAGS_BYTE                                  7
+#define PES_EXTENSION_DATA_PRESENT                      0x01
+#define PES_HEADER_DATA_LENGTH_BYTE                     8
+
+int MKV_InsertVideoPrivateDataHeader(unsigned char *data, int payload_size)
+{
+    MKV_BitPacker_t ld2 = {data, 0, 32};
+    int         i;
+
+    MKV_PutBits (&ld2, PES_PRIVATE_DATA_FLAG, 8);
+    MKV_PutBits (&ld2, payload_size & 0xff, 8);
+    MKV_PutBits (&ld2, (payload_size >> 8) & 0xff, 8);
+    MKV_PutBits (&ld2, (payload_size >> 16) & 0xff, 8);
+
+    for (i = 4; i < (PES_PRIVATE_DATA_LENGTH+1); i++)
+        MKV_PutBits (&ld2, 0, 8);
+
+    MKV_FlushBits (&ld2);
+
+    return PES_PRIVATE_DATA_LENGTH+1;
+
+}
+
+#define PES_MIN_HEADER_SIZE                     9
+#define WMV3_PRIVATE_DATA_LENGTH				4
+#define VC1_VIDEO_PES_START_CODE				0xfd
+static int wmvInitialHeaderRequired = 1;
+typedef struct
+{
+	unsigned char       privateData[WMV3_PRIVATE_DATA_LENGTH]; 
+	unsigned int       width;
+	unsigned int       height;
+	unsigned int       framerate
+}awmv_t;
+
+    #define METADATA_STRUCT_A_START             12
+    #define METADATA_STRUCT_B_START             24
+    #define METADATA_STRUCT_B_FRAMERATE_START   32
+    #define METADATA_STRUCT_C_START             8
+static const unsigned char  Metadata[]          = {0x00,    0x00,   0x00,   0xc5,
+                                                           0x04,    0x00,   0x00,   0x00,
+                                                           0xc0,    0x00,   0x00,   0x00,   /* Struct C set for for advanced profile*/
+                                                           0x00,    0x00,   0x00,   0x00,   /* Struct A */
+                                                           0x00,    0x00,   0x00,   0x00,
+                                                           0x0c,    0x00,   0x00,   0x00,
+                                                           0x60,    0x00,   0x00,   0x00,   /* Struct B */
+                                                           0x00,    0x00,   0x00,   0x00,
+                                                           0x00,    0x00,   0x00,   0x00};
+
+
+static int wmv(unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, awmv_t *private_data, unsigned int private_size)
+{
+	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+    //printf("\tmpf=%f\n", mpf);
+	int len = 0;
+    unsigned char  PesHeader[PES_MAX_HEADER_SIZE];
+
+	if(wmvInitialHeaderRequired)
+	{
+		unsigned char               PesPacket[PES_MIN_HEADER_SIZE+128];
+		unsigned char*              PesPtr;
+		unsigned int                MetadataLength;
+
+		//printf("Framerate: %u\n", private_data->framerate);
+        //printf("biWidth: %d\n", private_data->width);
+        //printf("biHeight: %d\n", private_data->height);
+
+		PesPtr          = &PesPacket[PES_MIN_HEADER_SIZE];
+
+		memcpy (PesPtr, Metadata, sizeof(Metadata));
+		PesPtr         += METADATA_STRUCT_C_START;
+
+		memcpy (PesPtr, private_data->privateData, WMV3_PRIVATE_DATA_LENGTH);
+		PesPtr             += WMV3_PRIVATE_DATA_LENGTH;
+
+		/* Metadata Header Struct A */
+		*PesPtr++           = (private_data->height >>  0) & 0xff;
+		*PesPtr++           = (private_data->height >>  8) & 0xff;
+		*PesPtr++           = (private_data->height >> 16) & 0xff;
+		*PesPtr++           =  private_data->height >> 24;
+		*PesPtr++           = (private_data->width  >>  0) & 0xff;
+		*PesPtr++           = (private_data->width  >>  8) & 0xff;
+		*PesPtr++           = (private_data->width  >> 16) & 0xff;
+		*PesPtr++           =  private_data->width  >> 24;
+
+		PesPtr             += 12;       /* Skip flag word and Struct B first 8 bytes */
+
+		*PesPtr++           = (private_data->framerate >>  0) & 0xff;
+		*PesPtr++           = (private_data->framerate >>  8) & 0xff;
+		*PesPtr++           = (private_data->framerate >> 16) & 0xff;
+		*PesPtr++           =  private_data->framerate >> 24;
+
+		MetadataLength      = PesPtr - &PesPacket[PES_MIN_HEADER_SIZE];
+
+		int HeaderLength        = MKV_InsertPesHeader (PesPacket, MetadataLength, VC1_VIDEO_PES_START_CODE, INVALID_PTS_VALUE, 0);
+
+					/*int i , j;
+                    printf ("%s: (%d), Data = ", __FUNCTION__, HeaderLength+MetadataLength);
+                    for(j=0; j< HeaderLength+MetadataLength;) {
+                    	for (i=0; i<16 && j < HeaderLength+MetadataLength; i++, j++)
+                        	printf ("%02x ", PesPacket[j]);
+                    	printf ("\n");
+                    }*/
+
+		len = write(videofd,PesPacket, HeaderLength+MetadataLength);
+		wmvInitialHeaderRequired = 0;
+	}
+
+//o 00 00 01 fd 27 c9 80 81 | 0e . 21 00 1b bb a1 80 b8 27 00 00 00 00 00 00
+//d 00 00 01 fd 27 c9 80 81 | 0e . 31 00 1b d2 d5 80 b8 27 00 00 00 00 00 00
+
+	if(DataLength > 0 && PLAYERData)
+    {
+        unsigned char  PesHeader[PES_MAX_HEADER_SIZE];
+        int HeaderLength = MKV_InsertPesHeader (PesHeader, DataLength, VC1_VIDEO_PES_START_CODE, Pts, 0);
+
+		{
+			unsigned int        FrameSize       = DataLength/*BufferDataLength*/;
+			unsigned int        PesLength;
+			unsigned int        PrivateHeaderLength;
+
+			PrivateHeaderLength     = MKV_InsertVideoPrivateDataHeader (&PesHeader[HeaderLength],
+						                            FrameSize);
+			/* Update PesLength */
+			PesLength               = PesHeader[PES_LENGTH_BYTE_0] + (PesHeader[PES_LENGTH_BYTE_1] << 8) + PrivateHeaderLength;
+			PesHeader[PES_LENGTH_BYTE_0]            = PesLength & 0xff;
+			PesHeader[PES_LENGTH_BYTE_1]            = (PesLength >> 8) & 0xff;
+			PesHeader[PES_HEADER_DATA_LENGTH_BYTE] += PrivateHeaderLength;
+			PesHeader[PES_FLAGS_BYTE]              |= PES_EXTENSION_DATA_PRESENT;
+
+			HeaderLength                           += PrivateHeaderLength;
+		}
+
+        unsigned char* PacketStart = malloc(DataLength + HeaderLength);
+        memcpy (PacketStart, PesHeader, HeaderLength);
+        memcpy (PacketStart + HeaderLength, PLAYERData, DataLength);
+
+		/*int j;
+        printf ("%s: (%6d | %04x) ", __FUNCTION__, DataLength+HeaderLength, DataLength+HeaderLength);
+        for(j = 0; j < HeaderLength; j++) {
+           	printf ("%02x ", PacketStart[j]);
+        }
+		printf ("  |  ");
+		for(j = 0; j < 4; j++) {
+           	printf ("%02x ", PacketStart[HeaderLength+j]);
+        }
+		printf ("\n");*/
+
+        len = write(videofd,PacketStart,DataLength+HeaderLength);
+
+        free(PacketStart);
+    }
+
+    //dprintf("xvid_Write-< len=%d\n", len);
+    return len;
+}
+
+
+
+
+
 static int Write(Context_t  *context, const unsigned char *PLAYERData, const int DataLength, const unsigned long long int Pts, const unsigned char *Private, const int PrivateLength, float FrameRate, char * type) {
 
 	int ret = 0;
@@ -1304,6 +1475,8 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
 			}
  			else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC") || !strcmp (Encoding, "V_MKV/XVID"))
 				result = divx(PLAYERData, DataLength, Pts, FrameRate);
+			else if(!strcmp (Encoding, "V_WMV"))
+				result = wmv(PLAYERData, DataLength, Pts, Private, PrivateLength);
 			else {
 #ifdef DEBUG
 			  printf("unknown video codec %s\n",Encoding);
@@ -1355,12 +1528,14 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 			LinuxDvbClose(context, (char*)argument);
 			h264InitialHeaderRequired = 1;
 			wmaInitialHeaderRequired = 1;
+			wmvInitialHeaderRequired = 1;
 			sCURRENT_PTS = 0;
 			break;
 		}
 		case OUTPUT_PLAY: {	// 4
 			h264InitialHeaderRequired = 1;
 			wmaInitialHeaderRequired = 1;
+			wmvInitialHeaderRequired = 1;
 			sCURRENT_PTS = 0;
 			LinuxDvbPlay(context, (char*)argument);
 			break;
@@ -1369,6 +1544,7 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 			LinuxDvbStop(context, (char*)argument);
 			h264InitialHeaderRequired = 1;
 			wmaInitialHeaderRequired = 1;
+			wmvInitialHeaderRequired = 1;
 			sCURRENT_PTS = 0;
 			break;
 		}
@@ -1376,6 +1552,7 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 			LinuxDvbFlush(context, (char*)argument);
 			h264InitialHeaderRequired = 1;
 			wmaInitialHeaderRequired = 1;
+			wmvInitialHeaderRequired = 1;
 			sCURRENT_PTS = 0;
 			break;
 		}

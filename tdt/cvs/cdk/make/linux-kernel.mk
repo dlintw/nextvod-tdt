@@ -28,6 +28,11 @@ FORTISPATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ftdi_sio.c_stm22.patch \
 		linux-fortis_stboards_stm22.patch
 
+OCTAGON1008PATCHES_41 = $(COMMONPATCHES_41) \
+		octagon1008_setup_p0041.diff \
+		linux-fortis_hdbox_dvb_stm22.patch \
+		linux-fortis_hdbox_sound_stm22.patch
+
 UFS922PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ufs922_stasc_stm22.patch \
 		linux-ufs922_stmmac_stm22.patch \
@@ -124,6 +129,7 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 			$(if $(UFS910),$(UFS910PATCHES_41)) \
 			$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_41)) \
 			$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41)) \
+			$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_41)) \
 			$(if $(HOMECAST5101),$(HS5101PATCHES_41))
 
 ############ Patches Kernel 23 ###############
@@ -157,26 +163,55 @@ COMMONPATCHES_23 = \
 		$(if $(P0123),linux-sh4-asm_mov_0xffffff_stm23$(PATCH_STR).patch) \
 		$(STM23_DVB_PATCH)
 
+UFS912PATCHES_23 = $(COMMONPATCHES_23) \
+		ufs912_setup_stm23.patch \
+        	ufs912_sound_stm23.patch \
+		fortis_hdbox_dvb_core_stm23.patch
+
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		$(if $(P0119),linux-sh4-ufs922_stmmac_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
 
+FORTISPATCHES_23 = $(COMMONPATCHES_stm23) \
+		fdma_stm23.patch \
+		sound_stm23.diff \
+		fortis_hdbox_setup_stm23.diff \
+		fortis_hdbox_dvb_core_stm23.patch
+
+OCTAGON1008PATCHES_23 = $(COMMONPATCHES_stm23) \
+		fdma_stm23.patch \
+		sound_stm23.diff \
+		fortis_hdbox_setup_stm23.diff \
+		fortis_hdbox_dvb_core_stm23.patch
+
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		$(if $(P0119),linux-sh4-ufs922_stasc_stm23$(PATCH_STR).patch) \
 		tf7700_setup_stm23$(PATCH_STR).patch 
 
 HL101PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		$(if $(P0119),linux-sh4-hl101_setup_stm23$(PATCH_STR).patch)
 
 VIP2PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		$(if $(P0119),linux-sh4-vip2_setup_stm23$(PATCH_STR).patch)
 
 UFS910PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		linux-sh4-ufs910_setup_stm23$(PATCH_STR).patch \
 		linux-sh4-ufs910_pcmplayer_stm23.patch \
 		linux-sh4-ufs910_reboot_stm23.patch
 
 CUBEPATCHES_023 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		linux-sh4-cuberevo_patches_stm23$(PATCH_STR).patch \
 		linux-sh4-cuberevo_rtl8201_stm23$(PATCH_STR).patch \
 		linux-sh4-$(CUBEMOD)_setup_stm23$(PATCH_STR).patch
@@ -186,11 +221,13 @@ HS5101PATCHES_23 = $(UFS910PATCHES_23)
 KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(HL101),$(HL101PATCHES_23)) \
 		$(if $(VIP2),$(VIP2PATCHES_23)) \
+		$(if $(UFS912),$(UFS912PATCHES_23)) \
 		$(if $(UFS922),$(UFS922PATCHES_23)) \
 		$(if $(CUBEMOD),$(CUBEPATCHES_023)) \
 		$(if $(UFS910),$(UFS910PATCHES_23)) \
 		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_23)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_23)) \
+		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_23)) \
 		$(if $(HOMECAST5101),$(HS5101PATCHES_23))
 
 ############ Patches Kernel 23 End ###############
@@ -260,7 +297,7 @@ endif !STM22
 #
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS922)$(TF7700)$(HL101)$(VIP2)$(CUBEMOD)$(FORTIS_HDBOX)$(FLASH_UFS910)$(HOMECAST5101)
+MODNAME = $(UFS910)$(UFS912)$(UFS922)$(TF7700)$(HL101)$(VIP2)$(CUBEMOD)$(FORTIS_HDBOX)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -327,6 +364,9 @@ $(DEPDIR)/linux-kernel.do_compile: \
 	touch $@
 
 else !STM23_HAVANA
+##################################################################################
+#stlinux23
+
 $(HOST_KERNEL_RPM): \
 		$(if $(HOST_KERNEL_SPEC_PATCH),Patches/$(HOST_KERNEL_SPEC_PATCH)) \
 		Archive/$(HOST_KERNEL_SRC_RPM)
@@ -426,6 +466,7 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	echo -e "ST Linux Distribution - Binary Kernel\n \
 	CPU: sh4\n \
 	$(if $(FORTIS_HDBOX),PLATFORM: stb7109ref\n) \
+	$(if $(OCTAGON1008),PLATFORM: stb7109ref\n) \
 	$(if $(UFS922),PLATFORM: stb7109ref\n) \
 	$(if $(TF7700),PLATFORM: stb7109ref\n) \
 	$(if $(HL101),PLATFORM: stb7109ref\n) \
@@ -456,10 +497,12 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
+		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP2),VIP2=$(VIP2)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
+ 		$(if $(UFS912),UFS912=$(UFS912)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \
 		$(if $(CUBEREVO_MINI2),CUBEREVO_MINI2=$(CUBEREVO_MINI2)) \
@@ -475,10 +518,12 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		INSTALL_MOD_PATH=$(targetprefix) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
+		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP2),VIP2=$(VIP2)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
+ 		$(if $(UFS912),UFS912=$(UFS912)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \
 		$(if $(CUBEREVO_MINI2),CUBEREVO_MINI2=$(CUBEREVO_MINI2)) \

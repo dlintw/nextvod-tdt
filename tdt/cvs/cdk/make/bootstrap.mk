@@ -453,7 +453,7 @@ if STM23
 CROSS_BINUTILS_VERSION := 2.18.50.0.8-34
 CROSS_BINUTILS_SPEC := stm-$(subst cross-sh4,cross,$(CROSS_BINUTILS)).spec
 CROSS_BINUTILS_SPEC_PATCH := $(CROSS_BINUTILS_SPEC)23.diff
-CROSS_BINUTILS_PATCHES :=
+CROSS_BINUTILS_PATCHES := cross-binutils.diff
 else !STM23
 # if STM24
 CROSS_BINUTILS_VERSION := 2.19.1-41
@@ -483,6 +483,19 @@ $(CROSS_BINUTILS): $(CROSS_BINUTILS_RPM)
 $(CROSS_BINUTILS_DEV): $(CROSS_BINUTILS_DEV_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps --noscripts -Uhv $< && \
 	touch .deps/$(notdir $@)
+
+#
+# KERNEL-HEADERS
+#
+$(DEPDIR)/kernel-headers: linux-kernel.do_prepare
+	cd $(KERNEL_DIR) && \
+		$(INSTALL) -d $(targetprefix)/usr/include && \
+		cp -a include/linux $(targetprefix)/usr/include && \
+		cp -a include/asm-sh $(targetprefix)/usr/include/asm && \
+		cp -a include/asm-generic $(targetprefix)/usr/include && \
+		cp -a include/mtd $(targetprefix)/usr/include
+	touch $@
+
 
 #
 # CROSS GMP
@@ -583,7 +596,9 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GCC))-$(CROSS_GCC_VERSION).src.rpm \
 		| Archive/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 		Archive/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm \
-		$(CROSS_MPFR) $(CROSS_GCC_KERNELHEADERS)
+		$(if $(CROSS_MPFR),$(CROSS_MPFR)) \
+		$(if $(KERNELHEADERS),$(KERNELHEADERS)) \
+		kernel-headers
 	rpm $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
 		--relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 1,$|) && \
 	rpm $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
@@ -617,7 +632,7 @@ $(CROSS_G++): $(CROSS_G++_RPM)
 
 $(DEPDIR)/min-$(CROSS_LIBGCC) $(DEPDIR)/std-$(CROSS_LIBGCC) $(DEPDIR)/max-$(CROSS_LIBGCC) \
 $(DEPDIR)/$(CROSS_LIBGCC): \
-$(DEPDIR)/%$(CROSS_LIBGCC): $(CROSS_LIBGCC_RPM)
+$(DEPDIR)/%$(CROSS_LIBGCC): $(CROSS_LIBGCC_RPM) | $(DEPDIR)/%$(GLIBC)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb  $(DRPM) --ignorearch --nodeps -Uhv \
 		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true

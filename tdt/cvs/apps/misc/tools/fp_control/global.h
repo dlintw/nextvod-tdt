@@ -17,6 +17,11 @@
 #define VFDBRIGHTNESS		0xc0425a03
 #define VFDDISPLAYWRITEONOFF	0xc0425a05
 #define VFDDISPLAYCLR		0xc0425b00
+/* ufs912, 922, hdbox ->unset compat mode */
+#define VFDSETMODE		0xc0425aff
+
+/* ufs912 */
+#define VFDLEDBRIGHTNESS	0xc0425af8
 
 struct vfd_ioctl_data {
 	unsigned char start;
@@ -24,7 +29,7 @@ struct vfd_ioctl_data {
 	unsigned char length;
 };
 
-typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox, Hs5101} eBoxType;
+typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox, Hs5101, Ufs912} eBoxType;
 
 typedef struct Context_s {
 	void* /* Model_t */  *m; /* instance data */
@@ -53,12 +58,14 @@ typedef struct Model_s {
 	int     (* GetWakeupReason)(Context_t* context, int* reason);
 	int     (* SetLight)       (Context_t* context, int on);
 	int     (* Exit)           (Context_t* context);
+	int     (* SetLedBrightness) (Context_t* context, int brightness);
 
         void* private;
 } Model_t;
 
 extern Model_t Ufs910_1W_model;
 extern Model_t Ufs910_14W_model;
+extern Model_t UFS912_model;
 extern Model_t UFS922_model;
 extern Model_t HDBOX_model;
 extern Model_t HL101_model;
@@ -73,6 +80,7 @@ static Model_t * AvailableModels[] = {
 	&HL101_model,
 	&VIP2_model,
 	&Hs5101_model,
+	&UFS912_model,
 	NULL
 };
 

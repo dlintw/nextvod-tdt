@@ -10,6 +10,7 @@ SUBDIRS = \
 	streamproxy \
 	stfbcontrol \
 	ustslave \
+	ustslave_stm23 \
 	tffpctl \
 	tfd2mtd \
 	gitVCInfo \

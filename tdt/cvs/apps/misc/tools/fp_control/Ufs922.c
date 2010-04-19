@@ -54,6 +54,19 @@ typedef struct
 
 /* ******************* helper/misc functions ****************** */
 
+static void setMode(int fd)
+{
+   struct micom_ioctl_data micom;
+   
+   micom.u.mode.compat = 1;
+   
+   if (ioctl(fd, VFDSETMODE, &micom) < 0)
+   {
+      perror("setMode: ");
+   }
+   
+}
+
 /* calculate the time value which we can pass to
  * the micom fp. its a mjd time (mjd=modified
  * julian date). mjd is relativ to gmt so theGMTTime
@@ -446,6 +459,8 @@ static int setLed(Context_t* context, int which, int on)
    vData.u.led.led_nr = which;
    vData.u.led.on = on;
    
+   setMode(context->fd);
+
    if (ioctl(context->fd, VFDSETLED, &vData) < 0)
    {
       perror("setled: ");
@@ -461,6 +476,8 @@ static int setIcon (Context_t* context, int which, int on)
    vData.u.icon.icon_nr = which;
    vData.u.icon.on = on;
    
+   setMode(context->fd);
+
    if (ioctl(context->fd, VFDICONDISPLAYONOFF, &vData) < 0)
    {
       perror("seticon: ");
@@ -479,6 +496,9 @@ static int setBrightness(Context_t* context, int brightness)
    vData.u.brightness.level = brightness;
    
    printf("%d\n", context->fd);
+
+   setMode(context->fd);
+
    if (ioctl(context->fd, VFDBRIGHTNESS, &vData) < 0)
    {
       perror("setbrightness: ");
@@ -530,8 +550,7 @@ static int Clear(Context_t* context)
 
    for (i = 1; i <= 16 ; i++)
       setIcon(context, i, 0);
-
-   return 0;
+ 
 }
 
 Model_t UFS922_model = {
@@ -556,4 +575,5 @@ Model_t UFS922_model = {
 	setLight,
         Exit,
 	NULL,
+        NULL,
 };

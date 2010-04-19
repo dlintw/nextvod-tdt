@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == -h ] || [ "$1" == --help ]; then
- echo "Parameter 1: target system (1-13)"
+ echo "Parameter 1: target system (1-14)"
  echo "Parameter 2: kernel (1-4)"
  echo "Parameter 3: debug (Y/N)"
  exit
@@ -68,12 +68,13 @@ echo "10) Cuberevo mini (IPBOX 900)"
 echo "11) Cuberevo mini2 (IPBOX 910)"
 echo "12) Cuberevo 250 (IPBOX 91)"
 echo "13) Homecast 5101"
+echo "14) Octagon 1008"
 case $1 in
-	[1-9] | 1[0-3]) REPLY=$1
+	[1-9] | 1[0-4]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-13)? ";;
+	read -p "Select target (1-14)? ";;
 esac
 
 case "$REPLY" in
@@ -90,6 +91,7 @@ case "$REPLY" in
 	11) TARGET="--enable-cuberevo_mini2";;
 	12) TARGET="--enable-cuberevo_250hd";;
 	13) TARGET="--enable-homecast5101";;
+	14) TARGET="--enable-octagon1008";;
 	 *) TARGET="--enable-ufs910";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"
@@ -143,3 +145,7 @@ echo "-----------------------" && \
 echo && \
 ./configure $CONFIGPARAM
 ./touch.sh
+
+#Dagobert: I find it sometimes useful to know
+#what I have build last in this directory ;)
+echo $CONFIGPARAM >lastChoice
