@@ -9,6 +9,8 @@
 #include <pthread.h>
 #include <errno.h>
 
+#include <limits.h>
+
 //#ifndef DEBUG
 //#define DEBUG	// FIXME: until this is set properly by Makefile
 //#endif
@@ -91,180 +93,200 @@ static void SrtManagerDel(Context_t * context) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static void getExtension(char * FILENAMEname, char ** extension) {
-
-	int i = 0;
-	int stringlength = (int) strlen(FILENAMEname);
-#ifdef DEBUG
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
-#endif
-	for (i = 0; stringlength - i > 0; i++) {
-		if (FILENAMEname[stringlength - i - 1] == '.') {
-#ifdef DEBUG
-			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
-#endif
-			*extension = strdup(FILENAMEname+(stringlength - i));
-			break;
-		}
-	}
-}
-
-static void getParentFolder(char * Filename, char ** folder) {
+static int getExtension(char fileName[PATH_MAX], char extension[PATH_MAX]) {
 #ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
 
 	int i = 0;
-	int stringlength = strlen(Filename);
+	int extensionLength = -1;
+	int stringLength = (int) strlen(fileName);
 
-	for (i = 0; stringlength - i > 0; i++) {
-		if (Filename[stringlength - i - 1] == '/') {
-      char* sTmp = (char *)malloc(stringlength - i);
-			strncpy(sTmp, Filename, stringlength - i - 1);
-      sTmp[stringlength - i -1] = '\0';
-#ifdef DEBUG
-			printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
-#endif
-      *folder = strdup(sTmp);
-      free(sTmp);
+	for (i = 0; stringLength - i > 0; i++) {
+		if (fileName[stringLength - i - 1] == '.') {
+			extensionLength = i;
+			strncpy(extension, &fileName[stringLength - i], extensionLength);
+			extension[extensionLength] = '\0';
 			break;
 		}
 	}
+	return extensionLength;
 }
 
-static void SrtGetSubtitle(Context_t  *context, char * Filename) {
+static int getParentFolder(char fileName[PATH_MAX], char folder[PATH_MAX]) {
 #ifdef DEBUG
-		printf("%s::%s\n", FILENAME, __FUNCTION__);
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
+
+	int i = 0;
+	int folderLength = -1;
+	int stringLength = (int) strlen(fileName);
+
+	for (i = 0; stringLength - i > 0; i++) {
+		if (fileName[stringLength - i - 1] == '/') {
+			folderLength = stringLength - i - 1;
+			strncpy(folder, fileName, folderLength);
+			folder[folderLength] = '\0';
+			break;
+		}
+	}
+	return folderLength;
+}
+
+static int compare(char fileNameA[PATH_MAX], char fileNameB[PATH_MAX]) {
+	int i = 0;
+	int stringLengthA = strlen(fileNameA);
+	int stringLengthB = strlen(fileNameB);
+
+	if(stringLengthA > stringLengthB)
+		return -1;
+
+	for(i = 0; i < stringLengthA; i++)
+		if(fileNameA[i] != fileNameB[i])
+			break;
+
+	if (i == stringLengthA)
+		i = 0;
+
+	return i;
+}
+
+static void SrtGetSubtitle(Context_t  *context, char * _fileName) {
+#ifdef DEBUG
+    printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
 
     struct dirent *dirzeiger;
     DIR  *  dir;
     int     i                    = TEXTSRTOFFSET;
-    char *  FilenameExtension    = NULL;
-    char *  FilenameFolder       = NULL;
-    char *  FilenameShort        = NULL;
-    int     FilenameLength          = 0;
-    int     FilenameShortLength     = 0;
-    int     FilenameFolderLength    = 0;
-    int     FilenameExtensionLength = 0;
 
-    FilenameLength = strlen(Filename);
+    int     absFileNameLength          = 0;
+    int     absFileNameFolderLength    = 0;
+    int     relFileNameLength     = 0;
+    int     relFileNameExtensionLength = 0;
+    int     relFileNameShortLength = 0;
+    int     relFileNameSubExtensionLength = 0;
 
-#ifdef DEBUG
-    printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, Filename, FilenameLength);
-#endif
+    char absFileName[PATH_MAX];
+    char absFileNameFolder[PATH_MAX];
+    char relFileName[PATH_MAX];
+    char relFileNameExtension[PATH_MAX];
+    char relFileNameShort[PATH_MAX];
+    char relFileNameSubExtension[PATH_MAX];
 
-    getParentFolder(Filename, &FilenameFolder);
-    FilenameFolderLength = strlen(FilenameFolder);
+    absFileName[0] = '\0';
+    absFileNameFolder[0] = '\0';
+    relFileName[0] = '\0';
+    relFileNameExtension[0] = '\0';
+    relFileNameShort[0] = '\0';
+    relFileNameSubExtension[0] = '\0';
 
-#ifdef DEBUG
-    printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameFolder, FilenameFolderLength);
-#endif
+    // Absolut File Name
+    absFileNameLength = strlen(_fileName);
+    strncpy(absFileName, _fileName, absFileNameLength);
+    absFileName[absFileNameLength] = '\0';
 
-    getExtension(Filename, &FilenameExtension);
-    FilenameExtensionLength = strlen(FilenameExtension);
+    // Absolut Folder Path
+    absFileNameFolderLength = getParentFolder(absFileName, absFileNameFolder);
 
-#ifdef DEBUG
-    printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameExtension, FilenameExtensionLength);
-#endif
+    // Relativ File Name
+    relFileNameLength = absFileNameLength - absFileNameFolderLength - 1;
+    strncpy(relFileName, &absFileName[absFileNameFolderLength + 1], relFileNameLength);
+    relFileName[relFileNameLength] = '\0';
 
-    FilenameShortLength = FilenameLength - FilenameFolderLength - 1 /* / */ - FilenameExtensionLength - 1 /* . */;
-    FilenameShort = (char*) malloc(FilenameShortLength + 1 /* \0 */);
-    strncpy(FilenameShort, Filename + (strlen(FilenameFolder) + 1 /* / */), FilenameShortLength);
-    FilenameShort[FilenameShortLength] = '\0';
+    // Extension of Relativ File Name
+    relFileNameExtensionLength = getExtension(relFileName, relFileNameExtension);
 
-#ifdef DEBUG
-    printf("%s::%s %s %d\n", FILENAME, __FUNCTION__, FilenameShort, FilenameShortLength);
-    printf("%s\n%s | %s | %s\n", Filename, FilenameFolder, FilenameShort, FilenameExtension);
-#endif
+    // Relativ File Name without Extension
+    relFileNameShortLength = relFileNameLength - relFileNameExtensionLength - 1 /* . */;
+    strncpy(relFileNameShort, relFileName, relFileNameShortLength);
+    relFileNameShort[relFileNameShortLength] = '\0';
 
-    if((dir=opendir(FilenameFolder)) != NULL) {
-        while((dirzeiger=readdir(dir)) != NULL) {
-            char * extension = NULL;
-
+    if((dir = opendir(absFileNameFolder)) != NULL) {
+        while((dirzeiger = readdir(dir)) != NULL) {
 #ifdef DEBUG
             printf("%s\n",(*dirzeiger).d_name);
 #endif
-            getExtension((*dirzeiger).d_name, &extension);
 
-            if(extension != NULL) {
-                if(!strncmp(extension, "srt", 3)) {
-                    //often the used language is added before .srt so check
-                    char * name = NULL;
-                    char * subExtension = NULL;
-                    char * language = NULL;
-                    int nameLength = strlen((*dirzeiger).d_name) - 4;
+            int relSubtitleFileNameLength = 0;
+            int relSubtitleFileNameExtensionLength = 0;
 
-                    name = (char*) malloc(nameLength + 1);
-                    strncpy(name, (*dirzeiger).d_name, nameLength);
-                    name[nameLength] = '\0';
-                    
-                    getExtension(name, &subExtension);
+            char relSubtitleFileName[PATH_MAX];
+            char relSubtitleFileNameExtension[PATH_MAX];
+
+            // Relativ Subtitle File Name
+            relSubtitleFileNameLength = strlen((*dirzeiger).d_name);
+            strncpy(relSubtitleFileName, (*dirzeiger).d_name, relSubtitleFileNameLength);
+            relSubtitleFileName[relSubtitleFileNameLength] = '\0';
+
+            // Extension of Relativ Subtitle File Name
+            relSubtitleFileNameExtensionLength = getExtension(relSubtitleFileName, relSubtitleFileNameExtension);
+
+            if(relSubtitleFileNameExtensionLength <= 0)
+            	continue;
+
+            if(!strncmp(relSubtitleFileNameExtension, "srt", 3)) {
+
+            	if(compare(relFileNameShort, relSubtitleFileName) == 0) {
 #ifdef DEBUG
-                    printf("%s %s\n",name, subExtension);
+                    printf("%s\n", relSubtitleFileName);
 #endif
 
-                    if(subExtension == NULL) {
-#ifdef DEBUG
-												printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
-#endif
-                        language = strdup("und");
+                    int absSubtitleFileNameLength = 0;
+                    int relSubtitleFileNameShortLength = 0;
+                    int relSubtitleFileNameSubExtensionLength = 0;
 
-                    } else {
-                        int tmpLength = strlen(name)/* - strlen(subExtension) - 1*/; //Trick: FIX sub "test.test.srt"
-                        char * tmpName = (char*) malloc(tmpLength + 1);
-                        strncpy(tmpName, name, tmpLength);
-                        tmpName[tmpLength] = '\0';
+                    char absSubtitleFileName[PATH_MAX];
+            	    char relSubtitleFileNameShort[PATH_MAX];
+            	    char relSubtitleFileNameSubExtension[PATH_MAX];
 
-                        free(name);
-#ifdef DEBUG
-												printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
-#endif
-                        name = strdup(tmpName);
-                        free(tmpName);
-#ifdef DEBUG
-												printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
-#endif
-                        language = strdup(subExtension);
-                        free(subExtension);
-                    }
+            	    relSubtitleFileNameShort[0] = '\0';
+            	    relSubtitleFileNameSubExtension[0] = '\0';
 
-#ifdef DEBUG
-                    printf("%s %s %d\n",name, FilenameShort, FilenameShortLength);
-#endif
+                    // Relativ File Name without Extension
+                    relSubtitleFileNameShortLength = relSubtitleFileNameLength - relSubtitleFileNameExtensionLength - 1 /* . */;
+                    strncpy(relSubtitleFileNameShort, relSubtitleFileName, relSubtitleFileNameShortLength);
+                    relSubtitleFileNameShort[relSubtitleFileNameShortLength] = '\0';
 
-                    if(!strncmp(name, FilenameShort, FilenameShortLength)) {
-                        char * absSubtitleFilenam = (char*) malloc(strlen(FilenameFolder) + 1 + strlen((*dirzeiger).d_name));
-                        strcpy(absSubtitleFilenam, FilenameFolder);
-                        strcat(absSubtitleFilenam, "/");
-                        strcat(absSubtitleFilenam, (*dirzeiger).d_name);
+            	    // SubExtension of Relativ File Name
+            	    relSubtitleFileNameSubExtensionLength = getExtension(relSubtitleFileNameShort, relSubtitleFileNameSubExtension);
 
-                        SrtTrack_t SrtSubtitle = {
-				            absSubtitleFilenam,
-				            i,
-			            };
-                        SrtManagerAdd(context, SrtSubtitle);
+            	    if(relSubtitleFileNameSubExtensionLength <= 0 || relSubtitleFileNameSubExtensionLength > 3) {
+            	    	strncpy(relSubtitleFileNameSubExtension, "und", 3);
+            	    	relSubtitleFileNameSubExtension[3] = '\0';
+            	    }
 
-                        Track_t Subtitle = {
-				            language,
-				            "S_TEXT/SRT",
-				            i++,
-			            };
-                        context->manager->subtitle->Command(context, MANAGER_ADD, &Subtitle);
-                    }
+            	    absSubtitleFileNameLength = absFileNameFolderLength;
+            	    strncpy(absSubtitleFileName, absFileNameFolder, absFileNameFolderLength);
+            	    absSubtitleFileName[absSubtitleFileNameLength] = '/';
+            	    absSubtitleFileNameLength++;
+            	    strncpy(&absSubtitleFileName[absSubtitleFileNameLength], relSubtitleFileName, relSubtitleFileNameLength);
+            	    absSubtitleFileNameLength += relSubtitleFileNameLength;
+            	    absSubtitleFileName[absSubtitleFileNameLength] = '\0';
 
-                }
+            	    printf("SRT: %s [%s]\n", relSubtitleFileNameSubExtension, relSubtitleFileNameShort);
+            	    printf("\t->%s\n", absSubtitleFileName);
 
-                free(extension);
+            	    SrtTrack_t SrtSubtitle = {
+            	        absSubtitleFileName,
+            	        i,
+            	    };
+            	    SrtManagerAdd(context, SrtSubtitle);
+            	    
+            	    Track_t Subtitle = {
+            	        relSubtitleFileNameSubExtension,
+            	        "S_TEXT/SRT",
+            	        i++,
+            	    };
+            	    context->manager->subtitle->Command(context, MANAGER_ADD, &Subtitle);
+
+            	}
             }
         }
     }
-
-    free(FilenameExtension);
-    free(FilenameFolder);
-    free(FilenameShort);
-
 }
+
+
 
 
 FILE * fsub = NULL;
