@@ -15210,7 +15210,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicedvbrecord.cpp enigma2-nightly/l
  		eDebug("Recording to %s...", m_filename.c_str());
  		::remove(m_filename.c_str());
 +#if defined(__sh__) 
-+		//nit2005, we must creat a file for statfs
++		//we must creat a file for statfs
  		int fd = ::open(m_filename.c_str(), O_WRONLY|O_CREAT|O_LARGEFILE, 0644);
 +		::close(fd);
 +		if (statfs(m_filename.c_str(), &sbuf) < 0) 
@@ -19336,3 +19336,192 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  #ifndef SWIG
  	eEPGCache();
  	~eEPGCache();
+
+--- enigma2-nightly/lib/dvb/demux.cpp	2010-04-20 01:19:16.000000000 -0400
++++ enigma2-nightly/lib/dvb/demux.cpp	2010-04-20 01:15:27.000000000 -0400
+@@ -569,7 +569,14 @@
+ 	if (m_target_filename != "")
+ 		m_thread->startSaveMetaInformation(m_target_filename);
+ 	
++#ifdef __sh__
++	if (m_target_filename != "")
++		m_thread->start(m_source_fd, m_target_fd, m_target_filename.c_str());
++	else
++		m_thread->start(m_source_fd, m_target_fd);
++#else
+ 	m_thread->start(m_source_fd, m_target_fd);
++#endif
+ 	m_running = 1;
+ 
+ 	while (i != m_pids.end()) {
+
+--- enigma2-nightly/lib/base/filepush.h	2010-04-20 01:19:16.000000000 -0400
++++ enigma2-nightly/lib/base/filepush.h	2010-04-20 01:15:00.000000000 -0400
+@@ -28,6 +28,9 @@
+ 	void thread();
+ 	void stop();
+ 	void start(int sourcefd, int destfd);
++#ifdef __sh__
++	void start(int sourcefd, int destfd, const char *filename);
++#endif
+ 	int start(const char *filename, int destfd);
+ 	
+ 	void pause();
+@@ -59,6 +62,10 @@
+ #if defined(__sh__)
+         //align buffer to standard blocksize of 188
+         unsigned char m_buffer[348*188];
++	unsigned long long m_e2_record_split_size;
++	int m_e2_record_split_type;
++	char m_filename[256];
++	int m_flags;
+ #else
+         unsigned char m_buffer[65536];
+ #endif
+
+--- enigma2-nightly/lib/base/filepush.cpp	2010-04-20 01:19:16.000000000 -0400
++++ enigma2-nightly/lib/base/filepush.cpp	2010-04-20 01:14:43.000000000 -0400
+@@ -4,6 +4,17 @@
+ #include <fcntl.h>
+ #include <sys/ioctl.h>
+ 
++#if defined(__sh__) 
++#include <sys/vfs.h>
++
++#define USBDEVICE_SUPER_MAGIC 0x9fa2 
++#define EXT2_SUPER_MAGIC      0xEF53 
++#define EXT3_SUPER_MAGIC      0xEF53 
++#define SMB_SUPER_MAGIC       0x517B 
++#define NFS_SUPER_MAGIC       0x6969 
++#define MSDOS_SUPER_MAGIC     0x4d44            /* MD */
++#endif
++
+ #define PVR_COMMIT 1
+ 
+ //FILE *f = fopen("/log.ts", "wb");
+@@ -37,6 +48,11 @@
+ 	
+ 	size_t written_since_last_sync = 0;
+ 
++#ifdef __sh__
++	int file_count = 1;
++	unsigned long long total_bytes_written = 0;
++#endif
++
+ 	eDebug("FILEPUSH THREAD START");
+ 	
+ 		/* we set the signal to not restart syscalls, so we can detect our signal. */
+@@ -115,7 +131,11 @@
+ 			{
+ 				if (errno == EINTR || errno == EAGAIN || errno == EBUSY)
+ 					continue;
++#ifdef __sh__
++				eDebug("eFilePushThread WRITE ERROR (errno=%d, errstr=%s)", errno, strerror(errno));
++#else
+ 				eDebug("eFilePushThread WRITE ERROR");
++#endif
+ 				sendEvent(evtWriteError);
+ 				break;
+ 				// ... we would stop the thread
+@@ -131,6 +151,37 @@
+ 				dest_pos -= toflush;
+ 				posix_fadvise(m_fd_dest, dest_pos, toflush, POSIX_FADV_DONTNEED);
+ 				written_since_last_sync -= toflush;
++#ifdef __sh__
++				//split file only after sync
++				if (m_e2_record_split_size)
++				{
++					total_bytes_written += toflush;
++					if(total_bytes_written > m_e2_record_split_size)
++					{
++						char filename[255];
++
++						close(m_fd_dest);
++						total_bytes_written = 0;
++						written_since_last_sync = 0;
++
++						if(m_e2_record_split_type)
++							snprintf(filename, 255, "%s.%03d.ts", m_filename, file_count++);
++						else
++							snprintf(filename, 255, "%s.%03d", m_filename, file_count++);
++
++						eDebug("split record file - Recording to %s...", filename);
++
++						m_fd_dest = open(filename, m_flags, 0644);
++						if (m_fd_dest == -1)
++						{
++							eDebug("split record file - can't open recording file!");
++						}
++
++						/* turn off kernel caching strategies */
++						posix_fadvise(m_fd_dest, 0, 0, POSIX_FADV_RANDOM);
++					}
++				}
++#endif
+ 			}
+ 
+ //			printf("FILEPUSH: wrote %d bytes\n", w);
+@@ -260,6 +311,63 @@
+ 	eDebug("FILEPUSH THREAD STOP");
+ }
+ 
++#ifdef __sh__
++void eFilePushThread::start(int fd_source, int fd_dest, const char *filename)
++{
++	struct statfs sbuf;
++
++	m_raw_source.setfd(fd_source);
++	m_fd_dest = fd_dest;
++
++	m_e2_record_split_size = 0;
++	m_e2_record_split_type = 0;
++	m_flags = O_WRONLY|O_CREAT|O_LARGEFILE;
++
++	char *e2_record_split_size = getenv("E2_RECORD_SPLIT_SIZE");
++	if(e2_record_split_size != NULL)
++	{
++		m_e2_record_split_size = atoi(e2_record_split_size);
++		m_e2_record_split_size = m_e2_record_split_size * 1000 * 1000 * 1000;
++	}
++
++	char *e2_record_split_type = getenv("E2_RECORD_SPLIT_TYPE");
++	if(e2_record_split_type != NULL)
++	{
++		m_e2_record_split_type = atoi(e2_record_split_type);
++	}
++
++
++	m_filename[0] = NULL;
++	strcpy(m_filename, filename);
++
++	if (statfs(m_filename, &sbuf) < 0)
++	{
++		eDebug("split record file - can't get fs type assuming none NFS!");
++	} else
++	{
++		if (sbuf.f_type == EXT3_SUPER_MAGIC)
++			eDebug("split record file - Ext2/3/4 Filesystem\n");
++		else
++		if (sbuf.f_type == NFS_SUPER_MAGIC)
++		{
++			eDebug("split record file - NFS Filesystem; add O_DIRECT to flags\n");
++			m_flags |= O_DIRECT;
++		}
++		else
++		if (sbuf.f_type == USBDEVICE_SUPER_MAGIC)
++			eDebug("split record file - USB Device\n");
++		else
++		if (sbuf.f_type == SMB_SUPER_MAGIC)
++			eDebug("split record file - SMBs Device\n");
++		else
++		if (sbuf.f_type == MSDOS_SUPER_MAGIC)
++			eDebug("split record file - MSDOS Device\n");
++	}
++
++	resume();
++}
++#endif
++
+ void eFilePushThread::start(int fd_source, int fd_dest)
+ {
+ 	m_raw_source.setfd(fd_source);
