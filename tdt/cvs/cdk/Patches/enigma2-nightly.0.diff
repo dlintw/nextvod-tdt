@@ -19459,12 +19459,12 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +	m_flags = O_WRONLY|O_CREAT|O_LARGEFILE;
 +
 +	char record_split_size[3] = "";
-+	getshmentry(shm, "record_split_size=", record_split_size);
++	getshmentry(shm, "record_split_size=", record_split_size, 3);
 +	m_record_split_size = atoi(record_split_size);
 +	m_record_split_size = m_record_split_size * 1000 * 1000 * 1000;
 +	
 +	char record_split_type[3] = "";
-+	getshmentry(shm, "record_split_type=", record_split_type);
++	getshmentry(shm, "record_split_type=", record_split_type, 3);
 +	m_record_split_type = atoi(record_split_type);
 +
 +	m_filename[0] = NULL;
@@ -19504,7 +19504,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 
 --- enigma2-nightly/include/shmE2.h	2010-04-20 21:56:29.000000000 -0400
 +++ enigma2-nightly/include/shmE2.h	2010-04-20 21:34:34.000000000 -0400
-@@ -0,0 +1,223 @@
+@@ -0,0 +1,242 @@
 +#ifndef SHME2
 +#define SHME2
 +
@@ -19513,8 +19513,6 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +
 +#define SHMSZ 27
 +#define KEY 1234
-+
-+
 +
 +static char* createshm()
 +{
@@ -19565,6 +19563,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +		return -1;
 +	v = vbuf;
 +
++	//FIXME: here we can have a segfault
 +	shmbuf = (char *) malloc(4096);
 +	if(shmbuf == NULL)
 +		return -1;
@@ -19617,9 +19616,12 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +	char *c;
 +	int pos = 0;
 +
++	if(strlen(entry) > 255)
++		return -1;
++
 +       	buf = (char *) malloc(256);
 +        if(buf == NULL)
-+                return 0;
++                return -1;
 +
 +	c = strchr(entry, '=');
 +	if(c != NULL)
@@ -19627,7 +19629,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +	else
 +	{
 +		free(buf);
-+		return 0;
++		return -1;
 +	}
 +
 +	strncpy(buf, entry, pos);
@@ -19635,7 +19637,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +        if(delshmentry(shm, buf) < 0)
 +	{
 +		free(buf);
-+		return 0;
++		return -1;
 +	}
 +
 +	if(*shm != '\0')
@@ -19646,12 +19648,18 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +	return 1;
 +}
 +
-+static int getshmentry(char *shm, char *key, char *shmbuf)
++static int getshmentry(char *shm, char *key, char *buf, int buflen)
 +{
 +	if(shm == NULL) return -1;
-+        char *v = shmbuf, *s = shm;
++        char *v, *s = shm, *shmbuf;
 +        int matchkey = 0;
 +	int ret = 0;
++
++       	shmbuf = (char *) malloc(256);
++        if(shmbuf == NULL)
++                return -1;
++
++	v = shmbuf;
 +
 +        while(*s != '\0')
 +        {
@@ -19674,6 +19682,10 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +        if(matchkey == 0)
 +                v = shmbuf;
 +        *v = '\0';
++
++	strncpy(buf, shmbuf, buflen-1);
++	free(shmbuf);
++
 +        return ret;
 +}
 +
@@ -19707,20 +19719,27 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +        return ret;
 +}
 +
-+static int getshmentryall(char *shm, char *shmbuf)
++static int getshmentryall(char *shm, char *shmbuf, int buflen)
 +{
 +	if(shm == NULL) return -1;
 +        char *v = shmbuf, *s = shm;
++	int count = 0;
 +
 +        while(*s != '\0')
 +        {
 +                *v++ = *s++;
 +                *v = '\0';
++		count++;
 +                if(*s == ';')
 +                {
++			if(count >= buflen-1)
++				break;
 +                        s++;
 +			*v++ = '\n';
++			count++;
 +                }
++		if(count >= buflen-1)
++			break;
 +        }
 +        *v = '\0';
 +
