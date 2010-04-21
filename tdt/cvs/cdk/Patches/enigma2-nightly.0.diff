@@ -17650,7 +17650,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  			} else if(o.dc)
  			{
 +#if defined(__sh__)
-+				if(checkshmentry(shm, "stopGUI=") == 0)
++				if(checkshmentry(shm, "stopGUI=") != 1)
 +					o.dc->exec(&o);
 +#else
  				o.dc->exec(&o);
@@ -17663,7 +17663,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  				if (!idle)
  				{
 +#if defined(__sh__)
-+					if(checkshmentry(shm, "stopSpinner=") == 0)
++					if(checkshmentry(shm, "stopSpinner=") != 1)
 +					{
 +						if (!m_spinner_enabled)
 +							eDebug("main thread is non-idle! display spinner!");
