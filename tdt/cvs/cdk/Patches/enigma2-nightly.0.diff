@@ -15417,18 +15417,19 @@ diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
  void bsodLogInit()
 --- enigma2-nightly/lib/driver/rc.cpp	2010-04-18 20:15:37.000000000 -0400
 +++ enigma2-nightly/lib/driver/rc.cpp	2010-04-18 20:16:32.000000000 -0400
-@@ -10,6 +10,10 @@
+@@ -10,6 +10,11 @@
  #include <lib/base/init_num.h>
  #include <lib/base/eerror.h>
  
 +#ifdef __sh__
++#include "include/shmE2.h"
 +extern char *shm;
 +#endif
 +
  /*
   *  note on the enigma input layer:
   *  the enigma input layer (rc*) supports n different devices which
-@@ -64,6 +68,10 @@
+@@ -64,6 +69,10 @@
  	{
  		if (read(handle, &rccode, 2)!=2)
  			break;
@@ -15439,7 +15440,7 @@ diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
  		if (enabled && !input->islocked())
  			for (std::list<eRCDevice*>::iterator i(listeners.begin()); i!=listeners.end(); ++i)
  				(*i)->handleCode(rccode);
-@@ -97,6 +105,10 @@
+@@ -97,6 +106,10 @@
  	{
  		if (read(handle, &ev, sizeof(struct input_event))!=sizeof(struct input_event))
  			break;
