@@ -19347,8 +19347,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  #if defined(__sh__)
          //align buffer to standard blocksize of 188
          unsigned char m_buffer[348*188];
-+	unsigned long long m_e2_record_split_size;
-+	int m_e2_record_split_type;
++	unsigned long long m_record_split_size;
++	int m_record_split_type;
 +	char m_filename[256];
 +	int m_flags;
  #else
@@ -19357,12 +19357,13 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 
 --- enigma2-nightly/lib/base/filepush.cpp	2010-04-20 01:19:16.000000000 -0400
 +++ enigma2-nightly/lib/base/filepush.cpp	2010-04-20 01:14:43.000000000 -0400
-@@ -4,6 +4,17 @@
+@@ -4,6 +4,20 @@
  #include <fcntl.h>
  #include <sys/ioctl.h>
  
 +#if defined(__sh__) 
 +#include <sys/vfs.h>
++#include "include/shmE2.h"
 +
 +#define USBDEVICE_SUPER_MAGIC 0x9fa2 
 +#define EXT2_SUPER_MAGIC      0xEF53 
@@ -19370,12 +19371,14 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +#define SMB_SUPER_MAGIC       0x517B 
 +#define NFS_SUPER_MAGIC       0x6969 
 +#define MSDOS_SUPER_MAGIC     0x4d44            /* MD */
++
++extern char *shm;
 +#endif
 +
  #define PVR_COMMIT 1
  
  //FILE *f = fopen("/log.ts", "wb");
-@@ -37,6 +48,11 @@
+@@ -37,6 +51,11 @@
  	
  	size_t written_since_last_sync = 0;
  
@@ -19387,7 +19390,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  	eDebug("FILEPUSH THREAD START");
  	
  		/* we set the signal to not restart syscalls, so we can detect our signal. */
-@@ -115,7 +131,11 @@
+@@ -115,7 +134,11 @@
  			{
  				if (errno == EINTR || errno == EAGAIN || errno == EBUSY)
  					continue;
@@ -19399,16 +19402,16 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  				sendEvent(evtWriteError);
  				break;
  				// ... we would stop the thread
-@@ -131,6 +151,37 @@
+@@ -131,6 +154,37 @@
  				dest_pos -= toflush;
  				posix_fadvise(m_fd_dest, dest_pos, toflush, POSIX_FADV_DONTNEED);
  				written_since_last_sync -= toflush;
 +#ifdef __sh__
 +				//split file only after sync
-+				if (m_e2_record_split_size)
++				if (m_record_split_size)
 +				{
 +					total_bytes_written += toflush;
-+					if(total_bytes_written > m_e2_record_split_size)
++					if(total_bytes_written > m_record_split_size)
 +					{
 +						char filename[255];
 +
@@ -19416,7 +19419,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +						total_bytes_written = 0;
 +						written_since_last_sync = 0;
 +
-+						if(m_e2_record_split_type)
++						if(m_record_split_type)
 +							snprintf(filename, 255, "%s.%03d.ts", m_filename, file_count++);
 +						else
 +							snprintf(filename, 255, "%s.%03d", m_filename, file_count++);
@@ -19437,7 +19440,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  			}
  
  //			printf("FILEPUSH: wrote %d bytes\n", w);
-@@ -260,6 +311,63 @@
+@@ -260,6 +314,58 @@
  	eDebug("FILEPUSH THREAD STOP");
  }
  
@@ -19449,23 +19452,18 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +	m_raw_source.setfd(fd_source);
 +	m_fd_dest = fd_dest;
 +
-+	m_e2_record_split_size = 0;
-+	m_e2_record_split_type = 0;
++	m_record_split_size = 0;
++	m_record_split_type = 0;
 +	m_flags = O_WRONLY|O_CREAT|O_LARGEFILE;
 +
-+	char *e2_record_split_size = getenv("E2_RECORD_SPLIT_SIZE");
-+	if(e2_record_split_size != NULL)
-+	{
-+		m_e2_record_split_size = atoi(e2_record_split_size);
-+		m_e2_record_split_size = m_e2_record_split_size * 1000 * 1000 * 1000;
-+	}
-+
-+	char *e2_record_split_type = getenv("E2_RECORD_SPLIT_TYPE");
-+	if(e2_record_split_type != NULL)
-+	{
-+		m_e2_record_split_type = atoi(e2_record_split_type);
-+	}
-+
++	char record_split_size[3] = "";
++	getshmentry(shm, "record_split_size=", record_split_size);
++	m_record_split_size = atoi(record_split_size);
++	m_record_split_size = m_record_split_size * 1000 * 1000 * 1000;
++	
++	char record_split_type[3] = "";
++	getshmentry(shm, "record_split_type=", record_split_type);
++	m_record_split_type = atoi(record_split_type);
 +
 +	m_filename[0] = NULL;
 +	strcpy(m_filename, filename);
