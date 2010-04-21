@@ -15390,51 +15390,27 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.h enigma2-nightly/lib/servi
 diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
 --- enigma2-nightly.org/main/bsod.cpp	2009-12-12 23:16:22.500600000 +0100
 +++ enigma2-nightly/main/bsod.cpp	2009-12-12 23:19:55.585100263 +0100
-@@ -15,7 +15,13 @@
+@@ -15,7 +15,14 @@
  
  /************************************************/
  
 +#if defined(__sh__)  
 +#include <fcntl.h>
++#include "include/shmE2.h"
 +#define CRASH_EMAILADDR "nobody" 
-+int stopFBgui = 0;
++char *shm = NULL;
 +#else 
  #define CRASH_EMAILADDR "crashlog@dream-multimedia-tv.de"
 +#endif
  #define STDBUFFER_SIZE 512
  #define RINGBUFFER_SIZE 16384
  static char ringbuffer[RINGBUFFER_SIZE];
-@@ -446,6 +451,21 @@
- {
- 	ucontext_t *uc = (ucontext_t*)ctx;
- 
-+#if defined(__sh__)  
-+        if(signum == SIGUSR1)
-+        {
-+                //stop output of spinner
-+                stopFBgui = 1;
-+                return;
-+        }
-+        if(signum == SIGUSR2)
-+        {
-+                //stop output of gui 
-+                stopFBgui = 0;
-+                return;
-+        }
-+#endif
-+
- #ifndef NO_OOPS_SUPPORT
- 	oops(uc->uc_mcontext, signum == SIGSEGV || signum == SIGABRT);
- #endif
-@@ -467,6 +498,12 @@
+@@ -467,6 +499,9 @@
  	sigaction(SIGILL, &act, 0);
  	sigaction(SIGBUS, &act, 0);
  	sigaction(SIGABRT, &act, 0);
 +#if defined(__sh__)  
-+        sigaction(SIGUSR1, &act, 0);
-+        sigaction(SIGUSR2, &act, 0);
-+        int fd = open ("/tmp/.e2fbstopOk", O_RDWR | O_CREAT | O_TRUNC);
-+        close(fd);
++        shm = createshm();
 +#endif
  }
  
@@ -15446,7 +15422,7 @@ diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
  #include <lib/base/eerror.h>
  
 +#ifdef __sh__
-+extern int stopFBgui;
++extern char *shm;
 +#endif
 +
  /*
@@ -15457,7 +15433,7 @@ diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
  		if (read(handle, &rccode, 2)!=2)
  			break;
 +#ifdef __sh__
-+		if(stopFBgui)
++		if(checkshmentry(shm, "stopRC=") == 1)
 +			continue;
 +#endif
  		if (enabled && !input->islocked())
@@ -15468,7 +15444,7 @@ diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
  		if (read(handle, &ev, sizeof(struct input_event))!=sizeof(struct input_event))
  			break;
 +#ifdef __sh__
-+		if(stopFBgui)
++		if(checkshmentry(shm, "stopRC=") == 1)
 +			continue;
 +#endif
  		if (enabled && !input->islocked())
@@ -17663,7 +17639,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  #include <lib/base/init_num.h>
  
 +#if defined(__sh__)
-+extern int stopFBgui;
++extern char *shm;
 +#endif
 +
  #ifndef SYNC_PAINT
@@ -17674,7 +17650,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  			} else if(o.dc)
  			{
 +#if defined(__sh__)
-+				if(stopFBgui == 0)
++				if(checkshmentry(shm, "stopGUI=") == 0)
 +					o.dc->exec(&o);
 +#else
  				o.dc->exec(&o);
@@ -17687,7 +17663,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  				if (!idle)
  				{
 +#if defined(__sh__)
-+					if(stopFBgui == 0)
++					if(checkshmentry(shm, "stopSpinner=") == 0)
 +					{
 +						if (!m_spinner_enabled)
 +							eDebug("main thread is non-idle! display spinner!");
