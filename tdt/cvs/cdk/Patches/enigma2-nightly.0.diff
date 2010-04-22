@@ -19510,7 +19510,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 
 --- enigma2-nightly/include/shmE2.h	2010-04-20 21:56:29.000000000 -0400
 +++ enigma2-nightly/include/shmE2.h	2010-04-20 21:34:34.000000000 -0400
-@@ -0,0 +1,242 @@
+@@ -0,0 +1,252 @@
 +#ifndef SHME2
 +#define SHME2
 +
@@ -19568,11 +19568,16 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +	if(vbuf == NULL)
 +		return -1;
 +	v = vbuf;
++	memset(vbuf, '\0', 256);
 +
 +	//FIXME: here we can have a segfault
 +	shmbuf = (char *) malloc(4096);
 +	if(shmbuf == NULL)
++	{
++		free(vbuf);
 +		return -1;
++	}
++	memset(shmbuf, '\0', 4096);
 +
 +        while(*s != '\0')
 +        {
@@ -19619,7 +19624,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +{
 +	if(shm == NULL) return -1;
 +	char *buf = NULL;
-+	char *c;
++	char *c = NULL;
 +	int pos = 0;
 +
 +	if(strlen(entry) > 255)
@@ -19628,6 +19633,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +       	buf = (char *) malloc(256);
 +        if(buf == NULL)
 +                return -1;
++	memset(buf, '\0', 256);
 +
 +	c = strchr(entry, '=');
 +	if(c != NULL)
@@ -19639,6 +19645,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +	}
 +
 +	strncpy(buf, entry, pos);
++	buf[pos] = '\0';
 +
 +        if(delshmentry(shm, buf) < 0)
 +	{
@@ -19664,6 +19671,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +       	shmbuf = (char *) malloc(256);
 +        if(shmbuf == NULL)
 +                return -1;
++	memset(shmbuf, '\0', 256);
 +
 +	v = shmbuf;
 +
@@ -19690,6 +19698,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +        *v = '\0';
 +
 +	strncpy(buf, shmbuf, buflen-1);
++	buf[buflen] = '\0';
 +	free(shmbuf);
 +
 +        return ret;
@@ -19704,6 +19713,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +	shmbuf = (char *) malloc(256);
 +	if(shmbuf == NULL)
 +		return -1;
++	memset(shmbuf, '\0', 256);
 +
 +	v = shmbuf;
 +

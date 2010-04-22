@@ -55,11 +55,16 @@ static int delshmentry(char *shm, char *key)
 	if(vbuf == NULL)
 		return -1;
 	v = vbuf;
+	memset(vbuf, '\0', 256);
 
 	//FIXME: here we can have a segfault
 	shmbuf = (char *) malloc(4096);
 	if(shmbuf == NULL)
+	{
+		free(vbuf);
 		return -1;
+	}
+	memset(shmbuf, '\0', 4096);
 
         while(*s != '\0')
         {
@@ -106,7 +111,7 @@ static int setshmentry(char *shm, char *entry)
 {
 	if(shm == NULL) return -1;
 	char *buf = NULL;
-	char *c;
+	char *c = NULL;
 	int pos = 0;
 
 	if(strlen(entry) > 255)
@@ -115,6 +120,7 @@ static int setshmentry(char *shm, char *entry)
        	buf = (char *) malloc(256);
         if(buf == NULL)
                 return -1;
+	memset(buf, '\0', 256);
 
 	c = strchr(entry, '=');
 	if(c != NULL)
@@ -126,6 +132,7 @@ static int setshmentry(char *shm, char *entry)
 	}
 
 	strncpy(buf, entry, pos);
+	buf[pos] = '\0';
 
         if(delshmentry(shm, buf) < 0)
 	{
@@ -151,6 +158,7 @@ static int getshmentry(char *shm, char *key, char *buf, int buflen)
        	shmbuf = (char *) malloc(256);
         if(shmbuf == NULL)
                 return -1;
+	memset(shmbuf, '\0', 256);
 
 	v = shmbuf;
 
@@ -177,6 +185,7 @@ static int getshmentry(char *shm, char *key, char *buf, int buflen)
         *v = '\0';
 
 	strncpy(buf, shmbuf, buflen-1);
+	buf[buflen] = '\0';
 	free(shmbuf);
 
         return ret;
@@ -191,6 +200,7 @@ static int checkshmentry(char *shm, char *key)
 	shmbuf = (char *) malloc(256);
 	if(shmbuf == NULL)
 		return -1;
+	memset(shmbuf, '\0', 256);
 
 	v = shmbuf;
 

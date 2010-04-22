@@ -44,7 +44,7 @@ main(int argc, char *argv[])
         }
 
         if(strcmp(argv[1], "set") == 0) {
-                if(setshmentry(shm, argv[2]) != 0)
+                if(setshmentry(shm, argv[2]) != 1)
 			printf("error: value not set\n");
                 exit(0);
         }
