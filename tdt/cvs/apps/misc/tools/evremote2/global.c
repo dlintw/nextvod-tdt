@@ -122,7 +122,7 @@ int checkTuxTxt(const int cCode)
             if(tuxtxt_exit_count > 1)
             {
                 tuxtxt_exit_count = 0;
-                system("killall tuxtxt; sleep 3; killall -9 tuxtxt; rm -f /tmp/block.tmp; if [ -e /tmp/.e2fbstop ]; then killall -USR2 enigma2; fi");
+                system("killall tuxtxt; sleep 3; killall -9 tuxtxt; rm -f /tmp/block.tmp; shmE2 del stopGUI; shmE2 del stopSpinner");
             }
         }
 
