@@ -19796,7 +19796,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  	if (f)
  	{
 +#ifdef __sh__
-+		if(checkshmentry(shm, "not_del_epg" != 1)
++		if(checkshmentry(shm, "not_del_epg") != 1)
 +			unlink(epg_file);
 +#else
  		unlink("/hdd/epg.dat");
