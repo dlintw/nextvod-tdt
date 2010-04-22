@@ -3921,7 +3921,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/plu
 diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2009-12-11 21:40:12.000000000 +0100
-@@ -0,0 +1,6754 @@
+@@ -0,0 +1,6760 @@
 +/******************************************************************************
 + *                      <<< TuxTxt - Teletext Plugin >>>                      *
 + *                                                                            *
@@ -3948,6 +3948,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +#include <sys/select.h>
 +#include <sys/time.h>
 +#include <unistd.h>
++#include "include/shmE2.h"
 +
 +
 +//aktivate or deaktivate Menu Key
@@ -3970,6 +3971,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +int left, top, width, height;
 +char aspect[16];
 +char policy[16];
++char *shm = NULL;
 +
 +int stride;
 +
@@ -5451,7 +5453,8 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	unlink ("/tmp/rc.socket");
 +
 +	//aktivate E2 framebuffer output
-+	system("if [ -e /tmp/.e2fbstop ]; then killall -USR2 enigma2; fi");
++	delshmentry(shm, "stopGUI=");
++	delshmentry(shm, "stopSpinner=");
 +
 + 	debugf(1, "Tuxtxt dies with signal %d\n", signo);
 +
@@ -5624,7 +5627,9 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	close(bfd);
 +
 +	//deaktivate E2 framebuffer output
-+	system("if [ -e /tmp/.e2fbstop ]; then killall -USR1 enigma2; fi");
++	shm = findshm();
++	setshmentry(shm, "stopGUI=1");
++	setshmentry(shm, "stopSpinner=1");
 +
 +	/* initialisations */
 +	if (Init() == 0)
@@ -5790,7 +5795,8 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tux
 +	unlink ("/tmp/rc.socket");
 +
 +	//aktivate E2 framebuffer output
-+	system("if [ -e /tmp/.e2fbstop ]; then killall -USR2 enigma2; fi");
++	delshmentry(shm, "stopGUI=");
++	delshmentry(shm, "stopSpinner=");
 +
 +	debugf(1, "%s: <\n", __func__);
 +
