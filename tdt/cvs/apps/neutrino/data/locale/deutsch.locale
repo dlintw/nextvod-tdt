@@ -741,9 +741,9 @@ motorcontrol.user_menu Benutzermenü
 motorcontrol.west_limit Setze westliches (soft) Limit
 moviebrowser.book_clear_all Lösche alle
 moviebrowser.book_head Markierungen
-moviebrowser.book_lastmoviestop letzter Wiedergabestop:
+moviebrowser.book_lastmoviestop Letzter Wiedergabestop:
 moviebrowser.book_movieend Filmende:
-moviebrowser.book_moviestart Filstart:
+moviebrowser.book_moviestart Filmstart:
 moviebrowser.book_name Name:
 moviebrowser.book_new Neue Markierung
 moviebrowser.book_position Position:
