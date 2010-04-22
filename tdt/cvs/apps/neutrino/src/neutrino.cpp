@@ -2999,13 +2999,15 @@ int CNeutrinoApp::handleMsg(const neutrino_msg_t msg, neutrino_msg_data_t data)
 				old_num = bouquetList->Bouquets[old_b]->channelList->getActiveChannelNumber();
 			}
 
-			//if(msg == CRCInput::RC_ok && bouquetList->Bouquets.size()) 
-			if(msg == CRCInput::RC_ok && g_settings.bouquetlist_mode != 1)
+			if(msg == CRCInput::RC_ok && g_settings.bouquetlist_mode == 0)
 			{
 				if(bouquetList->Bouquets.size() && bouquetList->Bouquets[old_b]->channelList->getSize() > 0)
 					nNewChannel = bouquetList->Bouquets[old_b]->channelList->exec();//with ZAP!
 				else
 					nNewChannel = bouquetList->exec(true);
+			} else if(msg == CRCInput::RC_ok && g_settings.bouquetlist_mode == 2) {
+				SetChannelMode(LIST_MODE_ALL);
+				nNewChannel = bouquetList->Bouquets[old_b]->channelList->exec();
 			} else if(msg == CRCInput::RC_sat) {
 				SetChannelMode(LIST_MODE_SAT);
 				nNewChannel = bouquetList->exec(true);
