@@ -15411,12 +15411,13 @@ diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
  #define STDBUFFER_SIZE 512
  #define RINGBUFFER_SIZE 16384
  static char ringbuffer[RINGBUFFER_SIZE];
-@@ -467,6 +499,9 @@
+@@ -467,6 +499,10 @@
  	sigaction(SIGILL, &act, 0);
  	sigaction(SIGBUS, &act, 0);
  	sigaction(SIGABRT, &act, 0);
 +#if defined(__sh__)  
 +        shm = createshm();
++        system("enigma2.sh &");
 +#endif
  }
  
@@ -19780,7 +19781,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  int eventData::CacheSize=0;
  descriptorMap eventData::descriptors;
  __u8 eventData::data[4108];
-@@ -1021,10 +1028,21 @@
+@@ -1021,10 +1028,22 @@
  
  void eEPGCache::load()
  {
@@ -19795,14 +19796,15 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  	if (f)
  	{
 +#ifdef __sh__
-+		unlink(epg_file);
++		if(checkshmentry(shm, "not_del_epg" != 1)
++			unlink(epg_file);
 +#else
  		unlink("/hdd/epg.dat");
 +#endif
  		int size=0;
  		int cnt=0;
  #if 0
-@@ -1086,7 +1104,11 @@
+@@ -1086,7 +1105,11 @@
  					eventDB[key]=std::pair<eventMap,timeMap>(evMap,tmMap);
  				}
  				eventData::load(f);
@@ -19814,7 +19816,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  #ifdef ENABLE_PRIVATE_EPG
  				char text2[11];
  				fread( text2, 11, 1, f);
-@@ -1154,7 +1176,11 @@
+@@ -1154,7 +1177,11 @@
  	if ( tmp < (eventData::CacheSize*12)/10 ) // 20% overhead
  		return;
  
@@ -19826,7 +19828,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  	int cnt=0;
  	if ( f )
  	{
-@@ -1179,7 +1205,11 @@
+@@ -1179,7 +1206,11 @@
  				++cnt;
  			}
  		}
