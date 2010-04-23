@@ -19476,8 +19476,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +	m_record_split_size = atoi(record_split_size);
 +	m_record_split_size = m_record_split_size * 1000 * 1000 * 1000;
 +	
-+	char record_split_type[3] = "";
-+	getshmentry(shm, "record_split_type=", record_split_type, 3);
++	char record_split_type[2] = "";
++	getshmentry(shm, "record_split_type=", record_split_type, 2);
 +	m_record_split_type = atoi(record_split_type);
 +
 +	m_filename[0] = NULL;
@@ -19773,7 +19773,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 
 --- enigma2-nightly/lib/dvb/epgcache.cpp	2010-04-21 06:46:26.000000000 -0400
 +++ enigma2-nightly/lib/dvb/epgcache.cpp	2010-04-21 06:08:23.000000000 -0400
-@@ -18,6 +18,13 @@
+@@ -18,6 +18,14 @@
  #include <lib/python/python.h>
  #include <dvbsi++/descriptor_tag.h>
  
@@ -19781,13 +19781,26 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +#include "include/shmE2.h"
 +
 +char epg_file[256] = "";
++int m_epg_days = 14;
 +extern char *shm;
 +#endif
 +
  int eventData::CacheSize=0;
  descriptorMap eventData::descriptors;
  __u8 eventData::data[4108];
-@@ -1021,10 +1028,22 @@
+@@ -575,7 +583,11 @@
+ 		if ( TM == 3599 )
+ 			goto next;
+ 
++#ifdef __sh__
++		if ( TM != 3599 && (TM+duration < now || TM > now+m_epg_days*24*60*60) )
++#else
+ 		if ( TM != 3599 && (TM+duration < now || TM > now+14*24*60*60) )
++#endif
+ 			goto next;
+ 
+ 		if ( now <= (TM+duration) || TM == 3599 /*NVOD Service*/ )  // old events should not be cached
+@@ -1021,10 +1029,26 @@
  
  void eEPGCache::load()
  {
@@ -19802,6 +19815,10 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  	if (f)
  	{
 +#ifdef __sh__
++		char epg_days[3] = "";
++		if(getshmentry(shm, "epg_days=", epg_days, 3) == 1)
++			m_epg_days = atoi(epg_days);
++
 +		if(checkshmentry(shm, "not_del_epg") != 1)
 +			unlink(epg_file);
 +#else
@@ -19810,7 +19827,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  		int size=0;
  		int cnt=0;
  #if 0
-@@ -1086,7 +1105,11 @@
+@@ -1086,7 +1110,11 @@
  					eventDB[key]=std::pair<eventMap,timeMap>(evMap,tmMap);
  				}
  				eventData::load(f);
@@ -19822,7 +19839,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  #ifdef ENABLE_PRIVATE_EPG
  				char text2[11];
  				fread( text2, 11, 1, f);
-@@ -1154,7 +1177,11 @@
+@@ -1154,7 +1182,11 @@
  	if ( tmp < (eventData::CacheSize*12)/10 ) // 20% overhead
  		return;
  
@@ -19834,7 +19851,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  	int cnt=0;
  	if ( f )
  	{
-@@ -1179,7 +1206,11 @@
+@@ -1179,7 +1211,11 @@
  				++cnt;
  			}
  		}
