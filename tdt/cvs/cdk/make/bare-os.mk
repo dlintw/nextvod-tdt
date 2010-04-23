@@ -37,51 +37,6 @@ $(DEPDIR)/%filesystem: bootstrap-cross
 	$(INSTALL) -d $(targetprefix)/var/bin
 	[ "x$*" = "x" ] && touch $@ || true
 
-if STM22
-else !STM22
-KERNELHEADERS := linux-kernel-headers
-if STM23
-if ENABLE_P0119
-# STM23 && ENABLE_P0119
-KERNELHEADERS_VERSION := 2.6.23.17_stm23_0119-41
-KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec
-KERNELHEADERS_SPEC_PATCH := stm-target-kernel-headers-kbuild.spec.diff
-KERNELHEADERS_PATCHES :=
-else !ENABLE_P0119
-# STM23 && !ENABLE_P0119
-KERNELHEADERS_VERSION := 2.6.23.17_stm23_0123-41
-KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec
-KERNELHEADERS_SPEC_PATCH := stm-target-kernel-headers-kbuild_0123.spec.diff
-KERNELHEADERS_PATCHES :=
-endif !ENABLE_P0119
-else !STM23
-# if STM24
-KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
-KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec
-KERNELHEADERS_SPEC_PATCH :=
-KERNELHEADERS_PATCHES :=
-# endif STM24
-endif !STM23
-KERNELHEADERS_RPM := RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).noarch.rpm
-
-$(KERNELHEADERS_RPM): \
-		$(if $(KERNELHEADERS_SPEC_PATCH),Patches/$(KERNELHEADERS_SPEC_PATCH)) \
-		$(if $(KERNELHEADERS_PATCHES),$(KERNELHEADERS_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm
-	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(KERNELHEADERS_SPEC_PATCH),( cd SPECS && patch -p1 $(KERNELHEADERS_SPEC) < ../Patches/$(KERNELHEADERS_SPEC_PATCH) ) &&) \
-	$(if $(KERNELHEADERS_PATCHES),cp $(KERNELHEADERS_PATCHES:%=Patches/%) SOURCES/ &&) \
-	export PATH=$(hostprefix)/bin:$(PATH) && \
-	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(KERNELHEADERS_SPEC)
-
-$(DEPDIR)/max-$(KERNELHEADERS) \
-$(DEPDIR)/$(KERNELHEADERS): \
-$(DEPDIR)/%$(KERNELHEADERS): $(KERNELHEADERS_RPM)
-	@rpm $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
-	touch $@
-endif !STM22
-
 #
 # GLIBC
 #
@@ -89,21 +44,21 @@ GLIBC := glibc
 GLIBC_DEV := glibc-dev
 if STM22
 GLIBC_VERSION := 2.5-27
-GLIBC_RAWVERSION := 2.5
+GLIBC_RAWVERSION := $(firstword $(subst -, ,$(GLIBC_VERSION)))
 GLIBC_SPEC := stm-target-$(GLIBC)-sh4processed.spec
 GLIBC_SPEC_PATCH := $(GLIBC_SPEC)22.diff
 GLIBC_PATCHES :=
 else !STM22
 if STM23
-GLIBC_VERSION := 2.6.1-53
-GLIBC_RAWVERSION := 2.6.1
+GLIBC_VERSION := $(if $(STABLE),2.6.1-53,2.6.1-61)
+GLIBC_RAWVERSION := $(firstword $(subst -, ,$(GLIBC_VERSION)))
 GLIBC_SPEC := stm-target-$(GLIBC).spec
 GLIBC_SPEC_PATCH :=
 GLIBC_PATCHES :=
 else !STM23
 # if STM24
 GLIBC_VERSION := 2.10.1-7
-GLIBC_RAWVERSION := 2.10.1
+GLIBC_RAWVERSION := $(firstword $(subst -, ,$(GLIBC_VERSION)))
 GLIBC_SPEC := stm-target-$(GLIBC).spec
 GLIBC_SPEC_PATCH := $(GLIBC_SPEC)24.diff
 GLIBC_PATCHES :=
@@ -298,21 +253,21 @@ LIBTERMCAP_DEV		:= libtermcap-dev
 LIBTERMCAP_DOC		:= libtermcap-doc
 if STM22
 LIBTERMCAP_VERSION := 2.0.8-8
-LIBTERMCAP_RAWVERSION := 2.0.8
+LIBTERMCAP_RAWVERSION := $(firstword $(subst -, ,$(LIBTERMCAP_VERSION)))
 LIBTERMCAP_SPEC := stm-target-$(LIBTERMCAP).spec
 LIBTERMCAP_SPEC_PATCH :=
 LIBTERMCAP_PATCHES :=
 else !STM22
 if STM23
-LIBTERMCAP_VERSION := 2.0.8-8
-LIBTERMCAP_RAWVERSION := 2.0.8
+LIBTERMCAP_VERSION := $(if $(STABLE),2.0.8-8,2.0.8-9)
+LIBTERMCAP_RAWVERSION := $(firstword $(subst -, ,$(LIBTERMCAP_VERSION)))
 LIBTERMCAP_SPEC := stm-target-$(LIBTERMCAP).spec
 LIBTERMCAP_SPEC_PATCH :=
 LIBTERMCAP_PATCHES :=
 else !STM23
 # if STM24
 LIBTERMCAP_VERSION := 2.0.8-10
-LIBTERMCAP_RAWVERSION := 2.0.8
+LIBTERMCAP_RAWVERSION := $(firstword $(subst -, ,$(LIBTERMCAP_VERSION)))
 LIBTERMCAP_SPEC := stm-target-$(LIBTERMCAP).spec
 LIBTERMCAP_SPEC_PATCH :=
 LIBTERMCAP_PATCHES :=
@@ -540,7 +495,7 @@ MAKEDEV_SPEC_PATCH := $(MAKEDEV_SPEC)22.diff
 MAKEDEV_PATCHES :=
 else !STM22
 if STM23
-MAKEDEV_VERSION := 2.3.1-24
+MAKEDEV_VERSION := $(if $(STABLE),2.3.1-24,2.3.1-25)
 MAKEDEV_SPEC := stm-target-$(MAKEDEV).spec
 MAKEDEV_SPEC_PATCH := $(MAKEDEV_SPEC)23.diff
 MAKEDEV_PATCHES :=
@@ -705,7 +660,7 @@ UDEV_SPEC_PATCH :=
 UDEV_PATCHES :=
 else !STM22
 if STM23
-UDEV_VERSION := 116-23
+UDEV_VERSION := $(if $(STABLE),116-23,116-25)
 UDEV_SPEC := stm-target-$(UDEV).spec
 UDEV_SPEC_PATCH :=
 UDEV_PATCHES :=

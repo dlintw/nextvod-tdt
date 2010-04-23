@@ -135,6 +135,13 @@ fi
 
 ##############################################
 
+# Enable this option if you want to use the latest version of every package.
+# The latest version might have solved some bugs, but might also have
+# introduced new ones
+# CONFIGPARAM="$CONFIGPARAM --enable-bleeding-edge"
+
+##############################################
+
 echo && \
 echo "Performing autogen.sh..." && \
 echo "------------------------" && \

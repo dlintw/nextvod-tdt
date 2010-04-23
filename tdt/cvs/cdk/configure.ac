@@ -81,6 +81,11 @@ AC_ARG_ENABLE(debug,
 	,[enable_debug=no])
 AM_CONDITIONAL(DEBUG,test "$enable_debug" = "yes")
 
+AC_ARG_ENABLE(bleeding_edge,
+	AS_HELP_STRING(--enable-bleeding-edge,	Use latest possible version for every package),
+	,[enable_bleeding_edge=no])
+AM_CONDITIONAL(BLEEDING_EDGE,test "$enable_bleeding_edge" = "yes")
+
 AC_ARG_ENABLE(enable_vdr1711,
 	AS_HELP_STRING(--enable-vdr1711,	set up the CDK to use vdr 1.7.11),
 	,[enable_vrd1711=no])

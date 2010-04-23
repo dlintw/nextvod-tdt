@@ -42,6 +42,13 @@ STM_SRC := $(STLINUX)
 endif !STM23
 endif !STM22
 
+if BLEEDING_EDGE
+STABLE =
+else !BLEEDING_EDGE
+STABLE = YES
+endif !BLEEDING_EDGE
+export STABLE
+
 BUILDENV := \
 	CC=$(target)-gcc \
 	CXX=$(target)-g++ \
@@ -97,7 +104,7 @@ ACLOCAL_AMFLAGS = -I .
 CONFIG_STATUS_DEPENDENCIES = \
 	$(top_srcdir)/rules.pl \
 	$(top_srcdir)/rules-install $(top_srcdir)/rules-install-flash \
-	$(top_srcdir)/rules-make \
+	$(top_srcdir)/rules-make$(if $(STABLE),,.latest) \
 	Makefile-archive
 
 CONFIGURE_OPTS = \

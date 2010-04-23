@@ -75,6 +75,7 @@ readline-5.2.tar.gz;ftp://ftp.cwru.edu/pub/bash
 #freetype-2.1.9.tar.bz2;http://ftp.uniroma2.it/unix/packages/FREETYPE/freetype2
 freetype-2.1.4.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/freetype
 freetype-2.3.5.tar.bz2;http://download.savannah.gnu.org/releases/freetype
+freetype-2.3.12.tar.bz2;http://download.savannah.gnu.org/releases/freetype
 lirc-0.8.2.tar.gz;http://prdownloads.sourceforge.net/lirc
 jpegsrc.v6b.tar.gz;ftp://ftp.uni-leipzig.de/pub/linux/ftp:robot.informatik.uni-leipzig.de/Sources/System/Libs
 libpng-1.2.16.tar.bz2;http://kent.dl.sourceforge.net/sourceforge/libpng
