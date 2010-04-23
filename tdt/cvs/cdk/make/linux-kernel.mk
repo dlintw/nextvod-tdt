@@ -143,10 +143,10 @@ endif ENABLE_P0123
 endif !ENABLE_P0119
 
 if ENABLE_HL101
-STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23_api5.patch
+STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
 else !ENABLE_HL101
 if ENABLE_VIP2
-STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23_api5.patch
+STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
 else !ENABLE_VIP2
 STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23$(PATCH_STR).patch
 endif !ENABLE_VIP2
