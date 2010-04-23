@@ -565,6 +565,7 @@ CROSS_GCC_SPEC := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC))-sh4processed.spec
 CROSS_GCC_SPEC_PATCH := $(CROSS_GCC_SPEC)22.diff
 CROSS_GCC_PATCHES :=
 CROSS_GCC_KERNELHEADERS := kernel-headers
+CROSS_GCC_INVALIDATE = YES
 else !STM22
 if STM23
 CROSS_GCC_VERSION := $(if $(STABLE),4.2.4-49,4.2.4-63)
@@ -573,6 +574,7 @@ CROSS_GCC_SPEC := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
 CROSS_GCC_SPEC_PATCH := $(CROSS_GCC_SPEC)23.diff
 CROSS_GCC_PATCHES :=
 CROSS_GCC_KERNELHEADERS := kernel-headers
+CROSS_GCC_INVALIDATE = $(if $(STABLE),YES)
 else !STM23
 # if STM24
 CROSS_GCC_VERSION := 4.3.4-63
@@ -581,6 +583,7 @@ CROSS_GCC_SPEC := stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
 CROSS_GCC_SPEC_PATCH := $(CROSS_GCC_SPEC)24.diff
 CROSS_GCC_PATCHES :=
 CROSS_GCC_KERNELHEADERS := linux-kernel-headers
+CROSS_GCC_INVALIDATE =
 # endif STM24
 endif !STM23
 endif !STM22
@@ -611,16 +614,10 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 	rpm $(DRPM) --nodeps -ev $(STLINUX)-sh4-$(GLIBC_DEV) && \
 	rpm $(DRPM) --nodeps -ev $(STLINUX)-sh4-$(GLIBC)
 
-if STM24
 $(CROSS_GCC): $(CROSS_GCC_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
+	$(if $(CROSS_GCC_INVALIDATE),sh4-linux-objcopy -v --redefine-sym __ic_invalidate_syscall=__ic_invalidate $(prefix)/devkit/sh4/lib/gcc/sh4-linux/$(CROSS_GCC_RAWVERSION)/libgcc.a &&) \
 	touch .deps/$(notdir $@)
-else !STM24
-$(CROSS_GCC): $(CROSS_GCC_RPM)
-	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
-	sh4-linux-objcopy -v --redefine-sym __ic_invalidate_syscall=__ic_invalidate $(prefix)/devkit/sh4/lib/gcc/sh4-linux/$(CROSS_GCC_RAWVERSION)/libgcc.a && \
-	touch .deps/$(notdir $@)
-endif !STM24
 
 $(CROSS_CPP): $(CROSS_CPP_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
