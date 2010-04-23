@@ -232,14 +232,14 @@ eventfinder.start_search Suche beginnen
 eventlistbar.channelswitch Umschalten
 eventlistbar.eventsort Sortieren
 eventlistbar.recordevent Aufnehmen
-extra.add_to_bouquet dem Bouquet hinzufuegen
+extra.add_to_bouquet dem Bouquet hinzufügen
 extra.audio_run_player Audio Taste startet Player
 extra.auto_delete Automatische Löschung
 extra.auto_timeshift Autom. Aufnahme, Sek. (0 = deakt.)
 extra.auto_to_record Timeshift zu den Aufnahmen hinzufügen
 extra.cache_txt Teletext zwischenspeichern
 extra.chadded Der aktuelle Kanal wird dem selektierter Bouquet hinzugefügt....\n
-extra.chalreadyinbq Der aktueller Kanal ist bereits in selektiertem Bouquet....\n
+extra.chalreadyinbq Der aktuelle Kanal ist bereits in selektiertem Bouquet....\n
 extra.clear_log Logdatei löschen
 extra.dboxinfo Box Info
 extra.east Osten
@@ -299,7 +299,7 @@ extra.spts_mode SPTS Modus
 extra.start_tostandby Starten zum Standby
 extra.temp_timeshift Temporäres Timeshift
 extra.timeshift_pause Timeshift Pause
-extra.timezone Zeit-Zone
+extra.timezone Zeitzone
 extra.tp_fec FEC
 extra.tp_freq Frequenz
 extra.tp_mod Modulation
@@ -422,7 +422,7 @@ fontmenu.channellist Kanalliste
 fontmenu.epg EPG
 fontmenu.eventlist Eventlist
 fontmenu.gamelist Gameliste
-fontmenu.head Schriftgrössen Einstellungen
+fontmenu.head Schriftgrößen Einstellungen
 fontmenu.infobar Infobar
 fontsize.channel_num_zap Direktauswahl
 fontsize.channellist Kanalliste
@@ -532,7 +532,7 @@ hdd_30min 30 min.
 hdd_5min 5 min.
 hdd_60min 60 min.
 hdd_activate Aktiviere Einstellungen
-hdd_check Prüfe Dateiesystem
+hdd_check Prüfe Dateisystem
 hdd_check_failed HDD Prüfung fehlgeschlagen !
 hdd_ext3 Ext3fs
 hdd_fast Schnell
@@ -580,7 +580,7 @@ infoviewer.subchan_disp_pos Unterkanalanzeige
 infoviewer.subservice Bildregie
 infoviewer.waittime Warte auf Uhrzeit...
 ipsetup.hint_1 Benutzen Sie 0..9 oder hoch/runter
-ipsetup.hint_2 OK speichert, LAME! bricht ab
+ipsetup.hint_2 OK speichert, EXIT bricht ab
 keybindingmenu.addrecord Aufnahme-Timer hinzufügen
 keybindingmenu.addremind Umschalt-Timer hinzufügen
 keybindingmenu.allchannels_on_ok Kanalliste
@@ -712,14 +712,14 @@ motorcontrol.drive_mode_auto Fahr Modus/automatischer Stop
 motorcontrol.east_limit Setze östliches (soft) Limit
 motorcontrol.enable_limit Aktiviere (soft) Limit
 motorcontrol.goto Gehe zu Motor Position (a)
-motorcontrol.halt Stope Motor
+motorcontrol.halt Stoppe Motor
 motorcontrol.head Motor-Setup
 motorcontrol.install_menu Motor Installation
 motorcontrol.motor_pos (a) Motor Position:
 motorcontrol.movement (b) Bewegung:
 motorcontrol.msec Millisekunden
 motorcontrol.no_mode keine Sorge
-motorcontrol.notdef Not used
+motorcontrol.notdef nicht definiert
 motorcontrol.pos_decrease Motor Position runter (a)
 motorcontrol.pos_increase Motor Position rauf (a)
 motorcontrol.ref_position Gehe zu Referenz Position
@@ -757,11 +757,11 @@ moviebrowser.browser_row_nr Anzahl Spalten
 moviebrowser.browser_row_width Spaltenbreite [Punkte]
 moviebrowser.dir Pfad
 moviebrowser.dir_head Zusätzliche Verzeichnisse
-moviebrowser.edit_book Bookmark Ändern
+moviebrowser.edit_book Bookmark ändern
 moviebrowser.edit_book_name_info1 Neuer Markierungsname
 moviebrowser.edit_book_name_info2 book name info2
 moviebrowser.edit_book_pos_info1 Neue Position (s)
-moviebrowser.edit_book_pos_info2
+moviebrowser.edit_book_pos_info2 book pos info2
 moviebrowser.edit_book_type_info1 Neue Sprunglänge (s)
 moviebrowser.edit_book_type_info2 <0 zurück , >0 vor, 0: kein
 moviebrowser.edit_serie Name der Serie
@@ -802,7 +802,7 @@ moviebrowser.info_prodyear Jahr
 moviebrowser.info_quality Qualität
 moviebrowser.info_recorddate Aufnahmedatum
 moviebrowser.info_serie Serie
-moviebrowser.info_size Dateigrösse (MB)
+moviebrowser.info_size Dateigröße (MB)
 moviebrowser.info_title Titel
 moviebrowser.info_videoformat Bild
 moviebrowser.last_play_max_items Zeilen 'zuletzt aufgenommen'
