@@ -1189,6 +1189,7 @@ const char *locale_real_names[] = {
 	"hdd_middle",
 	"hdd_fast",
 	"hdd_ext3",
+	"hdd_ext2",
 	"hdd_reiser",
 	"hdd_1min",
 	"hdd_5min",

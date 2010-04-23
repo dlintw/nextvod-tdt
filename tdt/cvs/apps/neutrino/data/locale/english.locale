@@ -534,7 +534,8 @@ hdd_60min 60 min.
 hdd_activate Activate settings
 hdd_check Check filesystem
 hdd_check_failed HDD check failed !
-hdd_ext3 Ext3fs
+hdd_ext3 Ext3
+hdd_ext2 Ext2
 hdd_fast Fast
 hdd_format Format HDD
 hdd_format_failed HDD format failed !
@@ -544,7 +545,7 @@ hdd_manage Manage
 hdd_middle Middle
 hdd_noise Noise
 hdd_not_found No HDD found
-hdd_reiser Reiserfs
+hdd_reiser ReiserFS
 hdd_settings HDD Settings
 hdd_sleep Sleep time
 hdd_slow Slow

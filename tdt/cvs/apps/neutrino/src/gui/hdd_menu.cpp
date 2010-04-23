@@ -166,7 +166,7 @@ int CHDDMenuHandler::doMenu ()
 		CMenuWidget * tempMenu = new CMenuWidget(str, NEUTRINO_ICON_SETTINGS);
 		tempMenu->addItem( GenericMenuBack );
 		tempMenu->addItem( GenericMenuSeparatorLine );
-		//tempMenu->addItem( new CMenuOptionChooser(LOCALE_HDD_FS, &g_settings.hdd_fs, HDD_FILESYS_OPTIONS, HDD_FILESYS_OPTION_COUNT, true));
+		tempMenu->addItem( new CMenuOptionChooser(LOCALE_HDD_FS, &g_settings.hdd_fs, HDD_FILESYS_OPTIONS, HDD_FILESYS_OPTION_COUNT, true));
 		tempMenu->addItem(new CMenuForwarder(LOCALE_HDD_FORMAT, true, "", new CHDDFmtExec, namelist[i]->d_name));
 		tempMenu->addItem(new CMenuForwarder(LOCALE_HDD_CHECK, true, "", new CHDDChkExec, namelist[i]->d_name));
 		hddmenu->addItem(new CMenuForwarderNonLocalized(str, removable ? false : true, NULL, tempMenu));
@@ -281,9 +281,12 @@ int CHDDFmtExec::exec(CMenuTarget* parent, const std::string& key)
 
 	switch(g_settings.hdd_fs) {
 		case 0:
-			sprintf(cmd, "/sbin/mkfs.ext3 -T largefile -m0 %s", src);
+			sprintf(cmd, "/sbin/mkfs.ext3 -L RECORD -T largefile -j -m0 %s", src);
 			break;
 		case 1:
+			sprintf(cmd, "/sbin/mkfs.ext2 -L RECORD -T largefile -m0 %s", src);
+			break;
+		case 2:
 			sprintf(cmd, "/sbin/mkreiserfs -f -f %s", src);
 			break;
 		default:
@@ -333,15 +336,18 @@ _remount:
 	progress->hide();
 	delete progress;
 
-        switch(g_settings.hdd_fs) {
-                case 0:
-			res = mount(src, dst, "ext3", 0, NULL);
-                        break;
-                case 1:
-			res = mount(src, dst, "reiserfs", 0, NULL);
-                        break;
-		default:
-                        break;
+	switch(g_settings.hdd_fs) {
+	    case 0:
+		res = mount(src, dst, "ext3", 0, NULL);
+		break;
+	    case 1:
+		res = mount(src, dst, "ext2", 0, NULL);
+		break;
+	    case 2:
+		res = mount(src, dst, "reiserfs", 0, NULL);
+		break;
+	    default:
+		break;
         }
 	f = fopen("/proc/sys/kernel/hotplug", "w");
 	if(f) {
@@ -399,6 +405,9 @@ printf("CHDDChkExec: key %s\n", key.c_str());
 			sprintf(cmd, "/sbin/fsck.ext3 -C 1 -f -y %s", src);
 			break;
 		case 1:
+			sprintf(cmd, "/sbin/fsck.ext2 -C 1 -f -y %s", src);
+			break;
+		case 2:
 			sprintf(cmd, "/sbin/reiserfsck --fix-fixable %s", src);
 			break;
 		default:
@@ -450,14 +459,17 @@ printf("CHDDChkExec: key %s\n", key.c_str());
 
 ret1:
         switch(g_settings.hdd_fs) {
-                case 0:
+		case 0:
 			res = mount(src, dst, "ext3", 0, NULL);
-                        break;
-                case 1:
+			break;
+		case 1:
+			res = mount(src, dst, "ext2", 0, NULL);
+			break;
+		case 2:
 			res = mount(src, dst, "reiserfs", 0, NULL);
-                        break;
+			break;
 		default:
-                        break;
+			break;
         }
 	printf("CHDDChkExec: mount res %d\n", res);
 	

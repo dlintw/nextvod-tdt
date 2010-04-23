@@ -534,7 +534,8 @@ hdd_60min 60 min.
 hdd_activate Aktiviere Einstellungen
 hdd_check Prüfe Dateisystem
 hdd_check_failed HDD Prüfung fehlgeschlagen !
-hdd_ext3 Ext3fs
+hdd_ext3 Ext3
+hdd_ext2 Ext2
 hdd_fast Schnell
 hdd_format Formatiere HDD
 hdd_format_failed HDD formatieren fehlgeschlagen !
@@ -544,7 +545,7 @@ hdd_manage Verwalten
 hdd_middle Mitte
 hdd_noise HDD-Speed
 hdd_not_found Keine HDD gefunden
-hdd_reiser Reiserfs
+hdd_reiser ReiserFS
 hdd_settings HDD Einstellungen
 hdd_sleep HDD-Standby
 hdd_slow Langsam
