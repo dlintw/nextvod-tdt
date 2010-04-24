@@ -156,3 +156,12 @@ echo && \
 #Dagobert: I find it sometimes useful to know
 #what I have build last in this directory ;)
 echo $CONFIGPARAM >lastChoice
+
+echo "-----------------------"
+echo "Your build enivroment is ready :-)"
+echo "Your next step could be:"
+echo "make yaud-enigma2"
+echo "make yaud-enigma2-nightly"
+echo "make yaud-neutrino"
+echo "make yaud-vdr"
+echo "-----------------------"
