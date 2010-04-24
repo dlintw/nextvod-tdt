@@ -326,7 +326,7 @@ extra.zapit_menu Zapit Optionen
 extra.zapit_motor_speed Rotor Geschwindigkeit (10 = 1deg/sec)
 extra.zapit_restore Stelle Kanalliste wieder von /tmp wieder her
 extra.zapit_rezap_time Re-Zap bei EMU Umschaltzeit
-extra.zapit_save_last_chan Speicher letzten Kanal
+extra.zapit_save_last_chan Letzten Kanal speichern
 extra.zapit_scan_sdt Scan SDT für Updates
 extra.zapit_scanpids Scan/Benutze Pids
 extra.zapit_sdt_changed Kanalliste wird neu geladen.
