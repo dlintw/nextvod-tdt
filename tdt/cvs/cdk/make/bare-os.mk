@@ -183,7 +183,7 @@ else !STM23
 # if STM24
 GCC_VERSION := 4.3.4-66
 GCC_SPEC := stm-target-$(GCC).spec
-GCC_SPEC_PATCH :=
+GCC_SPEC_PATCH := $(GCC_SPEC)24.diff
 GCC_PATCHES :=
 # endif STM24
 endif !STM23
@@ -503,7 +503,7 @@ else !STM23
 # if STM24
 MAKEDEV_VERSION := 2.3.1-26
 MAKEDEV_SPEC := stm-target-$(MAKEDEV).spec
-MAKEDEV_SPEC_PATCH :=
+MAKEDEV_SPEC_PATCH := $(MAKEDEV_SPEC)24.diff
 MAKEDEV_PATCHES :=
 # endif STM24
 endif !STM23

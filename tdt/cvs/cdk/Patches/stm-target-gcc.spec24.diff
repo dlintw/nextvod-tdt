@@ -1,0 +1,10 @@
+--- SPECS/stm-target-gcc.spec.orig	2010-04-24 00:29:45.154850767 +0200
++++ SPECS/stm-target-gcc.spec	2010-04-24 00:30:58.850785492 +0200
+@@ -148,6 +148,7 @@
+ 
+ %prep
+ %setup -n gcc-%{version} -q
++%define _default_patch_fuzz 2
+ 
+ %patch0 -p1
+ %patch1 -p1

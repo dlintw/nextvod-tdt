@@ -1,0 +1,10 @@
+--- SPECS/stm-target-util-linux.spec.orig	2010-04-24 02:16:56.358781489 +0200
++++ SPECS/stm-target-util-linux.spec	2010-04-24 02:17:34.669484470 +0200
+@@ -55,6 +55,7 @@
+ 
+ %prep
+ %setup -q -n util-linux-ng-%{version}
++%define _default_patch_fuzz 2
+ %patch0 -p1
+ for p in `grep -v "^#" debian/patches/00list` ; do
+   patch -p1 < debian/patches/$p.dpatch

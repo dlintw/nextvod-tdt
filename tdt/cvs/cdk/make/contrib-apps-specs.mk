@@ -85,7 +85,7 @@ else !STM23
 # if STM24
 SYSVINIT_VERSION := 2.86-10
 SYSVINIT_SPEC := stm-target-$(SYSVINIT).spec
-SYSVINIT_SPEC_PATCH :=
+SYSVINIT_SPEC_PATCH := $(SYSVINIT_SPEC)24.diff
 SYSVINIT_PATCHES :=
 # endif STM24
 endif !STM23
@@ -888,7 +888,7 @@ if STM24
 UTIL_LINUX = util-linux
 UTIL_LINUX_VERSION = 2.16.1-21
 UTIL_LINUX_SPEC = stm-target-$(UTIL_LINUX).spec
-UTIL_LINUX_SPEC_PATCH =
+UTIL_LINUX_SPEC_PATCH = $(UTIL_LINUX_SPEC)24.diff
 UTIL_LINUX_PATCHES =
 UTIL_LINUX_RPM := RPMS/sh4/$(STLINUX)-sh4-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).sh4.rpm
 
@@ -898,7 +898,7 @@ $(UTIL_LINUX_RPM): \
 		Archive/$(STLINUX)-target-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).src.rpm \
 		| $(NCURSES_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(UTIL_LINUX_SPEC_PATCH),( cd SPECS && patch -p1 $(UTIL_LINUX_SPEC) < ../Patches/$(UTIL_LINUX_PATCH) ) &&) \
+	$(if $(UTIL_LINUX_SPEC_PATCH),( cd SPECS && patch -p1 $(UTIL_LINUX_SPEC) < ../Patches/$(UTIL_LINUX_SPEC_PATCH) ) &&) \
 	$(if $(UTIL_LINUX_PATCHES),cp $(UTIL_LINUX_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(UTIL_LINUX_SPEC)
