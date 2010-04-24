@@ -151,7 +151,6 @@ echo "Performing configure..." && \
 echo "-----------------------" && \
 echo && \
 ./configure $CONFIGPARAM
-./touch.sh
 
 #Dagobert: I find it sometimes useful to know
 #what I have build last in this directory ;)

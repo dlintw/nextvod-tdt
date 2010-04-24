@@ -504,30 +504,41 @@ endif
 endif
 endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmfb.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/sound/pseudocard/pseudocard.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/sound/silencegen/silencegen.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshell/embxshell.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxmailbox/embxmailbox.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshm/embxshm.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/mme/mme_host.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/stm/mmelog/mmelog.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/stm/monitor/stm_monitor.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/video/stm/stm_v4l2.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/dvb/stmdvb.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/sound/ksound/ksound.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/backend/player2.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/h264_preprocessor/sth264pp.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/allocator/stmalloc.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/stm/platform/platform.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
 #	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
-if !STM22
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/stm/platform/p2div64.ko $(prefix)/release_neutrino/lib/modules/
-endif
 	find $(prefix)/release_neutrino/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
+	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
+	for mod in \
+		sound/pseudocard/pseudocard.ko \
+		sound/silencegen/silencegen.ko \
+		stm/mmelog/mmelog.ko \
+		stm/monitor/stm_monitor.ko \
+		media/video/stm/stm_v4l2.ko \
+		media/dvb/stm/dvb/stmdvb.ko \
+		sound/ksound/ksound.ko \
+		media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko \
+		media/dvb/stm/backend/player2.ko \
+		media/dvb/stm/h264_preprocessor/sth264pp.ko \
+		media/dvb/stm/allocator/stmalloc.ko \
+		stm/platform/platform.ko \
+		stm/platform/p2div64.ko \
+	;do \
+		if [ -e player2/linux/drivers/$$mod ] ; then \
+			cp player2/linux/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
+			sh4-linux-strip --strip-unneeded $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+		else \
+			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+		fi;\
+	done
+if STM22
+	rm $(prefix)/release_neutrino/lib/modules/p2div64.ko
+endif
 	rm -rf $(prefix)/release_neutrino/lib/autofs
 	rm -rf $(prefix)/release_neutrino/lib/modules/$(KERNELVERSION)
 
