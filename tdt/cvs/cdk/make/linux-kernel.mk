@@ -157,8 +157,6 @@ COMMONPATCHES_23 = \
 		linux-sh4-time_stm23.patch \
 		linux-sh4-cmdline-printk_stm23.patch \
 		$(if $(P0123),linux-sh4-mtd_stm23$(PATCH_STR).patch) \
-		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
-		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		$(if $(P0123),linux-sh4-strcpy_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-asm_mov_0xffffff_stm23$(PATCH_STR).patch) \
 		$(STM23_DVB_PATCH)
