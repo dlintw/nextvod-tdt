@@ -221,7 +221,7 @@ EPGPlus.vergap2_width Breite ver. Lücke 2
 EPGPlus.view_mode Modus
 epgviewer.More_Screenings Weitere Termine auf diesem Kanal
 epgviewer.nodetailed Keine ausführlichen Informationen verfügbar
-epgviewer.notfound keine Programminformationen (EPG) gefunden
+epgviewer.notfound Keine Programminformationen (EPG) gefunden
 eventfinder.head Suche in EPG
 eventfinder.keyword Stichwort
 eventfinder.search Suche
@@ -238,8 +238,8 @@ extra.auto_delete Automatische Löschung
 extra.auto_timeshift Autom. Aufnahme, Sek. (0 = deakt.)
 extra.auto_to_record Timeshift zu den Aufnahmen hinzufügen
 extra.cache_txt Teletext zwischenspeichern
-extra.chadded Der aktuelle Kanal wird dem selektierter Bouquet hinzugefügt....\n
-extra.chalreadyinbq Der aktuelle Kanal ist bereits in selektiertem Bouquet....\n
+extra.chadded Der aktuelle Kanal wird dem selektierten Bouquet hinzugefügt...\n
+extra.chalreadyinbq Der aktuelle Kanal ist bereits im selektierten Bouquet...\n
 extra.clear_log Logdatei löschen
 extra.dboxinfo Box Info
 extra.east Osten
