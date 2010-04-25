@@ -53,6 +53,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	git clone git://git.opendreambox.org/git/enigma2.git $(appsdir)/enigma2-nightly; \
 	[ "$$REVISION" == "" ] || (cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd "$(buildprefix)"); \
 	cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-nightly.$$DIFF.diff"
+	cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-nightly.tuxtxt.diff"
 	$(if $(CUBEREVO),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
 	$(if $(CUBEREVO_MINI),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
 	$(if $(CUBEREVO_MINI2),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
