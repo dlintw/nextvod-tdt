@@ -343,28 +343,45 @@ if !STM22
 else
 	rm -f $(prefix)/release/bin/ustslave_stm23
 endif
+	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
+	for mod in \
+		sound/pseudocard/pseudocard.ko \
+		sound/silencegen/silencegen.ko \
+		stm/mmelog/mmelog.ko \
+		stm/monitor/stm_monitor.ko \
+		media/video/stm/stm_v4l2.ko \
+		media/dvb/stm/dvb/stmdvb.ko \
+		sound/ksound/ksound.ko \
+		media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko \
+		media/dvb/stm/backend/player2.ko \
+		media/dvb/stm/h264_preprocessor/sth264pp.ko \
+		media/dvb/stm/allocator/stmalloc.ko \
+		stm/platform/platform.ko \
+		stm/platform/p2div64.ko \
+	;do \
+		echo `pwd` player2/linux/drivers/$$mod; \
+		if [ -e player2/linux/drivers/$$mod ]; then \
+			cp player2/linux/drivers/$$mod $(prefix)/release/lib/modules/; \
+			sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/`basename $$mod`; \
+		else \
+			touch $(prefix)/release/lib/modules/`basename $$mod`; \
+		fi; \
+		echo "."; \
+	done
+	echo "touched";
+if STM22
+	rm $(prefix)/release/lib/modules/p2div64.ko
+endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/avs/avs.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/boxtype/boxtype.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/simu_button/simu_button.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/e2_proc/e2_proc.ko $(prefix)/release/lib/modules/
 
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmfb.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/sound/pseudocard/pseudocard.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/sound/silencegen/silencegen.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshell/embxshell.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxmailbox/embxmailbox.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshm/embxshm.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/mme/mme_host.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/stm/mmelog/mmelog.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/stm/monitor/stm_monitor.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/video/stm/stm_v4l2.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/dvb/stmdvb.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/sound/ksound/ksound.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/backend/player2.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/h264_preprocessor/sth264pp.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/media/dvb/stm/allocator/stmalloc.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/stm/platform/platform.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 if !ENABLE_VIP2
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release/lib/modules/
@@ -374,10 +391,8 @@ endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/lzo-kmod/lzo1x_compress.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/lzo-kmod/lzo1x_decompress.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/ramzswap.ko $(prefix)/release/lib/modules/
-if !STM22
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/drivers/stm/platform/p2div64.ko $(prefix)/release/lib/modules/
-endif
 	find $(prefix)/release/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
+
 	rm -rf $(prefix)/release/lib/autofs
 	rm -rf $(prefix)/release/lib/modules/$(KERNELVERSION)
 

@@ -37,6 +37,7 @@ lsb_3.2-12.tar.gz;ftp://ftp.debian.hu/debian/pool/main/l/lsb/
 # lsb_3.2-12.tar.gz;http://ftp.de.debian.org/debian/pool/main/l/lsb
 ipkg-0.99.163.tar.gz;http://www.handhelds.org/download/packages/ipkg
 module-init-tools-3.3-pre1.tar.bz2;http://www.kernel.org/pub/linux/utils/kernel/module-init-tools
+module-init-tools-3.12-pre2.tar.bz2;http://www.kernel.org/pub/linux/utils/kernel/module-init-tools/
 sysvinit-2.86.tar.gz;ftp://ftp.cistron.nl/pub/people/miquels/sysvinit
 sysvinit_2.86.ds1.orig.tar.gz;http://ftp.de.debian.org/debian/pool/main/s/sysvinit
 sysvinit_2.86.ds1-38.diff.gz;http://ftp.de.debian.org/debian/pool/main/s/sysvinit
@@ -49,6 +50,7 @@ grep_2.5.1.ds2-6.diff.gz;http://ftp.de.debian.org/debian/pool/main/g/grep
 openrdate-1.1.2.tar.gz;http://kent.dl.sourceforge.net/sourceforge/openrdate
 termcap-2.0.8.tar.gz;http://fresh.t-systems-sfr.com/linux/src
 e2fsprogs-1.40.2.tar.gz;http://kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/older_releases/
+e2fsprogs-1.41.11.tar.gz;http://prdownloads.sourceforge.net/e2fsprogs/
 xfsprogs_2.9.4-1.tar.gz;ftp://oss.sgi.com/projects/xfs/cmd_tars
 mc-4.6.1.tar.gz;ftp://ftp.zcu.cz/pub/linux/utils/file/managers/mc
 sdparm-1.01.tgz;http://sg.torque.net/sg/p
@@ -137,6 +139,7 @@ zd1211lnxdrv_2_15_0_0.tar.gz;http://www.lutec.eu/treiber
 wireless_tools.29.tar.gz;http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux
 wpa_supplicant-0.5.9.tar.gz;http://hostap.epitest.fi/releases
 ethtool-6.tar.gz;http://www.sfr-fresh.com/linux/misc
+ethtool-2.6.33.tar.gz;http://downloads.sourceforge.net/project/gkernel/ethtool/2.6.33/
 
 #
 # GUI

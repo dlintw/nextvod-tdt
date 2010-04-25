@@ -301,8 +301,7 @@ $(flashprefix)/root-stock-%: \
 	@TUXBOX_CUSTOMIZE@
 
 $(flashprefix)/root-stock-neutrino: \
-$(flashprefix)/root-stock-%: \
-			$(flashprefix)/root $(flashprefix)/root-stock $(flashprefix)/root-stock-squashfs
+			$(flashprefix)/root-stock-neutrino
 	rm -rf $@
 	$(INSTALL) -d $@/{dev,lib,usr,var}
 	mkdir  $@/boot
@@ -320,9 +319,12 @@ $(flashprefix)/root-stock-%: \
 	echo "/etc/init.d/rcS" >> $@/etc/init.d/rcS
 	chmod 755 $@/etc/init.d/rcS
 	cp -rd $(prefix)/release_neutrino/etc/inittab $@/etc/inittab
+	cp -rd $(prefix)/cdkroot/usr/lib/libcrypto.so.0.9.8 $@/usr/lib/
 	rm -f $@/usr/bin/{ip*,ir*}
+	rm -f $@/lib/libcrypto.so.0.9.8
+	ln -sf /usr/lib/libcrypto.so.0.9.8 $@/lib/libcrypto.so.0.9.8
 	rm -f $@/usr/lib/{libalsaplayer.so,libalsaplayer.so.0,libalsaplayer.so.0.0.2,libasound.so,libasound.so.2,libasound.so.2.0.0}
-	rm -f $@/usr/lib/{libcrypto.so,libcrypto.so.0.9.8,libfontconfig.so,libfontconfig.so.1,libfontconfig.so.1.3.0,libform.so,libform.so.5,libform.so.5.5}
+	rm -f $@/usr/lib/{libfontconfig.so,libfontconfig.so.1,libfontconfig.so.1.3.0,libform.so,libform.so.5,libform.so.5.5}
 	rm -f $@/usr/lib/{libncurses.so,libncurses.so.5,libreadline.so,libreadline.so.5,libreadline.so.5.2,libssl.so,libssl.so.0.9.8,xml2Conf.sh,xsltConf.sh}
 	rm -f $@/usr/lib/{libdvdnavmini.so,libdvdnavmini.so.4,libdvdnavmini.so.4.1.2,libfbsplashrender.so,libfbsplashrender.so.1,libfbsplashrender.so.1.0.0}
 	rm -f $@/usr/lib/{libfbsplash.so,libfbsplash.so.1,libfbsplash.so.1.0.0,liblcms.so,liblcms.so.1,liblcms.so.1.0.16}
@@ -330,6 +332,7 @@ $(flashprefix)/root-stock-%: \
 	( cd $@/usr/local/share && ln -sf /var/tuxbox/config config )
 	find $@/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
 	find $@/lib/ -name  *.so -exec sh4-linux-strip --strip-unneeded {} \;
+	find $@/usr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;	
 	@TUXBOX_CUSTOMIZE@
 
 
@@ -486,13 +489,11 @@ $(flashprefix)/var-%-enigma2: \
 
 
 $(flashprefix)/var-stock-neutrino: \
-$(flashprefix)/var-%-neutrino: \
-		$(flashprefix)/root $(flashprefix)/root-stock
+		$(flashprefix)/var-stock-neutrino
 	rm -rf $@
 	mkdir $@
 	cp -rd $(prefix)/release_neutrino/var/{plugins,share,tuxbox} $@
 	cp -rd $(prefix)/release_neutrino/usr/local/share/config/* $@/tuxbox/config
-	cp -rd $(prefix)/release_neutrino/usr/local/share/config/zapit $@/tuxbox/config/zapit
 	cp -rd $(prefix)/release_neutrino/etc $@/etc
 	ln -sf /.version $@/etc/.version
 	echo "tmpfs         /var/run            tmpfs   defaults                        0 0" >> $@/etc/fstab
