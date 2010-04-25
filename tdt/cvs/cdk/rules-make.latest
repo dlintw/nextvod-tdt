@@ -37,7 +37,7 @@ host_python;2.6;host-python-2.6;Python-2.6.tar.bz2:python.diff;extract:Python-2.
 busybox;1.11.2;busybox-1.11.2;busybox-1.11.2.tar.bz2:busybox.diff;extract:busybox-1.11.2.tar.bz2
 lsb;3.2-12;lsb-3.2;lsb_3.2-12.tar.gz;extract:lsb_3.2-12.tar.gz
 ipkg;0.99.163;ipkg-0.99.163;ipkg-0.99.163.tar.gz;extract:ipkg-0.99.163.tar.gz
-module_init_tools;3.3-pre1;module-init-tools-3.3-pre1;module-init-tools-3.3-pre1.tar.bz2;extract:module-init-tools-3.3-pre1.tar.bz2
+module_init_tools;3.12-pre2;module-init-tools-3.12-pre2;module-init-tools-3.12-pre2.tar.bz2;extract:module-init-tools-3.12-pre2.tar.bz2
 #sysvinit;2.86;sysvinit-2.86.ds1.orig;sysvinit-2.86.ds1.orig.tar.gz:sysvinit_2.86.ds1-38.diff.gz;extract:sysvinit-2.86.ds1.orig.tar.gz
 sysvinit;2.86;sysvinit-2.86;sysvinit-2.86.tar.gz:sysvinit_2.86.ds1-38.diff.gz;extract:sysvinit-2.86.tar.gz
 
@@ -46,7 +46,7 @@ sysvinit;2.86;sysvinit-2.86;sysvinit-2.86.tar.gz:sysvinit_2.86.ds1-38.diff.gz;ex
 #
 grep;2.5.1;grep-2.5.1;grep-2.5.1.tar.bz2:grep_2.5.1.ds2-6.diff.gz;extract:grep-2.5.1.tar.bz2
 openrdate;1.1.2;openrdate-1.1.2;openrdate-1.1.2.tar.gz;extract:openrdate-1.1.2.tar.gz
-e2fsprogs;1.40.2;e2fsprogs-1.40.2;e2fsprogs-1.40.2.tar.gz;extract:e2fsprogs-1.40.2.tar.gz
+e2fsprogs;1.41.11;e2fsprogs-1.41.11;e2fsprogs-1.41.11.tar.gz;extract:e2fsprogs-1.41.11.tar.gz
 xfsprogs;2.9.4-1;xfsprogs-2.9.4;xfsprogs_2.9.4-1.tar.gz:xfsprogs.diff;extract:xfsprogs_2.9.4-1.tar.gz;patch:xfsprogs.diff
 mc;4.6.1;mc-4.6.1;mc-4.6.1.tar.gz:mc.diff;extract:mc-4.6.1.tar.gz;patch:mc.diff
 sdparm;1.01;sdparm-1.01;sdparm-1.01.tgz;extract:sdparm-1.01.tgz
@@ -124,7 +124,7 @@ lighttpd;1.4.15;lighttpd-1.4.15;lighttpd-1.4.15.tar.gz;extract:lighttpd-1.4.15.t
 zd1211;2_15_0_0;ZD1211LnxDrv_2_15_0_0;zd1211lnxdrv_2_15_0_0.tar.gz:zd1211.diff;extract:zd1211lnxdrv_2_15_0_0.tar.gz;patch:zd1211.diff
 wireless_tools;29;wireless_tools.29;wireless_tools.29.tar.gz;extract:wireless_tools.29.tar.gz
 wpa_supplicant;0.5.9.;wpa_supplicant-0.5.9;wpa_supplicant-0.5.9.tar.gz;extract:wpa_supplicant-0.5.9.tar.gz
-ethtool;6;ethtool-6;ethtool-6.tar.gz;extract:ethtool-6.tar.gz
+ethtool;2.6.33;ethtool-2.6.33;ethtool-2.6.33.tar.gz;extract:ethtool-2.6.33.tar.gz
 
 #
 # GUI

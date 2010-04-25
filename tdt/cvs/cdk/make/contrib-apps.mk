@@ -221,10 +221,14 @@ endif
 #
 # E2FSPROGS
 #
-$(DEPDIR)/e2fsprogs.do_prepare: bootstrap @DEPENDS_e2fsprogs@
+E2FS_PROGS_PATCHES = $(if $(STABLE),e2fsprogs-relative-usrlib-path.patch,e2fsprogs-1.41.11-relative-usrlib-path.patch)
+
+$(DEPDIR)/e2fsprogs.do_prepare: bootstrap \
+		$(addprefix Patches/,$(E2FS_PROGS_PATCHES)) \
+		@DEPENDS_e2fsprogs@
 	@PREPARE_e2fsprogs@
 	cd @DIR_e2fsprogs@ && \
-	patch -p1 < ../Patches/e2fsprogs-relative-usrlib-path.patch
+	cat $(addprefix ../Patches/,$(E2FS_PROGS_PATCHES)) | patch -p1
 	touch $@
 
 $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare
@@ -234,7 +238,7 @@ $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare
 			--build=$(build) \
 			--host=$(target) \
 			--target=$(target) \
-			--with-cc="$(target)-gcc" \
+			$(if $(STABLE), --with-cc="$(target)-gcc") \
 			--with-linker=$(target)-ld \
 			--enable-htree \
 			--disable-profile \
