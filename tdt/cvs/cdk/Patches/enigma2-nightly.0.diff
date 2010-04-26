@@ -8016,9 +8016,33 @@ diff -r -u -N enigma2-nightly.org/lib/base/Makefile.am enigma2-nightly/lib/base/
 +	nconfig.cpp ioprio.cpp freesatv2.cpp
  
 diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/epgcache.cpp
---- enigma2-nightly.org/lib/dvb/epgcache.cpp	2010-04-17 09:03:20.000000000 +0200
+--- enigma2-nightly.org/lib/dvb/epgcache.cpp	2010-04-26 17:02:35.000000000 +0200
 +++ enigma2-nightly/lib/dvb/epgcache.cpp	2010-04-13 03:04:28.000000000 +0200
-@@ -115,11 +115,25 @@
+@@ -18,11 +18,23 @@
+ #include <lib/python/python.h>
+ #include <dvbsi++/descriptor_tag.h>
+ 
++#ifdef __sh__
++#include "include/shmE2.h"
++
++char epg_file[256] = "";
++int m_epg_days = 14;
++extern char *shm;
++#endif
++
+ int eventData::CacheSize=0;
+ descriptorMap eventData::descriptors;
+ __u8 eventData::data[4108];
+ extern const uint32_t crc32_table[256];
+ 
++#if ENABLE_FREESAT
++int enable_freesat = 1;
++#endif
++
+ const eServiceReference &handleGroup(const eServiceReference &ref)
+ {
+ 	if (ref.flags & eServiceReference::isGroup)
+@@ -115,11 +127,25 @@
  	int tmp = ByteSize-10;
  	memcpy(data, EITdata, 10);
  	int descriptors_length=0;
@@ -8044,7 +8068,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		if ( it != descriptors.end() )
  		{
  			int b = it->second.second[1]+2;
-@@ -128,7 +142,11 @@
+@@ -128,7 +154,11 @@
  			descriptors_length += b;
  		}
  		else
@@ -8056,7 +8080,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		tmp-=4;
  	}
  	ASSERT(pos <= 4108);
-@@ -142,12 +160,28 @@
+@@ -142,12 +172,28 @@
  	if ( ByteSize )
  	{
  		CacheSize -= ByteSize;
@@ -8085,7 +8109,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  			if ( it != descriptors.end() )
  			{
  				descriptorPair &p = it->second;
-@@ -159,7 +193,15 @@
+@@ -159,7 +205,15 @@
  				}
  			}
  			else
@@ -8101,28 +8125,43 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  			ByteSize -= 4;
  		}
  		delete [] EITdata;
-@@ -337,6 +379,20 @@
+@@ -337,6 +391,23 @@
  					return;
  				}
  #endif
 +#if ENABLE_FREESAT
-+				res = demux->createSectionReader( this, data.m_FreeSatScheduleOtherReader );
-+				if ( res )
++				if(enable_freesat)
 +				{
-+					eDebug("[eEPGCache] couldnt initialize FreeSat reader!!");
-+					return;
-+				}
-+				res = demux->createSectionReader( this, data.m_FreeSatScheduleOtherReader2 );
-+				if ( res )
-+				{
-+					eDebug("[eEPGCache] couldnt initialize FreeSat reader 2!!");
-+					return;
++					res = demux->createSectionReader( this, data.m_FreeSatScheduleOtherReader );
++					if ( res )
++					{
++						eDebug("[eEPGCache] couldnt initialize FreeSat reader!!");
++						return;
++					}
++					res = demux->createSectionReader( this, data.m_FreeSatScheduleOtherReader2 );
++					if ( res )
++					{
++						eDebug("[eEPGCache] couldnt initialize FreeSat reader 2!!");
++						return;
++					}
 +				}
 +#endif
  				messages.send(Message(Message::startChannel, chan));
  				// -> gotMessage -> changedService
  			}
-@@ -954,6 +1010,9 @@
+@@ -519,7 +590,11 @@
+ 		if ( TM == 3599 )
+ 			goto next;
+ 
++#ifdef __sh__
++		if ( TM != 3599 && (TM+duration < now || TM > now+m_epg_days*24*60*60) )
++#else
+ 		if ( TM != 3599 && (TM+duration < now || TM > now+14*24*60*60) )
++#endif
+ 			goto next;
+ 
+ 		if ( now <= (TM+duration) || TM == 3599 /*NVOD Service*/ )  // old events should not be cached
+@@ -954,6 +1029,9 @@
  {
  	hasStarted();
  	nice(4);
@@ -8132,12 +8171,99 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	load();
  	cleanLoop();
  	runLoop();
-@@ -1203,11 +1262,17 @@
+@@ -962,10 +1040,47 @@
+ 
+ void eEPGCache::load()
+ {
++#ifdef __sh__
++	if(getshmentry(shm, "epg_file=", epg_file, 256) != 1)
++		strcpy(epg_file, "/hdd/epg.dat");
++
++	FILE *f = fopen(epg_file, "r");
++#else
+ 	FILE *f = fopen("/hdd/epg.dat", "r");
++
++#if ENABLE_FREESAT
++	FILE *ffd;
++	ffd = fopen("/var/usr/local/share/enigma2/freesat.t1", "r");
++	if(ffd)
++	{
++		enable_freesat = 1;
++		fclose(ffd);
++	}
++	else
++		enable_freesat = 0;
++	ffd = fopen("/usr/local/share/enigma2/freesat.t1", "r");
++	if(ffd)
++	{
++		enable_freesat = 1;
++		fclose(ffd);
++	}
++	else
++		enable_freesat = 0;
++#endif
++
+ 	if (f)
+ 	{
++#ifdef __sh__
++		m_epg_days = 14;
++		char epg_days[3] = "";
++		if(getshmentry(shm, "epg_days=", epg_days, 3) == 1)
++			m_epg_days = atoi(epg_days);
++
++		if(checkshmentry(shm, "not_del_epg") != 1)
++			unlink(epg_file);
++#else
+ 		unlink("/hdd/epg.dat");
++#endif
+ 		int size=0;
+ 		int cnt=0;
+ #if 0
+@@ -1027,7 +1142,11 @@
+ 					eventDB[key]=std::pair<eventMap,timeMap>(evMap,tmMap);
+ 				}
+ 				eventData::load(f);
++#ifdef __sh__
++				eDebug("[EPGC] %d events read from %s", cnt, epg_file);
++#else
+ 				eDebug("[EPGC] %d events read from /hdd/epg.dat", cnt);
++#endif
+ #ifdef ENABLE_PRIVATE_EPG
+ 				char text2[11];
+ 				fread( text2, 11, 1, f);
+@@ -1095,7 +1214,11 @@
+ 	if ( tmp < (eventData::CacheSize*12)/10 ) // 20% overhead
+ 		return;
+ 
++#ifdef __sh__
++	FILE *f = fopen(epg_file, "w");
++#else
+ 	FILE *f = fopen("/hdd/epg.dat", "w");
++#endif
+ 	int cnt=0;
+ 	if ( f )
+ 	{
+@@ -1120,7 +1243,11 @@
+ 				++cnt;
+ 			}
+ 		}
++#ifdef __sh__
++		eDebug("[EPGC] %d events written to %s", cnt, epg_file);
++#else
+ 		eDebug("[EPGC] %d events written to /hdd/epg.dat", cnt);
++#endif
+ 		eventData::save(f);
+ #ifdef ENABLE_PRIVATE_EPG
+ 		const char* text3 = "PRIVATE_EPG";
+@@ -1203,11 +1330,23 @@
  			seenSections[i].clear();
  			calcedSections[i].clear();
  		}
 +#ifdef ENABLE_FREESAT
-+		cleanupFreeSat();
++		if(enable_freesat)
++		{
++			cleanupFreeSat();
++		}
 +#endif
  		singleLock l(cache->cache_lock);
  		cache->channelLastUpdated[channel->getChannelID()] = ::time(0);
@@ -8145,107 +8271,127 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		cleanup();
  #endif
 +#ifdef ENABLE_FREESAT
-+		cleanupFreeSat();
++		if(enable_freesat)
++		{
++			cleanupFreeSat();
++		}
 +#endif
  		return true;
  	}
  	return false;
-@@ -1223,6 +1288,9 @@
+@@ -1223,6 +1362,12 @@
  		seenSections[i].clear();
  		calcedSections[i].clear();
  	}
 +#ifdef ENABLE_FREESAT
-+		cleanupFreeSat();
++		if(enable_freesat)
++		{
++			cleanupFreeSat();
++		}
 +#endif
  
  	eDVBSectionFilterMask mask;
  	memset(&mask, 0, sizeof(mask));
-@@ -1249,6 +1317,24 @@
+@@ -1249,6 +1394,27 @@
  	mask.mask[1] = 0;
  	m_MHWTimeoutet=false;
  #endif
 +#ifdef ENABLE_FREESAT
-+	mask.pid = 3842;
-+	mask.flags = eDVBSectionFilterMask::rfCRC;
-+	mask.data[0] = 0x60;
-+	mask.mask[0] = 0xFE;
-+	m_FreeSatScheduleOtherReader->connectRead(slot(*this, &eEPGCache::channel_data::readFreeSatScheduleOtherData), m_FreeSatScheduleOtherConn);
-+	m_FreeSatScheduleOtherReader->start(mask);
-+	/*
-+	 * faster pid, available on ITV HD transponder.
-+	 * We rely on the fact that we have either of the two,
-+	 * never both. (both readers share the same data callback
-+	 * and status maps)
-+	 */
-+	mask.pid = 3003;
-+	m_FreeSatScheduleOtherReader2->connectRead(slot(*this, &eEPGCache::channel_data::readFreeSatScheduleOtherData), m_FreeSatScheduleOtherConn2);
-+	m_FreeSatScheduleOtherReader2->start(mask);
-+	isRunning |= FREESAT_SCHEDULE_OTHER;
++	if(enable_freesat)
++	{
++		mask.pid = 3842;
++		mask.flags = eDVBSectionFilterMask::rfCRC;
++		mask.data[0] = 0x60;
++		mask.mask[0] = 0xFE;
++		m_FreeSatScheduleOtherReader->connectRead(slot(*this, &eEPGCache::channel_data::readFreeSatScheduleOtherData), m_FreeSatScheduleOtherConn);
++		m_FreeSatScheduleOtherReader->start(mask);
++		/*
++	 	* faster pid, available on ITV HD transponder.
++	 	* We rely on the fact that we have either of the two,
++	 	* never both. (both readers share the same data callback
++	 	* and status maps)
++	 	*/
++		mask.pid = 3003;
++		m_FreeSatScheduleOtherReader2->connectRead(slot(*this, &eEPGCache::channel_data::readFreeSatScheduleOtherData), m_FreeSatScheduleOtherConn2);
++		m_FreeSatScheduleOtherReader2->start(mask);
++		isRunning |= FREESAT_SCHEDULE_OTHER;
++	}
 +#endif
  
  	mask.pid = 0x12;
  	mask.flags = eDVBSectionFilterMask::rfCRC;
-@@ -1306,6 +1392,18 @@
+@@ -1306,6 +1472,21 @@
  			m_ScheduleOtherReader->stop();
  			m_ScheduleOtherConn=0;
  		}
 +#ifdef ENABLE_FREESAT
-+		if ( !(haveData&FREESAT_SCHEDULE_OTHER) && (isRunning&FREESAT_SCHEDULE_OTHER) )
++		if(enable_freesat)
 +		{
-+			eDebug("[EPGC] abort non avail FreeSat schedule_other reading");
-+			isRunning &= ~FREESAT_SCHEDULE_OTHER;
-+			m_FreeSatScheduleOtherReader->stop();
-+			m_FreeSatScheduleOtherReader2->stop();
-+			m_FreeSatScheduleOtherConn=0;
-+			m_FreeSatScheduleOtherConn2=0;
-+			cleanupFreeSat();
++			if ( !(haveData&FREESAT_SCHEDULE_OTHER) && (isRunning&FREESAT_SCHEDULE_OTHER) )
++			{
++				eDebug("[EPGC] abort non avail FreeSat schedule_other reading");
++				isRunning &= ~FREESAT_SCHEDULE_OTHER;
++				m_FreeSatScheduleOtherReader->stop();
++				m_FreeSatScheduleOtherReader2->stop();
++				m_FreeSatScheduleOtherConn=0;
++				m_FreeSatScheduleOtherConn2=0;
++				cleanupFreeSat();
++			}
 +		}
 +#endif
  		if ( !(haveData&VIASAT) && (isRunning&VIASAT) )
  		{
  			eDebug("[EPGC] abort non avail viasat reading");
-@@ -1336,6 +1434,9 @@
+@@ -1336,6 +1517,12 @@
  				seenSections[i].clear();
  				calcedSections[i].clear();
  			}
 +#ifdef ENABLE_FREESAT
-+			cleanupFreeSat();
++			if(enable_freesat)
++			{
++				cleanupFreeSat();
++			}
 +#endif
  		}
  	}
  	++state;
-@@ -1365,6 +1466,9 @@
+@@ -1365,6 +1552,12 @@
  		seenSections[i].clear();
  		calcedSections[i].clear();
  	}
 +#ifdef ENABLE_FREESAT
-+	cleanupFreeSat();
++	if(enable_freesat)
++	{
++		cleanupFreeSat();
++	}
 +#endif
  	abortTimer->stop();
  	zapTimer->stop();
  	if (isRunning)
-@@ -1388,6 +1492,16 @@
+@@ -1388,6 +1581,19 @@
  			m_ScheduleOtherReader->stop();
  			m_ScheduleOtherConn=0;
  		}
 +#ifdef ENABLE_FREESAT
-+		if (isRunning & FREESAT_SCHEDULE_OTHER)
++		if(enable_freesat)
 +		{
-+			isRunning &= ~FREESAT_SCHEDULE_OTHER;
-+			m_FreeSatScheduleOtherReader->stop();
-+			m_FreeSatScheduleOtherReader2->stop();
-+			m_FreeSatScheduleOtherConn=0;
-+			m_FreeSatScheduleOtherConn2=0;
++			if (isRunning & FREESAT_SCHEDULE_OTHER)
++			{
++				isRunning &= ~FREESAT_SCHEDULE_OTHER;
++				m_FreeSatScheduleOtherReader->stop();
++				m_FreeSatScheduleOtherReader2->stop();
++				m_FreeSatScheduleOtherConn=0;
++				m_FreeSatScheduleOtherConn2=0;
++			}
 +		}
 +#endif
  		if (isRunning & VIASAT)
  		{
  			isRunning &= ~VIASAT;
-@@ -1414,7 +1528,51 @@
+@@ -1414,7 +1620,51 @@
  	pthread_mutex_unlock(&channel_active);
  }
  
--
 +#ifdef __sh__
 +void eEPGCache::InitEPGBlock ()
 +{
@@ -8273,7 +8419,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +	}
 +	else eDebug ("[EPGC] No blacklist found");
 +}
-+
+ 
 +bool eEPGCache::CheckEPGBlock (int32_t service_id, uint16_t transport_stream_id, uint16_t original_network_id, int source)
 +{
 +	std::list<epg_block_list_t>::iterator i;
@@ -8294,7 +8440,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  void eEPGCache::channel_data::readDataViasat( const __u8 *data)
  {
  	__u8 *d=0;
-@@ -1428,6 +1586,47 @@
+@@ -1428,6 +1678,47 @@
  	int source;
  	int map;
  	iDVBSectionReader *reader=NULL;
@@ -8342,7 +8488,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	switch(data[0])
  	{
  		case 0x4E ... 0x4F:
-@@ -1490,6 +1689,17 @@
+@@ -1490,6 +1781,17 @@
  	else
  	{
  		eit_t *eit = (eit_t*) data;
@@ -8360,7 +8506,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		__u32 sectionNo = data[0] << 24;
  		sectionNo |= data[3] << 16;
  		sectionNo |= data[4] << 8;
-@@ -1517,8 +1727,129 @@
+@@ -1517,8 +1819,151 @@
  			cache->sectionRead(data, source, this);
  		}
  	}
@@ -8370,127 +8516,149 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +#endif	
 +}
 +#if ENABLE_FREESAT
-+
 +freesatEITSubtableStatus::freesatEITSubtableStatus(u_char version, __u8 maxSection) : version(version)
 +{
-+	initMap(maxSection);
- }
- 
-+void freesatEITSubtableStatus::initMap(__u8 maxSection)
-+{
-+	int i, maxSectionIdx = maxSection / 8;
-+	for (i = 0; i < 32; i++)
-+	{
-+		sectionMap[i] = (i <= maxSectionIdx ? 0x0100 : 0x0000 );
-+	}
++	if(enable_freesat)
++		initMap(maxSection);
 +}
 +
++void freesatEITSubtableStatus::initMap(__u8 maxSection)
++{
++	if(enable_freesat)
++	{
++		int i, maxSectionIdx = maxSection / 8;
++		for (i = 0; i < 32; i++)
++		{
++			sectionMap[i] = (i <= maxSectionIdx ? 0x0100 : 0x0000 );
++		}
++	}
+ }
+ 
 +bool freesatEITSubtableStatus::isSectionPresent(__u8 sectionNo)
 +{
-+	__u8 sectionIdx = sectionNo / 8;
-+	__u8 bitOffset = sectionNo % 8;
++	if(enable_freesat)
++	{
++		__u8 sectionIdx = sectionNo / 8;
++		__u8 bitOffset = sectionNo % 8;
 +	
-+	return ((sectionMap[sectionIdx] & (1 << bitOffset)) != 0);
++		return ((sectionMap[sectionIdx] & (1 << bitOffset)) != 0);
++	}
 +}
 +
 +bool freesatEITSubtableStatus::isCompleted()
 +{
-+	__u32 i = 0;
-+	__u8 calc;
-+
-+	while ( i < 32 )
++	if(enable_freesat)
 +	{
-+		calc = sectionMap[i] >> 8;
-+		if (! calc) return true; // Last segment passed
-+		if (calc ^ ( sectionMap[i] & 0xFF ) ) // Segment not fully found
-+			return false;
-+		i++;
++		__u32 i = 0;
++		__u8 calc;
++
++		while ( i < 32 )
++		{
++			calc = sectionMap[i] >> 8;
++			if (! calc) return true; // Last segment passed
++			if (calc ^ ( sectionMap[i] & 0xFF ) ) // Segment not fully found
++				return false;
++			i++;
++		}
++		return true; // All segments ok
 +	}
-+	return true; // All segments ok
 +}
 +
 +void freesatEITSubtableStatus::seen(__u8 sectionNo, __u8 maxSegmentSection)
 +{
-+	__u8 sectionIdx = sectionNo / 8;
-+	__u8 bitOffset = sectionNo % 8;
-+	__u8 maxBitOffset = maxSegmentSection % 8;
++	if(enable_freesat)
++	{
++		__u8 sectionIdx = sectionNo / 8;
++		__u8 bitOffset = sectionNo % 8;
++		__u8 maxBitOffset = maxSegmentSection % 8;
 +
-+	sectionMap[sectionIdx] &= 0x00FF; // Clear calc map
-+	sectionMap[sectionIdx] |= ((0x01FF << maxBitOffset) & 0xFF00); // Set calc map
-+	sectionMap[sectionIdx] |= (1 << bitOffset); // Set seen map
++		sectionMap[sectionIdx] &= 0x00FF; // Clear calc map
++		sectionMap[sectionIdx] |= ((0x01FF << maxBitOffset) & 0xFF00); // Set calc map
++		sectionMap[sectionIdx] |= (1 << bitOffset); // Set seen map
++	}
 +}
 +
 +bool freesatEITSubtableStatus::isVersionChanged(u_char testVersion)
 +{
-+	return version != testVersion;
++	if(enable_freesat)
++		return version != testVersion;
 +}
 +
 +void freesatEITSubtableStatus::updateVersion(u_char newVersion, __u8 maxSection)
 +{
-+	version = newVersion;
-+	initMap(maxSection);
++	if(enable_freesat)
++	{
++		version = newVersion;
++		initMap(maxSection);
++	}
 +}
 +
 +void eEPGCache::channel_data::cleanupFreeSat()
 +{
-+	m_FreeSatSubTableStatus.clear();
-+	m_FreesatTablesToComplete = 0;
++	if(enable_freesat)
++	{
++		m_FreeSatSubTableStatus.clear();
++		m_FreesatTablesToComplete = 0;
++	}
 +}
 +
 +void eEPGCache::channel_data::readFreeSatScheduleOtherData( const __u8 *data)
 +{
-+	eit_t *eit = (eit_t*) data;
-+	__u32 subtableNo = data[0] << 24; // Table ID
-+	subtableNo |= data[3] << 16; // Service ID Hi
-+	subtableNo |= data[4] << 8; // Service ID Lo
-+
-+	// Check for sub-table version in map
-+	std::map<__u32, freesatEITSubtableStatus> &freeSatSubTableStatus = this->m_FreeSatSubTableStatus;
-+	std::map<__u32, freesatEITSubtableStatus>::iterator itmap = freeSatSubTableStatus.find(subtableNo);
-+
-+	freesatEITSubtableStatus *fsstatus;
-+	if ( itmap == freeSatSubTableStatus.end() )
++	if(enable_freesat)
 +	{
-+		// New sub table. Store version.
-+		eDebug("[EPGC] New subtable (%x) version (%d) now/next (%d) tsid (%x/%x) onid (%x/%x)", subtableNo, eit->version_number, eit->current_next_indicator, eit->transport_stream_id_hi, eit->transport_stream_id_lo, eit->original_network_id_hi, eit->original_network_id_lo);
-+		fsstatus = new freesatEITSubtableStatus(eit->version_number, eit->last_section_number);
-+		m_FreesatTablesToComplete++;
-+		freeSatSubTableStatus.insert(std::pair<__u32,freesatEITSubtableStatus>(subtableNo, *fsstatus));
-+	}
-+	else
-+	{
-+		fsstatus = &itmap->second;
-+		// Existing subtable. Check version. Should check current / next as well? Seems to always be current for Freesat
-+		if ( fsstatus->isVersionChanged(eit->version_number) )
++		eit_t *eit = (eit_t*) data;
++		__u32 subtableNo = data[0] << 24; // Table ID
++		subtableNo |= data[3] << 16; // Service ID Hi
++		subtableNo |= data[4] << 8; // Service ID Lo
++
++		// Check for sub-table version in map
++		std::map<__u32, freesatEITSubtableStatus> &freeSatSubTableStatus = this->m_FreeSatSubTableStatus;
++		std::map<__u32, freesatEITSubtableStatus>::iterator itmap = freeSatSubTableStatus.find(subtableNo);
++
++		freesatEITSubtableStatus *fsstatus;
++		if ( itmap == freeSatSubTableStatus.end() )
 +		{
-+			eDebug("[EPGC] FS subtable (%x) version changed (%d) now/next (%d)", subtableNo, eit->version_number, eit->current_next_indicator);
++			// New sub table. Store version.
++			eDebug("[EPGC] New subtable (%x) version (%d) now/next (%d) tsid (%x/%x) onid (%x/%x)", subtableNo, eit->version_number, eit->current_next_indicator, eit->transport_stream_id_hi, eit->transport_stream_id_lo, eit->original_network_id_hi, eit->original_network_id_lo);
++			fsstatus = new freesatEITSubtableStatus(eit->version_number, eit->last_section_number);
 +			m_FreesatTablesToComplete++;
-+			fsstatus->updateVersion(eit->version_number, eit->last_section_number);
++			freeSatSubTableStatus.insert(std::pair<__u32,freesatEITSubtableStatus>(subtableNo, *fsstatus));
 +		}
 +		else
 +		{
-+			if ( fsstatus->isSectionPresent(eit->section_number) )
++			fsstatus = &itmap->second;
++			// Existing subtable. Check version. Should check current / next as well? Seems to always be current for Freesat
++			if ( fsstatus->isVersionChanged(eit->version_number) )
 +			{
-+//				eDebug("[EPGC] DUP FS sub/sec/ver (%x/%d/%d)", subtableNo, eit->section_number, eit->version_number);
-+				return;
++				eDebug("[EPGC] FS subtable (%x) version changed (%d) now/next (%d)", subtableNo, eit->version_number, eit->current_next_indicator);
++				m_FreesatTablesToComplete++;
++				fsstatus->updateVersion(eit->version_number, eit->last_section_number);
++			}
++			else
++			{
++				if ( fsstatus->isSectionPresent(eit->section_number) )
++				{
++//					eDebug("[EPGC] DUP FS sub/sec/ver (%x/%d/%d)", subtableNo, eit->section_number, eit->version_number);
++					return;
++				}
 +			}
 +		}
-+	}
 +
 +//	eDebug("[EPGC] New FS sub/sec/ls/lss/ver (%x/%d/%d/%d/%d)", subtableNo, eit->section_number, eit->last_section_number, eit->segment_last_section_number, eit->version_number);
-+	fsstatus->seen(eit->section_number, eit->segment_last_section_number);
-+	if (fsstatus->isCompleted())
-+	{
-+		m_FreesatTablesToComplete--;
-+		eDebug("[EPGC] Subtable %x complete %d left", subtableNo, m_FreesatTablesToComplete); 
++		fsstatus->seen(eit->section_number, eit->segment_last_section_number);
++		if (fsstatus->isCompleted())
++		{
++			m_FreesatTablesToComplete--;
++			eDebug("[EPGC] Subtable %x complete %d left", subtableNo, m_FreesatTablesToComplete); 
++		}
++		cache->sectionRead(data, FREESAT_SCHEDULE_OTHER, this);
 +	}
-+	cache->sectionRead(data, FREESAT_SCHEDULE_OTHER, this);
 +}
 +#endif
  RESULT eEPGCache::lookupEventTime(const eServiceReference &service, time_t t, const eventData *&result, int direction)
  // if t == -1 we search the current event...
  {
-@@ -2243,11 +2574,22 @@
+@@ -2243,11 +2688,22 @@
  						{
  							__u8 *data = evData->EITdata;
  							int tmp = evData->ByteSize-10;
@@ -8513,7 +8681,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  								descriptorMap::iterator it =
  									eventData::descriptors.find(crc);
  								if (it != eventData::descriptors.end())
-@@ -2425,12 +2767,23 @@
+@@ -2425,12 +2881,23 @@
  					continue;
  				__u8 *data = evit->second->EITdata;
  				int tmp = evit->second->ByteSize-10;
@@ -8537,42 +8705,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  					for ( int i=0; i <= descridx; ++i)
  					{
  						if (descr[i] == crc32)  // found...
-@@ -2562,7 +2915,11 @@
- 								{
- 									__u8 buffer[10];
- 									(*desc)->writeToBuffer(buffer);
-+#ifdef __sh__
-+									if (!strncmp((const char*)buffer+2, "EPGDATA", 7))
-+#else
- 									if (!strncmp((unsigned char*)buffer+2, "EPGDATA", 7))
-+#endif
- 									{
- 										eServiceReferenceDVB ref;
- 										if (!pmthandler->getServiceReference(ref))
-@@ -2571,7 +2928,11 @@
- 											messages.send(Message(Message::got_mhw2_channel_pid, ref, pid));
- 										}
- 									}
-+#ifdef __sh__
-+									else if(!strncmp((const char*)buffer+2, "FICHAS", 6))
-+#else
- 									else if(!strncmp((unsigned char*)buffer+2, "FICHAS", 6))
-+#endif
- 									{
- 										eServiceReferenceDVB ref;
- 										if (!pmthandler->getServiceReference(ref))
-@@ -2580,7 +2941,11 @@
- 											messages.send(Message(Message::got_mhw2_summary_pid, ref, pid));
- 										}
- 									}
-+#ifdef __sh__
-+									else if(!strncmp((const char*)buffer+2, "GENEROS", 7))
-+#else
- 									else if(!strncmp((unsigned char*)buffer+2, "GENEROS", 7))
-+#endif
- 									{
- 										eServiceReferenceDVB ref;
- 										if (!pmthandler->getServiceReference(ref))
+
 diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epgcache.h
 --- enigma2-nightly.org/lib/dvb/epgcache.h	2010-04-17 09:03:20.000000000 +0200
 +++ enigma2-nightly/lib/dvb/epgcache.h	2010-04-13 01:59:02.000000000 +0200
@@ -9119,97 +9252,3 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +}
 +
 +#endif
-
---- enigma2-nightly/lib/dvb/epgcache.cpp	2010-04-21 06:46:26.000000000 -0400
-+++ enigma2-nightly/lib/dvb/epgcache.cpp	2010-04-21 06:08:23.000000000 -0400
-@@ -18,6 +18,14 @@
- #include <lib/python/python.h>
- #include <dvbsi++/descriptor_tag.h>
- 
-+#ifdef __sh__
-+#include "include/shmE2.h"
-+
-+char epg_file[256] = "";
-+int m_epg_days = 14;
-+extern char *shm;
-+#endif
-+
- int eventData::CacheSize=0;
- descriptorMap eventData::descriptors;
- __u8 eventData::data[4108];
-@@ -575,7 +583,11 @@
- 		if ( TM == 3599 )
- 			goto next;
- 
-+#ifdef __sh__
-+		if ( TM != 3599 && (TM+duration < now || TM > now+m_epg_days*24*60*60) )
-+#else
- 		if ( TM != 3599 && (TM+duration < now || TM > now+14*24*60*60) )
-+#endif
- 			goto next;
- 
- 		if ( now <= (TM+duration) || TM == 3599 /*NVOD Service*/ )  // old events should not be cached
-@@ -1021,10 +1029,27 @@
- 
- void eEPGCache::load()
- {
-+#ifdef __sh__
-+	if(getshmentry(shm, "epg_file=", epg_file, 256) != 1)
-+		strcpy(epg_file, "/hdd/epg.dat");
-+
-+	FILE *f = fopen(epg_file, "r");
-+#else
- 	FILE *f = fopen("/hdd/epg.dat", "r");
-+#endif
- 	if (f)
- 	{
-+#ifdef __sh__
-+		m_epg_days = 14;
-+		char epg_days[3] = "";
-+		if(getshmentry(shm, "epg_days=", epg_days, 3) == 1)
-+			m_epg_days = atoi(epg_days);
-+
-+		if(checkshmentry(shm, "not_del_epg") != 1)
-+			unlink(epg_file);
-+#else
- 		unlink("/hdd/epg.dat");
-+#endif
- 		int size=0;
- 		int cnt=0;
- #if 0
-@@ -1086,7 +1111,11 @@
- 					eventDB[key]=std::pair<eventMap,timeMap>(evMap,tmMap);
- 				}
- 				eventData::load(f);
-+#ifdef __sh__
-+				eDebug("[EPGC] %d events read from %s", cnt, epg_file);
-+#else
- 				eDebug("[EPGC] %d events read from /hdd/epg.dat", cnt);
-+#endif
- #ifdef ENABLE_PRIVATE_EPG
- 				char text2[11];
- 				fread( text2, 11, 1, f);
-@@ -1154,7 +1183,11 @@
- 	if ( tmp < (eventData::CacheSize*12)/10 ) // 20% overhead
- 		return;
- 
-+#ifdef __sh__
-+	FILE *f = fopen(epg_file, "w");
-+#else
- 	FILE *f = fopen("/hdd/epg.dat", "w");
-+#endif
- 	int cnt=0;
- 	if ( f )
- 	{
-@@ -1179,7 +1212,11 @@
- 				++cnt;
- 			}
- 		}
-+#ifdef __sh__
-+		eDebug("[EPGC] %d events written to %s", cnt, epg_file);
-+#else
- 		eDebug("[EPGC] %d events written to /hdd/epg.dat", cnt);
-+#endif
- 		eventData::save(f);
- #ifdef ENABLE_PRIVATE_EPG
- 		const char* text3 = "PRIVATE_EPG";
