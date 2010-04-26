@@ -183,8 +183,8 @@ else !STM23
 # if STM24
 STSLAVE_VERSION := 0.7-18
 STSLAVE_SPEC := stm-target-$(STSLAVE).spec
-STSLAVE_SPEC_PATCH := $(STSLAVE_SPEC)24.diff
-STSLAVE_PATCHES := stm-target-$(STSLAVE)-missing_libz.patch
+STSLAVE_SPEC_PATCH :=
+STSLAVE_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
