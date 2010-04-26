@@ -887,6 +887,7 @@ echo "%_stm_host_config ${host_alias:-${host}}" >>localmacros
 echo "%_dbpath $rpmdbprefix" >>localmacros
 echo "%__bzip2 $BZIP2" >>localmacros
 echo "%nohostbuilddeps 1" >> localmacros
+echo "%_default_patch_fuzz 2" >> localmacros
 
 # Determine how to pass options to rpm, depending on version and distribution
 macrofiles="/usr/lib/rpm/macros:$configprefix/rpm/targets/sh4-linux:$configprefix/rpm/common:$buildprefix/localmacros"
