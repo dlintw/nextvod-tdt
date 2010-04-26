@@ -8182,7 +8182,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +	FILE *f = fopen(epg_file, "r");
 +#else
  	FILE *f = fopen("/hdd/epg.dat", "r");
-+
++#endif
 +#if ENABLE_FREESAT
 +	FILE *ffd;
 +	ffd = fopen("/var/usr/local/share/enigma2/freesat.t1", "r");
