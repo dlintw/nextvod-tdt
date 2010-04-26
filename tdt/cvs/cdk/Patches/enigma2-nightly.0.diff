@@ -8715,7 +8715,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  #define ENABLE_PRIVATE_EPG 1
 +#if defined(__sh__) 
 +#define ENABLE_MHW_EPG 1
-+//#define ENABLE_FREESAT 1 
++#define ENABLE_FREESAT 1 
 +#else
  //#define ENABLE_MHW_EPG 1
 +#endif
