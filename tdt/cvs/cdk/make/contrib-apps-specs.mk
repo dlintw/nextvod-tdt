@@ -886,7 +886,7 @@ $(flashprefix)/root/usr/bin/strace: $(STRACE_RPM)
 # 
 if STM24
 UTIL_LINUX = util-linux
-UTIL_LINUX_VERSION = 2.16.1-21
+UTIL_LINUX_VERSION = 2.16.1-22
 UTIL_LINUX_SPEC = stm-target-$(UTIL_LINUX).spec
 UTIL_LINUX_SPEC_PATCH =
 UTIL_LINUX_PATCHES =
