@@ -8,6 +8,7 @@
 #include <sys/select.h>
 
 #include "video_cs.h"
+#include <linux/version.h>
 #include <linux/dvb/video.h>
 #include <linux/fb.h>
 #include <linux/stmfb.h>
@@ -117,7 +118,7 @@ void * cVideo::GetHandle()
 //5
 void cVideo::SetAudioHandle(void * handle)
 {
-	printf("%s:%s - handle=0x%08x\n", FILENAME, __FUNCTION__, handle);
+	printf("%s:%s - handle=0x%08x\n", FILENAME, __FUNCTION__, (unsigned int) handle);
 }
 
 /* aspect ratio */
@@ -137,7 +138,7 @@ int cVideo::setAspectRatio(int aspect, int mode)
 
     if (aspect != -1)
     {
-        char* sAspect[] =
+        const char* sAspect[] =
 	{
 	   "4:3", /* 1 */
 	   "14:9", //not supported
@@ -177,7 +178,7 @@ int cVideo::setAspectRatio(int aspect, int mode)
 	
 	if (is43)
 	{     
-          char* sMode[][2] =
+          const char* sMode[][2] =
 	  {
 	     {"panscan"      , "letterbox"}, /* 0 */ 
 	     {"letterbox"    , "panscan"}, /* fixme: former pillarbox */
@@ -188,7 +189,7 @@ int cVideo::setAspectRatio(int aspect, int mode)
 	  write(fd, sMode[mode][1], strlen((const char*) sMode[mode][1]));
         } else
 	{
-          char* sMode[][2] =
+          const char* sMode[][2] =
 	  {
 	     {"panscan"      , "panscan"}, /* 0 */ 
 	     {"letterbox"    , "letterbox"},
@@ -334,7 +335,7 @@ int cVideo::Flush(void)
 int cVideo::SetVideoSystem(int video_system, bool remember)
 {
 
-	char *aVideoSystems[][2] = {
+	const char *aVideoSystems[][2] = {
 	{"VIDEO_STD_NTSC", "pal"},
 	{"VIDEO_STD_SECAM", "pal"},
 	{"VIDEO_STD_PAL", "pal"},
@@ -361,7 +362,7 @@ int cVideo::SetVideoSystem(int video_system, bool remember)
 
 int cVideo::SetStreamType(VIDEO_FORMAT type) {
 
-	char *aVIDEOFORMAT[] = {
+	const char *aVIDEOFORMAT[] = {
 	"VIDEO_FORMAT_MPEG2",
 	"VIDEO_FORMAT_MPEG4",
 	"VIDEO_FORMAT_VC1",
@@ -399,19 +400,19 @@ void cVideo::SetSyncMode(AVSYNC_TYPE mode)
 {
         int clock;
 	
-	char *aAVSYNCTYPE[] = {
+	const char *aAVSYNCTYPE[] = {
 	"AVSYNC_DISABLED",
 	"AVSYNC_ENABLED",
 	"AVSYNC_AUDIO_IS_MASTER",
 	};
 
-        char* av_modes[] = {
+        const char* av_modes[] = {
 	"disapply",
 	"apply"
 	
 	};
 
-        char* master_clock[] = {
+        const char* master_clock[] = {
 	"video",
 	"audio"
 	};
@@ -466,8 +467,12 @@ void cVideo::Standby(unsigned int bOn)
 	int fd_avs = open("/proc/stb/avs/0/standby", O_RDWR);
 	int fd_hdmi  = open("/dev/fb0",   O_RDWR);
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
 	struct stmfbio_output_configuration outputConfig = {0};
 	outputConfig.outputid = 1;
+#else
+	struct stmfbio_output_configuration outputConfig = {STMFBIO_OUTPUTID_MAIN};
+#endif
 	if(ioctl(fd_hdmi, STMFBIO_GET_OUTPUT_CONFIG, &outputConfig)<0)
 		printf("Getting current output configuration failed\n");
   
@@ -546,14 +551,14 @@ void cVideo::SetWideScreen(bool onoff)
 //9
 void cVideo::SetVideoMode(analog_mode_t mode)
 {
-	char *aANALOGMODESCART[] = {
+	const char *aANALOGMODESCART[] = {
 	"ANALOG_SD_RGB_SCART",
 	"ANALOG_SD_YPRPB_SCART",
 	"ANALOG_HD_RGB_SCART",
 	"ANALOG_HD_YPRPB_SCART",
 	};
 	
-	char *aANALOGMODECINCH[] = {
+	const char *aANALOGMODECINCH[] = {
 	"ANALOG_SD_RGB_CINCH",
 	"ANALOG_SD_YPRPB_CINCH",
 	"ANALOG_HD_RGB_CINCH",
@@ -569,7 +574,7 @@ void cVideo::SetVideoMode(analog_mode_t mode)
 //6
 void cVideo::SetDBDR(int dbdr)
 {
-	char *aDBDR[] = {
+	const char *aDBDR[] = {
 	"VIDEO_DB_DR_NEITHER",
 	"VIDEO_DB_ON",
 	"VIDEO_DB_DR_BOTH"
