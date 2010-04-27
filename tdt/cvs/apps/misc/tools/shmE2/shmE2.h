@@ -9,46 +9,46 @@
 
 static char* createshm()
 {
-        int shmid;
-        key_t key = KEY;
+	int shmid;
+	key_t key = KEY;
 	char *shm = NULL;
 
-        if((shmid = shmget(key, SHMSZ, IPC_CREAT | 0666)) < 0) {
-                return NULL;
-        }
+	if((shmid = shmget(key, SHMSZ, IPC_CREAT | 0666)) < 0) {
+		return NULL;
+	}
 
-        shm = (char *) shmat(shmid, NULL, 0);
-        if(shm == (char *) -1)
+	shm = (char *) shmat(shmid, NULL, 0);
+	if(shm == (char *) -1)
 		return NULL;
 
-        *shm = '\0';
+	*shm = '\0';
 
 	return shm;
 }
 
 static char* findshm()
 {
-        int shmid;
-        key_t key = KEY;
+	int shmid;
+	key_t key = KEY;
 	char *shm = NULL;
 
-        if((shmid = shmget(key, SHMSZ, 0666)) < 0) {
-                return NULL;
-        }
+	if((shmid = shmget(key, SHMSZ, 0666)) < 0) {
+		return NULL;
+	}
 
-        shm = (char *) shmat(shmid, NULL, 0);
-        if(shm == (char *) -1)
-                return NULL;
+	shm = (char *) shmat(shmid, NULL, 0);
+	if(shm == (char *) -1)
+		return NULL;
 
-        return shm;
+	return shm;
 }
 
 static int delshmentry(char *shm, char *key)
 {
 	if(shm == NULL) return -1;
-        char *vbuf = NULL, *shmbuf = NULL;
+	char *vbuf = NULL, *shmbuf = NULL;
 	char *v, *s = shm;
-        int matchkey = 0;
+	int matchkey = 0;
 	int ret = 0;
 
 	vbuf = (char *) malloc(256);
@@ -66,45 +66,45 @@ static int delshmentry(char *shm, char *key)
 	}
 	memset(shmbuf, '\0', 4096);
 
-        while(*s != '\0')
-        {
-                *v++ = *s++;
-                *v = '\0';
-                if(strcmp(key, vbuf) == 0)
+	while(*s != '\0')
+	{
+		*v++ = *s++;
+		*v = '\0';
+		if(strcmp(key, vbuf) == 0)
 		{
-                        matchkey = 1;
+			matchkey = 1;
 			ret = 1;
 		}
-                if(matchkey == 0 && *s == ';')
-                {
+		if(matchkey == 0 && *s == ';')
+		{
 			*v++ = ';';
 			*v = '\0';
 			strcat(shmbuf, vbuf);
-                        v = vbuf;
-                        s++;
-                }
-                if(matchkey == 1 && *s == ';')
+			v = vbuf;
+			s++;
+		}
+		if(matchkey == 1 && *s == ';')
 		{
 			matchkey = 0;
 			v = vbuf;
 			s++;
 		}
-        }
-        if(matchkey == 0)
-        {
+	}
+	if(matchkey == 0)
+	{
 		*v++ = ';';
 		*v = '\0';
 		strcat(shmbuf, vbuf);
-                v = vbuf;
-        }
+		v = vbuf;
+	}
 	shmbuf[strlen(shmbuf)-1] = '\0';
-        *shm = '\0';
+	*shm = '\0';
 	strcpy(shm, shmbuf);
 
 	free(vbuf);
 	free(shmbuf);
 
-        return ret;
+	return ret;
 }
 
 static int setshmentry(char *shm, char *entry)
@@ -117,9 +117,9 @@ static int setshmentry(char *shm, char *entry)
 	if(strlen(entry) > 255)
 		return -1;
 
-       	buf = (char *) malloc(256);
-        if(buf == NULL)
-                return -1;
+	buf = (char *) malloc(256);
+	if(buf == NULL)
+		return -1;
 	memset(buf, '\0', 256);
 
 	c = strchr(entry, '=');
@@ -134,7 +134,7 @@ static int setshmentry(char *shm, char *entry)
 	strncpy(buf, entry, pos);
 	buf[pos] = '\0';
 
-        if(delshmentry(shm, buf) < 0)
+	if(delshmentry(shm, buf) < 0)
 	{
 		free(buf);
 		return -1;
@@ -142,7 +142,7 @@ static int setshmentry(char *shm, char *entry)
 
 	if(*shm != '\0')
 		strcat(shm, ";");
-        strcat(shm, entry);
+	strcat(shm, entry);
 
 	free(buf);
 	return 1;
@@ -151,51 +151,9 @@ static int setshmentry(char *shm, char *entry)
 static int getshmentry(char *shm, char *key, char *buf, int buflen)
 {
 	if(shm == NULL) return -1;
-        char *v, *s = shm, *shmbuf;
-        int matchkey = 0;
+	char *v, *s = shm, *shmbuf;
+	int matchkey = 0;
 	int ret = 0;
-
-       	shmbuf = (char *) malloc(256);
-        if(shmbuf == NULL)
-                return -1;
-	memset(shmbuf, '\0', 256);
-
-	v = shmbuf;
-
-        while(*s != '\0')
-        {
-                *v++ = *s++;
-                *v = '\0';
-                if(strcmp(key, shmbuf) == 0)
-                {
-                        v = shmbuf;
-                        matchkey = 1;
-			ret = 1;
-                }
-                if(matchkey == 0 && *s == ';')
-                {
-                        v = shmbuf;
-                        s++;
-                }
-                if(matchkey == 1 && *s == ';')
-                        break;
-        }
-        if(matchkey == 0)
-                v = shmbuf;
-        *v = '\0';
-
-	strncpy(buf, shmbuf, buflen-1);
-	buf[buflen] = '\0';
-	free(shmbuf);
-
-        return ret;
-}
-
-static int checkshmentry(char *shm, char *key)
-{
-	if(shm == NULL) return -1;
-        char *v = NULL, *s = shm, *shmbuf = NULL;
-        int ret = 0;
 
 	shmbuf = (char *) malloc(256);
 	if(shmbuf == NULL)
@@ -204,47 +162,90 @@ static int checkshmentry(char *shm, char *key)
 
 	v = shmbuf;
 
-        while(*s != '\0')
-        {
-                *v++ = *s++;
-                *v = '\0';
-                if(strcmp(key, shmbuf) == 0)
-                {
-                        ret = 1;
+	while(*s != '\0')
+	{
+		*v++ = *s++;
+		*v = '\0';
+		if(strcmp(key, shmbuf) == 0)
+		{
+			v = shmbuf;
+			matchkey = 1;
+			ret = 1;
+		}
+		if(matchkey == 0 && *s == ';')
+		{
+			v = shmbuf;
+			s++;
+		}
+		if(matchkey == 1 && *s == ';')
+		break;
+	}
+	if(matchkey == 0)
+	v = shmbuf;
+	*v = '\0';
+
+	strncpy(buf, shmbuf, buflen-1);
+	buf[buflen] = '\0';
+	free(shmbuf);
+
+	return ret;
+}
+
+static int checkshmentry(char *shm, char *key)
+{
+	if(shm == NULL) return -1;
+	char *v = NULL, *s = shm, *shmbuf = NULL;
+	int ret = 0;
+
+	shmbuf = (char *) malloc(256);
+	if(shmbuf == NULL)
+		return -1;
+	memset(shmbuf, '\0', 256);
+
+	v = shmbuf;
+
+	while(*s != '\0')
+	{
+		*v++ = *s++;
+		*v = '\0';
+		if(strcmp(key, shmbuf) == 0)
+		{
+ 		ret = 1;
 			break;
-                }
-                if(*s == ';')
-                {
-                        v = shmbuf;
-                        s++;
-                }
-        }
-        return ret;
+		}
+		if(*s == ';')
+		{
+			v = shmbuf;
+			s++;
+		}
+	}
+	free(shmbuf);
+	return ret;
 }
 
 static int getshmentryall(char *shm, char *shmbuf, int buflen)
 {
 	if(shm == NULL) return -1;
-        char *v = shmbuf, *s = shm;
+	char *v = shmbuf, *s = shm;
 	int count = 0;
 
-        while(*s != '\0')
-        {
-                *v++ = *s++;
-                *v = '\0';
+	while(*s != '\0')
+	{
+		*v++ = *s++;
+		*v = '\0';
 		count++;
-                if(*s == ';')
-                {
+		if(*s == ';')
+		{
 			if(count >= buflen-1)
 				break;
-                        s++;
+			s++;
 			*v++ = '\n';
 			count++;
                 }
 		if(count >= buflen-1)
 			break;
-        }
-        *v = '\0';
+	}
+	*v = '\0';
 
 	return 0;
 }
