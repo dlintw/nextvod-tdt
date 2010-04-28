@@ -1982,6 +1982,7 @@ do
 			makedev dvb/adapter$i/dvr2      c 212 `math 64 \* $i + 37` $video
 			makedev dvb/adapter$i/ca0       c 212 `math 64 \* $i + 6` $video
 			makedev dvb/adapter$i/ca1       c 212 `math 64 \* $i + 22` $video
+			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 38` $video
 			makedev dvb/adapter$i/net0      c 212 `math 64 \* $i + 7` $video
 			makedev dvb/adapter$i/osd0      c 212 `math 64 \* $i + 8` $video
 			makedev dvb/adapter$i/ci0      c 212 `math 64 \* $i + 9` $video
