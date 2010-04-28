@@ -218,6 +218,7 @@ $(flashprefix)/root/usr/bin/rdate: bootstrap $(DEPDIR)/openrdate.do_compile \
 	@TUXBOX_CUSTOMIZE@
 endif
 
+
 #
 # E2FSPROGS
 #
@@ -231,34 +232,66 @@ $(DEPDIR)/e2fsprogs.do_prepare: bootstrap \
 	cat $(addprefix ../Patches/,$(E2FS_PROGS_PATCHES)) | patch -p1
 	touch $@
 
+if STM24
+$(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare $(UTIL_UNIX)
+	cd @DIR_e2fsprogs@ && \
+	$(BUILDENV) \
+	./configure \
+		--build=$(build) \
+		--host=$(target) \
+		--target=$(target) \
+		--with-linker=$(target)-ld \
+       		--enable-elf-shlibs \
+       		--with-root-prefix= \
+       		--enable-verbose-makecmds \
+       		--enable-compression \
+       		--disable-fsck \
+       		--disable-libblkid \
+       		--disable-libuuid \
+       		--disable-uuidd && \
+	$(MAKE) all && \
+	$(MAKE) -C e2fsck e2fsck.static
+	touch $@
+else !STM24
 $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare
 	cd @DIR_e2fsprogs@ && \
-		$(BUILDENV) \
-		./configure \
-			--build=$(build) \
-			--host=$(target) \
-			--target=$(target) \
-			$(if $(STABLE), --with-cc="$(target)-gcc") \
-			--with-linker=$(target)-ld \
-			--enable-htree \
-			--disable-profile \
-			--disable-e2initrd-helper \
-			--disable-swapfs \
-			--disable-debugfs \
-			--disable-image \
-			--enable-resizer \
-			--enable-dynamic-e2fsck \
-			--enable-fsck \
-			--with-gnu-ld \
-			--disable-nls \
-			--prefix=/usr \
-			--enable-elf-shlibs \
-			--enable-dynamic-e2fsck \
-			--disable-evms \
-			--with-root-prefix= && \
-			$(MAKE) libs progs
+	$(BUILDENV) \
+	./configure \
+		--build=$(build) \
+		--host=$(target) \
+		--target=$(target) \
+		--with-linker=$(target)-ld \
+		$(if $(STABLE), --with-cc="$(target)-gcc") \
+		--enable-htree \
+		--disable-profile \
+		--disable-e2initrd-helper \
+		--disable-swapfs \
+		--disable-debugfs \
+		--disable-image \
+		--enable-resizer \
+		--enable-dynamic-e2fsck \
+		--enable-fsck \
+		--with-gnu-ld \
+		--disable-nls \
+		--prefix=/usr \
+		--enable-elf-shlibs \
+		--enable-dynamic-e2fsck \
+		--disable-evms \
+		--with-root-prefix= && \
+		$(MAKE) libs progs
 	touch $@
+endif !STM24
 
+if STM24
+$(DEPDIR)/e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
+	cd @DIR_e2fsprogs@ && \
+	$(BUILDENV) \
+	$(MAKE) install install-libs \
+		LDCONFIG=true \
+		DESTDIR=$(targetprefix) 
+	touch $@
+	@TUXBOX_YAUD_CUSTOMIZE@
+else !STM24
 $(DEPDIR)/min-e2fsprogs $(DEPDIR)/std-e2fsprogs $(DEPDIR)/max-e2fsprogs $(DEPDIR)/ipk-e2fsprogs \
 $(DEPDIR)/e2fsprogs: \
 $(DEPDIR)/%e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
@@ -271,6 +304,7 @@ $(DEPDIR)/%e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
 #       @DISTCLEANUP_e2fsprogs@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
+endif !STM24
 
 if TARGETRULESET_FLASH
 
