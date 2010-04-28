@@ -4530,6 +4530,26 @@ diff -Nur enigma2-nightly.org/lib/service/servicedvb.cpp enigma2-nightly/lib/ser
  		extensions.push_back("ts");
  		extensions.push_back("trp");
  		sc->addServiceFactory(eServiceFactoryDVB::id, this, extensions);
+@@ -1452,6 +1455,10 @@
+ 
+ RESULT eDVBServicePlay::isCurrentlySeekable()
+ {
++// __sh__: fix seekable problem with .ts files if .ts.meta not exists (see e2 git from 02.01.2010 10:54:57)
++#ifdef __sh__
++	return m_is_pvr || m_timeshift_active;
++#else
+ 	int ret = 0;
+ 	if (m_decoder)
+ 	{
+@@ -1460,6 +1467,7 @@
+ 			ret &= ~2;
+ 	}
+ 	return ret;
++#endif
+ }
+ 
+ RESULT eDVBServicePlay::frontendInfo(ePtr<iFrontendInformation> &ptr)
+
 diff -Nur enigma2-nightly.org/lib/service/servicedvbrecord.cpp enigma2-nightly/lib/service/servicedvbrecord.cpp
 --- enigma2-nightly.org/lib/service/servicedvbrecord.cpp	2009-12-12 23:16:22.496600000 +0100
 +++ enigma2-nightly/lib/service/servicedvbrecord.cpp	2009-12-12 23:59:03.000000000 +0100
