@@ -755,7 +755,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
 +		m_boxtype = CUBEREVO_MINI_FTA;
 +	else if (!strncmp(tmp, "octagon1008\n", rd))
 +		m_boxtype = OCTAGON1008;
-+	else if (!strncmp(tmp, "vip2"\n", rd))
++	else if (!strncmp(tmp, "vip2\n", rd))
 +		m_boxtype = VIP2;
 +#endif
  	else {
