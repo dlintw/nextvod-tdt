@@ -8202,6 +8202,11 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +		strcpy(epg_file, "/hdd/epg.dat");
 +
 +	FILE *f = fopen(epg_file, "r");
++
++	m_epg_days = 14;
++	char epg_days[3] = "";
++	if(getshmentry(shm, "epg_days=", epg_days, 3) == 1)
++		m_epg_days = atoi(epg_days);
 +#else
  	FILE *f = fopen("/hdd/epg.dat", "r");
 +#endif
@@ -8228,11 +8233,6 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	if (f)
  	{
 +#ifdef __sh__
-+		m_epg_days = 14;
-+		char epg_days[3] = "";
-+		if(getshmentry(shm, "epg_days=", epg_days, 3) == 1)
-+			m_epg_days = atoi(epg_days);
-+
 +		if(checkshmentry(shm, "not_del_epg") != 1)
 +			unlink(epg_file);
 +#else
@@ -8554,8 +8554,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +			sectionMap[i] = (i <= maxSectionIdx ? 0x0100 : 0x0000 );
 +		}
 +	}
- }
- 
++}
++
 +bool freesatEITSubtableStatus::isSectionPresent(__u8 sectionNo)
 +{
 +	if(enable_freesat)
@@ -8613,8 +8613,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +		version = newVersion;
 +		initMap(maxSection);
 +	}
-+}
-+
+ }
+ 
 +void eEPGCache::channel_data::cleanupFreeSat()
 +{
 +	if(enable_freesat)
