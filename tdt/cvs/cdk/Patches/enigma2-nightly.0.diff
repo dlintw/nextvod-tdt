@@ -724,7 +724,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/demux.cpp enigma2-nightly/lib/dvb/demux.cp
 diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
 --- enigma2-nightly.org/lib/dvb/dvb.cpp	2009-12-12 23:16:22.404599000 +0100
 +++ enigma2-nightly/lib/dvb/dvb.cpp	2009-12-13 11:49:35.249764000 +0100
-@@ -96,6 +96,37 @@
+@@ -96,6 +96,34 @@
  		m_boxtype = DM800;
  	else if (!strncmp(tmp, "dm500hd\n", rd))
  		m_boxtype = DM500HD;
@@ -755,20 +755,18 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
 +		m_boxtype = CUBEREVO_MINI_FTA;
 +	else if (!strncmp(tmp, "octagon1008\n", rd))
 +		m_boxtype = OCTAGON1008;
-+	else if (!strncmp(tmp, "vip2\n", rd))
-+		m_boxtype = VIP2;
 +#endif
  	else {
  		eDebug("boxtype detection via /proc/stb/info not possible... use fallback via demux count!\n");
  		if (m_demux.size() == 3)
-@@ -540,7 +555,58 @@
+@@ -540,7 +552,58 @@
  			}
  		}
  	}
 +#if defined(__sh__)
 +	else if (m_boxtype == UFS910 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX || m_boxtype == HL101 ||
 +		m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || 
-+		m_boxtype == CUBEREVO_MINI_FTA || m_boxtype == CUBEREVO_250HD || m_boxtype == CUBEREVO_2000HD || m_boxtype == CUBEREVO_9500HD || m_boxtype == OCTAGON1008 || m_boxtype == VIP2)
++		m_boxtype == CUBEREVO_MINI_FTA || m_boxtype == CUBEREVO_250HD || m_boxtype == CUBEREVO_2000HD || m_boxtype == CUBEREVO_9500HD || m_boxtype == OCTAGON1008)
 +	{
 +		for (; i != m_demux.end(); ++i, ++n)
 +		{
@@ -820,7 +818,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
  	if (unused)
  	{
  		demux = new eDVBAllocatedDemux(unused);
-@@ -1752,8 +1816,15 @@
+@@ -1752,8 +1813,15 @@
  #if HAVE_DVB_API_VERSION < 3
  		m_pvr_fd_dst = open("/dev/pvr", O_WRONLY);
  #else
