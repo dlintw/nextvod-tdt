@@ -222,14 +222,8 @@ endif
 #
 # E2FSPROGS
 #
-E2FS_PROGS_PATCHES = $(if $(STABLE),e2fsprogs-relative-usrlib-path.patch,e2fsprogs-1.41.11-relative-usrlib-path.patch)
-
-$(DEPDIR)/e2fsprogs.do_prepare: bootstrap \
-		$(addprefix Patches/,$(E2FS_PROGS_PATCHES)) \
-		@DEPENDS_e2fsprogs@
+$(DEPDIR)/e2fsprogs.do_prepare: bootstrap @DEPENDS_e2fsprogs@
 	@PREPARE_e2fsprogs@
-	cd @DIR_e2fsprogs@ && \
-	cat $(addprefix ../Patches/,$(E2FS_PROGS_PATCHES)) | patch -p1
 	touch $@
 
 if STM24
@@ -288,7 +282,8 @@ $(DEPDIR)/e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
 	$(BUILDENV) \
 	$(MAKE) install install-libs \
 		LDCONFIG=true \
-		DESTDIR=$(targetprefix) 
+		DESTDIR=$(targetprefix) && \
+	$(INSTALL) e2fsck/e2fsck.static $(targetprefix)/sbin
 	touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
 else !STM24
