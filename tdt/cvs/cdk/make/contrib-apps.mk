@@ -233,7 +233,7 @@ $(DEPDIR)/e2fsprogs.do_prepare: bootstrap \
 	touch $@
 
 if STM24
-$(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare $(UTIL_UNIX)
+$(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare | $(UTIL_LINUX)
 	cd @DIR_e2fsprogs@ && \
 	$(BUILDENV) \
 	./configure \
