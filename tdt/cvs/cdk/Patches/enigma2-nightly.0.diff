@@ -820,7 +820,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
  	if (unused)
  	{
  		demux = new eDVBAllocatedDemux(unused);
-@@ -1752,8 +1813,15 @@
+@@ -1755,8 +1815,15 @@
  #if HAVE_DVB_API_VERSION < 3
  		m_pvr_fd_dst = open("/dev/pvr", O_WRONLY);
  #else
