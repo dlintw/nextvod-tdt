@@ -89,19 +89,6 @@ if ENABLE_TF7700
 else
 	rm -f $(targetprefix)/usr/local/share/enigma2/keymap_tf7700.xml
 endif
-if ENABLE_HL101
-	cp -dp root/bin/stslave $(targetprefix)/bin/stslave
-	cp -dp root/usr/bin/lircd $(targetprefix)/usr/bin/lircd
-	cp -dp root/etc/lircd_hl101.conf $(targetprefix)/etc/lircd.conf
-else
-if ENABLE_VIP2
-	cp -dp root/bin/stslave $(targetprefix)/bin/stslave
-	cp -dp root/usr/bin/lircd $(targetprefix)/usr/bin/lircd
-	cp -dp root/etc/lircd_vip2.conf $(targetprefix)/etc/lircd.conf
-else
-	$(INSTALL_FILE) root/etc/lircd.conf $(targetprefix)/etc/
-endif
-endif
 	touch $@
 
 enigma2-clean enigma2-distclean:

@@ -46,7 +46,7 @@ sysvinit;2.86;sysvinit-2.86;sysvinit-2.86.tar.gz:sysvinit_2.86.ds1-38.diff.gz;ex
 #
 grep;2.5.1;grep-2.5.1;grep-2.5.1.tar.bz2:grep_2.5.1.ds2-6.diff.gz;extract:grep-2.5.1.tar.bz2
 openrdate;1.1.2;openrdate-1.1.2;openrdate-1.1.2.tar.gz;extract:openrdate-1.1.2.tar.gz
-e2fsprogs;1.40.2;e2fsprogs-1.40.2;e2fsprogs-1.40.2.tar.gz;extract:e2fsprogs-1.40.2.tar.gz
+e2fsprogs;1.40.2;e2fsprogs-1.40.2;e2fsprogs-1.40.2.tar.gz:e2fsprogs-relative-usrlib-path.patch;extract:e2fsprogs-1.40.2.tar.gz;patch:e2fsprogs-relative-usrlib-path.patch
 xfsprogs;2.9.4-1;xfsprogs-2.9.4;xfsprogs_2.9.4-1.tar.gz:xfsprogs.diff;extract:xfsprogs_2.9.4-1.tar.gz;patch:xfsprogs.diff
 mc;4.6.1;mc-4.6.1;mc-4.6.1.tar.gz:mc.diff;extract:mc-4.6.1.tar.gz;patch:mc.diff
 sdparm;1.01;sdparm-1.01;sdparm-1.01.tgz;extract:sdparm-1.01.tgz
