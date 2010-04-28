@@ -724,7 +724,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/demux.cpp enigma2-nightly/lib/dvb/demux.cp
 diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
 --- enigma2-nightly.org/lib/dvb/dvb.cpp	2009-12-12 23:16:22.404599000 +0100
 +++ enigma2-nightly/lib/dvb/dvb.cpp	2009-12-13 11:49:35.249764000 +0100
-@@ -96,6 +93,34 @@
+@@ -96,6 +96,37 @@
  		m_boxtype = DM800;
  	else if (!strncmp(tmp, "dm500hd\n", rd))
  		m_boxtype = DM500HD;
@@ -761,7 +761,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
  	else {
  		eDebug("boxtype detection via /proc/stb/info not possible... use fallback via demux count!\n");
  		if (m_demux.size() == 3)
-@@ -543,7 +555,58 @@
+@@ -540,7 +555,58 @@
  			}
  		}
  	}
@@ -820,7 +820,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
  	if (unused)
  	{
  		demux = new eDVBAllocatedDemux(unused);
-@@ -1755,8 +1815,15 @@
+@@ -1752,8 +1816,15 @@
  #if HAVE_DVB_API_VERSION < 3
  		m_pvr_fd_dst = open("/dev/pvr", O_WRONLY);
  #else
