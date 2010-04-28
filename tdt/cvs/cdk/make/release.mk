@@ -120,16 +120,15 @@ release_fortis_hdbox:
 	rm -f $(prefix)/release/bin/evremote
 
 release_octagon1008:
-#todo/fixme ->I have never tested this!
-	echo "octagon1008" > $(prefix)/release_neutrino/etc/hostname 
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/avl2108.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/nuvoton/nuvoton.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
+	echo "octagon1008" > $(prefix)/release/etc/hostname 
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/avl2108.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 
-	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
-	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
-	rm -f $(prefix)/release_neutrino/bin/evremote
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release/bin/evremote
 
 release_ufs910:
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button/button.ko $(prefix)/release/lib/modules/
@@ -226,14 +225,14 @@ release_tf7700: release_common_utils
 # IMPORTANT: it is assumed that only one variable is set. Otherwise the target name won't be resolved.
 #
 $(DEPDIR)/min-release $(DEPDIR)/std-release $(DEPDIR)/max-release $(DEPDIR)/ipk-release $(DEPDIR)/release: \
-$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS912)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
+$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS912)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
 	touch $@
 
 
 release-clean:
 	rm -f $(DEPDIR)/release
 	rm -f $(DEPDIR)/release_base
-	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS912)$(UFS922)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
+	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP2)$(UFS910)$(UFS912)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
 	rm -f $(DEPDIR)/release_common_utils
 	rm -f $(DEPDIR)/release_cube_common
 
