@@ -149,7 +149,7 @@ int checkConfig(int* display, int* display_custom, char** timeFormat, int* wakeu
 			*timeFormat = strdup(option);
 		}
 		else if (!strncmp("WAKEUPDECREMENT=", puffer, 16)) {
-			char * option = &puffer[14];
+			char * option = &puffer[16];
 			*wakeup = atoi(option);
 		}
 	}

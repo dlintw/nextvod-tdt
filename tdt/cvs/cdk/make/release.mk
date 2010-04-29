@@ -580,6 +580,11 @@ if STM22
 	cp $(kernelprefix)/linux/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
+if ENABLE_FORTIS_HDBOX
+	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release/lib/modules
+endif
 else
 	cp $(kernelprefix)/linux-sh4/arch/sh/boot/uImage $(prefix)/release/boot/
 endif
