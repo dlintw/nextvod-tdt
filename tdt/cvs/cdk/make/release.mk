@@ -396,15 +396,7 @@ endif
 	find $(prefix)/release/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
 
 	rm -rf $(prefix)/release/lib/autofs
-	echo $(prefix)/release/lib/modules
-	ls -al $(prefix)/release/lib/modules
-	echo $(prefix)/release/lib/modules/$(KERNELVERSION)
-	ls -al $(prefix)/release/lib/modules/$(KERNELVERSION)
-
 	rm -rf $(prefix)/release/lib/modules/$(KERNELVERSION)
-
-	echo $(prefix)/release/lib/modules
-	ls -al $(prefix)/release/lib/modules
 
 	$(INSTALL_DIR) $(prefix)/release/media
 	ln -s /hdd $(prefix)/release/media/hdd
