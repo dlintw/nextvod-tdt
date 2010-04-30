@@ -382,7 +382,9 @@ endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxmailbox/embxmailbox.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshm/embxshm.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/mme/mme_host.ko $(prefix)/release/lib/modules/
+if !ENABLE_OCTAGON1008
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
+endif
 if !ENABLE_VIP2
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release/lib/modules/
 endif
@@ -394,7 +396,15 @@ endif
 	find $(prefix)/release/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
 
 	rm -rf $(prefix)/release/lib/autofs
+	echo $(prefix)/release/lib/modules
+	ls -al $(prefix)/release/lib/modules
+	echo $(prefix)/release/lib/modules/$(KERNELVERSION)
+	ls -al $(prefix)/release/lib/modules/$(KERNELVERSION)
+
 	rm -rf $(prefix)/release/lib/modules/$(KERNELVERSION)
+
+	echo $(prefix)/release/lib/modules
+	ls -al $(prefix)/release/lib/modules
 
 	$(INSTALL_DIR) $(prefix)/release/media
 	ln -s /hdd $(prefix)/release/media/hdd
@@ -584,6 +594,7 @@ if ENABLE_FORTIS_HDBOX
 	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release/lib/modules
 endif
 else
 	cp $(kernelprefix)/linux-sh4/arch/sh/boot/uImage $(prefix)/release/boot/
