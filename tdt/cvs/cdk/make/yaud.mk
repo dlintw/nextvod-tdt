@@ -9,6 +9,7 @@ min-prepare-yaud std-prepare-yaud max-prepare-yaud: \
 #
 $(DEPDIR)/min-bootstrap $(DEPDIR)/std-bootstrap $(DEPDIR)/max-bootstrap $(DEPDIR)/bootstrap: \
 $(DEPDIR)/%bootstrap: \
+		%libtool \
 		%$(FILESYSTEM) \
 		| %$(GLIBC) \
 		%$(CROSS_LIBGCC) \

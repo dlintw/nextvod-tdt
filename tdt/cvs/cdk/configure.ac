@@ -704,6 +704,7 @@ TUXBOX_RULES_MAKE(cramfs)
 TUXBOX_RULES_MAKE(ipkg_utils)
 TUXBOX_RULES_MAKE(ipkg_host)
 TUXBOX_RULES_MAKE(host_python)
+TUXBOX_RULES_MAKE(libtool)
 
 #
 # root
