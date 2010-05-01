@@ -1,4 +1,4 @@
-# tuxbox/enigma2 
+﻿# tuxbox/enigma2 
 $(appsdir)/enigma2-nightly/config.status: bootstrap freetype expat fontconfig libpng jpeg libgif libfribidi libid3tag libmad libsigc libreadline \
 		libdvbsi++ python libxml2 libxslt elementtree zope-interface twisted pyopenssl lxml libxmlccwrap ncurses-dev alsa-lib alsa-lib-dev alsa-utils \
 		alsaplayer alsaplayer-dev
@@ -29,7 +29,7 @@ $(appsdir)/enigma2-nightly/config.status: bootstrap freetype expat fontconfig li
 			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-hl101) \
 			$(if $(VIP2),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_VIP2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-vip2) \
 			$(if $(OCTAGON1008),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_OCTAGON1008 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-		    $(if $(UFS912),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_UFS912 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") 
+		    	$(if $(UFS912),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_UFS912 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") 
 $(DEPDIR)/enigma2-nightly.do_prepare:
 
 	REVISION=""; \
