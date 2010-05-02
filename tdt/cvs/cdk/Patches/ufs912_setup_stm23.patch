@@ -238,75 +238,57 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   #endif
   
   	return platform_driver_register(&stpio_driver);
-*** b/arch/sh/boards/st/mb618/setup.c	2010-02-15 09:28:06.000000000 +0100
---- a/arch/sh/boards/st/mb618/setup.c	2010-03-06 12:46:31.000000000 +0100
+*** b/arch/sh/boards/st/mb618/setup.c	2010-05-01 23:27:35.000000000 +0200
+--- a/arch/sh/boards/st/mb618/setup.c	2010-05-02 12:17:23.839522000 +0200
 ***************
-*** 19,24 ****
---- 19,25 ----
+*** 19,25 ****
   #include <linux/mtd/mtd.h>
   #include <linux/mtd/physmap.h>
   #include <linux/mtd/partitions.h>
-+ #include <linux/bpa2.h>
+- #include <linux/bpa2.h>
   #include <linux/phy.h>
   #include <linux/lirc.h>
   #include <linux/gpio_keys.h>
+--- 19,24 ----
 ***************
-*** 30,35 ****
---- 31,65 ----
+*** 31,80 ****
   #include <asm/io.h>
   #include "../common/common.h"
   
-+ const char *LMI_OTHER_partalias[] = { "gfx-memory", "bigphysarea", NULL };
-+ const char *LMI_SYS_partalias[] = { "BPA2_Region0", "v4l2-coded-video-buffers",
-+                                     "BPA2_Region1", "v4l2-video-buffers" ,"coredisplay-video", NULL };
-+  
-+ /*
-+ 0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
-+ 0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
-+ 0x40800000 - 0x443FFFFF - linux (60mb)
-+ 0x44400000 - 0x487FFFFF - lmi_sys (68mb)
-+ 0x48800000 - 0x4FFFFFFF - lmi_other
-+ */
-+     static struct bpa2_partition_desc bpa2_parts_table[] = {
-+  	{
-+  		.name  = "LMI_SYS",
-+  		.start = 0x44400000,
-+  		.size  = 0x04400000, /* 68 */
-+  		.flags = 0,
-+  		.aka   = LMI_SYS_partalias
-+  	}, 
-+  	{
-+  		.name  = "LMI_OTHER",
-+  		.start = 0x48800000,
-+  		.size  = 0x07800000,
-+  		.flags = 0,
-+  		.aka   = LMI_OTHER_partalias
-+  	},
-+ 	
-+  };
-+ 
+- const char *LMI_OTHER_partalias[] = { "gfx-memory", "bigphysarea", NULL };
+- const char *LMI_SYS_partalias[] = { "BPA2_Region0", "v4l2-coded-video-buffers",
+-                                     "BPA2_Region1", "v4l2-video-buffers" ,"coredisplay-video", NULL };
+-  
+- /*
+- 0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
+- 0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
+- 0x40800000 - 0x443FFFFF - linux (60mb)
+- 0x44400000 - 0x487FFFFF - lmi_sys (68mb)
+- 0x48800000 - 0x4FFFFFFF - lmi_other
+- */
+-     static struct bpa2_partition_desc bpa2_parts_table[] = {
+-  	{
+-  		.name  = "LMI_SYS",
+-  		.start = 0x44400000,
+-  		.size  = 0x04400000, /* 68 */
+-  		.flags = 0,
+-  		.aka   = LMI_SYS_partalias
+-  	}, 
+-  	{
+-  		.name  = "LMI_OTHER",
+-  		.start = 0x48800000,
+-  		.size  = 0x07800000,
+-  		.flags = 0,
+-  		.aka   = LMI_OTHER_partalias
+-  	},
+- 	
+-  };
+- 
   /* Whether the hardware supports NOR or NAND Flash depends on J34.
    * In position 1-2 CSA selects NAND, in position 2-3 is selects NOR.
    * Note that J30A must be in position 2-3 to select the on board Flash
-***************
-*** 37,50 ****
+   * (both NOR and NAND).
    */
-  #define FLASH_NOR
-  
-! static int ascs[2] __initdata = { 2, 3 };
-  
-  static void __init mb618_setup(char** cmdline_p)
-  {
-  	printk("STMicroelectronics STx7111 Mboard initialisation\n");
-  
-  	stx7111_early_device_init();
-! 	stx7111_configure_asc(ascs, 2, 0);
-  }
-  
-  static struct plat_stm_pwm_data pwm_private_info = {
---- 67,81 ----
-   */
-  #define FLASH_NOR
   
 ! static int ascs[1] __initdata = { 1 };
   
@@ -320,16 +302,30 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   }
   
   static struct plat_stm_pwm_data pwm_private_info = {
-***************
-*** 53,59 ****
+--- 30,50 ----
+  #include <asm/io.h>
+  #include "../common/common.h"
   
-  static struct plat_ssc_data ssc_private_info = {
-  	.capability  =
-! 		ssc0_has(SSC_SPI_CAPABILITY) |
-  		ssc1_has(SSC_I2C_CAPABILITY) |
-  		ssc2_has(SSC_I2C_CAPABILITY) |
-  		ssc3_has(SSC_I2C_CAPABILITY),
---- 84,90 ----
+  /* Whether the hardware supports NOR or NAND Flash depends on J34.
+   * In position 1-2 CSA selects NAND, in position 2-3 is selects NOR.
+   * Note that J30A must be in position 2-3 to select the on board Flash
+   * (both NOR and NAND).
+   */
++ #define FLASH_NOR
+  
+! static int ascs[2] __initdata = { 2, 3 };
+  
+  static void __init mb618_setup(char** cmdline_p)
+  {
+  	printk("STMicroelectronics STx7111 Mboard initialisation\n");
+  
+  	stx7111_early_device_init();
+! 	stx7111_configure_asc(ascs, 2, 0);
+  }
+  
+  static struct plat_stm_pwm_data pwm_private_info = {
+***************
+*** 83,89 ****
   
   static struct plat_ssc_data ssc_private_info = {
   	.capability  =
@@ -337,27 +333,67 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   		ssc1_has(SSC_I2C_CAPABILITY) |
   		ssc2_has(SSC_I2C_CAPABILITY) |
   		ssc3_has(SSC_I2C_CAPABILITY),
+--- 53,59 ----
+  
+  static struct plat_ssc_data ssc_private_info = {
+  	.capability  =
+! 		ssc0_has(SSC_SPI_CAPABILITY) |
+  		ssc1_has(SSC_I2C_CAPABILITY) |
+  		ssc2_has(SSC_I2C_CAPABILITY) |
+  		ssc3_has(SSC_I2C_CAPABILITY),
 ***************
-*** 120,127 ****
-  
-  static void set_vpp(struct map_info * info, int enable)
-  {
-! 	stpio_set_pin(vpp_pio, enable);
-! }
-  
-  static struct mtd_partition mtd_parts_table[3] = {
-  	{
---- 151,158 ----
+*** 150,167 ****
   
   static void set_vpp(struct map_info * info, int enable)
   {
 ! /*	stpio_set_pin(vpp_pio, enable);
 ! */}
   
-  static struct mtd_partition mtd_parts_table[3] = {
+! static struct mtd_partition mtd_parts_table[] = {
   	{
+! 		.name = "NOR U-BOOT :    0xA000.0000-0xA007.FFFF (512KB)",
+! 		.size = 0x00080000,
+  		.offset = 0x00000000,
+  	}, {
+! 		.name = "NOR ROOT :      0xA008.0000-0xA03F.FFFF (3,5MB)",
+  		.size = MTDPART_SIZ_FULL,
+! 		.offset = 0x00080000,
+  	}
+  };
+  
+--- 120,141 ----
+  
+  static void set_vpp(struct map_info * info, int enable)
+  {
+! 	stpio_set_pin(vpp_pio, enable);
+! }
+  
+! static struct mtd_partition mtd_parts_table[3] = {
+  	{
+! 		.name = "Boot firmware",
+! 		.size = 0x00040000,
+  		.offset = 0x00000000,
+  	}, {
+! 		.name = "Kernel",
+! 		.size = 0x00100000,
+! 		.offset = 0x00040000,
+! 	}, {
+! 		.name = "Root FS",
+  		.size = MTDPART_SIZ_FULL,
+! 		.offset = 0x00140000,
+  	}
+  };
+  
 ***************
-*** 153,159 ****
+*** 179,185 ****
+  	.resource	= (struct resource[]) {
+  		{
+  			.start		= 0x00000000,
+! 			.end		= 4*1024*1024 - 1, /* NOR Flashsize = 0x400000 */
+  			.flags		= IORESOURCE_MEM,
+  		}
+  	},
+--- 153,159 ----
   	.resource	= (struct resource[]) {
   		{
   			.start		= 0x00000000,
@@ -365,24 +401,8 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   			.flags		= IORESOURCE_MEM,
   		}
   	},
---- 184,190 ----
-  	.resource	= (struct resource[]) {
-  		{
-  			.start		= 0x00000000,
-! 			.end		= 16*1024*1024 - 1,
-  			.flags		= IORESOURCE_MEM,
-  		}
-  	},
 ***************
-*** 176,182 ****
-  static struct plat_stmmacphy_data phy_private_data = {
-  	/* SMSC LAN 8700 */
-  	.bus_id = 0,
-! 	.phy_addr = -1,
-  	.phy_mask = 0,
-  	.interface = PHY_INTERFACE_MODE_MII,
-  	.phy_reset = &mb618_phy_reset,
---- 207,213 ----
+*** 202,208 ****
   static struct plat_stmmacphy_data phy_private_data = {
   	/* SMSC LAN 8700 */
   	.bus_id = 0,
@@ -390,52 +410,84 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   	.phy_mask = 0,
   	.interface = PHY_INTERFACE_MODE_MII,
   	.phy_reset = &mb618_phy_reset,
+--- 176,182 ----
+  static struct plat_stmmacphy_data phy_private_data = {
+  	/* SMSC LAN 8700 */
+  	.bus_id = 0,
+! 	.phy_addr = -1,
+  	.phy_mask = 0,
+  	.interface = PHY_INTERFACE_MODE_MII,
+  	.phy_reset = &mb618_phy_reset,
 ***************
-*** 217,223 ****
+*** 242,295 ****
+  	},
   };
   
-  /* J34 must be in the 1-2 position to enable NOR Flash */
-! static struct mtd_partition nand_partitions[] = {
-  	{
-  		.name	= "NAND root",
-  		.offset	= 0,
---- 248,278 ----
-  };
-  
+- //#define ORIGINAL_MTD
+- 
   /* J34 must be in the 1-2 position to enable NOR Flash */
 ! static struct mtd_partition nand_partitions[] = 
 ! {
+! #ifdef ORIGINAL_MTD
 ! 	 {
-! 	 .name = "NAND KERNEL -0x0000.0000-0x002F.FFFF",
+! 	 .name = "NAND KERNEL :          0x0000.0000-0x002F.FFFF",
 ! 	 .size = 0x300000,	/* will expand to the end of the flash */
 ! 	 .offset = 0,
 ! 	 },
 ! 	 {
-! 	 .name = "NAND ROOT  -	0x0030.0000-0x005F.FFFF",
+! 	 .name = "NAND ROOT :            0x0030.0000-0x027F.FFFF",
 ! 	 .size = 0x2500000,	/* will expand to the end of the flash */
 ! 	 .offset = 0x300000,
 ! 	 },
 ! 	 {
-! 	 .name = "Config Data - YAFFS 0x0160.0000-0x03FF.FFFF",
+! 	 .name = "NAND CONFIG :          0x0280.0000-0x04FF.FFFF",
 ! 	 .size = 0x2800000,	/* will expand to the end of the flash */
 ! 	 .offset = 0x2800000,
 ! 	 },
 ! 	 {
-! 	 .name = "NAND Data Block - writable FS, YAFFS",
+! 	 .name = "NAND DATA :            0x0500.0000-0x07FF.FFFF",
 ! 	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
 ! 	 .offset = 0x05000000,
 ! 	 },
+! #else
+! 	 {
+! 	 .name = "NAND KERNEL :   0x0000.0000-0x002F.FFFF (  4MB)",
+! 	 .size = 0x400000,	/* will expand to the end of the flash */
+! 	 .offset = 0,
+! 	 },
+! 	 {
+! 	 .name = "NAND ROOT :     0x0030.0000-0x042F.FFFF ( 64MB)",
+! 	 .size = 0x4000000,	/* will expand to the end of the flash */
+! 	 .offset = 0x300000,
+! 	 },
+! 	 {
+! 	 .name = "NAND DATA :     0x0430.0000-0x07FF.FFFF ( 60MB)",
+! 	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
+! 	 .offset = 0x04300000,
+! 	 },
 ! 
-! 
-! 	/*
-  	{
-  		.name	= "NAND root",
-  		.offset	= 0,
-***************
-*** 226,236 ****
-  		.name	= "NAND home",
-  		.offset	= MTDPART_OFS_APPEND,
-  		.size	= MTDPART_SIZ_FULL
+! #endif
+  };
+  
+  static struct nand_config_data mb618_nand_config = {
+! 	.emi_bank		= 1,
+  	.emi_withinbankoffset	= 0,
+  
+  	/* Timings for NAND512W3A */
+--- 216,236 ----
+  	},
+  };
+  
+  /* J34 must be in the 1-2 position to enable NOR Flash */
+! static struct mtd_partition nand_partitions[] = {
+! 	{
+! 		.name	= "NAND root",
+! 		.offset	= 0,
+! 		.size 	= 0x00800000
+! 	}, {
+! 		.name	= "NAND home",
+! 		.offset	= MTDPART_OFS_APPEND,
+! 		.size	= MTDPART_SIZ_FULL
 ! 	},
   };
   
@@ -444,64 +496,43 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   	.emi_withinbankoffset	= 0,
   
   	/* Timings for NAND512W3A */
---- 281,291 ----
-  		.name	= "NAND home",
-  		.offset	= MTDPART_OFS_APPEND,
-  		.size	= MTDPART_SIZ_FULL
-! 	},*/
-  };
-  
-  static struct nand_config_data mb618_nand_config = {
-! 	.emi_bank		= 1,
-  	.emi_withinbankoffset	= 0,
-  
-  	/* Timings for NAND512W3A */
 ***************
-*** 253,259 ****
+*** 312,317 ****
+--- 253,259 ----
   	.nr_parts		= ARRAY_SIZE(nand_partitions),
   };
   
-- 
++ 
   /* We don't bother with INT[BCD] as they are shared with the ssc
    * J20-A must be removed, J20-B must be 5-6
    */
---- 308,313 ----
 ***************
-*** 273,285 ****
+*** 331,339 ****
   }
   
   static struct platform_device *mb618_devices[] __initdata = {
-- 	&mb618_leds,
   	&epld_device,
-  #ifdef FLASH_NOR
-  	&physmap_flash,
-  #endif
+! 	&physmap_flash, /* FLASH_NOR */
   	&mb618_phy_device,
-- 	&mb618_button_device,
   };
   
   /* Configuration based on Futarque-RC signals train. */
---- 327,337 ----
+--- 273,285 ----
+  }
+  
+  static struct platform_device *mb618_devices[] __initdata = {
++ 	&mb618_leds,
+  	&epld_device,
+! #ifdef FLASH_NOR
+! 	&physmap_flash,
+! #endif
+  	&mb618_phy_device,
++ 	&mb618_button_device,
+  };
+  
+  /* Configuration based on Futarque-RC signals train. */
 ***************
-*** 327,343 ****
-  
-  static int __init device_init(void)
-  {
-! 	stx7111_configure_pci(&pci_config);
-! 	stx7111_configure_pwm(&pwm_private_info);
-  	stx7111_configure_ssc(&ssc_private_info);
-  	stx7111_configure_usb(1); /* Enable inverter */
-  	stx7111_configure_ethernet(1, 0, 0, 0);
-!         stx7111_configure_lirc(&lirc_scd);
-! 
-! 	vpp_pio = stpio_request_pin(3,4, "VPP", STPIO_OUT);
-! 
-  #ifdef CONFIG_SND
-! 	i2c_register_board_info(1, &mb618_scart_audio, 1);
-  #endif
-  
-  #ifndef FLASH_NOR
---- 379,398 ----
+*** 381,417 ****
   
   static int __init device_init(void)
   {
@@ -521,144 +552,49 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
 ! 	//i2c_register_board_info(1, &mb618_scart_audio, 1);
   #endif
   
-  #ifndef FLASH_NOR
-***************
-*** 345,353 ****
-  	/* The MTD NAND code doesn't understand the concept of VPP,
-  	 * (or hardware write protect) so permanently enable it.
-  	 */
-! 	stpio_set_pin(vpp_pio, 1);
-  #endif
-  
-  	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
-  }
-  arch_initcall(device_init);
---- 400,418 ----
+  	stx7111_configure_nand(&mb618_nand_config);
   	/* The MTD NAND code doesn't understand the concept of VPP,
   	 * (or hardware write protect) so permanently enable it.
   	 */
 ! /*	stpio_set_pin(vpp_pio, 1);
 ! */
-  #endif
+! 
+! /* kdhong */
+! 	{
+! 		struct stpio_pin *pin;
+! 		pin = stpio_request_pin(4,4, "PHY_RESET", STPIO_OUT);
+! 		stpio_set_pin(pin, 1);
+! //		stpio_free_pin( pin );
+! 	}
+! /* kdhong */
   
-+ /* kdhong */
-+ 	{
-+ 		struct stpio_pin *pin;
-+ 		pin = stpio_request_pin(4,4, "PHY_RESET", STPIO_OUT);
-+ 		stpio_set_pin(pin, 1);
-+ //		stpio_free_pin( pin );
-+ 	}
-+ /* kdhong */
-+ 
   	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
   }
-  arch_initcall(device_init);
-*** b/arch/sh/kernel/cpu/sh4/setup-stx7111.c	2010-02-15 09:28:08.000000000 +0100
---- a/arch/sh/kernel/cpu/sh4/setup-stx7111.c	2010-03-06 12:42:34.000000000 +0100
-***************
-*** 264,269 ****
---- 264,282 ----
-  		platform_device_register(&stssc_devices[i]);
-  	}
+--- 327,352 ----
   
-+         /* some additional sysconfig settings to enable i2c, cic and cec */
-+ 	ssc_sc = sysconf_claim(SYS_CFG, 5, 0, 0, "cic");
-+         sysconf_write(ssc_sc, 1);
-+ 
-+ 	ssc_sc = sysconf_claim(SYS_CFG, 5, 17, 17, "cic");
-+         sysconf_write(ssc_sc, 1);
-+ 
-+ 	ssc_sc = sysconf_claim(SYS_CFG, 5, 8, 8, "cec");
-+         sysconf_write(ssc_sc, 1);
-+ 
-+         ssc_sc = sysconf_claim(SYS_CFG, 7, 15, 15, "i2c");
-+         sysconf_write(ssc_sc, 1);
-+ 
-  	/* I2C buses number reservation (to prevent any hot-plug device
-  	 * from using it) */
-  #ifdef CONFIG_I2C_BOARDINFO
-***************
-*** 422,433 ****
-  	STASC_DEVICE(0xfd030000, evt2irq(0x1160), 11, 15,
-  		     0, 0, 1, 4, 7,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
-  	STASC_DEVICE(0xfd031000, evt2irq(0x1140), 12, 16,
-  		     1, 0, 1, 4, 5,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
-! 	STASC_DEVICE(0xfd032000, evt2irq(0x1120), 13, 17,
-! 		     4, 3, 2, 4, 5,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
-  	STASC_DEVICE(0xfd033000, evt2irq(0x1100), 14, 18,
-  		     5, 0, 1, 2, 3,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
---- 435,449 ----
-  	STASC_DEVICE(0xfd030000, evt2irq(0x1160), 11, 15,
-  		     0, 0, 1, 4, 7,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
-+ //console
-  	STASC_DEVICE(0xfd031000, evt2irq(0x1140), 12, 16,
-  		     1, 0, 1, 4, 5,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
-! //fp
-! 	STASC_DEVICE(0xfd032000, evt2irq(0x1120), /* 13 */ -1, /*17 */ -1,
-! 		     4, 3, 2, /*4 konfetti */ -1, 5,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
-+ 
-  	STASC_DEVICE(0xfd033000, evt2irq(0x1100), 14, 18,
-  		     5, 0, 1, 2, 3,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
-***************
-*** 499,504 ****
---- 515,521 ----
-  			 * ssc2_mux_sel = 0 */
-  			if (!sc7_3)
-  				sc7_3 = sysconf_claim(SYS_CFG, 7, 3, 3, "asc");
-+ 
-  			sysconf_write(sc7_3, 0);
+  static int __init device_init(void)
+  {
+! 	stx7111_configure_pci(&pci_config);
+! 	stx7111_configure_pwm(&pwm_private_info);
+  	stx7111_configure_ssc(&ssc_private_info);
+  	stx7111_configure_usb(1); /* Enable inverter */
+  	stx7111_configure_ethernet(1, 0, 0, 0);
+!         stx7111_configure_lirc(&lirc_scd);
+! 
+! 	vpp_pio = stpio_request_pin(3,4, "VPP", STPIO_OUT);
+! 
+  #ifdef CONFIG_SND
+! 	i2c_register_board_info(1, &mb618_scart_audio, 1);
+  #endif
   
-  			break;
-***************
-*** 508,514 ****
-  			break;
-  		}
++ #ifndef FLASH_NOR
+  	stx7111_configure_nand(&mb618_nand_config);
+  	/* The MTD NAND code doesn't understand the concept of VPP,
+  	 * (or hardware write protect) so permanently enable it.
+  	 */
+! 	stpio_set_pin(vpp_pio, 1);
+! #endif
   
-! 		pdev->id = i;
-  		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
-  		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
-  	}
---- 525,532 ----
-  			break;
-  		}
-  
-!                 pdev->id = i;
-!                 
-  		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
-  		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
-  	}
-*** b/drivers/mtd/chips/cfi_probe.c	2010-02-15 09:28:06.000000000 +0100
---- a/drivers/mtd/chips/cfi_probe.c	2010-03-06 11:02:11.000000000 +0100
-***************
-*** 255,260 ****
---- 255,276 ----
-  	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
-  		cfi->cfiq->EraseRegionInfo[i] = le32_to_cpu(cfi->cfiq->EraseRegionInfo[i]);
-  
-+ 	/* kdhong */
-+ 	printk( "CFI MFR = %x DEV = %x\n", cfi->mfr, cfi->id );
-+ 
-+ 	if( cfi->mfr == 0x00c2 && cfi->id == 0x227e )
-+ 	{
-+ 		int devsize = (1 << cfi->cfiq->DevSize) * cfi->interleave;
-+ 
-+ 		printk( "devsize = %x\n", devsize );
-+ 
-+ 		if( devsize == 0x400000 )
-+ 		{
-+ 			cfi->cfiq->EraseRegionInfo[i] = 0x100003f;
-+ 		}
-+ 	}
-+ 	/* kdhong */
-+ 
-  #ifdef DEBUG_CFI
-  		printk("  Erase Region #%d: BlockSize 0x%4.4X bytes, %d blocks\n",
-  		       i, (cfi->cfiq->EraseRegionInfo[i] >> 8) & ~0xff,
+  	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
+  }
+
