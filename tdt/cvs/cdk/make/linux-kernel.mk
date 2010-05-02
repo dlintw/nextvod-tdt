@@ -230,6 +230,26 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 
 ############ Patches Kernel 23 End ###############
 
+############ Patches Kernel 24 ###############
+
+PATCH_STR=_201
+STM24_DVB_PATCH = linux-sh4-linuxdvb_stm24$(PATCH_STR).patch
+
+COMMONPATCHES_24 = \
+		$(STM24_DVB_PATCH) \
+		linux-sh4-sound_stm24_201.patch
+
+UFS910PATCHES_24 = $(COMMONPATCHES_24)
+
+UFS922PATCHES_24 = $(COMMONPATCHES_24)
+
+
+KERNELPATCHES_24 =  \
+		$(if $(UFS910),$(UFS910PATCHES_24)) \
+		$(if $(UFS922),$(UFS922PATCHES_24))
+
+############ Patches Kernel 24 End ###############
+
 #
 # KERNEL-HEADERS
 #
