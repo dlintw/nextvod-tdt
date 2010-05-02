@@ -456,9 +456,9 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
 ! 	 .offset = 0,
 ! 	 },
 ! 	 {
-! 	 .name = "NAND ROOT :     0x0030.0000-0x042F.FFFF ( 64MB)",
+! 	 .name = "NAND ROOT :     0x0040.0000-0x042F.FFFF ( 64MB)",
 ! 	 .size = 0x4000000,	/* will expand to the end of the flash */
-! 	 .offset = 0x300000,
+! 	 .offset = 0x400000,
 ! 	 },
 ! 	 {
 ! 	 .name = "NAND DATA :     0x0430.0000-0x07FF.FFFF ( 60MB)",
