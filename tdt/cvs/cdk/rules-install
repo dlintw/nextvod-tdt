@@ -13,6 +13,7 @@
 ccache;make:install:DESTDIR=HOST
 cramfs;install:mkcramfs:HOST/bin
 ipkg_utils;make:install
+libtool;make:install
 
 #
 # root

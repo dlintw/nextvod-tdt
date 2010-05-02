@@ -661,3 +661,21 @@ $(DEPDIR)/setup-cross-doc: \
 $(DEPDIR)/setup-cross-optional: \
 	cross-sh4-protoize
 
+#
+# LIBTOOL
+#
+$(DEPDIR)/libtool.do_prepare: @DEPENDS_libtool@
+	@PREPARE_libtool@
+	touch $@
+
+$(DEPDIR)/libtool.do_compile: $(DEPDIR)/libtool.do_prepare
+	cd @DIR_libtool@  && \
+	./configure --prefix=$(hostprefix) && \
+	$(MAKE)
+	touch $@
+
+$(DEPDIR)/libtool: $(DEPDIR)/libtool.do_compile
+	cd @DIR_libtool@  && \
+	@INSTALL_libtool@
+	touch $@
+
