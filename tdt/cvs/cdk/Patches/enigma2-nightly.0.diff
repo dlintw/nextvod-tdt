@@ -8097,7 +8097,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +#ifndef __sh__
  			eFatal("LINE %d descriptor not found in descriptor cache %08x!!!!!!", __LINE__, *(p-1));
 +#else
-+			eFatal("LINE %d descriptor not found in descriptor cache %08x!!!!!!", __LINE__, *(p-4));
++			eDebug("LINE %d descriptor not found in descriptor cache %08x!!!!!!", __LINE__, *(p-4));
 +#endif
  		tmp-=4;
  	}
@@ -8198,6 +8198,11 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  void eEPGCache::load()
  {
 +#ifdef __sh__
++	m_epg_days = 14;
++	char epg_days[3] = "";
++	if(getshmentry(shm, "epg_days=", epg_days, 3) == 1)
++		m_epg_days = atoi(epg_days);
++
 +	if(getshmentry(shm, "epg_file=", epg_file, 256) != 1)
 +		strcpy(epg_file, "/hdd/epg.dat");
 +
@@ -8228,11 +8233,6 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	if (f)
  	{
 +#ifdef __sh__
-+		m_epg_days = 14;
-+		char epg_days[3] = "";
-+		if(getshmentry(shm, "epg_days=", epg_days, 3) == 1)
-+			m_epg_days = atoi(epg_days);
-+
 +		if(checkshmentry(shm, "not_del_epg") != 1)
 +			unlink(epg_file);
 +#else
