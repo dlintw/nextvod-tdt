@@ -19,12 +19,16 @@ from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from re import compile as re_compile, search as re_search
 from enigma import evfd
 
+import os
+
 my_global_session = None
 
 config.plugins.CuberevoVFD = ConfigSubsection()
 config.plugins.CuberevoVFD.scroll = ConfigSelection(default = "once", choices = [("never"), ("once"), ("always")])
 config.plugins.CuberevoVFD.brightness = ConfigSelection(default = "bright", choices = [("dark"), ("medium"), ("bright")])
 config.plugins.CuberevoVFD.showClock = ConfigEnableDisable(default = True)
+config.plugins.CuberevoVFD.setDaylight = ConfigEnableDisable(default = False)
+config.plugins.CuberevoVFD.timeMode = ConfigSelection(default = "24h", choices = [("12h"),("24h")])
 config.plugins.CuberevoVFD.setLed = ConfigEnableDisable(default = False)
 config.plugins.CuberevoVFD.setFan = ConfigEnableDisable(default = True)
 
@@ -46,6 +50,8 @@ class CuberevoVFDSetup(ConfigListScreen, Screen):
 		# create elements for the menu list
 		self.list = [ ]
 		self.list.append(getConfigListEntry(_("Show clock"), config.plugins.CuberevoVFD.showClock))
+		self.list.append(getConfigListEntry(_("Daylight"), config.plugins.CuberevoVFD.setDaylight))
+		self.list.append(getConfigListEntry(_("Time mode"), config.plugins.CuberevoVFD.timeMode))
 		self.list.append(getConfigListEntry(_("Set led"), config.plugins.CuberevoVFD.setLed))
 		self.list.append(getConfigListEntry(_("Brightness"), config.plugins.CuberevoVFD.brightness))
 		self.list.append(getConfigListEntry(_("Scroll long strings"), config.plugins.CuberevoVFD.scroll))
@@ -77,12 +83,22 @@ class CuberevoVFDSetup(ConfigListScreen, Screen):
 		else:
 			cubeVfd.disableClock()
 
+		if config.plugins.CuberevoVFD.setDaylight.getValue():
+			cubeVfd.enableDaylight()
+		else:
+			cubeVfd.disableDaylight()
+
+	      	if config.plugins.CuberevoVFD.timeMode.value == "24h":
+			cubeVfd.enableTimeMode()
+		else:
+			cubeVfd.disableTimeMode()
+
 		# enable/disable fan activity
                 if config.plugins.CuberevoVFD.setFan.getValue():
                 	cubeVfd.enableFan()
                 else:
                 	cubeVfd.disableFan()
-
+ 
 		# enable/disable led activity
                 if config.plugins.CuberevoVFD.setLed.getValue():
                 	cubeVfd.enableLed()
@@ -132,6 +148,11 @@ class CuberevoVFD:
 		self.fanEnabled = config.plugins.CuberevoVFD.setFan.getValue()
 		self.ledEnabled = config.plugins.CuberevoVFD.setLed.getValue()
 		self.clockEnabled = config.plugins.CuberevoVFD.showClock.getValue()
+		self.daylightEnabled = config.plugins.CuberevoVFD.setDaylight.getValue()
+		if config.plugins.CuberevoVFD.timeMode.value == "24h":
+			self.timeModeEnabled = 1
+		else:
+			self.timeModeEnabled = 0
 		if self.fanEnabled == False:
 			self.disableFan()
 		else:
@@ -153,6 +174,42 @@ class CuberevoVFD:
 	        
 	def disableClock(self):
 		self.clockEnabled = False
+
+	def enableTimeMode(self):
+		self.timeModeEnabled = 1
+		try:
+			os.popen("/bin/cubefpctl --settimemode 1")
+		except OSError:
+			print "no memory"
+	        
+	def disableTimeMode(self):
+		self.timeModeEnabled = 0
+		try:
+			os.popen("/bin/cubefpctl --settimemode 0")
+		except OSError:
+			print "no memory"
+
+	def enableDaylight(self):
+		self.daylightEnabled = True
+		try:
+			os.popen("/bin/cubefpctl --setdaylight 1")
+		except OSError:
+			print "no memory"
+		try:
+			os.popen("/bin/cubefpctl --syncfptime")
+		except OSError:
+			print "no memory"
+	        
+	def disableDaylight(self):
+		self.daylightEnabled = False
+		try:
+			os.popen("/bin/cubefpctl --setdaylight 0")
+		except OSError:
+			print "no memory"
+		try:
+			os.popen("/bin/cubefpctl --syncfptime")
+		except OSError:
+			print "no memory"
 
 	def enableLed(self):
 		self.ledEnabled = True

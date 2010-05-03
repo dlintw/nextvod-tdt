@@ -1411,4 +1411,274 @@ diff -urN enigma2-nightly/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py e
  		
  
  VFDIconsInstance = None
+--- enigma2-nightly/lib/python/Components/Timezones.py	2010-05-03 13:45:15.006899015 +0200
++++ enigma2-nightly/lib/python/Components/Timezones.py	2010-05-02 14:06:52.000000000 +0200
+@@ -50,6 +50,17 @@
+ 		except:
+ 			from enigma import e_tzset
+ 			e_tzset()
++#+++>
++		import os
++		try:
++			os.popen("/bin/cubefpctl --setgmtoffset")
++		except OSError:
++			print "no memory"
++		try:
++			os.popen("/bin/cubefpctl --syncfptime")
++		except OSError:
++			print "no memory"
++#+++<
+ 		
+ 	def getTimezoneList(self):
+ 		return [ str(x[0]) for x in self.timezones ]
+--- enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2010-05-03 13:45:15.266902593 +0200
++++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2010-05-03 15:26:26.934973004 +0200
+@@ -1541,7 +1541,7 @@
+ 
+ void * rcThread(void *vData)
+ {
+-    int key;
++    int key, oldkey/*, count_time_elapsed*/;
+     char stmp[9];
+     struct sockaddr_un cliadr, srvadr;
+     int srvfd;
+@@ -1560,6 +1560,10 @@
+     
+     debugf (1, "Thread started !!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+ 
++    oldkey = -2;
++    key = -1;
++    //count_time_elapsed = 0;
++
+     while (rc == -1)
+     {
+     	rc = accept( srvfd, (struct sockaddr *) &cliadr, &len );
+@@ -1579,44 +1583,56 @@
+ 	   sscanf(stmp, "%d", &key);
+ 	   debugf(1, "TT_KEY->: %d\n", key);
+ 
+-           switch (key)
+-               {
+-                   case KEY_UP:        RCCode = RC_UP;        break;
+-                   case KEY_DOWN:        RCCode = RC_DOWN;    break;
+-                   case KEY_LEFT:        RCCode = RC_LEFT;    break;
+-                   case KEY_RIGHT:        RCCode = RC_RIGHT;    break;
+-                   case KEY_OK:        RCCode = RC_OK;        break;
+-                   case KEY_0:        RCCode = RC_0;        break;
+-                   case KEY_1:        RCCode = RC_1;        break;
+-                   case KEY_2:        RCCode = RC_2;        break;
+-                   case KEY_3:        RCCode = RC_3;        break;
+-                   case KEY_4:        RCCode = RC_4;        break;
+-                   case KEY_5:        RCCode = RC_5;        break;
+-                   case KEY_6:        RCCode = RC_6;        break;
+-                   case KEY_7:        RCCode = RC_7;        break;
+-                   case KEY_8:        RCCode = RC_8;        break;
+-                   case KEY_9:        RCCode = RC_9;        break;
+-                   case KEY_RED:        RCCode = RC_RED;    break;
+-                   case KEY_GREEN:        RCCode = RC_GREEN;    break;
+-                   case KEY_YELLOW:    RCCode = RC_YELLOW;    break;
+-                   case KEY_BLUE:        RCCode = RC_BLUE;    break;
+-                   case KEY_VOLUMEUP:    RCCode = RC_PLUS;    break;
+-                   case KEY_VOLUMEDOWN:    RCCode = RC_MINUS;    break;
+-                   case KEY_MUTE:        RCCode = RC_MUTE;    break;
+-                   case KEY_HELP:        RCCode = RC_HELP;    break;
+-                   case KEY_MENU:        RCCode = RC_DBOX;    break;
+-                   case KEY_HOME:        RCCode = RC_HOME;    break;
+-                   case KEY_POWER:        RCCode = RC_STANDBY;    break;
+-                   default:  RCCode = -1;
+-	       }
+-       
+-       	   if (RCCode != -1)
+-	   	newKey = 1;
+-	   else
+-	        newKey = 0;
+-       }
+-       
+-       usleep(100000);       	
++	   if((oldkey!=key) /*|| (count_time_elapsed>0)*/)
++	   {
++		   switch (key)
++		       {
++		           case KEY_UP:        RCCode = RC_UP;        break;
++		           case KEY_DOWN:      RCCode = RC_DOWN;    break;
++		           case KEY_LEFT:      RCCode = RC_LEFT;    break;
++		           case KEY_RIGHT:     RCCode = RC_RIGHT;    break;
++		           case KEY_OK:        RCCode = RC_OK;        break;
++		           case KEY_0:         RCCode = RC_0;        break;
++		           case KEY_1:         RCCode = RC_1;        break;
++		           case KEY_2:         RCCode = RC_2;        break;
++		           case KEY_3:         RCCode = RC_3;        break;
++		           case KEY_4:         RCCode = RC_4;        break;
++		           case KEY_5:         RCCode = RC_5;        break;
++		           case KEY_6:         RCCode = RC_6;        break;
++		           case KEY_7:         RCCode = RC_7;        break;
++		           case KEY_8:         RCCode = RC_8;        break;
++		           case KEY_9:         RCCode = RC_9;        break;
++		           case KEY_RED:       RCCode = RC_RED;    break;
++		           case KEY_GREEN:     RCCode = RC_GREEN;    break;
++		           case KEY_YELLOW:    RCCode = RC_YELLOW;    break;
++		           case KEY_BLUE:      RCCode = RC_BLUE;    break;
++		           case KEY_FASTFORWARD:
++	           case KEY_PAGEUP:    RCCode = RC_PLUS;    break;
++		           case KEY_REWIND:
++		           case KEY_PAGEDOWN:  RCCode = RC_MINUS;    break;
++		           case KEY_MUTE:      RCCode = RC_MUTE;    break;
++		           case KEY_HELP:      RCCode = RC_HELP;    break;
++		           case KEY_MENU:        RCCode = RC_DBOX;    break;
++		           case KEY_HOME:
++			   case KEY_TEXT:
++			   case 158/*KEY_EXIT*/:
++		           case KEY_POWER:        RCCode = RC_HOME;    break;
++		           default:  RCCode = -1;
++		       }
++	       
++	       	   if (RCCode != -1) {
++               		fprintf(stderr, "TT_KEY->: %d\n", key);
++               		newKey = 1;
++	   	   } else
++	        	newKey = 0;
++		   //count_time_elapsed = 0;
++		   oldkey = key;
++           }
++	   else oldkey = -1;
++        }
++ 
++       usleep(100000);
++       //count_time_elapsed++;
+ 
+     }
+     
+@@ -6733,7 +6749,7 @@
+        while(1)
+        {
+            /* block until rcThread says there is a new key */
+-	   usleep(1000000/100);
++	   usleep(350*1000/1000);
+ 	   if (newKey == 1)
+ 	   {   
+ 	        newKey = 0;
+@@ -6746,7 +6762,8 @@
+         int tmp = newKey;
+ 	newKey = 0;
+ 	
+-	usleep(1000000/100);
++	//350*HZ*10/1000
++	usleep(350*1000/1000);
+ 	
+ 	return tmp;
+     }   
+
+--- enigma2-nightly.org/lib/python/Screens/InputBox.py	2010-05-03 18:46:44.000000000 +0100
++++ enigma2-nightly/lib/python/Screens/InputBox.py	2010-05-03 10:44:43.000000000 +0100
+@@ -43,7 +43,7 @@
+ 		}, -1)
+ 		if self["input"].type == Input.TEXT:
+ 			rcinput = eRCInput.getInstance()
+-			rcinput.setKeyboardMode(rcinput.kmAscii)
++			#rcinput.setKeyboardMode(rcinput.kmAscii)
+ 
+ 	def gotAsciiCode(self):
+ 		self["input"].handleAscii(getPrevAsciiCode())
+@@ -62,12 +62,12 @@
+ 
+ 	def go(self):
+ 		rcinput = eRCInput.getInstance()
+-		rcinput.setKeyboardMode(rcinput.kmNone)
++		#rcinput.setKeyboardMode(rcinput.kmNone)
+ 		self.close(self["input"].getText())
+ 
+ 	def cancel(self):
+ 		rcinput = eRCInput.getInstance()
+-		rcinput.setKeyboardMode(rcinput.kmNone)
++		#rcinput.setKeyboardMode(rcinput.kmNone)
+ 		self.close(None)
+ 
+ 	def keyHome(self):
+@@ -143,18 +143,18 @@
+ 	
+ 	def closePinWrong(self, *args):
+ 		rcinput = eRCInput.getInstance()
+-		rcinput.setKeyboardMode(rcinput.kmNone)
++		#rcinput.setKeyboardMode(rcinput.kmNone)
+ 		print "args:", args
+ 		self.close(False)
+ 		
+ 	def closePinCorrect(self, *args):
+ 		rcinput = eRCInput.getInstance()
+-		rcinput.setKeyboardMode(rcinput.kmNone)
++		#rcinput.setKeyboardMode(rcinput.kmNone)
+ 		self.close(True)
+ 		
+ 	def closePinCancel(self, *args):
+ 		rcinput = eRCInput.getInstance()
+-		rcinput.setKeyboardMode(rcinput.kmNone)
++		#rcinput.setKeyboardMode(rcinput.kmNone)
+ 		self.close(None)
+ 			
+ 	def cancel(self):
+
+--- enigma2-nightly.org/lib/python/Screens/ChannelSelection.py	2010-05-03 18:46:44.000000000 +0100
++++ enigma2-nightly/lib/python/Screens/ChannelSelection.py	2010-05-03 10:45:07.000000000 +0100
+@@ -1130,11 +1130,11 @@
+ 
+ 	def asciiOn(self):
+ 		rcinput = eRCInput.getInstance()
+-		rcinput.setKeyboardMode(rcinput.kmAscii)
++		#rcinput.setKeyboardMode(rcinput.kmAscii)
+ 
+ 	def asciiOff(self):
+ 		rcinput = eRCInput.getInstance()
+-		rcinput.setKeyboardMode(rcinput.kmNone)
++		#rcinput.setKeyboardMode(rcinput.kmNone)
+ 
+ 	def multibouquet_config_changed(self, val):
+ 		self.recallBouquetMode()
+
+--- enigma2-nightly.org/lib/python/Components/ConfigList.py	2010-05-03 18:46:44.000000000 +0100
++++ enigma2-nightly/lib/python/Components/ConfigList.py	2010-05-03 10:33:56.000000000 +0100
+@@ -18,12 +18,12 @@
+ 
+ 	def execBegin(self):
+ 		rcinput = eRCInput.getInstance()
+-		rcinput.setKeyboardMode(rcinput.kmAscii)
++		#rcinput.setKeyboardMode(rcinput.kmAscii)
+ 		self.timer.callback.append(self.timeout)
+ 
+ 	def execEnd(self):
+ 		rcinput = eRCInput.getInstance()
+-		rcinput.setKeyboardMode(rcinput.kmNone)
++		#rcinput.setKeyboardMode(rcinput.kmNone)
+ 		self.timer.callback.remove(self.timeout)
+ 
+ 	def toggle(self):
+
+--- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/CommonInterfaceAssignment/plugin.py	2010-05-03 10:52:45.000000000 +0100
++++ enigma2-nightly/lib/python/Plugins/SystemPlugins/CommonInterfaceAssignment/plugin.py	2010-05-03 10:38:57.000000000 +0100
+@@ -27,8 +27,10 @@
+ 		</screen>"""
+ 
+ 	def __init__(self, session, args = 0):
+-
+ 		Screen.__init__(self, session)
++#+++>
++		appname = ""
++#+++<
+ 
+ 		self["key_red"] = StaticText(_("Close"))
+ 		self["key_green"] = StaticText(_("Edit"))
+@@ -51,7 +53,12 @@
+ 		if NUM_CI > 0:
+ 			for slot in range(NUM_CI):
+ 				state = eDVBCI_UI.getInstance().getState(slot)
+-				if state == 0:
++#--->
++#-				if state == 0:
++#---<
++#+++>
++				if state == 0 or state == -1:
++#+++<
+ 					appname = _("Slot %d") %(slot+1) + " - " + _("no module found")
+ 				elif state == 1:	
+ 					appname = _("Slot %d") %(slot+1) + " - " + _("init modules")
+
 

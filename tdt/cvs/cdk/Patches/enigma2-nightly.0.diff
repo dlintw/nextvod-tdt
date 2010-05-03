@@ -7213,10 +7213,9 @@ diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/Makefile
 +	plugin.py
 +
 + 
-diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py enigma2-nightly/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py
---- enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py	1970-01-01 01:00:00.000000000 +0100
-+++ enigma2-nightly/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py	2009-12-02 10:26:12.000000000 +0100
-@@ -0,0 +1,244 @@
+--- enigma2-nightly/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py	2010-05-03 21:07:20.914575015 +0200
++++ enigma2-nightly/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py	2010-05-02 14:06:52.000000000 +0200
+@@ -0,0 +1,301 @@
 +from Screens.Screen import Screen
 +from Screens.MessageBox import MessageBox
 +from Plugins.Plugin import PluginDescriptor
@@ -7238,12 +7237,16 @@ diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.p
 +from re import compile as re_compile, search as re_search
 +from enigma import evfd
 +
++import os
++
 +my_global_session = None
 +
 +config.plugins.CuberevoVFD = ConfigSubsection()
 +config.plugins.CuberevoVFD.scroll = ConfigSelection(default = "once", choices = [("never"), ("once"), ("always")])
 +config.plugins.CuberevoVFD.brightness = ConfigSelection(default = "bright", choices = [("dark"), ("medium"), ("bright")])
 +config.plugins.CuberevoVFD.showClock = ConfigEnableDisable(default = True)
++config.plugins.CuberevoVFD.setDaylight = ConfigEnableDisable(default = False)
++config.plugins.CuberevoVFD.timeMode = ConfigSelection(default = "24h", choices = [("12h"),("24h")])
 +config.plugins.CuberevoVFD.setLed = ConfigEnableDisable(default = False)
 +config.plugins.CuberevoVFD.setFan = ConfigEnableDisable(default = True)
 +
@@ -7265,6 +7268,8 @@ diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.p
 +		# create elements for the menu list
 +		self.list = [ ]
 +		self.list.append(getConfigListEntry(_("Show clock"), config.plugins.CuberevoVFD.showClock))
++		self.list.append(getConfigListEntry(_("Daylight"), config.plugins.CuberevoVFD.setDaylight))
++		self.list.append(getConfigListEntry(_("Time mode"), config.plugins.CuberevoVFD.timeMode))
 +		self.list.append(getConfigListEntry(_("Set led"), config.plugins.CuberevoVFD.setLed))
 +		self.list.append(getConfigListEntry(_("Brightness"), config.plugins.CuberevoVFD.brightness))
 +		self.list.append(getConfigListEntry(_("Scroll long strings"), config.plugins.CuberevoVFD.scroll))
@@ -7296,11 +7301,22 @@ diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.p
 +		else:
 +			cubeVfd.disableClock()
 +
++		if config.plugins.CuberevoVFD.setDaylight.getValue():
++			cubeVfd.enableDaylight()
++		else:
++			cubeVfd.disableDaylight()
++
++	      	if config.plugins.CuberevoVFD.timeMode.value == "24h":
++			cubeVfd.enableTimeMode()
++		else:
++			cubeVfd.disableTimeMode()
++
 +		# enable/disable fan activity
 +                if config.plugins.CuberevoVFD.setFan.getValue():
 +                	cubeVfd.enableFan()
 +                else:
 +                	cubeVfd.disableFan()
++ 
 +		# enable/disable led activity
 +                if config.plugins.CuberevoVFD.setLed.getValue():
 +                	cubeVfd.enableLed()
@@ -7350,6 +7366,11 @@ diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.p
 +		self.fanEnabled = config.plugins.CuberevoVFD.setFan.getValue()
 +		self.ledEnabled = config.plugins.CuberevoVFD.setLed.getValue()
 +		self.clockEnabled = config.plugins.CuberevoVFD.showClock.getValue()
++		self.daylightEnabled = config.plugins.CuberevoVFD.setDaylight.getValue()
++		if config.plugins.CuberevoVFD.timeMode.value == "24h":
++			self.timeModeEnabled = 1
++		else:
++			self.timeModeEnabled = 0
 +		if self.fanEnabled == False:
 +			self.disableFan()
 +		else:
@@ -7371,6 +7392,42 @@ diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.p
 +	        
 +	def disableClock(self):
 +		self.clockEnabled = False
++
++	def enableTimeMode(self):
++		self.timeModeEnabled = 1
++		try:
++			os.popen("/bin/cubefpctl --settimemode 1")
++		except OSError:
++			print "no memory"
++	        
++	def disableTimeMode(self):
++		self.timeModeEnabled = 0
++		try:
++			os.popen("/bin/cubefpctl --settimemode 0")
++		except OSError:
++			print "no memory"
++
++	def enableDaylight(self):
++		self.daylightEnabled = True
++		try:
++			os.popen("/bin/cubefpctl --setdaylight 1")
++		except OSError:
++			print "no memory"
++		try:
++			os.popen("/bin/cubefpctl --syncfptime")
++		except OSError:
++			print "no memory"
++	        
++	def disableDaylight(self):
++		self.daylightEnabled = False
++		try:
++			os.popen("/bin/cubefpctl --setdaylight 0")
++		except OSError:
++			print "no memory"
++		try:
++			os.popen("/bin/cubefpctl --syncfptime")
++		except OSError:
++			print "no memory"
 +
 +	def enableLed(self):
 +		self.ledEnabled = True
@@ -7460,8 +7517,6 @@ diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.p
 +def Plugins(**kwargs):
 + 	return [ PluginDescriptor(name="CuberevoVFD", description="Change VFD display settings", where = PluginDescriptor.WHERE_PLUGINMENU, fnc=main),
 + 		PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart) ]
-+
-
 --- enigma2-nightly/lib/dvb/decoder.cpp	2010-04-06 07:01:08.000000000 -0400
 +++ enigma2-nightly/lib/dvb/decoder.cpp	2010-04-06 07:05:49.000000000 -0400
 @@ -40,6 +40,10 @@
