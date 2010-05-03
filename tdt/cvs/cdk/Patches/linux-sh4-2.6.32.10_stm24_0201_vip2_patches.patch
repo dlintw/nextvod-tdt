@@ -231,3 +231,15 @@
   module_param(delay_use, uint, S_IRUGO | S_IWUSR);
   MODULE_PARM_DESC(delay_use, "seconds to delay before using a new device");
   
+*** linux-sh4-2.6.32.10_stm24_0201_orig/drivers/stm/copro-st_socs.c	Mon May  3 15:59:01 2010
+--- linux-sh4/drivers/stm/copro-st_socs.c	Mon May  3 19:37:29 2010
+***************
+*** 3,8 ****
+--- 3,9 ----
+  #include <linux/init.h>
+  #include <linux/delay.h>
+  #include <linux/seq_file.h>
++ #include <linux/stm/stx7100.h>
+  #include <linux/stm/coprocessor.h>
+  #include <linux/stm/sysconf.h>
+  #include <linux/pfn.h>
