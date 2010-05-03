@@ -243,10 +243,14 @@ UFS910PATCHES_24 = $(COMMONPATCHES_24)
 
 UFS922PATCHES_24 = $(COMMONPATCHES_24)
 
+VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
+					linux-sh4-2.6.32.10_stm24_0201_29bit_fix.patch \
+					linux-sh4-2.6.32.10_stm24_0201_vip2_patches.patch
 
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
-		$(if $(UFS922),$(UFS922PATCHES_24))
+		$(if $(UFS922),$(UFS922PATCHES_24)) \
+		$(if $(VIP2),$(VIP2_PATCHES_24))
 
 ############ Patches Kernel 24 End ###############
 
