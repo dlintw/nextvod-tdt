@@ -1325,5 +1325,90 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.h enigma2-nightly/lib/driver/vfd.h
  	void vfd_set_light(bool onoff);
 +	void vfd_set_fan(bool onoff);
  };
+
+
+diff -urN enigma2-nightly/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py enigma2-nightly/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py
+--- enigma2-nightly/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py	1970-01-01 01:00:00.000000000 +0100
++++ enigma2-nightly/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py	2009-12-13 10:15:06.057264790 +0100
+@@ -69,9 +69,9 @@
+ 			info=service.info()
+ 			crypted = info and info.getInfo(iServiceInformation.sIsCrypted) or -1
+ 			if crypted == 1 : #set crypt symbol
+-				evfd.getInstance().vfd_set_icon(0x13,1)
++				evfd.getInstance().vfd_set_icon(0x12,True)
+ 			else:
+-				evfd.getInstance().vfd_set_icon(0x13,0)
++				evfd.getInstance().vfd_set_icon(0x12,False)
+ 	
+ 	def checkAudioTracks(self):
+ 		self.dolbyAvailable = False
+@@ -92,16 +92,16 @@
+ 	def showDolby(self):
+ 		print "[showDolby]"
+ 		if self.dolbyAvailable:
+-			evfd.getInstance().vfd_set_icon(0x17,1)
++			evfd.getInstance().vfd_set_icon(0x15,True)
+ 		else:
+-			evfd.getInstance().vfd_set_icon(0x17,0)
++			evfd.getInstance().vfd_set_icon(0x15,False)
+ 		
+ 	def showMp3(self):
+ 		print "[showMp3]"
+ 		if self.mp3Available:
+-			evfd.getInstance().vfd_set_icon(0x15,1)
++			evfd.getInstance().vfd_set_icon(0x13,True)
+ 		else:
+-			evfd.getInstance().vfd_set_icon(0x15,0)
++			evfd.getInstance().vfd_set_icon(0x13,False)
+ 		
+ 	def __evUpdatedEventInfo(self):
+ 		print "[__evUpdatedEventInfo]"
+@@ -118,9 +118,9 @@
+ 	def __evSeekableStatusChanged(self):
+ 		print "[__evSeekableStatusChanged]"
+ 		if self.getSeekState():
+-			evfd.getInstance().vfd_set_icon(0x1A,1)
++			evfd.getInstance().vfd_set_icon(0x18,True)
+ 		else:
+-			evfd.getInstance().vfd_set_icon(0x1A,0)
++			evfd.getInstance().vfd_set_icon(0x18,False)
+ 		
+ 	def __evVideoSizeChanged(self):
+ 		print "[__evVideoSizeChanged]"
+@@ -128,18 +128,30 @@
+ 		if service is not None:
+ 			info=service.info()
+ 			height = info and info.getInfo(iServiceInformation.sVideoHeight) or -1
+-			if height > 576 : #set HD symbol
+-				evfd.getInstance().vfd_set_icon(0x11,1)
++			if height == 480:
++				evfd.getInstance().vfd_set_icon(0x1D,True)
+ 			else:
+-				evfd.getInstance().vfd_set_icon(0x11,0)
++				evfd.getInstance().vfd_set_icon(0x1D,False)
++			if height == 576:
++				evfd.getInstance().vfd_set_icon(0x1F,True)
++			else:
++				evfd.getInstance().vfd_set_icon(0x1F,False)
++			if height == 720:
++				evfd.getInstance().vfd_set_icon(0x21,True)
++			else:
++				evfd.getInstance().vfd_set_icon(0x21,False)
++			if height == 1080:
++				evfd.getInstance().vfd_set_icon(0x22,True)
++			else:
++				evfd.getInstance().vfd_set_icon(0x22,False)
+ 		
+ 	def gotRecordEvent(self, service, event):
+ 		recs = self.session.nav.getRecordings()
+ 		nrecs = len(recs)
+ 		if nrecs > 0: #set rec symbol
+-			evfd.getInstance().vfd_set_icon(0x1e,1)
++			evfd.getInstance().vfd_set_icon(0x19,True)
+ 		else:
+-			evfd.getInstance().vfd_set_icon(0x1e,0)
++			evfd.getInstance().vfd_set_icon(0x19,False)
+ 		
  
- 
+ VFDIconsInstance = None
+
