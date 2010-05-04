@@ -8202,7 +8202,33 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  			ByteSize -= 4;
  		}
  		delete [] EITdata;
-@@ -337,6 +391,23 @@
+@@ -231,6 +285,25 @@
+ 		if (eDVBLocalTimeHandler::getInstance()->ready())
+ 			timeUpdated();
+ 	}
++#if ENABLE_FREESAT
++        FILE *ffd;
++        ffd = fopen("/var/usr/local/share/enigma2/freesat.t1", "r");
++        if(ffd)
++        {
++                enable_freesat = 1;
++                fclose(ffd);
++        }
++        else
++                enable_freesat = 0;
++        ffd = fopen("/usr/local/share/enigma2/freesat.t1", "r");
++        if(ffd)
++        {
++                enable_freesat = 1;
++                fclose(ffd);
++        }
++        else
++                enable_freesat = 0;
++#endif
+ 	instance=this;
+ }
+ 
+@@ -337,6 +410,23 @@
  					return;
  				}
  #endif
@@ -8226,7 +8252,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  				messages.send(Message(Message::startChannel, chan));
  				// -> gotMessage -> changedService
  			}
-@@ -519,7 +590,11 @@
+@@ -519,7 +609,11 @@
  		if ( TM == 3599 )
  			goto next;
  
@@ -8238,7 +8264,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  			goto next;
  
  		if ( now <= (TM+duration) || TM == 3599 /*NVOD Service*/ )  // old events should not be cached
-@@ -954,6 +1029,9 @@
+@@ -954,6 +1048,9 @@
  {
  	hasStarted();
  	nice(4);
@@ -8248,7 +8274,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	load();
  	cleanLoop();
  	runLoop();
-@@ -962,10 +1040,47 @@
+@@ -962,10 +1059,27 @@
  
  void eEPGCache::load()
  {
@@ -8265,26 +8291,6 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +#else
  	FILE *f = fopen("/hdd/epg.dat", "r");
 +#endif
-+#if ENABLE_FREESAT
-+	FILE *ffd;
-+	ffd = fopen("/var/usr/local/share/enigma2/freesat.t1", "r");
-+	if(ffd)
-+	{
-+		enable_freesat = 1;
-+		fclose(ffd);
-+	}
-+	else
-+		enable_freesat = 0;
-+	ffd = fopen("/usr/local/share/enigma2/freesat.t1", "r");
-+	if(ffd)
-+	{
-+		enable_freesat = 1;
-+		fclose(ffd);
-+	}
-+	else
-+		enable_freesat = 0;
-+#endif
-+
  	if (f)
  	{
 +#ifdef __sh__
@@ -8296,7 +8302,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		int size=0;
  		int cnt=0;
  #if 0
-@@ -1027,7 +1142,11 @@
+@@ -1027,7 +1141,11 @@
  					eventDB[key]=std::pair<eventMap,timeMap>(evMap,tmMap);
  				}
  				eventData::load(f);
@@ -8308,7 +8314,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  #ifdef ENABLE_PRIVATE_EPG
  				char text2[11];
  				fread( text2, 11, 1, f);
-@@ -1077,7 +1196,20 @@
+@@ -1077,7 +1195,20 @@
  {
  	struct statfs s;
  	off64_t tmp;
@@ -8329,7 +8335,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		tmp=0;
  	else
  	{
-@@ -1095,7 +1227,11 @@
+@@ -1095,7 +1226,11 @@
  	if ( tmp < (eventData::CacheSize*12)/10 ) // 20% overhead
  		return;
  
@@ -8341,7 +8347,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	int cnt=0;
  	if ( f )
  	{
-@@ -1120,7 +1256,11 @@
+@@ -1120,7 +1255,11 @@
  				++cnt;
  			}
  		}
@@ -8353,7 +8359,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		eventData::save(f);
  #ifdef ENABLE_PRIVATE_EPG
  		const char* text3 = "PRIVATE_EPG";
-@@ -1203,11 +1343,23 @@
+@@ -1203,11 +1342,23 @@
  			seenSections[i].clear();
  			calcedSections[i].clear();
  		}
@@ -8377,7 +8383,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		return true;
  	}
  	return false;
-@@ -1223,6 +1375,12 @@
+@@ -1223,6 +1374,12 @@
  		seenSections[i].clear();
  		calcedSections[i].clear();
  	}
@@ -8390,7 +8396,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  
  	eDVBSectionFilterMask mask;
  	memset(&mask, 0, sizeof(mask));
-@@ -1249,6 +1407,27 @@
+@@ -1249,6 +1406,27 @@
  	mask.mask[1] = 0;
  	m_MHWTimeoutet=false;
  #endif
@@ -8418,7 +8424,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  
  	mask.pid = 0x12;
  	mask.flags = eDVBSectionFilterMask::rfCRC;
-@@ -1306,6 +1485,21 @@
+@@ -1306,6 +1484,21 @@
  			m_ScheduleOtherReader->stop();
  			m_ScheduleOtherConn=0;
  		}
@@ -8440,7 +8446,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		if ( !(haveData&VIASAT) && (isRunning&VIASAT) )
  		{
  			eDebug("[EPGC] abort non avail viasat reading");
-@@ -1336,6 +1530,12 @@
+@@ -1336,6 +1529,12 @@
  				seenSections[i].clear();
  				calcedSections[i].clear();
  			}
@@ -8453,7 +8459,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		}
  	}
  	++state;
-@@ -1365,6 +1565,12 @@
+@@ -1365,6 +1564,12 @@
  		seenSections[i].clear();
  		calcedSections[i].clear();
  	}
@@ -8466,7 +8472,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	abortTimer->stop();
  	zapTimer->stop();
  	if (isRunning)
-@@ -1388,6 +1594,19 @@
+@@ -1388,6 +1593,19 @@
  			m_ScheduleOtherReader->stop();
  			m_ScheduleOtherConn=0;
  		}
@@ -8486,7 +8492,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		if (isRunning & VIASAT)
  		{
  			isRunning &= ~VIASAT;
-@@ -1414,7 +1633,51 @@
+@@ -1414,7 +1632,51 @@
  	pthread_mutex_unlock(&channel_active);
  }
  
@@ -8538,7 +8544,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  void eEPGCache::channel_data::readDataViasat( const __u8 *data)
  {
  	__u8 *d=0;
-@@ -1428,6 +1691,47 @@
+@@ -1428,6 +1690,47 @@
  	int source;
  	int map;
  	iDVBSectionReader *reader=NULL;
@@ -8586,7 +8592,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	switch(data[0])
  	{
  		case 0x4E ... 0x4F:
-@@ -1490,6 +1794,17 @@
+@@ -1490,6 +1793,17 @@
  	else
  	{
  		eit_t *eit = (eit_t*) data;
@@ -8604,7 +8610,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		__u32 sectionNo = data[0] << 24;
  		sectionNo |= data[3] << 16;
  		sectionNo |= data[4] << 8;
-@@ -1517,8 +1832,151 @@
+@@ -1517,8 +1831,151 @@
  			cache->sectionRead(data, source, this);
  		}
  	}
@@ -8618,8 +8624,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +{
 +	if(enable_freesat)
 +		initMap(maxSection);
-+}
-+
+ }
+ 
 +void freesatEITSubtableStatus::initMap(__u8 maxSection)
 +{
 +	if(enable_freesat)
@@ -8630,8 +8636,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +			sectionMap[i] = (i <= maxSectionIdx ? 0x0100 : 0x0000 );
 +		}
 +	}
- }
- 
++}
++
 +bool freesatEITSubtableStatus::isSectionPresent(__u8 sectionNo)
 +{
 +	if(enable_freesat)
@@ -8756,7 +8762,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  RESULT eEPGCache::lookupEventTime(const eServiceReference &service, time_t t, const eventData *&result, int direction)
  // if t == -1 we search the current event...
  {
-@@ -2243,11 +2701,22 @@
+@@ -2243,11 +2700,22 @@
  						{
  							__u8 *data = evData->EITdata;
  							int tmp = evData->ByteSize-10;
@@ -8779,7 +8785,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  								descriptorMap::iterator it =
  									eventData::descriptors.find(crc);
  								if (it != eventData::descriptors.end())
-@@ -2425,12 +2894,23 @@
+@@ -2425,12 +2893,23 @@
  					continue;
  				__u8 *data = evit->second->EITdata;
  				int tmp = evit->second->ByteSize-10;
