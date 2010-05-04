@@ -4773,32 +4773,19 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.h enigma2-nightly/lib/servi
 diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
 --- enigma2-nightly.org/main/bsod.cpp	2009-12-12 23:16:22.500600000 +0100
 +++ enigma2-nightly/main/bsod.cpp	2009-12-12 23:19:55.585100263 +0100
-@@ -15,7 +15,14 @@
+@@ -15,7 +15,11 @@
  
  /************************************************/
  
 +#if defined(__sh__)  
-+#include <fcntl.h>
-+#include "include/shmE2.h"
 +#define CRASH_EMAILADDR "nobody" 
-+char *shm = NULL;
 +#else 
  #define CRASH_EMAILADDR "crashlog@dream-multimedia-tv.de"
 +#endif
  #define STDBUFFER_SIZE 512
  #define RINGBUFFER_SIZE 16384
  static char ringbuffer[RINGBUFFER_SIZE];
-@@ -467,6 +499,10 @@
- 	sigaction(SIGILL, &act, 0);
- 	sigaction(SIGBUS, &act, 0);
- 	sigaction(SIGABRT, &act, 0);
-+#if defined(__sh__)  
-+        shm = createshm();
-+        system("enigma2.sh &");
-+#endif
- }
- 
- void bsodLogInit()
+
 --- enigma2-nightly/lib/driver/rc.cpp	2010-04-18 20:15:37.000000000 -0400
 +++ enigma2-nightly/lib/driver/rc.cpp	2010-04-18 20:16:32.000000000 -0400
 @@ -10,6 +10,11 @@
@@ -4838,17 +4825,30 @@ diff -Nur enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
 diff -Nur enigma2-nightly.org/main/enigma.cpp enigma2-nightly/main/enigma.cpp
 --- enigma2-nightly.org/main/enigma.cpp	2009-12-12 23:16:22.500600000 +0100
 +++ enigma2-nightly/main/enigma.cpp	2009-12-12 23:20:35.880600970 +0100
-@@ -29,6 +29,9 @@
+@@ -29,6 +29,11 @@
  #include <lib/python/connections.h>
  #include <lib/python/python.h>
  
 +#if defined(__sh__)  
 +#include <lib/driver/vfd.h>  
++#include "include/shmE2.h"
++char *shm = NULL;
 +#endif  
  #include "bsod.h"
  
  #ifdef HAVE_GSTREAMER
-@@ -235,6 +238,12 @@
+@@ -127,6 +132,10 @@
+ 
+ int main(int argc, char **argv)
+ {
++#if defined(__sh__)  
++        shm = createshm();
++        system("enigma2.sh &");
++#endif
+ #ifdef MEMLEAK_CHECK
+ 	atexit(DumpUnfreed);
+ #endif
+@@ -235,6 +244,12 @@
  	gRC::getInstance()->setSpinnerDC(my_dc);
  
  	eRCInput::getInstance()->keyEvent.connect(slot(keyEvent));
@@ -4860,7 +4860,7 @@ diff -Nur enigma2-nightly.org/main/enigma.cpp enigma2-nightly/main/enigma.cpp
 +#endif  
  	
  	printf("executing main\n");
-	
+ 	
 diff -Nur enigma2-nightly.org/main/Makefile.am enigma2-nightly/main/Makefile.am
 --- enigma2-nightly.org/main/Makefile.am	2009-12-12 23:16:22.500600000 +0100
 +++ enigma2-nightly/main/Makefile.am	2009-12-12 23:18:41.332599958 +0100
