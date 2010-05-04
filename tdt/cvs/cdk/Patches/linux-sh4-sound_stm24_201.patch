@@ -80,3 +80,105 @@
   #define snd_BUG()			do { } while (0)
   static inline int __snd_bug_on(int cond)
   {
+diff -rcN linux-sh4-2.6.32.10_stm24_0201_orig/sound/core/oss/pcm_oss.c linux-sh4/sound/core/oss/pcm_oss.c
+*** linux-sh4-2.6.32.10_stm24_0201_orig/sound/core/oss/pcm_oss.c	Mon May  3 15:58:10 2010
+--- linux-sh4/sound/core/oss/pcm_oss.c	Tue May  4 01:00:33 2010
+***************
+*** 219,224 ****
+--- 219,226 ----
+  	return 0;
+  }
+  
++ EXPORT_SYMBOL_GPL(snd_pcm_hw_param_mask);
++ 
+  static int _snd_pcm_hw_param_min(struct snd_pcm_hw_params *params,
+  				 snd_pcm_hw_param_t var, unsigned int val,
+  				 int dir)
+***************
+*** 278,283 ****
+--- 280,287 ----
+  	return snd_pcm_hw_param_value_min(params, var, dir);
+  }
+  
++ EXPORT_SYMBOL_GPL(_snd_pcm_hw_param_min);
++ 
+  static int _snd_pcm_hw_param_max(struct snd_pcm_hw_params *params,
+  				 snd_pcm_hw_param_t var, unsigned int val,
+  				 int dir)
+***************
+*** 467,472 ****
+--- 471,478 ----
+  	return v;
+  }
+  
++ EXPORT_SYMBOL_GPL(snd_pcm_hw_param_near);
++ 
+  static int _snd_pcm_hw_param_set(struct snd_pcm_hw_params *params,
+  				 snd_pcm_hw_param_t var, unsigned int val,
+  				 int dir)
+***************
+*** 543,548 ****
+--- 549,556 ----
+  	return snd_pcm_hw_param_value(params, var, NULL);
+  }
+  
++ EXPORT_SYMBOL_GPL(snd_pcm_hw_param_set);
++ 
+  static int _snd_pcm_hw_param_setinteger(struct snd_pcm_hw_params *params,
+  					snd_pcm_hw_param_t var)
+  {
+***************
+*** 554,560 ****
+  	}
+  	return changed;
+  }
+! 	
+  /*
+   * plugin
+   */
+--- 562,570 ----
+  	}
+  	return changed;
+  }
+! 
+! EXPORT_SYMBOL_GPL(_snd_pcm_hw_param_setinteger);
+! 
+  /*
+   * plugin
+   */
+diff -rcN linux-sh4-2.6.32.10_stm24_0201_orig/sound/core/pcm_native.c linux-sh4/sound/core/pcm_native.c
+*** linux-sh4-2.6.32.10_stm24_0201_orig/sound/core/pcm_native.c	Mon May  3 15:58:10 2010
+--- linux-sh4/sound/core/pcm_native.c	Tue May  4 00:46:19 2010
+***************
+*** 885,890 ****
+--- 885,892 ----
+  			      SNDRV_PCM_STATE_RUNNING);
+  }
+  
++ EXPORT_SYMBOL(snd_pcm_start);
++ 
+  /*
+   * stop callbacks
+   */
+***************
+*** 1879,1884 ****
+--- 1881,1888 ----
+  	return 0;
+  }
+  
++ EXPORT_SYMBOL_GPL(snd_pcm_hw_constraints_init);
++ 
+  int snd_pcm_hw_constraints_complete(struct snd_pcm_substream *substream)
+  {
+  	struct snd_pcm_runtime *runtime = substream->runtime;
+***************
+*** 1962,1967 ****
+--- 1966,1973 ----
+  	return 0;
+  }
+  
++ EXPORT_SYMBOL_GPL(snd_pcm_hw_constraints_complete);
++ 
+  static void pcm_release_private(struct snd_pcm_substream *substream)
+  {
+  	snd_pcm_unlink(substream);

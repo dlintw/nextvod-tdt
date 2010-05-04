@@ -30,7 +30,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stmfb.ko display0=720x576-32@60:10m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
 
    echo "LOADING MODULES"   
-   echo "LOADING MODULES" >/dev/vfd
+   fp_control -c
+   fp_control -t "LOADING MODULES"
 
    echo "load a/v firmware"
    /bin/ustslave_stm23 /dev/st231-1 /boot/audio.elf
@@ -51,8 +52,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
-   insmod $MODDIR/st-slim.ko
-   insmod $MODDIR/st-tkdma.ko
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/cx21143.ko
@@ -64,6 +63,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
+   insmod $MODDIR/silencegen.ko
 
    showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
@@ -73,7 +73,10 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/simu_button.ko
 
    mknod /dev/rc c 147 1 
-   /bin/evremote2 ufs922 &
+
+   #toggleFeedback 0 = false, 1 = true
+   #maxRate (same key) = 2, maxDelay (determine new key) = 500
+   /bin/evremote2 0 2 500 &
 
    #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
    #mount /dev/sr0 /media/dvd
@@ -89,7 +92,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    stfbcontrol a 255
 
-   echo "LOADING e2" > /dev/vfd
+   fp_control -t "LOADING e2"
    echo "LOADING e2"
 
    until false
@@ -104,7 +107,7 @@ if [ ! -e /var/etc/.firstboot ]; then
       		   reboot;;
 		1) echo "1"
 		   echo "SHUTDOWN"
-		   gotosleep ufs922
+		   fp_control -e
                    umount -a;;
 		2) echo "2"
 		   echo "REBOOT"
