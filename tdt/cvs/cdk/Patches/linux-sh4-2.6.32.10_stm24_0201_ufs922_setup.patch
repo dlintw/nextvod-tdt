@@ -150,28 +150,3 @@
   	return platform_add_devices(mb442_devices,
   			ARRAY_SIZE(mb442_devices));
   }
-*** linux-sh4-2.6.32.10_stm24_0201_orig/drivers/stm/copro-st_socs.c	Mon May  3 15:59:01 2010
---- linux-sh4/drivers/stm/copro-st_socs.c	Mon May  3 19:37:29 2010
-***************
-*** 3,8 ****
---- 3,9 ----
-  #include <linux/init.h>
-  #include <linux/delay.h>
-  #include <linux/seq_file.h>
-+ #include <linux/stm/stx7100.h>
-  #include <linux/stm/coprocessor.h>
-  #include <linux/stm/sysconf.h>
-  #include <linux/pfn.h>
-*** linux-sh4-2.6.32.10_stm24_0201_orig/arch/sh/mm/init.c	Mon May  3 15:59:09 2010
---- linux-sh4/arch/sh/mm/init.c	Tue May  4 00:08:16 2010
-***************
-*** 133,138 ****
---- 133,140 ----
-  		j = 0;
-  	}
-  }
-+ 
-+ EXPORT_SYMBOL(init_mm);
-  #endif	/* CONFIG_MMU */
-  
-  /*

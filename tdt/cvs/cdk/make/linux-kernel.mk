@@ -237,7 +237,10 @@ STM24_DVB_PATCH = linux-sh4-linuxdvb_stm24$(PATCH_STR).patch
 
 COMMONPATCHES_24 = \
 		$(STM24_DVB_PATCH) \
-		linux-sh4-sound_stm24_201.patch
+		linux-sh4-sound_stm24_201.patch \
+		linux-sh4-2.6.32.10-0201_time.patch \
+		linux-sh4-2.6.32.10-0201_init_mm.patch \
+		linux-sh4-2.6.32.10-0201_copro.patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24)
 
