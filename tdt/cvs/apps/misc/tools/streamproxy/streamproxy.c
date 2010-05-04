@@ -13,7 +13,7 @@
 #define MAX_PIDS 32
 #define MAX_LINE_LENGTH 512
 
-#define BSIZE                    188*88//1024*16
+#define BSIZE                    188*388//1024*16
 
 //#if defined(__sh__)
 //#else

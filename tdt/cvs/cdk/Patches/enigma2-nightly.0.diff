@@ -8102,8 +8102,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +#ifdef __sh__
 +#include "include/shmE2.h"
 +
-+char epg_file[256] = "";
-+int m_epg_days = 14;
++static char epg_file[256] = "";
++static int m_epg_days = 14;
 +extern char *shm;
 +#endif
 +
