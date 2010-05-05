@@ -79,7 +79,7 @@ esac
 
 case "$REPLY" in
 	 1) TARGET="--enable-ufs910";;
-	 2) TARGET="--enable-flash_ufs910 --with-rootpartitionsize=0x8e0000 --with-datapartitionsize=0x580000";;
+	 2) TARGET="--enable-flash_ufs910 --with-rootpartitionsize=0x9e0000 --with-datapartitionsize=0x480000";;
 	 3) TARGET="--enable-ufs912";;
 	 4) TARGET="--enable-ufs922";;
 	 5) TARGET="--enable-tf7700";;

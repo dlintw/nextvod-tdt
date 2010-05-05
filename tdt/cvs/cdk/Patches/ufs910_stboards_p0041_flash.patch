@@ -46,16 +46,16 @@
 -	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
 -	 .offset = 0x00140000,
 +	{ 
-+	 .name = "Root   - SQUASHFS      0xA01A.0000-0xA0A7.FFFF",
-+	 .size = 0x8e0000,
++	 .name = "Root   - SQUASHFS      0xA01A.0000-0xA0B7.FFFF",
++	 .size = 0x9e0000,
 +	 //.size = 0x00240000, 
 +	 .offset = 0x1a0000,
 +	 }, 
 +	{ 
-+	 .name = "Var    - JFFS2         0xA0A8.0000-0xA0FF.FFFF",
-+	 .size = 0x580000, 
++	 .name = "Var    - JFFS2         0xA0B8.0000-0xA0FF.FFFF",
++	 .size = 0x480000, 
 +	 //.size = 0x00400000, 
-+	 .offset = 0xa80000, 
++	 .offset = 0xb80000, 
 +	 //.offset = 0x00C00000, 
 +	 }, 
 +	{ 
