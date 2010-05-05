@@ -428,9 +428,6 @@ endif
 	$(INSTALL_DIR) $(prefix)/release/usr/share
 
 	ln -s /usr/local/share/enigma2 $(prefix)/release/usr/share/enigma2
-	$(INSTALL_DIR) $(prefix)/release/usr/share/alsa
-	cp -a $(targetprefix)/usr/share/alsa/* $(prefix)/release/usr/share/alsa
-
 
 	$(INSTALL_DIR) $(prefix)/release/usr/share/fonts
 	cp $(targetprefix)/usr/share/fonts/ae_AlMateen.ttf $(prefix)/release/usr/share/fonts/
@@ -470,8 +467,6 @@ endif
 
 	$(INSTALL_DIR) $(prefix)/release/usr/lib
 	cp -R $(targetprefix)/usr/lib/* $(prefix)/release/usr/lib/
-	rm -rf $(prefix)/release/usr/lib/alsa-lib
-	rm -rf $(prefix)/release/usr/lib/alsaplayer
 	rm -rf $(prefix)/release/usr/lib/engines
 	rm -rf $(prefix)/release/usr/lib/enigma2
 	rm -rf $(prefix)/release/usr/lib/gconv
