@@ -5,8 +5,8 @@
 		<key id="KEY_HOME" mapto="back" flags="mr" />
 		<key id="KEY_PAGEUP" mapto="pageUp" flags="mr" />
 		<key id="KEY_PAGEDOWN" mapto="pageDown" flags="mr" />
-		<key id="KEY_LEFT" mapto="pageUp" flags="mr" />
-		<key id="KEY_RIGHT" mapto="pageDown" flags="mr" />
+		<key id="KEY_PREVIOUS" mapto="pageUp" flags="mr" />
+		<key id="KEY_NEXT" mapto="pageDown" flags="mr" />
 		<key id="KEY_1" mapto="moveUp" flags="mr" />
 		<key id="KEY_2" mapto="moveDown" flags="mr" />
 	</map>
@@ -438,9 +438,11 @@
 	</map>
 
   <map context="GlobalActions">
-    <key id="KEY_NEXT" mapto="volumeUp" flags="mr" />
-    <key id="KEY_PREVIOUS" mapto="volumeDown" flags="mr" />
+    <key id="KEY_RIGHT" mapto="volumeUp" flags="mr" />
+    <key id="KEY_LEFT" mapto="volumeDown" flags="mr" />
     <key id="KEY_MUTE" mapto="volumeMute" flags="mr" />
-    <key id="KEY_POWER" mapto="deepstandby" flags="m" />
+    <key id="KEY_POWER" mapto="power_long" flags="l" />
+    <key id="KEY_POWER" mapto="power_down" flags="m" />
+    <key id="KEY_POWER" mapto="power_up" flags="b" />
   </map>
 </keymap>
