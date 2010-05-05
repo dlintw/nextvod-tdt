@@ -799,7 +799,9 @@ static int PlaybackSlowMotion(Context_t  *context,int* speed) {
 
 
     //Audio only forwarding not supported
-	if (context->playback->isVideo && !context->playback->isHttp && (!context->playback->isPaused || context->playback->isPlaying)) {
+	if (context->playback->isVideo && !context->playback->isHttp && context->playback->isPlaying) {
+		if(context->playback->isPaused)
+			PlaybackContinue(context);
 
 		switch(*speed) {
 		case 2: 
