@@ -261,7 +261,7 @@ int LinuxDvbContinue(Context_t  *context, char * type) {
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
 #endif
 
-	//if (context->playback->isPaused || context->playback->isForwarding) {
+	//if (context->playback->isPaused || context->playback->isForwarding || context->playback->SlowMotion) {
 		if (video && videofd != -1) {
 			ioctl(videofd, VIDEO_CONTINUE, NULL);
 		}
@@ -328,6 +328,39 @@ int LinuxDvbFastForward(Context_t  *context, char * type) {
 			}
 			if (audio && audiofd != -1) { //not supported
 			//	ioctl(audiofd, AUDIO_FAST_FORWARD, context->playback->Speed);
+				ret = -1;
+			}
+			
+			releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+		}
+	//}
+
+#ifdef DEBUG
+	printf("%s::%s exiting with value %d\n", FILENAME, __FUNCTION__, ret);
+#endif
+
+	return ret;
+}
+
+int LinuxDvbSlowMotion(Context_t  *context, char * type) {
+	int ret = 0;
+	
+	unsigned char video = !strcmp("video", type);
+	unsigned char audio = !strcmp("audio", type);
+
+#ifdef DEBUG
+	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
+#endif	
+	
+	//if (context->playback->isPlaying && !context->playback->isPaused) {
+		if ( (video && videofd != -1) || (audio && audiofd != -1) ) {	// trick to create only one Mutex
+			getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+			
+			if (video && videofd != -1) {
+				ioctl(videofd, VIDEO_SLOWMOTION, context->playback->SlowMotion);
+			}
+			if (audio && audiofd != -1) { //not supported
+			//	ioctl(audiofd, AUDIO_SLOWMOTION, context->playback->SlowMotion);
 				ret = -1;
 			}
 			
@@ -1584,6 +1617,10 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 		}
 		case OUTPUT_SWITCH: {
 			LinuxDvbSwitch(context, (char*)argument);
+			break;
+		}
+		case OUTPUT_SLOWMOTION: {
+			return LinuxDvbSlowMotion(context, (char*)argument);
 			break;
 		}
 		default:

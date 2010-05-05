@@ -219,6 +219,18 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 				ret = -1;
 			break;
 		}
+		case OUTPUT_SLOWMOTION: {
+			if (context && context->playback ) {
+				if (context->playback->isVideo)
+					context->output->video->Command(context, OUTPUT_SLOWMOTION, "video");
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_SLOWMOTION, "audio");
+				//if (context->playback->isSubtitle)
+				//	context->output->subtitle->Command(context, OUTPUT_PAUSE, "subtitle");
+			} else
+				ret = -1;
+			break;
+		}
 		default:
 #ifdef DEBUG
 			printf("%s::%s OutputCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
