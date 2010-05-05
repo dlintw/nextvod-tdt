@@ -13,6 +13,8 @@ $(DEPDIR)/boot-elf:
 	cp $(buildprefix)/root/firmware/*.fw $(targetprefix)/lib/firmware/
 	@[ "x$*" = "x" ] && touch $@ || true
 
+LIRCD_CONF := lircd.conf
+
 if ENABLE_HL101
 LIRCD_CONF := lircd_hl101.conf
 else !ENABLE_HL101
@@ -22,7 +24,6 @@ else !ENABLE_VIP2
 if ENABLE_HOMECAST5101
 LIRCD_CONF := lircd_hs5101.conf
 else !ENABLE_HOMECAST5101
-LIRCD_CONF := lircd.conf
 endif !ENABLE_HOMECAST5101
 endif !ENABLE_VIP2
 endif !ENABLE_HL101

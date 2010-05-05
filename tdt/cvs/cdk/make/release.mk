@@ -157,7 +157,7 @@ release_hl101: release_common_utils
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_hl101.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
 
-	cp -dp $(targetprefix)/etc/lircd_hl101.conf $(prefix)/release/etc/
+	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
@@ -175,7 +175,7 @@ release_vip2: release_common_utils
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_vip2.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
 
-	cp -dp $(targetprefix)/etc/lircd_vip2.conf $(prefix)/release/etc/
+	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
@@ -428,9 +428,6 @@ endif
 	$(INSTALL_DIR) $(prefix)/release/usr/share
 
 	ln -s /usr/local/share/enigma2 $(prefix)/release/usr/share/enigma2
-	$(INSTALL_DIR) $(prefix)/release/usr/share/alsa
-	cp -a $(targetprefix)/usr/share/alsa/* $(prefix)/release/usr/share/alsa
-
 
 	$(INSTALL_DIR) $(prefix)/release/usr/share/fonts
 	cp $(targetprefix)/usr/share/fonts/ae_AlMateen.ttf $(prefix)/release/usr/share/fonts/
@@ -470,8 +467,6 @@ endif
 
 	$(INSTALL_DIR) $(prefix)/release/usr/lib
 	cp -R $(targetprefix)/usr/lib/* $(prefix)/release/usr/lib/
-	rm -rf $(prefix)/release/usr/lib/alsa-lib
-	rm -rf $(prefix)/release/usr/lib/alsaplayer
 	rm -rf $(prefix)/release/usr/lib/engines
 	rm -rf $(prefix)/release/usr/lib/enigma2
 	rm -rf $(prefix)/release/usr/lib/gconv

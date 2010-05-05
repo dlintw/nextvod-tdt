@@ -193,12 +193,12 @@ TF7700PATCHES_23 = $(COMMONPATCHES_23) \
 HL101PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		$(if $(P0119),linux-sh4-hl101_setup_stm23$(PATCH_STR).patch)
+		linux-sh4-hl101_setup_stm23$(PATCH_STR).patch
 
 VIP2PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		$(if $(P0119),linux-sh4-vip2_setup_stm23$(PATCH_STR).patch)
+		linux-sh4-vip2_setup_stm23$(PATCH_STR).patch
 
 UFS910PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
@@ -232,24 +232,27 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 
 ############ Patches Kernel 24 ###############
 
-PATCH_STR=_201
+if ENABLE_P0201
+PATCH_STR=_0201
+endif
+
 STM24_DVB_PATCH = linux-sh4-linuxdvb_stm24$(PATCH_STR).patch
 
 COMMONPATCHES_24 = \
 		$(STM24_DVB_PATCH) \
-		linux-sh4-sound_stm24_201.patch \
-		linux-sh4-2.6.32.10-0201_time.patch \
-		linux-sh4-2.6.32.10-0201_init_mm.patch \
-		linux-sh4-2.6.32.10-0201_copro.patch
+		linux-sh4-sound_stm24$(PATCH_STR).patch \
+		linux-sh4-time_stm24$(PATCH_STR).patch \
+		linux-sh4-init_mm_stm24$(PATCH_STR).patch \
+		linux-sh4-copro_stm24$(PATCH_STR).patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24)
 
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
-			linux-sh4-2.6.32.10_stm24_0201_ufs922_setup.patch
+			linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch
 
 VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
-					linux-sh4-2.6.32.10_stm24_0201_29bit_fix.patch \
-					linux-sh4-2.6.32.10_stm24_0201_vip2_patches.patch
+					linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
+					linux-sh4-vip2_patches_stm24$(PATCH_STR).patch
 
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
