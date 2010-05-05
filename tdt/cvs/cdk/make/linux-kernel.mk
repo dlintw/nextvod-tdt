@@ -231,8 +231,9 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 ############ Patches Kernel 23 End ###############
 
 ############ Patches Kernel 24 ###############
-
+if STM24
 PATCH_STR=_201
+endif STM24
 STM24_DVB_PATCH = linux-sh4-linuxdvb_stm24$(PATCH_STR).patch
 
 COMMONPATCHES_24 = \
