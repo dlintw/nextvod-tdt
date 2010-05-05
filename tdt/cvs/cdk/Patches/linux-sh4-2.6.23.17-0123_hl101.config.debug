@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.23.17
-# Thu Feb 18 00:15:59 2010
+# Wed May  5 20:48:39 2010
 #
 CONFIG_SUPERH=y
 CONFIG_RWSEM_GENERIC_SPINLOCK=y
@@ -244,8 +244,6 @@ CONFIG_SH4_CALIBRATE_DELAY=y
 # CPU Frequency scaling
 #
 # CONFIG_CPU_FREQ is not set
-# CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE is not set
-# CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE is not set
 
 #
 # DMA support
@@ -735,6 +733,7 @@ CONFIG_LIRC_SUPPORT=y
 # CONFIG_LIRC_SIR is not set
 CONFIG_LIRC_STM=y
 # CONFIG_LIRC_STM_UHF_RX is not set
+# CONFIG_LIRC_STM_DEBUG is not set
 # CONFIG_IPMI_HANDLER is not set
 # CONFIG_WATCHDOG is not set
 CONFIG_HW_RANDOM=y
@@ -1044,6 +1043,7 @@ CONFIG_USB_LIBUSUAL=y
 # USB Serial Converter support
 #
 CONFIG_USB_SERIAL=y
+# CONFIG_USB_SERIAL_CONSOLE is not set
 CONFIG_USB_SERIAL_GENERIC=y
 # CONFIG_USB_SERIAL_AIRCABLE is not set
 # CONFIG_USB_SERIAL_AIRPRIME is not set
