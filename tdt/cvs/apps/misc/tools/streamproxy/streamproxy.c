@@ -9,6 +9,7 @@
 #include <linux/dvb/dmx.h>
 #include <stdarg.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #define MAX_PIDS 32
 #define MAX_LINE_LENGTH 512
@@ -209,7 +210,12 @@ int main(int argc, char **argv)
 			int r = read(dvr_fd, buffer, BSIZE);
 			//logOutput("read %d bytes from dvr0\n", r);
 			if (r < 0)
+			{
+				//continue if in the moment, there are no data in dmx buffer
+				if(errno == EWOULDBLOCK)
+					continue;
 				break;
+			}
 			write(1, buffer, r);
 		}
 #endif
