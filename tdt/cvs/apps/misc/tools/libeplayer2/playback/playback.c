@@ -670,6 +670,10 @@ static int PlaybackPause(Context_t  *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
 	if (context->playback->isPlaying && !context->playback->isPaused) {
+	
+		if(context->playback->SlowMotion)
+			context->output->Command(context, OUTPUT_CLEAR, NULL);
+			
 		context->output->Command(context, OUTPUT_PAUSE, NULL);
 
 		context->playback->isPaused     = 1;
@@ -689,6 +693,9 @@ static int PlaybackContinue(Context_t  *context) {
 #endif
 	if (context->playback->isPlaying && 
         (context->playback->isPaused || context->playback->isForwarding || context->playback->SlowMotion)) {
+    
+    if(context->playback->SlowMotion)
+			context->output->Command(context, OUTPUT_CLEAR, NULL);
 
 		context->output->Command(context, OUTPUT_CONTINUE, NULL);
 
