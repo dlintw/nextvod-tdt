@@ -584,6 +584,7 @@ if ENABLE_FORTIS_HDBOX
 	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release/lib/modules
 endif
 else
 	cp $(kernelprefix)/linux-sh4/arch/sh/boot/uImage $(prefix)/release/boot/
