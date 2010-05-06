@@ -47,19 +47,10 @@ diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/drivers/net/stmmac/stmmac_main.c l
   	}
   
   	ret = register_netdev(dev);
-diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/drivers/net/stmmac/stmmac_mdio.c linux-sh4/drivers/net/stmmac/stmmac_mdio.c
-*** linux-sh4-2.6.23.17_stm23_0123_orig/drivers/net/stmmac/stmmac_mdio.c	Thu May  6 04:13:19 2010
---- linux-sh4/drivers/net/stmmac/stmmac_mdio.c	Wed May  5 19:54:48 2010
+*** linux-sh4-2.6.23.17_stm23_0123_orig/drivers/net/stmmac/stmmac_mdio.c	Thu Apr  1 19:18:51 2010
+--- linux-sh4/drivers/net/stmmac/stmmac_mdio.c	Tue Mar 23 23:32:05 2010
 ***************
 *** 174,180 ****
-  	for (addr = 0; addr < 32; addr++) {
-  		struct phy_device *phydev = new_bus->phy_map[addr];
-  		if (phydev) {
-! 			/*if (priv->phy_addr == -1)*/ {
-  				priv->phy_addr = addr;
-  				phydev->irq = priv->phy_irq;
-  				irqlist[addr] = priv->phy_irq;
---- 174,180 ----
   	for (addr = 0; addr < 32; addr++) {
   		struct phy_device *phydev = new_bus->phy_map[addr];
   		if (phydev) {
@@ -67,3 +58,12 @@ diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/drivers/net/stmmac/stmmac_mdio.c l
   				priv->phy_addr = addr;
   				phydev->irq = priv->phy_irq;
   				irqlist[addr] = priv->phy_irq;
+--- 174,180 ----
+  	for (addr = 0; addr < 32; addr++) {
+  		struct phy_device *phydev = new_bus->phy_map[addr];
+  		if (phydev) {
+! 			/*if (priv->phy_addr == -1)*/ {
+  				priv->phy_addr = addr;
+  				phydev->irq = priv->phy_irq;
+  				irqlist[addr] = priv->phy_irq;
+  	
