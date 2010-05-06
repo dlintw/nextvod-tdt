@@ -192,11 +192,13 @@ TF7700PATCHES_23 = $(COMMONPATCHES_23) \
 
 HL101PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-stmmac_stm23$(PATCH_STR)_hl101.patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		linux-sh4-hl101_setup_stm23$(PATCH_STR).patch
 
 VIP2PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-stmmac_stm23$(PATCH_STR)_vip2.patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		linux-sh4-vip2_setup_stm23$(PATCH_STR).patch
 

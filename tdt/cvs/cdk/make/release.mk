@@ -155,6 +155,7 @@ release_hl101: release_common_utils
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_hl101 $(prefix)/release/etc/fstab
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
+	cp $(targetprefix)/bin/stslave $(prefix)/release/bin
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_hl101.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
 
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
@@ -173,6 +174,7 @@ release_vip2: release_common_utils
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_vip2 $(prefix)/release/etc/fstab
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
+	cp $(targetprefix)/bin/stslave $(prefix)/release/bin
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_vip2.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
 
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
