@@ -13,11 +13,13 @@ from Components.config import config, configfile, ConfigSubsection, ConfigEnable
 from Components.ConfigList import ConfigListScreen
 from Plugins.Plugin import PluginDescriptor
 import ServiceReference
-from enigma import iPlayableService, eServiceCenter, iServiceInformation
-from enigma import evfd
+#---- Civer start ----#
+#- from enigma import iPlayableService, eServiceCenter, iServiceInformation
+#- from enigma import evfd
+from enigma import *
+#----- Civer end ----#
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from re import compile as re_compile, search as re_search
-from enigma import evfd
 
 import os
 
@@ -59,9 +61,9 @@ class CuberevoVFDSetup(ConfigListScreen, Screen):
 		ConfigListScreen.__init__(self, self.list)
 
 		self.Console = Console()
-                self["key_red"] = Button(_("Cancel"))
-                self["key_green"] = Button(_("Save"))
-                                
+		self["key_red"] = Button(_("Cancel"))
+		self["key_green"] = Button(_("Save"))
+
 		# DO NOT ASK.
 		self["setupActions"] = ActionMap(["SetupActions"],
 		{
@@ -88,46 +90,46 @@ class CuberevoVFDSetup(ConfigListScreen, Screen):
 		else:
 			cubeVfd.disableDaylight()
 
-	      	if config.plugins.CuberevoVFD.timeMode.value == "24h":
+		if config.plugins.CuberevoVFD.timeMode.value == "24h":
 			cubeVfd.enableTimeMode()
 		else:
 			cubeVfd.disableTimeMode()
 
 		# enable/disable fan activity
-                if config.plugins.CuberevoVFD.setFan.getValue():
-                	cubeVfd.enableFan()
-                else:
-                	cubeVfd.disableFan()
- 
+		if config.plugins.CuberevoVFD.setFan.getValue():
+			cubeVfd.enableFan()
+		else:
+			cubeVfd.disableFan()
+
 		# enable/disable led activity
-                if config.plugins.CuberevoVFD.setLed.getValue():
-                	cubeVfd.enableLed()
-                else:
-                	cubeVfd.disableLed()
-       
-	        # set the brightness
-        	brightness = 3
-                if config.plugins.CuberevoVFD.brightness.getValue() == "dark":
-                	brightness = 1
-                elif config.plugins.CuberevoVFD.brightness.getValue() == "bright":
-                	brightness = 7
-                evfd.getInstance().vfd_set_brightness(brightness)
-                
-	        # set the the scroll mode
-	      	if config.plugins.CuberevoVFD.scroll.value == "once":
+		if config.plugins.CuberevoVFD.setLed.getValue():
+			cubeVfd.enableLed()
+		else:
+			cubeVfd.disableLed()
+
+	# set the brightness
+		brightness = 3
+		if config.plugins.CuberevoVFD.brightness.getValue() == "dark":
+			brightness = 1
+		elif config.plugins.CuberevoVFD.brightness.getValue() == "bright":
+			brightness = 7
+		evfd.getInstance().vfd_set_brightness(brightness)
+
+	# set the the scroll mode
+		if config.plugins.CuberevoVFD.scroll.value == "once":
 			scrollMode = 1
 		elif config.plugins.CuberevoVFD.scroll.value == "always":
 			scrollMode = 2
 		else:
 			scrollMode = 0
-                evfd.getInstance().vfd_set_ani(scrollMode)
+		evfd.getInstance().vfd_set_ani(scrollMode)
 
 		configfile.save()
 
 		self.close()
 
 	def cancel(self):
-                for x in self["config"].list:
+		for x in self["config"].list:
 			x[1].cancel()
 		self.close()
 
@@ -135,16 +137,26 @@ class CuberevoVFDSetup(ConfigListScreen, Screen):
 class CuberevoVFD:
 	def __init__(self, session):
 		#print "CuberevoVFD initializing"
-	        self.session = session
-	        self.service = None
-	        self.onClose = [ ]
-	        self.__event_tracker = ServiceEventTracker(screen=self,eventmap=
-	                {
-                                iPlayableService.evSeekableStatusChanged: self.__evSeekableStatusChanged,
-                                iPlayableService.evStart: self.__evStart,
-	                })
+#---- CIVER start ----#
+		global showmenuorpanel
+		showmenuorpanel = False
+		self.showtimer = eTimer()
+#---- CIVER end ----#
+		self.session = session
+		self.service = None
+		self.onClose = [ ]
+		self.__event_tracker = ServiceEventTracker(screen=self,eventmap=
+			{
+				iPlayableService.evSeekableStatusChanged: self.__evSeekableStatusChanged,
+				iPlayableService.evStart: self.__evStart,
+			})
 		self.Console = Console()
 		self.tsEnabled = False
+#---- CIVER start ----#
+		self.timer = eTimer()
+		self.timer.callback.append(self.handleTimer)
+		self.timer.start(1000, False)
+#---- CIVER end ----#
 		self.fanEnabled = config.plugins.CuberevoVFD.setFan.getValue()
 		self.ledEnabled = config.plugins.CuberevoVFD.setLed.getValue()
 		self.clockEnabled = config.plugins.CuberevoVFD.showClock.getValue()
@@ -167,11 +179,48 @@ class CuberevoVFD:
 			scrollMode = 2
 		else:
 			scrollMode = 0
-                evfd.getInstance().vfd_set_ani(scrollMode)
+		evfd.getInstance().vfd_set_ani(scrollMode)
+
+#---- CIVER start---workaround to show servicename again after menues ----#
+	def handleTimer(self):
+		global showmenuorpanel
+		try:
+			from Plugins.Extensions.Aafpanel.plugin import inAAFPanel
+			showPanel = inAAFPanel
+		except:
+			#print '[CuberevoVFD] Error showPanel'
+			showPanel = None
+		try:
+			from Screens.Menu import inMenu
+			showMenu = inMenu
+		except:
+			#print '[CuberevoVFD] Error showMenu'
+			showMenu = None
+		if showMenu or showPanel:
+			self.showtimer.start(4000, True)
+		self.showtimer.callback.append(self.setshowmenuorpanel)
+		if not showMenu and not showPanel and showmenuorpanel is True:
+			showmenuorpanel = False
+			self.service = self.session.nav.getCurrentlyPlayingServiceReference()
+			if not self.service is None:
+				service = self.service.toCompareString()
+				servicename = ServiceReference.ServiceReference(service).getServiceName().replace('\xc2\x87', '').replace('\xc2\x86', '').ljust(16)
+				subservice = self.service.toString().split("::")
+				if subservice[0].count(':') == 9:
+					servicename =subservice[1].replace('\xc2\x87', '').replace('\xc3\x9f', 'ss').replace('\xc2\x86', '').ljust(16)
+				else:
+					servicename=servicename
+				evfd.getInstance().vfd_write_string(servicename[0:17])
+
+	def setshowmenuorpanel(self):
+		global showmenuorpanel
+		showmenuorpanel = True
+		self.showtimer.stop()
+#---- CIVER end ----#
 
 	def enableClock(self):
 		self.clockEnabled = True
-	        
+
 	def disableClock(self):
 		self.clockEnabled = False
 
@@ -181,7 +230,7 @@ class CuberevoVFD:
 			os.popen("/bin/cubefpctl --settimemode 1")
 		except OSError:
 			print "no memory"
-	        
+
 	def disableTimeMode(self):
 		self.timeModeEnabled = 0
 		try:
@@ -199,7 +248,7 @@ class CuberevoVFD:
 			os.popen("/bin/cubefpctl --syncfptime")
 		except OSError:
 			print "no memory"
-	        
+
 	def disableDaylight(self):
 		self.daylightEnabled = False
 		try:
@@ -213,50 +262,50 @@ class CuberevoVFD:
 
 	def enableLed(self):
 		self.ledEnabled = True
-                evfd.getInstance().vfd_set_light(self.ledEnabled)
-	        
+		evfd.getInstance().vfd_set_light(self.ledEnabled)
+
 	def disableLed(self):
 		self.ledEnabled = False
-                evfd.getInstance().vfd_set_light(self.ledEnabled)
+		evfd.getInstance().vfd_set_light(self.ledEnabled)
 
 	def enableFan(self):
 		self.fanEnabled = True
 		evfd.getInstance().vfd_set_fan(self.fanEnabled)
-	        
+
 	def disableFan(self):
 		self.fanEnabled = False
 		evfd.getInstance().vfd_set_fan(self.fanEnabled)
 
-        def regExpMatch(self, pattern, string):
-                if string is None:
-                        return None
-                try:
-                        return pattern.search(string).group()
-                except AttributeError:
-                        None
+	def regExpMatch(self, pattern, string):
+		if string is None:
+			return None
+		try:
+			return pattern.search(string).group()
+		except AttributeError:
+			None
 	
 	def __evStart(self):
-	        self.__evSeekableStatusChanged()
+		self.__evSeekableStatusChanged()
 	
 	def getTimeshiftState(self):
 		service = self.session.nav.getCurrentService()
 		if service is None:
-		        return False
+			return False
 		timeshift = service.timeshift()
 		if timeshift is None:
-		        return False
+			return False
 		return True
 
 	def __evSeekableStatusChanged(self):
-	        tmp = self.getTimeshiftState()
-	        if tmp == self.tsEnabled:
-	        	return
-	        if tmp:
-	                print "[Timeshift enabled]"
-	                evfd.getInstance().vfd_set_icon(0x1A,True)
-	        else:
-	                print "[Timeshift disabled]"
-	                evfd.getInstance().vfd_set_icon(0x1A,False)
+		tmp = self.getTimeshiftState()
+		if tmp == self.tsEnabled:
+			return
+		if tmp:
+			print "[Timeshift enabled]"
+			evfd.getInstance().vfd_set_icon(0x1A,True)
+		else:
+			print "[Timeshift disabled]"
+			evfd.getInstance().vfd_set_icon(0x1A,False)
 		self.tsEnabled = tmp
 		
 	def shutdown(self):
@@ -277,7 +326,7 @@ def controlcubeVfd():
 	global gReason
 	global mySession
 
-        if gReason == 0 and mySession != None and cubeVfd == None:
+	if gReason == 0 and mySession != None and cubeVfd == None:
 		print "Starting CuberevoVFD"
 		cubeVfd = CuberevoVFD(mySession)
 	elif gReason == 1 and cubeVfd != None:
@@ -290,12 +339,12 @@ def autostart(reason, **kwargs):
 	global mySession
 
 	if kwargs.has_key("session"):
-                global my_global_session
-                mySession = kwargs["session"]
+		global my_global_session
+		mySession = kwargs["session"]
 	else:
 		gReason = reason
 	controlcubeVfd()
 
 def Plugins(**kwargs):
- 	return [ PluginDescriptor(name="CuberevoVFD", description="Change VFD display settings", where = PluginDescriptor.WHERE_PLUGINMENU, fnc=main),
- 		PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart) ]
+	return [ PluginDescriptor(name="CuberevoVFD", description="Change VFD display settings", where = PluginDescriptor.WHERE_PLUGINMENU, fnc=main),
+		PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart) ]
