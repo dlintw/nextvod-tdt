@@ -837,7 +837,7 @@ static int PlaybackSeek(Context_t  *context, float * pos) {
 	printf("%s::%s pos: %f\n", FILENAME, __FUNCTION__, *pos);
 #endif
 
-	if (!context->playback->isHttp && context->playback->isPlaying && !context->playback->isForwarding && !context->playback->SlowMotion) {
+	if (!context->playback->isHttp && context->playback->isPlaying && !context->playback->isForwarding && !context->playback->SlowMotion && !context->playback->isPaused) {
 		context->playback->isSeeking = 1;
 		context->output->Command(context, OUTPUT_CLEAR, NULL);
 		PlaybackPause(context);
