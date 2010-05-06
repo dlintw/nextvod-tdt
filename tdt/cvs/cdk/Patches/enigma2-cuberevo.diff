@@ -406,14 +406,9 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly/lib/driver/vfd.
  }
  
  #ifdef PLATFORM_TF7700
-@@ -176,10 +184,10 @@
- 	evfd vfd;
- 	blocked = true;
- 	//vfd.vfd_clear_icons();
--	vfd.vfd_write_string(" Team Ducktales ", true);
--	//run 2 times through all icons 
-+	vfd.vfd_write_string(" Duckbox ", true);
-+	//run 2 times throught all icons 
+@@ -179,7 +179,7 @@
+ 	vfd.vfd_write_string(" Team Ducktales ", true);
+ 	//run 2 times through all icons 
  	for  (int vloop = 0; vloop < 128; vloop++) {
 -		/*if (vloop%14 == 0 )
 +		if (vloop%14 == 0 )
