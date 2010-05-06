@@ -247,7 +247,8 @@ COMMONPATCHES_24 = \
 		linux-sh4-init_mm_stm24$(PATCH_STR).patch \
 		linux-sh4-copro_stm24$(PATCH_STR).patch
 
-UFS910PATCHES_24 = $(COMMONPATCHES_24)
+UFS910PATCHES_24 = $(COMMONPATCHES_24) \
+			linux-sh4-ufs910_setup_stm24$(PATCH_STR).patch
 
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 			linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch
@@ -523,7 +524,9 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 
 $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 #	$(MAKE) -C $(KERNEL_DIR) $(MAKE_OPTS) ARCH=sh modules_prepare
-	cp $(driverdir)/stgfb/stmfb/Linux/video/stmfb.h $(targetprefix)/usr/include/linux
+	$(if $(STM24), cp $(driverdir)/stgfb/stmfb/linux/video/stmfb.h $(targetprefix)/usr/include/linux)
+	$(if $(STM23), cp $(driverdir)/stgfb/stmfb/Linux/video/stmfb.h $(targetprefix)/usr/include/linux)
+	$(if $(STM22), cp $(driverdir)/stgfb/stmfb/Linux/video/stmfb.h $(targetprefix)/usr/include/linux)
 	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
