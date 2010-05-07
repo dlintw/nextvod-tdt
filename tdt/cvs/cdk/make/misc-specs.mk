@@ -286,19 +286,19 @@ ALSALIB_DEV := alsa-lib-dev
 if STM22
 ALSALIB_VERSION := 1.0.12-9
 ALSALIB_SPEC := stm-target-$(ALSALIB)-sh4processed.spec
-ALSALIB_SPEC_PATCHES := stm-target-$(ALSALIB).spec22.diff 
+ALSALIB_SPEC_PATCH := stm-target-$(ALSALIB).spec22.diff 
 ALSALIB_PATCHES :=
 else !STM22
 if STM23
 ALSALIB_VERSION := $(if $(STABLE),1.0.16-16,1.0.21a-22)
 ALSALIB_SPEC := stm-target-$(ALSALIB).spec
-ALSALIB_SPEC_PATCHES := $(ALSALIB_SPEC)23.diff 
+ALSALIB_SPEC_PATCH := $(ALSALIB_SPEC)23.diff 
 ALSALIB_PATCHES :=
 else !STM23
 # if STM24
 ALSALIB_VERSION := 1.0.21a-23
 ALSALIB_SPEC := stm-target-$(ALSALIB).spec
-ALSALIB_SPEC_PATCHES := 
+ALSALIB_SPEC_PATCH := 
 ALSALIB_PATCHES :=
 # endif STM24
 endif !STM23
@@ -307,7 +307,7 @@ ALSALIB_RPM := RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB)-$(ALSALIB_VERSION).sh4.rpm
 ALSALIB_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(ALSALIB_DEV)-$(ALSALIB_VERSION).sh4.rpm
 
 $(ALSALIB_RPM) $(ALSALIB_DEV_RPM): \
-		$(if $(ALSALIB_SPEC_PATCH),Patches/$(ALSALIB_PATCH)) \
+		$(if $(ALSALIB_SPEC_PATCH),Patches/$(ALSALIB_SPEC_PATCH)) \
 		$(if $(ALSALIB_PATCHES),$(ALSALIB_PATCHES:%=Patches/%)) \
 		Archive/$(STLINUX)-target-$(ALSALIB)-$(ALSALIB_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
