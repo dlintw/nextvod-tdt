@@ -607,6 +607,7 @@ static int PlaybackClose(Context_t  *context) {
 	context->playback->isPaused     = 0;
 	context->playback->isPlaying    = 0;
 	context->playback->isForwarding = 0;
+	context->playback->BackWard     = 0;
 	context->playback->SlowMotion   = 0;
 	context->playback->Speed        = 0;
 
@@ -638,6 +639,7 @@ static int PlaybackPlay(Context_t  *context) {
 			context->playback->isPlaying    = 1;
 			context->playback->isPaused     = 0;
 			context->playback->isForwarding = 0;
+			context->playback->BackWard     = 0;
 			context->playback->SlowMotion   = 0;
 			context->playback->Speed        = 1;
 
@@ -670,15 +672,16 @@ static int PlaybackPause(Context_t  *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
 	if (context->playback->isPlaying && !context->playback->isPaused) {
-	
+
 		if(context->playback->SlowMotion)
 			context->output->Command(context, OUTPUT_CLEAR, NULL);
-			
+
 		context->output->Command(context, OUTPUT_PAUSE, NULL);
 
 		context->playback->isPaused     = 1;
 		//context->playback->isPlaying  = 1;
 		context->playback->isForwarding = 0;
+		context->playback->BackWard     = 0;
 		context->playback->SlowMotion   = 0;
 		context->playback->Speed        = 1;
 	} else
@@ -692,9 +695,9 @@ static int PlaybackContinue(Context_t  *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
 	if (context->playback->isPlaying && 
-        (context->playback->isPaused || context->playback->isForwarding || context->playback->SlowMotion)) {
-    
-    if(context->playback->SlowMotion)
+        (context->playback->isPaused || context->playback->isForwarding || context->playback->BackWard || context->playback->SlowMotion)) {
+
+		if(context->playback->SlowMotion)
 			context->output->Command(context, OUTPUT_CLEAR, NULL);
 
 		context->output->Command(context, OUTPUT_CONTINUE, NULL);
@@ -702,6 +705,7 @@ static int PlaybackContinue(Context_t  *context) {
 		context->playback->isPaused     = 0;
 		//context->playback->isPlaying  = 1;
 		context->playback->isForwarding = 0;
+		context->playback->BackWard     = 0;
 		context->playback->SlowMotion   = 0;
 		context->playback->Speed        = 1;
 	} else
@@ -719,6 +723,7 @@ static int PlaybackStop(Context_t  *context) {
 		context->playback->isPaused     = 0;
 		context->playback->isPlaying    = 0;
 		context->playback->isForwarding = 0;
+		context->playback->BackWard     = 0;
 		context->playback->SlowMotion   = 0;
 		context->playback->Speed        = 0;
 
@@ -746,6 +751,7 @@ static int PlaybackTerminate(Context_t  *context) {
 		context->playback->isPaused     = 0;
 		context->playback->isPlaying    = 0;
 		context->playback->isForwarding = 0;
+		context->playback->BackWard     = 0;
 		context->playback->SlowMotion   = 0;
 		context->playback->Speed        = 0;
 
@@ -764,7 +770,7 @@ static int PlaybackFastForward(Context_t  *context,int* speed) {
 
 
     //Audio only forwarding not supported
-	if (context->playback->isVideo && !context->playback->isHttp && (!context->playback->isPaused || context->playback->isPlaying)) {
+	if (context->playback->isVideo && !context->playback->isHttp && !context->playback->BackWard && (!context->playback->isPaused || context->playback->isPlaying)) {
 
 		context->playback->isForwarding = 1;
 
@@ -799,6 +805,78 @@ static int PlaybackFastForward(Context_t  *context,int* speed) {
 		context->output->Command(context, OUTPUT_FASTFORWARD, NULL);
 	} else
         return -1;
+	return 0;
+}
+
+static pthread_t FBThread = NULL;
+
+static void FastBackwardThread(Context_t *context)
+{
+	nice(-20);
+#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
+	context->output->Command(context, OUTPUT_AUDIOMUTE, "1");
+	while(context->playback && context->playback->isPlaying && context->playback->BackWard)
+	{
+		context->container->selectedContainer->Command(context, CONTAINER_SEEK, &context->playback->BackWard);
+		context->output->Command(context, OUTPUT_CLEAR, NULL);
+		usleep(250000);
+	}
+	context->output->Command(context, OUTPUT_AUDIOMUTE, "0");
+	FBThread = NULL;
+#ifdef DEBUG
+	printf("%s::%s exit\n", FILENAME, __FUNCTION__);
+#endif
+}
+
+static int PlaybackFastBackward(Context_t  *context,int* speed) {
+
+	//Audio only backwarding not supported
+	if (context->playback->isVideo && !context->playback->isHttp && !context->playback->isForwarding && (!context->playback->isPaused || context->playback->isPlaying)) {
+		context->playback->BackWard = 0;
+
+		switch(*speed) {
+		case 8:
+			context->playback->BackWard = -8;
+			break;
+		case 16:
+			context->playback->BackWard = -16;
+			break;
+		case 32:
+			context->playback->BackWard = -32;
+			break;
+		case 64:
+			context->playback->BackWard = -64;
+			break;
+		case 128:
+			context->playback->BackWard = -128;
+			break;
+		default:
+			return -1;
+        	}
+
+#ifdef DEBUG
+		printf("%s::%s Speed: %d x {%f}\n", FILENAME, __FUNCTION__, *speed, context->playback->BackWard);
+#endif
+
+		int error;
+		pthread_attr_t attr;
+
+		if(FBThread == NULL)
+		{
+			pthread_attr_init(&attr);
+			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+			if(error=pthread_create(&FBThread, &attr, (void *)&FastBackwardThread, context) != 0)
+			{
+				fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,error,strerror(error));
+				FBThread = NULL;
+				return -1;
+			}
+		}
+	} else
+		return -1;
 	return 0;
 }
 
@@ -837,7 +915,7 @@ static int PlaybackSeek(Context_t  *context, float * pos) {
 	printf("%s::%s pos: %f\n", FILENAME, __FUNCTION__, *pos);
 #endif
 
-	if (!context->playback->isHttp && context->playback->isPlaying && !context->playback->isForwarding && !context->playback->SlowMotion && !context->playback->isPaused) {
+	if (!context->playback->isHttp && context->playback->isPlaying && !context->playback->isForwarding && !context->playback->BackWard && !context->playback->SlowMotion && !context->playback->isPaused) {
 		context->playback->isSeeking = 1;
 		context->output->Command(context, OUTPUT_CLEAR, NULL);
 		PlaybackPause(context);
@@ -1068,6 +1146,10 @@ static int Command(Context_t  *context, PlaybackCmd_t command, void * argument) 
 			ret = PlaybackSlowMotion(context,(int*)argument);
 			break;
 		}
+		case PLAYBACK_FASTBACKWARD: {
+			ret = PlaybackFastBackward(context,(int*)argument);
+			break;
+		}
 		default:
 #ifdef DEBUG
 			printf("%s::%s PlaybackCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
@@ -1086,6 +1168,7 @@ static int Command(Context_t  *context, PlaybackCmd_t command, void * argument) 
 PlaybackHandler_t PlaybackHandler = {
 	"Playback",
 	-1,
+	0,
 	0,
 	0,
 	0,
