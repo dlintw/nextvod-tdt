@@ -4988,7 +4988,7 @@ diff -Nur enigma2-nightly.org/main/enigma.cpp enigma2-nightly/main/enigma.cpp
  {
 +#if defined(__sh__)  
 +        shm = createshm();
-+        system("enigma2.sh &");
++        system("enigma2.sh");
 +#endif
  #ifdef MEMLEAK_CHECK
  	atexit(DumpUnfreed);
