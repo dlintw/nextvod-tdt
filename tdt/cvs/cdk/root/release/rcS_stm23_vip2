@@ -43,7 +43,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mme_host.ko transport0=shm
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko type=dummy_avs
+   insmod $MODDIR/avs.ko type=avs_none
 
    echo "init player"
    insmod $MODDIR/mmelog.ko
