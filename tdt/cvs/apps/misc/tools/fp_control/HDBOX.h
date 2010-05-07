@@ -4,6 +4,10 @@
 struct set_brightness_s {
 	int level;
 };
+/* added by zeroone; set PowerLed Brightness on HDBOX*/
+struct set_pwrled_s {
+	int level;
+};
 
 struct set_icon_s {
 	int icon_nr;
@@ -43,6 +47,7 @@ struct nuvoton_ioctl_data {
 		struct set_icon_s icon;
 		struct set_led_s led;
 		struct set_brightness_s brightness;
+		struct set_pwrled_s pwrled; /* added by zeroone; set PowerLed Brightness on HDBOX*/
 		struct set_mode_s mode;
 		struct set_standby_s standby;
 		struct set_time_s time;

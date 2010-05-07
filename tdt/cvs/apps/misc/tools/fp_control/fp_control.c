@@ -19,6 +19,12 @@
  *
  */
 
+/*
+ * added: 
+ * powerLed intensity adjustment
+ * by zeroone 
+ */
+ 
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,6 +73,8 @@ tArgs vArgs[] =
 "Args: icon on\nSet an icon on or off" },
    { "-b", "--setBrightness  ",
 "Args: brightness\nSet display brightness" },
+   { "-P", "--setPwrLed  ",
+"Args: 0..15\nSet PowerLed brightness" },
    { "-w", "--getWakeupReason",
 "Args: No arguments\nGet the wake-up reason" },
    { "-L", "--setLight",
@@ -302,6 +310,24 @@ void processCommand (Context_t * context, int argc, char* argv[])
 	        }
 		i += 1;
 	    } else
+/* added by zeroone; set PowerLed Brightness on HDBOX*/		
+// BEGIN SetPwrLed  
+            if ((strcmp(argv[i], "-P") == 0) || (strcmp(argv[i], "--setPwrLed") == 0))
+            {
+	        if (i + 1 <= argc)
+		{
+		   int brightness;
+
+		   brightness = atoi(argv[i + 1]);
+
+	           /* set PwrLed Brightness icon */
+                   if (((Model_t*)context->m)->SetPwrLed)
+                       ((Model_t*)context->m)->SetPwrLed(context, brightness);
+
+	        }
+		i += 1;
+	    } else
+// END SetPwrLed
             if ((strcmp(argv[i], "-w") == 0) || (strcmp(argv[i], "--getWakeupReason") == 0))
             {
 		   int reason;

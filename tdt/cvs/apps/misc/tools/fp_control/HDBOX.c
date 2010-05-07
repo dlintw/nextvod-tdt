@@ -493,6 +493,25 @@ static int setBrightness(Context_t* context, int brightness)
    }
    return 0;   
 }
+/* added by zeroone; set PowerLed Brightness on HDBOX*/
+// BEGIN setPwrLed
+static int setPwrLed(Context_t* context, int pwrled)
+{
+   struct nuvoton_ioctl_data vData;
+
+   if (pwrled < 0 || pwrled > 15)
+      return -1;
+
+   vData.u.pwrled.level = pwrled;
+   
+   if (ioctl(context->fd, VFDPWRLED, &vData) < 0)
+   {
+      perror("setpwrled: ");
+      return -1;
+   }
+   return 0;   
+}
+// END setPwrLed
 
 static int setLight(Context_t* context, int on)
 {
@@ -558,6 +577,7 @@ Model_t HDBOX_model = {
 	setLed,
 	setIcon,
 	setBrightness,
+	setPwrLed, /* added by zeroone; set PowerLed Brightness on HDBOX*/
 	getWakeupReason,
 	setLight,
         Exit,

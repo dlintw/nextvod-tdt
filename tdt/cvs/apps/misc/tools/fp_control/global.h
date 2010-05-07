@@ -15,6 +15,7 @@
 #define VFDICONDISPLAYONOFF	0xc0425a0a
 #define	VFDDISPLAYCHARS 	0xc0425a00
 #define VFDBRIGHTNESS		0xc0425a03
+#define VFDPWRLED		0xc0425a04 /* added by zeroone, also used in nuvoton.h; set PowerLed Brightness on HDBOX*/
 #define VFDDISPLAYWRITEONOFF	0xc0425a05
 #define VFDDISPLAYCLR		0xc0425b00
 /* ufs912, 922, hdbox ->unset compat mode */
@@ -55,6 +56,7 @@ typedef struct Model_s {
 	int     (* SetLed)         (Context_t* context, int which, int on);
 	int     (* SetIcon)        (Context_t* context, int which, int on);
 	int     (* SetBrightness)  (Context_t* context, int brightness);
+	int     (* SetPwrLed)  	   (Context_t* context, int pwrled); /* added by zeroone; set PowerLed Brightness on HDBOX*/
 	int     (* GetWakeupReason)(Context_t* context, int* reason);
 	int     (* SetLight)       (Context_t* context, int on);
 	int     (* Exit)           (Context_t* context);
