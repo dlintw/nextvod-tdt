@@ -285,7 +285,7 @@ int LinuxDvbAudioMute(Context_t  *context, char *flag) {
 
 	//if (context->playback->isPaused || context->playback->isForwarding || context->playback->SlowMotion) {
 		if (audiofd != -1) {
-			if(*flag == "1")
+			if(*flag == '1')
 				ioctl(audiofd, AUDIO_SET_MUTE, 1);
 			else
 				ioctl(audiofd, AUDIO_SET_MUTE, 0);
