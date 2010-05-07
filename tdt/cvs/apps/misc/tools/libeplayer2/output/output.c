@@ -231,6 +231,14 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 				ret = -1;
 			break;
 		}
+		case OUTPUT_AUDIOMUTE: {
+			if (context && context->playback ) {
+				if (context->playback->isAudio)
+					context->output->audio->Command(context, OUTPUT_AUDIOMUTE, (char*) argument);
+			} else
+				ret = -1;
+			break;
+		}
 		default:
 #ifdef DEBUG
 			printf("%s::%s OutputCmd %d not supported!\n", FILENAME, __FUNCTION__, command);

@@ -277,6 +277,29 @@ int LinuxDvbContinue(Context_t  *context, char * type) {
 	return 0;
 }
 
+int LinuxDvbAudioMute(Context_t  *context, char *flag) {
+
+#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
+
+	//if (context->playback->isPaused || context->playback->isForwarding || context->playback->SlowMotion) {
+		if (audiofd != -1) {
+			if(*flag == "1")
+				ioctl(audiofd, AUDIO_SET_MUTE, 1);
+			else
+				ioctl(audiofd, AUDIO_SET_MUTE, 0);
+		}
+	//}
+
+#ifdef DEBUG
+	printf("%s::%s exiting\n", FILENAME, __FUNCTION__);
+#endif
+
+	return 0;
+}
+
+
 int LinuxDvbFlush(Context_t  *context, char * type) {
 	unsigned char video = !strcmp("video", type);
 	unsigned char audio = !strcmp("audio", type);
@@ -1621,6 +1644,10 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 		}
 		case OUTPUT_SLOWMOTION: {
 			return LinuxDvbSlowMotion(context, (char*)argument);
+			break;
+		}
+		case OUTPUT_AUDIOMUTE: {
+			return LinuxDvbAudioMute(context, (char*)argument);
 			break;
 		}
 		default:
