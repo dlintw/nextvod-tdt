@@ -187,11 +187,11 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 		}
 		case OUTPUT_CLEAR: {
 			if (context && context->playback ) {
-				if (context->playback->isVideo)
+				if (context->playback->isVideo && (argument == NULL || *(char *) argument == 'v'))
 					context->output->video->Command(context, OUTPUT_CLEAR, "video");
-				if (context->playback->isAudio)
+				if (context->playback->isAudio && (argument == NULL || *(char *) argument == 'a'))
 					context->output->audio->Command(context, OUTPUT_CLEAR, "audio");
-				//if (context->playback->isSubtitle)
+				//if (context->playback->isSubtitle && (argument == NULL || *(char *) argument == 's'))
 				//	context->output->subtitle->Command(context, OUTPUT_CLEAR, "subtitle");
 			} else
 				ret = -1;
