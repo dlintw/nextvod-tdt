@@ -815,14 +815,26 @@ static void FastBackwardThread(Context_t *context)
 #ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
+
+	float tmp = 0;
+
 	context->output->Command(context, OUTPUT_AUDIOMUTE, "1");
 	while(context->playback && context->playback->isPlaying && context->playback->BackWard)
 	{
+		context->playback->isSeeking = 1;
+		context->output->Command(context, OUTPUT_CLEAR, NULL);
+		context->output->Command(context, OUTPUT_PAUSE, NULL);
+		context->output->Command(context, OUTPUT_CLEAR, NULL);
 		context->container->selectedContainer->Command(context, CONTAINER_SEEK, &context->playback->BackWard);
-		context->output->Command(context, OUTPUT_CLEAR, "video");
+		context->output->Command(context, OUTPUT_CLEAR, NULL);
+		context->playback->isSeeking = 0;
+		context->output->Command(context, OUTPUT_CONTINUE, NULL);
+		
+		//context->container->selectedContainer->Command(context, CONTAINER_SEEK, &context->playback->BackWard);
+		//context->output->Command(context, OUTPUT_CLEAR, "video");
 		usleep(500000);
 	}
-	context->output->Command(context, OUTPUT_CLEAR, NULL);
+	//context->output->Command(context, OUTPUT_CLEAR, NULL);
 	context->output->Command(context, OUTPUT_AUDIOMUTE, "0");
 	FBThread = NULL;
 #ifdef DEBUG
