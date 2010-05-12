@@ -54,6 +54,7 @@ static tButton cButtonsKathrein[] = {
     {"RECORD"         , "37", KEY_RECORD},
     {"STOP"           , "31", KEY_STOP},
     {"STANDBY"        , "0C", KEY_POWER},
+    {"STANDBY_FRONT"  , "48", KEY_POWER},
     {"MUTE"           , "0D", KEY_MUTE},
     {"CHANNELUP"      , "1E", KEY_PAGEUP},
     {"CHANNELDOWN"    , "1F", KEY_PAGEDOWN},
