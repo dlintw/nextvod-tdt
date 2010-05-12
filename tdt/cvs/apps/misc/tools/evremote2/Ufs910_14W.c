@@ -39,12 +39,16 @@
 #include "remotes.h"
 
 static tButton cButtonsKathrein[] = {
+//    {"OPTIONS_FRONT"  , "47", KEY_MENU}, // any idea?
+//    {"VFORMAT_FRONT"  , "4A", KEY_MENU}, // any idea?
     {"MENU"           , "54", KEY_MENU},
+    {"MENU_FRONT"     , "49", KEY_MENU},
     {"RED"            , "6D", KEY_RED},
     {"GREEN"          , "6E", KEY_GREEN},
     {"YELLOW"         , "6F", KEY_YELLOW},
     {"BLUE"           , "70", KEY_BLUE},
     {"EXIT"           , "55", KEY_HOME},
+    {"EXIT_FRONT"     , "4B", KEY_HOME},
     {"TEXT"           , "3C", KEY_TEXT},
     {"EPG"            , "4C", KEY_EPG},
     {"REWIND"         , "21", KEY_REWIND},
@@ -54,6 +58,7 @@ static tButton cButtonsKathrein[] = {
     {"RECORD"         , "37", KEY_RECORD},
     {"STOP"           , "31", KEY_STOP},
     {"STANDBY"        , "0C", KEY_POWER},
+    {"STANDBY_FRONT"  , "48", KEY_POWER},
     {"MUTE"           , "0D", KEY_MUTE},
     {"CHANNELUP"      , "1E", KEY_PAGEUP},
     {"CHANNELDOWN"    , "1F", KEY_PAGEDOWN},
