@@ -202,7 +202,7 @@ static int setTimer(Context_t* context)
    
    wakeupTime -= private->wakeupDecrement;
    
-   if ((wakeupTime == 0) || (curTime > wakeupTime))
+   if ((wakeupTime == 0) || (curTime > wakeupTime) || (curTime < (wakeupTime-25920000)))
    {
        /* nothing to do for e2 */   
        fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
