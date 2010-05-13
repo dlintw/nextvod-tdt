@@ -502,14 +502,14 @@ void CStreamInfo2::paint_techinfo(int xpos, int ypos)
 	sprintf ((char *) buf, "%s:",g_Locale->getText (LOCALE_STREAMINFO_ARATIO));
 	g_Font[font_info]->RenderString (xpos, ypos, width*2/3 - 10, buf, COL_MENUCONTENTDARK, 0, true);	// UTF-8
 	switch (aspectRatio) {
-		case 1:
+		case 0:
 			sprintf ((char *) buf, "4:3");
+		break;
+		case 1:
+			sprintf ((char *) buf, "16:9");
 		break;
 		case 2:
 			sprintf ((char *) buf, "14:9");
-		break;
-		case 3:
-			sprintf ((char *) buf, "16:9");
 		break;
 		case 4:
 			sprintf ((char *) buf, "20:9");
@@ -524,10 +524,10 @@ void CStreamInfo2::paint_techinfo(int xpos, int ypos)
 	sprintf ((char *) buf, "%s:", g_Locale->getText (LOCALE_STREAMINFO_FRAMERATE));
 	g_Font[font_info]->RenderString (xpos, ypos, width*2/3 - 10, buf, COL_MENUCONTENTDARK, 0, true);	// UTF-8
 	switch (framerate) {
-		case 2:
+		case 25:
 			sprintf ((char *) buf, "25fps");
 		break;
-		case 5:
+		case 50:
 			sprintf ((char *) buf, "50fps");
 		break;
 		default:

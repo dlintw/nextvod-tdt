@@ -237,8 +237,7 @@ void CInfoViewer::showTitle (const int ChanNum, const std::string & Channel, con
 	int fadeValue;
 	bool new_chan = false;
 //printf("CInfoViewer::showTitle ************************* chan num %d name %s\n", ChanNum, Channel.c_str());
-	//aspectRatio = videoDecoder->getAspectRatio() > 2 ? 1 : 0;
-	aspectRatio = 0;
+	aspectRatio = videoDecoder->getAspectRatio();
 
 	showButtonBar = !calledFromNumZap;
 	bool fadeIn = g_settings.widget_fade && (!is_visible) && showButtonBar;
@@ -718,12 +717,9 @@ void CInfoViewer::showSubchan ()
   }
 }
 
-void CInfoViewer::showIcon_16_9 ()
-{
-	if((aspectRatio == 0) || (aspectRatio != videoDecoder->getAspectRatio())) {
-		aspectRatio = videoDecoder->getAspectRatio();
-		frameBuffer->paintIcon ((aspectRatio > 2) ? "16_9.raw" : "16_9_gray.raw", BoxEndX - (2*ICON_LARGE_WIDTH + 2*ICON_SMALL_WIDTH + 4*2), BoxEndY - ICON_Y_1);
-	}
+void CInfoViewer::showIcon_16_9 () {
+	aspectRatio = videoDecoder->getAspectRatio();
+	frameBuffer->paintIcon ((aspectRatio) ? "16_9.raw" : "16_9_gray.raw", BoxEndX - (2*ICON_LARGE_WIDTH + 2*ICON_SMALL_WIDTH + 4*2), BoxEndY - ICON_Y_1);
 }
 
 extern "C" void tuxtxt_start(int tpid);

@@ -122,10 +122,19 @@ void cVideo::SetAudioHandle(void * handle)
 }
 
 /* aspect ratio */
-int cVideo::getAspectRatio(void) 
-{ 
-   printf("%s:%s\n", FILENAME, __FUNCTION__); 
-   return 0; 
+int cVideo::getAspectRatio(void) {
+	printf("%s:%s\n", FILENAME, __FUNCTION__);
+
+	unsigned char buffer[2];
+	int n, fd;
+	int ratio = 0; // 0 = 4:3, 1 = 16:9
+	fd = open("/proc/stb/vmpeg/0/aspect", O_RDONLY);
+	n = read(fd, buffer, 2);
+	close(fd);
+	if (n > 0) {
+	    ratio = atoi((const char*) buffer);
+	}
+	return ratio;
 }
 
 int cVideo::setAspectRatio(int aspect, int mode) 
@@ -170,7 +179,7 @@ int cVideo::setAspectRatio(int aspect, int mode)
 
         close(fd);
     }
-    
+
     if (mode != -1)
     {
 	
@@ -200,53 +209,46 @@ int cVideo::setAspectRatio(int aspect, int mode)
 	  write(fd, sMode[mode][1], strlen((const char*) sMode[mode][1]));
 	}
         close(fd);
-    
     }
 
-    return 0; 
+    return 0;
 }
 
-void cVideo::getPictureInfo(int &width, int &height, int &rate) 
-{ 
-   unsigned char buffer[128];
-   int n, fd;
+void cVideo::getPictureInfo(int &width, int &height, int &rate) {
+	unsigned char buffer[10];
+	int n, fd;
 
-   printf("%s:%s\n", FILENAME, __FUNCTION__); 
-   
-   rate = 0;
-   fd = open("/proc/stb/vmpeg/0/framerate", O_RDONLY);
-   n = read(fd, buffer, 128);
-   close(fd);
-   
-   if (n > 0)
-   {
-       rate = atoi((const char*) buffer);
-   }
+	printf("%s:%s\n", FILENAME, __FUNCTION__); 
 
-//fixme revise this
+	rate = 0;
+	fd = open("/proc/stb/vmpeg/0/framerate", O_RDONLY);
+	n = read(fd, buffer, 10);
+	close(fd);
 
-   width = 0;
-   fd = open("/proc/stb/vmpeg/0/dst_width", O_RDONLY);
-   n = read(fd, buffer, 128);
-   close(fd);
-   
-   if (n > 0)
-   {
-       width = atoi((const char*)buffer);
-   }
+	if (n > 0) {
+		sscanf((const char*) buffer, "%X", &rate);
+		rate = rate/1000;
+	}
 
-   height = 0;
-   fd = open("/proc/stb/vmpeg/0/dst_height", O_RDONLY);
-   n = read(fd, buffer, 128);
-   close(fd);
-   
-   if (n > 0)
-   {
-       height = atoi((const char*)buffer);
-   }
+	width = 0;
+	fd = open("/proc/stb/vmpeg/0/xres", O_RDONLY);
+	n = read(fd, buffer, 10);
+	close(fd);
 
-   printf("%s:%s < w %d, h %d, r %d\n", FILENAME, __FUNCTION__, width, height, rate); 
- 
+	if (n > 0) {
+		sscanf((const char*) buffer, "%X", &width);
+	}
+
+	height = 0;
+	fd = open("/proc/stb/vmpeg/0/yres", O_RDONLY);
+	n = read(fd, buffer, 10);
+	close(fd);
+
+	if (n > 0) {
+		sscanf((const char*) buffer, "%X", &height);
+	}
+
+	printf("%s:%s < w %d, h %d, r %d\n", FILENAME, __FUNCTION__, width, height, rate);
 }
 
 /* cropping mode */
