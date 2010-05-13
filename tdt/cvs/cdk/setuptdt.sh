@@ -79,7 +79,9 @@ if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then
 	# ST changed to the -m32 option for their gcc compiler build
 	# we might need to install more 32bit versions of some packages
 	PACKAGES="$PACKAGES \
-	${UBUNTU:+gcc-multilib}    ${SUSE:+gcc-32bit}
+	${UBUNTU:+gcc-multilib}    ${SUSE:+gcc-32bit} \
+	                                                   ${FEDORA:+libstdc++-devel.i686} \
+	                                                   ${FEDORA:+glibc-devel.i686} \
 	";
 fi
 
