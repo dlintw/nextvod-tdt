@@ -14,19 +14,21 @@
  %define _build_cpu		sh4_uclibc
  %define _stm_base_prefix	%{_stm_install_prefix}/STLinux-%{_stm_build_id}
  %define _stm_config_dir		%{_stm_base_prefix}/config
-@@ -11,6 +21,7 @@
+@@ -11,6 +21,8 @@
  Version: %{_stm_build_id}
  Release: 21 
  Source0: stm-host-rpmconfig-%{version}-%{_build_cpu}.tar.gz
 +Patch0: stm-host-rpmconfig-ignore-skip-cvs-errors.patch
++Patch1: stm-host-rpmconfig-autoreconf-add-libtool-macros24.patch
  License: GPL
  Group: Development/Tools
  BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-@@ -26,11 +37,38 @@
+@@ -26,11 +38,39 @@
  
  %prep
  %setup -q -n rpmconfig-%{version}
 +%patch0 -p1
++%patch1 -p1
  
  %install
  make	RPMCONFIGDIR=%{buildroot}%{_stm_config_dir}/rpm \
@@ -61,7 +63,7 @@
  %clean
  rm -rf %{buildroot}
  
-@@ -44,32 +44,6 @@
+@@ -44,32 +46,6 @@
   done
  fi
  
@@ -94,7 +96,7 @@
  %files
  %defattr(-,root,root)
  %dir %{_stm_config_dir}/rpm
-@@ -86,6 +60,7 @@
+@@ -86,6 +62,7 @@
  %{_stm_config_dir}/rpm/hosts/*
  %{_stm_config_dir}/rpm/targets/*
  %{_stm_config_dir}/rpm/site_configs/*

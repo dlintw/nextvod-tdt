@@ -84,19 +84,21 @@ if STM22
 HOST_RPMCONFIG_VERSION := 2.2-10
 HOST_RPMCONFIG_SPEC := stm-$(HOST_RPMCONFIG)-2.2.spec
 HOST_RPMCONFIG_SPEC_PATCH := stm-$(HOST_RPMCONFIG).spec22.diff
-HOST_RPMCONFIG_PATCHES := stm-$(HOST_RPMCONFIG)-compress_man-allways-true.patch
+HOST_RPMCONFIG_PATCHES := stm-$(HOST_RPMCONFIG)-compress_man-allways-true.patch \
+			  stm-$(HOST_RPMCONFIG)-autoreconf-add-libtool-macros22.patch
 else !STM22
 if STM23
 HOST_RPMCONFIG_VERSION := 2.3-16
 HOST_RPMCONFIG_SPEC := stm-$(HOST_RPMCONFIG).spec
-HOST_RPMCONFIG_SPEC_PATCH :=
-HOST_RPMCONFIG_PATCHES :=
+HOST_RPMCONFIG_SPEC_PATCH := stm-$(HOST_RPMCONFIG).spec23.diff
+HOST_RPMCONFIG_PATCHES := stm-$(HOST_RPMCONFIG)-autoreconf-add-libtool-macros23.patch
 else !STM23
 # if STM24
 HOST_RPMCONFIG_VERSION := 2.4-21
 HOST_RPMCONFIG_SPEC := stm-$(HOST_RPMCONFIG).spec
 HOST_RPMCONFIG_SPEC_PATCH := $(HOST_RPMCONFIG_SPEC)24.diff
-HOST_RPMCONFIG_PATCHES := stm-$(HOST_RPMCONFIG)-ignore-skip-cvs-errors.patch
+HOST_RPMCONFIG_PATCHES := stm-$(HOST_RPMCONFIG)-ignore-skip-cvs-errors.patch \
+			  stm-$(HOST_RPMCONFIG)-autoreconf-add-libtool-macros24.patch
 # endif STM24
 endif !STM23
 endif !STM22
