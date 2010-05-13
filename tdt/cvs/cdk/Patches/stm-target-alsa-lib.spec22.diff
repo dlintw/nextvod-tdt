@@ -4,8 +4,8 @@
  
  %build
  %target_setup
-+libtoolize -f -c
-+autoreconf -f -i
++%replacelibtool
++%autoreconfcrs
  ./configure \
  	--host=%{_stm_target_config} \
          --target=%{_stm_target_config} \
