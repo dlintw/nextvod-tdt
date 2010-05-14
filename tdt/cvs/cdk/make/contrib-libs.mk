@@ -662,7 +662,7 @@ $(DEPDIR)/directfb.do_compile: bootstrap freetype directfb.do_prepare
 	cd @DIR_directfb@ && \
 		rm -f include/directfb_version.h && \
 		rm -f lib/{direct/build.h,fusion/build.h,voodoo/build.h} && \
-		libtoolize -f -i
+		libtoolize -f -i && \
 		autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
 		./configure \
