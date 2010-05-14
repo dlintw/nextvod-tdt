@@ -2,6 +2,7 @@
 
 #$(appsdir)/misc/tools/config.status: bootstrap libpng
 $(appsdir)/misc/tools/config.status: bootstrap
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/misc/tools && \
 	libtoolize -f -c && \
 	$(CONFIGURE) --prefix=

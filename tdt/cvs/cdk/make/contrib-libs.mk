@@ -368,6 +368,7 @@ $(DEPDIR)/libmad.do_prepare: bootstrap @DEPENDS_libmad@
 	touch $@
 
 $(DEPDIR)/libmad.do_compile: $(DEPDIR)/libmad.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libmad@ && \
 		aclocal && \
 		autoconf && \
@@ -662,7 +663,7 @@ $(DEPDIR)/directfb.do_compile: bootstrap freetype directfb.do_prepare
 	cd @DIR_directfb@ && \
 		rm -f include/directfb_version.h && \
 		rm -f lib/{direct/build.h,fusion/build.h,voodoo/build.h} && \
-		libtoolize -f -i && \
+		libtoolize -f -c && \
 		autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
 		./configure \
@@ -740,7 +741,7 @@ $(DEPDIR)/fontconfig.do_prepare: @DEPENDS_fontconfig@
 $(DEPDIR)/fontconfig.do_compile: bootstrap libz fontconfig.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_fontconfig@ && \
-		libtoolize -f -i && \
+		libtoolize -f -c && \
 		autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
 		./configure \
@@ -1198,6 +1199,7 @@ $(DEPDIR)/libdvdread.do_prepare: @DEPENDS_libdvdread@
 	touch $@
 
 $(DEPDIR)/libdvdread.do_compile: bootstrap libdvdread.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	libtoolize -c -f && \
 	cd @DIR_libdvdread@ && \
 		$(BUILDENV) \

@@ -331,6 +331,7 @@ $(DEPDIR)/xfsprogs.do_prepare: bootstrap @DEPENDS_xfsprogs@
 	touch $@
 
 $(DEPDIR)/xfsprogs.do_compile: $(DEPDIR)/e2fsprogs $(DEPDIR)/libreadline $(DEPDIR)/xfsprogs.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_xfsprogs@ && \
 		export DEBUG=-DNDEBUG && export OPTIMIZER=-O2 && \
 		mv -f aclocal.m4 aclocal.m4.orig && mv Makefile Makefile.sgi || true && chmod 644 Makefile.sgi && \
@@ -465,6 +466,7 @@ $(DEPDIR)/sg3_utils.do_prepare: bootstrap @DEPENDS_sg3_utils@
 	touch $@
 
 $(DEPDIR)/sg3_utils.do_compile: $(DEPDIR)/sg3_utils.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_sg3_utils@ && \
 		$(MAKE) clean || true && \
 		aclocal && \
