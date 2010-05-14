@@ -162,8 +162,8 @@ COMMONPATCHES_23 = \
 		$(STM23_DVB_PATCH)
 
 UFS912PATCHES_23 = $(COMMONPATCHES_23) \
-		ufs912_setup_stm23.patch \
-        	ufs912_sound_stm23.patch \
+		$(if $(P0119),linux-sh4-ufs912_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \

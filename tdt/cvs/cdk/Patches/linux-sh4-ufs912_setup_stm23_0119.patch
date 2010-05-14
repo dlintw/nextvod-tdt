@@ -238,8 +238,35 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   #endif
   
   	return platform_driver_register(&stpio_driver);
-*** b/arch/sh/boards/st/mb618/setup.c	2010-05-02 12:17:23.839522000 +0200
---- a/arch/sh/boards/st/mb618/setup.c	2010-05-01 23:27:35.000000000 +0200
+*** b/drivers/mtd/chips/cfi_probe.c	2010-02-15 09:28:06.000000000 +0100
+--- a/drivers/mtd/chips/cfi_probe.c	2010-03-06 11:02:11.000000000 +0100
+***************
+*** 255,260 ****
+--- 255,276 ----
+  	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
+  		cfi->cfiq->EraseRegionInfo[i] = le32_to_cpu(cfi->cfiq->EraseRegionInfo[i]);
+  
++ 	/* kdhong */
++ 	printk( "CFI MFR = %x DEV = %x\n", cfi->mfr, cfi->id );
++ 
++ 	if( cfi->mfr == 0x00c2 && cfi->id == 0x227e )
++ 	{
++ 		int devsize = (1 << cfi->cfiq->DevSize) * cfi->interleave;
++ 
++ 		printk( "devsize = %x\n", devsize );
++ 
++ 		if( devsize == 0x400000 )
++ 		{
++ 			cfi->cfiq->EraseRegionInfo[i] = 0x100003f;
++ 		}
++ 	}
++ 	/* kdhong */
++ 
+  #ifdef DEBUG_CFI
+  		printk("  Erase Region #%d: BlockSize 0x%4.4X bytes, %d blocks\n",
+  		       i, (cfi->cfiq->EraseRegionInfo[i] >> 8) & ~0xff,
+*** a/arch/sh/boards/st/mb618/setup.c	2010-05-07 20:04:43.000000000 +0200
+--- b/setup.c	2010-05-13 17:49:05.177908300 +0200
 ***************
 *** 19,24 ****
 --- 19,25 ----
@@ -273,37 +300,35 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   }
   
   static struct plat_stm_pwm_data pwm_private_info = {
---- 31,80 ----
+--- 31,78 ----
   #include <asm/io.h>
   #include "../common/common.h"
   
-+ const char *LMI_OTHER_partalias[] = { "gfx-memory", "bigphysarea", NULL };
-+ const char *LMI_SYS_partalias[] = { "BPA2_Region0", "v4l2-coded-video-buffers",
-+                                     "BPA2_Region1", "v4l2-video-buffers" ,"coredisplay-video", NULL };
++ const char *LMI_IO_partalias[] = { "v4l2-coded-video-buffers", "BPA2_Region1", "v4l2-video-buffers" ,
++                                     "coredisplay-video", "gfx-memory", "BPA2_Region0", NULL };
 +  
 + /*
 + 0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
 + 0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
-+ 0x40800000 - 0x443FFFFF - linux (60mb)
-+ 0x44400000 - 0x487FFFFF - lmi_sys (68mb)
-+ 0x48800000 - 0x4FFFFFFF - lmi_other
++ 0x40800000 - 0x47FFFFFF - linux   (120mb) 
++ 0x48000000 - 0x49FFFFFF - bigphys ( 32mb)
++ 0x4A000000 - 0x4FFFFFFF - lmi_io  ( 96mb)
 + */
-+     static struct bpa2_partition_desc bpa2_parts_table[] = {
-+  	{
-+  		.name  = "LMI_SYS",
-+  		.start = 0x44400000,
-+  		.size  = 0x04400000, /* 68 */
-+  		.flags = 0,
-+  		.aka   = LMI_SYS_partalias
-+  	}, 
-+  	{
-+  		.name  = "LMI_OTHER",
-+  		.start = 0x48800000,
-+  		.size  = 0x07800000,
-+  		.flags = 0,
-+  		.aka   = LMI_OTHER_partalias
-+  	},
-+ 	
++ static struct bpa2_partition_desc bpa2_parts_table[] = {
++     {
++  	    .name  = "bigphysarea",
++  	    .start = 0x48000000,
++  	    .size  = 0x02000000, /* 32 Mb */
++  	    .flags = 0,
++  	    .aka   = NULL
++     }, 
++     {
++  	    .name  = "LMI_IO",
++  	    .start = 0x4A000000,
++  	    .size  = 0x06000000, /* 92 Mb */
++  	    .flags = 0,
++  	    .aka   = LMI_IO_partalias
++     }, 
 +  };
 + 
   /* Whether the hardware supports NOR or NAND Flash depends on J34.
@@ -333,7 +358,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   		ssc1_has(SSC_I2C_CAPABILITY) |
   		ssc2_has(SSC_I2C_CAPABILITY) |
   		ssc3_has(SSC_I2C_CAPABILITY),
---- 83,89 ----
+--- 81,87 ----
   
   static struct plat_ssc_data ssc_private_info = {
   	.capability  =
@@ -365,7 +390,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   	}
   };
   
---- 150,167 ----
+--- 148,165 ----
   
   static void set_vpp(struct map_info * info, int enable)
   {
@@ -393,7 +418,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   			.flags		= IORESOURCE_MEM,
   		}
   	},
---- 179,185 ----
+--- 177,183 ----
   	.resource	= (struct resource[]) {
   		{
   			.start		= 0x00000000,
@@ -410,7 +435,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   	.phy_mask = 0,
   	.interface = PHY_INTERFACE_MODE_MII,
   	.phy_reset = &mb618_phy_reset,
---- 202,208 ----
+--- 200,206 ----
   static struct plat_stmmacphy_data phy_private_data = {
   	/* SMSC LAN 8700 */
   	.bus_id = 0,
@@ -441,7 +466,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   	.emi_withinbankoffset	= 0,
   
   	/* Timings for NAND512W3A */
---- 242,295 ----
+--- 240,293 ----
   	},
   };
   
@@ -505,7 +530,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   /* We don't bother with INT[BCD] as they are shared with the ssc
    * J20-A must be removed, J20-B must be 5-6
    */
---- 312,317 ----
+--- 310,315 ----
 ***************
 *** 273,285 ****
   }
@@ -521,7 +546,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   };
   
   /* Configuration based on Futarque-RC signals train. */
---- 331,339 ----
+--- 329,337 ----
   }
   
   static struct platform_device *mb618_devices[] __initdata = {
@@ -559,7 +584,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   
   	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
   }
---- 381,417 ----
+--- 379,415 ----
   
   static int __init device_init(void)
   {
@@ -679,30 +704,3 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
   		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
   	}
-*** b/drivers/mtd/chips/cfi_probe.c	2010-02-15 09:28:06.000000000 +0100
---- a/drivers/mtd/chips/cfi_probe.c	2010-03-06 11:02:11.000000000 +0100
-***************
-*** 255,260 ****
---- 255,276 ----
-  	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
-  		cfi->cfiq->EraseRegionInfo[i] = le32_to_cpu(cfi->cfiq->EraseRegionInfo[i]);
-  
-+ 	/* kdhong */
-+ 	printk( "CFI MFR = %x DEV = %x\n", cfi->mfr, cfi->id );
-+ 
-+ 	if( cfi->mfr == 0x00c2 && cfi->id == 0x227e )
-+ 	{
-+ 		int devsize = (1 << cfi->cfiq->DevSize) * cfi->interleave;
-+ 
-+ 		printk( "devsize = %x\n", devsize );
-+ 
-+ 		if( devsize == 0x400000 )
-+ 		{
-+ 			cfi->cfiq->EraseRegionInfo[i] = 0x100003f;
-+ 		}
-+ 	}
-+ 	/* kdhong */
-+ 
-  #ifdef DEBUG_CFI
-  		printk("  Erase Region #%d: BlockSize 0x%4.4X bytes, %d blocks\n",
-  		       i, (cfi->cfiq->EraseRegionInfo[i] >> 8) & ~0xff,
