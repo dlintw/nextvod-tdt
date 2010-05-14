@@ -658,9 +658,11 @@ $(DEPDIR)/directfb.do_prepare: @DEPENDS_directfb@
 	touch $@
 
 $(DEPDIR)/directfb.do_compile: bootstrap freetype directfb.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_directfb@ && \
 		rm -f include/directfb_version.h && \
 		rm -f lib/{direct/build.h,fusion/build.h,voodoo/build.h} && \
+		libtoolize -f -i
 		autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
 		./configure \
@@ -736,7 +738,9 @@ $(DEPDIR)/fontconfig.do_prepare: @DEPENDS_fontconfig@
 	touch $@
 
 $(DEPDIR)/fontconfig.do_compile: bootstrap libz fontconfig.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_fontconfig@ && \
+		libtoolize -f -i && \
 		autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
 		./configure \
