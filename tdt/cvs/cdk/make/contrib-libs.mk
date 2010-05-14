@@ -1177,7 +1177,6 @@ $(DEPDIR)/libdvdnav.do_compile: bootstrap libdvdread libdvdnav.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libdvdnav@ && \
 		autoreconf -f -i -I$(hostprefix)/share/aclocal && \
-		libtoolize -f -c && \
 		$(BUILDENV) \
 		./configure \
 			--build=$(build) \
@@ -1205,7 +1204,6 @@ $(DEPDIR)/libdvdread.do_compile: bootstrap libdvdread.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libdvdread@ && \
 		autoreconf -f -i -I$(hostprefix)/share/aclocal && \
-		libtoolize -f -c && \
 		$(BUILDENV) \
 		./configure \
 			--build=$(build) \
