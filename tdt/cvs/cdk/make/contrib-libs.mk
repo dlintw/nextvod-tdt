@@ -370,7 +370,7 @@ $(DEPDIR)/libmad.do_prepare: bootstrap @DEPENDS_libmad@
 $(DEPDIR)/libmad.do_compile: $(DEPDIR)/libmad.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libmad@ && \
-		aclocal && \
+		aclocal -I $(hostprefix)/share/aclocal && \
 		autoconf && \
 		autoheader && \
 		automake --foreign && \
@@ -1174,9 +1174,12 @@ $(DEPDIR)/libdvdnav.do_prepare: @DEPENDS_libdvdnav@
 	touch $@
 
 $(DEPDIR)/libdvdnav.do_compile: bootstrap libdvdread libdvdnav.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libdvdnav@ && \
+		autoreconf -f -i -I$(hostprefix)/share/aclocal && \
+		libtoolize -f -c && \
 		$(BUILDENV) \
-		./autogen.sh \
+		./configure \
 			--build=$(build) \
 			--host=$(target) \
 			--prefix=/usr \
@@ -1200,10 +1203,11 @@ $(DEPDIR)/libdvdread.do_prepare: @DEPENDS_libdvdread@
 
 $(DEPDIR)/libdvdread.do_compile: bootstrap libdvdread.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
-	libtoolize -c -f && \
 	cd @DIR_libdvdread@ && \
+		autoreconf -f -i -I$(hostprefix)/share/aclocal && \
+		libtoolize -f -c && \
 		$(BUILDENV) \
-		./autogen.sh \
+		./configure \
 			--build=$(build) \
 			--host=$(target) \
 			--enable-static \

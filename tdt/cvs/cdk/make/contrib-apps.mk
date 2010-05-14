@@ -335,7 +335,7 @@ $(DEPDIR)/xfsprogs.do_compile: $(DEPDIR)/e2fsprogs $(DEPDIR)/libreadline $(DEPDI
 	cd @DIR_xfsprogs@ && \
 		export DEBUG=-DNDEBUG && export OPTIMIZER=-O2 && \
 		mv -f aclocal.m4 aclocal.m4.orig && mv Makefile Makefile.sgi || true && chmod 644 Makefile.sgi && \
-		aclocal -I m4 && \
+		aclocal -I m4 -I $(hostprefix)/share/aclocal && \
 		autoconf && \
 		libtoolize && \
 		$(BUILDENV) \
@@ -469,7 +469,7 @@ $(DEPDIR)/sg3_utils.do_compile: $(DEPDIR)/sg3_utils.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_sg3_utils@ && \
 		$(MAKE) clean || true && \
-		aclocal && \
+		aclocal -I $(hostprefix)/share/aclocal && \
 		autoconf && \
 		libtoolize && \
 		automake --add-missing --foreign && \
