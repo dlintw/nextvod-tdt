@@ -8,7 +8,7 @@
 + * to enable printk while booting
 + * needs CONFIG_RPINTK too
 + */
-+static int use_printk = 0;
++static int use_printk = 1;
 +
 +static int __init printk_cmdline_opt(char *str)
 +{
