@@ -32,8 +32,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING MODULES" >/dev/vfd
 
    echo "load a/v firmware"
-   /bin/stslave_stm23 -t stb7100.0 -R /boot/video.elf
-   /bin/stslave_stm23 -t stb7100.1 -R /boot/audio.elf
+   /bin/stslave -t stb7100.0 -R /boot/video.elf
+   /bin/stslave -t stb7100.1 -R /boot/audio.elf
 
    echo "init embx"
    insmod $MODDIR/embxshell.ko
@@ -42,7 +42,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mme_host.ko transport0=shm
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko type=stv6412
+   insmod $MODDIR/avs.ko type=stv6418
 
    echo "init player"
    insmod $MODDIR/mmelog.ko
