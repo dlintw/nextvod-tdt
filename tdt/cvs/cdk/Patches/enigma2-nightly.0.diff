@@ -9388,3 +9388,16 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
 +}
 +
 +#endif
+
+--- enigma2-nightly/lib/dvb/volume.cpp	2010-05-11 22:39:32.000000000 -0400
++++ enigma2-nightly/lib/dvb/volume.cpp	2010-05-15 04:41:47.000000000 -0400
+@@ -29,7 +29,9 @@
+ eDVBVolumecontrol::eDVBVolumecontrol()
+ {
+ 	volumeUnMute();
++#ifndef __sh__
+ 	setVolume(100, 100);
++#endif
+ }
+ 
+ int eDVBVolumecontrol::openMixer()
