@@ -8144,7 +8144,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  extern const uint32_t crc32_table[256];
  
 +#if ENABLE_FREESAT
-+int enable_freesat = 1;
++static int enable_freesat = 1;
 +#endif
 +
  const eServiceReference &handleGroup(const eServiceReference &ref)
@@ -8238,23 +8238,23 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  			timeUpdated();
  	}
 +#if ENABLE_FREESAT
-+        FILE *ffd;
-+        ffd = fopen("/var/usr/local/share/enigma2/freesat.t1", "r");
-+        if(ffd)
-+        {
-+                enable_freesat = 1;
-+                fclose(ffd);
-+        }
-+        else
-+                enable_freesat = 0;
-+        ffd = fopen("/usr/local/share/enigma2/freesat.t1", "r");
-+        if(ffd)
-+        {
-+                enable_freesat = 1;
-+                fclose(ffd);
-+        }
-+        else
-+                enable_freesat = 0;
++	FILE *ffd;
++	ffd = fopen("/var/usr/local/share/enigma2/freesat.t1", "r");
++	if(ffd)
++	{
++		enable_freesat = 1;
++		fclose(ffd);
++	}
++	else
++	{
++		ffd = fopen("/usr/local/share/enigma2/freesat.t1", "r");
++		if(ffd)
++		{
++			enable_freesat = 1; fclose(ffd);
++		}
++		else
++			enable_freesat = 0;
++	}
 +#endif
  	instance=this;
  }
