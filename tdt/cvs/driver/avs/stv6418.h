@@ -1,8 +1,8 @@
-#ifndef _VIP2_AVS_
-#define _VIP2_AVS_
+#ifndef stv6418_123
+#define stv6418_123
 
 /*
- *   svip2_avs.h - audio/video switch driver
+ *   stv6418.h - audio/video switch driver
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@
  *
  */
 
-int vip2_avs_init(void);
-int vip2_avs_command(unsigned int cmd, void *arg );
-int vip2_avs_command_kernel(unsigned int cmd, void *arg);
+int stv6418_init(struct i2c_client *client);
+int stv6418_command(struct i2c_client *client, unsigned int cmd, void *arg );
+int stv6418_command_kernel(struct i2c_client *client, unsigned int cmd, void *arg);
+int stv6418_set_volume( struct i2c_client *client, int vol );
+int stv6418_get_volume(void);
+int stv6418_get_status(struct i2c_client *client);
 
 #endif
-

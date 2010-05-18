@@ -1,8 +1,7 @@
-#ifndef _VIP2_AVS_
-#define _VIP2_AVS_
-
+#ifndef _AVS_TOOLS_
+#define _AVS_TOOLS_
 /*
- *   svip2_avs.h - audio/video switch driver
+ *   tools.h - audio/video switch tools
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,9 +19,7 @@
  *
  */
 
-int vip2_avs_init(void);
-int vip2_avs_command(unsigned int cmd, void *arg );
-int vip2_avs_command_kernel(unsigned int cmd, void *arg);
+void set_bits(unsigned char *regs, int regIndex, unsigned char value, int start_bit, int nr_bits);
+unsigned char get_bits(unsigned char *regs, int regIndex, int start_bit, int nr_bits);
 
 #endif
-
