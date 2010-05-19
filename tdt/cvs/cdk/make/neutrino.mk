@@ -5,8 +5,10 @@
 #
 
 $(appsdir)/neutrino-nightly/config.status: bootstrap freetype libpng libid3tag openssl curl libmad libboost
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/neutrino-nightly && \
-		./autogen.sh && \
+		ACLOCAL_FLAGS="-I $(hostprefix)/share/aclocal" ./autogen.sh && \
+		$(BUILDENV) \
 		./configure \
 			--host=$(target) \
 			--without-libsdl \
@@ -59,7 +61,8 @@ neutrino-nightly-clean neutrino-nightly-distclean:
 
 $(appsdir)/neutrino/config.status: bootstrap freetype libpng libid3tag openssl curl libmad libboost libgif
 	cd $(appsdir)/neutrino && \
-		./autogen.sh && \
+		ACLOCAL_FLAGS="-I $(hostprefix)/share/aclocal" ./autogen.sh && \
+		$(BUILDENV) \
 		./configure \
 			--host=$(target) \
 			--without-libsdl \
