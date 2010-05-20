@@ -60,8 +60,8 @@ echo "Generating configuration files for $package, please wait...."
 
 echo "  aclocal $ACLOCAL_FLAGS"
 aclocal $ACLOCAL_FLAGS
-echo "  libtoolize --automake"
-libtoolize --automake
+echo "  libtoolize --automake -f -c"
+libtoolize --automake -f -c
 #echo "  gettextize"
 #gettextize
 echo "  autoconf"
