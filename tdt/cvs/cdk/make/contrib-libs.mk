@@ -204,6 +204,7 @@ $(DEPDIR)/libpng.do_prepare: bootstrap @DEPENDS_libpng@
 	touch $@
 
 $(DEPDIR)/libpng.do_compile: libz $(DEPDIR)/libpng.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libpng@ && \
 		./autogen.sh && \
 		$(BUILDENV) \
@@ -1176,6 +1177,7 @@ $(DEPDIR)/libdvdnav.do_prepare: @DEPENDS_libdvdnav@
 $(DEPDIR)/libdvdnav.do_compile: bootstrap libdvdread libdvdnav.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libdvdnav@ && \
+		cp $(hostprefix)/share/libtool/config/ltmain.sh . && \
 		autoreconf -f -i -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
 		./configure \
@@ -1203,6 +1205,7 @@ $(DEPDIR)/libdvdread.do_prepare: @DEPENDS_libdvdread@
 $(DEPDIR)/libdvdread.do_compile: bootstrap libdvdread.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libdvdread@ && \
+		cp $(hostprefix)/share/libtool/config/ltmain.sh . && \
 		autoreconf -f -i -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
 		./configure \

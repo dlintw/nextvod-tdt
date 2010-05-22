@@ -487,19 +487,6 @@ $(CROSS_BINUTILS_DEV): $(CROSS_BINUTILS_DEV_RPM)
 	touch .deps/$(notdir $@)
 
 #
-# KERNEL-HEADERS
-#
-$(DEPDIR)/kernel-headers: linux-kernel.do_prepare
-	cd $(KERNEL_DIR) && \
-		$(INSTALL) -d $(targetprefix)/usr/include && \
-		cp -a include/linux $(targetprefix)/usr/include && \
-		cp -a include/asm-sh $(targetprefix)/usr/include/asm && \
-		cp -a include/asm-generic $(targetprefix)/usr/include && \
-		cp -a include/mtd $(targetprefix)/usr/include
-	touch $@
-
-
-#
 # CROSS GMP
 #
 if STM24
