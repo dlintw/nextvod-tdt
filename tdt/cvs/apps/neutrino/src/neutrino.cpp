@@ -851,6 +851,7 @@ int CNeutrinoApp::loadSetup(const char * fname)
         g_settings.network_ntprefresh   = configfile.getString("network_ntprefresh", "30" );
         g_settings.network_ntpenable    = configfile.getBool("network_ntpenable", false);
 
+	g_settings.epg_filter = configfile.getBool("epg_filter", false);
 	g_settings.epg_save = configfile.getBool("epg_save", false);
 
 	//widget settings
@@ -1385,6 +1386,7 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setString("language", g_settings.language);
 	configfile.setString("timezone", g_settings.timezone);
 	// epg
+	configfile.setBool("epg_filter", g_settings.epg_filter);
 	configfile.setBool("epg_save", g_settings.epg_save);
         configfile.setString("epg_cache_time"           ,g_settings.epg_cache );
         configfile.setString("epg_extendedcache_time"   ,g_settings.epg_extendedcache);

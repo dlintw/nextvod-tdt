@@ -175,7 +175,10 @@ static long secondsExtendedTextCache;
 static long oldEventsAre;
 static int scanning = 1;
 
+bool epg_filter = false;
 std::string epg_filter_dir = "/var/tuxbox/config/zapit/epgfilter.xml";
+std::string epg_bouquets_dir = "/var/tuxbox/config/zapit/bouquets.xml";
+std::string epg_ubouquets_dir = "/var/tuxbox/config/zapit/ubouquets.xml";
 static bool epg_filter_is_whitelist = false;
 static bool epg_filter_except_current_next = false;
 static bool bouquet_filter_is_whitelist = false;
@@ -186,8 +189,8 @@ static bool dvb_time_update = false;
 
 //NTP- Config
 #define CONF_FILE "/var/tuxbox/config/neutrino.conf"
-//const std::string ntp_system_cmd_prefix = "/sbin/rdate -s ";
-const std::string ntp_system_cmd_prefix = "/sbin/ntpdate ";
+const std::string ntp_system_cmd_prefix = "/sbin/rdate -4 -n -s ";
+//const std::string ntp_system_cmd_prefix = "/sbin/ntpdate ";
 std::string ntp_system_cmd;
 CConfigFile ntp_config(',');
 std::string ntpserver;
@@ -8243,27 +8246,23 @@ printf("[sectionsd] Removed %d old events.\n", anzEventsAlt - mySIeventsOrderUni
 	pthread_exit(NULL);
 }
 
-static void readEPGFilter(void)
-{
-	xmlDocPtr filter_parser = parseXmlFile(epg_filter_dir.c_str());
-
+static void readEPGFilter(void) {
+	xmlNodePtr filter;
+	xmlNodePtr filter1;
+	xmlDocPtr filter_parser;
 	t_original_network_id onid = 0;
 	t_transport_stream_id tsid = 0;
 	t_service_id sid = 0;
-
-	if (filter_parser != NULL)
-	{
-		dprintf("Reading EPGFilters\n");
-		
-		xmlNodePtr filter = xmlDocGetRootElement(filter_parser);
+	filter_parser = parseXmlFile(epg_filter_dir.c_str());
+	if (filter_parser != NULL) {
+//		xprintf("Reading EPGFilters (epgfilter.xml)\n");
+		filter = xmlDocGetRootElement(filter_parser);
 		if (xmlGetNumericAttribute(filter, (char *) "is_whitelist", 10) == 1)
 			epg_filter_is_whitelist = true;
 		if (xmlGetNumericAttribute(filter, (char *) "except_current_next", 10) == 1)
 			epg_filter_except_current_next = true;
 		filter = filter->xmlChildrenNode;
-
 		while (filter) {
-
 			onid = xmlGetNumericAttribute(filter, (char *) "onid", 16);
 			tsid = xmlGetNumericAttribute(filter, (char *) "tsid", 16);
 			sid  = xmlGetNumericAttribute(filter, (char *) "serviceID", 16);
@@ -8271,8 +8270,46 @@ static void readEPGFilter(void)
 				addBlacklist(onid, tsid, sid);
 			else
 				addEPGFilter(onid, tsid, sid);
-
 			filter = filter->xmlNextNode;
+		}
+	} else {
+		filter_parser = parseXmlFile(epg_bouquets_dir.c_str());
+		if (filter_parser != NULL) {
+//			xprintf("Reading EPGFilters (bouqutes.xml)\n");
+			epg_filter_is_whitelist = true;
+			epg_filter_except_current_next = true;
+			filter = xmlDocGetRootElement(filter_parser);
+			filter = filter->xmlChildrenNode;
+			while (filter) {
+				filter1 = filter->xmlChildrenNode;
+				while (filter1) {
+					onid = xmlGetNumericAttribute(filter1, "on", 16);
+					tsid = xmlGetNumericAttribute(filter1, "t", 16);
+					sid  = xmlGetNumericAttribute(filter1, "i", 16);
+					addEPGFilter(onid, tsid, sid);
+					filter1 = filter1->xmlNextNode;
+				}
+				filter = filter->xmlNextNode;
+			}
+		}
+		filter_parser = parseXmlFile(epg_ubouquets_dir.c_str());
+		if (filter_parser != NULL) {
+//			xprintf("Reading EPGFilters (ubouquets.xml)\n");
+			epg_filter_is_whitelist = true;
+			epg_filter_except_current_next = true;
+			filter = xmlDocGetRootElement(filter_parser);
+			filter = filter->xmlChildrenNode;
+			while (filter) {
+				filter1 = filter->xmlChildrenNode;
+				while (filter1) {
+					onid = xmlGetNumericAttribute(filter1, "on", 16);
+					tsid = xmlGetNumericAttribute(filter1, "t", 16);
+					sid  = xmlGetNumericAttribute(filter1, "i", 16);
+					addEPGFilter(onid, tsid, sid);
+					filter1 = filter1->xmlNextNode;
+				}
+				filter = filter->xmlNextNode;
+			}
 		}
 	}
 	xmlFreeDoc(filter_parser);
@@ -8488,6 +8525,7 @@ void sectionsd_main_thread(void *data)
 	ntp_system_cmd = ntp_system_cmd_prefix + ntpserver;
 
 	//EPG Einstellungen laden
+	epg_filter = ntp_config.getBool("epg_filter", false);
 	secondsToCache = (atoi(ntp_config.getString("epg_cache_time","14").c_str() ) *24*60L*60L); //Tage
 	secondsExtendedTextCache = (atoi(ntp_config.getString("epg_extendedcache_time","360").c_str() ) *60L*60L); //Stunden
 	oldEventsAre = (atoi(ntp_config.getString("epg_old_events","1").c_str() ) *60L*60L); //Stunden
@@ -8498,7 +8536,10 @@ void sectionsd_main_thread(void *data)
 	printf("[sectionsd] Caching %ld hours Extended Text\n", secondsExtendedTextCache / (60*60L));
 	printf("[sectionsd] Events are old %ldmin after their end time\n", oldEventsAre / 60);
 
-	readEPGFilter();
+	if (epg_filter) {
+		readEPGFilter();
+	}
+
 	readDVBTimeFilter();
 	readBouquetFilter();
 	readEncodingFile();
