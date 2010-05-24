@@ -252,13 +252,21 @@ AC_ARG_ENABLE(hl101,
 AM_CONDITIONAL(ENABLE_HL101,test "$enable_hl101" = "yes")
 AC_SUBST(HL101)
 
-AC_ARG_ENABLE(vip2,
-	AS_HELP_STRING(--enable-vip2,    enable edision argus vip2 stuff),
+AC_ARG_ENABLE(vip2_v1,
+	AS_HELP_STRING(--enable-vip2_v1,    enable edision argus vip2_v1 stuff),
 	[case "${enableval}" in
-		yes) VIP2=vip2 ;;
-	esac],[enable_vip2=no])
-AM_CONDITIONAL(ENABLE_VIP2,test "$enable_vip2" = "yes")
-AC_SUBST(VIP2)
+		yes) VIP2_V1=vip2_v1 ;;
+	esac],[enable_vip2_v1=no])
+AM_CONDITIONAL(ENABLE_VIP2_V1,test "$enable_vip2_v1" = "yes")
+AC_SUBST(VIP2_V1)
+
+AC_ARG_ENABLE(vip1_v2,
+	AS_HELP_STRING(--enable-vip1_v2,    enable edision argus vip1_v2 stuff),
+	[case "${enableval}" in
+		yes) VIP1_V2=vip1_v2 ;;
+	esac],[enable_vip1_v2=no])
+AM_CONDITIONAL(ENABLE_VIP1_V2,test "$enable_vip1_v2" = "yes")
+AC_SUBST(VIP1_V2)
 
 AC_ARG_ENABLE(ufs922,
 	AS_HELP_STRING(--enable-ufs922,    enable kathrein ufs922 stuff),
@@ -977,7 +985,8 @@ Fortis/hdbox stuff:    $enable_fortis_hdbox
 octagon1008 stuff:     $enable_octagon1008
 topfield stuff:	       $enable_tf7700
 spider-box hl101 stuff:	$enable_hl101
-edision argus vip2 stuff:	$enable_vip2
+edision argus vip1 v2 stuff:	$enable_vip1_v2
+edision argus vip2 v1 stuff:	$enable_vip2_v1
 ufs910 stuff:	       $enable_ufs910
 ufs910 flash:          $enable_flash_ufs910
 ufs912 stuff:	       $enable_ufs912

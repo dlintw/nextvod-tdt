@@ -62,7 +62,7 @@ echo " 4) Kathrein UFS-922"
 echo " 5) Topfield 7700 HDPVR"
 echo " 6) Fortis based (HDBOX)"
 echo " 7) SpiderBox HL-101"
-echo " 8) Edision argus VIP2"
+echo " 8) Edision Argus vip"
 echo " 9) Cuberevo (IPBOX 9000)"
 echo "10) Cuberevo mini (IPBOX 900)"
 echo "11) Cuberevo mini2 (IPBOX 910)"
@@ -85,7 +85,7 @@ case "$REPLY" in
 	 5) TARGET="--enable-tf7700";;
 	 6) TARGET="--enable-fortis_hdbox --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
 	 7) TARGET="--enable-hl101";;
-	 8) TARGET="--enable-vip2";;
+	 8) TARGET="--enable-vip";;
 	 9) TARGET="--enable-cuberevo";;
 	10) TARGET="--enable-cuberevo_mini";;
 	11) TARGET="--enable-cuberevo_mini2";;
@@ -96,9 +96,29 @@ case "$REPLY" in
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"
 
+case "$REPLY" in
+        8) REPLY=$3
+			echo -e "\nModels:"
+			echo " 1) VIP1 v1 [ single tuner + 2 CI + 2 USB ]"
+			echo " 2) VIP1 v2 [ single tuner + 2 CI + 1 USB + plug & play tuner (dvb-s2/t/c) ]"
+			echo " 3) VIP2 v1 [ twin tuner ]"
+			
+        	read -p "Select Model (1-3)? "
+        		
+			case "$REPLY" in
+				1) MODEL="--enable-hl101";;
+				2) MODEL="--enable-vip1_v2";;
+				3) MODEL="--enable-vip2_v1";;
+				*) MODEL="--enable-vip2_v1";;
+			esac
+			CONFIGPARAM="$CONFIGPARAM $MODEL"
+        	;;
+        *)
+esac
+
 ##############################################
 
-echo "Kernel:"
+echo -e "\nKernel:"
 echo " 1) STM 22 P0041"
 echo " 2) STM 23 P0119 (instable)"
 echo " 3) STM 23 P0119 with Havana (instable)"
