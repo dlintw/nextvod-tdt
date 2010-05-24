@@ -72,6 +72,7 @@ struct SNeutrinoSettings
 	#ifdef DUCKBOX
 	int scale_display_type;
 	#endif
+	int play_button_action;
 
 	//audio
 	int audio_AnalogMode;

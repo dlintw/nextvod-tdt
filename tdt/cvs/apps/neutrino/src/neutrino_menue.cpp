@@ -1433,10 +1433,20 @@ const CMenuOptionChooser::keyval AUDIOPLAYER_DISPLAY_ORDER_OPTIONS[AUDIOPLAYER_D
 	{ CAudioPlayerGui::TITLE_ARTIST, LOCALE_AUDIOPLAYER_TITLE_ARTIST }
 };
 
+#define PLAY_BUTTON_ACTION_OPTION_COUNT 2
+const CMenuOptionChooser::keyval PLAY_BUTTON_ACTION_OPTION[PLAY_BUTTON_ACTION_OPTION_COUNT] =
+{
+	{ 0, LOCALE_MOVIEBROWSER_HEAD },
+	{ 1, LOCALE_MOVIEPLAYER_FILEPLAYBACK }
+};
+
 void CNeutrinoApp::InitAudioplPicSettings(CMenuWidget &audioplPicSettings)
 {
 	audioplPicSettings.addItem(GenericMenuSeparator);
 	audioplPicSettings.addItem(GenericMenuBack);
+
+	audioplPicSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_PICTUREVIEWER_HEAD));
+	audioplPicSettings.addItem(new CMenuOptionChooser(LOCALE_PLAY_BUTTON_ACTION, &g_settings.play_button_action, PLAY_BUTTON_ACTION_OPTION, PLAY_BUTTON_ACTION_OPTION_COUNT, true ));
 
 	audioplPicSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_PICTUREVIEWER_HEAD));
 	audioplPicSettings.addItem(new CMenuOptionChooser(LOCALE_PICTUREVIEWER_SCALING  , &g_settings.picviewer_scaling     , PICTUREVIEWER_SCALING_OPTIONS  , PICTUREVIEWER_SCALING_OPTION_COUNT  , true ));

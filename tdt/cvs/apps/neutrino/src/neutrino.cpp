@@ -734,7 +734,6 @@ int CNeutrinoApp::loadSetup(const char * fname)
 {
 	char cfg_key[81];
 	int erg = 0;
-
 	configfile.clear();
 	//settings laden - und dabei Defaults setzen!
 	if(!configfile.loadConfig(fname)) {
@@ -1117,6 +1116,8 @@ printf("***************************** rec dir %s timeshift dir %s\n", g_settings
 	g_settings.picviewer_scaling = configfile.getInt32("picviewer_scaling", 1 /*(int)CPictureViewer::SIMPLE*/);
 	g_settings.picviewer_decode_server_ip = configfile.getString("picviewer_decode_server_ip", "");
 	
+	//video-player
+	g_settings.play_button_action = configfile.getInt32("play_button_action", 0); // default: recordings browser
 	//Audio-Player
 	g_settings.audioplayer_display = configfile.getInt32("audioplayer_display",(int)CAudioPlayerGui::ARTIST_TITLE);
 	g_settings.audioplayer_follow  = configfile.getInt32("audioplayer_follow",0);
@@ -1640,6 +1641,8 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setString( "picviewer_decode_server_ip", g_settings.picviewer_decode_server_ip );
 	configfile.setString( "picviewer_decode_server_port", g_settings.picviewer_decode_server_port);
 
+	//video-player
+	configfile.setInt32( "play_button_action", g_settings.play_button_action ); 
 	//Audio-Player
 	configfile.setInt32( "audioplayer_display", g_settings.audioplayer_display );
 	configfile.setInt32( "audioplayer_follow", g_settings.audioplayer_follow );
@@ -2833,7 +2836,10 @@ printf("[neutrino] direct record\n");
 					//dvbsub_pause();
 					if( mode == mode_radio )
 						videoDecoder->StopPicture();
-					moviePlayerGui->exec(NULL, "tsmoviebrowser");
+					if ( g_settings.play_button_action == 0 )
+						moviePlayerGui->exec(NULL, "tsmoviebrowser");
+					else
+						moviePlayerGui->exec(NULL, "fileplayback");
 					if( mode == mode_radio )
 						videoDecoder->ShowPicture(DATADIR "/neutrino/icons/radiomode.jpg");
 					//dvbsub_start(0);
