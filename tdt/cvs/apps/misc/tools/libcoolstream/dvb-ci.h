@@ -155,7 +155,7 @@ class cDvbCi {
                 void CI_CloseMMI(unsigned char bSlotIndex);
                 void CI_EnterMenu(unsigned char bSlotIndex);
                 bool checkQueueSize(tSlot* slot);
-                void process_tpdu(tSlot* slot, char tpdu_tag, __u8* data, int asn_data_length, int con_id);
+                void process_tpdu(tSlot* slot, unsigned char tpdu_tag, __u8* data, int asn_data_length, int con_id);
                 void reset(int slot);
 };
 

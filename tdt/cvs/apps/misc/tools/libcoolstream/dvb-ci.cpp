@@ -293,7 +293,7 @@ bool sendCreateTC(tSlot* slot)
    return true;
 }
 
-void cDvbCi::process_tpdu(tSlot* slot, char tpdu_tag, __u8* data, int asn_data_length, int con_id)
+void cDvbCi::process_tpdu(tSlot* slot, unsigned char tpdu_tag, __u8* data, int asn_data_length, int con_id)
 {
       switch (tpdu_tag) 
       {
