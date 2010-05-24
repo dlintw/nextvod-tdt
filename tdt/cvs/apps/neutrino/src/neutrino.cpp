@@ -734,7 +734,6 @@ int CNeutrinoApp::loadSetup(const char * fname)
 {
 	char cfg_key[81];
 	int erg = 0;
-
 	configfile.clear();
 	//settings laden - und dabei Defaults setzen!
 	if(!configfile.loadConfig(fname)) {
@@ -851,6 +850,7 @@ int CNeutrinoApp::loadSetup(const char * fname)
         g_settings.network_ntprefresh   = configfile.getString("network_ntprefresh", "30" );
         g_settings.network_ntpenable    = configfile.getBool("network_ntpenable", false);
 
+	g_settings.epg_filter = configfile.getBool("epg_filter", false);
 	g_settings.epg_save = configfile.getBool("epg_save", false);
 
 	//widget settings
@@ -1116,6 +1116,8 @@ printf("***************************** rec dir %s timeshift dir %s\n", g_settings
 	g_settings.picviewer_scaling = configfile.getInt32("picviewer_scaling", 1 /*(int)CPictureViewer::SIMPLE*/);
 	g_settings.picviewer_decode_server_ip = configfile.getString("picviewer_decode_server_ip", "");
 	
+	//video-player
+	g_settings.play_button_action = configfile.getInt32("play_button_action", 0); // default: recordings browser
 	//Audio-Player
 	g_settings.audioplayer_display = configfile.getInt32("audioplayer_display",(int)CAudioPlayerGui::ARTIST_TITLE);
 	g_settings.audioplayer_follow  = configfile.getInt32("audioplayer_follow",0);
@@ -1385,6 +1387,7 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setString("language", g_settings.language);
 	configfile.setString("timezone", g_settings.timezone);
 	// epg
+	configfile.setBool("epg_filter", g_settings.epg_filter);
 	configfile.setBool("epg_save", g_settings.epg_save);
         configfile.setString("epg_cache_time"           ,g_settings.epg_cache );
         configfile.setString("epg_extendedcache_time"   ,g_settings.epg_extendedcache);
@@ -1638,6 +1641,8 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setString( "picviewer_decode_server_ip", g_settings.picviewer_decode_server_ip );
 	configfile.setString( "picviewer_decode_server_port", g_settings.picviewer_decode_server_port);
 
+	//video-player
+	configfile.setInt32( "play_button_action", g_settings.play_button_action ); 
 	//Audio-Player
 	configfile.setInt32( "audioplayer_display", g_settings.audioplayer_display );
 	configfile.setInt32( "audioplayer_follow", g_settings.audioplayer_follow );
@@ -2831,7 +2836,10 @@ printf("[neutrino] direct record\n");
 					//dvbsub_pause();
 					if( mode == mode_radio )
 						videoDecoder->StopPicture();
-					moviePlayerGui->exec(NULL, "tsmoviebrowser");
+					if ( g_settings.play_button_action == 0 )
+						moviePlayerGui->exec(NULL, "tsmoviebrowser");
+					else
+						moviePlayerGui->exec(NULL, "fileplayback");
 					if( mode == mode_radio )
 						videoDecoder->ShowPicture(DATADIR "/neutrino/icons/radiomode.jpg");
 					//dvbsub_start(0);

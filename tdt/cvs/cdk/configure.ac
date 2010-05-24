@@ -126,7 +126,7 @@ if test -z "$CFLAGS" ; then
 	CFLAGS="-g -O2"
 fi
 # CFLAGS="-g -O2 -fno-strict-aliasing"
-if test -z "$TARGET_CFLAGS" -o -z"$TARGET_CXXFLAGS"; then
+if test -z "$TARGET_CFLAGS" -o -z "$TARGET_CXXFLAGS"; then
 	TARGET_CFLAGS="-O2"
 	if test "$enable_flashrules" != "yes"; then
 		TARGET_CFLAGS="$TARGET_CFLAGS"

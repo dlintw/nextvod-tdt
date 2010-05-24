@@ -1433,10 +1433,20 @@ const CMenuOptionChooser::keyval AUDIOPLAYER_DISPLAY_ORDER_OPTIONS[AUDIOPLAYER_D
 	{ CAudioPlayerGui::TITLE_ARTIST, LOCALE_AUDIOPLAYER_TITLE_ARTIST }
 };
 
+#define PLAY_BUTTON_ACTION_OPTION_COUNT 2
+const CMenuOptionChooser::keyval PLAY_BUTTON_ACTION_OPTION[PLAY_BUTTON_ACTION_OPTION_COUNT] =
+{
+	{ 0, LOCALE_MOVIEBROWSER_HEAD },
+	{ 1, LOCALE_MOVIEPLAYER_FILEPLAYBACK }
+};
+
 void CNeutrinoApp::InitAudioplPicSettings(CMenuWidget &audioplPicSettings)
 {
 	audioplPicSettings.addItem(GenericMenuSeparator);
 	audioplPicSettings.addItem(GenericMenuBack);
+
+	audioplPicSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_PICTUREVIEWER_HEAD));
+	audioplPicSettings.addItem(new CMenuOptionChooser(LOCALE_PLAY_BUTTON_ACTION, &g_settings.play_button_action, PLAY_BUTTON_ACTION_OPTION, PLAY_BUTTON_ACTION_OPTION_COUNT, true ));
 
 	audioplPicSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_PICTUREVIEWER_HEAD));
 	audioplPicSettings.addItem(new CMenuOptionChooser(LOCALE_PICTUREVIEWER_SCALING  , &g_settings.picviewer_scaling     , PICTUREVIEWER_SCALING_OPTIONS  , PICTUREVIEWER_SCALING_OPTION_COUNT  , true ));
@@ -1558,6 +1568,7 @@ void CNeutrinoApp::InitMiscSettings(CMenuWidget &miscSettings)
         miscSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_MISCSETTINGS_EPG_HEAD));
 
 	CSectionsdConfigNotifier* sectionsdConfigNotifier = new CSectionsdConfigNotifier;
+	miscSettings.addItem(new CMenuOptionChooser("EPG-Filter", &g_settings.epg_filter, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_MISCSETTINGS_EPG_SAVE, &g_settings.epg_save, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
         CStringInput * miscSettings_epg_cache = new CStringInput(LOCALE_MISCSETTINGS_EPG_CACHE, &g_settings.epg_cache, 2,LOCALE_MISCSETTINGS_EPG_CACHE_HINT1, LOCALE_MISCSETTINGS_EPG_CACHE_HINT2 , "0123456789 ", sectionsdConfigNotifier);
         miscSettings.addItem(new CMenuForwarder(LOCALE_MISCSETTINGS_EPG_CACHE, true, g_settings.epg_cache, miscSettings_epg_cache));

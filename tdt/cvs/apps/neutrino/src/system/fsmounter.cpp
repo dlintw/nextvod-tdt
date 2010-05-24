@@ -187,58 +187,49 @@ bool CFSMounter::isMounted(const char * const local_dir)
 	return false;
 }
 
-CFSMounter::MountRes CFSMounter::mount(const char * const ip, const char * const dir, const char * const local_dir, 
-				       const FSType fstype, const char * const username, const char * const password, 
-				       char * options1, char * options2)
+CFSMounter::MountRes CFSMounter::mount(const char * const ip, const char * const dir, const char * const local_dir,
+					const FSType fstype, const char * const username, const char * const password,
+					char * options1, char * options2)
 {
 	std::string cmd;
+	std::string dircmd;
 	pthread_mutex_init(&g_mut, NULL);
 	pthread_cond_init(&g_cond, NULL);
 	g_mntstatus=-1;
-
 	FS_Support sup = fsSupported(fstype, true); /* keep modules if necessary */
 
-	if (sup == CFSMounter::FS_UNSUPPORTED)
-	{
+	if (sup == CFSMounter::FS_UNSUPPORTED) {
 		printf("[CFSMounter] FS type %d not supported\n", (int) fstype);
 		return MRES_FS_NOT_SUPPORTED;
 	}
-
 	printf("[CFSMounter] Mount(%d) %s:%s -> %s\n", (int) fstype, ip, dir, local_dir);
-	
-	if (isMounted(local_dir))
-	{
+
+	if (isMounted(local_dir)) {
 		printf("[CFSMounter] FS mount error %s already mounted\n", local_dir);
 		return MRES_FS_ALREADY_MOUNTED;
 	}
 
-	if(options1[0] == '\0')
-	{
+	if(options1[0] == '\0') {
 		strcpy(options1,options2);
 		options2[0] = '\0';
 	}
-	
-	if((options1[0] == '\0') && (options2[0] == '\0'))
-	{
-		if(fstype == NFS)
-		{
+
+	if((options1[0] == '\0') && (options2[0] == '\0')) {
+		if(fstype == NFS) {
 			strcpy(options1,"ro,soft,udp");
 			strcpy(options2,"nolock,rsize=8192,wsize=8192");
 		}
-		else if(fstype == CIFS)
-		{
+		else if(fstype == CIFS) {
 			strcpy(options1,"ro");
 			strcpy(options2,"");
 		}
-		else if(fstype == LUFS)
-		{
+		else if(fstype == LUFS) {
 			strcpy(options1,"");
 			strcpy(options2,"");
 		}
 	}
-	
-	if(fstype == NFS)
-	{
+
+	if(fstype == NFS) {
 		cmd = "mount -t nfs ";
 		cmd += ip;
 		cmd += ':';
@@ -248,8 +239,7 @@ CFSMounter::MountRes CFSMounter::mount(const char * const ip, const char * const
 		cmd += " -o ";
 		cmd += options1;
 	}
-	else if(fstype == CIFS)
-	{
+	else if(fstype == CIFS) {
 		cmd = "mount -t cifs //";
 		cmd += ip;
 		cmd += '/';
@@ -267,8 +257,7 @@ CFSMounter::MountRes CFSMounter::mount(const char * const ip, const char * const
 		//cmd += ',';
 		//cmd += options1;
 	}
-	else
-	{
+	else {
 		cmd = "lufsd none ";
 		cmd += local_dir;
 		cmd += " -o fs=ftpfs,username=";
@@ -282,15 +271,24 @@ CFSMounter::MountRes CFSMounter::mount(const char * const ip, const char * const
 		cmd += ',';
 		cmd += options1;
 	}
-	
-	if (options2[0] !='\0')
-	{
+
+	if (options2[0] !='\0') {
 		cmd += ',';
 		cmd += options2;
 	}
-	
+
+	if ( local_dir ) {
+		dircmd = "test -d ";
+		dircmd += local_dir;
+		if ( system(dircmd.c_str() ) != 0 ) {
+			dircmd = "mkdir -p ";
+			dircmd += local_dir;
+			system( dircmd.c_str() );
+		}
+	}
+
 	pthread_create(&g_mnt, 0, mount_thread, (void *) cmd.c_str());
-	
+
 	struct timespec timeout;
 	int retcode;
 
@@ -298,19 +296,16 @@ CFSMounter::MountRes CFSMounter::mount(const char * const ip, const char * const
 	timeout.tv_sec = time(NULL) + 5;
 	timeout.tv_nsec = 0;
 	retcode = pthread_cond_timedwait(&g_cond, &g_mut, &timeout);
-	if (retcode == ETIMEDOUT) 
-	{  // timeout occurred
+	if (retcode == ETIMEDOUT) {  // timeout occurred
 		pthread_cancel(g_mnt);
 	}
 	pthread_mutex_unlock(&g_mut);
 	pthread_join(g_mnt, NULL);
-	if ( g_mntstatus != 0 )
-	{
+	if ( g_mntstatus != 0 ) {
 		printf("[CFSMounter] FS mount error: \"%s\"\n", cmd.c_str());
 		return (retcode == ETIMEDOUT) ? MRES_TIMEOUT : MRES_UNKNOWN;
 	}
 	return MRES_OK;
-
 }
 
 bool CFSMounter::automount()
