@@ -18,14 +18,18 @@ LIRCD_CONF := lircd.conf
 if ENABLE_HL101
 LIRCD_CONF := lircd_hl101.conf
 else !ENABLE_HL101
-if ENABLE_VIP2
-LIRCD_CONF := lircd_vip2.conf
-else !ENABLE_VIP2
+if ENABLE_VIP1_V2
+LIRCD_CONF := lircd_vip1_v2.conf
+else !ENABLE_VIP1_V2
+if ENABLE_VIP2_V1
+LIRCD_CONF := lircd_vip2_v1.conf
+else !ENABLE_VIP2_V1
 if ENABLE_HOMECAST5101
 LIRCD_CONF := lircd_hs5101.conf
 else !ENABLE_HOMECAST5101
 endif !ENABLE_HOMECAST5101
-endif !ENABLE_VIP2
+endif !ENABLE_VIP2_V1
+endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
 
 $(DEPDIR)/misc-cp:

@@ -26,7 +26,8 @@ $(appsdir)/enigma2/config.status: bootstrap freetype expat fontconfig libpng jpe
 			$(if $(FLASH_UFS910),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FLASH_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-hl101) \
-			$(if $(VIP2),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_VIP2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-vip2) \
+			$(if $(VIP1_V2),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_VIP1_V2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-vip1_v2) \
+			$(if $(VIP2_V1),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_VIP2_V1 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-vip2_v1) \
 			$(if $(HOMECAST5101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HS5101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(OCTAGON1008),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_OCTAGON1008 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
 
@@ -34,7 +35,10 @@ $(DEPDIR)/enigma2.do_prepare:
 if ENABLE_HL101
 	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches/e2_api5.patch
 endif
-if ENABLE_VIP2
+if ENABLE_VIP2_V1
+	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches/e2_api5.patch
+endif
+if ENABLE_VIP1_V2
 	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches/e2_api5.patch
 endif
 	touch $@

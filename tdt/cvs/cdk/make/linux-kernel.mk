@@ -123,7 +123,8 @@ HS5101PATCHES_41 = $(COMMONPATCHES_41) \
 
 KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 			$(if $(HL101),$(HL101PATCHES_41)) \
-			$(if $(VIP2),$(VIP2PATCHES_41)) \
+			$(if $(VIP1_V2),$(VIP2PATCHES_41)) \
+			$(if $(VIP2_V1),$(VIP2PATCHES_41)) \
 			$(if $(UFS922),$(UFS922PATCHES_41)) \
 			$(if $(CUBEMOD),$(CUBEPATCHES_041)) \
 			$(if $(UFS910),$(UFS910PATCHES_41)) \
@@ -145,11 +146,15 @@ endif !ENABLE_P0119
 if ENABLE_HL101
 STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
 else !ENABLE_HL101
-if ENABLE_VIP2
+if ENABLE_VIP1_V2
 STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
-else !ENABLE_VIP2
+else !ENABLE_VIP1_V2
+if ENABLE_VIP2_V1
+STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
+else !ENABLE_VIP2_V1
 STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23$(PATCH_STR).patch
-endif !ENABLE_VIP2
+endif !ENABLE_VIP2_V1
+endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
 
 COMMONPATCHES_23 = \
@@ -220,7 +225,8 @@ HS5101PATCHES_23 = $(UFS910PATCHES_23)
 
 KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(HL101),$(HL101PATCHES_23)) \
-		$(if $(VIP2),$(VIP2PATCHES_23)) \
+		$(if $(VIP1_V2),$(VIP2PATCHES_23)) \
+		$(if $(VIP2_V1),$(VIP2PATCHES_23)) \
 		$(if $(UFS912),$(UFS912PATCHES_23)) \
 		$(if $(UFS922),$(UFS922PATCHES_23)) \
 		$(if $(CUBEMOD),$(CUBEPATCHES_023)) \
@@ -260,7 +266,8 @@ VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
 		$(if $(UFS922),$(UFS922PATCHES_24)) \
-		$(if $(VIP2),$(VIP2_PATCHES_24))
+		$(if $(VIP1_V2),$(VIP2_PATCHES_24)) \
+		$(if $(VIP2_V1),$(VIP2_PATCHES_24))
 
 ############ Patches Kernel 24 End ###############
 
@@ -329,7 +336,7 @@ endif !STM22
 #
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(UFS922)$(TF7700)$(HL101)$(VIP2)$(CUBEMOD)$(FORTIS_HDBOX)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)
+MODNAME = $(UFS910)$(UFS912)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -502,7 +509,8 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	$(if $(UFS922),PLATFORM: stb7109ref\n) \
 	$(if $(TF7700),PLATFORM: stb7109ref\n) \
 	$(if $(HL101),PLATFORM: stb7109ref\n) \
-	$(if $(VIP2),PLATFORM: stb7109ref\n) \
+	$(if $(VIP1_V2),PLATFORM: stb7109ref\n) \
+	$(if $(VIP2_V1),PLATFORM: stb7109ref\n) \
 	$(if $(UFS910),PLATFORM: stb7100ref\n) \
 	$(if $(FLASH_UFS910),PLATFORM: stb7100ref\n) \
 	$(if $(CUBEREVO),PLATFORM: stb7109ref\n) \
@@ -532,7 +540,8 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
-		$(if $(VIP2),VIP2=$(VIP2)) \
+		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
+		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
  		$(if $(UFS912),UFS912=$(UFS912)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
@@ -553,7 +562,8 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
-		$(if $(VIP2),VIP2=$(VIP2)) \
+		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
+		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
  		$(if $(UFS912),UFS912=$(UFS912)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
