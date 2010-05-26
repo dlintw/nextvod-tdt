@@ -2,10 +2,11 @@
 
 MODDIR=/lib/modules
 
+insmod $MODDIR/vfd.ko
 insmod $MODDIR/aotom.ko
 
 if [ -e /var/etc/.firstboot ]; then
-   echo "WAIT 3 M" > /dev/vfd
+   echo "WAIT 3 min" > /dev/vfd
    echo "WAIT 3 min"
    rm /var/etc/.firstboot
    touch /dev/.devfsd
@@ -42,7 +43,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mme_host.ko transport0=shm
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko type=avs_none
+   insmod $MODDIR/avs.ko type=vip2_avs
 
    echo "init player"
    insmod $MODDIR/mmelog.ko
@@ -53,9 +54,10 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
    
    echo "init frontends"
-   insmod $MODDIR/fe-core.ko #demod1=stv090x tuner1=sharp7306 demod2=stv090x tuner2=sharp7306;
+   insmod $MODDIR/fe-core.ko demod=stv090x tuner=sharp7306;
 
    echo "init drivers"
+   insmod $MODDIR/cimax.ko
    insmod $MODDIR/pti.ko
    insmod $MODDIR/stmdvb.ko
    insmod $MODDIR/stm_monitor.ko

@@ -2,10 +2,11 @@
 
 MODDIR=/lib/modules
 
+insmod $MODDIR/vfd.ko
 insmod $MODDIR/aotom.ko
 
 if [ -e /var/etc/.firstboot ]; then
-   echo "WAIT 3 M" > /dev/vfd
+   echo "WAIT 3 min" > /dev/vfd
    echo "WAIT 3 min"
    rm /var/etc/.firstboot
    touch /dev/.devfsd
@@ -40,6 +41,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/embxmailbox.ko mailbox0=0xb9211000:136:set2 mailbox1=0xb9212000:0 ;
    insmod $MODDIR/embxshm.ko mailbox0=shm:0:7:0x60000000:0:256:256:0:1024:0xa4000000:0x10000000 ;
    insmod $MODDIR/mme_host.ko transport0=shm
+
+   echo "init AVS"
+   insmod $MODDIR/avs.ko type=vip2_avs
 
    echo "init player"
    insmod $MODDIR/mmelog.ko
