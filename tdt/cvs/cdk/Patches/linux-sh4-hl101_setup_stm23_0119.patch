@@ -249,6 +249,25 @@
   	}
   
   	if ((ret = register_netdev(dev))) {
+*** linux-sh4-2.6.23.17_stm23_0119_orig/drivers/net/stmmac/stmmac_mdio.c	Sun May 16 03:14:44 2010
+--- linux-sh4/drivers/net/stmmac/stmmac_mdio.c	Thu May 27 01:36:20 2010
+***************
+*** 174,180 ****
+  	for (addr = 0; addr < 32; addr++) {
+  		struct phy_device *phydev = new_bus->phy_map[addr];
+  		if (phydev) {
+! 			if (priv->phy_addr == -1) {
+  				priv->phy_addr = addr;
+  				phydev->irq = priv->phy_irq;
+  				irqlist[addr] = priv->phy_irq;
+--- 174,180 ----
+  	for (addr = 0; addr < 32; addr++) {
+  		struct phy_device *phydev = new_bus->phy_map[addr];
+  		if (phydev) {
+! 			if ((priv->phy_addr == -1) || (phydev->phy_id == 0x0181b880) || (phydev->phy_id == 0x0181b8a0)) {
+  				priv->phy_addr = addr;
+  				phydev->irq = priv->phy_irq;
+  				irqlist[addr] = priv->phy_irq;
 *** linux-sh4-2.6.23.17_stm23_0119_orig/drivers/usb/storage/usb.c	Sun Mar 14 03:16:37 2010
 --- linux-sh4/drivers/usb/storage/usb.c	Sun Mar 14 02:35:09 2010
 ***************
