@@ -4,6 +4,8 @@ export CXXFLAGS
 export DRPM 
 export DRPMBUILD 
 
+AUTOMAKE_OPTIONS = -Wno-portability
+
 if ENABLE_CCACHE
 PATH := $(hostprefix)/ccache-bin:$(crossprefix)/bin:$(PATH):/usr/sbin
 else

@@ -12,3 +12,13 @@
 +Version: 0.15.0b
 +Libs: -L${libdir} -lmad -lm
 +Cflags: -I${includedir}
+--- libmad-0.15.1b.orig/configure.ac	2010-05-24 00:11:11.000000000 +0200
++++ libmad-0.15.1b/configure.ac	2010-05-24 00:11:48.000000000 +0200
+@@ -140,7 +140,6 @@
+     case "$optimize" in
+ 	-O|"-O "*)
+ 	    optimize="-O"
+-	    optimize="$optimize -fforce-mem"
+ 	    optimize="$optimize -fforce-addr"
+ 	    : #x optimize="$optimize -finline-functions"
+ 	    : #- optimize="$optimize -fstrength-reduce"

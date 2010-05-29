@@ -135,7 +135,8 @@ BINUTILS_SPEC_PATCH :=
 BINUTILS_PATCHES :=
 else !STM22
 if STM23
-BINUTILS_VERSION := 2.18.50.0.8-38
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
+BINUTILS_VERSION := 2.19.1-41
 BINUTILS_SPEC := stm-target-$(BINUTILS).spec
 BINUTILS_SPEC_PATCH :=
 BINUTILS_PATCHES :=
@@ -154,7 +155,7 @@ BINUTILS_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS_DEV)-$(BINUTILS_VERSION).
 $(BINUTILS_RPM) $(BINUTILS_DEV_RPM): \
 		$(if $(BINUTILS_SPEC_PATCH),Patches/$(BINUTILS_PATCH)) \
 		$(if $(BINUTILS_PATCHES),$(BINUTILS_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(BINUTILS)-$(BINUTILS_VERSION).src.rpm
+		Archive/$(STLINUX:%23=%24)-target-$(BINUTILS)-$(BINUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(BINUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(BINUTILS_SPEC) < ../Patches/$(BINUTILS_SPEC_PATCH) ) &&) \
 	$(if $(BINUTILS_PATCHES),cp $(BINUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -180,7 +181,8 @@ STSLAVE_SPEC_PATCH :=
 STSLAVE_PATCHES :=
 else !STM22
 if STM23
-STSLAVE_VERSION := 0.7-16
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
+STSLAVE_VERSION := 0.7-18
 STSLAVE_SPEC := stm-target-$(STSLAVE).spec
 STSLAVE_SPEC_PATCH :=
 STSLAVE_PATCHES :=
@@ -198,7 +200,7 @@ STSLAVE_RPM := RPMS/sh4/$(STLINUX)-sh4-$(STSLAVE)-$(STSLAVE_VERSION).sh4.rpm
 $(STSLAVE_RPM): \
 		$(if $(STSLAVE_SPEC_PATCH),Patches/$(STSLAVE_PATCH)) \
 		$(if $(STSLAVE_PATCHES),$(STSLAVE_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(STSLAVE)-$(STSLAVE_VERSION).src.rpm
+		Archive/$(STLINUX:%23=%24)-target-$(STSLAVE)-$(STSLAVE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(STSLAVE_SPEC_PATCH),( cd SPECS && patch -p1 $(STSLAVE_SPEC) < ../Patches/$(STSLAVE_SPEC_PATCH) ) &&) \
 	$(if $(STSLAVE_PATCHES),cp $(STSLAVE_PATCHES:%=Patches/%) SOURCES/ &&) \

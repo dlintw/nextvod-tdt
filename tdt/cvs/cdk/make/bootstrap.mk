@@ -91,7 +91,9 @@ if STM23
 HOST_RPMCONFIG_VERSION = 2.3-16
 HOST_RPMCONFIG_SPEC = stm-$(HOST_RPMCONFIG).spec
 HOST_RPMCONFIG_SPEC_PATCH = stm-$(HOST_RPMCONFIG).spec23.diff
-HOST_RPMCONFIG_PATCHES = stm-$(HOST_RPMCONFIG)-autoreconf-add-libtool-macros23.patch
+HOST_RPMCONFIG_PATCHES = stm-$(HOST_RPMCONFIG)-autoreconf-add-libtool-macros23.patch \
+			 stm-$(HOST_RPMCONFIG)-config_sub-dir.patch
+
 else !STM23
 # if STM24
 HOST_RPMCONFIG_VERSION = 2.4-21
@@ -225,9 +227,10 @@ HOST_AUTOTOOLS_SPEC_PATCH = $(HOST_AUTOTOOLS_SPEC)22.diff
 HOST_AUTOTOOLS_PATCHES =
 else !STM22
 if STM23
-HOST_AUTOTOOLS_VERSION = $(if $(STABLE),2.0-14,2.0-15)
-HOST_AUTOTOOLS_SPEC = stm-$(HOST_AUTOTOOLS).spec
-HOST_AUTOTOOLS_SPEC_PATCH = $(HOST_AUTOTOOLS_SPEC)23.diff
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
+HOST_AUTOTOOLS_VERSION = dev-20091012-2
+HOST_AUTOTOOLS_SPEC = stm-$(HOST_AUTOTOOLS)-dev.spec
+HOST_AUTOTOOLS_SPEC_PATCH =
 HOST_AUTOTOOLS_PATCHES =
 else !STM23
 # if STM24
@@ -241,70 +244,122 @@ endif !STM22
 HOST_AUTOTOOLS_RPM = RPMS/sh4/$(STLINUX)-$(HOST_AUTOTOOLS)-$(HOST_AUTOTOOLS_VERSION).sh4.rpm
 
 $(HOST_AUTOTOOLS_RPM): \
-		$(if $(HOST_AUTOTOOLS_SPEC_PATCH),Patches/$(HOST_AUTOTOOLS_SPEC_PATCH)) \
-		$(if $(HOST_AUTOTOOLS_PATCHES),$(HOST_AUTOTOOLS_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-$(HOST_AUTOTOOLS)-$(HOST_AUTOTOOLS_VERSION).src.rpm
+		$(addprefix Patches/,$(HOST_AUTOTOOLS_SPEC_PATCH) $(HOST_AUTOTOOLS_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-$(HOST_AUTOTOOLS)-$(HOST_AUTOTOOLS_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(HOST_AUTOTOOLS_SPEC_PATCH),( cd SPECS && patch -p1 $(HOST_AUTOTOOLS_SPEC) < ../Patches/$(HOST_AUTOTOOLS_SPEC_PATCH) ) &&) \
-	$(if $(HOST_AUTOTOOLS_PATCHES),cp $(HOST_AUTOTOOLS_PATCHES:%=Patches/%) SOURCES/ &&) \
+	$(if $(HOST_AUTOTOOLS_PATCHES),cp $(addprefix Patches/,$(HOST_AUTOTOOLS_PATCHES)) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_AUTOTOOLS_SPEC)
 
-$(HOST_AUTOTOOLS): $(HOST_AUTOTOOLS_RPM)
+$(DEPDIR)/$(HOST_AUTOTOOLS): $(HOST_AUTOTOOLS_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
-	touch .deps/$(notdir $@)
+	touch $@
 
-if STM24
+#
+# HOST AUTOMAKE
+#
+if !STM22
+HOST_AUTOMAKE = host-automake
+if STM23
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
+HOST_AUTOMAKE_VERSION = 1.11-2
+HOST_AUTOMAKE_SPEC = stm-$(HOST_AUTOMAKE).spec
+HOST_AUTOMAKE_SPEC_PATCH =
+HOST_AUTOMAKE_PATCHES =
+else !STM23
+# if STM24
+HOST_AUTOMAKE_VERSION = 1.11-2
+HOST_AUTOMAKE_SPEC = stm-$(HOST_AUTOMAKE).spec
+HOST_AUTOMAKE_SPEC_PATCH =
+HOST_AUTOMAKE_PATCHES =
+# endif STM24
+endif !STM23
+HOST_AUTOMAKE_RPM = RPMS/sh4/$(STLINUX)-$(HOST_AUTOMAKE)-$(HOST_AUTOMAKE_VERSION).sh4.rpm
+
+$(HOST_AUTOMAKE_RPM): \
+		$(addprefix Patches/,$(HOST_AUTOMAKE_SPEC_PATCH) $(HOST_AUTOMAKE_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-$(HOST_AUTOMAKE)-$(HOST_AUTOMAKE_VERSION).src.rpm
+	rpm  $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(HOST_AUTOMAKE_SPEC_PATCH),( cd SPECS && patch -p1 $(HOST_AUTOMAKE_SPEC) < ../Patches/$(HOST_AUTOMAKE_SPEC_PATCH) ) &&) \
+	$(if $(HOST_AUTOMAKE_PATCHES),cp $(addprefix Patches/,$(HOST_AUTOMAKE_PATCHES)) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_AUTOMAKE_SPEC)
+
+$(DEPDIR)/$(HOST_AUTOMAKE): $(HOST_AUTOMAKE_RPM)
+	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
+	touch $@
+endif !STM22
+
 #
 # HOST AUTOCONF
 #
+if !STM22
 HOST_AUTOCONF = host-autoconf
+if STM23
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
 HOST_AUTOCONF_VERSION = 2.64-4
 HOST_AUTOCONF_SPEC = stm-$(HOST_AUTOCONF).spec
 HOST_AUTOCONF_SPEC_PATCH =
 HOST_AUTOCONF_PATCHES =
+else !STM23
+# if STM24
+HOST_AUTOCONF_VERSION = 2.64-4
+HOST_AUTOCONF_SPEC = stm-$(HOST_AUTOCONF).spec
+HOST_AUTOCONF_SPEC_PATCH =
+HOST_AUTOCONF_PATCHES =
+# endif STM24
+endif !STM23
 HOST_AUTOCONF_RPM = RPMS/sh4/$(STLINUX)-$(HOST_AUTOCONF)-$(HOST_AUTOCONF_VERSION).sh4.rpm
 
 $(HOST_AUTOCONF_RPM): \
-		$(if $(HOST_AUTOCONF_SPEC_PATCH),Patches/$(HOST_AUTOCONF_SPEC_PATCH)) \
-		$(if $(HOST_AUTOCONF_PATCHES),$(HOST_AUTOCONF_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-$(HOST_AUTOCONF)-$(HOST_AUTOCONF_VERSION).src.rpm
+		$(addprefix Patches/,$(HOST_AUTOCONF_SPEC_PATCH) $(HOST_AUTOCONF_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-$(HOST_AUTOCONF)-$(HOST_AUTOCONF_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(HOST_AUTOCONF_SPEC_PATCH),( cd SPECS && patch -p1 $(HOST_AUTOCONF_SPEC) < ../Patches/$(HOST_AUTOCONF_SPEC_PATCH) ) &&) \
-	$(if $(HOST_AUTOCONF_PATCHES),cp $(HOST_AUTOCONF_PATCHES:%=Patches/%) SOURCES/ &&) \
+	$(if $(HOST_AUTOMAKE_PATCHES),cp $(addprefix Patches/,$(HOST_AUTOCONF_PATCHES)) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_AUTOCONF_SPEC)
 
-$(HOST_AUTOCONF): $(HOST_AUTOCONF_RPM)
+$(DEPDIR)/$(HOST_AUTOCONF): $(HOST_AUTOCONF_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
-	touch .deps/$(notdir $@)
-endif STM24
+	touch $@
+endif !STM22
 
-if STM24
 #
 # HOST PKGCONFIG
 #
+if !STM22
 HOST_PKGCONFIG = host-pkg-config
+if STM23
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
 HOST_PKGCONFIG_VERSION = 0.23-2
 HOST_PKGCONFIG_SPEC = stm-$(HOST_PKGCONFIG).spec
 HOST_PKGCONFIG_SPEC_PATCH =
 HOST_PKGCONFIG_PATCHES =
+else !STM23
+# if STM24
+HOST_PKGCONFIG_VERSION = 0.23-2
+HOST_PKGCONFIG_SPEC = stm-$(HOST_PKGCONFIG).spec
+HOST_PKGCONFIG_SPEC_PATCH =
+HOST_PKGCONFIG_PATCHES =
+# endif STM24
+endif !STM23
 HOST_PKGCONFIG_RPM = RPMS/sh4/$(STLINUX)-$(HOST_PKGCONFIG)-$(HOST_PKGCONFIG_VERSION).sh4.rpm
 
 $(HOST_PKGCONFIG_RPM): \
-		$(if $(HOST_PKGCONFIG_SPEC_PATCH),Patches/$(HOST_PKGCONFIG_SPEC_PATCH)) \
-		$(if $(HOST_PKGCONFIG_PATCHES),$(HOST_PKGCONFIG_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-$(HOST_PKGCONFIG)-$(HOST_PKGCONFIG_VERSION).src.rpm
+		$(addprefix Patches/,$(HOST_PKGCONFIG_SPEC_PATCH) $(HOST_PKGCONFIG_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-$(HOST_PKGCONFIG)-$(HOST_PKGCONFIG_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(HOST_PKGCONFIG_SPEC_PATCH),( cd SPECS && patch -p1 $(HOST_PKGCONFIG_SPEC) < ../Patches/$(HOST_PKGCONFIG_SPEC_PATCH) ) &&) \
-	$(if $(HOST_PKGCONFIG_PATCHES),cp $(HOST_PKGCONFIG_PATCHES:%=Patches/%) SOURCES/ &&) \
+	$(if $(HOST_PKGCONFIG_PATCHES),cp $(addprefix Patches/,$(HOST_PKGCONFIG_PATCHES)) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_PKGCONFIG_SPEC)
 
-$(HOST_PKGCONFIG): $(HOST_PKGCONFIG_RPM)
+$(DEPDIR)/$(HOST_PKGCONFIG): $(HOST_PKGCONFIG_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
-	touch .deps/$(notdir $@)
-endif STM24
+	touch $@
+endif !STM22
 
 if STM22
 else !STM22
@@ -372,7 +427,7 @@ endif !STM24
 #
 $(DEPDIR)/bootstrap-host: | \
 		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils \
-		host-filesystem host-autotools $(HOST_AUTOCONF) $(HOST_PKGCONFIG) \
+		host-filesystem host-autotools $(HOST_AUTOMAKE) $(HOST_AUTOCONF) $(HOST_PKGCONFIG) \
 		$(HOST_MTD_UTILS) host-python
 	$(if $(HOST_MTD_UTILS_RPM),[ "x$*" = "x" ] && touch -r $(HOST_MTD_UTILS_RPM) $@ || true)
 
@@ -489,17 +544,29 @@ $(CROSS_BINUTILS_DEV): $(CROSS_BINUTILS_DEV_RPM)
 #
 # CROSS GMP
 #
-if STM24
+if !STM22
+if STM23
+CROSS_GMP = cross-sh4-gmp
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
+CROSS_GMP_VERSION = 4.3.2-6
+CROSS_GMP_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_GMP)).spec
+CROSS_GMP_SPEC_PATCH =
+CROSS_GMP_PATCHES =
+CROSS_GMP_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GMP)-$(CROSS_GMP_VERSION).$(host_arch).rpm
+else !STM23
+# if STM24
 CROSS_GMP = cross-sh4-gmp
 CROSS_GMP_VERSION = 4.3.2-6
 CROSS_GMP_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_GMP)).spec
 CROSS_GMP_SPEC_PATCH =
 CROSS_GMP_PATCHES =
 CROSS_GMP_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GMP)-$(CROSS_GMP_VERSION).$(host_arch).rpm
+# endif STM24
+endif !STM23
 
 $(CROSS_GMP_RPM): \
 		$(addprefix Patches/,$(CROSS_GMP_SPEC_PATCH) $(CROSS_GMP_PATCHES)) \
-		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GMP))-$(CROSS_GMP_VERSION).src.rpm
+		Archive/$(STLINUX:%23=%24)-$(subst cross-sh4-,cross-,$(CROSS_GMP))-$(CROSS_GMP_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(CROSS_GMP_SPEC_PATCH),( cd SPECS && patch -p1 $(CROSS_GMP_SPEC) < ../Patches/$(CROSS_GMP_SPEC_PATCH) ) &&) \
 	$(if $(CROSS_GMP_PATCHES),cp $(addprefix Patches/,$(CROSS_GMP_PATCHES)) SOURCES/ &&) \
@@ -509,23 +576,33 @@ $(CROSS_GMP_RPM): \
 $(DEPDIR)/$(CROSS_GMP): $(CROSS_GMP_RPM)
 	@rpm $(DRPM) --nodeps -Uhv $(lastword $^) && \
 	touch $@
-endif STM24
+endif !STM22
 
 #
 # CROSS MPFR
 #
-if STM24
+if !STM22
 CROSS_MPFR = cross-sh4-mpfr
+if STM23
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
 CROSS_MPFR_VERSION = 2.4.2-6
 CROSS_MPFR_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_MPFR)).spec
 CROSS_MPFR_SPEC_PATCH = $(CROSS_MPFR_SPEC)24.diff
 CROSS_MPFR_PATCHES =
+else !STM23
+# if STM24
+CROSS_MPFR_VERSION = 2.4.2-6
+CROSS_MPFR_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_MPFR)).spec
+CROSS_MPFR_SPEC_PATCH = $(CROSS_MPFR_SPEC)24.diff
+CROSS_MPFR_PATCHES =
+# endif STM24
+endif !STM23
 CROSS_MPFR_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_MPFR)-$(CROSS_MPFR_VERSION).$(host_arch).rpm
 
 $(CROSS_MPFR_RPM): \
 		$(CROSS_GMP_RPM) \
 		$(addprefix Patches/,$(CROSS_MPFR_SPEC_PATCH) $(CROSS_MPFR_PATCHES)) \
-		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_MPFR))-$(CROSS_MPFR_VERSION).src.rpm
+		Archive/$(STLINUX:%23=%24)-$(subst cross-sh4-,cross-,$(CROSS_MPFR))-$(CROSS_MPFR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(CROSS_MPFR_SPEC_PATCH),( cd SPECS && patch -p1 $(CROSS_MPFR_SPEC) < ../Patches/$(CROSS_MPFR_SPEC_PATCH) ) &&) \
 	$(if $(CROSS_MPFR_PATCHES),cp $(addprefix Patches/,$(CROSS_MPFR_PATCHES)) SOURCES/ &&) \
@@ -535,7 +612,7 @@ $(CROSS_MPFR_RPM): \
 $(DEPDIR)/$(CROSS_MPFR): $(CROSS_GMP) $(CROSS_MPFR_RPM)
 	@rpm $(DRPM) --nodeps -Uhv $(lastword $^) && \
 	touch $@
-endif STM24
+endif !STM22
 
 #
 # CROSS GCC
@@ -555,13 +632,14 @@ CROSS_GCC_KERNELHEADERS = kernel-headers
 CROSS_GCC_INVALIDATE = YES
 else !STM22
 if STM23
-CROSS_GCC_VERSION = $(if $(STABLE),4.2.4-49,4.2.4-63)
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
+CROSS_GCC_VERSION = 4.3.4-63
 CROSS_GCC_RAWVERSION = $(firstword $(subst -, ,$(CROSS_GCC_VERSION)))
 CROSS_GCC_SPEC = stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
 CROSS_GCC_SPEC_PATCH = $(CROSS_GCC_SPEC)23.diff
 CROSS_GCC_PATCHES =
-CROSS_GCC_KERNELHEADERS = kernel-headers
-CROSS_GCC_INVALIDATE = $(if $(STABLE),YES)
+CROSS_GCC_KERNELHEADERS = linux-kernel-headers
+CROSS_GCC_INVALIDATE =
 else !STM23
 # if STM24
 CROSS_GCC_VERSION = 4.3.4-63
@@ -583,7 +661,7 @@ CROSS_LIBGCC_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_LIBGCC)-$(CROSS_GCC_VERS
 $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS_LIBGCC_RPM): \
 		$(if $(CROSS_GCC_SPEC_PATCH),Patches/$(CROSS_GCC_SPEC_PATCH)) \
 		$(if $(CROSS_GCC_PATCHES),$(CROSS_GCC_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-$(subst cross-sh4-,cross-,$(CROSS_GCC))-$(CROSS_GCC_VERSION).src.rpm \
+		Archive/$(STLINUX:%23=%24)-$(subst cross-sh4-,cross-,$(CROSS_GCC))-$(CROSS_GCC_VERSION).src.rpm \
 		| Archive/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 		Archive/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm \
 		$(if $(CROSS_MPFR),$(CROSS_MPFR)) \

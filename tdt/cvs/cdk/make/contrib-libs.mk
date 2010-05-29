@@ -12,9 +12,9 @@ $(DEPDIR)/libboost: bootstrap @DEPENDS_libboost@
 #
 # LIBZ
 #
-if STM24
+if !STM22
 LIBZ_ORDER = binutils-dev
-endif STM24
+endif !STM22
 
 $(DEPDIR)/libz.do_prepare: bootstrap @DEPENDS_libz@ $(if $(LIBZ_ORDER),| $(LIBZ_ORDER))
 	@PREPARE_libz@
@@ -1206,6 +1206,7 @@ $(DEPDIR)/libdvdread.do_compile: bootstrap libdvdread.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libdvdread@ && \
 		cp $(hostprefix)/share/libtool/config/ltmain.sh . && \
+		cp $(hostprefix)/share/libtool/config/ltmain.sh .. && \
 		autoreconf -f -i -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
 		./configure \

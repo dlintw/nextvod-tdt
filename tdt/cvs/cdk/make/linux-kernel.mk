@@ -161,6 +161,7 @@ COMMONPATCHES_23 = \
 		linux-sh4-cpp_stm23.patch \
 		linux-sh4-time_stm23.patch \
 		linux-sh4-cmdline-printk_stm23.patch \
+		linux-sh4-shksyms-gcc43_stm23.patch \
 		$(if $(P0123),linux-sh4-mtd_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-strcpy_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-asm_mov_0xffffff_stm23$(PATCH_STR).patch) \
