@@ -1446,9 +1446,6 @@ void CNeutrinoApp::InitAudioplPicSettings(CMenuWidget &audioplPicSettings)
 	audioplPicSettings.addItem(GenericMenuBack);
 
 	audioplPicSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_PICTUREVIEWER_HEAD));
-	audioplPicSettings.addItem(new CMenuOptionChooser(LOCALE_PLAY_BUTTON_ACTION, &g_settings.play_button_action, PLAY_BUTTON_ACTION_OPTION, PLAY_BUTTON_ACTION_OPTION_COUNT, true ));
-
-	audioplPicSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_PICTUREVIEWER_HEAD));
 	audioplPicSettings.addItem(new CMenuOptionChooser(LOCALE_PICTUREVIEWER_SCALING  , &g_settings.picviewer_scaling     , PICTUREVIEWER_SCALING_OPTIONS  , PICTUREVIEWER_SCALING_OPTION_COUNT  , true ));
 	CStringInput * pic_timeout= new CStringInput(LOCALE_PICTUREVIEWER_SLIDE_TIME, g_settings.picviewer_slide_time, 2, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789 ");
 	audioplPicSettings.addItem(new CMenuForwarder(LOCALE_PICTUREVIEWER_SLIDE_TIME, true, g_settings.picviewer_slide_time, pic_timeout));
@@ -2622,6 +2619,7 @@ void CNeutrinoApp::InitKeySettings(CMenuWidget &keySettings)
 		bindSettings->addItem(new CMenuForwarder(keydescription[i], true, NULL, keychooser[i]));
 
 	bindSettings->addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_MAINSETTINGS_MISC));
+	bindSettings->addItem(new CMenuOptionChooser(LOCALE_PLAY_BUTTON_ACTION, &g_settings.play_button_action, PLAY_BUTTON_ACTION_OPTION, PLAY_BUTTON_ACTION_OPTION_COUNT, true ));
 	//bindSettings->addItem(new CMenuForwarder(keydescription[KEY_PLUGIN], true, NULL, keychooser[KEY_PLUGIN]));
 	bindSettings->addItem(new CMenuForwarder(keydescription[KEY_UNLOCK], true, NULL, keychooser[KEY_UNLOCK]));
 	//bindSettings->addItem(new CMenuOptionChooser(LOCALE_EXTRA_ZAP_CYCLE, &g_settings.zap_cycle, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
