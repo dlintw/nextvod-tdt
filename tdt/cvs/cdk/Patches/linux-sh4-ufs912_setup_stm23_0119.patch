@@ -473,22 +473,21 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
 + //#define ORIGINAL_MTD
 + 
   /* J34 must be in the 1-2 position to enable NOR Flash */
-! static struct mtd_partition nand_partitions[] = 
-! {
+! static struct mtd_partition nand_partitions[] = {
 ! #ifdef ORIGINAL_MTD
 ! 	 {
 ! 	 .name = "NAND KERNEL :          0x0000.0000-0x002F.FFFF",
-! 	 .size = 0x300000,	/* will expand to the end of the flash */
+! 	 .size = 0x300000,
 ! 	 .offset = 0,
 ! 	 },
 ! 	 {
 ! 	 .name = "NAND ROOT :            0x0030.0000-0x027F.FFFF",
-! 	 .size = 0x2500000,	/* will expand to the end of the flash */
+! 	 .size = 0x2500000,
 ! 	 .offset = 0x300000,
 ! 	 },
 ! 	 {
 ! 	 .name = "NAND CONFIG :          0x0280.0000-0x04FF.FFFF",
-! 	 .size = 0x2800000,	/* will expand to the end of the flash */
+! 	 .size = 0x2800000,
 ! 	 .offset = 0x2800000,
 ! 	 },
 ! 	 {
@@ -499,20 +498,21 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
 ! #else
 ! 	 {
 ! 	 .name = "NAND KERNEL :   0x0000.0000-0x003F.FFFF (  4MB)",
-! 	 .size = 0x400000,	/* will expand to the end of the flash */
+! 	 .size = 0x400000,
 ! 	 .offset = 0,
-! 	 },
-! 	 {
-! 	 .name = "NAND ROOT :     0x0040.0000-0x043F.FFFF ( 64MB)",
-! 	 .size = 0x4000000,	/* will expand to the end of the flash */
+! 	 }, {
+! 	 .name = "NAND FW :       0x0040.0000-0x00BF.FFFF ( 8MB)",
+! 	 .size = 0x800000,
 ! 	 .offset = 0x400000,
-! 	 },
-! 	 {
-! 	 .name = "NAND DATA :     0x0440.0000-0x07FF.FFFF ( 60MB)",
+! 	 }, {
+! 	 .name = "NAND ROOT :     0x00C0.0000-0x04BF.FFFF ( 64MB)",
+! 	 .size = 0x4000000,
+! 	 .offset = 0xC00000,
+! 	 }, {
+! 	 .name = "NAND DATA :     0x04C0.0000-0x07FF.FFFF ( 52MB)",
 ! 	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-! 	 .offset = 0x04400000,
+! 	 .offset = 0x04C00000,
 ! 	 },
-! 
 ! #endif
   };
   
