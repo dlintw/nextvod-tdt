@@ -38,7 +38,8 @@ OCTAGON1008PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-tune_stm22.patch \
 		linux-usbwait123_stm22.patch \
 		linux-jffs2-lzma_stm22.patch \
-		linux-ftdi_sio.c_stm22.patch
+		linux-ftdi_sio.c_stm22.patch \
+		linux-octagon1008_stboards_stm22.patch
 
 UFS922PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ufs922_stasc_stm22.patch \
