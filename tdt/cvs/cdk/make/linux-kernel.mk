@@ -31,7 +31,14 @@ FORTISPATCHES_41 = $(COMMONPATCHES_41) \
 OCTAGON1008PATCHES_41 = $(COMMONPATCHES_41) \
 		octagon1008_setup_p0041.diff \
 		linux-fortis_hdbox_dvb_stm22.patch \
-		linux-fortis_hdbox_sound_stm22.patch
+		linux-fortis_hdbox_sound_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch
 
 UFS922PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ufs922_stasc_stm22.patch \
