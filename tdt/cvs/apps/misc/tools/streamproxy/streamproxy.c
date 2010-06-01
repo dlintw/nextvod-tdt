@@ -90,6 +90,8 @@ int main(int argc, char **argv)
 {
 	char request[MAX_LINE_LENGTH], upstream_request[256];
 	char *c, *service_ref;
+	int used=0;
+	char buffer[BSIZE];
 
 	logOutput("starting streamproxy\n");
 #ifdef HAVE_ADD_PID
@@ -158,14 +160,17 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		fd_set r;
+		fd_set w;
 		FD_ZERO(&r);
+		FD_ZERO(&w);
 		FD_SET(upstream, &r);
 		FD_SET(0, &r);
+		FD_SET(1, &w);
 #ifdef HAVE_ADD_PID
 		if (demux_fd != -1)
 			FD_SET(demux_fd, &r);
 
-		if (select(5, &r, 0, 0, 0) < 0)
+		if (select(5, &r, &w , 0, 0) < 0)
 			break;
 
 		if (FD_ISSET(0, &r)) /* check for client disconnect */
@@ -177,15 +182,24 @@ int main(int argc, char **argv)
 			if (handle_upstream())
 				break;
 
-		if (demux_fd > 0 && FD_ISSET(demux_fd, &r))
+		if (demux_fd > 0 && BSIZE-used>187 && FD_ISSET(demux_fd, &r))
 		{
-			static unsigned char buffer[BSIZE];
-			int r = read(demux_fd, buffer, BSIZE);
+			int r = read(demux_fd, buffer+used, BSIZE-used);
 			//logOutput("read %d bytes from demux0\n", r);
-			if (r < 0)
-				break;
-			write(1, buffer, r);
+			if (r < 0){
+				//continue if in the moment, there are no data in dmx buffer
+				continue;
+			}
+			used+=r;
 		}
+		if (used>0 && FD_ISSET(1, &w))
+		{
+			int r=write(1, buffer, used);
+			if(r<used)
+				logOutput("wrote %d bytes should be %d\n", r,used);
+			if(r>0)used=0;
+		}
+
 #else
 		if (dvr_fd != -1)
 			FD_SET(dvr_fd, &r);
@@ -205,16 +219,13 @@ int main(int argc, char **argv)
 		}
 
 		if (dvr_fd > 0 && FD_ISSET(dvr_fd, &r))
-		{
-			static unsigned char buffer[BSIZE];
+		{			
 			int r = read(dvr_fd, buffer, BSIZE);
 			//logOutput("read %d bytes from dvr0\n", r);
 			if (r < 0)
 			{
 				//continue if in the moment, there are no data in dmx buffer
-				if(errno == EWOULDBLOCK)
-					continue;
-				break;
+				continue;
 			}
 			write(1, buffer, r);
 		}
