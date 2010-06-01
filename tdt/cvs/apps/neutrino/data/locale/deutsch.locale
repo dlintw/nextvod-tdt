@@ -1019,8 +1019,9 @@ ping.socket ist nicht erreichbar (Socket error)
 ping.unreachable ist nicht erreichbar (unreachable)
 pinprotection.head PIN-Abfrage
 pinprotection.wrongcode Geben Sie den Code nocheinmal ein!
+play.button.action PLAY-Taste für
 plugins.result Pluginausgabe
-rclock.lockmsg Die Fernbedienung der Coolstream wird gesperrt.\n Um die Sperre aufzuheben, bitte\n <ROT> und <MENU> auf der Fernbedienung\n druecken.
+rclock.lockmsg Die Fernbedienung der Box wird gesperrt.\n Um die Sperre aufzuheben, bitte\n <ROT> und <MENU> auf der Fernbedienung\n druecken.
 rclock.menueadd FB sperren
 rclock.title Fernbedienung sperren
 rclock.unlockmsg Fernbedienung reaktiviert...

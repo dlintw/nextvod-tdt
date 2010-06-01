@@ -98,7 +98,7 @@
   }
   
 ***************
-*** 167,173 ****
+*** 167,191 ****
   	struct stpio_pin *smc91x_reset;
   
   	stx7100_configure_sata();
@@ -106,16 +106,7 @@
   	stx7100_configure_ssc(&ssc_private_info);
   	stx7100_configure_usb();
   	stx7100_configure_lirc(&lirc_scd);
---- 193,199 ----
-  	struct stpio_pin *smc91x_reset;
-  
-  	stx7100_configure_sata();
-! 	//stx7100_configure_pwm(&pwm_private_info);
-  	stx7100_configure_ssc(&ssc_private_info);
-  	stx7100_configure_usb();
-  	stx7100_configure_lirc(&lirc_scd);
-***************
-*** 175,191 ****
+! 	stx7100_configure_pata(3, 1, IRL1_IRQ);
   
   	vpp_pio = stpio_request_set_pin(2, 7, "flash_VPP", STPIO_OUT, 0);
   
@@ -133,7 +124,15 @@
   
   	return platform_add_devices(mb442_devices,
   				    ARRAY_SIZE(mb442_devices));
---- 201,210 ----
+--- 193,210 ----
+  	struct stpio_pin *smc91x_reset;
+  
+  	stx7100_configure_sata();
+! 	//stx7100_configure_pwm(&pwm_private_info);
+  	stx7100_configure_ssc(&ssc_private_info);
+  	stx7100_configure_usb();
+  	stx7100_configure_lirc(&lirc_scd);
+! 	//stx7100_configure_pata(3, 1, IRL1_IRQ);
   
   	vpp_pio = stpio_request_set_pin(2, 7, "flash_VPP", STPIO_OUT, 0);
   
@@ -250,6 +249,25 @@
   	}
   
   	if ((ret = register_netdev(dev))) {
+*** linux-sh4-2.6.23.17_stm23_0119_orig/drivers/net/stmmac/stmmac_mdio.c	Sun May 16 03:14:44 2010
+--- linux-sh4/drivers/net/stmmac/stmmac_mdio.c	Thu May 27 01:36:20 2010
+***************
+*** 174,180 ****
+  	for (addr = 0; addr < 32; addr++) {
+  		struct phy_device *phydev = new_bus->phy_map[addr];
+  		if (phydev) {
+! 			if (priv->phy_addr == -1) {
+  				priv->phy_addr = addr;
+  				phydev->irq = priv->phy_irq;
+  				irqlist[addr] = priv->phy_irq;
+--- 174,180 ----
+  	for (addr = 0; addr < 32; addr++) {
+  		struct phy_device *phydev = new_bus->phy_map[addr];
+  		if (phydev) {
+! 			if ((priv->phy_addr == -1) || (phydev->phy_id == 0x0181b880) || (phydev->phy_id == 0x0181b8a0)) {
+  				priv->phy_addr = addr;
+  				phydev->irq = priv->phy_irq;
+  				irqlist[addr] = priv->phy_irq;
 *** linux-sh4-2.6.23.17_stm23_0119_orig/drivers/usb/storage/usb.c	Sun Mar 14 03:16:37 2010
 --- linux-sh4/drivers/usb/storage/usb.c	Sun Mar 14 02:35:09 2010
 ***************

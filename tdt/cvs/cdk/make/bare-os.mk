@@ -53,8 +53,8 @@ if STM23
 GLIBC_VERSION := $(if $(STABLE),2.6.1-53,2.6.1-61)
 GLIBC_RAWVERSION := $(firstword $(subst -, ,$(GLIBC_VERSION)))
 GLIBC_SPEC := stm-target-$(GLIBC).spec
-GLIBC_SPEC_PATCH :=
-GLIBC_PATCHES :=
+GLIBC_SPEC_PATCH := $(GLIBC_SPEC)23.diff
+GLIBC_PATCHES := stm-target-glibc-sysincludes.patch
 else !STM23
 # if STM24
 GLIBC_VERSION := 2.10.1-7
@@ -111,55 +111,73 @@ $(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so: $(GLIBC_RPM)
 #
 # GMP
 #
-if STM24
+if !STM22
 GMP := gmp
+if STM23
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
 GMP_VERSION := 4.3.2-3
 GMP_SPEC := stm-target-$(GMP).spec
 GMP_SPEC_PATCH :=
 GMP_PATCHES :=
+else !STM23
+# if STM24
+GMP_VERSION := 4.3.2-3
+GMP_SPEC := stm-target-$(GMP).spec
+GMP_SPEC_PATCH :=
+GMP_PATCHES :=
+# endif STM24
+endif !STM23
 GMP_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GMP)-$(GMP_VERSION).sh4.rpm
 
 $(GMP_RPM): \
-		$(if $(GMP_SPEC_PATCH),Patches/$(GMP_SPEC_PATCH)) \
-		$(if $(GMP_PATCHES),$(GMP_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(GMP)-$(GMP_VERSION).src.rpm
+		$(addprefix Patches/,$(GMP_SPEC_PATCH) $(GMP_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-target-$(GMP)-$(GMP_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(GMP_SPEC_PATCH),( cd SPECS && patch -p1 $(GMP_SPEC) < ../Patches/$(GMP_SPEC_PATCH) ) &&) \
-	$(if $(GMP_PATCHES),cp $(GMP_PATCHES:%=Patches/%) SOURCES/ &&) \
+	$(if $(GMP_PATCHES),cp $(addprefix Patches/,$(GMP_PATCHES)) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(GMP_SPEC)
 
-$(GMP): $(GMP_RPM)
+$(DEPDIR)/$(GMP): $(GMP_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
-	touch .deps/$(notdir $@)
-endif STM24
+	touch $@
+endif !STM22
 
 #
 # MPFR
 #
-if STM24
+if !STM22
 MPFR := mpfr
+if STM23
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
 MPFR_VERSION := 2.4.2-3
 MPFR_SPEC := stm-target-$(MPFR).spec
 MPFR_SPEC_PATCH :=
 MPFR_PATCHES :=
+else !STM23
+# if STM24
+MPFR_VERSION := 2.4.2-3
+MPFR_SPEC := stm-target-$(MPFR).spec
+MPFR_SPEC_PATCH :=
+MPFR_PATCHES :=
+# endif STM24
+endif !STM23
 MPFR_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPFR)-$(MPFR_VERSION).sh4.rpm
 
 $(MPFR_RPM): \
-		$(if $(MPFR_SPEC_PATCH),Patches/$(MPFR_SPEC_PATCH)) \
-		$(if $(MPFR_PATCHES),$(MPFR_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(MPFR)-$(MPFR_VERSION).src.rpm \
-		| $(GMP)
+		$(GMP) \
+		$(addprefix Patches/,$(MPFR_SPEC_PATCH) $(MPFR_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-target-$(MPFR)-$(MPFR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(MPFR_SPEC_PATCH),( cd SPECS && patch -p1 $(MPFR_SPEC) < ../Patches/$(MPFR_SPEC_PATCH) ) &&) \
-	$(if $(MPFR_PATCHES),cp $(MPFR_PATCHES:%=Patches/%) SOURCES/ &&) \
+	$(if $(MPFR_PATCHES),cp $(addprefix Patches/,$(MPFR_PATCHES)) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(MPFR_SPEC)
 
-$(MPFR): $(MPFR_RPM)
+$(DEPDIR)/$(MPFR): $(MPFR_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
 	touch .deps/$(notdir $@)
-endif STM24
+endif !STM22
 
 #
 # GCC LIBSTDC++
@@ -175,9 +193,10 @@ GCC_SPEC_PATCH := $(GCC_SPEC)22.diff
 GCC_PATCHES :=
 else !STM22
 if STM23
-GCC_VERSION := 4.2.4-50
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
+GCC_VERSION := 4.3.4-66
 GCC_SPEC := stm-target-$(GCC).spec
-GCC_SPEC_PATCH := $(GCC_SPEC)23.diff
+GCC_SPEC_PATCH :=
 GCC_PATCHES :=
 else !STM23
 # if STM24
@@ -194,13 +213,12 @@ LIBSTDC_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm
 LIBGCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
 
 $(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM): \
-		$(if $(GCC_SPEC_PATCH),Patches/$(GCC_SPEC_PATCH)) \
-		$(if $(GCC_PATCHES),$(GCC_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(GCC)-$(GCC_VERSION).src.rpm \
+		$(addprefix Patches/,$(GCC_SPEC_PATCH) $(GCC_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-target-$(GCC)-$(GCC_VERSION).src.rpm \
 		| $(DEPDIR)/$(GLIBC_DEV) $(MPFR)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(GCC_SPEC_PATCH),( cd SPECS && patch -p1 $(GCC_SPEC) < ../Patches/$(GCC_SPEC_PATCH) ) &&) \
-	$(if $(GCC_PATCHES),cp $(GCC_PATCHES:%=Patches/%) SOURCES/ &&) \
+	$(if $(GCC_PATCHES),cp $(addprefix Patches/,$(GCC_PATCHES)) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb --clean --target=sh4-linux SPECS/$(GCC_SPEC)
 

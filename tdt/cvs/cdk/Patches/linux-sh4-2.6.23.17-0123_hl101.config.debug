@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.23.17
-# Wed May  5 20:48:39 2010
+# Fri May  7 21:10:22 2010
 #
 CONFIG_SUPERH=y
 CONFIG_RWSEM_GENERIC_SPINLOCK=y
@@ -599,7 +599,7 @@ CONFIG_PHYLIB=y
 # PHY device drivers
 #
 # CONFIG_MARVELL_PHY is not set
-# CONFIG_DAVICOM_PHY is not set
+CONFIG_DAVICOM_PHY=y
 # CONFIG_QSEMI_PHY is not set
 # CONFIG_LXT_PHY is not set
 # CONFIG_CICADA_PHY is not set
@@ -945,6 +945,7 @@ CONFIG_SND_VERBOSE_PROCFS=y
 #
 CONFIG_SND_STM=y
 CONFIG_SND_STM_BPA2_PARTITION_NAME="audio"
+CONFIG_SND_STM_DEBUG_LEVEL=0
 CONFIG_SND_STM_STX7100=y
 # CONFIG_SND_STM_STX7105 is not set
 # CONFIG_SND_STM_STX7111 is not set

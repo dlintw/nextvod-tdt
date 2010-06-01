@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.23.17
-# Thu Feb 18 00:15:59 2010
+# Tue May 18 00:52:59 2010
 #
 CONFIG_SUPERH=y
 CONFIG_RWSEM_GENERIC_SPINLOCK=y
@@ -555,7 +555,7 @@ CONFIG_SCSI_LOWLEVEL=y
 CONFIG_ATA=y
 # CONFIG_ATA_NONSTANDARD is not set
 CONFIG_SATA_STM=y
-CONFIG_PATA_PLATFORM=y
+# CONFIG_PATA_PLATFORM is not set
 # CONFIG_MD is not set
 CONFIG_NETDEVICES=y
 # CONFIG_NETDEVICES_MULTIQUEUE is not set
@@ -571,7 +571,7 @@ CONFIG_PHYLIB=y
 # PHY device drivers
 #
 # CONFIG_MARVELL_PHY is not set
-# CONFIG_DAVICOM_PHY is not set
+CONFIG_DAVICOM_PHY=y
 # CONFIG_QSEMI_PHY is not set
 # CONFIG_LXT_PHY is not set
 # CONFIG_CICADA_PHY is not set

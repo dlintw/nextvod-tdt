@@ -1019,6 +1019,7 @@ ping.socket is unreachable (socket error)
 ping.unreachable is unreachable
 pinprotection.head Enter PIN code
 pinprotection.wrongcode PIN-Code was wrong! Try again.
+play.button.action Play button action
 plugins.result plugin output
 rclock.lockmsg Your box remote control will be locked.\n To unlock it, press <RED> \n and <MENU> on your remote control.
 rclock.menueadd Lock RC

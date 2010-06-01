@@ -15,57 +15,6 @@ $(DEPDIR)/console_data: bootstrap @DEPENDS_console_data@
 	touch $@
 
 #
-# GREP
-#
-GREPX := grep
-if STM22
-GREP_VERSION := 2.5.1-7
-GREP_SPEC := stm-target-$(GREPX).spec
-GREP_SPEC_PATCH :=
-GREP_PATCHES :=
-else !STM22
-if STM23
-GREP_VERSION := 2.5.1-7
-GREP_SPEC := stm-target-$(GREPX).spec
-GREP_SPEC_PATCH :=
-GREP_PATCHES :=
-else !STM23
-# if STM24
-GREP_VERSION := 2.5.4-9
-GREP_SPEC := stm-target-$(GREPX).spec
-GREP_SPEC_PATCH :=
-GREP_PATCHES :=
-# endif STM24
-endif !STM23
-endif !STM22
-GREP_RPM := RPMS/sh4/$(STM_SRC)-sh4-$(GREPX)-$(GREP_VERSION).sh4.rpm
-
-$(GREP_RPM): \
-		$(if $(GREP_SPEC_PATCH),Patches/$(GREP_SPEC_PATCH)) \
-		$(if $(GREP_PATCHES),$(GREP_PATCHES:%=Patches/%)) \
-		Archive/$(STM_SRC)-target-$(GREPX)-$(GREP_VERSION).src.rpm
-	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(GREP_SPEC_PATCH),( cd SPECS && patch -p1 $(GREP_SPEC) < ../Patches/$(GREP_PATCH) ) &&) \
-	$(if $(GREP_PATCHES),cp $(GREP_PATCHES:%=Patches/%) SOURCES/ &&) \
-	export PATH=$(hostprefix)/bin:$(PATH) && \
-	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(GREP_SPEC)
-
-$(DEPDIR)/min-$(GREPX) $(DEPDIR)/std-$(GREPX) $(DEPDIR)/max-$(GREPX) $(DEPDIR)/$(GREPX): \
-$(DEPDIR)/%$(GREPX): $(GREP_RPM)
-	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --noscripts -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
-	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-xgrep: $(flashprefix)/root/bin/grep
-
-$(flashprefix)/root/bin/grep: $(GREP_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --noscripts -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-
-#
 # SYSVINIT/INITSCRIPTS
 #
 SYSVINIT := sysvinit

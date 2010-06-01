@@ -290,14 +290,24 @@ bool CMovieInfo::loadMovieInfo(MI_MOVIE_INFO * movie_info, CFile * file)
 	//TRACE("[mi]->loadMovieInfo \r\n");
 	bool result = true;
 	CFile file_xml;
+	std::string filename;
 
-	if (file == NULL) {
-		// if there is no give file, we use the file name from movie info but we have to convert the ts name to xml name first
-		file_xml.Name = movie_info->file.Name;
-		result = convertTs2XmlName(&file_xml.Name);
-	} else {
-		file_xml.Name = file->Name;
+	if (file != NULL) {
+		// if there is a give file, we use that name
+		filename = file->Name;
 	}
+	else {
+		// check if it is a .ts file
+		filename = movie_info->file.Name;
+		if(filename.rfind(".ts") != filename.length() - 3){
+			// no .ts file
+			return (false);
+		}
+	}	
+	
+	// check if there is a .xml file with movieinfos
+	file_xml.Name = filename;
+	result = convertTs2XmlName(&file_xml.Name);
 
 	if (result == true) {
 		// load xml file in buffer
@@ -313,8 +323,38 @@ bool CMovieInfo::loadMovieInfo(MI_MOVIE_INFO * movie_info, CFile * file)
 	}
 	if (movie_info->productionDate > 50 && movie_info->productionDate < 200)	// backwardcompaibility
 		movie_info->productionDate += 1900;
-
-	return (result);
+	
+	// check if there is a .meta file with movieinfos (recorded on enigma2) 	
+	if (result == false) {	
+		filename = filename + ".meta";
+			
+		FILE *f = fopen(filename.c_str(), "r");
+		if (f){
+			for (int linecnt=0;linecnt<2;linecnt++)
+			{
+				char line[1024];
+				if (!fgets(line, 1024, f))
+					break;
+				if (*line && line[strlen(line)-1] == '\n')
+					line[strlen(line)-1] = 0;
+		
+		 		if (*line && line[strlen(line)-1] == '\r')
+					line[strlen(line)-1] = 0;
+		
+				switch (linecnt)
+				{
+				case 0:
+					//m_ref = eServiceReferenceDVB(line);
+					break;
+				case 1:
+					movie_info->epgTitle = line;
+					break;
+				}
+			}
+			fclose(f);
+		}
+	}
+	return (true);
 }
 
 /************************************************************************
@@ -1040,3 +1080,4 @@ void CMovieInfo::copy(MI_MOVIE_INFO * src, MI_MOVIE_INFO * dst)
 		dst->audioPids.push_back(audio_pids);
 	}
 }
+

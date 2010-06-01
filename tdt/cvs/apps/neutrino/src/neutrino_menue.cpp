@@ -1433,6 +1433,13 @@ const CMenuOptionChooser::keyval AUDIOPLAYER_DISPLAY_ORDER_OPTIONS[AUDIOPLAYER_D
 	{ CAudioPlayerGui::TITLE_ARTIST, LOCALE_AUDIOPLAYER_TITLE_ARTIST }
 };
 
+#define PLAY_BUTTON_ACTION_OPTION_COUNT 2
+const CMenuOptionChooser::keyval PLAY_BUTTON_ACTION_OPTION[PLAY_BUTTON_ACTION_OPTION_COUNT] =
+{
+	{ 0, LOCALE_MOVIEBROWSER_HEAD },
+	{ 1, LOCALE_MOVIEPLAYER_FILEPLAYBACK }
+};
+
 void CNeutrinoApp::InitAudioplPicSettings(CMenuWidget &audioplPicSettings)
 {
 	audioplPicSettings.addItem(GenericMenuSeparator);
@@ -1558,6 +1565,7 @@ void CNeutrinoApp::InitMiscSettings(CMenuWidget &miscSettings)
         miscSettings.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_MISCSETTINGS_EPG_HEAD));
 
 	CSectionsdConfigNotifier* sectionsdConfigNotifier = new CSectionsdConfigNotifier;
+	miscSettings.addItem(new CMenuOptionChooser("EPG-Filter", &g_settings.epg_filter, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 	miscSettings.addItem(new CMenuOptionChooser(LOCALE_MISCSETTINGS_EPG_SAVE, &g_settings.epg_save, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
         CStringInput * miscSettings_epg_cache = new CStringInput(LOCALE_MISCSETTINGS_EPG_CACHE, &g_settings.epg_cache, 2,LOCALE_MISCSETTINGS_EPG_CACHE_HINT1, LOCALE_MISCSETTINGS_EPG_CACHE_HINT2 , "0123456789 ", sectionsdConfigNotifier);
         miscSettings.addItem(new CMenuForwarder(LOCALE_MISCSETTINGS_EPG_CACHE, true, g_settings.epg_cache, miscSettings_epg_cache));
@@ -2611,6 +2619,7 @@ void CNeutrinoApp::InitKeySettings(CMenuWidget &keySettings)
 		bindSettings->addItem(new CMenuForwarder(keydescription[i], true, NULL, keychooser[i]));
 
 	bindSettings->addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_MAINSETTINGS_MISC));
+	bindSettings->addItem(new CMenuOptionChooser(LOCALE_PLAY_BUTTON_ACTION, &g_settings.play_button_action, PLAY_BUTTON_ACTION_OPTION, PLAY_BUTTON_ACTION_OPTION_COUNT, true ));
 	//bindSettings->addItem(new CMenuForwarder(keydescription[KEY_PLUGIN], true, NULL, keychooser[KEY_PLUGIN]));
 	bindSettings->addItem(new CMenuForwarder(keydescription[KEY_UNLOCK], true, NULL, keychooser[KEY_UNLOCK]));
 	//bindSettings->addItem(new CMenuOptionChooser(LOCALE_EXTRA_ZAP_CYCLE, &g_settings.zap_cycle, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
