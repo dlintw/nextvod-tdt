@@ -104,6 +104,8 @@ libxmlccwrap;0.0.12;libxmlccwrap-0.0.12;libxmlccwrap-0.0.12.tar.gz;extract:libxm
 zope_interface;3.3.0;zope.interface-3.3.0;zope.interface-3.3.0.tar.gz;extract:zope.interface-3.3.0.tar.gz
 setuptools;0.6c8;setuptools-0.6c8;setuptools-0.6c8.tar.gz;extract:setuptools-0.6c8.tar.gz
 twisted;8.2.0;Twisted-8.2.0;Twisted-8.2.0.tar.bz2;extract:Twisted-8.2.0.tar.bz2
+twistedweb2;8.1.0;TwistedWeb2-8.1.0;TwistedWeb2-8.1.0.tar.bz2;extract:TwistedWeb2-8.1.0.tar.bz2
+twisted;2.5.0;Twisted-2.5.0;Twisted-2.5.0.tar.bz2;extract:Twisted-2.5.0.tar.bz2
 a52dec;0.7.4;a52dec-0.7.4;a52dec-0.7.4.tar.gz;extract:a52dec-0.7.4.tar.gz
 libdvdcss;1.2.10;libdvdcss-1.2.10;libdvdcss-1.2.10.tar.gz;extract:libdvdcss-1.2.10.tar.gz
 #libdvdnav;0.1.10;libdvdnav-0.1.10;libdvdnav-0.1.10.tar.gz:libdvdnav-0.1.10-multithreaded_read_cache.diff;extract:libdvdnav-0.1.10.tar.gz;patch:libdvdnav-0.1.10-multithreaded_read_cache.diff
