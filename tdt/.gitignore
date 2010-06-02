@@ -8,6 +8,8 @@
 *.a
 *.mod.c
 *.o.d
+*.swp
+*~
 Makefile.in
 aclocal.m4
 Archive
@@ -148,6 +150,7 @@ cvs/cdk/localmacros
 cvs/cdk/lsb-3.2/
 cvs/cdk/module-init-tools-3.3-pre1/
 cvs/cdk/openrdate-1.1.2/
+cvs/cdk/openvpn-2.1.1/
 cvs/cdk/portmap_6.0/
 cvs/cdk/rules-downcheck.pl
 cvs/cdk/u-boot/
