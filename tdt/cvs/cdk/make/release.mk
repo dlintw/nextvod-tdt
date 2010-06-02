@@ -47,6 +47,13 @@ if !STM22
 	cp -f $(buildprefix)/root/release/tuner.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/lib/modules/tuner.ko
 else
 	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/drivers/usb/serial/cp2101.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release/lib/modules
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release/bin/cubefpctl
 	chmod 777 $(prefix)/release/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/lib/modules/fp.ko
@@ -215,7 +222,11 @@ release_tf7700: release_common_utils
 	cp -f $(buildprefix)/root/release/fstab_tf7700 $(prefix)/release/etc/fstab
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_tf7700.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
-
+if STM22
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release/lib/modules
+endif
+	
+	
 
 #	install autofs
 #	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
