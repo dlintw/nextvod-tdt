@@ -3734,7 +3734,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/Extensions/TopfieldVFD/plugin.p
 +#---- Topfi start ----#
 +                        buf = array.array('h', [0])
 +                        fcntl.ioctl(fd.fileno(),ioBootReason,buf,1)
-+                        if buf[0] != 0:
++                        if buf[0] == 2:
 +                                fcntl.ioctl(fd.fileno(), ioIconCmd, ioOffFlush)
 +#---- Topfi end ----#
 +
