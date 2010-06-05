@@ -405,13 +405,12 @@ void cVideo::SetSyncMode(AVSYNC_TYPE mode)
 	const char *aAVSYNCTYPE[] = {
 	"AVSYNC_DISABLED",
 	"AVSYNC_ENABLED",
-	"AVSYNC_AUDIO_IS_MASTER",
+	"AVSYNC_AUDIO_IS_MASTER"
 	};
 
         const char* av_modes[] = {
 	"disapply",
 	"apply"
-	
 	};
 
         const char* master_clock[] = {
@@ -557,14 +556,14 @@ void cVideo::SetVideoMode(analog_mode_t mode)
 	"ANALOG_SD_RGB_SCART",
 	"ANALOG_SD_YPRPB_SCART",
 	"ANALOG_HD_RGB_SCART",
-	"ANALOG_HD_YPRPB_SCART",
+	"ANALOG_HD_YPRPB_SCART"
 	};
 	
 	const char *aANALOGMODECINCH[] = {
 	"ANALOG_SD_RGB_CINCH",
 	"ANALOG_SD_YPRPB_CINCH",
 	"ANALOG_HD_RGB_CINCH",
-	"ANALOG_HD_YPRPB_CINCH",
+	"ANALOG_HD_YPRPB_CINCH"
 	};
 
 	if(mode && 0x80 != 0x80)

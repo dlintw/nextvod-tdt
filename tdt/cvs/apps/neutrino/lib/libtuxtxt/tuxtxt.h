@@ -266,7 +266,7 @@ const unsigned short int nationaltable23[14][2] =
 	{ '#', '€' }, /* A    RO    */
 	{ '#', 'Λ' }, /* B SR/HR/SL */
 	{ '#', '€' }, /* C SV/FI/HU */
-	{ '£', 287 }, /* D    TR   ? */
+	{ '£', 287 }  /* D    TR   ? */
 };
 const unsigned short int nationaltable40[14] =
 {
@@ -283,7 +283,7 @@ const unsigned short int nationaltable40[14] =
 	354, /* A    RO    */
 	268, /* B SR/HR/SL */
 	'Ι', /* C SV/FI/HU */
-	304, /* D    TR    */
+	304  /* D    TR    */
 };
 const unsigned short int nationaltable5b[14][6] =
 {
@@ -300,7 +300,7 @@ const unsigned short int nationaltable5b[14][6] =
 	{ 'Β', 350, 461, 'Ξ', 305, 355 }, /* A    RO    */
 	{ 262, 381, 272, 352, 'λ', 269 }, /* B SR/HR/SL */
 	{ 'Δ', 'Φ', 'Ε', 'ά', '_', 'ι' }, /* C SV/FI/HU */
-	{ 350, 'Φ', 'Η', 'ά', 486, 305 }, /* D    TR    */
+	{ 350, 'Φ', 'Η', 'ά', 486, 305 }  /* D    TR    */
 };
 const unsigned short int nationaltable7b[14][4] =
 {
@@ -317,7 +317,7 @@ const unsigned short int nationaltable7b[14][4] =
 	{ 'β', 351, 462, 'ξ' }, /* A    RO    */
 	{ 263, 382, 273, 353 }, /* B SR/HR/SL */
 	{ 'δ', 'φ', 'ε', 'ό' }, /* C SV/FI/HU */
-	{ 351, 'φ', 231, 'ό' }, /* D    TR    */
+	{ 351, 'φ', 231, 'ό' }  /* D    TR    */
 };
 
 const unsigned short int arrowtable[] =
@@ -473,7 +473,7 @@ const char hotlisttext[][2*6] =
 	{ "agg. elim." },
 	{ "dodajkasuj" },
 	{ "ny   bort " },
-	{ "lis{{pois " },
+	{ "lis{{pois " }
 };
 
 const char configonoff[][2*4] =
@@ -486,7 +486,7 @@ const char configonoff[][2*4] =
 	{ "offon " },
 	{ "wy}w} " },
 	{ "p} av " },
-	{ "EI ON " },
+	{ "EI ON " }
 };
 const char menuatr[Menu_Height*(Menu_Width+1)] =
 {
@@ -768,7 +768,7 @@ const char configmenu[][Menu_Height*(Menu_Width+1)] =
 		"γν Kieli            suomi   ξδι"
 		"εζ   www.tuxtxt.net  x.xx   ζηι"
 		"λμμμμμμμμμμμμμμμμμμμμμμμμμμμμμκ"
-	},
+	}
 };
 
 const char catchmenutext[][81] =
@@ -790,7 +790,7 @@ const char catchmenutext[][81] =
 	{ "        νοπξ v{lj     ρς visa           "
      "0000000011110000000000110000000000000000" },
 	{ "        νοπξ valitse  ρς n{yt{          "
-	  "0000000011110000000000110000000000000000" },
+	  "0000000011110000000000110000000000000000" }
 };
 
 const char message_3[][39] =
@@ -803,7 +803,7 @@ const char message_3[][39] =
 	{ "γ     attesa opzioni televideo      δι" },
 	{ "γ  poszukiwanie sygna}u telegazety  δι" },
 	{ "γ    s|ker efter TextTV tj{nster    δι" },
-	{ "γ   etsit{{n Teksti-TV -palvelua    δι" },
+	{ "γ   etsit{{n Teksti-TV -palvelua    δι" }
 };
 const char message_3_blank[] = "γ                                   δι";
 const char message_7[][39] =
@@ -816,7 +816,7 @@ const char message_7[][39] =
 	{ "γ nessun televideo sul trasponder   δι" },
 	{ "γ   brak sygna}u na transponderze   δι" },
 	{ "γ ingen TextTV p} denna transponder δι" },
-	{ "γ    Ei Teksti-TV:t{ l{hettimell{   δι" },
+	{ "γ    Ei Teksti-TV:t{ l{hettimell{   δι" }
 };
 const char message_8[][39] =
 {
@@ -830,7 +830,7 @@ const char message_8[][39] =
 	{ "γ   attesa ricezione pagina 100     δι" },
 	{ "γ     oczekiwanie na stron` 100     δι" },
 	{ "γ  v{ntar p} mottagning av sida 100 δι" },
-	{ "γ        Odotetaan sivua 100        δι" },
+	{ "γ        Odotetaan sivua 100        δι" }
 };
 const char message8pagecolumn[] = /* last(!) column of page to show in each language */
 {
@@ -1229,7 +1229,7 @@ const char lcd_layout[] =
 	_X__ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i __X_,
 	__X_ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i _X__,
 	___X i X___,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,____ i ____,___X i X___,
-	____ i _XXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXX_ i ____,
+	____ i _XXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXXX i XXXX,XXX_ i ____
 
 #undef i
 };
@@ -1463,7 +1463,7 @@ const char lcd_digits[] =
 	0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0
 };
 
 /* functions */
