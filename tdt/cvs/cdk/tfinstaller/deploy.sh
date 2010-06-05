@@ -54,6 +54,7 @@ export NOFORMAT=`grep -i 'noformat' /instsrc/Enigma_Installer.ini 2>/dev/null`
 export NOPARTITION=`grep -i 'nopartition' /instsrc/Enigma_Installer.ini 2>/dev/null`
 export NOUPDATE=`grep -i 'noupdate' /instsrc/Enigma_Installer.ini 2>/dev/null`
 export USBHDD=`grep -i 'usbhdd' /instsrc/Enigma_Installer.ini 2>/dev/null`
+export NOMTD2=`grep -i 'no_mtd2' /instsrc/Enigma_Installer.ini 2>/dev/null`
 
 if [ "$USBHDD" != "" ]; then
   HDD=/dev/sdb
@@ -166,11 +167,11 @@ EOF
   echo '   7'     > /dev/fpsmall
   echo 'HDD FMT'  > /dev/fplarge
   ln -s /proc/mounts /etc/mtab
-  mkfs.ext3 $ROOTFS
+  mkfs.ext3 -L MINI9 $ROOTFS
 
   if [ -z $NOPARTITION ]; then
     echo '   6'     > /dev/fpsmall
-    mkfs.ext2 $DATAFS
+    mkfs.ext2 -L RECORD $DATAFS
   fi
 
 
@@ -178,6 +179,8 @@ EOF
   echo '   5'     > /dev/fpsmall
   echo 'HDD SWAP' > /dev/fplarge
   mkswap $SWAPFS
+  echo "SWAPPART" > /deploy/swaplabel
+  dd if=/deploy/swaplabel of="$SWAPFS" seek=1052 bs=1 count=8
 fi
 
 
@@ -237,17 +240,20 @@ dd if=/deploy/u-boot.mtd1 of=/dev/mtdblock1
 if [ $? -ne 0 ]; then  
   echo "FAIL" > /dev/fpsmall  
   exit  
-fi  
-if [ "$USBHDD" != "" ]; then
-  dd if=/deploy/U-Boot_Settings_usb.mtd2 of=/dev/mtdblock2
-else
-  dd if=/deploy/U-Boot_Settings_hdd.mtd2 of=/dev/mtdblock2
-fi
-if [ $? -ne 0 ]; then
-  echo "FAIL" > /dev/fpsmall
-  exit
-fi
+fi 
 
+# Skip Flash MTD2 if keyword 'nomtd2' is specified in the control file
+if [ "$NOMTD2" != "" ]; then
+	if [ "$USBHDD" != "" ]; then
+		dd if=/deploy/U-Boot_Settings_usb.mtd2 of=/dev/mtdblock2
+	else
+		dd if=/deploy/U-Boot_Settings_hdd.mtd2 of=/dev/mtdblock2
+	fi
+	if [ $? -ne 0 ]; then
+		echo "FAIL" > /dev/fpsmall
+		exit
+	fi
+fi
 
 # write the kernel to flash
 echo "Flashing kernel"
