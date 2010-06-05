@@ -1592,7 +1592,7 @@ void CFrameBuffer::resize(int format)
 	{"VIDEO_STD_1080P30", "1080p30"},
 	{"VIDEO_STD_1080P24", "1080p24"},
 	{"VIDEO_STD_1080P25", "1080p25"},
-	{"VIDEO_STD_AUTO" "1080i50"},
+	{"VIDEO_STD_AUTO", "1080i50"},
 	};
 
 printf("###RESIZE###\n");
