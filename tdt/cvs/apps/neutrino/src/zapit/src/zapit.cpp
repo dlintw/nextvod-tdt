@@ -70,6 +70,7 @@
 /* globals */
 int zapit_ready;
 int abort_zapit;
+int v_mode;
 
 extern void send_ca_id(int);
 cDvbCi * ci;
@@ -556,6 +557,45 @@ printf("[zapit] saving channel, apid %x sub pid %x mode %d volume %d\n", channel
 	send_ca_id(1);
         if (update_pmt)
                 pmt_set_update_filter(channel, &pmt_update_fd);
+
+#define NEUTRINO_SETTINGS_FILE CONFIGDIR "/neutrino.conf"
+	CConfigFile cfg(',', false);
+	cfg.loadConfig(NEUTRINO_SETTINGS_FILE);
+	if (cfg.getInt32("video_Mode", 7) == VIDEO_STD_AUTO) {
+		sleep(3); // needed, because values for new resolution needs min 3 sec.
+		int xres, yres, framerate, video_mode;
+		video_mode = cfg.getInt32("video_Mode", 7);
+		videoDecoder->getPictureInfo(xres, yres, framerate);
+		if (yres > 0) {
+			if (yres <= 480) {
+				video_mode = cfg.getInt32("video_Mode_Auto_576i50", 7);
+			} else
+			if (yres <= 576) {
+				if (framerate == 50) {
+					video_mode = cfg.getInt32("video_Mode_Auto_576p", 7);
+				} else {
+					video_mode = cfg.getInt32("video_Mode_Auto_576i50", 7);
+				}
+			} else
+			if (yres <= 720) {
+				video_mode = cfg.getInt32("video_Mode_Auto_720p50", 7);
+			} else
+			if (yres <= 1088) {
+				if (framerate == 50) {
+					video_mode = cfg.getInt32("video_Mode_Auto_1080p25", 8);
+				} else {
+					video_mode = cfg.getInt32("video_Mode_Auto_1080i50", 8);
+				}
+			}
+		}
+		if (v_mode != video_mode) {
+			v_mode = video_mode;
+			videoDecoder->SetVideoSystem(video_mode);
+#ifdef __sh__
+			CFrameBuffer::getInstance()->resize(video_mode);
+#endif
+		}
+	}
 
 	return 0;
 }

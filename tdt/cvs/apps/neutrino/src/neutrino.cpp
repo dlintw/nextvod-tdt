@@ -747,6 +747,11 @@ int CNeutrinoApp::loadSetup(const char * fname)
 	}
 	//video
 	g_settings.video_Mode = configfile.getInt32("video_Mode", 7); // default 720p/50HZ
+	g_settings.video_Mode_Auto_576i50 = configfile.getInt32("video_Mode_Auto_576i50", 7); // default 720p/50HZ
+	g_settings.video_Mode_Auto_576p = configfile.getInt32("video_Mode_Auto_576p", 7); // default 720p/50HZ
+	g_settings.video_Mode_Auto_720p50 = configfile.getInt32("video_Mode_Auto_720p50", 7); // default 720p/50HZ
+	g_settings.video_Mode_Auto_1080i50 = configfile.getInt32("video_Mode_Auto_1080i50", 8);
+	g_settings.video_Mode_Auto_1080p25 = configfile.getInt32("video_Mode_Auto_1080p25", 8); // default 1080i/50HZ
 	prev_video_mode = g_settings.video_Mode;
 	g_settings.analog_mode1 = configfile.getInt32("analog_mode1", 0); // default RGB
 	g_settings.analog_mode2 = configfile.getInt32("analog_mode2", 0); // default RGB
@@ -1322,6 +1327,11 @@ void CNeutrinoApp::saveSetup(const char * fname)
 
 	//video
 	configfile.setInt32( "video_Mode", g_settings.video_Mode );
+	configfile.setInt32( "video_Mode_Auto_576i50", g_settings.video_Mode_Auto_576i50 );
+	configfile.setInt32( "video_Mode_Auto_576p", g_settings.video_Mode_Auto_576p );
+	configfile.setInt32( "video_Mode_Auto_720p50", g_settings.video_Mode_Auto_720p50 );
+	configfile.setInt32( "video_Mode_Auto_1080i50", g_settings.video_Mode_Auto_1080i50 );
+	configfile.setInt32( "video_Mode_Auto_1080p25", g_settings.video_Mode_Auto_1080p25 );
 	configfile.setInt32( "analog_mode1", g_settings.analog_mode1 );
 	configfile.setInt32( "analog_mode2", g_settings.analog_mode2 );
 	

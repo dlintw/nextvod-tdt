@@ -49,6 +49,11 @@ struct SNeutrinoSettings
 	//video
 	int video_Format;
 	int video_Mode;
+	int video_Mode_Auto_576i50;
+	int video_Mode_Auto_576p;
+	int video_Mode_Auto_720p50;
+	int video_Mode_Auto_1080i50;
+	int video_Mode_Auto_1080p25;
 	int analog_mode1;
 	int analog_mode2;
 	int video_43mode;

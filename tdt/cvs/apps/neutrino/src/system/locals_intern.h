@@ -1364,5 +1364,6 @@ const char *locale_real_names[] = {
 	"cpu.freq_default",
 	"AUDIOSelectMenue.no_tracks",
 	"play.button.action",
+	"videomenu.videomode_auto"
 };
 #endif

@@ -281,6 +281,16 @@ const CMenuOptionChooser::keyval VIDEOMENU_DBDR_OPTIONS[VIDEOMENU_DBDR_OPTION_CO
         { 2, LOCALE_VIDEOMENU_DBDR_BOTH }
 };
 
+#define VIDEOMENU_VIDEOMODE_AUTO_OPTION_COUNT 5
+const CMenuOptionChooser::keyval VIDEOMENU_VIDEOMODE_AUTO_OPTIONS[VIDEOMENU_VIDEOMODE_AUTO_OPTION_COUNT] =
+{
+	{ 2, NONEXISTANT_LOCALE, "PAL"		},
+	{ 4, NONEXISTANT_LOCALE, "576p"		},
+	{ 7, NONEXISTANT_LOCALE, "720p 50Hz"	},
+	{ 8, NONEXISTANT_LOCALE, "1080i 50Hz"	},
+	{ 11, NONEXISTANT_LOCALE, "1080p 25Hz"	}
+};
+
 #include "videosettings.h"
 CVideoSettings::CVideoSettings() : CMenuWidget(LOCALE_VIDEOMENU_HEAD, "video.raw"), RGBCSyncControler(LOCALE_VIDEOMENU_RGB_CENTERING, &g_settings.video_csync)
 {
@@ -303,6 +313,18 @@ CVideoSettings::CVideoSettings() : CMenuWidget(LOCALE_VIDEOMENU_HEAD, "video.raw
 	addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_VIDEOFORMAT, &g_settings.video_Format, VIDEOMENU_VIDEOFORMAT_OPTIONS, VIDEOMENU_VIDEOFORMAT_OPTION_COUNT, true, this));
 	addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_43MODE, &g_settings.video_43mode, VIDEOMENU_43MODE_OPTIONS, VIDEOMENU_43MODE_OPTION_COUNT, true, this));
 	addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_VIDEOMODE, &g_settings.video_Mode, VIDEOMENU_VIDEOMODE_OPTIONS, VIDEOMENU_VIDEOMODE_OPTION_COUNT, true, this, CRCInput::RC_nokey, "", true));
+
+	CMenuWidget* auto_switch_menu = new CMenuWidget(LOCALE_VIDEOMENU_VIDEOMODE_AUTO, NEUTRINO_ICON_SETTINGS);
+	addItem(new CMenuForwarder(LOCALE_VIDEOMENU_VIDEOMODE_AUTO, true, NULL, auto_switch_menu));
+	auto_switch_menu->addItem(GenericMenuSeparator);
+	auto_switch_menu->addItem(GenericMenuBack);
+	auto_switch_menu->addItem(GenericMenuSeparatorLine);
+	auto_switch_menu->addItem(new CMenuOptionChooser("PAL/576i 50Hz", &g_settings.video_Mode_Auto_576i50, VIDEOMENU_VIDEOMODE_AUTO_OPTIONS, VIDEOMENU_VIDEOMODE_AUTO_OPTION_COUNT, true, NULL));
+	auto_switch_menu->addItem(new CMenuOptionChooser("576p", &g_settings.video_Mode_Auto_576p, VIDEOMENU_VIDEOMODE_AUTO_OPTIONS, VIDEOMENU_VIDEOMODE_AUTO_OPTION_COUNT, true, NULL));
+	auto_switch_menu->addItem(new CMenuOptionChooser("720p 50Hz", &g_settings.video_Mode_Auto_720p50, VIDEOMENU_VIDEOMODE_AUTO_OPTIONS, VIDEOMENU_VIDEOMODE_AUTO_OPTION_COUNT, true, NULL));
+	auto_switch_menu->addItem(new CMenuOptionChooser("1080i 50Hz", &g_settings.video_Mode_Auto_1080i50, VIDEOMENU_VIDEOMODE_AUTO_OPTIONS, VIDEOMENU_VIDEOMODE_AUTO_OPTION_COUNT, true, NULL));
+	auto_switch_menu->addItem(new CMenuOptionChooser("1080p 25Hz", &g_settings.video_Mode_Auto_1080p25, VIDEOMENU_VIDEOMODE_AUTO_OPTIONS, VIDEOMENU_VIDEOMODE_AUTO_OPTION_COUNT, true, NULL));
+
 	addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_DBDR, &g_settings.video_dbdr, VIDEOMENU_DBDR_OPTIONS, VIDEOMENU_DBDR_OPTION_COUNT, true, this));
 
         CMenuWidget* menu = new CMenuWidget(LOCALE_VIDEOMENU_ENABLED_MODES, NEUTRINO_ICON_SETTINGS);
