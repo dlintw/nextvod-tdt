@@ -76,7 +76,7 @@ cDvbCi * ci;
 //cDvbCiSlot *one, *two;
 extern cDemux * pmtDemux;
 
-#define AUDIO_CONFIG_FILE "/var/tuxbox/config/zapit/audio.conf"
+#define AUDIO_CONFIG_FILE CONFIGDIR "/zapit/audio.conf"
 map<t_channel_id, audio_map_set_t> audio_map;
 map<t_channel_id, audio_map_set_t>::iterator audio_map_it;
 unsigned int volume_left = 0, volume_right = 0;
