@@ -935,6 +935,7 @@ const char *locale_real_names[] = {
 	"scale.display_type", 		// DUCKBOX
 	"scale.display_type_dots", 	// DUCKBOX
 	"scale.display_type_full", 	// DUCKBOX
+	"scale.display_type_rainbow", 	// DUCKBOX
 	"scants.abort_body",
 	"scants.abort_header",
 	"scants.actcable",

@@ -88,12 +88,14 @@ void CScale::paint (int x, int y, int pcr)
 
 		for (i = 0; (i < red) && (i < maxi); i++) {
 			#ifdef DUCKBOX
-			if (!g_settings.scale_display_type) {
+			if (g_settings.scale_display_type == 1) {
+				rgb = g_settings.infobar_barcolor;
+			}
+			else {
 				step = 255/red;
 				if(inverse) rgb = GREEN + ((unsigned char)(step*i) << 16); // adding red
 				else        rgb = RED   + ((unsigned char)(step*i) <<  8); // adding green
-			} else
-				rgb = g_settings.infobar_barcolor;
+			}
 			
 			color = make16color(rgb);
 			#else
@@ -105,7 +107,7 @@ void CScale::paint (int x, int y, int pcr)
 			
 			for(j = 0; j <= hcnt; j++ ) {
 			      #ifdef DUCKBOX
-			      if (!g_settings.scale_display_type)
+			      if (g_settings.scale_display_type == 0)
 				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
 			      else			  
 				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, ITEMW, ITEMW, color);
@@ -117,13 +119,14 @@ void CScale::paint (int x, int y, int pcr)
 
 		for (; (i < yellow) && (i < maxi); i++) {
 			#ifdef DUCKBOX
-			if (!g_settings.scale_display_type) {
+			if (g_settings.scale_display_type == 1) {
+				rgb = g_settings.infobar_barcolor;
+			} else {
 				step = 255/yellow/2;
 				if(inverse) rgb = YELLOW - (((unsigned char)step*(b++)) <<  8); // removing green
 				else        rgb = YELLOW - ((unsigned char)(step*(b++)) << 16); // removing red
-			} else
-				rgb = g_settings.infobar_barcolor;
-
+			}
+			
 			color = make16color(rgb);
 			#else
 			step = 255/yellow/2;
@@ -134,7 +137,7 @@ void CScale::paint (int x, int y, int pcr)
 			
 			for(j = 0; j <= hcnt; j++ ) {
 			      #ifdef DUCKBOX
-			      if (!g_settings.scale_display_type)
+			      if (g_settings.scale_display_type == 0)
 				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
 			      else
 				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, ITEMW, ITEMW, color);
@@ -145,13 +148,15 @@ void CScale::paint (int x, int y, int pcr)
 		}
 		for (; (i < green) && (i < maxi); i++) {
 			#ifdef DUCKBOX
-			if (!g_settings.scale_display_type) {
+			if (g_settings.scale_display_type == 1) {
+				rgb = g_settings.infobar_barcolor;
+				
+			} else {
 				step = 255/green;
 				if(inverse) rgb = YELLOW - ((unsigned char) (step*(b++)) <<  8); // removing green
 				else        rgb = YELLOW - ((unsigned char) (step*(b++)) << 16); // removing red
-			} else
-				rgb = g_settings.infobar_barcolor;
-			  
+			}
+			
 			color = make16color(rgb);
 			#else
 			step = 255/green;
@@ -162,7 +167,7 @@ void CScale::paint (int x, int y, int pcr)
 			
 			for(j = 0; j <= hcnt; j++ ) {
 			      #ifdef DUCKBOX
-			      if (!g_settings.scale_display_type)
+			      if (g_settings.scale_display_type == 0)
 				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, color);
 			      else
 				      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, ITEMW, ITEMW, color);
@@ -175,7 +180,7 @@ void CScale::paint (int x, int y, int pcr)
 	for(i = maxi; i < total; i++) {
 		for(j = 0; j <= hcnt; j++ ) {
 		      #ifdef DUCKBOX
-		      if (!g_settings.scale_display_type)
+		      if (g_settings.scale_display_type == 0)
 			      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, POINT, POINT, COL_INFOBAR_PLUS_3);//fill passive
 		      else
 			      frameBuffer->paintBoxRel (posx + i*ITEMW, posy + j*ITEMW, ITEMW, ITEMW, COL_INFOBAR_PLUS_3);//fill passive

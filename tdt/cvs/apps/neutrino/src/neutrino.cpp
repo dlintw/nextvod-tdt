@@ -973,7 +973,7 @@ printf("***************************** rec dir %s timeshift dir %s\n", g_settings
 	g_settings.record_hours = configfile.getInt32( "record_hours", 4 );
 
 	#ifdef DUCKBOX
-	g_settings.scale_display_type = configfile.getBool("scale_display_type", 0 );
+	g_settings.scale_display_type = configfile.getInt32("scale_display_type", 2 );
 	#endif
 	
 	g_settings.filesystem_is_utf8              = configfile.getBool("filesystem_is_utf8"                 , true );
@@ -1502,7 +1502,7 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setString( "timeshiftdir", g_settings.timeshiftdir);
 
 	#ifdef DUCKBOX
-	configfile.setBool  ("scale_display_type"                 , g_settings.scale_display_type );
+	configfile.setInt32  ("scale_display_type"                 , g_settings.scale_display_type );
 	#endif
 	
 	configfile.setBool  ("filesystem_is_utf8"                 , g_settings.filesystem_is_utf8             );
