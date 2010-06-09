@@ -1111,6 +1111,7 @@ satsetup.use_usals Use usals
 scale.display_type Bar type
 scale.display_type_dots Dots
 scale.display_type_full Lines
+scale.display_type_rainbow Rainbow
 scants.abort_body Should the search really be aborted?
 scants.abort_header Abortion of channel scan
 scants.actcable Cable:
