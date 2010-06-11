@@ -507,6 +507,13 @@ static int setBrightness(Context_t* context, int brightness)
    return 0;   
 }
 
+static int setPwrLed(Context_t* context, int brightness)
+{
+	fprintf(stderr, "%s: not implemented\n", __func__);
+	return -1;
+}
+
+
 static int setLight(Context_t* context, int on)
 {
     
@@ -571,6 +578,7 @@ Model_t UFS922_model = {
 	setLed,
 	setIcon,
 	setBrightness,
+	setPwrLed,
 	getWakeupReason,
 	setLight,
         Exit,

@@ -449,6 +449,12 @@ static int setBrightness(Context_t* context, int brightness)
     return 0;   
 }
 
+static int setPwrLed(Context_t* context, int brightness)
+{
+	fprintf(stderr, "%s: not implemented\n", __func__);
+	return -1;
+}
+
 static int setLight(Context_t* context, int on)
 {
     struct vfd_ioctl_data data;
@@ -531,6 +537,7 @@ Model_t Ufs910_1W_model = {
 	setLed,
 	setIcon,
 	setBrightness,
+	setPwrLed,
 	getWakeupReason,
 	setLight,
         Exit,
