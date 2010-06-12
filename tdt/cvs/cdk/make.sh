@@ -67,8 +67,11 @@ echo " 9) Cuberevo (IPBOX 9000)"
 echo "10) Cuberevo mini (IPBOX 900)"
 echo "11) Cuberevo mini2 (IPBOX 910)"
 echo "12) Cuberevo 250 (IPBOX 91)"
-echo "13) Homecast 5101"
-echo "14) Octagon 1008"
+echo "13) Cuberevo 9500HD (7000HD)"
+echo "14) Cuberevo 2000HD"
+echo "15) Cuberevo mini_fta (200HD)"
+echo "16) Homecast 5101"
+echo "17) Octagon 1008"
 case $1 in
 	[1-9] | 1[0-4]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
@@ -90,8 +93,11 @@ case "$REPLY" in
 	10) TARGET="--enable-cuberevo_mini";;
 	11) TARGET="--enable-cuberevo_mini2";;
 	12) TARGET="--enable-cuberevo_250hd";;
-	13) TARGET="--enable-homecast5101";;
-	14) TARGET="--enable-octagon1008";;
+	13) TARGET="--enable-cuberevo_9500hd";;
+	14) TARGET="--enable-cuberevo_2000hd";;
+	15) TARGET="--enable-cuberevo_mini_fta";;
+	16) TARGET="--enable-homecast5101";;
+	17) TARGET="--enable-octagon1008";;
 	 *) TARGET="--enable-ufs910";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"
