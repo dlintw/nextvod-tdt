@@ -21,6 +21,7 @@ audiomenu.ost ost
 audiomenu.PCMOffset Lautstärkeabsenkung PCM
 audiomenu.spdif_dd DD über SPDIF
 audiomenu.stereo Stereo
+audiomenu.volume_step Lautstärke schrittweite
 audioplayer.add Hinzufügen
 audioplayer.add_ic Icecast
 audioplayer.add_loc Lokale Radioliste

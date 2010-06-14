@@ -782,6 +782,7 @@ int CNeutrinoApp::loadSetup(const char * fname)
 	g_settings.video_Format = configfile.getInt32("video_Format", 3);
 	g_settings.video_43mode = configfile.getInt32("video_43mode", 0);
 	g_settings.current_volume = configfile.getInt32("current_volume", 100);
+	g_settings.current_volume_step = configfile.getInt32("current_volume_step", 5);
 	g_settings.channel_mode = configfile.getInt32("channel_mode", LIST_MODE_PROV);
 	g_settings.video_csync = configfile.getInt32( "video_csync", 0 );
 
@@ -1342,6 +1343,7 @@ void CNeutrinoApp::saveSetup(const char * fname)
 	configfile.setInt32( "video_Format", g_settings.video_Format );
 	configfile.setInt32( "video_43mode", g_settings.video_43mode );
 	configfile.setInt32( "current_volume", g_settings.current_volume );
+	configfile.setInt32( "current_volume_step", g_settings.current_volume_step );
 	configfile.setInt32( "channel_mode", g_settings.channel_mode );
 	configfile.setInt32( "video_csync", g_settings.video_csync );
 
@@ -3723,14 +3725,14 @@ void CNeutrinoApp::setVolume(const neutrino_msg_t key, const bool bDoPaint, bool
 	do {
 		if (msg <= CRCInput::RC_MaxRC) {
 			if (msg == CRCInput::RC_plus || msg == CRCInput::RC_right) { //FIXME
-				if (g_settings.current_volume < 100 - 2)
-					g_settings.current_volume += 2;
+				if (g_settings.current_volume < 100 - g_settings.current_volume_step)
+					g_settings.current_volume += g_settings.current_volume_step;
 				else
 					g_settings.current_volume = 100;
 			}
 			else if (msg == CRCInput::RC_minus || msg == CRCInput::RC_left) { //FIXME
-				if (g_settings.current_volume > 2)
-					g_settings.current_volume -= 2;
+				if (g_settings.current_volume > g_settings.current_volume_step)
+					g_settings.current_volume -= g_settings.current_volume_step;
 				else
 					g_settings.current_volume = 0;
 			}

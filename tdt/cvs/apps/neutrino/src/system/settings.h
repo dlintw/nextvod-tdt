@@ -59,6 +59,7 @@ struct SNeutrinoSettings
 	int video_43mode;
 	unsigned char video_csync;
 	char current_volume;
+	int current_volume_step;
 	int channel_mode;
 	#ifdef DUCKBOX
 	int hdmi_color_space;
