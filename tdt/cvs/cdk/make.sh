@@ -77,7 +77,7 @@ case $1 in
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-14)? ";;
+	read -p "Select target (1-17)? ";;
 esac
 
 case "$REPLY" in
