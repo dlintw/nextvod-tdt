@@ -96,7 +96,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    fp_control -t "LOADING neutrino"
    echo "LOADING neutrino"
 
-   insmod $MODDIR/clk7111.ko
+   insmod $MODDIR/clk.ko
 
    until false
    do
