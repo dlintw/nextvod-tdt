@@ -104,6 +104,7 @@ release_ufs922:
 
 release_ufs912:
 	echo "ufs912" > $(prefix)/release/etc/hostname 
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ufs912_clk/clk7111.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/micom/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf 
