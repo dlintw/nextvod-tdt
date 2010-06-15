@@ -9486,3 +9486,14 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  }
  
  int eDVBVolumecontrol::openMixer()
+ 
+--- enigma2-nightly/lib/python/Screens/EventView.py	2010-06-11 19:51:54.494695962 +0200
++++ enigma2-nightly/lib/python/Screens/EventView.py	2010-06-15 23:12:35.597319863 +0200
+@@ -146,6 +146,7 @@
+ 
+ 		self.setTitle(event.getEventName())
+ 		self["epg_description"].setText(text)
++		self["EventInfo"].setText(text)
+ 		self["datetime"].setText(event.getBeginTimeString())
+ 		self["duration"].setText(_("%d min")%(event.getDuration()/60))
+ 		self["key_red"].setText("")
