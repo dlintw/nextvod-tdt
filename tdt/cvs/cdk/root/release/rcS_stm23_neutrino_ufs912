@@ -43,6 +43,11 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING MODULES"   
    fp_control -t "LOADING MODULES"
 
+   if [ -e /boot/audio.elf ]; then
+   else
+      fp_control -t "FW MISSING!!!"
+   fi
+
    echo "load a firmware"
    /bin/ustslave_stm23 /dev/st231-1 /boot/audio.elf
    echo "load v firmware"
