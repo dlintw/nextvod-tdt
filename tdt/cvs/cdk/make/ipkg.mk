@@ -40,6 +40,7 @@ export IPKG_CONF
 packages: $(IPKG_BUILD_BIN) \
 	make pkg-netio \
 	make pkg-nano \
+	make pkg-pngquant \
 	make pkg-libncurses \
 	make pkg-libncurses-extra \
 	make pkg-ncurses-terminfo \
@@ -77,6 +78,7 @@ packages: $(IPKG_BUILD_BIN) \
 packages-small: $(IPKG_BUILD_BIN) \
 	make pkg-netio \
 	make pkg-nano \
+	make pkg-pngquant \
 	make pkg-libncurses \
 	make pkg-libncurses-extra \
 	make pkg-ncurses-terminfo \

@@ -757,6 +757,7 @@ TUXBOX_RULES_MAKE(lm_sensors)
 TUXBOX_RULES_MAKE(fuse)
 TUXBOX_RULES_MAKE(curlftpfs)
 TUXBOX_RULES_MAKE(fbset)
+TUXBOX_RULES_MAKE(pngquant)
 TUXBOX_RULES_MAKE(util_linux)
 
 #

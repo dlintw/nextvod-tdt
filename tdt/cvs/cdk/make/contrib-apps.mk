@@ -832,6 +832,28 @@ $(DEPDIR)/%fbset: fbset.do_compile
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
+# PNGQUANT
+#
+$(DEPDIR)/pngquant.do_prepare: @DEPENDS_pngquant@
+	@PREPARE_pngquant@
+	touch $@
+
+$(DEPDIR)/pngquant.do_compile: bootstrap libz libpng pngquant.do_prepare 
+	cd @DIR_pngquant@ && \
+		$(target)-gcc -O3 -Wall -I. -funroll-loops -fomit-frame-pointer -o pngquant pngquant.c rwpng.c -lpng -lz -lm
+	touch $@
+
+$(DEPDIR)/min-pngquant $(DEPDIR)/std-pngquant $(DEPDIR)/max-pngquant \
+$(DEPDIR)/pngquant: \
+$(DEPDIR)/%pngquant: $(DEPDIR)/pngquant.do_compile
+	cd @DIR_pngquant@ && \
+		@INSTALL_pngquant@
+#	@DISTCLEANUP_pngquant@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+
+#
 # UTIL-LINUX
 #
 if STM24
@@ -876,4 +898,7 @@ $(DEPDIR)/%util-linux: util-linux.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM24
+
+
+
 
