@@ -852,6 +852,86 @@ $(DEPDIR)/%pngquant: $(DEPDIR)/pngquant.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
+# MPLAYER
+#
+$(DEPDIR)/mplayer.do_prepare: @DEPENDS_mplayer@
+	@PREPARE_mplayer@
+	touch $@
+
+$(DEPDIR)/mplayer.do_compile: bootstrap mplayer.do_prepare 
+	cd @DIR_mplayer@ && \
+		$(BUILDENV) \
+		./configure \
+			--cc=$(target)-gcc \
+			--target=$(target) \
+			--host-cc=gcc \
+			--prefix=/usr \
+			--disable-mencoder  && \
+		$(MAKE) CC="$(target)-gcc"
+	touch $@
+
+$(DEPDIR)/min-mplayer $(DEPDIR)/std-mplayer $(DEPDIR)/max-mplayer \
+$(DEPDIR)/mplayer: \
+$(DEPDIR)/%mplayer: $(DEPDIR)/mplayer.do_compile
+	cd @DIR_mplayer@ && \
+		@INSTALL_mplayer@
+#	@DISTCLEANUP_mplayer@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# MENCODER
+#
+#$(DEPDIR)/mencoder.do_prepare: @DEPENDS_mplayer@
+#	@PREPARE_mplayer@
+#	touch $@
+
+$(DEPDIR)/mencoder.do_compile: bootstrap mplayer.do_prepare 
+	cd @DIR_mencoder@ && \
+		$(BUILDENV) \
+		./configure \
+			--cc=$(target)-gcc \
+			--target=$(target) \
+			--host-cc=gcc \
+			--prefix=/usr \
+			--disable-dvdnav \
+			--disable-dvdread \ 
+			--disable-dvdread-internal \
+			--disable-libdvdcss-internal \
+			--disable-libvorbis \
+			--disable-mp3lib  \
+			--disable-liba52 \
+			--disable-mad \
+			--disable-vcd \
+			--disable-ftp \
+			--disable-pvr \
+			--disable-tv-v4l2 \
+			--disable-tv-v4l1 \
+			--disable-tv \
+			--disable-network \
+			--disable-real \
+			--disable-xanim \
+			--disable-faad-internal  \
+			--disable-tremor-internal \
+			--disable-pnm \
+			--disable-ossaudio \
+			--disable-tga \
+			--disable-v4l2 \
+			--disable-fbdev \
+			--disable-dvb \
+			--disable-mplayer && \
+		$(MAKE) CC="$(target)-gcc"
+	touch $@
+
+$(DEPDIR)/min-mencoder $(DEPDIR)/std-mencoder $(DEPDIR)/max-mencoder \
+$(DEPDIR)/mencoder: \
+$(DEPDIR)/%mencoder: $(DEPDIR)/mencoder.do_compile
+	cd @DIR_mencoder@ && \
+		@INSTALL_mencoder@
+#	@DISTCLEANUP_mencoder@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # UTIL-LINUX
