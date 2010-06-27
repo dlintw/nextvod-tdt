@@ -175,7 +175,7 @@ EPGMenu.epgplus Vorschau Übersicht
 EPGMenu.eventinfo Info zur Sendung
 EPGMenu.eventlist Vorschau aktuelles Programm
 EPGMenu.head EPG - Programm Information
-EPGMenu.streaminfo technische Information
+EPGMenu.streaminfo Technische Informationen
 EPGPlus.actions Aktionen
 EPGPlus.bybouquet_mode bouquetweise
 EPGPlus.bypage_mode seitenweise
@@ -1174,7 +1174,7 @@ streaminfo.audiotype_unknown Audiotyp: unbekannt
 streaminfo.bitrate Bitrate
 streaminfo.framerate Bildrate
 streaminfo.framerate_unknown Bildrate: unbekannt
-streaminfo.head Tech. Information
+streaminfo.head Technische Informationen
 streaminfo.not_available nicht verfügbar
 streaminfo.resolution Auflösung
 streaminfo.signal Empfangssignal
