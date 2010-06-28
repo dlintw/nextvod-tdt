@@ -88,9 +88,42 @@ diff -Nur enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
  lib/service/Makefile
  lib/components/Makefile
 diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/filepush.cpp
---- enigma2-nightly.org/lib/base/filepush.cpp	2009-12-12 23:16:22.400599000 +0100
-+++ enigma2-nightly/lib/base/filepush.cpp	2009-12-12 23:36:55.000000000 +0100
-@@ -49,6 +49,11 @@
+--- enigma2-nightly.org/lib/base/filepush.cpp	2010-06-28 23:00:00.400599000 +0100
++++ enigma2-nightly/lib/base/filepush.cpp	2010-06-28 23:00:00.000000000 +0100
+@@ -4,6 +4,20 @@
+ #include <fcntl.h>
+ #include <sys/ioctl.h>
+ 
++#if defined(__sh__) 
++#include <sys/vfs.h>
++#include "include/shmE2.h"
++
++#define USBDEVICE_SUPER_MAGIC 0x9fa2 
++#define EXT2_SUPER_MAGIC      0xEF53 
++#define EXT3_SUPER_MAGIC      0xEF53 
++#define SMB_SUPER_MAGIC       0x517B 
++#define NFS_SUPER_MAGIC       0x6969 
++#define MSDOS_SUPER_MAGIC     0x4d44            /* MD */
++
++extern char *shm;
++#endif
++
+ #define PVR_COMMIT 1
+ 
+ //FILE *f = fopen("/log.ts", "wb");
+@@ -37,6 +51,11 @@ void eFilePushThread::thread()
+ 	
+ 	size_t written_since_last_sync = 0;
+ 
++#ifdef __sh__
++	int file_count = 1;
++	unsigned long long total_bytes_written = 0;
++#endif
++
+ 	eDebug("FILEPUSH THREAD START");
+ 	
+ 		/* we set the signal to not restart syscalls, so we can detect our signal. */
+@@ -49,7 +68,15 @@ void eFilePushThread::thread()
  	
  	source_pos = m_raw_source.lseek(0, SEEK_CUR);
  	
@@ -100,9 +133,63 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
 +	int fd_video = open("/dev/dvb/adapter0/video0", O_RDONLY);
 +#endif
  		/* m_stop must be evaluated after each syscall. */
++		
++	bool already_empty=false;
++		
  	while (!m_stop)
  	{
-@@ -137,6 +142,19 @@
+ 			/* first try flushing the bufptr */
+@@ -110,7 +137,11 @@ void eFilePushThread::thread()
+ 			{
+ 				if (errno == EINTR || errno == EAGAIN || errno == EBUSY)
+ 					continue;
++#ifdef __sh__
++				eDebug("eFilePushThread WRITE ERROR (errno=%d, errstr=%s)", errno, strerror(errno));
++#else
+ 				eDebug("eFilePushThread WRITE ERROR");
++#endif
+ 				sendEvent(evtWriteError);
+ 				break;
+ 				// ... we would stop the thread
+@@ -126,6 +157,37 @@ void eFilePushThread::thread()
+ 				dest_pos -= toflush;
+ 				posix_fadvise(m_fd_dest, dest_pos, toflush, POSIX_FADV_DONTNEED);
+ 				written_since_last_sync -= toflush;
++#ifdef __sh__
++				//split file only after sync
++				if (m_record_split_size)
++				{
++					total_bytes_written += toflush;
++					if(total_bytes_written > m_record_split_size)
++					{
++						char filename[255];
++
++						close(m_fd_dest);
++						total_bytes_written = 0;
++						written_since_last_sync = 0;
++
++						if(m_record_split_type)
++							snprintf(filename, 255, "%s.%03d.ts", m_filename, file_count++);
++						else
++							snprintf(filename, 255, "%s.%03d", m_filename, file_count++);
++
++						eDebug("split record file - Recording to %s...", filename);
++
++						m_fd_dest = open(filename, m_flags, 0644);
++						if (m_fd_dest == -1)
++						{
++							eDebug("split record file - can't open recording file!");
++						}
++
++						/* turn off kernel caching strategies */
++						posix_fadvise(m_fd_dest, 0, 0, POSIX_FADV_RANDOM);
++					}
++				}
++#endif
+ 			}
+ 
+ //			printf("FILEPUSH: wrote %d bytes\n", w);
+@@ -137,6 +199,19 @@ void eFilePushThread::thread()
  			
  		if (m_sg && !current_span_remaining)
  		{
@@ -122,7 +209,32 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  			m_sg->getNextSourceSpan(source_pos, bytes_read, current_span_offset, current_span_remaining);
  			ASSERT(!(current_span_remaining % m_blocksize));
  
-@@ -235,6 +253,9 @@
+@@ -194,7 +269,15 @@ void eFilePushThread::thread()
+ 				{
+ 					case 0:
+ 						eDebug("wait for driver eof timeout");
+-						continue;
++						if(already_empty)
++						{
++							break;
++						}
++						else
++						{
++							already_empty=true;
++							continue;
++						}
+ 					case 1:
+ 						eDebug("wait for driver eof ok");
+ 						break;
+@@ -227,6 +310,7 @@ void eFilePushThread::thread()
+ 			break;
+ 		} else
+ 		{
++			already_empty=false;
+ 			source_pos += m_buf_end;
+ 			bytes_read += m_buf_end;
+ 			if (m_sg)
+@@ -235,10 +319,65 @@ void eFilePushThread::thread()
  //		printf("FILEPUSH: read %d bytes\n", m_buf_end);
  	}
  	fdatasync(m_fd_dest);
@@ -132,6 +244,62 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  
  	eDebug("FILEPUSH THREAD STOP");
  }
+ 
++#ifdef __sh__
++void eFilePushThread::start(int fd_source, int fd_dest, const char *filename)
++{
++	struct statfs sbuf;
++
++	m_raw_source.setfd(fd_source);
++	m_fd_dest = fd_dest;
++
++	m_record_split_size = 0;
++	m_record_split_type = 0;
++	m_flags = O_WRONLY|O_CREAT|O_LARGEFILE;
++
++	char record_split_size[3] = "";
++	getshmentry(shm, "record_split_size=", record_split_size, 3);
++	m_record_split_size = atoi(record_split_size);
++	m_record_split_size = m_record_split_size * 1000 * 1000 * 1000;
++	
++	char record_split_type[2] = "";
++	getshmentry(shm, "record_split_type=", record_split_type, 2);
++	m_record_split_type = atoi(record_split_type);
++
++	m_filename[0] = NULL;
++	strcpy(m_filename, filename);
++
++	if (statfs(m_filename, &sbuf) < 0)
++	{
++		eDebug("split record file - can't get fs type assuming none NFS!");
++	} else
++	{
++		if (sbuf.f_type == EXT3_SUPER_MAGIC)
++			eDebug("split record file - Ext2/3/4 Filesystem\n");
++		else
++		if (sbuf.f_type == NFS_SUPER_MAGIC)
++		{
++			eDebug("split record file - NFS Filesystem; add O_DIRECT to flags\n");
++			m_flags |= O_DIRECT;
++		}
++		else
++		if (sbuf.f_type == USBDEVICE_SUPER_MAGIC)
++			eDebug("split record file - USB Device\n");
++		else
++		if (sbuf.f_type == SMB_SUPER_MAGIC)
++			eDebug("split record file - SMBs Device\n");
++		else
++		if (sbuf.f_type == MSDOS_SUPER_MAGIC)
++			eDebug("split record file - MSDOS Device\n");
++	}
++
++	resume();
++}
++#endif
++
+ void eFilePushThread::start(int fd_source, int fd_dest)
+ {
+ 	m_raw_source.setfd(fd_source);
 diff -Nur enigma2-nightly.org/lib/base/filepush.h enigma2-nightly/lib/base/filepush.h
 --- enigma2-nightly.org/lib/base/filepush.h	2009-12-12 23:16:22.400599000 +0100
 +++ enigma2-nightly/lib/base/filepush.h	2009-12-12 23:37:07.000000000 +0100
@@ -9071,152 +9239,6 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  #else
          unsigned char m_buffer[65536];
  #endif
-
---- enigma2-nightly/lib/base/filepush.cpp	2010-04-20 01:19:16.000000000 -0400
-+++ enigma2-nightly/lib/base/filepush.cpp	2010-04-20 01:14:43.000000000 -0400
-@@ -4,6 +4,20 @@
- #include <fcntl.h>
- #include <sys/ioctl.h>
- 
-+#if defined(__sh__) 
-+#include <sys/vfs.h>
-+#include "include/shmE2.h"
-+
-+#define USBDEVICE_SUPER_MAGIC 0x9fa2 
-+#define EXT2_SUPER_MAGIC      0xEF53 
-+#define EXT3_SUPER_MAGIC      0xEF53 
-+#define SMB_SUPER_MAGIC       0x517B 
-+#define NFS_SUPER_MAGIC       0x6969 
-+#define MSDOS_SUPER_MAGIC     0x4d44            /* MD */
-+
-+extern char *shm;
-+#endif
-+
- #define PVR_COMMIT 1
- 
- //FILE *f = fopen("/log.ts", "wb");
-@@ -37,6 +51,11 @@
- 	
- 	size_t written_since_last_sync = 0;
- 
-+#ifdef __sh__
-+	int file_count = 1;
-+	unsigned long long total_bytes_written = 0;
-+#endif
-+
- 	eDebug("FILEPUSH THREAD START");
- 	
- 		/* we set the signal to not restart syscalls, so we can detect our signal. */
-@@ -115,7 +134,11 @@
- 			{
- 				if (errno == EINTR || errno == EAGAIN || errno == EBUSY)
- 					continue;
-+#ifdef __sh__
-+				eDebug("eFilePushThread WRITE ERROR (errno=%d, errstr=%s)", errno, strerror(errno));
-+#else
- 				eDebug("eFilePushThread WRITE ERROR");
-+#endif
- 				sendEvent(evtWriteError);
- 				break;
- 				// ... we would stop the thread
-@@ -131,6 +154,37 @@
- 				dest_pos -= toflush;
- 				posix_fadvise(m_fd_dest, dest_pos, toflush, POSIX_FADV_DONTNEED);
- 				written_since_last_sync -= toflush;
-+#ifdef __sh__
-+				//split file only after sync
-+				if (m_record_split_size)
-+				{
-+					total_bytes_written += toflush;
-+					if(total_bytes_written > m_record_split_size)
-+					{
-+						char filename[255];
-+
-+						close(m_fd_dest);
-+						total_bytes_written = 0;
-+						written_since_last_sync = 0;
-+
-+						if(m_record_split_type)
-+							snprintf(filename, 255, "%s.%03d.ts", m_filename, file_count++);
-+						else
-+							snprintf(filename, 255, "%s.%03d", m_filename, file_count++);
-+
-+						eDebug("split record file - Recording to %s...", filename);
-+
-+						m_fd_dest = open(filename, m_flags, 0644);
-+						if (m_fd_dest == -1)
-+						{
-+							eDebug("split record file - can't open recording file!");
-+						}
-+
-+						/* turn off kernel caching strategies */
-+						posix_fadvise(m_fd_dest, 0, 0, POSIX_FADV_RANDOM);
-+					}
-+				}
-+#endif
- 			}
- 
- //			printf("FILEPUSH: wrote %d bytes\n", w);
-@@ -260,6 +314,58 @@
- 	eDebug("FILEPUSH THREAD STOP");
- }
- 
-+#ifdef __sh__
-+void eFilePushThread::start(int fd_source, int fd_dest, const char *filename)
-+{
-+	struct statfs sbuf;
-+
-+	m_raw_source.setfd(fd_source);
-+	m_fd_dest = fd_dest;
-+
-+	m_record_split_size = 0;
-+	m_record_split_type = 0;
-+	m_flags = O_WRONLY|O_CREAT|O_LARGEFILE;
-+
-+	char record_split_size[3] = "";
-+	getshmentry(shm, "record_split_size=", record_split_size, 3);
-+	m_record_split_size = atoi(record_split_size);
-+	m_record_split_size = m_record_split_size * 1000 * 1000 * 1000;
-+	
-+	char record_split_type[2] = "";
-+	getshmentry(shm, "record_split_type=", record_split_type, 2);
-+	m_record_split_type = atoi(record_split_type);
-+
-+	m_filename[0] = NULL;
-+	strcpy(m_filename, filename);
-+
-+	if (statfs(m_filename, &sbuf) < 0)
-+	{
-+		eDebug("split record file - can't get fs type assuming none NFS!");
-+	} else
-+	{
-+		if (sbuf.f_type == EXT3_SUPER_MAGIC)
-+			eDebug("split record file - Ext2/3/4 Filesystem\n");
-+		else
-+		if (sbuf.f_type == NFS_SUPER_MAGIC)
-+		{
-+			eDebug("split record file - NFS Filesystem; add O_DIRECT to flags\n");
-+			m_flags |= O_DIRECT;
-+		}
-+		else
-+		if (sbuf.f_type == USBDEVICE_SUPER_MAGIC)
-+			eDebug("split record file - USB Device\n");
-+		else
-+		if (sbuf.f_type == SMB_SUPER_MAGIC)
-+			eDebug("split record file - SMBs Device\n");
-+		else
-+		if (sbuf.f_type == MSDOS_SUPER_MAGIC)
-+			eDebug("split record file - MSDOS Device\n");
-+	}
-+
-+	resume();
-+}
-+#endif
-+
- void eFilePushThread::start(int fd_source, int fd_dest)
- {
- 	m_raw_source.setfd(fd_source);
-
 --- enigma2-nightly/include/shmE2.h	2010-04-20 21:56:29.000000000 -0400
 +++ enigma2-nightly/include/shmE2.h	2010-04-20 21:34:34.000000000 -0400
 @@ -0,0 +1,253 @@
