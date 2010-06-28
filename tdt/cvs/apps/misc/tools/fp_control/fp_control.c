@@ -50,41 +50,41 @@ typedef struct
 tArgs vArgs[] =
 {
    { "-e", "--setTimer       ",
-"Args: No arguments\nSet the most recent timer from e2 to the frontcontroller and standby" },
+"Args: No arguments\n\tSet the most recent timer from e2 to the frontcontroller and standby" },
    { "-g", "--getTime        ",
-"Args: No arguments\nReturn current set frontcontroller time" },
+"Args: No arguments\n\tReturn current set frontcontroller time" },
    { "-s", "--setTime        ",
-"Args: time date [format???]\nSet the current frontcontroller time" },
+"Args: time date Format: HH:MM:SS dd-mm-YYYY\n\tSet the current frontcontroller time" },
    { "-m", "--setTimerManual ",
-"Args: time date [format???]\nSet the current frontcontroller wake-up time" },
+"Args: time date Format: HH:MM:SS dd-mm-YYYY\n\tSet the current frontcontroller wake-up time" },
    { "-gt", "--getTimer       ",
-"Args: No arguments\nGet the current frontcontroller wake-up time" },
+"Args: No arguments\n\tGet the current frontcontroller wake-up time" },
    { "-d", "--shutdown       ",
-"Args: time date [format???]\nShutdown receiver via fc at given time." },
+"Args: [time date] Format: HH:MM:SS dd-mm-YYYY\n\tShutdown receiver via fc at given time." },
    { "-r", "--reboot         ",
-"Args: time date [format???]\nReboot receiver via fc at given time." },
+"Args: time date Format: HH:MM:SS dd-mm-YYYY\n\tReboot receiver via fc at given time." },
    { "-p", "--sleep          ",
-"Args: time date [format???]\nReboot receiver via fc at given time." },
+"Args: time date Format: HH:MM:SS dd-mm-YYYY\n\tReboot receiver via fc at given time." },
    { "-t", "--settext        ",
-"Args: text\nSet text to frontpanel." },
+"Args: text\n\tSet text to frontpanel." },
    { "-l", "--setLed         ",
-"Args: led on\nSet a led on or off" },
+"Args: led on\n\tSet a led on or off" },
    { "-i", "--setIcon        ",
-"Args: icon on\nSet an icon on or off" },
+"Args: icon on\n\tSet an icon on or off" },
    { "-b", "--setBrightness  ",
-"Args: brightness\nSet display brightness" },
+"Args: brightness\n\tSet display brightness" },
    { "-P", "--setPwrLed  ",
-"Args: 0..15\nSet PowerLed brightness" },
+"Args: 0..15\n\tSet PowerLed brightness" },
    { "-w", "--getWakeupReason",
-"Args: No arguments\nGet the wake-up reason" },
+"Args: No arguments\n\tGet the wake-up reason" },
    { "-L", "--setLight",
-"Args: 0/1\nSet light" },
+"Args: 0/1\n\tSet light" },
    { "-c", "--clear",
-"Args: No argumens\nClear display, all icons and leds off" },
+"Args: No argumens\n\tClear display, all icons and leds off" },
    { NULL, NULL, NULL }
 };
 
-void usage(Context_t * context, char* prg)
+void usage(Context_t * context, char* prg, char* cmd)
 {
    /* let the model print out what it can handle in real */
    if ((((Model_t*)context->m)->Usage == NULL) || (((Model_t*)context->m)->Usage(context, prg) < 0))
@@ -99,7 +99,9 @@ void usage(Context_t * context, char* prg)
       {
          if (vArgs[i].arg == NULL)
 	    break;
-	 fprintf(stderr, "%s   %s   %s\n\n", vArgs[i].arg, vArgs[i].arg_long, vArgs[i].arg_description);
+
+         if ((cmd == NULL) || (strcmp(cmd, vArgs[i].arg) == 0) || (strstr(vArgs[i].arg_long, cmd) != NULL))
+	    fprintf(stderr, "%s   %s   %s\n", vArgs[i].arg, vArgs[i].arg_long, vArgs[i].arg_description);
       }
    }
 
@@ -166,7 +168,7 @@ void processCommand (Context_t * context, int argc, char* argv[])
 	        /* get the frontcontroller time */
                 if (((Model_t*)context->m)->GetTime)
                 {
-		    if (((Model_t*)context->m)->GetTime(context, &theGMTTime))
+		    if (((Model_t*)context->m)->GetTime(context, &theGMTTime) == 0)
 		    {
 		       struct tm *gmt = gmtime(&theGMTTime);
 
@@ -180,23 +182,31 @@ void processCommand (Context_t * context, int argc, char* argv[])
             {
 	        time_t theGMTTime;
 
-                getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+                if (argc == 4)
+		{
+		   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-	        /* set the frontcontroller time */
-                if (((Model_t*)context->m)->SetTime)
-                    ((Model_t*)context->m)->SetTime(context, &theGMTTime);
-
+	           /* set the frontcontroller time */
+                   if (((Model_t*)context->m)->SetTime)
+                       ((Model_t*)context->m)->SetTime(context, &theGMTTime);
+                } else
+                   usage(context, argv[0], argv[1]);
+		
 		i += 2;
 	    } else
             if ((strcmp(argv[i], "-m") == 0) || (strcmp(argv[i], "--setTimerManual") == 0))
             {
 	        time_t theGMTTime;
 
-                getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+                if (argc == 4)
+		{
+                   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-	        /* set the frontcontroller timer from args */
-                if (((Model_t*)context->m)->SetTimerManual)
-                    ((Model_t*)context->m)->SetTimerManual(context, &theGMTTime);
+	           /* set the frontcontroller timer from args */
+                   if (((Model_t*)context->m)->SetTimerManual)
+                       ((Model_t*)context->m)->SetTimerManual(context, &theGMTTime);
+                } else
+                   usage(context, argv[0], argv[1]);
 
 		i += 2;
 	    } else
@@ -220,23 +230,38 @@ void processCommand (Context_t * context, int argc, char* argv[])
             {
 	        time_t theGMTTime;
 
-                getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+                if (argc == 4)
+		{
+                   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-	        /* shutdown immediately or at a given time */
-                if (((Model_t*)context->m)->Shutdown)
-                    ((Model_t*)context->m)->Shutdown(context, &theGMTTime);
-
+	           /* shutdown immediately or at a given time */
+                   if (((Model_t*)context->m)->Shutdown)
+                          ((Model_t*)context->m)->Shutdown(context, &theGMTTime);
+                } else
+		if (argc == 2)
+		{
+		   theGMTTime = -1;
+	           /* shutdown immediately or at a given time */
+                   if (((Model_t*)context->m)->Shutdown)
+                          ((Model_t*)context->m)->Shutdown(context, &theGMTTime);
+		} else
+                   usage(context, argv[0], argv[1]);
+ 
 		i += 2;
 	    } else
             if ((strcmp(argv[i], "-r") == 0) || (strcmp(argv[i], "--reboot") == 0))
             {
 	        time_t theGMTTime;
 
-                getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+                if (argc == 4)
+		{
+                   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-	        /* reboot immediately or at a given time */
-                if (((Model_t*)context->m)->Reboot)
-                    ((Model_t*)context->m)->Reboot(context, &theGMTTime);
+	           /* reboot immediately or at a given time */
+                   if (((Model_t*)context->m)->Reboot)
+                       ((Model_t*)context->m)->Reboot(context, &theGMTTime);
+                } else
+                   usage(context, argv[0], argv[1]);
 
 		i += 2;
 	    } else
@@ -244,11 +269,15 @@ void processCommand (Context_t * context, int argc, char* argv[])
             {
 	        time_t theGMTTime;
 
-                getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+                if (argc == 4)
+		{
+                   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-	        /* sleep for a while, or wake-up on another reason (rc ...) */
-                if (((Model_t*)context->m)->Sleep)
-                    ((Model_t*)context->m)->Sleep(context, &theGMTTime);
+	           /* sleep for a while, or wake-up on another reason (rc ...) */
+                   if (((Model_t*)context->m)->Sleep)
+                       ((Model_t*)context->m)->Sleep(context, &theGMTTime);
+                } else
+                   usage(context, argv[0], argv[1]);
 
 		i += 2;
 	    } else
@@ -375,14 +404,14 @@ void processCommand (Context_t * context, int argc, char* argv[])
 		i += 1;    
 	    } else
 	    {
-                usage(context, argv[0]);
+                usage(context, argv[0], NULL);
 	    }
 
 	    i++;
         }
     } else
     {
-       usage(context, argv[0]);
+       usage(context, argv[0], NULL);
     }
 
     if (((Model_t*)context->m)->Exit)
