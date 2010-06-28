@@ -82,8 +82,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko
 
-   insmod $MODDIR/clk.ko
-
    showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
 
