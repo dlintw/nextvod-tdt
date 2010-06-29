@@ -63,6 +63,7 @@ private:
 	void SettingsCGI(CyhookHandler *hh);
 	void GetServicesxmlCGI(CyhookHandler *hh);
 	void GetBouquetsxmlCGI(CyhookHandler *hh);
+	void GetUBouquetsxmlCGI(CyhookHandler *hh);
 	void GetChannel_IDCGI(CyhookHandler *hh);
 	void MessageCGI(CyhookHandler *hh);
 	void InfoCGI(CyhookHandler *hh);
