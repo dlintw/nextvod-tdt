@@ -187,8 +187,10 @@ static int setTimer(Context_t* context)
 {
    struct micom_ioctl_data vData;
    time_t                  curTime;
+   time_t                  curTimeFP;
    time_t                  wakeupTime;
    struct tm               *ts;
+   struct tm               *tsw;
    tUFS922Private* private = (tUFS922Private*) 
         ((Model_t*)context->m)->private;
 
@@ -197,14 +199,18 @@ static int setTimer(Context_t* context)
 
    fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
 	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
-
+	   
    wakeupTime = read_e2_timers(curTime);
+   tsw = localtime (&wakeupTime);
+   printf("wakeup Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+	   tsw->tm_hour, tsw->tm_min, tsw->tm_sec, tsw->tm_mday, tsw->tm_mon+1, tsw->tm_year+1900);
    
    wakeupTime -= private->wakeupDecrement;
    
    if ((wakeupTime == 0) || (curTime > wakeupTime) || (curTime < (wakeupTime-25920000)))
    {
-       /* nothing to do for e2 */   
+       /* nothing to do for e2 */ 
+        
        fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
 
        vData.u.standby.time[0] = '\0';
@@ -237,16 +243,25 @@ static int setTimer(Context_t* context)
          fprintf(stderr, "success reading time from fp\n");
 			
          /* current front controller time */
-         curTime = (time_t) getMicomTime(fp_time);
+         curTimeFP = (time_t) getMicomTime(fp_time);
+         
+         /* set FP-Time if curTime > or < 12h */  
+         if (((curTimeFP - curTime) > 43200) || ((curTime - curTimeFP) > 43200)) {
+         		setTime(context,&curTime);
+         		curTimeFP = curTime;
+         }
+         tsw = gmtime (&curTimeFP);
+         printf("fp_time (UTC): %02d:%02d:%02d %02d-%02d-%04d\n",
+	   				tsw->tm_hour, tsw->tm_min, tsw->tm_sec, tsw->tm_mday, tsw->tm_mon+1, tsw->tm_year+1900);
       } else
       {
           fprintf(stderr, "error reading time ... assuming localtime\n");
+          curTimeFP = curTime;
           /* noop current time already set */
       }
 
-      wakeupTime = curTime + diff;
-
-      setMicomTime(wakeupTime, vData.u.standby.time);
+      wakeupTime = curTimeFP + diff;
+			setMicomTime(wakeupTime, vData.u.standby.time);
 
        if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
        {
