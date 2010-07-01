@@ -369,6 +369,10 @@ static int shutdown(Context_t* context, time_t* shutdownTimeGMT)
    
    printf("%s\n", __func__);
 
+   /* shutdown immediate */
+   if (*shutdownTimeGMT == -1)
+         system(cmdHalt);
+
    while (1)
    {
       time(&curTime);

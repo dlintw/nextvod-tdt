@@ -238,6 +238,8 @@ static int setTimer(Context_t* context)
 			
          /* current front controller time */
          curTime = (time_t) getMicomTime(fp_time);
+	 
+	 printf("curTime = %d\n", curTime);
       } else
       {
           fprintf(stderr, "error reading time ... assuming localtime\n");
@@ -246,6 +248,8 @@ static int setTimer(Context_t* context)
 
       wakeupTime = curTime + diff;
 
+      printf("wakeupTime = %d\n", wakeupTime);
+      
       setMicomTime(wakeupTime, vData.u.standby.time);
 
        if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
@@ -337,6 +341,10 @@ static int getTimer(Context_t* context, time_t* theGMTTime)
 static int shutdown(Context_t* context, time_t* shutdownTimeGMT)
 {
    time_t     curTime;
+   
+   /* shutdown immediate */
+   if (*shutdownTimeGMT == -1)
+      return (setTimer(context));
    
    while (1)
    {
@@ -573,7 +581,7 @@ Model_t UFS912_model = {
 	.Type             = Ufs912,
         .Init             = init,
         .Clear            = Clear,
-	.Usage            = usage,
+	.Usage            = NULL,
 	.SetTime          = setTime,
 	.GetTime          = getTime,
 	.SetTimer         = setTimer,

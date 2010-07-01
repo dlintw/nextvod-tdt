@@ -175,7 +175,6 @@ else
 if ENABLE_UFS912
 
 	echo "ufs912" > $(prefix)/release_neutrino/etc/hostname 
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/clk/clk.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/micom/micom.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_neutrino/boot/video.elf 

@@ -338,6 +338,10 @@ static int shutdown(Context_t* context, time_t* shutdownTimeGMT)
 {
    time_t     curTime;
    
+   /* shutdown immediate */
+   if (*shutdownTimeGMT == -1)
+      return (setTimer(context));
+
    while (1)
    {
       time(&curTime);

@@ -41,6 +41,11 @@ extern t_channel_id live_channel_id;
 
 #define EVENTDEV "/dev/input/event0"
 //#define EVENTDEV "/dev/input/input0"
+
+#define BOUQUETS_XML_FILE CONFIGDIR "/zapit/bouquets.xml"
+#define UBOUQUETS_XML_FILE CONFIGDIR "/zapit/ubouquets.xml"
+#define SERVICES_XML_FILE CONFIGDIR "/zapit/services.xml"
+
 //-----------------------------------------------------------------------------
 enum {	// not defined in input.h but used like that, at least in 2.4.22
 	KEY_RELEASED = 0,
@@ -131,6 +136,7 @@ const CControlAPI::TyCgiCall CControlAPI::yCgiCallList[]=
 	// channel & bouquet & epg & zapping handling
 	{"getservicesxml", 	&CControlAPI::GetServicesxmlCGI,""},
 	{"getbouquetsxml", 	&CControlAPI::GetBouquetsxmlCGI,""},
+	{"getubouquetsxml", 	&CControlAPI::GetUBouquetsxmlCGI,""},
 	{"channellist", 	&CControlAPI::ChannellistCGI,	"text/plain"},
 	{"getbouquet", 		&CControlAPI::GetBouquetCGI,	"+xml"},
 	{"getbouquets", 	&CControlAPI::GetBouquetsCGI,	"text/plain"},
@@ -523,14 +529,20 @@ void CControlAPI::SettingsCGI(CyhookHandler *hh)
 // send services.xml
 void CControlAPI::GetServicesxmlCGI(CyhookHandler *hh)
 {
-	hh->SendFile("/var/tuxbox/config/zapit/services.xml");
+	hh->SendFile(SERVICES_XML_FILE);
 }
 
 //-----------------------------------------------------------------------------
 // send bouquets.xml
 void CControlAPI::GetBouquetsxmlCGI(CyhookHandler *hh)
 {
-	hh->SendFile("/var/tuxbox/config/zapit/bouquets.xml");
+	hh->SendFile(BOUQUETS_XML_FILE);
+}
+
+// send ubouquets.xml
+void CControlAPI::GetUBouquetsxmlCGI(CyhookHandler *hh)
+{
+	hh->SendFile(UBOUQUETS_XML_FILE);
 }
 
 //-----------------------------------------------------------------------------
@@ -979,8 +991,8 @@ void CControlAPI::GetBouquetCGI(CyhookHandler *hh)
 //-----------------------------------------------------------------------------
 void CControlAPI::GetBouquetsCGI(CyhookHandler *hh)
 {
-	for (unsigned int i = 0; i < NeutrinoAPI->BouquetList.size();i++)
-		hh->printf("%u %s\n", (NeutrinoAPI->BouquetList[i].bouquet_nr) + 1, NeutrinoAPI->BouquetList[i].name);
+	for (unsigned int i = 0; i < (int) g_bouquetManager->Bouquets.size();i++)
+		hh->printf("%u %s\n", (i + 1), g_bouquetManager->Bouquets[i]->Name.c_str());
 }
 
 //-----------------------------------------------------------------------------
@@ -1452,7 +1464,7 @@ void CControlAPI::SendStreamInfo(CyhookHandler *hh)
 		case 6: hh->Write("50\n"); break;
 		default: hh->Write("unknown\n");
 	}
-	hh->WriteLn(NeutrinoAPI->audiotype_names[bitInfo[6]]);
+//	hh->WriteLn(NeutrinoAPI->audiotype_names[bitInfo[6]]);
 }
 
 //-----------------------------------------------------------------------------
