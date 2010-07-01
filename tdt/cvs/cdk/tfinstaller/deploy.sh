@@ -49,12 +49,45 @@ if [ -f /instsrc/topfield.tfd ]; then
 fi
 mkdir /instdest
 
-export KEEPSETTINGS=`grep -i 'keepsettings' /instsrc/Enigma_Installer.ini 2>/dev/null`
-export NOFORMAT=`grep -i 'noformat' /instsrc/Enigma_Installer.ini 2>/dev/null`
-export NOPARTITION=`grep -i 'nopartition' /instsrc/Enigma_Installer.ini 2>/dev/null`
-export NOUPDATE=`grep -i 'noupdate' /instsrc/Enigma_Installer.ini 2>/dev/null`
-export USBHDD=`grep -i 'usbhdd' /instsrc/Enigma_Installer.ini 2>/dev/null`
-export NOMTD2=`grep -i 'no_mtd2' /instsrc/Enigma_Installer.ini 2>/dev/null`
+
+export startingLine1=`grep -m 1 -n "### DO NOT EDIT THIS LINE: BELOW IS THE LIST OF FILES AND DIRECTORIES USED FOR KEEP SETTINGS ###" /instsrc/Enigma_Installer.ini | awk -F: '{ print $1 }' 2>/dev/null`
+export startingLine2=`grep -m 1 -n "### DO NOT EDIT THIS LINE: BELOW IS THE LIST OF ADDITIONAL FILES AND DIRECTORIES USED FOR KEEP SETTINGS ###" /instsrc/Enigma_Installer.ini | awk -F: '{ print $1 }' 2>/dev/null`
+
+if [ -z $startingLine1 ]; then
+  echo "No specification for KEEP SETTINGS detected"
+  export set startingLine1=9999
+else
+  echo "Specification for KEEP SETTINGS detected at line "$startingLine1
+fi
+
+if [ -z $startingLine2 ]; then
+  echo "No specification for additional KEEP SETTINGS detected"
+  export set startingLine2=9999
+else
+  echo "Specification for additional KEEP SETTINGS detected at line "$startingLine2
+fi
+
+if [ $startingLine1 -gt $startingLine2 ]; then
+  export set startingLine=$startingLine2
+else
+  export set startingLine=$startingLine1
+fi
+
+export KEEPSETTINGS=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'keepsettings' 2>/dev/null`
+export NOFORMAT=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'noformat' 2>/dev/null`
+export NOPARTITION=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'nopartition' 2>/dev/null`
+export NOUPDATE=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'noupdate' 2>/dev/null`
+export USBHDD=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'usbhdd' 2>/dev/null`
+export NOMTD2=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'nomtd2' 2>/dev/null`
+export CREATEMINI=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'createmini' 2>/dev/null`
+
+echo "KEEPSETTINGS:" $KEEPSETTINGS
+echo "NOFORMAT    :" $NOFORMAT
+echo "NOPARTITION :" $NOPARTITION
+echo "NOUPDATE    :" $NOUPDATE
+echo "USBHDD      :" $USBHDD
+echo "NOMTD2      :" $NOMTD2
+echo "CREATEMINI  :" $CREATEMINI
 
 if [ "$USBHDD" != "" ]; then
   HDD=/dev/sdb
@@ -66,25 +99,29 @@ DATAFS=$HDD"3"
 
 # If the keyword 'keepsettings' has been specified, save some config files to the disk
 if [ $KEEPSETTINGS ]; then
-  if [ ! -d /instsrc/e2settings ]; then
-    echo Saving settings
-    mkdir /instsrc/e2settings
-    mount $ROOTFS /instdest
-    cp /instdest/usr/local/share/enigma2/timers.xml /instsrc/e2settings
-    cp /instdest/usr/local/share/enigma2/settings /instsrc/e2settings
-    cp /instdest/usr/local/share/enigma2/profile /instsrc/e2settings
-    cp /instdest/usr/local/share/enigma2/lamedb /instsrc/e2settings
-    cp /instdest/usr/local/share/enigma2/bouquets.* /instsrc/e2settings
-    cp /instdest/usr/local/share/enigma2/keymap.xml /instsrc/e2settings
-    cp /instdest/usr/local/share/enigma2/module.list /instsrc/e2settings
-    cp /instdest/usr/local/share/enigma2/satellites.xml /instsrc/e2settings
-    cp /instdest/usr/local/share/enigma2/skin.xml /instsrc/e2settings
-    cp /instdest/etc/network/interfaces /instsrc/e2settings
-    cp /instdest/etc/tffpctl.conf /instsrc/e2settings
-    umount /instdest
+  echo Saving settings
+  echo "SAVE" > /dev/fpsmall
+  echo "SETTINGS" > /dev/fplarge
+  if [ ! -d /instsrc/e2settings ] || [ ! -f /instsrc/e2settings/backup.tar.gz ]; then
+    export set savFile="backup.tar.gz"
   else
-    echo Settings are already on the stick
+    export set savFile="backup-new.tar.gz"
+    echo "Settings are already on the stick. Saving current settings to backup-new.tar.gz but will use backup.tar.gz to restore."
   fi
+
+  if [ ! -d /instsrc/e2settings ]; then
+    mkdir /instsrc/e2settings
+  fi
+  mount $ROOTFS /instdest
+  cd /instdest
+
+  echo "Using settings in file /instsrc/Enigma_Installer.ini, starting at line "$startingLine
+  tar cvzf "/instsrc/e2settings/$savFile" `tail /instsrc/Enigma_Installer.ini -n +$startingLine | grep -v "^#"` 
+
+  cd /
+  sync
+  sleep 3
+  umount /instdest
 fi
 
 if [ "$USBHDD" != "" ]; then
@@ -142,25 +179,47 @@ if [ $NOFORMAT ]; then
   fsck.ext2 -y $DATAFS
 else
   if [ -z $NOPARTITION ]; then
-    # Erase the disk and create 3 partitions
-    #  1:   2GB Linux
-    #  2: 512MB Swap
-    #  3: remaining space as Linux
     echo "Partitioning HDD"
     echo '   8'     > /dev/fpsmall
     echo 'HDD PART' > /dev/fplarge
     dd if=/dev/zero of=$HDD bs=512 count=64
     sfdisk --re-read $HDD
-    sfdisk $HDD -uM << EOF
+    if [ -z $CREATEMINI ]; then
+      # Erase the disk and create 3 partitions
+      #  1:   2GB Linux
+      #  2: 512MB Swap
+      #  3: remaining space LINUX
+      sfdisk $HDD -uM << EOF
 ,2048,L
 ,256,S
 ,,L
 ;
 EOF
+    else
+      export set recsize=$((`sfdisk -s $HDD`/1024-2048-256-1024-1024-1024-1024))
+      # Erase the disk and create 8 partitions
+      #  1:   2GB Linux
+      #  2: 512MB Swap
+      #  3: remaining space LINUX
+      #  4: Extended Partition
+      #  5: 1GB  LINUX
+      #  6: 1GB  LINUX
+      #  7: 1GB  LINUX
+      #  8: 1GB  LINUX
+      sfdisk $HDD -uM << EOF
+,2048,L
+,256,S
+,$recsize,L
+,,E
+,1024,L
+,1024,L
+,1024,L
+,,L
+EOF
+    fi
   else
     echo Skipping partitioning of the disk
   fi
-
 
   # Format both Linux partitions
   echo "Formatting HDD"
@@ -170,10 +229,20 @@ EOF
   mkfs.ext3 -L MINI9 $ROOTFS
 
   if [ -z $NOPARTITION ]; then
+    if [ ! -z $CREATEMINI ]; then
+      echo 'MINI'     > /dev/fpsmall
+      mknod $HDD"5" b 8 5
+      mknod $HDD"6" b 8 6
+      mknod $HDD"7" b 8 7
+      mknod $HDD"8" b 8 8
+      mkfs.ext2 -L MINI1 $HDD"5"
+      mkfs.ext2 -L MINI2 $HDD"6"
+      mkfs.ext2 -L MINI3 $HDD"7"
+      mkfs.ext2 -L MINI4 $HDD"8"
+    fi
     echo '   6'     > /dev/fpsmall
     mkfs.ext2 -L RECORD $DATAFS
   fi
-
 
   # Initialise the swap partition
   echo '   5'     > /dev/fpsmall
@@ -200,6 +269,7 @@ if [ -z $NOUPDATE ]; then
     chmod 744 etc/init.d/rcS
   fi
   cd ..
+  sync
   umount /instdest
 else
   echo Skipping root file system
@@ -209,18 +279,14 @@ fi
 # Restore the settings
 if [ $KEEPSETTINGS ]; then
   echo Restoring settings
+  echo "RSTR" > /dev/fpsmall
+  echo "SETTINGS" > /dev/fplarge
   mount $ROOTFS /instdest
-  cp /instsrc/e2settings/timers.xml     /instdest/usr/local/share/enigma2
-  cp /instsrc/e2settings/settings       /instdest/usr/local/share/enigma2
-  cp /instsrc/e2settings/profile        /instdest/usr/local/share/enigma2
-  cp /instsrc/e2settings/lamedb         /instdest/usr/local/share/enigma2
-  cp /instsrc/e2settings/bouquets.*     /instdest/usr/local/share/enigma2
-  cp /instsrc/e2settings/keymap.xml     /instdest/usr/local/share/enigma2
-  cp /instsrc/e2settings/module.list    /instdest/usr/local/share/enigma2
-  cp /instsrc/e2settings/satellites.xml /instdest/usr/local/share/enigma2
-  cp /instsrc/e2settings/skin.xml       /instdest/usr/local/share/enigma2
-  cp /instsrc/e2settings/interfaces     /instdest/etc/network
-  cp /instsrc/e2settings/tffpctl.conf	/instdest/etc
+  cd /instdest
+  tar xvf "/instsrc/e2settings/backup.tar.gz"
+  cd /
+  sync
+  sleep 3
   umount /instdest
 fi
 
@@ -230,6 +296,7 @@ mount $DATAFS /mnt
 mkdir -p /mnt/movie
 mkdir -p /mnt/music
 mkdir -p /mnt/picture
+sync
 umount /mnt
 
 # Write U-Boot settings into the flash
@@ -243,7 +310,7 @@ if [ $? -ne 0 ]; then
 fi 
 
 # Skip Flash MTD2 if keyword 'nomtd2' is specified in the control file
-if [ "$NOMTD2" != "" ]; then
+if [ -z "$NOMTD2" ]; then
 	if [ "$USBHDD" != "" ]; then
 		dd if=/deploy/U-Boot_Settings_usb.mtd2 of=/dev/mtdblock2
 	else
@@ -253,6 +320,8 @@ if [ "$NOMTD2" != "" ]; then
 		echo "FAIL" > /dev/fpsmall
 		exit
 	fi
+else
+  echo "Skipped flashing mtdblock2 on user request."
 fi
 
 # write the kernel to flash
@@ -272,7 +341,7 @@ echo '   1'     > /dev/fpsmall
 echo 'FSCK'     > /dev/fplarge
 umount /instdest
 rmdir /instdest
-fsck.ext3 -y $ROOTFS
+fsck.ext3 -f -y $ROOTFS
 
 
 # rename uImage to avoid infinite installation loop
