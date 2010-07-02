@@ -1413,8 +1413,8 @@
 +
 +#endif
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt_common.h	1970-01-01 01:00:00.000000000 +0100
-+++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt_common.h	2009-12-11 21:40:12.000000000 +0100
-@@ -0,0 +1,1816 @@
++++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt_common.h	2010-97-02 17:30:00.000000000 +0200
+@@ -0,0 +1,1827 @@
 +#ifndef tuxtxt_common_123
 +#define tuxtxt_common_123
 +
@@ -1431,6 +1431,7 @@
 +#include <zlib.h>
 +#endif
 +
++int demuxDevToUse=0;
 +
 +/* shapes */
 +enum
@@ -1988,12 +1989,22 @@
 +int tuxtxt_init_demuxer()
 +{
 +	/* open demuxer */
-+	if ((tuxtxt_cache.dmx = open(DMX, O_RDWR)) == -1)
++	if( demuxDevToUse == 0 )
 +	{
-+		perror("TuxTxt <open DMX>");
-+		return 0;
++	  if ((tuxtxt_cache.dmx = open(DMX, O_RDWR)) == -1)
++	  {
++		  perror("TuxTxt <open DMX>");
++		  return 0;
++	  }
 +	}
-+
++	else
++	{
++	  if ((tuxtxt_cache.dmx = open(DMX1, O_RDWR)) == -1)
++	  {
++		  perror("TuxTxt <open DMX1>");
++		  return 0;
++	  }
++	}
 +
 +	if (ioctl(tuxtxt_cache.dmx, DMX_SET_BUFFER_SIZE, 64*1024) < 0)
 +	{
@@ -3232,8 +3243,8 @@
 +}
 +#endif
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt_def.h	1970-01-01 01:00:00.000000000 +0100
-+++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt_def.h	2009-12-11 21:40:12.000000000 +0100
-@@ -0,0 +1,644 @@
++++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt_def.h	2010-07-02 17:30:00.000000000 +0200
+@@ -0,0 +1,645 @@
 +/******************************************************************************
 + * definitions for plugin and lib                                             *
 + ******************************************************************************/
@@ -3249,6 +3260,7 @@
 +#include <linux/dvb/dmx.h>
 +
 +#define DMX "/dev/dvb/adapter0/demux0"
++#define DMX1 "/dev/dvb/adapter0/demux1"
 +
 +#define FLOFSIZE 4
 +
@@ -3879,8 +3891,8 @@
 +#endif /* table or serial */
 +#endif
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	1970-01-01 01:00:00.000000000 +0100
-+++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2009-12-11 21:40:12.000000000 +0100
-@@ -0,0 +1,6762 @@
++++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2010-07-02 16:30:00.000000000 +0200
+@@ -0,0 +1,6771 @@
 +/******************************************************************************
 + *                      <<< TuxTxt - Teletext Plugin >>>                      *
 + *                                                                            *
@@ -5557,9 +5569,18 @@
 +		printf("No PID given, so scanning for PIDs ...\n\n");
 +		tuxtxt_cache.vtxtpid=0;
 +	}
-+	else 
++	else if(argc==2)
 +	{
 +		tuxtxt_cache.vtxtpid = atoi(argv[1]);
++	}
++	else
++	{
++		tuxtxt_cache.vtxtpid = atoi(argv[1]);
++		demuxDevToUse = atoi(argv[2]);
++		if( demuxDevToUse < 0 || demuxDevToUse > 1 )
++		{
++		  demuxDevToUse=0;
++		}
 +	}
 +
 +	/* open Framebuffer */

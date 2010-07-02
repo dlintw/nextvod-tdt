@@ -4183,21 +4183,23 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/Makefile.a
 +
 diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py	1970-01-01 01:00:00.000000000 +0100
-+++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py	2009-12-11 21:40:12.000000000 +0100
-@@ -0,0 +1,72 @@
++++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py	2010-07-02 16:15:00.000000000 +0200
+@@ -0,0 +1,78 @@
 +from enigma import *
 +from Screens.Screen import Screen
 +from Plugins.Plugin import PluginDescriptor
++from Components.Sources.FrontendStatus import FrontendStatus
++from Components.TunerInfo import TunerInfo
 +import os
 +
 +class ShellStarter(Screen):
 +	skin = """
 +		<screen position="0,0" size="720,576" title="TuxTXT" >
-+                </screen>"""
++		</screen>"""
 +
-+        def __init__(self, session, args = None):
++	def __init__(self, session, args = None):
 +		print "__init"
-+        	self.skin = ShellStarter.skin
++		self.skin = ShellStarter.skin
 +		Screen.__init__(self, session)
 +		#self.container=eConsoleAppContainer()
 +		#self.container.appClosed.get().append(self.finished)
@@ -4217,6 +4219,10 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py 
 +		#if self.container.execute("/usr/bin/tuxtxt "+self.getValue(iServiceInformation.sTXTPID)):
 +		s="/usr/bin/tuxtxt "
 +		s+=self.getValue(iServiceInformation.sTXTPID)
++		feInfo = service.frontendInfo()
++		feNumber = feInfo and feInfo.getFrontendInfo(iFrontendInformation.frontendNumber)
++		s+= " "
++		s+=str(feNumber)
 +		s+=" &"
 +		print s
 +		try:
