@@ -195,6 +195,14 @@ static int setTimer(Context_t* context)
 
    wakeupTime = read_e2_timers(curTime);
 
+   /* failed to read e2 timers so lets take a look if
+    * we are running on neutrino
+    */
+   if (wakeupTime == 3000000000ul)
+   {
+      wakeupTime = read_neutrino_timers(curTime);
+   }
+
    wakeupTime -= private->wakeupDecrement;
    
    if ((wakeupTime == 0) || (curTime > wakeupTime))
@@ -586,5 +594,6 @@ Model_t HDBOX_model = {
 	setLight,
         Exit,
         NULL,
+	NULL,
 	NULL,
 };

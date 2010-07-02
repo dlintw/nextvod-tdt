@@ -172,6 +172,15 @@ static int setTimer(Context_t* context)
 	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
 
    wakeupTime = read_e2_timers(curTime);
+
+   /* failed to read e2 timers so lets take a look if
+    * we are running on neutrino
+    */
+   if (wakeupTime == 3000000000ul)
+   {
+      wakeupTime = read_neutrino_timers(curTime);
+   }
+
    wakeupTime -= private->wakeupDecrement;
    
    if (curTime > wakeupTime)
@@ -545,6 +554,7 @@ Model_t Ufs910_1W_model = {
 	getWakeupReason,
 	setLight,
         Exit,
+	NULL,
 	NULL,
 	NULL,
 };

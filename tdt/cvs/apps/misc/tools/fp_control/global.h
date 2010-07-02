@@ -22,7 +22,9 @@
 #define VFDSETMODE		0xc0425aff
 
 /* ufs912 */
+#define VFDGETVERSION	        0xc0425af7
 #define VFDLEDBRIGHTNESS	0xc0425af8
+#define VFDGETWAKEUPMODE	0xc0425af9
 
 struct vfd_ioctl_data {
 	unsigned char start;
@@ -61,6 +63,7 @@ typedef struct Model_s {
 	int     (* SetLight)       (Context_t* context, int on);
 	int     (* Exit)           (Context_t* context);
 	int     (* SetLedBrightness) (Context_t* context, int brightness);
+	int     (* GetVersion)       (Context_t* context, int* version);
 
         void* private;
 } Model_t;

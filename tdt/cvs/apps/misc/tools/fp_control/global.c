@@ -31,6 +31,8 @@
 /* #define E2TIMERSXML "/usr/local/share/enigma2/timers.xml" */
 #define E2TIMERSXML "/etc/enigma2/timers.xml"
 
+#define NEUTRINO_TIMERS "/usr/local/share/config/timerd.conf"
+
 #define CONFIG "/etc/vdstandby.cfg"
 char * sDisplayStd = "%a %d %H:%M:%S";
 
@@ -60,6 +62,45 @@ unsigned long int read_e2_timers(time_t curTime)
 	    printf("error reading %s\n", E2TIMERSXML);
 	}
 
+	return recordTime;
+}
+
+unsigned long int read_neutrino_timers(time_t curTime)
+{
+	unsigned long int recordTime = 3000000000ul;
+	char*             line = malloc(1000);
+	FILE              *fd = fopen (NEUTRINO_TIMERS, "r");
+
+	if (fd > 0)
+	{
+	        printf("opening %s\n", NEUTRINO_TIMERS);
+		
+		while(fgets(line, 999, fd) != NULL)
+		{
+			line[999]='\0';
+
+			if (strstr(line, "ALARM_TIME_") != NULL )
+			{
+				unsigned long int tmp = 0;
+				char* str;
+
+				str = strstr(line, "=");
+
+				if (str != NULL)
+				{
+				   tmp = atol(str + 1);
+
+				   recordTime = (tmp < recordTime && tmp > curTime ? tmp : recordTime);
+				}
+			}
+		}
+	} else
+	{
+	    printf("error reading %s\n", NEUTRINO_TIMERS);
+	}
+
+        free(line);
+
 	if (recordTime == 3000000000ul)
         {
 	   struct tm tsWake;
@@ -76,7 +117,7 @@ unsigned long int read_e2_timers(time_t curTime)
 
 	   recordTime = mktime(&tsWake);
 	} 
-
+printf("recordTime %d\n", recordTime);
 	return recordTime;
 }
 

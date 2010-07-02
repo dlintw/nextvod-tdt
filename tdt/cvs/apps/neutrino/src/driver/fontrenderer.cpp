@@ -560,7 +560,7 @@ void Font::RenderString(int x, int y, const int width, const char *text, const u
 	}
 #ifdef __sh__
 if(minX != 6000 && minY != 6000) {
-	printf("%s %d %d %d %d (%d %d)\n", __FUNCTION__, minX, minY, maxX, maxY, maxX-minX, maxY-minY);
+	dprintf(DEBUG_NORMAL, "%s %d %d %d %d (%d %d)\n", __FUNCTION__, minX, minY, maxX, maxY, maxX-minX, maxY-minY);
 	frameBuffer->blit(minX, minY, maxX-minX, maxY-minY);
 }
 #endif

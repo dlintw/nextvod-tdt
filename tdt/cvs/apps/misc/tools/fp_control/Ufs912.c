@@ -200,6 +200,14 @@ static int setTimer(Context_t* context)
 
    wakeupTime = read_e2_timers(curTime);
    
+   /* failed to read e2 timers so lets take a look if
+    * we are running on neutrino
+    */
+   if (wakeupTime == 3000000000ul)
+   {
+      wakeupTime = read_neutrino_timers(curTime);
+   }
+
    wakeupTime -= private->wakeupDecrement;
    
    if ((wakeupTime == 0) || (curTime > wakeupTime))
@@ -525,10 +533,67 @@ static int setLight(Context_t* context, int on)
     return 0;
 }
 
+/* 0xc1 = rcu
+ * 0xc2 = front
+ * 0xc3 = time
+ * 0xc4 = ac ???
+ */
 static int getWakeupReason(Context_t* context, int* reason)
 {
-   fprintf(stderr, "%s: not implemented\n", __func__);
-   return -1;
+   char mode[8];
+
+   fprintf(stderr, "waiting on wakeupmode from fp ...\n");
+
+   /* front controller time */
+   if (ioctl(context->fd, VFDGETWAKEUPMODE, &mode) < 0)
+   {
+      perror("getWakeupReason: ");
+      return -1;
+   }
+
+   /* if we get the fp time */
+   if (mode[0] != '\0')
+   {
+      fprintf(stderr, "success reading wakeupdmode from fp\n");
+
+      *reason = mode[1] & 0xff;
+      
+      printf("reason = 0x%x\n", *reason);
+   } else
+   {
+      fprintf(stderr, "error reading wakeupmode from fp\n");
+      *reason = 0;
+   }
+   return 0;
+}
+
+static int getVersion(Context_t* context, int* version)
+{
+   char strVersion[8];
+
+   fprintf(stderr, "waiting on version from fp ...\n");
+
+   /* front controller time */
+   if (ioctl(context->fd, VFDGETVERSION, &strVersion) < 0)
+   {
+      perror("getVersion: ");
+      return -1;
+   }
+
+   /* if we get the fp time */
+   if (strVersion[0] != '\0')
+   {
+      fprintf(stderr, "success reading version from fp\n");
+
+      *version = strVersion[1] * 10 | strVersion[2];
+      
+      printf("version = %d\n", *version);
+   } else
+   {
+      fprintf(stderr, "error reading version from fp\n");
+      *version = 0;
+   }
+   return 0;
 }
 
 static int Exit(Context_t* context)
@@ -599,5 +664,6 @@ Model_t UFS912_model = {
 	.SetLight         = setLight,
         .Exit             = Exit,
 	.SetLedBrightness = setLedBrightness,
+	.GetVersion       = getVersion,
 	.private          = NULL,
 };

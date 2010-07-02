@@ -201,6 +201,15 @@ static int setTimer(Context_t* context)
 	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
 	   
    wakeupTime = read_e2_timers(curTime);
+
+   /* failed to read e2 timers so lets take a look if
+    * we are running on neutrino
+    */
+   if (wakeupTime == 3000000000ul)
+   {
+      wakeupTime = read_neutrino_timers(curTime);
+   }
+
    tsw = localtime (&wakeupTime);
    printf("wakeup Time: %02d:%02d:%02d %02d-%02d-%04d\n",
 	   tsw->tm_hour, tsw->tm_min, tsw->tm_sec, tsw->tm_mday, tsw->tm_mon+1, tsw->tm_year+1900);
@@ -544,10 +553,64 @@ static int setLight(Context_t* context, int on)
     return 0;
 }
 
+/* fixme: not sure if this really works for ufs922 ->must be checked */
 static int getWakeupReason(Context_t* context, int* reason)
 {
-   fprintf(stderr, "%s: not implemented\n", __func__);
-   return -1;
+   char mode[8];
+
+   fprintf(stderr, "waiting on wakeupmode from fp ...\n");
+
+   /* front controller time */
+   if (ioctl(context->fd, VFDGETWAKEUPMODE, &mode) < 0)
+   {
+      perror("getWakeupReason: ");
+      return -1;
+   }
+
+   /* if we get the fp time */
+   if (mode[0] != '\0')
+   {
+      fprintf(stderr, "success reading wakeupdmode from fp\n");
+
+      *reason = mode[1] && 0xff;
+      
+      printf("reason = 0x%x\n", *reason);
+   } else
+   {
+      fprintf(stderr, "error reading wakeupmode from fp\n");
+      *reason = 0;
+   }
+   return 0;
+}
+
+/* fixme: not sure if this really works for ufs922 ->must be checked */
+static int getVersion(Context_t* context, int* version)
+{
+   char strVersion[8];
+
+   fprintf(stderr, "waiting on version from fp ...\n");
+
+   /* front controller time */
+   if (ioctl(context->fd, VFDGETVERSION, &strVersion) < 0)
+   {
+      perror("getVersion: ");
+      return -1;
+   }
+
+   /* if we get the fp time */
+   if (strVersion[0] != '\0')
+   {
+      fprintf(stderr, "success reading version from fp\n");
+
+      *version = strVersion[1] * 10 | strVersion[2];
+      
+      printf("version = %d\n", *version);
+   } else
+   {
+      fprintf(stderr, "error reading version from fp\n");
+      *version = 0;
+   }
+   return 0;
 }
 
 static int Exit(Context_t* context)
@@ -602,5 +665,6 @@ Model_t UFS922_model = {
 	setLight,
         Exit,
 	NULL,
+	getVersion,
         NULL,
 };

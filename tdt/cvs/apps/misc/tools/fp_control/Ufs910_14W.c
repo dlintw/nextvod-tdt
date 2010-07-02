@@ -322,6 +322,15 @@ static int setTimer(Context_t* context)
    startPseudoStandby(context, private);
 
    private->wakeupTime = read_e2_timers(curTime);
+
+   /* failed to read e2 timers so lets take a look if
+    * we are running on neutrino
+    */
+   if (wakeupTime == 3000000000ul)
+   {
+      wakeupTime = read_neutrino_timers(curTime);
+   }
+
    private->wakeupTime -= private->wakeupDecrement;
 
    Sleep(context, &private->wakeupTime);
@@ -678,6 +687,7 @@ Model_t Ufs910_14W_model = {
 	getWakeupReason,
 	setLight,
         Exit,
+	NULL,
 	NULL,
 	NULL,
 };

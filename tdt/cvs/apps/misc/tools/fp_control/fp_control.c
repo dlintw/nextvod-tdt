@@ -81,6 +81,8 @@ tArgs vArgs[] =
 "Args: 0/1\n\tSet light" },
    { "-c", "--clear",
 "Args: No argumens\n\tClear display, all icons and leds off" },
+   { "-v", "--version",
+"Args: No argumens\n\tGet version from fc" },
    { NULL, NULL, NULL }
 };
 
@@ -402,6 +404,14 @@ void processCommand (Context_t * context, int argc, char* argv[])
 		    
 	        }
 		i += 1;    
+	    } else
+            if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "--version") == 0))
+            {
+		int version;
+
+	        /* get version */
+                if (((Model_t*)context->m)->GetVersion)
+                    ((Model_t*)context->m)->GetVersion(context, &version);
 	    } else
 	    {
                 usage(context, argv[0], NULL);
