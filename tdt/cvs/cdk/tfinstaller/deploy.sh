@@ -235,10 +235,10 @@ EOF
       mknod $HDD"6" b 8 6
       mknod $HDD"7" b 8 7
       mknod $HDD"8" b 8 8
-      mkfs.ext2 -L MINI1 $HDD"5"
-      mkfs.ext2 -L MINI2 $HDD"6"
-      mkfs.ext2 -L MINI3 $HDD"7"
-      mkfs.ext2 -L MINI4 $HDD"8"
+      mkfs.ext3 -L MINI1 $HDD"5"
+      mkfs.ext3 -L MINI2 $HDD"6"
+      mkfs.ext3 -L MINI3 $HDD"7"
+      mkfs.ext3 -L MINI4 $HDD"8"
     fi
     echo '   6'     > /dev/fpsmall
     mkfs.ext2 -L RECORD $DATAFS
