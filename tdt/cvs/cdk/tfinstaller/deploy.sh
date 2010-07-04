@@ -81,6 +81,12 @@ export USBHDD=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'us
 export NOMTD2=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'nomtd2' 2>/dev/null`
 export CREATEMINI=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'createmini' 2>/dev/null`
 
+echo "-------------------------------------"
+echo "deploy.sh"
+echo "V0.03: Suppress meaningless tar errors during save settings"
+echo "V0.02: Format Mini partitions with Ext3 instead of Ext2"
+echo "V0.01: New parameter CREATEMINI and cleanup of KEEPSETTINGS"
+echo "-------------------------------------"
 echo "KEEPSETTINGS:" $KEEPSETTINGS
 echo "NOFORMAT    :" $NOFORMAT
 echo "NOPARTITION :" $NOPARTITION
@@ -88,6 +94,7 @@ echo "NOUPDATE    :" $NOUPDATE
 echo "USBHDD      :" $USBHDD
 echo "NOMTD2      :" $NOMTD2
 echo "CREATEMINI  :" $CREATEMINI
+echo "-------------------------------------"
 
 if [ "$USBHDD" != "" ]; then
   HDD=/dev/sdb
@@ -116,7 +123,7 @@ if [ $KEEPSETTINGS ]; then
   cd /instdest
 
   echo "Using settings in file /instsrc/Enigma_Installer.ini, starting at line "$startingLine
-  tar cvzf "/instsrc/e2settings/$savFile" `tail /instsrc/Enigma_Installer.ini -n +$startingLine | grep -v "^#"` 
+  tar cvzf "/instsrc/e2settings/$savFile" `tail /instsrc/Enigma_Installer.ini -n +$startingLine | grep -v "^#"` 2>/dev/null
 
   cd /
   sync
