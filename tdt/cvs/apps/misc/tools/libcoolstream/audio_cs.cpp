@@ -32,7 +32,9 @@ cAudio * audioDecoder = NULL;
 #ifndef AUDIO_SET_ENCODING 
 #define AUDIO_SET_ENCODING              _IO('o',  70)
 #endif
-
+#ifndef AUDIO_FLUSH 
+#define AUDIO_FLUSH                     _IO('o',  71)
+#endif
 //EVIL END
 
 
@@ -324,6 +326,9 @@ int cAudio::Flush(void)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	
+	if (ioctl(privateData->m_fd, AUDIO_FLUSH, NULL) < 0)
+		printf("AUDIO_FLUSH failed(%m)");
+
 	return 0;
 }
 
