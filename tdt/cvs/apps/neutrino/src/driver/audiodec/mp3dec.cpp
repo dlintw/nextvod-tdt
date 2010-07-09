@@ -502,6 +502,10 @@ CBaseDec::RetCode CMP3Dec::Decoder(FILE *InputFp, const int OutputFd,
 				}
 				if(feof(InputFp))
 					fprintf(stderr,"%s: end of input stream\n",ProgName);
+#ifdef __sh__
+					// Lets flush the remaining seconds through the decoder matrix
+					audioDecoder->Flush();
+#endif
 				break;
 			}
 
