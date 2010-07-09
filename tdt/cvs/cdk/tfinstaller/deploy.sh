@@ -50,53 +50,62 @@ fi
 mkdir /instdest
 
 
-export startingLine1=`grep -m 1 -n "### DO NOT EDIT THIS LINE: BELOW IS THE LIST OF FILES AND DIRECTORIES USED FOR KEEP SETTINGS ###" /instsrc/Enigma_Installer.ini | awk -F: '{ print $1 }' 2>/dev/null`
-export startingLine2=`grep -m 1 -n "### DO NOT EDIT THIS LINE: BELOW IS THE LIST OF ADDITIONAL FILES AND DIRECTORIES USED FOR KEEP SETTINGS ###" /instsrc/Enigma_Installer.ini | awk -F: '{ print $1 }' 2>/dev/null`
+export startingLine1=`grep -m 1 -n "\[settings\]" /instsrc/Enigma_Installer.ini | awk -F: '{ print $1 }' 2>/dev/null`
+export startingLine2=`grep -m 1 -n "\[ownsettings\]" /instsrc/Enigma_Installer.ini | awk -F: '{ print $1 }' 2>/dev/null`
 
-if [ -z $startingLine1 ]; then
+if [ -z "$startingLine1" ]; then
   echo "No specification for KEEP SETTINGS detected"
   export set startingLine1=9999
 else
-  echo "Specification for KEEP SETTINGS detected at line "$startingLine1
+  echo "Specification for KEEP SETTINGS detected at line $startingLine1"
 fi
 
-if [ -z $startingLine2 ]; then
+if [ -z "$startingLine2" ]; then
   echo "No specification for additional KEEP SETTINGS detected"
   export set startingLine2=9999
 else
   echo "Specification for additional KEEP SETTINGS detected at line "$startingLine2
 fi
 
-if [ $startingLine1 -gt $startingLine2 ]; then
-  export set startingLine=$startingLine2
+if [ "$startingLine1" -gt "$startingLine2" ]; then
+  export set startingLine="$startingLine2"
 else
-  export set startingLine=$startingLine1
+  export set startingLine="$startingLine1"
 fi
 
-export KEEPSETTINGS=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'keepsettings' 2>/dev/null`
-export NOFORMAT=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'noformat' 2>/dev/null`
-export NOPARTITION=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'nopartition' 2>/dev/null`
-export NOUPDATE=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'noupdate' 2>/dev/null`
-export USBHDD=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'usbhdd' 2>/dev/null`
-export NOMTD2=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'nomtd2' 2>/dev/null`
-export CREATEMINI=`head /instsrc/Enigma_Installer.ini -n $startingLine | grep -i 'createmini' 2>/dev/null`
+
+eval `sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
+    -e 's/;.*$//' \
+    -e 's/[[:space:]]*$//' \
+    -e 's/^[[:space:]]*//' \
+    -e "s/^\(.*\)=\([^\"']*\)$/\1=\"\2\"/" \
+   < /instsrc/Enigma_Installer.ini \
+    | sed -n -e "/^\[parameter\]/,/^\s*\[/{/^[^;].*\=.*/p;}"`
 
 echo "-------------------------------------"
 echo "deploy.sh"
+echo "V0.04: Changed ini File format"
 echo "V0.03: Suppress meaningless tar errors during save settings"
 echo "V0.02: Format Mini partitions with Ext3 instead of Ext2"
 echo "V0.01: New parameter CREATEMINI and cleanup of KEEPSETTINGS"
 echo "-------------------------------------"
-echo "KEEPSETTINGS:" $KEEPSETTINGS
-echo "NOFORMAT    :" $NOFORMAT
-echo "NOPARTITION :" $NOPARTITION
-echo "NOUPDATE    :" $NOUPDATE
-echo "USBHDD      :" $USBHDD
-echo "NOMTD2      :" $NOMTD2
-echo "CREATEMINI  :" $CREATEMINI
+echo "partition:" "$partition"
+echo "createmini:" "$createmini"
+echo "keepsettings:" "$keepsettings"
+echo "keepbootargs:" "$keepbootargs"
+
+echo "usbhdd:" "$usbhdd"
+echo "format:" "$format"
+echo "update:" "$update"
 echo "-------------------------------------"
 
-if [ "$USBHDD" != "" ]; then
+# Undocumented feature for testing: abort shell script
+if [ "$CONSOLE" = "666" ]; then
+  echo "CONSOLE" > /dev/fplarge
+  exit
+fi
+
+if [ "$usbhdd" = "1" ]; then
   HDD=/dev/sdb
 fi
 
@@ -105,7 +114,7 @@ SWAPFS=$HDD"2"
 DATAFS=$HDD"3"
 
 # If the keyword 'keepsettings' has been specified, save some config files to the disk
-if [ $KEEPSETTINGS ]; then
+if [ "$keepsettings" = "1" ]; then
   echo Saving settings
   echo "SAVE" > /dev/fpsmall
   echo "SETTINGS" > /dev/fplarge
@@ -131,7 +140,7 @@ if [ $KEEPSETTINGS ]; then
   umount /instdest
 fi
 
-if [ "$USBHDD" != "" ]; then
+if [ "$usbhdd" = "1" ]; then
   # the following is only executed when usbhdd is selected
   echo "Preparing installation to USB HDD"
   mkdir /instsrc1
@@ -176,8 +185,8 @@ if [ "$USBHDD" != "" ]; then
   echo "USB attached"
 fi
 
-# Skip formatting if the keyword 'noformat' is specified in the control file
-if [ $NOFORMAT ]; then
+# Skip formatting if the keyword 'format' is not specified in the control file
+if [ $format != "1" ]; then
   echo Checking hdd
   echo '   8'     > /dev/fpsmall
   echo 'HDD CHK'  > /dev/fplarge
@@ -185,13 +194,13 @@ if [ $NOFORMAT ]; then
   fsck.ext3 -y $ROOTFS
   fsck.ext2 -y $DATAFS
 else
-  if [ -z $NOPARTITION ]; then
+  if [ "$partition" = "1" ]; then
     echo "Partitioning HDD"
     echo '   8'     > /dev/fpsmall
     echo 'HDD PART' > /dev/fplarge
     dd if=/dev/zero of=$HDD bs=512 count=64
     sfdisk --re-read $HDD
-    if [ -z $CREATEMINI ]; then
+    if [ "$createmini" != "1" ]; then
       # Erase the disk and create 3 partitions
       #  1:   2GB Linux
       #  2: 512MB Swap
@@ -235,8 +244,8 @@ EOF
   ln -s /proc/mounts /etc/mtab
   mkfs.ext3 -L MINI9 $ROOTFS
 
-  if [ -z $NOPARTITION ]; then
-    if [ ! -z $CREATEMINI ]; then
+  if [ "$partition" = "1" ]; then
+    if [ "$createmini" = "1" ]; then
       echo 'MINI'     > /dev/fpsmall
       mknod $HDD"5" b 8 5
       mknod $HDD"6" b 8 6
@@ -260,15 +269,15 @@ EOF
 fi
 
 
-# Skip rootfs installation if the keyword 'noupdate' is specified in the control file
-if [ -z $NOUPDATE ]; then
+# Skip rootfs installation if the keyword 'update' is not specified in the control file
+if [ "$update" = "1" ]; then
   echo "Installing root file system"
   echo '   4'     > /dev/fpsmall
   echo 'ROOT FS'  > /dev/fplarge
   mount $ROOTFS /instdest
   cd /instdest
   gunzip -c /instsrc/rootfs.tar.gz | tar -xv
-  if [ $USBHDD ]; then
+  if [ "$usbhdd" = "1" ]; then
     sed -e "s#sda#sdb#g" etc/fstab > fstab1
     mv fstab1 etc/fstab
     sed -e "s#sda#sdb#g" etc/init.d/rcS > rcS1
@@ -284,7 +293,7 @@ fi
 
 
 # Restore the settings
-if [ $KEEPSETTINGS ]; then
+if [ "$keepsettings" = "1" ]; then
   echo Restoring settings
   echo "RSTR" > /dev/fpsmall
   echo "SETTINGS" > /dev/fplarge
@@ -317,8 +326,8 @@ if [ $? -ne 0 ]; then
 fi 
 
 # Skip Flash MTD2 if keyword 'nomtd2' is specified in the control file
-if [ -z "$NOMTD2" ]; then
-	if [ "$USBHDD" != "" ]; then
+if [ "$keepbootargs" != "1" ]; then
+	if [ "$usbhdd" = "1" ]; then
 		dd if=/deploy/U-Boot_Settings_usb.mtd2 of=/dev/mtdblock2
 	else
 		dd if=/deploy/U-Boot_Settings_hdd.mtd2 of=/dev/mtdblock2
@@ -352,7 +361,7 @@ fsck.ext3 -f -y $ROOTFS
 
 
 # rename uImage to avoid infinite installation loop
-if [ "$USBHDD" == "" ]; then
+if [ "$usbhdd" != "1" ]; then
   mv -f /instsrc/uImage /instsrc/uImage_
   umount /instsrc
 fi
