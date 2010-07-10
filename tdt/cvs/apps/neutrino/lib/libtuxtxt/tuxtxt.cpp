@@ -123,6 +123,11 @@ fprintf(stderr, "srcOffset=%d, srcPitch=%d\n"
 	bltData.dst_top, bltData.dst_left , bltData.dst_right, bltData.dst_bottom);
 #endif
 
+        bltData.srcFormat = SURF_BGRA8888;
+        bltData.dstFormat = SURF_BGRA8888;
+        bltData.srcMemBase = STMFBGP_FRAMEBUFFER; 
+        bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
+
 	if ( ioctl(fb, STMFBIO_BLT, &bltData ) < 0)
 	{
 		printf("errno = %d, ioctl = %d\n", errno, STMFBIO_BLT); 

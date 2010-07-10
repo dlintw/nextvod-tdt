@@ -144,6 +144,11 @@ CFrameBuffer::CFrameBuffer()
 	memset(green, 0, 256*sizeof(__u16));
 	memset(blue, 0, 256*sizeof(__u16));
 	memset(trans, 0, 256*sizeof(__u16));
+
+#ifdef __sh__
+        xFactor = -1; 
+        yFactor = -1; 
+#endif
 }
 
 CFrameBuffer* CFrameBuffer::getInstance()
@@ -1526,6 +1531,16 @@ void CFrameBuffer::blit()
 	bltData.dst_right  = xDestRes; 
 	bltData.dst_bottom = yDestRes; 
 
+//	printf("### BLIT %d %d %d %d-> %d %d %d %d ###\n", 
+//	                0, 0, DEFAULT_XRES, DEFAULT_YRES,
+//			0, 0, xDestRes, yDestRes);
+
+        bltData.srcFormat = SURF_BGRA8888;
+        bltData.dstFormat = SURF_BGRA8888;
+
+	bltData.srcMemBase = STMFBGP_FRAMEBUFFER; 
+	bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
+
 	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
 	{ 
 		perror("FBIO_BLIT"); 
@@ -1534,7 +1549,12 @@ void CFrameBuffer::blit()
 
 void CFrameBuffer::blit(int x, int y, int dx, int dy)
 {
+        if (xFactor == -1)
+	   return;
+
 	if(dx > 0 && dy > 0) {
+		//printf("### BLIT %d %d %d %d %d %d ###\n", x, y, dx, dy, xFactor, yFactor);
+
 		int srcXa = x<10?0:x-10;
 		int srcYa = y<10?0:y-10;
 
@@ -1569,6 +1589,18 @@ void CFrameBuffer::blit(int x, int y, int dx, int dy)
 		bltData.dst_top    = desYa; 
 		bltData.dst_right  = desXb; 
 		bltData.dst_bottom = desYb; 
+
+                bltData.srcFormat = SURF_BGRA8888;
+                bltData.dstFormat = SURF_BGRA8888;
+		bltData.srcMemBase = STMFBGP_FRAMEBUFFER; 
+		bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
+
+                if ((bltData.dst_right > xDestRes) || (bltData.dst_bottom > yDestRes) || 
+		    (bltData.src_right > xDestRes) || (bltData.src_bottom > yDestRes))
+                {
+		     printf("attention: blitter values out of range\n");
+		     return;
+		}
 
 		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
 		{ 
