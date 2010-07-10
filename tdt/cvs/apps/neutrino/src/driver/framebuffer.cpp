@@ -1596,7 +1596,7 @@ void CFrameBuffer::blit(int x, int y, int dx, int dy)
 		bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
 
                 if ((bltData.dst_right > xDestRes) || (bltData.dst_bottom > yDestRes) || 
-		    (bltData.src_right > xDestRes) || (bltData.src_bottom > yDestRes))
+		    (bltData.src_right > DEFAULT_XRES) || (bltData.src_bottom > DEFAULT_YRES))
                 {
 		     printf("attention: blitter values out of range\n");
 		     return;
