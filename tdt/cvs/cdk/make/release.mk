@@ -109,6 +109,15 @@ release_ufs912:
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf 
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release/boot/audio.elf
 
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/
+	echo 'sda    -fstype=auto,noatime,nodiratime          :/dev/sda' >> $(prefix)/release/etc/auto.usb
+	echo 'sda1   -fstype=auto,noatime,nodiratime          :/dev/sda1' >> $(prefix)/release/etc/auto.usb
+	echo 'sda2   -fstype=auto,noatime,nodiratime          :/dev/sda2' >> $(prefix)/release/etc/auto.usb
+	echo 'sda3   -fstype=auto,noatime,nodiratime          :/dev/sda3' >> $(prefix)/release/etc/auto.usb
+
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
