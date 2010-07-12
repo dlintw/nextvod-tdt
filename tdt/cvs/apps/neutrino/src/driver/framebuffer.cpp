@@ -1595,12 +1595,14 @@ void CFrameBuffer::blit(int x, int y, int dx, int dy)
 		bltData.srcMemBase = STMFBGP_FRAMEBUFFER; 
 		bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
 
+/* deactivated, because osd broken - fix me
                 if ((bltData.dst_right > xDestRes) || (bltData.dst_bottom > yDestRes) || 
 		    (bltData.src_right > DEFAULT_XRES) || (bltData.src_bottom > DEFAULT_YRES))
                 {
 		     printf("attention: blitter values out of range\n");
 		     return;
 		}
+*/
 
 		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
 		{ 
