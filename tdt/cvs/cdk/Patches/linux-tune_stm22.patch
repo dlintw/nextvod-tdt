@@ -40,7 +40,7 @@
  #define NR_PTYS	CONFIG_LEGACY_PTY_COUNT   /* Number of legacy ptys */
  #define NR_UNIX98_PTY_DEFAULT	4096      /* Default maximum for Unix98 ptys */
  #define NR_UNIX98_PTY_MAX	(1 << MINORBITS) /* Absolute limit */
-+#if defined(CONFIG_SH_RELOOK511) || defined(CONFIG_SH_CUBEREVO_MINI) || defined(CONFIG_SH_CUBEREVO_250HD) || defined(CONFIG_SH_CUBEREVO_MINI_FTA) || defined(CONFIG_SH_CUBEREVO_2000HD)
++#if defined(CONFIG_SH_RELOOK511) || defined(CONFIG_SH_CUBEREVO_MINI) || defined(CONFIG_SH_CUBEREVO_250HD) || defined(CONFIG_SH_CUBEREVO_MINI_FTA) || defined(CONFIG_SH_CUBEREVO_2000HD) || defined(CONFIG_SH_OCTAGON1008)
  #define NR_LDISCS		16
 +#else 
 +#define NR_LDISCS		4
