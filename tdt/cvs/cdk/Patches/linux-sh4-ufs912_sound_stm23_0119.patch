@@ -475,3 +475,9 @@ diff -x '*.cmd' -x '*.o' -rcN b/sound/stm//stx7111.c a/sound/stm//stx7111.c
   	 * converters enabled without loading STMFB...
   	 * TODO: do this in some sane way! */
 --- 516,521 ----
+  		goto error_soc_type;
+  	}
+  
+  	/* Ugly but quick hack to have SPDIF player & I2S to SPDIF
+  	 * converters enabled without loading STMFB...
+  	 * TODO: do this in some sane way! */
