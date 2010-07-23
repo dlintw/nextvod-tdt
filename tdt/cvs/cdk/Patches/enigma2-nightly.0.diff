@@ -6399,7 +6399,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
  		extensions.push_back("mpg");
  		extensions.push_back("vob");
  		extensions.push_back("wav");
-@@ -42,10 +48,22 @@
+@@ -42,10 +48,29 @@
  		extensions.push_back("avi");
  		extensions.push_back("divx");
  		extensions.push_back("dat");
@@ -6418,6 +6418,13 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/ser
 +		extensions.push_back("vdr");
 +		extensions.push_back("wma");
 +		extensions.push_back("mts");
++		int fd = open("/proc/stb/info/model", O_RDONLY);
++		char tmp[255];
++		int rd = fd >= 0 ? read(fd, tmp, 255) : 0;
++		if (fd >= 0)
++			close(fd);
++		if (!strncmp(tmp, "ufs912\n", rd))
++			extensions.push_back("wmv");
 +#endif
  		sc->addServiceFactory(eServiceFactoryMP3::id, this, extensions);
  	}
