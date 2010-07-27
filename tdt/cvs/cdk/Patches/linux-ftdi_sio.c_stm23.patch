@@ -1,5 +1,5 @@
---- linux/drivers/usb/serial/ftdi_sio.c	2007-10-09 22:31:38.000000000 +0200
-+++ linux/drivers/usb/serial/ftdi_sio.c	2010-07-20 10:28:36.711261000 +0200
+--- linux-sh4/drivers/usb/serial/ftdi_sio.c	2007-10-09 22:31:38.000000000 +0200
++++ linux-sh4/drivers/usb/serial/ftdi_sio.c	2010-07-20 10:28:36.711261000 +0200
 @@ -265,7 +265,7 @@
   */
  #define DRIVER_VERSION "v1.4.3"
