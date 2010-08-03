@@ -8632,6 +8632,15 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		tmp=0;
  	else
  	{
+@@ -1086,7 +1217,7 @@
+ 	}
+ 
+ 	// prevent writes to builtin flash
+-	if ( tmp < 1024*1024*50 ) // storage size < 50MB
++	if ( tmp < 1024*1024*25 ) // storage size < 50MB // for Duckboxes changed to < 25MB even to use UFS912 Flash for EPG
+ 		return;
+ 
+ 	// check for enough free space on storage
 @@ -1095,7 +1226,11 @@
  	if ( tmp < (eventData::CacheSize*12)/10 ) // 20% overhead
  		return;
@@ -8933,8 +8942,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +			sectionMap[i] = (i <= maxSectionIdx ? 0x0100 : 0x0000 );
 +		}
 +	}
-+}
-+
++ }
++ 
 +bool freesatEITSubtableStatus::isSectionPresent(__u8 sectionNo)
 +{
 +	if(enable_freesat)
