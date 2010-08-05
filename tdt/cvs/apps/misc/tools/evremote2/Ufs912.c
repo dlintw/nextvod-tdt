@@ -58,6 +58,8 @@ typedef struct
 /* ***************** our key assignment **************** */
 
 static tButton cButtonUFS912[] = {
+	  {"MEDIA"          , "D5", KEY_MEDIA},
+	  {"ARCHIVE"        , "46", KEY_ARCHIVE},
     {"MENU"           , "54", KEY_MENU},
     {"RED"            , "6D", KEY_RED},
     {"GREEN"          , "6E", KEY_GREEN},
@@ -180,10 +182,15 @@ static int pRead(Context_t* context)
        else
            return -1;
 
-       if(vKeyType == RemoteControl)
+       if(vKeyType == RemoteControl) {
+         if(vData[1] == 0xD5) 
+           vCurrentCode = getInternalCodeHex(cButtonUFS912, vData[1]);
+         else  
            vCurrentCode = getInternalCodeHex(cButtonUFS912, vData[1] & ~0x80);
-       else
-           vCurrentCode = getInternalCodeHex(cButtonUFS912Frontpanel, vData[1]);
+       }
+       else {
+         vCurrentCode = getInternalCodeHex(cButtonUFS912Frontpanel, vData[1]);
+       }    
 
        private->isNewKey = 0;
 
