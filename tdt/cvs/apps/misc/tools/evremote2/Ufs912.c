@@ -58,6 +58,8 @@ typedef struct
 /* ***************** our key assignment **************** */
 
 static tButton cButtonUFS912[] = {
+    {"MEDIA"          , "D5", KEY_MEDIA},
+    {"ARCHIVE"        , "46", KEY_ARCHIVE},
     {"MENU"           , "54", KEY_MENU},
     {"RED"            , "6D", KEY_RED},
     {"GREEN"          , "6E", KEY_GREEN},
