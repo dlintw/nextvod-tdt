@@ -179,10 +179,15 @@ static int pRead(Context_t* context)
        else
            return -1;
 
-       if(vKeyType == RemoteControl)
+       if(vKeyType == RemoteControl) {
+         if(vData[1] == 0xD5) 
+           vCurrentCode = getInternalCodeHex(cButtonUFS912, vData[1]);
+         else  
            vCurrentCode = getInternalCodeHex(cButtonUFS912, vData[1] & ~0x80);
-       else
-           vCurrentCode = getInternalCodeHex(cButtonUFS912Frontpanel, vData[1]);
+       }
+       else {
+         vCurrentCode = getInternalCodeHex(cButtonUFS912Frontpanel, vData[1]);
+       }
 
        private->isNewKey = 0;
 
