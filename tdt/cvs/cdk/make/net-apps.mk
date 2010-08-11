@@ -88,9 +88,15 @@ $(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
 	rpm $(DRPM) --noscripts --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
 	touch $@
 else
+if ENABLE_SPARK
+$(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
+	rpm $(DRPM) --noscripts --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
+	touch $@
+else
 $(DEPDIR)/autofs.do_prepare: @DEPENDS_autofs@
 	@PREPARE_autofs@
 	touch $@
+endif
 endif
 endif
 
@@ -99,9 +105,12 @@ if ENABLE_TF7700
 else
 if ENABLE_UFS912
 else
+if ENABLE_SPARK
+else
 	cd @DIR_autofs@  && \
 		$(MAKE_OPTS) \
 		$(MAKE)
+endif
 endif
 endif
 	touch $@
@@ -117,9 +126,11 @@ else
 if ENABLE_UFS912
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
 else
+if ENABLE_SPARK
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default && \
 	cd @DIR_autofs@  && \
 		@INSTALL_autofs@
+endif
 endif
 endif
 	( cd root/etc && for i in $(AUTOFS_ADAPTED_ETC_FILES); do \

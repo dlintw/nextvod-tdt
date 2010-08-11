@@ -32,6 +32,7 @@ extern RemoteControl_t UFS922_RC;
 extern RemoteControl_t HDBOX_RC;
 extern RemoteControl_t Hs5101_RC;
 extern RemoteControl_t UFS912_RC;
+extern RemoteControl_t Spark_RC;
 
 static RemoteControl_t * AvailableRemoteControls[] = {
 	&Ufs910_1W_RC,
@@ -43,6 +44,7 @@ static RemoteControl_t * AvailableRemoteControls[] = {
 	&HDBOX_RC,
 	&Hs5101_RC,
 	&UFS912_RC,
+	&Spark_RC,
 	NULL
 };
 
