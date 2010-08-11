@@ -268,6 +268,14 @@ AC_ARG_ENABLE(vip1_v2,
 AM_CONDITIONAL(ENABLE_VIP1_V2,test "$enable_vip1_v2" = "yes")
 AC_SUBST(VIP1_V2)
 
+AC_ARG_ENABLE(spark,
+    AS_HELP_STRING(--enable-spark,    enable spark),
+    [case "${enableval}" in
+        yes) SPARK=spark ;;
+    esac],[enable_spark=no])
+AM_CONDITIONAL(ENABLE_SPARK,test "$enable_spark" = "yes")
+AC_SUBST(SPARK)
+
 AC_ARG_ENABLE(ufs922,
 	AS_HELP_STRING(--enable-ufs922,    enable kathrein ufs922 stuff),
 	[case "${enableval}" in
@@ -990,6 +998,7 @@ topfield stuff:	       $enable_tf7700
 spider-box hl101 stuff:	$enable_hl101
 edision argus vip1 v2 stuff:	$enable_vip1_v2
 edision argus vip2 v1 stuff:	$enable_vip2_v1
+spark box stuff:       $enable_spark
 ufs910 stuff:	       $enable_ufs910
 ufs910 flash:          $enable_flash_ufs910
 ufs912 stuff:	       $enable_ufs912

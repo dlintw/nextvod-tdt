@@ -153,12 +153,14 @@ int getModel()
             vBoxType = Vip2;
         else if(!strncasecmp(vName,"hdbox", 5))
             vBoxType = HdBox;
-	else if(!strncasecmp(vName,"octagon1008", 11))
+		else if(!strncasecmp(vName,"octagon1008", 11))
             vBoxType = HdBox;
         else if(!strncasecmp(vName,"hs5101", 6))
             vBoxType = Hs5101;
         else if(!strncasecmp(vName,"ufs912", 5))
             vBoxType = Ufs912;
+        else if(!strncasecmp(vName,"spark", 5))
+            vBoxType = Spark;
         else
             vBoxType = Unknown;
     }

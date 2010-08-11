@@ -58,7 +58,7 @@ static int ix7306_write(struct ix7306_state *state, u8 *buf, u8 len)
 
 	err = i2c_transfer(state->i2c, &msg, 1);
 	if (err != 1)
-		printk("%s: read error, err=%d\n", __func__, err);
+		printk("%s: write error, err=%d\n", __func__, err);
 
 	return err;
 }

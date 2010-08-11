@@ -13,8 +13,9 @@ $(DEPDIR)/boot-elf:
 	cp $(buildprefix)/root/firmware/*.fw $(targetprefix)/lib/firmware/
 	@[ "x$*" = "x" ] && touch $@ || true
 
-LIRCD_CONF := lircd.conf
-
+if ENABLE_SPARK
+LIRCD_CONF := lircd_spark.conf
+else !ENABLE_SPARK
 if ENABLE_HL101
 LIRCD_CONF := lircd_hl101.conf
 else !ENABLE_HL101
@@ -27,10 +28,12 @@ else !ENABLE_VIP2_V1
 if ENABLE_HOMECAST5101
 LIRCD_CONF := lircd_hs5101.conf
 else !ENABLE_HOMECAST5101
+LIRCD_CONF := lircd.conf
 endif !ENABLE_HOMECAST5101
 endif !ENABLE_VIP2_V1
 endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
+endif !ENABLE_SPARK
 
 $(DEPDIR)/misc-cp:
 	cp $(buildprefix)/root/sbin/hotplug $(targetprefix)/sbin
