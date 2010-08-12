@@ -347,7 +347,17 @@ uint32_t CFrontend::getRate()
 
 fe_status_t CFrontend::getStatus(void) const
 {
-	fe_status_t status = (fe_status_t) 0;
+/* Result channel normal tuned
+frontend->getStatus() & FE_HAS_LOCK == 16
+frontend->getStatus() & FE_TIMEDOUT == 0
+frontend->getStatus() & FE_HAS_SIGNAL == 1
+frontend->getStatus() & FE_HAS_CARRIER == 2
+frontend->getStatus() & FE_HAS_VITERBI == 4
+frontend->getStatus() & FE_HAS_SYNC == 8
+frontend->getStatus() & FE_REINIT == 0
+*/
+	fe_status_t status;
+	fop(ioctl, FE_READ_STATUS, &status);
 	return status;
 }
 
