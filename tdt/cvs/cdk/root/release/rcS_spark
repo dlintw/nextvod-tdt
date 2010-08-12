@@ -2,7 +2,8 @@
 
 MODDIR=/lib/modules
 
-#insmod $MODDIR/aotom.ko
+insmod $MODDIR/vfd.ko
+insmod $MODDIR/aotom.ko
 
 if [ -e /var/etc/.firstboot ]; then
    #fp_control does not work here
@@ -12,12 +13,14 @@ if [ -e /var/etc/.firstboot ]; then
    touch /dev/.devfsd
 fi
 
+echo "mount" > /dev/vfd
+
 /etc/init.d/mountvirtfs start
 
 /etc/init.d/portmap start
 
-echo "starting telnetd"
-/usr/sbin/telnetd -l /bin/login
+#echo "starting telnetd"
+#/usr/sbin/telnetd -l /bin/login
 insmod $MODDIR/e2_proc.ko
 
 # start automounter with umount timeout of 5 seconds
@@ -29,9 +32,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/mountall start
    /etc/init.d/hostname start
 
-   echo ---------------------------box---------------------
    #fp_control -c
-   echo ---------------------------box---------------------
 
    #green led on
    #fp_control -l 2 1
@@ -41,12 +42,19 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/login
 
+   insmod $MODDIR/simu_button.ko
+
+   echo "init lircd"
+   /usr/bin/lircd
+
+   /bin/evremote2 spark &
+ 
    echo "init stmfb"
    insmod $MODDIR/stmcore-display-sti7111.ko
-   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:10m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
+   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:10m:pal:yuv:yuv #display1=720x576-16@50:3m:pal:cvbs;
 
    echo "LOADING MODULES"   
-   #fp_control -t "LOADING MODULES"
+   echo "LOADING MODULES" > /dev/vfd
 
    if [ -e /boot/audio.elf ]; then
 	  echo "load a firmware"
@@ -67,8 +75,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mme_host.ko transport0=shm
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko type=avs_none #type=stv6417
-
+   insmod $MODDIR/avs.ko type=spark_avs #type=stv6417
    echo "init player"
    insmod $MODDIR/mmelog.ko
    #there is no mpeg2hw on ufs912, will be handled by fw & copos
@@ -79,7 +86,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/stv090x.ko
-   #insmod $MODDIR/ufs912_cic.ko
    insmod $MODDIR/pti.ko
    insmod $MODDIR/stmdvb.ko
    insmod $MODDIR/stm_monitor.ko
@@ -93,13 +99,13 @@ if [ ! -e /var/etc/.firstboot ]; then
    stfbcontrol a 0
 
    echo "init frontpanel"
-   insmod $MODDIR/simu_button.ko
+
 
    mknod /dev/rc c 147 1 
 
    #toggleFeedback 0 = false, 1 = true
    #maxRate (same key) = 2, maxDelay (determine new key) = 500
-   /bin/evremote2 1 2 500 &
+   #/bin/evremote2 1 2 500 &
 
    # timefix e2
    # date -s "121220001970"
