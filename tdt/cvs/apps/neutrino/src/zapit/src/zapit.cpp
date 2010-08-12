@@ -2123,6 +2123,8 @@ int zapit_main_thread(void *data)
 	stime = time(0);
 	//time_t curtime;
 	while (zapit_server.run(zapit_parse_command, CZapitMessages::ACTVERSION, true)) {
+		if (update_pmt)
+			pmt_set_update_filter(channel, &pmt_update_fd);
 		if (pmt_update_fd != -1) {
 			unsigned char buf[4096];
 			int ret = pmtDemux->Read(buf, 4095, 10);
