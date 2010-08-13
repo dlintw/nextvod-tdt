@@ -2123,9 +2123,7 @@ int zapit_main_thread(void *data)
 	stime = time(0);
 	//time_t curtime;
 	while (zapit_server.run(zapit_parse_command, CZapitMessages::ACTVERSION, true)) {
-		if (update_pmt && frontend->getSignalStrength() > 25000 && frontend->getSignalNoiseRatio() > 25000)
-			pmt_set_update_filter(channel, &pmt_update_fd);
-		if (pmt_update_fd != -1) {
+		if ((pmt_update_fd != -1) && (parse_pmt(channel) > -1)) {
 			unsigned char buf[4096];
 			int ret = pmtDemux->Read(buf, 4095, 10);
 			if (ret > 0) {
