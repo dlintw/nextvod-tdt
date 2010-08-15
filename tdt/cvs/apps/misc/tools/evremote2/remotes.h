@@ -44,7 +44,7 @@ static RemoteControl_t * AvailableRemoteControls[] = {
 	&HDBOX_RC,
 	&Hs5101_RC,
 	&UFS912_RC,
-	&Spark_RC,
+//	&Spark_RC,
 	NULL
 };
 
