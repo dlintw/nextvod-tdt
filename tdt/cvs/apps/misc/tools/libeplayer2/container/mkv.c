@@ -623,7 +623,7 @@ add_cluster_position (mkv_demuxer_t *mkv_d, uint64_t position)
 
 
 #define AAC_SYNC_EXTENSION_TYPE 0x02b7
-static int
+/*static int
 aac_get_sample_rate_index (uint32_t sample_rate)
 {
     #ifdef DEBUG
@@ -654,8 +654,43 @@ aac_get_sample_rate_index (uint32_t sample_rate)
         return 10;
     else
         return 11;
-}
+}*/
+static int
+aac_get_sample_rate_index (uint32_t sample_rate)
+{
+    #ifdef DEBUG
+    dprintf("mkv.c aac_get_sample_rate_index\n\n");
+    #endif
 
+    if (96000 <= sample_rate)
+        return 0;
+    else if (88200 <= sample_rate)
+        return 1;
+    else if (64000 <= sample_rate)
+        return 2;
+    else if (48000 <= sample_rate)
+        return 3;
+    else if (44100 <= sample_rate)
+        return 4;
+    else if (32000 <= sample_rate)
+        return 5;
+    else if (24000 <= sample_rate)
+        return 6;
+    else if (22050 <= sample_rate)
+        return 7;
+    else if (16000 <= sample_rate)
+        return 8;
+    else if (12000 <= sample_rate)
+        return 9;
+    else if (11025 <= sample_rate)
+        return 10;
+    else if (8000 <= sample_rate)
+        return 11;
+    else if (7350 <= sample_rate)
+        return 12;
+    else
+        return 13;
+}
 /*
 static int
 vobsub_parse_size (sh_sub_t *sh, const char *start)
@@ -976,7 +1011,7 @@ demux_mkv_read_info (demuxer_t *demuxer,stream_t *s)
                 tc_scale = num;
 
     		#ifdef DEBUG
-                dprintf("[mkv] | + timecode scale: %"PRIu64"\n",tc_scale);
+                printf("[mkv] | + timecode scale: %"PRIu64"\n",tc_scale);
     		#endif
 
                 break;
@@ -3488,16 +3523,16 @@ int WriteDataToDevice (int Device, unsigned char *Data, int DataLength)
 
 void Hexdump(unsigned char *Data, int length)
 {
-    	#ifdef DEBUG
+    	//#ifdef DEBUG
 	int k;
 	for (k = 0; k < length; k++)
 	{
-		dprintf("%02x ", Data[k]);
+		printf("%02x ", Data[k]);
 		if (((k+1)&31)==0)
-			dprintf("\n");
+			printf("\n");
 	}
-	dprintf("\n");
-    	#endif
+	printf("\n");
+    	//#endif
 }
 
 static int
@@ -4468,10 +4503,12 @@ demux_mkv_seek (demuxer_t *demuxer, float rel_seek_secs, float audio_delay, int 
 static demuxer_t *demuxer = NULL;
 static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 //static stream_t *s = NULL;
-//static sh_audio_t *sh_audio = NULL;
+static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
 static pthread_t PlayThread = NULL;
 
+static uint8_t *aacbuf;
+static int aac;
 int MkvInit(Context_t *context, char * filename) {
 	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
@@ -4542,9 +4579,32 @@ int MkvInit(Context_t *context, char * filename) {
 		printf("\nVIDEO 0x%02x\n",sh_video->format);
 		#endif
 	}
+	if (demuxer->audio && demuxer->audio->sh) {
+		sh_audio=demuxer->audio->sh;
 
+		#ifdef DEBUG
+		printf("\nAUDIO 0x%02x\n",sh_audio->format);
+		#endif
+	}
 	for (i = 0; i < mkv_d->num_tracks; i++) {
         	if (mkv_d->tracks[i] != NULL && mkv_d->tracks[i]->type == MATROSKA_TRACK_AUDIO) {
+
+			if(sh_audio->format == 0x4134504d) // A_AAC -> AAC_HEADER
+			{
+				unsigned int  Profile = 1;
+				unsigned int  SampleIndex;
+				SampleIndex = aac_get_sample_rate_index(mkv_d->tracks[i]->a_sfreq);
+				aacbuf = malloc(8);
+				aacbuf[0] = 0xFF;
+				aacbuf[1] = 0xF1;
+				aacbuf[2] = ((Profile & 0x03) << 6)  | (SampleIndex << 2) | ((mkv_d->tracks[i]->a_channels >> 2) & 0x01);
+				aacbuf[3] = (mkv_d->tracks[i]->a_channels & 0x03) << 6;
+				aacbuf[4] = 0x00;
+				aacbuf[5] = 0x1F;
+				aacbuf[6] = 0xFC;
+				printf("AAC_HEADER -> ");
+				Hexdump(aacbuf,7);
+			}
 			Track_t Audio = {
 				mkv_d->tracks[i]->language,
 				mkv_d->tracks[i]->codec_id,
@@ -4687,7 +4747,12 @@ void MkvGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 		}
 
 		while (current != NULL) {
-			context->output->audio->Write(context, current->buffer, current->len, Pts, NULL, 0, 0, "audio");
+			if(sh_audio->format == 0x4134504d){
+				//printf("aac write\n");
+				context->output->audio->Write(context, current->buffer, current->len, Pts, aacbuf, 7, 0, "audio");
+			}
+			else
+				context->output->audio->Write(context, current->buffer, current->len, Pts, NULL, 0, 0, "audio");
 
 			current = current->next;
 			Pts = INVALID_PTS_VALUE;
