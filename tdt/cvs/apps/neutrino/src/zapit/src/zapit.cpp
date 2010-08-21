@@ -2055,7 +2055,7 @@ int zapit_main_thread(void *data)
 {
 	int			video_mode = (int) data;
 
-	time_t stime;
+	//time_t stime;
 	printf("[zapit] starting... tid %ld\n", syscall(__NR_gettid));
 	abort_zapit = 0;
 
@@ -2120,12 +2120,18 @@ int zapit_main_thread(void *data)
 	sleep(2);
 	leaveStandby();
 	firstzap = false;
-	stime = time(0);
+	//stime = time(0);
 	//time_t curtime;
+	int tmp_time = time(0);
 	while (zapit_server.run(zapit_parse_command, CZapitMessages::ACTVERSION, true)) {
-		if (update_pmt && frontend->getSignalStrength() > 25000 && frontend->getSignalNoiseRatio() > 25000)
-			pmt_set_update_filter(channel, &pmt_update_fd);
 		if (pmt_update_fd != -1) {
+			if (update_pmt && !standby && !scan_runs && channel && frontend->getSignalStrength() > 25000 && frontend->getSignalNoiseRatio() > 25000 && time(0) == tmp_time + 10) { // update all 10 sec.
+				tmp_time = time(0);
+				pmt_set_update_filter(channel, &pmt_update_fd);
+			}
+			if (tmp_time+10 < time(0)) {
+				tmp_time = time(0);
+			}
 			unsigned char buf[4096];
 			int ret = pmtDemux->Read(buf, 4095, 10);
 			if (ret > 0) {
