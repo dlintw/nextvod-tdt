@@ -111,7 +111,15 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  #define PVR_COMMIT 1
  
  //FILE *f = fopen("/log.ts", "wb");
-@@ -37,6 +51,11 @@ void eFilePushThread::thread()
+@@ -12,6 +26,7 @@ eFilePushThread::eFilePushThread(int io_prio_class, int io_prio_level, int block
+ 	:prio_class(io_prio_class), prio(io_prio_level), m_messagepump(eApp, 0)
+ {
+ 	m_stop = 0;
++	m_stopped = 0;
+ 	m_sg = 0;
+ 	m_send_pvr_commit = 0;
+ 	m_stream_mode = 0;
+@@ -37,6 +52,11 @@ void eFilePushThread::thread()
  	
  	size_t written_since_last_sync = 0;
  
@@ -123,7 +131,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  	eDebug("FILEPUSH THREAD START");
  	
  		/* we set the signal to not restart syscalls, so we can detect our signal. */
-@@ -49,7 +68,15 @@ void eFilePushThread::thread()
+@@ -49,7 +69,15 @@ void eFilePushThread::thread()
  	
  	source_pos = m_raw_source.lseek(0, SEEK_CUR);
  	
@@ -139,7 +147,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  	while (!m_stop)
  	{
  			/* first try flushing the bufptr */
-@@ -110,7 +137,11 @@ void eFilePushThread::thread()
+@@ -110,7 +138,11 @@ void eFilePushThread::thread()
  			{
  				if (errno == EINTR || errno == EAGAIN || errno == EBUSY)
  					continue;
@@ -151,7 +159,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  				sendEvent(evtWriteError);
  				break;
  				// ... we would stop the thread
-@@ -126,6 +157,37 @@ void eFilePushThread::thread()
+@@ -126,6 +158,37 @@ void eFilePushThread::thread()
  				dest_pos -= toflush;
  				posix_fadvise(m_fd_dest, dest_pos, toflush, POSIX_FADV_DONTNEED);
  				written_since_last_sync -= toflush;
@@ -189,7 +197,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  			}
  
  //			printf("FILEPUSH: wrote %d bytes\n", w);
-@@ -137,6 +199,19 @@ void eFilePushThread::thread()
+@@ -137,6 +200,19 @@ void eFilePushThread::thread()
  			
  		if (m_sg && !current_span_remaining)
  		{
@@ -209,7 +217,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  			m_sg->getNextSourceSpan(source_pos, bytes_read, current_span_offset, current_span_remaining);
  			ASSERT(!(current_span_remaining % m_blocksize));
  
-@@ -194,7 +269,15 @@ void eFilePushThread::thread()
+@@ -194,7 +270,15 @@ void eFilePushThread::thread()
  				{
  					case 0:
  						eDebug("wait for driver eof timeout");
@@ -226,7 +234,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  					case 1:
  						eDebug("wait for driver eof ok");
  						break;
-@@ -227,6 +310,7 @@ void eFilePushThread::thread()
+@@ -227,6 +311,7 @@ void eFilePushThread::thread()
  			break;
  		} else
  		{
@@ -234,14 +242,22 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  			source_pos += m_buf_end;
  			bytes_read += m_buf_end;
  			if (m_sg)
-@@ -235,10 +319,65 @@ void eFilePushThread::thread()
+@@ -234,11 +319,72 @@ void eFilePushThread::thread()
+ 		}
  //		printf("FILEPUSH: read %d bytes\n", m_buf_end);
  	}
- 	fdatasync(m_fd_dest);
+-	fdatasync(m_fd_dest);
+ 
++	// Do NOT call "fdatasync(m_fd_dest);" here because on some systems it doesn't return
++	// and freezes the whole box.
++	// Calling this function here is not that important, anyway, because the initiator closes
++	// m_fd_dest immediatedly when the filepush thread has been stopped.
++
 +#if defined(__sh__)
 +	close(fd_video);
 +#endif
- 
++
++	m_stopped=1;
  	eDebug("FILEPUSH THREAD STOP");
  }
  
@@ -300,10 +316,31 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  void eFilePushThread::start(int fd_source, int fd_dest)
  {
  	m_raw_source.setfd(fd_source);
+@@ -261,10 +407,20 @@ void eFilePushThread::stop()
+ 	if (!sync())
+ 		return;
+ 
++	m_stopped=0;
+ 	m_stop = 1;
+ 
+ 	eDebug("stopping thread."); /* just do it ONCE. it won't help to do this more than once. */
+ 	sendSignal(SIGUSR1);
++
++	int stopCount=0;
++	while(!m_stopped && stopCount<20)
++	{
++	  eDebug("Filepush Thread not stopped yet. Wait one second.");
++	  sleep(1);
++	  stopCount++;
++	}
++	
+ 	kill(0);
+ }
+ 
 diff -Nur enigma2-nightly.org/lib/base/filepush.h enigma2-nightly/lib/base/filepush.h
 --- enigma2-nightly.org/lib/base/filepush.h	2009-12-12 23:16:22.400599000 +0100
 +++ enigma2-nightly/lib/base/filepush.h	2009-12-12 23:37:07.000000000 +0100
-@@ -13,6 +13,11 @@
+@@ -13,6 +13,11 @@ class iFilePushScatterGather
  public:
  	virtual void getNextSourceSpan(off_t current_offset, size_t bytes_read, off_t &start, size_t &size)=0;
  	virtual ~iFilePushScatterGather() {}
@@ -315,14 +352,29 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.h enigma2-nightly/lib/base/filep
  };
  
  class eFilePushThread: public eThread, public Object
-@@ -51,7 +56,12 @@
+@@ -23,6 +28,9 @@ public:
+ 	void thread();
+ 	void stop();
+ 	void start(int sourcefd, int destfd);
++#ifdef __sh__
++	void start(int sourcefd, int destfd, const char *filename);
++#endif
+ 	int start(const char *filename, int destfd);
+ 	
+ 	void pause();
+@@ -51,7 +59,17 @@ protected:
  private:
  	iFilePushScatterGather *m_sg;
  	int m_stop;
 -	unsigned char m_buffer[65536];
++	int m_stopped;
 +#if defined(__sh__)
 +        //align buffer to standard blocksize of 188
 +        unsigned char m_buffer[348*188];
++	unsigned long long m_record_split_size;
++	int m_record_split_type;
++	char m_filename[256];
++	int m_flags;
 +#else
 +        unsigned char m_buffer[65536];
 +#endif
@@ -9238,29 +9290,6 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  
  	while (i != m_pids.end()) {
 
---- enigma2-nightly/lib/base/filepush.h	2010-04-20 01:19:16.000000000 -0400
-+++ enigma2-nightly/lib/base/filepush.h	2010-04-20 01:15:00.000000000 -0400
-@@ -28,6 +28,9 @@
- 	void thread();
- 	void stop();
- 	void start(int sourcefd, int destfd);
-+#ifdef __sh__
-+	void start(int sourcefd, int destfd, const char *filename);
-+#endif
- 	int start(const char *filename, int destfd);
- 	
- 	void pause();
-@@ -59,6 +62,10 @@
- #if defined(__sh__)
-         //align buffer to standard blocksize of 188
-         unsigned char m_buffer[348*188];
-+	unsigned long long m_record_split_size;
-+	int m_record_split_type;
-+	char m_filename[256];
-+	int m_flags;
- #else
-         unsigned char m_buffer[65536];
- #endif
 --- enigma2-nightly/include/shmE2.h	2010-04-20 21:56:29.000000000 -0400
 +++ enigma2-nightly/include/shmE2.h	2010-04-20 21:34:34.000000000 -0400
 @@ -0,0 +1,253 @@
