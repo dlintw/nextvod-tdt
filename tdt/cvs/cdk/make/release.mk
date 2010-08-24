@@ -147,6 +147,8 @@ release_spark:
 release_fortis_hdbox:
 	echo "fortis" > $(prefix)/release/etc/hostname 
 	rm -f $(prefix)/release/sbin/halt
+	cp $(buildprefix)/root/release/halt_fortis_hdbox $(prefix)/release/etc/init.d/halt
+	chmod 777 $(prefix)/release/etc/init.d/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release/etc/init.d/
