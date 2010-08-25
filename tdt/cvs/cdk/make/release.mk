@@ -181,6 +181,29 @@ release_fortis_hdbox:
 
 release_octagon1008:
 	echo "octagon1008" > $(prefix)/release/etc/hostname 
+	rm -f $(prefix)/release/sbin/halt
+	cp $(buildprefix)/root/release/halt_octagon1008 $(prefix)/release/etc/init.d/halt
+	chmod 777 $(prefix)/release/etc/init.d/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release/etc/init.d/
+	chmod 755 $(prefix)/release/etc/init.d/umountfs
+	chmod 755 $(prefix)/release/etc/init.d/rc
+	chmod 755 $(prefix)/release/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release/etc/init.d/halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release/etc/rc.d
+	ln -fs halt $(prefix)/release/sbin/reboot
+	ln -fs halt $(prefix)/release/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
+	
 # disable driver copy
 #	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/avl2108.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
