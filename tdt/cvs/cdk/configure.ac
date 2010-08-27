@@ -769,6 +769,7 @@ TUXBOX_RULES_MAKE(pngquant)
 TUXBOX_RULES_MAKE(mplayer)
 TUXBOX_RULES_MAKE(mencoder)
 TUXBOX_RULES_MAKE(util_linux)
+TUXBOX_RULES_MAKE(jfsutils)
 
 #
 # contrib libs

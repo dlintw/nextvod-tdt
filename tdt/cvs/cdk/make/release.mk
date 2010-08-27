@@ -373,6 +373,10 @@ release_base:
 	cp -dp $(targetprefix)/sbin/mkfs.ext3 $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.ext2 $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.ext3 $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/fsck.jfs $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/jfs_fsck $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/jfs_mkfs $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/jfs_tune $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.nfs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/sfdisk $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release/etc/init.d/ && \

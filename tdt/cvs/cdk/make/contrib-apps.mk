@@ -900,7 +900,7 @@ $(DEPDIR)/mencoder.do_compile: bootstrap mplayer.do_prepare
 			--disable-dvdread-internal \
 			--disable-libdvdcss-internal \
 			--disable-libvorbis \
-			--disable-mp3lib  \
+			--disable-mp3lib \
 			--disable-liba52 \
 			--disable-mad \
 			--disable-vcd \
@@ -912,7 +912,7 @@ $(DEPDIR)/mencoder.do_compile: bootstrap mplayer.do_prepare
 			--disable-network \
 			--disable-real \
 			--disable-xanim \
-			--disable-faad-internal  \
+			--disable-faad-internal \
 			--disable-tremor-internal \
 			--disable-pnm \
 			--disable-ossaudio \
@@ -978,6 +978,33 @@ $(DEPDIR)/%util-linux: util-linux.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM24
+
+#
+# jfsutils
+#
+$(DEPDIR)/jfsutils.do_prepare: @DEPENDS_jfsutils@
+	@PREPARE_jfsutils@
+	touch $@
+
+$(DEPDIR)/jfsutils.do_compile: bootstrap jfsutils.do_prepare 
+	cd @DIR_jfsutils@ && \
+		$(BUILDENV) \
+		./configure \
+			--host=gcc \
+			--target=$(target) \
+			--prefix= && \
+		$(MAKE) CC="$(target)-gcc"
+	touch $@
+
+$(DEPDIR)/min-jfsutils $(DEPDIR)/std-jfsutils $(DEPDIR)/max-jfsutils \
+$(DEPDIR)/jfsutils: \
+$(DEPDIR)/%jfsutils: $(DEPDIR)/jfsutils.do_compile
+	cd @DIR_jfsutils@ && \
+		@INSTALL_jfsutils@
+#	@DISTCLEANUP_jfsutils@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 
 
 
