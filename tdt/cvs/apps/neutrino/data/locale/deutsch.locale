@@ -1062,10 +1062,10 @@ recordingmenu.zap_on_announce Umschalten bei Ankündigung
 recordtimer.announce Die Aufnahme beginnt in wenigen Minuten.
 repeatblocker.hint_1 Mindestzeit (in ms) zwischen 2 Tastendrücken
 repeatblocker.hint_2 0 schaltet den Blocker aus (Rot ist " ")
-reset_all Werkseinstellungen zurücksetzen
+reset_all Alle Einstellungen zurücksetzen
 reset_channels Lösche Kanäle
 reset_confirm Sind Sie sich sicher?
-reset_settings Zurückstellen auf Werkseinstellungen
+reset_settings Einstellungen zurücksetzen
 rfmod.carrier Unterträger-Frequenz
 rfmod.carrier4500 4.5
 rfmod.carrier5500 5.5
