@@ -327,10 +327,10 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  	sendSignal(SIGUSR1);
 +
 +	int stopCount=0;
-+	while(!m_stopped && stopCount<20)
++	while(!m_stopped && stopCount<200)
 +	{
-+	  eDebug("Filepush Thread not stopped yet. Wait one second.");
-+	  sleep(1);
++	  eDebug("Filepush Thread not stopped yet. Wait 10 milliseconds.");
++	  usleep(10000);
 +	  stopCount++;
 +	}
 +	
