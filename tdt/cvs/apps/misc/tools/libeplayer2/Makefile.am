@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = libeplayer2.la
 
+CFLAGS = -Wall
+CXXFLAGS = -Wall
+
 INCLUDES = \
 	-Iinclude
 
