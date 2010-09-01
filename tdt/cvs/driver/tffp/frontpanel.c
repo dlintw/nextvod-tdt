@@ -194,7 +194,7 @@ static byte                    IconMask [] =  {0xff, 0xcf, 0xff, 0xff, 0xff, 0x7
                                                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
                                                0xff, 0xfe, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff,
                                                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-                                               0xff, 0xfc, 0x00, 0x06, 0xff, 0xff, 0xff, 0xff};
+                                               0xff, 0xfc, 0x00, 0x03, 0xff, 0xff, 0xff, 0xff};
 static byte                    IconBlinkMode[48][4];
 static byte                    DefaultTypematicDelay = 3;
 static byte                    DefaultTypematicRate = 1;
@@ -1286,7 +1286,7 @@ static void VFDSetIcons (dword Icons1, dword Icons2, byte BlinkMode)
   if (Icons1 & FPICON_MP3)          SetIconBits (28, 7, BlinkMode);
   if (Icons1 & FPICON_MUSIC)        SetIconBits (27, 3, BlinkMode);
   if (Icons1 & FPICON_MUTE)         SetIconBits (42, 0, BlinkMode);
-  if (Icons1 & FPICON_NETWORK)      SetIconBits (43, 0, BlinkMode);
+  if (Icons1 & FPICON_NETWORK)      SetIconBits (43, 2, BlinkMode);
   if (Icons1 & FPICON_PAUSE)        SetIconBits (42, 1, BlinkMode);
   if (Icons1 & FPICON_PLAY)         SetIconBits (42, 4, BlinkMode);
   if (Icons1 & FPICON_PM)           SetIconBits ( 6, 0, BlinkMode);

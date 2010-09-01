@@ -19,6 +19,31 @@
   	STSSC_DEVICE(0x18042000, 117, 4, 0, 1, 0xff),
   };
   
+***************
+*** 704,714 ****
+  static struct platform_device stm_stasc_devices[] = {
+  	STASC_DEVICE(0x18030000, 123, -1, -1, 0, 0, 1, 4, 7,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
+  	STASC_DEVICE(0x18031000, 122, -1, -1, 1, 0, 1, 4, 5,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
+! 	STASC_DEVICE(0x18032000, 121, -1, -1, 4, 3, 2, 4, 5,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
+! 	STASC_DEVICE(0x18033000, 120, -1, -1, 5, 0, 1, 2, 3,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
+  };
+  
+--- 704,714 ----
+  static struct platform_device stm_stasc_devices[] = {
+  	STASC_DEVICE(0x18030000, 123, -1, -1, 0, 0, 1, 4, 7,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
+  	STASC_DEVICE(0x18031000, 122, -1, -1, 1, 0, 1, 4, 5,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
+! 	STASC_DEVICE(0x18032000, 121, -1, -1, 4, 3, 2, -1, -1,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
+! 	STASC_DEVICE(0x18033000, 120, -1, -1, 5, 0, 1, -1, -1,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
+  };
+  
 *** linux-sh4-2.6.23.17_stm23_0119-orig/arch/sh/boards/st/mb442/setup.c	2009-06-06 20:17:14.000000000 +0200
 --- linux-sh4/arch/sh/boards/st/mb442/setup.c	2009-06-11 18:09:12.000000000 +0200
 ***************
@@ -69,7 +94,7 @@
 ! 	{
 ! 		.name  = "LMI_SYS",
 ! 		.start = 0,
-! 		.size  = 0x01600000,
+! 		.size  = 0x02600000,
 ! 		.flags = 0,
 ! 		.aka   = LMI_SYS_partalias
 ! 	}
@@ -121,6 +146,31 @@
 +    }
   	return 1;
   }
+  
+***************
+*** 165,175 ****
+  static int __init device_init(void)
+  {
+  	struct stpio_pin *smc91x_reset;
+  
+  	stx7100_configure_sata();
+! 	stx7100_configure_pwm(&pwm_private_info);
+  	stx7100_configure_ssc(&ssc_private_info);
+  	stx7100_configure_usb();
+  	stx7100_configure_lirc(&lirc_scd);
+  	stx7100_configure_pata(3, 1, IRL1_IRQ);
+  
+--- 195,205 ----
+  static int __init device_init(void)
+  {
+  	struct stpio_pin *smc91x_reset;
+  
+  	stx7100_configure_sata();
+! 	//stx7100_configure_pwm(&pwm_private_info);
+  	stx7100_configure_ssc(&ssc_private_info);
+  	stx7100_configure_usb();
+  	stx7100_configure_lirc(&lirc_scd);
+  	stx7100_configure_pata(3, 1, IRL1_IRQ);
   
 ***************
 *** 175,192 ****

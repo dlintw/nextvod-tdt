@@ -101,21 +101,20 @@ if [ ! -e /var/etc/.firstboot ]; then
       case "$rtv" in
 		0) echo "0"
 		   echo "E2 ERROR"
-      		   reboot;;
+      	   init 6;;
 		1) echo "1"
 		   echo "SHUTDOWN"
-		   gotosleep hdbox
-         umount -a;;
+           init 0;;
 		2) echo "2"
 		   echo "REBOOT"
-		   reboot;;
+		   init 6;;
 		3) echo "3"
 		   echo "E2 RESTART"
 		   echo "0" > /proc/progress
 		   showiframe -p /boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
-         reboot;;
+           echo "0" > /proc/progress;;
       esac
    done 
 fi
@@ -123,4 +122,4 @@ fi
 #never reached
 echo "REBOOT HDBOX" > /dev/vfd
 echo "REBOOT HDBOX"
-reboot
+init 6

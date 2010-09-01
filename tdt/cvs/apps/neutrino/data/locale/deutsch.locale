@@ -380,18 +380,18 @@ flashupdate.expertfunctions Experten-Funktionen
 flashupdate.fileis0bytes die Dateigröße ist 0 Byte
 flashupdate.fileselector Datei-Auswahl
 flashupdate.flashreadyreboot Das Image wurde erfolgreich geflasht.\nIhre Box wird jetzt neu gestartet.
-flashupdate.getinfofile lade Versionsinfo
-flashupdate.getinfofileerror kann Info nicht laden
-flashupdate.getupdatefile lade Update
-flashupdate.getupdatefileerror kann Update nicht laden
+flashupdate.getinfofile Lade Versionsinfo
+flashupdate.getinfofileerror Kann Info nicht laden
+flashupdate.getupdatefile Lade Update
+flashupdate.getupdatefileerror Kann Update nicht laden
 flashupdate.globalprogress Gesamtstatus:
 flashupdate.head Aktualisierung
 flashupdate.md5check Imageprüfung
 flashupdate.md5sumerror Das Image ist fehlerhaft
-flashupdate.msgbox Es wurde folgendes neues file gefunden:\nDatum: %s, %s\nBasisImage: %s\nTyp: %s\n\nWollen Sie diese Version jetzt herunterladen\nund installieren?
+flashupdate.msgbox Es wurde folgende neue Datei gefunden:\nDatum: %s, %s\nBasisImage: %s\nTyp: %s\n\nWollen Sie diese Version jetzt herunterladen\nund installieren?
 flashupdate.msgbox_manual Es wurde ein neues Image gefunden:\nDatum: %s, %s\nBasisImage: %s\nImageTyp: %s\n\nWollen Sie diese Version jetzt installieren?
 flashupdate.mtdselector Partitions-Auswahl
-flashupdate.programmingflash programmiere Flash
+flashupdate.programmingflash Programmiere Flash
 flashupdate.proxypassword Passwort
 flashupdate.proxypassword_hint1 Geben sie das Proxy-Passwort ein
 flashupdate.proxypassword_hint2 Ein leerer Eintrag bedeutet keine Authentifizierung
@@ -404,11 +404,11 @@ flashupdate.proxyusername_hint1 Geben Sie den Proxy-Benutzernamen ein
 flashupdate.proxyusername_hint2 Ein leerer Eintrag bedeutet keine Authentifizierung
 flashupdate.readflash ganzes Flashimage auslesen
 flashupdate.readflashmtd einzelne Partition auslesen
-flashupdate.ready fertig
+flashupdate.ready Fertig
 flashupdate.reallyflashmtd Wollen Sie den Flashvorgang wirklich durchführen?\n\nFalls ein Fehler auftritt oder das Image nicht\nfunktionfähig ist, wird Ihre box nicht mehr booten.\n\nImagename: %s\nZiel: %s
 flashupdate.savesuccess Das Image wurde erfolgreich unter dem\nDateinamen %s gespeichert.
 flashupdate.selectimage Verfügbare Images/Files
-flashupdate.squashfs.noversion Bei SquashFS Updates werden Versionsüberprüfungen derzeit nur bei Web-Updates unterstützt.\nWollen Sie das ausgewählt Image wirklich installieren?
+flashupdate.squashfs.noversion Bei SquashFS Updates werden Versionsüberprüfungen derzeit nur bei Web-Updates unterstützt.\nWollen Sie das ausgewählte Image wirklich installieren?
 flashupdate.titlereadflash Flash auslesen
 flashupdate.titlewriteflash Flash schreiben
 flashupdate.updatemode Updatemodus
@@ -1062,10 +1062,10 @@ recordingmenu.zap_on_announce Umschalten bei Ankündigung
 recordtimer.announce Die Aufnahme beginnt in wenigen Minuten.
 repeatblocker.hint_1 Mindestzeit (in ms) zwischen 2 Tastendrücken
 repeatblocker.hint_2 0 schaltet den Blocker aus (Rot ist " ")
-reset_all Werkseinstellungen zurücksetzen
+reset_all Alle Einstellungen zurücksetzen
 reset_channels Lösche Kanäle
 reset_confirm Sind Sie sich sicher?
-reset_settings Zurückstellen auf Werkseinstellungen
+reset_settings Einstellungen zurücksetzen
 rfmod.carrier Unterträger-Frequenz
 rfmod.carrier4500 4.5
 rfmod.carrier5500 5.5

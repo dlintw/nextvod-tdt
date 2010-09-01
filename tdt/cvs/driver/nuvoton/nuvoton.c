@@ -236,7 +236,7 @@ struct iconToInternal {
    { "ICON_RADIO"    , ICON_RADIO     , 0xff, 0xff},
    { "ICON_DOLBY"    , ICON_DOLBY     , 0x37, 0xff},
    { "ICON_EMAIL"    , ICON_EMAIL     , 0xff, 0xff},
-   { "ICON_MUTE"     , ICON_MUTE      , 0xff, 0xff},
+   { "ICON_MUTE"     , ICON_MUTE      , 0x38, 0xff},
    { "ICON_PLAY"     , ICON_PLAY      , 0xff, 0xff},
    { "ICON_PAUSE"    , ICON_PAUSE     , 0xff, 0xff},
    { "ICON_FF"       , ICON_FF        , 0xff, 0xff},
@@ -278,7 +278,7 @@ struct iconToInternal {
 #ifdef OCTAGON1008
 #define cCommandSetIcon          0xc4 //0xc2
 #else
-#define cCommandSetIcon          0xc4
+#define cCommandSetIcon          0xc2
 #endif
 
 #ifdef OCTAGON1008

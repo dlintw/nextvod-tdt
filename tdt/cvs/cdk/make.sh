@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == -h ] || [ "$1" == --help ]; then
- echo "Parameter 1: target system (1-14)"
+ echo "Parameter 1: target system (1-18)"
  echo "Parameter 2: kernel (1-4)"
  echo "Parameter 3: debug (Y/N)"
  exit
@@ -72,12 +72,13 @@ echo "14) Cuberevo 2000HD"
 echo "15) Cuberevo mini_fta (200HD)"
 echo "16) Homecast 5101"
 echo "17) Octagon 1008"
+echo "18) SPARK"
 case $1 in
-	[1-9] | 1[0-4]) REPLY=$1
+	[1-9] | 1[0-8]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-17)? ";;
+	read -p "Select target (1-18)? ";;
 esac
 
 case "$REPLY" in
@@ -98,6 +99,7 @@ case "$REPLY" in
 	15) TARGET="--enable-cuberevo_mini_fta";;
 	16) TARGET="--enable-homecast5101";;
 	17) TARGET="--enable-octagon1008";;
+	18) TARGET="--enable-spark";;
 	 *) TARGET="--enable-ufs910";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"

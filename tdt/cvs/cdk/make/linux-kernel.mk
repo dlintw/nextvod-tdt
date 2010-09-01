@@ -179,6 +179,11 @@ UFS912PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs912_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
+		linux-ftdi_sio.c_stm23.patch \
+SPARKPATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-spark_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-spark_sound_stm23$(PATCH_STR).patch) \
+		fortis_hdbox_dvb_core_stm23.patch
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
@@ -237,6 +242,7 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(VIP1_V2),$(VIP2PATCHES_23)) \
 		$(if $(VIP2_V1),$(VIP2PATCHES_23)) \
 		$(if $(UFS912),$(UFS912PATCHES_23)) \
+		$(if $(SPARK),$(SPARKPATCHES_23)) \
 		$(if $(UFS922),$(UFS922PATCHES_23)) \
 		$(if $(CUBEMOD),$(CUBEPATCHES_023)) \
 		$(if $(UFS910),$(UFS910PATCHES_23)) \
@@ -345,7 +351,7 @@ endif !STM22
 #
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)
+MODNAME = $(UFS910)$(UFS912)$(SPARK)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -553,6 +559,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
  		$(if $(UFS912),UFS912=$(UFS912)) \
+ 		$(if $(SPARK),SPARK=$(SPARK)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \
 		$(if $(CUBEREVO_MINI2),CUBEREVO_MINI2=$(CUBEREVO_MINI2)) \
@@ -575,6 +582,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
  		$(if $(UFS912),UFS912=$(UFS912)) \
+ 		$(if $(SPARK),SPARK=$(SPARK)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \
 		$(if $(CUBEREVO_MINI2),CUBEREVO_MINI2=$(CUBEREVO_MINI2)) \

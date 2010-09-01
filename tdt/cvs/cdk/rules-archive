@@ -47,7 +47,7 @@ sysvinit_2.86.ds1-38.diff.gz;http://ftp.de.debian.org/debian/pool/main/s/sysvini
 # contrib apps
 #
 grep-2.5.1.tar.bz2;ftp://mirrors.kernel.org/gnu/grep
-grep_2.5.1.ds2-6.diff.gz;http://ftp.de.debian.org/debian/pool/main/g/grep
+grep_2.5.1.ds2-6.diff.gz;http://64studio.hivelocity.net/apt/pool/main/g/grep
 openrdate-1.1.2.tar.gz;http://kent.dl.sourceforge.net/sourceforge/openrdate
 termcap-2.0.8.tar.gz;http://fresh.t-systems-sfr.com/linux/src
 e2fsprogs-1.40.2.tar.gz;http://kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/older_releases/
@@ -70,6 +70,7 @@ util-linux-2.12r.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/util-linux
 boost_1_40_0.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/boost
 pngquant-1.0-src.tgz;ftp://ftp.simplesystems.org/pub/libpng/png/applications
 mplayer-export-snapshot.tar.bz2;ftp://ftp.mplayerhq.hu/MPlayer/releases
+jfsutils-1.1.14.tar.gz;http://jfs.sourceforge.net/project/pub/
 
 #
 # contrib libs
@@ -111,7 +112,7 @@ Python-2.5.1.tar.bz2;http://www.python.org/ftp/python/2.5.1
 Python-2.5.2.tar.bz2;http://www.python.org/ftp/python/2.5.2
 Python-2.6.tar.bz2;http://www.python.org/ftp/python/2.6
 elementtree-1.2.6-20050316.tar.gz;http://effbot.org/media/downloads
-lxml-2.0.5.tgz;http://codespeak.net/lxml
+lxml-2.0.5.tgz;http://launchpad.net/lxml/2.0/2.0.5/+download
 libxmlccwrap-0.0.12.tar.gz;http://www.ant.uni-bremen.de/whomes/rinas/libxmlccwrap/download
 zope.interface-3.3.0.tar.gz;http://www.zope.org/Products/ZopeInterface/3.3.0
 Zope-3.3.1.tgz;http://www.zope.org/Products/Zope3/3.3.1
@@ -133,7 +134,7 @@ portmap_6.0-9.diff.gz;http://debian.osuosl.org/debian/pool/main/p/portmap/
 nfs-utils-1.1.1.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/nfs
 nfs-utils_1.1.1-12.diff.gz;http://ftp.de.debian.org/debian/pool/main/n/nfs-utils
 autofs-4.1.4.tar.bz2;ftp://ftp.kernel.org/pub/linux/daemons/autofs/v4
-vsftpd-2.0.7.tar.gz;ftp://ftp.uni-kassel.de/Mirrors/ftp.fhh.opensource-mirror.de/gentoo/distfiles
+vsftpd-2.0.7.tar.gz;http://gd.tuwien.ac.at/infosys/servers/ftp/vsftpd
 netkit-ftp-0.17.tar.gz;ftp://ftp.uk.linux.org/pub/linux/Networking/netkit
 samba-3.0.28.tar.gz;http://us1.samba.org/samba/ftp
 netio126.zip;http://freshmeat.net/redir/netio/18673/url_zip

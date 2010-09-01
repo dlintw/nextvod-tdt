@@ -58,6 +58,8 @@ typedef struct
 /* ***************** our key assignment **************** */
 
 static tButton cButtonUFS912[] = {
+    {"MEDIA"          , "D5", KEY_MEDIA},
+    {"ARCHIVE"        , "46", KEY_ARCHIVE},
     {"MENU"           , "54", KEY_MENU},
     {"RED"            , "6D", KEY_RED},
     {"GREEN"          , "6E", KEY_GREEN},
@@ -100,16 +102,13 @@ static tButton cButtonUFS912[] = {
 /* ***************** our fp button assignment **************** */
 
 static tButton cButtonUFS912Frontpanel[] = {
-	{"FP_MENU"		, "80", KEY_MENU},
-	{"FP_EXIT"		, "0D", KEY_HOME},
-/*	{"FP_AUX"		, 0x20, ???},
-	{"FP_TV_R"		, 0x08, ???},
-*/
-	{"FP_OK"		, "04", KEY_OK},
-	{"FP_WHEEL_LEFT"	, "0F", KEY_UP},
-	{"FP_WHEEL_RIGHT"	, "0E", KEY_DOWN},
+	{"FP_MEDIA"		, "80", KEY_MENU},
+	{"FP_ON_OFF"		, "01", KEY_HOME},
+	{"FP_MINUS"		, "04", KEY_DOWN},
+	{"FP_PLUS"		, "02", KEY_UP},
+	{"FP_TV_R"		, "08", KEY_OK},
 	{""	                , ""  , KEY_NULL}
-/* is there no power key on frontpanel? */
+/* Powerkey is used as HOME EXIT Button? */
 };
 
 static int pInit(Context_t* context, int argc, char* argv[]) 
@@ -180,10 +179,15 @@ static int pRead(Context_t* context)
        else
            return -1;
 
-       if(vKeyType == RemoteControl)
+       if(vKeyType == RemoteControl) {
+         if(vData[1] == 0xD5) 
+           vCurrentCode = getInternalCodeHex(cButtonUFS912, vData[1]);
+         else  
            vCurrentCode = getInternalCodeHex(cButtonUFS912, vData[1] & ~0x80);
-       else
-           vCurrentCode = getInternalCodeHex(cButtonUFS912Frontpanel, vData[1]);
+       }
+       else {
+         vCurrentCode = getInternalCodeHex(cButtonUFS912Frontpanel, vData[1]);
+       }
 
        private->isNewKey = 0;
 

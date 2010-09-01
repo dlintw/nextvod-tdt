@@ -32,7 +32,7 @@ struct vfd_ioctl_data {
 	unsigned char length;
 };
 
-typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox, Hs5101, Ufs912} eBoxType;
+typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox, Hs5101, Ufs912, Spark} eBoxType;
 
 typedef struct Context_s {
 	void* /* Model_t */  *m; /* instance data */
