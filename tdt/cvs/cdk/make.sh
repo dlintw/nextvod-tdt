@@ -183,6 +183,16 @@ echo && \
 echo $CONFIGPARAM >lastChoice
 
 echo "-----------------------"
+if [ ! -e $KATIDIR/cvs/driver/include/player2/acc_defines.h ]; then
+ echo "WARNING: Player2 Header files not found!"
+ echo "         Player2 will not be build!"
+ echo "         Please install the Player2 Header files and rerun this script"
+ sed -i 's/^obj-y	+= player2\/$/#obj-y	+= player2\//g' $KATIDIR/cvs/driver/Makefile
+else
+ sed -i 's/^#obj-y	+= player2\//obj-y	+= player2\//g' $KATIDIR/cvs/driver/Makefile
+fi
+
+echo "-----------------------"
 echo "Your build enivroment is ready :-)"
 echo "Your next step could be:"
 echo "make yaud-enigma2"
