@@ -456,7 +456,7 @@ std::string CNeutrinoYParser::func_get_bouquets_with_epg(CyhookHandler *hh, std:
 			}
 		}
 		
-		else if ((event = NeutrinoAPI->ChannelListEvents[channel->channel_id]))
+		else if ((event = NeutrinoAPI->ChannelListEvents[channel->channel_id]) && prozent <= 100)
 		{
 			//bool has_current_next = NeutrinoAPI->Sectionsd->getCurrentNextServiceKey(channel->channel_id&0xFFFFFFFFFFFFULL, currentNextInfo);
 			bool has_current_next = true;
