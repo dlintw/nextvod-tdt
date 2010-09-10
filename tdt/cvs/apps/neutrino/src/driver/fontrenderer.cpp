@@ -537,7 +537,7 @@ void Font::RenderString(int x, int y, const int width, const char *text, const u
 
 #ifdef __sh__
 
-		int srcX = x - glyph->left;
+		int srcX = x + glyph->left;
 		int srcY = y - glyph->top;
 		int srcW = w + spread_by;
 		int srcH = h;

@@ -1555,59 +1555,50 @@ void CFrameBuffer::blit(int x, int y, int dx, int dy)
 	if(dx > 0 && dy > 0) {
 		//printf("### BLIT %d %d %d %d %d %d ###\n", x, y, dx, dy, xFactor, yFactor);
 
-		int srcXa = x<10?0:x-10;
-		int srcYa = y<10?0:y-10;
+		int srcXa = x < 10 ? 0 : x - 10;
+		int srcYa = y < 10 ? 0 : y - 10;
 
-		int srcXb = x + dx + 20;
-		int srcYb = y + dy + 20;
+		int srcXb = (x + dx + 10) > DEFAULT_XRES ? DEFAULT_XRES : (x + dx + 10);
+		int srcYb = (y + dy + 1) > DEFAULT_YRES ? DEFAULT_YRES : (y + dy + 1);
 
 		int desXa = srcXa * xFactor;
 		int desYa = srcYa * yFactor;
 
-		int desXb = srcXb * xFactor;
-		int desYb = srcYb * yFactor;
+		int desXb = (srcXb * xFactor) > xDestRes ? xDestRes : (srcXb * xFactor);
+		int desYb = (srcYb * yFactor) > yDestRes ? yDestRes : (srcYb * yFactor);
 
 		//printf("### BLIT %d %d %d %d (%d %d)-> %d %d %d %d ###\n", srcXa, srcYa, srcXb, srcYb, dx, dy,
 		//	desXa, desYa, desXb, desYb);
 
-		STMFBIO_BLT_DATA  bltData; 
-		memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA)); 
+		STMFBIO_BLT_DATA  bltData;
+		memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA));
 
-		bltData.operation  = BLT_OP_COPY; 
-		bltData.srcOffset  = 1920*1080*4; 
-		bltData.srcPitch   = DEFAULT_XRES * 4; 
+		bltData.operation  = BLT_OP_COPY;
+		bltData.srcOffset  = 1920*1080*4;
+		bltData.srcPitch   = DEFAULT_XRES * 4;
 
-		bltData.src_left   = srcXa; 
-		bltData.src_top    = srcYa; 
-		bltData.src_right  = srcXb; 
-		bltData.src_bottom = srcYb; 
+		bltData.src_left   = srcXa;
+		bltData.src_top    = srcYa;
+		bltData.src_right  = srcXb;
+		bltData.src_bottom = srcYb;
 
-		bltData.dstOffset  = 0; 
-		bltData.dstPitch   = xDestRes * 4; 
+		bltData.dstOffset  = 0;
+		bltData.dstPitch   = xDestRes * 4;
 
-		bltData.dst_left   = desXa; 
-		bltData.dst_top    = desYa; 
-		bltData.dst_right  = desXb; 
-		bltData.dst_bottom = desYb; 
+		bltData.dst_left   = desXa;
+		bltData.dst_top    = desYa;
+		bltData.dst_right  = desXb;
+		bltData.dst_bottom = desYb;
 
                 bltData.srcFormat = SURF_BGRA8888;
                 bltData.dstFormat = SURF_BGRA8888;
-		bltData.srcMemBase = STMFBGP_FRAMEBUFFER; 
-		bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
+		bltData.srcMemBase = STMFBGP_FRAMEBUFFER;
+		bltData.dstMemBase = STMFBGP_FRAMEBUFFER;
 
-/* deactivated, because osd broken - fix me
-                if ((bltData.dst_right > xDestRes) || (bltData.dst_bottom > yDestRes) || 
-		    (bltData.src_right > DEFAULT_XRES) || (bltData.src_bottom > DEFAULT_YRES))
-                {
-		     printf("attention: blitter values out of range\n");
-		     return;
+		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0)
+		{
+			perror("FBIO_BLIT");
 		}
-*/
-
-		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
-		{ 
-			perror("FBIO_BLIT"); 
-		} 
 	}
 }
 
