@@ -2,6 +2,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <sys/types.h>
@@ -19,7 +20,7 @@ static const char FILENAME[] = "text_srt.c";
 #define TEXTSRTOFFSET 100
 
 #include "common.h"
-static pthread_t thread_sub = NULL;
+static pthread_t thread_sub;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,8 +48,8 @@ static void SrtManagerAdd(Context_t  *context, SrtTrack_t track) {
 		printf("2strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
 #endif
 		Tracks[TrackCount].File       = strdup(track.File);
-        Tracks[TrackCount].Id         = track.Id;
-        TrackCount++;
+                Tracks[TrackCount].Id         = track.Id;
+                TrackCount++;
 	} else {
 		//Track_t * tmp_Tracks = realoc(sizeof(Tracks));
 	}
@@ -60,16 +61,18 @@ static char ** SrtManagerList(Context_t  *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
 	if (Tracks != NULL) {
+	        char help[256];
 		int i = 0, j = 0;
 		tracklist = malloc(sizeof(char *) * ((TrackCount*2) + 1));
 		for (i = 0, j = 0; i < TrackCount; i++, j+=2) {
 #ifdef DEBUG
 			printf("2strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
 #endif
-      tracklist[j]    = strdup(Tracks[i].Id);
-			tracklist[j+1]    = strdup(Tracks[i].File);
-		}
-    tracklist[j] = NULL;
+                sprintf(help, "%d", Tracks[i].Id);
+                tracklist[j]    = strdup(help);
+		tracklist[j+1]  = strdup(Tracks[i].File);
+	   }
+           tracklist[j] = NULL;
 	}
 
 	return tracklist;
@@ -80,10 +83,10 @@ static void SrtManagerDel(Context_t * context) {
     int i = 0;
     if(Tracks != NULL) {
         for (i = 0; i < TrackCount; i++) {
-		    free(Tracks[i].File);
+            free(Tracks[i].File);
             Tracks[i].File = NULL;
-	    }
-	    free(Tracks);
+	}
+	free(Tracks);
         Tracks = NULL;
     }
 
@@ -165,7 +168,6 @@ static void SrtGetSubtitle(Context_t  *context, char * _fileName) {
     int     relFileNameLength     = 0;
     int     relFileNameExtensionLength = 0;
     int     relFileNameShortLength = 0;
-    int     relFileNameSubExtensionLength = 0;
 
     char absFileName[PATH_MAX];
     char absFileNameFolder[PATH_MAX];
@@ -325,7 +327,8 @@ static int SrtCloseSubtitle(Context_t *context) {
 }
 
 
-static void SrtSubtitleThread(Context_t *context) {
+static void* SrtSubtitleThread(void *data) {
+Context_t *context = (Context_t*) data;
 #ifdef DEBUG
 		printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
@@ -363,7 +366,7 @@ static void SrtSubtitleThread(Context_t *context) {
 #ifdef DEBUG
                 printf("--> Text= \"%s\"\n", Text);
 #endif
-                context->output->subtitle->Write(context, Text, strlen(Text), Pts, NULL, 0, Duration, "subtitle");
+                context->output->subtitle->Write(context, (unsigned char*) Text, strlen(Text), Pts, NULL, 0, Duration, "subtitle");
 #ifdef DEBUG
                 printf("<-- Text= \"%s\"\n", Text);
 #endif
@@ -394,15 +397,13 @@ static void SrtSubtitleThread(Context_t *context) {
                 strcat(Text, Data);
                 free(tmpText);
             }
-
-            int len = strlen(Text);
         }
     }
     if(Text) {
         free(Text);
         Text = NULL;
     }
-
+    return NULL;
 }
 
 static int SrtPlay(Context_t *context) {
@@ -442,7 +443,8 @@ static int SrtDel(Context_t *context) {
     return 0;
 }
 
-static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+static int Command(void  *_context, ContainerCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 #ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif

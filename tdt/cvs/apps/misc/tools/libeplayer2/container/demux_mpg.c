@@ -37,7 +37,7 @@ int demux_mpg_debug = 0;
 
 pthread_mutex_t MPGmutex;
 
-void getMPGMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+void getMPGMutex(const char *filename, const char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	#ifdef DEBUG
 //	printf("%s::%s::%d requesting mutex\n",filename, function, line);
 	#endif
@@ -49,7 +49,7 @@ void getMPGMutex(char *filename, char *function, int line) {	// FIXME: Use one c
 	#endif
 }
 
-void releaseMPGMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+void releaseMPGMutex(const char *filename, const char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	pthread_mutex_unlock(&MPGmutex);
 	#ifdef DEBUG
 //	printf("%s::%s::%d released mutex\n",filename, function, line);
@@ -174,7 +174,7 @@ static float read_first_mpeg_pts_at_position(demuxer_t* demuxer, off_t stream_po
    && (fabsf(found_pts2-found_pts1) < MAX_PTS_DIFF_FOR_CONSECUTIVE)
    && (fabsf(found_pts3-found_pts2) < MAX_PTS_DIFF_FOR_CONSECUTIVE)
    && (stream_tell(s) < stream_pos + TIMESTAMP_PROBE_LEN)
-   && ds_fill_buffer2(demuxer->video,demuxer))
+   && ds_fill_buffer(demuxer->video))
   {
     if(mpg_d->last_pts != found_pts1)
     {
@@ -206,7 +206,7 @@ static demuxer_t* demux_mpg_open(demuxer_t* demuxer) {
   stream_t *s = demuxer->stream;
   mpg_demuxer_t* mpg_d;
 
-  if (!ds_fill_buffer2(demuxer->video,demuxer)) return 0;
+  if (!ds_fill_buffer(demuxer->video)) return 0;
   mpg_d = calloc(1,sizeof(mpg_demuxer_t));
   if(mpg_d)
   {
@@ -257,7 +257,7 @@ static demuxer_t* demux_mpg_open(demuxer_t* demuxer) {
       demuxer->audio->eof=0;
 
       stream_seek(s,pos);
-      ds_fill_buffer2(demuxer->video,demuxer);
+      ds_fill_buffer(demuxer->video);
     } // if ( demuxer->seekable )
   } // if ( mpg_d )
   return demuxer;
@@ -1100,9 +1100,9 @@ void demux_seek_mpg(demuxer_t *demuxer,float rel_seek_secs,float audio_delay, in
         // re-sync video:
         videobuf_code_len=0; // reset ES stream buffer
 
-	ds_fill_buffer2(d_video,demuxer);
+	ds_fill_buffer(d_video);
 	if(sh_audio){
-	  ds_fill_buffer2(d_audio,demuxer);
+	  ds_fill_buffer(d_audio);
 	}
 
 	while(1){
@@ -1257,7 +1257,7 @@ static demuxer_t* demux_mpg_ps_open(demuxer_t* demuxer)
     sh_video=demuxer->video->sh;sh_video->ds=demuxer->video;
 
     if(demuxer->audio->id!=-2) {
-        if(!ds_fill_buffer2(demuxer->audio,demuxer)){
+        if(!ds_fill_buffer(demuxer->audio)){
 		#ifdef DEBUG
             demux_mpg_printf("MPEG: MissingAudioStream\n");
 		#endif
@@ -1269,7 +1269,6 @@ static demuxer_t* demux_mpg_ps_open(demuxer_t* demuxer)
     }
 
     if(!sh_video->format && ps_probe > 0) {
-        int head;
         off_t pos = stream_tell(demuxer->stream);
 
         clear_stats();
@@ -1316,7 +1315,8 @@ static demuxer_t *demuxer = NULL;
 static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
-static pthread_t PlayThread = NULL;
+static pthread_t PlayThread;
+static int hasPlayThreadStarted = 0;
 static int TSMPEG = 0;
 
 demuxer_desc_t demuxer_desc_mpeg_ps = {
@@ -1398,7 +1398,16 @@ int MpgInit(Context_t *context, char * filename) {
     demuxer->video->id = -1;
     //demuxer->video_play = 0;
     demuxer->stream->start_pos		= 0;
-    demuxer->stream->type		= STREAMTYPE_FILE;//STREAMTYPE_STREAM;
+
+    if (context->playback->isUPNP)
+       demuxer->stream->type = STREAMTYPE_STREAM;
+    else
+    if (context->playback->isHttp)
+       demuxer->stream->type = STREAMTYPE_STREAM;
+    else
+    if (context->playback->isFile)
+       demuxer->stream->type = STREAMTYPE_FILE;
+
     demuxer->stream->flags		= 6;
     demuxer->stream->sector_size	= 0;
     demuxer->stream->buf_pos		= 0;
@@ -1412,7 +1421,7 @@ int MpgInit(Context_t *context, char * filename) {
     ret=demux_mpg_pes_probe(demuxer);
     //FIXME
     if(ret == 0){
-	ret=ts_mpg(demuxer);
+	ret = ts_mpg(demuxer);
 	#ifdef DEBUG
         printf("ret =%d\n",ret);
 	#endif
@@ -1435,7 +1444,9 @@ int MpgInit(Context_t *context, char * filename) {
     }
     else{
 	ps_probe=1;
-	ret = demux_mpg_ps_open(demuxer);
+	ret = 0;
+	
+	demuxer = demux_mpg_ps_open(demuxer);
 
 	#ifdef DEBUG
 	printf("ret = %d\n",ret);
@@ -1522,7 +1533,9 @@ int MpgInit(Context_t *context, char * filename) {
         context->manager->audio->Command(context, MANAGER_ADD, &Audio);
     }
 
-	releaseMPGMutex(FILENAME, __FUNCTION__,__LINE__);
+    releaseMPGMutex(FILENAME, __FUNCTION__,__LINE__);
+
+    return ret;
 }
 
 static unsigned long long int aStartPts = 0;
@@ -1703,7 +1716,7 @@ static void MpgThread(Context_t *context) {
 	aStartPts = 0;
 	vStartPts = 0;
 
-	PlayThread = NULL;	// prevent locking situation when calling PLAYBACK_TERM
+	hasPlayThreadStarted = 0;	// prevent locking situation when calling PLAYBACK_TERM
 
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 
@@ -1730,7 +1743,7 @@ static int MpgPlay(Context_t *context) {
 	}
 	#endif
 	
-	if (PlayThread == NULL) {
+	if (hasPlayThreadStarted == 0) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
@@ -1739,12 +1752,13 @@ static int MpgPlay(Context_t *context) {
 			printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
 			#endif
 
-			PlayThread = NULL;
+			hasPlayThreadStarted = 0;
 			ret = -1;
 		} else {
 			#ifdef DEBUG		  
 			printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
 			#endif
+			hasPlayThreadStarted = 1;
 		}
 	} else {
 		#ifdef DEBUG
@@ -1770,7 +1784,7 @@ static int MpgStop(Context_t *context) {
 	int ret = 0;
 	int wait_time = 20;
 	
-	while ( (PlayThread != NULL) && (--wait_time) > 0 ) {
+	while ( (hasPlayThreadStarted != 0) && (--wait_time) > 0 ) {
 		#ifdef DEBUG  
 		printf("%s::%s Waiting for MPG thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 		#endif
@@ -1829,7 +1843,8 @@ static int MpgStop(Context_t *context) {
 	return ret;
 }
 
-static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+static int Command(void  *_context, ContainerCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 	#ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	#endif
@@ -1839,7 +1854,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 	switch(command) {
 		case CONTAINER_INIT: {
 			char * FILENAME = (char *)argument;
-			MpgInit(context, FILENAME);
+			ret = MpgInit(context, FILENAME);
 			break;
 		}
 		case CONTAINER_PLAY: {

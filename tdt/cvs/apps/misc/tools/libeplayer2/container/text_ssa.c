@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -17,7 +18,7 @@ static const char FILENAME[] = "text_ssa.c";
 #define TEXTSSAOFFSET 200
 
 #include "common.h"
-static pthread_t thread_sub = NULL;
+static pthread_t thread_sub;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,16 +59,18 @@ static char ** SsaManagerList(Context_t  *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
 	if (Tracks != NULL) {
+	        char help[256];
 		int i = 0, j = 0;
 		tracklist = malloc(sizeof(char *) * ((TrackCount*2) + 1));
 		for (i = 0, j = 0; i < TrackCount; i++, j+=2) {
 #ifdef DEBUG
 		printf("2strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
 #endif
-            tracklist[j]    = strdup(Tracks[i].Id);
-			tracklist[j+1]    = strdup(Tracks[i].File);
-		}
-        tracklist[j] = NULL;
+                sprintf(help, "%d", Tracks[i].Id);
+                tracklist[j]    = strdup(help);
+		tracklist[j+1]  = strdup(Tracks[i].File);
+	   }
+           tracklist[j] = NULL;
 	}
 
 	return tracklist;
@@ -78,10 +81,10 @@ static void SsaManagerDel(Context_t * context) {
     int i = 0;
     if(Tracks != NULL) {
         for (i = 0; i < TrackCount; i++) {
-		    free(Tracks[i].File);
+	    free(Tracks[i].File);
             Tracks[i].File = NULL;
-	    }
-	    free(Tracks);
+	}
+	free(Tracks);
         Tracks = NULL;
     }
 
@@ -300,7 +303,6 @@ static int SsaCloseSubtitle(Context_t *context) {
 
     return 0;
 }
-static long int numScene = 0;
 
 //Buffer size used in getLine function. Do not set to value less than 1 !!!
 #define BUFFER_SIZE 14
@@ -354,12 +356,11 @@ char *SSAgetLine(FILE **fssa)
 
 }
 
-static void SsaSubtitleThread(Context_t *context) {
+static void* SsaSubtitleThread(void *data) {
+Context_t *context = (Context_t*) data;
 #ifdef DEBUG
-		printf("%s::%s\n", FILENAME, __FUNCTION__);
+    printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
-    int pos = 0;
-    char  Data[MAXLINELENGTH];
     unsigned long long int Pts = 0;
     float Duration = 0;
     char * Text = NULL;
@@ -368,13 +369,12 @@ static void SsaSubtitleThread(Context_t *context) {
 #ifdef DEBUG
 		printf("%s::%s \n", FILENAME, __FUNCTION__);
 #endif
-		int comma, lines;
+		int comma;
 		static int max_comma = 32; /* let's use 32 for the case that the */
                     			   /*  amount of commas increase with newer SSA versions */
 
 		int hour1, min1, sec1, hunsec1,
 		hour2, min2, sec2, hunsec2, nothing;
-		int num;
 		char *line = NULL;
 		char line3[MAXLINELENGTH+1], *line2;
 		char *tmp;
@@ -414,7 +414,7 @@ static void SsaSubtitleThread(Context_t *context) {
 		printf("strdup in %s::%s:%d\n", FILENAME, __FUNCTION__,__LINE__);
 #endif
 		Text=strdup(line2);
-                context->output->subtitle->Write(context, Text, strlen(Text), Pts, NULL, 0, Duration, "subtitle");
+                context->output->subtitle->Write(context, (unsigned char*) Text, strlen(Text), Pts, NULL, 0, Duration, "subtitle");
 
                 free(Text);
                 Text = NULL;
@@ -425,6 +425,7 @@ static void SsaSubtitleThread(Context_t *context) {
         Text = NULL;
     }
 
+    return NULL;
 }
 
 static int SsaPlay(Context_t *context) {
@@ -465,7 +466,8 @@ static int SsaDel(Context_t *context) {
     return 0;
 }
 
-static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+static int Command(void  *_context, ContainerCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 #ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif

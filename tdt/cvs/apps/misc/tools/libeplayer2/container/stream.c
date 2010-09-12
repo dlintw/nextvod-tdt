@@ -66,7 +66,7 @@ int stream_fill_buffer(stream_t *s){
     break;
 
   default: 
-    len= file_fill_buffer(s,s->buffer,STREAM_BUFFER_SIZE);
+    len= file_fill_buffer(s,(char*) s->buffer,STREAM_BUFFER_SIZE);
     break;
   }
   stream_printf("stream_fill_buffer-< len=%d\n", len);
@@ -81,7 +81,7 @@ int stream_fill_buffer(stream_t *s){
 
 
 int stream_seek_long(stream_t *s,off_t pos) {
-stream_printf("stream_seek_long> 0x%08x ->\n", pos);
+stream_printf("stream_seek_long> 0x%lx ->\n", (long unsigned int) pos);
 
   off_t newpos=0;
 
@@ -113,7 +113,7 @@ stream_printf("stream_seek_long> 0x%08x ->\n", pos);
           return 1;
         }
         while(s->pos<newpos){
-          stream_printf("\ts->pos=0x%08x < newpos=0x%08x\n", s->pos, newpos);
+          stream_printf("\ts->pos=0x%lx < newpos=0x%lx\n", (long unsigned int) s->pos, (long unsigned int) newpos);
           if(stream_fill_buffer(s)<=0) break; // EOF
         }
 

@@ -65,7 +65,8 @@ static void ManagerDel(Context_t * context) {
     context->playback->isVideo = 0;
 }
 
-static int Command(Context_t  *context, ManagerCmd_t command, void * argument) {
+static int Command(void  *_context, ManagerCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 	//printf("%s::%s\n", FILENAME, __FUNCTION__);
 
 	switch(command) {
@@ -100,7 +101,7 @@ static int Command(Context_t  *context, ManagerCmd_t command, void * argument) {
 			break;
 		}
 		case MANAGER_SET: {
-			int id = argument;
+			int id = (int) argument;
 			if (id < TrackCount)
 				CurrentTrack = id;
 			break;

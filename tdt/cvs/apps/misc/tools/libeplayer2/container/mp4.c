@@ -4,7 +4,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
-//#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -12,12 +11,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <sys/types.h>
-//#include <linux/dvb/dmx.h>
-//#include <linux/dvb/video.h>
-//#include <linux/dvb/audio.h>
-
-//#include "dvbplay.h"
-
 #include "container.h"
 #include "common.h"
 
@@ -28,65 +21,106 @@ pthread_mutex_t mutex;
 static const char FILENAME[] = "mp4.c";
 
 static Mp4Info_t*       Mp4Info      = NULL;
-static pthread_t PlayThread = NULL;
-
-
+static int              TrackCount   = -1;
+static pthread_t PlayThread;
+static unsigned char isPlayThreadCreated = 0;
 
 static off_t stream_off =0;
 
+/* #define DEBUG
+*/
 
 static off_t myftello(Context_t* context,FILE* stream){
-	if(context->playback->isHttp)return stream_off;
+	if ((context->playback->isHttp) || (context->playback->isUPNP))
+	   return stream_off;
 	return ftello (stream);
 }
 
 static size_t myfread(Context_t* context,void* ptr,size_t size, size_t count, FILE* stream){
 	size_t n=fread (ptr, size, count, stream);
 	stream_off+=(n*size);
+	
+#ifdef DEBUG
+	if (n != count) printf("%s: count %d != n %d\n", __func__, count, n);
+#endif	
 	return n;
 }
 
-static int myfseeko(Context_t* context,FILE* stream,off_t off, int whence){
-	/*printf("%s ",__FUNCTION__);
-	printf("Stream Pos: %X ",myftello(context,stream));
-	printf("Offset: %X ",off);
-	if(whence==SEEK_SET)printf("SEEK_SET\n"); else printf("SEEK_CUR\n");
-	*/
-	if(context->playback->isHttp){
+static int myfseeko(Context_t* context,FILE** stream,off_t off, int whence){
+	
+#ifdef DEBUG
+	printf("%s ",__FUNCTION__);
+	printf("Stream Pos: 0x%lx ",(long unsigned int) myftello(context, *stream));
+	printf("Offset: 0x%lx (%lu)", (long unsigned int) off, (long unsigned int) off);
+	
+	if(whence==SEEK_SET)
+	   printf("SEEK_SET\n"); 
+        else 
+	   printf("SEEK_CUR\n");
+#endif	
+
+	if ((context->playback->isHttp) || (context->playback->isUPNP))
+	{
+	    int fd;
 		if(whence==SEEK_SET){
 			if(off<stream_off || off-stream_off>32000){
-				char *ext;
-				fclose(stream);
+				char *ext = NULL;
+				
+				fclose(*stream);
 				close(context->playback->fd);
 				stream_off=off;
-				int fd=openHttpConnection(context, &ext ,off);
+				
+				if (context->playback->isHttp)
+				   fd = openHttpConnection(context, &ext ,off);
+				else
+				   fd = openUPNPConnection(context, off);
+
+                                if (fd < 0) 
+				   return fd;
+
 				context->playback->fd=fd;
-				free(ext);
-				stream            = fdopen(context->playback->fd, "r");
-			}else{
+				if (ext != NULL)
+				   free(ext);
+				
+				*stream            = fdopen(context->playback->fd, "r");
+
+			}else
+			{
 				char t;
-				int x,n=off-stream_off;
-				for(x=0;x<n;x++)myfread(context,&t,1,1,stream);
+				int x,n = off - stream_off;
+				
+				for( x = 0; x < n; x++)
+				    myfread(context,&t,1,1, *stream);
 			}
 		}else if(whence==SEEK_CUR){
 			if(off<0 || off>32000){
-				char *ext;
-				fclose(stream);
+				char *ext = NULL;
+				fclose( *stream);
 				close(context->playback->fd);
 				stream_off+=off;
-				int fd=openHttpConnection(context, &ext ,stream_off);
+				
+				if (context->playback->isHttp)
+				   fd = openHttpConnection(context, &ext ,stream_off);
+				else
+				   fd = openUPNPConnection(context, stream_off);
+
+                                if (fd < 0) 
+				   return fd;
+
 				context->playback->fd=fd;
-				free(ext);
-				stream            = fdopen(context->playback->fd, "r");
+				if (ext != NULL)
+				   free(ext);
+				*stream            = fdopen(context->playback->fd, "r");
 			}else{
 				char t;
 				int x;
-				for(x=0;x<off;x++)myfread(context,&t,1,1,stream);
+				for( x = 0; x < off; x++)
+				   myfread(context,&t,1,1, *stream);
 			}
 		}
-		return 1;
+		return 0;
 	}
-	return fseeko (stream,off,whence);
+	return fseeko (*stream, off, whence);
 	
 }
 
@@ -180,9 +214,10 @@ static PlayerStatus_t BuildTrackMap (Mp4Track_t* Track)
     unsigned int        CompositionEntry;
     unsigned int        CompositionCount;
 
+#ifdef DEBUG
     printf ("%s: MOV track type '%.4s': %d chunks, %d samples\n", __FUNCTION__,
             (char*)&Track->Type, Track->ChunkCount, Track->SampleCount);
-
+#endif
 
     /* transfer data from chunk map to chunks */
     i           = Track->ChunkMapCount;
@@ -523,6 +558,10 @@ static void PlayH264Mp4File (Context_t* Context)
 	int                 AudioSample             = 0;
 	float		    frameRate		    = 0;
 
+#ifdef DEBUG
+        printf("%s >\n", __func__);
+#endif
+	
 	if (Mp4Info->VideoTrack != -1)
 	{
 		VideoTrack                      = &Mp4Info->Track[Mp4Info->VideoTrack];
@@ -537,7 +576,9 @@ static void PlayH264Mp4File (Context_t* Context)
 
 	if ((Mp4Info->AudioTrack != -1) && (AudioTrack == NULL))
 	{
-		// printf ("%s: Initialising AudioTrack\n", __FUNCTION__);
+#ifdef DEBUG
+		printf ("%s: Initialising AudioTrack\n", __FUNCTION__);
+#endif
 		AudioTrack                      = &Mp4Info->Track[Mp4Info->AudioTrack];
 		AudioTrack->ChunkToPlay         = 0;
 		AudioTrack->SampleToPlay        = 0;
@@ -555,12 +596,16 @@ static void PlayH264Mp4File (Context_t* Context)
 		AudioChunk          = AudioTrack->ChunkToPlay;
 
             
-		//printf("Audio: %d, Video: %d\n", Context->playback->isAudio, Context->playback->isVideo);
+#ifdef DEBUG
+		printf("Audio: %d, Video: %d\n", Context->playback->isAudio, Context->playback->isVideo);
+#endif
 
 		/*i merged the functionality of playThread and audioThread because streaming works much better this way*/
 		if(Context->playback->isAudio && (AudioTrack->Samples[AudioTrack->SampleToPlay].Offset < VideoTrack->Samples[VideoTrack->SampleToPlay].Offset)){
-		//printf("audio comes first %X ",AudioTrack->Samples[AudioTrack->SampleToPlay].Offset);
-		//printf("then video %X\n",VideoTrack->Samples[VideoTrack->SampleToPlay].Offset);
+#ifdef DEBUG
+		printf("audio comes first %llu ",AudioTrack->Samples[AudioTrack->SampleToPlay].Offset);
+		printf("then video %llu\n",VideoTrack->Samples[VideoTrack->SampleToPlay].Offset);
+#endif
 			if (Context->playback->isAudio) {
 				if (AudioChunk < AudioTrack->ChunkCount) {
 					for (AudioSample=AudioTrack->SampleToPlay; AudioSample<(AudioTrack->Chunk[AudioChunk].FirstSample+AudioTrack->Chunk[AudioChunk].SampleCount); AudioSample++) {
@@ -573,9 +618,21 @@ static void PlayH264Mp4File (Context_t* Context)
 							
 						AudioData = malloc(SampleSize);
 						
-						myfseeko(Context, Mp4File, AudioPosition, SEEK_SET);
-						
-						myfread(Context, AudioData, 1, SampleSize, Mp4File);
+						if (myfseeko(Context, &Mp4File, AudioPosition, SEEK_SET) < 0)
+						{
+						    printf("%s: line %d seek failed\n", __func__, __LINE__);
+						    free(AudioData);
+                                                    fclose(Mp4File);
+		                                    return;
+						} 
+
+						if (myfread(Context, AudioData, 1, SampleSize, Mp4File) == 0)
+						{
+						    printf("%s: line %d read failed\n", __func__, __LINE__);
+						    free(AudioData);
+                                                    fclose(Mp4File);
+		                                    return;
+						}
 						
 						Context->output->audio->Write(Context, AudioData, SampleSize, AudioPts, AudioTrack->SequenceData, AudioTrack->SequenceDataLength, 0, "audio");
 						
@@ -588,8 +645,10 @@ static void PlayH264Mp4File (Context_t* Context)
 				}
 			}
 		}else{
-			//printf("video comes first %X ",VideoTrack->Samples[VideoTrack->SampleToPlay].Offset);
-			//printf("then audio %X\n",AudioTrack->Samples[AudioTrack->SampleToPlay].Offset);
+#ifdef DEBUG
+			printf("video comes first %llu ",VideoTrack->Samples[VideoTrack->SampleToPlay].Offset);
+			printf("then audio %llu\n",AudioTrack->Samples[AudioTrack->SampleToPlay].Offset);
+#endif
 			if (Context->playback->isVideo) {
 				if (VideoChunk < VideoTrack->ChunkCount) {
 					for (VideoSample=VideoTrack->SampleToPlay; VideoSample<(VideoTrack->Chunk[VideoChunk].FirstSample+VideoTrack->Chunk[VideoChunk].SampleCount); VideoSample++) {
@@ -600,8 +659,22 @@ static void PlayH264Mp4File (Context_t* Context)
 						VideoPts = VideoTrack->Samples[VideoSample].Pts;
 						Data = malloc(SampleSize);
 	
-						myfseeko(Context, Mp4File, VideoPosition, SEEK_SET);
-						myfread(Context, Data, 1, SampleSize, Mp4File);
+						if (myfseeko(Context, &Mp4File, VideoPosition, SEEK_SET) < 0)
+						{
+						   printf("%s: line %d seek failed\n", __func__, __LINE__);
+		                                   free(Data);
+                                                   fclose(Mp4File);
+						   return;
+						}
+						
+						if (myfread(Context, Data, 1, SampleSize, Mp4File) == 0)
+						{
+						   printf("%s: line %d read failed\n", __func__, __LINE__);
+		                                   free(Data);
+                                                   fclose(Mp4File);
+						   return;
+						}
+						
 						Context->output->video->Write(Context, Data, SampleSize, VideoPts, VideoTrack->SequenceData, VideoTrack->SequenceDataLength, frameRate, "video");
 	
 						free(Data);
@@ -614,6 +687,9 @@ static void PlayH264Mp4File (Context_t* Context)
 		}
 	pthread_mutex_unlock(&mutex);
 	}
+#ifdef DEBUG
+        printf("%s <\n", __func__);
+#endif
 }
 /*}}}  */
 
@@ -628,19 +704,26 @@ static int StartMp4 (Context_t* context)
     int                         i;
     //Mp4Info_t*                  Mp4Info;
     unsigned int                TrackSelect     = 0;
-    int                         TrackCount      = -1;
     Mp4Container_t                 Container       = File;
     unsigned int                EntryCount;
     bool                        NewTrack        = true; /* Flag so that track updated by both mdhd and hdlr */
-	int Status = 0;
+    int Status = 0;
+    
     //Context->StartOffset        = 0;
-	printf(" start %X\n", myftello(context,Mp4File));
-	pthread_mutex_init(&mutex,0);
+#ifdef DEBUG
+    printf("%s >\n", __func__);
+    printf(" start %X\n", (unsigned int) myftello(context, Mp4File));
+#endif
+    
+    TrackCount      = -1;
+    
+    pthread_mutex_init(&mutex,0);
+    
     Mp4Info     = (Mp4Info_t*)malloc (sizeof(Mp4Info_t));
     if (Mp4Info == NULL)
     {
         printf( "%s: Unable to create MP4 context\n", __FUNCTION__);
-        return PlayerNoMemory;
+        return -PlayerNoMemory;
     }
     else
         memset (Mp4Info, 0, sizeof(Mp4Info_t));
@@ -648,7 +731,9 @@ static int StartMp4 (Context_t* context)
     Mp4Info->VideoTrack         = -1;
     Mp4Info->AudioTrack         = -1;
 
+#ifdef DEBUG
     printf ("%s::%s (%d)\n", FILENAME, __FUNCTION__, __LINE__);
+#endif
 
     while (!feof (Mp4File))
     {
@@ -658,7 +743,13 @@ static int StartMp4 (Context_t* context)
         myfread(context, &Code,   sizeof(unsigned int), 1, Mp4File);
 
         if (feof(Mp4File))
-            break;
+	{
+#ifdef DEBUG
+            printf("end of file\n");
+#endif
+            /* this must not be an error, but we must leave loop */
+	    break;
+        }
 
         Length          = BE2ME (Length);                               /* Convert Length from Little to Big endian */
         if (Length == 1)                                                /* Length == 1 indicates 64 bit length follows */
@@ -679,12 +770,25 @@ static int StartMp4 (Context_t* context)
         BoxEnd          = BoxStart + Length;
 	
         if (CheckCode (Code, &Container)){               /* true indicates skip contents of box */
-	    if(context->playback->isHttp && context->playback->size>0 && context->playback->size<=BoxEnd){
+	    if (
+	        ((context->playback->isHttp) || (context->playback->isUPNP)) && 
+		 (context->playback->size>0 && context->playback->size<=BoxEnd))
+	    {
 		printf("skipping seek because offset>filesize\n");
-		myfseeko(context, Mp4File, BoxStart, SEEK_SET);
+		if (myfseeko(context, &Mp4File, BoxStart, SEEK_SET) < 0)
+		{
+		   printf("seek1 failed\n");
+		   goto StartMp4_error;
+		}
 		break;
 	    }
-            myfseeko(context, Mp4File, BoxEnd, SEEK_SET);
+	    
+            if (myfseeko(context, &Mp4File, BoxEnd, SEEK_SET) < 0)
+            {
+		   printf("seek2 failed->BoxEnd %lld, BoxStart %lld, Length %lld\n", BoxEnd, BoxStart, Length);
+		   goto StartMp4_error;
+
+	    }
 	}
 
         switch (Code)
@@ -698,6 +802,10 @@ static int StartMp4 (Context_t* context)
                 if (NewTrack)
                 {
                     TrackCount++;
+
+#ifdef DEBUG
+                    printf("NewTrack Count %d\n", TrackCount);
+#endif
                     TrackSelect         = TrackCount;
                     NewTrack            = false;
                 }
@@ -709,26 +817,48 @@ static int StartMp4 (Context_t* context)
                 {
                     unsigned int    Duration;
 
-                    myfseeko(context, Mp4File, sizeof(unsigned int) * 2, SEEK_CUR);
-                    myfread(context, &TimeScale, sizeof(unsigned int), 1, Mp4File);
-                    myfread(context, &Duration,  sizeof(unsigned int), 1, Mp4File);
+                    if (myfseeko(context, &Mp4File, sizeof(unsigned int) * 2, SEEK_CUR) < 0)
+		    {
+		       printf("seek3 failed\n");
+		       goto StartMp4_error;
+		    }
+
+                    if (myfread(context, &TimeScale, sizeof(unsigned int), 1, Mp4File) == 0)
+		       goto StartMp4_error;
+
+                    if (myfread(context, &Duration,  sizeof(unsigned int), 1, Mp4File) == 0)
+		       goto StartMp4_error;
+			
                     Mp4Info->Track[TrackSelect].Duration    = (unsigned long long)BE2ME(Duration);
                 }
                 else
                 {
                     unsigned long long  Duration;
 
-                    myfseeko(context, Mp4File, sizeof(unsigned long long) * 2, SEEK_CUR);
-                    myfread(context, &TimeScale, sizeof(unsigned int), 1, Mp4File);
-                    myfread(context, &Duration,  sizeof(unsigned long long), 1, Mp4File);
+                    if (myfseeko(context, &Mp4File, sizeof(unsigned long long) * 2, SEEK_CUR) < 0)
+		    {
+		       printf("seek4 failed\n");
+		       goto StartMp4_error;
+                    }
+                    if (myfread(context, &TimeScale, sizeof(unsigned int), 1, Mp4File) == 0)
+		       goto StartMp4_error;
+                    if (myfread(context, &Duration,  sizeof(unsigned long long), 1, Mp4File) == 0)
+		       goto StartMp4_error;
+
                     Mp4Info->Track[TrackSelect].Duration    = BE2ME64(Duration);
                 }
                 Mp4Info->Track[TrackSelect].TimeScale       = BE2ME(TimeScale);
+#ifdef DEBUG
                 printf ("%s: 'mdhd' Track %d, TimeScale = %u, Duration = %llu (%llu)\n", __FUNCTION__, TrackSelect,
                         Mp4Info->Track[TrackSelect].TimeScale, Mp4Info->Track[TrackSelect].Duration,
                         Mp4Info->Track[TrackSelect].Duration/Mp4Info->Track[TrackSelect].TimeScale);
+#endif
 
-                myfseeko(context, Mp4File, BoxEnd, SEEK_SET);
+                if (myfseeko(context, &Mp4File, BoxEnd, SEEK_SET) < 0)
+		{
+		       printf("seek5 failed\n");
+		       goto StartMp4_error;
+		}
                 break;
             }
             /*}}}  */
@@ -737,12 +867,21 @@ static int StartMp4 (Context_t* context)
             {
                 unsigned int  HandlerType;
 
-                myfseeko(context, Mp4File, sizeof(unsigned int) * 2, SEEK_CUR);     /* skip version and pre_defined */
-                myfread(context, &HandlerType, sizeof(unsigned int), 1, Mp4File);
+                if (myfseeko(context, &Mp4File, sizeof(unsigned int) * 2, SEEK_CUR) < 0)     /* skip version and pre_defined */
+		{
+		       printf("seek6 failed\n");
+		       goto StartMp4_error;
+                }
+		myfread(context, &HandlerType, sizeof(unsigned int), 1, Mp4File);
 
                 if (NewTrack)
                 {
                     TrackCount++;
+
+#ifdef DEBUG
+                    printf("NewTrack Count %d\n", TrackCount);
+#endif
+
                     TrackSelect         = TrackCount;
                     NewTrack            = false;
                 }
@@ -754,25 +893,38 @@ static int StartMp4 (Context_t* context)
                 else if (HandlerType == CodeToInteger('v','i','d','e'))
                     Mp4Info->VideoTrack     = TrackSelect;
                 Mp4Info->Track[TrackSelect].Type    = HandlerType;
+#ifdef DEBUG
                 printf ("%s: Track %d type = '%.4s'\n", __FUNCTION__, TrackSelect, (char*)&HandlerType);
+#endif
 
-                myfseeko(context, Mp4File, BoxEnd, SEEK_SET);
-                break;
+                if (myfseeko(context, &Mp4File, BoxEnd, SEEK_SET) < 0)
+		{
+		       printf("seek7 failed\n");
+		       goto StartMp4_error;
+                }
+		break;
             }
             /*}}}  */
             case CodeToInteger('s','t','t','s'):
             /*{{{  */
             {
-                myfseeko(context, Mp4File, sizeof(unsigned int), SEEK_CUR);                        /* skip version no */
+                if (myfseeko(context, &Mp4File, sizeof(unsigned int), SEEK_CUR) < 0)                        /* skip version no */
+		{
+		       printf("seek8 failed\n");
+		       goto StartMp4_error;
+                }
+		
                 myfread(context, &EntryCount, sizeof(unsigned int), 1, Mp4File);
                 EntryCount      = BE2ME (EntryCount);
 
-                /*printf("%s: stts Found %d\n",__FUNCTION__, EntryCount);*/
+#ifdef DEBUG
+                printf("%s: stts Found %d\n",__FUNCTION__, EntryCount);
+#endif
                 Mp4Info->Track[TrackSelect].DecodingTime        = (Mp4TimeToSample_t*)calloc (EntryCount, sizeof(Mp4TimeToSample_t));
                 if (Mp4Info->Track[TrackSelect].DecodingTime == NULL)
                 {
                     printf ("%s: ERROR - unable to create Sample table - need %d bytes\n", __FUNCTION__, EntryCount * sizeof(Mp4TimeToSample_t));
-                    return PlayerNoMemory;
+                    return -PlayerNoMemory;
                 }
                 else
                 {
@@ -790,16 +942,22 @@ static int StartMp4 (Context_t* context)
             case CodeToInteger('c','t','t','s'):
             /*{{{  */
             {
-                myfseeko(context, Mp4File, sizeof(unsigned int), SEEK_CUR);                        /* skip version no */
+                if (myfseeko(context, &Mp4File, sizeof(unsigned int), SEEK_CUR) < 0)                        /* skip version no */
+		{
+		       printf("seek9 failed\n");
+		       goto StartMp4_error;
+                }
                 myfread(context, &EntryCount, sizeof(unsigned int), 1, Mp4File);
                 EntryCount      = BE2ME (EntryCount);
 
-                /*printf("%s: stts Found %d\n",__FUNCTION__, EntryCount);*/
+#ifdef DEBUG
+                printf("%s: stts Found %d\n",__FUNCTION__, EntryCount);
+#endif
                 Mp4Info->Track[TrackSelect].CompositionTime        = (Mp4CompositionOffset_t*)calloc (EntryCount, sizeof(Mp4CompositionOffset_t));
                 if (Mp4Info->Track[TrackSelect].CompositionTime == NULL)
                 {
                     printf ("%s: ERROR - unable to create Sample table - need %d bytes\n", __FUNCTION__, EntryCount * sizeof(Mp4TimeToSample_t));
-                    return PlayerNoMemory;
+                    return -PlayerNoMemory;
                 }
                 else
                 {
@@ -817,16 +975,23 @@ static int StartMp4 (Context_t* context)
             case CodeToInteger('s','t','s','s'):
             /*{{{  */
             {
-                myfseeko(context, Mp4File, sizeof(unsigned int), SEEK_CUR);                        /* skip version no */
+                if (myfseeko(context, &Mp4File, sizeof(unsigned int), SEEK_CUR) < 0)                        /* skip version no */
+		{
+		       printf("seek10 failed\n");
+		       goto StartMp4_error;
+                }
+
                 myfread(context, &EntryCount, sizeof(unsigned int), 1, Mp4File);
                 EntryCount      = BE2ME (EntryCount);
 
-                /*printf("%s: 'stss' Found %d key frames\n",__FUNCTION__, EntryCount);*/
+#ifdef DEBUG
+                printf("%s: 'stss' Found %d key frames\n",__FUNCTION__, EntryCount);
+#endif
                 Mp4Info->Track[TrackSelect].KeyFrameTable       = (unsigned int*)calloc (EntryCount, sizeof(unsigned int));
                 if (Mp4Info->Track[TrackSelect].KeyFrameTable == NULL)
                 {
                     printf ("%s: ERROR - unable to create KeyFrame table - need %d bytes\n", __FUNCTION__, EntryCount * sizeof(unsigned int));
-                    return PlayerNoMemory;
+                    return -PlayerNoMemory;
                 }
                 else
                 {
@@ -835,7 +1000,11 @@ static int StartMp4 (Context_t* context)
                     for (i=0; i<EntryCount; i++)            /* convert sample table to little endian */
                         Mp4Info->Track[TrackSelect].KeyFrameTable[i]    = BE2ME (Mp4Info->Track[TrackSelect].KeyFrameTable[i]);
                 }
-                myfseeko(context, Mp4File, BoxEnd, SEEK_SET);
+                if (myfseeko(context, &Mp4File, BoxEnd, SEEK_SET) < 0)
+		{
+		       printf("seek11 failed\n");
+		       goto StartMp4_error;
+                }
                 break;
             }
             /*}}}  */
@@ -844,7 +1013,12 @@ static int StartMp4 (Context_t* context)
             {
                 unsigned int*  ChunkOffset;
 
-                myfseeko(context, Mp4File, sizeof(unsigned int), SEEK_CUR);                        /* skip version no */
+                if (myfseeko(context, &Mp4File, sizeof(unsigned int), SEEK_CUR) < 0)                        /* skip version no */
+		{
+		       printf("seek12 failed\n");
+		       goto StartMp4_error;
+                }
+
                 myfread(context, &EntryCount, sizeof(unsigned int), 1, Mp4File);
                 EntryCount          = BE2ME (EntryCount);
 
@@ -852,7 +1026,7 @@ static int StartMp4 (Context_t* context)
                 if (ChunkOffset == NULL)
                 {
                     printf ("%s: ERROR - unable to create Chunk offset list need %d bytes\n", __FUNCTION__, EntryCount  * sizeof(unsigned int));
-                    return PlayerNoMemory;
+                    return -PlayerNoMemory;
                 }
                 else
                 {
@@ -861,7 +1035,7 @@ static int StartMp4 (Context_t* context)
                     if (Mp4Info->Track[TrackSelect].Chunk == NULL)
                     {
                         printf ("%s: ERROR - unable to create Chunk list - need %d bytes\n", __FUNCTION__, sizeof(Mp4Chunk_t) * EntryCount);
-                        return PlayerNoMemory;
+                        return -PlayerNoMemory;
                     }
                     else
                     {
@@ -879,7 +1053,12 @@ static int StartMp4 (Context_t* context)
             {
                 unsigned long long*  ChunkOffset;
 
-                myfseeko(context, Mp4File, sizeof(unsigned int), SEEK_CUR);                        /* skip version no */
+                if (myfseeko(context, &Mp4File, sizeof(unsigned int), SEEK_CUR) < 0)                        /* skip version no */
+		{
+		       printf("seek13 failed\n");
+		       goto StartMp4_error;
+                }
+
                 myfread(context, &EntryCount, sizeof(unsigned int), 1, Mp4File);
                 EntryCount          = BE2ME (EntryCount);
 
@@ -887,7 +1066,7 @@ static int StartMp4 (Context_t* context)
                 if (ChunkOffset == NULL)
                 {
                     printf ("%s: ERROR - unable to create Chunk offset list need %u bytes\n", __FUNCTION__, EntryCount * sizeof(unsigned long long int));
-                    return false;
+                    return -PlayerError;
                 }
                 else
                 {
@@ -896,7 +1075,7 @@ static int StartMp4 (Context_t* context)
                     if (Mp4Info->Track[TrackSelect].Chunk == NULL)
                     {
                         printf ("%s: ERROR - unable to create Chunk list - need %u bytes\n", __FUNCTION__, sizeof(Mp4Chunk_t) * EntryCount);
-                        return false;
+                        return -PlayerError;
                     }
                     else
                     {
@@ -912,7 +1091,12 @@ static int StartMp4 (Context_t* context)
             case CodeToInteger('s','t','s','c'):
             /*{{{  */
             {
-                myfseeko(context, Mp4File, sizeof(unsigned int), SEEK_CUR);                        /* skip version no */
+                if (myfseeko(context, &Mp4File, sizeof(unsigned int), SEEK_CUR) < 0)                        /* skip version no */
+		{
+		       printf("seek13 failed\n");
+		       goto StartMp4_error;
+                }
+
                 myfread(context, &EntryCount, sizeof(unsigned int), 1, Mp4File);
                 EntryCount          = BE2ME (EntryCount);
 
@@ -920,7 +1104,7 @@ static int StartMp4 (Context_t* context)
                 if (Mp4Info->Track[TrackSelect].ChunkMap == NULL)
                 {
                     printf ("%s: ERROR - unable to create Chunk map - need %d bytes\n", __FUNCTION__, sizeof(Mp4ChunkMap_t) * EntryCount);
-                    return PlayerNoMemory;
+                    return -PlayerNoMemory;
                 }
                 else
                 {
@@ -942,7 +1126,12 @@ static int StartMp4 (Context_t* context)
             {
                 unsigned int        SampleSize;
 
-                myfseeko(context, Mp4File, sizeof(unsigned int), SEEK_CUR);                        /* skip version no */
+                if (myfseeko(context, &Mp4File, sizeof(unsigned int), SEEK_CUR) < 0)                        /* skip version no */
+		{
+		       printf("seek14 failed\n");
+		       goto StartMp4_error;
+                }
+
                 myfread(context, &SampleSize, sizeof(unsigned int), 1, Mp4File);
                 myfread(context, &EntryCount, sizeof(unsigned int), 1, Mp4File);
                 SampleSize          = BE2ME (SampleSize);
@@ -957,7 +1146,7 @@ static int StartMp4 (Context_t* context)
                     if (SampleSizeList == NULL)
                     {
                         printf ("%s: ERROR - unable to create Sample size list - need %d bytes\n", __FUNCTION__, EntryCount * sizeof(unsigned int));
-                        return PlayerNoMemory;
+                        return -PlayerNoMemory;
                     }
                     else
                     {
@@ -965,7 +1154,7 @@ static int StartMp4 (Context_t* context)
                         if (Mp4Info->Track[TrackSelect].Samples == NULL)
                         {
                             printf ("%s: ERROR - unable to create Samples list - need %d bytes\n", __FUNCTION__, EntryCount * sizeof(Mp4Sample_t));
-                            return PlayerNoMemory;
+                            return -PlayerNoMemory;
                         }
                         else
                         {
@@ -984,7 +1173,12 @@ static int StartMp4 (Context_t* context)
             /*{{{  */
             {
                 /* This contains the Sequence Parameters and Picture Parameters */
-                myfseeko(context, Mp4File, sizeof(unsigned int), SEEK_CUR);                        /* skip blank word */
+                if (myfseeko(context, &Mp4File, sizeof(unsigned int), SEEK_CUR) < 0)                        /* skip blank word */
+		{
+		       printf("seek15 failed\n");
+		       goto StartMp4_error;
+                }
+
                 myfread(context, &EntryCount, sizeof(unsigned int), 1, Mp4File);
 
                 EntryCount          = BE2ME (EntryCount);
@@ -1005,7 +1199,11 @@ static int StartMp4 (Context_t* context)
                         myfread(context, &RecordType, sizeof(unsigned int), 1, Mp4File);
                         if ((RecordType == CodeToInteger('a','v','c','1')) && (Mp4Info->Track[TrackSelect].Type == CodeToInteger('v','i','d','e')))
                         {
-                            myfseeko(context, Mp4File, sizeof(avc1_t), SEEK_CUR);                      /* skip avc1 record */
+                            if (myfseeko(context, &Mp4File, sizeof(avc1_t), SEEK_CUR) < 0)                      /* skip avc1 record */
+		            {
+			       printf("seek16 failed\n");
+			       goto StartMp4_error;
+                            }
                             myfread(context, &EntryLength, sizeof(unsigned int), 1, Mp4File);
                             myfread(context, &RecordType, sizeof(unsigned int), 1, Mp4File);
                             EntryLength     = BE2ME(EntryLength);
@@ -1017,7 +1215,7 @@ static int StartMp4 (Context_t* context)
                                 if (Mp4Info->Track[TrackSelect].SequenceData == NULL)
                                 {
                                     printf ("%s: ERROR - unable to create video sequence data need %d bytes\n", __FUNCTION__, Mp4Info->Track[TrackSelect].SequenceDataLength);
-                                    return PlayerNoMemory;
+                                    return -PlayerNoMemory;
                                 }
                                 myfread(context, Mp4Info->Track[TrackSelect].SequenceData, 1, EntryLength - (sizeof(unsigned int) * 2), Mp4File);
                                 //Context->Video->Encoding = VIDEO_ENCODING_H264;
@@ -1057,7 +1255,7 @@ static int StartMp4 (Context_t* context)
                             if (Mp4Info->Track[TrackSelect].SequenceData == NULL)
                             {
                                 printf ("%s: ERROR - unable to create audio sequence data need %d bytes\n", __FUNCTION__, AAC_HEADER_LENGTH);
-                                return PlayerNoMemory;
+                                return -PlayerNoMemory;
                             }
                             memcpy (Mp4Info->Track[TrackSelect].SequenceData, DefaultAACHeader, AAC_HEADER_LENGTH);
                             
@@ -1154,7 +1352,11 @@ static int StartMp4 (Context_t* context)
                         }
                     }
                 }
-                myfseeko(context, Mp4File, BoxEnd, SEEK_SET);
+                if (myfseeko(context, &Mp4File, BoxEnd, SEEK_SET) < 0)
+		{
+		       printf("seek17 failed\n");
+		       goto StartMp4_error;
+                }
                 break;
             }
             /*}}}  */
@@ -1162,7 +1364,9 @@ static int StartMp4 (Context_t* context)
 
     }
 
+#ifdef DEBUG
     printf ("%s::%s (%d)\n", FILENAME, __FUNCTION__, __LINE__);
+#endif
 
     if (Mp4Info->VideoTrack != -1)
         BuildTrackMap (&Mp4Info->Track[Mp4Info->VideoTrack]);
@@ -1182,87 +1386,137 @@ static int StartMp4 (Context_t* context)
     if ((Status == PlayerNoError) && (Context->Audio->Required))
         Status    = AudioIoctl (Context, AUDIO_SET_ENCODING,  (void*)Context->Audio->Encoding);
 	*/
+#ifdef DEBUG
+    printf("%s <\n", __func__);
+#endif
     return Status;
+
+StartMp4_error:
+#ifdef DEBUG
+    printf("StartMp4_error <\n");
+#endif
+    stream_off=0;
+
+    /* free all non video/audio data */
+    for (i = 0; i < TrackCount; i++)
+        if ((i != Mp4Info->VideoTrack) && (i != Mp4Info->AudioTrack))
+            FreeTrackData (&Mp4Info->Track[i]);
+
+    if (Mp4Info != NULL)
+       free(Mp4Info);
+    Mp4Info = NULL;
+
+    return -PlayerError;
+
 }
 /*}}}  */
 
 static void Mp4Thread(Context_t *context) {
-    printf("%s::%s\n", FILENAME, __FUNCTION__);
+    
+#ifdef DEBUG
+    printf("%s::%s>\n", FILENAME, __FUNCTION__);
+#endif
     
     PlayH264Mp4File (context);
     
-	context->playback->Command(context, PLAYBACK_TERM, NULL);
+    context->playback->Command(context, PLAYBACK_TERM, NULL);
+
+/* fixme: no more data to free here? */
+    stream_off=0;
+
+#ifdef DEBUG
+    printf("%s::%s<\n", FILENAME, __FUNCTION__);
+#endif
 }
 
 
 /*{{{  PlayMp4*/
 static int PlayMp4 (Context_t* context)
 {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
-
-    if (PlayThread == NULL) {
+#ifdef DEBUG
+    printf("%s::%s>\n", FILENAME, __FUNCTION__);
+#endif
+    if (isPlayThreadCreated == 0) {
 	  pthread_attr_t attr;
 	  pthread_attr_init(&attr);
 	  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
           if(pthread_create(&PlayThread, &attr, (void *)&Mp4Thread, context) != 0)
           {
             fprintf(stderr, "Error creating thread in %s error:%d:%s\n", __FUNCTION__,errno,strerror(errno));
-	    PlayThread = NULL;
+	    isPlayThreadCreated = 0;
             return -1;
-          }
+          } else
+	    isPlayThreadCreated = 1;
     }
+#ifdef DEBUG
+    printf("%s::%s<\n", FILENAME, __FUNCTION__);
+#endif
     return 0;
-    
-	//char * Encoding = NULL;
-	//context->manager->video->Command(context, MANAGER_GETENCODING, &Encoding);
-
-    //if(!strcmp (Encoding, "V_MPEG4/ISO/AVC"))
-    //        PlayH264Mp4File (context);
-	//else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC"))
-    //        PlayDivXMp4File (context);
-	//else
-    //        printf ("%s: Error mp4 video encoding %s not supported\n", __FUNCTION__, Encoding);
 }
 /*}}}  */
 
 /*{{{  StopMp4*/
 static void StopMp4 (Context_t* context) {
-	printf("%s::%s\n", FILENAME, __FUNCTION__);
+    int i;
+#ifdef DEBUG
+    printf("%s::%s>\n", FILENAME, __FUNCTION__);
+#endif
 
     int result=0;
-    if(PlayThread!=NULL)result = pthread_join (PlayThread, NULL);
+    if(isPlayThreadCreated != 0)
+       result = pthread_join (PlayThread, NULL);
     if(result != 0) 
     {
           printf("ERROR: Stop PlayThread\n");
     }
 
-	PlayThread = NULL;
+    isPlayThreadCreated = 0;
 
     usleep(100000);
     
     if (Mp4Info != NULL)
     {
+#ifdef old
         if (Mp4Info->AudioTrack != -1)
             FreeTrackData (&Mp4Info->Track[Mp4Info->AudioTrack]);
         if (Mp4Info->VideoTrack != -1)
             FreeTrackData (&Mp4Info->Track[Mp4Info->VideoTrack]);
-
+#else
+	/* free all non video/audio data */
+	for (i = 0; i < TrackCount; i++)
+            if ((i != Mp4Info->VideoTrack) && (i != Mp4Info->AudioTrack))
+        	FreeTrackData (&Mp4Info->Track[i]);
+#endif
         free (Mp4Info);
         Mp4Info       = NULL;
     }
+    
+    stream_off=0;
+
+#ifdef DEBUG
+    printf("%s::%s<\n", FILENAME, __FUNCTION__);
+#endif
 }
 /*}}}  */
 /*{{{  SeekMp4*/
 static PlayerStatus_t SeekMp4 (Context_t* context, bool Forward)
 {
-	char * Encoding = NULL;
-	context->manager->video->Command(context, MANAGER_GETENCODING, &Encoding);
+    char * Encoding = NULL;
 
+#ifdef DEBUG
+    printf("%s::%s>\n", FILENAME, __FUNCTION__);
+#endif
+
+    context->manager->video->Command(context, MANAGER_GETENCODING, &Encoding);
 
     //if(!strcmp (Encoding, "V_MPEG4/ISO/AVC"))
     //    return SeekH264Mp4 (context, Forward ? 30000 : -30000);
-	free(Encoding);
+    free(Encoding);
     printf ("%s: Mp4 file skip not yest implemented.\n", __FUNCTION__);
+
+#ifdef DEBUG
+    printf("%s::%s<\n", FILENAME, __FUNCTION__);
+#endif
     return PlayerNoError;
 }
 /*}}}  */
@@ -1279,19 +1533,28 @@ void seek_mp4(Context_t  *Context,float rel_seek_secs,float audio_delay,int flag
 	//Context_t*    Context                 = (Context_t*)ThreadParam;
 	// make shure the playthread has enuogh time to go in pause mode
 	// TODO: use a mutex
+	
 	pthread_mutex_lock(&mutex);
-	printf("SeekMP4: %f sec\n",rel_seek_secs);
 	unsigned long long  AudioPts                = 0ull;
 	int                 AudioChunk              = 0;
 	int                 AudioSample             = 0;
 
+#ifdef DEBUG
+    printf("%s::%s>\n", FILENAME, __FUNCTION__);
+    printf("SeekMP4: %f sec\n",rel_seek_secs);
+#endif
 
 	if (Mp4Info->VideoTrack != -1)
 	{
 		VideoTrack                      = &Mp4Info->Track[Mp4Info->VideoTrack];
 		printf("SeekMP4: pos: %d \n",VideoTrack->Samples[VideoTrack->SampleToPlay].Pts);
-		targetPts=VideoTrack->Samples[VideoTrack->SampleToPlay].Pts+(rel_seek_secs*90000);
-		printf("SeekMP4: target: %d \n",targetPts);
+		
+		printf("SamplesToPlay ->%d max %d\n", VideoTrack->SampleToPlay, VideoTrack->SampleCount);
+		
+		targetPts = VideoTrack->Samples[VideoTrack->SampleToPlay].Pts + (rel_seek_secs*90000);
+		
+		printf("SeekMP4: target: %d \n", (int) targetPts);
+		
 		VideoTrack->ChunkToPlay         = 0;
 		VideoTrack->SampleToPlay        = 0;
 		VideoChunk                      = 1;    /* Force to be different from ChunkToPlay so reload pts */
@@ -1321,8 +1584,11 @@ void seek_mp4(Context_t  *Context,float rel_seek_secs,float audio_delay,int flag
 			VideoTrack->SampleToPlay    = VideoSample;
 			VideoChunk++;
 			VideoTrack->ChunkToPlay     = VideoChunk;		
-		}else break;
-		printf("videoPTS: %d ",VideoPts);
+		}
+		else 
+		    break;
+		
+		printf("videoPTS: %d ", (int) VideoPts);
 		printf("chunk:%d ",VideoChunk);
 		printf("sample:%d\n",VideoSample);
 	}
@@ -1337,15 +1603,21 @@ void seek_mp4(Context_t  *Context,float rel_seek_secs,float audio_delay,int flag
 			AudioChunk++;
 			AudioTrack->ChunkToPlay     = AudioChunk;
 		}else break;
-		printf("audioPTS: %d ",AudioPts);
+		printf("audioPTS: %d ", (int) AudioPts);
 		printf("chunk:%d ",AudioChunk);
 		printf("sample:%d\n",AudioSample);
 	}
 	pthread_mutex_unlock(&mutex);
+#ifdef DEBUG
+    printf("%s::%s<\n", FILENAME, __FUNCTION__);
+#endif
 }
 
 static double Mp4GetLength() {
 
+#ifdef DEBUG
+    printf("%s::%s<>\n", FILENAME, __FUNCTION__);
+#endif
     if (Mp4Info->VideoTrack != -1)
         return Mp4Info->Track[Mp4Info->VideoTrack].Duration/Mp4Info->Track[Mp4Info->VideoTrack].TimeScale;
     else if (Mp4Info->AudioTrack != -1)
@@ -1353,17 +1625,21 @@ static double Mp4GetLength() {
     return 0;
 }
 
-static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
+static int Command(void* _context, ContainerCmd_t command, void * argument) {
+   Context_t  *context = (Context_t*) _context;
+   
+#ifdef DEBUG
+    printf("%s::%s>\n", FILENAME, __FUNCTION__);
+#endif
 
 	switch(command) {
 		case CONTAINER_INIT: {
 			//char * FILENAME = (char *)argument;
-			StartMp4(context);
+			return StartMp4(context);
 			break;
 		}
 		case CONTAINER_PLAY: {
-			PlayMp4(context);
+			return PlayMp4(context);
 			break;
 		}
 		case CONTAINER_STOP: {
@@ -1384,6 +1660,9 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 	}
 
+#ifdef DEBUG
+    printf("%s::%s<\n", FILENAME, __FUNCTION__);
+#endif
 	return 0;
 }
 

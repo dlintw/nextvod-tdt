@@ -12,7 +12,7 @@
 #include <errno.h>
 #include <sys/poll.h>
 #include <pthread.h>
-
+#include <math.h>
 #include "utils.h"
 
 #ifdef __cplusplus

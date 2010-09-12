@@ -17,9 +17,7 @@
 #include "output.h"
 #include "stm_ioctls.h"
 
-//#ifndef DEBUG
-//#define DEBUG	// FIXME: until this is set properly by Makefile
-//#endif
+/* #define DEBUG */
 
 #ifdef DEBUG
 int debugdvb = 0;
@@ -37,13 +35,15 @@ static int audiofd 	= -1;
 static int dvrfd 	= -1;
 
 static int LinuxDvbPtsStart(Context_t *context);
-static pthread_t PtsThread = NULL;
+static pthread_t PtsThread;
+static unsigned char isPTSThreadCreated = 0;
+
 unsigned long long int sCURRENT_PTS = 0;
 static const unsigned int cSLEEPTIME = 500000;
 
 pthread_mutex_t LinuxDVBmutex;
 
-void getLinuxDVBMutex(char *filename, char *function, int line) {
+void getLinuxDVBMutex(const char *filename, const char *function, int line) {
 #ifdef DEBUG
 	printf("%s::%s::%d requesting mutex\n",filename, function, line);
 #endif
@@ -53,7 +53,7 @@ void getLinuxDVBMutex(char *filename, char *function, int line) {
 #endif  
 }
 
-void releaseLinuxDVBMutex(char *filename, char *function, int line) {
+void releaseLinuxDVBMutex(const char *filename, const char *function, int line) {
 	pthread_mutex_unlock(&LinuxDVBmutex);
 #ifdef DEBUG
 	printf("%s::%s::%d released mutex\n", filename, function, line);
@@ -70,6 +70,13 @@ int LinuxDvbOpen(Context_t  *context, char * type) {
 
 	if (video && videofd == -1) {
 		videofd = open(VIDEODEV, O_RDWR);
+
+        	if (videofd < 0)
+        	{
+		   printf("%s::%s %s\n", FILENAME, __FUNCTION__, strerror(errno));	
+        	   return -1;
+        	}
+
     		ioctl( videofd, VIDEO_CLEAR_BUFFER ,0);
 		ioctl( videofd, VIDEO_SELECT_SOURCE, (void*)VIDEO_SOURCE_MEMORY);
 		ioctl( videofd, VIDEO_SET_STREAMTYPE, (void*)STREAM_TYPE_PROGRAM);
@@ -77,6 +84,13 @@ int LinuxDvbOpen(Context_t  *context, char * type) {
 	}
 	if (audio && audiofd == -1) {
 		audiofd = open(AUDIODEV, O_RDWR);
+
+        	if (audiofd < 0)
+        	{
+		   printf("%s::%s %s\n", FILENAME, __FUNCTION__, strerror(errno));	
+        	   return -1;
+        	}
+
     		ioctl( audiofd, AUDIO_CLEAR_BUFFER,0);
 		ioctl( audiofd, AUDIO_SELECT_SOURCE, (void*)AUDIO_SOURCE_MEMORY);
 		ioctl( audiofd, AUDIO_SET_STREAMTYPE, (void*)STREAM_TYPE_PROGRAM);
@@ -188,7 +202,7 @@ int LinuxDvbStop(Context_t  *context, char * type) {
 	printf("%s::%s v%d a%d\n", FILENAME, __FUNCTION__, video, audio);
 #endif	
 
-	while ( (PtsThread != NULL) && (--wait_time) > 0 ) {
+	while ( (isPTSThreadCreated != 0) && (--wait_time) > 0 ) {
 #ifdef DEBUG  
 		printf("%s::%s Waiting for LinuxDVB thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 #endif
@@ -399,7 +413,9 @@ int LinuxDvbSlowMotion(Context_t  *context, char * type) {
 }
 
 int LinuxDvbAVSync(Context_t  *context, char * type) {
+#ifdef DEBUG
 	unsigned char video = !strcmp("video", type);
+#endif
 	unsigned char audio = !strcmp("audio", type);
 
 #ifdef DEBUG
@@ -489,7 +505,7 @@ static void LinuxDvbPtsThread(Context_t *context) {
 	printf("%s::%s terminating\n",FILENAME, __FUNCTION__);
 #endif
 
-	PtsThread = NULL;
+	isPTSThreadCreated = 0;
 }
 
 static int LinuxDvbPtsStart(Context_t *context) {
@@ -507,20 +523,21 @@ static int LinuxDvbPtsStart(Context_t *context) {
 	}
 #endif  
 	
-	if (PtsThread == NULL) {
+	if (isPTSThreadCreated == 0) {
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-		if(error=pthread_create(&PtsThread, &attr, (void *)&LinuxDvbPtsThread, context) != 0) {
+		if ((error = pthread_create(&PtsThread, &attr, (void *)&LinuxDvbPtsThread, context)) != 0) {
 #ifdef DEBUG
 			printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
 #endif
-			PtsThread=NULL;
+			isPTSThreadCreated = 0;
 			ret = -1;
 		} else {
 #ifdef DEBUG
 			printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
 #endif
+                        isPTSThreadCreated = 1;
 		}
 	} else {
 #ifdef DEBUG
@@ -818,7 +835,7 @@ int MKV_InsertPesHeader (unsigned char *data, int size, unsigned char stream_id,
 #define PES_AUDIO_HEADER_SIZE           (32 + PES_AUDIO_PRIVATE_HEADER_SIZE)
 #define PES_AUDIO_PACKET_SIZE           2028
 #define SPDIF_AUDIO_PACKET_SIZE         (1024 * sizeof(unsigned int) * 2) // stereo 32bit samples.
-static int dts(unsigned char *PLAYERData, int DataLength, unsigned long long int Pts)
+static int dts(const unsigned char *PLAYERData, int DataLength, unsigned long long int Pts)
 {
 #ifdef DEBUG
 		printf("%s::%s\n", FILENAME, __FUNCTION__);
@@ -854,7 +871,7 @@ static int dts(unsigned char *PLAYERData, int DataLength, unsigned long long int
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // mp3                                                                       //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static int mp3 (unsigned char *PLAYERData, int DataLength, unsigned long long int Pts)
+static int mp3 (const unsigned char *PLAYERData, int DataLength, unsigned long long int Pts)
 {
 #ifdef DEBUG
 		printf("%s::%s %llu\n", FILENAME, __FUNCTION__, Pts);
@@ -870,10 +887,15 @@ static int mp3 (unsigned char *PLAYERData, int DataLength, unsigned long long in
 
     int len = write(audiofd,PacketStart,DataLength+HeaderLength);
 
+    if (len < 0)
+    {
+       printf("%s: %s\n", __func__, strerror(errno));
+    }
+
     free(PacketStart);
 
 #ifdef DEBUG
-    printf("mp3_Write-< len=%d\n", len);
+    printf("mp3_Write-< len=%d, audiofd %d\n", len, audiofd);
 #endif
     return len;
 }
@@ -884,7 +906,7 @@ static int mp3 (unsigned char *PLAYERData, int DataLength, unsigned long long in
 
 static int wmaInitialHeaderRequired = 1;
 
-static int wma (unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, void *private_data, unsigned int private_size)
+static int wma (const unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, const void *private_data, unsigned int private_size)
 {
 #ifdef DEBUG
 		printf("%s::%s %llu\n", FILENAME, __FUNCTION__, Pts);
@@ -958,7 +980,7 @@ static int ac3 (const unsigned char *PLAYERData, const int DataLength, unsigned 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static unsigned char DefaultAACHeader[]    =  { 0xff, 0xf1, /*0x00, 0x00*/0x50, 0x80, 0x00, 0x1f, 0xfc };//Trick: ob es bei allen geht??
 
-int aac_mpeg4 (const unsigned char *PLAYERData, const int DataLength, unsigned long long int Pts, void *private_data, unsigned int private_size)
+int aac_mpeg4 (const unsigned char *PLAYERData, const int DataLength, unsigned long long int Pts, const void *private_data, unsigned int private_size)
 {
 #ifdef DEBUG
 		printf("%s::%s\n", FILENAME, __FUNCTION__);
@@ -997,7 +1019,7 @@ int aac_mpeg4 (const unsigned char *PLAYERData, const int DataLength, unsigned l
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // mpeg2                                                                       //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static int mpeg2(unsigned char *PLAYERData, int DataLength, long long int Pts)
+static int mpeg2(const unsigned char *PLAYERData, int DataLength, long long int Pts)
 {
 #ifdef DEBUG
 		printf("%s::%s\n", FILENAME, __FUNCTION__);
@@ -1009,9 +1031,10 @@ static int mpeg2(unsigned char *PLAYERData, int DataLength, long long int Pts)
     int Position = 0;
 
     while(1) {
-        int PacketLength = (DataLength-Position)<=MAX_PES_PACKET_SIZE?(DataLength-Position):MAX_PES_PACKET_SIZE;
-        int Remaining = DataLength - Position - PacketLength;
+        int PacketLength = (DataLength-Position) <= MAX_PES_PACKET_SIZE ? (DataLength-Position) : MAX_PES_PACKET_SIZE;
+
 #ifdef DEBUG
+        int Remaining = DataLength - Position - PacketLength;
         printf("PacketLength=%d, Remaining=%d, Position=%d\n", PacketLength, Remaining, Position);
 #endif
         int HeaderLength = MKV_InsertPesHeader (PesHeader, PacketLength, 0xe0, Pts, 0);
@@ -1020,6 +1043,15 @@ static int mpeg2(unsigned char *PLAYERData, int DataLength, long long int Pts)
         memcpy (PacketStart + HeaderLength, PLAYERData + Position, PacketLength);
 
         len = write(videofd,PacketStart,PacketLength+HeaderLength);
+
+#ifdef DEBUG
+        printf("%s len=%d\n", __func__, len);
+        if (len < 0)
+	{
+	   printf("%s: %s\n", __func__, strerror(errno));
+	}
+#endif
+
         free(PacketStart);
 
         Position += PacketLength;
@@ -1028,16 +1060,17 @@ static int mpeg2(unsigned char *PLAYERData, int DataLength, long long int Pts)
             break;
     }
 
+
     return len;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // xvid                                                                        //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static int divx(unsigned char *PLAYERData, int DataLength, long long int Pts, unsigned int mpf)
+static int divx(const unsigned char *PLAYERData, int DataLength, long long int Pts, unsigned int mpf)
 {
 #ifdef DEBUG
-		printf("%s::%s\n", FILENAME, __FUNCTION__);
-    printf("\tmpf=%f\n", mpf);
+    printf("%s::%s\n", FILENAME, __FUNCTION__);
+    printf("\tmpf=%d\n", mpf);
 #endif
     unsigned char  PesHeader[PES_MAX_HEADER_SIZE];
 
@@ -1106,7 +1139,7 @@ typedef struct avcC_s
 const unsigned char Head[]                  = {0, 0, 0, 1};
 
 
-static int h264(unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, void *private_data, unsigned int private_size, unsigned int TimeDelta, unsigned int TimeScale)
+static int h264(const unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, const void *private_data, unsigned int private_size, unsigned int TimeDelta, unsigned int TimeScale)
 {
 #ifdef DEBUG
 		printf("%s::%s %d %d\n", FILENAME, __FUNCTION__,TimeDelta,TimeScale);
@@ -1365,10 +1398,10 @@ int MKV_InsertVideoPrivateDataHeader(unsigned char *data, int payload_size)
 static int wmvInitialHeaderRequired = 1;
 typedef struct
 {
-	unsigned char       privateData[WMV3_PRIVATE_DATA_LENGTH]; 
+	unsigned char      privateData[WMV3_PRIVATE_DATA_LENGTH]; 
 	unsigned int       width;
 	unsigned int       height;
-	unsigned int       framerate
+	unsigned int       framerate;
 }awmv_t;
 
     #define METADATA_STRUCT_A_START             12
@@ -1386,12 +1419,13 @@ static const unsigned char  Metadata[]          = {0x00,    0x00,   0x00,   0xc5
                                                            0x00,    0x00,   0x00,   0x00};
 
 
-static int wmv(unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, awmv_t *private_data, unsigned int private_size)
+static int wmv(const unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, const awmv_t *private_data, unsigned int private_size)
 {
-	//printf("%s::%s\n", FILENAME, __FUNCTION__);
-    //printf("\tmpf=%f\n", mpf);
 	int len = 0;
-    unsigned char  PesHeader[PES_MAX_HEADER_SIZE];
+
+#ifdef DEBUG
+	printf("%s::%s\n", FILENAME, __FUNCTION__);
+#endif
 
 	if(wmvInitialHeaderRequired)
 	{
@@ -1399,10 +1433,11 @@ static int wmv(unsigned char *PLAYERData, int DataLength, unsigned long long int
 		unsigned char*              PesPtr;
 		unsigned int                MetadataLength;
 
-		//printf("Framerate: %u\n", private_data->framerate);
-        //printf("biWidth: %d\n", private_data->width);
-        //printf("biHeight: %d\n", private_data->height);
-
+#ifdef DEBUG
+		printf("Framerate: %u\n", private_data->framerate);
+                printf("biWidth: %d\n", private_data->width);
+                printf("biHeight: %d\n", private_data->height);
+#endif
 		PesPtr          = &PesPacket[PES_MIN_HEADER_SIZE];
 
 		memcpy (PesPtr, Metadata, sizeof(Metadata));
@@ -1497,7 +1532,8 @@ static int wmv(unsigned char *PLAYERData, int DataLength, unsigned long long int
 
 
 
-static int Write(Context_t  *context, const unsigned char *PLAYERData, const int DataLength, const unsigned long long int Pts, const unsigned char *Private, const int PrivateLength, float FrameRate, char * type) {
+static int Write(void  *_context, unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, unsigned char *Private, const int PrivateLength, float FrameRate, char * type) {
+   Context_t  *context = (Context_t*) _context;
 
 	int ret = 0;
 	int result;
@@ -1532,7 +1568,7 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
  			else if(!strcmp (Encoding, "V_MSCOMP") || !strcmp (Encoding, "V_MS/VFW/FOURCC") || !strcmp (Encoding, "V_MKV/XVID"))
 				result = divx(PLAYERData, DataLength, Pts, FrameRate);
 			else if(!strcmp (Encoding, "V_WMV"))
-				result = wmv(PLAYERData, DataLength, Pts, Private, PrivateLength);
+				result = wmv(PLAYERData, DataLength, Pts, (const awmv_t *)Private, PrivateLength);
 			else {
 #ifdef DEBUG
 			  printf("unknown video codec %s\n",Encoding);
@@ -1556,7 +1592,7 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
  			else if(!strcmp (Encoding, "A_DTS"))
 				result = dts(PLAYERData, DataLength, Pts);
  			else if(!strcmp (Encoding, "A_WMA"))
-				result = wma(PLAYERData, DataLength, Pts, Private, PrivateLength);
+				result = wma(PLAYERData, DataLength, Pts, (const unsigned char *) Private, PrivateLength);
 			else {
 #ifdef DEBUG
 			  printf("unknown audio codec %s\n",Encoding);
@@ -1568,7 +1604,8 @@ static int Write(Context_t  *context, const unsigned char *PLAYERData, const int
 	return ret;
 }
 
-static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
+static int Command(void  *_context, OutputCmd_t command, void * argument) {
+   Context_t  *context = (Context_t*) _context;
 #ifdef DEBUG
 	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
 #endif
@@ -1577,7 +1614,7 @@ static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
 
 	switch(command) {
 		case OUTPUT_OPEN: {
-			LinuxDvbOpen(context, (char*)argument);
+			ret = LinuxDvbOpen(context, (char*)argument);
 			break;
 		}
 		case OUTPUT_CLOSE: {

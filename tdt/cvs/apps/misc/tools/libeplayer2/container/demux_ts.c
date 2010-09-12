@@ -3,6 +3,8 @@
 #include <string.h>
 #include <pthread.h>
 #include <errno.h>
+#include <unistd.h>
+
 //#include "../config.h"
 
 #include "stream.h"
@@ -13,10 +15,13 @@
 #include "ms_hdr.h"
 #include "mpeg_hdr.h"
 
+/* #define DEBUG */
+
 #ifdef DEBUG
-int debugts = 0;
+int debugts = 1;
 #define demux_ts_printf(x...) do { if (debugts)printf(x); } while (0)
 #endif
+
 
 #define TS_PH_PACKET_SIZE 192
 #define TS_FEC_PACKET_SIZE 204
@@ -235,7 +240,7 @@ typedef struct {
 
 pthread_mutex_t TSmutex;
 
-void getTSMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+void getTSMutex(const char *filename, const char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	#ifdef DEBUG
 //	printf("%s::%s::%d requesting mutex\n",filename, function, line);
 	#endif
@@ -247,7 +252,7 @@ void getTSMutex(char *filename, char *function, int line) {	// FIXME: Use one ce
 	#endif  
 }
 
-void releaseTSMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+void releaseTSMutex(const char *filename, const char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	pthread_mutex_unlock(&TSmutex);
 
 	#ifdef DEBUG
@@ -304,7 +309,9 @@ static inline uint8_t *pid_lang_from_pmt(ts_priv_t *priv, int pid);
 
 static void ts_add_stream(demuxer_t * demuxer, ES_stream_t *es)
 {
+#ifdef DEBUG
 	int i;
+#endif
 	ts_priv_t *priv = (ts_priv_t*) demuxer->priv;
 
 	if(priv->ts.streams[es->pid].sh)
@@ -315,7 +322,9 @@ static void ts_add_stream(demuxer_t * demuxer, ES_stream_t *es)
 		sh_audio_t *sh = new_sh_audio_aid(demuxer, priv->last_aid, es->pid);
 		if(sh)
 		{
-			const char *lang = pid_lang_from_pmt(priv, es->pid);
+			#ifdef DEBUG
+			uint8_t *lang = pid_lang_from_pmt(priv, es->pid);
+                        #endif
 			sh->format = IS_AUDIO(es->type) ? es->type : es->subtype;
 			sh->ds = demuxer->audio;
 
@@ -410,7 +419,6 @@ static int ts_check_file(demuxer_t * demuxer)
 			&& (i < MAX_CHECK_SIZE)
 			&& ! demuxer->stream->eof
 		) i++;
-
 
 		if(c != 0x47)
 		{
@@ -593,7 +601,7 @@ static inline int pid_match_lang(ts_priv_t *priv, uint16_t pid, char *lang)
 			demux_ts_printf("CMP LANG %s AND %s, pids: %d %d\n",pmt->es[j].lang, lang, pmt->es[j].pid, pid);
 			#endif
 
-			if(strncmp(pmt->es[j].lang, lang, 3) == 0)
+			if(strncmp((char*) pmt->es[j].lang, lang, 3) == 0)
 			{
 				return 1;
 			}
@@ -666,7 +674,7 @@ static int a52_check(char *buf, int len)
 	{
 		if(buf[cnt] == 0x0B && buf[cnt+1] == 0x77)
 		{
-			frame_length = mp_a52_framesize(&buf[cnt], &srate);
+			frame_length = mp_a52_framesize((uint8_t*) &buf[cnt], &srate);
 			if(frame_length>=7 && frame_length<=3840)
 			{
 				cnt += frame_length;
@@ -720,9 +728,12 @@ static off_t ts_detect_streams(demuxer_t *demuxer, tsdemux_init_t *param)
 	while(1)
 	{
 		pos = stream_tell(demuxer->stream);
-		if(pos > end_pos || demuxer->stream->eof)
-			break;
 
+		if((pos > end_pos) || (demuxer->stream->eof))
+		{
+			break;
+                }
+		
 		if(ts_parse(demuxer, &es, tmp, 1))
 		{
 			//Non PES-aligned A52 audio may escape detection if PMT is not present;
@@ -895,7 +906,9 @@ static off_t ts_detect_streams(demuxer_t *demuxer, tsdemux_init_t *param)
 				num_packets++;
 
 			if((has_tables==0) && (video_found && audio_found) && (pos >= 1000000))
+                        { 
 				break;
+                        }
 		}
 	}
 
@@ -1163,7 +1176,6 @@ static demuxer_t *demux_open_ts(demuxer_t * demuxer)
 	//demuxer->reference_clock = MP_NOPTS_VALUE;
 	stream_reset(demuxer->stream);
 	stream_seek(demuxer->stream, start_pos);	//IF IT'S FROM A PIPE IT WILL FAIL, BUT WHO CARES?
-
 
 	priv->last_pid = 8192;		//invalid pid
 
@@ -1952,7 +1964,9 @@ static int parse_pat(ts_priv_t * priv, int is_start, unsigned char *buff, int si
 
 		if((idx = prog_idx_in_pat(priv, progid)) == -1)
 		{
+#ifdef DEBUG
 			int sz = sizeof(struct pat_progs_t) * (priv->pat.progs_cnt+1);
+#endif
 			tmp = realloc_struct(priv->pat.progs, priv->pat.progs_cnt+1, sizeof(struct pat_progs_t));
 			if(tmp == NULL)
 			{
@@ -2211,7 +2225,10 @@ static uint16_t parse_mp4_decoder_config_descriptor(pmt_t *pmt, uint8_t *buf, in
 
 static uint16_t parse_mp4_decoder_specific_descriptor(uint8_t *buf, int len, void *elem)
 {
+	#ifdef DEBUG
 	int i;
+	#endif
+
 	mp4_decoder_config_t *dec;
 	
 	#ifdef DEBUG
@@ -2634,7 +2651,7 @@ static int parse_descriptors(struct pmt_es_t *es, uint8_t *ptr)
 				memcpy(es->format_descriptor, &ptr[j+2], 4);
 				es->format_descriptor[4] = 0;
 
-				d = &ptr[j+2];
+				d = (char*) &ptr[j+2];
 				if(d[0] == 'A' && d[1] == 'C' && d[2] == '-' && d[3] == '3')
 				{
 					es->type = AUDIO_A52;
@@ -2719,7 +2736,9 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 	unsigned char *base, *es_base;
 	pmt_t *pmt;
 	int32_t idx, es_count, section_bytes;
+	#ifdef DEBUG
 	uint8_t m=0;
+        #endif
 	int skip;
 	pmt_t *tmp;
 	struct pmt_es_t *tmp_es;
@@ -2730,7 +2749,9 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 
 	if(idx == -1)
 	{
+#ifdef DEBUG
 		int sz = (priv->pmt_cnt + 1) * sizeof(pmt_t);
+#endif
 		tmp = realloc_struct(priv->pmt, priv->pmt_cnt + 1, sizeof(pmt_t));
 		if(tmp == NULL)
 		{
@@ -2799,7 +2820,9 @@ static int parse_pmt(ts_priv_t * priv, uint16_t progid, uint16_t pid, int is_sta
 		idx = es_pid_in_pmt(pmt, es_pid);
 		if(idx == -1)
 		{
+			#ifdef DEBUG
 			int sz = sizeof(struct pmt_es_t) * (pmt->es_cnt + 1);
+                        #endif
 			tmp_es = realloc_struct(pmt->es, pmt->es_cnt + 1, sizeof(struct pmt_es_t));
 			if(tmp_es == NULL)
 			{
@@ -3130,6 +3153,10 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 				demuxer->filepos = stream_tell(demuxer->stream);
 			}
 
+			#ifdef DEBUG
+			demux_ts_printf("TS_PARSE: end of file\n");
+			#endif
+
 			return 0;
 		}
 
@@ -3146,8 +3173,12 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 		len = stream_read(stream, &packet[1], 3);
 
 		if (len != 3)
+		{
+			#ifdef DEBUG
+			demux_ts_printf("TS_PARSE: stream error\n");
+			#endif
 			return 0;
-
+                }                
 		buf_size -= 4;
 
 		if((packet[1]  >> 7) & 0x01)	//transport error
@@ -3322,7 +3353,7 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 						if(dvdsub_lang)
 						{
 							if ((lang = pid_lang_from_pmt(priv, pid)))
-								asgn = (strncmp(lang, dvdsub_lang, 3) == 0);
+								asgn = (strncmp((char*) lang, dvdsub_lang, 3) == 0);
 						}
 						else		//no language specified with -slang
 							asgn = 1;
@@ -3381,7 +3412,7 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 
 		if(probe || !dp)	//dp is NULL for tables and sections
 		{
-			p = &packet[base];
+			p = (char*) &packet[base];
 		}
 		else	//feeding
 		{
@@ -3390,10 +3421,10 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 				*buffer_size = *dp_offset + buf_size + TS_FEC_PACKET_SIZE;
 				resize_demux_packet(*dp, *buffer_size);
 			}
-			p = &((*dp)->buffer[*dp_offset]);
+			p = (char*) &((*dp)->buffer[*dp_offset]);
 		}
 
-		len = stream_read(stream, p, buf_size);
+		len = stream_read(stream, (unsigned char*) p, buf_size);
 		if(len < buf_size)
 		{
 			#ifdef DEBUG
@@ -3406,7 +3437,7 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 
 		if(pid  == 0)
 		{
-			parse_pat(priv, is_start, p, buf_size);
+			parse_pat(priv, is_start, (unsigned char*) p, buf_size);
 			continue;
 		}
 		else if((tss->type == SL_SECTION) && pmt)
@@ -3462,7 +3493,7 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 			demux_ts_printf("IS_START\n");
 			#endif
 
-			len = pes_parse2(p, buf_size, es, pid_type, pmt, pid);
+			len = pes_parse2((unsigned char*) p, buf_size, es, pid_type, pmt, pid);
 			if(! len)
 			{
 				tss->is_synced = 0;
@@ -3483,10 +3514,17 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 			if(probe)
 			{
 				if(es->type == UNKNOWN)
+				{
+			#ifdef DEBUG
+			demux_ts_printf("TS_PARSE: es type unknown\n");
+			#endif
 					return 0;
-				
+				}
 				tss->type = es->type;
 				tss->subtype = es->subtype;
+			#ifdef DEBUG
+			demux_ts_printf("TS_PARSE: return 1\n");
+			#endif
 				
 				return 1;
 			}
@@ -3511,7 +3549,12 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 				(*dp)->pts = es->pts;
 
 				if(retv > 0)
+				{
+			#ifdef DEBUG
+			demux_ts_printf("TS_PARSE: retv %d\n", retv);
+			#endif
 					return retv;
+				}
 				else
 					continue;
 			}
@@ -3554,6 +3597,9 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 				{
 					(*dp)->pts = tss->last_pts;
 					retv = fill_packet(demuxer, ds, dp, dp_offset, si);
+			#ifdef DEBUG
+			demux_ts_printf("TS_PARSE: ret 1\n");
+			#endif
 					return 1;
 				}
 
@@ -3564,12 +3610,20 @@ static int ts_parse(demuxer_t *demuxer , ES_stream_t *es, unsigned char *packet,
 				memcpy(es->start, p, sz);
 
 				if(es->size)
+                                {
+			#ifdef DEBUG
+			demux_ts_printf("TS_PARSE: es->size %d\n", es->size);
+			#endif
 					return es->size;
+				}
 				else
 					continue;
 			}
 		}
 	}
+			#ifdef DEBUG
+			demux_ts_printf("TS_PARSE: <done = %d\n", done);
+			#endif
 
 	return 0;
 }
@@ -3668,6 +3722,7 @@ static void demux_seek_ts(demuxer_t *demuxer, float rel_seek_secs, float audio_d
   		newpos = demuxer->movi_start;	//begininng of stream
 
 	stream_seek(demuxer->stream, newpos);
+
 	for(i = 0; i < 8192; i++)
 		if(priv->ts.pids[i] != NULL)
 			priv->ts.pids[i]->is_synced = 0;
@@ -3729,7 +3784,7 @@ int demux_ts_fill_buffer(demuxer_t * demuxer, demux_stream_t *ds)
 	ES_stream_t es;
 	ts_priv_t *priv = (ts_priv_t *)demuxer->priv;
 	
-	return -ts_parse(demuxer, &es, priv->packet, 0);
+	return -ts_parse(demuxer, &es, (unsigned char*) priv->packet, 0);
 }
 extern int demux_ts_fill_buffer(demuxer_t * demuxer, demux_stream_t *ds);
 
@@ -3910,14 +3965,18 @@ static int demux_ts_control(demuxer_t *demuxer, int cmd, void *arg)
 ////////////////////////////////////////////////////////////////7
 ////////////////////////////////////////////////////////////////7
 
-int ts_mpg(const demuxer_t *demuxer)
+int ts_mpg(demuxer_t *demuxer)
 {
-	int ret = 0;
+	demuxer_t * ret = NULL;
 
-	ret=demux_open_ts(demuxer);
-	return ret;
+	ret = demux_open_ts(demuxer);
+	
+	if (ret == NULL)
+	   return 0;
+	else
+	   return -1;
 }
-extern int ts_mpg(const demuxer_t *demuxer);
+extern int ts_mpg(demuxer_t *demuxer);
 
 #include "common.h"
 #include "container.h"
@@ -3928,7 +3987,8 @@ static demuxer_t *demuxer = NULL;
 static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
-static pthread_t PlayThread = NULL;
+static pthread_t PlayThread;
+static int isPlayThreadCreated = 0;
 
 int TSInit(Context_t *context, char * filename) {
 	#ifdef DEBUG
@@ -3978,7 +4038,16 @@ int TSInit(Context_t *context, char * filename) {
 	demuxer->video->id = -1;
 	//demuxer->video_play = 0;
 	demuxer->stream->start_pos	= 0;
-	demuxer->stream->type		= STREAMTYPE_FILE;//STREAMTYPE_STREAM;
+	
+	if (context->playback->isUPNP)
+	   demuxer->stream->type = STREAMTYPE_STREAM;
+        else
+	if (context->playback->isHttp)
+	   demuxer->stream->type = STREAMTYPE_STREAM;
+        else
+	if (context->playback->isFile)
+	   demuxer->stream->type = STREAMTYPE_FILE;
+
 	demuxer->stream->flags		= 6;
 	demuxer->stream->sector_size	= 0;
 	demuxer->stream->buf_pos	= 0;
@@ -3990,7 +4059,11 @@ int TSInit(Context_t *context, char * filename) {
 	demuxer->stream->cache_pid	= 0;
 
 	//ts_check_file_dmx(demuxer);
-	ret = demux_open_ts(demuxer);
+	if (demux_open_ts(demuxer) == NULL)
+	   ret = 0;
+	else
+	   ret = -1;
+	
 	//printf("ret = %d\n",ret);
 
 	if(demuxer->video->sh){
@@ -4034,7 +4107,8 @@ int TSInit(Context_t *context, char * filename) {
 			#endif
 		}
 	}
-	if(!demuxer->audio->sh == NULL){
+	
+	if(demuxer->audio->sh != NULL){
 		sh_audio=demuxer->audio->sh;
 		#ifdef DEBUG
 		printf("AUDIO 0x%02x\n",sh_audio->format);
@@ -4084,7 +4158,6 @@ static unsigned long long int vStartPts = 0;
 void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	const demux_stream_t * video = demuxer->video;
 	const demux_stream_t * audio = demuxer->audio;
-	const demux_stream_t * sub = demuxer->sub;
 	unsigned long long int Pts_audio = 0;
 	unsigned long long int Pts_video = 0;
 	unsigned int video_format_changed = 0;
@@ -4159,6 +4232,12 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			#endif
 		}
 		
+printf("audio current_audio->flags = 0x%02x\n",current_audio->flags);
+		if (!(current_audio->flags & 0x10))
+		     video_format_changed = 0;
+		else
+		     video_format_changed = 1;
+
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts = INVALID_PTS_VALUE;
@@ -4190,6 +4269,12 @@ void TSGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			#endif
 		}
 		
+printf("video current->flags = 0x%02x\n",current_video->flags);
+		if (!(current_video->flags & 0x10))
+		     video_format_changed = 0;
+		else
+		     video_format_changed = 1;
+
 		/*if (!(current->flags&0x10)) {  //current frame isn't a keyframe
 			//printf("\tNORMALFRAME,                 ");
 			Pts = INVALID_PTS_VALUE;
@@ -4318,7 +4403,7 @@ static void TSThread(Context_t *context) {
 	aStartPts = 0;
 	vStartPts = 0;
 
-	PlayThread = NULL;	// prevent locking situation when calling PLAYBACK_TERM
+        isPlayThreadCreated = 0; // prevent locking situation when calling PLAYBACK_TERM
 
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 
@@ -4345,7 +4430,7 @@ static int TSPlay(Context_t *context) {
 	}
 	#endif
 	
-	if (PlayThread == NULL) {
+	if (isPlayThreadCreated == 0) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
@@ -4354,13 +4439,14 @@ static int TSPlay(Context_t *context) {
 			printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
 			#endif
 
-			PlayThread = NULL;
+			isPlayThreadCreated = 0;
 			ret = -1;
 		} else {
 			#ifdef DEBUG		  
 			printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
 			#endif
 		}
+			isPlayThreadCreated = 1;
 	} else {
 		#ifdef DEBUG
 		printf("%s::%s A thread already exists!\n", FILENAME, __FUNCTION__);
@@ -4385,7 +4471,7 @@ static int TSStop(Context_t *context) {
 	int ret = 0;
 	int wait_time = 20;
 	
-	while ( (PlayThread != NULL) && (--wait_time) > 0 ) {
+	while ( (isPlayThreadCreated != 0) && (--wait_time) > 0 ) {
 		#ifdef DEBUG  
 		printf("%s::%s Waiting for TS thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 		#endif
@@ -4451,7 +4537,8 @@ static int TSGetLength(demuxer_t *demuxer,double * length) {
 	return -1;	// FIXME
 }
 
-static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+static int Command(void  *_context, ContainerCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 	#ifdef DEBUG
 	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
 	#endif

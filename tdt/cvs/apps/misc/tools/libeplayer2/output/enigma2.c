@@ -95,7 +95,7 @@ int Enigma2ParseASS (char **Line) {
 #ifdef DEBUG
     printf("%s::%s <- Text=%s\n",  FILENAME, __FUNCTION__, *Line);
 #endif
-    return;
+    return 0;
 }
 
 int Enigma2ParseSRT (char **Line) {
@@ -118,7 +118,7 @@ int Enigma2ParseSRT (char **Line) {
 #ifdef DEBUG
     printf("%s::%s <- Text=%s\n",  FILENAME, __FUNCTION__, *Line);
 #endif
-    return;
+    return 0;
 }
 
 int Enigma2ParseSSA (char **Line) {
@@ -141,10 +141,10 @@ int Enigma2ParseSSA (char **Line) {
 #ifdef DEBUG
     printf("%s::%s <- Text=%s\n",  FILENAME, __FUNCTION__, *Line);
 #endif
-    return;
+    return 0;
 }
 
-static pthread_t thread_sub = NULL;
+static pthread_t thread_sub;
 void * _smp3 = NULL;
 void (*_fkt) (long int, size_t, char *, void *);
 
@@ -169,7 +169,7 @@ static int nextSubPointer = 0;
 static int freeSubPointer = 0;
 
 
-void addSub(Context_t  *context, char ** text, unsigned long long int pts, unsigned long int milliDuration) {
+void addSub(Context_t  *context, char * text, unsigned long long int pts, unsigned long int milliDuration) {
 #ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
 #endif
@@ -230,7 +230,8 @@ int getNextSub(char ** text, unsigned long long int * pts, long int * milliDurat
     return 0;
 } 
 
-static void Enigma2SubtitleThread(Context_t *context) {
+static void* Enigma2SubtitleThread(void* data) {
+Context_t *context = (Context_t*) data;
 #ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
 #endif
@@ -263,7 +264,7 @@ static void Enigma2SubtitleThread(Context_t *context) {
 
             if (context && context->playback)
                 context->playback->Command(context, PLAYBACK_PTS, &Pts);
-            else return;
+            else return NULL;
 
            if(Pts > subPts) {
                 if(subText != NULL)
@@ -290,7 +291,7 @@ static void Enigma2SubtitleThread(Context_t *context) {
 
                 if (context && context->playback)
                     context->playback->Command(context, PLAYBACK_PTS, &Pts);
-                else return;
+                else return NULL;
 
 #ifdef DEBUG
                 printf("%s::%s cur: %llu wanted: %llu\n", FILENAME, __FUNCTION__, Pts, subPts);
@@ -316,18 +317,20 @@ static void Enigma2SubtitleThread(Context_t *context) {
             usleep(500000);
 
     }
-}
+    return NULL;
+} 
 
 
 
 
-static int Write(Context_t  *context, const unsigned char *PLAYERData, const int DataLength, const unsigned long long int Pts, const unsigned char *Private, const int PrivateLength, float Duration, char * type) {
+static int Write(void* _context, unsigned char *PLAYERData, int DataLength, unsigned long long int Pts, unsigned char *Private, const int PrivateLength, float Duration, char * type) {
+Context_t  * context = (Context_t  *) _context;
 #ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
 
 	char * Encoding = NULL;
-	char * Text = strdup(PLAYERData);
+	char * Text = strdup((const char*) PLAYERData);
 
 	context->manager->subtitle->Command(context, MANAGER_GETENCODING, &Encoding);
 
@@ -376,7 +379,7 @@ static int Enigma2Open(context) {
     return 0;
 }
 
-static int Enigma2Close(context) {
+static int Enigma2Close(Context_t* context) {
 #ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
 #endif
@@ -393,14 +396,14 @@ static int Enigma2Close(context) {
     return 0;
 }
 
-static int Enigma2Play(context) {
+static int Enigma2Play(Context_t* context) {
 #ifdef DEBUG
     printf("%s::%s\n",  FILENAME, __FUNCTION__);
 #endif
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    pthread_create (&thread_sub, &attr, &Enigma2SubtitleThread, context);   
+    pthread_create (&thread_sub, &attr, &Enigma2SubtitleThread, (void*) context);   
 
     return 0;
 }
@@ -432,7 +435,8 @@ void Enigma2SignalConnectBuffer(void* smp3)
     _smp3 = smp3;   
 }
 
-static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
+static int Command(void  *_context, OutputCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 #ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif

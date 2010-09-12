@@ -194,7 +194,7 @@ int asf_check_header(demuxer_t *demuxer){
   unsigned char asfhdrguid[16]={0x30,0x26,0xB2,0x75,0x8E,0x66,0xCF,0x11,0xA6,0xD9,0x00,0xAA,0x00,0x62,0xCE,0x6C};
   struct asf_priv* asf = calloc(1,sizeof(*asf));
   asf->scrambling_h=asf->scrambling_w=asf->scrambling_b=1;
-  stream_read(demuxer->stream,(char*) &asf->header,sizeof(asf->header)); // header obj
+  stream_read(demuxer->stream,(unsigned char*) &asf->header,sizeof(asf->header)); // header obj
   le2me_ASF_header_t(&asf->header);			// swap to machine endian
 //  for(i=0;i<16;i++) printf(" %02X",temp[i]);printf("\n");
 //  for(i=0;i<16;i++) printf(" %02X",asfhdrguid[i]);printf("\n");
@@ -219,7 +219,7 @@ void print_video_header(BITMAPINFOHEADER *h, int verbose_level);
 static int get_ext_stream_properties(char *buf, int buf_len, int stream_num, struct asf_priv* asf, int is_video)
 {
   int pos=0;
-  uint8_t *buffer = &buf[0];
+  uint8_t *buffer = (uint8_t*) &buf[0];
   uint64_t avg_ft;
   unsigned bitrate;
 
@@ -227,7 +227,7 @@ static int get_ext_stream_properties(char *buf, int buf_len, int stream_num, str
     int this_stream_num, stnamect, payct, i;
     int buf_max_index=pos+50;
     if (buf_max_index > buf_len) return 0;
-    buffer = &buf[pos];
+    buffer = (uint8_t*) &buf[pos];
 
     // the following info is available
     // some of it may be useful but we're skipping it for now
@@ -434,7 +434,7 @@ static int asf_init_audio_stream(demuxer_t *demuxer,struct asf_priv* asf, sh_aud
   print_wave_header(sh_audio->wf,MSGL_V);
 #endif
   if(ASF_LOAD_GUID_PREFIX(streamh->concealment)==ASF_GUID_PREFIX_audio_conceal_interleave){
-    buffer = &hdr[pos];
+    buffer = (uint8_t*) &hdr[pos];
     pos += streamh->stream_size;
     if (pos > hdr_len) return 0;
     asf->scrambling_h=buffer[0];
@@ -500,7 +500,7 @@ int read_asf_header(demuxer_t *demuxer,struct asf_priv* asf){
             hdr_len);
     return 0;
   }
-  stream_read(demuxer->stream, hdr, hdr_len);
+  stream_read(demuxer->stream, (unsigned char*) hdr, hdr_len);
   if (hdr_skip)
     stream_skip(demuxer->stream, hdr_skip);
   if (stream_eof(demuxer->stream)) {
@@ -529,7 +529,7 @@ int read_asf_header(demuxer_t *demuxer,struct asf_priv* asf){
       streamh = (ASF_stream_header_t *)&hdr[sh_pos];
       le2me_ASF_stream_header_t(streamh);
       audio_pos += 64; //16+16+4+4+4+16+4;
-      buffer = &hdr[audio_pos];
+      buffer = (uint8_t*) &hdr[audio_pos];
       sh_audio=new_sh_audio(demuxer,streamh->stream_no & 0x7F);
 #ifndef __sh__
       sh_audio->needs_parsing = 1;
@@ -569,7 +569,7 @@ int read_asf_header(demuxer_t *demuxer,struct asf_priv* asf){
             (unsigned long)streamh->unk1, (unsigned int)streamh->unk2);
     mp_msg(MSGT_HEADER, MSGL_V, "FILEPOS=0x%X\n", pos + start);
     // type-specific data:
-    buffer = &hdr[pos];
+    buffer = (uint8_t*) &hdr[pos];
     pos += streamh->type_size;
     if (pos > hdr_len) goto len_err_out;
     switch(ASF_LOAD_GUID_PREFIX(streamh->type)){
@@ -780,7 +780,7 @@ int read_asf_header(demuxer_t *demuxer,struct asf_priv* asf){
   free(hdr);
   hdr = NULL;
   start = stream_tell(demuxer->stream); // start of first data chunk
-  stream_read(demuxer->stream, guid_buffer, 16);
+  stream_read(demuxer->stream, (unsigned char*) guid_buffer, 16);
   if (memcmp(guid_buffer, asf_data_chunk_guid, 16) != 0) {
     mp_msg(MSGT_HEADER, MSGL_FATAL, MSGTR_MPDEMUX_ASFHDR_NoDataChunkAfterHeader);
     free(streams);
@@ -788,7 +788,7 @@ int read_asf_header(demuxer_t *demuxer,struct asf_priv* asf){
     return 0;
   }
   // read length of chunk
-  stream_read(demuxer->stream, (char *)&data_len, sizeof(data_len));
+  stream_read(demuxer->stream, (unsigned char *)&data_len, sizeof(data_len));
   data_len = le2me_64(data_len);
   demuxer->movi_start = stream_tell(demuxer->stream) + 26;
   demuxer->movi_end = start + data_len;

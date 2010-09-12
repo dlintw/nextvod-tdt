@@ -1,3 +1,4 @@
+#include <unistd.h>
 
 // LIBEPLAYER2 Headers
 #include "common.h"
@@ -30,6 +31,7 @@ static sh_audio_t     *sh_audio = NULL;
 static sh_video_t     *sh_video = NULL;
 
 static pthread_t PlayThread;
+static int hasPlayThreadStarted = 0;
 //static int isFirstAudioFrame = 1;
 
 static int whileSeeking = 0;
@@ -39,10 +41,9 @@ int ASFInit(Context_t *context, char * filename) {
 #ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
-	int ret = 0;
-	int i = 0;
+    int i = 0;
 	
-	ds = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
+    ds = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
     memset (ds,0,sizeof(demux_stream_t));
 
     ds->demuxer = (demuxer_t*)malloc ( sizeof(demuxer_t));
@@ -77,10 +78,10 @@ int ASFInit(Context_t *context, char * filename) {
 
 
     
-	ds->demuxer->video->id = -1;
-	ds->demuxer->audio->id = -1;
+    ds->demuxer->video->id = -1;
+    ds->demuxer->audio->id = -1;
 
-	//printf("%s::%d\n", __FUNCTION__, __LINE__);
+    //printf("%s::%d\n", __FUNCTION__, __LINE__);
     asf_check_header(ds->demuxer);
 
     demux_open_asf(ds->demuxer);
@@ -181,7 +182,7 @@ typedef struct
 	unsigned char       privateData[4]; 
 	unsigned int       width;
 	unsigned int       height;
-	unsigned int       framerate
+	unsigned int       framerate;
 }bwmv_t;
 
 extern unsigned char ASF_PRIVATE_DATA[4];
@@ -192,7 +193,6 @@ void ASFGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 
 	demux_stream_t * video = demuxer->video;
 	demux_stream_t * audio = demuxer->audio;
-	demux_stream_t * sub = demuxer->sub;
 
 	unsigned long long int Pts = 0;
 
@@ -252,7 +252,7 @@ void ASFGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 			priv->height = sh_video->bih->biHeight;
 			priv->framerate = 333667;
 
-			context->output->video->Write(context, current->buffer, current->len, Pts, priv, sizeof(bwmv_t), 0, "video");
+			context->output->video->Write(context, current->buffer, current->len, Pts, (unsigned char*) priv, sizeof(bwmv_t), 0, "video");
 
 			free(priv);
 
@@ -345,7 +345,7 @@ static void ASFThread(Context_t *context) {
 		}
 	}
 
-	PlayThread = NULL;	// prevent locking situation when calling PLAYBACK_TERM
+	hasPlayThreadStarted = 0;	// prevent locking situation when calling PLAYBACK_TERM
 
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 
@@ -372,7 +372,7 @@ static int ASFPlay(Context_t *context) {
 	}
 #endif
 	
-	if (PlayThread == NULL) {
+	if (hasPlayThreadStarted == 0) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
@@ -380,12 +380,13 @@ static int ASFPlay(Context_t *context) {
 #ifdef DEBUG
 			  printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
 #endif
-			  PlayThread = NULL;
+			  hasPlayThreadStarted = 0;
 			  ret = -1;
 		} else {
 #ifdef DEBUG
 			  printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
 #endif
+			  hasPlayThreadStarted = 1;
 		}
 	} else {
 #ifdef DEBUG
@@ -410,7 +411,7 @@ static int ASFStop(Context_t *context) {
 	int ret = 0;
 	int wait_time = 20;
 	
-	while ( (PlayThread != NULL) && (wait_time--) > 0 ) {
+	while ( (hasPlayThreadStarted != 0) && (wait_time--) > 0 ) {
 		#ifdef DEBUG  
 		printf("%s::%s Waiting for ASF thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 		#endif
@@ -468,7 +469,8 @@ static int ASFStop(Context_t *context) {
 	return ret;
 }
 
-static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+static int Command(void  *_context, ContainerCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 	#ifdef DEBUG
 	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
 	#endif

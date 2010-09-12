@@ -13,6 +13,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <errno.h>
+#include <unistd.h>
 
 int audio_stop = 0;
 
@@ -59,7 +60,7 @@ int hr_mp3_seek = 0;
 
 pthread_mutex_t Audiomutex;
 
-void getAudioMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+void getAudioMutex(const char *filename, const char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	#ifdef DEBUG
 	demux_audio_printf("%s::%s::%d requesting mutex\n",filename, function, line);
 	#endif
@@ -71,7 +72,7 @@ void getAudioMutex(char *filename, char *function, int line) {	// FIXME: Use one
 	#endif  
 }
 
-void releaseAudioMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+void releaseAudioMutex(const char *filename, const char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	pthread_mutex_unlock(&Audiomutex);
 	
 	#ifdef DEBUG
@@ -392,7 +393,7 @@ free_mp3_hdrs(&mp3_hdrs);
     if(s->end_pos && (s->flags & STREAM_SEEK) == STREAM_SEEK) {
       char tag[4];
       stream_seek(s,s->end_pos-128);
-      stream_read(s,tag,3);
+      stream_read(s,(unsigned char*) tag,3);
       tag[3] = '\0';
       if(strcmp(tag,"TAG")) {
 		demuxer->movi_end = s->end_pos;
@@ -409,19 +410,19 @@ free_mp3_hdrs(&mp3_hdrs);
 		printf("demuxer->movi_end = stream_tell(s)-3; = %d\n", demuxer->movi_end);
 		#endif
 		
-		stream_read(s,buf,30);
+		stream_read(s,(unsigned char*) buf,30);
 		buf[30] = '\0';
 		demux_info_add(demuxer,"Title",buf);
-		stream_read(s,buf,30);
+		stream_read(s,(unsigned char*) buf,30);
 		buf[30] = '\0';
 		demux_info_add(demuxer,"Artist",buf);
-		stream_read(s,buf,30);
+		stream_read(s,(unsigned char*) buf,30);
 		buf[30] = '\0';
 		demux_info_add(demuxer,"Album",buf);
-		stream_read(s,buf,4);
+		stream_read(s,(unsigned char*) buf,4);
 		buf[4] = '\0';
 		demux_info_add(demuxer,"Year",buf);
-		stream_read(s,buf,30);
+		stream_read(s,(unsigned char*) buf,30);
 		buf[30] = '\0';
 		demux_info_add(demuxer,"Comment",buf);
 		
@@ -480,7 +481,7 @@ free_mp3_hdrs(&mp3_hdrs);
 	
         w->cbSize = l;
       }
-      stream_read(s,(char*)((char*)(w)+sizeof(WAVEFORMATEX)),w->cbSize);
+      stream_read(s,(unsigned char*)((char*)(w)+sizeof(WAVEFORMATEX)),w->cbSize);
       l -= w->cbSize;
     }
 
@@ -567,9 +568,9 @@ free_mp3_hdrs(&mp3_hdrs);
 	      int64_t num_samples = 0;
 	      int32_t srate = 0;
 	      stream_skip(s, 14);
-	      stream_read(s, (char *)&srate, 3);
+	      stream_read(s, (unsigned char *)&srate, 3);
 	      srate = be2me_32(srate) >> 12;
-	      stream_read(s, (char *)&num_samples, 5);
+	      stream_read(s, (unsigned char *)&num_samples, 5);
 	      num_samples = (be2me_64(num_samples) >> 24) & 0xfffffffffULL;
 	      if (num_samples && srate)
 	        sh_audio->i_bps = size * srate / num_samples;
@@ -795,7 +796,8 @@ static void demux_close_audio(demuxer_t* demuxer) {
 static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 //static sh_audio_t *sh_audio = NULL;
 //static sh_video_t *sh_video = NULL;
-static pthread_t PlayThread = NULL;
+static pthread_t PlayThread;
+static int hasPlayThreadStarted = 0;
 //static int isFirstAudioFrame = 1;
 
 int AUDIOInit(Context_t *context, char * filename) {
@@ -805,9 +807,6 @@ int AUDIOInit(Context_t *context, char * filename) {
 
 	getAudioMutex(FILENAME, __FUNCTION__,__LINE__);
 	
-	int ret = 0;
-	int i = 0;
-
 	ds = (demux_stream_t*)malloc ( sizeof(demux_stream_t));
 	memset (ds,0,sizeof(demux_stream_t));
 
@@ -964,7 +963,7 @@ static void AUDIOThread(Context_t *context) {
 
 	usleep(500000);
 	
-	PlayThread = NULL;
+	hasPlayThreadStarted = 0;
 	
 	if(context && context->playback)
 	   context->playback->Command(context, PLAYBACK_TERM, NULL);
@@ -993,7 +992,7 @@ static int AUDIOPlay(Context_t *context) {
 	#endif
 	
 	audio_stop = 0;
-	if (PlayThread == NULL) {
+	if (hasPlayThreadStarted == 0) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
@@ -1002,12 +1001,13 @@ static int AUDIOPlay(Context_t *context) {
 			  printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
 			  #endif
 			  
-			  PlayThread = NULL;
+			  hasPlayThreadStarted = 0;
 			  ret = -1;
 		} else {
 			  #ifdef DEBUG		  
 			  printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
 			  #endif
+			  hasPlayThreadStarted = 1;
 		}
 	} else {
 		#ifdef DEBUG
@@ -1033,7 +1033,7 @@ static int AUDIOStop(Context_t *context) {
 	int wait_time = 20;
 	
 	audio_stop = 1;
-	while ( (PlayThread != NULL) && (--wait_time) > 0 ) {
+	while ( (hasPlayThreadStarted != 0) && (--wait_time) > 0 ) {
 		#ifdef DEBUG  
 		printf("%s::%s Waiting for Audio thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 		#endif
@@ -1127,7 +1127,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 	switch(command) {
 		case CONTAINER_INIT: {
 			char * FILENAME = (char *)argument;
-			AUDIOInit(context, FILENAME);
+			ret = AUDIOInit(context, FILENAME);
 			break;
 		}
 		case CONTAINER_PLAY: {
@@ -1135,7 +1135,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 			break;
 		}
 		case CONTAINER_STOP: {
-			AUDIOStop(context);
+			ret = AUDIOStop(context);
 			break;
 		}
 		case CONTAINER_SEEK: {
@@ -1153,7 +1153,7 @@ static int Command(Context_t  *context, ContainerCmd_t command, void * argument)
 		}
 		case CONTAINER_INFO: {
 			if (ds && ds->demuxer)
-				AUDIOGetInfo(ds->demuxer, (char **)argument);
+				ret = AUDIOGetInfo(ds->demuxer, (char **)argument);
 			break;
 		}
 		default:

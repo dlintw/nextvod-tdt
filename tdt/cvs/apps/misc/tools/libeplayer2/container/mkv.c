@@ -41,7 +41,7 @@ int correct_pts=1;
 
 pthread_mutex_t MKVmutex;
 
-void getMKVMutex(char *filename, char *function, int line) {
+void getMKVMutex(const char *filename, const char *function, int line) {
 	#ifdef DEBUG
 	dprintf("%s::%s::%d requesting mutex\n",filename, function, line);
 	#endif
@@ -53,7 +53,7 @@ void getMKVMutex(char *filename, char *function, int line) {
 	#endif
 }
 
-void releaseMKVMutex(char *filename, char *function, int line) {
+void releaseMKVMutex(const char *filename, const char *function, int line) {
 	pthread_mutex_unlock(&MKVmutex);
 
 	#ifdef DEBUG
@@ -2131,7 +2131,6 @@ demux_mkv_read_attachments (demuxer_t *demuxer,stream_t *s)
     dprintf("mkv.c demux_mkv_read_attachments\n\n");
     #endif
 
-    mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
     //stream_t *s = demuxer->stream;
     uint64_t length, l;
     int il;
@@ -2148,6 +2147,7 @@ demux_mkv_read_attachments (demuxer_t *demuxer,stream_t *s)
         {
             case MATROSKA_ID_ATTACHEDFILE:
             /*{ //Why should we care about an attachment ?!
+                mkv_demuxer_t *mkv_d = (mkv_demuxer_t *) demuxer->priv;
                 uint64_t len;
                 int i;
                 char* name = NULL;
@@ -3654,7 +3654,7 @@ handle_block (demuxer_t *demuxer, uint8_t *block, uint64_t length,
         {
 
           if (!mkv_d->v_skip_to_keyframe)
-            handle_subtitles (demuxer, track, block, length,
+            handle_subtitles (demuxer, track, (char*) block, length,
                               block_duration, tc);
           use_this_block = 0;
         }
@@ -4505,7 +4505,8 @@ static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 //static stream_t *s = NULL;
 static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
-static pthread_t PlayThread = NULL;
+static pthread_t PlayThread;
+static int hasPlayThreadStarted = 0;
 
 static uint8_t *aacbuf;
 static int aac;
@@ -4863,7 +4864,7 @@ static void MkvThread(Context_t *context) {
 
 	}
 
-	PlayThread = NULL;	// prevent locking situation when calling PLAYBACK_TERM
+	hasPlayThreadStarted = 0;	// prevent locking situation when calling PLAYBACK_TERM
 
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 
@@ -4892,7 +4893,7 @@ static int MkvPlay(Context_t *context) {
 		#endif
 	}
 	
-	if (PlayThread == NULL) {
+	if (hasPlayThreadStarted == 0) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
@@ -4901,12 +4902,13 @@ static int MkvPlay(Context_t *context) {
 			printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
 			#endif
 
-			PlayThread = NULL;
+			hasPlayThreadStarted = 0;
 			ret = -1;
 		} else {
 			#ifdef DEBUG
 			printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
 			#endif
+			hasPlayThreadStarted = 1;
 		}
 	} else {
 		#ifdef DEBUG
@@ -4962,12 +4964,11 @@ static int MkvStop(Context_t *context) {
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 	#endif
 
-	int error;
 	int i;
 	int ret = 0;
 	int wait_time = 20;
 	
-	while ( (PlayThread != NULL) && (--wait_time) > 0 ) {
+	while ( (hasPlayThreadStarted != 0) && (--wait_time) > 0 ) {
 		#ifdef DEBUG  
 		printf("%s::%s Waiting for MKV thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 		#endif
@@ -5080,9 +5081,9 @@ static int MkvSwitchAudio(demuxer_t *demuxer, int* arg) {
 		
 		releaseMKVMutex(FILENAME, __FUNCTION__,__LINE__);
 		
-	    //*(int*)arg = sh->aid;
+	    // *(int*)arg = sh->aid;
 	} //else
-	    //*(int*)arg = -2;
+	    // *(int*)arg = -2;
 	return 0;
 }
 
@@ -5115,7 +5116,8 @@ static int MkvSwitchSubtitle(demuxer_t *demuxer, int* arg) {
 	return 0;
 }
 
-static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+static int Command(void  *_context, ContainerCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 	#ifdef DEBUG
 	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
 	#endif

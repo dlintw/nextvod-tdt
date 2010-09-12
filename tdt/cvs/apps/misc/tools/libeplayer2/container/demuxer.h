@@ -1,6 +1,7 @@
 #ifndef _DEMUXER_H
 #define _DEMUXER_H
 
+#include <stdlib.h>
 #include <inttypes.h>
 
 #include "stream.h"
@@ -12,12 +13,18 @@ extern "C" {
 
 #define MP_INPUT_BUFFER_PADDING_SIZE 8
 
+#define HAVE_BUILTIN_EXPECT
+
 #ifdef HAVE_BUILTIN_EXPECT
+
 #define likely(x) __builtin_expect ((x) != 0, 1)
 #define unlikely(x) __builtin_expect ((x) != 0, 0)
+
 #else
+
 #define likely(x) (x)
 #define unlikely(x) (x)
+
 #endif
 
 #define FFMAX(a,b) ((a) > (b) ? (a) : (b))
@@ -56,8 +63,6 @@ extern "C" {
 
 #define SEEK_ABSOLUTE (1 << 0)
 #define SEEK_FACTOR   (1 << 1)
-#define likely(x) __builtin_expect ((x) != 0, 1)
-#define unlikely(x) __builtin_expect ((x) != 0, 0)
 
 #define MP_NOPTS_VALUE (-1LL<<63) //both int64_t and double should be able to represent this exactly
 // Holds one packet/frame/whatever
@@ -293,5 +298,6 @@ int demuxer_sub_track_by_lang(demuxer_t *d, char *lang);
 void ds_read_packet(demux_stream_t *ds, stream_t *stream, int len, double pts, off_t pos, int flags);
 void ds_free_packs(demux_stream_t *ds);
 int demux_info_add(demuxer_t *demuxer, const char *opt, const char *param);
+void demux_flush(demuxer_t *demuxer);
 
 #endif //DEMUXER_H

@@ -29,7 +29,7 @@ static const char FILENAME[] = "avi.c";
 
 pthread_mutex_t AVImutex;
 
-void getAVIMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+void getAVIMutex(const char *filename, const char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	#ifdef DEBUG
 //	printf("%s::%s::%d requesting mutex\n",filename, function, line);
 	#endif
@@ -41,7 +41,7 @@ void getAVIMutex(char *filename, char *function, int line) {	// FIXME: Use one c
 	#endif
 }
 
-void releaseAVIMutex(char *filename, char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
+void releaseAVIMutex(const char *filename, const char *function, int line) {	// FIXME: Use one central getMutex and pass the mutex into the function
 	pthread_mutex_unlock(&AVImutex);
 
 	#ifdef DEBUG
@@ -534,8 +534,11 @@ char *index_file_save = NULL, *index_file_load = NULL;
 int force_ni=0;     // force non-interleaved AVI parsing
 
 void read_avi_header(demuxer_t *demuxer,int index_mode);
-
-static demuxer_t* demux_open_avi(demuxer_t* demuxer, int next){
+/* konfetti: next removed from signature because the descr structure
+ * has only one parameter.
+ * ->see demuxer.h
+ */
+static demuxer_t* demux_open_avi(demuxer_t* demuxer){
   #ifdef DEBUG
   printf("%s::%d\n", __FUNCTION__, __LINE__);
   #endif
@@ -677,6 +680,7 @@ static demuxer_t* demux_open_avi(demuxer_t* demuxer, int next){
     demux_avi_printf("%s::%d packs=%u\n", __FUNCTION__, __LINE__, d_video->packs);
     #endif
 
+#ifdef buggy
   if(next == 0){
     if(!ds_fill_buffer(d_video)){
 	#ifdef DEBUG
@@ -694,6 +698,20 @@ static demuxer_t* demux_open_avi(demuxer_t* demuxer, int next){
        return NULL;
     }
   }
+#else
+/* konfetti: dont know the meaning of ds_fill_buffer2 but
+ * the second parameter is wrong in the call above. mplayer
+ * does not need this 2nd function so I remove it here since
+ * someone can explain the what it is for!
+ */
+    if(!ds_fill_buffer(d_video)){
+	#ifdef DEBUG
+        demux_avi_printf("AVI: MissingVideoStreamBug\n");
+	#endif
+	
+       return NULL;
+    }
+#endif  
     #ifdef DEBUG
     demux_avi_printf("%s::%d\n", __FUNCTION__, __LINE__);
     #endif
@@ -704,6 +722,7 @@ static demuxer_t* demux_open_avi(demuxer_t* demuxer, int next){
     demux_avi_printf("AVI: Searching for audio stream (id:%d)\n",d_audio->id);
     #endif
     
+#ifdef buggy
     if(next == 0){
       if(!priv->audio_streams || !ds_fill_buffer(d_audio)){
 	#ifdef DEBUG
@@ -725,6 +744,22 @@ static demuxer_t* demux_open_avi(demuxer_t* demuxer, int next){
         sh_audio=d_audio->sh;sh_audio->ds=d_audio;
       }
     }
+#else
+/* konfetti: dont know the meaning of ds_fill_buffer2 but
+ * the second parameter is wrong in the call above. mplayer
+ * does not need this 2nd function so I remove it here since
+ * someone can explain the what it is for!
+ */
+      if(!priv->audio_streams || !ds_fill_buffer(d_audio)){
+	#ifdef DEBUG
+        demux_avi_printf("AVI: MissingAudioStream\n");
+	#endif
+
+        d_audio->sh=sh_audio=NULL;
+      } else {
+        sh_audio=d_audio->sh;sh_audio->ds=d_audio;
+      }
+#endif
   }
 
     #ifdef DEBUG
@@ -804,7 +839,9 @@ void demux_seek_avi(demuxer_t *demuxer,float rel_seek_secs,float audio_delay,int
     demux_stream_t *d_video=demuxer->video;
     sh_audio_t *sh_audio=d_audio->sh;
     sh_video_t *sh_video=d_video->sh;
+#ifdef DEBUG
     float skip_audio_secs=0;
+#endif
     audio_delay=priv->pts_correction;
     
     #ifdef DEBUG
@@ -1087,7 +1124,7 @@ static int avi_check_file(demuxer_t *demuxer)
 }
 
 
-static demuxer_t* demux_open_hack_avi(demuxer_t *demuxer, int next)
+static demuxer_t* demux_open_hack_avi(demuxer_t *demuxer)
 {
   #ifdef DEBUG
   printf("log demux_avi 14\n");
@@ -1095,7 +1132,7 @@ static demuxer_t* demux_open_hack_avi(demuxer_t *demuxer, int next)
   
    sh_audio_t* sh_a;
 
-   demuxer = demux_open_avi(demuxer,next);
+   demuxer = demux_open_avi(demuxer);
    if(!demuxer) return NULL; // failed to open
    sh_a = demuxer->audio->sh;
    if(demuxer->audio->id != -2 && sh_a) {
@@ -1134,10 +1171,12 @@ static demuxer_t *demuxer = NULL;
 static demux_stream_t *ds = NULL;   // dvd subtitle buffer/demuxer
 static sh_audio_t *sh_audio = NULL;
 static sh_video_t *sh_video = NULL;
-static pthread_t PlayThread = NULL;
+static pthread_t PlayThread;
+static int hasPlayThreadStarted = 0;
+
 static int isFirstAudioFrame = 1;
 
-const demuxer_desc_t demuxer_desc_avi = {
+demuxer_desc_t demuxer_desc_avi = {
   "AVI demuxer",
   "avi",
   "AVI",
@@ -1234,7 +1273,7 @@ int AviInit(Context_t *context, char * filename) {
 	printf("%s::%d\n", __FUNCTION__, __LINE__);
 	#endif
 
-	demux_open_hack_avi(demuxer,0);
+	demux_open_hack_avi(demuxer);
 
 	if(demuxer->audio->sh == NULL){
 		#ifdef DEBUG
@@ -1246,8 +1285,17 @@ int AviInit(Context_t *context, char * filename) {
 		demuxer->video->id = -1;
 		//demuxer->video_play = 0;
 		demuxer->stream->start_pos	= 0;
-		demuxer->stream->type		= STREAMTYPE_FILE;
-		lseek(demuxer->stream->fd, 0L, SEEK_SET);
+                		
+		if(context->playback->isFile)
+                {
+		     demuxer->stream->type		= STREAMTYPE_FILE;
+		     lseek(demuxer->stream->fd, 0L, SEEK_SET);
+                }
+		else
+		{
+		     demuxer->stream->type		= STREAMTYPE_STREAM;
+		}
+		
 		read(demuxer->stream->fd,demuxer->stream->buffer,2048);//soviel ??
 		demuxer->stream->flags		= 6;
 		demuxer->stream->sector_size	= 0;
@@ -1257,13 +1305,14 @@ int AviInit(Context_t *context, char * filename) {
 		demuxer->stream->start_pos	= 0;
 		demuxer->stream->eof		= 0;
 		demuxer->stream->cache_pid	= 0;
-		demux_open_hack_avi(demuxer,1);
+		demux_open_hack_avi(demuxer);
 
 		#ifdef DEBUG
 		printf("%s::%d\n", __FUNCTION__, __LINE__);
 		#endif
 	}
-	if(!demuxer->audio->sh == NULL){
+	if(demuxer->audio->sh != NULL)
+	{
 		sh_audio=demuxer->audio->sh;
 
 		#ifdef DEBUG
@@ -1274,45 +1323,33 @@ int AviInit(Context_t *context, char * filename) {
 			if(demuxer->a_streams[i]==NULL)continue;
 			if(((sh_audio_t *)demuxer->a_streams[i])->format == 0x55) //mp3
 			{
-				avi_priv_t *d = (avi_priv_t *) demuxer->priv;
-	
-				{
 					Track_t Audio = {
 						"und",
 						"A_MPEG/L3",
 						((sh_audio_t *)demuxer->a_streams[i])->aid,
 					};
 					context->manager->audio->Command(context, MANAGER_ADD, &Audio);
-				}
 			} else if(((sh_audio_t *)demuxer->a_streams[i])->format == 0x2000) //ac3
 			{
-				avi_priv_t *d = (avi_priv_t *) demuxer->priv;
-	
-				{
 					Track_t Audio = {
 						"und",
 						"A_AC3",
 						((sh_audio_t *)demuxer->a_streams[i])->aid,
 					};
 					context->manager->audio->Command(context, MANAGER_ADD, &Audio);
-				}
 			} else if(((sh_audio_t *)demuxer->a_streams[i])->format == 0x2001) //dts
 			{
-				avi_priv_t *d = (avi_priv_t *) demuxer->priv;
-	
-				{
 					Track_t Audio = {
 						"und",
 						"A_DTS",
 						((sh_audio_t *)demuxer->a_streams[i])->aid,
 					};
 					context->manager->audio->Command(context, MANAGER_ADD, &Audio);
-				}
 			}
 		}
 		
 	}
-	if(!demuxer->video->sh == NULL){
+	if(demuxer->video->sh != NULL){
 		sh_video=demuxer->video->sh;
 
 		#ifdef DEBUG
@@ -1416,7 +1453,6 @@ void HexdumpAVI(unsigned char *Data, int length)
 void AviGenerateParcel(Context_t *context, const demuxer_t *demuxer) {
 	const demux_stream_t * video = demuxer->video;
 	const demux_stream_t * audio = demuxer->audio;
-	const demux_stream_t * sub = demuxer->sub;
 	unsigned long long int Pts = 0;
 
 	 if (audio->first != NULL) {
@@ -1532,7 +1568,7 @@ static void AviThread(Context_t *context) {
 		}
 	}
 
-	PlayThread = NULL;	// prevent locking situation when calling PLAYBACK_TERM
+        hasPlayThreadStarted = 0;
 
 	context->playback->Command(context, PLAYBACK_TERM, NULL);
 
@@ -1561,7 +1597,7 @@ static int AviPlay(Context_t *context) {
 		#endif
 	}
 	
-	if (PlayThread == NULL) {
+	if (hasPlayThreadStarted == 9) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
@@ -1570,12 +1606,13 @@ static int AviPlay(Context_t *context) {
 			printf("%s::%s Error creating thread, error:%d:%s\n", FILENAME, __FUNCTION__,error,strerror(error));
 			#endif
 
-			PlayThread = NULL;
+			hasPlayThreadStarted = 0;
 			ret = -1;
 		} else {
 			#ifdef DEBUG		  
 			printf("%s::%s Created thread\n", FILENAME, __FUNCTION__);
 			#endif
+			hasPlayThreadStarted = 1;
 		}
 	} else {
 		#ifdef DEBUG
@@ -1600,8 +1637,8 @@ static int AviStop(Context_t *context) {
 	int i;
 	int ret = 0;
 	int wait_time = 20;
-	
-	while ( (PlayThread != NULL) && (--wait_time) > 0 ) {
+
+	while ( (hasPlayThreadStarted != 0) && (--wait_time) > 0 ) {
 		#ifdef DEBUG
 		printf("%s::%s Waiting for AVI thread to terminate itself, will try another %d times\n", FILENAME, __FUNCTION__, wait_time);
 		#endif
@@ -1705,16 +1742,17 @@ static int AviSwitchAudio(demuxer_t *demuxer, int* arg) {
 		    	sh = demuxer->a_streams[demuxer->audio->id];
 		    	ds_free_packs(demuxer->audio);
 		}
-	    //*(int*)arg = sh->aid;
+	    // *(int*)arg = sh->aid;
 	} //else
-	    //*(int*)arg = -2;
+	    // *(int*)arg = -2;
 	
 	releaseAVIMutex(FILENAME, __FUNCTION__,__LINE__);
 	
     return 0;
 }
 
-static int Command(Context_t  *context, ContainerCmd_t command, void * argument) {
+static int Command(void  *_context, ContainerCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 	#ifdef DEBUG
 	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
 	#endif

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <byteswap.h>
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {

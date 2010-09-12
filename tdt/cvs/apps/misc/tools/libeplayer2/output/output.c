@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "common.h"
 #include "output.h"
 
@@ -41,7 +42,6 @@ static void OutputAdd(Context_t  *context, char * port) {
 }
 
 static void OutputDel(Context_t  *context, char * port) {
-	int i, j;
 #ifdef DEBUG
 	printf("%s::%s\n", FILENAME, __FUNCTION__);
 #endif
@@ -55,7 +55,8 @@ static void OutputDel(Context_t  *context, char * port) {
 
 }
 
-static int Command(Context_t  *context, OutputCmd_t command, void * argument) {
+static int Command(void  *_context, OutputCmd_t command, void * argument) {
+Context_t  *context = (Context_t*) _context;
 #ifdef DEBUG
 	printf("%s::%s Command %d\n", FILENAME, __FUNCTION__, command);
 #endif

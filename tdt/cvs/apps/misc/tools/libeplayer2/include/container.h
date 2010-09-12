@@ -22,14 +22,14 @@ extern Container_t MPGContainer;
 extern Container_t ASFContainer;
 
 static Container_t * AvailableContainer[] = {
-	&MkvContainer,
-	&AviContainer,
-	&Mp4Container,
-	&AUDIOContainer,
+    &MkvContainer,
+    &AviContainer,
+    &Mp4Container,
+    &AUDIOContainer,
     &TSContainer,
     &MPGContainer,
     &ASFContainer,
-	NULL
+    NULL
 };
 
 typedef struct ContainerHandler_s {
