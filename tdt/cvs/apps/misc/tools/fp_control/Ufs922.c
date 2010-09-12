@@ -642,6 +642,26 @@ static int Clear(Context_t* context)
  
 }
 
+static int setLedBrightness(Context_t* context, int brightness)
+{
+   struct micom_ioctl_data vData;
+
+   if (brightness < 0 || brightness > 0xff)
+      return -1;
+
+   vData.u.brightness.level = brightness;
+   
+   setMode(context->fd);
+   
+   printf("%d\n", context->fd);
+   if (ioctl(context->fd, VFDLEDBRIGHTNESS, &vData) < 0)
+   {
+      perror("setledbrightness: ");
+      return -1;
+   }
+   return 0;   
+}
+
 Model_t UFS922_model = {
 	"Kathrein UFS922 frontpanel control utility",
 	Ufs922,
@@ -664,7 +684,7 @@ Model_t UFS922_model = {
 	getWakeupReason,
 	setLight,
         Exit,
-	NULL,
+	setLedBrightness,
 	getVersion,
         NULL,
 };
