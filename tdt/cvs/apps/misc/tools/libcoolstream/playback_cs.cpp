@@ -79,6 +79,7 @@ void cPlayback::Close(void)
 bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned short apid, bool ac3)
 {
 	bool ret = false;
+	bool isHTTP = false;
 	
 	printf("%s:%s - filename=%s vpid=%u vtype=%d apid=%u ac3=%d\n",
 		FILENAME, __FUNCTION__, filename, vpid, vtype, apid, ac3);
@@ -88,17 +89,26 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 	char file[400] = {""};
 
 	if(!strncmp("http://", filename, 7))
-		;
+	{
+	    printf("http://\n");
+            isHTTP = true;
+	}
 	else if(!strncmp("file://", filename, 7))
-		;
+	{
+	    printf("file://\n");
+	}
+	else if(!strncmp("upnp://", filename, 7))
+	{
+	    printf("upnp://\n");
+            isHTTP = true;
+	}
 	else
-		strcat(file, "file://");
+	    strcat(file, "file://");
 
 	strcat(file, filename);
 
 	//try to open file
 	if(player && player->playback && player->playback->Command(player, PLAYBACK_OPEN, file) >= 0) {
-
 		//AUDIO
 		if(player && player->manager && player->manager->audio) {
 			char ** TrackList = NULL;
@@ -139,10 +149,27 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 		}
 	}
 
-	//pause playback in case of timeshift
-	//FIXME: no picture on tv
-	player->playback->Command(player, PLAYBACK_PAUSE, NULL);
-	playing=true;
+/* konfetti: in case of upnp playing mp4 often leads to a 
+ * paused playback but data is already injected which leads
+ * to errors ... 
+ * and I don't see any sense of pausing direct after starting
+ * with the exception of timeshift. but this should be handled
+ * outside this lib or with another function!
+ */
+        if ((ret) && (!isHTTP))
+
+	{
+	   //pause playback in case of timeshift
+	   //FIXME: no picture on tv
+	   if (player->playback->Command(player, PLAYBACK_PAUSE, NULL) < 0)
+	   {
+	      ret = false;
+	      printf("failed to pause playback\n");
+	   } else
+  	      playing = true;
+        } else
+  	      playing = true;
+		
 	printf("%s:%s - return=%d\n", FILENAME, __FUNCTION__, ret);
 
 	return ret;
@@ -220,6 +247,8 @@ bool cPlayback::SetSpeed(int speed)
 				break;
 		}
 
+                nPlaybackSpeed = speed;
+		
 		if(speed > 1){
 			result = player->playback->Command(player, PLAYBACK_FASTFORWARD, (void*)&ratio);
 		}else if(speed == 0 || speed == -1){
@@ -236,6 +265,7 @@ bool cPlayback::SetSpeed(int speed)
 bool cPlayback::GetSpeed(int &speed) const
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+        speed = nPlaybackSpeed;
 	return true;
 }
 
@@ -362,6 +392,17 @@ cPlayback::~cPlayback()
 bool cPlayback::IsPlaying(void) const
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
+
+        /* konfetti: there is no event/callback mechanism in libeplayer2
+	 * so in case of ending playback we have no information on a 
+	 * terminated stream currently (or did I oversee it?).
+	 * So let's ask the player the state.
+	 */
+	if (playing)
+	{
+	   return player->playback->isPlaying;
+        }
+
 	return playing;
 }
 

@@ -110,6 +110,17 @@ class CUpnpBrowserGui : public CMenuTarget
 	void paintItem2DetailsLine (int pos,unsigned  int ch_index);
 
 	void updateTimes(const bool force = false);
+#ifdef __sh__
+        void hide();
+#endif
 };
+
+#ifdef __sh__
+class CUPNPAPIDSelectExec : public CMenuTarget
+{
+	public:
+		int exec(CMenuTarget* parent, const std::string & actionKey);
+};
+#endif
 
 #endif

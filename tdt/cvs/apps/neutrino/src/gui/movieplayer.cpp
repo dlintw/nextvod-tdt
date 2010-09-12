@@ -217,6 +217,8 @@ void CMoviePlayerGui::Init(void)
 	tsfilefilter.addFilter("mpv");
 	tsfilefilter.addFilter("vob");
 	tsfilefilter.addFilter("m2ts");
+	//konfetti: I'd like to playback mp3 also through movieplayers filebrowser ;)
+	tsfilefilter.addFilter("mp3");
 
 
 	vlcfilefilter.addFilter("mpg");

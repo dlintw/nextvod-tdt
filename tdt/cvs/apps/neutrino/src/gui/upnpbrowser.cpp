@@ -69,6 +69,10 @@
 #include <video_cs.h>
 extern cVideo * videoDecoder;
 
+#ifdef __sh__
+#include <playback_cs.h>
+#endif
+
 #ifdef ConnectLineBox_Width
 #undef ConnectLineBox_Width
 #endif
@@ -79,6 +83,11 @@ const struct button_label StopButton   = {NEUTRINO_ICON_BUTTON_YELLOW, LOCALE_AU
 const struct button_label PUpButton    = {NEUTRINO_ICON_BUTTON_RED   , LOCALE_FILEBROWSER_NEXTPAGE};
 const struct button_label PDownButton  = {NEUTRINO_ICON_BUTTON_GREEN , LOCALE_FILEBROWSER_PREVPAGE};
 
+#ifdef __sh__
+#include <audio_cs.h>
+extern cAudio * audioDecoder;
+#endif
+
 //------------------------------------------------------------------------
 
 CUpnpBrowserGui::CUpnpBrowserGui()
@@ -86,6 +95,7 @@ CUpnpBrowserGui::CUpnpBrowserGui()
 	m_socket = new CUPnPSocket();
 	m_frameBuffer = CFrameBuffer::getInstance();
 	m_playing_entry_is_shown = false;
+
 }
 
 //------------------------------------------------------------------------
@@ -311,6 +321,7 @@ std::vector<UPnPEntry> *CUpnpBrowserGui::decodeResult(std::string result)
 						p=(char *) "";
 					protocol=std::string(p);
 					UPnPResource resource = {url, protocol, size, duration};
+printf("%s, %s, %s, %s\n", url.c_str(), protocol.c_str(), size.c_str(), duration.c_str());
 					resources.push_back(resource);
 				}
 				int pref=0;
@@ -333,6 +344,8 @@ std::vector<UPnPEntry> *CUpnpBrowserGui::decodeResult(std::string result)
 						pref=2;
 					}
 #endif
+
+printf("%s: mime %s\n",__func__, mime.c_str());
 					if (mime == "audio/mpeg" && pref < 3)
 					{
 						preferred=i;
@@ -343,6 +356,36 @@ std::vector<UPnPEntry> *CUpnpBrowserGui::decodeResult(std::string result)
 						preferred=i;
 						pref=4;
 					}
+#ifdef __sh__
+					/* avi */
+					if (mime == "video/x-msvideo" && pref < 5)
+					{
+						preferred=i;
+						pref=5;
+					}
+					/* vob, ts */
+					if (mime == "video/mpeg" && pref < 6)
+					{
+						preferred=i;
+						pref=6;
+					}
+					/* mp4 */
+					if (mime == "video/mp4" && pref < 6)
+					{
+						preferred=i;
+						pref=6;
+					}
+					if (mime == "video/x-matroska" && pref < 7)
+					{
+						preferred=i;
+						pref=7;
+					}
+					if (mime == "video/x-ms-wmv" && pref < 8)
+					{
+						preferred=i;
+						pref=8;
+					}
+#endif
 				}
 			}
 			p = node->GetAttributeValue((char *) "id");
@@ -589,6 +632,41 @@ void CUpnpBrowserGui::playnext(void)
 
 //------------------------------------------------------------------------
 
+void CUpnpBrowserGui::hide()
+{
+   m_frameBuffer->ClearFrameBuffer();
+}
+
+//------------------------------------------------------------------------
+#ifdef __sh__
+        static cPlayback *playback = NULL;
+        static bool   isPlaybackRunning = false;
+        static int    m_LocalLastMode;
+        static unsigned short g_apids[10];
+        static unsigned short g_ac3flags[10];
+        static unsigned short g_numpida = 0;
+        static unsigned short g_vpid = 0;
+        static unsigned short g_vtype = 0;
+        static std::string    g_language[10];
+
+        static unsigned int g_currentapid = 0, g_currentac3 = 0, apidchanged = 0;
+
+int CUPNPAPIDSelectExec::exec(CMenuTarget * parent, const std::string & actionKey)
+{
+	apidchanged = 0;
+	unsigned int sel = atoi(actionKey.c_str());
+	if (g_currentapid != g_apids[sel - 1]) {
+		g_currentapid = g_apids[sel - 1];
+		g_currentac3 = g_ac3flags[sel - 1];
+		apidchanged = 1;
+		printf("[movieplayer] apid changed to %d\n", g_apids[sel - 1]);
+	}
+	return menu_return::RETURN_EXIT;
+}
+#endif
+
+//------------------------------------------------------------------------
+
 bool CUpnpBrowserGui::selectItem(std::string id)
 {
 	bool loop = true;
@@ -605,8 +683,15 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 	dirnum=0;
 	entries=NULL;
 
+#ifdef __sh__
+        printf("%s >\n", __func__);
+#endif
+
 	while (loop)
 	{
+#ifdef __sh__
+            if (!isPlaybackRunning)
+#endif		       
 		updateTimes();
 		if (rchanged)
 		{
@@ -688,6 +773,10 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 			changed=true;
 		}
 
+#ifdef __sh__
+            if (isPlaybackRunning)
+	        changed = false;
+#endif		       
 		if (changed)
 		{
 			paintItem(entries, selected - index, dirnum - index, index);
@@ -713,6 +802,10 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 
 		else if (msg_repeatok == CRCInput::RC_up && selected > 0)
 		{
+#ifdef __sh__
+		    if (isPlaybackRunning)
+		       continue;
+#endif		       
 			selected--;
 			if (selected < index)
 			{
@@ -722,9 +815,107 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 			changed=true;
 		}
 
+#ifndef __sh__
 		else if(msg == CRCInput::RC_green && selected > 0)
+#else
+		else if(msg == CRCInput::RC_green)
+#endif
 		{
-			if (index > 0)
+
+#ifdef __sh__
+		    if (isPlaybackRunning)
+		    {
+printf("upnp audio\n");
+			CMenuWidget APIDSelector(LOCALE_APIDSELECTOR_HEAD, "audio.raw", 300);
+			
+			playback->FindAllPids(g_apids, g_ac3flags, &g_numpida, g_language);
+			
+			if (g_numpida > 0) {
+
+				APIDSelector.addItem(GenericMenuSeparator);
+				CUPNPAPIDSelectExec *APIDChanger = new CUPNPAPIDSelectExec;
+				bool enabled;
+				bool defpid;
+				for (unsigned int count = 0; count < g_numpida; count++) {
+					bool name_ok;
+					char apidnumber[10];
+					sprintf(apidnumber, "%d %X", count + 1, g_apids[count]);
+					enabled = true;
+					defpid = g_currentapid ? (g_currentapid == g_apids[count]) : (count == 0);
+					std::string apidtitle = "Stream ";
+
+#ifdef keine_ahnung
+					if(!is_file_player){
+						name_ok = get_movie_info_apid_name(g_apids[count], p_movie_info, &apidtitle);
+					}
+					else 
+#endif
+					if (!g_language[count].empty()){
+						apidtitle = g_language[count];
+						name_ok = true;
+					}
+					if (!name_ok)
+						apidtitle = "Stream ";
+
+					switch(g_ac3flags[count])
+					{
+						case 1: /*AC3,EAC3*/
+							if (apidtitle.find("AC3") < 0)
+								apidtitle.append(" (AC3)");
+							break;
+						case 2: /*teletext*/
+							apidtitle.append(" (Teletext)");
+							enabled = false;
+							break;
+						case 3: /*MP2*/
+							apidtitle.append(" (MP2)");
+							break;
+						case 4: /*MP3*/
+							apidtitle.append(" (MP3)");
+							break;
+						case 5: /*AAC*/
+							apidtitle.append(" (AAC)");
+							break;
+						case 6: /*DTS*/
+							apidtitle.append(" (DTS)");
+							break;
+						case 7: /*MLP*/
+							apidtitle.append(" (MLP)");
+							break;
+						default:
+							break;
+					}
+					if (!name_ok)
+						apidtitle.append(apidnumber);
+
+					APIDSelector.addItem(new CMenuForwarderNonLocalized(apidtitle.c_str(), enabled, NULL, APIDChanger, apidnumber, CRCInput::convertDigitToKey(count + 1)), defpid);
+				}
+
+				apidchanged = 0;
+				APIDSelector.exec(NULL, "");
+				if (apidchanged) {
+					if (g_currentapid == 0) {
+						g_currentapid = g_apids[0];
+						g_currentac3 = g_ac3flags[0];
+					}
+					playback->SetAPid(g_currentapid, g_currentac3);
+					apidchanged = 0;
+				}
+				delete APIDChanger;
+				CVFD::getInstance()->setMode(CVFD::MODE_MENU_UTF8);
+			} else {
+				DisplayErrorMessage(g_Locale->getText(LOCALE_AUDIOSELECTMENUE_NO_TRACKS)); // UTF-8
+			}
+		       continue;
+		    } /* playbackrunning */
+#endif		       
+
+#ifdef __sh__
+                    if (selected <= 0)
+		       continue;
+#endif
+
+ 			if (index > 0)
 			{
 				index-=m_listmaxshow;
 				selected-=m_listmaxshow;
@@ -737,6 +928,10 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 
 		else if (msg_repeatok == CRCInput::RC_down && selected + 1 < dirnum)
 		{
+#ifdef __sh__
+		    if (isPlaybackRunning)
+		       continue;
+#endif		       
 			selected++;
 			if (selected + 1 > index + m_listmaxshow)
 			{
@@ -748,6 +943,10 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 
 		else if(msg == CRCInput::RC_red && selected + 1 < dirnum)
 		{
+#ifdef __sh__
+		    if (isPlaybackRunning)
+		       continue;
+#endif		       
 			if (index < ((dirnum - 1) / m_listmaxshow) * m_listmaxshow)
 			{
 				index+=m_listmaxshow;
@@ -763,6 +962,10 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 
 		else if(msg == CRCInput::RC_right)
 		{
+#ifdef __sh__
+		    if (isPlaybackRunning)
+		       continue;
+#endif		       
 			if ((*entries)[selected - index].isdir)
 			{
 				endall=selectItem((*entries)[selected - index].id);
@@ -773,15 +976,36 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 		}
 		else if(msg == CRCInput::RC_ok)
 		{
+
+#ifdef __sh__
+		        if (isPlaybackRunning)
+		            continue;
+
+			if ((*entries)[selected - index].isdir)
+			{
+				endall=selectItem((*entries)[selected - index].id);
+				if (endall)
+					loop=false;
+			        changed=true;
+			} else
+			
+#endif		       
+
 			if (!(*entries)[selected - index].isdir)
 			{
+#ifndef __sh__
 				m_folderplay = false;
+#endif
 				int preferred=(*entries)[selected - index].preferred;
 				if (preferred != -1)
 				{
 					std::string protocol, prot, network, mime, additional;
 					protocol=(*entries)[selected - index].resources[preferred].protocol;
 					splitProtocol(protocol, prot, network, mime, additional);
+
+printf("mime = %s, url %s\n", mime.c_str(), (*entries)[selected - index].resources[preferred].url.c_str());
+
+#ifndef __sh__
 					if (mime == "audio/mpeg")
 					{
 						CAudiofile mp3((*entries)[selected - index].resources[preferred].url, CFile::FILE_MP3);
@@ -792,6 +1016,62 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 						CAudiofile mp3((*entries)[selected - index].resources[preferred].url, CFile::FILE_OGG);
 						CAudioPlayer::getInstance()->play(&mp3, g_settings.audioplayer_highprio == 1);
 					}
+#else
+					if ((mime == "audio/mpeg") || 
+					    (mime == "video/mpeg") || 
+					    (mime == "video/mp4") || 
+					    (mime == "video/x-msvideo") ||
+					    (mime == "video/x-matroska") ||
+					    (mime == "video/x-ms-wmv") ||
+					    (mime == "audio/x-vorbis+ogg") /* dont know if ogg vorbis work through libeplayer2/player2 I  have no testfiles */
+				           ) 
+					{
+                                           char* filename = (char*) malloc(strlen((char*) (*entries)[selected - index].resources[preferred].url.c_str()) + 8);
+					   
+printf("play %d\n", selected - index);
+					   sprintf(filename, "upnp://%s", (char*) (*entries)[selected - index].resources[preferred].url.c_str());
+					   
+	                                   if (playback == NULL)
+					   {
+					      playback = new cPlayback(3);
+
+	                                      CNeutrinoApp::getInstance()->handleMsg( NeutrinoMessages::CHANGEMODE , NeutrinoMessages::mode_ts );
+	                                      m_LocalLastMode = (CNeutrinoApp::getInstance()->getLastMode() | NeutrinoMessages::norezap);
+
+	                                      g_Zapit->setStandby(true);
+	                                      g_Sectionsd->setPauseScanning(true);
+	                                      
+					      audioDecoder->Close();
+	                                      videoDecoder->Close();
+					   }
+					   
+			                   playback->Open(PLAYMODE_FILE);
+
+			                   if (!playback->Start(filename, g_vpid, g_vtype, g_currentapid, g_currentac3)) 
+					   {
+				              printf("%s Starting Playback failed!\n", __FUNCTION__);
+				              playback->Close();
+
+					      isPlaybackRunning = false;
+
+	                                      delete playback;
+	                                      playback = NULL;
+	   
+	                                      audioDecoder->Open();
+	                                      videoDecoder->Open();
+
+	                                      g_Zapit->setStandby(false);
+	                                      g_Zapit->stopPlayBack();
+			                   } else 
+					   {
+					      hide();
+				              CVFD::getInstance()->ShowIcon(VFD_ICON_PLAY, true);
+					      playback->SetSpeed(1);
+					      isPlaybackRunning = true;
+				           }
+					   free(filename);
+					}
+#endif
 					m_playing_entry = (*entries)[selected - index];
 #if 0
 // #ifdef ENABLE_PICTUREVIEWER
@@ -832,21 +1112,41 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 #endif
 				}
 
-			} else {
+			}
+#ifndef __sh__
+			 else {
 				m_folderplay = true;
 				m_playfolder = (*entries)[selected - index].id;
 				m_playid = 0;
 				playnext();
 			}
+#endif
 			changed=true;
 		}
+#ifndef __sh__
 		else if( msg == CRCInput::RC_yellow)
 		{
 			if(CAudioPlayer::getInstance()->getState() != CBaseDec::STOP)
 				CAudioPlayer::getInstance()->stop();
 			m_folderplay = false;
 		}
+/* on __sh__ we use yellow as audio selector */
+#else
+		else if( msg == CRCInput::RC_yellow)
+		{
+#ifdef fixme
+/* fixme: this should replace m_folderplay later */
 
+		    if (m_repeatMode == eRepeatNone)
+		    
+		    else
+		    if (m_repeatMode == eRepeatOne)
+		    
+		    else
+		    if (m_repeatMode == eRepeatDir)
+#endif
+		}
+#endif
 		else if(msg == NeutrinoMessages::RECORD_START ||
 			msg == NeutrinoMessages::ZAPTO ||
 			msg == NeutrinoMessages::STANDBY_ON ||
@@ -861,7 +1161,90 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 		{
 			CNeutrinoApp::getInstance()->handleMsg( msg, data );
 		}
+#ifdef __sh__
+		else if (isPlaybackRunning)
+		{
+		   int speed;
+		   
+		   speed = playback->GetCurrPlaybackSpeed();
+		   
+		   if (msg == CRCInput::RC_rewind) 
+		   {	// rewind
+printf("upnp rewind\n");
+			   if (speed >= 0)
+				   speed = -1;
+			   else
+				   speed --;
 
+			   playback->SetSpeed(speed);
+		   } else if (msg == CRCInput::RC_forward) 
+		   {	// fast-forward
+printf("upnp forward\n");
+			   if (speed <= 0)
+				   speed = 2;
+			   else
+				   speed ++;
+
+			   playback->SetSpeed(speed);
+		   } else
+		   if (msg == CRCInput::RC_1) {	// Jump Backwards 1 minute
+			   playback->SetPosition(-60 * 1000);
+		   } else if (msg == CRCInput::RC_3) {	// Jump Forward 1 minute
+			   playback->SetPosition(60 * 1000);
+		   } else if (msg == CRCInput::RC_4) {	// Jump Backwards 5 minutes
+			   playback->SetPosition(-5 * 60 * 1000);
+		   } else if (msg == CRCInput::RC_6) {	// Jump Forward 5 minutes
+			   playback->SetPosition(5 * 60 * 1000);
+		   } else if (msg == CRCInput::RC_7) {	// Jump Backwards 10 minutes
+			   playback->SetPosition(-10 * 60 * 1000);
+		   } else if (msg == CRCInput::RC_9) {	// Jump Forward 10 minutes
+			   playback->SetPosition(10 * 60 * 1000);
+		   } else if (msg == CRCInput::RC_2) {	// goto start
+			   playback->SetPosition(0, true);
+		   } else if (msg == CRCInput::RC_page_up) {
+			   playback->SetPosition(10 * 1000);
+		   } else if (msg == CRCInput::RC_page_down) {
+			   playback->SetPosition(-10 * 1000);
+	           }
+                   else if (msg == CRCInput::RC_stop) 
+		   {
+	              playback->Close();
+           
+	              delete playback;
+	              playback = NULL;
+	   
+	              audioDecoder->Open();
+	              videoDecoder->Open();
+
+	              g_Zapit->setStandby(false);
+	              g_Zapit->stopPlayBack();
+           
+	              isPlaybackRunning = false;
+		      changed = true;  
+		   }
+                   else if (msg == CRCInput::RC_pause) 
+		   {
+			if (speed == 0) 
+			{
+			    speed = 1;
+			    playback->SetSpeed(speed);
+			} else 
+			{
+			    speed = 0;
+			    playback->SetSpeed(speed);
+			}
+		   }
+                   else if (msg == CRCInput::RC_play) 
+		   {
+			speed = 1;
+			playback->SetSpeed(speed);
+		   }
+                   else if (msg == CRCInput::RC_help) 
+		   {
+			//fixme showaudioselectdialog = true;                
+		   }
+		}   
+#endif
 		else
 		{
 			if( CNeutrinoApp::getInstance()->handleMsg( msg, data ) & messages_return::cancel_all )
@@ -869,9 +1252,92 @@ bool CUpnpBrowserGui::selectItem(std::string id)
 			changed=true;
 		}
 
+
+#ifndef __sh__
 		if (m_folderplay && (CAudioPlayer::getInstance()->getState() == CBaseDec::STOP))
 			playnext();
-	}
+#else
+		if (isPlaybackRunning)
+		{
+	             int position = 0, duration = 0;
+                     int file_prozent = 0;
+		     int speed;
+
+		     if(playback->GetPosition(position, duration)) {
+			     if(duration > 100)
+				     file_prozent = (unsigned char) (position / (duration / 100));
+			     speed = playback->GetCurrPlaybackSpeed();
+			     printf("CUpnpBrowserGui::PlayFile: speed %d position %d duration %d (%d, %d%%)\n", speed, position, duration, duration-position, file_prozent);
+		     }
+
+		     /* has playback ended ? */
+		     if (playback->IsPlaying() == false)
+		     {
+printf("%s: playack ended\n", __func__);
+		         if (m_folderplay)
+			 {
+printf("m_folderplayer = true\n");
+	                    delete playback;
+	                    playback = NULL;
+
+	                    audioDecoder->Open();
+	                    videoDecoder->Open();
+
+	                    g_Zapit->setStandby(false);
+	                    g_Zapit->stopPlayBack();
+
+			    isPlaybackRunning = false;
+
+			    selected++;
+			    if (selected + 1 > index + m_listmaxshow)
+			    {
+				    index+=m_listmaxshow;
+			    }
+                            
+			    msg = CRCInput::RC_ok;
+			 } else
+			 {
+printf("m_folderplayer = false\n");
+			    delete playback;
+			    playback = NULL;
+
+	                    audioDecoder->Open();
+	                    videoDecoder->Open();
+
+	                    g_Zapit->setStandby(false);
+	                    g_Zapit->stopPlayBack();
+
+			    isPlaybackRunning = false;
+		            changed = true;
+			 }
+		     }
+
+		}
+#endif
+	} /* while loop */
+
+#ifdef __sh__
+printf("nach while loop\n");
+        if (isPlaybackRunning)
+	{
+	   playback->Close();
+           
+	   delete playback;
+	   playback = NULL;
+	   
+	   audioDecoder->Open();
+	   videoDecoder->Open();
+
+	   g_Zapit->setStandby(false);
+	   g_Zapit->stopPlayBack();
+	   g_Sectionsd->setPauseScanning(false);
+	   CNeutrinoApp::getInstance()->handleMsg(NeutrinoMessages::CHANGEMODE, m_LocalLastMode);
+           
+	   isPlaybackRunning = false;
+        }
+	
+        printf("%s <\n", __func__);
+#endif
 	if (entries)
 		delete entries;
 	return endall;

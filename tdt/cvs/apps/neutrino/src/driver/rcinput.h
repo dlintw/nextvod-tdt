@@ -214,7 +214,12 @@ class CRCInput
 			RC_record	= KEY_RECORD,
 			RC_play		= KEY_PLAY,
 			RC_pause	= KEY_PAUSE,
+#ifdef __sh__
+/* evremot don't use forward */
+			RC_forward	= KEY_FASTFORWARD,
+#else
 			RC_forward	= KEY_FORWARD,
+#endif
 			RC_rewind	= KEY_REWIND,
 			RC_stop		= KEY_STOP,
 			RC_timeshift	= KEY_TIME,
