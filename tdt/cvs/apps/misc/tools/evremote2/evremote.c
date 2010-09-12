@@ -213,6 +213,54 @@ int main (int argc, char* argv[])
         printKeyMap((tButton*)((RemoteControl_t*)context.r)->Frontpanel);
     }
 
+    const int cMaxButtonExtension = 128; // Up To 128 Extension Buttons
+    tButton vButtonExtension[cMaxButtonExtension]; 
+    int vButtonExtensionCounter = 0;
+
+    if (argc >= 2) {
+        if (argc == 3 && !strncmp(argv[1], "-r", 2)) {
+            char   vKeyName[64];
+            char   vKeyWord[64];
+            int    vKeyCode;
+            char * vRemoteFile  = argv[2];
+            FILE * vRemoteFileD = NULL;
+
+            vRemoteFileD = fopen(vRemoteFile, "r");
+            if (vRemoteFileD != NULL) {
+                while ( fscanf(vRemoteFileD,"%s %s %d", vKeyName, vKeyWord, &vKeyCode) == 3 ) {
+                    strncpy(vButtonExtension[vButtonExtensionCounter].KeyName, vKeyName, 20);
+                    strncpy(vButtonExtension[vButtonExtensionCounter].KeyWord, vKeyWord, 2);
+                    vButtonExtension[vButtonExtensionCounter].KeyCode = vKeyCode;
+                    vButtonExtensionCounter++;
+                    if (vButtonExtensionCounter + 1 == cMaxButtonExtension)
+                        break;
+                }
+                fclose(vRemoteFileD);
+
+                strncpy(vButtonExtension[vButtonExtensionCounter].KeyName, "\0", 1);
+                strncpy(vButtonExtension[vButtonExtensionCounter].KeyWord, "\0", 1);
+                vButtonExtension[vButtonExtensionCounter].KeyCode = KEY_NULL;
+
+                printf("RemoteControl Extension Map:\n");
+                printKeyMap(vButtonExtension);
+            }
+        }
+    }
+
+    if (vButtonExtensionCounter > 0)
+        ((RemoteControl_t*)context.r)->RemoteControl = vButtonExtension;
+    // TODO
+    //if(((RemoteControl_t*)context.r)->RemoteControl == NULL && vButtonExtensionCounter > 0)
+        //((RemoteControl_t*)context.r)->RemoteControl = vButtonExtension;
+    //else if (vButtonExtensionCounter > 0) {
+        //int vRemoteControlSize    = sizeof(((RemoteControl_t*)context.r)->RemoteControl) / sizeof(tButton);
+        //int vRemoteControlExtSize = vButtonExtensionCounter;
+        //((RemoteControl_t*)context.r)->RemoteControl = malloc((vRemoteControlSize + vRemoteControlExtSize - 1)*sizeof(tButton));
+    //}
+
+    //printf("RemoteControl Map:\n");
+    //printKeyMap((tButton*)((RemoteControl_t*)context.r)->RemoteControl);
+
     processSimple(&context, argc, argv);
 
     return 0;

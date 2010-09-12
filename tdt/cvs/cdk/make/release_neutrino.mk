@@ -115,7 +115,7 @@ $(DEPDIR)/%release_neutrino:
 	rm -f $(prefix)/release_neutrino/lib/*.a && \
 	rm -f $(prefix)/release_neutrino/lib/*.o && \
 	rm -f $(prefix)/release_neutrino/lib/*.la && \
-	find $(prefix)/release_neutrino/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
+	find $(prefix)/release_neutrino/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 if !STM22
 	cp $(buildprefix)/root/release/rcS_stm23_neutrino$(if $(TF7700),_$(TF7700))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK)) $(prefix)/release_neutrino/etc/init.d/rcS
 endif
@@ -547,7 +547,7 @@ endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
 #	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
-	find $(prefix)/release_neutrino/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
+	find $(prefix)/release_neutrino/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
 	for mod in \
 		sound/pseudocard/pseudocard.ko \
@@ -733,7 +733,7 @@ endif
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y && ln -s /usr/local/share/neutrino/icons/logo logos )
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino && ln -s /usr/local/share/neutrino/httpd-y httpd )
 	( cd $(prefix)/release_neutrino/var && ln -s /usr/local/share/neutrino/httpd-y httpd )
-	find $(prefix)/release_neutrino/usr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
+	find $(prefix)/release_neutrino/usr/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 #
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/neutrino #############
 #	rm $(prefix)/release_neutrino/bin/mount
