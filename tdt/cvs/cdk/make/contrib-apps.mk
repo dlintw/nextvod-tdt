@@ -896,7 +896,7 @@ $(DEPDIR)/mencoder.do_compile: bootstrap mplayer.do_prepare
 			--host-cc=gcc \
 			--prefix=/usr \
 			--disable-dvdnav \
-			--disable-dvdread \ 
+			--disable-dvdread \
 			--disable-dvdread-internal \
 			--disable-libdvdcss-internal \
 			--disable-libvorbis \

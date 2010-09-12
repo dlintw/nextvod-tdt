@@ -68,8 +68,8 @@ $(flashprefix)/root-stock-fosquashfs/lib/ld-linux.so.2: \
 #	ln -sf /app/usr/local/bin/lircd $</usr/sbin/lircd
 #	ln -sf /app/usr/local/bin/lircmd $</usr/sbin/lircmd
 	chmod u+rwX,go+rX -R $</
-	find $</lib -name *.la | xargs rm -f
-	find $</usr/lib -name *.la | xargs rm -f
+	find $</lib -name '*.la' | xargs rm -f
+	find $</usr/lib -name '*.la' | xargs rm -f
 	rm -rf $</include
 
 $(flashprefix)/root/strippy \
@@ -160,6 +160,6 @@ $(flashprefix)/root-enigma2-disk/lib/ld-linux.so.2: \
 	PATH=$(MAKE_PATH) $(target)-strip `find $</usr/lib/alsaplayer/* -type f -name "*.so"` 2>/dev/null || /bin/true
 	PATH=$(MAKE_PATH) $(target)-strip $</usr/lib/autofs/* 2>/dev/null || /bin/true
 	chmod u+rwX,go+rX -R $</
-	find $</lib -name *.la | xargs rm -f
-	find $</usr/lib -name *.la | xargs rm -f
+	find $</lib -name '*.la' | xargs rm -f
+	find $</usr/lib -name '*.la' | xargs rm -f
 	rm -rf $</include

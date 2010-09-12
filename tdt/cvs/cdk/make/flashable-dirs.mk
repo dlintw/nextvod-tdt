@@ -297,7 +297,7 @@ $(flashprefix)/root-stock-%: \
 	cp -rd $(flashprefix)/root-squashfs/lib/modules/2.6.17.14_stm22_0041/kernel/drivers/media/dvb/dvb-core/dvb-core.ko $@/lib/modules
 	cp -rd $(flashprefix)/root-squashfs/lib/modules/2.6.17.14_stm22_0041/kernel/drivers/media/dvb/frontends/dvb-pll.ko $@/lib/modules
 	cp -rd $(flashprefix)/root-squashfs/lib/modules/2.6.17.14_stm22_0041/kernel/drivers/net/smsc_911x/smsc911x.ko $@/lib/modules
-	find $@/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
+	find $@/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 	@TUXBOX_CUSTOMIZE@
 
 $(flashprefix)/root-stock-neutrino: \
@@ -330,9 +330,9 @@ $(flashprefix)/root-stock-neutrino: \
 	rm -f $@/usr/lib/{libfbsplash.so,libfbsplash.so.1,libfbsplash.so.1.0.0,liblcms.so,liblcms.so.1,liblcms.so.1.0.16}
 	rm -rf $@/usr/local/share/config
 	( cd $@/usr/local/share && ln -sf /var/tuxbox/config config )
-	find $@/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
-	find $@/lib/ -name  *.so -exec sh4-linux-strip --strip-unneeded {} \;
-	find $@/usr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;	
+	find $@/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
+	find $@/lib/ -name '*.so' -exec sh4-linux-strip --strip-unneeded {} \;
+	find $@/usr/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 	@TUXBOX_CUSTOMIZE@
 
 
@@ -601,9 +601,9 @@ $(flashprefix)/root-stock-hdbox-enigma2: \
 	rm $@/usr/local/bin/enigma2
 	ln -s /var/usr/local/bin/enigma2 $@/usr/local/bin/enigma2
 	rm -Rf $@/rbin/splash*
-	find $@/ -name libncurses* -exec rm {} \;
-	find $@/ -name libfbsp* -exec rm {} \;
-#	find $@/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
+	find $@/ -name 'libncurses*' -exec rm {} \;
+	find $@/ -name 'libfbsp*' -exec rm {} \;
+#	find $@/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 	@TUXBOX_CUSTOMIZE@
 
 $(flashprefix)/var-stock-hdbox-enigma2: \
@@ -625,7 +625,7 @@ $(flashprefix)/var-stock-hdbox-enigma2: \
 	cp -rf  $</usr/local/bin/enigma2 $@/usr/local/bin/
 	rm $@/etc/.firstboot
 #	rm -rf $@/usr/lib/enigma2/python/Plugins/Extensions/*
-#	find $@/ -name *.pyo -exec rm {} \;
+#	find $@/ -name '*.pyo' -exec rm {} \;
 
 #	rm -f $@/bin/*
 #	rm -rd $@/etc/*

@@ -434,7 +434,7 @@ release_base:
 	rm -f $(prefix)/release/lib/*.a && \
 	rm -f $(prefix)/release/lib/*.o && \
 	rm -f $(prefix)/release/lib/*.la && \
-	find $(prefix)/release/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
+	find $(prefix)/release/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 if !STM22
 	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/etc/init.d/rcS
 	rm -f $(prefix)/release/bin/{stslave,ustslave}
@@ -491,7 +491,7 @@ endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/lzo-kmod/lzo1x_compress.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/lzo-kmod/lzo1x_decompress.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/ramzswap.ko $(prefix)/release/lib/modules/
-	find $(prefix)/release/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
+	find $(prefix)/release/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 
 	rm -rf $(prefix)/release/lib/autofs
 	rm -rf $(prefix)/release/lib/modules/$(KERNELVERSION)
@@ -576,16 +576,16 @@ endif
 	rm -f $(prefix)/release/usr/lib/*.a
 	rm -f $(prefix)/release/usr/lib/*.o
 	rm -f $(prefix)/release/usr/lib/*.la
-	find $(prefix)/release/usr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
+	find $(prefix)/release/usr/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 
 	$(INSTALL_DIR) $(prefix)/release/usr/lib/enigma2
 	cp -a $(targetprefix)/usr/lib/enigma2/* $(prefix)/release/usr/lib/enigma2/
 	if test -d $(targetprefix)/usr/local/lib/enigma2; then \
 		cp -a $(targetprefix)/usr/local/lib/enigma2/* $(prefix)/release/usr/lib/enigma2/; fi
-	find $(prefix)/release/usr/lib/enigma2/ -name *.a -exec rm -f {} \;
-	find $(prefix)/release/usr/lib/enigma2/ -name *.o -exec rm -f {} \;
-	find $(prefix)/release/usr/lib/enigma2/ -name *.la -exec rm -f {} \;
-	find $(prefix)/release/usr/lib/enigma2/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
+	find $(prefix)/release/usr/lib/enigma2/ -name '*.a' -exec rm -f {} \;
+	find $(prefix)/release/usr/lib/enigma2/ -name '*.o' -exec rm -f {} \;
+	find $(prefix)/release/usr/lib/enigma2/ -name '*.la' -exec rm -f {} \;
+	find $(prefix)/release/usr/lib/enigma2/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 
 #Delete unnecessary plugins 
 	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/DemoPlugins 
@@ -660,10 +660,10 @@ endif
 
 	rm -rf $(prefix)/release/usr/lib/python2.6/email
 
-	find $(prefix)/release/usr/lib/python2.6/ -name *.a -exec rm -f {} \;
-	find $(prefix)/release/usr/lib/python2.6/ -name *.o -exec rm -f {} \;
-	find $(prefix)/release/usr/lib/python2.6/ -name *.la -exec rm -f {} \;
-	find $(prefix)/release/usr/lib/python2.6/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
+	find $(prefix)/release/usr/lib/python2.6/ -name '*.a' -exec rm -f {} \;
+	find $(prefix)/release/usr/lib/python2.6/ -name '*.o' -exec rm -f {} \;
+	find $(prefix)/release/usr/lib/python2.6/ -name '*.la' -exec rm -f {} \;
+	find $(prefix)/release/usr/lib/python2.6/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/enigma2 #############
 	cp -RP $(buildprefix)/own_build/enigma2/* $(prefix)/release/
