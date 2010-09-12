@@ -199,11 +199,18 @@ printf("%s\n", __FUNCTION__);
 		goto nolfb;
 	}
 
+        if (available / (1024 * 1024) < 12)
+	{
+           printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+	   printf("error: to less memory for stmfb given, need at least 12mb\n");  	
+	}
+
 #if defined(__sh__) 
 printf("fb: 0x%08x\n", lfb);
 	//we use 2MB at the end of the buffer, the rest does the blitter 
 	lfb += 1920*1080;   
 printf("fb: 0x%08x\n", lfb);
+
 #endif 
 
 #ifdef USE_NEVIS_GXA
@@ -529,12 +536,52 @@ void CFrameBuffer::paintBoxRel(const int x, const int y, const int dx, const int
 }
 #endif
 
+#ifdef __sh__
+void CFrameBuffer::paintBoxRel(const int x, const int y, const int _dx, const int _dy, const fb_pixel_t col, int radius, int type)
+#else
 void CFrameBuffer::paintBoxRel(const int x, const int y, const int dx, const int dy, const fb_pixel_t col, int radius, int type)
+#endif
 {
+#ifdef __sh__
+    int dx, dy;
+
+    dx = _dx;
+    dy = _dy;
+#endif
+
     /* draw a filled rectangle (with additional round corners) */
 
     if (!getActive())
         return;
+
+#ifdef __sh__
+    if (x + dx > DEFAULT_XRES)
+    {
+       printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
+       dx -= (x + dx - DEFAULT_XRES) - 1;
+
+       if (x + dx > DEFAULT_XRES)
+       {
+           /* I think if both values are out of range we should abort. just my two cent on it */
+           printf("aborting!\n");
+           return;
+       }
+    }
+
+    if (y + dy > DEFAULT_YRES)
+    {
+       printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
+
+       dy -= (y + dy - DEFAULT_YRES) - 1;
+
+       if (y + dy > DEFAULT_YRES)
+       {
+           /* I think if both values are out of range we should abort. just my two cent on it */
+           printf("aborting!\n");
+           return;
+       }
+    }
+#endif
 
 #ifdef USE_NEVIS_GXA
     /* this table contains the x coordinates for a quarter circle (the bottom right quarter) with fixed 
@@ -746,6 +793,26 @@ void CFrameBuffer::paintVLine(int x, int ya, int yb, const fb_pixel_t col)
 	if (!getActive())
 		return;
 
+#ifdef __sh__
+        if (x > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (x %d > DEFAULT_XRES %d)\n", __func__, x, DEFAULT_XRES );
+           x = DEFAULT_XRES - 1;
+        }
+
+        if (ya > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (ya %d > DEFAULT_YRES %d)\n", __func__, ya, DEFAULT_YRES );
+           ya = DEFAULT_YRES - 1;
+        }
+
+        if (yb > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (yb %d > DEFAULT_YRES %d)\n", __func__, yb, DEFAULT_YRES );
+           yb = DEFAULT_YRES - 1;
+        }
+#endif
+
 #ifdef USE_NEVIS_GXA
     /* draw a single vertical line from point x/ya to x/yb */
     unsigned int cmd = GXA_CMD_NOT_TEXT | GXA_SRC_BMP_SEL(2) | GXA_DST_BMP_SEL(2) | GXA_PARAM_COUNT(2) | GXA_CMD_NOT_ALPHA;
@@ -774,6 +841,28 @@ void CFrameBuffer::paintVLineRel(int x, int y, int dy, const fb_pixel_t col)
 {
 	if (!getActive())
 		return;
+
+#ifdef __sh__
+        if (x > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (x %d > DEFAULT_XRES %d)\n", __func__, x, DEFAULT_XRES );
+           x = DEFAULT_XRES - 1;
+        }
+
+        if (y + dy > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
+
+	   dy -= (y + dy - DEFAULT_YRES) - 1;
+
+	   if (y + dy > DEFAULT_YRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return;
+	   }
+        }
+#endif
 
 #ifdef USE_NEVIS_GXA
     /* draw a single vertical line from point x/y with hight dx */
@@ -814,6 +903,26 @@ void CFrameBuffer::paintHLine(int xa, int xb, int y, const fb_pixel_t col)
 	if (!getActive())
 		return;
 
+#ifdef __sh__
+        if (xa > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (xa %d > DEFAULT_XRES %d)\n", __func__, xa, DEFAULT_XRES );
+           xa = DEFAULT_XRES - 1;
+        }
+
+        if (xb > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (xb %d > DEFAULT_XRES %d)\n", __func__, xb, DEFAULT_XRES );
+           xb = DEFAULT_XRES - 1;
+        }
+
+        if (y > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (y %d > DEFAULT_YRES %d)\n", __func__, y, DEFAULT_YRES );
+           y = DEFAULT_YRES - 1;
+        }
+#endif
+
 #ifdef USE_NEVIS_GXA
 	/* draw a single horizontal line from point xa/y to xb/y */
 	unsigned int cmd = GXA_CMD_NOT_TEXT | GXA_SRC_BMP_SEL(2) | GXA_DST_BMP_SEL(2) | GXA_PARAM_COUNT(2) | GXA_CMD_NOT_ALPHA;
@@ -841,6 +950,28 @@ void CFrameBuffer::paintHLineRel(int x, int dx, int y, const fb_pixel_t col)
 {
 	if (!getActive())
 		return;
+
+#ifdef __sh__
+        if (x + dx > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
+
+	   dx -= (x + dx - DEFAULT_XRES) - 1;
+
+	   if (x + dx > DEFAULT_XRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return;
+	   }
+        }
+
+        if (y > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (y %d > DEFAULT_YRES %d)\n", __func__, y, DEFAULT_YRES );
+           y = DEFAULT_YRES - 1;
+        }
+#endif
 
 #ifdef USE_NEVIS_GXA
 	/* draw a single horizontal line from point x/y with width dx */
@@ -891,6 +1022,35 @@ bool CFrameBuffer::paintIcon8(const std::string & filename, const int x, const i
 	width  = (header.width_hi  << 8) | header.width_lo;
 	height = (header.height_hi << 8) | header.height_lo;
 
+#ifdef __sh__
+        if (x + width > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (x %d + width %d > DEFAULT_XRES %d)\n", __func__, x, width, DEFAULT_XRES );
+
+	   width -= (x + width - DEFAULT_XRES) - 1;
+
+	   if (x + width > DEFAULT_XRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return false;
+	   }
+        }
+
+        if (y + height > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (y %d + height %d > DEFAULT_YRES %d)\n", __func__, y, height, DEFAULT_YRES );
+
+	   height -= (y + height - DEFAULT_YRES) - 1;
+
+	   if (y + height > DEFAULT_YRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return false;
+	   }
+        }
+#endif
 	unsigned char pixbuf[768];
 
 	uint8_t * d = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
@@ -956,6 +1116,35 @@ bool CFrameBuffer::paintIcon(const std::string & filename, const int x, const in
 	width  = (header.width_hi  << 8) | header.width_lo;
 	height = (header.height_hi << 8) | header.height_lo;
 
+#ifdef __sh__
+        if (x + width > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (x %d + width %d > DEFAULT_XRES %d)\n", __func__, x, width, DEFAULT_XRES );
+
+	   width -= (x + width - DEFAULT_XRES) - 1;
+
+	   if (x + width > DEFAULT_XRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return false;
+	   }
+        }
+
+        if (y + height > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (y %d + height %d > DEFAULT_YRES %d)\n", __func__, y, height, DEFAULT_YRES );
+
+	   height -= (y + height - DEFAULT_YRES) - 1;
+
+	   if (y + height > DEFAULT_YRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return false;
+	   }
+        }
+#endif
 	unsigned char pixbuf[768];
 	uint8_t * d = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
 	fb_pixel_t * d2;
@@ -1031,15 +1220,36 @@ void CFrameBuffer::loadPal(const std::string & filename, const unsigned char off
 
 void CFrameBuffer::paintPixel(const int x, const int y, const fb_pixel_t col)
 {
+#ifdef __sh__
+        int x1, y1;
+#endif
+	
 	if (!getActive())
 		return;
+
+#ifdef __sh__
+        x1 = x;
+	y1 = y; 
+
+        if (x  > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (x %d > DEFAULT_XRES %d)\n", __func__, x, DEFAULT_XRES );
+           x1 = DEFAULT_XRES - 1;
+        }
+
+        if (y > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (y %d > DEFAULT_YRES %d)\n", __func__, y, DEFAULT_YRES );
+           y1 = DEFAULT_YRES - 1;
+        }
+#endif
 
 	#ifdef USE_NEVIS_GXA
 	paintHLineRel(x, 1, y, col);
 	#else
 	fb_pixel_t * pos = getFrameBufferPointer();
-	pos += (stride / sizeof(fb_pixel_t)) * y;
-	pos += x;
+	pos += (stride / sizeof(fb_pixel_t)) * y1;
+	pos += x1;
 
 	*pos = col;
 	#endif
@@ -1052,12 +1262,40 @@ void CFrameBuffer::paintLine(int xa, int ya, int xb, int yb, const fb_pixel_t co
 
 //printf("%s(%d, %d, %d, %d, %.8X)\n", __FUNCTION__, xa, ya, xb, yb, col);
 
-	int dx = abs (xa - xb);
-	int dy = abs (ya - yb);
+	int dx;
+	int dy;
 	int x;
 	int y;
 	int End;
 	int step;
+
+#ifdef __sh__
+        if (xa  > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (xa %d > DEFAULT_XRES %d)\n", __func__, xa, DEFAULT_XRES );
+           xa = DEFAULT_XRES -1 ;
+        }
+
+        if (xb  > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (xb %d > DEFAULT_XRES %d)\n", __func__, xb, DEFAULT_XRES );
+           xb = DEFAULT_XRES - 1;
+        }
+
+        if (ya > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (ya %d > DEFAULT_YRES %d)\n", __func__, ya, DEFAULT_YRES );
+           ya = DEFAULT_YRES - 1;
+        }
+
+        if (yb > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (yb %d > DEFAULT_YRES %d)\n", __func__, yb, DEFAULT_YRES );
+           yb = DEFAULT_YRES - 1;
+        }
+#endif
+	dx = abs (xa - xb);
+	dy = abs (ya - yb);
 
 	if ( dx > dy )
 	{
@@ -1151,6 +1389,24 @@ bool CFrameBuffer::loadPictureToMem(const std::string & filename, const uint16_t
 
 //printf("%s(%d, %d, memp)\n", __FUNCTION__, width, height);
 
+#ifdef __sh__
+        int w, h;
+	
+	w = width;
+	h = height;
+
+        if (width > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (width %d)\n", __func__, width );
+           w = DEFAULT_XRES - 1;
+        }
+
+        if (height > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (height %d)\n", __func__, height );
+           h = DEFAULT_YRES - 1;
+        }
+#endif
 	fd = open((iconBasePath + filename).c_str(), O_RDONLY );
 
 	if (fd == -1)
@@ -1161,10 +1417,24 @@ bool CFrameBuffer::loadPictureToMem(const std::string & filename, const uint16_t
 
 	read(fd, &header, sizeof(struct rawHeader));
 
+#ifdef __sh__
+	if ((w  != ((header.width_hi  << 8) | header.width_lo)) ||
+	    (h != ((header.height_hi << 8) | header.height_lo)))
+	{
+		printf("error while loading icon: %s - invalid resolution = %hux%hu\n", filename.c_str(), w, h);
+		return false;
+	}
+
+	if ((stride == 0) || (stride == w * sizeof(fb_pixel_t)))
+		read(fd, memp, h * w * sizeof(fb_pixel_t));
+	else
+		for (int i = 0; i < h; i++)
+			read(fd, ((uint8_t *)memp) + i * stride, w * sizeof(fb_pixel_t));
+#else
 	if ((width  != ((header.width_hi  << 8) | header.width_lo)) ||
 	    (height != ((header.height_hi << 8) | header.height_lo)))
 	{
-		printf("error while loading icon: %s - invalid resolution = %hux%hu\n", filename.c_str(), width, height);
+		printf("error while loading icon: %s - invalid resolution = %hux%hu\n", filename.c_str(), w, h);
 		return false;
 	}
 
@@ -1173,6 +1443,7 @@ bool CFrameBuffer::loadPictureToMem(const std::string & filename, const uint16_t
 	else
 		for (int i = 0; i < height; i++)
 			read(fd, ((uint8_t *)memp) + i * stride, width * sizeof(fb_pixel_t));
+#endif
 
 	close(fd);
 	return true;
@@ -1340,6 +1611,39 @@ void CFrameBuffer::paintBackgroundBoxRel(int x, int y, int dx, int dy)
 	if (!getActive())
 		return;
 
+#ifdef __sh__
+        if (x + dx > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
+
+           dx -= (x + dx - DEFAULT_XRES) - 1;
+
+           printf("new dx = %d\n", dx); 
+
+	   if (x + dx > DEFAULT_XRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return;
+	   }
+        }
+
+        if (y + dy > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
+
+           dy -= (y + dy - DEFAULT_YRES) - 1;
+
+           printf("new dy = %d\n", dy); 
+
+	   if (y + dy > DEFAULT_YRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return;
+	   }
+        }
+#endif
 	if(!useBackgroundPaint)
 	{
 		paintBoxRel(x, y, dx, dy, backgroundColor);
@@ -1392,6 +1696,35 @@ void CFrameBuffer::SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const m
 	if (!getActive())
 		return;
 
+#ifdef __sh__
+        if (x + dx > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
+
+           dx -= (x + dx - DEFAULT_XRES) - 1;
+
+	   if (x + dx > DEFAULT_XRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return;
+	   }
+        }
+
+        if (y + dy > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
+
+           dy -= (y + dy - DEFAULT_YRES) - 1;
+
+	   if (y + dy > DEFAULT_YRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return;
+	   }
+        }
+#endif
 	uint8_t * pos = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
 	fb_pixel_t * bkpos = memp;
 	for (int count = 0; count < dy; count++) {
@@ -1423,6 +1756,35 @@ void CFrameBuffer::RestoreScreen(int x, int y, int dx, int dy, fb_pixel_t * cons
 	if (!getActive())
 		return;
 
+#ifdef __sh__
+        if (x + dx > DEFAULT_XRES)
+	{
+           printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
+
+           dx -= (x + dx - DEFAULT_XRES) - 1;
+
+	   if (x + dx > DEFAULT_XRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return;
+	   }
+        }
+
+        if (y + dy > DEFAULT_YRES)
+	{
+           printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
+
+           dy -= (y + dy - DEFAULT_YRES) - 1;
+
+	   if (y + dy > DEFAULT_YRES)
+	   {
+               /* I think if both values are out of range we should abort. just my two cent on it */
+               printf("aborting!\n");
+               return;
+	   }
+        }
+#endif
 	uint8_t * fbpos = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
 	fb_pixel_t * bkpos = memp;
 	for (int count = 0; count < dy; count++)
