@@ -1597,7 +1597,7 @@ static int AviPlay(Context_t *context) {
 		#endif
 	}
 	
-	if (hasPlayThreadStarted == 9) {
+	if (hasPlayThreadStarted == 0) {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
