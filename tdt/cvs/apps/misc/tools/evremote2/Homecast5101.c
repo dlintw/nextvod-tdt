@@ -128,7 +128,7 @@ static int pRead(Context_t* context ) {
   vData[1] = vBuffer[15];
   vData[2] = '\0';
 
-  vCurrentCode = getInternalCode(cButtonsHomecast5101, vData);
+  vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
   
   return vCurrentCode;
 }
@@ -147,4 +147,6 @@ RemoteControl_t Hs5101_RC = {
   cButtonsHomecast5101,
   NULL, 
   NULL,
+    0,
+    NULL,
 };

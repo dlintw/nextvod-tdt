@@ -184,12 +184,12 @@ static int pRead(Context_t* context)
 
        if(vKeyType == RemoteControl) {
        	   if(vData[1] == 0xD5)
-               vCurrentCode = getInternalCodeHex(cButtonUFS922, vData[1]);
+               vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[1]);
            else
-           	   vCurrentCode = getInternalCodeHex(cButtonUFS922, vData[1] & ~0x80);
+           	   vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[1] & ~0x80);
        }    	     
        else
-           vCurrentCode = getInternalCodeHex(cButtonUFS922Frontpanel, vData[1]);
+           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
 
        private->isNewKey = 0;
 
@@ -305,4 +305,6 @@ RemoteControl_t UFS922_RC = {
 	cButtonUFS922,
 	cButtonUFS922Frontpanel,
 	NULL,
+    0,
+    NULL,
 };

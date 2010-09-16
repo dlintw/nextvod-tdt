@@ -151,7 +151,7 @@ static int pRead(Context_t* context ) {
     vData[2] = '\0';
 
     printf("[RCU] key: %s -> %s\n", vData, &vBuffer[20]);
-    vCurrentCode = getInternalCode(cButtonsEdisionVip2, vData);
+    vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
 
     return vCurrentCode;
 }
@@ -192,4 +192,6 @@ RemoteControl_t Vip2_RC = {
 	cButtonsEdisionVip2,
 	NULL,
         NULL,
+    0,
+    NULL,
 };

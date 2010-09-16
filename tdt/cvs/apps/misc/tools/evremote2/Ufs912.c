@@ -43,19 +43,11 @@
 #define rcDeviceName "/dev/rc"
 #define cUFS912CommandLen 8
 
-typedef struct
-{
-	int          vLastCode;
-        unsigned int lastTime;
-	int          rate;
-	int          isNewKey;
-	int          toggleFeedback;
-	
-	int          maxRate;
-	int          maxDelay;
-} tUFS912Private;
-
 /* ***************** our key assignment **************** */
+
+static tLongKeyPressSupport cLongKeyPressSupport = {
+  20, 106,
+};
 
 static tButton cButtonUFS912[] = {
     {"MEDIA"          , "D5", KEY_MEDIA},
@@ -80,7 +72,8 @@ static tButton cButtonUFS912[] = {
     {"CHANNELDOWN"    , "1F", KEY_PAGEDOWN},
     {"VOLUMEUP"       , "10", KEY_VOLUMEUP},
     {"VOLUMEDOWN"     , "11", KEY_VOLUMEDOWN},
-    {"INFO"           , "0F", KEY_HELP}, //THIS IS WRONG SHOULD BE KEY_INFO
+    {"HELP"           , "81", KEY_HELP},
+    {"INFO"           , "0F", KEY_INFO},
     {"OK"             , "5C", KEY_OK},
     {"UP"             , "58", KEY_UP},
     {"RIGHT"          , "5B", KEY_RIGHT},
@@ -114,41 +107,7 @@ static tButton cButtonUFS912Frontpanel[] = {
 static int pInit(Context_t* context, int argc, char* argv[]) 
 {
     int vFd;
-    tUFS912Private* private = malloc(sizeof(tUFS912Private));
-
-    ((RemoteControl_t*)context->r)->private = private;
-
     vFd = open(rcDeviceName, O_RDWR);
-
-    memset(private, 0, sizeof(tUFS912Private));
-
-    if (argc >= 2)
-       private->toggleFeedback = atoi(argv[1]);
-    else
-       private->toggleFeedback = 0;
-       
-    if (argc >= 3)
-       private->maxRate = atoi(argv[2]);
-    else
-       private->maxRate = 2;
-       
-    if (argc == 4)
-       private->maxDelay = atoi(argv[3]);
-    else
-       private->maxDelay = 400;
-
-    printf("toggleFeedback = %d, maxRate = %d, maxDelay %d\n", private->toggleFeedback, private->maxRate, private->maxDelay);
-        			
-    if (private->toggleFeedback)
-    {
-       struct micom_ioctl_data vfd_data;
-       int ioctl_fd = open("/dev/vfd", O_RDONLY);
-		   	
-       vfd_data.u.led.led_nr = 6;
-       vfd_data.u.led.on = 1;
-       ioctl(ioctl_fd, VFDSETLED, &vfd_data);
-       close(ioctl_fd);
-    }
 
     return vFd;
 }
@@ -158,18 +117,13 @@ static int pRead(Context_t* context)
 {
     unsigned char   vData[cUFS912CommandLen];
     eKeyType        vKeyType = RemoteControl;
-    unsigned int    currentTime = 0;
     int             vCurrentCode = -1;
-    struct          timespec tmp = {0, 0};
-    tUFS912Private* private = (tUFS912Private*) ((RemoteControl_t*)context->r)->private;
 
-    printf("%s >\n", __func__);
+    //printf("%s >\n", __func__);
 
     while (1)
     {
        read (context->fd, vData, cUFS912CommandLen);
-
-       printf("0x%02X 0x%02X\n", vData[0], vData[1]);
 
        if(vData[0] == 0xD2)
            vKeyType = RemoteControl;
@@ -177,130 +131,50 @@ static int pRead(Context_t* context)
        if(vData[0] == 0xD1)
            vKeyType = FrontPanel;
        else
-           return -1;
+           continue;
 
        if(vKeyType == RemoteControl) {
-         //if(vData[1] == 0xD5) 
-           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[1]);
-         //else  
-         //  vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[1] & ~0x80);
+         vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[1]);
        }
        else {
          vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
        }
-
-       private->isNewKey = 0;
-
-       /* get time */
-       clock_gettime(CLOCK_REALTIME, &tmp);
-
-       /* convert it to milliseconds */
-       currentTime = tmp.tv_sec * 1000 + tmp.tv_nsec / 1000000;
-
-       /* printf("c %x l %x\n", vCurrentCode, private->vLastCode); */
-
-/* fixme: to be observed if this should be distinguished between
- * frontpanel button and remote control. what about people
- * who uses an alternate rc, which may be a little bit different
- * in behaviour. so we need maxRate and Delay for rc and fp
- * button ...
- */
-       if (vCurrentCode != private->vLastCode)
-	  private->isNewKey = 1;
-       else
-       {
-	  if (private->lastTime == 0)
-             private->lastTime = currentTime;
-
-	  if (currentTime - private->lastTime > private->maxDelay)
-             private->isNewKey = 1;
-
-             /* printf("%d %d %d\n", currentTime, lastTime, currentTime - lastTime); */
-       }  
-
-       private->vLastCode = vCurrentCode; 
-       private->lastTime = currentTime;
-
-       if (private->isNewKey) 
-	  private->rate = 0;
-       else
-	  private->rate++;
-
-       if ((!private->isNewKey) && (private->rate < private->maxRate))
-	  return -1;
-
-       private->rate = 0;
-       break;
-    } /* for later use we make a dummy while loop here */
-    
-    printf("%s <\n", __func__);
+       if(vCurrentCode != 0) {
+         unsigned int vNextKey = vData[4];
+         vCurrentCode += (vNextKey<<16);
+         break;
+       }
+    }
+    //printf("%s < %08X\n", __func__, vCurrentCode);
     
     return vCurrentCode;
 }
 
 static int pNotification(Context_t* context, const int cOn) 
 {
-    int 	            ioctl_fd = -1;
-    struct micom_ioctl_data vfd_data;
-    tUFS912Private*         private = (tUFS912Private*) ((RemoteControl_t*)context->r)->private;
 
-    if(cOn)
-    {
-       if (private->isNewKey)
-       {
-            ioctl_fd = open("/dev/vfd", O_RDONLY);
-            vfd_data.u.led.led_nr = 2;
-            vfd_data.u.led.on = !private->toggleFeedback;
-            ioctl(ioctl_fd, VFDSETLED, &vfd_data);
-            close(ioctl_fd);
-       }
-    }
-    else
-    {
-       if (private->isNewKey)
-       {
-          usleep(100000);
-          ioctl_fd = open("/dev/vfd", O_RDONLY);
-          vfd_data.u.led.led_nr = 2;
-          vfd_data.u.led.on = private->toggleFeedback;
-          ioctl(ioctl_fd, VFDSETLED, &vfd_data);
-          close(ioctl_fd);
-       }
-    }
-
-    return 0;
+  return 0;
 }
 
 static int pShutdown(Context_t* context) 
 {
-    tUFS912Private*         private = (tUFS912Private*) ((RemoteControl_t*)context->r)->private;
 
-    close(context->fd);
+  close(context->fd);
 
-    if (private->toggleFeedback)
-    {
-       struct micom_ioctl_data vfd_data;
-       int ioctl_fd = open("/dev/vfd", O_RDONLY);
-		   	
-       vfd_data.u.led.led_nr = 6;
-       vfd_data.u.led.on = 0;
-       ioctl(ioctl_fd, VFDSETLED, &vfd_data);
-       close(ioctl_fd);
-    }
-
-    free(private);
-    
-    return 0;
+  return 0;
 }
 
 RemoteControl_t UFS912_RC = {
-	"Kathrein UFS912 RemoteControl",
-	Ufs912,
-	&pInit,
-	&pShutdown,
-	&pRead,
-	&pNotification,
-	cButtonUFS912,
-	cButtonUFS912Frontpanel,
-	NULL,
+  "Kathrein UFS912 RemoteControl",
+  Ufs912,
+  &pInit,
+  &pShutdown,
+  &pRead,
+  &pNotification,
+  cButtonUFS912,
+  cButtonUFS912Frontpanel,
+  NULL,
+  1,
+  &cLongKeyPressSupport,
 };
+

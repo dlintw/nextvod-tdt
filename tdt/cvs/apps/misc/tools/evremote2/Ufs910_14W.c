@@ -181,7 +181,7 @@ static int pRead(Context_t* context ) {
     vData[1] = vBuffer[15];
     vData[2] = '\0';
 
-    vCurrentCode = getInternalCode(cButtonsKathrein, vData);
+    vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
     
     return vCurrentCode;
 }
@@ -211,4 +211,6 @@ RemoteControl_t Ufs910_14W_RC = {
 	cButtonsKathrein,
 	NULL, 
 	NULL,
+    0,
+    NULL,
 };

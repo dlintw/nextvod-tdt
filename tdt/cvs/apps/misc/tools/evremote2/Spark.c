@@ -153,7 +153,7 @@ static int pRead(Context_t* context ) {
     vData[2] = '\0';
 
     printf("[RCU] key: %s -> %s\n", vData, &vBuffer[20]);
-    vCurrentCode = getInternalCode(cButtonsEdisionSpark, vData);
+    vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
 
     return vCurrentCode;
 }
@@ -194,4 +194,6 @@ RemoteControl_t Spark_RC = {
 	cButtonsEdisionSpark,
 	NULL,
         NULL,
+    0,
+    NULL,
 };

@@ -151,7 +151,7 @@ static int pRead(Context_t* context ) {
     vData[2] = '\0';
 
     printf("[ HL101 RCU ] key: %s -> %s\n", vData, &vBuffer[20]);
-    vCurrentCode = getInternalCode(cButtonsSpideroxHL101, vData);
+    vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
 
     return vCurrentCode;
 }
@@ -192,4 +192,6 @@ RemoteControl_t Hl101_RC = {
 	cButtonsSpideroxHL101,
 	NULL,
         NULL,
+    0,
+    NULL,
 };
