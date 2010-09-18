@@ -79,7 +79,7 @@ int getInternalCode(tButton * cButtons, const char cCode[3]) {
         if ( (cButtons[vLoop].KeyWord[0] == cCode[0] || cButtons[vLoop].KeyWord[0] == (cCode[0]-32) ) && 
              (cButtons[vLoop].KeyWord[1] == cCode[1] || cButtons[vLoop].KeyWord[1] == (cCode[1]-32) )) {
              
-            printf("%02X - %s\n", cButtons[vLoop].KeyCode, cButtons[vLoop].KeyName);
+            //printf("%02X - %s\n", cButtons[vLoop].KeyCode, cButtons[vLoop].KeyName);
             return cButtons[vLoop].KeyCode;
         }
     }
@@ -166,28 +166,47 @@ int checkTuxTxt(const int cCode)
     return 0;
 }
 
-#define INPUT_PRESS 1
-#define INPUT_RELEASE 0
 void sendInputEvent(const int cCode)
+{
+    sendInputEventT(INPUT_PRESS, cCode);
+    sendInputEventT(INPUT_RELEASE, cCode);
+}
+
+void sendInputEventT(const unsigned int type, const int cCode)
 {
     int                 vFd    = -1;
     struct input_event  vInev;
     int                 cSize  = sizeof(struct input_event);
     
-   
-    vInev.time.tv_sec      = 0;    
-    vInev.time.tv_usec     = 0;
+    gettimeofday(&vInev.time, NULL);
     vInev.type             = 1;
     vInev.code             = cCode;
 
 
     vFd = open(eventPath, O_WRONLY);
     
-    vInev.value             = INPUT_PRESS;
+    vInev.value             = type;
     write(vFd, &vInev, cSize);
 
-    vInev.value             = INPUT_RELEASE;
-    write(vFd, &vInev, cSize);
+    close(vFd);
+}
+
+void setInputEventRepeatRate(unsigned int delay, unsigned int period)
+{
+    int                 vFd    = -1;
+    struct input_event  vInev;
+
+    vFd = open(eventPath, O_WRONLY);
+
+    vInev.type = EV_REP;
+    vInev.code = REP_DELAY;
+    vInev.value = delay;
+    if (write(vFd, &vInev, sizeof(vInev)) == -1)
+        perror("REP_DELAY");
+    vInev.code = REP_PERIOD;
+    vInev.value = period; 
+    if (write(vFd, &vInev, sizeof(vInev)) == -1)
+        perror("REP_PERIOD");
 
     close(vFd);
 }

@@ -38,6 +38,14 @@
 #include "map.h"
 #include "remotes.h"
 
+#define UFS910_1W_LONGKEY
+
+#ifdef UFS910_1W_LONGKEY
+static tLongKeyPressSupport cLongKeyPressSupport = {
+  20, 142,
+};
+#endif
+
 static tButton cButtonsKathrein[] = {
 //    {"VFORMAT_FRONT"  , "4A", KEY_MENU}, // any idea?
     {"MENU"           , "54", KEY_MENU},
@@ -169,6 +177,7 @@ static int pShutdown(Context_t* context) {
     return 0;
 }
 
+#ifndef UFS910_1W_LONGKEY
 static int pRead(Context_t* context) {
 
     char         vData[3];
@@ -181,10 +190,38 @@ static int pRead(Context_t* context) {
     //parse and send key event
     vData[2] = '\0';
         
-    vCurrentCode = getInternalCode(cButtonsKathrein, vData);
+    vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
     
     return vCurrentCode;
 }
+#else
+
+static int gNextKey = 0;
+
+static int pRead(Context_t* context) {
+
+    char         vData[3];
+    const int    cSize             = 3;
+    int          vCurrentCode      = -1;
+    
+    //wait for new command
+    read (vFd, vData, cSize);
+    
+    //parse and send key event
+    vData[2] = '\0';
+        
+    vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
+    if (vCurrentCode&0x80 == 0) // new key
+    {
+        gNextKey++;
+        gNextKey%=20;
+    }
+
+    vCurrentCode += (gNextKey<<16);
+
+    return vCurrentCode;
+}
+#endif
 
 static int pNotification(Context_t* context, const int cOn) {
 
@@ -209,4 +246,11 @@ RemoteControl_t Ufs910_1W_RC = {
     cButtonsKathrein,
     NULL,
     NULL,
+#ifndef UFS910_1W_LONGKEY
+    0,
+    NULL,
+#else
+    1,
+    &cLongKeyPressSupport,
+#endif
 };

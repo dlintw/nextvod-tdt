@@ -141,9 +141,9 @@ static int pRead(Context_t* context) {
         return -1;
         
     if(vKeyType == RemoteControl)
-        vCurrentCode = getInternalCodeHex(cButtonsTopfield7700HDPVR, vData[1]);
+        vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[1]);
     else
-        vCurrentCode = getInternalCodeHex(cButtonsTopfield7700HDPVRFrontpanel, vData[1]);
+        vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
     
     return vCurrentCode;
 }
@@ -164,4 +164,6 @@ RemoteControl_t Tf7700_RC = {
 	cButtonsTopfield7700HDPVR,
 	cButtonsTopfield7700HDPVRFrontpanel,
         NULL,
+    0,
+    NULL,
 };

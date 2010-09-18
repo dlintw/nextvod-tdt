@@ -205,9 +205,9 @@ static int pRead(Context_t* context)
            return -1;
 
        if(vKeyType == RemoteControl)
-           vCurrentCode = getInternalCodeHex(cButtonHDBOX, vData[3] & ~0x80);
+           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[3] & ~0x80);
        else
-           vCurrentCode = getInternalCodeHex(cButtonHDBOXFrontpanel, vData[1]);
+           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
 
        private->isNewKey = 0;
 
@@ -301,4 +301,6 @@ RemoteControl_t HDBOX_RC = {
 	cButtonHDBOX,
 	cButtonHDBOXFrontpanel,
 	NULL,
+    0,
+    NULL,
 };
