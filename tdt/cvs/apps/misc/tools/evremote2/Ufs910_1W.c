@@ -42,7 +42,7 @@
 
 #ifdef UFS910_1W_LONGKEY
 static tLongKeyPressSupport cLongKeyPressSupport = {
-  20, 142,
+  20, 106,
 };
 #endif
 
