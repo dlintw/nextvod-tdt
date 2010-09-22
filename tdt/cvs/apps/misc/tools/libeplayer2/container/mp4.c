@@ -595,6 +595,7 @@ static void PlayH264Mp4File (Context_t* Context)
 		VideoChunk          = VideoTrack->ChunkToPlay;
 		AudioChunk          = AudioTrack->ChunkToPlay;
 
+		if(AudioChunk >= AudioTrack->ChunkCount && VideoChunk >= VideoTrack->ChunkCount) return; /* hellmaster1024: EoF detection */
             
 #ifdef DEBUG
 		printf("Audio: %d, Video: %d\n", Context->playback->isAudio, Context->playback->isVideo);
