@@ -125,11 +125,36 @@ static void sem_down(void) {
   sem_wait(&keydown_sem);
 }
 
-static unsigned int diffMilli(struct timeval from, struct timeval to)
+int
+timeval_subtract (result, x, y)
+    struct timeval *result, *x, *y;
 {
-  unsigned int fromI = (from.tv_usec/1000) + (from.tv_sec%1000)*1000;
-  unsigned int toI = (to.tv_usec/1000) + (to.tv_sec%1000)*1000;
-  return toI - fromI;
+ /* Perform the carry for the later subtraction by updating y. */
+ if (x->tv_usec < y->tv_usec) {
+   int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+   y->tv_usec -= 1000000 * nsec;
+   y->tv_sec += nsec;
+ }
+ if (x->tv_usec - y->tv_usec > 1000000) {
+   int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+   y->tv_usec += 1000000 * nsec;
+   y->tv_sec -= nsec;
+ }
+
+ /* Compute the time remaining to wait.
+    tv_usec is certainly positive. */
+ result->tv_sec = x->tv_sec - y->tv_sec;
+ result->tv_usec = x->tv_usec - y->tv_usec;
+
+ /* Return 1 if result is negative. */
+ return x->tv_sec < y->tv_sec;
+}
+
+static long diffMilli(struct timeval from, struct timeval to)
+{
+  struct timeval diff;
+  timeval_subtract(&diff, &to, &from);
+  return (long)(diff.tv_sec*1000 + diff.tv_usec/1000);
 }
 
 
@@ -194,7 +219,7 @@ int processComplex (Context_t * context, int argc, char* argv[]) {
         }
 
         gettimeofday(&time, NULL);
-        printf("**** %12u ****\n", diffMilli(profilerLast, time));
+        printf("**** %12u %d ****\n", diffMilli(profilerLast, time), gNextKey);
         profilerLast = time;
 
         sem_up();
@@ -222,27 +247,32 @@ void *detectKeyUpTask(void* dummy)
     unsigned int keyCode = 0;
     unsigned int nextKey = 0;
     sem_down(); // Wait till the next keypress
-    keyCode = gKeyCode;
-    nextKey = gNextKey;
-
-    printf("KEY_PRESS - %02x %d\n", keyCode, nextKey);
-    sendInputEventT(INPUT_PRESS, keyCode);
-
-    usleep(gBtnDelay*1000);
-    while (gKeyCode && nextKey == gNextKey)
+    while(1)
     {
+      keyCode = gKeyCode;
+      nextKey = gNextKey;
+
+      printf("KEY_PRESS - %02x %d\n", keyCode, nextKey);
+      sendInputEventT(INPUT_PRESS, keyCode);
+
+      //usleep(gBtnDelay*1000);
+      while (gKeyCode && nextKey == gNextKey)
+      {
+        gettimeofday(&time, NULL);
+        unsigned int sleep = gBtnPeriod + gBtnDelay - diffMilli(profilerLast, time);
+        printf("++++ %12u ms ++++\n", diffMilli(profilerLast, time));
+        gKeyCode = 0;
+        usleep(sleep*1000);
+      }
+      printf("KEY_RELEASE - %02x %d\n", keyCode, nextKey);
+      sendInputEventT(INPUT_RELEASE, keyCode);
+
       gettimeofday(&time, NULL);
-      unsigned int sleep = gBtnPeriod + gBtnDelay - diffMilli(profilerLast, time);
-      printf("++++ %12u ms ++++\n", diffMilli(profilerLast, time));
-      gKeyCode = 0;
-      usleep(sleep*1000);
+      printf("---- %12u ms ----\n", diffMilli(profilerLast, time));
+
+      if (nextKey == gNextKey)
+        break;
     }
-    printf("KEY_RELEASE - %02x %d\n", keyCode, nextKey);
-    sendInputEventT(INPUT_RELEASE, keyCode);
-
-    gettimeofday(&time, NULL);
-    printf("---- %12u ms ----\n", diffMilli(profilerLast, time));
-
   }
 
   return 0;

@@ -46,7 +46,7 @@
 /* ***************** our key assignment **************** */
 
 static tLongKeyPressSupport cLongKeyPressSupport = {
-  20, 106,
+  10, 104,
 };
 
 static tButton cButtonUFS912[] = {
