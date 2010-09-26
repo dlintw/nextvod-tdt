@@ -89,6 +89,8 @@ file  /sbin/mkfs.ext2	../../../tufsbox/release/sbin/mkfs.ext2 0755 0 0
 file  /sbin/fsck.ext2   ../../../tufsbox/release/sbin/fsck.ext2 0755 0 0
 file  /sbin/mkfs.ext3   ../../../tufsbox/release/sbin/mkfs.ext3 0755 0 0
 file  /sbin/fsck.ext3   ../../../tufsbox/release/sbin/fsck.ext3 0755 0 0
+file  /sbin/mkfs.jfs    ../../../tufsbox/release/sbin/mkfs.jfs 0755 0 0
+file  /sbin/fsck.jfs    ../../../tufsbox/release/sbin/fsck.jfs 0755 0 0
 
 dir  /etc						0755 0 0
 file /etc/inittab	./inittab 	  		0755 0 0

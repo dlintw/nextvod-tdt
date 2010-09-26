@@ -84,6 +84,8 @@ eval `sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
 
 echo "-------------------------------------"
 echo "deploy.sh"
+echo "V0.06: Added EXT2 option for E2 and MINI partitions"
+echo "V0.05: Added JFS option for RECORD partition"
 echo "V0.04: Changed ini File format"
 echo "V0.03: Suppress meaningless tar errors during save settings"
 echo "V0.02: Format Mini partitions with Ext3 instead of Ext2"
@@ -93,6 +95,9 @@ echo "partition:" "$partition"
 echo "createmini:" "$createmini"
 echo "keepsettings:" "$keepsettings"
 echo "keepbootargs:" "$keepbootargs"
+
+echo "usejfs:" "$usejfs"
+echo "useext2e2:" "$useext2e2"
 
 echo "usbhdd:" "$usbhdd"
 echo "format:" "$format"
@@ -192,7 +197,11 @@ if [ $format != "1" ]; then
   echo 'HDD CHK'  > /dev/fplarge
 
   fsck.ext3 -y $ROOTFS
-  fsck.ext2 -y $DATAFS
+  if [ "$usejfs" = "1" ]; then
+    fsck.jfs -p $DATAFS
+  else
+    fsck.ext2 -y $DATAFS
+  fi
 else
   if [ "$partition" = "1" ]; then
     echo "Partitioning HDD"
@@ -242,7 +251,13 @@ EOF
   echo '   7'     > /dev/fpsmall
   echo 'HDD FMT'  > /dev/fplarge
   ln -s /proc/mounts /etc/mtab
-  mkfs.ext3 -L MINI9 $ROOTFS
+  
+  fs="ext3"
+  if [ "$useext2e2" = "1" ]; then
+    fs="ext2"
+  fi
+  
+  mkfs.$fs -L MINI9 $ROOTFS
 
   if [ "$partition" = "1" ]; then
     if [ "$createmini" = "1" ]; then
@@ -251,13 +266,18 @@ EOF
       mknod $HDD"6" b 8 6
       mknod $HDD"7" b 8 7
       mknod $HDD"8" b 8 8
-      mkfs.ext3 -L MINI1 $HDD"5"
-      mkfs.ext3 -L MINI2 $HDD"6"
-      mkfs.ext3 -L MINI3 $HDD"7"
-      mkfs.ext3 -L MINI4 $HDD"8"
+      mkfs.$fs -L MINI1 $HDD"5"
+      mkfs.$fs -L MINI2 $HDD"6"
+      mkfs.$fs -L MINI3 $HDD"7"
+      mkfs.$fs -L MINI4 $HDD"8"
     fi
     echo '   6'     > /dev/fpsmall
-    mkfs.ext2 -L RECORD $DATAFS
+    if [ "$usejfs" = "1" ]; then
+      echo 'HDD FMT JFS'  > /dev/fplarge
+      mkfs.jfs -q -L RECORD $DATAFS
+    else
+      mkfs.ext2 -L RECORD $DATAFS
+    fi
   fi
 
   # Initialise the swap partition
