@@ -127,6 +127,8 @@ if ENABLE_UFS912
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
 else
 if ENABLE_SPARK
+	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
+else
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default && \
 	cd @DIR_autofs@  && \
 		@INSTALL_autofs@
