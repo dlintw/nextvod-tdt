@@ -469,7 +469,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   	.emi_withinbankoffset	= 0,
   
   	/* Timings for NAND512W3A */
---- 244,289 ----
+--- 244,297 ----
   	},
   };
   
@@ -500,13 +500,21 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
 ! 	 },
 ! #else
 ! 	 {
-! 	 .name = "NAND ENIGMA2 Root fs",
-! 	 .size = 0x08000000,
+! 	 .name = "NAND Spark Kernel",
+! 	 .size = 0x0800000,
 ! 	 .offset = 0,
 ! 	 }, {
-! 	 .name = "NAND SPARK User fs",
-! 	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-! 	 .offset = 0x08000000,
+!      .name = "NAND Spark Root fs",
+!      .size = 0x17800000,
+!      .offset = 0x800000,
+!      }, {
+!      .name = "NAND Enigma2 Kernel",
+!      .size = 0x800000,
+!      .offset = 0x18000000,
+!      }, {
+! 	 .name = "NAND Enigma2 User fs",
+! 	 .size = 0x7700000, //MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
+! 	 .offset = 0x18800000,
 ! 	 },
 ! #endif
   };
@@ -525,7 +533,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   /* We don't bother with INT[BCD] as they are shared with the ssc
    * J20-A must be removed, J20-B must be 5-6
    */
---- 306,311 ----
+--- 314,319 ----
 ***************
 *** 273,285 ****
   }
@@ -541,7 +549,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   };
   
   /* Configuration based on Futarque-RC signals train. */
---- 325,333 ----
+--- 333,341 ----
   }
   
   static struct platform_device *mb618_devices[] __initdata = {
@@ -579,7 +587,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   
   	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
   }
---- 375,411 ----
+--- 383,419 ----
   
   static int __init device_init(void)
   {
