@@ -3,31 +3,40 @@
 # default installation device
 HDD=/dev/sda
 
-# Check if the correct MTD setup has been used
-if [ -z "`cat /proc/mtd | grep mtd3 | grep 'TF Kernel'`" ]
-then
+# Do the mout stuff before starting logging, then call this
+# script again and log to stick
+
+if [ "$1" != "start" ]; then
+  # Check if the correct MTD setup has been used
+  if [ -z "`cat /proc/mtd | grep mtd3 | grep 'TF Kernel'`" ]
+  then
         echo 'ERR MTD' > /dev/fplarge
         echo 'ERR MTD'
         exit 1
-fi
-
-
-# Give the system a chance to recognize the USB stick
-echo "Mounting USB stick"
-echo '   9'     > /dev/fpsmall
-echo 'USB STCK' > /dev/fplarge
-sleep 5
-mkdir /instsrc
-mount -t vfat /dev/sdb1 /instsrc
-if [ $? -ne 0 ]; then
- mount -t vfat /dev/sdb /instsrc
-  if [ $? -ne 0 ]; then
-    echo "USB" > /dev/fpsmall
-    echo "FAILED" > /dev/fplarge
-    exit
   fi
+
+
+  # Give the system a chance to recognize the USB stick
+  echo "Mounting USB stick"
+  echo '   9'     > /dev/fpsmall
+  echo 'USB STCK' > /dev/fplarge
+  sleep 5
+  mkdir /instsrc
+  mount -t vfat /dev/sdb1 /instsrc
+  if [ $? -ne 0 ]; then
+   mount -t vfat /dev/sdb /instsrc
+    if [ $? -ne 0 ]; then
+      echo "USB" > /dev/fpsmall
+      echo "FAILED" > /dev/fplarge
+      exit
+    fi
+  fi
+  rm /instsrc/install.log
+  /deploy/deploy.sh start 2>&1 | tee /instsrc/install.log
+  exit
 fi
 
+echo Logging output to install.log
 
 # If the file topfield.tfd is located on the stick, flash it
 if [ -f /instsrc/topfield.tfd ]; then
@@ -84,6 +93,9 @@ eval `sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
 
 echo "-------------------------------------"
 echo "deploy.sh"
+echo "V0.08: Log installation to boot medium"
+echo "V0.07: Do not install E2 if disk is not partitioned
+             and parameter partition is set to 0"
 echo "V0.06: Added EXT2 option for E2 and MINI partitions"
 echo "V0.05: Added JFS option for RECORD partition"
 echo "V0.04: Changed ini File format"
@@ -107,6 +119,7 @@ echo "-------------------------------------"
 # Undocumented feature for testing: abort shell script
 if [ "$CONSOLE" = "666" ]; then
   echo "CONSOLE" > /dev/fplarge
+  echo "Entering console mode"
   exit
 fi
 
@@ -244,6 +257,17 @@ EOF
     fi
   else
     echo Skipping partitioning of the disk
+    # Check if the RECORD Partition is there already. If not cancel the installation
+    fpart=`fdisk -l "$HDD" | grep -c "$HDD"3`
+    if [ $fpart = 0 ]; then
+      echo ' ERR' > /dev/fpsmall
+      echo 'REC PART'  > /dev/fplarge
+      echo Error. Disk not partitioned yet. Installation canceled.
+      mv -f /instsrc/uImage /instsrc/uImage
+      halt
+    else
+      echo OK, Disk already partitioned.
+    fi
   fi
 
   # Format both Linux partitions

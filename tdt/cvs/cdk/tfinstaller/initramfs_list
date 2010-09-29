@@ -76,6 +76,7 @@ slink /bin/expr	   	/bin/busybox			0777 0 0
 slink /bin/wc	   	/bin/busybox			0777 0 0
 slink /bin/grep	   	/bin/busybox			0777 0 0
 slink /bin/stty	   	/bin/busybox			0777 0 0
+slink /bin/tee	   	/bin/busybox			0777 0 0
 
 dir  /sbin						0700 0 0
 slink /sbin/init	/bin/busybox			0755 0 0
