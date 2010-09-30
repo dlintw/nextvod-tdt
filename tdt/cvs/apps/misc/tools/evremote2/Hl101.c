@@ -76,6 +76,11 @@ static tButton cButtonsSpideroxHL101[] = {
     {"YELLOW"         , "6d", KEY_YELLOW},
     {"BLUE"           , "8d", KEY_BLUE},
 
+    {"SLOW"           , "cd", KEY_SLOW},
+    {"F1"             , "07", KEY_F1},
+    {"F2"             , "2d", KEY_F2},
+    {"FIND"           , "17", KEY_FIND},
+    {"U"              , "d7", KEY_U},
     {"REWIND"         , "65", KEY_REWIND},
     {"PAUSE"          , "87", KEY_PAUSE},
     {"PLAY"           , "57", KEY_PLAY},
@@ -103,6 +108,8 @@ static int pInit(Context_t* context, int argc, char* argv[]) {
     int vHandle;
 
     vAddr.sun_family = AF_UNIX;
+    // in new lircd its moved to /var/run/lirc/lircd by default and need use key to run as old version
+    
     strcpy(vAddr.sun_path, "/dev/lircd");
 
     vHandle = socket(AF_UNIX,SOCK_STREAM, 0);
