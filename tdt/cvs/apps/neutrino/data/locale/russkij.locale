@@ -1352,50 +1352,8 @@ upnpbrowser.noservers Не найдено UPnP сервисов
 upnpbrowser.rescan Отсканируйте снова
 upnpbrowser.scanning Сканирование UPnP сервисов.
 
-neutrino.save_epg Сохранить EPG...
-mainmenu.extras Дополнения
-EmuMenu.actsettings Применить установки
-extrasMenu.emu Выбор EMU
-extrasMenu.restartnet Перезапуск сети
-extrasMenu.bkprst Сохранить/Востановить настройки
-BkpRstMenu.bkprst_bkpall Сохранить ВСЕ настройки
-BkpRstMenu.bkprst_rstall Востановить ВСЕ настройки
-Neutrino.systemexecerror Внутренняя Ошибка, перезапустите Нейтрино.
-Neutrino.restart_msg1 Требуется рестарт ресивера, перезапустить сейчас?
-Neutrino.restart_msg2 Изменения активизируются после перезагрузки.
-swap.creating Ждите, создаётся SWAP-файл...
-swap.creating_ok SWAP-файл создан.
-swap.deleting Ждите, удаляется SWAP-файл...
-swap.deleting_ok SWAP-файл удалён.
-extrasMenu.swap Создать SWAP-файл
-extrasMenu.highsr highSR
-extrasMenu.modchange Сменить модули
-extrasMenu.vfd_setting Настройки VFD
-extrasMenu.vfd_center Центровка текста VFD
-extrasMenu.vfd_scroll Прокрутка текста VFD
-extrasMenu.vfd_icons VFD-Icons выключить
-extrasMenu.infobar_settings Настройки Infobar
-
 infobar.picon Channel logo
 infobar.picon_normal нормальный
 infobar.picon_big увеличенный
 infobar.picon_move поменять SIG/SNR
 infobar.bar_color Bar color
-
-extrasMenu.infobar_show_cryptinfo Показ Cryptinfo в Infobar
-extrasMenu.infobar_show_emu Показ EMU в Infobar
-extrasMenu.onlineupdate Обновление Online
-extrasMenu.onlineupdate_news Что нового?
-extrasMenu.onlineupdate_check Поиск новой версии
-extrasMenu.onlineupdate_force Сделать обновление
-extrasMenu.personalize Персонализировать
-options.on_star ein*
-EmuMenu.msg1_actsettings Применение установок, ждите...
-EmuMenu.msg2_actsettings Установки активированы, Перезапуск
-EmuMenu.cardserver Сервер
-BkpRstMenu.msg1_bkp Создаётся Backup, ждите...
-BkpRstMenu.msg2_bkp Backup создан, путь /tmp/backup.tar.gz
-BkpRstMenu.msg3_bkp Backup не создан. Ошибка...
-BkpRstMenu.msg1_rst Востановление настроек, ждите...
-BkpRstMenu.msg2_rst Востановлено\Перезагрузка Neutrino
-BkpRstMenu.msg3_rst Ошибка при востановлении\Перезагрузите Neutrino и пробуйте снова
