@@ -49,16 +49,17 @@ diff -Nur enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
  AM_PATH_PYTHON()
  AC_PYTHON_DEVEL
  #AM_PATH_XINE(1.1.0,, AC_MSG_ERROR([*** Please install xine-lib (devel) first ***]))
-@@ -117,8 +122,6 @@
+@@ -117,9 +122,6 @@
  lib/python/Components/Sources/Makefile
  lib/python/Screens/Makefile
  lib/python/Plugins/Makefile
 -lib/python/Plugins/DemoPlugins/Makefile
+-lib/python/Plugins/DemoPlugins/TPMDemo/Makefile
 -lib/python/Plugins/DemoPlugins/TestPlugin/Makefile
  lib/python/Plugins/Extensions/CutListEditor/Makefile
  lib/python/Plugins/Extensions/CutListEditor/meta/Makefile
  lib/python/Plugins/Extensions/DVDBurn/Makefile
-@@ -133,15 +140,12 @@
+@@ -134,15 +141,12 @@
  lib/python/Plugins/Extensions/MediaPlayer/meta/Makefile
  lib/python/Plugins/Extensions/MediaScanner/Makefile
  lib/python/Plugins/Extensions/MediaScanner/meta/Makefile
@@ -74,7 +75,7 @@ diff -Nur enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
  lib/python/Plugins/SystemPlugins/CleanupWizard/Makefile
  lib/python/Plugins/SystemPlugins/CleanupWizard/meta/Makefile
  lib/python/Plugins/SystemPlugins/CommonInterfaceAssignment/Makefile
-@@ -180,6 +184,12 @@
+@@ -182,6 +286,12 @@
  lib/python/Plugins/SystemPlugins/Videomode/meta/Makefile
  lib/python/Plugins/SystemPlugins/WirelessLan/Makefile
  lib/python/Plugins/SystemPlugins/WirelessLan/meta/Makefile
@@ -1088,10 +1089,10 @@ diff -Nur enigma2-nightly.org/lib/dvb/demux.cpp enigma2-nightly/lib/dvb/demux.cp
  
 --- enigma2-nightly.org.bak/lib/dvb/dvb.cpp	2010-08-09 11:10:04.085887266 +0800
 +++ enigma2-nightly.spark/lib/dvb/dvb.cpp	2010-08-11 18:13:17.452384000 +0800
-@@ -96,6 +96,42 @@
- 		m_boxtype = DM800;
- 	else if (!strncmp(tmp, "dm500hd\n", rd))
- 		m_boxtype = DM500HD;
+@@ -98,6 +98,42 @@
+		m_boxtype = DM500HD;
+	else if (!strncmp(tmp, "dm800se\n", rd))
+		m_boxtype = DM800SE;
 +#if defined(__sh__)
 +	else if (!strncmp(tmp, "ufs910\n", rd))
 +		m_boxtype = UFS910;
@@ -1131,7 +1132,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/demux.cpp enigma2-nightly/lib/dvb/demux.cp
  	else {
  		eDebug("boxtype detection via /proc/stb/info not possible... use fallback via demux count!\n");
  		if (m_demux.size() == 3)
-@@ -540,7 +576,58 @@
+@@ -542,7 +578,58 @@
  			}
  		}
  	}
@@ -1190,7 +1191,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/demux.cpp enigma2-nightly/lib/dvb/demux.cp
  	if (unused)
  	{
  		demux = new eDVBAllocatedDemux(unused);
-@@ -1750,8 +1837,15 @@
+@@ -1764,8 +1851,15 @@
  #if HAVE_DVB_API_VERSION < 3
  		m_pvr_fd_dst = open("/dev/pvr", O_WRONLY);
  #else
@@ -1216,7 +1217,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.h enigma2-nightly/lib/dvb/dvb.h
 +#if defined(__sh__)
 +	enum { DM7025, DM800, DM500HD, DM8000, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, SPARK};
 +#else
- 	enum { DM7025, DM800, DM500HD, DM8000 };
+ 	enum { DM7025, DM800, DM500HD, DM800SE, DM8000 };
 +#endif
  
  	int m_boxtype;
@@ -1235,7 +1236,7 @@ diff -Nur enigma2-nightly.org/lib/dvb/dvb.h enigma2-nightly/lib/dvb/dvb.h
 diff -Nur enigma2-nightly.org/lib/dvb/frontend.cpp enigma2-nightly/lib/dvb/frontend.cpp
 --- enigma2-nightly.org/lib/dvb/frontend.cpp	2009-12-12 23:16:22.408600000 +0100
 +++ enigma2-nightly/lib/dvb/frontend.cpp	2009-12-12 23:22:30.716600097 +0100
-@@ -2058,8 +2058,22 @@
+@@ -2111,8 +2111,22 @@
  					return -EINVAL;
  			}
  #if HAVE_DVB_API_VERSION < 5
@@ -3476,7 +3477,7 @@ diff -Nur enigma2-nightly.org/lib/gdi/gfbdc.cpp enigma2-nightly/lib/gdi/gfbdc.cp
 diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp enigma2-nightly/lib/gdi/gpixmap.cpp
 --- enigma2-nightly.org/lib/gdi/gpixmap.cpp	2009-12-12 23:16:22.412600000 +0100
 +++ enigma2-nightly/lib/gdi/gpixmap.cpp	2009-12-12 23:43:28.000000000 +0100
-@@ -163,6 +163,10 @@
+@@ -188,6 +188,10 @@
  			else
  				col=0x10101*color;
  			
@@ -3487,7 +3488,7 @@ diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp enigma2-nightly/lib/gdi/gpixma
  			col^=0xFF000000;
  			
  			if (surface->data_phys && gAccel::getInstance())
-@@ -195,6 +199,10 @@
+@@ -220,6 +224,10 @@
  			__u32 col;
  
  			col = color.argb();
@@ -3498,7 +3499,7 @@ diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp enigma2-nightly/lib/gdi/gpixma
  			col^=0xFF000000;
  
  			if (surface->data_phys && gAccel::getInstance())
-@@ -422,6 +430,10 @@
+@@ -481,6 +489,10 @@
  					pal[i]=(src.surface->clut.data[i].a<<24)|(src.surface->clut.data[i].r<<16)|(src.surface->clut.data[i].g<<8)|(src.surface->clut.data[i].b);
  				else
  					pal[i]=0x010101*i;
@@ -3603,7 +3604,7 @@ diff -Nur enigma2-nightly.org/lib/gdi/stmfb.cpp enigma2-nightly/lib/gdi/stmfb.cp
 diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightly/lib/python/Components/NimManager.py
 --- enigma2-nightly.org/lib/python/Components/NimManager.py	2009-12-12 23:16:22.424599000 +0100
 +++ enigma2-nightly/lib/python/Components/NimManager.py	2009-12-12 23:45:45.000000000 +0100
-@@ -18,4 +18,8 @@
+@@ -21,4 +21,8 @@
  
  def getConfigSatlist(orbpos, satlist):
 +#+++>  CAUSE OF CRASH!
@@ -3612,7 +3613,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightl
 +#+++<
  	default_orbpos = None
  	for x in satlist:
-@@ -356,4 +360,7 @@
+@@ -381,4 +385,7 @@
  					if currLnb.diseqcMode.value == "1_0":
  						currCO = currLnb.commandOrder1_0.value
 +#+++>  WHY ???
@@ -3620,15 +3621,6 @@ diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightl
 +#+++<
  					else:
  						currCO = currLnb.commandOrder.value
-@@ -983,5 +990,7 @@
- 	lnb_choices = {
- 		"universal_lnb": _("Universal LNB"),
--#		"unicable": _("Unicable"),
-+#+++> activated Unicable
-+		"unicable": _("Unicable"),
-+#+++<
- 		"c_band": _("C-Band"),
- 		"user_defined": _("User defined")}
 
 diff -Nur enigma2-nightly.org/lib/python/Components/TunerInfo.py enigma2-nightly/lib/python/Components/TunerInfo.py
 --- enigma2-nightly.org/lib/python/Components/TunerInfo.py	2009-12-12 23:16:22.428599000 +0100
@@ -3656,7 +3648,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/TunerInfo.py enigma2-nightly
 diff -Nur enigma2-nightly.org/lib/python/enigma_python.i enigma2-nightly/lib/python/enigma_python.i
 --- enigma2-nightly.org/lib/python/enigma_python.i	2009-12-12 23:16:22.496600000 +0100
 +++ enigma2-nightly/lib/python/enigma_python.i	2009-12-13 10:30:25.000000000 +0100
-@@ -97,6 +97,7 @@
+@@ -98,6 +98,7 @@
  #include <lib/dvb_ci/dvbci_ui.h>
  #include <lib/python/python.h>
  #include <lib/gdi/picload.h>
@@ -3664,7 +3656,7 @@ diff -Nur enigma2-nightly.org/lib/python/enigma_python.i enigma2-nightly/lib/pyt
  %}
  
  %feature("ref")   iObject "$this->AddRef(); /* eDebug(\"AddRef (%s:%d)!\", __FILE__, __LINE__); */ "
-@@ -212,6 +213,7 @@
+@@ -214,6 +215,7 @@
  %include <lib/dvb/db.h>
  %include <lib/python/python.h>
  %include <lib/gdi/picload.h>
@@ -4802,9 +4794,9 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
 -		portlist = self.getPortList()
  		for port in portlist:
 -			descr = port
--			if descr == 'DVI' and hw_type == 'dm500hd':
+-			if descr == 'DVI' and hw_type in ('dm500hd', 'dm800se'):
 -				descr = 'HDMI'
--			elif descr == 'DVI-PC' and hw_type == 'dm500hd':
+-			elif descr == 'DVI-PC' and hw_type in ('dm500hd', 'dm800se'):
 -				descr = 'HDMI-PC'
 -			lst.append((port, descr))
 -
@@ -4956,7 +4948,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/Wizard.py enigma2-nightly/lib/p
  		if print_now:
  			print "Now: " + str(self.currStep)
  
-@@ -448,6 +454,9 @@
+@@ -452,6 +458,9 @@
  			if self.wizard[self.currStep].has_key("onselect"):
  				self.selection = self["list"].current[-1]
  				print "self.selection:", self.selection
@@ -5180,7 +5172,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.h enigma2-nightly/lib/servi
  	struct bufferInfo
  	{
  		int bufferPercent;
-@@ -197,31 +245,42 @@
+@@ -197,11 +245,15 @@
  		stIdle, stRunning, stStopped,
  	};
  	int m_state;
@@ -5192,23 +5184,25 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.h enigma2-nightly/lib/servi
 +#endif
  	eFixedMessagePump<int> m_pump;
  	std::string m_error_message;
- 
+-
 +#if not defined(__sh__)
  	audiotype_t gstCheckAudioPad(GstStructure* structure);
  	void gstBusCall(GstBus *bus, GstMessage *msg);
  	static GstBusSyncReply gstBusSyncHandler(GstBus *bus, GstMessage *message, gpointer user_data);
- 	static void gstCBsubtitleAvail(GstElement *element, gpointer user_data);
+@@ -209,7 +261,9 @@
  	GstPad* gstCreateSubtitleSink(eServiceMP3* _this, subtype_t type);
  	void gstPoll(const int&);
+ 	static void gstHTTPSourceSetAgent(GObject *source, GParamSpec *unused, gpointer user_data);
 -
 +#else
 +	static void eplayerCBsubtitleAvail(long int duration_ns, size_t len, char * buffer, void* user_data);
 +#endif
  	std::list<ePangoSubtitlePage> m_subtitle_pages;
  	ePtr<eTimer> m_subtitle_sync_timer;
- 	void pushSubtitles();
- 	void pullSubtitle();
+ 	
+@@ -220,14 +274,18 @@
  	int m_subs_to_pull;
+ 	sourceStream m_sourceinfo;
  	eSingleLock m_subs_to_pull_lock;
 +#if not defined(__sh__)
  	gulong m_subs_to_pull_handler_id;
@@ -5217,6 +5211,7 @@ diff -Nur enigma2-nightly.org/lib/service/servicemp3.h enigma2-nightly/lib/servi
  	RESULT seekToImpl(pts_t to);
  
  	gint m_aspect, m_width, m_height, m_framerate, m_progressive;
+ 	std::string m_useragent;
 +#if not defined(__sh__)
  	RESULT trickSeek(gdouble ratio);
 -};
@@ -5334,7 +5329,7 @@ diff -Nur enigma2-nightly.org/main/Makefile.am enigma2-nightly/main/Makefile.am
 diff -Nur enigma2-nightly.org/mytest.py enigma2-nightly.org/mytest.py
 --- enigma2-nightly.org/mytest.py	2010-01-03 23:16:22.500600000 +0100
 +++ enigma2-nightly.org/mytest.py	2010-01-03 23:18:41.332599958 +0100
-@@ -301,4 +301,8 @@
+@@ -303,4 +303,8 @@
  		self.pushCurrent()
  		dlg = self.current_dialog = self.instantiateDialog(screen, *arguments, **kwargs)
 +#+++>
@@ -5343,7 +5338,7 @@ diff -Nur enigma2-nightly.org/mytest.py enigma2-nightly.org/mytest.py
 +#+++<
  		dlg.isTmp = True
  		dlg.callback = None
-@@ -369,4 +373,8 @@
+@@ -372,4 +376,8 @@
  		if action == "shutdown":
  			self.shutdown()
 +#+++>
@@ -5352,7 +5347,7 @@ diff -Nur enigma2-nightly.org/mytest.py enigma2-nightly.org/mytest.py
 +#+++<
  		elif action == "show_menu":
  			print "Show shutdown Menu"
-@@ -501,8 +509,15 @@
+@@ -505,8 +514,15 @@
  		from time import strftime
  		startTime = wakeupList[0]
 -		if (startTime[0] - nowTime) < 270: # no time to switch box back on
@@ -5573,7 +5568,8 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py
 --- enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py	2010-01-26 23:16:22.500600000 +0100
 +++ enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py	2010-03-10 23:18:41.332599958 +0100
-@@ -45,4 +45,8 @@
+@@ -44,6 +44,10 @@
+ # hack alert!
  from Menu import MainMenu, mdom
  
 +#+++>
@@ -5582,7 +5578,9 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
  class InfoBarDish:
  	def __init__(self):
-@@ -89,4 +93,7 @@
+ 		self.dishDialog = self.session.instantiateDialog(Dish)
+@@ -88,6 +92,9 @@
+ 	STATE_HIDING = 1
  	STATE_SHOWING = 2
  	STATE_SHOWN = 3
 +#+++>
@@ -5590,23 +5588,22 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  	def __init__(self):
-@@ -139,10 +146,32 @@
+ 		self["ShowHideActions"] = ActionMap( ["InfobarShowHideActions"] ,
+@@ -138,12 +145,34 @@
+ 		if self.__state == self.STATE_SHOWN:
  			self.hide()
  
+-	def toggleShow(self):
+-		if self.__state == self.STATE_SHOWN:
 +#+++>
 +	def epg(self): 
 +		self.__state = self.STATE_EPG 
-+		self.hide() 
-+		self.hideTimer.stop() 
+ 			self.hide()
+ 			self.hideTimer.stop()
 +		self.openEventView() 
 +#+++<
 +
- 	def toggleShow(self):
--		if self.__state == self.STATE_SHOWN:
--			self.hide()
--			self.hideTimer.stop()
--		elif self.__state == self.STATE_HIDDEN:
--			self.show()
++	def toggleShow(self):
 +#--->
 +#-		if self.__state == self.STATE_SHOWN:
 +#-			self.hide()
@@ -5618,9 +5615,9 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +		if self.__state == self.STATE_SHOWN: 
 +			print "self.STATE_SHOWN" 
 +			self.epg() 
-+		elif self.__state == self.STATE_HIDDEN: 
+ 		elif self.__state == self.STATE_HIDDEN:
 +			print "self.STATE_HIDDEN" 
-+			self.show() 
+ 			self.show()
 +		elif self.__state == self.STATE_EPG: 
 +			print "self.STATE_EPG" 
 +			self.hide() 
@@ -5628,7 +5625,9 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  	def lockShow(self):
-@@ -1327,5 +1356,10 @@
+ 		self.__locked = self.__locked + 1
+@@ -1327,7 +1356,12 @@
+ 
  	def updateExtensions(self):
  		self.extensionsList = []
 -		self.availableKeys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow", "blue" ]
@@ -5640,7 +5639,9 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  		self.extensionKeys = {}
  		for x in self.list:
-@@ -1404,4 +1438,16 @@
+ 			if x[0] == self.EXTENSION_SINGLE:
+@@ -1404,6 +1438,18 @@
+ 		job_manager.in_background = in_background
  
  # depends on InfoBarExtensions
 +
@@ -5657,9 +5658,62 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
  class InfoBarPiP:
  	def __init__(self):
-@@ -1793,4 +1839,151 @@
- 			self.audioChannel.selectChannel(mode[1])
- 		del self.audioChannel
+ 		try:
+@@ -1755,16 +1801,43 @@
+ 				idx += 1
+ 
+ 			if self.bouquets and len(self.bouquets):
+-				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
++#--->
++#				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
++#--->
++#+++>
++				keys = ["red", "blue", "yellow", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
++#+++<
+ 				if config.usage.multibouquet.value:
+-					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
++#--->
++#					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
++#--->
++#+++>
++					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("Exit", "exit"), ("--", "")] + tlist
++#+++<
+ 				else:
+-					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to favourites"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
+-				selection += 3
++#--->
++#					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to favourites"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
++#--->
++#+++>
++					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to favourites"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("Exit", "exit"), ("--", "")] + tlist
++#+++<
++#--->
++#-				selection += 3
++#---<
++#+++>
++				selection += 4
++#+++<
+ 			else:
+-				tlist = [(_("Quickzap"), "quickzap", service.subServices()), ("--", "")] + tlist
+-				keys = ["red", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
+-				selection += 2
++#--->
++#-				tlist = [(_("Quickzap"), "quickzap", service.subServices()), ("--", "")] + tlist
++#-				keys = ["red", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
++#-				selection += 2
++#---<
++#+++>
++				tlist = [(_("Quickzap"), "quickzap", service.subServices()), ("Exit", "exit"), ("--", "")] + tlist
++				keys = ["red", "yellow", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
++				selection += 3
++#+++<
+ 
+ 			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
+ 
+@@ -1793,6 +1866,153 @@
+ 				self.session.open(MessageBox, _("Service has been added to the favourites."), MessageBox.TYPE_INFO)
+ 
+ 	def bouquetSelClosed(self, confirmed):
 +
 +#+++>
 +class InfoBarExtendedAudioSelection:
@@ -5807,61 +5861,13 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +			self.audioChannel.selectChannel(mode[1])
 +		del self.audioChannel
 +#+++<
- 
- class InfoBarSubserviceSelection:
-@@ -1870,14 +2063,41 @@
- 
- 			if self.bouquets and len(self.bouquets):
--				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
-+#--->
-+#-				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
-+#---<
-+#+++>
-+				keys = ["red", "blue", "yellow", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
-+#+++<
- 				if config.usage.multibouquet.value:
--					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
-+#--->
-+#-					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
-+#---<
-+#+++>
-+					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("Exit", "exit"), ("--", "")] + tlist
-+#+++<
- 				else:
--					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to favourites"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
-+#--->
-+#-					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to favourites"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
-+#---<
-+#+++>
-+					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to favourites"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("Exit", "exit"), ("--", "")] + tlist
-+#+++<
-+#--->
-+#-				selection += 3
-+#---<
-+#+++>
-+				selection += 4
-+#+++<
-+			else:
-+#--->
-+#-				tlist = [(_("Quickzap"), "quickzap", service.subServices()), ("--", "")] + tlist
-+#-				keys = ["red", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
-+#-				selection += 2
-+#---<
-+#+++>
-+				tlist = [(_("Quickzap"), "quickzap", service.subServices()), ("Exit", "exit"), ("--", "")] + tlist
-+				keys = ["red", "yellow", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
- 				selection += 3
--			else:
--				tlist = [(_("Quickzap"), "quickzap", service.subServices()), ("--", "")] + tlist
--				keys = ["red", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
--				selection += 2
-+#+++<
- 
- 			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
-@@ -1919,4 +2139,127 @@
+ 		self.bsel = None
+ 		del self.selectedSubservice
+ 		if confirmed:
+@@ -1805,6 +2025,129 @@
  		else:
  			del self.selectedSubservice
-+
+ 
 +#+++>
 +class InfoBarAspectSelection: 
 +	STATE_HIDDEN = 0 
@@ -5984,19 +5990,21 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +
 +
 +#+++<
- 
++
  class InfoBarAdditionalInfo:
-@@ -2246,5 +2589,20 @@
+ 	def __init__(self):
+ 
+@@ -2131,7 +2474,22 @@
+ 			print "no teletext plugin found!"
  
  	def startTeletext(self):
--		self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
 +#--->
 +#		self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
 +#---<
 +#+++>
 +		global txtIsStarting
 +		if txtIsStarting is False:
-+			self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
+ 		self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
 +			txtIsStarting = True
 +			self.txtIsStartingTimer = eTimer()
 +			self.txtIsStartingTimer.callback.append(self.txtIsStartingEnd)
@@ -6008,11 +6016,12 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++<
  
  class InfoBarSubtitleSupport(object):
+ 	def __init__(self):
 
 diff -Nur enigma2-nightly.org/lib/python/Components/VolumeControl.py enigma2-nightly.org/lib/python/Components/VolumeControl.py
 --- enigma2-nightly.org/lib/python/Components/VolumeControl.py	2010-01-14 23:16:22.500600000 +0100
 +++ enigma2-nightly.org/lib/python/Components/VolumeControl.py	2010-01-14 23:18:41.332599958 +0100
-@@ -68,5 +68,13 @@
+@@ -72,5 +72,13 @@
  
  	def volMute(self, showMuteSymbol=True, force=False):
 -		vol = self.volctrl.getVolume()
@@ -6027,7 +6036,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/VolumeControl.py enigma2-nig
 +#+++<
  		if vol or force:
  			self.volctrl.volumeToggleMute()
-@@ -75,5 +83,11 @@
+@@ -79,5 +87,11 @@
  					self.muteDialog.show()
  				self.volumeDialog.setValue(0)
 +#+++>
@@ -6049,12 +6058,12 @@ diff -Nur enigma2-nightly.org/lib/python/Components/UsageConfig.py enigma2-night
 +#+++>
 +		("standby", _("immediate standby")),
 +#+++<
- 		("shutdown", _("immediate shutdown")) ] )
- 
+		("shutdown", _("immediate shutdown")),
+ 		("standby", _("Standby")) ] )
 diff -Nur enigma2-nightly.org/RecordTimer.py enigma2-nightly/RecordTimer.py
 --- enigma2-nightly.org/RecordTimer.py	2010-02-16 19:28:48.000000000 +0100
 +++ enigma2-nightly/RecordTimer.py	2010-02-16 19:32:07.000000000 +0100
-@@ -292,6 +292,12 @@
+@@ -304,6 +304,12 @@
  						RecordTimerEntry.TryQuitMainloop() # start shutdown handling without screen
  					else:
  						Notifications.AddNotificationWithCallback(self.sendTryQuitMainloopNotification, MessageBox, _("A finished record timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20)
@@ -6071,7 +6080,7 @@ diff -Nur enigma2-nightly.org/RecordTimer.py enigma2-nightly/RecordTimer.py
 diff -Nur enigma2-nightly.org/lib/gdi/gpixmap.cpp
 --- enigma2-nightly/lib/gdi/gpixmap.cpp	2010-03-02 23:06:31.000000000 -0500
 +++ enigma2-nightly/lib/gdi/gpixmap.cpp	2010-03-02 23:08:40.000000000 -0500
-@@ -326,7 +326,10 @@
+@@ -385,7 +385,10 @@
  		if (flag & blitScale)
  		{
  			eWarning("unimplemented: scale on non-accel surfaces");
@@ -6432,16 +6441,8 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
 +#endif
  #include <sys/stat.h>
  
- // eServiceFactoryMP3
-@@ -25,14 +29,16 @@
- eServiceFactoryMP3::eServiceFactoryMP3()
- {
- 	ePtr<eServiceCenter> sc;
--	
-+
- 	eServiceCenter::getPrivInstance(sc);
- 	if (sc)
- 	{
+ #define HTTP_TIMEOUT 10
+@@ -34,7 +38,9 @@
  		std::list<std::string> extensions;
  		extensions.push_back("mp2");
  		extensions.push_back("mp3");
@@ -6451,7 +6452,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  		extensions.push_back("mpg");
  		extensions.push_back("vob");
  		extensions.push_back("wav");
-@@ -42,10 +48,29 @@
+@@ -44,10 +50,29 @@
  		extensions.push_back("avi");
  		extensions.push_back("divx");
  		extensions.push_back("dat");
@@ -6481,67 +6482,17 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  		sc->addServiceFactory(eServiceFactoryMP3::id, this, extensions);
  	}
  
-@@ -55,7 +80,7 @@
- eServiceFactoryMP3::~eServiceFactoryMP3()
- {
- 	ePtr<eServiceCenter> sc;
--	
-+
- 	eServiceCenter::getPrivInstance(sc);
- 	if (sc)
- 		sc->removeServiceFactory(eServiceFactoryMP3::id);
-@@ -95,7 +120,7 @@
- 	eServiceReference m_ref;
- public:
- 	eMP3ServiceOfflineOperations(const eServiceReference &ref);
--	
-+
- 	RESULT deleteFromDisk(int simulate);
- 	RESULT getListOfFilenames(std::list<std::string> &);
- 	RESULT reindex();
-@@ -116,11 +141,11 @@
- 		std::list<std::string> res;
- 		if (getListOfFilenames(res))
- 			return -1;
--		
-+
- 		eBackgroundFileEraser *eraser = eBackgroundFileEraser::getInstance();
- 		if (!eraser)
- 			eDebug("FATAL !! can't get background file eraser");
--		
-+
- 		for (std::list<std::string>::iterator i(res.begin()); i != res.end(); ++i)
- 		{
- 			eDebug("Removing %s...", i->c_str());
-@@ -129,7 +154,7 @@
- 			else
- 				::unlink(i->c_str());
- 		}
--		
-+
- 		return 0;
- 	}
- }
-@@ -206,7 +231,7 @@
- 	}
- 	return iServiceInformation::resNA;
- }
-- 
-+
- 
- // eServiceMP3
- int eServiceMP3::ac3_delay,
-@@ -217,7 +242,9 @@
- {
+@@ -220,7 +245,9 @@
  	m_seekTimeout = eTimer::create(eApp);
  	m_subtitle_sync_timer = eTimer::create(eApp);
+ 	m_streamingsrc_timeout = 0;
 +#if not defined(__sh__)
  	m_stream_tags = 0;
 +#endif
  	m_currentAudioStream = -1;
  	m_currentSubtitleStream = 0;
  	m_subtitle_widget = 0;
-@@ -226,7 +253,9 @@
+@@ -229,7 +256,9 @@
  	m_buffer_size = 1*1024*1024;
  	CONNECT(m_seekTimeout->timeout, eServiceMP3::seekTimeoutCB);
  	CONNECT(m_subtitle_sync_timer->timeout, eServiceMP3::pushSubtitles);
@@ -6551,15 +6502,15 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	m_aspect = m_width = m_height = m_framerate = m_progressive = -1;
  
  	m_state = stIdle;
-@@ -237,6 +266,7 @@
+@@ -240,6 +269,7 @@
  	if (!ext)
  		ext = filename;
  
 +#if not defined(__sh__)
- 	sourceStream sourceinfo;
- 	sourceinfo.is_video = FALSE;
- 	sourceinfo.audiotype = atUnknown;
-@@ -359,10 +389,147 @@
+ 	m_sourceinfo.is_video = FALSE;
+ 	m_sourceinfo.audiotype = atUnknown;
+ 	if ( (strcasecmp(ext, ".mpeg") && strcasecmp(ext, ".mpg") && strcasecmp(ext, ".vob") && strcasecmp(ext, ".bin") && strcasecmp(ext, ".dat") ) == 0 )
+@@ -377,10 +407,147 @@
  	}
  
  	setBufferSize(m_buffer_size);
@@ -6707,7 +6658,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	// disconnect subtitle callback
  	GstElement *sink;
  	g_object_get (G_OBJECT (m_gst_playbin), "text-sink", &sink, NULL);
-@@ -371,23 +538,42 @@
+@@ -389,15 +556,18 @@
  		g_signal_handler_disconnect (sink, m_subs_to_pull_handler_id);
  		gst_object_unref(sink);
  	}
@@ -6726,10 +6677,8 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
 +#if not defined(__sh__)
  	if (m_stream_tags)
  		gst_tag_list_free(m_stream_tags);
--	
-+
- 	if (m_gst_playbin)
- 	{
+ 	
+@@ -406,6 +576,22 @@
  		gst_object_unref (GST_OBJECT (m_gst_playbin));
  		eDebug("eServiceMP3::destruct!");
  	}
@@ -6752,7 +6701,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  }
  
  DEFINE_REF(eServiceMP3);
-@@ -395,20 +581,35 @@
+@@ -413,20 +599,35 @@
  RESULT eServiceMP3::connectEvent(const Slot2<void,iPlayableService*,int> &event, ePtr<eConnection> &connection)
  {
  	connection = new eConnection((iPlayableService*)this, m_event.connect(event));
@@ -6790,7 +6739,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	m_event(this, evStart);
  
  	return 0;
-@@ -416,13 +617,39 @@
+@@ -440,13 +641,39 @@
  
  RESULT eServiceMP3::stop()
  {
@@ -6831,7 +6780,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	m_state = stStopped;
  
  	return 0;
-@@ -436,21 +663,50 @@
+@@ -460,21 +687,50 @@
  RESULT eServiceMP3::pause(ePtr<iPauseableService> &ptr)
  {
  	ptr=this;
@@ -6882,16 +6831,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  }
  
  void eServiceMP3::seekTimeoutCB()
-@@ -459,7 +715,7 @@
- 	getPlayPosition(ppos);
- 	getLength(len);
- 	ppos += 90000*m_currentTrickRatio;
--	
-+
- 	if (ppos < 0)
- 	{
- 		ppos = 0;
-@@ -478,21 +734,30 @@
+@@ -502,21 +758,30 @@
  		// iPausableService
  RESULT eServiceMP3::pause()
  {
@@ -6923,7 +6863,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	return 0;
  }
  
-@@ -505,6 +770,7 @@
+@@ -529,6 +794,7 @@
  
  RESULT eServiceMP3::getLength(pts_t &pts)
  {
@@ -6931,17 +6871,9 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -513,17 +779,29 @@
- 
- 	GstFormat fmt = GST_FORMAT_TIME;
- 	gint64 len;
--	
-+
- 	if (!gst_element_query_duration(m_gst_playbin, &fmt, &len))
- 		return -1;
+@@ -543,11 +809,23 @@
  		/* len is in nanoseconds. we have 90 000 pts per second. */
--	
-+
+ 	
  	pts = len / 11111;
 +#else
 +    double length = 0;
@@ -6963,7 +6895,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  		/* convert pts to nanoseconds */
  	gint64 time_nanoseconds = to * 11111LL;
  	if (!gst_element_seek (m_gst_playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-@@ -533,7 +811,8 @@
+@@ -557,7 +835,8 @@
  		eDebug("eServiceMP3::seekTo failed");
  		return -1;
  	}
@@ -6973,7 +6905,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	return 0;
  }
  
-@@ -541,6 +820,7 @@
+@@ -565,6 +844,7 @@
  {
  	RESULT ret = -1;
  
@@ -6981,7 +6913,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	if (m_gst_playbin) {
  		eSingleLocker l(m_subs_to_pull_lock); // this is needed to dont handle incomming subtitles during seek!
  		if (!(ret = seekToImpl(to)))
-@@ -550,10 +830,12 @@
+@@ -574,10 +854,12 @@
  		}
  	}
  
@@ -6995,7 +6927,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  RESULT eServiceMP3::trickSeek(gdouble ratio)
  {
  	if (!m_gst_playbin)
-@@ -594,10 +876,12 @@
+@@ -618,10 +900,12 @@
  
  	return 0;
  }
@@ -7008,7 +6940,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -607,12 +891,17 @@
+@@ -631,12 +915,17 @@
  	if (ppos < 0)
  		ppos = 0;
  	seekTo(ppos);
@@ -7027,7 +6959,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	GstFormat fmt = GST_FORMAT_TIME;
  	gint64 pos;
  	GstElement *sink;
-@@ -647,6 +936,24 @@
+@@ -671,6 +960,24 @@
  
  	/* pos is in nanoseconds. we have 90 000 pts per second. */
  	pts = pos / 11111;
@@ -7052,7 +6984,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	return 0;
  }
  
-@@ -658,6 +965,9 @@
+@@ -682,6 +989,9 @@
  
  RESULT eServiceMP3::isCurrentlySeekable()
  {
@@ -7062,7 +6994,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	int ret = 3; // seeking and fast/slow winding possible
  	GstElement *sink;
  
-@@ -683,6 +993,7 @@
+@@ -707,6 +1017,7 @@
  	}
  
  	return ret;
@@ -7070,7 +7002,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  }
  
  RESULT eServiceMP3::info(ePtr<iServiceInformation>&i)
-@@ -708,7 +1019,9 @@
+@@ -732,7 +1043,9 @@
  
  int eServiceMP3::getInfo(int w)
  {
@@ -7080,7 +7012,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  
  	switch (w)
  	{
-@@ -748,7 +1061,9 @@
+@@ -772,7 +1085,9 @@
  	case sTagKeywords:
  	case sTagChannelMode:
  	case sUser+12:
@@ -7090,7 +7022,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	case sTagTrackGain:
  	case sTagTrackPeak:
  	case sTagAlbumGain:
-@@ -759,6 +1074,7 @@
+@@ -783,6 +1098,7 @@
  	case sTagPreviewImage:
  	case sTagAttachment:
  		return resIsPyObject;
@@ -7098,7 +7030,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	case sTagTrackNumber:
  		tag = GST_TAG_TRACK_NUMBER;
  		break;
-@@ -792,22 +1108,25 @@
+@@ -816,22 +1132,25 @@
  	case sTagCRC:
  		tag = "has-crc";
  		break;
@@ -7110,8 +7042,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
 +#if not defined(__sh__)
  	if (!m_stream_tags || !tag)
  		return 0;
--	
-+
+ 	
  	guint value;
  	if (gst_tag_list_get_uint(m_stream_tags, tag, &value))
  		return (int) value;
@@ -7126,16 +7057,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	if ( !m_stream_tags && w < sUser && w > 26 )
  		return "";
  	const gchar *tag = 0;
-@@ -836,7 +1155,7 @@
- 		if (gst_tag_list_get_date(m_stream_tags, GST_TAG_DATE, &date))
- 		{
- 			gchar res[5];
-- 			g_date_strftime (res, sizeof(res), "%Y-%M-%D", date); 
-+ 			g_date_strftime (res, sizeof(res), "%Y-%M-%D", date);
- 			return (std::string)res;
- 		}
- 		break;
-@@ -920,9 +1239,56 @@
+@@ -944,9 +1263,56 @@
  		g_free(value);
  		return res;
  	}
@@ -7173,9 +7095,9 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
 +		break;
 +
 +	default:
-+		return "";
-+	}
-+
+ 	return "";
+ }
+ 
 +	if (player && player->playback) {
 +        player->playback->Command(player, PLAYBACK_INFO, &tag);
 +
@@ -7185,14 +7107,14 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
 +	}
 +    free(tag);
 +#endif
- 	return "";
- }
- 
++	return "";
++}
++
 +#if not defined(__sh__)
  PyObject *eServiceMP3::getInfoObject(int w)
  {
  	const gchar *tag = 0;
-@@ -982,6 +1348,7 @@
+@@ -1006,6 +1372,7 @@
  
  	return 0;
  }
@@ -7200,7 +7122,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  
  RESULT eServiceMP3::audioChannel(ePtr<iAudioChannelSelection> &ptr)
  {
-@@ -1014,8 +1381,10 @@
+@@ -1038,8 +1405,10 @@
  
  int eServiceMP3::getCurrentTrack()
  {
@@ -7211,7 +7133,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	return m_currentAudioStream;
  }
  
-@@ -1038,6 +1407,7 @@
+@@ -1062,6 +1431,7 @@
  
  int eServiceMP3::selectAudioStream(int i)
  {
@@ -7219,7 +7141,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	int current_audio;
  	g_object_set (G_OBJECT (m_gst_playbin), "current-audio", i, NULL);
  	g_object_get (G_OBJECT (m_gst_playbin), "current-audio", &current_audio, NULL);
-@@ -1048,6 +1418,13 @@
+@@ -1072,6 +1442,13 @@
  		return 0;
  	}
  	return -1;
@@ -7233,7 +7155,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  }
  
  int eServiceMP3::getCurrentChannel()
-@@ -1065,6 +1442,7 @@
+@@ -1089,6 +1466,7 @@
  {
   	if (i >= m_audioStreams.size())
  		return -2;
@@ -7241,7 +7163,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  		info.m_description = m_audioStreams[i].codec;
  /*	if (m_audioStreams[i].type == atMPEG)
  		info.m_description = "MPEG";
-@@ -1084,11 +1462,28 @@
+@@ -1108,11 +1486,28 @@
  		info.m_description = "FLAC";
  	else
  		info.m_description = "???";*/
@@ -7270,77 +7192,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  void eServiceMP3::gstBusCall(GstBus *bus, GstMessage *msg)
  {
  	if (!msg)
-@@ -1120,14 +1515,14 @@
- 
- 			GstState old_state, new_state;
- 			gst_message_parse_state_changed(msg, &old_state, &new_state, NULL);
--		
-+
- 			if(old_state == new_state)
- 				break;
--	
-+
- 			eDebug("eServiceMP3::state transition %s -> %s", gst_element_state_get_name(old_state), gst_element_state_get_name(new_state));
--	
-+
- 			GstStateChange transition = (GstStateChange)GST_STATE_TRANSITION(old_state, new_state);
--	
-+
- 			switch(transition)
- 			{
- 				case GST_STATE_CHANGE_NULL_TO_READY:
-@@ -1187,7 +1582,7 @@
- 		{
- 			gchar *debug;
- 			GError *inf;
--	
-+
- 			gst_message_parse_info (msg, &inf, &debug);
- 			g_free (debug);
- 			if ( inf->domain == GST_STREAM_ERROR && inf->code == GST_STREAM_ERROR_DECODE )
-@@ -1202,7 +1597,7 @@
- 		{
- 			GstTagList *tags, *result;
- 			gst_message_parse_tag(msg, &tags);
--	
-+
- 			result = gst_tag_list_merge(m_stream_tags, tags, GST_TAG_MERGE_REPLACE);
- 			if (result)
- 			{
-@@ -1210,7 +1605,7 @@
- 					gst_tag_list_free(m_stream_tags);
- 				m_stream_tags = result;
- 			}
--	
-+
- 			const GValue *gv_image = gst_tag_list_get_value_index(tags, GST_TAG_IMAGE, 0);
- 			if ( gv_image )
- 			{
-@@ -1280,7 +1675,7 @@
- 			}
- 
- 			for (i = 0; i < n_text; i++)
--			{	
-+			{
- 				gchar *g_lang;
- // 				gchar *g_type;
- // 				GstPad* pad = 0;
-@@ -1406,11 +1801,11 @@
- 
- void eServiceMP3::gstPoll(const int &msg)
- {
--		/* ok, we have a serious problem here. gstBusSyncHandler sends 
-+		/* ok, we have a serious problem here. gstBusSyncHandler sends
- 		   us the wakup signal, but likely before it was posted.
- 		   the usleep, an EVIL HACK (DON'T DO THAT!!!) works around this.
--		   
--		   I need to understand the API a bit more to make this work 
-+
-+		   I need to understand the API a bit more to make this work
- 		   proplerly. */
- 	if (msg == 1)
- 	{
-@@ -1426,9 +1821,9 @@
+@@ -1493,9 +1888,9 @@
  	else
  		pullSubtitle();
  }
@@ -7352,7 +7204,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  void eServiceMP3::gstCBsubtitleAvail(GstElement *appsink, gpointer user_data)
  {
  	eServiceMP3 *_this = (eServiceMP3*)user_data;
-@@ -1475,9 +1870,30 @@
+@@ -1542,9 +1937,30 @@
  	else
  		eDebug("no subtitle sink!");
  }
@@ -7383,7 +7235,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	ePangoSubtitlePage page;
  	pts_t running_pts;
  	while ( !m_subtitle_pages.empty() )
-@@ -1522,6 +1938,7 @@
+@@ -1589,6 +2005,7 @@
  	}
  	if (m_subtitle_pages.empty())
  		pullSubtitle();
@@ -7391,7 +7243,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  }
  
  RESULT eServiceMP3::enableSubtitles(eWidget *parent, ePyObject tuple)
-@@ -1546,9 +1963,11 @@
+@@ -1613,9 +2030,11 @@
  
  	if (m_currentSubtitleStream != pid)
  	{
@@ -7403,7 +7255,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  		m_subs_to_pull = 0;
  		m_subtitle_pages.clear();
  	}
-@@ -1557,9 +1976,14 @@
+@@ -1624,9 +2043,14 @@
  	m_subtitle_widget = new eSubtitleWidget(parent);
  	m_subtitle_widget->resize(parent->size()); /* full size */
  
@@ -7418,7 +7270,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  
  	return 0;
  
-@@ -1575,6 +1999,11 @@
+@@ -1642,6 +2066,11 @@
  	m_subtitle_pages.clear();
  	delete m_subtitle_widget;
  	m_subtitle_widget = 0;
@@ -7430,7 +7282,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	return 0;
  }
  
-@@ -1587,6 +2016,15 @@
+@@ -1654,6 +2083,15 @@
  PyObject *eServiceMP3::getSubtitleList()
  {
  	eDebug("eServiceMP3::getSubtitleList");
@@ -7446,7 +7298,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  
  	ePyObject l = PyList_New(0);
  	int stream_count[sizeof(subtype_t)];
-@@ -1629,7 +2067,9 @@
+@@ -1696,7 +2134,9 @@
  int eServiceMP3::setBufferSize(int size)
  {
  	m_buffer_size = size;
@@ -7456,7 +7308,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	return 0;
  }
  
-@@ -1645,6 +2085,7 @@
+@@ -1712,6 +2152,7 @@
  
  void eServiceMP3::setAC3Delay(int delay)
  {
@@ -7464,7 +7316,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	ac3_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1678,10 +2119,12 @@
+@@ -1745,10 +2186,12 @@
  			gst_object_unref(sink);
  		}
  	}
@@ -7477,7 +7329,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  	pcm_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1722,8 +2165,9 @@
+@@ -1789,8 +2232,9 @@
  			gst_object_unref(sink);
  		}
  	}
@@ -7490,7 +7342,6 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
 +//#else
 +//#warning gstreamer not available, not building media player
 +//#endif
-
 --- enigma2-nightly.org/lib/gdi/grc.cpp	2010-03-30 19:26:09.000000000 -0400
 +++ enigma2-nightly.org/lib/gdi/grc.cpp	2010-03-30 19:34:30.000000000 -0400
 @@ -4,6 +4,11 @@
@@ -7655,7 +7506,7 @@ diff -Nur enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
 +])
 --- enigma2-nightly.orig/configure.ac	2010-04-03 23:45:11.000000000 +0200
 +++ enigma2-nightly/configure.ac	2010-04-03 23:47:27.000000000 +0200
-@@ -67,10 +67,11 @@
+@@ -78,10 +78,11 @@
  TUXBOX_APPS_LIB_PKGCONFIG(XML2,libxml-2.0)
  
  # ok, we are in trouble: XMLCCWRAP only defines C++ symbols. So let's just check if linking works,
@@ -8040,17 +7891,6 @@ diff -urN enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/Makefile
 +def Plugins(**kwargs):
 +	return [ PluginDescriptor(name="CuberevoVFD", description="Change VFD display settings", where = PluginDescriptor.WHERE_PLUGINMENU, fnc=main),
 +		PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart) ]
-diff -r -u -N enigma2-nightly.org/data/Makefile.am enigma2-nightly/data/Makefile.am
---- enigma2-nightly.org/data/Makefile.am	2010-04-17 09:03:20.000000000 +0200
-+++ enigma2-nightly/data/Makefile.am	2010-04-13 00:40:07.000000000 +0200
-@@ -14,4 +14,6 @@
- 	skin_default.xml \
- 	skin.xml \
- 	startwizard.xml \
--	tutorialwizard.xml
-+	tutorialwizard.xml
-+
-+
 diff -r -u -N enigma2-nightly.org/lib/base/estring.cpp enigma2-nightly/lib/base/estring.cpp
 --- enigma2-nightly.org/lib/base/estring.cpp	2010-04-17 09:03:20.000000000 +0200
 +++ enigma2-nightly/lib/base/estring.cpp	2010-04-13 01:43:12.000000000 +0200
@@ -8438,8 +8278,8 @@ diff -r -u -N enigma2-nightly.org/lib/base/Makefile.am enigma2-nightly/lib/base/
  	init.cpp message.cpp thread.cpp \
  	smartptr.cpp estring.cpp connection.cpp \
  	filepush.cpp encoding.cpp console.cpp rawfile.cpp \
--	nconfig.cpp ioprio.cpp
-+	nconfig.cpp ioprio.cpp freesatv2.cpp
+-	nconfig.cpp ioprio.cpp etpm.cpp
++	nconfig.cpp ioprio.cpp etpm.cpp freesatv2.cpp
  
 diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/epgcache.cpp
 --- enigma2-nightly.org/lib/dvb/epgcache.cpp	2010-04-26 17:02:35.000000000 +0200
