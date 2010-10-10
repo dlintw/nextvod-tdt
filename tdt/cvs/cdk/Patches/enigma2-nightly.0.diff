@@ -120,7 +120,18 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  	m_sg = 0;
  	m_send_pvr_commit = 0;
  	m_stream_mode = 0;
-@@ -37,6 +52,11 @@ void eFilePushThread::thread()
+@@ -19,6 +34,10 @@ eFilePushThread::eFilePushThread(int io_prio_class, int io_prio_level, int block
+ 	flush();
+ 	enablePVRCommit(0);
+ 	CONNECT(m_messagepump.recv_msg, eFilePushThread::recvEvent);
++
++	m_record_split_size = 0;
++	m_record_split_type = 0;
++
+ }
+ 
+ static void signal_handler(int x)
+@@ -37,6 +56,11 @@ void eFilePushThread::thread()
  	
  	size_t written_since_last_sync = 0;
  
@@ -132,7 +143,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  	eDebug("FILEPUSH THREAD START");
  	
  		/* we set the signal to not restart syscalls, so we can detect our signal. */
-@@ -49,7 +69,15 @@ void eFilePushThread::thread()
+@@ -49,7 +73,15 @@ void eFilePushThread::thread()
  	
  	source_pos = m_raw_source.lseek(0, SEEK_CUR);
  	
@@ -148,7 +159,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  	while (!m_stop)
  	{
  			/* first try flushing the bufptr */
-@@ -110,7 +138,11 @@ void eFilePushThread::thread()
+@@ -110,7 +142,11 @@ void eFilePushThread::thread()
  			{
  				if (errno == EINTR || errno == EAGAIN || errno == EBUSY)
  					continue;
@@ -160,7 +171,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  				sendEvent(evtWriteError);
  				break;
  				// ... we would stop the thread
-@@ -126,6 +158,37 @@ void eFilePushThread::thread()
+@@ -126,6 +162,37 @@ void eFilePushThread::thread()
  				dest_pos -= toflush;
  				posix_fadvise(m_fd_dest, dest_pos, toflush, POSIX_FADV_DONTNEED);
  				written_since_last_sync -= toflush;
@@ -198,7 +209,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  			}
  
  //			printf("FILEPUSH: wrote %d bytes\n", w);
-@@ -137,6 +200,19 @@ void eFilePushThread::thread()
+@@ -137,6 +204,19 @@ void eFilePushThread::thread()
  			
  		if (m_sg && !current_span_remaining)
  		{
@@ -218,7 +229,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  			m_sg->getNextSourceSpan(source_pos, bytes_read, current_span_offset, current_span_remaining);
  			ASSERT(!(current_span_remaining % m_blocksize));
  
-@@ -194,7 +270,15 @@ void eFilePushThread::thread()
+@@ -194,7 +274,15 @@ void eFilePushThread::thread()
  				{
  					case 0:
  						eDebug("wait for driver eof timeout");
@@ -235,7 +246,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  					case 1:
  						eDebug("wait for driver eof ok");
  						break;
-@@ -227,6 +311,7 @@ void eFilePushThread::thread()
+@@ -227,6 +315,7 @@ void eFilePushThread::thread()
  			break;
  		} else
  		{
@@ -243,7 +254,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  			source_pos += m_buf_end;
  			bytes_read += m_buf_end;
  			if (m_sg)
-@@ -234,11 +319,72 @@ void eFilePushThread::thread()
+@@ -234,11 +323,88 @@ void eFilePushThread::thread()
  		}
  //		printf("FILEPUSH: read %d bytes\n", m_buf_end);
  	}
@@ -275,13 +286,29 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
 +	m_flags = O_WRONLY|O_CREAT|O_LARGEFILE;
 +
 +	char record_split_size[3] = "";
-+	getshmentry(shm, "record_split_size=", record_split_size, 3);
-+	m_record_split_size = atoi(record_split_size);
-+	m_record_split_size = m_record_split_size * 1000 * 1000 * 1000;
++	if( getshmentry(shm, "record_split_size=", record_split_size, 3) >=0 )
++	{
++		m_record_split_size = atoi(record_split_size);
++		m_record_split_size = m_record_split_size * 1000 * 1000 * 1000;
++	}
++	else
++	{
++		m_record_split_size = 0;
++		eDebug("------> getshmentry(record_split_size) returned -1");
++	}
 +	
++	eDebug("------> m_record_split_size: %d", m_record_split_size);
++		
 +	char record_split_type[2] = "";
-+	getshmentry(shm, "record_split_type=", record_split_type, 2);
-+	m_record_split_type = atoi(record_split_type);
++	if( getshmentry(shm, "record_split_type=", record_split_type, 2) >= 0 )
++	{
++		m_record_split_type = atoi(record_split_type);
++	}
++	else
++	{
++		m_record_split_type = 0;
++		eDebug("------> getshmentry(record_split_type) returned -1");
++	}
 +
 +	m_filename[0] = NULL;
 +	strcpy(m_filename, filename);
@@ -317,7 +344,7 @@ diff -Nur enigma2-nightly.org/lib/base/filepush.cpp enigma2-nightly/lib/base/fil
  void eFilePushThread::start(int fd_source, int fd_dest)
  {
  	m_raw_source.setfd(fd_source);
-@@ -261,10 +407,20 @@ void eFilePushThread::stop()
+@@ -261,10 +427,20 @@ void eFilePushThread::stop()
  	if (!sync())
  		return;
  
