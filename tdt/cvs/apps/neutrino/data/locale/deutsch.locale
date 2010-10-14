@@ -318,7 +318,7 @@ extra.use_gotoxx Benutze gotoXX
 extra.use_log Log nach /tmp/log
 extra.west Westen
 extra.zap_cycle Zap Zyklen
-extra.zapit_backup Sichere Kanelliste nach /tmp
+extra.zapit_backup Sichere Kanalliste nach /tmp
 extra.zapit_fast_zap Fast Zap
 extra.zapit_fe_timeout Tune timeout
 extra.zapit_hvoltage High (13.5/18.5) Voltage
@@ -782,7 +782,7 @@ moviebrowser.hint_movieend Filmende in 5 s\n '0' zum Weitersehen
 moviebrowser.hint_newbook_backward Neue Wiederholung\n 'blue' für Endposition
 moviebrowser.hint_newbook_forward Neuer Werbesprung\n 'blue' für Endposition
 moviebrowser.info_audio Audio
-moviebrowser.info_channel Kanel
+moviebrowser.info_channel Kanal
 moviebrowser.info_filename Name
 moviebrowser.info_genre_major Genre
 moviebrowser.info_genre_minor Genre
