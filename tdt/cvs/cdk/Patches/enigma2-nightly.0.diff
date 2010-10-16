@@ -5595,7 +5595,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBar.py enigma2-nightly.org/
 diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py
 --- enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py	2010-01-26 23:16:22.500600000 +0100
 +++ enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py	2010-03-10 23:18:41.332599958 +0100
-@@ -44,6 +44,10 @@
+@@ -44,6 +44,10 @@ from RecordTimer import RecordTimerEntry, RecordTimer
  # hack alert!
  from Menu import MainMenu, mdom
  
@@ -5606,7 +5606,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
  class InfoBarDish:
  	def __init__(self):
  		self.dishDialog = self.session.instantiateDialog(Dish)
-@@ -88,6 +92,9 @@
+@@ -88,6 +92,9 @@ class InfoBarShowHide:
  	STATE_HIDING = 1
  	STATE_SHOWING = 2
  	STATE_SHOWN = 3
@@ -5616,12 +5616,10 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
  
  	def __init__(self):
  		self["ShowHideActions"] = ActionMap( ["InfobarShowHideActions"] ,
-@@ -138,12 +145,34 @@
+@@ -138,12 +145,34 @@ class InfoBarShowHide:
  		if self.__state == self.STATE_SHOWN:
  			self.hide()
  
--	def toggleShow(self):
--		if self.__state == self.STATE_SHOWN:
 +#+++>
 +	def epg(self): 
 +		self.__state = self.STATE_EPG 
@@ -5630,7 +5628,10 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +		self.openEventView() 
 +#+++<
 +
-+	def toggleShow(self):
+ 	def toggleShow(self):
+-		if self.__state == self.STATE_SHOWN:
+-			self.hide()
+-			self.hideTimer.stop()
 +#--->
 +#-		if self.__state == self.STATE_SHOWN:
 +#-			self.hide()
@@ -5653,7 +5654,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
  
  	def lockShow(self):
  		self.__locked = self.__locked + 1
-@@ -1327,7 +1356,12 @@
+@@ -1327,7 +1356,12 @@ class InfoBarExtensions:
  
  	def updateExtensions(self):
  		self.extensionsList = []
@@ -5667,7 +5668,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
  		self.extensionKeys = {}
  		for x in self.list:
  			if x[0] == self.EXTENSION_SINGLE:
-@@ -1404,6 +1438,18 @@
+@@ -1404,6 +1438,18 @@ class InfoBarJobman:
  		job_manager.in_background = in_background
  
  # depends on InfoBarExtensions
@@ -5686,7 +5687,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
  class InfoBarPiP:
  	def __init__(self):
  		try:
-@@ -1755,16 +1801,43 @@
+@@ -1755,16 +1801,43 @@ class InfoBarSubserviceSelection:
  				idx += 1
  
  			if self.bouquets and len(self.bouquets):
@@ -5737,7 +5738,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
  
  			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
  
-@@ -1793,6 +1866,153 @@
+@@ -1793,6 +1866,153 @@ class InfoBarSubserviceSelection:
  				self.session.open(MessageBox, _("Service has been added to the favourites."), MessageBox.TYPE_INFO)
  
  	def bouquetSelClosed(self, confirmed):
@@ -5891,7 +5892,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
  		self.bsel = None
  		del self.selectedSubservice
  		if confirmed:
-@@ -1805,6 +2025,129 @@
+@@ -1805,6 +2025,129 @@ class InfoBarSubserviceSelection:
  		else:
  			del self.selectedSubservice
  
@@ -6021,10 +6022,11 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
  class InfoBarAdditionalInfo:
  	def __init__(self):
  
-@@ -2131,7 +2474,22 @@
+@@ -2131,7 +2474,22 @@ class InfoBarTeletextPlugin:
  			print "no teletext plugin found!"
  
  	def startTeletext(self):
+-		self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
 +#--->
 +#		self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
 +#---<
