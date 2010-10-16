@@ -5738,10 +5738,10 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
  
  			self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = selection, keys = keys, skin_name = "SubserviceSelection")
  
-@@ -1793,6 +1866,153 @@ class InfoBarSubserviceSelection:
- 				self.session.open(MessageBox, _("Service has been added to the favourites."), MessageBox.TYPE_INFO)
+@@ -1805,6 +1878,276 @@ class InfoBarSubserviceSelection:
+ 		else:
+ 			del self.selectedSubservice
  
- 	def bouquetSelClosed(self, confirmed):
 +
 +#+++>
 +class InfoBarExtendedAudioSelection:
@@ -5889,13 +5889,6 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +			self.audioChannel.selectChannel(mode[1])
 +		del self.audioChannel
 +#+++<
- 		self.bsel = None
- 		del self.selectedSubservice
- 		if confirmed:
-@@ -1805,6 +2025,129 @@ class InfoBarSubserviceSelection:
- 		else:
- 			del self.selectedSubservice
- 
 +#+++>
 +class InfoBarAspectSelection: 
 +	STATE_HIDDEN = 0 
