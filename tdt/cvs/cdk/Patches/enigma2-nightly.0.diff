@@ -5625,8 +5625,8 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++>
 +	def epg(self): 
 +		self.__state = self.STATE_EPG 
- 			self.hide()
- 			self.hideTimer.stop()
++		self.hide()
++		self.hideTimer.stop()
 +		self.openEventView() 
 +#+++<
 +
@@ -6031,7 +6031,7 @@ diff -Nur enigma2-nightly.org/lib/python/Screens/InfoBarGenerics.py enigma2-nigh
 +#+++>
 +		global txtIsStarting
 +		if txtIsStarting is False:
- 		self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
++			self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
 +			txtIsStarting = True
 +			self.txtIsStartingTimer = eTimer()
 +			self.txtIsStartingTimer.callback.append(self.txtIsStartingEnd)
