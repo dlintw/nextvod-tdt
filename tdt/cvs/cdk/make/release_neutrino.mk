@@ -505,7 +505,8 @@ else
 if ENABLE_OCTAGON1008
 
 	echo "octagon1008" > $(prefix)/release_neutrino/etc/hostname 
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/avl2108.ko $(prefix)/release_neutrino/lib/modules/
+# disable driver copy
+#	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/avl2108.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/nuvoton/nuvoton.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
