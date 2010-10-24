@@ -3631,7 +3631,8 @@ diff -Nur enigma2-nightly.org/lib/gdi/stmfb.cpp enigma2-nightly/lib/gdi/stmfb.cp
 diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightly/lib/python/Components/NimManager.py
 --- enigma2-nightly.org/lib/python/Components/NimManager.py	2009-12-12 23:16:22.424599000 +0100
 +++ enigma2-nightly/lib/python/Components/NimManager.py	2009-12-12 23:45:45.000000000 +0100
-@@ -21,4 +21,8 @@
+@@ -20,6 +20,10 @@ from Tools import Directories
+ import xml.etree.cElementTree
  
  def getConfigSatlist(orbpos, satlist):
 +#+++>  CAUSE OF CRASH!
@@ -3640,7 +3641,9 @@ diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightl
 +#+++<
  	default_orbpos = None
  	for x in satlist:
-@@ -381,4 +385,7 @@
+ 		if x[0] == orbpos:
+@@ -390,6 +394,9 @@ class SecConfigure:
+ 
  					if currLnb.diseqcMode.value == "1_0":
  						currCO = currLnb.commandOrder1_0.value
 +#+++>  WHY ???
@@ -3648,7 +3651,15 @@ diff -Nur enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightl
 +#+++<
  					else:
  						currCO = currLnb.commandOrder.value
-
+ 
+@@ -702,6 +709,7 @@ class NimManager:
+ 				parts = line.strip().split(" ")
+ 				current_slot = int(parts[2][:-1])
+ 				entries[current_slot] = {}
++				entries[current_slot]["frontend_device"] = current_slot
+ 			elif line.strip().startswith("Type:"):
+ 				entries[current_slot]["type"] = str(line.strip()[6:])
+ 				entries[current_slot]["isempty"] = False
 diff -Nur enigma2-nightly.org/lib/python/Components/TunerInfo.py enigma2-nightly/lib/python/Components/TunerInfo.py
 --- enigma2-nightly.org/lib/python/Components/TunerInfo.py	2009-12-12 23:16:22.428599000 +0100
 +++ enigma2-nightly/lib/python/Components/TunerInfo.py	2009-12-12 23:48:36.000000000 +0100
