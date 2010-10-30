@@ -260,6 +260,10 @@ void *detectKeyUpTask(void* dummy)
       {
         gettimeofday(&time, NULL);
         unsigned int sleep = gBtnPeriod + gBtnDelay - diffMilli(profilerLast, time);
+
+        if (sleep > (gBtnPeriod + gBtnDelay)) 
+             sleep = (gBtnPeriod + gBtnDelay);
+
         printf("++++ %12u ms ++++\n", diffMilli(profilerLast, time));
         gKeyCode = 0;
         usleep(sleep*1000);
