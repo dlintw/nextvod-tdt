@@ -1,0 +1,17 @@
+Twisted-*
+elementtree-*
+expat-*
+fontconfig-*
+fribidi-*
+jfsutils-*
+libsigc++-*
+libtool-*
+libxml2-*
+libxmlccwrap-*
+libxslt-*
+lxml-*
+pyOpenSSL-*
+python-*
+readline-*
+setuptools-*
+zope.interface-*
