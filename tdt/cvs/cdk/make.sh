@@ -7,6 +7,7 @@ if [ "$1" == -h ] || [ "$1" == --help ]; then
  exit
 fi
 
+
 CURDIR=`pwd`
 KATIDIR=${CURDIR%/cvs/cdk}
 export PATH=/usr/sbin:/sbin:$PATH
