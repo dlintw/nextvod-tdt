@@ -123,6 +123,8 @@ release_ufs912:
 	rm -f $(prefix)/release/bin/evremote
 	rm -f $(prefix)/release/bin/gotosleep
 
+	mv $(prefix)/release/lib/firmware/component_7111_mb618.fw $(prefix)/release/lib/firmware/component.fw
+
 release_spark:
 	echo "spark" > $(prefix)/release/etc/hostname 
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release/lib/modules/
@@ -582,7 +584,9 @@ endif
 	cp -a $(targetprefix)/usr/lib/enigma2/* $(prefix)/release/usr/lib/enigma2/
 	if test -d $(targetprefix)/usr/local/lib/enigma2; then \
 		cp -a $(targetprefix)/usr/local/lib/enigma2/* $(prefix)/release/usr/lib/enigma2/; fi
-	find $(prefix)/release/usr/lib/enigma2/ -name '*.pyo' -exec rm -f {} \;
+
+	# Dont remove pyo files, remove pyc instead
+	find $(prefix)/release/usr/lib/enigma2/ -name '*.pyc' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/enigma2/ -name '*.a' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/enigma2/ -name '*.o' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/enigma2/ -name '*.la' -exec rm -f {} \;
@@ -632,7 +636,8 @@ endif
 	rm -rf $(prefix)/release/usr/lib/python2.6/distutils
 	rm -rf $(prefix)/release/usr/lib/python2.6/email
 
-	find $(prefix)/release/usr/lib/python2.6/ -name '*.pyo' -exec rm -f {} \;
+	# Dont remove pyo files, remove pyc instead
+	find $(prefix)/release/usr/lib/python2.6/ -name '*.pyc' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.a' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.o' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.la' -exec rm -f {} \;
