@@ -22,8 +22,6 @@ release_common_utils:
 	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
 
-
-
 release_cube_common:
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release/etc/init.d/halt
 	chmod 777 $(prefix)/release/etc/init.d/halt
@@ -584,84 +582,57 @@ endif
 	cp -a $(targetprefix)/usr/lib/enigma2/* $(prefix)/release/usr/lib/enigma2/
 	if test -d $(targetprefix)/usr/local/lib/enigma2; then \
 		cp -a $(targetprefix)/usr/local/lib/enigma2/* $(prefix)/release/usr/lib/enigma2/; fi
+	find $(prefix)/release/usr/lib/enigma2/ -name '*.pyo' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/enigma2/ -name '*.a' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/enigma2/ -name '*.o' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/enigma2/ -name '*.la' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/enigma2/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 
-#Delete unnecessary plugins 
-	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/DemoPlugins 
-	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/SystemPlugins/FrontprocessorUpgrade 
-	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/SystemPlugins/NFIFlash 
-	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/FileManager 
-	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/TuxboxPlugins 
+#Delete unnecessary plugins
+	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/DemoPlugins
+	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/SystemPlugins/FrontprocessorUpgrade
+	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/SystemPlugins/NFIFlash
+	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/FileManager
+	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/TuxboxPlugins
 
 	$(INSTALL_DIR) $(prefix)/release/usr/lib/python2.6
 	cp -a $(targetprefix)/usr/lib/python2.6/* $(prefix)/release/usr/lib/python2.6/
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/test
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/lxml
-
-	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/lxml-2.0.5-py2.5.egg.info
-
+	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/lxml-2.0.5-py2.6.egg-info
 	rm -f $(prefix)/release/usr/lib/python2.6/site-packages/libxml2mod.so
 	rm -f $(prefix)/release/usr/lib/python2.6/site-packages/libxsltmod.so
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/OpenSSL/test
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/setuptools
-
-	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/setuptools-0.6c8-py2.5.egg-info
-
+	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/setuptools-0.6c8-py2.6.egg-info
+	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/zope.interface-3.3.0-py2.6.egg-info
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/test
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/conch
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/mail
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/manhole
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/names
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/news
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/trial
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/words
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/application
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/enterprise
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/flow
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/lore
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/pair
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/runner
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/scripts
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/tap
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/twisted/topfiles
-
+	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/Twisted-8.2.0-py2.6.egg-info
 	rm -rf $(prefix)/release/usr/lib/python2.6/bsddb
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/compiler
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/config
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/ctypes
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/curses
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/distutils
-
 	rm -rf $(prefix)/release/usr/lib/python2.6/email
 
+	find $(prefix)/release/usr/lib/python2.6/ -name '*.pyo' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.a' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.o' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.la' -exec rm -f {} \;
