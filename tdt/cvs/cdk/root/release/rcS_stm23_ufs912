@@ -44,7 +44,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING MODULES"   
    fp_control -t "LOADING MODULES"
 
-   if [ ! -e /boot/audio_7111.elf ]; then
+   if [ ! -e /boot/audio.elf ]; then
       fp_control -t "FW MISSING!!!"
    fi
 
