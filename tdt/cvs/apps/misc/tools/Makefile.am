@@ -15,4 +15,5 @@ SUBDIRS = \
 	tfd2mtd \
 	gitVCInfo \
 	hotplug \
-	libcoolstream
+	libcoolstream \
+	vfdctl
