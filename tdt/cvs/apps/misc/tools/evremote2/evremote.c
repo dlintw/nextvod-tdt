@@ -191,7 +191,7 @@ int processComplex (Context_t * context, int argc, char* argv[]) {
     setInputEventRepeatRate(500, 200);
 
     sem_init(&keydown_sem, 0, 0);
-    pthread_create(&keydown_thread, NULL, detectKeyUpTask, 0);
+    pthread_create(&keydown_thread, NULL, detectKeyUpTask, context);
 
     struct timeval time;
     gettimeofday(&profilerLast, NULL);
@@ -203,11 +203,6 @@ int processComplex (Context_t * context, int argc, char* argv[]) {
            vCurrentCode = ((RemoteControl_t*)context->r)->Read(context);
         if(vCurrentCode <= 0)
             continue;
-
-        //activate visual notification
-        if (((RemoteControl_t*)context->r)->Notification)
-           ((RemoteControl_t*)context->r)->Notification(context, 1);
-
 
         gKeyCode = vCurrentCode & 0xFFFF;
         unsigned int nextKeyFlag = (vCurrentCode>>16) & 0xFFFF;
@@ -224,9 +219,6 @@ int processComplex (Context_t * context, int argc, char* argv[]) {
 
         sem_up();
 
-        //deactivate visual notification
-        if (((RemoteControl_t*)context->r)->Notification)
-           ((RemoteControl_t*)context->r)->Notification(context, 0);
     }
 
     if (((RemoteControl_t*)context->r)->Shutdown)
@@ -241,6 +233,7 @@ int processComplex (Context_t * context, int argc, char* argv[]) {
 
 void *detectKeyUpTask(void* dummy)
 {
+  Context_t * context = (Context_t*) dummy;
   struct timeval time;
   while (1)
   {
@@ -251,6 +244,10 @@ void *detectKeyUpTask(void* dummy)
     {
       keyCode = gKeyCode;
       nextKey = gNextKey;
+
+      //activate visual notification
+      if (((RemoteControl_t*)context->r)->Notification)
+         ((RemoteControl_t*)context->r)->Notification(context, 1);
 
       printf("KEY_PRESS - %02x %d\n", keyCode, nextKey);
       sendInputEventT(INPUT_PRESS, keyCode);
@@ -270,6 +267,10 @@ void *detectKeyUpTask(void* dummy)
       }
       printf("KEY_RELEASE - %02x %d\n", keyCode, nextKey);
       sendInputEventT(INPUT_RELEASE, keyCode);
+
+      //deactivate visual notification
+      if (((RemoteControl_t*)context->r)->Notification)
+         ((RemoteControl_t*)context->r)->Notification(context, 0);
 
       gettimeofday(&time, NULL);
       printf("---- %12u ms ----\n", diffMilli(profilerLast, time));
