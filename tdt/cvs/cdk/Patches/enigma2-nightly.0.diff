@@ -4587,7 +4587,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/plugin.
 diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHardware.py enigma2-nightly/lib/python/Plugins/SystemPlugins/Videomode/VideoHardware.py
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHardware.py	2009-12-12 23:16:22.484601000 +0100
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Videomode/VideoHardware.py	2009-12-11 21:40:15.000000000 +0100
-@@ -2,7 +2,6 @@
+@@ -2,7 +2,6 @@ from enigma import eTimer
  from Components.config import config, ConfigSelection, ConfigSubDict, ConfigYesNo
  
  from Tools.CList import CList
@@ -4595,7 +4595,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  
  # The "VideoHardware" is the interface to /proc/stb/video.
  # It generates hotplug events, and gives you the list of 
-@@ -13,93 +12,48 @@
+@@ -13,93 +12,48 @@ class VideoHardware:
  
  	modes = { }  # a list of (high-level) modes for a certain port.
  
@@ -4622,13 +4622,13 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
 -								"60Hz": 	{ 60: "720p" },
 -								"multi": 	{ 50: "720p50", 60: "720p" } }
 +					  "60Hz": 	{ 60: "720p60" } }
++
++	rates["1080i"] =		{ "50Hz":	{ 50: "1080i50" },
++					  "60Hz":	{ 60: "1080i60" } }
  
 -	rates["1080i"] =		{ "50Hz":		{ 50: "1080i50" },
 -								"60Hz":		{ 60: "1080i" },
 -								"multi":	{ 50: "1080i50", 60: "1080i" } }
-+	rates["1080i"] =		{ "50Hz":	{ 50: "1080i50" },
-+					  "60Hz":	{ 60: "1080i60" } }
-+
 +	rates["1080p"] =		{ "23Hz":	{ 50: "1080p23" },
 +					  "24Hz":	{ 60: "1080p24" },
 +					  "25Hz":	{ 60: "1080p25" },
@@ -4711,7 +4711,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  		self.createConfig()
  #		self.on_hotplug.append(self.createConfig)
  
-@@ -108,11 +62,20 @@
+@@ -108,11 +62,20 @@ class VideoHardware:
  		# take over old AVSwitch component :)
  		from Components.AVSwitch import AVSwitch
  #		config.av.colorformat.notifiers = [ ] 
@@ -4721,19 +4721,19 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  		config.av.wss.notifiers = [ ]
 -		AVSwitch.getOutputAspect = self.getOutputAspect
 +		AVSwitch.setInput = self.AVSwitchSetInput
- 
++
 +		config.av.colorformat_hdmi = ConfigSelection(choices = {"hdmi_rgb": _("RGB"), "hdmi_yuv": _("YUV"), "hdmi_422": _("422")}, default="hdmi_rgb")
 +		config.av.colorformat_yuv = ConfigSelection(choices = {"yuv": _("YUV")}, default="yuv")
 +#		config.av.hdmi_audio_source = ConfigSelection(choices = {"pcm": _("PCM"), "spdif": _("SPDIF"), "8ch": _("8Ch"), "none": _("None")}, default="pcm")
 +		config.av.hdmi_audio_source = ConfigSelection(choices = {"pcm": _("PCM"), "spdif": _("SPDIF")}, default="pcm")
-+
+ 
 +		config.av.colorformat_hdmi.addNotifier(self.setHDMIColor)
 +		config.av.colorformat_yuv.addNotifier(self.setYUVColor)
 +		config.av.hdmi_audio_source.addNotifier(self.setHDMIAudioSource)
  		config.av.aspect.addNotifier(self.updateAspect)
  		config.av.wss.addNotifier(self.updateAspect)
  		config.av.policy_169.addNotifier(self.updateAspect)
-@@ -123,6 +86,12 @@
+@@ -123,6 +86,12 @@ class VideoHardware:
  #		self.timer.callback.append(self.readPreferredModes)
  #		self.timer.start(1000)
  
@@ -4746,7 +4746,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  	def readAvailableModes(self):
  		try:
  			modes = open("/proc/stb/video/videomode_choices").read()[:-1]
-@@ -131,6 +100,7 @@
+@@ -131,6 +100,7 @@ class VideoHardware:
  			self.modes_available = [ ]
  			return
  		self.modes_available = modes.split(' ')
@@ -4754,7 +4754,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  
  	def readPreferredModes(self):
  		try:
-@@ -142,20 +112,23 @@
+@@ -142,20 +112,23 @@ class VideoHardware:
  
  		if self.modes_preferred != self.last_modes_preferred:
  			self.last_modes_preferred = self.modes_preferred
@@ -4781,7 +4781,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  		return True
  
  	def isWidescreenMode(self, port, mode):
-@@ -189,8 +162,11 @@
+@@ -189,8 +162,11 @@ class VideoHardware:
  			open("/etc/videomode", "w").write(mode_50) # use 50Hz mode (if available) for booting
  		except IOError:
  			print "writing initial videomode to /etc/videomode failed."
@@ -4794,7 +4794,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  
  	def saveMode(self, port, mode, rate):
  		print "saveMode", port, mode, rate
-@@ -206,7 +182,7 @@
+@@ -206,7 +182,7 @@ class VideoHardware:
  		return True
  
  	def isPortUsed(self, port):
@@ -4803,7 +4803,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  			self.readPreferredModes()
  			return len(self.modes_preferred) != 0
  		else:
-@@ -229,29 +205,20 @@
+@@ -229,29 +205,20 @@ class VideoHardware:
  		return res
  
  	def createConfig(self, *args):
@@ -4821,9 +4821,9 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
 -		portlist = self.getPortList()
  		for port in portlist:
 -			descr = port
--			if descr == 'DVI' and hw_type in ('dm500hd', 'dm800se'):
+-			if descr == 'DVI' and hw_type in ('dm500hd', 'dm800se', 'dm7020hd'):
 -				descr = 'HDMI'
--			elif descr == 'DVI-PC' and hw_type in ('dm500hd', 'dm800se'):
+-			elif descr == 'DVI-PC' and hw_type in ('dm500hd', 'dm800se', 'dm7020hd'):
 -				descr = 'HDMI-PC'
 -			lst.append((port, descr))
 -
@@ -4837,7 +4837,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  
  	def setConfiguredMode(self):
  		port = config.av.videoport.value
-@@ -297,17 +264,15 @@
+@@ -297,17 +264,15 @@ class VideoHardware:
  
  		force_widescreen = self.isWidescreenMode(port, mode)
  
@@ -4857,7 +4857,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHa
  		elif is_auto:
  			aspect = "any"
  			policy = "bestfit"
-@@ -320,14 +285,70 @@
+@@ -320,14 +285,70 @@ class VideoHardware:
  		else:
  			wss = "auto"
  
@@ -8306,14 +8306,13 @@ diff -r -u -N enigma2-nightly.org/lib/base/Makefile.am enigma2-nightly/lib/base/
 diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/epgcache.cpp
 --- enigma2-nightly.org/lib/dvb/epgcache.cpp	2010-04-26 17:02:35.000000000 +0200
 +++ enigma2-nightly/lib/dvb/epgcache.cpp	2010-04-13 03:04:28.000000000 +0200
-@@ -18,11 +18,23 @@
+@@ -18,11 +18,22 @@
  #include <lib/python/python.h>
  #include <dvbsi++/descriptor_tag.h>
  
 +#ifdef __sh__
 +#include "include/shmE2.h"
 +
-+char epg_file[256] = "";
 +static int m_epg_days = 14;
 +extern char *shm;
 +#endif
@@ -8330,7 +8329,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  const eServiceReference &handleGroup(const eServiceReference &ref)
  {
  	if (ref.flags & eServiceReference::isGroup)
-@@ -115,11 +127,25 @@
+@@ -115,11 +126,25 @@ const eit_event_struct* eventData::get() const
  	int tmp = ByteSize-10;
  	memcpy(data, EITdata, 10);
  	int descriptors_length=0;
@@ -8356,7 +8355,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		if ( it != descriptors.end() )
  		{
  			int b = it->second.second[1]+2;
-@@ -128,7 +154,11 @@
+@@ -128,7 +153,11 @@ const eit_event_struct* eventData::get() const
  			descriptors_length += b;
  		}
  		else
@@ -8368,7 +8367,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		tmp-=4;
  	}
  	ASSERT(pos <= 4108);
-@@ -142,12 +172,28 @@
+@@ -142,12 +171,28 @@ eventData::~eventData()
  	if ( ByteSize )
  	{
  		CacheSize -= ByteSize;
@@ -8397,7 +8396,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  			if ( it != descriptors.end() )
  			{
  				descriptorPair &p = it->second;
-@@ -159,7 +205,15 @@
+@@ -159,7 +204,15 @@ eventData::~eventData()
  				}
  			}
  			else
@@ -8413,10 +8412,10 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  			ByteSize -= 4;
  		}
  		delete [] EITdata;
-@@ -231,6 +285,25 @@
- 		if (eDVBLocalTimeHandler::getInstance()->ready())
- 			timeUpdated();
- 	}
+@@ -228,6 +281,25 @@ eEPGCache::eEPGCache()
+ 	else
+ 		res_mgr->connectChannelAdded(slot(*this,&eEPGCache::DVBChannelAdded), m_chanAddedConn);
+ 
 +#if ENABLE_FREESAT
 +	FILE *ffd;
 +	ffd = fopen("/var/usr/local/share/enigma2/freesat.t1", "r");
@@ -8437,9 +8436,9 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +	}
 +#endif
  	instance=this;
+ 	memset(m_filename, 0, sizeof(m_filename));
  }
- 
-@@ -337,6 +410,23 @@
+@@ -362,6 +434,23 @@ void eEPGCache::DVBChannelRunning(iDVBChannel *chan)
  					return;
  				}
  #endif
@@ -8460,10 +8459,10 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +					}
 +				}
 +#endif
- 				messages.send(Message(Message::startChannel, chan));
- 				// -> gotMessage -> changedService
- 			}
-@@ -519,7 +609,11 @@
+ 				if (m_running) {
+ 					data.state=0;
+ 					messages.send(Message(Message::startChannel, chan));
+@@ -548,7 +637,11 @@ void eEPGCache::sectionRead(const __u8 *data, int source, channel_data *channel)
  		if ( TM == 3599 )
  			goto next;
  
@@ -8475,9 +8474,9 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  			goto next;
  
  		if ( now <= (TM+duration) || TM == 3599 /*NVOD Service*/ )  // old events should not be cached
-@@ -954,6 +1048,9 @@
- {
+@@ -984,6 +1077,9 @@ void eEPGCache::thread()
  	hasStarted();
+ 	m_running=1;
  	nice(4);
 +#ifdef __sh__ 
 +	InitEPGBlock (); 
@@ -8485,7 +8484,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	load();
  	cleanLoop();
  	runLoop();
-@@ -962,10 +1059,27 @@
+@@ -993,13 +1089,24 @@ void eEPGCache::thread()
  
  void eEPGCache::load()
  {
@@ -8495,91 +8494,24 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +	if(getshmentry(shm, "epg_days=", epg_days, 3) == 1)
 +		m_epg_days = atoi(epg_days);
 +
-+	if(getshmentry(shm, "epg_file=", epg_file, 256) != 1)
-+		strcpy(epg_file, "/hdd/epg.dat");
-+
-+	FILE *f = fopen(epg_file, "r");
-+#else
- 	FILE *f = fopen("/hdd/epg.dat", "r");
++	if(getshmentry(shm, "epg_file=", m_filename, 256) != 1)
++		strcpy(m_filename, "/hdd/epg.dat");
 +#endif
+ 	FILE *f = fopen(m_filename, "r");
  	if (f)
  	{
+-		unlink(m_filename);
 +#ifdef __sh__
 +		if(checkshmentry(shm, "not_del_epg") != 1)
-+			unlink(epg_file);
-+#else
- 		unlink("/hdd/epg.dat");
 +#endif
++			unlink(m_filename);
  		int size=0;
  		int cnt=0;
- #if 0
-@@ -1027,7 +1141,11 @@
- 					eventDB[key]=std::pair<eventMap,timeMap>(evMap,tmMap);
- 				}
- 				eventData::load(f);
-+#ifdef __sh__
-+				eDebug("[EPGC] %d events read from %s", cnt, epg_file);
-+#else
- 				eDebug("[EPGC] %d events read from /hdd/epg.dat", cnt);
-+#endif
- #ifdef ENABLE_PRIVATE_EPG
- 				char text2[11];
- 				fread( text2, 11, 1, f);
-@@ -1077,7 +1195,20 @@
- {
- 	struct statfs s;
- 	off64_t tmp;
-+#ifdef __sh__
-+	char epg_path[256]="";
-+	strcpy(epg_path, epg_file);
-+
-+	char *lpos=strrchr(epg_path, '/');
-+	if(lpos != '\0')
-+		*++lpos='\0';
-+	else
-+		strcpy(epg_path, ".");
-+
-+	if (statfs(epg_path, &s)<0)
-+#else
- 	if (statfs("/hdd", &s)<0)
-+#endif
- 		tmp=0;
- 	else
- 	{
-@@ -1086,7 +1217,7 @@
- 	}
- 
- 	// prevent writes to builtin flash
--	if ( tmp < 1024*1024*50 ) // storage size < 50MB
-+	if ( tmp < 1024*1024*25 ) // storage size < 50MB // for Duckboxes changed to < 25MB even to use UFS912 Flash for EPG
- 		return;
- 
- 	// check for enough free space on storage
-@@ -1095,7 +1226,11 @@
- 	if ( tmp < (eventData::CacheSize*12)/10 ) // 20% overhead
- 		return;
- 
-+#ifdef __sh__
-+	FILE *f = fopen(epg_file, "w");
-+#else
- 	FILE *f = fopen("/hdd/epg.dat", "w");
-+#endif
- 	int cnt=0;
- 	if ( f )
- 	{
-@@ -1120,7 +1255,11 @@
- 				++cnt;
- 			}
- 		}
-+#ifdef __sh__
-+		eDebug("[EPGC] %d events written to %s", cnt, epg_file);
-+#else
- 		eDebug("[EPGC] %d events written to /hdd/epg.dat", cnt);
-+#endif
- 		eventData::save(f);
- #ifdef ENABLE_PRIVATE_EPG
- 		const char* text3 = "PRIVATE_EPG";
-@@ -1203,11 +1342,23 @@
+-
+ 		{
+ 			unsigned int magic=0;
+ 			fread( &magic, sizeof(int), 1, f);
+@@ -1220,11 +1327,23 @@ bool eEPGCache::channel_data::finishEPG()
  			seenSections[i].clear();
  			calcedSections[i].clear();
  		}
@@ -8603,7 +8535,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		return true;
  	}
  	return false;
-@@ -1223,6 +1374,12 @@
+@@ -1240,6 +1359,12 @@ void eEPGCache::channel_data::startEPG()
  		seenSections[i].clear();
  		calcedSections[i].clear();
  	}
@@ -8616,7 +8548,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  
  	eDVBSectionFilterMask mask;
  	memset(&mask, 0, sizeof(mask));
-@@ -1249,6 +1406,27 @@
+@@ -1266,6 +1391,27 @@ void eEPGCache::channel_data::startEPG()
  	mask.mask[1] = 0;
  	m_MHWTimeoutet=false;
  #endif
@@ -8644,7 +8576,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  
  	mask.pid = 0x12;
  	mask.flags = eDVBSectionFilterMask::rfCRC;
-@@ -1306,6 +1484,21 @@
+@@ -1323,6 +1469,21 @@ void eEPGCache::channel_data::abortNonAvail()
  			m_ScheduleOtherReader->stop();
  			m_ScheduleOtherConn=0;
  		}
@@ -8666,7 +8598,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		if ( !(haveData&VIASAT) && (isRunning&VIASAT) )
  		{
  			eDebug("[EPGC] abort non avail viasat reading");
-@@ -1336,6 +1529,12 @@
+@@ -1353,6 +1514,12 @@ void eEPGCache::channel_data::abortNonAvail()
  				seenSections[i].clear();
  				calcedSections[i].clear();
  			}
@@ -8679,7 +8611,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		}
  	}
  	++state;
-@@ -1365,6 +1564,12 @@
+@@ -1382,6 +1549,12 @@ void eEPGCache::channel_data::abortEPG()
  		seenSections[i].clear();
  		calcedSections[i].clear();
  	}
@@ -8692,7 +8624,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	abortTimer->stop();
  	zapTimer->stop();
  	if (isRunning)
-@@ -1388,6 +1593,19 @@
+@@ -1405,6 +1578,19 @@ void eEPGCache::channel_data::abortEPG()
  			m_ScheduleOtherReader->stop();
  			m_ScheduleOtherConn=0;
  		}
@@ -8712,7 +8644,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		if (isRunning & VIASAT)
  		{
  			isRunning &= ~VIASAT;
-@@ -1414,7 +1632,51 @@
+@@ -1431,7 +1617,51 @@ void eEPGCache::channel_data::abortEPG()
  	pthread_mutex_unlock(&channel_active);
  }
  
@@ -8764,7 +8696,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  void eEPGCache::channel_data::readDataViasat( const __u8 *data)
  {
  	__u8 *d=0;
-@@ -1428,6 +1690,47 @@
+@@ -1445,6 +1675,47 @@ void eEPGCache::channel_data::readData( const __u8 *data)
  	int source;
  	int map;
  	iDVBSectionReader *reader=NULL;
@@ -8812,7 +8744,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  	switch(data[0])
  	{
  		case 0x4E ... 0x4F:
-@@ -1490,6 +1793,17 @@
+@@ -1507,6 +1778,17 @@ void eEPGCache::channel_data::readData( const __u8 *data)
  	else
  	{
  		eit_t *eit = (eit_t*) data;
@@ -8830,7 +8762,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  		__u32 sectionNo = data[0] << 24;
  		sectionNo |= data[3] << 16;
  		sectionNo |= data[4] << 8;
-@@ -1517,8 +1831,151 @@
+@@ -1534,8 +1816,151 @@ void eEPGCache::channel_data::readData( const __u8 *data)
  			cache->sectionRead(data, source, this);
  		}
  	}
@@ -8844,8 +8776,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +{
 +	if(enable_freesat)
 +		initMap(maxSection);
- }
- 
++}
++
 +void freesatEITSubtableStatus::initMap(__u8 maxSection)
 +{
 +	if(enable_freesat)
@@ -8886,8 +8818,8 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
 +		}
 +		return true; // All segments ok
 +	}
-+}
-+
+ }
+ 
 +void freesatEITSubtableStatus::seen(__u8 sectionNo, __u8 maxSegmentSection)
 +{
 +	if(enable_freesat)
@@ -8982,7 +8914,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  RESULT eEPGCache::lookupEventTime(const eServiceReference &service, time_t t, const eventData *&result, int direction)
  // if t == -1 we search the current event...
  {
-@@ -2243,11 +2700,22 @@
+@@ -2260,11 +2685,22 @@ PyObject *eEPGCache::search(ePyObject arg)
  						{
  							__u8 *data = evData->EITdata;
  							int tmp = evData->ByteSize-10;
@@ -9005,7 +8937,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  								descriptorMap::iterator it =
  									eventData::descriptors.find(crc);
  								if (it != eventData::descriptors.end())
-@@ -2425,12 +2893,23 @@
+@@ -2442,12 +2878,23 @@ PyObject *eEPGCache::search(ePyObject arg)
  					continue;
  				__u8 *data = evit->second->EITdata;
  				int tmp = evit->second->ByteSize-10;
@@ -9029,7 +8961,6 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.cpp enigma2-nightly/lib/dvb/e
  					for ( int i=0; i <= descridx; ++i)
  					{
  						if (descr[i] == crc32)  // found...
-
 diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epgcache.h
 --- enigma2-nightly.org/lib/dvb/epgcache.h	2010-04-17 09:03:20.000000000 +0200
 +++ enigma2-nightly/lib/dvb/epgcache.h	2010-04-13 01:59:02.000000000 +0200
@@ -9046,7 +8977,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  
  #ifndef SWIG
  
-@@ -165,6 +170,24 @@
+@@ -165,6 +170,24 @@ public:
  	}
  };
  #endif
@@ -9071,7 +9002,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  
  class eEPGCache: public eMainloop, private eThread, public Object
  {
-@@ -182,6 +205,14 @@
+@@ -183,6 +206,14 @@ class eEPGCache: public eMainloop, private eThread, public Object
  		ePtr<eConnection> m_stateChangedConn, m_NowNextConn, m_ScheduleConn, m_ScheduleOtherConn, m_ViasatConn;
  		ePtr<iDVBSectionReader> m_NowNextReader, m_ScheduleReader, m_ScheduleOtherReader, m_ViasatReader;
  		tidMap seenSections[4], calcedSections[4];
@@ -9086,7 +9017,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  #ifdef ENABLE_PRIVATE_EPG
  		ePtr<eTimer> startPrivateTimer;
  		int m_PrevVersion;
-@@ -232,6 +263,11 @@
+@@ -233,6 +264,11 @@ public:
  #ifdef ENABLE_MHW_EPG
  	,MHW=8
  #endif
@@ -9098,9 +9029,9 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  	,VIASAT=16
  	};
  	struct Message
-@@ -291,7 +327,9 @@
- 
- // called from epgcache thread
+@@ -294,7 +330,9 @@ private:
+ 	int m_running;
+ 	char m_filename[1024];
  	void save();
 +#ifndef __sh__
  	void load();
@@ -9108,7 +9039,7 @@ diff -r -u -N enigma2-nightly.org/lib/dvb/epgcache.h enigma2-nightly/lib/dvb/epg
  #ifdef ENABLE_PRIVATE_EPG
  	void privateSectionRead(const uniqueEPGKey &, const __u8 *);
  #endif
-@@ -312,8 +350,24 @@
+@@ -315,8 +353,24 @@ private:
  	eEPGCache();
  	~eEPGCache();
  #endif // SWIG

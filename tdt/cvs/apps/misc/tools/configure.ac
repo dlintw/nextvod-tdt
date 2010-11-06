@@ -25,4 +25,5 @@ tfd2mtd/Makefile
 gitVCInfo/Makefile
 hotplug/Makefile
 libcoolstream/Makefile
+vfdctl/Makefile
 ])

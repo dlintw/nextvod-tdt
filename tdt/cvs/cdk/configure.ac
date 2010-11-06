@@ -953,72 +953,72 @@ ${srcdir}/rules-archive.pl ${srcdir}/rules-archive > Makefile-archive
 
 AC_MSG_RESULT([
 summary:
-----------------------------------------
-target cpu:	       $CPU_MODEL
-linux kernel:	       ${KERNELVERSION%.*}
-kernelversion:	       $KERNELVERSION
-localversion:          $KERNELSTMLABEL
-STLinux 2.2:	       $enable_stm22
-STLinux 2.3:	       $enable_stm23
-STLinux 2.3_Havana:    $enable_havana
-STLinux 2.4:	       $enable_stm24
-Patchlevel P0040:      $enable_p0040
-Patchlevel P0041:      $enable_p0041
-Patchlevel P0119:      $enable_p0119
-Patchlevel P0123:      $enable_p0123
-Patchlevel P0201:      $enable_p0201
-vdr VDR 1.7.11:        $enable_vdr1711
-flash rules:	       $enable_flashrules
-ccache:		       $enable_ccache
-target prefix:	       $targetprefix
-boot prefix:	       $bootprefix
-host prefix:	       $hostprefix
-cross prefix:	       $crossprefix
-build prefix:	       $buildprefix
-ipk packages prefix:   $ipkprefix
-root partition size:   $ROOT_PARTITION_SIZE
-data partition size:   $DATA_PARTITION_SIZE
-default locale	       $DEFAULTLOCALE
-serversupport:	       $serversupport
-checkImage:	       $CHECKIMAGE_BEHAVIOR
-target apps directory: $appsdir
-boot directory:	       $bootdir
-driver directory:      $driverdir
-host apps directory:   $hostappsdir
-logo directory:	       $logosdir
-customization directory: $customizationsdir
-ucode directory:       $ucodesdir
-GNU server:	       $gnuserver
-default server:	       $defaultserver
-update http prefix:    $updatehttpprefix
-stock directory:       $stockdir
-ipkg build directory:  $ipkgbuilddir
-Fortis/hdbox stuff:    $enable_fortis_hdbox
-octagon1008 stuff:     $enable_octagon1008
-topfield stuff:	       $enable_tf7700
-spider-box hl101 stuff:	$enable_hl101
-edision argus vip1 v2 stuff:	$enable_vip1_v2
-edision argus vip2 v1 stuff:	$enable_vip2_v1
-spark box stuff:       $enable_spark
-ufs910 stuff:	       $enable_ufs910
-ufs910 flash:          $enable_flash_ufs910
-ufs912 stuff:	       $enable_ufs912
-ufs922 stuff:	       $enable_ufs922
-cuberevo stuff:	       $enable_cuberevo
-cuberevo mini stuff:   $enable_cuberevo_mini
-cuberevo mini 2 stuff: $enable_cuberevo_mini2
-cuberevo mini fta stuff: $enable_cuberevo_mini_fta
-cuberevo 250hd stuff:  $enable_cuberevo_250hd
-cuberevo 2000hd stuff: $enable_cuberevo_2000hd
-cuberevo 9500hd stuff: $enable_cuberevo_9500hd
-homecast 5101 stuff:   $enable_homecast5101
-XFS support for IDE:   $enable_xfs
-NFS server:            $enable_nfsserver
-Samba Clients:         $enable_cifs
-NTFS support for IDE:  $enable_ntfs
-sg3 utils:             $enable_sg3
-osd910 support:        $enable_osd910
-DEBUG:                 $enable_debug
+-------------------------------------------------------------------------------
+target cpu:                  $CPU_MODEL
+linux kernel:                ${KERNELVERSION%.*}
+kernelversion:               $KERNELVERSION
+localversion:                $KERNELSTMLABEL
+STLinux 2.2:                 $enable_stm22
+STLinux 2.3:                 $enable_stm23
+STLinux 2.3_Havana:          $enable_havana
+STLinux 2.4:                 $enable_stm24
+Patchlevel P0040:            $enable_p0040
+Patchlevel P0041:            $enable_p0041
+Patchlevel P0119:            $enable_p0119
+Patchlevel P0123:            $enable_p0123
+Patchlevel P0201:            $enable_p0201
+vdr VDR 1.7.11:              $enable_vdr1711
+flash rules:                 $enable_flashrules
+ccache:                      $enable_ccache
+target prefix:               $targetprefix
+boot prefix:                 $bootprefix
+host prefix:                 $hostprefix
+cross prefix:                $crossprefix
+build prefix:                $buildprefix
+ipk packages prefix:         $ipkprefix
+root partition size:         $ROOT_PARTITION_SIZE
+data partition size:         $DATA_PARTITION_SIZE
+default local:               $DEFAULTLOCALE
+serversupport:               $serversupport
+checkImage:                  $CHECKIMAGE_BEHAVIOR
+target apps directory:       $appsdir
+boot directory:              $bootdir
+driver directory:            $driverdir
+host apps directory:         $hostappsdir
+logo directory:              $logosdir
+customization directory:     $customizationsdir
+ucode directory:             $ucodesdir
+GNU server:                  $gnuserver
+default server:              $defaultserver
+update http prefix:          $updatehttpprefix
+stock directory:             $stockdir
+ipkg build directory:        $ipkgbuilddir
+Fortis/hdbox stuff:          $enable_fortis_hdbox
+octagon1008 stuff:           $enable_octagon1008
+topfield stuff:              $enable_tf7700
+spider-box hl101 stuff:      $enable_hl101
+edision argus vip1 v2 stuff: $enable_vip1_v2
+edision argus vip2 v1 stuff: $enable_vip2_v1
+spark box stuff:             $enable_spark
+ufs910 stuff:                $enable_ufs910
+ufs910 flash:                $enable_flash_ufs910
+ufs912 stuff:                $enable_ufs912
+ufs922 stuff:                $enable_ufs922
+cuberevo stuff:              $enable_cuberevo
+cuberevo mini stuff:         $enable_cuberevo_mini
+cuberevo mini 2 stuff:       $enable_cuberevo_mini2
+cuberevo mini fta stuff:     $enable_cuberevo_mini_fta
+cuberevo 250hd stuff:        $enable_cuberevo_250hd
+cuberevo 2000hd stuff:       $enable_cuberevo_2000hd
+cuberevo 9500hd stuff:       $enable_cuberevo_9500hd
+homecast 5101 stuff:         $enable_homecast5101
+XFS support for IDE:         $enable_xfs
+NFS server:                  $enable_nfsserver
+Samba Clients:               $enable_cifs
+NTFS support for IDE:        $enable_ntfs
+sg3 utils:                   $enable_sg3
+osd910 support:              $enable_osd910
+DEBUG:                       $enable_debug
 ])
 
 if test "$dircheck" = "fail"; then

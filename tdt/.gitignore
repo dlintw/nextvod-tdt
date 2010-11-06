@@ -38,6 +38,7 @@ cvs/apps/misc/tools/devinit/Makefile
 cvs/apps/misc/tools/devinit/devinit
 cvs/apps/misc/tools/evremote2/Makefile
 cvs/apps/misc/tools/evremote2/evremote2
+cvs/apps/misc/tools/evremote2/evtest
 cvs/apps/misc/tools/fp_control/Makefile
 cvs/apps/misc/tools/fp_control/fp_control
 cvs/apps/misc/tools/gitVCInfo/Makefile

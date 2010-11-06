@@ -1,5 +1,5 @@
-#ifndef __ufs922__
-#define __ufs922__
+#ifndef __hdbox__
+#define __hdbox__
 
 struct set_brightness_s {
 	int level;
