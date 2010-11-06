@@ -129,9 +129,11 @@ static int pInit(Context_t* context, int argc, char* argv[])
        private->toggleFeedback = 0;
 
     if (argc >= 3)
-       private->disableFeedback = atoi(argv[1]);
+       private->disableFeedback = atoi(argv[2]);
     else
        private->disableFeedback = 0;
+         
+    printf("toggle %d, disable %d\n", private->toggleFeedback, private->disableFeedback);
                			
     if (private->toggleFeedback)
     {
@@ -154,11 +156,12 @@ static int pRead(Context_t* context)
     eKeyType        vKeyType = RemoteControl;
     int             vCurrentCode = -1;
 
-    printf("%s >\n", __func__);
+/*    printf("%s >\n", __func__); */
 
     while (1)
     {
-       read (context->fd, vData, cUFS922CommandLen);
+       int i;
+       int n = read (context->fd, vData, cUFS922CommandLen);
 
        if(vData[0] == 0xD2)
            vKeyType = RemoteControl;
@@ -175,13 +178,13 @@ static int pRead(Context_t* context)
          vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
        }
        if(vCurrentCode != 0) {
-         unsigned int vNextKey = vCurrentCode & 0x80;
+         unsigned int vNextKey = vData[4];
          vCurrentCode += (vNextKey<<16);
          break;
        }
     }
     
-    printf("%s <\n", __func__);
+/*    printf("%s <\n", __func__);*/
     
     return vCurrentCode;
 }
