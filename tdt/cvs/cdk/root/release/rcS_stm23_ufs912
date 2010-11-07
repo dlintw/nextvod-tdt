@@ -111,14 +111,20 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
 
-   if [ -e /etc/network/interfaces ]; then
-      ip addr flush eth0
-      /etc/init.d/networking stop
-      TEST=$(grep -c 'dhcp' /etc/network/interfaces)
-      if [ "$(TEST)" -eq "1" ]; then
-         /etc/init.d/udhcpc start
-      fi
-      /etc/init.d/networking start
+   NFS=$(grep -c 'nfs' /proc/cmdline)
+   if [ "$NFS" -eq "1" ]; then 
+      echo "Booting from nfs, don't set network" 
+   else 
+      if [ -e /etc/network/interfaces ]; then 
+	 ip addr flush eth0 
+	 /etc/init.d/networking stop 
+	 TEST=$(grep -c 'dhcp' /etc/network/interfaces) 
+	 if [ "$(TEST)" -eq "1" ]; then 
+	    echo dhcp
+            /etc/init.d/udhcpc start 
+	 fi 
+	 /etc/init.d/networking start 
+      fi 
    fi
 
    until false
