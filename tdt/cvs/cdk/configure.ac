@@ -816,6 +816,8 @@ TUXBOX_RULES_MAKE(libdvdcss)
 TUXBOX_RULES_MAKE(libdvdnav)
 TUXBOX_RULES_MAKE(libdvdread)
 TUXBOX_RULES_MAKE(pyopenssl)
+TUXBOX_RULES_MAKE(ffmpeg)
+TUXBOX_RULES_MAKE(libass)
 
 #
 # GUI

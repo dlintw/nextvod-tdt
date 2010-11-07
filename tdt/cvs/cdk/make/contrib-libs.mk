@@ -1265,3 +1265,78 @@ $(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/OpenSSL: \
 	rm $*/usr/lib/python2.6/site-packages/OpenSSL/test && \
 	touch $@ && \
 	@TUXBOX_CUSTOMIZE@
+
+#
+# ffmpeg
+#
+$(DEPDIR)/ffmpeg.do_prepare: bootstrap libass @DEPENDS_ffmpeg@
+	@PREPARE_ffmpeg@
+	touch $@
+
+#$(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
+#	export PATH=$(hostprefix)/bin:$(PATH) && \
+#	cd @DIR_ffmpeg@ && \
+#	$(BUILDENV) \
+#	./configure \
+#		--enable-parsers --disable-decoders --disable-encoders --enable-demuxers \
+#		--disable-muxers --disable-ffplay --disable-ffmpeg --disable-ffserver \
+#		--disable-devices \
+#		--disable-protocols --enable-protocol=file --enable-bsfs \
+#		--disable-mpegaudio-hp --disable-zlib --enable-bzlib \
+#		--disable-static --enable-shared \
+#		--enable-cross-compile \
+#		--cross-prefix=$(target)- \
+#		--target-os=linux \
+#		--arch=sh4 \
+#		--extra-cflags=-fno-strict-aliasing \
+#		--enable-stripping \
+#		--prefix=/usr
+#	touch $@
+
+$(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
+	cd @DIR_ffmpeg@ && \
+	$(BUILDENV) \
+	./configure \
+		--disable-static --enable-shared \
+		--enable-cross-compile \
+		--disable-decoder=vorbis \
+		--cross-prefix=$(target)- \
+		--target-os=linux \
+		--arch=sh4 \
+		--extra-cflags=-fno-strict-aliasing \
+		--enable-stripping \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-ffmpeg $(DEPDIR)/std-ffmpeg $(DEPDIR)/max-ffmpeg \
+$(DEPDIR)/ffmpeg: \
+$(DEPDIR)/%ffmpeg: $(DEPDIR)/ffmpeg.do_compile
+	cd @DIR_ffmpeg@ && \
+		@INSTALL_ffmpeg@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# libass
+#
+$(DEPDIR)/libass.do_prepare: bootstrap freetype @DEPENDS_libass@
+	@PREPARE_libass@
+	touch $@
+
+$(DEPDIR)/libass.do_compile: $(DEPDIR)/libass.do_prepare
+	cd @DIR_libass@ && \
+	$(BUILDENV) \
+	./configure \
+                --host=$(target) \
+                --disable-fontconfig \
+		        --prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-libass $(DEPDIR)/std-libass $(DEPDIR)/max-libass \
+$(DEPDIR)/libass: \
+$(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
+	cd @DIR_libass@ && \
+		@INSTALL_libass@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+

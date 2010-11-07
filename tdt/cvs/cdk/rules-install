@@ -81,6 +81,9 @@ a52dec;make:install:DESTDIR=TARGETS
 libdvdcss;make:install:DESTDIR=TARGETS
 libdvdnav;make:install:DESTDIR=TARGETS
 libdvdread;make:install:DESTDIR=TARGETS
+ffmpeg;make:install:DESTDIR=TARGETS
+libass;make:install:DESTDIR=TARGETS
+
 #
 # net apps
 #
