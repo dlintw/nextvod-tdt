@@ -5591,7 +5591,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins
  	__init__.py
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins/SystemPlugins/SoftwareManager/SoftwareTools.py enigma2-nightly/lib/python/Plugins/SystemPlugins/SoftwareManager/SoftwareTools.py
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/SoftwareManager/SoftwareTools.py	2010-11-05 21:35:17.156673710 +0100
-+++ enigma2-nightly/lib/python/Plugins/SystemPlugins/SoftwareManager/SoftwareTools.py	2010-11-05 19:05:45.000000000 +0100
++++ enigma2-nightly/lib/python/Plugins/SystemPlugins/SoftwareManager/SoftwareTools.py	2010-11-07 14:54:24.503068000 +0100
 @@ -1,5 +1,10 @@
  # -*- coding: iso-8859-1 -*-
 -from enigma import eConsoleAppContainer,eTPM
@@ -5604,18 +5604,23 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins
  from Components.Console import Console
  from Components.About import about
  from Components.DreamInfoHandler import DreamInfoHandler
-@@ -9,49 +14,51 @@
+@@ -9,49 +14,52 @@
  from Components.Network import iNetwork
  from Tools.Directories import pathExists, fileExists, resolveFilename, SCOPE_METADIR
  from Tools.HardwareInfo import HardwareInfo
 -import sha
 -
--from time import time
++#--->
++#- import sha
++#---<
+ from time import time
 -rootkey = ['\x9f', '|', '\xe4', 'G', '\xc9', '\xb4', '\xf4', '#', '&', '\xce', '\xb3', '\xfe', '\xda', '\xc9', 'U', '`', '\xd8', '\x8c', 's', 'o', '\x90', '\x9b', '\\', 'b', '\xc0', '\x89', '\xd1', '\x8c', '\x9e', 'J', 'T', '\xc5', 'X', '\xa1', '\xb8', '\x13', '5', 'E', '\x02', '\xc9', '\xb2', '\xe6', 't', '\x89', '\xde', '\xcd', '\x9d', '\x11', '\xdd', '\xc7', '\xf4', '\xe4', '\xe4', '\xbc', '\xdb', '\x9c', '\xea', '}', '\xad', '\xda', 't', 'r', '\x9b', '\xdc', '\xbc', '\x18', '3', '\xe7', '\xaf', '|', '\xae', '\x0c', '\xe3', '\xb5', '\x84', '\x8d', '\r', '\x8d', '\x9d', '2', '\xd0', '\xce', '\xd5', 'q', '\t', '\x84', 'c', '\xa8', ')', '\x99', '\xdc', '<', '"', 'x', '\xe8', '\x87', '\x8f', '\x02', ';', 'S', 'm', '\xd5', '\xf0', '\xa3', '_', '\xb7', 'T', '\t', '\xde', '\xa7', '\xf1', '\xc9', '\xae', '\x8a', '\xd7', '\xd2', '\xcf', '\xb2', '.', '\x13', '\xfb', '\xac', 'j', '\xdf', '\xb1', '\x1d', ':', '?']
 -
 -def bin2long(s):
 -	return reduce( lambda x,y:(x<<8L)+y, map(ord, s))
--
++#--->
++#- rootkey = ['\x9f', '|', '\xe4', 'G', '\xc9', '\xb4', '\xf4', '#', '&', '\xce', '\xb3', '\xfe', '\xda', '\xc9', 'U', '`', '\xd8', '\x8c', 's', 'o', '\x90', '\x9b', '\\', 'b', '\xc0', '\x89', '\xd1', '\x8c', '\x9e', 'J', 'T', '\xc5', 'X', '\xa1', '\xb8', '\x13', '5', 'E', '\x02', '\xc9', '\xb2', '\xe6', 't', '\x89', '\xde', '\xcd', '\x9d', '\x11', '\xdd', '\xc7', '\xf4', '\xe4', '\xe4', '\xbc', '\xdb', '\x9c', '\xea', '}', '\xad', '\xda', 't', 'r', '\x9b', '\xdc', '\xbc', '\x18', '3', '\xe7', '\xaf', '|', '\xae', '\x0c', '\xe3', '\xb5', '\x84', '\x8d', '\r', '\x8d', '\x9d', '2', '\xd0', '\xce', '\xd5', 'q', '\t', '\x84', 'c', '\xa8', ')', '\x99', '\xdc', '<', '"', 'x', '\xe8', '\x87', '\x8f', '\x02', ';', 'S', 'm', '\xd5', '\xf0', '\xa3', '_', '\xb7', 'T', '\t', '\xde', '\xa7', '\xf1', '\xc9', '\xae', '\x8a', '\xd7', '\xd2', '\xcf', '\xb2', '.', '\x13', '\xfb', '\xac', 'j', '\xdf', '\xb1', '\x1d', ':', '?']
+ 
 -def long2bin(l):
 -	res = ""
 -	for byte in range(128):
@@ -5651,12 +5656,6 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins
 -		return buf
 -	except:
 -		return None
-+#--->
-+#- import sha
-+#- 
-+#- from time import time
-+#- rootkey = ['\x9f', '|', '\xe4', 'G', '\xc9', '\xb4', '\xf4', '#', '&', '\xce', '\xb3', '\xfe', '\xda', '\xc9', 'U', '`', '\xd8', '\x8c', 's', 'o', '\x90', '\x9b', '\\', 'b', '\xc0', '\x89', '\xd1', '\x8c', '\x9e', 'J', 'T', '\xc5', 'X', '\xa1', '\xb8', '\x13', '5', 'E', '\x02', '\xc9', '\xb2', '\xe6', 't', '\x89', '\xde', '\xcd', '\x9d', '\x11', '\xdd', '\xc7', '\xf4', '\xe4', '\xe4', '\xbc', '\xdb', '\x9c', '\xea', '}', '\xad', '\xda', 't', 'r', '\x9b', '\xdc', '\xbc', '\x18', '3', '\xe7', '\xaf', '|', '\xae', '\x0c', '\xe3', '\xb5', '\x84', '\x8d', '\r', '\x8d', '\x9d', '2', '\xd0', '\xce', '\xd5', 'q', '\t', '\x84', 'c', '\xa8', ')', '\x99', '\xdc', '<', '"', 'x', '\xe8', '\x87', '\x8f', '\x02', ';', 'S', 'm', '\xd5', '\xf0', '\xa3', '_', '\xb7', 'T', '\t', '\xde', '\xa7', '\xf1', '\xc9', '\xae', '\x8a', '\xd7', '\xd2', '\xcf', '\xb2', '.', '\x13', '\xfb', '\xac', 'j', '\xdf', '\xb1', '\x1d', ':', '?']
-+
 +#- def bin2long(s):
 +#- 	return reduce( lambda x,y:(x<<8L)+y, map(ord, s))
 +#- 
@@ -5699,7 +5698,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins
  
  class SoftwareTools(DreamInfoHandler):
  	lastDownloadDate = None
-@@ -101,26 +108,31 @@
+@@ -101,26 +109,31 @@
  
  	def getUpdates(self, callback = None):
  		if self.lastDownloadDate is None:
@@ -5746,12 +5745,12 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins
 +#- 			if self.hardware_info.device_name == "dm7025" or result[80:88] == rnd:
 +#---<
 +#+++>
-+			if True;
++			if True:
 +#+++<
  				if self.NetworkConnectionAvailable == True:
  					self.lastDownloadDate = time()
  					if self.list_updating is False and callback is None:
-@@ -159,26 +171,31 @@
+@@ -159,26 +172,31 @@
  					self.NotifierCallback = callback
  			else:
  				if self.list_updating and callback is not None:
@@ -5798,7 +5797,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins
 +#- 					if self.hardware_info.device_name == "dm7025" or result[80:88] == rnd:
 +#---<
 +#+++>
-+				if True:
++					if True:
 +#+++<
  						self.NotifierCallback = callback
  						self.startIpkgListAvailable()
@@ -6982,6 +6981,43 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Screens
  				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
  		
  	def resetCounter(self):
+diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Tools/KeyBindings.py enigma2-nightly/lib/python/Tools/KeyBindings.py
+--- enigma2-nightly.org/lib/python/Tools/KeyBindings.py	2010-11-05 21:35:17.167597933 +0100
++++ enigma2-nightly/lib/python/Tools/KeyBindings.py	2010-11-07 14:50:36.883555084 +0100
+@@ -44,7 +44,15 @@
+ 		KEYIDS["KEY_9"]: ("9",),
+ 		KEYIDS["KEY_EXIT"]: ("EXIT",),
+ 		KEYIDS["KEY_STOP"]: ("TV", "SHIFT"),
+-		KEYIDS["KEY_RECORD"]: ("RECORD",)
++#--->
++#- 		KEYIDS["KEY_RECORD"]: ("RECORD",)
++#---<
++#+++>
++		KEYIDS["KEY_RECORD"]: ("RECORD",),
++		KEYIDS["KEY_EPG"]: ("EPG",),
++		KEYIDS["KEY_REWIND"]: ("REWIND",),
++		KEYIDS["KEY_FASTFORWARD"]: ("FASTFORWARD",)
++#+++<
+ 	},
+ 	{
+ 		KEYIDS["BTN_0"]: ("UP", "fp"),
+@@ -86,7 +94,15 @@
+ 		KEYIDS["KEY_9"]: ("9",),
+ 		KEYIDS["KEY_EXIT"]: ("EXIT",),
+ 		KEYIDS["KEY_STOP"]: ("TV", "SHIFT"),
+-		KEYIDS["KEY_RECORD"]: ("RADIO", "SHIFT")
++#--->
++#- 		KEYIDS["KEY_RECORD"]: ("RECORD", "SHIFT")
++#---<
++#+++>
++		KEYIDS["KEY_RECORD"]: ("RECORD", "SHIFT"),
++		KEYIDS["KEY_EPG"]: ("EPG",),
++		KEYIDS["KEY_REWIND"]: ("REWIND",),
++		KEYIDS["KEY_FASTFORWARD"]: ("FASTFORWARD",)
++#+++<
+ 	}
+ ]
+ 
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/Makefile.am enigma2-nightly/lib/service/Makefile.am
 --- enigma2-nightly.org/lib/service/Makefile.am	2010-11-05 21:35:17.167597933 +0100
 +++ enigma2-nightly/lib/service/Makefile.am	2010-11-05 18:34:52.000000000 +0100
