@@ -107,6 +107,8 @@ release_ufs912:
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf 
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release/boot/audio.elf
 
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs912.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+
 #	install autofs
 	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
