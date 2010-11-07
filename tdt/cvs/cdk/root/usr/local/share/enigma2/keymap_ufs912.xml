@@ -296,6 +296,10 @@
 	<map context="MediaPlayerCueSheetActions">
 		<key id="KEY_0" mapto="toggleMark" flags="m" />
 	</map>
+
+	<map context="VirtualKeyboardActions">
+		<key id="KEY_TEXT" mapto="showVirtualKeyboard" flags="m" />
+	</map>
 	
 	<map context="InfobarTeletextActions">
 		<key id="KEY_TEXT" mapto="startTeletext" flags="m" />
