@@ -384,7 +384,8 @@ static void ASSThread(Context_t *context) {
                 if (change != 0)
                     releaseRegions();
 
-                while ((img) && (change != 0))
+                while (context && context->playback && context->playback->isPlaying &&
+                       (img) && (change != 0))
                 {
                     WriterFBCallData_t out;
                     time_t now = time(NULL);
@@ -424,7 +425,8 @@ static void ASSThread(Context_t *context) {
                                     
                         if (shareFramebuffer)
                         {
-                            writer->writeData(&out);
+                            if(context && context->playback && context->playback->isPlaying)
+                                writer->writeData(&out);
                         }
                         else
                         {
@@ -452,8 +454,9 @@ static void ASSThread(Context_t *context) {
                             out.u.gfx.Height = img->h;
                             out.u.gfx.x      = img->dst_x;
                             out.u.gfx.y      = img->dst_y;
-
-                            context->output->subtitle->Write(context, &out);
+                            if(context && context->playback && context->playback->isPlaying &&
+                               context->output && context->output->subtitle)
+                                context->output->subtitle->Write(context, &out);
                         }
                     }
 
