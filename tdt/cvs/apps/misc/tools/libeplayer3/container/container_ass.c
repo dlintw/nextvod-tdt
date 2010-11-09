@@ -531,6 +531,8 @@ int container_ass_init(Context_t *context)
               screen_width, screen_height, shareFramebuffer, framebufferFD);
 
     ass_set_frame_size(ass_renderer, screen_width, screen_height);
+    ass_set_margins(ass_renderer, (int)(0.03 * screen_height), (int)(0.03 * screen_height) ,
+                                  (int)(0.03 * screen_width ), (int)(0.03 * screen_width )  );
     ass_set_use_margins(ass_renderer, 0 );
     ass_set_font_scale(ass_renderer, ass_font_scale);
 
