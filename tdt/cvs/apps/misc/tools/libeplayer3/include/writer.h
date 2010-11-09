@@ -24,7 +24,7 @@ typedef struct {
     unsigned int           Width;
     unsigned int           Height;
     unsigned int           Stride;
-    int                    color;
+    unsigned int           color;
 
     unsigned int           x;       /* dst x ->given by ass */
     unsigned int           y;       /* dst y ->given by ass */
