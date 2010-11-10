@@ -1337,6 +1337,7 @@ $(DEPDIR)/libass: \
 $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 	cd @DIR_libass@ && \
 		@INSTALL_libass@
+	echo "libdir='$(targetprefix)/usr/lib'" >> $(targetprefix)/usr/lib/libass.la
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 

@@ -66,8 +66,8 @@ neutrino_LDADD = \
 	@LIBCS_LIBS@ \
 	-lgif \
 	-ljpeg \
-	-leplayer2 \
-	$(top_builddir)/lib/libtuxtxt/libtuxtxt.a \
+	-leplayer3 \
+    $(top_builddir)/lib/libtuxtxt/libtuxtxt.a \
 	-lrt -lpthread
 	
 #	@AVFORMAT_LIBS@

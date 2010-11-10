@@ -157,7 +157,6 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
  * outside this lib or with another function!
  */
         if ((ret) && (!isHTTP))
-
 	{
 	   //pause playback in case of timeshift
 	   //FIXME: no picture on tv
@@ -217,48 +216,63 @@ bool cPlayback::SetAPid(unsigned short pid, bool ac3)
 
 bool cPlayback::SetSpeed(int speed)
 {
-	printf("%s:%s playing %d\n", FILENAME, __FUNCTION__,playing);
+	printf("%s:%s playing %d speed %d\n", FILENAME, __FUNCTION__, playing, speed);
 
-	if(playing==false) return false;
-	if(player && player->playback) {
+	if(playing==false) 
+	   return false;
+	
+	if(player && player->playback) 
+	{
 		int result = 0;
-		int ratio=1;
-		switch(speed) {
-			case 2:
-				ratio = 2;
-				break;
-			case 3:
-				ratio = 4;
-				break;
-			case 4:
-				ratio = 8;
-				break;
-			case 5: //16x
-				ratio = 48;
-				break;
-			case 6: //32x
-				ratio = 96;
-				break;
-			case 7: //64x
-				ratio = 192;
-				break;
-			case 8: //128x
-				ratio = 384;
-				break;
-		}
-
+		
                 nPlaybackSpeed = speed;
 		
-		if(speed > 1){
-			result = player->playback->Command(player, PLAYBACK_FASTFORWARD, (void*)&ratio);
-		}else if(speed == 0 || speed == -1){
-			player->playback->Command(player, PLAYBACK_PAUSE, NULL);
-		}else{
+		if (speed > 1)
+		{
+                    /* direction switch ? */
+		    if (player->playback->BackWard)
+		    {
+		        int r = 0;
+                        result = player->playback->Command(player, PLAYBACK_FASTBACKWARD, (void*)&r);
+		    
+		        printf("result = %d\n", result);
+		    }
+                    result = player->playback->Command(player, PLAYBACK_FASTFORWARD, (void*)&speed);
+		} else
+		if (speed < 0)
+		{
+                    /* direction switch ? */
+		    if (player->playback->isForwarding)
+		    {
+                        result = player->playback->Command(player, PLAYBACK_CONTINUE, NULL);
+		    
+		        printf("result = %d\n", result);
+		    }
+		    
+		    result = player->playback->Command(player, PLAYBACK_FASTBACKWARD, (void*)&speed);
+		} 
+		else
+		if (speed == 0)
+		{
+		     /* konfetti: hmmm accessing the member isn't very proper */
+		     if ((player->playback->isForwarding) || (!player->playback->BackWard))
+                        player->playback->Command(player, PLAYBACK_PAUSE, NULL);
+                     else
+                     {
+		            int _speed = 0; /* means end of reverse playback */
+			    player->playback->Command(player, PLAYBACK_FASTBACKWARD, (void*)&_speed);
+		     }
+		} else
+		{
 			result = player->playback->Command(player, PLAYBACK_CONTINUE, NULL);
 		}
+		
 		if (result != 0)
-			return false;
-		}
+		{
+                        printf("returning false\n");
+    			return false;
+                }
+	}
 	return true;
 }
 
