@@ -18,7 +18,7 @@ INCLUDES = \
 	@FREETYPE_CFLAGS@ \
 	-I$(top_srcdir)/lib \
 	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/../misc/tools/libeplayer2/include
+	-I$(top_srcdir)/../misc/tools/libeplayer3/include
 
 noinst_LIBRARIES = libtimerlist.a libneutrino_gui.a libneutrino_gui2.a
 
