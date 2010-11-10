@@ -75,7 +75,7 @@ if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); 
 
 #define ASS_RING_SIZE 5
 
-#define ASS_FONT "/usr/local/share/fonts/neutrino.ttf"
+#define ASS_FONT "/usr/share/fonts/FreeSans.ttf"
 
 /* ***************************** */
 /* Types                         */
@@ -116,8 +116,8 @@ static unsigned char isContainerRunning = 0;
 static ASS_Library *ass_library;
 static ASS_Renderer *ass_renderer;
 
-static float ass_font_scale = 1.0;
-static float ass_line_spacing = 1.0;
+static float ass_font_scale = 0.7;
+static float ass_line_spacing = 0.7;
 
 static unsigned int screen_width     = 0;
 static unsigned int screen_height    = 0;
@@ -384,7 +384,8 @@ static void ASSThread(Context_t *context) {
                 if (change != 0)
                     releaseRegions();
 
-                while ((img) && (change != 0))
+                while (context && context->playback && context->playback->isPlaying &&
+                       (img) && (change != 0))
                 {
                     WriterFBCallData_t out;
                     time_t now = time(NULL);
@@ -424,7 +425,8 @@ static void ASSThread(Context_t *context) {
                                     
                         if (shareFramebuffer)
                         {
-                            writer->writeData(&out);
+                            if(context && context->playback && context->playback->isPlaying)
+                                writer->writeData(&out);
                         }
                         else
                         {
@@ -452,8 +454,9 @@ static void ASSThread(Context_t *context) {
                             out.u.gfx.Height = img->h;
                             out.u.gfx.x      = img->dst_x;
                             out.u.gfx.y      = img->dst_y;
-
-                            context->output->subtitle->Write(context, &out);
+                            if(context && context->playback && context->playback->isPlaying &&
+                               context->output && context->output->subtitle)
+                                context->output->subtitle->Write(context, &out);
                         }
                     }
 
@@ -528,6 +531,8 @@ int container_ass_init(Context_t *context)
               screen_width, screen_height, shareFramebuffer, framebufferFD);
 
     ass_set_frame_size(ass_renderer, screen_width, screen_height);
+    ass_set_margins(ass_renderer, (int)(0.03 * screen_height), (int)(0.03 * screen_height) ,
+                                  (int)(0.03 * screen_width ), (int)(0.03 * screen_width )  );
     ass_set_use_margins(ass_renderer, 0 );
     ass_set_font_scale(ass_renderer, ass_font_scale);
 
