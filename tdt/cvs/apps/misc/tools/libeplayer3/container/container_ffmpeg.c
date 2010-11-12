@@ -405,20 +405,7 @@ static void FFMPEGThread(Context_t *context) {
 
                     if (context->output->video->Write(context, &avOut) < 0) {
                         ffmpeg_err("writing data to video device failed\n");
-                    }
-
-                    if (subtitleTrack)
-                    {
-                        /* wake up the container */
-                        data.data      = NULL;
-                        data.len       = 0;
-                        data.extradata = NULL;
-                        data.extralen  = 0;
-                        data.pts       = currentVideoPts; /* videopts to sync the subtitle! */
-                        data.duration  = 0;
-
-                        context->container->assContainer->Command(context, CONTAINER_DATA, &data);
-                    }                    
+                    }                   
                 }
             }
 

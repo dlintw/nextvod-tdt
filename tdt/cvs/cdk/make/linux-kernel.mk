@@ -125,21 +125,21 @@ CUBEPATCHES_041 = $(COMMONPATCHES_41) \
 		linux-ftdi_sio.c_stm22.patch
 
 HS5101PATCHES_41 = $(COMMONPATCHES_41) \
-                $(UFS910PATCHES_41) \
-                linux-hs5101_setup_stm22.patch \
-                linux-hs5101_stasc_stm22.patch
+		$(UFS910PATCHES_41) \
+		linux-hs5101_setup_stm22.patch \
+		linux-hs5101_stasc_stm22.patch
 
 KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
-			$(if $(HL101),$(HL101PATCHES_41)) \
-			$(if $(VIP1_V2),$(VIP2PATCHES_41)) \
-			$(if $(VIP2_V1),$(VIP2PATCHES_41)) \
-			$(if $(UFS922),$(UFS922PATCHES_41)) \
-			$(if $(CUBEMOD),$(CUBEPATCHES_041)) \
-			$(if $(UFS910),$(UFS910PATCHES_41)) \
-			$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_41)) \
-			$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41)) \
-			$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_41)) \
-			$(if $(HOMECAST5101),$(HS5101PATCHES_41))
+		$(if $(HL101),$(HL101PATCHES_41)) \
+		$(if $(VIP1_V2),$(VIP2PATCHES_41)) \
+		$(if $(VIP2_V1),$(VIP2PATCHES_41)) \
+		$(if $(UFS922),$(UFS922PATCHES_41)) \
+		$(if $(CUBEMOD),$(CUBEPATCHES_041)) \
+		$(if $(UFS910),$(UFS910PATCHES_41)) \
+		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_41)) \
+		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41)) \
+		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_41)) \
+		$(if $(HOMECAST5101),$(HS5101PATCHES_41))
 
 ############ Patches Kernel 23 ###############
 
@@ -191,13 +191,13 @@ UFS922PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs922_stmmac_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
 
-FORTISPATCHES_23 = $(COMMONPATCHES_stm23) \
+FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		fortis_hdbox_setup_stm23.diff \
 		fortis_hdbox_dvb_core_stm23.patch
 
-OCTAGON1008PATCHES_23 = $(COMMONPATCHES_stm23) \
+OCTAGON1008PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		fortis_hdbox_setup_stm23.diff \
@@ -272,11 +272,11 @@ UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 			linux-sh4-ufs910_setup_stm24$(PATCH_STR).patch
 
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
-			linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch
+		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch
 
 VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
-					linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
-					linux-sh4-vip2_patches_stm24$(PATCH_STR).patch
+		linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
+		linux-sh4-vip2_patches_stm24$(PATCH_STR).patch
 
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \

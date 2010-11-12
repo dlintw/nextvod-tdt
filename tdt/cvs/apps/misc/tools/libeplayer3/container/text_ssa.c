@@ -90,7 +90,6 @@ static pthread_t thread_sub;
 
 static SsaTrack_t * Tracks;
 static int TrackCount = 0;
-static int CurrentTrack = -1; //no as default.
 FILE * fssa = NULL;
 
 static int hasThreadStarted = 0;
@@ -142,7 +141,11 @@ char *SSAgetLine()
                 strInput[k] = '\0';
 
             }
-            else  tamAux = 1;
+            else { 
+                tamAux = 1;
+                fclose(fssa);
+                fssa = NULL;
+            }
         }
 
     }
@@ -156,125 +159,58 @@ char *SSAgetLine()
 /* ***************************** */
 static void* SsaSubtitleThread(void *data) {
     Context_t *context = (Context_t*) data;
-    unsigned long long int Pts = 3.0;
+    unsigned long int Pts = 3.0;
     float                  Duration = 0;
     char *                 Text = NULL;
+    char *                 head =malloc(sizeof(char)*1);
     SubtitleOut_t out;
 
     ssa_printf(10, "\n");
+    head[0]='\0';
+
 
     while ( context && context->playback && context->playback->isPlaying && fssa ) {
-        int comma;
-        static int max_comma = 32; /* let's use 32 for the case that the */
-        /*  amount of commas increase with newer SSA versions */
-
         int hour1, min1, sec1, hunsec1,
             hour2, min2, sec2, hunsec2, nothing;
         char *line = NULL;
-        char line3[MAXLINELENGTH+1], *line2;
-        char *tmp;
-
-        ssa_printf(10, "\n");
-
         do 
         {
             line = SSAgetLine();
-        } while (sscanf (line, "Dialogue: Marked=%d,%d:%d:%d.%d,%d:%d:%d.%d,"
-                         "%[^\n\r]", &nothing,
-                         &hour1, &min1, &sec1, &hunsec1,
-                         &hour2, &min2, &sec2, &hunsec2,
-                         line3) < 9
-                 &&
-                 sscanf (line, "Dialogue: %d,%d:%d:%d.%d,%d:%d:%d.%d,"
-                         "%[^\n\r]", &nothing,
-                         &hour1, &min1, &sec1, &hunsec1,
-                         &hour2, &min2, &sec2, &hunsec2,
-                         line3) < 9	    );
-
-        line2 = strchr(line3, ',');
-        
-        for (comma = 4; comma < max_comma; comma ++)
-        {
-            tmp = line2;
-            
-            if(!(tmp=strchr(++tmp, ','))) 
-                break;
-        
-            if(*(++tmp) == ' ') 
-                break;
-            
-            /* a space after a comma means we're already in a sentence */
-            line2 = tmp;
-        }
-
-        if(comma < max_comma) 
-            max_comma = comma;
-        
-        /* eliminate the trailing comma */
-        if(*line2 == ',') 
-            line2++;
-
-        Pts = (hour1*3600 + min1*60 + sec1)*1000 + hunsec1;
-        Duration = (hour2*3600 + min2*60 + sec2) * 1000  + hunsec2 - Pts;
-        Pts = Pts * 90;
-
-        Text = strdup(line2);
-        unsigned long int playPts;
-        if (context && context->playback)
-            context->playback->Command(context, PLAYBACK_PTS, &playPts);
-        while ( context &&
-            context->playback &&
-            context->playback->isPlaying &&
-            fssa &&
-            playPts < (Pts-1500000)) {
-            unsigned long int diff = Pts - playPts-1500000;
-            diff = (diff*1000)/90.0;
-
-            ssa_printf(50, "DIFF: %lu\n", diff);
-
-            if(diff > 100)
-                usleep(diff);
-
-            if (context && context->playback)
-                context->playback->Command(context, PLAYBACK_PTS, &playPts);
-            else
-            { 
-               ssa_err("no playback ? terminated?\n");
-               break;
+            if(strncmp(line,"Dialogue: ",10)) {
+                int head_len = strlen(head);
+                int line_len = strlen(line);
+                head = realloc(head, line_len + head_len +2);
+                memcpy(head + head_len, line, sizeof(char)*line_len+1);
+                head[head_len + line_len] = '\n';
+                head[head_len + line_len + 1] = '\0';
             }
-            ssa_printf(20, "cur: %lu wanted: %llu\n", playPts, Pts);
-        }
-
-        out.type        = eSub_Txt;                        
-        out.pts         = Pts;
-        out.duration    = Duration / 1000.0;
-
-        out.u.text.data = (unsigned char*) Text;
-        out.u.text.len  = strlen(Text);
+        } while (strncmp(line,"Dialogue: ",10)!=0 && fssa);
 
         /*Hellmaster 1024 since we have waited, we have to check if we are still paying */
         if( context &&
             context->playback &&
-            context->playback->isPlaying)
-                context->output->subtitle->Write(context, &out);
-
-        free(Text);
-        Text = NULL;
-    
-/* konfetti comment: not sure here but I am missing the
- * freeing of "line". its (re)alloced in SSAgetLine but
- * never freed ?!?
- */
+            context->playback->isPlaying) {
+                SubtitleData_t data;
+                          
+                data.data      = line;
+                data.len       = strlen(line);
+                data.extradata = head;
+                data.extralen  = strlen(head);
+                data.pts       = 0;
+                data.duration  = 0.0;
+                context->container->assContainer->Command(context, CONTAINER_DATA, &data);
+        }
+        free(line);
+        line = NULL;
         continue;
     }
 
     hasThreadStarted = 0;
     
-    if(Text) {
-        free(Text);
-        Text = NULL;
+    if(head) {
+        free(head);
+        head = NULL;
     }
-
     ssa_printf(0, "thread has ended\n");
 
     return NULL;
@@ -337,7 +273,6 @@ static void SsaManagerDel(Context_t * context) {
     }
 
     TrackCount = 0;
-    CurrentTrack = -1;
 }
 
 static int SsaGetSubtitle(Context_t  *context, char * Filename) {

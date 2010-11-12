@@ -130,8 +130,6 @@ static ASS_Track* ass_track = NULL;
 
 static region_t* firstRegion = NULL;
 
-long long int videoPts = -1;
-
 /* ***************************** */
 /* Prototypes                    */
 /* ***************************** */
@@ -357,7 +355,7 @@ static void ASSThread(Context_t *context) {
             continue;
         }
 
-        if ((isContainerRunning) && (videoPts != -1) && (ass_track))
+        if ((isContainerRunning) && (ass_track))
         {
             ASS_Image *       img   = NULL;
             int               change = 0;
@@ -574,14 +572,13 @@ int container_ass_process_data(Context_t *context, SubtitleData_t* data)
     if ((data->extradata) && (first_kiss))
     {
         ass_process_codec_private(ass_track, (char*) data->extradata, data->extralen);
+        ass_printf(20,"processing private\n");
     } 
 
     if (data->data)
     {
         ass_process_data(ass_track, (char*) data->data, data->len);
-    } else
-    {
-        videoPts = data->pts;
+        ass_printf(20,"processing data\n");
     }
     
     return cERR_CONTAINER_ASS_NO_ERROR;
@@ -628,8 +625,6 @@ static int container_ass_stop(Context_t *context) {
     if (ass_library)
         ass_library_done(ass_library);
     ass_library = NULL;
-    
-    videoPts = -1;
  
     isContainerRunning = 0;
 
@@ -702,8 +697,6 @@ static int container_ass_switch_subtitle(Context_t* context, int* arg)
         ass_free_track(ass_track);
 
     ass_track = NULL;
-
-    videoPts = -1;
 
     releaseMutex(__LINE__);
 
