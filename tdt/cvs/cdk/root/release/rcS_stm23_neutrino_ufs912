@@ -89,9 +89,10 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    mknod /dev/rc c 147 1 
 
-   #toggleFeedback 0 = false, 1 = true
-   #maxRate (same key) = 2, maxDelay (determine new key) = 500
-   /bin/evremote2 1 2 500 &
+   #params:
+   #period
+   #delay
+   /bin/evremote2 10 120 &
 
    #timefix e2
    #date -s "121220001970"

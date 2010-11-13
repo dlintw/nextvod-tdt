@@ -74,8 +74,11 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/simu_button.ko
 
    mknod /dev/rc c 147 1
-   #maxRate (same key) = 3, maxDelay (determine new key) = 150
-   /bin/evremote2 3 300 &
+
+   #params:
+   #period
+   #delay
+   /bin/evremote2 10 140 &
 
 	echo "init cardreader"
 	mknod /dev/sci0 c 253 0

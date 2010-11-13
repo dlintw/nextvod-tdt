@@ -74,9 +74,12 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    mknod /dev/rc c 147 1 
 
+   #params:
    #toggleFeedback 0 = false, 1 = true
-   #maxRate (same key) = 2, maxDelay (determine new key) = 500
-   /bin/evremote2 0 2 500 &
+   #disableFeed
+   #period
+   #delay
+   /bin/evremote2 0 0 10 120 &
 
    #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
    #mount /dev/sr0 /media/dvd

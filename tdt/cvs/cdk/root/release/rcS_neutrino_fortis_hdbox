@@ -71,8 +71,11 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/nuvoton.ko
 
    mknod /dev/rc c 147 1 
-   #maxRate (same key) = 3, maxDelay (determine new key) = 150
-   /bin/evremote2 3 300 &
+
+   #params:
+   #period
+   #delay
+   /bin/evremote2 10 140 &
 
    #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
    #mount /dev/sr0 /media/dvd
