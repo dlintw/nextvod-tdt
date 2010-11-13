@@ -45,17 +45,13 @@
 
 typedef struct
 {
-	int          vLastCode;
-        unsigned int lastTime;
-	int          rate;
-	int          isNewKey;
-	int          lenOfCommand;
-
-	int          maxRate;
-	int          maxDelay;
 } tHDBOXPrivate;
 
 /* ***************** our key assignment **************** */
+
+static tLongKeyPressSupport cLongKeyPressSupport = {
+  10, 140,
+};
 
 static tButton cButtonHDBOX[] = {
     {"MENU"           , "04", KEY_MENU},
@@ -136,21 +132,19 @@ static int pInit(Context_t* context, int argc, char* argv[])
 
     memset(private, 0, sizeof(tHDBOXPrivate));
 
-    if (argc >= 2)
-       private->maxRate = atoi(argv[1]);
-    else
-       private->maxRate = 3;
-       
-    if (argc == 3)
-       private->maxDelay = atoi(argv[2]);
-    else
-       private->maxDelay = 150;
-
-    printf("maxRate = %d, maxDelay %d\n", private->maxRate, private->maxDelay);
-
     vFd = open(rcDeviceName, O_RDWR);
 
-    private->lenOfCommand = 0;
+    if (argc >= 2)
+    {
+       cLongKeyPressSupport.period = atoi(argv[1]);
+    }
+    
+    if (argc >= 3)
+    {
+       cLongKeyPressSupport.delay = atoi(argv[2]);
+    }
+
+    printf("period %d, delay %d\n", cLongKeyPressSupport.period, cLongKeyPressSupport.delay);
 
     return vFd;
 }
@@ -160,41 +154,28 @@ static int pRead(Context_t* context)
 {
     unsigned char   vData[cHDBOXDataLen];
     eKeyType        vKeyType = RemoteControl;
-    unsigned int    currentTime = 0;
     int             vCurrentCode = -1;
-    struct          timespec tmp = {0, 0};
-    tHDBOXPrivate* private = (tHDBOXPrivate*) ((RemoteControl_t*)context->r)->private;
-
-    printf("%s >\n", __func__);
-
+    static   int    vNextKey = 0;
+    
+/*    printf("%s >\n", __func__);
+*/
     while (1)
     {
-    
-       private->lenOfCommand += read (context->fd, vData, cHDBOXDataLen - private->lenOfCommand);
+#if 0
+       int vLoop;
+       int n = 
+#endif       
+       read (context->fd, vData, cHDBOXDataLen);
 
-       printf("0x%02X 0x%02X\n", vData[0], vData[1]);
-
-       //command complete?
-       if (private->lenOfCommand < 1)
-	       return -1;
-
-       /* standby buttons (remote control + frontpanel 
-	*/	
-       if ((vData[0] == 0x80) && (private->lenOfCommand < 2))
-	       return -1;
-
-       /* frontpanel buttons */	
-       if ((vData[0] == 0x51) && (private->lenOfCommand < 3))
-	       return -1;
-
-       /* remotecontrol buttons */	
-       if ((vData[0] == 0x63) && (private->lenOfCommand < 5))
-	       return -1;
-
-       private->lenOfCommand = 0;
-
+#if 0
+       printf("(len %d): ", n);
+       
+       for (vLoop = 0; vLoop < n; vLoop++)
+           printf("0x%02X ", vData[vLoop]);
+       printf("\n");
+#endif       
        if ((vData[0] != 0x51) && (vData[0] != 0x63) && (vData[0] != 0x80))
-               return -1;
+               continue;
 
        if(vData[0] == 0x63)
            vKeyType = RemoteControl;
@@ -202,82 +183,33 @@ static int pRead(Context_t* context)
        if(vData[0] == 0x51)
            vKeyType = FrontPanel;
        else
-           return -1;
+           continue;
 
        if(vKeyType == RemoteControl)
            vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[3] & ~0x80);
        else
            vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
 
-       private->isNewKey = 0;
+       if(vCurrentCode != 0) {
+         vNextKey = (vData[3] & 0x80 == 0 ? vNextKey +1 : vNextKey) % 0x100;
+         
+         /* printf("nextFlag %d\n", vNextKey);*/
+         
+         vCurrentCode += (vNextKey<<16);
+         break;
+       }
 
-       /* get time */
-       clock_gettime(CLOCK_REALTIME, &tmp);
-
-       /* convert it to milliseconds */
-       currentTime = tmp.tv_sec * 1000 + tmp.tv_nsec / 1000000;
-
-       printf("c %x l %x\n", vCurrentCode, private->vLastCode);
-
-/* fixme: to be observed if this should be distinguished between
- * frontpanel button and remote control. what about people
- * who uses an alternate rc, which may be a little bit different
- * in behaviour. so we need maxRate and Delay for rc and fp
- * button ...
- */
-
-       if (vCurrentCode != private->vLastCode)
-	  private->isNewKey = 1;
-       else
-       {
-	  if (private->lastTime == 0)
-             private->lastTime = currentTime;
-
-	  if (currentTime - private->lastTime > private->maxDelay)
-             private->isNewKey = 1;
-
-             /* printf("%d %d %d\n", currentTime, lastTime, currentTime - lastTime); */
-       }  
-
-       private->vLastCode = vCurrentCode; 
-       private->lastTime = currentTime;
-
-       if (private->isNewKey) 
-	  private->rate = 0;
-       else
-	  private->rate++;
-
-       if ((!private->isNewKey) && (private->rate < private->maxRate))
-	  return -1;
-
-       private->rate = 0;
-       break;
     } /* for later use we make a dummy while loop here */
-    
-   /* printf("%s <\n", __func__); */
+   /* printf("%s <\n", __func__); 
+    printf("current code 0x%02x\n", vCurrentCode);
+    */
     
     return vCurrentCode;
 }
 
 static int pNotification(Context_t* context, const int cOn) 
 {
-    tHDBOXPrivate*          private = (tHDBOXPrivate*) ((RemoteControl_t*)context->r)->private;
-
-/* FIXME */
-    if(cOn)
-    {
-       if (private->isNewKey)
-       {
-       }
-    }
-    else
-    {
-       if (private->isNewKey)
-       {
-          usleep(10000);
-       }
-    }
-
+/* noop: is handled from fp itself */
     return 0;
 }
 
@@ -301,6 +233,6 @@ RemoteControl_t HDBOX_RC = {
 	cButtonHDBOX,
 	cButtonHDBOXFrontpanel,
 	NULL,
-    0,
-    NULL,
+    1,
+    &cLongKeyPressSupport,
 };
