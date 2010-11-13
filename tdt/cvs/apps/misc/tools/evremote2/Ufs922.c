@@ -52,7 +52,7 @@ typedef struct
 /* ***************** our key assignment **************** */
 
 static tLongKeyPressSupport cLongKeyPressSupport = {
-  10, 104,
+  10, 120,
 };
 
 static tButton cButtonUFS922[] = {
@@ -134,7 +134,19 @@ static int pInit(Context_t* context, int argc, char* argv[])
        private->disableFeedback = 0;
          
     printf("toggle %d, disable %d\n", private->toggleFeedback, private->disableFeedback);
+    
+    if (argc >= 4)
+    {
+       cLongKeyPressSupport.period = atoi(argv[3]);
+    }
+    
+    if (argc >= 5)
+    {
+       cLongKeyPressSupport.delay = atoi(argv[4]);
+    }
                			
+    printf("period %d, delay %d\n", cLongKeyPressSupport.period, cLongKeyPressSupport.delay);
+
     if (private->toggleFeedback)
     {
        struct micom_ioctl_data vfd_data;

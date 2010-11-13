@@ -46,7 +46,7 @@
 /* ***************** our key assignment **************** */
 
 static tLongKeyPressSupport cLongKeyPressSupport = {
-  10, 104,
+  10, 120,
 };
 
 static tButton cButtonUFS912[] = {
@@ -108,6 +108,18 @@ static int pInit(Context_t* context, int argc, char* argv[])
 {
     int vFd;
     vFd = open(rcDeviceName, O_RDWR);
+
+    if (argc >= 2)
+    {
+       cLongKeyPressSupport.period = atoi(argv[1]);
+    }
+    
+    if (argc >= 3)
+    {
+       cLongKeyPressSupport.delay = atoi(argv[2]);
+    }
+
+    printf("period %d, delay %d\n", cLongKeyPressSupport.period, cLongKeyPressSupport.delay);
 
     return vFd;
 }
