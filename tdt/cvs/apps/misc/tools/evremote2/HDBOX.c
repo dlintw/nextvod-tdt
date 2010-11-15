@@ -156,9 +156,8 @@ static int pRead(Context_t* context)
     eKeyType        vKeyType = RemoteControl;
     int             vCurrentCode = -1;
     static   int    vNextKey = 0;
+    static   char   vOldButton = 0;
     
-/*    printf("%s >\n", __func__);
-*/
     while (1)
     {
 #if 0
@@ -174,35 +173,45 @@ static int pRead(Context_t* context)
            printf("0x%02X ", vData[vLoop]);
        printf("\n");
 #endif       
-       if ((vData[0] != 0x51) && (vData[0] != 0x63) && (vData[0] != 0x80))
+       if ((vData[2] != 0x51) && (vData[2] != 0x63) && (vData[2] != 0x80))
                continue;
 
-       if(vData[0] == 0x63)
+       if(vData[2] == 0x63)
            vKeyType = RemoteControl;
        else 
-       if(vData[0] == 0x51)
+       if(vData[2] == 0x51)
            vKeyType = FrontPanel;
        else
            continue;
 
        if(vKeyType == RemoteControl)
-           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[3] & ~0x80);
-       else
-           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
+       {    
+           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[5] & ~0x80);
 
-       if(vCurrentCode != 0) {
-         vNextKey = (vData[3] & 0x80 == 0 ? vNextKey +1 : vNextKey) % 0x100;
-         
-         /* printf("nextFlag %d\n", vNextKey);*/
-         
-         vCurrentCode += (vNextKey<<16);
-         break;
+           if(vCurrentCode != 0) {
+             vNextKey = (vData[5] & 0x80 == 0 ? vNextKey + 1 : vNextKey) % 0x100;
+
+             /* printf("nextFlag %d\n", vNextKey);*/
+
+             vCurrentCode += (vNextKey << 16);
+             break;
+           }
        }
+       else
+       {
+           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[3]);
 
+           if(vCurrentCode != 0) 
+           {
+             vNextKey = (vOldButton != vData[3] ? vNextKey + 1 : vNextKey) % 0x100;
+
+             /* printf("nextFlag %d\n", vNextKey);*/
+
+             vCurrentCode += (vNextKey << 16);
+             break;
+           }
+       }
     } /* for later use we make a dummy while loop here */
-   /* printf("%s <\n", __func__); 
-    printf("current code 0x%02x\n", vCurrentCode);
-    */
     
     return vCurrentCode;
 }
