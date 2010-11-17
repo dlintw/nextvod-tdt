@@ -159,20 +159,15 @@ char *SSAgetLine()
 /* ***************************** */
 static void* SsaSubtitleThread(void *data) {
     Context_t *context = (Context_t*) data;
-    unsigned long int Pts = 3.0;
-    float                  Duration = 0;
-    char *                 Text = NULL;
     char *                 head =malloc(sizeof(char)*1);
-    SubtitleOut_t out;
 
     ssa_printf(10, "\n");
     head[0]='\0';
 
 
     while ( context && context->playback && context->playback->isPlaying && fssa ) {
-        int hour1, min1, sec1, hunsec1,
-            hour2, min2, sec2, hunsec2, nothing;
         char *line = NULL;
+
         do 
         {
             line = SSAgetLine();
@@ -192,9 +187,9 @@ static void* SsaSubtitleThread(void *data) {
             context->playback->isPlaying) {
                 SubtitleData_t data;
                           
-                data.data      = line;
+                data.data      = (unsigned char*) line;
                 data.len       = strlen(line);
-                data.extradata = head;
+                data.extradata = (unsigned char*) head;
                 data.extralen  = strlen(head);
                 data.pts       = 0;
                 data.duration  = 0.0;

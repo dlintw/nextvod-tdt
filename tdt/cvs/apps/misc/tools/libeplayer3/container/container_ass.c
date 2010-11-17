@@ -154,17 +154,17 @@ void ass_msg_callback(int level, const char *format, va_list va, void *ctx)
 }
 
 static void getMutex(int line) {
-    ass_printf(100, "%d requesting mutex\n", line);
+    ass_printf(150, "%d requesting mutex\n", line);
 
     pthread_mutex_lock(&mutex);
 
-    ass_printf(100, "%d received mutex\n", line);
+    ass_printf(150, "%d received mutex\n", line);
 }
 
 static void releaseMutex(int line) {
     pthread_mutex_unlock(&mutex);
 
-    ass_printf(100, "%d released mutex\n", line);
+    ass_printf(150, "%d released mutex\n", line);
 }
 
 /* ********************************* */
@@ -371,7 +371,7 @@ static void ASSThread(Context_t *context) {
 
             img = ass_render_frame(ass_renderer, ass_track, playPts / 90.0, &change);
 
-            ass_printf(100, "img %p pts %lu %f\n", img, playPts, playPts / 90.0);
+            ass_printf(150, "img %p pts %lu %f\n", img, playPts, playPts / 90.0);
 
             if(img != NULL)
             {
