@@ -1300,6 +1300,16 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--disable-static --enable-shared \
 		--enable-cross-compile \
 		--disable-decoder=vorbis \
+		--disable-ffmpeg \
+		--disable-ffserver \
+		--disable-ffplay \
+		--disable-mmx \
+		--disable-armv5te \
+		--disable-armv6 \
+		--disable-iwmmxt \
+		--disable-altivec \
+		--disable-debug \
+		--enable-small \
 		--cross-prefix=$(target)- \
 		--target-os=linux \
 		--arch=sh4 \
