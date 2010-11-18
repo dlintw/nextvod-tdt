@@ -698,7 +698,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 
                 /* fixme: revise this */
 
-                if (stream->r_frame_rate.num < 23976)
+                if (track.frame_rate < 23970)
                     track.TimeScale = 1001;
                 else
                     track.TimeScale = 1000;

@@ -759,7 +759,7 @@ static int PlaybackSeek(Context_t  *context, float * pos) {
 static int PlaybackPts(Context_t  *context, unsigned long long int* pts) {
     int ret = cERR_PLAYBACK_NO_ERROR;
 
-    playback_printf(10, "\n");
+    playback_printf(20, "\n");
 
     *pts = 0;
 
@@ -771,7 +771,7 @@ static int PlaybackPts(Context_t  *context, unsigned long long int* pts) {
         ret = cERR_PLAYBACK_ERROR;
     }
 
-    playback_printf(10, "exiting with value %d\n", ret);
+    playback_printf(20, "exiting with value %d\n", ret);
 
     return ret;
 }
@@ -906,7 +906,7 @@ static int Command(void* _context, PlaybackCmd_t command, void * argument) {
     Context_t* context = (Context_t*) _context; /* to satisfy compiler */
     int ret = cERR_PLAYBACK_NO_ERROR;
 
-    playback_printf(10, "Command %d\n", command);
+    playback_printf(20, "Command %d\n", command);
 
 
     switch(command) {
@@ -980,7 +980,7 @@ static int Command(void* _context, PlaybackCmd_t command, void * argument) {
         break;
     }
 
-    playback_printf(10, "exiting with value %d\n", ret);
+    playback_printf(20, "exiting with value %d\n", ret);
 
     return ret;
 }
