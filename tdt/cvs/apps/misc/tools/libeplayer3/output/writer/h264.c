@@ -152,12 +152,15 @@ static int writeData(void* _call)
 
         HeaderLength = InsertPesHeader(PesHeader, call->len,
                                        MPEG_VIDEO_PES_START_CODE, call->Pts, FakeStartCode);
-        unsigned char *PacketData = malloc(HeaderLength + call->len);
+        /*Hellmaster1024: some packets will only be accepted by the player if we send one byte more than
+                          data is available. The content of this byte does not matter. It will be ignored
+                          by the player */
+        unsigned char *PacketData = malloc(HeaderLength + call->len + 1);
 
         memcpy(PacketData, PesHeader, HeaderLength);
         memcpy (PacketData + HeaderLength, call->data, call->len);
 
-        len = write(call->fd, PacketData, call->len + HeaderLength);
+        len = write(call->fd, PacketData, call->len + HeaderLength + 1);
 
         free(PacketData);
 

@@ -335,7 +335,7 @@ static int SsaGetSubtitle(Context_t  *context, char * Filename) {
             if (subtitleExtension == NULL)
                 continue;
 
-            if (strcmp(subtitleExtension, "ssa") != 0)
+            if ( strcmp(subtitleExtension, "ssa") != 0 && strcmp(subtitleExtension, "ass") != 0 )
             {
                 free(subtitleExtension);
                 continue;
@@ -346,7 +346,7 @@ static int SsaGetSubtitle(Context_t  *context, char * Filename) {
 
             ssa_printf(10, "%s %s\n", FilenameShort, subtitleFilename);
 
-            if (strcmp(FilenameShort, subtitleFilename) == 0)
+            if (strncmp(FilenameShort, subtitleFilename,strlen(FilenameShort)) == 0)
             {
                 char absSubtitleFileName[PATH_MAX];
                 /* found something of interest, so now make an absolut path name */
@@ -385,7 +385,7 @@ static int SsaGetSubtitle(Context_t  *context, char * Filename) {
 static int SsaOpenSubtitle(Context_t *context, int trackid) {
     ssa_printf(10, "\n");
 
-    if(trackid < TEXTSSAOFFSET) {
+    if(trackid < TEXTSSAOFFSET || (trackid % TEXTSSAOFFSET) >= TrackCount ) {
         ssa_err("trackid not for us\n");
         return cERR_SSA_ERROR;
     }

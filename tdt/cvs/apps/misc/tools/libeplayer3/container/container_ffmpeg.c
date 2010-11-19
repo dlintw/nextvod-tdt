@@ -256,9 +256,9 @@ float getDurationFromSSALine(unsigned char* line){
     }
     
     sscanf(ptr[2],"%d:%d:%d.%d",&h,&m,&s,&ms);
-    msec = ms + (s*1000) + (m*60*1000) + (h*24*60*1000);
+    msec = (ms*10) + (s*1000) + (m*60*1000) + (h*24*60*1000);
     sscanf(ptr[1],"%d:%d:%d.%d",&h,&m,&s,&ms);
-    msec -= ms + (s*1000) + (m*60*1000) + (h*24*60*1000);
+    msec -= (ms*10) + (s*1000) + (m*60*1000) + (h*24*60*1000);
 
     ffmpeg_printf(10, "%s %s %f\n", ptr[2], ptr[1], (float) msec / 1000.0); 
 
@@ -553,16 +553,21 @@ static void FFMPEGThread(Context_t *context) {
                         else
                         {
                             /* hopefully native text ;) */
-                            SubtitleOut_t out;
 
-                            out.type        = eSub_Txt;                        
-                            out.pts         = pts;
-                            out.duration    = duration;
+                            unsigned char* line = text_to_ass((char *)packet.data,pts/90,duration);
+                            ffmpeg_printf(50,"text line is %s\n",(char *)packet.data);
+                            ffmpeg_printf(50,"Sub line is %s\n",line);
+                            ffmpeg_printf(20, "videoPts %lld %f\n", currentVideoPts,currentVideoPts/90000.0);
+                            SubtitleData_t data;
+                            data.data      = line;
+                            data.len       = strlen((char*)line);
+                            data.extradata = DEFAULT_ASS_HEAD;
+                            data.extralen  = strlen(DEFAULT_ASS_HEAD);
+                            data.pts       = pts;
+                            data.duration  = duration;
 
-                            out.u.text.data = packet.data;
-                            out.u.text.len  = packet.size;
-
-                            context->output->subtitle->Write(context, &out);
+                            context->container->assContainer->Command(context, CONTAINER_DATA, &data);
+                            free(line);
                         }
                     } /* duration */
                 }

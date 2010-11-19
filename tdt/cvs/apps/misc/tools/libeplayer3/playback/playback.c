@@ -853,19 +853,21 @@ static int PlaybackSwitchSubtitle(Context_t  *context, int* track) {
 /* konfetti: I make this hack a little bit nicer,
  * but its still a hack in my opinion ;)
  */
-            if (trackid == TEXTSRTOFFSET)
+            if (context->container && context->container->assContainer)
+                context->container->assContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &trackid);
+
+            if (trackid >= TEXTSRTOFFSET)
             {
                 if (context->container && context->container->textSrtContainer)
                      context->container->textSrtContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &trackid);
-            } else
-            if (trackid == TEXTSSAOFFSET)
+            }
+            if (trackid >= TEXTSSAOFFSET)
             {
                  if (context->container && context->container->textSsaContainer)
                      context->container->textSsaContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &trackid);
             }
             
-            if (context->container && context->container->assContainer)
-                context->container->assContainer->Command(context, CONTAINER_SWITCH_SUBTITLE, &trackid);
+            
             
         } else
         {

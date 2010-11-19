@@ -373,7 +373,7 @@ static void ASSThread(Context_t *context) {
 
             ass_printf(150, "img %p pts %lu %f\n", img, playPts, playPts / 90.0);
 
-            if(img != NULL)
+            if(img != NULL && ass_renderer && ass_track)
             {
                 /* the spec says, that if a new set of regions is present
                  * the complete display switches to the new state. So lets
@@ -389,7 +389,7 @@ static void ASSThread(Context_t *context) {
                     time_t now = time(NULL);
                     time_t undisplay = now + 10;
 
-                    if (ass_track->events)
+                    if (ass_track && ass_track->events)
                     {
                         undisplay = now + ass_track->events->Duration / 1000 + 0.5;
                     }
@@ -423,7 +423,7 @@ static void ASSThread(Context_t *context) {
                                     
                         if (shareFramebuffer)
                         {
-                            if(context && context->playback && context->playback->isPlaying)
+                            if(context && context->playback && context->playback->isPlaying && writer)
                                 writer->writeData(&out);
                         }
                         else
@@ -571,14 +571,16 @@ int container_ass_process_data(Context_t *context, SubtitleData_t* data)
 
     if ((data->extradata) && (first_kiss))
     {
+        ass_printf(30,"processing private %d bytes\n",data->extralen);
         ass_process_codec_private(ass_track, (char*) data->extradata, data->extralen);
-        ass_printf(20,"processing private\n");
+        ass_printf(30,"processing private done\n");
     } 
 
     if (data->data)
     {
+        ass_printf(30,"processing data %d bytes\n",data->len);
         ass_process_data(ass_track, (char*) data->data, data->len);
-        ass_printf(20,"processing data\n");
+        ass_printf(30,"processing data done\n");
     }
     
     return cERR_CONTAINER_ASS_NO_ERROR;

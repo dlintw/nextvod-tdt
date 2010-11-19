@@ -109,16 +109,15 @@ static void* SrtSubtitleThread(void *data) {
     int pos = 0;
     char  Data[MAXLINELENGTH];
     unsigned long long int Pts = 0;
-    float Duration = 0;
+    double Duration = 0;
     char * Text = NULL;
-    SubtitleOut_t out;
      
     Context_t *context = (Context_t*) data;
 
     srt_printf(10, "\n");
 
     while(context && context->playback && context->playback->isPlaying && fsub && fgets(Data, MAXLINELENGTH, fsub)) {
-        srt_printf(10, "pos=%d\n", pos);
+        srt_printf(20, "pos=%d\n", pos);
 
         if(pos == 0) 
         {
@@ -131,7 +130,6 @@ static void* SrtSubtitleThread(void *data) {
 
             Pts = (horIni*3600 + minIni*60 + secIni)*1000 + milIni;
             Duration = ((horFim*3600 + minFim*60 + secFim) * 1000  + milFim - Pts) / 1000.0;
-            Pts = Pts * 90;
 
             pos++;
 
@@ -139,46 +137,27 @@ static void* SrtSubtitleThread(void *data) {
             srt_printf(20, "Data[0] = %d \'%c\'\n", Data[0], Data[0]);
 
             if(Data[0] == '\n' || Data[0] == '\0' || Data[0] == 13 /* ^M */) {
-                unsigned long int playPts;
-                if (context && context->playback)
-                    context->playback->Command(context, PLAYBACK_PTS, &playPts);
-                while ( context &&
-                    context->playback &&
-                    context->playback->isPlaying &&
-                    fsub &&
-                    playPts < (Pts-1500000)) {
-
-                    unsigned long int diff = Pts - playPts-1500000;
-                    diff = (diff*1000)/90.0;
-
-                    srt_printf(50, "DIFF: %lu\n", diff);
-
-                    if(diff > 100)
-                        usleep(diff);
-
-                    if (context && context->playback)
-                        context->playback->Command(context, PLAYBACK_PTS, &playPts);
-                    else
-                    { 
-                       srt_err("no playback ? terminated?\n");
-                       break;
-                    }
-                    srt_printf(20, "cur: %lu wanted: %lld\n", playPts, Pts);
-                }
                 srt_printf(20, "--> Text= \"%s\"\n", Text);
-
-                out.type        = eSub_Txt;                        
-                out.pts         = Pts;
-                out.duration    = Duration;
-
-                out.u.text.data = (unsigned char*) Text;
-                out.u.text.len  = strlen(Text);
 
                 /*Hellmaster 1024 since we have waited, we have to check if we are still paying */
                 if( context &&
                     context->playback &&
-                    context->playback->isPlaying)
-                        context->output->subtitle->Write(context, &out);
+                    context->playback->isPlaying){
+                        Text[strlen(Text)-2]='\0'; /*Delete laste \n */
+                        unsigned char* line = text_to_ass(Text, Pts, Duration);
+                        srt_printf(50,"Sub text is %s\n",Text);
+                        srt_printf(50,"Sub line is %s\n",line);
+                        SubtitleData_t data;
+                        data.data      = line;
+                        data.len       = strlen((char*)line);
+                        data.extradata = DEFAULT_ASS_HEAD;
+                        data.extralen  = strlen(DEFAULT_ASS_HEAD);
+                        data.pts       = Pts*90;
+                        data.duration  = Duration;
+
+                        context->container->assContainer->Command(context, CONTAINER_DATA, &data);
+                        free(line);
+                }
                 srt_printf(20, "<-- Text= \"%s\"\n", Text);
                 free(Text);
                 Text = NULL;
@@ -197,7 +176,6 @@ static void* SrtSubtitleThread(void *data) {
                 Text = (char*)malloc(length);
 
                 strcpy(Text, tmpText);
-                strcat(Text, "\n");
                 strcat(Text, Data);
                 free(tmpText);
             }
@@ -353,7 +331,7 @@ static int SrtGetSubtitle(Context_t  *context, char * Filename) {
 
             srt_printf(10, "%s %s\n", FilenameShort, subtitleFilename);
 
-            if (strcmp(FilenameShort, subtitleFilename) == 0)
+            if (strncmp(FilenameShort, subtitleFilename,strlen(FilenameShort)) == 0)
             {
                 char absSubtitleFileName[PATH_MAX];
                 /* found something of interest, so now make an absolut path name */
@@ -392,7 +370,7 @@ static int SrtGetSubtitle(Context_t  *context, char * Filename) {
 static int SrtOpenSubtitle(Context_t *context, int trackid) {
     srt_printf(10, "\n");
 
-    if(trackid < TEXTSRTOFFSET) {
+    if(trackid < TEXTSRTOFFSET || (trackid % TEXTSRTOFFSET) >= TrackCount) {
         srt_err("trackid not for us\n");
         return cERR_SRT_ERROR;
     }
