@@ -46,7 +46,7 @@ static inline unsigned char* text_to_ass(char *text, long long int pts, double d
      buf[pos++]='\0';
      int len = 80 + strlen(buf);
      long long int end_pts = pts + (duration * 1000.0);
-     char* line = malloc( sizeof(char) * len );
+     char* line = (char*)malloc( sizeof(char) * len );
      int sc = pts / 10;
      int ec = end_pts  / 10;
      int sh, sm, ss, eh, em, es;
