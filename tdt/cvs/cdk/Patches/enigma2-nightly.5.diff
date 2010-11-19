@@ -5048,12 +5048,20 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins/Extensions/Makefile.am enigma2-nightly/lib/python/Plugins/Extensions/Makefile.am
 --- enigma2-nightly.org/lib/python/Plugins/Extensions/Makefile.am	2010-11-08 15:43:07.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/Extensions/Makefile.am	2010-11-08 15:52:30.000000000 +0100
-@@ -1,6 +1,6 @@
+@@ -1,6 +1,14 @@
  installdir = $(pkglibdir)/python/Plugins/Extensions
  
 -SUBDIRS = TuxboxPlugins CutListEditor PicturePlayer MediaScanner MediaPlayer GraphMultiEPG SocketMMI DVDPlayer DVDBurn Modem
 +SUBDIRS = CutListEditor PicturePlayer MediaScanner MediaPlayer GraphMultiEPG SocketMMI DVDPlayer DVDBurn
  
++if ENABLE_TF7700
++SUBDIRS += TopfieldVFD
++endif
++
++if ENABLE_CUBEREVO
++SUBDIRS += CuberevoVFD
++endif
++
  install_PYTHON =	\
  	__init__.py
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins/Extensions/TopfieldVFD/__init__.py enigma2-nightly/lib/python/Plugins/Extensions/TopfieldVFD/__init__.py
