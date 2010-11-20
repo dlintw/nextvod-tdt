@@ -551,6 +551,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
+		$(if $(FLASH_UFS910),FLASH_UFS910=$(FLASH_UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
@@ -574,6 +575,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		BIN_DEST=$(targetprefix)/bin \
 		INSTALL_MOD_PATH=$(targetprefix) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
+		$(if $(FLASH_UFS910),FLASH_UFS910=$(FLASH_UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
