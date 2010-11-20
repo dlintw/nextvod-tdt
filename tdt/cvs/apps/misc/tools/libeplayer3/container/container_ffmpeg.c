@@ -101,6 +101,8 @@ static AVFormatContext*   avContext = NULL;
 
 static unsigned char isContainerRunning = 0;
 
+static long long int latestPts = 0;
+
 /* ***************************** */
 /* Prototypes                    */
 /* ***************************** */
@@ -254,9 +256,9 @@ float getDurationFromSSALine(unsigned char* line){
     }
     
     sscanf(ptr[2],"%d:%d:%d.%d",&h,&m,&s,&ms);
-    msec = ms + (s*1000) + (m*60*1000) + (h*24*60*1000);
+    msec = (ms*10) + (s*1000) + (m*60*1000) + (h*24*60*1000);
     sscanf(ptr[1],"%d:%d:%d.%d",&h,&m,&s,&ms);
-    msec -= ms + (s*1000) + (m*60*1000) + (h*24*60*1000);
+    msec -= (ms*10) + (s*1000) + (m*60*1000) + (h*24*60*1000);
 
     ffmpeg_printf(10, "%s %s %f\n", ptr[2], ptr[1], (float) msec / 1000.0); 
 
@@ -386,9 +388,10 @@ static void FFMPEGThread(Context_t *context) {
 
             if (videoTrack != NULL) {
                 if (videoTrack->Id == index) {
-                     SubtitleData_t data;
-
                     currentVideoPts = videoTrack->pts = pts = calcPts(videoTrack->stream, &packet);
+
+                    if (currentVideoPts > latestPts)
+                        latestPts = currentVideoPts; 
 
                     ffmpeg_printf(200, "VideoTrack index = %d %lld\n",index, currentVideoPts);
 
@@ -413,6 +416,9 @@ static void FFMPEGThread(Context_t *context) {
                 if (audioTrack->Id == index) {
                     currentAudioPts = audioTrack->pts = pts = calcPts(audioTrack->stream, &packet);
                     
+                    if ((currentAudioPts > latestPts) && (!videoTrack))
+                        latestPts = currentAudioPts; 
+
                     ffmpeg_printf(200, "AudioTrack index = %d\n",index);
 
                     if (audioTrack->have_aacheader == 1) 
@@ -464,6 +470,9 @@ static void FFMPEGThread(Context_t *context) {
 
                     pts = calcPts(subtitleTrack->stream, &packet);
                     
+                    if ((pts > latestPts) && (!videoTrack) && (!audioTrack))
+                        latestPts = pts; 
+
                     /*Hellmaster1024: in mkv the duration for ID_TEXT is stored in convergence_duration */
                     ffmpeg_printf(20, "Packet duration %d\n", packet.duration);
                     ffmpeg_printf(20, "Packet convergence_duration %lld\n", packet.convergence_duration);
@@ -544,16 +553,21 @@ static void FFMPEGThread(Context_t *context) {
                         else
                         {
                             /* hopefully native text ;) */
-                            SubtitleOut_t out;
 
-                            out.type        = eSub_Txt;                        
-                            out.pts         = pts;
-                            out.duration    = duration;
+                            unsigned char* line = text_to_ass((char *)packet.data,pts/90,duration);
+                            ffmpeg_printf(50,"text line is %s\n",(char *)packet.data);
+                            ffmpeg_printf(50,"Sub line is %s\n",line);
+                            ffmpeg_printf(20, "videoPts %lld %f\n", currentVideoPts,currentVideoPts/90000.0);
+                            SubtitleData_t data;
+                            data.data      = line;
+                            data.len       = strlen((char*)line);
+                            data.extradata = DEFAULT_ASS_HEAD;
+                            data.extralen  = strlen(DEFAULT_ASS_HEAD);
+                            data.pts       = pts;
+                            data.duration  = duration;
 
-                            out.u.text.data = packet.data;
-                            out.u.text.len  = packet.size;
-
-                            context->output->subtitle->Write(context, &out);
+                            context->container->assContainer->Command(context, CONTAINER_DATA, &data);
+                            free(line);
                         }
                     } /* duration */
                 }
@@ -573,8 +587,6 @@ static void FFMPEGThread(Context_t *context) {
     } /* while */
 
     hasPlayThreadStarted = 0;
-
-    context->playback->Command(context, PLAYBACK_TERM, NULL);
 
     ffmpeg_printf(10, "terminating\n");
 }
@@ -691,7 +703,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 
                 /* fixme: revise this */
 
-                if (stream->r_frame_rate.num < 23976)
+                if (track.frame_rate < 23970)
                     track.TimeScale = 1001;
                 else
                     track.TimeScale = 1000;
@@ -938,6 +950,8 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 
     } /* for */
 
+    /* init */
+    latestPts = 0;
     isContainerRunning = 1;
 
     releaseMutex(FILENAME, __FUNCTION__,__LINE__);
@@ -1021,7 +1035,7 @@ static int container_ffmpeg_stop(Context_t *context) {
     }
 
     isContainerRunning = 0;
-
+    
     releaseMutex(FILENAME, __FUNCTION__,__LINE__);
 
     ffmpeg_printf(10, "ret %d\n", ret);
@@ -1180,6 +1194,12 @@ static int container_ffmpeg_seek(Context_t *context, float sec) {
     int flag = 0;
 
     ffmpeg_printf(10, "seeking %f sec\n", sec);
+
+    if (sec == 0.0)
+    { 
+        ffmpeg_err("sec = 0.0 ignoring\n");
+        return cERR_CONTAINER_FFMPEG_ERR;
+    }
 
     context->manager->video->Command(context, MANAGER_GET_TRACK, &videoTrack);
     context->manager->audio->Command(context, MANAGER_GET_TRACK, &audioTrack);
@@ -1395,8 +1415,8 @@ static int container_ffmpeg_get_info(Context_t* context, char ** infoString)
        }
        else
        {
-          *infoString = strdup("not found");
           ffmpeg_printf(1, "no metadata found for \"%s\"\n", *infoString);
+          *infoString = strdup("not found");
        }
     } else
     {
@@ -1451,6 +1471,14 @@ static int Command(void  *_context, ContainerCmd_t command, void * argument)
     }
     case CONTAINER_INFO: {
         ret = container_ffmpeg_get_info(context, (char **)argument);
+        break;
+    }
+    case CONTAINER_STATUS: {
+        *((int*)argument) = hasPlayThreadStarted;
+        break;
+    }
+    case CONTAINER_LAST_PTS: {
+        *((long long int*)argument) = latestPts;
         break;
     }
     default:

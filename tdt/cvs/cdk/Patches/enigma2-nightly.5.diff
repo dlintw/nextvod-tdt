@@ -471,7 +471,23 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/base/filepush.
  #define PVR_COMMIT 1
  
  //FILE *f = fopen("/log.ts", "wb");
-@@ -37,6 +52,11 @@
+@@ -19,6 +34,15 @@ eFilePushThread::eFilePushThread(int io_prio_class, int io_prio_level, int block
+ 	flush();
+ 	enablePVRCommit(0);
+ 	CONNECT(m_messagepump.recv_msg, eFilePushThread::recvEvent);
++
++// vvv Initialize with 0, because otherwise playback may stop
++// (In case of playback eFilePushThread::start is not called)		
++#if defined(__sh__)
++	m_record_split_size = 0;
++	m_record_split_type = 0;
++#endif
++// ^^^ Initialize with 0, because otherwise playback may stop
++
+ }
+ 
+ static void signal_handler(int x)
+@@ -37,6 +61,11 @@ void eFilePushThread::thread()
  	
  	size_t written_since_last_sync = 0;
  
@@ -483,7 +499,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/base/filepush.
  	eDebug("FILEPUSH THREAD START");
  	
  		/* we set the signal to not restart syscalls, so we can detect our signal. */
-@@ -49,6 +69,11 @@
+@@ -49,7 +78,17 @@ void eFilePushThread::thread()
  	
  	source_pos = m_raw_source.lseek(0, SEEK_CUR);
  	
@@ -493,9 +509,15 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/base/filepush.
 +	int fd_video = open("/dev/dvb/adapter0/video0", O_RDONLY);
 +#endif
  		/* m_stop must be evaluated after each syscall. */
++		
++// vvv Fix to ensure that event evtEOF is called at end of playbackl part 1/3
++	bool already_empty=false;
++// ^^^ Fix to ensure that event evtEOF is called at end of playbackl part 1/3
++		
  	while (!m_stop)
  	{
-@@ -126,6 +151,37 @@
+ 			/* first try flushing the bufptr */
+@@ -126,6 +165,37 @@ void eFilePushThread::thread()
  				dest_pos -= toflush;
  				posix_fadvise(m_fd_dest, dest_pos, toflush, POSIX_FADV_DONTNEED);
  				written_since_last_sync -= toflush;
@@ -533,7 +555,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/base/filepush.
  			}
  
  //			printf("FILEPUSH: wrote %d bytes\n", w);
-@@ -137,6 +193,19 @@
+@@ -137,6 +207,19 @@ void eFilePushThread::thread()
  			
  		if (m_sg && !current_span_remaining)
  		{
@@ -553,10 +575,47 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/base/filepush.
  			m_sg->getNextSourceSpan(source_pos, bytes_read, current_span_offset, current_span_remaining);
  			ASSERT(!(current_span_remaining % m_blocksize));
  
-@@ -235,10 +304,67 @@
+@@ -194,7 +277,17 @@ void eFilePushThread::thread()
+ 				{
+ 					case 0:
+ 						eDebug("wait for driver eof timeout");
+-						continue;
++// vvv Fix to ensure that event evtEOF is called at end of playbackl part 2/3
++						if(already_empty)
++						{
++							break;
++						}
++						else
++						{
++							already_empty=true;
++							continue;
++						}
++// ^^^ Fix to ensure that event evtEOF is called at end of playbackl	part 2/3
+ 					case 1:
+ 						eDebug("wait for driver eof ok");
+ 						break;
+@@ -227,6 +320,9 @@ void eFilePushThread::thread()
+ 			break;
+ 		} else
+ 		{
++// vvv Fix to ensure that event evtEOF is called at end of playbackl part 3/3
++			already_empty=false;
++// ^^^ Fix to ensure that event evtEOF is called at end of playbackl part 3/3
+ 			source_pos += m_buf_end;
+ 			bytes_read += m_buf_end;
+ 			if (m_sg)
+@@ -234,11 +330,74 @@ void eFilePushThread::thread()
+ 		}
  //		printf("FILEPUSH: read %d bytes\n", m_buf_end);
  	}
- 	fdatasync(m_fd_dest);
+-	fdatasync(m_fd_dest);
++	// Do NOT call "fdatasync(m_fd_dest);" here because on some systems it doesn't return
++	// and freezes the whole box.
++	// Calling this function here is not that important, anyway, because the initiator closes
++	// m_fd_dest immediatedly when the filepush thread has been stopped.
++	// Original code has been:	
++	// fdatasync(m_fd_dest);
++
 +#if defined(__sh__) // closes video device for the reverse playback workaround
 +	close(fd_video);
 +#endif
@@ -4989,12 +5048,20 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins/Extensions/Makefile.am enigma2-nightly/lib/python/Plugins/Extensions/Makefile.am
 --- enigma2-nightly.org/lib/python/Plugins/Extensions/Makefile.am	2010-11-08 15:43:07.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/Extensions/Makefile.am	2010-11-08 15:52:30.000000000 +0100
-@@ -1,6 +1,6 @@
+@@ -1,6 +1,14 @@
  installdir = $(pkglibdir)/python/Plugins/Extensions
  
 -SUBDIRS = TuxboxPlugins CutListEditor PicturePlayer MediaScanner MediaPlayer GraphMultiEPG SocketMMI DVDPlayer DVDBurn Modem
 +SUBDIRS = CutListEditor PicturePlayer MediaScanner MediaPlayer GraphMultiEPG SocketMMI DVDPlayer DVDBurn
  
++if ENABLE_TF7700
++SUBDIRS += TopfieldVFD
++endif
++
++if ENABLE_CUBEREVO
++SUBDIRS += CuberevoVFD
++endif
++
  install_PYTHON =	\
  	__init__.py
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Plugins/Extensions/TopfieldVFD/__init__.py enigma2-nightly/lib/python/Plugins/Extensions/TopfieldVFD/__init__.py
@@ -8402,3 +8469,20 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/mytest.py enigma2-
  		if not config.misc.useTransponderTime.value:
  			print "dvb time sync disabled... so set RTC now to current linux time!", strftime("%Y/%m/%d %H:%M", localtime(nowTime))
  			setRTCtime(nowTime)
+diff -Nur enigma2-nightly.org/RecordTimer.py enigma2-nightly/RecordTimer.py
+--- enigma2-nightly.org/RecordTimer.py	2010-11-18 11:30:48.000000000 +0100
++++ enigma2-nightly/RecordTimer.py	2010-11-18 11:30:07.000000000 +0100
+@@ -304,6 +304,13 @@ class RecordTimerEntry(timer.TimerEntry, object):
+ 						RecordTimerEntry.TryQuitMainloop() # start shutdown handling without screen
+ 					else:
+ 						Notifications.AddNotificationWithCallback(self.sendTryQuitMainloopNotification, MessageBox, _("A finished record timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20)
++			# vvv Ensure shutdown after AUTO timer if no key has been pressed
++			elif self.afterEvent == AFTEREVENT.AUTO:
++				if not Screens.Standby.inTryQuitMainloop: # not a shutdown messagebox is open
++					timerStart = open("/proc/stb/fp/was_timer_wakeup").read()
++					if timerStart[:1] == "1":
++						Notifications.AddNotificationWithCallback(self.sendTryQuitMainloopNotification, MessageBox, _("A finished record timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20) 
++			# ^^^ Ensure shutdown after AUTO timer if no key has been pressed
+ 			return True
+ 
+ 	def setAutoincreaseEnd(self, entry = None):

@@ -159,20 +159,15 @@ char *SSAgetLine()
 /* ***************************** */
 static void* SsaSubtitleThread(void *data) {
     Context_t *context = (Context_t*) data;
-    unsigned long int Pts = 3.0;
-    float                  Duration = 0;
-    char *                 Text = NULL;
     char *                 head =malloc(sizeof(char)*1);
-    SubtitleOut_t out;
 
     ssa_printf(10, "\n");
     head[0]='\0';
 
 
     while ( context && context->playback && context->playback->isPlaying && fssa ) {
-        int hour1, min1, sec1, hunsec1,
-            hour2, min2, sec2, hunsec2, nothing;
         char *line = NULL;
+
         do 
         {
             line = SSAgetLine();
@@ -192,9 +187,9 @@ static void* SsaSubtitleThread(void *data) {
             context->playback->isPlaying) {
                 SubtitleData_t data;
                           
-                data.data      = line;
+                data.data      = (unsigned char*) line;
                 data.len       = strlen(line);
-                data.extradata = head;
+                data.extradata = (unsigned char*) head;
                 data.extralen  = strlen(head);
                 data.pts       = 0;
                 data.duration  = 0.0;
@@ -340,7 +335,7 @@ static int SsaGetSubtitle(Context_t  *context, char * Filename) {
             if (subtitleExtension == NULL)
                 continue;
 
-            if (strcmp(subtitleExtension, "ssa") != 0)
+            if ( strcmp(subtitleExtension, "ssa") != 0 && strcmp(subtitleExtension, "ass") != 0 )
             {
                 free(subtitleExtension);
                 continue;
@@ -351,7 +346,7 @@ static int SsaGetSubtitle(Context_t  *context, char * Filename) {
 
             ssa_printf(10, "%s %s\n", FilenameShort, subtitleFilename);
 
-            if (strcmp(FilenameShort, subtitleFilename) == 0)
+            if (strncmp(FilenameShort, subtitleFilename,strlen(FilenameShort)) == 0)
             {
                 char absSubtitleFileName[PATH_MAX];
                 /* found something of interest, so now make an absolut path name */
@@ -390,7 +385,7 @@ static int SsaGetSubtitle(Context_t  *context, char * Filename) {
 static int SsaOpenSubtitle(Context_t *context, int trackid) {
     ssa_printf(10, "\n");
 
-    if(trackid < TEXTSSAOFFSET) {
+    if(trackid < TEXTSSAOFFSET || (trackid % TEXTSSAOFFSET) >= TrackCount ) {
         ssa_err("trackid not for us\n");
         return cERR_SSA_ERROR;
     }
