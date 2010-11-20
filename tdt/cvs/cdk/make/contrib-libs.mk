@@ -1309,6 +1309,33 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--disable-iwmmxt \
 		--disable-altivec \
 		--disable-debug \
+		--disable-bsfs \
+		--disable-filters \
+		--disable-asm \
+		--disable-altivec \
+		--disable-amd3dnow \
+		--disable-amd3dnowext \
+		--disable-mmx \
+		--disable-mmx2 \
+		--disable-sse \
+		--disable-ssse3 \
+		--disable-armv5te \
+		--disable-armv6 \
+		--disable-armv6t2 \
+		--disable-armvfp \
+		--disable-iwmmxt \
+		--disable-mmi \
+		--disable-neon \
+		--disable-vis \
+		--disable-yasm \
+		--disable-muxers \
+		--disable-encoders \
+		--disable-indevs \
+		--disable-outdevs \
+		--disable-decoders \
+		--enable-decoder=aac \
+		--enable-decoder=mp3 \
+		--enable-decoder=theora \
 		--enable-small \
 		--cross-prefix=$(target)- \
 		--target-os=linux \
