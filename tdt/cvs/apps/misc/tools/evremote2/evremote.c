@@ -242,6 +242,8 @@ void *detectKeyUpTask(void* dummy)
     sem_down(); // Wait till the next keypress
     while(1)
     {
+      int tux = 0;
+      
       keyCode = gKeyCode;
       nextKey = gNextKey;
 
@@ -250,7 +252,11 @@ void *detectKeyUpTask(void* dummy)
          ((RemoteControl_t*)context->r)->Notification(context, 1);
 
       printf("KEY_PRESS - %02x %d\n", keyCode, nextKey);
-      sendInputEventT(INPUT_PRESS, keyCode);
+
+      //Check if tuxtxt is running
+      tux = checkTuxTxt(keyCode);
+      if (tux == false)
+         sendInputEventT(INPUT_PRESS, keyCode);
 
       //usleep(gBtnDelay*1000);
       while (gKeyCode && nextKey == gNextKey)
@@ -266,7 +272,10 @@ void *detectKeyUpTask(void* dummy)
         usleep(sleep*1000);
       }
       printf("KEY_RELEASE - %02x %d\n", keyCode, nextKey);
-      sendInputEventT(INPUT_RELEASE, keyCode);
+
+      //Check if tuxtxt is running
+      if (tux == false)
+          sendInputEventT(INPUT_RELEASE, keyCode);
 
       //deactivate visual notification
       if (((RemoteControl_t*)context->r)->Notification)
