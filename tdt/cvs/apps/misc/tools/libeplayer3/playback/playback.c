@@ -495,7 +495,7 @@ static int PlaybackTerminate(Context_t  *context) {
     int ret = cERR_PLAYBACK_NO_ERROR;
     int wait_time = 20;
 
-    playback_printf(10, "\n");
+    playback_printf(20, "\n");
 
     if ( context && context->playback && context->playback->isPlaying ) {
         //First Flush and than delete container, else e2 cant read length of file anymore
@@ -536,7 +536,7 @@ static int PlaybackTerminate(Context_t  *context) {
         ret = cERR_PLAYBACK_ERROR;
     }
 
-    playback_printf(10, "exiting with value %d\n", ret);
+    playback_printf(20, "exiting with value %d\n", ret);
 
     return ret;
 }

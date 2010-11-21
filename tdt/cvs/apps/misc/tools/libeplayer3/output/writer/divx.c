@@ -98,7 +98,7 @@ static int writeData(void* _call)
     unsigned char  Version             = 5;
     unsigned int   FakeStartCode       = (Version << 8) | PES_VERSION_FAKE_START_CODE;
     unsigned int   HeaderLength = 0;
-
+    unsigned int   usecPerFrame = 41708; /* Hellmaster1024: default value */
     BitPacker_t ld = {FakeHeaders, 0, 32};
 
     divx_printf(10, "\n");
@@ -123,6 +123,9 @@ static int writeData(void* _call)
         return 0;
     }
 
+    usecPerFrame = 1000000000 / call->FrameRate;
+    divx_printf(10, "Microsecends per frame = %d\n", usecPerFrame);
+
     memset(FakeHeaders, 0, sizeof(FakeHeaders));
 
     /* Create info record for frame parser */
@@ -135,7 +138,7 @@ static int writeData(void* _call)
     PutBits(&ld, 0, 8);           // profile = reserved
     PutBits(&ld, 0x1b2, 32);      // startcode (user data)
     PutBits(&ld, 0x53545443, 32); // STTC - an embedded ST timecode from an avi file
-    PutBits(&ld, call->FrameRate , 32);
+    PutBits(&ld, usecPerFrame , 32);
     // microseconds per frame
     FlushBits(&ld);
 
