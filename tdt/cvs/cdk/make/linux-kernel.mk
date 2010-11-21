@@ -186,10 +186,9 @@ SPARKPATCHES_23 = $(COMMONPATCHES_23) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
-		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
-		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		$(if $(P0119),linux-sh4-ufs922_stmmac_stm23$(PATCH_STR).patch) \
-		$(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
+    $(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+    $(if $(P0119),linux-sh4-ufs922_stmmac_stm23$(PATCH_STR).patch) \
+    $(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
 
 FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
