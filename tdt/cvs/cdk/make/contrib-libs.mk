@@ -1303,10 +1303,6 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--disable-ffmpeg \
 		--disable-ffserver \
 		--disable-ffplay \
-		--disable-mmx \
-		--disable-armv5te \
-		--disable-armv6 \
-		--disable-iwmmxt \
 		--disable-altivec \
 		--disable-debug \
 		--disable-bsfs \
@@ -1330,12 +1326,23 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--disable-yasm \
 		--disable-muxers \
 		--disable-encoders \
+		--enable-encoder=aac \
+		--enable-encoder=mp3 \
+		--enable-encoder=theora \
+		--enable-encoder=h261 \
+		--enable-encoder=h263 \
+		--enable-encoder=h263i \
+		--enable-encoder=h264 \
 		--disable-indevs \
 		--disable-outdevs \
 		--disable-decoders \
 		--enable-decoder=aac \
 		--enable-decoder=mp3 \
 		--enable-decoder=theora \
+		--enable-decoder=h261 \
+		--enable-decoder=h263 \
+		--enable-decoder=h263i \
+		--enable-decoder=h264 \
 		--enable-small \
 		--cross-prefix=$(target)- \
 		--target-os=linux \

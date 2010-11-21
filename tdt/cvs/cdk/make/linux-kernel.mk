@@ -206,7 +206,6 @@ OCTAGON1008PATCHES_23 = $(COMMONPATCHES_23) \
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		$(if $(P0119),linux-sh4-ufs922_stasc_stm23$(PATCH_STR).patch) \
 		tf7700_setup_stm23$(PATCH_STR).patch 
 
 HL101PATCHES_23 = $(COMMONPATCHES_23) \
