@@ -1308,7 +1308,6 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--disable-bsfs \
 		--disable-filters \
 		--disable-asm \
-		--disable-altivec \
 		--disable-amd3dnow \
 		--disable-amd3dnowext \
 		--disable-mmx \
@@ -1324,6 +1323,8 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--disable-neon \
 		--disable-vis \
 		--disable-yasm \
+		--disable-indevs \
+		--disable-outdevs \
 		--disable-muxers \
 		--disable-encoders \
 		--enable-encoder=aac \
@@ -1333,8 +1334,6 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--enable-encoder=h263 \
 		--enable-encoder=h263i \
 		--enable-encoder=h264 \
-		--disable-indevs \
-		--disable-outdevs \
 		--disable-decoders \
 		--enable-decoder=aac \
 		--enable-decoder=mp3 \
