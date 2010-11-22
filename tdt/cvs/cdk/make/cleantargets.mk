@@ -88,6 +88,7 @@ endif
 	-rm -rf $(prefix)/*cdkroot-tftpboot
 	-rm -rf $(rpmdbprefix)/
 	-rm -rf $(ipkprefix)/
+	-rm -rf $(prefix)/release_neutrino*
 	-rm -rf SOURCES SPECS BUILD && install -d SOURCES SPECS BUILD
 	-rm -rf $(prefix)/ccache
 
