@@ -411,9 +411,17 @@ int main(int argc,char* argv[]) {
 
             case 'k': {
                 int Key2 = getchar() - 48;
+                float sec=0.0;
                 printf("seconds %d \n", Key2);
-
-                player->playback->Command(player, PLAYBACK_SEEK, &Key2);
+                switch (Key2) {
+                    case 1: sec=-15.0;break;
+                    case 4: sec=-60.0;break;
+                    case 7: sec=-300.0;break;
+                    case 3: sec= 15.0;break;
+                    case 6: sec= 60.0;break;
+                    case 9: sec= 300.0;break;
+                }
+                player->playback->Command(player, PLAYBACK_SEEK, (void*)&sec);
                 break;
             }
 
@@ -476,6 +484,8 @@ int main(int argc,char* argv[]) {
                 printf("b:        Decrease speed (Fast reverse) (-1 - -15)\n");
                 printf("l:        Print duration\n");
                 printf("j:        Print current PTS\n");
+                printf("k[1,4,7]: Jump back [15,60,300] seconds\n");
+                printf("k[3,6,9]: Jump forward [15,60,300] seconds\n");
                 printf("i:        Print Info\n");
                 break;
             }

@@ -1328,6 +1328,8 @@ static int container_ffmpeg_swich_audio(Context_t* context, int* arg)
 {
     ffmpeg_printf(10, "track %d\n", *arg);
     /* Hellmaster1024: nothing to do here!*/
+    float sec=-5.0;
+    context->playback->Command(context, PLAYBACK_SEEK, (void*)&sec);
     return cERR_CONTAINER_FFMPEG_NO_ERROR;
 }
 
