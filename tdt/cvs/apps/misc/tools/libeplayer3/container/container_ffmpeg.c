@@ -390,7 +390,7 @@ static void FFMPEGThread(Context_t *context) {
                 if (videoTrack->Id == index) {
                     currentVideoPts = videoTrack->pts = pts = calcPts(videoTrack->stream, &packet);
 
-                    if (currentVideoPts > latestPts)
+                    if ((currentVideoPts > latestPts) && (currentVideoPts != INVALID_PTS_VALUE))
                         latestPts = currentVideoPts; 
 
                     ffmpeg_printf(200, "VideoTrack index = %d %lld\n",index, currentVideoPts);

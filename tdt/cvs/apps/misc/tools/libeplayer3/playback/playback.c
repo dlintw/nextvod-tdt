@@ -779,7 +779,7 @@ static int PlaybackPts(Context_t  *context, unsigned long long int* pts) {
 static int PlaybackLength(Context_t  *context, double* length) {
     int ret = cERR_PLAYBACK_NO_ERROR;
 
-    playback_printf(10, "\n");
+    playback_printf(20, "\n");
 
     *length = 0;
 
@@ -792,7 +792,7 @@ static int PlaybackLength(Context_t  *context, double* length) {
         ret = cERR_PLAYBACK_ERROR;
     }
 
-    playback_printf(10, "exiting with value %d\n", ret);
+    playback_printf(20, "exiting with value %d\n", ret);
 
     return ret;
 }
