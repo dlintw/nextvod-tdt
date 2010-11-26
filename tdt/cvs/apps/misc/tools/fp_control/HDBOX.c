@@ -39,6 +39,8 @@ static int setText(Context_t* context, char* theText);
 
 #define cVFD_DEVICE "/dev/vfd"
 #define cRC_DEVICE "/dev/rc"
+#define WAKEUPFILE "/var/wakeup"
+#define WAS_TIMER_WAKEUP "/proc/stb/fp/was_timer_wakeup"
 
 #define cMAXCharsHDBOX 12
 
@@ -181,6 +183,7 @@ static int getTime(Context_t* context, time_t* theGMTTime)
 static int setTimer(Context_t* context)
 {
    struct nuvoton_ioctl_data vData;
+   FILE                   *datei;
    time_t                    curTime;
    time_t                    wakeupTime;
    struct tm                 *ts;
@@ -208,7 +211,13 @@ static int setTimer(Context_t* context)
    
    if ((wakeupTime == 0) || (curTime > wakeupTime))
    {
-       /* nothing to do for e2 */   
+       /* nothing to do for e2 */  
+       wakeupTime = 1999999999;
+       datei = fopen(WAKEUPFILE,"w");
+       fprintf(datei,"%i",wakeupTime);
+       fclose(datei);
+       system("sync");
+        
        fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
 
        vData.u.standby.time[0] = '\0';
@@ -249,6 +258,10 @@ static int setTimer(Context_t* context)
       }
 
       wakeupTime = curTime + diff;
+      datei = fopen(WAKEUPFILE,"w");
+      fprintf(datei,"%i",wakeupTime);
+      fclose(datei);
+      system("sync");
 
       setNuvotonTime(wakeupTime, vData.u.standby.time);
 
@@ -506,6 +519,46 @@ static int setBrightness(Context_t* context, int brightness)
    }
    return 0;   
 }
+
+static int setWakeupReason(Context_t* context)
+{
+   time_t                  curTimeFP;
+   time_t                  wakeupTime;
+   struct tm               *ts;
+   int                     reason;
+   
+   reason = 0;
+   FILE *datei1 = fopen(WAKEUPFILE,"r");
+	 if(datei1 != NULL) {
+     fscanf(datei1,"%i", &wakeupTime);
+     fclose(datei1);
+     if (wakeupTime < 1999999999) {
+     	 int rc = getTime(context, &curTimeFP);
+     	 if (rc == 0) {
+     	 	 if (curTimeFP >= wakeupTime) {
+     	 	 	 reason = 1;
+     	 	 }
+     	 }
+     }
+   }
+   else {
+   	 printf("wakeup File not found\n");
+   }
+   if (reason == 1) {
+     FILE *fd = fopen(WAS_TIMER_WAKEUP, "w");
+     if(fd == NULL) {
+       fprintf(stderr, "setWakeupReason failed to open %s\n", WAS_TIMER_WAKEUP);
+       return -1;
+     }
+     if(fwrite("1\n", 2, 1, fd) != 1)
+       fprintf(stderr, "setWakeupReason failed to write to %s\n", WAS_TIMER_WAKEUP);
+     else
+       fprintf(stderr, "setWakeupReason set %s to 1\n", WAS_TIMER_WAKEUP);
+     fclose(fd);
+     return 0;
+   } 
+}	 	 
+
 /* added by zeroone; set PowerLed Brightness on HDBOX*/
 // BEGIN setPwrLed
 static int setPwrLed(Context_t* context, int pwrled)
@@ -593,6 +646,7 @@ Model_t HDBOX_model = {
 	setPwrLed, /* added by zeroone; set PowerLed Brightness on HDBOX*/
 	getWakeupReason,
 	setLight,
+	setWakeupReason,
         Exit,
 	NULL,
 	NULL,
