@@ -1655,7 +1655,7 @@ int tuxtx_main(int _rc, void * _fb, int pid, int x, int y, int w, int h)
 
         if ((fb=open("/dev/fb0", O_RDWR)) == -1)
         {
-                perror("TuxTxt <open /dev/fb/0>");
+                perror("TuxTxt <open /dev/fb0>");
                 return 0;
         }
 

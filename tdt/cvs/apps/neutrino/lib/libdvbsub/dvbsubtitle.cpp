@@ -21,7 +21,12 @@ extern "C" {
 }
 #include "driver/framebuffer.h"
 
-#define FB	"/dev/fb/0"
+#ifdef __sh__
+#define FB "/dev/fb0"
+#else
+#define FB "/dev/fb/0"
+#endif
+
 extern int fb_fd;
 //struct fb_fix_screeninfo fix_screeninfo;
 //struct fb_var_screeninfo var_screeninfo;
