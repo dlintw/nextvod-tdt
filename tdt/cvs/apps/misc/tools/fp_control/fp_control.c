@@ -83,6 +83,8 @@ tArgs vArgs[] =
 "Args: No argumens\n\tClear display, all icons and leds off" },
    { "-v", "--version",
 "Args: No argumens\n\tGet version from fc" },
+   { "-sw", "--setWakeup",
+"Args: No argumens\n\tset WakeUp reason" },
    { NULL, NULL, NULL }
 };
 
@@ -412,6 +414,13 @@ void processCommand (Context_t * context, int argc, char* argv[])
 	        /* get version */
                 if (((Model_t*)context->m)->GetVersion)
                     ((Model_t*)context->m)->GetVersion(context, &version);
+ 	    } else
+            if ((strcmp(argv[i], "-sw") == 0) || (strcmp(argv[i], "--setWakeup") == 0))
+            {
+	        /* set WakeUp reason */
+                if (((Model_t*)context->m)->setWakeupReason)
+                    ((Model_t*)context->m)->setWakeupReason(context);            	
+	    
 	    } else
 	    {
                 usage(context, argv[0], NULL);
