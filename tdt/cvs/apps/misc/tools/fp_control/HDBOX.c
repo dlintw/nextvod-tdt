@@ -214,10 +214,11 @@ static int setTimer(Context_t* context)
        /* nothing to do for e2 */  
        wakeupTime = 1999999999;
        datei = fopen(WAKEUPFILE,"w");
-       fprintf(datei,"%i",wakeupTime);
-       fclose(datei);
-       system("sync");
-        
+	if (datei) {
+		fprintf(datei,"%i",wakeupTime);
+		fclose(datei);
+		system("sync");
+	}
        fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
 
        vData.u.standby.time[0] = '\0';
@@ -258,11 +259,12 @@ static int setTimer(Context_t* context)
       }
 
       wakeupTime = curTime + diff;
-      datei = fopen(WAKEUPFILE,"w");
-      fprintf(datei,"%i",wakeupTime);
-      fclose(datei);
-      system("sync");
-
+	datei = fopen(WAKEUPFILE,"w");
+	if (datei) {
+		fprintf(datei,"%i",wakeupTime);
+		fclose(datei);
+		system("sync");
+	}
       setNuvotonTime(wakeupTime, vData.u.standby.time);
 
        if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
