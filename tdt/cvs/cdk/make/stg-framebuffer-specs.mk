@@ -14,7 +14,7 @@ RPMS/noarch/$(STLINUX)-$(HOST_STGFB)-$(HOST_STGFB_VERSION).noarch.rpm: \
 
 $(DEPDIR)/$(HOST_STGFB): RPMS/noarch/$(STLINUX)-$(HOST_STGFB)-$(HOST_STGFB_VERSION).noarch.rpm
 	@rpm $(DRPM) --ignorearch -Uhv \
-		--relocate $(buildprefix)/stgfb=$(buildprefix) --nodeps --noscripts $<
+		--badreloc --relocate $(buildprefix)/stgfb=$(buildprefix) --nodeps --noscripts $<
 	touch $@
 
 $(DEPDIR)/stgfb.do_prepare: linux-kernel.do_compile $(HOST_STGFB)
@@ -65,7 +65,7 @@ RPMS/sh4/stlinux20-sh4-console-data-1999.08.29-4.sh4.rpm: \
 $(DEPDIR)/min-$(CONSOLE_DATAA) $(DEPDIR)/std-$(CONSOLE_DATAA) $(DEPDIR)/max-$(CONSOLE_DATAA) $(DEPDIR)/$(CONSOLE_DATAA): \
 $(DEPDIR)/%$(CONSOLE_DATAA): RPMS/sh4/stlinux20-sh4-$(CONSOLE_DATAA)-$(CONSOLE_DATA_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -84,7 +84,7 @@ RPMS/sh4/stlinux20-sh4-console-tools-0.2.3-6.sh4.rpm: \
 $(DEPDIR)/min-$(CONSOLE_TOOLS) $(DEPDIR)/std-$(CONSOLE_TOOLS) $(DEPDIR)/max-$(CONSOLE_TOOLS) $(DEPDIR)/$(CONSOLE_TOOLS): \
 $(DEPDIR)/%$(CONSOLE_TOOLS): RPMS/sh4/stlinux20-sh4-$(CONSOLE_TOOLS)-$(CONSOLE_TOOLS_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -103,7 +103,7 @@ RPMS/sh4/stlinux20-sh4-ICE-6.8.1-2.sh4.rpm: \
 $(DEPDIR)/min-$(ICE) $(DEPDIR)/std-$(ICE) $(DEPDIR)/max-$(ICE) $(DEPDIR)/$(ICE): \
 $(DEPDIR)/%$(ICE): RPMS/sh4/stlinux20-sh4-$(ICE)-$(ICE_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -120,7 +120,7 @@ RPMS/sh4/stlinux20-sh4-SM-6.8.1-2.sh4.rpm: \
 $(DEPDIR)/min-$(SM) $(DEPDIR)/std-$(SM) $(DEPDIR)/max-$(SM) $(DEPDIR)/$(SM): \
 $(DEPDIR)/%$(SM): RPMS/sh4/stlinux20-sh4-$(SM)-$(SM_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -137,7 +137,7 @@ RPMS/sh4/stlinux20-sh4-Xproto-6.8.1-2.sh4.rpm: \
 $(DEPDIR)/min-$(XPROTO) $(DEPDIR)/std-$(XPROTO) $(DEPDIR)/max-$(XPROTO) $(DEPDIR)/$(XPROTO): \
 $(DEPDIR)/%$(XPROTO): RPMS/sh4/stlinux20-sh4-$(XPROTO)-$(XPROTO_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -154,7 +154,7 @@ RPMS/sh4/stlinux20-sh4-XExtensions-6.8.1-2.sh4.rpm: \
 $(DEPDIR)/min-$(XEXTENSIONS) $(DEPDIR)/std-$(XEXTENSIONS) $(DEPDIR)/max-$(XEXTENSIONS) $(DEPDIR)/$(XEXTENSIONS): \
 $(DEPDIR)/%$(XEXTENSIONS): RPMS/sh4/stlinux20-sh4-$(XEXTENSIONS)-$(XEXTENSIONS_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -172,7 +172,7 @@ RPMS/sh4/stlinux20-sh4-Xt-6.8.1-2.sh4.rpm: \
 $(DEPDIR)/min-$(XT) $(DEPDIR)/std-$(XT) $(DEPDIR)/max-$(XT) $(DEPDIR)/$(XT): \
 $(DEPDIR)/%$(XT): RPMS/sh4/stlinux20-sh4-$(XT)-$(XT_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -189,7 +189,7 @@ RPMS/sh4/stlinux20-sh4-xtrans-6.8.1-2.sh4.rpm: \
 $(DEPDIR)/min-$(XTRANS) $(DEPDIR)/std-$(XTRANS) $(DEPDIR)/max-$(XTRANS) $(DEPDIR)/$(XTRANS): \
 $(DEPDIR)/%$(XTRANS): RPMS/sh4/stlinux20-sh4-$(XTRANS)-$(XTRANS_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -207,7 +207,7 @@ RPMS/sh4/stlinux20-sh4-Xau-6.8.1-2.sh4.rpm: \
 $(DEPDIR)/min-$(XAU) $(DEPDIR)/std-$(XAU) $(DEPDIR)/max-$(XAU) $(DEPDIR)/$(XAU): \
 $(DEPDIR)/%$(XAU): $(DEPDIR)/%$(XPROTO) RPMS/sh4/stlinux20-sh4-$(XAU)-$(XAU_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -227,7 +227,7 @@ RPMS/sh4/stlinux20-sh4-X11-6.8.1-4.sh4.rpm: \
 $(DEPDIR)/min-$(X11) $(DEPDIR)/std-$(X11) $(DEPDIR)/max-$(X11) $(DEPDIR)/$(X11): \
 $(DEPDIR)/%$(X11): $(DEPDIR)/%$(XAU) RPMS/sh4/stlinux20-sh4-$(X11)-$(X11_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -245,7 +245,7 @@ RPMS/sh4/stlinux20-sh4-lirc-apps-0.7.2pre1-7.sh4.rpm: \
 $(DEPDIR)/min-$(LIRC_APPS) $(DEPDIR)/std-$(LIRC_APPS) $(DEPDIR)/max-$(LIRC_APPS) $(DEPDIR)/$(LIRC_APPS): \
 $(DEPDIR)/%$(LIRC_APPS): $(DEPDIR)/%$(X11) RPMS/sh4/stlinux20-sh4-$(LIRC_APPS)-$(LIRC_APPS_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -277,14 +277,14 @@ RPMS/sh4/$(STLINUX)-sh4-$(DIRECTFB_DEV)-$(DIRECTFB_VERSION).sh4.rpm: \
 $(DEPDIR)/min-$(DIRECTFB) $(DEPDIR)/std-$(DIRECTFB) $(DEPDIR)/max-$(DIRECTFB) $(DEPDIR)/$(DIRECTFB): \
 $(DEPDIR)/%$(DIRECTFB):  %freetype %jpeg RPMS/sh4/$(STLINUX)-sh4-$(DIRECTFB)-$(DIRECTFB_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(DIRECTFB_DEV) $(DEPDIR)/std-$(DIRECTFB_DEV) $(DEPDIR)/max-$(DIRECTFB_DEV) $(DEPDIR)/$(DIRECTFB_DEV): \
 $(DEPDIR)/%$(DIRECTFB_DEV): $(DEPDIR)/%$(DIRECTFB) RPMS/sh4/$(STLINUX)-sh4-$(DIRECTFB_DEV)-$(DIRECTFB_VERSION).sh4.rpm
 	rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	perl -pi -e "s,^libdir=.*\$$,libdir='$(targetprefix)/usr/lib'," $(targetprefix)/usr/lib/libdirectfb.la && \
 	perl -pi -e "s,^prefix=.*\$$,prefix=$(targetprefix)/usr," $(targetprefix)/usr/lib/pkgconfig/directfb.pc && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
@@ -306,7 +306,7 @@ RPMS/sh4/stlinux20-sh4-directfb-examples-0.9.22_stcvs20050810-7.sh4.rpm: \
 $(DEPDIR)/min-$(DIRECTFB_EXAMPLES) $(DEPDIR)/std-$(DIRECTFB_EXAMPLES) $(DEPDIR)/max-$(DIRECTFB_EXAMPLES) $(DEPDIR)/$(DIRECTFB_EXAMPLES): \
 $(DEPDIR)/%$(DIRECTFB_EXAMPLES): $(DEPDIR)/%$(FREETYPE) RPMS/sh4/stlinux20-sh4-$(DIRECTFB_EXAMPLES)-$(DIRECTFB_EXAMPLES_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
