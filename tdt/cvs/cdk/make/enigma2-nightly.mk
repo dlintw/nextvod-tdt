@@ -46,7 +46,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	echo "2) Wed, 31 Mar 2010 21:53 - 5807686a79350632f38e4161c942ae59cf2f63ce"; \
 	echo "3) Thu,  5 Aug 2010 09:15 - 65ce4a9bd27e342545b88faf9420426113d32702"; \
 	echo "4) Tue,  5 Oct 2010 11:00 - be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
-	echo "5) Fri,  5 Nov 2010 00:16 - 7fd4241a1d7b8d7c36385860b24882636517473b"; \
+	echo "5) Fri, 26 Nov 2010 18:12 - 59e42503e34758a946ebee1a1405fecb8fe7236d"; \
 	echo "6) current inactive... comming soon, here is the next stable (case 6 == DIFF=6)"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
@@ -55,7 +55,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	[ "$$REPLY" == "2" ] && DIFF="2" && REVISION="5807686a79350632f38e4161c942ae59cf2f63ce"; \
 	[ "$$REPLY" == "3" ] && DIFF="3" && REVISION="65ce4a9bd27e342545b88faf9420426113d32702"; \
 	[ "$$REPLY" == "4" ] && DIFF="4" && REVISION="be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
-	[ "$$REPLY" == "5" ] && DIFF="5" && REVISION="7fd4241a1d7b8d7c36385860b24882636517473b"; \
+	[ "$$REPLY" == "5" ] && DIFF="5" && REVISION="59e42503e34758a946ebee1a1405fecb8fe7236d"; \
 	echo "Revision: " $$REVISION; \
 	[ -d "$(appsdir)/enigma2-nightly" ] && \
 	git pull $(appsdir)/enigma2-nightly master;\
