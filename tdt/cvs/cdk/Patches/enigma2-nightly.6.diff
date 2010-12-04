@@ -1,7 +1,12 @@
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
 --- enigma2-nightly.org/configure.ac	2010-11-08 15:43:07.000000000 +0100
 +++ enigma2-nightly/configure.ac	2010-11-08 15:52:30.000000000 +0100
-@@ -41,6 +41,26 @@
+@@ -37,10 +37,30 @@
+ AM_CONDITIONAL(HAVE_GIT_DIR, test -d "$srcdir/.git")
+ AM_CONDITIONAL(HAVE_FAKE_GIT_DIR, test -f "$srcdir/.git/last_commit_info")
+ 
+-PKG_CHECK_MODULES(BASE, [freetype2 fribidi gstreamer-0.10 gstreamer-pbutils-0.10 libdvbsi++ libpng libxml-2.0 sigc++-1.2])
++PKG_CHECK_MODULES(BASE, [freetype2 fribidi libdvbsi++ libpng libxml-2.0 sigc++-1.2])
  PKG_CHECK_MODULES(LIBDDVD, libdreamdvd, HAVE_LIBDDVD="yes", HAVE_LIBDDVD="no")
  AM_CONDITIONAL(HAVE_LIBDDVD, test "$HAVE_LIBDDVD" = "yes")
  
@@ -603,13 +608,13 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/base/filepush.
  }
  
 +#if defined(__sh__) // here we prioritise and split the files
-+void eFilePushThread::start(int fd_source, int fd_dest, const char *filename)
++void eFilePushThread::start(int fd, int fd_dest, const char *filename)
 +{
 +	struct statfs sbuf;
-+
-+	m_raw_source.setfd(fd_source);
-+	m_fd_dest = fd_dest;
-+
++	eRawFile *f = new eRawFile();
++	ePtr<iTsSource> source = f;
++	f->setfd(fd);
++	start(source, fd_dest);
 +	m_record_split_size = 0;
 +	m_record_split_type = 0;
 +	m_flags = O_WRONLY|O_CREAT|O_LARGEFILE;
