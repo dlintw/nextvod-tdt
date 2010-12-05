@@ -57,7 +57,7 @@ $(DEPDIR)/$(SYSVINIT): \
 $(DEPDIR)/%$(SYSVINIT): $(SYSVINIT_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(SYSVINIT_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	( cd root/etc && for i in $(SYSVINIT_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(prefix)/$*cdkroot/etc/$$i || true; \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; done )
@@ -70,7 +70,7 @@ flash-sysvinit: $(flashprefix)/root/etc/inittab
 $(flashprefix)/root/etc/inittab: $(SYSVINIT_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(SYSVINIT_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	( cd root/etc && for i in $(SYSVINIT_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done )
@@ -84,7 +84,7 @@ $(DEPDIR)/%$(INITSCRIPTS): $(INITSCRIPTS_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(INITSCRIPTS_RPM) \
 		| $(DEPDIR)/%filesystem
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force --nopost -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	( cd $(prefix)/$*cdkroot/etc/init.d/ && \
 		sed -e "s|-uid 0 ||g" -i bootclean.sh && \
 		sed -e "s|-empty ||g" -i bootclean.sh && \
@@ -117,7 +117,7 @@ flash-initscripts: $(flashprefix)/root/etc/init.d/rc
 $(flashprefix)/root/etc/init.d/rc: $(INITSCRIPTS_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(INITSCRIPTS_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts --nopost -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	( cd $(flashprefix)/root/etc/init.d/ && \
 		sed -e "s|-uid 0 ||g" -i bootclean.sh && \
 		sed -e "s|-empty ||g" -i bootclean.sh && \
@@ -187,7 +187,7 @@ $(DEPDIR)/$(NETBASE): \
 $(DEPDIR)/%$(NETBASE): \
 		$(NETBASE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force --nopost -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	( cd root/etc/network && $(INSTALL) interfaces_yaud $(prefix)/$*cdkroot/etc/network/interfaces || true ) && \
 	( export HHL_CROSS_TARGET_DIR=$(prefix)/$*cdkroot && cd $(prefix)/$*cdkroot/etc/init.d && \
 		for s in networking ; do \
@@ -207,7 +207,7 @@ flash-netbase: $(flashprefix)/root/etc/init.d/networking
 $(flashprefix)/root/etc/init.d/networking: $(NETBASE_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(NETBASE_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	( cd root/etc && for i in $(NETBASE_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done ) && \
@@ -265,7 +265,7 @@ $(DEPDIR)/min-$(BC) $(DEPDIR)/std-$(BC) $(DEPDIR)/max-$(BC) \
 $(DEPDIR)/$(BC): \
 $(DEPDIR)/%$(BC): $(BC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -274,7 +274,7 @@ flash-bc: $(flashprefix)/root/usr/bin/bc
 
 $(flashprefix)/root/usr/bin/bc: $(BC_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
 endif TARGETRULESET_FLASH
@@ -318,7 +318,7 @@ $(FINDUTILS_RPM): \
 $(DEPDIR)/min-$(FINDUTILS) $(DEPDIR)/std-$(FINDUTILS) $(DEPDIR)/max-$(FINDUTILS) $(DEPDIR)/$(FINDUTILS): \
 $(DEPDIR)/%$(FINDUTILS): RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $<
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $<
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -326,7 +326,7 @@ flash-findutils: $(flashprefix)/root/usr/bin/find
 
 $(flashprefix)/root/usr/bin/find: RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
 
@@ -374,7 +374,7 @@ $(DEPDIR)/min-$(DISTRIBUTIONUTILS) $(DEPDIR)/std-$(DISTRIBUTIONUTILS) $(DEPDIR)/
 $(DEPDIR)/$(DISTRIBUTIONUTILS): \
 $(DEPDIR)/%$(DISTRIBUTIONUTILS): $(DISTRIBUTIONUTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -382,7 +382,7 @@ $(DEPDIR)/min-$(DISTRIBUTIONUTILS_DOC) $(DEPDIR)/std-$(DISTRIBUTIONUTILS_DOC) $(
 $(DEPDIR)/$(DISTRIBUTIONUTILS_DOC): \
 $(DEPDIR)/%$(DISTRIBUTIONUTILS_DOC): $(DISTRIBUTIONUTILS_DOC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 if TARGETRULESET_FLASH
@@ -390,7 +390,7 @@ flash-distributionutils: $(flashprefix)/root/usr/sbin/initdconfig
 
 $(flashprefix)/root/usr/sbin/initdconfig: $(DISTRIBUTIONUTILS_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
 endif TARGETRULESET_FLASH
@@ -435,7 +435,7 @@ $(DEPDIR)/min-$(MTD_UTILS) $(DEPDIR)/std-$(MTD_UTILS) $(DEPDIR)/max-$(MTD_UTILS)
 $(DEPDIR)/$(MTD_UTILS): \
 $(DEPDIR)/%$(MTD_UTILS): $(MTD_UTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -444,7 +444,7 @@ flash-mtd-utils: $(flashprefix)/root/usr/sbin/flash_info
 
 $(flashprefix)/root/usr/sbin/flash_info: $(MTD_UTILS_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	rm -rf $(flashprefix)/root/usr/share && \
 	rm $(flashprefix)/root/usr/sbin/{doc_loadbios,docfdisk,flash_otp_dump,flash_otp_info,ftl_check,ftl_format} && \
 	rm $(flashprefix)/root/usr/sbin/{jffs2dump,mkfs.jffs,mkfs.jffs2,nanddump,nandwrite,nftl_format,nftldump,rfddump,rfdformat,sumtool}
@@ -496,7 +496,7 @@ $(BASH_RPM): \
 $(DEPDIR)/min-$(BASH) $(DEPDIR)/std-$(BASH) $(DEPDIR)/max-$(BASH) $(DEPDIR)/$(BASH): \
 $(DEPDIR)/%$(BASH): $(DEPDIR)/%$(GLIBC) $(DEPDIR)/%$(LIBTERMCAP) $(BASH_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --noscripts --force -Uhvv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -549,7 +549,7 @@ $(COREUTILS_RPM): \
 $(DEPDIR)/min-$(COREUTILS) $(DEPDIR)/std-$(COREUTILS) $(DEPDIR)/max-$(COREUTILS) $(DEPDIR)/$(COREUTILS): \
 $(DEPDIR)/%$(COREUTILS): $(DEPDIR)/%$(GLIBC) $(COREUTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -593,7 +593,7 @@ $(NET_TOOLS_RPM): \
 $(DEPDIR)/min-$(NET_TOOLS) $(DEPDIR)/std-$(NET_TOOLS) $(DEPDIR)/max-$(NET_TOOLS) $(DEPDIR)/$(NET_TOOLS): \
 $(DEPDIR)/%$(NET_TOOLS): $(DEPDIR)/%$(GLIBC) $(NET_TOOLS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -637,7 +637,7 @@ $(SED_RPM): \
 $(DEPDIR)/min-$(SEDX) $(DEPDIR)/std-$(SEDX) $(DEPDIR)/max-$(SEDX) $(DEPDIR)/$(SEDX): \
 $(DEPDIR)/%$(SEDX): $(DEPDIR)/%$(GLIBC) $(SED_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -682,14 +682,14 @@ $(DIFF_RPM) $(DIFF_DOC_RPM): \
 $(DEPDIR)/min-$(DIFF) $(DEPDIR)/std-$(DIFF) $(DEPDIR)/max-$(DIFF) $(DEPDIR)/$(DIFF): \
 $(DEPDIR)/%$(DIFF): $(DIFF_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) .deps/$(notdir $@) || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(DIFF_DOC) $(DEPDIR)/std-$(DIFF_DOC) $(DEPDIR)/max-$(DIFF_DOC) $(DEPDIR)/$(DIFF_DOC): \
 $(DEPDIR)/%$(DIFF_DOC): $(DIFF_DOC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -732,7 +732,7 @@ $(FILE_RPM): \
 $(DEPDIR)/min-$(FILE) $(DEPDIR)/std-$(FILE) $(DEPDIR)/max-$(FILE) $(DEPDIR)/$(FILE): \
 $(DEPDIR)/%$(FILE): $(FILE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -775,7 +775,7 @@ $(TAR_RPM): \
 $(DEPDIR)/min-$(TAR) $(DEPDIR)/std-$(TAR) $(DEPDIR)/max-$(TAR) $(DEPDIR)/$(TAR): \
 $(DEPDIR)/%$(TAR): $(TAR_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -818,7 +818,7 @@ $(STRACE_RPM): \
 $(DEPDIR)/min-$(STRACE) $(DEPDIR)/std-$(STRACE) $(DEPDIR)/max-$(STRACE) $(DEPDIR)/$(STRACE): \
 $(DEPDIR)/%$(STRACE): $(STRACE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force --noscripts -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -826,7 +826,7 @@ flash-strace: $(flashprefix)/root/usr/bin/strace
 
 $(flashprefix)/root/usr/bin/strace: $(STRACE_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
 
@@ -854,7 +854,7 @@ $(UTIL_LINUX_RPM): \
 
 $(DEPDIR)/$(UTIL_LINUX): $(UTIL_LINUX_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif STM24

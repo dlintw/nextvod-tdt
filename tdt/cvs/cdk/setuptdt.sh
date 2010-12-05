@@ -50,6 +50,7 @@ if [ -z "$FEDORA$SUSE$UBUNTU" ]; then
 fi
 
 PACKAGES="\
+	make \
 	subversion \
 	ccache \
 	flex \

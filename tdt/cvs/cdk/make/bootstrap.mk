@@ -118,7 +118,7 @@ $(HOST_RPMCONFIG_RPM): \
 
 $(HOST_RPMCONFIG): $(HOST_RPMCONFIG_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(STM_RELOCATE)=$(prefix) $< && \
+		--badreloc --relocate $(STM_RELOCATE)=$(prefix) $< && \
 	touch .deps/$(notdir $@)
 
 #
@@ -668,9 +668,9 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 		$(if $(KERNELHEADERS),$(KERNELHEADERS)) \
 		kernel-headers
 	rpm $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
-		--relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 1,$|) && \
+		--badreloc --relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 1,$|) && \
 	rpm $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
-		--relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 2,$|)
+		--badreloc --relocate $(STM_RELOCATE)/devkit/sh4/target=$(targetprefix) $(word 2,$|)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(CROSS_GCC_SPEC_PATCH),( cd SPECS && patch -p1 $(CROSS_GCC_SPEC) < ../Patches/$(CROSS_GCC_SPEC_PATCH) ) &&) \
 	$(if $(CROSS_GCC_PATCHES),cp $(CROSS_GCC_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -696,7 +696,7 @@ $(DEPDIR)/min-$(CROSS_LIBGCC) $(DEPDIR)/std-$(CROSS_LIBGCC) $(DEPDIR)/max-$(CROS
 $(DEPDIR)/$(CROSS_LIBGCC): \
 $(DEPDIR)/%$(CROSS_LIBGCC): $(CROSS_LIBGCC_RPM) | $(DEPDIR)/%$(GLIBC)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb  $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -708,7 +708,7 @@ $(CROSS_PROTOIZE): $(CROSS_PROTOIZE_RPM)
 #
 #$(flashprefix)/root/lib/libgcc_s-$(CROSS_GCC_RAWVERSION).so.1: $(CROSS_LIBGCC_RPM)
 #	@rpm --dbpath $(flashprefix)-rpmdb  $(DRPM) --ignorearch --nodeps  -Uhv \
-#		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $<
+#		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $<
 #	touch $@
 #	@FLASHROOTDIR_MODIFIED@
 

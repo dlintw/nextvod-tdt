@@ -338,7 +338,7 @@ $(DEPDIR)/max-$(KERNELHEADERS) \
 $(DEPDIR)/$(KERNELHEADERS): \
 $(DEPDIR)/%$(KERNELHEADERS): $(KERNELHEADERS_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	touch $@
 endif !STM22
 

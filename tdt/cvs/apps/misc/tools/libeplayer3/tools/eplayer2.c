@@ -49,6 +49,25 @@ static int               xRes   = 0;
 static int               yRes   = 0;
 static int               bpp    = 0;
 
+int kbhit(void) {
+        struct timeval tv;
+        fd_set read_fd;
+
+        tv.tv_sec=1;
+        tv.tv_usec=0;
+
+        FD_ZERO(&read_fd);
+        FD_SET(0,&read_fd);
+
+        if(select(1, &read_fd, NULL, NULL, &tv) == -1)
+                return 0;
+
+        if(FD_ISSET(0,&read_fd))
+                return 1;
+
+        return 0;
+}
+
 void framebuffer_init()
 {
 	int available  = 0;
@@ -104,7 +123,7 @@ void framebuffer_init()
 
 int main(int argc,char* argv[]) {
     SubtitleOutputDef_t out;
-    int showInfos = 0;
+    int showInfos = 0, noinput = 0;
     char file[255] = {""};
     int speed = 1;
     printf("%s >\n", __FILE__);
@@ -123,10 +142,13 @@ int main(int argc,char* argv[]) {
     strcat(file, argv[1]);
 
     /* debug helper */
-    if (argc == 3)
+    if(argc == 3 && !strcmp(argv[2], "-d"))
     {
         showInfos = 1;
     }
+    
+    if(argc == 3 && !strcmp(argv[2], "-n"))
+        noinput = 1;
 
     player = malloc(sizeof(Context_t));
 
@@ -276,10 +298,19 @@ int main(int argc,char* argv[]) {
         }*/
 
         while(player->playback->isPlaying) {
-            int                 Key = getchar();
+        		int Key = 0;
+
+	    			if(kbhit())
+	    				if(noinput == 0)
+            		Key = getchar();
+            
             if(!player->playback->isPlaying) {
                 break;
             }
+            
+            if(Key == 0)
+							continue;
+            
             switch (Key) {
             case 'a': {
                 int Key2 = getchar();

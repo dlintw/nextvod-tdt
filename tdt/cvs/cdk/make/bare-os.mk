@@ -83,14 +83,14 @@ $(DEPDIR)/min-$(GLIBC) $(DEPDIR)/std-$(GLIBC) $(DEPDIR)/max-$(GLIBC) \
 $(DEPDIR)/$(GLIBC): \
 $(DEPDIR)/%$(GLIBC): $(GLIBC_RPM) | $(DEPDIR)/%filesystem
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(GLIBC_DEV) $(DEPDIR)/std-$(GLIBC_DEV) $(DEPDIR)/max-$(GLIBC_DEV) \
 $(DEPDIR)/$(GLIBC_DEV): \
 $(DEPDIR)/%$(GLIBC_DEV): $(DEPDIR)/%$(GLIBC) $(GLIBC_DEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 #Wrote: RPMS/sh4/stlinux23-sh4-glibc-prof-2.5-27.sh4.rpm
@@ -104,7 +104,7 @@ flash-glibc: $(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so
 
 $(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so: $(GLIBC_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
 
@@ -225,19 +225,19 @@ $(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM): \
 $(DEPDIR)/min-$(GCC) $(DEPDIR)/std-$(GCC) $(DEPDIR)/max-$(GCC) $(DEPDIR)/$(GCC): \
 $(DEPDIR)/%$(GCC): $(DEPDIR)/%$(GLIBC_DEV) $(GCC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(LIBSTDC) $(DEPDIR)/std-$(LIBSTDC) $(DEPDIR)/max-$(LIBSTDC) $(DEPDIR)/$(LIBSTDC): \
 $(DEPDIR)/%$(LIBSTDC): $(DEPDIR)/%$(CROSS_LIBGCC) $(LIBSTDC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(LIBSTDC_DEV) $(DEPDIR)/std-$(LIBSTDC_DEV) $(DEPDIR)/max-$(LIBSTDC_DEV) $(DEPDIR)/$(LIBSTDC_DEV): \
 $(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) $(LIBSTDC_DEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	sed -i "/^libdir/s|'/usr/lib'|'$(targetprefix)/usr/lib'|" $(targetprefix)/usr/lib/lib{std,sup}c++.la
 	sed -i "/^dependency_libs/s|-L/usr/lib -L/lib ||" $(targetprefix)/usr/lib/lib{std,sup}c++.la
@@ -245,14 +245,14 @@ $(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) $(LIBSTDC_DEV_RPM)
 $(DEPDIR)/min-$(LIBGCC) $(DEPDIR)/std-$(LIBGCC) $(DEPDIR)/max-$(LIBGCC) $(DEPDIR)/$(LIBGCC): \
 $(DEPDIR)/%$(LIBGCC): $(LIBGCC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
 #flash-libstdc++: $(flashprefix)/root/usr/lib/libstdc++.so.6.0.3
 #
 #$(flashprefix)/root/usr/lib/libstdc++.so.6.0.3: RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm
 #	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-#		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+#		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 #	touch $@
 #	@FLASHROOTDIR_MODIFIED@
 
@@ -311,7 +311,7 @@ $(DEPDIR)/min-$(LIBTERMCAP) $(DEPDIR)/std-$(LIBTERMCAP) $(DEPDIR)/max-$(LIBTERMC
 $(DEPDIR)/$(LIBTERMCAP): \
 $(DEPDIR)/%$(LIBTERMCAP): bootstrap $(LIBTERMCAP_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	ln -sf libtermcap.so.2 $(prefix)/$*cdkroot/usr/lib/libtermcap.so && \
 	$(INSTALL) -m 644 $(buildprefix)/root/etc/termcap $(prefix)/$*cdkroot/etc && \
 	[ "x$*" = "x" ] && touch $@ || true
@@ -321,7 +321,7 @@ $(DEPDIR)/min-$(LIBTERMCAP_DEV) $(DEPDIR)/std-$(LIBTERMCAP_DEV) $(DEPDIR)/max-$(
 $(DEPDIR)/$(LIBTERMCAP_DEV): \
 $(DEPDIR)/%$(LIBTERMCAP_DEV): $(DEPDIR)/%$(LIBTERMCAP) $(LIBTERMCAP_DEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -329,7 +329,7 @@ $(DEPDIR)/min-$(LIBTERMCAP_DOC) $(DEPDIR)/std-$(LIBTERMCAP_DOC) $(DEPDIR)/max-$(
 $(DEPDIR)/$(LIBTERMCAP_DOC): \
 $(DEPDIR)/%$(LIBTERMCAP_DOC): $(LIBTERMCAP_DOC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -338,7 +338,7 @@ flash-libtermcap: $(flashprefix)/root/usr/lib/libtermcap.so.$(LIBTERMCAP_RAWVERS
 
 $(flashprefix)/root/usr/lib/libtermcap.so.$(LIBTERMCAP_RAWVERSION): $(NCURSES) $(LIBTERMCAP_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	$(INSTALL) -m 644 $(buildprefix)/root/etc/termcap $(flashprefix)/root/etc && \
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
@@ -391,7 +391,7 @@ $(DEPDIR)/min-$(NCURSES_BASE) $(DEPDIR)/std-$(NCURSES_BASE) $(DEPDIR)/max-$(NCUR
 $(DEPDIR)/$(NCURSES_BASE): \
 $(DEPDIR)/%$(NCURSES_BASE): $(NCURSES_BASE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $<)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $<)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -399,7 +399,7 @@ $(DEPDIR)/min-$(NCURSES) $(DEPDIR)/std-$(NCURSES) $(DEPDIR)/max-$(NCURSES) \
 $(DEPDIR)/$(NCURSES): \
 $(DEPDIR)/%$(NCURSES): $(DEPDIR)/%$(NCURSES_BASE) $(NCURSES_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -407,7 +407,7 @@ $(DEPDIR)/min-$(NCURSES_DEV) $(DEPDIR)/std-$(NCURSES_DEV) $(DEPDIR)/max-$(NCURSE
 $(DEPDIR)/$(NCURSES_DEV): \
 $(DEPDIR)/%$(NCURSES_DEV): $(DEPDIR)/%$(NCURSES_BASE) $(NCURSES_DEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -423,7 +423,7 @@ $(eval $(call Packages,ncurses))
 #
 #$(flashprefix)/root/usr/share/terminfo: RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_BASE)-$(NCURSES_VERSION).sh4.rpm
 #	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-#		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+#		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 #	touch $@
 #	@FLASHROOTDIR_MODIFIED@
 #
@@ -431,7 +431,7 @@ $(eval $(call Packages,ncurses))
 #
 #$(flashprefix)/root/lib/libncurses.so.5.4: RPMS/sh4/$(STLINUX)-sh4-$(NCURSES)-$(NCURSES_VERSION).sh4.rpm
 #	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-#		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
+#		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 #	touch $@
 #	@FLASHROOTDIR_MODIFIED@
 
@@ -476,7 +476,7 @@ $(DEPDIR)/$(BASE_PASSWD): \
 $(DEPDIR)/%$(BASE_PASSWD): $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(BASE_PASSWD_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  --nopost -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
         $(hostprefix)/bin/update-passwd -L -p $(prefix)/$*cdkroot/usr/share/base-passwd/passwd.master \
                	-g $(prefix)/$*cdkroot/usr/share/base-passwd/group.master -P $(prefix)/$*cdkroot/etc/passwd \
                	-S $(prefix)/$*cdkroot/etc/shadow -G $(prefix)/$*cdkroot/etc/group && \
@@ -492,7 +492,7 @@ flash-base-passwd: $(flashprefix)/root/usr/sbin/update-passwd
 $(flashprefix)/root/usr/sbin/update-passwd: \
 		$(BASE_PASSWD_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
         $(hostprefix)/bin/update-passwd -L -p $(flashprefix)/root/usr/share/base-passwd/passwd.master \
                	-g $(flashprefix)/root/usr/share/base-passwd/group.master -P $(flashprefix)/root/etc/passwd \
                	-S $(flashprefix)/root/etc/shadow -G $(flashprefix)/root/etc/group && \
@@ -542,7 +542,7 @@ $(DEPDIR)/min-$(MAKEDEV) $(DEPDIR)/std-$(MAKEDEV) $(DEPDIR)/max-$(MAKEDEV) \
 $(DEPDIR)/$(MAKEDEV): \
 $(DEPDIR)/%$(MAKEDEV): root/sbin/MAKEDEV $(MAKEDEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	$(INSTALL) -m 755 root/sbin/MAKEDEV $(prefix)/$*cdkroot/sbin
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
@@ -554,7 +554,7 @@ flash-makedev: $(flashprefix)/root/sbin/MAKEDEV
 
 $(flashprefix)/root/sbin/MAKEDEV: root/sbin/MAKEDEV $(MAKEDEV_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	$(INSTALL) -m 755 root/sbin/MAKEDEV_flash $(flashprefix)/root/sbin/MAKEDEV
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
@@ -600,7 +600,7 @@ $(DEPDIR)/min-$(BASE_FILES) $(DEPDIR)/std-$(BASE_FILES) $(DEPDIR)/max-$(BASE_FIL
 $(DEPDIR)/%$(BASE_FILES): $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(BASE_FILES_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	( cd root/etc && for i in $(BASE_FILES_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(prefix)/$*cdkroot/etc/$$i || true; \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; done ) && \
@@ -615,7 +615,7 @@ flash-base-files: $(flashprefix)/root/etc/fstab
 $(flashprefix)/root/etc/fstab: $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(BASEFILES_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	( cd root/etc && for i in $(BASE_FILES_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; done ) && \
 	echo "proc          /proc               proc    defaults                        0 0" >> $(flashprefix)/root/etc/fstab && \
@@ -706,7 +706,7 @@ $(UDEV_RPM): \
 $(DEPDIR)/min-$(UDEV) $(DEPDIR)/std-$(UDEV) $(DEPDIR)/max-$(UDEV) $(DEPDIR)/$(UDEV): \
 $(DEPDIR)/%$(UDEV): $(UDEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --noscripts -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	( export HHL_CROSS_TARGET_DIR=$(prefix)/$*cdkroot && cd $(prefix)/$*cdkroot/etc/init.d && \
 		for s in sysfs udev ; do \
 			$(hostprefix)/bin/target-initdconfig --add $$s || \
@@ -740,7 +740,7 @@ $(HOTPLUG_RPM): \
 $(DEPDIR)/min-$(HOTPLUG) $(DEPDIR)/std-$(HOTPLUG) $(DEPDIR)/max-$(HOTPLUG) $(DEPDIR)/$(HOTPLUG): \
 $(DEPDIR)/%$(HOTPLUG): $(HOTPLUG_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --noscripts -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	( export HHL_CROSS_TARGET_DIR=$(prefix)/$*cdkroot && cd $(prefix)/$*cdkroot/etc/init.d && \
 		for s in hotplug ; do \
 			$(hostprefix)/bin/target-initdconfig --add $$s || \
@@ -753,7 +753,7 @@ flash-hotplug: $(flashprefix)/root/sbin/hotplug
 
 $(flashprefix)/root/sbin/hotplug: $(HOTPLUG_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--replacepkgs --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
 endif TARGETRULESET_FLASH

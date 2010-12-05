@@ -101,7 +101,7 @@ $(SPLASHUTILS_RPM): \
 $(DEPDIR)/min-$(SPLASHUTILS) $(DEPDIR)/std-$(SPLASHUTILS) $(DEPDIR)/max-$(SPLASHUTILS) $(DEPDIR)/$(SPLASHUTILS): \
 $(DEPDIR)/%$(SPLASHUTILS): $(SPLASHUTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	cp root/etc/splash/luxisri.ttf $(targetprefix)/etc/splash/ && \
 	cp -rd root/etc/splash/{vdr,liquid,together}_theme $(targetprefix)/etc/splash/ && \
 	$(LN_SF) liquid_theme $(targetprefix)/etc/splash/default && \
@@ -114,7 +114,7 @@ flash-splashutils: $(flashprefix)/root/sbin/fbsplashd
 
 $(flashprefix)/root/sbin/fbsplashd: $(SPLASHUTILS_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	cp root/etc/splash/luxisri.ttf $(flashprefix)/root/etc/splash/ && \
 	cp -rd root/etc/splash/{vdr,liquid,together}_theme $(flashprefix)/root/etc/splash/ && \
 	$(LN_SF) liquid_theme $(flashprefix)/root/etc/splash/default && \
@@ -214,14 +214,14 @@ if STM22
 $(DEPDIR)/min-$(STSLAVE) $(DEPDIR)/std-$(STSLAVE) $(DEPDIR)/max-$(STSLAVE) $(DEPDIR)/$(STSLAVE): \
 $(DEPDIR)/%$(STSLAVE): $(STSLAVE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 else !STM22
 $(DEPDIR)/min-$(STSLAVE) $(DEPDIR)/std-$(STSLAVE) $(DEPDIR)/max-$(STSLAVE) $(DEPDIR)/$(STSLAVE): \
 $(DEPDIR)/%$(STSLAVE): linux-kernel-headers binutils-dev $(STSLAVE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM22
@@ -276,14 +276,14 @@ $(OPENSSL_RPM) $(OPENSSL_DEV_RPM): \
 $(DEPDIR)/min-$(OPENSSL) $(DEPDIR)/std-$(OPENSSL) $(DEPDIR)/max-$(OPENSSL) $(DEPDIR)/$(OPENSSL): \
 $(DEPDIR)/%$(OPENSSL): $(OPENSSL_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(OPENSSL_DEV) $(DEPDIR)/std-$(OPENSSL_DEV) $(DEPDIR)/max-$(OPENSSL_DEV) $(DEPDIR)/$(OPENSSL_DEV): \
 $(DEPDIR)/%$(OPENSSL_DEV): %$(OPENSSL) $(OPENSSL_DEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -328,14 +328,14 @@ $(ALSALIB_RPM) $(ALSALIB_DEV_RPM): \
 $(DEPDIR)/min-$(ALSALIB) $(DEPDIR)/std-$(ALSALIB) $(DEPDIR)/max-$(ALSALIB) $(DEPDIR)/$(ALSALIB): \
 $(DEPDIR)/%$(ALSALIB): $(ALSALIB_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(ALSALIB_DEV) $(DEPDIR)/std-$(ALSALIB_DEV) $(DEPDIR)/max-$(ALSALIB_DEV) $(DEPDIR)/$(ALSALIB_DEV): \
 $(DEPDIR)/%$(ALSALIB_DEV): %$(ALSALIB) $(ALSALIB_DEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -343,7 +343,7 @@ flash-alsa-lib: $(flashprefix)/root/usr/bin/aserver
 
 $(flashprefix)/root/usr/bin/aserver: $(ALSALIB_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	touch $@ && \
 	@FLASHROOTDIR_MODIFIED@
 
@@ -387,7 +387,7 @@ $(ALSAUTILS_RPM): \
 $(DEPDIR)/min-$(ALSAUTILS) $(DEPDIR)/std-$(ALSAUTILS) $(DEPDIR)/max-$(ALSAUTILS) $(DEPDIR)/$(ALSAUTILS): \
 $(DEPDIR)/%$(ALSAUTILS): $(ALSAUTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -395,7 +395,7 @@ flash-alsa-utils: $(flashprefix)/root/usr/bin/amixer
 
 $(flashprefix)/root/usr/bin/amixer: $(ALSAUTILS_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	rm -rf $(flashprefix)/root/usr/share/sounds/alsa && \
 	rmdir $(flashprefix)/root/usr/share/sounds && \
 	touch $@ && \
@@ -444,14 +444,14 @@ $(ALSAPLAYER_RPM) $(ALSAPLAYER_DEV_RPM): \
 $(DEPDIR)/min-$(ALSAPLAYER) $(DEPDIR)/std-$(ALSAPLAYER) $(DEPDIR)/max-$(ALSAPLAYER) $(DEPDIR)/$(ALSAPLAYER): \
 $(DEPDIR)/%$(ALSAPLAYER): $(ALSAPLAYER_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(ALSAPLAYER_DEV) $(DEPDIR)/std-$(ALSAPLAYER_DEV) $(DEPDIR)/max-$(ALSAPLAYER_DEV) $(DEPDIR)/$(ALSAPLAYER_DEV): \
 $(DEPDIR)/%$(ALSAPLAYER_DEV): $(ALSAPLAYER_DEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -459,7 +459,7 @@ flash-alsaplayer: $(flashprefix)/root/usr/bin/alsaplayer
 
 $(flashprefix)/root/usr/bin/alsaplayer: $(ALSAPLAYER_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
+		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
 	touch $@ && \
 	@FLASHROOTDIR_MODIFIED@
 
