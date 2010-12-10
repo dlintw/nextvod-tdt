@@ -7901,7 +7901,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	if ( !m_stream_tags && w < sUser && w > 26 )
  		return "";
  	const gchar *tag = 0;
-@@ -944,9 +1313,62 @@
+@@ -944,9 +1313,68 @@
  		g_free(value);
  		return res;
  	}
@@ -7950,12 +7950,18 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
 +		res_str = tag;
 +        	player->playback->Command(player, PLAYBACK_INFO, &res_str);
 +
-+		std::string res = res_str;
-+        	free(tag);
-+		free(res_str);
-+		return res;
++		/* Hellmaster1024: in case something went wrong maybe no new adress is returned */
++		if(tag != res_str){		
++			std::string res = res_str;
++        		free(tag);
++			free(res_str);
++			return res;
++		} else {
++			free(tag);
++			return "";	
++		}
 +	}
-+    free(tag);
++	free(tag);
 +#endif
  	return "";
  }
@@ -7964,7 +7970,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  PyObject *eServiceMP3::getInfoObject(int w)
  {
  	const gchar *tag = 0;
-@@ -1006,6 +1428,7 @@
+@@ -1006,6 +1434,7 @@
  
  	return 0;
  }
@@ -7972,7 +7978,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  
  RESULT eServiceMP3::audioChannel(ePtr<iAudioChannelSelection> &ptr)
  {
-@@ -1038,30 +1461,37 @@
+@@ -1038,30 +1467,37 @@
  
  int eServiceMP3::getCurrentTrack()
  {
@@ -8010,7 +8016,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	int current_audio;
  	g_object_set (G_OBJECT (m_gst_playbin), "current-audio", i, NULL);
  	g_object_get (G_OBJECT (m_gst_playbin), "current-audio", &current_audio, NULL);
-@@ -1072,6 +1502,13 @@
+@@ -1072,6 +1508,13 @@
  		return 0;
  	}
  	return -1;
@@ -8024,7 +8030,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  }
  
  int eServiceMP3::getCurrentChannel()
-@@ -1089,6 +1526,7 @@
+@@ -1089,6 +1532,7 @@
  {
   	if (i >= m_audioStreams.size())
  		return -2;
@@ -8032,7 +8038,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  		info.m_description = m_audioStreams[i].codec;
  /*	if (m_audioStreams[i].type == atMPEG)
  		info.m_description = "MPEG";
-@@ -1108,11 +1546,28 @@
+@@ -1108,11 +1552,28 @@
  		info.m_description = "FLAC";
  	else
  		info.m_description = "???";*/
@@ -8061,7 +8067,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  void eServiceMP3::gstBusCall(GstBus *bus, GstMessage *msg)
  {
  	if (!msg)
-@@ -1493,9 +1948,9 @@
+@@ -1493,9 +1954,9 @@
  	else
  		pullSubtitle();
  }
@@ -8073,7 +8079,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  void eServiceMP3::gstCBsubtitleAvail(GstElement *appsink, gpointer user_data)
  {
  	eServiceMP3 *_this = (eServiceMP3*)user_data;
-@@ -1542,9 +1997,30 @@
+@@ -1542,9 +2003,30 @@
  	else
  		eDebug("no subtitle sink!");
  }
@@ -8104,7 +8110,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	ePangoSubtitlePage page;
  	pts_t running_pts;
  	while ( !m_subtitle_pages.empty() )
-@@ -1589,6 +2065,7 @@
+@@ -1589,6 +2071,7 @@
  	}
  	if (m_subtitle_pages.empty())
  		pullSubtitle();
@@ -8112,7 +8118,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  }
  
  RESULT eServiceMP3::enableSubtitles(eWidget *parent, ePyObject tuple)
-@@ -1613,9 +2090,11 @@
+@@ -1613,9 +2096,11 @@
  
  	if (m_currentSubtitleStream != pid)
  	{
@@ -8124,7 +8130,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  		m_subs_to_pull = 0;
  		m_subtitle_pages.clear();
  	}
-@@ -1624,9 +2103,14 @@
+@@ -1624,9 +2109,14 @@
  	m_subtitle_widget = new eSubtitleWidget(parent);
  	m_subtitle_widget->resize(parent->size()); /* full size */
  
@@ -8139,7 +8145,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  
  	return 0;
  
-@@ -1642,6 +2126,11 @@
+@@ -1642,6 +2132,11 @@
  	m_subtitle_pages.clear();
  	delete m_subtitle_widget;
  	m_subtitle_widget = 0;
@@ -8151,7 +8157,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	return 0;
  }
  
-@@ -1654,6 +2143,15 @@
+@@ -1654,6 +2149,15 @@
  PyObject *eServiceMP3::getSubtitleList()
  {
  	eDebug("eServiceMP3::getSubtitleList");
@@ -8167,7 +8173,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  
  	ePyObject l = PyList_New(0);
  	int stream_count[sizeof(subtype_t)];
-@@ -1665,7 +2163,11 @@
+@@ -1665,7 +2169,11 @@
  		subtype_t type = IterSubtitleStream->type;
  		ePyObject tuple = PyTuple_New(5);
  		PyTuple_SET_ITEM(tuple, 0, PyInt_FromLong(2));
@@ -8179,7 +8185,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  		PyTuple_SET_ITEM(tuple, 2, PyInt_FromLong(int(type)));
  		PyTuple_SET_ITEM(tuple, 3, PyInt_FromLong(0));
  		PyTuple_SET_ITEM(tuple, 4, PyString_FromString((IterSubtitleStream->language_code).c_str()));
-@@ -1696,7 +2198,9 @@
+@@ -1696,7 +2204,9 @@
  int eServiceMP3::setBufferSize(int size)
  {
  	m_buffer_size = size;
@@ -8189,7 +8195,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	return 0;
  }
  
-@@ -1712,6 +2216,7 @@
+@@ -1712,6 +2222,7 @@
  
  void eServiceMP3::setAC3Delay(int delay)
  {
@@ -8197,7 +8203,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	ac3_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1745,10 +2250,12 @@
+@@ -1745,10 +2256,12 @@
  			gst_object_unref(sink);
  		}
  	}
@@ -8210,7 +8216,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	pcm_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1789,8 +2296,9 @@
+@@ -1789,8 +2302,9 @@
  			gst_object_unref(sink);
  		}
  	}

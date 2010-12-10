@@ -1,7 +1,474 @@
+diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/acinclude.m4 enigma2-nightly/acinclude.m4
+--- enigma2-nightly.org/acinclude.m4	2010-11-08 15:43:07.000000000 +0100
++++ enigma2-nightly/acinclude.m4	2010-11-08 15:52:30.000000000 +0100
+@@ -0,0 +1,445 @@
++AC_DEFUN([TUXBOX_APPS],[
++
++INSTALL="$INSTALL -p"
++
++AC_GNU_SOURCE
++AC_SYS_LARGEFILE
++
++AC_ARG_WITH(target,
++	[  --with-target=TARGET    target for compilation [[native,cdk]]],
++	[TARGET="$withval"],[TARGET="native"])
++
++AC_ARG_WITH(targetprefix,
++	[  --with-targetprefix=PATH  prefix relative to target root (only applicable in cdk mode)],
++	[targetprefix="$withval"],[targetprefix="NONE"])
++
++AC_ARG_WITH(debug,
++	[  --without-debug         disable debugging code],
++	[DEBUG="$withval"],[DEBUG="yes"])
++
++if test "$DEBUG" = "yes"; then
++	DEBUG_CFLAGS="-g3 -ggdb"
++	AC_DEFINE(DEBUG,1,[Enable debug messages])
++fi
++
++AC_MSG_CHECKING(target)
++
++if test "$TARGET" = "native"; then
++	AC_MSG_RESULT(native)
++
++	if test "$CFLAGS" = "" -a "$CXXFLAGS" = ""; then
++		CFLAGS="-Wall -O2 -pipe $DEBUG_CFLAGS"
++		CXXFLAGS="-Wall -O2 -pipe $DEBUG_CFLAGS"
++	fi
++	if test "$prefix" = "NONE"; then
++		prefix=/usr/local
++	fi
++	targetprefix=$prefix
++elif test "$TARGET" = "cdk"; then
++	AC_MSG_RESULT(cdk)
++
++	if test "$CC" = "" -a "$CXX" = ""; then
++		CC=powerpc-tuxbox-linux-gnu-gcc CXX=powerpc-tuxbox-linux-gnu-g++
++	fi
++	if test "$CFLAGS" = "" -a "$CXXFLAGS" = ""; then
++		CFLAGS="-Wall -Os -mcpu=823 -pipe $DEBUG_CFLAGS"
++		CXXFLAGS="-Wall -Os -mcpu=823 -pipe $DEBUG_CFLAGS"
++	fi
++	if test "$prefix" = "NONE"; then
++		AC_MSG_ERROR(invalid prefix, you need to specify one in cdk mode)
++	fi
++	if test "$targetprefix" = "NONE"; then
++		targetprefix=""
++	fi
++	if test "$host_alias" = ""; then
++		cross_compiling=yes
++		host_alias=powerpc-tuxbox-linux-gnu
++	fi
++else
++	AC_MSG_RESULT(none)
++	AC_MSG_ERROR([invalid target $TARGET, choose on from native,cdk]);
++fi
++
++AC_CANONICAL_BUILD
++AC_CANONICAL_HOST
++
++check_path () {
++	return $(perl -e "if(\"$1\"=~m#^/usr/(local/)?bin#){print \"0\"}else{print \"1\";}")
++}
++
++])
++
++AC_DEFUN([TUXBOX_APPS_DIRECTORY_ONE],[
++AC_ARG_WITH($1,[  $6$7 [[PREFIX$4$5]]],[
++	_$2=$withval
++	if test "$TARGET" = "cdk"; then
++		$2=`eval echo "${targetprefix}$withval"`
++	else
++		$2=$withval
++	fi
++],[
++	$2="\${$3}$5"
++	if test "$TARGET" = "cdk"; then
++		_$2=`eval echo "${target$3}$5"`
++	else
++		_$2=`eval echo "${$3}$5"`
++	fi
++])
++
++dnl automake <= 1.6 don't support this
++dnl AC_SUBST($2)
++AC_DEFINE_UNQUOTED($2,"$_$2",$7)
++])
++
++AC_DEFUN([TUXBOX_APPS_DIRECTORY],[
++AC_REQUIRE([TUXBOX_APPS])
++
++if test "$TARGET" = "cdk"; then
++	datadir="\${prefix}/share"
++	tuxboxdatadir="\${prefix}/share/tuxbox"
++	zoneinfodir="\${datadir}/zoneinfo"
++	sysconfdir="\${prefix}/etc"
++	localstatedir="\${prefix}/var"
++	localedir="\${prefix}/var"
++	libdir="\${prefix}/lib"
++	targetdatadir="\${targetprefix}/share"
++	targetsysconfdir="\${targetprefix}/etc"
++	targetlocalstatedir="\${targetprefix}/var"
++	targetlibdir="\${targetprefix}/lib"
++fi
++
++TUXBOX_APPS_DIRECTORY_ONE(configdir,CONFIGDIR,sysconfdir,/etc,,
++	[--with-configdir=PATH   ],[where to find the config files])
++
++TUXBOX_APPS_DIRECTORY_ONE(datadir,DATADIR,datadir,/share,,
++	[--with-datadir=PATH     ],[where to find data])
++
++TUXBOX_APPS_DIRECTORY_ONE(fontdir,FONTDIR,datadir,/share,/fonts,
++	[--with-fontdir=PATH     ],[where to find the fonts])
++
++TUXBOX_APPS_DIRECTORY_ONE(libdir,LIBDIR,libdir,/lib,,
++	[--with-libdir=PATH      ],[where to find the internal libs])
++])
++
++dnl automake <= 1.6 needs this specifications
++AC_SUBST(CONFIGDIR)
++AC_SUBST(DATADIR)
++AC_SUBST(FONTDIR)
++AC_SUBST(LIBDIR)
++dnl end workaround
++
++AC_DEFUN([TUXBOX_APPS_DVB],[
++AC_ARG_WITH(dvbincludes,
++	[  --with-dvbincludes=PATH  path for dvb includes [[NONE]]],
++	[DVBINCLUDES="$withval"],[DVBINCLUDES=""])
++
++if test "$DVBINCLUDES"; then
++	CPPFLAGS="$CPPFLAGS -I$DVBINCLUDES"
++fi
++
++AC_CHECK_HEADERS(ost/dmx.h,[
++	DVB_API_VERSION=1
++	AC_MSG_NOTICE([found dvb version 1])
++])
++
++if test -z "$DVB_API_VERSION"; then
++AC_CHECK_HEADERS(linux/dvb/version.h,[
++	AC_LANG_PREPROC_REQUIRE()
++	AC_REQUIRE([AC_PROG_EGREP])
++	AC_LANG_CONFTEST([AC_LANG_SOURCE([[
++#include <linux/dvb/version.h>
++version DVB_API_VERSION
++	]])])
++	DVB_API_VERSION=`(eval "$ac_cpp conftest.$ac_ext") 2>&AS_MESSAGE_LOG_FD | $EGREP "^version" | sed "s,version\ ,,"`
++	rm -f conftest*
++
++	AC_MSG_NOTICE([found dvb version $DVB_API_VERSION])
++])
++fi
++
++if test "$DVB_API_VERSION"; then
++	AC_DEFINE(HAVE_DVB,1,[Define to 1 if you have the dvb includes])
++	AC_DEFINE_UNQUOTED(HAVE_DVB_API_VERSION,$DVB_API_VERSION,[Define to the version of the dvb api])
++else
++	AC_MSG_ERROR([can't find dvb headers])
++fi
++])
++
++AC_DEFUN([_TUXBOX_APPS_LIB_CONFIG],[
++AC_PATH_PROG($1_CONFIG,$2,no)
++if test "$$1_CONFIG" != "no"; then
++	if test "$TARGET" = "cdk" && check_path "$$1_CONFIG"; then
++		AC_MSG_$3([could not find a suitable version of $2]);
++	else
++		$1_CFLAGS=$($$1_CONFIG --cflags)
++		$1_LIBS=$($$1_CONFIG --libs)
++	fi
++fi
++
++AC_SUBST($1_CFLAGS)
++AC_SUBST($1_LIBS)
++])
++
++AC_DEFUN([TUXBOX_APPS_LIB_CONFIG],[
++_TUXBOX_APPS_LIB_CONFIG($1,$2,ERROR)
++if test "$$1_CONFIG" = "no"; then
++	AC_MSG_ERROR([could not find $2]);
++fi
++])
++
++AC_DEFUN([TUXBOX_APPS_LIB_CONFIG_CHECK],[
++_TUXBOX_APPS_LIB_CONFIG($1,$2,WARN)
++])
++
++AC_DEFUN([TUXBOX_APPS_PKGCONFIG],[
++AC_PATH_PROG(PKG_CONFIG, pkg-config,no)
++if test "$PKG_CONFIG" = "no" ; then
++	AC_MSG_ERROR([could not find pkg-config]);
++fi
++])
++
++AC_DEFUN([_TUXBOX_APPS_LIB_PKGCONFIG],[
++PKG_CHECK_MODULES($1,$2)
++AC_SUBST($1_CFLAGS)
++AC_SUBST($1_LIBS)
++])
++
++AC_DEFUN([_TUXBOX_APPS_LIB_PKGCONFIG_OPTIONAL],[
++PKG_CHECK_MODULES($1,$2,$3="yes",$3="no")
++if test "$$3" = "yes"; then
++	AC_DEFINE($3, 1, [$2 available])
++else
++	$1_CFLAGS=""
++	$1_LIBS=""
++fi
++AC_SUBST($1_CFLAGS)
++AC_SUBST($1_LIBS)
++])
++
++AC_DEFUN([TUXBOX_APPS_LIB_PKGCONFIG],[
++_TUXBOX_APPS_LIB_PKGCONFIG($1,$2)
++if test -z "$$1_CFLAGS" ; then
++	AC_MSG_ERROR([could not find package $2]);
++fi
++])
++
++AC_DEFUN([TUXBOX_APPS_LIB_PKGCONFIG_CHECK],[
++_TUXBOX_APPS_LIB_PKGCONFIG($1,$2)
++])
++
++AC_DEFUN([_TUXBOX_APPS_LIB_SYMBOL],[
++AC_CHECK_LIB($2,$3,HAVE_$1="yes",HAVE_$1="no")
++if test "$HAVE_$1" = "yes"; then
++	$1_LIBS=-l$2
++fi
++
++AC_SUBST($1_LIBS)
++])
++
++AC_DEFUN([TUXBOX_APPS_LIB_SYMBOL],[
++_TUXBOX_APPS_LIB_SYMBOL($1,$2,$3,ERROR)
++if test "$HAVE_$1" = "no"; then
++	AC_MSG_ERROR([could not find $2]);
++fi
++])
++
++AC_DEFUN([TUXBOX_APPS_LIB_CONFIG_SYMBOL],[
++_TUXBOX_APPS_LIB_SYMBOL($1,$2,$3,WARN)
++])
++
++AC_DEFUN([TUXBOX_APPS_GETTEXT],[
++AM_PATH_PROG_WITH_TEST(MSGFMT, msgfmt,
++	[$ac_dir/$ac_word --statistics /dev/null >/dev/null 2>&1 &&
++	(if $ac_dir/$ac_word --statistics /dev/null 2>&1 >/dev/null | grep usage >/dev/null; then exit 1; else exit 0; fi)],
++	:)
++AC_PATH_PROG(GMSGFMT, gmsgfmt, $MSGFMT)
++
++AM_PATH_PROG_WITH_TEST(XGETTEXT, xgettext,
++	[$ac_dir/$ac_word --omit-header --copyright-holder= /dev/null >/dev/null 2>&1 &&
++	(if $ac_dir/$ac_word --omit-header --copyright-holder= /dev/null 2>&1 >/dev/null | grep usage >/dev/null; then exit 1; else exit 0; fi)],
++	:)
++
++AM_PATH_PROG_WITH_TEST(MSGMERGE, msgmerge,[$ac_dir/$ac_word --update -q /dev/null /dev/null >/dev/null 2>&1],:)
++
++AC_MSG_CHECKING([whether NLS is requested])
++AC_ARG_ENABLE(nls,
++	[  --disable-nls           do not use Native Language Support],
++	USE_NLS=$enableval, USE_NLS=yes)
++AC_MSG_RESULT($USE_NLS)
++AC_SUBST(USE_NLS)
++
++if test "$USE_NLS" = "yes"; then
++	AC_CACHE_CHECK([for GNU gettext in libc], gt_cv_func_gnugettext_libc,[
++		AC_TRY_LINK([
++			#include <libintl.h>
++			#ifndef __GNU_GETTEXT_SUPPORTED_REVISION
++			#define __GNU_GETTEXT_SUPPORTED_REVISION(major) ((major) == 0 ? 0 : -1)
++			#endif
++			extern int _nl_msg_cat_cntr;
++			extern int *_nl_domain_bindings;
++			],[
++			bindtextdomain ("", "");
++			return (int) gettext ("") + _nl_msg_cat_cntr + *_nl_domain_bindings;
++			], gt_cv_func_gnugettext_libc=yes, gt_cv_func_gnugettext_libc=no
++		)]
++	)
++
++	if test "$gt_cv_func_gnugettext_libc" = "yes"; then
++		AC_DEFINE(ENABLE_NLS, 1, [Define to 1 if translation of program messages to the user's native language is requested.])
++		gt_use_preinstalled_gnugettext=yes
++	else
++		USE_NLS=no
++	fi
++fi
++
++if test -f "$srcdir/po/LINGUAS"; then
++	ALL_LINGUAS=$(sed -e "/^#/d" "$srcdir/po/LINGUAS")
++fi
++
++POFILES=
++GMOFILES=
++UPDATEPOFILES=
++DUMMYPOFILES=
++for lang in $ALL_LINGUAS; do
++	POFILES="$POFILES $srcdirpre$lang.po"
++	GMOFILES="$GMOFILES $srcdirpre$lang.gmo"
++	UPDATEPOFILES="$UPDATEPOFILES $lang.po-update"
++	DUMMYPOFILES="$DUMMYPOFILES $lang.nop"
++done
++INST_LINGUAS=
++if test -n "$ALL_LINGUAS"; then
++	for presentlang in $ALL_LINGUAS; do
++		useit=no
++		if test -n "$LINGUAS"; then
++			desiredlanguages="$LINGUAS"
++		else
++			desiredlanguages="$ALL_LINGUAS"
++		fi
++		for desiredlang in $desiredlanguages; do
++			case "$desiredlang" in
++				"$presentlang"*) useit=yes;;
++			esac
++		done
++		if test $useit = yes; then
++			INST_LINGUAS="$INST_LINGUAS $presentlang"
++		fi
++	done
++fi
++CATALOGS=
++if test -n "$INST_LINGUAS"; then
++	for lang in $INST_LINGUAS; do
++		CATALOGS="$CATALOGS $lang.gmo"
++	done
++fi
++AC_SUBST(POFILES)
++AC_SUBST(GMOFILES)
++AC_SUBST(UPDATEPOFILES)
++AC_SUBST(DUMMYPOFILES)
++AC_SUBST(CATALOGS)
++])
++
++dnl backward compatiblity
++AC_DEFUN([AC_GNU_SOURCE],
++[AH_VERBATIM([_GNU_SOURCE],
++[/* Enable GNU extensions on systems that have them.  */
++#ifndef _GNU_SOURCE
++# undef _GNU_SOURCE
++#endif])dnl
++AC_BEFORE([$0], [AC_COMPILE_IFELSE])dnl
++AC_BEFORE([$0], [AC_RUN_IFELSE])dnl
++AC_DEFINE([_GNU_SOURCE])
++])
++
++AC_DEFUN([AC_PROG_EGREP],
++[AC_CACHE_CHECK([for egrep], [ac_cv_prog_egrep],
++   [if echo a | (grep -E '(a|b)') >/dev/null 2>&1
++    then ac_cv_prog_egrep='grep -E'
++    else ac_cv_prog_egrep='egrep'
++    fi])
++ EGREP=$ac_cv_prog_egrep
++ AC_SUBST([EGREP])
++])
++
++AC_DEFUN([AC_PYTHON_DEVEL],[
++	#
++	# should allow for checking of python version here...
++	#
++	if test $cross_compiling = "yes"; then
++		# Check for Python include path
++		AC_MSG_CHECKING([for Python include path])
++		
++		# FIXME: yes, this is wrong. sorry about that. (tmbinc)
++		cross_PYTHON_VERSION=$PYTHON_VERSION
++		python_path=$PY_PATH/include/python2.6 
++		for i in $CPPFLAGS ; do
++			p=`echo $i | sed "s,^-I,,"`
++			p=`echo $p | sed "s,^-isystem,,"`
++			if test -f "$p/python$cross_PYTHON_VERSION/Python.h"; then
++				python_path="$p/python$cross_PYTHON_VERSION"
++				break
++			fi
++		done
++		AC_MSG_RESULT([$python_path])
++		if test -z "$python_path" ; then
++						AC_MSG_ERROR([cannot find Python include path])
++		fi
++		AC_SUBST([PYTHON_CPPFLAGS],[-I$python_path])
++
++		# Check for Python library path
++		AC_MSG_CHECKING([for Python library path])
++		python_path=$PY_PATH/include/python2.6 
++		for i in $LDFLAGS; do
++			l=`echo $i | sed "s,^-L,,"`
++			python_path=`find $l -type f -name libpython$cross_PYTHON_VERSION.* -print | sed "1q"`
++			if test -n "$python_path" ; then
++				break
++			fi
++		done
++		python_path=`echo $python_path | sed "s,/libpython.*$,,"`
++		AC_MSG_RESULT([$python_path])
++		if test -z "$python_path" ; then
++						AC_MSG_ERROR([cannot find Python library path])
++		fi
++		AC_SUBST([PYTHON_LDFLAGS],["-L$python_path -lpython$cross_PYTHON_VERSION"])
++		#
++		python_site=`echo $python_path | sed "s/config/site-packages/"`
++		AC_SUBST([PYTHON_SITE_PKG],[$python_site])
++	else
++		AC_REQUIRE([AM_PATH_PYTHON])
++
++		# Check for Python include path
++		AC_MSG_CHECKING([for Python include path])
++		python_path=`echo $PYTHON | sed "s,/bin.*$,,"`
++		for i in "$python_path/include/python$PYTHON_VERSION/" "$python_path/include/python/" "$python_path/" ; do
++			python_path=`find $i -type f -name Python.h -print | sed "1q"`
++			if test -n "$python_path" ; then
++				break
++			fi
++		done
++		python_path=`echo $python_path | sed "s,/Python.h$,,"`
++		AC_MSG_RESULT([$python_path])
++		if test -z "$python_path" ; then
++			AC_MSG_ERROR([cannot find Python include path])
++		fi
++		AC_SUBST([PYTHON_CPPFLAGS],[-I$python_path])
++
++		# Check for Python library path
++		AC_MSG_CHECKING([for Python library path])
++		python_path=`echo $PYTHON | sed "s,/bin.*$,,"`
++		for i in "$python_path/lib/python$PYTHON_VERSION/config/" "$python_path/lib/python$PYTHON_VERSION/" "$python_path/lib/python/config/" "$python_path/lib/python/" "$python_path/" ; do
++			python_path=`find $i -type f -name libpython$PYTHON_VERSION.* -print | sed "1q"`
++			if test -n "$python_path" ; then
++				break
++			fi
++		done
++		python_path=`echo $python_path | sed "s,/libpython.*$,,"`
++		AC_MSG_RESULT([$python_path])
++		if test -z "$python_path" ; then
++			AC_MSG_ERROR([cannot find Python library path])
++		fi
++		AC_SUBST([PYTHON_LDFLAGS],["-L$python_path -lpython$PYTHON_VERSION"])
++		#
++		python_site=`echo $python_path | sed "s/config/site-packages/"`
++		AC_SUBST([PYTHON_SITE_PKG],[$python_site])
++	fi
++])
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/configure.ac enigma2-nightly/configure.ac
 --- enigma2-nightly.org/configure.ac	2010-11-08 15:43:07.000000000 +0100
 +++ enigma2-nightly/configure.ac	2010-11-08 15:52:30.000000000 +0100
-@@ -37,10 +37,30 @@
+@@ -34,13 +34,48 @@
+ 
+ TUXBOX_APPS_DVB
+ 
++_TUXBOX_APPS_LIB_PKGCONFIG_OPTIONAL(FREETYPE, freetype2, HAVE_FREETYPE2)
++if test "$HAVE_FREETYPE2" = "no" ; then
++	TUXBOX_APPS_LIB_CONFIG(FREETYPE, freetype-config)
++fi
++TUXBOX_APPS_LIB_PKGCONFIG(FRIBIDI,fribidi)
++TUXBOX_APPS_LIB_PKGCONFIG(ID3TAG,id3tag)
++TUXBOX_APPS_LIB_PKGCONFIG(MAD,mad)
++#TUXBOX_APPS_LIB_PKGCONFIG(PLUGINS,tuxbox-plugins)
++TUXBOX_APPS_LIB_PKGCONFIG(PNG,libpng)
++TUXBOX_APPS_LIB_PKGCONFIG(SIGC,sigc++-1.2)
++TUXBOX_APPS_LIB_PKGCONFIG(DVBSI,libdvbsi++)
++_TUXBOX_APPS_LIB_PKGCONFIG_OPTIONAL(GSTREAMER,gstreamer,HAVE_GSTREAMER)
++_TUXBOX_APPS_LIB_PKGCONFIG_OPTIONAL(GSTREAMERPBUTILS,gstreamer-pbutils,HAVE_GSTSTREAMERPBUTILS)
++_TUXBOX_APPS_LIB_PKGCONFIG_OPTIONAL(LIBXINE,libxine,HAVE_LIBXINE)
++
  AM_CONDITIONAL(HAVE_GIT_DIR, test -d "$srcdir/.git")
  AM_CONDITIONAL(HAVE_FAKE_GIT_DIR, test -f "$srcdir/.git/last_commit_info")
  
@@ -33,6 +500,15 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/configure.ac enigm
  AC_CHECK_LIB([dl], [dlopen], [LIBDL_LIBS="-ldl"], [AC_MSG_ERROR([Could not find libdl])])
  AC_SUBST(LIBDL_LIBS)
  AC_CHECK_LIB([jpeg], [jpeg_set_defaults], [LIBJPEG_LIBS="-ljpeg"], [AC_MSG_ERROR([Could not find libjpeg])])
+@@ -90,7 +125,7 @@
+ 	[with_po="$withval"],[with_po="yes"])
+ AM_CONDITIONAL(UPDATE_PO, test "$with_po" = "yes")
+ 
+-CPPFLAGS="$CPPFLAGS $PYTHON_CPPFLAGS"
++CPPFLAGS="$CPPFLAGS $PYTHON_CPPFLAGS $FREETYPE_CFLAGS"
+ CXXFLAGS="$CXXFLAGS $BASE_CFLAGS $PTHREAD_CFLAGS $DEBUG_CFLAGS -fno-rtti -fno-exceptions -Wall"
+ 
+ AC_CONFIG_FILES([
 @@ -129,9 +149,6 @@
  lib/python/Components/Sources/Makefile
  lib/python/Screens/Makefile
@@ -7139,7 +7615,15 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly/lib/service/servicemp3.cpp
 --- enigma2-nightly.org/lib/service/servicemp3.cpp	2010-11-08 15:43:07.000000000 +0100
 +++ enigma2-nightly/lib/service/servicemp3.cpp	2010-11-08 17:23:11.000000000 +0100
-@@ -14,8 +14,10 @@
+@@ -1,4 +1,6 @@
+-#ifdef HAVE_GSTREAMER
++//#if not defined(__sh__)
++//#ifdef HAVE_GSTREAMER
++//#endif
+ 
+ 	/* note: this requires gstreamer 0.10.x and a big list of plugins. */
+ 	/* it's currently hardcoded to use a big-endian alsasink as sink. */
+@@ -16,8 +18,10 @@
  
  #include <string>
  
@@ -7150,7 +7634,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  #include <sys/stat.h>
  
  #define HTTP_TIMEOUT 10
-@@ -32,7 +34,9 @@
+@@ -34,7 +38,9 @@
  		std::list<std::string> extensions;
  		extensions.push_back("mp2");
  		extensions.push_back("mp3");
@@ -7160,7 +7644,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  		extensions.push_back("mpg");
  		extensions.push_back("vob");
  		extensions.push_back("wav");
-@@ -42,10 +46,28 @@
+@@ -44,10 +50,28 @@
  		extensions.push_back("avi");
  		extensions.push_back("divx");
  		extensions.push_back("dat");
@@ -7189,7 +7673,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  		sc->addServiceFactory(eServiceFactoryMP3::id, this, extensions);
  	}
  
-@@ -217,8 +239,9 @@
+@@ -219,8 +243,9 @@
  {
  	m_seekTimeout = eTimer::create(eApp);
  	m_subtitle_sync_timer = eTimer::create(eApp);
@@ -7200,7 +7684,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	m_currentAudioStream = -1;
  	m_currentSubtitleStream = 0;
  	m_subtitle_widget = 0;
-@@ -227,7 +250,9 @@
+@@ -229,7 +254,9 @@
  	m_buffer_size = 1*1024*1024;
  	CONNECT(m_seekTimeout->timeout, eServiceMP3::seekTimeoutCB);
  	CONNECT(m_subtitle_sync_timer->timeout, eServiceMP3::pushSubtitles);
@@ -7210,7 +7694,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	m_aspect = m_width = m_height = m_framerate = m_progressive = -1;
  
  	m_state = stIdle;
-@@ -238,6 +263,7 @@
+@@ -240,6 +267,7 @@
  	if (!ext)
  		ext = filename;
  
@@ -7218,7 +7702,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	m_sourceinfo.is_video = FALSE;
  	m_sourceinfo.audiotype = atUnknown;
  	if ( (strcasecmp(ext, ".mpeg") && strcasecmp(ext, ".mpg") && strcasecmp(ext, ".vob") && strcasecmp(ext, ".bin") && strcasecmp(ext, ".dat") ) == 0 )
-@@ -375,10 +401,160 @@
+@@ -377,10 +405,160 @@
  	}
  
  	setBufferSize(m_buffer_size);
@@ -7379,7 +7863,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	// disconnect subtitle callback
  	GstElement *sink;
  	g_object_get (G_OBJECT (m_gst_playbin), "text-sink", &sink, NULL);
-@@ -387,15 +563,18 @@
+@@ -389,15 +567,18 @@
  		g_signal_handler_disconnect (sink, m_subs_to_pull_handler_id);
  		gst_object_unref(sink);
  	}
@@ -7399,7 +7883,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	if (m_stream_tags)
  		gst_tag_list_free(m_stream_tags);
  	
-@@ -404,6 +583,22 @@
+@@ -406,6 +587,22 @@
  		gst_object_unref (GST_OBJECT (m_gst_playbin));
  		eDebug("eServiceMP3::destruct!");
  	}
@@ -7422,7 +7906,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  }
  
  DEFINE_REF(eServiceMP3);
-@@ -411,20 +606,35 @@
+@@ -413,20 +610,35 @@
  RESULT eServiceMP3::connectEvent(const Slot2<void,iPlayableService*,int> &event, ePtr<eConnection> &connection)
  {
  	connection = new eConnection((iPlayableService*)this, m_event.connect(event));
@@ -7460,7 +7944,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	m_event(this, evStart);
  
  	return 0;
-@@ -438,13 +648,39 @@
+@@ -440,13 +652,39 @@
  
  RESULT eServiceMP3::stop()
  {
@@ -7501,7 +7985,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	m_state = stStopped;
  
  	return 0;
-@@ -458,21 +694,89 @@
+@@ -460,21 +698,89 @@
  RESULT eServiceMP3::pause(ePtr<iPauseableService> &ptr)
  {
  	ptr=this;
@@ -7591,7 +8075,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  }
  
  void eServiceMP3::seekTimeoutCB()
-@@ -500,21 +804,30 @@
+@@ -502,21 +808,30 @@
  		// iPausableService
  RESULT eServiceMP3::pause()
  {
@@ -7623,7 +8107,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	return 0;
  }
  
-@@ -527,6 +840,7 @@
+@@ -529,6 +844,7 @@
  
  RESULT eServiceMP3::getLength(pts_t &pts)
  {
@@ -7631,7 +8115,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -541,11 +855,23 @@
+@@ -543,11 +859,23 @@
  		/* len is in nanoseconds. we have 90 000 pts per second. */
  	
  	pts = len / 11111;
@@ -7655,7 +8139,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  		/* convert pts to nanoseconds */
  	gint64 time_nanoseconds = to * 11111LL;
  	if (!gst_element_seek (m_gst_playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-@@ -555,7 +881,8 @@
+@@ -557,7 +885,8 @@
  		eDebug("eServiceMP3::seekTo failed");
  		return -1;
  	}
@@ -7665,7 +8149,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	return 0;
  }
  
-@@ -563,6 +890,7 @@
+@@ -565,6 +894,7 @@
  {
  	RESULT ret = -1;
  
@@ -7673,7 +8157,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	if (m_gst_playbin) {
  		eSingleLocker l(m_subs_to_pull_lock); // this is needed to dont handle incomming subtitles during seek!
  		if (!(ret = seekToImpl(to)))
-@@ -572,10 +900,12 @@
+@@ -574,10 +904,12 @@
  		}
  	}
  
@@ -7687,7 +8171,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  RESULT eServiceMP3::trickSeek(gdouble ratio)
  {
  	if (!m_gst_playbin)
-@@ -616,10 +946,12 @@
+@@ -618,10 +950,12 @@
  
  	return 0;
  }
@@ -7700,7 +8184,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -629,12 +961,17 @@
+@@ -631,12 +965,17 @@
  	if (ppos < 0)
  		ppos = 0;
  	seekTo(ppos);
@@ -7719,7 +8203,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	GstFormat fmt = GST_FORMAT_TIME;
  	gint64 pos;
  	GstElement *sink;
-@@ -669,6 +1006,24 @@
+@@ -671,6 +1010,24 @@
  
  	/* pos is in nanoseconds. we have 90 000 pts per second. */
  	pts = pos / 11111;
@@ -7744,7 +8228,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	return 0;
  }
  
-@@ -680,6 +1035,9 @@
+@@ -682,6 +1039,9 @@
  
  RESULT eServiceMP3::isCurrentlySeekable()
  {
@@ -7754,7 +8238,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	int ret = 3; // seeking and fast/slow winding possible
  	GstElement *sink;
  
-@@ -705,6 +1063,7 @@
+@@ -707,6 +1067,7 @@
  	}
  
  	return ret;
@@ -7762,7 +8246,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  }
  
  RESULT eServiceMP3::info(ePtr<iServiceInformation>&i)
-@@ -730,7 +1089,9 @@
+@@ -732,7 +1093,9 @@
  
  int eServiceMP3::getInfo(int w)
  {
@@ -7772,7 +8256,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  
  	switch (w)
  	{
-@@ -770,7 +1131,9 @@
+@@ -772,7 +1135,9 @@
  	case sTagKeywords:
  	case sTagChannelMode:
  	case sUser+12:
@@ -7782,7 +8266,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	case sTagTrackGain:
  	case sTagTrackPeak:
  	case sTagAlbumGain:
-@@ -781,6 +1144,7 @@
+@@ -783,6 +1148,7 @@
  	case sTagPreviewImage:
  	case sTagAttachment:
  		return resIsPyObject;
@@ -7790,7 +8274,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	case sTagTrackNumber:
  		tag = GST_TAG_TRACK_NUMBER;
  		break;
-@@ -814,22 +1178,25 @@
+@@ -816,22 +1182,25 @@
  	case sTagCRC:
  		tag = "has-crc";
  		break;
@@ -7817,7 +8301,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	if ( !m_stream_tags && w < sUser && w > 26 )
  		return "";
  	const gchar *tag = 0;
-@@ -942,9 +1309,62 @@
+@@ -944,9 +1313,68 @@
  		g_free(value);
  		return res;
  	}
@@ -7866,12 +8350,18 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
 +		res_str = tag;
 +        	player->playback->Command(player, PLAYBACK_INFO, &res_str);
 +
-+		std::string res = res_str;
-+        	free(tag);
-+		free(res_str);
-+		return res;
++		/* Hellmaster1024: in case something went wrong maybe no new adress is returned */
++		if(tag != res_str){		
++			std::string res = res_str;
++        		free(tag);
++			free(res_str);
++			return res;
++		} else {
++			free(tag);
++			return "";	
++		}
 +	}
-+    free(tag);
++	free(tag);
 +#endif
  	return "";
  }
@@ -7880,7 +8370,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  PyObject *eServiceMP3::getInfoObject(int w)
  {
  	const gchar *tag = 0;
-@@ -1004,6 +1424,7 @@
+@@ -1006,6 +1434,7 @@
  
  	return 0;
  }
@@ -7888,7 +8378,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  
  RESULT eServiceMP3::audioChannel(ePtr<iAudioChannelSelection> &ptr)
  {
-@@ -1036,30 +1457,37 @@
+@@ -1038,30 +1467,37 @@
  
  int eServiceMP3::getCurrentTrack()
  {
@@ -7926,7 +8416,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	int current_audio;
  	g_object_set (G_OBJECT (m_gst_playbin), "current-audio", i, NULL);
  	g_object_get (G_OBJECT (m_gst_playbin), "current-audio", &current_audio, NULL);
-@@ -1070,6 +1498,13 @@
+@@ -1072,6 +1508,13 @@
  		return 0;
  	}
  	return -1;
@@ -7940,7 +8430,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  }
  
  int eServiceMP3::getCurrentChannel()
-@@ -1087,6 +1522,7 @@
+@@ -1089,6 +1532,7 @@
  {
   	if (i >= m_audioStreams.size())
  		return -2;
@@ -7948,7 +8438,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  		info.m_description = m_audioStreams[i].codec;
  /*	if (m_audioStreams[i].type == atMPEG)
  		info.m_description = "MPEG";
-@@ -1106,11 +1542,28 @@
+@@ -1108,11 +1552,28 @@
  		info.m_description = "FLAC";
  	else
  		info.m_description = "???";*/
@@ -7977,7 +8467,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  void eServiceMP3::gstBusCall(GstBus *bus, GstMessage *msg)
  {
  	if (!msg)
-@@ -1491,9 +1944,9 @@
+@@ -1493,9 +1954,9 @@
  	else
  		pullSubtitle();
  }
@@ -7989,7 +8479,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  void eServiceMP3::gstCBsubtitleAvail(GstElement *appsink, gpointer user_data)
  {
  	eServiceMP3 *_this = (eServiceMP3*)user_data;
-@@ -1540,9 +1993,30 @@
+@@ -1542,9 +2003,30 @@
  	else
  		eDebug("no subtitle sink!");
  }
@@ -8020,7 +8510,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	ePangoSubtitlePage page;
  	pts_t running_pts;
  	while ( !m_subtitle_pages.empty() )
-@@ -1587,6 +2061,7 @@
+@@ -1589,6 +2071,7 @@
  	}
  	if (m_subtitle_pages.empty())
  		pullSubtitle();
@@ -8028,7 +8518,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  }
  
  RESULT eServiceMP3::enableSubtitles(eWidget *parent, ePyObject tuple)
-@@ -1611,9 +2086,11 @@
+@@ -1613,9 +2096,11 @@
  
  	if (m_currentSubtitleStream != pid)
  	{
@@ -8040,7 +8530,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  		m_subs_to_pull = 0;
  		m_subtitle_pages.clear();
  	}
-@@ -1622,9 +2099,14 @@
+@@ -1624,9 +2109,14 @@
  	m_subtitle_widget = new eSubtitleWidget(parent);
  	m_subtitle_widget->resize(parent->size()); /* full size */
  
@@ -8055,7 +8545,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  
  	return 0;
  
-@@ -1640,6 +2122,11 @@
+@@ -1642,6 +2132,11 @@
  	m_subtitle_pages.clear();
  	delete m_subtitle_widget;
  	m_subtitle_widget = 0;
@@ -8067,7 +8557,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	return 0;
  }
  
-@@ -1652,6 +2139,15 @@
+@@ -1654,6 +2149,15 @@
  PyObject *eServiceMP3::getSubtitleList()
  {
  	eDebug("eServiceMP3::getSubtitleList");
@@ -8083,7 +8573,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  
  	ePyObject l = PyList_New(0);
  	int stream_count[sizeof(subtype_t)];
-@@ -1663,7 +2159,11 @@
+@@ -1665,7 +2169,11 @@
  		subtype_t type = IterSubtitleStream->type;
  		ePyObject tuple = PyTuple_New(5);
  		PyTuple_SET_ITEM(tuple, 0, PyInt_FromLong(2));
@@ -8095,7 +8585,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  		PyTuple_SET_ITEM(tuple, 2, PyInt_FromLong(int(type)));
  		PyTuple_SET_ITEM(tuple, 3, PyInt_FromLong(0));
  		PyTuple_SET_ITEM(tuple, 4, PyString_FromString((IterSubtitleStream->language_code).c_str()));
-@@ -1694,7 +2194,9 @@
+@@ -1696,7 +2204,9 @@
  int eServiceMP3::setBufferSize(int size)
  {
  	m_buffer_size = size;
@@ -8105,7 +8595,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	return 0;
  }
  
-@@ -1710,6 +2212,7 @@
+@@ -1712,6 +2222,7 @@
  
  void eServiceMP3::setAC3Delay(int delay)
  {
@@ -8113,7 +8603,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	ac3_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1743,10 +2246,12 @@
+@@ -1745,10 +2256,12 @@
  			gst_object_unref(sink);
  		}
  	}
@@ -8126,17 +8616,32 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	pcm_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1787,5 +2292,6 @@
+@@ -1789,8 +2302,9 @@
  			gst_object_unref(sink);
  		}
  	}
 +#endif
  }
  
+-#else
+-#warning gstreamer not available, not building media player
+-#endif
++//#else
++//#warning gstreamer not available, not building media player
++//#endif
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servicemp3.h enigma2-nightly/lib/service/servicemp3.h
 --- enigma2-nightly.org/lib/service/servicemp3.h	2010-11-08 15:43:07.000000000 +0100
 +++ enigma2-nightly/lib/service/servicemp3.h	2010-11-08 15:52:30.000000000 +0100
-@@ -6,7 +6,17 @@
+@@ -1,13 +1,24 @@
+ #ifndef __servicemp3_h
+ #define __servicemp3_h
+-
+-#ifdef HAVE_GSTREAMER
++//#if not defined(__sh__)
++//#ifdef HAVE_GSTREAMER
++//#endif
+ #include <lib/base/message.h>
+ #include <lib/service/iservice.h>
  #include <lib/dvb/pmt.h>
  #include <lib/dvb/subtitle.h>
  #include <lib/dvb/teletext.h>
@@ -8154,7 +8659,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  /* for subtitles */
  #include <lib/gui/esubtitle.h>
  
-@@ -43,7 +53,9 @@
+@@ -44,7 +55,9 @@
  	int getInfo(const eServiceReference &ref, int w);
  };
  
@@ -8164,7 +8669,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  
  typedef enum { atUnknown, atMPEG, atMP3, atAC3, atDTS, atAAC, atPCM, atOGG, atFLAC } audiotype_t;
  typedef enum { stPlainText, stSSA, stSRT } subtype_t;
-@@ -101,7 +113,9 @@
+@@ -102,7 +115,9 @@
  	RESULT getName(std::string &name);
  	int getInfo(int w);
  	std::string getInfoString(int w);
@@ -8174,7 +8679,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  
  		// iAudioTrackSelection	
  	int getNumberOfTracks();
-@@ -130,6 +144,7 @@
+@@ -131,6 +146,7 @@
  	void setAC3Delay(int);
  	void setPCMDelay(int);
  
@@ -8182,7 +8687,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	struct audioStream
  	{
  		GstPad* pad;
-@@ -162,6 +177,39 @@
+@@ -163,6 +179,39 @@
  		{
  		}
  	};
@@ -8222,7 +8727,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	struct bufferInfo
  	{
  		int bufferPercent;
-@@ -196,19 +244,25 @@
+@@ -197,19 +246,25 @@
  		stIdle, stRunning, stStopped,
  	};
  	int m_state;
@@ -8250,7 +8755,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	std::list<ePangoSubtitlePage> m_subtitle_pages;
  	ePtr<eTimer> m_subtitle_sync_timer;
  	
-@@ -219,13 +273,14 @@
+@@ -220,14 +275,17 @@
  	int m_subs_to_pull;
  	sourceStream m_sourceinfo;
  	eSingleLock m_subs_to_pull_lock;
@@ -8264,10 +8769,14 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
 -	std::string m_useragent;
 +#if not defined(__sh__)
  	RESULT trickSeek(gdouble ratio);
-+#endif
- };
--
+-};
  #endif
+-
++};
+ #endif
++//#if not defined(__sh__)
++//#endif
++//#endif
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
 --- enigma2-nightly.org/main/bsod.cpp	2010-11-08 15:43:07.000000000 +0100
 +++ enigma2-nightly/main/bsod.cpp	2010-11-08 15:52:30.000000000 +0100
