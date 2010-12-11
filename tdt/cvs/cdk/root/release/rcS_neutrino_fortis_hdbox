@@ -68,7 +68,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init frontpanel"
    insmod $MODDIR/boxtype.ko
    insmod $MODDIR/simu_button.ko
-   insmod $MODDIR/nuvoton.ko
 
    mknod /dev/rc c 147 1 
 
