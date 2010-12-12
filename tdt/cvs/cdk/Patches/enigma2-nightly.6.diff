@@ -8748,7 +8748,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	RESULT trickSeek(gdouble ratio);
 +#endif
  };
-+#endif
++  
  
  #endif
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/main/bsod.cpp enigma2-nightly/main/bsod.cpp
