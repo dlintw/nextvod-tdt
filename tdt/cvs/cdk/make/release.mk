@@ -521,6 +521,7 @@ endif
 	cp -p $(targetprefix)/usr/bin/python $(prefix)/release/usr/bin/
 
 	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release/usr/bin/
+	cp -p $(targetprefix)/usr/bin/ffmpeg $(prefix)/release/sbin/
 	cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release/usr/bin/
 	cp -p $(targetprefix)/usr/sbin/ethtool $(prefix)/release/usr/sbin/
 
