@@ -1300,7 +1300,6 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--disable-static --enable-shared \
 		--enable-cross-compile \
 		--disable-decoder=vorbis \
-		--disable-ffmpeg \
 		--disable-ffserver \
 		--disable-ffplay \
 		--disable-altivec \
@@ -1329,6 +1328,8 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--enable-muxer=h261 \
 		--enable-muxer=h263 \
 		--enable-muxer=h264 \
+		--enable-muxer=mpeg1video \
+		--enable-muxer=image2 \
 		--disable-encoders \
 		--enable-encoder=aac \
 		--enable-encoder=mp3 \
@@ -1336,6 +1337,10 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--enable-encoder=h261 \
 		--enable-encoder=h263 \
 		--enable-encoder=h263p \
+		--enable-encoder=ljpeg \
+		--enable-encoder=mjpeg \
+		--enable-encoder=png \
+		--enable-encoder=mpeg1video \
 		--disable-decoders \
 		--enable-decoder=aac \
 		--enable-decoder=mp3 \
@@ -1344,6 +1349,10 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--enable-decoder=h263 \
 		--enable-decoder=h263i \
 		--enable-decoder=h264 \
+		--enable-decoder=mpeg2video \
+		--enable-decoder=png \
+		--enable-decoder=ljpeg \
+		--enable-decoder=mjpeg \
 		--enable-small \
 		--cross-prefix=$(target)- \
 		--target-os=linux \
