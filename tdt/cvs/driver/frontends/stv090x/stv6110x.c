@@ -79,8 +79,7 @@ static int stv6110x_read_reg(struct stv6110x_state *stv6110x, u8 reg, u8 *data)
 
 	ret = i2c_transfer(stv6110x->i2c, msg, 2);
 	if (ret != 2) {
-		printk("stv6110x_read_reg I/O Error %d, addr=0x%02x, reg=0x%02x\n", ret, config->addr, reg);
-		printk("stv6110x_read_reg I/O Error");
+		printk("stv6110x_read_reg I/O Error %d, addr=0x%02x, reg=0x%02x (res 0x%02x - 0x%02x) ret = %d (expected 2)\n", ret, config->addr, reg, *data, b1[0], ret);
 		return -EREMOTEIO;
 	}
 	*data = b1[0];
@@ -155,6 +154,8 @@ static int stv6110x_init(struct dvb_frontend *fe)
 		return -1;
 	}
 
+    stv6110x->gain = 10;
+
 //tdt
 	stv6110x_set_refclock(fe, 2);
 
@@ -186,13 +187,8 @@ static int stv6110x_set_frequency(struct dvb_frontend *fe, u32 frequency)
 	stv6110x_regs[STV6110x_CTRL1] |=
 				((((stv6110x->config->refclk / 1000000) - 16) & 0x1f) << 3);
 
-#ifndef UFS912
-/*orig 0x53 = 01010011
-wir 0x56 = 01010110
-*/
 	stv6110x_regs[STV6110x_CTRL2] &= ~0x0f;
-	stv6110x_regs[STV6110x_CTRL2] |= (3/* gain*/ & 0x0f);
-#endif
+	stv6110x_regs[STV6110x_CTRL2] |= (stv6110x->gain & 0x0f);
 
 	if (frequency <= 1023000) {
 		p = 1;
@@ -244,13 +240,9 @@ wir 0x56 = 01010110
 
 	/* CALVCOSTRT = 1 VCO Auto Calibration */
 	
-//tdt orig app macht des nicht? obwohl ich meine, dass ich des schonmal gesehen
-// habe bei der orig app ->0x05 ->0x05 diesmal 0x03???
 	stv6110x_regs[STV6110x_STAT1] |= 0x04;
 
-#ifndef UFS912
 	stv6110x_write_reg(stv6110x, STV6110x_CTRL2, stv6110x_regs[STV6110x_CTRL2]);
-#endif
 	stv6110x_write_reg(stv6110x, STV6110x_CTRL1, stv6110x_regs[STV6110x_CTRL1]);
 
 // TDT from app 
@@ -408,7 +400,7 @@ static int stv6110x_get_bbgain(struct dvb_frontend *fe, u32 *gain)
 	dprintk(10, "%s:  >\n", __func__);
 
 	stv6110x_read_reg(stv6110x, STV6110x_CTRL2, &stv6110x_regs[STV6110x_CTRL2]);
-	*gain = 2 * STV6110x_GETFIELD(CTRL2_BBGAIN, stv6110x_regs[STV6110x_CTRL2]);
+	*gain = STV6110x_GETFIELD(CTRL2_BBGAIN, stv6110x_regs[STV6110x_CTRL2]);
 
 	dprintk(10, "%s gain = %d<\n", __func__, *gain);
 	return 0;
@@ -420,8 +412,10 @@ static int stv6110x_set_bbgain(struct dvb_frontend *fe, u32 gain)
 
 	dprintk(10, "%s: gain = %d >\n", __func__, gain);
 
-	STV6110x_SETFIELD(stv6110x_regs[STV6110x_CTRL2], CTRL2_BBGAIN, gain / 2);
+	STV6110x_SETFIELD(stv6110x_regs[STV6110x_CTRL2], CTRL2_BBGAIN, gain & 0xf);
 	stv6110x_write_reg(stv6110x, STV6110x_CTRL2, stv6110x_regs[STV6110x_CTRL2]);
+
+    stv6110x->gain = gain;
 
 	dprintk(10, "%s: <\n", __func__);
 	return 0;
@@ -573,19 +567,15 @@ static struct dvb_tuner_ops stv6110x_ops = {
 	.init			= stv6110x_init,
 //workaround for tuner failed, a frontend open does not allways wakeup the tuner
 #ifndef FORTIS_HDBOX
-	.sleep          	= stv6110x_sleep,
+	.sleep          = stv6110x_sleep,
 #endif
 
-#if 0
-	.get_status		= stv6110x_get_status,
-	.get_state		= stv6110x_get_state,
-	.set_state		= stv6110x_set_state,
-#endif
 	.release		= stv6110x_release
 };
 
 static struct stv6110x_devctl stv6110x_ctl = {
 	.tuner_init		= stv6110x_init,
+	.tuner_sleep		= stv6110x_sleep,
 	.tuner_set_mode		= stv6110x_set_mode,
 	.tuner_set_frequency	= stv6110x_set_frequency,
 	.tuner_get_frequency	= stv6110x_get_frequency,
@@ -612,7 +602,7 @@ struct stv6110x_devctl *stv6110x_attach(struct dvb_frontend *fe,
 	stv6110x->i2c		= i2c;
 	stv6110x->config	= config;
 	stv6110x->devctl	= &stv6110x_ctl;
-	stv6110x->fe	        = fe;
+	stv6110x->fe	    = fe;
 
 	fe->tuner_priv		= stv6110x;
 	fe->ops.tuner_ops	= stv6110x_ops;

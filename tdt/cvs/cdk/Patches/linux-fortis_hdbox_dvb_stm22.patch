@@ -294,7 +294,7 @@
   		struct dvb_frontend_info* info = parg;
   		memcpy(info, &fe->ops.info, sizeof(struct dvb_frontend_info));
   
-+ 	printk ("FE_GET_INFO\n");
++ 	//printk ("FE_GET_INFO\n");
 + 
   		/* Force the CAN_INVERSION_AUTO bit on. If the frontend doesn't
   		 * do it, it is done for it. */
@@ -305,7 +305,7 @@
   	case FE_READ_STATUS: {
   		fe_status_t* status = parg;
   
-+ 	printk ("FE_READ_STATUS\n");
++ 	//printk ("FE_READ_STATUS\n");
   		/* if retune was requested but hasn't occured yet, prevent
   		 * that user get signal state from previous tuning */
   		if(fepriv->state == FESTATE_RETUNE) {
@@ -315,32 +315,32 @@
   		break;
   	}
   	case FE_READ_BER:
-+ 	printk ("FE_READ_BER\n");
++ 	//printk ("FE_READ_BER\n");
   		if (fe->ops.read_ber)
   			err = fe->ops.read_ber(fe, (__u32*) parg);
   		break;
   
   	case FE_READ_SIGNAL_STRENGTH:
-+ 	printk ("FE_READ_SIGNAL_STRENGTH\n");
++ 	//printk ("FE_READ_SIGNAL_STRENGTH\n");
   		if (fe->ops.read_signal_strength)
   			err = fe->ops.read_signal_strength(fe, (__u16*) parg);
   		break;
   
   	case FE_READ_SNR:
-+ 	printk ("FE_READ_SNR\n");
++ 	//printk ("FE_READ_SNR\n");
   		if (fe->ops.read_snr)
   			err = fe->ops.read_snr(fe, (__u16*) parg);
   		break;
   
   	case FE_READ_UNCORRECTED_BLOCKS:
-+ 	printk ("FE_READ_UNCORRECTED_BLOCKS\n");
++ 	//printk ("FE_READ_UNCORRECTED_BLOCKS\n");
   		if (fe->ops.read_ucblocks)
   			err = fe->ops.read_ucblocks(fe, (__u32*) parg);
   		break;
   
   
   	case FE_DISEQC_RESET_OVERLOAD:
-+ 	printk ("FE_DISEQC_RESET_OVERLOAD\n");
++ 	//printk ("FE_DISEQC_RESET_OVERLOAD\n");
   		if (fe->ops.diseqc_reset_overload) {
   			err = fe->ops.diseqc_reset_overload(fe);
   			fepriv->state = FESTATE_DISEQC;

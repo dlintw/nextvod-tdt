@@ -147,7 +147,7 @@ release_spark:
 	rm -f $(prefix)/release/bin/gotosleep
 
 release_fortis_hdbox:
-	echo "fortis" > $(prefix)/release/etc/hostname 
+	echo "fortis" > $(prefix)/release/etc/hostname
 	rm -f $(prefix)/release/sbin/halt
 	cp $(buildprefix)/root/release/halt_fortis_hdbox $(prefix)/release/etc/init.d/halt
 	chmod 777 $(prefix)/release/etc/init.d/halt
@@ -182,7 +182,7 @@ release_fortis_hdbox:
 	rm -f $(prefix)/release/bin/evremote
 
 release_octagon1008:
-	echo "octagon1008" > $(prefix)/release/etc/hostname 
+	echo "octagon1008" > $(prefix)/release/etc/hostname
 	rm -f $(prefix)/release/sbin/halt
 	cp $(buildprefix)/root/release/halt_octagon1008 $(prefix)/release/etc/init.d/halt
 	chmod 777 $(prefix)/release/etc/init.d/halt
@@ -521,6 +521,7 @@ endif
 	cp -p $(targetprefix)/usr/bin/python $(prefix)/release/usr/bin/
 
 	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release/usr/bin/
+	cp -p $(targetprefix)/usr/bin/ffmpeg $(prefix)/release/sbin/
 	cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release/usr/bin/
 	cp -p $(targetprefix)/usr/sbin/ethtool $(prefix)/release/usr/sbin/
 
@@ -675,4 +676,3 @@ if ENABLE_UFS922
 	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
 endif
 endif
-
