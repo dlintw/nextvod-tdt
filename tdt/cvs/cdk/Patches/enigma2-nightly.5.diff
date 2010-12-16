@@ -7306,7 +7306,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
  	m_sourceinfo.is_video = FALSE;
  	m_sourceinfo.audiotype = atUnknown;
  	if ( (strcasecmp(ext, ".mpeg") && strcasecmp(ext, ".mpg") && strcasecmp(ext, ".vob") && strcasecmp(ext, ".bin") && strcasecmp(ext, ".dat") ) == 0 )
-@@ -377,10 +405,160 @@
+@@ -377,10 +405,162 @@
  	}
  
  	setBufferSize(m_buffer_size);
@@ -7375,6 +7375,8 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
 +
 +                    // atUnknown, atMPEG, atMP3, atAC3, atDTS, atAAC, atPCM, atOGG, atFLAC
 +                    if(     !strncmp("A_MPEG/L3",   TrackList[i+1], 9))
++                        audio.type = atMP3;
++                    else if(!strncmp("A_MP3",       TrackList[i+1], 5))
 +                        audio.type = atMP3;
 +                    else if(!strncmp("A_AC3",       TrackList[i+1], 5))
 +                        audio.type = atAC3;
