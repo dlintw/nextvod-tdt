@@ -66,7 +66,7 @@ curlftpfs-0.9.1.tar.gz;http://kent.dl.sourceforge.net/sourceforge/curlftpfs
 fbset_2.1.orig.tar.gz;http://ftp.de.debian.org/debian/pool/main/f/fbset
 # fbset_2.1-6.diff.gz;http://archive.debian.org/debian-archive/pool/main/f/fbset
 fbset_2.1-6.diff.gz;http://ftp.kaist.ac.kr/debian-archive/pool/main/f/fbset/
-util-linux-2.12r.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/util-linux
+util-linux-2.12r.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.12
 boost_1_40_0.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/boost
 pngquant-1.0-src.tgz;ftp://ftp.simplesystems.org/pub/libpng/png/applications
 mplayer-export-snapshot.tar.bz2;ftp://ftp.mplayerhq.hu/MPlayer/releases
@@ -145,7 +145,7 @@ lighttpd-1.4.15.tar.gz;http://www.lighttpd.net/download
 zd1211lnxdrv_2_15_0_0.tar.gz;http://www.lutec.eu/treiber
 wireless_tools.29.tar.gz;http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux
 wpa_supplicant-0.5.9.tar.gz;http://hostap.epitest.fi/releases
-ethtool-6.tar.gz;http://www.sfr-fresh.com/linux/misc
+ethtool-6.tar.gz;http://downloads.openwrt.org/sources/
 ethtool-2.6.33.tar.gz;http://downloads.sourceforge.net/project/gkernel/ethtool/2.6.33/
 
 #

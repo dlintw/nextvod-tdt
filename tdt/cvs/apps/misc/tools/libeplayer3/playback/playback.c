@@ -47,7 +47,7 @@ if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); 
 #define cERR_PLAYBACK_NO_ERROR      0
 #define cERR_PLAYBACK_ERROR        -1
 
-#define cMaxSpeed   15 /* fixme: revise */
+#define cMaxSpeed   128 /* fixme: revise */
 
 /* ***************************** */
 /* Varaibles                     */

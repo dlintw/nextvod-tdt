@@ -16,6 +16,7 @@
 #include <pvr_config.h>
 
 short paramDebug = 0;
+int bbgain = -1;
 
 static struct core *core[MAX_DVB_ADAPTERS];
 
@@ -32,7 +33,7 @@ static struct stv090x_config tt1600_stv090x_config = {
 	.clk_mode		= STV090x_CLK_EXT,
 
 #if defined(FORTIS_HDBOX)
-	.xtal			= 16000000/*8000000*/,
+	.xtal			= 8000000,
 #elif defined(UFS912)
 	.xtal			= 30000000,
 #else
@@ -61,6 +62,12 @@ static struct stv090x_config tt1600_stv090x_config = {
 #warning  not supported architechture
 #endif
 
+    .tuner_bbgain = 10,
+	.adc1_range	= STV090x_ADC_1Vpp,
+	.adc2_range	= STV090x_ADC_2Vpp,
+
+	.diseqc_envelope_mode = false,
+     
 	.tuner_init		= NULL,
 	.tuner_set_mode		= NULL,
 	.tuner_set_frequency	= NULL,
@@ -293,6 +300,9 @@ module_exit             (stv090x_exit);
 
 module_param(paramDebug, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(paramDebug, "Debug Output 0=disabled >0=enabled(debuglevel)");
+
+module_param(bbgain, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+MODULE_PARM_DESC(bbgain, "default=-1 (use default config = 10");
 
 MODULE_DESCRIPTION      ("Tunerdriver");
 MODULE_AUTHOR           ("Manu Abraham; adapted by TDT");

@@ -51,6 +51,7 @@ $(DEPDIR)/%release_neutrino:
 	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI) $(prefix)/release_neutrino/sbin/MAKEDEV && \
 	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release_neutrino/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_neutrino/bin/ && \
+	cp -dp $(targetprefix)/usr/bin/ffmpeg $(prefix)/release_neutrino/sbin/ && \
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release_neutrino/boot/video.elf && \
 	$(if $(TF7700),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf &&) \
 	$(if $(HL101),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf &&) \
@@ -552,6 +553,7 @@ endif
 if !ENABLE_SPARK
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release_neutrino/lib/modules/
 endif
+if ENABLE_PLAYER131
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
 #	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
 	find $(prefix)/release_neutrino/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
@@ -578,6 +580,40 @@ endif
 			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
 		fi;\
 	done
+endif
+
+if ENABLE_PLAYER179
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvbi.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvout.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
+#	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
+	find $(prefix)/release_neutrino/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
+	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
+	for mod in \
+		sound/pseudocard/pseudocard.ko \
+		sound/silencegen/silencegen.ko \
+		stm/mmelog/mmelog.ko \
+		stm/monitor/stm_monitor.ko \
+		media/dvb/stm/dvb/stmdvb.ko \
+		sound/ksound/ksound.ko \
+		media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko \
+		media/dvb/stm/backend/player2.ko \
+		media/dvb/stm/h264_preprocessor/sth264pp.ko \
+		media/dvb/stm/allocator/stmalloc.ko \
+		stm/platform/platform.ko \
+		stm/platform/p2div64.ko \
+	;do \
+		if [ -e player2/linux/drivers/$$mod ] ; then \
+			cp player2/linux/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
+			sh4-linux-strip --strip-unneeded $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+		else \
+			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+		fi;\
+	done
+endif    
+    
+    
 if STM22
 	rm $(prefix)/release_neutrino/lib/modules/p2div64.ko
 endif

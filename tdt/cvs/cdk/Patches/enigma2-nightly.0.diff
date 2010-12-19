@@ -4256,7 +4256,7 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/Makefile.a
 diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py	2010-07-02 16:15:00.000000000 +0200
-@@ -0,0 +1,78 @@
+@@ -0,0 +1,82 @@
 +from enigma import *
 +from Screens.Screen import Screen
 +from Plugins.Plugin import PluginDescriptor
@@ -4291,26 +4291,30 @@ diff -Nur enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/plugin.py 
 +		#if self.container.execute("/usr/bin/tuxtxt "+self.getValue(iServiceInformation.sTXTPID)):
 +		s="/usr/bin/tuxtxt "
 +		s+=self.getValue(iServiceInformation.sTXTPID)
-+		feInfo = service.frontendInfo()
++		feInfo = service and service.frontendInfo()
 +		feNumber = feInfo and feInfo.getFrontendInfo(iFrontendInformation.frontendNumber)
-+		s+= " "
-+		s+=str(feNumber)
-+		s+=" &"
-+		print s
-+		try:
-+			os.popen(s)
-+		except OSError, e: 
-+			print "OSError: ", e
-+			#print "OSError"
-+			#Why cant i use openWithCallback?
-+			#from Screens.MessageBox import MessageBox
-+			#def msgClosed(ret):
-+			#	return
-+			#self.session.openWithCallback(msgClosed, MessageBox, _("Swap needed"), MessageBox.TYPE_INFO)
++		if feNumber is not None:
++			s+= " "
++			s+=str(feNumber)
++			s+=" &"
++			print s
++			try:
++				os.popen(s)
++			except OSError, e: 
++				print "OSError: ", e
++				#print "OSError"
++				#Why cant i use openWithCallback?
++				#from Screens.MessageBox import MessageBox
++				#def msgClosed(ret):
++				#	return
++				#self.session.openWithCallback(msgClosed, MessageBox, _("Swap needed"), MessageBox.TYPE_INFO)
 +
++				self.finished(-1)
 +			self.finished(-1)
-+		self.finished(-1)
-+
++		else:
++			print "tuxtxt: No frontend detected!"
++			self.finished(-1)
++			
 +	def finished(self,retval):
 +		print "finished"
 +		#fbClass.getInstance().unlock()

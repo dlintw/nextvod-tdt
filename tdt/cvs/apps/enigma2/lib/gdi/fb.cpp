@@ -13,10 +13,7 @@
 #include <lib/gdi/fb.h>
 
 #if defined(__sh__) 
-	#include <linux/stmfb.h> 
-	extern "C" { 
-    #include <jpeglib.h> 
-	} 
+#include <linux/stmfb.h> 
 #endif 
 
 #ifndef FBIO_WAITFORVSYNC
@@ -212,136 +209,7 @@ int fbClass::waitVSync()
 	return ioctl(fd, FBIO_WAITFORVSYNC, &c);
 }
 
-#if defined(__sh__)
-struct r_jpeg_error_mgr
-{
-	struct jpeg_error_mgr pub;
-	jmp_buf envbuffer;
-};
-
-void jpeg_cb_error_exit1(j_common_ptr cinfo)
-{
-	struct r_jpeg_error_mgr *mptr;
-	mptr = (struct r_jpeg_error_mgr *) cinfo->err;
-	(*cinfo->err->output_message) (cinfo);
-	longjmp(mptr->envbuffer, 1);
-}
-
-
-void fbClass::blitFullscreenJpg(char *filename)
-{
-    struct jpeg_decompress_struct cinfo;
-	struct jpeg_decompress_struct *ciptr = &cinfo;
-	struct r_jpeg_error_mgr emgr;
-	FILE *fh;
-
-	if (!(fh = fopen(filename, "rb")))
-		return;
-
-	ciptr->err = jpeg_std_error(&emgr.pub);
-	emgr.pub.error_exit = jpeg_cb_error_exit1;
-	if (setjmp(emgr.envbuffer) == 1)
-	{
-		jpeg_destroy_decompress(ciptr);
-		fclose(fh);
-		return;
-	}
-
-	jpeg_create_decompress(ciptr);
-	jpeg_stdio_src(ciptr, fh);
-	jpeg_read_header(ciptr, TRUE);
-	ciptr->out_color_space = JCS_RGB;
-	ciptr->scale_denom = 1;
-	ciptr->do_fancy_upsampling = 0;
-        /*
-                My Tests: 
-                float is faster than integer_slow but has the same accuracy
-                float is also faster than integer_fast and looks better 
-        */
-    ciptr->dct_method = JDCT_FLOAT; 
-
-	jpeg_start_decompress(ciptr);
-	
-	// 2M offscreen buffer
-    int lines = 2097152 / (ciptr->output_width * 3);
-	
-	// TODO: small images
-	float prop = (float)ciptr->output_width / ciptr->output_height;
-	float propDisp = (float)xRes / yRes;
-	int frameTB = 0, frameLR = 0;
-	
-	if(prop < propDisp) 
-		frameLR = (propDisp - prop) * xRes / 2.0f ;	// frame left/right
-	else
-		frameTB = ((1.0f / propDisp) - (1.0f / prop)) * yRes / 2.0f; // frame top/bottom
-	
-	STMFBIO_BLT_DATA  bltData;
-	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA));
-	bltData.operation  = BLT_OP_FILL;
-	bltData.ulFlags    = BLT_OP_FLAGS_GLOBAL_ALPHA;
-	bltData.dstOffset  = 0;
-	bltData.dstPitch   = xRes * 4;
-	bltData.dst_left   = 0;
-	bltData.dst_right  = xRes;
-	bltData.dst_top    = 0;
-	bltData.dst_bottom  = yRes;
-	bltData.srcFormat = SURF_BGR888;
-	bltData.dstFormat  = SURF_ARGB8888;
-	bltData.globalAlpha = 255;
-	bltData.colour = 0;
-	ioctl(fd, STMFBIO_BLT, &bltData);		// Fill screen with black color
-	
-    memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA));
-    bltData.operation  = BLT_OP_COPY;
-    bltData.ulFlags    = BLT_OP_FLAGS_GLOBAL_ALPHA;
-	bltData.srcOffset  = 1920 * 1080 * 4;
-	bltData.srcPitch   = ciptr->output_width * 3;
-	bltData.dstOffset  = 0;
-	bltData.dstPitch   = xRes * 4;
-	bltData.src_top    = 0;
-	bltData.src_left   = 0;
-	bltData.src_right  = ciptr->output_width;
-    bltData.src_bottom = lines;
-    bltData.dst_left   = frameLR;
-    bltData.dst_right  = xRes - frameLR;
-    bltData.srcFormat = SURF_BGR888;
-    bltData.dstFormat = SURF_ARGB8888;
-    bltData.globalAlpha = 255;
-  
-	int line;
-	int startLine = 0;
-	unsigned char *pt;
-    while(startLine < ciptr->output_height)
-	{
-		pt = lfb;
-		if(ciptr->output_height - startLine < lines)
-		{
-			lines = ciptr->output_height - startLine;
-			bltData.src_bottom = lines;
-		}
-			
-		for(line = 0 ; line < lines ; line++)
-		{
-			jpeg_read_scanlines(ciptr, &pt, 1); 
-			pt += ciptr->output_width * 3;
-		}
-
-		bltData.dst_top    = ((yRes - 2 * frameTB) * startLine) / ciptr->output_height + frameTB;
-		bltData.dst_bottom = ((yRes - 2 * frameTB) * (startLine + lines)) / ciptr->output_height + frameTB;
-
-		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0)
-			perror("FBIO_BLIT");
-		else
-			ioctl(fd, STMFBIO_SYNC_BLITTER, NULL );
-		
-		startLine += lines;
-	}
-
-	jpeg_finish_decompress(ciptr);
-	jpeg_destroy_decompress(ciptr);
-	fclose(fh);
-}
-
+#if defined(__sh__) 
 int fbClass::directBlit(STMFBIO_BLT_DATA &bltData)
 {
 	return ioctl(fd, STMFBIO_BLT, &bltData);
@@ -367,6 +235,11 @@ void fbClass::blit()
 	bltData.dst_left   = 0; 
 	bltData.dst_right  = xRes; 
 	bltData.dst_bottom = yRes; 
+	bltData.srcFormat = SURF_BGRA8888;
+	bltData.dstFormat = SURF_BGRA8888;
+	bltData.srcMemBase = STMFBGP_FRAMEBUFFER; 
+	bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
+	
 	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
 	{ 
 		perror("FBIO_BLIT"); 

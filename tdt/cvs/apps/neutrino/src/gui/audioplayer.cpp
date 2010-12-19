@@ -1415,7 +1415,7 @@ bool CAudioPlayerGui::openFilebrowser(void)
 }
 
 //------------------------------------------------------------------------
-#define SC_BASE_DIR	"http://www.shoutcast.com"
+#define SC_BASE_DIR	"http://shoutcast.net"
 #define SC_INIT_DIR	"/sbin/newxml.phtml"
 bool CAudioPlayerGui::openSCbrowser(void)
 {

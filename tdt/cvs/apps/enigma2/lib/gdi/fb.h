@@ -5,7 +5,7 @@
 #include <linux/fb.h>
 
 #if defined(__sh__) 
-	#include <linux/stmfb.h> 
+#include <linux/stmfb.h> 
 #endif
 
 class fbClass
@@ -61,10 +61,9 @@ public:
 #endif
 	static fbClass *getInstance();
 	
-	#if defined(__sh__)  
-		void blitFullscreenJpg(char *filename); 
-		int directBlit(STMFBIO_BLT_DATA &bltData);
-    #endif  
+#if defined(__sh__)  
+	int directBlit(STMFBIO_BLT_DATA &bltData);
+#endif  
 
 
 	int lock();
