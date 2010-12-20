@@ -435,8 +435,10 @@ endif
 if !ENABLE_SPARK
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release_vdr/lib/modules/
 endif
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_vdr/lib/modules/
-	find $(prefix)/release_vdr/lib/modules/ -name  *.ko -exec sh4-linux-strip --strip-unneeded {} \;
+if ENABLE_PLAYER131
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
+#	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
+	find $(prefix)/release_neutrino/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
 	for mod in \
 		sound/pseudocard/pseudocard.ko \
@@ -454,12 +456,42 @@ endif
 		stm/platform/p2div64.ko \
 	;do \
 		if [ -e player2/linux/drivers/$$mod ] ; then \
-			cp player2/linux/drivers/$$mod $(prefix)/release_vdr/lib/modules/; \
-			sh4-linux-strip --strip-unneeded $(prefix)/release_vdr/lib/modules/`basename $$mod`; \
+			cp player2/linux/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
+			sh4-linux-strip --strip-unneeded $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
 		else \
-			touch $(prefix)/release_vdr/lib/modules/`basename $$mod`; \
+			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
 		fi;\
 	done
+endif
+
+if ENABLE_PLAYER179
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
+#	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
+	find $(prefix)/release_neutrino/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
+	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
+	for mod in \
+		sound/pseudocard/pseudocard.ko \
+		sound/silencegen/silencegen.ko \
+		stm/mmelog/mmelog.ko \
+		stm/monitor/stm_monitor.ko \
+		media/dvb/stm/dvb/stmdvb.ko \
+		sound/ksound/ksound.ko \
+		media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko \
+		media/dvb/stm/backend/player2.ko \
+		media/dvb/stm/h264_preprocessor/sth264pp.ko \
+		media/dvb/stm/allocator/stmalloc.ko \
+		stm/platform/platform.ko \
+		stm/platform/p2div64.ko \
+	;do \
+		if [ -e player2/linux/drivers/$$mod ] ; then \
+			cp player2/linux/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
+			sh4-linux-strip --strip-unneeded $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+		else \
+			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+		fi;\
+	done
+endif    
 if STM22
 	rm $(prefix)/release_vdr/lib/modules/p2div64.ko
 endif

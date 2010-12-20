@@ -443,6 +443,7 @@ if !STM22
 else
 	rm -f $(prefix)/release/bin/ustslave_stm23
 endif
+if ENABLE_PLAYER131
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
 	for mod in \
 		sound/pseudocard/pseudocard.ko \
@@ -469,6 +470,36 @@ endif
 		echo "."; \
 	done
 	echo "touched";
+endif
+if ENABLE_PLAYER179
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release_neutrino/lib/modules/
+	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
+	for mod in \
+		sound/pseudocard/pseudocard.ko \
+		sound/silencegen/silencegen.ko \
+		stm/mmelog/mmelog.ko \
+		stm/monitor/stm_monitor.ko \
+		media/dvb/stm/dvb/stmdvb.ko \
+		sound/ksound/ksound.ko \
+		media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko \
+		media/dvb/stm/backend/player2.ko \
+		media/dvb/stm/h264_preprocessor/sth264pp.ko \
+		media/dvb/stm/allocator/stmalloc.ko \
+		stm/platform/platform.ko \
+		stm/platform/p2div64.ko \
+	;do \
+		echo `pwd` player2/linux/drivers/$$mod; \
+		if [ -e player2/linux/drivers/$$mod ]; then \
+			cp player2/linux/drivers/$$mod $(prefix)/release/lib/modules/; \
+			sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/`basename $$mod`; \
+		else \
+			touch $(prefix)/release/lib/modules/`basename $$mod`; \
+		fi; \
+		echo "."; \
+	done
+	echo "touched";
+endif
+
 if STM22
 	rm $(prefix)/release/lib/modules/p2div64.ko
 endif

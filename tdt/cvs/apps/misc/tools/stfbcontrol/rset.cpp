@@ -222,7 +222,11 @@ void fbset::update_var_screeninfo(struct fb_var_screeninfo *var)
 void fbset::set_background()
 {
 	struct stmfbio_output_configuration config;
+#if defined(PLAYER179)
+	config.outputid = STMFBIO_OUTPUTID_MAIN;
+#elif defined(PLAYER131)
 	config.outputid = 1;
+#endif
 	if (ioctl(fh,STMFBIO_GET_OUTPUT_CONFIG,&config))
 		Die("ioctl STMFBIO_GET_OUTPUT_CONFIG: %s\n", strerror(errno));
 	printf("config.outputid=%d\n",config.outputid);
