@@ -206,7 +206,10 @@ SPARKPATCHES_23 = $(COMMONPATCHES_23) \
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
     $(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
     $(if $(P0119),linux-sh4-ufs922_stmmac_stm23$(PATCH_STR).patch) \
-    $(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
+    $(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
+    $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+    $(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
+    $(if $(P0123),linux-sh4-ufs922_sh_ksyms_stm23$(PATCH_STR).patch)
 
 FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
@@ -283,10 +286,6 @@ if ENABLE_P0201
 PATCH_STR=_0201
 endif
 
-if ENABLE_P0205
-PATCH_STR=_0205
-endif
-
 STM24_DVB_PATCH = linux-sh4-linuxdvb_stm24$(PATCH_STR).patch
 
 COMMONPATCHES_24 = \
@@ -295,8 +294,6 @@ COMMONPATCHES_24 = \
 		linux-sh4-time_stm24$(PATCH_STR).patch \
 		linux-sh4-init_mm_stm24$(PATCH_STR).patch \
 		linux-sh4-copro_stm24$(PATCH_STR).patch
-
-TF7700PATCHES_24 = $(COMMONPATCHES_24)
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 			linux-sh4-ufs910_setup_stm24$(PATCH_STR).patch
@@ -311,7 +308,6 @@ VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
 		$(if $(UFS922),$(UFS922PATCHES_24)) \
-		$(if $(TF7700),$(TF7700PATCHES_24)) \
 		$(if $(VIP1_V2),$(VIP2_PATCHES_24)) \
 		$(if $(VIP2_V1),$(VIP2_PATCHES_24))
 
@@ -348,11 +344,7 @@ KERNELHEADERS_PATCHES :=
 endif !ENABLE_P0119
 else !STM23
 # if STM24
-if ENABLE_P0205
-KERNELHEADERS_VERSION := 2.6.32.16_stm24_0205-43
-else
 KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
-endif
 KERNELHEADERS_SPEC := stm-target-kernel-headers-kbuild.spec
 KERNELHEADERS_SPEC_PATCH :=
 KERNELHEADERS_PATCHES :=
@@ -414,11 +406,7 @@ HOST_KERNEL_SRC_RPM := $(STLINUX)-$(HOST_KERNEL)-source-sh4-$(HOST_KERNEL_VERSIO
 HOST_KERNEL_RPM := RPMS/noarch/$(STLINUX)-$(HOST_KERNEL)-source-sh4-$(HOST_KERNEL_VERSION).noarch.rpm
 else !STM23
 # if STM24
-if ENABLE_P0201
 HOST_KERNEL_VERSION := 2.6.32.10$(KERNELSTMLABEL)-$(KERNELLABEL)
-else
-HOST_KERNEL_VERSION := 2.6.32.16$(KERNELSTMLABEL)-$(KERNELLABEL)
-endif
 HOST_KERNEL_SPEC := stm-$(HOST_KERNEL)-sh4.spec
 HOST_KERNEL_SPEC_PATCH :=
 HOST_KERNEL_PATCHES := $(KERNELPATCHES_24)
