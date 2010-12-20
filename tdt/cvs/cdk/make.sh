@@ -4,6 +4,7 @@ if [ "$1" == -h ] || [ "$1" == --help ]; then
  echo "Parameter 1: target system (1-18)"
  echo "Parameter 2: kernel (1-4)"
  echo "Parameter 3: debug (Y/N)"
+ echo "Parameter 3: player(1-2)"
  exit
 fi
 
@@ -168,8 +169,8 @@ fi
 echo -e "\nPlayer:"
 echo "   1) Player 131"
 echo "   2) Player 179"
-case $2 in
-        [1-2]) REPLY=$2
+case $4 in
+        [1-2]) REPLY=$4
         echo -e "\nSelected player: $REPLY\n"
         ;;
         *)
