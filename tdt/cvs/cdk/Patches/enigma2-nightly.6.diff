@@ -7551,12 +7551,12 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/service/servic
 + /* e2_ratio   speed */
 +    2,         1,
 +    4,         2,
-+    8,         3,
-+    48,        4,
-+    96,        5,
-+    192,       6, 
-+    384,       7,
-+    -1,        -1
++    8,         4,
++   16,         8,
++   32,        16,
++   64,        32, 
++   128,       64,
++    -1,       -1
 +};
 +
 +int getSpeed(int ratio)

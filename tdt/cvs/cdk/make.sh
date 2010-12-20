@@ -4,6 +4,7 @@ if [ "$1" == -h ] || [ "$1" == --help ]; then
  echo "Parameter 1: target system (1-18)"
  echo "Parameter 2: kernel (1-4)"
  echo "Parameter 3: debug (Y/N)"
+ echo "Parameter 3: player(1-2)"
  exit
 fi
 
@@ -162,6 +163,60 @@ else
  read -p "Activate debug (y/N)? "
 fi
 [ "$REPLY" == "y" -o "$REPLY" == "Y" ] && CONFIGPARAM="$CONFIGPARAM --enable-debug"
+
+##############################################
+
+echo -e "\nPlayer:"
+echo "   1) Player 131"
+echo "   2) Player 179"
+case $4 in
+        [1-2]) REPLY=$4
+        echo -e "\nSelected player: $REPLY\n"
+        ;;
+        *)
+        read -p "Select player (1-2)? ";;
+esac
+
+case "$REPLY" in
+	1) PLAYER="--enable-player131"
+       cd ../driver/include/
+       rm player2
+       rm stmfb
+       ln -s player2_131 player2
+       ln -s stmfb_player131 stmfb
+       cd -
+
+       cd ../driver/
+       rm player2
+       ln -s player2_131 player2
+       cd -
+
+       cd ../driver/stgfb
+       rm stmfb
+       ln -s stmfb_player131 stmfb
+       cd -
+    ;;
+	2) PLAYER="--enable-player179"
+       cd ../driver/include/
+       rm player2
+       rm stmfb
+       ln -s player2_179 player2
+       ln -s stmfb-3.1_stm23_0032 stmfb
+       cd -
+
+       cd ../driver/
+       rm player2
+       ln -s player2_179 player2
+       cd -
+
+       cd ../driver/stgfb
+       rm stmfb
+       ln -s stmfb-3.1_stm23_0032 stmfb
+       cd -
+    ;;
+	*) PLAYER="--enable-player131";;
+esac
+CONFIGPARAM="$CONFIGPARAM $PLAYER"
 
 ##############################################
 

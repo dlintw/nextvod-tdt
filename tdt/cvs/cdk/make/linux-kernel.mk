@@ -139,7 +139,8 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_41)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_41)) \
-		$(if $(HOMECAST5101),$(HS5101PATCHES_41))
+		$(if $(HOMECAST5101),$(HS5101PATCHES_41)) \
+		$(if $(PLAYER179),linux-v4l.patch)
 
 ############ Patches Kernel 23 ###############
 
@@ -545,7 +546,8 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 
 $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 #	$(MAKE) -C $(KERNEL_DIR) $(MAKE_OPTS) ARCH=sh modules_prepare
-	cp $(driverdir)/stgfb/stmfb/Linux/video/stmfb.h $(targetprefix)/usr/include/linux
+	$(if $(PLAYER131),cp $(driverdir)/stgfb/stmfb/Linux/video/stmfb.h $(targetprefix)/usr/include/linux)
+	$(if $(PLAYER179),cp $(driverdir)/stgfb/stmfb/linux/drivers/video/stmfb.h $(targetprefix)/usr/include/linux)
 	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
@@ -567,6 +569,8 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_2000HD),CUBEREVO_2000HD=$(CUBEREVO_2000HD)) \
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
+		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
+		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
 		CROSS_COMPILE=$(target)-
 	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
@@ -591,6 +595,8 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_2000HD),CUBEREVO_2000HD=$(CUBEREVO_2000HD)) \
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
+		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
+		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
 		install
 	$(DEPMOD) -ae -b $(targetprefix) -F $(buildprefix)/$(KERNEL_DIR)/System.map -r $(KERNELVERSION)
 	touch $@
