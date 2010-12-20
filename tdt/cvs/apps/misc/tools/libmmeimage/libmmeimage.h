@@ -19,6 +19,9 @@ LIBMMEIMG_ERROR get_jpeg_img_size(FILE *fp, unsigned int *width, unsigned int *h
 // output is in BGR (3 bytes per pixel)
 LIBMMEIMG_ERROR decode_jpeg(FILE *fp, unsigned int original_width, unsigned int original_height, unsigned int dst_width, unsigned int dst_height, char **dest_data);
 
+// output is in BGR (3 bytes per pixel), but allocs no memory
+LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsigned int original_height, unsigned int dst_width, unsigned int dst_height, char *dest_data);
+
 #ifdef __cplusplus 
 }
 #endif
