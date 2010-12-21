@@ -472,7 +472,7 @@ if ENABLE_PLAYER131
 	echo "touched";
 endif
 if ENABLE_PLAYER179
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release/lib/modules/
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
 	for mod in \
 		sound/pseudocard/pseudocard.ko \
