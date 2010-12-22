@@ -199,7 +199,6 @@ eData waitData(int fd, unsigned char* buffer, int* len)
 	  } else
           if (fds.revents & POLLPRI)
 	  { 
-printf("changed status\n");          
 	      return eDataStatusChanged;
 	  }
       }
