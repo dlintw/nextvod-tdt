@@ -199,6 +199,7 @@ eData waitData(int fd, unsigned char* buffer, int* len)
 	  } else
           if (fds.revents & POLLPRI)
 	  { 
+printf("changed status\n");          
 	      return eDataStatusChanged;
 	  }
       }
@@ -479,7 +480,7 @@ void cDvbCi::slot_pollthread(void *c)
 		              slot->status = eStatusNone;
 
                               if (g_RCInput)
-                        	g_RCInput->postMsg(NeutrinoMessages::EVT_CI_INSERTED, 0);
+                        	g_RCInput->postMsg(NeutrinoMessages::EVT_CI_INSERTED, slot->slot);
 
 		              slot->camIsReady = true;
                 	  } else
@@ -562,7 +563,7 @@ void cDvbCi::slot_pollthread(void *c)
 		         else
 		         {
 		              //printf("sendqueue emtpy\n");
-		              if ((checkQueueSize(slot) == false) && (!slot->hasCAManager) || (slot->mmiOpened))
+		              if ((checkQueueSize(slot) == false) && ((!slot->hasCAManager) || (slot->mmiOpened)))
 				 slot->pollConnection = true;
 		         }
 		    }
@@ -590,7 +591,7 @@ void cDvbCi::slot_pollthread(void *c)
 		           slot->status = eStatusNone;
 
                            if (g_RCInput)
-                             g_RCInput->postMsg(NeutrinoMessages::EVT_CI_INSERTED, 0);
+                             g_RCInput->postMsg(NeutrinoMessages::EVT_CI_INSERTED, slot->slot);
 
 		           slot->camIsReady = true;
                        } else
@@ -606,9 +607,8 @@ void cDvbCi::slot_pollthread(void *c)
 			  if (ioctl(slot->fd, CA_GET_SLOT_INFO, &info) < 0)
 			     printf("IOCTL CA_GET_SLOT_INFO failed for slot %d\n", slot->slot);
        
-	   	          if ((!info.flags & CA_CI_MODULE_READY))
+	   	          if (!(info.flags & CA_CI_MODULE_READY))
 			  {
-
 		             printf("cam status changed ->cam now _not_ present\n");
 
 	 	             eDVBCISession::deleteSessions(slot);
@@ -628,7 +628,7 @@ void cDvbCi::slot_pollthread(void *c)
 			     slot->status = eStatusNone;
 
                              if (g_RCInput)
-                        	g_RCInput->postMsg(NeutrinoMessages::EVT_CI_REMOVED, 0);
+                        	g_RCInput->postMsg(NeutrinoMessages::EVT_CI_REMOVED, slot->slot);
 
 	                     while(slot->sendqueue.size())
 	                     {
@@ -658,7 +658,7 @@ void cDvbCi::slot_pollthread(void *c)
 	    {
 	         slot->init = true;
 	         if (g_RCInput)
-                       g_RCInput->postMsg(NeutrinoMessages::EVT_CI_INIT_OK, 0);
+                       g_RCInput->postMsg(NeutrinoMessages::EVT_CI_INIT_OK, slot->slot);
 	    
 	         //resend a capmt if we have one. this is not very proper but I cant any mechanism in
 		 //neutrino currently. so if a cam is inserted a pmt is not resend
