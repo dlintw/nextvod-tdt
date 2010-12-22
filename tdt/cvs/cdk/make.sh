@@ -4,7 +4,7 @@ if [ "$1" == -h ] || [ "$1" == --help ]; then
  echo "Parameter 1: target system (1-18)"
  echo "Parameter 2: kernel (1-4)"
  echo "Parameter 3: debug (Y/N)"
- echo "Parameter 3: player(1-2)"
+ echo "Parameter 4: player(1-2)"
  exit
 fi
 
