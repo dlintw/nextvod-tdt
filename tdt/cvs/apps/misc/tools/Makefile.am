@@ -17,4 +17,6 @@ SUBDIRS = \
 	gitVCInfo \
 	hotplug \
 	libcoolstream \
-	vfdctl
+	vfdctl \
+	libmme_host \
+	libmmeimage
