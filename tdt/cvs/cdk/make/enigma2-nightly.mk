@@ -75,6 +75,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	$(if $(CUBEREVO_2000HD),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
 	$(if $(CUBEREVO_9500HD),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
 	$(if $(CUBEREVO_MINI_FTA),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
+	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.patched; \
 	touch $@
 
 $(DEPDIR)/enigma2-nightly.do_compile: $(appsdir)/enigma2-nightly/config.status

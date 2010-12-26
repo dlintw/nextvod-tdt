@@ -180,37 +180,55 @@ esac
 case "$REPLY" in
 	1) PLAYER="--enable-player131"
        cd ../driver/include/
-       rm player2
-       rm stmfb
+       if [ -L player2 ]; then
+          rm player2
+       fi
+       
+       if [ -L stmfb ]; then
+          rm stmfb
+       fi
        ln -s player2_131 player2
        ln -s stmfb_player131 stmfb
        cd -
 
        cd ../driver/
-       rm player2
+       if [ -L player2 ]; then
+          rm player2
+       fi
        ln -s player2_131 player2
        cd -
 
        cd ../driver/stgfb
-       rm stmfb
+       if [ -L stmfb ]; then
+          rm stmfb
+       fi
        ln -s stmfb_player131 stmfb
        cd -
     ;;
 	2) PLAYER="--enable-player179"
        cd ../driver/include/
-       rm player2
-       rm stmfb
+       if [ -L player2 ]; then
+          rm player2
+       fi
+       
+       if [ -L stmfb ]; then
+          rm stmfb
+       fi
        ln -s player2_179 player2
        ln -s stmfb-3.1_stm23_0032 stmfb
        cd -
 
        cd ../driver/
-       rm player2
+       if [ -L player2 ]; then
+          rm player2
+       fi
        ln -s player2_179 player2
        cd -
 
        cd ../driver/stgfb
-       rm stmfb
+       if [ -L stmfb ]; then
+          rm stmfb
+       fi
        ln -s stmfb-3.1_stm23_0032 stmfb
        cd -
     ;;

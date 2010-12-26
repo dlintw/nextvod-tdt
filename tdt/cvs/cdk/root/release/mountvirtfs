@@ -181,7 +181,7 @@ domakedev() {
         ##${MAKEDEV} ttySC0 ttySC1 ttySC2 ttySC3 ttySC4
         ##${MAKEDEV} ttyFW0 ttyFW1 ttyFW2 ttyFW3
         ${MAKEDEV} ttyAS0 ttyAS1 ttyAS2 ttyAS3
-        ${MAKEDEV} lp par audio video fb rtc lirc st200 alsasnd
+        ${MAKEDEV} lp par audio video fb rtc lirc st200 alsasnd mme bpamem
         ${MAKEDEV} ppp busmice
         ln -s -f /dev/input/mouse0 mouse
         ${MAKEDEV} input i2c mtd

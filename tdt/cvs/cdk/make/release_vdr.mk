@@ -436,9 +436,9 @@ if !ENABLE_SPARK
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release_vdr/lib/modules/
 endif
 if ENABLE_PLAYER131
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
-#	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
-	find $(prefix)/release_neutrino/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_vdr/lib/modules/
+#	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_vdr/lib/modules/
+	find $(prefix)/release_vdr/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
 	for mod in \
 		sound/pseudocard/pseudocard.ko \
@@ -456,19 +456,21 @@ if ENABLE_PLAYER131
 		stm/platform/p2div64.ko \
 	;do \
 		if [ -e player2/linux/drivers/$$mod ] ; then \
-			cp player2/linux/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
-			sh4-linux-strip --strip-unneeded $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+			cp player2/linux/drivers/$$mod $(prefix)/release_vdr/lib/modules/; \
+			sh4-linux-strip --strip-unneeded $(prefix)/release_vdr/lib/modules/`basename $$mod`; \
 		else \
-			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+			touch $(prefix)/release_vdr/lib/modules/`basename $$mod`; \
 		fi;\
 	done
 endif
 
 if ENABLE_PLAYER179
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
-#	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
-	find $(prefix)/release_neutrino/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release_vdr/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvbi.ko $(prefix)/release_vdr/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvout.ko $(prefix)/release_vdr/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_vdr/lib/modules/
+#	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_vdr/lib/modules/
+	find $(prefix)/release_vdr/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
 	for mod in \
 		sound/pseudocard/pseudocard.ko \
@@ -485,10 +487,10 @@ if ENABLE_PLAYER179
 		stm/platform/p2div64.ko \
 	;do \
 		if [ -e player2/linux/drivers/$$mod ] ; then \
-			cp player2/linux/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
-			sh4-linux-strip --strip-unneeded $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+			cp player2/linux/drivers/$$mod $(prefix)/release_vdr/lib/modules/; \
+			sh4-linux-strip --strip-unneeded $(prefix)/release_vdr/lib/modules/`basename $$mod`; \
 		else \
-			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
+			touch $(prefix)/release_vdr/lib/modules/`basename $$mod`; \
 		fi;\
 	done
 endif    
