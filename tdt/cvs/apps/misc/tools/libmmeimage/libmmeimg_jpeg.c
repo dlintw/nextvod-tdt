@@ -125,6 +125,26 @@ static int jpeg_sem_initialized = 0;
 
 LIBMMEIMG_ERROR decode_jpeg(FILE *fp, unsigned int original_width, unsigned int original_height, unsigned int dst_width, unsigned int dst_height, char **dest_data)
 {
+	LIBMMEIMG_ERROR ret;
+	
+	*dest_data = NULL;
+	// look if we have enough mem before starting the decode
+	*dest_data = (char *)malloc(dst_width * dst_height * 3);
+	if(!*dest_data)
+	{
+		DEBUG_PRINT("could not alloc sys mem for image");
+		return LIBMMEIMG_NOMEM;
+	}
+	
+	ret = decode_jpeg_noalloc(fp, original_width, original_height, dst_width, dst_height, *dest_data);
+	
+	if(ret != LIBMMEIMG_SUCCESS)
+		free(*dest_data);
+	return ret;
+}
+
+LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsigned int original_height, unsigned int dst_width, unsigned int dst_height, char *dest_data)
+{
 	DecodeJPEGData decode_data;
 	unsigned int pre_scaled_width, pre_scaled_height, removeright, removebottom;
 	int fd_bpa;
@@ -148,7 +168,6 @@ LIBMMEIMG_ERROR decode_jpeg(FILE *fp, unsigned int original_width, unsigned int 
 	if(res_img != LIBMMEIMG_SUCCESS)
 		return res_img;
 	
-	*dest_data = NULL;
 	fseek(fp, 0, SEEK_END);
 	filesize = ftell(fp);
 	fseek(fp, 0, SEEK_SET);
@@ -201,20 +220,6 @@ LIBMMEIMG_ERROR decode_jpeg(FILE *fp, unsigned int original_width, unsigned int 
 		return LIBMMEIMG_NOMEM;
 	}
 	
-	// look if we have enough mem before starting the decode
-	*dest_data = (char *)malloc(dst_width * dst_height * 3);
-	if(!*dest_data)
-	{
-		DEBUG_PRINT("could not alloc sys mem for image");
-		free(*dest_data);
-		*dest_data = NULL;
-		munmap(decode_surface, bpa_data.mem_size);
-		ioctl(fd_bpa, BPAMEMIO_FREEMEM);
-		close(fd_bpa);
-		return LIBMMEIMG_NOMEM;
-	}
-	
-	
 	if(mme_init_multi() != LIBMMEIMG_SUCCESS)
 	{
 		DEBUG_PRINT("mme did not init");
@@ -261,8 +266,6 @@ LIBMMEIMG_ERROR decode_jpeg(FILE *fp, unsigned int original_width, unsigned int 
 		
 	if(res_img != LIBMMEIMG_SUCCESS || !decode_data.data.decode_success)
 	{
-		free(*dest_data);
-		*dest_data = NULL;
 		mme_abort_transformer(&decode_data.data);
 		mme_deinit_transformer(&decode_data.data);
 		munmap(decode_surface, bpa_data.mem_size);
@@ -279,7 +282,6 @@ LIBMMEIMG_ERROR decode_jpeg(FILE *fp, unsigned int original_width, unsigned int 
 	
 	if(res_img != LIBMMEIMG_SUCCESS)
 	{
-		free(*dest_data);
 		munmap(decode_surface, bpa_data.mem_size);
 		ioctl(fd_bpa, BPAMEMIO_FREEMEM);
 		close(fd_bpa);
@@ -288,7 +290,7 @@ LIBMMEIMG_ERROR decode_jpeg(FILE *fp, unsigned int original_width, unsigned int 
 	
 	// memcpy doesn't work
 	for(i = 0; i < dst_width * dst_height * 3; i++)
-		*(*dest_data + i) = *(decode_surface + pre_scaled_width * pre_scaled_height * 2 + i);
+		*(dest_data + i) = *(decode_surface + pre_scaled_width * pre_scaled_height * 2 + i);
 	
 	DEBUG_PRINT("JPEG decode finished");
 	munmap(decode_surface, bpa_data.mem_size);

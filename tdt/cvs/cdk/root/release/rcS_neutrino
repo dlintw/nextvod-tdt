@@ -86,6 +86,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko
+   insmod $MODDIR/bpamem.ko
 
    #showiframe -p /boot/bootlogo.mvi &
    #stfbcontrol a 0
