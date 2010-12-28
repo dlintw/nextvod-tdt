@@ -68,7 +68,7 @@ neutrino_LDADD = \
 	-ljpeg \
 	-leplayer3 \
     $(top_builddir)/lib/libtuxtxt/libtuxtxt.a \
-	-lrt -lpthread -lmmeimage
+	-lrt -lpthread -lmmeimage -ldl
 	
 #	@AVFORMAT_LIBS@
 #	@AVUTIL_LIBS@
