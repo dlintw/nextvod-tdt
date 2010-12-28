@@ -25,6 +25,10 @@ extern "C" {
 #include "pictureviewer.h"
 #include "picv_client_server.h"
 
+#if defined(__sh__) 
+#include "../../../../misc/tools/libmmeimage/libmmeimage.h"
+#endif
+
 #define MIN(a,b) ((a)>(b)?(b):(a))
 
 struct r_jpeg_error_mgr
@@ -139,6 +143,36 @@ int fh_jpeg_load_via_server(const char *filename,unsigned char *buffer,int x,int
 	dbout("fh_jpeg_load_via_server }\n");
 	return(FH_ERROR_OK);
 }
+
+#if defined(__sh__) 
+int fh_jpeg_load_local_hw(const char *filename,unsigned char **buffer,int* x,int* y)
+{
+	unsigned int original_x, original_y;
+	dbout("[Picload] hardware decode picture...");
+
+	FILE *fp;
+
+	if (!(fp = fopen(filename, "rb")))
+		return FH_ERROR_FILE;
+	
+	// TODO: pass original image size to this function
+	if(get_jpeg_img_size(fp, (unsigned int *)&original_x, (unsigned int *)&original_y) != LIBMMEIMG_SUCCESS)
+		return FH_ERROR_FILE;
+
+		
+	if(decode_jpeg_noalloc(fp, original_x, original_y, *x, *y, (char *)*buffer) == LIBMMEIMG_SUCCESS)
+	{
+		fclose(fp);
+		return FH_ERROR_OK;
+	}
+	
+	dbout("hardware decode error");
+	
+	fclose(fp);
+	return FH_ERROR_FILE;
+}
+#endif
+
 int fh_jpeg_load_local(const char *filename,unsigned char **buffer,int* x,int* y)
 {
 	//dbout("fh_jpeg_load_local (%s/%d/%d) {\n",basename(filename),*x,*y);
@@ -219,6 +253,10 @@ int fh_jpeg_load(const char *filename,unsigned char **buffer,int* x,int* y)
 		ret=fh_jpeg_load_via_server(filename, *buffer, *x, *y);
 	if(ret!=FH_ERROR_OK)
 #endif
+#if defined(__sh__) 
+		ret=fh_jpeg_load_local_hw(filename, buffer, x, y);
+	if(ret != FH_ERROR_OK)
+#endif
 		ret=fh_jpeg_load_local(filename, buffer, x, y);
 	return ret;
 }
@@ -234,7 +272,7 @@ int fh_jpeg_getsize(const char *filename,int *x,int *y, int wanted_width, int wa
 	FILE *fh;
 	ciptr=&cinfo;
 	if(!(fh=fopen(filename,"rb"))) return(FH_ERROR_FILE);
-
+#if !defined(__sh__) 
 	ciptr->err=jpeg_std_error(&emgr.pub);
 	emgr.pub.error_exit=jpeg_cb_error_exit;
 	if(setjmp(emgr.envbuffer)==1)
@@ -303,6 +341,19 @@ int fh_jpeg_getsize(const char *filename,int *x,int *y, int wanted_width, int wa
 	}
 //	jpeg_finish_decompress(ciptr);
 	jpeg_destroy_decompress(ciptr);
+#else
+	if(get_jpeg_img_size(fh, (unsigned int *)&px, (unsigned int *)&py) == LIBMMEIMG_SUCCESS)
+		if( (CPictureViewer::m_aspect_ratio_correction*py*wanted_width/px) <= wanted_height)
+		{
+			*x=wanted_width;
+			*y=(int)(CPictureViewer::m_aspect_ratio_correction*py*wanted_width/px);
+		}
+		else
+		{
+			*x=(int)((1.0/CPictureViewer::m_aspect_ratio_correction)*px*wanted_height/py);
+			*y=wanted_height;
+		}
+#endif
 	fclose(fh);
 //	 dbout("fh_jpeg_getsize }\n");
 	return(FH_ERROR_OK);
