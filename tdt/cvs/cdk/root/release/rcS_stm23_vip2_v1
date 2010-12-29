@@ -54,6 +54,10 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
    
    echo "init frontends"
+   #demodelator1 type: stv090x, ce6353, tda10023(default stv090x)
+   #tuner type1: sharp7306, stv6110x, sharp6465, lg031(default sharp7306)
+   #demodelator2 type: stv090x, ce6353, tda10023(default ce6353)
+   #tuner type2: sharp7306, stv6110x, sharp6465, lg031(default sharp6465)
    insmod $MODDIR/fe-core.ko #demod1=stv090x tuner1=sharp7306 demod2=stv090x tuner2=sharp7306;
 
    echo "init drivers"
