@@ -104,6 +104,7 @@ bool CPictureViewer::DecodeImage (const std::string & name, bool showBusySign, b
 	fh = fh_getsize (name.c_str (), &x, &y, INT_MAX, INT_MAX);
   else
 	fh = fh_getsize (name.c_str (), &x, &y, m_endx - m_startx, m_endy - m_starty);
+	
   if (fh) {
 	if (m_NextPic_Buffer != NULL) {
 	  free (m_NextPic_Buffer);
@@ -133,6 +134,7 @@ bool CPictureViewer::DecodeImage (const std::string & name, bool showBusySign, b
 	  }
 	  m_NextPic_X = x;
 	  m_NextPic_Y = y;
+	 
 	  if (x < (m_endx - m_startx))
 		m_NextPic_XPos = (m_endx - m_startx - x) / 2 + m_startx;
 	  else
@@ -186,7 +188,6 @@ bool CPictureViewer::DecodeImage (const std::string & name, bool showBusySign, b
   }
   m_NextPic_Name = name;
   hideBusy ();
-  CFrameBuffer::getInstance ()-> blit(m_startx, m_starty, m_endx - m_startx, m_endy - m_starty);//j00zek update screen to display decoded picture
 
   //   dbout("DecodeImage }\n"); 
   return (m_NextPic_Buffer != NULL);
@@ -194,10 +195,17 @@ bool CPictureViewer::DecodeImage (const std::string & name, bool showBusySign, b
 
 void CPictureViewer::SetVisible (int startx, int endx, int starty, int endy)
 {
+#ifdef __sh__
+  m_startx = CFrameBuffer::getInstance()->scaleX(startx);
+  m_endx = CFrameBuffer::getInstance()->scaleX(endx);
+  m_starty = CFrameBuffer::getInstance()->scaleY(starty);
+  m_endy = CFrameBuffer::getInstance()->scaleY(endy);
+#else
   m_startx = startx;
   m_endx = endx;
   m_starty = starty;
   m_endy = endy;
+#endif
 }
 
 
@@ -391,7 +399,6 @@ void CPictureViewer::showBusy (int sx, int sy, int width, char r, char g, char b
   m_busy_width = width;
   m_busy_cpp = cpp;
   free (fb_buffer);
-  CFrameBuffer::getInstance ()-> blit(m_busy_x, m_busy_y, m_busy_width, m_busy_width);//j00zek let's update screen to display busy sign
 
 //  dbout("Show Busy}\n");
 }
@@ -502,8 +509,6 @@ bool CPictureViewer::DisplayImage (const std::string & name, int posx, int posy,
 	fb_display (m_NextPic_Buffer, m_NextPic_X, m_NextPic_Y, 0, 0, m_NextPic_XPos, m_NextPic_YPos, false, convertSetupAlpha2Alpha(g_settings.infobar_alpha));
 	ret = true;
   }
-  //j00zek we need below to refresh buffer and properly display pictures and logos
-  CFrameBuffer::getInstance ()-> blit(posx, posy, width, height);
   return ret;
 }
 

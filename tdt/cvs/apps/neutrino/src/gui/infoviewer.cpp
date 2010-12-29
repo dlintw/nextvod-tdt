@@ -673,8 +673,13 @@ void CInfoViewer::showSubchan ()
 	  y = g_settings.screen_EndY - dy - 10;
 	}
 
+#ifdef __sh__
+	fb_pixel_t *pixbuf = frameBuffer->allocPixelBuffer((dx + 2 * borderwidth), (dy + 2 * borderwidth));
+	int checkSize = frameBuffer->SaveScreen (x - borderwidth, y - borderwidth, dx + 2 * borderwidth, dy + 2 * borderwidth, pixbuf);
+#else
 	fb_pixel_t pixbuf[(dx + 2 * borderwidth) * (dy + 2 * borderwidth)];
 	frameBuffer->SaveScreen (x - borderwidth, y - borderwidth, dx + 2 * borderwidth, dy + 2 * borderwidth, pixbuf);
+#endif
 
 	// clear border
 	frameBuffer->paintBackgroundBoxRel (x - borderwidth, y - borderwidth, dx + 2 * borderwidth, borderwidth);
@@ -711,7 +716,12 @@ void CInfoViewer::showSubchan ()
 		}
 	  }
 	}
+#ifdef __sh__
+	frameBuffer->RestoreScreen (x - borderwidth, y - borderwidth, dx + 2 * borderwidth, dy + 2 * borderwidth, pixbuf, checkSize);
+	delete pixbuf;
+#else
 	frameBuffer->RestoreScreen (x - borderwidth, y - borderwidth, dx + 2 * borderwidth, dy + 2 * borderwidth, pixbuf);
+#endif
   } else {
 	g_RCInput->postMsg (NeutrinoMessages::SHOW_INFOBAR, 0);
   }

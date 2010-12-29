@@ -422,7 +422,11 @@ int CMenuWidget::exec(CMenuTarget* parent, const std::string &)
 
 void CMenuWidget::hide()
 {
+#ifdef __sh__	// TODO: investigate this
+	frameBuffer->paintBackgroundBoxRel(x, y, width+15,height+11 );
+#else
 	frameBuffer->paintBackgroundBoxRel(x, y, width+15,height+10 );
+#endif
 }
 
 void CMenuWidget::paint()

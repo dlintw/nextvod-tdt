@@ -70,11 +70,22 @@ void fb_display(unsigned char *rgbbuff, int x_size, int y_size, int x_pan, int y
     lfb = (unsigned char *)CFrameBuffer::getInstance()->getFrameBufferPointer();
 
     /* correct panning */
+#ifdef __sh__
+    int xres = CFrameBuffer::getInstance()->getScaledScreenWidth();
+    int yres = CFrameBuffer::getInstance()->getScaledScreenHeight();
+    
+    if(x_pan > x_size - xres) x_pan = 0;
+    if(y_pan > y_size - yres) y_pan = 0;
+    /* correct offset */
+    if(x_offs + x_size > xres) x_offs = 0;
+    if(y_offs + y_size > yres) y_offs = 0;
+#else
     if(x_pan > x_size - (int)var->xres) x_pan = 0;
     if(y_pan > y_size - (int)var->yres) y_pan = 0;
     /* correct offset */
     if(x_offs + x_size > (int)var->xres) x_offs = 0;
     if(y_offs + y_size > (int)var->yres) y_offs = 0;
+#endif
     
 //printf("fb_display: bits_per_pixel: %d\n", var->bits_per_pixel);
 //printf("fb_display: var->xres %d var->yres %d x_size %d y_size %d\n", var->xres, var->yres, x_size, y_size);
@@ -86,16 +97,25 @@ void fb_display(unsigned char *rgbbuff, int x_size, int y_size, int x_pan, int y
     //if(x_size < (int)var->xres || y_size < (int)var->yres)
     if(clearfb)
        clearFB(var->bits_per_pixel, bp);
+#ifdef __sh__
+    blit2FB(fbbuff, x_size, y_size, xres, yres, x_pan, y_pan, x_offs, y_offs, bp);
+#else
     blit2FB(fbbuff, x_size, y_size, var->xres, var->yres, x_pan, y_pan, x_offs, y_offs, bp);
+#endif
     free(fbbuff);
 }
 
 void getCurrentRes(int *x, int *y)
 {
+#ifdef __sh__
+	*x = CFrameBuffer::getInstance()->getScaledScreenWidth();
+	*y = CFrameBuffer::getInstance()->getScaledScreenHeight();
+#else
     struct fb_var_screeninfo *var;
     var = CFrameBuffer::getInstance()->getScreenInfo();
     *x = var->xres;
     *y = var->yres;
+#endif
 //printf("getCurrentRes: %dx%d\n", var->xres, var->yres);
 }
 

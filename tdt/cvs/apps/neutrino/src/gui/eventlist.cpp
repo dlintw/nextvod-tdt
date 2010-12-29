@@ -558,7 +558,11 @@ int EventList::exec(const t_channel_id channel_id, const std::string& channelnam
 
 void EventList::hide()
 {
+#ifdef __sh__
+	frameBuffer->paintBackgroundBoxRel(x,y, width + 1,height);	// TODO: probably scaling issue - do investigations
+#else
 	frameBuffer->paintBackgroundBoxRel(x,y, width,height);
+#endif
 	showFunctionBar (false);
 
 }

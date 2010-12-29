@@ -3707,10 +3707,19 @@ void CNeutrinoApp::setVolume(const neutrino_msg_t key, const bool bDoPaint, bool
 
 	fb_pixel_t * pixbuf = NULL;
 
+#ifdef __sh__
+	int checkSize;
+	
+	if(bDoPaint) {
+		pixbuf = frameBuffer->allocPixelBuffer(dx, dy);
+		if(pixbuf!= NULL)
+			checkSize = frameBuffer->SaveScreen(x, y, dx, dy, pixbuf);
+#else
 	if(bDoPaint) {
 		pixbuf = new fb_pixel_t[dx * dy];
 		if(pixbuf!= NULL)
 			frameBuffer->SaveScreen(x, y, dx, dy, pixbuf);
+#endif
 
 		frameBuffer->paintIcon("volume.raw",x,y, COL_INFOBAR);
 		frameBuffer->paintBoxRel (x + 40, y+12, 200, 15, COL_INFOBAR_PLUS_0);
@@ -3772,7 +3781,11 @@ void CNeutrinoApp::setVolume(const neutrino_msg_t key, const bool bDoPaint, bool
 	//frameBuffer->paintBackgroundBoxRel(x, y, dx, dy); //FIXME osd bug
 
 	if( (bDoPaint) && (pixbuf!= NULL) ) {
+#ifdef __sh__
+		frameBuffer->RestoreScreen(x, y, dx, dy, pixbuf, checkSize);
+#else
 		frameBuffer->RestoreScreen(x, y, dx, dy, pixbuf);
+#endif
 		delete [] pixbuf;
 	}
 }

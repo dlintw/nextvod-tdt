@@ -78,6 +78,10 @@ class CFrameBuffer
 
 		int             fd, tty;
 		fb_pixel_t *    lfb;
+#ifdef __sh__
+		int				fd_bpa;
+		fb_pixel_t *    icon_space;
+#endif
 		int		available;
 		fb_pixel_t *    background;
 		fb_pixel_t *    backupBackground;
@@ -85,10 +89,7 @@ class CFrameBuffer
 		std::string     backgroundFilename;
 		bool            useBackgroundPaint;
 		unsigned int	xRes, yRes, stride, bpp;
-#ifdef __sh__
-		unsigned int	xDestRes, yDestRes;
-		double          xFactor, yFactor;
-#endif
+
 		t_fb_var_screeninfo screeninfo, oldscreen;
 		fb_cmap cmap;
 		__u16 red[256], green[256], blue[256], trans[256];
@@ -152,7 +153,11 @@ class CFrameBuffer
 				*dest = realcolor[color];
 #endif
 			};
+#ifdef __sh__
+		void paintPixel(int x, int y, const fb_pixel_t col, bool applyScaling = true);
+#else
 		void paintPixel(int x, int y, const fb_pixel_t col);
+#endif
 
 		void paintBoxRel(const int x, const int y, const int dx, const int dy, const fb_pixel_t col, int radius = 0, int type = 0);
 		inline void paintBox(int xa, int ya, int xb, int yb, const fb_pixel_t col) { paintBoxRel(xa, ya, xb - xa, yb - ya, col); }
@@ -193,16 +198,27 @@ class CFrameBuffer
 
 		void paintBackground();
 
+#ifdef __sh__
+		int SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp);
+		// checkSize is returned by SaveScreen
+		void RestoreScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp, int checkSize);
+#else
 		void SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp);
 		void RestoreScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp);
+#endif
 
 		void ClearFrameBuffer();
 		void showFrame(const std::string & filename);
 		bool loadBackgroundPic(const std::string & filename, bool show = true);
 #ifdef __sh__
-		void blit();
-		void blit(int x, int y, int dx, int dy);
+		void blitRect(int x, int y, int width, int height, unsigned long color);
+		void blitIcon(int original_width, int original_height, int fb_x, int fb_y, int width, int height);
 		void resize(int format);
+		int scaleX(const int x);
+		int scaleY(const int y);
+		fb_pixel_t *allocPixelBuffer(int width, int height);
+		inline int getScaledScreenWidth()  { return xRes; }
+		inline int getScaledScreenHeight() { return yRes; }
 #endif
 };
 

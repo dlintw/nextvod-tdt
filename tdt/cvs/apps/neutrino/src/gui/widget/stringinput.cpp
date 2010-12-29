@@ -818,10 +818,17 @@ const char * CPLPINInput::getHint1(void)
 
 int CPLPINInput::exec( CMenuTarget* parent, const std::string & )
 {
+#ifdef __sh__
+	fb_pixel_t * pixbuf = frameBuffer->allocPixelBuffer((width+ 2* borderwidth), (height+ 2* borderwidth));
+	int checkSize;
+	if (pixbuf != NULL)
+		checkSize = frameBuffer->SaveScreen(x- borderwidth, y- borderwidth, width+ 2* borderwidth, height+ 2* borderwidth, pixbuf);
+#else
 	fb_pixel_t * pixbuf = new fb_pixel_t[(width+ 2* borderwidth) * (height+ 2* borderwidth)];
 
 	if (pixbuf != NULL)
 		frameBuffer->SaveScreen(x- borderwidth, y- borderwidth, width+ 2* borderwidth, height+ 2* borderwidth, pixbuf);
+#endif
 
 	// clear border
 	frameBuffer->paintBackgroundBoxRel(x- borderwidth, y- borderwidth, width+ 2* borderwidth, borderwidth);
@@ -833,7 +840,11 @@ int CPLPINInput::exec( CMenuTarget* parent, const std::string & )
 
 	if (pixbuf != NULL)
 	{
+#ifdef __sh__
+		frameBuffer->RestoreScreen(x- borderwidth, y- borderwidth, width+ 2* borderwidth, height+ 2* borderwidth, pixbuf, checkSize);
+#else
 		frameBuffer->RestoreScreen(x- borderwidth, y- borderwidth, width+ 2* borderwidth, height+ 2* borderwidth, pixbuf);
+#endif
 		delete[] pixbuf;//Mismatching allocation and deallocation: pixbuf
 	}
 

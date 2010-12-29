@@ -48,9 +48,12 @@
 
 #ifdef __sh__
 #include <linux/stmfb.h> 
+#include <bpamem.h>
 
 #define DEFAULT_XRES 1280
 #define DEFAULT_YRES 720
+
+#define ICON_TEMP_SIZE 256	// should be enough for small icons
 #endif 
 
 extern cVideo * videoDecoder;
@@ -109,6 +112,26 @@ static void _write_gxa(volatile unsigned char *base_addr, unsigned int offset, u
 
 #endif /* USE_NEVIS_GXA */
 
+#ifdef __sh__
+int CFrameBuffer::scaleX(const int x)
+{
+	int mul = x * xRes;
+	mul = mul / DEFAULT_XRES + (((mul % DEFAULT_XRES) >= (DEFAULT_XRES / 2)) ? 1 : 0);
+	if(mul > xRes)
+		return xRes;
+	return mul;
+}
+
+int CFrameBuffer::scaleY(const int y)
+{
+	int mul = y * yRes;
+	mul = mul / DEFAULT_YRES + (((mul % DEFAULT_YRES) >= (DEFAULT_YRES / 2)) ? 1 : 0);
+	if(mul > yRes)
+		return yRes;
+	return mul;
+}
+#endif
+
 /*******************************************************************************/
 
 static uint8_t * virtual_fb = NULL;
@@ -144,11 +167,6 @@ CFrameBuffer::CFrameBuffer()
 	memset(green, 0, 256*sizeof(__u16));
 	memset(blue, 0, 256*sizeof(__u16));
 	memset(trans, 0, 256*sizeof(__u16));
-
-#ifdef __sh__
-        xFactor = -1; 
-        yFactor = -1; 
-#endif
 }
 
 CFrameBuffer* CFrameBuffer::getInstance()
@@ -166,9 +184,6 @@ CFrameBuffer* CFrameBuffer::getInstance()
 
 void CFrameBuffer::init(const char * const fbDevice)
 {
-#ifdef __sh__
-printf("%s\n", __FUNCTION__);
-#endif
 	fd = open(fbDevice, O_RDWR);
 	if(!fd) fd = open(fbDevice, O_RDWR);
 
@@ -199,19 +214,54 @@ printf("%s\n", __FUNCTION__);
 		goto nolfb;
 	}
 
-        if (available / (1024 * 1024) < 12)
+#ifdef __sh__
+    if (available / (1024 * 1024) < 8)
 	{
            printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-	   printf("error: to less memory for stmfb given, need at least 12mb\n");  	
+	       printf("error: to less memory for stmfb given, need at least 8mb\n");  	
 	}
-
-#if defined(__sh__) 
-printf("fb: 0x%08x\n", lfb);
-	//we use 2MB at the end of the buffer, the rest does the blitter 
-	lfb += 1920*1080;   
-printf("fb: 0x%08x\n", lfb);
-
-#endif 
+	
+	fd_bpa = open("/dev/bpamem0", O_RDWR);
+	
+	if(fd_bpa < 0)
+	{
+		printf("cannot access /dev/bpamem0! err = %d", fd_bpa);
+		return;
+	}
+	
+	BPAMemAllocMemData bpa_data;
+	bpa_data.bpa_part = "LMI_VID";
+	bpa_data.mem_size = ICON_TEMP_SIZE * ICON_TEMP_SIZE * 4;	// should be enough for small icons
+	int res = ioctl(fd_bpa, BPAMEMIO_ALLOCMEM, &bpa_data); // request memory from bpamem
+	if(res)
+	{
+		printf("cannot alloc required bpa mem");
+		return;
+	}
+	
+	char bpa_mem_device[30];
+	
+	sprintf(bpa_mem_device, "/dev/bpamem%d", bpa_data.device_num);
+	close(fd_bpa);
+	
+	fd_bpa = open(bpa_mem_device, O_RDWR);
+	
+	if(fd_bpa < 0)
+	{
+		printf("cannot access /dev/bpamem0! err = %d", fd_bpa);
+		return;
+	}
+	
+	icon_space = (fb_pixel_t *)mmap(0, bpa_data.mem_size, PROT_WRITE|PROT_READ, MAP_SHARED, fd_bpa, 0);
+	
+	if(icon_space == MAP_FAILED) 
+	{
+		printf("could not map bpa mem");
+		ioctl(fd_bpa, BPAMEMIO_FREEMEM);
+		close(fd_bpa);
+		return;
+	}
+#endif
 
 #ifdef USE_NEVIS_GXA
 	/* Open 7dev/mem for HW-register access */
@@ -314,6 +364,15 @@ CFrameBuffer::~CFrameBuffer()
 #endif
 	if (lfb)
 		munmap(lfb, available);
+#ifdef __sh__
+	if(icon_space)
+		munmap(icon_space, ICON_TEMP_SIZE * ICON_TEMP_SIZE * 4);
+	if(fd_bpa)
+	{
+		ioctl(fd_bpa, BPAMEMIO_FREEMEM);
+		close(fd_bpa);
+	}
+#endif
 	
 	if (virtual_fb)
 		delete[] virtual_fb;
@@ -334,7 +393,11 @@ unsigned int CFrameBuffer::getStride() const
 unsigned int CFrameBuffer::getScreenWidth(bool real)
 {
 	if(real)
+#ifdef __sh__
+		return DEFAULT_XRES;
+#else
 		return xRes;
+#endif
 	else
 		return g_settings.screen_EndX - g_settings.screen_StartX;
 }
@@ -342,7 +405,11 @@ unsigned int CFrameBuffer::getScreenWidth(bool real)
 unsigned int CFrameBuffer::getScreenHeight(bool real)
 {
 	if(real)
+#ifdef __sh__
+		return DEFAULT_YRES;
+#else
 		return yRes;
+#endif
 	else
 		return g_settings.screen_EndY - g_settings.screen_StartY;
 }
@@ -382,9 +449,6 @@ t_fb_var_screeninfo *CFrameBuffer::getScreenInfo()
 
 int CFrameBuffer::setMode(unsigned int nxRes, unsigned int nyRes, unsigned int nbpp)
 {
-#ifdef __sh__
-printf("%s\n", __FUNCTION__);
-#endif
 	if (!available&&!active)
 		return -1;
 
@@ -412,13 +476,6 @@ printf("%s\n", __FUNCTION__);
 		return -1;
 	}
 #endif
-
-#ifdef __sh__
-	xRes = DEFAULT_XRES;
-	yRes = DEFAULT_YRES;
-	bpp  = 32;
-	stride = xRes * 4;
-#else
 	xRes = screeninfo.xres;
 	yRes = screeninfo.yres;
 	bpp  = screeninfo.bits_per_pixel;
@@ -432,7 +489,6 @@ printf("%s\n", __FUNCTION__);
 
 	stride = fix.line_length;
 
-#endif
 printf("FB: %dx%dx%d line lenght %d\n", xRes, yRes, bpp, stride);
 
 	memset(getFrameBufferPointer(), 0, stride * yRes);
@@ -537,16 +593,18 @@ void CFrameBuffer::paintBoxRel(const int x, const int y, const int dx, const int
 #endif
 
 #ifdef __sh__
-void CFrameBuffer::paintBoxRel(const int x, const int y, const int _dx, const int _dy, const fb_pixel_t col, int radius, int type)
+void CFrameBuffer::paintBoxRel(const int _x, const int _y, const int _dx, const int _dy, const fb_pixel_t col, int _radius, int type)
 #else
 void CFrameBuffer::paintBoxRel(const int x, const int y, const int dx, const int dy, const fb_pixel_t col, int radius, int type)
 #endif
 {
 #ifdef __sh__
-    int dx, dy;
-
-    dx = _dx;
-    dy = _dy;
+    int x, y, dx, dy, radius;
+    x = scaleX(_x);
+    y = scaleY(_y);
+    dx = scaleX(_dx);
+    dy = scaleY(_dy);
+    radius = scaleX(_radius);
 #endif
 
     /* draw a filled rectangle (with additional round corners) */
@@ -554,34 +612,6 @@ void CFrameBuffer::paintBoxRel(const int x, const int y, const int dx, const int
     if (!getActive())
         return;
 
-#ifdef __sh__
-    if (x + dx > DEFAULT_XRES)
-    {
-       printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
-       dx -= (x + dx - DEFAULT_XRES) - 1;
-
-       if (x + dx > DEFAULT_XRES)
-       {
-           /* I think if both values are out of range we should abort. just my two cent on it */
-           printf("aborting!\n");
-           return;
-       }
-    }
-
-    if (y + dy > DEFAULT_YRES)
-    {
-       printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
-
-       dy -= (y + dy - DEFAULT_YRES) - 1;
-
-       if (y + dy > DEFAULT_YRES)
-       {
-           /* I think if both values are out of range we should abort. just my two cent on it */
-           printf("aborting!\n");
-           return;
-       }
-    }
-#endif
 
 #ifdef USE_NEVIS_GXA
     /* this table contains the x coordinates for a quarter circle (the bottom right quarter) with fixed 
@@ -764,15 +794,8 @@ void CFrameBuffer::paintBoxRel(const int x, const int y, const int dx, const int
     if(!(type & 2))
 	end = dyy+ (R ? 1 : 0);
 
-#if 0
-        fb_fillrect fillrect;
-        fillrect.dx = x;
-        fillrect.dy = y+start;
-        fillrect.width = dx;
-        fillrect.height = end;
-        fillrect.color = col;
-        fillrect.rop = ROP_COPY;
-        ioctl(fd, FBIO_FILL_RECT, &fillrect);
+#ifdef __sh__
+	blitRect(x, y + start, dx, end - start, col);
 #else
     for (int count= start; count < end; count++) {
         dest0=(fb_pixel_t *)pos;
@@ -782,10 +805,6 @@ void CFrameBuffer::paintBoxRel(const int x, const int y, const int dx, const int
     }
 #endif
 #endif /* USE_NEVIS_GXA */
-#ifdef __sh__
-//printf("%s - %d %d %d %d - %d\n", __FUNCTION__, x, y, dx, dy, type);
-    blit(x, y, dx, dy);
-#endif
 }
 
 void CFrameBuffer::paintVLine(int x, int ya, int yb, const fb_pixel_t col)
@@ -794,23 +813,9 @@ void CFrameBuffer::paintVLine(int x, int ya, int yb, const fb_pixel_t col)
 		return;
 
 #ifdef __sh__
-        if (x > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (x %d > DEFAULT_XRES %d)\n", __func__, x, DEFAULT_XRES );
-           x = DEFAULT_XRES - 1;
-        }
-
-        if (ya > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (ya %d > DEFAULT_YRES %d)\n", __func__, ya, DEFAULT_YRES );
-           ya = DEFAULT_YRES - 1;
-        }
-
-        if (yb > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (yb %d > DEFAULT_YRES %d)\n", __func__, yb, DEFAULT_YRES );
-           yb = DEFAULT_YRES - 1;
-        }
+	x = scaleX(x);
+	ya = scaleY(ya);
+	yb = scaleY(yb);
 #endif
 
 #ifdef USE_NEVIS_GXA
@@ -822,7 +827,10 @@ void CFrameBuffer::paintVLine(int x, int ya, int yb, const fb_pixel_t col)
     _write_gxa(gxa_base, cmd, GXA_POINT(x, ya + (yb - ya)));	/* end point */
     _write_gxa(gxa_base, cmd, GXA_POINT(x, ya));		/* start point */
 #else /* USE_NEVIS_GXA */
-
+#ifdef __sh__
+	int dy = yb-ya;
+	blitRect(x, ya, 1, dy, col);
+#else
 	uint8_t * pos = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * ya;
 
 	int dy = yb-ya;
@@ -830,38 +838,19 @@ void CFrameBuffer::paintVLine(int x, int ya, int yb, const fb_pixel_t col)
 		*(fb_pixel_t *)pos = col;
 		pos += stride;
 	}
-#endif	/* USE_NEVIS_GXA */
-#ifdef __sh__
-//printf("%s\n", __FUNCTION__);
-    blit(x, ya, 1, dy);
 #endif
+#endif	/* USE_NEVIS_GXA */
 }
 
 void CFrameBuffer::paintVLineRel(int x, int y, int dy, const fb_pixel_t col)
-{
+{	
 	if (!getActive())
 		return;
 
 #ifdef __sh__
-        if (x > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (x %d > DEFAULT_XRES %d)\n", __func__, x, DEFAULT_XRES );
-           x = DEFAULT_XRES - 1;
-        }
-
-        if (y + dy > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
-
-	   dy -= (y + dy - DEFAULT_YRES) - 1;
-
-	   if (y + dy > DEFAULT_YRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return;
-	   }
-        }
+	x = scaleX(x);
+	y = scaleY(y);
+	dy = scaleY(dy);
 #endif
 
 #ifdef USE_NEVIS_GXA
@@ -873,16 +862,8 @@ void CFrameBuffer::paintVLineRel(int x, int y, int dy, const fb_pixel_t col)
     _write_gxa(gxa_base, cmd, GXA_POINT(x, y + dy));		/* end point */
     _write_gxa(gxa_base, cmd, GXA_POINT(x, y));			/* start point */
 #else /* USE_NEVIS_GXA */
-#if 0
-	fb_fillrect fillrect;
-	fillrect.dx = x;
-	fillrect.dy = y; 
-	fillrect.width = 1;
-	fillrect.height = dy;
-	fillrect.color = col;
-	fillrect.rop = ROP_COPY;
-	ioctl(fd, FBIO_FILL_RECT, &fillrect);
-	return;
+#ifdef __sh__
+	blitRect(x, y, 1, dy, col);
 #else
 	uint8_t * pos = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
 
@@ -892,35 +873,17 @@ void CFrameBuffer::paintVLineRel(int x, int y, int dy, const fb_pixel_t col)
 	}
 #endif
 #endif /* USE_NEVIS_GXA */
-#ifdef __sh__
-//printf("%s\n", __FUNCTION__);
-    blit(x, y, 1, dy);
-#endif
 }
 
 void CFrameBuffer::paintHLine(int xa, int xb, int y, const fb_pixel_t col)
-{
+{	
 	if (!getActive())
 		return;
 
 #ifdef __sh__
-        if (xa > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (xa %d > DEFAULT_XRES %d)\n", __func__, xa, DEFAULT_XRES );
-           xa = DEFAULT_XRES - 1;
-        }
-
-        if (xb > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (xb %d > DEFAULT_XRES %d)\n", __func__, xb, DEFAULT_XRES );
-           xb = DEFAULT_XRES - 1;
-        }
-
-        if (y > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (y %d > DEFAULT_YRES %d)\n", __func__, y, DEFAULT_YRES );
-           y = DEFAULT_YRES - 1;
-        }
+	xa = scaleX(xa);
+	xb = scaleX(xb);
+	y = scaleY(y);
 #endif
 
 #ifdef USE_NEVIS_GXA
@@ -932,18 +895,18 @@ void CFrameBuffer::paintHLine(int xa, int xb, int y, const fb_pixel_t col)
 	_write_gxa(gxa_base, cmd, GXA_POINT(xa + (xb - xa), y));	/* end point */
 	_write_gxa(gxa_base, cmd, GXA_POINT(xa, y));		/* start point */
 #else /* USE_NEVIS_GXA */
-
+#ifdef __sh__
+	int dx = xb -xa;
+	blitRect(xa, y, dx, 1, col);
+#else
 	uint8_t * pos = ((uint8_t *)getFrameBufferPointer()) + xa * sizeof(fb_pixel_t) + stride * y;
 
 	int dx = xb -xa;
 	fb_pixel_t * dest = (fb_pixel_t *)pos;
 	for (int i = 0; i < dx; i++)
 		*(dest++) = col;
-#endif /* USE_NEVIS_GXA */
-#ifdef __sh__
-//printf("%s\n", __FUNCTION__);
-    blit(xa, y, dx, 1);
 #endif
+#endif /* USE_NEVIS_GXA */
 }
 
 void CFrameBuffer::paintHLineRel(int x, int dx, int y, const fb_pixel_t col)
@@ -952,25 +915,9 @@ void CFrameBuffer::paintHLineRel(int x, int dx, int y, const fb_pixel_t col)
 		return;
 
 #ifdef __sh__
-        if (x + dx > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
-
-	   dx -= (x + dx - DEFAULT_XRES) - 1;
-
-	   if (x + dx > DEFAULT_XRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return;
-	   }
-        }
-
-        if (y > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (y %d > DEFAULT_YRES %d)\n", __func__, y, DEFAULT_YRES );
-           y = DEFAULT_YRES - 1;
-        }
+	x = scaleX(x);
+	dx = scaleX(dx);
+	y = scaleY(y);
 #endif
 
 #ifdef USE_NEVIS_GXA
@@ -982,16 +929,16 @@ void CFrameBuffer::paintHLineRel(int x, int dx, int y, const fb_pixel_t col)
 	_write_gxa(gxa_base, cmd, GXA_POINT(x + dx, y));		/* end point */
 	_write_gxa(gxa_base, cmd, GXA_POINT(x, y));			/* start point */
 #else /* USE_NEVIS_GXA */
+#ifdef __sh__
+	blitRect(x, y, dx, 1, col);
+#else
 	uint8_t * pos = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
 
 	fb_pixel_t * dest = (fb_pixel_t *)pos;
 	for (int i = 0; i < dx; i++)
 		*(dest++) = col;
-#endif /* USE_NEVIS_GXA */
-#ifdef __sh__
-//printf("%s\n", __FUNCTION__);
-    blit(x, y, dx, 1);
 #endif
+#endif /* USE_NEVIS_GXA */
 }
 
 void CFrameBuffer::setIconBasePath(const std::string & iconPath)
@@ -999,10 +946,20 @@ void CFrameBuffer::setIconBasePath(const std::string & iconPath)
 	iconBasePath = iconPath;
 }
 
+#ifdef __sh__
+bool CFrameBuffer::paintIcon8(const std::string & filename, const int _x, const int _y, const unsigned char offset)
+#else
 bool CFrameBuffer::paintIcon8(const std::string & filename, const int x, const int y, const unsigned char offset)
+#endif
 {
 	if (!getActive())
 		return false;
+
+#ifdef __sh__
+	int x, y;
+	x = scaleX(_x);
+	y = scaleY(_y);
+#endif
 
 //printf("%s(file, %d, %d, %d)\n", __FUNCTION__, x, y, offset);
 
@@ -1021,36 +978,36 @@ bool CFrameBuffer::paintIcon8(const std::string & filename, const int x, const i
 
 	width  = (header.width_hi  << 8) | header.width_lo;
 	height = (header.height_hi << 8) | header.height_lo;
-
 #ifdef __sh__
-        if (x + width > DEFAULT_XRES)
+	if(width > ICON_TEMP_SIZE || height > ICON_TEMP_SIZE)
 	{
-           printf("%s: values out of range (x %d + width %d > DEFAULT_XRES %d)\n", __func__, x, width, DEFAULT_XRES );
+		close(fd);
+		return false;
+	}
+	
+	unsigned char pixbuf[768];
 
-	   width -= (x + width - DEFAULT_XRES) - 1;
-
-	   if (x + width > DEFAULT_XRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return false;
-	   }
-        }
-
-        if (y + height > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (y %d + height %d > DEFAULT_YRES %d)\n", __func__, y, height, DEFAULT_YRES );
-
-	   height -= (y + height - DEFAULT_YRES) - 1;
-
-	   if (y + height > DEFAULT_YRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return false;
-	   }
-        }
-#endif
+	uint8_t * d = (uint8_t *)icon_space;
+	fb_pixel_t * d2;
+	for (int count=0; count<height; count ++ ) {
+		read(fd, &pixbuf[0], width );
+		unsigned char *pixpos = &pixbuf[0];
+		d2 = (fb_pixel_t *) d;
+		for (int count2=0; count2<width; count2 ++ ) {
+			unsigned char color = *pixpos;
+			if (color != header.transp)
+				paintPixel(d2, color + offset);
+			else
+				*d2 = 0;
+			d2++;
+			pixpos++;
+		}
+		d += width * 4;
+	}
+	blitIcon(width, height, x, y, scaleX(width), scaleY(height));
+	
+	
+#else
 	unsigned char pixbuf[768];
 
 	uint8_t * d = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
@@ -1070,20 +1027,22 @@ bool CFrameBuffer::paintIcon8(const std::string & filename, const int x, const i
 		}
 		d += stride;
 	}
-	close(fd);
-
-#ifdef __sh__
-//printf("%s: %d %d\n", __FUNCTION__, width, height);
-    blit(x, y, width, height);
 #endif
+	close(fd);
 
 	return true;
 }
 
-bool CFrameBuffer::paintIcon(const std::string & filename, const int x, const int y, const unsigned char offset)
+bool CFrameBuffer::paintIcon(const std::string & filename, const int _x, const int _y, const unsigned char offset)
 {
 	if (!getActive())
 		return false;
+
+#ifdef __sh__
+	int x, y;
+	x = scaleX(_x);
+	y = scaleY(_y);
+#endif
 
 //printf("%s(file, %d, %d, %d)\n", __FUNCTION__, x, y, offset);
 
@@ -1115,36 +1074,42 @@ bool CFrameBuffer::paintIcon(const std::string & filename, const int x, const in
 
 	width  = (header.width_hi  << 8) | header.width_lo;
 	height = (header.height_hi << 8) | header.height_lo;
-
+	
 #ifdef __sh__
-        if (x + width > DEFAULT_XRES)
+	if(width > ICON_TEMP_SIZE || height > ICON_TEMP_SIZE)
 	{
-           printf("%s: values out of range (x %d + width %d > DEFAULT_XRES %d)\n", __func__, x, width, DEFAULT_XRES );
+		close(fd);
+		return false;
+	}
 
-	   width -= (x + width - DEFAULT_XRES) - 1;
-
-	   if (x + width > DEFAULT_XRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return false;
-	   }
-        }
-
-        if (y + height > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (y %d + height %d > DEFAULT_YRES %d)\n", __func__, y, height, DEFAULT_YRES );
-
-	   height -= (y + height - DEFAULT_YRES) - 1;
-
-	   if (y + height > DEFAULT_YRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return false;
-	   }
-        }
-#endif
+	unsigned char pixbuf[768];
+	uint8_t * d = (uint8_t *)icon_space;
+	fb_pixel_t * d2;
+	for (int count=0; count<height; count ++ ) {
+		read(fd, &pixbuf[0], width >> 1 );
+		unsigned char *pixpos = &pixbuf[0];
+		d2 = (fb_pixel_t *) d;
+		for (int count2=0; count2<width >> 1; count2 ++ ) {
+			unsigned char compressed = *pixpos;
+			unsigned char pix1 = (compressed & 0xf0) >> 4;
+			unsigned char pix2 = (compressed & 0x0f);
+			if (pix1 != header.transp)
+				paintPixel(d2, pix1 + offset);
+			else
+				*d2 = 0;
+			
+			d2++;
+			if (pix2 != header.transp)
+				paintPixel(d2, pix2 + offset);
+			else
+				*d2 = 0;
+			d2++;
+			pixpos++;
+		}
+		d += width * 4;
+	}
+	blitIcon(width, height, x, y, scaleX(width), scaleY(height));
+#else
 	unsigned char pixbuf[768];
 	uint8_t * d = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
 	fb_pixel_t * d2;
@@ -1168,13 +1133,9 @@ bool CFrameBuffer::paintIcon(const std::string & filename, const int x, const in
 		}
 		d += stride;
 	}
+#endif
 
 	close(fd);
-
-#ifdef __sh__
-//printf("%s: %d %d\n", __FUNCTION__, width, height);
-    blit(x, y, width, height);
-#endif
 
 	return true;
 }
@@ -1218,38 +1179,31 @@ void CFrameBuffer::loadPal(const std::string & filename, const unsigned char off
 	close(fd);
 }
 
-void CFrameBuffer::paintPixel(const int x, const int y, const fb_pixel_t col)
+void CFrameBuffer::paintPixel(const int _x, const int _y, const fb_pixel_t col, bool applyScaling)
 {
 #ifdef __sh__
-        int x1, y1;
+	int x, y;
+	if(applyScaling)
+	{
+		x = scaleX(_x);
+		y = scaleY(_y);
+	}
+	else
+	{
+		x = _x;
+		y = _y;
+	}
 #endif
 	
 	if (!getActive())
 		return;
 
-#ifdef __sh__
-        x1 = x;
-	y1 = y; 
-
-        if (x  > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (x %d > DEFAULT_XRES %d)\n", __func__, x, DEFAULT_XRES );
-           x1 = DEFAULT_XRES - 1;
-        }
-
-        if (y > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (y %d > DEFAULT_YRES %d)\n", __func__, y, DEFAULT_YRES );
-           y1 = DEFAULT_YRES - 1;
-        }
-#endif
-
 	#ifdef USE_NEVIS_GXA
 	paintHLineRel(x, 1, y, col);
 	#else
 	fb_pixel_t * pos = getFrameBufferPointer();
-	pos += (stride / sizeof(fb_pixel_t)) * y1;
-	pos += x1;
+	pos += (stride / sizeof(fb_pixel_t)) * y;
+	pos += x;
 
 	*pos = col;
 	#endif
@@ -1260,6 +1214,13 @@ void CFrameBuffer::paintLine(int xa, int ya, int xb, int yb, const fb_pixel_t co
 	if (!getActive())
 		return;
 
+#ifdef __sh__
+	xa = scaleX(xa);
+	xb = scaleX(xb);
+	ya = scaleY(ya);
+	yb = scaleY(yb);
+#endif
+
 //printf("%s(%d, %d, %d, %d, %.8X)\n", __FUNCTION__, xa, ya, xb, yb, col);
 
 	int dx;
@@ -1269,31 +1230,6 @@ void CFrameBuffer::paintLine(int xa, int ya, int xb, int yb, const fb_pixel_t co
 	int End;
 	int step;
 
-#ifdef __sh__
-        if (xa  > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (xa %d > DEFAULT_XRES %d)\n", __func__, xa, DEFAULT_XRES );
-           xa = DEFAULT_XRES -1 ;
-        }
-
-        if (xb  > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (xb %d > DEFAULT_XRES %d)\n", __func__, xb, DEFAULT_XRES );
-           xb = DEFAULT_XRES - 1;
-        }
-
-        if (ya > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (ya %d > DEFAULT_YRES %d)\n", __func__, ya, DEFAULT_YRES );
-           ya = DEFAULT_YRES - 1;
-        }
-
-        if (yb > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (yb %d > DEFAULT_YRES %d)\n", __func__, yb, DEFAULT_YRES );
-           yb = DEFAULT_YRES - 1;
-        }
-#endif
 	dx = abs (xa - xb);
 	dy = abs (ya - yb);
 
@@ -1318,7 +1254,11 @@ void CFrameBuffer::paintLine(int xa, int ya, int xb, int yb, const fb_pixel_t co
 			step = yb < ya ? -1 : 1;
 		}
 
+#ifdef __sh__
+		paintPixel (x, y, col, false);
+#else
 		paintPixel (x, y, col);
+#endif
 
 		while( x < End )
 		{
@@ -1330,7 +1270,11 @@ void CFrameBuffer::paintLine(int xa, int ya, int xb, int yb, const fb_pixel_t co
 				y += step;
 				p += twoDyDx;
 			}
+#ifdef __sh__
+			paintPixel (x, y, col, false);
+#else
 			paintPixel (x, y, col);
+#endif
 		}
 	}
 	else
@@ -1354,7 +1298,11 @@ void CFrameBuffer::paintLine(int xa, int ya, int xb, int yb, const fb_pixel_t co
 			step = xb < xa ? -1 : 1;
 		}
 
+#ifdef __sh__
+		paintPixel (x, y, col, false);
+#else
 		paintPixel (x, y, col);
+#endif
 
 		while( y < End )
 		{
@@ -1366,14 +1314,13 @@ void CFrameBuffer::paintLine(int xa, int ya, int xb, int yb, const fb_pixel_t co
 				x += step;
 				p += twoDxDy;
 			}
+#ifdef __sh__
+			paintPixel (x, y, col, false);
+#else
 			paintPixel (x, y, col);
+#endif
 		}
 	}
-
-#ifdef __sh__
-//printf("%s\n", __FUNCTION__);
-    blit(xa, ya, dx, dy);
-#endif
 
 }
 
@@ -1389,24 +1336,6 @@ bool CFrameBuffer::loadPictureToMem(const std::string & filename, const uint16_t
 
 //printf("%s(%d, %d, memp)\n", __FUNCTION__, width, height);
 
-#ifdef __sh__
-        int w, h;
-	
-	w = width;
-	h = height;
-
-        if (width > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (width %d)\n", __func__, width );
-           w = DEFAULT_XRES - 1;
-        }
-
-        if (height > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (height %d)\n", __func__, height );
-           h = DEFAULT_YRES - 1;
-        }
-#endif
 	fd = open((iconBasePath + filename).c_str(), O_RDONLY );
 
 	if (fd == -1)
@@ -1417,24 +1346,11 @@ bool CFrameBuffer::loadPictureToMem(const std::string & filename, const uint16_t
 
 	read(fd, &header, sizeof(struct rawHeader));
 
-#ifdef __sh__
-	if ((w  != ((header.width_hi  << 8) | header.width_lo)) ||
-	    (h != ((header.height_hi << 8) | header.height_lo)))
-	{
-		printf("error while loading icon: %s - invalid resolution = %hux%hu\n", filename.c_str(), w, h);
-		return false;
-	}
 
-	if ((stride == 0) || (stride == w * sizeof(fb_pixel_t)))
-		read(fd, memp, h * w * sizeof(fb_pixel_t));
-	else
-		for (int i = 0; i < h; i++)
-			read(fd, ((uint8_t *)memp) + i * stride, w * sizeof(fb_pixel_t));
-#else
 	if ((width  != ((header.width_hi  << 8) | header.width_lo)) ||
 	    (height != ((header.height_hi << 8) | header.height_lo)))
 	{
-		printf("error while loading icon: %s - invalid resolution = %hux%hu\n", filename.c_str(), w, h);
+		printf("error while loading icon: %s - invalid resolution = %hux%hu\n", filename.c_str(), width, height);
 		return false;
 	}
 
@@ -1443,7 +1359,6 @@ bool CFrameBuffer::loadPictureToMem(const std::string & filename, const uint16_t
 	else
 		for (int i = 0; i < height; i++)
 			read(fd, ((uint8_t *)memp) + i * stride, width * sizeof(fb_pixel_t));
-#endif
 
 	close(fd);
 	return true;
@@ -1451,15 +1366,22 @@ bool CFrameBuffer::loadPictureToMem(const std::string & filename, const uint16_t
 
 bool CFrameBuffer::loadPicture2Mem(const std::string & filename, fb_pixel_t * memp)
 {
+#ifdef __sh__
+	return loadPictureToMem(filename, xRes, yRes, 0, memp);
+#else
 	return loadPictureToMem(filename, BACKGROUNDIMAGEWIDTH, 576, 0, memp);
+#endif
 }
 
 bool CFrameBuffer::loadPicture2FrameBuffer(const std::string & filename)
 {
 	if (!getActive())
 		return false;
-
+#ifdef __sh__
+	return loadPictureToMem(filename, xRes, yRes, getStride(), getFrameBufferPointer());
+#else
 	return loadPictureToMem(filename, BACKGROUNDIMAGEWIDTH, 576, getStride(), getFrameBufferPointer());
+#endif
 }
 
 bool CFrameBuffer::savePictureFromMem(const std::string & filename, const fb_pixel_t * const memp)
@@ -1467,9 +1389,14 @@ bool CFrameBuffer::savePictureFromMem(const std::string & filename, const fb_pix
 	struct rawHeader header;
 	uint16_t         width, height;
 	int              fd;
-	
+
+#ifdef __sh__	
+	width = xRes;
+	height = yRes;
+#else
 	width = BACKGROUNDIMAGEWIDTH;
 	height = 576;
+#endif
 
 	header.width_lo  = width  &  0xFF;
 	header.width_hi  = width  >>    8;
@@ -1501,9 +1428,15 @@ bool CFrameBuffer::loadBackground(const std::string & filename, const unsigned c
 	if (background)
 		delete[] background;
 
+#ifdef __sh__
+	background = new fb_pixel_t[xRes * yRes];
+
+	if (!loadPictureToMem(filename, xRes, yRes, 0, background))
+#else
 	background = new fb_pixel_t[BACKGROUNDIMAGEWIDTH * 576];
 
 	if (!loadPictureToMem(filename, BACKGROUNDIMAGEWIDTH, 576, 0, background))
+#endif
 	{
 		delete[] background;
 		background=0;
@@ -1513,7 +1446,11 @@ bool CFrameBuffer::loadBackground(const std::string & filename, const unsigned c
 	if (offset != 0)//pic-offset
 	{
 		fb_pixel_t * bpos = background;
+#ifdef __sh__
+		int pos = xRes * yRes;
+#else
 		int pos = BACKGROUNDIMAGEWIDTH * 576;
+#endif
 		while (pos > 0)
 		{
 			*bpos += offset;
@@ -1522,21 +1459,23 @@ bool CFrameBuffer::loadBackground(const std::string & filename, const unsigned c
 		}
 	}
 
+#ifdef __sh__
+	fb_pixel_t * dest = background + xRes * yRes;
+	uint8_t    * src  = ((uint8_t * )background)+ xRes * yRes;
+	for (int i = yRes - 1; i >= 0; i--)
+		for (int j = xRes - 1; j >= 0; j--)
+#else
 	fb_pixel_t * dest = background + BACKGROUNDIMAGEWIDTH * 576;
 	uint8_t    * src  = ((uint8_t * )background)+ BACKGROUNDIMAGEWIDTH * 576;
 	for (int i = 576 - 1; i >= 0; i--)
 		for (int j = BACKGROUNDIMAGEWIDTH - 1; j >= 0; j--)
+#endif
 		{
 			dest--;
 			src--;
 			paintPixel(dest, *src);
 		}
 	backgroundFilename = filename;
-
-#ifdef __sh__
-//printf("%s\n", __FUNCTION__);
-    blit();
-#endif
 
 	return true;
 }
@@ -1550,7 +1489,11 @@ bool CFrameBuffer::loadBackgroundPic(const std::string & filename, bool show)
 	if (background)
 		delete[] background;
 
+#ifdef __sh__
+	background = g_PicViewer->getImage(iconBasePath + filename, xRes, yRes);
+#else
 	background = g_PicViewer->getImage(iconBasePath + filename, BACKGROUNDIMAGEWIDTH, 576);
+#endif
 
 	if (background == NULL) {
 		background=0;
@@ -1611,59 +1554,33 @@ void CFrameBuffer::paintBackgroundBoxRel(int x, int y, int dx, int dy)
 	if (!getActive())
 		return;
 
-#ifdef __sh__
-        if (x + dx > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
-
-           dx -= (x + dx - DEFAULT_XRES) - 1;
-
-           printf("new dx = %d\n", dx); 
-
-	   if (x + dx > DEFAULT_XRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return;
-	   }
-        }
-
-        if (y + dy > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
-
-           dy -= (y + dy - DEFAULT_YRES) - 1;
-
-           printf("new dy = %d\n", dy); 
-
-	   if (y + dy > DEFAULT_YRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return;
-	   }
-        }
-#endif
 	if(!useBackgroundPaint)
 	{
 		paintBoxRel(x, y, dx, dy, backgroundColor);
 	}
 	else
 	{
+		x = scaleX(x);
+		y = scaleY(y);
+		dx = scaleX(dx);
+		dy = scaleY(dy);
 		uint8_t * fbpos = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
+#ifdef __sh__
+		fb_pixel_t * bkpos = background + x + xRes * y;
+#else
 		fb_pixel_t * bkpos = background + x + BACKGROUNDIMAGEWIDTH * y;
+#endif
 		for(int count = 0;count < dy; count++)
 		{
 			memcpy(fbpos, bkpos, dx * sizeof(fb_pixel_t));
 			fbpos += stride;
+#ifdef __sh__
+			bkpos += xRes;
+#else
 			bkpos += BACKGROUNDIMAGEWIDTH;
+#endif
 		}
 	}
-
-#ifdef __sh__
-//printf("%s\n", __FUNCTION__);
-    blit(x, y, dx, dy);
-#endif
 }
 
 void CFrameBuffer::paintBackground()
@@ -1675,56 +1592,45 @@ void CFrameBuffer::paintBackground()
 	{
 #ifdef __sh__
 		for (int i = 0; i < yRes; i++)
+			memcpy(((uint8_t *)getFrameBufferPointer()) + i * stride, (background + i * xRes), xRes * sizeof(fb_pixel_t));
 #else
 		for (int i = 0; i < 576; i++)
-#endif
 			memcpy(((uint8_t *)getFrameBufferPointer()) + i * stride, (background + i * BACKGROUNDIMAGEWIDTH), BACKGROUNDIMAGEWIDTH * sizeof(fb_pixel_t));
+#endif
+
 	}
 	else
 	{
 		paintBoxRel(0, 0, xRes, yRes, backgroundColor);
 	}
-
-#ifdef __sh__
-//printf("%s\n", __FUNCTION__);
-    blit();
-#endif
 }
 
-void CFrameBuffer::SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp)
-{
-	if (!getActive())
-		return;
-
 #ifdef __sh__
-        if (x + dx > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
+fb_pixel_t *CFrameBuffer::allocPixelBuffer(int width, int height)
+{
+	return new fb_pixel_t[scaleX(width) * scaleY(height)];
+}
 
-           dx -= (x + dx - DEFAULT_XRES) - 1;
 
-	   if (x + dx > DEFAULT_XRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return;
-	   }
-        }
-
-        if (y + dy > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
-
-           dy -= (y + dy - DEFAULT_YRES) - 1;
-
-	   if (y + dy > DEFAULT_YRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return;
-	   }
-        }
+int CFrameBuffer::SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp)
+#else
+void CFrameBuffer::SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp)
 #endif
+{
+#ifdef __sh__
+	x = scaleX(x);
+	dx = scaleX(dx);
+	y = scaleY(y);
+	dy = scaleY(dy);
+#endif
+	
+	if (!getActive())
+#ifdef __sh__
+		return -1;
+#else
+		return;
+#endif
+
 	uint8_t * pos = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
 	fb_pixel_t * bkpos = memp;
 	for (int count = 0; count < dy; count++) {
@@ -1734,6 +1640,9 @@ void CFrameBuffer::SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const m
 			*(bkpos++) = *(dest++);
 		pos += stride;
 	}
+#ifdef __sh__
+	return dx * dy * bpp / 4;
+#endif
 #if 0 //FIXME test to flush cache
         if (ioctl(fd, 1, FB_BLANK_UNBLANK) < 0);
 #endif
@@ -1751,53 +1660,36 @@ void CFrameBuffer::SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const m
 
 }
 
+#ifdef __sh__
+void CFrameBuffer::RestoreScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp, int checkSize)
+{
+	printf("restoreScreen x = %d, y = %d, dx = %d, dy = %d\n", x, y, dx, dy);
+	x = scaleX(x);
+	dx = scaleX(dx);
+	y = scaleY(y);
+	dy = scaleY(dy);
+
+#else
 void CFrameBuffer::RestoreScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp)
 {
+#endif
 	if (!getActive())
 		return;
 
-#ifdef __sh__
-        if (x + dx > DEFAULT_XRES)
-	{
-           printf("%s: values out of range (x %d + dx %d > DEFAULT_XRES %d)\n", __func__, x, dx, DEFAULT_XRES );
-
-           dx -= (x + dx - DEFAULT_XRES) - 1;
-
-	   if (x + dx > DEFAULT_XRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return;
-	   }
-        }
-
-        if (y + dy > DEFAULT_YRES)
-	{
-           printf("%s: values out of range (y %d + dy %d > DEFAULT_YRES %d)\n", __func__, y, dy, DEFAULT_YRES );
-
-           dy -= (y + dy - DEFAULT_YRES) - 1;
-
-	   if (y + dy > DEFAULT_YRES)
-	   {
-               /* I think if both values are out of range we should abort. just my two cent on it */
-               printf("aborting!\n");
-               return;
-	   }
-        }
-#endif
 	uint8_t * fbpos = ((uint8_t *)getFrameBufferPointer()) + x * sizeof(fb_pixel_t) + stride * y;
 	fb_pixel_t * bkpos = memp;
 	for (int count = 0; count < dy; count++)
 	{
-		memcpy(fbpos, bkpos, dx * sizeof(fb_pixel_t));
+#ifdef __sh__
+		if(dx * dy * bpp / 4 != checkSize)  // to prevent restoring when the buffersize changed
+			for(int w = 0; w < dx; w++) // TODO: copy to blitter and resize the image to fit
+				*fbpos = 0;	    // (but practically this only occurs when the screen is black during boot...)
+		else
+#endif
+			memcpy(fbpos, bkpos, dx * sizeof(fb_pixel_t));
 		fbpos += stride;
 		bkpos += dx;
 	}
-
-#ifdef __sh__
-//printf("%s\n", __FUNCTION__);
-    blit(x, y, dx, dy);
-#endif
 }
 
 void CFrameBuffer::switch_signal (int signal)
@@ -1869,99 +1761,66 @@ void CFrameBuffer::showFrame(const std::string & filename)
 }
 
 #if defined(__sh__) 
-void CFrameBuffer::blit()
+
+void CFrameBuffer::blitRect(int x, int y, int width, int height, unsigned long color)
 {
-	//blit(0, 0, DEFAULT_XRES, DEFAULT_YRES);
+	STMFBIO_BLT_DATA  bltData;
+	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA));
 
-	STMFBIO_BLT_DATA  bltData; 
-	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA)); 
 
-	bltData.operation  = BLT_OP_COPY; 
-	bltData.srcOffset  = 1920*1080*4; 
-	bltData.srcPitch   = DEFAULT_XRES * 4; 
+	bltData.operation  = BLT_OP_FILL;
+	bltData.dstOffset  = 0;
+	bltData.dstPitch   = stride;
 
-	bltData.dstOffset  = 0; 
-	bltData.dstPitch   = xDestRes * 4; 
+	bltData.dst_left   = x;
+	bltData.dst_top    = y;
+	bltData.dst_right  = x + width;
+	bltData.dst_bottom = y + height;
 
-	bltData.src_top    = 0; 
-	bltData.src_left   = 0; 
-	bltData.src_right  = DEFAULT_XRES; 
-	bltData.src_bottom = DEFAULT_YRES; 
+        bltData.dstFormat  = SURF_ARGB8888;
+        bltData.srcFormat  = SURF_ARGB8888;
+	bltData.dstMemBase = STMFBGP_FRAMEBUFFER;
+	bltData.srcMemBase = STMFBGP_FRAMEBUFFER;
+	bltData.colour     = color; 
 
-	bltData.dst_top    = 0; 
-	bltData.dst_left   = 0; 
-	bltData.dst_right  = xDestRes; 
-	bltData.dst_bottom = yDestRes; 
-
-//	printf("### BLIT %d %d %d %d-> %d %d %d %d ###\n", 
-//	                0, 0, DEFAULT_XRES, DEFAULT_YRES,
-//			0, 0, xDestRes, yDestRes);
-
-        bltData.srcFormat = SURF_BGRA8888;
-        bltData.dstFormat = SURF_BGRA8888;
-
-	bltData.srcMemBase = STMFBGP_FRAMEBUFFER; 
-	bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
-
-	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
-	{ 
-		perror("FBIO_BLIT"); 
-	} 
+	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0)
+		perror("FBIO_BLIT");
+	else
+		ioctl(fd, STMFBIO_SYNC_BLITTER);
 }
 
-void CFrameBuffer::blit(int x, int y, int dx, int dy)
+void CFrameBuffer::blitIcon(int original_width, int original_height, int fb_x, int fb_y, int width, int height)
 {
-        if (xFactor == -1)
-	   return;
-
-	if(dx > 0 && dy > 0) {
-		//printf("### BLIT %d %d %d %d %d %d ###\n", x, y, dx, dy, xFactor, yFactor);
-
-		int srcXa = x < 10 ? 0 : x - 10;
-		int srcYa = y < 10 ? 0 : y - 10;
-
-		int srcXb = (x + dx + 10) > DEFAULT_XRES ? DEFAULT_XRES : (x + dx + 10);
-		int srcYb = (y + dy + 1) > DEFAULT_YRES ? DEFAULT_YRES : (y + dy + 1);
-
-		int desXa = srcXa * xFactor;
-		int desYa = srcYa * yFactor;
-
-		int desXb = (srcXb * xFactor) > xDestRes ? xDestRes : (srcXb * xFactor);
-		int desYb = (srcYb * yFactor) > yDestRes ? yDestRes : (srcYb * yFactor);
-
-		//printf("### BLIT %d %d %d %d (%d %d)-> %d %d %d %d ###\n", srcXa, srcYa, srcXb, srcYb, dx, dy,
-		//	desXa, desYa, desXb, desYb);
-
-		STMFBIO_BLT_DATA  bltData;
-		memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA));
-
-		bltData.operation  = BLT_OP_COPY;
-		bltData.srcOffset  = 1920*1080*4;
-		bltData.srcPitch   = DEFAULT_XRES * 4;
-
-		bltData.src_left   = srcXa;
-		bltData.src_top    = srcYa;
-		bltData.src_right  = srcXb;
-		bltData.src_bottom = srcYb;
-
-		bltData.dstOffset  = 0;
-		bltData.dstPitch   = xDestRes * 4;
-
-		bltData.dst_left   = desXa;
-		bltData.dst_top    = desYa;
-		bltData.dst_right  = desXb;
-		bltData.dst_bottom = desYb;
-
-                bltData.srcFormat = SURF_BGRA8888;
-                bltData.dstFormat = SURF_BGRA8888;
-		bltData.srcMemBase = STMFBGP_FRAMEBUFFER;
-		bltData.dstMemBase = STMFBGP_FRAMEBUFFER;
-
-		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0)
-		{
-			perror("FBIO_BLIT");
-		}
-	}
+	STMFBIO_BLT_EXTERN_DATA blt_data;
+	memset(&blt_data, 0, sizeof(STMFBIO_BLT_EXTERN_DATA));
+	blt_data.operation  = BLT_OP_COPY;
+	blt_data.ulFlags    = BLT_OP_FLAGS_BLEND_SRC_ALPHA | BLT_OP_FLAGS_BLEND_DST_MEMORY;	// we need alpha blending
+	blt_data.srcOffset  = 0;
+	blt_data.srcPitch   = original_width * 4;
+	blt_data.dstOffset  = 0;
+	blt_data.dstPitch   = stride;
+	blt_data.src_top    = 0;
+	blt_data.src_left   = 0;
+	blt_data.src_right  = original_width;
+	blt_data.src_bottom = original_height;
+	blt_data.dst_left   = fb_x;
+	blt_data.dst_top    = fb_y;
+	blt_data.dst_right  = fb_x + width;
+	blt_data.dst_bottom = fb_y + height;
+	blt_data.srcFormat  = SURF_ARGB8888;
+	blt_data.dstFormat  = SURF_ARGB8888;
+	blt_data.srcMemBase = (char *)icon_space;
+	blt_data.dstMemBase = (char *)lfb;
+	blt_data.srcMemSize = ICON_TEMP_SIZE * ICON_TEMP_SIZE * 4;
+	blt_data.dstMemSize = stride * yRes;
+	
+	// icons are so small that they will still be in cache
+	msync(icon_space, ICON_TEMP_SIZE * ICON_TEMP_SIZE * 4, MS_SYNC);
+	
+	if(ioctl(fd, STMFBIO_BLT_EXTERN, &blt_data) < 0)
+		perror("FBIO_BLIT");
+	else
+		ioctl(fd, STMFBIO_SYNC_BLITTER);
 }
 
 void CFrameBuffer::resize(int format)
@@ -1982,7 +1841,7 @@ void CFrameBuffer::resize(int format)
 	{"VIDEO_STD_AUTO", "1080i50"}
 	};
 
-printf("###RESIZE###\n");
+	printf("###RESIZE###\n");
 	printf("video_system=%s\n", aVideoSystems[format][0]);
 
 	int iaVideoSystems[][2] = {
@@ -2000,25 +1859,11 @@ printf("###RESIZE###\n");
 	{1920, 1080},
 	{1920, 1080}
 	};
-
-	xDestRes = iaVideoSystems[format][0];
-	yDestRes = iaVideoSystems[format][1];
-
-
-	xFactor = xDestRes;
-	xFactor = xFactor / xRes;
-
-	yFactor = yDestRes;
-	yFactor = yFactor / yRes;
-
-/*
-xFactor = xDestRes / xRes;
-yFactor = yDestRes / yRes;
-*/
-
-printf("Factor: %f %f\n", xFactor, yFactor);
-
-	blit();
+	
+	paintBackground(); // clear framebuffer
+	xRes = iaVideoSystems[format][0];
+	yRes = iaVideoSystems[format][1];
+	stride = xRes * bpp / 8;
 }
 #endif
 

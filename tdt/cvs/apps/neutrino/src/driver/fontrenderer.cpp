@@ -251,14 +251,29 @@ return 0;
 	// hack begin (this is a hack to get correct font metrics, didn't find any other way which gave correct values)
 	FTC_SBit glyph;
 	int index;
+#ifdef __sh__
+	FTC_ImageTypeRec tempFont;
+	
+	memcpy(&tempFont, &font, sizeof(font));
+	tempFont.width = frameBuffer->scaleX(font.width);
+	tempFont.height = frameBuffer->scaleY(font.height);
+#endif
 
 	index=FT_Get_Char_Index(face, 'M'); // "M" gives us ascender
+#ifdef __sh__
+	renderer->getGlyphBitmap(&tempFont, index, &glyph);
+#else
 	getGlyphBitmap(index, &glyph);
+#endif
 	int tM=glyph->top;
 	fontwidth = glyph->width;
 
 	index=FT_Get_Char_Index(face, 'g'); // "g" gives us descender
+#ifdef __sh__
+	renderer->getGlyphBitmap(&tempFont, index, &glyph);
+#else
 	getGlyphBitmap(index, &glyph);
+#endif
 	int hg=glyph->height;
 	int tg=glyph->top;
 
@@ -326,14 +341,43 @@ int UTF8ToUnicode(const char * &text, const bool utf8_encoded) // returns -1 on 
 	return unicode_value;
 }
 
+#ifdef __sh__
+void Font::RenderString(int x, int y, const int _width, const char *text, const unsigned char color, const int _boxheight, const bool utf8_encoded)
+{
+	FTC_ScalerRec  tempScaler;
+	FTC_ImageTypeRec tempFont;
+	
+	x = frameBuffer->scaleX(x);
+	y = frameBuffer->scaleY(y);
+	int boxheight = frameBuffer->scaleY(_boxheight);
+	int width = frameBuffer->scaleX(_width);
+	int height = frameBuffer->scaleY(height);
+	//int fontwidth = frameBuffer->scaleX(fontwidth);
+	
+	tempScaler.face_id = scaler.face_id;
+	tempScaler.width   = frameBuffer->scaleX(scaler.width);
+	tempScaler.height  = frameBuffer->scaleY(scaler.height);
+	tempScaler.pixel   = scaler.pixel;
+	tempScaler.x_res   = frameBuffer->scaleX(scaler.x_res);
+	tempScaler.y_res   = frameBuffer->scaleY(scaler.y_res);
+	
+	memcpy(&tempFont, &font, sizeof(font));
+	tempFont.width = frameBuffer->scaleX(font.width);
+	tempFont.height = frameBuffer->scaleY(font.height);
+#else
 void Font::RenderString(int x, int y, const int width, const char *text, const unsigned char color, const int boxheight, const bool utf8_encoded)
 {
+#endif
 	if (!frameBuffer->getActive())
 		return;
 
 	pthread_mutex_lock( &renderer->render_mutex );
 
+#ifdef __sh__
+	if (FTC_Manager_LookupSize(renderer->cacheManager, &tempScaler, &size)<0)
+#else
 	if (FTC_Manager_LookupSize(renderer->cacheManager, &scaler, &size)<0)
+#endif
 	{
 		dprintf(DEBUG_NORMAL, "FTC_Manager_Lookup_Size failed!\n");
 		return;
@@ -432,14 +476,6 @@ void Font::RenderString(int x, int y, const int width, const char *text, const u
 			spread_by = 1;
 	}
 
-#ifdef __sh__
-//I dont want to blit every character on its own
-	int minX = 6000;
-	int minY = 6000;
-	int maxX = 0;
-	int maxY = 0;
-#endif
-
 	for (; *text; text++)
 	{
 		FTC_SBit glyph;
@@ -458,7 +494,11 @@ void Font::RenderString(int x, int y, const int width, const char *text, const u
 
 		if (!index)
 			continue;
+#ifdef __sh__
+		if (renderer->getGlyphBitmap(&tempFont, index, &glyph))
+#else
 		if (getGlyphBitmap(index, &glyph))
+#endif
 		{
 			dprintf(DEBUG_NORMAL, "failed to get glyph bitmap.\n");
 			continue;
@@ -535,21 +575,6 @@ void Font::RenderString(int x, int y, const int width, const char *text, const u
 			#endif
 		}
 
-#ifdef __sh__
-
-		int srcX = x + glyph->left;
-		int srcY = y - glyph->top;
-		int srcW = w + spread_by;
-		int srcH = h;
-
-		if(w != 0 && h != 0) {
-			minX = srcX<minX?srcX:minX;
-			minY = srcY<minY?srcY:minY;
-
-			maxX = (srcX+srcW)>maxX?(srcX+srcW):maxX;
-			maxY = (srcY+srcH)>maxY?(srcY+srcH):maxY;
-		}
-#endif
 
 		x+=glyph->xadvance+1;
 		//x+=glyph->xadvance;
@@ -558,12 +583,6 @@ void Font::RenderString(int x, int y, const int width, const char *text, const u
 		pen1=x;
 		lastindex=index;
 	}
-#ifdef __sh__
-if(minX != 6000 && minY != 6000) {
-// remove chore message	dprintf(DEBUG_NORMAL, "%s %d %d %d %d (%d %d)\n", __FUNCTION__, minX, minY, maxX, maxY, maxX-minX, maxY-minY);
-	frameBuffer->blit(minX, minY, maxX-minX, maxY-minY);
-}
-#endif
 //printf("RenderStat: %d %d %d \n", renderer->cacheManager->num_nodes, renderer->cacheManager->num_bytes, renderer->cacheManager->max_bytes);
 	pthread_mutex_unlock( &renderer->render_mutex );
 }

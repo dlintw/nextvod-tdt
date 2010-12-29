@@ -36,6 +36,9 @@ class CFBWindow
 
  private:
 	private_data_t private_data;
+#ifdef __sh__
+	int checkSize;
+#endif
 
  public:
 	int x, y;   /* upper left corner */
