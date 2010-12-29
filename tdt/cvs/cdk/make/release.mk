@@ -489,6 +489,7 @@ if ENABLE_PLAYER179
 		media/dvb/stm/allocator/stmalloc.ko \
 		stm/platform/platform.ko \
 		stm/platform/p2div64.ko \
+		media/sysfs/stm/stmsysfs.ko \
 	;do \
 		echo `pwd` player2/linux/drivers/$$mod; \
 		if [ -e player2/linux/drivers/$$mod ]; then \

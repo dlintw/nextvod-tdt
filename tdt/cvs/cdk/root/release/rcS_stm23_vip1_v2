@@ -43,7 +43,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mme_host.ko transport0=shm
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko type=vip2_avs
+   insmod $MODDIR/avs.ko type=vip1_avs
 
    echo "init player"
    insmod $MODDIR/mmelog.ko
@@ -54,6 +54,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
    
    echo "init frontends"
+   #demodelator type: stb0899, stv090x, cx24116, ce6353, tda10023(default stb0899)
+   #tuner type: stb6100, stv6110x, sharp7306, sharp6465, lg031(default stb6100)
    insmod $MODDIR/fe-core.ko demod=stv090x tuner=sharp7306;
 
    echo "init drivers"
