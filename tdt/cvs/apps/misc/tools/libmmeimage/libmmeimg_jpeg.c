@@ -166,7 +166,10 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 	
 	res_img = mme_loadlib();
 	if(res_img != LIBMMEIMG_SUCCESS)
+	{
+		sem_post(&jpeg_sem);
 		return res_img;
+	}
 	
 	fseek(fp, 0, SEEK_END);
 	filesize = ftell(fp);
@@ -181,6 +184,7 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 	if(fd_bpa < 0)
 	{
 		DEBUG_PRINT("cannot access /dev/bpamem0! err = %d", fd_bpa);
+		sem_post(&jpeg_sem);
 		return LIBMMEIMG_NO_DEVACCESS;
 	}
 	
@@ -195,6 +199,7 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 	if(res)
 	{
 		DEBUG_PRINT("cannot alloc required mem");
+		sem_post(&jpeg_sem);
 		return LIBMMEIMG_NOMEM;
 	}
 	
@@ -206,7 +211,8 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 	// if somebody forgot to add all bpamem devs then this gets really bad here
 	if(fd_bpa < 0)
 	{
-		DEBUG_PRINT("cannot access %s! err = %d - BPA MEM STILL ALLOCATED", bpa_mem_device, fd_bpa);
+		DEBUG_PRINT("cannot access %s! err = %d", bpa_mem_device, fd_bpa);
+		sem_post(&jpeg_sem);
 		return LIBMMEIMG_NO_DEVACCESS;
 	}
 	
@@ -217,6 +223,7 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 		DEBUG_PRINT("could not map bpa mem");
 		ioctl(fd_bpa, BPAMEMIO_FREEMEM);
 		close(fd_bpa);
+		sem_post(&jpeg_sem);
 		return LIBMMEIMG_NOMEM;
 	}
 	
@@ -226,11 +233,15 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 		munmap(decode_surface, bpa_data.mem_size);
 		ioctl(fd_bpa, BPAMEMIO_FREEMEM);
 		close(fd_bpa);
+		sem_post(&jpeg_sem);
 		return LIBMMEIMG_NOMEM;
 	}
 	
 	// read in the file
 	fread(decode_surface + pre_scaled_width * pre_scaled_height * 2, 1, filesize, fp);
+	
+	// clear cache
+	msync(decode_surface + pre_scaled_width * pre_scaled_height * 2, filesize, MS_SYNC);
 	
 	static const char *transformers[] = {  "JPEG_DECODER",
 		                               "JPEG_DECODER4",
@@ -271,6 +282,7 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 		munmap(decode_surface, bpa_data.mem_size);
 		ioctl(fd_bpa, BPAMEMIO_FREEMEM);
 		close(fd_bpa);
+		sem_post(&jpeg_sem);
 		return LIBMMEIMG_DECODE_ERROR;
 	}
 	
@@ -287,6 +299,9 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 		close(fd_bpa);
 		return LIBMMEIMG_DECODE_ERROR;
 	}
+	
+	// clear cache
+	msync(decode_surface + pre_scaled_width * pre_scaled_height * 2, dst_width * dst_height * 3, MS_SYNC);
 	
 	// memcpy doesn't work
 	for(i = 0; i < dst_width * dst_height * 3; i++)
