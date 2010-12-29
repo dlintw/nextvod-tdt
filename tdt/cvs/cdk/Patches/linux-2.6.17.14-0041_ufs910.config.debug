@@ -203,7 +203,7 @@ CONFIG_SPLIT_PTLOCK_CPUS=4
 # CONFIG_BIGPHYS_AREA_NONE is not set
 # CONFIG_BIGPHYS_AREA is not set
 CONFIG_BPA2=y
-# CONFIG_STM_GRB is not set
+CONFIG_STM_GRB=y
 
 #
 # Processor features
