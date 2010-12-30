@@ -232,7 +232,8 @@ void CFrameBuffer::init(const char * const fbDevice)
 	BPAMemAllocMemData bpa_data;
 	bpa_data.bpa_part = "LMI_VID";
 	bpa_data.mem_size = ICON_TEMP_SIZE * ICON_TEMP_SIZE * 4;	// should be enough for small icons
-	int res = ioctl(fd_bpa, BPAMEMIO_ALLOCMEM, &bpa_data); // request memory from bpamem
+	int res;
+	res = ioctl(fd_bpa, BPAMEMIO_ALLOCMEM, &bpa_data); // request memory from bpamem
 	if(res)
 	{
 		printf("cannot alloc required bpa mem");
