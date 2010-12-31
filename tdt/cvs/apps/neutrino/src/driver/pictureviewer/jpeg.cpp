@@ -343,6 +343,9 @@ int fh_jpeg_getsize(const char *filename,int *x,int *y, int wanted_width, int wa
 	jpeg_destroy_decompress(ciptr);
 #else
 	if(get_jpeg_img_size(fh, (unsigned int *)&px, (unsigned int *)&py) == LIBMMEIMG_SUCCESS)
+	{
+		if(wanted_width > px) wanted_width = px;
+		if(wanted_height > py) wanted_height = py;
 		if( (CPictureViewer::m_aspect_ratio_correction*py*wanted_width/px) <= wanted_height)
 		{
 			*x=wanted_width;
@@ -353,6 +356,7 @@ int fh_jpeg_getsize(const char *filename,int *x,int *y, int wanted_width, int wa
 			*x=(int)((1.0/CPictureViewer::m_aspect_ratio_correction)*px*wanted_height/py);
 			*y=wanted_height;
 		}
+	}
 #endif
 	fclose(fh);
 //	 dbout("fh_jpeg_getsize }\n");
