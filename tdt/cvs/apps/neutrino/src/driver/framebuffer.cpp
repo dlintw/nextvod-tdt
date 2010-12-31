@@ -196,6 +196,18 @@ void CFrameBuffer::init(const char * const fbDevice)
 		perror("FBIOGET_VSCREENINFO");
 		goto nolfb;
 	}
+#ifdef __sh__
+	xRes = screeninfo.xres;
+	yRes = screeninfo.yres;
+	bpp = 32;
+	stride = xRes * bpp / 8;
+
+	screeninfo.xres = DEFAULT_XRES;
+	screeninfo.yres = DEFAULT_YRES;
+	screeninfo.xres_virtual = DEFAULT_XRES;
+	screeninfo.yres_virtual = DEFAULT_YRES;
+	screeninfo.bits_per_pixel = 32;
+#endif
 
 	memcpy(&oldscreen, &screeninfo, sizeof(screeninfo));
 
@@ -215,10 +227,10 @@ void CFrameBuffer::init(const char * const fbDevice)
 	}
 
 #ifdef __sh__
-    if (available / (1024 * 1024) < 8)
+	if (available / (1024 * 1024) < 8)
 	{
-           printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-	       printf("error: to less memory for stmfb given, need at least 8mb\n");  	
+		printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+		printf("error: to less memory for stmfb given, need at least 8mb\n");  	
 	}
 	
 	fd_bpa = open("/dev/bpamem0", O_RDWR);
@@ -477,6 +489,7 @@ int CFrameBuffer::setMode(unsigned int nxRes, unsigned int nyRes, unsigned int n
 		return -1;
 	}
 #endif
+#ifndef __sh__
 	xRes = screeninfo.xres;
 	yRes = screeninfo.yres;
 	bpp  = screeninfo.bits_per_pixel;
@@ -496,6 +509,7 @@ printf("FB: %dx%dx%d line lenght %d\n", xRes, yRes, bpp, stride);
         if (ioctl(fd, FBIOBLANK, FB_BLANK_UNBLANK) < 0) {
                 printf("screen unblanking failed\n");
         }
+#endif
 
 	return 0;
 }
@@ -1664,7 +1678,6 @@ void CFrameBuffer::SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const m
 #ifdef __sh__
 void CFrameBuffer::RestoreScreen(int x, int y, int dx, int dy, fb_pixel_t * const memp, int checkSize)
 {
-	printf("restoreScreen x = %d, y = %d, dx = %d, dy = %d\n", x, y, dx, dy);
 	x = scaleX(x);
 	dx = scaleX(dx);
 	y = scaleY(y);
@@ -1864,6 +1877,7 @@ void CFrameBuffer::resize(int format)
 	paintBackground(); // clear framebuffer
 	xRes = iaVideoSystems[format][0];
 	yRes = iaVideoSystems[format][1];
+	bpp = 32;
 	stride = xRes * bpp / 8;
 }
 #endif

@@ -251,29 +251,14 @@ return 0;
 	// hack begin (this is a hack to get correct font metrics, didn't find any other way which gave correct values)
 	FTC_SBit glyph;
 	int index;
-#ifdef __sh__
-	FTC_ImageTypeRec tempFont;
-	
-	memcpy(&tempFont, &font, sizeof(font));
-	tempFont.width = frameBuffer->scaleX(font.width);
-	tempFont.height = frameBuffer->scaleY(font.height);
-#endif
 
 	index=FT_Get_Char_Index(face, 'M'); // "M" gives us ascender
-#ifdef __sh__
-	renderer->getGlyphBitmap(&tempFont, index, &glyph);
-#else
 	getGlyphBitmap(index, &glyph);
-#endif
 	int tM=glyph->top;
 	fontwidth = glyph->width;
 
 	index=FT_Get_Char_Index(face, 'g'); // "g" gives us descender
-#ifdef __sh__
-	renderer->getGlyphBitmap(&tempFont, index, &glyph);
-#else
 	getGlyphBitmap(index, &glyph);
-#endif
 	int hg=glyph->height;
 	int tg=glyph->top;
 
@@ -352,7 +337,6 @@ void Font::RenderString(int x, int y, const int _width, const char *text, const 
 	int boxheight = frameBuffer->scaleY(_boxheight);
 	int width = frameBuffer->scaleX(_width);
 	int height = frameBuffer->scaleY(height);
-	//int fontwidth = frameBuffer->scaleX(fontwidth);
 	
 	tempScaler.face_id = scaler.face_id;
 	tempScaler.width   = frameBuffer->scaleX(scaler.width);
