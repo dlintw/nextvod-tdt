@@ -4237,7 +4237,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org.org/lib/gdi/picloa
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org.org/lib/gdi/stmfb.cpp enigma2-nightly.org/lib/gdi/stmfb.cpp
 --- enigma2-nightly.org.org/lib/gdi/stmfb.cpp	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly.org/lib/gdi/stmfb.cpp	2010-12-27 12:57:19.778801010 +0100
-@@ -0,0 +1,75 @@
+@@ -0,0 +1,77 @@
 +/*
 +  Interface to the Dreambox dm800/dm8000 proprietary accel interface.
 +*/
@@ -4291,6 +4291,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org.org/lib/gdi/stmfb.
 +	bltData.src_top    = src_y;
 +	bltData.src_right  = src_x + width;
 +	bltData.src_bottom = src_y + height;
++ bltData.srcFormat  = SURF_BGRA8888;
 +
 +	bltData.dstOffset  = 1920*1080*4;
 +	bltData.dstPitch   = dst_stride;
@@ -4298,6 +4299,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org.org/lib/gdi/stmfb.
 +	bltData.dst_top    = dst_y;
 +	bltData.dst_right  = dst_x + dwidth;
 +	bltData.dst_bottom = dst_y + dheight;
++ bltData.dstFormat  = SURF_BGRA8888;
 +
 +	if (ioctl(fb_fd, STMFBIO_BLT, &bltData ) < 0)
 +	{
