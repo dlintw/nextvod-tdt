@@ -305,7 +305,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   #include "../common/common.h"
   
 + const char *LMI_IO_partalias[] = { "v4l2-coded-video-buffers", "BPA2_Region1", "v4l2-video-buffers" ,
-+                                     "coredisplay-video", "gfx-memory", "BPA2_Region0", NULL };
++                                     "coredisplay-video", "gfx-memory", "BPA2_Region0", "LMI_VID", NULL };
 +  
 + /*
 + 0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
