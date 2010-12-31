@@ -3892,7 +3892,7 @@
 +#endif
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2010-07-02 16:30:00.000000000 +0200
-@@ -0,0 +1,6771 @@
+@@ -0,0 +1,6777 @@
 +/******************************************************************************
 + *                      <<< TuxTxt - Teletext Plugin >>>                      *
 + *                                                                            *
@@ -3962,6 +3962,7 @@
 +	   bltData.src_left   = 0;
 +	   bltData.src_right  = 720;
 +	   bltData.src_bottom = 576;
++    bltData.srcFormat = SURF_BGRA8888;
 +
 +	   bltData.dstOffset  = 0;
 +	   bltData.dstPitch   = stride;
@@ -3969,6 +3970,7 @@
 +	   bltData.dst_left   = 0;
 +	   bltData.dst_right  = var_screeninfo.xres;
 +	   bltData.dst_bottom = var_screeninfo.yres;
++    bltData.dstFormat  = SURF_BGRA8888;
 +	} else
 +	if (zoommode == 1)
 +	{
@@ -3980,6 +3982,7 @@
 +	   bltData.src_left   = 0;
 +	   bltData.src_right  = 720;
 +	   bltData.src_bottom = 576 / 2;
++    bltData.srcFormat  = SURF_BGRA8888;
 +
 +	   bltData.dstOffset  = 0;
 +	   bltData.dstPitch   = stride;
@@ -3987,6 +3990,7 @@
 +	   bltData.dst_left   = 0;
 +	   bltData.dst_right  = var_screeninfo.xres;
 +	   bltData.dst_bottom = var_screeninfo.yres;
++    bltData.dstFormat  = SURF_BGRA8888;
 +	} else
 +	if (zoommode == 2)
 +	{
@@ -3998,6 +4002,7 @@
 +	   bltData.src_left   = 0;
 +	   bltData.src_right  = 720;
 +	   bltData.src_bottom = 576;
++    bltData.srcFormat  = SURF_BGRA8888;
 +
 +	   bltData.dstOffset  = 0;
 +	   bltData.dstPitch   = stride;
@@ -4005,6 +4010,7 @@
 +	   bltData.dst_left   = 0;
 +	   bltData.dst_right  = var_screeninfo.xres;
 +	   bltData.dst_bottom = var_screeninfo.yres;
++    bltData.dstFormat  = SURF_BGRA8888;
 +	} else
 +		return;
 +	
