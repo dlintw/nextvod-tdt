@@ -78,6 +78,9 @@ class CPictureViewer
 	int m_NextPic_YPos;
 	int m_NextPic_XPan;
 	int m_NextPic_YPan;
+#ifdef __sh__
+	int m_NextPic_HwDev;	// m_xxxxPic_Buffer are now mmaped bpamem pointers DO NOT free() THEM
+#endif
 	std::string m_CurrentPic_Name;
 	unsigned char* m_CurrentPic_Buffer;
 	int m_CurrentPic_X;
@@ -86,6 +89,9 @@ class CPictureViewer
 	int m_CurrentPic_YPos;
 	int m_CurrentPic_XPan;
 	int m_CurrentPic_YPan;
+#ifdef __sh__
+	int m_CurrentPic_HwDev;
+#endif
 	
 	unsigned char* m_busy_buffer;
 	int m_busy_x;

@@ -136,14 +136,14 @@ LIBMMEIMG_ERROR decode_jpeg(FILE *fp, unsigned int original_width, unsigned int 
 		return LIBMMEIMG_NOMEM;
 	}
 	
-	ret = decode_jpeg_noalloc(fp, original_width, original_height, dst_width, dst_height, *dest_data);
+	ret = decode_jpeg_noalloc(fp, original_width, original_height, dst_width, dst_height, *dest_data, 0);
 	
 	if(ret != LIBMMEIMG_SUCCESS)
 		free(*dest_data);
 	return ret;
 }
 
-LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsigned int original_height, unsigned int dst_width, unsigned int dst_height, char *dest_data)
+LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsigned int original_height, unsigned int dst_width, unsigned int dst_height, char *dest_data, int mem_is_hw_writeable)
 {
 	DecodeJPEGData decode_data;
 	unsigned int pre_scaled_width, pre_scaled_height, removeright, removebottom;
@@ -191,7 +191,10 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 	bpa_data.bpa_part = "LMI_VID";		// TODO: good for ufs910 - please adapt this for other boxes
 	bpa_data.mem_size = pre_scaled_width * pre_scaled_height * 2;	// we get the image in UYVY which is 2 byte per pixel
 	if(dst_width * dst_height * 3 > filesize)
-		bpa_data.mem_size += dst_width * dst_height * 3;
+		if(mem_is_hw_writeable)
+			bpa_data.mem_size += filesize;
+		else
+			bpa_data.mem_size += dst_width * dst_height * 3;
 	else
 		bpa_data.mem_size += filesize;		// temporarily store the whole file in mem - streaming is slow (at least on ufs910)
 		
@@ -290,7 +293,10 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 	mme_term_multi();
 	sem_post(&jpeg_sem);
 	
-	res_img = blit_decoder_result(decode_surface, bpa_data.mem_size, pre_scaled_width * pre_scaled_height * 2, pre_scaled_width, pre_scaled_height, dst_width, dst_height, removeright, removebottom);
+	if(mem_is_hw_writeable)
+		res_img = blit_decoder_result(decode_surface, bpa_data.mem_size, dest_data, dst_width * dst_height *3, pre_scaled_width, pre_scaled_height, dst_width, dst_height, removeright, removebottom);
+	else
+		res_img = blit_decoder_result(decode_surface, bpa_data.mem_size, decode_surface + pre_scaled_width * pre_scaled_height * 2, dst_width * dst_height *3, pre_scaled_width, pre_scaled_height, dst_width, dst_height, removeright, removebottom);
 	
 	if(res_img != LIBMMEIMG_SUCCESS)
 	{
@@ -300,12 +306,18 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 		return LIBMMEIMG_DECODE_ERROR;
 	}
 	
-	// clear cache
-	msync(decode_surface + pre_scaled_width * pre_scaled_height * 2, dst_width * dst_height * 3, MS_SYNC);
+	if(mem_is_hw_writeable)
+		// clear cache
+		msync(dest_data, dst_width * dst_height * 3, MS_SYNC);
+	else
+	{
+		// clear cache
+		msync(decode_surface + pre_scaled_width * pre_scaled_height * 2, dst_width * dst_height * 3, MS_SYNC);
 	
-	// memcpy doesn't work
-	for(i = 0; i < dst_width * dst_height * 3; i++)
-		*(dest_data + i) = *(decode_surface + pre_scaled_width * pre_scaled_height * 2 + i);
+		// memcpy doesn't work
+		for(i = 0; i < dst_width * dst_height * 3; i++)
+			*(dest_data + i) = *(decode_surface + pre_scaled_width * pre_scaled_height * 2 + i);
+	}
 	
 	DEBUG_PRINT("JPEG decode finished");
 	munmap(decode_surface, bpa_data.mem_size);

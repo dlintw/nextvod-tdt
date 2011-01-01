@@ -160,7 +160,7 @@ int fh_jpeg_load_local_hw(const char *filename,unsigned char **buffer,int* x,int
 		return FH_ERROR_FILE;
 
 		
-	if(decode_jpeg_noalloc(fp, original_x, original_y, *x, *y, (char *)*buffer) == LIBMMEIMG_SUCCESS)
+	if(decode_jpeg_noalloc(fp, original_x, original_y, *x, *y, (char *)*buffer, 1) == LIBMMEIMG_SUCCESS)
 	{
 		fclose(fp);
 		return FH_ERROR_OK;
@@ -254,10 +254,11 @@ int fh_jpeg_load(const char *filename,unsigned char **buffer,int* x,int* y)
 	if(ret!=FH_ERROR_OK)
 #endif
 #if defined(__sh__) 
-		ret=fh_jpeg_load_local_hw(filename, buffer, x, y);
-	if(ret != FH_ERROR_OK)
-#endif
+		ret=fh_jpeg_load_local_hw(filename, buffer, x, y);	
+		// TODO if needed: reenable software decoding and resize to x/y (do not change x/y since *buffer is unfreeable)
+#else
 		ret=fh_jpeg_load_local(filename, buffer, x, y);
+#endif
 	return ret;
 }
 

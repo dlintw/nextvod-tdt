@@ -445,9 +445,9 @@ LIBMMEIMG_ERROR mme_send_data(MMEData *data, char *data_content, unsigned long d
 	return LIBMMEIMG_SUCCESS;
 }
 
-// needs modified stmfb to allow blitting on external mem, output is BGR
+// needs modified stmfb to allow blitting on external mem, output is RGB
 // memsize needs to be the whole size of srcdestmem
-LIBMMEIMG_ERROR blit_decoder_result(char *srcdestmem, unsigned long mem_size, unsigned long dest_offset, unsigned int width, unsigned int height, unsigned int dest_width, unsigned int dest_height, unsigned int removeright, unsigned int removebottom)
+LIBMMEIMG_ERROR blit_decoder_result(char *srcmem, unsigned long srcmem_size, char *destmem, unsigned long destmem_size, unsigned int width, unsigned int height, unsigned int dest_width, unsigned int dest_height, unsigned int removeright, unsigned int removebottom)
 {
 	int fd;
 	STMFBIO_BLT_EXTERN_DATA blt_data;
@@ -468,7 +468,7 @@ LIBMMEIMG_ERROR blit_decoder_result(char *srcdestmem, unsigned long mem_size, un
 	blt_data.ulFlags    = 0;
 	blt_data.srcOffset  = 0;
 	blt_data.srcPitch   = width * 2;
-	blt_data.dstOffset  = dest_offset;
+	blt_data.dstOffset  = 0;
 	blt_data.dstPitch   = dest_width * 3;
 	blt_data.src_top    = 0;
 	blt_data.src_left   = 0;
@@ -480,8 +480,10 @@ LIBMMEIMG_ERROR blit_decoder_result(char *srcdestmem, unsigned long mem_size, un
 	blt_data.dst_bottom = dest_height;
 	blt_data.srcFormat  = SURF_YCBCR422R;
 	blt_data.dstFormat  = SURF_BGR888;
-	blt_data.srcMemBase = blt_data.dstMemBase = srcdestmem;
-	blt_data.srcMemSize = blt_data.dstMemSize = mem_size;
+	blt_data.srcMemBase = srcmem;
+	blt_data.dstMemBase = destmem;
+	blt_data.srcMemSize = srcmem_size;
+	blt_data.dstMemSize = destmem_size;
 	
 	error = ioctl(fd, STMFBIO_BLT_EXTERN, &blt_data);
 	if(error != 0)

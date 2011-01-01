@@ -6,7 +6,8 @@ INCLUDES = \
 	-I$(top_srcdir)/lib/libconfigfile \
 	@FREETYPE_CFLAGS@ \
 	-I$(top_srcdir)/lib \
-	-I$(top_srcdir)/include
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/../../driver/bpamem
  
 noinst_LIBRARIES = libneutrino_pictureviewer.a
 

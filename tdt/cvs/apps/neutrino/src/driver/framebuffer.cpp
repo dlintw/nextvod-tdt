@@ -237,7 +237,7 @@ void CFrameBuffer::init(const char * const fbDevice)
 	
 	if(fd_bpa < 0)
 	{
-		printf("cannot access /dev/bpamem0! err = %d", fd_bpa);
+		printf("cannot access /dev/bpamem0! err = %d\n", fd_bpa);
 		return;
 	}
 	
@@ -248,7 +248,8 @@ void CFrameBuffer::init(const char * const fbDevice)
 	res = ioctl(fd_bpa, BPAMEMIO_ALLOCMEM, &bpa_data); // request memory from bpamem
 	if(res)
 	{
-		printf("cannot alloc required bpa mem");
+		printf("cannot alloc required bpa mem\n");
+		close(fd_bpa);
 		return;
 	}
 	
@@ -261,7 +262,7 @@ void CFrameBuffer::init(const char * const fbDevice)
 	
 	if(fd_bpa < 0)
 	{
-		printf("cannot access /dev/bpamem0! err = %d", fd_bpa);
+		printf("cannot access %s! err = %d\n", bpa_mem_device, fd_bpa);
 		return;
 	}
 	
@@ -269,7 +270,7 @@ void CFrameBuffer::init(const char * const fbDevice)
 	
 	if(icon_space == MAP_FAILED) 
 	{
-		printf("could not map bpa mem");
+		printf("could not map bpa mem\n");
 		ioctl(fd_bpa, BPAMEMIO_FREEMEM);
 		close(fd_bpa);
 		return;
@@ -1830,6 +1831,68 @@ void CFrameBuffer::blitIcon(int original_width, int original_height, int fb_x, i
 	
 	// icons are so small that they will still be in cache
 	msync(icon_space, ICON_TEMP_SIZE * ICON_TEMP_SIZE * 4, MS_SYNC);
+	
+	if(ioctl(fd, STMFBIO_BLT_EXTERN, &blt_data) < 0)
+		perror("FBIO_BLIT");
+	else
+		ioctl(fd, STMFBIO_SYNC_BLITTER);
+}
+
+void CFrameBuffer::blitRGBtoRGB(int original_width, int original_height, int height, int width, char *original_data, char *dest_data)
+{
+	STMFBIO_BLT_EXTERN_DATA blt_data;
+	memset(&blt_data, 0, sizeof(STMFBIO_BLT_EXTERN_DATA));
+	blt_data.operation  = BLT_OP_COPY;
+	blt_data.ulFlags    = 0;
+	blt_data.srcOffset  = 0;
+	blt_data.srcPitch   = original_width * 3;
+	blt_data.dstOffset  = 0;
+	blt_data.dstPitch   = width * 3;
+	blt_data.src_top    = 0;
+	blt_data.src_left   = 0;
+	blt_data.src_right  = original_width;
+	blt_data.src_bottom = original_height;
+	blt_data.dst_left   = 0;
+	blt_data.dst_top    = 0;
+	blt_data.dst_right  = width;
+	blt_data.dst_bottom = height;
+	blt_data.srcFormat  = SURF_RGB888;
+	blt_data.dstFormat  = SURF_RGB888;
+	blt_data.srcMemBase = (char *)original_data;
+	blt_data.dstMemBase = (char *)dest_data;
+	blt_data.srcMemSize = original_width * original_height * 3; // we don't need to know the actual mem size
+	blt_data.dstMemSize = width * height * 3;
+	
+	if(ioctl(fd, STMFBIO_BLT_EXTERN, &blt_data) < 0)
+		perror("FBIO_BLIT");
+	else
+		ioctl(fd, STMFBIO_SYNC_BLITTER);
+}
+
+void CFrameBuffer::blitRGBtoFB(int pan_x, int pan_y, int original_width, int original_height, int fb_x, int fb_y, int width, int height, char *bpaData)
+{
+	STMFBIO_BLT_EXTERN_DATA blt_data;
+	memset(&blt_data, 0, sizeof(STMFBIO_BLT_EXTERN_DATA));
+	blt_data.operation  = BLT_OP_COPY;
+	blt_data.ulFlags    = 0;
+	blt_data.srcOffset  = 0;
+	blt_data.srcPitch   = original_width * 3;
+	blt_data.dstOffset  = 0;
+	blt_data.dstPitch   = stride;
+	blt_data.src_top    = pan_x;
+	blt_data.src_left   = pan_y;
+	blt_data.src_right  = pan_x + original_width;
+	blt_data.src_bottom = pan_y + original_height;
+	blt_data.dst_left   = fb_x;
+	blt_data.dst_top    = fb_y;
+	blt_data.dst_right  = fb_x + width;
+	blt_data.dst_bottom = fb_y + height;
+	blt_data.srcFormat  = SURF_BGR888;
+	blt_data.dstFormat  = SURF_ARGB8888;
+	blt_data.srcMemBase = (char *)bpaData;
+	blt_data.dstMemBase = (char *)lfb;
+	blt_data.srcMemSize = (pan_x + original_width) * (pan_y + original_height) * 3; // we don't need to know the actual mem size
+	blt_data.dstMemSize = stride * yRes;
 	
 	if(ioctl(fd, STMFBIO_BLT_EXTERN, &blt_data) < 0)
 		perror("FBIO_BLIT");

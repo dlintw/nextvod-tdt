@@ -16,11 +16,11 @@ extern "C"
 // will need the original image sizes quite often.
 LIBMMEIMG_ERROR get_jpeg_img_size(FILE *fp, unsigned int *width, unsigned int *height);
 
-// output is in BGR (3 bytes per pixel)
+// output is in BGR/user space (3 bytes per pixel)
 LIBMMEIMG_ERROR decode_jpeg(FILE *fp, unsigned int original_width, unsigned int original_height, unsigned int dst_width, unsigned int dst_height, char **dest_data);
 
 // output is in BGR (3 bytes per pixel), but allocs no memory
-LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsigned int original_height, unsigned int dst_width, unsigned int dst_height, char *dest_data);
+LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsigned int original_height, unsigned int dst_width, unsigned int dst_height, char *dest_data, int mem_is_hw_writeable);
 
 #ifdef __cplusplus 
 }

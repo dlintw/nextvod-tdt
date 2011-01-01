@@ -219,6 +219,9 @@ class CFrameBuffer
 		fb_pixel_t *allocPixelBuffer(int width, int height);
 		inline int getScaledScreenWidth()  { return xRes; }
 		inline int getScaledScreenHeight() { return yRes; }
+		void blitRGBtoRGB(int original_width, int original_height, int height, int width, char *original_data, char *dest_data);
+		void blitRGBtoFB(int pan_x, int pan_y, int original_width, int original_height, int fb_x, int fb_y, int width, int height, char *bpaData);
+		
 #endif
 };
 

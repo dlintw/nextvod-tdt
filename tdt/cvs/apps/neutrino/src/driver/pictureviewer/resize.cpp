@@ -3,6 +3,7 @@
 
 #include "pictureviewer.h"
 
+#ifndef __sh__  // useless for sh
 unsigned char * simple_resize(unsigned char * orgin,int ox,int oy,int dx,int dy)
 {
 //   dbout("simple_resize{\n");
@@ -78,3 +79,5 @@ unsigned char * color_average_resize(unsigned char * orgin,int ox,int oy,int dx,
 //   dbout("color_average_resize}\n");
 	return(cr);
 }
+
+#endif

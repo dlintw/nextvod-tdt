@@ -14,6 +14,10 @@
 #include "fb_display.h"
 #include "pictureviewer.h"
 #include "driver/framebuffer.h"
+
+#ifdef __sh__
+#include <linux/stmfb.h> 
+#endif
 /*
  * FrameBuffer Image Display Function
  * (c) smoku/2000
@@ -90,7 +94,11 @@ void fb_display(unsigned char *rgbbuff, int x_size, int y_size, int x_pan, int y
 //printf("fb_display: bits_per_pixel: %d\n", var->bits_per_pixel);
 //printf("fb_display: var->xres %d var->yres %d x_size %d y_size %d\n", var->xres, var->yres, x_size, y_size);
     /* blit buffer 2 fb */
+#ifndef __sh__
     fbbuff = (unsigned short *) convertRGB2FB(rgbbuff, x_size, y_size, var->bits_per_pixel, &bp, transp);
+#else
+    fbbuff = (unsigned short *) rgbbuff; // luckily our hardware blitter does this
+#endif
     if(fbbuff==NULL)
 		 return;
 	 /* ClearFB if image is smaller */
@@ -101,8 +109,8 @@ void fb_display(unsigned char *rgbbuff, int x_size, int y_size, int x_pan, int y
     blit2FB(fbbuff, x_size, y_size, xres, yres, x_pan, y_pan, x_offs, y_offs, bp);
 #else
     blit2FB(fbbuff, x_size, y_size, var->xres, var->yres, x_pan, y_pan, x_offs, y_offs, bp);
-#endif
     free(fbbuff);
+#endif
 }
 
 void getCurrentRes(int *x, int *y)
@@ -178,14 +186,16 @@ void blit2FB(void *fbbuff,
     yc = (pic_ys > scr_ys) ? scr_ys : pic_ys;
     
     unsigned int stride = CFrameBuffer::getInstance()->getStride();
-
+#ifdef __sh__
+	CFrameBuffer::getInstance()->blitRGBtoFB((int)xp, (int)yp, xc, yc, (int)xoffs, (int)yoffs, xc, yc, (char *)fbbuff);
+#else
 	 switch(cpp){
 		 case 1:
-	    set332map();
-	    for(i = 0; i < yc; i++){
-			 memcpy(lfb+(i+yoffs)*stride+xoffs*cpp, cp + (i+yp)*pic_xs+xp,xc*cpp);
-		 }
-		 break;
+			set332map();
+			for(i = 0; i < yc; i++){
+				 memcpy(lfb+(i+yoffs)*stride+xoffs*cpp, cp + (i+yp)*pic_xs+xp,xc*cpp);
+			 }
+			 break;
 		 case 2:
 			 for(i = 0; i < yc; i++){
 				 memcpy(lfb+(i+yoffs)*stride+xoffs*cpp, sp + (i+yp)*pic_xs+xp, xc*cpp);
@@ -197,12 +207,17 @@ void blit2FB(void *fbbuff,
 			 }
 			 break;
 	 }
+#endif
 }
 
 void clearFB(int bpp, int cpp)
 {
    int x,y;
    getCurrentRes(&x,&y);
+
+#ifdef __sh__
+	CFrameBuffer::getInstance()->paintBoxRel(0, 0, x, y, 0xFF000000);
+#else
 	unsigned int stride = CFrameBuffer::getInstance()->getStride();
 
 //printf("clearFB: stride %d y %d cpp %d bpp %d total %d\n", stride, y, cpp, bpp, stride*y*cpp);
@@ -248,6 +263,7 @@ void clearFB(int bpp, int cpp)
 			memset(lfb, 0, stride*y);
 			break;
 	}
+#endif
 }
 
 inline unsigned char make8color(unsigned char r, unsigned char g, unsigned char b)
