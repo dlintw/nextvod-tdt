@@ -93,7 +93,7 @@ void mme_abort_transformer(MMEData *data);
 
 LIBMMEIMG_ERROR mme_send_data(MMEData *data, char *data_content, unsigned long data_size);
 
-// needs modified stmfb to allow blitting on external mem, output is RGB
+// needs modified stmfb to allow blitting on external mem, output is BGR
 // memsize needs to be the whole size of srcdestmem
 LIBMMEIMG_ERROR blit_decoder_result(char *srcmem, unsigned long srcmem_size, char *destmem, unsigned long destmem_size, unsigned int width, unsigned int height, unsigned int dest_width, unsigned int dest_height, unsigned int removeright, unsigned int removebottom);
 
