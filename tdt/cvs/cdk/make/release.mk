@@ -593,7 +593,10 @@ endif
 
 	$(INSTALL_DIR) $(prefix)/release/usr/local
 	$(INSTALL_DIR) $(prefix)/release/usr/local/bin
-	cp $(targetprefix)/usr/local/bin/enigma2 $(prefix)/release/usr/local/bin/
+	if [ -e $(targetprefix)/usr/bin/enigma2 ]; then \
+		cp -f $(targetprefix)/usr/bin/enigma2 $(prefix)/release/usr/local/bin/enigma2;fi
+	if [ -e $(targetprefix)/usr/local/bin/enigma2 ]; then \
+		cp -f $(targetprefix)/usr/local/bin/enigma2 $(prefix)/release/usr/local/bin/enigma2;fi
 	find $(prefix)/release/usr/local/bin/ -name  enigma2 -exec sh4-linux-strip --strip-unneeded {} \;
 
 	ln -s /etc $(prefix)/release/usr/local/etc

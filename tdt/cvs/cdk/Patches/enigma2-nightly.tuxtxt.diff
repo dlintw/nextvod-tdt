@@ -7,7 +7,7 @@
 +tuxtxt_LDFLAGS = -lfreetype -lpthread
 +AM_CFLAGS = -Wall
 +
-+installdir = $(targetprefix)/usr/bin
++installdir = $(targetprefix)/usr/local/bin
 +
 +install_PYTHON =	\
 +	tuxtxt

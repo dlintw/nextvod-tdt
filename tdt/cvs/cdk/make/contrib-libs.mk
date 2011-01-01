@@ -117,6 +117,7 @@ define freetype/install/post
 		sed -e "s,^prefix=,prefix=$(targetprefix)," < builds/unix/freetype-config > $(crossprefix)/bin/freetype-config && \
 		ln -sf freetype-config $(target)-freetype-config && \
 		chmod 755 $(crossprefix)/bin/freetype-config
+		ln -sf $(targetprefix)/usr/include/freetype2/freetype $(targetprefix)/usr/include/freetype
 endef
 
 # Evaluate yaud and temporary package install

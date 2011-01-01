@@ -59,7 +59,6 @@ $(DEPDIR)/enigma2-misc:
 	rm -f $(targetprefix)/usr/local/etc
 
 	$(INSTALL_DIR) $(targetprefix)/usr/bin && \
-	$(LN_SF) /usr/local/bin/enigma2 $(targetprefix)/usr/bin/enigma2 && \
 	$(INSTALL_DIR) $(targetprefix)/usr/share && \
 	$(LN_SF) /usr/local/share/enigma2 $(targetprefix)/usr/share/enigma2 && \
 	$(INSTALL_DIR) $(targetprefix)/usr/share/etc && \

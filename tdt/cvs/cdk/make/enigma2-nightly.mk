@@ -10,6 +10,11 @@ $(appsdir)/enigma2-nightly/config.status: bootstrap freetype expat fontconfig li
 			--with-datadir=/usr/local/share \
 			--with-libdir=/usr/lib \
 			--with-plugindir=/usr/lib/tuxbox/plugins \
+			--prefix=/usr \
+			--datadir=/usr/local/share \
+			--sysconfdir=/etc \
+			STAGING_INCDIR=$(hostprefix)/usr/include \
+			STAGING_LIBDIR=$(hostprefix)/usr/lib \
 			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
 			PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig \
 			PY_PATH=$(targetprefix)/usr \
@@ -42,27 +47,25 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	echo "Choose between the following revisions:"; \
 	echo " 0) Newest (Can fail due to outdated patch)"; \
 	echo "---- REVISIONS ----"; \
-	echo "1) Mon, 21 Dec 2009 15:04 - bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
-	echo "2) Wed, 31 Mar 2010 21:53 - 5807686a79350632f38e4161c942ae59cf2f63ce"; \
-	echo "3) Thu,  5 Aug 2010 09:15 - 65ce4a9bd27e342545b88faf9420426113d32702"; \
-	echo "4) Tue,  5 Oct 2010 11:00 - be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
-	echo "5) Fri,  5 Nov 2010 00:16 - 7fd4241a1d7b8d7c36385860b24882636517473b"; \
-	echo "6) Sat, 11 Dec 2010 12:38 - c33214ce30a9caa31bccfb88c629cd30a0b58635"; \
-	echo "7) current inactive... comming soon, here is the next stable (case 7 == DIFF=7)"; \
+	echo "1) Mon, 31 Dec 2010 16:16 - E2 V3.0 fd388a500b0c45afb1668ba28758dbc1ea5631b1"; \
+	echo "2) inactive"; \
+	echo "3) inactive"; \
+	echo "4) Tue,  5 Oct 2010 11:00 - E2 V2.4 libplayer2 be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
+	echo "5) Fri,  5 Nov 2010 00:16 - E2 V2.4 libplayer3 7fd4241a1d7b8d7c36385860b24882636517473b"; \
+	echo "6) current inactive... comming soon, here is the next stable (case 6 == DIFF=6)"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
-	[ "$$REPLY" == "0" ] && DIFF="0"; \
-	[ "$$REPLY" == "1" ] && DIFF="1" && REVISION="bcd44b8a861159b638eadfd06954d1fcd7119d90"; \
-	[ "$$REPLY" == "2" ] && DIFF="2" && REVISION="5807686a79350632f38e4161c942ae59cf2f63ce"; \
-	[ "$$REPLY" == "3" ] && DIFF="3" && REVISION="65ce4a9bd27e342545b88faf9420426113d32702"; \
-	[ "$$REPLY" == "4" ] && DIFF="4" && REVISION="be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
-	[ "$$REPLY" == "5" ] && DIFF="5" && REVISION="7fd4241a1d7b8d7c36385860b24882636517473b"; \
-	[ "$$REPLY" == "6" ] && DIFF="6" && REVISION="c33214ce30a9caa31bccfb88c629cd30a0b58635"; \
+	[ "$$REPLY" == "0" ] && DIFF="0" && HEAD="experimental"; \
+	[ "$$REPLY" == "1" ] && DIFF="1" && HEAD="experimental" && REVISION="fd388a500b0c45afb1668ba28758dbc1ea5631b1"; \
+	[ "$$REPLY" == "2" ] && DIFF="2" && HEAD="experimental" && REVISION=""; \
+	[ "$$REPLY" == "3" ] && DIFF="3" && HEAD="experimental" && REVISION=""; \
+	[ "$$REPLY" == "4" ] && DIFF="4" && HEAD="master" && REVISION="be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
+	[ "$$REPLY" == "5" ] && DIFF="5" && HEAD="master" && REVISION="7fd4241a1d7b8d7c36385860b24882636517473b"; \
 	echo "Revision: " $$REVISION; \
 	[ -d "$(appsdir)/enigma2-nightly" ] && \
-	git pull $(appsdir)/enigma2-nightly master;\
+	git pull $(appsdir)/enigma2-nightly $$HEAD;\
 	[ -d "$(appsdir)/enigma2-nightly" ] || \
-	git clone git://git.opendreambox.org/git/enigma2.git $(appsdir)/enigma2-nightly; \
+	git clone -b $$HEAD git://git.opendreambox.org/git/enigma2.git $(appsdir)/enigma2-nightly; \
 	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.newest; \
 	[ "$$REVISION" == "" ] || (cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd "$(buildprefix)"; \
 	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.org;); \
@@ -85,7 +88,12 @@ $(DEPDIR)/enigma2-nightly.do_compile: $(appsdir)/enigma2-nightly/config.status
 
 $(DEPDIR)/enigma2-nightly: enigma2-nightly.do_prepare enigma2-nightly.do_compile
 	$(MAKE) -C $(appsdir)/enigma2-nightly install DESTDIR=$(targetprefix)
-	$(target)-strip $(targetprefix)/usr/local/bin/enigma2
+	if [ -e $(targetprefix)/usr/bin/enigma2 ]; then \
+		$(target)-strip $(targetprefix)/usr/bin/enigma2; \
+	fi
+	if [ -e $(targetprefix)/usr/local/bin/enigma2 ]; then \
+		$(target)-strip $(targetprefix)/usr/local/bin/enigma2; \
+	fi
 	touch $@
 
 enigma2-nightly-clean enigma2-nightly-distclean:
