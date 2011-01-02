@@ -208,10 +208,9 @@ release_atevio7500:
 
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/boot/video_7105.elf $(prefix)/release/boot/video.elf
+	cp $(targetprefix)/boot/video_7105.elf $(prefix)/release_neutrino/boot/video.elf 
+	cp $(targetprefix)/boot/audio_7105.elf $(prefix)/release_neutrino/boot/audio.elf
 
-	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
-	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/bin/evremote
