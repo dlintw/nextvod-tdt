@@ -771,7 +771,7 @@ fb_pixel_t * CPictureViewer::getImage (const std::string & name, int width, int 
 		if (fh->get_pic (name.c_str (), &buffer, &x, &y) == FH_ERROR_OK) {
 #ifdef __sh__
 			// the blitter needs to access the memory - flush cache
-			msync(m_NextPic_Buffer, x * y * 3, MS_SYNC);
+			msync(buffer, x * y * 3, MS_SYNC);
 #endif
 printf("getImage: decoded %s, %d x %d \n", name.c_str (), x, y);
 			if(x != width || y != height)
