@@ -336,7 +336,7 @@ void Font::RenderString(int x, int y, const int _width, const char *text, const 
 	y = frameBuffer->scaleY(y);
 	int boxheight = frameBuffer->scaleY(_boxheight);
 	int width = frameBuffer->scaleX(_width);
-	int height = frameBuffer->scaleY(height);
+	int height = frameBuffer->scaleY(this->height);
 	
 	tempScaler.face_id = scaler.face_id;
 	tempScaler.width   = frameBuffer->scaleX(scaler.width);
