@@ -74,12 +74,13 @@ echo "15) Cuberevo mini_fta (200HD)"
 echo "16) Homecast 5101"
 echo "17) Octagon 1008"
 echo "18) SPARK"
+echo "19) Atevio7500"
 case $1 in
-	[1-9] | 1[0-8]) REPLY=$1
+	[1-9] | 1[0-9]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-18)? ";;
+	read -p "Select target (1-19)? ";;
 esac
 
 case "$REPLY" in
@@ -101,6 +102,7 @@ case "$REPLY" in
 	16) TARGET="--enable-homecast5101";;
 	17) TARGET="--enable-octagon1008";;
 	18) TARGET="--enable-spark";;
+	19) TARGET="--enable-atevio7500";;
 	 *) TARGET="--enable-ufs910";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"

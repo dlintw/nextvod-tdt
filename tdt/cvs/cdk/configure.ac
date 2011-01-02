@@ -242,6 +242,14 @@ AC_ARG_ENABLE(fortis_hdbox,
 AM_CONDITIONAL(ENABLE_FORTIS_HDBOX,test "$enable_fortis_hdbox" = "yes")
 AC_SUBST(FORTIS_HDBOX)
 
+AC_ARG_ENABLE(atevio7500,
+	AS_HELP_STRING(--enable-atevio7500,    enable Atevio 7500 PVR stuff),
+	[case "${enableval}" in
+		yes) ATEVIO7500=atevio7500 ;;
+	esac],[enable_atevio7500=no])
+AM_CONDITIONAL(ENABLE_ATEVIO7500,test "$enable_atevio7500" = "yes")
+AC_SUBST(ATEVIO7500)
+
 AC_ARG_ENABLE(octagon1008,
 	AS_HELP_STRING(--enable-octagon1008,    enable Octagon 1008 stuff),
 	[case "${enableval}" in
@@ -1010,6 +1018,7 @@ update http prefix:          $updatehttpprefix
 stock directory:             $stockdir
 ipkg build directory:        $ipkgbuilddir
 Fortis/hdbox stuff:          $enable_fortis_hdbox
+Atevio 7500 stuff:           $enable_atevio7500
 octagon1008 stuff:           $enable_octagon1008
 topfield stuff:              $enable_tf7700
 spider-box hl101 stuff:      $enable_hl101

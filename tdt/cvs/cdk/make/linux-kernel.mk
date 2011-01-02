@@ -28,6 +28,19 @@ FORTISPATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ftdi_sio.c_stm22.patch \
 		linux-fortis_stboards_stm22.patch
 
+ATEVIO7500_41 = $(COMMONPATCHES_41) \
+		linux-atevio7500_setup_stm22.patch \
+		linux-fortis_hdbox_dvb_stm22.patch \
+		linux-fortis_hdbox_sound_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch \
+		linux-atevio7500_stboards_stm22.patch
+
 OCTAGON1008PATCHES_41 = $(COMMONPATCHES_41) \
 		octagon1008_setup_p0041.diff \
 		linux-fortis_hdbox_dvb_stm22.patch \
@@ -138,6 +151,7 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 		$(if $(UFS910),$(UFS910PATCHES_41)) \
 		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_41)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41)) \
+		$(if $(ATEVIO7500),$(ATEVIO7500_41)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_41)) \
 		$(if $(HOMECAST5101),$(HS5101PATCHES_41)) \
 		$(if $(PLAYER179),linux-v4l.patch)
@@ -197,6 +211,13 @@ FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		fortis_hdbox_setup_stm23.diff \
 		fortis_hdbox_dvb_core_stm23.patch
 
+ATEVIO7500PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-atevio7500_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-atevio7500_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		fortis_hdbox_dvb_core_stm23.patch
+
 OCTAGON1008PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
@@ -247,6 +268,7 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(UFS910),$(UFS910PATCHES_23)) \
 		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_23)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_23)) \
+		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_23)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_23)) \
 		$(if $(HOMECAST5101),$(HS5101PATCHES_23))
 
@@ -350,7 +372,7 @@ endif !STM22
 #
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(SPARK)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)
+MODNAME = $(UFS910)$(UFS912)$(SPARK)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -519,6 +541,7 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	echo -e "ST Linux Distribution - Binary Kernel\n \
 	CPU: sh4\n \
 	$(if $(FORTIS_HDBOX),PLATFORM: stb7109ref\n) \
+	$(if $(ATEVIO7500),PLATFORM: stb7105ref\n) \
 	$(if $(OCTAGON1008),PLATFORM: stb7109ref\n) \
 	$(if $(UFS922),PLATFORM: stb7109ref\n) \
 	$(if $(TF7700),PLATFORM: stb7109ref\n) \
@@ -553,6 +576,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(UFS910),UFS910=$(UFS910)) \
 		$(if $(FLASH_UFS910),FLASH_UFS910=$(FLASH_UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
+		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
@@ -579,6 +603,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(UFS910),UFS910=$(UFS910)) \
 		$(if $(FLASH_UFS910),FLASH_UFS910=$(FLASH_UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
+		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
