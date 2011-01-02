@@ -33,6 +33,8 @@ scanner="  root root   0666"
 readable="  root root   0444"
   st220="  root root   0644"
   st231="  root root   0644"
+    mme="  root root   0644"
+ bpamem="  root root   0644"
 
 MAXVT=63
 
@@ -280,6 +282,8 @@ cvt () {
 			mtd)	echo mtdblock mtd mtdr ;;
 			lirc)   echo lirc ;;
                         st200)  echo st220 st231;;
+                        mme)    echo mme ;;
+                        bpamem) echo bpamem ;;
 			*)	echo "$1" ;;
 		esac
 		shift
@@ -502,6 +506,8 @@ do
 		$0 $opts rtc
 		$0 $opts lirc
                 $0 $opts st200
+                $0 $opts mme
+                $0 $opts bpamem
 		$0 $opts alsasnd
 		;;
 	generic-sparc)
@@ -1942,6 +1948,14 @@ do
                 makedev st231-2 c 63 1 $st231
                 makedev st231-3 c 63 1 $st231
                 ;;
+        mme)    makedev mme c 231 0 $mme
+        	;;
+        bpamem) makedev bpamem0 c 153 0 $bpamem 
+        	makedev bpamem1 c 153 1 $bpamem
+        	makedev bpamem2 c 153 2 $bpamem
+        	makedev bpamem3 c 153 3 $bpamem
+        	makedev bpamem4 c 153 4 $bpamem
+        	;;
 
 	comedi)
 		major=98
