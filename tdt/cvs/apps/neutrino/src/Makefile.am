@@ -18,6 +18,7 @@ INCLUDES = \
 	@LIBCS_CFLAGS@ \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/../misc/tools/libcoolstream \
+	-I$(top_srcdir)/../../driver/bpamem/ \
 	-I$(top_srcdir)/../misc/tools 
 
 bin_PROGRAMS = neutrino
