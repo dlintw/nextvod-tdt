@@ -240,6 +240,10 @@ bool CPictureViewer::DecodeImage (const std::string & name, bool showBusySign, b
 #endif
      // dbout("---Decoding Start(%d/%d)\n",x,y);
 	if (fh->get_pic (name.c_str (), &m_NextPic_Buffer, &x, &y) == FH_ERROR_OK) {
+#ifdef __sh__
+	// the blitter needs to access the memory - flush cache
+	msync(m_NextPic_Buffer, x * y * 3, MS_SYNC);
+#endif
       // dbout("---Decoding Done\n");
 	  if ((x > (m_endx - m_startx) || y > (m_endy - m_starty)) && m_scaling != NONE && !unscaled) {
 		if ((m_aspect_ratio_correction * y * (m_endx - m_startx) / x) <= (m_endy - m_starty)) {
@@ -701,6 +705,10 @@ bool CPictureViewer::DisplayImage (const std::string & name, int posx, int posy,
 		}
 #endif
 		if (fh->get_pic (name.c_str (), &m_NextPic_Buffer, &x, &y) == FH_ERROR_OK) {
+#ifdef __sh__
+			// the blitter needs to access the memory - flush cache
+			msync(m_NextPic_Buffer, x * y * 3, MS_SYNC);
+#endif
 //printf("DisplayImage: decoded %s, %d x %d to x=%d y=%d\n", name.c_str (), x, y, posx, posy);
 			//FIXME m_aspect_ratio_correction ?
 			if(width && height) {
@@ -761,6 +769,10 @@ fb_pixel_t * CPictureViewer::getImage (const std::string & name, int width, int 
 		  	return false;
 		}
 		if (fh->get_pic (name.c_str (), &buffer, &x, &y) == FH_ERROR_OK) {
+#ifdef __sh__
+			// the blitter needs to access the memory - flush cache
+			msync(m_NextPic_Buffer, x * y * 3, MS_SYNC);
+#endif
 printf("getImage: decoded %s, %d x %d \n", name.c_str (), x, y);
 			if(x != width || y != height)
 			{
