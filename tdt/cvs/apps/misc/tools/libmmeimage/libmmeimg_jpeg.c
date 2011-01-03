@@ -246,13 +246,25 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 	// clear cache
 	msync(decode_surface + pre_scaled_width * pre_scaled_height * 2, filesize, MS_SYNC);
 	
-	static const char *transformers[] = {  "JPEG_DECODER",
-		                               "JPEG_DECODER4",
-		                               "JPEG_DECODER3",
-		                               "JPEG_DECODER2",
-		                               "JPEG_DECODER1",
-		                               "JPEG_DECODER0",
-		                               NULL };
+	static const char *transformers[] = {	"JPEG_DECODER0",
+						"JPEG_Transformer0",
+						"JPEG_DECODER_HW0",
+						"JPEG_DECODER1",
+						"JPEG_DECODER2",
+						"JPEG_DECODER3",
+						"JPEG_DECODER4",
+						"JPEG_DECODER",
+						"JPEG_Transformer1",
+						"JPEG_Transformer2",
+						"JPEG_Transformer3",
+						"JPEG_Transformer4",
+						"JPEG_Transformer",
+						"JPEG_DECODER_HW1",
+						"JPEG_DECODER_HW4",
+						"JPEG_DECODER_HW3",
+						"JPEG_DECODER_HW2",
+						"JPEG_DECODER_HW",
+						NULL };
 		    
 	decode_data.data.decode_success = 0;    
 	decode_data.data.transform_command = NULL;                       
@@ -265,12 +277,16 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 		decode_data.output_params.outputSettings.yvalue0 = 0;
 		decode_data.output_params.outputSettings.yvalue1 = 0;
 
-		decode_data.output_params.outputSettings.outputWidth    = 0;  // buffersize used to prevent bufferoverflows
+		decode_data.output_params.outputSettings.outputWidth    = 0;
 		decode_data.output_params.outputSettings.outputHeight   = 0; 
 		decode_data.output_params.outputSettings.ROTATEFLAG     = 0;
 		decode_data.output_params.outputSettings.Rotatedegree   = 0;
 		decode_data.output_params.outputSettings.HorizantalFlip = 0;
 		decode_data.output_params.outputSettings.VerticalFlip   = 0;
+#ifndef STM22
+		decode_data.output_params.outputSettings.ROTATEFLAG     = 0x80000000;
+		decode_data.output_params.outputSettings.Pitch          = pre_scaled_width * 2;
+#endif
 		
 		res_img = mme_start_transformer(&decode_data.data, sizeof(JPEGD_TransformReturnParams_t), (void *)&decode_data.return_params, sizeof(JPEGD_TransformParams_t), (void *)&decode_data.output_params, decode_surface, pre_scaled_width * pre_scaled_height * 2);
 		
