@@ -72,6 +72,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init player"
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
+   insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
@@ -79,13 +80,14 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/cx24116.ko
    insmod $MODDIR/cimax.ko
    insmod $MODDIR/pti.ko camRouting=1
-   insmod $MODDIR/stmdvb.ko
    insmod $MODDIR/stm_monitor.ko
+   insmod $MODDIR/stmdvb.ko
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko
+   insmod $MODDIR/bpamem.ko
 
    #showiframe -p /boot/bootlogo.mvi &
    #stfbcontrol a 0

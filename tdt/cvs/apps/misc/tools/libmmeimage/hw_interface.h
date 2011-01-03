@@ -5,7 +5,13 @@
 #include <stdio.h>
 #include <semaphore.h>
 #include <dlfcn.h>
+#ifdef STM22		// STM22 compatibility
 #include <JPEG_TransformerTypes.h>
+#else
+#include <JPEG_VideoTransformerTypes.h>
+#define JPEGD_TransformParams_t JPEGDEC_TransformParams_t
+#define JPEGD_TransformReturnParams_t JPEGDEC_TransformReturnParams_t
+#endif
 
 typedef struct
 {

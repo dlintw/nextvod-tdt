@@ -638,6 +638,12 @@ bool CPictureViewer::DisplayImage (const std::string & name, int posx, int posy,
   int x, y;
   CFormathandler *fh;
   bool ret = false;
+#ifdef __sh__
+  posx = CFrameBuffer::getInstance()->scaleX(posx);
+  posy = CFrameBuffer::getInstance()->scaleY(posy);
+  width = CFrameBuffer::getInstance()->scaleX(width);
+  height = CFrameBuffer::getInstance()->scaleY(height);
+#endif
 
   if (m_NextPic_Name != name || m_NextPic_X != width || m_NextPic_Y != height) {
 
@@ -708,6 +714,11 @@ bool CPictureViewer::DisplayImage (const std::string & name, int posx, int posy,
 #ifdef __sh__
 			// the blitter needs to access the memory - flush cache
 			msync(m_NextPic_Buffer, x * y * 3, MS_SYNC);
+			// the user always expects a fixed fb size so scale the image if no sizes are supplied
+			if(!width)
+				width = CFrameBuffer::getInstance()->scaleX(x);
+			if(!height)
+				height = CFrameBuffer::getInstance()->scaleY(y);
 #endif
 //printf("DisplayImage: decoded %s, %d x %d to x=%d y=%d\n", name.c_str (), x, y, posx, posy);
 			//FIXME m_aspect_ratio_correction ?
