@@ -431,6 +431,7 @@ void cDvbCi::process_tpdu(tSlot* slot, unsigned char tpdu_tag, __u8* data, int a
 
 void cDvbCi::slot_pollthread(void *c)
 {
+	ca_slot_info_t info;
 	unsigned char data[1024];
 	tSlot* slot = (tSlot*) c;
 	
@@ -460,9 +461,16 @@ void cDvbCi::slot_pollthread(void *c)
 		       status = waitData(slot->fd, data, &len);
 		       if (status == eDataStatusChanged)
 		       {
-	        	  if (slot->camIsReady == false)
+                          info.num = slot->slot;
+
+		          if (ioctl(slot->fd, CA_GET_SLOT_INFO, &info) < 0)
+			     printf("IOCTL CA_GET_SLOT_INFO failed for slot %d\n", slot->slot);
+
+                          printf("flags %d %d %d ->slot %d\n", info.flags, CA_CI_MODULE_READY, info.flags & CA_CI_MODULE_READY, slot->slot);
+
+	                  if (info.flags & CA_CI_MODULE_READY)
 			  {
-		              printf("cam status changed ->cam now present\n");
+		              printf("1. cam (%d) status changed ->cam now present\n", slot->slot);
 
 		              slot->mmiSession = NULL;
 		              slot->hasMMIManager = false;
@@ -484,11 +492,11 @@ void cDvbCi::slot_pollthread(void *c)
 		              slot->camIsReady = true;
                 	  } else
 			  {
-			     // error it cannot be that a cam is removed in eStatusNone!
-			  }
+                             //noop
+                          }
 		       }
 		   }
-		}
+		} /* case statusnone */
 		break;
 		case eStatusWait:
                 {    
@@ -568,12 +576,16 @@ void cDvbCi::slot_pollthread(void *c)
 		    }
 		    else if (status == eDataStatusChanged)
 		    {
-	               if (slot->camIsReady == false)
+                       info.num = slot->slot;
+
+		       if (ioctl(slot->fd, CA_GET_SLOT_INFO, &info) < 0)
+			  printf("IOCTL CA_GET_SLOT_INFO failed for slot %d\n", slot->slot);
+
+                       printf("flags %d %d %d ->slot %d\n", info.flags, CA_CI_MODULE_READY, info.flags & CA_CI_MODULE_READY, slot->slot);
+
+	               if ((slot->camIsReady == false) && (info.flags & CA_CI_MODULE_READY))
 		       {
-//Dagobert: This is also needed here for manual reset purpose.
-//this can only happen if we are in this state but something
-//went wrong. see CI_EnterMenu	
-		           printf("cam status changed ->cam now present\n");
+		           printf("2. cam (%d) status changed ->cam now present\n", slot->slot);
 
 		           slot->mmiSession = NULL;
 		           slot->hasMMIManager = false;
@@ -594,25 +606,9 @@ void cDvbCi::slot_pollthread(void *c)
 
 		           slot->camIsReady = true;
                        } else
-	               if (slot->camIsReady == true)
+	               if ((slot->camIsReady == true) && (!(info.flags & CA_CI_MODULE_READY)))
 		       {
-	                  ca_slot_info_t info;
-	   	          
-                          info.num = slot->slot;
-                   
-                          /* Dagobert: in this case let us ask if we the module
-			   * is really removed. on start-up of neutrino it happens 
-			   * that the status changed is reported twice. this leads 
-			   * to a misinterpreted state
-			   */
-			  if (ioctl(slot->fd, CA_GET_SLOT_INFO, &info) < 0)
-			     printf("IOCTL CA_GET_SLOT_INFO failed for slot %d\n", slot->slot);
-       
-                          printf("flags %d %d %d ->slot %d\n", info.flags, CA_CI_MODULE_READY, info.flags & CA_CI_MODULE_READY, slot->slot);
-	   	      
-                          if (!(info.flags & CA_CI_MODULE_READY))
-			  {
-		             printf("cam status changed ->cam now _not_ present\n");
+		             printf("cam (%d) status changed ->cam now _not_ present\n", slot->slot);
 
 	 	             eDVBCISession::deleteSessions(slot);
 
@@ -640,7 +636,6 @@ void cDvbCi::slot_pollthread(void *c)
 	                     }
 
 		             slot->camIsReady = false;
-                          }
 		          usleep(100000);		
                        }
 		    }
@@ -787,6 +782,10 @@ cDvbCi::cDvbCi(int Slots) {
 
             sprintf(slot->name, "unknown module %d", i);
 
+	    slot_data.push_back(slot);
+            /* now reset the slot so the poll pri can happen in the thread */
+            reset(i); 
+
 	    /* create a thread for each slot */
 	    if (fd > 0) 
 	    {
@@ -796,12 +795,6 @@ cDvbCi::cDvbCi(int Slots) {
 		  printf("pthread_create");
 	       }
 	    }
-
-	    slot_data.push_back(slot);
-
-            /* now reset the slot so the poll pri can happen in the thread */
-            reset(i); 
-	    
 	}
 }
 
