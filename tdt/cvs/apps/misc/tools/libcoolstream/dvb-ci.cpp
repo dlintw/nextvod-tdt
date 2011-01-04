@@ -597,7 +597,9 @@ void cDvbCi::slot_pollthread(void *c)
 	               if (slot->camIsReady == true)
 		       {
 	                  ca_slot_info_t info;
-	   	           
+	   	          
+                          info.num = slot->slot;
+                   
                           /* Dagobert: in this case let us ask if we the module
 			   * is really removed. on start-up of neutrino it happens 
 			   * that the status changed is reported twice. this leads 
@@ -606,7 +608,9 @@ void cDvbCi::slot_pollthread(void *c)
 			  if (ioctl(slot->fd, CA_GET_SLOT_INFO, &info) < 0)
 			     printf("IOCTL CA_GET_SLOT_INFO failed for slot %d\n", slot->slot);
        
-	   	          if (!(info.flags & CA_CI_MODULE_READY))
+                          printf("flags %d %d %d ->slot %d\n", info.flags, CA_CI_MODULE_READY, info.flags & CA_CI_MODULE_READY, slot->slot);
+	   	      
+                          if (!(info.flags & CA_CI_MODULE_READY))
 			  {
 		             printf("cam status changed ->cam now _not_ present\n");
 

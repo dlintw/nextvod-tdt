@@ -22,6 +22,7 @@ linuxp0119;2.6.23.17_stm23_0119;linux-sh4-2.6.23.17_stm23_0119;stlinux23-host-ke
 linuxp0123;2.6.23.17_stm23_0123;linux-sh4-2.6.23.17_stm23_0123;stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0123-123.src.rpm
 linux24;2.6.32.10_stm24_0201;linux-sh4-2.6.32.10_stm24_0201;stlinux24-host-kernel-source-sh4-2.6.32.10_stm24_0201-201.src.rpm
 linuxp0201;2.6.32.10_stm24_0201;linux-sh4-2.6.32.10_stm24_0201;stlinux24-host-kernel-source-sh4-2.6.32.10_stm24_0201-201.src.rpm
+linuxp0205;2.6.32.16_stm24_0205;linux-sh4-2.6.32.16_stm24_0205;stlinux24-host-kernel-source-sh4-2.6.32.16_stm24_0205-205.src.rpm
 squashfs;3.0;mksquashfs;squashfs3.0.tar.gz:mksquashfs_lzma.diff:lzma442.tar.bz2:lzma_zlib-stream.diff;dircreate:mksquashfs;extract:lzma442.tar.bz2;patch:lzma_zlib-stream.diff;extract:squashfs3.0.tar.gz;patch:mksquashfs_lzma.diff
 ccache;2.4;ccache-2.4;ccache-2.4.tar.gz;extract:ccache-2.4.tar.gz
 cramfs;1.1;cramfs-1.1;cramfs-1.1.tar.gz;extract:cramfs-1.1.tar.gz

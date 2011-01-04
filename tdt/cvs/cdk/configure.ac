@@ -90,6 +90,14 @@ AC_ARG_ENABLE(p0201,
 AM_CONDITIONAL(ENABLE_P0201,test "$enable_p0201" = "yes")
 AC_SUBST(P0201)
 
+AC_ARG_ENABLE(p0205,
+        AS_HELP_STRING(--enable-p0205,  set up the CDK to use the STLinux 2.4 with patchlevel 0205),
+	[case "${enableval}" in
+		yes) P0205=p0205 ;;
+	esac], [enable_p0205=no])
+AM_CONDITIONAL(ENABLE_P0205,test "$enable_p0205" = "yes")
+AC_SUBST(P0205)
+
 AC_ARG_ENABLE(debug,
 	AS_HELP_STRING(--enable-debug,	set up the CDK to use debug kernel configs),
 	,[enable_debug=no])
@@ -691,6 +699,7 @@ TUXBOX_RULES_MAKE(linuxp0119)
 TUXBOX_RULES_MAKE(linuxp0123)
 TUXBOX_RULES_MAKE(linux24)
 TUXBOX_RULES_MAKE(linuxp0201)
+TUXBOX_RULES_MAKE(linuxp0205)
 
 if test "$enable_stm22" = "yes"; then
 	if test "$enable_p0040" == "yes"; then
@@ -715,15 +724,15 @@ if test "$enable_stm23" = "yes"; then
 		KERNELLABEL="119"
 	fi
 else
-	#if test "$enable_p0201" == "yes"; then
+	if test "$enable_p0205" == "yes"; then
+		KERNELVERSION=${VERSION_linuxp0205}
+		KERNELSTMLABEL="_${VERSION_linuxp0205#*_}"
+		KERNELLABEL="205"
+	else
 		KERNELVERSION=${VERSION_linuxp0201}
 		KERNELSTMLABEL="_${VERSION_linuxp0201#*_}"
 		KERNELLABEL="201"
-	#else
-	#	KERNELVERSION=${VERSION_linuxp0201}
-	#	KERNELSTMLABEL="_${VERSION_linuxp0201#*_}"
-	#	KERNELLABEL="201"
-	#fi
+	fi
 fi
 fi
 
@@ -991,6 +1000,7 @@ Patchlevel P0041:            $enable_p0041
 Patchlevel P0119:            $enable_p0119
 Patchlevel P0123:            $enable_p0123
 Patchlevel P0201:            $enable_p0201
+Patchlevel P0205:            $enable_p0205
 vdr VDR 1.7.11:              $enable_vdr1711
 flash rules:                 $enable_flashrules
 ccache:                      $enable_ccache

@@ -136,7 +136,8 @@ echo "   2) STM 23 P0119"
 echo " Experimental:"
 echo "   3) STM 23 P0119 with Havana"
 echo "   4) STM 23 P0123"
-#echo " 5) STM 24 P0201 (not working)"
+#echo "   5) STM 24 P0201 (not working)"
+#echo "   6) STM 24 P0205 (experimental)"
 case $2 in
         [1-5]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"
@@ -151,6 +152,7 @@ case "$REPLY" in
 	3) KERNEL="--enable-stm23 --enable-p0119 --enable-havana";;
 	4) KERNEL="--enable-stm23 --enable-p0123";;
 	5) KERNEL="--enable-stm24 --enable-p0201";;
+	6) KERNEL="--enable-stm24 --enable-p0205";;
 	*) KERNEL="--enable-stm22 --enable-p0041";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"
