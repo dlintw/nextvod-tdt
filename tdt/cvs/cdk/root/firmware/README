@@ -1,0 +1,7 @@
+The FDMA firmware files are required for stlinux24 kernels. The firmware can be linked
+into the kernel (see CONFIG_EXTRA_FIRMWARE) or loaded by udev on request (hotplug did
+not work). The symbolic links correspond to the file names requested by the kernel.
+
+The FDMA firmware files have been extracted from the attachment published in the STM
+bugzilla system (https://bugzilla.stlinux.com/show_bug.cgi?id=10686).
+
