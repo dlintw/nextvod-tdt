@@ -429,3 +429,30 @@
   		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
   		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
   	}
+*** a/drivers/mtd/chips/cfi_probe.c	2011-01-02 21:05:30.000000000 +0100
+--- b/cfi_probe.c	2011-01-05 20:38:36.087467593 +0100
+***************
+*** 255,260 ****
+--- 255,276 ----
+  	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
+  		cfi->cfiq->EraseRegionInfo[i] = le32_to_cpu(cfi->cfiq->EraseRegionInfo[i]);
+  
++ 	/* kdhong */
++ 	printk( "CFI MFR = %x DEV = %x\n", cfi->mfr, cfi->id );
++ 
++ 	if( cfi->mfr == 0x00c2 && cfi->id == 0x227e )
++ 	{
++ 		int devsize = (1 << cfi->cfiq->DevSize) * cfi->interleave;
++ 
++ 		printk( "devsize = %x\n", devsize );
++ 
++ 		if( devsize == 0x400000 )
++ 		{
++ 			cfi->cfiq->EraseRegionInfo[i] = 0x100003f;
++ 		}
++ 	}
++ 	/* kdhong */
++ 
+  #ifdef DEBUG_CFI
+  		printk("  Erase Region #%d: BlockSize 0x%4.4X bytes, %d blocks\n",
+  		       i, (cfi->cfiq->EraseRegionInfo[i] >> 8) & ~0xff,
