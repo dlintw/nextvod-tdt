@@ -1,5 +1,246 @@
-*** a/arch/sh/boards/st/mb618/setup.c	2011-01-02 21:06:57.000000000 +0100
---- b/setup.c	2011-01-03 01:48:35.607316546 +0100
+*** a/drivers/mtd/chips/cfi_probe.c	2011-01-02 21:05:30.000000000 +0100
+--- b/cfi_probe.c	2011-01-05 20:38:36.087467593 +0100
+***************
+*** 255,260 ****
+--- 255,276 ----
+  	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
+  		cfi->cfiq->EraseRegionInfo[i] = le32_to_cpu(cfi->cfiq->EraseRegionInfo[i]);
+  
++ 	/* kdhong */
++ 	printk( "CFI MFR = %x DEV = %x\n", cfi->mfr, cfi->id );
++ 
++ 	if( cfi->mfr == 0x00c2 && cfi->id == 0x227e )
++ 	{
++ 		int devsize = (1 << cfi->cfiq->DevSize) * cfi->interleave;
++ 
++ 		printk( "devsize = %x\n", devsize );
++ 
++ 		if( devsize == 0x400000 )
++ 		{
++ 			cfi->cfiq->EraseRegionInfo[i] = 0x100003f;
++ 		}
++ 	}
++ 	/* kdhong */
++ 
+  #ifdef DEBUG_CFI
+  		printk("  Erase Region #%d: BlockSize 0x%4.4X bytes, %d blocks\n",
+  		       i, (cfi->cfiq->EraseRegionInfo[i] >> 8) & ~0xff,
+*** a/arch/sh/kernel/cpu/sh4/setup-stx7111.c	2011-01-05 22:00:04.000000000 +0100
+--- b/setup-stx7111.c	2011-01-06 18:04:49.738959174 +0100
+***************
+*** 237,242 ****
+--- 237,255 ----
+  		platform_device_register(&stssc_devices[i]);
+  	}
+  
++         /* some additional sysconfig settings to enable i2c, cic and cec */
++ 	ssc_sc = sysconf_claim(SYS_CFG, 5, 0, 0, "cic");
++         sysconf_write(ssc_sc, 1);
++ 
++ 	ssc_sc = sysconf_claim(SYS_CFG, 5, 17, 17, "cic");
++         sysconf_write(ssc_sc, 1);
++ 
++ 	ssc_sc = sysconf_claim(SYS_CFG, 5, 8, 8, "cec");
++         sysconf_write(ssc_sc, 1);
++ 
++         ssc_sc = sysconf_claim(SYS_CFG, 7, 15, 15, "i2c");
++         sysconf_write(ssc_sc, 1);
++ 
+  	/* I2C buses number reservation (to prevent any hot-plug device
+  	 * from using it) */
+  #ifdef CONFIG_I2C_BOARDINFO
+***************
+*** 390,401 ****
+  	STASC_DEVICE(0xfd030000, evt2irq(0x1160), 11, 15,
+  		     0, 0, 1, 4, 7,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
+  	STASC_DEVICE(0xfd031000, evt2irq(0x1140), 12, 16,
+  		     1, 0, 1, 4, 5,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
+! 	STASC_DEVICE(0xfd032000, evt2irq(0x1120), 13, 17,
+! 		     4, 3, 2, 4, 5,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
+  	STASC_DEVICE(0xfd033000, evt2irq(0x1100), 14, 18,
+  		     5, 0, 1, 2, 3,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
+--- 403,417 ----
+  	STASC_DEVICE(0xfd030000, evt2irq(0x1160), 11, 15,
+  		     0, 0, 1, 4, 7,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
++ //console
+  	STASC_DEVICE(0xfd031000, evt2irq(0x1140), 12, 16,
+  		     1, 0, 1, 4, 5,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
+! //fp
+! 	STASC_DEVICE(0xfd032000, evt2irq(0x1120), /* 13 */ -1, /*17 */ -1,
+! 		     4, 3, 2, /*4 konfetti */ -1, 5,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
++ 
+  	STASC_DEVICE(0xfd033000, evt2irq(0x1100), 14, 18,
+  		     5, 0, 1, 2, 3,
+  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
+***************
+*** 468,474 ****
+  			break;
+  		}
+  
+! 		pdev->id = i;
+  		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
+  		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
+  	}
+--- 484,491 ----
+  			break;
+  		}
+  
+!                 pdev->id = i;
+!                 
+  		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
+  		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
+  	}
+***************
+*** 545,564 ****
+  	platform_device_register(&lirc_device);
+  }
+  
+! void __init stx7111_configure_nand(struct platform_device *pdev)
+  {
+! 	/* EMI Bank base address */
+! 	/*  - setup done in stm_nand_emi probe */
+  
+! 	/* NAND Controller base address */
+! 	pdev->resource[0].start	= 0xFE701000;
+! 	pdev->resource[0].end	= 0xFE701FFF;
+  
+! 	/* NAND Controller IRQ */
+! 	pdev->resource[1].start = evt2irq(0x14c0);
+! 	pdev->resource[1].end	= evt2irq(0x14c0);
+  
+! 	platform_device_register(pdev);
+  }
+  
+  
+--- 562,680 ----
+  	platform_device_register(&lirc_device);
+  }
+  
+! /* NAND Resources ---------------------------------------------------------- */
+! 
+! static void nand_cmd_ctrl(struct mtd_info *mtd, int cmd, unsigned int ctrl)
+  {
+! 	struct nand_chip *this = mtd->priv;
+! 
+! 	if (ctrl & NAND_CTRL_CHANGE) {
+! 
+! 		if (ctrl & NAND_CLE) {
+! 			this->IO_ADDR_W = (void *)((unsigned int)this->IO_ADDR_W |
+! 						   (unsigned int)(1 << 17));
+! 		}
+! 		else {
+! 			this->IO_ADDR_W = (void *)((unsigned int)this->IO_ADDR_W &
+! 						   ~(unsigned int)(1 << 17));
+! 		}
+! 
+! 		if (ctrl & NAND_ALE) {
+! 			this->IO_ADDR_W = (void *)((unsigned int)this->IO_ADDR_W |
+! 						   (unsigned int)(1 << 18));
+! 		}
+! 		else {
+! 			this->IO_ADDR_W = (void *)((unsigned int)this->IO_ADDR_W &
+! 						   ~(unsigned int)(1 << 18));
+! 		}
+! 	}
+! 
+! 	if (cmd != NAND_CMD_NONE) {
+! 		writeb(cmd, this->IO_ADDR_W);
+! 	}
+! }
+! 
+! static void nand_write_buf(struct mtd_info *mtd, const uint8_t *buf, int len)
+! {
+! 	int i;
+! 	struct nand_chip *chip = mtd->priv;
+! 
+! 	/* write buf up to 4-byte boundary */
+! 	while ((unsigned int)buf & 0x3) {
+! 		writeb(*buf++, chip->IO_ADDR_W);
+! 		len--;
+! 	}
+! 
+! 	writesl(chip->IO_ADDR_W, buf, len/4);
+! 
+! 	/* mop up trailing bytes */
+! 	for (i = (len & ~0x3); i < len; i++) {
+! 		writeb(buf[i], chip->IO_ADDR_W);
+! 	}
+! }
+! 
+! static void nand_read_buf(struct mtd_info *mtd, uint8_t *buf, int len)
+! {
+! 	int i;
+! 	struct nand_chip *chip = mtd->priv;
+! 
+! 	/* read buf up to 4-byte boundary */
+! 	while ((unsigned int)buf & 0x3) {
+! 		*buf++ = readb(chip->IO_ADDR_R);
+! 		len--;
+! 	}
+! 
+! 	readsl(chip->IO_ADDR_R, buf, len/4);
+! 
+! 	/* mop up trailing bytes */
+! 	for (i = (len & ~0x3); i < len; i++) {
+! 		buf[i] = readb(chip->IO_ADDR_R);
+! 	}
+! }
+! 
+! static const char *nand_part_probes[] = { "cmdlinepart", NULL };
+! 
+! static struct platform_device nand_flash[] = {
+! 	EMI_NAND_DEVICE(0),
+! 	EMI_NAND_DEVICE(1),
+! 	EMI_NAND_DEVICE(2),
+! 	EMI_NAND_DEVICE(3),
+! 	EMI_NAND_DEVICE(4),
+!  };
+! 
+! 
+! /*
+!  * stx7111_configure_nand - Configures NAND support for the STx7111
+!  *
+!  * Requires generic platform NAND driver (CONFIG_MTD_NAND_PLATFORM).
+!  * Uses 'gen_nand.x' as ID for specifying MTD partitions on the kernel
+!  * command line.
+!  */
+! void __init stx7111_configure_nand(struct plat_stmnand_data *data)
+! {
+! 	unsigned int bank_base, bank_end;
+! 	unsigned int emi_bank = data->emi_bank;
+! 
+! 	struct platform_nand_data *nand_private_data =
+! 		nand_flash[emi_bank].dev.platform_data;
+! 
+! 	bank_base = emi_bank_base(emi_bank) + data->emi_withinbankoffset;
+! 	if (emi_bank == 4)
+! 		bank_end = 0x07ffffff;
+! 	else
+! 		bank_end = emi_bank_base(emi_bank+1) - 1;
+! 
+! 	printk("Configuring EMI Bank%d for NAND device\n", emi_bank);
+! 	emi_config_nand(data->emi_bank, data->emi_timing_data);
+  
+! 	nand_flash[emi_bank].resource[0].start = bank_base;
+! 	nand_flash[emi_bank].resource[0].end = bank_end;
+  
+! 	nand_private_data->chip.chip_delay = data->chip_delay;
+! 	nand_private_data->chip.partitions = data->mtd_parts;
+! 	nand_private_data->chip.nr_partitions = data->nr_parts;
+  
+! 	platform_device_register(&nand_flash[emi_bank]);
+  }
+  
+  
+*** a/arch/sh/boards/st/mb618/setup.c	2011-01-05 22:00:04.000000000 +0100
+--- b/setup.c	2011-01-06 19:40:41.158981136 +0100
 ***************
 *** 21,26 ****
 --- 21,27 ----
@@ -177,7 +418,7 @@
   	.interface = PHY_INTERFACE_MODE_MII,
   	.phy_reset = &mb618_phy_reset,
 ***************
-*** 219,235 ****
+*** 219,263 ****
   	},
   };
   
@@ -195,7 +436,35 @@
   };
   
   static struct plat_stmnand_data mb618_nand_config = {
---- 243,290 ----
+! 	/* STM_NAND_EMI data */
+! 	.emi_withinbankoffset   = 0,
+! 	.rbn_port               = -1,
+! 	.rbn_pin                = -1,
+! 
+! 	.timing_data = &(struct nand_timing_data) {
+! 		.sig_setup      = 50,           /* times in ns */
+! 		.sig_hold       = 50,
+! 		.CE_deassert    = 0,
+! 		.WE_to_RBn      = 100,
+! 		.wr_on          = 10,
+! 		.wr_off         = 40,
+! 		.rd_on          = 10,
+! 		.rd_off         = 40,
+! 		.chip_delay     = 50,           /* in us */
+! 	},
+! 	.flex_rbn_connected     = 0,	/* mb618 rev A-D: board-mod required:
+! 					 * R283 -> pos 1-2 (RBn pull-up). Then
+! 					 * set flex_rbn_connected = 1  */
+! };
+! 
+! /* Platform data for STM_NAND_EMI/FLEX/AFM. */
+! static struct platform_device mb618_nand_device =
+! 	STM_NAND_DEVICE("stm-nand-emi", 0, &mb618_nand_config,
+! 			mb618_nand_parts, ARRAY_SIZE(mb618_nand_parts), 0);
+  
+  
+  static struct pci_config_data mb618_pci_config = {
+--- 243,315 ----
   	},
   };
   
@@ -244,20 +513,28 @@
   };
   
   static struct plat_stmnand_data mb618_nand_config = {
-***************
-*** 257,263 ****
-  /* Platform data for STM_NAND_EMI/FLEX/AFM. */
-  static struct platform_device mb618_nand_device =
-  	STM_NAND_DEVICE("stm-nand-emi", 0, &mb618_nand_config,
-! 			mb618_nand_parts, ARRAY_SIZE(mb618_nand_parts), 0);
-  
-  
-  static struct pci_config_data mb618_pci_config = {
---- 312,318 ----
-  /* Platform data for STM_NAND_EMI/FLEX/AFM. */
-  static struct platform_device mb618_nand_device =
-  	STM_NAND_DEVICE("stm-nand-emi", 0, &mb618_nand_config,
-! 			nand_partitions, ARRAY_SIZE(nand_partitions), 0);
+! 	.emi_bank		= 1,
+! 	.emi_withinbankoffset	= 0,
+! 
+! 	/* Timings for NAND512W3A */
+! 	.emi_timing_data = &(struct emi_timing_data) {
+! 		.rd_cycle_time	 = 40,		 /* times in ns */
+! 		.rd_oee_start	 = 0,
+! 		.rd_oee_end	 = 10,
+! 		.rd_latchpoint	 = 10,
+! 		.busreleasetime  = 0,
+! 
+! 		.wr_cycle_time	 = 40,
+! 		.wr_oee_start	 = 0,
+! 		.wr_oee_end	 = 10,
+! 
+! 		.wait_active_low = 0,
+! 	},
+! 
+! 	.chip_delay		= 40,		/* time in us */
+! 	.mtd_parts		= nand_partitions,
+! 	.nr_parts		= ARRAY_SIZE(nand_partitions),
+! };
   
   
   static struct pci_config_data mb618_pci_config = {
@@ -276,7 +553,7 @@
   };
   
   /* Configuration based on Futarque-RC signals train. */
---- 344,352 ----
+--- 341,349 ----
   }
   
   static struct platform_device *mb618_devices[] __initdata = {
@@ -287,7 +564,7 @@
   
   /* Configuration based on Futarque-RC signals train. */
 ***************
-*** 343,359 ****
+*** 343,369 ****
   
   static int __init device_init(void)
   {
@@ -305,7 +582,17 @@
   #endif
   
   #ifndef FLASH_NOR
---- 394,413 ----
+! 	stx7111_configure_nand(&mb618_nand_device);
+  	/* The MTD NAND code doesn't understand the concept of VPP,
+  	 * (or hardware write protect) so permanently enable it.
+  	 */
+! 	stpio_set_pin(vpp_pio, 1);
+  #endif
+  
+  	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
+  }
+  arch_initcall(device_init);
+--- 391,430 ----
   
   static int __init device_init(void)
   {
@@ -326,18 +613,7 @@
   #endif
   
   #ifndef FLASH_NOR
-***************
-*** 361,369 ****
-  	/* The MTD NAND code doesn't understand the concept of VPP,
-  	 * (or hardware write protect) so permanently enable it.
-  	 */
-! 	stpio_set_pin(vpp_pio, 1);
-  #endif
-  
-  	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
-  }
-  arch_initcall(device_init);
---- 415,433 ----
+! 	stx7111_configure_nand(&mb618_nand_config);
   	/* The MTD NAND code doesn't understand the concept of VPP,
   	 * (or hardware write protect) so permanently enable it.
   	 */
@@ -357,102 +633,28 @@
   	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
   }
   arch_initcall(device_init);
-*** a/arch/sh/kernel/cpu/sh4/setup-stx7111.c	2011-01-02 21:06:57.000000000 +0100
---- b/setup-stx7111.c	2011-01-03 01:04:51.322067881 +0100
+*** a/include/linux/stm/soc.h	2011-01-05 22:00:04.000000000 +0100
+--- b/soc.h	2011-01-06 18:46:53.838961281 +0100
 ***************
-*** 237,242 ****
---- 237,255 ----
-  		platform_device_register(&stssc_devices[i]);
-  	}
+*** 708,717 ****
+  void stx7111_configure_ssc(struct plat_ssc_data *data);
+  void stx7111_configure_usb(int inv_enable);
+  void stx7111_configure_ethernet(int en_mii, int sel, int ext_clk, int phy_bus);
+- void stx7111_configure_nand(struct platform_device *pdev);
+  void stx7111_configure_lirc(lirc_scd_t *scd);
+  void stx7111_configure_pci(struct pci_config_data *pci_config);
+  int  stx7111_pcibios_map_platform_irq(struct pci_config_data *pci_config, u8 pin);
   
-+         /* some additional sysconfig settings to enable i2c, cic and cec */
-+ 	ssc_sc = sysconf_claim(SYS_CFG, 5, 0, 0, "cic");
-+         sysconf_write(ssc_sc, 1);
-+ 
-+ 	ssc_sc = sysconf_claim(SYS_CFG, 5, 17, 17, "cic");
-+         sysconf_write(ssc_sc, 1);
-+ 
-+ 	ssc_sc = sysconf_claim(SYS_CFG, 5, 8, 8, "cec");
-+         sysconf_write(ssc_sc, 1);
-+ 
-+         ssc_sc = sysconf_claim(SYS_CFG, 7, 15, 15, "i2c");
-+         sysconf_write(ssc_sc, 1);
-+ 
-  	/* I2C buses number reservation (to prevent any hot-plug device
-  	 * from using it) */
-  #ifdef CONFIG_I2C_BOARDINFO
-***************
-*** 390,401 ****
-  	STASC_DEVICE(0xfd030000, evt2irq(0x1160), 11, 15,
-  		     0, 0, 1, 4, 7,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
-  	STASC_DEVICE(0xfd031000, evt2irq(0x1140), 12, 16,
-  		     1, 0, 1, 4, 5,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
-! 	STASC_DEVICE(0xfd032000, evt2irq(0x1120), 13, 17,
-! 		     4, 3, 2, 4, 5,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
-  	STASC_DEVICE(0xfd033000, evt2irq(0x1100), 14, 18,
-  		     5, 0, 1, 2, 3,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
---- 403,417 ----
-  	STASC_DEVICE(0xfd030000, evt2irq(0x1160), 11, 15,
-  		     0, 0, 1, 4, 7,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
-+ //console
-  	STASC_DEVICE(0xfd031000, evt2irq(0x1140), 12, 16,
-  		     1, 0, 1, 4, 5,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT), /* oe pin: 6 */
-! //fp
-! 	STASC_DEVICE(0xfd032000, evt2irq(0x1120), /* 13 */ -1, /*17 */ -1,
-! 		     4, 3, 2, /*4 konfetti */ -1, 5,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
-+ 
-  	STASC_DEVICE(0xfd033000, evt2irq(0x1100), 14, 18,
-  		     5, 0, 1, 2, 3,
-  		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
-***************
-*** 468,474 ****
-  			break;
-  		}
+  void stx7141_early_device_init(void);
+  void stx7141_configure_asc(const int *ascs, int num_ascs, int console);
+--- 708,717 ----
+  void stx7111_configure_ssc(struct plat_ssc_data *data);
+  void stx7111_configure_usb(int inv_enable);
+  void stx7111_configure_ethernet(int en_mii, int sel, int ext_clk, int phy_bus);
+  void stx7111_configure_lirc(lirc_scd_t *scd);
+  void stx7111_configure_pci(struct pci_config_data *pci_config);
+  int  stx7111_pcibios_map_platform_irq(struct pci_config_data *pci_config, u8 pin);
++ void stx7111_configure_nand(struct plat_stmnand_data *data);
   
-! 		pdev->id = i;
-  		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
-  		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
-  	}
---- 484,491 ----
-  			break;
-  		}
-  
-!                 pdev->id = i;
-!                 
-  		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
-  		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
-  	}
-*** a/drivers/mtd/chips/cfi_probe.c	2011-01-02 21:05:30.000000000 +0100
---- b/cfi_probe.c	2011-01-05 20:38:36.087467593 +0100
-***************
-*** 255,260 ****
---- 255,276 ----
-  	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
-  		cfi->cfiq->EraseRegionInfo[i] = le32_to_cpu(cfi->cfiq->EraseRegionInfo[i]);
-  
-+ 	/* kdhong */
-+ 	printk( "CFI MFR = %x DEV = %x\n", cfi->mfr, cfi->id );
-+ 
-+ 	if( cfi->mfr == 0x00c2 && cfi->id == 0x227e )
-+ 	{
-+ 		int devsize = (1 << cfi->cfiq->DevSize) * cfi->interleave;
-+ 
-+ 		printk( "devsize = %x\n", devsize );
-+ 
-+ 		if( devsize == 0x400000 )
-+ 		{
-+ 			cfi->cfiq->EraseRegionInfo[i] = 0x100003f;
-+ 		}
-+ 	}
-+ 	/* kdhong */
-+ 
-  #ifdef DEBUG_CFI
-  		printk("  Erase Region #%d: BlockSize 0x%4.4X bytes, %d blocks\n",
-  		       i, (cfi->cfiq->EraseRegionInfo[i] >> 8) & ~0xff,
+  void stx7141_early_device_init(void);
+  void stx7141_configure_asc(const int *ascs, int num_ascs, int console);
