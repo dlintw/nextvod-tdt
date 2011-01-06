@@ -6264,7 +6264,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
 +		int rd = fd >= 0 ? read(fd, tmp, 255) : 0;
 +		if (fd >= 0)
 +			close(fd);
-+		if (!strncmp(tmp, "ufs912\n", rd))
++		if (!strncmp(tmp, "ufs912\n", rd) || !strncmp(tmp, "atevio7500\n", rd))
 +			extensions.push_back("wmv");
 +#endif
  		sc->addServiceFactory(eServiceFactoryMP3::id, this, extensions);
