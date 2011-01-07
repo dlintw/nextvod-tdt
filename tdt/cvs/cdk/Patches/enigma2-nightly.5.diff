@@ -1479,10 +1479,10 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org.org/lib/dvb/demux.
  	m_running = 1;
  
  	while (i != m_pids.end()) {
-diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org.org/lib/dvb/dvb.cpp enigma2-nightly.org/lib/dvb/dvb.cpp
---- enigma2-nightly.org.org/lib/dvb/dvb.cpp	2010-12-27 12:57:14.430805040 +0100
-+++ enigma2-nightly.org/lib/dvb/dvb.cpp	2010-12-27 12:57:19.762808233 +0100
-@@ -98,6 +98,42 @@
+diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly.patched/lib/dvb/dvb.cpp
+--- enigma2-nightly.org/lib/dvb/dvb.cpp	2011-01-07 22:06:12.000000000 +0100
++++ enigma2-nightly.patched/lib/dvb/dvb.cpp	2011-01-07 22:08:21.000000000 +0100
+@@ -98,6 +98,44 @@
  		m_boxtype = DM500HD;
  	else if (!strncmp(tmp, "dm800se\n", rd))
  		m_boxtype = DM800SE;
@@ -1602,9 +1602,9 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org.org/lib/dvb/dvb.cp
  		if (m_pvr_fd_dst < 0)
  		{
  			eDebug("can't open /dev/misc/pvr - you need to buy the new(!) $$$ box! (%m)"); // or wait for the driver to be improved.
-diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org.org/lib/dvb/dvb.h enigma2-nightly.org/lib/dvb/dvb.h
---- enigma2-nightly.org.org/lib/dvb/dvb.h	2010-12-27 12:57:14.430805040 +0100
-+++ enigma2-nightly.org/lib/dvb/dvb.h	2010-12-27 12:57:19.762808233 +0100
+diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.h enigma2-nightly.patched/lib/dvb/dvb.h
+--- enigma2-nightly.org/lib/dvb/dvb.h	2011-01-07 22:06:12.000000000 +0100
++++ enigma2-nightly.patched/lib/dvb/dvb.h	2011-01-07 22:09:37.000000000 +0100
 @@ -135,7 +135,11 @@
  	DECLARE_REF(eDVBResourceManager);
  	int avail, busy;
