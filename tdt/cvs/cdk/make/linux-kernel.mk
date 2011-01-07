@@ -616,6 +616,8 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
 		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
 		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
+		$(if $(REMOTE_SPARK),REMOTE_SPARK=$(REMOTE_SPARK)) \
+		$(if $(REMOTE_RC08),REMOTE_RC08=$(REMOTE_RC08)) \
 		CROSS_COMPILE=$(target)-
 	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
@@ -643,6 +645,8 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
 		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
 		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
+		$(if $(REMOTE_SPARK),REMOTE_SPARK=$(REMOTE_SPARK)) \
+		$(if $(REMOTE_RC08),REMOTE_RC08=$(REMOTE_RC08)) \
 		install
 	$(DEPMOD) -ae -b $(targetprefix) -F $(buildprefix)/$(KERNEL_DIR)/System.map -r $(KERNELVERSION)
 	touch $@

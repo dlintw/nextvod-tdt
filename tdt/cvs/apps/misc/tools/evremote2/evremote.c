@@ -243,7 +243,7 @@ void *detectKeyUpTask(void* dummy)
     while(1)
     {
       int tux = 0;
-      
+
       keyCode = gKeyCode;
       nextKey = gNextKey;
 
@@ -264,7 +264,7 @@ void *detectKeyUpTask(void* dummy)
         gettimeofday(&time, NULL);
         unsigned int sleep = gBtnPeriod + gBtnDelay - diffMilli(profilerLast, time);
 
-        if (sleep > (gBtnPeriod + gBtnDelay)) 
+        if (sleep > (gBtnPeriod + gBtnDelay))
              sleep = (gBtnPeriod + gBtnDelay);
 
         printf("++++ %12u ms ++++\n", diffMilli(profilerLast, time));
@@ -306,6 +306,28 @@ int getKathreinUfs910BoxType() {
     close(vFdBox);
 
     return vType=='0'?0:vType=='1'||vType=='3'?1:-1;
+}
+
+int getSparkBoxType()
+{
+    const int   cSize           = 128;
+    char        vName[129]      = "Unknown";
+    int         vLen            = -1;
+    eBoxType    vBoxType        = Spark;
+
+	int vFd = open("/proc/stb/info/remote", O_RDONLY);
+    vLen = read (vFd, vName, cSize);
+    close(vFd);
+
+	if(!strncasecmp(vName,"rc08", 4))
+	{
+    	vBoxType = Spark_rc08;
+	}
+	else
+	{
+    	vBoxType = Spark;
+	}
+	return vBoxType;
 }
 
 int getModel()
@@ -360,7 +382,9 @@ int getModel()
         else if(!strncasecmp(vName,"ufs912", 5))
             vBoxType = Ufs912;
         else if(!strncasecmp(vName,"spark", 5))
-            vBoxType = Spark;
+        {
+			vBoxType = getSparkBoxType();
+        }
         else
             vBoxType = Unknown;
     }
@@ -414,7 +438,7 @@ int main (int argc, char* argv[])
     }
 
     const int cMaxButtonExtension = 128; // Up To 128 Extension Buttons
-    tButton vButtonExtension[cMaxButtonExtension]; 
+    tButton vButtonExtension[cMaxButtonExtension];
     int vButtonExtensionCounter = 0;
 
     if (argc >= 2) {

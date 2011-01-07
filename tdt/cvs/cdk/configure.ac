@@ -306,6 +306,22 @@ AC_ARG_ENABLE(spark,
 AM_CONDITIONAL(ENABLE_SPARK,test "$enable_spark" = "yes")
 AC_SUBST(SPARK)
 
+AC_ARG_ENABLE(remote_spark,
+    AS_HELP_STRING(--enable-remote-spark,    enable remote spark),
+    [case "${enableval}" in
+        yes) REMOTE_SPARK=remote_spark ;;
+    esac],[enable_remote_spark=no])
+AM_CONDITIONAL(ENABLE_REMOTE_SPARK,test "$enable_remote_spark" = "yes")
+AC_SUBST(REMOTE_SPARK)
+
+AC_ARG_ENABLE(remote_rc08,
+    AS_HELP_STRING(--enable-remote-rc08,    enable remote rc08),
+    [case "${enableval}" in
+        yes) REMOTE_RC08=remote_rc08 ;;
+    esac],[enable_remote_rc08=no])
+AM_CONDITIONAL(ENABLE_REMOTE_RC08,test "$enable_remote_rc08" = "yes")
+AC_SUBST(REMOTE_RC08)
+
 AC_ARG_ENABLE(ufs922,
 	AS_HELP_STRING(--enable-ufs922,    enable kathrein ufs922 stuff),
 	[case "${enableval}" in
@@ -1056,6 +1072,8 @@ osd910 support:              $enable_osd910
 DEBUG:                       $enable_debug
 Player131:                   $enable_player131
 Player179:                   $enable_player179
+remote spark:                $enable_remote_spark
+remote rc08:                 $enable_remote_rc08
 ])
 
 if test "$dircheck" = "fail"; then

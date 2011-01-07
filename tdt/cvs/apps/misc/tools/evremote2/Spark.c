@@ -44,7 +44,7 @@ static tButton cButtonsEdisionSpark[] = {
     {"STANDBY"        , "25", KEY_POWER},
     {"MUTE"           , "85", KEY_MUTE},
     {"V.FORMAT"       , "ad", KEY_V},
-    {"TV/SAT"            , "c5", KEY_AUX},
+    {"TV/SAT"         , "c5", KEY_AUX},
 
     {"0BUTTON"        , "57", KEY_0},
     {"1BUTTON"        , "b5", KEY_1},
@@ -91,6 +91,77 @@ static tButton cButtonsEdisionSpark[] = {
     {"TV/RADIO"       , "77", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCH BUTTON
     {"USB"            , "95", KEY_CLOSE},
     {"TIMER"          , "8d", KEY_TIME},
+    {""               , ""  , KEY_NULL},
+};
+
+/* spark RC8 */
+static tButton cButtonsSparRc08[] = {
+    {"POWER"          , "4D", KEY_POWER},
+    {"MUTE"           , "DD", KEY_MUTE},
+    {"TIME"           , "ED", KEY_TIME},
+    {"V.FORMAT"       , "AD", KEY_V},
+    {"F1"             , "0F", KEY_F1},
+    {"TV/SAT"         , "37", KEY_AUX},
+    {"USB"            , "0D", KEY_CLOSE},
+    {"FIND"           , "35", KEY_FIND},
+
+    {"0BUTTON"        , "27", KEY_0},
+    {"1BUTTON"        , "7D", KEY_1},
+    {"2BUTTON"        , "3F", KEY_2},
+    {"3BUTTON"        , "BD", KEY_3},
+    {"4BUTTON"        , "5D", KEY_4},
+    {"5BUTTON"        , "1F", KEY_5},
+    {"6BUTTON"        , "9D", KEY_6},
+    {"7BUTTON"        , "55", KEY_7},
+    {"8BUTTON"        , "17", KEY_8},
+    {"9BUTTON"        , "95", KEY_9},
+
+	{"TV/RADIO" 	  , "65", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCHB
+    {"RECALL"         , "A5", KEY_BACK},
+
+    {"MENU"           , "5F", KEY_MENU},
+    {"INFO"           , "1D", KEY_INFO},
+
+	{"UP"		      , "9F", KEY_UP},
+	{"DOWN"		      , "AF", KEY_DOWN},
+	{"LEFT" 	      , "3D", KEY_LEFT},
+	{"RIGHT"		  , "7F", KEY_RIGHT},
+	{"OK"		      , "BF", KEY_OK},
+    {"EXIT"           , "2D", KEY_HOME},
+    {"EPG"            , "25", KEY_EPG},
+
+    {"VOL-"           , "8D", KEY_VOLUMEDOWN},
+    {"VOL+"           , "B5", KEY_VOLUMEUP},
+    {"REC"            , "EF", KEY_RECORD},
+    {"PAGE-"          , "B7", KEY_CHANNELDOWN},
+    {"PAGE+"          , "77", KEY_CHANNELUP},
+
+	{"FOLDER"		  , "E5", KEY_ARCHIVE},
+
+	{"STOP" 		  , "A7", KEY_STOP},
+	{"PLAY" 		  , "75", KEY_PLAY},
+	{"PAUSE"		  , "F5", KEY_PAUSE},
+	{"FASTFORWARD"	  , "CD", KEY_FASTFORWARD},
+	{"REWIND"		  , "D5", KEY_REWIND},
+    {"PREV"           , "8F", KEY_PREVIOUS},
+    {"NEXT"           , "57", KEY_NEXT},
+
+    {"Tms"            , "4F", KEY_T},
+
+    {"FAST"           , "97", KEY_F},
+    {"SLOW"           , "15", KEY_SLOW},
+    {"PLAY_MODE"      , "6F", KEY_P},
+    {"WHITE"          , "67", KEY_W},
+
+    {"RED"            , "05", KEY_RED},
+    {"GREEN"          , "87", KEY_GREEN},
+    {"YELLOW"         , "C5", KEY_YELLOW},
+    {"BLUE"           , "47", KEY_BLUE},
+
+	{"FAV"			  , "F7", KEY_FAVORITES},
+    {"SAT"            , "2F", KEY_SAT},
+    {"TTX"            , "DF", KEY_TITLE},
+    {"AUDIO"          , "D7", KEY_SUBTITLE},
     {""               , ""  , KEY_NULL},
 };
 /* fixme: move this to a structure and
@@ -193,7 +264,22 @@ RemoteControl_t Spark_RC = {
 	&pNotification,
 	cButtonsEdisionSpark,
 	NULL,
-        NULL,
+	NULL,
     0,
     NULL,
 };
+
+RemoteControl_t Spark_RC08 = {
+	"Spark rc8 RemoteControl",
+	Spark_rc08,
+	&pInit,
+	&pShutdown,
+	&pRead,
+	&pNotification,
+	cButtonsSparRc08,
+	NULL,
+	NULL,
+    0,
+    NULL,
+};
+

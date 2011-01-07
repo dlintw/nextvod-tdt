@@ -14,7 +14,15 @@ $(DEPDIR)/boot-elf:
 	@[ "x$*" = "x" ] && touch $@ || true
 
 if ENABLE_SPARK
+if ENABLE_REMOTE_SPARK
 LIRCD_CONF := lircd_spark.conf
+else !ENABLE_REMOTE_SPARK
+if ENABLE_REMOTE_RC08
+LIRCD_CONF := lircd_rc08.conf
+else !ENABLE_REMOTE_RC08
+LIRCD_CONF := lircd_spark.conf
+endif
+endif
 else !ENABLE_SPARK
 if ENABLE_HL101
 LIRCD_CONF := lircd_hl101.conf

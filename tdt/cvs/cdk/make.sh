@@ -124,6 +124,20 @@ case "$REPLY" in
 			esac
 			CONFIGPARAM="$CONFIGPARAM $MODEL"
         	;;
+        18) REPLY=$3
+			echo -e "\nRemotes:"
+			echo " 1) spark(rcu-05:HOF-54M15)"
+			echo " 2) rc08(rcu-08:HOF-55C)"
+
+        	read -p "Select Remote (1-2)? "
+
+			case "$REPLY" in
+				1) REMOTE="--enable-remote-spark";;
+				2) REMOTE="--enable-remote-rc08";;
+				*) REMOTE="--enable-remote-spark";;
+			esac
+			CONFIGPARAM="$CONFIGPARAM $REMOTE"
+        	;;
         *)
 esac
 
