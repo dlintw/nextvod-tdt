@@ -1469,10 +1469,10 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/demux.cpp enigma2
  	m_running = 1;
  
  	while (i != m_pids.end()) {
-diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
---- enigma2-nightly.org/lib/dvb/dvb.cpp	2010-12-27 16:33:26.336622065 +0100
-+++ enigma2-nightly/lib/dvb/dvb.cpp	2010-12-27 16:33:28.271621698 +0100
-@@ -98,6 +98,40 @@
+diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly.patched/lib/dvb/dvb.cpp
+--- enigma2-nightly.org/lib/dvb/dvb.cpp	2011-01-07 21:23:59.000000000 +0100
++++ enigma2-nightly.patched/lib/dvb/dvb.cpp	2011-01-07 21:07:07.000000000 +0100
+@@ -98,6 +98,42 @@
  		m_boxtype = DM500HD;
  	else if (!strncmp(tmp, "dm800se\n", rd))
  		m_boxtype = DM800SE;
@@ -1509,18 +1509,20 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-n
 +		m_boxtype = CUBEREVO_MINI_FTA;
 +	else if (!strncmp(tmp, "octagon1008\n", rd))
 +		m_boxtype = OCTAGON1008;
++	else if (!strncmp(tmp, "atevio7500\n", rd))
++		m_boxtype = ATEVIO7500;
 +#endif
  	else {
  		eDebug("boxtype detection via /proc/stb/info not possible... use fallback via demux count!\n");
  		if (m_demux.size() == 3)
-@@ -549,7 +583,58 @@
+@@ -549,7 +585,58 @@
  			}
  		}
  	}
 +#if defined(__sh__) // we use our own algo for demux detection
 +	else if (m_boxtype == UFS910 || m_boxtype == UFS912 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX || m_boxtype == HL101 ||
 +		m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || m_boxtype == VIP1_V2 || m_boxtype == VIP2_V1 ||
-+		m_boxtype == CUBEREVO_MINI_FTA || m_boxtype == CUBEREVO_250HD || m_boxtype == CUBEREVO_2000HD || m_boxtype == CUBEREVO_9500HD || m_boxtype == OCTAGON1008)
++		m_boxtype == CUBEREVO_MINI_FTA || m_boxtype == CUBEREVO_250HD || m_boxtype == CUBEREVO_2000HD || m_boxtype == CUBEREVO_9500HD || m_boxtype == OCTAGON1008 || m_boxtype == ATEVIO7500)
 +	{
 +		for (; i != m_demux.end(); ++i, ++n)
 +		{
@@ -1572,7 +1574,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-n
  	if (unused)
  	{
  		demux = new eDVBAllocatedDemux(unused);
-@@ -1791,8 +1876,15 @@
+@@ -1791,8 +1878,15 @@
  #if HAVE_DVB_API_VERSION < 3
  		m_pvr_fd_dst = open("/dev/pvr", O_WRONLY);
  #else
@@ -1588,15 +1590,15 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-n
  		if (m_pvr_fd_dst < 0)
  		{
  			eDebug("can't open /dev/misc/pvr - you need to buy the new(!) $$$ box! (%m)"); // or wait for the driver to be improved.
-diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/dvb.h enigma2-nightly/lib/dvb/dvb.h
---- enigma2-nightly.org/lib/dvb/dvb.h	2010-12-27 16:33:26.336622065 +0100
-+++ enigma2-nightly/lib/dvb/dvb.h	2010-12-27 16:33:28.271621698 +0100
+diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.h enigma2-nightly.patched/lib/dvb/dvb.h
+--- enigma2-nightly.org/lib/dvb/dvb.h	2011-01-07 21:23:59.000000000 +0100
++++ enigma2-nightly.patched/lib/dvb/dvb.h	2011-01-07 21:04:50.000000000 +0100
 @@ -135,7 +135,11 @@
  	DECLARE_REF(eDVBResourceManager);
  	int avail, busy;
  
 +#if defined(__sh__)
-+	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1};
++	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, ATEVIO7500};
 +#else
  	enum { DM7025, DM800, DM500HD, DM800SE, DM8000 };
 +#endif
