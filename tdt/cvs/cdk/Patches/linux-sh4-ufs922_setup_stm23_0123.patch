@@ -38,8 +38,45 @@
   		STPIO_ALT_OUT, STPIO_IN, STPIO_IN, STPIO_ALT_OUT),
   };
   
-*** a/arch/sh/boards/st/mb448/setup.c	2011-01-03 11:11:57.000000000 +0100
---- b/setup.c	2011-01-03 16:22:02.707307615 +0100
+*** a/drivers/stm/pio.c	2011-01-03 11:13:42.000000000 +0100
+--- b/pio.c	2011-01-03 17:15:15.958555041 +0100
+***************
+*** 154,159 ****
+--- 154,168 ----
+  		stpio_configure_pin(pin, direction);
+  		pin->name = name;
+  	}
++ 	else
++ 	{
++ 		pin = &stpio_ports[portno].pins[pinno];
++ 
++ 		if( pin )
++ 		{
++ 			printk( "GPIO %d %d is occupied by %s\n", portno, pinno, pin->name );
++ 		}
++ 	}
+  
+  	spin_unlock(&stpio_lock);
+  
+***************
+*** 163,169 ****
+  
+  void stpio_free_pin(struct stpio_pin *pin)
+  {
+! 	stpio_configure_pin(pin, STPIO_IN);
+  	pin->name = NULL;
+  	pin->func = 0;
+  	pin->dev  = 0;
+--- 172,178 ----
+  
+  void stpio_free_pin(struct stpio_pin *pin)
+  {
+! //	stpio_configure_pin(pin, STPIO_IN);
+  	pin->name = NULL;
+  	pin->func = 0;
+  	pin->dev  = 0;
+*** a/arch/sh/boards/st/mb448/setup.c	2011-01-05 19:06:49.000000000 +0100
+--- b/setup.c	2011-01-07 22:40:50.928603786 +0100
 ***************
 *** 18,42 ****
   #include <linux/mtd/mtd.h>
@@ -341,7 +378,7 @@
   
 ! //	vpp_pio = stpio_request_pin(2,7, "VPP", STPIO_OUT);
   
-! 	/* Reset the USB POWER */
+! 	/* Reset the USB POWER 
 ! 	smc91x_reset = stpio_request_set_pin(5, 7, "smc91x_reset",
   					     STPIO_OUT, 0);
 ! //	udelay(1);
@@ -351,44 +388,7 @@
   
 + 	udelay( 10 );
 + 	stpio_free_pin( smc91x_reset );
-+ 
++ */
   	return platform_add_devices(mb448_devices,
   				    ARRAY_SIZE(mb448_devices));
   }
-*** a/drivers/stm/pio.c	2011-01-03 11:13:42.000000000 +0100
---- b/pio.c	2011-01-03 17:15:15.958555041 +0100
-***************
-*** 154,159 ****
---- 154,168 ----
-  		stpio_configure_pin(pin, direction);
-  		pin->name = name;
-  	}
-+ 	else
-+ 	{
-+ 		pin = &stpio_ports[portno].pins[pinno];
-+ 
-+ 		if( pin )
-+ 		{
-+ 			printk( "GPIO %d %d is occupied by %s\n", portno, pinno, pin->name );
-+ 		}
-+ 	}
-  
-  	spin_unlock(&stpio_lock);
-  
-***************
-*** 163,169 ****
-  
-  void stpio_free_pin(struct stpio_pin *pin)
-  {
-! 	stpio_configure_pin(pin, STPIO_IN);
-  	pin->name = NULL;
-  	pin->func = 0;
-  	pin->dev  = 0;
---- 172,178 ----
-  
-  void stpio_free_pin(struct stpio_pin *pin)
-  {
-! //	stpio_configure_pin(pin, STPIO_IN);
-  	pin->name = NULL;
-  	pin->func = 0;
-  	pin->dev  = 0;
