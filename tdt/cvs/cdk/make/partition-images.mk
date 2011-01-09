@@ -310,6 +310,24 @@ $(flashprefix)/mtdblock2.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
 		echo "chown root:root null" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
 		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 bpamem0 c 153 0" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 bpamem1 c 153 1" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 bpamem2 c 153 2" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 bpamem3 c 153 3" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 bpamem4 c 153 4" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 mme c 231 0" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB0 c 188 0" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB1 c 188 1" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB2 c 188 2" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB3 c 188 3" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB4 c 188 4" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB5 c 188 5" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB6 c 188 6" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB7 c 188 7" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB8 c 188 8" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 ttyUSB9 c 188 9" >> $$dir/.fakeroot && \
+		echo "mkdir net" >> $$dir/.fakeroot && \
+		echo "mknod -m 0666 net/tun c 10 200" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 vfd c 147 0" >> $$dir/.fakeroot && \
 		echo "MAKEDEV=\"$(flashprefix)/../cdkroot/sbin/MAKEDEV -p $(flashprefix)/../cdkroot/etc/passwd -g $(flashprefix)/../cdkroot/etc/group\"" >> $$dir/.fakeroot && \
