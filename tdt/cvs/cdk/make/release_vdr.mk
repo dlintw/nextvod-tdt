@@ -44,7 +44,7 @@ $(DEPDIR)/%release_vdr:
 	cp -dp $(targetprefix)/sbin/sfdisk $(prefix)/release_vdr/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release_vdr/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/etc/init.d/udhcpc $(prefix)/release_vdr/etc/init.d/ && \
-	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI) $(prefix)/release_vdr/sbin/MAKEDEV && \
+	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI) $(prefix)/release_vdr/sbin/MAKEDEV && \
 	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release_vdr/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_vdr/bin/ && \
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release_vdr/boot/video.elf && \
@@ -58,7 +58,6 @@ $(DEPDIR)/%release_vdr:
 	$(if $(CUBEREVO_2000HD),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdr/boot/video.elf &&) \
 	$(if $(CUBEREVO_9500HD),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdr/boot/video.elf &&) \
 	$(if $(FORTIS_HDBOX),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdr/boot/video.elf &&) \
-	$(if $(ATEVIO7500),cp $(targetprefix)/boot/video_7105.elf $(prefix)/release_vdr/boot/video.elf &&) \
 	cp $(targetprefix)/boot/audio.elf $(prefix)/release_vdr/boot/audio.elf && \
 	cp -a $(targetprefix)/dev/* $(prefix)/release_vdr/dev/ && \
 	cp -dp $(targetprefix)/etc/fstab $(prefix)/release_vdr/etc/ && \
@@ -87,7 +86,7 @@ $(DEPDIR)/%release_vdr:
 	cp -dp $(targetprefix)/etc/init.d/halt $(prefix)/release_vdr/etc/init.d/ && \
 	cp $(buildprefix)/root/release/reboot $(prefix)/release_vdr/etc/init.d/ && \
 	echo "576i50" > $(prefix)/release_vdr/etc/videomode && \
-	cp $(buildprefix)/root/release/rcS_vdr$(if $(TF7700),_$(TF7700))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_vdr/etc/init.d/rcS && \
+	cp $(buildprefix)/root/release/rcS_vdr$(if $(TF7700),_$(TF7700))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_vdr/etc/init.d/rcS && \
 	chmod 755 $(prefix)/release_vdr/etc/init.d/rcS && \
 	mkdir -p $(prefix)/release_vdr/var/vdr && \
 	mkdir -p $(prefix)/release_vdr/usr/local/bin && \
@@ -411,23 +410,12 @@ if ENABLE_FORTIS_HDBOX
 	rm -f $(prefix)/release_vdr/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release_vdr/bin/evremote
 else
-if ENABLE_ATEVIO7500
-
-	echo "fortis" > $(prefix)/release_vdr/etc/hostname 
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release_vdr/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release_vdr/lib/modules/
-
-	rm -f $(prefix)/release_vdr/lib/firmware/dvb-fe-cx24116.fw
-	rm -f $(prefix)/release_vdr/lib/firmware/dvb-fe-cx21143.fw
-	rm -f $(prefix)/release_vdr/bin/evremote
-else
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button/button.ko $(prefix)/release_vdr/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/led/led.ko $(prefix)/release_vdr/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd/vfd.ko $(prefix)/release_vdr/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_vdr/lib/modules/
 
 	rm -f $(prefix)/release_vdr/lib/firmware/dvb-fe-cx21143.fw
-endif
 endif
 endif
 endif
@@ -472,6 +460,7 @@ if ENABLE_PLAYER131
 			sh4-linux-strip --strip-unneeded $(prefix)/release_vdr/lib/modules/`basename $$mod`; \
 		else \
 			touch $(prefix)/release_vdr/lib/modules/`basename $$mod`; \
+			echo "`basename $$mod` not found" ; \
 		fi;\
 	done
 endif
@@ -614,8 +603,8 @@ if ENABLE_VDR1711
 	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.11 $(prefix)/release_vdr/usr/lib/vdr/
 	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.11 $(prefix)/release_vdr/usr/lib/vdr/
 else
-	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
-	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.0 $(prefix)/release_vdr/usr/lib/vdr/
+	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.14 $(prefix)/release_vdr/usr/lib/vdr/
+	cp -rd $(targetprefix)/usr/lib/vdr/lib*.1.7.14 $(prefix)/release_vdr/usr/lib/vdr/
 endif
 	rm -rf $(prefix)/release_vdr/usr/lib/alsa-lib
 	rm -rf $(prefix)/release_vdr/usr/lib/alsaplayer
@@ -656,10 +645,10 @@ endif
 	$(INSTALL_DIR) $(prefix)/release_vdr/usr/share/locale
 
 	mkdir -p $(prefix)/release_vdr/var/vdr
-	cp -rd $(targetprefix)/var/vdr/remote.conf $(prefix)/release_vdr/var/vdr/
-	cp -rd $(targetprefix)/var/vdr/sources.conf $(prefix)/release_vdr/var/vdr/
-	cp -rd $(targetprefix)/var/vdr/channels.conf $(prefix)/release_vdr/var/vdr/
-	cp -rd $(targetprefix)/var/vdr/keymacros.conf $(prefix)/release_vdr/var/vdr/
+#	cp -rd $(targetprefix)/var/vdr/remote.conf $(prefix)/release_vdr/var/vdr/
+#	cp -rd $(targetprefix)/var/vdr/sources.conf $(prefix)/release_vdr/var/vdr/
+#	cp -rd $(targetprefix)/var/vdr/channels.conf $(prefix)/release_vdr/var/vdr/
+	cp -rd $(targetprefix)/var/vdr $(prefix)/release_vdr/var/vdr/
 
 #######################################################################################
 #######################################################################################
