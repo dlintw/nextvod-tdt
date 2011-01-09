@@ -466,7 +466,7 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   	.emi_withinbankoffset	= 0,
   
   	/* Timings for NAND512W3A */
---- 240,293 ----
+--- 240,297 ----
   	},
   };
   
@@ -497,21 +497,25 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
 ! 	 },
 ! #else
 ! 	 {
-! 	 .name = "NAND KERNEL :   0x0000.0000-0x003F.FFFF (  4MB)",
+! 	 .name = "NAND KERNEL :           0x0000.0000-0x003F.FFFF (   4MB)",
 ! 	 .size = 0x400000,
 ! 	 .offset = 0,
 ! 	 }, {
-! 	 .name = "NAND FW :       0x0040.0000-0x00BF.FFFF ( 8MB)",
-! 	 .size = 0x800000,
+! 	 .name = "NAND ROOT :             0x0040.0000-0x0520.0000 (  78MB)",
+! 	 .size = 0x4E00000,
 ! 	 .offset = 0x400000,
 ! 	 }, {
-! 	 .name = "NAND ROOT :     0x00C0.0000-0x04BF.FFFF ( 64MB)",
-! 	 .size = 0x4000000,
-! 	 .offset = 0xC00000,
-! 	 }, {
-! 	 .name = "NAND DATA :     0x04C0.0000-0x07FF.FFFF ( 52MB)",
+! 	 .name = "NAND SWAP :             0x0530.0000-0x07FF.FFFF (  45MB)",
 ! 	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-! 	 .offset = 0x04C00000,
+! 	 .offset = 0x5200000,
+! 	 }, {	
+! 	 .name = "NAND FULL WO DATA :     0x0000.0000-0x0520.0000 (  82MB)",
+! 	 .size = 0x5200000,
+! 	 .offset = 0,
+! 	 }, {	
+! 	 .name = "NAND FULL :             0x0000.0000-0x07FF.FFFF ( 128MB)",
+! 	 .size = 0x08000000,
+! 	 .offset = 0,
 ! 	 },
 ! #endif
   };
@@ -704,3 +708,15 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
   		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
   	}
+--- linux-sh4/fs/cifs/cifspdu.h	2010-11-08 12:42:48.000000000 +0100
++++ linux-sh4/fs/cifs/cifspdu.h.patched	2010-11-08 12:43:06.000000000 +0100
+@@ -104,7 +104,7 @@
+ /*
+  * Starting value for maximum SMB size negotiation
+  */
+-#define CIFS_MAX_MSGSIZE (4*4096)
++#define CIFS_MAX_MSGSIZE (16*4096)
+ 
+ /*
+  * Size of encrypted user password in bytes
+
