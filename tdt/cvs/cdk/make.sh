@@ -100,7 +100,7 @@ case "$REPLY" in
 	14) TARGET="--enable-cuberevo_2000hd";;
 	15) TARGET="--enable-cuberevo_mini_fta";;
 	16) TARGET="--enable-homecast5101";;
-	17) TARGET="--enable-octagon1008";;
+	17) TARGET="--enable-octagon1008 --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
 	18) TARGET="--enable-spark";;
 	19) TARGET="--enable-atevio7500";;
 	 *) TARGET="--enable-ufs910";;
@@ -278,13 +278,13 @@ echo && \
 echo $CONFIGPARAM >lastChoice
 
 echo "-----------------------"
-if [ ! -e $KATIDIR/cvs/driver/include/player2/acc_defines.h ]; then
+if [ ! -e ../driver/include/player2/acc_defines.h ]; then
  echo "WARNING: Player2 Header files not found!"
  echo "         Player2 will not be build!"
  echo "         Please install the Player2 Header files and rerun this script"
- sed -i 's/^obj-y	+= player2\/$/#obj-y	+= player2\//g' $KATIDIR/cvs/driver/Makefile
+ sed -i 's/^obj-y	+= player2\/$/#obj-y	+= player2\//g' ../driver/Makefile
 else
- sed -i 's/^#obj-y	+= player2\//obj-y	+= player2\//g' $KATIDIR/cvs/driver/Makefile
+ sed -i 's/^#obj-y	+= player2\//obj-y	+= player2\//g' ../driver/Makefile
 fi
 
 echo "-----------------------"
