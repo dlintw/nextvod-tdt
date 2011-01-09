@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.16
-# Wed Jan  5 17:06:51 2011
+# Sun Jan  9 14:17:43 2011
 #
 CONFIG_SUPERH=y
 CONFIG_SUPERH32=y
@@ -786,7 +786,9 @@ CONFIG_I2C_HELPER_AUTO=y
 # CONFIG_I2C_OCORES is not set
 # CONFIG_I2C_SH_MOBILE is not set
 # CONFIG_I2C_SIMTEC is not set
-# CONFIG_I2C_STM is not set
+CONFIG_I2C_STM=y
+# CONFIG_I2C_STM_GLITCH_SUPPORT is not set
+# CONFIG_I2C_STM_HW_GLITCH is not set
 
 #
 # External I2C/SMBus adapter drivers

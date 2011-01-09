@@ -356,3 +356,19 @@
  	BUG_ON(gpio == STM_GPIO_INVALID);
  
  	sc = sysconf_claim(SYS_CFG, 2, 1, 1, "stm-usb");
+--- linux-sh4/drivers/stm/stx7100_comms.c.orig	2011-01-09 14:19:17.000000000 +0100
++++ linux-sh4/drivers/stm/stx7100_comms.c	2011-01-09 14:19:52.000000000 +0100
+@@ -240,12 +240,10 @@
+ 			STM_PAD_PIO_BIDIR_NAMED(3, 0, 1, "SCL"),
+ 			STM_PAD_PIO_BIDIR_NAMED(3, 1, 1, "SDA"),
+ 		},
+-		.sysconfs_num = 2,
++		.sysconfs_num = 1,
+ 		.sysconfs = (struct stm_pad_sysconf []) {
+ 			/* SSC1_MUX_SEL = 0 (default assignment) */
+ 			STM_PAD_SYS_CFG(7, 2, 2, 0),
+-			/* DVO_OUT_ON = 0 (SSC not DVO) */
+-			STM_PAD_SYS_CFG(7, 10, 10, 0),
+ 		},
+ 	},
+ 	[2] = {
