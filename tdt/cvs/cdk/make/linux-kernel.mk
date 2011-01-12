@@ -189,7 +189,7 @@ COMMONPATCHES_23 = \
 		$(if $(P0123),linux-sh4-strcpy_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-asm_mov_0xffffff_stm23$(PATCH_STR).patch) \
 		linux-sh4-cifs-unaligned-mem-access-kernel_stm23.patch \
-		linux-tune_stm23_p123.patch \
+		linux-tune_stm23.patch \
 		$(STM23_DVB_PATCH)
 
 UFS912PATCHES_23 = $(COMMONPATCHES_23) \
