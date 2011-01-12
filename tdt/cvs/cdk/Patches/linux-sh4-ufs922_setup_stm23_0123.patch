@@ -393,18 +393,6 @@
   				    ARRAY_SIZE(mb448_devices));
   }
 
---- linux-sh4/fs/cifs/cifspdu.h	2011-01-10 20:31:06.000000000 -0500
-+++ linux-sh4/fs/cifs/cifspdu.h	2011-01-10 20:31:33.000000000 -0500
-@@ -104,7 +104,7 @@
- /*
-  * Starting value for maximum SMB size negotiation
-  */
--#define CIFS_MAX_MSGSIZE (4*4096)
-+#define CIFS_MAX_MSGSIZE (16*4096)
- 
- /*
-  * Size of encrypted user password in bytes
-
 *** linux-sh4/drivers/net/stmmac/stmmac_main.c	2010-02-07 22:14:38.470923501 +0100
 --- linux-sh4/drivers/net/stmmac/stmmac_main.c	2010-01-31 11:02:03.000000000 +0100
 ***************
