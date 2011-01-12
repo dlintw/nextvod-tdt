@@ -560,3 +560,112 @@
  }
  arch_initcall(device_init);
 
+--- linux-sh4/drivers/net/stmmac/stmmac_main.c	2011-01-04 16:02:05.000000000 +0100
++++ linux-sh4/drivers/net/stmmac/stmmac_main.c.patched	2011-01-12 17:21:54.000000000 +0100
+@@ -389,6 +389,96 @@
+ 	return 0;
+ }
+ 
++#include <linux/ctype.h>
++
++static unsigned long simple_strtoul2(const char *cp,char **endp,unsigned int base)
++{
++	unsigned long result = 0,value;
++
++	if (*cp == '0') {
++		cp++;
++		if ((*cp == 'x') && isxdigit(cp[1])) {
++			base = 16;
++			cp++;
++		}
++		if (!base) {
++			base = 8;
++		}
++	}
++	if (!base) {
++		base = 10;
++	}
++	while (isxdigit(*cp) && (value = isdigit(*cp) ? *cp-'0' : (islower(*cp)
++	    ? toupper(*cp) : *cp)-'A'+10) < base) {
++		result = result*base + value;
++		cp++;
++	}
++	if (endp)
++		*endp = (char *)cp;
++	return result;
++}
++
++/**
++ * get_mac_addr
++ * @ioaddr: device I/O address
++ * @addr: mac address
++ * @high: High register offset
++ * @low: low register offset
++ * Description: the function gets the hardware MAC address
++ */
++
++char g_env_mac[]="00:50:FD:00:00:00";
++
++static void get_mac_address(unsigned long ioaddr, unsigned char *addr,
++			    unsigned int high, unsigned int low)
++{
++	unsigned int hi_addr, lo_addr;
++
++    int env_size,reg,env_present=0, tmp_count;
++    char *s = NULL, *e,  es[] = "00:00:00:00:00:00";
++    unsigned char s_env_mac[64], v_env_mac[6];
++
++	/* Read the MAC address from the hardware */
++	env_size = 17;
++	memcpy(s_env_mac, g_env_mac, 17);
++
++	if (env_size > 0) {
++			env_present = 1;
++			s = s_env_mac;
++		}
++
++	//by doliyu ...patch for mac address write error!
++	for(tmp_count =0 ; tmp_count < 17; tmp_count++)
++	{
++		if(s_env_mac[tmp_count] == ' ')
++			s_env_mac[tmp_count]='0';
++		printk("s_env_mac[%d] = %c\n", tmp_count, s_env_mac[tmp_count]);
++	}
++	
++	for (reg = 0; reg < 6; ++reg) { /* turn string into mac value */
++		v_env_mac[reg] = s ? simple_strtoul2 (s, &e, 16) : 0;
++		if (s)
++			s = (*e) ? e + 1 : e;
++	}
++
++    printk("get ether addr = %x, %x, %x, %x, %x, %x \n", v_env_mac[0],v_env_mac[1],v_env_mac[2],v_env_mac[3],v_env_mac[4],v_env_mac[5]);
++    hi_addr = (int)(v_env_mac[5]) <<8 | (int)(v_env_mac[4]);
++    lo_addr = (int)(v_env_mac[3]) << 24 | (int)(v_env_mac[2]) << 16 | (int)(v_env_mac[1]) <<8 | v_env_mac[0];
++
++//	hi_addr = readl(ioaddr + high);
++//	lo_addr = readl(ioaddr + low);
++
++	/* Extract the MAC address from the high and low words */
++	addr[0] = lo_addr & 0xff;
++	addr[1] = (lo_addr >> 8) & 0xff;
++	addr[2] = (lo_addr >> 16) & 0xff;
++	addr[3] = (lo_addr >> 24) & 0xff;
++	addr[4] = hi_addr & 0xff;
++	addr[5] = (hi_addr >> 8) & 0xff;
++
++	return;
++}
++
+ /**
+  * stmmac_mac_enable_rx
+  * @dev: net device structure
+@@ -2348,6 +2438,9 @@
+ 			tmrate = simple_strtoul(opt + 7, NULL, 0);
+ #endif
+ 		}
++		else if( !strncmp(opt,"ethaddr:", 8)) {
++			memcpy(g_env_mac, opt + 8, 17);
++		}
+ 	}
+ 	return 0;
+ }

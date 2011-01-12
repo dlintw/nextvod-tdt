@@ -709,15 +709,3 @@ diff -x Module.symvers -x .mailmap -rcN b//drivers/net/stmmac/stmmac_main.c a//d
   		((struct stasc_uart_data*)(pdev->dev.platform_data))->flags = flags;
   		stasc_configured_devices[stasc_configured_devices_count++] = pdev;
   	}
---- linux-sh4/fs/cifs/cifspdu.h	2010-11-08 12:42:48.000000000 +0100
-+++ linux-sh4/fs/cifs/cifspdu.h.patched	2010-11-08 12:43:06.000000000 +0100
-@@ -104,7 +104,7 @@
- /*
-  * Starting value for maximum SMB size negotiation
-  */
--#define CIFS_MAX_MSGSIZE (4*4096)
-+#define CIFS_MAX_MSGSIZE (16*4096)
- 
- /*
-  * Size of encrypted user password in bytes
-

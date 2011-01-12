@@ -207,7 +207,6 @@ SPARKPATCHES_23 = $(COMMONPATCHES_23) \
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
     $(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-    $(if $(P0119),linux-sh4-ufs922_stmmac_stm23$(PATCH_STR).patch) \
     $(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
     $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
     $(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
