@@ -198,7 +198,7 @@ UFS912PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0123),linux-sh4-ufs912_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch \
-		linux-ftdi_sio.c_stm23.patch 
+		linux-ftdi_sio.c_stm23.patch
 
 SPARKPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-spark_setup_stm23$(PATCH_STR).patch) \
@@ -234,7 +234,7 @@ OCTAGON1008PATCHES_23 = $(COMMONPATCHES_23) \
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		tf7700_setup_stm23$(PATCH_STR).patch 
+		tf7700_setup_stm23$(PATCH_STR).patch
 
 HL101PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
@@ -437,7 +437,7 @@ endif !STM22
 if STM23_HAVANA
 $(DEPDIR)/linux-kernel.do_prepare:
 	rm -rf $(KERNEL_DIR)
-	git clone git://git.stlinux.com/havana/com.st.havana.kernel.git $(KERNEL_DIR); 
+	git clone git://git.stlinux.com/havana/com.st.havana.kernel.git $(KERNEL_DIR);
 	$(INSTALL) -m644 Patches/mb618se_defconfig $(KERNEL_DIR)/.config
 	-rm $(KERNEL_DIR)/localversion*
 	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
@@ -584,7 +584,7 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	KERNEL VERSION: $(KERNELVERSION)\n" > $(prefix)/$*cdkroot/README.ST && \
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh INSTALL_MOD_PATH=$(prefix)/$*cdkroot modules_install && \
 	rm $(prefix)/$*cdkroot/lib/modules/$(KERNELVERSION)/build || true && \
-	rm $(prefix)/$*cdkroot/lib/modules/$(KERNELVERSION)/source || true 
+	rm $(prefix)/$*cdkroot/lib/modules/$(KERNELVERSION)/source || true
 #else
 #endif
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -618,8 +618,6 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
 		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
 		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
-		$(if $(REMOTE_SPARK),REMOTE_SPARK=$(REMOTE_SPARK)) \
-		$(if $(REMOTE_RC08),REMOTE_RC08=$(REMOTE_RC08)) \
 		CROSS_COMPILE=$(target)-
 	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
@@ -647,8 +645,6 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
 		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
 		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
-		$(if $(REMOTE_SPARK),REMOTE_SPARK=$(REMOTE_SPARK)) \
-		$(if $(REMOTE_RC08),REMOTE_RC08=$(REMOTE_RC08)) \
 		install
 	$(DEPMOD) -ae -b $(targetprefix) -F $(buildprefix)/$(KERNEL_DIR)/System.map -r $(KERNELVERSION)
 	touch $@

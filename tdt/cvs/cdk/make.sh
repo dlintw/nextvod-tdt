@@ -25,35 +25,35 @@ CONFIGPARAM=" \
 ##############################################
 
 echo "
-  _______                     _____              _     _         _          
- |__   __|                   |  __ \            | |   | |       | |         
-    | | ___  __ _ _ __ ___   | |  | |_   _  ____| | __| |_  __ _| | ___ ___ 
+  _______                     _____              _     _         _
+ |__   __|                   |  __ \            | |   | |       | |
+    | | ___  __ _ _ __ ___   | |  | |_   _  ____| | __| |_  __ _| | ___ ___
     | |/ _ \/ _\` | '_ \` _ \  | |  | | | | |/  __| |/ /| __|/ _\` | |/ _ | __|
     | |  __/ (_| | | | | | | | |__| | |_| |  (__|   < | |_| (_| | |  __|__ \\
     |_|\___|\__,_|_| |_| |_| |_____/ \__,_|\____|_|\_\ \__|\__,_|_|\___|___/
-                                                                                  
+
 "
 
 ##############################################
 
-# config.guess generates different answers for some packages 
-# Ensure that all packages use the same host by explicitly specifying it. 
+# config.guess generates different answers for some packages
+# Ensure that all packages use the same host by explicitly specifying it.
 
-# First obtain the triplet 
-AM_VER=`automake --version | awk '{print $NF}' | grep -oEm1 "^[0-9]+.[0-9]+"` 
-host_alias=`/usr/share/automake-${AM_VER}/config.guess` 
+# First obtain the triplet
+AM_VER=`automake --version | awk '{print $NF}' | grep -oEm1 "^[0-9]+.[0-9]+"`
+host_alias=`/usr/share/automake-${AM_VER}/config.guess`
 
-# Then undo Suse specific modifications, no harm to other distribution 
-case `echo ${host_alias} | cut -d '-' -f 1` in 
-  i?86) VENDOR=pc ;; 
-  *   ) VENDOR=unknown ;; 
-esac 
+# Then undo Suse specific modifications, no harm to other distribution
+case `echo ${host_alias} | cut -d '-' -f 1` in
+  i?86) VENDOR=pc ;;
+  *   ) VENDOR=unknown ;;
+esac
 host_alias=`echo ${host_alias} | sed -e "s/suse/${VENDOR}/"`
 
-# And add it to the config parameters. 
-CONFIGPARAM="${CONFIGPARAM} --host=${host_alias} --build=${host_alias}" 
+# And add it to the config parameters.
+CONFIGPARAM="${CONFIGPARAM} --host=${host_alias} --build=${host_alias}"
 
-############################################## 
+##############################################
 
 echo "Targets:"
 echo " 1) Kathrein UFS-910"
@@ -113,9 +113,9 @@ case "$REPLY" in
 			echo " 1) VIP1 v1 [ single tuner + 2 CI + 2 USB ]"
 			echo " 2) VIP1 v2 [ single tuner + 2 CI + 1 USB + plug & play tuner (dvb-s2/t/c) ]"
 			echo " 3) VIP2 v1 [ twin tuner ]"
-			
+
         	read -p "Select Model (1-3)? "
-        		
+
 			case "$REPLY" in
 				1) MODEL="--enable-hl101";;
 				2) MODEL="--enable-vip1_v2";;
@@ -123,20 +123,6 @@ case "$REPLY" in
 				*) MODEL="--enable-vip2_v1";;
 			esac
 			CONFIGPARAM="$CONFIGPARAM $MODEL"
-        	;;
-        18) REPLY=$3
-			echo -e "\nRemotes:"
-			echo " 1) spark(rcu-05:HOF-54M15)"
-			echo " 2) rc08(rcu-08:HOF-55C)"
-
-        	read -p "Select Remote (1-2)? "
-
-			case "$REPLY" in
-				1) REMOTE="--enable-remote-spark";;
-				2) REMOTE="--enable-remote-rc08";;
-				*) REMOTE="--enable-remote-spark";;
-			esac
-			CONFIGPARAM="$CONFIGPARAM $REMOTE"
         	;;
         *)
 esac
@@ -172,7 +158,7 @@ esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"
 
 ##############################################
-if [ "$3" ]; then 
+if [ "$3" ]; then
  REPLY="$3"
  echo "Activate debug (y/N)? "
  echo -e "\nSelected option: $REPLY\n"
@@ -201,7 +187,7 @@ case "$REPLY" in
        if [ -L player2 ]; then
           rm player2
        fi
-       
+
        if [ -L stmfb ]; then
           rm stmfb
        fi
@@ -228,7 +214,7 @@ case "$REPLY" in
        if [ -L player2 ]; then
           rm player2
        fi
-       
+
        if [ -L stmfb ]; then
           rm stmfb
        fi

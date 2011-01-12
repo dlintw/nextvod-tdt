@@ -306,22 +306,6 @@ AC_ARG_ENABLE(spark,
 AM_CONDITIONAL(ENABLE_SPARK,test "$enable_spark" = "yes")
 AC_SUBST(SPARK)
 
-AC_ARG_ENABLE(remote_spark,
-    AS_HELP_STRING(--enable-remote-spark,    enable remote spark),
-    [case "${enableval}" in
-        yes) REMOTE_SPARK=remote_spark ;;
-    esac],[enable_remote_spark=no])
-AM_CONDITIONAL(ENABLE_REMOTE_SPARK,test "$enable_remote_spark" = "yes")
-AC_SUBST(REMOTE_SPARK)
-
-AC_ARG_ENABLE(remote_rc08,
-    AS_HELP_STRING(--enable-remote-rc08,    enable remote rc08),
-    [case "${enableval}" in
-        yes) REMOTE_RC08=remote_rc08 ;;
-    esac],[enable_remote_rc08=no])
-AM_CONDITIONAL(ENABLE_REMOTE_RC08,test "$enable_remote_rc08" = "yes")
-AC_SUBST(REMOTE_RC08)
-
 AC_ARG_ENABLE(ufs922,
 	AS_HELP_STRING(--enable-ufs922,    enable kathrein ufs922 stuff),
 	[case "${enableval}" in
@@ -721,8 +705,8 @@ if test "$enable_stm22" = "yes"; then
 	if test "$enable_p0040" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0040}
 		KERNELSTMLABEL="_${VERSION_linuxp0040#*_}"
-	elif test "$enable_p0041" == "yes"; then 
-                KERNELVERSION=${VERSION_linuxp0041} 
+	elif test "$enable_p0041" == "yes"; then
+                KERNELVERSION=${VERSION_linuxp0041}
                 KERNELSTMLABEL="_${VERSION_linuxp0041#*_}"
 	else
 		KERNELVERSION=${VERSION_linux}
@@ -952,7 +936,7 @@ echo "%_stm_cross_target_dir $targetprefix" >>localmacros
 echo "%_stm_kernel_dir $kernelprefix" >>localmacros
 echo "%_stm_sources_dir $kernelprefix" >>localmacros
 echo "%_stm_host_arch ${host_arch}" >>localmacros
-echo "%_stm_host_cpu ${host_cpu}" >>localmacros 
+echo "%_stm_host_cpu ${host_cpu}" >>localmacros
 echo "%_stm_host_config ${host_alias:-${host}}" >>localmacros
 echo "%_dbpath $rpmdbprefix" >>localmacros
 echo "%__bzip2 $BZIP2" >>localmacros
@@ -1072,8 +1056,6 @@ osd910 support:              $enable_osd910
 DEBUG:                       $enable_debug
 Player131:                   $enable_player131
 Player179:                   $enable_player179
-remote spark:                $enable_remote_spark
-remote rc08:                 $enable_remote_rc08
 ])
 
 if test "$dircheck" = "fail"; then
