@@ -1,8 +1,8 @@
 # vdr
 VERSION_vdr	:= 0.0.2
 DIR_vdr	:= ../apps/vdr
-VDR = 1.7.16
-#VDR = 1.7.14
+#VDR = 1.7.16
+VDR = 1.7.14
 
 $(DEPDIR)/vdr.do_compile: bootstrap libstdc++-dev ncurses-dev jpeg libz libpng freetype stgfb-devnew expat fontconfig alsa-lib alsa-lib-dev alsa-utils libboost \
 		alsaplayer alsaplayer-dev
