@@ -642,7 +642,7 @@ diff -rcN linux-sh4/drivers/media/dvb/dvb-core/dvb_ca_en50221.c UFS922_stm23_Pat
 ! //Dagobert
 ! #include <linux/proc_fs.h>  	/* proc fs */
 ! 
-! static int dvb_ca_en50221_debug = 1;
+! static int dvb_ca_en50221_debug = 0;
   
   module_param_named(cam_debug, dvb_ca_en50221_debug, int, 0644);
   MODULE_PARM_DESC(cam_debug, "enable verbose debug messages");
