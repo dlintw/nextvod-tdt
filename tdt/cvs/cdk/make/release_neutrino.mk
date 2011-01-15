@@ -185,6 +185,7 @@ if ENABLE_UFS912
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release_neutrino/boot/audio.elf
 
 	mv $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw $(prefix)/release_neutrino/lib/firmware/component.fw
+	rm $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-stv6306.fw
@@ -513,6 +514,9 @@ if ENABLE_ATEVIO7500
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/boot/video_7105.elf $(prefix)/release_neutrino/boot/video.elf 
 	cp $(targetprefix)/boot/audio_7105.elf $(prefix)/release_neutrino/boot/audio.elf
+
+	mv $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw $(prefix)/release_neutrino/lib/firmware/component.fw
+	rm $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw

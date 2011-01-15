@@ -126,6 +126,7 @@ release_ufs912:
 	rm -f $(prefix)/release/bin/gotosleep
 
 	mv $(prefix)/release/lib/firmware/component_7111_mb618.fw $(prefix)/release/lib/firmware/component.fw
+	rm $(prefix)/release/lib/firmware/component_7105_pdk7105.fw
 
 release_spark:
 	echo "spark" > $(prefix)/release/etc/hostname 
@@ -218,6 +219,9 @@ release_atevio7500:
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7105.elf $(prefix)/release/boot/video.elf 
 	cp $(targetprefix)/boot/audio_7105.elf $(prefix)/release/boot/audio.elf
+
+	mv $(prefix)/release/lib/firmware/component_7105_pdk7105.fw $(prefix)/release/lib/firmware/component.fw
+	rm $(prefix)/release/lib/firmware/component_7111_mb618.fw
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
