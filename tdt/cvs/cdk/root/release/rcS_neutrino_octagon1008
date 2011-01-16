@@ -65,6 +65,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
+   if [ -e $MODDIR/bpamem.ko ]; then
+      insmod $MODDIR/bpamem.ko #for player179
+   fi
    showiframe -p /boot/bootlogo.mvi &
    (sleep 8; killall -9 showiframe)
    stfbcontrol a 0
