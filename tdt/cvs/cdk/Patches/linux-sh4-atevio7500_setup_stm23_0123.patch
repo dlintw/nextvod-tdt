@@ -1,5 +1,5 @@
 *** a/arch/sh/boards/st/pdk7105/setup.c	2011-01-05 22:26:18.000000000 +0100
---- b/setup.c	2011-01-15 20:00:19.057753423 +0100
+--- b/setup.c	2011-01-16 12:10:08.817801365 +0100
 ***************
 *** 23,28 ****
 --- 23,29 ----
@@ -88,6 +88,23 @@
   		ssc3_has(SSC_I2C_CAPABILITY),
   	.routing =
 ***************
+*** 85,91 ****
+  
+  static struct usb_init_data usb_init[2] __initdata = {
+  	{
+! 		.oc_en = 1,
+  		.oc_actlow = 1,
+  		.oc_pinsel = USB0_OC_PIO4_4,
+  		.pwr_en = 1,
+--- 115,121 ----
+  
+  static struct usb_init_data usb_init[2] __initdata = {
+  	{
+! 		.oc_en = 0,
+  		.oc_actlow = 1,
+  		.oc_pinsel = USB0_OC_PIO4_4,
+  		.pwr_en = 1,
+***************
 *** 324,333 ****
   
   static struct platform_device *pdk7105_devices[] __initdata = {
@@ -143,11 +160,8 @@
   
   	/*
 ***************
-*** 416,438 ****
-  	 *	alt	| 12[6]	J5B 1-2		14[7]	J10B 1-2
-  	 */
-  
-! 	stx7105_configure_usb(0, &usb_init[0]);
+*** 419,438 ****
+  	stx7105_configure_usb(0, &usb_init[0]);
   	stx7105_configure_usb(1, &usb_init[1]);
   
 ! 	phy_reset_pin = stpio_request_set_pin(15, 5, "eth_phy_reset",
@@ -167,11 +181,8 @@
   
   	return platform_add_devices(pdk7105_devices, ARRAY_SIZE(pdk7105_devices));
   }
---- 448,473 ----
-  	 *	alt	| 12[6]	J5B 1-2		14[7]	J10B 1-2
-  	 */
-  
-! /*	stx7105_configure_usb(0, &usb_init[0]);*/
+--- 451,473 ----
+  	stx7105_configure_usb(0, &usb_init[0]);
   	stx7105_configure_usb(1, &usb_init[1]);
   
 ! 	phy_reset_pin = stpio_request_set_pin(5, 5, "eth_phy_reset",
