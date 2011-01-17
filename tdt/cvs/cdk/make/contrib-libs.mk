@@ -138,6 +138,7 @@ $(DEPDIR)/lirc.do_compile: $(DEPDIR)/lirc.do_prepare
 	cd @DIR_lirc@ && \
 		$(BUILDENV) \
 		ac_cv_path_LIBUSB_CONFIG= \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -288,6 +289,7 @@ $(DEPDIR)/curl.do_prepare: @DEPENDS_curl@
 $(DEPDIR)/curl.do_compile: bootstrap libz $(DEPDIR)/curl.do_prepare
 	cd @DIR_curl@ && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -320,6 +322,7 @@ $(DEPDIR)/libfribidi.do_prepare: bootstrap @DEPENDS_libfribidi@
 $(DEPDIR)/libfribidi.do_compile: $(DEPDIR)/libfribidi.do_prepare
 	cd @DIR_libfribidi@ && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -407,6 +410,7 @@ $(DEPDIR)/libid3tag.do_prepare: bootstrap @DEPENDS_libid3tag@
 $(DEPDIR)/libid3tag.do_compile: libz $(DEPDIR)/libid3tag.do_prepare
 	cd @DIR_libid3tag@ && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -479,7 +483,8 @@ $(DEPDIR)/libxslt.do_prepare: @DEPENDS_libxslt@
 $(DEPDIR)/libxslt.do_compile: bootstrap libxml2 libxslt.do_prepare
 	cd @DIR_libxslt@ && \
 		$(BUILDENV) \
-		CPPFLAGS="$(CPPFLAGS) -I$(targetprefix)/usr/include/libxml2" \
+		CPPFLAGS="$(CPPFLAGS) -I$(targetprefix)/usr/include/libxml2 -Os" \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -557,6 +562,7 @@ $(DEPDIR)/glib2.do_compile: bootstrap $(DEPDIR)/glib2.do_prepare
 	echo "glib_cv_uscore=no" >> @DIR_glib2@/config.cache
 	cd @DIR_glib2@ && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--cache-file=config.cache \
 			--build=$(build) \
@@ -721,6 +727,7 @@ $(DEPDIR)/expat.do_prepare: @DEPENDS_expat@
 $(DEPDIR)/expat.do_compile: bootstrap expat.do_prepare
 	cd @DIR_expat@ && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -746,6 +753,7 @@ $(DEPDIR)/fontconfig.do_compile: bootstrap libz fontconfig.do_prepare
 		libtoolize -f -c && \
 		autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -1156,6 +1164,7 @@ $(DEPDIR)/libdvdcss.do_prepare: @DEPENDS_libdvdcss@
 $(DEPDIR)/libdvdcss.do_compile: bootstrap libdvdcss.do_prepare
 	cd @DIR_libdvdcss@ && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -1181,6 +1190,7 @@ $(DEPDIR)/libdvdnav.do_compile: bootstrap libdvdread libdvdnav.do_prepare
 		cp $(hostprefix)/share/libtool/config/ltmain.sh . && \
 		autoreconf -f -i -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -1210,6 +1220,7 @@ $(DEPDIR)/libdvdread.do_compile: bootstrap libdvdread.do_prepare
 		cp $(hostprefix)/share/libtool/config/ltmain.sh .. && \
 		autoreconf -f -i -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -1381,6 +1392,7 @@ $(DEPDIR)/libass.do_prepare: bootstrap freetype @DEPENDS_libass@
 $(DEPDIR)/libass.do_compile: $(DEPDIR)/libass.do_prepare
 	cd @DIR_libass@ && \
 	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os" \
 	./configure \
                 --host=$(target) \
                 --disable-fontconfig \
