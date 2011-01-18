@@ -1305,7 +1305,10 @@ $(DEPDIR)/ffmpeg.do_prepare: bootstrap libass @DEPENDS_ffmpeg@
 #		--prefix=/usr
 #	touch $@
 
-FFMPEGPARAMS_GLOB =	\
+$(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
+	cd @DIR_ffmpeg@ && \
+	$(BUILDENV) \
+	./configure \
 		--disable-static --enable-shared \
 		--enable-cross-compile \
 		--disable-decoder=vorbis \
@@ -1369,28 +1372,6 @@ FFMPEGPARAMS_GLOB =	\
 		--extra-cflags=-fno-strict-aliasing \
 		--enable-stripping \
 		--prefix=/usr
-		
-if ENABLE_ATEVIO7500
-FFMPEGPARAMS =	$(FFMPEGPARAMS_GLOB) \
-		--enable-muxer=ogg \
-		--enable-encoder=libvorbis \
-		--enable-decoder=vorbis
-else !ENABLE_ATEVIO7500
-if ENABLE_UFS912
-FFMPEGPARAMS =	$(FFMPEGPARAMS_GLOB) \
-		--enable-muxer=ogg \
-		--enable-encoder=libvorbis \
-		--enable-decoder=vorbis
-else !ENABLE_UFS912
-FFMPEGPARAMS =	$(FFMPEGPARAMS_GLOB)
-endif !ENABLE_UFS912
-endif !ENABLE_ATEVIO7500
-
-$(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
-	cd @DIR_ffmpeg@ && \
-	$(BUILDENV) \
-	./configure \
-		$(FFMPEGPARAMS)
 	touch $@
 
 $(DEPDIR)/min-ffmpeg $(DEPDIR)/std-ffmpeg $(DEPDIR)/max-ffmpeg \
