@@ -194,6 +194,8 @@ static char* Codec2Encoding(enum CodecID id, int* version)
         return "A_RMA";
     case CODEC_ID_VORBIS:
         return "A_VORBIS";
+    case CODEC_ID_FLAC: //86030
+        return "A_FLAC";
 /* subtitle */
     case CODEC_ID_SSA:
         return "S_TEXT/ASS"; /* Hellmaster1024: seems to be ASS instead of SSA */
@@ -1494,7 +1496,7 @@ static int Command(void  *_context, ContainerCmd_t command, void * argument)
     return ret;
 }
 
-static char *FFMPEG_Capabilities[] = {"avi", "mkv", "mp4", "ts", "mov", "flv", "flac", "mp3", "mpg", "m2ts", "vob", "wmv","wma", "asf", "mp2", "m4v", "m4a", "divx", "dat", "mpeg", "trp", "mts", "vdr",  NULL };
+static char *FFMPEG_Capabilities[] = {"avi", "mkv", "mp4", "ts", "mov", "flv", "flac", "mp3", "mpg", "m2ts", "vob", "wmv","wma", "asf", "mp2", "m4v", "m4a", "divx", "dat", "mpeg", "trp", "mts", "vdr", "ogg",  NULL };
 
 Container_t FFMPEGContainer = {
     "FFMPEG",
