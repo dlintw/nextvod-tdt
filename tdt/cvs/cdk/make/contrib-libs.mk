@@ -1311,7 +1311,6 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 	./configure \
 		--disable-static --enable-shared \
 		--enable-cross-compile \
-		--disable-decoder=vorbis \
 		--disable-ffserver \
 		--disable-ffplay \
 		--disable-altivec \
@@ -1335,6 +1334,8 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--disable-indevs \
 		--disable-outdevs \
 		--disable-muxers \
+		--enable-muxer=ogg \
+		--enable-muxer=flac \
 		--enable-muxer=aac \
 		--enable-muxer=mp3 \
 		--enable-muxer=h261 \
