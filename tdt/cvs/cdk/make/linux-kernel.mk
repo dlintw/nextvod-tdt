@@ -175,7 +175,7 @@ else !ENABLE_VIP1_V2
 if ENABLE_VIP2_V1
 STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
 else !ENABLE_VIP2_V1
-STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23$(PATCH_STR).patch
+STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
 endif !ENABLE_VIP2_V1
 endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
@@ -203,7 +203,10 @@ UFS912PATCHES_23 = $(COMMONPATCHES_23) \
 SPARKPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-spark_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-spark_sound_stm23$(PATCH_STR).patch) \
-		fortis_hdbox_dvb_core_stm23.patch
+		$(if $(P0123),linux-sh4-spark_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-spark_sound_stm23$(PATCH_STR).patch) \
+		fortis_hdbox_dvb_core_stm23.patch \
+		linux-ftdi_sio.c_stm23.patch
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
     $(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
