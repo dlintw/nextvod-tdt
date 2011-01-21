@@ -10,4 +10,4 @@
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
 echo -n "Rebooting... "
-reboot -n
+reboot -f

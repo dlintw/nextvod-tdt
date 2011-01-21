@@ -116,7 +116,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 		   showiframe -p /boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
-           echo "0" > /proc/progress;;
+           init 6;;
       esac
    done 
 fi

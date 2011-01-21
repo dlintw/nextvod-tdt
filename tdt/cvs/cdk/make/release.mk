@@ -88,7 +88,28 @@ release_cuberevo: release_common_utils release_cube_common
 	echo "cuberevo" > $(prefix)/release/etc/hostname
 
 release_ufs922:
-	echo "ufs922" > $(prefix)/release/etc/hostname 
+	echo "ufs922" > $(prefix)/release/etc/hostname
+	rm -f $(prefix)/release/sbin/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/halt_ufs $(prefix)/release_neutrino/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/umountfs
+	chmod 755 $(prefix)/release/etc/init.d/rc
+	chmod 755 $(prefix)/release/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release/etc/init.d/halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release/etc/rc.d
+	ln -fs halt $(prefix)/release/sbin/reboot
+	ln -fs halt $(prefix)/release/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot	
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ufs922_fan/fan_ctrl.ko $(prefix)/release/lib/modules/
@@ -101,7 +122,28 @@ release_ufs922:
 	rm -f $(prefix)/release/bin/gotosleep
 
 release_ufs912:
-	echo "ufs912" > $(prefix)/release/etc/hostname 
+	echo "ufs912" > $(prefix)/release/etc/hostname
+	rm -f $(prefix)/release/sbin/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/halt_ufs912 $(prefix)/release_neutrino/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/umountfs
+	chmod 755 $(prefix)/release/etc/init.d/rc
+	chmod 755 $(prefix)/release/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release/etc/init.d/halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release/etc/rc.d
+	ln -fs halt $(prefix)/release/sbin/reboot
+	ln -fs halt $(prefix)/release/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot	
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf 
@@ -263,6 +305,28 @@ release_octagon1008:
 	rm -f $(prefix)/release/bin/evremote
 
 release_ufs910:
+	echo "ufs910" > $(prefix)/release/etc/hostname
+	rm -f $(prefix)/release/sbin/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/halt_ufs $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/umountfs
+	chmod 755 $(prefix)/release/etc/init.d/rc
+	chmod 755 $(prefix)/release/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release/etc/init.d/halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release/etc/rc.d
+	ln -fs halt $(prefix)/release/sbin/reboot
+	ln -fs halt $(prefix)/release/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button/button.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/led/led.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd/vfd.ko $(prefix)/release/lib/modules/
