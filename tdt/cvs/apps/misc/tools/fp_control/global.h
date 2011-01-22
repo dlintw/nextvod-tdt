@@ -65,6 +65,7 @@ typedef struct Model_s {
 	int     (* SetLedBrightness) (Context_t* context, int brightness);
 	int     (* GetVersion)       (Context_t* context, int* version);
 	int     (* setWakeupReason)(Context_t* context);
+	int     (* writeWakeupFile)(Context_t* context);
 
         void* private;
 } Model_t;
