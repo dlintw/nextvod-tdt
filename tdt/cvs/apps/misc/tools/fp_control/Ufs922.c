@@ -281,11 +281,13 @@ static int setTimer(Context_t* context)
       }
 
       wakeupTime = curTimeFP + diff;
-			
+	
       datei = fopen(WAKEUPFILE,"w");
-      fprintf(datei,"%i",wakeupTime);
-      fclose(datei);
-      system("sync");
+      if (datei) {
+        fprintf(datei,"%i",wakeupTime);
+        fclose(datei);
+        system("sync");
+      }
 			
 			setMicomTime(wakeupTime, vData.u.standby.time);
       
