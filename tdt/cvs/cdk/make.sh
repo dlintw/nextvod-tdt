@@ -170,6 +170,13 @@ fi
 
 ##############################################
 
+cd ../driver/
+echo "# Automatically generated config: don't edit" > .config
+echo "#" >> .config
+echo "export CONFIG_ZD1211REV_B=y" >> .config
+echo "export CONFIG_ZD1211=n"		>> .config
+cd -
+
 echo -e "\nPlayer:"
 echo "   1) Player 131"
 echo "   2) Player 179"
@@ -200,6 +207,7 @@ case "$REPLY" in
           rm player2
        fi
        ln -s player2_131 player2
+       echo "export CONFIG_PLAYER_131=y" >> .config
        cd -
 
        cd ../driver/stgfb
@@ -227,6 +235,7 @@ case "$REPLY" in
           rm player2
        fi
        ln -s player2_179 player2
+       echo "export CONFIG_PLAYER_179=y" >> .config
        cd -
 
        cd ../driver/stgfb
