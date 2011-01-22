@@ -92,7 +92,7 @@ HL101PATCHES_41 = $(COMMONPATCHES_41) \
 
 VIP2PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ufs922_stasc_stm22.patch \
-		linux-vip2_setup_stm22.patch\
+		linux-vip2_setup_stm22.patch \
 		linux-linuxdvb_api5_stm22.patch \
 		linux-fat_stm22.patch \
 		linux-fuse_stm22.patch \

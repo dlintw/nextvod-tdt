@@ -200,7 +200,7 @@ else
 if ENABLE_UFS912
 
 	echo "ufs912" > $(prefix)/release_neutrino/etc/hostname
-    rm -f $(prefix)/release_neutrino/sbin/halt
+	rm -f $(prefix)/release_neutrino/sbin/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
@@ -645,7 +645,7 @@ if ENABLE_OCTAGON1008
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
 else
-    rm -f $(prefix)/release_neutrino/sbin/halt
+	rm -f $(prefix)/release_neutrino/sbin/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
