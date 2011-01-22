@@ -308,28 +308,6 @@ int getKathreinUfs910BoxType() {
     return vType=='0'?0:vType=='1'||vType=='3'?1:-1;
 }
 
-int getSparkBoxType()
-{
-    const int   cSize           = 128;
-    char        vName[129]      = "Unknown";
-    int         vLen            = -1;
-    eBoxType    vBoxType        = Spark;
-
-	int vFd = open("/proc/stb/info/remote", O_RDONLY);
-    vLen = read (vFd, vName, cSize);
-    close(vFd);
-
-	if(!strncasecmp(vName,"rc08", 4))
-	{
-    	vBoxType = Spark_rc08;
-	}
-	else
-	{
-    	vBoxType = Spark;
-	}
-	return vBoxType;
-}
-
 int getModel()
 {
     int         vFd             = -1;
@@ -383,7 +361,7 @@ int getModel()
             vBoxType = Ufs912;
         else if(!strncasecmp(vName,"spark", 5))
         {
-			vBoxType = getSparkBoxType();
+    		vBoxType = Spark;
         }
         else
             vBoxType = Unknown;

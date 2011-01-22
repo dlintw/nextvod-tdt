@@ -106,25 +106,24 @@ if [ ! -e /var/etc/.firstboot ]; then
       echo "starting neutrino->"
       /usr/local/bin/neutrino
       rtv=$?
-      echo "e2 ended <- RTV: " $rtv
+      echo "neutrino ended <- RTV: " $rtv
       case "$rtv" in
 		0) echo "0"
-		   echo "E2 ERROR"
-      		   reboot;;
+		   echo "ERROR"
+      	   init 6;;
 		1) echo "1"
 		   echo "SHUTDOWN"
-		   gotosleep ufs922
-                   umount -a;;
+		   init 0;;
 		2) echo "2"
 		   echo "REBOOT"
-		   reboot;;
+		   init 6;;
 		3) echo "3"
-		   echo "E2 RESTART"
+		   echo "RESTART"
 		   echo "0" > /proc/progress
 		   showiframe -p /boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
-                   reboot;;
+           init 6;;
       esac
    done 
 fi
@@ -132,4 +131,4 @@ fi
 #never reached
 echo "REBOOT HDBOX" > /dev/vfd
 echo "REBOOT HDBOX"
-reboot
+init 6

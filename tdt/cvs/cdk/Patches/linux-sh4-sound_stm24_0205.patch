@@ -42,6 +42,25 @@
   #endif
   
   /* Error messages */
+*** b/sound/core/sound.c        2010-02-15 09:28:06.000000000 +0100
+--- a/sound/core/sound.c        2010-02-16 09:13:06.000000000 +0100
+***************
+*** 312,317 ****
+--- 312,325 ----
+	return -1;
+  }
+
++ int snd_get_minor(int type, int card, int dev)
++ {
++       return find_snd_minor(type, snd_cards[card], dev);
++ }
++
++ EXPORT_SYMBOL(snd_get_minor);
++
++
+  /**
+   * snd_unregister_device - unregister the device on the given card
+   * @type: the device type, SNDRV_DEVICE_TYPE_XXX
 *** a/include/sound/core.h	2009-12-03 04:51:21.000000000 +0100
 --- b/include/sound/core.h	2010-05-01 15:20:56.905993232 +0200
 ***************
@@ -80,6 +99,15 @@
   #define snd_BUG()			do { } while (0)
   static inline int __snd_bug_on(int cond)
   {
+***************
+*** 458,462 ****
+--- 458,463 ----
+  const struct snd_pci_quirk *
+  snd_pci_quirk_lookup(struct pci_dev *pci, const struct snd_pci_quirk *list);
+
++ int snd_get_minor(int type, int card, int dev);
+
+  #endif /* __SOUND_CORE_H */
 diff -rcN linux-sh4-2.6.32.10_stm24_0201_orig/sound/core/oss/pcm_oss.c linux-sh4/sound/core/oss/pcm_oss.c
 *** linux-sh4-2.6.32.10_stm24_0201_orig/sound/core/oss/pcm_oss.c	Mon May  3 15:58:10 2010
 --- linux-sh4/sound/core/oss/pcm_oss.c	Tue May  4 01:00:33 2010

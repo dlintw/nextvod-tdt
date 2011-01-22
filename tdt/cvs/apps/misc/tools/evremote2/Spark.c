@@ -39,6 +39,11 @@
 #include "remotes.h"
 #include "Spark.h"
 
+
+#define	SPARK_RC05_PREDATA		"11EE"
+#define	SPARK_RC08_PREDATA		"44BB"
+#define	SPARK_RC09_PREDATA		"9966"
+
 /* Edision argus-spark RCU */
 static tButton cButtonsEdisionSpark[] = {
     {"STANDBY"        , "25", KEY_POWER},
@@ -169,6 +174,28 @@ static tButton cButtonsSparRc08[] = {
  */
 static struct sockaddr_un  vAddr;
 
+
+
+static tButton *pSparkGetButton(char *pData)
+
+{
+	tButton	*pButtons = cButtonsEdisionSpark;
+	if (!strncasecmp(pData, SPARK_RC05_PREDATA, sizeof(SPARK_RC05_PREDATA)))
+	{
+		pButtons = cButtonsEdisionSpark;
+	}
+	else if (!strncasecmp(pData, SPARK_RC08_PREDATA, sizeof(SPARK_RC08_PREDATA)))
+	{
+		pButtons = cButtonsSparRc08;
+	}
+	else if (!strncasecmp(pData, SPARK_RC09_PREDATA, sizeof(SPARK_RC09_PREDATA)))
+	{
+		pButtons = cButtonsEdisionSpark;
+	}
+	return pButtons;
+}
+
+
 static int pInit(Context_t* context, int argc, char* argv[]) {
 
     int vHandle;
@@ -205,6 +232,7 @@ static int pRead(Context_t* context ) {
     const int           cSize         = 128;
     int                 vCurrentCode  = -1;
 	int					rc;
+	tButton 			*cButtons = cButtonsEdisionSpark;
 
     //wait for new command
     rc = read (context->fd, vBuffer, cSize);
@@ -219,12 +247,19 @@ static int pRead(Context_t* context ) {
     if (atoi(vData)%3 != 0)
         return -1;
 
+    vData[0] = vBuffer[8];
+    vData[1] = vBuffer[9];
+    vData[2] = vBuffer[10];
+    vData[3] = vBuffer[11];
+    vData[4] = '\0';
+	cButtons = pSparkGetButton(vData);
+
     vData[0] = vBuffer[14];
     vData[1] = vBuffer[15];
     vData[2] = '\0';
 
     printf("[RCU] key: %s -> %s\n", vData, &vBuffer[20]);
-    vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
+    vCurrentCode = getInternalCode(cButtons, vData);
 
     return vCurrentCode;
 }
@@ -263,20 +298,6 @@ RemoteControl_t Spark_RC = {
 	&pRead,
 	&pNotification,
 	cButtonsEdisionSpark,
-	NULL,
-	NULL,
-    0,
-    NULL,
-};
-
-RemoteControl_t Spark_RC08 = {
-	"Spark rc8 RemoteControl",
-	Spark_rc08,
-	&pInit,
-	&pShutdown,
-	&pRead,
-	&pNotification,
-	cButtonsSparRc08,
 	NULL,
 	NULL,
     0,

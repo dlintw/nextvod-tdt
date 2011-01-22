@@ -58,6 +58,9 @@ extern Writer_t WriterAudioAC3;
 extern Writer_t WriterAudioAAC;
 extern Writer_t WriterAudioDTS;
 extern Writer_t WriterAudioWMA;
+extern Writer_t WriterAudioFLAC;
+extern Writer_t WriterAudioVORBIS;
+
 extern Writer_t WriterVideoMPEG2;
 extern Writer_t WriterVideoMPEGH264;
 extern Writer_t WriterVideoH264;
@@ -72,10 +75,14 @@ extern Writer_t WriterFramebuffer;
 
 static Writer_t * AvailableWriter[] = {
     &WriterAudioMP3,
+    &WriterAudioMPEGL3,
     &WriterAudioAC3,
     &WriterAudioAAC,
     &WriterAudioDTS,
     &WriterAudioWMA,
+    &WriterAudioFLAC,
+    &WriterAudioVORBIS,
+
     &WriterVideoMPEG2,
     &WriterVideoMPEGH264,
     &WriterVideoH264,
@@ -83,7 +90,6 @@ static Writer_t * AvailableWriter[] = {
     &WriterVideoFOURCC,
     &WriterVideoMSCOMP,
     &WriterVideoWMV,
-    &WriterAudioMPEGL3,
     &WriterVideoH263,
     &WriterVideoFLV,
     &WriterVideoVC1,

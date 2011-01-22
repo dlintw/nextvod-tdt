@@ -106,31 +106,30 @@ do
  killall -9 showiframe
  echo "starting neutrino ->"
  /usr/local/bin/neutrino
- rtv=$?
- echo "neutrino ended <- RTV: " $rtv
- case "$rtv" in
-     0) echo "0"
-        echo "Box is going to sleep"
-	umount -a
-	gotosleep hdbox
-	;;
-     1) echo "1"
-	echo "SHUTDOWN"
-        case "$var" in
-          0) fp_control -e
-    	     umount -a;;
-    	1|3) fp_control -e please check if this works for ufs910 14W
-             echo "0" > /proc/progress
-        esac
-        ;;           
-     2) echo "Box is rebooting"
-        umount -a
-        reboot -f
-        ;;
-     *) echo "*"
-        echo "Unexpected error"
-        reboot;;
-        
- esac
-done
+     rtv=$?
+      echo "neutrino ended <- RTV: " $rtv
+      case "$rtv" in
+		0) echo "0"
+		   echo "ERROR"
+      	   init 6;;
+		1) echo "1"
+		   echo "SHUTDOWN"
+		   init 0;;
+		2) echo "2"
+		   echo "REBOOT"
+		   init 6;;
+		3) echo "3"
+		   echo "RESTART"
+		   echo "0" > /proc/progress
+		   showiframe -p /boot/bootlogo.mvi &;;
+		*) echo "*"
+		   echo "ERROR"
+           init 6;;
+      esac
+   done 
 fi
+
+#never reached
+echo "REBOOT HDBOX" > /dev/vfd
+echo "REBOOT HDBOX"
+init 6

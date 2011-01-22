@@ -8,21 +8,13 @@ $(DEPDIR)/boot-elf:
 		else \
 			touch $(targetprefix)/boot/$$elf; \
 		fi; \
-	done 
+	done
 	$(INSTALL_DIR) $(targetprefix)/lib/firmware
 	cp $(buildprefix)/root/firmware/*.fw $(targetprefix)/lib/firmware/
 	@[ "x$*" = "x" ] && touch $@ || true
 
 if ENABLE_SPARK
-if ENABLE_REMOTE_SPARK
 LIRCD_CONF := lircd_spark.conf
-else !ENABLE_REMOTE_SPARK
-if ENABLE_REMOTE_RC08
-LIRCD_CONF := lircd_rc08.conf
-else !ENABLE_REMOTE_RC08
-LIRCD_CONF := lircd_spark.conf
-endif
-endif
 else !ENABLE_SPARK
 if ENABLE_HL101
 LIRCD_CONF := lircd_hl101.conf
@@ -303,19 +295,19 @@ ALSALIB_DEV := alsa-lib-dev
 if STM22
 ALSALIB_VERSION := 1.0.12-9
 ALSALIB_SPEC := stm-target-$(ALSALIB)-sh4processed.spec
-ALSALIB_SPEC_PATCH := stm-target-$(ALSALIB).spec22.diff 
+ALSALIB_SPEC_PATCH := stm-target-$(ALSALIB).spec22.diff
 ALSALIB_PATCHES :=
 else !STM22
 if STM23
 ALSALIB_VERSION := $(if $(STABLE),1.0.16-16,1.0.21a-22)
 ALSALIB_SPEC := stm-target-$(ALSALIB).spec
-ALSALIB_SPEC_PATCH := $(ALSALIB_SPEC)23.diff 
+ALSALIB_SPEC_PATCH := $(ALSALIB_SPEC)23.diff
 ALSALIB_PATCHES :=
 else !STM23
 # if STM24
 ALSALIB_VERSION := 1.0.21a-23
 ALSALIB_SPEC := stm-target-$(ALSALIB).spec
-ALSALIB_SPEC_PATCH := 
+ALSALIB_SPEC_PATCH :=
 ALSALIB_PATCHES :=
 # endif STM24
 endif !STM23

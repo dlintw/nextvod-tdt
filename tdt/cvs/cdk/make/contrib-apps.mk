@@ -55,6 +55,7 @@ $(DEPDIR)/grep.do_prepare: @DEPENDS_grep@
 $(DEPDIR)/grep.do_compile: bootstrap $(DEPDIR)/grep.do_prepare
 	cd @DIR_grep@  && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
@@ -230,6 +231,7 @@ if STM24
 $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare | $(UTIL_LINUX)
 	cd @DIR_e2fsprogs@ && \
 	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os" \
 	./configure \
 		--build=$(build) \
 		--host=$(target) \
