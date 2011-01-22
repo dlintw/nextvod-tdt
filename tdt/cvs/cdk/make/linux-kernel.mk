@@ -212,7 +212,8 @@ UFS922PATCHES_23 = $(COMMONPATCHES_23) \
     $(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
     $(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
     $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-    $(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
+    $(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
+    linux-ftdi_sio.c_stm23.patch    
 
 FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
