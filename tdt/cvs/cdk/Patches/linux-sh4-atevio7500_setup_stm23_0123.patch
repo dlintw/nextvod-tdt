@@ -1,5 +1,5 @@
 *** linux-sh4/arch/sh/boards/st/pdk7105/setup.c	2011-01-11 17:58:19.000000000 +0100
---- setup.c.patched	2011-01-22 13:02:29.000000000 +0100
+--- setup.c.patched	2011-01-22 13:29:02.000000000 +0100
 ***************
 *** 23,28 ****
 --- 23,29 ----
@@ -105,9 +105,11 @@
   		.oc_pinsel = USB0_OC_PIO4_4,
   		.pwr_en = 1,
 *************** static struct platform_device pdk7105_ph
-*** 201,217 ****
+*** 199,217 ****
+  	}
+  };
   
-  static struct mtd_partition mtd_parts_table[3] = {
+! static struct mtd_partition mtd_parts_table[3] = {
   	{
 ! 		.name = "Boot firmware",
 ! 		.size = 0x00040000,
@@ -123,9 +125,11 @@
   	}
   };
   
---- 231,259 ----
+--- 229,259 ----
+  	}
+  };
   
-  static struct mtd_partition mtd_parts_table[3] = {
+! static struct mtd_partition mtd_parts_table[6] = {
   	{
 ! 		.name = "U-BOOT ENV",
 ! 		.size = 0x00020000,
