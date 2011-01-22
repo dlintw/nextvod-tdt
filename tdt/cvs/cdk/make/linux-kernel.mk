@@ -175,7 +175,7 @@ else !ENABLE_VIP1_V2
 if ENABLE_VIP2_V1
 STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
 else !ENABLE_VIP2_V1
-STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
+STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23$(PATCH_STR).patch
 endif !ENABLE_VIP2_V1
 endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
