@@ -1,3 +1,21 @@
+*** linux-sh4/arch/sh/kernel/setup.c	2011-01-05 10:45:31.000000000 +0100
+--- setup.c.patched	2011-01-22 12:22:31.340928000 +0100
+***************
+*** 276,281 ****
+--- 276,289 ----
+  #endif
+  #endif
+  
++ 	char org_command_line[] = "console=ttyAS0,115200 root=/dev/mtdblock3";
++ 	char tdt_command_line[] = "console=ttyAS0,115200 root=/dev/mtdblock4 rw rootfstype=jffs2 init=/bin/devinit coprocessor_mem=4m@0x40000000,4m@0x40400000 printk=1";
++ 
++ 	if(strncmp(command_line, org_command_line, strlen(org_command_line)) == 0)
++ 		strlcpy(command_line, tdt_command_line, sizeof(tdt_command_line));
++ 
+  	/* Save unparsed command line copy for /proc/cmdline */
+  	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
+  	*cmdline_p = command_line;
+
 *** linux-sh4/arch/sh/boards/st/pdk7105/setup.c	2011-01-11 17:58:19.000000000 +0100
 --- setup.c.patched	2011-01-22 13:29:02.000000000 +0100
 ***************
