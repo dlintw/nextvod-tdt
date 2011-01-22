@@ -225,9 +225,11 @@ static int setTimer(Context_t* context)
 
        wakeupTime = 1999999999;
        datei = fopen(WAKEUPFILE,"w");
-       fprintf(datei,"%i",wakeupTime);
-       fclose(datei);
-       system("sync");
+       if (datei) {
+         fprintf(datei,"%i",wakeupTime);
+         fclose(datei);
+         system("sync");
+       }
 
        fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
 
