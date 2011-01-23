@@ -61,9 +61,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init drivers"
    insmod $MODDIR/cimax.ko
    insmod $MODDIR/pti.ko
-   insmod $MODDIR/stmsysfs.ko
-   insmod $MODDIR/stm_monitor.ko
    insmod $MODDIR/stmdvb.ko
+   insmod $MODDIR/stm_monitor.ko
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko

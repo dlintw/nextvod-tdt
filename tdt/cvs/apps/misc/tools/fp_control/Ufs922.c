@@ -300,6 +300,109 @@ static int setTimer(Context_t* context)
    return 0;
 }
 
+static int writeWakeupFile(Context_t* context)
+{
+   struct micom_ioctl_data vData;
+   FILE                   *datei;
+   time_t                  curTime;
+   time_t                  curTimeFP;
+   time_t                  wakeupTime;
+   struct tm               *ts;
+   struct tm               *tsw;
+   tUFS922Private* private = (tUFS922Private*) 
+        ((Model_t*)context->m)->private;
+
+   time(&curTime);
+   ts = localtime (&curTime);
+
+   fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
+	   
+   wakeupTime = read_e2_timers(curTime);
+
+   /* failed to read e2 timers so lets take a look if
+    * we are running on neutrino
+    */
+   if (wakeupTime == 3000000000ul)
+   {
+      wakeupTime = read_neutrino_timers(curTime);
+   }
+
+   tsw = localtime (&wakeupTime);
+   printf("wakeup Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+	   tsw->tm_hour, tsw->tm_min, tsw->tm_sec, tsw->tm_mday, tsw->tm_mon+1, tsw->tm_year+1900);
+   
+   wakeupTime -= private->wakeupDecrement;
+   
+   if ((wakeupTime == 0) || (curTime > wakeupTime) || (curTime < (wakeupTime-25920000)))
+   {
+       /* nothing to do for e2 */ 
+
+       wakeupTime = 1999999999;
+       datei = fopen(WAKEUPFILE,"w");
+       if (datei) {
+         fprintf(datei,"%i",wakeupTime);
+         fclose(datei);
+         system("sync");
+       }
+
+       fprintf(stderr, "no e2 timer found clearing fp wakeup time\n");
+             
+   } else
+   {
+      unsigned long diff;
+      char   	    fp_time[8];
+
+      fprintf(stderr, "waiting on current time from fp ...\n");
+		
+      /* front controller time */
+       if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
+       {
+	  perror("gettime: ");
+          return -1;
+       }
+
+      /* difference from now to wake up */
+      diff = (unsigned long int) wakeupTime - curTime;
+
+      /* if we get the fp time */
+      if (fp_time[0] != '\0')
+      {
+         fprintf(stderr, "success reading time from fp\n");
+			
+         /* current front controller time */
+         curTimeFP = (time_t) getMicomTime(fp_time);
+         
+         /* set FP-Time if curTime > or < 12h */  
+         if (((curTimeFP - curTime) > 43200) || ((curTime - curTimeFP) > 43200)) {
+         		setTime(context,&curTime);
+         		curTimeFP = curTime;
+         }
+         tsw = gmtime (&curTimeFP);
+         printf("fp_time (UTC): %02d:%02d:%02d %02d-%02d-%04d\n",
+	   				tsw->tm_hour, tsw->tm_min, tsw->tm_sec, tsw->tm_mday, tsw->tm_mon+1, tsw->tm_year+1900);
+      } else
+      {
+          fprintf(stderr, "error reading time ... assuming localtime\n");
+          curTimeFP = curTime;
+          /* noop current time already set */
+      }
+
+      wakeupTime = curTimeFP + diff;
+	
+      datei = fopen(WAKEUPFILE,"w");
+      if (datei) {
+        fprintf(datei,"%i",wakeupTime);
+        fclose(datei);
+        system("sync");
+      }
+			
+			//setMicomTime(wakeupTime, vData.u.standby.time);
+
+   }
+   return 0;
+}
+
 static int setTimerManual(Context_t* context, time_t* theGMTTime)
 {
    struct micom_ioctl_data vData;
@@ -746,5 +849,6 @@ Model_t UFS922_model = {
 	setLedBrightness,
 	getVersion,
 	setWakeupReason,
+	writeWakeupFile,
         NULL,
 };
