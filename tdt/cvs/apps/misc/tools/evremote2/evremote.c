@@ -110,18 +110,17 @@ static unsigned int gNextKeyFlag = 0xFF;
 static sem_t keydown_sem;
 static pthread_t keydown_thread;
 
-static unsigned char keydown_sem_helper = 1;
 static void sem_up(void) {
-  if(keydown_sem_helper == 0) {
+	int sem_val;
+	sem_getvalue(&keydown_sem, &sem_val);
+  if(sem_val <= 0) {
     printf("[SEM] UP\n");
     sem_post(&keydown_sem);
-    keydown_sem_helper = 1;
   }
 }
 
 static void sem_down(void) {
   printf("[SEM] DOWN\n");
-  keydown_sem_helper = 0;
   sem_wait(&keydown_sem);
 }
 
