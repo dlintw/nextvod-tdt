@@ -37,7 +37,8 @@ libtool;2.2.6a;libtool-2.2.6;libtool-2.2.6a.tar.gz:libtool-cross_compile.patch:l
 #
 # busybox;1.11.2;busybox-1.11.2;busybox-1.11.2.tar.bz2:busybox-initfiles.patch:busybox.diff;extract:busybox-1.11.2.tar.bz2;patch:busybox-initfiles.patch
 busybox;1.11.2;busybox-1.11.2;busybox-1.11.2.tar.bz2:busybox.diff;extract:busybox-1.11.2.tar.bz2
-lsb;3.2-12;lsb-3.2;lsb_3.2-12.tar.gz;extract:lsb_3.2-12.tar.gz
+#lsb;3.2-12;lsb-3.2;lsb_3.2-12.tar.gz;extract:lsb_3.2-12.tar.gz
+lsb;3.2-20;lsb-3.2;lsb_3.2-20.tar.gz;extract:lsb_3.2-20.tar.gz
 ipkg;0.99.163;ipkg-0.99.163;ipkg-0.99.163.tar.gz;extract:ipkg-0.99.163.tar.gz
 module_init_tools;3.3-pre1;module-init-tools-3.3-pre1;module-init-tools-3.3-pre1.tar.bz2;extract:module-init-tools-3.3-pre1.tar.bz2
 #sysvinit;2.86;sysvinit-2.86.ds1.orig;sysvinit-2.86.ds1.orig.tar.gz:sysvinit_2.86.ds1-38.diff.gz;extract:sysvinit-2.86.ds1.orig.tar.gz
