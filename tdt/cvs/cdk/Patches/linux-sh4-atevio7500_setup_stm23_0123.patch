@@ -151,7 +151,7 @@
   	{
 ! 		.name = "U-BOOT",
   		.size = 0x00040000,
-! 		.offset = 0x00040000,
+! 		.offset = 0x00000000,
   	}, {
   		.name = "Kernel",
 ! 		.size = 0x00300000,
