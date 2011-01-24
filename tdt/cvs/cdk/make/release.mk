@@ -182,7 +182,7 @@ release_spark:
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf 
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release/boot/audio.elf
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_spark.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
-	cp -f $(buildprefix)/root/release/vfd_spark_stm23_0119.ko $(prefix)/release/lib/modules/vfd.ko
+	cp -f $(buildprefix)/root/release/vfd_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/vfd.ko
 
 	cp -dp $(buildprefix)/root/etc/$(LIRCD_CONF) $(prefix)/release/etc/lircd.conf
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
