@@ -17,7 +17,7 @@
   	*cmdline_p = command_line;
 
 *** linux-sh4/arch/sh/boards/st/pdk7105/setup.c	2011-01-11 17:58:19.000000000 +0100
---- setup.c.patched	2011-01-22 13:29:02.000000000 +0100
+--- setup.c.patched	2011-01-24 17:45:52.000000000 +0100
 ***************
 *** 23,28 ****
 --- 23,29 ----
@@ -130,7 +130,7 @@
 ! static struct mtd_partition mtd_parts_table[3] = {
   	{
 ! 		.name = "Boot firmware",
-! 		.size = 0x00040000,
+  		.size = 0x00040000,
 ! 		.offset = 0x00000000,
   	}, {
   		.name = "Kernel",
@@ -143,15 +143,15 @@
   	}
   };
   
---- 229,259 ----
+--- 229,267 ----
   	}
   };
   
-! static struct mtd_partition mtd_parts_table[6] = {
+! static struct mtd_partition mtd_parts_table[8] = {
   	{
 ! 		.name = "U-BOOT",
-! 		.size = 0x00100000,
-! 		.offset = 0x00000000,
+  		.size = 0x00040000,
+! 		.offset = 0x00040000,
   	}, {
   		.name = "Kernel",
 ! 		.size = 0x00300000,
@@ -169,9 +169,17 @@
 ! 		.size = 0x0021E0000,
 ! 		.offset = 0x01E20000,
 ! 	}, { 
+! 		.name = "EXT1",
+! 		.size = 0x006E0000,
+! 		.offset = 0x00420000,
+! 	}, { 
 !  		.name = "Full", 
 !  		.size = MTDPART_SIZ_FULL, 
 ! 		.offset = 0x00100000, 
+! 	}, { 
+! 		.name = "U-BOOT ENV",
+! 		.size = 0x00020000,
+! 		.offset = 0x00040000,
   	}
   };
   
@@ -187,7 +195,7 @@
   };
   
   /* Configuration based on Futarque-RC signals train. */
---- 366,375 ----
+--- 374,383 ----
   
   static struct platform_device *pdk7105_devices[] __initdata = {
   	&pdk7105_physmap_flash,
@@ -200,7 +208,7 @@
   /* Configuration based on Futarque-RC signals train. */
 *************** static int __init device_init(void)
 *** 390,395 ****
---- 432,438 ----
+--- 440,446 ----
   		nand_device.id = 0;
   	}
   
@@ -219,7 +227,7 @@
   	stx7105_configure_ssc(&ssc_private_info);
   
   	/*
---- 443,452 ----
+--- 451,460 ----
   		printk(KERN_WARNING "pdk7105: Failed to claim PCI SERR PIO!\n");
   	}
   	stx7105_configure_pci(&pdk7105_pci_config);
@@ -252,7 +260,7 @@
   
   	return platform_add_devices(pdk7105_devices, ARRAY_SIZE(pdk7105_devices));
   }
---- 463,485 ----
+--- 471,493 ----
   	stx7105_configure_usb(0, &usb_init[0]);
   	stx7105_configure_usb(1, &usb_init[1]);
   
