@@ -173,13 +173,13 @@
 ! 		.size = 0x006E0000,
 ! 		.offset = 0x00420000,
 ! 	}, { 
-!  		.name = "Full", 
-!  		.size = MTDPART_SIZ_FULL, 
-! 		.offset = 0x00100000, 
-! 	}, { 
 ! 		.name = "U-BOOT ENV",
 ! 		.size = 0x00020000,
 ! 		.offset = 0x00040000,
+! 	}, { 
+!  		.name = "Full", 
+!  		.size = MTDPART_SIZ_FULL, 
+! 		.offset = 0x00100000, 
   	}
   };
   
