@@ -1779,9 +1779,11 @@ void CFrameBuffer::showFrame(const std::string & filename)
 
 void CFrameBuffer::blitRect(int x, int y, int width, int height, unsigned long color)
 {
+//printf ("[fb - blitRect]: x=%d, y=%d, width=%d, height=%d, x+width=%d, y+height=%d\n", x, y, width, height, x+width, y+height);
+if (width == 0 || height == 0) return;
+
 	STMFBIO_BLT_DATA  bltData;
 	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA));
-
 
 	bltData.operation  = BLT_OP_FILL;
 	bltData.dstOffset  = 0;
@@ -1792,8 +1794,8 @@ void CFrameBuffer::blitRect(int x, int y, int width, int height, unsigned long c
 	bltData.dst_right  = x + width;
 	bltData.dst_bottom = y + height;
 
-        bltData.dstFormat  = SURF_ARGB8888;
-        bltData.srcFormat  = SURF_ARGB8888;
+	bltData.dstFormat  = SURF_ARGB8888;
+	bltData.srcFormat  = SURF_ARGB8888;
 	bltData.dstMemBase = STMFBGP_FRAMEBUFFER;
 	bltData.srcMemBase = STMFBGP_FRAMEBUFFER;
 	bltData.colour     = color; 
