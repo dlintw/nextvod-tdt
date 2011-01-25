@@ -278,7 +278,7 @@ static void FFMPEGThread(Context_t *context) {
     off_t lastReverseSeek = 0;     /* max address to read before seek again in reverse play */
     off_t lastSeek = -1;
     long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1;
-    int           err = 0;
+    int           err = 0, gotlastPts = 0;
     AudioVideoOut_t avOut;
 
     ffmpeg_printf(10, "\n");
@@ -322,7 +322,10 @@ static void FFMPEGThread(Context_t *context) {
             /* save the maximum read position, if we reach this, we must
              * seek back again.
              */ 
-            lastReverseSeek = lastSeek;
+            if(lastReverseSeek == 0)
+                lastReverseSeek = currentReadPosition;
+            else
+                lastReverseSeek = lastSeek;
 
 #define use_sec_to_seek
 #if defined(use_sec_to_seek)
@@ -332,7 +335,7 @@ static void FFMPEGThread(Context_t *context) {
 #endif
             {
                 ffmpeg_err( "Error seeking\n");
-    
+                
                 if (err == cERR_CONTAINER_FFMPEG_END_OF_FILE)
                 {
                     break;
@@ -341,14 +344,19 @@ static void FFMPEGThread(Context_t *context) {
             else 
             {
                lastSeek = currentReadPosition = url_ftell(avContext->pb);
+               gotlastPts = 1;
 
+#ifndef use_sec_to_seek
                if (err != lastSeek)
-                   ffmpeg_err("upssssssssssssssss seek not doing what I want\n");              
+                   ffmpeg_err("upssssssssssssssss seek not doing what I want\n");
+#endif              
                
+/*
                if (currentVideoPts != -1)
                    lastPts = currentVideoPts;
                else
                    lastPts = currentAudioPts;
+*/
             } 
         } else
         if (!context->playback->BackWard)
@@ -356,6 +364,7 @@ static void FFMPEGThread(Context_t *context) {
            lastReverseSeek = 0;
            lastSeek = -1;
            lastPts = -1;
+           gotlastPts = 0;
         }       
 
         getMutex(FILENAME, __FUNCTION__,__LINE__);
@@ -394,6 +403,12 @@ static void FFMPEGThread(Context_t *context) {
 
                     if ((currentVideoPts > latestPts) && (currentVideoPts != INVALID_PTS_VALUE))
                         latestPts = currentVideoPts; 
+                        
+                    if (currentVideoPts != INVALID_PTS_VALUE && gotlastPts == 1)
+                    {
+                        lastPts = currentVideoPts;
+                        gotlastPts = 0;
+										}
 
                     ffmpeg_printf(200, "VideoTrack index = %d %lld\n",index, currentVideoPts);
 
@@ -419,7 +434,13 @@ static void FFMPEGThread(Context_t *context) {
                     currentAudioPts = audioTrack->pts = pts = calcPts(audioTrack->stream, &packet);
                     
                     if ((currentAudioPts > latestPts) && (!videoTrack))
-                        latestPts = currentAudioPts; 
+                        latestPts = currentAudioPts;
+	
+	                  if (currentAudioPts != INVALID_PTS_VALUE && gotlastPts == 1 && (!videoTrack))
+	                  {
+                        lastPts = currentAudioPts;
+                        gotlastPts = 0;
+										}
 
                     ffmpeg_printf(200, "AudioTrack index = %d\n",index);
 
@@ -1174,7 +1195,7 @@ static int container_ffmpeg_seek_rel(Context_t *context, off_t pos, long long in
     }
     else
     {
-        sec += ((float) current->pts / 90000.0f);
+        sec += ((float) pts / 90000.0f);
 
         ffmpeg_printf(10, "2. seeking to position %f sec ->time base %f %d\n", sec, av_q2d(((AVStream*) current->stream)->time_base), AV_TIME_BASE);
         

@@ -668,6 +668,7 @@ static int PlaybackFastBackward(Context_t  *context,int* speed) {
             context->playback->Speed = 0;    /* reverse end */
         } else
         {
+            context->playback->isSeeking = 1;
             context->playback->Speed = *speed;
             context->playback->BackWard = 2^(*speed);
          
@@ -680,6 +681,7 @@ static int PlaybackFastBackward(Context_t  *context,int* speed) {
             playback_err("OUTPUT_REVERSE failed\n");
             context->playback->BackWard = 0;
             context->playback->Speed = 1;
+            context->playback->isSeeking = 0;
             ret = cERR_PLAYBACK_ERROR;
         }
     } else
@@ -688,6 +690,7 @@ static int PlaybackFastBackward(Context_t  *context,int* speed) {
         ret = cERR_PLAYBACK_ERROR;
     }
 
+    context->playback->isSeeking = 0;
     playback_printf(10, "exiting with value %d\n", ret);
 
     return ret;
