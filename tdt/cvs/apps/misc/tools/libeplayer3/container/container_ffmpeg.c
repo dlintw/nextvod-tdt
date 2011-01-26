@@ -277,7 +277,7 @@ static void FFMPEGThread(Context_t *context) {
     off_t currentReadPosition = 0; /* last read position */
     off_t lastReverseSeek = 0;     /* max address to read before seek again in reverse play */
     off_t lastSeek = -1;
-    long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1;
+    long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1, videoframes = 0;
     int           err = 0, gotlastPts = 0;
     AudioVideoOut_t avOut;
 
@@ -306,8 +306,41 @@ static void FFMPEGThread(Context_t *context) {
             usleep(100000);
             continue;
         }
+        
+#define reverse_playback_3
+#ifdef reverse_playback_3
+if (context->playback->BackWard && videoframes >= 100)
+{
+      float sec;
 
-#ifndef old_reverse_playback
+      videoframes = 0;
+      context->output->Command(context, OUTPUT_CLEAR, NULL);
+
+      switch(context->playback->Speed)
+      {
+          case -1: sec = -8; break;
+          case -2: sec = -16; break;
+          case -4: sec = -32; break;
+          case -8: sec = -64; break;
+          case -16: sec = -128; break;
+          case -32: sec = -256; break;
+          case -64: sec = -512; break;
+          case -128: sec = -1024; break;
+      }
+
+      if((err = container_ffmpeg_seek_rel(context, lastSeek, lastPts, sec)) < 0)
+      {
+          ffmpeg_err( "Error seeking\n");
+
+          if (err == cERR_CONTAINER_FFMPEG_END_OF_FILE)
+          {
+              break;
+          }
+      }
+}
+#endif
+
+#ifdef reverse_playback_2
         /* should we seek back again ?
          * reverse play and currentReadPosition >= end of seek reverse play area ? */
         if ((context->playback->BackWard) && (currentReadPosition >= lastReverseSeek))
@@ -403,12 +436,14 @@ static void FFMPEGThread(Context_t *context) {
 
                     if ((currentVideoPts > latestPts) && (currentVideoPts != INVALID_PTS_VALUE))
                         latestPts = currentVideoPts; 
-                        
+
+#ifdef reverse_playback_2
                     if (currentVideoPts != INVALID_PTS_VALUE && gotlastPts == 1)
                     {
                         lastPts = currentVideoPts;
                         gotlastPts = 0;
 										}
+#endif
 
                     ffmpeg_printf(200, "VideoTrack index = %d %lld\n",index, currentVideoPts);
 
@@ -423,6 +458,10 @@ static void FFMPEGThread(Context_t *context) {
                     avOut.height     = videoTrack->height;
                     avOut.type       = "video";
 
+#ifdef reverse_playback_3
+                    videoframes++;
+#endif
+
                     if (context->output->video->Write(context, &avOut) < 0) {
                         ffmpeg_err("writing data to video device failed\n");
                     }                   
@@ -435,12 +474,14 @@ static void FFMPEGThread(Context_t *context) {
                     
                     if ((currentAudioPts > latestPts) && (!videoTrack))
                         latestPts = currentAudioPts;
-	
+
+#ifdef reverse_playback_2
 	                  if (currentAudioPts != INVALID_PTS_VALUE && gotlastPts == 1 && (!videoTrack))
 	                  {
                         lastPts = currentAudioPts;
                         gotlastPts = 0;
 										}
+#endif
 
                     ffmpeg_printf(200, "AudioTrack index = %d\n",index);
 
@@ -1196,6 +1237,12 @@ static int container_ffmpeg_seek_rel(Context_t *context, off_t pos, long long in
     else
     {
         sec += ((float) pts / 90000.0f);
+        
+        if (sec < 0)
+        {
+           ffmpeg_err("end of file reached\n");
+           return cERR_CONTAINER_FFMPEG_END_OF_FILE;
+        }
 
         ffmpeg_printf(10, "2. seeking to position %f sec ->time base %f %d\n", sec, av_q2d(((AVStream*) current->stream)->time_base), AV_TIME_BASE);
         

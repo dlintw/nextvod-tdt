@@ -572,7 +572,7 @@ static int PlaybackFastForward(Context_t  *context, int* speed) {
     return ret;
 }
 
-#ifdef old_reverse_playback
+#ifdef reverse_playback_1
 static pthread_t FBThread;
 /* konfetti: see below */
 static unsigned char isFBThreadStarted = 0;
