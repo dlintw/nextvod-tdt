@@ -44,6 +44,7 @@
 #include "misc.h"
 #include "debug.h"
 #include "aac.h"
+#include "pcm.h"
 #include "ffmpeg_metadata.h"
 #include "subtitle.h"
 
@@ -193,9 +194,9 @@ static char* Codec2Encoding(enum CodecID id, int* version)
     case CODEC_ID_RA_288:
         return "A_RMA";
     case CODEC_ID_VORBIS:
-        return "A_VORBIS";
+        return "A_IPCM"; //return "A_VORBIS";
     case CODEC_ID_FLAC: //86030
-        return "A_FLAC";
+        return "A_IPCM"; //return "A_FLAC";
 /* subtitle */
     case CODEC_ID_SSA:
         return "S_TEXT/ASS"; /* Hellmaster1024: seems to be ASS instead of SSA */
@@ -280,6 +281,12 @@ static void FFMPEGThread(Context_t *context) {
     long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1, videoframes = 0;
     int           err = 0, gotlastPts = 0;
     AudioVideoOut_t avOut;
+
+/***/
+unsigned char *samples = NULL;
+unsigned int offset = 0;
+/***/
+
 
     ffmpeg_printf(10, "\n");
 
@@ -485,7 +492,67 @@ if (context->playback->BackWard && videoframes >= 100)
 
                     ffmpeg_printf(200, "AudioTrack index = %d\n",index);
 
-                    if (audioTrack->have_aacheader == 1) 
+                    if (audioTrack->inject_as_pcm == 1) 
+                    {
+
+AVPacket avpkt;
+avpkt = packet;
+                            int      bytesDone = 0;
+                            unsigned int samples_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+
+
+                            if(samples == NULL)
+                                samples = (unsigned char *)malloc(samples_size);
+
+                            while(avpkt.size > 0)
+                            {
+Hexdump(avpkt.data, 30);
+                                int decoded_data_size = samples_size;
+
+printf("-> %d %d \n", decoded_data_size, avpkt.size);
+
+                                bytesDone = avcodec_decode_audio3(( (AVStream*) audioTrack->stream)->codec, 
+                                    (short *)(samples), &decoded_data_size, &avpkt);
+
+printf("<- %d %d\n", bytesDone, decoded_data_size);
+
+                                if(bytesDone < 0) // Error Happend
+                                    break;
+
+                avpkt.data += bytesDone;
+                avpkt.size -= bytesDone;
+
+                                if(decoded_data_size <= 0)
+                                    continue;
+
+
+
+                                pcmPrivateData_t extradata;
+                                extradata.uNoOfChannels = ((AVStream*) audioTrack->stream)->codec->channels;
+                                extradata.uSampleRate = ((AVStream*) audioTrack->stream)->codec->sample_rate;
+                                extradata.uBitsPerSample = 16;
+                                extradata.bLittleEndian = 1;
+
+                                avOut.data       = samples;
+                                avOut.len        = decoded_data_size;
+
+                                avOut.pts        = pts;
+                                avOut.extradata  = &extradata;
+                                avOut.extralen   = sizeof(extradata);
+                                avOut.frameRate  = 0;
+                                avOut.timeScale  = 0;
+                                avOut.width      = 0;
+                                avOut.height     = 0;
+                                avOut.type       = "audio";
+
+                                if (context->output->audio->Write(context, &avOut) < 0) 
+                                    ffmpeg_err("writing data to audio device failed\n");
+
+                                //break;
+                            }
+                            
+                    }
+                    else if (audioTrack->have_aacheader == 1) 
                     {
                         ffmpeg_printf(200,"write audio aac\n");
 
@@ -649,6 +716,9 @@ if (context->playback->BackWard && videoframes >= 100)
         releaseMutex(FILENAME, __FUNCTION__,__LINE__);
 
     } /* while */
+
+    if (samples != NULL)
+        free(samples);
 
     hasPlayThreadStarted = 0;
 
@@ -832,7 +902,23 @@ int container_ffmpeg_init(Context_t *context, char * filename)
                     track.duration = (double) stream->duration * av_q2d(stream->time_base) * 1000.0;
                 }
 
-                if(stream->codec->codec_id == CODEC_ID_AAC) {
+                if(!strncmp(encoding, "A_IPCM", 6))
+                {
+                    track.inject_as_pcm = 1;
+                    ffmpeg_printf(10, " Handle inject_as_pcm = %d\n", track.inject_as_pcm);
+
+                        AVCodec *codec = avcodec_find_decoder(stream->codec->codec_id);
+
+//( (AVStream*) audioTrack->stream)->codec->flags |= CODEC_FLAG_TRUNCATED;
+                        if(codec != NULL && !avcodec_open(stream->codec, codec))
+printf("AVCODEC__INIT__SUCCESS\n");
+else
+printf("AVCODEC__INIT__FAILED\n");
+
+
+                }
+                else if(stream->codec->codec_id == CODEC_ID_AAC) {
+                    ffmpeg_printf(10,"Create AAC ExtraData\n");
                     ffmpeg_printf(10,"aac sample_rate %d\n",stream->codec->sample_rate);
 
                     unsigned int  SampleIndex;
@@ -856,6 +942,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
                     || stream->codec->codec_id == CODEC_ID_WMAV2
                     || 86056 ) //CODEC_ID_WMAPRO) //if (stream->codec->extradata_size > 0)
                 {
+                    ffmpeg_printf(10,"Create WMA ExtraData\n");
                     track.aacbuflen = 104 + stream->codec->extradata_size;
                     track.aacbuf = malloc(track.aacbuflen);
                     memset (track.aacbuf, 0, track.aacbuflen);
