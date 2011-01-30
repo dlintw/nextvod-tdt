@@ -264,8 +264,8 @@
   
   void stx7141_early_device_init(void);
   void stx7141_configure_asc(const int *ascs, int num_ascs, int console);
---- a/arch/sh/boards/st/mb618/setup.c	2011-01-04 16:02:06.000000000 +0100
-+++ a/arch/sh/boards/st/mb618/setup.c.patched	2011-01-10 22:17:30.000000000 +0100
+--- a/arch/sh/boards/st/mb618/setup.c	2011-01-30 23:20:23.677707681 +0100
++++ a/arch/sh/boards/st/mb618/setup.c.patched	2011-01-30 23:23:27.957844786 +0100
 @@ -21,6 +21,7 @@
  #include <linux/mtd/mtd.h>
  #include <linux/mtd/physmap.h>
@@ -383,7 +383,7 @@
  	.phy_mask = 0,
  	.interface = PHY_INTERFACE_MODE_MII,
  	.phy_reset = &mb618_phy_reset,
-@@ -219,45 +243,77 @@
+@@ -219,45 +243,73 @@
  	},
  };
  
@@ -421,29 +421,25 @@
 +	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
 +	 .offset = 0x05000000,
 +	 },
-+#else
-+ 	 {
-+ 	 .name = "NAND KERNEL :           0x0000.0000-0x003F.FFFF (   4MB)",
-+ 	 .size = 0x400000,
-+ 	 .offset = 0,
-+ 	 }, {
-+ 	 .name = "NAND ROOT :             0x0040.0000-0x0520.0000 (  78MB)",
-+ 	 .size = 0x4E00000,
-+ 	 .offset = 0x400000,
-+ 	 }, {
-+ 	 .name = "NAND SWAP :             0x0530.0000-0x07FF.FFFF (  45MB)",
-+ 	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-+ 	 .offset = 0x5200000,
-+ 	 }, {	
-+ 	 .name = "NAND FULL WO DATA :     0x0000.0000-0x0520.0000 (  82MB)",
-+ 	 .size = 0x5200000,
-+ 	 .offset = 0,
-+ 	 }, {	
-+ 	 .name = "NAND FULL :             0x0000.0000-0x07FF.FFFF ( 128MB)",
-+ 	 .size = 0x08000000,
-+ 	 .offset = 0,
-+ 	 },
-+#endif
++#else 
++ 	 { 
++ 	 .name = "NAND KERNEL :           0x0000.0000-0x003F.FFFF (   4MB)", 
++ 	 .size = 0x400000, 
++ 	 .offset = 0, 
++ 	 }, { 
++ 	 .name = "NAND FW :       0x0040.0000-0x00BF.FFFF ( 8MB)", 
++ 	 .size = 0x800000, 
++ 	 .offset = 0x400000, 
++ 	 }, { 
++ 	 .name = "NAND ROOT :     0x00C0.0000-0x04BF.FFFF ( 64MB)", 
++ 	 .size = 0x4000000, 
++ 	 .offset = 0xC00000, 
++ 	 }, { 
++ 	 .name = "NAND DATA :     0x04C0.0000-0x07FF.FFFF ( 52MB)", 
++ 	 .size = MTDPART_SIZ_FULL,      /* will expand to the end of the flash */ 
++ 	 .offset = 0x04C00000, 
++ 	 }, 
++#endif 
  };
  
  static struct plat_stmnand_data mb618_nand_config = {
@@ -497,7 +493,7 @@
  
  
  static struct pci_config_data mb618_pci_config = {
-@@ -289,13 +345,9 @@
+@@ -289,13 +341,9 @@
  }
  
  static struct platform_device *mb618_devices[] __initdata = {
@@ -512,7 +508,7 @@
  };
  
  /* Configuration based on Futarque-RC signals train. */
-@@ -343,27 +395,40 @@
+@@ -343,27 +391,40 @@
  
  static int __init device_init(void)
  {
