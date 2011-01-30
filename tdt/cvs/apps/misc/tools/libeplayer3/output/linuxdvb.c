@@ -49,7 +49,7 @@
 
 #define LINUXDVB_DEBUG
 
-static short debug_level = 10;
+static short debug_level = 20;
 
 static const char FILENAME[] = __FILE__;
 
@@ -764,10 +764,52 @@ int LinuxDvbPts(Context_t  *context, unsigned long long int* pts) {
             ret = cERR_LINUXDVB_ERROR;
         }
     }
-    else
+    else {
         sCURRENT_PTS = 0;
+        ret = cERR_LINUXDVB_ERROR;
+    }
 
     *((unsigned long long int *)pts)=(unsigned long long int)sCURRENT_PTS;
+
+    releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+
+    return ret;
+}
+
+int LinuxDvbGetFrameCount(Context_t  *context, unsigned long long int* frameCount) {
+    int ret = cERR_LINUXDVB_NO_ERROR;
+    dvb_play_info_t playInfo;
+
+    linuxdvb_printf(50, "\n");
+
+    getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+
+    if (videofd != -1)
+    {
+        if (ioctl(videofd, VIDEO_GET_PLAY_INFO, (void*)&playInfo) == -1)
+        {
+            linuxdvb_err("ioctl failed with errno %d\n", errno);
+            linuxdvb_err("VIDEO_GET_PLAY_INFO: %s\n", strerror(errno));
+            ret = cERR_LINUXDVB_ERROR;
+        }
+        else linuxdvb_err("V: %ull\n", playInfo.frame_count);
+    }
+    else if (audiofd != -1)
+    {
+        if (ioctl(audiofd, AUDIO_GET_PLAY_INFO, (void*)&playInfo) == -1)
+        {
+            linuxdvb_err("ioctl failed with errno %d\n", errno);
+            linuxdvb_err("AUDIO_GET_PLAY_INFO: %s\n", strerror(errno));
+            ret = cERR_LINUXDVB_ERROR;
+        }
+        else linuxdvb_err("A: %ull\n", playInfo.frame_count);
+    }
+    else {
+        ret = cERR_LINUXDVB_ERROR;
+    }
+
+    if(ret == cERR_LINUXDVB_NO_ERROR)
+        *((unsigned long long int *)frameCount) = playInfo.frame_count;
 
     releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 
@@ -1130,6 +1172,12 @@ static int Command(void  *_context, OutputCmd_t command, void * argument) {
     }
     case OUTPUT_DISCONTINUITY_REVERSE: {
         return LinuxDvbReverseDiscontinuity(context, (int*)argument);
+        break;
+    }
+    case OUTPUT_GET_FRAME_COUNT: {
+        unsigned long long int frameCount = 0;
+        ret = LinuxDvbGetFrameCount(context, &frameCount);
+        *((unsigned long long int*)argument) = (unsigned long long int)frameCount;
         break;
     }
     default:

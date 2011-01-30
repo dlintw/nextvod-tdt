@@ -282,10 +282,8 @@ static void FFMPEGThread(Context_t *context) {
     int           err = 0, gotlastPts = 0;
     AudioVideoOut_t avOut;
 
-/***/
-unsigned char *samples = NULL;
-unsigned int offset = 0;
-/***/
+    /* Softdecoding buffer*/
+    unsigned char *samples = NULL;
 
 
     ffmpeg_printf(10, "\n");
@@ -494,63 +492,53 @@ if (context->playback->BackWard && videoframes >= 100)
 
                     if (audioTrack->inject_as_pcm == 1) 
                     {
+                        int      bytesDone = 0;
+                        unsigned int samples_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+                        AVPacket avpkt;
+                        avpkt = packet;
 
-AVPacket avpkt;
-avpkt = packet;
-                            int      bytesDone = 0;
-                            unsigned int samples_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+                        // This way the buffer is only allocated if we really need it
+                        if(samples == NULL)
+                            samples = (unsigned char *)malloc(samples_size);
 
+                        while(avpkt.size > 0)
+                        {
+                            int decoded_data_size = samples_size;
 
-                            if(samples == NULL)
-                                samples = (unsigned char *)malloc(samples_size);
-
-                            while(avpkt.size > 0)
-                            {
-Hexdump(avpkt.data, 30);
-                                int decoded_data_size = samples_size;
-
-printf("-> %d %d \n", decoded_data_size, avpkt.size);
-
-                                bytesDone = avcodec_decode_audio3(( (AVStream*) audioTrack->stream)->codec, 
-                                    (short *)(samples), &decoded_data_size, &avpkt);
-
-printf("<- %d %d\n", bytesDone, decoded_data_size);
-
-                                if(bytesDone < 0) // Error Happend
-                                    break;
-
-                avpkt.data += bytesDone;
-                avpkt.size -= bytesDone;
-
-                                if(decoded_data_size <= 0)
-                                    continue;
+                            bytesDone = avcodec_decode_audio3(( (AVStream*) audioTrack->stream)->codec, 
+                                (short *)(samples), &decoded_data_size, &avpkt);
 
 
+                            if(bytesDone < 0) // Error Happend
+                                break;
 
-                                pcmPrivateData_t extradata;
-                                extradata.uNoOfChannels = ((AVStream*) audioTrack->stream)->codec->channels;
-                                extradata.uSampleRate = ((AVStream*) audioTrack->stream)->codec->sample_rate;
-                                extradata.uBitsPerSample = 16;
-                                extradata.bLittleEndian = 1;
+                            avpkt.data += bytesDone;
+                            avpkt.size -= bytesDone;
 
-                                avOut.data       = samples;
-                                avOut.len        = decoded_data_size;
+                            if(decoded_data_size <= 0)
+                                continue;
 
-                                avOut.pts        = pts;
-                                avOut.extradata  = &extradata;
-                                avOut.extralen   = sizeof(extradata);
-                                avOut.frameRate  = 0;
-                                avOut.timeScale  = 0;
-                                avOut.width      = 0;
-                                avOut.height     = 0;
-                                avOut.type       = "audio";
+                            pcmPrivateData_t extradata;
+                            extradata.uNoOfChannels = ((AVStream*) audioTrack->stream)->codec->channels;
+                            extradata.uSampleRate = ((AVStream*) audioTrack->stream)->codec->sample_rate;
+                            extradata.uBitsPerSample = 16;
+                            extradata.bLittleEndian = 1;
 
-                                if (context->output->audio->Write(context, &avOut) < 0) 
-                                    ffmpeg_err("writing data to audio device failed\n");
+                            avOut.data       = samples;
+                            avOut.len        = decoded_data_size;
 
-                                //break;
-                            }
-                            
+                            avOut.pts        = pts;
+                            avOut.extradata  = &extradata;
+                            avOut.extralen   = sizeof(extradata);
+                            avOut.frameRate  = 0;
+                            avOut.timeScale  = 0;
+                            avOut.width      = 0;
+                            avOut.height     = 0;
+                            avOut.type       = "audio";
+
+                            if (context->output->audio->Write(context, &avOut) < 0) 
+                                ffmpeg_err("writing data to audio device failed\n");
+                        }
                     }
                     else if (audioTrack->have_aacheader == 1) 
                     {
@@ -717,8 +705,11 @@ printf("<- %d %d\n", bytesDone, decoded_data_size);
 
     } /* while */
 
-    if (samples != NULL)
+    // Freeing the allocated buffer for softdecoding
+    if (samples != NULL) {
         free(samples);
+        samples = NULL;
+    }
 
     hasPlayThreadStarted = 0;
 
