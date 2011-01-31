@@ -85,6 +85,8 @@ tArgs vArgs[] =
 "Args: No argumens\n\tGet version from fc" },
    { "-sw", "--setWakeup",
 "Args: No argumens\n\tset WakeUp reason" },
+   { "-ww", "--writeWakeup",
+"Args: No argumens\n\write WakeUp file" },
    { NULL, NULL, NULL }
 };
 
@@ -420,6 +422,13 @@ void processCommand (Context_t * context, int argc, char* argv[])
 	        /* set WakeUp reason */
                 if (((Model_t*)context->m)->setWakeupReason)
                     ((Model_t*)context->m)->setWakeupReason(context);            	
+	    
+	    } else
+            if ((strcmp(argv[i], "-ww") == 0) || (strcmp(argv[i], "--writeWakeup") == 0))
+            {
+	        /* only write WakeUp File */
+                if (((Model_t*)context->m)->writeWakeupFile)
+                    ((Model_t*)context->m)->writeWakeupFile(context);            	
 	    
 	    } else
 	    {

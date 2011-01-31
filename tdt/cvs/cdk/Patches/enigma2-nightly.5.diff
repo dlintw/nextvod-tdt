@@ -7287,9 +7287,9 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  		std::list<std::string> extensions;
  		extensions.push_back("mp2");
  		extensions.push_back("mp3");
-+#if not defined(__sh__)
++ 
  		extensions.push_back("ogg");
-+#endif
++ 
  		extensions.push_back("mpg");
  		extensions.push_back("vob");
  		extensions.push_back("wav");
@@ -7297,9 +7297,9 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  		extensions.push_back("avi");
  		extensions.push_back("divx");
  		extensions.push_back("dat");
-+#if not defined(__sh__)
++ 
  		extensions.push_back("flac");
-+#endif
++ 
  		extensions.push_back("mp4");
  		extensions.push_back("mov");
  		extensions.push_back("m4a");

@@ -74,7 +74,7 @@ static void SupervisorThread(Context_t *context) {
     long long int playPts = -1;
     long long int lastPts = -1;
     int dieNow = 0;
-    int count;
+    int count = 0;
     
     playback_printf(10, ">\n");
 
@@ -85,20 +85,40 @@ static void SupervisorThread(Context_t *context) {
 
         if (context->container->selectedContainer != NULL)
             context->container->selectedContainer->Command(context, CONTAINER_LAST_PTS, &lastPts);
-        
+
+#ifdef FRAMECOUNT_WORKS
+// This is a good place to implement buffer managment
+long long int frameCount = -1;
+int ret = context->playback->Command(context, PLAYBACK_GET_FRAME_COUNT, &frameCount);
+playback_printf(1, "Framecount = %ull\n", frameCount);
+status = 1;
+#endif
+
         if ((status == 0) && (status != lastStatus))
         {
              playback_printf(1, "container has ended, syncing to playback pts ...\n");
-             
+
+#define FLUSH_AFTER_CONTAINER_ENDED
+#ifdef FLUSH_AFTER_CONTAINER_ENDED
+             // These means that we have injected everything we got, so flush it.
+             // As this is a thread, the call should block the thread as long as frames are beeing played.
+             // The main thread should not be blocked by this.
+             // This also helps for files which dont have any pts at all
+             if (context->output->Command(context, OUTPUT_FLUSH, NULL) < 0)
+             {
+                 playback_err("failed to flush output.\n");
+             }
+#endif
+
              while (!dieNow)
              {
                  if (context && context->playback && context->playback->isPlaying)
                  {
-                     context->playback->Command(context, PLAYBACK_PTS, &playPts);
+                     int ret = context->playback->Command(context, PLAYBACK_PTS, &playPts);
 
-                     playback_err("playbackPts %lld ->lastPts %lld\n", playPts, lastPts);
+                     playback_err("playbackPts %lld ->lastPts %lld ret %d\n", playPts, lastPts, ret);
                      
-                     if (playPts + (2 * 90000) >= lastPts)
+                     if (ret != cERR_PLAYBACK_NO_ERROR || playPts + (2 * 90000) >= lastPts)
                          dieNow = 1;
                      
                  } else
@@ -572,7 +592,7 @@ static int PlaybackFastForward(Context_t  *context, int* speed) {
     return ret;
 }
 
-#ifdef old_reverse_playback
+#ifdef reverse_playback_1
 static pthread_t FBThread;
 /* konfetti: see below */
 static unsigned char isFBThreadStarted = 0;
@@ -668,6 +688,7 @@ static int PlaybackFastBackward(Context_t  *context,int* speed) {
             context->playback->Speed = 0;    /* reverse end */
         } else
         {
+            context->playback->isSeeking = 1;
             context->playback->Speed = *speed;
             context->playback->BackWard = 2^(*speed);
          
@@ -680,6 +701,7 @@ static int PlaybackFastBackward(Context_t  *context,int* speed) {
             playback_err("OUTPUT_REVERSE failed\n");
             context->playback->BackWard = 0;
             context->playback->Speed = 1;
+            context->playback->isSeeking = 0;
             ret = cERR_PLAYBACK_ERROR;
         }
     } else
@@ -688,6 +710,7 @@ static int PlaybackFastBackward(Context_t  *context,int* speed) {
         ret = cERR_PLAYBACK_ERROR;
     }
 
+    context->playback->isSeeking = 0;
     playback_printf(10, "exiting with value %d\n", ret);
 
     return ret;
@@ -764,7 +787,27 @@ static int PlaybackPts(Context_t  *context, unsigned long long int* pts) {
     *pts = 0;
 
     if (context->playback->isPlaying) {
-        context->output->Command(context, OUTPUT_PTS, pts);
+        ret = context->output->Command(context, OUTPUT_PTS, pts);
+    } else
+    {
+        playback_err("not possible\n");
+        ret = cERR_PLAYBACK_ERROR;
+    }
+
+    playback_printf(20, "exiting with value %d\n", ret);
+
+    return ret;
+}
+
+static int PlaybackGetFrameCount(Context_t  *context, unsigned long long int* frameCount) {
+    int ret = cERR_PLAYBACK_NO_ERROR;
+
+    playback_printf(20, "\n");
+
+    *frameCount = 0;
+
+    if (context->playback->isPlaying) {
+        ret = context->output->Command(context, OUTPUT_GET_FRAME_COUNT, frameCount);
     } else
     {
         playback_err("not possible\n");
@@ -974,6 +1017,10 @@ static int Command(void* _context, PlaybackCmd_t command, void * argument) {
     }
     case PLAYBACK_FASTBACKWARD: {
         ret = PlaybackFastBackward(context,(int*)argument);
+        break;
+    }
+    case PLAYBACK_GET_FRAME_COUNT: { // 10
+        ret = PlaybackGetFrameCount(context, (unsigned long long int*)argument);
         break;
     }
     default:

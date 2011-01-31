@@ -148,7 +148,7 @@ int fh_jpeg_load_via_server(const char *filename,unsigned char *buffer,int x,int
 int fh_jpeg_load_local_hw(const char *filename,unsigned char **buffer,int* x,int* y)
 {
 	unsigned int original_x, original_y;
-	dbout("[Picload] hardware decode picture...");
+	dbout("[Picload] hardware decode picture...\n");
 
 	FILE *fp;
 
@@ -166,7 +166,7 @@ int fh_jpeg_load_local_hw(const char *filename,unsigned char **buffer,int* x,int
 		return FH_ERROR_OK;
 	}
 	
-	dbout("hardware decode error");
+	dbout("hardware decode error\n");
 	
 	fclose(fp);
 	return FH_ERROR_FILE;

@@ -1312,7 +1312,6 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--disable-static --enable-shared \
 		--enable-cross-compile \
 		--disable-ffserver \
-		--disable-ffplay \
 		--disable-altivec \
 		--disable-debug \
 		--disable-asm \
@@ -1366,6 +1365,8 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--enable-decoder=png \
 		--enable-decoder=ljpeg \
 		--enable-decoder=mjpeg \
+		--enable-decoder=vorbis \
+		--enable-decoder=flac \
 		--enable-small \
 		--cross-prefix=$(target)- \
 		--target-os=linux \

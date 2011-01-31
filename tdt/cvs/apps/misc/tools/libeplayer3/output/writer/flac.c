@@ -139,7 +139,7 @@ static WriterCaps_t caps_flac = {
     "flac",
     eAudio,
     "A_FLAC",
-    AUDIO_ENCODING_PCM, //AUDIO_ENCODING_FLAC,
+    AUDIO_ENCODING_LPCM, //AUDIO_ENCODING_FLAC,
 };
 
 struct Writer_s WriterAudioFLAC = {

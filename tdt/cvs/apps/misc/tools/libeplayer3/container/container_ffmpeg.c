@@ -44,6 +44,7 @@
 #include "misc.h"
 #include "debug.h"
 #include "aac.h"
+#include "pcm.h"
 #include "ffmpeg_metadata.h"
 #include "subtitle.h"
 
@@ -193,9 +194,9 @@ static char* Codec2Encoding(enum CodecID id, int* version)
     case CODEC_ID_RA_288:
         return "A_RMA";
     case CODEC_ID_VORBIS:
-        return "A_VORBIS";
+        return "A_IPCM"; //return "A_VORBIS";
     case CODEC_ID_FLAC: //86030
-        return "A_FLAC";
+        return "A_IPCM"; //return "A_FLAC";
 /* subtitle */
     case CODEC_ID_SSA:
         return "S_TEXT/ASS"; /* Hellmaster1024: seems to be ASS instead of SSA */
@@ -277,9 +278,13 @@ static void FFMPEGThread(Context_t *context) {
     off_t currentReadPosition = 0; /* last read position */
     off_t lastReverseSeek = 0;     /* max address to read before seek again in reverse play */
     off_t lastSeek = -1;
-    long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1;
-    int           err = 0;
+    long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1, videoframes = 0;
+    int           err = 0, gotlastPts = 0;
     AudioVideoOut_t avOut;
+
+    /* Softdecoding buffer*/
+    unsigned char *samples = NULL;
+
 
     ffmpeg_printf(10, "\n");
 
@@ -306,8 +311,41 @@ static void FFMPEGThread(Context_t *context) {
             usleep(100000);
             continue;
         }
+        
+#define reverse_playback_3
+#ifdef reverse_playback_3
+if (context->playback->BackWard && videoframes >= 100)
+{
+      float sec;
 
-#ifndef old_reverse_playback
+      videoframes = 0;
+      context->output->Command(context, OUTPUT_CLEAR, NULL);
+
+      switch(context->playback->Speed)
+      {
+          case -1: sec = -8; break;
+          case -2: sec = -16; break;
+          case -4: sec = -32; break;
+          case -8: sec = -64; break;
+          case -16: sec = -128; break;
+          case -32: sec = -256; break;
+          case -64: sec = -512; break;
+          case -128: sec = -1024; break;
+      }
+
+      if((err = container_ffmpeg_seek_rel(context, lastSeek, lastPts, sec)) < 0)
+      {
+          ffmpeg_err( "Error seeking\n");
+
+          if (err == cERR_CONTAINER_FFMPEG_END_OF_FILE)
+          {
+              break;
+          }
+      }
+}
+#endif
+
+#ifdef reverse_playback_2
         /* should we seek back again ?
          * reverse play and currentReadPosition >= end of seek reverse play area ? */
         if ((context->playback->BackWard) && (currentReadPosition >= lastReverseSeek))
@@ -322,7 +360,10 @@ static void FFMPEGThread(Context_t *context) {
             /* save the maximum read position, if we reach this, we must
              * seek back again.
              */ 
-            lastReverseSeek = lastSeek;
+            if(lastReverseSeek == 0)
+                lastReverseSeek = currentReadPosition;
+            else
+                lastReverseSeek = lastSeek;
 
 #define use_sec_to_seek
 #if defined(use_sec_to_seek)
@@ -332,7 +373,7 @@ static void FFMPEGThread(Context_t *context) {
 #endif
             {
                 ffmpeg_err( "Error seeking\n");
-    
+                
                 if (err == cERR_CONTAINER_FFMPEG_END_OF_FILE)
                 {
                     break;
@@ -341,14 +382,19 @@ static void FFMPEGThread(Context_t *context) {
             else 
             {
                lastSeek = currentReadPosition = url_ftell(avContext->pb);
+               gotlastPts = 1;
 
+#ifndef use_sec_to_seek
                if (err != lastSeek)
-                   ffmpeg_err("upssssssssssssssss seek not doing what I want\n");              
+                   ffmpeg_err("upssssssssssssssss seek not doing what I want\n");
+#endif              
                
+/*
                if (currentVideoPts != -1)
                    lastPts = currentVideoPts;
                else
                    lastPts = currentAudioPts;
+*/
             } 
         } else
         if (!context->playback->BackWard)
@@ -356,6 +402,7 @@ static void FFMPEGThread(Context_t *context) {
            lastReverseSeek = 0;
            lastSeek = -1;
            lastPts = -1;
+           gotlastPts = 0;
         }       
 
         getMutex(FILENAME, __FUNCTION__,__LINE__);
@@ -395,6 +442,14 @@ static void FFMPEGThread(Context_t *context) {
                     if ((currentVideoPts > latestPts) && (currentVideoPts != INVALID_PTS_VALUE))
                         latestPts = currentVideoPts; 
 
+#ifdef reverse_playback_2
+                    if (currentVideoPts != INVALID_PTS_VALUE && gotlastPts == 1)
+                    {
+                        lastPts = currentVideoPts;
+                        gotlastPts = 0;
+										}
+#endif
+
                     ffmpeg_printf(200, "VideoTrack index = %d %lld\n",index, currentVideoPts);
 
                     avOut.data       = packet.data;
@@ -408,6 +463,10 @@ static void FFMPEGThread(Context_t *context) {
                     avOut.height     = videoTrack->height;
                     avOut.type       = "video";
 
+#ifdef reverse_playback_3
+                    videoframes++;
+#endif
+
                     if (context->output->video->Write(context, &avOut) < 0) {
                         ffmpeg_err("writing data to video device failed\n");
                     }                   
@@ -419,11 +478,69 @@ static void FFMPEGThread(Context_t *context) {
                     currentAudioPts = audioTrack->pts = pts = calcPts(audioTrack->stream, &packet);
                     
                     if ((currentAudioPts > latestPts) && (!videoTrack))
-                        latestPts = currentAudioPts; 
+                        latestPts = currentAudioPts;
+
+#ifdef reverse_playback_2
+	                  if (currentAudioPts != INVALID_PTS_VALUE && gotlastPts == 1 && (!videoTrack))
+	                  {
+                        lastPts = currentAudioPts;
+                        gotlastPts = 0;
+										}
+#endif
 
                     ffmpeg_printf(200, "AudioTrack index = %d\n",index);
 
-                    if (audioTrack->have_aacheader == 1) 
+                    if (audioTrack->inject_as_pcm == 1) 
+                    {
+                        int      bytesDone = 0;
+                        unsigned int samples_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+                        AVPacket avpkt;
+                        avpkt = packet;
+
+                        // This way the buffer is only allocated if we really need it
+                        if(samples == NULL)
+                            samples = (unsigned char *)malloc(samples_size);
+
+                        while(avpkt.size > 0)
+                        {
+                            int decoded_data_size = samples_size;
+
+                            bytesDone = avcodec_decode_audio3(( (AVStream*) audioTrack->stream)->codec, 
+                                (short *)(samples), &decoded_data_size, &avpkt);
+
+
+                            if(bytesDone < 0) // Error Happend
+                                break;
+
+                            avpkt.data += bytesDone;
+                            avpkt.size -= bytesDone;
+
+                            if(decoded_data_size <= 0)
+                                continue;
+
+                            pcmPrivateData_t extradata;
+                            extradata.uNoOfChannels = ((AVStream*) audioTrack->stream)->codec->channels;
+                            extradata.uSampleRate = ((AVStream*) audioTrack->stream)->codec->sample_rate;
+                            extradata.uBitsPerSample = 16;
+                            extradata.bLittleEndian = 1;
+
+                            avOut.data       = samples;
+                            avOut.len        = decoded_data_size;
+
+                            avOut.pts        = pts;
+                            avOut.extradata  = &extradata;
+                            avOut.extralen   = sizeof(extradata);
+                            avOut.frameRate  = 0;
+                            avOut.timeScale  = 0;
+                            avOut.width      = 0;
+                            avOut.height     = 0;
+                            avOut.type       = "audio";
+
+                            if (context->output->audio->Write(context, &avOut) < 0) 
+                                ffmpeg_err("writing data to audio device failed\n");
+                        }
+                    }
+                    else if (audioTrack->have_aacheader == 1) 
                     {
                         ffmpeg_printf(200,"write audio aac\n");
 
@@ -587,6 +704,12 @@ static void FFMPEGThread(Context_t *context) {
         releaseMutex(FILENAME, __FUNCTION__,__LINE__);
 
     } /* while */
+
+    // Freeing the allocated buffer for softdecoding
+    if (samples != NULL) {
+        free(samples);
+        samples = NULL;
+    }
 
     hasPlayThreadStarted = 0;
 
@@ -770,7 +893,23 @@ int container_ffmpeg_init(Context_t *context, char * filename)
                     track.duration = (double) stream->duration * av_q2d(stream->time_base) * 1000.0;
                 }
 
-                if(stream->codec->codec_id == CODEC_ID_AAC) {
+                if(!strncmp(encoding, "A_IPCM", 6))
+                {
+                    track.inject_as_pcm = 1;
+                    ffmpeg_printf(10, " Handle inject_as_pcm = %d\n", track.inject_as_pcm);
+
+                        AVCodec *codec = avcodec_find_decoder(stream->codec->codec_id);
+
+//( (AVStream*) audioTrack->stream)->codec->flags |= CODEC_FLAG_TRUNCATED;
+                        if(codec != NULL && !avcodec_open(stream->codec, codec))
+printf("AVCODEC__INIT__SUCCESS\n");
+else
+printf("AVCODEC__INIT__FAILED\n");
+
+
+                }
+                else if(stream->codec->codec_id == CODEC_ID_AAC) {
+                    ffmpeg_printf(10,"Create AAC ExtraData\n");
                     ffmpeg_printf(10,"aac sample_rate %d\n",stream->codec->sample_rate);
 
                     unsigned int  SampleIndex;
@@ -794,6 +933,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
                     || stream->codec->codec_id == CODEC_ID_WMAV2
                     || 86056 ) //CODEC_ID_WMAPRO) //if (stream->codec->extradata_size > 0)
                 {
+                    ffmpeg_printf(10,"Create WMA ExtraData\n");
                     track.aacbuflen = 104 + stream->codec->extradata_size;
                     track.aacbuf = malloc(track.aacbuflen);
                     memset (track.aacbuf, 0, track.aacbuflen);
@@ -1174,7 +1314,13 @@ static int container_ffmpeg_seek_rel(Context_t *context, off_t pos, long long in
     }
     else
     {
-        sec += ((float) current->pts / 90000.0f);
+        sec += ((float) pts / 90000.0f);
+        
+        if (sec < 0)
+        {
+           ffmpeg_err("end of file reached\n");
+           return cERR_CONTAINER_FFMPEG_END_OF_FILE;
+        }
 
         ffmpeg_printf(10, "2. seeking to position %f sec ->time base %f %d\n", sec, av_q2d(((AVStream*) current->stream)->time_base), AV_TIME_BASE);
         

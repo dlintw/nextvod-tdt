@@ -92,7 +92,7 @@ HL101PATCHES_41 = $(COMMONPATCHES_41) \
 
 VIP2PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ufs922_stasc_stm22.patch \
-		linux-vip2_setup_stm22.patch\
+		linux-vip2_setup_stm22.patch \
 		linux-linuxdvb_api5_stm22.patch \
 		linux-fat_stm22.patch \
 		linux-fuse_stm22.patch \
@@ -203,13 +203,17 @@ UFS912PATCHES_23 = $(COMMONPATCHES_23) \
 SPARKPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-spark_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-spark_sound_stm23$(PATCH_STR).patch) \
-		fortis_hdbox_dvb_core_stm23.patch
+		$(if $(P0123),linux-sh4-spark_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-spark_sound_stm23$(PATCH_STR).patch) \
+		fortis_hdbox_dvb_core_stm23.patch \
+		linux-ftdi_sio.c_stm23.patch
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
     $(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
     $(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
     $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-    $(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
+    $(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
+    linux-ftdi_sio.c_stm23.patch    
 
 FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
@@ -225,9 +229,10 @@ ATEVIO7500PATCHES_23 = $(COMMONPATCHES_23) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 OCTAGON1008PATCHES_23 = $(COMMONPATCHES_23) \
-		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
-		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		fortis_hdbox_setup_stm23.diff \
+        $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+        $(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+        $(if $(P0123),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
+        $(if $(P0119),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \

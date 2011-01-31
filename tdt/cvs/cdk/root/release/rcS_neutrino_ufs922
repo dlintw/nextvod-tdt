@@ -106,20 +106,21 @@ if [ ! -e /var/etc/.firstboot ]; then
       echo "neutrino ended <- RTV: " $rtv
       case "$rtv" in
 		0) echo "0"
-		   echo "SHUTDOWN"
-		   sync
-		   umount -a -l -f;;
+		   echo "ERROR"
+      	   init 6;;
 		1) echo "1"
 		   echo "SHUTDOWN"
-		   sync
-		   fp_control -e
-		   umount -a -l -f;;
+		   init 0;;
 		2) echo "2"
-		   echo "BOX RESTART"
-		   reboot -f;;
+		   echo "REBOOT"
+		   init 6;;
+		3) echo "3"
+		   echo "RESTART"
+		   echo "0" > /proc/progress
+		   showiframe -p /boot/bootlogo.mvi &;;
 		*) echo "*"
-		   echo "Unexpected error"
-                   reboot;;
+		   echo "ERROR"
+           init 6;;
       esac
    done 
 fi

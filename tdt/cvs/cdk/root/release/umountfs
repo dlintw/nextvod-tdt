@@ -18,7 +18,7 @@ echo "done."
 #	Umount all filesystems except the virtual ones.
 #
 echo -n "Unmounting local filesystems..."
-umount -tnoproc,noprocfs,nodevfs,nosysfs,nousbfs,nousbdevfs,nodevpts -d -a -r
+umount -tnoproc,noprocfs,nodevfs,nosysfs,nousbfs,nousbdevfs,nodevpts,novar -d -a -r
 echo "done."
 
 # This is superfluous.

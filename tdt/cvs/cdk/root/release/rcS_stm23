@@ -128,29 +128,23 @@ if [ ! -e /var/etc/.firstboot ]; then
       /usr/local/bin/enigma2
       rtv=$?
       echo "e2 ended <- RTV: " $rtv
-      case "$rtv" in
+     case "$rtv" in
 		0) echo "0"
 		   echo "E2 ERROR"
-      		   reboot;;
+      	   init 6;;
 		1) echo "1"
 		   echo "SHUTDOWN"
-		   case "$var" in
-			0) gotosleep
-                           umount -a;;
-  			1|3) /bin/vdstandby -n #USE PARAMTER -n ONLY IF BOOTING PER NFS!!!
-                             echo "0" > /proc/progress
-		             showiframe -p /boot/bootlogo.mvi &;;
-		   esac;;           
+		   init 0;;
 		2) echo "2"
 		   echo "REBOOT"
-		   reboot;;
+		   init 6;;
 		3) echo "3"
 		   echo "E2 RESTART"
 		   echo "0" > /proc/progress
 		   showiframe -p /boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
-                   reboot;;
+           init 6;;
       esac
    done 
 fi

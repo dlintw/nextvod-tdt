@@ -6,7 +6,6 @@ insmod $MODDIR/vfd.ko
 insmod $MODDIR/aotom.ko
 
 if [ -e /var/etc/.firstboot ]; then
-   #fp_control does not work here
    echo "WAIT 1 min" >/dev/vfd
    echo "WAIT 1 min"
    rm /var/etc/.firstboot
@@ -32,13 +31,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/mountall start
    /etc/init.d/hostname start
 
-   #fp_control -c
-
-   #green led on
-   #fp_control -l 2 1
-   #led brightness
-   #fp_control -led 80
-
    echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/login
 
@@ -60,7 +52,6 @@ if [ ! -e /var/etc/.firstboot ]; then
 	  echo "load a firmware"
    else
        echo "FW MISSING!!!"
-      #fp_control -t "FW MISSING!!!"
    fi
 
    echo "load a firmware"
@@ -76,19 +67,34 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    echo "init AVS"
    insmod $MODDIR/avs.ko type=spark_avs #type=stv6417
-   echo "init player"
+
+   player=`cat /proc/stb/player/version`
+   if [ $player=='player179' ]; then
+	echo "[rcS] init player 179"
+   else
+	echo "[rcS] init player 131"
+   fi
    insmod $MODDIR/mmelog.ko
-   #there is no mpeg2hw on ufs912, will be handled by fw & copos
-   #insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
+   if [ $player=='player179' ]; then
+	insmod $MODDIR/stmvout.ko
+	insmod $MODDIR/stmvbi.ko
+   fi
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/stv090x.ko
-   insmod $MODDIR/pti.ko
-   insmod $MODDIR/stmdvb.ko
-   insmod $MODDIR/stm_monitor.ko
+   if [ $player=='player179' ]; then
+	insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+	insmod $MODDIR/stm_monitor.ko
+	insmod $MODDIR/stmsysfs.ko
+    insmod $MODDIR/stmdvb.ko highSR=1 swts=1
+   else
+	insmod $MODDIR/pti.ko
+    insmod $MODDIR/stmdvb.ko
+	insmod $MODDIR/stm_monitor.ko
+   fi	
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
@@ -112,8 +118,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    stfbcontrol a 255
 
-   #fp_control -t "LOADING e2"
-   echo "LOADING e2"
+   echo "LOADING E2"
 
    /etc/init.d/mountall start
 
@@ -123,16 +128,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/sbin/telnetd -l /bin/login
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
-
-#   if [ -e /etc/network/interfaces ]; then
-#      ip addr flush eth0
-#      /etc/init.d/networking stop
-#      TEST=$(grep -c 'dhcp' /etc/network/interfaces)
-#      if [ "$(TEST)" -eq "1" ]; then
-#         /etc/init.d/udhcpc start
-#      fi
-#      /etc/init.d/networking start
-#   fi
 
    until false
    do
@@ -146,19 +141,7 @@ if [ ! -e /var/etc/.firstboot ]; then
       		   reboot;;
 		1) echo "1"
 		   echo "SHUTDOWN"
-
                    sync
-		   
-		   #green green off
-                   #fp_control -l 2 0
-
-                   #green red on
-                   #fp_control -l 3 1
-                   
-		   #led brightness
-                   #fp_control -led 5
-		   
-		   #fp_control -e
                    umount -a;;
 		2) echo "2"
 		   echo "REBOOT"
@@ -175,6 +158,6 @@ if [ ! -e /var/etc/.firstboot ]; then
 fi
 
 #never reached
-echo "REBOOT UFS912" > /dev/vfd
-echo "REBOOT UFS912"
+echo "REBOOT SPARK" > /dev/vfd
+echo "REBOOT SPARK"
 reboot

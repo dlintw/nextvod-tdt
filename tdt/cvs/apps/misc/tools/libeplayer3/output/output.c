@@ -321,6 +321,18 @@ static int Command(void  *_context, OutputCmd_t command, void * argument) {
             ret = cERR_OUTPUT_INTERNAL_ERROR;
         break;
     }
+    case OUTPUT_GET_FRAME_COUNT: {
+        if (context && context->playback ) {
+            if (context->playback->isVideo)
+                return context->output->video->Command(context, OUTPUT_GET_FRAME_COUNT, argument);
+            if (context->playback->isAudio)
+                return context->output->audio->Command(context, OUTPUT_GET_FRAME_COUNT, argument);
+            //if (context->playback->isSubtitle)
+            //	return context->output->subtitle->Command(context, OUTPUT_GET_FRAME_COUNT, "subtitle");
+        } else
+            ret = cERR_OUTPUT_INTERNAL_ERROR;
+        break;
+    }
     default:
         output_err("%s::%s OutputCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
         ret = cERR_OUTPUT_INTERNAL_ERROR;
