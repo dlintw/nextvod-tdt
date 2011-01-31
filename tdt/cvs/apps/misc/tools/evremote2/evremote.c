@@ -110,17 +110,36 @@ static unsigned int gNextKeyFlag = 0xFF;
 static sem_t keydown_sem;
 static pthread_t keydown_thread;
 
+#ifdef NITS_SEM_PATCH_WOULD_WORK
+// Your patch crashes the long key press detection.
+// You know there was a reason why I didn't do it this way.
+// Sem_getvaulue and counting sems does not work as someone would initialy expect.
+#else
+static unsigned char keydown_sem_helper = 1;
+#endif
 static void sem_up(void) {
-	int sem_val;
-	sem_getvalue(&keydown_sem, &sem_val);
+#ifdef NITS_SEM_PATCH_WOULD_WORK
+  int sem_val;
+  sem_getvalue(&keydown_sem, &sem_val);
   if(sem_val <= 0) {
+#else
+  if(keydown_sem_helper == 0) {
+#endif
     printf("[SEM] UP\n");
     sem_post(&keydown_sem);
+#ifdef NITS_SEM_PATCH_WOULD_WORK
+#else
+    keydown_sem_helper = 1;
+#endif
   }
 }
 
 static void sem_down(void) {
   printf("[SEM] DOWN\n");
+#ifdef NITS_SEM_PATCH_WOULD_WORK
+#else
+  keydown_sem_helper = 0;
+#endif
   sem_wait(&keydown_sem);
 }
 
