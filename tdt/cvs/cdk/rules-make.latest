@@ -29,7 +29,8 @@ ipkg_utils;050831;ipkg-utils-050831;ipkg-utils-050831.tar.gz;extract:ipkg-utils-
 ipkg_host;0.99.163;ipkg-host;ipkg-0.99.163.tar.gz:ipkg-host.diff;dirextract:ipkg-0.99.163.tar.gz;patch:ipkg-host.diff
 #host_python;2.5.2;host-python-2.5.2;Python-2.5.2.tar.bz2:python.diff;extract:Python-2.5.2.tar.bz2;move:Python-2.5.2:host-python-2.5.2;patch:python.diff
 host_python;2.6;host-python-2.6;Python-2.6.tar.bz2:python.diff;extract:Python-2.6.tar.bz2;move:Python-2.6:host-python-2.6;patch:python.diff
-libtool;2.2.6b;libtool-2.2.6;libtool-2.2.6b.tar.gz:libtool-cross_compile.patch:libtool-trailing_slash.patch;extract:libtool-2.2.6b.tar.gz;patch:libtool-cross_compile.patch;patch:libtool-trailing_slash.patch
+#libtool;2.2.6a;libtool-2.2.6;libtool-2.2.6a.tar.gz:libtool-2.2.6a-cross_compile.patch:libtool-2.2.6a-trailing_slash.patch;extract:libtool-2.2.6a.tar.gz;patch:libtool-2.2.6a-cross_compile.patch;patch:libtool-2.2.6a-trailing_slash.patch
+libtool;2.4;libtool-2.4;libtool-2.4.tar.gz:libtool-2.4-cross_compile.patch:libtool-2.4-trailing_slash.patch;extract:libtool-2.4.tar.gz;patch:libtool-2.4-cross_compile.patch;patch:libtool-2.4-trailing_slash.patch
 
 #
 # root
