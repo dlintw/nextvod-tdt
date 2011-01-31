@@ -642,9 +642,9 @@ int CFrontend::setFrontend(const struct dvb_frontend_parameters *feparams, bool 
 	default:
 		printf("frontend: unknown frontend type, exiting\n");
 		return 0;
-	}
+	};
 
-	switch (fec_inner) {
+	switch ((int)(fec_inner)) {
 	case FEC_1_2:
 	case FEC_S2_QPSK_1_2:
 	case FEC_S2_8PSK_1_2:
@@ -704,7 +704,7 @@ int CFrontend::setFrontend(const struct dvb_frontend_parameters *feparams, bool 
 	case FEC_AUTO:
 		fec = FEC_AUTO;
 		break;
-	}
+	};
 
 	char *f, *s, *m;
 	getDelSys(fec_inner, modulation, f, s, m);
