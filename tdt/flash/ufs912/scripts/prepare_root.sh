@@ -23,6 +23,6 @@ echo "/dev/mtdblock3	/boot	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
 #echo "/dev/mtdblock5	/root	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
 
 
-if [  -e $CURDIR/dev.tar]; then
-  sudo tar -xf $CURDIR/dev.tar -C $TMPROOTDIR/dev/
+if [  -e $CURDIR/extras/dev_ufs912.tar.gz ]; then
+  sudo tar -xzf $CURDIR/extras/dev_ufs912.tar.gz -C $TMPROOTDIR/dev/
 fi
