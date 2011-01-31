@@ -33,6 +33,7 @@ host_python;2.6;host-python-2.6;Python-2.6.tar.bz2:python.diff;extract:Python-2.
 #libtool;2.2.6a;libtool-2.2.6;libtool-2.2.6a.tar.gz:libtool-2.2.6a-cross_compile.patch:libtool-2.2.6a-trailing_slash.patch;extract:libtool-2.2.6a.tar.gz;patch:libtool-2.2.6a-cross_compile.patch;patch:libtool-2.2.6a-trailing_slash.patch
 libtool;2.4;libtool-2.4;libtool-2.4.tar.gz:libtool-2.4-cross_compile.patch:libtool-2.4-trailing_slash.patch;extract:libtool-2.4.tar.gz;patch:libtool-2.4-cross_compile.patch;patch:libtool-2.4-trailing_slash.patch
 
+
 #
 # root
 #
