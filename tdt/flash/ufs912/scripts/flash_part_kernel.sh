@@ -29,7 +29,7 @@ cp $TMPKERNELDIR/uImage $CURDIR/uImage
 # Offset on NAND Disk = 0x00400000
 $MUP c $OUTFILE << EOF
 2
-0x00000000, 1, uImage
+0x00000000, 0x0, 1, uImage
 ;
 EOF
 
