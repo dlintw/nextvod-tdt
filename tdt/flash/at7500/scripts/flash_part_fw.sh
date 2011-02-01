@@ -11,10 +11,9 @@ echo "OUTDIR     = $OUTDIR"
 echo "TMPFWDIR   = $TMPFWDIR"
 
 MKFSJFFS2=$TUFSBOXDIR/host/bin/mkfs.jffs2
-SUMTOOL=$TUFSBOXDIR/host/bin/sumtool
-MUP=$CURDIR/mup
+FUP=$CURDIR/fup
 
-OUTFILE=$OUTDIR/update_fw.img
+OUTFILE=$OUTDIR/update_fw.ird
 
 if [ ! -e $OUTDIR ]; then
   mkdir $OUTDIR
@@ -25,26 +24,19 @@ if [ -e $OUTFILE ]; then
 fi
 
 # Create a jffs2 partition for fw's
-# Size 8mb = -p0x800000
+# Size 6.875  MB = -p0x6E0000
 # Folder which contains fw's is -r fw
 # e.g.
 # .
 # ./fw
 # ./fw/audio.elf
 # ./fw/video.elf
-$MKFSJFFS2 -qUfv -p0x800000 -e0x20000 -r $TMPFWDIR -o $CURDIR/mtd_fw.bin
-$SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_fw.bin -o $CURDIR/mtd_fw.sum.bin
+$MKFSJFFS2 -qUnfv -r $TMPFWDIR -s0x800 -p0x6E0000 -e0x20000 -o $CURDIR/mtd_fw.bin
 
-# Create a kathrein update file for fw's 
-# To get the partitions erased we first need to fake an yaffs2 update
-$MUP c $OUTFILE << EOF
-2
-0x00400000, 0x800000, 3, foo
-0x00400000, 0x0, 1, mtd_fw.sum.bin
-;
-EOF
+# Create a fortis signed update file for fw's 
+echo "CMD: $FUP -ce $OUTFILE -f $CURDIR/mtd_fw.bin"
+$FUP -ce $OUTFILE -f $CURDIR/mtd_fw.bin
 
 rm -f $CURDIR/mtd_fw.bin
-rm -f $CURDIR/mtd_fw.sum.bin
 
 zip $OUTFILE.zip $OUTFILE

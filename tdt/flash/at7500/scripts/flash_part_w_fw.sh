@@ -15,10 +15,9 @@ echo "TMPFWDIR     = $TMPFWDIR"
 echo "TMPROOTDIR   = $TMPROOTDIR"
 
 MKFSJFFS2=$TUFSBOXDIR/host/bin/mkfs.jffs2
-SUMTOOL=$TUFSBOXDIR/host/bin/sumtool
-MUP=$CURDIR/mup
+FUP=$CURDIR/fup
 
-OUTFILE=$OUTDIR/update_w_fw.img
+OUTFILE=$OUTDIR/update_w_fw.ird
 
 if [ ! -e $OUTDIR ]; then
   mkdir $OUTDIR
@@ -31,42 +30,32 @@ fi
 cp $TMPKERNELDIR/uImage $CURDIR/uImage
 
 # Create a jffs2 partition for fw's
-# Size 8mb = -p0x800000
+# Size 6.875  MB = -p0x6E0000
 # Folder which contains fw's is -r fw
 # e.g.
 # .
 # ./fw
 # ./fw/audio.elf
 # ./fw/video.elf
-$MKFSJFFS2 -qUfv -p0x800000 -e0x20000 -r $TMPFWDIR -o $CURDIR/mtd_fw.bin
-$SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_fw.bin -o $CURDIR/mtd_fw.sum.bin
+$MKFSJFFS2 -qUnfv -r $TMPFWDIR -s0x800 -p0x6E0000 -e0x20000 -o $CURDIR/mtd_fw.bin
+
 # Create a jffs2 partition for root
-# Size 64mb = -p0x4000000
+# Size 30     MB = -p0x1E00000
 # Folder which contains fw's is -r fw
 # e.g.
 # .
 # ./release
 # ./release/etc
 # ./release/usr
-$MKFSJFFS2 -qUfv -p0x4000000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin
-$SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin
+$MKFSJFFS2 -qUnfv -r $TMPROOTDIR -s0x800 -p0x1E00000 -e0x20000 -o $CURDIR/mtd_root.bin
 
-# Create a kathrein update file for fw's 
-# To get the partitions erased we first need to fake an yaffs2 update
-$MUP c $OUTFILE << EOF
-2
-0x00400000, 0x800000, 3, foo
-0x00C00000, 0x4000000, 3, foo
-0x00000000, 0x0, 1, uImage
-0x00400000, 0x0, 1, mtd_fw.sum.bin
-0x00C00000, 0x0, 1, mtd_root.sum.bin
-;
-EOF
+# Create a fortis signed update file for fw's 
+# Note: -g is a workaround which will be removed as soon as the missing conf partition is found
+# Note: -e could be used as a extension partition but at the moment we dont use it
+$FUP -ce $OUTFILE -k $CURDIR/uImage -f $CURDIR/mtd_fw.bin -f $CURDIR/mtd_fw.bin -r $CURDIR/mtd_root.bin -g $CURDIR/dummy.squash.signed.padded -e $CURDIR/dummy.squash.signed.padded
 
 rm -f $CURDIR/uImage
 rm -f $CURDIR/mtd_fw.bin
 rm -f $CURDIR/mtd_root.bin
-rm -f $CURDIR/mtd_fw.sum.bin
-rm -f $CURDIR/mtd_root.sum.bin
 
 zip $OUTFILE.zip $OUTFILE

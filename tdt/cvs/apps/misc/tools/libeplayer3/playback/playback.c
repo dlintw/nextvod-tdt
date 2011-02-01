@@ -695,6 +695,7 @@ static int PlaybackFastBackward(Context_t  *context,int* speed) {
             playback_printf(1, "S %d B %f\n", context->playback->Speed, context->playback->BackWard);
         }
 
+        context->output->Command(context, OUTPUT_AUDIOMUTE, "1");
         context->output->Command(context, OUTPUT_CLEAR, NULL);
         if (context->output->Command(context, OUTPUT_REVERSE, NULL) < 0)
         {

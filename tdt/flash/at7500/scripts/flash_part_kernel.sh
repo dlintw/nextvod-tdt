@@ -11,9 +11,9 @@ echo "OUTDIR       = $OUTDIR"
 echo "TMPKERNELDIR = $TMPKERNELDIR"
 
 MKFSJFFS2=$TUFSBOXDIR/host/bin/mkfs.jffs2
-MUP=$CURDIR/mup
+FUP=$CURDIR/fup
 
-OUTFILE=$OUTDIR/update_kernel.img
+OUTFILE=$OUTDIR/update_kernel.ird
 
 if [ ! -e $OUTDIR ]; then
   mkdir $OUTDIR
@@ -25,13 +25,8 @@ fi
 
 cp $TMPKERNELDIR/uImage $CURDIR/uImage
 
-# Create a kathrein update file for fw's 
-# Offset on NAND Disk = 0x00400000
-$MUP c $OUTFILE << EOF
-2
-0x00000000, 0x0, 1, uImage
-;
-EOF
+# Create a fortis signed update file for fw's 
+$FUP -ce $OUTFILE -k $CURDIR/uImage
 
 rm -f $CURDIR/uImage
 
