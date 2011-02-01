@@ -278,8 +278,8 @@ static void FFMPEGThread(Context_t *context) {
     off_t currentReadPosition = 0; /* last read position */
     off_t lastReverseSeek = 0;     /* max address to read before seek again in reverse play */
     off_t lastSeek = -1;
-    long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1, videoframes = 0;
-    int           err = 0, gotlastPts = 0;
+    long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1, showtime = 0;
+    int           err = 0, gotlastPts = 0, audioMute = 0;
     AudioVideoOut_t avOut;
 
     /* Softdecoding buffer*/
@@ -314,26 +314,12 @@ static void FFMPEGThread(Context_t *context) {
         
 #define reverse_playback_3
 #ifdef reverse_playback_3
-if (context->playback->BackWard && videoframes >= 100)
+if (context->playback->BackWard && av_gettime() >= showtime)
 {
-      float sec;
-
-      videoframes = 0;
+      audioMute = 1;
       context->output->Command(context, OUTPUT_CLEAR, NULL);
 
-      switch(context->playback->Speed)
-      {
-          case -1: sec = -8; break;
-          case -2: sec = -16; break;
-          case -4: sec = -32; break;
-          case -8: sec = -64; break;
-          case -16: sec = -128; break;
-          case -32: sec = -256; break;
-          case -64: sec = -512; break;
-          case -128: sec = -1024; break;
-      }
-
-      if((err = container_ffmpeg_seek_rel(context, lastSeek, lastPts, sec)) < 0)
+      if((err = container_ffmpeg_seek_rel(context, lastSeek, lastPts, (float) context->playback->Speed)) < 0)
       {
           ffmpeg_err( "Error seeking\n");
 
@@ -342,6 +328,15 @@ if (context->playback->BackWard && videoframes >= 100)
               break;
           }
       }
+      
+      showtime = av_gettime() + 300000; //jump back all 300ms
+}
+
+if(!context->playback->BackWard && audioMute)
+{
+      showtime = 0;
+      audioMute = 0;
+      context->output->Command(context, OUTPUT_AUDIOMUTE, "0");
 }
 #endif
 
@@ -405,8 +400,8 @@ if (context->playback->BackWard && videoframes >= 100)
            gotlastPts = 0;
         }       
 
-        getMutex(FILENAME, __FUNCTION__,__LINE__);
 #endif
+        getMutex(FILENAME, __FUNCTION__,__LINE__);
 
 #define use_read_frame
 #ifdef use_read_frame
@@ -462,10 +457,6 @@ if (context->playback->BackWard && videoframes >= 100)
                     avOut.width      = videoTrack->width;
                     avOut.height     = videoTrack->height;
                     avOut.type       = "video";
-
-#ifdef reverse_playback_3
-                    videoframes++;
-#endif
 
                     if (context->output->video->Write(context, &avOut) < 0) {
                         ffmpeg_err("writing data to video device failed\n");
