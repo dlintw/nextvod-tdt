@@ -117,9 +117,6 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    stfbcontrol a 255
 
-   fp_control -t "LOADING e2"
-   echo "LOADING e2"
-
    /etc/init.d/mountall start
 
    /etc/init.d/hostname start
@@ -144,6 +141,9 @@ if [ ! -e /var/etc/.firstboot ]; then
 	 /etc/init.d/networking start 
       fi 
    fi
+
+   echo "LOADING e2" > /dev/vfd
+   echo "LOADING e2"
 
    until false
    do

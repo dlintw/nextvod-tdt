@@ -31,7 +31,8 @@ fi
 # ./fw
 # ./fw/audio.elf
 # ./fw/video.elf
-$MKFSJFFS2 -qUnfv -r $TMPFWDIR -s0x800 -p0x6E0000 -e0x20000 -o $CURDIR/mtd_fw.bin
+$MKFSJFFS2 -qUfv -p0x6E0000 -e0x20000 -r $TMPFWDIR -o $CURDIR/mtd_fw.bin
+#$MKFSJFFS2 -qUfv -p0x6C0000 -e0x20000 -r $TMPFWDIR -o $CURDIR/mtd_fw.bin
 
 # Create a fortis signed update file for fw's 
 echo "CMD: $FUP -ce $OUTFILE -f $CURDIR/mtd_fw.bin"

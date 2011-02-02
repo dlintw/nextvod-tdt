@@ -37,7 +37,7 @@ cp $TMPKERNELDIR/uImage $CURDIR/uImage
 # ./fw
 # ./fw/audio.elf
 # ./fw/video.elf
-$MKFSJFFS2 -qUnfv -r $TMPFWDIR -s0x800 -p0x6E0000 -e0x20000 -o $CURDIR/mtd_fw.bin
+$MKFSJFFS2 -qUfv -p0x6E0000 -e0x20000 -r $TMPFWDIR -o $CURDIR/mtd_fw.bin
 
 # Create a jffs2 partition for root
 # Size 30     MB = -p0x1E00000
@@ -47,15 +47,15 @@ $MKFSJFFS2 -qUnfv -r $TMPFWDIR -s0x800 -p0x6E0000 -e0x20000 -o $CURDIR/mtd_fw.bi
 # ./release
 # ./release/etc
 # ./release/usr
-$MKFSJFFS2 -qUnfv -r $TMPROOTDIR -s0x800 -p0x1E00000 -e0x20000 -o $CURDIR/mtd_root.bin
+$MKFSJFFS2 -qUfv -p0x1E00000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin
 
 # Create a fortis signed update file for fw's 
 # Note: -g is a workaround which will be removed as soon as the missing conf partition is found
 # Note: -e could be used as a extension partition but at the moment we dont use it
-$FUP -ce $OUTFILE -k $CURDIR/uImage -f $CURDIR/mtd_fw.bin -f $CURDIR/mtd_fw.bin -r $CURDIR/mtd_root.bin -g $CURDIR/dummy.squash.signed.padded -e $CURDIR/dummy.squash.signed.padded
+$FUP -ce $OUTFILE -k $CURDIR/uImage -f $CURDIR/mtd_fw.bin -g $CURDIR/dummy.squash.signed.padded -e $CURDIR/dummy.squash.signed.padded -r $CURDIR/mtd_root.bin
 
 rm -f $CURDIR/uImage
-rm -f $CURDIR/mtd_fw.bin
-rm -f $CURDIR/mtd_root.bin
+#rm -f $CURDIR/mtd_fw.bin
+#rm -f $CURDIR/mtd_root.bin
 
 zip $OUTFILE.zip $OUTFILE

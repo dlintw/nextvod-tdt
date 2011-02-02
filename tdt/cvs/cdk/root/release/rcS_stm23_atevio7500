@@ -56,20 +56,34 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init AVS"
    insmod $MODDIR/avs.ko type=stv6418
 
-   echo "init player"
+   player=`cat /proc/stb/player/version`
+   if [ $player=='player179' ]; then
+      echo "init player 179"
+   else
+      echo "init player 131"
+   fi
    insmod $MODDIR/mmelog.ko
-   #there is no mpeg2hw on atevio7500, will be handled by fw & copos
-   #insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
+   if [ $player=='player179' ]; then
+      insmod $MODDIR/stmvout.ko
+      insmod $MODDIR/stmvbi.ko
+   fi
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/avl2108.ko
    insmod $MODDIR/starci.ko 
-   insmod $MODDIR/pti.ko
-   insmod $MODDIR/stmdvb.ko
-   insmod $MODDIR/stm_monitor.ko
+   if [ $player=='player179' ]; then
+      insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+      insmod $MODDIR/stm_monitor.ko
+      insmod $MODDIR/stmsysfs.ko
+      insmod $MODDIR/stmdvb.ko
+   else
+      insmod $MODDIR/pti.ko
+      insmod $MODDIR/stmdvb.ko
+      insmod $MODDIR/stm_monitor.ko
+   fi
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
@@ -79,8 +93,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/bpamem.ko
    mknod /dev/bpamem c 153 0 
 
-   #showiframe -p /boot/bootlogo.mvi &
-   #stfbcontrol a 0
+   showiframe -p /boot/bootlogo.mvi &
+   stfbcontrol a 0
 
    echo "init frontpanel"
    insmod $MODDIR/simu_button.ko
@@ -92,13 +106,10 @@ if [ ! -e /var/etc/.firstboot ]; then
    #delay
    /bin/evremote2 10 120 &
 
-   #timefix e2
-   #date -s "121220001970"
+   # timefix e2
+   # date -s "121220001970"
 
-   #stfbcontrol a 255
-
-   fp_control -t "LOADING neutrino"
-   echo "LOADING neutrino"
+   stfbcontrol a 255
 
    /etc/init.d/mountall start
 
@@ -134,7 +145,7 @@ if [ ! -e /var/etc/.firstboot ]; then
       /usr/local/bin/enigma2
       rtv=$?
       echo "e2 ended <- RTV: " $rtv
-     case "$rtv" in
+      case "$rtv" in
 		0) echo "0"
 		   echo "E2 ERROR"
       	   init 6;;
@@ -158,4 +169,4 @@ fi
 #never reached
 echo "REBOOT ATEVIO7500" > /dev/vfd
 echo "REBOOT ATEVIO7500"
-reboot
+reboot -f
