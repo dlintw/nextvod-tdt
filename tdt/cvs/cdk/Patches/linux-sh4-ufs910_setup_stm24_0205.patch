@@ -1,221 +1,196 @@
-*** a/arch/sh/boards/mach-mb442/setup.c	2011-01-25 19:57:22.000000000 +0100
---- b/arch/sh/boards/mach-mb442/setup.c	2011-01-24 00:09:52.000000000 +0100
-***************
-*** 21,27 ****
---- 21,29 ----
-  #include <linux/mtd/physmap.h>
-  #include <linux/stm/platform.h>
-  #include <linux/stm/stx7100.h>
-+ #include <linux/bpa2.h>
-  #include <asm/irl.h>
-+ #include <linux/smsc911x.h>
-  
-  
-  
-***************
-*** 29,35 ****
---- 31,55 ----
-  #define MB442_PIO_SMC91X_RESET stm_gpio(2, 6)
-  #define MB442_PIO_FLASH_VPP stm_gpio(2, 7)
-  
-+ const char *LMI_VID_partalias[] = { "BPA2_Region1", "coredisplay-video", "gfx-memory", "v4l2-video-buffers", NULL };
-+ const char *LMI_SYS_partalias[] = { "BPA2_Region0", "bigphysarea", "v4l2-coded-video-buffers", NULL };
-  
-+ static struct bpa2_partition_desc bpa2_parts_table[] = {
-+       {
-+ 	      .name  = "LMI_VID",
-+ 	      .start = 0x10800000,
-+ 	      .size  = 0x03800000,
-+ 	      .flags = 0,
-+ 	      .aka   = LMI_VID_partalias
-+       },
-+       {
-+ 	      .name  = "LMI_SYS",
-+ 	      .start = 0,
-+ 	      .size  = 0x00E00000,
-+ 	      .flags = 0,
-+ 	      .aka   = LMI_SYS_partalias
-+       }
-+ };
-  
-  void __init mb442_setup(char** cmdline_p)
-  {
-***************
-*** 43,68 ****
-  	stx7100_configure_asc(3, &(struct stx7100_asc_config) {
-  			.hw_flow_control = 0,
-  			.is_console = 0, });
-  }
-  
-! static struct resource mb442_smc91x_resources[] = {
-  	[0] = {
-! 		.start	= 0x02000300,
-! 		.end	= 0x02000300 + 0xff,
-! 		.flags	= IORESOURCE_MEM,
-! 	},
-  	[1] = {
-! 		.start	= IRL0_IRQ,
-! 		.end	= IRL0_IRQ,
-! 		.flags	= IORESOURCE_IRQ,
-! 	},
-  };
-  
-! static struct platform_device mb442_smc91x_device = {
-! 	.name		= "smc91x",
-  	.id		= 0,
-! 	.num_resources	= ARRAY_SIZE(mb442_smc91x_resources),
-! 	.resource	= mb442_smc91x_resources,
-  };
-  
-  static void mb442_set_vpp(struct map_info *info, int enable)
---- 64,97 ----
-  	stx7100_configure_asc(3, &(struct stx7100_asc_config) {
-  			.hw_flow_control = 0,
-  			.is_console = 0, });
-+ 
-+   	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
-  }
-  
-! static struct resource smsc_lan9115_resources[] = {
-  	[0] = {
-!  		      .flags = IORESOURCE_MEM,
-!  		      .start = 0x02000000,
-!  		      .end   = 0x020000ff,
-!  	      },
-  	[1] = {
-!  		      .flags = IORESOURCE_IRQ,
-!  		      .start = IRL0_IRQ,
-!  		      .end   = IRL0_IRQ,
-!  	      },
-  };
-  
-! static struct platform_device smsc_lan9115 = {
-! 	.name		= "smsc911x",
-  	.id		= 0,
-! 	.num_resources	= ARRAY_SIZE(smsc_lan9115_resources),
-! 	.resource	= smsc_lan9115_resources,
-! 	.dev.platform_data = &(struct smsc911x_platform_config) {
-! 		.irq_polarity = 1,
-! 		.irq_type = 1,
-! 		.flags = SMSC911X_USE_32BIT,
-! 		.phy_interface = PHY_INTERFACE_MODE_MII,
-! 	},
-  };
-  
-  static void mb442_set_vpp(struct map_info *info, int enable)
-***************
-*** 86,98 ****
-  
-  static int mb442_phy_reset(void* bus)
-  {
-  	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
-  	udelay(1);
-  	gpio_set_value(MB442_PIO_STE100P_RESET, 0);
-  	udelay(1);
-  	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
-  
-! 	return 1;
-  }
-  
-  static struct plat_stmmacphy_data mb442_phy_private_data = {
---- 115,129 ----
-  
-  static int mb442_phy_reset(void* bus)
-  {
-+ /* on ufs922 2.4 is the tuner
-  	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
-  	udelay(1);
-  	gpio_set_value(MB442_PIO_STE100P_RESET, 0);
-  	udelay(1);
-  	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
-  
-! */	return 1;
-! 
-  }
-  
-  static struct plat_stmmacphy_data mb442_phy_private_data = {
-***************
-*** 103,127 ****
-  	.phy_reset = &mb442_phy_reset,
-  };
-  
-! static struct platform_device mb442_phy_device = {
-! 	.name		= "stmmacphy",
-! 	.id		= 0,
-! 	.num_resources	= 1,
-! 	.resource	= (struct resource[]) {
-!                 {
-! 			.name	= "phyirq",
-! 			.start	= IRL3_IRQ,
-! 			.end	= IRL3_IRQ,
-! 			.flags	= IORESOURCE_IRQ,
-! 		},
-! 	},
-! 	.dev.platform_data = &mb442_phy_private_data,
-  };
-  
-  static struct platform_device *mb442_devices[] __initdata = {
-! 	&mb442_smc91x_device,
-  	&mb442_physmap_flash,
-! 	&mb442_phy_device,
-  };
-  
-  static int __init mb442_device_init(void)
---- 134,148 ----
-  	.phy_reset = &mb442_phy_reset,
-  };
-  
-! static struct platform_device led_device = {
-!        .name		= "ufs910-led",
-!        .id		= -1,
-  };
-  
-  static struct platform_device *mb442_devices[] __initdata = {
-! 	&smsc_lan9115,
-  	&mb442_physmap_flash,
-!  	&led_device,
-  };
-  
-  static int __init mb442_device_init(void)
-***************
-*** 133,139 ****
-  			.out1_enabled = 1, });
-  
-  	stx7100_configure_ssc_i2c(0);
-! 	stx7100_configure_ssc_spi(1, NULL);
-  	stx7100_configure_ssc_i2c(2);
-  
-  	stx7100_configure_usb();
---- 154,160 ----
-  			.out1_enabled = 1, });
-  
-  	stx7100_configure_ssc_i2c(0);
-! 	stx7100_configure_ssc_i2c(1);
-  	stx7100_configure_ssc_i2c(2);
-  
-  	stx7100_configure_usb();
-***************
-*** 151,172 ****
-  	gpio_request(MB442_PIO_FLASH_VPP, "Flash VPP");
-  	gpio_direction_output(MB442_PIO_FLASH_VPP, 0);
-  
-- 	gpio_request(MB442_PIO_STE100P_RESET, "STE100P reset");
-- 	gpio_direction_output(MB442_PIO_STE100P_RESET, 1);
-- 
-- 	stx7100_configure_ethernet(&(struct stx7100_ethernet_config) {
-- 			.mode = stx7100_ethernet_mode_mii,
-- 			.ext_clk = 0,
-- 			.phy_bus = 0, });
-- 
-- 	/* Reset the SMSC 91C111 Ethernet chip */
-- 	gpio_request(MB442_PIO_SMC91X_RESET, "SMC91x reset");
-- 	gpio_direction_output(MB442_PIO_SMC91X_RESET, 0);
-- 	udelay(1);
-- 	gpio_set_value(MB442_PIO_SMC91X_RESET, 1);
-- 	udelay(1);
-- 	gpio_set_value(MB442_PIO_SMC91X_RESET, 0);
-- 
-  	return platform_add_devices(mb442_devices,
-  			ARRAY_SIZE(mb442_devices));
-  }
---- 172,177 ----
+--- a/arch/sh/boards/mach-mb442/setup.c	2011-01-20 19:00:37.000000000 +0100
++++ b/arch/sh/boards/mach-mb442/setup.c	2011-02-01 22:47:01.403481000 +0100
+@@ -21,7 +21,9 @@
+ #include <linux/mtd/physmap.h>
+ #include <linux/stm/platform.h>
+ #include <linux/stm/stx7100.h>
++#include <linux/bpa2.h>
+ #include <asm/irl.h>
++#include <linux/smsc911x.h>
+ 
+ 
+ 
+@@ -29,7 +31,25 @@
+ #define MB442_PIO_SMC91X_RESET stm_gpio(2, 6)
+ #define MB442_PIO_FLASH_VPP stm_gpio(2, 7)
+ 
++const char *LMI_VID_partalias[] = { "BPA2_Region1", "coredisplay-video", "gfx-memory", "v4l2-video-buffers", "v4l2-coded-video-buffers", NULL };
++const char *LMI_SYS_partalias[] = { "BPA2_Region0", "bigphysarea", NULL };
+ 
++static struct bpa2_partition_desc bpa2_parts_table[] = {
++      {
++	      .name  = "LMI_VID",
++	      .start = 0x10800000,
++	      .size  = 0x03800000,
++	      .flags = 0,
++	      .aka   = LMI_VID_partalias
++      },
++      {
++	      .name  = "LMI_SYS",
++	      .start = 0,
++	      .size  = 0x00A00000,   // THIS IS FOR NEUTRINO - NEEDS TO BE INCREASED FOR E2
++	      .flags = 0,
++	      .aka   = LMI_SYS_partalias
++      }
++};
+ 
+ void __init mb442_setup(char** cmdline_p)
+ {
+@@ -43,26 +63,34 @@
+ 	stx7100_configure_asc(3, &(struct stx7100_asc_config) {
+ 			.hw_flow_control = 0,
+ 			.is_console = 0, });
++
++  	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
+ }
+ 
+-static struct resource mb442_smc91x_resources[] = {
++static struct resource smsc_lan9115_resources[] = {
+ 	[0] = {
+-		.start	= 0x02000300,
+-		.end	= 0x02000300 + 0xff,
+-		.flags	= IORESOURCE_MEM,
+-	},
++ 		      .flags = IORESOURCE_MEM,
++ 		      .start = 0x02000000,
++ 		      .end   = 0x020000ff,
++ 	      },
+ 	[1] = {
+-		.start	= IRL0_IRQ,
+-		.end	= IRL0_IRQ,
+-		.flags	= IORESOURCE_IRQ,
+-	},
++ 		      .flags = IORESOURCE_IRQ,
++ 		      .start = IRL0_IRQ,
++ 		      .end   = IRL0_IRQ,
++ 	      },
+ };
+ 
+-static struct platform_device mb442_smc91x_device = {
+-	.name		= "smc91x",
++static struct platform_device smsc_lan9115 = {
++	.name		= "smsc911x",
+ 	.id		= 0,
+-	.num_resources	= ARRAY_SIZE(mb442_smc91x_resources),
+-	.resource	= mb442_smc91x_resources,
++	.num_resources	= ARRAY_SIZE(smsc_lan9115_resources),
++	.resource	= smsc_lan9115_resources,
++	.dev.platform_data = &(struct smsc911x_platform_config) {
++		.irq_polarity = 1,
++		.irq_type = 1,
++		.flags = SMSC911X_USE_32BIT,
++		.phy_interface = PHY_INTERFACE_MODE_MII,
++	},
+ };
+ 
+ static void mb442_set_vpp(struct map_info *info, int enable)
+@@ -86,13 +114,15 @@
+ 
+ static int mb442_phy_reset(void* bus)
+ {
++/* on ufs922 2.4 is the tuner
+ 	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
+ 	udelay(1);
+ 	gpio_set_value(MB442_PIO_STE100P_RESET, 0);
+ 	udelay(1);
+ 	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
+ 
+-	return 1;
++*/	return 1;
++
+ }
+ 
+ static struct plat_stmmacphy_data mb442_phy_private_data = {
+@@ -103,25 +133,15 @@
+ 	.phy_reset = &mb442_phy_reset,
+ };
+ 
+-static struct platform_device mb442_phy_device = {
+-	.name		= "stmmacphy",
+-	.id		= 0,
+-	.num_resources	= 1,
+-	.resource	= (struct resource[]) {
+-                {
+-			.name	= "phyirq",
+-			.start	= IRL3_IRQ,
+-			.end	= IRL3_IRQ,
+-			.flags	= IORESOURCE_IRQ,
+-		},
+-	},
+-	.dev.platform_data = &mb442_phy_private_data,
++static struct platform_device led_device = {
++       .name		= "ufs910-led",
++       .id		= -1,
+ };
+ 
+ static struct platform_device *mb442_devices[] __initdata = {
+-	&mb442_smc91x_device,
++	&smsc_lan9115,
+ 	&mb442_physmap_flash,
+-	&mb442_phy_device,
++ 	&led_device,
+ };
+ 
+ static int __init mb442_device_init(void)
+@@ -133,7 +153,7 @@
+ 			.out1_enabled = 1, });
+ 
+ 	stx7100_configure_ssc_i2c(0);
+-	stx7100_configure_ssc_spi(1, NULL);
++	stx7100_configure_ssc_i2c(1);
+ 	stx7100_configure_ssc_i2c(2);
+ 
+ 	stx7100_configure_usb();
+@@ -151,22 +171,6 @@
+ 	gpio_request(MB442_PIO_FLASH_VPP, "Flash VPP");
+ 	gpio_direction_output(MB442_PIO_FLASH_VPP, 0);
+ 
+-	gpio_request(MB442_PIO_STE100P_RESET, "STE100P reset");
+-	gpio_direction_output(MB442_PIO_STE100P_RESET, 1);
+-
+-	stx7100_configure_ethernet(&(struct stx7100_ethernet_config) {
+-			.mode = stx7100_ethernet_mode_mii,
+-			.ext_clk = 0,
+-			.phy_bus = 0, });
+-
+-	/* Reset the SMSC 91C111 Ethernet chip */
+-	gpio_request(MB442_PIO_SMC91X_RESET, "SMC91x reset");
+-	gpio_direction_output(MB442_PIO_SMC91X_RESET, 0);
+-	udelay(1);
+-	gpio_set_value(MB442_PIO_SMC91X_RESET, 1);
+-	udelay(1);
+-	gpio_set_value(MB442_PIO_SMC91X_RESET, 0);
+-
+ 	return platform_add_devices(mb442_devices,
+ 			ARRAY_SIZE(mb442_devices));
+ }
+--- a/drivers/stm/stx7100_comms.c	2011-01-20 19:00:37.000000000 +0100
++++ b/drivers/stm/stx7100_comms.c	2011-02-01 22:52:17.018479519 +0100
+@@ -226,12 +226,10 @@
+ 			STM_PAD_PIO_BIDIR_NAMED(2, 0, 1, "SCL"),
+ 			STM_PAD_PIO_BIDIR_NAMED(2, 1, 1, "SDA"),
+ 		},
+-		.sysconfs_num = 2,
++		.sysconfs_num = 1,
+ 		.sysconfs = (struct stm_pad_sysconf []) {
+ 			/* SSC0_MUX_SEL = 0 (default assignment) */
+ 			STM_PAD_SYS_CFG(7, 1, 1, 0),
+-			/* DVO_OUT_ON = 0 (SSC not DVO) */
+-			STM_PAD_SYS_CFG(7, 10, 10, 0),
+ 		},
+ 	},
+ 	[1] = {
+@@ -240,12 +238,10 @@
+ 			STM_PAD_PIO_BIDIR_NAMED(3, 0, 1, "SCL"),
+ 			STM_PAD_PIO_BIDIR_NAMED(3, 1, 1, "SDA"),
+ 		},
+-		.sysconfs_num = 2,
++		.sysconfs_num = 1,
+ 		.sysconfs = (struct stm_pad_sysconf []) {
+ 			/* SSC1_MUX_SEL = 0 (default assignment) */
+ 			STM_PAD_SYS_CFG(7, 2, 2, 0),
+-			/* DVO_OUT_ON = 0 (SSC not DVO) */
+-			STM_PAD_SYS_CFG(7, 10, 10, 0),
+ 		},
+ 	},
+ 	[2] = {

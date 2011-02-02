@@ -133,11 +133,11 @@ echo -e "\nKernel:"
 echo " Maintained:"
 echo "   1) STM 22 P0041"
 echo "   2) STM 23 P0119"
+echo "   4) STM 23 P0123"
+echo "   6) STM 24 P0205 (currently ufs910/player 179 only)"
 echo " Experimental:"
 echo "   3) STM 23 P0119 with Havana"
-echo "   4) STM 23 P0123"
 #echo "   5) STM 24 P0201 (not working)"
-#echo "   6) STM 24 P0205 (experimental)"
 case $2 in
         [1-5]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"

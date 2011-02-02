@@ -253,10 +253,11 @@ VIP2PATCHES_23 = $(COMMONPATCHES_23) \
 		linux-sh4-vip2_setup_stm23$(PATCH_STR).patch
 
 UFS910PATCHES_23 = $(COMMONPATCHES_23) \
-		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
-		linux-sh4-sound_stm23$(PATCH_STR).patch \
+		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		linux-sh4-ufs910_setup_stm23$(PATCH_STR).patch \
 		linux-sh4-ufs910_pcmplayer_stm23.patch \
+		$(if $(P0123),stx7100_fdma_fix_stm23_123.patch) \
 		linux-sh4-ufs910_reboot_stm23.patch
 
 CUBEPATCHES_023 = $(COMMONPATCHES_23) \
@@ -308,6 +309,7 @@ TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 			tf7700_setup_stm24$(PATCH_STR).patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
+			stx7100_fdma_fix_stm24_205.patch \
 			linux-sh4-ufs910_setup_stm24$(PATCH_STR).patch
 
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
