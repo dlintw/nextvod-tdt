@@ -151,8 +151,8 @@ case "$REPLY" in
 	2) KERNEL="--enable-stm23 --enable-p0119";;
 	3) KERNEL="--enable-stm23 --enable-p0119 --enable-havana";;
 	4) KERNEL="--enable-stm23 --enable-p0123";;
-	5) KERNEL="--enable-stm24 --enable-p0201";;
-	6) KERNEL="--enable-stm24 --enable-p0205";;
+	5) KERNEL="--enable-stm24 --enable-p0201";STMFB="stm24";;
+	6) KERNEL="--enable-stm24 --enable-p0205";STMFB="stm24";;
 	*) KERNEL="--enable-stm22 --enable-p0041";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"
@@ -227,7 +227,11 @@ case "$REPLY" in
           rm stmfb
        fi
        ln -s player2_179 player2
-       ln -s stmfb-3.1_stm23_0032 stmfb
+       if [ "$STMFB" == "stm24" ]; then
+           ln -s stmfb-3.1_stm24_0102 stmfb
+       else
+           ln -s stmfb-3.1_stm23_0032 stmfb
+       fi
        cd -
 
        cd ../driver/
@@ -242,7 +246,11 @@ case "$REPLY" in
        if [ -L stmfb ]; then
           rm stmfb
        fi
-       ln -s stmfb-3.1_stm23_0032 stmfb
+       if [ "$STMFB" == "stm24" ]; then
+           ln -s stmfb-3.1_stm24_0102 stmfb
+       else
+           ln -s stmfb-3.1_stm23_0032 stmfb
+       fi
        cd -
     ;;
 	*) PLAYER="--enable-player131";;
