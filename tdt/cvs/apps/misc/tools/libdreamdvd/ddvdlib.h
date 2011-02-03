@@ -66,7 +66,9 @@ int ddvd_get_messagepipe_fd(struct ddvd *pconfig);
 // xres, yres-> screen resolution, normally 720x576 libdreamdvd will scale inside to the given resolution
 // bypp-> bytes per pixel, only 1 (8bit) or 4 (32bit argb) is supported
 // stride-> line length in bytes, normally xres*bypp but not always like on the DM7025 framebuffer
+// canscale-> caller supports ddvd_get_blit_destination
 void ddvd_set_lfb(struct ddvd *pconfig, unsigned char *lfb, int xres, int yres, int bypp, int stride);
+void ddvd_set_lfb_ex(struct ddvd *pconfig, unsigned char *lfb, int xres, int yres, int bypp, int stride, int canscale);
 
 // set path to a dvd block device, a dvd file structure or an dvd iso-file ("/dev/dvd" ...)
 void ddvd_set_dvd_path(struct ddvd *pconfig, const char *path);
@@ -81,9 +83,16 @@ void ddvd_set_ac3thru(struct ddvd *pconfig, int ac3thru);
 
 // set video options for aspect and the tv system, see enums for possible options
 void ddvd_set_video(struct ddvd *pconfig, int aspect, int tv_mode, int tv_system);
+void ddvd_set_video_ex(struct ddvd *pconfig, int aspect, int tv_mode, int tv_mode2, int tv_system);
 
 // set resume postion for dvd start
 void ddvd_set_resume_pos(struct ddvd *pconfig, struct ddvd_resume resume_info);
+
+// directly set given audio stream id (alternative to iteration through the streams with the DDVD_KEY_AUDIO)
+void ddvd_set_audio(struct ddvd *pconfig, int audio_id);
+
+// directly set given subtitle stream id (alternative to iteration through the streams with the DDVD_KEY_SUBTITLE)
+void ddvd_set_spu(struct ddvd *pconfig, int spu_id);
 
 /* 
  * functions for starting the dvd player
@@ -124,6 +133,11 @@ void ddvd_get_last_colortable(struct ddvd*pconfig, void *colortable);
 // get last area to update overlay after DDVD_SCREEN_UPDATE
 void ddvd_get_last_blit_area(struct ddvd *pconfig, int *x_start, int *x_end, int *y_start, int *y_end);
 
+#define DDVD_SUPPORTS_16_10_SCALING 1
+#define DDVD_SUPPORTS_GET_BLIT_DESTINATION 1
+// get parameters used for blit
+void ddvd_get_blit_destination(struct ddvd *pconfig, int *x_offset, int *y_offset, int *width, int *height);
+
 // get last received playing time
 // struct ddvd_time timestamp
 void ddvd_get_last_time(struct ddvd*pconfig, void *timestamp);
@@ -145,17 +159,34 @@ void ddvd_get_last_string(struct ddvd*pconfig, void *text);
 // int type -> audio type, see audio type enum (ac3,mpeg,...)
 void ddvd_get_last_audio(struct ddvd*pconfig, void *id, void *lang, void *type);
 
+// get audio track details for given audio track id
+void ddvd_get_audio_byid(struct ddvd *pconfig, int audio_id, void *lang, void *type);
+
+// get the number of available audio tracks
+void ddvd_get_audio_count(struct ddvd *pconfig, void *count);
+
 // get the active subtitle track
 // int id -> logical track number
 // uint16_t lang -> subtitle language in 2 letter iso code
 // id=-1 means no subtitle track active
 void ddvd_get_last_spu(struct ddvd*pconfig, void *id, void *lang);
 
+// get track details for given subtitle track id
+void ddvd_get_spu_byid(struct ddvd *pconfig, int spu_id, void *lang);
+
+// get the number of available subtitle tracks
+void ddvd_get_spu_count(struct ddvd *pconfig, void *count);
+
 // get dvd title string
 void ddvd_get_title_string(struct ddvd*pconfig, char *title_string);
 
 // get last received position for resume
 void ddvd_get_resume_pos(struct ddvd *pconfig, struct ddvd_resume *resume_info);
+
+#define DDVD_SUPPORTS_PICTURE_INFO 1
+void ddvd_get_last_size(struct ddvd *pconfig, int *width, int *height, int *aspect);
+void ddvd_get_last_framerate(struct ddvd *pconfig, int *frate);
+void ddvd_get_last_progressive(struct ddvd *pconfig, int *progressive);
 
 /* 
  * functions for clean up AFTER the player had stopped
@@ -193,6 +224,9 @@ enum { // state
 	DDVD_MENU_OPENED,
 	DDVD_MENU_CLOSED,
 	DDVD_SHOWOSD_ANGLE,			// show angle info, you can get it with ddvd_get_angle_info	
+	DDVD_SIZE_CHANGED,
+	DDVD_PROGRESSIVE_CHANGED,
+	DDVD_FRAMERATE_CHANGED,
 };
 
 
@@ -233,8 +267,10 @@ enum { // send_key
 	DDVD_SET_MUTE,				// just telling dreamdvd that the sound has been muted, libdreamdvd does not mute for you, but has to know
 								// the mute state for sound handling on ffwd/fbwd trick mode
 	DDVD_UNSET_MUTE,			// sound is not muted any more (see DDVD_SET_MUTE)
-	DDVD_KEY_ANGLE,				// change angle on the fly 	
-	DDVD_GET_ANGLE,				// get actual angle info	
+	DDVD_KEY_ANGLE,				// change angle on the fly
+	DDVD_GET_ANGLE,				// get actual angle info
+	DDVD_SET_AUDIO,				// set given audio track id
+	DDVD_SET_SUBTITLE,			// set given subtitle track id
 };
 
 // if you use the same keys for different functions in different contexts (menu/movie) just send both commands, the player will 
@@ -247,6 +283,7 @@ enum { // send_key
  */
 
 enum { // audio types
+	DDVD_UNKNOWN,
 	DDVD_AC3,
 	DDVD_MPEG,
 	DDVD_DTS,

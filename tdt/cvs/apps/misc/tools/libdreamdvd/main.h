@@ -24,8 +24,9 @@
  */
 
 #ifndef __MAIN_H__
-
 #define __MAIN_H__
+
+#include "libdreamdvd_config.h"
 
 #if defined(__sh__)
 #define CONVERT_TO_DVB_COMPLIANT_AC3
@@ -34,7 +35,9 @@
 #define SHOW_START_SCREEN 1
 
 #define CONVERT_TO_DVB_COMPLIANT_AC3
+#define CONVERT_TO_DVB_COMPLIANT_DTS
 #endif
+#define NUM_SPU_BACKBUFFER 8
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -64,20 +67,16 @@
 #error "no BYTE_ORDER defined!!!!"
 #endif
 
-#if BYTE_ORDER == BIG_ENDIAN
-#warning "assume api v1 when byte order is big endian !!"
-#define CONFIG_API_VERSION 1
-#else
-#warning "assume api v3 when byte order is little endian !!"
-#define CONFIG_API_VERSION 3
-#endif
-
-#if CONFIG_API_VERSION == 1
-#include <ost/video.h>
-#include <ost/audio.h>
-#elif CONFIG_API_VERSION == 3
+#if defined(HAVE_LINUX_DVB_VERSION_H)
 #include <linux/dvb/video.h>
 #include <linux/dvb/audio.h>
+#define CONFIG_API_VERSION 3
+#elif defined(HAVE_OST_DMX_H)
+#include <ost/video.h>
+#include <ost/audio.h>
+#define CONFIG_API_VERSION 1
+#include <ost/video.h>
+#include <ost/audio.h>
 #endif
 
 #define BUFFER_SIZE 4096
@@ -104,6 +103,9 @@
 #define SAA_WSS_OFF     8
 #define SAA_NTSC        0
 #define SAA_PAL         1
+
+#define MAX_AUDIO       8
+#define MAX_SPU         32
 
 typedef struct ddvd_spudec_clut_struct {
 #if BYTE_ORDER == BIG_ENDIAN
@@ -134,6 +136,8 @@ struct ddvd_resize_return {
 	int x_end;
 	int y_start;
 	int y_end;	
+	
+	int x_offset, y_offset, width, height;
 };
 
 // some global stuff 
@@ -174,12 +178,28 @@ int ddvd_screeninfo_xres, ddvd_screeninfo_yres, ddvd_screeninfo_stride;
 
 unsigned short ddvd_rd[256],ddvd_gn[256],ddvd_bl[256],ddvd_tr[256];
 
+struct ddvd_size_evt {
+	int width;
+	int height;
+	int aspect;
+};
+
+struct ddvd_framerate_evt {
+	int framerate;
+};
+
+struct ddvd_progressive_evt {
+	int progressive;
+};
+
+
 /* struct for ddvd nav handle*/
 struct ddvd {
 	/* config options */
 	char language[2]; 				// iso code (de, en, ...)
 	int aspect;						// 0-> 4:3 1-> 16:9 2-> 16:10
 	int tv_mode;					// 0-> letterbox 1-> pan_scan 2-> justscale
+	int tv_mode2;					// 0-> letterbox 1-> pan_scan 2-> justscale
 	int tv_system;					// 0-> PAL 1-> NTSC
 	int ac3thru;					// 0-> internal soft decoding 1-> ac3 pass thru to optical out
 	unsigned char *lfb;				// framebuffer to render subtitles and menus
@@ -187,6 +207,7 @@ struct ddvd {
 	int yres;						// y resolution of the framebuffer (normally 576, we dont scale inside libdreamdvd)
 	int stride;						// line_length of the framebuffer (normally 720*bypp, but not always like on DM7025)
 	int bypp;						// the bytes per pixel only 1 (8bit framebuffer) or 4 (32bit) are supported
+	int canscale;
 	int key_pipe[2];				// pipe for sending a command/remote control key (sizeof(int)) to the player
 	int message_pipe[2];			// pipe for getting player status, osd time and text as well as 8bit color tables
 	char *dvd_path;				// the path of a dvd block device ("/dev/dvd"), an iso-file ("/hdd/dvd.iso")
@@ -202,7 +223,11 @@ struct ddvd {
 	uint16_t last_audio_lang;		// active audio language
 	int last_spu_id;				// active subtitle id
 	uint16_t last_spu_lang;			// active subtitle language
+	struct ddvd_size_evt last_size;
+	struct ddvd_framerate_evt last_framerate;
+	struct ddvd_progressive_evt last_progressive;
 	uint64_t next_time_update;
+	
 	int in_menu;
 	int resume_title;				// title, chapter, block for resuming dvd or
 	int resume_chapter;				// getting actual resume position
@@ -215,6 +240,9 @@ struct ddvd {
 	struct ddvd_resize_return blit_area;
 	int angle_current;
 	int angle_num;
+
+	int audio_format[MAX_AUDIO];
+	int spu_map[MAX_SPU];
 };
 
 /* internal functions */
