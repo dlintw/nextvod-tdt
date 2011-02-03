@@ -1,22 +1,71 @@
 #!/bin/sh
 
+DEVFS="MDEV"
+#MDEV, DEVFS
+
+NEUTRINO="NO" #Is set below
+ENIGMA2="NO" #Is set below
+VDR="NO" #Is set below
+
+PLAYER="player131" #Is set below
+CPU="STx7100" #Is set below
+
+STM="stm23" #Is set below
+
 MODDIR=/lib/modules
 
-rm /var/etc/.firstboot
+if [ $DEVFS -eq "MDEV" ]; then
+   touch /dev/.udev
+   rm /var/etc/.firstboot
 
-mount -t tmpfs -o size=64k,mode=0755 mdev /dev
-mkdir /dev/pts
-mount -t devpts devpts /dev/pts
-mount -t proc proc /proc
-mount -t sysfs sysfs /sys
-echo /sbin/mdev > /proc/sys/kernel/hotplug
-/sbin/mdev -s
+   mount -t tmpfs -o size=64k,mode=0755 mdev /dev
+   mkdir /dev/pts
+   mount -t devpts devpts /dev/pts
+   mount -t proc proc /proc
+   mount -t sysfs sysfs /sys
+   echo /sbin/mdev > /proc/sys/kernel/hotplug
+   /sbin/mdev -s
 
-touch /dev/.udev
+elif [ $DEVFS -eq "DEVFS" ]; then
+   if [ -e /var/etc/.firstboot ]; then
+      touch /dev/.devfsd
+      rm /var/etc/.firstboot
+
+      #fp_control does not work here
+      echo "WAIT 1 min" >/dev/vfd
+      echo "WAIT 1 min"
+   fi
+
+   /etc/init.d/mountvirtfs start
+fi
+
+PLAYER=`cat /proc/stb/player/version`
+#player179, player131
+
+CPU=`cat /proc/cpuinfo | grep "cpu type" | sed "s/cpu type\t: //g" | sed "s/i/x/g"`
+#STx7105, STx7111, STx7100, STx7101, STx7109
+
+if [ `cat /proc/version | grep -c "stm22"` -eq "1" ]; then
+   STM="stm22"
+elif [ `cat /proc/version | grep -c "stm23"` -eq "1" ]; then
+   STM="stm23"
+elif [ `cat /proc/version | grep -c "stm24"` -eq "1" ]; then
+   STM="stm24"
+fi
 
 . /etc/init.d/init_vfd.sh $MODDIR
 
 if [ ! -e /var/etc/.firstboot ]; then
+
+   /etc/init.d/mountall start
+
+   if [ -e /usr/local/bin/neutrino ]; then
+      NEUTRINO="YES"
+   elif [ -e /usr/local/bin/enigma2 ]; then
+      ENIGMA2="YES"
+   else
+      VDR="YES"
+   fi
 
    insmod $MODDIR/e2_proc.ko
 
@@ -27,102 +76,132 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "load v firmware"
    /bin/ustslave /dev/st231-0 /boot/video.elf
 
-   /etc/init.d/mountall start
+   echo "starting network services"
    /etc/init.d/hostname start
 
-   echo "starting telnetd"
+   NFS=$(grep -c 'nfs' /proc/cmdline)
+   if [ "$NFS" -eq "1" ]; then
+      echo "Booting from nfs, don't set network"
+   elif [ -e /etc/network/interfaces ]; then
+      ip addr flush eth0
+      /etc/init.d/networking stop
+      TEST=$(grep -c 'dhcp' /etc/network/interfaces)
+      if [ "$(TEST)" -eq "1" ]; then 
+         echo "DHCP"
+         /etc/init.d/udhcpc start
+      fi 
+      /etc/init.d/networking start
+   fi
+
+   echo "starting telnetd services"
    /usr/sbin/telnetd -l /bin/login
 
-   . /etc/init.d/init_box.sh $MODDIR
-   
-   echo "init embxshell"
-   insmod $MODDIR/embxshell.ko
-   echo "init embxmailbox"
-   insmod $MODDIR/embxmailbox.ko mailbox0=0xb9211000:136:set2 mailbox1=0xb9212000:137:set2 ;
-   echo "init embxshm"
-   insmod $MODDIR/embxshm.ko mailbox0=shm:0:7:0x60000000:0:256:256:0:512:0xa4000000:0x10000000 ;
-   echo "init mme_host"
-   insmod $MODDIR/mme_host.ko transport0=shm
+   echo "starting other network services"
+   /etc/init.d/portmap start
+   /etc/init.d/vsftpd start
+   /usr/sbin/inetd
 
-   echo "init stmfb"
+   . /etc/init.d/init_box_pre.sh $MODDIR
+
+   echo "init embx drivers"
+   insmod $MODDIR/embxshell.ko
+   if [ $CPU -eq "STx7100" -o $CPU -eq "STx7101" -o $CPU -eq "STx7109" ]; then
+      insmod $MODDIR/embxmailbox.ko mailbox0=0xb9211000:136:set2 mailbox1=0xb9212000:137:set2 ;
+      insmod $MODDIR/embxshm.ko mailbox0=shm:0:7:0x60000000:0:256:256:0:512:0xa4000000:0x10000000 ;
+      insmod $MODDIR/mme_host.ko transport0=shm
+   else
+      insmod $MODDIR/embxmailbox.ko mailbox0=0xfe211000:136:set2 mailbox1=0xfe212000:0 ;
+      insmod $MODDIR/embxshm.ko mailbox0=shm:0:7:0x60000000:0:256:256:0:512:0x40000000:0x10000000 ;
+      insmod $MODDIR/mme_host.ko transport0=shm
+   fi
+
+   echo "init stmfb drivers"
    insmod $MODDIR/stmcore-display-stx7100.ko
-   if [ -e /usr/local/bin/neutrino ]; then
+    if [ $NEUTRINO -eq "YES" ]; then
       # 8mb is sufficient for Neutrino
       insmod $MODDIR/stmfb.ko display0=1280x720-32@50:8m:pal:yuv:yuv;
    else
       insmod $MODDIR/stmfb.ko display0=1280x720-32@50:12m:pal:yuv:yuv;
    fi
 
-   echo "init player"
+   echo "init player drivers"
    insmod $MODDIR/mmelog.ko
-   insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
-   insmod $MODDIR/stmsysfs.ko
+   if [ $CPU -eq "STx7100" -o $CPU -eq "STx7101" -o $CPU -eq "STx7109" ]; then
+      insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
+   fi
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
+   if [ $PLAYER -eq 'player179' ]; then
+      insmod $MODDIR/stmvout.ko
+      insmod $MODDIR/stmvbi.ko
+   fi
    insmod $MODDIR/pseudocard.ko
-   insmod $MODDIR/pti.ko
-   insmod $MODDIR/stm_monitor.ko
-   insmod $MODDIR/stmdvb.ko
+
+   insmod $MODDIR/stv090x.ko
+   insmod $MODDIR/ufs912_cic.ko
+   if [ $PLAYER -eq 'player179' ]; then
+      insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+      insmod $MODDIR/stm_monitor.ko
+      insmod $MODDIR/stmsysfs.ko
+      insmod $MODDIR/stmdvb.ko
+   elif
+      insmod $MODDIR/pti.ko
+      insmod $MODDIR/stmdvb.ko
+      insmod $MODDIR/stm_monitor.ko
+   fi
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko
+
+   echo "init other drivers"
    insmod $MODDIR/bpamem.ko
-
-   echo "init lircd"
-   /usr/bin/lircd
-
-   echo "init frontpanel"
-   /bin/evremote2 &
-
-   /etc/init.d/portmap start
-   /etc/init.d/vsftpd start
-   /usr/sbin/inetd
-
-   # timefix
-   date -s "121220001970"
 
    echo "LOADING" > $VFD
    echo "LOADING"
 
-   if [ ! -e /usr/local/bin/neutrino ]; then
+   if [ $ENIGMA2 -eq "YES" ]; then
       showiframe -p /boot/bootlogo.mvi &
    fi
+
+   . /etc/init.d/init_box_post.sh $MODDIR
 
    stfbcontrol a 255
    until false
    do
-      echo "starting ->"
-      if [ -e /usr/local/bin/neutrino ]; then
+      echo "starting main system"
+      if [ $NEUTRINO -eq "YES" ]; then
          /usr/local/bin/neutrino -f -u
-      else
+      elif [ $ENIGMA2 -eq "YES" ]; then
          /usr/local/bin/enigma2
       fi
 
-      echo "ended <- RTV: " $rtv
+      echo "main system ended <- RTV: " $rtv
       case "$rtv" in
-		0) echo "0"
-		   echo "ERROR"
-      	   init 6;;
-		1) echo "1"
-		   echo "SHUTDOWN"
-		   init 0;;
-		2) echo "2"
-		   echo "REBOOT"
-		   init 6;;
-		3) echo "3"
-		   echo "RESTART"
-		   echo "0" > /proc/progress
-		   showiframe -p /boot/bootlogo.mvi &;;
-		*) echo "*"
-		   echo "ERROR"
-           init 6;;
+      0) echo "0"
+         echo "ERROR"
+         init 6;;
+      1) echo "1"
+         echo "SHUTDOWN"
+         init 0;;
+      2) echo "2"
+         echo "REBOOT"
+         init 6;;
+      3) echo "3"
+         echo "RESTART"
+         if [ $ENIGMA2 -eq "YES" ]; then
+            echo "0" > /proc/progress
+            showiframe -p /boot/bootlogo.mvi &
+         fi
+         ;;
+      *) echo "*"
+         echo "ERROR"
+         init 6;;
       esac
    done 
 fi
 
-echo "REBOOT" > $VFD
-echo "REBOOT"
-reboot
+echo "FAILURE" > $VFD
+echo "SYSTEM FAILURE - EXIT TO SHELL"
