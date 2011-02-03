@@ -2,18 +2,19 @@
 
 MODDIR=/lib/modules
 
+rm /var/etc/.firstboot
+
+mount -t tmpfs -o size=64k,mode=0755 mdev /dev
+mkdir /dev/pts
+mount -t devpts devpts /dev/pts
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+echo /sbin/mdev > /proc/sys/kernel/hotplug
+/sbin/mdev -s
+
+touch /dev/.udev
+
 . /etc/init.d/init_vfd.sh $MODDIR
-
-echo "    Welcome     " > $VFD
-
-if [ -e /var/etc/.firstboot ]; then
-   echo "WAIT 1 min" > $VFD
-   echo "WAIT 1 min"
-   rm /var/etc/.firstboot
-   touch /dev/.devfsd
-fi
-
-/etc/init.d/mountvirtfs start
 
 if [ ! -e /var/etc/.firstboot ]; then
 
