@@ -1,0 +1,12 @@
+# Boot-time system configuration/initialization script.
+# This is run first except when booting in emergency (-b) mode.
+si::sysinit:/etc/init.d/rcS
+
+# What to do in single-user mode.
+~~:S:wait:/sbin/sulogin
+
+# Normally not reached, but fallthrough in case of emergency.
+z6:6:respawn:/sbin/sulogin
+
+# What to do when CTRL-ALT-DEL is pressed.
+ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
