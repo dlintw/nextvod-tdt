@@ -100,14 +100,16 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko
+   insmod $MODDIR/smartcard.ko
 
    showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
 
    echo "init frontpanel"
 
-
    mknod /dev/rc c 147 1 
+   mknod /dev/sci0 c 169 0
+   mknod /dev/sci1 c 169 1 
 
    #toggleFeedback 0 = false, 1 = true
    #maxRate (same key) = 2, maxDelay (determine new key) = 500

@@ -79,6 +79,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
+   insmod $MODDIR/smartcard.ko
 
    showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
@@ -91,6 +92,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/bin/lircd
 
    mknod /dev/rc c 147 1 
+   mknod /dev/sci0 c 169 0
+   mknod /dev/sci1 c 169 1 
+   
    /bin/evremote2 hl101 &
 
    #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
