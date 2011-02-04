@@ -110,6 +110,16 @@ flash-ufs910-neutrino: yaud-none stslave \
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
+yaud-neutrino-static: yaud-none lirc stslave\
+		boot-elf remote firstboot neutrino release_neutrino_static
+	@TUXBOX_YAUD_CUSTOMIZE@
+flash-ufs910-neutrino: yaud-none stslave \
+		yaud-neutrino \
+		kernel-squashfs.ubimage \
+		root-stock.neutrino \
+		var-stock.neutrino
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 if STM22
 yaud-enigma2: yaud-none lirc stslave\
 		boot-elf hotplug remote firstboot enigma2 enigma2-misc release
