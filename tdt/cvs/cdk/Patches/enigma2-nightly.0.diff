@@ -1472,10 +1472,10 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/demux.cpp enigma2
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly.patched/lib/dvb/dvb.cpp
 --- enigma2-nightly.org/lib/dvb/dvb.cpp	2011-01-07 21:23:59.000000000 +0100
 +++ enigma2-nightly.patched/lib/dvb/dvb.cpp	2011-01-07 21:07:07.000000000 +0100
-@@ -98,6 +98,44 @@
- 		m_boxtype = DM500HD;
- 	else if (!strncmp(tmp, "dm800se\n", rd))
+@@ -100,6 +100,44 @@
  		m_boxtype = DM800SE;
+ 	else if (!strncmp(tmp, "dm7020hd\n", rd))
+ 		m_boxtype = DM7020HD;
 +#if defined(__sh__)
 +	else if (!strncmp(tmp, "ufs910\n", rd))
 +		m_boxtype = UFS910;
@@ -1517,7 +1517,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.cpp en
  	else {
  		eDebug("boxtype detection via /proc/stb/info not possible... use fallback via demux count!\n");
  		if (m_demux.size() == 3)
-@@ -549,7 +587,58 @@
+@@ -551,7 +589,58 @@
  			}
  		}
  	}
@@ -1576,7 +1576,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.cpp en
  	if (unused)
  	{
  		demux = new eDVBAllocatedDemux(unused);
-@@ -1791,8 +1880,15 @@
+@@ -1793,8 +1882,15 @@
  #if HAVE_DVB_API_VERSION < 3
  		m_pvr_fd_dst = open("/dev/pvr", O_WRONLY);
  #else
@@ -1599,10 +1599,11 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.h enig
  	DECLARE_REF(eDVBResourceManager);
  	int avail, busy;
  
+-	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD };
 +#if defined(__sh__)
-+	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, SPARK, ATEVIO7500};
++	enum { DM7025, DM800, DM500HD, DM800SE, DM8000,, DM7020HD, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, SPARK, ATEVIO7500};
 +#else
- 	enum { DM7025, DM800, DM500HD, DM800SE, DM8000 };
++ 	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD };
 +#endif
  
  	int m_boxtype;
@@ -1699,7 +1700,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/epgcache.cpp enig
  			ByteSize -= 4;
  		}
  		delete [] EITdata;
-@@ -1444,6 +1482,46 @@
+@@ -1446,6 +1484,46 @@
  	int source;
  	int map;
  	iDVBSectionReader *reader=NULL;
@@ -1746,7 +1747,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/epgcache.cpp enig
  	switch(data[0])
  	{
  		case 0x4E ... 0x4F:
-@@ -1533,6 +1611,10 @@
+@@ -1535,6 +1613,10 @@
  			cache->sectionRead(data, source, this);
  		}
  	}
@@ -1757,7 +1758,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/epgcache.cpp enig
  }
  
  RESULT eEPGCache::lookupEventTime(const eServiceReference &service, time_t t, const eventData *&result, int direction)
-@@ -2259,11 +2341,22 @@
+@@ -2261,11 +2343,22 @@
  						{
  							__u8 *data = evData->EITdata;
  							int tmp = evData->ByteSize-10;
@@ -1780,7 +1781,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/epgcache.cpp enig
  								descriptorMap::iterator it =
  									eventData::descriptors.find(crc);
  								if (it != eventData::descriptors.end())
-@@ -2441,12 +2534,23 @@
+@@ -2443,12 +2536,23 @@
  					continue;
  				__u8 *data = evit->second->EITdata;
  				int tmp = evit->second->ByteSize-10;
