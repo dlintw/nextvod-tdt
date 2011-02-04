@@ -50,8 +50,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stmfb.ko display0=1280x720-32@50:12m:pal:yuv:yuv
 
    echo "load a/v firmware"
-   /bin/ustslave_stm23 /dev/st231-0 /boot/video.elf
-   /bin/ustslave_stm23 /dev/st231-1 /boot/audio.elf
+   /bin/ustslave /dev/st231-0 /boot/video.elf
+   /bin/ustslave /dev/st231-1 /boot/audio.elf
 
    echo "init embx"
    insmod $MODDIR/embxshell.ko

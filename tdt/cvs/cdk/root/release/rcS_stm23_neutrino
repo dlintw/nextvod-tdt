@@ -23,9 +23,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    /bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
    # end mme bug wa
    echo "load a firmware"
-   /bin/ustslave_stm23 /dev/st231-1 /boot/audio.elf
+   /bin/ustslave /dev/st231-1 /boot/audio.elf
    echo "load v firmware"
-   /bin/ustslave_stm23 /dev/st231-0 /boot/video.elf
+   /bin/ustslave /dev/st231-0 /boot/video.elf
 
    echo "Starting DEBUG Interface"
    /etc/init.d/mountall start
