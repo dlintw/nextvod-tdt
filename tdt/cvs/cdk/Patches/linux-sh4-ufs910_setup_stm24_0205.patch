@@ -28,7 +28,7 @@
 +      {
 +	      .name  = "LMI_SYS",
 +	      .start = 0,
-+	      .size  = 0x00A00000,   // THIS IS FOR NEUTRINO - NEEDS TO BE INCREASED FOR E2
++	      .size  = 0x00F00000,
 +	      .flags = 0,
 +	      .aka   = LMI_SYS_partalias
 +      }
