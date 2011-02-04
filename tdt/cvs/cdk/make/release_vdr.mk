@@ -108,9 +108,6 @@ cp $(buildprefix)/root/release/rcS_vdr$(if $(TF7700),_$(TF7700))$(if $(UFS910),_
 	find $(prefix)/release_vdr/lib/ -name  *.so* -exec sh4-linux-strip --strip-unneeded {} \;
 if !STM22
 	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_vdr/etc/init.d/rcS && \
-	rm -f $(prefix)/release_vdr/bin/{stslave,ustslave}
-else
-	rm -f $(prefix)/release_vdr/bin/ustslave_stm23
 endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/avs/avs.ko $(prefix)/release_vdr/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/boxtype/boxtype.ko $(prefix)/release_vdr/lib/modules/
