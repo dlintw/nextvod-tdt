@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <linux/ioctl.h>
+#include <sys/utsname.h>
 
 #define ST_IOCTL_BASE      'l'
 #define STCOP_GRANT      _IOR(ST_IOCTL_BASE, 0, unsigned int)
@@ -21,14 +22,16 @@
 /* fixme: Dagobert: we should include <linux/stm/coprocessor.h>
 * here but I dont understand the automatic generated makefile here
 * ->so use the hacky version here ...
+* (Schischu): Actually this makes it easier to implement a stm22 stm23 detection,
+* so leave it.
 */
 typedef struct {
-   char          name[16];   /* coprocessor name          */
-   u_int          flags;      /* control flags           */
-               /* Coprocessor region:              */
-   unsigned long   ram_start;   /*   Host effective address         */
-   u_int          ram_size;   /*   region size (in bytes)         */
-   unsigned long   cp_ram_start;   /*   coprocessor effective address  */
+   char           name[16];      /* coprocessor name                 */
+   u_int          flags;         /* control flags                    */
+   /* Coprocessor region:                                            */
+   unsigned long   ram_start;    /*   Host effective address         */
+   u_int           ram_size;     /*   region size (in bytes)         */
+   unsigned long   cp_ram_start; /*   coprocessor effective address  */
 
 } cop_properties_t;
 
@@ -37,7 +40,7 @@ typedef struct {
 typedef struct {
 
    unsigned int ID;
-   char Name[MAX_NAMELEN];
+   char         Name[MAX_NAMELEN];
    unsigned int DestinationAddress;
    unsigned int SourceAddress;
    unsigned int Size;
@@ -50,6 +53,25 @@ typedef struct {
 tSecIndex IndexTable[MAX_SECTIONS];
 int IndexCounter = 0;
 int IDCounter = -1;
+
+unsigned int getKernelVersion()
+{
+   unsigned int version = 24;
+   struct utsname name;
+   uname(&name);
+
+   if(!strncmp(name.release, "2.6.17", 6))
+      version = 22;
+   else if(!strncmp(name.release, "2.6.23", 6))
+      version = 23;
+   else // 2.6.32
+      version = 24;
+
+   printf("ustslave: Kernel Version: %d\n", version);
+
+   return version;
+}
+
 
 int writeToSlave(int cpuf, int fd, off_t DestinationAddress, unsigned int SourceAddress, unsigned int Size)
 {
@@ -78,10 +100,16 @@ int sectionToSlave(int cpuf, int fd, int * EntryPoint)
    int i = 0;
    int BootSection = -2;
    int LastSection = -2;
-       cop_properties_t cop;
-   
-       ioctl(cpuf,STCOP_GET_PROPERTIES,&cop);
-       printf("base_address 0x%.8x\n",cop.cp_ram_start);
+   unsigned long ramStart = 0;
+   unsigned char kernelVersion = getKernelVersion();
+   if(kernelVersion == 23 || kernelVersion == 24)
+   {
+      cop_properties_t cop;
+
+      ioctl(cpuf,STCOP_GET_PROPERTIES,&cop);
+      printf("base_address 0x%.8x\n", cop.cp_ram_start);
+      ramStart = cop.cp_ram_start;
+   }
 
    for(i = 0; i < IndexCounter; i++) {
       if(IndexTable[i].Size > 0 && (IndexTable[i].Flags & SEC_LOAD == SEC_LOAD)) {
@@ -94,7 +122,8 @@ int sectionToSlave(int cpuf, int fd, int * EntryPoint)
             continue;
          }
 
-         writeToSlave(cpuf, fd, IndexTable[i].DestinationAddress - cop.cp_ram_start, IndexTable[i].SourceAddress, IndexTable[i].Size);
+         writeToSlave(cpuf, fd, IndexTable[i].DestinationAddress - ramStart, 
+            IndexTable[i].SourceAddress, IndexTable[i].Size);
 
          LastSection = i;
       }
@@ -107,11 +136,11 @@ int sectionToSlave(int cpuf, int fd, int * EntryPoint)
       unsigned int DestinationAddress = (IndexTable[LastSection].DestinationAddress + IndexTable[LastSection].Size
                                         + (1 << Alignment)) & ~((1 << Alignment) - 1);
 
-      writeToSlave(cpuf, fd, DestinationAddress - cop.cp_ram_start, IndexTable[BootSection].SourceAddress, IndexTable[BootSection].Size);
+      writeToSlave(cpuf, fd, DestinationAddress - ramStart, 
+         IndexTable[BootSection].SourceAddress, IndexTable[BootSection].Size);
 
       *EntryPoint = DestinationAddress;
    } else {
-
       //We allready have the EntryPoint
    }
 
@@ -167,13 +196,13 @@ int addIndex(unsigned int DestinationAddress, unsigned int SourceAddress, unsign
          Alignment==0x100?8:
          Alignment);*/
 
-   IndexTable[IndexCounter].ID             = IDCounter++;
+   IndexTable[IndexCounter].ID                 = IDCounter++;
    IndexTable[IndexCounter].DestinationAddress = DestinationAddress;
-   IndexTable[IndexCounter].SourceAddress       = SourceAddress;
-   IndexTable[IndexCounter].Size             = Size;
+   IndexTable[IndexCounter].SourceAddress      = SourceAddress;
+   IndexTable[IndexCounter].Size               = Size;
    IndexTable[IndexCounter].Alignment          = Alignment;
 
-   IndexTable[IndexCounter].Flags             = Flags;
+   IndexTable[IndexCounter].Flags              = Flags;
    IndexTable[IndexCounter].DontKnow2          = DontKnow2;
 
    IndexCounter++;
@@ -190,7 +219,7 @@ int readDescription(int fd, unsigned int Address, unsigned int Size)
    lseek(fd, Address, SEEK_SET);
 
    read(fd, &buf, Size);
-   
+
    while(Position < Size) {
       int i = 0;
 
@@ -229,19 +258,19 @@ int loadElf(int cpuf, int fd, unsigned int *entry_p, unsigned int *stack_p, int 
    while( (ReadBytes = read(fd, &buf, 10 * sizeof(int))) == (10 * sizeof(int)) ) {
 
       unsigned int IncreasingNumber   = buf[0]  | buf[1]<<8  | buf[2]<<16  | buf[3]<<24;
-      unsigned int Flags            = buf[4]  | buf[5]<<8  | buf[6]<<16  | buf[7]<<24;
-      unsigned int DontKnow2         = buf[8]  | buf[9]<<8  | buf[10]<<16 | buf[11]<<24;
+      unsigned int Flags              = buf[4]  | buf[5]<<8  | buf[6]<<16  | buf[7]<<24;
+      unsigned int DontKnow2          = buf[8]  | buf[9]<<8  | buf[10]<<16 | buf[11]<<24;
 
-      unsigned int DestinationAddress   = buf[12] | buf[13]<<8 | buf[14]<<16 | buf[15]<<24;
+      unsigned int DestinationAddress = buf[12] | buf[13]<<8 | buf[14]<<16 | buf[15]<<24;
       unsigned int SourceAddress      = buf[16] | buf[17]<<8 | buf[18]<<16 | buf[19]<<24;
-      unsigned int Size            = buf[20] | buf[21]<<8 | buf[22]<<16 | buf[23]<<24;
+      unsigned int Size               = buf[20] | buf[21]<<8 | buf[22]<<16 | buf[23]<<24;
 
-      unsigned int DontKnow3         = buf[24] | buf[25]<<8 | buf[26]<<16 | buf[27]<<24;
-      unsigned int DontKnow4         = buf[28] | buf[29]<<8 | buf[30]<<16 | buf[31]<<24;
+      unsigned int DontKnow3          = buf[24] | buf[25]<<8 | buf[26]<<16 | buf[27]<<24;
+      unsigned int DontKnow4          = buf[28] | buf[29]<<8 | buf[30]<<16 | buf[31]<<24;
 
-      unsigned int Alignment         = buf[32] | buf[33]<<8 | buf[34]<<16 | buf[35]<<24;
+      unsigned int Alignment          = buf[32] | buf[33]<<8 | buf[34]<<16 | buf[35]<<24;
 
-      unsigned int DontKnow5         = buf[36] | buf[37]<<8 | buf[38]<<16 | buf[39]<<24;
+      unsigned int DontKnow5          = buf[36] | buf[37]<<8 | buf[38]<<16 | buf[39]<<24;
 
       if(DestinationAddress == 0x00 && SourceAddress != 0x00) {
          //Source Address is address of description
@@ -266,27 +295,27 @@ int loadElf(int cpuf, int fd, unsigned int *entry_p, unsigned int *stack_p, int 
 
 int copLoadFile (int cpuf, char *infile, unsigned int *entry_p, unsigned int *stack_p, int verbose)
 {
-    int   inf;
-    char *sfx;
-    int pipe;
-    unsigned char header[4];
+   int   inf;
+   char *sfx;
+   int pipe;
+   unsigned char header[4];
 
-    printf("%s (file %s)\n", __FUNCTION__, infile);
+   printf("%s (file %s)\n", __FUNCTION__, infile);
 
-    if ( (inf = open(infile, O_RDONLY))  < 0 )
-    {
-        printf("[%d] cannot open input file %s\n", errno, infile);
-        return(-1);
-    }
+   if ( (inf = open(infile, O_RDONLY))  < 0 )
+   {
+      printf("[%d] cannot open input file %s\n", errno, infile);
+      return(-1);
+   }
 
-    if ( sfx = strrchr(infile, '.') )
-    {
-   sfx++;
-   if (strcmp(sfx, "elf") == 0)
-       return( loadElf(cpuf, inf, entry_p, stack_p, verbose) );
-    }
+   if ( sfx = strrchr(infile, '.') )
+   {
+      sfx++;
+      if (strcmp(sfx, "elf") == 0)
+         return( loadElf(cpuf, inf, entry_p, stack_p, verbose) );
+   }
 
-    return -1;
+   return -1;
 }
 
 /* ------------------------------------------------------------------------
@@ -297,41 +326,40 @@ int copLoadFile (int cpuf, char *infile, unsigned int *entry_p, unsigned int *st
 int
 copRun (int cpuf, unsigned long entry_p, int verbose)
 {
-    //printf("<DBG>\tstart execution...\n");
+   //printf("<DBG>\tstart execution...\n");
 
-    if ( ioctl(cpuf, STCOP_START, entry_p) < 0)
-    {
-        printf("[%d] while triggering coprocessor start!\n", errno);
-        return(-1);
-    }
+   if ( ioctl(cpuf, STCOP_START, entry_p) < 0)
+   {
+      printf("[%d] while triggering coprocessor start!\n", errno);
+      return(-1);
+   }
 
-    if (verbose)
-        printf("Coprocessor running! (from 0x%lx)\n", entry_p);
-    return(0);
+   if (verbose)
+      printf("Coprocessor running! (from 0x%lx)\n", entry_p);
+   return(0);
 }
 
 
 int main(int argc, char * argv[])
 {
-    int cpuf = -1;
+   int cpuf = -1;
    int res;
    unsigned int entry_p, stack_p;
-    /*
-     * Open the coprocessor device
-     */
-    if ( (cpuf = open(argv[1] /* /dev/st231-0 and -1*/, O_RDWR))  < 0 )
-    {
-        printf("cannot open %s device (errno = %d)\n", argv[1], errno);
-        exit (1);
-    }
+   /*
+   * Open the coprocessor device
+   */
+   if ( (cpuf = open(argv[1] /* /dev/st231-0 and -1*/, O_RDWR))  < 0 )
+   {
+      printf("cannot open %s device (errno = %d)\n", argv[1], errno);
+      exit (1);
+   }
 
-    /*
-     * Execute the command
-     */
-    res = copLoadFile(cpuf, argv[2],
-         &entry_p, &stack_p, 0);
-    if (res == 0)
-       res = copRun(cpuf, entry_p, 0);
+   /*
+   * Execute the command
+   */
+   res = copLoadFile(cpuf, argv[2], &entry_p, &stack_p, 0);
+   if (res == 0)
+      res = copRun(cpuf, entry_p, 0);
 
    return res;
 }
