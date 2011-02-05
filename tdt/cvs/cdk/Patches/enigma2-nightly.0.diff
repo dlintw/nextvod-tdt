@@ -2828,7 +2828,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/gdi/fb.cpp enigma2-ni
 +#if defined(__sh__) 
 +	int fd=open("/dev/ttyAS1", O_RDWR); 
 +#else 
- 	int fd=open("/dev/vc/0", O_RDWR);
+ 	int fd=open("/dev/tty0", O_RDWR);
  	if(fd>=0)
  	{
 @@ -92,13 +104,18 @@
@@ -3005,30 +3005,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/gdi/fb.h enigma2-nigh
  	int available;
  	struct fb_var_screeninfo screeninfo, oldscreen;
  	fb_cmap cmap;
-@@ -19,7 +27,11 @@
- 	int m_number_of_pages;
- 	int m_phys_mem;
- #ifdef SWIG
-+#if defined(__sh__) 
-+	fbClass(const char *fb="/dev/fb0"); 
-+#else 
- 	fbClass(const char *fb="/dev/fb/0");
-+#endif
- 	~fbClass();
- public:
- #else
-@@ -41,17 +53,34 @@
- 	unsigned int Stride() { return stride; }
- 	fb_cmap *CMAP() { return &cmap; }
- 
-+#if defined(__sh__) 
-+	fbClass(const char *fb="/dev/fb0"); 
-+#else 
- 	fbClass(const char *fb="/dev/fb/0");
-+#endif
- 	~fbClass();
- 	
- 			// low level gfx stuff
+@@ -48,10 +56,23 @@
  	int PutCMAP();
  #endif
  	static fbClass *getInstance();
