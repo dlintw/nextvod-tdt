@@ -139,11 +139,11 @@ echo " Experimental:"
 echo "   3) STM 23 P0119 with Havana"
 #echo "   5) STM 24 P0201 (not working)"
 case $2 in
-        [1-5]) REPLY=$2
+        [1-6]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
-        read -p "Select kernel (1-5)? ";;
+        read -p "Select kernel (1-6)? ";;
 esac
 
 case "$REPLY" in
