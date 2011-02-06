@@ -1,5 +1,5 @@
---- usb.org.c	2011-02-06 09:20:11.000000000 -0500
-+++ usb.c	2011-02-06 09:28:00.000000000 -0500
+--- linux-sh4/drivers/usb/storage/usb.c	2011-02-06 09:20:11.000000000 -0500
++++ linux-sh4/drivers/usb/storage/usb.c	2011-02-06 09:28:00.000000000 -0500
 @@ -74,9 +74,9 @@
  MODULE_DESCRIPTION("USB Mass Storage driver for Linux");
  MODULE_LICENSE("GPL");
