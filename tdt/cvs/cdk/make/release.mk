@@ -347,9 +347,10 @@ release_ufs910:
 	mv $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 
 release_hl101: release_common_utils
-	echo "SpiderBox" > $(prefix)/release/etc/hostname 
+	echo "SpiderBox" > $(prefix)/release/etc/hostname
 	cp -f $(targetprefix)/sbin/shutdown $(prefix)/release/sbin/
 	cp $(buildprefix)/root/release/halt_hl101 $(prefix)/release/etc/init.d/halt
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/proton/proton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_hl101 $(prefix)/release/etc/fstab
