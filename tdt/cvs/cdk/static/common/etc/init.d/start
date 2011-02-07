@@ -1,0 +1,44 @@
+#!/bin/sh
+
+NEUTRINO="NO" #Is set below
+ENIGMA2="NO" #Is set below
+VDR="NO" #Is set below
+
+if [ -e /usr/local/bin/neutrino ]; then
+   NEUTRINO="YES"
+elif [ -e /usr/local/bin/enigma2 ]; then
+   ENIGMA2="YES"
+else
+   VDR="YES"
+fi
+
+echo "starting main system"
+if [ $NEUTRINO -eq "YES" ]; then
+   /usr/local/bin/neutrino -f -u
+elif [ $ENIGMA2 -eq "YES" ]; then
+   /usr/local/bin/enigma2
+fi
+
+rtv=$?
+echo "main system ended ($rtv)"
+case "$rtv" in
+0) echo "0"
+   echo "ERROR"
+   init 6;;
+1) echo "1"
+   echo "SHUTDOWN"
+   init 0;;
+2) echo "2"
+   echo "REBOOT"
+   init 6;;
+3) echo "3"
+   echo "RESTART"
+   if [ $ENIGMA2 -eq "YES" ]; then
+      echo "0" > /proc/progress
+      showiframe -p /boot/bootlogo.mvi &
+   fi;;
+*) echo "*"
+   echo "ERROR"
+   init 6;;
+esac
+

@@ -21,10 +21,9 @@ mount -t sysfs sysfs /sys
 echo /sbin/mdev > /proc/sys/kernel/hotplug
 /sbin/mdev -s
 
-PLAYER=`cat /proc/stb/player/version`
-#player179, player131
 
-CPU=`cat /proc/cpuinfo | grep "cpu type" | sed "s/cpu type\t: //g" | sed "s/i/x/g"`
+
+CPU=`cat /proc/cpuinfo | grep "cpu type" | sed "s/cpu type\t: //g" | sed "s/i/x/g"` | sed "s/b/x/g"`
 #STx7105, STx7111, STx7100, STx7101, STx7109
 
 if [ `cat /proc/version | grep -c "stm22"` -eq "1" ]; then
@@ -35,7 +34,10 @@ elif [ `cat /proc/version | grep -c "stm24"` -eq "1" ]; then
    STM="stm24"
 fi
 
-. /etc/init.d/init_vfd.sh $MODDIR
+. /etc/init.d/vfd
+
+initVFD $MODDIR
+echoVFD "DUCKBOX"
 
 /etc/init.d/mountall start
 
@@ -49,12 +51,8 @@ fi
 
 insmod $MODDIR/e2_proc.ko
 
-/bin/dd if=/dev/zero of=/dev/st231-0 bs=1024 count=4096
-/bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
-echo "load a firmware"
-/bin/ustslave /dev/st231-1 /boot/audio.elf
-echo "load v firmware"
-/bin/ustslave /dev/st231-0 /boot/video.elf
+PLAYER=`cat /proc/stb/player/version`
+#player179, player131
 
 echo "starting network services"
 /etc/init.d/hostname start
@@ -83,6 +81,13 @@ echo "starting other network services"
 
 . /etc/init.d/init_box_pre.sh $MODDIR
 
+/bin/dd if=/dev/zero of=/dev/st231-0 bs=1024 count=4096
+/bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
+echo "load a firmware"
+/bin/ustslave /dev/st231-1 /boot/audio.elf
+echo "load v firmware"
+/bin/ustslave /dev/st231-0 /boot/video.elf
+
 echo "init embx drivers"
 insmod $MODDIR/embxshell.ko
 if [ $CPU -eq "STx7100" -o $CPU -eq "STx7101" -o $CPU -eq "STx7109" ]; then
@@ -98,7 +103,7 @@ fi
 echo "init stmfb drivers"
 insmod $MODDIR/stmcore-display-stx7100.ko
 if [ $NEUTRINO -eq "YES" ]; then
-   # 8mb is sufficient for Neutrino
+   # 8mb is sufficient For Neutrino
    insmod $MODDIR/stmfb.ko display0=1280x720-32@50:8m:pal:yuv:yuv;
 else
    insmod $MODDIR/stmfb.ko display0=1280x720-32@50:12m:pal:yuv:yuv;
@@ -118,16 +123,14 @@ if [ $PLAYER -eq 'player179' ]; then
 fi
 insmod $MODDIR/pseudocard.ko
 
-insmod $MODDIR/stv090x.ko
-insmod $MODDIR/ufs912_cic.ko
 if [ $PLAYER -eq 'player179' ]; then
-   insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+   insmod $MODDIR/pti.ko $PTI_P179_ARGS
    insmod $MODDIR/stm_monitor.ko
    insmod $MODDIR/stmsysfs.ko
-   insmod $MODDIR/stmdvb.ko
+   insmod $MODDIR/stmdvb.ko $STMDVB_P179_ARGS
 elif
-   insmod $MODDIR/pti.ko
-   insmod $MODDIR/stmdvb.ko
+   insmod $MODDIR/pti.ko $PTI_P131_ARGS
+   insmod $MODDIR/stmdvb.ko $STMDVB_P131_ARGS
    insmod $MODDIR/stm_monitor.ko
 fi
 insmod $MODDIR/player2.ko
@@ -139,9 +142,6 @@ insmod $MODDIR/silencegen.ko
 echo "init other drivers"
 insmod $MODDIR/bpamem.ko
 
-echo "LOADING" > $VFD
-echo "LOADING"
-
 if [ $ENIGMA2 -eq "YES" ]; then
    showiframe -p /boot/bootlogo.mvi &
 fi
@@ -149,17 +149,3 @@ fi
 . /etc/init.d/init_box_post.sh $MODDIR
 
 stfbcontrol a 255
-until false
-do
-   echo "starting main system"
-   if [ $NEUTRINO -eq "YES" ]; then
-      /usr/local/bin/neutrino -f -u
-   elif [ $ENIGMA2 -eq "YES" ]; then
-      /usr/local/bin/enigma2
-   fi
-   
-   # TODO: get the return value and react to it without using init
-done
-
-echo "FAILURE" > $VFD
-echo "SYSTEM FAILURE - EXIT TO SHELL"
