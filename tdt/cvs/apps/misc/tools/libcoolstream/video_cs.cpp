@@ -517,6 +517,23 @@ void cVideo::Pig(int x, int y, int w, int h, int osd_w, int osd_h)
 {
 	printf("%s:%s - x=%d y=%d w=%d h=%d osd_w=%d osd_h=%d\n", FILENAME, __FUNCTION__, 
 		x, y, w, h, osd_w, osd_h);
+
+	// set video size auto not working @obi
+	fd = fopen("/proc/stb/vmpeg/0/dst_left", "w");
+	fprintf(fd, "%x", x);
+	fclose(fd);
+
+	fd = fopen("/proc/stb/vmpeg/0/dst_top", "w");
+	fprintf(fd, "%x", y);
+	fclose(fd);
+
+	fd = fopen("/proc/stb/vmpeg/0/dst_width", "w");
+	fprintf(fd, "%x", w);
+	fclose(fd);
+
+	fd = fopen("/proc/stb/vmpeg/0/dst_height", "w");
+	fprintf(fd, "%x", h);
+	fclose(fd);
 }
 
 void cVideo::setContrast(int val)
