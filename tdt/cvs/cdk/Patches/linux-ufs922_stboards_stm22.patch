@@ -62,7 +62,7 @@
 +	 //.offset = 0x00C00000, 
 +	 }, 
 +	{ 
-+	 .name = "Flash w/o Bootloader   0xA004.0000-0xA0FF.FFFF", 
++	 .name = "Full w/o Bootloader   0xA004.0000-0xA0FF.FFFF", 
 +	 .size = 0x00FC0000,
 +	 .offset = 0x00040000, 
  	 }
