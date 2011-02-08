@@ -519,6 +519,7 @@ void cVideo::Pig(int x, int y, int w, int h, int osd_w, int osd_h)
 		x, y, w, h, osd_w, osd_h);
 
 	// set video size auto not working @obi
+	FILE* fd;
 	fd = fopen("/proc/stb/vmpeg/0/dst_left", "w");
 	fprintf(fd, "%x", x);
 	fclose(fd);
