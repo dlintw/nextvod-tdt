@@ -282,12 +282,8 @@ void CStreamInfo2::paint_pig (int x, int y, int w, int h)
 	frameBuffer->paintBackgroundBoxRel (x, y, w, h);
 	printf("CStreamInfo2::paint_pig x %d y %d w %d h %d osd_w %d osd_w %d\n", x, y, w, h, frameBuffer->getScreenWidth(true), frameBuffer->getScreenHeight(true));
 //	videoDecoder->Pig(x, y, w, h, frameBuffer->getScreenWidth(true), frameBuffer->getScreenHeight(true));
-//	set video window position/size manuel @obi
-	int test_x = 405;
-	int test_y = 30;
-	int test_w = 224;
-	int test_h = 186;
-	videoDecoder->Pig(test_x, test_y, test_w, test_h, frameBuffer->getScreenWidth(true), frameBuffer->getScreenHeight(true));
+// 	use osd adjust then is the size correctly @obi
+	videoDecoder->Pig(x / 2, y, w, h, frameBuffer->getScreenWidth(true), frameBuffer->getScreenHeight(true));
 }
 
 void CStreamInfo2::paint_signal_fe_box(int _x, int _y, int w, int h)
