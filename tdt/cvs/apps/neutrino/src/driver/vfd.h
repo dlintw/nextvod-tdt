@@ -44,6 +44,7 @@
 #include <string>
 
 typedef enum {
+/*** just not complete implemented
 #if defined(PLATFORM_OCTAGON1008) || defined(PLATFORM_FORTIS_HDBOX)
 // AV700/0
 	ICON_STANDBY = 0x10,
@@ -109,6 +110,7 @@ typedef enum {
 	VFD_ICON_CLOCK,
 
 #else
+***/
 // old
 	VFD_ICON_BAR8	= 0x00000004,
 	VFD_ICON_BAR7	= 0x00000008,
@@ -142,7 +144,7 @@ typedef enum {
 	VFD_ICON_COL2	= 0x0B000002,
 	VFD_ICON_CAM2	= 0x0C000001,
 
-#endif
+//#endif
 	VFD_ICON_MAX
 } vfd_icon;
 
