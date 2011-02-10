@@ -562,7 +562,7 @@ void CStreamInfo2::paint_techinfo(int xpos, int ypos)
 		sprintf ((char *) buf, "DD %s (%d)", ddmodes[mode], freq);
 	}
 	*/
-	sprintf ((char *) buf, "%s (%d)", g_RemoteControl->current_PIDs.APIDs[g_RemoteControl->current_PIDs.PIDs.selected_apid].desc, freq);
+	sprintf ((char *) buf, "%s", g_RemoteControl->current_PIDs.APIDs[g_RemoteControl->current_PIDs.PIDs.selected_apid].desc);
 	g_Font[font_info]->RenderString (xpos+spaceoffset, ypos, width*2/3 - 10, buf, COL_MENUCONTENTDARK, 0, true);	// UTF-8
 
 	//satellite
