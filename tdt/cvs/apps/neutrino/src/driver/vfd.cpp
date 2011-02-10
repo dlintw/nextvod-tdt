@@ -26,6 +26,7 @@
 #include <config.h>
 #endif
 
+#include <driver/vfd.h>
 #include <global.h>
 #include <neutrino.h>
 #include <system/settings.h>
