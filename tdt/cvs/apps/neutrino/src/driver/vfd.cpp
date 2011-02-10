@@ -202,7 +202,7 @@ printf("CVFD::setlcdparameter dimm %d power %d\n", dimm, power);
         struct vfd_ioctl_data data;
 	data.start_address = dimm;
 	
-	int ret = ioctl(fd, IOC_VFD_SET_BRIGHT, &data);
+	int ret = ioctl(fd, VFDBRIGHTNESS, &data);
 
         closeDevice();
 #else
@@ -599,7 +599,7 @@ printf("CVFD::Clear>\n");
 	data.start_address = 0x01;
 	data.length = 0x0;
 	
-	int ret = ioctl(fd, IOC_VFD_CLEAR_ALL, &data);
+	int ret = ioctl(fd, VFDDISPLAYCLR, &data);
 #else
 	int ret = ioctl(fd, IOC_VFD_CLEAR_ALL, 0);
 #endif
@@ -621,7 +621,7 @@ void CVFD::ShowIcon(vfd_icon icon, bool show)
 
         data.data[0] = icon;
 	data.data[4] = show ? 1 : 0;
-	int ret = ioctl(fd, IOC_VFD_SET_ICON, &data);
+	int ret = ioctl(fd, VFDICONDISPLAYONOFF, &data);
 
         closeDevice();
 #else
