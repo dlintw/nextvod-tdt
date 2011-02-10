@@ -118,6 +118,9 @@ int file_prozent;
 #error not using 64 bit file offsets
 #endif /* __USE_FILE__OFFSET64 */
 
+#define MOVIEPLAYER_START_SCRIPT CONFIGDIR "/movieplayer.start"
+#define MOVIEPLAYER_END_SCRIPT CONFIGDIR "/movieplayer.end"
+
 int streamingrunning;
 CHintBox *hintBox;
 std::string startfilename;
@@ -167,6 +170,15 @@ int CAPIDSelectExec::exec(CMenuTarget * parent, const std::string & actionKey)
 		printf("[movieplayer] apid changed to %d\n", g_apids[sel - 1]);
 	}
 	return menu_return::RETURN_EXIT;
+}
+
+class CChange43FormatNotifier : public CChangeObserver {
+	public:
+		bool changeNotify(const neutrino_locale_t, void * Data);
+};
+
+bool CChange43FormatNotifier::changeNotify(const neutrino_locale_t, void * Data) {
+	videoDecoder->setAspectRatio(-1, g_settings.video_43mode);
 }
 
 CMoviePlayerGui::CMoviePlayerGui()
@@ -279,6 +291,12 @@ void CMoviePlayerGui::restoreNeutrino()
 	//CVFD::getInstance()->showServicename(g_RemoteControl->getCurrentChannelName());
 
 	stopped = false;
+
+	if (!timeshift) {
+		puts("[movieplayer.cpp] executing " MOVIEPLAYER_END_SCRIPT "."); 
+		if (system(MOVIEPLAYER_END_SCRIPT) != 0)
+			perror("Datei " MOVIEPLAYER_END_SCRIPT " fehlt. Bitte erstellen, wenn gebraucht.\nFile " MOVIEPLAYER_END_SCRIPT " not found. Please create if needed.\n");
+	}
 }
 
 int CMoviePlayerGui::exec(CMenuTarget * parent, const std::string & actionKey)
@@ -870,6 +888,16 @@ void CMoviePlayerGui::PlayFile(void)
 			FileTime.updatePos(file_prozent);
 		}
 
+#define VIDEOMENU_43MODE_OPTION_COUNT 4
+const CMenuOptionChooser::keyval VIDEOMENU_43MODE_OPTIONS[VIDEOMENU_43MODE_OPTION_COUNT] =
+{
+	{ DISPLAY_AR_MODE_PANSCAN, LOCALE_VIDEOMENU_PANSCAN },
+	{ DISPLAY_AR_MODE_PANSCAN2, LOCALE_VIDEOMENU_PANSCAN2 },
+	{ DISPLAY_AR_MODE_LETTERBOX, LOCALE_VIDEOMENU_LETTERBOX },
+	{ DISPLAY_AR_MODE_NONE, LOCALE_VIDEOMENU_FULLSCREEN }
+	//{ 2, LOCALE_VIDEOMENU_AUTO } // whatever is this auto mode, it seems its totally broken
+};
+
 		if (start_play) {
 			printf("%s::%s Startplay at %d seconds\n", FILENAME, __FUNCTION__, startposition/1000);
 			start_play = false;
@@ -890,6 +918,13 @@ void CMoviePlayerGui::PlayFile(void)
 			} else {
 				playstate = CMoviePlayerGui::PLAY;
 				CVFD::getInstance()->ShowIcon(VFD_ICON_PLAY, true);
+
+				if (!timeshift) {
+					puts("[movieplayer.cpp] executing " MOVIEPLAYER_START_SCRIPT "."); 
+					if (system(MOVIEPLAYER_START_SCRIPT) != 0)
+						perror("Datei " MOVIEPLAYER_START_SCRIPT " fehlt. Bitte erstellen, wenn gebraucht.\nFile " MOVIEPLAYER_START_SCRIPT " not found. Please create if needed.\n");
+				}
+
 				if(timeshift) {
 					timeshift_paused = true;
 					startposition = -1;
@@ -1233,7 +1268,7 @@ void CMoviePlayerGui::PlayFile(void)
 				strReplace(fname, ".ts", ".bmp");
 				CVCRControl::getInstance()->Screenshot(0, (char *)fname.c_str());
 			}
-		} 
+		}
 #if 0
 		else if (msg == CRCInput::RC_shift_radio) {
 			if (isMovieBrowser == true && p_movie_info != NULL) {
@@ -1245,8 +1280,14 @@ void CMoviePlayerGui::PlayFile(void)
 				strcat(filename, ".bmp");
 				CVCRControl::getInstance()->Screenshot(0, filename);
 			}
-		} 
+		}
 #endif
+		else if (msg == CRCInput::RC_yellow && playstate == CMoviePlayerGui::PLAY) {
+			CChange43FormatNotifier * Change43FormatNotifier = new CChange43FormatNotifier;
+			CMenuWidget * video43format = new CMenuWidget(LOCALE_VIDEOMENU_HEAD, NEUTRINO_ICON_SETTINGS);
+			video43format->addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_43MODE, &g_settings.video_43mode, VIDEOMENU_43MODE_OPTIONS, VIDEOMENU_43MODE_OPTION_COUNT, true, Change43FormatNotifier));
+			video43format->exec(NULL, "");
+		}
 		else if (msg == CRCInput::RC_timeout) {
 			// nothing
 		} else if ((msg == NeutrinoMessages::ANNOUNCE_RECORD) || msg == NeutrinoMessages::RECORD_START || msg == NeutrinoMessages::ZAPTO || msg == NeutrinoMessages::STANDBY_ON || msg == NeutrinoMessages::SHUTDOWN || msg == NeutrinoMessages::SLEEPTIMER) {	// Exit for Record/Zapto Timers

@@ -2829,6 +2829,11 @@ class CKeyHelper
                 };
 };
 
+class CChange43FormatNotifier : public CChangeObserver {
+	public:
+		bool changeNotify(const neutrino_locale_t, void * Data);
+};
+
 // USERMENU
 bool CNeutrinoApp::showUserMenu(int button)
 {
@@ -2994,19 +2999,33 @@ bool CNeutrinoApp::showUserMenu(int button)
                                 }
                                 break;
 
-                        case SNeutrinoSettings::ITEM_SUBCHANNEL:
-                                if (!(g_RemoteControl->subChannels.empty())) {
-                                        // NVOD/SubService- Kanal!
-                                        tmpNVODSelector = new CMenuWidget(g_RemoteControl->are_subchannels ? LOCALE_NVODSELECTOR_SUBSERVICE : LOCALE_NVODSELECTOR_HEAD, "video.raw", 350);
-                                        if(getNVODMenu(tmpNVODSelector)) {
-                                                menu_items++;
-                                                menu_prev = SNeutrinoSettings::ITEM_SUBCHANNEL;
-                                                keyhelper.get(&key,&icon);
-                                                menu_item = new CMenuForwarder(g_RemoteControl->are_subchannels ? LOCALE_NVODSELECTOR_SUBSERVICE : LOCALE_NVODSELECTOR_HEAD, true, NULL, tmpNVODSelector, "-1", key,icon);
-                                                menu->addItem(menu_item, false);
-                                        }
-                                }
-                                break;
+			case SNeutrinoSettings::ITEM_SUBCHANNEL:
+				if (!(g_RemoteControl->subChannels.empty())) {
+					// NVOD/SubService- Kanal!
+					tmpNVODSelector = new CMenuWidget(g_RemoteControl->are_subchannels ? LOCALE_NVODSELECTOR_SUBSERVICE : LOCALE_NVODSELECTOR_HEAD, "video.raw", 350);
+					if(getNVODMenu(tmpNVODSelector)) {
+						menu_items++;
+						menu_prev = SNeutrinoSettings::ITEM_SUBCHANNEL;
+						keyhelper.get(&key,&icon);
+						menu_item = new CMenuForwarder(g_RemoteControl->are_subchannels ? LOCALE_NVODSELECTOR_SUBSERVICE : LOCALE_NVODSELECTOR_HEAD, true, NULL, tmpNVODSelector, "-1", key, icon);
+						menu->addItem(menu_item, false);
+					}
+					menu_items++;
+					menu_prev = SNeutrinoSettings::ITEM_SUBCHANNEL;
+					keyhelper.get(&key,&icon);
+					CChange43FormatNotifier * Change43FormatNotifier = new CChange43FormatNotifier;
+					menu->addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_43MODE, &g_settings.video_43mode, VIDEOMENU_43MODE_OPTIONS, VIDEOMENU_43MODE_OPTION_COUNT, true, Change43FormatNotifier, key, icon));
+				} else {
+					menu_items++;
+					menu_prev = SNeutrinoSettings::ITEM_SUBCHANNEL;
+					keyhelper.get(&key,&icon);
+					CChange43FormatNotifier * Change43FormatNotifier = new CChange43FormatNotifier;
+					CMenuWidget * video43format = new CMenuWidget(LOCALE_VIDEOMENU_HEAD, NEUTRINO_ICON_SETTINGS);
+					menu_item = new CMenuForwarder(LOCALE_VIDEOMENU_HEAD, true, NULL, video43format, "-1", key, icon);
+					menu->addItem(menu_item, false);
+					video43format->addItem(new CMenuOptionChooser(LOCALE_VIDEOMENU_43MODE, &g_settings.video_43mode, VIDEOMENU_43MODE_OPTIONS, VIDEOMENU_43MODE_OPTION_COUNT, true, Change43FormatNotifier, key, icon));
+				}
+				break;
 
                         case SNeutrinoSettings::ITEM_TECHINFO:
                                 menu_items++;

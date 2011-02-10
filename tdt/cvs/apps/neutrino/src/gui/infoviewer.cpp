@@ -886,15 +886,13 @@ int CInfoViewer::handleMsg (const neutrino_msg_t msg, neutrino_msg_data_t data)
   return messages_return::unhandled;
 }
 
-void CInfoViewer::showButton_SubServices ()
-{
-  if (!(g_RemoteControl->subChannels.empty ())) {
-        frameBuffer->paintIcon(NEUTRINO_ICON_BUTTON_YELLOW, 
-		ChanInfoX + 2 + NEUTRINO_ICON_BUTTON_RED_WIDTH + 2 + asize + 2 + NEUTRINO_ICON_BUTTON_GREEN_WIDTH + 2 + asize + 2, BoxEndY- ICON_Y_1 );
-        g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->RenderString(
-		ChanInfoX + 2 + NEUTRINO_ICON_BUTTON_RED_WIDTH + 2 + asize + 2 + NEUTRINO_ICON_BUTTON_GREEN_WIDTH + 2 + asize + 2 + NEUTRINO_ICON_BUTTON_YELLOW_WIDTH + 2, 
-		BoxEndY+2, asize, g_Locale->getText((g_RemoteControl->are_subchannels) ? LOCALE_INFOVIEWER_SUBSERVICE : LOCALE_INFOVIEWER_SELECTTIME), COL_INFOBAR_BUTTONS, 0, true); // UTF-8
-  }
+void CInfoViewer::showButton_SubServices () {
+	frameBuffer->paintIcon(NEUTRINO_ICON_BUTTON_YELLOW, BoxStartX + 15 + NEUTRINO_ICON_BUTTON_RED_WIDTH + 2 + asize + 2 + NEUTRINO_ICON_BUTTON_GREEN_WIDTH + 2 + asize + 2, BoxEndY- ICON_Y_1);
+	if (!(g_RemoteControl->subChannels.empty ())) {
+		g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->RenderString(BoxStartX + 18 + NEUTRINO_ICON_BUTTON_RED_WIDTH + 2 + asize + 2 + NEUTRINO_ICON_BUTTON_GREEN_WIDTH + 2 + asize + 2 + NEUTRINO_ICON_BUTTON_YELLOW_WIDTH + 2, BoxEndY+2, asize, g_Locale->getText((g_RemoteControl->are_subchannels) ? LOCALE_INFOVIEWER_SUBSERVICE : LOCALE_INFOVIEWER_SELECTTIME), COL_INFOBAR_BUTTONS, 0, true); // UTF-8
+	} else {
+		g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->RenderString(BoxStartX + 18 + NEUTRINO_ICON_BUTTON_RED_WIDTH + 2 + asize + 2 + NEUTRINO_ICON_BUTTON_GREEN_WIDTH + 2 + asize + 2 + NEUTRINO_ICON_BUTTON_YELLOW_WIDTH + 2, BoxEndY+2, asize, g_Locale->getText(LOCALE_VIDEOMENU_HEAD), COL_INFOBAR_BUTTONS, 0, true); // UTF-8
+	}
 }
 
 CSectionsdClient::CurrentNextInfo CInfoViewer::getEPG (const t_channel_id for_channel_id, CSectionsdClient::CurrentNextInfo &info)
