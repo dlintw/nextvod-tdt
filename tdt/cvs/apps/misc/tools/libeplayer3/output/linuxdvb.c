@@ -49,7 +49,7 @@
 
 #define LINUXDVB_DEBUG
 
-static short debug_level = 20;
+static short debug_level = 10;
 
 static const char FILENAME[] = __FILE__;
 
