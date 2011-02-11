@@ -74,7 +74,7 @@
   #include "dvb_ca_en50221.h"
   #include "dvb_ringbuffer.h"
   
-! static int dvb_ca_en50221_debug = 1;
+! static int dvb_ca_en50221_debug = 0;
   
   module_param_named(cam_debug, dvb_ca_en50221_debug, int, 0644);
   MODULE_PARM_DESC(cam_debug, "enable verbose debug messages");
