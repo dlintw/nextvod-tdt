@@ -13,6 +13,7 @@ $(appsdir)/enigma2-nightly/config.status: bootstrap freetype expat fontconfig li
 			--prefix=/usr \
 			--datadir=/usr/local/share \
 			--sysconfdir=/etc \
+			--without-debug \
 			STAGING_INCDIR=$(hostprefix)/usr/include \
 			STAGING_LIBDIR=$(hostprefix)/usr/lib \
 			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
