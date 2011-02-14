@@ -8168,7 +8168,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/dvb_ci/dvb
 +
 +typedef enum {eDataTimeout, eDataError, eDataReady, eDataWrite, eDataStatusChanged} eData;
 +
-+static inline int time_after(struct timeval oldtime, uint32_t delta_ms)
++static inline int time_after(struct timespec oldtime, uint32_t delta_ms)
 +{
 +	// calculate the oldtime + add on the delta
 +	uint64_t oldtime_ms = (oldtime.tv_sec * 1000) + (oldtime.tv_nsec / 1000000);
