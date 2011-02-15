@@ -76,8 +76,7 @@ int CScreenSetup::exec(CMenuTarget* parent, const std::string &)
 
 	selected = 0;
 
-	unsigned long long timeoutEnd = CRCInput::calcTimeoutEnd(g_settings.timing[SNeutrinoSettings::TIMING_MENU] == 0 ? 0xFFFF : g_settings.timing[SNeutrinoSettings
-::TIMING_MENU]);
+	unsigned long long timeoutEnd = CRCInput::calcTimeoutEnd(g_settings.timing[SNeutrinoSettings::TIMING_MENU] == 0 ? 0xFFFF : g_settings.timing[SNeutrinoSettings::TIMING_MENU]);
 
 	bool loop=true;
 	while (loop)
@@ -85,8 +84,7 @@ int CScreenSetup::exec(CMenuTarget* parent, const std::string &)
 		g_RCInput->getMsgAbsoluteTimeout( &msg, &data, &timeoutEnd, true );
 
 		if ( msg <= CRCInput::RC_MaxRC )
-			timeoutEnd = CRCInput::calcTimeoutEnd(g_settings.timing[SNeutrinoSettings::TIMING_MENU] == 0 ? 0xFFFF : g_settings.timing[SNeutrinoSettings
-::TIMING_MENU]);
+			timeoutEnd = CRCInput::calcTimeoutEnd(g_settings.timing[SNeutrinoSettings::TIMING_MENU] == 0 ? 0xFFFF : g_settings.timing[SNeutrinoSettings::TIMING_MENU]);
 
 		switch ( msg )
 		{
@@ -141,8 +139,8 @@ int CScreenSetup::exec(CMenuTarget* parent, const std::string &)
 				{
 					y_coord[selected]++;
 
-					//int max = ( selected == 0 ) ? 200 : 575;
-					int max = ( selected == 0 ) ? 200 : frameBuffer->getScreenHeight(true)-1;
+					//int max = ( selected == 0 ) ? 200 : 576;
+					int max = ( selected == 0 ) ? 200 : frameBuffer->getScreenHeight(true);
 printf("selected %d y %d max %d\n", selected, y_coord[selected], max);
 					if ( y_coord[selected] > max )
 						y_coord[selected] = max ;
@@ -165,8 +163,8 @@ printf("selected %d y %d max %d\n", selected, y_coord[selected], max);
 				{
 					x_coord[selected]++;
 
-					//int max = ( selected == 0 ) ? 200 : 719;
-					int max = ( selected == 0 ) ? 200 : frameBuffer->getScreenWidth(true)-1;
+					//int max = ( selected == 0 ) ? 200 : 720;
+					int max = ( selected == 0 ) ? 200 : frameBuffer->getScreenWidth(true);
 					if ( y_coord[selected] > max )
 						y_coord[selected] = max ;
 					else

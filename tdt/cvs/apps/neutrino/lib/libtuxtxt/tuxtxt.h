@@ -68,7 +68,6 @@ extern int tuxtxt_get_zipsize(int p, int sp);
 #endif
 #endif
 
-
 #define TUXTXTCONF CONFIGDIR "/tuxtxt/tuxtxt2.conf"
 
 /* fonts */
@@ -84,18 +83,18 @@ int ymosaic[4];
 int displaywidth;
 #define fontwidth_small_lcd 8
 
-#define TV43STARTX (ex - 146) //(StartX + 2 + (40-nofirst)*fontwidth_topmenumain + (40*fontwidth_topmenumain/abx))
-#define TV169FULLSTARTX (sx+ 8*40) //(sx +(ex +1 - sx)/2)
+#define TV43STARTX (ex-210)
+#define TV169FULLSTARTX ((sx+ex)/2) // 2.66=PAL, 2=720p, 1.33=1080i (does not calculate here?!)
 #define TVENDX ex
-#define TVENDY (StartY + 25*fontheight)
-#define TV43WIDTH 144 /* 120 */
-#define TV43HEIGHT 116 /* 96 */
-#define TV43STARTY (TVENDY - TV43HEIGHT)
-#define TV169FULLSTARTY sy
-#define TV169FULLWIDTH  (ex - sx)/2
-#define TV169FULLHEIGHT (ey - sy)
+#define TVENDY (StartY+25*fontheight)
+#define TV43WIDTH 208 /* 120 */
+#define TV43HEIGHT 110 /* 96 */
+#define TV43STARTY (TVENDY-TV43HEIGHT)
+#define TV169FULLSTARTY ((sy+ey)/2) // 2.66=PAL, 2=720p, 1.33=1080i (does not calculate here?!)
+#define TV169FULLWIDTH  ((ex-sx)/2)
+#define TV169FULLHEIGHT (ey-sy)
 
-#define TOPMENUSTARTX TV43STARTX+2
+#define TOPMENUSTARTX (TV43STARTX+2)
 #define TOPMENUENDX TVENDX
 #define TOPMENUSTARTY StartY
 #define TOPMENUENDY TV43STARTY
@@ -172,22 +171,20 @@ int displaywidth;
 #define RC_TEXT     0x19
 #define RC_HOME     0x1F
 
-typedef enum /* object type */
-{
+typedef enum { /* object type */
 	OBJ_PASSIVE,
 	OBJ_ACTIVE,
 	OBJ_ADAPTIVE
 } tObjType;
 
-const char *ObjectSource[] =
-{
+const char *ObjectSource[] = {
 	"(illegal)",
 	"Local",
 	"POP",
 	"GPOP"
 };
-const char *ObjectType[] =
-{
+
+const char *ObjectType[] = {
 	"Passive",
 	"Active",
 	"Adaptive",
@@ -202,7 +199,6 @@ const char *ObjectType[] =
 
 /* framebuffer stuff */
 static unsigned char *lfb = 0;
-struct fb_var_screeninfo var_screeninfo;
 struct fb_fix_screeninfo fix_screeninfo;
 
 /* freetype stuff */
@@ -216,10 +212,8 @@ FTC_SBit        sbit;
 FT_Face			face;
 FONTTYPE typettf;
 
-
 // G2 Charset (0 = Latin, 1 = Cyrillic, 2 = Greek)
-const unsigned short int G2table[3][6*16] =
-{
+const unsigned short int G2table[3][6*16] = {
 	{ ' ' ,'¡' ,'¢' ,'£' ,'$' ,'¥' ,'#' ,'§' ,'¤' ,'\'','\"','«' ,8592,8594,8595,8593,
 	  '°' ,'±' ,'²' ,'³' ,'x' ,'µ' ,'¶' ,'·' ,'÷' ,'\'','\"','»' ,'¼' ,'½' ,'¾' ,'¿' ,
 	  ' ' ,'`' ,'´' ,710 ,732 ,'¯' ,728 ,729 ,733 ,716 ,730 ,719 ,'_' ,698 ,718 ,711 ,
@@ -239,10 +233,10 @@ const unsigned short int G2table[3][6*16] =
 	  'C' ,'D' ,'F' ,'G' ,'J' ,'L' ,'Q' ,'R' ,'S' ,'U' ,'V' ,'W' ,'Y' ,'Z' ,902 ,905 ,
 	  'c' ,'d' ,'f' ,'g' ,'j' ,'l' ,'q' ,'r' ,'s' ,'u' ,'v' ,'w' ,'y' ,'z' ,904 ,0x7F}
 };
+
 // cyrillic G0 Charset
 // TODO: different maps for serbian/russian/ukrainian
-const unsigned short int G0tablecyrillic[6*16] =
-{
+const unsigned short int G0tablecyrillic[6*16] = {
 	  ' ' ,'!' ,'\"','#' ,'$' ,'%' ,'&' ,'\'','(' ,')' ,'*' ,'+' ,',' ,'-' ,'.' ,'/' ,
 	  '0' ,'1' ,'2' ,'3' ,'4' ,'5' ,'6' ,'7' ,'8' ,'9' ,':' ,';' ,'<' ,'=' ,'>' ,'?' ,
 	  1063,1040,1041,1062,1044,1045,1060,1043,1061,1048,1032,1050,1051,1052,1053,1054,
@@ -251,8 +245,7 @@ const unsigned short int G0tablecyrillic[6*16] =
 	  1087,1116,1088,1089,1090,1091,1074,1107,1113,1114,1079,1115,1078,1106,1096,0x7F
 };
 
-const unsigned short int nationaltable23[14][2] =
-{
+const unsigned short int nationaltable23[14][2] = {
 	{ '#', '¤' }, /* 0          */
 	{ '#', 367 }, /* 1  CS/SK   */
 	{ '£', '$' }, /* 2    EN    */
@@ -268,8 +261,8 @@ const unsigned short int nationaltable23[14][2] =
 	{ '#', '¤' }, /* C SV/FI/HU */
 	{ '£', 287 }  /* D    TR   ? */
 };
-const unsigned short int nationaltable40[14] =
-{
+
+const unsigned short int nationaltable40[14] = {
 	'@', /* 0          */
 	269, /* 1  CS/SK   */
 	'@', /* 2    EN    */
@@ -285,8 +278,8 @@ const unsigned short int nationaltable40[14] =
 	'É', /* C SV/FI/HU */
 	304  /* D    TR    */
 };
-const unsigned short int nationaltable5b[14][6] =
-{
+
+const unsigned short int nationaltable5b[14][6] = {
 	{ '[','\\', ']', '^', '_', '`' }, /* 0          */
 	{ 357, 382, 'ý', 'í', 345, 'é' }, /* 1  CS/SK   */
 	{8592, '½',8594,8593, '#', 822 }, /* 2    EN    */
@@ -302,8 +295,8 @@ const unsigned short int nationaltable5b[14][6] =
 	{ 'Ä', 'Ö', 'Å', 'Ü', '_', 'é' }, /* C SV/FI/HU */
 	{ 350, 'Ö', 'Ç', 'Ü', 486, 305 }  /* D    TR    */
 };
-const unsigned short int nationaltable7b[14][4] =
-{
+
+const unsigned short int nationaltable7b[14][4] = {
 	{ '{', '|', '}', '~' }, /* 0          */
 	{ 'á', 283, 'ú', 353 }, /* 1  CS/SK   */
 	{ '¼',8214, '¾', '÷' }, /* 2    EN    */
@@ -320,8 +313,7 @@ const unsigned short int nationaltable7b[14][4] =
 	{ 351, 'ö', 231, 'ü' }  /* D    TR    */
 };
 
-const unsigned short int arrowtable[] =
-{
+const unsigned short int arrowtable[] = {
 	8592, 8594, 8593, 8595, 'O', 'K', 8592, 8592
 };
 
@@ -344,11 +336,11 @@ const char countrystring[] =
 " RU/BUL/SER/CRO/UKR (cyr) "   /* 14 cyrillic */
 "    EK                    "   /* 15 greek */
 ;
+
 #define COUNTRYSTRING_WIDTH 26
 #define MAX_NATIONAL_SUBSET (sizeof(countrystring) / COUNTRYSTRING_WIDTH - 1)
 
-enum
-{
+enum {
 	NAT_DEFAULT = 0,
 	NAT_CZ = 1,
 	NAT_UK = 2,
@@ -370,7 +362,6 @@ enum
 
 const unsigned char countryconversiontable[] = { NAT_UK, NAT_DE, NAT_SW, NAT_IT, NAT_FR, NAT_SP, NAT_CZ, NAT_RO};
 
-
 /* some data */
 char versioninfo[16];
 int hotlist[10];
@@ -388,18 +379,18 @@ int prev_100, prev_10, next_10, next_100;
 int screen_mode1, screen_mode2, color_mode, trans_mode, national_subset, national_subset_secondary, auto_national, swapupdown, showhex, menulanguage;
 int pids_found, current_service, getpidsdone;
 int SDT_ready;
-int pc_old_row, pc_old_col;     /* for page catching */
-int temp_page;	/* for page input */
+int pc_old_row, pc_old_col; /* for page catching */
+int temp_page; /* for page input */
 char saveconfig, hotlistchanged;
 signed char clearbbcolor = -1;
 int usettf;
 short pop, gpop, drcs, gdrcs;
-unsigned char tAPx, tAPy;	/* temporary offset to Active Position for objects */
+unsigned char tAPx, tAPy; /* temporary offset to Active Position for objects */
 unsigned char axdrcs[12+1+10+1];
 #define aydrcs (axdrcs + 12+1)
 unsigned char FullRowColor[25];
 unsigned char FullScrColor;
-tstPageinfo *pageinfo = 0;/* pointer to cached info of last decoded page */
+tstPageinfo *pageinfo = 0; /* pointer to cached info of last decoded page */
 const char * fncmodes[] = {"12", "6"};
 const char * saamodes[] = {"4:3_full_format", "16:9_full_format"};
 
@@ -407,39 +398,34 @@ struct timeval tv_delay;
 int  subtitledelay, delaystarted;
 FILE *conf;
 
-
 unsigned short RCCode;
 
-struct _pid_table
-{
+struct _pid_table {
 	int  vtxt_pid;
 	int  service_id;
 	int  service_name_len;
 	char service_name[24];
 	int  national_subset;
-}pid_table[128];
+} pid_table[128];
 
 unsigned char restoreaudio = 0;
 /* 0 Nokia, 1 Philips, 2 Sagem */
-/* typ_vcr/dvb: 	v1 a1 v2 a2 v3 a3 (vcr_only: fblk) */
+/* typ_vcr/dvb: v1 a1 v2 a2 v3 a3 (vcr_only: fblk) */
 
 /* language dependent texts */
 #define MAXMENULANGUAGE 8 /* 0 deutsch, 1 englisch, 2 französisch, 3 niederländisch, 4 griechisch, 5 italienisch, 6 polnisch, 7 schwedisch, 8 suomi */
-const int menusubset[] =   { NAT_DE   , NAT_UK    , NAT_FR       , NAT_UK          , NAT_GR      , NAT_IT       , NAT_PL    , NAT_SW, NAT_SW };
-
+const int menusubset[] =   { NAT_DE   , NAT_UK    , NAT_FR       , NAT_UK          , NAT_GR      , NAT_IT       , NAT_PL    , NAT_SW,       NAT_SW };
 
 #define Menu_StartX (StartX + fontwidth*9/2)
 #define Menu_StartY (StartY + fontheight)
 #define Menu_Height 24
 #define Menu_Width 31
 
-const char MenuLine[] =
-{
+const char MenuLine[] = {
 	3,8,11,12,15,17,19,20,21
 };
 
-enum
-{
+enum {
 	M_HOT=0,
 	M_PID,
 	M_SC1,
@@ -455,16 +441,15 @@ enum
 #define M_Start M_HOT
 #define M_MaxDirect M_AUN
 
-const char hotlistpagecolumn[] =	/* last(!) column of page to show in each language */
-{
+const char hotlistpagecolumn[] = { /* last(!) column of page to show in each language */
 	22, 26, 28, 27, 28, 27, 28, 21, 20
 };
-const char hotlisttextcolumn[] =
-{
+
+const char hotlisttextcolumn[] = {
 	24, 14, 14, 15, 14, 15, 14, 23, 22
 };
-const char hotlisttext[][2*6] =
-{
+
+const char hotlisttext[][2*6] = {
 	{ "dazu entf." },
 	{ " add rem. " },
 	{ "ajoutenlev" },
@@ -476,8 +461,7 @@ const char hotlisttext[][2*6] =
 	{ "lis{{pois " }
 };
 
-const char configonoff[][2*4] =
-{
+const char configonoff[][2*4] = {
 	{ "ausein" },
 	{ "offon " },
 	{ "desact" },
@@ -488,8 +472,8 @@ const char configonoff[][2*4] =
 	{ "p} av " },
 	{ "EI ON " }
 };
-const char menuatr[Menu_Height*(Menu_Width+1)] =
-{
+
+const char menuatr[Menu_Height*(Menu_Width+1)] = {
 	"0000000000000000000000000000002"
 	"0111111111111111111111111111102"
 	"0000000000000000000000000000002"
@@ -515,8 +499,8 @@ const char menuatr[Menu_Height*(Menu_Width+1)] =
 	"3334444444444444444444444443332"
 	"2222222222222222222222222222222"
 };
-const char configmenu[][Menu_Height*(Menu_Width+1)] =
-{
+
+const char configmenu[][Menu_Height*(Menu_Width+1)] = {
 	{
 /*     0000000000111111111122222222223 */
 /*     0123456789012345678901234567890 */
@@ -771,8 +755,7 @@ const char configmenu[][Menu_Height*(Menu_Width+1)] =
 	}
 };
 
-const char catchmenutext[][81] =
-{
+const char catchmenutext[][81] = {
 	{ "        íïðî w{hlen   ñò anzeigen       "
 	  "0000000011110000000000110000000000000000" },
 	{ "        íïðî select   ñò show           "
@@ -793,8 +776,7 @@ const char catchmenutext[][81] =
 	  "0000000011110000000000110000000000000000" }
 };
 
-const char message_3[][39] =
-{
+const char message_3[][39] = {
 	{ "ã   suche nach Teletext-Anbietern   äé" },
 	{ "ã  searching for teletext Services  äé" },
 	{ "ã  recherche des services teletext  äé" },
@@ -805,9 +787,10 @@ const char message_3[][39] =
 	{ "ã    s|ker efter TextTV tj{nster    äé" },
 	{ "ã   etsit{{n Teksti-TV -palvelua    äé" }
 };
+
 const char message_3_blank[] = "ã                                   äé";
-const char message_7[][39] =
-{
+
+const char message_7[][39] = {
 	{ "ã kein Teletext auf dem Transponder äé" },
 	{ "ã   no teletext on the transponder  äé" },
 	{ "ã pas de teletext sur le transponderäé" },
@@ -818,8 +801,8 @@ const char message_7[][39] =
 	{ "ã ingen TextTV p} denna transponder äé" },
 	{ "ã    Ei Teksti-TV:t{ l{hettimell{   äé" }
 };
-const char message_8[][39] =
-{
+
+const char message_8[][39] = {
 /*    00000000001111111111222222222233333333334 */
 /*    01234567890123456789012345678901234567890 */
 	{ "ã  warte auf Empfang von Seite 100  äé" },
@@ -832,13 +815,12 @@ const char message_8[][39] =
 	{ "ã  v{ntar p} mottagning av sida 100 äé" },
 	{ "ã        Odotetaan sivua 100        äé" }
 };
-const char message8pagecolumn[] = /* last(!) column of page to show in each language */
-{
+
+const char message8pagecolumn[] = { /* last(!) column of page to show in each language */
 	33, 34, 34, 35, 29, 30, 30, 34, 34
 };
 
-enum /* options for charset */
-{
+enum { /* options for charset */
 	C_G0P = 0, /* primary G0 */
 	C_G0S, /* secondary G0 */
 	C_G1C, /* G1 contiguous */
@@ -851,8 +833,7 @@ enum /* options for charset */
 };
 
 /* struct for page attributes */
-typedef struct
-{
+typedef struct {
 	unsigned char fg      :6; /* foreground color */
 	unsigned char bg      :6; /* background color */
 	unsigned char charset :6; /* see enum above */
@@ -872,8 +853,7 @@ typedef struct
 	unsigned char setG0G2  :7; /* G0+G2 set designation  */
 } tstPageAttr;
 
-enum /* indices in atrtable */
-{
+enum { /* indices in atrtable */
 	ATR_WB, /* white on black */
 	ATR_PassiveDefault, /* Default for passive objects: white on black, ignore at Black Background Color Substitution */
 	ATR_L250, /* line25 */
@@ -907,8 +887,7 @@ enum /* indices in atrtable */
 };
 
 /* define color names */
-enum
-{
+enum {
 	black = 0,
 	red, /* 1 */
 	green, /* 2 */
@@ -926,8 +905,7 @@ enum
 };
 
 //const (avoid warnings :<)
-tstPageAttr atrtable[] =
-{
+tstPageAttr atrtable[] = {
 	{ white  , black , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_WB */
 	{ white  , black , C_G0P, 0, 0, 1 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_PassiveDefault */
 	{ white  , red   , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_L250 */
@@ -959,6 +937,7 @@ tstPageAttr atrtable[] =
 	{ yellow , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}, /* ATR_CATCHMENU0 a4 ¤ */
 	{ white  , menu1 , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f}  /* ATR_CATCHMENU1 a8 ¨ */
 };
+
 /* buffers */
 unsigned char  lcd_backbuffer[120*64 / 8];
 unsigned char  page_char[40 * 25];
@@ -966,10 +945,8 @@ tstPageAttr page_atrb[40 * 25];
 
 //unsigned short page_atrb[40 * 25]; /*  ?????:h:cc:bbbb:ffff -> ?=reserved, h=double height, c=charset (0:G0 / 1:G1c / 2:G1s), b=background, f=foreground */
 
-
 /* colormap */
-const unsigned short defaultcolors[] =	/* 0x0bgr */
-{
+const unsigned short defaultcolors[] = { /* 0x0bgr */
 	0x000, 0x00f, 0x0f0, 0x0ff, 0xf00, 0xf0f, 0xff0, 0xfff,
 	0x000, 0x007, 0x070, 0x077, 0x700, 0x707, 0x770, 0x777,
 	0x50f, 0x07f, 0x7f0, 0xbff, 0xac0, 0x005, 0x256, 0x77c,
@@ -978,7 +955,7 @@ const unsigned short defaultcolors[] =	/* 0x0bgr */
 };
 
 /* 32bit colortable */
-unsigned char bgra[][5] = { 
+unsigned char bgra[][5] = {
 "\0\0\0\xFF", "\0\0\0\xFF", "\0\0\0\xFF", "\0\0\0\xFF",
 "\0\0\0\xFF", "\0\0\0\xFF", "\0\0\0\xFF", "\0\0\0\xFF",
 "\0\0\0\xFF", "\0\0\0\xFF", "\0\0\0\xFF", "\0\0\0\xFF",
@@ -1001,10 +978,8 @@ struct fb_cmap colormap_0 = {0, SIZECOLTABLE, rd0, gn0, bl0, tr0};
 const unsigned char MapTblFG[] = {  0,  0,  8,  8, 16, 16, 16 };
 const unsigned char MapTblBG[] = {  8, 16,  8, 16,  8, 16, 24 };
 
-
 /* shapes */
-enum
-{
+enum {
 	S_END = 0,
 	S_FHL, /* full horizontal line: y-offset */
 	S_FVL, /* full vertical line: x-offset */
@@ -1020,8 +995,7 @@ enum
 };
 
 /* shape coordinates */
-enum
-{
+enum {
 	S_W13 = 5, /* width*1/3 */
 	S_W12, /* width*1/2 */
 	S_W23, /* width*2/3 */
@@ -1131,8 +1105,7 @@ unsigned char aG3_7c[] = { S_LNK, 0x6c, S_FLH, S_END };
 unsigned char aG3_7d[] = { S_LNK, 0x6d, S_FLV, S_END };
 unsigned char aG3_7e[] = { S_BOX, S_W12, 0, 2, S_H12, S_FLH, S_BOX, S_W12, 0, 2, S_H12, S_END };// help char, not printed directly (only by S_LNK)
 
-unsigned char *aShapes[] =
-{
+unsigned char *aShapes[] = {
 	aG3_20, aG3_21, aG3_22, aG3_23, aG3_24, aG3_25, aG3_26, aG3_27, aG3_28, aG3_29, aG3_2a, aG3_2b, aG3_2c, aG3_2d, aG3_2e, aG3_2f,
 	aG3_30, aG3_31, aG3_32, aG3_33, aG3_34, aG3_35, aG3_36, aG3_37, aG3_38, aG3_39, aG3_3a, aG3_3b, aG3_3c, aG3_3d, aG3_3e, aG3_3f,
 	aG3_40, aG3_41, aG3_42, aG3_43, aG3_44, aG3_45, aG3_46, aG3_47, aG3_48, aG3_49, aG3_4a, aG3_4b, aG3_4c, aG3_4d, aG3_4e, aG3_4f,
@@ -1141,12 +1114,8 @@ unsigned char *aShapes[] =
 	aG3_70, aG3_71, aG3_72, aG3_73, aG3_74, aG3_75, aG3_76, aG3_77, aG3_78, aG3_79, aG3_7a, aG3_7b, aG3_7c, aG3_7d, aG3_7e
 };
 
-
-
-
 /* lcd layout */
-const char lcd_layout[] =
-{
+const char lcd_layout[] = {
 #define ____ 0x0
 #define ___X 0x1
 #define __X_ 0x2
@@ -1235,8 +1204,7 @@ const char lcd_layout[] =
 };
 
 /* lcd digits */
-const char lcd_digits[] =
-{
+const char lcd_digits[] = {
 	0,1,1,1,1,1,1,1,1,0,
 	1,1,0,0,0,0,0,0,1,1,
 	1,0,0,0,0,0,0,0,0,1,
@@ -1494,14 +1462,13 @@ int  GetNationalSubset(char *country_code);
 int  GetTeletextPIDs();
 int  GetRCCode();
 int  eval_triplet(int iOData, tstCachedPage *pstCachedPage,
-						unsigned char *pAPx, unsigned char *pAPy,
-						unsigned char *pAPx0, unsigned char *pAPy0,
-						unsigned char *drcssubp, unsigned char *gdrcssubp,
-						signed char *endcol, tstPageAttr *attrPassive, unsigned char* pagedata);
+			unsigned char *pAPx, unsigned char *pAPy,
+			unsigned char *pAPx0, unsigned char *pAPy0,
+			unsigned char *drcssubp, unsigned char *gdrcssubp,
+			signed char *endcol, tstPageAttr *attrPassive, unsigned char* pagedata);
 void eval_object(int iONr, tstCachedPage *pstCachedPage,
-					  unsigned char *pAPx, unsigned char *pAPy,
-					  unsigned char *pAPx0, unsigned char *pAPy0,
-					  tObjType ObjType, unsigned char* pagedata);
-
+			unsigned char *pAPx, unsigned char *pAPy,
+			unsigned char *pAPx0, unsigned char *pAPy0,
+			tObjType ObjType, unsigned char* pagedata);
 
 #endif
