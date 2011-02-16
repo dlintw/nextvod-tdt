@@ -83,14 +83,14 @@ int ymosaic[4];
 int displaywidth;
 #define fontwidth_small_lcd 8
 
-#define TV43STARTX (ex-210)
-#define TV169FULLSTARTX ((sx+ex)/2) // 2.66=PAL, 2=720p, 1.33=1080i (does not calculate here?!)
+#define TV43STARTX (ex-350)
+#define TV169FULLSTARTX ((sx+ex)/2)
 #define TVENDX ex
 #define TVENDY (StartY+25*fontheight)
-#define TV43WIDTH 208 /* 120 */
-#define TV43HEIGHT 110 /* 96 */
+#define TV43WIDTH 348 /* 120 */
+#define TV43HEIGHT 150 /* 96 */
 #define TV43STARTY (TVENDY-TV43HEIGHT)
-#define TV169FULLSTARTY ((sy+ey)/2) // 2.66=PAL, 2=720p, 1.33=1080i (does not calculate here?!)
+#define TV169FULLSTARTY ((sy+ey)/2)
 #define TV169FULLWIDTH  ((ex-sx)/2)
 #define TV169FULLHEIGHT (ey-sy)
 

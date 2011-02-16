@@ -35,21 +35,27 @@ int log_level = 5;
 		fprintf(stderr, arg);
 
 void getCurrentPIGSettings(int* left, int* top, int* width, int* height);
-void getCurrentASPECTSettings();
 void setCurrentPIGSettings(int left, int top, int width, int height);
+
+//#define change_to_bestfit // why should we use this?
+#ifdef change_to_bestfit
+void getCurrentASPECTSettings();
 void setCurrentASPECTSettings(int reset);
 void getCurrentPOLICYSettings();
 void setCurrentPOLICYSettings(int reset);
+char aspect[16];
+char policy[16];
+#endif
 
 /* current pig settings */
 int left, top, width, height;
-char aspect[16];
-char policy[16];
 
 int stride;
 
 static inline void setPixel(int x, int y, int color) {
 	debugf(100, "%s: >\n", __func__);
+
+//	CFrameBuffer::getInstance()->paintPixel(x, y, atoi((char *)bgra[color]));
 
 	unsigned char *p = lfb + x*4 + y*stride;
 	memcpy(p, bgra[color], 4);
@@ -59,6 +65,8 @@ static inline void setPixel(int x, int y, int color) {
 
 void FillRect(int x, int y, int w, int h, int color) {
 	debugf(100, "%s: >\n", __func__);
+
+//	CFrameBuffer::getInstance()->blitRect(x, y, w, h, atoi((char *)bgra[color]));
 
 	int xtmp, ytmp;
 	if (w > 0)
@@ -1343,9 +1351,11 @@ int tuxtx_main(int _rc, void * _fb, int pid, int x, int y, int w, int h) {
 	char cvs_revision[] = "$Revision: 1.95 $";
 
 	getCurrentPIGSettings(&left, &top, &width, &height);
-        getCurrentASPECTSettings();
-        getCurrentPOLICYSettings();
-        setCurrentASPECTSettings(0);
+#ifdef change_to_bestfit
+	getCurrentASPECTSettings();
+	getCurrentPOLICYSettings();
+	setCurrentASPECTSettings(0);
+#endif
 
 //printf("to init tuxtxt\n");fflush(stdout);
 #if !TUXTXT_CFG_STANDALONE
@@ -1379,10 +1389,10 @@ int tuxtx_main(int _rc, void * _fb, int pid, int x, int y, int w, int h) {
 	stride = CFrameBuffer::getInstance()->getStride();
 	fprintf(stderr, "stride = %d\n", stride);
 
-	sx = x;
-	sy = y;
-	ex = w;
-	ey = h;
+	sx = CFrameBuffer::getInstance()->scaleX(x);
+	sy = CFrameBuffer::getInstance()->scaleY(y);
+	ex = CFrameBuffer::getInstance()->scaleX(w);
+	ey = CFrameBuffer::getInstance()->scaleY(h);
 
 	fprintf(stderr, "stride=%d sx=%d sy=%d ex=%d ey=%d\n", stride, sx, sy, ex, ey);
 
@@ -1867,8 +1877,10 @@ void CleanUp() {
 	/* hide and close pig */
 	if (screenmode)
 		SwitchScreenMode(0); /* turn off divided screen */
+#ifdef change_to_bestfit
 	setCurrentASPECTSettings(1);
 	setCurrentPOLICYSettings(1);
+#endif
 
 #if TUXTXT_CFG_STANDALONE
 	tuxtxt_stop_thread();
@@ -3389,6 +3401,7 @@ void getCurrentPIGSettings(int* left, int* top, int* width, int* height) {
 	fprintf(stderr, "%s: top %x, left %x, width %x, height %x\n", __func__, *left, *top, *width, *height);
 }
 
+#ifdef change_to_bestfit
 void getCurrentPOLICYSettings() {
 	FILE* fd;
 	fd = fopen("/proc/stb/video/policy", "r");
@@ -3402,6 +3415,7 @@ void getCurrentASPECTSettings() {
 	fscanf(fd, "%s", aspect);
 	fclose(fd);
 }
+#endif
 
 void setCurrentPIGSettings(int left, int top, int width, int height) {
 	FILE* fd;
@@ -3424,6 +3438,7 @@ void setCurrentPIGSettings(int left, int top, int width, int height) {
 	fclose(fd);
 }
 
+#ifdef change_to_bestfit
 void setCurrentPOLICYSettings(int reset) {
 	FILE* fd;
 	fd = fopen("/proc/stb/video/policy", "w");
@@ -3441,6 +3456,7 @@ void setCurrentASPECTSettings(int reset) {
 		fprintf(fd, "4:3");
 	fclose(fd);
 }
+#endif
 
 void SwitchScreenMode(int newscreenmode) {
 	debugf(1, "%s: >\n", __func__);
@@ -3491,7 +3507,7 @@ void SwitchScreenMode(int newscreenmode) {
 			 * ausgabe werte nochmal umrechnet (wohin auch immer) und es dann ggf. zu
 			 * einem "Kernel panic - not syncing: Need true 64-bit/64-bit division" kommt */
 			if (width == 720) {
-				setCurrentPIGSettings(720 - 180, 576 - 150, 180, 150);
+				setCurrentPIGSettings(720 - 130, 576 - 100, 130, 100);
 			} else
 			if (width == 1280) {
 				setCurrentPIGSettings(1280 - 250, 440, 250, 460);
