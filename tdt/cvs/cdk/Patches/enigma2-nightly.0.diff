@@ -1576,22 +1576,21 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.cpp en
  	if (unused)
  	{
  		demux = new eDVBAllocatedDemux(unused);
-@@ -1793,8 +1882,15 @@
- #if HAVE_DVB_API_VERSION < 3
- 		m_pvr_fd_dst = open("/dev/pvr", O_WRONLY);
- #else
+@@ -1801,7 +1882,14 @@
+		ePtr<eDVBAllocatedDemux> &demux = m_demux ? m_demux : m_decoder_demux;
+		if (demux)
+		{
 +#if defined(__sh__) // our pvr device is called dvr
 +		char dvrDev[128];
 +		int dvrIndex = m_mgr->m_adapter.begin()->getNumDemux() - 1;
 +		sprintf(dvrDev, "/dev/dvb/adapter0/dvr%d", dvrIndex);
 +		m_pvr_fd_dst = open(dvrDev, O_WRONLY);
 +#else
- 		m_pvr_fd_dst = open("/dev/misc/pvr", O_WRONLY);
- #endif
+			m_pvr_fd_dst = demux->get().openDVR(O_WRONLY);
 +#endif
- 		if (m_pvr_fd_dst < 0)
- 		{
- 			eDebug("can't open /dev/misc/pvr - you need to buy the new(!) $$$ box! (%m)"); // or wait for the driver to be improved.
+			if (m_pvr_fd_dst < 0)
+			{
+				eDebug("can't open /dev/dvb/adapterX/dvrX - you need to buy the new(!) $$$ box! (%m)"); // or wait for the driver to be improved.
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/dvb/dvb.h enigma2-nightly.patched/lib/dvb/dvb.h
 --- enigma2-nightly.org/lib/dvb/dvb.h	2011-01-07 21:23:59.000000000 +0100
 +++ enigma2-nightly.patched/lib/dvb/dvb.h	2011-01-07 21:04:50.000000000 +0100
