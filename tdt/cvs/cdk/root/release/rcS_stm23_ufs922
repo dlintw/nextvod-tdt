@@ -66,7 +66,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/cx21143.ko
    insmod $MODDIR/ufs922_cic.ko
    if [ $player=='player179' ]; then
-     insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+     insmod $MODDIR/pti.ko
      insmod $MODDIR/stm_monitor.ko
      insmod $MODDIR/stmsysfs.ko
      insmod $MODDIR/stmdvb.ko
