@@ -60,7 +60,7 @@
 + .offset = 0x00020000,
 +},
 +{
-+ .name = "ALL without bootloader",
++ .name = "Full without bootloader",
 + .size =   0x01FC0000,
 + .offset = 0x00040000,
 + }

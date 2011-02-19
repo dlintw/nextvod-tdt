@@ -276,23 +276,23 @@ diff -urN linux-2.6.17.14_stm22_0040_cuberevo-9500hd/arch/sh/boards/dgstation/cu
 +		.mask_flags	= MTD_WRITEABLE,
 +	},
 +	{
-+		.name		= "nor.db",
++		.name		= "nor.var",
 +		.offset		= BOOT_SIZE+WELCOME_SIZE+KERNEL_SIZE+ROOT_SIZE,
 +		.size		= DB_SIZE,
 +	},
 +	/* partitions for upgrade */
 +	{
-+		.name		= "nor.kernel_root",
++		.name		= "nor.mtd2_mtd3",
 +		.offset		= BOOT_SIZE+WELCOME_SIZE,
 +		.size		= KERNEL_SIZE+ROOT_SIZE,
 +	},
 +	{
-+		.name		= "nor.kernel_root_db",
++		.name		= "nor.mtd2_mtd3_mtd4",
 +		.offset		= BOOT_SIZE+WELCOME_SIZE,
 +		.size		= KERNEL_SIZE+ROOT_SIZE+DB_SIZE,
 +	},
 +	{
-+		.name		= "nor.all_noboot",
++		.name		= "nor.full",
 +		.offset		= BOOT_SIZE,
 +		.size		= (WINDOW_SIZE-BOOT_SIZE),
 +	},
