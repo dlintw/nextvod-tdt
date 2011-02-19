@@ -2,7 +2,7 @@
 
 MODDIR=/lib/modules
 
-insmod $MODDIR/micom.ko
+insmod $MODDIR/micom.ko paramDebug=0
 
 if [ -e /var/etc/.firstboot ]; then
    echo "WAIT 3 min" > /dev/vfd
@@ -46,19 +46,35 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init AVS"
    insmod $MODDIR/avs.ko type=stv6412
 
-   echo "init player"
+   player=`cat /proc/stb/player/version`
+   if [ $player=='player179' ]; then
+     echo "init player 179"
+   else
+     echo "init player 131"
+   fi
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
+   if [ $player=='player179' ]; then
+     insmod $MODDIR/stmvout.ko
+     insmod $MODDIR/stmvbi.ko
+   fi
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/cx21143.ko
    insmod $MODDIR/ufs922_cic.ko
-   insmod $MODDIR/pti.ko
-   insmod $MODDIR/stmdvb.ko
-   insmod $MODDIR/stm_monitor.ko
+   if [ $player=='player179' ]; then
+     insmod $MODDIR/pti.ko
+     insmod $MODDIR/stm_monitor.ko
+     insmod $MODDIR/stmsysfs.ko
+     insmod $MODDIR/stmdvb.ko
+   else
+     insmod $MODDIR/pti.ko
+     insmod $MODDIR/stmdvb.ko
+     insmod $MODDIR/stm_monitor.ko
+   fi
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko

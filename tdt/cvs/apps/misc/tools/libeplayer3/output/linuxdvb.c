@@ -744,7 +744,8 @@ int LinuxDvbPts(Context_t  *context, unsigned long long int* pts) {
     
     linuxdvb_printf(50, "\n");
 
-    getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+    // pts is a non writting requests and can be done in parallel to other requests
+    //getLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 
     if (videofd != -1)
     {
@@ -771,7 +772,7 @@ int LinuxDvbPts(Context_t  *context, unsigned long long int* pts) {
 
     *((unsigned long long int *)pts)=(unsigned long long int)sCURRENT_PTS;
 
-    releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
+    //releaseLinuxDVBMutex(FILENAME, __FUNCTION__,__LINE__);
 
     return ret;
 }
