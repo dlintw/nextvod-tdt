@@ -190,6 +190,7 @@ COMMONPATCHES_23 = \
 		$(if $(P0123),linux-sh4-asm_mov_0xffffff_stm23$(PATCH_STR).patch) \
 		linux-sh4-cifs-unaligned-mem-access-kernel_stm23.patch \
 		linux-tune_stm23.patch \
+		linux-ftdi_sio.c_stm23.patch \
 		$(STM23_DVB_PATCH)
 
 UFS912PATCHES_23 = $(COMMONPATCHES_23) \
@@ -197,23 +198,20 @@ UFS912PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-ufs912_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-		fortis_hdbox_dvb_core_stm23.patch \
-		linux-ftdi_sio.c_stm23.patch
+		fortis_hdbox_dvb_core_stm23.patch
 
 SPARKPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-spark_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-spark_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-spark_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-spark_sound_stm23$(PATCH_STR).patch) \
-		fortis_hdbox_dvb_core_stm23.patch \
-		linux-ftdi_sio.c_stm23.patch
+		fortis_hdbox_dvb_core_stm23.patch 
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
     $(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
     $(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
     $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-    $(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
-    linux-ftdi_sio.c_stm23.patch    
+    $(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)  
 
 FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
