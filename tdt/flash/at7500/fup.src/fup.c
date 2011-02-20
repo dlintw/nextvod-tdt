@@ -10,6 +10,7 @@
 #include <zlib.h>
 
 #include "crc16.h"
+#include "dummy.h"
 
 #define VERSION "1.3a"
 #define DATE "23.01.2011"
@@ -21,6 +22,34 @@ unsigned short blockCounterTotal = 0;
 #define MAX_PART_NUMBER 17
 #define EXTENSION_LEN 32
 
+#define PART_SIGN 1
+#define PART_FLASH 2
+
+#if 0
+struct {
+unsigned int Id;
+char Extension[EXTENSION_LEN];
+char Description[EXTENSION_LEN];
+unsigned int Offset;
+unsigned int Size;
+unsigned int Flags;
+} tPartition;
+
+
+
+(0x0,  ".loader.mtd0",   "Loader", 0x00000000, 0x00100000, (PART_FLASH)),
+(0x01,     ".app.mtd1",     "App", 0x00b00000, 0x00700000, (PART_FLASH | PART_SIGN)),
+(0x02, ".config0.mtd5", "Config0", 0x02100000, 0x00040000, (PART_FLASH)),
+(0x03, ".config4.mtd5", "Config4", 0x02140000, 0x00040000, (PART_FLASH)),
+(0x04, ".config8.mtd5", "Config8", 0x02180000, 0x00020000, (PART_FLASH)),
+(0x05, ".configA.mtd5", "ConfigA", 0x021A0000, 0x00020000, (PART_FLASH)),
+
+(0x06,  ".kernel.mtd6",  "Kernel", 0x00100000, 0x00300000, (PART_FLASH)),
+(0x07,     ".dev.mtd4",  "Loader", 0x00000000, 0x00100000, (PART_FLASH | PART_SIGN)),
+(0x08,  ".rootfs.mtd8",  "Loader", 0x00000000, 0x00100000, (PART_FLASH | PART_SIGN)),
+(0x09,    ".user.mtd9",  "Loader", 0x00000000, 0x00100000, (PART_FLASH)),
+(0x10,           ".10",  "Loader", 0x00000000, 0x00100000, (PART_FLASH)),
+#endif
 unsigned char has[MAX_PART_NUMBER];
 FILE* fd[MAX_PART_NUMBER];
 char ext[MAX_PART_NUMBER][EXTENSION_LEN] = {
@@ -28,7 +57,7 @@ char ext[MAX_PART_NUMBER][EXTENSION_LEN] = {
 ".app.mtd1",
 ".config0.mtd5", //F mtd5 offset 0x00000000
 ".config4.mtd5", //E mtd5 offset 0x00040000
-".04",
+".config8.mtd5",
 ".configA.mtd5", //C mtd5 offset 0x000A0000
 ".kernel.mtd6",
 ".dev.mtd4",
@@ -300,7 +329,7 @@ int main(int argc, char* argv[])
          crc = crc32(crc, buffer, 1/*0x2710*/);
       }
    
-      printf("Signed footer: %08X\n", crc);
+      printf("Signed footer: %08lX\n", crc);
       fwrite(&crc, 1, 4, signedFile);
       
       fclose(file);
@@ -320,8 +349,8 @@ int main(int argc, char* argv[])
          crc = crc32(crc, buffer, 1/*0x2710*/);
       }
    
-      printf("Signed footer: %08X\n", crc);
-      printf("Original Signed footer: %08X\n", orgcrc);
+      printf("Signed footer: %08lX\n", crc);
+      printf("Original Signed footer: %08lX\n", orgcrc);
       
       fclose(file);
    }
@@ -486,6 +515,7 @@ int main(int argc, char* argv[])
       
       unsigned char appendPartCount = argc - 3;
       for(int i = 0; i < appendPartCount; i+=2) {
+
          unsigned char type = 0x01;
          
          if(strlen(argv[3 + i]) == 2 && strncmp(argv[3 + i], "-f", 2) == 0) // ORIGNINAL APP_BAK NOW FW
@@ -500,32 +530,60 @@ int main(int argc, char* argv[])
             type = 0x09; // 7 if dev, than we need to split the file in 3 files
          
          if(type == 0x01 || type == 0x08 || type== 0x07) {
-            FILE* file = fopen("dummy.squash.signed.padded", "rb");
-            while(writeBlock(irdFile, file, 0, type) == DATA_BLOCKSIZE) {
-               totalBlockCount++;
-            }
-            fclose(file);
-         }
-         
-         FILE* file = fopen(argv[3 + i + 1], "rb");
-         
-         /*if(type == 0x07) { // DEV ROOT
-            // We have to split it onto 3 partitions
-            // dev    2E0000 2,875MB (300000 - 20000)
-            // config 100000 1MB
-            // user   1E00000 30MB
-            unsigned char buffer[0x1000];
-         }*/
-         
-         printf("Adding %s\n", argv[3 + i + 1]);
-         unsigned short partBlocksize = totalBlockCount;
-         while(writeBlock(irdFile, file, 0, type) == DATA_BLOCKSIZE) {
-            totalBlockCount++;
+            printf("Adding signed dummy squashfs header");
+            FILE* file = fopen("dummy.squash.signed.padded", "w");
             printf(".");
+            if(file != NULL) {
+               printf(".");
+               fwrite(dummy, 1, dummy_size, file);
+               printf(".");
+               fclose(file);
+               printf(".");
+               file = fopen("dummy.squash.signed.padded", "rb");
+               printf(".");
+               if(file != NULL) {
+                  while(writeBlock(irdFile, file, 0, type) == DATA_BLOCKSIZE) {
+                     printf(".");
+                     totalBlockCount++;
+                  }
+                  fclose(file);
+               }
+               else
+                  printf("\nCould not write signed dummy squashfs header (2)\n");
+               remove("dummy.squash.signed.padded");
+            }
+            else
+               printf("\nCould not write signed dummy squashfs header (1)\n");
+            printf("\n");
          }
-         partBlocksize = totalBlockCount - partBlocksize;
-         printf("\nAdded %d Blocks, total %d\n", partBlocksize, totalBlockCount);
-         fclose(file);
+         
+         if(strncmp(argv[3 + i + 1], "foo", 3) != 0) {
+            FILE* file = fopen(argv[3 + i + 1], "rb");
+            if(file != NULL) {
+               /*if(type == 0x07) { // DEV ROOT
+                  // We have to split it onto 3 partitions
+                  // dev    2E0000 2,875MB (300000 - 20000)
+                  // config 100000 1MB
+                  // user   1E00000 30MB
+                  unsigned char buffer[0x1000];
+               }*/
+               
+               printf("Adding %s", argv[3 + i + 1]);
+               unsigned short partBlocksize = totalBlockCount;
+               while(writeBlock(irdFile, file, 0, type) == DATA_BLOCKSIZE) {
+                  totalBlockCount++;
+                  printf(".");
+               }
+               partBlocksize = totalBlockCount - partBlocksize;
+               printf("\nAdded %d Blocks, total %d\n", partBlocksize, totalBlockCount);
+               fclose(file);
+            }
+            else
+               printf("\nCould not append %s\n", argv[3 + i + 1]);
+            printf("\n");
+         }
+         else
+            printf("This is a foo partition\n");
       }
       
       /// Refresh Header

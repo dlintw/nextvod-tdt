@@ -44,7 +44,7 @@ $PAD 0x1E00000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin
 # Create a fortis signed update file for fw's 
 # Note: -g is a workaround which will be removed as soon as the missing conf partition is found
 # Note: -e could be used as a extension partition but at the moment we dont use it
-$FUP -ce $OUTFILE -k $CURDIR/uImage -r $CURDIR/mtd_root.sum.pad.bin -g $CURDIR/dummy.squash.signed.padded -e $CURDIR/dummy.squash.signed.padded
+$FUP -ce $OUTFILE -k $CURDIR/uImage -r $CURDIR/mtd_root.sum.pad.bin -g foo -e foo
 
 rm -f $CURDIR/uImage
 rm -f $CURDIR/mtd_root.bin
