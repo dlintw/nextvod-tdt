@@ -316,6 +316,9 @@ UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 UFS912PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs912_setup_stm24$(PATCH_STR).patch
 
+ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-atevio7500_setup_stm24$(PATCH_STR).patch
+
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch
@@ -330,7 +333,8 @@ KERNELPATCHES_24 =  \
 		$(if $(UFS922),$(UFS922PATCHES_24)) \
 		$(if $(TF7700),$(TF7700PATCHES_24)) \
 		$(if $(VIP1_V2),$(VIP2_PATCHES_24)) \
-		$(if $(VIP2_V1),$(VIP2_PATCHES_24))
+		$(if $(VIP2_V1),$(VIP2_PATCHES_24)) \
+		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_24))
 
 ############ Patches Kernel 24 End ###############
 
