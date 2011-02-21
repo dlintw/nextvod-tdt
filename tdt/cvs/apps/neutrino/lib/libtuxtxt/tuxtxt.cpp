@@ -37,8 +37,8 @@ int log_level = 5;
 void getCurrentPIGSettings(int* left, int* top, int* width, int* height);
 void setCurrentPIGSettings(int left, int top, int width, int height);
 
-#define change_to_4_3 // why we need this?
-#define change_to_bestfit // why we need this?
+//#define change_to_4_3 // why we need this?
+//#define change_to_bestfit // why we need this?
 
 #ifdef change_to_4_3
 void getCurrentASPECTSettings();
