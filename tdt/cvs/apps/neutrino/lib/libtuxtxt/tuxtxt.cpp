@@ -1726,6 +1726,7 @@ int Init() {
 				dumpl25 = ival & 1;
 			else if (1 == sscanf(line, "UseTTF %i", &ival))
 				usettf = ival & 1;
+#if 0
 			else if (1 == sscanf(line, "StartX %i", &ival))
 				sx = ival;
 			else if (1 == sscanf(line, "EndX %i", &ival))
@@ -1734,6 +1735,7 @@ int Init() {
 				sy = ival;
 			else if (1 == sscanf(line, "EndY %i", &ival))
 				ey = ival;
+#endif
 		}
 		fclose(conf);
 	}
