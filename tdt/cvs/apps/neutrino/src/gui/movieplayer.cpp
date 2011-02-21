@@ -980,6 +980,12 @@ const CMenuOptionChooser::keyval VIDEOMENU_43MODE_OPTIONS[VIDEOMENU_43MODE_OPTIO
 				playback->GetSpeed(speed);
 				printf("CMoviePlayerGui::PlayFile: speed %d position %d duration %d (%d, %d%%)\n", speed, position, duration, duration-position, file_prozent);
 			}
+#ifdef __sh__
+			else if (!timeshift) {
+				sleep(3);
+				exit = true;
+			}
+#endif
 		}
 
 		if (msg == (neutrino_msg_t) g_settings.mpkey_plugin) {
