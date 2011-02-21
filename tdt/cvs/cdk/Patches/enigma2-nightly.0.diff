@@ -6627,7 +6627,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
 +        	int result = 0;
 +        	if(ratio > 1) result = player->playback->Command(player, PLAYBACK_FASTFORWARD, (void*)&speed);
 +		else if(ratio < -1) {
-+			speed = speed * -1;
++			//speed = speed * -1;
 +			result = player->playback->Command(player, PLAYBACK_FASTBACKWARD, (void*)&speed);
 +		}
 +    		else result = player->playback->Command(player, PLAYBACK_CONTINUE, NULL);
