@@ -37,13 +37,17 @@ int log_level = 5;
 void getCurrentPIGSettings(int* left, int* top, int* width, int* height);
 void setCurrentPIGSettings(int left, int top, int width, int height);
 
-//#define change_to_bestfit // why should we use this?
-#ifdef change_to_bestfit
+#define change_to_4_3 // why we need this?
+#define change_to_bestfit // why we need this?
+
+#ifdef change_to_4_3
 void getCurrentASPECTSettings();
 void setCurrentASPECTSettings(int reset);
+char aspect[16];
+#endif
+#ifdef change_to_bestfit
 void getCurrentPOLICYSettings();
 void setCurrentPOLICYSettings(int reset);
-char aspect[16];
 char policy[16];
 #endif
 
@@ -1352,8 +1356,10 @@ int tuxtx_main(int _rc, void * _fb, int pid, int x, int y, int w, int h) {
 
 	getCurrentPIGSettings(&left, &top, &width, &height);
 #ifdef change_to_bestfit
-	getCurrentASPECTSettings();
 	getCurrentPOLICYSettings();
+#endif
+#ifdef change_to_4_3
+	getCurrentASPECTSettings();
 	setCurrentASPECTSettings(0);
 #endif
 
@@ -1877,8 +1883,10 @@ void CleanUp() {
 	/* hide and close pig */
 	if (screenmode)
 		SwitchScreenMode(0); /* turn off divided screen */
-#ifdef change_to_bestfit
+#ifdef change_to_4_3
 	setCurrentASPECTSettings(1);
+#endif
+#ifdef change_to_bestfit
 	setCurrentPOLICYSettings(1);
 #endif
 
@@ -3408,7 +3416,8 @@ void getCurrentPOLICYSettings() {
 	fscanf(fd, "%s", policy);
 	fclose(fd);
 }
-
+#endif
+#ifdef change_to_4_3
 void getCurrentASPECTSettings() {
 	FILE* fd;
 	fd = fopen("/proc/stb/video/aspect", "r");
@@ -3446,7 +3455,8 @@ void setCurrentPOLICYSettings(int reset) {
 		fprintf(fd, "%s", policy);
 	fclose(fd);
 }
-
+#endif
+#ifdef change_to_4_3
 void setCurrentASPECTSettings(int reset) {
 	FILE* fd;
 	fd = fopen("/proc/stb/video/aspect", "w");
