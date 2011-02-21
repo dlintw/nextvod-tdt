@@ -47,7 +47,8 @@ if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); 
 #define cERR_PLAYBACK_NO_ERROR      0
 #define cERR_PLAYBACK_ERROR        -1
 
-#define cMaxSpeed   128 /* fixme: revise */
+#define cMaxSpeed_ff   128 /* fixme: revise */
+#define cMaxSpeed_fr   -320 /* fixme: revise */
 
 /* ***************************** */
 /* Varaibles                     */
@@ -569,9 +570,9 @@ static int PlaybackFastForward(Context_t  *context, int* speed) {
     /* Audio only forwarding not supported */
     if (context->playback->isVideo && !context->playback->isHttp && !context->playback->BackWard && (!context->playback->isPaused || context->playback->isPlaying)) {
 
-        if ((*speed <= 0) || (*speed > cMaxSpeed))
+        if ((*speed <= 0) || (*speed > cMaxSpeed_ff))
         {
-            playback_err("speed %d out of range (1 - %d) \n", *speed, cMaxSpeed);
+            playback_err("speed %d out of range (1 - %d) \n", *speed, cMaxSpeed_ff);
             return cERR_PLAYBACK_ERROR;
         }
 
@@ -634,9 +635,9 @@ static int PlaybackFastBackward(Context_t  *context,int* speed) {
     /* Audio only backwarding not supported */
     if (context->playback->isVideo && !context->playback->isHttp && !context->playback->isForwarding && (!context->playback->isPaused || context->playback->isPlaying)) {
         
-        if ((*speed <= 0) || (*speed > cMaxSpeed))
+        if ((*speed > 0) || (*speed < cMaxSpeed_fr))
         {
-            playback_err("speed %d out of range (1 - %d) \n", *speed, cMaxSpeed);
+            playback_err("speed %d out of range (0 - %d) \n", *speed, cMaxSpeed_fr);
             return cERR_PLAYBACK_ERROR;
         }
 
@@ -676,9 +677,9 @@ static int PlaybackFastBackward(Context_t  *context,int* speed) {
     /* Audio only reverse play not supported */
     if (context->playback->isVideo && !context->playback->isForwarding && (!context->playback->isPaused || context->playback->isPlaying)) {
 
-        if ((*speed > 0) || (*speed < -cMaxSpeed))
+        if ((*speed > 0) || (*speed < cMaxSpeed_fr))
         {
-            playback_err("speed %d out of range (0 - %d) \n", *speed, -cMaxSpeed);
+            playback_err("speed %d out of range (0 - %d) \n", *speed, cMaxSpeed_fr);
             return cERR_PLAYBACK_ERROR;
         }
 

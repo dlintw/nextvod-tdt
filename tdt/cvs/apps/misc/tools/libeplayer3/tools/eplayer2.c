@@ -125,7 +125,7 @@ int main(int argc,char* argv[]) {
     SubtitleOutputDef_t out;
     int showInfos = 0, noinput = 0;
     char file[255] = {""};
-    int speed = 1;
+    int speed = 0, speedmap = 0;
     printf("%s >\n", __FILE__);
 
     if (argc < 2)
@@ -419,11 +419,22 @@ int main(int argc,char* argv[]) {
                    speed = 0;
                     
                 speed++;
-                
-                if (speed > 15)
+
+                if (speed > 7)
                    speed = 1;
 
-                player->playback->Command(player, PLAYBACK_FASTFORWARD, &speed);
+                switch(speed)
+                {
+                    case 1: speedmap = 1; break;
+                    case 2: speedmap = 3; break;
+                    case 3: speedmap = 7; break;
+                    case 4: speedmap = 15; break;
+                    case 5: speedmap = 31; break;
+                    case 6: speedmap = 63; break;
+                    case 7: speedmap = 127; break;
+                }
+                
+                player->playback->Command(player, PLAYBACK_FASTFORWARD, &speedmap);
                 break;
             }
 
@@ -433,10 +444,21 @@ int main(int argc,char* argv[]) {
                    
                 speed--;
                    
-                if (speed < -15)
+                if (speed < -7)
                     speed = -1;
-                       
-                player->playback->Command(player, PLAYBACK_FASTBACKWARD, &speed);
+
+                switch(speed)
+                {
+                    case -1: speedmap = -5; break;
+                    case -2: speedmap = -10; break;
+                    case -3: speedmap = -20; break;
+                    case -4: speedmap = -40; break;
+                    case -5: speedmap = -80; break;
+                    case -6: speedmap = -160; break;
+                    case -7: speedmap = -320; break;
+                }
+
+                player->playback->Command(player, PLAYBACK_FASTBACKWARD, &speedmap);
                 break;
             }
 
@@ -511,8 +533,8 @@ int main(int argc,char* argv[]) {
                 printf("q:        Stop\n");
                 printf("c:        Continue\n");
                 printf("p:        Pause\n");
-                printf("f:        Increase speed (Fast forward) (1 - 15)\n");
-                printf("b:        Decrease speed (Fast reverse) (-1 - -15)\n");
+                printf("f:        Increase speed (Fast forward) (stepwise)\n");
+                printf("b:        Decrease speed (Fast reverse) (stepwise)\n");
                 printf("l:        Print duration\n");
                 printf("j:        Print current PTS\n");
                 printf("k[1,4,7]: Jump back [15,60,300] seconds\n");
