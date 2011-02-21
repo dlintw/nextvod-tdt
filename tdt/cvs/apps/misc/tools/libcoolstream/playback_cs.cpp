@@ -288,16 +288,15 @@ bool cPlayback::GetPosition(int &position, int &duration)
 {
 	printf("%s:%s %d %d\n", FILENAME, __FUNCTION__, position, duration);
 	if(playing==false) return false;
-/*
+
 	if (player && player->playback && !player->playback->isPlaying) {
 		printf("cPlayback::%s !!!!EOF!!!! < -1\n", __func__);
 		position = duration + 1000;
-		//duration = 0;
+		// duration = 0;
 
-		// this is stupid, neutrino is realy realy stupid!
+		// this is stupid
 		return false;
 	}
-*/
 
 	unsigned long long int vpts = 0;
 	if(player && player->playback)
