@@ -1,8 +1,42 @@
-*** a/arch/sh/boards/mach-mb618/setup.c	2011-02-02 20:35:28.000000000 +0100
---- b/setup.c	2011-02-11 15:57:48.183119172 +0100
+*** a/drivers/mtd/chips/cfi_probe.c	2011-01-02 21:05:30.000000000 +0100
+--- b/cfi_probe.c	2011-01-05 20:38:36.087467593 +0100
 ***************
-*** 32,39 ****
---- 32,70 ----
+*** 255,260 ****
+--- 255,276 ----
+  	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
+  		cfi->cfiq->EraseRegionInfo[i] = le32_to_cpu(cfi->cfiq->EraseRegionInfo[i]);
+  
++ 	/* kdhong */
++ 	printk( "CFI MFR = %x DEV = %x\n", cfi->mfr, cfi->id );
++ 
++ 	if( cfi->mfr == 0x00c2 && cfi->id == 0x227e )
++ 	{
++ 		int devsize = (1 << cfi->cfiq->DevSize) * cfi->interleave;
++ 
++ 		printk( "devsize = %x\n", devsize );
++ 
++ 		if( devsize == 0x400000 )
++ 		{
++ 			cfi->cfiq->EraseRegionInfo[i] = 0x100003f;
++ 		}
++ 	}
++ 	/* kdhong */
++ 
+  #ifdef DEBUG_CFI
+  		printk("  Erase Region #%d: BlockSize 0x%4.4X bytes, %d blocks\n",
+  		       i, (cfi->cfiq->EraseRegionInfo[i] >> 8) & ~0xff,
+*** a/arch/sh/boards/mach-mb618/setup.c	2011-02-21 22:40:41.000000000 +0100
+--- b/setup.c	2011-02-22 19:51:52.606070925 +0100
+***************
+*** 26,39 ****
+--- 26,71 ----
+  #include <linux/stm/pci-synopsys.h>
+  #include <linux/mtd/mtd.h>
+  #include <linux/mtd/nand.h>
++ #include <linux/stm/nand.h>
+  #include <linux/mtd/physmap.h>
+  #include <linux/mtd/partitions.h>
+  #include <asm/irq-ilc.h>
   #include <asm/irl.h>
   #include <sound/stm.h>
   #include <mach/common.h>
@@ -56,7 +90,7 @@
   }
   
   
---- 82,97 ----
+--- 83,98 ----
   
   	stx7111_early_device_init();
   
@@ -74,6 +108,166 @@
   
   
 ***************
+*** 115,155 ****
+  
+  static void mb618_nor_set_vpp(struct map_info *info, int enable)
+  {
+! 	gpio_set_value(MB618_PIO_FLASH_VPP, enable);
+  }
+  
+  static struct platform_device mb618_nor_flash = {
+  	.name		= "physmap-flash",
+  	.id		= -1,
+  	.num_resources	= 1,
+  	.resource	= (struct resource[]) {
+! 		STM_PLAT_RESOURCE_MEM(0, 32*1024*1024),
+  	},
+  	.dev.platform_data = &(struct physmap_flash_data) {
+  		.width		= 2,
+  		.set_vpp	= mb618_nor_set_vpp,
+  	},
+  };
+  
+  /* J34 must be in the 1-2 position to enable NOR Flash */
+! static struct mtd_partition mb618_nand_flash_partitions[] = {
+! 	{
+! 		.name	= "NAND root",
+! 		.offset	= 0,
+! 		.size 	= 0x00800000
+! 	}, {
+! 		.name	= "NAND home",
+! 		.offset	= MTDPART_OFS_APPEND,
+! 		.size	= MTDPART_SIZ_FULL
+! 	},
+  };
+  
+! struct stm_nand_bank_data nand_bank_data = {
+! 	.csn		= 0,
+! 	.nr_partitions	= ARRAY_SIZE(mb618_nand_flash_partitions),
+! 	.partitions	= mb618_nand_flash_partitions,
+  	.options	= NAND_NO_AUTOINCR | NAND_USE_FLASH_BBT,
+! 	.timing_data	= &(struct stm_nand_timing_data) {
+  		.sig_setup	= 50,		/* times in ns */
+  		.sig_hold	= 50,
+  		.CE_deassert	= 0,
+--- 151,236 ----
+  
+  static void mb618_nor_set_vpp(struct map_info *info, int enable)
+  {
+! //	gpio_set_value(MB618_PIO_FLASH_VPP, enable);
+  }
+  
++ static struct mtd_partition mtd_parts_table[] = {
++ 	{
++ 		.name = "NOR U-BOOT :    0xA000.0000-0xA007.FFFF (512KB)",
++ 		.size = 0x00080000,
++ 		.offset = 0x00000000,
++ 	}, {
++ 		.name = "NOR ROOT :      0xA008.0000-0xA03F.FFFF (3,5MB)",
++ 		.size = MTDPART_SIZ_FULL,
++ 		.offset = 0x00080000,
++ 	}
++ };
++ 
+  static struct platform_device mb618_nor_flash = {
+  	.name		= "physmap-flash",
+  	.id		= -1,
+  	.num_resources	= 1,
+  	.resource	= (struct resource[]) {
+! 		STM_PLAT_RESOURCE_MEM(0, 4*1024*1024),
+  	},
+  	.dev.platform_data = &(struct physmap_flash_data) {
+  		.width		= 2,
+  		.set_vpp	= mb618_nor_set_vpp,
++ 	    .nr_parts	= ARRAY_SIZE(mtd_parts_table),
++ 	    .parts		= mtd_parts_table
+  	},
+  };
+  
+  /* J34 must be in the 1-2 position to enable NOR Flash */
+! static struct mtd_partition nand_parts[] = {
+! #ifdef ORIGINAL_MTD
+! 	 {
+! 	 .name = "NAND KERNEL :          0x0000.0000-0x002F.FFFF",
+! 	 .size = 0x300000,
+! 	 .offset = 0,
+! 	 },
+! 	 {
+! 	 .name = "NAND ROOT :            0x0030.0000-0x027F.FFFF",
+! 	 .size = 0x2500000,
+! 	 .offset = 0x300000,
+! 	 },
+! 	 {
+! 	 .name = "NAND CONFIG :          0x0280.0000-0x04FF.FFFF",
+! 	 .size = 0x2800000,
+! 	 .offset = 0x2800000,
+! 	 },
+! 	 {
+! 	 .name = "NAND DATA :            0x0500.0000-0x07FF.FFFF",
+! 	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
+! 	 .offset = 0x05000000,
+! 	 },
+! #else
+! 	 {
+! 	 .name = "NAND KERNEL :   0x0000.0000-0x003F.FFFF (  4MB)",
+! 	 .size = 0x400000,
+! 	 .offset = 0,
+! 	 }, {
+! 	 .name = "NAND FW :       0x0040.0000-0x00BF.FFFF ( 8MB)",
+! 	 .size = 0x800000,
+! 	 .offset = 0x400000,
+! 	 }, {
+! 	 .name = "NAND ROOT :     0x00C0.0000-0x04BF.FFFF ( 64MB)",
+! 	 .size = 0x4000000,
+! 	 .offset = 0xC00000,
+! 	 }, {
+! 	 .name = "NAND DATA :     0x04C0.0000-0x07FF.FFFF ( 52MB)",
+! 	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
+! 	 .offset = 0x04C00000,
+! 	 },
+! #endif
+  };
+  
+! static struct stm_nand_bank_data nand_bank_data = {
+! 	.csn		= 1,
+! 	.nr_partitions	= ARRAY_SIZE(nand_parts),
+! 	.partitions	= nand_parts,
+  	.options	= NAND_NO_AUTOINCR | NAND_USE_FLASH_BBT,
+! 	.timing_data = &(struct stm_nand_timing_data) {
+  		.sig_setup	= 50,		/* times in ns */
+  		.sig_hold	= 50,
+  		.CE_deassert	= 0,
+***************
+*** 158,167 ****
+  		.wr_off		= 40,
+  		.rd_on		= 10,
+  		.rd_off		= 40,
+! 		.chip_delay	= 30,		/* in us */
+  	},
+  
+! 	.emi_withinbankoffset	= 0,
+  };
+  
+  static int mb618_phy_reset(void *bus)
+--- 239,255 ----
+  		.wr_off		= 40,
+  		.rd_on		= 10,
+  		.rd_off		= 40,
+! 		.chip_delay	= 40,		/* in us */
+  	},
++ };
+  
+! static struct platform_device nand_device = {
+! 	.name		= "stm-nand-emi",
+! 	.dev.platform_data = &(struct stm_plat_nand_emi_data){
+! 		.nr_banks	= 1,
+! 		.banks		= &nand_bank_data,
+! 		.emi_rbn_gpio	= -1,
+! 	},
+  };
+  
+  static int mb618_phy_reset(void *bus)
+***************
 *** 178,184 ****
   static struct plat_stmmacphy_data mb618_phy_private_data = {
   	/* SMSC LAN 8700 */
@@ -82,7 +276,7 @@
   	.phy_mask = 0,
   	.interface = PHY_INTERFACE_MODE_MII,
   	.phy_reset = &mb618_phy_reset,
---- 213,219 ----
+--- 266,272 ----
   static struct plat_stmmacphy_data mb618_phy_private_data = {
   	/* SMSC LAN 8700 */
   	.bus_id = 0,
@@ -105,7 +299,7 @@
   };
   
   /* SCART switch simple control */
---- 284,296 ----
+--- 337,350 ----
   }
   
   static struct platform_device *mb618_devices[] __initdata = {
@@ -116,6 +310,7 @@
   #endif
   	&mb618_phy_device,
 ! //	&mb618_button_device,
+! 	&nand_device,
   };
   
   /* SCART switch simple control */
@@ -134,7 +329,7 @@
   	stx7111_configure_ssc_i2c(1); /* J12=1-2, J16=1-2 */
   	peripherals_i2c_bus = stx7111_configure_ssc_i2c(2);
   	stx7111_configure_ssc_i2c(3);
---- 329,341 ----
+--- 383,395 ----
   {
   	int peripherals_i2c_bus;
   
@@ -149,7 +344,7 @@
   	peripherals_i2c_bus = stx7111_configure_ssc_i2c(2);
   	stx7111_configure_ssc_i2c(3);
 ***************
-*** 313,333 ****
+*** 313,327 ****
   			.ext_clk = 0,
   			.phy_bus = 0, });
   
@@ -165,13 +360,7 @@
   
   #ifndef FLASH_NOR
   	stx7111_configure_nand_flex(1, &nand_bank_data, 0);
-  	/* The MTD NAND code doesn't understand the concept of VPP,
-  	 * (or hardware write protect) so permanently enable it. */
-! 	gpio_direction_output(MB618_PIO_FLASH_VPP, 1);
-  #endif
-  
-  	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
---- 348,369 ----
+--- 402,417 ----
   			.ext_clk = 0,
   			.phy_bus = 0, });
   
@@ -188,9 +377,3 @@
   
   #ifndef FLASH_NOR
   	stx7111_configure_nand_flex(1, &nand_bank_data, 0);
-  	/* The MTD NAND code doesn't understand the concept of VPP,
-  	 * (or hardware write protect) so permanently enable it. */
-! //	gpio_direction_output(MB618_PIO_FLASH_VPP, 1);
-  #endif
-  
-  	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
