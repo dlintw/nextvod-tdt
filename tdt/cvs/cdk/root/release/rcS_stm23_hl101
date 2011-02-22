@@ -45,19 +45,19 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/avs.ko type=stv6418
 
    player=`cat /proc/stb/player/version`
-   if [ $player=='player179' ]; then
-	echo "[rcS] init player 179"
+   if [ $player == 'player179' ]; then
+		echo "[rcS] init player 179"
    else
-	echo "[rcS] init player 131"
+		echo "[rcS] init player 131"
    fi
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
-   if [ $player=='player179' ]; then
-	insmod $MODDIR/stmvout.ko
-	insmod $MODDIR/stmvbi.ko
+   if [ $player == 'player179' ]; then
+		insmod $MODDIR/stmvout.ko
+		insmod $MODDIR/stmvbi.ko
    fi
    insmod $MODDIR/pseudocard.ko
    
@@ -67,9 +67,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init drivers"
    insmod $MODDIR/cimax.ko
    insmod $MODDIR/pti.ko
-   if [ $player=='player179' ]; then
-	insmod $MODDIR/stm_monitor.ko
-	insmod $MODDIR/stmsysfs.ko
+   if [ $player == 'player179' ]; then
+		insmod $MODDIR/stm_monitor.ko
+		insmod $MODDIR/stmsysfs.ko
     insmod $MODDIR/stmdvb.ko
    else
     insmod $MODDIR/stmdvb.ko
