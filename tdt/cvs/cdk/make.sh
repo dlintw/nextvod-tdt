@@ -134,16 +134,17 @@ echo " Maintained:"
 echo "   1) STM 22 P0041"
 echo "   2) STM 23 P0119"
 echo "   4) STM 23 P0123"
-echo "   6) STM 24 P0205 (currently ufs910/player 179 only)"
+echo "   6) STM 24 P0205 (unstable: currently ufs910, atevio7500, ufs912, ufs922/player 179 only)"
+echo "   7) STM 24 P0206 (unstable: currently ufs922/player 179 only)"
 echo " Experimental:"
 echo "   3) STM 23 P0119 with Havana"
 #echo "   5) STM 24 P0201 (not working)"
 case $2 in
-        [1-6]) REPLY=$2
+        [1-7]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
-        read -p "Select kernel (1-6)? ";;
+        read -p "Select kernel (1-7)? ";;
 esac
 
 case "$REPLY" in
@@ -153,6 +154,7 @@ case "$REPLY" in
 	4) KERNEL="--enable-stm23 --enable-p0123";;
 	5) KERNEL="--enable-stm24 --enable-p0201";STMFB="stm24";;
 	6) KERNEL="--enable-stm24 --enable-p0205";STMFB="stm24";;
+	7) KERNEL="--enable-stm24 --enable-p0206";STMFB="stm24";;
 	*) KERNEL="--enable-stm22 --enable-p0041";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"

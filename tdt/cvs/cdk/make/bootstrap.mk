@@ -34,12 +34,18 @@ endif !ENABLE_P0123
 endif !ENABLE_P0119
 else !STM23
 # if STM24
+
 KERNEL_DEPENDS = @DEPENDS_linux24@
 if ENABLE_P0201
 KERNEL_DIR = @DIR_linuxp0201@
 else
+if ENABLE_P0205
 KERNEL_DIR = @DIR_linuxp0205@
+else
+KERNEL_DIR = @DIR_linuxp0206@
 endif
+endif
+
 KERNEL_PREPARE = @PREPARE_linux24@
 # endif STM24
 endif !STM23
