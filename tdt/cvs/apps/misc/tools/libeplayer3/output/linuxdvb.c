@@ -435,19 +435,25 @@ int LinuxDvbAudioMute(Context_t  *context, char *flag) {
     if (audiofd != -1) {
         if(*flag == '1')
         {
-            if (ioctl(audiofd, AUDIO_SET_MUTE, 1) == -1)
+            //AUDIO_SET_MUTE has no effect with new player
+            //if (ioctl(audiofd, AUDIO_SET_MUTE, 1) == -1)
+            if (ioctl(audiofd, AUDIO_STOP, NULL) == -1)
             {
                 linuxdvb_err("ioctl failed with errno %d\n", errno);
-                linuxdvb_err("AUDIO_SET_MUTE: %s\n", strerror(errno));
+                //linuxdvb_err("AUDIO_SET_MUTE: %s\n", strerror(errno));
+                linuxdvb_err("AUDIO_STOP: %s\n", strerror(errno));
                 ret = cERR_LINUXDVB_ERROR;
             }
         }
         else
         {
-            if (ioctl(audiofd, AUDIO_SET_MUTE, 0) == -1)
+            //AUDIO_SET_MUTE has no effect with new player
+            //if (ioctl(audiofd, AUDIO_SET_MUTE, 0) == -1)
+            if (ioctl(audiofd, AUDIO_PLAY, NULL) == -1)
             {
                 linuxdvb_err("ioctl failed with errno %d\n", errno);
-                linuxdvb_err("AUDIO_SET_MUTE: %s\n", strerror(errno));
+                //linuxdvb_err("AUDIO_SET_MUTE: %s\n", strerror(errno));
+                linuxdvb_err("AUDIO_PLAY: %s\n", strerror(errno));
                 ret = cERR_LINUXDVB_ERROR;
             }
         }

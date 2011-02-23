@@ -317,7 +317,7 @@ static void FFMPEGThread(Context_t *context) {
 if (context->playback->BackWard && av_gettime() >= showtime)
 {
       audioMute = 1;
-      context->output->Command(context, OUTPUT_CLEAR, NULL);
+      context->output->Command(context, OUTPUT_CLEAR, "v");
 
       if((err = container_ffmpeg_seek_rel(context, lastSeek, lastPts, (float) context->playback->Speed)) < 0)
       {
@@ -327,6 +327,9 @@ if (context->playback->BackWard && av_gettime() >= showtime)
           {
               container_ffmpeg_seek_bytes(0);
               context->playback->Command(context, PLAYBACK_PAUSE, NULL);
+              showtime = 0;
+              audioMute = 0;
+              context->output->Command(context, OUTPUT_AUDIOMUTE, "0");
               continue;
           }
       }
@@ -529,6 +532,9 @@ if(!context->playback->BackWard && audioMute)
                             avOut.height     = 0;
                             avOut.type       = "audio";
 
+#ifdef reverse_playback_3
+                            if (!context->playback->BackWard)
+#endif
                             if (context->output->audio->Write(context, &avOut) < 0) 
                                 ffmpeg_err("writing data to audio device failed\n");
                         }
@@ -548,6 +554,9 @@ if(!context->playback->BackWard && audioMute)
                         avOut.height     = 0;
                         avOut.type       = "audio";
 
+#ifdef reverse_playback_3
+                        if (!context->playback->BackWard)
+#endif
                         if (context->output->audio->Write(context, &avOut) < 0) 
                         {
                             ffmpeg_err("(aac) writing data to audio device failed\n");
@@ -567,6 +576,9 @@ if(!context->playback->BackWard && audioMute)
                         avOut.height     = 0;
                         avOut.type       = "audio";
 
+#ifdef reverse_playback_3
+                        if (!context->playback->BackWard)
+#endif
                         if (context->output->audio->Write(context, &avOut) < 0) 
                         {
                             ffmpeg_err("writing data to audio device failed\n");
