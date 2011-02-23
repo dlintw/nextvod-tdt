@@ -278,7 +278,7 @@ static void FFMPEGThread(Context_t *context) {
     off_t currentReadPosition = 0; /* last read position */
     off_t lastReverseSeek = 0;     /* max address to read before seek again in reverse play */
     off_t lastSeek = -1;
-    long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1, showtime = 0;
+    long long int lastPts = -1, currentVideoPts = -1, currentAudioPts = -1, showtime = 0, bofcount = 0;
     int           err = 0, gotlastPts = 0, audioMute = 0;
     AudioVideoOut_t avOut;
 
@@ -318,6 +318,13 @@ if (context->playback->BackWard && av_gettime() >= showtime)
 {
       audioMute = 1;
       context->output->Command(context, OUTPUT_CLEAR, "v");
+      
+      if(bofcount == 1)
+      {
+			    showtime = av_gettime();
+          usleep(100000);
+          continue;
+			}
 
       if((err = container_ffmpeg_seek_rel(context, lastSeek, lastPts, (float) context->playback->Speed)) < 0)
       {
@@ -325,10 +332,7 @@ if (context->playback->BackWard && av_gettime() >= showtime)
 
           if (err == cERR_CONTAINER_FFMPEG_END_OF_FILE)
           {
-              container_ffmpeg_seek_bytes(0);
-              showtime = av_gettime();
-              usleep(100000);
-              continue;
+              bofcount = 1;
           }
       }
       
@@ -337,6 +341,7 @@ if (context->playback->BackWard && av_gettime() >= showtime)
 
 if(!context->playback->BackWard && audioMute)
 {
+      bofcount = 0;
       showtime = 0;
       audioMute = 0;
       context->output->Command(context, OUTPUT_AUDIOMUTE, "0");
@@ -1321,11 +1326,7 @@ static int container_ffmpeg_seek_rel(Context_t *context, off_t pos, long long in
         sec += ((float) pts / 90000.0f);
         
         if (sec < 0)
-        {
-           ffmpeg_err("end of file reached\n");
-           releaseMutex(FILENAME, __FUNCTION__,__LINE__);
-           return cERR_CONTAINER_FFMPEG_END_OF_FILE;
-        }
+            sec = 0;
 
         ffmpeg_printf(10, "2. seeking to position %f sec ->time base %f %d\n", sec, av_q2d(((AVStream*) current->stream)->time_base), AV_TIME_BASE);
         
@@ -1333,6 +1334,13 @@ static int container_ffmpeg_seek_rel(Context_t *context, off_t pos, long long in
             ffmpeg_err( "Error seeking\n");
             releaseMutex(FILENAME, __FUNCTION__,__LINE__);
             return cERR_CONTAINER_FFMPEG_ERR;
+        }
+        
+        if (sec <= 0)
+        {
+           ffmpeg_err("end of file reached\n");
+           releaseMutex(FILENAME, __FUNCTION__,__LINE__);
+           return cERR_CONTAINER_FFMPEG_END_OF_FILE;
         }
     }
 
