@@ -138,6 +138,9 @@ static void* SrtSubtitleThread(void *data) {
 
             if(Data[0] == '\n' || Data[0] == '\0' || Data[0] == 13 /* ^M */) {
                 srt_printf(20, "--> Text= \"%s\"\n", Text);
+                
+                if(Text == NULL)
+                    Text = strdup(Data);
 
                 /*Hellmaster 1024 since we have waited, we have to check if we are still paying */
                 if( context &&
