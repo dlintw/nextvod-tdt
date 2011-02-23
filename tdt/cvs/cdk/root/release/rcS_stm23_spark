@@ -1,7 +1,7 @@
 #!/bin/sh
 
 MODDIR=/lib/modules
-
+insmod $MODDIR/encrypt.ko
 insmod $MODDIR/vfd.ko
 insmod $MODDIR/aotom.ko
 
@@ -110,6 +110,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    mknod /dev/rc c 147 1 
    mknod /dev/sci0 c 169 0
    mknod /dev/sci1 c 169 1 
+   major=$(awk "\$2==\"sparkid\" {print \$1}" /proc/devices)
+   rm -f /dev/sparkid
+   mknod /dev/sparkid c $major 0 
 
    #toggleFeedback 0 = false, 1 = true
    #maxRate (same key) = 2, maxDelay (determine new key) = 500
