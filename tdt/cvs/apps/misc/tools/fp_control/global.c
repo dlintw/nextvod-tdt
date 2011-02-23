@@ -166,17 +166,23 @@ int searchModel(Context_t  *context, eBoxType type) {
 int checkConfig(int* display, int* display_custom, char** timeFormat, int* wakeup) {
 	const int MAX = 100;
 	char puffer[MAX];
+	
+	*display = 0;
+	*display_custom = 0;
+	*timeFormat = NULL;
+	*wakeup = 5*60;
+	
 	FILE *fd_config = fopen(CONFIG, "r");
 
 	printf("%s\n", __func__);
 
 	if (fd_config == NULL)
+	{
+		printf("config file (%s) not found, use standard config", CONFIG);
+		printf("configs: DISPLAY = %d, DISPLAYCUSTOM = %d, CUSTOM = %s, WAKEUPDECREMENT  %d\n", 
+	            *display, *display_custom, *timeFormat, *wakeup);
 		return -1;
-
-	*display = 0;
-	*display_custom = 0;
-	*timeFormat = NULL;
-        *wakeup = 5*60;
+	}
 	
 	while (fgets(puffer, MAX, fd_config)) {
 		if (!strncmp("DISPLAY=", puffer, 8)) {
