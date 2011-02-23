@@ -325,7 +325,9 @@ if (context->playback->BackWard && av_gettime() >= showtime)
 
           if (err == cERR_CONTAINER_FFMPEG_END_OF_FILE)
           {
-              break;
+              container_ffmpeg_seek_bytes(0);
+              context->playback->Command(context, PLAYBACK_PAUSE, NULL);
+              continue;
           }
       }
       
@@ -1288,6 +1290,7 @@ static int container_ffmpeg_seek_rel(Context_t *context, off_t pos, long long in
         if (pos < 0)
         {
            ffmpeg_err("end of file reached\n");
+           releaseMutex(FILENAME, __FUNCTION__,__LINE__);
            return cERR_CONTAINER_FFMPEG_END_OF_FILE;
         }
         
