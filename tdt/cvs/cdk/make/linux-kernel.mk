@@ -315,7 +315,8 @@ UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 			stx7100_fdma_fix_stm24_205.patch \
 			sata_32bit_fix_stm24_205.patch \
 			linux-sh4-ufs910_setup_stm24$(PATCH_STR).patch \
-			linux-usbwait123_stm24.patch
+			linux-usbwait123_stm24.patch \
+			linux-sh4-ufs910_reboot_stm24.patch
 
 UFS912PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs912_setup_stm24$(PATCH_STR).patch
