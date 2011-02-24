@@ -321,10 +321,19 @@ if (context->playback->BackWard && av_gettime() >= showtime)
       
       if(bofcount == 1)
       {
-			    showtime = av_gettime();
+          showtime = av_gettime();
           usleep(100000);
           continue;
-			}
+      }
+
+      if(lastPts == -1)
+      {
+          if(currentVideoPts != -1)
+              lastPts = currentVideoPts;
+          else
+              lastPts = currentAudioPts;
+      }
+
 
       if((err = container_ffmpeg_seek_rel(context, lastSeek, lastPts, (float) context->playback->Speed)) < 0)
       {
@@ -335,12 +344,14 @@ if (context->playback->BackWard && av_gettime() >= showtime)
               bofcount = 1;
           }
       }
-      
+
+      lastPts = lastPts + (context->playback->Speed * 90000);
       showtime = av_gettime() + 300000; //jump back all 300ms
 }
 
 if(!context->playback->BackWard && audioMute)
 {
+      lastPts = -1;
       bofcount = 0;
       showtime = 0;
       audioMute = 0;
@@ -450,7 +461,7 @@ if(!context->playback->BackWard && audioMute)
                     {
                         lastPts = currentVideoPts;
                         gotlastPts = 0;
-										}
+                    }
 #endif
 
                     ffmpeg_printf(200, "VideoTrack index = %d %lld\n",index, currentVideoPts);
@@ -480,11 +491,11 @@ if(!context->playback->BackWard && audioMute)
                         latestPts = currentAudioPts;
 
 #ifdef reverse_playback_2
-	                  if (currentAudioPts != INVALID_PTS_VALUE && gotlastPts == 1 && (!videoTrack))
-	                  {
+	            if (currentAudioPts != INVALID_PTS_VALUE && gotlastPts == 1 && (!videoTrack))
+	            {
                         lastPts = currentAudioPts;
                         gotlastPts = 0;
-										}
+                    }
 #endif
 
                     ffmpeg_printf(200, "AudioTrack index = %d\n",index);
