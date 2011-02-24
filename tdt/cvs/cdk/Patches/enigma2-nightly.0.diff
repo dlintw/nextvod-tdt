@@ -1252,7 +1252,53 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/driver/vfd.h enigma2-
 diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigma2-nightly/lib/dvb/decoder.cpp
 --- enigma2-nightly.org/lib/dvb/decoder.cpp	2010-12-27 16:33:26.332618204 +0100
 +++ enigma2-nightly/lib/dvb/decoder.cpp	2010-12-27 16:33:28.267619653 +0100
-@@ -166,7 +166,11 @@
+@@ -34,6 +34,10 @@
+ #include <sys/stat.h>
+ #include <errno.h>
+ 
++#ifdef __sh__
++extern int szaplong;
++#endif
++
+ 	/* these are quite new... */
+ #ifndef AUDIO_GET_PTS
+ #define AUDIO_GET_PTS              _IOR('o', 19, __u64)
+@@ -52,8 +56,20 @@
+ 	sprintf(filename, "/dev/dvb/adapter%d/audio%d", demux->adapter, dev);
+ #endif
+ 	m_fd = ::open(filename, O_RDWR);
++#ifdef __sh__
++	if (m_fd < 0)
++	{
++		eWarning("%s: %m", filename);
++		if(szaplong == 1)
++		{
++			eDebug("szaplong HACK: set audio fd to 9999");
++			m_fd = 9999;
++		}
++	}
++#else
+ 	if (m_fd < 0)
+ 		eWarning("%s: %m", filename);
++#endif
+ #if HAVE_DVB_API_VERSION < 3
+ 	sprintf(filename, "/dev/dvb/card%d/demux%d", demux->adapter, demux->demux);
+ #else
+@@ -158,6 +174,13 @@
+ #else
+ int eDVBAudio::startPid(int pid, int type)
+ {
++#ifdef __sh__
++	if(szaplong == 1)
++	{
++		eDebug("szaplong HACK: don't start Demux Audio to Decoder");
++		return 0;
++        }
++#endif
+ 	if ((m_fd < 0) || (m_fd_demux < 0))
+ 		return -1;
+ 	dmx_pes_filter_params pes;
+@@ -166,7 +189,11 @@
  	pes.input    = DMX_IN_FRONTEND;
  	pes.output   = DMX_OUT_DECODER;
  	pes.pes_type = m_dev ? DMX_PES_AUDIO1 : DMX_PES_AUDIO0; /* FIXME */
@@ -1264,7 +1310,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - audio - ", pid);
  	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
  	{
-@@ -174,6 +178,8 @@
+@@ -174,6 +201,8 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -1273,7 +1319,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	eDebugNoNewLine("DEMUX_START - audio - ");
  	if (::ioctl(m_fd_demux, DMX_START) < 0)
  	{
-@@ -181,6 +187,8 @@
+@@ -181,6 +210,8 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -1282,7 +1328,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	int bypass = 0;
  
  	switch (type)
-@@ -213,7 +221,10 @@
+@@ -213,7 +244,10 @@
  		eDebug("failed (%m)");
  	else
  		eDebug("ok");
@@ -1293,7 +1339,52 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	eDebugNoNewLine("AUDIO_PLAY - ");
  	if (::ioctl(m_fd, AUDIO_PLAY) < 0)
  		eDebug("failed (%m)");
-@@ -439,7 +450,11 @@
+@@ -314,6 +348,22 @@
+ 	sprintf(filename, "/dev/dvb/adapter%d/video%d", demux->adapter, dev);
+ #endif
+ 	m_fd = ::open(filename, O_RDWR);
++#ifdef __sh__
++	if (m_fd < 0)
++	{
++		eWarning("%s: %m", filename);
++		if(szaplong == 1)
++		{
++			eDebug("szaplong HACK: set video fd to 9999");
++			m_fd = 9999;
++		}
++	}
++	else
++	{
++		m_sn = eSocketNotifier::create(eApp, m_fd, eSocketNotifier::Priority);
++		CONNECT(m_sn->activated, eDVBVideo::video_event);
++	}
++#else
+ 	if (m_fd < 0)
+ 		eWarning("%s: %m", filename);
+ 	else
+@@ -321,6 +371,7 @@
+ 		m_sn = eSocketNotifier::create(eApp, m_fd, eSocketNotifier::Priority);
+ 		CONNECT(m_sn->activated, eDVBVideo::video_event);
+ 	}
++#endif
+ 	eDebug("Video Device: %s", filename);
+ #if HAVE_DVB_API_VERSION < 3
+ 	sprintf(filename, "/dev/dvb/card%d/demux%d", demux->adapter, demux->demux);
+@@ -401,6 +452,13 @@
+ #else
+ int eDVBVideo::startPid(int pid, int type)
+ {
++#ifdef __sh__
++	if(szaplong == 1)
++	{
++		eDebug("szaplong HACK: don't start Demux Video to Decoder");
++		return 0;
++	}
++#endif
+ 	int streamtype = VIDEO_STREAMTYPE_MPEG2;
+ 
+ 	if ((m_fd < 0) || (m_fd_demux < 0))
+@@ -439,7 +497,11 @@
  	pes.input    = DMX_IN_FRONTEND;
  	pes.output   = DMX_OUT_DECODER;
  	pes.pes_type = m_dev ? DMX_PES_VIDEO1 : DMX_PES_VIDEO0; /* FIXME */
@@ -1305,7 +1396,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - video - ", pid);
  	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
  	{
-@@ -447,6 +462,7 @@
+@@ -447,6 +509,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -1313,7 +1404,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	eDebugNoNewLine("DEMUX_START - video - ");
  	if (::ioctl(m_fd_demux, DMX_START) < 0)
  	{
-@@ -455,6 +471,7 @@
+@@ -455,6 +518,7 @@
  	}
  	eDebug("ok");
  	freeze();  // why freeze here?!? this is a problem when only a pid change is requested... because of the unfreeze logic in Decoder::setState
@@ -1321,7 +1412,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	eDebugNoNewLine("VIDEO_PLAY - ");
  	if (::ioctl(m_fd, VIDEO_PLAY) < 0)
  		eDebug("failed (%m)");
-@@ -753,7 +770,11 @@
+@@ -753,7 +817,11 @@
  	pes.input    = DMX_IN_FRONTEND;
  	pes.output   = DMX_OUT_DECODER;
  	pes.pes_type = m_dev ? DMX_PES_PCR1 : DMX_PES_PCR0; /* FIXME */
@@ -1333,7 +1424,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - pcr - ", pid);
  	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
  	{
-@@ -761,6 +782,7 @@
+@@ -761,6 +829,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -1341,7 +1432,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	eDebugNoNewLine("DEMUX_START - pcr - ");
  	if (::ioctl(m_fd_demux, DMX_START) < 0)
  	{
-@@ -768,6 +790,7 @@
+@@ -768,6 +837,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -1349,7 +1440,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	return 0;
  }
  #endif
-@@ -813,7 +836,11 @@
+@@ -813,7 +883,11 @@
  	pes.input    = DMX_IN_FRONTEND;
  	pes.output   = DMX_OUT_DECODER;
  	pes.pes_type = m_dev ? DMX_PES_TELETEXT1 : DMX_PES_TELETEXT0; // FIXME
@@ -1361,7 +1452,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  
  	eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - ttx - ", pid);
  	if (::ioctl(m_fd_demux, DMX_SET_PES_FILTER, &pes) < 0)
-@@ -822,6 +849,7 @@
+@@ -822,6 +896,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -1369,7 +1460,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	eDebugNoNewLine("DEMUX_START - ttx - ");
  	if (::ioctl(m_fd_demux, DMX_START) < 0)
  	{
-@@ -829,6 +857,7 @@
+@@ -829,6 +904,7 @@
  		return -errno;
  	}
  	eDebug("ok");
@@ -1377,7 +1468,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  	return 0;
  }
  
-@@ -1022,12 +1051,30 @@
+@@ -1022,12 +1098,30 @@
  		int *s = state_table[m_state];
  		if (changed & (changeState|changeVideo) && m_video)
  		{
@@ -1408,7 +1499,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  		}
  		if (changed & (changeState|changeAudio) && m_audio)
  		{
-@@ -1104,9 +1151,11 @@
+@@ -1104,9 +1198,11 @@
  eTSMPEGDecoder::~eTSMPEGDecoder()
  {
  	finishShowSinglePic();
@@ -1420,18 +1511,29 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  }
  
  RESULT eTSMPEGDecoder::setVideoPID(int vpid, int type)
-@@ -1303,6 +1352,10 @@
- 		{
+@@ -1304,6 +1400,10 @@
  			struct stat s;
+ 			size_t written=0;
  			fstat(f, &s);
 +#if defined(__sh__) // our driver has a different behaviour for iframes
 +			if (m_video_clip_fd >= 0)  
 +				finishShowSinglePic();  
 +#endif  
  			if (m_video_clip_fd == -1)
- 				m_video_clip_fd = open("/dev/dvb/adapter0/video0", O_WRONLY|O_NONBLOCK);
+ 				m_video_clip_fd = open("/dev/dvb/adapter0/video0", O_WRONLY);
  			if (m_video_clip_fd >= 0)
-@@ -1336,7 +1389,9 @@
+@@ -1319,8 +1419,10 @@
+ 				read(f, iframe, s.st_size);
+ 				if (ioctl(m_video_clip_fd, VIDEO_SELECT_SOURCE, VIDEO_SOURCE_MEMORY) < 0)
+ 					eDebug("VIDEO_SELECT_SOURCE MEMORY failed (%m)");
++#if not defined(__sh__) // remove showSinglePic failed
+ 				if (ioctl(m_video_clip_fd, VIDEO_SET_STREAMTYPE, streamtype) < 0)
+ 					eDebug("VIDEO_SET_STREAMTYPE failed(%m)");
++#endif 
+ 				if (ioctl(m_video_clip_fd, VIDEO_PLAY) < 0)
+ 					eDebug("VIDEO_PLAY failed (%m)");
+ 				if (ioctl(m_video_clip_fd, VIDEO_CONTINUE) < 0)
+@@ -1337,7 +1439,9 @@
  				if (!seq_end_avail)
  					write(m_video_clip_fd, seq_end, sizeof(seq_end));
  				write(m_video_clip_fd, stuffing, 8192);
