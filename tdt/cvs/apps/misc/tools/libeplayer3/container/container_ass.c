@@ -368,6 +368,13 @@ static void ASSThread(Context_t *context) {
             }
 
             getMutex(__LINE__);
+            
+            //FIXME: durch den sleep bleibt die cpu usage zw. 5 und 13%, ohne
+            //       steigt sie bei Verwendung von subtiteln bis auf 95%.
+            //       ich hoffe dadurch gehen keine subtitle verloren, wenn die playPts
+            //       durch den sleep verschlafen wird. Besser wäre es den nächsten
+            //       subtitel zeitpunkt zu bestimmen und solange zu schlafen.
+            usleep(1000);
 
             img = ass_render_frame(ass_renderer, ass_track, playPts / 90.0, &change);
 
@@ -499,7 +506,8 @@ int container_ass_init(Context_t *context)
         return cERR_CONTAINER_ASS_ERROR;
     }
 
-    ass_set_message_cb(ass_library, ass_msg_callback, NULL);
+    if (debug_level >= 100)
+        ass_set_message_cb(ass_library, ass_msg_callback, NULL);
     
     ass_set_extract_fonts( ass_library, 1 );
     ass_set_style_overrides( ass_library, NULL );

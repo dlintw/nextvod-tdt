@@ -1420,18 +1420,29 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/dvb/decoder.cpp enigm
  }
  
  RESULT eTSMPEGDecoder::setVideoPID(int vpid, int type)
-@@ -1303,6 +1352,10 @@
- 		{
+@@ -1304,6 +1353,10 @@
  			struct stat s;
+ 			size_t written=0;
  			fstat(f, &s);
 +#if defined(__sh__) // our driver has a different behaviour for iframes
 +			if (m_video_clip_fd >= 0)  
 +				finishShowSinglePic();  
 +#endif  
  			if (m_video_clip_fd == -1)
- 				m_video_clip_fd = open("/dev/dvb/adapter0/video0", O_WRONLY|O_NONBLOCK);
+ 				m_video_clip_fd = open("/dev/dvb/adapter0/video0", O_WRONLY);
  			if (m_video_clip_fd >= 0)
-@@ -1336,7 +1389,9 @@
+@@ -1319,8 +1372,10 @@
+ 				read(f, iframe, s.st_size);
+ 				if (ioctl(m_video_clip_fd, VIDEO_SELECT_SOURCE, VIDEO_SOURCE_MEMORY) < 0)
+ 					eDebug("VIDEO_SELECT_SOURCE MEMORY failed (%m)");
++#if not defined(__sh__) 
+ 				if (ioctl(m_video_clip_fd, VIDEO_SET_STREAMTYPE, streamtype) < 0)
+ 					eDebug("VIDEO_SET_STREAMTYPE failed(%m)");
++#endif 
+ 				if (ioctl(m_video_clip_fd, VIDEO_PLAY) < 0)
+ 					eDebug("VIDEO_PLAY failed (%m)");
+ 				if (ioctl(m_video_clip_fd, VIDEO_CONTINUE) < 0)
+@@ -1337,7 +1392,9 @@
  				if (!seq_end_avail)
  					write(m_video_clip_fd, seq_end, sizeof(seq_end));
  				write(m_video_clip_fd, stuffing, 8192);
