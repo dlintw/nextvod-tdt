@@ -153,7 +153,7 @@ double modJulianDate(struct tm *theTime)
 
 int searchModel(Context_t  *context, eBoxType type) {
     int i;
-    for (i = 0; AvailableModels[i] != 0ull; i++)
+    for (i = 0; AvailableModels[i] != Null; i++)
 
         if (AvailableModels[i]->Type == type) {
             context->m = AvailableModels[i];
