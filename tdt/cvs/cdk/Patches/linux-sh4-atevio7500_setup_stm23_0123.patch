@@ -168,7 +168,7 @@
   
   static struct physmap_flash_data pdk7105_physmap_flash_data = {
   	.width		= 2,
---- 228,302 ----
+--- 228,306 ----
   		.platform_data = &phy_private_data,
   	}
   };
@@ -209,7 +209,7 @@
 + 	}
 + };
 + #else
-+ static struct mtd_partition mtd_parts_table[7] = {
++ static struct mtd_partition mtd_parts_table[8] = {
 + 	{
 + 		.name = "U-BOOT",
 + 		.size = 0x00040000,
@@ -230,6 +230,10 @@
 ! 		.name = "ROOT",
 ! 		.size = 0x001E00000,
 ! 		.offset = 0x02200000,
+! 	}, {
+! 		.name = "SWAP (VOLATILE)",
+! 		.size = 0x006E0000,
+! 		.offset = 0x00420000,
 ! 	}, { 
 ! 		.name = "U-BOOT ENV",
 ! 		.size = 0x00020000,
@@ -237,7 +241,7 @@
 ! 	}, { 
 !  		.name = "Full", 
 !  		.size = MTDPART_SIZ_FULL, 
-! 		.offset = 0x00100000, 
+!  		.offset = 0x00100000, 
   	}
   };
 + #endif
@@ -256,7 +260,7 @@
   };
   
   /* Configuration based on Futarque-RC signals train. */
---- 407,416 ----
+--- 411,420 ----
   
   static struct platform_device *pdk7105_devices[] __initdata = {
   	&pdk7105_physmap_flash,
@@ -269,7 +273,7 @@
   /* Configuration based on Futarque-RC signals train. */
 *************** static int __init device_init(void)
 *** 390,395 ****
---- 473,479 ----
+--- 477,483 ----
   		nand_device.id = 0;
   	}
   
@@ -288,7 +292,7 @@
   	stx7105_configure_ssc(&ssc_private_info);
   
   	/*
---- 484,493 ----
+--- 488,497 ----
   		printk(KERN_WARNING "pdk7105: Failed to claim PCI SERR PIO!\n");
   	}
   	stx7105_configure_pci(&pdk7105_pci_config);
@@ -321,7 +325,7 @@
   
   	return platform_add_devices(pdk7105_devices, ARRAY_SIZE(pdk7105_devices));
   }
---- 504,526 ----
+--- 508,530 ----
   	stx7105_configure_usb(0, &usb_init[0]);
   	stx7105_configure_usb(1, &usb_init[1]);
   
