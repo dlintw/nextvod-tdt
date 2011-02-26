@@ -12,8 +12,8 @@
 #include "crc16.h"
 #include "dummy.h"
 
-#define VERSION "1.3a"
-#define DATE "23.01.2011"
+#define VERSION "1.5"
+#define DATE "26.02.2011"
 
 
 unsigned short blockCounter = 0;
@@ -387,12 +387,10 @@ int main(int argc, char* argv[])
       FILE* irdFile = fopen(argv[2], "w+");
       unsigned short totalBlockCount = 0;
       unsigned short headerDataBlockLen = 0;
-      //unsigned char * headerDataBloc;
       
       // Header
       headerDataBlockLen = writeBlock(irdFile, NULL, 1, 0x10);
       headerDataBlockLen+=4;
-      totalBlockCount++;
       
       unsigned char appendPartCount = argc - 3;
       for(int i = 0; i < appendPartCount; i+=2) {
@@ -471,6 +469,7 @@ int main(int argc, char* argv[])
             totalBlockCount++;
             printf(".");
          }
+         totalBlockCount++;
          partBlocksize = totalBlockCount - partBlocksize;
          printf("\nAdded %d Blocks, total %d\n", partBlocksize, totalBlockCount);
          fclose(file);
@@ -511,7 +510,6 @@ int main(int argc, char* argv[])
       // Header
       headerDataBlockLen = writeBlock(irdFile, NULL, 1, 0x10);
       headerDataBlockLen+=4;
-      totalBlockCount++;
       
       unsigned char appendPartCount = argc - 3;
       for(int i = 0; i < appendPartCount; i+=2) {
@@ -546,6 +544,7 @@ int main(int argc, char* argv[])
                      printf(".");
                      totalBlockCount++;
                   }
+                  totalBlockCount++;
                   fclose(file);
                }
                else
@@ -574,6 +573,7 @@ int main(int argc, char* argv[])
                   totalBlockCount++;
                   printf(".");
                }
+               totalBlockCount++;
                partBlocksize = totalBlockCount - partBlocksize;
                printf("\nAdded %d Blocks, total %d\n", partBlocksize, totalBlockCount);
                fclose(file);
@@ -582,8 +582,9 @@ int main(int argc, char* argv[])
                printf("\nCould not append %s\n", argv[3 + i + 1]);
             printf("\n");
          }
-         else
+         else {
             printf("This is a foo partition\n");
+         }
       }
       
       /// Refresh Header
