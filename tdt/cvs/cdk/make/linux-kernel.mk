@@ -332,6 +332,9 @@ VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
 		linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
 		linux-sh4-vip2_patches_stm24$(PATCH_STR).patch
 
+SPARK_PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-spark_setup_stm24$(PATCH_STR).patch
+
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
 		$(if $(UFS912),$(UFS912PATCHES_24)) \
@@ -339,6 +342,7 @@ KERNELPATCHES_24 =  \
 		$(if $(TF7700),$(TF7700PATCHES_24)) \
 		$(if $(VIP1_V2),$(VIP2_PATCHES_24)) \
 		$(if $(VIP2_V1),$(VIP2_PATCHES_24)) \
+		$(if $(SPARK),$(SPARK_PATCHES_24)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_24))
 
 ############ Patches Kernel 24 End ###############
