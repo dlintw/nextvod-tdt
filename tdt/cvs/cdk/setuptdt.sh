@@ -74,6 +74,7 @@ PACKAGES="\
 	${UBUNTU:+cfv} \
 	${UBUNTU:+fakeroot} \
 	${UBUNTU:+gawk} \
+	${UBUNTU:+autopoint} \
 ";
 
 if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then
