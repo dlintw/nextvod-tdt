@@ -43,18 +43,17 @@
 #include <gui/color.h>
 #include <gui/pictureviewer.h>
 #include <global.h>
-//#include <cnxtfb.h>
 #include <video_cs.h>
 
 #ifdef __sh__
-#include <linux/stmfb.h> 
+#include <linux/stmfb.h>
 #include <bpamem.h>
 
 #define DEFAULT_XRES 1280
 #define DEFAULT_YRES 720
 
 #define ICON_TEMP_SIZE 256	// should be enough for small icons
-#endif 
+#endif
 
 extern cVideo * videoDecoder;
 
@@ -1021,8 +1020,7 @@ bool CFrameBuffer::paintIcon8(const std::string & filename, const int x, const i
 		d += width * 4;
 	}
 	blitIcon(width, height, x, y, scaleX(width), scaleY(height));
-	
-	
+
 #else
 	unsigned char pixbuf[768];
 
@@ -1044,6 +1042,9 @@ bool CFrameBuffer::paintIcon8(const std::string & filename, const int x, const i
 		d += stride;
 	}
 #endif
+
+	if (d) d = NULL;
+	if (d2) d2 = NULL;
 	close(fd);
 
 	return true;
@@ -1076,10 +1077,10 @@ bool CFrameBuffer::paintIcon(const std::string & filename, const int _x, const i
 #if 0 // no need if we have whole / as r/w
 	std::string iconBasePath1 = "/var/share/icons/";
 	fd = open((iconBasePath1 + filename).c_str(), O_RDONLY);
-	if (fd == -1) 
+	if (fd == -1)
 		fd = open((iconBasePath + filename).c_str(), O_RDONLY);
 #endif
-		fd = open((iconBasePath + filename).c_str(), O_RDONLY);
+	fd = open((iconBasePath + filename).c_str(), O_RDONLY);
 
 	if (fd == -1) {
 		printf("paintIcon: error while loading icon: %s%s\n", iconBasePath.c_str(), filename.c_str());
@@ -1090,7 +1091,7 @@ bool CFrameBuffer::paintIcon(const std::string & filename, const int _x, const i
 
 	width  = (header.width_hi  << 8) | header.width_lo;
 	height = (header.height_hi << 8) | header.height_lo;
-	
+
 #ifdef __sh__
 	if(width > ICON_TEMP_SIZE || height > ICON_TEMP_SIZE)
 	{
@@ -1151,6 +1152,8 @@ bool CFrameBuffer::paintIcon(const std::string & filename, const int _x, const i
 	}
 #endif
 
+	if (d) d = NULL;
+	if (d2) d2 = NULL;
 	close(fd);
 
 	return true;
