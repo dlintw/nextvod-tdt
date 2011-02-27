@@ -12,8 +12,8 @@
 #include "crc16.h"
 #include "dummy.h"
 
-#define VERSION "1.5"
-#define DATE "26.02.2011"
+#define VERSION "1.6"
+#define DATE "27.02.2011"
 
 
 unsigned short blockCounter = 0;
@@ -613,54 +613,97 @@ int main(int argc, char* argv[])
       
       fclose(irdFile);
    }
+   else if(argc == 4 && strlen(argv[1]) == 2 && strncmp(argv[1], "-r", 2) == 0) {
+      unsigned char headerDataBlockLen = 0;
+      unsigned int resellerId = 0;
+      
+      sscanf(argv[3], "%x", &resellerId);
+      
+      FILE* irdFile = fopen(argv[2], "r+");
+      if(irdFile == NULL) {
+         printf("Error opening %s\n", argv[2]);
+      }
+      
+      headerDataBlockLen = readShort(irdFile);
+      headerDataBlockLen -= 2;
+      
+      printf("Changing reseller id to %04x\n", resellerId);
+      
+      /// Refresh Header
+      unsigned char * dataBuf = (unsigned char *)malloc(headerDataBlockLen);
+      
+      // Read Header Data Block
+      fseek(irdFile, 0x04, SEEK_SET);
+      fread(dataBuf, 1, headerDataBlockLen, irdFile);
+      
+      // Update Blockcount
+      insertShort(&dataBuf, 2, resellerId&0xFFFF);
+      
+      // Rewrite Header Data Block
+      fseek(irdFile, 0x04, SEEK_SET);
+      fwrite(dataBuf, 1, headerDataBlockLen, irdFile);
+      
+      // Update CRC
+      unsigned short dataCrc = crc16(0, dataBuf, headerDataBlockLen);
+      insertShort(&dataBuf, 0, dataCrc);
+      
+      // Rewrite CRC
+      fseek(irdFile, 0x02, SEEK_SET);
+      fwrite(dataBuf, 1, 2, irdFile);
+      
+      free(dataBuf);
+      
+      fclose(irdFile);
+   }
    else {
       printf("\n");
-      printf("Version: %s Date: %s                                 \n", VERSION, DATE);
+      printf("Version: %s Date: %s                                                                     \n", VERSION, DATE);
       printf("\n");
-      printf("Usage: %s -xcstv []                                  \n", argv[0]);
-      printf("       -x [update.ird]           Extract IRD         \n");
-      printf("       -c [update.ird] Options   Create IRD          \n");
-      printf("         Options:                                    \n");
-      printf("              [file.part]         Append Loader   (0) 0x00000000 - 0x000FFFFF (1   MB)\n");
-      printf("          -k  [file.part]         Append Kernel   (6) 0x00100000 - 0x003FFFFF (3   MB)\n");
-      printf(" *        -ao [file.part]         Append App Org  (*) 0x00400000 - 0x00aFFFFF (7   MB)\n");
-      printf(" s        -a  [file.part]         Append App      (1) 0x00b00000 - 0x011FFFFF (7   MB)\n");
-      printf(" s        -r  [file.part]         Append Root     (8) 0x01200000 - 0x01dFFFFF (12  MB)\n");
-      printf(" s        -d  [file.part]         Append Dev      (7) 0x01e00000 - 0x020FFFFF (3   MB)\n");
-      printf("          -c0 [file.part]         Append Config0  (2) 0x02100000 - 0x0213FFFF (256 KB)\n");
-      printf("          -c4 [file.part]         Append Config4  (3) 0x02140000 - 0x0217FFFF (256 KB)\n");
-      printf("          -c8 [file.part]         Append Config8  (4) 0x02180000 - 0x0219FFFF (128 KB)\n");
-      printf("          -ca [file.part]         Append ConfigA  (5) 0x021A0000 - 0x021BFFFF (128 KB)\n");
-      printf(" *        -cc [file.part]         Append ConfigC  (*) 0x021C0000 - 0x021FFFFF (256 KB)\n");
-      printf("          -u  [file.part]         Append User     (9) 0x02200000 - 0x03FFFFFF (30  MB)\n");
-      printf("          -1  [file.part]         Append Type 1   (1)\n");
-      printf("          ...                                        \n");
-      printf("          -10 [file.part]         Append Type 10 (10)\n");
-    //printf("          -16 [file.part]         Append Type 16 (16)\n");
-      printf("       -ce [update.ird] Options   Create Enigma2 IRD \n");
-      printf("         Options:                                    \n");
+      printf("Usage: %s -xcstv []                                                                      \n", argv[0]);
+      printf("       -x [update.ird]           Extract IRD                                             \n");
+      printf("       -c [update.ird] Options   Create IRD                                              \n");
+      printf("         Options:                                                                        \n");
+      printf("              [file.part]         Append Loader   (0) 0x00000000 - 0x000FFFFF (1   MB)   \n");
+      printf("          -k  [file.part]         Append Kernel   (6) 0x00100000 - 0x003FFFFF (3   MB)   \n");
+      printf(" *        -ao [file.part]         Append App Org  (*) 0x00400000 - 0x00aFFFFF (7   MB)   \n");
+      printf(" s        -a  [file.part]         Append App      (1) 0x00b00000 - 0x011FFFFF (7   MB)   \n");
+      printf(" s        -r  [file.part]         Append Root     (8) 0x01200000 - 0x01dFFFFF (12  MB)   \n");
+      printf(" s        -d  [file.part]         Append Dev      (7) 0x01e00000 - 0x020FFFFF (3   MB)   \n");
+      printf("          -c0 [file.part]         Append Config0  (2) 0x02100000 - 0x0213FFFF (256 KB)   \n");
+      printf("          -c4 [file.part]         Append Config4  (3) 0x02140000 - 0x0217FFFF (256 KB)   \n");
+      printf("          -c8 [file.part]         Append Config8  (4) 0x02180000 - 0x0219FFFF (128 KB)   \n");
+      printf("          -ca [file.part]         Append ConfigA  (5) 0x021A0000 - 0x021BFFFF (128 KB)   \n");
+      printf(" *        -cc [file.part]         Append ConfigC  (*) 0x021C0000 - 0x021FFFFF (256 KB)   \n");
+      printf("          -u  [file.part]         Append User     (9) 0x02200000 - 0x03FFFFFF (30  MB)   \n");
+      printf("          -1  [file.part]         Append Type 1   (1)                                    \n");
+      printf("          ...                                                                            \n");
+      printf("          -10 [file.part]         Append Type 10 (10)                                    \n");
+    //printf("          -16 [file.part]         Append Type 16 (16)                                    \n");
+      printf("       -ce [update.ird] Options   Create Enigma2 IRD                                     \n");
+      printf("         Options:                                                                        \n");
       printf("          -k [file.part]          Append Kernel       0x00100000 - 0x003FFFFF (3      MB)\n");
       printf("          -f [file.part]          Append FW           0x00B20000 - 0x011FFFFF (6.875  MB)\n");
     //printf("          -r [file.part]          Append Root         0x01E20000 - 0x03FFFFFF (33.875 MB)\n");
       printf("          -r [file.part]          Append Root         0x02200000 - 0x03FFFFFF (30     MB)\n");
       printf("          -e [file.part]          Append Ext          0x01220000 - 0x01DFFFFF (11.875 MB)\n");
       printf("          -g [file.part]          Append G            0x01E20000 - 0x020FFFFF (2.875  MB)\n");
-      printf("       -s [unsigned.squashfs]    Sign squashfs part. \n");
-      printf("       -t [signed.squashfs]      Test signed squashfs part.\n");
-      printf("       -v                        Display version     \n");
+      printf("       -s [unsigned.squashfs]    Sign squashfs part                                      \n");
+      printf("       -t [signed.squashfs]      Test signed squashfs part                               \n");
+      printf("       -r [update.ird] id        Change reseller id (e.g. 2303 for atevio 7500)          \n");
+      printf("       -v                        Display version                                         \n");
       printf("\n");
-      printf("Note: For creating squashfs part. use mksquashfs v3.3\n");
-      printf("      ./mksquashfs squashfs-root flash.rootfs.own.mtd8 -nopad -le\n");
+      printf("Note: For creating squashfs part. use mksquashfs v3.3                                    \n");
+      printf("      ./mksquashfs squashfs-root flash.rootfs.own.mtd8 -nopad -le                        \n");
       printf("\n");
-      printf("Example:\n");
-      printf("  Creating a new IRD file with rootfs and kernel:\n");
-      printf("   %s -c my.ird -r flash.rootfs.own.mtd8.signed -k uimage.mtd6\n", argv[0]);
+      printf("Example:                                                                                 \n");
+      printf("  Creating a new IRD file with rootfs and kernel:                                        \n");
+      printf("   %s -c my.ird -r flash.rootfs.own.mtd8.signed -k uimage.mtd6                           \n", argv[0]);
       printf("\n");
-      printf("  Extracting a IRD file:\n");
-      printf("   %s -x my.ird\n", argv[0]);
+      printf("  Extracting a IRD file:                                                                 \n");
+      printf("   %s -x my.ird                                                                          \n", argv[0]);
       printf("\n");
-      printf("  Signing a squashfs partition:\n");
-      printf("   %s -s my.squashfs\n", argv[0]);
+      printf("  Signing a squashfs partition:                                                          \n");
+      printf("   %s -s my.squashfs                                                                     \n", argv[0]);
       return -1;
    }
 
