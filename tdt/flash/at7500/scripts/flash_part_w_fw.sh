@@ -65,7 +65,7 @@ $PAD 0x1E00000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin
 # Note: -g is a workaround which will be removed as soon as the missing conf partition is found
 # Note: -e could be used as a extension partition but at the moment we dont use it
 echo "FUP -ce $OUTFILE -k $CURDIR/uImage -f $CURDIR/mtd_fw.sum.pad.bin -g foo -e foo -r $CURDIR/mtd_root.sum.pad.bin"
-$FUP -ce $OUTFILE -k $CURDIR/uImage -f $CURDIR/mtd_fw.sum.pad.bin -g $CURDIR/dummy.squash.signed.padded -e $CURDIR/dummy.squash.signed.padded -r $CURDIR/mtd_root.sum.pad.bin
+$FUP -ce $OUTFILE -k $CURDIR/uImage -f $CURDIR/mtd_fw.sum.pad.bin -g foo -e foo -r $CURDIR/mtd_root.sum.pad.bin
 
 rm -f $CURDIR/uImage
 rm -f $CURDIR/mtd_fw.bin

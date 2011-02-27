@@ -644,7 +644,7 @@ int main(int argc, char* argv[])
     //printf("          -r [file.part]          Append Root         0x01E20000 - 0x03FFFFFF (33.875 MB)\n");
       printf("          -r [file.part]          Append Root         0x02200000 - 0x03FFFFFF (30     MB)\n");
       printf("          -e [file.part]          Append Ext          0x01220000 - 0x01DFFFFF (11.875 MB)\n");
-      printf("          -g [file.part]          Append G            0x01e00000 - 0x020FFFFF (2.875  MB)\n");
+      printf("          -g [file.part]          Append G            0x01E20000 - 0x020FFFFF (2.875  MB)\n");
       printf("       -s [unsigned.squashfs]    Sign squashfs part. \n");
       printf("       -t [signed.squashfs]      Test signed squashfs part.\n");
       printf("       -v                        Display version     \n");

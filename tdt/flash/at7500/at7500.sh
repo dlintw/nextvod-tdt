@@ -13,10 +13,12 @@ TMPFWDIR=$TMPDIR/FW
 
 OUTDIR=$CURDIR/out
 
-if [  -e $TMPDIR ]; then
-  sudo rm -rf $TMPDIR/*
-else
-  mkdir $TMPDIR
+if [ $# == "0" ]; then
+  if [  -e $TMPDIR ]; then
+    sudo rm -rf $TMPDIR/*
+  else
+    mkdir $TMPDIR
+  fi
 fi
 
 mkdir $TMPROOTDIR
@@ -45,6 +47,7 @@ fi
 
 read -p "Select target (1-2)? "
 case "$REPLY" in
+	0)  echo "Skipping...";;
 	1)  echo "Preparing Enigma2 Root..."
 		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR;;
 	2)  echo "Preparing Neutrino Root..."
