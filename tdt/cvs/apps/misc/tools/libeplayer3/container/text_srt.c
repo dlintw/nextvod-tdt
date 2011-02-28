@@ -101,6 +101,33 @@ static int hasThreadStarted = 0;
 /* MISC Functions                */
 /* ***************************** */
 
+void data_to_manager(Context_t *context, char* Text, unsigned long long int Pts, double Duration)
+{
+    srt_printf(20, "--> Text= \"%s\"\n", Text);
+
+    if( context &&
+        context->playback &&
+        context->playback->isPlaying){
+            int sl = strlen(Text)-1;
+            while(sl && (Text[sl]=='\n' || Text[sl]=='\r')) Text[sl--]='\0'; /*Delete last \n or \r */
+            unsigned char* line = text_to_ass(Text, Pts, Duration);
+            srt_printf(50,"Sub text is %s\n",Text);
+            srt_printf(50,"Sub line is %s\n",line);
+            SubtitleData_t data;
+            data.data      = line;
+            data.len       = strlen((char*)line);
+            data.extradata = DEFAULT_ASS_HEAD;
+            data.extralen  = strlen(DEFAULT_ASS_HEAD);
+            data.pts       = Pts*90;
+            data.duration  = Duration;
+
+            context->container->assContainer->Command(context, CONTAINER_DATA, &data);
+            free(line);
+    }
+
+    srt_printf(20, "<-- Text= \"%s\"\n", Text);
+}
+
 /* ***************************** */
 /* Worker Thread                 */
 /* ***************************** */
@@ -121,12 +148,15 @@ static void* SrtSubtitleThread(void *data) {
 
         if(pos == 0) 
         {
+            if(Data[0] == '\n' || Data[0] == '\0' || Data[0] == 13 /* ^M */) 
+                continue; /* Empty line not allowed here */
             pos++;
         } else if(pos == 1) 
         {
             int ret, horIni, minIni, secIni, milIni, horFim, minFim, secFim, milFim;
 
             ret = sscanf(Data, "%d:%d:%d,%d --> %d:%d:%d,%d", &horIni, &minIni, &secIni, &milIni, &horFim, &minFim, &secFim, &milFim);
+            if (ret!=8) continue; /* Data is not in correct format */
 
             Pts = (horIni*3600 + minIni*60 + secIni)*1000 + milIni;
             Duration = ((horFim*3600 + minFim*60 + secFim) * 1000  + milFim - Pts) / 1000.0;
@@ -137,32 +167,11 @@ static void* SrtSubtitleThread(void *data) {
             srt_printf(20, "Data[0] = %d \'%c\'\n", Data[0], Data[0]);
 
             if(Data[0] == '\n' || Data[0] == '\0' || Data[0] == 13 /* ^M */) {
-            
                 if(Text == NULL)
-                    Text = strdup(Data);
-            
-                srt_printf(20, "--> Text= \"%s\"\n", Text);
+                    Text = strdup(" \n"); /* better to display at least one character */
 
                 /*Hellmaster 1024 since we have waited, we have to check if we are still paying */
-                if( context &&
-                    context->playback &&
-                    context->playback->isPlaying){
-                        Text[strlen(Text)-2]='\0'; /*Delete laste \n */
-                        unsigned char* line = text_to_ass(Text, Pts, Duration);
-                        srt_printf(50,"Sub text is %s\n",Text);
-                        srt_printf(50,"Sub line is %s\n",line);
-                        SubtitleData_t data;
-                        data.data      = line;
-                        data.len       = strlen((char*)line);
-                        data.extradata = DEFAULT_ASS_HEAD;
-                        data.extralen  = strlen(DEFAULT_ASS_HEAD);
-                        data.pts       = Pts*90;
-                        data.duration  = Duration;
-
-                        context->container->assContainer->Command(context, CONTAINER_DATA, &data);
-                        free(line);
-                }
-                srt_printf(20, "<-- Text= \"%s\"\n", Text);
+                data_to_manager(context, Text, Pts, Duration);
                 free(Text);
                 Text = NULL;
                 pos = 0;
@@ -189,6 +198,7 @@ static void* SrtSubtitleThread(void *data) {
     hasThreadStarted = 0;
 
     if(Text) {
+        data_to_manager(context, Text, Pts, Duration);
         free(Text);
         Text = NULL;
     }
