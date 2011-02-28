@@ -685,7 +685,7 @@ void CPictureViewerGui::view(unsigned int index, bool unscaled)
 	if(m_state==MENU)
 		m_state=VIEW;
 
-	if (access(playlist[index].Filename.c_str(), F_OK) == 0) {
+	if (access(playlist[next].Filename.c_str(), F_OK) == 0) {
 		if(m_state==VIEW)
 			m_viewer->DecodeImage(playlist[next].Filename,true);
 		else
