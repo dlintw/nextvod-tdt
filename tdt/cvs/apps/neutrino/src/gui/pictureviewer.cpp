@@ -141,12 +141,17 @@ int CPictureViewerGui::exec(CMenuTarget* parent, const std::string & actionKey)
 	if(parent)
 		parent->hide();
 
+	// set zapit in standby mode
+	g_Zapit->stopPlayBack();
+	g_Zapit->setStandby(true);
+
 	// tell neutrino we're in pic_mode
 	CNeutrinoApp::getInstance()->handleMsg( NeutrinoMessages::CHANGEMODE , NeutrinoMessages::mode_pic );
+
 	// remember last mode
 	m_LastMode=(CNeutrinoApp::getInstance()->getLastMode() | NeutrinoMessages::norezap);
 
-	g_Sectionsd->setPauseScanning(true); 
+	g_Sectionsd->setPauseScanning(true);
 
 	show();
 
@@ -157,9 +162,11 @@ int CPictureViewerGui::exec(CMenuTarget* parent, const std::string & actionKey)
 	g_Sectionsd->setPauseScanning(false);
 
 	// Restore last mode
-	CNeutrinoApp::getInstance()->handleMsg( NeutrinoMessages::CHANGEMODE , m_LastMode );
+	CNeutrinoApp::getInstance()->handleMsg(NeutrinoMessages::CHANGEMODE, m_LastMode);
+	g_Zapit->startPlayBack();
+	g_Zapit->setStandby(false);
 
-	// always exit all	
+	// always exit all
 	return menu_return::RETURN_REPAINT;
 }
 
@@ -664,9 +671,12 @@ void CPictureViewerGui::view(unsigned int index, bool unscaled)
 	strftime(timestring, 18, "%d-%m-%Y %H:%M", gmtime(&playlist[index].Date));
 	//CVFD::getInstance()->showMenuText(1, timestring); //FIXME
 	
-	if(unscaled)
-		m_viewer->DecodeImage(playlist[index].Filename, true, unscaled);
-	m_viewer->ShowImage(playlist[index].Filename, unscaled);
+
+	if (access(playlist[index].Filename.c_str(), F_OK) == 0) {
+		if(unscaled)
+			m_viewer->DecodeImage(playlist[index].Filename, true, unscaled);
+		m_viewer->ShowImage(playlist[index].Filename, unscaled);
+	}
 
 	//Decode next
 	unsigned int next=selected+1;
@@ -674,10 +684,14 @@ void CPictureViewerGui::view(unsigned int index, bool unscaled)
 		next=0;
 	if(m_state==MENU)
 		m_state=VIEW;
-	if(m_state==VIEW)
-		m_viewer->DecodeImage(playlist[next].Filename,true);
-	else
-		m_viewer->DecodeImage(playlist[next].Filename,false);
+
+	if (access(playlist[index].Filename.c_str(), F_OK) == 0) {
+		if(m_state==VIEW)
+			m_viewer->DecodeImage(playlist[next].Filename,true);
+		else
+			m_viewer->DecodeImage(playlist[next].Filename,false);
+	}
+
 }
 
 void CPictureViewerGui::endView()
