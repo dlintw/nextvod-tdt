@@ -72,6 +72,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    fi
    insmod $MODDIR/pseudocard.ko
 
+   insmod $MODDIR/avl2108_platform.ko
    insmod $MODDIR/avl2108.ko
    insmod $MODDIR/starci.ko 
    if [ $player=='player179' ]; then

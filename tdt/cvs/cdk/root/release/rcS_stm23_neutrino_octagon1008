@@ -57,6 +57,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stm_v4l2.ko
    insmod $MODDIR/pseudocard.ko
 
+   insmod $MODDIR/avl2108_platform.ko
    insmod $MODDIR/avl2108.ko
    insmod $MODDIR/cimax.ko
    insmod $MODDIR/pti.ko
