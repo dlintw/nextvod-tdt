@@ -93,7 +93,7 @@ netkit-ftpx;make:install:DESTDIR=TARGETS
 autofs;make:install:INSTALLROOT=TARGETS
 vsftpd;make:install:PREFIX=TARGETS
 netkit_ftp;make:install:MANDIR=/usr/share/man:INSTALLROOT=TARGETS
-#samba;make:install
+samba;make:install
 netio;install:-m755:netio:TARGETS/usr/bin;install:-m755:bin/linux-i386:HOST/bin/netio
 lighttpd;make:install:DESTDIR=TARGETS
 wireless_tools;make:install:INSTALL_MAN=TARGETS/usr/share/man:PREFIX=TARGETS/usr

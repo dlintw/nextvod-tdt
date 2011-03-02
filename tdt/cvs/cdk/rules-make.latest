@@ -123,7 +123,8 @@ nfs_utils;1.1.1;nfs-utils-1.1.1;nfs-utils-1.1.1.tar.bz2:nfs-utils_1.1.1-12.diff.
 autofs;4.1.4;autofs-4.1.4;autofs-4.1.4.tar.bz2:autofs4.diff;extract:autofs-4.1.4.tar.bz2;patch:autofs4.diff
 vsftpd;2.0.7;vsftpd-2.0.7;vsftpd-2.0.7.tar.gz:vsftpd.diff;extract:vsftpd-2.0.7.tar.gz;patch:vsftpd.diff
 netkit_ftp;0.17;netkit-ftp-0.17;netkit-ftp-0.17.tar.gz:netkit-ftp.diff;extract:netkit-ftp-0.17.tar.gz;patch:netkit-ftp.diff
-samba;3.0.28;samba-3.0.28;samba-3.0.28.tar.gz:samba.diff;extract:samba-3.0.28.tar.gz;patch:samba.diff
+#samba;3.0.28;samba-3.0.28;samba-3.0.28.tar.gz:samba.diff;extract:samba-3.0.28.tar.gz;patch:samba.diff
+samba;3.5.5;samba-3.5.5;samba-3.5.5.tar.gz:samba-3.5.5.diff;extract:samba-3.5.5.tar.gz;patch:samba-3.5.5.diff
 netio;1.26;netio126;netio126.zip;extract:netio126.zip:netio126
 lighttpd;1.4.15;lighttpd-1.4.15;lighttpd-1.4.15.tar.gz;extract:lighttpd-1.4.15.tar.gz
 zd1211;2_15_0_0;ZD1211LnxDrv_2_15_0_0;zd1211lnxdrv_2_15_0_0.tar.gz:zd1211.diff;extract:zd1211lnxdrv_2_15_0_0.tar.gz;patch:zd1211.diff

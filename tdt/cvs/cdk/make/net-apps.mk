@@ -256,7 +256,7 @@ $(DEPDIR)/samba.do_prepare: @DEPENDS_samba@
 
 $(DEPDIR)/samba.do_compile: bootstrap $(DEPDIR)/samba.do_prepare
 	cd @DIR_samba@ && \
-		cd source && \
+		cd source3 && \
 		./autogen.sh && \
 		$(BUILDENV) \
 		./configure \
@@ -279,7 +279,7 @@ $(DEPDIR)/samba.do_compile: bootstrap $(DEPDIR)/samba.do_prepare
 
 define samba/install
 	cd @DIR_samba@ && \
-		cd source && \
+		cd source3 && \
 		$(MAKE) $(MAKE_OPTS) installservers installbin installcifsmount installman installscripts installdat installmodules \
 			SBIN_PROGS="bin/smbd bin/nmbd bin/winbindd" DESTDIR=$(prefix)/$*cdkroot/ prefix=./. && \
 		$(INSTALL) -d $(prefix)/$*cdkroot/etc/samba && \
