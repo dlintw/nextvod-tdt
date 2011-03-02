@@ -89,7 +89,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 		insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
 		insmod $MODDIR/stm_monitor.ko
 		insmod $MODDIR/stmsysfs.ko
-    insmod $MODDIR/stmdvb.ko highSR=1 swts=1
+    insmod $MODDIR/stmdvb.ko highSR=1 swts=0
    else
 		insmod $MODDIR/pti.ko
     insmod $MODDIR/stmdvb.ko
