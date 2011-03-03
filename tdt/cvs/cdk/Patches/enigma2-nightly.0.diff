@@ -6249,7 +6249,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	m_currentAudioStream = -1;
  	m_currentSubtitleStream = 0;
  	m_subtitle_widget = 0;
-@@ -231,7 +254,9 @@
+@@ -232,7 +255,9 @@
  
  	CONNECT(m_seekTimeout->timeout, eServiceMP3::seekTimeoutCB);
  	CONNECT(m_subtitle_sync_timer->timeout, eServiceMP3::pushSubtitles);
@@ -6259,7 +6259,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	m_aspect = m_width = m_height = m_framerate = m_progressive = -1;
  
  	m_state = stIdle;
-@@ -242,6 +267,7 @@
+@@ -243,6 +268,7 @@
  	if (!ext)
  		ext = filename;
  
@@ -6267,7 +6267,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	m_sourceinfo.is_video = FALSE;
  	m_sourceinfo.audiotype = atUnknown;
  	if ( (strcasecmp(ext, ".mpeg") && strcasecmp(ext, ".mpg") && strcasecmp(ext, ".vob") && strcasecmp(ext, ".bin") && strcasecmp(ext, ".dat") ) == 0 )
-@@ -372,10 +398,162 @@
+@@ -377,10 +403,162 @@
  	}
  
  	setBufferSize(m_buffer_size);
@@ -6430,7 +6430,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	// disconnect subtitle callback
  	GstElement *appsink = gst_bin_get_by_name(GST_BIN(m_gst_playbin), "subtitle_sink");
  
-@@ -385,14 +563,17 @@
+@@ -390,14 +568,17 @@
  		gst_object_unref(appsink);
  	}
  
@@ -6449,7 +6449,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	if (m_stream_tags)
  		gst_tag_list_free(m_stream_tags);
  	
-@@ -401,6 +582,22 @@
+@@ -406,6 +587,22 @@
  		gst_object_unref (GST_OBJECT (m_gst_playbin));
  		eDebug("eServiceMP3::destruct!");
  	}
@@ -6472,7 +6472,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  }
  
  DEFINE_REF(eServiceMP3);
-@@ -408,20 +605,35 @@
+@@ -413,20 +610,35 @@
  RESULT eServiceMP3::connectEvent(const Slot2<void,iPlayableService*,int> &event, ePtr<eConnection> &connection)
  {
  	connection = new eConnection((iPlayableService*)this, m_event.connect(event));
@@ -6510,7 +6510,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	m_event(this, evStart);
  
  	return 0;
-@@ -435,15 +647,41 @@
+@@ -440,15 +652,41 @@
  
  RESULT eServiceMP3::stop()
  {
@@ -6553,7 +6553,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	m_state = stStopped;
  
  	return 0;
-@@ -457,21 +695,96 @@
+@@ -462,21 +700,96 @@
  RESULT eServiceMP3::pause(ePtr<iPauseableService> &ptr)
  {
  	ptr=this;
@@ -6650,7 +6650,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  }
  
  void eServiceMP3::seekTimeoutCB()
-@@ -499,21 +812,30 @@
+@@ -504,21 +817,30 @@
  		// iPausableService
  RESULT eServiceMP3::pause()
  {
@@ -6682,7 +6682,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	return 0;
  }
  
-@@ -526,6 +848,7 @@
+@@ -531,6 +853,7 @@
  
  RESULT eServiceMP3::getLength(pts_t &pts)
  {
@@ -6690,7 +6690,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -540,11 +863,23 @@
+@@ -545,11 +868,23 @@
  		/* len is in nanoseconds. we have 90 000 pts per second. */
  	
  	pts = len / 11111;
@@ -6714,7 +6714,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  		/* convert pts to nanoseconds */
  	gint64 time_nanoseconds = to * 11111LL;
  	if (!gst_element_seek (m_gst_playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-@@ -554,7 +889,8 @@
+@@ -559,7 +894,8 @@
  		eDebug("eServiceMP3::seekTo failed");
  		return -1;
  	}
@@ -6724,7 +6724,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	return 0;
  }
  
-@@ -562,6 +898,7 @@
+@@ -567,6 +903,7 @@
  {
  	RESULT ret = -1;
  
@@ -6732,7 +6732,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	if (m_gst_playbin) {
  		eSingleLocker l(m_subs_to_pull_lock); // this is needed to dont handle incomming subtitles during seek!
  		if (!(ret = seekToImpl(to)))
-@@ -573,10 +910,12 @@
+@@ -578,10 +915,12 @@
  		}
  	}
  
@@ -6746,7 +6746,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  RESULT eServiceMP3::trickSeek(gdouble ratio)
  {
  	if (!m_gst_playbin)
-@@ -617,10 +956,12 @@
+@@ -622,10 +961,12 @@
  
  	return 0;
  }
@@ -6759,7 +6759,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -630,12 +971,17 @@
+@@ -635,12 +976,17 @@
  	if (ppos < 0)
  		ppos = 0;
  	seekTo(ppos);
@@ -6778,7 +6778,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	GstFormat fmt = GST_FORMAT_TIME;
  	gint64 pos;
  	GstElement *sink;
-@@ -670,6 +1016,24 @@
+@@ -675,6 +1021,24 @@
  
  	/* pos is in nanoseconds. we have 90 000 pts per second. */
  	pts = pos / 11111;
@@ -6803,7 +6803,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  // 	eDebug("gst_element_query_position %lld pts (%lld ms)", pts, pos/1000000);
  	return 0;
  }
-@@ -682,6 +1046,9 @@
+@@ -687,6 +1051,9 @@
  
  RESULT eServiceMP3::isCurrentlySeekable()
  {
@@ -6813,7 +6813,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	int ret = 3; // seeking and fast/slow winding possible
  	GstElement *sink;
  
-@@ -707,6 +1074,7 @@
+@@ -712,6 +1079,7 @@
  	}
  
  	return ret;
@@ -6821,7 +6821,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  }
  
  RESULT eServiceMP3::info(ePtr<iServiceInformation>&i)
-@@ -732,7 +1100,9 @@
+@@ -737,7 +1105,9 @@
  
  int eServiceMP3::getInfo(int w)
  {
@@ -6831,7 +6831,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  
  	switch (w)
  	{
-@@ -772,7 +1142,9 @@
+@@ -777,7 +1147,9 @@
  	case sTagKeywords:
  	case sTagChannelMode:
  	case sUser+12:
@@ -6841,7 +6841,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	case sTagTrackGain:
  	case sTagTrackPeak:
  	case sTagAlbumGain:
-@@ -783,6 +1155,7 @@
+@@ -788,6 +1160,7 @@
  	case sTagPreviewImage:
  	case sTagAttachment:
  		return resIsPyObject;
@@ -6849,7 +6849,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	case sTagTrackNumber:
  		tag = GST_TAG_TRACK_NUMBER;
  		break;
-@@ -816,22 +1189,25 @@
+@@ -821,22 +1194,25 @@
  	case sTagCRC:
  		tag = "has-crc";
  		break;
@@ -6876,7 +6876,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	if ( !m_stream_tags && w < sUser && w > 26 )
  		return "";
  	const gchar *tag = 0;
-@@ -944,9 +1320,68 @@
+@@ -949,9 +1325,68 @@
  		g_free(value);
  		return res;
  	}
@@ -6945,7 +6945,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  PyObject *eServiceMP3::getInfoObject(int w)
  {
  	const gchar *tag = 0;
-@@ -1006,6 +1441,7 @@
+@@ -1011,6 +1446,7 @@
  
  	return 0;
  }
@@ -6953,7 +6953,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  
  RESULT eServiceMP3::audioChannel(ePtr<iAudioChannelSelection> &ptr)
  {
-@@ -1038,30 +1474,37 @@
+@@ -1043,30 +1479,37 @@
  
  int eServiceMP3::getCurrentTrack()
  {
@@ -6991,7 +6991,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	int current_audio;
  	g_object_set (G_OBJECT (m_gst_playbin), "current-audio", i, NULL);
  	g_object_get (G_OBJECT (m_gst_playbin), "current-audio", &current_audio, NULL);
-@@ -1072,6 +1515,13 @@
+@@ -1077,6 +1520,13 @@
  		return 0;
  	}
  	return -1;
@@ -7005,7 +7005,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  }
  
  int eServiceMP3::getCurrentChannel()
-@@ -1089,6 +1539,7 @@
+@@ -1094,6 +1544,7 @@
  {
   	if (i >= m_audioStreams.size())
  		return -2;
@@ -7013,7 +7013,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  		info.m_description = m_audioStreams[i].codec;
  /*	if (m_audioStreams[i].type == atMPEG)
  		info.m_description = "MPEG";
-@@ -1108,11 +1559,27 @@
+@@ -1113,11 +1564,27 @@
  		info.m_description = "FLAC";
  	else
  		info.m_description = "???";*/
@@ -7042,7 +7042,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  subtype_t getSubtitleType(GstPad* pad, gchar *g_codec=NULL)
  {
  	subtype_t type = stUnknown;
-@@ -1536,9 +2003,9 @@
+@@ -1555,9 +2022,9 @@
  	else
  		eDebug("gstPoll unhandled Message %d\n", msg.type);
  }
@@ -7054,7 +7054,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  void eServiceMP3::gstCBsubtitleAvail(GstElement *appsink, gpointer user_data)
  {
  	eServiceMP3 *_this = (eServiceMP3*)user_data;	
-@@ -1662,9 +2129,30 @@
+@@ -1681,9 +2148,30 @@
  	else
  		eDebug("no subtitle sink!");
  }
@@ -7085,7 +7085,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	while ( !m_subtitle_pages.empty() )
  	{
  		SubtitlePage &frontpage = m_subtitle_pages.front();
-@@ -1720,6 +2208,7 @@
+@@ -1739,6 +2227,7 @@
  	}
  	if (m_subtitle_pages.empty())
  		pullSubtitle();
@@ -7093,7 +7093,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  }
  
  
-@@ -1752,9 +2241,11 @@
+@@ -1771,9 +2260,11 @@
  
  	if (m_currentSubtitleStream != pid)
  	{
@@ -7105,7 +7105,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  		m_subs_to_pull = 0;
  		m_prev_decoder_time = -1;
  		m_subtitle_pages.clear();
-@@ -1763,10 +2254,14 @@
+@@ -1782,10 +2273,14 @@
  	m_subtitle_widget = 0;
  	m_subtitle_widget = new eSubtitleWidget(parent);
  	m_subtitle_widget->resize(parent->size()); /* full size */
@@ -7121,7 +7121,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  // 	gst_pad_remove_buffer_probe (pad, subprobe_handler_id);
  
  	m_event((iPlayableService*)this, evUpdatedInfo);
-@@ -1785,6 +2280,11 @@
+@@ -1804,6 +2299,11 @@
  	m_subtitle_pages.clear();
  	delete m_subtitle_widget;
  	m_subtitle_widget = 0;
@@ -7133,7 +7133,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	return 0;
  }
  
-@@ -1848,7 +2348,9 @@
+@@ -1867,7 +2367,9 @@
  int eServiceMP3::setBufferSize(int size)
  {
  	m_buffer_size = size;
@@ -7143,7 +7143,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	return 0;
  }
  
-@@ -1864,6 +2366,7 @@
+@@ -1883,6 +2385,7 @@
  
  void eServiceMP3::setAC3Delay(int delay)
  {
@@ -7151,7 +7151,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	ac3_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1897,10 +2400,12 @@
+@@ -1916,10 +2419,12 @@
  			gst_object_unref(sink);
  		}
  	}
@@ -7164,7 +7164,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  	pcm_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1941,5 +2446,6 @@
+@@ -1960,5 +2465,6 @@
  			gst_object_unref(sink);
  		}
  	}
@@ -7260,7 +7260,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.h 
  	struct bufferInfo
  	{
  		int bufferPercent;
-@@ -196,9 +244,12 @@
+@@ -203,9 +251,12 @@
  		stIdle, stRunning, stStopped,
          };
          int m_state;
@@ -7274,7 +7274,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.h 
          struct Message
          {
                  Message()
-@@ -207,21 +258,26 @@
+@@ -214,20 +265,25 @@
                  Message(int type)
                          :type(type)
                  {}
@@ -7295,13 +7295,12 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.h 
          };
  
          eFixedMessagePump<Message> m_pump;
-         std::string m_error_message;
  
 +#if not defined(__sh__)
          audiotype_t gstCheckAudioPad(GstStructure* structure);
          void gstBusCall(GstBus *bus, GstMessage *msg);
          static GstBusSyncReply gstBusSyncHandler(GstBus *bus, GstMessage *message, gpointer user_data);
-@@ -231,7 +287,9 @@
+@@ -237,7 +293,9 @@
          GstPad* gstCreateSubtitleSink(eServiceMP3* _this, subtype_t type);
  	void gstPoll(const Message&);
          static void gstHTTPSourceSetAgent(GObject *source, GParamSpec *unused, gpointer user_data);
@@ -7312,7 +7311,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.h 
  	struct SubtitlePage
  	{
  		enum { Unknown, Pango, Vob } type;
-@@ -252,13 +310,17 @@
+@@ -258,13 +316,17 @@
          int m_subs_to_pull;
          sourceStream m_sourceinfo;
  	eSingleLock m_subs_to_pull_lock;
