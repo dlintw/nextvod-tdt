@@ -991,6 +991,7 @@ $(DEPDIR)/jfsutils.do_prepare: @DEPENDS_jfsutils@
 $(DEPDIR)/jfsutils.do_compile: bootstrap jfsutils.do_prepare 
 	cd @DIR_jfsutils@ && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--host=gcc \
 			--target=$(target) \
