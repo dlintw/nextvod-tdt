@@ -1,32 +1,5 @@
-*** a/drivers/mtd/chips/cfi_probe.c	2011-01-02 21:05:30.000000000 +0100
---- b/cfi_probe.c	2011-01-05 20:38:36.087467593 +0100
-***************
-*** 255,260 ****
---- 255,276 ----
-  	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
-  		cfi->cfiq->EraseRegionInfo[i] = le32_to_cpu(cfi->cfiq->EraseRegionInfo[i]);
-  
-+ 	/* kdhong */
-+ 	printk( "CFI MFR = %x DEV = %x\n", cfi->mfr, cfi->id );
-+ 
-+ 	if( cfi->mfr == 0x00c2 && cfi->id == 0x227e )
-+ 	{
-+ 		int devsize = (1 << cfi->cfiq->DevSize) * cfi->interleave;
-+ 
-+ 		printk( "devsize = %x\n", devsize );
-+ 
-+ 		if( devsize == 0x400000 )
-+ 		{
-+ 			cfi->cfiq->EraseRegionInfo[i] = 0x100003f;
-+ 		}
-+ 	}
-+ 	/* kdhong */
-+ 
-  #ifdef DEBUG_CFI
-  		printk("  Erase Region #%d: BlockSize 0x%4.4X bytes, %d blocks\n",
-  		       i, (cfi->cfiq->EraseRegionInfo[i] >> 8) & ~0xff,
-*** a/arch/sh/boards/mach-mb618/setup.c	Sun Feb 27 00:14:20 2011
---- b/arch/sh/boards/mach-mb618/setup.c	Sun Feb 27 17:35:06 2011
+*** linux-sh4-2.6.32.16_stm24_0205_no_setup_patch/arch/sh/boards/mach-mb618/setup.c	Sun Feb 27 00:14:20 2011
+--- linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/mach-mb618/setup.c	Sat Mar  5 04:40:53 2011
 ***************
 *** 26,39 ****
 --- 26,67 ----
@@ -73,11 +46,19 @@
   /* Whether the hardware supports NOR or NAND Flash depends on J34.
    * In position 1-2 CSA selects NAND, in position 2-3 is selects NOR.
 ***************
-*** 51,62 ****
+*** 43,66 ****
+  #define FLASH_NOR
+  #define MB618_PIO_FLASH_VPP stm_gpio(3, 4)
+  
+- 
+- 
+  static void __init mb618_setup(char** cmdline_p)
+  {
+  	printk(KERN_INFO "STMicroelectronics STx7111 Mboard initialisation\n");
   
   	stx7111_early_device_init();
-  
-! 	stx7111_configure_asc(2, &(struct stx7111_asc_config) {
+- 
+  	stx7111_configure_asc(2, &(struct stx7111_asc_config) {
   			.hw_flow_control = 1,
   			.is_console = 1, });
   	stx7111_configure_asc(3, &(struct stx7111_asc_config) {
@@ -85,27 +66,50 @@
   			.is_console = 0, });
   }
   
+- 
+- 
+  static struct platform_device mb618_leds = {
+  	.name = "leds-gpio",
+  	.id = -1,
+--- 71,90 ----
+  #define FLASH_NOR
+  #define MB618_PIO_FLASH_VPP stm_gpio(3, 4)
   
---- 79,94 ----
+  static void __init mb618_setup(char** cmdline_p)
+  {
+  	printk(KERN_INFO "STMicroelectronics STx7111 Mboard initialisation\n");
   
   	stx7111_early_device_init();
-  
-! 	stx7111_configure_asc(1, &(struct stx7111_asc_config) {
+  	stx7111_configure_asc(2, &(struct stx7111_asc_config) {
   			.hw_flow_control = 1,
   			.is_console = 1, });
-+ 
-+ /*
   	stx7111_configure_asc(3, &(struct stx7111_asc_config) {
   			.hw_flow_control = 1,
   			.is_console = 0, });
-+ */
 +   	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
   }
   
-  
+  static struct platform_device mb618_leds = {
+  	.name = "leds-gpio",
+  	.id = -1,
 ***************
-*** 115,155 ****
+*** 79,86 ****
+  	},
+  };
   
+- 
+- 
+  static struct gpio_keys_button mb618_buttons[] = {
+  	{
+  		.code = BTN_0,
+--- 103,108 ----
+***************
+*** 111,155 ****
+  	},
+  };
+  
+- 
+- 
   static void mb618_nor_set_vpp(struct map_info *info, int enable)
   {
 ! 	gpio_set_value(MB618_PIO_FLASH_VPP, enable);
@@ -146,7 +150,9 @@
   		.sig_setup	= 50,		/* times in ns */
   		.sig_hold	= 50,
   		.CE_deassert	= 0,
---- 147,236 ----
+--- 133,224 ----
+  	},
+  };
   
   static void mb618_nor_set_vpp(struct map_info *info, int enable)
   {
@@ -249,7 +255,7 @@
   };
   
   static int mb618_phy_reset(void *bus)
---- 239,255 ----
+--- 227,243 ----
   		.wr_off		= 40,
   		.rd_on		= 10,
   		.rd_off		= 40,
@@ -276,7 +282,7 @@
   	.phy_mask = 0,
   	.interface = PHY_INTERFACE_MODE_MII,
   	.phy_reset = &mb618_phy_reset,
---- 266,272 ----
+--- 254,260 ----
   static struct plat_stmmacphy_data mb618_phy_private_data = {
   	/* SMSC LAN 8700 */
   	.bus_id = 0,
@@ -284,6 +290,28 @@
   	.phy_mask = 0,
   	.interface = PHY_INTERFACE_MODE_MII,
   	.phy_reset = &mb618_phy_reset,
+***************
+*** 199,206 ****
+  	.dev.platform_data = &mb618_phy_private_data,
+  };
+  
+- 
+- 
+  static struct platform_device epld_device = {
+  	.name		= "epld",
+  	.id		= -1,
+--- 275,280 ----
+***************
+*** 218,225 ****
+  	},
+  };
+  
+- 
+- 
+  static struct stm_plat_pci_config mb618_pci_config = {
+  	/* We don't bother with INT[BCD] as they are shared with the ssc
+  	 * J20-A must be removed, J20-B must be 5-6 */
+--- 292,297 ----
 ***************
 *** 249,261 ****
   }
@@ -299,7 +327,7 @@
   };
   
   /* SCART switch simple control */
---- 337,350 ----
+--- 321,334 ----
   }
   
   static struct platform_device *mb618_devices[] __initdata = {
@@ -329,7 +357,7 @@
   	stx7111_configure_ssc_i2c(1); /* J12=1-2, J16=1-2 */
   	peripherals_i2c_bus = stx7111_configure_ssc_i2c(2);
   	stx7111_configure_ssc_i2c(3);
---- 383,395 ----
+--- 367,379 ----
   {
   	int peripherals_i2c_bus;
   
@@ -366,7 +394,7 @@
   #endif
   
   	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
---- 402,423 ----
+--- 386,407 ----
   			.ext_clk = 0,
   			.phy_bus = 0, });
   
@@ -389,3 +417,24 @@
   #endif
   
   	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
+*** linux-sh4-2.6.32.16_stm24_0205_no_setup_patch/drivers/net/stmmac/stmmac_mdio.c	Sun Feb 27 00:14:21 2011
+--- linux-sh4/drivers/net/stmmac/stmmac_mdio.c	Sat Mar  5 04:17:10 2011
+***************
+*** 172,179 ****
+  	found = 0;
+  	for (addr = 0; addr < 32; addr++) {
+  		struct phy_device *phydev = new_bus->phy_map[addr];
+! 		if (phydev) {
+! 			if (priv->phy_addr == -1) {
+  				priv->phy_addr = addr;
+  				phydev->irq = priv->phy_irq;
+  				irqlist[addr] = priv->phy_irq;
+--- 172,179 ----
+  	found = 0;
+  	for (addr = 0; addr < 32; addr++) {
+  		struct phy_device *phydev = new_bus->phy_map[addr];
+! 		if (phydev && (phydev->phy_id>0)) {
+! 			/*if (priv->phy_addr == -1)*/ {
+  				priv->phy_addr = addr;
+  				phydev->irq = priv->phy_irq;
+  				irqlist[addr] = priv->phy_irq;
