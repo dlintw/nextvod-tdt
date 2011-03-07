@@ -97,7 +97,6 @@ class CBookmarkManager
 	void hide();
 
 
-
  public:
 	CBookmarkManager();
 	~CBookmarkManager();

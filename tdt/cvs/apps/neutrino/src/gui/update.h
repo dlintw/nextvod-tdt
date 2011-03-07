@@ -78,5 +78,4 @@ class CFlashExpert : public CProgressWindow
 
 };
 
-
 #endif

@@ -45,4 +45,3 @@ class CCAMMenuHandler : public CMenuTarget
 		int handleMsg (const neutrino_msg_t msg, neutrino_msg_data_t data);
 };
 #endif
-

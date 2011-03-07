@@ -73,6 +73,4 @@ class CAlphaSetup : public CMenuTarget
 
 };
 
-
 #endif
-

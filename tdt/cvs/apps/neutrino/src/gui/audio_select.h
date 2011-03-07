@@ -31,7 +31,6 @@
 #include "widget/menue.h"
 
 
-
 using namespace std;
 
 class CAudioSelectMenuHandler : public CMenuTarget
@@ -42,6 +41,4 @@ class CAudioSelectMenuHandler : public CMenuTarget
 
 };
 
-
 #endif
-

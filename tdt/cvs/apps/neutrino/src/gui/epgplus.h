@@ -57,28 +57,28 @@ class EpgPlus
 public:
   enum FontSettingID
   {
-    EPGPlus_header_font = 0,                         
-    EPGPlus_timeline_fonttime,                   
-    EPGPlus_timeline_fontdate,                   
-    EPGPlus_channelentry_font,                   
-    EPGPlus_channelevententry_font,              
-    EPGPlus_footer_fontbouquetchannelname,       
-    EPGPlus_footer_fonteventdescription,         
-    EPGPlus_footer_fonteventshortdescription,    
-    EPGPlus_footer_fontbuttons,                  
+    EPGPlus_header_font = 0,
+    EPGPlus_timeline_fonttime,
+    EPGPlus_timeline_fontdate,
+    EPGPlus_channelentry_font,
+    EPGPlus_channelevententry_font,
+    EPGPlus_footer_fontbouquetchannelname,
+    EPGPlus_footer_fonteventdescription,
+    EPGPlus_footer_fonteventshortdescription,
+    EPGPlus_footer_fontbuttons,
     NumberOfFontSettings
   };
 
   enum SizeSettingID
-  {                                                 
-    EPGPlus_channelentry_width = 0,                    
-    EPGPlus_channelentry_separationlineheight,     
-    EPGPlus_slider_width,                          
-    EPGPlus_horgap1_height,                        
-    EPGPlus_horgap2_height,                        
-    EPGPlus_vergap1_width,                         
-    EPGPlus_vergap2_width,                         
-	 NumberOfSizeSettings
+  {
+    EPGPlus_channelentry_width = 0,
+    EPGPlus_channelentry_separationlineheight,
+    EPGPlus_slider_width,
+    EPGPlus_horgap1_height,
+    EPGPlus_horgap2_height,
+    EPGPlus_vergap1_width,
+    EPGPlus_vergap2_width,
+    NumberOfSizeSettings
   };
 
 	struct FontSetting
@@ -91,7 +91,7 @@ public:
 	struct SizeSetting
 	{
 		SizeSettingID     settingID;
-		int               size;           
+		int               size;
 	};
 
 
@@ -101,7 +101,7 @@ public:
     ViewMode_Scroll,
   };
 
-  enum TSwapMode  
+  enum TSwapMode
   {
     SwapMode_ByPage,
     SwapMode_ByBouquet,
@@ -120,19 +120,15 @@ public:
   //// methods
   public:
     static void init();
-
     void paint();
-
     static int getUsedHeight();
 
   //// attributes
   public:
     CFrameBuffer* frameBuffer;
-
     int x;
     int y;
     int width;
-    
     static Font* font;
   };
 
@@ -142,36 +138,26 @@ public:
   //// construction / destruction
   public:
     TimeLine ( CFrameBuffer* frameBuffer , int x , int y , int width , int startX , int durationX);
-    
     ~TimeLine();
 
   //// methods
   public:
     static void init();
-
     void paint ( time_t startTime , int    duration);
-
     void paintMark ( time_t startTime , int    duration , int    x , int    width);
-
     void paintGrid();
-
     void clearMark();
-
     static int getUsedHeight();
 
   //// attributes
   public:
     CFrameBuffer* frameBuffer;
-
     int currentDuration;
-
     int x;
     int y;
     int width;
-  
     static Font* fontTime;
     static Font* fontDate;
-
     int startX;
     int durationX;
   };

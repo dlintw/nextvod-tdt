@@ -45,7 +45,7 @@ private:
 	void clearFileData();
 	unsigned int m_SecondsToSkip;
 
-protected: 
+protected:
 	CAudiofile m_Audiofile;
 	bool SetDSP(int soundfd, int fmt, unsigned int dsp_speed, unsigned int channels);
 
@@ -68,10 +68,6 @@ public:
 
 	CAudioPlayer();
 	~CAudioPlayer();
-
-
 };
 
-
 #endif
-

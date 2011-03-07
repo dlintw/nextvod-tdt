@@ -93,8 +93,6 @@ class CEpgData
 		void hide();
 };
 
-
-
 class CEPGDataHandler : public CMenuTarget
 {
 	public:
@@ -102,7 +100,4 @@ class CEPGDataHandler : public CMenuTarget
 
 };
 
-
-
 #endif
-

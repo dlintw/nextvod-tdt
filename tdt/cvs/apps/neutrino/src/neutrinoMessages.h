@@ -164,5 +164,4 @@ struct NeutrinoMessages {
 	};
 };
 
-
 #endif

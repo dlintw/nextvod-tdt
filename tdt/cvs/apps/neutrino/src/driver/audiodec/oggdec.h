@@ -73,6 +73,4 @@ private:
 	static void* OutputDsp(void *);
 };
 
-
 #endif
-

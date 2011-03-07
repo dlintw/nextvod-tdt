@@ -40,4 +40,3 @@ class CCdrDec : public CWavDec
 };
 
 #endif
-

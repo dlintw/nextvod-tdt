@@ -73,7 +73,6 @@ class CBouquet
 		}
 };
 
-
 class CBouquetList
 {
 	private:
@@ -118,6 +117,5 @@ class CBouquetList
 		void adjustToChannelID(t_channel_id channel_id);
 		int exec( bool bShowChannelList);
 };
-
 
 #endif

@@ -36,7 +36,7 @@
 class CBaseDec
 {
 public:
-	enum State {STOP = 0, STOP_REQ, PLAY, PAUSE, FF, REV};
+	enum State { STOP = 0, STOP_REQ, PLAY, PAUSE, FF, REV };
 	enum RetCode { OK = 0, READ_ERR, WRITE_ERR, DSPSET_ERR, DATA_ERR, INTERNAL_ERR };
 
 	// the follwing two methods have to be implemented for new decoders
@@ -58,6 +58,4 @@ private:
 	unsigned static int mSamplerate;
 };
 
-
 #endif
-

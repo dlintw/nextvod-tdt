@@ -94,5 +94,4 @@ class CTimerList : public CMenuTarget
 
 bool askUserOnTimerConflict(time_t announceTime, time_t stopTime);
 
-
 #endif

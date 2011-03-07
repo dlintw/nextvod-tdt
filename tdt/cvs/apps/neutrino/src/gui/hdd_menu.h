@@ -52,4 +52,3 @@ class CHDDMenuHandler : public CMenuTarget
 };
 
 #endif
-

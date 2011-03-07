@@ -51,7 +51,7 @@ typedef struct fb_var_screeninfo t_fb_var_screeninfo;
 #define CORNER_BOTTOM	0x2
 #define CORNER_BOTH	0x3
 
-/** Ausführung als Singleton */
+/** Ausfuehrung als Singleton */
 class CFrameBuffer
 {
 	private:
@@ -224,6 +224,5 @@ class CFrameBuffer
 		
 #endif
 };
-
 
 #endif

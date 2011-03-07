@@ -67,4 +67,3 @@ class CBEChannelSelectWidget : public CListBox
 };
 
 #endif
-

@@ -49,7 +49,7 @@ class CPictureViewer
 			COLOR=2
 		};
 	CPictureViewer();
-	~CPictureViewer(){Cleanup();};
+	~CPictureViewer() { Cleanup(); };
 	bool ShowImage(const std::string & filename, bool unscaled=false);
 	bool DecodeImage(const std::string & name, bool showBusySign=false, bool unscaled=false);
 	bool DisplayNextImage();

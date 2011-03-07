@@ -117,5 +117,4 @@ public:
 	inline const std::string & getCurrentChannelName(void) const { return current_channel_name; }
 };
 
-
 #endif

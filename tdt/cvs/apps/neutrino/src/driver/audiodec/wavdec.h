@@ -49,6 +49,4 @@ protected:
 	int header_size;
 };
 
-
 #endif
-

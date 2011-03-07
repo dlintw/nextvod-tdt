@@ -71,11 +71,6 @@ class CCAPTURE
 		int	cx, cy, cw, ch;		// capture size
 		int	out_w, out_h;		// capture output size
 		int	stride;
-
 };
 
-
-
 #endif
-
-

@@ -44,7 +44,7 @@
 class CVCRControl
 {
  public:
-	typedef enum CVCRStates 
+	typedef enum CVCRStates
 		{
 			CMD_VCR_UNKNOWN =	0,
 			CMD_VCR_RECORD	=	1,
@@ -216,6 +216,5 @@ class CVCRControl
 	bool Resume(){return Device->Resume();};
 	void Screenshot(const t_channel_id channel_id, char * fname = NULL);
 };
-
 
 #endif

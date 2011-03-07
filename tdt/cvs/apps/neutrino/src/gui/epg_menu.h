@@ -19,14 +19,10 @@
 	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-
 #ifndef __epg_menu__
 #define __epg_menu__
 
-
 #include "widget/menue.h"
-
-
 
 using namespace std;
 
@@ -38,6 +34,4 @@ class CEPGMenuHandler : public CMenuTarget
 
 };
 
-
 #endif
-

@@ -66,4 +66,3 @@ class CImageInfo : public CMenuTarget
 };
 
 #endif
-

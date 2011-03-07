@@ -111,4 +111,3 @@ class CStreamInfo2Handler : public CMenuTarget
                 int exec( CMenuTarget* parent,  const std::string &actionKey);
 };
 #endif
-

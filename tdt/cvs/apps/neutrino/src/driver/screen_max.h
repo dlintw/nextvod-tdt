@@ -22,12 +22,7 @@
 #ifndef  __SCREEN_MAX__
 #define  __SCREEN_MAX__
 
-
 int w_max (int w_size, int w_add);
 int h_max (int h_size, int h_add);
 
-
-
 #endif
-
-

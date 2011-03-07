@@ -39,7 +39,6 @@ class CChMosaicHandler : public CMenuTarget
 
 };
 
-
 class CChMosaic
 {
 	public:
@@ -65,6 +64,4 @@ class CChMosaic
 
 };
 
-
 #endif
-

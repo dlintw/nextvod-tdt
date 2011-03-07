@@ -47,7 +47,7 @@ class CPluginList : public CMenuTarget
 		enum result_
 		{
 			close  = 0,
-			resume = 1,
+			resume = 1
 		} result;
 
 	private:
