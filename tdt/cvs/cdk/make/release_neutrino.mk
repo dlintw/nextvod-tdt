@@ -118,8 +118,15 @@ $(DEPDIR)/%release_neutrino:
 	rm -f $(prefix)/release_neutrino/lib/*.o && \
 	rm -f $(prefix)/release_neutrino/lib/*.la && \
 	find $(prefix)/release_neutrino/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
+if STM22
+	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+endif
 if !STM22
 	cp $(buildprefix)/root/release/rcS_stm23_neutrino$(if $(TF7700),_$(TF7700))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK)) $(prefix)/release_neutrino/etc/init.d/rcS
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
 endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/avs/avs.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/boxtype/boxtype.ko $(prefix)/release_neutrino/lib/modules/
@@ -156,10 +163,6 @@ if ENABLE_TF7700
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/tffp/tffp.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_tf7700 $(prefix)/release_neutrino/etc/fstab
-
-#	install autofs
-	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
-	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
@@ -761,7 +764,6 @@ endif
 if STM22
 	rm $(prefix)/release_neutrino/lib/modules/p2div64.ko
 endif
-	rm -rf $(prefix)/release_neutrino/lib/autofs
 	rm -rf $(prefix)/release_neutrino/lib/modules/$(KERNELVERSION)
 
 	$(INSTALL_DIR) $(prefix)/release_neutrino/media
