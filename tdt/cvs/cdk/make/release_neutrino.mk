@@ -118,9 +118,6 @@ $(DEPDIR)/%release_neutrino:
 	rm -f $(prefix)/release_neutrino/lib/*.o && \
 	rm -f $(prefix)/release_neutrino/lib/*.la && \
 	find $(prefix)/release_neutrino/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
-#	install autofs
-	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
-	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
 if STM22
 	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
 endif
@@ -227,6 +224,9 @@ if ENABLE_UFS912
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_neutrino/boot/video.elf
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release_neutrino/boot/audio.elf
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
 
 	mv $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw $(prefix)/release_neutrino/lib/firmware/component.fw
 	rm $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
