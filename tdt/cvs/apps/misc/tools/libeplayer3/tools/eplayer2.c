@@ -86,7 +86,7 @@ void framebuffer_init()
 		return;
 	}
 
-	memcpy(&oldscreen, &screeninfo, sizeof(screeninfo));
+	memmove(&oldscreen, &screeninfo, sizeof(screeninfo));
 
 	ioctl(fd, FBIOGET_VSCREENINFO, &screeninfo);
 	

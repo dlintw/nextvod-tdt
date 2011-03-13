@@ -958,34 +958,34 @@ printf("AVCODEC__INIT__FAILED\n");
                     memset (track.aacbuf, 0, track.aacbuflen);
                     unsigned char ASF_Stream_Properties_Object[16] =
                         {0x91,0x07,0xDC,0xB7,0xB7,0xA9,0xCF,0x11,0x8E,0xE6,0x00,0xC0,0x0C,0x20,0x53,0x65};
-                    memcpy(track.aacbuf + 0, ASF_Stream_Properties_Object, 16); // ASF_Stream_Properties_Object
-                    memcpy(track.aacbuf + 16, &track.aacbuflen, 4); //FrameDateLength
+                    memmove(track.aacbuf + 0, ASF_Stream_Properties_Object, 16); // ASF_Stream_Properties_Object
+                    memmove(track.aacbuf + 16, &track.aacbuflen, 4); //FrameDateLength
 
                     unsigned int sizehi = 0;
-                    memcpy(track.aacbuf + 20, &sizehi, 4); // sizehi (not used)
+                    memmove(track.aacbuf + 20, &sizehi, 4); // sizehi (not used)
 
                     unsigned char ASF_Audio_Media[16] =
                         {0x40,0x9E,0x69,0xF8,0x4D,0x5B,0xCF,0x11,0xA8,0xFD,0x00,0x80,0x5F,0x5C,0x44,0x2B}; 
-                    memcpy(track.aacbuf + 24, ASF_Audio_Media, 16); //ASF_Audio_Media
+                    memmove(track.aacbuf + 24, ASF_Audio_Media, 16); //ASF_Audio_Media
 
                     unsigned char ASF_Audio_Spread[16] =
                         {0x50,0xCD,0xC3,0xBF,0x8F,0x61,0xCF,0x11,0x8B,0xB2,0x00,0xAA,0x00,0xB4,0xE2,0x20}; 
-                    memcpy(track.aacbuf + 40, ASF_Audio_Spread, 16); //ASF_Audio_Spread
+                    memmove(track.aacbuf + 40, ASF_Audio_Spread, 16); //ASF_Audio_Spread
 
                     memset(track.aacbuf + 56, 0, 4); // time_offset (not used)
                     memset(track.aacbuf + 60, 0, 4); // time_offset_hi (not used)
 
                     unsigned int type_specific_data_length = 18 + stream->codec->extradata_size;
-                    memcpy(track.aacbuf + 64, &type_specific_data_length, 4); //type_specific_data_length
+                    memmove(track.aacbuf + 64, &type_specific_data_length, 4); //type_specific_data_length
 
                     unsigned int error_correction_data_length = 8;
-                    memcpy(track.aacbuf + 68, &error_correction_data_length, 4); //error_correction_data_length
+                    memmove(track.aacbuf + 68, &error_correction_data_length, 4); //error_correction_data_length
 
                     unsigned short flags = 1; // stream_number
-                    memcpy(track.aacbuf + 72, &flags, 2); //flags
+                    memmove(track.aacbuf + 72, &flags, 2); //flags
 
                     unsigned int reserved = 0;
-                    memcpy(track.aacbuf + 74, &reserved, 4); // reserved
+                    memmove(track.aacbuf + 74, &reserved, 4); // reserved
 
                     // type_specific_data
 #define WMA_VERSION_1           0x160
@@ -1006,31 +1006,31 @@ printf("AVCODEC__INIT__FAILED\n");
                             codec_id = WMA_VERSION_1;
                             break;
                     }
-                    memcpy(track.aacbuf + 78, &codec_id, 2); //codec_id
+                    memmove(track.aacbuf + 78, &codec_id, 2); //codec_id
 
                     unsigned short number_of_channels = stream->codec->channels;
-                    memcpy(track.aacbuf + 80, &number_of_channels, 2); //number_of_channels
+                    memmove(track.aacbuf + 80, &number_of_channels, 2); //number_of_channels
 
                     unsigned int samples_per_second = stream->codec->sample_rate;
                     ffmpeg_printf(1, "samples_per_second = %d\n", samples_per_second);
-                    memcpy(track.aacbuf + 82, &samples_per_second, 4); //samples_per_second
+                    memmove(track.aacbuf + 82, &samples_per_second, 4); //samples_per_second
 
                     unsigned int average_number_of_bytes_per_second = stream->codec->bit_rate / 8;
                     ffmpeg_printf(1, "average_number_of_bytes_per_second = %d\n", average_number_of_bytes_per_second);
-                    memcpy(track.aacbuf + 86, &average_number_of_bytes_per_second, 4); //average_number_of_bytes_per_second
+                    memmove(track.aacbuf + 86, &average_number_of_bytes_per_second, 4); //average_number_of_bytes_per_second
 
                     unsigned short block_alignment = stream->codec->block_align;
                     ffmpeg_printf(1, "block_alignment = %d\n", block_alignment);
-                    memcpy(track.aacbuf + 90, &block_alignment, 2); //block_alignment
+                    memmove(track.aacbuf + 90, &block_alignment, 2); //block_alignment
 
                     unsigned short bits_per_sample = 
                         stream->codec->sample_fmt>=0?(stream->codec->sample_fmt+1)*8:8;
                     ffmpeg_printf(1, "bits_per_sample = %d (%d)\n", bits_per_sample, stream->codec->sample_fmt);
-                    memcpy(track.aacbuf + 92, &bits_per_sample, 2); //bits_per_sample
+                    memmove(track.aacbuf + 92, &bits_per_sample, 2); //bits_per_sample
 
-                    memcpy(track.aacbuf + 94, &stream->codec->extradata_size, 2); //bits_per_sample
+                    memmove(track.aacbuf + 94, &stream->codec->extradata_size, 2); //bits_per_sample
 
-                    memcpy(track.aacbuf + 96, stream->codec->extradata, stream->codec->extradata_size);
+                    memmove(track.aacbuf + 96, stream->codec->extradata, stream->codec->extradata_size);
 
                     ffmpeg_printf(1, "aacbuf:\n");
                     Hexdump(track.aacbuf, track.aacbuflen);

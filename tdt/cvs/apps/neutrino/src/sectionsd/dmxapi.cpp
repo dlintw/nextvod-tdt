@@ -104,7 +104,7 @@ bool getUTC(UTC_t * const UTC, const bool TDT)
 		perror("[sectionsd] getUTC: read");
 		ret = false;
 	} else {
-		memcpy(cUTC, &tdt_tot_header.UTC_time, 5);
+		memmove(cUTC, &tdt_tot_header.UTC_time, 5);
 		if ((cUTC[2] > 0x23) || (cUTC[3] > 0x59) || (cUTC[4] > 0x59)) // no valid time
 		{
 			printf("[sectionsd] getUTC: invalid %s section received: %02x %02x %02x %02x %02x\n", 

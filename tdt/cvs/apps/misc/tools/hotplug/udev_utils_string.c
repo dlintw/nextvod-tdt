@@ -58,10 +58,10 @@ size_t path_encode(char *s, size_t len)
 	t[0] = '\0';
 	for (i = 0, j = 0; s[i] != '\0'; i++) {
 		if (s[i] == '/') {
-			memcpy(&t[j], "\\x2f", 4);
+			memmove(&t[j], "\\x2f", 4);
 			j += 4;
 		} else if (s[i] == '\\') {
-			memcpy(&t[j], "\\x5c", 4);
+			memmove(&t[j], "\\x5c", 4);
 			j += 4;
 		} else {
 			t[j] = s[i];

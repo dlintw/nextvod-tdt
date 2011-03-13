@@ -345,7 +345,7 @@ void Font::RenderString(int x, int y, const int _width, const char *text, const 
 	tempScaler.x_res   = frameBuffer->scaleX(scaler.x_res);
 	tempScaler.y_res   = frameBuffer->scaleY(scaler.y_res);
 	
-	memcpy(&tempFont, &font, sizeof(font));
+	memmove(&tempFont, &font, sizeof(font));
 	tempFont.width = frameBuffer->scaleX(font.width);
 	tempFont.height = frameBuffer->scaleY(font.height);
 #else

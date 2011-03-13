@@ -82,10 +82,10 @@ void eDVBCISession::sendAPDU(const unsigned char *tag, const void *data, int len
 #ifdef __sh__
 	printf("%s >\n", __func__);
 #endif
-	memcpy(pkt, tag, 3);
+	memmove(pkt, tag, 3);
 	l=buildLengthField(pkt+3, len);
 	if (data)
-		memcpy(pkt+3+l, data, len);
+		memmove(pkt+3+l, data, len);
 	sendSPDU(0x90, 0, 0, pkt, len+3+l);
 #ifdef __sh__
 	printf("%s <\n", __func__);
@@ -114,13 +114,13 @@ void eDVBCISession::sendSPDU(tSlot *slot, unsigned char tag, const void *data, i
 	*ptr++=tag;
 	ptr+=buildLengthField(ptr, len+2);
 	if (data)
-		memcpy(ptr, data, len);
+		memmove(ptr, data, len);
 	ptr += len;
 	*ptr++ = session_nb>>8;
 	*ptr++ = session_nb;
 
 	if (apdu)
-		memcpy(ptr, apdu, alen);
+		memmove(ptr, apdu, alen);
 
 	ptr += alen;
 	//slot->send(pkt, ptr - pkt);
@@ -138,7 +138,7 @@ void eDVBCISession::sendOpenSessionResponse(tSlot *slot, unsigned char session_s
 	
 	printf("sendOpenSessionResponse\n");
 	
-	memcpy(pkt + 1, resource_identifier, 4);
+	memmove(pkt + 1, resource_identifier, 4);
 	sendSPDU(slot, 0x92, pkt, 5, session_nb);
 #ifdef __sh__
 	printf("%s <\n", __func__);

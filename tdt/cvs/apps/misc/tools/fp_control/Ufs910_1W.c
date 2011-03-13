@@ -388,7 +388,7 @@ static int setText(Context_t* context, char* theText)
 
     memset ( data.data, ' ', 63 );
     
-    memcpy ( data.data, theText, strlen(theText) );	
+    memmove ( data.data, theText, strlen(theText) );	
 
     data.start = 0;
     data.length = strlen(theText);

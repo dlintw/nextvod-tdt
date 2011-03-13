@@ -165,10 +165,10 @@ static int writeData(void* _call)
         {
             PesPtr          = &PesPacket[PES_MIN_HEADER_SIZE];
 
-            memcpy (PesPtr, SequenceLayerStartCode, sizeof(SequenceLayerStartCode));
+            memmove (PesPtr, SequenceLayerStartCode, sizeof(SequenceLayerStartCode));
             PesPtr             += sizeof(SequenceLayerStartCode);
 
-            memcpy (PesPtr, Metadata, sizeof(Metadata));
+            memmove (PesPtr, Metadata, sizeof(Metadata));
             PesPtr         += METADATA_STRUCT_C_START;
 
             //
@@ -202,7 +202,7 @@ static int writeData(void* _call)
             int i;
 
             /* For VC1 the codec private data is a standard vc1 sequence header so we just copy it to the output */
-            memcpy (&PesPacket[PES_MIN_HEADER_SIZE], call->private_data, call->private_size);
+            memmove (&PesPacket[PES_MIN_HEADER_SIZE], call->private_data, call->private_size);
 
             vc1_printf(10, "Private Data:\n");
             for (i = 0; i < call->private_size; i++)
@@ -247,15 +247,15 @@ static int writeData(void* _call)
                         FrameHeaderSeen         = 1;
                     if (!FrameHeaderSeen)
                     {
-                        memcpy (&PesHeader[HeaderLength], Vc1FrameStartCode, sizeof(Vc1FrameStartCode));
+                        memmove (&PesHeader[HeaderLength], Vc1FrameStartCode, sizeof(Vc1FrameStartCode));
                         HeaderLength           += sizeof(Vc1FrameStartCode);
                     }
                 insertSampleHeader = 0;
             }
 
             PacketStart = malloc(call->len + HeaderLength);
-            memcpy (PacketStart, PesHeader, HeaderLength);
-            memcpy (PacketStart + HeaderLength, call->data + Position, PacketLength);
+            memmove (PacketStart, PesHeader, HeaderLength);
+            memmove (PacketStart + HeaderLength, call->data + Position, PacketLength);
 
             len = write(call->fd, PacketStart, PacketLength + HeaderLength);
             free(PacketStart);

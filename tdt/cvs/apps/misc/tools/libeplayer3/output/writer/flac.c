@@ -120,8 +120,8 @@ static int writeData(void* _call)
 
     unsigned char* PacketStart = malloc(call->len + HeaderLength);
 
-    memcpy (PacketStart, PesHeader, HeaderLength);
-    memcpy (PacketStart + HeaderLength, call->data, call->len);
+    memmove (PacketStart, PesHeader, HeaderLength);
+    memmove (PacketStart + HeaderLength, call->data, call->len);
 
     int len = write(call->fd, PacketStart, call->len + HeaderLength);
 

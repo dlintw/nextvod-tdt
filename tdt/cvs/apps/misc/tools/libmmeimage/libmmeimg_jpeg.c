@@ -330,7 +330,7 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 		// clear cache
 		msync(decode_surface + pre_scaled_width * pre_scaled_height * 2, dst_width * dst_height * 3, MS_SYNC);
 	
-		// memcpy doesn't work
+		// memmove doesn't work
 		for(i = 0; i < dst_width * dst_height * 3; i++)
 			*(dest_data + i) = *(decode_surface + pre_scaled_width * pre_scaled_height * 2 + i);
 	}

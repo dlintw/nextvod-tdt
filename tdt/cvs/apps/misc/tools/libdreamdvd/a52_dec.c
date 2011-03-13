@@ -113,7 +113,7 @@ int ddvd_ac3_decode(const uint8_t *input, unsigned int len, int16_t *output)
 	if (len > bufpos - bufptr)
 	    len = bufpos - bufptr;
 	
-	memcpy (bufptr, input, len);
+	memmove (bufptr, input, len);
 	bufptr += len;
 	input += len;
 

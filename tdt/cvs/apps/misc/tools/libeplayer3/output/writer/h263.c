@@ -132,12 +132,12 @@ static int writeData(void* _call)
 
     unsigned char *PacketData = call->data - HeaderLength;
 
-    memcpy(DataCopy, PacketData, HeaderLength);
-    memcpy(PacketData, PesHeader, HeaderLength);
+    memmove(DataCopy, PacketData, HeaderLength);
+    memmove(PacketData, PesHeader, HeaderLength);
 
     len = write(call->fd, PacketData, call->len + HeaderLength);
 
-    memcpy(PacketData, DataCopy, HeaderLength);
+    memmove(PacketData, DataCopy, HeaderLength);
 
     h263_printf(10, "< len %d\n", len);
     return len;

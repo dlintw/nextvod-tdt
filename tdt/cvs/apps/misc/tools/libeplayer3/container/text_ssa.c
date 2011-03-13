@@ -175,7 +175,7 @@ static void* SsaSubtitleThread(void *data) {
                 int head_len = strlen(head);
                 int line_len = strlen(line);
                 head = realloc(head, line_len + head_len +2);
-                memcpy(head + head_len, line, sizeof(char)*line_len+1);
+                memmove(head + head_len, line, sizeof(char)*line_len+1);
                 head[head_len + line_len] = '\n';
                 head[head_len + line_len + 1] = '\0';
             }

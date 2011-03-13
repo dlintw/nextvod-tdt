@@ -157,8 +157,8 @@ static int writeData(void* _call)
                           by the player */
         unsigned char *PacketData = malloc(HeaderLength + call->len + 1);
 
-        memcpy(PacketData, PesHeader, HeaderLength);
-        memcpy (PacketData + HeaderLength, call->data, call->len);
+        memmove(PacketData, PesHeader, HeaderLength);
+        memmove (PacketData + HeaderLength, call->data, call->len);
 
         len = write(call->fd, PacketData, call->len + HeaderLength + 1);
 
@@ -219,8 +219,8 @@ static int writeData(void* _call)
 
         PacketStart = malloc(HeaderLength + ParametersLength);
         PacketStartSIZE = HeaderLength + ParametersLength;
-        memcpy (PacketStart, PesHeader, HeaderLength);
-        memcpy (PacketStart + HeaderLength, HeaderData, ParametersLength);
+        memmove (PacketStart, PesHeader, HeaderLength);
+        memmove (PacketStart + HeaderLength, HeaderData, ParametersLength);
         len += write (call->fd, PacketStart, HeaderLength + ParametersLength);
 
         NalLengthBytes  = (avcCHeader->NalLengthMinusOne & 0x03) + 1;
@@ -245,7 +245,7 @@ static int writeData(void* _call)
                 PacketStartSIZE = HeaderLength + InitialHeaderLength + sizeof(Head);
             }
 
-            memcpy (PacketStart + HeaderLength + InitialHeaderLength, Head, sizeof(Head));
+            memmove (PacketStart + HeaderLength + InitialHeaderLength, Head, sizeof(Head));
             InitialHeaderLength        += sizeof(Head);
 
             if (HeaderLength + InitialHeaderLength + PsLength > PacketStartSIZE) {
@@ -253,7 +253,7 @@ static int writeData(void* _call)
                 PacketStartSIZE = HeaderLength + InitialHeaderLength + PsLength;
             }
 
-            memcpy (PacketStart + HeaderLength + InitialHeaderLength, &avcCHeader->Params[ParamOffset+2], PsLength);
+            memmove (PacketStart + HeaderLength + InitialHeaderLength, &avcCHeader->Params[ParamOffset+2], PsLength);
 
             InitialHeaderLength        += PsLength;
             ParamOffset                += PsLength+2;
@@ -274,7 +274,7 @@ static int writeData(void* _call)
                 PacketStartSIZE = HeaderLength + InitialHeaderLength + sizeof(Head);
             }
 
-            memcpy (PacketStart + HeaderLength + InitialHeaderLength, Head, sizeof(Head));
+            memmove (PacketStart + HeaderLength + InitialHeaderLength, Head, sizeof(Head));
             InitialHeaderLength        += sizeof(Head);
 
             if (HeaderLength + InitialHeaderLength + PsLength > PacketStartSIZE) {
@@ -282,13 +282,13 @@ static int writeData(void* _call)
                 PacketStartSIZE = HeaderLength + InitialHeaderLength + PsLength;
             }
 
-            memcpy (PacketStart + HeaderLength + InitialHeaderLength, &avcCHeader->Params[ParamOffset+2], PsLength);
+            memmove (PacketStart + HeaderLength + InitialHeaderLength, &avcCHeader->Params[ParamOffset+2], PsLength);
             InitialHeaderLength        += PsLength;
             ParamOffset                += PsLength+2;
         }
 
         HeaderLength    = InsertPesHeader (PesHeader, InitialHeaderLength, MPEG_VIDEO_PES_START_CODE, INVALID_PTS_VALUE, 0);
-        memcpy (PacketStart, PesHeader, HeaderLength);
+        memmove (PacketStart, PesHeader, HeaderLength);
 
         len += write (call->fd, PacketStart, HeaderLength + InitialHeaderLength);
 
@@ -307,7 +307,7 @@ static int writeData(void* _call)
         unsigned char  NalData[4];
         int            NalPresent = 1;
 
-        memcpy (NalData, call->data + VideoPosition, NalLengthBytes);
+        memmove (NalData, call->data + VideoPosition, NalLengthBytes);
         VideoPosition += NalLengthBytes;
         NalLength       = (NalLengthBytes == 1) ?  NalData[0] :
                           (NalLengthBytes == 2) ? (NalData[0] <<  8) |  NalData[1] :
@@ -333,14 +333,14 @@ static int writeData(void* _call)
 
                 if (NalPresent) {
                     PacketStart     = malloc(sizeof(Head) + PacketLength);
-                    memcpy (PacketStart + sizeof(Head), call->data + VideoPosition, PacketLength);
+                    memmove (PacketStart + sizeof(Head), call->data + VideoPosition, PacketLength);
                     VideoPosition    += PacketLength;
 
-                    memcpy (PacketStart, Head, sizeof(Head));
+                    memmove (PacketStart, Head, sizeof(Head));
                     ExtraLength    = sizeof(Head);
                 } else {
                     PacketStart     = malloc(PacketLength);
-                    memcpy (PacketStart, call->data + VideoPosition, PacketLength);
+                    memmove (PacketStart, call->data + VideoPosition, PacketLength);
                     VideoPosition    += PacketLength;
                 }
 
@@ -351,8 +351,8 @@ static int writeData(void* _call)
                 HeaderLength    = InsertPesHeader (PesHeader, PacketLength, MPEG_VIDEO_PES_START_CODE, VideoPts, 0);
 
                 unsigned char*    WritePacketStart = malloc(HeaderLength + PacketLength);
-                memcpy (WritePacketStart,              PesHeader,   HeaderLength);
-                memcpy (WritePacketStart+HeaderLength, PacketStart, PacketLength);
+                memmove (WritePacketStart,              PesHeader,   HeaderLength);
+                memmove (WritePacketStart+HeaderLength, PacketStart, PacketLength);
                 free(PacketStart);
 
                 PacketLength   += HeaderLength;

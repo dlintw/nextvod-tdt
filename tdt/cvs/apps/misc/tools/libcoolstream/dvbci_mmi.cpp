@@ -106,7 +106,7 @@ int eDVBCIMMISession::receivedAPDU(const unsigned char *tag, const void *data, i
 		
 		        char str[textlen + 1];
 		        
-			memcpy(str, ((char*)d), textlen);
+			memmove(str, ((char*)d), textlen);
 		        str[textlen] = '\0';
 		        
 			printf("enq-text: %s",str);
@@ -165,7 +165,7 @@ int eDVBCIMMISession::receivedAPDU(const unsigned char *tag, const void *data, i
 				       break;
 			       
 			       char str[textlen + 1];
-			       memcpy(str, ((char*)d), textlen);
+			       memmove(str, ((char*)d), textlen);
 			       str[textlen] = '\0';
 			       
 			       int type = pos++;
@@ -288,7 +288,7 @@ int eDVBCIMMISession::answerEnq(char *answer, int len)
 
 	unsigned char data[len+1];
 	data[0] = 0x01; // answer ok
-	memcpy(data+1, answer, len);
+	memmove(data+1, answer, len);
 
 	unsigned char tag[]={0x9f, 0x88, 0x08};
 	sendAPDU(tag, data, len+1);

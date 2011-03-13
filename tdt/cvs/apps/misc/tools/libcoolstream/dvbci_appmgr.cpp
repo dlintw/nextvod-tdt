@@ -61,7 +61,7 @@ int eDVBCIApplicationManagerSession::receivedAPDU(const unsigned char *tag,const
 				dl=len-6;
 			}
 			char str[dl + 1];
-			memcpy(str, ((char*)data) + 6, dl);
+			memmove(str, ((char*)data) + 6, dl);
 			str[dl] = '\0';
 			for (int i = 0; i < dl; ++i)
 				printf("%c", ((unsigned char*)data)[i+6]);

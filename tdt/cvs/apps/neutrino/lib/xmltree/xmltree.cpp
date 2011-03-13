@@ -313,7 +313,7 @@ void XMLTreeNode::SetData(char *dat, unsigned int datSize)
   data=new char[dataSize+1];
   data[dataSize]=0;
 
-  memcpy(data, dat, datSize);
+  memmove(data, dat, datSize);
 }
 
 void XMLTreeNode::AppendData(char *dat, unsigned int datSize)
@@ -325,8 +325,8 @@ void XMLTreeNode::AppendData(char *dat, unsigned int datSize)
     char *tmp;
 
     tmp=new char[dataSize+datSize];
-    memcpy(tmp, data, dataSize);
-    memcpy(tmp+dataSize, dat, datSize);
+    memmove(tmp, data, dataSize);
+    memmove(tmp+dataSize, dat, datSize);
 
     SetData(tmp, dataSize+datSize);
 

@@ -144,13 +144,13 @@ size_t ringbuffer_read (ringbuffer_t * rb, char *dest, size_t cnt)
 		n2 = 0;
 	}
 
-	memcpy (dest, &(rb->buf[rb->read_ptr]), n1);
+	memmove (dest, &(rb->buf[rb->read_ptr]), n1);
 	rb->read_ptr += n1;
 	rb->read_ptr &= rb->size_mask;
 
 	if (n2)
 	{
-		memcpy (dest + n1, &(rb->buf[rb->read_ptr]), n2);
+		memmove (dest + n1, &(rb->buf[rb->read_ptr]), n2);
 		rb->read_ptr += n2;
 		rb->read_ptr &= rb->size_mask;
 	}
@@ -185,13 +185,13 @@ size_t ringbuffer_write (ringbuffer_t * rb, char *src, size_t cnt)
 		n2 = 0;
 	}
 
-	memcpy (&(rb->buf[rb->write_ptr]), src, n1);
+	memmove (&(rb->buf[rb->write_ptr]), src, n1);
 	rb->write_ptr += n1;
 	rb->write_ptr &= rb->size_mask;
 
 	if (n2)
 	{
-		memcpy (&(rb->buf[rb->write_ptr]), src + n1, n2);
+		memmove (&(rb->buf[rb->write_ptr]), src + n1, n2);
 		rb->write_ptr += n2;
 		rb->write_ptr &= rb->size_mask;
 	}
