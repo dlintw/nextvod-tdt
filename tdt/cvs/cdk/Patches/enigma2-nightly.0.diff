@@ -6213,7 +6213,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
  #include <sys/stat.h>
  
  #define HTTP_TIMEOUT 10
-@@ -47,6 +49,25 @@
+@@ -47,6 +49,26 @@
  		extensions.push_back("mp4");
  		extensions.push_back("mov");
  		extensions.push_back("m4a");
@@ -6228,6 +6228,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/service/servicemp3.cp
 +		extensions.push_back("rar");
 +		extensions.push_back("img");
 +		extensions.push_back("iso");
++		extensions.push_back("ifo");
 +		int fd = open("/proc/stb/info/model", O_RDONLY);
 +		char tmp[255];
 +		int rd = fd >= 0 ? read(fd, tmp, 255) : 0;
