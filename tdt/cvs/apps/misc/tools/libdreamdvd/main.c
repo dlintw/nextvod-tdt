@@ -222,7 +222,7 @@ void ddvd_set_dvd_path(struct ddvd *pconfig, const char *path)
 // set language
 void ddvd_set_language(struct ddvd *pconfig, const char lang[2])
 {
-	memmove(pconfig->language, lang, 2);
+	memcpy(pconfig->language, lang, 2);
 }
 
 // set internal ac3 decoding (needs liba52 which will be dynamically loaded)
@@ -355,10 +355,10 @@ int ddvd_get_next_message(struct ddvd *pconfig, int blocked)
 void ddvd_get_last_blit_area(struct ddvd *pconfig, int *x_start, int *x_end, int *y_start, int *y_end)
 {
 	struct ddvd_resize_return *ptr = &pconfig->blit_area;
-	memmove(x_start, &ptr->x_start, sizeof(int));
-	memmove(x_end, &ptr->x_end, sizeof(int));
-	memmove(y_start, &ptr->y_start, sizeof(int));
-	memmove(y_end, &ptr->y_end, sizeof(int));
+	memcpy(x_start, &ptr->x_start, sizeof(int));
+	memcpy(x_end, &ptr->x_end, sizeof(int));
+	memcpy(y_start, &ptr->y_start, sizeof(int));
+	memcpy(y_end, &ptr->y_end, sizeof(int));
 }
 
 /*void ddvd_get_blit_destination(struct ddvd *pconfig, int *x_offset, int *y_offset, int *width, int *height)
@@ -374,32 +374,32 @@ void ddvd_get_last_blit_area(struct ddvd *pconfig, int *x_start, int *x_end, int
 // get angle info
 void ddvd_get_angle_info(struct ddvd*pconfig, int *current, int *num)
 {
-	memmove(current, &pconfig->angle_current, sizeof(pconfig->angle_current));
-	memmove(num, &pconfig->angle_num, sizeof(pconfig->angle_num));
+	memcpy(current, &pconfig->angle_current, sizeof(pconfig->angle_current));
+	memcpy(num, &pconfig->angle_num, sizeof(pconfig->angle_num));
 }
 
 // get last colortable for 8bit mode (4 colors)
 void ddvd_get_last_colortable(struct ddvd *pconfig, void *colortable)
 {
-	memmove(colortable, pconfig->last_col, sizeof(pconfig->last_col));
+	memcpy(colortable, pconfig->last_col, sizeof(pconfig->last_col));
 }
 
 // get last received playing time as struct ddvd_time
 void ddvd_get_last_time(struct ddvd *pconfig, void *timestamp)
 {
-	memmove(timestamp, &pconfig->last_time, sizeof(pconfig->last_time));
+	memcpy(timestamp, &pconfig->last_time, sizeof(pconfig->last_time));
 }
 
 // get the actual trickspeed (2-64x) when in trickmode
 void ddvd_get_last_trickspeed(struct ddvd *pconfig, void *trickspeed)
 {
-	memmove(trickspeed, &pconfig->last_trickspeed, sizeof(pconfig->last_trickspeed));
+	memcpy(trickspeed, &pconfig->last_trickspeed, sizeof(pconfig->last_trickspeed));
 }
 
 // get last text message from player
 void ddvd_get_last_string(struct ddvd *pconfig, void *text)
 {
-	memmove(text, pconfig->last_string, sizeof(pconfig->last_string));
+	memcpy(text, pconfig->last_string, sizeof(pconfig->last_string));
 }
 
 // get the number of available audio tracks
@@ -412,15 +412,15 @@ void ddvd_get_audio_count(struct ddvd *pconfig, void *count)
 		if ( pconfig->audio_format[i] != -1 )
 			c++;
 	}
-	memmove(count, &c, sizeof(int));
+	memcpy(count, &c, sizeof(int));
 }
 
 // get the active audio track
 void ddvd_get_last_audio(struct ddvd *pconfig, void *id, void *lang, void *type)
 {
-	memmove(id, &pconfig->last_audio_id, sizeof(pconfig->last_audio_id));
-	memmove(lang, &pconfig->last_audio_lang, sizeof(pconfig->last_audio_lang));
-	memmove(type, &pconfig->last_audio_type, sizeof(pconfig->last_audio_type));
+	memcpy(id, &pconfig->last_audio_id, sizeof(pconfig->last_audio_id));
+	memcpy(lang, &pconfig->last_audio_lang, sizeof(pconfig->last_audio_lang));
+	memcpy(type, &pconfig->last_audio_type, sizeof(pconfig->last_audio_type));
 }
 
 // get audio track details for given audio track id
@@ -432,15 +432,15 @@ void ddvd_get_audio_byid(struct ddvd *pconfig, int audio_id, void *lang, void *t
 	audio_lang = dvdnav_audio_stream_to_lang(dvdnav, audio_id_logical);
 	if (audio_lang == 0xFFFF)
 		audio_lang = 0x2D2D;
-	memmove(lang, &audio_lang, sizeof(uint16_t));
-	memmove(type, &pconfig->audio_format[audio_id], sizeof(int));
+	memcpy(lang, &audio_lang, sizeof(uint16_t));
+	memcpy(type, &pconfig->audio_format[audio_id], sizeof(int));
 }
 
 // get the active SPU track
 void ddvd_get_last_spu(struct ddvd *pconfig, void *id, void *lang)
 {
-	memmove(id, &pconfig->last_spu_id, sizeof(pconfig->last_spu_id));
-	memmove(lang, &pconfig->last_spu_lang, sizeof(pconfig->last_spu_lang));
+	memcpy(id, &pconfig->last_spu_id, sizeof(pconfig->last_spu_id));
+	memcpy(lang, &pconfig->last_spu_lang, sizeof(pconfig->last_spu_lang));
 }
 
 // get the number of available subtitle tracks
@@ -453,7 +453,7 @@ void ddvd_get_spu_count(struct ddvd *pconfig, void *count)
 		if ( pconfig->spu_map[i] != -1 )
 			c++;
 	}
-	memmove(count, &c, sizeof(int));
+	memcpy(count, &c, sizeof(int));
 }
 
 // get audio track details for given subtitle track id
@@ -462,25 +462,25 @@ void ddvd_get_spu_byid(struct ddvd *pconfig, int spu_id, void *lang)
 	uint16_t spu_lang = 0xFFFF;
 	if (spu_id < MAX_SPU & pconfig->spu_map[spu_id] > -1)
 		spu_lang = dvdnav_spu_stream_to_lang(dvdnav, pconfig->spu_map[spu_id]);
-	memmove(lang, &spu_lang, sizeof(uint16_t));
+	memcpy(lang, &spu_lang, sizeof(uint16_t));
 }
 
 // get dvd title string
 void ddvd_get_title_string(struct ddvd *pconfig, char *title_string)
 {
-	memmove(title_string, pconfig->title_string, sizeof(pconfig->title_string));
+	memcpy(title_string, pconfig->title_string, sizeof(pconfig->title_string));
 }
 
 // get actual position for resuming
 void ddvd_get_resume_pos(struct ddvd *pconfig, struct ddvd_resume *resume_info)
 {
-	memmove(&resume_info->title, &pconfig->resume_title, sizeof(pconfig->resume_title));
-	memmove(&resume_info->chapter, &pconfig->resume_chapter, sizeof(pconfig->resume_chapter));
-	memmove(&resume_info->block, &pconfig->resume_block, sizeof(pconfig->resume_block));
-	memmove(&resume_info->audio_id, &pconfig->resume_audio_id, sizeof(pconfig->resume_audio_id));
-	memmove(&resume_info->audio_lock, &pconfig->resume_audio_lock, sizeof(pconfig->resume_audio_lock));
-	memmove(&resume_info->spu_id, &pconfig->resume_spu_id, sizeof(pconfig->resume_spu_id));
-	memmove(&resume_info->spu_lock, &pconfig->resume_spu_lock, sizeof(pconfig->resume_spu_lock));
+	memcpy(&resume_info->title, &pconfig->resume_title, sizeof(pconfig->resume_title));
+	memcpy(&resume_info->chapter, &pconfig->resume_chapter, sizeof(pconfig->resume_chapter));
+	memcpy(&resume_info->block, &pconfig->resume_block, sizeof(pconfig->resume_block));
+	memcpy(&resume_info->audio_id, &pconfig->resume_audio_id, sizeof(pconfig->resume_audio_id));
+	memcpy(&resume_info->audio_lock, &pconfig->resume_audio_lock, sizeof(pconfig->resume_audio_lock));
+	memcpy(&resume_info->spu_id, &pconfig->resume_spu_id, sizeof(pconfig->resume_spu_id));
+	memcpy(&resume_info->spu_lock, &pconfig->resume_spu_lock, sizeof(pconfig->resume_spu_lock));
 }
 
 void ddvd_get_last_size(struct ddvd *pconfig, int *width, int *height, int *aspect)
@@ -843,7 +843,7 @@ enum ddvd_result ddvd_run(struct ddvd *playerconfig)
 
 	struct ddvd_spu_return last_spu_return;
 	struct ddvd_resize_return last_blit_area;
-	memmove(&last_blit_area,&blit_area,sizeof(struct ddvd_resize_return));
+	memcpy(&last_blit_area,&blit_area,sizeof(struct ddvd_resize_return));
 	last_spu_return.x_start = last_spu_return.y_start = 0;
 	last_spu_return.x_end = last_spu_return.y_end = 0;
 	
@@ -1199,7 +1199,7 @@ send_message:
 						}
 
 						if (padding > 8) {
-							memmove(buf+14+pes_len, "\x00\x00\x01\xE0\x00\x00\x80\x00\x00", 9);
+							memcpy(buf+14+pes_len, "\x00\x00\x01\xE0\x00\x00\x80\x00\x00", 9);
 							pes_len += 9;
 						}
 
@@ -1258,10 +1258,10 @@ send_message:
 								int skip = buf[14+8] + 9; // skip complete pes header
 								len -= skip;
 								if (ddvd_last_iframe_len == 0) { // add simple pes header without pts
-									memmove(last_iframe, "\x00\x00\x01\xE0\x00\x00\x80\x00\x00", 9);
+									memcpy(last_iframe, "\x00\x00\x01\xE0\x00\x00\x80\x00\x00", 9);
 									ddvd_last_iframe_len += 9;
 								}
-								memmove(last_iframe + ddvd_last_iframe_len, buf + 14 + skip, len);
+								memcpy(last_iframe + ddvd_last_iframe_len, buf + 14 + skip, len);
 								ddvd_last_iframe_len += len;
 							}
 						}
@@ -1340,7 +1340,7 @@ send_message:
 						char abuf[(((buf[18] << 8) | buf[19]) - buf[22] - 14)];
     #if BYTE_ORDER == BIG_ENDIAN
 						// just copy, byte order is correct on ppc machines
-						memmove(abuf, buf + 14 + buf[14 + 8] + 9 + 7, (((buf[18] << 8) | buf[19]) - buf[22] - 14));
+						memcpy(abuf, buf + 14 + buf[14 + 8] + 9 + 7, (((buf[18] << 8) | buf[19]) - buf[22] - 14));
 						i = (((buf[18] << 8) | buf[19]) - buf[22] - 14);
     #else
 						// byte swapping .. we become the wrong byteorder on lpcm on the 7025
@@ -1355,11 +1355,11 @@ send_message:
 						// oss will break the pic/sound sync. So believe it or not, this is the 
 						// smartest way to get a synced lpcm track ;-)
 						if (ddvd_lpcm_count == 0) {	// save mpeg header with pts
-							memmove(mpa_data, buf + 14, buf[14 + 8] + 9);
+							memcpy(mpa_data, buf + 14, buf[14 + 8] + 9);
 							mpa_header_length = buf[14 + 8] + 9;
 						}
 						if (ddvd_lpcm_count + i >= 4608) {	//we have to send 4608 bytes to the encoder
-							memmove(lpcm_data + ddvd_lpcm_count, abuf, 4608 - ddvd_lpcm_count);
+							memcpy(lpcm_data + ddvd_lpcm_count, abuf, 4608 - ddvd_lpcm_count);
 							//encode
 							mpa_count = ddvd_mpa_encode_frame(mpa_data + mpa_header_length, 4608, lpcm_data);
 							//patch pes__packet_length
@@ -1370,12 +1370,12 @@ send_message:
 							mpa_data[3] = 0xC0;
 							//write
 							safe_write(ddvd_ac3_fd, mpa_data, mpa_count + mpa_header_length);
-							memmove(lpcm_data, abuf + (4608 - ddvd_lpcm_count), i - (4608 - ddvd_lpcm_count));
+							memcpy(lpcm_data, abuf + (4608 - ddvd_lpcm_count), i - (4608 - ddvd_lpcm_count));
 							ddvd_lpcm_count = i - (4608 - ddvd_lpcm_count);
-							memmove(mpa_data, buf + 14, buf[14 + 8] + 9);
+							memcpy(mpa_data, buf + 14, buf[14 + 8] + 9);
 							mpa_header_length = buf[14 + 8] + 9;
 						} else {
-							memmove(lpcm_data + ddvd_lpcm_count, abuf, i);
+							memcpy(lpcm_data + ddvd_lpcm_count, abuf, i);
 							ddvd_lpcm_count += i;
 						}
 #else
@@ -1518,7 +1518,7 @@ send_message:
 							ac3_len = ddvd_ac3_decode(buf + buf[22] + 27, ((buf[18] << 8) | buf[19]) - buf[22] - 7, ac3_tmp);
 
 							// save the pes header incl. PTS
-							memmove(mpa_data, buf + 14, buf[14 + 8] + 9);
+							memcpy(mpa_data, buf + 14, buf[14 + 8] + 9);
 							mpa_header_length = buf[14 + 8] + 9;
 
 							//apts-=(((unsigned long long)(ddvd_lpcm_count)*90)/192);
@@ -1529,7 +1529,7 @@ send_message:
 							//mpa_data[10]=(int)((apts>>22)&0xFF);
 
 							// copy lpcm data into buffer for encoding
-							memmove(lpcm_data + ddvd_lpcm_count, ac3_tmp, ac3_len);
+							memcpy(lpcm_data + ddvd_lpcm_count, ac3_tmp, ac3_len);
 							ddvd_lpcm_count += ac3_len;
 
 							// encode the whole packet to mpa
@@ -1538,7 +1538,7 @@ send_message:
 								mpa_count = ddvd_mpa_encode_frame(mpa_data + mpa_header_length + mpa_count2, 4608, lpcm_data);
 								mpa_count2 += mpa_count;
 								ddvd_lpcm_count -= 4608;
-								memmove(lpcm_data, lpcm_data + 4608, ddvd_lpcm_count);
+								memcpy(lpcm_data, lpcm_data + 4608, ddvd_lpcm_count);
 							}
 
 							// patch pes__packet_length
@@ -1554,7 +1554,7 @@ send_message:
 
 						}
 					} else if ((buf[14 + 3]) == 0xBD && ((buf[14 + buf[14 + 8] + 9]) & 0xE0) == 0x20 && ((buf[14 + buf[14 + 8] + 9]) & 0x1F) == spu_active_id) {	// SPU packet
-						memmove(spu_buffer + ddvd_spu_ptr, buf + buf[22] + 14 + 10, 2048 - (buf[22] + 14 + 10));
+						memcpy(spu_buffer + ddvd_spu_ptr, buf + buf[22] + 14 + 10, 2048 - (buf[22] + 14 + 10));
 						ddvd_spu_ptr += 2048 - (buf[22] + 14 + 10);
 
 						if (buf[14 + 7] & 128) {
@@ -1581,7 +1581,7 @@ send_message:
 							{
 								printf("dropped SPU frame\n");
 								int tmplen = (spu_backbuffer[0] << 8 | spu_backbuffer[1]);
-								memmove(spu_backbuffer, spu_backbuffer + tmplen, ddvd_spu_backptr - tmplen);	// delete oldest SPU packet
+								memcpy(spu_backbuffer, spu_backbuffer + tmplen, ddvd_spu_backptr - tmplen);	// delete oldest SPU packet
 								int i;
 								for (i = 0; i < NUM_SPU_BACKBUFFER - 1; ++i)
 									spu_backpts[i] = spu_backpts[i + 1];
@@ -1589,7 +1589,7 @@ send_message:
 								ddvd_spu_backptr -= tmplen;
 							}
 
-							memmove(spu_backbuffer + ddvd_spu_backptr, spu_buffer, (spu_buffer[0] << 8 | spu_buffer[1]));	// copy into backbuffer
+							memcpy(spu_backbuffer + ddvd_spu_backptr, spu_buffer, (spu_buffer[0] << 8 | spu_buffer[1]));	// copy into backbuffer
 							spu_backpts[ddvd_spu_backnr++] = spts;	// store pts
 							ddvd_spu_backptr += (spu_buffer[0] << 8 | spu_buffer[1]);	// increase ptr
 
@@ -1637,7 +1637,7 @@ send_message:
 					int i = 0, i2 = 0;
 					uint8_t pal[16 * 4];
 #if BYTE_ORDER == BIG_ENDIAN
-					memmove(pal, buf, 16 * sizeof(uint32_t));
+					memcpy(pal, buf, 16 * sizeof(uint32_t));
 #else
 					for (; i < 16; ++i)
 						*(int *)(pal + i * 4) = htonl(*(int *)(buf + i * 4));
@@ -1741,7 +1741,7 @@ send_message:
 					dsi = dvdnav_get_current_nav_dsi(dvdnav);
 					dvdnav_highlight_area_t hl;
 					
-					memmove(&blit_area,&last_blit_area,sizeof(struct ddvd_resize_return));
+					memcpy(&blit_area,&last_blit_area,sizeof(struct ddvd_resize_return));
 					memset(p_lfb, 0, ddvd_screeninfo_stride * ddvd_screeninfo_yres);	//clear backbuffer .. 
 					msg = DDVD_SCREEN_UPDATE;	// wipe old highlight
 					safe_write(message_pipe, &msg, sizeof(int));
@@ -1793,7 +1793,7 @@ send_message:
 							//copy button into screen
 							for (i = btni->y_start; i < btni->y_end; i++) {
 								if (ddvd_screeninfo_bypp == 1)
-									memmove(ddvd_lbb2 + btni->x_start + 720 * (i),
+									memcpy(ddvd_lbb2 + btni->x_start + 720 * (i),
 									       ddvd_lbb + btni->x_start + 720 * (i),
 									       btni->x_end - btni->x_start);
 								else
@@ -1834,7 +1834,7 @@ send_message:
 						//copy button into screen
 						for (i = hl.sy; i < hl.ey; i++) {
 							if (ddvd_screeninfo_bypp == 1)
-								memmove(ddvd_lbb2 + hl.sx + 720 * (i),
+								memcpy(ddvd_lbb2 + hl.sx + 720 * (i),
 								       ddvd_lbb + hl.sx + 720 * (i), hl.ex - hl.sx);
 							else
 								ddvd_blit_to_argb(ddvd_lbb2 + hl.sx * ddvd_screeninfo_bypp + 720 * ddvd_screeninfo_bypp * i,
@@ -1876,13 +1876,13 @@ send_message:
 							blit_area.x_offset = x_offset;
 							blit_area.y_offset = y_offset;
 						}
-						memmove(p_lfb, ddvd_lbb2, ddvd_screeninfo_xres * ddvd_screeninfo_yres * ddvd_screeninfo_bypp); //copy backbuffer into screen
+						memcpy(p_lfb, ddvd_lbb2, ddvd_screeninfo_xres * ddvd_screeninfo_yres * ddvd_screeninfo_bypp); //copy backbuffer into screen
 						//printf("needed time for resizing: %d ms\n",(int)(ddvd_get_time()-start));
 						//printf("destination area to blit: %d %d %d %d\n",blit_area.x_start,blit_area.x_end,blit_area.y_start,blit_area.y_end);
 						msg = DDVD_SCREEN_UPDATE;
 						safe_write(message_pipe, &msg, sizeof(int));
 						safe_write(message_pipe, &blit_area, sizeof(struct ddvd_resize_return));
-						memmove(&last_blit_area,&blit_area,sizeof(struct ddvd_resize_return)); // safe blit area for next wipe
+						memcpy(&last_blit_area,&blit_area,sizeof(struct ddvd_resize_return)); // safe blit area for next wipe
 					}
 				} else {
 					ddvd_clear_buttons = 0;
@@ -1944,7 +1944,7 @@ send_message:
 			case DVDNAV_CELL_CHANGE:
 				{
 					/* Store new cell information */
-					memmove(&ddvd_lastCellEventInfo, buf, sizeof(dvdnav_cell_change_event_t));
+					memcpy(&ddvd_lastCellEventInfo, buf, sizeof(dvdnav_cell_change_event_t));
 
 					if ((ddvd_still_frame & CELL_STILL) && ddvd_iframesend == 0 && ddvd_last_iframe_len)
 						ddvd_iframesend = 1;
@@ -2132,7 +2132,7 @@ send_message:
 			}
 			msg = DDVD_NULL;
 
-			memmove(spu_backbuffer, spu_backbuffer + tmplen, ddvd_spu_backptr - tmplen);	// delete SPU packet
+			memcpy(spu_backbuffer, spu_backbuffer + tmplen, ddvd_spu_backptr - tmplen);	// delete SPU packet
 			int i;
 			for (i = 0; i < NUM_SPU_BACKBUFFER - 1; ++i)
 				spu_backpts[i] = spu_backpts[i + 1];
@@ -2590,7 +2590,7 @@ key_play:
 		if (ddvd_lbb_changed == 1) {
 			
 			if (ddvd_screeninfo_bypp == 1)
-				memmove(ddvd_lbb2, ddvd_lbb, 720 * 576);
+				memcpy(ddvd_lbb2, ddvd_lbb, 720 * 576);
 			else {
 				int i = 0;
 				for (i = last_spu_return.y_start; i < last_spu_return.y_end; ++i)
@@ -2621,7 +2621,7 @@ key_play:
 				blit_area = ddvd_resize_pixmap_spu(ddvd_lbb2, 720, y_source, ddvd_screeninfo_xres, ddvd_screeninfo_yres, x_offset, y_offset, blit_area.x_start, blit_area.x_end, blit_area.y_start, blit_area.y_end, ddvd_screeninfo_bypp); // resize
 				resized = 1;
 			}
-			memmove(p_lfb, ddvd_lbb2, ddvd_screeninfo_xres * ddvd_screeninfo_yres * ddvd_screeninfo_bypp); //copy backbuffer into screen
+			memcpy(p_lfb, ddvd_lbb2, ddvd_screeninfo_xres * ddvd_screeninfo_yres * ddvd_screeninfo_bypp); //copy backbuffer into screen
 
 			if (resized)
 			{
@@ -3111,7 +3111,7 @@ struct ddvd_resize_return ddvd_resize_pixmap_xbpp(unsigned char *pixmap, int xso
 	
 	unsigned char *pixmap_tmp;
 	pixmap_tmp = (unsigned char *)malloc(xsource*ysource*colors);
-	memmove(pixmap_tmp, pixmap, xsource*ysource*colors);
+	memcpy(pixmap_tmp, pixmap, xsource*ysource*colors);
 	memset(pixmap, 0, xdest * ydest * colors);	//clear screen ..
 	struct ddvd_resize_return return_code;
 	
@@ -3152,7 +3152,7 @@ struct ddvd_resize_return ddvd_resize_pixmap_xbpp_smooth(unsigned char *pixmap, 
 	yd=ydest; // y-resolution destination
 	unsigned char *pixmap_tmp;
 	pixmap_tmp = (unsigned char *)malloc(xsource*ysource*colors);
-	memmove(pixmap_tmp, pixmap, xsource*ysource*colors);
+	memcpy(pixmap_tmp, pixmap, xsource*ysource*colors);
 	memset(pixmap, 0, xdest * ydest * colors);	//clear screen ..
 	struct ddvd_resize_return return_code;
 	
@@ -3230,7 +3230,7 @@ struct ddvd_resize_return ddvd_resize_pixmap_1bpp(unsigned char *pixmap, int xso
 {
 	unsigned char *pixmap_tmp;
 	pixmap_tmp = (unsigned char *)malloc(xsource * ysource * colors);
-	memmove(pixmap_tmp, pixmap, xsource * ysource * colors);
+	memcpy(pixmap_tmp, pixmap, xsource * ysource * colors);
 	memset(pixmap, 0, xdest * ydest * colors);	//clear screen ..
 	struct ddvd_resize_return return_code;
 	
@@ -3257,7 +3257,7 @@ struct ddvd_resize_return ddvd_resize_pixmap_1bpp(unsigned char *pixmap, int xso
 	{
 		tmp=(fy*i)/10;
 		if (tmp != i)
-			memmove(pixmap + (i*xdest), pixmap + (tmp + yoffset) * xdest, xdest);
+			memcpy(pixmap + (i*xdest), pixmap + (tmp + yoffset) * xdest, xdest);
 	}	
 	free(pixmap_tmp);
 	

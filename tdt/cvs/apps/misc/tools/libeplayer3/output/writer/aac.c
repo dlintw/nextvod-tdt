@@ -140,7 +140,7 @@ static int writeData(void* _call)
         call->private_size = AAC_HEADER_LENGTH;
     }
 
-    memmove (ExtraData, call->private_data, AAC_HEADER_LENGTH);
+    memcpy (ExtraData, call->private_data, AAC_HEADER_LENGTH);
     ExtraData[3]       |= (PacketLength >> 12) & 0x3;
     ExtraData[4]        = (PacketLength >> 3) & 0xff;
     ExtraData[5]       |= (PacketLength << 5) & 0xe0;
@@ -148,9 +148,9 @@ static int writeData(void* _call)
     unsigned int  HeaderLength = InsertPesHeader (PesHeader, PacketLength, AAC_AUDIO_PES_START_CODE, call->Pts, 0);
 
     unsigned char* PacketStart = malloc(HeaderLength + sizeof(ExtraData) + call->len);
-    memmove (PacketStart, PesHeader, HeaderLength);
-    memmove (PacketStart + HeaderLength, ExtraData, sizeof(ExtraData));
-    memmove (PacketStart + HeaderLength + sizeof(ExtraData), call->data, call->len);
+    memcpy (PacketStart, PesHeader, HeaderLength);
+    memcpy (PacketStart + HeaderLength, ExtraData, sizeof(ExtraData));
+    memcpy (PacketStart + HeaderLength + sizeof(ExtraData), call->data, call->len);
 
     aac_printf(100, "H %d d %d ExtraData %d\n", HeaderLength, call->len, sizeof(ExtraData));
 

@@ -199,7 +199,7 @@ void setMessageToDisplay ( char* str )
 
 	i = strlen ( str );
 	if ( i > 16 ) i = 16;
-	memmove ( writedisp_data.data, str, i );	
+	memcpy ( writedisp_data.data, str, i );	
 
 	writedisp_data.start = 0;
 	writedisp_data.length = 16;
@@ -239,7 +239,7 @@ void centeredText(char* text) {
 	
 	char *textout = malloc(16);
 	memset(textout, ' ', 16);
-	memmove(textout+ws, text, 16-ws);
+	memcpy(textout+ws, text, 16-ws);
 	setMessageToDisplay(textout);
 	free(textout);
 }
@@ -250,18 +250,18 @@ void scrollText(char* text) {
 
 	for (i=0; i<=(len-16); i++) { // scroll text till end
 		memset(out, ' ', 16);
-		memmove(out, text+i, 16);
+		memcpy(out, text+i, 16);
 		setMessageToDisplay(out);
 		usleep(SLEEPTIME);
 	}
 	for (i=1; i<16; i++) { // scroll text with whitespaces from right
 		memset(out, ' ', 16);
-		memmove(out, text+len+i-16, 16-i);
+		memcpy(out, text+len+i-16, 16-i);
 		setMessageToDisplay(out);
 		usleep(SLEEPTIME);
 	}
 
-	memmove(out, text, 16); // display first 16 chars after scrolling
+	memcpy(out, text, 16); // display first 16 chars after scrolling
 	setMessageToDisplay(out);
 	free (out);
 }
@@ -362,10 +362,10 @@ void appendToOutput(char c) {
 void refreshDisp() {
 	memset(&outbuffer[offset], ' ', 16-offset);
 	if (position>15-offset) {
-		memmove(&outbuffer[offset], &input[position-15+offset], 15-offset);
+		memcpy(&outbuffer[offset], &input[position-15+offset], 15-offset);
 		outbuffer[15]=IN_CHAR;
 	} else {
-		memmove(&outbuffer[offset], &input, position);
+		memcpy(&outbuffer[offset], &input, position);
 		outbuffer[position+offset]=IN_CHAR;
 	}
 	setMessageToDisplay(outbuffer);
@@ -393,7 +393,7 @@ void inputRemote(char* text) {
 	if (text!=(void*)0) {
 		offset=strlen(text);
 		if (offset>10) offset=10;
-		memmove(outbuffer, text, offset);
+		memcpy(outbuffer, text, offset);
 	}
 
 	outbuffer[offset] = IN_CHAR;
@@ -417,7 +417,7 @@ void inputRemote(char* text) {
 				break;
 			} else if (in==53 && in2==67) {
 				char* out = (char*)malloc(position+1);
-				memmove(out, &input, position);
+				memcpy(out, &input, position);
 				*(out+position)= 0x00;
 				printf("%s",out);
 				break;
@@ -477,7 +477,7 @@ void setMessageToDisplayEx ( char* str, int len )
 	memset ( writedisp_data.data, ' ', 16 );
 
 	if ( len > 16 ) len = 16;
-	memmove ( writedisp_data.data, str, len );	
+	memcpy ( writedisp_data.data, str, len );
 
 	writedisp_data.start = 0;
 	writedisp_data.length = 16;

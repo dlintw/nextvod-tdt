@@ -137,7 +137,7 @@ static int writeData(void* _call)
 
     wmv_printf(10, "Got Private Size %d\n", call->private_size);
 
-    memmove(private_data->privateData, call->private_data,
+    memcpy(private_data->privateData, call->private_data,
            call->private_size>WMV3_PRIVATE_DATA_LENGTH?WMV3_PRIVATE_DATA_LENGTH:call->private_size);
 
     private_data->width = call->Width;
@@ -174,10 +174,10 @@ static int writeData(void* _call)
 
         PesPtr          = &PesPacket[PES_MIN_HEADER_SIZE];
 
-        memmove (PesPtr, Metadata, sizeof(Metadata));
+        memcpy (PesPtr, Metadata, sizeof(Metadata));
         PesPtr         += METADATA_STRUCT_C_START;
 
-        memmove (PesPtr, private_data->privateData, WMV3_PRIVATE_DATA_LENGTH);
+        memcpy (PesPtr, private_data->privateData, WMV3_PRIVATE_DATA_LENGTH);
         PesPtr             += WMV3_PRIVATE_DATA_LENGTH;
 
         /* Metadata Header Struct A */
@@ -242,8 +242,8 @@ static int writeData(void* _call)
             }
 
             PacketStart = malloc(call->len + HeaderLength);
-            memmove (PacketStart, PesHeader, HeaderLength);
-            memmove (PacketStart + HeaderLength, call->data + Position, PacketLength);
+            memcpy (PacketStart, PesHeader, HeaderLength);
+            memcpy (PacketStart + HeaderLength, call->data + Position, PacketLength);
 
             len = write(call->fd, PacketStart, PacketLength + HeaderLength);
             free(PacketStart);

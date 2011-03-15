@@ -216,7 +216,7 @@ int CCAMMenuHandler::handleCamMsg (const neutrino_msg_t msg, neutrino_msg_data_t
 		else
                    printf("NeutrinoMessages::EVT_CI_MMI_LIST \n");
 		
-		memmove(pMenu, (MMI_MENU_LIST_INFO*) data, sizeof(MMI_MENU_LIST_INFO));
+		memcpy(pMenu, (MMI_MENU_LIST_INFO*) data, sizeof(MMI_MENU_LIST_INFO));
 		free((void *)data);
 
 		curslot = pMenu->slot;
@@ -302,7 +302,7 @@ printf("CCAMMenuHandler::handleCamMsg: bottom: %s\n", pMenu->bottom);
 		}
 	}
 	else if(msg == NeutrinoMessages::EVT_CI_MMI_REQUEST_INPUT) {
-		memmove(pMmiEnquiry, (MMI_ENGUIRY_INFO*) data, sizeof(MMI_ENGUIRY_INFO));
+		memcpy(pMmiEnquiry, (MMI_ENGUIRY_INFO*) data, sizeof(MMI_ENGUIRY_INFO));
 		free((void *)data);
 		curslot = pMmiEnquiry->slot;
 		printf("CCAMMenuHandler::handleCamMsg: slot %d input request, text %s\n", curslot, convertDVBUTF8(pMmiEnquiry->enguiryText, strlen(pMmiEnquiry->enguiryText), 0).c_str());

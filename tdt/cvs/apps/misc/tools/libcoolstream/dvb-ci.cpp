@@ -225,11 +225,11 @@ eData sendData(tSlot* slot, unsigned char* data, int len)
 	{
 	   if ((data[2] >= T_SB) && (data[2] <= T_NEW_T_C))
 	   {
-	      memmove(d, data, len);
+	      memcpy(d, data, len);
 	   } else
 	   {
 	      //send data_last and data
-	      memmove(d + 5, data, len);
+	      memcpy(d + 5, data, len);
 
 	      d[0] = slot->slot;
 	      d[1] = slot->connection_id;
@@ -332,7 +332,7 @@ void cDvbCi::process_tpdu(tSlot* slot, unsigned char tpdu_tag, __u8* data, int a
 	
 		slot->receivedData = new_data_buffer;
 
-		memmove(slot->receivedData + slot->receivedLen, data, asn_data_length);
+		memcpy(slot->receivedData + slot->receivedLen, data, asn_data_length);
 		
 		slot->receivedLen = new_data_length;
 					
@@ -370,7 +370,7 @@ void cDvbCi::process_tpdu(tSlot* slot, unsigned char tpdu_tag, __u8* data, int a
 	
 			slot->receivedData = new_data_buffer;
 
-			memmove(slot->receivedData + slot->receivedLen, data, asn_data_length);
+			memcpy(slot->receivedData + slot->receivedLen, data, asn_data_length);
 		
 			slot->receivedLen = new_data_length;
 					

@@ -133,7 +133,7 @@ unsigned short parse_ES_info(const unsigned char * const buffer, CZapitChannel *
 			case 0x56: /* teletext descriptor */
 				for (unsigned char fIdx=0;fIdx<fieldCount;fIdx++) {
 					char tmpLang[4];
-					memmove(tmpLang, &buffer[pos + 5*fIdx + 2], 3);
+					memcpy(tmpLang, &buffer[pos + 5*fIdx + 2], 3);
 					tmpLang[3] = '\0';
 					unsigned char teletext_type=buffer[pos + 5*fIdx + 5]>> 3;
 					unsigned char teletext_magazine_number = buffer[pos + 5*fIdx + 5] & 7;
@@ -156,7 +156,7 @@ unsigned short parse_ES_info(const unsigned char * const buffer, CZapitChannel *
 					unsigned char fieldCount=descriptor_length/8;
 					for (unsigned char fIdx=0;fIdx<fieldCount;fIdx++){
 						char tmpLang[4];
-						memmove(tmpLang,&buffer[pos + 8*fIdx + 2],3);
+						memcpy(tmpLang,&buffer[pos + 8*fIdx + 2],3);
 						tmpLang[3] = '\0';
 						unsigned char subtitling_type=buffer[pos+8*fIdx+5];
 						unsigned short composition_page_id=

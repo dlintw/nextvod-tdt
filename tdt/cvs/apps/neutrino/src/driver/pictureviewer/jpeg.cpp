@@ -233,7 +233,7 @@ int fh_jpeg_load_local(const char *filename,unsigned char **buffer,int* x,int* y
 		while(ciptr->output_scanline < ciptr->output_height)
 		{
 			jpeg_read_scanlines(ciptr, &lb, 1);
-			memmove(bp,lb,px*c);
+			memcpy(bp,lb,px*c);
 			bp+=px*c;
 		}                 
 

@@ -276,7 +276,7 @@ int handle_upstream(void)
 			return 1;
 		}
 		
-		memmove(response_line + response_p, c, valid);
+		memcpy(response_line + response_p, c, valid);
 		c += valid;
 		response_p += valid;
 		n -= valid;
@@ -388,7 +388,7 @@ int handle_upstream_line(void)
 			const char *p = strchr(response_line, ':');
 			int old_active_pids[MAX_PIDS];
 			
-			memmove(old_active_pids, active_pids, sizeof(active_pids));
+			memcpy(old_active_pids, active_pids, sizeof(active_pids));
 			
 			int nr_pids = 0, i, j;
 			while (p)

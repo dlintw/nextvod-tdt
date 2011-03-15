@@ -555,9 +555,9 @@ void CPictureViewer::showBusy (int sx, int sy, int width, char r, char g, char b
 
   for (int y = sy; y < sy + width; y++) {
 	for (int x = sx; x < sx + width; x++) {
-	  memmove (busy_buffer_wrk, fb + y * stride + x * cpp, cpp);
+	  memcpy (busy_buffer_wrk, fb + y * stride + x * cpp, cpp);
 	  busy_buffer_wrk += cpp;
-	  memmove (fb + y * stride + x * cpp, fb_buffer, cpp);
+	  memcpy (fb + y * stride + x * cpp, fb_buffer, cpp);
 	}
   }
   m_busy_x = sx;
@@ -579,7 +579,7 @@ void CPictureViewer::hideBusy ()
 
 	for (int y = m_busy_y; y < m_busy_y + m_busy_width; y++) {
 	  for (int x = m_busy_x; x < m_busy_x + m_busy_width; x++) {
-		memmove (fb + y * stride + x * m_busy_cpp, busy_buffer_wrk, m_busy_cpp);
+		memcpy (fb + y * stride + x * m_busy_cpp, busy_buffer_wrk, m_busy_cpp);
 		busy_buffer_wrk += m_busy_cpp;
 	  }
 	}

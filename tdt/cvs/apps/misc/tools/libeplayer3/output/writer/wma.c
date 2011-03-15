@@ -134,8 +134,8 @@ static int writeData(void* _call)
         HeaderLength = InsertPesHeader (PesHeader, call->private_size, MPEG_AUDIO_PES_START_CODE, 0, 0);
 
         unsigned char* PacketStart = malloc(call->private_size + HeaderLength);
-        memmove (PacketStart, PesHeader, HeaderLength);
-        memmove (PacketStart + HeaderLength, call->private_data, call->private_size);
+        memcpy (PacketStart, PesHeader, HeaderLength);
+        memcpy (PacketStart + HeaderLength, call->private_data, call->private_size);
 
         len = write(call->fd, PacketStart, call->private_size + HeaderLength);
 
@@ -151,8 +151,8 @@ static int writeData(void* _call)
         int HeaderLength = InsertPesHeader (PesHeader, call->len, MPEG_AUDIO_PES_START_CODE, call->Pts, 0);
 
         unsigned char* PacketStart = malloc(call->len + HeaderLength);
-        memmove (PacketStart, PesHeader, HeaderLength);
-        memmove (PacketStart + HeaderLength, call->data, call->len);
+        memcpy (PacketStart, PesHeader, HeaderLength);
+        memcpy (PacketStart + HeaderLength, call->data, call->len);
 
         len = write(call->fd, PacketStart, call->len + HeaderLength);
 

@@ -128,8 +128,8 @@ static int prepareClipPlay(int uNoOfChannels, int uSampleRate, int uBitsPerSampl
 	SubFramesPerPES = 0;
 	breakBufferFillSize = 0;
 
-	memmove(lpcm_pes, clpcm_pes, sizeof(lpcm_pes));
-	memmove(lpcm_prv, clpcm_prv, sizeof(lpcm_prv));
+	memcpy(lpcm_pes, clpcm_pes, sizeof(lpcm_pes));
+	memcpy(lpcm_prv, clpcm_prv, sizeof(lpcm_prv));
 
 	//figure out size of subframe
 	//and set up sample rate
@@ -238,7 +238,7 @@ static int writeData(void* _call)
 		if((size - pos) < SubFrameLen)
 		{
 			breakBufferFillSize = size - pos;
-			memmove(breakBuffer, &buffer[pos], sizeof(unsigned char) * breakBufferFillSize);
+			memcpy(breakBuffer, &buffer[pos], sizeof(unsigned char) * breakBufferFillSize);
 			//printf("PCM %s - Unplayed=%d\n", __FUNCTION__, breakBufferFillSize);
 			break;
 		}
@@ -246,21 +246,21 @@ static int writeData(void* _call)
                 //get first PES's worth
 		if(breakBufferFillSize > 0)
 		{
-			memmove(injectBufferDataPointer, breakBuffer, sizeof(unsigned char)*breakBufferFillSize);
-			memmove(&injectBufferDataPointer[breakBufferFillSize], &buffer[pos], sizeof(unsigned char)*(SubFrameLen - breakBufferFillSize));
+			memcpy(injectBufferDataPointer, breakBuffer, sizeof(unsigned char)*breakBufferFillSize);
+			memcpy(&injectBufferDataPointer[breakBufferFillSize], &buffer[pos], sizeof(unsigned char)*(SubFrameLen - breakBufferFillSize));
 			pos += (SubFrameLen - breakBufferFillSize);
 			breakBufferFillSize = 0;
 		} else
 		{
-		        memmove(injectBufferDataPointer, &buffer[pos], sizeof(unsigned char)*SubFrameLen);
+		        memcpy(injectBufferDataPointer, &buffer[pos], sizeof(unsigned char)*SubFrameLen);
 			pos += SubFrameLen;
 		}
 
 		//write the PES header
-		memmove(injectBuffer, lpcm_pes, sizeof(lpcm_pes));
+		memcpy(injectBuffer, lpcm_pes, sizeof(lpcm_pes));
 
 		//write the private data area
-		memmove(&injectBuffer[sizeof(lpcm_pes)], lpcm_prv, sizeof(lpcm_prv));
+		memcpy(&injectBuffer[sizeof(lpcm_pes)], lpcm_prv, sizeof(lpcm_prv));
 
 		//write the PCM data
 		if(pcmPrivateData->uBitsPerSample == 16) {
@@ -286,7 +286,7 @@ static int writeData(void* _call)
 				tmp[ 7]=injectBufferDataPointer[n+11];
 				tmp[ 8]=injectBufferDataPointer[n+10];
 				tmp[11]=injectBufferDataPointer[n+9];
-				memmove(&injectBufferDataPointer[n],tmp,12);
+				memcpy(&injectBufferDataPointer[n],tmp,12);
 			}
 		}
 

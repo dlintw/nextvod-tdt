@@ -146,9 +146,9 @@ static int writeData(void* _call)
 
     HeaderLength        = InsertPesHeader (PesHeader, call->len, MPEG_VIDEO_PES_START_CODE, call->Pts, FakeStartCode);
     unsigned char* PacketStart = malloc(call->len + HeaderLength + FakeHeaderLength);
-    memmove (PacketStart, PesHeader, HeaderLength);
-    memmove (PacketStart + HeaderLength, FakeHeaders, FakeHeaderLength);
-    memmove (PacketStart + HeaderLength + FakeHeaderLength, call->data, call->len);
+    memcpy (PacketStart, PesHeader, HeaderLength);
+    memcpy (PacketStart + HeaderLength, FakeHeaders, FakeHeaderLength);
+    memcpy (PacketStart + HeaderLength + FakeHeaderLength, call->data, call->len);
 
     int len = write(call->fd, PacketStart ,call->len + HeaderLength + FakeHeaderLength);
 

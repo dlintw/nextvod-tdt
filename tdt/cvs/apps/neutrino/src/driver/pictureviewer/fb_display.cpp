@@ -193,17 +193,17 @@ void blit2FB(void *fbbuff,
 		 case 1:
 			set332map();
 			for(i = 0; i < yc; i++){
-				 memmove(lfb+(i+yoffs)*stride+xoffs*cpp, cp + (i+yp)*pic_xs+xp,xc*cpp);
+				 memcpy(lfb+(i+yoffs)*stride+xoffs*cpp, cp + (i+yp)*pic_xs+xp,xc*cpp);
 			 }
 			 break;
 		 case 2:
 			 for(i = 0; i < yc; i++){
-				 memmove(lfb+(i+yoffs)*stride+xoffs*cpp, sp + (i+yp)*pic_xs+xp, xc*cpp);
+				 memcpy(lfb+(i+yoffs)*stride+xoffs*cpp, sp + (i+yp)*pic_xs+xp, xc*cpp);
 			 }
 			 break;
 		 case 4:
 			 for(i = 0; i < yc; i++){
-				 memmove(lfb+(i+yoffs)*stride+xoffs*cpp, ip + (i+yp)*pic_xs+xp, xc*cpp);
+				 memcpy(lfb+(i+yoffs)*stride+xoffs*cpp, ip + (i+yp)*pic_xs+xp, xc*cpp);
 			 }
 			 break;
 	 }
@@ -246,7 +246,7 @@ void clearFB(int bpp, int cpp)
 
 				for(i = 0; i < y*stride/2; i++)
 				   s_fbbuff[i] = black;
-				memmove(lfb, s_fbbuff, y*stride);
+				memcpy(lfb, s_fbbuff, y*stride);
 				free(s_fbbuff);
 			}
 			break;

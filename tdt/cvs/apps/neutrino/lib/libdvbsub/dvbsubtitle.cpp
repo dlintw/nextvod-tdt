@@ -623,7 +623,7 @@ unsigned char *cDvbSubtitleAssembler::Get(int &Length)
 void cDvbSubtitleAssembler::Put(const uchar *Data, int Length)
 {
   if (Length && Realloc(length + Length)) {
-     memmove(data + length, Data, Length);
+     memcpy(data + length, Data, Length);
      length += Length;
      }
 }
@@ -705,7 +705,7 @@ void cDvbSubtitleBitmaps::Draw()
 		int NumColors;
 		const tColor *Colors = bitmaps[i]->Colors(NumColors);
 		if (Colors) {
-			memmove(save_colors, Colors, sizeof(tColor)*NumColors);
+			memcpy(save_colors, Colors, sizeof(tColor)*NumColors);
 		}
 		/* center on screen */
 		int xoff = xs + (wd - bitmaps[i]->Width())/2;

@@ -179,11 +179,11 @@ bool cDemux::sectionFilter(unsigned short Pid, const unsigned char * const Tid,
 	//There seems to be something wrong, the given array is not 0 initialisied
 	//So just copy the first entry
 	if(Tid)
-		memmove(sct.filter.filter, Tid/*mask.data*/, /*DMX_FILTER_SIZE*/len * sizeof(unsigned char));
+		memcpy(sct.filter.filter, Tid/*mask.data*/, /*DMX_FILTER_SIZE*/len * sizeof(unsigned char));
 	if(Mask)
-		memmove(sct.filter.mask, Mask/*mask.mask*/, /*DMX_FILTER_SIZE*/len * sizeof(unsigned char));
+		memcpy(sct.filter.mask, Mask/*mask.mask*/, /*DMX_FILTER_SIZE*/len * sizeof(unsigned char));
 	if(nMask)
-		memmove(sct.filter.mode, nMask/*mask.mode*/, /*DMX_FILTER_SIZE*/len * sizeof(unsigned char));
+		memcpy(sct.filter.mode, nMask/*mask.mode*/, /*DMX_FILTER_SIZE*/len * sizeof(unsigned char));
 
 	if (ioctl(privateData->m_fd_demux, DMX_SET_FILTER, &sct) < 0)
 	{

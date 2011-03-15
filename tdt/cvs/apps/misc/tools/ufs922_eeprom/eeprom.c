@@ -924,7 +924,7 @@ int i2c_readreg(int fd_i2c, char addr, char* buffer, int len)
 	i2c_rdwr.msgs[0].len = len;
 	i2c_rdwr.msgs[0].buf = malloc(len);
 
-	memmove(i2c_rdwr.msgs[0].buf, buffer, len);
+	memcpy(i2c_rdwr.msgs[0].buf, buffer, len);
 
 	if((err = ioctl(fd_i2c, I2C_RDWR, &i2c_rdwr)) < 0)
 	{
@@ -936,7 +936,7 @@ int i2c_readreg(int fd_i2c, char addr, char* buffer, int len)
 		return -1;
 	}
 
-	memmove(buffer, i2c_rdwr.msgs[0].buf, len);
+	memcpy(buffer, i2c_rdwr.msgs[0].buf, len);
 	
 	free(i2c_rdwr.msgs[0].buf);
 	free(i2c_rdwr.msgs);
@@ -1002,7 +1002,7 @@ int main(int argc, char* argv[])
 			{
 				ufs922_slots[vLoopSlot].details[vLoop].buffer = malloc(ufs922_slots[vLoopSlot].details[vLoop].number_bytes + 1);
 				
-				memmove(ufs922_slots[vLoopSlot].details[vLoop].buffer, 
+				memcpy(ufs922_slots[vLoopSlot].details[vLoop].buffer, 
 					buffer + ufs922_slots[vLoopSlot].details[vLoop].first_byte,
 					ufs922_slots[vLoopSlot].details[vLoop].number_bytes);
 					
@@ -1021,7 +1021,7 @@ int main(int argc, char* argv[])
 				
 				ufs922_slots[vLoopSlot].details[vLoop].buffer = malloc(ufs922_slots[vLoopSlot].details[vLoop].number_bytes);
 				
-				memmove(ufs922_slots[vLoopSlot].details[vLoop].buffer, 
+				memcpy(ufs922_slots[vLoopSlot].details[vLoop].buffer, 
 					buffer + ufs922_slots[vLoopSlot].details[vLoop].first_byte,
 					ufs922_slots[vLoopSlot].details[vLoop].number_bytes);
 					
@@ -1049,7 +1049,7 @@ int main(int argc, char* argv[])
 
 				ufs922_slots[vLoopSlot].details[vLoop].buffer = malloc(ufs922_slots[vLoopSlot].details[vLoop].number_bytes);
 				
-				memmove(ufs922_slots[vLoopSlot].details[vLoop].buffer, 
+				memcpy(ufs922_slots[vLoopSlot].details[vLoop].buffer, 
 					buffer + ufs922_slots[vLoopSlot].details[vLoop].first_byte,
 					ufs922_slots[vLoopSlot].details[vLoop].number_bytes);
 					

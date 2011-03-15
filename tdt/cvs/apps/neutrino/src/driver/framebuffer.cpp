@@ -208,7 +208,7 @@ void CFrameBuffer::init(const char * const fbDevice)
 	screeninfo.bits_per_pixel = 32;
 #endif
 
-	memmove(&oldscreen, &screeninfo, sizeof(screeninfo));
+	memcpy(&oldscreen, &screeninfo, sizeof(screeninfo));
 
 	fb_fix_screeninfo fix;
 	if (ioctl(fd, FBIOGET_FSCREENINFO, &fix)<0) {
@@ -1591,7 +1591,7 @@ void CFrameBuffer::paintBackgroundBoxRel(int x, int y, int dx, int dy)
 #endif
 		for(int count = 0;count < dy; count++)
 		{
-			memmove(fbpos, bkpos, dx * sizeof(fb_pixel_t));
+			memcpy(fbpos, bkpos, dx * sizeof(fb_pixel_t));
 			fbpos += stride;
 #ifdef __sh__
 			bkpos += xRes;
@@ -1611,10 +1611,10 @@ void CFrameBuffer::paintBackground()
 	{
 #ifdef __sh__
 		for (int i = 0; i < yRes; i++)
-			memmove(((uint8_t *)getFrameBufferPointer()) + i * stride, (background + i * xRes), xRes * sizeof(fb_pixel_t));
+			memcpy(((uint8_t *)getFrameBufferPointer()) + i * stride, (background + i * xRes), xRes * sizeof(fb_pixel_t));
 #else
 		for (int i = 0; i < 576; i++)
-			memmove(((uint8_t *)getFrameBufferPointer()) + i * stride, (background + i * BACKGROUNDIMAGEWIDTH), BACKGROUNDIMAGEWIDTH * sizeof(fb_pixel_t));
+			memcpy(((uint8_t *)getFrameBufferPointer()) + i * stride, (background + i * BACKGROUNDIMAGEWIDTH), BACKGROUNDIMAGEWIDTH * sizeof(fb_pixel_t));
 #endif
 
 	}
@@ -1671,7 +1671,7 @@ void CFrameBuffer::SaveScreen(int x, int y, int dx, int dy, fb_pixel_t * const m
 	fb_pixel_t * bkpos = memp;
 	for (int count = 0; count < dy; count++)
 	{
-		memmove(bkpos, fbpos, dx * sizeof(fb_pixel_t));
+		memcpy(bkpos, fbpos, dx * sizeof(fb_pixel_t));
 		fbpos += stride;
 		bkpos += dx;
 	}
@@ -1704,7 +1704,7 @@ void CFrameBuffer::RestoreScreen(int x, int y, int dx, int dy, fb_pixel_t * cons
 				*fbpos = 0;	    // (but practically this only occurs when the screen is black during boot...)
 		else
 #endif
-			memmove(fbpos, bkpos, dx * sizeof(fb_pixel_t));
+			memcpy(fbpos, bkpos, dx * sizeof(fb_pixel_t));
 		fbpos += stride;
 		bkpos += dx;
 	}
@@ -1719,7 +1719,7 @@ void CFrameBuffer::switch_signal (int signal)
 		virtual_fb = new uint8_t[thiz->stride * thiz->yRes];
 		thiz->active = false;
 		if (virtual_fb != NULL)
-			memmove(virtual_fb, thiz->lfb, thiz->stride * thiz->yRes);
+			memcpy(virtual_fb, thiz->lfb, thiz->stride * thiz->yRes);
 		ioctl(thiz->tty, VT_RELDISP, 1);
 		printf ("release display\n");
 	}
@@ -1729,7 +1729,7 @@ void CFrameBuffer::switch_signal (int signal)
 		printf ("acquire display\n");
 		thiz->paletteSet(NULL);
 		if (virtual_fb != NULL)
-			memmove(thiz->lfb, virtual_fb, thiz->stride * thiz->yRes);
+			memcpy(thiz->lfb, virtual_fb, thiz->stride * thiz->yRes);
 		else
 			memset(thiz->lfb, 0, thiz->stride * thiz->yRes);
 	}

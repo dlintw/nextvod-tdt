@@ -444,7 +444,7 @@ static void ddvd_mpa_compute_bit_allocation(short smr1[MPA_MAX_CHANNELS][SBLIMIT
     unsigned char subband_status[MPA_MAX_CHANNELS][SBLIMIT];
     const unsigned char *alloc;
 
-    memmove(smr, smr1, NB_CHANNELS * sizeof(short) * SBLIMIT);
+    memcpy(smr, smr1, NB_CHANNELS * sizeof(short) * SBLIMIT);
     memset(subband_status, SB_NOTALLOCATED, NB_CHANNELS * SBLIMIT);
     memset(bit_alloc, 0, NB_CHANNELS * SBLIMIT);
 

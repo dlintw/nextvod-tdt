@@ -129,8 +129,8 @@ static int writeData(void* _call)
 
         int HeaderLength = InsertPesHeader (PesHeader, PacketLength, 0xe0, call->Pts, 0);
         unsigned char* PacketStart = malloc(PacketLength + HeaderLength);
-        memmove (PacketStart, PesHeader, HeaderLength);
-        memmove (PacketStart + HeaderLength, call->data + Position, PacketLength);
+        memcpy (PacketStart, PesHeader, HeaderLength);
+        memcpy (PacketStart + HeaderLength, call->data + Position, PacketLength);
 
         len = write(call->fd, PacketStart, PacketLength + HeaderLength);
         free(PacketStart);
