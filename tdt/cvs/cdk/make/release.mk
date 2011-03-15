@@ -57,10 +57,12 @@ else
 endif	
 	rm -f $(prefix)/release/lib/modules/simu_button.ko
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release/bin/tffpctl
 	rm -f $(prefix)/release/bin/vfdctl
 	rm -f $(prefix)/release/bin/evremote
 	rm -f $(prefix)/release/bin/tfd2mtd
+
 
 release_cuberevo_9500hd: release_common_utils release_cube_common
 	echo "cuberevo-9500hd" > $(prefix)/release/etc/hostname
