@@ -7412,17 +7412,19 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/main/enigma.cpp enigma2-n
  
  #ifdef OBJECT_DEBUG
  int object_total_remaining;
-@@ -124,6 +134,9 @@
+@@ -124,6 +134,11 @@
  
  int main(int argc, char **argv)
  {
 +#if defined(__sh__) // nits shm hack to behavior of e2 on the fly
-+        shm = createshm();
++        shm = findshm();
++        if(shm == NULL)
++            shm = createshm();
 +#endif
  #ifdef MEMLEAK_CHECK
  	atexit(DumpUnfreed);
  #endif
-@@ -132,7 +145,9 @@
+@@ -132,7 +147,9 @@
  	atexit(object_dump);
  #endif
  
@@ -7432,7 +7434,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/main/enigma.cpp enigma2-n
  
  	// set pythonpath if unset
  	setenv("PYTHONPATH", eEnv::resolve("${libdir}/enigma2/python").c_str(), 0);
-@@ -227,6 +242,12 @@
+@@ -227,6 +244,12 @@
  	gRC::getInstance()->setSpinnerDC(my_dc);
  
  	eRCInput::getInstance()->keyEvent.connect(slot(keyEvent));
