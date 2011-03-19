@@ -3892,7 +3892,7 @@
 +#endif
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2010-07-02 16:30:00.000000000 +0200
-@@ -0,0 +1,6777 @@
+@@ -0,0 +1,6765 @@
 +/******************************************************************************
 + *                      <<< TuxTxt - Teletext Plugin >>>                      *
 + *                                                                            *
@@ -3919,7 +3919,6 @@
 +#include <sys/select.h>
 +#include <sys/time.h>
 +#include <unistd.h>
-+#include "include/shmE2.h"
 +
 +
 +//aktivate or deaktivate Menu Key
@@ -3942,7 +3941,6 @@
 +int left, top, width, height;
 +char aspect[16];
 +char policy[16];
-+char *shm = NULL;
 +
 +int stride;
 +
@@ -5429,9 +5427,6 @@
 +	unlink ("/tmp/block.tmp");
 +	unlink ("/tmp/rc.socket");
 +
-+	//aktivate E2 framebuffer output
-+	decshmentry(shm, "stopGUI=");
-+	decshmentry(shm, "stopSpinner=");
 +
 + 	debugf(1, "Tuxtxt dies with signal %d\n", signo);
 +
@@ -5612,10 +5607,6 @@
 +	int bfd = open ("/tmp/block.tmp", O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO );
 +	close(bfd);
 +
-+	//deaktivate E2 framebuffer output
-+	shm = findshm();
-+	incshmentry(shm, "stopGUI=");
-+ incshmentry(shm, "stopSpinner=");
 +
 +
 +	/* initialisations */
@@ -5781,9 +5772,6 @@
 +	unlink ("/tmp/block.tmp");
 +	unlink ("/tmp/rc.socket");
 +
-+	//aktivate E2 framebuffer output
-+	decshmentry(shm, "stopGUI=");
-+ decshmentry(shm, "stopSpinner=");
 +
 +
 +	debugf(1, "%s: <\n", __func__);
