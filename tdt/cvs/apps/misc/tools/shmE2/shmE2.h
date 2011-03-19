@@ -210,7 +210,7 @@ static int checkshmentry(char *shm, char *key)
 		*v = '\0';
 		if(strcmp(key, shmbuf) == 0)
 		{
- 		ret = 1;
+			ret = 1;
 			break;
 		}
 		if(*s == ';')
@@ -248,6 +248,90 @@ static int getshmentryall(char *shm, char *shmbuf, int buflen)
 	*v = '\0';
 
 	return 0;
+}
+
+static int incshmentry(char *shm, char *entry)
+{
+	if(shm == NULL) return -1;
+	char *buf = NULL;
+	char *pch;
+	int value;
+	
+	if(strlen(entry) > 255)
+		return -1;
+
+	buf = (char *) malloc(256);
+	if(buf == NULL)
+		return -1;
+	memset(buf, '\0', 256);
+	
+	getshmentry(shm, entry, buf, 256);
+		
+	if(strlen(buf) == 0) {
+		sprintf(buf, "%s%d", entry, 1);
+		if(setshmentry(shm, buf) != 1) {
+			free(buf);
+			return 0;
+		}
+		free(buf);
+		return 1;
+	}
+		
+	pch = strtok(buf, "=");
+	if(pch != NULL) {
+		value = atoi(pch);
+		value++;
+		sprintf(buf, "%s%d", entry, value);
+		if(setshmentry(shm, buf) != 1) {
+			free(buf);
+			return 0;
+		}
+	}
+		
+	free(buf);
+	return 1;
+}
+	
+static int decshmentry(char *shm, char *entry)
+{
+	if(shm == NULL) return -1;
+	char *buf = NULL;
+	char *pch;
+	int value;
+	
+	if(strlen(entry) > 255)
+		return -1;
+
+	buf = (char *) malloc(256);
+	if(buf == NULL)
+		return -1;
+	memset(buf, '\0', 256);
+
+	getshmentry(shm, entry, buf, 256);
+		
+	if(strlen(buf) == 0) {
+		free(buf);
+		return 1;
+	}
+			
+	pch = strtok(buf, "=");
+	if(pch != NULL) {
+		value = atoi(pch);
+		value--;
+		if(value < 1) {
+			delshmentry(shm, entry);
+			free(buf);
+			return 1;
+		}
+		sprintf(buf, "%s%d", entry, value);
+		if(setshmentry(shm, buf) != 1) {
+			free(buf);
+			return 0;
+		}
+	}
+
+	free(buf);
+	return 1;
 }
 
 #endif

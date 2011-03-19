@@ -5430,8 +5430,8 @@
 +	unlink ("/tmp/rc.socket");
 +
 +	//aktivate E2 framebuffer output
-+	delshmentry(shm, "stopGUI=");
-+	delshmentry(shm, "stopSpinner=");
++	decshmentry(shm, "stopGUI=");
++	decshmentry(shm, "stopSpinner=");
 +
 + 	debugf(1, "Tuxtxt dies with signal %d\n", signo);
 +
@@ -5614,8 +5614,8 @@
 +
 +	//deaktivate E2 framebuffer output
 +	shm = findshm();
-+	setshmentry(shm, "stopGUI=1");
-+        setshmentry(shm, "stopSpinner=1");
++	incshmentry(shm, "stopGUI=");
++ incshmentry(shm, "stopSpinner=");
 +
 +
 +	/* initialisations */
@@ -5782,8 +5782,8 @@
 +	unlink ("/tmp/rc.socket");
 +
 +	//aktivate E2 framebuffer output
-+	delshmentry(shm, "stopGUI=");
-+        delshmentry(shm, "stopSpinner=");
++	decshmentry(shm, "stopGUI=");
++ decshmentry(shm, "stopSpinner=");
 +
 +
 +	debugf(1, "%s: <\n", __func__);

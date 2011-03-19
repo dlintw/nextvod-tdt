@@ -75,9 +75,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/configure.ac enigma2-nigh
 diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/include/shmE2.h enigma2-nightly/include/shmE2.h
 --- enigma2-nightly.org/include/shmE2.h	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly/include/shmE2.h	2010-12-27 16:33:28.247623536 +0100
-@@ -0,0 +1,257 @@
-+#if defined(__sh__) // nits shm hack to behavior of e2 on the fly
-+
+@@ -0,0 +1,337 @@
 +#ifndef SHME2
 +#define SHME2
 +
@@ -290,7 +288,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/include/shmE2.h enigma2-n
 +		*v = '\0';
 +		if(strcmp(key, shmbuf) == 0)
 +		{
-+ 		ret = 1;
++			ret = 1;
 +			break;
 +		}
 +		if(*s == ';')
@@ -330,9 +328,92 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/include/shmE2.h enigma2-n
 +	return 0;
 +}
 +
-+#endif
++static int incshmentry(char *shm, char *entry)
++{
++	if(shm == NULL) return -1;
++	char *buf = NULL;
++	char *pch;
++	int value;
++	
++	if(strlen(entry) > 255)
++		return -1;
++
++	buf = (char *) malloc(256);
++	if(buf == NULL)
++		return -1;
++	memset(buf, '\0', 256);
++	
++	getshmentry(shm, entry, buf, 256);
++		
++	if(strlen(buf) == 0) {
++		sprintf(buf, "%s%d", entry, 1);
++		if(setshmentry(shm, buf) != 1) {
++			free(buf);
++			return 0;
++		}
++		free(buf);
++		return 1;
++	}
++		
++	pch = strtok(buf, "=");
++	if(pch != NULL) {
++		value = atoi(pch);
++		value++;
++		sprintf(buf, "%s%d", entry, value);
++		if(setshmentry(shm, buf) != 1) {
++			free(buf);
++			return 0;
++		}
++	}
++		
++	free(buf);
++	return 1;
++}
++	
++static int decshmentry(char *shm, char *entry)
++{
++	if(shm == NULL) return -1;
++	char *buf = NULL;
++	char *pch;
++	int value;
++	
++	if(strlen(entry) > 255)
++		return -1;
++
++	buf = (char *) malloc(256);
++	if(buf == NULL)
++		return -1;
++	memset(buf, '\0', 256);
++
++	getshmentry(shm, entry, buf, 256);
++		
++	if(strlen(buf) == 0) {
++		free(buf);
++		return 1;
++	}
++			
++	pch = strtok(buf, "=");
++	if(pch != NULL) {
++		value = atoi(pch);
++		value--;
++		if(value < 1) {
++			delshmentry(shm, entry);
++			free(buf);
++			return 1;
++		}
++		sprintf(buf, "%s%d", entry, value);
++		if(setshmentry(shm, buf) != 1) {
++			free(buf);
++			return 0;
++		}
++	}
++
++	free(buf);
++	return 1;
++}
 +
 +#endif
+
 diff -Nur --exclude-from=e2-ignore enigma2-nightly.org/lib/base/etpm.cpp enigma2-nightly/lib/base/etpm.cpp
 --- enigma2-nightly.org/lib/base/etpm.cpp	2010-12-27 16:33:26.324620121 +0100
 +++ enigma2-nightly/lib/base/etpm.cpp	2010-12-27 16:33:28.251624114 +0100
