@@ -75,6 +75,7 @@ if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); 
 /* ***************************** */
 /* Varaibles                     */
 /* ***************************** */
+static int initialHeader = 1;
 
 /* ***************************** */
 /* Prototypes                    */
@@ -85,6 +86,7 @@ if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); 
 /* ***************************** */
 static int reset()
 {
+    initialHeader = 1;
     return 0;
 }
 
@@ -95,6 +97,7 @@ static int writeData(void* _call)
     unsigned char  PesHeader[PES_MAX_HEADER_SIZE];
     unsigned char  FakeHeaders[64]; // 64bytes should be enough to make the fake headers
     unsigned int   FakeHeaderLength;
+    unsigned int   ExtraLength = 0;
     unsigned char  Version             = 5;
     unsigned int   FakeStartCode       = (Version << 8) | PES_VERSION_FAKE_START_CODE;
     unsigned int   HeaderLength = 0;
@@ -144,13 +147,19 @@ static int writeData(void* _call)
 
     FakeHeaderLength    = (ld.Ptr - (FakeHeaders));
 
+    if (initialHeader) ExtraLength = call->private_size;
+
     HeaderLength        = InsertPesHeader (PesHeader, call->len, MPEG_VIDEO_PES_START_CODE, call->Pts, FakeStartCode);
-    unsigned char* PacketStart = malloc(call->len + HeaderLength + FakeHeaderLength);
+    unsigned char* PacketStart = malloc(call->len + HeaderLength + FakeHeaderLength + ExtraLength);
     memcpy (PacketStart, PesHeader, HeaderLength);
     memcpy (PacketStart + HeaderLength, FakeHeaders, FakeHeaderLength);
-    memcpy (PacketStart + HeaderLength + FakeHeaderLength, call->data, call->len);
+    if (initialHeader) {
+        memcpy (PacketStart + HeaderLength + FakeHeaderLength, call->private_data, call->private_size);
+        initialHeader = 0;
+    }
+    memcpy (PacketStart + HeaderLength + FakeHeaderLength + ExtraLength, call->data, call->len);
 
-    int len = write(call->fd, PacketStart ,call->len + HeaderLength + FakeHeaderLength);
+    int len = write(call->fd, PacketStart ,call->len + HeaderLength + FakeHeaderLength + ExtraLength);
 
     free(PacketStart);
 
