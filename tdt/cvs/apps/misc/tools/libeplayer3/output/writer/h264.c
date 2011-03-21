@@ -191,27 +191,9 @@ static int writeData(void* _call)
             return -1;
         }
 
-        if (avcCHeader->Version != 1){
+        if (avcCHeader->Version != 1)
             h264_err("Error unknown avcC version (%x). Expect problems.\n", avcCHeader->Version);
-            unsigned int FakeStartCode = (call->Version << 8) | PES_VERSION_FAKE_START_CODE;
 
-            HeaderLength = InsertPesHeader(PesHeader, call->len,
-                                       MPEG_VIDEO_PES_START_CODE, call->Pts, FakeStartCode);
-            /*Hellmaster1024: some packets will only be accepted by the player if we send one byte more than
-                          data is available. The content of this byte does not matter. It will be ignored
-                          by the player */
-            unsigned char *PacketData = malloc(HeaderLength + call->len + call->private_size + 1);
-
-            memcpy(PacketData, PesHeader, HeaderLength);
-            memcpy (PacketData + HeaderLength, call->private_data, call->private_size);
-            memcpy (PacketData + HeaderLength, call->data + call->private_size, call->len);
-
-            len = write(call->fd, PacketData, call->len + HeaderLength + call->private_size + 1);
-
-            free(PacketData);
-            initialHeader = 0;
-            return len;
-	}
         ParametersLength                      = 0;
 
         HeaderData[ParametersLength++]        = 0x00;                                         // Start code
