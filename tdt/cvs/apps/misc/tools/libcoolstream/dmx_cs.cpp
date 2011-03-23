@@ -22,14 +22,14 @@ cDemux *pcrDemux = NULL;
 
 static const char * aDMXCHANNELTYPE[] = {
 	"",
-   "DMX_VIDEO_CHANNEL",
-   "DMX_AUDIO_CHANNEL",
-   "DMX_PES_CHANNEL",
-   "DMX_PSI_CHANNEL",
-   "DMX_PIP_CHANNEL",
-   "DMX_TP_CHANNEL",
-   "DMX_PCR_ONLY_CHANNEL",
-	};
+	"DMX_VIDEO_CHANNEL",
+	"DMX_AUDIO_CHANNEL",
+	"DMX_PES_CHANNEL",
+	"DMX_PSI_CHANNEL",
+	"DMX_PIP_CHANNEL",
+	"DMX_TP_CHANNEL",
+	"DMX_PCR_ONLY_CHANNEL"
+};
 
 bool cDemux::Open(DMX_CHANNEL_TYPE pes_type, void * hVideoBuffer , int uBufferSize)
 {
@@ -321,4 +321,3 @@ cDemux::~cDemux()
 	
 	free(privateData);
 }
-

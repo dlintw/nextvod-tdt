@@ -25,8 +25,8 @@ typedef struct {
 
 typedef enum {
 	PLAYMODE_TS = 0,
-	PLAYMODE_FILE,
-} playmode_t; 
+	PLAYMODE_FILE
+} playmode_t;
 
 class cPlayback
 {

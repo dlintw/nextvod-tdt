@@ -8,7 +8,7 @@
 class eDVBCICAManagerSession: public eDVBCISession
 {
 	enum {
-		stateFinal=statePrivate,
+		stateFinal=statePrivate
 	};
 	std::vector<uint16_t> caids;
 	int receivedAPDU(const unsigned char *tag, const void *data, int len);

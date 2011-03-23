@@ -6,7 +6,7 @@
 class eDVBCIApplicationManagerSession: public eDVBCISession
 {
 	enum {
-		stateFinal=statePrivate,
+		stateFinal=statePrivate
 	};
 	
 	tSlot *slot;

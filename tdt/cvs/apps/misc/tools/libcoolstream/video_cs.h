@@ -16,7 +16,7 @@ typedef enum {
 	ANALOG_SD_RGB_CINCH = 0x80,
 	ANALOG_SD_YPRPB_CINCH,
 	ANALOG_HD_RGB_CINCH,
-	ANALOG_HD_YPRPB_CINCH,
+	ANALOG_HD_YPRPB_CINCH
 } analog_mode_t;
 
 typedef enum {
@@ -54,7 +54,7 @@ typedef enum {
 	DISPLAY_AR_14_9,
 	DISPLAY_AR_16_9,
 	DISPLAY_AR_20_9,
-	DISPLAY_AR_RAW,
+	DISPLAY_AR_RAW
 } DISPLAY_AR;
 
 typedef enum {

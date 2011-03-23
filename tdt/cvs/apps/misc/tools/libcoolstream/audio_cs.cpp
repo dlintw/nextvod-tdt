@@ -276,7 +276,7 @@ void cAudio::SetStreamType(AUDIO_FORMAT type)
 		"AUDIO_FMT_DTS",
 		"AUDIO_FMT_AVS",
 		"AUDIO_FMT_MLP",
-		"AUDIO_FMT_WMA",
+		"AUDIO_FMT_WMA"
 	};
 
 	printf("%s:%s - type=%s\n", FILENAME, __FUNCTION__, aAUDIOFORMAT[type]);
