@@ -187,6 +187,7 @@ bookmarkmanager.select wybierz
 bouqueteditor.add dodaj
 bouqueteditor.bouquetname Nazwa bukietu
 bouqueteditor.delete usuń
+bouqueteditor.delete_channel Usunąć kanał z bukietu?
 bouqueteditor.discardingchanges Zmiany zostaną odrzucone. Proszę czekaç ...
 bouqueteditor.hide ukryj
 bouqueteditor.lock blokuj
