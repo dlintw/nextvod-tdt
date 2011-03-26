@@ -41,7 +41,8 @@ static int setText(Context_t* context, char* theText);
 
 #define cMAXCharsUFS910 16
 
-#define cmdReboot "/sbin/reboot"
+//#define cmdReboot "/sbin/reboot" /* does not currently work */
+#define cmdReboot "init 6"
 
 typedef struct
 {

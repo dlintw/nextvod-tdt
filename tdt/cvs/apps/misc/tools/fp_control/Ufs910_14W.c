@@ -43,7 +43,8 @@ static int Sleep(Context_t* context, time_t* wakeUpGMT);
 static int setLight(Context_t* context, int on);
 
 /******************** constants ************************ */
-#define cmdReboot "/sbin/reboot"
+//#define cmdReboot "/sbin/reboot" /* does not currently work */
+#define cmdReboot "init 6"
 #define cmdHalt "/sbin/halt"
 
 #define cVFD_DEVICE "/dev/vfd"
