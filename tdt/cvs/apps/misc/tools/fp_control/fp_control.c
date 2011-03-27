@@ -20,11 +20,11 @@
  */
 
 /*
- * added: 
+ * added:
  * powerLed intensity adjustment
- * by zeroone 
+ * by zeroone
  */
- 
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -159,285 +159,287 @@ void processCommand (Context_t * context, int argc, char* argv[])
     if (argc > 1)
     {
         i = 1;
-	while (i < argc)
-	{
-            if ((strcmp(argv[i], "-e") == 0) || (strcmp(argv[i], "--setTimer") == 0))
-            {
-	        /* setup timer; wake-up time will be read from e2 */
-                if (((Model_t*)context->m)->SetTimer)
-                    ((Model_t*)context->m)->SetTimer(context);
-	    } else
-            if ((strcmp(argv[i], "-g") == 0) || (strcmp(argv[i], "--getTime") == 0))
-            {
-	        time_t theGMTTime;
-
-	        /* get the frontcontroller time */
-                if (((Model_t*)context->m)->GetTime)
-                {
-		    if (((Model_t*)context->m)->GetTime(context, &theGMTTime) == 0)
-		    {
-		       struct tm *gmt = gmtime(&theGMTTime);
-
-		       fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-	                 gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
+		while (i < argc)
+		{
+	        if ((strcmp(argv[i], "-e") == 0) || (strcmp(argv[i], "--setTimer") == 0))
+	        {
+	        	/* setup timer; wake-up time will be read from e2 */
+	            if (((Model_t*)context->m)->SetTimer)
+	                ((Model_t*)context->m)->SetTimer(context);
 		    }
-		}
+			else if ((strcmp(argv[i], "-g") == 0) || (strcmp(argv[i], "--getTime") == 0))
+	        {
+	        	time_t theGMTTime;
 
-	    } else
-            if ((strcmp(argv[i], "-s") == 0) || (strcmp(argv[i], "--setTime") == 0))
-            {
-	        time_t theGMTTime;
+	        	/* get the frontcontroller time */
+	            if (((Model_t*)context->m)->GetTime)
+	            {
+				    if (((Model_t*)context->m)->GetTime(context, &theGMTTime) == 0)
+				    {
+						struct tm *gmt = gmtime(&theGMTTime);
 
-                if (argc == 4)
-		{
-		   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+						fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+						     gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
+				    }
+				}
 
-	           /* set the frontcontroller time */
-                   if (((Model_t*)context->m)->SetTime)
-                       ((Model_t*)context->m)->SetTime(context, &theGMTTime);
-                } else
-                   usage(context, argv[0], argv[1]);
-		
-		i += 2;
-	    } else
-            if ((strcmp(argv[i], "-m") == 0) || (strcmp(argv[i], "--setTimerManual") == 0))
-            {
-	        time_t theGMTTime;
-
-                if (argc == 4)
-		{
-                   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
-
-	           /* set the frontcontroller timer from args */
-                   if (((Model_t*)context->m)->SetTimerManual)
-                       ((Model_t*)context->m)->SetTimerManual(context, &theGMTTime);
-                } else
-                   usage(context, argv[0], argv[1]);
-
-		i += 2;
-	    } else
-            if ((strcmp(argv[i], "-gt") == 0) || (strcmp(argv[i], "--getTimer") == 0))
-            {
-	        time_t theGMTTime;
-
-	        /* get the current timer value from frontcontroller */
-                if (((Model_t*)context->m)->GetTimer)
-                {
-		    if (((Model_t*)context->m)->GetTimer(context, &theGMTTime) == 0)
-		    {
-		       struct tm *gmt = gmtime(&theGMTTime);
-
-		       fprintf(stderr, "Current Timer: %02d:%02d:%02d %02d-%02d-%04d\n",
-	                 gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
 		    }
-		}
-	    } else
-            if ((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--shutdown") == 0))
-            {
-	        time_t theGMTTime;
+			else if ((strcmp(argv[i], "-s") == 0) || (strcmp(argv[i], "--setTime") == 0))
+	        {
+	        	time_t theGMTTime;
 
-                if (argc == 4)
-		{
-                   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+	            if (argc == 4)
+				{
+			   		getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-	           /* shutdown immediately or at a given time */
-                   if (((Model_t*)context->m)->Shutdown)
-                          ((Model_t*)context->m)->Shutdown(context, &theGMTTime);
-                } else
-		if (argc == 2)
-		{
-		   theGMTTime = -1;
-	           /* shutdown immediately or at a given time */
-                   if (((Model_t*)context->m)->Shutdown)
-                          ((Model_t*)context->m)->Shutdown(context, &theGMTTime);
-		} else
-                   usage(context, argv[0], argv[1]);
- 
-		i += 2;
-	    } else
-            if ((strcmp(argv[i], "-r") == 0) || (strcmp(argv[i], "--reboot") == 0))
-            {
-	        time_t theGMTTime;
+					/* set the frontcontroller time */
+					if (((Model_t*)context->m)->SetTime)
+						((Model_t*)context->m)->SetTime(context, &theGMTTime);
+				} else
+					usage(context, argv[0], argv[1]);
 
-                if (argc == 4)
-		{
-                   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+				i += 2;
+		    }
+			else if ((strcmp(argv[i], "-m") == 0) || (strcmp(argv[i], "--setTimerManual") == 0))
+	        {
+	        	time_t theGMTTime;
 
-	           /* reboot immediately or at a given time */
-                   if (((Model_t*)context->m)->Reboot)
-                       ((Model_t*)context->m)->Reboot(context, &theGMTTime);
-                } else
-                   usage(context, argv[0], argv[1]);
+	            if (argc == 4)
+				{
+					getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-		i += 2;
-	    } else
-            if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "--sleep") == 0))
-            {
-	        time_t theGMTTime;
+					/* set the frontcontroller timer from args */
+					if (((Model_t*)context->m)->SetTimerManual)
+						((Model_t*)context->m)->SetTimerManual(context, &theGMTTime);
+	            } else
+	               usage(context, argv[0], argv[1]);
 
-                if (argc == 4)
-		{
-                   getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+				i += 2;
+		    }
+			else if ((strcmp(argv[i], "-gt") == 0) || (strcmp(argv[i], "--getTimer") == 0))
+	        {
+		        time_t theGMTTime;
 
-	           /* sleep for a while, or wake-up on another reason (rc ...) */
-                   if (((Model_t*)context->m)->Sleep)
-                       ((Model_t*)context->m)->Sleep(context, &theGMTTime);
-                } else
-                   usage(context, argv[0], argv[1]);
+		        /* get the current timer value from frontcontroller */
+	            if (((Model_t*)context->m)->GetTimer)
+	            {
+				    if (((Model_t*)context->m)->GetTimer(context, &theGMTTime) == 0)
+				    {
+						struct tm *gmt = gmtime(&theGMTTime);
 
-		i += 2;
-	    } else
-            if ((strcmp(argv[i], "-t") == 0) || (strcmp(argv[i], "--settext") == 0))
-            {
-	        if (i + 1 <= argc)
-	           /* set display text */
-                   if (((Model_t*)context->m)->SetText)
-                       ((Model_t*)context->m)->SetText(context, argv[i+1]);
-		i += 1;
+						fprintf(stderr, "Current Timer: %02d:%02d:%02d %02d-%02d-%04d\n",
+						     gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
+				    }
+				}
+		    }
+			else if ((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--shutdown") == 0))
+	        {
+	        	time_t theGMTTime;
 
-	    } else
-            if ((strcmp(argv[i], "-l") == 0) || (strcmp(argv[i], "--setLed") == 0))
-            {
-	        if (i + 2 <= argc)
-		{
-		   int which, on;
+	            if (argc == 4)
+				{
+					getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-		   which = atoi(argv[i + 1]);
-		   on = atoi(argv[i + 2]);
-		   i+=2;
+					/* shutdown immediately or at a given time */
+					if (((Model_t*)context->m)->Shutdown)
+					      ((Model_t*)context->m)->Shutdown(context, &theGMTTime);
+				}
+				else if (argc == 2)
+				{
+				   theGMTTime = -1;
+		           /* shutdown immediately or at a given time */
+	               if (((Model_t*)context->m)->Shutdown)
+	                      ((Model_t*)context->m)->Shutdown(context, &theGMTTime);
+				}
+				else
+	               usage(context, argv[0], argv[1]);
 
-	           /* set display led */
-                   if (((Model_t*)context->m)->SetLed)
-                       ((Model_t*)context->m)->SetLed(context, which, on);
+				i += 2;
+		    }
+			else if ((strcmp(argv[i], "-r") == 0) || (strcmp(argv[i], "--reboot") == 0))
+	        {
+	        	time_t theGMTTime;
 
-	        }
-		i += 2;
-	    } else
-            if ((strcmp(argv[i], "-i") == 0) || (strcmp(argv[i], "--setIcon") == 0))
-            {
-	        if (i + 2 <= argc)
-		{
-		   int which, on;
+	            if (argc == 4)
+				{
+					getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-		   which = atoi(argv[i + 1]);
-		   on = atoi(argv[i + 2]);
+		           	/* reboot immediately or at a given time */
+					if (((Model_t*)context->m)->Reboot)
+						((Model_t*)context->m)->Reboot(context, &theGMTTime);
+				}
+				else
+		   			usage(context, argv[0], argv[1]);
 
-	           /* set display icon */
-                   if (((Model_t*)context->m)->SetIcon)
-                       ((Model_t*)context->m)->SetIcon(context, which, on);
+				i += 2;
+		    }
+			else if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "--sleep") == 0))
+	        {
+	        	time_t theGMTTime;
 
-	        }
-		i += 2;
-	    } else
-            if ((strcmp(argv[i], "-b") == 0) || (strcmp(argv[i], "--setBrightness") == 0))
-            {
-	        if (i + 1 <= argc)
-		{
-		   int brightness;
+	            if (argc == 4)
+				{
+					getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
 
-		   brightness = atoi(argv[i + 1]);
+					/* sleep for a while, or wake-up on another reason (rc ...) */
+					if (((Model_t*)context->m)->Sleep)
+						((Model_t*)context->m)->Sleep(context, &theGMTTime);
+		 		}
+				else
+		 			usage(context, argv[0], argv[1]);
 
-		   
-	           /* set display brightness */
-                   if (((Model_t*)context->m)->SetBrightness)
-                       ((Model_t*)context->m)->SetBrightness(context, brightness);
+				i += 2;
+		    }
+			else if ((strcmp(argv[i], "-t") == 0) || (strcmp(argv[i], "--settext") == 0))
+			{
+		        if (i + 1 <= argc)
+					/* set display text */
+					if (((Model_t*)context->m)->SetText)
+						((Model_t*)context->m)->SetText(context, argv[i+1]);
+				i += 1;
 
-	        }
-		i += 1;
-	    } else
-/* added by zeroone; set PowerLed Brightness on HDBOX*/		
-// BEGIN SetPwrLed  
-            if ((strcmp(argv[i], "-P") == 0) || (strcmp(argv[i], "--setPwrLed") == 0))
-            {
-	        if (i + 1 <= argc)
-		{
-		   int brightness;
+		    }
+			else if ((strcmp(argv[i], "-l") == 0) || (strcmp(argv[i], "--setLed") == 0))
+		   	{
+		        if (i + 2 <= argc)
+				{
+					int which, on;
 
-		   brightness = atoi(argv[i + 1]);
+					which = atoi(argv[i + 1]);
+					on = atoi(argv[i + 2]);
+					i+=2;
 
-	           /* set PwrLed Brightness icon */
-                   if (((Model_t*)context->m)->SetPwrLed)
-                       ((Model_t*)context->m)->SetPwrLed(context, brightness);
+					/* set display led */
+					if (((Model_t*)context->m)->SetLed)
+					   ((Model_t*)context->m)->SetLed(context, which, on);
+			   	}
+				i += 2;
+		    }
+			else if ((strcmp(argv[i], "-i") == 0) || (strcmp(argv[i], "--setIcon") == 0))
+	        {
+	        	if (i + 2 <= argc)
+				{
+					int which, on;
 
-	        }
-		i += 1;
-	    } else
-// END SetPwrLed
-            if ((strcmp(argv[i], "-w") == 0) || (strcmp(argv[i], "--getWakeupReason") == 0))
-            {
-		   int reason;
+					which = atoi(argv[i + 1]);
+					on = atoi(argv[i + 2]);
 
-                   if (((Model_t*)context->m)->GetWakeupReason)
-                       if (((Model_t*)context->m)->GetWakeupReason(context, &reason) == 0)
-		       {
-                            printf("wakeup reason = %d\n", reason);
-		       }
-	    } else
-            if ((strcmp(argv[i], "-L") == 0) || (strcmp(argv[i], "--setLight") == 0))
-            {
-	        if (i + 1 < argc)
-		{
-		   int on;
+					/* set display icon */
+					if (((Model_t*)context->m)->SetIcon)
+						((Model_t*)context->m)->SetIcon(context, which, on);
+				}
+				i += 2;
+		    }
+			else if ((strcmp(argv[i], "-b") == 0) || (strcmp(argv[i], "--setBrightness") == 0))
+	        {
+	        	if (i + 1 <= argc)
+				{
+					int brightness;
 
-		   on = atoi(argv[i + 1]);
+					brightness = atoi(argv[i + 1]);
 
-	           /* set brightness on/off */
-                   if (((Model_t*)context->m)->SetLight)
-                       ((Model_t*)context->m)->SetLight(context, on);
 
-	        }
-		i += 1;
-	    } else
-            if ((strcmp(argv[i], "-c") == 0) || (strcmp(argv[i], "--clear") == 0))
-            {
+					/* set display brightness */
+					if (((Model_t*)context->m)->SetBrightness)
+						((Model_t*)context->m)->SetBrightness(context, brightness);
+		        }
+				i += 1;
+		    }
+			/* added by zeroone; set PowerLed Brightness on HDBOX*/
+			// BEGIN SetPwrLed
+			else if((strcmp(argv[i], "-P") == 0) || (strcmp(argv[i], "--setPwrLed") == 0))
+	        {
+	        	if (i + 1 <= argc)
+				{
+				   int brightness;
+
+				   brightness = atoi(argv[i + 1]);
+
+		           /* set PwrLed Brightness icon */
+	               if (((Model_t*)context->m)->SetPwrLed)
+	                   ((Model_t*)context->m)->SetPwrLed(context, brightness);
+
+			  	}
+				i += 1;
+		    }
+			// END SetPwrLed
+			else if ((strcmp(argv[i], "-w") == 0) || (strcmp(argv[i], "--getWakeupReason") == 0))
+	        {
+				int reason;
+
+				if (((Model_t*)context->m)->GetWakeupReason)
+					if (((Model_t*)context->m)->GetWakeupReason(context, &reason) == 0)
+					{
+						printf("wakeup reason = %d\n", reason);
+					}
+		    }
+			else if ((strcmp(argv[i], "-L") == 0) || (strcmp(argv[i], "--setLight") == 0))
+	        {
+		        if (i + 1 < argc)
+				{
+					int on;
+
+					on = atoi(argv[i + 1]);
+
+					/* set brightness on/off */
+					if (((Model_t*)context->m)->SetLight)
+					((Model_t*)context->m)->SetLight(context, on);
+
+			 	}
+				i += 1;
+		    }
+			else if ((strcmp(argv[i], "-c") == 0) || (strcmp(argv[i], "--clear") == 0))
+	        {
 	           /* clear the display */
-                   if (((Model_t*)context->m)->Clear)
-                       ((Model_t*)context->m)->Clear(context);
-	    } else
-            if ((strcmp(argv[i], "-led") == 0) || (strcmp(argv[i], "--setLedBrightness") == 0))
-            {
-	        if (i + 1 <= argc)
-		{
-		   int brightness;
-		   
-		   brightness = atoi(argv[i + 1]);
-		   
-	           /* set led brightness */
-                   if (((Model_t*)context->m)->SetLedBrightness)
-                       ((Model_t*)context->m)->SetLedBrightness(context, brightness);
-		    
-	        }
-		i += 1;    
-	    } else
-            if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "--version") == 0))
-            {
-		int version;
+               if (((Model_t*)context->m)->Clear)
+                   ((Model_t*)context->m)->Clear(context);
+		    }
+			else if ((strcmp(argv[i], "-led") == 0) || (strcmp(argv[i], "--setLedBrightness") == 0))
+	        {
+		        if (i + 1 <= argc)
+				{
+					int brightness;
 
-	        /* get version */
-                if (((Model_t*)context->m)->GetVersion)
-                    ((Model_t*)context->m)->GetVersion(context, &version);
- 	    } else
-            if ((strcmp(argv[i], "-sw") == 0) || (strcmp(argv[i], "--setWakeup") == 0))
-            {
-	        /* set WakeUp reason */
-                if (((Model_t*)context->m)->setWakeupReason)
-                    ((Model_t*)context->m)->setWakeupReason(context);            	
-	    
-	    } else
-            if ((strcmp(argv[i], "-ww") == 0) || (strcmp(argv[i], "--writeWakeup") == 0))
-            {
-	        /* only write WakeUp File */
-                if (((Model_t*)context->m)->writeWakeupFile)
-                    ((Model_t*)context->m)->writeWakeupFile(context);            	
-	    
-	    } else
-	    {
-                usage(context, argv[0], NULL);
-	    }
+					brightness = atoi(argv[i + 1]);
 
-	    i++;
+					/* set led brightness */
+					if (((Model_t*)context->m)->SetLedBrightness)
+						((Model_t*)context->m)->SetLedBrightness(context, brightness);
+
+		        }
+				i += 1;
+		    }
+			else if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "--version") == 0))
+	        {
+				int version;
+
+		        /* get version */
+		     	if (((Model_t*)context->m)->GetVersion)
+		    		((Model_t*)context->m)->GetVersion(context, &version);
+			}
+			else if ((strcmp(argv[i], "-sw") == 0) || (strcmp(argv[i], "--setWakeup") == 0))
+	        {
+	        	/* set WakeUp reason */
+	            if (((Model_t*)context->m)->setWakeupReason)
+	                ((Model_t*)context->m)->setWakeupReason(context);
+
+		    }
+			else if ((strcmp(argv[i], "-ww") == 0) || (strcmp(argv[i], "--writeWakeup") == 0))
+	        {
+	        	/* only write WakeUp File */
+	            if (((Model_t*)context->m)->writeWakeupFile)
+	                ((Model_t*)context->m)->writeWakeupFile(context);
+
+		    }
+			else
+		    {
+		   		usage(context, argv[0], NULL);
+		    }
+
+		    i++;
         }
-    } else
+    }
+	else
     {
        usage(context, argv[0], NULL);
     }

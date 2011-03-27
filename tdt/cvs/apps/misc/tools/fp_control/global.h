@@ -78,6 +78,7 @@ extern Model_t HDBOX_model;
 extern Model_t HL101_model;
 extern Model_t VIP2_model;
 extern Model_t Hs5101_model;
+extern Model_t Spark_model;
 
 static Model_t * AvailableModels[] = {
 	&Ufs910_1W_model,
@@ -88,6 +89,7 @@ static Model_t * AvailableModels[] = {
 	&VIP2_model,
 	&Hs5101_model,
 	&UFS912_model,
+	&Spark_model,
 	NULL
 };
 
@@ -95,5 +97,6 @@ double modJulianDate(struct tm *theTime);
 unsigned long int read_e2_timers(time_t curTime);
 int searchModel(Context_t  *context, eBoxType type);
 int checkConfig(int* display, int* display_custom, char** timeFormat, int* wakeup);
+unsigned long int read_neutrino_timers(time_t curTime);
 
 #endif
