@@ -48,7 +48,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	echo "Choose between the following revisions:"; \
 	echo " 0) Newest (Can fail due to outdated patch)"; \
 	echo "---- REVISIONS ----"; \
-	echo "1) Sat, 19 Feb 2011 15:06 - E2 V3.0 3b1deb60b80969a6e0d9062e7e96998588c93206"; \
+	echo "1) Sat, 29 Mar 2011 13:49 - E2 V3.0 e013d09af0e010f15e225a12dcc217abc052ee19"; \
 	echo "2) inactive"; \
 	echo "3) inactive"; \
 	echo "4) Tue,  5 Oct 2010 11:00 - E2 V2.4 libplayer2 be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
@@ -57,7 +57,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
 	[ "$$REPLY" == "0" ] && DIFF="0" && HEAD="experimental"; \
-	[ "$$REPLY" == "1" ] && DIFF="1" && HEAD="experimental" && REVISION="3b1deb60b80969a6e0d9062e7e96998588c93206"; \
+	[ "$$REPLY" == "1" ] && DIFF="1" && HEAD="experimental" && REVISION="e013d09af0e010f15e225a12dcc217abc052ee19"; \
 	[ "$$REPLY" == "2" ] && DIFF="2" && HEAD="experimental" && REVISION=""; \
 	[ "$$REPLY" == "3" ] && DIFF="3" && HEAD="experimental" && REVISION=""; \
 	[ "$$REPLY" == "4" ] && DIFF="4" && HEAD="master" && REVISION="be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
