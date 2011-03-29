@@ -1563,55 +1563,6 @@ diff -urN enigma2-nightly/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py e
  	return tmp;
      }   
 
---- enigma2-nightly.org/lib/python/Screens/InputBox.py	2010-05-03 18:46:44.000000000 +0100
-+++ enigma2-nightly/lib/python/Screens/InputBox.py	2010-05-03 10:44:43.000000000 +0100
-@@ -43,7 +43,7 @@
- 		}, -1)
- 		if self["input"].type == Input.TEXT:
- 			rcinput = eRCInput.getInstance()
--			rcinput.setKeyboardMode(rcinput.kmAscii)
-+			#rcinput.setKeyboardMode(rcinput.kmAscii)
- 
- 	def gotAsciiCode(self):
- 		self["input"].handleAscii(getPrevAsciiCode())
-@@ -62,12 +62,12 @@
- 
- 	def go(self):
- 		rcinput = eRCInput.getInstance()
--		rcinput.setKeyboardMode(rcinput.kmNone)
-+		#rcinput.setKeyboardMode(rcinput.kmNone)
- 		self.close(self["input"].getText())
- 
- 	def cancel(self):
- 		rcinput = eRCInput.getInstance()
--		rcinput.setKeyboardMode(rcinput.kmNone)
-+		#rcinput.setKeyboardMode(rcinput.kmNone)
- 		self.close(None)
- 
- 	def keyHome(self):
-@@ -143,18 +143,18 @@
- 	
- 	def closePinWrong(self, *args):
- 		rcinput = eRCInput.getInstance()
--		rcinput.setKeyboardMode(rcinput.kmNone)
-+		#rcinput.setKeyboardMode(rcinput.kmNone)
- 		print "args:", args
- 		self.close(False)
- 		
- 	def closePinCorrect(self, *args):
- 		rcinput = eRCInput.getInstance()
--		rcinput.setKeyboardMode(rcinput.kmNone)
-+		#rcinput.setKeyboardMode(rcinput.kmNone)
- 		self.close(True)
- 		
- 	def closePinCancel(self, *args):
- 		rcinput = eRCInput.getInstance()
--		rcinput.setKeyboardMode(rcinput.kmNone)
-+		#rcinput.setKeyboardMode(rcinput.kmNone)
- 		self.close(None)
- 			
- 	def cancel(self):
-
 --- enigma2-nightly.org/lib/python/Screens/ChannelSelection.py	2010-05-03 18:46:44.000000000 +0100
 +++ enigma2-nightly/lib/python/Screens/ChannelSelection.py	2010-05-03 10:45:07.000000000 +0100
 @@ -1130,11 +1130,11 @@
