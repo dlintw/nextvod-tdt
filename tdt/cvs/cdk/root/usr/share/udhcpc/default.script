@@ -76,12 +76,12 @@ case "$1" in
 		deconfig;
 	;;
 
-	reasefail)
+	leasefail)
 		echo "failed...";
 	;;
 
 	*)
-		echo "Usage : $0 {bound|renew|deconfig}"
+		echo "Usage : $0 {bound|renew|deconfig|leasefail}"
 		exit 1
 	;;
 esac
