@@ -206,6 +206,23 @@ void startPseudoStandby(Context_t* context, tUFS910Private* private)
 
 void stopPseudoStandby(Context_t* context, tUFS910Private* private) 
 {
+	if (private->display == 0)
+	    setLight(context, 1);
+
+	setText(context, "                ");
+
+	int id;
+	for (id = 0x10; id < 0x20; id++)
+	    setIcon(context, id, 0);
+
+	setLed(context, 1, 0);
+	setLed(context, 2, 0);
+	setLed(context, 3, 0);
+
+	system(cmdReboot);
+
+/* deactivated, because box will hang and remote control not longer works */
+#if 0
 	int fd_avs = open("/proc/stb/avs/0/standby", O_RDWR);
 	int fd_hdmi  = open("/dev/fb0",   O_RDWR);
         int id;
@@ -213,12 +230,12 @@ void stopPseudoStandby(Context_t* context, tUFS910Private* private)
 	printf("%s\n", __func__);
 
 	if (private->display == 0)
-   	    setLight(context, 1);
+	    setLight(context, 1);
 
-        setText(context, "                ");
+	setText(context, "                ");
 
-	for (id = 0x10; id < 0x20; id++) 
-	    setIcon(context, id, 0);     
+	for (id = 0x10; id < 0x20; id++)
+	    setIcon(context, id, 0);
 
 	hdmi_standby(fd_hdmi, 1);
 	avs_standby(fd_avs, 1);
@@ -226,16 +243,16 @@ void stopPseudoStandby(Context_t* context, tUFS910Private* private)
         if (private->nfs == 0)
 	{
 	   net_standby(1);
- 	   helloSerial();
+	   helloSerial();
         }
-	
+
 	setLed(context, 1, 0);
 	setLed(context, 2, 0);
 	setLed(context, 3, 0);
 
 	close(fd_hdmi);
 	close(fd_avs);
-
+#endif
 }
 
 /* ******************* driver functions ****************** */
