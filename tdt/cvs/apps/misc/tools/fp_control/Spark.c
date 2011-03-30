@@ -552,8 +552,8 @@ static int Spark_Clear(Context_t* context)
 Model_t Spark_model = {
 	"Edision Spark frontpanel control utility",
 	Spark,
-    Spark_init,
-    Spark_Clear,
+	Spark_init,
+	Spark_Clear,
 	Spark_usage,
 	Spark_setTime,
 	Spark_getTime,
@@ -573,5 +573,5 @@ Model_t Spark_model = {
 	Spark_Exit,
 	NULL,
 	NULL,
-	NULL,
+	NULL
 };

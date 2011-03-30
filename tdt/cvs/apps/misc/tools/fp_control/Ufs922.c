@@ -827,8 +827,8 @@ static int setLedBrightness(Context_t* context, int brightness)
 Model_t UFS922_model = {
 	"Kathrein UFS922 frontpanel control utility",
 	Ufs922,
-        init,
-        Clear,
+	init,
+	Clear,
 	usage,
 	setTime,
 	getTime,
@@ -845,10 +845,10 @@ Model_t UFS922_model = {
 	setPwrLed,
 	getWakeupReason,
 	setLight,
-        Exit,
+	Exit,
 	setLedBrightness,
 	getVersion,
 	setWakeupReason,
 	writeWakeupFile,
-        NULL,
+	NULL
 };

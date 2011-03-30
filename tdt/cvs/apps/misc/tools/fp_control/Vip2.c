@@ -552,8 +552,8 @@ static int Clear(Context_t* context)
 Model_t VIP2_model = {
 	"Edision vip2 frontpanel control utility",
 	Vip2,
-        init,
-        Clear,
+	init,
+	Clear,
 	usage,
 	setTime,
 	getTime,
@@ -570,8 +570,8 @@ Model_t VIP2_model = {
 	setPwrLed,
 	getWakeupReason,
 	setLight,
-        Exit,
+	Exit,
 	NULL,
 	NULL,
-	NULL,
+	NULL
 };

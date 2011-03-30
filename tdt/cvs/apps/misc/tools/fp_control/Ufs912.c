@@ -644,8 +644,8 @@ static int setLedBrightness(Context_t* context, int brightness)
 Model_t UFS912_model = {
 	.Name             = "Kathrein UFS912 frontpanel control utility",
 	.Type             = Ufs912,
-        .Init             = init,
-        .Clear            = Clear,
+	.Init             = init,
+	.Clear            = Clear,
 	.Usage            = NULL,
 	.SetTime          = setTime,
 	.GetTime          = getTime,
@@ -662,8 +662,8 @@ Model_t UFS912_model = {
 	.SetPwrLed        = NULL,
 	.GetWakeupReason  = getWakeupReason,
 	.SetLight         = setLight,
-        .Exit             = Exit,
+	.Exit             = Exit,
 	.SetLedBrightness = setLedBrightness,
 	.GetVersion       = getVersion,
-	.private          = NULL,
+	.private          = NULL
 };

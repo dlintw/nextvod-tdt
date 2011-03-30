@@ -630,7 +630,7 @@ static int Clear(Context_t* context)
 Model_t HDBOX_model = {
 	"Fortis HDBOX frontpanel control utility",
 	HdBox,
-        init,
+	init,
 	Clear,
 	usage,
 	setTime,
@@ -649,7 +649,7 @@ Model_t HDBOX_model = {
 	getWakeupReason,
 	setLight,
 	setWakeupReason,
-        Exit,
+	Exit,
 	NULL,
-	NULL,
+	NULL
 };

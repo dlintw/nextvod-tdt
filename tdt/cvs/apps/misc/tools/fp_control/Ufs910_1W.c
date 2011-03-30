@@ -536,8 +536,8 @@ static int Clear(Context_t* context)
 Model_t Ufs910_1W_model = {
 	"Kathrein UFS910 1W frontpanel control utility",
 	Ufs910_1W,
-        init,
-        Clear,
+	init,
+	Clear,
 	usage,
 	setTime,
 	getTime,
@@ -554,8 +554,8 @@ Model_t Ufs910_1W_model = {
 	setPwrLed,
 	getWakeupReason,
 	setLight,
-        Exit,
+	Exit,
 	NULL,
 	NULL,
-	NULL,
+	NULL
 };

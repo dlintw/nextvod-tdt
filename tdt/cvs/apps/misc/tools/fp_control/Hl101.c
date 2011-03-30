@@ -552,8 +552,8 @@ static int Clear(Context_t* context)
 Model_t HL101_model = {
 	"Spider HL101 frontpanel control utility",
 	Hl101,
-        init,
-        Clear,
+	init,
+	Clear,
 	usage,
 	setTime,
 	getTime,
@@ -570,9 +570,9 @@ Model_t HL101_model = {
 	setPwrLed,
 	getWakeupReason,
 	setLight,
-        Exit,
+	Exit,
 	NULL,
 	NULL,
 	NULL,
-	NULL,
+	NULL
 };

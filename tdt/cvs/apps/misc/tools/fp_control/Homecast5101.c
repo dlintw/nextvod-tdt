@@ -594,8 +594,8 @@ static int Clear(Context_t* context)
 Model_t Hs5101_model = {
 	"Homecast 5101 frontpanel control utility",
 	Hs5101,
-        init,
-        Clear,
+	init,
+	Clear,
 	usage,
 	setTime,
 	getTime,
@@ -611,8 +611,8 @@ Model_t Hs5101_model = {
 	setBrightness,
 	getWakeupReason,
 	setLight,
-        Exit,
+	Exit,
 	NULL,
 	NULL,
-	NULL,
+	NULL
 };
