@@ -955,6 +955,7 @@ $(DEPDIR)/util-linux.do_compile: bootstrap util-linux.do_prepare
 		sed -e 's/\ && .\/conftest//g' < configure > configure.new && \
 		chmod +x configure.new && mv configure.new configure && \
 		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure && \
 		sed 's/CURSESFLAGS=.*/CURSESFLAGS=-DNCH=1/' make_include > make_include.new && \
 		mv make_include make_include.bak && \
