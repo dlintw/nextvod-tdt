@@ -306,13 +306,44 @@ if ENABLE_VIP2_V1
 else
 if ENABLE_CUBEREVO
 	echo "cuberevo" > $(prefix)/release_neutrino/etc/hostname
-#       remove the slink to busybox
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 777 $(prefix)/release_neutrino/etc/init.d/reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
+	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
+	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
+
+if !STM22
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko
+else
+	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko	
+endif
 	rm -f $(prefix)/release_neutrino/sbin/halt
-	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/reboot
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
@@ -328,7 +359,6 @@ if ENABLE_CUBEREVO
 	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 
 	rm -f $(prefix)/release_neutrino/lib/modules/simu_button.ko
@@ -342,13 +372,44 @@ if ENABLE_CUBEREVO
 else
 if ENABLE_CUBEREVO_MINI
 	echo "cuberevo-mini" > $(prefix)/release_neutrino/etc/hostname
-#       remove the slink to busybox
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 777 $(prefix)/release_neutrino/etc/init.d/reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
+	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
+	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
+
+if !STM22
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko
+else
+	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko	
+endif
 	rm -f $(prefix)/release_neutrino/sbin/halt
-	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/reboot
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
@@ -364,7 +425,6 @@ if ENABLE_CUBEREVO_MINI
 	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 
 	rm -f $(prefix)/release_neutrino/lib/modules/simu_button.ko
@@ -378,19 +438,52 @@ if ENABLE_CUBEREVO_MINI
 else
 if ENABLE_CUBEREVO_MINI2
 	echo "cuberevo-mini2" > $(prefix)/release_neutrino/etc/hostname
-#       remove the slink to busybox
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 777 $(prefix)/release_neutrino/etc/init.d/reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
+	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
+	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
+
+if !STM22
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko
+else
+	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko	
+endif
 	rm -f $(prefix)/release_neutrino/sbin/halt
-	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/reboot
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/halt
 	mkdir -p $(prefix)/release_neutrino/etc/rc.d/rc0.d
 	ln -s ../init.d $(prefix)/release_neutrino/etc/rc.d
+	ln -fs halt $(prefix)/release_neutrino/sbin/reboot
+	ln -fs halt $(prefix)/release_neutrino/sbin/poweroff
 	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc0.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc0.d/S40umountfs
 	ln -s ../init.d/halt $(prefix)/release_neutrino/etc/rc.d/rc0.d/S90halt
@@ -398,7 +491,6 @@ if ENABLE_CUBEREVO_MINI2
 	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 
 	rm -f $(prefix)/release_neutrino/lib/modules/simu_button.ko
@@ -412,13 +504,44 @@ if ENABLE_CUBEREVO_MINI2
 else
 if ENABLE_CUBEREVO_MINI_FTA
 	echo "cuberevo-mini-fta" > $(prefix)/release_neutrino/etc/hostname
-#       remove the slink to busybox
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 777 $(prefix)/release_neutrino/etc/init.d/reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
+	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
+	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
+
+if !STM22
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko
+else
+	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko	
+endif
 	rm -f $(prefix)/release_neutrino/sbin/halt
-	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/reboot
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
@@ -434,7 +557,6 @@ if ENABLE_CUBEREVO_MINI_FTA
 	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 
 	rm -f $(prefix)/release_neutrino/lib/modules/simu_button.ko
@@ -448,13 +570,44 @@ if ENABLE_CUBEREVO_MINI_FTA
 else
 if ENABLE_CUBEREVO_250HD
 	echo "cuberevo-250hd" > $(prefix)/release_neutrino/etc/hostname
-#       remove the slink to busybox
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 777 $(prefix)/release_neutrino/etc/init.d/reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
+	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
+	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
+
+if !STM22
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko
+else
+	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko	
+endif
 	rm -f $(prefix)/release_neutrino/sbin/halt
-	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/reboot
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
@@ -470,7 +623,6 @@ if ENABLE_CUBEREVO_250HD
 	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 
 	rm -f $(prefix)/release_neutrino/lib/modules/simu_button.ko
@@ -484,13 +636,44 @@ if ENABLE_CUBEREVO_250HD
 else
 if ENABLE_CUBEREVO_2000HD
 	echo "cuberevo-2000hd" > $(prefix)/release_neutrino/etc/hostname
-#       remove the slink to busybox
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 777 $(prefix)/release_neutrino/etc/init.d/reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
+	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
+	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
+
+if !STM22
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko
+else
+	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko	
+endif
 	rm -f $(prefix)/release_neutrino/sbin/halt
-	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/reboot
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
@@ -506,7 +689,6 @@ if ENABLE_CUBEREVO_2000HD
 	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 
 	rm -f $(prefix)/release_neutrino/lib/modules/simu_button.ko
@@ -520,13 +702,44 @@ if ENABLE_CUBEREVO_2000HD
 else
 if ENABLE_CUBEREVO_9500HD
 	echo "cuberevo-9500hd" > $(prefix)/release_neutrino/etc/hostname
-#       remove the slink to busybox
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 777 $(prefix)/release_neutrino/etc/init.d/reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf
+	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
+	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
+
+if !STM22
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko
+else
+	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
+	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
+	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release_neutrino/bin/cubefpctl
+	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
+	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
+	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/tuner.ko	
+endif
 	rm -f $(prefix)/release_neutrino/sbin/halt
-	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release_neutrino/etc/init.d/halt
+	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release_neutrino/etc/init.d/reboot
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/reboot
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
@@ -542,7 +755,6 @@ if ENABLE_CUBEREVO_9500HD
 	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cubefp/fp.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 
 	rm -f $(prefix)/release_neutrino/lib/modules/simu_button.ko
