@@ -862,6 +862,7 @@ TUXBOX_RULES_MAKE(libdvdread)
 TUXBOX_RULES_MAKE(pyopenssl)
 TUXBOX_RULES_MAKE(ffmpeg)
 TUXBOX_RULES_MAKE(libass)
+TUXBOX_RULES_MAKE(webkitdfb)
 
 #
 # GUI

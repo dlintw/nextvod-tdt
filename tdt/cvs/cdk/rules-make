@@ -99,8 +99,9 @@ libiconv;1.11;libiconv-1.11;libiconv-1.11.tar.gz;extract:libiconv-1.11.tar.gz
 libmng;1.0.10;libmng-1.0.10;libmng-1.0.10.tar.bz2;extract:libmng-1.0.10.tar.bz2
 lcms;1.17;lcms-1.17;lcms-1.17.tar.gz:lcms.diff;extract:lcms-1.17.tar.gz;patch:lcms.diff
 openssl;0.9.6m;openssl-0.9.6m;openssl-0.9.6m.tar.gz;extract:openssl-0.9.6m.tar.gz
-directfb;1.0.1;DirectFB-1.0.1;DirectFB-1.0.1.tar.gz:directfb-stm.diff;extract:DirectFB-1.0.1.tar.gz;patch:directfb-stm.diff
+directfb;1.4.11;DirectFB-1.4.11;DirectFB-1.4.11.tar.gz:directfb-1.4.11+STM2010.12.15-4.diff;extract:DirectFB-1.4.11.tar.gz;patch:directfb-1.4.11+STM2010.12.15-4.diff
 dfbpp;1.0.0;DFB++-1.0.0;DFB++-1.0.0.tar.gz;extract:DFB++-1.0.0.tar.gz
+webkitdfb;2010-11-18;webkitdfb_2010-11-18;webkitdfb_2010-11-18.tar.gz;extract:webkitdfb_2010-11-18.tar.gz
 expat;2.0.1;expat-2.0.1;expat-2.0.1.tar.gz;extract:expat-2.0.1.tar.gz
 fontconfig;2.5.93;fontconfig-2.5.93;fontconfig-2.5.93.tar.gz;extract:fontconfig-2.5.93.tar.gz
 python24;2.4.4;Python-2.4.4;Python-2.4.4.tar.bz2:python-stm.diff;extract:Python-2.4.4.tar.bz2;patch:python-stm.diff
@@ -149,13 +150,6 @@ enigma2;cvs;enigma2-cvs;enigma2.cvs:enigma2.diff:e2-fb.diff:e2-rc.diff;extract:e
 #
 # development
 #
-
-#
-# framebuffer
-#
-#stlinux20-sh4-directfb-examples-0.9.22_stcvs20050810-7.sh4.rpm
-#directfb;0.9.22_stcvs20060607-13;RPMS/sh4/stlinux20-sh4-directfb-0.9.22_stcvs20060607-13.sh4.rpm;stlinux20-target-directfb-0.9.22_stcvs20060607-13.src.rpm;
-directfb_examples;0.9.22_stcvs20050810-7;RPMS/sh4/stlinux20-sh4-directfb-examples-0.9.22_stcvs20050810-7.sh4.rpm;stlinux20-target-directfb-examples-0.9.22_stcvs20050810-7.src.rpm;
 
 #
 # in work

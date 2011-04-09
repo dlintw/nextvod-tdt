@@ -669,8 +669,6 @@ $(DEPDIR)/directfb.do_prepare: @DEPENDS_directfb@
 $(DEPDIR)/directfb.do_compile: bootstrap freetype directfb.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_directfb@ && \
-		rm -f include/directfb_version.h && \
-		rm -f lib/{direct/build.h,fusion/build.h,voodoo/build.h} && \
 		libtoolize -f -c && \
 		autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
@@ -681,7 +679,10 @@ $(DEPDIR)/directfb.do_compile: bootstrap freetype directfb.do_prepare
 			--enable-static \
 			--disable-sdl \
 			--disable-x11 \
-			--with-gfxdrivers=stgfx && \
+			--disable-devmem \
+			--disable-multi \
+			--with-gfxdrivers=stgfx \
+			--enable-mme=yes && \
 			export top_builddir=`pwd` && \
 		$(MAKE) LD=$(target)-ld
 	touch $@
@@ -1410,3 +1411,46 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+
+#
+# WebKitDFB
+#
+$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 @DEPENDS_webkitdfb@
+	@PREPARE_webkitdfb@
+	touch $@
+
+$(DEPDIR)/webkitdfb.do_compile: bootstrap $(DEPDIR)/webkitdfb.do_prepare
+	cd @DIR_webkitdfb@ && \
+	$(BUILDENV) \
+	./autogen.sh --with-target=directfb --without-gtkplus \
+	   --host=$(target) \
+	   --prefix=/usr \
+		--with-cairo-directfb \
+		--enable-optimizations	\
+		--disable-channel-messaging	\
+		--enable-javascript-debugger	\
+		--enable-offline-web-applications	\
+		--enable-dom-storage	\
+		--enable-database	\
+		--disable-eventsource	\
+		--disable-icon-database	\
+		--enable-datalist	\
+		--disable-video	\
+		--enable-svg	\
+		--enable-xpath	\
+		--disable-xslt	\
+		--disable-dashboard-support \
+		--disable-geolocation \
+		--disable-workers	\
+		--disable-web-sockets	\
+    	--with-networking-backend=curl
+	touch $@
+
+$(DEPDIR)/min-webkitdfb $(DEPDIR)/std-webkitdfb $(DEPDIR)/max-webkitdfb \
+$(DEPDIR)/webkitdfb: \
+$(DEPDIR)/%webkitdfb: $(DEPDIR)/webkitdfb.do_compile
+	cd @DIR_webkitdfb@ && \
+		@INSTALL_webkitdfb@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+	
