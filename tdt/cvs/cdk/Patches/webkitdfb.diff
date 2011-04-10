@@ -1,3 +1,15 @@
+diff -Nur webkitdfb_2010-11-18.orig/configure.ac webkitdfb_2010-11-18/configure.ac
+--- webkitdfb_2010-11-18.orig/configure.ac	2011-01-06 15:12:13.000000000 -0800
++++ webkitdfb_2010-11-18/configure.ac	2011-04-10 05:06:07.513283601 -0700
+@@ -930,8 +930,6 @@
+     html_flags=yes
+ fi
+ 
+-GTK_DOC_CHECK([1.10])
+-
+ # OS conditionals
+ AM_CONDITIONAL([OS_WIN32],[test "$os_win32" = "yes"])
+ AM_CONDITIONAL([OS_UNIX],[test "$os_win32" = "no"])
 diff -Nur webkitdfb_2010-11-18.orig/Makefile webkitdfb_2010-11-18/Makefile
 --- webkitdfb_2010-11-18.orig/Makefile	2011-01-06 15:08:19.000000000 -0800
 +++ webkitdfb_2010-11-18/Makefile	2011-04-09 08:39:49.000000000 -0700

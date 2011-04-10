@@ -77,6 +77,7 @@ dfbpp;rewrite-pkgconfig:dfb++.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TA
 webkitdfb;make:install:DESTDIR=TARGETS
 icu4c;make:install:DESTDIR=TARGETS
 enchant;make:install:DESTDIR=TARGETS
+lite;make:install:DESTDIR=TARGETS
 expat;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libexpat.la
 fontconfig;make:install:DESTDIR=TARGETS
 libxmlccwrap;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxmlccwrap.la

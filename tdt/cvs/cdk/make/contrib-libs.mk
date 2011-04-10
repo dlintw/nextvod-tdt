@@ -1422,23 +1422,23 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 #
 # WebKitDFB
 #
-$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant @DEPENDS_webkitdfb@
+$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant lite curl fontconfig @DEPENDS_webkitdfb@
 	@PREPARE_webkitdfb@
 	touch $@
 
+#		--with-cairo-directfb
 $(DEPDIR)/webkitdfb.do_compile: bootstrap $(DEPDIR)/webkitdfb.do_prepare
 	cd @DIR_webkitdfb@ && \
 	$(BUILDENV) \
 	./autogen.sh --with-target=directfb --without-gtkplus \
 	   --host=$(target) \
 	   --prefix=/usr \
-		--with-cairo-directfb \
 		--enable-optimizations	\
 		--disable-channel-messaging	\
-		--enable-javascript-debugger	\
-		--enable-offline-web-applications	\
-		--enable-dom-storage	\
-		--enable-database	\
+		--disable-javascript-debugger	\
+		--disable-offline-web-applications	\
+		--disable-dom-storage	\
+		--disable-database	\
 		--disable-eventsource	\
 		--disable-icon-database	\
 		--enable-datalist	\
@@ -1517,4 +1517,31 @@ $(DEPDIR)/%enchant: $(DEPDIR)/enchant.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
+# lite
+#
+$(DEPDIR)/lite.do_prepare: bootstrap @DEPENDS_lite@
+	@PREPARE_lite@
+	touch $@
 
+$(DEPDIR)/lite.do_compile: $(DEPDIR)/lite.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_lite@ && \
+	cp $(hostprefix)/share/libtool/config/ltmain.sh .. && \
+	libtoolize -f -c && \
+	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+      --disable-debug
+	touch $@
+
+$(DEPDIR)/min-lite $(DEPDIR)/std-lite $(DEPDIR)/max-lite \
+$(DEPDIR)/lite: \
+$(DEPDIR)/%lite: $(DEPDIR)/lite.do_compile
+	cd @DIR_lite@ && \
+		@INSTALL_lite@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+	
