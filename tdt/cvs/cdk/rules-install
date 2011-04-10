@@ -75,6 +75,7 @@ lcms;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblcms.la
 directfb;rewrite-pkgconfig:directfb.pc;rewrite-pkgconfig:directfb-internal.pc;rewrite-pkgconfig:lib/direct/direct.pc;rewrite-pkgconfig:lib/fusion/fusion.pc;make:install:DESTDIR=TARGETS:LD=sh4-linux-ld;rewrite-libtool:TARGETS/usr/lib/libdirectfb.la;rewrite-libtool:TARGETS/usr/lib/libdirect.la;rewrite-libtool:TARGETS/usr/lib/libfusion.la;rewrite-dependency:TARGETS/usr/lib/libdirectfb.la;rewrite-dependency:TARGETS/usr/lib/libfusion.la
 dfbpp;rewrite-pkgconfig:dfb++.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libdfb++.la
 webkitdfb;make:install:DESTDIR=TARGETS
+icu4c;make:install:DESTDIR=TARGETS
 expat;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libexpat.la
 fontconfig;make:install:DESTDIR=TARGETS
 libxmlccwrap;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxmlccwrap.la

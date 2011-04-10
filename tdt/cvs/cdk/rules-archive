@@ -100,7 +100,7 @@ libid3tag-0.15.1b.tar.gz;http://bent.latency.net/bent/darcs/libid3tag-0.15.1b/sr
 # libid3tag-0.15.1b.tar.gz;ftp://ftp.osb.hu/openwrt/sources
 libxml2-2.6.30.tar.gz;ftp://ftp.gnome.org/pub/GNOME/sources/libxml2/2.6
 libxslt-1.1.24.tar.gz;http://xmlsoft.org/sources
-glib-2.8.3.tar.gz;http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.8
+glib-2.28.3.tar.gz;http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.28
 libiconv-1.11.tar.gz;http://ftp.gnu.org/pub/gnu/libiconv
 libmng-1.0.10.tar.bz2;http://dfn.dl.sourceforge.net/sourceforge/libmng
 lcms-1.17.tar.gz;http://dfn.dl.sourceforge.net/sourceforge/lcms
@@ -108,6 +108,7 @@ openssl-0.9.6m.tar.gz;ftp://ftp.openssl.org/source
 DirectFB-1.4.11.tar.gz;http://directfb.org/downloads/Core/DirectFB-1.4/
 DFB++-1.0.0.tar.gz;http://www.directfb.org/downloads/Extras
 webkitdfb_2010-11-18.tar.gz;http://www.duckbox.info/files/packages
+icu4c-4_4_1-src.tgz;http://download.icu-project.org/files/icu4c/4.4.1
 expat-2.0.1.tar.gz;http://kent.dl.sourceforge.net/sourceforge/expat
 fontconfig-2.5.93.tar.gz;http://fontconfig.org/release
 Python-2.4.4.tar.bz2;http://www.python.org/ftp/python/2.4.4

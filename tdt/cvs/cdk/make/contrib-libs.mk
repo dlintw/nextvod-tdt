@@ -557,7 +557,11 @@ $(DEPDIR)/glib2.do_prepare: @DEPENDS_glib2@
 	touch $@
 
 $(DEPDIR)/glib2.do_compile: bootstrap $(DEPDIR)/glib2.do_prepare
-	echo "ac_cv_func_posix_getpwuid_r=yes" > @DIR_glib2@/config.cache
+	echo "glib_cv_va_copy=no" > @DIR_glib2@/config.cache
+	echo "glib_cv___va_copy=yes" >> @DIR_glib2@/config.cache
+	echo "glib_cv_va_val_copy=yes" >> @DIR_glib2@/config.cache
+	echo "ac_cv_func_posix_getpwuid_r=yes" >> @DIR_glib2@/config.cache
+	echo "ac_cv_func_posix_getgrgid_r=yes" >> @DIR_glib2@/config.cache
 	echo "glib_cv_stack_grows=no" >> @DIR_glib2@/config.cache
 	echo "glib_cv_uscore=no" >> @DIR_glib2@/config.cache
 	cd @DIR_glib2@ && \
@@ -565,6 +569,9 @@ $(DEPDIR)/glib2.do_compile: bootstrap $(DEPDIR)/glib2.do_prepare
 		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--cache-file=config.cache \
+			--disable-gtk-doc \
+			--with-threads="posix" \
+			--enable-static \
 			--build=$(build) \
 			--host=$(target) \
 			--prefix=/usr \
@@ -1415,7 +1422,7 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 #
 # WebKitDFB
 #
-$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 @DEPENDS_webkitdfb@
+$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 @DEPENDS_webkitdfb@
 	@PREPARE_webkitdfb@
 	touch $@
 
@@ -1453,4 +1460,33 @@ $(DEPDIR)/%webkitdfb: $(DEPDIR)/webkitdfb.do_compile
 		@INSTALL_webkitdfb@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-	
+
+
+$(DEPDIR)/icu4c.do_prepare: bootstrap @DEPENDS_icu4c@
+	@PREPARE_icu4c@
+	touch $@
+
+
+$(DEPDIR)/icu4c.do_compile: bootstrap $(DEPDIR)/icu4c.do_prepare
+	echo "Building host icu"
+	mkdir -p @DIR_icu4c@/host && \
+	cd @DIR_icu4c@/host && \
+   sh ../configure --disable-samples --disable-tests && \
+   unset TARGET && \
+	make
+	echo "Building cross icu"
+	cd @DIR_icu4c@ && \
+	$(BUILDENV) \
+	./configure --disable-samples --disable-tests --with-cross-build=$(BUILDPREFIX)/icu/source/host \
+	   --host=$(target) \
+	   --prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-icu4c $(DEPDIR)/std-icu4c $(DEPDIR)/max-icu4c \
+$(DEPDIR)/icu4c: \
+$(DEPDIR)/%icu4c: $(DEPDIR)/icu4c.do_compile
+	cd @DIR_icu4c@ && \
+	   unset TARGET && \
+		@INSTALL_icu4c@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@

@@ -1,0 +1,171 @@
+diff -Naupr glib-2.28.3.orig/configure.ac glib-2.28.3/configure.ac
+--- glib-2.28.3.orig/configure.ac	2011-03-16 13:08:12.571940140 +0100
++++ glib-2.28.3/configure.ac	2011-03-16 13:10:17.606937157 +0100
+@@ -2511,6 +2511,12 @@ if test x"$GCC" = xyes; then
+ 			   [cris atomic implementation])
+         glib_memory_barrier_needed=no
+         ;;
++      sh*)
++       AC_MSG_RESULT([sh4])
++       AC_DEFINE_UNQUOTED(G_ATOMIC_SH4, 1,
++                          [SH4 atomic implementation])
++       glib_memory_barrier_needed=yes
++       ;;
+       *)
+         AC_MSG_RESULT([none])
+         glib_memory_barrier_needed=yes
+diff -Naupr glib-2.28.3.orig/glib/gatomic.c glib-2.28.3/glib/gatomic.c
+--- glib-2.28.3.orig/glib/gatomic.c	2011-03-16 13:08:12.690939105 +0100
++++ glib-2.28.3/glib/gatomic.c	2011-03-16 13:11:28.624938122 +0100
+@@ -810,6 +810,42 @@ g_atomic_int_add (volatile gint G_GNUC_M
+ #  define g_atomic_int_compare_and_exchange __g_atomic_int_compare_and_exchange
+ #  define g_atomic_pointer_compare_and_exchange __g_atomic_pointer_compare_and_exchange
+ 
++# elif defined (G_ATOMIC_SH4)
++
++gint32
++g_atomic_int_exchange_and_add (volatile gint32 *atomic,
++                              gint32           val)
++{
++  return __sync_fetch_and_add (atomic, val);
++}
++
++void
++g_atomic_int_add (volatile gint32 *atomic,
++                 gint32           val)
++{
++  __sync_fetch_and_add (atomic, val);
++}
++
++gboolean
++g_atomic_int_compare_and_exchange (volatile gint32 *atomic,
++                                  gint32           oldval,
++                                  gint32           newval)
++{
++  return __sync_bool_compare_and_swap (atomic, oldval, newval);
++}
++
++gboolean
++g_atomic_pointer_compare_and_exchange (volatile gpointer *atomic,
++                                      gpointer           oldval,
++                                      gpointer           newval)
++{
++  return __sync_bool_compare_and_swap ((long *)atomic,
++                                       (long)oldval, (long)newval);
++}
++
++#  define G_ATOMIC_MEMORY_BARRIER __asm__ ("synco" : : : "memory")
++
++
+ # else /* !G_ATOMIC_* */
+ #  define DEFINE_WITH_MUTEXES
+ # endif /* G_ATOMIC_* */
+
+ diff -Naupr glib-2.28.3.orig/configure.ac glib-2.28.3/configure.ac
+--- glib-2.28.3.orig/configure.ac	2011-03-16 13:13:07.961939036 +0100
++++ glib-2.28.3/configure.ac	2011-03-16 13:14:25.289937267 +0100
+@@ -47,6 +47,9 @@ m4_define([glib_debug_default],
+ AC_INIT(glib, [glib_version],
+         [http://bugzilla.gnome.org/enter_bug.cgi?product=glib])
+ 
++AC_CONFIG_MACRO_DIR([m4macros])
++m4_include([m4macros/gtk-doc.m4])
++
+ AC_CONFIG_HEADER([config.h])
+ AC_CONFIG_SRCDIR([glib/glib.h])
+ AC_CONFIG_MACRO_DIR([m4macros])
+diff -Naupr glib-2.28.3.orig/m4macros/gtk-doc.m4 glib-2.28.3/m4macros/gtk-doc.m4
+--- glib-2.28.3.orig/m4macros/gtk-doc.m4	1970-01-01 01:00:00.000000000 +0100
++++ glib-2.28.3/m4macros/gtk-doc.m4	2011-03-16 13:15:13.719999054 +0100
+@@ -0,0 +1,39 @@
++dnl -*- mode: autoconf -*-
++
++# serial 1
++
++dnl Usage:
++dnl   GTK_DOC_CHECK([minimum-gtk-doc-version])
++AC_DEFUN([GTK_DOC_CHECK],
++[
++  AC_BEFORE([AC_PROG_LIBTOOL],[$0])dnl setup libtool first
++  AC_BEFORE([AM_PROG_LIBTOOL],[$0])dnl setup libtool first
++  dnl for overriding the documentation installation directory
++  AC_ARG_WITH([html-dir],
++    AS_HELP_STRING([--with-html-dir=PATH], [path to installed docs]),,
++    [with_html_dir='${datadir}/gtk-doc/html'])
++  HTML_DIR="$with_html_dir"
++  AC_SUBST([HTML_DIR])
++
++  dnl enable/disable documentation building
++  AC_ARG_ENABLE([gtk-doc],
++    AS_HELP_STRING([--enable-gtk-doc],
++                   [use gtk-doc to build documentation [[default=no]]]),,
++    [enable_gtk_doc=no])
++
++  if test x$enable_gtk_doc = xyes; then
++    ifelse([$1],[],
++      [PKG_CHECK_EXISTS([gtk-doc],,
++                        AC_MSG_ERROR([gtk-doc not installed and --enable-gtk-doc requested]))],
++      [PKG_CHECK_EXISTS([gtk-doc >= $1],,
++                        AC_MSG_ERROR([You need to have gtk-doc >= $1 installed to build gtk-doc]))])
++  fi
++
++  AC_MSG_CHECKING([whether to build gtk-doc documentation])
++  AC_MSG_RESULT($enable_gtk_doc)
++
++  AC_PATH_PROGS(GTKDOC_CHECK,gtkdoc-check,)
++
++  AM_CONDITIONAL([ENABLE_GTK_DOC], [test x$enable_gtk_doc = xyes])
++  AM_CONDITIONAL([GTK_DOC_USE_LIBTOOL], [test -n "$LIBTOOL"])
++])
+diff -Naupr glib-2.28.3.orig/m4macros/Makefile.am glib-2.28.3/m4macros/Makefile.am
+--- glib-2.28.3.orig/m4macros/Makefile.am	2011-03-16 13:13:08.040938732 +0100
++++ glib-2.28.3/m4macros/Makefile.am	2011-03-16 13:15:38.204935573 +0100
+@@ -1,6 +1,6 @@
+ include $(top_srcdir)/Makefile.decl
+ 
+-installed_m4= glib-2.0.m4 glib-gettext.m4 gsettings.m4
++installed_m4= glib-2.0.m4 glib-gettext.m4 gsettings.m4 gtk-doc.m4
+ 
+ EXTRA_DIST+=$(installed_m4)
+ 
+diff -Naupr glib-2.28.3.orig/configure.ac glib-2.28.3/configure.ac
+--- glib-2.28.3.orig/configure.ac	2011-03-16 13:25:14.304939388 +0100
++++ glib-2.28.3/configure.ac	2011-03-16 13:26:06.045939448 +0100
+@@ -2737,7 +2737,7 @@ if test $cross_compiling = yes; then
+ 
+   AC_PATH_PROG(GLIB_COMPILE_SCHEMAS, glib-compile-schemas, no)
+   if test x$GLIB_COMPILE_SCHEMAS = xno; then
+-    AC_MSG_ERROR(Could not find a glib-compile-schemas in your PATH)
++    AC_MSG_WARN(Could not find a glib-compile-schemas in your PATH)
+   fi
+ fi
+ 
+diff -Naupr glib-2.28.3/configure.ac.orig glib-2.28.3/configure.ac
+--- glib-2.28.3/configure.ac.orig	2011-03-29 17:41:07.000000000 +0100
++++ glib-2.28.3/configure.ac	2011-03-29 17:42:12.000000000 +0100
+@@ -2520,6 +2520,12 @@
+                           [SH4 atomic implementation])
+        glib_memory_barrier_needed=yes
+        ;;
++      st2[[0-9]][[0-9]]*)
++       AC_MSG_RESULT([st200])
++       AC_DEFINE_UNQUOTED(G_ATOMIC_ST200, 1,
++                          [st200 atomic implementation])
++       glib_memory_barrier_needed=yes
++       ;;
+       *)
+         AC_MSG_RESULT([none])
+         glib_memory_barrier_needed=yes
+
+diff -Naupr glib-2.28.3/glib/gatomic.c.orig glib-2.28.3/glib/gatomic.c
+--- glib-2.28.3/glib/gatomic.c.orig	2011-03-29 17:40:00.000000000 +0100
++++ glib-2.28.3/glib/gatomic.c	2011-03-29 17:40:40.000000000 +0100
+@@ -522,7 +522,7 @@
+ 
+ #  define G_ATOMIC_MEMORY_BARRIER __asm__ ("sync" : : : "memory")
+ 
+-# elif defined (G_ATOMIC_IA64)
++# elif defined (G_ATOMIC_IA64) || defined (G_ATOMIC_ST200)
+ /* Adapted from CVS version 1.8 of glibc's sysdeps/ia64/bits/atomic.h
+  */
+ gint
