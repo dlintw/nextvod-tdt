@@ -1422,7 +1422,7 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 #
 # WebKitDFB
 #
-$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 @DEPENDS_webkitdfb@
+$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant @DEPENDS_webkitdfb@
 	@PREPARE_webkitdfb@
 	touch $@
 
@@ -1466,7 +1466,6 @@ $(DEPDIR)/icu4c.do_prepare: bootstrap @DEPENDS_icu4c@
 	@PREPARE_icu4c@
 	touch $@
 
-
 $(DEPDIR)/icu4c.do_compile: bootstrap $(DEPDIR)/icu4c.do_prepare
 	echo "Building host icu"
 	mkdir -p @DIR_icu4c@/host && \
@@ -1490,3 +1489,32 @@ $(DEPDIR)/%icu4c: $(DEPDIR)/icu4c.do_compile
 		@INSTALL_icu4c@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
+	
+$(DEPDIR)/enchant.do_prepare: bootstrap @DEPENDS_enchant@
+	@PREPARE_enchant@
+	touch $@
+
+#	libtoolize -f -c && \
+#	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal
+
+$(DEPDIR)/enchant.do_compile: bootstrap $(DEPDIR)/enchant.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_enchant@ && \
+	libtoolize -f -c && \
+	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
+	$(BUILDENV)  \
+	./configure --disable-aspell --disable-ispell --disable-myspell --disable-zemberek \
+	--host=$(target) \
+	--prefix=/usr && \
+	$(MAKE) LD=$(target)-ld
+	touch $@
+
+$(DEPDIR)/min-enchant $(DEPDIR)/std-enchant $(DEPDIR)/max-enchant \
+$(DEPDIR)/enchant: \
+$(DEPDIR)/%enchant: $(DEPDIR)/enchant.do_compile
+	cd @DIR_enchant@ && \
+		@INSTALL_enchant@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+

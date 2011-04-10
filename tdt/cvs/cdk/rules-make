@@ -103,6 +103,7 @@ directfb;1.4.11;DirectFB-1.4.11;DirectFB-1.4.11.tar.gz:directfb-1.4.11+STM2010.1
 dfbpp;1.0.0;DFB++-1.0.0;DFB++-1.0.0.tar.gz;extract:DFB++-1.0.0.tar.gz
 webkitdfb;2010-11-18;webkitdfb_2010-11-18;webkitdfb_2010-11-18.tar.gz:webkitdfb.diff;extract:webkitdfb_2010-11-18.tar.gz;patch:webkitdfb.diff
 icu4c;4_4_1;icu/source;icu4c-4_4_1-src.tgz;extract:icu4c-4_4_1-src.tgz
+enchant;1.5.0;enchant-1.5.0;enchant-1.5.0.tar.gz;extract:enchant-1.5.0.tar.gz
 expat;2.0.1;expat-2.0.1;expat-2.0.1.tar.gz;extract:expat-2.0.1.tar.gz
 fontconfig;2.5.93;fontconfig-2.5.93;fontconfig-2.5.93.tar.gz;extract:fontconfig-2.5.93.tar.gz
 python24;2.4.4;Python-2.4.4;Python-2.4.4.tar.bz2:python-stm.diff;extract:Python-2.4.4.tar.bz2;patch:python-stm.diff

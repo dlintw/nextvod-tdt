@@ -68,7 +68,7 @@ libid3tag;rewrite-pkgconfig:id3tag.pc;make:install:DESTDIR=TARGETS;install:-m644
 libxml2;rewrite-pkgconfig:libxml-2.0.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxml2.la;rewrite-libtool:TARGETS/usr/lib/python2.6/site-packages/libxml2mod.la
 libxslt;rewrite-pkgconfig:libxslt.pc;rewrite-pkgconfig:libexslt.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxslt.la;rewrite-libtool:TARGETS/usr/lib/libexslt.la;rewrite-libtool:TARGETS/usr/lib/python2.6/site-packages/libxsltmod.la
 libvorbisidec;rewrite-pkgconfig:vorbisidec.pc;make:install:DESTDIR=TARGET;install:-m644:vorbisidec.pc:TARGET/usr/lib/pkgconfig;rewrite-libtool:TARGET/lib/libvorbisidec.la
-glib2;rewrite-pkgconfig:glib-2.0.pc:gmodule-2.0.pc:gmodule-export-2.0.pc:gmodule-no-export-2.0.pc:gobject-2.0.pc:gthread-2.0.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libglib-2.0.la
+glib2;rewrite-pkgconfig:glib-2.0.pc:gmodule-2.0.pc:gmodule-export-2.0.pc:gmodule-no-export-2.0.pc:gobject-2.0.pc:gthread-2.0.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libglib-2.0.la;rewrite-libtool:TARGETS/usr/lib/libgmodule-2.0.la;rewrite-dependency:TARGETS/usr/lib/libgmodule-2.0.la
 libiconv;make:install:DESTDIR=TARGETS
 libmng;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libmng.la;rewrite-dependency:TARGETS/usr/lib/libmng.la
 lcms;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblcms.la
@@ -76,6 +76,7 @@ directfb;rewrite-pkgconfig:directfb.pc;rewrite-pkgconfig:directfb-internal.pc;re
 dfbpp;rewrite-pkgconfig:dfb++.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libdfb++.la
 webkitdfb;make:install:DESTDIR=TARGETS
 icu4c;make:install:DESTDIR=TARGETS
+enchant;make:install:DESTDIR=TARGETS
 expat;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libexpat.la
 fontconfig;make:install:DESTDIR=TARGETS
 libxmlccwrap;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxmlccwrap.la
