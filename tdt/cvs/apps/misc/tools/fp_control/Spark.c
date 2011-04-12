@@ -33,7 +33,7 @@
 #include "global.h"
 #include "Vip2.h"
 
-static int setText(Context_t* context, char* theText);
+static int Spark_setText(Context_t* context, char* theText);
 
 /******************** constants ************************ */
 
@@ -143,24 +143,23 @@ static int Spark_setTime(Context_t* context, time_t* theGMTTime)
 
 static int Spark_getTime(Context_t* context, time_t* theGMTTime)
 {
-   char fp_time[8];
-
+   time_t iTime;
    fprintf(stderr, "waiting on current time from fp ...\n");
 
    /* front controller time */
-   if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
+   if (ioctl(context->fd, VFDGETTIME, &iTime) < 0)
    {
       perror("gettime: ");
       return -1;
    }
 
    /* if we get the fp time */
-   if (fp_time[0] != '\0')
+   if (iTime != '\0')
    {
       fprintf(stderr, "success reading time from fp\n");
 
       /* current front controller time */
-      *theGMTTime = (time_t) Spark_getAotomTime(fp_time);
+      *theGMTTime = iTime;
    } else
    {
       fprintf(stderr, "error reading time from fp\n");
@@ -211,14 +210,13 @@ static int Spark_setTimer(Context_t* context)
    } else
    {
       unsigned long diff;
-      char   	    fp_time[8];
-
+   	  time_t iTime;
       fprintf(stderr, "waiting on current time from fp ...\n");
 
       /* front controller time */
-       if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
+       if (ioctl(context->fd, VFDGETTIME, &iTime) < 0)
        {
-	  perror("gettime: ");
+	  	  perror("gettime: ");
           return -1;
        }
 
@@ -226,12 +224,12 @@ static int Spark_setTimer(Context_t* context)
       diff = (unsigned long int) wakeupTime - curTime;
 
       /* if we get the fp time */
-      if (fp_time[0] != '\0')
+      if (iTime != '\0')
       {
          fprintf(stderr, "success reading time from fp\n");
 
          /* current front controller time */
-         curTime = (time_t) Spark_getAotomTime(fp_time);
+		 curTime = iTime;
       } else
       {
           fprintf(stderr, "error reading time ... assuming localtime\n");
@@ -242,7 +240,7 @@ static int Spark_setTimer(Context_t* context)
 
       Spark_setAotomTime(wakeupTime, vData.u.standby.time);
 
-       if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
+       if (ioctl(context->fd, VFDSTANDBY, &wakeupTime) < 0)
        {
 	  perror("standby: ");
           return -1;
@@ -282,14 +280,14 @@ static int Spark_setTimerManual(Context_t* context, time_t* theGMTTime)
    } else
    {
       unsigned long diff;
-      char   	    fp_time[8];
+   	  time_t iTime;
 
       fprintf(stderr, "waiting on current time from fp ...\n");
 
       /* front controller time */
-      if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
+      if (ioctl(context->fd, VFDGETTIME, &iTime) < 0)
       {
-	 perror("gettime: ");
+	 	 perror("gettime: ");
          return -1;
       }
 
@@ -297,12 +295,12 @@ static int Spark_setTimerManual(Context_t* context, time_t* theGMTTime)
       diff = (unsigned long int) wakeupTime - curTime;
 
       /* if we get the fp time */
-      if (fp_time[0] != '\0')
+      if (iTime != '\0')
       {
          fprintf(stderr, "success reading time from fp\n");
 
          /* current front controller time */
-         curTime = (time_t) Spark_getAotomTime(fp_time);
+         curTime = iTime;
       } else
       {
           fprintf(stderr, "error reading time ... assuming localtime\n");
@@ -379,6 +377,7 @@ static int Spark_reboot(Context_t* context, time_t* rebootTimeGMT)
 
 static int Spark_Sleep(Context_t* context, time_t* wakeUpGMT)
 {
+#if 0
    time_t     curTime;
    int        sleep = 1;
    int        vFd;
@@ -389,7 +388,6 @@ static int Spark_Sleep(Context_t* context, time_t* wakeUpGMT)
    char       output[cMAXCharsVIP2 + 1];
    tSparkPrivate* private = (tSparkPrivate*)
         ((Model_t*)context->m)->private;
-#if 0
    printf("%s\n", __func__);
 
    vFd = open(cRC_DEVICE, O_RDWR);
@@ -430,7 +428,7 @@ static int Spark_Sleep(Context_t* context, time_t* wakeUpGMT)
       if (private->display)
       {
          strftime(output, cMAXCharsVIP2 + 1, private->timeFormat, ts);
-         setText(context, output);
+         Spark_setText(context, output);
       }
    }
 #endif
