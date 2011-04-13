@@ -76,10 +76,12 @@ directfb;rewrite-pkgconfig:directfb.pc;rewrite-pkgconfig:directfb-internal.pc;re
 dfbpp;rewrite-pkgconfig:dfb++.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libdfb++.la
 webkitdfb;make:install:DESTDIR=TARGETS
 icu4c;make:install:DESTDIR=TARGETS
-enchant;make:install:DESTDIR=TARGETS
-lite;make:install:DESTDIR=TARGETS
+enchant;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libenchant.la;rewrite-dependency:TARGETS/usr/lib/libenchant.la
+lite;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblite.la;rewrite-dependency:TARGETS/usr/lib/liblite.la
+sqlite;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libsqlite3.la;rewrite-dependency:TARGETS/usr/lib/libsqlite3.la
+libsoup;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libsoup-2.4.la;rewrite-dependency:TARGETS/usr/lib/libsoup-2.4.la;move:TARGETS/usr/include/libsoup-2.4/libsoup:TARGETS/usr/include/libsoup;remove:TARGETS/usr/include/libsoup-2.4
 expat;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libexpat.la
-fontconfig;make:install:DESTDIR=TARGETS
+fontconfig;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libfontconfig.la;rewrite-dependency:TARGETS/usr/lib/libfontconfig.la
 libxmlccwrap;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxmlccwrap.la
 a52dec;make:install:DESTDIR=TARGETS
 libdvdcss;make:install:DESTDIR=TARGETS

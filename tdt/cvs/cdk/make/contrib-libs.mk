@@ -1422,25 +1422,27 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 #
 # WebKitDFB
 #
-$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant lite curl fontconfig @DEPENDS_webkitdfb@
+$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant lite curl fontconfig sqlite libsoup @DEPENDS_webkitdfb@
 	@PREPARE_webkitdfb@
 	touch $@
 
 #		--with-cairo-directfb
 $(DEPDIR)/webkitdfb.do_compile: bootstrap $(DEPDIR)/webkitdfb.do_prepare
+	export PATH=$(BUILDPREFIX)/@DIR_icu4c@/host/config:$(PATH) && \
 	cd @DIR_webkitdfb@ && \
 	$(BUILDENV) \
 	./autogen.sh --with-target=directfb --without-gtkplus \
 	   --host=$(target) \
 	   --prefix=/usr \
+	   --disable-shared-workers \
 		--enable-optimizations	\
 		--disable-channel-messaging	\
 		--disable-javascript-debugger	\
-		--disable-offline-web-applications	\
-		--disable-dom-storage	\
-		--disable-database	\
+		--enable-offline-web-applications	\
+		--enable-dom-storage	\
+		--enable-database	\
 		--disable-eventsource	\
-		--disable-icon-database	\
+		--enable-icon-database	\
 		--enable-datalist	\
 		--disable-video	\
 		--enable-svg	\
@@ -1450,7 +1452,7 @@ $(DEPDIR)/webkitdfb.do_compile: bootstrap $(DEPDIR)/webkitdfb.do_prepare
 		--disable-geolocation \
 		--disable-workers	\
 		--disable-web-sockets	\
-    	--with-networking-backend=curl
+    	--with-networking-backend=soup
 	touch $@
 
 $(DEPDIR)/min-webkitdfb $(DEPDIR)/std-webkitdfb $(DEPDIR)/max-webkitdfb \
@@ -1476,7 +1478,7 @@ $(DEPDIR)/icu4c.do_compile: bootstrap $(DEPDIR)/icu4c.do_prepare
 	echo "Building cross icu"
 	cd @DIR_icu4c@ && \
 	$(BUILDENV) \
-	./configure --disable-samples --disable-tests --with-cross-build=$(BUILDPREFIX)/icu/source/host \
+	./configure --disable-samples --disable-tests --with-cross-build=$(BUILDPREFIX)/@DIR_icu4c@/host \
 	   --host=$(target) \
 	   --prefix=/usr
 	touch $@
@@ -1544,4 +1546,55 @@ $(DEPDIR)/%lite: $(DEPDIR)/lite.do_compile
 		@INSTALL_lite@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# sqlite
+#
+$(DEPDIR)/sqlite.do_prepare: bootstrap @DEPENDS_sqlite@
+	@PREPARE_sqlite@
+	touch $@
+
+$(DEPDIR)/sqlite.do_compile: $(DEPDIR)/sqlite.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_sqlite@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+      --disable-debug
+	touch $@
+
+$(DEPDIR)/min-sqlite $(DEPDIR)/std-sqlite $(DEPDIR)/max-sqlite \
+$(DEPDIR)/sqlite: \
+$(DEPDIR)/%sqlite: $(DEPDIR)/sqlite.do_compile
+	cd @DIR_sqlite@ && \
+		@INSTALL_sqlite@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
 	
+#
+# libsoup
+#
+$(DEPDIR)/libsoup.do_prepare: bootstrap @DEPENDS_libsoup@
+	@PREPARE_libsoup@
+	touch $@
+
+$(DEPDIR)/libsoup.do_compile: $(DEPDIR)/libsoup.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libsoup@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+		--disable-more-warnings \
+		--without-gnome
+	touch $@
+
+$(DEPDIR)/min-libsoup $(DEPDIR)/std-libsoup $(DEPDIR)/max-libsoup \
+$(DEPDIR)/libsoup: \
+$(DEPDIR)/%libsoup: $(DEPDIR)/libsoup.do_compile
+	cd @DIR_libsoup@ && \
+		@INSTALL_libsoup@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+

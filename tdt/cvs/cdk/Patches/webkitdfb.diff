@@ -1,7 +1,81 @@
 diff -Nur webkitdfb_2010-11-18.orig/configure.ac webkitdfb_2010-11-18/configure.ac
 --- webkitdfb_2010-11-18.orig/configure.ac	2011-01-06 15:12:13.000000000 -0800
-+++ webkitdfb_2010-11-18/configure.ac	2011-04-10 05:06:07.513283601 -0700
-@@ -930,8 +930,6 @@
++++ webkitdfb_2010-11-18/configure.ac	2011-04-13 11:57:26.214172527 -0700
+@@ -17,9 +17,20 @@
+ AC_CONFIG_AUX_DIR([autotools])
+ AC_SUBST(ACLOCAL_AMFLAGS, "-I autotools")
+ 
++dnl Save user specified CFLAGS/CXXFLAGS. 
++dnl We want to separate it from configure generated defaults
++USER_CFLAGS="$CFLAGS"
++USER_CXXFLAGS="$CXXFLAGS"
++AC_SUBST([USER_CFLAGS])
++AC_SUBST([USER_CXXFLAGS])
++
+ AC_CONFIG_HEADERS([autotoolsconfig.h])
+ AC_CANONICAL_HOST
+ 
++dnl Restore user specified flags. Discard configure generated defaults.
++CFLAGS="$USER_CFLAGS"
++CXXFLAGS="$USER_CXXFLAGS"
++
+ WEBKIT_MAJOR_VERSION=webkit_major_version
+ WEBKIT_MINOR_VERSION=webkit_minor_version
+ WEBKIT_MICRO_VERSION=webkit_micro_version
+@@ -38,7 +49,7 @@
+ LIBWEBKITGTK_VERSION=3:1:3
+ AC_SUBST([LIBWEBKITGTK_VERSION])
+ 
+-AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])
++AM_INIT_AUTOMAKE([foreign subdir-objects])
+ 
+ # Use AM_SILENT_RULES if present
+ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+@@ -82,6 +93,7 @@
+ AC_DISABLE_STATIC
+ AC_LIBTOOL_WIN32_DLL
+ AC_PROG_LIBTOOL
++AM_PROG_CC_C_O
+ # use dolt to speedup the build
+ DOLT
+ 
+@@ -167,6 +179,35 @@
+ fi
+ AC_SUBST([PNG_LIBS])
+ 
++# determine the Unicode backend
++AC_MSG_CHECKING([the Unicode backend to use])
++AC_ARG_WITH(unicode_backend,
++            AC_HELP_STRING([--with-unicode-backend=@<:@icu@:>@],
++                           [Select Unicode backend [default=icu]]),
++            [],[unicode_backend="icu"])
++
++case "$unicode_backend" in
++     icu) ;;
++     *) AC_MSG_ERROR([Invalid Unicode backend: must be icu.]) ;;
++esac
++
++AC_MSG_RESULT([$unicode_backend])
++
++if test "$unicode_backend" = "icu"; then
++       if test "$os_darwin" = "yes"; then
++               UNICODE_CFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
++               UNICODE_LIBS="-licucore"
++       elif test "$os_win32" = "yes"; then
++               UNICODE_CFLAGS=""
++               UNICODE_LIBS="-licuin -licuuc"
++       else
++               UNICODE_CFLAGS=""
++               UNICODE_LIBS="-licui18n -licuuc -licudata -lpthread -ldl -lm"
++       fi
++fi
++
++AC_SUBST([UNICODE_CFLAGS])
++AC_SUBST([UNICODE_LIBS])
+ 
+ if test "$os_win32" = "yes"; then
+   WINMM_LIBS=-lwinmm
+@@ -930,8 +971,6 @@
      html_flags=yes
  fi
  
@@ -10,18 +84,154 @@ diff -Nur webkitdfb_2010-11-18.orig/configure.ac webkitdfb_2010-11-18/configure.
  # OS conditionals
  AM_CONDITIONAL([OS_WIN32],[test "$os_win32" = "yes"])
  AM_CONDITIONAL([OS_UNIX],[test "$os_win32" = "no"])
+diff -Nur webkitdfb_2010-11-18.orig/JavaScriptCore/GNUmakefile.am webkitdfb_2010-11-18/JavaScriptCore/GNUmakefile.am
+--- webkitdfb_2010-11-18.orig/JavaScriptCore/GNUmakefile.am	2011-01-06 15:12:12.000000000 -0800
++++ webkitdfb_2010-11-18/JavaScriptCore/GNUmakefile.am	2011-04-13 12:21:58.936432135 -0700
+@@ -630,6 +630,7 @@
+ 	$(GLOBALDEPS_CFLAGS)
+ 
+ Programs_minidom_LDADD = \
++	 $(UNICODE_LIBS) \
+ 	 libJavaScriptCore.la \
+ 	 $(WINMM_LIBS) \
+ 	 -lm \
+@@ -660,6 +661,7 @@
+ 	$(UNICODE_CFLAGS)
+ 
+ Programs_jsc_LDADD = \
++	$(UNICODE_LIBS) \
+ 	libJavaScriptCore.la \
+ 	$(WINMM_LIBS)
+ 
 diff -Nur webkitdfb_2010-11-18.orig/Makefile webkitdfb_2010-11-18/Makefile
 --- webkitdfb_2010-11-18.orig/Makefile	2011-01-06 15:08:19.000000000 -0800
-+++ webkitdfb_2010-11-18/Makefile	2011-04-09 08:39:49.000000000 -0700
++++ webkitdfb_2010-11-18/Makefile	2011-04-13 10:46:21.000000000 -0700
 @@ -1,4 +1,4 @@
 -MODULES = JavaScriptCore JavaScriptGlue ANGLE WebCore WebKit WebKit2 WebKitTools 
 +MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKitTools
  
  all:
  	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
+diff -Nur webkitdfb_2010-11-18.orig/WebCore/bridge/npapi.h webkitdfb_2010-11-18/WebCore/bridge/npapi.h
+--- webkitdfb_2010-11-18.orig/WebCore/bridge/npapi.h	2011-01-06 15:08:26.000000000 -0800
++++ webkitdfb_2010-11-18/WebCore/bridge/npapi.h	2011-04-13 10:46:21.000000000 -0700
+@@ -89,9 +89,11 @@
+ #endif
+ #endif
+ 
+-#if defined(XP_UNIX)
+-#include <X11/Xlib.h>
+-#include <X11/Xutil.h>
++#ifdef XP_UNIX
++#if defined(MOZ_X11)
++     #include <X11/Xlib.h>
++     #include <X11/Xutil.h>
++#endif
+ #include <stdio.h>
+ #endif
+ 
+@@ -266,10 +268,12 @@
+ typedef struct
+ {
+   int32_t      type;
++#if defined(MOZ_X11)
+   Display*     display;
+   Visual*      visual;
+   Colormap     colormap;
+   unsigned int depth;
++#endif
+ } NPSetWindowCallbackStruct;
+ 
+ typedef struct
+@@ -533,8 +537,12 @@
+   uint32_t lParam;
+ } NPEvent;
+ #elif defined(XP_UNIX)
++#if defined(MOZ_X11)
+ typedef XEvent NPEvent;
+ #else
++typedef GdkEvent NPEvent;
++#endif
++#else
+ typedef void*  NPEvent;
+ #endif
+ 
+@@ -546,7 +554,7 @@
+ typedef CGPathRef NPCGRegion;
+ #elif defined(XP_WIN)
+ typedef HRGN NPRegion;
+-#elif defined(XP_UNIX)
++#elif defined(XP_UNIX)&& defined(MOZ_X11)
+ typedef Region NPRegion;
+ #elif defined(XP_SYMBIAN)
+ typedef QRegion* NPRegion;
+diff -Nur webkitdfb_2010-11-18.orig/WebCore/bridge/npruntime_internal.h webkitdfb_2010-11-18/WebCore/bridge/npruntime_internal.h
+--- webkitdfb_2010-11-18.orig/WebCore/bridge/npruntime_internal.h	2011-01-06 15:08:26.000000000 -0800
++++ webkitdfb_2010-11-18/WebCore/bridge/npruntime_internal.h	2011-04-13 10:46:21.000000000 -0700
+@@ -30,7 +30,9 @@
+ #include "npruntime.h"
+ 
+ #ifdef XP_UNIX
++#if PLATFORM(X11)
+     #include <X11/Xresource.h>
++#endif
+ 
+     #undef None
+     #undef Above
+diff -Nur webkitdfb_2010-11-18.orig/WebCore/platform/network/curl/ResourceHandleManager.cpp webkitdfb_2010-11-18/WebCore/platform/network/curl/ResourceHandleManager.cpp
+--- webkitdfb_2010-11-18.orig/WebCore/platform/network/curl/ResourceHandleManager.cpp	2011-01-06 15:08:36.000000000 -0800
++++ webkitdfb_2010-11-18/WebCore/platform/network/curl/ResourceHandleManager.cpp	2011-04-13 10:46:21.000000000 -0700
+@@ -338,9 +338,9 @@
+     // Retry 'select' if it was interrupted by a process signal.
+     int rc = 0;
+     do {
+-        FD_ZERO(&fdread);
+-        FD_ZERO(&fdwrite);
+-        FD_ZERO(&fdexcep);
++        //FD_ZERO(&fdread);
++        //FD_ZERO(&fdwrite);
++        //FD_ZERO(&fdexcep);
+         curl_multi_fdset(m_curlMultiHandle, &fdread, &fdwrite, &fdexcep, &maxfd);
+         // When the 3 file descriptors are empty, winsock will return -1
+         // and bail out, stopping the file download. So make sure we
+diff -Nur webkitdfb_2010-11-18.orig/WebCore/plugins/PluginView.cpp webkitdfb_2010-11-18/WebCore/plugins/PluginView.cpp
+--- webkitdfb_2010-11-18.orig/WebCore/plugins/PluginView.cpp	2011-01-06 15:08:36.000000000 -0800
++++ webkitdfb_2010-11-18/WebCore/plugins/PluginView.cpp	2011-04-13 10:46:21.000000000 -0700
+@@ -870,11 +870,13 @@
+ #endif
+ #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
+     , m_hasPendingGeometryChange(true)
++#if PLATFORM(X11)
+     , m_drawable(0)
+     , m_visual(0)
+     , m_colormap(0)
+     , m_pluginDisplay(0)
+ #endif
++#endif
+ #if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
+     , m_renderToImage(false)
+ #endif
+diff -Nur webkitdfb_2010-11-18.orig/WebCore/plugins/PluginView.h webkitdfb_2010-11-18/WebCore/plugins/PluginView.h
+--- webkitdfb_2010-11-18.orig/WebCore/plugins/PluginView.h	2011-01-06 15:08:36.000000000 -0800
++++ webkitdfb_2010-11-18/WebCore/plugins/PluginView.h	2011-04-13 10:46:21.000000000 -0700
+@@ -406,12 +406,13 @@
+ 
+ #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
+         bool m_hasPendingGeometryChange;
++#if PLATFORM(X11)
+         Pixmap m_drawable;
+         Visual* m_visual;
+         Colormap m_colormap;
+         Display* m_pluginDisplay;
+ 
+-        void initXEvent(XEvent* event);
++#endif
+ #endif
+ 
+ #if PLATFORM(QT) 
 diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/docs/GNUmakefile.am webkitdfb_2010-11-18/WebKit/dfb/docs/GNUmakefile.am
 --- webkitdfb_2010-11-18.orig/WebKit/dfb/docs/GNUmakefile.am	2011-01-06 15:12:13.000000000 -0800
-+++ webkitdfb_2010-11-18/WebKit/dfb/docs/GNUmakefile.am	2011-04-09 08:41:57.000000000 -0700
++++ webkitdfb_2010-11-18/WebKit/dfb/docs/GNUmakefile.am	2011-04-13 10:46:21.000000000 -0700
 @@ -88,11 +88,11 @@
  	$(LIBSOUP_LIBS)
  
@@ -38,7 +248,7 @@ diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/docs/GNUmakefile.am webkitdfb_201
  # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
 diff -Nur webkitdfb_2010-11-18.orig/WebKit/gtk/docs/GNUmakefile.am webkitdfb_2010-11-18/WebKit/gtk/docs/GNUmakefile.am
 --- webkitdfb_2010-11-18.orig/WebKit/gtk/docs/GNUmakefile.am	2011-01-06 15:08:38.000000000 -0800
-+++ webkitdfb_2010-11-18/WebKit/gtk/docs/GNUmakefile.am	2011-04-09 08:42:09.000000000 -0700
++++ webkitdfb_2010-11-18/WebKit/gtk/docs/GNUmakefile.am	2011-04-13 10:46:21.000000000 -0700
 @@ -90,11 +90,11 @@
  	$(LIBSOUP_LIBS)
  
@@ -53,3 +263,14 @@ diff -Nur webkitdfb_2010-11-18.orig/WebKit/gtk/docs/GNUmakefile.am webkitdfb_201
  
  # Files not to distribute
  # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
+diff -Nur webkitdfb_2010-11-18.orig/WebKitTools/GNUmakefile.am webkitdfb_2010-11-18/WebKitTools/GNUmakefile.am
+--- webkitdfb_2010-11-18.orig/WebKitTools/GNUmakefile.am	2011-01-06 15:12:13.000000000 -0800
++++ webkitdfb_2010-11-18/WebKitTools/GNUmakefile.am	2011-04-13 11:19:57.613145739 -0700
+@@ -81,6 +81,7 @@
+ Programs_WebKitDFB_LDADD = \
+ 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+ 	$(DIRECTFB_LIBS) \
++	$(UNICODE_LIBS) \
+ 	$(GLIB_LIBS)
+ 
+ if USE_CURL
