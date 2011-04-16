@@ -1,6 +1,29 @@
+diff -Nur webkitdfb_2010-11-18.orig/autotools/webkit.m4 webkitdfb_2010-11-18/autotools/webkit.m4
+--- webkitdfb_2010-11-18.orig/autotools/webkit.m4	2011-01-06 15:12:13.000000000 -0800
++++ webkitdfb_2010-11-18/autotools/webkit.m4	2011-04-15 13:24:27.125967525 -0700
+@@ -156,17 +156,8 @@
+ 		UNICODE_LIBS="-licuin -licuuc"
+                 ;;
+             *)
+-		AC_PATH_PROG(icu_config, icu-config, no)
+-		if test "$icu_config" = "no"; then
+-			AC_MSG_ERROR([Cannot find icu-config. The ICU library is needed.])
+-		fi
+-
+-		# We don't use --cflags as this gives us a lot of things that we don't
+-		# necessarily want, like debugging and optimization flags
+-		# See man (1) icu-config for more info.
+-		UNICODE_CFLAGS=`$icu_config --cppflags`
+-		UNICODE_LIBS=`$icu_config --ldflags-libsonly`
+-                ;;
++		UNICODE_CFLAGS=""
++		UNICODE_LIBS="-licui18n -licuuc -licudata -lpthread -ldl -lm"
+         esac
+ fi
+ 
 diff -Nur webkitdfb_2010-11-18.orig/configure.ac webkitdfb_2010-11-18/configure.ac
 --- webkitdfb_2010-11-18.orig/configure.ac	2011-01-06 15:12:13.000000000 -0800
-+++ webkitdfb_2010-11-18/configure.ac	2011-04-13 11:57:26.214172527 -0700
++++ webkitdfb_2010-11-18/configure.ac	2011-04-15 12:13:14.126031518 -0700
 @@ -17,9 +17,20 @@
  AC_CONFIG_AUX_DIR([autotools])
  AC_SUBST(ACLOCAL_AMFLAGS, "-I autotools")
@@ -22,7 +45,7 @@ diff -Nur webkitdfb_2010-11-18.orig/configure.ac webkitdfb_2010-11-18/configure.
  WEBKIT_MAJOR_VERSION=webkit_major_version
  WEBKIT_MINOR_VERSION=webkit_minor_version
  WEBKIT_MICRO_VERSION=webkit_micro_version
-@@ -38,7 +49,7 @@
+@@ -38,10 +49,10 @@
  LIBWEBKITGTK_VERSION=3:1:3
  AC_SUBST([LIBWEBKITGTK_VERSION])
  
@@ -30,7 +53,11 @@ diff -Nur webkitdfb_2010-11-18.orig/configure.ac webkitdfb_2010-11-18/configure.
 +AM_INIT_AUTOMAKE([foreign subdir-objects])
  
  # Use AM_SILENT_RULES if present
- m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
++#m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+ 
+ # host checking - inspired by the GTK+ configure.in
+ # TODO: move these to webkit.m4?
 @@ -82,6 +93,7 @@
  AC_DISABLE_STATIC
  AC_LIBTOOL_WIN32_DLL
@@ -86,23 +113,49 @@ diff -Nur webkitdfb_2010-11-18.orig/configure.ac webkitdfb_2010-11-18/configure.
  AM_CONDITIONAL([OS_UNIX],[test "$os_win32" = "no"])
 diff -Nur webkitdfb_2010-11-18.orig/JavaScriptCore/GNUmakefile.am webkitdfb_2010-11-18/JavaScriptCore/GNUmakefile.am
 --- webkitdfb_2010-11-18.orig/JavaScriptCore/GNUmakefile.am	2011-01-06 15:12:12.000000000 -0800
-+++ webkitdfb_2010-11-18/JavaScriptCore/GNUmakefile.am	2011-04-13 12:21:58.936432135 -0700
-@@ -630,6 +630,7 @@
- 	$(GLOBALDEPS_CFLAGS)
++++ webkitdfb_2010-11-18/JavaScriptCore/GNUmakefile.am	2011-04-15 13:02:38.430954321 -0700
+@@ -600,12 +600,14 @@
+ JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
+ 	$(AM_V_GEN)$(PERL) $^ $@
+ 
+-bin_PROGRAMS += \
+-	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT)
+-
+-noinst_PROGRAMS += \
+-	Programs/jsc \
+-	Programs/minidom
++bin_PROGRAMS =
++#bin_PROGRAMS += \
++#	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT)
++
++noinst_PROGRAMS =
++#noinst_PROGRAMS += \
++#	Programs/jsc \
++#	Programs/minidom
+ 
+ # minidom
+ Programs_minidom_SOURCES = \
+@@ -631,6 +633,7 @@
  
  Programs_minidom_LDADD = \
-+	 $(UNICODE_LIBS) \
  	 libJavaScriptCore.la \
++	 $(UNICODE_LIBS) \
  	 $(WINMM_LIBS) \
  	 -lm \
-@@ -660,6 +661,7 @@
- 	$(UNICODE_CFLAGS)
+ 	 -lstdc++
+@@ -661,8 +664,12 @@
  
  Programs_jsc_LDADD = \
-+	$(UNICODE_LIBS) \
  	libJavaScriptCore.la \
++	$(UNICODE_LIBS) \
  	$(WINMM_LIBS)
  
++Programs_jsc_LDFLAGS = \
++	$(UNICODE_LIBS)
++
+ EXTRA_DIST += \
+ 	JavaScriptCore/AUTHORS \
+ 	JavaScriptCore/ChangeLog \
 diff -Nur webkitdfb_2010-11-18.orig/Makefile webkitdfb_2010-11-18/Makefile
 --- webkitdfb_2010-11-18.orig/Makefile	2011-01-06 15:08:19.000000000 -0800
 +++ webkitdfb_2010-11-18/Makefile	2011-04-13 10:46:21.000000000 -0700
@@ -246,6 +299,93 @@ diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/docs/GNUmakefile.am webkitdfb_201
  
  # Files not to distribute
  # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
+diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/tests/testdfb.cpp webkitdfb_2010-11-18/WebKit/dfb/tests/testdfb.cpp
+--- webkitdfb_2010-11-18.orig/WebKit/dfb/tests/testdfb.cpp	2011-01-06 15:12:13.000000000 -0800
++++ webkitdfb_2010-11-18/WebKit/dfb/tests/testdfb.cpp	2011-04-14 11:05:35.887087311 -0700
+@@ -48,7 +48,7 @@
+ #include <glib-object.h>
+ 
+ #include <webkitdfb.h>
+-#include <webkit/webkitrender.h>
++//#include <webkit/webkitrender.h>
+ #include <GraphicsContext.h>
+ 
+ #if PLATFORM(CAIRO)
+diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/webview.cpp webkitdfb_2010-11-18/WebKit/dfb/webview.cpp
+--- webkitdfb_2010-11-18.orig/WebKit/dfb/webview.cpp	2011-01-06 15:12:13.000000000 -0800
++++ webkitdfb_2010-11-18/WebKit/dfb/webview.cpp	2011-04-15 15:20:16.153665905 -0700
+@@ -70,8 +70,15 @@
+ #include <Document.h>
+ #include <FocusController.h>
+ 
++#include <JavaScriptCore/APICast.h>
++#include <JavaScriptCore/JavaScript.h>
++
++
++
+ #include "webview.h"
+ 
++#include <WebCore/bindings/js/JSDOMBinding.h>
++
+ D_DEBUG_DOMAIN(LiteWebViewDomain, "LiTE/WebView", "LiteWebView");
+ 
+ LiteWebViewTheme *liteDefaultWebViewTheme = NULL;
+@@ -322,6 +329,31 @@
+ 
+      return DFB_OK;
+ }
++
++DFBResult
++lite_webview_handleKeyboardEvent( LiteWebView *webview, DFBEvent event )
++{
++     LITE_NULL_PARAMETER_CHECK(webview);
++     
++     WebCore::PlatformKeyboardEvent keyEvent(&event);
++     webview->page->mainFrame()->eventHandler()->keyEvent( keyEvent );
++     
++
++     return DFB_OK;
++}
++
++JSGlobalContextRef
++lite_webview_get_global_context( LiteWebView *webview )
++{
++     return toGlobalRef(webview->page->mainFrame()->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec());
++}
++
++DFBResult lite_webview_execute_script( LiteWebView *webview, char* script )
++{
++     webview->page->mainFrame()->script()->executeScript(script, true);
++
++     return DFB_OK;
++}
+ 
+ DFBResult 
+ lite_on_webview_doc_loaded(LiteWebView           *webview,
+diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/webview.h webkitdfb_2010-11-18/WebKit/dfb/webview.h
+--- webkitdfb_2010-11-18.orig/WebKit/dfb/webview.h	2011-01-06 15:12:13.000000000 -0800
++++ webkitdfb_2010-11-18/WebKit/dfb/webview.h	2011-04-15 15:19:28.762102324 -0700
+@@ -38,6 +38,8 @@
+ {
+ #endif
+ 
++#include <JavaScriptCore/JSBase.h>
++
+ #include <lite/box.h>
+ #include <lite/theme.h>
+ 
+@@ -105,6 +107,11 @@
+ DFBResult lite_webview_scroll_down( LiteWebView *webview );
+ DFBResult lite_webview_scroll_up  ( LiteWebView *webview );
+ 
++DFBResult lite_webview_handleKeyboardEvent( LiteWebView *webview, DFBEvent event );
++JSGlobalContextRef lite_webview_get_global_context( LiteWebView *webview );
++
++DFBResult lite_webview_execute_script( LiteWebView *webview, char* script );
++
+ /* @brief Install the WebView navigation callback
+  * This function will install a WebView navigation callback. This
+  * callback is triggered every time the WebView navigates to a page.
 diff -Nur webkitdfb_2010-11-18.orig/WebKit/gtk/docs/GNUmakefile.am webkitdfb_2010-11-18/WebKit/gtk/docs/GNUmakefile.am
 --- webkitdfb_2010-11-18.orig/WebKit/gtk/docs/GNUmakefile.am	2011-01-06 15:08:38.000000000 -0800
 +++ webkitdfb_2010-11-18/WebKit/gtk/docs/GNUmakefile.am	2011-04-13 10:46:21.000000000 -0700
