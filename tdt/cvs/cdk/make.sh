@@ -131,13 +131,13 @@ esac
 
 echo -e "\nKernel:"
 echo " Maintained:"
-echo "   1) STM 22 P0041"
-echo "   2) STM 23 P0119"
 echo "   4) STM 23 P0123"
+echo " Experimental:"
 echo "   6) STM 24 P0205 (unstable: currently ufs910, atevio7500, spark, ufs912, ufs922/player 179 only)"
 echo "   7) STM 24 P0206 (unstable: currently ufs922/player 179 only)"
-echo " Experimental:"
-echo "   3) STM 23 P0119 with Havana"
+echo " Deprecated (Not maintained):"
+echo "   1) STM 22 P0041"
+echo "   2) STM 23 P0119"
 #echo "   5) STM 24 P0201 (not working)"
 case $2 in
         [1-7]) REPLY=$2
@@ -180,7 +180,7 @@ echo "export CONFIG_ZD1211=n"		>> .config
 cd -
 
 echo -e "\nPlayer:"
-echo "   1) Player 131"
+echo "   1) Player 131 (Deprecated)"
 echo "   2) Player 179"
 case $4 in
         [1-2]) REPLY=$4
