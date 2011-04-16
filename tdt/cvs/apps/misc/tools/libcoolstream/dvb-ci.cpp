@@ -429,6 +429,18 @@ void cDvbCi::process_tpdu(tSlot* slot, unsigned char tpdu_tag, __u8* data, int a
 }
 
 
+void cDvbCi::setSource(tSlot* slot)
+{
+    char buf[64];
+    snprintf(buf, 64, "/proc/stb/tsmux/ci%d_input", slot->slot);
+    FILE *ci = fopen(buf, "wb");
+/* konfetti: neutrino currently serves only tuner A so
+ * we do not need a source here!
+ */
+   fprintf(ci, "A");
+   fclose(ci);
+}
+
 void cDvbCi::slot_pollthread(void *c)
 {
 	ca_slot_info_t info;
@@ -490,6 +502,8 @@ void cDvbCi::slot_pollthread(void *c)
                         	g_RCInput->postMsg(NeutrinoMessages::EVT_CI_INSERTED, slot->slot);
 
 		              slot->camIsReady = true;
+                              
+                              setSource(slot);
                 	  } else
 			  {
                              //noop
@@ -654,13 +668,13 @@ void cDvbCi::slot_pollthread(void *c)
 	   
 	    if (slot->hasCAManager && slot->hasAppManager && !slot->init) //declare this as init, but remeber we are still not complete!
 	    {
+
 	         slot->init = true;
 	         if (g_RCInput)
                        g_RCInput->postMsg(NeutrinoMessages::EVT_CI_INIT_OK, slot->slot);
 	    
 	         //resend a capmt if we have one. this is not very proper but I cant any mechanism in
 		 //neutrino currently. so if a cam is inserted a pmt is not resend
-		 
 		 if (slot->caPmt != NULL)
 		 {
 		     SendCaPMT(slot->caPmt);
@@ -724,7 +738,13 @@ bool cDvbCi::SendCaPMT(CCaPmt *caPmt)
 
                    if ((*it)->hasCAManager)
                       (*it)->camgrSession->sendSPDU(0x90, 0, 0, buffer, len);
-
+               }
+               
+/* konfetti: if cam is not ready we must store caPmt too, because
+ * changing the slot should also descramble the channel
+ */
+	       if ((*it)->fd > 0) 
+               {
 //fixme: hmmm is this a copy or did I only save the pointer.
 //in copy case I must do some delete etc before if set and in destruct case
                    (*it)->caPmt = caPmt;

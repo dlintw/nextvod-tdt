@@ -139,6 +139,7 @@ class cDvbCi {
 		bool SendDateTime(void);
 #ifdef __sh__
                 void slot_pollthread(void *c);
+                void setSource(tSlot* slot);
 #endif
  
 		//
