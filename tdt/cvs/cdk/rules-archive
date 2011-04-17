@@ -113,6 +113,8 @@ sqlite-3.6.0.tar.gz;http://www.duckbox.info/files/packages
 enchant-1.5.0.tar.gz;http://www.abisource.com/downloads/enchant/1.5.0
 lite-0.9.0+git0.7982ccc.tar.bz2;http://www.duckbox.info/files/packages
 libsoup-2.33.90.tar.gz;http://download.gnome.org/sources/libsoup/2.33
+pixman-0.18.0.tar.gz;http://cairographics.org/releases
+cairo-1.8.10.tar.gz;http://cairographics.org/releases
 expat-2.0.1.tar.gz;http://kent.dl.sourceforge.net/sourceforge/expat
 fontconfig-2.5.93.tar.gz;http://fontconfig.org/release
 Python-2.4.4.tar.bz2;http://www.python.org/ftp/python/2.4.4

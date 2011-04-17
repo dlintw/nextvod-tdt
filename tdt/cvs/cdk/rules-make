@@ -107,6 +107,8 @@ enchant;1.5.0;enchant-1.5.0;enchant-1.5.0.tar.gz;extract:enchant-1.5.0.tar.gz
 lite;0.9.0;lite-0.9.0+git0.7982ccc;lite-0.9.0+git0.7982ccc.tar.bz2;extract:lite-0.9.0+git0.7982ccc.tar.bz2
 sqlite;3.6.0;sqlite-3.6.0;sqlite-3.6.0.tar.gz;extract:sqlite-3.6.0.tar.gz
 libsoup;2.33.90;libsoup-2.33.90;libsoup-2.33.90.tar.gz;extract:libsoup-2.33.90.tar.gz
+pixman;0.18.0;pixman-0.18.0;pixman-0.18.0.tar.gz;extract:pixman-0.18.0.tar.gz
+cairo;1.8.10;cairo-1.8.10;cairo-1.8.10.tar.gz;extract:cairo-1.8.10.tar.gz;patch:cairo-1.8.10.diff
 expat;2.0.1;expat-2.0.1;expat-2.0.1.tar.gz;extract:expat-2.0.1.tar.gz
 fontconfig;2.5.93;fontconfig-2.5.93;fontconfig-2.5.93.tar.gz;extract:fontconfig-2.5.93.tar.gz
 python24;2.4.4;Python-2.4.4;Python-2.4.4.tar.bz2:python-stm.diff;extract:Python-2.4.4.tar.bz2;patch:python-stm.diff

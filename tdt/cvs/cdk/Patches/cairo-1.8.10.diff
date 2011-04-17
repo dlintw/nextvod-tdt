@@ -1,0 +1,3072 @@
+diff -Nur cairo-1.8.10.org/boilerplate/cairo-boilerplate-directfb.c cairo-1.8.10/boilerplate/cairo-boilerplate-directfb.c
+--- cairo-1.8.10.org/boilerplate/cairo-boilerplate-directfb.c	2010-02-19 10:38:03.000000000 -0800
++++ cairo-1.8.10/boilerplate/cairo-boilerplate-directfb.c	2011-04-16 10:33:07.533175600 -0700
+@@ -111,14 +111,13 @@
+ 
+     desc.flags  = DWDESC_POSX | DWDESC_POSY |
+ 	          DWDESC_WIDTH | DWDESC_HEIGHT;
+-    desc.caps   = DSCAPS_NONE;
+     desc.posx   = 0;
+     desc.posy   = 0;
+     desc.width  = width;
+     desc.height = height;
+     if (content == CAIRO_CONTENT_COLOR_ALPHA) {
+-	desc.flags |= DWDESC_CAPS | DSDESC_PIXELFORMAT;
+-	desc.caps  |= DWCAPS_DOUBLEBUFFER | DWCAPS_ALPHACHANNEL;
++	desc.flags |= DWDESC_CAPS | DWDESC_PIXELFORMAT;
++	desc.caps   = DWCAPS_DOUBLEBUFFER | DWCAPS_ALPHACHANNEL;
+ 	desc.pixelformat = DSPF_ARGB;
+     }
+ 
+@@ -158,6 +157,12 @@
+     if (content == CAIRO_CONTENT_COLOR_ALPHA) {
+ 	desc.flags |= DSDESC_PIXELFORMAT;
+ 	desc.pixelformat = DSPF_ARGB;
++    } else if (content == CAIRO_CONTENT_COLOR) {
++	desc.flags |= DSDESC_PIXELFORMAT;
++	desc.pixelformat = DSPF_RGB32;
++    } else if (content == CAIRO_CONTENT_ALPHA) {
++	desc.flags |= DSDESC_PIXELFORMAT;
++	desc.pixelformat = DSPF_A8;
+     }
+     DFBCHECK (info->dfb->CreateSurface (info->dfb, &desc, &info->surface));
+ 
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0001--directfb-boilerplate-Fix-usage-of-DSDESC-vs.-DWDES.patch cairo-1.8.10/cairo-1.8.8-0001--directfb-boilerplate-Fix-usage-of-DSDESC-vs.-DWDES.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0001--directfb-boilerplate-Fix-usage-of-DSDESC-vs.-DWDES.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0001--directfb-boilerplate-Fix-usage-of-DSDESC-vs.-DWDES.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,37 @@
++From 13fda1e5fd204a60da3f72d78e1407ee8338fb7e Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 02:12:30 +0000
++Subject: [PATCH] (directfb boilerplate) Fix usage of DSDESC vs. DWDESC
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ boilerplate/cairo-boilerplate-directfb.c |    5 ++---
++ 1 files changed, 2 insertions(+), 3 deletions(-)
++
++diff --git a/boilerplate/cairo-boilerplate-directfb.c b/boilerplate/cairo-boilerplate-directfb.c
++index 7a6462f..975b73b 100644
++--- a/boilerplate/cairo-boilerplate-directfb.c
+++++ b/boilerplate/cairo-boilerplate-directfb.c
++@@ -111,14 +111,13 @@ _cairo_boilerplate_directfb_window_create_surface (DFBInfo		*info,
++ 
++     desc.flags  = DWDESC_POSX | DWDESC_POSY |
++ 	          DWDESC_WIDTH | DWDESC_HEIGHT;
++-    desc.caps   = DSCAPS_NONE;
++     desc.posx   = 0;
++     desc.posy   = 0;
++     desc.width  = width;
++     desc.height = height;
++     if (content == CAIRO_CONTENT_COLOR_ALPHA) {
++-	desc.flags |= DWDESC_CAPS | DSDESC_PIXELFORMAT;
++-	desc.caps  |= DWCAPS_DOUBLEBUFFER | DWCAPS_ALPHACHANNEL;
+++	desc.flags |= DWDESC_CAPS | DWDESC_PIXELFORMAT;
+++	desc.caps   = DWCAPS_DOUBLEBUFFER | DWCAPS_ALPHACHANNEL;
++ 	desc.pixelformat = DSPF_ARGB;
++     }
++ 
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0002--directfb-boilerplate-recognise-some-more-pixelform.patch cairo-1.8.10/cairo-1.8.8-0002--directfb-boilerplate-recognise-some-more-pixelform.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0002--directfb-boilerplate-recognise-some-more-pixelform.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0002--directfb-boilerplate-recognise-some-more-pixelform.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,33 @@
++From 00de4f3ff297041a96d3d4be6adbde94acfab92f Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 02:12:31 +0000
++Subject: [PATCH] (directfb boilerplate) recognise some more pixelformats
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ boilerplate/cairo-boilerplate-directfb.c |    6 ++++++
++ 1 files changed, 6 insertions(+), 0 deletions(-)
++
++diff --git a/boilerplate/cairo-boilerplate-directfb.c b/boilerplate/cairo-boilerplate-directfb.c
++index 975b73b..d87ccf2 100644
++--- a/boilerplate/cairo-boilerplate-directfb.c
+++++ b/boilerplate/cairo-boilerplate-directfb.c
++@@ -157,6 +157,12 @@ _cairo_boilerplate_directfb_bitmap_create_surface (DFBInfo		*info,
++     if (content == CAIRO_CONTENT_COLOR_ALPHA) {
++ 	desc.flags |= DSDESC_PIXELFORMAT;
++ 	desc.pixelformat = DSPF_ARGB;
+++    } else if (content == CAIRO_CONTENT_COLOR) {
+++	desc.flags |= DSDESC_PIXELFORMAT;
+++	desc.pixelformat = DSPF_RGB32;
+++    } else if (content == CAIRO_CONTENT_ALPHA) {
+++	desc.flags |= DSDESC_PIXELFORMAT;
+++	desc.pixelformat = DSPF_A8;
++     }
++     DFBCHECK (info->dfb->CreateSurface (info->dfb, &desc, &info->surface));
++ 
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0003--directfb-change-update-some-debug-messages.patch cairo-1.8.10/cairo-1.8.8-0003--directfb-change-update-some-debug-messages.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0003--directfb-change-update-some-debug-messages.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0003--directfb-change-update-some-debug-messages.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,321 @@
++From 0403c810ee2e0b427cd5899eb2473d0bd8807ede Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 02:10:36 +0000
++Subject: [PATCH] (directfb) change/update some debug messages
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |  107 +++++++++++++++++++++++++++++++++++------
++ 1 files changed, 91 insertions(+), 16 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index bb02dbf..b45a1bc 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -74,6 +74,7 @@ D_DEBUG_DOMAIN (CairoDFB_Clip,    "CairoDFB/Clip",    "Cairo DirectFB Clipping")
++ D_DEBUG_DOMAIN (CairoDFB_Font,    "CairoDFB/Font",    "Cairo DirectFB Font Rendering");
++ D_DEBUG_DOMAIN (CairoDFB_Render,  "CairoDFB/Render",  "Cairo DirectFB Rendering");
++ D_DEBUG_DOMAIN (CairoDFB_Surface, "CairoDFB/Surface", "Cairo DirectFB Surface");
+++D_DEBUG_DOMAIN (CairoDFB_SurfExt, "CairoDFB/SurfExt", "Cairo DirectFB Surface Extents");
++ 
++ /*****************************************************************************/
++ 
++@@ -288,6 +289,7 @@ _directfb_get_operator (cairo_operator_t         operator,
++ 	break;
++ #endif
++     default:
+++	D_DEBUG_AT (CairoDFB_Render, "=> UNSUPPORTED OPERATOR %d\n", operator);
++ 	return FALSE;
++     }
++ 
++@@ -308,6 +310,9 @@ _directfb_buffer_surface_create (IDirectFB             *dfb,
++     DFBSurfaceDescription  dsc;
++     DFBResult              ret;
++ 
+++    D_DEBUG_AT (CairoDFB_Surface, "%s( %4dx%4d %s )\n",
+++		__FUNCTION__, width, height, dfb_pixelformat_name (format));
+++
++     dsc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;
++     dsc.caps        = DSCAPS_PREMULTIPLIED;
++     dsc.width       = width;
++@@ -387,6 +392,10 @@ _directfb_acquire_surface (cairo_directfb_surface_t  *surface,
++                                  .y2 = source_rect.y + source_rect.h - 1 };
++             surface->dfbsurface->Flip (surface->dfbsurface, &region, DSFLIP_BLIT);
++         } */
+++
+++	D_DEBUG_AT (CairoDFB_Render, "  => Blit( 0,0-%4dx%4d <- %4d,%4d )\n",
+++		    source_rect.w, source_rect.h, source_rect.x, source_rect.y);
+++
++         buffer->Blit (buffer, surface->dfbsurface, &source_rect, 0, 0);
++     } else {
++         /*might be a subsurface get the offset*/
++@@ -447,8 +456,11 @@ _cairo_directfb_surface_create_similar (void            *abstract_src,
++     cairo_status_t	      status;
++ 
++     D_DEBUG_AT (CairoDFB_Surface,
++-                "%s( src=%p, content=0x%x, width=%d, height=%d).\n",
++-                __FUNCTION__, source, content, width, height);
+++		"%s( src=%p, content=0x%x (%s%s), width=%d, height=%d).\n",
+++		__FUNCTION__, source, content,
+++		(content & CAIRO_CONTENT_COLOR) ? "COLOR"  : "",
+++		(content & CAIRO_CONTENT_ALPHA) ? "+ALPHA" : "",
+++		width, height);
++ 
++     width = (width <= 0) ? 1 : width;
++     height = (height<= 0) ? 1 : height;
++@@ -538,7 +550,8 @@ _cairo_directfb_surface_acquire_source_image (void                   *abstract_s
++     cairo_directfb_surface_t *surface = abstract_surface;
++ 
++     D_DEBUG_AT (CairoDFB_Acquire,
++-		"%s( surface=%p ).\n", __FUNCTION__, surface);
+++		"%s( surface=%p - %dx%d 0x%x ).\n", __FUNCTION__, surface,
+++		surface->width, surface->height, surface->format);
++ 
++     return _directfb_acquire_surface (surface, NULL, image_out,
++ 				      NULL, image_extra, DSLF_READ);
++@@ -570,8 +583,8 @@ _cairo_directfb_surface_acquire_dest_image (void                     *abstract_s
++     cairo_directfb_surface_t *surface = abstract_surface;
++ 
++     D_DEBUG_AT (CairoDFB_Acquire,
++-		"%s( surface=%p (%dx%d), interest_rect={ %u %u %u %u } ).\n",
++-		__FUNCTION__, surface, surface->width, surface->height,
+++		"%s( surface=%p (%dx%d 0x%x), interest_rect={ %u %u %u %u } ).\n",
+++		__FUNCTION__, surface, surface->width, surface->height, surface->format,
++ 		interest_rect ? interest_rect->x : 0,
++ 		interest_rect ? interest_rect->y : 0,
++ 		interest_rect ? interest_rect->width  : (unsigned) surface->width,
++@@ -629,13 +642,16 @@ _cairo_directfb_surface_clone_similar (void             *abstract_surface,
++     cairo_directfb_surface_t *clone;
++ 
++     D_DEBUG_AT (CairoDFB_Surface,
++-		"%s( surface=%p, src=%p ).\n", __FUNCTION__, surface, src);
+++		"%s( surface=%p, src=%p [%d,%d-%dx%d] )\n", __FUNCTION__,
+++		surface, src, src_x, src_y, width, height);
++ 
++     if (src->backend == surface->base.backend) {
++ 	*clone_offset_x = 0;
++ 	*clone_offset_y = 0;
++ 	*clone_out = cairo_surface_reference (src);
++ 
+++	D_DEBUG_AT (CairoDFB_Surface, "  -> lightweight - referenced :)\n");
+++
++ 	return CAIRO_STATUS_SUCCESS;
++     } else if (_cairo_surface_is_image (src)) {
++ 	cairo_image_surface_t *image_src = (cairo_image_surface_t *) src;
++@@ -663,6 +679,9 @@ _cairo_directfb_surface_clone_similar (void             *abstract_surface,
++ 
++ 	src += image_src->stride * src_y;
++ 	if (image_src->format == CAIRO_FORMAT_A1) {
+++	    D_ASSERT (clone->format == CAIRO_FORMAT_A8);
+++	    D_DEBUG_AT (CairoDFB_Surface, "  ==> converting A1 -> A8 data\n");
+++
++ 	    /* A1 -> A8 */
++ 	    dst -= src_x;
++ 	    for (i = 0; i < height; i++) {
++@@ -675,9 +694,16 @@ _cairo_directfb_surface_clone_similar (void             *abstract_surface,
++ 	    int len;
++ 
++ 	    if (image_src->format == CAIRO_FORMAT_A8) {
+++		D_ASSERT (clone->format == CAIRO_FORMAT_A8);
+++		D_DEBUG_AT (CairoDFB_Surface, "  ==> copying A8 data\n");
+++
++ 		src += src_x;
++ 		len  = width;
++ 	    } else {
+++		D_ASSERT (clone->format == CAIRO_FORMAT_ARGB32 ||
+++			  clone->format == CAIRO_FORMAT_RGB24);
+++		D_DEBUG_AT (CairoDFB_Surface, "  ==> copying ARGB data\n");
+++
++ 		src += src_x * 4;
++ 		len  = width * 4;
++ 	    }
++@@ -736,11 +762,21 @@ _directfb_prepare_composite (cairo_directfb_surface_t    *dst,
++ 	    cairo_pattern_t *tmp;
++ 	    int              tmp_x, tmp_y;
++ 
++-	    if (src_pattern->type != CAIRO_PATTERN_TYPE_SOLID ||
++-		sblend == DSBF_INVDESTALPHA) /* Doesn't work correctly */
+++	    if (src_pattern->type != CAIRO_PATTERN_TYPE_SOLID) {
+++		/* Doesn't work correctly */
+++		D_DEBUG_AT (CairoDFB_Render, "=> PATTERN TYPE %d WITH MASK NOT SUPPORTED\n",
+++			    src_pattern->type);
+++		return CAIRO_INT_STATUS_UNSUPPORTED;
+++	    }
+++
+++	    if (sblend == DSBF_INVDESTALPHA) {
+++		/* Doesn't work correctly */
+++		D_DEBUG_AT (CairoDFB_Render, "=> SOURCE BLEND %d WITH MASK NOT SUPPORTED\n",
+++			    sblend);
++ 		return CAIRO_INT_STATUS_UNSUPPORTED;
+++	    }
++ 
++-	    D_DEBUG_AT (CairoDFB_Render, "Replacing src pattern by mask pattern.\n");
+++	    D_DEBUG_AT (CairoDFB_Render, "-> Replacing src pattern by mask pattern.\n");
++ 
++ 	    tmp = src_pattern;
++ 	    tmp_x = *src_x; tmp_y = *src_y;
++@@ -758,6 +794,10 @@ _directfb_prepare_composite (cairo_directfb_surface_t    *dst,
++ 	}
++ 
++ 	color = &((cairo_solid_pattern_t *) mask_pattern)->color;
+++
+++	D_DEBUG_AT (CairoDFB_Render, "-> SOLID MASK (%02x %02x %02x %02x)\n",
+++		    color->alpha_short >> 8, color->red_short >> 8,
+++		    color->green_short >> 8, color->blue_short >> 8);
++     } else {
++ 	color = _cairo_stock_color (CAIRO_STOCK_WHITE);
++     }
++@@ -858,19 +898,34 @@ _directfb_categorize_operation (cairo_surface_attributes_t *src_attr)
++     cairo_matrix_t *m = &src_attr->matrix;
++ 
++     if (m->xy != 0 || m->yx != 0 || m->xx < 0 || m->yy < 0) {
++-	if (src_attr->extend != CAIRO_EXTEND_NONE)
+++	D_DEBUG_AT (CairoDFB_Render, "-> NON-RECTANGULAR TRANSFORM\n" );
+++
+++	if (src_attr->extend != CAIRO_EXTEND_NONE) {
+++	    D_DEBUG_AT (CairoDFB_Render, "=> EXTEND MODE %d NOT SUPPORTED\n",
+++			src_attr->extend);
++ 	    return DFXL_NONE;
+++	}
++ 
++ 	return DFXL_TEXTRIANGLES;
++     }
++ 
++     if (m->xx != 1 || m->yy != 1) {
++-	if (src_attr->extend != CAIRO_EXTEND_NONE)
+++	D_DEBUG_AT (CairoDFB_Render, "-> RECTANGULAR TRANSFORM\n" );
+++
+++	if (src_attr->extend != CAIRO_EXTEND_NONE) {
+++	    D_DEBUG_AT (CairoDFB_Render, "=> EXTEND MODE %d NOT SUPPORTED\n",
+++			src_attr->extend);
+++
+++	    /* TODO: support EXTEND_PAD in special cases */
+++
++ 	    return DFXL_NONE;
+++	}
++ 
++ 	return DFXL_STRETCHBLIT;
++     }
++ 
+++    D_DEBUG_AT (CairoDFB_Render, "-> NO TRANSFORM\n" );
+++
++     switch (src_attr->extend) {
++     case CAIRO_EXTEND_NONE:
++     case CAIRO_EXTEND_REPEAT:
++@@ -887,6 +942,7 @@ _directfb_categorize_operation (cairo_surface_attributes_t *src_attr)
++     default:
++     case CAIRO_EXTEND_REFLECT:
++     case CAIRO_EXTEND_PAD:
+++	D_DEBUG_AT (CairoDFB_Render, "=> EXTEND MODE %d NOT SUPPORTED\n", src_attr->extend );
++ 	return DFXL_NONE;
++     }
++ }
++@@ -925,6 +981,7 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 
++     accel = _directfb_categorize_operation (&src_attr);
++     if (accel == DFXL_NONE) {
+++	D_DEBUG_AT (CairoDFB_Render, "  ====>> UNSUPPORTED!!!\n");
++ 	_directfb_finish_composite (dst, src_pattern, &src->base, &src_attr);
++ 	return CAIRO_INT_STATUS_UNSUPPORTED;
++     }
++@@ -959,7 +1016,8 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 	    sr.h = height;
++ 
++ 	    if (src_attr.extend == CAIRO_EXTEND_NONE) {
++-		D_DEBUG_AT (CairoDFB_Render, "Running Blit().\n");
+++		D_DEBUG_AT (CairoDFB_Render, "  ==> Blit( %4d,%4d-%4dx%4d <- %4d,%4d )\n",
+++			    dst_x, dst_y, sr.w, sr.h, sr.x, sr.y);
++ 
++ 		RUN_CLIPPED (dst, NULL,
++ 			     dst->dfbsurface->Blit (dst->dfbsurface,
++@@ -974,7 +1032,8 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 		clip.x2 = dst_x + width  - 1;
++ 		clip.y2 = dst_y + height - 1;
++ 
++-		D_DEBUG_AT (CairoDFB_Render, "Running TileBlit().\n");
+++		D_DEBUG_AT (CairoDFB_Render, "  ==> TileBlit( %4d,%4d-%4dx%4d <- %4d,%4d-%4dx%4d )\n",
+++			    dst_x, dst_y, width, height, sr.x, sr.y, sr.w, sr.h);
++ 
++ 		RUN_CLIPPED (dst, &clip,
++ 			     dst->dfbsurface->TileBlit (dst->dfbsurface,
++@@ -1005,7 +1064,8 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 	    dr.w = width;
++ 	    dr.h = height;
++ 
++-	    D_DEBUG_AT (CairoDFB_Render, "Running StretchBlit().\n");
+++	    D_DEBUG_AT (CairoDFB_Render, "  ==> StretchBlit( %4d,%4d-%4dx%4d <- %4d,%4d-%4dx%4d )\n",
+++			dst_x, dst_y, width, height, sr.x, sr.y, sr.w, sr.h);
++ 
++ 	    RUN_CLIPPED (dst, NULL,
++ 			 dst->dfbsurface->StretchBlit (dst->dfbsurface,
++@@ -1064,7 +1124,7 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 	    clip.x2 = dst_x + width  - 1;
++ 	    clip.y2 = dst_y + height - 1;
++ 
++-	    D_DEBUG_AT (CairoDFB_Render, "Running TextureTriangles().\n");
+++	    D_DEBUG_AT (CairoDFB_Render, "  ==> TextureTriangles()\n");
++ 
++ 	    RUN_CLIPPED (dst, &clip,
++ 			 dst->dfbsurface->TextureTriangles (dst->dfbsurface,
++@@ -1138,6 +1198,10 @@ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface
++ 	dst->dfbsurface->SetDstBlendFunction (dst->dfbsurface, dblend);
++     }
++ 
+++    D_DEBUG_AT (CairoDFB_Render, "  -> %02x %02x %02x %02x\n",
+++		color->alpha_short >> 8, color->red_short >> 8,
+++		color->green_short >> 8, color->blue_short >> 8);
+++
++     dst->dfbsurface->SetColor (dst->dfbsurface,
++ 			       color->red_short >> 8,
++ 			       color->green_short >> 8,
++@@ -1149,6 +1213,9 @@ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface
++ 	r[i].y = rects[i].y;
++ 	r[i].w = rects[i].width;
++ 	r[i].h = rects[i].height;
+++
+++	D_DEBUG_AT (CairoDFB_Render, "  ==> Fill %4d,%4d-%4dx%4d [%d]\n",
+++		    DFB_RECTANGLE_VALS (&r[i]), i);
++     }
++ 
++     RUN_CLIPPED (dst, NULL,
++@@ -1336,10 +1403,15 @@ _cairo_directfb_surface_set_clip_region (void           *abstract_surface,
++ 	    surface->clips[i].y1 = boxes[i].p1.y;
++ 	    surface->clips[i].x2 = boxes[i].p2.x - 1;
++ 	    surface->clips[i].y2 = boxes[i].p2.y - 1;
+++
+++	    D_DEBUG_AT (CairoDFB_Clip, "  = CLIP %4d,%4d-%4dx%4d [%d]\n",
+++			DFB_RECTANGLE_VALS_FROM_REGION (&surface->clips[i]), i);
++ 	}
++ 
++ 	_cairo_region_boxes_fini (region, boxes);
++     } else {
+++	D_DEBUG_AT (CairoDFB_Clip, "  -> NULL region (unclipped)\n");
+++
++ 	surface->has_clip = FALSE;
++ 	if (surface->clips) {
++ 	    free (surface->clips);
++@@ -1371,6 +1443,9 @@ _cairo_directfb_abstract_surface_get_extents (void                  *abstract_su
++     rectangle->width  = surface->width;
++     rectangle->height = surface->height;
++ 
+++    D_DEBUG_AT (CairoDFB_SurfExt, "  -> %dx%d\n",
+++		surface->width, surface->height);
+++
++     return CAIRO_STATUS_SUCCESS;
++ }
++ 
++@@ -1773,7 +1848,7 @@ _cairo_directfb_surface_show_glyphs (void                *abstract_dst,
++ 				   color->alpha * 0xff);
++     }
++ 
++-    D_DEBUG_AT (CairoDFB_Font, "Running BatchBlit().\n");
+++    D_DEBUG_AT (CairoDFB_Font, "  ===> BatchBlit()\n");
++ 
++     RUN_CLIPPED (dst, NULL,
++ 		 dst->dfbsurface->BatchBlit (dst->dfbsurface,
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0004--directfb-rework-_cairo_directfb_surface_set_clip_r.patch cairo-1.8.10/cairo-1.8.8-0004--directfb-rework-_cairo_directfb_surface_set_clip_r.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0004--directfb-rework-_cairo_directfb_surface_set_clip_r.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0004--directfb-rework-_cairo_directfb_surface_set_clip_r.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,54 @@
++From e30d6563b89ccc44dbb0cf01e39fb2cad0d222a1 Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Mon, 22 Jun 2009 20:59:05 +0100
++Subject: [PATCH] (directfb) rework _cairo_directfb_surface_set_clip_region()
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off-by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |   25 +++++++++++++++++++++----
++ 1 files changed, 21 insertions(+), 4 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index b45a1bc..b943794 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -1379,12 +1379,29 @@ _cairo_directfb_surface_set_clip_region (void           *abstract_surface,
++ 	surface->has_clip = TRUE;
++ 
++ 	status = _cairo_region_get_boxes (region, &n_boxes, &boxes);
++-	if (n_boxes == 0)
++-	    return CAIRO_STATUS_SUCCESS;
++-	if (status)
+++	if (status) {
+++	    D_DEBUG_AT (CairoDFB_Clip, "  -> status %d!\n", status);
+++
++ 	    return status;
+++	}
+++
+++	if (n_boxes == 0) {
+++	    D_DEBUG_AT (CairoDFB_Clip, "  -> EMPTY region (fully clipped)\n");
+++
+++	    if (surface->clips) {
+++		free (surface->clips);
+++		surface->clips = NULL;
+++		surface->n_clips = 0;
+++	    }
+++	    surface->has_clip = FALSE;
+++
+++	    return CAIRO_STATUS_SUCCESS;
+++	}
+++
+++	D_DEBUG_AT (CairoDFB_Clip, "  -> %d box%s\n",
+++		    n_boxes, (n_boxes > 1) ? "es" : "");
++ 
++-	if (surface->n_clips != n_boxes) {
+++	if (surface->n_clips < n_boxes || surface->n_clips - n_boxes > 10) {
++ 	    if (surface->clips)
++ 		free (surface->clips);
++ 
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0005--directfb-fix-a-few-compiler-warnings.patch cairo-1.8.10/cairo-1.8.8-0005--directfb-fix-a-few-compiler-warnings.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0005--directfb-fix-a-few-compiler-warnings.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0005--directfb-fix-a-few-compiler-warnings.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,81 @@
++From 043a76df638f75675b6530e4de262c948baa7f4e Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Mon, 22 Jun 2009 21:53:20 +0100
++Subject: [PATCH] (directfb) fix a few compiler warnings
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off-by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |   39 ++++++++++++++++++++++++++++++++++++++-
++ 1 files changed, 38 insertions(+), 1 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index b943794..4bbd991 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -213,6 +213,33 @@ _directfb_to_cairo_format (DFBSurfacePixelFormat format)
++ 	return CAIRO_FORMAT_A8;
++     case DSPF_A1:
++ 	return CAIRO_FORMAT_A1;
+++    case DSPF_UNKNOWN:
+++    case DSPF_ARGB1555:
+++    case DSPF_RGB16:
+++    case DSPF_RGB24:
+++    case DSPF_YUY2:
+++    case DSPF_RGB332:
+++    case DSPF_UYVY:
+++    case DSPF_I420:
+++    case DSPF_YV12:
+++    case DSPF_LUT8:
+++    case DSPF_ALUT44:
+++    case DSPF_AiRGB:
+++    case DSPF_NV12:
+++    case DSPF_NV16:
+++    case DSPF_ARGB2554:
+++    case DSPF_ARGB4444:
+++    case DSPF_RGBA4444:
+++    case DSPF_NV21:
+++    case DSPF_AYUV:
+++    case DSPF_A4:
+++    case DSPF_ARGB1666:
+++    case DSPF_ARGB6666:
+++    case DSPF_RGB18:
+++    case DSPF_LUT2:
+++    case DSPF_RGB444:
+++    case DSPF_RGB555:
+++    case DSPF_BGR555:
++     default:
++ 	break;
++     }
++@@ -1132,8 +1159,17 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 	    break;
++ 	}
++ 
+++    case DFXL_NONE:
+++    case DFXL_FILLRECTANGLE:
+++    case DFXL_DRAWRECTANGLE:
+++    case DFXL_DRAWLINE:
+++    case DFXL_FILLTRIANGLE:
+++    case DFXL_DRAWSTRING:
+++    case DFXL_ALL:
+++    case DFXL_ALL_DRAW:
+++    case DFXL_ALL_BLIT:
++     default:
++-	D_BUG ("Unexpected operation");
+++	D_BUG ("%s: Unexpected operation %x", __FUNCTION__, accel);
++ 	break;
++     }
++ 
++@@ -1553,6 +1589,7 @@ _directfb_acquire_font_cache (cairo_directfb_surface_t     *surface,
++ 	case CAIRO_FORMAT_A8:
++ 	case CAIRO_FORMAT_ARGB32:
++ 	    break;
+++	case CAIRO_FORMAT_RGB24:
++ 	default:
++ 	    D_DEBUG_AT (CairoDFB_Font,
++ 			"  -> Unsupported font format %d!\n", img->format);
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0006--directfb-we-want-all-blits-etc.-to-go-through-Dire.patch cairo-1.8.10/cairo-1.8.8-0006--directfb-we-want-all-blits-etc.-to-go-through-Dire.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0006--directfb-we-want-all-blits-etc.-to-go-through-Dire.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0006--directfb-we-want-all-blits-etc.-to-go-through-Dire.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,33 @@
++From ea3170f20f3f3b937f726cf62c687e80dafced80 Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Mon, 22 Jun 2009 21:57:13 +0100
++Subject: [PATCH] (directfb) we want all blits etc. to go through DirectFB
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++only DFXL_TEXTRIANGLES doesn't have a software fallback, but blit,
++stretchblit, tileblit etc. have
++
++Signed-off-by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |    3 +--
++ 1 files changed, 1 insertions(+), 2 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 4bbd991..7595d10 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -1017,8 +1017,7 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 					  src->dfbsurface,
++ 					  &mask);
++     if ((mask & accel) == 0) {
++-	D_DEBUG_AT (CairoDFB_Render, "No acceleration (%08x)!\n", accel);
++-	if (accel != DFXL_BLIT) {
+++	if (accel == DFXL_TEXTRIANGLES) {
++ 	    _directfb_finish_composite (dst, src_pattern, &src->base, &src_attr);
++ 	    return CAIRO_INT_STATUS_UNSUPPORTED;
++ 	}
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0007--directfb-Some-optimizations-wrt-memory-usage.patch cairo-1.8.10/cairo-1.8.8-0007--directfb-Some-optimizations-wrt-memory-usage.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0007--directfb-Some-optimizations-wrt-memory-usage.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0007--directfb-Some-optimizations-wrt-memory-usage.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,123 @@
++From 00fafb5b5e668678568f6c7d3456a024e24406de Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 02:12:37 +0000
++Subject: [PATCH] (directfb) Some optimizations wrt memory usage
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |   35 +++++++++++++++++++++++++++--------
++ 1 files changed, 27 insertions(+), 8 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 7595d10..5df69ea 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -170,6 +170,7 @@ static int _directfb_argb_font = 0;
++  */
++ 
++ static cairo_content_t
+++__attribute__((const))
++ _directfb_format_to_content (DFBSurfacePixelFormat format)
++ {
++     if (DFB_PIXELFORMAT_HAS_ALPHA (format)) {
++@@ -182,7 +183,8 @@ _directfb_format_to_content (DFBSurfacePixelFormat format)
++     return CAIRO_CONTENT_COLOR;
++ }
++ 
++-static inline DFBSurfacePixelFormat
+++static DFBSurfacePixelFormat
+++__attribute__((const))
++ _cairo_to_directfb_format (cairo_format_t format)
++ {
++     switch (format) {
++@@ -424,6 +426,7 @@ _directfb_acquire_surface (cairo_directfb_surface_t  *surface,
++ 		    source_rect.w, source_rect.h, source_rect.x, source_rect.y);
++ 
++         buffer->Blit (buffer, surface->dfbsurface, &source_rect, 0, 0);
+++        buffer->ReleaseSource (buffer);
++     } else {
++         /*might be a subsurface get the offset*/
++         surface->dfbsurface->GetVisibleRectangle (surface->dfbsurface, &source_rect);
++@@ -649,6 +652,7 @@ _cairo_directfb_surface_release_dest_image (void                  *abstract_surf
++ 		     surface->dfbsurface->Blit (surface->dfbsurface,
++ 						buffer, NULL,
++ 						image_rect->x, image_rect->y));
+++	surface->dfbsurface->ReleaseSource (surface->dfbsurface);
++     }
++ 
++     cairo_surface_destroy (&image->base);
++@@ -915,6 +919,9 @@ _directfb_finish_composite (cairo_directfb_surface_t   *dst,
++                             cairo_surface_attributes_t *src_attr)
++ {
++     _cairo_pattern_release_surface (src_pattern, src, src_attr);
+++
+++    if (dst->dfbsurface)
+++        dst->dfbsurface->ReleaseSource (dst->dfbsurface);
++ }
++ #endif /* DFB_COMPOSITE || DFB_COMPOSITE_TRAPEZOIDS */
++ 
++@@ -1190,7 +1197,8 @@ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface
++     DFBSurfaceDrawingFlags    flags;
++     DFBSurfaceBlendFunction   sblend;
++     DFBSurfaceBlendFunction   dblend;
++-    DFBRectangle              r[n_rects];
+++    DFBRectangle              static_dfbrects[CAIRO_STACK_ARRAY_LENGTH(DFBRectangle)];
+++    DFBRectangle             *dfbrects = static_dfbrects;
++     int                       i;
++ 
++     D_DEBUG_AT (CairoDFB_Render,
++@@ -1203,6 +1211,12 @@ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface
++     if (! _directfb_get_operator (op, &sblend, &dblend))
++ 	return CAIRO_INT_STATUS_UNSUPPORTED;
++ 
+++    if (n_rects > ARRAY_LENGTH (static_dfbrects)) {
+++	dfbrects = _cairo_malloc_ab (n_rects, sizeof (DFBRectangle));
+++	if (dfbrects == NULL)
+++	    return _cairo_error (CAIRO_STATUS_NO_MEMORY);
+++    }
+++
++     if (CAIRO_COLOR_IS_OPAQUE (color)) {
++ 	if (sblend == DSBF_SRCALPHA)
++ 	    sblend = DSBF_ONE;
++@@ -1244,17 +1258,21 @@ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface
++ 			       color->alpha_short >> 8);
++ 
++     for (i = 0; i < n_rects; i++) {
++-	r[i].x = rects[i].x;
++-	r[i].y = rects[i].y;
++-	r[i].w = rects[i].width;
++-	r[i].h = rects[i].height;
+++	dfbrects[i].x = rects[i].x;
+++	dfbrects[i].y = rects[i].y;
+++	dfbrects[i].w = rects[i].width;
+++	dfbrects[i].h = rects[i].height;
++ 
++ 	D_DEBUG_AT (CairoDFB_Render, "  ==> Fill %4d,%4d-%4dx%4d [%d]\n",
++-		    DFB_RECTANGLE_VALS (&r[i]), i);
+++		    DFB_RECTANGLE_VALS (&dfbrects[i]), i);
++     }
++ 
++     RUN_CLIPPED (dst, NULL,
++-		 dst->dfbsurface->FillRectangles (dst->dfbsurface, r, n_rects));
+++		 dst->dfbsurface->FillRectangles (dst->dfbsurface,
+++						  dfbrects, n_rects));
+++
+++    if (dfbrects != static_dfbrects)
+++	free (dfbrects);
++ 
++     return CAIRO_STATUS_SUCCESS;
++ }
++@@ -1906,6 +1924,7 @@ _cairo_directfb_surface_show_glyphs (void                *abstract_dst,
++     RUN_CLIPPED (dst, NULL,
++ 		 dst->dfbsurface->BatchBlit (dst->dfbsurface,
++ 					     cache->dfbsurface, rects, points, num));
+++    dst->dfbsurface->ReleaseSource (dst->dfbsurface);
++ 
++     return CAIRO_STATUS_SUCCESS;
++ }
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0008--directfb-fix-for-glyph-blends-for-better-hardware.patch cairo-1.8.10/cairo-1.8.8-0008--directfb-fix-for-glyph-blends-for-better-hardware.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0008--directfb-fix-for-glyph-blends-for-better-hardware.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0008--directfb-fix-for-glyph-blends-for-better-hardware.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,99 @@
++From 1ca1134a9dc720ae7a9ca55bf43cadc457633bc4 Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 02:13:23 +0000
++Subject: [PATCH] (directfb) fix for glyph blends for better hardware accel
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Fix the blend operations so that glyphs in A8 pixelformat
++render correctly with the premultiplied blend maths.
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |   32 ++++++++++++++++++++++++--------
++ 1 files changed, 24 insertions(+), 8 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 5df69ea..ab163ce 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -116,7 +116,7 @@ static cairo_surface_backend_t _cairo_directfb_surface_backend;
++ 
++ /*****************************************************************************/
++ 
++-static int _directfb_argb_font = 0;
+++static int _directfb_argb_font;
++ 
++ /*****************************************************************************/
++ 
++@@ -328,6 +328,7 @@ _directfb_get_operator (cairo_operator_t         operator,
++     return TRUE;
++ }
++ 
+++extern const char * dfb_pixelformat_name (DFBSurfacePixelFormat format);
++ static cairo_status_t
++ _directfb_buffer_surface_create (IDirectFB             *dfb,
++                                  DFBSurfacePixelFormat  format,
++@@ -342,7 +343,7 @@ _directfb_buffer_surface_create (IDirectFB             *dfb,
++     D_DEBUG_AT (CairoDFB_Surface, "%s( %4dx%4d %s )\n",
++ 		__FUNCTION__, width, height, dfb_pixelformat_name (format));
++ 
++-    dsc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;
+++    dsc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT | DSDESC_CAPS;
++     dsc.caps        = DSCAPS_PREMULTIPLIED;
++     dsc.width       = width;
++     dsc.height      = height;
++@@ -354,6 +355,8 @@ _directfb_buffer_surface_create (IDirectFB             *dfb,
++ 	return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++     }
++ 
+++    buffer->SetPorterDuff (buffer, DSPD_SRC_OVER);
+++
++     *out = buffer;
++     return CAIRO_STATUS_SUCCESS;
++ }
++@@ -879,7 +882,7 @@ _directfb_prepare_composite (cairo_directfb_surface_t    *dst,
++     flags = (sblend == DSBF_ONE && dblend == DSBF_ZERO)
++ 	? DSBLIT_NOFX : DSBLIT_BLEND_ALPHACHANNEL;
++     if (! CAIRO_COLOR_IS_OPAQUE (color))
++-	flags |= DSBLIT_BLEND_COLORALPHA;
+++	flags |= DSBLIT_BLEND_COLORALPHA | DSBLIT_SRC_PREMULTCOLOR;
++     if (! _cairo_color_equal (color, _cairo_stock_color (CAIRO_STOCK_WHITE)))
++ 	flags |= DSBLIT_COLORIZE;
++ 
++@@ -1894,13 +1897,26 @@ _cairo_directfb_surface_show_glyphs (void                *abstract_dst,
++     if (! CAIRO_COLOR_IS_OPAQUE (color))
++ 	flags |= DSBLIT_BLEND_COLORALPHA;
++ 
++-    if (!_directfb_argb_font) {
++-	if (sblend == DSBF_ONE) {
++-	    sblend = DSBF_SRCALPHA;
++-	    if (dblend == DSBF_ZERO)
++-		dblend = DSBF_INVSRCALPHA;
+++    {
+++    DFBSurfaceCapabilities src_caps, dst_caps;
+++    DFBSurfacePixelFormat dst_format;
+++    cache->dfbsurface->GetCapabilities (cache->dfbsurface, &src_caps);
+++    dst->dfbsurface->GetCapabilities (dst->dfbsurface, &dst_caps);
+++    dst->dfbsurface->GetPixelFormat (dst->dfbsurface, &dst_format);
+++
+++    if ((DFB_PIXELFORMAT_HAS_ALPHA (dst_format)
+++	 && (dst_caps & DSCAPS_PREMULTIPLIED))
+++	|| (src_caps & DSCAPS_PREMULTIPLIED))
+++    {
+++	if (src_caps & DSCAPS_PREMULTIPLIED)
+++	{
+++	    if (flags & DSBLIT_BLEND_COLORALPHA)
+++		flags |= DSBLIT_SRC_PREMULTCOLOR;
+++	    else
+++		flags |= DSBLIT_SRC_PREMULTIPLY;
++ 	}
++     }
+++    }
++ 
++     dst->dfbsurface->SetBlittingFlags (dst->dfbsurface, flags);
++     dst->dfbsurface->SetSrcBlendFunction (dst->dfbsurface, sblend);
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0009--directfb-fix-size-calculation-in-case-subsurfaces.patch cairo-1.8.10/cairo-1.8.8-0009--directfb-fix-size-calculation-in-case-subsurfaces.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0009--directfb-fix-size-calculation-in-case-subsurfaces.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0009--directfb-fix-size-calculation-in-case-subsurfaces.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,41 @@
++From 347f896cb906e84ef7c0c795bd51285859db8cdc Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 02:13:29 +0000
++Subject: [PATCH] (directfb) fix size calculation in case subsurfaces are used in _directfb_acquire_surface()
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |    8 ++------
++ 1 files changed, 2 insertions(+), 6 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index ab163ce..11d5d21 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -380,18 +380,14 @@ _directfb_acquire_surface (cairo_directfb_surface_t  *surface,
++     if (surface->format == (cairo_format_t) -1 ||
++ 	(lock_flags & DSLF_WRITE && surface->has_clip))
++     {
++-        DFBSurfaceCapabilities caps;
++-
++         if (intrest_rec) {
++             source_rect.x = intrest_rec->x;
++             source_rect.y = intrest_rec->y;
++             source_rect.w = intrest_rec->width;
++             source_rect.h = intrest_rec->height;
++         } else {
++-            source_rect.x = 0;
++-            source_rect.y = 0;
++-            surface->dfbsurface->GetSize (surface->dfbsurface,
++-                                          &source_rect.w, &source_rect.h);
+++            surface->dfbsurface->GetVisibleRectangle (surface->dfbsurface,
+++                                                      &source_rect);
++         }
++ 
++         if (surface->tmpsurface) {
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0010--directfb-remove-some-dead-code.patch cairo-1.8.10/cairo-1.8.8-0010--directfb-remove-some-dead-code.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0010--directfb-remove-some-dead-code.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0010--directfb-remove-some-dead-code.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,35 @@
++From 9c90d6cc808d20f2297b4b7cbdff345e2d052d2d Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Mon, 22 Jun 2009 22:27:28 +0100
++Subject: [PATCH] (directfb) remove some dead code
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off-by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |    8 --------
++ 1 files changed, 0 insertions(+), 8 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 11d5d21..2540f47 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -413,14 +413,6 @@ _directfb_acquire_surface (cairo_directfb_surface_t  *surface,
++         }
++         buffer = surface->tmpsurface;
++ 
++-/*        surface->dfbsurface->GetCapabilities (surface->dfbsurface, &caps);
++-        if (caps & DSCAPS_FLIPPING) {
++-            DFBRegion region = { .x1 = source_rect.x, .y1 = source_rect.y,
++-                                 .x2 = source_rect.x + source_rect.w - 1,
++-                                 .y2 = source_rect.y + source_rect.h - 1 };
++-            surface->dfbsurface->Flip (surface->dfbsurface, &region, DSFLIP_BLIT);
++-        } */
++-
++ 	D_DEBUG_AT (CairoDFB_Render, "  => Blit( 0,0-%4dx%4d <- %4d,%4d )\n",
++ 		    source_rect.w, source_rect.h, source_rect.x, source_rect.y);
++ 
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0011--directfb-use-DSBLIT_NOFX-when-copying-temp-surface.patch cairo-1.8.10/cairo-1.8.8-0011--directfb-use-DSBLIT_NOFX-when-copying-temp-surface.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0011--directfb-use-DSBLIT_NOFX-when-copying-temp-surface.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0011--directfb-use-DSBLIT_NOFX-when-copying-temp-surface.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,28 @@
++From 999bcce6a7a9e8466f13e9e934e3edd0ac8e835b Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Mon, 22 Jun 2009 22:29:06 +0100
++Subject: [PATCH] (directfb) use DSBLIT_NOFX when copying temp surface
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off-by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |    1 +
++ 1 files changed, 1 insertions(+), 0 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 2540f47..74deb3d 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -416,6 +416,7 @@ _directfb_acquire_surface (cairo_directfb_surface_t  *surface,
++ 	D_DEBUG_AT (CairoDFB_Render, "  => Blit( 0,0-%4dx%4d <- %4d,%4d )\n",
++ 		    source_rect.w, source_rect.h, source_rect.x, source_rect.y);
++ 
+++        buffer->SetBlittingFlags (buffer, DSBLIT_NOFX);
++         buffer->Blit (buffer, surface->dfbsurface, &source_rect, 0, 0);
++         buffer->ReleaseSource (buffer);
++     } else {
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0012--directfb-this-fixes-some-more-annoying-compiler-wa.patch cairo-1.8.10/cairo-1.8.8-0012--directfb-this-fixes-some-more-annoying-compiler-wa.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0012--directfb-this-fixes-some-more-annoying-compiler-wa.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0012--directfb-this-fixes-some-more-annoying-compiler-wa.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,200 @@
++From 039384ee58e8aa3f51eb0b555b25087c3c6bf0f9 Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 02:13:32 +0000
++Subject: [PATCH] (directfb) this fixes some more annoying compiler warnings
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |  115 ++++++++++++++++++++++++------------------
++ 1 files changed, 66 insertions(+), 49 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 74deb3d..3edcf27 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -120,36 +120,48 @@ static int _directfb_argb_font;
++ 
++ /*****************************************************************************/
++ 
++-#define RUN_CLIPPED(surface, clip, func) {\
++-    if ((surface)->has_clip) {\
++-        int k;\
++-        for (k = 0; k < (surface)->n_clips; k++) {\
++-            if (clip) {\
++-                DFBRegion  reg = (surface)->clips[k];\
++-                DFBRegion *cli = (clip);\
++-                if (reg.x2 < cli->x1 || reg.y2 < cli->y1 ||\
++-                    reg.x1 > cli->x2 || reg.y1 > cli->y2)\
++-                    continue;\
++-                if (reg.x1 < cli->x1)\
++-                    reg.x1 = cli->x1;\
++-                if (reg.y1 < cli->y1)\
++-                    reg.y1 = cli->y1;\
++-                if (reg.x2 > cli->x2)\
++-                    reg.x2 = cli->x2;\
++-                if (reg.y2 > cli->y2)\
++-                    reg.y2 = cli->y2;\
++-                (surface)->dfbsurface->SetClip ((surface)->dfbsurface, &reg);\
++-            } else {\
++-                (surface)->dfbsurface->SetClip ((surface)->dfbsurface,\
++-                                           &(surface)->clips[k]);\
++-            }\
++-            func;\
++-        }\
++-    } else {\
++-        (surface)->dfbsurface->SetClip ((surface)->dfbsurface, clip);\
++-        func;\
++-    }\
++-}
+++#define RUN_CLIPPED(surface, func) \
+++    ({                                                                       \
+++	if ((surface)->has_clip) {                                           \
+++	    int k;                                                           \
+++	    for (k = 0; k < (surface)->n_clips; k++) {                       \
+++		(surface)->dfbsurface->SetClip ((surface)->dfbsurface,       \
+++						&(surface)->clips[k]);       \
+++		func;                                                        \
+++	    }                                                                \
+++	} else {                                                             \
+++	    (surface)->dfbsurface->SetClip ((surface)->dfbsurface, NULL);    \
+++	    func;                                                            \
+++	}                                                                    \
+++    })
+++
+++#define RUN_CLIPPED_EXTRA(surface, clip, func) \
+++    ({                                                                       \
+++	if ((surface)->has_clip) {                                           \
+++	    int k;                                                           \
+++	    for (k = 0; k < (surface)->n_clips; k++) {                       \
+++		DFBRegion  reg = (surface)->clips[k];                        \
+++		DFBRegion *cli = clip;                                       \
+++		if (reg.x2 < cli->x1 || reg.y2 < cli->y1 ||                  \
+++		    reg.x1 > cli->x2 || reg.y1 > cli->y2)                    \
+++		    continue;                                                \
+++		if (reg.x1 < cli->x1)                                        \
+++		    reg.x1 = cli->x1;                                        \
+++		if (reg.y1 < cli->y1)                                        \
+++		    reg.y1 = cli->y1;                                        \
+++		if (reg.x2 > cli->x2)                                        \
+++		    reg.x2 = cli->x2;                                        \
+++		if (reg.y2 > cli->y2)                                        \
+++		    reg.y2 = cli->y2;                                        \
+++		(surface)->dfbsurface->SetClip ((surface)->dfbsurface, &reg);\
+++		func;                                                        \
+++	    }                                                                \
+++	} else {                                                             \
+++	    (surface)->dfbsurface->SetClip ((surface)->dfbsurface, clip);    \
+++	    func;                                                            \
+++	}                                                                    \
+++    })
+++
++ 
++ #define TRANSFORM_POINT2X(m, x, y, ret_x, ret_y) {\
++     double _x = (x);\
++@@ -640,10 +652,11 @@ _cairo_directfb_surface_release_dest_image (void                  *abstract_surf
++ 	    .y2 = interest_rect->y + interest_rect->height - 1
++ 	};
++ 	surface->dfbsurface->SetBlittingFlags (surface->dfbsurface, DSBLIT_NOFX);
++-	RUN_CLIPPED (surface, &region,
++-		     surface->dfbsurface->Blit (surface->dfbsurface,
++-						buffer, NULL,
++-						image_rect->x, image_rect->y));
+++	RUN_CLIPPED_EXTRA (surface, &region,
+++			   surface->dfbsurface->Blit (surface->dfbsurface,
+++						      buffer, NULL,
+++						      image_rect->x,
+++						      image_rect->y));
++ 	surface->dfbsurface->ReleaseSource (surface->dfbsurface);
++     }
++ 
++@@ -1044,7 +1057,7 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 		D_DEBUG_AT (CairoDFB_Render, "  ==> Blit( %4d,%4d-%4dx%4d <- %4d,%4d )\n",
++ 			    dst_x, dst_y, sr.w, sr.h, sr.x, sr.y);
++ 
++-		RUN_CLIPPED (dst, NULL,
+++		RUN_CLIPPED (dst,
++ 			     dst->dfbsurface->Blit (dst->dfbsurface,
++ 						    src->dfbsurface,
++ 						    &sr,
++@@ -1060,11 +1073,11 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 		D_DEBUG_AT (CairoDFB_Render, "  ==> TileBlit( %4d,%4d-%4dx%4d <- %4d,%4d-%4dx%4d )\n",
++ 			    dst_x, dst_y, width, height, sr.x, sr.y, sr.w, sr.h);
++ 
++-		RUN_CLIPPED (dst, &clip,
++-			     dst->dfbsurface->TileBlit (dst->dfbsurface,
++-							src->dfbsurface,
++-							&sr,
++-							dst_x, dst_y));
+++		RUN_CLIPPED_EXTRA (dst, &clip,
+++				   dst->dfbsurface->TileBlit (dst->dfbsurface,
+++							      src->dfbsurface,
+++							      &sr,
+++							      dst_x, dst_y));
++ 	    }
++ 	    break;
++ 	}
++@@ -1092,9 +1105,10 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 	    D_DEBUG_AT (CairoDFB_Render, "  ==> StretchBlit( %4d,%4d-%4dx%4d <- %4d,%4d-%4dx%4d )\n",
++ 			dst_x, dst_y, width, height, sr.x, sr.y, sr.w, sr.h);
++ 
++-	    RUN_CLIPPED (dst, NULL,
+++	    RUN_CLIPPED (dst,
++ 			 dst->dfbsurface->StretchBlit (dst->dfbsurface,
++-						       src->dfbsurface, &sr, &dr));
+++						       src->dfbsurface,
+++						       &sr, &dr));
++ 	    break;
++ 	}
++ 
++@@ -1151,9 +1165,11 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 
++ 	    D_DEBUG_AT (CairoDFB_Render, "  ==> TextureTriangles()\n");
++ 
++-	    RUN_CLIPPED (dst, &clip,
++-			 dst->dfbsurface->TextureTriangles (dst->dfbsurface,
++-							    src->dfbsurface, v, NULL, 4, DTTF_FAN));
+++	    RUN_CLIPPED_EXTRA (dst, &clip,
+++			       dst->dfbsurface->TextureTriangles (dst->dfbsurface,
+++								  src->dfbsurface,
+++								  v, NULL, 4,
+++								  DTTF_FAN));
++ 	    break;
++ 	}
++ 
++@@ -1259,7 +1275,7 @@ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface
++ 		    DFB_RECTANGLE_VALS (&dfbrects[i]), i);
++     }
++ 
++-    RUN_CLIPPED (dst, NULL,
+++    RUN_CLIPPED (dst,
++ 		 dst->dfbsurface->FillRectangles (dst->dfbsurface,
++ 						  dfbrects, n_rects));
++ 
++@@ -1390,7 +1406,7 @@ _cairo_directfb_surface_composite_trapezoids (cairo_operator_t   op,
++ 
++         D_DEBUG_AT (CairoDFB_Render, "Running TextureTriangles().\n");
++ 
++-        RUN_CLIPPED (dst, NULL,
+++        RUN_CLIPPED (dst,
++                      dst->dfbsurface->TextureTriangles (dst->dfbsurface,
++ 							src->dfbsurface,
++ 							vertex, NULL, n,
++@@ -1926,9 +1942,10 @@ _cairo_directfb_surface_show_glyphs (void                *abstract_dst,
++ 
++     D_DEBUG_AT (CairoDFB_Font, "  ===> BatchBlit()\n");
++ 
++-    RUN_CLIPPED (dst, NULL,
+++    RUN_CLIPPED (dst,
++ 		 dst->dfbsurface->BatchBlit (dst->dfbsurface,
++-					     cache->dfbsurface, rects, points, num));
+++					     cache->dfbsurface, rects,
+++					     points, num));
++     dst->dfbsurface->ReleaseSource (dst->dfbsurface);
++ 
++     return CAIRO_STATUS_SUCCESS;
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0013--directfb-small-code-cleanup.patch cairo-1.8.10/cairo-1.8.8-0013--directfb-small-code-cleanup.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0013--directfb-small-code-cleanup.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0013--directfb-small-code-cleanup.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,52 @@
++From 198ffc813d7d602dd7255820dd643cd07776da50 Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 02:14:07 +0000
++Subject: [PATCH] (directfb) small code cleanup
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |   18 +++++++++++++++++-
++ 1 files changed, 17 insertions(+), 1 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 3edcf27..908467b 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -177,6 +177,22 @@ static int _directfb_argb_font;
++     (ret_y) = (_x * (m).yx + _y * (m).yy + (m).y0);\
++ }
++ 
+++
+++/**
+++ * _cairo_surface_is_directfb:
+++ * @surface: a #cairo_surface_t
+++ *
+++ * Checks if a surface is a #cairo_directfb_surface_t
+++ *
+++ * Return value: %TRUE if the surface is a directfb surface
+++ **/
+++static cairo_bool_t
+++_cairo_surface_is_directfb (const cairo_surface_t * const surface)
+++{
+++    return surface->backend == &_cairo_directfb_surface_backend;
+++}
+++
+++
++ /* XXX: A1 has a different bits ordering in cairo.
++  *      Probably we should drop it.
++  */
++@@ -850,7 +866,7 @@ _directfb_prepare_composite (cairo_directfb_surface_t    *dst,
++     if (status)
++ 	return status;
++ 
++-    if (src->base.backend != &_cairo_directfb_surface_backend ||
+++    if (!_cairo_surface_is_directfb (&src->base) ||
++ 	src->dfb != dst->dfb)
++     {
++ 	_cairo_pattern_release_surface (src_pattern, &src->base, &src_attr);
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0014--directfb-this-fixes-the-extend-reflect-testcase.patch cairo-1.8.10/cairo-1.8.8-0014--directfb-this-fixes-the-extend-reflect-testcase.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0014--directfb-this-fixes-the-extend-reflect-testcase.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0014--directfb-this-fixes-the-extend-reflect-testcase.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,70 @@
++From 7dffcde865e823be82b8bb6b1fa84f67538de9c2 Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 02:14:32 +0000
++Subject: [PATCH] (directfb) this fixes the extend-reflect testcase
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++The semantics of DirectFB with regards to negative start positions
++are different from what cairo expects.
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |   31 +++++++++++++++++++++----------
++ 1 files changed, 21 insertions(+), 10 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 908467b..9a87e20 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -1078,15 +1078,17 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 						    src->dfbsurface,
++ 						    &sr,
++ 						    dst_x, dst_y));
++-	    } else if (src_attr.extend == CAIRO_EXTEND_REPEAT) {
++-		DFBRegion clip;
++-
++-		clip.x1 = dst_x;
++-		clip.y1 = dst_y;
++-		clip.x2 = dst_x + width  - 1;
++-		clip.y2 = dst_y + height - 1;
++-
++-		D_DEBUG_AT (CairoDFB_Render, "  ==> TileBlit( %4d,%4d-%4dx%4d <- %4d,%4d-%4dx%4d )\n",
+++	    } else if (src_attr.extend == CAIRO_EXTEND_REPEAT
+++		       && src_x >= 0 && src_y >= 0) {
+++                /* the semantics of DirectFB wrt negative start positions are
+++                   different from what cairo expects. */
+++		DFBRegion clip = { .x1 = dst_x,
+++				   .y1 = dst_y,
+++				   .x2 = dst_x + width  - 1,
+++				   .y2 = dst_y + height - 1 };
+++
+++		D_DEBUG_AT (CairoDFB_Render,
+++			    "  ==> TileBlit( %4d,%4d-%4dx%4d <- %4d,%4d-%4dx%4d )\n",
++ 			    dst_x, dst_y, width, height, sr.x, sr.y, sr.w, sr.h);
++ 
++ 		RUN_CLIPPED_EXTRA (dst, &clip,
++@@ -1094,9 +1096,18 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 							      src->dfbsurface,
++ 							      &sr,
++ 							      dst_x, dst_y));
+++	    } else {
+++		D_DEBUG_AT (CairoDFB_Render,
+++			    "  ==> unsupported BLIT:\n"
+++			    "  extend: %d, src_x/src_y: %d/%d, x_offset/y_offset: %d/%d\n"
+++			    "  tx/ty: %d/%d width/height: %d/%d dst_x/dst_y: %d/%d\n",
+++			    __FUNCTION__, src_attr.extend, src_x,
+++			    src_y, src_attr.x_offset, src_attr.y_offset, tx, ty,
+++			    width, height, dst_x, dst_y);
+++		status = CAIRO_INT_STATUS_UNSUPPORTED;
++ 	    }
++-	    break;
++ 	}
+++	break;
++ 
++     case DFXL_STRETCHBLIT:
++ 	{
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0015--directfb-allow-all-fill-rect-operations-to-be-hard.patch cairo-1.8.10/cairo-1.8.8-0015--directfb-allow-all-fill-rect-operations-to-be-hard.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0015--directfb-allow-all-fill-rect-operations-to-be-hard.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0015--directfb-allow-all-fill-rect-operations-to-be-hard.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,133 @@
++From 26b1587c07d61f1044c8c6d59badaca8b091d47d Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Tue, 9 Dec 2008 03:13:09 +0000
++Subject: [PATCH] (directfb) allow all fill rect operations to be hardware accelerated
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |   75 ++++++++++++++++++++++-------------------
++ 1 files changed, 40 insertions(+), 35 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 9a87e20..6fb7851 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -1221,6 +1221,8 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ #endif /* DFB_COMPOSITE */
++ 
++ #if DFB_RECTANGLES
+++#  define DSPD_DST  (DSPD_XOR + 1)
+++#  define DSPD_SAT  (DSPD_DST + 1)
++ static cairo_int_status_t
++ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface,
++                                          cairo_operator_t       op,
++@@ -1229,57 +1231,60 @@ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface
++                                          int                    n_rects)
++ {
++     cairo_directfb_surface_t *dst   = abstract_surface;
++-    DFBSurfaceDrawingFlags    flags;
++-    DFBSurfaceBlendFunction   sblend;
++-    DFBSurfaceBlendFunction   dblend;
++     DFBRectangle              static_dfbrects[CAIRO_STACK_ARRAY_LENGTH(DFBRectangle)];
++     DFBRectangle             *dfbrects = static_dfbrects;
++     int                       i;
+++    u8                        alpha = color->alpha_short >> 8;
+++
+++    static const DFBSurfacePorterDuffRule cairo_operator_to_directfb[] = {
+++	DSPD_CLEAR,
+++	DSPD_SRC, DSPD_SRC_OVER, DSPD_SRC_IN, DSPD_SRC_OUT, DSPD_SRC_ATOP,
+++	DSPD_DST, DSPD_DST_OVER, DSPD_DST_IN, DSPD_DST_OUT, DSPD_DST_ATOP,
+++	DSPD_XOR, DSPD_ADD, DSPD_SAT
+++    };
++ 
++     D_DEBUG_AT (CairoDFB_Render,
++ 		"%s( dst=%p, op=%d, color=%p, rects=%p, n_rects=%d ).\n",
++ 		__FUNCTION__, dst, op, color, rects, n_rects);
++ 
++-    if (! _cairo_operator_bounded_by_source (op))
++-        return CAIRO_INT_STATUS_UNSUPPORTED;
++-
++-    if (! _directfb_get_operator (op, &sblend, &dblend))
++-	return CAIRO_INT_STATUS_UNSUPPORTED;
++-
++     if (n_rects > ARRAY_LENGTH (static_dfbrects)) {
++ 	dfbrects = _cairo_malloc_ab (n_rects, sizeof (DFBRectangle));
++ 	if (dfbrects == NULL)
++ 	    return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++     }
++ 
++-    if (CAIRO_COLOR_IS_OPAQUE (color)) {
++-	if (sblend == DSBF_SRCALPHA)
++-	    sblend = DSBF_ONE;
++-	else if (sblend == DSBF_INVSRCALPHA)
++-	    sblend = DSBF_ZERO;
+++    dst->dfbsurface->SetPorterDuff (dst->dfbsurface,
+++				    cairo_operator_to_directfb[op]);
+++    dst->dfbsurface->SetDrawingFlags (dst->dfbsurface, DSDRAW_BLEND);
++ 
++-	if (dblend == DSBF_SRCALPHA)
++-	    dblend = DSBF_ONE;
++-	else if (dblend == DSBF_INVSRCALPHA)
++-	    dblend = DSBF_ZERO;
++-    }
++-    if (dst->content == CAIRO_CONTENT_COLOR) {
++-	if (sblend == DSBF_DESTALPHA)
++-	    sblend = DSBF_ONE;
++-	else if (sblend == DSBF_INVDESTALPHA)
++-	    sblend = DSBF_ZERO;
+++    switch (op) {
+++    case CAIRO_OPERATOR_CLEAR:
+++    case CAIRO_OPERATOR_SOURCE:
+++	{
+++	DFBSurfacePixelFormat dst_format;
++ 
++-	if (dblend == DSBF_DESTALPHA)
++-	    dblend = DSBF_ONE;
++-	else if (dblend == DSBF_INVDESTALPHA)
++-	    dblend = DSBF_ZERO;
++-    }
+++	dst->dfbsurface->GetPixelFormat (dst->dfbsurface, &dst_format);
+++	if (!DFB_PIXELFORMAT_HAS_ALPHA (dst_format))
+++	    alpha = 0xff;
+++	}
+++	break;
++ 
++-    flags = (sblend == DSBF_ONE && dblend == DSBF_ZERO) ? DSDRAW_NOFX : DSDRAW_BLEND;
++-    dst->dfbsurface->SetDrawingFlags (dst->dfbsurface, flags);
++-    if (flags & DSDRAW_BLEND) {
++-	dst->dfbsurface->SetSrcBlendFunction (dst->dfbsurface, sblend);
++-	dst->dfbsurface->SetDstBlendFunction (dst->dfbsurface, dblend);
+++    /* fixup some Porter/Duff rules. DirectFB doesn't know about those two */
+++    case CAIRO_OPERATOR_DEST:
+++	dst->dfbsurface->SetSrcBlendFunction (dst->dfbsurface, DSBF_ZERO);
+++	dst->dfbsurface->SetDstBlendFunction (dst->dfbsurface, DSBF_ONE);
+++	break;
+++
+++    case CAIRO_OPERATOR_SATURATE:
+++        /* the saturate result looks a bit different from what cairo
+++           expects, but we enable SATURATE anyway */
+++	dst->dfbsurface->SetSrcBlendFunction (dst->dfbsurface, DSBF_SRCALPHASAT);
+++	dst->dfbsurface->SetDstBlendFunction (dst->dfbsurface, DSBF_ONE);
+++	break;
+++
+++    default:
+++        /* nothing */
+++	break;
++     }
++ 
++     D_DEBUG_AT (CairoDFB_Render, "  -> %02x %02x %02x %02x\n",
++@@ -1290,7 +1295,7 @@ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface
++ 			       color->red_short >> 8,
++ 			       color->green_short >> 8,
++ 			       color->blue_short >> 8,
++-			       color->alpha_short >> 8);
+++			       alpha);
++ 
++     for (i = 0; i < n_rects; i++) {
++ 	dfbrects[i].x = rects[i].x;
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/cairo-1.8.8-0016--directfb-use-DirectFB-for-matrix-operations-which.patch cairo-1.8.10/cairo-1.8.8-0016--directfb-use-DirectFB-for-matrix-operations-which.patch
+--- cairo-1.8.10.org/cairo-1.8.8-0016--directfb-use-DirectFB-for-matrix-operations-which.patch	1969-12-31 16:00:00.000000000 -0800
++++ cairo-1.8.10/cairo-1.8.8-0016--directfb-use-DirectFB-for-matrix-operations-which.patch	2009-10-19 07:37:36.000000000 -0700
+@@ -0,0 +1,455 @@
++From 46e2f212ba5a5474302132c8ac5bb992a14768be Mon Sep 17 00:00:00 2001
++From: =?utf-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@st.com>
++Date: Thu, 18 Dec 2008 12:11:02 +0000
++Subject: [PATCH] (directfb) use DirectFB for matrix operations which result in reflection
++MIME-Version: 1.0
++Content-Type: text/plain; charset=utf-8
++Content-Transfer-Encoding: 8bit
++
++We use DirectFB for matrix operations which result in a reflection
++on the X and/or Y axis.
++Some code cleanup.
++
++Signed-off by: André Draszik <andre.draszik@st.com>
++---
++ src/cairo-directfb-surface.c |  341 +++++++++++++++++++++++++++++++++++-------
++ 1 files changed, 289 insertions(+), 52 deletions(-)
++
++diff --git a/src/cairo-directfb-surface.c b/src/cairo-directfb-surface.c
++index 6fb7851..34f689a 100644
++--- a/src/cairo-directfb-surface.c
+++++ b/src/cairo-directfb-surface.c
++@@ -39,6 +39,7 @@
++ #include "cairo-directfb.h"
++ 
++ #include <directfb.h>
+++#include <directfb_util.h>
++ #include <direct/types.h>
++ #include <direct/debug.h>
++ #include <direct/memcpy.h>
++@@ -947,61 +948,171 @@ _directfb_finish_composite (cairo_directfb_surface_t   *dst,
++ #endif /* DFB_COMPOSITE || DFB_COMPOSITE_TRAPEZOIDS */
++ 
++ #if DFB_COMPOSITE
+++static const char *extend_to_str[]= { "none", "repeat", "reflect", "pad" };
++ static DFBAccelerationMask
++-_directfb_categorize_operation (cairo_surface_attributes_t *src_attr)
+++_directfb_categorize_operation (const cairo_surface_attributes_t * const src_attr)
++ {
++-    cairo_matrix_t *m = &src_attr->matrix;
++-
++-    if (m->xy != 0 || m->yx != 0 || m->xx < 0 || m->yy < 0) {
++-	D_DEBUG_AT (CairoDFB_Render, "-> NON-RECTANGULAR TRANSFORM\n" );
+++    const cairo_matrix_t * const m = &src_attr->matrix;
+++
+++    if (m->yx == 0 && m->xy == 0) {
+++	cairo_fixed_t xx_fixed;
+++	cairo_fixed_t yy_fixed;
+++
+++	/* simple blit */
+++	if (m->xx == 1 && m->yy == 1) {
+++	    D_DEBUG_AT (CairoDFB_Render, "-> no transform -> blit\n" );
+++
+++	    switch (src_attr->extend) {
+++	    case CAIRO_EXTEND_NONE:
+++	    case CAIRO_EXTEND_REPEAT:
+++		{
+++		cairo_bool_t is_int =
+++		    _cairo_matrix_is_integer_translation (&src_attr->matrix,
+++							  NULL, NULL);
+++
+++		if (is_int || src_attr->extend == CAIRO_EXTEND_NONE) {
+++		    D_DEBUG_AT (CairoDFB_Render,
+++				"%s: cool we support blit matrix:\n"
+++				"    | %g %g | + | %g |\n"
+++				"    | %g %g |   | %g | mode: %s\n",
+++				__FUNCTION__,
+++				m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
+++				extend_to_str[src_attr->extend]);
+++		    return is_int ? DFXL_BLIT : DFXL_STRETCHBLIT;
+++		}
+++		}
+++		/* fall through */
++ 
++-	if (src_attr->extend != CAIRO_EXTEND_NONE) {
++-	    D_DEBUG_AT (CairoDFB_Render, "=> EXTEND MODE %d NOT SUPPORTED\n",
++-			src_attr->extend);
++-	    return DFXL_NONE;
+++	    case CAIRO_EXTEND_REFLECT:
+++	    case CAIRO_EXTEND_PAD:
+++	    default:
+++		D_DEBUG_AT (CairoDFB_Render,
+++			    "=> extend mode: %d (%s) w/ matrix not supported:\n"
+++			    "    | %g %g | + | %g |\n"
+++			    "    | %g %g |   | %g |\n",
+++			    src_attr->extend, extend_to_str[src_attr->extend],
+++			    m->xx, m->xy, m->x0, m->xy, m->yy, m->y0);
+++		return DFXL_NONE;
+++	    }
++ 	}
++ 
++-	return DFXL_TEXTRIANGLES;
++-    }
++-
++-    if (m->xx != 1 || m->yy != 1) {
++-	D_DEBUG_AT (CairoDFB_Render, "-> RECTANGULAR TRANSFORM\n" );
++-
++-	if (src_attr->extend != CAIRO_EXTEND_NONE) {
++-	    D_DEBUG_AT (CairoDFB_Render, "=> EXTEND MODE %d NOT SUPPORTED\n",
++-			src_attr->extend);
+++        /* stretchblit */
+++	if (m->xx > 0 && m->yy > 0) {
+++	    D_DEBUG_AT (CairoDFB_Render, "-> rectangular transform/stretchblit\n");
+++	    if (src_attr->extend == CAIRO_EXTEND_NONE) {
+++		D_DEBUG_AT (CairoDFB_Render,
+++			    "%s: cool we support stretchblit matrix:\n"
+++			    "    | %g %g | + | %g |\n"
+++			    "    | %g %g |   | %g | mode: %s\n",
+++			    __FUNCTION__,
+++			    m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
+++			    extend_to_str[src_attr->extend]);
+++		return DFXL_STRETCHBLIT;
+++	    }
++ 
++ 	    /* TODO: support EXTEND_PAD in special cases */
++-
+++	    D_DEBUG_AT (CairoDFB_Render,
+++			"=> TODO: rectangular transform/stretchblit with "
+++			"extend mode: %d (%s) not supported:\n"
+++			"    | %g %g | + | %g |\n"
+++			"    | %g %g |   | %g |\n",
+++			src_attr->extend, extend_to_str[src_attr->extend],
+++			m->xx, m->xy, m->x0, m->xy, m->yy, m->y0);
++ 	    return DFXL_NONE;
++ 	}
++ 
++-	return DFXL_STRETCHBLIT;
++-    }
++-
++-    D_DEBUG_AT (CairoDFB_Render, "-> NO TRANSFORM\n" );
++ 
++-    switch (src_attr->extend) {
++-    case CAIRO_EXTEND_NONE:
++-    case CAIRO_EXTEND_REPEAT:
++-	if (_cairo_matrix_is_integer_translation (&src_attr->matrix,
++-						  NULL, NULL))
++-	{
++-	    return DFXL_BLIT;
++-	}
++-	else
++-	{
++-	    return DFXL_STRETCHBLIT;
+++        /* test for reflection, so that we can use a couple of blit()s to
+++           achieve the desired result. We don't support stretching at the
+++           moment, therefore:
+++	   - on x axis
+++	       xx -1  yx  0
+++	       xy  0  yy  1
+++	   - on y axis
+++	       xx  1  yx  0
+++	       xy  0  yy -1
+++	   no support yet for reflection on x & y axis:
+++	   - on x & y axis
+++	       xx -1  yx  0
+++	       xy  0  yy -1
+++
+++	   but this can be enhanced maybe to support stretching:
+++	   - on x axis
+++	       xx -1  yx  0
+++	       xy  0  yy >0
+++	   - on y axis
+++	       xx >0  yx  0
+++	       xy  0  yy -1
+++	   - on x & y axis
+++	       xx <0  yx  0
+++	       xy  0  yy <0
+++	*/
+++	if (src_attr->extend != CAIRO_EXTEND_NONE) {
+++            /* else there's no sense in continuing with these tests */
+++
+++	    xx_fixed = _cairo_fixed_from_double (m->xx);
+++	    yy_fixed = _cairo_fixed_from_double (m->yy);
+++	    if (_cairo_fixed_is_integer (xx_fixed)
+++		&& _cairo_fixed_is_integer (yy_fixed)) {
+++
+++		int ixx = _cairo_fixed_integer_part (xx_fixed);
+++		int iyy = _cairo_fixed_integer_part (yy_fixed);
+++
+++		if ((ixx == -1 && iyy == 1)
+++		    || (ixx == 1 && iyy == -1)
+++		    || (ixx == -1 && iyy == -1)) {
+++		    /* cool, can support this! */
+++		    D_DEBUG_AT (CairoDFB_Render,
+++				" -> BLIT|TEXTRIANGLES matrix:\n"
+++				"    | %g %g | + | %g |\n"
+++				"    | %g %g |   | %g | mode: %s\n",
+++				m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
+++				extend_to_str[src_attr->extend]);
+++		    return DFXL_BLIT | DFXL_TEXTRIANGLES;
+++		}
+++	    }
++ 	}
+++    }
++ 
++-    default:
++-    case CAIRO_EXTEND_REFLECT:
++-    case CAIRO_EXTEND_PAD:
++-	D_DEBUG_AT (CairoDFB_Render, "=> EXTEND MODE %d NOT SUPPORTED\n", src_attr->extend );
++-	return DFXL_NONE;
+++    if (src_attr->extend == CAIRO_EXTEND_NONE
+++	&& (m->xy != 0 || m->yx != 0 || m->xx < 0 || m->yy < 0)) {
+++	D_DEBUG_AT (CairoDFB_Render, "-> NON-RECTANGULAR TRANSFORM, matrix:\n"
+++		    "    | %g %g | + | %g |\n"
+++		    "    | %g %g |   | %g | mode: %s\n",
+++		    m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
+++		    extend_to_str[src_attr->extend]);
+++
+++	return DFXL_TEXTRIANGLES;
++     }
+++
+++    D_DEBUG_AT (CairoDFB_Render,
+++		"->can't support the following operation, matrix:\n"
+++		"    | %g %g | + | %g |\n"
+++		"    | %g %g |   | %g | mode: %s\n",
+++		m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
+++		extend_to_str[src_attr->extend]);
+++
+++    return DFXL_NONE;
++ }
++ 
+++static const char *op_to_str[] = {
+++  "CAIRO_OPERATOR_CLEAR",
+++
+++  "CAIRO_OPERATOR_SOURCE",
+++  "CAIRO_OPERATOR_OVER",
+++  "CAIRO_OPERATOR_IN",
+++  "CAIRO_OPERATOR_OUT",
+++  "CAIRO_OPERATOR_ATOP",
+++
+++  "CAIRO_OPERATOR_DEST",
+++  "CAIRO_OPERATOR_DEST_OVER",
+++  "CAIRO_OPERATOR_DEST_IN",
+++  "CAIRO_OPERATOR_DEST_OUT",
+++  "CAIRO_OPERATOR_DEST_ATOP",
+++
+++  "CAIRO_OPERATOR_XOR",
+++  "CAIRO_OPERATOR_ADD",
+++  "CAIRO_OPERATOR_SATURATE" };
++ static cairo_int_status_t
++ _cairo_directfb_surface_composite (cairo_operator_t  op,
++                                    cairo_pattern_t  *src_pattern,
++@@ -1016,16 +1127,15 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++     cairo_directfb_surface_t   *dst = abstract_dst;
++     cairo_directfb_surface_t   *src;
++     cairo_surface_attributes_t  src_attr;
++-    cairo_bool_t                is_integer_translation;
++     DFBAccelerationMask         accel, mask;
++     cairo_int_status_t          status;
++     int                         tx, ty;
++ 
++     D_DEBUG_AT (CairoDFB_Render,
++-		"%s( op=%d, src_pattern=%p, mask_pattern=%p, dst=%p,"
+++		"%s( op=%d (%s), src_pattern=%p, mask_pattern=%p, dst=%p,"
++ 		" src_x=%d, src_y=%d, mask_x=%d, mask_y=%d, dst_x=%d,"
++ 		" dst_y=%d, width=%u, height=%u ).\n",
++-		__FUNCTION__, op, src_pattern, mask_pattern, dst,
+++		__FUNCTION__, op, op_to_str[op], src_pattern, mask_pattern, dst,
++ 		src_x, src_y, mask_x, mask_y, dst_x, dst_y, width, height);
++ 
++     status = _directfb_prepare_composite (dst, src_pattern, mask_pattern, op,
++@@ -1041,12 +1151,19 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 	return CAIRO_INT_STATUS_UNSUPPORTED;
++     }
++ 
++-    dst->dfbsurface->GetAccelerationMask (dst->dfbsurface,
++-					  src->dfbsurface,
++-					  &mask);
++-    if ((mask & accel) == 0) {
++-	if (accel == DFXL_TEXTRIANGLES) {
++-	    _directfb_finish_composite (dst, src_pattern, &src->base, &src_attr);
+++    /* DirectFB has no software fallback for TextureTriangles() but since we
+++       might be able to emulate through some BLITs, make sure not to return
+++       UNSUPPORTED if that's the case. */
+++    if (accel & DFXL_TEXTRIANGLES) {
+++	dst->dfbsurface->GetAccelerationMask (dst->dfbsurface,
+++					      src->dfbsurface,
+++					      &mask);
+++	if ((accel & mask) == 0) {
+++	    D_DEBUG_AT (CairoDFB_Render,
+++			"No TEXTRIANGLES acceleration (%08x)!\n",
+++			accel);
+++	    _directfb_finish_composite (dst, src_pattern, &src->base,
+++					&src_attr);
++ 	    return CAIRO_INT_STATUS_UNSUPPORTED;
++ 	}
++     }
++@@ -1054,15 +1171,23 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++     src_x += src_attr.x_offset;
++     src_y += src_attr.y_offset;
++ 
+++#if 0
+++if (dst)
+++    (void) cairo_surface_write_to_png (&dst->base, "xxxdfb-dst");
+++if (src)
+++    (void) cairo_surface_write_to_png (&src->base, "xxxdfb-src");
+++#endif
+++
++     switch (accel) {
++     case DFXL_BLIT:
++ 	{
++ 	    DFBRectangle sr;
++ 
++-	    is_integer_translation =
+++	    cairo_bool_t is_index_translation =
++ 		_cairo_matrix_is_integer_translation (&src_attr.matrix,
++ 						      &tx, &ty);
++-	    assert (is_integer_translation);
+++	    /* this is a pre-condition for blit */
+++	    assert (is_index_translation);
++ 
++ 	    sr.x = src_x + tx;
++ 	    sr.y = src_y + ty;
++@@ -1070,7 +1195,8 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 	    sr.h = height;
++ 
++ 	    if (src_attr.extend == CAIRO_EXTEND_NONE) {
++-		D_DEBUG_AT (CairoDFB_Render, "  ==> Blit( %4d,%4d-%4dx%4d <- %4d,%4d )\n",
+++		D_DEBUG_AT (CairoDFB_Render,
+++			    "  ==> Blit( %4d,%4d-%4dx%4d <- %4d,%4d )\n",
++ 			    dst_x, dst_y, sr.w, sr.h, sr.x, sr.y);
++ 
++ 		RUN_CLIPPED (dst,
++@@ -1101,11 +1227,12 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 			    "  ==> unsupported BLIT:\n"
++ 			    "  extend: %d, src_x/src_y: %d/%d, x_offset/y_offset: %d/%d\n"
++ 			    "  tx/ty: %d/%d width/height: %d/%d dst_x/dst_y: %d/%d\n",
++-			    __FUNCTION__, src_attr.extend, src_x,
+++			    src_attr.extend, src_x,
++ 			    src_y, src_attr.x_offset, src_attr.y_offset, tx, ty,
++ 			    width, height, dst_x, dst_y);
++ 		status = CAIRO_INT_STATUS_UNSUPPORTED;
++ 	    }
+++//cairo_surface_write_to_png (&dst->base, "xxxdfb-dst");
++ 	}
++ 	break;
++ 
++@@ -1139,6 +1266,116 @@ _cairo_directfb_surface_composite (cairo_operator_t  op,
++ 	    break;
++ 	}
++ 
+++    case DFXL_BLIT | DFXL_TEXTRIANGLES:
+++	if ((mask & DFXL_TEXTRIANGLES) == 0) {
+++	    /* this a simple matrix translation which we can emulate through
+++	       some blits in case no hardware acceleration is available */
+++
+++	    int ixx = _cairo_fixed_integer_part (_cairo_fixed_from_double (src_attr.matrix.xx));
+++	    int iyy = _cairo_fixed_integer_part (_cairo_fixed_from_double (src_attr.matrix.yy));
+++
+++#if 0
+++	    cairo_fixed_t x0_fixed = _cairo_fixed_from_double (src_attr.matrix.x0);
+++	    cairo_fixed_t y0_fixed = _cairo_fixed_from_double (src_attr.matrix.y0);
+++	    int ix0, iy0;
+++
+++	    if (!_cairo_fixed_is_integer (x0_fixed)
+++		|| !_cairo_fixed_is_integer (y0_fixed)) {
+++		status = CAIRO_INT_STATUS_UNSUPPORTED;
+++		break;
+++	    }
+++
+++	    ix0 = _cairo_fixed_integer_part (x0_fixed);
+++	    iy0 = _cairo_fixed_integer_part (y0_fixed);
+++#endif
+++
+++	    if (ixx == -1 && iyy == 1) {
+++                /* mirror on Y axis */
+++		DFBRectangle sr = { .x = src_x - 1,
+++				    .y = src_y,
+++				    .w = 1,
+++				    .h = height };
+++
+++		--dst_x;
+++		for ( ; sr.x >= 0; --sr.x) {
+++		    RUN_CLIPPED (dst,
+++				 dst->dfbsurface->Blit (dst->dfbsurface,
+++							src->dfbsurface,
+++							&sr,
+++							++dst_x,
+++							dst_y));
+++		}
+++	    } else if (ixx == 1 && iyy == -1) {
+++                /* mirrored on X axis */
+++		DFBRectangle sr = { .x = src_x,
+++				    .y = src_y - 1,
+++				    .w = width,
+++				    .h = 1 };
+++
+++		--dst_y;
+++		for ( ; sr.y >= 0; --sr.y) {
+++		    RUN_CLIPPED (dst,
+++				 dst->dfbsurface->Blit (dst->dfbsurface,
+++							src->dfbsurface,
+++							&sr,
+++							dst_x,
+++							++dst_y));
+++		}
+++	    } else if (ixx == -1 && iyy == -1) {
+++                /* mirror on X && Y axis */
+++		IDirectFBSurface *tmp;
+++		DFBRectangle      sr;
+++		int              _dst_x;
+++		if (_directfb_buffer_surface_create (src->dfb,
+++						     _cairo_to_directfb_format (src->format),
+++						     src->width, src->height,
+++						     &tmp)) {
+++                    /* OOM */
+++		    status = CAIRO_INT_STATUS_UNSUPPORTED;
+++		    break;
+++		}
+++
+++		/* mirror on Y axis */
+++		sr.x = src_x - 1;
+++		sr.y = 0;
+++		sr.w = 1;
+++		sr.h = height;
+++
+++		tmp->SetClip (tmp, NULL);
+++		tmp->SetBlittingFlags (tmp, DSBLIT_NOFX);
+++		for (_dst_x = 0; sr.x >= 0; --sr.x, ++_dst_x) {
+++		    tmp->Blit (tmp, src->dfbsurface, &sr, _dst_x,
+++			       0);
+++		}
+++//tmp->Dump (tmp, "./", "yyydfb1");
+++
+++		/* mirrored on X axis */
+++		sr.x = 0;
+++		sr.y = src_y - 1;
+++		sr.w = width;
+++		sr.h = 1;
+++
+++		for ( ; sr.y >= 0; --sr.y, ++dst_y) {
+++		    RUN_CLIPPED (dst,
+++				 dst->dfbsurface->Blit (dst->dfbsurface,
+++							tmp,
+++							&sr,
+++							dst_x,
+++							dst_y));
+++		}
+++//dst->dfbsurface->Dump (dst->dfbsurface, "./", "yyydfb2");
+++
+++		tmp->Release (tmp);
+++	    } else {
+++                /* shouldn't be reached */
+++		assert (1==2);
+++		status = CAIRO_INT_STATUS_UNSUPPORTED;
+++	    }
+++
+++	    break;
+++	}
+++        /* fall through */
+++
++     case DFXL_TEXTRIANGLES:
++ 	{
++ 	    DFBRegion clip;
++-- 
++1.6.0.4
++
+diff -Nur cairo-1.8.10.org/src/cairo-directfb-surface.c cairo-1.8.10/src/cairo-directfb-surface.c
+--- cairo-1.8.10.org/src/cairo-directfb-surface.c	2010-02-19 10:38:04.000000000 -0800
++++ cairo-1.8.10/src/cairo-directfb-surface.c	2011-04-16 10:34:56.837648362 -0700
+@@ -39,6 +39,7 @@
+ #include "cairo-directfb.h"
+ 
+ #include <directfb.h>
++#include <directfb_util.h>
+ #include <direct/types.h>
+ #include <direct/debug.h>
+ #include <direct/memcpy.h>
+@@ -74,6 +75,7 @@
+ D_DEBUG_DOMAIN (CairoDFB_Font,    "CairoDFB/Font",    "Cairo DirectFB Font Rendering");
+ D_DEBUG_DOMAIN (CairoDFB_Render,  "CairoDFB/Render",  "Cairo DirectFB Rendering");
+ D_DEBUG_DOMAIN (CairoDFB_Surface, "CairoDFB/Surface", "Cairo DirectFB Surface");
++D_DEBUG_DOMAIN (CairoDFB_SurfExt, "CairoDFB/SurfExt", "Cairo DirectFB Surface Extents");
+ 
+ /*****************************************************************************/
+ 
+@@ -115,40 +117,52 @@
+ 
+ /*****************************************************************************/
+ 
+-static int _directfb_argb_font = 0;
++static int _directfb_argb_font;
+ 
+ /*****************************************************************************/
+ 
+-#define RUN_CLIPPED(surface, clip, func) {\
+-    if ((surface)->has_clip) {\
+-        int k;\
+-        for (k = 0; k < (surface)->n_clips; k++) {\
+-            if (clip) {\
+-                DFBRegion  reg = (surface)->clips[k];\
+-                DFBRegion *cli = (clip);\
+-                if (reg.x2 < cli->x1 || reg.y2 < cli->y1 ||\
+-                    reg.x1 > cli->x2 || reg.y1 > cli->y2)\
+-                    continue;\
+-                if (reg.x1 < cli->x1)\
+-                    reg.x1 = cli->x1;\
+-                if (reg.y1 < cli->y1)\
+-                    reg.y1 = cli->y1;\
+-                if (reg.x2 > cli->x2)\
+-                    reg.x2 = cli->x2;\
+-                if (reg.y2 > cli->y2)\
+-                    reg.y2 = cli->y2;\
+-                (surface)->dfbsurface->SetClip ((surface)->dfbsurface, &reg);\
+-            } else {\
+-                (surface)->dfbsurface->SetClip ((surface)->dfbsurface,\
+-                                           &(surface)->clips[k]);\
+-            }\
+-            func;\
+-        }\
+-    } else {\
+-        (surface)->dfbsurface->SetClip ((surface)->dfbsurface, clip);\
+-        func;\
+-    }\
+-}
++#define RUN_CLIPPED(surface, func) \
++    ({                                                                       \
++	if ((surface)->has_clip) {                                           \
++	    int k;                                                           \
++	    for (k = 0; k < (surface)->n_clips; k++) {                       \
++		(surface)->dfbsurface->SetClip ((surface)->dfbsurface,       \
++						&(surface)->clips[k]);       \
++		func;                                                        \
++	    }                                                                \
++	} else {                                                             \
++	    (surface)->dfbsurface->SetClip ((surface)->dfbsurface, NULL);    \
++	    func;                                                            \
++	}                                                                    \
++    })
++
++#define RUN_CLIPPED_EXTRA(surface, clip, func) \
++    ({                                                                       \
++	if ((surface)->has_clip) {                                           \
++	    int k;                                                           \
++	    for (k = 0; k < (surface)->n_clips; k++) {                       \
++		DFBRegion  reg = (surface)->clips[k];                        \
++		DFBRegion *cli = clip;                                       \
++		if (reg.x2 < cli->x1 || reg.y2 < cli->y1 ||                  \
++		    reg.x1 > cli->x2 || reg.y1 > cli->y2)                    \
++		    continue;                                                \
++		if (reg.x1 < cli->x1)                                        \
++		    reg.x1 = cli->x1;                                        \
++		if (reg.y1 < cli->y1)                                        \
++		    reg.y1 = cli->y1;                                        \
++		if (reg.x2 > cli->x2)                                        \
++		    reg.x2 = cli->x2;                                        \
++		if (reg.y2 > cli->y2)                                        \
++		    reg.y2 = cli->y2;                                        \
++		(surface)->dfbsurface->SetClip ((surface)->dfbsurface, &reg);\
++		func;                                                        \
++	    }                                                                \
++	} else {                                                             \
++	    (surface)->dfbsurface->SetClip ((surface)->dfbsurface, clip);    \
++	    func;                                                            \
++	}                                                                    \
++    })
++
+ 
+ #define TRANSFORM_POINT2X(m, x, y, ret_x, ret_y) {\
+     double _x = (x);\
+@@ -164,11 +178,28 @@
+     (ret_y) = (_x * (m).yx + _y * (m).yy + (m).y0);\
+ }
+ 
++
++/**
++ * _cairo_surface_is_directfb:
++ * @surface: a #cairo_surface_t
++ *
++ * Checks if a surface is a #cairo_directfb_surface_t
++ *
++ * Return value: %TRUE if the surface is a directfb surface
++ **/
++static cairo_bool_t
++_cairo_surface_is_directfb (const cairo_surface_t * const surface)
++{
++    return surface->backend == &_cairo_directfb_surface_backend;
++}
++
++
+ /* XXX: A1 has a different bits ordering in cairo.
+  *      Probably we should drop it.
+  */
+ 
+ static cairo_content_t
++__attribute__((const))
+ _directfb_format_to_content (DFBSurfacePixelFormat format)
+ {
+     if (DFB_PIXELFORMAT_HAS_ALPHA (format)) {
+@@ -181,7 +212,8 @@
+     return CAIRO_CONTENT_COLOR;
+ }
+ 
+-static inline DFBSurfacePixelFormat
++static DFBSurfacePixelFormat
++__attribute__((const))
+ _cairo_to_directfb_format (cairo_format_t format)
+ {
+     switch (format) {
+@@ -212,6 +244,33 @@
+ 	return CAIRO_FORMAT_A8;
+     case DSPF_A1:
+ 	return CAIRO_FORMAT_A1;
++    case DSPF_UNKNOWN:
++    case DSPF_ARGB1555:
++    case DSPF_RGB16:
++    case DSPF_RGB24:
++    case DSPF_YUY2:
++    case DSPF_RGB332:
++    case DSPF_UYVY:
++    case DSPF_I420:
++    case DSPF_YV12:
++    case DSPF_LUT8:
++    case DSPF_ALUT44:
++    case DSPF_AiRGB:
++    case DSPF_NV12:
++    case DSPF_NV16:
++    case DSPF_ARGB2554:
++    case DSPF_ARGB4444:
++    case DSPF_RGBA4444:
++    case DSPF_NV21:
++    case DSPF_AYUV:
++    case DSPF_A4:
++    case DSPF_ARGB1666:
++    case DSPF_ARGB6666:
++    case DSPF_RGB18:
++    case DSPF_LUT2:
++    case DSPF_RGB444:
++    case DSPF_RGB555:
++    case DSPF_BGR555:
+     default:
+ 	break;
+     }
+@@ -288,6 +347,7 @@
+ 	break;
+ #endif
+     default:
++	D_DEBUG_AT (CairoDFB_Render, "=> UNSUPPORTED OPERATOR %d\n", operator);
+ 	return FALSE;
+     }
+ 
+@@ -297,6 +357,7 @@
+     return TRUE;
+ }
+ 
++extern const char * dfb_pixelformat_name (DFBSurfacePixelFormat format);
+ static cairo_status_t
+ _directfb_buffer_surface_create (IDirectFB             *dfb,
+                                  DFBSurfacePixelFormat  format,
+@@ -308,7 +369,10 @@
+     DFBSurfaceDescription  dsc;
+     DFBResult              ret;
+ 
+-    dsc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;
++    D_DEBUG_AT (CairoDFB_Surface, "%s( %4dx%4d %s )\n",
++		__FUNCTION__, width, height, dfb_pixelformat_name (format));
++
++    dsc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT | DSDESC_CAPS;
+     dsc.caps        = DSCAPS_PREMULTIPLIED;
+     dsc.width       = width;
+     dsc.height      = height;
+@@ -320,6 +384,8 @@
+ 	return _cairo_error (CAIRO_STATUS_NO_MEMORY);
+     }
+ 
++    buffer->SetPorterDuff (buffer, DSPD_SRC_OVER);
++
+     *out = buffer;
+     return CAIRO_STATUS_SUCCESS;
+ }
+@@ -343,18 +409,14 @@
+     if (surface->format == (cairo_format_t) -1 ||
+ 	(lock_flags & DSLF_WRITE && surface->has_clip))
+     {
+-        DFBSurfaceCapabilities caps;
+-
+         if (intrest_rec) {
+             source_rect.x = intrest_rec->x;
+             source_rect.y = intrest_rec->y;
+             source_rect.w = intrest_rec->width;
+             source_rect.h = intrest_rec->height;
+         } else {
+-            source_rect.x = 0;
+-            source_rect.y = 0;
+-            surface->dfbsurface->GetSize (surface->dfbsurface,
+-                                          &source_rect.w, &source_rect.h);
++            surface->dfbsurface->GetVisibleRectangle (surface->dfbsurface,
++                                                      &source_rect);
+         }
+ 
+         if (surface->tmpsurface) {
+@@ -380,14 +442,12 @@
+         }
+         buffer = surface->tmpsurface;
+ 
+-/*        surface->dfbsurface->GetCapabilities (surface->dfbsurface, &caps);
+-        if (caps & DSCAPS_FLIPPING) {
+-            DFBRegion region = { .x1 = source_rect.x, .y1 = source_rect.y,
+-                                 .x2 = source_rect.x + source_rect.w - 1,
+-                                 .y2 = source_rect.y + source_rect.h - 1 };
+-            surface->dfbsurface->Flip (surface->dfbsurface, &region, DSFLIP_BLIT);
+-        } */
++	D_DEBUG_AT (CairoDFB_Render, "  => Blit( 0,0-%4dx%4d <- %4d,%4d )\n",
++		    source_rect.w, source_rect.h, source_rect.x, source_rect.y);
++
++        buffer->SetBlittingFlags (buffer, DSBLIT_NOFX);
+         buffer->Blit (buffer, surface->dfbsurface, &source_rect, 0, 0);
++        buffer->ReleaseSource (buffer);
+     } else {
+         /*might be a subsurface get the offset*/
+         surface->dfbsurface->GetVisibleRectangle (surface->dfbsurface, &source_rect);
+@@ -447,8 +507,11 @@
+     cairo_status_t	      status;
+ 
+     D_DEBUG_AT (CairoDFB_Surface,
+-                "%s( src=%p, content=0x%x, width=%d, height=%d).\n",
+-                __FUNCTION__, source, content, width, height);
++		"%s( src=%p, content=0x%x (%s%s), width=%d, height=%d).\n",
++		__FUNCTION__, source, content,
++		(content & CAIRO_CONTENT_COLOR) ? "COLOR"  : "",
++		(content & CAIRO_CONTENT_ALPHA) ? "+ALPHA" : "",
++		width, height);
+ 
+     width = (width <= 0) ? 1 : width;
+     height = (height<= 0) ? 1 : height;
+@@ -538,7 +601,8 @@
+     cairo_directfb_surface_t *surface = abstract_surface;
+ 
+     D_DEBUG_AT (CairoDFB_Acquire,
+-		"%s( surface=%p ).\n", __FUNCTION__, surface);
++		"%s( surface=%p - %dx%d 0x%x ).\n", __FUNCTION__, surface,
++		surface->width, surface->height, surface->format);
+ 
+     return _directfb_acquire_surface (surface, NULL, image_out,
+ 				      NULL, image_extra, DSLF_READ);
+@@ -570,8 +634,8 @@
+     cairo_directfb_surface_t *surface = abstract_surface;
+ 
+     D_DEBUG_AT (CairoDFB_Acquire,
+-		"%s( surface=%p (%dx%d), interest_rect={ %u %u %u %u } ).\n",
+-		__FUNCTION__, surface, surface->width, surface->height,
++		"%s( surface=%p (%dx%d 0x%x), interest_rect={ %u %u %u %u } ).\n",
++		__FUNCTION__, surface, surface->width, surface->height, surface->format,
+ 		interest_rect ? interest_rect->x : 0,
+ 		interest_rect ? interest_rect->y : 0,
+ 		interest_rect ? interest_rect->width  : (unsigned) surface->width,
+@@ -605,10 +669,12 @@
+ 	    .y2 = interest_rect->y + interest_rect->height - 1
+ 	};
+ 	surface->dfbsurface->SetBlittingFlags (surface->dfbsurface, DSBLIT_NOFX);
+-	RUN_CLIPPED (surface, &region,
+-		     surface->dfbsurface->Blit (surface->dfbsurface,
+-						buffer, NULL,
+-						image_rect->x, image_rect->y));
++	RUN_CLIPPED_EXTRA (surface, &region,
++			   surface->dfbsurface->Blit (surface->dfbsurface,
++						      buffer, NULL,
++						      image_rect->x,
++						      image_rect->y));
++	surface->dfbsurface->ReleaseSource (surface->dfbsurface);
+     }
+ 
+     cairo_surface_destroy (&image->base);
+@@ -629,13 +695,16 @@
+     cairo_directfb_surface_t *clone;
+ 
+     D_DEBUG_AT (CairoDFB_Surface,
+-		"%s( surface=%p, src=%p ).\n", __FUNCTION__, surface, src);
++		"%s( surface=%p, src=%p [%d,%d-%dx%d] )\n", __FUNCTION__,
++		surface, src, src_x, src_y, width, height);
+ 
+     if (src->backend == surface->base.backend) {
+ 	*clone_offset_x = 0;
+ 	*clone_offset_y = 0;
+ 	*clone_out = cairo_surface_reference (src);
+ 
++	D_DEBUG_AT (CairoDFB_Surface, "  -> lightweight - referenced :)\n");
++
+ 	return CAIRO_STATUS_SUCCESS;
+     } else if (_cairo_surface_is_image (src)) {
+ 	cairo_image_surface_t *image_src = (cairo_image_surface_t *) src;
+@@ -663,6 +732,9 @@
+ 
+ 	src += image_src->stride * src_y;
+ 	if (image_src->format == CAIRO_FORMAT_A1) {
++	    D_ASSERT (clone->format == CAIRO_FORMAT_A8);
++	    D_DEBUG_AT (CairoDFB_Surface, "  ==> converting A1 -> A8 data\n");
++
+ 	    /* A1 -> A8 */
+ 	    dst -= src_x;
+ 	    for (i = 0; i < height; i++) {
+@@ -675,9 +747,16 @@
+ 	    int len;
+ 
+ 	    if (image_src->format == CAIRO_FORMAT_A8) {
++		D_ASSERT (clone->format == CAIRO_FORMAT_A8);
++		D_DEBUG_AT (CairoDFB_Surface, "  ==> copying A8 data\n");
++
+ 		src += src_x;
+ 		len  = width;
+ 	    } else {
++		D_ASSERT (clone->format == CAIRO_FORMAT_ARGB32 ||
++			  clone->format == CAIRO_FORMAT_RGB24);
++		D_DEBUG_AT (CairoDFB_Surface, "  ==> copying ARGB data\n");
++
+ 		src += src_x * 4;
+ 		len  = width * 4;
+ 	    }
+@@ -736,11 +815,21 @@
+ 	    cairo_pattern_t *tmp;
+ 	    int              tmp_x, tmp_y;
+ 
+-	    if (src_pattern->type != CAIRO_PATTERN_TYPE_SOLID ||
+-		sblend == DSBF_INVDESTALPHA) /* Doesn't work correctly */
++	    if (src_pattern->type != CAIRO_PATTERN_TYPE_SOLID) {
++		/* Doesn't work correctly */
++		D_DEBUG_AT (CairoDFB_Render, "=> PATTERN TYPE %d WITH MASK NOT SUPPORTED\n",
++			    src_pattern->type);
++		return CAIRO_INT_STATUS_UNSUPPORTED;
++	    }
++
++	    if (sblend == DSBF_INVDESTALPHA) {
++		/* Doesn't work correctly */
++		D_DEBUG_AT (CairoDFB_Render, "=> SOURCE BLEND %d WITH MASK NOT SUPPORTED\n",
++			    sblend);
+ 		return CAIRO_INT_STATUS_UNSUPPORTED;
++	    }
+ 
+-	    D_DEBUG_AT (CairoDFB_Render, "Replacing src pattern by mask pattern.\n");
++	    D_DEBUG_AT (CairoDFB_Render, "-> Replacing src pattern by mask pattern.\n");
+ 
+ 	    tmp = src_pattern;
+ 	    tmp_x = *src_x; tmp_y = *src_y;
+@@ -758,6 +847,10 @@
+ 	}
+ 
+ 	color = &((cairo_solid_pattern_t *) mask_pattern)->color;
++
++	D_DEBUG_AT (CairoDFB_Render, "-> SOLID MASK (%02x %02x %02x %02x)\n",
++		    color->alpha_short >> 8, color->red_short >> 8,
++		    color->green_short >> 8, color->blue_short >> 8);
+     } else {
+ 	color = _cairo_stock_color (CAIRO_STOCK_WHITE);
+     }
+@@ -774,7 +867,7 @@
+     if (status)
+ 	return status;
+ 
+-    if (src->base.backend != &_cairo_directfb_surface_backend ||
++    if (!_cairo_surface_is_directfb (&src->base) ||
+ 	src->dfb != dst->dfb)
+     {
+ 	_cairo_pattern_release_surface (src_pattern, &src->base, &src_attr);
+@@ -808,7 +901,7 @@
+     flags = (sblend == DSBF_ONE && dblend == DSBF_ZERO)
+ 	? DSBLIT_NOFX : DSBLIT_BLEND_ALPHACHANNEL;
+     if (! CAIRO_COLOR_IS_OPAQUE (color))
+-	flags |= DSBLIT_BLEND_COLORALPHA;
++	flags |= DSBLIT_BLEND_COLORALPHA | DSBLIT_SRC_PREMULTCOLOR;
+     if (! _cairo_color_equal (color, _cairo_stock_color (CAIRO_STOCK_WHITE)))
+ 	flags |= DSBLIT_COLORIZE;
+ 
+@@ -848,49 +941,178 @@
+                             cairo_surface_attributes_t *src_attr)
+ {
+     _cairo_pattern_release_surface (src_pattern, src, src_attr);
++
++    if (dst->dfbsurface)
++        dst->dfbsurface->ReleaseSource (dst->dfbsurface);
+ }
+ #endif /* DFB_COMPOSITE || DFB_COMPOSITE_TRAPEZOIDS */
+ 
+ #if DFB_COMPOSITE
++static const char *extend_to_str[]= { "none", "repeat", "reflect", "pad" };
+ static DFBAccelerationMask
+-_directfb_categorize_operation (cairo_surface_attributes_t *src_attr)
++_directfb_categorize_operation (const cairo_surface_attributes_t * const src_attr)
+ {
+-    cairo_matrix_t *m = &src_attr->matrix;
++    const cairo_matrix_t * const m = &src_attr->matrix;
+ 
+-    if (m->xy != 0 || m->yx != 0 || m->xx < 0 || m->yy < 0) {
+-	if (src_attr->extend != CAIRO_EXTEND_NONE)
+-	    return DFXL_NONE;
++    if (m->yx == 0 && m->xy == 0) {
++	cairo_fixed_t xx_fixed;
++	cairo_fixed_t yy_fixed;
++
++	/* simple blit */
++	if (m->xx == 1 && m->yy == 1) {
++	    D_DEBUG_AT (CairoDFB_Render, "-> no transform -> blit\n" );
++
++	    switch (src_attr->extend) {
++	    case CAIRO_EXTEND_NONE:
++	    case CAIRO_EXTEND_REPEAT:
++		{
++		cairo_bool_t is_int =
++		    _cairo_matrix_is_integer_translation (&src_attr->matrix,
++							  NULL, NULL);
++
++		if (is_int || src_attr->extend == CAIRO_EXTEND_NONE) {
++		    D_DEBUG_AT (CairoDFB_Render,
++				"%s: cool we support blit matrix:\n"
++				"    | %g %g | + | %g |\n"
++				"    | %g %g |   | %g | mode: %s\n",
++				__FUNCTION__,
++				m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
++				extend_to_str[src_attr->extend]);
++		    return is_int ? DFXL_BLIT : DFXL_STRETCHBLIT;
++		}
++		}
++		/* fall through */
+ 
+-	return DFXL_TEXTRIANGLES;
+-    }
++	    case CAIRO_EXTEND_REFLECT:
++	    case CAIRO_EXTEND_PAD:
++	    default:
++		D_DEBUG_AT (CairoDFB_Render,
++			    "=> extend mode: %d (%s) w/ matrix not supported:\n"
++			    "    | %g %g | + | %g |\n"
++			    "    | %g %g |   | %g |\n",
++			    src_attr->extend, extend_to_str[src_attr->extend],
++			    m->xx, m->xy, m->x0, m->xy, m->yy, m->y0);
++		return DFXL_NONE;
++	    }
++	}
+ 
+-    if (m->xx != 1 || m->yy != 1) {
+-	if (src_attr->extend != CAIRO_EXTEND_NONE)
++        /* stretchblit */
++	if (m->xx > 0 && m->yy > 0) {
++	    D_DEBUG_AT (CairoDFB_Render, "-> rectangular transform/stretchblit\n");
++	    if (src_attr->extend == CAIRO_EXTEND_NONE) {
++		D_DEBUG_AT (CairoDFB_Render,
++			    "%s: cool we support stretchblit matrix:\n"
++			    "    | %g %g | + | %g |\n"
++			    "    | %g %g |   | %g | mode: %s\n",
++			    __FUNCTION__,
++			    m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
++			    extend_to_str[src_attr->extend]);
++		return DFXL_STRETCHBLIT;
++	    }
++
++	    /* TODO: support EXTEND_PAD in special cases */
++	    D_DEBUG_AT (CairoDFB_Render,
++			"=> TODO: rectangular transform/stretchblit with "
++			"extend mode: %d (%s) not supported:\n"
++			"    | %g %g | + | %g |\n"
++			"    | %g %g |   | %g |\n",
++			src_attr->extend, extend_to_str[src_attr->extend],
++			m->xx, m->xy, m->x0, m->xy, m->yy, m->y0);
+ 	    return DFXL_NONE;
++	}
+ 
+-	return DFXL_STRETCHBLIT;
+-    }
+ 
+-    switch (src_attr->extend) {
+-    case CAIRO_EXTEND_NONE:
+-    case CAIRO_EXTEND_REPEAT:
+-	if (_cairo_matrix_is_integer_translation (&src_attr->matrix,
+-						  NULL, NULL))
+-	{
+-	    return DFXL_BLIT;
+-	}
+-	else
+-	{
+-	    return DFXL_STRETCHBLIT;
++        /* test for reflection, so that we can use a couple of blit()s to
++           achieve the desired result. We don't support stretching at the
++           moment, therefore:
++	   - on x axis
++	       xx -1  yx  0
++	       xy  0  yy  1
++	   - on y axis
++	       xx  1  yx  0
++	       xy  0  yy -1
++	   no support yet for reflection on x & y axis:
++	   - on x & y axis
++	       xx -1  yx  0
++	       xy  0  yy -1
++
++	   but this can be enhanced maybe to support stretching:
++	   - on x axis
++	       xx -1  yx  0
++	       xy  0  yy >0
++	   - on y axis
++	       xx >0  yx  0
++	       xy  0  yy -1
++	   - on x & y axis
++	       xx <0  yx  0
++	       xy  0  yy <0
++	*/
++	if (src_attr->extend != CAIRO_EXTEND_NONE) {
++            /* else there's no sense in continuing with these tests */
++
++	    xx_fixed = _cairo_fixed_from_double (m->xx);
++	    yy_fixed = _cairo_fixed_from_double (m->yy);
++	    if (_cairo_fixed_is_integer (xx_fixed)
++		&& _cairo_fixed_is_integer (yy_fixed)) {
++
++		int ixx = _cairo_fixed_integer_part (xx_fixed);
++		int iyy = _cairo_fixed_integer_part (yy_fixed);
++
++		if ((ixx == -1 && iyy == 1)
++		    || (ixx == 1 && iyy == -1)
++		    || (ixx == -1 && iyy == -1)) {
++		    /* cool, can support this! */
++		    D_DEBUG_AT (CairoDFB_Render,
++				" -> BLIT|TEXTRIANGLES matrix:\n"
++				"    | %g %g | + | %g |\n"
++				"    | %g %g |   | %g | mode: %s\n",
++				m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
++				extend_to_str[src_attr->extend]);
++		    return DFXL_BLIT | DFXL_TEXTRIANGLES;
++		}
++	    }
+ 	}
++    }
+ 
+-    default:
+-    case CAIRO_EXTEND_REFLECT:
+-    case CAIRO_EXTEND_PAD:
+-	return DFXL_NONE;
++    if (src_attr->extend == CAIRO_EXTEND_NONE
++	&& (m->xy != 0 || m->yx != 0 || m->xx < 0 || m->yy < 0)) {
++	D_DEBUG_AT (CairoDFB_Render, "-> NON-RECTANGULAR TRANSFORM, matrix:\n"
++		    "    | %g %g | + | %g |\n"
++		    "    | %g %g |   | %g | mode: %s\n",
++		    m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
++		    extend_to_str[src_attr->extend]);
++
++	return DFXL_TEXTRIANGLES;
+     }
+-}
+ 
++    D_DEBUG_AT (CairoDFB_Render,
++		"->can't support the following operation, matrix:\n"
++		"    | %g %g | + | %g |\n"
++		"    | %g %g |   | %g | mode: %s\n",
++		m->xx, m->xy, m->x0, m->xy, m->yy, m->y0,
++		extend_to_str[src_attr->extend]);
++
++    return DFXL_NONE;
++}
++
++static const char *op_to_str[] = {
++  "CAIRO_OPERATOR_CLEAR",
++
++  "CAIRO_OPERATOR_SOURCE",
++  "CAIRO_OPERATOR_OVER",
++  "CAIRO_OPERATOR_IN",
++  "CAIRO_OPERATOR_OUT",
++  "CAIRO_OPERATOR_ATOP",
++
++  "CAIRO_OPERATOR_DEST",
++  "CAIRO_OPERATOR_DEST_OVER",
++  "CAIRO_OPERATOR_DEST_IN",
++  "CAIRO_OPERATOR_DEST_OUT",
++  "CAIRO_OPERATOR_DEST_ATOP",
++
++  "CAIRO_OPERATOR_XOR",
++  "CAIRO_OPERATOR_ADD",
++  "CAIRO_OPERATOR_SATURATE" };
+ static cairo_int_status_t
+ _cairo_directfb_surface_composite (cairo_operator_t  op,
+                                    cairo_pattern_t  *src_pattern,
+@@ -905,16 +1127,15 @@
+     cairo_directfb_surface_t   *dst = abstract_dst;
+     cairo_directfb_surface_t   *src;
+     cairo_surface_attributes_t  src_attr;
+-    cairo_bool_t                is_integer_translation;
+     DFBAccelerationMask         accel, mask;
+     cairo_int_status_t          status;
+     int                         tx, ty;
+ 
+     D_DEBUG_AT (CairoDFB_Render,
+-		"%s( op=%d, src_pattern=%p, mask_pattern=%p, dst=%p,"
++		"%s( op=%d (%s), src_pattern=%p, mask_pattern=%p, dst=%p,"
+ 		" src_x=%d, src_y=%d, mask_x=%d, mask_y=%d, dst_x=%d,"
+ 		" dst_y=%d, width=%u, height=%u ).\n",
+-		__FUNCTION__, op, src_pattern, mask_pattern, dst,
++		__FUNCTION__, op, op_to_str[op], src_pattern, mask_pattern, dst,
+ 		src_x, src_y, mask_x, mask_y, dst_x, dst_y, width, height);
+ 
+     status = _directfb_prepare_composite (dst, src_pattern, mask_pattern, op,
+@@ -925,17 +1146,24 @@
+ 
+     accel = _directfb_categorize_operation (&src_attr);
+     if (accel == DFXL_NONE) {
++	D_DEBUG_AT (CairoDFB_Render, "  ====>> UNSUPPORTED!!!\n");
+ 	_directfb_finish_composite (dst, src_pattern, &src->base, &src_attr);
+ 	return CAIRO_INT_STATUS_UNSUPPORTED;
+     }
+ 
+-    dst->dfbsurface->GetAccelerationMask (dst->dfbsurface,
+-					  src->dfbsurface,
+-					  &mask);
+-    if ((mask & accel) == 0) {
+-	D_DEBUG_AT (CairoDFB_Render, "No acceleration (%08x)!\n", accel);
+-	if (accel != DFXL_BLIT) {
+-	    _directfb_finish_composite (dst, src_pattern, &src->base, &src_attr);
++    /* DirectFB has no software fallback for TextureTriangles() but since we
++       might be able to emulate through some BLITs, make sure not to return
++       UNSUPPORTED if that's the case. */
++    if (accel & DFXL_TEXTRIANGLES) {
++	dst->dfbsurface->GetAccelerationMask (dst->dfbsurface,
++					      src->dfbsurface,
++					      &mask);
++	if ((accel & mask) == 0) {
++	    D_DEBUG_AT (CairoDFB_Render,
++			"No TEXTRIANGLES acceleration (%08x)!\n",
++			accel);
++	    _directfb_finish_composite (dst, src_pattern, &src->base,
++					&src_attr);
+ 	    return CAIRO_INT_STATUS_UNSUPPORTED;
+ 	}
+     }
+@@ -943,15 +1171,23 @@
+     src_x += src_attr.x_offset;
+     src_y += src_attr.y_offset;
+ 
++#if 0
++if (dst)
++    (void) cairo_surface_write_to_png (&dst->base, "xxxdfb-dst");
++if (src)
++    (void) cairo_surface_write_to_png (&src->base, "xxxdfb-src");
++#endif
++
+     switch (accel) {
+     case DFXL_BLIT:
+ 	{
+ 	    DFBRectangle sr;
+ 
+-	    is_integer_translation =
++	    cairo_bool_t is_index_translation =
+ 		_cairo_matrix_is_integer_translation (&src_attr.matrix,
+ 						      &tx, &ty);
+-	    assert (is_integer_translation);
++	    /* this is a pre-condition for blit */
++	    assert (is_index_translation);
+ 
+ 	    sr.x = src_x + tx;
+ 	    sr.y = src_y + ty;
+@@ -959,31 +1195,46 @@
+ 	    sr.h = height;
+ 
+ 	    if (src_attr.extend == CAIRO_EXTEND_NONE) {
+-		D_DEBUG_AT (CairoDFB_Render, "Running Blit().\n");
++		D_DEBUG_AT (CairoDFB_Render,
++			    "  ==> Blit( %4d,%4d-%4dx%4d <- %4d,%4d )\n",
++			    dst_x, dst_y, sr.w, sr.h, sr.x, sr.y);
+ 
+-		RUN_CLIPPED (dst, NULL,
++		RUN_CLIPPED (dst,
+ 			     dst->dfbsurface->Blit (dst->dfbsurface,
+ 						    src->dfbsurface,
+ 						    &sr,
+ 						    dst_x, dst_y));
+-	    } else if (src_attr.extend == CAIRO_EXTEND_REPEAT) {
+-		DFBRegion clip;
+-
+-		clip.x1 = dst_x;
+-		clip.y1 = dst_y;
+-		clip.x2 = dst_x + width  - 1;
+-		clip.y2 = dst_y + height - 1;
+-
+-		D_DEBUG_AT (CairoDFB_Render, "Running TileBlit().\n");
+-
+-		RUN_CLIPPED (dst, &clip,
+-			     dst->dfbsurface->TileBlit (dst->dfbsurface,
+-							src->dfbsurface,
+-							&sr,
+-							dst_x, dst_y));
++	    } else if (src_attr.extend == CAIRO_EXTEND_REPEAT
++		       && src_x >= 0 && src_y >= 0) {
++                /* the semantics of DirectFB wrt negative start positions are
++                   different from what cairo expects. */
++		DFBRegion clip = { .x1 = dst_x,
++				   .y1 = dst_y,
++				   .x2 = dst_x + width  - 1,
++				   .y2 = dst_y + height - 1 };
++
++		D_DEBUG_AT (CairoDFB_Render,
++			    "  ==> TileBlit( %4d,%4d-%4dx%4d <- %4d,%4d-%4dx%4d )\n",
++			    dst_x, dst_y, width, height, sr.x, sr.y, sr.w, sr.h);
++
++		RUN_CLIPPED_EXTRA (dst, &clip,
++				   dst->dfbsurface->TileBlit (dst->dfbsurface,
++							      src->dfbsurface,
++							      &sr,
++							      dst_x, dst_y));
++	    } else {
++		D_DEBUG_AT (CairoDFB_Render,
++			    "  ==> unsupported BLIT:\n"
++			    "  extend: %d, src_x/src_y: %d/%d, x_offset/y_offset: %d/%d\n"
++			    "  tx/ty: %d/%d width/height: %d/%d dst_x/dst_y: %d/%d\n",
++			    src_attr.extend, src_x,
++			    src_y, src_attr.x_offset, src_attr.y_offset, tx, ty,
++			    width, height, dst_x, dst_y);
++		status = CAIRO_INT_STATUS_UNSUPPORTED;
+ 	    }
+-	    break;
++//cairo_surface_write_to_png (&dst->base, "xxxdfb-dst");
+ 	}
++	break;
+ 
+     case DFXL_STRETCHBLIT:
+ 	{
+@@ -1005,14 +1256,126 @@
+ 	    dr.w = width;
+ 	    dr.h = height;
+ 
+-	    D_DEBUG_AT (CairoDFB_Render, "Running StretchBlit().\n");
++	    D_DEBUG_AT (CairoDFB_Render, "  ==> StretchBlit( %4d,%4d-%4dx%4d <- %4d,%4d-%4dx%4d )\n",
++			dst_x, dst_y, width, height, sr.x, sr.y, sr.w, sr.h);
+ 
+-	    RUN_CLIPPED (dst, NULL,
++	    RUN_CLIPPED (dst,
+ 			 dst->dfbsurface->StretchBlit (dst->dfbsurface,
+-						       src->dfbsurface, &sr, &dr));
++						       src->dfbsurface,
++						       &sr, &dr));
+ 	    break;
+ 	}
+ 
++    case DFXL_BLIT | DFXL_TEXTRIANGLES:
++	if ((mask & DFXL_TEXTRIANGLES) == 0) {
++	    /* this a simple matrix translation which we can emulate through
++	       some blits in case no hardware acceleration is available */
++
++	    int ixx = _cairo_fixed_integer_part (_cairo_fixed_from_double (src_attr.matrix.xx));
++	    int iyy = _cairo_fixed_integer_part (_cairo_fixed_from_double (src_attr.matrix.yy));
++
++#if 0
++	    cairo_fixed_t x0_fixed = _cairo_fixed_from_double (src_attr.matrix.x0);
++	    cairo_fixed_t y0_fixed = _cairo_fixed_from_double (src_attr.matrix.y0);
++	    int ix0, iy0;
++
++	    if (!_cairo_fixed_is_integer (x0_fixed)
++		|| !_cairo_fixed_is_integer (y0_fixed)) {
++		status = CAIRO_INT_STATUS_UNSUPPORTED;
++		break;
++	    }
++
++	    ix0 = _cairo_fixed_integer_part (x0_fixed);
++	    iy0 = _cairo_fixed_integer_part (y0_fixed);
++#endif
++
++	    if (ixx == -1 && iyy == 1) {
++                /* mirror on Y axis */
++		DFBRectangle sr = { .x = src_x - 1,
++				    .y = src_y,
++				    .w = 1,
++				    .h = height };
++
++		--dst_x;
++		for ( ; sr.x >= 0; --sr.x) {
++		    RUN_CLIPPED (dst,
++				 dst->dfbsurface->Blit (dst->dfbsurface,
++							src->dfbsurface,
++							&sr,
++							++dst_x,
++							dst_y));
++		}
++	    } else if (ixx == 1 && iyy == -1) {
++                /* mirrored on X axis */
++		DFBRectangle sr = { .x = src_x,
++				    .y = src_y - 1,
++				    .w = width,
++				    .h = 1 };
++
++		--dst_y;
++		for ( ; sr.y >= 0; --sr.y) {
++		    RUN_CLIPPED (dst,
++				 dst->dfbsurface->Blit (dst->dfbsurface,
++							src->dfbsurface,
++							&sr,
++							dst_x,
++							++dst_y));
++		}
++	    } else if (ixx == -1 && iyy == -1) {
++                /* mirror on X && Y axis */
++		IDirectFBSurface *tmp;
++		DFBRectangle      sr;
++		int              _dst_x;
++		if (_directfb_buffer_surface_create (src->dfb,
++						     _cairo_to_directfb_format (src->format),
++						     src->width, src->height,
++						     &tmp)) {
++                    /* OOM */
++		    status = CAIRO_INT_STATUS_UNSUPPORTED;
++		    break;
++		}
++
++		/* mirror on Y axis */
++		sr.x = src_x - 1;
++		sr.y = 0;
++		sr.w = 1;
++		sr.h = height;
++
++		tmp->SetClip (tmp, NULL);
++		tmp->SetBlittingFlags (tmp, DSBLIT_NOFX);
++		for (_dst_x = 0; sr.x >= 0; --sr.x, ++_dst_x) {
++		    tmp->Blit (tmp, src->dfbsurface, &sr, _dst_x,
++			       0);
++		}
++//tmp->Dump (tmp, "./", "yyydfb1");
++
++		/* mirrored on X axis */
++		sr.x = 0;
++		sr.y = src_y - 1;
++		sr.w = width;
++		sr.h = 1;
++
++		for ( ; sr.y >= 0; --sr.y, ++dst_y) {
++		    RUN_CLIPPED (dst,
++				 dst->dfbsurface->Blit (dst->dfbsurface,
++							tmp,
++							&sr,
++							dst_x,
++							dst_y));
++		}
++//dst->dfbsurface->Dump (dst->dfbsurface, "./", "yyydfb2");
++
++		tmp->Release (tmp);
++	    } else {
++                /* shouldn't be reached */
++		assert (1==2);
++		status = CAIRO_INT_STATUS_UNSUPPORTED;
++	    }
++
++	    break;
++	}
++        /* fall through */
++
+     case DFXL_TEXTRIANGLES:
+ 	{
+ 	    DFBRegion clip;
+@@ -1064,16 +1427,27 @@
+ 	    clip.x2 = dst_x + width  - 1;
+ 	    clip.y2 = dst_y + height - 1;
+ 
+-	    D_DEBUG_AT (CairoDFB_Render, "Running TextureTriangles().\n");
++	    D_DEBUG_AT (CairoDFB_Render, "  ==> TextureTriangles()\n");
+ 
+-	    RUN_CLIPPED (dst, &clip,
+-			 dst->dfbsurface->TextureTriangles (dst->dfbsurface,
+-							    src->dfbsurface, v, NULL, 4, DTTF_FAN));
++	    RUN_CLIPPED_EXTRA (dst, &clip,
++			       dst->dfbsurface->TextureTriangles (dst->dfbsurface,
++								  src->dfbsurface,
++								  v, NULL, 4,
++								  DTTF_FAN));
+ 	    break;
+ 	}
+ 
++    case DFXL_NONE:
++    case DFXL_FILLRECTANGLE:
++    case DFXL_DRAWRECTANGLE:
++    case DFXL_DRAWLINE:
++    case DFXL_FILLTRIANGLE:
++    case DFXL_DRAWSTRING:
++    case DFXL_ALL:
++    case DFXL_ALL_DRAW:
++    case DFXL_ALL_BLIT:
+     default:
+-	D_BUG ("Unexpected operation");
++	D_BUG ("%s: Unexpected operation %x", __FUNCTION__, accel);
+ 	break;
+     }
+ 
+@@ -1084,6 +1458,8 @@
+ #endif /* DFB_COMPOSITE */
+ 
+ #if DFB_RECTANGLES
++#  define DSPD_DST  (DSPD_XOR + 1)
++#  define DSPD_SAT  (DSPD_DST + 1)
+ static cairo_int_status_t
+ _cairo_directfb_surface_fill_rectangles (void                  *abstract_surface,
+                                          cairo_operator_t       op,
+@@ -1092,67 +1468,88 @@
+                                          int                    n_rects)
+ {
+     cairo_directfb_surface_t *dst   = abstract_surface;
+-    DFBSurfaceDrawingFlags    flags;
+-    DFBSurfaceBlendFunction   sblend;
+-    DFBSurfaceBlendFunction   dblend;
+-    DFBRectangle              r[n_rects];
++    DFBRectangle              static_dfbrects[CAIRO_STACK_ARRAY_LENGTH(DFBRectangle)];
++    DFBRectangle             *dfbrects = static_dfbrects;
+     int                       i;
++    u8                        alpha = color->alpha_short >> 8;
++
++    static const DFBSurfacePorterDuffRule cairo_operator_to_directfb[] = {
++	DSPD_CLEAR,
++	DSPD_SRC, DSPD_SRC_OVER, DSPD_SRC_IN, DSPD_SRC_OUT, DSPD_SRC_ATOP,
++	DSPD_DST, DSPD_DST_OVER, DSPD_DST_IN, DSPD_DST_OUT, DSPD_DST_ATOP,
++	DSPD_XOR, DSPD_ADD, DSPD_SAT
++    };
+ 
+     D_DEBUG_AT (CairoDFB_Render,
+ 		"%s( dst=%p, op=%d, color=%p, rects=%p, n_rects=%d ).\n",
+ 		__FUNCTION__, dst, op, color, rects, n_rects);
+ 
+-    if (! _cairo_operator_bounded_by_source (op))
+-        return CAIRO_INT_STATUS_UNSUPPORTED;
++    if (n_rects > ARRAY_LENGTH (static_dfbrects)) {
++	dfbrects = _cairo_malloc_ab (n_rects, sizeof (DFBRectangle));
++	if (dfbrects == NULL)
++	    return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++    }
+ 
+-    if (! _directfb_get_operator (op, &sblend, &dblend))
+-	return CAIRO_INT_STATUS_UNSUPPORTED;
++    dst->dfbsurface->SetPorterDuff (dst->dfbsurface,
++				    cairo_operator_to_directfb[op]);
++    dst->dfbsurface->SetDrawingFlags (dst->dfbsurface, DSDRAW_BLEND);
+ 
+-    if (CAIRO_COLOR_IS_OPAQUE (color)) {
+-	if (sblend == DSBF_SRCALPHA)
+-	    sblend = DSBF_ONE;
+-	else if (sblend == DSBF_INVSRCALPHA)
+-	    sblend = DSBF_ZERO;
++    switch (op) {
++    case CAIRO_OPERATOR_CLEAR:
++    case CAIRO_OPERATOR_SOURCE:
++	{
++	DFBSurfacePixelFormat dst_format;
+ 
+-	if (dblend == DSBF_SRCALPHA)
+-	    dblend = DSBF_ONE;
+-	else if (dblend == DSBF_INVSRCALPHA)
+-	    dblend = DSBF_ZERO;
+-    }
+-    if (dst->content == CAIRO_CONTENT_COLOR) {
+-	if (sblend == DSBF_DESTALPHA)
+-	    sblend = DSBF_ONE;
+-	else if (sblend == DSBF_INVDESTALPHA)
+-	    sblend = DSBF_ZERO;
++	dst->dfbsurface->GetPixelFormat (dst->dfbsurface, &dst_format);
++	if (!DFB_PIXELFORMAT_HAS_ALPHA (dst_format))
++	    alpha = 0xff;
++	}
++	break;
+ 
+-	if (dblend == DSBF_DESTALPHA)
+-	    dblend = DSBF_ONE;
+-	else if (dblend == DSBF_INVDESTALPHA)
+-	    dblend = DSBF_ZERO;
+-    }
++    /* fixup some Porter/Duff rules. DirectFB doesn't know about those two */
++    case CAIRO_OPERATOR_DEST:
++	dst->dfbsurface->SetSrcBlendFunction (dst->dfbsurface, DSBF_ZERO);
++	dst->dfbsurface->SetDstBlendFunction (dst->dfbsurface, DSBF_ONE);
++	break;
+ 
+-    flags = (sblend == DSBF_ONE && dblend == DSBF_ZERO) ? DSDRAW_NOFX : DSDRAW_BLEND;
+-    dst->dfbsurface->SetDrawingFlags (dst->dfbsurface, flags);
+-    if (flags & DSDRAW_BLEND) {
+-	dst->dfbsurface->SetSrcBlendFunction (dst->dfbsurface, sblend);
+-	dst->dfbsurface->SetDstBlendFunction (dst->dfbsurface, dblend);
++    case CAIRO_OPERATOR_SATURATE:
++        /* the saturate result looks a bit different from what cairo
++           expects, but we enable SATURATE anyway */
++	dst->dfbsurface->SetSrcBlendFunction (dst->dfbsurface, DSBF_SRCALPHASAT);
++	dst->dfbsurface->SetDstBlendFunction (dst->dfbsurface, DSBF_ONE);
++	break;
++
++    default:
++        /* nothing */
++	break;
+     }
+ 
++    D_DEBUG_AT (CairoDFB_Render, "  -> %02x %02x %02x %02x\n",
++		color->alpha_short >> 8, color->red_short >> 8,
++		color->green_short >> 8, color->blue_short >> 8);
++
+     dst->dfbsurface->SetColor (dst->dfbsurface,
+ 			       color->red_short >> 8,
+ 			       color->green_short >> 8,
+ 			       color->blue_short >> 8,
+-			       color->alpha_short >> 8);
++			       alpha);
+ 
+     for (i = 0; i < n_rects; i++) {
+-	r[i].x = rects[i].x;
+-	r[i].y = rects[i].y;
+-	r[i].w = rects[i].width;
+-	r[i].h = rects[i].height;
++	dfbrects[i].x = rects[i].x;
++	dfbrects[i].y = rects[i].y;
++	dfbrects[i].w = rects[i].width;
++	dfbrects[i].h = rects[i].height;
++
++	D_DEBUG_AT (CairoDFB_Render, "  ==> Fill %4d,%4d-%4dx%4d [%d]\n",
++		    DFB_RECTANGLE_VALS (&dfbrects[i]), i);
+     }
+ 
+-    RUN_CLIPPED (dst, NULL,
+-		 dst->dfbsurface->FillRectangles (dst->dfbsurface, r, n_rects));
++    RUN_CLIPPED (dst,
++		 dst->dfbsurface->FillRectangles (dst->dfbsurface,
++						  dfbrects, n_rects));
++
++    if (dfbrects != static_dfbrects)
++	free (dfbrects);
+ 
+     return CAIRO_STATUS_SUCCESS;
+ }
+@@ -1278,7 +1675,7 @@
+ 
+         D_DEBUG_AT (CairoDFB_Render, "Running TextureTriangles().\n");
+ 
+-        RUN_CLIPPED (dst, NULL,
++        RUN_CLIPPED (dst,
+                      dst->dfbsurface->TextureTriangles (dst->dfbsurface,
+ 							src->dfbsurface,
+ 							vertex, NULL, n,
+@@ -1312,12 +1709,29 @@
+ 	surface->has_clip = TRUE;
+ 
+ 	status = _cairo_region_get_boxes (region, &n_boxes, &boxes);
+-	if (n_boxes == 0)
+-	    return CAIRO_STATUS_SUCCESS;
+-	if (status)
++	if (status) {
++	    D_DEBUG_AT (CairoDFB_Clip, "  -> status %d!\n", status);
++
+ 	    return status;
++	}
++
++	if (n_boxes == 0) {
++	    D_DEBUG_AT (CairoDFB_Clip, "  -> EMPTY region (fully clipped)\n");
++
++	    if (surface->clips) {
++		free (surface->clips);
++		surface->clips = NULL;
++		surface->n_clips = 0;
++	    }
++	    surface->has_clip = FALSE;
++
++	    return CAIRO_STATUS_SUCCESS;
++	}
++
++	D_DEBUG_AT (CairoDFB_Clip, "  -> %d box%s\n",
++		    n_boxes, (n_boxes > 1) ? "es" : "");
+ 
+-	if (surface->n_clips != n_boxes) {
++	if (surface->n_clips < n_boxes || surface->n_clips - n_boxes > 10) {
+ 	    if (surface->clips)
+ 		free (surface->clips);
+ 
+@@ -1336,10 +1750,15 @@
+ 	    surface->clips[i].y1 = boxes[i].p1.y;
+ 	    surface->clips[i].x2 = boxes[i].p2.x - 1;
+ 	    surface->clips[i].y2 = boxes[i].p2.y - 1;
++
++	    D_DEBUG_AT (CairoDFB_Clip, "  = CLIP %4d,%4d-%4dx%4d [%d]\n",
++			DFB_RECTANGLE_VALS_FROM_REGION (&surface->clips[i]), i);
+ 	}
+ 
+ 	_cairo_region_boxes_fini (region, boxes);
+     } else {
++	D_DEBUG_AT (CairoDFB_Clip, "  -> NULL region (unclipped)\n");
++
+ 	surface->has_clip = FALSE;
+ 	if (surface->clips) {
+ 	    free (surface->clips);
+@@ -1371,6 +1790,9 @@
+     rectangle->width  = surface->width;
+     rectangle->height = surface->height;
+ 
++    D_DEBUG_AT (CairoDFB_SurfExt, "  -> %dx%d\n",
++		surface->width, surface->height);
++
+     return CAIRO_STATUS_SUCCESS;
+ }
+ 
+@@ -1461,6 +1883,7 @@
+ 	case CAIRO_FORMAT_A8:
+ 	case CAIRO_FORMAT_ARGB32:
+ 	    break;
++	case CAIRO_FORMAT_RGB24:
+ 	default:
+ 	    D_DEBUG_AT (CairoDFB_Font,
+ 			"  -> Unsupported font format %d!\n", img->format);
+@@ -1748,13 +2171,26 @@
+     if (! CAIRO_COLOR_IS_OPAQUE (color))
+ 	flags |= DSBLIT_BLEND_COLORALPHA;
+ 
+-    if (!_directfb_argb_font) {
+-	if (sblend == DSBF_ONE) {
+-	    sblend = DSBF_SRCALPHA;
+-	    if (dblend == DSBF_ZERO)
+-		dblend = DSBF_INVSRCALPHA;
++    {
++    DFBSurfaceCapabilities src_caps, dst_caps;
++    DFBSurfacePixelFormat dst_format;
++    cache->dfbsurface->GetCapabilities (cache->dfbsurface, &src_caps);
++    dst->dfbsurface->GetCapabilities (dst->dfbsurface, &dst_caps);
++    dst->dfbsurface->GetPixelFormat (dst->dfbsurface, &dst_format);
++
++    if ((DFB_PIXELFORMAT_HAS_ALPHA (dst_format)
++	 && (dst_caps & DSCAPS_PREMULTIPLIED))
++	|| (src_caps & DSCAPS_PREMULTIPLIED))
++    {
++	if (src_caps & DSCAPS_PREMULTIPLIED)
++	{
++	    if (flags & DSBLIT_BLEND_COLORALPHA)
++		flags |= DSBLIT_SRC_PREMULTCOLOR;
++	    else
++		flags |= DSBLIT_SRC_PREMULTIPLY;
+ 	}
+     }
++    }
+ 
+     dst->dfbsurface->SetBlittingFlags (dst->dfbsurface, flags);
+     dst->dfbsurface->SetSrcBlendFunction (dst->dfbsurface, sblend);
+@@ -1773,11 +2209,13 @@
+ 				   color->alpha * 0xff);
+     }
+ 
+-    D_DEBUG_AT (CairoDFB_Font, "Running BatchBlit().\n");
++    D_DEBUG_AT (CairoDFB_Font, "  ===> BatchBlit()\n");
+ 
+-    RUN_CLIPPED (dst, NULL,
++    RUN_CLIPPED (dst,
+ 		 dst->dfbsurface->BatchBlit (dst->dfbsurface,
+-					     cache->dfbsurface, rects, points, num));
++					     cache->dfbsurface, rects,
++					     points, num));
++    dst->dfbsurface->ReleaseSource (dst->dfbsurface);
+ 
+     return CAIRO_STATUS_SUCCESS;
+ }

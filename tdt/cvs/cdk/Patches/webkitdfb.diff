@@ -231,6 +231,18 @@ diff -Nur webkitdfb_2010-11-18.orig/WebCore/bridge/npruntime_internal.h webkitdf
  
      #undef None
      #undef Above
+diff -Nur webkitdfb_2010-11-18.orig/WebCore/css/StyleSheet.cpp webkitdfb_2010-11-18/WebCore/css/StyleSheet.cpp
+--- webkitdfb_2010-11-18.orig/WebCore/css/StyleSheet.cpp	2011-01-06 15:12:13.000000000 -0800
++++ webkitdfb_2010-11-18/WebCore/css/StyleSheet.cpp	2011-04-16 12:52:01.321164400 -0700
+@@ -25,6 +25,8 @@
+ #include "Node.h"
+ #include "SVGNames.h"
+ 
++#include "Document.h"
++
+ namespace WebCore {
+ 
+ #if !ASSERT_DISABLED
 diff -Nur webkitdfb_2010-11-18.orig/WebCore/platform/network/curl/ResourceHandleManager.cpp webkitdfb_2010-11-18/WebCore/platform/network/curl/ResourceHandleManager.cpp
 --- webkitdfb_2010-11-18.orig/WebCore/platform/network/curl/ResourceHandleManager.cpp	2011-01-06 15:08:36.000000000 -0800
 +++ webkitdfb_2010-11-18/WebCore/platform/network/curl/ResourceHandleManager.cpp	2011-04-13 10:46:21.000000000 -0700
@@ -313,7 +325,7 @@ diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/tests/testdfb.cpp webkitdfb_2010-
  #if PLATFORM(CAIRO)
 diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/webview.cpp webkitdfb_2010-11-18/WebKit/dfb/webview.cpp
 --- webkitdfb_2010-11-18.orig/WebKit/dfb/webview.cpp	2011-01-06 15:12:13.000000000 -0800
-+++ webkitdfb_2010-11-18/WebKit/dfb/webview.cpp	2011-04-15 15:20:16.153665905 -0700
++++ webkitdfb_2010-11-18/WebKit/dfb/webview.cpp	2011-04-16 07:22:22.468683200 -0700
 @@ -70,8 +70,15 @@
  #include <Document.h>
  #include <FocusController.h>
@@ -330,18 +342,19 @@ diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/webview.cpp webkitdfb_2010-11-18/
  D_DEBUG_DOMAIN(LiteWebViewDomain, "LiTE/WebView", "LiteWebView");
  
  LiteWebViewTheme *liteDefaultWebViewTheme = NULL;
-@@ -322,6 +329,31 @@
+@@ -322,6 +329,39 @@
  
       return DFB_OK;
  }
 +
 +DFBResult
-+lite_webview_handleKeyboardEvent( LiteWebView *webview, DFBEvent event )
++lite_webview_handleKeyboardEvent( LiteWebView *webview, DFBWindowEvent *evt )
 +{
 +     LITE_NULL_PARAMETER_CHECK(webview);
 +     
-+     WebCore::PlatformKeyboardEvent keyEvent(&event);
-+     webview->page->mainFrame()->eventHandler()->keyEvent( keyEvent );
++     //WebCore::PlatformKeyboardEvent keyEvent(&event);
++     WebCore::PlatformKeyboardEvent event( (DFBEvent*) evt );
++     webview->page->mainFrame()->eventHandler()->keyEvent( event );
 +     
 +
 +     return DFB_OK;
@@ -359,12 +372,19 @@ diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/webview.cpp webkitdfb_2010-11-18/
 +
 +     return DFB_OK;
 +}
++
++DFBResult lite_webview_set_transparent(LiteWebView* webview, gboolean flag)
++{
++     webview->page->mainFrame()->view()->setTransparent(flag);
++
++     return DFB_OK;
++}
  
  DFBResult 
  lite_on_webview_doc_loaded(LiteWebView           *webview,
 diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/webview.h webkitdfb_2010-11-18/WebKit/dfb/webview.h
 --- webkitdfb_2010-11-18.orig/WebKit/dfb/webview.h	2011-01-06 15:12:13.000000000 -0800
-+++ webkitdfb_2010-11-18/WebKit/dfb/webview.h	2011-04-15 15:19:28.762102324 -0700
++++ webkitdfb_2010-11-18/WebKit/dfb/webview.h	2011-04-16 07:20:36.646659600 -0700
 @@ -38,6 +38,8 @@
  {
  #endif
@@ -378,10 +398,10 @@ diff -Nur webkitdfb_2010-11-18.orig/WebKit/dfb/webview.h webkitdfb_2010-11-18/We
  DFBResult lite_webview_scroll_down( LiteWebView *webview );
  DFBResult lite_webview_scroll_up  ( LiteWebView *webview );
  
-+DFBResult lite_webview_handleKeyboardEvent( LiteWebView *webview, DFBEvent event );
++DFBResult lite_webview_handleKeyboardEvent( LiteWebView *webview, DFBWindowEvent *evt );
 +JSGlobalContextRef lite_webview_get_global_context( LiteWebView *webview );
-+
 +DFBResult lite_webview_execute_script( LiteWebView *webview, char* script );
++DFBResult lite_webview_set_transparent(LiteWebView* webview, gboolean flag);
 +
  /* @brief Install the WebView navigation callback
   * This function will install a WebView navigation callback. This

@@ -556,7 +556,7 @@ $(DEPDIR)/glib2.do_prepare: @DEPENDS_glib2@
 	@PREPARE_glib2@
 	touch $@
 
-$(DEPDIR)/glib2.do_compile: bootstrap $(DEPDIR)/glib2.do_prepare
+$(DEPDIR)/glib2.do_compile: bootstrap libz $(DEPDIR)/glib2.do_prepare
 	echo "glib_cv_va_copy=no" > @DIR_glib2@/config.cache
 	echo "glib_cv___va_copy=yes" >> @DIR_glib2@/config.cache
 	echo "glib_cv_va_val_copy=yes" >> @DIR_glib2@/config.cache
@@ -1422,18 +1422,20 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 #
 # WebKitDFB
 #
-$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant lite curl fontconfig sqlite libsoup @DEPENDS_webkitdfb@
+$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant lite curl fontconfig sqlite libsoup cairo jpeg @DEPENDS_webkitdfb@
 	@PREPARE_webkitdfb@
 	touch $@
 
-#		--with-cairo-directfb
-$(DEPDIR)/webkitdfb.do_compile: bootstrap $(DEPDIR)/webkitdfb.do_prepare
+
+#
+$(DEPDIR)/webkitdfb.do_compile: $(DEPDIR)/webkitdfb.do_prepare
 	export PATH=$(BUILDPREFIX)/@DIR_icu4c@/host/config:$(PATH) && \
 	cd @DIR_webkitdfb@ && \
 	$(BUILDENV) \
 	./autogen.sh --with-target=directfb --without-gtkplus \
 	   --host=$(target) \
 	   --prefix=/usr \
+	   --with-cairo-directfb \
 	   --disable-shared-workers \
 		--enable-optimizations	\
 		--disable-channel-messaging	\
@@ -1468,7 +1470,7 @@ $(DEPDIR)/icu4c.do_prepare: bootstrap @DEPENDS_icu4c@
 	@PREPARE_icu4c@
 	touch $@
 
-$(DEPDIR)/icu4c.do_compile: bootstrap $(DEPDIR)/icu4c.do_prepare
+$(DEPDIR)/icu4c.do_compile: $(DEPDIR)/icu4c.do_prepare
 	echo "Building host icu"
 	mkdir -p @DIR_icu4c@/host && \
 	cd @DIR_icu4c@/host && \
@@ -1499,7 +1501,7 @@ $(DEPDIR)/enchant.do_prepare: bootstrap @DEPENDS_enchant@
 #	libtoolize -f -c && \
 #	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal
 
-$(DEPDIR)/enchant.do_compile: bootstrap $(DEPDIR)/enchant.do_prepare
+$(DEPDIR)/enchant.do_compile: $(DEPDIR)/enchant.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_enchant@ && \
 	libtoolize -f -c && \
@@ -1522,7 +1524,7 @@ $(DEPDIR)/%enchant: $(DEPDIR)/enchant.do_compile
 #
 # lite
 #
-$(DEPDIR)/lite.do_prepare: bootstrap @DEPENDS_lite@
+$(DEPDIR)/lite.do_prepare: bootstrap directfb @DEPENDS_lite@
 	@PREPARE_lite@
 	touch $@
 
@@ -1598,3 +1600,62 @@ $(DEPDIR)/%libsoup: $(DEPDIR)/libsoup.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
+# pixman
+#
+$(DEPDIR)/pixman.do_prepare: bootstrap @DEPENDS_pixman@
+	@PREPARE_pixman@
+	touch $@
+
+$(DEPDIR)/pixman.do_compile: $(DEPDIR)/pixman.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_pixman@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-pixman $(DEPDIR)/std-pixman $(DEPDIR)/max-pixman \
+$(DEPDIR)/pixman: \
+$(DEPDIR)/%pixman: $(DEPDIR)/pixman.do_compile
+	cd @DIR_pixman@ && \
+		@INSTALL_pixman@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# cairo
+#
+$(DEPDIR)/cairo.do_prepare: bootstrap libpng pixman @DEPENDS_cairo@
+	@PREPARE_cairo@
+	touch $@
+
+$(DEPDIR)/cairo.do_compile: $(DEPDIR)/cairo.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_cairo@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+		--disable-gtk-doc \
+		--enable-ft=yes \
+		--enable-png=yes \
+		--enable-ps=no \
+		--enable-pdf=no \
+		--enable-svg=no \
+		--disable-glitz \
+		--disable-xcb \
+		--disable-xlib \
+		--enable-directfb \
+		--program-suffix=-directfb
+	touch $@
+
+$(DEPDIR)/min-cairo $(DEPDIR)/std-cairo $(DEPDIR)/max-cairo \
+$(DEPDIR)/cairo: \
+$(DEPDIR)/%cairo: $(DEPDIR)/cairo.do_compile
+	cd @DIR_cairo@ && \
+		@INSTALL_cairo@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+	
