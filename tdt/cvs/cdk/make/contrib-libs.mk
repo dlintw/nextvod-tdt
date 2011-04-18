@@ -1376,6 +1376,10 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass $(DEPDIR)/ffmpeg.do_prepare
 		--enable-decoder=vorbis \
 		--enable-decoder=flac \
 		--enable-small \
+		--enable-decoder=dvbsub \
+		--enable-decoder=iff_byterun1 \
+		--enable-pthreads \
+		--enable-bzlib \
 		--cross-prefix=$(target)- \
 		--target-os=linux \
 		--arch=sh4 \
