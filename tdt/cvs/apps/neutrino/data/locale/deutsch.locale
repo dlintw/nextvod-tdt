@@ -310,7 +310,7 @@ extra.tp_mod_16 QAM/16
 extra.tp_mod_256 QAM/256
 extra.tp_mod_32 QAM/32
 extra.tp_mod_64 QAM/64
-extra.tp_pol Polarization
+extra.tp_pol Polarisation
 extra.tp_pol_h H
 extra.tp_rate Symbolrate
 extra.tp.pol_v V
@@ -320,8 +320,8 @@ extra.use_log Log nach /tmp/log
 extra.west Westen
 extra.zap_cycle Zap Zyklen
 extra.zapit_backup Sichere Kanalliste nach /tmp
-extra.zapit_fast_zap Fast Zap
-extra.zapit_fe_timeout Tune timeout
+extra.zapit_fast_zap schnelles Zapping
+extra.zapit_fe_timeout Tuning Zeitüberschreitung (1 = 10ms)
 extra.zapit_hvoltage High (13.5/18.5) Voltage
 extra.zapit_make_bouquet Mache restliche Kanalliste
 extra.zapit_menu Zapit Optionen

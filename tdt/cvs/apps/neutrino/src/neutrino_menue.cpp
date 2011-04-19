@@ -339,7 +339,12 @@ CVideoSettings::CVideoSettings() : CMenuWidget(LOCALE_VIDEOMENU_HEAD, "video.raw
 	addItem(new CMenuForwarder(LOCALE_VIDEOMENU_SCREENSETUP, true, NULL, &ScreenSetup, NULL, CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED));
 #endif
 	changeNotify(LOCALE_VIDEOMENU_VIDEOFORMAT, NULL);
-	changeNotify(LOCALE_VIDEOMENU_ANALOG_MODE, NULL);
+	if (system_rev == 0x06) {
+		changeNotify(LOCALE_VIDEOMENU_ANALOG_MODE, NULL);
+	} else {
+		changeNotify(LOCALE_VIDEOMENU_SCART, NULL);
+		changeNotify(LOCALE_VIDEOMENU_CINCH, NULL);
+	}
 };
 
 void CVideoSettings::nextMode(void)

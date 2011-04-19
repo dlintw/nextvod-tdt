@@ -208,6 +208,9 @@ cCpuFreqManager * cpuFreq;
 
 int prev_video_mode;
 
+int xres = 72;
+int yres = 72; // TODO: no globals for that.
+
 void stop_daemons(bool stopall = true);
 // uncomment if you want to have a "test" menue entry  (rasc)
 
@@ -2002,6 +2005,12 @@ void CNeutrinoApp::CmdParser(int argc, char **argv)
 		else if ((!strcmp(argv[x], "-zd"))) {
 			zapit_debug = 1;
 			x++;
+		}
+		else if (!strcmp(argv[x], "-r")) {
+			if (x < argc)
+				xres = atoi(argv[x++]);
+			if (x < argc)
+				yres = atoi(argv[x++]);
 		} else {
 			dprintf(DEBUG_NORMAL, "Usage: neutrino [-u | --enable-update] [-f | --enable-flash] [-v | --verbose 0..3]\n");
 			exit(1);
@@ -2053,7 +2062,7 @@ void CNeutrinoApp::SetupFonts()
 	if (g_fontRenderer != NULL)
 		delete g_fontRenderer;
 
-	g_fontRenderer = new FBFontRenderClass();
+	g_fontRenderer = new FBFontRenderClass(xres, yres);
 
 	if(font.filename != NULL)
 		free((void *)font.filename);

@@ -46,8 +46,7 @@ FT_Error FBFontRenderClass::myFTC_Face_Requester(FTC_FaceID  face_id,
 	return ((FBFontRenderClass*)request_data)->FTC_Face_Requester(face_id, aface);
 }
 
-
-FBFontRenderClass::FBFontRenderClass()
+FBFontRenderClass::FBFontRenderClass(const int xr, const int yr)
 {
 	dprintf(DEBUG_DEBUG, "[FONT] initializing core...\n");
 	if (FT_Init_FreeType(&library))
@@ -57,6 +56,9 @@ FBFontRenderClass::FBFontRenderClass()
 	}
 
 	font = NULL;
+
+	xres = xr;
+	yres = yr;
 
 	int maxbytes= 4 *1024*1024;
 	dprintf(DEBUG_INFO, "[FONT] Intializing font cache, using max. %dMB...\n", maxbytes/1024/1024);
@@ -133,18 +135,32 @@ FTC_FaceID FBFontRenderClass::getFaceID(const char * const family, const char * 
 		if ((!strcmp(f->family, family)) && (!strcmp(f->style, style)))
 			return (FTC_FaceID)f;
 	}
-	if (strncmp(style, "Bold ", 5) == 0)
+	if (strncmp(style, "Bold ", 5) == 0) {
 		for (fontListEntry *f=font; f; f=f->next)
 		{
 			if ((!strcmp(f->family, family)) && (!strcmp(f->style, &(style[5]))))
 				return (FTC_FaceID)f;
 		}
+	}
+	for (fontListEntry *f=font; f; f=f->next) {
+		if (!strcmp(f->family, family))
+		{
+			if (f->next) // the first font always seems to be italic, skip if possible
+				continue;
+			return (FTC_FaceID)f;
+		}
+	}
 	return 0;
 }
 
 FT_Error FBFontRenderClass::getGlyphBitmap(FTC_ImageTypeRec *font, FT_ULong glyph_index, FTC_SBit *sbit)
 {
 	return FTC_SBitCache_Lookup(sbitsCache, font, glyph_index, sbit, NULL);
+}
+
+FT_Error FBFontRenderClass::getGlyphBitmap(FTC_ScalerRec *sc, FT_ULong glyph_index, FTC_SBit *sbit)
+{
+	return FTC_SBitCache_LookupScaler(sbitsCache, sc, FT_LOAD_DEFAULT, glyph_index, sbit, NULL);
 }
 
 const char * const FBFontRenderClass::AddFont(const char * const filename, const bool make_italics)
@@ -213,25 +229,25 @@ Font::Font(FBFontRenderClass *render, FTC_FaceID faceid, const int isize, const 
 	font.flags = FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT;
 
 	scaler.face_id = font.face_id;
-	scaler.width   = font.width;
-	scaler.height  = font.height;
-	scaler.pixel   = true;
-	scaler.x_res   = 0;
-	scaler.y_res   = 0;
-
+	scaler.width   = isize * 64;
+	scaler.height  = isize * 64;
+	scaler.pixel   = false;
+	scaler.x_res   = render->xres;
+	scaler.y_res   = render->yres;
 	setSize(isize);
 }
 
 FT_Error Font::getGlyphBitmap(FT_ULong glyph_index, FTC_SBit *sbit)
 {
-	return renderer->getGlyphBitmap(&font, glyph_index, sbit);
+	return renderer->getGlyphBitmap(&scaler, glyph_index, sbit);
 }
 
 int Font::setSize(int isize)
 {
 	int temp = font.width; 
 	font.width = font.height = isize; 
-	scaler.width = scaler.height = isize;//FIXME test
+	scaler.width  = isize * 64;
+	scaler.height = isize * 64;
 
 	if (FTC_Manager_LookupSize(renderer->cacheManager, &scaler, &size)<0)
 	{
