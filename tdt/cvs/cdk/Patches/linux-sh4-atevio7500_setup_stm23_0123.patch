@@ -224,7 +224,7 @@
 ! 		.offset = 0x00B20000,
 ! 	}, {
 ! 		.name = "VAR",
-! 		.size = 0x00BE0000,
+! 		.size = 0x00BC0000,
 ! 		.offset = 0x01220000,
 ! 	}, {
 ! 		.name = "ROOT",
