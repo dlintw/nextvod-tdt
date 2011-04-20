@@ -918,7 +918,7 @@ networkmenu.ipaddress IP address
 networkmenu.mount NFS/CIFS/FTPFS
 networkmenu.nameserver name server
 networkmenu.netmask netmask
-networkmenu.ntpenable Syncronisation via
+networkmenu.ntpenable Synchronization via
 networkmenu.ntprefresh NTP/DVB-Refresh
 networkmenu.ntprefresh_hint1 NTP/DVB-Time-Sync in minutes
 networkmenu.ntprefresh_hint2 need reboot or epg-reset

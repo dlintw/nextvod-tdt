@@ -92,6 +92,10 @@ class FBFontRenderClass
 
 		FTC_FaceID getFaceID(const char * const family, const char * const style);
 		FT_Error getGlyphBitmap(FTC_ImageTypeRec *font, FT_ULong glyph_index, FTC_SBit *sbit);
+		FT_Error getGlyphBitmap(FTC_ScalerRec *sc, FT_ULong glyph_index, FTC_SBit *sbit);
+
+		int xres;	/* the screen resolution in dpi */
+		int yres;	/* defaults to 72 dpi */
 
 	public:
 		pthread_mutex_t     render_mutex;
@@ -111,7 +115,7 @@ class FBFontRenderClass
 
 		const char * const AddFont(const char * const filename, const bool make_italics = false);
 
-		FBFontRenderClass();
+		FBFontRenderClass(const int xres = 72, const int yres = 72);
 		~FBFontRenderClass();
 
 		friend class Font;
