@@ -626,6 +626,38 @@ if ENABLE_PLAYER179
 	echo "touched";
 endif
 
+if ENABLE_PLAYER191
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvbi.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvout.ko $(prefix)/release/lib/modules/
+	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
+	for mod in \
+		sound/pseudocard/pseudocard.ko \
+		sound/silencegen/silencegen.ko \
+		stm/mmelog/mmelog.ko \
+		stm/monitor/stm_monitor.ko \
+		media/dvb/stm/dvb/stmdvb.ko \
+		sound/ksound/ksound.ko \
+		media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko \
+		media/dvb/stm/backend/player2.ko \
+		media/dvb/stm/h264_preprocessor/sth264pp.ko \
+		media/dvb/stm/allocator/stmalloc.ko \
+		stm/platform/platform.ko \
+		stm/platform/p2div64.ko \
+		media/sysfs/stm/stmsysfs.ko \
+	;do \
+		echo `pwd` player2/linux/drivers/$$mod; \
+		if [ -e player2/linux/drivers/$$mod ]; then \
+			cp player2/linux/drivers/$$mod $(prefix)/release/lib/modules/; \
+			sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/`basename $$mod`; \
+		else \
+			touch $(prefix)/release/lib/modules/`basename $$mod`; \
+		fi; \
+		echo "."; \
+	done
+	echo "touched";
+endif
+
 if STM22
 	rm $(prefix)/release/lib/modules/p2div64.ko
 endif
@@ -639,7 +671,7 @@ endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxmailbox/embxmailbox.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshm/embxshm.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/mme/mme_host.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/multituner/*.ko $(prefix)/release/lib/modules/
 
 if !ENABLE_VIP2_V1
 if !ENABLE_SPARK

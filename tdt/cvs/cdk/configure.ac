@@ -36,6 +36,14 @@ AC_ARG_ENABLE(player179,
 AM_CONDITIONAL(ENABLE_PLAYER179,test "$enable_player179" = "yes")
 AC_SUBST(PLAYER179)
 
+AC_ARG_ENABLE(player191,
+	AS_HELP_STRING(--enable-player191,	set up the CDK to use player191),
+	[case "${enableval}" in
+		yes) PLAYER191=player191 ;;
+	esac],[enable_player191=no])
+AM_CONDITIONAL(ENABLE_PLAYER191,test "$enable_player191" = "yes")
+AC_SUBST(PLAYER191)
+
 AC_ARG_ENABLE(stm22,
 	AS_HELP_STRING(--enable-stm22,	set up the CDK to use the STLinux 2.2),
 	,[enable_stm22=no])
@@ -1078,6 +1086,7 @@ osd910 support:              $enable_osd910
 DEBUG:                       $enable_debug
 Player131:                   $enable_player131
 Player179:                   $enable_player179
+Player191:                   $enable_player191
 ])
 
 if test "$dircheck" = "fail"; then

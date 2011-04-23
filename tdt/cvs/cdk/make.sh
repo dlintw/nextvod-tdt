@@ -182,12 +182,13 @@ cd -
 echo -e "\nPlayer:"
 echo "   1) Player 131 (Deprecated)"
 echo "   2) Player 179"
+echo "   3) Player 191 (Experimental)"
 case $4 in
-        [1-2]) REPLY=$4
+        [1-3]) REPLY=$4
         echo -e "\nSelected player: $REPLY\n"
         ;;
         *)
-        read -p "Select player (1-2)? ";;
+        read -p "Select player (1-3)? ";;
 esac
 
 case "$REPLY" in
@@ -242,6 +243,42 @@ case "$REPLY" in
        fi
        ln -s player2_179 player2
        echo "export CONFIG_PLAYER_179=y" >> .config
+       cd -
+
+       cd ../driver/stgfb
+       if [ -L stmfb ]; then
+          rm stmfb
+       fi
+       if [ "$STMFB" == "stm24" ]; then
+           ln -s stmfb-3.1_stm24_0102 stmfb
+       else
+           ln -s stmfb-3.1_stm23_0032 stmfb
+       fi
+       cd -
+    ;;
+	3) PLAYER="--enable-player191"
+       cd ../driver/include/
+       if [ -L player2 ]; then
+          rm player2
+       fi
+
+       if [ -L stmfb ]; then
+          rm stmfb
+       fi
+       ln -s player2_179 player2
+       if [ "$STMFB" == "stm24" ]; then
+           ln -s stmfb-3.1_stm24_0102 stmfb
+       else
+           ln -s stmfb-3.1_stm23_0032 stmfb
+       fi
+       cd -
+
+       cd ../driver/
+       if [ -L player2 ]; then
+          rm player2
+       fi
+       ln -s player2_191 player2
+       echo "export CONFIG_PLAYER_191=y" >> .config
        cd -
 
        cd ../driver/stgfb

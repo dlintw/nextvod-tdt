@@ -19,6 +19,7 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	$(if $(CUBEREVO_9500HD),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_CUBEREVO_9500HD") \
 	$(if $(PLAYER131),CPPFLAGS="$(CPPFLAGS) -DPLAYER131") \
 	$(if $(PLAYER179),CPPFLAGS="$(CPPFLAGS) -DPLAYER179") \
+	$(if $(PLAYER191),CPPFLAGS="$(CPPFLAGS) -DPLAYER191") \
 	$(if $(STM22),CPPFLAGS="$(CPPFLAGS) -DSTM22")
 	[ "x$*" = "x" ] && touch $@ || true
 
