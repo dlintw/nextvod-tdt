@@ -265,7 +265,7 @@ case "$REPLY" in
        if [ -L stmfb ]; then
           rm stmfb
        fi
-       ln -s player2_191 player2
+       ln -s player2_179 player2
        if [ "$STMFB" == "stm24" ]; then
            ln -s stmfb-3.1_stm24_0102 stmfb
        else
