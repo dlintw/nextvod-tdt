@@ -49,6 +49,15 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init AVS"
    insmod $MODDIR/avs.ko type=stv6412
 
+   player=`cat /proc/stb/player/version`
+   if [ $player=='player179' ]; then
+      echo "init player 179"
+   elif [ $player=='player191' ]; then
+      echo "init player 191"
+   else
+      echo "init player 131"
+   fi
+
    echo "init player"
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER1;
@@ -59,9 +68,23 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    insmod $MODDIR/stv090x.ko
    insmod $MODDIR/cimax.ko
-   insmod $MODDIR/pti.ko
-   insmod $MODDIR/stmdvb.ko
-   insmod $MODDIR/stm_monitor.ko
+
+   if [ $player=='player179' ]; then
+      insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+      insmod $MODDIR/stm_monitor.ko
+      insmod $MODDIR/stmsysfs.ko
+      insmod $MODDIR/stmdvb.ko
+   elif [ $player=='player191' ]; then
+      insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+      insmod $MODDIR/stm_monitor.ko
+      insmod $MODDIR/stmsysfs.ko
+      insmod $MODDIR/stmdvb.ko
+   else
+      insmod $MODDIR/pti.ko
+      insmod $MODDIR/stmdvb.ko
+      insmod $MODDIR/stm_monitor.ko
+   fi
+
    insmod $MODDIR/player2.ko noaudiosync=1; discardlateframe=0; useoldaudiofw=1 ;
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko

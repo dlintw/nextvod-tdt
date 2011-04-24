@@ -215,8 +215,11 @@ UFS922PATCHES_23 = $(COMMONPATCHES_23) \
 
 FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
-		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		fortis_hdbox_setup_stm23.diff \
+		$(if $(P0119),linux-sh4-sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),fortis_hdbox_setup_stm23.diff) \
+		$(if $(P0119),fortis_hdbox_dvb_core_stm23.patch) \
+        $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+        $(if $(P0123),linux-sh4-fortis_hdbox_setup_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 ATEVIO7500PATCHES_23 = $(COMMONPATCHES_23) \
