@@ -510,6 +510,7 @@ if ENABLE_PLAYER191
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release_vdr/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvbi.ko $(prefix)/release_vdr/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvout.ko $(prefix)/release_vdr/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/player2/linux/player2-unified.ko $(prefix)/release_vdr/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_vdr/lib/modules/
 #	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_vdr/lib/modules/
 	find $(prefix)/release_vdr/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
@@ -521,6 +522,9 @@ if ENABLE_PLAYER191
 		stm/monitor/stm_monitor.ko \
 		media/dvb/stm/dvb/stmdvb.ko \
 		sound/ksound/ksound.ko \
+		sound/kreplay/kreplay.ko \
+		sound/kreplay/kreplay-fdma.ko \
+		sound/ksound/ktone.ko \
 		media/dvb/stm/mpeg2_hard_host_transformer/mpeg2hw.ko \
 		media/dvb/stm/backend/player2.ko \
 		media/dvb/stm/h264_preprocessor/sth264pp.ko \
