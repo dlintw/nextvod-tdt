@@ -130,7 +130,6 @@
 #include <timerdclient/timerdmsg.h>
 #include <zapit/satconfig.h>
 
-#include <init_cs.h>
 #include <video_cs.h>
 #include <audio_cs.h>
 #include <zapit/frontend_c.h>
@@ -2415,8 +2414,6 @@ int CNeutrinoApp::run(int argc, char **argv)
 	// disable Neutrino start message we can use a bootvideo...
 	// CVFD::getInstance()->ShowText((char *) g_Locale->getText(LOCALE_NEUTRINO_STARTING));
 
-	init_cs_api();
-
 	pthread_create (&zapit_thread, NULL, zapit_main_thread, (void *) g_settings.video_Mode);
 	audioSetupNotifier        = new CAudioSetupNotifier;
 
@@ -3619,7 +3616,6 @@ void CNeutrinoApp::ExitRun(const bool write_si, int retcode)
 			}
 
 			delete moviePlayerGui;
-			shutdown_cs_api();
 
 			system("/etc/init.d/rcK");
 			CVFD::getInstance()->ShowIcon(VFD_ICON_CAM1, true);
@@ -4567,7 +4563,6 @@ void stop_daemons(bool stopall)
 			powerManager->Close();
 			delete powerManager;
 		}
-		shutdown_cs_api();
 	}
 }
 

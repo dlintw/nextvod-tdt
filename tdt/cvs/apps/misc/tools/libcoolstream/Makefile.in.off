@@ -53,7 +53,7 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libcoolstream_la_LIBADD =
 am_libcoolstream_la_OBJECTS = audio_cs.lo dmx_cs.lo dvb-ci.lo \
-	init_cs.lo playback_cs.lo pwrmngr.lo record_cs.lo video_cs.lo \
+	playback_cs.lo pwrmngr.lo record_cs.lo video_cs.lo \
 	cool.lo dvbci_session.lo dvbci_mmi.lo dvbci_camgr.lo \
 	dvbci_appmgr.lo dvbci_datetimemgr.lo dvbci_resmgr.lo
 libcoolstream_la_OBJECTS = $(am_libcoolstream_la_OBJECTS)
@@ -204,7 +204,7 @@ INCLUDES = \
 	-I../libeplayer2/include 
 
 lib_LTLIBRARIES = libcoolstream.la
-libcoolstream_la_SOURCES = audio_cs.cpp dmx_cs.cpp dvb-ci.cpp init_cs.cpp playback_cs.cpp pwrmngr.cpp record_cs.cpp video_cs.cpp cool.cpp \
+libcoolstream_la_SOURCES = audio_cs.cpp dmx_cs.cpp dvb-ci.cpp playback_cs.cpp pwrmngr.cpp record_cs.cpp video_cs.cpp cool.cpp \
 dvbci_session.cpp dvbci_mmi.cpp dvbci_camgr.cpp dvbci_appmgr.cpp dvbci_datetimemgr.cpp dvbci_resmgr.cpp
 
 AM_CPPFLAGS = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
@@ -288,7 +288,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvbci_mmi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvbci_resmgr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvbci_session.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_cs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/playback_cs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pwrmngr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/record_cs.Plo@am__quote@
