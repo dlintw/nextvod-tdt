@@ -403,6 +403,13 @@ if ENABLE_FORTIS_HDBOX
 	echo "fortis" > $(prefix)/release_vdr/etc/hostname 
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release_vdr/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_vdr/lib/modules/
+	
+if STM23	
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_vdr/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_vdr/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_vdr/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_vdr/lib/modules
+endif	
 
 	rm -f $(prefix)/release_vdr/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_vdr/lib/firmware/dvb-fe-cx21143.fw
