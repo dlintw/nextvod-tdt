@@ -309,7 +309,8 @@ COMMONPATCHES_24 = \
 		linux-sh4-time_stm24$(PATCH_STR).patch \
 		linux-sh4-init_mm_stm24$(PATCH_STR).patch \
 		linux-sh4-copro_stm24$(PATCH_STR).patch \
-		linux-sh4-strcpy_stm24$(PATCH_STR).patch
+		linux-sh4-strcpy_stm24$(PATCH_STR).patch \
+		linux-squashfs-lzma_stm24$(PATCH_STR).patch
 
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 			tf7700_setup_stm24$(PATCH_STR).patch \
