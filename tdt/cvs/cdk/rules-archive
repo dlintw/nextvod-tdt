@@ -21,6 +21,8 @@ stlinux23-host-kernel-source-sh4-2.6.23.17_stm23_0123-123.src.rpm;ftp://ftp.stli
 stlinux24-host-kernel-source-sh4-2.6.32.10_stm24_0201-201.src.rpm;ftp://ftp.stlinux.com/pub/stlinux/2.4/SRPMS/
 squashfs3.0.tar.gz;http://heanet.dl.sourceforge.net/sourceforge/squashfs
 lzma442.tar.bz2;http://heanet.dl.sourceforge.net/sourceforge/sevenzip
+squashfs4.0.tar.gz;http://heanet.dl.sourceforge.net/sourceforge/squashfs
+lzma465.tar.bz2;http://heanet.dl.sourceforge.net/sourceforge/sevenzip
 #sqlzma3.3-fixed.tar.bz2;http://www.squashfs-lzma.org/dl
 #sqlzma2k-3.2-r2.patch;http://dfn.dl.sourceforge.net/sourceforge/monitoring
 ccache-2.4.tar.gz;http://samba.org/ftp/ccache
