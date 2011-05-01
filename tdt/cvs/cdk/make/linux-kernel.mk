@@ -119,6 +119,11 @@ FLASHUFS910PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ufs910_smsc_stm22.patch \
 		linux-ufs910_i2c_stm22.patch \
 		linux-ufs910_setup_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch \
 		linux-ufs910_stboards_stm22.patch
 
 # IMPORTANT: it is expected that only one define is set
@@ -261,6 +266,8 @@ UFS910PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0123),stx7100_fdma_fix_stm23_123.patch) \
 		linux-sh4-ufs910_reboot_stm23.patch
 
+FLASHUFS910PATCHES_23 = $(UFS910PATCHES_23)
+
 CUBEPATCHES_023 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
@@ -327,6 +334,8 @@ UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 			linux-sh4-stmmac_stm24_0205.patch \
 			linux-sh4-i2c-st40-pio_stm24_0205.patch
 
+FLASHUFS910PATCHES_24 = $(UFS910PATCHES_24)
+
 UFS912PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs912_setup_stm24$(PATCH_STR).patch
 
@@ -347,6 +356,7 @@ SPARK_PATCHES_24 = $(COMMONPATCHES_24) \
 
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
+		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_24)) \
 		$(if $(UFS912),$(UFS912PATCHES_24)) \
 		$(if $(UFS922),$(UFS922PATCHES_24)) \
 		$(if $(TF7700),$(TF7700PATCHES_24)) \
