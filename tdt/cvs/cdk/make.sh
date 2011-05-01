@@ -179,6 +179,8 @@ echo "export CONFIG_ZD1211REV_B=y" >> .config
 echo "export CONFIG_ZD1211=n"		>> .config
 cd -
 
+##############################################
+
 echo -e "\nPlayer:"
 echo "   1) Player 131 (Deprecated)"
 echo "   2) Player 179"
@@ -294,7 +296,55 @@ case "$REPLY" in
     ;;
 	*) PLAYER="--enable-player131";;
 esac
-CONFIGPARAM="$CONFIGPARAM $PLAYER"
+
+##############################################
+
+echo -e "\nMulticom:"
+echo "   1) Multicom 3.2.2"
+echo "   2) Multicom 3.2.4 rc3 (experimental)"
+case $4 in
+        [1-2]) REPLY=$4
+        echo -e "\nSelected multicom: $REPLY\n"
+        ;;
+        *)
+        read -p "Select multicom (1-2)? ";;
+esac
+
+case "$REPLY" in
+	1) MULTICOM="--enable-multicom322"
+       cd ../driver/include/
+       if [ -L multicom ]; then
+          rm multicom
+       fi
+
+       ln -s multicom-3.2.2 multicom
+       cd -
+
+       cd ../driver/
+       if [ -L multicom ]; then
+          rm multicom
+       fi
+
+       ln -s multicom-3.2.2 multicom
+       echo "export CONFIG_MULTICOM322=y" >> .config
+       cd -
+    ;;
+	2) MULTICOM="--enable-multicom324"
+       cd ../driver/
+       if [ -L multicom ]; then
+          rm multicom
+       fi
+
+       ln -s multicom-3.2.4_rc3 multicom
+       echo "export CONFIG_MULTICOM324=y" >> .config
+       cd -
+    ;;
+	*) MULTICOM="--enable-multicom322";;
+esac
+
+##############################################
+
+CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM"
 
 ##############################################
 
