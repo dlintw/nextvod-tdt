@@ -331,6 +331,14 @@ case "$REPLY" in
        cd -
     ;;
 	2) MULTICOM="--enable-multicom324"
+       cd ../driver/include/
+       if [ -L multicom ]; then
+          rm multicom
+       fi
+
+       ln -s ../multicom-3.2.4_rc3/include multicom
+       cd -
+
        cd ../driver/
        if [ -L multicom ]; then
           rm multicom

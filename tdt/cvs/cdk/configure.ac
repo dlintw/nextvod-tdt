@@ -44,6 +44,22 @@ AC_ARG_ENABLE(player191,
 AM_CONDITIONAL(ENABLE_PLAYER191,test "$enable_player191" = "yes")
 AC_SUBST(PLAYER191)
 
+AC_ARG_ENABLE(multicom322,
+	AS_HELP_STRING(--enable-multicom322, set up the CDK to use multicom322),
+	[case "${enableval}" in
+		yes) MULTICOM322=multicom322 ;;
+	esac],[enable_multicom322=no])
+AM_CONDITIONAL(ENABLE_MULTICOM322,test "$enable_multicom322" = "yes")
+AC_SUBST(MULTICOM322)
+
+AC_ARG_ENABLE(multicom324,
+	AS_HELP_STRING(--enable-multicom324, set up the CDK to use multicom324),
+	[case "${enableval}" in
+		yes) MULTICOM324=multicom324 ;;
+	esac],[enable_multicom324=no])
+AM_CONDITIONAL(ENABLE_MULTICOM324,test "$enable_multicom324" = "yes")
+AC_SUBST(MULTICOM324)
+
 AC_ARG_ENABLE(stm22,
 	AS_HELP_STRING(--enable-stm22,	set up the CDK to use the STLinux 2.2),
 	,[enable_stm22=no])
@@ -1087,6 +1103,8 @@ DEBUG:                       $enable_debug
 Player131:                   $enable_player131
 Player179:                   $enable_player179
 Player191:                   $enable_player191
+Multicom322:                 $enable_multicom322
+Multicom324:                 $enable_multicom324
 ])
 
 if test "$dircheck" = "fail"; then
