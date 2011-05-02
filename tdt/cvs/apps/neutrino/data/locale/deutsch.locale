@@ -1307,9 +1307,9 @@ usermenu.button_green Benutzermenü 'grün'
 usermenu.button_red Benutzermenü 'rot'
 usermenu.button_yellow Benutzermenü 'gelb'
 usermenu.head Benutzermenü
-usermenu.item_bar ---- Trennung ----
+usermenu.item_bar --- Trennung ---
 usermenu.item_epg_misc EPG Funktionen
-usermenu.item_none
+usermenu.item_none --- Frei ---
 usermenu.item_vtxt Videotext
 usermenu.name Name
 video_mode_ok Video-Einstellungen ok ?
