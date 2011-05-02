@@ -5,6 +5,7 @@ if [ "$1" == -h ] || [ "$1" == --help ]; then
  echo "Parameter 2: kernel (1-4)"
  echo "Parameter 3: debug (Y/N)"
  echo "Parameter 4: player(1-2)"
+ echo "Parameter 5: Multicom(1-2)"
  exit
 fi
 
@@ -302,8 +303,8 @@ esac
 echo -e "\nMulticom:"
 echo "   1) Multicom 3.2.2"
 echo "   2) Multicom 3.2.4 rc3 (experimental)"
-case $4 in
-        [1-2]) REPLY=$4
+case $5 in
+        [1-2]) REPLY=$5
         echo -e "\nSelected multicom: $REPLY\n"
         ;;
         *)
