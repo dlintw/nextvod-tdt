@@ -949,8 +949,8 @@ if ENABLE_PLAYER131
 		stm/platform/platform.ko \
 		stm/platform/p2div64.ko \
 	;do \
-		if [ -e player2/$(kernelpath)/drivers/$$mod ] ; then \
-			cp player2/$(kernelpath)/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
+		if [ -e player2/linux/drivers/$$mod ] ; then \
+			cp player2/linux/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
 			sh4-linux-strip --strip-unneeded $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
 		else \
 			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
@@ -981,8 +981,8 @@ if ENABLE_PLAYER179
 		stm/platform/p2div64.ko \
 		media/sysfs/stm/stmsysfs.ko \
 	;do \
-		if [ -e player2/$(kernelpath)/drivers/$$mod ] ; then \
-			cp player2/$(kernelpath)/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
+		if [ -e player2/linux/drivers/$$mod ] ; then \
+			cp player2/linux/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
 			sh4-linux-strip --strip-unneeded $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
 		else \
 			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
@@ -1013,8 +1013,8 @@ if ENABLE_PLAYER191
 		stm/platform/p2div64.ko \
 		media/sysfs/stm/stmsysfs.ko \
 	;do \
-		if [ -e player2/$(kernelpath)/drivers/$$mod ] ; then \
-			cp player2/$(kernelpath)/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
+		if [ -e player2/linux/drivers/$$mod ] ; then \
+			cp player2/linux/drivers/$$mod $(prefix)/release_neutrino/lib/modules/; \
 			sh4-linux-strip --strip-unneeded $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
 		else \
 			touch $(prefix)/release_neutrino/lib/modules/`basename $$mod`; \
