@@ -78,6 +78,116 @@ if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); 
 /* Varaibles                     */
 /* ***************************** */
 
+/// ** AAC ADTS format **
+///
+/// AAAAAAAA AAAABCCD EEFFFFGH HHIJKLMM
+/// MMMMMMMM MMMNNNNN NNNNNNOO ........
+///
+/// Sign            Length          Position         Description
+///
+/// A                12             (31-20)          Sync code
+/// B                 1              (19)            ID
+/// C                 2             (18-17)          layer
+/// D                 1              (16)            protect absent
+/// E                 2             (15-14)          profile
+/// F                 4             (13-10)          sample freq index
+/// G                 1              (9)             private
+/// H                 3             (8-6)            channel config
+/// I                 1              (5)             original/copy
+/// J                 1              (4)             home
+/// K                 1              (3)             copyright id
+/// L                 1              (2)             copyright start
+/// M                 13         (1-0,31-21)         frame length
+/// N                 11           (20-10)           adts buffer fullness
+/// O                 2             (9-8)            num of raw data blocks in frame
+
+/*
+LC: Audio: aac, 44100 Hz, stereo, s16, 192 kb/ ->ff f1 50 80 00 1f fc
+HE: Audio: aac, 48000 Hz, stereo, s16, 77 kb/s ->ff f1 4c 80 00 1f fc
+*/
+
+/*
+ADIF = basic format called Audio Data Interchange Format (ADIF)
+       consisting of a single header followed by the raw AAC audio data blocks
+ADTS = streaming format called Audio Data Transport Stream (ADTS)
+       consisting of a series of frames, each frame having a header followed by the AAC audio data
+LOAS = Low Overhead Audio Stream (LOAS), a self-synchronizing streaming format
+*/
+
+/*
+AvailableBytes = Writen Bytes
+Sync = Bits.Get(11);
+if (Sync == AAC_AUDIO_LOAS_ASS_SYNC_WORD{0x2b7}) 
+   Type = AAC_AUDIO_LOAS_FORMAT;
+   FrameSize = Bits.Get(13) + AAC_LOAS_ASS_SYNC_LENGTH_HEADER_SIZE{3};
+   if (FrameSize > AAC_LOAS_ASS_MAX_FRAME_SIZE{8192})
+      // ERROR
+   AvailableBytes = AvailableBytes - AAC_LOAS_ASS_MAX_FRAME_SIZE{8192};
+   
+   ImplicitSbrExtension = true;
+   ExplicitSbrExtension = false;
+   
+   if (AvailableBytes > 0)
+      useSameStreamMux = Bits->Get(1);
+   else
+      useSameStreamMux = true;
+   
+   if ( !useSameStreamMux )
+      audioMuxVersion = Bits->Get(1); // Has to be 0
+      if (!audioMuxVersion)
+         // only get program 0 and layer 0 information ...
+         Bits->FlushUnseen(1 + 6 + 4 + 3); // allStreamSameTimeFraming, numSubFrames, numProgram, numLayer
+         audioObjectType = Bits->Get(5);
+         if ((audioObjectType != AAC_AUDIO_PROFILE_LC{2}) && (audioObjectType != AAC_AUDIO_PROFILE_SBR{5}))
+            // Error
+         
+         samplingFrequencyIndex = Bits->Get(4);
+         channelConfiguration = Bits->Get(4);
+         if (audioObjectType == AAC_AUDIO_PROFILE_SBR{5})
+            ImplicitSbrExtension = false;
+            ExplicitSbrExtension = true;
+            samplingFrequencyIndex = Bits->Get(4);
+            audioObjectType = Bits->Get(5);
+            if (audioObjectType != AAC_AUDIO_PROFILE_LC{2})
+               // Error
+      *SampleCount = 1024 * ((ImplicitSbrExtension || ExplicitSbrExtension)?2:1);
+      *SamplingFrequency *= (ImplicitSbrExtension?2:1);
+else
+   Sync |= Bits.Get(1) << 11;
+   if (Sync == AAC_AUDIO_ADTS_SYNC_WORD{0xfff})
+      Type = AAC_AUDIO_ADTS_FORMAT; // Supports only LC
+      ID = Bits.Get(1);
+      Layer = Bits.Get(2); // Has to be 0
+      protection_absent = Bits.Get(1);
+      profile_ObjectType = Bits.Get(2);
+      if ((profile_ObjectType+1) != AAC_AUDIO_PROFILE_LC)
+         return
+      sampling_frequency_index = Bits.Get(4);
+      SamplingFrequency   = aac_sample_rates[sampling_frequency_index] * 2;
+      Bits.FlushUnseen(1); //private_bit
+      channel_configuration = Bits.Get(3);
+      Bits.FlushUnseen(1 + 1 + 1 + 1); //original/copy, home, copyright_identification_bit, copyright_identification_start
+      FrameSize = Bits.Get(13); // aac_frame_length
+      if (FrameSize < AAC_ADTS_MIN_FRAME_SIZE{7})
+         // Error 
+      Bits.FlushUnseen(11); //adts_buffer_fullness
+      no_raw_data_blocks_in_frame = Bits.Get(2);
+      // multiple the sample count by two in case a sbr object is present
+      SampleCount         = (no_raw_data_blocks_in_frame + 1) * 1024 * 2 ;
+   else
+      Sync |= Bits.Get(4) << 12;
+      if (Sync == AAC_AUDIO_LOAS_EPASS_SYNC_WORD{0x4de1})
+         Type = AAC_AUDIO_LOAS_FORMAT;
+         ...
+      else
+         Sync |= Bits.Get(16) << 16;
+         if (Sync == AAC_AUDIO_ADIF_SYNC_WORD{0x41444946})
+            Type = AAC_AUDIO_ADIF_FORMAT;
+            //not supported
+      
+   
+*/
+
 static unsigned char DefaultAACHeader[]    =  {
     0xff,
     0xf1,
