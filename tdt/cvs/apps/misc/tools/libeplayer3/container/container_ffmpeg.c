@@ -929,17 +929,46 @@ printf("AVCODEC__INIT__FAILED\n");
                 }
                 else if(stream->codec->codec_id == CODEC_ID_AAC) {
                     ffmpeg_printf(10,"Create AAC ExtraData\n");
-                    ffmpeg_printf(10,"aac sample_rate %d\n",stream->codec->sample_rate);
+                    ffmpeg_printf(10,"stream->codec->extradata_size %d\n", stream->codec->extradata_size);
+                    Hexdump(stream->codec->extradata, stream->codec->extradata_size);
+  
+  /* extradata
+13 10 56 e5 9d 48 00 (anderen cops)
+	object_type: 00010 2 = LC
+	sample_rate: 011 0 6 = 24000
+	chan_config: 0010 2 = Stereo
+	000 0
+	1010110 111 = 0x2b7
+	00101 = SBR
+	1
+	0011 = 48000
+	101 01001000 = 0x548
+	ps = 0
+	0000000
+*/
+                    
+                    unsigned int object_type = 2; // LC
+                    unsigned int sample_index = aac_get_sample_rate_index(stream->codec->sample_rate);
+                    unsigned int chan_config = stream->codec->channels;
+                    if(stream->codec->extradata_size >= 2) {
+                        object_type = stream->codec->extradata[0] >> 3;
+                        sample_index = ((stream->codec->extradata[0] & 0x7) << 1)
+                            + (stream->codec->extradata[1] >> 7);
+                        chan_config = (stream->codec->extradata[1] >> 3) && 0xf; 
+                    }
 
-                    unsigned int  SampleIndex;
+                    ffmpeg_printf(10,"aac object_type %d\n", object_type);
+                    ffmpeg_printf(10,"aac sample_index %d\n", sample_index);
+                    ffmpeg_printf(10,"aac chan_config %d\n", chan_config);
 
-                    SampleIndex = aac_get_sample_rate_index(stream->codec->sample_rate);
+                    object_type -= 1; // Cause of ADTS
+
                     track.aacbuflen = AAC_HEADER_LENGTH;
                     track.aacbuf = malloc(8);
                     track.aacbuf[0] = 0xFF;
                     track.aacbuf[1] = 0xF1;
-                    track.aacbuf[2] = ((stream->codec->sample_fmt & 0x03) << 6)  | (SampleIndex << 2) | ((stream->codec->channels >> 2) & 0x01);
-                    track.aacbuf[3] = (stream->codec->channels & 0x03) << 6;
+                    track.aacbuf[2] = ((object_type & 0x03) << 6)  | (sample_index << 2) | ((chan_config >> 2) & 0x01);
+                    track.aacbuf[3] = (chan_config & 0x03) << 6;
                     track.aacbuf[4] = 0x00;
                     track.aacbuf[5] = 0x1F;
                     track.aacbuf[6] = 0xFC;
