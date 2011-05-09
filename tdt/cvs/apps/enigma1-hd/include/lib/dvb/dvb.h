@@ -2,6 +2,11 @@
 #define __dvb_h
 
 #include <stdio.h>
+
+#ifdef __sh__
+#include <string.h>
+#endif
+
 #include "si.h"
 
 /** reihenfolge: transport_stream_id, original_network_id, service_id

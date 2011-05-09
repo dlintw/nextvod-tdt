@@ -16,6 +16,10 @@
 #include <lib/base/console.h>
 #endif
 
+#ifdef __sh__
+#include <limits.h>
+#endif
+
 #ifdef USE_IFUPDOWN
 // in Makefile.am INCLUDES @NET_CFLAGS@
 // in configure.ac TUXBOX_APPS_LIB_PKGCONFIG(NET,tuxbox-net)

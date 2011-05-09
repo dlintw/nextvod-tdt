@@ -4,6 +4,10 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 
+#ifdef __sh__
+#include <string.h>
+#endif
+
 #include <lib/base/ebase.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>

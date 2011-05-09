@@ -5,6 +5,11 @@
 #include <lib/base/estring.h>
 #include <enigma_processutils.h>
 
+#ifdef __sh__
+#include <stdlib.h>
+#include <string.h>
+#endif
+
 long *eProcessUtils::getPID(const char *procname)
 {
 	struct dirent *entry;

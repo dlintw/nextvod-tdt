@@ -5,6 +5,11 @@
 
 #include <libsig_comp.h>
 #include <set>
+
+#ifdef __sh__
+#include <sys/types.h>
+#endif
+
 class eIOBuffer;
 
 class eAudioDecoder

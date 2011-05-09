@@ -4,6 +4,10 @@
 #include <unistd.h>
 #include <errno.h>
 
+#ifdef __sh__
+#include <string.h>
+#endif
+
 void eIOBuffer::removeblock()
 {
 	ASSERT(!buffer.empty());

@@ -152,7 +152,11 @@ void gFBDC::setBrightness(int b)
             bc = 0xffffffff;      
 
 	brightness=b;
+#if defined(PLAYER179) || defined(PLAYER191)
+	config.outputid = STMFBIO_OUTPUTID_MAIN;
+#elif defined(PLAYER131)
         outputConfig.outputid = 1;
+#endif
 	outputConfig.activate = STMFBIO_ACTIVATE_IMMEDIATE;
 	outputConfig.caps = STMFBIO_OUTPUT_CAPS_MIXER_BACKGROUND;
 	outputConfig.mixer_background = bc;

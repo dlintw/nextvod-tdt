@@ -9,6 +9,11 @@
 #include <lib/base/eerror.h>
 #include <lib/system/econfig.h>
 
+#ifdef __sh__
+#include <stdlib.h>
+#include <string.h>
+#endif
+
 unsigned long eDemux::getLong()
 {
 	unsigned long c;

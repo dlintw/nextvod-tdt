@@ -17,6 +17,9 @@
 #include <lib/system/elock.h>
 #include <lib/gdi/gpixmap.h>
 
+#ifdef __sh__
+#include <string.h>
+#endif
 
 class eTextPara;
 

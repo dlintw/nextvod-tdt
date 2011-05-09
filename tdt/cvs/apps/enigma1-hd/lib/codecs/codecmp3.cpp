@@ -5,6 +5,10 @@
 #include <lib/base/buffer.h>
 #include <linux/soundcard.h>
 
+#ifdef __sh__
+#include <string.h>
+#endif
+
 static inline unsigned short MadFixedToUshort(mad_fixed_t Fixed)
 {
 		// CLIPPING !!!

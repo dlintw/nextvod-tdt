@@ -3,6 +3,11 @@
 #include <limits.h>
 #include <lib/system/elock.h>
 
+#ifdef __sh__
+#include <stdlib.h>
+#include <string.h>
+#endif
+
 ///////////////////////////////////////// eString sprintf /////////////////////////////////////////////////
 eString& eString::sprintf(char *fmt, ...)
 {

@@ -2,6 +2,10 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#ifdef __sh__
+#include <cstring> 
+#endif
+
 #include <lib/gui/eskin.h>
 #include <lib/gui/ewidget.h>
 #include <lib/gdi/gfbdc.h>

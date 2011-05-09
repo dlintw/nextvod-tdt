@@ -1,6 +1,10 @@
 #include <lib/gdi/gpixmap.h>
 #include <zlib.h>
 
+#ifdef __sh__
+#include <string.h>
+#endif
+
 gLookup::gLookup()
 	:size(0), lookup(0)
 {

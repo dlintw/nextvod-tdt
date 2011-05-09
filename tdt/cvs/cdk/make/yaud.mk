@@ -140,6 +140,16 @@ yaud-enigma2-nightly: yaud-none lirc stslave\
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
+if STM22
+yaud-enigma1-hd: yaud-none lirc stslave\
+		boot-elf hotplug remote firstboot enigma1-hd release_enigma1_hd
+	@TUXBOX_YAUD_CUSTOMIZE@
+else
+yaud-enigma1-hd: yaud-none lirc stslave\
+		boot-elf remote firstboot enigma1-hd release_enigma1_hd
+	@TUXBOX_YAUD_CUSTOMIZE@
+endif
+
 #work yet!!!
 flash-ufs910-enigma2: yaud-none lirc stslave \
 		boot-elf hotplug remote firstboot enigma2 enigma2-misc release \

@@ -8,6 +8,10 @@
 #include <asm/types.h>
 #include <time.h>
 
+#ifdef __sh__
+#include <pthread.h>
+#endif
+
 #include <lib/base/eptrlist.h>
 #include <libsig_comp.h>
 

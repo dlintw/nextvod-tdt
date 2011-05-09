@@ -30,6 +30,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#ifdef __sh__
+#include <string.h>
+#endif
+
 int bidirpipe(int pfd[], char *cmd , char *argv[])
 {
 	int pfdin[2];  /* from child to parent */

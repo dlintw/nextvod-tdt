@@ -5,6 +5,11 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
+#ifdef __sh__
+#include <stdlib.h>
+#include <string.h>
+#endif
+
 eConfig *eConfig::instance;
 
 eConfig::eConfig()

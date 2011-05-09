@@ -7,10 +7,15 @@
 #include <unistd.h>
 #include <linux/input.h>
 
+#ifdef __sh__
+#include <string.h>
+#endif
+
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 #include <lib/system/econfig.h>
 #include <lib/base/eerror.h>
+
 
 /*
   *  note on the enigma input layer:
