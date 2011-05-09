@@ -74,9 +74,6 @@ include make/enigma2.mk
 # Include enigma2-nightly gui targets
 include make/enigma2-nightly.mk
 
-# Include enigma2-nightly gui targets
-include make/enigma1-hd.mk
-
 # Include neutrino gui targets
 include make/neutrino.mk
 
