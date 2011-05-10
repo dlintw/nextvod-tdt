@@ -413,7 +413,8 @@ ALSAPLAYER_SPEC_PATCH :=
 ALSAPLAYER_PATCHES :=
 else !STM22
 if STM23
-ALSAPLAYER_VERSION := $(if $(STABLE),0.99.77-10,0.99.77-14)
+# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
+ALSAPLAYER_VERSION := 0.99.77-16
 ALSAPLAYER_SPEC := stm-target-$(ALSAPLAYER).spec
 ALSAPLAYER_SPEC_PATCH :=
 ALSAPLAYER_PATCHES :=
@@ -433,7 +434,7 @@ $(ALSAPLAYER_RPM) $(ALSAPLAYER_DEV_RPM): \
 		$(if $(ALSAPLAYER_SPEC_PATCH),Patches/$(ALSAPLAYER_PATCH)) \
 		$(if $(ALSAPLAYER_PATCHES),$(ALSAPLAYER_PATCHES:%=Patches/%)) \
 		libmad libid3tag \
-		Archive/$(STLINUX)-target-$(ALSAPLAYER)-$(ALSAPLAYER_VERSION).src.rpm
+		Archive/$(STLINUX:%23=%24)-target-$(ALSAPLAYER)-$(ALSAPLAYER_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(ALSAPLAYER_SPEC_PATCH),( cd SPECS && patch -p1 $(ALSAPLAYER_SPEC) < ../Patches/$(ALSAPLAYER_SPEC_PATCH) ) &&) \
 	$(if $(ALSAPLAYER_PATCHES),cp $(ALSAPLAYER_PATCHES:%=Patches/%) SOURCES/ &&) \
