@@ -672,9 +672,10 @@ endif
 
 	cp -rd $(buildprefix)/root/usr/share/tuxbox $(prefix)/release_enigma1_hd/usr/share/
 	ln -sf /usr/share/zoneinfo/CET $(prefix)/release_enigma1_hd/etc/localtime
+	rm -rf $(prefix)/release_enigma1_hd/var/etc
 	ln -sf /etc $(prefix)/release_enigma1_hd/var
-	ln -sf /etc/tuxbox $(prefix)/release_enigma1_hd/var
-	ln -sf /usr/share $(prefix)/release_enigma1_hd/share
+	ln -sf /usr/share $(prefix)/release_enigma1_hd/
+	ln -sf /usr/share/tuxbox/config/enigma $(prefix)/release_enigma1_hd/
 ##	echo "$(DEFAULT_VIDEOMODE)" >$(prefix)/release_enigma1_hd/etc/videomode
 
 	$(INSTALL_DIR) $(prefix)/release_enigma1_hd/etc
@@ -682,6 +683,8 @@ endif
 
 	$(INSTALL_DIR) $(prefix)/release_enigma1_hd/etc
 	cp -rd $(buildprefix)/root/root_enigma1_hd/etc/* $(prefix)/release_enigma1_hd/etc/
+	rm -rf $(prefix)/release_enigma1_hd/var/tuxbox
+	ln -sf /etc/tuxbox $(prefix)/release_enigma1_hd/var
 
 	$(INSTALL_DIR) $(prefix)/release_enigma1_hd/usr/share/tuxbox
 	cp -rd $(buildprefix)/root/root_enigma1_hd/usr/* $(prefix)/release_enigma1_hd/usr/
