@@ -18,10 +18,11 @@ $(DEPDIR)/enigma1-hd.do_prepare:
 	touch $@
 
 $(DEPDIR)/enigma1-hd.do_compile: $(appsdir)/enigma1-hd/config.status
-	$(MAKE) -C $(appsdir)/enigma1-hd all install DESTDIR=$(targetprefix)
+	rm -rf $(targetprefix)/usr/share/zoneinfo
+	$(MAKE) -C $(appsdir)/enigma1-hd all install DESTDIR=$$(targetprefix)
 
 $(DEPDIR)/enigma1-hd: enigma1-hd.do_prepare enigma1-hd.do_compile
-	$(MAKE) -C $(appsdir)/enigma1-hd install DESTDIR=$(targetprefix)
+	$(MAKE) -C $(appsdir)/enigma1-hd install DESTDIR=$$(targetprefix)
 	touch $@
 
 #enigma1-hd: lirc enigma1-hd.do_compile
