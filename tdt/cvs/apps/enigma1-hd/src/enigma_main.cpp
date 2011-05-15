@@ -3355,6 +3355,7 @@ void eZapMain::pause()
 			                case eSystemInfo::DGS_R9000:
 			                case eSystemInfo::HL101:
 			                case eSystemInfo::VIP2:
+			                case eSystemInfo::ATEVIO7500:
 			            		break;
 			                case eSystemInfo::UFS9101W ... eSystemInfo::UFS91014W:
 						break;

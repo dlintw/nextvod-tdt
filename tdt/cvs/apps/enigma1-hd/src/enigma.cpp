@@ -48,6 +48,10 @@
 #include <enigma_plugins.h>
 #include <setup_harddisk.h>
 
+#if defined(__sh__) // vfd class
+#include <lib/driver/vfd.h>  
+#endif  
+
 // #include <mcheck.h>
 
 eWidget *currentFocus=0;
@@ -277,6 +281,13 @@ void eZap::init_eZap(int argc, char **argv)
 			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcufs91014w.xml") )
 			if ( eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rcufs91014w.xml") )
 			eFatal("couldn't load RC Mapping file for Kathrein UFS910 14W");
+			break;
+		}
+		case eSystemInfo::ATEVIO7500:
+		{
+			if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rc_atevio7500.xml") )
+			if ( eActionMapList::getInstance()->loadXML( TUXBOXDATADIR "/enigma/resources/rc_atevio7500.xml") )
+			eFatal("couldn't load RC Mapping file for Atevio 7500");
 			break;
 		}
 		//FIXME add for other models
@@ -610,6 +621,12 @@ int main(int argc, char **argv)
 		eConfigOld c;
 		c.convert("/var/tuxbox/config/enigma/config");
 	}
+
+#if defined(__sh__)  // initialise the vfd class
+	evfd * vfd = new evfd;  
+	vfd->init();  
+    delete vfd;  
+#endif  
 
 	{
 		eZap ezap(argc, argv);

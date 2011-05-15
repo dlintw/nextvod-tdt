@@ -215,7 +215,8 @@ void gFBDC::saveSettings()
 
 void gFBDC::setResolution(int xres, int yres)
 {
-        fb->fbset();		
+#ifndef __sh__
+    fb->fbset();		
 	fb->SetMode(720, 576, 32);
 //	for (int y=0; y<576; y++)																		 // make whole screen transparent
 //		memset(fb->lfb+y*720*4, 0x00, 720*4);
@@ -231,6 +232,21 @@ void gFBDC::setResolution(int xres, int yres)
 	pixmap->clut.colors=256;
 	pixmap->clut.data=new gRGB[pixmap->clut.colors];
 	memset(pixmap->clut.data, 0, sizeof(*pixmap->clut.data)*pixmap->clut.colors);
+#else
+	fb->SetMode(xres, yres, 32);
+
+	pixmap         = new gPixmap();
+	pixmap->x      = xres;
+	pixmap->y      = yres;
+	pixmap->bpp    = 32;
+	pixmap->bypp   = 4;
+	pixmap->stride = xres * 4;
+	pixmap->data   = fb->lfb;
+
+	pixmap->clut.colors = 256;
+	pixmap->clut.data   = new gRGB[pixmap->clut.colors];
+	memset(pixmap->clut.data, 0, sizeof(*pixmap->clut.data)*pixmap->clut.colors);
+#endif
 }
 
 void gFBDC::reloadSettings()

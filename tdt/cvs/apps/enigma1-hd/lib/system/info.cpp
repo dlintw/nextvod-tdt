@@ -155,6 +155,24 @@ void eSystemInfo::init_eSystemInfo()
 			hasci=1;
 			hasscartswitch = 1;
 			break;
+		case ATEVIO7500:
+		    eDebug("[SystemInfo] HW type: Atevio 7500");
+			defaulttimertype=ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR;
+			manufactstr="Atevio";
+			helpstr="atevio7500";
+			cpustr="STi7105";
+			haskeyboard=1;
+			modelstr="Atevio 7500";
+			if(!strncmp(" avl2108", tuner.c_str(), 9))
+				tunerstr = "AVL2108 DVB S2";
+			else
+				tunerstr = "Unknown";
+			midstr="92";
+			haslcd = hashdd = canmeasurelnbcurrent = canrecordts = cantimeshift = 1;
+			hasstandbywakeuptimer = 1;
+			hasci=1;
+			hasscartswitch = 1;
+			break;
 		case DGS_R900:
 		    eDebug("[SystemInfo] HW type: IPBOX 900");
 			caids.insert(0x4a70);
@@ -667,6 +685,8 @@ int eSystemInfo::getBoxModel()
         	vBoxType = VIP2;
         else if(!strncasecmp(vName,"hdbox", 5))
         	vBoxType = HDBOX;
+        else if(!strncasecmp(vName,"atevio7500", 5))
+        	vBoxType = ATEVIO7500;
         else
         	vBoxType = Unknown;
     }

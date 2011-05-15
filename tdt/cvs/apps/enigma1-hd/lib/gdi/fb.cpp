@@ -74,7 +74,16 @@ void fbClass::init_fbClass(const char *fb)
 		goto nolfb;
 	}
 
-	lfb += 1920*1080*4;    
+#if defined(__sh__) 
+	//we use 2MB at the end of the buffer, the rest does the blitter 
+	lfb_direct = lfb;     
+	lfb += 1920*1080*4;     
+	topDiff = 0;
+	leftDiff = 0;
+	rightDiff = 0;
+	bottomDiff = 0;
+#endif 
+
 	showConsole(state);
 	return;
 nolfb:
@@ -91,27 +100,71 @@ int fbClass::showConsole(int state)
 
 int fbClass::SetMode(unsigned int nxRes, unsigned int nyRes, unsigned int nbpp)
 {
-//      eDebug("[%s] %dx%d-%d",__FUNCTION__, nxRes, nyRes, nbpp);  
 	screeninfo.xres_virtual=screeninfo.xres=nxRes;
-	screeninfo.yres_virtual=screeninfo.yres=nyRes;
+#if defined(__sh__) 
+	screeninfo.yres_virtual=screeninfo.yres=nyRes; 
+#else 
+	screeninfo.yres_virtual=(screeninfo.yres=nyRes)*2;
+#endif
 	screeninfo.height=0;
 	screeninfo.width=0;
 	screeninfo.xoffset=screeninfo.yoffset=0;
 	screeninfo.bits_per_pixel=nbpp;
-/*         
+
+	switch (nbpp) {
+	case 16:
+		// ARGB 1555
+		screeninfo.transp.offset = 15;
+		screeninfo.transp.length = 1;
+		screeninfo.red.offset = 10;
+		screeninfo.red.length = 5;
+		screeninfo.green.offset = 5;
+		screeninfo.green.length = 5;
+		screeninfo.blue.offset = 0;
+		screeninfo.blue.length = 5;
+		break;
+	case 32:
+		// ARGB 8888
+		screeninfo.transp.offset = 24;
+		screeninfo.transp.length = 8;
+		screeninfo.red.offset = 16;
+		screeninfo.red.length = 8;
+		screeninfo.green.offset = 8;
+		screeninfo.green.length = 8;
+		screeninfo.blue.offset = 0;
+		screeninfo.blue.length = 8;
+		break;
+	}
+
+#if not defined(__sh__) 
 	if (ioctl(fd, FBIOPUT_VSCREENINFO, &screeninfo)<0)
 	{
-		perror("FBIOPUT_VSCREENINFO");
-		printf("fb failed\n");
-		return -1;
-	}
-*/
+		// try single buffering
+		screeninfo.yres_virtual=screeninfo.yres=nyRes;
+		
+		if (ioctl(fd, FBIOPUT_VSCREENINFO, &screeninfo)<0)
+		{
+			perror("FBIOPUT_VSCREENINFO");
+			printf("fb failed\n");
+			return -1;
+		}
+		eDebug(" - double buffering not available.");
+	} else
+		eDebug(" - double buffering available!");
+#endif
+	
+	ioctl(fd, FBIOGET_VSCREENINFO, &screeninfo);
+	
 	if ((screeninfo.xres!=nxRes) && (screeninfo.yres!=nyRes) && (screeninfo.bits_per_pixel!=nbpp))
 	{
 		eDebug("SetMode failed: wanted: %dx%dx%d, got %dx%dx%d",
 			nxRes, nyRes, nbpp,
 			screeninfo.xres, screeninfo.yres, screeninfo.bits_per_pixel);
 	}
+#if defined(__sh__) 
+	xResFB=nxRes; 
+	yResFB=nyRes; 
+#endif 
 	xRes=screeninfo.xres;
 	yRes=screeninfo.yres;
 	bpp=screeninfo.bits_per_pixel;
@@ -122,32 +175,37 @@ int fbClass::SetMode(unsigned int nxRes, unsigned int nyRes, unsigned int nbpp)
 		printf("fb failed\n");
 	}
 	stride=fix.line_length;
-//	memset(lfb, 0, 4*yRes);
-	memset(mmap(0, fix.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0),1, fix.smem_len);
+#if not defined(__sh__) 
+	memset(lfb, 0, stride*yRes);
+#endif
 	return 0;
 }
 
 void fbClass::blit()
 {
-	STMFBIO_BLT_DATA  bltData;
-	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA));
-	bltData.operation  = BLT_OP_COPY;
-	bltData.srcOffset  = 1920*1080*4;
-	bltData.srcPitch   = xRes*4;
-	bltData.dstOffset  = 0;
-	bltData.dstPitch   = xResFB*4;
-	bltData.src_top    = 0;
-	bltData.src_left   = 0;
-	bltData.src_right  = xRes;
-	bltData.src_bottom = yRes;
-	bltData.dst_top    = 0;
-	bltData.dst_bottom = yResFB;
-	bltData.dst_left   = 0;
-	bltData.dst_right  = xResFB;
-	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0)
-	{
-		perror("FBIO_BLIT");
-	}
+	STMFBIO_BLT_DATA  bltData; 
+	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA)); 
+	bltData.operation  = BLT_OP_COPY; 
+	bltData.srcOffset  = 1920*1080*4; 
+	bltData.srcPitch   = xResFB * 4; 
+	bltData.dstOffset  = 0; 
+	bltData.dstPitch   = xRes*4; 
+	bltData.src_top    = 0; 
+    bltData.src_left   = 0; 
+	bltData.src_right  = xResFB; 
+    bltData.src_bottom = yResFB; 
+	bltData.srcFormat  = SURF_BGRA8888; 
+    bltData.dstFormat  = SURF_BGRA8888;
+	bltData.srcMemBase = STMFBGP_FRAMEBUFFER; 
+    bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
+	bltData.dst_top    = 0 + topDiff; 
+	bltData.dst_left   = 0 + leftDiff; 
+	bltData.dst_right  = xRes + rightDiff; 
+	bltData.dst_bottom = yRes + bottomDiff; 
+	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
+	{ 
+		perror("FBIO_BLIT"); 
+	} 
 }
 
 fbClass::~fbClass()
@@ -227,6 +285,7 @@ void fbClass::unlock()
 
 int fbClass::fbset()
 {
+#ifndef __sh__
         screeninfo.bits_per_pixel = 32;
         int videomode = 0;
 	FILE *f=fopen("/etc/videomode", "r");
@@ -325,6 +384,7 @@ int fbClass::fbset()
 		return -1;
 	}
 
+#endif
         return 0;
 }
 
@@ -352,5 +412,44 @@ void fbClass::setTransparency(int tr)
 }
 #endif
 
+#if defined(__sh__) 
+void fbClass::clearFBblit()
+{
+	//set real frambuffer transparent
+	memset(lfb_direct, 0x00, xRes * yRes * 4);
+	blit();
+}
+
+int fbClass::getFBdiff(int ret)
+{
+	if(ret == 0)
+		return topDiff;
+	else if(ret == 1)
+		return leftDiff;
+	else if(ret == 2)
+		return rightDiff;
+	else if(ret == 3)
+		return bottomDiff;
+	else
+		return -1;
+
+}
+
+void fbClass::setFBdiff(int top, int left, int right, int bottom)
+{
+	if(top < 0) top = 0;
+	if(top > yRes) top = yRes;
+	topDiff = top;
+	if(left < 0) left = 0;
+	if(left > xRes) left = xRes;
+	leftDiff = left;
+	if(right > 0) right = 0;
+	if(-right > xRes) right = -xRes;
+	rightDiff = right;
+	if(bottom > 0) bottom = 0;
+	if(-bottom > yRes) bottom = -yRes;
+	bottomDiff = bottom;
+}
+#endif
 
 

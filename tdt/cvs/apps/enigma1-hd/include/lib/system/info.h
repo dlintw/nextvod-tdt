@@ -54,6 +54,7 @@ public:
 		HL101,
 		VIP2,
 		HDBOX,
+		ATEVIO7500,
 		Unknown
 	};
 

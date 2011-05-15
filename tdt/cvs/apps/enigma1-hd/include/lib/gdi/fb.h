@@ -9,7 +9,12 @@
 class fbClass
 {
 	int fd;
-	unsigned int xRes, yRes, xResFB, yResFB, stride, bpp;
+	unsigned int xRes, yRes, stride, bpp;
+#if defined(__sh__) 
+	unsigned int xResFB, yResFB; 
+	int topDiff, leftDiff, rightDiff, bottomDiff; 
+	unsigned char *lfb_direct;
+#endif
 	int available;
 	unsigned int videoformat;
 	struct fb_var_screeninfo screeninfo, oldscreen;
@@ -32,7 +37,11 @@ public:
 	void setTransparency( int tr = 0 );
 #endif
 
-	fbClass(const char *fb="/dev/fb0");
+#if defined(__sh__) 
+	fbClass(const char *fb="/dev/fb0"); 
+#else 
+	fbClass(const char *fb="/dev/fb/0");
+#endif
 	~fbClass();
 	
 	static fbClass *getInstance();
@@ -45,11 +54,25 @@ public:
 	void NBox(int x, int y, int width, int height, int color);
 	void VLine(int x, int y, int sy, int color);
 	
+#if defined(__sh__)  
+//---> "hack" for libeplayer3 fb access
+        int getFD() { return fd; }
+        unsigned char * getLFB_Direct() { return lfb_direct; }
+        int getScreenResX() { return xRes; }
+        int getScreenResY() { return yRes; }
+//---<
+#endif  
+
 	int lock();
 	void unlock();
 	void blit();
 	int fbset(); 
 	int islocked() { return locked; }
+#if defined(__sh__) 
+	void clearFBblit();
+	int getFBdiff(int ret);
+	void setFBdiff(int top, int right, int left, int bottom);
+#endif
 };
 
 #endif
