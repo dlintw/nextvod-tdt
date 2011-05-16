@@ -676,12 +676,12 @@ endif
 	ln -sf /etc $(prefix)/release_enigma1_hd/var
 	ln -sf /usr/share $(prefix)/release_enigma1_hd/
 	ln -sf /usr/share/tuxbox/config/enigma $(prefix)/release_enigma1_hd/
+	ln -sf /usr/share/tuxbox/keymaps $(prefix)/release_enigma1_hd/usr/local
 ##	echo "$(DEFAULT_VIDEOMODE)" >$(prefix)/release_enigma1_hd/etc/videomode
 
 	$(INSTALL_DIR) $(prefix)/release_enigma1_hd/etc
+	touch $(prefix)/release_enigma1_hd/etc/.firstboot
 	cp -rd $(buildprefix)/root/etc/*.xml $(prefix)/release_enigma1_hd/etc/
-
-	$(INSTALL_DIR) $(prefix)/release_enigma1_hd/etc
 	cp -rd $(buildprefix)/root/root_enigma1_hd/etc/* $(prefix)/release_enigma1_hd/etc/
 	rm -rf $(prefix)/release_enigma1_hd/var/tuxbox
 	ln -sf /etc/tuxbox $(prefix)/release_enigma1_hd/var
