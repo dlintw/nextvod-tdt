@@ -662,7 +662,6 @@ endif
 
 	$(INSTALL_DIR) $(prefix)/release_enigma1_hd/usr/share/locale
 
-#	mkdir -p $(prefix)/release_enigma1_hd/usr/share/locale/
 	cp -rd $(targetprefix)/usr/share/locale/* $(prefix)/release_enigma1_hd/usr/share/locale
 
 #######################################################################################
