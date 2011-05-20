@@ -338,7 +338,7 @@ AC_ARG_ENABLE(spark,
 AM_CONDITIONAL(ENABLE_SPARK,test "$enable_spark" = "yes")
 AC_SUBST(SPARK)
 
-AC_ARG_ENABLE(spark2,
+AC_ARG_ENABLE(spark7162,
     AS_HELP_STRING(--enable-spark7162,    enable spark7162),
     [case "${enableval}" in
         yes) SPARK7162=spark7162 ;;
