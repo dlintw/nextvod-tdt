@@ -343,7 +343,7 @@ AC_ARG_ENABLE(spark7162,
     [case "${enableval}" in
         yes) SPARK7162=spark7162 ;;
     esac],[enable_spark7162=no])
-AM_CONDITIONAL(ENABLE_SPARK2,test "$enable_spark7162" = "yes")
+AM_CONDITIONAL(ENABLE_SPARK7162,test "$enable_spark7162" = "yes")
 AC_SUBST(SPARK7162)
 
 AC_ARG_ENABLE(ufs922,
