@@ -56,7 +56,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mme_host.ko transport0=shm
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko type=spark2_avs
+   insmod $MODDIR/avs.ko type=spark7162_avs
 
    player=`cat /proc/stb/player/version`
    if [ $player=='player179' ]; then
@@ -74,7 +74,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    fi
    insmod $MODDIR/pseudocard.ko
 
-   insmod $MODDIR/spark2.ko
+   insmod $MODDIR/spark7162.ko
    #insmod $MODDIR/starci.ko 
    if [ $player=='player179' ]; then
       insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
