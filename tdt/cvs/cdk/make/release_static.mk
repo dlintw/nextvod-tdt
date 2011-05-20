@@ -60,7 +60,7 @@ release_cuberevo_mini: release_cuberevo
 
 release_ufs922: cpu7101
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(releaseprefix)/lib/modules/
-   
+
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ufs922_fan/fan_ctrl.ko $(releaseprefix)/lib/modules/
 
 release_ufs912: cpu7111
@@ -69,11 +69,14 @@ release_ufs912: cpu7111
 release_spark: cpu7111
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(releaseprefix)/lib/modules/
 
+release_spark2: cpu7105
+   cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(releaseprefix)/lib/modules/
+
 release_fortis_hdbox: cpu7101
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(releaseprefix)/lib/modules/
 
 release_atevio7500: cpu7105
-   cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release/lib/modules/	
+   cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release/lib/modules/
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 
 release_octagon1008: cpu7101
@@ -98,7 +101,7 @@ release_vip1_v2: cpu7101
 release_hs5101: cpu7101
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button_hs5101/button.ko $(releaseprefix)/lib/modules/
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd_hs5101/vfd.ko $(releaseprefix)/lib/modules/
-   
+
    cp -p $(targetprefix)/usr/bin/lircd $(releaseprefix)/usr/bin/
 
 release_tf7700: cpu7101

@@ -113,7 +113,7 @@ endif
 
 if ENABLE_TF7700
 
-	echo "tf7700" > $(prefix)/release_enigma1_hd/etc/hostname 
+	echo "tf7700" > $(prefix)/release_enigma1_hd/etc/hostname
 #       remove the slink to busybox
 	rm -f $(prefix)/release_enigma1_hd/sbin/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release_enigma1_hd/sbin/
@@ -150,7 +150,7 @@ if ENABLE_TF7700
 else
 if ENABLE_UFS922
 
-	echo "ufs922" > $(prefix)/release_enigma1_hd/etc/hostname 
+	echo "ufs922" > $(prefix)/release_enigma1_hd/etc/hostname
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release_enigma1_hd/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_enigma1_hd/lib/modules/
 
@@ -396,27 +396,27 @@ if ENABLE_CUBEREVO_9500HD
 else
 if ENABLE_FORTIS_HDBOX
 
-	echo "fortis" > $(prefix)/release_enigma1_hd/etc/hostname 
+	echo "fortis" > $(prefix)/release_enigma1_hd/etc/hostname
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release_enigma1_hd/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_enigma1_hd/lib/modules/
-	
-if STM23	
+
+if STM23
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_enigma1_hd/lib/modules/ftdi.ko
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_enigma1_hd/lib/modules
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_enigma1_hd/lib/modules
 	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_enigma1_hd/lib/modules
-endif	
+endif
 
 	rm -f $(prefix)/release_enigma1_hd/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_enigma1_hd/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release_enigma1_hd/bin/evremote
 else
 if ENABLE_ATEVIO7500
-	
+
 	echo "fortis" > $(prefix)/release_enigma1_hd/etc/hostname
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release_enigma1_hd/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release_enigma1_hd/lib/modules/
-	
+
 	rm -f $(prefix)/release_enigma1_hd/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_enigma1_hd/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release_enigma1_hd/bin/evremote
@@ -445,7 +445,9 @@ endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/mme/mme_host.ko $(prefix)/release_enigma1_hd/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release_enigma1_hd/lib/modules/
 if !ENABLE_SPARK
+if !ENABLE_SPARK2
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release_enigma1_hd/lib/modules/
+endif
 endif
 if ENABLE_PLAYER131
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_enigma1_hd/lib/modules/
@@ -507,7 +509,7 @@ if ENABLE_PLAYER179
 			touch $(prefix)/release_enigma1_hd/lib/modules/`basename $$mod`; \
 		fi;\
 	done
-endif    
+endif
 
 if ENABLE_PLAYER191
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release_enigma1_hd/lib/modules/
@@ -543,7 +545,7 @@ if ENABLE_PLAYER191
 			touch $(prefix)/release_enigma1_hd/lib/modules/`basename $$mod`; \
 		fi;\
 	done
-endif    
+endif
 
 if STM22
 	rm $(prefix)/release_enigma1_hd/lib/modules/p2div64.ko
@@ -570,7 +572,7 @@ endif
 	$(INSTALL_DIR) $(prefix)/release_enigma1_hd/usr/bin
 	cp -p $(targetprefix)/usr/sbin/vsftpd $(prefix)/release_enigma1_hd/usr/bin/
 if ENABLE_TF7700
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_enigma1_hd/usr/bin/ 
+	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_enigma1_hd/usr/bin/
 endif
 
 if ENABLE_UFS910

@@ -41,7 +41,7 @@ $(DEPDIR)/%release_neutrino_static:
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_neutrino_static/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/ffmpeg $(prefix)/release_neutrino_static/sbin/ && \
 	cp -R $(buildprefix)/static/common/* $(prefix)/release_neutrino_static/ && \
-	cp -R $(buildprefix)/static/$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)/* $(prefix)/release_neutrino_static/ && \
+	cp -R $(buildprefix)/static/$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK2)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)/* $(prefix)/release_neutrino_static/ && \
 	cp -R $(buildprefix)/static/neutrino/* $(prefix)/release_neutrino_static/ && \
 	cp -rd $(targetprefix)/lib/* $(prefix)/release_neutrino_static/lib/ && \
 	rm -f $(prefix)/release_neutrino_static/lib/*.a && \
@@ -68,6 +68,10 @@ else
 if ENABLE_SPARK
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release_neutrino_static/lib/modules/
+else
+if ENABLE_SPARK2
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release_neutrino_static/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release_neutrino_static/lib/modules/
 else
 if ENABLE_HL101
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/proton/proton.ko $(prefix)/release_neutrino_static/lib/modules/
@@ -143,7 +147,8 @@ endif
 endif
 endif
 endif
-	
+endif
+
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmfb.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshell/embxshell.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxmailbox/embxmailbox.ko $(prefix)/release_neutrino_static/lib/modules/
@@ -154,11 +159,12 @@ if !ENABLE_OCTAGON1008
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release_neutrino_static/lib/modules/
 endif
 if !ENABLE_SPARK
+if !ENABLE_SPARK2
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release_neutrino_static/lib/modules/
 endif
-
+endif
 #	PLAYER
-	
+
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stm_v4l2.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvbi.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvout.ko $(prefix)/release_neutrino_static/lib/modules/
@@ -186,9 +192,9 @@ endif
 		else \
 			touch $(prefix)/release_neutrino_static/lib/modules/`basename $$mod`; \
 		fi;\
-	done 
-    
-   
+	done
+
+
 if STM22
 	rm $(prefix)/release_neutrino_static/lib/modules/p2div64.ko
 endif
@@ -207,11 +213,11 @@ endif
 	cp -p $(targetprefix)/usr/sbin/vsftpd $(prefix)/release_neutrino_static/usr/bin/
 	cp -dp $(buildprefix)/root/etc/lircd.conf $(prefix)/release_neutrino_static/etc/
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino_static/usr/bin/
-	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino_static/usr/lib/ 
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino_static/usr/lib/
 
 
 #######################################################################################
-	
+
 
 	$(INSTALL_DIR) $(prefix)/release_neutrino_static/usr/local/bin
 	cp $(targetprefix)/usr/local/bin/neutrino $(prefix)/release_neutrino_static/usr/local/bin/

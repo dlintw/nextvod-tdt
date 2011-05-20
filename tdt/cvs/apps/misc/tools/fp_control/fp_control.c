@@ -517,6 +517,8 @@ int getModel()
             vBoxType = Ufs912;
         else if(!strncasecmp(vName,"spark", 6))
             vBoxType = Spark;
+        else if(!strncasecmp(vName,"spark2", 6))
+            vBoxType = Spark;
         else
             vBoxType = Unknown;
     }

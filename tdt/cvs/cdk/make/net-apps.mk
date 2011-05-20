@@ -24,7 +24,7 @@ $(DEPDIR)/nfs-utils.do_compile: bootstrap e2fsprogs $(DEPDIR)/nfs-utils.do_prepa
 			--disable-gss \
 			--disable-nfsv4 \
 			--without-tcp-wrappers && \
-		$(MAKE) 
+		$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-nfs-utils $(DEPDIR)/std-nfs-utils $(DEPDIR)/max-nfs-utils $(DEPDIR)/ipk-nfs-utils \
@@ -93,9 +93,15 @@ $(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
 	rpm $(DRPM) --noscripts --badreloc --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
 	touch $@
 else
+if ENABLE_SPARK2
+$(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
+	rpm $(DRPM) --noscripts --badreloc --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
+	touch $@
+else
 $(DEPDIR)/autofs.do_prepare: @DEPENDS_autofs@
 	@PREPARE_autofs@
 	touch $@
+endif
 endif
 endif
 endif
@@ -107,9 +113,12 @@ if ENABLE_UFS912
 else
 if ENABLE_SPARK
 else
+if ENABLE_SPARK2
+else
 	cd @DIR_autofs@  && \
 		$(MAKE_OPTS) \
 		$(MAKE)
+endif
 endif
 endif
 endif
@@ -129,9 +138,13 @@ else
 if ENABLE_SPARK
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
 else
+if ENABLE_SPARK2
+	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
+else
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default && \
 	cd @DIR_autofs@  && \
 		@INSTALL_autofs@
+endif
 endif
 endif
 endif

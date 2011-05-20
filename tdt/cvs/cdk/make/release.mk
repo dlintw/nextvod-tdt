@@ -53,8 +53,8 @@ else
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release/bin/cubefpctl
 	chmod 777 $(prefix)/release/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/lib/modules/fp.ko
-	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/lib/modules/tuner.ko	
-endif	
+	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/lib/modules/tuner.ko
+endif
 	rm -f $(prefix)/release/lib/modules/simu_button.ko
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
@@ -109,7 +109,7 @@ release_ufs922:
 	mkdir -p $(prefix)/release/etc/rc.d/rc6.d
 	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
-	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot	
+	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ufs922_fan/fan_ctrl.ko $(prefix)/release/lib/modules/
@@ -152,10 +152,10 @@ release_ufs912:
 	mkdir -p $(prefix)/release/etc/rc.d/rc6.d
 	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
-	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot	
+	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf 
+	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release/boot/audio.elf
 
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs912.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
@@ -180,14 +180,38 @@ release_ufs912:
 	rm $(prefix)/release/lib/firmware/component_7105_pdk7105.fw
 
 release_spark:
-	echo "spark" > $(prefix)/release/etc/hostname 
+	echo "spark" > $(prefix)/release/etc/hostname
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf 
+	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release/boot/audio.elf
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_spark.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_spark.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	cp -f $(buildprefix)/root/release/vfd_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/vfd.ko
 	cp -f $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/encrypt.ko
+
+	cp -dp $(buildprefix)/root/etc/$(LIRCD_CONF) $(prefix)/release/etc/lircd.conf
+	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+
+	$(INSTALL_DIR) $(prefix)/release/usr/local/share/fonts
+	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/local/share/fonts/
+
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release/bin/evremote
+	rm -f $(prefix)/release/bin/gotosleep
+
+release_spark2:
+	echo "spark2" > $(prefix)/release/etc/hostname
+
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/boot/video_7105.elf $(prefix)/release/boot/video.elf
+	cp $(targetprefix)/boot/audio_7105.elf $(prefix)/release/boot/audio.elf
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_spark.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+	cp -f $(buildprefix)/root/release/vfd_spark2$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/vfd.ko
+	cp -f $(buildprefix)/root/release/tuner.ko$(KERNELSTMLABEL)_spark2 $(prefix)/release/lib/modules/spark2.ko
 
 	cp -dp $(buildprefix)/root/etc/$(LIRCD_CONF) $(prefix)/release/etc/lircd.conf
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
@@ -226,7 +250,7 @@ release_fortis_hdbox:
 	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
-if STM23	
+if STM23
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
@@ -243,7 +267,7 @@ endif
 	rm -f $(prefix)/release/bin/evremote
 
 release_atevio7500:
-	echo "atevio7500" > $(prefix)/release/etc/hostname 
+	echo "atevio7500" > $(prefix)/release/etc/hostname
 	rm -f $(prefix)/release/sbin/halt
 	cp $(buildprefix)/root/release/halt_fortis_hdbox $(prefix)/release/etc/init.d/halt
 	chmod 777 $(prefix)/release/etc/init.d/halt
@@ -266,16 +290,16 @@ release_atevio7500:
 	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
-	
+
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
 
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release/lib/modules/	
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release/lib/modules/
-	cp $(targetprefix)/boot/video_7105.elf $(prefix)/release/boot/video.elf 
+	cp $(targetprefix)/boot/video_7105.elf $(prefix)/release/boot/video.elf
 	cp $(targetprefix)/boot/audio_7105.elf $(prefix)/release/boot/audio.elf
 
 	cp $(targetprefix)/lib/firmware/dvb-fe-avl2108.fw $(prefix)/release/lib/firmware/
@@ -312,7 +336,7 @@ release_octagon1008:
 	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
-	
+
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
@@ -352,7 +376,7 @@ release_ufs910:
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd/vfd.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release/boot/video.elf
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
@@ -372,7 +396,7 @@ release_hl101: release_common_utils
 	cp -f $(buildprefix)/root/release/fstab_hl101 $(prefix)/release/etc/fstab
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 	cp $(targetprefix)/bin/stslave $(prefix)/release/bin
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_hl101.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_hl101.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
@@ -383,7 +407,7 @@ release_hl101: release_common_utils
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 
 release_vip1_v2: release_common_utils
-	echo "Edision" > $(prefix)/release/etc/hostname 
+	echo "Edision" > $(prefix)/release/etc/hostname
 	cp -f $(targetprefix)/sbin/shutdown $(prefix)/release/sbin/
 	cp $(buildprefix)/root/release/halt_vip2 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
@@ -391,7 +415,7 @@ release_vip1_v2: release_common_utils
 	cp -f $(buildprefix)/root/release/fstab_vip2 $(prefix)/release/etc/fstab
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 	cp $(targetprefix)/bin/stslave $(prefix)/release/bin
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_vip2.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_vip2.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 if STM23
 	cp -f $(buildprefix)/root/release/vfd_vip2_stm23_0123.ko $(prefix)/release/lib/modules/vfd.ko
 endif
@@ -411,7 +435,7 @@ release_hs5101:
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd_hs5101/vfd.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release/boot/video.elf
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
@@ -421,19 +445,19 @@ release_hs5101:
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 
 release_tf7700: release_common_utils
-	echo "tf7700" > $(prefix)/release/etc/hostname 
+	echo "tf7700" > $(prefix)/release/etc/hostname
 	cp -f $(targetprefix)/sbin/shutdown $(prefix)/release/sbin/
 	cp $(buildprefix)/root/release/halt_tf7700 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/tffp/tffp.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_tf7700 $(prefix)/release/etc/fstab
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_tf7700.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_tf7700.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 if STM22
 	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release/lib/modules
 endif
-	
-	
+
+
 
 #	install autofs
 #	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
@@ -452,14 +476,14 @@ endif
 # IMPORTANT: it is assumed that only one variable is set. Otherwise the target name won't be resolved.
 #
 $(DEPDIR)/min-release $(DEPDIR)/std-release $(DEPDIR)/max-release $(DEPDIR)/ipk-release $(DEPDIR)/release: \
-$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
+$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK2)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
 	touch $@
 
 
 release-clean:
 	rm -f $(DEPDIR)/release
 	rm -f $(DEPDIR)/release_base
-	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
+	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK2)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
 	rm -f $(DEPDIR)/release_common_utils
 	rm -f $(DEPDIR)/release_cube_common
 
@@ -553,7 +577,7 @@ release_base:
 	cp $(targetprefix)/etc/tuxbox/tuxtxt2.conf $(prefix)/release/etc/tuxbox/ && \
 	echo "576i50" > $(prefix)/release/etc/videomode && \
 	cp -R $(targetprefix)/etc/fonts/* $(prefix)/release/etc/fonts/ && \
-	cp $(buildprefix)/root/release/rcS$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(HOMECAST5101),_$(HOMECAST5101)) $(prefix)/release/etc/init.d/rcS && \
+	cp $(buildprefix)/root/release/rcS$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(SPARK2),_$(SPARK2))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(HOMECAST5101),_$(HOMECAST5101)) $(prefix)/release/etc/init.d/rcS && \
 	chmod 755 $(prefix)/release/etc/init.d/rcS && \
 	cp $(buildprefix)/root/release/mountvirtfs $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/mme_check $(prefix)/release/etc/init.d/ && \
@@ -569,7 +593,7 @@ release_base:
 	rm -f $(prefix)/release/lib/*.la && \
 	find $(prefix)/release/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 if !STM22
-	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/etc/init.d/rcS
+	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(SPARK2),_$(SPARK2))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/etc/init.d/rcS
 endif
 if ENABLE_PLAYER131
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
@@ -684,7 +708,9 @@ endif
 
 if !ENABLE_VIP2_V1
 if !ENABLE_SPARK
+if !ENABLE_SPARK2
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release/lib/modules/
+endif
 endif
 endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release/lib/modules/
@@ -770,7 +796,7 @@ endif
 	cp -a $(targetprefix)/usr/local/share/enigma2/* $(prefix)/release/usr/local/share/enigma2
 	cp -a $(targetprefix)/etc/enigma2/* $(prefix)/release/etc/enigma2
 
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml	
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 
 	$(INSTALL_DIR) $(prefix)/release/usr/lib
 	cp -R $(targetprefix)/usr/lib/* $(prefix)/release/usr/lib/

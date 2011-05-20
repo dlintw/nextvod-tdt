@@ -76,12 +76,13 @@ echo "16) Homecast 5101"
 echo "17) Octagon 1008"
 echo "18) SPARK"
 echo "19) Atevio7500"
+echo "20) SPARK2"
 case $1 in
-	[1-9] | 1[0-9]) REPLY=$1
+	[1-9] | 1[0-9] | 2[0]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-19)? ";;
+	read -p "Select target (1-20)? ";;
 esac
 
 case "$REPLY" in
@@ -104,6 +105,7 @@ case "$REPLY" in
 	17) TARGET="--enable-octagon1008 --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
 	18) TARGET="--enable-spark";;
 	19) TARGET="--enable-atevio7500";;
+	20) TARGET="--enable-spark2";;
 	 *) TARGET="--enable-ufs910";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"

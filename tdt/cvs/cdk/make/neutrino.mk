@@ -1,4 +1,4 @@
-# tuxbox/neutrino 
+# tuxbox/neutrino
 
 #
 #NIGHLY
@@ -28,6 +28,7 @@ $(appsdir)/neutrino-nightly/config.status: bootstrap freetype libpng libid3tag o
 			$(if $(FLASH_UFS910),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_FLASH_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(UFS912),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS912 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(SPARK),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
+			$(if $(SPARK2),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(UFS922),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS922 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(TF7700),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_TF7700 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
@@ -57,8 +58,8 @@ neutrino-nightly-clean neutrino-nightly-distclean:
 	rm -f $(DEPDIR)/neutrino-nightly.do_compile
 	rm -f $(DEPDIR)/neutrino-nightly.do_prepare
 	rm -rf $(appsdir)/neutrino-nightly
-	
-	
+
+
 #
 #NORMAL
 #
@@ -90,6 +91,7 @@ $(appsdir)/neutrino/config.status: bootstrap freetype libpng libid3tag openssl c
 			$(if $(FLASH_UFS910),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_FLASH_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(UFS912),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS912 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(SPARK),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
+			$(if $(SPARK2),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(UFS922),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS922 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(TF7700),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_TF7700 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
@@ -98,7 +100,7 @@ $(appsdir)/neutrino/config.status: bootstrap freetype libpng libid3tag openssl c
 			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(VIP1_V2),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_VIP1_V2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(VIP2_V1),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_VIP2_V1 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
-			
+
 
 $(DEPDIR)/neutrino.do_prepare: Patches/neutrino.patch
 	touch $@
@@ -121,5 +123,5 @@ neutrino-clean neutrino-distclean:
 	rm -f $(DEPDIR)/neutrino.do_prepare
 	cd $(appsdir)/neutrino && \
 		$(MAKE) distclean
-	
+
 #libogg is needed
