@@ -93,7 +93,7 @@ $(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
 	rpm $(DRPM) --noscripts --badreloc --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
 	touch $@
 else
-if ENABLE_SPARK2
+if ENABLE_SPARK7162
 $(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
 	rpm $(DRPM) --noscripts --badreloc --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
 	touch $@
@@ -113,7 +113,7 @@ if ENABLE_UFS912
 else
 if ENABLE_SPARK
 else
-if ENABLE_SPARK2
+if ENABLE_SPARK7162
 else
 	cd @DIR_autofs@  && \
 		$(MAKE_OPTS) \
@@ -138,7 +138,7 @@ else
 if ENABLE_SPARK
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
 else
-if ENABLE_SPARK2
+if ENABLE_SPARK7162
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
 else
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default && \

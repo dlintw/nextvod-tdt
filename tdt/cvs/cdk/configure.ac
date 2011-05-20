@@ -339,12 +339,12 @@ AM_CONDITIONAL(ENABLE_SPARK,test "$enable_spark" = "yes")
 AC_SUBST(SPARK)
 
 AC_ARG_ENABLE(spark2,
-    AS_HELP_STRING(--enable-spark2,    enable spark2),
+    AS_HELP_STRING(--enable-spark7162,    enable spark7162),
     [case "${enableval}" in
-        yes) SPARK2=spark2 ;;
-    esac],[enable_spark2=no])
-AM_CONDITIONAL(ENABLE_SPARK2,test "$enable_spark2" = "yes")
-AC_SUBST(SPARK2)
+        yes) SPARK7162=spark7162 ;;
+    esac],[enable_spark7162=no])
+AM_CONDITIONAL(ENABLE_SPARK2,test "$enable_spark7162" = "yes")
+AC_SUBST(SPARK7162)
 
 AC_ARG_ENABLE(ufs922,
 	AS_HELP_STRING(--enable-ufs922,    enable kathrein ufs922 stuff),
@@ -1089,7 +1089,7 @@ spider-box hl101 stuff:      $enable_hl101
 edision argus vip1 v2 stuff: $enable_vip1_v2
 edision argus vip2 v1 stuff: $enable_vip2_v1
 spark box stuff:             $enable_spark
-spark2 box stuff:            $enable_spark2
+spark7162 box stuff:         $enable_spark7162
 ufs910 stuff:                $enable_ufs910
 ufs910 flash:                $enable_flash_ufs910
 ufs912 stuff:                $enable_ufs912

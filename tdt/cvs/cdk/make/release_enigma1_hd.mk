@@ -445,7 +445,7 @@ endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/mme/mme_host.ko $(prefix)/release_enigma1_hd/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release_enigma1_hd/lib/modules/
 if !ENABLE_SPARK
-if !ENABLE_SPARK2
+if !ENABLE_SPARK7162
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release_enigma1_hd/lib/modules/
 endif
 endif

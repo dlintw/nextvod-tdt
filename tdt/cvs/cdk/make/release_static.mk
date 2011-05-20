@@ -69,7 +69,7 @@ release_ufs912: cpu7111
 release_spark: cpu7111
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(releaseprefix)/lib/modules/
 
-release_spark2: cpu7105
+release_spark7162: cpu7105
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(releaseprefix)/lib/modules/
 
 release_fortis_hdbox: cpu7101

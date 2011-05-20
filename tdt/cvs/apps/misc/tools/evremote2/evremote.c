@@ -381,7 +381,7 @@ int getModel()
         {
     		vBoxType = Spark;
         }
-        else if(!strncasecmp(vName,"spark2", 6))
+        else if(!strncasecmp(vName,"spark7162", 9))
         {
     		vBoxType = Spark;
         }

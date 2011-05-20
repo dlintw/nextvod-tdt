@@ -1,4 +1,4 @@
-# tuxbox/enigma2 
+# tuxbox/enigma2
 $(appsdir)/enigma2-nightly/config.status: bootstrap freetype expat fontconfig libpng jpeg libgif libfribidi libid3tag libmad libsigc libreadline \
 		libdvbsi++ python libxml2 libxslt elementtree zope-interface twisted pyopenssl lxml libxmlccwrap ncurses-dev ffmpeg
 	cd $(appsdir)/enigma2-nightly && \
@@ -37,7 +37,7 @@ $(appsdir)/enigma2-nightly/config.status: bootstrap freetype expat fontconfig li
 			$(if $(OCTAGON1008),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_OCTAGON1008 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(UFS912),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_UFS912 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(SPARK),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_SPARK -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")  \
-			$(if $(SPARK2),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_SPARK2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
+			$(if $(SPARK7162),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_SPARK7162 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
 $(DEPDIR)/enigma2-nightly.do_prepare:
 
 	REVISION=""; \

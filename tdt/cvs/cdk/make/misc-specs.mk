@@ -16,9 +16,9 @@ $(DEPDIR)/boot-elf:
 if ENABLE_SPARK
 LIRCD_CONF := lircd_spark.conf
 else !ENABLE_SPARK
-if ENABLE_SPARK2
-LIRCD_CONF := lircd_spark2.conf
-else !ENABLE_SPARK2
+if ENABLE_SPARK7162
+LIRCD_CONF := lircd_spark7162.conf
+else !ENABLE_SPARK7162
 if ENABLE_HL101
 LIRCD_CONF := lircd_hl101.conf
 else !ENABLE_HL101
@@ -36,7 +36,7 @@ endif !ENABLE_HOMECAST5101
 endif !ENABLE_VIP2_V1
 endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
-endif !ENABLE_SPARK2
+endif !ENABLE_SPARK7162
 endif !ENABLE_SPARK
 
 $(DEPDIR)/misc-cp:
