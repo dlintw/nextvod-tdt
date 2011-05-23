@@ -1,32 +1,29 @@
-*** a/drivers/stm/stx7100_comms.c	2011-02-18 18:29:45.000000000 +0100
---- b/stx7100_comms.c	2011-02-20 15:48:38.760295912 +0100
-***************
-*** 240,251 ****
-  			STM_PAD_PIO_BIDIR_NAMED(3, 0, 1, "SCL"),
-  			STM_PAD_PIO_BIDIR_NAMED(3, 1, 1, "SDA"),
-  		},
-! 		.sysconfs_num = 2,
-  		.sysconfs = (struct stm_pad_sysconf []) {
-  			/* SSC1_MUX_SEL = 0 (default assignment) */
-  			STM_PAD_SYS_CFG(7, 2, 2, 0),
-  			/* DVO_OUT_ON = 0 (SSC not DVO) */
-! 			STM_PAD_SYS_CFG(7, 10, 10, 0),
-  		},
-  	},
-  	[2] = {
---- 240,251 ----
-  			STM_PAD_PIO_BIDIR_NAMED(3, 0, 1, "SCL"),
-  			STM_PAD_PIO_BIDIR_NAMED(3, 1, 1, "SDA"),
-  		},
-! 		.sysconfs_num = 1,
-  		.sysconfs = (struct stm_pad_sysconf []) {
-  			/* SSC1_MUX_SEL = 0 (default assignment) */
-  			STM_PAD_SYS_CFG(7, 2, 2, 0),
-  			/* DVO_OUT_ON = 0 (SSC not DVO) */
-! 			//STM_PAD_SYS_CFG(7, 10, 10, 0),
-  		},
-  	},
-  	[2] = {
+--- a/drivers/stm/stx7100_comms.c	2011-05-23 19:00:00.000000000 +0100
++++ b/drivers/stm/stx7100_comms.c	2011-05-23 22:00:00.018479519 +0100
+@@ -240,12 +240,12 @@
+ 			STM_PAD_PIO_BIDIR_NAMED(3, 0, 1, "SCL"),
+ 			STM_PAD_PIO_BIDIR_NAMED(3, 1, 1, "SDA"),
+ 		},
+-		.sysconfs_num = 2,
++		.sysconfs_num = 1,
+ 		.sysconfs = (struct stm_pad_sysconf []) {
+ 			/* SSC1_MUX_SEL = 0 (default assignment) */
+ 			STM_PAD_SYS_CFG(7, 2, 2, 0),
+ 			/* DVO_OUT_ON = 0 (SSC not DVO) */
+-			STM_PAD_SYS_CFG(7, 10, 10, 0),
++			//STM_PAD_SYS_CFG(7, 10, 10, 0),
+ 		},
+ 	},
+ 	[2] = {
+@@ -344,7 +344,7 @@
+ 	BUG_ON(stx7100_ssc_configured[ssc]);
+ 	stx7100_ssc_configured[ssc] = 1;
+ 
+-	stx7100_ssc_devices[ssc].name = "i2c-stm";
++	stx7100_ssc_devices[ssc].name = "i2c-st40";
+ 	stx7100_ssc_devices[ssc].id = i2c_busnum;
+ 
+ 	plat_data = stx7100_ssc_devices[ssc].dev.platform_data;
 *** a/arch/sh/boards/mach-mb448/setup.c	2011-02-18 18:29:42.000000000 +0100
 --- b/setup.c	2011-02-22 13:50:16.257336460 +0100
 ***************
