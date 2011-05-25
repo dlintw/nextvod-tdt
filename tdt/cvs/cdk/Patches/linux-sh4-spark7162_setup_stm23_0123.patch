@@ -279,7 +279,7 @@ diff -pcr linux-sh4-2.6.23.17_stm23_0123_setup/arch/sh/boards/st/pdk7105/setup.c
   	}
   	stx7105_configure_pci(&pdk7105_pci_config);
   
-! 	stx7105_configure_sata(0);
+  	stx7105_configure_sata(0);
 ! 	stx7105_configure_pwm(&pwm_private_info);
   	stx7105_configure_ssc(&ssc_private_info);
   
@@ -290,7 +290,7 @@ diff -pcr linux-sh4-2.6.23.17_stm23_0123_setup/arch/sh/boards/st/pdk7105/setup.c
   	stx7105_configure_pci(&pdk7105_pci_config);
 + #endif
   
-! 	/*stx7105_configure_sata(0);*/
+  	stx7105_configure_sata(0);
 ! /*	stx7105_configure_pwm(&pwm_private_info);*/
   	stx7105_configure_ssc(&ssc_private_info);
   
@@ -342,6 +342,99 @@ diff -pcr linux-sh4-2.6.23.17_stm23_0123_setup/arch/sh/boards/st/pdk7105/setup.c
   	return platform_add_devices(pdk7105_devices, ARRAY_SIZE(pdk7105_devices));
   }
   arch_initcall(device_init);
+diff -pcr linux-sh4-2.6.23.17_stm23_0123_setup/arch/sh/kernel/cpu/sh4/sata-init.c linux-sh4-2.6.23.17_stm23_0123/arch/sh/kernel/cpu/sh4/sata-init.c
+*** linux-sh4-2.6.23.17_stm23_0123_setup/arch/sh/kernel/cpu/sh4/sata-init.c	2011-05-16 15:45:01.719744570 +0800
+--- linux-sh4-2.6.23.17_stm23_0123/arch/sh/kernel/cpu/sh4/sata-init.c	2011-05-25 10:33:57.699061000 +0800
+*************** static void __init SATA_JTAG_DR_Write_MI
+*** 290,295 ****
+--- 290,296 ----
+  
+  static void __init SATA_JTAG_MIPHY_Start_Lane0(struct stm_sata_miphy *miphy)
+  {
++     int Timeout = 0; //YWDRIVER_MODI lwj add 
+  	SATA_JTAG_IR_Select_MIPHY(miphy, 0);
+  
+  	/* Force Macro1 in reset and request PLL calibration reset */
+*************** static void __init SATA_JTAG_MIPHY_Start
+*** 311,319 ****
+  	SATA_JTAG_DR_Write_MIPHY(miphy, 0, 0x12, 0x00);
+  
+  	/* Wait for HFC_READY = 0 */
+  	while (SATA_JTAG_DR_Read_MIPHY(miphy, 0, 0x1) & 0x3)
+  		;
+! 
+  	/* Restart properly Process compensation & PLL Calibration */
+  
+  	/* Set properly comsr definition for 30 MHz ref clock */
+--- 312,331 ----
+  	SATA_JTAG_DR_Write_MIPHY(miphy, 0, 0x12, 0x00);
+  
+  	/* Wait for HFC_READY = 0 */
++     #if 0  //YWDRIVER_MODI lwj modify
+  	while (SATA_JTAG_DR_Read_MIPHY(miphy, 0, 0x1) & 0x3)
+  		;
+!     #else
+!     while (SATA_JTAG_DR_Read_MIPHY(miphy, 0, 0x1) & 0x3 )
+!     {
+!         Timeout++;
+!         if(Timeout == 5)
+!         {
+!             break;
+!         }
+!         msleep(10);
+!     }
+!     #endif
+  	/* Restart properly Process compensation & PLL Calibration */
+  
+  	/* Set properly comsr definition for 30 MHz ref clock */
+*************** static void __init SATA_JTAG_MIPHY_Start
+*** 337,344 ****
+--- 349,369 ----
+  	SATA_JTAG_DR_Write_MIPHY(miphy, 0, 0x40, 0x13);
+  
+  	/* Wait for comzc & comsr done */
++     #if 0  //YWDRIVER_MODI lwj modify
+  	while ((SATA_JTAG_DR_Read_MIPHY(miphy, 0, 0x40) & 0xC) != 0xC)
+  		;
++     #else
++     Timeout = 0;
++ 	while ((SATA_JTAG_DR_Read_MIPHY(miphy, 0, 0x40) & 0xC) != 0xC)
++     {
++         Timeout++;
++         if(Timeout == 5)
++         {
++             break;
++         }
++         msleep(10);
++     }
++     #endif
+  
+  	/* Recommended settings for swing & slew rate FOR SATA GEN 1
+  	 * from CPG */
+*************** static void __init SATA_JTAG_MIPHY_Start
+*** 357,364 ****
+--- 382,402 ----
+  
+  	/*  Wait for phy_ready */
+  	/*  When phy is in ready state ( register 0x01 of macro1 to 0x13) */
++     #if 0  //YWDRIVER_MODI lwj modify
+  	while ((SATA_JTAG_DR_Read_MIPHY(miphy, 0, 0x01) & 0x03) != 0x03)
+  		;
++     #else
++     Timeout = 0;
++ 	while ((SATA_JTAG_DR_Read_MIPHY(miphy, 0, 0x01) & 0x03) != 0x03)
++     {
++         Timeout++;
++         if(Timeout == 5)
++         {
++             break;
++         }
++         msleep(10);
++     }
++     #endif
+  
+  	/* Enable macro1 to use rx_lspd  & tx_lspd from link interface */
+  	SATA_JTAG_DR_Write_MIPHY(miphy, 0, 0x10, 0x00);
 diff -pcr linux-sh4-2.6.23.17_stm23_0123_setup/arch/sh/kernel/cpu/sh4/setup-stx7105.c linux-sh4-2.6.23.17_stm23_0123/arch/sh/kernel/cpu/sh4/setup-stx7105.c
 *** linux-sh4-2.6.23.17_stm23_0123_setup/arch/sh/kernel/cpu/sh4/setup-stx7105.c	2011-05-16 15:45:01.724912856 +0800
 --- linux-sh4-2.6.23.17_stm23_0123/arch/sh/kernel/cpu/sh4/setup-stx7105.c	2011-05-16 17:16:51.883867611 +0800
