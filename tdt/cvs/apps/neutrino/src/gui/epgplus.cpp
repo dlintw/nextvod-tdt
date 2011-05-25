@@ -77,7 +77,7 @@ static EpgPlus::FontSetting fontSettingTable[] = {
   {EpgPlus::EPGPlus_footer_fontbouquetchannelname, (char *) "Bold", 24},
   {EpgPlus::EPGPlus_footer_fonteventdescription, (char *) "Regular", 16},
   {EpgPlus::EPGPlus_footer_fonteventshortdescription, (char *) "Regular", 16},
-  {EpgPlus::EPGPlus_footer_fontbuttons, (char *) "Regular", 16},
+  {EpgPlus::EPGPlus_footer_fontbuttons, (char *) "Regular", 16}
 };
 
 static EpgPlus::SizeSetting sizeSettingTable[] = {
@@ -87,7 +87,7 @@ static EpgPlus::SizeSetting sizeSettingTable[] = {
   {EpgPlus::EPGPlus_horgap1_height, 4},
   {EpgPlus::EPGPlus_horgap2_height, 4},
   {EpgPlus::EPGPlus_vergap1_width, 4},
-  {EpgPlus::EPGPlus_vergap2_width, 4},
+  {EpgPlus::EPGPlus_vergap2_width, 4}
 };
 
 Font *EpgPlus::Header::font = NULL;
