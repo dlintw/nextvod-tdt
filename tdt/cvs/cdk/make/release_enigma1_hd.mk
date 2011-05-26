@@ -684,6 +684,8 @@ endif
 	touch $(prefix)/release_enigma1_hd/etc/.firstboot
 	cp -rd $(buildprefix)/root/etc/*.xml $(prefix)/release_enigma1_hd/etc/
 	cp -rd $(buildprefix)/root/root_enigma1_hd/etc/* $(prefix)/release_enigma1_hd/etc/
+	rm -rf $(prefix)/release_enigma1_hd/etc/tuxbox
+	ln -sf /usr/share/tuxbox $(prefix)/release_enigma1_hd/etc
 	rm -rf $(prefix)/release_enigma1_hd/var/tuxbox
 	ln -sf /etc/tuxbox $(prefix)/release_enigma1_hd/var
 
