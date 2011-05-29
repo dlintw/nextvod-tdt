@@ -303,6 +303,10 @@ sub process_install_rule ($)
   {
     $output .= "rm -rf " . join " ", @_;
   }
+  elsif ( $_ eq "mkdir" )
+  {
+    $output .= "mkdir -p " . join " ", @_;
+  }
   elsif ( $_ eq "link" )
   {
     $output .= "ln -sf " . join " ", @_;

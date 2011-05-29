@@ -44,6 +44,7 @@ pngquant;install:-m755:pngquant:TARGETS/usr/bin
 mplayer;make:install INSTALLSTRIP="":DESTDIR=TARGETS
 mencoder;make:install INSTALLSTRIP="":DESTDIR=TARGETS
 jfsutils;make:install:prefix=TARGETS
+opkg;make:install:DESTDIR=TARGETS;link:/usr/bin/opkg-cl:TARGET/usr/bin/opkg;mkdir:TARGET/var/opkg
 
 #
 # contrib libs

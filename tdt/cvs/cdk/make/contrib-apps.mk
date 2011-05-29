@@ -1010,6 +1010,33 @@ $(DEPDIR)/%jfsutils: $(DEPDIR)/jfsutils.do_compile
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 
+#
+# opkg
+#
+$(DEPDIR)/opkg.do_prepare: @DEPENDS_opkg@
+	@PREPARE_opkg@
+	touch $@
 
+$(DEPDIR)/opkg.do_compile: bootstrap opkg.do_prepare 
+	cd @DIR_opkg@ && \
+		$(BUILDENV) \
+		./configure \
+			--build=$(build) \
+			--host=$(target) \
+			--prefix=/usr \
+			--disable-curl \
+			--disable-gpg \
+			--with-opkglibdir=/var && \
+		$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-opkg $(DEPDIR)/std-opkg $(DEPDIR)/max-opkg \
+$(DEPDIR)/opkg: \
+$(DEPDIR)/%opkg: $(DEPDIR)/opkg.do_compile
+	cd @DIR_opkg@ && \
+		@INSTALL_opkg@
+#	@DISTCLEANUP_jfsutils@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
 
 

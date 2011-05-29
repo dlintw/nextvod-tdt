@@ -72,6 +72,7 @@ pngquant;1.0;pngquant-1.0;pngquant-1.0-src.tgz;extract:pngquant-1.0-src.tgz
 mplayer;1.0;mplayer-export-*;mplayer-export-snapshot.tar.bz2;extract:mplayer-export-snapshot.tar.bz2
 mencoder;1.0;mplayer-export-*;mplayer-export-snapshot.tar.bz2;extract:mplayer-export-snapshot.tar.bz2
 jfsutils;1.1.14;jfsutils-1.1.14;jfsutils-1.1.14.tar.gz;extract:jfsutils-1.1.14.tar.gz
+opkg;0.1.8;opkg-0.1.8;opkg-0.1.8.tar.gz;extract:opkg-0.1.8.tar.gz
 
 #
 # contrib libs
@@ -139,6 +140,7 @@ libass;0.9.11;libass-0.9.11;libass-0.9.11.tar.gz;extract:libass-0.9.11.tar.gz
 portmap;6.0;portmap_6.0;portmap-6.0.tgz:portmap_6.0.diff:portmap_6.0-9.diff.gz;extract:portmap-6.0.tgz;patch:portmap_6.0.diff
 nfs_utils;1.1.1;nfs-utils-1.1.1;nfs-utils-1.1.1.tar.bz2:nfs-utils_1.1.1-12.diff.gz;extract:nfs-utils-1.1.1.tar.bz2
 autofs;4.1.4;autofs-4.1.4;autofs-4.1.4.tar.bz2:autofs4.diff;extract:autofs-4.1.4.tar.bz2;patch:autofs4.diff
+#autofs;3.1.7;autofs-3.1.7;autofs-3.1.7.tar.bz2;extract:autofs-3.1.7.tar.bz2;patch:autofs-3.1.7-16.diff
 vsftpd;2.0.7;vsftpd-2.0.7;vsftpd-2.0.7.tar.gz:vsftpd.diff;extract:vsftpd-2.0.7.tar.gz;patch:vsftpd.diff
 netkit_ftp;0.17;netkit-ftp-0.17;netkit-ftp-0.17.tar.gz:netkit-ftp.diff;extract:netkit-ftp-0.17.tar.gz;patch:netkit-ftp.diff
 #samba;3.0.28;samba-3.0.28;samba-3.0.28.tar.gz:samba.diff;extract:samba-3.0.28.tar.gz;patch:samba.diff

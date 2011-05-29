@@ -76,6 +76,7 @@ boost_1_40_0.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/boost
 pngquant-1.0-src.tgz;ftp://ftp.simplesystems.org/pub/libpng/png/applications
 mplayer-export-snapshot.tar.bz2;ftp://ftp.mplayerhq.hu/MPlayer/releases
 jfsutils-1.1.14.tar.gz;http://jfs.sourceforge.net/project/pub/
+opkg-0.1.8.tar.gz;http://opkg.googlecode.com/files/
 
 #
 # contrib libs
@@ -150,6 +151,7 @@ portmap_6.0-9.diff.gz;http://debian.osuosl.org/debian/pool/main/p/portmap/
 nfs-utils-1.1.1.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/nfs
 nfs-utils_1.1.1-12.diff.gz;http://ftp.de.debian.org/debian/pool/main/n/nfs-utils
 autofs-4.1.4.tar.bz2;ftp://ftp.kernel.org/pub/linux/daemons/autofs/v4
+#autofs-3.1.7.tar.bz2;ftp://ftp.kernel.org/pub/linux/daemons/autofs/v3
 vsftpd-2.0.7.tar.gz;http://gd.tuwien.ac.at/infosys/servers/ftp/vsftpd
 netkit-ftp-0.17.tar.gz;ftp://ftp.uk.linux.org/pub/linux/Networking/netkit
 samba-3.0.28.tar.gz;http://us1.samba.org/samba/ftp
