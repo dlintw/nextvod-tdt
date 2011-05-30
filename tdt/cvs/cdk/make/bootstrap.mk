@@ -389,8 +389,6 @@ else !STM22
 ##	touch .deps/$(notdir $@)
 endif !STM22
 
-if STM24
-else !STM24
 #
 # HOST-MTD-UTILS
 #
@@ -408,7 +406,7 @@ HOST_MTD_UTILS_SPEC_PATCH =
 HOST_MTD_UTILS_PATCHES =
 else !STM23
 # if STM24
-HOST_MTD_UTILS_VERSION = TODO
+HOST_MTD_UTILS_VERSION = 1.0.1-8
 HOST_MTD_UTILS_SPEC = stm-$(HOST_MTD_UTILS).spec
 HOST_MTD_UTILS_SPEC_PATCH =
 HOST_MTD_UTILS_PATCHES =
@@ -417,6 +415,19 @@ endif !STM23
 endif !STM22
 HOST_MTD_UTILS_RPM = RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).sh4.rpm
 
+
+# Workaround for stm24, where is the host-lzo package available?
+if STM24
+$(HOST_MTD_UTILS_RPM): \
+		$(if $(HOST_MTD_UTILS_SPEC_PATCH),Patches/$(HOST_MTD_UTILS_SPEC_PATCH)) \
+		$(if $(HOST_MTD_UTILS_PATCHES),$(HOST_MTD_UTILS_PATCHES:%=Patches/%)) \
+		Archive/stlinux23-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).src.rpm
+	rpm  $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(HOST_MTD_UTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(HOST_MTD_UTILS_SPEC) < ../Patches/$(HOST_MTD_UTILS_SPEC_PATCH) ) &&) \
+	$(if $(HOST_MTD_UTILS_PATCHES),cp $(HOST_MTD_UTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_MTD_UTILS_SPEC)
+else !STM24
 $(HOST_MTD_UTILS_RPM): \
 		$(if $(HOST_MTD_UTILS_SPEC_PATCH),Patches/$(HOST_MTD_UTILS_SPEC_PATCH)) \
 		$(if $(HOST_MTD_UTILS_PATCHES),$(HOST_MTD_UTILS_PATCHES:%=Patches/%)) \
@@ -426,11 +437,11 @@ $(HOST_MTD_UTILS_RPM): \
 	$(if $(HOST_MTD_UTILS_PATCHES),cp $(HOST_MTD_UTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_MTD_UTILS_SPEC)
+endif !STM24
 
 $(HOST_MTD_UTILS): $(HOST_MTD_UTILS_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
-endif !STM24
 
 #
 # BOOTSTRAP-HOST
