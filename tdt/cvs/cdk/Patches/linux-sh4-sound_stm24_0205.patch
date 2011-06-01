@@ -210,3 +210,16 @@ diff -rcN linux-sh4-2.6.32.10_stm24_0201_orig/sound/core/pcm_native.c linux-sh4/
   static void pcm_release_private(struct snd_pcm_substream *substream)
   {
   	snd_pcm_unlink(substream);
+*** a/sound/core/pcm_lib.c    2009-12-03 04:51:21.000000000 +0100
+--- b/pcm_lib.c    2011-05-30 22:57:54.407735963 +0200
+***************
+*** 434,439 ****
+--- 434,441 ----
+      return snd_pcm_update_hw_ptr_post(substream, runtime);
+  }
+  
++ EXPORT_SYMBOL(snd_pcm_update_hw_ptr);
++ 
+  /**
+   * snd_pcm_set_ops - set the PCM operators
+   * @pcm: the pcm instance
