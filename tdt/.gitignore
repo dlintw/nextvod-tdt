@@ -1,4 +1,5 @@
 #git status excludes the following files (except those line who start with !)
+*.order
 *.lo
 *.la
 *.so
@@ -119,6 +120,16 @@ cvs/apps/neutrino/src/zapit/src/Makefile
 cvs/apps/neutrino/src/zapit/src/pzapit
 cvs/apps/neutrino/src/zapit/src/udpstreampes
 cvs/apps/neutrino/stamp-h1
+
+cvs/apps/misc/tools/libeplayer3/Makefile
+cvs/apps/misc/tools/libeplayer3/eplayer3
+cvs/apps/misc/tools/libeplayer3/meta
+cvs/apps/misc/tools/libmme_host/Makefile
+cvs/apps/misc/tools/libmmeimage/Makefile
+cvs/apps/misc/tools/vfdctl/Makefile
+cvs/apps/misc/tools/vfdctl/vfdctl
+
+
 cvs/cdk/Makefile
 cvs/cdk/Makefile-archive
 cvs/cdk/RPMS/
@@ -127,7 +138,7 @@ cvs/cdk/autofs-4.1.4/
 cvs/cdk/boost_1_40_0/
 cvs/cdk/busybox-1.11.2/
 cvs/cdk/config
-cvs/cdk/curl-7.17.1/
+cvs/cdk/curl-*
 cvs/cdk/depcomp
 cvs/cdk/e2fsprogs-1.40.2/
 cvs/cdk/ethtool-6/
@@ -158,13 +169,29 @@ cvs/cdk/u-boot/
 cvs/cdk/util-linux-2.12r/
 cvs/cdk/vsftpd-2.0.7/
 cvs/cdk/zlib-1.2.3/
+cvs/cdk/ffmpeg-*
+cvs/cdk/libass-*
 cvs/driver/.config
 cvs/driver/.tmp_versions/
+#make.sh changes something in this file, so dont commit by default
+cvs/driver/Makefile
+
 tufsbox/
 .version
 cvs/cdk/BUILD/
 cvs/cdk/SOURCES/
 cvs/cdk/SPECS/
 cvs/cdk/linux
-cvs/cdk/linux-2.6.17.14_stm22_0041/
+cvs/cdk/linux-*
 cvs/cdk/root/var/etc/.version
+
+#Theses are only links which are created by make.sh
+cvs/driver/include/multicom
+cvs/driver/include/player2
+cvs/driver/include/stmfb
+cvs/driver/multicom
+cvs/driver/player2
+cvs/driver/stgfb/stmfb
+
+
+
