@@ -56,7 +56,13 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init AVS"
    insmod $MODDIR/avs.ko type=stv6418
 
-   echo "init player"
+   player=`cat /proc/stb/player/version`
+   if [ $player=='player179' ]; then
+      echo "init player 179"
+   else
+      echo "init player 131"
+   fi
+
    insmod $MODDIR/mmelog.ko
    #there is no mpeg2hw on atevio7500, will be handled by fw & copos
    #insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
@@ -65,12 +71,24 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stm_v4l2.ko
    insmod $MODDIR/pseudocard.ko
 
-   insmod $MODDIR/avl2108_platform.ko
+   insmod $MODDIR/frontend_platform.ko
+   insmod $MODDIR/socket.ko
+   insmod $MODDIR/lnbh221.ko
+   insmod $MODDIR/lnb_pio.ko
    insmod $MODDIR/avl2108.ko
+#   insmod $MODDIR/tda10024.ko
+
    insmod $MODDIR/starci.ko 
-   insmod $MODDIR/pti.ko
-   insmod $MODDIR/stmdvb.ko
-   insmod $MODDIR/stm_monitor.ko
+   if [ $player=='player179' ]; then
+      insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+      insmod $MODDIR/stm_monitor.ko
+      insmod $MODDIR/stmsysfs.ko
+      insmod $MODDIR/stmdvb.ko
+   else
+      insmod $MODDIR/pti.ko
+      insmod $MODDIR/stmdvb.ko
+      insmod $MODDIR/stm_monitor.ko
+   fi
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko

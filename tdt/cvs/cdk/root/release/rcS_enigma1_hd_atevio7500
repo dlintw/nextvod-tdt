@@ -66,10 +66,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
-   if [ $player=='player179' ]; then
-      insmod $MODDIR/stmvout.ko
-      insmod $MODDIR/stmvbi.ko
-   fi
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/frontend_platform.ko
@@ -77,7 +73,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/lnbh221.ko
    insmod $MODDIR/lnb_pio.ko
    insmod $MODDIR/avl2108.ko
-   insmod $MODDIR/tda10024.ko
+#   insmod $MODDIR/tda10024.ko
 
    insmod $MODDIR/starci.ko 
    if [ $player=='player179' ]; then
