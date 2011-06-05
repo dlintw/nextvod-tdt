@@ -57,7 +57,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/avs.ko type=stv6418
 
    player=`cat /proc/stb/player/version`
-   if [ $player=='player179' ]; then
+   if [ $player=='player191' ]; then
+      echo "init player 191"
+   elif [ $player=='player179' ]; then
       echo "init player 179"
    else
       echo "init player 131"
@@ -79,7 +81,12 @@ if [ ! -e /var/etc/.firstboot ]; then
 #   insmod $MODDIR/tda10024.ko
 
    insmod $MODDIR/starci.ko 
-   if [ $player=='player179' ]; then
+   if [ $player=='player191' ]; then
+      insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+      insmod $MODDIR/stm_monitor.ko
+      insmod $MODDIR/stmsysfs.ko
+      insmod $MODDIR/stmdvb.ko
+   elif [ $player=='player179' ]; then
       insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
       insmod $MODDIR/stm_monitor.ko
       insmod $MODDIR/stmsysfs.ko
@@ -128,16 +135,16 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
 
-   NFS=$(grep -c 'nfs' /proc/cmdline)
+   NFS=`grep -c nfs /proc/cmdline`
    if [ "$NFS" -eq "1" ]; then 
       echo "Booting from nfs, don't set network" 
    else 
       if [ -e /etc/network/interfaces ]; then 
 	 ip addr flush eth0 
 	 /etc/init.d/networking stop 
-	 TEST=$(grep -c 'dhcp' /etc/network/interfaces) 
-	 if [ "$(TEST)" -eq "1" ]; then 
-	    echo dhcp
+	 DHCP=`grep -c dhcp /etc/network/interfaces`
+	 if [ "$DHCP" -eq "1" ]; then 
+	    echo "Starting dhcp"
             /etc/init.d/udhcpc start 
 	 fi 
 	 /etc/init.d/networking start 
@@ -172,6 +179,4 @@ if [ ! -e /var/etc/.firstboot ]; then
 fi
 
 #never reached
-echo "REBOOT ATEVIO7500" > /dev/vfd
-echo "REBOOT ATEVIO7500"
-reboot
+
