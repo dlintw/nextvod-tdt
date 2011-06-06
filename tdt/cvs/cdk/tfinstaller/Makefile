@@ -1,4 +1,4 @@
-LINDIR = ../linux
+LINDIR = ../linux-sh4
 
 # To generate an image with initramfs containing the installer the
 # following steps have to be executed:
@@ -6,18 +6,19 @@ LINDIR = ../linux
 # - generate and compress new initramfs
 # - make a uImage containing the new initramfs
 all:
-	mv $(LINDIR)/arch/sh/boot/uImage ./uImage.org
-	rm -f ./initramfs_data.cpio.gz.org
-	mv $(LINDIR)/usr/initramfs_data.cpio.gz ./initramfs_data.cpio.gz.org
+	pwd
+	mv $(LINDIR)/arch/sh/boot/uImage uImage.org
+	rm -f initramfs_data.cpio
+	mv $(LINDIR)/usr/initramfs_data.cpio initramfs_data.cpio.org
 	$(LINDIR)/usr/gen_init_cpio initramfs_list > $(LINDIR)/usr/initramfs_data.cpio
-	gzip -f -9 $(LINDIR)/usr/initramfs_data.cpio
+
+	#Build Kernel containing initramfs
 	$(MAKE) -C $(LINDIR) ARCH=sh TF7700=y uImage
-	rm -f $(LINDIR)/usr/initramfs_data.cpio.gz
-	mv ./initramfs_data.cpio.gz.org $(LINDIR)/usr/initramfs_data.cpio.gz
-	mv $(LINDIR)/arch/sh/boot/uImage .
-	mv uImage.org $(LINDIR)/arch/sh/boot/uImage
-	rm $(LINDIR)/../../../tufsbox/cdkroot/boot/uImage
-	cp $(LINDIR)/arch/sh/boot/uImage $(LINDIR)/../../../tufsbox/cdkroot/boot/
+
+	rm -f $(LINDIR)/usr/initramfs_data.cpio
+	mv initramfs_data.cpio.org $(LINDIR)/usr/initramfs_data.cpio
+	mv $(LINDIR)/arch/sh/boot/uImage.gz uImage
+	mv uImage.org $(LINDIR)/arch/sh/boot/uImage.gz
 
 TFP_OBJS = io.o encode.o decode.o maketree.o maketbl.o huf.o
 

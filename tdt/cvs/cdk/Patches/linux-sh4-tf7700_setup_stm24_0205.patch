@@ -189,7 +189,7 @@
 +	 },
 +	{
 +	 .name = "TF Kernel",
-+	 .size = 0x00200000,
++	 .size = 0x00300000,
 +	 .offset = MTDPART_OFS_NXTBLK,
 +	 },
 +	{
