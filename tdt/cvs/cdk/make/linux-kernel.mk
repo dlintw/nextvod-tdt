@@ -329,7 +329,8 @@ COMMONPATCHES_24 = \
 
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-tf7700_setup_stm24$(PATCH_STR).patch \
-		linux-usbwait123_stm24.patch
+		linux-usbwait123_stm24.patch \
+		linux-sh4-stmmac_stm24_0205.patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 			stx7100_fdma_fix_stm24_205.patch \
