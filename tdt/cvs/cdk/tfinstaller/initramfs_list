@@ -64,7 +64,7 @@ dir   /bin						0777 0 0
 # (uncomment at the bottom)
 #file  /bin/busybox	../../../tufsbox/release/bin/busybox 	0755 0 0
 # busybox 1.13.1
-file  /bin/busybox	./busybox 			0755 0 0
+file  /bin/busybox	../tfinstaller/busybox 			0755 0 0
 slink /bin/echo		/bin/busybox			0777 0 0
 slink /bin/ash		/bin/busybox			0777 0 0
 slink /bin/sh		/bin/busybox			0777 0 0
@@ -94,9 +94,9 @@ file  /sbin/mkfs.jfs    ../../../tufsbox/release/sbin/mkfs.jfs 0755 0 0
 file  /sbin/fsck.jfs    ../../../tufsbox/release/sbin/fsck.jfs 0755 0 0
 
 dir  /etc						0755 0 0
-file /etc/inittab	./inittab 	  		0755 0 0
+file /etc/inittab	../tfinstaller/inittab 	  		0755 0 0
 dir  /etc/init.d 					0755 0 0
-file /etc/init.d/rcS	./rcS				0755 0 0
+file /etc/init.d/rcS	../tfinstaller/rcS				0755 0 0
 
 file /drvko/e2_proc.ko	../../../tufsbox/release/lib/modules/e2_proc.ko	0755 0 0
 file /drvko/tffp.ko	../../../tufsbox/release/lib/modules/tffp.ko	0755 0 0
@@ -106,10 +106,10 @@ file /sbin/tfd2mtd      ../../../tufsbox/release/bin/tfd2mtd            0755 0 0
 slink /init		/bin/busybox			0755 0 0
 
 dir  /deploy									0755 0 0
-file /deploy/deploy.sh			./deploy.sh			0755 0 0
-file /deploy/U-Boot_Settings_hdd.mtd2	./U-Boot_Settings_hdd.mtd2	0755 0 0
-file /deploy/U-Boot_Settings_usb.mtd2	./U-Boot_Settings_usb.mtd2	0755 0 0
-file /deploy/u-boot.mtd1		./u-boot.ftfd	0755 0 0
+file /deploy/deploy.sh			../tfinstaller/deploy.sh			0755 0 0
+file /deploy/U-Boot_Settings_hdd.mtd2	../tfinstaller/U-Boot_Settings_hdd.mtd2	0755 0 0
+file /deploy/U-Boot_Settings_usb.mtd2	../tfinstaller/U-Boot_Settings_usb.mtd2	0755 0 0
+file /deploy/u-boot.mtd1		../tfinstaller/u-boot.ftfd	0755 0 0
 
 dir  /lib									0755 0 0
 file /lib/libc.so.6		../../../tufsbox/release/lib/libc.so.6		0755 0 0
