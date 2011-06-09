@@ -42,6 +42,7 @@ min-bare-os std-bare-os max-bare-os bare-os: \
 		\
 		%e2fsprogs \
 		%jfsutils \
+		%opkg \
 		%u-boot-utils \
 		%diverse-tools
 #		%$(RELEASE) \
