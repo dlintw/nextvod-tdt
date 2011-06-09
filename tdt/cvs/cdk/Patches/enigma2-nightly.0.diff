@@ -577,7 +577,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/base/filepush.cpp 
 +// vvv Fix to ensure that event evtEOF is called at end of playbackl part 1/3
 +	bool already_empty=false;
 +// ^^^ Fix to ensure that event evtEOF is called at end of playbackl part 1/3
-+ sleep(1);
++	sleep(1);
  	while (!m_stop)
  	{
  			/* first try flushing the bufptr */
