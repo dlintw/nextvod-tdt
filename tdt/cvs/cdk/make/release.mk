@@ -522,6 +522,7 @@ release_base:
 	$(INSTALL_DIR) $(prefix)/release/ram && \
 	$(INSTALL_DIR) $(prefix)/release/var && \
 	$(INSTALL_DIR) $(prefix)/release/var/etc && \
+	$(INSTALL_DIR) $(prefix)/release/var/opkg && \
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release && \
 	touch $(prefix)/release/var/etc/.firstboot && \
@@ -754,6 +755,7 @@ endif
 	cp -p $(targetprefix)/usr/bin/python $(prefix)/release/usr/bin/
 
 	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release/usr/bin/
+	cp -p $(targetprefix)/usr/bin/opkg-cl $(prefix)/release/usr/bin/opkg
 	cp -p $(targetprefix)/usr/bin/ffmpeg $(prefix)/release/sbin/
 	cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release/usr/bin/
 	cp -p $(targetprefix)/usr/sbin/ethtool $(prefix)/release/usr/sbin/
