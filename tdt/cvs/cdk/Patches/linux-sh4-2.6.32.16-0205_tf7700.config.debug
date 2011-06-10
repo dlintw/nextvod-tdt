@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.16
-# Thu Jun  9 12:03:29 2011
+# Fri Jun 10 09:05:56 2011
 #
 CONFIG_SUPERH=y
 CONFIG_SUPERH32=y
@@ -122,6 +122,7 @@ CONFIG_HAVE_DMA_API_DEBUG=y
 #
 # GCOV-based kernel profiling
 #
+CONFIG_SLOW_WORK=y
 CONFIG_HAVE_GENERIC_DMA_COHERENT=y
 CONFIG_SLABINFO=y
 CONFIG_RT_MUTEXES=y
@@ -1195,7 +1196,11 @@ CONFIG_EXT3_FS_XATTR=y
 CONFIG_JBD=y
 CONFIG_FS_MBCACHE=y
 # CONFIG_REISERFS_FS is not set
-# CONFIG_JFS_FS is not set
+CONFIG_JFS_FS=y
+# CONFIG_JFS_POSIX_ACL is not set
+# CONFIG_JFS_SECURITY is not set
+# CONFIG_JFS_DEBUG is not set
+# CONFIG_JFS_STATISTICS is not set
 # CONFIG_FS_POSIX_ACL is not set
 # CONFIG_XFS_FS is not set
 # CONFIG_GFS2_FS is not set
