@@ -79,7 +79,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/boxtype.ko
    insmod $MODDIR/simu_button.ko
    tffpctl --keyemulationmode 0
-   /bin/evremote2 &
+   tffpctl --typematicdelay 0
+   tffpctl --typematicrate 0
+   /bin/evremote2 10 110 &
 fi
 
 #rset

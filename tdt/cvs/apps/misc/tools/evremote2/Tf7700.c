@@ -38,6 +38,12 @@
 #include "map.h"
 #include "remotes.h"
 
+/* ***************** our key assignment **************** */
+
+static tLongKeyPressSupport cLongKeyPressSupport = {
+  10, 110,
+};
+
 static tButton cButtonsTopfield7700HDPVR[] = {
     {"STANDBY"        , "0B", KEY_POWER},
     {"MUTE"           , "0C", KEY_MUTE},
@@ -96,6 +102,8 @@ static tButton cButtonsTopfield7700HDPVR[] = {
     {""               , ""  , KEY_NULL},
 };
 
+/* ***************** our fp button assignment **************** */
+
 static tButton cButtonsTopfield7700HDPVRFrontpanel[] = {
     {"CHANNELDOWN"    , "02", KEY_PAGEDOWN},
     {"CHANNELUP"      , "03", KEY_PAGEUP},
@@ -111,6 +119,18 @@ static tButton cButtonsTopfield7700HDPVRFrontpanel[] = {
 static int pInit(Context_t* context, int argc, char* argv[]) {
 
     int vFd              = open("/dev/rc", O_RDWR);
+
+    if (argc >= 2)
+    {
+       cLongKeyPressSupport.period = atoi(argv[1]);
+    }
+    
+    if (argc >= 3)
+    {
+       cLongKeyPressSupport.delay = atoi(argv[2]);
+    }
+
+    printf("period %d, delay %d\n", cLongKeyPressSupport.period, cLongKeyPressSupport.delay);
 
     return vFd;
 }
@@ -129,7 +149,7 @@ static int pRead(Context_t* context) {
     eKeyType      vKeyType         = RemoteControl;
     int           vCurrentCode     = -1;
     
-// wait for new command 
+    // wait for new command 
     read (context->fd, vData, cSize);
 
     //printf("0x%02X 0x%02X\n", vData[0], vData[1]);
@@ -145,6 +165,11 @@ static int pRead(Context_t* context) {
     else
         vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
     
+    if(vCurrentCode != 0) {
+        unsigned int vNextKey = vData[4];
+        vCurrentCode += (vNextKey<<16);
+    }
+
     return vCurrentCode;
 }
 
@@ -164,6 +189,6 @@ RemoteControl_t Tf7700_RC = {
 	cButtonsTopfield7700HDPVR,
 	cButtonsTopfield7700HDPVRFrontpanel,
         NULL,
-    0,
-    NULL,
+        1,
+        &cLongKeyPressSupport,
 };
