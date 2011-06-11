@@ -46,7 +46,12 @@ if [ "$INIT_HALT" = "HALT" ]
 then
 	poweroff=""
 fi
+  
+#led brightness
+/bin/tffpctl --brightness 0
+/bin/tffpctl --cleardisplay
 
-halt -d -f -n -i $poweroff $hddown
+#halt -d -f -n -i $poweroff $hddown
+/bin/tffpctl --poweroff
 
 : exit 0
