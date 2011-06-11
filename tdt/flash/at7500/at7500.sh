@@ -8,6 +8,7 @@ CDKDIR=$BASEDIR/cvs/cdk
 SCRIPTDIR=$CURDIR/scripts
 TMPDIR=$CURDIR/tmp
 TMPROOTDIR=$TMPDIR/ROOT
+TMPEXTDIR=$TMPDIR/EXT
 TMPKERNELDIR=$TMPDIR/KERNEL
 TMPFWDIR=$TMPDIR/FW
 
@@ -22,6 +23,7 @@ if [ $# == "0" ]; then
 fi
 
 mkdir $TMPROOTDIR
+mkdir $TMPEXTDIR
 mkdir $TMPKERNELDIR
 mkdir $TMPFWDIR
 
@@ -49,9 +51,9 @@ read -p "Select target (1-2)? "
 case "$REPLY" in
 	0)  echo "Skipping...";;
 	1)  echo "Preparing Enigma2 Root..."
-		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR;;
+		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPEXTDIR $TMPKERNELDIR $TMPFWDIR;;
 	2)  echo "Preparing Neutrino Root..."
-		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR;;
+		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPEXTDIR $TMPKERNELDIR $TMPFWDIR;;
 	*)  "Invalid Input! Exiting..."
 		exit 2;;
 esac
@@ -87,9 +89,9 @@ echo "   4) FW"
 read -p "Select flashtarget (1-4)? "
 case "$REPLY" in
 	1)  echo "Creating KERNEL with ROOT..."
-		$SCRIPTDIR/flash_part_wo_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR;;
+		$SCRIPTDIR/flash_part_wo_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR $TMPEXTDIR;;
 	2)  echo "Creating KERNEL with ROOT and FW..."
-		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPFWDIR $TMPROOTDIR;;
+		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPFWDIR $TMPROOTDIR $TMPEXTDIR;;
 	3)  echo "Creating KERNEL..."
 		$SCRIPTDIR/flash_part_kernel.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR;;
 	4)  echo "Creating FW..."

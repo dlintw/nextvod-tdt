@@ -4,10 +4,13 @@ CURDIR=$1
 RELEASEDIR=$2
 
 TMPROOTDIR=$3
-TMPKERNELDIR=$4
-TMPFWDIR=$5
+TMPEXTDIR=$4
+TMPKERNELDIR=$5
+TMPFWDIR=$6
 
 cp -a $RELEASEDIR/* $TMPROOTDIR
+
+mv $TMPROOTDIR/usr/local/* $TMPEXTDIR
 
 mv $TMPROOTDIR/boot/uImage $TMPKERNELDIR/uImage
 
@@ -20,7 +23,7 @@ sed -i "s/\/boot\/bootlogo.mvi/\/etc\/bootlogo.mvi/g" $TMPROOTDIR/etc/init.d/rcS
 rm -f $TMPROOTDIR/boot/*
 
 echo "/dev/mtdblock2	/boot	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
-#echo "/dev/mtdblock5	/root	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
+echo "/dev/mtdblock3	/usr/local	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
 
 
 if [  -e $CURDIR/extras/dev_at7500.tar.gz ]; then
