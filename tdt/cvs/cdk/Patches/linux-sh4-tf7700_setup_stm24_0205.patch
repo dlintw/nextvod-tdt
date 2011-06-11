@@ -45,7 +45,7 @@
 + 	"gfx-memory",
 + 	NULL };
 + 
-+const char *LMI_SYS_partalias[] = { "BPA2_Region0", "bigphysarea",  NULL };
++const char *LMI_SYS_partalias[] = { "BPA2_Region0", "bigphysarea", "v4l2-coded-video-buffers",  NULL };
 + 
 +static struct bpa2_partition_desc bpa2_parts_table[] = {
 +	  {
