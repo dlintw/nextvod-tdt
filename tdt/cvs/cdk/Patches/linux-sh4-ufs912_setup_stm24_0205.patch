@@ -304,7 +304,7 @@
  	stx7111_ssc_configured[ssc] = 1;
  
 -	stx7111_ssc_devices[ssc].name = "i2c-stm";
-+	stx7100_ssc_devices[ssc].name = "i2c-st40";
++	stx7111_ssc_devices[ssc].name = "i2c-st40";
  	stx7111_ssc_devices[ssc].id = i2c_busnum;
  
  	/* The SSC3 is an internal I2C link and is hard-wired -
