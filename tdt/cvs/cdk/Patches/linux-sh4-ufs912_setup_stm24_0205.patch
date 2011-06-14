@@ -297,8 +297,8 @@
  	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
  }
 
---- stx7111_comms.c	2011-04-28 22:11:29.000000000 +0200
-+++ stx7111_comms.c.patched	2011-06-14 14:28:37.000000000 +0200
+--- a/drivers/stm/stx7111_comms.c	2011-04-28 22:11:29.000000000 +0200
++++ b/drivers/stm/stx7111_comms.c.patched	2011-06-14 14:28:37.000000000 +0200
 @@ -350,7 +350,7 @@
  	BUG_ON(stx7111_ssc_configured[ssc]);
  	stx7111_ssc_configured[ssc] = 1;
