@@ -346,7 +346,8 @@ UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 FLASHUFS910PATCHES_24 = $(UFS910PATCHES_24)
 
 UFS912PATCHES_24 = $(COMMONPATCHES_24) \
-		linux-sh4-ufs912_setup_stm24$(PATCH_STR).patch
+		linux-sh4-ufs912_setup_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24_0205.patch
 
 ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-atevio7500_setup_stm24$(PATCH_STR).patch
