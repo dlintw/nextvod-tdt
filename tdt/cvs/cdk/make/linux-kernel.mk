@@ -186,6 +186,7 @@ endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
 
 COMMONPATCHES_23 = \
+		linux-squashfs3.0_lzma_stm23.patch \
 		linux-sh4-cpp_stm23.patch \
 		linux-sh4-time_stm23.patch \
 		linux-sh4-cmdline-printk_stm23.patch \
@@ -355,7 +356,7 @@ UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
 		linux-sh4-stmmac_stm24_0205.patch \
-		linux-sh4-i2c-st40-pio_stm24_0205.patch 
+		linux-sh4-i2c-st40-pio_stm24_0205.patch
 
 VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
 		linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
