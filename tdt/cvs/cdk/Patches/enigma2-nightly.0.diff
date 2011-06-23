@@ -3745,11 +3745,18 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/gdi/fb.cpp enigma2
  	return 0;
  }
  
-@@ -183,10 +208,32 @@
+@@ -183,10 +208,80 @@
  
  void fbClass::blit()
  {
-+#if defined(__sh__) 
++#if defined(__sh__)
++	int modefd=open("/proc/stb/video/3d_mode", O_RDWR);
++	char buf[16] = "off";
++	if(modefd > 0){
++		read(modefd, buf, 15);
++		buf[15]='\0';
++	}
++
 +	STMFBIO_BLT_DATA  bltData; 
 +	memset(&bltData, 0, sizeof(STMFBIO_BLT_DATA)); 
 +	bltData.operation  = BLT_OP_COPY; 
@@ -3757,18 +3764,59 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/gdi/fb.cpp enigma2
 +	bltData.srcPitch   = xResFB * 4; 
 +	bltData.dstOffset  = 0; 
 +	bltData.dstPitch   = xRes*4; 
-+	bltData.src_top    = 0; bltData.src_left   = 0; 
-+	bltData.src_right  = xResFB; bltData.src_bottom = yResFB; 
++	bltData.src_top    = 0;
++	bltData.src_left   = 0; 
++	bltData.src_right  = xResFB;
++ 	bltData.src_bottom = yResFB; 
 +	bltData.srcFormat = SURF_BGRA8888; bltData.dstFormat = SURF_BGRA8888;
 +	bltData.srcMemBase = STMFBGP_FRAMEBUFFER; bltData.dstMemBase = STMFBGP_FRAMEBUFFER; 
-+	bltData.dst_top    = 0 + topDiff; 
-+	bltData.dst_left   = 0 + leftDiff; 
-+	bltData.dst_right  = xRes + rightDiff; 
-+	bltData.dst_bottom = yRes + bottomDiff; 
-+	if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
-+	{ 
-+		perror("FBIO_BLIT"); 
-+	} 
++ 
++	if(strncmp(buf,"sbs",3)==0){
++		bltData.dst_top    = 0 + topDiff; 
++		bltData.dst_left   = 0 + leftDiff/2; 
++		bltData.dst_right  = xRes/2 + rightDiff/2; 
++		bltData.dst_bottom = yRes + bottomDiff; 
++		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
++		{ 
++			perror("FBIO_BLIT"); 
++		}
++		bltData.dst_top    = 0 + topDiff; 
++		bltData.dst_left   = xRes/2 + leftDiff/2; 
++		bltData.dst_right  = xRes + rightDiff/2; 
++		bltData.dst_bottom = yRes + bottomDiff; 
++		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
++		{ 
++			perror("FBIO_BLIT"); 
++		}
++	}else if(strncmp(buf,"tab",3)==0){
++		bltData.dst_top    = 0 + topDiff/2; 
++		bltData.dst_left   = 0 + leftDiff; 
++		bltData.dst_right  = xRes + rightDiff; 
++		bltData.dst_bottom = yRes/2 + bottomDiff/2; 
++		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
++		{ 
++			perror("FBIO_BLIT"); 
++		}
++		bltData.dst_top    = yRes/2 + topDiff/2; 
++		bltData.dst_left   = 0 + leftDiff; 
++		bltData.dst_right  = xRes + rightDiff; 
++		bltData.dst_bottom = yRes + bottomDiff/2; 
++		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
++		{ 
++			perror("FBIO_BLIT"); 
++		}
++	}else{
++		bltData.dst_top    = 0 + topDiff; 
++		bltData.dst_left   = 0 + leftDiff; 
++		bltData.dst_right  = xRes + rightDiff; 
++		bltData.dst_bottom = yRes + bottomDiff; 
++		if (ioctl(fd, STMFBIO_BLT, &bltData ) < 0) 
++		{ 
++			perror("FBIO_BLIT"); 
++		}
++	
++	}
++
 +#else 
  	if (m_manual_blit == 1) {
  		if (ioctl(fd, FBIO_BLIT) < 0)
@@ -3778,7 +3826,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/gdi/fb.cpp enigma2
  }
  
  fbClass::~fbClass()
-@@ -231,19 +278,62 @@
+@@ -231,19 +326,62 @@
  
  void fbClass::enableManualBlit()
  {
@@ -6281,7 +6329,15 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/python/Plugins/Sys
 diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/python/Plugins/SystemPlugins/Videomode/plugin.py enigma2-nightly/lib/python/Plugins/SystemPlugins/Videomode/plugin.py
 --- enigma2-nightly.newest/lib/python/Plugins/SystemPlugins/Videomode/plugin.py	2011-05-21 12:57:48.815347488 +0200
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Videomode/plugin.py	2011-05-21 12:57:49.571344051 +0200
-@@ -85,7 +85,16 @@
+@@ -64,6 +64,7 @@
+ 				self.list.append(getConfigListEntry(_("Resolution"), config.av.videorate[config.av.videomode[config.av.videoport.value].value]))
+ 			else:
+ 				self.list.append(getConfigListEntry(_("Refresh Rate"), config.av.videorate[config.av.videomode[config.av.videoport.value].value]))
++		self.list.append(getConfigListEntry(_("3D Mode"), config.av.threedmode))
+ 
+ 		port = config.av.videoport.value
+ 		if port not in config.av.videomode:
+@@ -85,7 +86,16 @@
  		elif config.av.aspect.value == "4_3":
  			self.list.append(getConfigListEntry(_("Display 16:9 content as"), config.av.policy_169))
  
@@ -6379,7 +6435,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/python/Plugins/Sys
  
  	def getOutputAspect(self):
  		ret = (16,9)
-@@ -112,7 +100,15 @@
+@@ -112,11 +100,22 @@
  		config.av.tvsystem.notifiers = [ ]
  		config.av.wss.notifiers = [ ]
  		AVSwitch.getOutputAspect = self.getOutputAspect
@@ -6389,6 +6445,8 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/python/Plugins/Sys
 +		config.av.colorformat_yuv = ConfigSelection(choices = {"yuv": _("YUV")}, default="yuv")
 +#		config.av.hdmi_audio_source = ConfigSelection(choices = {"pcm": _("PCM"), "spdif": _("SPDIF"), "8ch": _("8Ch"), "none": _("None")}, default="pcm")
 +		config.av.hdmi_audio_source = ConfigSelection(choices = {"pcm": _("PCM"), "spdif": _("SPDIF")}, default="pcm")
++		config.av.threedmode = ConfigSelection(choices = {"off": _("Off"), "sbs": _("Side by Side"),"tab": _("Top an Bottom")}, default="off")
++		config.av.threedmode.addNotifier(self.set3DMode)
 +#+++<
 +		config.av.colorformat_hdmi.addNotifier(self.setHDMIColor)
 +		config.av.colorformat_yuv.addNotifier(self.setYUVColor)
@@ -6396,7 +6454,12 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/python/Plugins/Sys
  		config.av.aspect.addNotifier(self.updateAspect)
  		config.av.wss.addNotifier(self.updateAspect)
  		config.av.policy_169.addNotifier(self.updateAspect)
-@@ -150,7 +146,13 @@
+ 		config.av.policy_43.addNotifier(self.updateAspect)
++		
+ 
+ 		# until we have the hotplug poll socket
+ #		self.timer = eTimer()
+@@ -150,7 +149,13 @@
  		rate = self.rates[mode][rate]
  		for mode in rate.values():
  			# DVI modes must be in "modes_preferred"
@@ -6411,7 +6474,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/python/Plugins/Sys
  #				if mode not in self.modes_preferred and not config.av.edid_override.value:
  #					print "no, not preferred"
  #					return False
-@@ -189,8 +191,15 @@
+@@ -189,8 +194,15 @@
  			open("/etc/videomode", "w").write(mode_50) # use 50Hz mode (if available) for booting
  		except IOError:
  			print "writing initial videomode to /etc/videomode failed."
@@ -6428,7 +6491,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/python/Plugins/Sys
  
  	def saveMode(self, port, mode, rate):
  		print "saveMode", port, mode, rate
-@@ -208,7 +217,12 @@
+@@ -208,7 +220,12 @@
  		return True
  
  	def isPortUsed(self, port):
@@ -6442,10 +6505,13 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/python/Plugins/Sys
  			self.readPreferredModes()
  			return len(self.modes_preferred) != 0
  		else:
-@@ -331,6 +345,31 @@
+@@ -331,6 +348,34 @@
  		except IOError:
  			pass
  
++	def set3DMode(self, configElement):
++		open("/proc/stb/video/3d_mode", "w").write(configElement.value)
++
 +#+++>
 +	def setHDMIColor(self, configElement):
 +		map = {"hdmi_rgb": 0, "hdmi_yuv": 1, "hdmi_422": 2}
