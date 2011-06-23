@@ -27,31 +27,16 @@ then
 	esac
 fi
 
-# See if we need to cut the power.
-if [ "$INIT_HALT" = "POWEROFF" ] && [ -x /etc/init.d/ups-monitor ]
-then
-	/etc/init.d/ups-monitor poweroff
-fi
-
-# Don't shut down drives if we're using RAID.
-hddown="-h"
-if grep -qs '^md.*active' /proc/mdstat
-then
-	hddown=""
-fi
-
-# If INIT_HALT=HALT don't poweroff.
-poweroff="-p"
-if [ "$INIT_HALT" = "HALT" ]
-then
-	poweroff=""
-fi
-  
-#led brightness
-/bin/tffpctl --brightness 0
+ 
+# Led brightness
+/bin/tffpctl --brightness 5
 /bin/tffpctl --cleardisplay
 
-#halt -d -f -n -i $poweroff $hddown
+# Write everything to disk
+# It would be great if we could remount / as read-only before shutting down
+/bin/sync
+sleep 5
+# Power off
 /bin/tffpctl --poweroff
 
 : exit 0
