@@ -33,7 +33,9 @@ fi
 /bin/tffpctl --cleardisplay
 
 # Write everything to disk
+# It would be great if we could remount / as read-only before shutting down
 /bin/sync
+sleep 5
 # Power off
 /bin/tffpctl --poweroff
 

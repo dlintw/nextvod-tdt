@@ -104,6 +104,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
    
+   # Workaround why is jfs always not mountable?
+   # fsck.ext3 /dev/sda3 -a
+   fsck.jfs /dev/sda3 -a
 
    /etc/init.d/mountall start
 
