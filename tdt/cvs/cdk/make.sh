@@ -140,8 +140,6 @@ echo "   6) STM 24 P0205 (working on ufs910(stable, w.o. sata), atevio7500, spar
 echo "   7) STM 24 P0206 (not working until stm provides header)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
-echo "   2) STM 23 P0119"
-#echo "   5) STM 24 P0201 (not working)"
 case $2 in
         [1-7]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"
@@ -185,7 +183,6 @@ cd -
 ##############################################
 
 echo -e "\nPlayer:"
-echo "   1) Player 131 (Deprecated)"
 echo "   2) Player 179"
 echo "   3) Player 191 (Experimental)"
 case $4 in
@@ -379,16 +376,6 @@ echo && \
 #Dagobert: I find it sometimes useful to know
 #what I have build last in this directory ;)
 echo $CONFIGPARAM >lastChoice
-
-echo "-----------------------"
-if [ ! -e ../driver/include/player2/acc_defines.h ]; then
- echo "WARNING: Player2 Header files not found!"
- echo "         Player2 will not be build!"
- echo "         Please install the Player2 Header files and rerun this script"
- sed -i 's/^obj-y	+= player2\/$/#obj-y	+= player2\//g' ../driver/Makefile
-else
- sed -i 's/^#obj-y	+= player2\//obj-y	+= player2\//g' ../driver/Makefile
-fi
 
 echo "-----------------------"
 echo "Your build enivroment is ready :-)"
