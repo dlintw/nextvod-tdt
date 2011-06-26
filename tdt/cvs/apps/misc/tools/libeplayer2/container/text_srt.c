@@ -285,7 +285,9 @@ static void SrtGetSubtitle(Context_t  *context, char * _fileName) {
             	}
             }
         }
+        closedir(dir);
     }
+
 }
 
 

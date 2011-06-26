@@ -372,6 +372,7 @@ static int SrtGetSubtitle(Context_t  *context, char * Filename) {
 
             free(subtitleExtension);
         } /* while */
+	closedir(dir);
     } /* if dir */
 
     free(FilenameExtension);

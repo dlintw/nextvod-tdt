@@ -261,6 +261,7 @@ static void SsaGetSubtitle(Context_t  *context, char * Filename) {
                 free(extension);
             }
         }
+        closedir(dir);
     }
 
     free(FilenameExtension);
