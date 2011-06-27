@@ -130,6 +130,14 @@ AC_ARG_ENABLE(p0206,
 AM_CONDITIONAL(ENABLE_P0206,test "$enable_p0206" = "yes")
 AC_SUBST(P0206)
 
+AC_ARG_ENABLE(p0207,
+        AS_HELP_STRING(--enable-p0207,  set up the CDK to use the STLinux 2.4 with patchlevel 0207),
+	[case "${enableval}" in
+		yes) P0207=p0207 ;;
+	esac], [enable_p0207=no])
+AM_CONDITIONAL(ENABLE_P0206,test "$enable_p0207" = "yes")
+AC_SUBST(P0207)
+
 AC_ARG_ENABLE(debug,
 	AS_HELP_STRING(--enable-debug,	set up the CDK to use debug kernel configs),
 	,[enable_debug=no])

@@ -316,6 +316,10 @@ if ENABLE_P0206
 PATCH_STR=_0206
 endif
 
+if ENABLE_P0207
+PATCH_STR=_0207
+endif
+
 STM24_DVB_PATCH = linux-sh4-linuxdvb_stm24$(PATCH_STR).patch
 
 COMMONPATCHES_24 = \
@@ -415,13 +419,13 @@ if ENABLE_P0205
 KERNELHEADERS_VERSION := 2.6.32.16_stm24_0205-43
 else
 if ENABLE_P0206
-#fixme fixme fixme ->if one has an bugzill account please ask for kernel-headers for 0206!!!
-#cant find kernel-headers for this kernel currently :(
-#so we must patch the spec and use the old or try
-#again later ...
-KERNELHEADERS_VERSION := 2.6.32.16_stm24_0206-43
+KERNELHEADERS_VERSION := 2.6.32.16-44
+else
+if ENABLE_P0205
+KERNELHEADERS_VERSION := 2.6.32.16-44
 else
 KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
+endif
 endif
 endif
 

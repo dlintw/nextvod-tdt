@@ -137,7 +137,8 @@ echo " Maintained:"
 echo "   4) STM 23 P0123"
 echo " Experimental:"
 echo "   6) STM 24 P0205 (working on ufs910(stable, w.o. sata), atevio7500, spark, ufs912, ufs922/player 179/191 only)"
-echo "   7) STM 24 P0206 (not working until stm provides header)"
+echo "   7) STM 24 P0206 (not working)"
+echo "   7) STM 24 P0207 (not working)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
 case $2 in
@@ -156,6 +157,7 @@ case "$REPLY" in
 	5) KERNEL="--enable-stm24 --enable-p0201";STMFB="stm24";;
 	6) KERNEL="--enable-stm24 --enable-p0205";STMFB="stm24";;
 	7) KERNEL="--enable-stm24 --enable-p0206";STMFB="stm24";;
+	8) KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
 	*) KERNEL="--enable-stm22 --enable-p0041";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"
