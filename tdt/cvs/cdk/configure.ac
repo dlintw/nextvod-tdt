@@ -135,7 +135,7 @@ AC_ARG_ENABLE(p0207,
 	[case "${enableval}" in
 		yes) P0207=p0207 ;;
 	esac], [enable_p0207=no])
-AM_CONDITIONAL(ENABLE_P0206,test "$enable_p0207" = "yes")
+AM_CONDITIONAL(ENABLE_P0207,test "$enable_p0207" = "yes")
 AC_SUBST(P0207)
 
 AC_ARG_ENABLE(debug,
