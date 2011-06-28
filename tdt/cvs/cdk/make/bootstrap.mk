@@ -42,7 +42,11 @@ else
 if ENABLE_P0205
 KERNEL_DIR = @DIR_linuxp0205@
 else
+if ENABLE_P0206
 KERNEL_DIR = @DIR_linuxp0206@
+else
+KERNEL_DIR = @DIR_linuxp0207@
+endif
 endif
 endif
 
