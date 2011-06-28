@@ -555,6 +555,7 @@ int container_ass_init(Context_t *context)
     if(modefd > 0){
         read(modefd, buf, 15);
         buf[15]='\0';
+	close(modefd);
     }else threeDMode = 0;
 
     if(strncmp(buf,"sbs",3)==0)threeDMode = 1;
