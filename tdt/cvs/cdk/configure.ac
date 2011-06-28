@@ -749,6 +749,7 @@ TUXBOX_RULES_MAKE(linux24)
 TUXBOX_RULES_MAKE(linuxp0201)
 TUXBOX_RULES_MAKE(linuxp0205)
 TUXBOX_RULES_MAKE(linuxp0206)
+TUXBOX_RULES_MAKE(linuxp0207)
 
 if test "$enable_stm22" = "yes"; then
 	if test "$enable_p0040" == "yes"; then
@@ -773,7 +774,11 @@ if test "$enable_stm23" = "yes"; then
 		KERNELLABEL="119"
 	fi
 else
-	if test "$enable_p0206" == "yes"; then
+	if test "$enable_p0207" == "yes"; then
+		KERNELVERSION=${VERSION_linuxp0207}
+		KERNELSTMLABEL="_${VERSION_linuxp0207#*_}"
+		KERNELLABEL="207"
+	elif test "$enable_p0206" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0206}
 		KERNELSTMLABEL="_${VERSION_linuxp0206#*_}"
 		KERNELLABEL="206"
@@ -1064,6 +1069,7 @@ Patchlevel P0123:            $enable_p0123
 Patchlevel P0201:            $enable_p0201
 Patchlevel P0205:            $enable_p0205
 Patchlevel P0206:            $enable_p0206
+Patchlevel P0207:            $enable_p0207
 vdr VDR 1.7.11:              $enable_vdr1711
 flash rules:                 $enable_flashrules
 ccache:                      $enable_ccache
