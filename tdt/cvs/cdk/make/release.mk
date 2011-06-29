@@ -461,6 +461,8 @@ release_tf7700: release_common_utils
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_tf7700.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 if STM22
 	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release/lib/modules
+else
+	[ -e $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko ] && cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules || true
 endif
 
 
