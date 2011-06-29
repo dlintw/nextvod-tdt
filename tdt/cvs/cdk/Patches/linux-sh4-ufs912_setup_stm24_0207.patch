@@ -383,8 +383,8 @@
 -	},
 +	&mb618_epld_device,
 +	&mb618_nor_device,
++	&mb618_nand_device,
 +	//&mb618_phy_device,
-+	//&mb618_nand_device,
  };
  
  static int __init mb618_devices_init(void)
