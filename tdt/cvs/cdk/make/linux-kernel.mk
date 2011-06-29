@@ -13,6 +13,7 @@ COMMONPATCHES_41 = \
 		linux-sched_stm22.patch \
 		linux-timer_stm22.patch \
 		linux-cmdline_printk_stm22.patch \
+		linux-2.6.17.14-0041_make-3.82_fix.patch \
 		linux-strcpy_stm22.patch
 
 FORTISPATCHES_41 = $(COMMONPATCHES_41) \
