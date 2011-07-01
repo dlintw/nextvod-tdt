@@ -186,8 +186,8 @@ if STM24
 MPC := mpc
 MPC_VERSION := 0.8.2-2
 MPC_SPEC := stm-target-$(MPC).spec
-MPC_SPEC_PATCH :=
-MPC_PATCHES :=
+MPC_SPEC_PATCH := $(MPC_SPEC).$(MPC_VERSION).diff
+MPC_PATCHES := stm-target-$(MPC).$(MPC_VERSION).diff
 MPC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPC)-$(MPC_VERSION).sh4.rpm
 
 $(MPC_RPM): \
@@ -201,6 +201,31 @@ $(MPC_RPM): \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(MPC_SPEC)
 
 $(DEPDIR)/$(MPC): $(MPC_RPM)
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
+	touch $@
+endif STM24
+
+#
+# LIBELF
+#
+if STM24
+LIBELF := libelf
+LIBELF_VERSION := 0.8.13-1
+LIBELF_SPEC := stm-target-$(LIBELF).spec
+LIBELF_SPEC_PATCH := 
+LIBELF_PATCHES := 
+LIBELF_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBELF)-$(LIBELF_VERSION).sh4.rpm
+
+$(LIBELF_RPM): \
+		$(addprefix Patches/,$(LIBELF_SPEC_PATCH) $(LIBELF_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-target-$(LIBELF)-$(LIBELF_VERSION).src.rpm
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(LIBELF_SPEC_PATCH),( cd SPECS && patch -p1 $(LIBELF_SPEC) < ../Patches/$(LIBELF_SPEC_PATCH) ) &&) \
+	$(if $(LIBELF_PATCHES),cp $(addprefix Patches/,$(LIBELF_PATCHES)) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(LIBELF_SPEC)
+
+$(DEPDIR)/$(LIBELF): $(LIBELF_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
 	touch $@
 endif STM24
@@ -241,7 +266,7 @@ LIBGCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
 $(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM): \
 		$(addprefix Patches/,$(GCC_SPEC_PATCH) $(GCC_PATCHES)) \
 		Archive/$(STLINUX:%23=%24)-target-$(GCC)-$(GCC_VERSION).src.rpm \
-		| $(DEPDIR)/$(GLIBC_DEV) $(MPFR) $(MPC)
+		| $(DEPDIR)/$(GLIBC_DEV) $(MPFR) $(MPC) $(LIBELF)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(GCC_SPEC_PATCH),( cd SPECS && patch -p1 $(GCC_SPEC) < ../Patches/$(GCC_SPEC_PATCH) ) &&) \
 	$(if $(GCC_PATCHES),cp $(addprefix Patches/,$(GCC_PATCHES)) SOURCES/ &&) \
