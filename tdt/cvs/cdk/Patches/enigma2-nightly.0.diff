@@ -1563,7 +1563,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/dvb/demux.cpp enig
 diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
 --- enigma2-nightly.newest/lib/dvb/dvb.cpp	2011-05-21 12:57:48.563349454 +0200
 +++ enigma2-nightly/lib/dvb/dvb.cpp	2011-05-21 18:09:45.000000000 +0200
-@@ -100,6 +100,44 @@
+@@ -100,6 +100,46 @@
  		m_boxtype = DM800SE;
  	else if (!strncmp(tmp, "dm7020hd\n", rd))
  		m_boxtype = DM7020HD;
@@ -1580,6 +1580,8 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/dvb/dvb.cpp enigma
 +		m_boxtype = HDBOX;
 +	else if (!strncmp(tmp, "hl101\n", rd))
 +		m_boxtype = HL101;
++	else if (!strncmp(tmp, "spark\n", rd))
++		m_boxtype = SPARK;
 +	else if (!strncmp(tmp, "spark7162\n", rd))
 +		m_boxtype = SPARK7162;
 +	else if (!strncmp(tmp, "vip1-v2\n", rd))
