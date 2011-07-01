@@ -346,7 +346,8 @@ UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 			linux-usbwait123_stm24.patch \
 			linux-sh4-ufs910_reboot_stm24.patch \
 			linux-sh4-smsc911x_dma_stm24$(PATCH_STR).patch \
-			linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
+			linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+			stx7100_pcm_noise_fix_stm24$(PATCH_STR).patch
 
 FLASHUFS910PATCHES_24 = $(UFS910PATCHES_24)
 
