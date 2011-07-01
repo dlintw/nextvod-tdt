@@ -1,0 +1,10 @@
+--- old/stm-target-gcc.spec	2010-03-03 10:41:16.374735762 +0100
++++ new/stm-target-gcc.spec	2010-03-03 10:43:21.090764949 +0100
+@@ -236,7 +236,6 @@
+ 	--enable-nls \
+ 	--enable-c99 \
+ 	--enable-long-long \
+-	--with-system-zlib \
+ 	--enable-shared \
+ %if "%{_stm_target_arch}" != "armv7"
+ 	--disable-libgomp \

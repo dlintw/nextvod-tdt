@@ -253,7 +253,7 @@ else !STM23
 # if STM24
 GCC_VERSION := 4.5.2-82
 GCC_SPEC := stm-target-$(GCC).spec
-GCC_SPEC_PATCH :=
+GCC_SPEC_PATCH := $(GCC_SPEC).$(GCC_VERSION).diff
 GCC_PATCHES :=
 # endif STM24
 endif !STM23
