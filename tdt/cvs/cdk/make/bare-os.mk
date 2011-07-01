@@ -60,7 +60,7 @@ else !STM23
 GLIBC_VERSION := 2.10.1-21
 GLIBC_RAWVERSION := $(firstword $(subst -, ,$(GLIBC_VERSION)))
 GLIBC_SPEC := stm-target-$(GLIBC).spec
-GLIBC_SPEC_PATCH :=
+GLIBC_SPEC_PATCH := 
 GLIBC_PATCHES :=
 # endif STM24
 endif !STM23
@@ -165,6 +165,7 @@ endif !STM23
 MPFR_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPFR)-$(MPFR_VERSION).sh4.rpm
 
 $(MPFR_RPM): \
+		$(GMP) \
 		$(addprefix Patches/,$(MPFR_SPEC_PATCH) $(MPFR_PATCHES)) \
 		Archive/$(STLINUX:%23=%24)-target-$(MPFR)-$(MPFR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
@@ -175,7 +176,7 @@ $(MPFR_RPM): \
 
 $(DEPDIR)/$(MPFR): $(MPFR_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
-	touch .$@
+	touch .deps/$(notdir $@)
 endif !STM22
 
 #
