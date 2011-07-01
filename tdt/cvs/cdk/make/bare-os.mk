@@ -57,7 +57,7 @@ GLIBC_SPEC_PATCH := $(GLIBC_SPEC)23.diff
 GLIBC_PATCHES := stm-target-glibc-sysincludes.patch
 else !STM23
 # if STM24
-GLIBC_VERSION := 2.10.1-7
+GLIBC_VERSION := 2.10.1-21
 GLIBC_RAWVERSION := $(firstword $(subst -, ,$(GLIBC_VERSION)))
 GLIBC_SPEC := stm-target-$(GLIBC).spec
 GLIBC_SPEC_PATCH :=
@@ -121,7 +121,7 @@ GMP_SPEC_PATCH :=
 GMP_PATCHES :=
 else !STM23
 # if STM24
-GMP_VERSION := 4.3.2-3
+GMP_VERSION := 5.0.1-5
 GMP_SPEC := stm-target-$(GMP).spec
 GMP_SPEC_PATCH :=
 GMP_PATCHES :=
@@ -156,7 +156,7 @@ MPFR_SPEC_PATCH :=
 MPFR_PATCHES :=
 else !STM23
 # if STM24
-MPFR_VERSION := 2.4.2-3
+MPFR_VERSION := 3.0.0-5
 MPFR_SPEC := stm-target-$(MPFR).spec
 MPFR_SPEC_PATCH :=
 MPFR_PATCHES :=
@@ -165,7 +165,6 @@ endif !STM23
 MPFR_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPFR)-$(MPFR_VERSION).sh4.rpm
 
 $(MPFR_RPM): \
-		$(GMP) \
 		$(addprefix Patches/,$(MPFR_SPEC_PATCH) $(MPFR_PATCHES)) \
 		Archive/$(STLINUX:%23=%24)-target-$(MPFR)-$(MPFR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
@@ -176,8 +175,34 @@ $(MPFR_RPM): \
 
 $(DEPDIR)/$(MPFR): $(MPFR_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
-	touch .deps/$(notdir $@)
+	touch .$@
 endif !STM22
+
+#
+# MPC
+#
+if STM24
+MPC := mpc
+MPC_VERSION := 0.8.2-2
+MPC_SPEC := stm-target-$(MPC).spec
+MPC_SPEC_PATCH :=
+MPC_PATCHES :=
+MPC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPC)-$(MPC_VERSION).sh4.rpm
+
+$(MPC_RPM): \
+		$(MPFR) $(GMP) \
+		$(addprefix Patches/,$(MPC_SPEC_PATCH) $(MPC_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-target-$(MPC)-$(MPC_VERSION).src.rpm
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(MPC_SPEC_PATCH),( cd SPECS && patch -p1 $(MPC_SPEC) < ../Patches/$(MPC_SPEC_PATCH) ) &&) \
+	$(if $(MPC_PATCHES),cp $(addprefix Patches/,$(MPC_PATCHES)) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(MPC_SPEC)
+
+$(DEPDIR)/$(MPC): $(MPC_RPM)
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
+	touch $@
+endif STM24
 
 #
 # GCC LIBSTDC++
@@ -200,7 +225,7 @@ GCC_SPEC_PATCH :=
 GCC_PATCHES :=
 else !STM23
 # if STM24
-GCC_VERSION := 4.3.4-66
+GCC_VERSION := 4.5.2-82
 GCC_SPEC := stm-target-$(GCC).spec
 GCC_SPEC_PATCH :=
 GCC_PATCHES :=
@@ -215,7 +240,7 @@ LIBGCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
 $(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM): \
 		$(addprefix Patches/,$(GCC_SPEC_PATCH) $(GCC_PATCHES)) \
 		Archive/$(STLINUX:%23=%24)-target-$(GCC)-$(GCC_VERSION).src.rpm \
-		| $(DEPDIR)/$(GLIBC_DEV) $(MPFR)
+		| $(DEPDIR)/$(GLIBC_DEV) $(MPFR) $(MPC)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(GCC_SPEC_PATCH),( cd SPECS && patch -p1 $(GCC_SPEC) < ../Patches/$(GCC_SPEC_PATCH) ) &&) \
 	$(if $(GCC_PATCHES),cp $(addprefix Patches/,$(GCC_PATCHES)) SOURCES/ &&) \

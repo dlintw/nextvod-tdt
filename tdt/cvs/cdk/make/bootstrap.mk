@@ -320,8 +320,8 @@ else !STM23
 # if STM24
 HOST_AUTOCONF_VERSION = 2.64-4
 HOST_AUTOCONF_SPEC = stm-$(HOST_AUTOCONF).spec
-HOST_AUTOCONF_SPEC_PATCH =
-HOST_AUTOCONF_PATCHES =
+HOST_AUTOCONF_SPEC_PATCH = stm-$(HOST_AUTOCONF).$(HOST_AUTOCONF_VERSION).spec.diff
+HOST_AUTOCONF_PATCHES = stm-$(HOST_AUTOCONF).$(HOST_AUTOCONF_VERSION).diff
 # endif STM24
 endif !STM23
 HOST_AUTOCONF_RPM = RPMS/sh4/$(STLINUX)-$(HOST_AUTOCONF)-$(HOST_AUTOCONF_VERSION).sh4.rpm
@@ -331,7 +331,7 @@ $(HOST_AUTOCONF_RPM): \
 		Archive/$(STLINUX:%23=%24)-$(HOST_AUTOCONF)-$(HOST_AUTOCONF_VERSION).src.rpm
 	rpm  $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(HOST_AUTOCONF_SPEC_PATCH),( cd SPECS && patch -p1 $(HOST_AUTOCONF_SPEC) < ../Patches/$(HOST_AUTOCONF_SPEC_PATCH) ) &&) \
-	$(if $(HOST_AUTOMAKE_PATCHES),cp $(addprefix Patches/,$(HOST_AUTOCONF_PATCHES)) SOURCES/ &&) \
+	$(if $(HOST_AUTOCONF_PATCHES),cp $(addprefix Patches/,$(HOST_AUTOCONF_PATCHES)) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_AUTOCONF_SPEC)
 
@@ -640,6 +640,58 @@ $(DEPDIR)/$(CROSS_MPFR): $(CROSS_GMP) $(CROSS_MPFR_RPM)
 endif !STM22
 
 #
+# CROSS MPC
+#
+if STM24
+CROSS_MPC = cross-sh4-mpc
+CROSS_MPC_VERSION = 0.8.2-3
+CROSS_MPC_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_MPC)).spec
+CROSS_MPC_SPEC_PATCH =
+CROSS_MPC_PATCHES =
+CROSS_MPC_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_MPC)-$(CROSS_MPC_VERSION).$(host_arch).rpm
+
+
+$(CROSS_MPC_RPM): \
+		$(addprefix Patches/,$(CROSS_MPC_SPEC_PATCH) $(CROSS_MPC_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-$(subst cross-sh4-,cross-,$(CROSS_MPC))-$(CROSS_MPC_VERSION).src.rpm
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(CROSS_MPC_SPEC_PATCH),( cd SPECS && patch -p1 $(CROSS_MPC_SPEC) < ../Patches/$(CROSS_MPC_SPEC_PATCH) ) &&) \
+	$(if $(CROSS_MPC_PATCHES),cp $(addprefix Patches/,$(CROSS_MPC_PATCHES)) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --target=sh4-linux SPECS/$(CROSS_MPC_SPEC)
+
+$(DEPDIR)/$(CROSS_MPC): $(CROSS_MPC_RPM)
+	@rpm $(DRPM) --nodeps -Uhv $(lastword $^) && \
+	touch $@
+endif STM24
+
+#
+# CROSS LIBELF
+#
+if STM24
+CROSS_LIBELF = cross-sh4-libelf
+CROSS_LIBELF_VERSION = 0.8.13-1
+CROSS_LIBELF_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_LIBELF)).spec
+CROSS_LIBELF_SPEC_PATCH =
+CROSS_LIBELF_PATCHES =
+CROSS_LIBELF_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_LIBELF)-$(CROSS_LIBELF_VERSION).$(host_arch).rpm
+
+
+$(CROSS_LIBELF_RPM): \
+		$(addprefix Patches/,$(CROSS_LIBELF_SPEC_PATCH) $(CROSS_LIBELF_PATCHES)) \
+		Archive/$(STLINUX:%23=%24)-$(subst cross-sh4-,cross-,$(CROSS_LIBELF))-$(CROSS_LIBELF_VERSION).src.rpm
+	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
+	$(if $(CROSS_LIBELF_SPEC_PATCH),( cd SPECS && patch -p1 $(CROSS_LIBELF_SPEC) < ../Patches/$(CROSS_LIBELF_SPEC_PATCH) ) &&) \
+	$(if $(CROSS_LIBELF_PATCHES),cp $(addprefix Patches/,$(CROSS_LIBELF_PATCHES)) SOURCES/ &&) \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	rpmbuild $(DRPMBUILD) -bb -v --target=sh4-linux SPECS/$(CROSS_LIBELF_SPEC)
+
+$(DEPDIR)/$(CROSS_LIBELF): $(CROSS_LIBELF_RPM)
+	@rpm $(DRPM) --nodeps -Uhv $(lastword $^) && \
+	touch $@
+endif STM24
+
+#
 # CROSS GCC
 #
 CROSS_GCC		= cross-sh4-gcc
@@ -667,10 +719,10 @@ CROSS_GCC_KERNELHEADERS = linux-kernel-headers
 CROSS_GCC_INVALIDATE =
 else !STM23
 # if STM24
-CROSS_GCC_VERSION = 4.3.4-63
+CROSS_GCC_VERSION = 4.5.2-78
 CROSS_GCC_RAWVERSION = $(firstword $(subst -, ,$(CROSS_GCC_VERSION)))
 CROSS_GCC_SPEC = stm-$(subst cross-sh4-,cross-,$(CROSS_GCC)).spec
-CROSS_GCC_SPEC_PATCH = $(CROSS_GCC_SPEC)24.diff
+CROSS_GCC_SPEC_PATCH = $(CROSS_GCC_SPEC).$(CROSS_GCC_VERSION).diff
 CROSS_GCC_PATCHES =
 CROSS_GCC_KERNELHEADERS = linux-kernel-headers
 CROSS_GCC_INVALIDATE =
@@ -690,6 +742,8 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 		| Archive/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm \
 		Archive/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm \
 		$(if $(CROSS_MPFR),$(CROSS_MPFR)) \
+		$(if $(CROSS_MPC),$(CROSS_MPC)) \
+		$(if $(CROSS_LIBELF),$(CROSS_LIBELF)) \
 		$(if $(KERNELHEADERS),$(KERNELHEADERS)) \
 		kernel-headers
 	rpm $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
