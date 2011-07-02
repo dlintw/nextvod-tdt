@@ -811,6 +811,8 @@ endif
 
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 
+	ln -s /usr/share/fonts $(prefix)/release/usr/local/share/fonts
+
 	$(INSTALL_DIR) $(prefix)/release/usr/lib
 	cp -R $(targetprefix)/usr/lib/* $(prefix)/release/usr/lib/
 	rm -rf $(prefix)/release/usr/lib/engines

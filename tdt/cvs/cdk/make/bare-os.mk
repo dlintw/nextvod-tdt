@@ -191,7 +191,7 @@ MPC_PATCHES := stm-target-$(MPC).$(MPC_VERSION).diff
 MPC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPC)-$(MPC_VERSION).sh4.rpm
 
 $(MPC_RPM): \
-		$(MPFR) $(GMP) \
+		$(MPFR) \
 		$(addprefix Patches/,$(MPC_SPEC_PATCH) $(MPC_PATCHES)) \
 		Archive/$(STLINUX:%23=%24)-target-$(MPC)-$(MPC_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
