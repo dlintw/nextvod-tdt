@@ -10,7 +10,7 @@ SCRIPTDIR=$CURDIR/scripts
 TMPDIR=$CURDIR/tmp
 TMPROOTDIR=$TMPDIR/ROOT
 TMPKERNELDIR=$TMPDIR/KERNEL
-TMPFWDIR=$TMPDIR/FW
+TMPVARDIR=$TMPDIR/VAR
 
 OUTDIR=$CURDIR/out
 
@@ -24,10 +24,9 @@ fi
 
 mkdir $TMPROOTDIR
 mkdir $TMPKERNELDIR
-mkdir $TMPFWDIR
+mkdir $TMPVARDIR
 
 echo "This script creates flashable images for UFS910 MINI/MAXI UBOOT"
-echo "Will probably be adapted in future to support clones"
 echo "Author: Schischu"
 echo "Date: 07-02-2011"
 echo "-----------------------------------------------------------------------"
@@ -50,9 +49,9 @@ read -p "Select target (1-2)? "
 case "$REPLY" in
 	0)  echo "Skipping...";;
 	1)  echo "Preparing Enigma2 Root..."
-		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPKERNELDIR;;
+		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPVARDIR $TMPKERNELDIR;;
 	2)  echo "Preparing Neutrino Root..."
-		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPKERNELDIR;;
+		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPVARDIR $TMPKERNELDIR;;
 	*)  "Invalid Input! Exiting..."
 		exit 2;;
 esac
@@ -66,7 +65,7 @@ echo "   1) KERNEL with ROOT and FW"
 read -p "Select flashtarget (1)? "
 case "$REPLY" in
 	1)  echo "Creating KERNEL with ROOT and FW..."
-		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR;;
+		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR $TMPVARDIR;;
 	*)  "Invalid Input! Exiting..."
 		exit 3;;
 esac
