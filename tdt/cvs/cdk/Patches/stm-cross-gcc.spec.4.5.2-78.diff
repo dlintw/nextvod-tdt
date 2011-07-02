@@ -1,5 +1,14 @@
 --- SPECS/stm-cross-gcc.spec.orig	2010-04-28 13:53:55.000000000 +0200
 +++ SPECS/stm-cross-gcc.spec	2010-04-28 13:55:22.000000000 +0200
+@@ -221,7 +221,7 @@
+         --with-mpfr=%{_stm_cross_dir} \
+         --with-libelf=%{_stm_cross_dir} \
+         --without-ppl \
+-        --with-gxx-include-dir="\\\${prefix}/target%{_stm_target_include_dir}/c++/%{version}" \
++        --with-gxx-include-dir="\\\${prefix}/../../cdkroot%{_stm_target_include_dir}/c++/%{version}" \
+         --enable-__cxa_atexit \
+ %if "%{_stm_target_fpu}" == "no"
+ %if_target_arch sh4_uclibc
 @@ -257,13 +257,6 @@
  %cross_setup
  %cross_makeinstall
@@ -14,16 +23,6 @@
  
  cd ..
  
-@@ -316,7 +316,9 @@
- rm %{buildroot}%{_stm_cross_targetconf_dir}/lib/libiberty.a
- rm %{buildroot}%{_stm_cross_targetconf_dir}/lib/libstdc++*
- rm %{buildroot}%{_stm_cross_targetconf_dir}/lib/libsupc++*
-+echo %{buildroot}%{_stm_cross_target_dir}%{_stm_target_include_dir}/c++
- rm -rf %{buildroot}%{_stm_cross_target_dir}%{_stm_target_include_dir}/c++
-+rm -rf %{buildroot}%{_stm_cross_target_dir}/../devkit/sh4/target/%{_stm_target_include_dir}/c++
- %if_target_arch sh4 sh4_uclibc
- rm %{buildroot}%{_stm_cross_targetconf_dir}/lib/m4-nofpu/libstdc++*
- rm %{buildroot}%{_stm_cross_targetconf_dir}/lib/m4-nofpu/libsupc++*
 @@ -334,14 +334,16 @@
  	xargs --no-run-if-empty --verbose rm
  # Remove some installed files we don't ship, to keep rpm happy
