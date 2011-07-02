@@ -6448,7 +6448,7 @@ diff -Nur --exclude-from=e2-ignore enigma2-nightly.newest/lib/python/Plugins/Sys
 +		config.av.colorformat_yuv = ConfigSelection(choices = {"yuv": _("YUV")}, default="yuv")
 +#		config.av.hdmi_audio_source = ConfigSelection(choices = {"pcm": _("PCM"), "spdif": _("SPDIF"), "8ch": _("8Ch"), "none": _("None")}, default="pcm")
 +		config.av.hdmi_audio_source = ConfigSelection(choices = {"pcm": _("PCM"), "spdif": _("SPDIF")}, default="pcm")
-+		config.av.threedmode = ConfigSelection(choices = {"off": _("Off"), "sbs": _("Side by Side"),"tab": _("Top an Bottom")}, default="off")
++		config.av.threedmode = ConfigSelection(choices = {"off": _("Off"), "sbs": _("Side by Side"),"tab": _("Top and Bottom")}, default="off")
 +		config.av.threedmode.addNotifier(self.set3DMode)
 +#+++<
 +		config.av.colorformat_hdmi.addNotifier(self.setHDMIColor)
