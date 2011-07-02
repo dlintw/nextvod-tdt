@@ -24,6 +24,9 @@
 #include "libnet.h"             /* netGetNameserver, netSetNameserver   */
 #include "network_interfaces.h" /* getInetAttributes, setInetAttributes */
 #include <stdlib.h>             /* system                               */
+#ifdef __sh__
+#include <stdio.h>
+#endif
 
 CNetworkConfig::CNetworkConfig(void)
 {

@@ -33,6 +33,10 @@
 #ifndef __messagebox__
 #define __messagebox__
 
+#ifdef __sh__
+#include <stdint.h>
+#endif
+
 #include <gui/widget/hintboxext.h>
 
 #include <string>

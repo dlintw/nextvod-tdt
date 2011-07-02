@@ -1062,8 +1062,11 @@ bool CFrameBuffer::paintIcon(const std::string & filename, const int _x, const i
 #endif
 
 //printf("%s(file, %d, %d, %d)\n", __FUNCTION__, x, y, offset);
-
+#ifdef __sh__
+	char * ptr = (char *)rindex(filename.c_str(), '.');
+#else
 	char * ptr = rindex(filename.c_str(), '.');
+#endif
 	if(ptr) {
 		*ptr = 0;
 		std::string newname = iconBasePath + filename.c_str() + ".gif";

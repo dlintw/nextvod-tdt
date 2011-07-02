@@ -5,6 +5,9 @@
 // c++
 #include <cerrno>
 #include <csignal>
+#ifdef __sh__
+#include <stdio.h>
+#endif
 
 // system
 #include <arpa/inet.h>

@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#ifdef __sh__
+#include <stdio.h>
+#endif
 
 #include "dvbci_mmi.h"
 

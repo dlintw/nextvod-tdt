@@ -7,6 +7,9 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <cstring>
+#ifdef __sh__
+#include <stdio.h>
+#endif
 
 #include "mod_weblog.h"
 #include "helper.h"

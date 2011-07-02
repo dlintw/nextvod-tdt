@@ -25,6 +25,10 @@
 #ifndef __zapit__types_h__
 #define __zapit__types_h__
 
+#ifdef __sh__
+#include <stdint.h>
+#endif
+
 //typedef  void CS_DMX_PDATA;
 
 #include "client/zapittypes.h"

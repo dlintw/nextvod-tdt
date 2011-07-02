@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#ifdef __sh__
+#include <stdio.h>
+#endif
 
 #include "dvbci_session.h"
 #include "dvbci_resmgr.h"

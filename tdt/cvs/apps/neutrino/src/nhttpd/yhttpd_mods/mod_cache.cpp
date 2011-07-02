@@ -3,6 +3,9 @@
 // Module: CacheManager (mod_cache)
 //=============================================================================
 
+#ifdef __sh__
+#include <stdio.h>
+#endif
 // system
 #include <pthread.h>
 #include <sys/stat.h>

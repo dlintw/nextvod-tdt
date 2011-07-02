@@ -35,6 +35,9 @@
 #include <linux/input.h>
 #include <string>
 #include <vector>
+#ifdef __sh__
+#include <stdint.h> 
+#endif
 
 #ifndef KEY_OK
 #define KEY_OK           0x160

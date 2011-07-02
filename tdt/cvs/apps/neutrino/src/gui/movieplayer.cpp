@@ -1147,7 +1147,11 @@ const CMenuOptionChooser::keyval VIDEOMENU_43MODE_OPTIONS[VIDEOMENU_43MODE_OPTIO
 
 				} else {
 					char temp_name[255];
+#ifdef __sh__
+					const char *slash = strrchr(filename, '/');
+#else
 					char *slash = strrchr(filename, '/');
+#endif
 					if (slash) {
 						slash++;
 						int len = strlen(slash);
