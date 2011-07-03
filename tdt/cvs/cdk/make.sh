@@ -142,11 +142,11 @@ echo "   8) STM 24 P0207 (not working)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
 case $2 in
-        [1-7]) REPLY=$2
+        [1-8]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
-        read -p "Select kernel (1-7)? ";;
+        read -p "Select kernel (1-8)? ";;
 esac
 
 case "$REPLY" in
