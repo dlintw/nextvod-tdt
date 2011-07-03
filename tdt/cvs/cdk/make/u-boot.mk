@@ -23,8 +23,8 @@ HOST_U_BOOT_VERSION := sh4-1.3.1_stm24_0048-48
 HOST_U_BOOT_RAWVERSION := $(HOST_U_BOOT_VERSION)
 HOST_U_BOOT_DIR := u-boot/u-boot-sh4-$(word 2, $(subst -, ,$(HOST_U_BOOT_VERSION)))
 HOST_U_BOOT_SPEC := stm-$(HOST_U_BOOT).spec
-HOST_U_BOOT_SPEC_PATCH :=
-HOST_U_BOOT_PATCHES :=
+HOST_U_BOOT_SPEC_PATCH := uboot-1.3.1_spec_stm24.patch
+HOST_U_BOOT_PATCHES := uboot-1.3.1_lzma_stm24.patch
 # endif STM24
 endif !STM23
 endif !STM22
