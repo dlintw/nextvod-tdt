@@ -163,6 +163,7 @@ cvs/cdk/lsb-3.2/
 cvs/cdk/module-init-tools-3.3-pre1/
 cvs/cdk/openrdate-1.1.2/
 cvs/cdk/openvpn-2.1.1/
+cvs/cdk/opkg-0.1.8/
 cvs/cdk/portmap_6.0/
 cvs/cdk/rules-downcheck.pl
 cvs/cdk/u-boot/
@@ -192,6 +193,4 @@ cvs/driver/include/stmfb
 cvs/driver/multicom
 cvs/driver/player2
 cvs/driver/stgfb/stmfb
-
-
 
