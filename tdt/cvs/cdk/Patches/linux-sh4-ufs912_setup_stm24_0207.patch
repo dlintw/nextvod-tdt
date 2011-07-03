@@ -46,7 +46,7 @@
  			/* spi_boot_not_comm = 0 should be set here... */
  			/* This is a signal from SPI block */
  			/* Hope this is set correctly by default */
-
+ 
 ---  a/arch/sh/boards/mach-mb618/setup.c.org	2011-06-28 13:29:08.711183993 -0700
 +++ b/arch/sh/boards/mach-mb618/setup.c	2011-06-28 13:36:37.000000000 -0700
 @@ -12,11 +12,13 @@

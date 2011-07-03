@@ -25,6 +25,28 @@
   #ifdef DEBUG_CFI
   		printk("  Erase Region #%d: BlockSize 0x%4.4X bytes, %d blocks\n",
   		       i, (cfi->cfiq->EraseRegionInfo[i] >> 8) & ~0xff,
+--- a/drivers/stm/stx7111_comms.c.org	2011-07-02 05:58:19.000000000 -0700
++++ b/drivers/stm/stx7111_comms.c	2011-07-03 05:30:59.771608244 -0700
+@@ -211,10 +211,17 @@
+ 			STM_PAD_PIO_BIDIR_NAMED(2, 0, 1, "SCL"),
+ 			STM_PAD_PIO_BIDIR_NAMED(2, 1, 1, "SDA"),
+ 		},
+-		.sysconfs_num = 1,
++		.sysconfs_num = 5,
+ 		.sysconfs = (struct stm_pad_sysconf []) {
+ 			/* SSC0_MUX_SEL = 0 (default assignment) */
+ 			STM_PAD_SYS_CFG(7, 1, 1, 0),
++
++			/* some additional sysconfig settings to enable i2c, cic and cec */
++			STM_PAD_SYS_CFG(5, 0, 0, 1), // cic
++			STM_PAD_SYS_CFG(5, 17, 17, 1), // cic
++			STM_PAD_SYS_CFG(5, 8, 8, 1), //cec
++			STM_PAD_SYS_CFG(7, 15, 15, 1), //i2c
++
+ 			/* spi_boot_not_comm = 0 should be set here... */
+ 			/* This is a signal from SPI block */
+ 			/* Hope this is set correctly by default */
+ 
 --- a/arch/sh/boards/mach-mb618/setup.c.org	2011-06-24 02:26:18.000000000 -0700
 +++ b/arch/sh/boards/mach-mb618/setup.c	2011-06-26 02:10:57.720145160 -0700
 @@ -12,11 +12,13 @@
