@@ -89,31 +89,14 @@ yaud-vdr: yaud-none stslave openssl openssl-dev \
 		boot-elf misc-cp remote firstboot vdr release_vdr
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if STM22
-yaud-neutrino: yaud-none lirc stslave\
-		boot-elf hotplug remote firstboot neutrino release_neutrino
-	@TUXBOX_YAUD_CUSTOMIZE@
-flash-ufs910-neutrino: yaud-none stslave \
-		yaud-neutrino \
-		kernel-squashfs.ubimage \
-		root-stock.neutrino \
-		var-stock.neutrino
-	@TUXBOX_YAUD_CUSTOMIZE@
-else
 yaud-neutrino: yaud-none lirc stslave\
 		boot-elf remote firstboot neutrino release_neutrino
 	@TUXBOX_YAUD_CUSTOMIZE@
-flash-ufs910-neutrino: yaud-none stslave \
-		yaud-neutrino \
-		kernel-squashfs.ubimage \
-		root-stock.neutrino \
-		var-stock.neutrino
-	@TUXBOX_YAUD_CUSTOMIZE@
-endif
 
 yaud-neutrino-static: yaud-none lirc stslave\
 		boot-elf remote firstboot neutrino release_neutrino_static
 	@TUXBOX_YAUD_CUSTOMIZE@
+
 flash-ufs910-neutrino: yaud-none stslave \
 		yaud-neutrino \
 		kernel-squashfs.ubimage \
