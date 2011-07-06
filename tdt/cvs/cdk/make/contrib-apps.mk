@@ -257,7 +257,7 @@ $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare
 		--host=$(target) \
 		--target=$(target) \
 		--with-linker=$(target)-ld \
-		$(if $(STABLE), --with-cc="$(target)-gcc") \
+		$(if $(STABLE), cc="$(target)-gcc") \
 		--enable-htree \
 		--disable-profile \
 		--disable-e2initrd-helper \
