@@ -5,7 +5,7 @@ $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	@PREPARE_busybox@
 	touch $@
 
-$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.11.2.config | $(DEPDIR)/$(GLIBC_DEV)
+$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.18.4.config | $(DEPDIR)/$(GLIBC_DEV)
 	cd @DIR_busybox@ && \
 		export CROSS_COMPILE=$(target)- && \
 		$(MAKE) mrproper && \
