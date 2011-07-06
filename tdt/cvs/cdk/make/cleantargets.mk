@@ -25,25 +25,15 @@ endif
 
 # Clean tuxbox source directories
 cdk-clean:
-#	-$(MAKE) -C linux clean
-	-$(MAKE) -C $(driverdir) KERNEL_LOCATION=$(buildprefix)/linux \
+	-$(MAKE) -C $(driverdir) KERNEL_LOCATION=$(buildprefix)/linux-sh4 \
 		BIN_DEST=$(targetprefix)/bin \
 		INSTALL_MOD_PATH=$(targetprefix) clean
-	-$(MAKE) -C $(appsdir)/tuxbox/neutrino clean
-	-$(MAKE) -C $(appsdir)/tuxbox/enigma clean
-	-$(MAKE) -C $(appsdir)/tuxbox/lcars clean
-	-$(MAKE) -C $(appsdir)/tuxbox/radiobox clean
-	-$(MAKE) -C $(appsdir)/tuxbox/plugins clean
-	-$(MAKE) -C $(appsdir)/tuxbox/tools clean
-	-$(MAKE) -C $(appsdir)/tuxbox/lcd clean
 	-$(MAKE) -C $(appsdir)/tuxbox/libs clean
 	-$(MAKE) -C $(appsdir)/tuxbox/libtuxbox clean
-	-$(MAKE) -C $(appsdir)/misc/tools clean
+	-$(MAKE) -C $(appsdir)/tuxbox/plugins clean
 	-$(MAKE) -C $(appsdir)/misc/libs clean
-	-$(MAKE) -C $(appsdir)/dvb/tools clean
-	-$(MAKE) -C $(appsdir)/dvb/config distclean
+	-$(MAKE) -C $(appsdir)/misc/tools distclean
 	-$(MAKE) -C $(appsdir)/dvb/dvbsnoop clean
-	-$(MAKE) -C $(appsdir)/dvb/zapit clean
 	-$(MAKE) -C $(hostappsdir) clean
 #	-$(MAKE) -C root clean
 	-rm -rf build
@@ -51,29 +41,13 @@ cdk-clean:
 # Clean tuxbox source directories. Clean up in cdkroot as much as the
 # uninstall facilities of the components allow.
 clean-local: mostlyclean-local depsclean rpmdepsclean
-#	-$(MAKE) -C $(appsdir)/tuxbox/neutrino uninstall
-	-$(MAKE) -C $(appsdir)/tuxbox/enigma uninstall
-#	-$(MAKE) -C $(appsdir)/tuxbox/lcars uninstall
-#	-$(MAKE) -C $(appsdir)/tuxbox/radiobox uninstall
-	-$(MAKE) -C $(appsdir)/tuxbox/plugins uninstall
-	-$(MAKE) -C $(appsdir)/tuxbox/tools uninstall
-#	-$(MAKE) -C $(appsdir)/tuxbox/lcd uninstall
 	-$(MAKE) -C $(appsdir)/tuxbox/libs uninstall
 	-$(MAKE) -C $(appsdir)/tuxbox/libtuxbox uninstall
-	-$(MAKE) -C $(appsdir)/misc/tools uninstall
+	-$(MAKE) -C $(appsdir)/tuxbox/plugins uninstall
 	-$(MAKE) -C $(appsdir)/misc/libs uninstall
-#	-$(MAKE) -C $(appsdir)/dvb/tools uninstall
-#	-$(MAKE) -C $(appsdir)/dvb/config uninstall
-#	-$(MAKE) -C $(appsdir)/dvb/dvbsnoop uninstall
-#	-$(MAKE) -C $(appsdir)/dvb/zapit uninstall
+	-$(MAKE) -C $(appsdir)/misc/tools uninstall
+	-$(MAKE) -C $(appsdir)/dvb/dvbsnoop uninstall
 	-$(MAKE) -C $(hostappsdir) uninstall
-#	-rm -f $(bootprefix)/dboxflasher
-#	-rm -f $(bootprefix)/dboxflasher-fb
-#	-rm -f $(bootprefix)/dboxflasher-lcd
-#	-rm -f $(bootprefix)/u-boot
-#	-rm -f $(bootprefix)/u-boot-yadd
-#	-rm -f $(bootprefix)/kernel-cdk
-#	-rm -rf $(serversupport)
 	-rm -rf $(hostprefix)
 if TARGETRULESET_FLASH
 	-rm -rf $(flashprefix)/
@@ -96,25 +70,15 @@ endif
 distclean-local:
 #	-$(MAKE) -C root distclean
 	-$(MAKE) -C $(appsdir) distclean
-#	-$(MAKE) -C $(appsdir)/dvb/configtools distclean
 #	-$(MAKE) -C $(appsdir)/dvb/dvbsnoop distclean
-#	-$(MAKE) -C $(appsdir)/dvb/dvb/libdvb++ distclean
-#	-$(MAKE) -C $(appsdir)/dvb/dvb/libdvbsi++ distclean
-#	-$(MAKE) -C $(appsdir)/dvb/tools distclean
-#	-$(MAKE) -C $(appsdir)/dvb/zapit distclean
-	-$(MAKE) -C $(appsdir)/tuxbox/enigma distclean
-#	-$(MAKE) -C $(appsdir)/tuxbox/funstuff distclean
-#	-$(MAKE) -C $(appsdir)/tuxbox/lcars distclean
-#	-$(MAKE) -C $(appsdir)/tuxbox/radiobox distclean
-#	-$(MAKE) -C $(appsdir)/tuxbox/lcd distclean
+#	-$(MAKE) -C $(appsdir)/dvb/libdvb++ distclean
+#	-$(MAKE) -C $(appsdir)/dvb/libdvbsi++ distclean
 	-$(MAKE) -C $(appsdir)/tuxbox/libs distclean
+	-$(MAKE) -C $(appsdir)/tuxbox/plugins distclean
 	-$(MAKE) -C $(appsdir)/tuxbox/libtuxbox distclean
-#	-$(MAKE) -C $(appsdir)/tuxbox/neutrino distclean
-	-$(MAKE) -C $(appsdir)/tuxbox/tools distclean
 	-$(MAKE) -C $(appsdir)/misc/libs distclean
 	-$(MAKE) -C $(appsdir)/misc/tools distclean
 	-$(MAKE) -C $(hostappsdir) distclean
-#	-$(MAKE) -C $(appsdir)/tuxbox/tools/hotplug distclean
 	-$(MAKE) driver-clean
 	-$(MAKE) enigma2-clean
 	-rm -f Makefile-archive
@@ -123,12 +87,6 @@ distclean-local:
 	-rm -rf $(DEPDIR)
 #	-rm -rf $(targetprefix)
 	-rm -rf $(hostprefix)
-#	-rm -f $(bootprefix)/dboxflasher
-#	-rm -f $(bootprefix)/dboxflasher-fb
-#	-rm -f $(bootprefix)/dboxflasher-lcd
-#	-rm -f $(bootprefix)/u-boot
-#	-rm -f $(bootprefix)/u-boot-yadd
-#	-rm -f $(bootprefix)/kernel-cdk
 	-rm -rf $(serversupport)
 if TARGETRULESET_FLASH
 	-rm -rf $(flashprefix)/
@@ -149,7 +107,7 @@ endif
 	-rm -rf $(STGFB_DIR)
 	-@DISTCLEANUP@
 #	rm symlinks
-#	-rm compile config config.guess config.sub COPYING depcomp INSTALL install-sh ltmain.sh missing 
+#	-rm compile config config.guess config.sub COPYING depcomp INSTALL install-sh ltmain.sh missing
 
 
 if TARGETRULESET_FLASH
@@ -211,7 +169,7 @@ $(RPMLIST_CLEAN): \
 
 list-distclean:
 	make $(LIST_DISTCLEAN)
-	
+
 $(LIST_DISTCLEAN): \
 %-distclean:
 	-$(DISTCLEANUP_$*)

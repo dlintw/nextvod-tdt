@@ -161,6 +161,8 @@ include make/release.mk
 
 include make/release_neutrino.mk
 
+include make/release_neutrino_nightly.mk
+
 include make/release_vdr.mk
 
 include make/release_enigma1_hd.mk

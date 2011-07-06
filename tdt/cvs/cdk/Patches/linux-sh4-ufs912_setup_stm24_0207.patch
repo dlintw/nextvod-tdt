@@ -187,7 +187,7 @@
 -		.buttons = mb618_buttons,
 -		.nbuttons = ARRAY_SIZE(mb618_buttons),
 -	},
-+		.name   = "NOR ROOT :      0xA008.0000-0xA03F.FFFF (3,5MB)",
++		.name   = "NOR R00T :      0xA008.0000-0xA03F.FFFF (3,5MB)",
 +		.size   = MTDPART_SIZ_FULL,
 +		.offset = MTDPART_OFS_APPEND,
 +	}
