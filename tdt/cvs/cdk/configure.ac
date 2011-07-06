@@ -91,7 +91,7 @@ AC_ARG_ENABLE(p0041,
 AM_CONDITIONAL(P0041,test "$enable_p0041" = "yes")
 
 AC_ARG_ENABLE(p0119,
-        AS_HELP_STRING(--enable-p0119,  set up the CDK to use the STLinux 2.3 with patchlevel 0119),
+	AS_HELP_STRING(--enable-p0119,  set up the CDK to use the STLinux 2.3 with patchlevel 0119),
 	[case "${enableval}" in
 		yes) P0119=p0119 ;;
 	esac], [enable_p0119=no])
@@ -99,7 +99,7 @@ AM_CONDITIONAL(ENABLE_P0119,test "$enable_p0119" = "yes")
 AC_SUBST(P0119)
 
 AC_ARG_ENABLE(p0123,
-        AS_HELP_STRING(--enable-p0123,  set up the CDK to use the STLinux 2.3 with patchlevel 0123),
+	AS_HELP_STRING(--enable-p0123,  set up the CDK to use the STLinux 2.3 with patchlevel 0123),
 	[case "${enableval}" in
 		yes) P0123=p0123 ;;
 	esac], [enable_p0123=no])
@@ -107,7 +107,7 @@ AM_CONDITIONAL(ENABLE_P0123,test "$enable_p0123" = "yes")
 AC_SUBST(P0123)
 
 AC_ARG_ENABLE(p0201,
-        AS_HELP_STRING(--enable-p0201,  set up the CDK to use the STLinux 2.4 with patchlevel 0201),
+	AS_HELP_STRING(--enable-p0201,  set up the CDK to use the STLinux 2.4 with patchlevel 0201),
 	[case "${enableval}" in
 		yes) P0201=p0201 ;;
 	esac], [enable_p0201=no])
@@ -115,7 +115,7 @@ AM_CONDITIONAL(ENABLE_P0201,test "$enable_p0201" = "yes")
 AC_SUBST(P0201)
 
 AC_ARG_ENABLE(p0205,
-        AS_HELP_STRING(--enable-p0205,  set up the CDK to use the STLinux 2.4 with patchlevel 0205),
+	AS_HELP_STRING(--enable-p0205,  set up the CDK to use the STLinux 2.4 with patchlevel 0205),
 	[case "${enableval}" in
 		yes) P0205=p0205 ;;
 	esac], [enable_p0205=no])
@@ -123,7 +123,7 @@ AM_CONDITIONAL(ENABLE_P0205,test "$enable_p0205" = "yes")
 AC_SUBST(P0205)
 
 AC_ARG_ENABLE(p0206,
-        AS_HELP_STRING(--enable-p0206,  set up the CDK to use the STLinux 2.4 with patchlevel 0206),
+	AS_HELP_STRING(--enable-p0206,  set up the CDK to use the STLinux 2.4 with patchlevel 0206),
 	[case "${enableval}" in
 		yes) P0206=p0206 ;;
 	esac], [enable_p0206=no])
@@ -131,7 +131,7 @@ AM_CONDITIONAL(ENABLE_P0206,test "$enable_p0206" = "yes")
 AC_SUBST(P0206)
 
 AC_ARG_ENABLE(p0207,
-        AS_HELP_STRING(--enable-p0207,  set up the CDK to use the STLinux 2.4 with patchlevel 0207),
+	AS_HELP_STRING(--enable-p0207,  set up the CDK to use the STLinux 2.4 with patchlevel 0207),
 	[case "${enableval}" in
 		yes) P0207=p0207 ;;
 	esac], [enable_p0207=no])
@@ -177,9 +177,9 @@ AC_ARG_ENABLE(flashrules,
 AM_CONDITIONAL(TARGETRULESET_FLASH,test "$enable_flashrules" = "yes")
 
 if test "$enable_flashrules" = "yes"; then
-        INSTALLRULESETFILE="-flash"
+	INSTALLRULESETFILE="-flash"
 else
-        INSTALLRULESETFILE=""
+	INSTALLRULESETFILE=""
 fi
 
 
@@ -756,8 +756,8 @@ if test "$enable_stm22" = "yes"; then
 		KERNELVERSION=${VERSION_linuxp0040}
 		KERNELSTMLABEL="_${VERSION_linuxp0040#*_}"
 	elif test "$enable_p0041" == "yes"; then
-                KERNELVERSION=${VERSION_linuxp0041}
-                KERNELSTMLABEL="_${VERSION_linuxp0041#*_}"
+		KERNELVERSION=${VERSION_linuxp0041}
+		KERNELSTMLABEL="_${VERSION_linuxp0041#*_}"
 	else
 		KERNELVERSION=${VERSION_linux}
 		KERNELSTMLABEL="_${VERSION_linux#*_}"
@@ -1033,8 +1033,12 @@ fi
 AC_SUBST(DRPM)
 AC_SUBST(DRPMBUILD)
 
-test -d ../../Archive || mkdir ../../Archive
-ln -sf ../../Archive
+#	old
+#test -d ../../Archive || mkdir ../../Archive
+#ln -sf ../../Archive
+
+test -d ~/Archive || mkdir ~/Archive
+ln -sf ~/Archive
 install -d $stockdir/{conf,root,.app,.eme,.dat}
 
 #
@@ -1054,81 +1058,81 @@ ${srcdir}/rules-archive.pl ${srcdir}/rules-archive > Makefile-archive
 AC_MSG_RESULT([
 summary:
 -------------------------------------------------------------------------------
-target cpu:                  $CPU_MODEL
-linux kernel:                ${KERNELVERSION%.*}
-kernelversion:               $KERNELVERSION
-localversion:                $KERNELSTMLABEL
-STLinux 2.2:                 $enable_stm22
-STLinux 2.3:                 $enable_stm23
-STLinux 2.3_Havana:          $enable_havana
-STLinux 2.4:                 $enable_stm24
-Patchlevel P0040:            $enable_p0040
-Patchlevel P0041:            $enable_p0041
-Patchlevel P0119:            $enable_p0119
-Patchlevel P0123:            $enable_p0123
-Patchlevel P0201:            $enable_p0201
-Patchlevel P0205:            $enable_p0205
-Patchlevel P0206:            $enable_p0206
-Patchlevel P0207:            $enable_p0207
-vdr VDR 1.7.11:              $enable_vdr1711
-flash rules:                 $enable_flashrules
-ccache:                      $enable_ccache
-target prefix:               $targetprefix
-boot prefix:                 $bootprefix
-host prefix:                 $hostprefix
-cross prefix:                $crossprefix
-build prefix:                $buildprefix
-ipk packages prefix:         $ipkprefix
-root partition size:         $ROOT_PARTITION_SIZE
-data partition size:         $DATA_PARTITION_SIZE
-default local:               $DEFAULTLOCALE
-serversupport:               $serversupport
-checkImage:                  $CHECKIMAGE_BEHAVIOR
-target apps directory:       $appsdir
-boot directory:              $bootdir
-driver directory:            $driverdir
-host apps directory:         $hostappsdir
-logo directory:              $logosdir
-customization directory:     $customizationsdir
-ucode directory:             $ucodesdir
-GNU server:                  $gnuserver
-default server:              $defaultserver
-update http prefix:          $updatehttpprefix
-stock directory:             $stockdir
-ipkg build directory:        $ipkgbuilddir
-Fortis/hdbox stuff:          $enable_fortis_hdbox
-Atevio 7500 stuff:           $enable_atevio7500
-octagon1008 stuff:           $enable_octagon1008
-topfield stuff:              $enable_tf7700
-spider-box hl101 stuff:      $enable_hl101
-edision argus vip1 v2 stuff: $enable_vip1_v2
-edision argus vip2 v1 stuff: $enable_vip2_v1
-spark box stuff:             $enable_spark
-spark7162 box stuff:         $enable_spark7162
-ufs910 stuff:                $enable_ufs910
-ufs910 flash:                $enable_flash_ufs910
-ufs912 stuff:                $enable_ufs912
-ufs922 stuff:                $enable_ufs922
-cuberevo stuff:              $enable_cuberevo
-cuberevo mini stuff:         $enable_cuberevo_mini
-cuberevo mini 2 stuff:       $enable_cuberevo_mini2
-cuberevo mini fta stuff:     $enable_cuberevo_mini_fta
-cuberevo 250hd stuff:        $enable_cuberevo_250hd
-cuberevo 2000hd stuff:       $enable_cuberevo_2000hd
-cuberevo 9500hd stuff:       $enable_cuberevo_9500hd
-homecast 5101 stuff:         $enable_homecast5101
-XFS support for IDE:         $enable_xfs
-NFS server:                  $enable_nfsserver
-Samba Clients:               $enable_cifs
-NTFS support for IDE:        $enable_ntfs
-sg3 utils:                   $enable_sg3
-osd910 support:              $enable_osd910
-DEBUG:                       $enable_debug
-Player131:                   $enable_player131
-Player179:                   $enable_player179
-Player191:                   $enable_player191
-Multicom322:                 $enable_multicom322
-Multicom324:                 $enable_multicom324
+target cpu                  : $CPU_MODEL
+linux kernel                : ${KERNELVERSION%.*}
+kernelversion               : $KERNELVERSION
+localversion                : $KERNELSTMLABEL
+STLinux 2.2                 : $enable_stm22
+STLinux 2.3                 : $enable_stm23
+STLinux 2.3_Havana          : $enable_havana
+STLinux 2.4                 : $enable_stm24
+Patchlevel P0040            : $enable_p0040
+Patchlevel P0041            : $enable_p0041
+Patchlevel P0119            : $enable_p0119
+Patchlevel P0123            : $enable_p0123
+Patchlevel P0201            : $enable_p0201
+Patchlevel P0205            : $enable_p0205
+Patchlevel P0206            : $enable_p0206
+Patchlevel P0207            : $enable_p0207
+vdr VDR 1.7.11              : $enable_vdr1711
+flash rules                 : $enable_flashrules
+ccache                      : $enable_ccache
+target prefix               : $targetprefix
+boot prefix                 : $bootprefix
+host prefix                 : $hostprefix
+cross prefix                : $crossprefix
+build prefix                : $buildprefix
+ipk packages prefix         : $ipkprefix
+root partition size         : $ROOT_PARTITION_SIZE
+data partition size         : $DATA_PARTITION_SIZE
+default local               : $DEFAULTLOCALE
+serversupport               : $serversupport
+checkImage                  : $CHECKIMAGE_BEHAVIOR
+target apps directory       : $appsdir
+boot directory              : $bootdir
+driver directory            : $driverdir
+host apps directory         : $hostappsdir
+logo directory              : $logosdir
+customization directory     : $customizationsdir
+ucode directory             : $ucodesdir
+GNU server                  : $gnuserver
+default server              : $defaultserver
+update http prefix          : $updatehttpprefix
+stock directory             : $stockdir
+ipkg build directory        : $ipkgbuilddir
+Fortis/hdbox stuff          : $enable_fortis_hdbox
+Atevio 7500 stuff           : $enable_atevio7500
+octagon1008 stuff           : $enable_octagon1008
+topfield stuff              : $enable_tf7700
+spider-box hl101 stuff      : $enable_hl101
+edision argus vip1 v2 stuff : $enable_vip1_v2
+edision argus vip2 v1 stuff : $enable_vip2_v1
+spark box stuff             : $enable_spark
+spark7162 box stuff         : $enable_spark7162
+ufs910 stuff                : $enable_ufs910
+ufs910 flash                : $enable_flash_ufs910
+ufs912 stuff                : $enable_ufs912
+ufs922 stuff                : $enable_ufs922
+cuberevo stuff              : $enable_cuberevo
+cuberevo mini stuff         : $enable_cuberevo_mini
+cuberevo mini 2 stuff       : $enable_cuberevo_mini2
+cuberevo mini fta stuff     : $enable_cuberevo_mini_fta
+cuberevo 250hd stuff        : $enable_cuberevo_250hd
+cuberevo 2000hd stuff       : $enable_cuberevo_2000hd
+cuberevo 9500hd stuff       : $enable_cuberevo_9500hd
+homecast 5101 stuff         : $enable_homecast5101
+XFS support for IDE         : $enable_xfs
+NFS server                  : $enable_nfsserver
+Samba Clients               : $enable_cifs
+NTFS support for IDE        : $enable_ntfs
+sg3 utils                   : $enable_sg3
+osd910 support              : $enable_osd910
+DEBUG                       : $enable_debug
+Player131                   : $enable_player131
+Player179                   : $enable_player179
+Player191                   : $enable_player191
+Multicom322                 : $enable_multicom322
+Multicom324                 : $enable_multicom324
 ])
 
 if test "$dircheck" = "fail"; then
