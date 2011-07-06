@@ -8,11 +8,11 @@
  	--enable-shared \
  %if "%{_stm_target_arch}" != "armv7"
  	--disable-libgomp \
-@@ -378,6 +377,7 @@
- %dir %{_stm_cross_target_dir}%{_stm_target_lib_dir}/gcc/%{_stm_target_config}
- %dir %{_stm_cross_target_dir}%{_stm_target_lib_dir}/gcc/%{_stm_target_config}/%{version}
- %dir %{_stm_cross_target_dir}%{_stm_target_lib_dir}/gcc/%{_stm_target_config}/%{version}/include
-+%dir %{_stm_cross_target_dir}%{_stm_target_lib_dir}/gcc/%{_stm_target_config}/%{version}/include/ssl
- %dir %{_gccdir}/include/ssp
- %{_gccdir}/include/ssp/ssp.h
- %{_gccdir}/include/ssp/stdio.h
+@@ -353,6 +353,7 @@
+ rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_man_dir}/man7
+ rm -r %{buildroot}%{_gccdir}/install-tools
+ rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
++rm -rf %{buildroot}%{_gccdir}/include/ssl
+ 
+ %unfixincludes %{buildroot}%{_gccdir}
+ 
