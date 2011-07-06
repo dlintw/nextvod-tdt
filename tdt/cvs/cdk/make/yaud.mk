@@ -97,6 +97,10 @@ yaud-neutrino-static: yaud-none lirc stslave\
 		boot-elf remote firstboot neutrino release_neutrino_static
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+yaud-neutrino-nightly: yaud-none lirc stslave\
+		boot-elf remote firstboot neutrino-nightly release_neutrino_nightly
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 flash-ufs910-neutrino: yaud-none stslave \
 		yaud-neutrino \
 		kernel-squashfs.ubimage \
