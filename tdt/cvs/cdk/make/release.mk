@@ -534,13 +534,19 @@ release_base:
 	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/fuser $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/md5sum $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/mountpoint $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/portmap $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mke2fs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mkfs.ext2 $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mkfs.ext3 $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/mkfs.ext4 $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mkfs.jfs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.ext2 $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.ext3 $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/fsck.ext4 $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.jfs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/jfs_fsck $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/jfs_mkfs $(prefix)/release/sbin/ && \
