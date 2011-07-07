@@ -533,10 +533,12 @@ release_base:
 	ln -s /bin/showiframe $(prefix)/release/usr/bin/showiframe && \
 	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/fuser $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/md5sum $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/mountpoint $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/usr/bin/killall5 $(prefix)/release/usr/bin/ && \
+	cp -dp $(targetprefix)/usr/bin/killall $(prefix)/release/usr/bin/ && \
+	cp -dp $(targetprefix)/usr/bin/fuser $(prefix)/release/usr/bin/ && \
+	cp -dp $(targetprefix)/usr/bin/md5sum $(prefix)/release/usr/bin/ && \
+	cp -dp $(targetprefix)/bin/pidof $(prefix)/release/bin/ && \
+	cp -dp $(targetprefix)/bin/mountpoint $(prefix)/release/bin/ && \
 	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/portmap $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mke2fs $(prefix)/release/sbin/ && \
@@ -763,7 +765,6 @@ endif
 	cp -p $(targetprefix)/usr/sbin/vsftpd $(prefix)/release/usr/bin/
 	cp -p $(targetprefix)/usr/bin/python $(prefix)/release/usr/bin/
 
-	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release/usr/bin/
 	cp -p $(targetprefix)/usr/bin/opkg-cl $(prefix)/release/usr/bin/opkg
 	cp -p $(targetprefix)/usr/bin/ffmpeg $(prefix)/release/sbin/
 	cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release/usr/bin/
