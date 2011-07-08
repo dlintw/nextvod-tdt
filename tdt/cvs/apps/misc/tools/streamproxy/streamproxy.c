@@ -1,3 +1,15 @@
+/* streamproxy 2007 - 2011
+ * Authors: Felix Domke
+ *          Andreas Monzner
+ *          Donald @ TDT
+ *          Schischu
+ * 
+ * Original code from https://schwerkraft.elitedvb.net/projects/streamproxy/
+ * License:
+ *          GNU GENERAL PUBLIC LICENSE
+ *          Version 2, June 1991
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +19,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/dvb/dmx.h>
+#include <linux/dvb/version.h>
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -16,12 +29,10 @@
 
 #define BSIZE                    188*388//1024*16
 
-//#if defined(__sh__)
-//#else
 #define HAVE_ADD_PID
-//#endif
 
 #ifdef HAVE_ADD_PID
+#if DVB_API_VERSION < 5 // LINUX_DVB_API 5
 #define DMX_ADD_PID              _IO('o', 51)
 #define DMX_REMOVE_PID           _IO('o', 52)
 
@@ -30,6 +41,7 @@ typedef enum {
 	DMX_TAP_PES = DMX_PES_OTHER, /* for backward binary compat. */
 } dmx_tap_type_t;
 
+#endif
 #endif
 
 
@@ -67,9 +79,7 @@ void logOutput(char *FormatStr, ...) {
 	char lStr [200];
 	int vStatus;
 	struct stat vStatusBuffer;
-
 	FILE * pFile;
-	
 
 	va_start (args, FormatStr);
 	vsprintf (lStr, FormatStr, args);
@@ -92,6 +102,20 @@ int main(int argc, char **argv)
 	char *c, *service_ref;
 	int used=0;
 	char buffer[BSIZE];
+
+	if(argc == 2 && !strncmp(argv[1], "--help", 6)) {
+		printf("streamproxy compiled for ");
+#ifdef HAVE_ADD_PID
+#if DVB_API_VERSION > 3 // LINUX_DVB_API 5
+		printf("Linux Dvb API 5 - ADD_PID\n");
+#else
+		printf("Linux Dvb API 3 - ADD_PID\n");
+#endif
+#else
+		printf("Linux Dvb API 3\n");
+#endif
+		exit(0);
+	}
 
 	logOutput("starting streamproxy\n");
 #ifdef HAVE_ADD_PID
@@ -240,7 +264,7 @@ bad_request:
 	printf("HTTP/1.0 400 Bad Request\r\n\r\n");
 	return 1;
 bad_gateway:
-	printf("HTTP/1.0 %s\r\n%s\r\n%s\r\n", 
+	printf("HTTP/1.0 %s\r\n%s\r\n%s\r\n",
 		upstream_response_code == 401 ? "401 Unauthorized" : "502 Bad Gateway",
 		wwwauthenticate, reason);
 	return 1;
@@ -345,10 +369,11 @@ int handle_upstream_line(void)
 				logOutput (" - succeeded\n");
 	        	}
 
-#else
+#else // HAVE_ADD_PID
 					/* parse (and possibly open) demux */
 			int demux = atoi(response_line + 1);
 			
+#if DVB_API_VERSION < 5 // LINUX_DVB_API 3
 			if (demux_fd < 0)
 			{
 			  	struct dmx_pes_filter_params flt; 
@@ -382,7 +407,8 @@ int handle_upstream_line(void)
 		    			return 2;
 				}
 			}
-#endif
+#endif // LINUX_DVB_API 3
+#endif // HAVE_ADD_PID
 
 					/* parse new pids */
 			const char *p = strchr(response_line, ':');
@@ -450,10 +476,54 @@ int handle_upstream_line(void)
 
 					open_pids[i] = fd;
 				}
-#else
-				if (j == MAX_PIDS)
+#else // HAVE_ADD_PID
+				if (j == MAX_PIDS) {
+#if DVB_API_VERSION > 3 // LINUX_DVB_API 5
+
+					if (demux_fd < 0)
+					{
+					  	struct dmx_pes_filter_params flt; 
+						char demuxfn[32];
+						sprintf(demuxfn, "/dev/dvb/adapter0/demux%d", demux);
+						demux_fd = open(demuxfn, O_RDWR | O_NONBLOCK);
+						if (demux_fd < 0)
+						{
+							reason = "DEMUX OPEN FAILED";
+							return 2;
+						}
+
+						ioctl(demux_fd, DMX_SET_BUFFER_SIZE, 1024*1024);
+
+				    		flt.pid = active_pids[i];
+				    		flt.input = DMX_IN_FRONTEND;
+				    		flt.output = DMX_OUT_TSDEMUX_TAP;
+				    		flt.pes_type = DMX_PES_OTHER;
+				    		flt.flags = DMX_IMMEDIATE_START;
+
+				   		 if (ioctl(demux_fd, DMX_SET_PES_FILTER, &flt) < 0)
+				    		{
+				    			reason = "DEMUX PES FILTER SET FAILED";
+				    			return 2;
+						}
+
+						fcntl(demux_fd, F_SETFL, O_NONBLOCK);
+
+				    		if (ioctl(demux_fd, DMX_START, 0) < 0)
+				    		{
+				    			reason = "DMX_START FAILED";
+				    			return 2;
+						}
+					}
+					else
+					{
+						uint16_t p = active_pids[i];
+						ioctl(demux_fd, DMX_ADD_PID, &p);
+					}
+#else // LINUX_DVB_API 3
 					ioctl(demux_fd, DMX_ADD_PID, active_pids[i]);
-#endif
+#endif // LINUX_DVB_API 3
+				}
+#endif // HAVE_ADD_PID
 			}
 			
 					/* check for removed pids */
@@ -471,10 +541,16 @@ int handle_upstream_line(void)
 					logOutput ("close fd=%d\n", open_pids[i]);
 					close(open_pids[i]);
 				}
-#else		
-				if (j == nr_pids)
+#else // HAVE_ADD_PID
+				if (j == nr_pids) {
+#if DVB_API_VERSION > 3 // LINUX_DVB_API 5
+					uint16_t p = old_active_pids[i];
+					ioctl(demux_fd, DMX_REMOVE_PID, &p);
+#else // LINUX_DVB_API 3
 					ioctl(demux_fd, DMX_REMOVE_PID, old_active_pids[i]);
-#endif
+#endif // LINUX_DVB_API 3
+				}
+#endif // HAVE_ADD_PID
 			}
 			if (upstream_state == 2)
 			{
