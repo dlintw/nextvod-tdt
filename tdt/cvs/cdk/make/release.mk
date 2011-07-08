@@ -901,6 +901,9 @@ endif
 
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/enigma2 #############
 	cp -RP $(buildprefix)/own_build/enigma2/* $(prefix)/release/
+	
+#      Workaround for busybox kopie problem
+	cp -a $(targetprefix)/bin/busybox $(prefix)/release/bin/	
 
 if STM22
 	cp $(kernelprefix)/linux/arch/sh/boot/uImage $(prefix)/release/boot/
