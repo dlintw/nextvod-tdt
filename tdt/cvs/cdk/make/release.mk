@@ -526,29 +526,33 @@ release_base:
 	$(INSTALL_DIR) $(prefix)/release/var && \
 	$(INSTALL_DIR) $(prefix)/release/var/etc && \
 	$(INSTALL_DIR) $(prefix)/release/var/opkg && \
-	cp -a $(targetprefix)/bin/* $(prefix)/release/bin/ && \
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release && \
 	touch $(prefix)/release/var/etc/.firstboot && \
+	cp -a $(targetprefix)/bin/* $(prefix)/release/bin/ && \
 	ln -s /bin/showiframe $(prefix)/release/usr/bin/showiframe && \
 	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/portmap $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mke2fs $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/mkfs.ext2 $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/mkfs.ext3 $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/mkfs.ext4 $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/mkfs.jfs $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/fsck.ext2 $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/fsck.ext3 $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/fsck.ext4 $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/sbin/fsck.jfs $(prefix)/release/sbin/ && \
+	ln -sf /sbin/mke2fs $(prefix)/release/sbin/mkfs.ext2 && \
+	ln -sf /sbin/mke2fs $(prefix)/release/sbin/mkfs.ext3 && \
+	ln -sf /sbin/mke2fs $(prefix)/release/sbin/mkfs.ext4 && \
+	ln -sf /sbin/mke2fs $(prefix)/release/sbin/mkfs.ext4dev && \
+	cp -dp $(targetprefix)/sbin/e2fsck $(prefix)/release/sbin/ && \
+	ln -sf /sbin/e2fsck $(prefix)/release/sbin/fsck.ext2 && \
+	ln -sf /sbin/e2fsck $(prefix)/release/sbin/fsck.ext3 && \
+	ln -sf /sbin/e2fsck $(prefix)/release/sbin/fsck.ext4 && \
+	ln -sf /sbin/e2fsck $(prefix)/release/sbin/fsck.ext4dev && \
 	cp -dp $(targetprefix)/sbin/jfs_fsck $(prefix)/release/sbin/ && \
+	ln -sf /sbin/jfs_fsck $(prefix)/release/sbin/fsck.jfs && \
 	cp -dp $(targetprefix)/sbin/jfs_mkfs $(prefix)/release/sbin/ && \
+	ln -sf /sbin/jfs_mkfs $(prefix)/release/sbin/mkfs.jfs && \
 	cp -dp $(targetprefix)/sbin/jfs_tune $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.nfs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/sfdisk $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/etc/init.d/udhcpc $(prefix)/release/etc/init.d/ && \
 	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(VIP2_V1),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI) $(prefix)/release/sbin/MAKEDEV && \
@@ -759,6 +763,7 @@ endif
 	cp -p $(targetprefix)/usr/sbin/vsftpd $(prefix)/release/usr/bin/
 	cp -p $(targetprefix)/usr/bin/python $(prefix)/release/usr/bin/
 
+	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release/usr/bin/
 	cp -p $(targetprefix)/usr/bin/opkg-cl $(prefix)/release/usr/bin/opkg
 	cp -p $(targetprefix)/usr/bin/ffmpeg $(prefix)/release/sbin/
 	cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release/usr/bin/
@@ -895,9 +900,6 @@ endif
 
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/enigma2 #############
 	cp -RP $(buildprefix)/own_build/enigma2/* $(prefix)/release/
-	
-#      Workaround for busybox kopie problem
-	cp -a $(targetprefix)/bin/busybox $(prefix)/release/bin/	
 
 if STM22
 	cp $(kernelprefix)/linux/arch/sh/boot/uImage $(prefix)/release/boot/
