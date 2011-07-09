@@ -62,11 +62,13 @@ typedef struct Output_s {
 extern Output_t LinuxDvbOutput;
 extern Output_t SubtitleOutput;
 
+/* not used
 static Output_t * AvailableOutput[] = {
     &LinuxDvbOutput,
     &SubtitleOutput,
     NULL
 };
+*/
 
 typedef struct OutputHandler_s {
     char * Name;
