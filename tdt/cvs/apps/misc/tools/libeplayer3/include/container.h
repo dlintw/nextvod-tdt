@@ -30,12 +30,10 @@ typedef struct Container_s {
 
 extern Container_t FFMPEGContainer;
 
-/* not used
 static Container_t * AvailableContainer[] = {
     &FFMPEGContainer,
     NULL
 };
-*/
 
 typedef struct ContainerHandler_s {
     char * Name;
