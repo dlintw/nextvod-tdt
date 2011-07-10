@@ -8,7 +8,8 @@ if [ -e /var/etc/.firstboot ]; then
    echo "WAIT 1 min" >/dev/vfd
    echo "WAIT 1 min"
    rm /var/etc/.firstboot
-   touch /dev/.devfsd
+   #fake that we are udev until Harddisk.py is fixed
+   touch /dev/.udev
 fi
 
 /etc/init.d/mountvirtfs start
@@ -18,6 +19,7 @@ fi
 insmod $MODDIR/e2_proc.ko
 
 # start automounter with umount timeout of 5 seconds
+insmod $MODDIR/autofs4.ko
 /usr/sbin/automount --timeout=5 /autofs file /etc/auto.usb
 
 if [ ! -e /var/etc/.firstboot ]; then
