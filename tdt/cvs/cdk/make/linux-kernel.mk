@@ -334,7 +334,8 @@ COMMONPATCHES_24 = \
 		linux-sh4-ext23_as_ext4_stm24$(PATCH_STR).patch \
 		bpa2_procfs_stm24$(PATCH_STR).patch \
 		xchg_fix_stm24$(PATCH_STR).patch \
-		mm_cache_update_stm24$(PATCH_STR).patch
+		mm_cache_update_stm24$(PATCH_STR).patch \
+		linux-sh4-lzma-fix_stm24$(PATCH_STR).patch
 
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-tf7700_setup_stm24$(PATCH_STR).patch \
