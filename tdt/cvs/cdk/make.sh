@@ -135,10 +135,9 @@ esac
 echo -e "\nKernel:"
 echo " Maintained:"
 echo "   4) STM 23 P0123"
+echo "   6) STM 24 P0205 (working on ufs910(stable, w.o. sata), atevio7500, spark, ufs912, ufs922, tf7700. Player 179/191 only)"
+echo "   8) STM 24 P0207 (working on ufs910(stable, w.o. sata), atevio7500, ufs912. Player 179/191 only)"
 echo " Experimental:"
-echo "   6) STM 24 P0205 (working on ufs910(stable, w.o. sata), atevio7500, spark, ufs912, ufs922/player 179/191 only)"
-echo "   7) STM 24 P0206 (not working)"
-echo "   8) STM 24 P0207 (not working)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
 case $2 in
