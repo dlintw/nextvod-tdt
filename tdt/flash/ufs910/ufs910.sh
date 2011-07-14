@@ -97,7 +97,9 @@ echo "Flashimage created:"
 echo `ls $OUTDIR`
 
 echo "-----------------------------------------------------------------------"
-echo "To flash the created image copy the *.img file to"
-echo "your usb drive"
+echo "To flash the created image rename the *.img file to miniFLASH.img and "
+echo "copy it to the root (/) of your usb drive."
+echo "To start the flashing process press RECORD for 10 sec on your remote "
+echo "control while the box is starting"
 echo ""
 
