@@ -58,11 +58,30 @@ cat $CURDIR/mtd_root.pad.bin >> $OUTFILE
 cat $CURDIR/mtd_var.sum.pad.bin >> $OUTFILE
 
 rm -f $CURDIR/uImage
-rm -f $CURDIR/mtd_kernel.pad.bin
 rm -f $CURDIR/mtd_root.bin
-rm -f $CURDIR/mtd_root.pad.bin
 rm -f $CURDIR/mtd_var.bin
 rm -f $CURDIR/mtd_var.sum.bin
+
+SIZE=`stat mtd_kernel.pad.bin -t --format %s`
+SIZE=`printf "0x%x" $SIZE`
+if [[ $SIZE > "0x160000" ]]; then
+  echo "KERNEL TO BIG. $SIZE instead of 0x160000" > /dev/stderr
+fi
+
+SIZE=`stat mtd_root.pad.bin -t --format %s`
+SIZE=`printf "0x%x" $SIZE`
+if [[ $SIZE > "0x9e0000" ]]; then
+  echo "ROOT TO BIG. $SIZE instead of 0x9e0000" > /dev/stderr
+fi
+
+SIZE=`stat mtd_var.sum.pad.bin -t --format %s`
+SIZE=`printf "0x%x" $SIZE`
+if [[ $SIZE > "0x480000" ]]; then
+  echo "VAR TO BIG. $SIZE instead of 0x480000" > /dev/stderr
+fi
+
+rm -f $CURDIR/mtd_kernel.pad.bin
+rm -f $CURDIR/mtd_root.pad.bin
 rm -f $CURDIR/mtd_var.sum.pad.bin
 
 zip $OUTFILE.zip $OUTFILE

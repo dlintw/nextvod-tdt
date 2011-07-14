@@ -51,7 +51,7 @@ case "$REPLY" in
 	1)  echo "Preparing Enigma2 Root..."
 		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPVARDIR $TMPKERNELDIR;;
 	2)  echo "Preparing Neutrino Root..."
-		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPVARDIR $TMPKERNELDIR;;
+		$SCRIPTDIR/prepare_root_neutrino.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPVARDIR $TMPKERNELDIR;;
 	*)  "Invalid Input! Exiting..."
 		exit 2;;
 esac
@@ -69,7 +69,7 @@ case "$REPLY" in
 	*)  "Invalid Input! Exiting..."
 		exit 3;;
 esac
-clear
+#clear
 echo "-----------------------------------------------------------------------"
 AUDIOELFSIZE=`stat -c %s $TMPROOTDIR/boot/audio.elf`
 VIDEOELFSIZE=`stat -c %s $TMPROOTDIR/boot/video.elf`

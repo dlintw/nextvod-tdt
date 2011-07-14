@@ -1,5 +1,5 @@
-*** a/arch/sh/boards/mach-mb680/setup.c	2011-06-29 21:20:46.000000000 +0200
---- b/setup.c	2011-07-03 18:05:18.236813633 +0200
+*** a/arch/sh/boards/mach-mb680/setup.c	2011-07-09 17:10:12.000000000 +0200
+--- b/setup.c	2011-07-11 23:52:30.924996476 +0200
 ***************
 *** 26,35 ****
   #include <linux/mtd/mtd.h>
@@ -60,16 +60,18 @@
   
   static void __init mb680_setup(char** cmdline_p)
 ***************
-*** 49,214 ****
+*** 47,214 ****
+  
+  	stx7105_configure_asc(2, &(struct stx7105_asc_config) {
   			.routing.asc2 = stx7105_asc2_pio4,
-  			.hw_flow_control = 1,
+! 			.hw_flow_control = 1,
   			.is_console = 1, });
 - 	stx7105_configure_asc(3, &(struct stx7105_asc_config) {
 - 			.hw_flow_control = 1,
 - 			.is_console = 0, });
 - }
+- 
   
-! 
 ! 
 ! static struct platform_device mb680_leds = {
 ! 	.name = "leds-gpio",
@@ -110,14 +112,14 @@
 ! static void ll_phy_reset(void)
 ! {
 ! 	mb705_reset(EPLD_EMI_RESET_SW0, 150);
+! }
+! #else
+! static void ll_phy_reset(void)
+! {
+! 	gpio_set_value(MB680_PIO_PHY_RESET, 0);
+! 	udelay(150);
+! 	gpio_set_value(MB680_PIO_PHY_RESET, 1);
   }
-- #else
-- static void ll_phy_reset(void)
-- {
-- 	gpio_set_value(MB680_PIO_PHY_RESET, 0);
-- 	udelay(150);
-- 	gpio_set_value(MB680_PIO_PHY_RESET, 1);
-- }
 - #endif
   
   static int mb680_phy_reset(void *bus)
@@ -227,9 +229,11 @@
   	/* NIM AB/STRecord I2C bus*/
   	stx7105_configure_ssc_i2c(2, &(struct stx7105_ssc_config) {
   			.routing.ssc2.sclk = stx7105_ssc2_sclk_pio3_4,
---- 76,208 ----
+--- 74,208 ----
+  
+  	stx7105_configure_asc(2, &(struct stx7105_asc_config) {
   			.routing.asc2 = stx7105_asc2_pio4,
-  			.hw_flow_control = 1,
+! 			.hw_flow_control = 0,
   			.is_console = 1, });
   
 !    	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));

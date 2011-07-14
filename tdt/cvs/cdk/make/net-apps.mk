@@ -121,9 +121,12 @@ if ENABLE_SPARK
 else
 if ENABLE_SPARK7162
 else
+if ENABLE_ATEVIO7500
+else
 	cd @DIR_autofs@  && \
 		$(MAKE_OPTS) \
 		$(MAKE)
+endif
 endif
 endif
 endif
@@ -147,9 +150,13 @@ else
 if ENABLE_SPARK7162
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
 else
+if ENABLE_ATEVIO7500
+	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default	
+else
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default && \
 	cd @DIR_autofs@  && \
 		@INSTALL_autofs@
+endif
 endif
 endif
 endif
