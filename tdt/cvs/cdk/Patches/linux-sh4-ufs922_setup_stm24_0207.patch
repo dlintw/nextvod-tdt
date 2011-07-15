@@ -1,0 +1,106 @@
+--- a/drivers/stm/stx7100_comms.c	2011-07-14 21:52:24.000000000 +0200
++++ b/stx7100_comms.c	2011-07-15 18:47:17.129232446 +0200
+@@ -240,12 +240,12 @@
+ 			STM_PAD_PIO_BIDIR_NAMED(3, 0, 1, "SCL"),
+ 			STM_PAD_PIO_BIDIR_NAMED(3, 1, 1, "SDA"),
+ 		},
+-		.sysconfs_num = 2,
++		.sysconfs_num = 1,
+ 		.sysconfs = (struct stm_pad_sysconf []) {
+ 			/* SSC1_MUX_SEL = 0 (default assignment) */
+ 			STM_PAD_SYS_CFG(7, 2, 2, 0),
+-			/* DVO_OUT_ON = 0 (SSC not DVO) */
+-			STM_PAD_SYS_CFG(7, 10, 10, 0),
++			/* DVO_OUT_ON = 0 (SSC not DVO) 
++			STM_PAD_SYS_CFG(7, 10, 10, 0),*/
+ 		},
+ 	},
+ 	[2] = {
+--- a/arch/sh/boards/mach-mb448/setup.c	2011-07-14 21:52:21.000000000 +0200
++++ b/setup.c	2011-07-15 19:06:25.349805986 +0200
+@@ -19,6 +19,7 @@
+ #include <linux/mtd/physmap.h>
+ #include <linux/stm/platform.h>
+ #include <linux/stm/stx7100.h>
++#include <linux/bpa2.h>
+ #include <asm/irl.h>
+ 
+ 
+@@ -27,6 +28,25 @@
+ #define MB448_PIO_FLASH_VPP stm_gpio(2, 7)
+ 
+ 
++const char *LMI_VID_partalias[] = { "BPA2_Region1", "coredisplay-video", "gfx-memory", "v4l2-video-buffers", NULL };
++const char *LMI_SYS_partalias[] = { "BPA2_Region0", "bigphysarea", "v4l2-coded-video-buffers", NULL };
++
++static struct bpa2_partition_desc bpa2_parts_table[] = {
++      {
++	      .name  = "LMI_VID",
++	      .start = 0x10800000,
++	      .size  = 0x03800000,
++	      .flags = 0,
++	      .aka   = LMI_VID_partalias
++      },
++      {
++	      .name  = "LMI_SYS",
++	      .start = 0,
++	      .size  = 0x02600000,
++	      .flags = 0,
++	      .aka   = LMI_SYS_partalias
++      }
++};
+ 
+ void __init mb448_setup(char **cmdline_p)
+ {
+@@ -37,9 +57,8 @@
+ 	stx7100_configure_asc(2, &(struct stx7100_asc_config) {
+ 			.hw_flow_control = 0,
+ 			.is_console = 1, });
+-	stx7100_configure_asc(3, &(struct stx7100_asc_config) {
+-			.hw_flow_control = 0,
+-			.is_console = 0, });
++
++  	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
+ }
+ 
+ 
+@@ -68,7 +87,7 @@
+ 
+ static void mb448_set_vpp(struct map_info *info, int enable)
+ {
+-	gpio_set_value(MB448_PIO_FLASH_VPP, enable);
++//	gpio_set_value(MB448_PIO_FLASH_VPP, enable);
+ }
+ 
+ static struct platform_device mb448_physmap_flash = {
+@@ -106,7 +125,7 @@
+ 	stx7100_configure_sata();
+ 
+ 	stx7100_configure_ssc_i2c(0);
+-	stx7100_configure_ssc_spi(1, NULL);
++	stx7100_configure_ssc_i2c(1);
+ 	stx7100_configure_ssc_i2c(2);
+ 
+ 	stx7100_configure_usb();
+@@ -119,17 +138,18 @@
+ 			.mdio_bus_data = &stmmac_mdio_bus,
+ 		});
+ 
+-	gpio_request(MB448_PIO_FLASH_VPP, "Flash VPP");
++/*	gpio_request(MB448_PIO_FLASH_VPP, "Flash VPP");
+ 	gpio_direction_output(MB448_PIO_FLASH_VPP, 0);
++*/
+ 
+-	/* Reset the SMSC 91C111 Ethernet chip */
++	/* Reset the SMSC 91C111 Ethernet chip 
+ 	gpio_request(MB448_PIO_SMC91X_RESET, "SMC91x reset");
+ 	gpio_direction_output(MB448_PIO_SMC91X_RESET, 0);
+ 	udelay(1);
+ 	gpio_set_value(MB448_PIO_SMC91X_RESET, 1);
+ 	udelay(1);
+ 	gpio_set_value(MB448_PIO_SMC91X_RESET, 0);
+-
++*/
+ 	return platform_add_devices(mb448_devices,
+ 			ARRAY_SIZE(mb448_devices));
+ }

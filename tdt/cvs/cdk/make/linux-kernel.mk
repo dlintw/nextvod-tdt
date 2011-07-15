@@ -340,8 +340,8 @@ COMMONPATCHES_24 = \
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-tf7700_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
-		linux-sh4-stmmac_stm24_0205.patch \
-		linux-sh4-i2c-st40-pio_stm24_0205.patch
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
+	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 			stx7100_fdma_fix_stm24$(PATCH_STR).patch \
@@ -371,8 +371,8 @@ ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
-		linux-sh4-stmmac_stm24_0205.patch \
-		linux-sh4-i2c-st40-pio_stm24_0205.patch
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
+	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
 
 VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
 		linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
@@ -384,8 +384,8 @@ SPARK_PATCHES_24 = $(COMMONPATCHES_24) \
 FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-fortis_hdbox_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
-		linux-sh4-stmmac_stm24_0205.patch \
-		linux-sh4-i2c-st40-pio_stm24_0205.patch
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
+	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
 
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
