@@ -44,6 +44,10 @@
 #define	SPARK_RC08_PREDATA		"44BB"
 #define	SPARK_RC09_PREDATA		"9966"
 
+static tLongKeyPressSupport cLongKeyPressSupport = {
+  10, 120,
+};
+
 /* Edision argus-spark RCU */
 static tButton cButtonsEdisionSpark[] = {
     {"STANDBY"        , "25", KEY_POWER},
@@ -234,6 +238,7 @@ static int pRead(Context_t* context ) {
 	int					rc;
 	tButton 			*cButtons = cButtonsEdisionSpark;
 
+	memset(vBuffer, 0, 128);
     //wait for new command
     rc = read (context->fd, vBuffer, cSize);
 	if(rc <= 0)return -1;
@@ -243,9 +248,6 @@ static int pRead(Context_t* context ) {
     vData[1] = vBuffer[18];
     vData[2] = '\0';
 
-    //prell, we could detect a long press here if we want
-    if (atoi(vData)%3 != 0)
-        return -1;
 
     vData[0] = vBuffer[8];
     vData[1] = vBuffer[9];
@@ -258,9 +260,17 @@ static int pRead(Context_t* context ) {
     vData[1] = vBuffer[15];
     vData[2] = '\0';
 
-    printf("[RCU] key: %s -> %s\n", vData, &vBuffer[20]);
+    printf("[RCU] key: %s -> %s\n", vData, &vBuffer[0]);
     vCurrentCode = getInternalCode(cButtons, vData);
 
+	if(vCurrentCode != 0) {
+		static int nextflag = 0;
+		if (('0' == vBuffer[17]) && ('0' == vBuffer[18]))
+		{
+		    nextflag++;
+		}
+		vCurrentCode += (nextflag << 16);
+	}
     return vCurrentCode;
 }
 
@@ -300,7 +310,7 @@ RemoteControl_t Spark_RC = {
 	cButtonsEdisionSpark,
 	NULL,
 	NULL,
-    0,
-    NULL,
+  	1,
+  	&cLongKeyPressSupport,
 };
 

@@ -39,6 +39,10 @@
 #include "remotes.h"
 #include "Hl101.h"
 
+static tLongKeyPressSupport cLongKeyPressSupport = {
+  10, 120,
+};
+
 /* Spider Box HL-101 RCU */
 static tButton cButtonsSpideroxHL101[] = {
     {"STANDBY"        , "f7", KEY_POWER},
@@ -141,6 +145,7 @@ static int pRead(Context_t* context ) {
     const int           cSize         = 128;
     int                 vCurrentCode  = -1;
 
+	memset(vBuffer, 0, 128);
     //wait for new command
     read (context->fd, vBuffer, cSize);
 
@@ -149,17 +154,22 @@ static int pRead(Context_t* context ) {
     vData[1] = vBuffer[18];
     vData[2] = '\0';
 
-    //prell, we could detect a long press here if we want
-    if (atoi(vData)%3 != 0)
-        return -1;
 
     vData[0] = vBuffer[14];
     vData[1] = vBuffer[15];
     vData[2] = '\0';
 
-    printf("[ HL101 RCU ] key: %s -> %s\n", vData, &vBuffer[20]);
+    printf("[RCU] key: %s -> %s\n", vData, &vBuffer[0]);
     vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
 
+	if(vCurrentCode != 0) {
+		static int nextflag = 0;
+		if (('0' == vBuffer[17]) && ('0' == vBuffer[18]))
+		{
+		    nextflag++;
+		}
+		vCurrentCode += (nextflag << 16);
+	}
     return vCurrentCode;
 }
 
@@ -198,7 +208,7 @@ RemoteControl_t Hl101_RC = {
 	&pNotification,
 	cButtonsSpideroxHL101,
 	NULL,
-        NULL,
-    0,
-    NULL,
+	NULL,
+  	1,
+  	&cLongKeyPressSupport,
 };
