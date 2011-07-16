@@ -466,17 +466,16 @@
   
   	return platform_add_devices(mb680_devices, ARRAY_SIZE(mb680_devices));
   }
-***************
-*** 288,298 ****
+@@ -302,11 +316,6 @@
   
   static void __init mb680_init_irq(void)
   {
-- #ifndef CONFIG_SH_ST_MB705
+-#ifndef CONFIG_SH_ST_MB705
 - 	/* Configure STEM interrupts as active low. */
 - 	set_irq_type(ILC_EXT_IRQ(1), IRQ_TYPE_LEVEL_LOW);
 - 	set_irq_type(ILC_EXT_IRQ(2), IRQ_TYPE_LEVEL_LOW);
-- #endif
+-#endif
   }
   
   struct sh_machine_vector mv_mb680 __initmv = {
---- 266,271 ----
+ 
