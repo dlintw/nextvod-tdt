@@ -1,0 +1,36 @@
+From 71a21db54159947924681836927c1a2135a7cb96 Mon Sep 17 00:00:00 2001
+From: Carmelo Amoroso <carmelo.amoroso@st.com>
+Date: Wed, 25 May 2011 09:11:30 +0200
+Subject: [PATCH (sh-2.6.32.y)] usb_hcd: stcore: fix USB registers access
+ using ehci_readl wrapper.
+
+Perform 32 bits read/write access to USB registers by using the proper
+ehci_readl/writel wrappers. They force the register addresses to be
+__u32 __iomem *.
+
+Signed-off-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Signed-off-by: Carmelo Amoroso <carmelo.amoroso@st.com>
+---
+ drivers/usb/host/ehci-stcore.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-stcore.c b/drivers/usb/host/ehci-stcore.c
+index 0443cb3..a7c3d75 100644
+--- a/drivers/usb/host/ehci-stcore.c
++++ b/drivers/usb/host/ehci-stcore.c
+@@ -159,10 +159,10 @@ static int ehci_hcd_stm_probe(struct platform_device *pdev)
+ 
+ 	ehci = hcd_to_ehci(hcd);
+ 	ehci->caps = hcd->regs;
+-	ehci->regs = hcd->regs + HC_LENGTH(readl(&ehci->caps->hc_capbase));
++	ehci->regs = hcd->regs + HC_LENGTH(ehci_readl(ehci, &ehci->caps->hc_capbase));
+ 
+ 	/* cache this readonly data; minimize device reads */
+-	ehci->hcs_params = readl(&ehci->caps->hcs_params);
++	ehci->hcs_params = ehci_readl(ehci, &ehci->caps->hcs_params);
+ 
+ /*
+  * Fix the reset port issue on a load-unload-load sequence
+-- 
+1.7.4.4
+
