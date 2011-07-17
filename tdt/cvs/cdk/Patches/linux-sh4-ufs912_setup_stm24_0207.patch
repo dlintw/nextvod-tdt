@@ -117,7 +117,7 @@
  
  static void __init mb618_setup(char** cmdline_p)
  {
-@@ -51,105 +72,87 @@
+@@ -51,119 +72,110 @@
  
  	stx7111_early_device_init();
  
@@ -283,7 +283,19 @@
  		.sig_setup	= 50,		/* times in ns */
  		.sig_hold	= 50,
  		.CE_deassert	= 0,
-@@ -164,6 +167,15 @@
+ 		.WE_to_RBn	= 100,
+-		.wr_on		= 10,
+-		.wr_off		= 40,
+-		.rd_on		= 10,
+-		.rd_off		= 40,
+-		.chip_delay	= 30,		/* in us */
++		.wr_on		= 20,
++		.wr_off		= 50,
++		.rd_on		= 20,
++		.rd_off		= 50,
++		.chip_delay	= 50,		/* in us */
+ 	},
+ 
  	.emi_withinbankoffset	= 0,
  };
  
@@ -487,4 +499,3 @@
  	.mv_ioport_map		= mb618_ioport_map,
 -	STM_PCI_IO_MACHINE_VEC
  };
-
