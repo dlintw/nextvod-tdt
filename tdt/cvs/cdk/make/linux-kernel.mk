@@ -361,7 +361,11 @@ UFS912PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch
 
-OCTAGON1008PATCHES_24 = $(COMMONPATCHES_24)
+OCTAGON1008PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-octagon1008_setup_stm24$(PATCH_STR).patch \
+		linux-usbwait123_stm24.patch \
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
+	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
 
 ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
@@ -396,7 +400,9 @@ KERNELPATCHES_24 =  \
 		$(if $(VIP2_V1),$(VIP2_PATCHES_24)) \
 		$(if $(SPARK),$(SPARK_PATCHES_24)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_24)) \
-		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_24))
+		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_24)) \
+		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_24))
+
 
 ############ Patches Kernel 24 End ###############
 
