@@ -69,8 +69,8 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	[ -d "$(appsdir)/enigma2-nightly" ] || \
 	git clone -b $$HEAD git://git.opendreambox.org/git/enigma2.git $(appsdir)/enigma2-nightly; \
 	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.newest; \
-	[ "$$REVISION" == "" ] || (cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd "$(buildprefix)"; \
-	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.org;); \
+	[ "$$REVISION" == "" ] || (cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd "$(buildprefix)";); \
+	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.org; \
 	cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-nightly.$$DIFF.diff"
 	cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-nightly.tuxtxt.diff"
 	$(if $(CUBEREVO),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )

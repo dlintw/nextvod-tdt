@@ -104,3 +104,17 @@
  	return platform_add_devices(mb448_devices,
  			ARRAY_SIZE(mb448_devices));
  }
+--- a/drivers/stm/stx7100_hispeed.c	2011-07-14 21:52:24.000000000 +0200
++++ b/stx7100_hispeed.c	2011-07-16 22:49:38.969034084 +0200
+@@ -218,9 +218,9 @@
+ 			STM_PLAT_USB_FLAGS_OPC_MSGSIZE_CHUNKSIZE,
+ 	.device_config = &(struct stm_device_config){
+ 		.pad_config = &(struct stm_pad_config) {
+-			.gpios_num = 2,
++			.gpios_num = 1,
+ 			.gpios = (struct stm_pad_gpio []) {
+-				STM_PAD_PIO_IN_NAMED(5, 6, -1, "OC"),
++//				STM_PAD_PIO_IN_NAMED(5, 6, -1, "OC"),
+ 				STM_PAD_PIO_OUT_NAMED(5, 7, 1, "PWR"),
+ 			},
+ 			.custom_claim = stx7100_usb_pad_claim,
