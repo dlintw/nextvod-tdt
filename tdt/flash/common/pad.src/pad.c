@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 
     sscanf(argv[1], "%x", &padToSize);
 
-    while((readBytes = fread(buffer, 1, BUFSIZE, input)) == BUFSIZE)
+    while((readBytes = fread(buffer, 1, BUFSIZE, input)) > 0)
         padToSize -= fwrite(buffer, 1, readBytes, output);
 
     memset(buffer, 0xFF, BUFSIZE);
