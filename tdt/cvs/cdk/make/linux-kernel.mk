@@ -370,7 +370,6 @@ ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
-		linux-usbwait123_stm24.patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
 	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
 
