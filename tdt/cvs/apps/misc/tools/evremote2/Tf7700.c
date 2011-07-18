@@ -142,6 +142,8 @@ static int pShutdown(Context_t* context) {
     return 0;
 }
 
+static int gNextKey = 0;
+
 static int pRead(Context_t* context) {
 
     char          vData[3];
@@ -165,10 +167,13 @@ static int pRead(Context_t* context) {
     else
         vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
     
-    if(vCurrentCode != 0) {
-        unsigned int vNextKey = vData[4];
-        vCurrentCode += (vNextKey<<16);
+    if (vCurrentCode&0x80 == 0) // new key
+    {
+        gNextKey++;
+        gNextKey%=20;
     }
+
+    vCurrentCode += (gNextKey<<16);
 
     return vCurrentCode;
 }
