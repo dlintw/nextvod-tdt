@@ -58,7 +58,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/stv090x.ko
-   insmod $MODDIR/cimax.ko
+   insmod $MODDIR/starci.ko
    insmod $MODDIR/pti.ko
    insmod $MODDIR/stmdvb.ko
    insmod $MODDIR/stm_monitor.ko

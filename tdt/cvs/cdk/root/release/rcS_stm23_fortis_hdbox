@@ -67,7 +67,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/stv090x.ko
-   insmod $MODDIR/cimax.ko
+   insmod $MODDIR/starci.ko
 
    if [ $player=='player179' ]; then
       insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
