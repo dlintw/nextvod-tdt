@@ -478,4 +478,3 @@
   }
   
   struct sh_machine_vector mv_mb680 __initmv = {
- 
