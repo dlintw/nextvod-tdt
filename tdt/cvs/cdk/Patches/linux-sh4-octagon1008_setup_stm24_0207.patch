@@ -75,28 +75,28 @@
 +	},
 +	{
 +		.name = "[root ] - [squashfs] [RW]",
-+		.size =   0x00A00000, //root 0x240000-0xc3ffff 10,0MB
++		.size =   0x00E00000, //root 0x240000-0xc3ffff 14,0MB
 +		.offset = 0x00240000,
 +	},
 +	{
 +		.name = "[user ] - [ jffs2  ] [RW]",
-+		.size =   0x013C0000,  //0xa40000-0x1dfffff 19,5MB
-+		.offset = 0x00C40000,
++		.size =   0x00FC0000,  //0xa40000-0x1dfffff 15,5MB
++		.offset = 0x01040000,
 +	},
 +	{
-+		.name = "[uboot] - [  CONF  ] [RO]",
++		.name = "[uboot] - [  CONF  ] [RW]",
 +		.size =   0x00020000,	//boot config 0xa0020000-0xa003ffff  128k
 +		.offset = 0x00020000,
 + 	},
 + 	{
-+		.name = "[fl+bl] - [  RAW   ] [RO]",
-+		.size =   0x02000000,
-+		.offset = 0x00000000,
-+	},
-+	{
 +		.name = "[fl-bl] - [  RAW   ] [RW]",
 +		.size =   0x01FC0000,
 +		.offset = 0x00040000,
++	},
++	{
++		.name = "[fl+bl] - [  RAW   ] [RO]",
++		.size =   0x02000000,
++		.offset = 0x00000000,
 +	}
 +//};
 +//set above to #if 0 if you want to build an ird image
@@ -143,14 +143,14 @@
 +		.offset = 0x01c00000,
 +	},
 +	{
-+		.name = "[fl+bl] - [  RAW   ] [RO]",
-+		.size =   0x02000000,
-+		.offset = 0x00000000,
-+	},
-+	{
 +		.name = "[fl-bl] - [  RAW   ] [RW]",
 +		.size =   0x01D00000,
 +		.offset = 0x00300000,
++	},
++	{
++		.name = "[fl+bl] - [  RAW   ] [RO]",
++		.size =   0x02000000,
++		.offset = 0x00000000,
 +	}
 +#endif
 +};
