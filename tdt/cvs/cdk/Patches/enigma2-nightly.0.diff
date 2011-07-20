@@ -5506,7 +5506,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Plu
 +                        f = statvfs(defaultMoviePath())
 +                        # there are 8 HDD segments in the VFD
 +                        used = (f.f_blocks - f.f_bavail) * 8 / f.f_blocks
-+                except OSError:
++                except:
 +                        used = 0;
 +
 +                if self.hddUsed != used:

@@ -336,7 +336,8 @@ COMMONPATCHES_24 = \
 		xchg_fix_stm24$(PATCH_STR).patch \
 		mm_cache_update_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-ehci_stm24$(PATCH_STR).patch) \
-		linux-sh4-lzma-fix_stm24$(PATCH_STR).patch
+		linux-sh4-lzma-fix_stm24$(PATCH_STR).patch \
+		linux-tune_stm24.patch
 
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-tf7700_setup_stm24$(PATCH_STR).patch \

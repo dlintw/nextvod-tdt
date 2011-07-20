@@ -42,20 +42,7 @@ MKSQUASHFS = $(hostprefix)/bin/mksquashfs
 
 mksquashfs: $(MKSQUASHFS)
 
-if STM24
-$(hostprefix)/bin/mksquashfs: @DEPENDS_squashfs@
-	rm -rf @DIR_squashfs@
-	mkdir -p @DIR_squashfs@
-	cd @DIR_squashfs@ && \
-	bunzip2 -cd ../Archive/lzma465.tar.bz2 | TAPE=- tar -x && \
-	gunzip -cd ../Archive/squashfs4.0.tar.gz | TAPE=- tar -x && \
-	cd squashfs4.0/squashfs-tools && patch -p1 < ../../../Patches/squashfs-tools-4.0-lzma.patch
-	$(MAKE) -C @DIR_squashfs@/squashfs4.0/squashfs-tools
-	$(INSTALL) -d $(@D)
-	$(INSTALL) -m755 @DIR_squashfs@/squashfs4.0/squashfs-tools/mksquashfs $@
-	$(INSTALL) -m755 @DIR_squashfs@/squashfs4.0/squashfs-tools/unsquashfs $(@D)
-#	rm -rf @DIR_squashfs@
-else
+if STM22
 $(hostprefix)/bin/mksquashfs: @DEPENDS_squashfs@
 	rm -rf @DIR_squashfs@
 	mkdir -p @DIR_squashfs@
@@ -70,11 +57,22 @@ $(hostprefix)/bin/mksquashfs: @DEPENDS_squashfs@
 	$(INSTALL) -m755 @DIR_squashfs@/squashfs3.0/squashfs-tools/mksquashfs $@
 	$(INSTALL) -m755 @DIR_squashfs@/squashfs3.0/squashfs-tools/unsquashfs $(@D)
 #	rm -rf @DIR_squashfs@
+else
+$(hostprefix)/bin/mksquashfs: @DEPENDS_squashfs@
+	rm -rf @DIR_squashfs@
+	mkdir -p @DIR_squashfs@
+	cd @DIR_squashfs@ && \
+	bunzip2 -cd ../Archive/lzma465.tar.bz2 | TAPE=- tar -x && \
+	gunzip -cd ../Archive/squashfs4.0.tar.gz | TAPE=- tar -x && \
+	cd squashfs4.0/squashfs-tools && patch -p1 < ../../../Patches/squashfs-tools-4.0-lzma.patch
+	$(MAKE) -C @DIR_squashfs@/squashfs4.0/squashfs-tools
+	$(INSTALL) -d $(@D)
+	$(INSTALL) -m755 @DIR_squashfs@/squashfs4.0/squashfs-tools/mksquashfs $@
+	$(INSTALL) -m755 @DIR_squashfs@/squashfs4.0/squashfs-tools/unsquashfs $(@D)
+#	rm -rf @DIR_squashfs@
 endif
 
 endif
-
-
 #
 # IPKG-UTILS
 #
