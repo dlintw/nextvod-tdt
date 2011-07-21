@@ -1,1 +1,1 @@
-mkfs.jffs2 mkfs.jffs2 -r release -o e2jffs2.img -e 0x20000 -pn
+mkfs.jffs2 -r release -o e2jffs2.img -e 0x20000 -pn
