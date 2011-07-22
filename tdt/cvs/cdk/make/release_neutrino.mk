@@ -988,6 +988,7 @@ if ENABLE_PLAYER179
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvbi.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvout.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release_neutrino/lib/modules/
 #	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
 	find $(prefix)/release_neutrino/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
@@ -1020,6 +1021,7 @@ if ENABLE_PLAYER191
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvbi.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmvout.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti/pti.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release_neutrino/lib/modules/
 #	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/pti_np/pti.ko $(prefix)/release_neutrino/lib/modules/
 	find $(prefix)/release_neutrino/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \
@@ -1185,7 +1187,7 @@ endif
 
 	cp -aR $(targetprefix)/usr/local/share/fonts/micron.ttf $(prefix)/release_neutrino/usr/local/share/fonts/neutrino.ttf
 	cp $(appsdir)/neutrino/src/nhttpd/web/{Y_Baselib.js,Y_VLC.js} $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y/
-	rm $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y/{Y_Baselib.js.gz,Y_VLC.js.gz}
+#	rm $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y/{Y_Baselib.js.gz,Y_VLC.js.gz}
 #######################################################################################
 	echo "duckbox-rev#: " > $(prefix)/release_neutrino/etc/imageinfo
 	git describe >> $(prefix)/release_neutrino/etc/imageinfo
@@ -1195,7 +1197,7 @@ endif
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/lib
 
 	cp -R $(targetprefix)/usr/lib/* $(prefix)/release_neutrino/usr/lib/
-	cp -R $(targetprefix)/usr/local/lib/* $(prefix)/release_neutrino/usr/lib/
+#	cp -R $(targetprefix)/usr/local/lib/* $(prefix)/release_neutrino/usr/lib/
 	rm -rf $(prefix)/release_neutrino/usr/lib/alsa-lib
 	rm -rf $(prefix)/release_neutrino/usr/lib/alsaplayer
 	rm -rf $(prefix)/release_neutrino/usr/lib/engines
