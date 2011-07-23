@@ -141,8 +141,8 @@ esac
 echo -e "\nKernel:"
 echo " Maintained:"
 echo "   4) STM 23 P0123"
-echo "   6) STM 24 P0205 (working on ufs910(stable, w.o. sata), atevio7500, spark, ufs912, ufs922, tf7700. Player 179/191 only)"
-echo "   8) STM 24 P0207 (working on ufs910(stable, w.o. sata), atevio7500, ufs912. Player 179/191 only)"
+echo "   6) STM 24 P0205"
+echo "   8) STM 24 P0207 (Recommended)"
 echo " Experimental:"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
@@ -191,7 +191,7 @@ cd -
 
 echo -e "\nPlayer:"
 echo "   2) Player 179"
-echo "   3) Player 191 (Experimental)"
+echo "   3) Player 191 (Recommended)"
 case $4 in
         [1-3]) REPLY=$4
         echo -e "\nSelected player: $REPLY\n"
@@ -307,8 +307,8 @@ esac
 ##############################################
 
 echo -e "\nMulticom:"
-echo "   1) Multicom 3.2.2"
-echo "   2) Multicom 3.2.4 rc3 (experimental)"
+echo "   1) Multicom 3.2.2     (Recommended for Player179)"
+echo "   2) Multicom 3.2.4 rc3 (Recommended for Player191)"
 case $5 in
         [1-2]) REPLY=$5
         echo -e "\nSelected multicom: $REPLY\n"
