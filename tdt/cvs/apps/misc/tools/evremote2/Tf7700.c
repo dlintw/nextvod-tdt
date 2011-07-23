@@ -146,28 +146,34 @@ static int gNextKey = 0;
 
 static int pRead(Context_t* context) {
 
-    char          vData[3];
+    unsigned char vData[3];
     const int     cSize            = 3;
     eKeyType      vKeyType         = RemoteControl;
     int           vCurrentCode     = -1;
+    unsigned char vIsBurst         = 0;
     
     // wait for new command 
     read (context->fd, vData, cSize);
-
-    //printf("0x%02X 0x%02X\n", vData[0], vData[1]);
+    
+    //printf("+0x%02X 0x%02X\n", vData[0], vData[1]);
     if(vData[0] == 0x61)
         vKeyType = RemoteControl;
     else if(vData[0] == 0x51)
         vKeyType = FrontPanel;
     else //Control Sequence
         return -1;
-        
+    
+    vIsBurst = ((vData[1]&0x80)==0x80)?1:0;
+    vData[1] = vData[1] & 0x7f;
+    
+    //printf("vIsBurst=%d Key=0x%02x\n", vIsBurst, vData[1]);
+    
     if(vKeyType == RemoteControl)
         vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[1]);
     else
         vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
-    
-    if (vCurrentCode&0x80 == 0) // new key
+    //printf("-0x%02X\n", vCurrentCode);
+    if (vIsBurst == 0) // new key
     {
         gNextKey++;
         gNextKey%=20;
@@ -193,7 +199,7 @@ RemoteControl_t Tf7700_RC = {
 	&pNotification,
 	cButtonsTopfield7700HDPVR,
 	cButtonsTopfield7700HDPVRFrontpanel,
-        NULL,
-        1,
-        &cLongKeyPressSupport,
+	NULL,
+	1,
+	&cLongKeyPressSupport,
 };
