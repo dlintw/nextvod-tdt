@@ -289,7 +289,7 @@ void *detectKeyUpTask(void* dummy)
         gKeyCode = 0;
         usleep(sleep*1000);
       }
-      printf("KEY_RELEASE - %02x %d\n", keyCode, nextKey);
+      printf("KEY_RELEASE - %02x %d CAUSE=%s\n", keyCode, nextKey, (gKeyCode==0)?"Timeout":"New key");
 
       //Check if tuxtxt is running
       if (tux == false)
