@@ -85,13 +85,13 @@ slink /sbin/mount	/bin/busybox			0755 0 0
 slink /sbin/umount	/bin/busybox			0755 0 0
 slink /sbin/swapoff	/bin/busybox			0755 0 0
 slink /sbin/reboot	/bin/busybox			0755 0 0
-file  /sbin/sfdisk      ../../../tufsbox/release/sbin/sfdisk	0755 0 0
-file  /sbin/mkfs.ext2	../../../tufsbox/release/sbin/mkfs.ext2 0755 0 0
-file  /sbin/fsck.ext2   ../../../tufsbox/release/sbin/fsck.ext2 0755 0 0
-file  /sbin/mkfs.ext3   ../../../tufsbox/release/sbin/mkfs.ext3 0755 0 0
-file  /sbin/fsck.ext3   ../../../tufsbox/release/sbin/fsck.ext3 0755 0 0
-file  /sbin/mkfs.jfs    ../../../tufsbox/release/sbin/mkfs.jfs 0755 0 0
-file  /sbin/fsck.jfs    ../../../tufsbox/release/sbin/fsck.jfs 0755 0 0
+file  /sbin/sfdisk      ../../../tufsbox/cdkroot/sbin/sfdisk	0755 0 0
+file  /sbin/mkfs.ext2	../../../tufsbox/cdkroot/sbin/mkfs.ext2 0755 0 0
+file  /sbin/fsck.ext2   ../../../tufsbox/cdkroot/sbin/fsck.ext2 0755 0 0
+file  /sbin/mkfs.ext3   ../../../tufsbox/cdkroot/sbin/mkfs.ext3 0755 0 0
+file  /sbin/fsck.ext3   ../../../tufsbox/cdkroot/sbin/fsck.ext3 0755 0 0
+file  /sbin/mkfs.jfs    ../../../tufsbox/cdkroot/sbin/mkfs.jfs 0755 0 0
+file  /sbin/fsck.jfs    ../../../tufsbox/cdkroot/sbin/fsck.jfs 0755 0 0
 
 dir  /etc						0755 0 0
 file /etc/inittab	../tfinstaller/inittab 	  		0755 0 0
@@ -118,7 +118,7 @@ file /lib/ld-linux.so.2		../../../tufsbox/release/lib/ld-linux.so.2	0755 0 0
 file /lib/libe2p.so.2		../../../tufsbox/release/lib/libe2p.so.2	0755 0 0
 file /lib/libext2fs.so.2	../../../tufsbox/release/lib/libext2fs.so.2	0755 0 0
 file /lib/libcom_err.so.2	../../../tufsbox/release/lib/libcom_err.so.2	0755 0 0
-file /lib/libblkid.so.1		../../../tufsbox/release/lib/libblkid.so.1	0755 0 0
-file /lib/libuuid.so.1		../../../tufsbox/release/lib/libuuid.so.1	0755 0 0
+file /lib/libblkid.so.1		../../../tufsbox/cdkroot/usr/lib/libblkid.so.1	0755 0 0
+file /lib/libuuid.so.1		../../../tufsbox/cdkroot/usr/lib/libuuid.so.1	0755 0 0
 #file /lib/libcrypt.so.1		../../../tufsbox/release/lib/libcrypt.so.1	0755 0 0
 

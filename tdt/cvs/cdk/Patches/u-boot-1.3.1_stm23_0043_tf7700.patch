@@ -1,3 +1,40 @@
+diff -Nur u-boot-sh4-1.3.1_stm23_0043_orig/common/main.c u-boot-sh4-1.3.1_stm23_0043/common/main.c
+--- u-boot-sh4-1.3.1_stm23_0043_orig/common/main.c	2011-07-02 21:08:15.700078411 +0200
++++ u-boot-sh4-1.3.1_stm23_0043/common/main.c	2011-07-02 21:07:24.584080807 +0200
+@@ -48,7 +48,7 @@
+  * Board-specific Platform code can reimplement show_boot_progress () if needed
+  */
+ void inline __show_boot_progress (int val) {}
+-void inline show_boot_progress (int val) __attribute__((weak, alias("__show_boot_progress")));
++void inline show_boot_progress (int val) __attribute__((alias("__show_boot_progress")));
+ 
+ #if defined(CONFIG_BOOT_RETRY_TIME) && defined(CONFIG_RESET_TO_RETRY)
+ extern int do_reset (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);		/* for do_reset() prototype */
+diff -Nur u-boot-sh4-1.3.1_stm23_0043_orig/common/cmd_ide.c.orig u-boot-sh4-1.3.1_stm23_0043/common/cmd_ide.c
+--- u-boot-sh4-1.3.1_stm23_0043_orig/common/cmd_ide.c	1970-01-01 01:00:00.000000000 +0100
++++ u-boot-sh4-1.3.1_stm23_0043/common/cmd_ide.c	2011-07-02 21:06:32.379078873 +0200
+@@ -816,19 +816,19 @@
+ 	outb(val, (ATA_CURR_BASE(dev)+CFG_ATA_PORT_ADDR(port)));
+ }
+ void inline ide_outb (int dev, int port, unsigned char val)
+-		__attribute__((weak, alias("__ide_outb")));
++		__attribute__((alias("__ide_outb")));
+ 
+ unsigned char inline
+ __ide_inb(int dev, int port)
+ {
+ 	uchar val;
+ 	val = inb((ATA_CURR_BASE(dev)+CFG_ATA_PORT_ADDR(port)));
+ 	debug ("ide_inb (dev= %d, port= 0x%x) : @ 0x%08lx -> 0x%02x\n",
+ 		dev, port, (ATA_CURR_BASE(dev)+CFG_ATA_PORT_ADDR(port)), val);
+ 	return val;
+ }
+ unsigned char inline ide_inb(int dev, int port)
+-			__attribute__((weak, alias("__ide_inb")));
++			__attribute__((alias("__ide_inb")));
+ 
+ #ifdef __PPC__
+ # ifdef CONFIG_AMIGAONEG3SE
 diff -rcN u-boot-sh4-1.3.1_stm23_0043_orig/board/tf7700/config.mk u-boot-sh4-1.3.1_stm23_0043/board/tf7700/config.mk
 *** u-boot-sh4-1.3.1_stm23_0043_orig/board/tf7700/config.mk	1970-01-01 01:00:00.000000000 +0100
 --- u-boot-sh4-1.3.1_stm23_0043/board/tf7700/config.mk	2010-01-30 00:30:21.000000000 +0100
