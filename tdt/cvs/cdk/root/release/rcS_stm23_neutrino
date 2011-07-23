@@ -28,7 +28,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    /bin/ustslave /dev/st231-0 /boot/video.elf
 
    echo "Starting DEBUG Interface"
-   /etc/init.d/mountall start
+   mount -av -t nonfs,nonfs4,nosmbfs,nocifs,noncp,noncpfs,nocoda
    /etc/init.d/hostname start
 
    echo "starting telnetd"

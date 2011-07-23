@@ -8,12 +8,16 @@ TMPVARDIR=$4
 TMPKERNELDIR=$5
 
 cp -a $RELEASEDIR/* $TMPROOTDIR
+mkdir $TMPROOTDIR/root_rw
+mkdir $TMPROOTDIR/storage
+cp ../common/init_mini_fo $TMPROOTDIR/sbin/
+chmod 777 $TMPROOTDIR/sbin/init_mini_fo
 
 # --- BOOT ---
 mv $TMPROOTDIR/boot/uImage $TMPKERNELDIR/uImage
 
 # --- VAR ---
-mv $TMPROOTDIR/var/* $TMPVARDIR
+mkdir $TMPVARDIR/root_ro
 
 # --- ROOT ---
 echo "/dev/mtdblock3	/var	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab

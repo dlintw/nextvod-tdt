@@ -44,9 +44,13 @@
 
 static void exec_init(char **argv, char **envp)
 {
+	char * const init_fo_name = "init_mini_fo";
 	char * const init_name = "init";
 	char * const sh_name = "sh";
 
+	argv[0] = init_fo_name;
+	execve("/sbin/init_mini_fo",argv,envp);
+	
 	argv[0] = init_name;
 	execve("/sbin/init",argv,envp);
 	execve("/etc/init",argv,envp);
