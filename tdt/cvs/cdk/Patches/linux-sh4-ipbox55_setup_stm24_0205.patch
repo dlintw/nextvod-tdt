@@ -163,9 +163,9 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c linu
 +		.size		= MTDPART_SIZ_FULL,
 +	},
 +	{
-+		.name		= "nor.all_noboot",
-+		.offset		= 0x00040000,
-+		.size		= 0x01FC0000,
++		.name		= "nor.kernel_root",
++		.offset		= 0x00060000,
++		.size		= 0x03FA0000,
 +	},
 +};
 +
@@ -182,7 +182,7 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c linu
 +	.resource	= (struct resource[]) {
 +		{
 +			.start		= 0x00000000,
-+			.end		= 0x02000000 - 1,
++			.end		= 0x04000000 - 1,
 +			.flags		= IORESOURCE_MEM,
 +		}
 +	},
