@@ -1,0 +1,1237 @@
+diff -urN enigma2-nightly.org/lib/driver/fan_options.cpp enigma2-nightly.org/lib/driver/fan_options.cpp
+--- enigma2-nightly.org/lib/driver//fan_options.cpp	1970-01-01 01:00:00.000000000 +0100
++++ enigma2-nightly.org/lib/driver//fan_options.cpp	2010-08-16 22:32:51.000000000 +0200
+@@ -0,0 +1,62 @@
++#include <lib/driver/fan_options.h>
++
++#include <unistd.h>
++#include <fcntl.h>
++#include <sys/ioctl.h>
++
++#include <lib/base/init.h>
++#include <lib/base/init_num.h>
++#include <lib/base/eerror.h>
++
++Fan_Options *Fan_Options::instance = 0;
++
++Fan_Options::Fan_Options()
++	:m_Fan_output_state(-1)
++{
++	ASSERT(!instance);
++	instance = this;
++}
++
++int Fan_Options::set_Fan_output(int state)
++{
++        eDebug("[%s] fan state = %d",__func__,state); 
++	if (state == m_Fan_output_state)
++		return 0;
++	int fd = open("/proc/stb/misc/fan", O_WRONLY);
++	if (fd < 0)
++	{
++		eDebug("couldn't open /proc/stb/misc/fan");
++		return -1;
++	}
++	const char *str=0;
++
++	if (state == 0)
++		str = "0";
++	else if (state == 1)
++		str = "1";
++	if (str)
++		write(fd, str, strlen(str));
++	m_Fan_output_state = state;
++	close(fd);
++	return 0;
++}
++
++bool Fan_Options::detected_Fan_output()
++{
++	int fd = open("/proc/stb/misc/fan", O_WRONLY);
++	if (fd < 0)
++	{
++		eDebug("couldn't open /proc/stb/misc/fan");
++		return false;
++	}
++	close(fd);
++	return true;
++}
++
++Fan_Options *Fan_Options::getInstance()
++{
++	return instance;
++}
++
++//FIXME: correct "run/startlevel"
++eAutoInitP0<Fan_Options> init_fan_options(eAutoInitNumbers::rc, "fan options");
+diff -urN enigma2-nightly.org/lib/driver//fan_options.h enigma2-nightly.org/lib/driver/fan_options.h
+--- enigma2-nightly.org/lib/driver/fan_options.h	1970-01-01 01:00:00.000000000 +0100
++++ enigma2-nightly.org/lib/driver/fan_options.h	2010-08-16 22:32:51.000000000 +0200
+@@ -0,0 +1,21 @@
++#ifndef __fan_options_h
++#define __fan_options_h
++
++class Fan_Options
++{
++	static Fan_Options *instance;
++	int m_Fan_output_state;
++#ifdef SWIG
++	Fan_Options();
++#endif
++public:
++#ifndef SWIG
++	Fan_Options();
++#endif
++	static Fan_Options *getInstance();
++	int set_Fan_output(int val);
++	int get_Fan_output() { return m_Fan_output_state; }
++	bool detected_Fan_output();
++};
++
++#endif // __fan_options_h
+diff -urN enigma2-nightly.org/lib/driver/Makefile.am enigma2-nightly.org/lib/driver/Makefile.am
+--- enigma2-nightly.org/lib/driver/Makefile.am	2011-07-14 22:23:46.000000000 +0200
++++ enigma2-nightly.org/lib/driver/Makefile.am	2011-07-14 23:07:34.998682430 +0200
+@@ -17,8 +17,9 @@
+ 	rcconsole.cpp \
+ 	rcinput.cpp \
+ 	rfmod.cpp \
+-	vfd.cpp
+-
++	vfd.cpp \
++	fan_options.cpp
++	
+ driverincludedir = $(pkgincludedir)/lib/driver
+ driverinclude_HEADERS = \
+ 	avswitch.h \
+diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/vfd.cpp
+--- enigma2-nightly.org/lib/driver/vfd.cpp	2011-07-14 22:23:46.000000000 +0200
++++ enigma2-nightly.org/lib/driver/vfd.cpp	2010-11-15 22:54:31.000000000 +0100
+@@ -7,21 +7,34 @@
+ #include <sys/ioctl.h>
+ #include <ctype.h>
+ #include <sys/stat.h>
+-#include  <pthread.h> 
++#include <pthread.h> 
++#include <stdio.h>
++#include <time.h> 
+ 
+ #include <lib/base/eerror.h>
+ #include <lib/driver/vfd.h>
+ 
+-#ifdef PLATFORM_TF7700
+-#include "../../misc/tools/tffpctl/frontpanel.h"
+-#endif
++#define VFD_DEVICE "/dev/dbox/vfd"
+ 
+-#define VFD_DEVICE "/dev/vfd"
+-#define VFDICONDISPLAYONOFF	0xc0425a0a
+ #define	VFDDISPLAYCHARS 	0xc0425a00
+-#define VFDBRIGHTNESS           0xc0425a03
+-//light on off
+-#define VFDDISPLAYWRITEONOFF    0xc0425a05
++#define VFDBRIGHTNESS		0xc0425a03
++#define VFDDISPLAYWRITEONOFF	0xc0425a05
++#define VFDDRIVERINIT		0xc0425a08
++#define VFDICONDISPLAYONOFF	0xc0425a0a
++
++#define VFDDISPLAYCHARSRAW	0xc0425a80 // sisyfos specific
++#define VFDDEEPSTANDBY		0xc0425a81 // sisyfos specific
++#define VFDDISPLAYCLEAR		0xc0425a82 // sisyfos specific
++
++#define VFDSETTIMERWAKEUP	0xc0425af9
++#define VFDGETTIME		0xc0425afa
++#define VFDSETTIME		0xc0425afb
++#define VFDSTANDBY		0xc0425afc
++//#define VFDREBOOT		0xc0425afd
++
++#define VFDSETLED		0xc0425afe
++#define VFDSETMODE		0xc0425aff
++
+ 
+ bool startloop_running = false;
+ static bool icon_onoff[32];
+@@ -39,7 +52,6 @@
+ };
+ 
+ 
+-
+ evfd* evfd::instance = NULL;
+ 
+ evfd* evfd::getInstance()
+@@ -67,166 +79,37 @@
+ 	//close (file_vfd);
+ }
+ 
+-#ifdef PLATFORM_TF7700
+-char * getProgress()
+-{
+-	int n;
+-	static char progress[20] = "0";
+-	int fd = open ("/proc/progress", O_RDONLY);
+-
+-	if(fd < 0)
+-		return 0;
+-
+-	n = read(fd, progress, sizeof(progress));
+-	close(fd);
+-
+-	if(n < 0)
+-		n = 0;
+-	else if((n > 1) && (progress[n-1] == 0xa))
+-		n--;
+-
+-	progress[n] = 0;
+-
+-	return progress;
+-}
+-
+-#define MAX_CHARS 8
+-
+-void * start_loop (void *arg)
+-{
+-	int fplarge = open ("/dev/fplarge", O_WRONLY);
+-	int fpsmall = open ("/dev/fpsmall", O_WRONLY);
+-	int fpc = open ("/dev/fpc", O_WRONLY);
+-
+-	if((fplarge < 0) || (fpsmall < 0) || (fpc < 0))
+-	{
+-		printf("Failed opening devices (%d, %d, %d)\n",
+-					fplarge, fpsmall, fpc);
+-		return NULL;
+-	}
+-
+-	blocked = true;
+-
+-	// set scroll mode
+-	//frontpanel_ioctl_scrollmode scrollMode = {2, 10, 15};
+-	//ioctl(fpc, FRONTPANELSCROLLMODE, &scrollMode);
+-	
+-	// display string
+-	char str[] = "        AAF DEV-TEAM ENIGMA2";
+-	int length = strlen(str);
+-	char dispData[MAX_CHARS + 1];
+-	int offset = 0;
+-	int i;
+-
+-	frontpanel_ioctl_icons icons = {0, 0, 0xf};
+-
+-	// start the display loop
+-	char * progress = getProgress();
+-	int index = 2;
+-	while(!requested)
+-	{
+-		// display the CD segments
+-		icons.Icons2 = (((1 << index) - 1)) & 0x1ffe;
+-		ioctl(fpc, FRONTPANELICON, &icons);
+-		index++;
+-		if(index > 13)
+-		{
+-			index = 2;
+-			icons.BlinkMode = (~icons.BlinkMode) & 0xf;
+-		}
+-
+-		// display the visible part of the string
+-		for(i = 0; i < MAX_CHARS; i++)
+-		{
+-			dispData[i] = str[(offset + i) % length];
+-		}
+-		offset++;
+-		write(fplarge, dispData, sizeof(dispData));
+-		usleep(200000);
+-		if((index % 4) == 0)
+-		{
+-		  // display progress
+-		  progress = getProgress();
+-		  write(fpsmall, progress, strlen(progress) + 1);
+-		  if(strncmp("100", progress, 3) == 0)
+-		    break;
+-		}
+-	}
+-
+-	// clear all icons
+-	frontpanel_ioctl_icons iconsOff = {0xffffffff, 0xffffffff, 0x0};
+-	ioctl(fpc, FRONTPANELICON, &iconsOff);
+-
+-	// clear display
+-	write(fpsmall, "    ", 5);
+-	write(fplarge, "        ", MAX_CHARS);
+-
+-	close(fplarge);
+-	close(fpsmall);
+-	close(fpc);
+-	blocked = false;
+-
+-	return NULL;
+-}
+-
+-#else
+-
+ void * start_loop (void *arg)
+ {
+ 	evfd vfd;
+ 	blocked = true;
+ 	//vfd.vfd_clear_icons();
+-	vfd.vfd_write_string("AAF DEV-TEAM", true);
++#ifdef IPBOX55
++	vfd.vfd_write_string("E2HD", true);
++#else
++	vfd.vfd_write_string("   ENIGMA 2   ", true);
++	
+ 	//run 2 times through all icons 
+ 	for  (int vloop = 0; vloop < 128; vloop++) {
+-		/*if (vloop%14 == 0 )
+-			vfd.vfd_set_brightness(1);
+-		else if (vloop%14 == 1 )
+-			vfd.vfd_set_brightness(2);
+-		else if (vloop%14 == 2 )
+-			vfd.vfd_set_brightness(3);
+-		else if (vloop%14 == 3 )
+-			vfd.vfd_set_brightness(4);
+-		else if (vloop%14 == 4 )
+-			vfd.vfd_set_brightness(5);
+-		else if (vloop%14 == 5 )
+-			vfd.vfd_set_brightness(6);
+-		else if (vloop%14 == 6 )
+-			vfd.vfd_set_brightness(7);
+-		else if (vloop%14 == 7 )
+-			vfd.vfd_set_brightness(6);
+-		else if (vloop%14 == 8 )
+-			vfd.vfd_set_brightness(5);
+-		else if (vloop%14 == 9 )
+-			vfd.vfd_set_brightness(4);
+-		else if (vloop%14 == 10 )
+-			vfd.vfd_set_brightness(3);
+-		else if (vloop%14 == 11 )
+-			vfd.vfd_set_brightness(2);
+-		else if (vloop%14 == 12 )
+-			vfd.vfd_set_brightness(1);
+-		else if (vloop%14 == 13 )
+-			vfd.vfd_set_brightness(0);*/
+ 		if (vloop%2 == 1) {
+-			vfd.vfd_set_icon( (tvfd_icon) (((vloop%32)/2)%16), ICON_OFF, true);
++			vfd.vfd_set_icon( (tvfd_icon) (((vloop%28)/2)%14), ICON_OFF, true);
+ 			//usleep(1000);
+-			vfd.vfd_set_icon( (tvfd_icon) ((((vloop%32)/2)%16)+1), ICON_ON, true);
++			vfd.vfd_set_icon( (tvfd_icon) ((((vloop%28)/2)%14)+1), ICON_ON, true);
+ 		}
+ 		usleep(75000);
+ 	}
++
+ 	vfd.vfd_set_brightness(7);
+-	
++
+ 	//set all blocked icons
+-	for (int id = 0x10; id < 0x20; id++) {
++	for (int id = 0x00; id < 0x0d; id++) {
+ 		vfd.vfd_set_icon((tvfd_icon)id, icon_onoff[id]);	
+ 	}
+-
++#endif
+ 	blocked = false;
+ 	return NULL;
+ }
+ 
+-#endif
+-
+ //////////////////////////////////////////////////////////////////////////////////////
+ 
+ void evfd::vfd_write_string(char * str)
+@@ -236,58 +119,70 @@
+ 
+ void evfd::vfd_write_string(char * str, bool force)
+ {
++	eDebug("[%s]%s len=%d", __func__, str,strlen(str));
+ 	int i;
+ 	i = strlen ( str );
+ 	if ( i > 63 ) i = 63;
+-	memset ( chars, ' ', 63 );
+-	memcpy ( chars, str, i);	
+-
+-#ifdef PLATFORM_TF7700
+-
+-	// request the display to cancel the start loop
+-	requested = true;
+-	while(blocked) usleep(200000);
+-
+-	{
+-#else
+ 	if (!blocked || force) {
+-#endif
+ 		struct vfd_ioctl_data data;
+ 		memset ( data.data, ' ', 63 );
+-		memcpy ( data.data, str, i );	
++		memcpy ( data.data, str, i );
+ 
+ 		data.start = 0;
+ 		data.length = i;
+-
+ 		file_vfd = open (VFD_DEVICE, O_WRONLY);
++#ifdef IPBOX55
++		ioctl ( file_vfd, VFDDISPLAYCHARS, str );
++#else
+ 		ioctl ( file_vfd, VFDDISPLAYCHARS, &data );
++#endif
+ 		close (file_vfd);
+ 	}
+ 	return;
+ }
+ 
+-void evfd::vfd_write_string_scrollText(char* text) {
++void evfd::vfd_write_string_scrollText(char* text) 
++{
++//	eDebug("[%s]%slen=%d", __func__, text,strlen(text));
++#ifdef IPBOX55
++	if (!blocked) {
++		int i, len = strlen(text);
++		char* out = (char *) malloc(14);
++
++		for (i=0; i<=(len-4); i++) { // scroll text till end
++			memset(out, ' ', 14);
++			memcpy(out, text+i, 14);
++			vfd_write_string(out);
++			usleep(200000);
++		}
++		memcpy(out, text, 4); // display first 14 chars after scrolling
++		vfd_write_string(out);
++		free (out);
++	}
++#else
+ 	if (!blocked) {
+ 		int i, len = strlen(text);
+-		char* out = (char *) malloc(16);
++		char* out = (char *) malloc(14);
+ 
+-		for (i=0; i<=(len-16); i++) { // scroll text till end
+-			memset(out, ' ', 16);
+-			memcpy(out, text+i, 16);
++		for (i=0; i<=(len-14); i++) { // scroll text till end
++			memset(out, ' ', 14);
++			memcpy(out, text+i, 14);
+ 			vfd_write_string(out);
+ 			usleep(200000);
+ 		}
+ 		for (i=1; i<16; i++) { // scroll text with whitespaces from right
+-			memset(out, ' ', 16);
+-			memcpy(out, text+len+i-16, 16-i);
++			memset(out, ' ', 14);
++			memcpy(out, text+len+i-14, 14-i);
+ 			vfd_write_string(out);
+ 			usleep(200000);
+ 		}
+ 
+-		memcpy(out, text, 16); // display first 16 chars after scrolling
++		memcpy(out, text, 14); // display first 14 chars after scrolling
+ 		vfd_write_string(out);
+ 		free (out);
+ 	}
++
++#endif
+ 	return;
+ }
+ 
+@@ -308,31 +203,34 @@
+ void evfd::vfd_set_icon(tvfd_icon id, bool onoff, bool force)
+ {
+ 	icon_onoff[id] = onoff;
+-
++#ifndef IPBOX55
+ 	if (!blocked || force) {
+ 		struct vfd_ioctl_data data;
+ 
+ 		if (!startloop_running) {
+ 			memset(&data, 0, sizeof(struct vfd_ioctl_data));
+-
+ 			data.start = 0x00;
+     			data.data[0] = id & 0x0f;
+     			data.data[4] = onoff;
+     			data.length = 5;
+-
++//                      eDebug("[%s] 0x%2x 0x%2x ", __func__, data.data[0], data.data[4]);
+ 			file_vfd = open (VFD_DEVICE, O_WRONLY);
+     			ioctl(file_vfd, VFDICONDISPLAYONOFF, &data);
+ 			close (file_vfd);
+ 		}
+ 	}
++#endif
+ 	return;
+ }
+ 
+ void evfd::vfd_clear_icons()
+ {
+-	for (int id = 0x10; id < 0x20; id++) {
++#ifndef IPBOX55
++
++	for (int id = 0x00; id < 0x0d; id++) {
+ 		vfd_set_icon((tvfd_icon)id, false);	
+ 	}
++#endif
+ 	return;
+ }
+ 
+@@ -346,11 +244,12 @@
+ 	
+ 	data.start = setting & 0x07;
+ 	data.length = 0;
+-
++	
++#ifndef IPBOX55
+ 	file_vfd = open (VFD_DEVICE, O_WRONLY);
+ 	ioctl ( file_vfd, VFDBRIGHTNESS, &data );
+ 	close (file_vfd);
+-
++#endif
+ 	return;
+ }
+ 
+@@ -366,11 +265,110 @@
+ 	else
+ 		data.start = 0x00;
+     	data.length = 0;
++#ifndef IPBOX55
++	file_vfd = open (VFD_DEVICE, O_WRONLY);
++    	ioctl(file_vfd, VFDDISPLAYWRITEONOFF, &data);
++	close (file_vfd);
++#endif
++	return;
++}
++
++void evfd::vfd_set_time()
++{
++	eDebug("[%s]", __func__);
++
++	time_t  secs_now;
++	struct  tm *time_now;
++	tzset();
++	time(&secs_now);
++	time_now = localtime(&secs_now);
++	char timebuf[7];
++#ifdef IPBOX55
++        sprintf(timebuf,"%02d%02d", time_now->tm_hour, time_now->tm_min);
++        vfd_write_string(timebuf);
++#else
++        
++	timebuf[0]=time_now->tm_sec;
++	timebuf[1]=time_now->tm_min;
++	timebuf[2]=time_now->tm_hour;
++	timebuf[3]=time_now->tm_wday;
++	timebuf[4]=time_now->tm_mday;
++	timebuf[5]=time_now->tm_mon+1;
++	timebuf[6]=time_now->tm_year % 100;
++
++        eDebug("TIME_SYSTEM %d %d %d %d %d %d %d"
++  		,timebuf[0],timebuf[1],timebuf[2],timebuf[3],timebuf[4],timebuf[5],timebuf[6]); 
++
++	struct vfd_ioctl_data data;
++	memset(&data, 0, sizeof(struct vfd_ioctl_data));
++        memcpy(&data,timebuf,7); 
+ 
+ 	file_vfd = open (VFD_DEVICE, O_WRONLY);
++    	ioctl(file_vfd, VFDSETTIME, &data);
++	close (file_vfd);
++#endif
+ 
+-    	ioctl(file_vfd, VFDDISPLAYWRITEONOFF, &data);
++	return;
++}
++
++void evfd::vfd_set_standby()
++{
++	eDebug("[%s]", __func__);
++#ifdef IPBOX55
++        vfd_set_time();
++#else
++ 	file_vfd = open (VFD_DEVICE, O_WRONLY);
++    	ioctl(file_vfd, VFDSTANDBY);
++	close (file_vfd);
++#endif
++	return;
++}
++
++void evfd::vfd_set_timer_wakeup()
++{
++#ifndef IPBOX55
++	eDebug("[%s]", __func__);
++        time_t wakeup_time;
++        char timebuf[6];
++	FILE *f = fopen("/proc/stb/fp/wakeup_time", "r");
++	if (f)
++	{
++		int tmp;
++		if (fscanf(f, "%u", &tmp) != 1)
++			eDebug("read /proc/stb/fp/wakeup_time failed (%m)");
++		else
++			wakeup_time=tmp;
++		fclose(f);
++	}
++	eDebug("wakeup_time %d \n",wakeup_time); 
++	tm *now=localtime(&wakeup_time);
++        timebuf[0]=1;
++	timebuf[1]=now->tm_min;
++	timebuf[2]=now->tm_hour;
++	timebuf[3]=now->tm_mday;
++	timebuf[4]=now->tm_mon+1;
++	timebuf[5]=now->tm_year % 100;
+ 
++        eDebug("TIME_WAKEUP %d:%d:%d %d %d %d"
++		,timebuf[0],timebuf[1],timebuf[2],timebuf[3],timebuf[4],timebuf[5]); 
++
++	struct vfd_ioctl_data data;
++	memset(&data, 0, sizeof(struct vfd_ioctl_data));
++        memcpy(&data,timebuf,6); 
++
++	file_vfd = open (VFD_DEVICE, O_WRONLY);
++    	ioctl(file_vfd, VFDSETTIMERWAKEUP, &data);
+ 	close (file_vfd);
++#endif
+ 	return;
++	
+ }
++
++
++
++
++
++
++
++
++
+diff -urN enigma2-nightly.org/lib/driver/vfd.h enigma2-nightly.org/lib/driver/vfd.h
+--- enigma2-nightly.org/lib/driver/vfd.h	2011-07-14 22:23:46.000000000 +0200
++++ enigma2-nightly.org/lib/driver/vfd.h	2010-11-13 07:58:43.000000000 +0100
+@@ -4,7 +4,7 @@
+ #define ICON_ON  1
+ #define ICON_OFF 0
+ 
+-typedef enum { USB = 0x10, HD, HDD, LOCK, BT, MP3, MUSIC, DD, MAIL, MUTE, PLAY, PAUSE, FF, FR, REC, CLOCK } tvfd_icon;
++typedef enum { ICON_STANDBY = 0x00, ICON_PLAY, ICON_PAUSE, ICON_RECORD, ICON_DOLBY, ICON_HD, ICON_480P, ICON_480I, ICON_720P, ICON_1080I, ICON_1080P, ICON_576I, ICON_576P, ICON_MP3 } tvfd_icon;
+ 
+ class evfd
+ {
+@@ -34,6 +34,9 @@
+ 	
+ 	void vfd_set_brightness(unsigned char setting);
+ 	void vfd_set_light(bool onoff);
++	void vfd_set_time();
++	void vfd_set_standby();	
++	void vfd_set_timer_wakeup();
+ };
+ 
+ 
+diff -urN enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/lib/python/Components/Harddisk.py
+--- enigma2-nightly.org/lib/python/Components/Harddisk.py	2011-07-14 23:18:21.000000000 +0200
++++ enigma2-nightly/lib/python/Components/Harddisk.py	2010-10-09 04:41:00.000000000 +0200
+@@ -1,16 +1,9 @@
+-#--->
+-#-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access
+-#-from Tools.Directories import SCOPE_HDD, resolveFilename
+-#---<
+-#+++>
+ from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access, readlink, remove, path as os_path
+ from Tools.Directories import SCOPE_HDD, resolveFilename, removeDir
+-#+++<
+ from Tools.CList import CList
+ from SystemInfo import SystemInfo
+ import time
+ from Components.Console import Console
+-#+++>
+ from enigma import eConsoleAppContainer, evfd
+ import os
+ 
+@@ -20,11 +13,6 @@
+ 	except IOError:
+ 		return ""
+ 	return procFile
+-#+++<
+-
+-def MajorMinor(path):
+-	rdev = stat(path).st_rdev
+-	return (major(rdev),minor(rdev))
+ 
+ def readFile(filename):
+ 	file = open(filename)
+@@ -32,20 +20,13 @@
+ 	file.close()
+ 	return data
+ 
+-DEVTYPE_UDEV = 0
+-DEVTYPE_DEVFS = 1
+-	
+ class Harddisk:
++	DEVTYPE_UDEV = 0
++	DEVTYPE_DEVFS = 1
++
+ 	def __init__(self, device):
+ 		self.device = device
+-
+-		if access("/dev/.udev", 0):
+-			self.type = DEVTYPE_UDEV
+-		elif access("/dev/.devfsd", 0):
+-			self.type = DEVTYPE_DEVFS
+-		else:
+-			print "Unable to determine structure of /dev"
+-
++		self.type = self.DEVTYPE_UDEV
+ 		self.max_idle_time = 0
+ 		self.idle_running = False
+ 		self.timer = None
+@@ -53,18 +34,19 @@
+ 		self.dev_path = ''
+ 		self.disk_path = ''
+ 		self.phys_path = path.realpath(self.sysfsPath('device'))
+-
+-		if self.type == DEVTYPE_UDEV:
++		
++		print "[Harddisk] found: ", self.phys_path
++		if self.type == self.DEVTYPE_UDEV:
+ 			self.dev_path = '/dev/' + self.device
+ 			self.disk_path = self.dev_path
+ 
+-		elif self.type == DEVTYPE_DEVFS:
++		elif self.type == self.DEVTYPE_DEVFS:
+ 			tmp = readFile(self.sysfsPath('dev')).split(':')
+ 			s_major = int(tmp[0])
+ 			s_minor = int(tmp[1])
+ 			for disc in listdir("/dev/discs"):
+ 				dev_path = path.realpath('/dev/discs/' + disc)
+-				disk_path = dev_path + '/disc'
++ 				disk_path = dev_path + '/disc'
+ 				try:
+ 					rdev = stat(disk_path).st_rdev
+ 				except OSError:
+@@ -81,9 +63,9 @@
+ 		return self.device < ob.device
+ 
+ 	def partitionPath(self, n):
+-		if self.type == DEVTYPE_UDEV:
++		if self.type == self.DEVTYPE_UDEV:
+ 			return self.dev_path + n
+-		elif self.type == DEVTYPE_DEVFS:
++		elif self.type == self.DEVTYPE_DEVFS:
+ 			return self.dev_path + '/part' + n
+ 
+ 	def sysfsPath(self, filename):
+@@ -96,12 +78,12 @@
+ 
+ 	def bus(self):
+ 		# CF (7025 specific)
+-		if self.type == DEVTYPE_UDEV:
++		if self.type == self.DEVTYPE_UDEV:
+ 			ide_cf = False	# FIXME
+-		elif self.type == DEVTYPE_DEVFS:
++		elif self.type == self.DEVTYPE_DEVFS:
+ 			ide_cf = self.device[:2] == "hd" and "host0" not in self.dev_path
+ 
+-		internal = "pci" in self.phys_path
++		internal = "pci" in self.phys_path or "sata" in self.phys_path
+ 
+ 		if ide_cf:
+ 			ret = "External (CF)"
+@@ -146,20 +128,18 @@
+ 
+ 		for line in lines:
+ 			parts = line.strip().split(" ")
+-			real_path = path.realpath(parts[0])
+-			if not real_path[-1].isdigit():
+-				continue
+-			try:
+-				if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
++			if path.realpath(parts[0]).startswith(self.dev_path):
++				try:
+ 					stat = statvfs(parts[1])
+-					return stat.f_bfree/1000 * stat.f_bsize/1000
+-			except OSError:
+-				pass
++				except OSError:
++					continue
++				return stat.f_bfree/1000 * stat.f_bsize/1000
++
+ 		return -1
+ 
+ 	def numPartitions(self):
+ 		numPart = -1
+-		if self.type == DEVTYPE_UDEV:
++		if self.type == self.DEVTYPE_UDEV:
+ 			try:
+ 				devdir = listdir('/dev')
+ 			except OSError:
+@@ -168,7 +148,7 @@
+ 				if filename.startswith(self.device):
+ 					numPart += 1
+ 
+-		elif self.type == DEVTYPE_DEVFS:
++		elif self.type == self.DEVTYPE_DEVFS:
+ 			try:
+ 				idedir = listdir(self.dev_path)
+ 			except OSError:
+@@ -181,6 +161,7 @@
+ 		return numPart
+ 
+ 	def unmount(self):
++                print "[Harddisk] unmount"
+ 		try:
+ 			mounts = open("/proc/mounts")
+ 		except IOError:
+@@ -191,23 +172,11 @@
+ 
+ 		cmd = "umount"
+ 
+-                for line in lines:                                                                          
+-                        parts = line.strip().split(" ")                                                     
+-                        real_path = path.realpath(parts[0])                                                 
+-                        if not real_path[-1].isdigit():                                                     
+-                                continue                                                                    
+-                        try:                                                                                
+-                                if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
+-#--->			
+-#-					cmd = ' ' . join([cmd, parts[1]])
+-#---<
+-#+++>
+-					cmd = ' -fl ' . join([cmd, parts[1]])
+-#+++<
+-					break
+-			except OSError:
+-				pass
+-
++		for line in lines:
++			parts = line.strip().split(" ")
++			if path.realpath(parts[0]).startswith(self.dev_path):
++				cmd = ' -fl ' . join([cmd, parts[1]])
++		print cmd
+ 		res = system(cmd)
+ 		return (res >> 8)
+ 
+@@ -220,11 +189,9 @@
+ 		cmd = "mkfs.ext3 "
+ 		if self.diskSize() > 4 * 1024:
+ 			cmd += "-T largefile "
+-		cmd += "-m0 -O dir_index " + self.partitionPath("1")
+-#--->
+-#-		res = system(cmd)
+-#---<
+-#+++>
++
++		cmd += "-m0 -O dir_index -L RECORD " + self.partitionPath("1")
++		print "cmd", cmd
+ 		print "[Harddisk] mkfs: ", cmd
+ 		if os.path.exists("/sbin/cmd") is True:
+ 			self.container = eConsoleAppContainer()
+@@ -232,7 +199,6 @@
+ 			res = 0
+ 		else:	
+ 			res = system(cmd)
+-#+++<
+ 		return (res >> 8)
+ 
+ 	def mount(self):
+@@ -247,16 +213,10 @@
+ 		res = -1
+ 		for line in lines:
+ 			parts = line.strip().split(" ")
+-                        real_path = path.realpath(parts[0])                                                 
+-                        if not real_path[-1].isdigit():                                                     
+-                                continue                                                                    
+-                        try:                                                                                
+-                                if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
+-					cmd = "mount -t ext3 " + parts[0]
+-					res = system(cmd)
+-					break
+-			except OSError:
+-				pass
++			if path.realpath(parts[0]) == self.partitionPath("1"):
++				cmd = "mount -t ext3 " + parts[0] + " /media/hdd"
++				res = system(cmd)
++				break
+ 
+ 		return (res >> 8)
+ 
+@@ -271,10 +231,6 @@
+ 		# We autocorrect any failures
+ 		# TODO: we could check if the fs is actually ext3
+ 		cmd = "fsck.ext3 -f -p " + self.partitionPath("1")
+-#--->
+-#-		res = system(cmd)
+-#---<
+-#+++>		
+ 		print "[Harddisk] fsck: ", cmd
+ 		if os.path.exists("/sbin/cmd") is True:
+ 			self.container = eConsoleAppContainer()
+@@ -282,7 +238,6 @@
+ 			res = 0
+ 		else:	
+ 			res = system(cmd)
+-#+++<
+ 		return (res >> 8)
+ 
+ 	def killPartition(self, n):
+@@ -457,55 +412,26 @@
+ 				return True
+ 		return False
+ 
+-DEVICEDB_SR = \
+-	{"dm8000":
++DEVICEDB =  \
++	{"ab9900":
+ 		{
+-			"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("DVD Drive"),
+-			"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("DVD Drive"),
+-			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0/host3/target3:0:0/3:0:0:0": _("DVD Drive"),
++			"/devices/platform/st-usb.0/stm-ehci.0/usb1/1-1/1-1.3/1-1.3:1.0": "Front USB Slot",
++			"/devices/platform/st-usb.0/stm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": "Back, USB Slot",
+ 		},
+-	"dm800":
+-	{
+-	},
+-	"dm7025":
+-	{
+-	}
+-	}
+-
+-DEVICEDB = \
+-	{"ufs910":
++	"ab99":
+ 		{
+-			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.4/1-1.4:1.0": "Front USB Slot",
+-			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.3/1-1.3:1.0": "Back, upper USB Slot",
+-			"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0": "Back, lower USB Slot",
+-		},
+-	"dm800":
+-	{
+-		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": "Upper USB Slot",
+-		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": "Lower USB Slot",
+-	},
+-	"dm7025":
+-	{
+-		"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "CF Card Slot", #hdc
+-		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk",
+-	},
+-	"UFS922":
+-	{
+-		"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.1/1-1.1:1.0/": "Back, upper USB Slot",
+-		"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0/": "Back, lower USB Slot",
+-		"/devices/platform/ST40-ehci.2/usb1/1-1/1-1.3/1-1.3:1.0/": "Front USB Slot",
+-	}
++			"/devices/platform/st-usb.0/stm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": "Front USB Slot",
++		}
+ 	}
+ 
+ class HarddiskManager:
+ 	def __init__(self):
++                print "[HarddiskManager] init"
+ 		self.hdd = [ ]
+ 		self.cd = ""
+ 		self.partitions = [ ]
+-		self.devices_scanned_on_init = [ ]
+-
+ 		self.on_partition_list_change = CList()
+-
++                
+ 		self.enumerateBlockDevices()
+ 
+ 		# currently, this is just an enumeration of what's possible,
+@@ -521,6 +447,9 @@
+ 					("/media/net", _("Network Mount")),
+ 					("/media/ram", _("Ram Disk")),
+ 					("/media/usb", _("USB Stick")),
++					("/media/upnp", _("UPNP Stick")),
++					("/media/ftp", _("FTP Stick")),
++					("/tmp", _("Temporary Folder")),
+ 					("/", _("Internal Flash"))
+ 				]
+ 
+@@ -536,12 +465,7 @@
+ 		try:
+ 			removable = bool(int(readFile(devpath + "/removable")))
+ 			dev = int(readFile(devpath + "/dev").split(':')[0])
+-#--->
+-#-			if dev in (7, 31): # loop, mtdblock
+-#---<
+-#+++>
+-			if dev in [1, 7, 31, 253]: # ram, loop, mtdblock, ramzswap
+-#+++<
++                        if dev in [1, 7, 31, 253]: # ram, loop, mtdblock, ramzswap
+ 				blacklisted = True
+ 			if blockdev[0:2] == 'sr':
+ 				is_cdrom = True
+@@ -575,24 +499,25 @@
+ 	def enumerateBlockDevices(self):
+ 		print "enumerating block devices..."
+ 		for blockdev in listdir("/sys/block"):
+-			error, blacklisted, removable, is_cdrom, partitions, medium_found = self.addHotplugPartition(blockdev)
+-			if not error and not blacklisted:
+-				if medium_found:
+-					for part in partitions:
+-						self.addHotplugPartition(part)
+-				self.devices_scanned_on_init.append((blockdev, removable, is_cdrom, medium_found))
++			error, blacklisted, removable, is_cdrom, partitions, medium_found = self.getBlockDevInfo(blockdev)
++			print "found block device '%s':" % blockdev, 
++			if error:
++				print "error querying properties"
++			elif blacklisted:
++				print "blacklisted"
++			elif not medium_found:
++				print "no medium"
++			else:
++				print "ok, removable=%s, cdrom=%s, partitions=%s, device=%s" % (removable, is_cdrom, partitions, blockdev)
++
++				self.addHotplugPartition(blockdev)
++				for part in partitions:
++					self.addHotplugPartition(part)
+ 
+ 	def getAutofsMountpoint(self, device):
+ 		return "/autofs/%s/" % (device)
+ 
+-	def is_hard_mounted(self, device):
+-		mounts = file('/proc/mounts').read().split('\n')
+-		for x in mounts:
+-			if x.find('/autofs') == -1 and x.find(device) != -1:
+-				return True
+-		return False
+-
+-	def addHotplugPartition(self, device, physdev = None):
++	def addHotplugPartition(self, device,physdev = None):
+ 		if not physdev:
+ 			dev, part = self.splitDeviceName(device)
+ 			try:
+@@ -600,45 +525,38 @@
+ 			except OSError:
+ 				physdev = dev
+ 				print "couldn't determine blockdev physdev for device", device
+-#+++>		
+ 		else:
+ 			dev, part = self.splitDeviceName(device)
+ 		if part is not 0:
+-			print "[Harddisk] start automount"
+-			#Automount(device,"mount")
+-#+++<		
+-
+-		error, blacklisted, removable, is_cdrom, partitions, medium_found = self.getBlockDevInfo(device)
+-		print "found block device '%s':" % device,
+-
+-		if blacklisted:
+-			print "blacklisted"
+-		else:
+-			if error:
+-				print "error querying properties"
+-			elif not medium_found:
+-				print "no medium"
+-			else:
+-				print "ok, removable=%s, cdrom=%s, partitions=%s" % (removable, is_cdrom, partitions)
+-
+-			l = len(device)
+-			if l:
+-				# see if this is a harddrive
+-				if not device[l-1].isdigit() and not removable and not is_cdrom:
++			print "[Harddisk] start automount", dev, part, device
++		
++		# device is the device name, without /dev
++		# physdev is the physical device path, which we (might) use to determine the userfriendly name
++		description = self.getUserfriendlyDeviceName(device, physdev)
++
++		p = Partition(mountpoint = self.getAutofsMountpoint(device), description = description, force_mounted = True, device = device)
++		self.partitions.append(p)
++		self.on_partition_list_change("add", p)
++
++		# see if this is a harddrive or flashdisk
++                l = len(device)
++                if l and not device[l-1].isdigit():
++			error, blacklisted, removable, is_cdrom, partitions, medium_found = self.getBlockDevInfo(device)
++			if not blacklisted and not removable and not is_cdrom and medium_found:
++				self.hdd.append(Harddisk(device))
++				self.hdd.sort()
++				SystemInfo["Harddisk"] = len(self.hdd) > 0
++			if not blacklisted and removable and not is_cdrom and medium_found:
++				device_found = False
++				for hdd in self.hdd:
++					if hdd.device == device:
++						device_found = True
++						break
++				if device_found == False:
+ 					self.hdd.append(Harddisk(device))
+ 					self.hdd.sort()
+ 					SystemInfo["Harddisk"] = len(self.hdd) > 0
+ 
+-				if (not removable or medium_found) and not self.is_hard_mounted(device):
+-					# device is the device name, without /dev
+-					# physdev is the physical device path, which we (might) use to determine the userfriendly name
+-					description = self.getUserfriendlyDeviceName(device, physdev)
+-					p = Partition(mountpoint = self.getAutofsMountpoint(device), description = description, force_mounted = True, device = device)
+-					self.partitions.append(p)
+-					self.on_partition_list_change("add", p)
+-
+-		return error, blacklisted, removable, is_cdrom, partitions, medium_found
+-
+ 	def removeHotplugPartition(self, device):
+ 		mountpoint = self.getAutofsMountpoint(device)
+ 		for x in self.partitions[:]:
+@@ -653,12 +571,11 @@
+ 					self.hdd.remove(hdd)
+ 					break
+ 			SystemInfo["Harddisk"] = len(self.hdd) > 0
+-#+++>
+-		dev, part = self.splitDeviceName(device)
++                dev, part = self.splitDeviceName(device)
+ 		if part is not 0:
+ 			print "[Harddisk] start auto umount"
+-			#Automount(device,"umount")
+-#+++<
++                        cmd = "umount -l /dev/"+device
++                        system(cmd)
+ 
+ 	def HDDCount(self):
+ 		return len(self.hdd)
+@@ -670,7 +587,7 @@
+ 			cap = hd.capacity()
+ 			if cap != "":
+ 				hdd += " (" + cap + ")"
+-			list.append((hdd, hd))
++			list.append((hdd,hd))
+ 		return list
+ 
+ 	def getCD(self):
+@@ -701,23 +618,15 @@
+ 	def getUserfriendlyDeviceName(self, dev, phys):
+ 		dev, part = self.splitDeviceName(dev)
+ 		description = "External Storage %s" % dev
+-		have_model_descr = False
+ 		try:
+ 			description = readFile("/sys" + phys + "/model")
+-			have_model_descr = True
+ 		except IOError, s:
+ 			print "couldn't read model: ", s
+ 		from Tools.HardwareInfo import HardwareInfo
+-		if dev.find('sr') == 0 and dev[2].isdigit():
+-			devicedb = DEVICEDB_SR
+-		else:
+-			devicedb = DEVICEDB
+-		for physdevprefix, pdescription in devicedb.get(HardwareInfo().device_name,{}).items():
++		for physdevprefix, pdescription in DEVICEDB.get(HardwareInfo().device_name,{}).items():
+ 			if phys.startswith(physdevprefix):
+-				if have_model_descr:
+-					description = pdescription + ' - ' + description
+-				else:
+-					description = pdescription
++				description = pdescription
++
+ 		# not wholedisk and not partition 1
+ 		if part and part != 1:
+ 			description += " (Partition %d)" % part
+diff -urN enigma2-nightly.org/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py enigma2-nightly/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py
+--- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py	2011-07-14 23:18:21.000000000 +0200
++++ enigma2-nightly/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py	2010-08-16 20:32:00.000000000 +0200
+@@ -27,6 +27,7 @@
+ 		
+ 	def __evStart(self):
+ 		print "[__evStart]"
++		evfd.getInstance().vfd_clear_icons()
+ 		self.__evSeekableStatusChanged()	
+ 		
+ 	def __evUpdatedInfo(self):
+@@ -49,10 +50,10 @@
+ 			self.service = self.session.nav.getCurrentlyPlayingServiceReference()
+ 			if not self.service is None:
+ 				service = self.service.toCompareString()
+-				servicename = ServiceReference.ServiceReference(service).getServiceName().replace('\xc2\x87', '').replace('\xc2\x86', '').ljust(16)
+-				subservice = self.service.toString().split("::")
++				servicename = ServiceReference.ServiceReference(service).getServiceName().replace('\xc2\x87', '').replace('\xc2\x86', '').center(14)
++                                subservice = self.service.toString().split("::")
+ 				if subservice[0].count(':') == 9:
+-					servicename = subservice[1].replace('\xc2\x87', '').replace('\xc3\x9f', 'ss').replace('\xc2\x86', '').ljust(16)
++					servicename = subservice[1].replace('\xc2\x87', '').replace('\xc3\x9f', 'ss').replace('\xc2\x86', '').center(14)
+ 				else:
+ 					servicename=servicename
+ 			else:
+@@ -69,9 +70,9 @@
+ 			info=service.info()
+ 			crypted = info and info.getInfo(iServiceInformation.sIsCrypted) or -1
+ 			if crypted == 1 : #set crypt symbol
+-				evfd.getInstance().vfd_set_icon(0x13,1)
++				evfd.getInstance().vfd_set_icon(0x00,True)
+ 			else:
+-				evfd.getInstance().vfd_set_icon(0x13,0)
++				evfd.getInstance().vfd_set_icon(0x00,False)
+ 	
+ 	def checkAudioTracks(self):
+ 		self.dolbyAvailable = False
+@@ -84,6 +85,7 @@
+ 				for x in range(n):
+ 					i = audio.getTrackInfo(x)
+ 					description = i.getDescription();
++					print description  
+ 					if description.find("MP3") != -1:
+ 						self.mp3Available = True
+ 					if description.find("AC3") != -1 or description.find("DTS") != -1:
+@@ -92,16 +94,16 @@
+ 	def showDolby(self):
+ 		print "[showDolby]"
+ 		if self.dolbyAvailable:
+-			evfd.getInstance().vfd_set_icon(0x17,1)
++			evfd.getInstance().vfd_set_icon(0x04,True)
+ 		else:
+-			evfd.getInstance().vfd_set_icon(0x17,0)
++			evfd.getInstance().vfd_set_icon(0x04,False)
+ 		
+ 	def showMp3(self):
+ 		print "[showMp3]"
+ 		if self.mp3Available:
+-			evfd.getInstance().vfd_set_icon(0x15,1)
++			evfd.getInstance().vfd_set_icon(0x0d,True)
+ 		else:
+-			evfd.getInstance().vfd_set_icon(0x15,0)
++			evfd.getInstance().vfd_set_icon(0x0d,False)
+ 		
+ 	def __evUpdatedEventInfo(self):
+ 		print "[__evUpdatedEventInfo]"
+@@ -118,9 +120,9 @@
+ 	def __evSeekableStatusChanged(self):
+ 		print "[__evSeekableStatusChanged]"
+ 		if self.getSeekState():
+-			evfd.getInstance().vfd_set_icon(0x1A,1)
++			evfd.getInstance().vfd_set_icon(0x01,True)
+ 		else:
+-			evfd.getInstance().vfd_set_icon(0x1A,0)
++			evfd.getInstance().vfd_set_icon(0x01,False)
+ 		
+ 	def __evVideoSizeChanged(self):
+ 		print "[__evVideoSizeChanged]"
+@@ -128,18 +130,35 @@
+ 		if service is not None:
+ 			info=service.info()
+ 			height = info and info.getInfo(iServiceInformation.sVideoHeight) or -1
++			print height
+ 			if height > 576 : #set HD symbol
+-				evfd.getInstance().vfd_set_icon(0x11,1)
+-			else:
+-				evfd.getInstance().vfd_set_icon(0x11,0)
++				evfd.getInstance().vfd_set_icon(0x05,True)
++				if height == 720:
++					evfd.getInstance().vfd_set_icon(0x08,True)
++				else:
++					evfd.getInstance().vfd_set_icon(0x08,False)
++				if height >= 1080:
++					evfd.getInstance().vfd_set_icon(0x09,True)
++				else:
++					evfd.getInstance().vfd_set_icon(0x09,False)
++                        else:
++                    		evfd.getInstance().vfd_set_icon(0x05,False)
++				if height == 480:
++					evfd.getInstance().vfd_set_icon(0x07,True)
++				else:
++					evfd.getInstance().vfd_set_icon(0x07,False)
++				if height == 576:
++					evfd.getInstance().vfd_set_icon(0x0b,True)
++				else:
++					evfd.getInstance().vfd_set_icon(0x0b,False)
+ 		
+ 	def gotRecordEvent(self, service, event):
+ 		recs = self.session.nav.getRecordings()
+ 		nrecs = len(recs)
+ 		if nrecs > 0: #set rec symbol
+-			evfd.getInstance().vfd_set_icon(0x1e,1)
++			evfd.getInstance().vfd_set_icon(0x03,True)
+ 		else:
+-			evfd.getInstance().vfd_set_icon(0x1e,0)
++			evfd.getInstance().vfd_set_icon(0x03,False)
+ 		
+ 
+ VFDIconsInstance = None

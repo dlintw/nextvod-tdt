@@ -79,6 +79,7 @@ TF7700PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-jffs2-lzma_stm22.patch \
 		linux-ftdi_sio.c_stm22.patch
 
+
 HL101PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ufs922_stasc_stm22.patch \
 		linux-hl101_setup_stm22.patch \
@@ -127,6 +128,54 @@ FLASHUFS910PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ftdi_sio.c_stm22.patch \
 		linux-ufs910_stboards_stm22.patch
 
+IPBOX9900PATCHES_41 = $(COMMONPATCHES_41) \
+		linux-ipbox_patches_stm22.patch \
+		linux-ipbox_setup_stm22.patch \
+		linux-linuxdvb_api5_stm22.patch \
+		linux-ipbox_fdma_stm22.patch \
+		linux-ipbox_i2c_stm22.patch \
+		linux-ipbox_rtl8201_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch \
+		linux-ipbox_lirc_stm22.patch
+
+IPBOX99PATCHES_41 = $(COMMONPATCHES_41) \
+		linux-ipbox_patches_stm22.patch \
+		linux-ipbox_setup_stm22.patch \
+		linux-linuxdvb_api5_stm22.patch \
+		linux-ipbox_fdma_stm22.patch \
+		linux-ipbox_i2c_stm22.patch \
+		linux-ipbox_rtl8201_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch \
+		linux-ipbox_lirc_stm22.patch
+
+IPBOX55PATCHES_41 = $(COMMONPATCHES_41) \
+		linux-ipbox_patches_stm22.patch \
+		linux-ipbox_setup_stm22.patch \
+		linux-linuxdvb_api5_stm22.patch \
+		linux-ipbox_fdma_stm22.patch \
+		linux-ipbox_i2c_stm22.patch \
+		linux-ipbox_rtl8201_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch \
+		linux-ipbox_lirc_stm22.patch
+
 # IMPORTANT: it is expected that only one define is set
 CUBEMOD=$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)
 CUBEPATCHES_041 = $(COMMONPATCHES_41) \
@@ -148,7 +197,8 @@ HS5101PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-hs5101_setup_stm22.patch \
 		linux-hs5101_stasc_stm22.patch
 
-KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
+KERNELPATCHES_41 = \
+		$(if $(TF7700),$(TF7700PATCHES_41)) \
 		$(if $(HL101),$(HL101PATCHES_41)) \
 		$(if $(VIP1_V2),$(VIP2PATCHES_41)) \
 		$(if $(VIP2_V1),$(VIP2PATCHES_41)) \
@@ -160,6 +210,9 @@ KERNELPATCHES_41 =	$(if $(TF7700),$(TF7700PATCHES_41)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500_41)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_41)) \
 		$(if $(HOMECAST5101),$(HS5101PATCHES_41)) \
+		$(if $(IPBOX9900),$(IPBOX9900PATCHES_41)) \
+		$(if $(IPBOX99),$(IPBOX99PATCHES_41)) \
+		$(if $(IPBOX55),$(IPBOX55PATCHES_41)) \
 		$(if $(PLAYER179),linux-v4l.patch)
 
 ############ Patches Kernel 23 ###############
@@ -181,7 +234,20 @@ else !ENABLE_VIP1_V2
 if ENABLE_VIP2_V1
 STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
 else !ENABLE_VIP2_V1
+if ENABLE_IPBOX9900
+STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
+else !ENABLE_IPBOX9900
+if ENABLE_IPBOX99
+STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
+else !ENABLE_IPBOX99
+if ENABLE_IPBOX55
+STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
+else !ENABLE_IPBOX55
+
 STM23_DVB_PATCH = linux-sh4-linuxdvb_stm23$(PATCH_STR).patch
+endif !ENABLE_IPBOX55
+endif !ENABLE_IPBOX99
+endif !ENABLE_IPBOX9900
 endif !ENABLE_VIP2_V1
 endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
@@ -276,6 +342,21 @@ UFS910PATCHES_23 = $(COMMONPATCHES_23) \
 
 FLASHUFS910PATCHES_23 = $(UFS910PATCHES_23)
 
+IPBOX9900PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
+		linux-sh4-ipbox_setup_stm23$(PATCH_STR).patch
+
+IPBOX99PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
+		linux-sh4-ipbox_setup_stm23$(PATCH_STR).patch
+
+IPBOX55PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch \
+		linux-sh4-ipbox_setup_stm23$(PATCH_STR).patch
+
 CUBEPATCHES_023 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
@@ -299,7 +380,10 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_23)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_23)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_23)) \
-		$(if $(HOMECAST5101),$(HS5101PATCHES_23))
+		$(if $(HOMECAST5101),$(HS5101PATCHES_23)) \
+		$(if $(IPBOX9900),$(IPBOX9900PATCHES_23)) \
+		$(if $(IPBOX99),$(IPBOX99PATCHES_23)) \
+                $(if $(IPBOX55),$(IPBOX55PATCHES_23))
 
 ############ Patches Kernel 23 End ###############
 
@@ -395,6 +479,18 @@ FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
+IPBOX9900PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-ipbox9900_setup_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch 
+
+IPBOX99PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-ipbox99_setup_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch 
+
+IPBOX55PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-ipbox55_setup_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch 
+
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
 		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_24)) \
@@ -406,9 +502,10 @@ KERNELPATCHES_24 =  \
 		$(if $(SPARK),$(SPARK_PATCHES_24)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_24)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_24)) \
-		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_24))
-
-
+		$(if $(IPBOX9900),$(IPBOX9900PATCHES_24)) \
+		$(if $(IPBOX99),$(IPBOX99PATCHES_24)) \
+               $(if $(IPBOX55),$(IPBOX55PATCHES_24))
+                
 ############ Patches Kernel 24 End ###############
 
 #
@@ -489,7 +586,7 @@ endif !STM22
 #
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)
+MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -691,6 +788,9 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	$(if $(CUBEREVO_2000HD),PLATFORM: stb7109ref\n) \
 	$(if $(CUBEREVO_9500HD),PLATFORM: stb7109ref\n) \
 	$(if $(HOMECAST5101),PLATFORM: stb7109ref\n) \
+	$(if $(IPBOX9900),PLATFORM: stb7109ref\n) \
+	$(if $(IPBOX99),PLATFORM: stb7109ref\n) \
+	$(if $(IPBOX55),PLATFORM: stb7109ref\n) \
 	KERNEL VERSION: $(KERNELVERSION)\n" > $(prefix)/$*cdkroot/README.ST && \
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh INSTALL_MOD_PATH=$(prefix)/$*cdkroot modules_install && \
 	rm $(prefix)/$*cdkroot/lib/modules/$(KERNELVERSION)/build || true && \
@@ -728,6 +828,9 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_2000HD),CUBEREVO_2000HD=$(CUBEREVO_2000HD)) \
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
+		$(if $(IPBOX9900),IPBOX9900=$(IPBOX9900)) \
+		$(if $(IPBOX99),IPBOX99=$(IPBOX99)) \
+		$(if $(IPBOX55),IPBOX55=$(IPBOX55)) \
 		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
 		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
 		$(if $(PLAYER191),PLAYER191=$(PLAYER191)) \
@@ -757,6 +860,9 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(CUBEREVO_2000HD),CUBEREVO_2000HD=$(CUBEREVO_2000HD)) \
 		$(if $(CUBEREVO_9500HD),CUBEREVO_9500HD=$(CUBEREVO_9500HD)) \
 		$(if $(HOMECAST5101),HOMECAST5101=$(HOMECAST5101)) \
+		$(if $(IPBOX9900),IPBOX9900=$(IPBOX9900)) \
+		$(if $(IPBOX99),IPBOX99=$(IPBOX99)) \
+		$(if $(IPBOX55),IPBOX55=$(IPBOX55)) \
 		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
 		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
 		$(if $(PLAYER191),PLAYER191=$(PLAYER191)) \

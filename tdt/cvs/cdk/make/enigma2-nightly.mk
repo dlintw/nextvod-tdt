@@ -37,7 +37,10 @@ $(appsdir)/enigma2-nightly/config.status: bootstrap freetype expat fontconfig li
 			$(if $(OCTAGON1008),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_OCTAGON1008 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(UFS912),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_UFS912 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 			$(if $(SPARK),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_SPARK -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")  \
-			$(if $(SPARK7162),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_SPARK7162 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
+			$(if $(SPARK7162),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_SPARK7162 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
+			$(if $(IPBOX9900),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_IPBOX9900 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
+			$(if $(IPBOX99),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_IPBOX99 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
+			$(if $(IPBOX55),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_IPBOX55 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") 
 $(DEPDIR)/enigma2-nightly.do_prepare:
 
 	REVISION=""; \
@@ -80,6 +83,9 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	$(if $(CUBEREVO_2000HD),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
 	$(if $(CUBEREVO_9500HD),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
 	$(if $(CUBEREVO_MINI_FTA),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
+	$(if $(IPBOX9900),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-ipbox.diff" )
+	$(if $(IPBOX99),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-ipbox.diff" )
+	$(if $(IPBOX55),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-ipbox.diff" )
 	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.patched; \
 	touch $@
 

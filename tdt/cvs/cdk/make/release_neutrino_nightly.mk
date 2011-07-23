@@ -707,16 +707,6 @@ endif
 	rm -f $(prefix)/$(release_dir)/usr/lib/*.o
 	rm -f $(prefix)/$(release_dir)/usr/lib/*.la
 	find $(prefix)/$(release_dir)/usr/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
-
-
-if STM24
-	[ -e $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko ] && cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/$(release_dir)/lib/modules || true
-	[ -e $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko ] && cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/$(release_dir)/lib/modules/ftdi.ko || true
-	[ -e $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko ] && cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/$(release_dir)/lib/modules || true
-	[ -e $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko ] && cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/$(release_dir)/lib/modules || true
-	[ -e $(kernelprefix)/linux-sh4/fs/ntfs/ntfs.ko ] && cp $(kernelprefix)/linux-sh4/fs/ntfs/ntfs.ko $(prefix)/$(release_dir)/lib/modules || true
-endif
-
 #
 # release_neutrino_nightly end
 #

@@ -489,15 +489,119 @@ else
 	[ -e $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko ] && cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules || true
 endif
 
+release_ipbox9900: release_common_utils
+	echo "ipbox" > $(prefix)/release/etc/hostname
+	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox99xx/micom.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	cp -f $(buildprefix)/root/release/fstab_ipbox $(prefix)/release/etc/fstab
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ipbox.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release/etc/lircd.conf
+	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release/usr/bin/lircd
+	cp -p $(buildprefix)/root/release/tvmode_ipbox $(prefix)/release/usr/bin/tvmode
+
+if STM22
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release/lib/modules
+else
+	[ -e $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko ] && cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules || true
+endif
 
 
 #	install autofs
 #	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
 	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/
 
-	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
-	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
-	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release/lib/firmware/*
+	rm -f $(prefix)/release/lib/modules/boxtype.ko
+	rm -f $(prefix)/release/lib/modules/bpamem.ko
+	rm -f $(prefix)/release/lib/modules/ftdi.ko	
+	rm -f $(prefix)/release/lib/modules/lzo*.ko
+	rm -f $(prefix)/release/lib/modules/pl2303.ko
+	rm -f $(prefix)/release/lib/modules/ramzswap.ko
+	rm -f $(prefix)/release/lib/modules/simu_button.ko
+	rm -f $(prefix)/release/lib/modules/stmvbi.ko
+	rm -f $(prefix)/release/lib/modules/stmvout.ko
+	rm -f $(prefix)/release/lib/modules/tun.ko
+	rm -f $(prefix)/release/lib/modules/usbserial.ko
+	rm -f $(prefix)/release/bin/gotosleep
+	rm -f $(prefix)/release/etc/network/interfaces
+	echo "config.usage.hdd_standby=0" >> $(prefix)/release/etc/enigma2/settings
+
+release_ipbox99: release_common_utils
+	echo "ipbox" > $(prefix)/release/etc/hostname
+	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox99xx/micom.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	cp -f $(buildprefix)/root/release/fstab_ipbox $(prefix)/release/etc/fstab
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ipbox.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release/etc/lircd.conf
+	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release/usr/bin/lircd
+	cp -p $(buildprefix)/root/release/tvmode_ipbox $(prefix)/release/usr/bin/tvmode
+
+if STM22
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release/lib/modules
+else
+	[ -e $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko ] && cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules || true
+endif
+
+
+#	install autofs
+#	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/
+
+	rm -f $(prefix)/release/lib/firmware/*
+	rm -f $(prefix)/release/lib/modules/boxtype.ko
+	rm -f $(prefix)/release/lib/modules/bpamem.ko
+	rm -f $(prefix)/release/lib/modules/ftdi.ko	
+	rm -f $(prefix)/release/lib/modules/lzo*.ko
+	rm -f $(prefix)/release/lib/modules/pl2303.ko
+	rm -f $(prefix)/release/lib/modules/ramzswap.ko
+	rm -f $(prefix)/release/lib/modules/simu_button.ko
+	rm -f $(prefix)/release/lib/modules/stmvbi.ko
+	rm -f $(prefix)/release/lib/modules/stmvout.ko
+	rm -f $(prefix)/release/lib/modules/tun.ko
+	rm -f $(prefix)/release/lib/modules/usbserial.ko
+	rm -f $(prefix)/release/bin/gotosleep
+	rm -f $(prefix)/release/etc/network/interfaces
+	echo "config.usage.hdd_standby=0" >> $(prefix)/release/etc/enigma2/settings
+
+release_ipbox55: release_common_utils
+	echo "ipbox" > $(prefix)/release/etc/hostname
+	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox55/front.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	cp -f $(buildprefix)/root/release/fstab_ipbox $(prefix)/release/etc/fstab
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ipbox.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release/etc/lircd.conf
+	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release/usr/bin/lircd
+	cp -p $(buildprefix)/root/release/tvmode_ipbox55 $(prefix)/release/usr/bin/tvmode
+
+if STM22
+	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release/lib/modules
+else
+	[ -e $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko ] && cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules || true
+endif
+
+
+#	install autofs
+#	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/
+
+	rm -f $(prefix)/release/lib/firmware/*
+	rm -f $(prefix)/release/lib/modules/boxtype.ko
+	rm -f $(prefix)/release/lib/modules/bpamem.ko
+	rm -f $(prefix)/release/lib/modules/ftdi.ko	
+	rm -f $(prefix)/release/lib/modules/lzo*.ko
+	rm -f $(prefix)/release/lib/modules/pl2303.ko
+	rm -f $(prefix)/release/lib/modules/ramzswap.ko
+	rm -f $(prefix)/release/lib/modules/simu_button.ko
+	rm -f $(prefix)/release/lib/modules/stmvbi.ko
+	rm -f $(prefix)/release/lib/modules/stmvout.ko
+	rm -f $(prefix)/release/lib/modules/tun.ko
+	rm -f $(prefix)/release/lib/modules/usbserial.ko
 	rm -f $(prefix)/release/bin/gotosleep
 	rm -f $(prefix)/release/etc/network/interfaces
 	echo "config.usage.hdd_standby=0" >> $(prefix)/release/etc/enigma2/settings
@@ -508,14 +612,14 @@ endif
 # IMPORTANT: it is assumed that only one variable is set. Otherwise the target name won't be resolved.
 #
 $(DEPDIR)/min-release $(DEPDIR)/std-release $(DEPDIR)/max-release $(DEPDIR)/ipk-release $(DEPDIR)/release: \
-$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
+$(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)
 	touch $@
 
 
 release-clean:
 	rm -f $(DEPDIR)/release
 	rm -f $(DEPDIR)/release_base
-	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)
+	rm -f $(DEPDIR)/release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)
 	rm -f $(DEPDIR)/release_common_utils
 	rm -f $(DEPDIR)/release_cube_common
 
@@ -578,7 +682,7 @@ release_base:
 	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/etc/init.d/udhcpc $(prefix)/release/etc/init.d/ && \
-	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(VIP2_V1),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI) $(prefix)/release/sbin/MAKEDEV && \
+	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(VIP2_V1),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI)$(if $(IPBOX9900),_dual_tuner)$(if $(IPBOX99),_no_CI)$(if $(IPBOX55),_no_CI) $(prefix)/release/sbin/MAKEDEV && \
 	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release/bin/ && \
 	cp $(targetprefix)/boot/audio.elf $(prefix)/release/boot/audio.elf && \
@@ -616,7 +720,7 @@ release_base:
 	cp $(targetprefix)/etc/tuxbox/tuxtxt2.conf $(prefix)/release/etc/tuxbox/ && \
 	echo "576i50" > $(prefix)/release/etc/videomode && \
 	cp -R $(targetprefix)/etc/fonts/* $(prefix)/release/etc/fonts/ && \
-	cp $(buildprefix)/root/release/rcS$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(SPARK7162),_$(SPARK7162))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(HOMECAST5101),_$(HOMECAST5101)) $(prefix)/release/etc/init.d/rcS && \
+	cp $(buildprefix)/root/release/rcS$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(SPARK7162),_$(SPARK7162))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(HOMECAST5101),_$(HOMECAST5101))$(if $(IPBOX9900),_$(IPBOX9900))$(if $(IPBOX99),_$(IPBOX99))$(if $(IPBOX55),_$(IPBOX55)) $(prefix)/release/etc/init.d/rcS && \
 	chmod 755 $(prefix)/release/etc/init.d/rcS && \
 	cp $(buildprefix)/root/release/mountvirtfs $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/mme_check $(prefix)/release/etc/init.d/ && \
@@ -632,7 +736,7 @@ release_base:
 	rm -f $(prefix)/release/lib/*.la && \
 	find $(prefix)/release/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 if !STM22
-	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(SPARK7162),_$(SPARK7162))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/etc/init.d/rcS
+	cp $(buildprefix)/root/release/rcS_stm23$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(SPARK7162),_$(SPARK7162))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(IPBOX9900),_$(IPBOX9900))$(if $(IPBOX99),_$(IPBOX99))$(if $(IPBOX55),_$(IPBOX55)) $(prefix)/release/etc/init.d/rcS
 endif
 if ENABLE_PLAYER131
 	cd $(targetprefix)/lib/modules/$(KERNELVERSION)/extra && \

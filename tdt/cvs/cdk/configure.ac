@@ -450,6 +450,31 @@ AC_ARG_ENABLE(homecast5101,
 AM_CONDITIONAL(ENABLE_HOMECAST5101,test "$enable_homecast5101" = "yes")
 AC_SUBST(HOMECAST5101)
 
+AC_ARG_ENABLE(ipbox9900,
+	AS_HELP_STRING(--enable-ipbox9900,    enable ipbox 9900 stuff),
+	[case "${enableval}" in
+		yes) IPBOX9900=ipbox9900 ;;
+	esac],[enable_ipbox9900=no])
+AM_CONDITIONAL(ENABLE_IPBOX9900,test "$enable_ipbox9900" = "yes")
+AC_SUBST(IPBOX9900)
+
+AC_ARG_ENABLE(ipbox99,
+	AS_HELP_STRING(--enable-ipbox99,    enable ipbox 99 stuff),
+	[case "${enableval}" in
+		yes) IPBOX99=ipbox99 ;;
+	esac],[enable_ipbox99=no])
+AM_CONDITIONAL(ENABLE_IPBOX99,test "$enable_ipbox99" = "yes")
+AC_SUBST(IPBOX99)
+
+AC_ARG_ENABLE(ipbox55,
+	AS_HELP_STRING(--enable-ipbox55,    enable ipbox 55 stuff),
+	[case "${enableval}" in
+		yes) IPBOX55=ipbox55 ;;
+	esac],[enable_ipbox55=no])
+AM_CONDITIONAL(ENABLE_IPBOX55,test "$enable_ipbox55" = "yes")
+AC_SUBST(IPBOX55)
+
+
 AC_SUBST(CFLAGS)
 AC_SUBST(TARGET_CFLAGS)
 AC_SUBST(TARGET_CXXFLAGS)
@@ -1121,6 +1146,9 @@ cuberevo 250hd stuff        : $enable_cuberevo_250hd
 cuberevo 2000hd stuff       : $enable_cuberevo_2000hd
 cuberevo 9500hd stuff       : $enable_cuberevo_9500hd
 homecast 5101 stuff         : $enable_homecast5101
+ipbox 9900 stuff	    : $enable_ipbox9900
+ipbox 99 stuff	            : $enable_ipbox99
+ipbox 55 stuff	            : $enable_ipbox55
 XFS support for IDE         : $enable_xfs
 NFS server                  : $enable_nfsserver
 Samba Clients               : $enable_cifs

@@ -110,6 +110,12 @@ release_tf7700: cpu7101
       cp $(kernelprefix)/linux/drivers/net/tun.ko $(releaseprefix)/lib/modules
    endif
 
+release_ipbox9900: cpu7101
+   cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox99xx/micom.ko $(releaseprefix)/lib/modules/
+   if STM22
+      cp $(kernelprefix)/linux/drivers/net/tun.ko $(releaseprefix)/lib/modules
+   endif
+
 release_common:
 cp -f $(targetprefix)/sbin/shutdown $(releaseprefix)/sbin/
 

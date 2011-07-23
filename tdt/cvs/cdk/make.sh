@@ -77,12 +77,15 @@ echo "17) Octagon 1008"
 echo "18) SPARK"
 echo "19) Atevio7500"
 echo "20) SPARK7162"
+echo "21) IPBOX9900"
+echo "22) IPBOX99"
+echo "23) IPBOX55"
 case $1 in
-	[1-9] | 1[0-9] | 2[0]) REPLY=$1
+	[1-9] | 1[0-9] | 2[0-9]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-20)? ";;
+	read -p "Select target (1-23)? ";;
 esac
 
 case "$REPLY" in
@@ -106,6 +109,9 @@ case "$REPLY" in
 	18) TARGET="--enable-spark";;
 	19) TARGET="--enable-atevio7500";;
 	20) TARGET="--enable-spark7162";;
+	21) TARGET="--enable-ipbox9900";;
+	22) TARGET="--enable-ipbox99";;
+	23) TARGET="--enable-ipbox55";;
 	 *) TARGET="--enable-ufs910";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"
