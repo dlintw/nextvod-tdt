@@ -19,7 +19,7 @@ if [ -e /var/etc/.firstboot ]; then
    echo "WAIT" > /dev/fpsmall
    echo "3 min" > /dev/fplarge
    rm /var/etc/.firstboot
-   touch /dev/.devfsd
+   touch /dev/.udev #workaround till diff0 is fixed
 fi
 
 /etc/init.d/mountvirtfs start
@@ -78,9 +78,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init frontpanel"
    insmod $MODDIR/boxtype.ko
    insmod $MODDIR/simu_button.ko
-   tffpctl --keyemulationmode 0
-   tffpctl --typematicdelay 0
-   tffpctl --typematicrate 0
+   tffpctl --keyemulationmode 2
    /bin/evremote2 10 110 &
 fi
 
