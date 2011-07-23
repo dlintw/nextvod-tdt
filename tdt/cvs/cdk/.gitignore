@@ -15,3 +15,5 @@ python-*
 readline-*
 setuptools-*
 zope.interface-*
+busybox-*
+e2fsprogs-*

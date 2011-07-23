@@ -21,9 +21,10 @@
 /*                    --scrolldelay                                       */
 /*                  tffpctl now saves some settings into a file.          */
 /*                  --restoresettings                                     */
+/* 2011-07-23 V4.2  Added lonkeypress option to keyemulation mode         */
 /**************************************************************************/
 
-#define VERSION         "V4.1"
+#define VERSION         "V4.2"
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -120,7 +121,7 @@ void Help (void)
   printf ("--typematicdelay <0 to 255>  delay between the first and the repeated keys\n");
   printf ("--typematicrate <0 to 255>   delay between the repeated key codes\n");
   printf ("                             the typematic rate unit is about 1/9th of a second\n");
-  printf ("--keyemulationmode <0 to 1>  selects the emulation mode (0=TF7700, 1=UFS910)\n");
+  printf ("--keyemulationmode <0 to 2>  selects the emulation mode (0=TF7700, 1=UFS910, 2=TF7700LKP)\n");
 
   printf ("--scrollmode <0 to 2>        selects a scroll mode (0=none, 1=once, 2=always)\n");
   printf ("--scrollpause <1 to 255>     sets the pause between the first 8 chars and the following scroll (n*100ms)\n");
