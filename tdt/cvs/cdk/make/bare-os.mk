@@ -47,7 +47,7 @@ GLIBC_VERSION := 2.5-27
 GLIBC_RAWVERSION := $(firstword $(subst -, ,$(GLIBC_VERSION)))
 GLIBC_SPEC := stm-target-$(GLIBC)-sh4processed.spec
 GLIBC_SPEC_PATCH := $(GLIBC_SPEC)22.diff
-GLIBC_PATCHES :=
+GLIBC_PATCHES := glibc-2.5.patch
 else !STM22
 if STM23
 GLIBC_VERSION := $(if $(STABLE),2.6.1-53,2.6.1-61)
@@ -60,7 +60,7 @@ else !STM23
 GLIBC_VERSION := 2.10.1-21
 GLIBC_RAWVERSION := $(firstword $(subst -, ,$(GLIBC_VERSION)))
 GLIBC_SPEC := stm-target-$(GLIBC).spec
-GLIBC_SPEC_PATCH := 
+GLIBC_SPEC_PATCH :=
 GLIBC_PATCHES :=
 # endif STM24
 endif !STM23
@@ -212,8 +212,8 @@ if STM24
 LIBELF := libelf
 LIBELF_VERSION := 0.8.13-1
 LIBELF_SPEC := stm-target-$(LIBELF).spec
-LIBELF_SPEC_PATCH := 
-LIBELF_PATCHES := 
+LIBELF_SPEC_PATCH :=
+LIBELF_PATCHES :=
 LIBELF_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBELF)-$(LIBELF_VERSION).sh4.rpm
 
 $(LIBELF_RPM): \
@@ -640,7 +640,7 @@ BASE_FILES_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BASE_FILES)-$(BASE_FILES_VERSION).sh
 $(BASE_FILES_RPM): \
 		$(if $(BASE_FILES_SPEC_PATCH),Patches/$(BASE_FILES_SPEC_PATCH)) \
 		$(if $(BASE_FILES_PATCHES),$(BASE_FILES_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(BASE_FILES)-$(BASE_FILES_VERSION).src.rpm  
+		Archive/$(STLINUX)-target-$(BASE_FILES)-$(BASE_FILES_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(BASE_FILES_SPEC_PATCH),( cd SPECS && patch -p1 $(BASE_FILES_SPEC) < ../Patches/$(BASE_FILES_SPEC_PATCH) ) &&) \
 	$(if $(BASE_FILES_PATCHES),cp $(BASE_FILES_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -693,7 +693,7 @@ endif TARGETRULESET_FLASH
 #			--host=$(target) \
 #			--target=$(target) \
 #			--prefix= && \
-#		$(MAKE) 
+#		$(MAKE)
 #	touch $@
 #
 #$(DEPDIR)/min-sysvinit $(DEPDIR)/std-sysvinit $(DEPDIR)/max-sysvinit \
