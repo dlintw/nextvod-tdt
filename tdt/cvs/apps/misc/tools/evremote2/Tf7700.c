@@ -45,7 +45,7 @@ static tLongKeyPressSupport cLongKeyPressSupport = {
 };
 
 static tButton cButtonsTopfield7700HDPVR[] = {
-    {"STANDBY"        , "0B", KEY_POWER},
+    {"STANDBY"        , "0A", KEY_POWER}, //This is the real power key, but sometimes we only get 0x0C FP
     {"MUTE"           , "0C", KEY_MUTE},
     
     {"V.FORMAT"       , "42", KEY_ZOOM},
@@ -111,7 +111,7 @@ static tButton cButtonsTopfield7700HDPVRFrontpanel[] = {
     {"VOLUMEDOWN"     , "01", KEY_VOLUMEDOWN},
     {"VOLUMEUP"       , "06", KEY_VOLUMEUP},
     
-    {"STANDBY"        , "0C", KEY_POWER},
+    {"STANDBY"        , "0C", KEY_POWER}, // This is the fake power call
     {""               , ""  , KEY_NULL},
 };
 
@@ -175,9 +175,9 @@ static int pRead(Context_t* context) {
     
     // We have a problem here, the power key has no burst flag, so a quick hack would be to always
     // say its burst. this is not noce and hopefully nobody will notice
-    if (vCurrentCode == KEY_POWER && sWasLastKeyPower)
+    if ((vKeyType == FrontPanel) && (vData[1] == 0x0C) && sWasLastKeyPower)
         vIsBurst = 1;
-    sWasLastKeyPower = (vCurrentCode == KEY_POWER)?1:0;
+    sWasLastKeyPower = ((vKeyType == FrontPanel) && (vData[1] == 0x0C))?1:0;
     
     //printf("vIsBurst=%d Key=0x%02x\n", vIsBurst, vCurrentCode);
     
