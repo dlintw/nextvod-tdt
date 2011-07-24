@@ -502,9 +502,10 @@ KERNELPATCHES_24 =  \
 		$(if $(SPARK),$(SPARK_PATCHES_24)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_24)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_24)) \
+		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_24)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_24)) \
 		$(if $(IPBOX99),$(IPBOX99PATCHES_24)) \
-               $(if $(IPBOX55),$(IPBOX55PATCHES_24))
+        $(if $(IPBOX55),$(IPBOX55PATCHES_24))
                 
 ############ Patches Kernel 24 End ###############
 
