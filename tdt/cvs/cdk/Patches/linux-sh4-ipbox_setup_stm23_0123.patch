@@ -991,3 +991,22 @@ diff -urN linux-sh4-2.6.23.17_stm23_0123.org/drivers/net/stmmac/Kconfig linux-sh
  	help
  	  This is the driver for the MAC 10/100/1000 on-chip Ethernet
  	  controllers (Synopsys Core).
+diff -urN linux-sh4-2.6.23.17_stm23_0123.org/arch/sh/kernel/cpu/sh4/setup-stb7100.c linux-sh4-2.6.23.17_stm23_0123/arch/sh/kernel/cpu/sh4/setup-stb7100.c
+--- linux-sh4-2.6.23.17_stm23_0123.org/arch/sh/kernel/cpu/sh4/setup-stb7100.c	2011-07-25 06:31:48.000000000 +0200
++++ linux-sh4-2.6.23.17_stm23_0123/arch/sh/kernel/cpu/sh4/setup-stb7100.c	2011-07-25 19:49:37.639314737 +0200
+@@ -600,6 +600,7 @@
+ 		.dir  = STPIO_IN,
+                 .pinof= 0x00 | LIRC_IR_RX | LIRC_PIO_ON
+ 	},
++#if 0
+ 	[1] = {
+ 		.bank = 3,
+ 		.pin  = 4,
+@@ -618,6 +619,7 @@
+ 		.dir  = STPIO_ALT_OUT,
+                 .pinof= 0x00 | LIRC_IR_TX /* | LIRC_PIO_ON not available */
+ 	}
++#endif
+ };
+ 
+ static struct plat_lirc_data lirc_private_info = {

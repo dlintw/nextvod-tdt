@@ -10,6 +10,7 @@ if [ -e /var/etc/.firstboot ]; then
    echo "WAIT 3 min"
    touch /dev/.devfsd
     mkdir /dev/dbox
+    mkdir /dev/input
     mknod /dev/dbox/vfd c 255 0
     mknod /dev/dbox/avs0 c 10 221
     mknod /dev/input/uinput c 10 223
@@ -43,23 +44,13 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/embxshm.ko mailbox0=shm:0:7:0x60000000:0:256:256:0:1024:0xa4000000:0x10000000 ;
    insmod $MODDIR/mme_host.ko transport0=shm
 
-
-   echo "init frontends"
-#   insmod $MODDIR/stv090x.ko
-#   insmod $MODDIR/stv6110x.ko
-#   insmod $MODDIR/mxl5007t.ko
-#   insmod $MODDIR/zl10353.ko
-#   insmod $MODDIR/tda10023.ko
-#   insmod $MODDIR/tuner.ko
-    insmod $MODDIR/fe-core.ko
-
-
    echo "init player"
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/stm_v4l2.ko
    insmod $MODDIR/pseudocard.ko
+   insmod $MODDIR/fe-core.ko
    insmod $MODDIR/dummy_cic.ko
    insmod $MODDIR/pti.ko
    insmod $MODDIR/stmsysfs.ko
@@ -87,6 +78,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/sbin/telnetd -l /bin/login
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
+   mknod /dev/input/uinput c 10 223
    /usr/bin/lircd -u
 
    if [ -e /etc/network/interfaces ]; then

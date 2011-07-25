@@ -10,6 +10,7 @@ if [ -e /var/etc/.firstboot ]; then
    echo "WAIT 3 min"
    touch /dev/.devfsd
     mkdir /dev/dbox
+    mkdir /dev/input
     mknod /dev/dbox/vfd c 147 0
     mknod /dev/dbox/avs0 c 10 221
     mknod /dev/input/uinput c 10 223
