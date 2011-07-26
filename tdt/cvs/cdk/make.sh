@@ -18,7 +18,6 @@ CONFIGPARAM=" \
  --prefix=$KATIDIR/tufsbox \
  --with-cvsdir=$KATIDIR/cvs \
  --with-customizationsdir=$KATIDIR/custom \
- --with-logosdir=$KATIDIR/logos \
  --enable-ccache \
  --enable-flashrules \
  --with-stockdir=$KATIDIR/stock"

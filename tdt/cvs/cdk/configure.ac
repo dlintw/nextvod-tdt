@@ -150,7 +150,7 @@ AM_CONDITIONAL(BLEEDING_EDGE,test "$enable_bleeding_edge" = "yes")
 
 AC_ARG_ENABLE(enable_vdr1711,
 	AS_HELP_STRING(--enable-vdr1711,	set up the CDK to use vdr 1.7.11),
-	,[enable_vrd1711=no])
+	,[enable_vdr1711=no])
 AM_CONDITIONAL(ENABLE_VDR1711,test "$enable_vdr1711" = "yes")
 
 AC_ARG_WITH(cpu,
@@ -514,10 +514,6 @@ AC_ARG_WITH(ucodesdir,
 	[  --with-ucodesdir=DIR  optional directory containing ucodes [[NONE]]],
 	[ucodesdir="$with_ucodesdir"],[ucodesdir="NONE"])
 
-AC_ARG_WITH(logosdir,
-	[  --with-logosdir=DIR  optional directory containing logos [[[CVS/]logos]]],
-	[logosdir="$with_logosdir"],[logosdir="`pwd`/logos"])
-
 AC_ARG_WITH(customizationsdir,
 	[  --with-customizationsdir=DIR  optional directory containing customization scripts [[[CVS]]]],
 	[customizationsdir="$with_customizationsdir"],[customizationsdir="`pwd`"])
@@ -543,7 +539,6 @@ AC_SUBST(flashprefix)
 AC_SUBST(ipkprefix)
 AC_SUBST(serversupport)
 AC_SUBST(ucodesdir)
-AC_SUBST(logosdir)
 AC_SUBST(customizationsdir)
 AC_SUBST(updatehttpprefix)
 AC_SUBST(stockdir)
@@ -586,12 +581,12 @@ AC_ARG_WITH(hostappsdir,
 	[hostappsdir="$with_hostappsdir"],[hostappsdir="NONE"])
 
 AC_ARG_WITH(gnuserver,
-        [  --with-gnuserver=ADDRESS   the gnu server for gnu-stuff (without ftp://)],
-        [gnuserver="$with_gnuserver"],[gnuserver="NONE"])
+	[  --with-gnuserver=ADDRESS   the gnu server for gnu-stuff (without ftp://)],
+	[gnuserver="$with_gnuserver"],[gnuserver="NONE"])
 
 AC_ARG_WITH(defaultserver,
-        [  --with-defaultserver=ADDRESS   the server that is taken if no server is given/works (without http://)],
-        [defaultserver="$with_defaultserver"],[defaultserver="NONE"])
+	[  --with-defaultserver=ADDRESS   the server that is taken if no server is given/works (without http://)],
+	[defaultserver="$with_defaultserver"],[defaultserver="NONE"])
 
 if test "$cvsdir" = "NONE"; then
 	if test "$appsdir" = "NONE"; then
@@ -840,7 +835,6 @@ TUXBOX_RULES_MAKE(libtool)
 # root
 #
 TUXBOX_RULES_MAKE(busybox)
-#TUXBOX_RULES_MAKE(busybox1153)
 TUXBOX_RULES_MAKE(lsb)
 TUXBOX_RULES_MAKE(ipkg)
 TUXBOX_RULES_MAKE(module_init_tools)
@@ -1006,6 +1000,9 @@ AC_SUBST(configprefix)
 AC_SUBST(devkitprefix)
 AC_SUBST(rpmdbprefix)
 AC_SUBST(kernelprefix)
+
+#
+# localmacros
 #
 $INSTALL -d SOURCES SPECS BUILD SRPMS RPMS/{noarch,${host_arch},sh4}
 test -f config && rm config || true
@@ -1110,14 +1107,12 @@ build prefix                : $buildprefix
 ipk packages prefix         : $ipkprefix
 root partition size         : $ROOT_PARTITION_SIZE
 data partition size         : $DATA_PARTITION_SIZE
-default local               : $DEFAULTLOCALE
 serversupport               : $serversupport
 checkImage                  : $CHECKIMAGE_BEHAVIOR
 target apps directory       : $appsdir
 boot directory              : $bootdir
 driver directory            : $driverdir
 host apps directory         : $hostappsdir
-logo directory              : $logosdir
 customization directory     : $customizationsdir
 ucode directory             : $ucodesdir
 GNU server                  : $gnuserver
@@ -1146,9 +1141,9 @@ cuberevo 250hd stuff        : $enable_cuberevo_250hd
 cuberevo 2000hd stuff       : $enable_cuberevo_2000hd
 cuberevo 9500hd stuff       : $enable_cuberevo_9500hd
 homecast 5101 stuff         : $enable_homecast5101
-ipbox 9900 stuff	    : $enable_ipbox9900
-ipbox 99 stuff	            : $enable_ipbox99
-ipbox 55 stuff	            : $enable_ipbox55
+ipbox 9900 stuff            : $enable_ipbox9900
+ipbox 99 stuff              : $enable_ipbox99
+ipbox 55 stuff              : $enable_ipbox55
 XFS support for IDE         : $enable_xfs
 NFS server                  : $enable_nfsserver
 Samba Clients               : $enable_cifs
