@@ -40,9 +40,11 @@ $(DEPDIR)/%release_neutrino:
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/portmap $(prefix)/release_neutrino/sbin/ && \
+	cp -dp $(targetprefix)/sbin/mkfs $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mke2fs $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mkfs.ext2 $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mkfs.ext3 $(prefix)/release_neutrino/sbin/ && \
+	cp -dp $(targetprefix)/sbin/fsck $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.ext2 $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.ext3 $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.nfs $(prefix)/release_neutrino/sbin/ && \

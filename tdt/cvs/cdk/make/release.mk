@@ -662,11 +662,13 @@ release_base:
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/portmap $(prefix)/release/sbin/ && \
+	cp -dp $(targetprefix)/sbin/mkfs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mke2fs $(prefix)/release/sbin/ && \
 	ln -sf /sbin/mke2fs $(prefix)/release/sbin/mkfs.ext2 && \
 	ln -sf /sbin/mke2fs $(prefix)/release/sbin/mkfs.ext3 && \
 	ln -sf /sbin/mke2fs $(prefix)/release/sbin/mkfs.ext4 && \
 	ln -sf /sbin/mke2fs $(prefix)/release/sbin/mkfs.ext4dev && \
+	cp -dp $(targetprefix)/sbin/fsck $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/e2fsck $(prefix)/release/sbin/ && \
 	ln -sf /sbin/e2fsck $(prefix)/release/sbin/fsck.ext2 && \
 	ln -sf /sbin/e2fsck $(prefix)/release/sbin/fsck.ext3 && \

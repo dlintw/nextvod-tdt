@@ -232,19 +232,20 @@ $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare | $(UTIL_LINUX)
 	cd @DIR_e2fsprogs@ && \
 	$(BUILDENV) \
 	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	cc=$(target)-gcc \
 	./configure \
 		--build=$(build) \
 		--host=$(target) \
 		--target=$(target) \
 		--with-linker=$(target)-ld \
-       		--enable-elf-shlibs \
-       		--with-root-prefix= \
-       		--enable-verbose-makecmds \
-       		--enable-compression \
-       		--disable-fsck \
-       		--disable-libblkid \
-       		--disable-libuuid \
-       		--disable-uuidd && \
+		--enable-elf-shlibs \
+		--with-root-prefix= \
+		--enable-verbose-makecmds \
+		--enable-symlink-install \
+		--enable-compression \
+		--disable-libblkid \
+		--disable-libuuid \
+		--disable-uuidd && \
 	$(MAKE) all && \
 	$(MAKE) -C e2fsck e2fsck.static
 	touch $@
@@ -263,7 +264,7 @@ $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare
 		--disable-e2initrd-helper \
 		--disable-swapfs \
 		--disable-debugfs \
-		--disable-image \
+		--disable-imager \
 		--enable-resizer \
 		--enable-dynamic-e2fsck \
 		--enable-fsck \
