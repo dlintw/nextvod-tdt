@@ -248,16 +248,8 @@ AC_ARG_ENABLE(sg3,
 AM_CONDITIONAL(ENABLE_SG3,test "$enable_sg3" = "yes")
 AC_SUBST(SG3)
 
-AC_ARG_ENABLE(osd910,
-	AS_HELP_STRING(--enable-osd910,    enable the osd910),
-	[case "${enableval}" in
-		yes) OSD910=osd910 ;;
-	esac],[enable_osd910=no])
-AM_CONDITIONAL(ENABLE_OSD910,test "$enable_osd910" = "yes")
-AC_SUBST(OSD910)
-
 AC_ARG_ENABLE(var,
-	AS_HELP_STRING(--enable-var,    move stock and osd910 libs into var),
+	AS_HELP_STRING(--enable-var,    move stock and libs into var),
 	[case "${enableval}" in
 		yes) VAR=var ;;
 	esac],[enable_var=no])
@@ -1148,7 +1140,6 @@ NFS server                  : $enable_nfsserver
 Samba Clients               : $enable_cifs
 NTFS support for IDE        : $enable_ntfs
 sg3 utils                   : $enable_sg3
-osd910 support              : $enable_osd910
 DEBUG                       : $enable_debug
 Player131                   : $enable_player131
 Player179                   : $enable_player179

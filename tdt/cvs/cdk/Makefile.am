@@ -77,9 +77,6 @@ include make/enigma2-nightly.mk
 # Include neutrino gui targets
 include make/neutrino.mk
 
-# Include osd910 gui targets
-include make/osd910.mk
-
 # Include vdr gui targets
 include make/vdr.mk
 

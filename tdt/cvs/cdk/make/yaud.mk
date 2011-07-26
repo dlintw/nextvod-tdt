@@ -77,7 +77,7 @@ max-:
 #
 # YAUD
 #
-yaud-stock: yaud-none stock $(OSD910)
+yaud-stock: yaud-none stock
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #yaud-enigma: yaud-none splashutils enigma
@@ -203,7 +203,7 @@ min-yaud-none: \
 yaud-kati: std-yaud-stock
 
 std-yaud-stock: \
-%yaud-stock: %prepare-yaud %yaud-none %stock %$(OSD910)
+%yaud-stock: %prepare-yaud %yaud-none %stock
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 std-yaud-none: \

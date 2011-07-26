@@ -61,10 +61,7 @@ packages: $(IPKG_BUILD_BIN) \
 	make pkg-libungif-dev \
 	make pkg-liblirc \
 	make pkg-liblirc-dev \
-	make pkg-lirc-tools \
-	make pkg-libosd910 \
-	make pkg-osdshell \
-	make pkg-osdpicview
+	make pkg-lirc-tools
 	( cd $(ipkprefix) && \
 		$(crossprefix)/bin/ipkg-make-index . >Packages \
 	)
@@ -99,9 +96,7 @@ packages-small: $(IPKG_BUILD_BIN) \
 	make pkg-libungif-dev \
 	make pkg-liblirc \
 	make pkg-liblirc-dev \
-	make pkg-lirc-tools \
-	make pkg-libosd910 \
-	make pkg-osdshell
+	make pkg-lirc-tools
 	( cd $(ipkprefix) && \
 		$(crossprefix)/bin/ipkg-make-index . >Packages \
 	)

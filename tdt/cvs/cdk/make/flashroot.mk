@@ -69,9 +69,7 @@ endif
 if ENABLE_SG3
 	$(MAKE) flash-sg3_utils
 endif
-if ENABLE_OSD910
-	$(MAKE) flash-osd910
-endif
+
 	$(MAKE) flash-misc-tools
 	$(MAKE) flash-lircd
 	$(MAKE) flash-stslave

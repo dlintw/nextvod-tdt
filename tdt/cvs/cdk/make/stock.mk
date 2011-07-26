@@ -60,8 +60,6 @@ $(flashprefix)/conf-stock: bootstrap $(wildcard conf-stock-local.sh) config.stat
 		sed -e 's|/usr/sbin/telnetd -l /bin/sh|#/usr/sbin/telnetd -l /bin/sh|' -i $@/start-ext.sh; \
 		sed -e 's|insmod /app/modules_sys/smsc911x.ko tx_dma=256 rx_dma=256|#insmod /app/modules_sys/smsc911x.ko tx_dma=256 rx_dma=256|' -i $@/start-ext.sh; \
 		sed -e 's|mount  -t usbfs none /proc/bus/usb/|#mount  -t usbfs none /proc/bus/usb/|' -i $@/start-ext.sh ) || true
-if ENABLE_OSD910
-	-sed -e 's|#check debug mode|/etc/init.d/osd910 start\n#check debug mode|' -i $@/start-ext.sh
-endif
+
 	@TUXBOX_CUSTOMIZE@
 endif

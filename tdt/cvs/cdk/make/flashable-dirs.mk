@@ -179,28 +179,7 @@ $(flashprefix)/root-stock-%: \
 	cp -rd $(flashprefix)/root-stock/* $@
 	cp -rd $(flashprefix)/root-$*/* $@
 	echo "tmpfs         /var                tmpfs   defaults                        0 0" >> $@/etc/fstab
-if ENABLE_OSD910
-	if [ ! -e $(flashprefix)/root-stock-cramfs/lib/libfreetype.so.6.3.3 -a ! -e $(flashprefix)/root-stock-squashfs/lib/libfreetype.so.6.3.3 -a \
-		-e $(targetprefix)/usr/lib/libfreetype.so.6.3.3 ]; then \
-		cp $(targetprefix)/usr/lib/libfreetype.so.6.3.3 $@/lib/libfreetype.so.6.3.3 ; \
-		ln -sf libfreetype.so.6.3.3 $@/lib/libfreetype.so.6 ; \
-	fi
-	if [ ! -e $(flashprefix)/root-stock-cramfs/lib/libjpeg.so.62.0.0 -a ! -e $(flashprefix)/root-stock-squashfs/lib/libjpeg.so.62.0.0 -a \
-		-e $(targetprefix)/usr/lib/libjpeg.so.62.0.0 ]; then \
-		cp $(targetprefix)/usr/lib/libjpeg.so.62.0.0 $@/lib/libjpeg.so.62.0.0 ; \
-		ln -sf libjpeg.so.62.0.0 $@/lib/libjpeg.so.62 ; \
-	fi
-	if [ ! -e $(flashprefix)/root-stock-cramfs/lib/liblirc_client.so.0.2.0 -a ! -e $(flashprefix)/root-stock-squashfs/lib/liblirc_client.so.0.2.0 -a \
-		-e $(targetprefix)/usr/lib/liblirc_client.so.0.2.0 ]; then \
-		cp $(targetprefix)/usr/lib/liblirc_client.so.0.2.0 $@/lib/liblirc_client.so.0.2.0 ; \
-		ln -sf liblirc_client.so.0.2.0 $@/lib/liblirc_client.so.0 ; \
-	fi
-	if [ ! -e $(flashprefix)/root-stock-cramfs/lib/libpng12.so.0.16.0 -a ! -e $(flashprefix)/root-stock-squashfs/lib/libpng12.so.0.16.0 -a \
-		-e $(targetprefix)/usr/lib/libpng12.so.0.16.0 ]; then \
-		cp $(targetprefix)/usr/lib/libpng12.so.0.16.0 $@/lib/libpng12.so.0.16.0 ; \
-		ln -sf libpng12.so.0.16.0 $@/lib/libpng12.so.0 ; \
-	fi
-endif
+
 #	rm -rf $@/boot
 	-rm -rf $@/usr/lib/gconv
 #	mkdir $@/usr/lib/gconv
@@ -386,28 +365,7 @@ if ENABLE_VAR
 		cp $(targetprefix)/usr/lib/libz.so.1.2.3 $@/lib/libz.so.1.2.3 ; \
 		ln -sf libz.so.1.2.3 $@/lib/libz.so.1 ; \
 	fi
-if ENABLE_OSD910
-	if [ ! -e $(flashprefix)/root-stock-cramfs/lib/libfreetype.so.6.3.3 -a ! -e $(flashprefix)/root-stock-squashfs/lib/libfreetype.so.6.3.3 -a \
-		-e $(targetprefix)/usr/lib/libfreetype.so.6.3.3 ]; then \
-		cp $(targetprefix)/usr/lib/libfreetype.so.6.3.3 $@/lib/libfreetype.so.6.3.3 ; \
-		ln -sf libfreetype.so.6.3.3 $@/lib/libfreetype.so.6 ; \
-	fi
-	if [ ! -e $(flashprefix)/root-stock-cramfs/lib/libjpeg.so.62.0.0 -a ! -e $(flashprefix)/root-stock-squashfs/lib/libjpeg.so.62.0.0 -a \
-		-e $(targetprefix)/usr/lib/libjpeg.so.62.0.0 ]; then \
-		cp $(targetprefix)/usr/lib/libjpeg.so.62.0.0 $@/lib/libjpeg.so.62.0.0 ; \
-		ln -sf libjpeg.so.62.0.0 $@/lib/libjpeg.so.62 ; \
-	fi
-	if [ ! -e $(flashprefix)/root-stock-cramfs/lib/liblirc_client.so.0.2.0 -a ! -e $(flashprefix)/root-stock-squashfs/lib/liblirc_client.so.0.2.0 -a \
-		-e $(targetprefix)/usr/lib/liblirc_client.so.0.2.0 ]; then \
-		cp $(targetprefix)/usr/lib/liblirc_client.so.0.2.0 $@/lib/liblirc_client.so.0.2.0 ; \
-		ln -sf liblirc_client.so.0.2.0 $@/lib/liblirc_client.so.0 ; \
-	fi
-	if [ ! -e $(flashprefix)/root-stock-cramfs/lib/libpng12.so.0.16.0 -a ! -e $(flashprefix)/root-stock-squashfs/lib/libpng12.so.0.16.0 -a \
-		-e $(targetprefix)/usr/lib/libpng12.so.0.16.0 ]; then \
-		cp $(targetprefix)/usr/lib/libpng12.so.0.16.0 $@/lib/libpng12.so.0.16.0 ; \
-		ln -sf libpng12.so.0.16.0 $@/lib/libpng12.so.0 ; \
-	fi
-endif
+
 endif
 	$(target)-strip --remove-section=.comment --remove-section=.note $@/bin/* 2>/dev/null || /bin/true && \
 	$(target)-strip $@/lib/* 2>/dev/null || /bin/true && \
