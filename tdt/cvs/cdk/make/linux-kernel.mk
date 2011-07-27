@@ -465,6 +465,10 @@ UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
 	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
 
+HL101_PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
+		linux-sh4-hl101_patches_stm24$(PATCH_STR).patch
+
 VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
 		linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
 		linux-sh4-vip2_patches_stm24$(PATCH_STR).patch
@@ -497,6 +501,7 @@ KERNELPATCHES_24 =  \
 		$(if $(UFS912),$(UFS912PATCHES_24)) \
 		$(if $(UFS922),$(UFS922PATCHES_24)) \
 		$(if $(TF7700),$(TF7700PATCHES_24)) \
+		$(if $(HL101),$(HL101_PATCHES_24)) \
 		$(if $(VIP1_V2),$(VIP2_PATCHES_24)) \
 		$(if $(VIP2_V1),$(VIP2_PATCHES_24)) \
 		$(if $(SPARK),$(SPARK_PATCHES_24)) \
