@@ -453,7 +453,7 @@ $(HOST_MTD_UTILS): $(HOST_MTD_UTILS_RPM)
 $(DEPDIR)/bootstrap-host: | \
 		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils \
 		host-filesystem host-autotools $(HOST_AUTOMAKE) $(HOST_AUTOCONF) $(HOST_PKGCONFIG) \
-		$(HOST_MTD_UTILS) host-python
+		$(HOST_MTD_UTILS)
 	$(if $(HOST_MTD_UTILS_RPM),[ "x$*" = "x" ] && touch -r $(HOST_MTD_UTILS_RPM) $@ || true)
 
 #

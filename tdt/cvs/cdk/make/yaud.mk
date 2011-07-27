@@ -109,21 +109,21 @@ flash-ufs910-neutrino: yaud-none stslave \
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 if STM22
-yaud-enigma2: yaud-none lirc stslave\
+yaud-enigma2: yaud-none host-python lirc stslave\
 		boot-elf hotplug remote firstboot enigma2 enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 else
-yaud-enigma2: yaud-none lirc \
+yaud-enigma2: yaud-none host-python lirc \
 		boot-elf remote firstboot enigma2 enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
 if STM22
-yaud-enigma2-nightly: yaud-none lirc stslave\
+yaud-enigma2-nightly: yaud-none host-python lirc stslave\
 		boot-elf hotplug remote firstboot enigma2-nightly enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 else
-yaud-enigma2-nightly: yaud-none lirc stslave\
+yaud-enigma2-nightly: yaud-none host-python lirc stslave\
 		boot-elf remote firstboot enigma2-nightly enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
@@ -139,7 +139,7 @@ yaud-enigma1-hd: yaud-none lirc stslave\
 endif
 
 #work yet!!!
-flash-ufs910-enigma2: yaud-none lirc stslave \
+flash-ufs910-enigma2: yaud-none host-python lirc stslave \
 		boot-elf hotplug remote firstboot enigma2 enigma2-misc release \
 		kernel-squashfs.ubimage \
 		conf-stock.enigma2 \
@@ -148,7 +148,7 @@ flash-ufs910-enigma2: yaud-none lirc stslave \
 		var-stock.enigma2
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-flash-hdbox-enigma2: yaud-none lirc \
+flash-hdbox-enigma2: yaud-none host-python lirc \
 		boot-elf hotplug remote firstboot enigma2 enigma2-misc release \
 		kernel-squashfs-hdbox.ubimage \
 		root-stock-hdbox.enigma2 \
