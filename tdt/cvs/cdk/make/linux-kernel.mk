@@ -345,17 +345,20 @@ FLASHUFS910PATCHES_23 = $(UFS910PATCHES_23)
 IPBOX9900PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		linux-sh4-ipbox_setup_stm23$(PATCH_STR).patch
+		linux-sh4-ipbox_setup_stm23$(PATCH_STR).patch \
+		linux-sh4-ipbox_rtl8201_stm23$(PATCH_STR).patch
 
 IPBOX99PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		linux-sh4-ipbox_setup_stm23$(PATCH_STR).patch
+		linux-sh4-ipbox_setup_stm23$(PATCH_STR).patch \
+		linux-sh4-ipbox_rtl8201_stm23$(PATCH_STR).patch
 
 IPBOX55PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
-		linux-sh4-ipbox_setup_stm23$(PATCH_STR).patch
+		linux-sh4-ipbox_setup_stm23$(PATCH_STR).patch \
+		linux-sh4-ipbox_rtl8201_stm23$(PATCH_STR).patch
 
 CUBEPATCHES_023 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \

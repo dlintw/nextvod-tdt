@@ -53,7 +53,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stm_v4l2.ko
    insmod $MODDIR/pseudocard.ko
    insmod $MODDIR/fe-core.ko
-   insmod $MODDIR/dummy_cic.ko
+   insmod $MODDIR/starci.ko
    insmod $MODDIR/pti.ko
    insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/stm_monitor.ko
