@@ -143,14 +143,15 @@ echo "   4) STM 23 P0123"
 echo "   6) STM 24 P0205"
 echo "   8) STM 24 P0207 (Recommended)"
 echo " Experimental:"
+echo "   9) HAVANA P0207-5 (experimental)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
 case $2 in
-        [1-8]) REPLY=$2
+        [1-9]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
-        read -p "Select kernel (1-8)? ";;
+        read -p "Select kernel (1-9)? ";;
 esac
 
 case "$REPLY" in
@@ -162,6 +163,7 @@ case "$REPLY" in
 	6) KERNEL="--enable-stm24 --enable-p0205";STMFB="stm24";;
 	7) KERNEL="--enable-stm24 --enable-p0206";STMFB="stm24";;
 	8) KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
+	9) KERNEL="--enable-stm24 --enable-havana-p0207_5";STMFB="stm24";;
 	*) KERNEL="--enable-stm22 --enable-p0041";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"

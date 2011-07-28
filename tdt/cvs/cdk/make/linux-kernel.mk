@@ -408,6 +408,11 @@ if ENABLE_P0207
 PATCH_STR=_0207
 endif
 
+if ENABLE_HAVANA_P0207_5
+PATCH_STR=_0207_5
+GIT_STR=207-5
+endif
+
 STM24_DVB_PATCH = linux-sh4-linuxdvb_stm24$(PATCH_STR).patch
 
 COMMONPATCHES_24 = \
@@ -517,6 +522,24 @@ KERNELPATCHES_24 =  \
                 
 ############ Patches Kernel 24 End ###############
 
+############ Patches Havana ###############
+
+HAVANA_STM24_DVB_PATCH = linux-sh4-linuxdvb_havana_stm24$(PATCH_STR).patch
+
+COMMONPATCHES_HAVANA_STM24 = \
+		$(HAVANA_STM24_DVB_PATCH) \
+		linux-sh4-init_mm_havana_stm24$(PATCH_STR).patch
+
+ATEVIO7500PATCHES_HAVANA_STM24 = $(COMMONPATCHES_HAVANA_STM24) \
+		linux-sh4-lmb_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-atevio7500_setup_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch
+
+KERNELPATCHES_HAVANA_STM24 =  \
+		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_HAVANA_STM24))
+
+############ Patches Havana End ###############
+
 #
 # KERNEL-HEADERS
 #
@@ -557,7 +580,11 @@ else
 if ENABLE_P0207
 KERNELHEADERS_VERSION := 2.6.32.16-44
 else
+if ENABLE_HAVANA_P0207_5
+KERNELHEADERS_VERSION := 2.6.32.16-44
+else
 KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
+endif
 endif
 endif
 endif
@@ -635,10 +662,16 @@ HOST_KERNEL_VERSION := 2.6.32.28$(KERNELSTMLABEL)-$(KERNELLABEL)
 else
 if ENABLE_P0207
 HOST_KERNEL_VERSION := 2.6.32.28$(KERNELSTMLABEL)-$(KERNELLABEL)
+else
+if ENABLE_HAVANA_P0207_5
+HOST_KERNEL_VERSION := 2.6.32.28$(KERNELSTMLABEL)-$(KERNELLABEL)
 endif
 endif
 endif
 endif
+endif
+
+if !ENABLE_HAVANA_P0207_5
 
 HOST_KERNEL_SPEC := stm-$(HOST_KERNEL)-sh4.spec
 HOST_KERNEL_SPEC_PATCH :=
@@ -646,9 +679,57 @@ HOST_KERNEL_PATCHES := $(KERNELPATCHES_24)
 HOST_KERNEL_CONFIG := linux-sh4-$(subst _stm24_,-,$(KERNELVERSION))_$(MODNAME).config$(DEBUG_STR)
 HOST_KERNEL_SRC_RPM := $(STLINUX)-$(HOST_KERNEL)-source-sh4-$(HOST_KERNEL_VERSION).src.rpm
 HOST_KERNEL_RPM := RPMS/noarch/$(STLINUX)-$(HOST_KERNEL)-source-sh4-$(HOST_KERNEL_VERSION).noarch.rpm
+
+endif
+
 # endif STM24
 endif !STM23
 endif !STM22
+
+if ENABLE_HAVANA_P0207_5
+
+HAVANA_STM24_KERNEL_PATCHES := $(KERNELPATCHES_HAVANA_STM24)
+HAVANA_STM24_KERNEL_CONFIG := linux-sh4-$(subst _stm24_,-,$(KERNELVERSION))_havana_$(MODNAME).config$(DEBUG_STR)
+
+$(DEPDIR)/linux-kernel.do_prepare:
+#close if necessary
+	[ -d "$(KERNEL_DIR)" ] || \
+	git clone git://git.stlinux.com/havana/com.st.havana.kernel.git $(KERNEL_DIR);
+#reset and checkout everytime
+	cd $(KERNEL_DIR) && \
+	git reset --hard && \
+	git checkout com.st.havana.kernel-$(GIT_STR);
+#if not exist make a clean copy so we can make patches easier
+	[ -d "$(KERNEL_DIR).orig" ] || \
+	cp -ra $(KERNEL_DIR) $(KERNEL_DIR).orig
+#if not exist create symlink
+	[ -d "linux-sh4" ] || \
+	ln -s $(KERNEL_DIR) linux-sh4
+	$(if $(HAVANA_STM24_KERNEL_PATCHES),cd $(KERNEL_DIR) && cat $(HAVANA_STM24_KERNEL_PATCHES:%=../Patches/%) | patch -p1)
+	$(INSTALL) -m644 Patches/$(HAVANA_STM24_KERNEL_CONFIG) $(KERNEL_DIR)/.config
+	-rm $(KERNEL_DIR)/localversion*
+	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
+	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig
+	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/asm
+	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/linux/version.h
+	rm $(KERNEL_DIR)/.config
+	touch $@
+
+$(DEPDIR)/linux-kernel.do_compile: \
+		bootstrap-cross \
+		linux-kernel.do_prepare \
+		Patches/$(HAVANA_STM24_KERNEL_CONFIG) \
+		config.status \
+		| $(HOST_U_BOOT_TOOLS)
+	-rm $(DEPDIR)/linux-kernel*.do_compile
+	cd $(KERNEL_DIR) && \
+		export PATH=$(hostprefix)/bin:$(PATH) && \
+		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
+		@M4@ ../Patches/$(HAVANA_STM24_KERNEL_CONFIG) > .config && \
+		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
+	touch $@
+
+else
 
 if STM23_HAVANA
 $(DEPDIR)/linux-kernel.do_prepare:
@@ -721,6 +802,7 @@ $(DEPDIR)/linux-kernel.do_compile: \
 	touch $@
 
 endif !STM23_HAVANA
+endif
 
 NFS_FLASH_SED_CONF=$(foreach param,XCONFIG_NFS_FS XCONFIG_LOCKD XCONFIG_SUNRPC,-e s"/^.*$(param)[= ].*/$(param)=m/")
 
@@ -843,6 +925,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
 		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
 		$(if $(PLAYER191),PLAYER191=$(PLAYER191)) \
+		$(if $(HAVANA_P0207_5),HAVANA_P0207_5=$(HAVANA_P0207_5)) \
 		CROSS_COMPILE=$(target)-
 	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
@@ -875,6 +958,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
 		$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
 		$(if $(PLAYER191),PLAYER191=$(PLAYER191)) \
+		$(if $(HAVANA_P0207_5),HAVANA_P0207_5=$(HAVANA_P0207_5)) \
 		install
 	$(DEPMOD) -ae -b $(targetprefix) -F $(buildprefix)/$(KERNEL_DIR)/System.map -r $(KERNELVERSION)
 	touch $@

@@ -138,6 +138,14 @@ AC_ARG_ENABLE(p0207,
 AM_CONDITIONAL(ENABLE_P0207,test "$enable_p0207" = "yes")
 AC_SUBST(P0207)
 
+AC_ARG_ENABLE(havana_p0207_5,
+	AS_HELP_STRING(enable-havana-p0207_5,  set up the CDK to use the STLinux 2.4 with Havana patchlevel 0207_5),
+	[case "${enableval}" in
+		yes) HAVANA_P0207_5=havana_p0207_5 ;;
+	esac], [enable_havana_p0207_5=no])
+AM_CONDITIONAL(ENABLE_HAVANA_P0207_5,test "$enable_havana_p0207_5" = "yes")
+AC_SUBST(HAVANA_P0207_5)
+
 AC_ARG_ENABLE(debug,
 	AS_HELP_STRING(--enable-debug,	set up the CDK to use debug kernel configs),
 	,[enable_debug=no])
@@ -786,7 +794,11 @@ if test "$enable_stm23" = "yes"; then
 		KERNELLABEL="119"
 	fi
 else
-	if test "$enable_p0207" == "yes"; then
+	if test "$enable_havana_p0207_5" == "yes"; then
+		KERNELVERSION=${VERSION_linuxp0207}
+		KERNELSTMLABEL="_${VERSION_linuxp0207#*_}"
+		KERNELLABEL="207"
+    elif test "$enable_p0207" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0207}
 		KERNELSTMLABEL="_${VERSION_linuxp0207#*_}"
 		KERNELLABEL="207"
@@ -1087,6 +1099,7 @@ Patchlevel P0201            : $enable_p0201
 Patchlevel P0205            : $enable_p0205
 Patchlevel P0206            : $enable_p0206
 Patchlevel P0207            : $enable_p0207
+HAVANA Patchlevel P0207_5   : $enable_havana_p0207_5
 vdr VDR 1.7.11              : $enable_vdr1711
 flash rules                 : $enable_flashrules
 ccache                      : $enable_ccache
