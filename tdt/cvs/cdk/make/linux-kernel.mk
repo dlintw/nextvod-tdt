@@ -471,7 +471,7 @@ ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+	        linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 HL101_PATCHES_24 = $(COMMONPATCHES_24) \
@@ -494,15 +494,18 @@ FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 
 IPBOX9900PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox9900_setup_stm24$(PATCH_STR).patch \
-		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch 
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch  \
+		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
 
 IPBOX99PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox99_setup_stm24$(PATCH_STR).patch \
-		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch 
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
 
 IPBOX55PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox55_setup_stm24$(PATCH_STR).patch \
-		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch 
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
 
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \

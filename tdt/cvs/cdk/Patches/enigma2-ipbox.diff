@@ -1274,3 +1274,156 @@ diff -urN enigma2-nightly.org/lib/dvb/dvb.h enigma2-nightly/lib/dvb/dvb.h
  #else
   	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD };
  #endif
+diff -urN enigma2-nightly.org/lib/dvb/pmt.cpp enigma2-nightly/lib/dvb/pmt.cpp
+--- enigma2-nightly.org/lib/dvb/pmt.cpp	2011-07-30 12:49:05.000000000 +0200
++++ enigma2-nightly/lib/dvb/pmt.cpp	2011-07-30 15:16:25.145993640 +0200
+@@ -19,6 +19,15 @@
+ #include <dvbsi++/video_stream_descriptor.h>
+ #include <dvbsi++/registration_descriptor.h>
+ 
++#include <stdio.h>
++#include <fcntl.h>
++#include <sys/ioctl.h>
++#include <errno.h>
++#include <unistd.h>
++#include <signal.h>
++
++#include <linux/dvb/dmx.h>
++
+ eDVBServicePMTHandler::eDVBServicePMTHandler()
+ 	:m_ca_servicePtr(0), m_dvb_scan(0), m_decode_demux_num(0xFF), m_no_pat_entry_delay(eTimer::create())
+ {
+@@ -1227,7 +1236,7 @@
+ 
+ 	uint8_t demux_mask = 0;
+ 	int data_demux = -1;
+-
++        int blen;
+ 	int iter=0, max_demux_slots = sizeof(m_used_demux);
+ 	while ( iter < max_demux_slots )
+ 	{
+@@ -1297,15 +1306,104 @@
+ 		capmt.injectDescriptor(tmp, false);
+ 
+ 		capmt.writeToBuffer(m_capmt);
++		blen=capmt.writeToBuffer(m_capmt);
+ 	}
+ 
+ 	m_prev_build_hash = build_hash;
+ 
+ 	if ( m_sendstate != 0xFFFFFFFF )
+ 		m_sendstate=0;
++
++	writeTMPPMT(blen);
++	sendAllinonesw();
+ 	sendCAPMT();
+ }
+ 
++#define PMT_TMP_FILE "/tmp/pmt.tmp"
++
++void eDVBCAService::writeTMPPMT(int blen)
++{
++	unsigned len = 0;
++	unsigned char pmt[2048];
++	if(blen > (11+10+4+4)+6) {
++		// good, we have some possible data enough :-)
++		int idx;
++		int offs = (m_capmt[3] >> 7) & 0x01;
++        	pmt[len++] = 0x02; // TID
++		pmt[len++] = 0x80 | 0x00 | 0x30 | 0x00;
++		pmt[len++] = 0x00; // LEN
++		pmt[len++] = m_capmt[5]; // SID1
++		pmt[len++] = m_capmt[6]; // SID2
++		pmt[len++] = 0xC0 | 0x02 /* version number = faked to 0x01 */ | 0x01;
++		pmt[len++] = 0x00; // section number = always 0x00
++		pmt[len++] = 0x00; // last section number = alsways 0x00
++		pmt[len++] = 0x1F; // PCR PID1 = faked to 0x1fff
++		pmt[len++] = 0xFF; // PCR PID2
++		pmt[len++] = 0x00; // 4bits = reserved, 4bits = program info len1
++		pmt[len++] = 0x00; // program info len2
++
++		// program info loop
++		idx = offs + 11+10+4+4;
++		while(m_capmt[idx] == 0x09 && idx < blen) {
++			int desclen = m_capmt[idx+1] + 2;
++			if(m_capmt[idx+1] >= 4) {
++				memcpy(pmt+len, m_capmt+idx, desclen);
++				pmt[11] += desclen;
++				len += desclen;
++				//FIXME: check for infolen > 256!
++			}
++			idx += desclen;
++		}
++		//stream type loop
++		while(idx < blen) {
++			int desclen = (((m_capmt[idx+3])&0x0f)<<4) + m_capmt[idx+4] + 5;
++			memcpy(pmt+len, m_capmt+idx, desclen);
++			len += desclen;
++			idx += desclen;
++		}
++		pmt[2] = len - 3;
++		//FIXME: appned 4 bytes of CRC!
++	}    
++#if 0
++	int i;
++	eDebugNoNewLine("PMT DATA ");
++	for (i=0;i<len;i++)
++		eDebugNoNewLine("%02x ",pmt[i]);
++	eDebug("");
++#endif
++	FILE * f;
++        f=fopen(PMT_TMP_FILE,"wb");
++	fwrite(pmt,len,1,f);
++	fclose(f);
++	return;
++}
++
++void eDVBCAService::sendAllinonesw()
++{
++//	const char *msg = "\x9f\x80\x32";
++	unsigned char *msg = m_capmt;
++	int len = m_capmt[3] & ~0x80;
++	
++	int sock, clilen, err;
++	struct sockaddr_un servaddr;
++	memset(&servaddr, 0, sizeof(struct sockaddr_un));
++	servaddr.sun_family = AF_UNIX;
++	strcpy(servaddr.sun_path, "/tmp/allinonesw.socket");
++	clilen = sizeof(servaddr.sun_family) + strlen(servaddr.sun_path);
++	sock = socket(PF_UNIX, SOCK_STREAM, 0);
++	if (sock > -1)
++	{
++		connect(sock, (struct sockaddr *) &servaddr, clilen);
++		fcntl(sock, F_SETFL, O_NONBLOCK);
++		int val=1;
++		setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &val, 4);
++		err=write(sock, msg, len + 4 );
++		if (err < 0)
++			eDebug("[eDVBCAService] write allinonesw %d", len);
++		close(sock);
++	}
++}
++
+ void eDVBCAService::sendCAPMT()
+ {
+ 	if ( m_sendstate && m_sendstate != 0xFFFFFFFF ) // broken pipe retry
+diff -urN enigma2-nightly.org/lib/dvb/pmt.h enigma2-nightly/lib/dvb/pmt.h
+--- enigma2-nightly.org/lib/dvb/pmt.h	2011-07-30 12:49:05.000000000 +0200
++++ enigma2-nightly/lib/dvb/pmt.h	2011-07-30 14:51:28.762459482 +0200
+@@ -46,11 +46,16 @@
+ 	struct sockaddr_un m_servaddr;
+ 	unsigned int m_sendstate;
+ 	unsigned char m_capmt[2048];
++	unsigned char raw_data[2048];
+ 	ePtr<eTimer> m_retryTimer;
+ 	void sendCAPMT();
+ 	void Connect();
+ 	void socketCB(int what);
+ 
++        ePtr<iDVBDemux> m_PMTReader;
++        void writeTMPPMT(int);
++	void sendAllinonesw();
++
+ 	static void DVBChannelAdded(eDVBChannel*);
+ 	static void DVBChannelStateChanged(iDVBChannel*);
+ 	static CAServiceMap exist;

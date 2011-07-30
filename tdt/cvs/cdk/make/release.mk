@@ -494,6 +494,8 @@ release_ipbox9900: release_common_utils
 	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox99xx/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/rmu/rmu.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/siinfo/siinfo.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_ipbox $(prefix)/release/etc/fstab
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ipbox.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
@@ -515,15 +517,11 @@ endif
 	rm -f $(prefix)/release/lib/firmware/*
 	rm -f $(prefix)/release/lib/modules/boxtype.ko
 	rm -f $(prefix)/release/lib/modules/bpamem.ko
-	rm -f $(prefix)/release/lib/modules/ftdi.ko	
 	rm -f $(prefix)/release/lib/modules/lzo*.ko
-	rm -f $(prefix)/release/lib/modules/pl2303.ko
 	rm -f $(prefix)/release/lib/modules/ramzswap.ko
 	rm -f $(prefix)/release/lib/modules/simu_button.ko
 	rm -f $(prefix)/release/lib/modules/stmvbi.ko
 	rm -f $(prefix)/release/lib/modules/stmvout.ko
-	rm -f $(prefix)/release/lib/modules/tun.ko
-	rm -f $(prefix)/release/lib/modules/usbserial.ko
 	rm -f $(prefix)/release/bin/gotosleep
 	rm -f $(prefix)/release/etc/network/interfaces
 	echo "config.usage.hdd_standby=0" >> $(prefix)/release/etc/enigma2/settings
@@ -533,6 +531,7 @@ release_ipbox99: release_common_utils
 	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox99xx/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/siinfo/siinfo.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_ipbox $(prefix)/release/etc/fstab
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ipbox.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
@@ -554,15 +553,11 @@ endif
 	rm -f $(prefix)/release/lib/firmware/*
 	rm -f $(prefix)/release/lib/modules/boxtype.ko
 	rm -f $(prefix)/release/lib/modules/bpamem.ko
-	rm -f $(prefix)/release/lib/modules/ftdi.ko	
 	rm -f $(prefix)/release/lib/modules/lzo*.ko
-	rm -f $(prefix)/release/lib/modules/pl2303.ko
 	rm -f $(prefix)/release/lib/modules/ramzswap.ko
 	rm -f $(prefix)/release/lib/modules/simu_button.ko
 	rm -f $(prefix)/release/lib/modules/stmvbi.ko
 	rm -f $(prefix)/release/lib/modules/stmvout.ko
-	rm -f $(prefix)/release/lib/modules/tun.ko
-	rm -f $(prefix)/release/lib/modules/usbserial.ko
 	rm -f $(prefix)/release/bin/gotosleep
 	rm -f $(prefix)/release/etc/network/interfaces
 	echo "config.usage.hdd_standby=0" >> $(prefix)/release/etc/enigma2/settings
@@ -572,6 +567,7 @@ release_ipbox55: release_common_utils
 	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox55/front.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/siinfo/siinfo.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_ipbox $(prefix)/release/etc/fstab
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ipbox.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
@@ -593,15 +589,11 @@ endif
 	rm -f $(prefix)/release/lib/firmware/*
 	rm -f $(prefix)/release/lib/modules/boxtype.ko
 	rm -f $(prefix)/release/lib/modules/bpamem.ko
-	rm -f $(prefix)/release/lib/modules/ftdi.ko	
 	rm -f $(prefix)/release/lib/modules/lzo*.ko
-	rm -f $(prefix)/release/lib/modules/pl2303.ko
 	rm -f $(prefix)/release/lib/modules/ramzswap.ko
 	rm -f $(prefix)/release/lib/modules/simu_button.ko
 	rm -f $(prefix)/release/lib/modules/stmvbi.ko
 	rm -f $(prefix)/release/lib/modules/stmvout.ko
-	rm -f $(prefix)/release/lib/modules/tun.ko
-	rm -f $(prefix)/release/lib/modules/usbserial.ko
 	rm -f $(prefix)/release/bin/gotosleep
 	rm -f $(prefix)/release/etc/network/interfaces
 	echo "config.usage.hdd_standby=0" >> $(prefix)/release/etc/enigma2/settings
