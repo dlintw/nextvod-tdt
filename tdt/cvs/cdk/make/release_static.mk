@@ -83,6 +83,10 @@ release_octagon1008: cpu7101
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/avl2108.ko $(releaseprefix)/lib/modules/
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(releaseprefix)/lib/modules/
 
+release_hs7810a: cpu7111
+   cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release/lib/modules/
+   cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(releaseprefix)/lib/modules/
+
 release_ufs910: cpu7100
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button/button.ko $(releaseprefix)/lib/modules/
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/led/led.ko $(releaseprefix)/lib/modules/
