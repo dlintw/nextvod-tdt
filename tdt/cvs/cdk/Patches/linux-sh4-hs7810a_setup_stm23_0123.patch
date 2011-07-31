@@ -797,3 +797,22 @@ diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/sat7111/setup.c 
   	} else {
   		if (status & ASC_STA_THE)
   			return FIFO_SIZE / 2;
+*** linux-sh4-2.6.23.17_stm23_0123_orig/include/asm-sh/irq-ilc.h	2011-06-19 18:34:29.000000000 +0300
+--- linux-sh4/include/asm-sh/irq-ilc.h	2011-07-31 22:33:41.203161130 +0300
+***************
+*** 39,45 ****
+  #define ILC_IRQ(x)	(ILC_FIRST_IRQ + (x))
+  #elif	defined(CONFIG_CPU_SUBTYPE_STX7111)
+  #define ILC_FIRST_IRQ	176
+! #define ILC_NR_IRQS	(64+33)
+  #define ILC_INT_IRQ(x)	(ILC_FIRST_IRQ + (x))
+  #define ILC_EXT_IRQ(x)	(ILC_FIRST_IRQ + 64 + (x))
+  #define ILC_IRQ(x)	ILC_INT_IRQ(x)
+--- 39,45 ----
+  #define ILC_IRQ(x)	(ILC_FIRST_IRQ + (x))
+  #elif	defined(CONFIG_CPU_SUBTYPE_STX7111)
+  #define ILC_FIRST_IRQ	176
+! #define ILC_NR_IRQS	(64+35)
+  #define ILC_INT_IRQ(x)	(ILC_FIRST_IRQ + (x))
+  #define ILC_EXT_IRQ(x)	(ILC_FIRST_IRQ + 64 + (x))
+  #define ILC_IRQ(x)	ILC_INT_IRQ(x)
