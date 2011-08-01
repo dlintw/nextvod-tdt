@@ -79,7 +79,6 @@ TF7700PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-jffs2-lzma_stm22.patch \
 		linux-ftdi_sio.c_stm22.patch
 
-
 HL101PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ufs922_stasc_stm22.patch \
 		linux-hl101_setup_stm22.patch \
@@ -315,6 +314,13 @@ OCTAGON1008PATCHES_23 = $(COMMONPATCHES_23) \
         $(if $(P0119),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
 
+HS7810APATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-hs7810a_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-hs7810a_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		fortis_hdbox_dvb_core_stm23.patch
+
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
@@ -383,6 +389,7 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_23)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_23)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_23)) \
+		$(if $(HS7810A),$(HS7810APATCHES_23)) \
 		$(if $(HOMECAST5101),$(HS5101PATCHES_23)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_23)) \
 		$(if $(IPBOX99),$(IPBOX99PATCHES_23)) \
@@ -468,10 +475,14 @@ ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-atevio7500_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch
 
+HS7810APATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-hs7810a_setup_stm24$(PATCH_STR).patch
+
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
+	        linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 HL101_PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
@@ -493,15 +504,18 @@ FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 
 IPBOX9900PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox9900_setup_stm24$(PATCH_STR).patch \
-		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch 
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch  \
+		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
 
 IPBOX99PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox99_setup_stm24$(PATCH_STR).patch \
-		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch 
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
 
 IPBOX55PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox55_setup_stm24$(PATCH_STR).patch \
-		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch 
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
 
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
@@ -514,6 +528,7 @@ KERNELPATCHES_24 =  \
 		$(if $(VIP2_V1),$(VIP2_PATCHES_24)) \
 		$(if $(SPARK),$(SPARK_PATCHES_24)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_24)) \
+		$(if $(HS7810A),$(HS7810APATCHES_24)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_24)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_24)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_24)) \
@@ -622,7 +637,7 @@ endif !STM22
 #
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(FLASH_UFS910)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)
+MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(FLASH_UFS910)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -903,6 +918,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
+ 		$(if $(HS7810A),HS7810A=$(HS7810A)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
@@ -936,6 +952,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
+ 		$(if $(HS7810A),HS7810A=$(HS7810A)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \

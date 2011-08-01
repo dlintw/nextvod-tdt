@@ -378,6 +378,14 @@ AC_ARG_ENABLE(ufs912,
 AM_CONDITIONAL(ENABLE_UFS912,test "$enable_ufs912" = "yes")
 AC_SUBST(UFS912)
 
+AC_ARG_ENABLE(hs7810a,
+	AS_HELP_STRING(--enable-hs7810a,    enable fortis hs7810a stuff),
+	[case "${enableval}" in
+		yes) HS7810A=hs7810a ;;
+	esac],[enable_hs7810a=no])
+AM_CONDITIONAL(ENABLE_HS7810A,test "$enable_hs7810a" = "yes")
+AC_SUBST(HS7810A)
+
 AC_ARG_ENABLE(cuberevo,
 	AS_HELP_STRING(--enable-cuberevo,    enable cuberevo stuff),
 	[case "${enableval}" in
