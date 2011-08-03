@@ -100,7 +100,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    mknod /dev/sci0 c 169 0
    mknod /dev/sci1 c 169 1 
 
-   /bin/evremote2 hdbox &
+   /bin/evremote2 hdbox 100 &
 
    stfbcontrol a 255
 
@@ -127,6 +127,9 @@ if [ ! -e /var/etc/.firstboot ]; then
 	 /etc/init.d/networking start 
       fi 
    fi
+
+   echo "neu" > /dev/vfd
+   echo "LOADING NEUTRINO"
 
    until false
    do
