@@ -816,3 +816,55 @@ diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/sat7111/setup.c 
   #define ILC_INT_IRQ(x)	(ILC_FIRST_IRQ + (x))
   #define ILC_EXT_IRQ(x)	(ILC_FIRST_IRQ + 64 + (x))
   #define ILC_IRQ(x)	ILC_INT_IRQ(x)
+*** linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/kernel/traps.c	2011-06-19 18:34:28.000000000 +0300
+--- linux-sh4/arch/sh/kernel/traps.c	2011-08-03 23:58:46.680278483 +0300
+***************
+*** 655,665 ****
+  			goto uspace_segv;
+  
+  		/* shout about userspace fixups */
+! 		if ((se_usermode & 1) && !(test_thread_flag (TIF_UAC_NOPRINT)))
+  			printk("Unaligned userspace access "
+  			       "in \"%s\" pid=%d pc=0x%p ins=0x%04hx\n",
+  			       current->comm,current->pid,
+! 			       (u16*)regs->pc,instruction);
+  #endif
+  
+  		if (se_usermode & 2)
+--- 655,665 ----
+  			goto uspace_segv;
+  
+  		/* shout about userspace fixups */
+! 		/*if ((se_usermode & 1) && !(test_thread_flag (TIF_UAC_NOPRINT)))
+  			printk("Unaligned userspace access "
+  			       "in \"%s\" pid=%d pc=0x%p ins=0x%04hx\n",
+  			       current->comm,current->pid,
+! 			       (u16*)regs->pc,instruction);*/
+  #endif
+  
+  		if (se_usermode & 2)
+***************
+*** 705,715 ****
+  	} else {
+  		se_sys += 1;
+  
+! 		if (se_kernmode_warn)
+  			printk("Unaligned kernel access "
+  			       "on behalf of \"%s\" pid=%d pc=0x%p ins=0x%04hx\n",
+  			       current->comm,current->pid,(u16*)regs->pc,
+! 			       instruction);
+  
+  		if (regs->pc & 1)
+  			die("unaligned program counter", regs, error_code);
+--- 705,715 ----
+  	} else {
+  		se_sys += 1;
+  
+! 		/*if (se_kernmode_warn)
+  			printk("Unaligned kernel access "
+  			       "on behalf of \"%s\" pid=%d pc=0x%p ins=0x%04hx\n",
+  			       current->comm,current->pid,(u16*)regs->pc,
+! 			       instruction);*/
+  
+  		if (regs->pc & 1)
+  			die("unaligned program counter", regs, error_code);
