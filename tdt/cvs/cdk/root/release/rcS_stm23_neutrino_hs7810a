@@ -53,7 +53,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mme_host.ko transport0=shm
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko type=avs_none
+   insmod $MODDIR/avs.ko type=avs_pio
 
    player=`cat /proc/stb/player/version`
    player=`cat /proc/stb/player/version | awk '{ print substr( $0, length($0) - 2, length($0) ) }'`
@@ -69,6 +69,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    fi
    insmod $MODDIR/pseudocard.ko
 
+   insmod $MODDIR/lnb.ko type=a8293
    insmod $MODDIR/stv090x.ko paramDebug=0
    insmod $MODDIR/starci.ko
    if [ $player -gt 131 ]; then
@@ -86,7 +87,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko
-   #insmod $MODDIR/smartcard.ko
+   insmod $MODDIR/smartcard.ko
 
    insmod $MODDIR/bpamem.ko
    mknod /dev/bpamem c 153 0 
@@ -95,10 +96,11 @@ if [ ! -e /var/etc/.firstboot ]; then
    stfbcontrol a 0
 
    mknod /dev/rc c 147 1 
+   mknod /dev/lnb c 149 0
    mknod /dev/sci0 c 169 0
    mknod /dev/sci1 c 169 1 
 
-   /bin/evremote2 hdbox &
+   /bin/evremote2 hdbox 100 &
 
    stfbcontrol a 255
 
@@ -125,6 +127,9 @@ if [ ! -e /var/etc/.firstboot ]; then
 	 /etc/init.d/networking start 
       fi 
    fi
+
+   echo "neu" > /dev/vfd
+   echo "LOADING NEUTRINO"
 
    until false
    do

@@ -1601,8 +1601,8 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/dvb/dvb.cp
 +		m_boxtype = CUBEREVO_250HD;
 +	else if (!strncmp(tmp, "cuberevo-mini-fta\n", rd))
 +		m_boxtype = CUBEREVO_MINI_FTA;
-+	else if (!strncmp(tmp, "octagon1008\n", rd))
-+		m_boxtype = OCTAGON1008;
++	else if (!strncmp(tmp, "octagon1008\n", rd)) m_boxtype = OCTAGON1008;
++	else if (!strncmp(tmp, "hs7810a\n", rd)) m_boxtype = HS7810A;
 +	else if (!strncmp(tmp, "atevio7500\n", rd))
 +		m_boxtype = ATEVIO7500;
 +#endif
@@ -1615,7 +1615,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/dvb/dvb.cp
  	}
 +#if defined(__sh__) // we use our own algo for demux detection
 +	else if (m_boxtype == UFS910 || m_boxtype == UFS912 || m_boxtype == SPARK || m_boxtype == SPARK7162 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX ||
-+		m_boxtype == HL101 || m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || m_boxtype == VIP1_V2 || m_boxtype == VIP2_V1 ||
++		m_boxtype == HL101 || m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || m_boxtype == VIP1_V2 || m_boxtype == VIP2_V1 || m_boxtype == HS7810A ||
 +		m_boxtype == CUBEREVO_MINI_FTA || m_boxtype == CUBEREVO_250HD || m_boxtype == CUBEREVO_2000HD || m_boxtype == CUBEREVO_9500HD || m_boxtype == OCTAGON1008 || m_boxtype == ATEVIO7500)
 +	{
 +		for (; i != m_demux.end(); ++i, ++n)
@@ -3685,7 +3685,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/fb.cpp
  int fbClass::showConsole(int state)
  {
 +#if defined(__sh__) 
-+	int fd=open("/dev/ttyAS1", O_RDWR); 
++	int fd=open("/dev/null", O_RDWR); // [spider] changed it because conflict with hdbox frontpanel
 +#else 
  	int fd=open("/dev/tty0", O_RDWR);
  	if(fd>=0)

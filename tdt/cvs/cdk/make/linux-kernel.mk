@@ -485,12 +485,18 @@ UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 HL101_PATCHES_24 = $(COMMONPATCHES_24) \
-		linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
-		linux-sh4-hl101_patches_stm24$(PATCH_STR).patch
+		linux-sh4-hl101_setup_stm24$(PATCH_STR).patch \
+		linux-usbwait123_stm24.patch \
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
+	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
-		linux-sh4-29bit_fix_stm24$(PATCH_STR).patch \
-		linux-sh4-vip2_patches_stm24$(PATCH_STR).patch
+		linux-sh4-vip2_setup_stm24$(PATCH_STR).patch \
+		linux-usbwait123_stm24.patch \
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
+	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 SPARK_PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-spark_setup_stm24$(PATCH_STR).patch
