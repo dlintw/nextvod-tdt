@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.28
-# Sun Jul 17 20:34:29 2011
+# Fri Aug  5 21:31:02 2011
 #
 CONFIG_SUPERH=y
 CONFIG_SUPERH32=y
@@ -119,7 +119,9 @@ CONFIG_HAVE_DMA_API_DEBUG=y
 #
 # GCOV-based kernel profiling
 #
+# CONFIG_GCOV_KERNEL is not set
 CONFIG_SLOW_WORK=y
+# CONFIG_SLOW_WORK_DEBUG is not set
 CONFIG_HAVE_GENERIC_DMA_COHERENT=y
 CONFIG_RT_MUTEXES=y
 CONFIG_BASE_SMALL=0
