@@ -554,10 +554,16 @@ COMMONPATCHES_HAVANA_STM24 = \
 ATEVIO7500PATCHES_HAVANA_STM24 = $(COMMONPATCHES_HAVANA_STM24) \
 		linux-sh4-lmb_havana_stm24$(PATCH_STR).patch \
 		linux-sh4-atevio7500_setup_havana_stm24$(PATCH_STR).patch \
-		linux-sh4-stmmac_stm24$(PATCH_STR).patch
+		linux-sh4-stmmac_havana_stm24$(PATCH_STR).patch
+
+UFS912PATCHES_HAVANA_STM24 = $(COMMONPATCHES_HAVANA_STM24) \
+		linux-sh4-lmb_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-ufs912_setup_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-stmmac_havana_stm24$(PATCH_STR).patch
 
 KERNELPATCHES_HAVANA_STM24 =  \
-		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_HAVANA_STM24))
+		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_HAVANA_STM24)) \
+		$(if $(UFS912),$(UFS912PATCHES_HAVANA_STM24))
 
 ############ Patches Havana End ###############
 
