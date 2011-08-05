@@ -467,7 +467,7 @@ release_ufs910:
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	mv $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 
-release_hl101: release_common_utils
+release_hl101:
 	echo "hl101" > $(prefix)/release/etc/hostname
 	rm -f $(prefix)/release/sbin/halt
 	cp $(buildprefix)/root/release/halt_hl101 $(prefix)/release/etc/init.d/halt
@@ -501,7 +501,7 @@ release_hl101: release_common_utils
 	cp $(targetprefix)/lib/firmware/dvb-fe-avl2108.fw $(prefix)/release/lib/firmware/
 	cp $(targetprefix)/lib/firmware/dvb-fe-stv6306.fw $(prefix)/release/lib/firmware/
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_hl101.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
-	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
+	cp -dp $(buildprefix)/root/etc/lircd_hl101.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
