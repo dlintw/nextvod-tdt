@@ -188,6 +188,28 @@ release_ufs912:
 
 release_spark:
 	echo "spark" > $(prefix)/release/etc/hostname
+	rm -f $(prefix)/release/sbin/halt
+	cp $(buildprefix)/root/release/halt_spark $(prefix)/release/etc/init.d/halt
+	chmod 777 $(prefix)/release/etc/init.d/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release/etc/init.d/
+	chmod 755 $(prefix)/release/etc/init.d/umountfs
+	chmod 755 $(prefix)/release/etc/init.d/rc
+	chmod 755 $(prefix)/release/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release/etc/init.d/halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release/etc/rc.d
+	ln -fs halt $(prefix)/release/sbin/reboot
+	ln -fs halt $(prefix)/release/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf
@@ -202,6 +224,20 @@ release_spark:
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/fonts
 	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/local/share/fonts/
 
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
+
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/
+	echo 'sda    -fstype=auto,noatime,nodiratime          :/dev/sda' >> $(prefix)/release/etc/auto.usb
+	echo 'sda1   -fstype=auto,noatime,nodiratime          :/dev/sda1' >> $(prefix)/release/etc/auto.usb
+	echo 'sda2   -fstype=auto,noatime,nodiratime          :/dev/sda2' >> $(prefix)/release/etc/auto.usb
+	echo 'sda3   -fstype=auto,noatime,nodiratime          :/dev/sda3' >> $(prefix)/release/etc/auto.usb
+
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
@@ -211,6 +247,28 @@ release_spark:
 
 release_spark7162:
 	echo "spark7162" > $(prefix)/release/etc/hostname
+	rm -f $(prefix)/release/sbin/halt
+	cp $(buildprefix)/root/release/halt_spark $(prefix)/release/etc/init.d/halt
+	chmod 777 $(prefix)/release/etc/init.d/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release/etc/init.d/
+	chmod 755 $(prefix)/release/etc/init.d/umountfs
+	chmod 755 $(prefix)/release/etc/init.d/rc
+	chmod 755 $(prefix)/release/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release/etc/init.d/halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release/etc/rc.d
+	ln -fs halt $(prefix)/release/sbin/reboot
+	ln -fs halt $(prefix)/release/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release/etc/rc.d/rc6.d/S90reboot
 
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
@@ -225,6 +283,20 @@ release_spark7162:
 
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/fonts
 	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/local/share/fonts/
+
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
+
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/
+	echo 'sda    -fstype=auto,noatime,nodiratime          :/dev/sda' >> $(prefix)/release/etc/auto.usb
+	echo 'sda1   -fstype=auto,noatime,nodiratime          :/dev/sda1' >> $(prefix)/release/etc/auto.usb
+	echo 'sda2   -fstype=auto,noatime,nodiratime          :/dev/sda2' >> $(prefix)/release/etc/auto.usb
+	echo 'sda3   -fstype=auto,noatime,nodiratime          :/dev/sda3' >> $(prefix)/release/etc/auto.usb
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
@@ -507,6 +579,20 @@ release_hl101:
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/bin/evremote
+
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
+
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release/usr/sbin/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/
+	echo 'sda    -fstype=auto,noatime,nodiratime          :/dev/sda' >> $(prefix)/release/etc/auto.usb
+	echo 'sda1   -fstype=auto,noatime,nodiratime          :/dev/sda1' >> $(prefix)/release/etc/auto.usb
+	echo 'sda2   -fstype=auto,noatime,nodiratime          :/dev/sda2' >> $(prefix)/release/etc/auto.usb
+	echo 'sda3   -fstype=auto,noatime,nodiratime          :/dev/sda3' >> $(prefix)/release/etc/auto.usb
 
 release_vip1_v2: release_common_utils
 	echo "Edision" > $(prefix)/release/etc/hostname
