@@ -946,6 +946,9 @@ TUXBOX_RULES_MAKE(sqlite)
 TUXBOX_RULES_MAKE(libsoup)
 TUXBOX_RULES_MAKE(pixman)
 TUXBOX_RULES_MAKE(cairo)
+TUXBOX_RULES_MAKE(gstreamer)
+TUXBOX_RULES_MAKE(gst_plugin_base)
+TUXBOX_RULES_MAKE(gst_plugin_good)
 
 #
 # GUI

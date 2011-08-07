@@ -134,6 +134,9 @@ libdvdread;4.1.3;libdvdread-4.1.3;libdvdread-4.1.3.tar.bz2:libdvdread_4.1.3-5.di
 pyopenssl;0.8;pyOpenSSL-0.8;pyOpenSSL-0.8.tar.gz;extract:pyOpenSSL-0.8.tar.gz
 ffmpeg;0.6.3;ffmpeg-0.6.3;ffmpeg-0.6.3.tar.gz;extract:ffmpeg-0.6.3.tar.gz
 libass;0.9.11;libass-0.9.11;libass-0.9.11.tar.gz;extract:libass-0.9.11.tar.gz
+gstreamer;0.10.34;gstreamer-0.10.34;gstreamer-0.10.34.tar.bz2;extract:gstreamer-0.10.34.tar.bz2
+gst_plugin_base;0.10.34;gst-plugins-base-0.10.34;gst-plugins-base-0.10.34.tar.bz2;extract:gst-plugins-base-0.10.34.tar.bz2
+gst_plugin_good;0.10.29;gst-plugins-good-0.10.29;gst-plugins-good-0.10.29.tar.bz2;extract:gst-plugins-good-0.10.29.tar.bz2
 
 #
 # net apps

@@ -75,6 +75,7 @@ PACKAGES="\
 	${UBUNTU:+fakeroot} \
 	${UBUNTU:+gawk} \
 	${UBUNTU:+autopoint} \
+	${UBUNTU:+libglib2.0-dev} \
 ";
 
 if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then

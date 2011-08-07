@@ -1595,4 +1595,90 @@ $(DEPDIR)/%cairo: $(DEPDIR)/cairo.do_compile
 		@INSTALL_cairo@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-	
+
+#
+#
+# GSTREAMER + PLUGINS
+# This will become the "libeplayer4"
+#
+
+# GSTREAMER
+$(DEPDIR)/gstreamer.do_prepare: bootstrap glib2 libxml2 @DEPENDS_gstreamer@
+	@PREPARE_gstreamer@
+	touch $@
+
+$(DEPDIR)/gstreamer.do_compile: $(DEPDIR)/gstreamer.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_gstreamer@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+		--disable-tests \
+		--disable-examples
+	touch $@
+
+$(DEPDIR)/min-gstreamer $(DEPDIR)/std-gstreamer $(DEPDIR)/max-gstreamer \
+$(DEPDIR)/gstreamer: \
+$(DEPDIR)/%gstreamer: $(DEPDIR)/gstreamer.do_compile
+	cd @DIR_gstreamer@ && \
+		@INSTALL_gstreamer@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+# GST-PLUGINS-BASE
+#TODO: sudo ln -s /home/ubuntu/git/ufs912_stm207_191/tdt/tufsbox/cdkroot/usr/lib/libgstreamer-0.10.la /usr/lib/libgstreamer-0.10.la
+# Dont get why!
+$(DEPDIR)/gst_plugin_base.do_prepare: bootstrap glib2 gstreamer @DEPENDS_gst_plugin_base@
+	@PREPARE_gst_plugin_base@
+	touch $@
+
+$(DEPDIR)/gst_plugin_base.do_compile: $(DEPDIR)/gst_plugin_base.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_gst_plugin_base@ && \
+	echo $(BUILDENV) && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+		--disable-silent-rules \
+		--disable-examples \
+		--disable-theora --disable-pango --disable-ogg --disable-vorbis
+	touch $@
+
+$(DEPDIR)/min-gst_plugin_base $(DEPDIR)/std-gst_plugin_base $(DEPDIR)/max-gst_plugin_base \
+$(DEPDIR)/gst_plugin_base: \
+$(DEPDIR)/%gst_plugin_base: $(DEPDIR)/gst_plugin_base.do_compile
+	cd @DIR_gst_plugin_base@ && \
+		@INSTALL_gst_plugin_base@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+# GST-PLUGINS-GOOD
+#TODO: And here we would need to link libgstvideo-0.10.la
+# Dont get why!
+$(DEPDIR)/gst_plugin_good.do_prepare: bootstrap gstreamer gst_plugin_base @DEPENDS_gst_plugin_good@
+	@PREPARE_gst_plugin_good@
+	touch $@
+
+$(DEPDIR)/gst_plugin_good.do_compile: $(DEPDIR)/gst_plugin_good.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_gst_plugin_good@ && \
+	echo $(BUILDENV) && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+		--disable-silent-rules \
+		--disable-esd --disable-esdtest \
+		--disable-shout2 --disable-shout2test
+	touch $@
+
+$(DEPDIR)/min-gst_plugin_good $(DEPDIR)/std-gst_plugin_good $(DEPDIR)/max-gst_plugin_good \
+$(DEPDIR)/gst_plugin_good: \
+$(DEPDIR)/%gst_plugin_good: $(DEPDIR)/gst_plugin_good.do_compile
+	cd @DIR_gst_plugin_good@ && \
+		@INSTALL_gst_plugin_good@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
