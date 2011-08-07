@@ -219,8 +219,9 @@
   				priv->plat->phy_addr = addr;
   
   			act = (priv->plat->bus_id == mdio_bus_data->bus_id) &&
-*** linux-sh4-2.6.32.28_stm24_0207_orig/drivers/stm/gpio.c	2011-08-04 15:56:11.000000000 +0300
---- linux-sh4/drivers/stm/gpio.c	2011-08-06 00:26:17.173160471 +0300
+
+*** linux-sh4-2.6.32.28_stm24_0207_orig/drivers/stm/gpio.c	2011-08-06 17:16:42.676314198 +0300
+--- linux-sh4/drivers/stm/gpio.c	2011-08-07 03:21:10.140239689 +0300
 ***************
 *** 27,38 ****
   #include <linux/stm/platform.h>
@@ -228,14 +229,14 @@
   #include <linux/stm/pio.h>
   #include "reg_pio.h"
   
-! 
   
+- 
   struct stpio_pin {
   #ifdef CONFIG_STPIO
   	void (*func)(struct stpio_pin *pin, void *dev);
   	void* dev;
   	unsigned short port_no, pin_no;
---- 27,46 ----
+--- 27,42 ----
   #include <linux/stm/platform.h>
   #include <linux/stm/pad.h>
   #include <linux/stm/pio.h>
@@ -245,10 +246,6 @@
 + #endif
   #include "reg_pio.h"
   
-! #ifndef CONFIG_STPIO
-! #define CONFIG_STPIO
-! #define CONFIG_PROC_FS
-! #endif
   
   struct stpio_pin {
   #ifdef CONFIG_STPIO
@@ -265,7 +262,7 @@
   #define PIN_IGNORE_EDGE_FLAG	2
   #define PIN_IGNORE_EDGE_VAL	1
   #define PIN_IGNORE_RISING_EDGE	(PIN_IGNORE_EDGE_FLAG | 0)
---- 49,55 ----
+--- 45,51 ----
   
   struct stm_gpio_pin {
   	unsigned char flags;
@@ -282,10 +279,10 @@
   int stm_gpio_num; /* Number of available internal PIOs (pins) */
   EXPORT_SYMBOL(stm_gpio_num);
   
---- 83,88 ----
+--- 79,84 ----
 ***************
 *** 352,357 ****
---- 359,367 ----
+--- 355,363 ----
   
   	port->pins[offset].direction = direction;
   	set__PIO_PCx(port->base, offset, direction);
@@ -297,7 +294,7 @@
   
 ***************
 *** 387,392 ****
---- 397,404 ----
+--- 393,400 ----
   	struct stm_gpio_port *port = to_stm_gpio_port(chip);
   
   	set__PIO_PCx__INPUT_HIGH_IMPEDANCE(port->base, offset);
@@ -308,7 +305,7 @@
   }
 ***************
 *** 399,404 ****
---- 411,418 ----
+--- 407,414 ----
   	__stm_gpio_set(port, offset, value);
   
   	set__PIO_PCx__OUTPUT_PUSH_PULL(port->base, offset);
@@ -332,7 +329,7 @@
   	stm_pad_release_gpio(stm_gpio(pin->port_no, pin->pin_no));
   }
   EXPORT_SYMBOL(stpio_free_pin);
---- 479,495 ----
+--- 475,491 ----
   
   	gpio_pin->stpio.port_no = port_no;
   	gpio_pin->stpio.pin_no = pin_no;
@@ -352,7 +349,7 @@
   EXPORT_SYMBOL(stpio_free_pin);
 ***************
 *** 587,592 ****
---- 605,691 ----
+--- 601,687 ----
   }
   EXPORT_SYMBOL(stpio_set_irq_type);
   
@@ -442,7 +439,7 @@
   
 ***************
 *** 967,972 ****
---- 1066,1077 ----
+--- 1062,1073 ----
   {
   	int ret;
   
