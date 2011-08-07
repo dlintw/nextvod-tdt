@@ -1,9 +1,11 @@
 #!/bin/sh
 
 MODDIR=/lib/modules
+echo "init frontpanel"
 insmod $MODDIR/vfd.ko
 insmod $MODDIR/aotom.ko
-#insmod $MODDIR/encrypt.ko
+insmod $MODDIR/simu_button.ko
+insmod $MODDIR/encrypt.ko
 
 if [ -e /var/etc/.firstboot ]; then
    echo "WAIT 1 min" >/dev/vfd
@@ -13,7 +15,6 @@ if [ -e /var/etc/.firstboot ]; then
 fi
 
 /etc/init.d/mountvirtfs start
-
 /etc/init.d/portmap start
 
 insmod $MODDIR/e2_proc.ko
@@ -33,13 +34,13 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    echo "init stmfb"
    insmod $MODDIR/stmcore-display-sti7111.ko
-   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:15m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
+   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:15m:pal:yuv:yuv
 
    echo "LOADING MODULES"   
-   fp_control -t "LOADING MODULES"
+   echo "LOAD" > /dev/vfd
 
    if [ ! -e /boot/audio.elf ]; then
-      fp_control -t "FW MISSING!!!"
+      echo "FW MISSING!!!"
    fi
 
    echo "load a firmware"
@@ -54,7 +55,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mme_host.ko transport0=shm
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko type=spark_avs
+   insmod $MODDIR/avs.ko type=avs_pio
 
    player=`cat /proc/stb/player/version`
    player=`cat /proc/stb/player/version | awk '{ print substr( $0, length($0) - 2, length($0) ) }'`
@@ -65,22 +66,22 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
    if [ $player -gt 131 ]; then
-		insmod $MODDIR/stmvout.ko
-		insmod $MODDIR/stmvbi.ko
+	insmod $MODDIR/stmvout.ko
+	insmod $MODDIR/stmvbi.ko
    fi
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/stv090x.ko
    insmod $MODDIR/dummy_cic.ko
    if [ $player -gt 131 ]; then
-		insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
-		insmod $MODDIR/stm_monitor.ko
-		insmod $MODDIR/stmsysfs.ko
-    	insmod $MODDIR/stmdvb.ko
+	insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+	insmod $MODDIR/stm_monitor.ko
+	insmod $MODDIR/stmsysfs.ko
+	insmod $MODDIR/stmdvb.ko
    else
-		insmod $MODDIR/pti.ko
-		insmod $MODDIR/stmdvb.ko
-		insmod $MODDIR/stm_monitor.ko
+	insmod $MODDIR/pti.ko
+	insmod $MODDIR/stmdvb.ko
+	insmod $MODDIR/stm_monitor.ko
    fi	
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
@@ -94,9 +95,6 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
-
-   echo "init frontpanel"
-   insmod $MODDIR/simu_button.ko
 
    echo "init lircd"
    /usr/bin/lircd
@@ -112,9 +110,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    stfbcontrol a 255
 
-
    /etc/init.d/mountall start
-
    /etc/init.d/hostname start
 
    echo "starting telnetd"
@@ -122,24 +118,24 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
 
-   NFS=$(grep -c 'nfs' /proc/cmdline)
+   NFS=`grep -c nfs /proc/cmdline`
    if [ "$NFS" -eq "1" ]; then 
       echo "Booting from nfs, don't set network" 
    else 
       if [ -e /etc/network/interfaces ]; then 
 	 ip addr flush eth0 
 	 /etc/init.d/networking stop 
-	 TEST=$(grep -c 'dhcp' /etc/network/interfaces) 
-	 if [ "$(TEST)" -eq "1" ]; then 
-	    echo dhcp
+	 DHCP=`grep -c dhcp /etc/network/interfaces`
+	 if [ "$DHCP" -eq "1" ]; then 
+	    echo "Starting dhcp"
             /etc/init.d/udhcpc start 
 	 fi 
 	 /etc/init.d/networking start 
       fi 
    fi
 
-   echo "LOADING e2" > /dev/vfd
-   echo "LOADING e2"
+   echo "run" > /dev/vfd
+   echo "LOADING E2"
 
    until false
    do
@@ -150,7 +146,7 @@ if [ ! -e /var/etc/.firstboot ]; then
       case "$rtv" in
 		0) echo "0"
 		   echo "E2 ERROR"
-      	   init 6;;
+		   init 6;;
 		1) echo "1"
 		   echo "SHUTDOWN"
 		   init 0;;
@@ -163,7 +159,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 		   showiframe -p /boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
-           init 6;;
+		   init 6;;
       esac
    done 
 fi
