@@ -1613,9 +1613,7 @@ $(DEPDIR)/gstreamer.do_compile: $(DEPDIR)/gstreamer.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr \
-		--disable-tests \
-		--disable-examples
+		--prefix=/usr
 	touch $@
 
 $(DEPDIR)/min-gstreamer $(DEPDIR)/std-gstreamer $(DEPDIR)/max-gstreamer \
@@ -1629,6 +1627,8 @@ $(DEPDIR)/%gstreamer: $(DEPDIR)/gstreamer.do_compile
 # GST-PLUGINS-BASE
 #TODO: sudo ln -s /home/ubuntu/git/ufs912_stm207_191/tdt/tufsbox/cdkroot/usr/lib/libgstreamer-0.10.la /usr/lib/libgstreamer-0.10.la
 # Dont get why!
+#sed -e "/^dependency_libs/ s,/usr/lib/libxml2.la,$(targetprefix)/usr/lib/libxml2.la,g" -i
+#	sed -e "/^lt_sysroot/ s,=,=${targetprefix},g" -i ./libtool
 $(DEPDIR)/gst_plugin_base.do_prepare: bootstrap glib2 gstreamer @DEPENDS_gst_plugin_base@
 	@PREPARE_gst_plugin_base@
 	touch $@
@@ -1636,13 +1636,10 @@ $(DEPDIR)/gst_plugin_base.do_prepare: bootstrap glib2 gstreamer @DEPENDS_gst_plu
 $(DEPDIR)/gst_plugin_base.do_compile: $(DEPDIR)/gst_plugin_base.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_gst_plugin_base@ && \
-	echo $(BUILDENV) && \
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--disable-silent-rules \
-		--disable-examples \
 		--disable-theora --disable-pango --disable-ogg --disable-vorbis
 	touch $@
 
@@ -1669,7 +1666,6 @@ $(DEPDIR)/gst_plugin_good.do_compile: $(DEPDIR)/gst_plugin_good.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--disable-silent-rules \
 		--disable-esd --disable-esdtest \
 		--disable-shout2 --disable-shout2test
 	touch $@
