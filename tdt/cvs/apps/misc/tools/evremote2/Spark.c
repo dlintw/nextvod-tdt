@@ -139,11 +139,11 @@ static tButton cButtonsSparRc08[] = {
     {"EXIT"           , "2D", KEY_HOME},
     {"EPG"            , "25", KEY_EPG},
 
-    {"VOL-"           , "8D", KEY_VOLUMEDOWN},
-    {"VOL+"           , "B5", KEY_VOLUMEUP},
+    {"VOL+"           , "8D", KEY_VOLUMEDOWN},
+    {"VOL-"           , "B5", KEY_VOLUMEUP},
     {"REC"            , "EF", KEY_RECORD},
-    {"PAGE-"          , "B7", KEY_CHANNELDOWN},
-    {"PAGE+"          , "77", KEY_CHANNELUP},
+    {"PAGE+"          , "B7", KEY_CHANNELDOWN},
+    {"PAGE-"          , "77", KEY_CHANNELUP},
 
 	{"FOLDER"		  , "E5", KEY_ARCHIVE},
 
