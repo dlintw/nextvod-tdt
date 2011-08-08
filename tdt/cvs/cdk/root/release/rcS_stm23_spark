@@ -5,7 +5,7 @@ echo "init frontpanel"
 insmod $MODDIR/vfd.ko
 insmod $MODDIR/aotom.ko
 insmod $MODDIR/simu_button.ko
-#insmod $MODDIR/encrypt.ko
+insmod $MODDIR/encrypt.ko
 
 if [ -e /var/etc/.firstboot ]; then
    echo "WAIT 1 min" >/dev/vfd
@@ -72,7 +72,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/stv090x.ko
-   insmod $MODDIR/dummy_cic.ko
    if [ $player -gt 131 ]; then
 	insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
 	insmod $MODDIR/stm_monitor.ko

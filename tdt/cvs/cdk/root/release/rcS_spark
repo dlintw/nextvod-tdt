@@ -72,7 +72,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/stv090x.ko
-   insmod $MODDIR/dummy_cic.ko
    if [ $player -gt 131 ]; then
 	insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
 	insmod $MODDIR/stm_monitor.ko
