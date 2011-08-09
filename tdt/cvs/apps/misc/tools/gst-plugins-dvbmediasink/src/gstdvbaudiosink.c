@@ -158,8 +158,8 @@ GST_STATIC_PAD_TEMPLATE (
 	GST_PAD_SINK,
 	GST_PAD_ALWAYS,
 	GST_STATIC_CAPS ("audio/mpeg, "
-#if 0
 		"framed = (boolean) true; "
+#if 0
 		"audio/x-aac, "
 		"framed = (boolean) true; "
 		"audio/x-private1-aac, "
