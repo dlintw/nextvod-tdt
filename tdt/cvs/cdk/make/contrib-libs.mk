@@ -1671,8 +1671,52 @@ $(DEPDIR)/%gst_plugins_good: $(DEPDIR)/gst_plugins_good.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+# GST-PLUGINS-BAD
+$(DEPDIR)/gst_plugins_bad.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_gst_plugins_bad@
+	@PREPARE_gst_plugins_bad@
+	touch $@
+
+$(DEPDIR)/gst_plugins_bad.do_compile: $(DEPDIR)/gst_plugins_bad.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_gst_plugins_bad@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-gst_plugins_bad $(DEPDIR)/std-gst_plugins_bad $(DEPDIR)/max-gst_plugins_bad \
+$(DEPDIR)/gst_plugins_bad: \
+$(DEPDIR)/%gst_plugins_bad: $(DEPDIR)/gst_plugins_bad.do_compile
+	cd @DIR_gst_plugins_bad@ && \
+		@INSTALL_gst_plugins_bad@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+# GST-PLUGINS-UGLY
+$(DEPDIR)/gst_plugins_ugly.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_gst_plugins_ugly@
+	@PREPARE_gst_plugins_ugly@
+	touch $@
+
+$(DEPDIR)/gst_plugins_ugly.do_compile: $(DEPDIR)/gst_plugins_ugly.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_gst_plugins_ugly@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-gst_plugins_ugly $(DEPDIR)/std-gst_plugins_ugly $(DEPDIR)/max-gst_plugins_ugly \
+$(DEPDIR)/gst_plugins_ugly: \
+$(DEPDIR)/%gst_plugins_ugly: $(DEPDIR)/gst_plugins_ugly.do_compile
+	cd @DIR_gst_plugins_ugly@ && \
+		@INSTALL_gst_plugins_ugly@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 # GST-PLUGINS-DVBMEDIASINK
-$(DEPDIR)/gst_plugins_dvbmediasink.do_prepare: bootstrap gstreamer gst_plugins_base gst_plugins_good @DEPENDS_gst_plugins_dvbmediasink@
+$(DEPDIR)/gst_plugins_dvbmediasink.do_prepare: bootstrap gstreamer gst_plugins_base gst_plugins_good gst_plugins_bad @DEPENDS_gst_plugins_dvbmediasink@
 	touch $@
 
 $(DEPDIR)/gst_plugins_dvbmediasink.do_compile: $(DEPDIR)/gst_plugins_dvbmediasink.do_prepare

@@ -1,4 +1,4 @@
-/*
+                                                           /*
  * GStreamer DVB Media Sink
  * Copyright 2006 Felix Domke <tmbinc@elitedvb.net>
  * based on code by:
@@ -70,6 +70,10 @@
 #include <fcntl.h>
 #include <poll.h>
 
+#ifdef __sh__
+#include <linux/dvb/stm_ioctls.h>
+#endif
+
 #include <gst/gst.h>
 
 #include "gstdvbaudiosink.h"
@@ -83,20 +87,20 @@
 
 /* the poll call is also performed on the control sockets, that way
  * we can send special commands to unblock the poll call */
-#define CONTROL_STOP		'S'			/* stop the poll call */
-#define CONTROL_SOCKETS(sink)	sink->control_sock
-#define WRITE_SOCKET(sink)	sink->control_sock[1]
-#define READ_SOCKET(sink)	sink->control_sock[0]
+#define CONTROL_STOP          'S' /* stop the poll call */
+#define CONTROL_SOCKETS(sink) sink->control_sock
+#define WRITE_SOCKET(sink)    sink->control_sock[1]
+#define READ_SOCKET(sink)     sink->control_sock[0]
 
-#define SEND_COMMAND(sink, command)			\
-G_STMT_START {						\
-	unsigned char c; c = command;			\
-	write (WRITE_SOCKET(sink), &c, 1);		\
+#define SEND_COMMAND(sink, command)    \
+G_STMT_START {                         \
+	unsigned char c; c = command;      \
+	write (WRITE_SOCKET(sink), &c, 1); \
 } G_STMT_END
 
-#define READ_COMMAND(sink, command, res)		\
-G_STMT_START {						\
-	res = read(READ_SOCKET(sink), &command, 1);	\
+#define READ_COMMAND(sink, command, res)        \
+G_STMT_START {                                  \
+	res = read(READ_SOCKET(sink), &command, 1); \
 } G_STMT_END
 
 #ifndef AUDIO_GET_PTS
@@ -152,37 +156,6 @@ GST_STATIC_PAD_TEMPLATE (
 		"framed = (boolean) true")
 );
 
-static GstStaticPadTemplate sink_factory_stm_stx7111 =
-GST_STATIC_PAD_TEMPLATE (
-	"sink",
-	GST_PAD_SINK,
-	GST_PAD_ALWAYS,
-	GST_STATIC_CAPS ("audio/mpeg, "
-		"framed = (boolean) true; "
-#if 0
-		"audio/x-aac, "
-		"framed = (boolean) true; "
-		"audio/x-private1-aac, "
-		"framed = (boolean) true; "
-#endif
-		"audio/x-ac3, "
-		"framed = (boolean) true; "
-		"audio/x-private1-ac3, "
-		"framed = (boolean) true; "
-#if 0
-		"audio/x-dts, "
-		"framed = (boolean) true; "
-		"audio/x-private1-dts, "
-		"framed = (boolean) true; "
-#endif
-		"audio/x-private1-lpcm, "
-		"framed = (boolean) true")
-#if 0
-		"audio/x-ms-wma, "
-		"framed = (boolean) true")
-#endif
-);
-
 static GstStaticPadTemplate sink_factory_broadcom =
 GST_STATIC_PAD_TEMPLATE (
 	"sink",
@@ -196,6 +169,43 @@ GST_STATIC_PAD_TEMPLATE (
 		"framed = (boolean) true")
 );
 
+#define SINK_FACTORY_STM_BASE \
+GST_STATIC_PAD_TEMPLATE ( \
+	"sink", \
+	GST_PAD_SINK, \
+	GST_PAD_ALWAYS, \
+	GST_STATIC_CAPS ("audio/mpeg, " \
+		"framed = (boolean) true; " \
+		"audio/x-ac3, " \
+		"framed = (boolean) true; " \
+		"audio/x-private1-ac3, " \
+		"framed = (boolean) true; " \
+		"audio/x-dts, " \
+		"framed = (boolean) true; " \
+		"audio/x-private1-dts, " \
+		"framed = (boolean) true; " \
+		"audio/x-private1-lpcm, " \
+		"framed = (boolean) true; " \
+		"audio/x-wma, " \
+		"framed = (boolean) true; " \
+		"audio/x-ms-wma, " \
+		"framed = (boolean) true") \
+)
+
+//TODO: Check if there are differences between the capabilities
+// FIRST GENERATION
+static GstStaticPadTemplate sink_factory_stm_stx7100 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7101 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7109 = SINK_FACTORY_STM_BASE;
+
+// SECOND GENERATION
+static GstStaticPadTemplate sink_factory_stm_stx7105 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7111 = SINK_FACTORY_STM_BASE;
+
+// THIRD GENERATION
+static GstStaticPadTemplate sink_factory_stm_stx7106 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7108 = SINK_FACTORY_STM_BASE;
+
 #define DEBUG_INIT(bla) \
 	GST_DEBUG_CATEGORY_INIT (dvbaudiosink_debug, "dvbaudiosink", 0, "dvbaudiosink element");
 
@@ -204,20 +214,72 @@ GST_BOILERPLATE_FULL (GstDVBAudioSink, gst_dvbaudiosink, GstBaseSink, GST_TYPE_B
 static void gst_dvbaudiosink_set_property (GObject * object, guint prop_id, const GValue * value, GParamSpec * pspec);
 static void gst_dvbaudiosink_get_property (GObject * object, guint prop_id, GValue * value, GParamSpec * pspec);
 
-static gboolean gst_dvbaudiosink_start (GstBaseSink * sink);
-static gboolean gst_dvbaudiosink_stop (GstBaseSink * sink);
-static gboolean gst_dvbaudiosink_event (GstBaseSink * sink, GstEvent * event);
-static GstFlowReturn gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer);
-static gboolean gst_dvbaudiosink_unlock (GstBaseSink * basesink);
-static gboolean gst_dvbaudiosink_unlock_stop (GstBaseSink * basesink);
-static gboolean gst_dvbaudiosink_set_caps (GstBaseSink * sink, GstCaps * caps);
-static void gst_dvbaudiosink_dispose (GObject * object);
+static gboolean             gst_dvbaudiosink_start (GstBaseSink * sink);
+static gboolean             gst_dvbaudiosink_stop (GstBaseSink * sink);
+static gboolean             gst_dvbaudiosink_event (GstBaseSink * sink, GstEvent * event);
+static GstFlowReturn        gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer);
+static gboolean             gst_dvbaudiosink_unlock (GstBaseSink * basesink);
+static gboolean             gst_dvbaudiosink_unlock_stop (GstBaseSink * basesink);
+static gboolean             gst_dvbaudiosink_set_caps (GstBaseSink * sink, GstCaps * caps);
+static void                 gst_dvbaudiosink_dispose (GObject * object);
 static GstStateChangeReturn gst_dvbaudiosink_change_state (GstElement * element, GstStateChange transition);
-static gint64 gst_dvbaudiosink_get_decoder_time (GstDVBAudioSink *self);
+static gint64               gst_dvbaudiosink_get_decoder_time (GstDVBAudioSink *self);
 
-typedef enum { DM7025, DM800, DM8000, DM500HD, DM800SE, DM7020HD, STX7100, STX7101, STX7109, STX7111, STX7105 } hardware_type_t;
+#define PES_MAX_HEADER_SIZE 64
 
-static hardware_type_t hwtype;
+typedef enum {  HW_UNKNOWN, 
+				DM7025, DM800, DM8000, DM500HD, DM800SE, DM7020HD, 
+				STX7100, STX7101, STX7109, STX7105, STX7111, STX7106, STX7108 
+} hardware_type_t;
+
+typedef enum { PF_UNKNOWN, DM, HAVANA } platform_type_t;
+
+static hardware_type_t hwtype = HW_UNKNOWN;
+static platform_type_t pftype = PF_UNKNOWN;
+
+//Please correct if wrong
+#define BYPASS_UNKNOWN  0xFF
+#define BYPASS_AC3      0x00
+#define BYPASS_MPEG1    0x01
+#define BYPASS_DTS      0x02
+#define BYPASS_LPCM     0x06
+#define BYPASS_MPEG1_L3 0x0A
+#define BYPASS_AAC      0x0B
+#define BYPASS_WMA      0x0C
+#define BYPASS_VORBIS   0x0D
+#define BYPASS_FLAC     0x0E
+
+#define AUDIO_ENCODING_UNKNOWN  0xFF
+
+unsigned int bypass_to_encoding (unsigned int bypass)
+{
+#ifdef AUDIO_SET_ENCODING
+	switch(bypass)
+	{
+	case BYPASS_AC3:
+		return AUDIO_ENCODING_AC3;
+	case BYPASS_MPEG1:
+		return AUDIO_ENCODING_MPEG1;
+	case BYPASS_DTS:
+		return AUDIO_ENCODING_DTS;
+	case BYPASS_LPCM:
+		return AUDIO_ENCODING_LPCMA;
+	case BYPASS_MPEG1_L3:
+		return AUDIO_ENCODING_MP3;
+	case BYPASS_AAC:
+		return AUDIO_ENCODING_AAC;
+	case BYPASS_WMA:
+		return AUDIO_ENCODING_WMA;
+	case BYPASS_VORBIS:
+		return AUDIO_ENCODING_VORBIS;
+	case BYPASS_FLAC:
+		return AUDIO_ENCODING_FLAC;
+	default:
+		return AUDIO_ENCODING_UNKNOWN;
+	}
+#endif
+	return AUDIO_ENCODING_UNKNOWN;
+}
 
 static void
 gst_dvbaudiosink_base_init (gpointer klass)
@@ -239,55 +301,126 @@ gst_dvbaudiosink_base_init (gpointer klass)
 		{
 			string[rd] = 0;
 			if ( !strncasecmp(string, "DM7025", 6) ) {
+				pftype = DM;
 				hwtype = DM7025;
 				GST_INFO ("model is DM7025 set ati xilleon caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_ati_xilleon));
 			}
 			else if ( !strncasecmp(string, "DM8000", 6) ) {
+				pftype = DM;
 				hwtype = DM8000;
 				GST_INFO ("model is DM8000 set broadcom dts caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_broadcom_dts));
 			}
 			else if ( !strncasecmp(string, "DM800SE", 7) ) {
+				pftype = DM;
 				hwtype = DM800SE;
-				GST_INFO ("model is DM800SE set broadcom dts caps", string);
+				GST_INFO ("model is DM800SE set broadcom dts caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_broadcom_dts));
 			}
 			else if ( !strncasecmp(string, "DM7020HD", 8) ) {
+				pftype = DM;
 				hwtype = DM7020HD;
-				GST_INFO ("model is DM7020HD set broadcom dts caps", string);
+				GST_INFO ("model is DM7020HD set broadcom dts caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_broadcom_dts));
 			}
 			else if ( !strncasecmp(string, "DM800", 5) ) {
+				pftype = DM;
 				hwtype = DM800;
-				GST_INFO ("model is DM800 set broadcom caps", string);
+				GST_INFO ("model is DM800 set broadcom caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_broadcom));
 			}
 			else if ( !strncasecmp(string, "DM500HD", 7) ) {
+				pftype = DM;
 				hwtype = DM500HD;
-				GST_INFO ("model is DM500HD set broadcom dts caps", string);
+				GST_INFO ("model is DM500HD set broadcom dts caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_broadcom_dts));
-			}
-			else if ( !strncasecmp(string, "UFS912", 6) ) {
-				hwtype = STX7111;
 			}
 		}
 		close(fd);
 	}
 
-	if (hwtype == STX7111) {
-		GST_INFO ("setting STX7111 caps");
-		gst_element_class_add_pad_template (element_class,
-			gst_static_pad_template_get (&sink_factory_stm_stx7111));
+	if (hwtype == HW_UNKNOWN) {
+		// Unfortunately we dont have sysinfo available so doing it the hard way
+		char line[256];
+		char *processor;
+		FILE *file = fopen("/proc/cpuinfo", "r");
+		while (fgets(line, sizeof(line) - 1, file) != NULL)
+		{
+			if (!strncmp(line, "cpu type", 8))
+			{
+				strtok (line,":");
+				processor = strtok (NULL,":");
+				while(processor[0] == ' ') processor++;
+				break;
+			}
+		}
+		fclose(file);
+		
+		printf("Processor: %s\n", processor);
+
+		// FIRST GENERATION
+		if( !strncasecmp(processor, "STX7100", 7) || 
+			!strncasecmp(processor, "STB7100", 7) || 
+			!strncasecmp(processor, "STI7100", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7100;
+			GST_INFO ("setting STX7100 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7100));
+		}
+		else if(!strncasecmp(processor, "STX7101", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7101;
+			GST_INFO ("setting STX7101 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7101));
+		}
+		else if(!strncasecmp(processor, "STX7109", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7109;
+			GST_INFO ("setting STX7109 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7109));
+		}
+		// SECOND GENERATIONad_template_get (&sink_factory_stm_stx7111));
+		else if(!strncasecmp(processor, "STX7105", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7105;
+			GST_INFO ("setting STX7105 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7105));
+		}
+		else if(!strncasecmp(processor, "STX7111", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7111;
+			GST_INFO ("setting STX7111 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7111));
+		}
+		// THIRD GENERATION
+		else if(!strncasecmp(processor, "STX7106", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7106;
+			GST_INFO ("setting STX7106 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7106));
+		}
+		else if(!strncasecmp(processor, "STX7108", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7108;
+			GST_INFO ("setting STX7108 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7108));
+		}
 	}
-
-
+		
 	gst_element_class_set_details (element_class, &element_details);
 }
 
@@ -298,11 +431,11 @@ gst_dvbaudiosink_async_write(GstDVBAudioSink *self, unsigned char *data, unsigne
 static void
 gst_dvbaudiosink_class_init (GstDVBAudioSinkClass *klass)
 {
-	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+	GObjectClass     *gobject_class     = G_OBJECT_CLASS (klass);
 	GstBaseSinkClass *gstbasesink_class = GST_BASE_SINK_CLASS (klass);
-	GstElementClass *gelement_class = GST_ELEMENT_CLASS (klass);
+	GstElementClass  *gelement_class    = GST_ELEMENT_CLASS (klass);
 
-	gobject_class->dispose = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_dispose);
+	gobject_class->dispose      = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_dispose);
 	gobject_class->set_property = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_set_property);
 	gobject_class->get_property = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_get_property);
 	g_object_class_install_property (gobject_class, PROP_LOCATION,
@@ -310,13 +443,13 @@ gst_dvbaudiosink_class_init (GstDVBAudioSinkClass *klass)
 			"Filename that Packetized Elementary Stream will be written to", NULL,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
-	gstbasesink_class->start = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_start);
-	gstbasesink_class->stop = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_stop);
-	gstbasesink_class->render = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_render);
-	gstbasesink_class->event = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_event);
-	gstbasesink_class->unlock = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_unlock);
+	gstbasesink_class->start       = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_start);
+	gstbasesink_class->stop        = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_stop);
+	gstbasesink_class->render      = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_render);
+	gstbasesink_class->event       = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_event);
+	gstbasesink_class->unlock      = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_unlock);
 	gstbasesink_class->unlock_stop = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_unlock_stop);
-	gstbasesink_class->set_caps = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_set_caps);
+	gstbasesink_class->set_caps    = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_set_caps);
 
 	gelement_class->change_state = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_change_state);
 
@@ -328,7 +461,7 @@ gst_dvbaudiosink_class_init (GstDVBAudioSinkClass *klass)
 		NULL, NULL, gst_dvbsink_marshal_INT64__VOID, G_TYPE_INT64, 0);
 
 	klass->get_decoder_time = gst_dvbaudiosink_get_decoder_time;
-	klass->async_write = gst_dvbaudiosink_async_write;
+	klass->async_write      = gst_dvbaudiosink_async_write;
 }
 
 /* initialize the new element
@@ -339,16 +472,25 @@ gst_dvbaudiosink_class_init (GstDVBAudioSinkClass *klass)
 static void
 gst_dvbaudiosink_init (GstDVBAudioSink *klass, GstDVBAudioSinkClass * gclass)
 {
-	klass->bypass = -1;
+// If AUDIO_SET_ENCODING ioctl is available us it, 
+// as using AUDIO_SET_BYPASS to change the encoding is not spec conform
+#ifdef AUDIO_SET_ENCODING
+	klass->use_set_encoding      = TRUE;
+#else
+	klass->use_set_encoding      = FALSE;
+#endif	
+	klass->bypass                = BYPASS_UNKNOWN;
 
-	klass->timestamp = 0;
+	klass->timestamp             = 0;
 	klass->aac_adts_header_valid = FALSE;
 
-	klass->no_write = 0;
-	klass->queue = NULL;
-	klass->fd = -1;
-	klass->dump_fd = -1;
-	klass->dump_filename = NULL;
+	klass->initial_header        = TRUE;
+
+	klass->no_write              = 0;
+	klass->queue                 = NULL;
+	klass->fd                    = -1;
+	klass->dump_fd               = -1;
+	klass->dump_filename         = NULL;
 
 	gst_base_sink_set_sync (GST_BASE_SINK(klass), FALSE);
 	gst_base_sink_set_async_enabled (GST_BASE_SINK(klass), TRUE);
@@ -358,10 +500,11 @@ static void
 gst_dvbaudiosink_dispose (GObject * object)
 {
 	GstDVBAudioSink *self = GST_DVBAUDIOSINK (object);
-	GstState state, pending;
+	GstState         state, pending;
 	GST_DEBUG_OBJECT (self, "dispose");
 
-// hack for gstreamer decodebin2 bug... it tries to dispose .. but doesnt set the state to NULL when it is READY
+	// hack start : for gstreamer decodebin2 bug... it tries to dispose .. 
+	//              but doesnt set the state to NULL when it is READY
 	switch(gst_element_get_state(GST_ELEMENT(object), &state, &pending, GST_CLOCK_TIME_NONE))
 	{
 	case GST_STATE_CHANGE_SUCCESS:
@@ -386,7 +529,7 @@ gst_dvbaudiosink_dispose (GObject * object)
 	default:
 		break;
 	}
-// hack end
+	// hack end
 
 	GST_DEBUG_OBJECT(self, "state in dispose %d, pending %d", state, pending);
 
@@ -403,25 +546,21 @@ static gboolean
 gst_dvbaudiosink_set_location (GstDVBAudioSink * sink, const gchar * location)
 {
 	if (sink->dump_fd)
-		goto was_open;
+	{
+		g_warning ("Changing the `dump-filename' property during operation is not supported.");
+		return FALSE;
+	}
 
 	g_free (sink->dump_filename);
 	if (location != NULL) {
 		/* we store the filename as we received it from the application. On Windows
-		* this should be in UTF8 */
+		 * this should be in UTF8 */
 		sink->dump_filename = g_strdup (location);
 	} else {
 		sink->dump_filename = NULL;
 	}
 
 	return TRUE;
-
-	/* ERRORS */
-	was_open:
-	{
-		g_warning ("Changing the `dump-filename' property during operation is not supported.");
-		return FALSE;
-	}
 }
 
 static void
@@ -457,7 +596,7 @@ gst_dvbaudiosink_get_property (GObject * object, guint prop_id, GValue * value, 
 static gint64
 gst_dvbaudiosink_get_decoder_time (GstDVBAudioSink *self)
 {
-	if (self->bypass != -1) {
+	if (self->bypass != BYPASS_UNKNOWN) {
 		gint64 cur = 0;
 		static gint64 last_pos = 0;
 
@@ -505,7 +644,7 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 	GstDVBAudioSink *self = GST_DVBAUDIOSINK (basesink);
 	GstStructure *structure = gst_caps_get_structure (caps, 0);
 	const char *type = gst_structure_get_name (structure);
-	int bypass = -1;
+	unsigned int bypass = BYPASS_UNKNOWN;
 
 	self->skip = 0;
 
@@ -518,10 +657,10 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 				gint layer;
 				gst_structure_get_int (structure, "layer", &layer);
 				if ( layer == 3 )
-					bypass = 0xA;
+					bypass = BYPASS_MPEG1_L3;
 				else
-					bypass = 1;
-				GST_INFO_OBJECT (self, "MIMETYPE %s version %d layer %d",type,mpegversion,layer);
+					bypass = BYPASS_MPEG1;
+				GST_INFO_OBJECT (self, "MIMETYPE %s version %d layer %d", type, mpegversion, layer);
 				break;
 			}
 			case 2:
@@ -560,7 +699,7 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 						self->aac_adts_header_valid = TRUE;
 					}
 					else {
-						gint rate, channels, rate_idx=0, obj_type=1; // hardcoded yet.. hopefully this works every time ;)
+						gint rate, channels, rate_idx=0, obj_type = 1; // hardcoded yet.. hopefully this works every time ;)
 						GST_INFO_OBJECT (self, "no codec data");
 						if (gst_structure_get_int (structure, "rate", &rate) && gst_structure_get_int (structure, "channels", &channels)) {
 							do {
@@ -590,7 +729,7 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 						}
 					}
 				}
-				bypass = 0x0b; // always use AAC+ ADTS yet..
+				bypass = BYPASS_AAC; // always use AAC + ADTS yet..
 				break;
 			}
 			default:
@@ -600,25 +739,132 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 	}
 	else if (!strcmp(type, "audio/x-ac3")) {
 		GST_INFO_OBJECT (self, "MIMETYPE %s",type);
-		bypass = 0;
+		bypass = BYPASS_AC3;
 	}
 	else if (!strcmp(type, "audio/x-private1-dts")) {
 		GST_INFO_OBJECT (self, "MIMETYPE %s (DVD Audio - 2 byte skipping)",type);
-		bypass = 2;
+		bypass = BYPASS_DTS;
 		self->skip = 2;
 	}
 	else if (!strcmp(type, "audio/x-private1-ac3")) {
 		GST_INFO_OBJECT (self, "MIMETYPE %s (DVD Audio - 2 byte skipping)",type);
-		bypass = 0;
+		bypass = BYPASS_AC3;
 		self->skip = 2;
 	}
 	else if (!strcmp(type, "audio/x-private1-lpcm")) {
 		GST_INFO_OBJECT (self, "MIMETYPE %s (DVD Audio)",type);
-		bypass = 6;
+		bypass = BYPASS_LPCM;
 	}
 	else if (!strcmp(type, "audio/x-dts")) {
 		GST_INFO_OBJECT (self, "MIMETYPE %s",type);
-		bypass = 2;
+		bypass = BYPASS_DTS;
+	}
+	else if (!strcmp(type, "audio/x-wma") || !strcmp(type, "audio/x-ms-wma")) {
+		GST_INFO_OBJECT (self, "MIMETYPE %s",type);
+
+		const GValue *codec_data = gst_structure_get_value (structure, "codec_data");
+		guint8 *h      = GST_BUFFER_DATA(gst_value_get_buffer (codec_data));
+		guint32 h_size = 0; //h_sizesizeof(h) / sizeof(guint8);
+		//TODO: How to get size of codec_data
+
+		// type_specific_data
+		#define WMA_VERSION_1           0x160
+		#define WMA_VERSION_2_9         0x161
+		#define WMA_VERSION_9_PRO       0x162
+		#define WMA_LOSSLESS            0x163
+		guint16 codec_id = 0; 
+		gint wmaversion;
+		gst_structure_get_int (structure, "wmaversion", &wmaversion);
+		//TODO: Need to check posible values
+		switch(wmaversion) {
+		//TODO: What code for lossless ?
+		case 9:
+			codec_id = WMA_VERSION_9_PRO;
+			h_size = 18;
+			break;
+		case 2:
+			codec_id = WMA_VERSION_2_9 ;
+			h_size = 10;
+			break;
+		case 1:
+		default:
+			codec_id = WMA_VERSION_1;
+			h_size = 0;
+			break;
+		}
+	
+		
+		self->initial_header_private_data_size = 104 + h_size;
+		self->initial_header_private_data = 
+			(guint8*) malloc(sizeof(guint8) * self->initial_header_private_data_size);
+		memset (self->initial_header_private_data, 0, self->initial_header_private_data_size);
+		
+		guint8 ASF_Stream_Properties_Object[16] =
+			{0x91,0x07,0xDC,0xB7,0xB7,0xA9,0xCF,0x11,0x8E,0xE6,0x00,0xC0,0x0C,0x20,0x53,0x65};
+		memcpy(self->initial_header_private_data + 0, ASF_Stream_Properties_Object, 16); // ASF_Stream_Properties_Object
+
+		memcpy(self->initial_header_private_data + 16, &self->initial_header_private_data_size, 4); //FrameDateLength
+
+		guint32 sizehi = 0;
+		memcpy(self->initial_header_private_data + 20, &sizehi, 4); // sizehi (not used)
+
+		guint8 ASF_Audio_Media[16] =
+			{0x40,0x9E,0x69,0xF8,0x4D,0x5B,0xCF,0x11,0xA8,0xFD,0x00,0x80,0x5F,0x5C,0x44,0x2B}; 
+		memcpy(self->initial_header_private_data + 24, ASF_Audio_Media, 16); //ASF_Audio_Media
+
+		guint8 ASF_Audio_Spread[16] =
+			{0x50,0xCD,0xC3,0xBF,0x8F,0x61,0xCF,0x11,0x8B,0xB2,0x00,0xAA,0x00,0xB4,0xE2,0x20}; 
+		memcpy(self->initial_header_private_data + 40, ASF_Audio_Spread, 16); //ASF_Audio_Spread
+
+		memset(self->initial_header_private_data + 56, 0, 4); // time_offset (not used)
+		memset(self->initial_header_private_data + 60, 0, 4); // time_offset_hi (not used)
+		
+		guint32 type_specific_data_length = 18 + h_size;
+		memcpy(self->initial_header_private_data + 64, &type_specific_data_length, 4); //type_specific_data_length
+
+		guint32 error_correction_data_length = 8;
+		memcpy(self->initial_header_private_data + 68, &error_correction_data_length, 4); //error_correction_data_length
+
+		guint16 flags = 1; // stream_number
+		memcpy(self->initial_header_private_data + 72, &flags, 2); //flags
+
+		guint32 reserved = 0;
+		memcpy(self->initial_header_private_data + 74, &reserved, 4); // reserved
+
+
+		memcpy(self->initial_header_private_data + 78, &codec_id, 2); //codec_id
+
+		gint16 number_of_channels;
+		gst_structure_get_int (structure, "channels", &number_of_channels);
+		memcpy(self->initial_header_private_data + 80, &number_of_channels, 2); //number_of_channels
+
+		guint32 samples_per_second;
+		gst_structure_get_int (structure, "rate", &samples_per_second);
+		printf("samples_per_second = %d\n", samples_per_second);
+		memcpy(self->initial_header_private_data + 82, &samples_per_second, 4); //samples_per_second
+
+		guint32 average_number_of_bytes_per_second;
+		gst_structure_get_int (structure, "bitrate", &average_number_of_bytes_per_second);
+		average_number_of_bytes_per_second /= 8;
+		printf("average_number_of_bytes_per_second = %d\n", average_number_of_bytes_per_second);
+		memcpy(self->initial_header_private_data + 86, &average_number_of_bytes_per_second, 4); //average_number_of_bytes_per_second
+
+		gint16 block_alignment;
+		gst_structure_get_int (structure, "block_align", &block_alignment);
+		printf("block_alignment = %d\n", block_alignment);
+		memcpy(self->initial_header_private_data + 90, &block_alignment, 2); //block_alignment
+
+		gint16 bits_per_sample;
+		gst_structure_get_int (structure, "depth", &bits_per_sample);
+		printf("bits_per_sample = %d\n", bits_per_sample);
+		memcpy(self->initial_header_private_data + 92, &bits_per_sample, 2); //bits_per_sample
+
+		memcpy(self->initial_header_private_data + 94, &h_size, 2);
+
+		memcpy(self->initial_header_private_data + 96, h, h_size);
+
+		self->initial_header_private_data_valid = TRUE;
+		bypass = BYPASS_WMA;
 	}
 	else {
 		GST_ELEMENT_ERROR (self, STREAM, TYPE_NOT_FOUND, (NULL), ("unimplemented stream type %s", type));
@@ -627,13 +873,24 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 
 	GST_INFO_OBJECT(self, "setting dvb mode 0x%02x\n", bypass);
 
-	if (ioctl(self->fd, AUDIO_SET_BYPASS_MODE, bypass) < 0) {
-		if (bypass == 2) {
-			GST_ELEMENT_ERROR (self, STREAM, TYPE_NOT_FOUND, (NULL), ("hardware decoder can't be set to bypass mode type %s", type));
-			return FALSE;
+	if (self->use_set_encoding)
+	{
+#ifdef AUDIO_SET_ENCODING
+		unsigned int encoding = bypass_to_encoding(bypass);
+		if (ioctl(self->fd, AUDIO_SET_ENCODING, encoding) < 0) {
+			GST_ELEMENT_WARNING (self, STREAM, DECODE, (NULL), ("hardware decoder can't be set to encoding %i.", encoding));
 		}
-		GST_ELEMENT_WARNING (self, STREAM, DECODE, (NULL), ("hardware decoder can't be set to bypass mode %i.", bypass));
-// 		return FALSE;
+#endif
+	}
+	else
+	{
+		if (ioctl(self->fd, AUDIO_SET_BYPASS_MODE, bypass) < 0) {
+			if (bypass == BYPASS_DTS) {
+				GST_ELEMENT_ERROR (self, STREAM, TYPE_NOT_FOUND, (NULL), ("hardware decoder can't be set to bypass mode type %s", type));
+				return FALSE;
+			}
+			GST_ELEMENT_WARNING (self, STREAM, DECODE, (NULL), ("hardware decoder can't be set to bypass mode %i.", bypass));
+		}
 	}
 	self->bypass = bypass;
 	return TRUE;
@@ -643,10 +900,10 @@ static void
 queue_push(queue_entry_t **queue_base, guint8 *data, size_t len)
 {
 	queue_entry_t *entry = malloc(sizeof(queue_entry_t)+len);
-	queue_entry_t *last = *queue_base;
-	guint8 *d = (guint8*)(entry+1);
+	queue_entry_t *last  = *queue_base;
+	guint8        *d     = (guint8*)(entry+1);
 	memcpy(d, data, len);
-	entry->bytes = len;
+	entry->bytes  = len;
 	entry->offset = 0;
 	if (!last)
 		*queue_base = entry;
@@ -671,12 +928,12 @@ queue_front(queue_entry_t **queue_base, guint8 **data, size_t *bytes)
 {
 	if (!*queue_base) {
 		*bytes = 0;
-		*data = 0;
+		*data  = 0;
 	}
 	else {
 		queue_entry_t *entry = *queue_base;
 		*bytes = entry->bytes - entry->offset;
-		*data = ((guint8*)(entry+1))+entry->offset;
+		*data  = ((guint8*)(entry+1))+entry->offset;
 	}
 	return *bytes;
 }
@@ -753,17 +1010,20 @@ gst_dvbaudiosink_event (GstBaseSink * sink, GstEvent * event)
 		gst_event_parse_new_segment_full (event, &update, &rate, &applied_rate,	&fmt, &cur, &stop, &time);
 		GST_DEBUG_OBJECT (self, "GST_EVENT_NEWSEGMENT rate=%f applied_rate=%f\n", rate, applied_rate);
 
-		int video_fd = open("/dev/dvb/adapter0/video0", O_RDWR);
-		if (fmt == GST_FORMAT_TIME) {
-			if ( rate > 1 )
-				skip = (int) rate;
-			else if ( rate < 1 )
-				repeat = 1.0/rate;
-			ret = ioctl(video_fd, VIDEO_SLOWMOTION, repeat);
-			ret = ioctl(video_fd, VIDEO_FAST_FORWARD, skip);
-//			gst_segment_set_newsegment_full (&dec->segment, update, rate, applied_rate, dformat, cur, stop, time);
+		if (pftype == DM) //TODO: What is the purpose of this code?
+		{
+			int video_fd = open("/dev/dvb/adapter0/video0", O_RDWR);
+			if (fmt == GST_FORMAT_TIME) {
+				if ( rate > 1 )
+					skip = (int) rate;
+				else if ( rate < 1 )
+					repeat = 1.0/rate;
+				ret = ioctl(video_fd, VIDEO_SLOWMOTION, repeat);
+				ret = ioctl(video_fd, VIDEO_FAST_FORWARD, skip);
+				//gst_segment_set_newsegment_full (&dec->segment, update, rate, applied_rate, dformat, cur, stop, time);
+			}
+			close(video_fd);
 		}
-		close(video_fd);
 		break;
 	}
 
@@ -834,7 +1094,7 @@ loop_start:
 			if (queue_front(&self->queue, &queue_data, &queue_entry_size)) {
 				int wr = write(self->fd, queue_data, queue_entry_size);
 				if ( self->dump_fd > 0 )
-						write(self->dump_fd, queue_data, queue_entry_size);
+					write(self->dump_fd, queue_data, queue_entry_size);
 				if (wr < 0) {
 					switch (errno) {
 						case EINTR:
@@ -859,7 +1119,7 @@ loop_start:
 			GST_OBJECT_UNLOCK(self);
 			int wr = write(self->fd, data+written, len - written);
 			if ( self->dump_fd > 0 )
-					write(self->dump_fd, data+written, len - written);
+				write(self->dump_fd, data+written, len - written);
 			if (wr < 0) {
 				switch (errno) {
 					case EINTR:
@@ -876,70 +1136,17 @@ loop_start:
 	return 0;
 }
 
-static GstFlowReturn
-gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
+
+static size_t
+buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp, unsigned char pic_start_code)
 {
-	GstDVBAudioSink *self = GST_DVBAUDIOSINK (sink);
-	unsigned char pes_header[64];
-	unsigned int size = GST_BUFFER_SIZE (buffer) - self->skip;
-	unsigned char *data = GST_BUFFER_DATA (buffer) + self->skip;
-	long long timestamp = GST_BUFFER_TIMESTAMP(buffer);
-	long long duration = GST_BUFFER_DURATION(buffer);
-
+	unsigned char *pes_header = data;
 	size_t pes_header_size;
-//	int i=0;
-
-	/* LPCM workaround.. we also need the first two byte of the lpcm header.. (substreamid and num of frames) 
-	   i dont know why the mpegpsdemux strips out this two bytes... */
-	if (self->bypass == 6 && (data[0] < 0xA0 || data[0] > 0xAF)) {
-		if (data[-2] >= 0xA0 && data[-2] <= 0xAF) {
-			data -= 2;
-			size += 2;
-		}
-	}
-
-	if (duration != -1 && timestamp != -1) {
-		if (self->timestamp == 0)
-			self->timestamp = timestamp;
-		else
-			timestamp = self->timestamp;
-		self->timestamp += duration;
-	}
-	else
-		self->timestamp = 0;
-
-//	for (;i < (size > 0x1F ? 0x1F : size); ++i)
-//		printf("%02x ", data[i]);
-//	printf("%d bytes\n", size);
-//	printf("timestamp: %016lld, buffer timestamp: %016lld, duration %lld, diff %lld\n", timestamp, GST_BUFFER_TIMESTAMP(buffer), duration,
-//		(timestamp > GST_BUFFER_TIMESTAMP(buffer) ? timestamp - GST_BUFFER_TIMESTAMP(buffer) : GST_BUFFER_TIMESTAMP(buffer) - timestamp) / 1000000);
-
-	if ( self->bypass == -1 ) {
-		GST_ELEMENT_ERROR (self, STREAM, FORMAT, (NULL), ("hardware decoder not setup (no caps in pipeline?)"));
-		return GST_FLOW_ERROR;
-	}
-
-	if (self->fd < 0)
-		return GST_FLOW_OK;
-
+	
 	pes_header[0] = 0;
 	pes_header[1] = 0;
 	pes_header[2] = 1;
-	pes_header[3] = 0xC0;
-
-	if (self->bypass == 2) {  // dts
-		int pos=0;
-		while((pos+3) < size) {
-			if (!strcmp((char*)(data+pos), "\x64\x58\x20\x25")) {  // is DTS-HD ?
-				size = pos;
-				break;
-			}
-			++pos;
-		}
-	}
-
-	if (self->aac_adts_header_valid)
-		size += 7;
+	pes_header[3] = pic_start_code;
 
 		/* do we have a timestamp? */
 	if (timestamp != GST_CLOCK_TIME_NONE) {
@@ -984,6 +1191,82 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 		pes_header[8] = 0;
 		pes_header_size = 9;
 	}
+
+	return pes_header_size;
+}
+
+
+static GstFlowReturn
+gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
+{
+	unsigned char    pes_header[PES_MAX_HEADER_SIZE];
+	GstDVBAudioSink *self      = GST_DVBAUDIOSINK (sink);
+	unsigned int     size      = GST_BUFFER_SIZE (buffer) - self->skip;
+	unsigned char   *data      = GST_BUFFER_DATA (buffer) + self->skip;
+	long long        timestamp = GST_BUFFER_TIMESTAMP(buffer);
+	long long        duration  = GST_BUFFER_DURATION(buffer);
+
+	size_t pes_header_size;
+
+	if (self->bypass == BYPASS_UNKNOWN) {
+		GST_ELEMENT_ERROR (self, STREAM, FORMAT, (NULL), ("hardware decoder not setup (no caps in pipeline?)"));
+		return GST_FLOW_ERROR;
+	}
+
+	if (self->fd < 0)
+		return GST_FLOW_OK;
+
+	if (duration != -1 && timestamp != -1) {
+		if (self->timestamp == 0)
+			self->timestamp = timestamp;
+		else
+			timestamp = self->timestamp;
+		self->timestamp += duration;
+	}
+	else
+		self->timestamp = 0;
+
+	if (self->initial_header)
+	{
+		if (self->bypass == BYPASS_WMA && self->initial_header_private_data_valid == TRUE)
+		{
+			unsigned char pes_header_initial[PES_MAX_HEADER_SIZE];
+			size_t pes_header_size_initial;
+			
+			pes_header_size_initial = buildPesHeader(pes_header_initial, self->initial_header_private_data_size, 0, 0);
+			ASYNC_WRITE(pes_header_initial, pes_header_size_initial);
+			ASYNC_WRITE(self->initial_header_private_data, self->initial_header_private_data_size);
+			
+			free(self->initial_header_private_data);
+			self->initial_header_private_data_valid = FALSE;
+		}
+		self->initial_header = FALSE;
+	}
+
+	/* LPCM workaround.. we also need the first two byte of the lpcm header.. (substreamid and num of frames) 
+	   i dont know why the mpegpsdemux strips out this two bytes... */
+	if (self->bypass == BYPASS_LPCM && (data[0] < 0xA0 || data[0] > 0xAF)) {
+		if (data[-2] >= 0xA0 && data[-2] <= 0xAF) {
+			data -= 2;
+			size += 2;
+		}
+	}
+
+	if (self->bypass == BYPASS_DTS) {  // dts
+		int pos=0;
+		while((pos+3) < size) {
+			if (!strcmp((char*)(data+pos), "\x64\x58\x20\x25")) {  // is DTS-HD ?
+				size = pos;
+				break;
+			}
+			++pos;
+		}
+	}
+
+	if (self->aac_adts_header_valid)
+		size += 7;
+
+	pes_header_size = buildPesHeader(pes_header, size, timestamp, 0xC0/*MPEG_AUDIO_PES_START_CODE*/);
 
 	if (self->aac_adts_header_valid) {
 		self->aac_adts_header[3] &= 0xC0;
@@ -1036,10 +1319,10 @@ gst_dvbaudiosink_start (GstBaseSink * basesink)
 		goto socket_pair;
 	}
 
-	READ_SOCKET (self) = control_sock[0];
+	READ_SOCKET (self)  = control_sock[0];
 	WRITE_SOCKET (self) = control_sock[1];
 
-	fcntl (READ_SOCKET (self), F_SETFL, O_NONBLOCK);
+	fcntl (READ_SOCKET (self),  F_SETFL, O_NONBLOCK);
 	fcntl (WRITE_SOCKET (self), F_SETFL, O_NONBLOCK);
 
 	return TRUE;
@@ -1062,22 +1345,23 @@ gst_dvbaudiosink_stop (GstBaseSink * basesink)
 	if (self->fd >= 0) {
 		int video_fd = open("/dev/dvb/adapter0/video0", O_RDWR);
 
-		ioctl(self->fd, AUDIO_STOP);
-		ioctl(self->fd, AUDIO_SELECT_SOURCE, AUDIO_SOURCE_DEMUX);
+		ioctl (self->fd, AUDIO_STOP);
+		ioctl (self->fd, AUDIO_SELECT_SOURCE, AUDIO_SOURCE_DEMUX);
 
+		//TODO: This seems to me like a hack?!
 		if ( video_fd > 0 ) {
-			ioctl(video_fd, VIDEO_SLOWMOTION, 0);
-			ioctl(video_fd, VIDEO_FAST_FORWARD, 0);
+			ioctl (video_fd, VIDEO_SLOWMOTION, 0);
+			ioctl (video_fd, VIDEO_FAST_FORWARD, 0);
 			close (video_fd);
 		}
-		close(self->fd);
+		close (self->fd);
 	}
 
 	if (self->dump_fd > 0)
-		close(self->dump_fd);
+		close (self->dump_fd);
 
 	while(self->queue)
-		queue_pop(&self->queue);
+		queue_pop (&self->queue);
 
 	close (READ_SOCKET (self));
 	close (WRITE_SOCKET (self));
@@ -1145,7 +1429,6 @@ gst_dvbaudiosink_change_state (GstElement * element, GstStateChange transition)
 	default:
 		break;
 	}
-
 	return ret;
 }
 
@@ -1180,3 +1463,4 @@ GST_PLUGIN_DEFINE (
 	"GStreamer",
 	"http://gstreamer.net/"
 )
+

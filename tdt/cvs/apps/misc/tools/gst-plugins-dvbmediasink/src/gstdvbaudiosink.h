@@ -80,6 +80,13 @@ typedef struct queue_entry
 struct _GstDVBAudioSink
 {
 	GstBaseSink element;
+	gboolean use_set_encoding;
+
+	gboolean initial_header;
+	guint8  *initial_header_private_data;
+	guint32  initial_header_private_data_size;
+	gboolean initial_header_private_data_valid;
+
 	guint8 aac_adts_header[7];
 	gboolean aac_adts_header_valid;
 

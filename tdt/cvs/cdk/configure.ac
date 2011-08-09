@@ -949,6 +949,8 @@ TUXBOX_RULES_MAKE(cairo)
 TUXBOX_RULES_MAKE(gstreamer)
 TUXBOX_RULES_MAKE(gst_plugins_base)
 TUXBOX_RULES_MAKE(gst_plugins_good)
+TUXBOX_RULES_MAKE(gst_plugins_bad)
+TUXBOX_RULES_MAKE(gst_plugins_ugly)
 TUXBOX_RULES_MAKE(gst_plugins_dvbmediasink)
 
 #

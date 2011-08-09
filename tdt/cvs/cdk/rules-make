@@ -138,6 +138,14 @@ libass;0.9.11;libass-0.9.11;libass-0.9.11.tar.gz;extract:libass-0.9.11.tar.gz
 gstreamer;0.10.34;gstreamer-0.10.34;gstreamer-0.10.34.tar.bz2;extract:gstreamer-0.10.34.tar.bz2
 gst_plugins_base;0.10.34;gst-plugins-base-0.10.34;gst-plugins-base-0.10.34.tar.bz2;extract:gst-plugins-base-0.10.34.tar.bz2
 gst_plugins_good;0.10.29;gst-plugins-good-0.10.29;gst-plugins-good-0.10.29.tar.bz2;extract:gst-plugins-good-0.10.29.tar.bz2
+
+gst_plugins_good;0.10.29;gst-plugins-good-0.10.29;gst-plugins-good-0.10.29.tar.bz2;extract:gst-plugins-good-0.10.29.tar.bz2
+
+gst_plugins_bad;0.10.21;gst-plugins-bad-0.10.21;gst-plugins-bad-0.10.21.tar.bz2;extract:gst-plugins-bad-0.10.21.tar.bz2
+
+gst_plugins_ugly;0.10.17;gst-plugins-ugly-0.10.17;gst-plugins-ugly-0.10.17.tar.bz2;extract:gst-plugins-ugly-0.10.17.tar.bz2
+
+
 gst_plugins_dvbmediasink;0.10.1;../apps/misc/tools/gst-plugins-dvbmediasink
 
 
