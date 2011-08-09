@@ -451,7 +451,7 @@ gst_dvbaudiosink_class_init (GstDVBAudioSinkClass *klass)
 	gstbasesink_class->unlock_stop = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_unlock_stop);
 	gstbasesink_class->set_caps    = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_set_caps);
 
-	gelement_class->change_state = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_change_state);
+	gelement_class->change_state   = GST_DEBUG_FUNCPTR (gst_dvbaudiosink_change_state);
 
 	gst_dvbaudiosink_signals[SIGNAL_GET_DECODER_TIME] =
 		g_signal_new ("get-decoder-time",
@@ -642,9 +642,9 @@ static gboolean
 gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 {
 	GstDVBAudioSink *self = GST_DVBAUDIOSINK (basesink);
-	GstStructure *structure = gst_caps_get_structure (caps, 0);
-	const char *type = gst_structure_get_name (structure);
-	unsigned int bypass = BYPASS_UNKNOWN;
+	GstStructure    *structure = gst_caps_get_structure (caps, 0);
+	const char      *type = gst_structure_get_name (structure);
+	unsigned int     bypass = BYPASS_UNKNOWN;
 
 	self->skip = 0;
 
@@ -1343,16 +1343,19 @@ gst_dvbaudiosink_stop (GstBaseSink * basesink)
 	GST_DEBUG_OBJECT (self, "stop");
 
 	if (self->fd >= 0) {
-		int video_fd = open("/dev/dvb/adapter0/video0", O_RDWR);
+		if (pftype == DM) //TODO: What is the purpose of this code?
+		{
+			int video_fd = open("/dev/dvb/adapter0/video0", O_RDWR);
 
-		ioctl (self->fd, AUDIO_STOP);
-		ioctl (self->fd, AUDIO_SELECT_SOURCE, AUDIO_SOURCE_DEMUX);
+			ioctl (self->fd, AUDIO_STOP);
+			ioctl (self->fd, AUDIO_SELECT_SOURCE, AUDIO_SOURCE_DEMUX);
 
-		//TODO: This seems to me like a hack?!
-		if ( video_fd > 0 ) {
-			ioctl (video_fd, VIDEO_SLOWMOTION, 0);
-			ioctl (video_fd, VIDEO_FAST_FORWARD, 0);
-			close (video_fd);
+			//TODO: This seems to me like a hack?!
+			if ( video_fd > 0 ) {
+				ioctl (video_fd, VIDEO_SLOWMOTION, 0);
+				ioctl (video_fd, VIDEO_FAST_FORWARD, 0);
+				close (video_fd);
+			}
 		}
 		close (self->fd);
 	}
