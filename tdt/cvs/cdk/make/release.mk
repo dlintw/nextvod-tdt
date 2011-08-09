@@ -219,7 +219,7 @@ release_spark:
 	cp -f $(buildprefix)/root/release/vfd_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/vfd.ko
 	cp -f $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/encrypt.ko
 
-	cp -dp $(buildprefix)/root/etc/$(LIRCD_CONF) $(prefix)/release/etc/lircd.conf
+	cp -dp $(buildprefix)/root/etc/lircd_spark.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/fonts
@@ -279,7 +279,7 @@ release_spark7162:
 	cp -f $(buildprefix)/root/release/vfd_spark7162$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/vfd.ko
 	cp -f $(buildprefix)/root/release/tuner.ko$(KERNELSTMLABEL)_spark7162 $(prefix)/release/lib/modules/spark7162.ko
 
-	cp -dp $(buildprefix)/root/etc/$(LIRCD_CONF) $(prefix)/release/etc/lircd.conf
+	cp -dp $(buildprefix)/root/etc/lircd_spark7162.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/fonts
