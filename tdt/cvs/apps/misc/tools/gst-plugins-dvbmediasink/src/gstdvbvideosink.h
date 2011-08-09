@@ -82,6 +82,7 @@ typedef struct queue_entry
 struct _GstDVBVideoSink
 {
 	GstBaseSink element;
+	gboolean use_set_encoding;
 
 	gint control_sock[2];
 

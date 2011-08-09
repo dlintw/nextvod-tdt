@@ -68,6 +68,10 @@
 #include <poll.h>
 #include <string.h>
 
+#ifdef __sh__
+#include <linux/dvb/stm_ioctls.h>
+#endif
+
 #include <gst/gst.h>
 
 #include "gstdvbvideosink.h"
@@ -147,27 +151,27 @@ void bitstream_put(struct bitstream *bit, unsigned long val, int bits)
 #define WRITE_SOCKET(sink)	sink->control_sock[1]
 #define READ_SOCKET(sink)	sink->control_sock[0]
 
-#define SEND_COMMAND(sink, command)			\
-G_STMT_START {						\
-	unsigned char c; c = command;			\
-	write (WRITE_SOCKET(sink), &c, 1);		\
+#define SEND_COMMAND(sink, command)    \
+G_STMT_START {                         \
+	unsigned char c; c = command;      \
+	write (WRITE_SOCKET(sink), &c, 1); \
 } G_STMT_END
 
-#define READ_COMMAND(sink, command, res)		\
-G_STMT_START {						\
-	res = read(READ_SOCKET(sink), &command, 1);	\
+#define READ_COMMAND(sink, command, res)        \
+G_STMT_START {                                  \
+	res = read(READ_SOCKET(sink), &command, 1); \
 } G_STMT_END
 
 GST_DEBUG_CATEGORY_STATIC (dvbvideosink_debug);
 #define GST_CAT_DEFAULT dvbvideosink_debug
 
-#define COMMON_VIDEO_CAPS \
-  "width = (int) [ 16, 4096 ], " \
+#define COMMON_VIDEO_CAPS         \
+  "width = (int) [ 16, 4096 ], "  \
   "height = (int) [ 16, 4096 ], " \
   "framerate = (fraction) [ 0, MAX ]"
 
-#define MPEG4V2_LIMITED_CAPS \
-  "width = (int) [ 16, 800 ], " \
+#define MPEG4V2_LIMITED_CAPS     \
+  "width = (int) [ 16, 800 ], "  \
   "height = (int) [ 16, 600 ], " \
   "framerate = (fraction) [ 0, MAX ]"
 
@@ -256,26 +260,126 @@ GST_STATIC_PAD_TEMPLATE (
 	COMMON_VIDEO_CAPS "; ")
 );
 
+#define SINK_FACTORY_STM_BASE \
+GST_STATIC_PAD_TEMPLATE ( \
+	"sink", \
+	GST_PAD_SINK, \
+	GST_PAD_ALWAYS, \
+	GST_STATIC_CAPS ( \
+		"video/mpeg, " \
+		"mpegversion = (int) { 1, 2, 4 }, " \
+		"systemstream = (boolean) false, " \
+	COMMON_VIDEO_CAPS "; " \
+		"video/x-h264, " \
+	COMMON_VIDEO_CAPS "; " \
+		"video/x-h263, " \
+	COMMON_VIDEO_CAPS "; " \
+		"video/x-msmpeg, " \
+	MPEG4V2_LIMITED_CAPS ", mspegversion = (int) 43; " \
+		"video/x-divx, " \
+	MPEG4V2_LIMITED_CAPS ", divxversion = (int) [ 3, 5 ]; " \
+		"video/x-xvid, " \
+	MPEG4V2_LIMITED_CAPS "; " \
+		"video/x-3ivx, " \
+	MPEG4V2_LIMITED_CAPS "; ") \
+)
+
+//TODO: All but 7100 and 7101 have wmv and vc1 capability. Need to add it
+// FIRST GENERATION
+static GstStaticPadTemplate sink_factory_stm_stx7100 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7101 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7109 = SINK_FACTORY_STM_BASE;
+
+// SECOND GENERATION
+static GstStaticPadTemplate sink_factory_stm_stx7105 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7111 = SINK_FACTORY_STM_BASE;
+
+// THIRD GENERATION
+static GstStaticPadTemplate sink_factory_stm_stx7106 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7108 = SINK_FACTORY_STM_BASE;
+
 #define DEBUG_INIT(bla) \
 	GST_DEBUG_CATEGORY_INIT (dvbvideosink_debug, "dvbvideosink", 0, "dvbvideosink element");
 
 GST_BOILERPLATE_FULL (GstDVBVideoSink, gst_dvbvideosink, GstBaseSink,
 	GST_TYPE_BASE_SINK, DEBUG_INIT);
 
-static gboolean gst_dvbvideosink_start (GstBaseSink * sink);
-static gboolean gst_dvbvideosink_stop (GstBaseSink * sink);
-static gboolean gst_dvbvideosink_event (GstBaseSink * sink, GstEvent * event);
-static GstFlowReturn gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer);
-static gboolean gst_dvbvideosink_set_caps (GstBaseSink * sink, GstCaps * caps);
-static gboolean gst_dvbvideosink_unlock (GstBaseSink * basesink);
-static gboolean gst_dvbvideosink_unlock_stop (GstBaseSink * basesink);
-static void gst_dvbvideosink_dispose (GObject * object);
+static gboolean             gst_dvbvideosink_start (GstBaseSink * sink);
+static gboolean             gst_dvbvideosink_stop (GstBaseSink * sink);
+static gboolean             gst_dvbvideosink_event (GstBaseSink * sink, GstEvent * event);
+static GstFlowReturn        gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer);
+static gboolean             gst_dvbvideosink_set_caps (GstBaseSink * sink, GstCaps * caps);
+static gboolean             gst_dvbvideosink_unlock (GstBaseSink * basesink);
+static gboolean             gst_dvbvideosink_unlock_stop (GstBaseSink * basesink);
+static void                 gst_dvbvideosink_dispose (GObject * object);
 static GstStateChangeReturn gst_dvbvideosink_change_state (GstElement * element, GstStateChange transition);
-static gint64 gst_dvbvideosink_get_decoder_time (GstDVBVideoSink *self);
+static gint64               gst_dvbvideosink_get_decoder_time (GstDVBVideoSink *self);
 
-typedef enum { DM7025, DM800, DM8000, DM500HD, DM800SE, DM7020HD } hardware_type_t;
+#define PES_MAX_HEADER_SIZE 64
 
-static hardware_type_t hwtype;
+typedef enum {  HW_UNKNOWN, 
+				DM7025, DM800, DM8000, DM500HD, DM800SE, DM7020HD, 
+				STX7100, STX7101, STX7109, STX7105, STX7111, STX7106, STX7108 
+} hardware_type_t;
+
+typedef enum { PF_UNKNOWN, DM, HAVANA } platform_type_t;
+
+static hardware_type_t hwtype = HW_UNKNOWN;
+static platform_type_t pftype = PF_UNKNOWN;
+
+//Please correct if wrong
+#define STREAMTYPE_UNKNOWN  0xFF
+#define STREAMTYPE_MPEG2    0x00
+#define STREAMTYPE_H264     0x01
+#define STREAMTYPE_H263     0x02
+#define STREAMTYPE_MPEG4_P2 0x04
+#define STREAMTYPE_MPEG1    0x06
+#define STREAMTYPE_XVID     0x0A
+#define STREAMTYPE_DIVX311  0x0C
+#define STREAMTYPE_DIVX4    0x0E
+#define STREAMTYPE_DIVX5    0x0F
+#define STREAMTYPE_FLV1     0x10
+#define STREAMTYPE_WMV      0x11
+#define STREAMTYPE_VC1      0x12
+
+#define VIDEO_ENCODING_UNKNOWN  0xFF
+
+unsigned int streamtype_to_encoding (unsigned int streamtype)
+{
+#ifdef VIDEO_SET_ENCODING
+	switch(streamtype)
+	{
+	case STREAMTYPE_MPEG2:
+		return VIDEO_ENCODING_AUTO;
+	case STREAMTYPE_H264:
+		return VIDEO_ENCODING_H264;
+	case STREAMTYPE_H263:
+		return VIDEO_ENCODING_H263;
+	case STREAMTYPE_MPEG4_P2:
+		return VIDEO_ENCODING_MPEG4P2;
+	case STREAMTYPE_MPEG1:
+		return VIDEO_ENCODING_AUTO;
+	case STREAMTYPE_XVID:
+		return VIDEO_ENCODING_MPEG4P2;
+	case STREAMTYPE_DIVX311:
+		return VIDEO_ENCODING_MPEG4P2;
+	case STREAMTYPE_DIVX4:
+		return VIDEO_ENCODING_MPEG4P2;
+	case STREAMTYPE_DIVX5:
+		return VIDEO_ENCODING_MPEG4P2;
+	case STREAMTYPE_FLV1:
+		return VIDEO_ENCODING_FLV1;
+	case STREAMTYPE_WMV:
+		return VIDEO_ENCODING_WMV;
+	case STREAMTYPE_VC1:
+		return VIDEO_ENCODING_VC1;
+
+	default:
+		return VIDEO_ENCODING_UNKNOWN;
+	}
+#endif
+	return VIDEO_ENCODING_UNKNOWN;
+}
 
 static void
 gst_dvbvideosink_base_init (gpointer klass)
@@ -297,37 +401,118 @@ gst_dvbvideosink_base_init (gpointer klass)
 		{
 			if ( !strncasecmp(string, "DM7025", 6) ) {
 				hwtype = DM7025;
+				pftype = DM;
 				GST_INFO ("model is DM7025... set ati xilleon caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_ati_xilleon));
 			} else if ( !strncasecmp(string, "DM500HD", 7) ) {
 				hwtype = DM500HD;
+				pftype = DM;
 				GST_INFO ("model is DM500HD... set bcm7405 caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_bcm7405));
 			} else if ( !strncasecmp(string, "DM800SE", 7) ) {
 				hwtype = DM800SE;
+				pftype = DM;
 				GST_INFO ("model is DM800SE... set bcm7405 caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_bcm7405));
 			} else if ( !strncasecmp(string, "DM7020HD", 8) ) {
 				hwtype = DM7020HD;
+				pftype = DM;
 				GST_INFO ("model is DM7020HD... set bcm7405 caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_bcm7405));
 			} else if ( !strncasecmp(string, "DM8000", 6) ) {
 				hwtype = DM8000;
+				pftype = DM;
 				GST_INFO ("model is DM8000... set bcm7400 caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_bcm7400));
 			} else if ( !strncasecmp(string, "DM800", 5) ) {
 				hwtype = DM800;
+				pftype = DM;
 				GST_INFO ("model is DM800 set bcm7401 caps");
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_bcm7401));
 			}
 		}
 		close(fd);
+	}
+
+	if (hwtype == HW_UNKNOWN) {
+		// Unfortunately we dont have sysinfo available so doing it the hard way
+		char line[256];
+		char *processor;
+		FILE *file = fopen("/proc/cpuinfo", "r");
+		while (fgets(line, sizeof(line) - 1, file) != NULL)
+		{
+			if (!strncmp(line, "cpu type", 8))
+			{
+				strtok (line,":");
+				processor = strtok (NULL,":");
+				while(processor[0] == ' ') processor++;
+				break;
+			}
+		}
+		fclose(file);
+		
+		printf("Processor: %s\n", processor);
+
+		// FIRST GENERATION
+		if( !strncasecmp(processor, "STX7100", 7) || 
+			!strncasecmp(processor, "STB7100", 7) || 
+			!strncasecmp(processor, "STI7100", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7100;
+			GST_INFO ("setting STX7100 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7100));
+		}
+		else if(!strncasecmp(processor, "STX7101", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7101;
+			GST_INFO ("setting STX7101 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7101));
+		}
+		else if(!strncasecmp(processor, "STX7109", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7109;
+			GST_INFO ("setting STX7109 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7109));
+		}
+		// SECOND GENERATIONad_template_get (&sink_factory_stm_stx7111));
+		else if(!strncasecmp(processor, "STX7105", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7105;
+			GST_INFO ("setting STX7105 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7105));
+		}
+		else if(!strncasecmp(processor, "STX7111", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7111;
+			GST_INFO ("setting STX7111 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7111));
+		}
+		// THIRD GENERATION
+		else if(!strncasecmp(processor, "STX7106", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7106;
+			GST_INFO ("setting STX7106 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7106));
+		}
+		else if(!strncasecmp(processor, "STX7108", 7)) {
+			pftype = HAVANA;
+			hwtype = STX7108;
+			GST_INFO ("setting STX7108 caps");
+			gst_element_class_add_pad_template (element_class,
+				gst_static_pad_template_get (&sink_factory_stm_stx7108));
+		}
 	}
 
 	gst_element_class_set_details (element_class, &element_details);
@@ -337,21 +522,21 @@ gst_dvbvideosink_base_init (gpointer klass)
 static void
 gst_dvbvideosink_class_init (GstDVBVideoSinkClass *klass)
 {
-	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+	GObjectClass     *gobject_class = G_OBJECT_CLASS (klass);
 	GstBaseSinkClass *gstbasesink_class = GST_BASE_SINK_CLASS (klass);
-	GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
+	GstElementClass  *element_class = GST_ELEMENT_CLASS (klass);
 
-	gobject_class->dispose = GST_DEBUG_FUNCPTR (gst_dvbvideosink_dispose);
+	gobject_class->dispose         = GST_DEBUG_FUNCPTR (gst_dvbvideosink_dispose);
 
-	gstbasesink_class->start = GST_DEBUG_FUNCPTR (gst_dvbvideosink_start);
-	gstbasesink_class->stop = GST_DEBUG_FUNCPTR (gst_dvbvideosink_stop);
-	gstbasesink_class->render = GST_DEBUG_FUNCPTR (gst_dvbvideosink_render);
-	gstbasesink_class->event = GST_DEBUG_FUNCPTR (gst_dvbvideosink_event);
-	gstbasesink_class->unlock = GST_DEBUG_FUNCPTR (gst_dvbvideosink_unlock);
+	gstbasesink_class->start       = GST_DEBUG_FUNCPTR (gst_dvbvideosink_start);
+	gstbasesink_class->stop        = GST_DEBUG_FUNCPTR (gst_dvbvideosink_stop);
+	gstbasesink_class->render      = GST_DEBUG_FUNCPTR (gst_dvbvideosink_render);
+	gstbasesink_class->event       = GST_DEBUG_FUNCPTR (gst_dvbvideosink_event);
+	gstbasesink_class->unlock      = GST_DEBUG_FUNCPTR (gst_dvbvideosink_unlock);
 	gstbasesink_class->unlock_stop = GST_DEBUG_FUNCPTR (gst_dvbvideosink_unlock_stop);
-	gstbasesink_class->set_caps = GST_DEBUG_FUNCPTR (gst_dvbvideosink_set_caps);
+	gstbasesink_class->set_caps    = GST_DEBUG_FUNCPTR (gst_dvbvideosink_set_caps);
 
-	element_class->change_state = GST_DEBUG_FUNCPTR (gst_dvbvideosink_change_state);
+	element_class->change_state    = GST_DEBUG_FUNCPTR (gst_dvbvideosink_change_state);
 
 	gst_dvb_videosink_signals[SIGNAL_GET_DECODER_TIME] =
 		g_signal_new ("get-decoder-time",
@@ -374,20 +559,25 @@ static void
 gst_dvbvideosink_init (GstDVBVideoSink *klass, GstDVBVideoSinkClass * gclass)
 {
 	FILE *f = fopen("/proc/stb/vmpeg/0/fallback_framerate", "r");
-	klass->dec_running = FALSE;
-	klass->must_send_header = 1;
-	klass->h264_buffer = NULL;
-	klass->h264_nal_len_size = 0;
-	klass->codec_data = NULL;
-	klass->codec_type = CT_H264;
+#ifdef VIDEO_SET_ENCODING
+	klass->use_set_encoding      = TRUE;
+#else
+	klass->use_set_encoding      = FALSE;
+#endif	
+	klass->dec_running           = FALSE;
+	klass->must_send_header      = 1;
+	klass->h264_buffer           = NULL;
+	klass->h264_nal_len_size     = 0;
+	klass->codec_data            = NULL;
+	klass->codec_type            = CT_H264;
 #ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-	klass->must_pack_bitstream = 0;
-	klass->num_non_keyframes = 0;
-	klass->prev_frame = NULL;
+	klass->must_pack_bitstream   = 0;
+	klass->num_non_keyframes     = 0;
+	klass->prev_frame            = NULL;
 #endif
-	klass->no_write = 0;
-	klass->queue = NULL;
-	klass->fd = -1;
+	klass->no_write              = 0;
+	klass->queue                 = NULL;
+	klass->fd                    = -1;
 
 	if (f) {
 		fgets(klass->saved_fallback_framerate, 16, f);
@@ -404,7 +594,8 @@ static void gst_dvbvideosink_dispose (GObject * object)
 	GstState state, pending;
 	GST_DEBUG_OBJECT(self, "dispose");
 
-// hack for decodebin2 bug.. decodebin2 tries to dispose ..but doesnt set state to NULL when it is READY
+	// hack start : for decodebin2 bug.. decodebin2 tries to dispose ..
+	//              but doesnt set state to NULL when it is READY
 	switch(gst_element_get_state(GST_ELEMENT(object), &state, &pending, GST_CLOCK_TIME_NONE))
 	{
 	case GST_STATE_CHANGE_SUCCESS:
@@ -429,7 +620,7 @@ static void gst_dvbvideosink_dispose (GObject * object)
 	default:
 		break;
 	}
-// hack end
+	// hack end
 
 	GST_DEBUG_OBJECT(self, "state in dispose %d, pending %d", state, pending);
 
@@ -1240,21 +1431,21 @@ static gboolean
 gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 {
 	GstDVBVideoSink *self = GST_DVBVIDEOSINK (basesink);
-	GstStructure *structure = gst_caps_get_structure (caps, 0);
-	const char *mimetype = gst_structure_get_name (structure);
-	int streamtype = -1;
+	GstStructure    *structure = gst_caps_get_structure (caps, 0);
+	const char      *mimetype = gst_structure_get_name (structure);
+	int              streamtype = STREAMTYPE_UNKNOWN;
 
 	if (!strcmp (mimetype, "video/mpeg")) {
 		gint mpegversion;
 		gst_structure_get_int (structure, "mpegversion", &mpegversion);
 		switch (mpegversion) {
 			case 1:
-				streamtype = 6;
+				streamtype = STREAMTYPE_MPEG1;
 				self->codec_type = CT_MPEG1;
 				GST_INFO_OBJECT (self, "MIMETYPE video/mpeg1 -> VIDEO_SET_STREAMTYPE, 6");
 			break;
 			case 2:
-				streamtype = 0;
+				streamtype = STREAMTYPE_MPEG2;
 				self->codec_type = CT_MPEG2;
 				GST_INFO_OBJECT (self, "MIMETYPE video/mpeg2 -> VIDEO_SET_STREAMTYPE, 0");
 			break;
@@ -1267,7 +1458,7 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 					self->codec_type = CT_MPEG4_PART2;
 					gst_buffer_ref (self->codec_data);
 				}
-				streamtype = 4;
+				streamtype = STREAMTYPE_MPEG4_P2;
 				GST_INFO_OBJECT (self, "MIMETYPE video/mpeg4 -> VIDEO_SET_STREAMTYPE, 4");
 			}
 			break;
@@ -1283,11 +1474,11 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			self->codec_type = CT_MPEG4_PART2;
 			gst_buffer_ref (self->codec_data);
 		}
-		streamtype = 4;
+		streamtype = STREAMTYPE_MPEG4_P2;
 		GST_INFO_OBJECT (self, "MIMETYPE video/x-3ivx -> VIDEO_SET_STREAMTYPE, 4");
 	} else if (!strcmp (mimetype, "video/x-h264")) {
 		const GValue *cd_data = gst_structure_get_value (structure, "codec_data");
-		streamtype = 1;
+		streamtype = STREAMTYPE_H264;
 		if (cd_data) {
 			unsigned char tmp[2048];
 			unsigned int tmp_len = 0;
@@ -1362,10 +1553,10 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			self->h264_nal_len_size = 0;
 		GST_INFO_OBJECT (self, "MIMETYPE video/x-h264 VIDEO_SET_STREAMTYPE, 1");
 	} else if (!strcmp (mimetype, "video/x-h263")) {
-		streamtype = 2;
+		streamtype = STREAMTYPE_H263;
 		GST_INFO_OBJECT (self, "MIMETYPE video/x-h263 VIDEO_SET_STREAMTYPE, 2");
 	} else if (!strcmp (mimetype, "video/x-xvid")) {
-		streamtype = 10;
+		streamtype = STREAMTYPE_XVID;
 #ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
 		self->must_pack_bitstream = 1;
 #endif
@@ -1404,13 +1595,13 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 				data[2] = B_GET_BITS(height,9,2);
 				data[3]= B_SET_BITS("height [1.0]", B_GET_BITS(height,1,0), 7, 6) |
 					B_SET_BITS("'100000'", 0x20, 5, 0);
-				streamtype = 13;
+				streamtype = STREAMTYPE_DIVX311;
 				self->codec_type = CT_DIVX311;
 				GST_INFO_OBJECT (self, "MIMETYPE video/x-divx vers. 3 -> VIDEO_SET_STREAMTYPE, 13");
 			}
 			break;
 			case 4:
-				streamtype = 14;
+				streamtype = STREAMTYPE_DIVX4;
 				self->codec_type = CT_DIVX4;
 				self->codec_data = gst_buffer_new_and_alloc(12);
 				guint8 *data = GST_BUFFER_DATA(self->codec_data);
@@ -1419,7 +1610,7 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			break;
 			case 6:
 			case 5:
-				streamtype = 15;
+				streamtype = STREAMTYPE_DIVX5;
 #ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
 				self->must_pack_bitstream = 1;
 #endif
@@ -1430,7 +1621,7 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			break;
 		}
 	}
-	if (streamtype != -1) {
+	if (streamtype != -STREAMTYPE_UNKNOWN) {
 		gint numerator, denominator;
 		if (gst_structure_get_fraction (structure, "framerate", &numerator, &denominator)) {
 			FILE *f = fopen("/proc/stb/vmpeg/0/fallback_framerate", "w");
@@ -1455,9 +1646,21 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			ioctl(self->fd, VIDEO_STOP, 0);
 			self->dec_running = FALSE;
 		}
-		if (ioctl(self->fd, VIDEO_SET_STREAMTYPE, streamtype) < 0 )
-			if ( streamtype != 0 && streamtype != 6 )
-				GST_ELEMENT_ERROR (self, STREAM, CODEC_NOT_FOUND, (NULL), ("hardware decoder can't handle streamtype %i", streamtype));
+		if (self->use_set_encoding)
+		{
+#ifdef VIDEO_SET_ENCODING
+			unsigned int encoding = streamtype_to_encoding(streamtype);
+			if (ioctl(self->fd, VIDEO_SET_ENCODING, encoding) < 0) {
+				GST_ELEMENT_WARNING (self, STREAM, DECODE, (NULL), ("hardware decoder can't be set to encoding %i.", encoding));
+			}
+#endif
+		}
+		else
+		{
+			if (ioctl(self->fd, VIDEO_SET_STREAMTYPE, streamtype) < 0 )
+				if ( streamtype != 0 && streamtype != 6 )
+					GST_ELEMENT_ERROR (self, STREAM, CODEC_NOT_FOUND, (NULL), ("hardware decoder can't handle streamtype %i", streamtype));
+		}
 		ioctl(self->fd, VIDEO_PLAY);
 		self->dec_running = TRUE;
 	} else
