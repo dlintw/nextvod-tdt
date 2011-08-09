@@ -284,19 +284,45 @@ GST_STATIC_PAD_TEMPLATE ( \
 	MPEG4V2_LIMITED_CAPS "; ") \
 )
 
+#define SINK_FACTORY_STM_BASE_EXTENDED \
+GST_STATIC_PAD_TEMPLATE ( \
+	"sink", \
+	GST_PAD_SINK, \
+	GST_PAD_ALWAYS, \
+	GST_STATIC_CAPS ( \
+		"video/mpeg, " \
+		"mpegversion = (int) { 1, 2, 4 }, " \
+		"systemstream = (boolean) false, " \
+	COMMON_VIDEO_CAPS "; " \
+		"video/x-h264, " \
+	COMMON_VIDEO_CAPS "; " \
+		"video/x-h263, " \
+	COMMON_VIDEO_CAPS "; " \
+		"video/x-msmpeg, " \
+	MPEG4V2_LIMITED_CAPS ", mspegversion = (int) 43; " \
+		"video/x-divx, " \
+	MPEG4V2_LIMITED_CAPS ", divxversion = (int) [ 3, 5 ]; " \
+		"video/x-xvid, " \
+	MPEG4V2_LIMITED_CAPS "; " \
+		"video/x-3ivx, " \
+	MPEG4V2_LIMITED_CAPS "; " \
+		"video/x-wmv, " \
+	COMMON_VIDEO_CAPS "; ") \
+)
+
 //TODO: All but 7100 and 7101 have wmv and vc1 capability. Need to add it
 // FIRST GENERATION
 static GstStaticPadTemplate sink_factory_stm_stx7100 = SINK_FACTORY_STM_BASE;
 static GstStaticPadTemplate sink_factory_stm_stx7101 = SINK_FACTORY_STM_BASE;
-static GstStaticPadTemplate sink_factory_stm_stx7109 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7109 = SINK_FACTORY_STM_BASE_EXTENDED;
 
 // SECOND GENERATION
-static GstStaticPadTemplate sink_factory_stm_stx7105 = SINK_FACTORY_STM_BASE;
-static GstStaticPadTemplate sink_factory_stm_stx7111 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7105 = SINK_FACTORY_STM_BASE_EXTENDED;
+static GstStaticPadTemplate sink_factory_stm_stx7111 = SINK_FACTORY_STM_BASE_EXTENDED;
 
 // THIRD GENERATION
-static GstStaticPadTemplate sink_factory_stm_stx7106 = SINK_FACTORY_STM_BASE;
-static GstStaticPadTemplate sink_factory_stm_stx7108 = SINK_FACTORY_STM_BASE;
+static GstStaticPadTemplate sink_factory_stm_stx7106 = SINK_FACTORY_STM_BASE_EXTENDED;
+static GstStaticPadTemplate sink_factory_stm_stx7108 = SINK_FACTORY_STM_BASE_EXTENDED;
 
 #define DEBUG_INIT(bla) \
 	GST_DEBUG_CATEGORY_INIT (dvbvideosink_debug, "dvbvideosink", 0, "dvbvideosink element");
@@ -569,7 +595,6 @@ gst_dvbvideosink_init (GstDVBVideoSink *klass, GstDVBVideoSinkClass * gclass)
 	klass->h264_buffer           = NULL;
 	klass->h264_nal_len_size     = 0;
 	klass->codec_data            = NULL;
-	klass->codec_type            = CT_H264;
 #ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
 	klass->must_pack_bitstream   = 0;
 	klass->num_non_keyframes     = 0;
@@ -1056,19 +1081,21 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 		pes_header_len = 14;
 
 		if (self->codec_data) {
-			switch (self->codec_type) { // we must always resend the codec data before every seq header on dm8k
-			case CT_MPEG4_PART2:
-			case CT_DIVX4:
+			switch (self->streamtype) { // we must always resend the codec data before every seq header on dm8k
+			case STREAMTYPE_MPEG4_P2:
+			case STREAMTYPE_DIVX4:
 				if (data[0] == 0xb3 || !memcmp(data, "\x00\x00\x01\xb3", 4))
 					self->must_send_header = 1;
 			default:
 				break;
 			}
 			if (self->must_send_header) {
-    				if (self->codec_type != CT_MPEG1 && self->codec_type != CT_MPEG2 && (self->codec_type != CT_DIVX4 || data[3] == 0x00)) {
+				if (self->streamtype != STREAMTYPE_MPEG1 && 
+						self->streamtype != STREAMTYPE_MPEG2 && 
+						(self->streamtype != STREAMTYPE_DIVX4 || data[3] == 0x00)) {
 					unsigned char *codec_data = GST_BUFFER_DATA (self->codec_data);
 					unsigned int codec_data_len = GST_BUFFER_SIZE (self->codec_data);
-					if (self->codec_type == CT_DIVX311)
+					if (self->streamtype == STREAMTYPE_DIVX311)
 						ASYNC_WRITE(codec_data, codec_data_len);
 					else {
 						memcpy(pes_header+pes_header_len, codec_data, codec_data_len);
@@ -1077,7 +1104,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 					self->must_send_header = 0;
 				}
 			}
-			if (self->codec_type == CT_H264) {  // MKV stuff
+			if (self->streamtype == STREAMTYPE_H264) {  // MKV stuff
 				unsigned int pos = 0;
 				if (self->h264_nal_len_size == 4) {
 					while(TRUE) {
@@ -1134,13 +1161,13 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 					data_len = dest_pos;
 				}
 			}
-			else if (self->codec_type == CT_MPEG4_PART2) {
+			else if (self->streamtype == STREAMTYPE_MPEG4_P2) {
 				if (data[0] || data[1] || data[2] != 1) {
 					memcpy(pes_header+pes_header_len, "\x00\x00\x01", 3);
 					pes_header_len += 3;
 				}
 			}
-			else if (self->codec_type == CT_DIVX311) {
+			else if (self->streamtype == STREAMTYPE_DIVX311) {
 				if (data[0] || data[1] || data[2] != 1 || data[3] != 0xb6) {
 					memcpy(pes_header+pes_header_len, "\x00\x00\x01\xb6", 4);
 					pes_header_len += 4;
@@ -1281,7 +1308,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 		payload_len += GST_BUFFER_SIZE (self->prev_frame);
 #endif
 
-	if (self->codec_type == CT_MPEG2 || self->codec_type == CT_MPEG1) {
+	if (self->streamtype == STREAMTYPE_MPEG2 || self->streamtype == STREAMTYPE_MPEG1) {
 		if (!self->codec_data && data_len > 3 && !data[0] && !data[1] && data[2] == 1 && data[3] == 0xb3) { // sequence header?
 			gboolean ok = TRUE;
 			unsigned int pos = 4;
@@ -1441,12 +1468,10 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		switch (mpegversion) {
 			case 1:
 				streamtype = STREAMTYPE_MPEG1;
-				self->codec_type = CT_MPEG1;
 				GST_INFO_OBJECT (self, "MIMETYPE video/mpeg1 -> VIDEO_SET_STREAMTYPE, 6");
 			break;
 			case 2:
 				streamtype = STREAMTYPE_MPEG2;
-				self->codec_type = CT_MPEG2;
 				GST_INFO_OBJECT (self, "MIMETYPE video/mpeg2 -> VIDEO_SET_STREAMTYPE, 0");
 			break;
 			case 4:
@@ -1455,7 +1480,6 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 				if (codec_data) {
 					GST_INFO_OBJECT (self, "MPEG4 have codec data");
 					self->codec_data = gst_value_get_buffer (codec_data);
-					self->codec_type = CT_MPEG4_PART2;
 					gst_buffer_ref (self->codec_data);
 				}
 				streamtype = STREAMTYPE_MPEG4_P2;
@@ -1471,7 +1495,6 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		if (codec_data) {
 			GST_INFO_OBJECT (self, "have 3ivx codec... handle as CT_MPEG4_PART2");
 			self->codec_data = gst_value_get_buffer (codec_data);
-			self->codec_type = CT_MPEG4_PART2;
 			gst_buffer_ref (self->codec_data);
 		}
 		streamtype = STREAMTYPE_MPEG4_P2;
@@ -1596,13 +1619,11 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 				data[3]= B_SET_BITS("height [1.0]", B_GET_BITS(height,1,0), 7, 6) |
 					B_SET_BITS("'100000'", 0x20, 5, 0);
 				streamtype = STREAMTYPE_DIVX311;
-				self->codec_type = CT_DIVX311;
 				GST_INFO_OBJECT (self, "MIMETYPE video/x-divx vers. 3 -> VIDEO_SET_STREAMTYPE, 13");
 			}
 			break;
 			case 4:
 				streamtype = STREAMTYPE_DIVX4;
-				self->codec_type = CT_DIVX4;
 				self->codec_data = gst_buffer_new_and_alloc(12);
 				guint8 *data = GST_BUFFER_DATA(self->codec_data);
 				memcpy(data, "\x00\x00\x01\xb2\x44\x69\x76\x58\x34\x41\x4e\x44", 12);
@@ -1661,6 +1682,8 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 				if ( streamtype != 0 && streamtype != 6 )
 					GST_ELEMENT_ERROR (self, STREAM, CODEC_NOT_FOUND, (NULL), ("hardware decoder can't handle streamtype %i", streamtype));
 		}
+		self->streamtype = streamtype;
+
 		ioctl(self->fd, VIDEO_PLAY);
 		self->dec_running = TRUE;
 	} else
@@ -1774,9 +1797,9 @@ gst_dvbvideosink_stop (GstBaseSink * basesink)
 		fclose(f);
 	}
 
-	close (READ_SOCKET (self));
+	close (READ_SOCKET  (self));
 	close (WRITE_SOCKET (self));
-	READ_SOCKET (self) = -1;
+	READ_SOCKET (self)  = -1;
 	WRITE_SOCKET (self) = -1;
 
 	return TRUE;

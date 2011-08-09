@@ -70,8 +70,6 @@ typedef struct _GstDVBVideoSink		GstDVBVideoSink;
 typedef struct _GstDVBVideoSinkClass	GstDVBVideoSinkClass;
 typedef struct _GstDVBVideoSinkPrivate	GstDVBVideoSinkPrivate;
 
-typedef enum { CT_MPEG1, CT_MPEG2, CT_H264, CT_DIVX311, CT_DIVX4, CT_MPEG4_PART2 } t_codec_type;
-
 typedef struct queue_entry
 {
 	struct queue_entry *next;
@@ -92,7 +90,6 @@ struct _GstDVBVideoSink
 	gint h264_nal_len_size;
 
 	GstBuffer *codec_data;
-	t_codec_type codec_type;
 
 #ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
 	/* data needed to pack bitstream (divx5 / xvid) */
@@ -104,6 +101,8 @@ struct _GstDVBVideoSink
 
 	int fd;
 	gboolean dec_running;
+
+	int streamtype;
 
 	int no_write;
 

@@ -764,7 +764,7 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 
 		const GValue *codec_data = gst_structure_get_value (structure, "codec_data");
 		guint8 *h      = GST_BUFFER_DATA(gst_value_get_buffer (codec_data));
-		guint32 h_size = 0; //h_sizesizeof(h) / sizeof(guint8);
+		guint32 h_size = GST_BUFFER_SIZE(gst_value_get_buffer (codec_data));// 0; //h_sizesizeof(h) / sizeof(guint8);
 		//TODO: How to get size of codec_data
 
 		// type_specific_data
@@ -780,25 +780,24 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		//TODO: What code for lossless ?
 		case 9:
 			codec_id = WMA_VERSION_9_PRO;
-			h_size = 18;
+			//h_size = 18;
 			break;
 		case 2:
 			codec_id = WMA_VERSION_2_9 ;
-			h_size = 10;
+			//h_size = 10;
 			break;
 		case 1:
 		default:
 			codec_id = WMA_VERSION_1;
-			h_size = 0;
+			//h_size = 0;
 			break;
 		}
-	
-		
+
 		self->initial_header_private_data_size = 104 + h_size;
 		self->initial_header_private_data = 
 			(guint8*) malloc(sizeof(guint8) * self->initial_header_private_data_size);
 		memset (self->initial_header_private_data, 0, self->initial_header_private_data_size);
-		
+
 		guint8 ASF_Stream_Properties_Object[16] =
 			{0x91,0x07,0xDC,0xB7,0xB7,0xA9,0xCF,0x11,0x8E,0xE6,0x00,0xC0,0x0C,0x20,0x53,0x65};
 		memcpy(self->initial_header_private_data + 0, ASF_Stream_Properties_Object, 16); // ASF_Stream_Properties_Object
@@ -825,7 +824,7 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		guint32 error_correction_data_length = 8;
 		memcpy(self->initial_header_private_data + 68, &error_correction_data_length, 4); //error_correction_data_length
 
-		guint16 flags = 1; // stream_number
+		guint16 flags = 1; // stream_number + encrypted flags
 		memcpy(self->initial_header_private_data + 72, &flags, 2); //flags
 
 		guint32 reserved = 0;
@@ -1265,6 +1264,15 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 
 	if (self->aac_adts_header_valid)
 		size += 7;
+
+#if 0
+	printf("->Timestamp: %lld\n", timestamp);
+#endif
+
+	// The Player tells us that most of the pts is invalid for wma
+	//TODO: This can only be a quick hack and has to be investigated further
+	if (self->bypass == BYPASS_WMA) 
+		timestamp = 0;
 
 	pes_header_size = buildPesHeader(pes_header, size, timestamp, 0xC0/*MPEG_AUDIO_PES_START_CODE*/);
 

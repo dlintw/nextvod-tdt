@@ -1648,7 +1648,7 @@ $(DEPDIR)/%gst_plugins_base: $(DEPDIR)/gst_plugins_base.do_compile
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 # GST-PLUGINS-GOOD
-$(DEPDIR)/gst_plugins_good.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_gst_plugins_good@
+$(DEPDIR)/gst_plugins_good.do_prepare: bootstrap gstreamer gst_plugins_base libsoup @DEPENDS_gst_plugins_good@
 	@PREPARE_gst_plugins_good@
 	touch $@
 
