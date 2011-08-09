@@ -1,12 +1,13 @@
 #!/bin/sh
 
 MODDIR=/lib/modules
+echo "init frontpanel"
 insmod $MODDIR/vfd.ko
 insmod $MODDIR/aotom.ko
-#insmod $MODDIR/nuvoton.ko
+insmod $MODDIR/simu_button.ko
+insmod $MODDIR/encrypt.ko
 
 if [ -e /var/etc/.firstboot ]; then
-   #fp_control does not work here
    echo "WAIT 1 min" >/dev/vfd
    echo "WAIT 1 min"
    rm /var/etc/.firstboot
@@ -14,12 +15,12 @@ if [ -e /var/etc/.firstboot ]; then
 fi
 
 /etc/init.d/mountvirtfs start
-
 /etc/init.d/portmap start
 
 insmod $MODDIR/e2_proc.ko
 
 # start automounter with umount timeout of 5 seconds
+insmod $MODDIR/autofs4.ko
 /usr/sbin/automount --timeout=5 /autofs file /etc/auto.usb
 
 if [ ! -e /var/etc/.firstboot ]; then
@@ -28,20 +29,18 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/mountall start
    /etc/init.d/hostname start
 
-   fp_control -c
-
    echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/login
 
    echo "init stmfb"
    insmod $MODDIR/stmcore-display-sti7105.ko
-   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:15m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
+   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:15m:pal:yuv:yuv
 
    echo "LOADING MODULES"   
-   fp_control -t "LOADING MODULES"
+   echo "LOAD" > /dev/vfd
 
    if [ ! -e /boot/audio.elf ]; then
-      fp_control -t "FW MISSING!!!"
+      echo "FW MISSING!!!"
    fi
 
    echo "load a firmware"
@@ -56,41 +55,39 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mme_host.ko transport0=shm
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko type=spark7162_avs
+   insmod $MODDIR/avs.ko type=avs_pio
 
    player=`cat /proc/stb/player/version`
-   if [ $player=='player179' ]; then
-      echo "init player 179"
-   else
-      echo "init player 131"
-   fi
+   player=`cat /proc/stb/player/version | awk '{ print substr( $0, length($0) - 2, length($0) ) }'`
+   echo "init player $player"
+
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
-   if [ $player=='player179' ]; then
-      insmod $MODDIR/stmvout.ko
-      insmod $MODDIR/stmvbi.ko
+   if [ $player -gt 131 ]; then
+	insmod $MODDIR/stmvout.ko
+	insmod $MODDIR/stmvbi.ko
    fi
    insmod $MODDIR/pseudocard.ko
 
    insmod $MODDIR/spark7162.ko
-   #insmod $MODDIR/starci.ko 
-   if [ $player=='player179' ]; then
-      insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
-      insmod $MODDIR/stm_monitor.ko
-      insmod $MODDIR/stmsysfs.ko
-      insmod $MODDIR/stmdvb.ko
+   if [ $player -gt 131 ]; then
+	insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+	insmod $MODDIR/stm_monitor.ko
+	insmod $MODDIR/stmsysfs.ko
+	insmod $MODDIR/stmdvb.ko
    else
-      insmod $MODDIR/pti.ko
-      insmod $MODDIR/stmdvb.ko
-      insmod $MODDIR/stm_monitor.ko
-   fi
+	insmod $MODDIR/pti.ko
+	insmod $MODDIR/stmdvb.ko
+	insmod $MODDIR/stm_monitor.ko
+   fi	
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko
+   insmod $MODDIR/smartcard.ko
 
    insmod $MODDIR/bpamem.ko
    mknod /dev/bpamem c 153 0 
@@ -98,54 +95,50 @@ if [ ! -e /var/etc/.firstboot ]; then
    showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
 
-   echo "init frontpanel"
-   insmod $MODDIR/simu_button.ko
+   echo "init lircd"
+   /usr/bin/lircd
 
    mknod /dev/rc c 147 1 
+   mknod /dev/sci0 c 169 0
+   mknod /dev/sci1 c 169 1 
+   major=$(awk "\$2==\"sparkid\" {print \$1}" /proc/devices)
+   rm -f /dev/sparkid
+   mknod /dev/sparkid c $major 0 
 
-   #params:
-   #period
-   #delay
-   
-   /usr/bin/lircd
-   
-   /bin/evremote2 10 120 &
-
-   # timefix e2
-   # date -s "121220001970"
+   /bin/evremote2 spark 100 &
 
    stfbcontrol a 255
 
    /etc/init.d/mountall start
-
    /etc/init.d/hostname start
 
    echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/login
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
+
 	mknod /dev/dvb/adapter0/frontend1 c 212 19
 	mknod /dev/dvb/adapter0/frontend2 c 212 35
 	mknod /dev/dvb/adapter0/frontend3 c 212 51
 	
-   NFS=$(grep -c 'nfs' /proc/cmdline)
+   NFS=`grep -c nfs /proc/cmdline`
    if [ "$NFS" -eq "1" ]; then 
       echo "Booting from nfs, don't set network" 
    else 
       if [ -e /etc/network/interfaces ]; then 
 	 ip addr flush eth0 
 	 /etc/init.d/networking stop 
-	 TEST=$(grep -c 'dhcp' /etc/network/interfaces) 
-	 if [ "$(TEST)" -eq "1" ]; then 
-	    echo dhcp
+	 DHCP=`grep -c dhcp /etc/network/interfaces`
+	 if [ "$DHCP" -eq "1" ]; then 
+	    echo "Starting dhcp"
             /etc/init.d/udhcpc start 
 	 fi 
 	 /etc/init.d/networking start 
       fi 
    fi
 
-   echo "LOADING e2" > /dev/vfd
-   echo "LOADING e2"
+   echo "run" > /dev/vfd
+   echo "LOADING E2"
 
    until false
    do
@@ -156,7 +149,7 @@ if [ ! -e /var/etc/.firstboot ]; then
       case "$rtv" in
 		0) echo "0"
 		   echo "E2 ERROR"
-      	   init 6;;
+		   init 6;;
 		1) echo "1"
 		   echo "SHUTDOWN"
 		   init 0;;
@@ -169,12 +162,12 @@ if [ ! -e /var/etc/.firstboot ]; then
 		   showiframe -p /boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
-           init 6;;
+		   init 6;;
       esac
    done 
 fi
 
 #never reached
-echo "REBOOT ATEVIO7500" > /dev/vfd
-echo "REBOOT ATEVIO7500"
+echo "REBOOT SPARK-7162" > /dev/vfd
+echo "REBOOT SPARK-7162"
 reboot -f
