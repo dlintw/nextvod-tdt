@@ -152,6 +152,37 @@ GST_STATIC_PAD_TEMPLATE (
 		"framed = (boolean) true")
 );
 
+static GstStaticPadTemplate sink_factory_stm_stx7111 =
+GST_STATIC_PAD_TEMPLATE (
+	"sink",
+	GST_PAD_SINK,
+	GST_PAD_ALWAYS,
+	GST_STATIC_CAPS ("audio/mpeg, "
+#if 0
+		"framed = (boolean) true; "
+		"audio/x-aac, "
+		"framed = (boolean) true; "
+		"audio/x-private1-aac, "
+		"framed = (boolean) true; "
+#endif
+		"audio/x-ac3, "
+		"framed = (boolean) true; "
+		"audio/x-private1-ac3, "
+		"framed = (boolean) true; "
+#if 0
+		"audio/x-dts, "
+		"framed = (boolean) true; "
+		"audio/x-private1-dts, "
+		"framed = (boolean) true; "
+#endif
+		"audio/x-private1-lpcm, "
+		"framed = (boolean) true")
+#if 0
+		"audio/x-ms-wma, "
+		"framed = (boolean) true")
+#endif
+);
+
 static GstStaticPadTemplate sink_factory_broadcom =
 GST_STATIC_PAD_TEMPLATE (
 	"sink",
@@ -184,7 +215,7 @@ static void gst_dvbaudiosink_dispose (GObject * object);
 static GstStateChangeReturn gst_dvbaudiosink_change_state (GstElement * element, GstStateChange transition);
 static gint64 gst_dvbaudiosink_get_decoder_time (GstDVBAudioSink *self);
 
-typedef enum { DM7025, DM800, DM8000, DM500HD, DM800SE, DM7020HD } hardware_type_t;
+typedef enum { DM7025, DM800, DM8000, DM500HD, DM800SE, DM7020HD, STX7100, STX7101, STX7109, STX7111, STX7105 } hardware_type_t;
 
 static hardware_type_t hwtype;
 
@@ -243,9 +274,19 @@ gst_dvbaudiosink_base_init (gpointer klass)
 				gst_element_class_add_pad_template (element_class,
 					gst_static_pad_template_get (&sink_factory_broadcom_dts));
 			}
+			else if ( !strncasecmp(string, "UFS912", 6) ) {
+				hwtype = STX7111;
+			}
 		}
 		close(fd);
 	}
+
+	if (hwtype == STX7111) {
+		GST_INFO ("setting STX7111 caps");
+		gst_element_class_add_pad_template (element_class,
+			gst_static_pad_template_get (&sink_factory_stm_stx7111));
+	}
+
 
 	gst_element_class_set_details (element_class, &element_details);
 }
