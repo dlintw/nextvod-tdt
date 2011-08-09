@@ -1,0 +1,727 @@
+*** linux-sh4-2.6.32.28_stm24_0207_orig/drivers/stm/gpio.c	2011-08-06 17:16:42.676314198 +0300
+--- linux-sh4/drivers/stm/gpio.c	2011-08-07 03:21:10.140239689 +0300
+***************
+*** 27,38 ****
+  #include <linux/stm/platform.h>
+  #include <linux/stm/pad.h>
+  #include <linux/stm/pio.h>
+  #include "reg_pio.h"
+  
+  
+- 
+  struct stpio_pin {
+  #ifdef CONFIG_STPIO
+  	void (*func)(struct stpio_pin *pin, void *dev);
+  	void* dev;
+  	unsigned short port_no, pin_no;
+--- 27,42 ----
+  #include <linux/stm/platform.h>
+  #include <linux/stm/pad.h>
+  #include <linux/stm/pio.h>
++ #ifdef CONFIG_PROC_FS
++ #include <linux/proc_fs.h>
++ #include <linux/kallsyms.h>
++ #endif
+  #include "reg_pio.h"
+  
+  
+  struct stpio_pin {
+  #ifdef CONFIG_STPIO
++ 	const char *pin_name;
+  	void (*func)(struct stpio_pin *pin, void *dev);
+  	void* dev;
+  	unsigned short port_no, pin_no;
+***************
+*** 41,47 ****
+  
+  struct stm_gpio_pin {
+  	unsigned char flags;
+! #define PIN_FAKE_EDGE		4
+  #define PIN_IGNORE_EDGE_FLAG	2
+  #define PIN_IGNORE_EDGE_VAL	1
+  #define PIN_IGNORE_RISING_EDGE	(PIN_IGNORE_EDGE_FLAG | 0)
+--- 45,51 ----
+  
+  struct stm_gpio_pin {
+  	unsigned char flags;
+! #define PIN_FAKE_EDGE			4
+  #define PIN_IGNORE_EDGE_FLAG	2
+  #define PIN_IGNORE_EDGE_VAL	1
+  #define PIN_IGNORE_RISING_EDGE	(PIN_IGNORE_EDGE_FLAG | 0)
+***************
+*** 75,81 ****
+  static struct sysdev_class stm_gpio_sysdev_class;
+  
+  
+- 
+  int stm_gpio_num; /* Number of available internal PIOs (pins) */
+  EXPORT_SYMBOL(stm_gpio_num);
+  
+--- 79,84 ----
+***************
+*** 352,357 ****
+--- 355,363 ----
+  
+  	port->pins[offset].direction = direction;
+  	set__PIO_PCx(port->base, offset, direction);
++ 
++ 	if (!port->pins[offset].stpio.pin_name)
++ 		port->pins[offset].stpio.pin_name = "-----";
+  }
+  
+  
+***************
+*** 387,392 ****
+--- 393,400 ----
+  	struct stm_gpio_port *port = to_stm_gpio_port(chip);
+  
+  	set__PIO_PCx__INPUT_HIGH_IMPEDANCE(port->base, offset);
++ 	if (!port->pins[offset].stpio.pin_name)
++ 		port->pins[offset].stpio.pin_name = "-----";
+  
+  	return 0;
+  }
+***************
+*** 399,404 ****
+--- 407,414 ----
+  	__stm_gpio_set(port, offset, value);
+  
+  	set__PIO_PCx__OUTPUT_PUSH_PULL(port->base, offset);
++ 	if (!port->pins[offset].stpio.pin_name)
++ 		port->pins[offset].stpio.pin_name = "-----";
+  
+  	return 0;
+  }
+***************
+*** 465,477 ****
+  
+  	gpio_pin->stpio.port_no = port_no;
+  	gpio_pin->stpio.pin_no = pin_no;
+! 
+  	return &gpio_pin->stpio;
+  }
+  EXPORT_SYMBOL(__stpio_request_pin);
+  
+  void stpio_free_pin(struct stpio_pin *pin)
+  {
+  	stm_pad_release_gpio(stm_gpio(pin->port_no, pin->pin_no));
+  }
+  EXPORT_SYMBOL(stpio_free_pin);
+--- 475,491 ----
+  
+  	gpio_pin->stpio.port_no = port_no;
+  	gpio_pin->stpio.pin_no = pin_no;
+! 	gpio_pin->stpio.pin_name = (name==NULL)?"-----":name;
+  	return &gpio_pin->stpio;
+  }
+  EXPORT_SYMBOL(__stpio_request_pin);
+  
+  void stpio_free_pin(struct stpio_pin *pin)
+  {
++ 	stpio_configure_pin(pin, STPIO_IN);
++ 	pin->pin_name = NULL;
++ 	pin->func = 0;
++ 	pin->dev = 0;
+  	stm_pad_release_gpio(stm_gpio(pin->port_no, pin->pin_no));
+  }
+  EXPORT_SYMBOL(stpio_free_pin);
+***************
+*** 587,592 ****
+--- 601,687 ----
+  }
+  EXPORT_SYMBOL(stpio_set_irq_type);
+  
++ #ifdef CONFIG_PROC_FS
++ 
++ static struct proc_dir_entry *proc_stpio;
++ 
++ static inline const char *stpio_get_direction_name(unsigned int direction)
++ {
++ 	switch (direction) {
++ 	case STPIO_NONPIO:		return "IN  (pull-up)      ";
++ 	case STPIO_BIDIR:		return "BI  (open-drain)   ";
++ 	case STPIO_OUT:			return "OUT (push-pull)    ";
++ 	case STPIO_IN:			return "IN  (Hi-Z)         ";
++ 	case STPIO_ALT_OUT:		return "Alt-OUT (push-pull)";
++ 	case STPIO_ALT_BIDIR:	return "Alt-BI (open-drain)";
++ 	default:				return "forbidden          ";
++ 	}
++ };
++ 
++ static inline const char *stpio_get_handler_name(void *func)
++ {
++ 	static char sym_name[KSYM_NAME_LEN];
++ 	char *modname;
++ 	unsigned long symbolsize, offset;
++ 	const char *symb;
++ 
++ 	if (func == NULL)
++ 		return "";
++ 
++ 	symb = kallsyms_lookup((unsigned long)func, &symbolsize, &offset,
++ 			&modname, sym_name);
++ 
++ 	return symb ? symb : "???";
++ }
++ 
++ static int stpio_read_proc(char *page, char **start, off_t off, int count,
++ 		int *eof, void *data_unused)
++ {
++ 	int len;
++ 	int port_no, pin_no;
++ 	off_t begin = 0;
++ 	int num_ports = stm_gpio_num / STM_GPIO_PINS_PER_PORT;
++ 	struct stm_gpio_port *port;
++ 	struct stm_gpio_pin *pin;
++ 
++ 	len = sprintf(page, "  port      name          direction\n");
++ 	for (port_no = 0; port_no < num_ports; port_no++)
++ 	{
++ 		for (pin_no = 0; pin_no < STM_GPIO_PINS_PER_PORT; pin_no++) {
++ 
++ 			port = &stm_gpio_ports[port_no];
++ 			if(!port) continue;
++ 
++ 			pin = &port->pins[pin_no];
++ 			if(!pin) continue;
++ 
++ 			char *name = pin->stpio.pin_name ? pin->stpio.pin_name : "";
++ 			len += sprintf(page + len,
++ 					"PIO %d.%d [%-10s] [%s] [%s]\n",
++ 					port_no, pin_no, name,
++ 					stpio_get_direction_name(pin->direction),
++ 					stpio_get_handler_name(pin->stpio.func));
++ 
++ 			if (len + begin > off + count)
++ 				goto done;
++ 			if (len + begin < off) {
++ 				begin += len;
++ 				len = 0;
++ 			}
++ 		}
++ 	}
++ 
++ 	*eof = 1;
++ 
++ done:
++ 	if (off >= len + begin)
++ 		return 0;
++ 	*start = page + (off - begin);
++ 	return ((count < begin + len - off) ? count : begin + len - off);
++ }
++ 
++ #endif /* CONFIG_PROC_FS */
++ 
+  #endif /* CONFIG_STPIO */
+  
+  
+***************
+*** 967,972 ****
+--- 1062,1073 ----
+  {
+  	int ret;
+  
++ #ifdef CONFIG_PROC_FS
++ 	proc_stpio = create_proc_entry("stpio", 0, NULL);
++ 	if (proc_stpio)
++ 		proc_stpio->read_proc = stpio_read_proc;
++ #endif
++ 
+  	ret = sysdev_class_register(&stm_gpio_sysdev_class);
+  	if (ret)
+  		return ret;
+*** linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/phy/phy_device.c	2011-08-04 16:27:16.440157990 +0300
+--- linux-sh4/drivers/net/phy/phy_device.c	2011-08-05 17:35:37.308158605 +0300
+***************
+*** 962,968 ****
+  		return retval;
+  	}
+  
+! 	pr_debug("%s: Registered new driver\n", new_driver->name);
+  
+  	return 0;
+  }
+--- 962,968 ----
+  		return retval;
+  	}
+  
+! 	pr_info("%s: Registered new driver (0x%08x)\n", new_driver->name, new_driver->phy_id);
+  
+  	return 0;
+  }
+*** linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/stmmac/stmmac_mdio.c	2011-08-06 17:16:40.233314199 +0300
+--- linux-sh4/drivers/net/stmmac/stmmac_mdio.c	2011-08-07 00:24:49.531239690 +0300
+***************
+*** 169,174 ****
+--- 169,175 ----
+  	priv->mii = new_bus;
+  
+  	found = 0;
++ 
+  	for (addr = 0; addr < PHY_MAX_ADDR; addr++) {
+  		struct phy_device *phydev = new_bus->phy_map[addr];
+  		if (phydev) {
+***************
+*** 191,202 ****
+  			 * and no PHY number was provided to the MAC,
+  			 * use the one probed here.
+  			 */
+! 			if ((priv->plat->bus_id == mdio_bus_data->bus_id) &&
+! 			    (priv->plat->phy_addr == -1))
+  				priv->plat->phy_addr = addr;
+  
+- 			act = (priv->plat->bus_id == mdio_bus_data->bus_id) &&
+- 				(priv->plat->phy_addr == addr);
+  			switch (phydev->irq) {
+  			case PHY_POLL:
+  				irq_str = "POLL";
+--- 192,213 ----
+  			 * and no PHY number was provided to the MAC,
+  			 * use the one probed here.
+  			 */
+! 
+! 			act = 0;
+! 
+! 			if ((priv->plat->bus_id == mdio_bus_data->bus_id) && (/*(priv->plat->phy_addr == -1) ||*/
+! 					(phydev->phy_id == 0x0181b880) || // Davicom DM9161E
+! 					(phydev->phy_id == 0x0181b8a0) || // Davicom DM9161A
+! 					(phydev->phy_id == 0x00181b80) || // Davicom DM9131
+! 					(phydev->phy_id == 0x1c040011) || // STe100p
+! 					(phydev->phy_id == 0x0007c0f1) || //
+! 					(phydev->phy_id == 0x00008201) || //
+! 					(phydev->phy_id == 0x001cc912)))  // RTL821x
+! 			{
+  				priv->plat->phy_addr = addr;
++ 				act=1;
++ 			}
+  
+  			switch (phydev->irq) {
+  			case PHY_POLL:
+  				irq_str = "POLL";
+*** linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb680/setup.c	2011-08-08 23:52:34.947280627 +0300
+--- linux-sh4/arch/sh/boards/mach-mb680/setup.c	2011-08-09 02:32:44.627280626 +0300
+***************
+*** 24,42 ****
+  #include <linux/stm/stx7105.h>
+  #include <linux/stm/pci-synopsys.h>
+  #include <linux/mtd/mtd.h>
+! #include <linux/mtd/physmap.h>
+  #include <linux/mtd/partitions.h>
+  #include <asm/irq-ilc.h>
+  #include <mach/common.h>
+  #include "../mach-st/mb705-epld.h"
+  
+! 
+! 
+! #define MB680_PIO_PHY_RESET stm_gpio(5, 5)
+! #define MB680_PIO_PCI_SERR stm_gpio(6, 4)
+! #define MB680_PIO_PCI_RESET stm_gpio(15, 6)
+! #define MB680_PIO_MII_BUS_SWITCH stm_gpio(11, 2)
+! 
+  
+  
+  static void __init mb680_setup(char** cmdline_p)
+--- 24,63 ----
+  #include <linux/stm/stx7105.h>
+  #include <linux/stm/pci-synopsys.h>
+  #include <linux/mtd/mtd.h>
+! #include <linux/mtd/nand.h>
+  #include <linux/mtd/partitions.h>
++ #include <linux/bpa2.h>
+  #include <asm/irq-ilc.h>
+  #include <mach/common.h>
+  #include "../mach-st/mb705-epld.h"
++ #include <linux/stm/pio.h>
+  
+! const char *LMI_IO_partalias[] = { "v4l2-coded-video-buffers", "BPA2_Region1", "v4l2-video-buffers" ,
+!                                     "coredisplay-video", "gfx-memory", "BPA2_Region0", "LMI_VID", NULL };
+!  
+! /*
+! 0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
+! 0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
+! 0x40800000 - 0x47FFFFFF - linux   (120mb) 
+! 0x48000000 - 0x49FFFFFF - bigphys ( 32mb)
+! 0x4A000000 - 0x4FFFFFFF - lmi_io  ( 96mb)
+! */
+! static struct bpa2_partition_desc bpa2_parts_table[] = {
+!     {
+!  	    .name  = "bigphysarea",
+!  	    .start = 0x48000000,
+!  	    .size  = 0x02000000, /* 32 Mb */
+!  	    .flags = 0,
+!  	    .aka   = NULL
+!     }, 
+!     {
+!  	    .name  = "LMI_IO",
+!  	    .start = 0x4A000000,
+!  	    .size  = 0x06000000, /* 92 Mb */
+!  	    .flags = 0,
+!  	    .aka   = LMI_IO_partalias
+!     }, 
+!  };
+  
+  
+  static void __init mb680_setup(char** cmdline_p)
+***************
+*** 47,211 ****
+  
+  	stx7105_configure_asc(2, &(struct stx7105_asc_config) {
+  			.routing.asc2 = stx7105_asc2_pio4,
+! 			.hw_flow_control = 1,
+  			.is_console = 1, });
+- 	stx7105_configure_asc(3, &(struct stx7105_asc_config) {
+- 			.hw_flow_control = 1,
+- 			.is_console = 0, });
+- }
+- 
+- 
+  
+! static struct platform_device mb680_leds = {
+! 	.name = "leds-gpio",
+! 	.id = 0,
+! 	.dev.platform_data = &(struct gpio_led_platform_data) {
+! 		.num_leds = 2,
+! 		.leds = (struct gpio_led[]) {
+! 			{
+! 				.name = "LD5",
+! 				.default_trigger = "heartbeat",
+! 				.gpio = stm_gpio(2, 4),
+! 			}, {
+! 				.name = "LD6",
+! 				.gpio = stm_gpio(2, 3),
+! 			},
+! 		},
+! 	},
+! };
+! 
+! /*
+!  * mb680 rev C added software control of the PHY reset, and buffers which
+!  * allow isolation of the MII pins so that their use as MODE pins is not
+!  * compromised by the PHY.
+!  */
+! 
+! /*
+!  * When connected to the mb705, MII reset is controlled by an EPLD register
+!  * on the mb705.
+!  * When used standalone a PIO pin is used, and J47-C must be fitted.
+!  *
+!  * Timings:
+!  *    PHY         | Reset low | Post reset stabilisation
+!  *    ------------+-----------+-------------------------
+!  *    DB83865     |   150uS   |         20mS
+!  *    LAN8700     |   100uS   |         800nS
+!  */
+! #ifdef CONFIG_SH_ST_MB705
+! static void ll_phy_reset(void)
+! {
+! 	mb705_reset(EPLD_EMI_RESET_SW0, 150);
+  }
+! #else
+! static void ll_phy_reset(void)
+! {
+! 	gpio_set_value(MB680_PIO_PHY_RESET, 0);
+! 	udelay(150);
+! 	gpio_set_value(MB680_PIO_PHY_RESET, 1);
+! }
+! #endif
+  
+  static int mb680_phy_reset(void *bus)
+  {
+! 	gpio_set_value(MB680_PIO_MII_BUS_SWITCH, 1);
+! 	ll_phy_reset();
+! 	gpio_set_value(MB680_PIO_MII_BUS_SWITCH, 0);
+! 	mdelay(20);
+! 
+! 	return 0;
+  }
+  
+  static struct stmmac_mdio_bus_data stmmac_mdio_bus = {
+! 	.bus_id = 0,
+! 	.phy_reset = mb680_phy_reset,
+! 	.phy_mask = 0,
+  };
+  
+! static struct platform_device *mb680_devices[] __initdata = {
+! 	&mb680_leds,
+! };
+! 
+! /* PCI configuration */
+! 
+! #ifdef CONFIG_SH_ST_MB705
+! static void mb705_epld_pci_reset(void)
+! {
+! 	mb705_reset(EPLD_EMI_RESET_SW1, 1000);
+! 
+! 	/* PCI spec says one second */
+! 	mdelay(10);
+! }
+! #endif
+! 
+! /*
+!  * J22-A must be removed, J22-B must be 2-3.
+!  */
+! static struct stm_plat_pci_config mb680_pci_config = {
+! 	.pci_irq = {
+! 		[0] = PCI_PIN_DEFAULT,
+! 		[1] = PCI_PIN_DEFAULT,
+! 		[2] = PCI_PIN_DEFAULT,
+! 		[3] = PCI_PIN_UNUSED
+! 	},
+! 	.serr_irq = PCI_PIN_UNUSED, /* Modified in mb680_device_init() below */
+! 	.idsel_lo = 30,
+! 	.idsel_hi = 30,
+! 	.req_gnt = {
+! 		[0] = PCI_PIN_DEFAULT,
+! 		[1] = PCI_PIN_UNUSED,
+! 		[2] = PCI_PIN_UNUSED,
+! 		[3] = PCI_PIN_UNUSED
+  	},
+! 	.pci_clk = 33333333,
+! 	/* When connected to the mb705, PCI reset is controlled by an EPLD
+! 	 * register on the mb705. When used standalone a PIO pin is used,
+! 	 * and J47-D, J9-G must be fitted. */
+! #ifdef CONFIG_SH_ST_MB705
+! 	.pci_reset = mb705_epld_pci_reset,
+! #else
+! 	.pci_reset_gpio = MB680_PIO_PCI_RESET,
+! #endif
+  };
+  
+! int pcibios_map_platform_irq(struct pci_dev *dev, u8 slot, u8 pin)
+! {
+!        /* We can use the standard function on this board */
+!        return stx7105_pcibios_map_platform_irq(&mb680_pci_config, pin);
+! }
+  
+! void __init mbxxx_configure_audio_pins(void)
+! {
+! 	stx7105_configure_audio(&(struct stx7105_audio_config) {
+! 			.pcm_player_0_output =
+! 					stx7105_pcm_player_0_output_6_channels,
+! 			.spdif_player_output_enabled = 1,
+! 			.pcm_reader_input_enabled =
+! 					cpu_data->type == CPU_STX7105, });
+! }
+  
+  static int __init mb680_devices_init(void)
+  {
+! 	/* Setup the PCI_SERR# PIO
+! 	 * J20-A - open, J27-E - closed */
+! 	if (gpio_request(MB680_PIO_PCI_SERR, "PCI_SERR#") == 0) {
+! 		gpio_direction_input(MB680_PIO_PCI_SERR);
+! 		mb680_pci_config.serr_irq = gpio_to_irq(MB680_PIO_PCI_SERR);
+! 		set_irq_type(mb680_pci_config.serr_irq, IRQ_TYPE_LEVEL_LOW);
+! 	} else {
+! 		printk(KERN_WARNING "mb680: Failed to claim PCI_SERR PIO!\n");
+! 	}
+! 	stx7105_configure_pci(&mb680_pci_config);
+! 
+  	stx7105_configure_sata(0);
+  
+! 	/* Valid only for mb680 rev. A & rev. B (they had two SATA lines) */
+! 	stx7105_configure_sata(1);
+! 
+! 	stx7105_configure_pwm(&(struct stx7105_pwm_config) {
+! 			.out0 = stx7105_pwm_out0_pio13_0,
+! 			.out1 = stx7105_pwm_out1_disabled, });
+  
+- 	/* NIM CD I2C bus*/
+  	stx7105_configure_ssc_i2c(1, &(struct stx7105_ssc_config) {
+  			.routing.ssc1.sclk = stx7105_ssc1_sclk_pio2_5,
+  			.routing.ssc1.mtsr = stx7105_ssc1_mtsr_pio2_6, });
+--- 68,150 ----
+  
+  	stx7105_configure_asc(2, &(struct stx7105_asc_config) {
+  			.routing.asc2 = stx7105_asc2_pio4,
+! 			.hw_flow_control = 0,
+  			.is_console = 1, });
+  
+!    	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
+  }
+! 
+! static struct stpio_pin *phy_reset_pin;
+  
+  static int mb680_phy_reset(void *bus)
+  {
+! 	stpio_set_pin(phy_reset_pin, 0);
+! 	udelay(100);
+! 	stpio_set_pin(phy_reset_pin, 1);
+!  	return 0;
+  }
+  
+  static struct stmmac_mdio_bus_data stmmac_mdio_bus = {
+!   	.bus_id = 0,
+!  	.phy_reset = mb680_phy_reset,
+!   	.phy_mask = 0,
+  };
+  
+! static struct mtd_partition spark7162_nand_flash_partitions[] = {
+! 	{
+! 		.name	= "uboot",
+! 		.offset	= 0,
+! 		.size 	= 0x00100000 		//1M
+  	},
+! 	{
+! 		.name	= "Spark kernel",
+! 		.offset	= 0x00100000,
+! 		.size 	= 0x00700000 		//7M
+! 	}, {
+! 		.name	= "Spark Userfs",
+! 		.offset	= 0x00800000,
+! 		.size	= 0x17800000  		//376M
+! 	}, {
+! 		.name	= "E2 kernel",
+! 		.offset	= 0x18000000,
+! 		.size	= 0x00800000 		//8M
+! 	}, {
+! 		.name	= "E2 Userfs",
+! 		.offset	= 0x18800000,
+! 		.size	= 0x07700000 		//119M
+! 	}
+  };
+  
+! struct stm_nand_bank_data spark7162_nand_bank_data = {
+! 	.csn			= 0, // boot from nand
+! 	.nr_partitions	= ARRAY_SIZE(spark7162_nand_flash_partitions),
+! 	.partitions		= spark7162_nand_flash_partitions,
+! 	.options		= NAND_NO_AUTOINCR | NAND_USE_FLASH_BBT,
+! 	.timing_data		= &(struct stm_nand_timing_data) {
+! 		.sig_setup		= 50,		/* times in ns */
+! 		.sig_hold		= 50,
+! 		.CE_deassert	= 0,
+! 		.WE_to_RBn	= 100,
+! 		.wr_on		= 10,
+! 		.wr_off		= 40,
+! 		.rd_on		= 10,
+! 		.rd_off		= 40,
+! 		.chip_delay	= 30,		/* in us */
+! 	},
+  
+! 	.emi_withinbankoffset	= 0,
+! };
+  
+  static int __init mb680_devices_init(void)
+  {
+! #if 0
+  	stx7105_configure_sata(0);
++ #endif
+  
+! 	stx7105_configure_ssc_i2c(0, &(struct stx7105_ssc_config) {
+! 			.routing.ssc0.sclk = stx7105_ssc0_sclk_pio2_2,
+! 			.routing.ssc0.mtsr = stx7105_ssc0_mtsr_pio2_3, });
+  
+  	stx7105_configure_ssc_i2c(1, &(struct stx7105_ssc_config) {
+  			.routing.ssc1.sclk = stx7105_ssc1_sclk_pio2_5,
+  			.routing.ssc1.mtsr = stx7105_ssc1_mtsr_pio2_6, });
+***************
+*** 213,218 ****
+--- 152,158 ----
+  	stx7105_configure_ssc_i2c(2, &(struct stx7105_ssc_config) {
+  			.routing.ssc2.sclk = stx7105_ssc2_sclk_pio3_4,
+  			.routing.ssc2.mtsr = stx7105_ssc2_mtsr_pio3_5, });
++ 
+  	/* HDMI I2C bus */
+  	stx7105_configure_ssc_i2c(3, &(struct stx7105_ssc_config) {
+  			.routing.ssc3.sclk = stx7105_ssc3_sclk_pio3_6,
+***************
+*** 230,236 ****
+  	 * alt	| 12[6]	J5B:1-2  J6G:open	14[7]	J10B:1-2  J11H:open
+  	 */
+  	stx7105_configure_usb(0, &(struct stx7105_usb_config) {
+! 			.ovrcur_mode = stx7105_usb_ovrcur_active_low,
+  			.pwr_enabled = 1,
+  			.routing.usb0.ovrcur = stx7105_usb0_ovrcur_pio4_4,
+  			.routing.usb0.pwr = stx7105_usb0_pwr_pio4_5, });
+--- 170,176 ----
+  	 * alt	| 12[6]	J5B:1-2  J6G:open	14[7]	J10B:1-2  J11H:open
+  	 */
+  	stx7105_configure_usb(0, &(struct stx7105_usb_config) {
+! 			.ovrcur_mode = stx7105_usb_ovrcur_disabled,
+  			.pwr_enabled = 1,
+  			.routing.usb0.ovrcur = stx7105_usb0_ovrcur_pio4_4,
+  			.routing.usb0.pwr = stx7105_usb0_pwr_pio4_5, });
+***************
+*** 240,266 ****
+  			.routing.usb1.ovrcur = stx7105_usb1_ovrcur_pio4_6,
+  			.routing.usb1.pwr = stx7105_usb1_pwr_pio4_7, });
+  
+- 	gpio_request(MB680_PIO_PHY_RESET, "notPioResetMII");
+- 	gpio_direction_output(MB680_PIO_PHY_RESET, 1);
+- 	gpio_request(MB680_PIO_MII_BUS_SWITCH, "MIIBusSwitchnotOE");
+- 	gpio_direction_output(MB680_PIO_MII_BUS_SWITCH, 1);
+- 
+  	stx7105_configure_ethernet(0, &(struct stx7105_ethernet_config) {
+  			.mode = stx7105_ethernet_mode_mii,
+  			.ext_clk = 1,
+  			.phy_bus = 0,
+  			.phy_addr = -1,
+! 			.mdio_bus_data = &stmmac_mdio_bus,
+! 		});
+  
+- 	/*
+- 	 * Check jumpers before using IR:
+- 	 * On the mb705:
+- 	 *	J25A : 1-2
+- 	 *	J25B : 1-2 (UHF), 2-3 (IR)
+- 	 * On the mb680:
+- 	 *	J15A : fitted
+- 	 */
+  	stx7105_configure_lirc(&(struct stx7105_lirc_config) {
+  #ifdef CONFIG_LIRC_STM_UHF
+  			.rx_mode = stx7105_lirc_rx_mode_uhf,
+--- 180,192 ----
+  			.routing.usb1.ovrcur = stx7105_usb1_ovrcur_pio4_6,
+  			.routing.usb1.pwr = stx7105_usb1_pwr_pio4_7, });
+  
+  	stx7105_configure_ethernet(0, &(struct stx7105_ethernet_config) {
+  			.mode = stx7105_ethernet_mode_mii,
+  			.ext_clk = 1,
+  			.phy_bus = 0,
+  			.phy_addr = -1,
+! 			.mdio_bus_data = &stmmac_mdio_bus, });
+  
+  	stx7105_configure_lirc(&(struct stx7105_lirc_config) {
+  #ifdef CONFIG_LIRC_STM_UHF
+  			.rx_mode = stx7105_lirc_rx_mode_uhf,
+***************
+*** 270,276 ****
+  			.tx_enabled = 1,
+  			.tx_od_enabled = 1, });
+  
+! 	return platform_add_devices(mb680_devices, ARRAY_SIZE(mb680_devices));
+  }
+  arch_initcall(mb680_devices_init);
+  
+--- 196,210 ----
+  			.tx_enabled = 1,
+  			.tx_od_enabled = 1, });
+  
+! 	phy_reset_pin = stpio_request_set_pin(5, 7, "phy_reset",  STPIO_OUT, 1);
+! 	phy_reset_pin = stpio_request_set_pin(6, 4, "FLASH_WP",  STPIO_OUT, 1);
+! 
+! 	/* enable optical out */
+! 	stpio_request_pin (10, 6, "opt_out", STPIO_ALT_OUT);
+! 
+! 	stx7105_configure_nand_flex(1, &spark7162_nand_bank_data, 1);
+! 
+! 	return 0;
+  }
+  arch_initcall(mb680_devices_init);
+  
+***************
+*** 296,302 ****
+  }
+  
+  struct sh_machine_vector mv_mb680 __initmv = {
+! 	.mv_name		= "STx7105 Mboard",
+  	.mv_setup		= mb680_setup,
+  	.mv_nr_irqs		= NR_IRQS,
+  	.mv_init_irq		= mb680_init_irq,
+--- 230,236 ----
+  }
+  
+  struct sh_machine_vector mv_mb680 __initmv = {
+! 	.mv_name		= "STx7105 Spark7162 Mboard",
+  	.mv_setup		= mb680_setup,
+  	.mv_nr_irqs		= NR_IRQS,
+  	.mv_init_irq		= mb680_init_irq,

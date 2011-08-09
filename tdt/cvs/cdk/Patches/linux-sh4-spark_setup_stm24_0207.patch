@@ -300,8 +300,9 @@
   			switch (phydev->irq) {
   			case PHY_POLL:
   				irq_str = "POLL";
+
 *** linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb618/setup.c	2011-08-06 17:16:45.143314199 +0300
---- linux-sh4/arch/sh/boards/mach-mb618/setup.c	2011-08-07 15:17:05.760215751 +0300
+--- linux-sh4/arch/sh/boards/mach-mb618/setup.c	2011-08-08 04:57:30.889095622 +0300
 ***************
 *** 12,22 ****
 --- 12,24 ----
@@ -509,17 +510,13 @@
   static int mb618_phy_reset(void *bus)
   {
   	epld_write(1, 0);	/* bank = Ctrl */
---- 72,181 ----
+--- 72,177 ----
   
   	stx7111_early_device_init();
   
 !   	stx7111_configure_asc(2, &(struct stx7111_asc_config) {
 !   			.hw_flow_control = 1,
 !   			.is_console = 1, });
-! 
-!   	stx7111_configure_asc(3, &(struct stx7111_asc_config) {
-!   			.hw_flow_control = 1,
-!   			.is_console = 0, });
   
 +   	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
 + }
@@ -635,7 +632,7 @@
   	.name		= "epld",
   	.id		= -1,
   	.num_resources	= 1,
---- 187,199 ----
+--- 183,195 ----
   	return 1;
   }
   
@@ -774,7 +771,7 @@
   
   	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
   }
---- 210,249 ----
+--- 206,245 ----
   	},
   };
   
@@ -824,7 +821,7 @@
   
   	epld_write(0, 0);	/* bank = Test */
   	epld_write(0x63, test_offset);
---- 287,293 ----
+--- 283,289 ----
   	const int version_offset = 0;
   	int version;
   
@@ -844,7 +841,7 @@
   	.mv_ioport_map		= mb618_ioport_map,
 - 	STM_PCI_IO_MACHINE_VEC
   };
---- 320,328 ----
+--- 316,324 ----
   }
   
   struct sh_machine_vector mv_mb618 __initmv = {
