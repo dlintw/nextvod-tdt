@@ -58,7 +58,8 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	echo "3) inactive"; \
 	echo "4) Tue,  5 Oct 2010 11:00 - E2 V2.4 libplayer2 be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
 	echo "5) Fri,  5 Nov 2010 00:16 - E2 V2.4 libplayer3 7fd4241a1d7b8d7c36385860b24882636517473b"; \
-	echo "6) current inactive... comming soon, here is the next stable (case 6 == DIFF=6)"; \
+	echo "6) Wed,  6 Jul 2011 11:17 - E2 V3.1 gstreamer  388dcd814d4e99720cb9a6c769611be4951e4ad4"; \
+	echo "7) current inactive... comming soon, here is the next stable (case 7 == DIFF=7)"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
 	[ "$$REPLY" == "0" ] && DIFF="0" && HEAD="experimental"; \
@@ -67,6 +68,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	[ "$$REPLY" == "3" ] && DIFF="3" && HEAD="experimental" && REVISION=""; \
 	[ "$$REPLY" == "4" ] && DIFF="4" && HEAD="master" && REVISION="be8ccc9f63c4cd79f8dba84087c7348c23657865"; \
 	[ "$$REPLY" == "5" ] && DIFF="5" && HEAD="master" && REVISION="7fd4241a1d7b8d7c36385860b24882636517473b"; \
+	[ "$$REPLY" == "6" ] && DIFF="6" && HEAD="experimental" && REVISION="388dcd814d4e99720cb9a6c769611be4951e4ad4"; \
 	echo "Revision: " $$REVISION; \
 	[ -d "$(appsdir)/enigma2-nightly" ] && \
 	git pull $(appsdir)/enigma2-nightly $$HEAD;\

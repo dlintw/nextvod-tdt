@@ -764,8 +764,7 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 
 		const GValue *codec_data = gst_structure_get_value (structure, "codec_data");
 		guint8 *h      = GST_BUFFER_DATA(gst_value_get_buffer (codec_data));
-		guint32 h_size = GST_BUFFER_SIZE(gst_value_get_buffer (codec_data));// 0; //h_sizesizeof(h) / sizeof(guint8);
-		//TODO: How to get size of codec_data
+		guint32 h_size = GST_BUFFER_SIZE(gst_value_get_buffer (codec_data));
 
 		// type_specific_data
 		#define WMA_VERSION_1           0x160
@@ -780,16 +779,13 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		//TODO: What code for lossless ?
 		case 9:
 			codec_id = WMA_VERSION_9_PRO;
-			//h_size = 18;
 			break;
 		case 2:
 			codec_id = WMA_VERSION_2_9 ;
-			//h_size = 10;
 			break;
 		case 1:
 		default:
 			codec_id = WMA_VERSION_1;
-			//h_size = 0;
 			break;
 		}
 
