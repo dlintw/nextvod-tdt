@@ -248,7 +248,6 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 	
 	static const char *transformers[] = {	"JPEG_DECODER0",
 						"JPEG_Transformer0",
-						"JPEG_DECODER_HW0",
 						"JPEG_DECODER1",
 						"JPEG_DECODER2",
 						"JPEG_DECODER3",
@@ -259,11 +258,6 @@ LIBMMEIMG_ERROR decode_jpeg_noalloc(FILE *fp, unsigned int original_width, unsig
 						"JPEG_Transformer3",
 						"JPEG_Transformer4",
 						"JPEG_Transformer",
-						"JPEG_DECODER_HW1",
-						"JPEG_DECODER_HW4",
-						"JPEG_DECODER_HW3",
-						"JPEG_DECODER_HW2",
-						"JPEG_DECODER_HW",
 						NULL };
 		    
 	decode_data.data.decode_success = 0;    
