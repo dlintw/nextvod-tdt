@@ -382,14 +382,3 @@
  	stx7100_ssc_devices[ssc].id = i2c_busnum;
  
  	plat_data = stx7100_ssc_devices[ssc].dev.platform_data;
---- linux-sh4.orig/drivers/ata/sata_stm.c
-+++ linux-sh4/drivers/ata/sata_stm.c
-@@ -488,7 +488,7 @@
- 
- 	if (write) {
- 		/* memory (master1) to SATA host (master2) transfer */
--		ctl0 |= DMAC_CTL_DEST_MSIZE_4		|
-+		ctl0 |= DMAC_CTL_DEST_MSIZE_1		|
- 			DMAC_CTL_SRC_MSIZE_16		|
- 			DMAC_CTL_TT_FC_M2P_DMAC		|
- 			DMAC_CTL_DMS_2			|
