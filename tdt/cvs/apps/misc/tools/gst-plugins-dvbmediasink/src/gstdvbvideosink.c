@@ -762,6 +762,12 @@ gst_dvbvideosink_event (GstBaseSink * sink, GstEvent * event)
 	{
 		struct pollfd pfd[2];
 		int retval;
+		printf("[V] GST_EVENT_EOS\n");
+
+		//Notify the player that no addionional data will be injected
+#ifdef VIDEO_FLUSH
+		ioctl(self->fd, VIDEO_FLUSH, 1/*NONBLOCK*/);
+#endif
 
 		pfd[0].fd = READ_SOCKET(self);
 		pfd[0].events = POLLIN;
@@ -771,6 +777,7 @@ gst_dvbvideosink_event (GstBaseSink * sink, GstEvent * event)
 		GST_PAD_PREROLL_UNLOCK (sink->sinkpad);
 		while (1) {
 			retval = poll(pfd, 2, 250);
+			printf("[V] poll %d\n", retval);
 			if (retval < 0) {
 				perror("poll in EVENT_EOS");
 				ret=FALSE;

@@ -292,6 +292,8 @@ gst_dvbaudiosink_base_init (gpointer klass)
 	};
 	GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
+	//gst_debug_set_active(TRUE);
+
 	int fd = open("/proc/stb/info/model", O_RDONLY);
 	if ( fd > 0 )
 	{
@@ -960,6 +962,12 @@ gst_dvbaudiosink_event (GstBaseSink * sink, GstEvent * event)
 	{
 		struct pollfd pfd[2];
 		int retval;
+		printf("[A] GST_EVENT_EOS\n");
+
+		//Notify the player that no addionional data will be injected
+#ifdef AUDIO_FLUSH
+		ioctl(self->fd, AUDIO_FLUSH, 1/*NONBLOCK*/);
+#endif
 
 		pfd[0].fd = READ_SOCKET(self);
 		pfd[0].events = POLLIN;
@@ -969,25 +977,26 @@ gst_dvbaudiosink_event (GstBaseSink * sink, GstEvent * event)
 		GST_PAD_PREROLL_UNLOCK (sink->sinkpad);
 		while (1) {
 			retval = poll(pfd, 2, 250);
+			printf("[A] poll %d\n", retval);
 			if (retval < 0) {
-				perror("poll in EVENT_EOS");
+				printf("poll in EVENT_EOS\n");
 				ret=FALSE;
 				break;
 			}
 
 			if (pfd[0].revents & POLLIN) {
-				GST_DEBUG_OBJECT (self, "wait EOS aborted!!\n");
+				printf("wait EOS aborted!!\n");
 				ret=FALSE;
 				break;
 			}
 
 			if (pfd[1].revents & POLLIN) {
-				GST_DEBUG_OBJECT (self, "got buffer empty from driver!\n");
+				printf("got buffer empty from driver!\n");
 				break;
 			}
 
 			if (sink->flushing) {
-				GST_DEBUG_OBJECT (self, "wait EOS flushing!!\n");
+				printf("wait EOS flushing!!\n");
 				ret=FALSE;
 				break;
 			}
