@@ -295,7 +295,9 @@ CONFIG_CPU_HAS_FPU=y
 #
 # Ipbox Boards
 #
+# CONFIG_SH_IPBOX9900 is not set
 CONFIG_SH_IPBOX99=y
+# CONFIG_SH_IPBOX55 is not set
 
 #
 # Timer and clock configuration
