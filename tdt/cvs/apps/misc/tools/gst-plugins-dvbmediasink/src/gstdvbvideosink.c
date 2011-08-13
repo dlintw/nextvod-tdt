@@ -81,63 +81,6 @@
 #define VIDEO_GET_PTS              _IOR('o', 57, gint64)
 #endif
 
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-struct bitstream
-{
-	guint8 *data;
-	guint8 last;
-	int avail;
-};
-
-void bitstream_init(struct bitstream *bit, const void *buffer, gboolean wr)
-{
-	bit->data = (guint8*) buffer;
-	if (wr) {
-		bit->avail = 0;
-		bit->last = 0;
-	}
-	else {
-		bit->avail = 8;
-		bit->last = *bit->data++;
-	}
-}
-
-unsigned long bitstream_get(struct bitstream *bit, int bits)
-{
-	unsigned long res=0;
-	while (bits)
-	{
-		unsigned int d=bits;
-		if (!bit->avail) {
-			bit->last = *bit->data++;
-			bit->avail = 8;
-		}
-		if (d > bit->avail)
-			d=bit->avail;
-		res<<=d;
-		res|=(bit->last>>(bit->avail-d))&~(-1<<d);
-		bit->avail-=d;
-		bits-=d;
-	}
-	return res;
-}
-
-void bitstream_put(struct bitstream *bit, unsigned long val, int bits)
-{
-	while (bits)
-	{
-		bit->last |= ((val & (1 << (bits-1))) ? 1 : 0) << (7 - bit->avail);
-		if (++bit->avail == 8) {
-			*bit->data = bit->last;
-			++bit->data;
-			bit->last = 0;
-			bit->avail = 0;
-		}
-		--bits;
-	}
-}
-#endif
-
 /* We add a control socket as in fdsrc to make it shutdown quickly when it's blocking on the fd.
  * Poll is used to determine when the fd is ready for use. When the element state is changed,
  * it happens from another thread while fdsink is poll'ing on the fd. The state-change thread 
@@ -303,7 +246,7 @@ GST_STATIC_PAD_TEMPLATE ( \
 		"video/x-divx, " \
 	MPEG4V2_LIMITED_CAPS ", divxversion = (int) [ 3, 5 ]; " \
 		"video/x-xvid, " \
-	MPEG4V2_LIMITED_CAPS "; " \
+	COMMON_VIDEO_CAPS "; " \
 		"video/x-3ivx, " \
 	MPEG4V2_LIMITED_CAPS "; " \
 		"video/x-wmv, " \
@@ -590,16 +533,17 @@ gst_dvbvideosink_init (GstDVBVideoSink *klass, GstDVBVideoSinkClass * gclass)
 #else
 	klass->use_set_encoding      = FALSE;
 #endif	
+	klass->streamtype            = STREAMTYPE_UNKNOWN;
+	klass->initial_header        = TRUE;
+	klass->initial_header_private_data_size = 0;
+
+	klass->runtime_header_data_size        = 0;
+
 	klass->dec_running           = FALSE;
 	klass->must_send_header      = 1;
 	klass->h264_buffer           = NULL;
 	klass->h264_nal_len_size     = 0;
 	klass->codec_data            = NULL;
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-	klass->must_pack_bitstream   = 0;
-	klass->num_non_keyframes     = 0;
-	klass->prev_frame            = NULL;
-#endif
 	klass->no_write              = 0;
 	klass->queue                 = NULL;
 	klass->fd                    = -1;
@@ -961,487 +905,318 @@ loop_start:
 	return 0;
 }
 
+static inline void Hexdump(unsigned char *Data, int length)
+{
+
+    int k;
+    for (k = 0; k < length; k++)
+    {
+        printf("%02x ", Data[k]);
+        if (((k+1)&31)==0)
+            printf("\n");
+    }
+    printf("\n");
+
+}
+
+static size_t
+buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp, 
+	unsigned char stream_id, unsigned int pic_start_code, unsigned char video_private_data)
+{
+	unsigned char *pes_header = data;
+	size_t pes_header_size;
+
+	pes_header[0] = 0x00;
+	pes_header[1] = 0x00;
+	pes_header[2] = 0x01;
+	pes_header[3] = stream_id;
+
+	//pes_header[4] = size >> 8;
+	//pes_header[5] = size & 0xFF;
+
+	pes_header[6] = 0x80;
+	pes_header[7] = 0x00;
+	pes_header[8] = 0x00;
+	pes_header_size = 9;
+
+		/* do we have a timestamp? */
+	if (timestamp != GST_CLOCK_TIME_NONE) {
+		unsigned long long pts = timestamp * 9LL / 100000 /* convert ns to 90kHz */;
+
+		pes_header[7] = 0x80;
+		pes_header[8] = 0x05;
+		
+		pes_header[9] =  0x21 | ((pts >> 29) & 0xE);
+		pes_header[10] = pts >> 22;
+		pes_header[11] = 0x01 | ((pts >> 14) & 0xFE);
+		pes_header[12] = pts >> 7;
+		pes_header[13] = 0x01 | ((pts << 1) & 0xFE);
+
+		pes_header_size += 5;
+	}
+
+	if (video_private_data) {
+		int i;
+#define PES_EXTENSION_DATA_PRESENT              0x01
+#define PES_PRIVATE_DATA_LENGTH                 8
+#define PES_PRIVATE_DATA_FLAG                   0x80
+
+		pes_header[7] |= PES_EXTENSION_DATA_PRESENT ;
+		pes_header[8] += (PES_PRIVATE_DATA_LENGTH+1);
+
+		pes_header[pes_header_size + 0] = PES_PRIVATE_DATA_FLAG;
+		pes_header[pes_header_size + 1] =  size & 0xFF;
+		pes_header[pes_header_size + 2] = (size >> 8) & 0xFF;
+		pes_header[pes_header_size + 3] = (size >> 16) & 0xFF;
+		for (i = 4; i < (PES_PRIVATE_DATA_LENGTH+1); i++)
+			pes_header[pes_header_size + i] = 0x00;
+
+		pes_header_size += (PES_PRIVATE_DATA_LENGTH+1);
+	}
+
+	pes_header[4] = (size + pes_header_size - 6) >> 8;
+	pes_header[5] = (size  + pes_header_size - 6) & 0xFF;
+
+	if (pic_start_code) {
+		pes_header[pes_header_size + 0] = 0x00;
+		pes_header[pes_header_size + 1] = 0x00;
+		pes_header[pes_header_size + 2] = 0x01;
+		pes_header[pes_header_size + 3] = pic_start_code & 0xFF; // 00, for picture start
+		pes_header_size += 4;
+		/*if (pic_start_code > 0xFF)*/ {
+			pes_header[pes_header_size + 4] = (pic_start_code >> 8 ) & 0xFF; // For any extra information (like in mpeg4p2, the pic_start_code)
+			pes_header_size += 1;
+		}
+	}
+
+	return pes_header_size;
+}
+
+#define VC1_VIDEO_PES_START_CODE            0xfd
+#define VC1_FRAME_START_CODE                            0x0d
+#define PES_VERSION_FAKE_START_CODE             0x31
+#define MPEG_VIDEO_PES_START_CODE               0xe0
+#define H263_VIDEO_PES_START_CODE               0xfe
+#define MAX_PES_PACKET_SIZE                     65400
+
+#define WRITE_COMPLETE_PACKAGE
+
 static GstFlowReturn
 gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 {
 	GstDVBVideoSink *self = GST_DVBVIDEOSINK (sink);
 	unsigned char *data = GST_BUFFER_DATA(buffer);
 	unsigned int data_len = GST_BUFFER_SIZE (buffer);
+	long long        timestamp = GST_BUFFER_TIMESTAMP(buffer);
 	guint8 pes_header[2048];
 	unsigned int pes_header_len=0;
 	unsigned int payload_len=0;
 //	int i=0;
 
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-	gboolean commit_prev_frame_data = FALSE,
-			cache_prev_frame = FALSE;
-#endif
-
-//	for (;i < (data_len > 0xF ? 0xF : data_len); ++i)
-//		printf("%02x ", data[i]);
-//	printf("%d bytes\n", data_len);
-//	printf("timestamp: %08llx\n", (long long)GST_BUFFER_TIMESTAMP(buffer));
+	if (self->streamtype == STREAMTYPE_UNKNOWN) {
+		GST_ELEMENT_ERROR (self, STREAM, FORMAT, (NULL), ("hardware decoder not setup (no caps in pipeline?)"));
+		return GST_FLOW_ERROR;
+	}
 
 	if (self->fd < 0)
 		return GST_FLOW_OK;
 
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-	if (self->must_pack_bitstream == 1) {
-		cache_prev_frame = TRUE;
-		unsigned int pos = 0;
-		while(pos < data_len) {
-			if (data[pos++])
-				continue;
-			if (data[pos++])
-				continue;
-			while (!data[pos])
-				++pos;
-			if (data[pos++] != 1)
-				continue;
-			if ((data[pos++] & 0xF0) == 0x20) { // we need time_inc_res
-				gboolean low_delay=FALSE;
-				unsigned int ver_id = 1, shape=0, time_inc_res=0, tmp=0;
-				struct bitstream bit;
-				bitstream_init(&bit, data+pos, 0);
-				bitstream_get(&bit, 9);
-				if (bitstream_get(&bit, 1)) {
-					ver_id = bitstream_get(&bit, 4); // ver_id
-					bitstream_get(&bit, 3);
-				}
-				if ((tmp=bitstream_get(&bit, 4)) == 15) { // Custom Aspect Ration
-					bitstream_get(&bit, 8); // skip AR width
-					bitstream_get(&bit, 8); // skip AR height
-				}
-				if (bitstream_get(&bit, 1)) {
-					bitstream_get(&bit, 2);
-					low_delay = bitstream_get(&bit, 1) ? TRUE : FALSE;
-					if (bitstream_get(&bit, 1)) {
-						bitstream_get(&bit, 32);
-						bitstream_get(&bit, 32);
-						bitstream_get(&bit, 15);
-					}
-				}
-				shape = bitstream_get(&bit, 2);
-				if (ver_id != 1 && shape == 3 /* Grayscale */)
-					bitstream_get(&bit, 4);
-				bitstream_get(&bit, 1);
-				time_inc_res = bitstream_get(&bit, 16);
-				self->time_inc_bits = 0;
-				while (time_inc_res) { // count bits
-					++self->time_inc_bits;
-					time_inc_res >>= 1;
-				}
-//				printf("%d time_inc_bits\n", self->time_inc_bits);
-			}
-		}
+	unsigned char start_code = MPEG_VIDEO_PES_START_CODE;
+	unsigned char pic_start_code = 0;
+	unsigned char insertVideoPrivateDataHeader = 0;
+	if (self->streamtype == STREAMTYPE_WMV) {
+		insertVideoPrivateDataHeader = 1;
+		start_code = VC1_VIDEO_PES_START_CODE;
+	}
+	else if (self->streamtype == STREAMTYPE_VC1) {
+		start_code = VC1_VIDEO_PES_START_CODE;
+		pic_start_code = VC1_FRAME_START_CODE;
+	}
+	else if (self->streamtype == STREAMTYPE_DIVX4) {
+		pic_start_code = (4 << 8) | PES_VERSION_FAKE_START_CODE;
+	}
+	else if (self->streamtype == STREAMTYPE_DIVX5 || self->streamtype == STREAMTYPE_XVID) {
+		pic_start_code = (5 << 8) | PES_VERSION_FAKE_START_CODE;
+	}
+	else if (self->streamtype == STREAMTYPE_H263) {
+		insertVideoPrivateDataHeader = 1;
+		start_code = H263_VIDEO_PES_START_CODE;
 	}
 
-	if (self->must_pack_bitstream == 1) {
-		int tmp1, tmp2;
-		unsigned char c1, c2;
-		unsigned int pos = 0;
-		while(pos < data_len) {
-			if (data[pos++])
-				continue;
-			if (data[pos++])
-				continue;
-			while (!data[pos])
-				++pos;
-			if (data[pos++] != 1)
-				continue;
-			if (data[pos++] != 0xB2)
-				continue;
-			if (data_len - pos < 13)
-				break;
-			if (sscanf((char*)data+pos, "DivX%d%c%d%cp", &tmp1, &c1, &tmp2, &c2) == 4 && (c1 == 'b' || c1 == 'B') && (c2 == 'p' || c2 == 'P')) {
-				GST_INFO_OBJECT (self, "%s seen... already packed!", (char*)data+pos);
-				self->must_pack_bitstream = 0;
-			}
-//			if (self->must_pack_bitstream)
-//				printf("pack needed\n");
-//			else
-//				printf("no pack needed\n");
-		}
-	}
+
+	if (self->initial_header)
+	{
+		if (self->initial_header_private_data_size > 0)
+		{
+			unsigned char pes_header_initial[PES_MAX_HEADER_SIZE];
+			size_t pes_header_size_initial;
+			
+			pes_header_size_initial = buildPesHeader(pes_header_initial, self->initial_header_private_data_size, GST_CLOCK_TIME_NONE, start_code, 0, 0);
+
+#if 1
+			printf("-->\n");
+			Hexdump(pes_header_initial, pes_header_size_initial);
+			Hexdump(self->initial_header_private_data, self->initial_header_private_data_size);
+			printf("<--\n");
 #endif
 
-	pes_header[0] = 0;
-	pes_header[1] = 0;
-	pes_header[2] = 1;
-	pes_header[3] = 0xE0;
+#ifdef WRITE_COMPLETE_PACKAGE
+			//printf("--> %d bytes\n", pes_header_size_initial + self->initial_header_private_data_size);
+			unsigned char *write_buffer = (unsigned char*) malloc(sizeof(unsigned char) * (pes_header_size_initial + self->initial_header_private_data_size));
+			memcpy(write_buffer, pes_header_initial, pes_header_size_initial);
+			memcpy(write_buffer + pes_header_size_initial, self->initial_header_private_data, self->initial_header_private_data_size);
+			ASYNC_WRITE(write_buffer, pes_header_size_initial + self->initial_header_private_data_size);
+			free(write_buffer);
+#else
+			ASYNC_WRITE(pes_header_initial, pes_header_size_initial);
+			ASYNC_WRITE(self->initial_header_private_data, self->initial_header_private_data_size);
+#endif
+			free(self->initial_header_private_data);
+			self->initial_header_private_data_size = 0;
+		}
 
-		/* do we have a timestamp? */
-	if (GST_BUFFER_TIMESTAMP(buffer) != GST_CLOCK_TIME_NONE) {
-		unsigned long long pts = GST_BUFFER_TIMESTAMP(buffer) * 9LL / 100000 /* convert ns to 90kHz */;
+		if (self->streamtype == STREAMTYPE_VC1 && self->initial_header_private_data_size > 0)
+		{
+			unsigned char pes_header_initial[PES_MAX_HEADER_SIZE];
+			size_t pes_header_size_initial;
+			
 
-		pes_header[6] = 0x80;
-		pes_header[7] = 0x80;
-		
-		pes_header[8] = 5;
-		
-		pes_header[9] =  0x21 | ((pts >> 29) & 0xE);
-		pes_header[10] = pts >> 22;
-		pes_header[11] = 0x01 | ((pts >> 14) & 0xFE);
-		pes_header[12] = pts >> 7;
-		pes_header[13] = 0x01 | ((pts << 1) & 0xFE);
+			/* For VC1 the codec private data is a standard vc1 sequence header so we just copy it to the output */
+			guint32 codec_data_len = GST_BUFFER_SIZE(self->codec_data);
 
-		pes_header_len = 14;
+			pes_header_size_initial = buildPesHeader(pes_header_initial, codec_data_len, GST_CLOCK_TIME_NONE, start_code, 0, 0);
 
-		if (self->codec_data) {
-			switch (self->streamtype) { // we must always resend the codec data before every seq header on dm8k
-			case STREAMTYPE_MPEG4_P2:
-			case STREAMTYPE_DIVX4:
-				if (data[0] == 0xb3 || !memcmp(data, "\x00\x00\x01\xb3", 4))
-					self->must_send_header = 1;
-			default:
-				break;
+#if 1
+			printf("-->\n");
+			Hexdump(pes_header_initial, pes_header_size_initial);
+			Hexdump(GST_BUFFER_DATA (self->codec_data), codec_data_len);
+			printf("<--\n");
+#endif
+
+#ifdef WRITE_COMPLETE_PACKAGE
+			{
+			//printf("--> %d bytes\n", pes_header_size_initial + self->initial_header_private_data_size);
+			unsigned char *write_buffer = (unsigned char*) malloc(sizeof(unsigned char) * (pes_header_size_initial + codec_data_len));
+			memcpy(write_buffer, pes_header_initial, pes_header_size_initial);
+			memcpy(write_buffer + pes_header_size_initial, GST_BUFFER_DATA (self->codec_data), codec_data_len);
+			ASYNC_WRITE(write_buffer, pes_header_size_initial + codec_data_len);
+			free(write_buffer);
 			}
-			if (self->must_send_header) {
-				if (self->streamtype != STREAMTYPE_MPEG1 && 
-						self->streamtype != STREAMTYPE_MPEG2 && 
-						(self->streamtype != STREAMTYPE_DIVX4 || data[3] == 0x00)) {
-					unsigned char *codec_data = GST_BUFFER_DATA (self->codec_data);
-					unsigned int codec_data_len = GST_BUFFER_SIZE (self->codec_data);
-					if (self->streamtype == STREAMTYPE_DIVX311)
-						ASYNC_WRITE(codec_data, codec_data_len);
-					else {
-						memcpy(pes_header+pes_header_len, codec_data, codec_data_len);
-						pes_header_len += codec_data_len;
-					}
-					self->must_send_header = 0;
+#else
+			ASYNC_WRITE(pes_header_initial, pes_header_size_initial);
+			ASYNC_WRITE(GST_BUFFER_DATA (self->codec_data), codec_data_len);
+#endif
+		}
+		self->initial_header = FALSE;
+	}
+
+
+	unsigned int data_position = 0;
+	int i = 0;
+	while (data_position < (data_len + self->runtime_header_data_size)) {
+		unsigned int pes_packet_size = ((data_len + self->runtime_header_data_size) - data_position) <= MAX_PES_PACKET_SIZE ?
+										((data_len + self->runtime_header_data_size) - data_position) : MAX_PES_PACKET_SIZE;
+
+		//if (data_position != 0) {
+			//printf("> %d pos=%u size=%u max=%u len=%u remaining=%u\n", i++, data_position, pes_packet_size, MAX_PES_PACKET_SIZE, data_len, data_len - data_position);
+		//}
+
+		unsigned char       pes_header[PES_MAX_HEADER_SIZE];
+		memset (pes_header, '0', PES_MAX_HEADER_SIZE);
+		int pes_header_size = 0;
+
+		if (self->streamtype == STREAMTYPE_VC1 && data_position == 0 && pic_start_code != 0) {
+			const unsigned char Vc1FrameStartCode[] = {0, 0, 1, VC1_FRAME_START_CODE};
+			if(data_len > 3 && (memcmp (data, Vc1FrameStartCode, 4) == 0)) {
+				printf("GOT IT!\n");
+				pic_start_code = 0;
+			}
+		}
+		else if (self->streamtype == STREAMTYPE_H264 && data_position == 0) {
+			//This code replaces all nal length bytes with HEAD
+			unsigned int pos = 0;
+			if (self->h264_nal_len_size == 4) {
+				while(TRUE) {
+					unsigned int pack_len = (data[pos] << 24) | (data[pos+1] << 16) | (data[pos+2] << 8) | data[pos+3];
+					memcpy(data+pos, "\x00\x00\x00\x01", 4);
+					pos += 4;
+					if ((pos + pack_len) >= data_len)
+						break;
+					pos += pack_len;
 				}
 			}
-			if (self->streamtype == STREAMTYPE_H264) {  // MKV stuff
-				unsigned int pos = 0;
-				if (self->h264_nal_len_size == 4) {
-					while(TRUE) {
-						unsigned int pack_len = (data[pos] << 24) | (data[pos+1] << 16) | (data[pos+2] << 8) | data[pos+3];
-//						printf("patch %02x %02x %02x %02x\n",
-//							data[pos],
-//							data[pos + 1],
-//							data[pos + 2],
-//							data[pos + 3]);
-						memcpy(data+pos, "\x00\x00\x00\x01", 4);
-//						printf("pos %d, (%d) >= %d\n", pos, pos+pack_len, data_len);
-						pos += 4;
+			else if (self->h264_nal_len_size == 3) {
+				while(TRUE) {
+					unsigned int pack_len = (data[pos] << 16) | (data[pos+1] << 8) | data[pos+2];
+					memcpy(data+pos, "\x00\x00\x01", 3);
+					pos += 3;
+					if ((pos + pack_len) >= data_len)
+						break;
+					pos += pack_len;
+				}
+			}
+			else {
+				unsigned char *dest = GST_BUFFER_DATA (self->h264_buffer);
+				unsigned int dest_pos = 0;
+				while(TRUE) {
+					unsigned int pack_len = self->h264_nal_len_size == 2 ? (data[pos] << 8) | data[pos+1] : data[pos];
+					if (dest_pos + pack_len <= H264_BUFFER_SIZE) {
+						memcpy(dest+dest_pos, "\x00\x00\x01", 3);
+						dest_pos += 3;
+						pos += self->h264_nal_len_size;
+						memcpy(dest+dest_pos, data+pos, pack_len);
+						dest_pos += pack_len;
 						if ((pos + pack_len) >= data_len)
 							break;
 						pos += pack_len;
 					}
-				}
-				else if (self->h264_nal_len_size == 3) {
-					while(TRUE) {
-						unsigned int pack_len = (data[pos] << 16) | (data[pos+1] << 8) | data[pos+2];
-//						printf("patch %02x %02x %02x\n",
-//							data[pos],
-//							data[pos + 1],
-//							data[pos + 2]);
-						memcpy(data+pos, "\x00\x00\x01", 3);
-//						printf("pos %d, (%d) >= %d\n", pos, pos+pack_len, data_len);
-						pos += 3;
-						if ((pos + pack_len) >= data_len)
-							break;
-						pos += pack_len;
-					}
-				}
-				else {
-					unsigned char *dest = GST_BUFFER_DATA (self->h264_buffer);
-					unsigned int dest_pos = 0;
-					while(TRUE) {
-						unsigned int pack_len = self->h264_nal_len_size == 2 ? (data[pos] << 8) | data[pos+1] : data[pos];
-						if (dest_pos + pack_len <= H264_BUFFER_SIZE) {
-							memcpy(dest+dest_pos, "\x00\x00\x01", 3);
-							dest_pos += 3;
-							pos += self->h264_nal_len_size;
-							memcpy(dest+dest_pos, data+pos, pack_len);
-							dest_pos += pack_len;
-							if ((pos + pack_len) >= data_len)
-								break;
-							pos += pack_len;
-						}
-						else {
-							g_error("BUG!!!!!!!! H264 buffer to small skip video data!!.. please report!\n");
-							break;
-						}
-					}
-					data = dest;
-					data_len = dest_pos;
-				}
-			}
-			else if (self->streamtype == STREAMTYPE_MPEG4_P2) {
-				if (data[0] || data[1] || data[2] != 1) {
-					memcpy(pes_header+pes_header_len, "\x00\x00\x01", 3);
-					pes_header_len += 3;
-				}
-			}
-			else if (self->streamtype == STREAMTYPE_DIVX311) {
-				if (data[0] || data[1] || data[2] != 1 || data[3] != 0xb6) {
-					memcpy(pes_header+pes_header_len, "\x00\x00\x01\xb6", 4);
-					pes_header_len += 4;
-				}
-			}
-		}
-	}
-	else {
-//		printf("no timestamp!\n");
-		pes_header[6] = 0x80;
-		pes_header[7] = 0x00;
-		pes_header[8] = 0;
-		pes_header_len = 9;
-	}
-
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-	if (self->must_pack_bitstream == 1) {
-		unsigned int pos = 0;
-		gboolean i_frame = FALSE;
-//		gboolean s_frame = FALSE;
-		while(pos < data_len) {
-			if (data[pos++])
-				continue;
-			if (data[pos++])
-				continue;
-			while (!data[pos])
-				++pos;
-			if (data[pos++] != 1)
-				continue;
-			if (data[pos++] != 0xB6)
-				continue;
-			switch ((data[pos] & 0xC0) >> 6) {
-				case 0: // I-Frame
-//					printf("I ");
-					cache_prev_frame = FALSE;
-					i_frame = TRUE;
-				case 1: // P-Frame
-//					if (!i_frame)
-//						printf("P ");
-					if (self->prev_frame != buffer) {
-						struct bitstream bit;
-						gboolean store_frame=FALSE;
-						if (self->prev_frame) {
-							if (!self->num_non_keyframes) {
-//								printf("no non keyframes...immediate commit prev frame\n");
-								GstFlowReturn ret = gst_dvbvideosink_render(sink, self->prev_frame);
-								gst_buffer_unref(self->prev_frame);
-								self->prev_frame = NULL;
-								if (ret != GST_FLOW_OK)
-									return ret;
-								store_frame = TRUE;
-							}
-							else {
-//								int i=-4;
-								pes_header[pes_header_len++] = 0;
-								pes_header[pes_header_len++] = 0;
-								pes_header[pes_header_len++] = 1;
-								pes_header[pes_header_len++] = 0xB6;
-								bitstream_init(&bit, pes_header+pes_header_len, 1);
-								bitstream_put(&bit, 1, 2);
-								bitstream_put(&bit, 0, 1);
-								bitstream_put(&bit, 1, 1);
-								bitstream_put(&bit, self->time_inc, self->time_inc_bits);
-								bitstream_put(&bit, 1, 1);
-								bitstream_put(&bit, 0, 1);
-								bitstream_put(&bit, 0x7F >> bit.avail, 8 - bit.avail);
-//								printf(" insert pack frame %d non keyframes, time_inc %d, time_inc_bits %d -",
-//									self->num_non_keyframes, self->time_inc, self->time_inc_bits);
-//								for (; i < (bit.data - (pes_header+pes_header_len)); ++i)
-//									printf(" %02x", pes_header[pes_header_len+i]);
-//								printf("\nset data_len to 0!\n");
-								data_len = 0;
-								pes_header_len += bit.data - (pes_header+pes_header_len);
-								cache_prev_frame = TRUE;
-							}
-						}
-						else if (!i_frame)
-							store_frame = TRUE;
-
-						self->num_non_keyframes=0;
-
-						// extract time_inc
-						bitstream_init(&bit, data+pos, 0);
-						bitstream_get(&bit, 2); // skip coding_type
-						while(bitstream_get(&bit, 1));
-						bitstream_get(&bit, 1);
-						self->time_inc = bitstream_get(&bit, self->time_inc_bits);
-//						printf("\ntime_inc is %d\n", self->time_inc);
-
-						if (store_frame) {
-//							printf("store frame\n");
-							self->prev_frame = buffer;
-							gst_buffer_ref (buffer);
-							return GST_FLOW_OK;
-						}
-					}
 					else {
-						cache_prev_frame = FALSE;
-//						printf(" I/P Frame without non key frame(s)!!\n");
-					}
-					break;
-				case 3: // S-Frame
-//					printf("S ");
-//					s_frame = TRUE;
-				case 2: // B-Frame
-//					if (!s_frame)
-//						printf("B ");
-					if (++self->num_non_keyframes == 1 && self->prev_frame) {
-//						printf("send grouped with prev P!\n");
-						commit_prev_frame_data = TRUE;
-					}
-					break;
-				case 4: // N-Frame
-				default:
-					g_warning("unhandled divx5/xvid frame type %d\n", (data[pos] & 0xC0) >> 6);
-					break;
-			}
-		}
-//		printf("\n");
-	}
-#endif
-
-	payload_len = data_len + pes_header_len - 6;
-
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-	if (self->prev_frame && self->prev_frame != buffer) {
-		unsigned long long pts = GST_BUFFER_TIMESTAMP(self->prev_frame) * 9LL / 100000 /* convert ns to 90kHz */;
-//		printf("use prev timestamp: %08llx\n", (long long)GST_BUFFER_TIMESTAMP(self->prev_frame));
-
-		pes_header[9] =  0x21 | ((pts >> 29) & 0xE);
-		pes_header[10] = pts >> 22;
-		pes_header[11] = 0x01 | ((pts >> 14) & 0xFE);
-		pes_header[12] = pts >> 7;
-		pes_header[13] = 0x01 | ((pts << 1) & 0xFE);
-	}
-
-	if (commit_prev_frame_data)
-		payload_len += GST_BUFFER_SIZE (self->prev_frame);
-#endif
-
-	if (self->streamtype == STREAMTYPE_MPEG2 || self->streamtype == STREAMTYPE_MPEG1) {
-		if (!self->codec_data && data_len > 3 && !data[0] && !data[1] && data[2] == 1 && data[3] == 0xb3) { // sequence header?
-			gboolean ok = TRUE;
-			unsigned int pos = 4;
-			unsigned int sheader_data_len=0;
-			while(pos < data_len && ok) {
-				if ( pos >= data_len )
-					break;
-				pos+=7;
-				if ( pos >=data_len )
-					break;
-				sheader_data_len=12;
-				if ( data[pos] & 2 ) { // intra matrix avail?
-					pos+=64;
-					if ( pos >=data_len )
+						g_error("BUG!!!!!!!! H264 buffer to small skip video data!!.. please report!\n");
 						break;
-					sheader_data_len+=64;
-				}
-				if ( data[pos] & 1 ) { // non intra matrix avail?
-					pos+=64;
-					if ( pos >=data_len )
-						break;
-					sheader_data_len+=64;
-				}
-				pos+=1;
-				if ( pos+3 >=data_len )
-					break;
-				// extended start code
-				if ( !data[pos] && !data[pos+1] && data[pos+2] == 1 && data[pos+3] == 0xB5 ) {
-					pos+=3;
-					sheader_data_len+=3;
-					do {
-						pos+=1;
-						++sheader_data_len;
-						if (pos+2 > data_len)
-							goto leave;
 					}
-					while( data[pos] || data[pos+1] || data[pos+2] != 1 );
 				}
-				if ( pos+3 >=data_len )
-					break;
-				// private data
-				if ( !data[pos] && !data[pos+1] && data[pos+2] && data[pos+3] == 0xB2 ) {
-					pos+=3;
-					sheader_data_len+=3;
-					do {
-						pos+=1;
-						++sheader_data_len;
-						if (pos+2 > data_len)
-							goto leave;
-					}
-					while( data[pos] || data[pos+1] || data[pos+2] != 1 );
-				}
-				self->codec_data = gst_buffer_new_and_alloc(sheader_data_len);
-				memcpy(GST_BUFFER_DATA(self->codec_data), data+pos-sheader_data_len, sheader_data_len);
-				self->must_send_header = 0;
-leave:
-				ok = FALSE;
+				data = dest;
+				data_len = dest_pos;
 			}
 		}
-		else if (self->codec_data && self->must_send_header) {
-			unsigned char *codec_data = GST_BUFFER_DATA (self->codec_data);
-			unsigned int codec_data_len = GST_BUFFER_SIZE (self->codec_data);
-			int pos = 0;
-			while(pos < data_len) {
-				if ( data[pos++] )
-					continue;
-				if ( data[pos++] )
-					continue;
-				while ( !data[pos] )
-					pos++;
-				if ( data[pos++] != 1 )
-					continue;
-				if ( data[pos++] != 0xb8 ) // group start code
-					continue;
-				pos-=4; // before group start
-				payload_len += codec_data_len;
-				if (payload_len <= 0xFFFF) {
-					pes_header[4] = payload_len >> 8;
-					pes_header[5] = payload_len & 0xFF;
-				}
-				else {
-					pes_header[4] = 0;
-					pes_header[5] = 0;
-				}
-				ASYNC_WRITE(pes_header, pes_header_len);
-				ASYNC_WRITE(data, pos);
-				ASYNC_WRITE(codec_data, codec_data_len);
-				ASYNC_WRITE(data+pos, data_len - pos);
-				--self->must_send_header;
-				return GST_FLOW_OK;
-			}
-		}
-	}
 
-	if (payload_len <= 0xFFFF) {
-		pes_header[4] = payload_len >> 8;
-		pes_header[5] = payload_len & 0xFF;
-	}
-	else {
-		pes_header[4] = 0;
-		pes_header[5] = 0;
-	}
+		pes_header_size = buildPesHeader(pes_header, pes_packet_size, 
+			timestamp, start_code, data_position==0?pic_start_code:0, 
+			insertVideoPrivateDataHeader);
 
-	ASYNC_WRITE(pes_header, pes_header_len);
+		insertVideoPrivateDataHeader = 0;
 
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-	if (commit_prev_frame_data) {
-//		printf("commit prev frame data\n");
-		ASYNC_WRITE(GST_BUFFER_DATA (self->prev_frame), GST_BUFFER_SIZE (self->prev_frame));
-	}
-
-	if (self->prev_frame && self->prev_frame != buffer) {
-//		printf("unref prev_frame buffer\n");
-		gst_buffer_unref(self->prev_frame);
-		self->prev_frame = NULL;
-	}
-
-	if (cache_prev_frame) {
-//		printf("cache prev frame\n");
-		gst_buffer_ref(buffer);
-		self->prev_frame = buffer;
-	}
+#if 1
+		printf("-->\n");
+		Hexdump(pes_header, pes_header_size);
+		Hexdump(data + data_position, 16);//pes_packet_size);
+		printf("<--\n");
 #endif
-	ASYNC_WRITE(data, data_len);
+
+#ifdef WRITE_COMPLETE_PACKAGE
+		{
+		//printf("--> %d bytes\n", pes_header_size + pes_packet_size);
+		unsigned char *write_buffer = (unsigned char*) malloc(sizeof(unsigned char) * (pes_header_size + self->runtime_header_data_size + pes_packet_size));
+		memcpy(write_buffer, pes_header, pes_header_size);
+		if (self->runtime_header_data_size > 0)
+			memcpy(write_buffer + pes_header_size, self->runtime_header_data, self->runtime_header_data_size);
+		memcpy(write_buffer + pes_header_size + self->runtime_header_data_size, data + data_position, pes_packet_size);
+		ASYNC_WRITE(write_buffer, pes_header_size  + self->runtime_header_data_size+ pes_packet_size);
+		free(write_buffer);
+		}
+#else
+		ASYNC_WRITE(pes_header, pes_header_size);
+		if (self->runtime_header_data_size > 0)
+			ASYNC_WRITE(self->runtime_header_data, self->runtime_header_data_size);
+		ASYNC_WRITE(data + data_position, pes_packet_size);
+#endif
+		timestamp = 0;
+		data_position += pes_packet_size;
+		//printf("< pos=%u size=%u\n", data_position, pes_packet_size);
+	}
 
 	return GST_FLOW_OK;
+
 poll_error:
 	{
 		GST_ELEMENT_ERROR (self, RESOURCE, READ, (NULL),
@@ -1481,7 +1256,7 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 				streamtype = STREAMTYPE_MPEG2;
 				GST_INFO_OBJECT (self, "MIMETYPE video/mpeg2 -> VIDEO_SET_STREAMTYPE, 0");
 			break;
-			case 4:
+			case 4: //TODO
 			{
 				const GValue *codec_data = gst_structure_get_value (structure, "codec_data");
 				if (codec_data) {
@@ -1497,6 +1272,7 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 				GST_ELEMENT_ERROR (self, STREAM, FORMAT, (NULL), ("unhandled mpeg version %i", mpegversion));
 			break;
 		}
+
 	} else if (!strcmp (mimetype, "video/x-3ivx")) {
 		const GValue *codec_data = gst_structure_get_value (structure, "codec_data");
 		if (codec_data) {
@@ -1506,6 +1282,7 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		}
 		streamtype = STREAMTYPE_MPEG4_P2;
 		GST_INFO_OBJECT (self, "MIMETYPE video/x-3ivx -> VIDEO_SET_STREAMTYPE, 4");
+
 	} else if (!strcmp (mimetype, "video/x-h264")) {
 		const GValue *cd_data = gst_structure_get_value (structure, "codec_data");
 		streamtype = STREAMTYPE_H264;
@@ -1517,23 +1294,17 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			unsigned int cd_len = GST_BUFFER_SIZE (codec_data);
 			unsigned int cd_pos = 0;
 			GST_INFO_OBJECT (self, "H264 have codec data..!");
-			if (cd_len > 7 && data[0] == 1) {
-				unsigned short len = (data[6] << 8) | data[7];
-//				printf("2 %d bytes\n", len);
+			if (cd_len > 7 && data[0] == 1) { // avcC version
+				unsigned short len = (data[6] << 8) | data[7]; // Length of first sequence param set
 				if (cd_len >= (len + 8)) {
 					unsigned int i=0;
 					uint8_t profile_num[] = { 66, 77, 88, 100 };
 					uint8_t profile_cmp[2] = { 0x67, 0x00 };
 					const char *profile_str[] = { "baseline", "main", "extended", "high" };
-//					printf("3\n");
-					memcpy(tmp, "\x00\x00\x00\x01", 4);
+					memcpy(tmp, "\x00\x00\x00\x01", 4); // Copy HEAD
 					tmp_len += 4;
-//					printf("header part1 ");
-//					for (i = 0; i < len; ++i)
-//						printf("%02x ", data[8+i]);
-//					printf("\n");
-					memcpy(tmp+tmp_len, data+8, len);
-					for (i = 0; i < 4; ++i) {
+					memcpy(tmp+tmp_len, data+8, len); // Copy body of sequence paramter
+					for (i = 0; i < 4; ++i) { // Check every type and fix if necessary
 						profile_cmp[1] = profile_num[i];
 						if (!memcmp(tmp+tmp_len, profile_cmp, 2)) {
 							uint8_t level_org = tmp[tmp_len+3];
@@ -1549,19 +1320,20 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 					tmp_len += len;
 					cd_pos = 8 + len;
 					if (cd_len > (cd_pos + 2)) {
-						len = (data[cd_pos+1] << 8) | data[cd_pos+2];
-//						printf("4 %d bytes\n", len);
+						len = (data[cd_pos+1] << 8) | data[cd_pos+2]; // Length of first picture param set
 						cd_pos += 3;
 						if (cd_len >= (cd_pos+len)) {
-//							printf("codec data ok!\n");
-							memcpy(tmp+tmp_len, "\x00\x00\x00\x01", 4);
+							memcpy(tmp+tmp_len, "\x00\x00\x00\x01", 4); // Copy HEAD
 							tmp_len += 4;
-//							printf("header part2 %02x %02x %02x %02x ... %d bytes\n", data[cd_pos], data[cd_pos+1], data[cd_pos+2], data[cd_pos+3], len);
-							memcpy(tmp+tmp_len, data+cd_pos, len);
+							memcpy(tmp+tmp_len, data+cd_pos, len); // Copy body of picture paramter
 							tmp_len += len;
-							self->codec_data = gst_buffer_new_and_alloc(tmp_len);
-							memcpy(GST_BUFFER_DATA(self->codec_data), tmp, tmp_len);
-							self->h264_nal_len_size = (data[4] & 0x03) + 1;
+
+							// Copy created pivate header
+							self->initial_header_private_data_size = tmp_len;
+							self->initial_header_private_data = 
+								(guint8*) malloc(sizeof(guint8) * self->initial_header_private_data_size);
+							memcpy(self->initial_header_private_data, tmp, tmp_len);
+							self->h264_nal_len_size = (data[4] & 0x03) + 1; // Whereas data[4] is nallengthMinusOne
 							if (self->h264_nal_len_size < 3)
 								self->h264_buffer = gst_buffer_new_and_alloc(H264_BUFFER_SIZE);
 						}
@@ -1582,20 +1354,27 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		else
 			self->h264_nal_len_size = 0;
 		GST_INFO_OBJECT (self, "MIMETYPE video/x-h264 VIDEO_SET_STREAMTYPE, 1");
+
 	} else if (!strcmp (mimetype, "video/x-h263")) {
 		streamtype = STREAMTYPE_H263;
 		GST_INFO_OBJECT (self, "MIMETYPE video/x-h263 VIDEO_SET_STREAMTYPE, 2");
+		const GValue *codec_data = gst_structure_get_value (structure, "codec_data");
+		self->codec_data = gst_value_get_buffer (codec_data);
+		gst_buffer_ref (self->codec_data);
+
 	} else if (!strcmp (mimetype, "video/x-xvid")) {
 		streamtype = STREAMTYPE_XVID;
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-		self->must_pack_bitstream = 1;
-#endif
 		GST_INFO_OBJECT (self, "MIMETYPE video/x-xvid -> VIDEO_SET_STREAMTYPE, 10");
+
 	} else if (!strcmp (mimetype, "video/x-divx") || !strcmp (mimetype, "video/x-msmpeg")) {
 		gint divxversion = -1;
+
 		if (!gst_structure_get_int (structure, "divxversion", &divxversion) && !gst_structure_get_int (structure, "msmpegversion", &divxversion))
 			;
+
 		switch (divxversion) {
+			case 0:
+			break;
 			case 3:
 			case 43:
 			{
@@ -1630,24 +1409,143 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			}
 			break;
 			case 4:
-				streamtype = STREAMTYPE_DIVX4;
-				self->codec_data = gst_buffer_new_and_alloc(12);
-				guint8 *data = GST_BUFFER_DATA(self->codec_data);
-				memcpy(data, "\x00\x00\x01\xb2\x44\x69\x76\x58\x34\x41\x4e\x44", 12);
 				GST_INFO_OBJECT (self, "MIMETYPE video/x-divx vers. 4 -> VIDEO_SET_STREAMTYPE, 14");
+				streamtype = STREAMTYPE_DIVX4;
 			break;
-			case 6:
 			case 5:
-				streamtype = STREAMTYPE_DIVX5;
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-				self->must_pack_bitstream = 1;
-#endif
+			case 6:
 				GST_INFO_OBJECT (self, "MIMETYPE video/x-divx vers. 5 -> VIDEO_SET_STREAMTYPE, 15");
+				streamtype = STREAMTYPE_DIVX5;
 			break;
 			default:
 				GST_ELEMENT_ERROR (self, STREAM, FORMAT, (NULL), ("unhandled divx version %i", divxversion));
 			break;
 		}
+
+		if (self->streamtype == STREAMTYPE_DIVX4 || self->streamtype == STREAMTYPE_DIVX5) {
+			self->runtime_header_data_size = 17; //Fakeheader size
+			self->runtime_header_data = (unsigned char*)malloc(sizeof(unsigned char) * self->runtime_header_data_size);
+			memset(self->runtime_header_data, 0, self->runtime_header_data_size);
+
+			unsigned int startcode = 0x1b0;
+			self->runtime_header_data[0] = (startcode >> 24) & 0xFF;
+			self->runtime_header_data[1] = (startcode >> 16) & 0xFF;
+			self->runtime_header_data[2] = (startcode >> 8) & 0xFF;
+			self->runtime_header_data[3] =  startcode & 0xFF;
+
+			self->runtime_header_data[4] = 0x00; //Profile = reserved
+
+			unsigned int startcode_user_data = 0x1b2;
+			self->runtime_header_data[5] = (startcode_user_data >> 24) & 0xFF;
+			self->runtime_header_data[6] = (startcode_user_data >> 16) & 0xFF;
+			self->runtime_header_data[7] = (startcode_user_data >> 8) & 0xFF;
+			self->runtime_header_data[8] =  startcode_user_data & 0xFF;
+
+			unsigned int sttc = 0x53545443;
+			self->runtime_header_data[9]  = (sttc >> 24) & 0xFF;
+			self->runtime_header_data[10] = (sttc >> 16) & 0xFF;
+			self->runtime_header_data[11] = (sttc >> 8) & 0xFF;
+			self->runtime_header_data[12] =  sttc & 0xFF;
+
+			gint rate, rate_nu = -1, rate_de = -1;
+			gst_structure_get_fraction (structure, "framerate", &rate_nu, &rate_de);
+			rate = rate_de / 10;
+			printf("\nRate: %d -> %d\n", rate_de, rate);
+			self->runtime_header_data[13] = (rate >> 24) & 0xFF;
+			self->runtime_header_data[14] = (rate >> 16) & 0xFF;
+			self->runtime_header_data[15] = (rate >> 8) & 0xFF;
+			self->runtime_header_data[16] =  rate & 0xFF;
+		}
+
+	} else if (!strcmp (mimetype, "video/x-wmv")) {
+		gint wmvversion = -1, rate, rate_nu = -1, rate_de = -1, width = -1, height = -1;
+		guint32 format = 0xFF;
+
+		#define WMV3_PRIVATE_DATA_LENGTH        4
+		#define VC1_SEQUENCE_LAYER_METADATA_START_CODE          0x80
+		#define VC1_FRAME_START_CODE                            0x0d
+
+		#define METADATA_STRUCT_A_START             12
+		#define METADATA_STRUCT_B_START             24
+		#define METADATA_STRUCT_B_FRAMERATE_START   32
+		#define METADATA_STRUCT_C_START             8
+
+		const unsigned char  SequenceLayerStartCode[]          = {0x00,    0x00,   0x01,   VC1_SEQUENCE_LAYER_METADATA_START_CODE};
+
+		const unsigned char  Metadata[]          =
+		{
+			0x00,    0x00,   0x00,   0xc5,
+			0x04,    0x00,   0x00,   0x00,
+			0xc0,    0x00,   0x00,   0x00,   /* Struct C set for for advanced profile*/
+			0x00,    0x00,   0x00,   0x00,   /* Struct A */
+			0x00,    0x00,   0x00,   0x00,
+			0x0c,    0x00,   0x00,   0x00,
+			0x60,    0x00,   0x00,   0x00,   /* Struct B */
+			0x00,    0x00,   0x00,   0x00,
+			0x00,    0x00,   0x00,   0x00
+		};
+
+		gst_structure_get_int      (structure, "wmvversion", &wmvversion);
+		gst_structure_get_fourcc      (structure, "format", &format);
+		gst_structure_get_fraction (structure, "framerate", &rate_nu, &rate_de);
+		gst_structure_get_int      (structure, "width", &width);
+		gst_structure_get_int      (structure, "height", &height);
+
+
+		rate = rate_de;
+		printf("Rate: %d -> %d\n", rate_de, rate);
+		printf("Format: %u\n", format);
+
+#define FOURCC_WMV3 0x33564D57
+#define FOURCC_WVC1 0x31435657
+
+		const GValue *codec_data = gst_structure_get_value (structure, "codec_data");
+		guint8 *h      = GST_BUFFER_DATA(gst_value_get_buffer (codec_data));
+		guint32 h_size = GST_BUFFER_SIZE(gst_value_get_buffer (codec_data));
+
+		guint8 METADATA_START = 0;
+		if (format == FOURCC_WVC1) {
+			self->codec_data = gst_value_get_buffer (codec_data);
+			gst_buffer_ref (self->codec_data);
+
+			self->initial_header_private_data_size = sizeof(SequenceLayerStartCode) + sizeof(Metadata);
+			METADATA_START = sizeof(SequenceLayerStartCode);
+		}
+		else if (format == FOURCC_WMV3) {
+			self->initial_header_private_data_size = sizeof(Metadata);
+		}
+
+		self->initial_header_private_data = 
+			(guint8*) malloc(sizeof(guint8) * self->initial_header_private_data_size);
+		memset (self->initial_header_private_data, 0, self->initial_header_private_data_size);
+
+		if (format == FOURCC_WVC1)
+			memcpy (self->initial_header_private_data, SequenceLayerStartCode, sizeof(SequenceLayerStartCode));
+
+		memcpy(self->initial_header_private_data + METADATA_START , Metadata, sizeof(Metadata));
+
+		if (format == FOURCC_WMV3)
+			memcpy(self->initial_header_private_data + METADATA_START + METADATA_STRUCT_C_START, h, WMV3_PRIVATE_DATA_LENGTH);
+
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 0] = (height >>  0) & 0xFF;
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 1] = (height >>  8) & 0xFF;
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 2] = (height >> 16) & 0xFF;
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 3] =  height >> 24;
+
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 4] = (width >>  0) & 0xFF;
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 5] = (width >>  8) & 0xFF;
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 6] = (width >> 16) & 0xFF;
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 7] =  width >> 24;
+
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_B_START + 8] = (rate >>  0) & 0xFF;
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_B_START + 9] = (rate >>  8) & 0xFF;
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_B_START + 10] = (rate >> 16) & 0xFF;
+		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_B_START + 11] =  rate >> 24;
+
+		if (format == FOURCC_WVC1)
+			streamtype = STREAMTYPE_VC1;
+		else if (format == FOURCC_WMV3)
+			streamtype = STREAMTYPE_WMV;
 	}
 	if (streamtype != -STREAMTYPE_UNKNOWN) {
 		gint numerator, denominator;
@@ -1674,6 +1572,7 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			ioctl(self->fd, VIDEO_STOP, 0);
 			self->dec_running = FALSE;
 		}
+
 		if (self->use_set_encoding)
 		{
 #ifdef VIDEO_SET_ENCODING
@@ -1791,10 +1690,6 @@ gst_dvbvideosink_stop (GstBaseSink * basesink)
 	if (self->h264_buffer)
 		gst_buffer_unref(self->h264_buffer);
 
-#ifdef PACK_UNPACKED_XVID_DIVX5_BITSTREAM
-	if (self->prev_frame)
-		gst_buffer_unref(self->prev_frame);
-#endif
 
 	while(self->queue)
 		queue_pop(&self->queue);

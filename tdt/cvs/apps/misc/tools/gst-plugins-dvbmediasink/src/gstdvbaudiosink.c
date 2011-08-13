@@ -672,63 +672,70 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 				if (!stream_type)
 					stream_type = gst_structure_get_string (structure, "stream-format");
 				if (stream_type && !strcmp(stream_type, "adts"))
-					GST_INFO_OBJECT (self, "MIMETYPE %s version %d (AAC-ADTS)", type, mpegversion);
+					printf("MIMETYPE %s version %d (AAC-ADTS)", type, mpegversion);
 				else {
+					guint8 channels = 0xFF, rate_idx = 0xFF, obj_type = 0xFF;
 					const GValue *codec_data = gst_structure_get_value (structure, "codec_data");
-					GST_INFO_OBJECT (self, "MIMETYPE %s version %d (AAC-RAW)", type, mpegversion);
+					printf("MIMETYPE %s version %d (AAC-RAW)", type, mpegversion);
+
+					// Get necessary data for header
 					if (codec_data) {
 						guint8 *h = GST_BUFFER_DATA(gst_value_get_buffer (codec_data));
-						guint8 obj_type = ((h[0] & 0xC) >> 2) + 1;
-						guint8 rate_idx = ((h[0] & 0x3) << 1) | ((h[1] & 0x80) >> 7);
-						guint8 channels = (h[1] & 0x78) >> 3;
-						GST_INFO_OBJECT (self, "have codec data -> obj_type = %d, rate_idx = %d, channels = %d\n",
-							obj_type, rate_idx, channels);
-						/* Sync point over a full byte */
-						self->aac_adts_header[0] = 0xFF;
-						/* Sync point continued over first 4 bits + static 4 bits
-						 * (ID, layer, protection)*/
-						self->aac_adts_header[1] = 0xF1;
-						if (mpegversion == 2)
-							self->aac_adts_header[1] |= 8;
-						/* Object type over first 2 bits */
-						self->aac_adts_header[2] = obj_type << 6;
-						/* rate index over next 4 bits */
-						self->aac_adts_header[2] |= rate_idx << 2;
-						/* channels over last 2 bits */
-						self->aac_adts_header[2] |= (channels & 0x4) >> 2;
-						/* channels continued over next 2 bits + 4 bits at zero */
-						self->aac_adts_header[3] = (channels & 0x3) << 6;
-						self->aac_adts_header_valid = TRUE;
+						printf("have codec data\n");
+						obj_type = ((h[0] & 0xC) >> 2) + 1;
+						rate_idx = ((h[0] & 0x3) << 1) | ((h[1] & 0x80) >> 7);
+						channels = (h[1] & 0x78) >> 3;
 					}
 					else {
-						gint rate, channels, rate_idx=0, obj_type = 1; // hardcoded yet.. hopefully this works every time ;)
-						GST_INFO_OBJECT (self, "no codec data");
-						if (gst_structure_get_int (structure, "rate", &rate) && gst_structure_get_int (structure, "channels", &channels)) {
+						gint rate_tmp, channels_tmp;
+						printf("have no codec data\n");
+						if (gst_structure_get_int (structure, "rate", &rate_tmp) && gst_structure_get_int (structure, "channels", &channels_tmp)) {
 							do {
-								if (AdtsSamplingRates[rate_idx] == rate)
+								if (AdtsSamplingRates[rate_idx] == rate_tmp)
 									break;
 								++rate_idx;
 							} while (AdtsSamplingRates[rate_idx]);
 							if (AdtsSamplingRates[rate_idx]) {
-								GST_INFO_OBJECT (self, "mpegversion %d, channels %d, rate %d, rate_idx %d\n", mpegversion, channels, rate, rate_idx);
-								/* Sync point over a full byte */
-								self->aac_adts_header[0] = 0xFF;
-								/* Sync point continued over first 4 bits + static 4 bits
-								 * (ID, layer, protection)*/
-								self->aac_adts_header[1] = 0xF1;
-								if (mpegversion == 2)
-									self->aac_adts_header[1] |= 8;
-								/* Object type over first 2 bits */
-								self->aac_adts_header[2] = obj_type << 6;
-								/* rate index over next 4 bits */
-								self->aac_adts_header[2] |= rate_idx << 2;
-								/* channels over last 2 bits */
-								self->aac_adts_header[2] |= (channels & 0x4) >> 2;
-								/* channels continued over next 2 bits + 4 bits at zero */
-								self->aac_adts_header[3] = (channels & 0x3) << 6;
-								self->aac_adts_header_valid = TRUE;
+								obj_type = 1; // hardcoded yet.. hopefully this works every time ;)
+								channels = (guint8)(channels_tmp&0xFF);
 							}
 						}
+					}
+
+					if (channels != 0xFF && rate_idx != 0xFF && obj_type != 0xFF) {
+						printf("have codec data -> obj_type = %d, rate_idx = %d, channels = %d\n",
+							obj_type, rate_idx, channels);
+
+						// AAC ADTS Header:
+						// 0: SSSSSSSS (S=Sync)
+						// 1: SSSS I LL P (I=Id L=Layer P=Protection)
+						// 2: OO RRRR P C (O=Profile R=Rate P=Private=0x0 C=Channels)
+						// 3: CC ZZZZ LL (Z=Zero=0x0 L=AAC Frame Length)
+						// 4: LLLLLLLL
+						// 5: LLL DDDDD (D=ADTS Buffer Fullness)
+						// 6: DDDDDD NN (N=Count Raw Data Blocks)
+
+						/* Sync point over a full byte */
+						self->aac_adts_header[0] = 0xFF; 
+
+						/* Sync point continued over first 4 bits + static 4 bits
+						 * (ID, layer, protection)*/
+						self->aac_adts_header[1] = 0xF1; 
+						if (mpegversion == 2)
+							self->aac_adts_header[1] |= 8;
+
+						/* Object type over first 2 bits */ 
+						self->aac_adts_header[2] = obj_type << 6; 
+						/* rate index over next 4 bits */
+						self->aac_adts_header[2] |= rate_idx << 2;
+						/* channels over last bit */
+						self->aac_adts_header[2] |= (channels & 0x4) >> 2;
+
+						/* channels continued over next 2 bits + 4 bits at zero */
+						self->aac_adts_header[3] = (channels & 0x3) << 6; 
+
+						/* Other fields will be set on runtime in gst_dvbaudiosink_render */
+						self->aac_adts_header_valid = TRUE;
 					}
 				}
 				bypass = BYPASS_AAC; // always use AAC + ADTS yet..
@@ -761,6 +768,7 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		GST_INFO_OBJECT (self, "MIMETYPE %s",type);
 		bypass = BYPASS_DTS;
 	}
+
 	else if (!strcmp(type, "audio/x-wma") || !strcmp(type, "audio/x-ms-wma")) {
 		GST_INFO_OBJECT (self, "MIMETYPE %s",type);
 
@@ -1142,63 +1150,61 @@ loop_start:
 
 
 static size_t
-buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp, unsigned char pic_start_code)
+buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp, unsigned char stream_id)
 {
 	unsigned char *pes_header = data;
 	size_t pes_header_size;
 	
-	pes_header[0] = 0;
-	pes_header[1] = 0;
-	pes_header[2] = 1;
-	pes_header[3] = pic_start_code;
+	pes_header[0] = 0x00;
+	pes_header[1] = 0x00;
+	pes_header[2] = 0x01;
+	pes_header[3] = stream_id;
+
+	pes_header[7] = 0x00;
+	pes_header[8] = 0x00;
+	pes_header_size = 9;
 
 		/* do we have a timestamp? */
 	if (timestamp != GST_CLOCK_TIME_NONE) {
 		unsigned long long pts = timestamp * 9LL / 100000 /* convert ns to 90kHz */;
 
-		pes_header[6] = 0x80;
+		pes_header[7] = 0x80;
+		pes_header[8] = 0x05;
 
-		pes_header[9]  = 0x21 | ((pts >> 29) & 0xE);
+		pes_header[9]  = 0x21 | ((pts >> 29) & 0x0E);
 		pes_header[10] = pts >> 22;
 		pes_header[11] = 0x01 | ((pts >> 14) & 0xFE);
 		pes_header[12] = pts >> 7;
 		pes_header[13] = 0x01 | ((pts << 1) & 0xFE);
 
+		pes_header_size = 14;
+
 		if (hwtype == DM7025) {  // DM7025 needs DTS in PES header
 			int64_t dts = pts; // what to use as DTS-PTS offset?
-			pes_header[4] = (size + 13) >> 8;
-			pes_header[5] = (size + 13) & 0xFF;
 			pes_header[7] = 0xC0;
-			pes_header[8] = 10;
+			pes_header[8] = 0x0A;
 			pes_header[9] |= 0x10;
 
-			pes_header[14] = 0x11 | ((dts >> 29) & 0xE);
+			pes_header[14] = 0x11 | ((dts >> 29) & 0x0E);
 			pes_header[15] = dts >> 22;
 			pes_header[16] = 0x01 | ((dts >> 14) & 0xFE);
 			pes_header[17] = dts >> 7;
 			pes_header[18] = 0x01 | ((dts << 1) & 0xFE);
+
 			pes_header_size = 19;
 		}
-		else {
-			pes_header[4] = (size + 8) >> 8;
-			pes_header[5] = (size + 8) & 0xFF;
-			pes_header[7] = 0x80;
-			pes_header[8] = 5;
-			pes_header_size = 14;
-		}
 	}
-	else {
-		pes_header[4] = (size + 3) >> 8;
-		pes_header[5] = (size + 3) & 0xFF;
-		pes_header[6] = 0x80;
-		pes_header[7] = 0x00;
-		pes_header[8] = 0;
-		pes_header_size = 9;
-	}
+
+	pes_header[4] = (size + pes_header_size - 6) >> 8;
+	pes_header[5] = (size  + pes_header_size - 6) & 0xFF;
+
+	pes_header[6] = 0x80;
 
 	return pes_header_size;
 }
 
+#define MPEG_AUDIO_PES_START_CODE           0xc0
+#define PRIVATE_STREAM_1_PES_START_CODE         0xbd
 
 static GstFlowReturn
 gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
@@ -1229,6 +1235,12 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 	}
 	else
 		self->timestamp = 0;
+
+	unsigned char start_code = MPEG_AUDIO_PES_START_CODE;
+	if (self->bypass == BYPASS_AC3) {
+		start_code = PRIVATE_STREAM_1_PES_START_CODE;
+	}
+
 
 	if (self->initial_header)
 	{
@@ -1279,7 +1291,7 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 	if (self->bypass == BYPASS_WMA) 
 		timestamp = 0;
 
-	pes_header_size = buildPesHeader(pes_header, size, timestamp, 0xC0/*MPEG_AUDIO_PES_START_CODE*/);
+	pes_header_size = buildPesHeader(pes_header, size, timestamp, start_code);
 
 	if (self->aac_adts_header_valid) {
 		self->aac_adts_header[3] &= 0xC0;
