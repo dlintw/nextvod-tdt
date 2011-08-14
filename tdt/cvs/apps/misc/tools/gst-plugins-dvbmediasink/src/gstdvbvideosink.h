@@ -86,6 +86,13 @@ struct _GstDVBVideoSink
 
 	gint must_send_header;
 
+	gboolean initial_header;
+	guint8  *initial_header_private_data;
+	guint32  initial_header_private_data_size;
+
+	guint8  *runtime_header_data;
+	guint32  runtime_header_data_size;
+
 	GstBuffer *h264_buffer;
 	gint h264_nal_len_size;
 
