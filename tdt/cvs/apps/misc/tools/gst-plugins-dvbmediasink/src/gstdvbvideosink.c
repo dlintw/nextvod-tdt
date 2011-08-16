@@ -935,16 +935,19 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 	//pes_header[5] = size & 0xFF;
 
 	pes_header[6] = 0x80;
-	pes_header[7] = 0x00;
-	pes_header[8] = 0x00;
+
+	// No special flags
+	pes_header[7] = 0x00; // Flag
+	pes_header[8] = 0x00; // Len of additional data field
 	pes_header_size = 9;
 
 		/* do we have a timestamp? */
 	if (timestamp != GST_CLOCK_TIME_NONE) {
 		unsigned long long pts = timestamp * 9LL / 100000 /* convert ns to 90kHz */;
 
-		pes_header[7] = 0x80;
-		pes_header[8] = 0x05;
+		// Timestamp present
+		pes_header[7] = 0x80; // Flag
+		pes_header[8] = 0x05; // Len of additional data field
 		
 		pes_header[9] =  0x21 | ((pts >> 29) & 0xE);
 		pes_header[10] = pts >> 22;
@@ -953,6 +956,12 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 		pes_header[13] = 0x01 | ((pts << 1) & 0xFE);
 
 		pes_header_size += 5;
+
+#ifdef SEND_DTS
+		// At the moment it seems that dts has only to be set for dm7025 
+		// and than only for audio
+#endif
+
 	}
 
 	if (video_private_data) {
@@ -975,7 +984,7 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 	}
 
 	pes_header[4] = (size + pes_header_size - 6) >> 8;
-	pes_header[5] = (size  + pes_header_size - 6) & 0xFF;
+	pes_header[5] = (size + pes_header_size - 6) & 0xFF;
 
 	if (pic_start_code) {
 		pes_header[pes_header_size + 0] = 0x00;
@@ -992,8 +1001,8 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 	return pes_header_size;
 }
 
-#define VC1_VIDEO_PES_START_CODE            0xfd
-#define VC1_FRAME_START_CODE                            0x0d
+#define VC1_VIDEO_PES_START_CODE                0xfd
+#define VC1_FRAME_START_CODE                    0x0d
 #define PES_VERSION_FAKE_START_CODE             0x31
 #define MPEG_VIDEO_PES_START_CODE               0xe0
 #define H263_VIDEO_PES_START_CODE               0xfe
@@ -1294,7 +1303,15 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			unsigned int cd_len = GST_BUFFER_SIZE (codec_data);
 			unsigned int cd_pos = 0;
 			GST_INFO_OBJECT (self, "H264 have codec data..!");
-			if (cd_len > 7 && data[0] == 1) { // avcC version
+
+#define AVCC_VERSION 0
+#define AVCC_PROFILE 1
+#define AVCC_COMPATIBILITY 2
+#define AVCC_LEVEL 3
+#define AVCC NAL_LENGTH_MINUS_ONE 4
+#define AVCC_NUM_PARAM_SETS 5
+
+			if (cd_len > 7 && data[AVCC_VERSION] == 1) { // avcC version
 				unsigned short len = (data[6] << 8) | data[7]; // Length of first sequence param set
 				if (cd_len >= (len + 8)) {
 					unsigned int i=0;
