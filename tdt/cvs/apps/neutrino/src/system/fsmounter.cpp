@@ -230,32 +230,34 @@ CFSMounter::MountRes CFSMounter::mount(const char * const ip, const char * const
 	}
 
 	if(fstype == NFS) {
-		cmd = "mount -t nfs ";
+		cmd = "mount -t nfs -o ";
+		cmd += options1;
+		if (options2[0] !='\0') {
+			cmd += ',';
+			cmd += options2;
+		}
+		cmd += ' ';
 		cmd += ip;
 		cmd += ':';
 		cmd += dir;
 		cmd += ' ';
 		cmd += local_dir;
-		cmd += " -o ";
-		cmd += options1;
 	}
 	else if(fstype == CIFS) {
-		cmd = "mount -t cifs //";
-		cmd += ip;
-		cmd += '/';
-		cmd += dir;
-		cmd += ' ';
-		cmd += local_dir;
-		cmd += " -o username=";
+		cmd = "mount -t cifs -o username=";
 		cmd += username;
 		cmd += ",password=";
 		cmd += password;
-		//cmd += ",unc=//"; for whats needed?
-		//cmd += ip;
-		//cmd += '/';
-		//cmd += dir;
-		//cmd += ',';
-		//cmd += options1;
+		if (options2[0] !='\0') {
+			cmd += ',';
+			cmd += options2;
+		}
+		cmd += " '//";
+		cmd += ip;
+		cmd += '\\';
+		cmd += dir;
+		cmd += "' ";
+		cmd += local_dir;
 	}
 	else {
 		cmd = "lufsd none ";
@@ -270,11 +272,10 @@ CFSMounter::MountRes CFSMounter::mount(const char * const ip, const char * const
 		cmd += dir;
 		cmd += ',';
 		cmd += options1;
-	}
-
-	if (options2[0] !='\0') {
-		cmd += ',';
-		cmd += options2;
+		if (options2[0] !='\0') {
+			cmd += ',';
+			cmd += options2;
+		}
 	}
 
 	if ( local_dir ) {
