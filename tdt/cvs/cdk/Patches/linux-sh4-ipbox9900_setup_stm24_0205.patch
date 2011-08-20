@@ -74,7 +74,7 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox9900/Makefile l
 diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox9900/setup.c linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox9900/setup.c
 --- linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox9900/setup.c	1970-01-01 01:00:00.000000000 +0100
 +++ linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox9900/setup.c	2011-07-03 17:37:41.000000000 +0200
-@@ -0,0 +1,186 @@
+@@ -0,0 +1,171 @@
 +/*
 + * arch/sh/boards/st/mb442/setup.c
 + *
@@ -100,9 +100,6 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox9900/setup.c li
 +#include <linux/stm/stx7100.h>
 +#include <asm/irl.h>
 +#include <linux/bpa2.h>
-+
-+#define MB442_PIO_STE100P_RESET stm_gpio(2, 4)
-+#define MB442_PIO_FLASH_VPP stm_gpio(2, 7)
 +
 +const char *LMI_VID_partalias[] = { "BPA2_Region1", "coredisplay-video", "gfx-memory", "v4l2-video-buffers","v4l2-coded-video-buffers", NULL };
 +const char *LMI_SYS_partalias[] = { "BPA2_Region0", "bigphysarea", NULL };
@@ -169,12 +166,6 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox9900/setup.c li
 +	},
 +};
 +
-+
-+static void mb442_set_vpp(struct map_info *info, int enable)
-+{
-+	gpio_set_value(MB442_PIO_FLASH_VPP, enable);
-+}
-+
 +static struct platform_device mb442_physmap_flash = {
 +	.name		= "physmap-flash",
 +	.id		= -1,
@@ -189,7 +180,7 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox9900/setup.c li
 +
 +	.dev.platform_data = &(struct physmap_flash_data) {
 +    	    	.width		= 2,
-+		.set_vpp	= mb442_set_vpp,
++		.set_vpp	= NULL,
 +		.nr_parts	= ARRAY_SIZE(mtd_parts_table),
 +		.parts		= mtd_parts_table
 +	},
@@ -246,12 +237,6 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox9900/setup.c li
 +			.rx_mode = stx7100_lirc_rx_mode_ir,
 +			.tx_enabled = 0,
 +			.tx_od_enabled = 0, });
-+
-+	gpio_request(MB442_PIO_FLASH_VPP, "Flash VPP");
-+	gpio_direction_output(MB442_PIO_FLASH_VPP, 0);
-+
-+//	gpio_request(MB442_PIO_STE100P_RESET, "STE100P reset");
-+//	gpio_direction_output(MB442_PIO_STE100P_RESET, 1);
 +
 +	stx7100_configure_ethernet(&(struct stx7100_ethernet_config) {
 +			.mode = 0,
@@ -319,3 +304,18 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/Makefile linux-sh4-2.6.32.1
  	stx7100_ssc_devices[ssc].id = i2c_busnum;
  
  	plat_data = stx7100_ssc_devices[ssc].dev.platform_data;
+diff -urN linux-sh4-2.6.32.16_stm24_0205.org/drivers/usb/core/hub.c linux-sh4-2.6.32.16_stm24_0205/drivers/usb/core/hub.c
+--- linux-sh4-2.6.32.16_stm24_0205.org/drivers/usb/core/hub.c	2011-08-16 07:36:25.947316046 +0200
++++ linux-sh4-2.6.32.16_stm24_0205/drivers/usb/core/hub.c	2011-08-16 07:24:47.494815389 +0200
+@@ -1051,7 +1051,11 @@
+ 				dev_warn(hub_dev,
+ 					"insufficient power available "
+ 					"to use all downstream ports\n");
++#if defined(CONFIG_SH_IPBOX9900)
++			hub->mA_per_port = 500;
++#else
+ 			hub->mA_per_port = 100;		/* 7.2.1.1 */
++#endif
+ 		}
+ 	} else {	/* Self-powered external hub */
+ 		/* FIXME: What about battery-powered external hubs that

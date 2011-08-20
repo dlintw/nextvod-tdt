@@ -1431,3 +1431,230 @@ diff -urN enigma2-nightly.org/lib/dvb/pmt.h enigma2-nightly/lib/dvb/pmt.h
  	static void DVBChannelAdded(eDVBChannel*);
  	static void DVBChannelStateChanged(iDVBChannel*);
  	static CAServiceMap exist;
+diff -urN enigma2-nightly.org/lib/python/Screens/ScanSetup.py enigma2-nightly/lib/python/Screens/ScanSetup.py
+--- enigma2-nightly.org/lib/python/Screens/ScanSetup.py	2011-07-24 17:21:06.378798000 +0200
++++ enigma2-nightly/lib/python/Screens/ScanSetup.py	2011-08-13 13:14:58.510444454 +0200
+@@ -100,6 +100,18 @@
+ #	def cableTransponderSearchFinished(self):
+ #		pass
+ 
++	def closeFrontendForSearch(self, feid):
++		res_mgr = eDVBResourceManager.getInstance()
++		if res_mgr:
++			raw_channel = res_mgr.allocateRawChannel(self.feid)
++			if raw_channel:
++				frontend = raw_channel.getFrontend()
++				if frontend:
++					frontend.closeFrontend()
++					del frontend
++					del raw_channel
++		return
++
+ 	def tryGetRawFrontend(self, feid):
+ 		res_mgr = eDVBResourceManager.getInstance()
+ 		if res_mgr:
+@@ -133,6 +145,7 @@
+ 		self.cable_search_session.close(True)
+ 
+ 	def getCableTransponderData(self, str):
++		print ""
+ 		data = str.split()
+ 		if len(data):
+ 			if data[0] == 'OK':
+@@ -160,12 +173,12 @@
+ 				parm.modulation = qam[data[4]]
+ 				parm.inversion = inv[data[5]]
+ 				self.__tlist.append(parm)
+-			tmpstr = _("Try to find used Transponders in cable network.. please wait...")
+-			tmpstr += "\n\n"
+-			tmpstr += data[1]
+-			tmpstr += " kHz "
+-			tmpstr += data[0]
+-			self.cable_search_session["text"].setText(tmpstr)
++		tmpstr = _("Try to find used Transponders in cable network.. please wait...")
++		tmpstr += "\n\n"
++		tmpstr += data[1]
++		tmpstr += " kHz "
++		tmpstr += data[0]
++		self.cable_search_session["text"].setText(tmpstr)
+ 
+ 	def startCableTransponderSearch(self, nim_idx):
+ 		if not self.tryGetRawFrontend(nim_idx):
+@@ -182,72 +195,17 @@
+ 		self.cable_search_container.appClosed.append(self.cableTransponderSearchClosed)
+ 		self.cable_search_container.dataAvail.append(self.getCableTransponderData)
+ 		cableConfig = config.Nims[nim_idx].cable
+-		tunername = nimmanager.getNimName(nim_idx)
+-		bus = nimmanager.getI2CDevice(nim_idx)
+-		if bus is None:
+-			print "ERROR: could not get I2C device for nim", nim_idx, "for cable transponder search"
+-			bus = 2
++		cmd = "w_scan -f c -qq"
++		cmd += " -c " + cableConfig.country.value
+ 
+-		if tunername == "CXD1981":
+-			cmd = "cxd1978 --init --scan --verbose --wakeup --inv 2 --bus %d" % bus
+-		else:
+-			cmd = "tda1002x --init --scan --verbose --wakeup --inv 2 --bus %d" % bus
+-		
+-		if cableConfig.scan_type.value == "bands":
+-			cmd += " --scan-bands "
+-			bands = 0
+-			if cableConfig.scan_band_EU_VHF_I.value:
+-				bands |= cable_bands["DVBC_BAND_EU_VHF_I"]
+-			if cableConfig.scan_band_EU_MID.value:
+-				bands |= cable_bands["DVBC_BAND_EU_MID"]
+-			if cableConfig.scan_band_EU_VHF_III.value:
+-				bands |= cable_bands["DVBC_BAND_EU_VHF_III"]
+-			if cableConfig.scan_band_EU_UHF_IV.value:
+-				bands |= cable_bands["DVBC_BAND_EU_UHF_IV"]
+-			if cableConfig.scan_band_EU_UHF_V.value:
+-				bands |= cable_bands["DVBC_BAND_EU_UHF_V"]
+-			if cableConfig.scan_band_EU_SUPER.value:
+-				bands |= cable_bands["DVBC_BAND_EU_SUPER"]
+-			if cableConfig.scan_band_EU_HYPER.value:
+-				bands |= cable_bands["DVBC_BAND_EU_HYPER"]
+-			if cableConfig.scan_band_US_LOW.value:
+-				bands |= cable_bands["DVBC_BAND_US_LO"]
+-			if cableConfig.scan_band_US_MID.value:
+-				bands |= cable_bands["DVBC_BAND_US_MID"]
+-			if cableConfig.scan_band_US_HIGH.value:
+-				bands |= cable_bands["DVBC_BAND_US_HI"]
+-			if cableConfig.scan_band_US_SUPER.value:
+-				bands |= cable_bands["DVBC_BAND_US_SUPER"]
+-			if cableConfig.scan_band_US_HYPER.value:
+-				bands |= cable_bands["DVBC_BAND_US_HYPER"]
+-			cmd += str(bands)
+-		else:
+-			cmd += " --scan-stepsize "
+-			cmd += str(cableConfig.scan_frequency_steps.value)
+-		if cableConfig.scan_mod_qam16.value:
+-			cmd += " --mod 16"
+-		if cableConfig.scan_mod_qam32.value:
+-			cmd += " --mod 32"
+-		if cableConfig.scan_mod_qam64.value:
+-			cmd += " --mod 64"
++		if cableConfig.ext_symrates.value:
++			cmd += " -e 1"
+ 		if cableConfig.scan_mod_qam128.value:
+-			cmd += " --mod 128"
+-		if cableConfig.scan_mod_qam256.value:
+-			cmd += " --mod 256"
+-		if cableConfig.scan_sr_6900.value:
+-			cmd += " --sr 6900000"
+-		if cableConfig.scan_sr_6875.value:
+-			cmd += " --sr 6875000"
+-		if cableConfig.scan_sr_ext1.value > 450:
+-			cmd += " --sr "
+-			cmd += str(cableConfig.scan_sr_ext1.value)
+-			cmd += "000"
+-		if cableConfig.scan_sr_ext2.value > 450:
+-			cmd += " --sr "
+-			cmd += str(cableConfig.scan_sr_ext2.value)
+-			cmd += "000"
+-		print "TDA1002x CMD is", cmd
++			cmd += " -e 2"
++
++		print "w_scan CMD is", cmd
+ 
++		self.closeFrontendForSearch(nim_idx)
+ 		self.cable_search_container.execute(cmd)
+ 		tmpstr = _("Try to find used transponders in cable network.. please wait...")
+ 		tmpstr += "\n\n..."
+diff -urN enigma2-nightly.org/lib/python/Screens/Satconfig.py enigma2-nightly/lib/python/Screens/Satconfig.py
+--- enigma2-nightly.org/lib/python/Screens/Satconfig.py	2011-07-24 17:21:05.867647000 +0200
++++ enigma2-nightly/lib/python/Screens/Satconfig.py	2011-08-13 13:03:32.248111248 +0200
+@@ -165,30 +165,9 @@
+ 				if self.nimConfig.cable.scan_type.value == "provider":
+ 					self.list.append(getConfigListEntry(_("Provider to scan"), self.nimConfig.cable.scan_provider))
+ 				else:
+-					if self.nimConfig.cable.scan_type.value == "bands":
+-						self.list.append(getConfigListEntry(_("Scan band EU VHF I"), self.nimConfig.cable.scan_band_EU_VHF_I))
+-						self.list.append(getConfigListEntry(_("Scan band EU MID"), self.nimConfig.cable.scan_band_EU_MID))
+-						self.list.append(getConfigListEntry(_("Scan band EU VHF III"), self.nimConfig.cable.scan_band_EU_VHF_III))
+-						self.list.append(getConfigListEntry(_("Scan band EU UHF IV"), self.nimConfig.cable.scan_band_EU_UHF_IV))
+-						self.list.append(getConfigListEntry(_("Scan band EU UHF V"), self.nimConfig.cable.scan_band_EU_UHF_V))
+-						self.list.append(getConfigListEntry(_("Scan band EU SUPER"), self.nimConfig.cable.scan_band_EU_SUPER))
+-						self.list.append(getConfigListEntry(_("Scan band EU HYPER"), self.nimConfig.cable.scan_band_EU_HYPER))
+-						self.list.append(getConfigListEntry(_("Scan band US LOW"), self.nimConfig.cable.scan_band_US_LOW))
+-						self.list.append(getConfigListEntry(_("Scan band US MID"), self.nimConfig.cable.scan_band_US_MID))
+-						self.list.append(getConfigListEntry(_("Scan band US HIGH"), self.nimConfig.cable.scan_band_US_HIGH))
+-						self.list.append(getConfigListEntry(_("Scan band US SUPER"), self.nimConfig.cable.scan_band_US_SUPER))
+-						self.list.append(getConfigListEntry(_("Scan band US HYPER"), self.nimConfig.cable.scan_band_US_HYPER))
+-					elif self.nimConfig.cable.scan_type.value == "steps":
+-						self.list.append(getConfigListEntry(_("Frequency scan step size(khz)"), self.nimConfig.cable.scan_frequency_steps))
+-					self.list.append(getConfigListEntry(_("Scan QAM16"), self.nimConfig.cable.scan_mod_qam16))
+-					self.list.append(getConfigListEntry(_("Scan QAM32"), self.nimConfig.cable.scan_mod_qam32))
+-					self.list.append(getConfigListEntry(_("Scan QAM64"), self.nimConfig.cable.scan_mod_qam64))
+-					self.list.append(getConfigListEntry(_("Scan QAM128"), self.nimConfig.cable.scan_mod_qam128))
+-					self.list.append(getConfigListEntry(_("Scan QAM256"), self.nimConfig.cable.scan_mod_qam256))
+-					self.list.append(getConfigListEntry(_("Scan SR6900"), self.nimConfig.cable.scan_sr_6900))
+-					self.list.append(getConfigListEntry(_("Scan SR6875"), self.nimConfig.cable.scan_sr_6875))
+-					self.list.append(getConfigListEntry(_("Scan additional SR"), self.nimConfig.cable.scan_sr_ext1))
+-					self.list.append(getConfigListEntry(_("Scan additional SR"), self.nimConfig.cable.scan_sr_ext2))
++					self.list.append(getConfigListEntry(_("Country"), self.nimConfig.cable.country))
++					self.list.append(getConfigListEntry(_("Use extended symbolrate list"), self.nimConfig.cable.ext_symrates))
++					self.list.append(getConfigListEntry(_("Enable QAM128"), self.nimConfig.cable.scan_mod_qam128))
+ 			self.have_advanced = False
+ 		elif self.nim.isCompatible("DVB-T"):
+ 			self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.configMode)
+diff -urN enigma2-nightly.org/lib/python/Components/NimManager.py enigma2-nightly/lib/python/Components/NimManager.py
+--- enigma2-nightly.org/lib/python/Components/NimManager.py	2011-08-13 12:58:21.244120764 +0200
++++ enigma2-nightly/lib/python/Components/NimManager.py	2011-08-13 12:59:40.220112547 +0200
+@@ -1467,33 +1467,14 @@
+ 				list.append((str(n), x[0]))
+ 				n += 1
+ 			nim.cable = ConfigSubsection()
+-			possible_scan_types = [("bands", _("Frequency bands")), ("steps", _("Frequency steps"))]
++			possible_scan_types = [("blind", _("Blindscan"))]
+ 			if n:
+ 				possible_scan_types.append(("provider", _("Provider")))
+ 				nim.cable.scan_provider = ConfigSelection(default = "0", choices = list)
+-			nim.cable.scan_type = ConfigSelection(default = "bands", choices = possible_scan_types)
+-			nim.cable.scan_band_EU_VHF_I = ConfigYesNo(default = True)
+-			nim.cable.scan_band_EU_MID = ConfigYesNo(default = True)
+-			nim.cable.scan_band_EU_VHF_III = ConfigYesNo(default = True)
+-			nim.cable.scan_band_EU_UHF_IV = ConfigYesNo(default = True)
+-			nim.cable.scan_band_EU_UHF_V = ConfigYesNo(default = True)
+-			nim.cable.scan_band_EU_SUPER = ConfigYesNo(default = True)
+-			nim.cable.scan_band_EU_HYPER = ConfigYesNo(default = True)
+-			nim.cable.scan_band_US_LOW = ConfigYesNo(default = False)
+-			nim.cable.scan_band_US_MID = ConfigYesNo(default = False)
+-			nim.cable.scan_band_US_HIGH = ConfigYesNo(default = False)
+-			nim.cable.scan_band_US_SUPER = ConfigYesNo(default = False)
+-			nim.cable.scan_band_US_HYPER = ConfigYesNo(default = False)
+-			nim.cable.scan_frequency_steps = ConfigInteger(default = 1000, limits = (1000, 10000))
+-			nim.cable.scan_mod_qam16 = ConfigYesNo(default = False)
+-			nim.cable.scan_mod_qam32 = ConfigYesNo(default = False)
+-			nim.cable.scan_mod_qam64 = ConfigYesNo(default = True)
++			nim.cable.scan_type = ConfigSelection(default = "blind", choices = possible_scan_types)
+ 			nim.cable.scan_mod_qam128 = ConfigYesNo(default = False)
+-			nim.cable.scan_mod_qam256 = ConfigYesNo(default = True)
+-			nim.cable.scan_sr_6900 = ConfigYesNo(default = True)
+-			nim.cable.scan_sr_6875 = ConfigYesNo(default = True)
+-			nim.cable.scan_sr_ext1 = ConfigInteger(default = 0, limits = (0, 7230))
+-			nim.cable.scan_sr_ext2 = ConfigInteger(default = 0, limits = (0, 7230))
++			nim.cable.ext_symrates = ConfigYesNo(default = False)
++			nim.cable.country = ConfigSelection(default = "DE", choices = [("AT", "Austria"), ("CH", "SWITZERLAND"), ("CZ", "CZECH REPUBLIC"), ("DE", "Germany"), ("NL", "NETHERLANDS"), ("PL", "POLAND"), ("SK", "SLOVAKIA")])
+ 		elif slot.isCompatible("DVB-T"):
+ 			nim.configMode = ConfigSelection(
+ 				choices = {
+diff -urN enigma2-nightly.org/lib/python/enigma_python.i enigma2-nightly/lib/python/enigma_python.i
+--- enigma2-nightly.org/lib/python/enigma_python.i	2011-08-14 21:22:43.000000000 +0200
++++ enigma2-nightly/lib/python/enigma_python.i	2011-08-15 20:32:47.658781792 +0200
+@@ -92,6 +92,7 @@
+ #include <lib/driver/avswitch.h>
+ #include <lib/driver/rfmod.h>
+ #include <lib/driver/misc_options.h>
++#include <lib/driver/fan_options.h>
+ #include <lib/driver/etimezone.h>
+ #include <lib/gdi/lcd.h>
+ #include <lib/mmi/mmi_ui.h>
+@@ -209,6 +210,7 @@
+ %include <lib/driver/avswitch.h>
+ %include <lib/driver/rfmod.h>
+ %include <lib/driver/misc_options.h>
++%include <lib/driver/fan_options.h>
+ %include <lib/driver/etimezone.h>
+ %include <lib/gdi/lcd.h>
+ %include <lib/mmi/mmi_ui.h>
