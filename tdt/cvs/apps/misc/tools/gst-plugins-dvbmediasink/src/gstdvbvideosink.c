@@ -919,9 +919,19 @@ static inline void Hexdump(unsigned char *Data, int length)
 
 }
 
+//#define SEND_DTS
+#define DYNAMIC_PIC
+#define WRITE_COMPLETE_PACKAGE
+
+//WMV does not like this!
+//#define RESEND_TIMESTAMP_EVERY_SUB_FRAME
+
+
+#define INJECT_XVID_DIRECTLY
+
 static size_t
 buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp, 
-	unsigned char stream_id, unsigned int pic_start_code, unsigned char video_private_data)
+	unsigned char stream_id, unsigned int pic_start_code, unsigned int video_private_plus_size)
 {
 	unsigned char *pes_header = data;
 	size_t pes_header_size;
@@ -964,7 +974,7 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 
 	}
 
-	if (video_private_data) {
+	if (video_private_plus_size) {
 		int i;
 #define PES_EXTENSION_DATA_PRESENT              0x01
 #define PES_PRIVATE_DATA_LENGTH                 8
@@ -974,13 +984,26 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 		pes_header[8] += (PES_PRIVATE_DATA_LENGTH+1);
 
 		pes_header[pes_header_size + 0] = PES_PRIVATE_DATA_FLAG;
+#if 1
+		pes_header[pes_header_size + 1] =  video_private_plus_size & 0xFF;
+		pes_header[pes_header_size + 2] = (video_private_plus_size >> 8) & 0xFF;
+		pes_header[pes_header_size + 3] = (video_private_plus_size >> 16) & 0xFF;
+#else
 		pes_header[pes_header_size + 1] =  size & 0xFF;
 		pes_header[pes_header_size + 2] = (size >> 8) & 0xFF;
 		pes_header[pes_header_size + 3] = (size >> 16) & 0xFF;
+#endif
 		for (i = 4; i < (PES_PRIVATE_DATA_LENGTH+1); i++)
 			pes_header[pes_header_size + i] = 0x00;
 
 		pes_header_size += (PES_PRIVATE_DATA_LENGTH+1);
+	}
+
+	// FIXME: VC1 wants the size without the pic startcode but divx wants with size
+	// So these are different fields and should maybe be splitted up
+	if (pic_start_code <= 0xFF) {
+		pes_header[4] = (size + pes_header_size - 6) >> 8;
+		pes_header[5] = (size + pes_header_size - 6) & 0xFF;
 	}
 
 	if (pic_start_code) {
@@ -988,7 +1011,7 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 		pes_header[pes_header_size + 1] = 0x00;
 		pes_header[pes_header_size + 2] = 0x01;
 		pes_header[pes_header_size + 3] = pic_start_code & 0xFF; // 00, for picture start
-#define DYNAMIC_PIC
+
 #ifdef DYNAMIC_PIC
 		pes_header_size += 4;
 		if (pic_start_code > 0xFF) {
@@ -997,15 +1020,15 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 		}
 #else
 		pes_header[pes_header_size + 4] = (pic_start_code >> 8) & 0xFF; // For any extra information (like in mpeg4p2, the pic_start_code)
-
-		//printf("PIC %X %x %x\n", pic_start_code, pes_header[pes_header_size + 3], pes_header[pes_header_size + 4]);
-
 		pes_header_size += 5;
 #endif
 	}
 
-	pes_header[4] = (size + pes_header_size - 6) >> 8;
-	pes_header[5] = (size + pes_header_size - 6) & 0xFF;
+	//FIXME: See above
+	if (pic_start_code > 0xFF) {
+		pes_header[4] = (size + pes_header_size - 6) >> 8;
+		pes_header[5] = (size + pes_header_size - 6) & 0xFF;
+	}
 
 	return pes_header_size;
 }
@@ -1017,7 +1040,7 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 #define H263_VIDEO_PES_START_CODE               0xfe
 #define MAX_PES_PACKET_SIZE                     65400
 
-#define WRITE_COMPLETE_PACKAGE
+
 
 static GstFlowReturn
 gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
@@ -1037,7 +1060,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 
 	unsigned char start_code = MPEG_VIDEO_PES_START_CODE;
 	unsigned int pic_start_code = 0;
-	unsigned char insertVideoPrivateDataHeader = 0;
+	unsigned int insertVideoPrivateDataHeader = 0;
 	if (self->streamtype == STREAMTYPE_WMV) {
 		insertVideoPrivateDataHeader = 1;
 		start_code = VC1_VIDEO_PES_START_CODE;
@@ -1091,7 +1114,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 			self->initial_header_private_data_size = 0;
 		}
 
-		if (self->streamtype == STREAMTYPE_VC1 && self->initial_header_private_data_size > 0)
+		if (self->streamtype == STREAMTYPE_VC1)
 		{
 			unsigned char pes_header_initial[PES_MAX_HEADER_SIZE];
 			size_t pes_header_size_initial;
@@ -1111,7 +1134,6 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 
 #ifdef WRITE_COMPLETE_PACKAGE
 			{
-			//printf("--> %d bytes\n", pes_header_size_initial + self->initial_header_private_data_size);
 			unsigned char *write_buffer = (unsigned char*) malloc(sizeof(unsigned char) * (pes_header_size_initial + codec_data_len));
 			memcpy(write_buffer, pes_header_initial, pes_header_size_initial);
 			memcpy(write_buffer + pes_header_size_initial, GST_BUFFER_DATA (self->codec_data), codec_data_len);
@@ -1201,8 +1223,9 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 			}
 		}
 
+		if (insertVideoPrivateDataHeader) insertVideoPrivateDataHeader = data_len;
 		pes_header_size = buildPesHeader(pes_header, pes_packet_size, 
-			timestamp, start_code, /*data_position==0?*/pic_start_code/*:0*/, 
+			timestamp, start_code, data_position==0?pic_start_code:0, 
 			insertVideoPrivateDataHeader);
 
 		insertVideoPrivateDataHeader = 0;
@@ -1233,7 +1256,10 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 			ASYNC_WRITE(self->runtime_header_data, self->runtime_header_data_size);
 		ASYNC_WRITE(data + data_position, pes_packet_size - self->runtime_header_data_size);
 #endif
-		//timestamp = 0;
+#ifdef RESEND_TIMESTAMP_EVERY_SUB_FRAME
+#else
+		timestamp = GST_CLOCK_TIME_NONE;
+#endif
 		data_position += pes_packet_size;
 		//printf("< pos=%u size=%u\n", data_position, pes_packet_size);
 	}
@@ -1395,7 +1421,6 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		self->codec_data = gst_value_get_buffer (codec_data);
 		gst_buffer_ref (self->codec_data);
 
-#define INJECT_XVID_DIRECTLY
 #ifdef INJECT_XVID_DIRECTLY
 	} else if (!strcmp (mimetype, "video/x-xvid")) {
 		streamtype = STREAMTYPE_XVID;
@@ -1583,6 +1608,7 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 6] = (width >> 16) & 0xFF;
 		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_A_START + 7] =  width >> 24;
 
+		//Note: The rate returned by ffmpeg is slightly different (24 instead of 29,97)
 		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_B_START + 8] = (rate >>  0) & 0xFF;
 		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_B_START + 9] = (rate >>  8) & 0xFF;
 		self->initial_header_private_data[METADATA_START + METADATA_STRUCT_B_START + 10] = (rate >> 16) & 0xFF;
