@@ -1,3 +1,12 @@
+/**************************************************************************/
+/* Name :   fup                                                           */
+/*                                                                        */
+/* Author:  Schischu                                                      */
+/*                                                                        */
+/* Licence: This file is subject to the terms and conditions of the       */
+/*          GNU General Public License version 2.                         */
+/**************************************************************************/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

@@ -1,3 +1,12 @@
+/**************************************************************************/
+/* Name :   mup                                                           */
+/*                                                                        */
+/* Author:  Schischu                                                      */
+/*                                                                        */
+/* Licence: This file is subject to the terms and conditions of the       */
+/*          GNU General Public License version 2.                         */
+/**************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
