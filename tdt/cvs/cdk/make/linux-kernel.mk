@@ -443,7 +443,8 @@ TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-tf7700_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-sata-v06_stm24$(PATCH_STR).patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 			stx7100_fdma_fix_stm24$(PATCH_STR).patch \
