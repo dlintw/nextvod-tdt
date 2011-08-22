@@ -76,7 +76,7 @@ void CScale::paint (int x, int y, int pcr)
   ypos = y;
 //printf("CScale::paint: old %d new %d x %d y %d\n", percent, pcr, x, y); fflush(stdout);
   if (pcr != percent) {
-	if(percent == 255) percent = 0;
+	if((int) percent == 255) percent = 0;
 	div = (double) 100 / (double) width;
 	siglen = (double) pcr / (double) div;
 	posx = xpos;
