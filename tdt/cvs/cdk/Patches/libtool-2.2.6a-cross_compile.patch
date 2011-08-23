@@ -8,7 +8,7 @@ Index: libtool-2.2.2/libltdl/config/ltmain.m4sh
 ===================================================================
 --- libtool-2.2.2.orig/libltdl/config/ltmain.m4sh	2008-05-01 21:48:42.000000000 +0100
 +++ libtool-2.2.2/libltdl/config/ltmain.m4sh	2008-05-01 21:51:41.000000000 +0100
-@@ -4454,8 +4454,14 @@
+@@ -4970,8 +4970,14 @@
  	    absdir="$abs_ladir"
  	    libdir="$abs_ladir"
  	  else
@@ -25,7 +25,7 @@ Index: libtool-2.2.2/libltdl/config/ltmain.m4sh
  	  fi
  	  test "X$hardcode_automatic" = Xyes && avoidtemprpath=yes
  	else
-@@ -4825,8 +4831,6 @@
+@@ -5342,8 +5348,6 @@
  		add="$libdir/$linklib"
  	      fi
  	    else
@@ -34,7 +34,7 @@ Index: libtool-2.2.2/libltdl/config/ltmain.m4sh
  	      # Try looking first in the location we're being installed to.
  	      if test -n "$inst_prefix_dir"; then
  		case $libdir in
-@@ -4972,7 +4976,17 @@
+@@ -5489,7 +5493,17 @@
  		  fi
  		  ;;
  		*)
