@@ -53137,6 +53137,11 @@ diff -u linux.org/drivers/ata/sata_sis.c linux-sh4-2.6.32.28_stm24_0207/drivers/
  
  static int __init sis_init(void)
 diff -u linux.org/drivers/ata/sata_stm.c linux-sh4-2.6.32.28_stm24_0207/drivers/ata/sata_stm.c
+
+
+
+
+
 --- linux.org/drivers/ata/sata_stm.c	2011-08-19 16:15:38.000000000 +0200
 +++ linux-sh4-2.6.32.28_stm24_0207/drivers/ata/sata_stm.c	2011-08-20 19:08:02.000000000 +0200
 @@ -26,21 +26,17 @@
@@ -53263,6 +53268,15 @@ diff -u linux.org/drivers/ata/sata_stm.c linux-sh4-2.6.32.28_stm24_0207/drivers/
  	ctl0 = 	DMAC_CTL_DST_TR_WIDTH_32	|
  		DMAC_CTL_SRC_TR_WIDTH_32	|
  		DMAC_CTL_DINC_INC		|
+@@ -488,7 +487,7 @@
+ 
+ 	if (write) {
+ 		/* memory (master1) to SATA host (master2) transfer */
+-		ctl0 |= DMAC_CTL_DEST_MSIZE_4		|
++		ctl0 |= DMAC_CTL_DEST_MSIZE_1		|
+ 			DMAC_CTL_SRC_MSIZE_16		|
+ 			DMAC_CTL_TT_FC_M2P_DMAC		|
+ 			DMAC_CTL_DMS_2			|
 @@ -512,7 +511,7 @@
  	idx = 0;
  	sar = dar = 0;
