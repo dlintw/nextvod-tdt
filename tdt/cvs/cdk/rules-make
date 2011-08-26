@@ -135,6 +135,9 @@ pyopenssl;0.8;pyOpenSSL-0.8;pyOpenSSL-0.8.tar.gz;extract:pyOpenSSL-0.8.tar.gz
 ffmpeg;0.6.3;ffmpeg-0.6.3;ffmpeg-0.6.3.tar.gz;extract:ffmpeg-0.6.3.tar.gz
 libass;0.9.11;libass-0.9.11;libass-0.9.11.tar.gz;extract:libass-0.9.11.tar.gz
 
+libogg;1.2.2;libogg-1.2.2;libogg-1.2.2.tar.gz;extract:libogg-1.2.2.tar.gz
+libflac;1.2.1;flac-1.2.1;flac-1.2.1.tar.gz:flac-1.2.1.patch;extract:flac-1.2.1.tar.gz;patch:flac-1.2.1.patch
+
 gstreamer;0.10.34;gstreamer-0.10.34;gstreamer-0.10.34.tar.bz2;extract:gstreamer-0.10.34.tar.bz2
 gst_plugins_base;0.10.34;gst-plugins-base-0.10.34;gst-plugins-base-0.10.34.tar.bz2;extract:gst-plugins-base-0.10.34.tar.bz2
 gst_plugins_good;0.10.29;gst-plugins-good-0.10.29;gst-plugins-good-0.10.29.tar.bz2;extract:gst-plugins-good-0.10.29.tar.bz2

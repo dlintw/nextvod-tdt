@@ -145,6 +145,10 @@ libdvdread-4.1.3.tar.bz2;http://www.mplayerhq.hu/MPlayer/releases/dvdnav
 pyOpenSSL-0.8.tar.gz;http://downloads.sourceforge.net/project/pyopenssl/pyopenssl/0.8/
 ffmpeg-0.6.3.tar.gz;http://ffmpeg.org/releases/
 libass-0.9.11.tar.gz;http://libass.googlecode.com/files/
+
+libogg-1.2.2.tar.gz;http://downloads.xiph.org/releases/ogg
+flac-1.2.1.tar.gz;http://ignum.dl.sourceforge.net/project/flac/flac-src/flac-1.2.1-src
+
 gstreamer-0.10.34.tar.bz2;http://gstreamer.freedesktop.org/src/gstreamer/
 gst-plugins-base-0.10.34.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plugins-base/
 gst-plugins-good-0.10.29.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plugins-good/

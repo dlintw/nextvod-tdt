@@ -789,7 +789,7 @@ $(DEPDIR)/python.do_prepare: host-python @DEPENDS_python@
 	@PREPARE_python@ && \
 	touch $@
 
-$(DEPDIR)/python.do_compile: openssl openssl-dev bootstrap python.do_prepare
+$(DEPDIR)/python.do_compile: openssl openssl-dev sqlite bootstrap python.do_prepare
 	( cd @DIR_python@ && \
 		CONFIG_SITE= \
 		$(BUILDENV) \
@@ -1370,10 +1370,10 @@ $(DEPDIR)/webkitdfb.do_compile: $(DEPDIR)/webkitdfb.do_prepare
 	cd @DIR_webkitdfb@ && \
 	$(BUILDENV) \
 	./autogen.sh --with-target=directfb --without-gtkplus \
-	   --host=$(target) \
-	   --prefix=/usr \
-	   --with-cairo-directfb \
-	   --disable-shared-workers \
+		--host=$(target) \
+		--prefix=/usr \
+		--with-cairo-directfb \
+		--disable-shared-workers \
 		--enable-optimizations	\
 		--disable-channel-messaging	\
 		--disable-javascript-debugger	\
@@ -1391,7 +1391,7 @@ $(DEPDIR)/webkitdfb.do_compile: $(DEPDIR)/webkitdfb.do_prepare
 		--disable-geolocation \
 		--disable-workers	\
 		--disable-web-sockets	\
-    	--with-networking-backend=soup
+		--with-networking-backend=soup
 	touch $@
 
 $(DEPDIR)/min-webkitdfb $(DEPDIR)/std-webkitdfb $(DEPDIR)/max-webkitdfb \
@@ -1496,11 +1496,14 @@ $(DEPDIR)/sqlite.do_prepare: bootstrap @DEPENDS_sqlite@
 $(DEPDIR)/sqlite.do_compile: $(DEPDIR)/sqlite.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_sqlite@ && \
+	libtoolize -f -c && \
+	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-      --disable-debug
+		--disable-tcl \
+		--disable-debug
 	touch $@
 
 $(DEPDIR)/min-sqlite $(DEPDIR)/std-sqlite $(DEPDIR)/max-sqlite \
@@ -1596,6 +1599,57 @@ $(DEPDIR)/%cairo: $(DEPDIR)/cairo.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+# libogg
+$(DEPDIR)/libogg.do_prepare: bootstrap  @DEPENDS_libogg@
+	@PREPARE_libogg@
+	touch $@
+
+$(DEPDIR)/libogg.do_compile: $(DEPDIR)/libogg.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libogg@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-libogg $(DEPDIR)/std-libogg $(DEPDIR)/max-libogg \
+$(DEPDIR)/libogg: \
+$(DEPDIR)/%libogg: $(DEPDIR)/libogg.do_compile
+	cd @DIR_libogg@ && \
+		@INSTALL_libogg@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+# libflac
+$(DEPDIR)/libflac.do_prepare: bootstrap  @DEPENDS_libflac@
+	@PREPARE_libflac@
+	touch $@
+
+$(DEPDIR)/libflac.do_compile: $(DEPDIR)/libflac.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libflac@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+		--disable-oggtest --disable-id3libtest \
+		--disable-doxygen-docs \
+		--disable-xmms-plugin \
+		--without-xmms-prefix \
+		--without-xmms-exec-prefix \
+		--without-libiconv-prefix \
+		--without-id3lib
+	touch $@
+
+$(DEPDIR)/min-libflac $(DEPDIR)/std-libflac $(DEPDIR)/max-libflac \
+$(DEPDIR)/libflac: \
+$(DEPDIR)/%libflac: $(DEPDIR)/libflac.do_compile
+	cd @DIR_libflac@ && \
+		@INSTALL_libflac@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 #
 #
 # GSTREAMER + PLUGINS
@@ -1625,7 +1679,7 @@ $(DEPDIR)/%gstreamer: $(DEPDIR)/gstreamer.do_compile
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 # GST-PLUGINS-BASE
-$(DEPDIR)/gst_plugins_base.do_prepare: bootstrap glib2 gstreamer @DEPENDS_gst_plugins_base@
+$(DEPDIR)/gst_plugins_base.do_prepare: bootstrap glib2 gstreamer libogg @DEPENDS_gst_plugins_base@
 	@PREPARE_gst_plugins_base@
 	touch $@
 
@@ -1636,7 +1690,7 @@ $(DEPDIR)/gst_plugins_base.do_compile: $(DEPDIR)/gst_plugins_base.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--disable-theora --disable-pango --disable-ogg --disable-vorbis
+		--disable-theora --disable-pango --disable-vorbis
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_base $(DEPDIR)/std-gst_plugins_base $(DEPDIR)/max-gst_plugins_base \

@@ -71,10 +71,12 @@ PACKAGES="\
 	${UBUNTU:+xfslibs-dev}     ${SUSE:+xfsprogs-devel} \
 	${UBUNTU:+pkg-config}      ${SUSE:+pkg-config} \
 	                           ${SUSE:+patch} \
+	${UBUNTU:+autopoint} \
 	${UBUNTU:+cfv} \
 	${UBUNTU:+fakeroot} \
 	${UBUNTU:+gawk} \
-	${UBUNTU:+autopoint} \
+	${UBUNTU:+gperf} \
+	${UBUNTU:+libglib2.0-bin} \ \
 	${UBUNTU:+libglib2.0-dev} \
 ";
 
