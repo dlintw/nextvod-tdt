@@ -1795,4 +1795,34 @@ $(DEPDIR)/%gst_plugins_dvbmediasink: $(DEPDIR)/gst_plugins_dvbmediasink.do_compi
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
+# eve-browser
+#
+$(DEPDIR)/evebrowser.do_prepare: webkitdfb @DEPENDS_evebrowser@
+	svn checkout https://eve-browser.googlecode.com/svn/trunk/ @DIR_evebrowser@
+	touch $@
+
+$(DEPDIR)/evebrowser.do_compile: $(DEPDIR)/evebrowser.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_evebrowser@ && \
+	aclocal -I $(hostprefix)/share/aclocal -I m4 && \
+	autoheader && \
+	autoconf && \
+	automake --foreign && \
+	libtoolize --force && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr && \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-evebrowser $(DEPDIR)/std-evebrowser $(DEPDIR)/max-evebrowser \
+$(DEPDIR)/evebrowser: \
+$(DEPDIR)/%evebrowser: $(DEPDIR)/evebrowser.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd @DIR_evebrowser@ && \
+		@INSTALL_evebrowser@ && \
+		cp -r enigma2/HbbTv $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/
+	@TUXBOX_YAUD_CUSTOMIZE@
 

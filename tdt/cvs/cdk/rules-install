@@ -75,7 +75,7 @@ libmng;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libmng.la;re
 lcms;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblcms.la
 directfb;rewrite-pkgconfig:directfb.pc;rewrite-pkgconfig:directfb-internal.pc;rewrite-pkgconfig:lib/direct/direct.pc;rewrite-pkgconfig:lib/fusion/fusion.pc;make:install:DESTDIR=TARGETS:LD=sh4-linux-ld;rewrite-libtool:TARGETS/usr/lib/libdirectfb.la;rewrite-libtool:TARGETS/usr/lib/libdirect.la;rewrite-libtool:TARGETS/usr/lib/libfusion.la;rewrite-dependency:TARGETS/usr/lib/libdirectfb.la;rewrite-dependency:TARGETS/usr/lib/libfusion.la
 dfbpp;rewrite-pkgconfig:dfb++.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libdfb++.la
-webkitdfb;make:install:DESTDIR=TARGETS
+webkitdfb;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libwebkitgtk-1.0.la;rewrite-dependency:TARGETS/usr/lib/libwebkitgtk-1.0.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/webkit-1.0.pc
 icu4c;make:install:DESTDIR=TARGETS
 enchant;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libenchant.la;rewrite-dependency:TARGETS/usr/lib/libenchant.la
 lite;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblite.la;rewrite-dependency:TARGETS/usr/lib/liblite.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/lite.pc;rewrite-libtool:TARGETS/usr/lib/libleck.la;rewrite-dependency:TARGETS/usr/lib/libleck.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/leck.pc
@@ -105,6 +105,8 @@ gst_plugins_bad;make:install:DESTDIR=TARGETS
 gst_plugins_ugly;make:install:DESTDIR=TARGETS
 
 gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
+
+evebrowser;make:install:DESTDIR=TARGETS
 
 #
 # net apps
