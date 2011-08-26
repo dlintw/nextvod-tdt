@@ -78,7 +78,7 @@ $(flashprefix)/mtdblock3.root-stock.%: $(flashprefix)/root-stock-% $(MKCRAMFS)
 		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
 		echo "chown root:root null" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
-		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "chown root:root ttyAS0" >> $$dir/.fakeroot && \
 		echo "mknod -m 0777 fbsplash c 10 63" >> $$dir/.fakeroot && \
 		echo "chown root:root fbsplash" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
@@ -126,7 +126,7 @@ $(flashprefix)/mtdblock3.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
 		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
 		echo "chown root:root null" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
-		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "chown root:root ttyAS0" >> $$dir/.fakeroot && \
 		echo "mknod -m 0777 fbsplash c 10 63" >> $$dir/.fakeroot && \
 		echo "chown root:root fbsplash" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
@@ -170,7 +170,7 @@ $(flashprefix)/mtdblock3.root-stock.jffs2: $(flashprefix)/root-stock-jffs2 $(MKJ
 		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
 		echo "chown root:root null" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
-		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "chown root:root ttyAS0" >> $$dir/.fakeroot && \
 		echo "mknod -m 0777 fbsplash c 10 63" >> $$dir/.fakeroot && \
 		echo "chown root:root fbsplash" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
@@ -220,7 +220,7 @@ $(flashprefix)/sdax.root-%.tgz: $(flashprefix)/root-%-tgz
 		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
 		echo "chown root:root null" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
-		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "chown root:root ttyAS0" >> $$dir/.fakeroot && \
 		echo "mknod -m 0777 fbsplash c 10 63" >> $$dir/.fakeroot && \
 		echo "chown root:root fbsplash" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
@@ -260,7 +260,7 @@ $(flashprefix)/mtdblock3.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
 		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
 		echo "chown root:root null" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
-		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "chown root:root ttyAS0" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 vfd c 147 0" >> $$dir/.fakeroot && \
 		echo "MAKEDEV=\"$(flashprefix)/root/sbin/MAKEDEV -p $(flashprefix)/root/etc/passwd -g $(flashprefix)/root/etc/group\"" >> $$dir/.fakeroot && \
@@ -301,6 +301,11 @@ $(flashprefix)/mtdblock2.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
 #######NEW NEUTRINO ROOT PARTITION SIZE:
 #ROOT_PARTITION_SIZE=0x8e0000 ####look at ufs910_stboards_p0041_flash.patch
 #ROOT_PARTITION_SIZE= (via configure)
+if !STM22
+LZMACOMP=-comp lzma
+else
+LZMACOMP=
+endif
 	rm $@* >/dev/null 2>&1 || true
 	( dir=$(flashprefix) && \
 		echo "cd $</dev" > $$dir/.fakeroot && \
@@ -309,7 +314,7 @@ $(flashprefix)/mtdblock2.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
 		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
 		echo "chown root:root null" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
-		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "chown root:root ttyAS0" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 bpamem0 c 153 0" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 bpamem1 c 153 1" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 bpamem2 c 153 2" >> $$dir/.fakeroot && \
@@ -347,7 +352,7 @@ $(flashprefix)/mtdblock2.root-stock.%: $(flashprefix)/root-stock-% $(MKSQUASHFS)
 		echo '$${MAKEDEV} dvb' >> $$dir/.fakeroot && \
 		echo "mkdir pts" >> $$dir/.fakeroot && \
 		echo "mkdir shm" >> $$dir/.fakeroot && \
-		echo "$(MKSQUASHFS) $< $@ -noappend" >> $$dir/.fakeroot && \
+		echo "$(MKSQUASHFS) $< $@ -noappend $(LZMACOMP)" >> $$dir/.fakeroot && \
 		chmod 755 $$dir/.fakeroot && \
 		$(FAKEROOT) -- $$dir/.fakeroot && \
 		rm $$dir/.fakeroot )
@@ -514,7 +519,7 @@ $(flashprefix)/root-%.disk.tar: $(flashprefix)/root-%-disk
 		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
 		echo "chown root:root null" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
-		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "chown root:root ttyAS0" >> $$dir/.fakeroot && \
 		echo "mknod -m 0777 fbsplash c 10 63" >> $$dir/.fakeroot && \
 		echo "chown root:root fbsplash" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
@@ -573,7 +578,7 @@ $(flashprefix)/mtdblock2.root-stock-hdbox.enigma2: $(flashprefix)/root-stock-hdb
 		echo "mknod -m 0666 null c 1 3" >> $$dir/.fakeroot && \
 		echo "chown root:root null" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 ttyAS0 c 204 40" >> $$dir/.fakeroot && \
-		echo "chown root:proxy ttyAS0" >> $$dir/.fakeroot && \
+		echo "chown root:root ttyAS0" >> $$dir/.fakeroot && \
 		echo "mknod -m 0666 fuse c 10 229" >> $$dir/.fakeroot && \
 		echo "mknod -m 0660 vfd c 147 0" >> $$dir/.fakeroot && \
 		echo "MAKEDEV=\"$(flashprefix)/root-hdbox/sbin/MAKEDEV -p $(flashprefix)/root-hdbox/etc/passwd -g $(flashprefix)/root-hdbox/etc/group\"" >> $$dir/.fakeroot && \
