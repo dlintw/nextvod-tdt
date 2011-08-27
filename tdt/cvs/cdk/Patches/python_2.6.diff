@@ -166,7 +166,7 @@
              exts.append( Extension('_ssl', ['_ssl.c'],
                                     include_dirs = ssl_incs,
                                     library_dirs = ssl_libs,
-@@ -1666,16 +1676,16 @@
+@@ -1666,16 +1676,17 @@
                                           ffi_configfile):
                  from distutils.dir_util import mkpath
                  mkpath(ffi_builddir)
@@ -175,12 +175,11 @@
  
                  # Pass empty CFLAGS because we'll just append the resulting
                  # CFLAGS to Python's; -g or -O2 is to be avoided.
--                cmd = "cd %s && env CFLAGS='' '%s/configure' %s" \
--                      % (ffi_builddir, ffi_srcdir, " ".join(config_args))
-+                cmd = "(cd %s && autoconf -W cross) && (cd %s && env CFLAGS='' '%s/configure' %s)" \
-+                      % (ffi_srcdir, ffi_builddir, ffi_srcdir, " ".join(config_args))
+                 cmd = "cd %s && env CFLAGS='' '%s/configure' %s" \
+                       % (ffi_builddir, ffi_srcdir, " ".join(config_args))
  
                  res = os.system(cmd)
++                res = os.system("echo \"" + cmd + "\"")
                  if res or not os.path.exists(ffi_configfile):
 -                    print "Failed to configure _ctypes module"
 +                    print "Failed to configure _ctypes module, ret %d or missing %s"% (res, ffi_configfile, )
