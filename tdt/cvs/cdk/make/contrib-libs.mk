@@ -1359,7 +1359,10 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 #
 # WebKitDFB
 #
-$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant lite curl fontconfig sqlite libsoup cairo jpeg @DEPENDS_webkitdfb@
+# --with-unicode-backend=icu will need icu4c which is 20mb big!
+# --with-unicode-backend=glib will probably not work as good? but way smaller
+#
+$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 ibxml2 enchant lite curl fontconfig sqlite libsoup cairo jpeg @DEPENDS_webkitdfb@
 	@PREPARE_webkitdfb@
 	touch $@
 
@@ -1405,21 +1408,29 @@ $(DEPDIR)/%webkitdfb: $(DEPDIR)/webkitdfb.do_compile
 
 $(DEPDIR)/icu4c.do_prepare: bootstrap @DEPENDS_icu4c@
 	@PREPARE_icu4c@
+	cd @DIR_icu4c@ && \
+		rm data/mappings/ucm*.mk; \
+		patch -p1 < ../../Patches/icu4c-4_4_1_locales.patch;
 	touch $@
 
 $(DEPDIR)/icu4c.do_compile: $(DEPDIR)/icu4c.do_prepare
 	echo "Building host icu"
 	mkdir -p @DIR_icu4c@/host && \
 	cd @DIR_icu4c@/host && \
-   sh ../configure --disable-samples --disable-tests && \
-   unset TARGET && \
+	sh ../configure --disable-samples --disable-tests && \
+	unset TARGET && \
 	make
 	echo "Building cross icu"
 	cd @DIR_icu4c@ && \
 	$(BUILDENV) \
-	./configure --disable-samples --disable-tests --with-cross-build=$(BUILDPREFIX)/@DIR_icu4c@/host \
-	   --host=$(target) \
-	   --prefix=/usr
+	./configure \
+		--with-cross-build=$(BUILDPREFIX)/@DIR_icu4c@/host \
+		--host=$(target) \
+		--prefix=/usr \
+		--disable-extras \
+		--disable-layout \
+		--disable-tests \
+		--disable-samples
 	touch $@
 
 $(DEPDIR)/min-icu4c $(DEPDIR)/std-icu4c $(DEPDIR)/max-icu4c \

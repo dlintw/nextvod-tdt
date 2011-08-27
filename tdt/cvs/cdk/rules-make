@@ -107,7 +107,7 @@ openssl;0.9.6m;openssl-0.9.6m;openssl-0.9.6m.tar.gz;extract:openssl-0.9.6m.tar.g
 directfb;1.4.11;DirectFB-1.4.11;DirectFB-1.4.11.tar.gz:directfb-1.4.11+STM2010.12.15-4.diff;extract:DirectFB-1.4.11.tar.gz;patch:directfb-1.4.11+STM2010.12.15-4.diff
 dfbpp;1.0.0;DFB++-1.0.0;DFB++-1.0.0.tar.gz;extract:DFB++-1.0.0.tar.gz
 webkitdfb;2010-11-18;webkitdfb_2010-11-18;webkitdfb_2010-11-18.tar.gz:webkitdfb.diff;extract:webkitdfb_2010-11-18.tar.gz;patch:webkitdfb.diff
-icu4c;4_4_1;icu/source;icu4c-4_4_1-src.tgz;extract:icu4c-4_4_1-src.tgz
+icu4c;4_4_1;icu/source;icu4c-4_4_1-src.tgz:icu4c-4_4_1_locales.patch;extract:icu4c-4_4_1-src.tgz
 enchant;1.5.0;enchant-1.5.0;enchant-1.5.0.tar.gz;extract:enchant-1.5.0.tar.gz
 lite;0.9.0;lite-0.9.0+git0.7982ccc;lite-0.9.0+git0.7982ccc.tar.bz2;extract:lite-0.9.0+git0.7982ccc.tar.bz2
 sqlite;3.6.0;sqlite-3.6.0;sqlite-3.6.0.tar.gz;extract:sqlite-3.6.0.tar.gz
