@@ -847,3 +847,16 @@
 
  #ifdef __cplusplus
 
+--- host-python-2.6/setup.py	2011-08-28 18:34:40.000000000 +0200
++++ host-python-2.6/setup.patched.py	2011-08-28 18:39:52.000000000 +0200
+@@ -944,7 +944,9 @@
+             ]
+             sqlite_libfile = self.compiler.find_library_file(
+                                 sqlite_dirs_to_check + lib_dirs, 'sqlite3')
+-            sqlite_libdir = [os.path.abspath(os.path.dirname(sqlite_libfile))]
++
++            if sqlite_libfile:
++                    sqlite_libdir = [os.path.abspath(os.path.dirname(sqlite_libfile))]
+ 
+         if sqlite_incdir and sqlite_libdir:
+             sqlite_srcs = ['_sqlite/cache.c',
