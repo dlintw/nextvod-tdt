@@ -1359,10 +1359,7 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 #
 # WebKitDFB
 #
-# --with-unicode-backend=icu will need icu4c which is 20mb big!
-# --with-unicode-backend=glib will probably not work as good? but way smaller
-#
-$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 ibxml2 enchant lite curl fontconfig sqlite libsoup cairo jpeg @DEPENDS_webkitdfb@
+$(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant lite curl fontconfig sqlite libsoup cairo jpeg @DEPENDS_webkitdfb@
 	@PREPARE_webkitdfb@
 	touch $@
 
@@ -1834,6 +1831,6 @@ $(DEPDIR)/%evebrowser: $(DEPDIR)/evebrowser.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_evebrowser@ && \
 		@INSTALL_evebrowser@ && \
-		cp -r enigma2/HbbTv $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/
+		cp -ar enigma2/HbbTv $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/
 	@TUXBOX_YAUD_CUSTOMIZE@
 
