@@ -1,0 +1,15 @@
+libffi: Add -DPIC to generate PIC code
+
+Add -DPIC to compile libffi sources to generate PIC code avoiding text
+relocation.
+
+Signed-off-by: Filippo Arcidiacono <filippo.arcidiacono>
+
+--- Python-2.6.2-orig/Modules/_ctypes/libffi/fficonfig.py.in	2011-03-29 20:16:56.000000000 +0200
++++ Python-2.6.2/Modules/_ctypes/libffi/fficonfig.py.in	2011-03-29 20:16:41.000000000 +0200
+@@ -32,4 +32,4 @@ ffi_srcdir = '@srcdir@'
+ ffi_sources += ffi_platforms['@TARGET@']
+ ffi_sources = [os.path.join('@srcdir@', f) for f in ffi_sources]
+ 
+-ffi_cflags = '@CFLAGS@'
++ffi_cflags = '@CFLAGS@ -DPIC'

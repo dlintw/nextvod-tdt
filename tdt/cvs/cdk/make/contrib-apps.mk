@@ -1040,4 +1040,3 @@ $(DEPDIR)/%opkg: $(DEPDIR)/opkg.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-

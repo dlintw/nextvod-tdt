@@ -1264,4 +1264,39 @@ endif
 		sh4-linux-strip --strip-unneeded $(prefix)/release/usr/lib/gstreamer-0.10/*; \
 	fi
 
+#DFB Stuff
+	if [ -d $(prefix)/release/usr/lib/directfb-1.4-5 ]; then \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/gfxdrivers; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/inputdrivers/*; \
+		cp -a $(targetprefix)/usr/lib/directfb-1.4-5/inputdrivers/libdirectfb_ps2mouse.so $(prefix)/release/usr/lib/directfb-1.4-5/inputdrivers/; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/systems/*.a; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/systems/*.la; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/systems/*.o; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/systems/libdirectfb_dummy.so; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/systems/libdirectfb_fbdev.so; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/wm/*.a; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/wm/*.la; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/wm/*.o; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/interfaces/IDirectFBFont/*.a; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/interfaces/IDirectFBFont/*.la; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/interfaces/IDirectFBFont/*.o; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/interfaces/IDirectFBImageProvider/*.a; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/interfaces/IDirectFBImageProvider/*.la; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/interfaces/IDirectFBImageProvider/*.o; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/interfaces/IDirectFBVideoProvider/*.a; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/interfaces/IDirectFBVideoProvider/*.la; \
+		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/interfaces/IDirectFBVideoProvider/*.o; \
+	fi
+	if [ -d $(prefix)/release/usr/lib/icu ]; then \
+		rm -rf $(prefix)/release/usr/lib/icu; \
+	fi
+	if [ -d $(prefix)/release/usr/lib/glib-2.0 ]; then \
+		rm -rf $(prefix)/release/usr/lib/glib-2.0; \
+	fi
+	if [ -d $(prefix)/release/usr/lib/gio ]; then \
+		rm -rf $(prefix)/release/usr/lib/gio; \
+	fi
+	if [ -d $(prefix)/release/usr/lib/enchant ]; then \
+		rm -rf $(prefix)/release/usr/lib/enchant; \
+	fi
 
