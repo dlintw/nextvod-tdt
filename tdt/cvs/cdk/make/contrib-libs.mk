@@ -1834,3 +1834,26 @@ $(DEPDIR)/%evebrowser: $(DEPDIR)/evebrowser.do_compile
 		cp -ar enigma2/HbbTv $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
+# brofs
+#
+$(DEPDIR)/brofs.do_prepare:  @DEPENDS_brofs@
+	@PREPARE_brofs@
+	touch $@
+
+$(DEPDIR)/brofs.do_compile: $(DEPDIR)/brofs.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_brofs@ && \
+	$(BUILDENV) \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-brofs $(DEPDIR)/std-brofs $(DEPDIR)/max-brofs \
+$(DEPDIR)/brofs: \
+$(DEPDIR)/%brofs: $(DEPDIR)/brofs.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd @DIR_brofs@ && \
+		@INSTALL_brofs@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+

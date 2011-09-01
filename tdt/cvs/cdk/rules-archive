@@ -155,6 +155,8 @@ gst-plugins-good-0.10.29.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plugin
 gst-plugins-bad-0.10.21.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plugins-bad/
 gst-plugins-ugly-0.10.17.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plugins-ugly/
 
+BroFS1.2.tgz;http://www.avalpa.com/assets/freesoft/other/
+
 #
 # net apps
 #

@@ -152,6 +152,8 @@ gst_plugins_ugly;0.10.17;gst-plugins-ugly-0.10.17;gst-plugins-ugly-0.10.17.tar.b
 gst_plugins_dvbmediasink;0.10.1;../apps/misc/tools/gst-plugins-dvbmediasink
 
 evebrowser;0.0.1;evebrowser-0.0.1
+dvbdata;0.6;dvbdata-0.6;dvbdata-0.6.tar.gz;extract:dvbdata-0.6.tar.gz
+brofs;1.2;BroFS1.2;BroFS1.2.tgz;extract:BroFS1.2.tgz
 
 #
 # net apps
