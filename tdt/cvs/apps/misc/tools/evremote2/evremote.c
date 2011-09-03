@@ -289,7 +289,7 @@ void *detectKeyUpTask(void* dummy)
         gKeyCode = 0;
         usleep(sleep*1000);
       }
-      printf("KEY_RELEASE - %02x %d CAUSE=%s\n", keyCode, nextKey, (gKeyCode==0)?"Timeout":"New key");
+      printf("KEY_RELEASE - %02x %02x %d %d CAUSE=%s\n", keyCode, gKeyCode, nextKey, gNextKey, (gKeyCode==0)?"Timeout":"New key");
 
       //Check if tuxtxt is running
       if (tux == false)
@@ -387,6 +387,16 @@ int getModel()
         {
     		vBoxType = Spark;
         }
+        else if ((!strncasecmp(vName,"cuberevo", 8)) ||
+                 (!strncasecmp(vName,"cuberevo-mini", 13)) ||
+                 (!strncasecmp(vName,"cuberevo-mini2", 14)) ||
+                 (!strncasecmp(vName,"cuberevo-mini-fta", 17)) ||
+                 (!strncasecmp(vName,"cuberevo-250hd", 14)) ||
+                 (!strncasecmp(vName,"cuberevo-2000hd", 15)) ||
+                 (!strncasecmp(vName,"cuberevo-9500hd", 15)))
+        {
+    		vBoxType = Cuberevo;
+        }
         else
             vBoxType = Unknown;
     }
@@ -423,8 +433,10 @@ int main (int argc, char* argv[])
 
     if(vBoxType != Unknown)
         if(!getEventDevice())
+        {
+            printf("unable to open event device\n");
             return 5;
-
+        }
     selectRemote(&context, vBoxType);
 
     printf("Selected Remote: %s\n", ((RemoteControl_t*)context.r)->Name);

@@ -18,4 +18,5 @@ SUBDIRS = \
 	libcoolstream \
 	vfdctl \
 	libmme_host \
-	libmmeimage
+	libmmeimage \
+	ipbox_eeprom

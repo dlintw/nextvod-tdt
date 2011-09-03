@@ -79,7 +79,7 @@ int getInternalCode(tButton * cButtons, const char cCode[3]) {
         if ( (cButtons[vLoop].KeyWord[0] == cCode[0] || cButtons[vLoop].KeyWord[0] == (cCode[0]-32) ) && 
              (cButtons[vLoop].KeyWord[1] == cCode[1] || cButtons[vLoop].KeyWord[1] == (cCode[1]-32) )) {
              
-            //printf("%02X - %s\n", cButtons[vLoop].KeyCode, cButtons[vLoop].KeyName);
+            printf("%02X - %s\n", cButtons[vLoop].KeyCode, cButtons[vLoop].KeyName);
             return cButtons[vLoop].KeyCode;
         }
     }
@@ -97,6 +97,7 @@ int printKeyMap(tButton * cButtons) {
 int getInternalCodeHex(tButton * cButtons, const unsigned char cCode) {
     char vCode[3];
     
+
     sprintf(vCode, "%.2hhx", cCode);
     vCode[2] = '\0';
 
@@ -181,7 +182,6 @@ void sendInputEventT(const unsigned int type, const int cCode)
     gettimeofday(&vInev.time, NULL);
     vInev.type             = 1;
     vInev.code             = cCode;
-
 
     vFd = open(eventPath, O_WRONLY);
     

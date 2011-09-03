@@ -226,7 +226,7 @@ static int setTimer(Context_t* context)
        wakeupTime = 1999999999;
        datei = fopen(WAKEUPFILE,"w");
        if (datei) {
-         fprintf(datei,"%i",wakeupTime);
+         fprintf(datei,"%ld",wakeupTime);
          fclose(datei);
          system("sync");
        }
@@ -284,7 +284,7 @@ static int setTimer(Context_t* context)
 	
       datei = fopen(WAKEUPFILE,"w");
       if (datei) {
-        fprintf(datei,"%i",wakeupTime);
+        fprintf(datei,"%ld",wakeupTime);
         fclose(datei);
         system("sync");
       }
@@ -302,7 +302,6 @@ static int setTimer(Context_t* context)
 
 static int writeWakeupFile(Context_t* context)
 {
-   struct micom_ioctl_data vData;
    FILE                   *datei;
    time_t                  curTime;
    time_t                  curTimeFP;
@@ -341,7 +340,7 @@ static int writeWakeupFile(Context_t* context)
        wakeupTime = 1999999999;
        datei = fopen(WAKEUPFILE,"w");
        if (datei) {
-         fprintf(datei,"%i",wakeupTime);
+         fprintf(datei,"%ld",wakeupTime);
          fclose(datei);
          system("sync");
        }
@@ -356,11 +355,11 @@ static int writeWakeupFile(Context_t* context)
       fprintf(stderr, "waiting on current time from fp ...\n");
 		
       /* front controller time */
-       if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
-       {
-	  perror("gettime: ");
-          return -1;
-       }
+      if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
+      {
+         perror("gettime: ");
+         return -1;
+      }
 
       /* difference from now to wake up */
       diff = (unsigned long int) wakeupTime - curTime;
@@ -392,12 +391,12 @@ static int writeWakeupFile(Context_t* context)
 	
       datei = fopen(WAKEUPFILE,"w");
       if (datei) {
-        fprintf(datei,"%i",wakeupTime);
+        fprintf(datei,"%ld",wakeupTime);
         fclose(datei);
         system("sync");
       }
 			
-			//setMicomTime(wakeupTime, vData.u.standby.time);
+      //setMicomTime(wakeupTime, vData.u.standby.time);
 
    }
    return 0;
@@ -661,13 +660,12 @@ static int setWakeupReason(Context_t* context)
 {
    time_t                  curTimeFP;
    time_t                  wakeupTime;
-   struct tm               *ts;
    int                     reason;
    
    reason = 0;
    FILE *datei1 = fopen(WAKEUPFILE,"r");
 	 if(datei1 != NULL) {
-     fscanf(datei1,"%i", &wakeupTime);
+     fscanf(datei1,"%ld", &wakeupTime);
      fclose(datei1);
      if (wakeupTime < 1999999999) {
      	 int rc = getTime(context, &curTimeFP);
@@ -694,7 +692,8 @@ static int setWakeupReason(Context_t* context)
      fclose(fd);
      return 0;
    } 
-}	 	 
+   return 0;
+}
 
 static int setPwrLed(Context_t* context, int brightness)
 {
@@ -801,7 +800,8 @@ static int Clear(Context_t* context)
 
    for (i = 1; i <= 16 ; i++)
       setIcon(context, i, 0);
- 
+
+   return 0; 
 }
 
 static int setLedBrightness(Context_t* context, int brightness)
@@ -825,30 +825,32 @@ static int setLedBrightness(Context_t* context, int brightness)
 }
 
 Model_t UFS922_model = {
-	"Kathrein UFS922 frontpanel control utility",
-	Ufs922,
-	init,
-	Clear,
-	usage,
-	setTime,
-	getTime,
-	setTimer,
-	setTimerManual,
-	getTimer,
-	shutdown,
-	reboot,
-	Sleep,
-	setText,
-	setLed,
-	setIcon,
-	setBrightness,
-	setPwrLed,
-	getWakeupReason,
-	setLight,
-	Exit,
-	setLedBrightness,
-	getVersion,
-	setWakeupReason,
-	writeWakeupFile,
-	NULL
+	.Name                      = "Kathrein UFS922 frontpanel control utility",
+	.Type                      = Ufs922,
+	.Init                      = init,
+	.Clear                     = Clear,
+	.Usage                     = usage,
+	.SetTime                   = setTime,
+	.GetTime                   = getTime,
+	.SetTimer                  = setTimer,
+	.SetTimerManual            = setTimerManual,
+	.GetTimer                  = getTimer,
+	.Shutdown                  = shutdown,
+	.Reboot                    = reboot,
+	.Sleep                     = Sleep,
+	.SetText                   = setText,
+	.SetLed                    = setLed,
+	.SetIcon                   = setIcon,
+	.SetBrightness              = setBrightness,
+	.SetPwrLed                 = setPwrLed,
+	.GetWakeupReason           = getWakeupReason,
+	.SetLight                  = setLight,
+	.Exit                      = Exit,
+    .SetLedBrightness          = setLedBrightness,
+    .GetVersion                = getVersion,
+    .SetWakeupReason           = setWakeupReason,
+    .writeWakeupFile           = writeWakeupFile,
+	.SetRF                     = NULL,
+    .SetFan                    = NULL,
+    .private                   = NULL
 };

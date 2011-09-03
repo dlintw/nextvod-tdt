@@ -50,4 +50,5 @@ libcoolstream/Makefile
 vfdctl/Makefile
 libmme_host/Makefile
 libmmeimage/Makefile
+ipbox_eeprom/Makefile
 ])

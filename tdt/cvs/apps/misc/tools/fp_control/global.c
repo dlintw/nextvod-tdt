@@ -52,7 +52,10 @@ unsigned long int read_e2_timers(time_t curTime)
 			{
 				unsigned long int tmp = 0;
 				strncpy(recordString, line+14, 10);
-				recordString[11] = '\0';
+/* konfetti: decrease array index from 11 to 10:
+ * ->the array is defined as 11 characters which are addressed by 0-10 not 11!
+ */
+				recordString[10] = '\0';
 				tmp = atol(recordString);
 				recordTime = (tmp < recordTime && tmp > curTime ? tmp : recordTime);
 			}
@@ -117,7 +120,7 @@ unsigned long int read_neutrino_timers(time_t curTime)
 
 	   recordTime = mktime(&tsWake);
 	} 
-printf("recordTime %d\n", recordTime);
+    printf("recordTime %ld\n", recordTime);
 	return recordTime;
 }
 
@@ -156,7 +159,7 @@ int searchModel(Context_t  *context, eBoxType type) {
     for (i = 0; AvailableModels[i] != NULL; i++)
 
         if (AvailableModels[i]->Type == type) {
-            context->m = AvailableModels[i];
+            context->m = (void*) AvailableModels[i];
             return 0;
         }
 

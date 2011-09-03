@@ -86,7 +86,13 @@ tArgs vArgs[] =
    { "-sw", "--setWakeup",
 "Args: No argumens\n\tset WakeUp reason" },
    { "-ww", "--writeWakeup",
-"Args: No argumens\n\write WakeUp file" },
+"Args: No argumens\n\tset WakeUp reason" },
+   { "-ww", "--writeWakeup",
+"Args: No argumens\n\twrite WakeUp file" },
+   { "-sf", "--setFan",
+"Args: 0/1\n\tset fan on/off" },
+   { "-sr", "--setRF",
+"Args: 0/1\n\tset rf modulator on/off" },
    { NULL, NULL, NULL }
 };
 
@@ -420,8 +426,8 @@ void processCommand (Context_t * context, int argc, char* argv[])
 			else if ((strcmp(argv[i], "-sw") == 0) || (strcmp(argv[i], "--setWakeup") == 0))
 	        {
 	        	/* set WakeUp reason */
-	            if (((Model_t*)context->m)->setWakeupReason)
-	                ((Model_t*)context->m)->setWakeupReason(context);
+	            if (((Model_t*)context->m)->SetWakeupReason)
+	                ((Model_t*)context->m)->SetWakeupReason(context);
 
 		    }
 			else if ((strcmp(argv[i], "-ww") == 0) || (strcmp(argv[i], "--writeWakeup") == 0))
@@ -430,6 +436,34 @@ void processCommand (Context_t * context, int argc, char* argv[])
 	            if (((Model_t*)context->m)->writeWakeupFile)
 	                ((Model_t*)context->m)->writeWakeupFile(context);
 
+		    }
+			else if ((strcmp(argv[i], "-sf") == 0) || (strcmp(argv[i], "--setFan") == 0))
+	        {
+	        	if (i + 1 <= argc)
+				{
+					int on;
+
+					on = atoi(argv[i + 1]);
+
+					/* set display icon */
+					if (((Model_t*)context->m)->SetFan)
+						((Model_t*)context->m)->SetFan(context, on);
+				}
+				i += 1;
+		    }
+			else if ((strcmp(argv[i], "-sr") == 0) || (strcmp(argv[i], "--setRF") == 0))
+	        {
+	        	if (i + 1 <= argc)
+				{
+					int on;
+
+					on = atoi(argv[i + 1]);
+
+					/* set display icon */
+					if (((Model_t*)context->m)->SetRF)
+						((Model_t*)context->m)->SetRF(context, on);
+				}
+				i += 2;
 		    }
 			else
 		    {
@@ -521,6 +555,16 @@ int getModel()
             vBoxType = Spark;
         else if(!strncasecmp(vName,"spark7162", 9))
             vBoxType = Spark;
+        else if ((!strncasecmp(vName,"cuberevo", 8)) ||
+                 (!strncasecmp(vName,"cuberevo-mini", 13)) ||
+                 (!strncasecmp(vName,"cuberevo-mini2", 14)) ||
+                 (!strncasecmp(vName,"cuberevo-mini-fta", 17)) ||
+                 (!strncasecmp(vName,"cuberevo-250hd", 14)) ||
+                 (!strncasecmp(vName,"cuberevo-2000hd", 15)) ||
+                 (!strncasecmp(vName,"cuberevo-9500hd", 15)))
+        {
+    		vBoxType = Cuberevo;
+        }
         else
             vBoxType = Unknown;
     }
