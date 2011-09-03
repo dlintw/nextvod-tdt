@@ -79,13 +79,6 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.org; \
 	cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-nightly.$$DIFF.diff"
 	cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-nightly.tuxtxt.diff"
-	$(if $(CUBEREVO),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
-	$(if $(CUBEREVO_MINI),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
-	$(if $(CUBEREVO_MINI2),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
-	$(if $(CUBEREVO_250HD),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
-	$(if $(CUBEREVO_2000HD),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
-	$(if $(CUBEREVO_9500HD),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
-	$(if $(CUBEREVO_MINI_FTA),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-cuberevo.diff" )
 	$(if $(IPBOX9900),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-ipbox.diff" )
 	$(if $(IPBOX99),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-ipbox.diff" )
 	$(if $(IPBOX55),cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-ipbox.diff" )

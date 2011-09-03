@@ -535,6 +535,11 @@ IPBOX55PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
 
+CUBEREVOPATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-cuberevo_setup_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
+
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
 		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_24)) \
@@ -552,7 +557,8 @@ KERNELPATCHES_24 =  \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_24)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_24)) \
 		$(if $(IPBOX99),$(IPBOX99PATCHES_24)) \
-        $(if $(IPBOX55),$(IPBOX55PATCHES_24))
+        $(if $(IPBOX55),$(IPBOX55PATCHES_24)) \
+        $(if $(CUBEREVO),$(CUBEREVOPATCHES_24))
                 
 ############ Patches Kernel 24 End ###############
 

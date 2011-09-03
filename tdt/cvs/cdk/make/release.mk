@@ -29,18 +29,13 @@ release_cube_common:
 	chmod 777 $(prefix)/release/etc/init.d/reboot
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
-	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release/bin/vdstandby
-	chmod 777 $(prefix)/release/bin/vdstandby
+	cp $(targetprefix)/bin/eeprom $(prefix)/release/bin
 if !STM22
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
-	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release/bin/cubefpctl
-	chmod 777 $(prefix)/release/bin/cubefpctl
-	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/lib/modules/fp.ko
-	cp -f $(buildprefix)/root/release/tuner.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/lib/modules/tuner.ko
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox/micom.ko $(prefix)/release/lib/modules/
 else
 	cp $(kernelprefix)/linux/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux/drivers/net/tun.ko $(prefix)/release/lib/modules
@@ -50,12 +45,8 @@ else
 	cp $(kernelprefix)/linux/fs/nfsd/nfsd.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux/fs/exportfs/exportfs.ko $(prefix)/release/lib/modules
 	cp $(kernelprefix)/linux/fs/nfs_common/nfs_acl.ko $(prefix)/release/lib/modules
-	cp -f $(buildprefix)/root/bin/cubefpctl_stm22 $(prefix)/release/bin/cubefpctl
-	chmod 777 $(prefix)/release/bin/cubefpctl
-	cp -f $(buildprefix)/root/release/fp.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/lib/modules/fp.ko
-	cp -f $(buildprefix)/root/release/tuner.ko_stm22_041$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release/lib/modules/tuner.ko
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox/micom.ko $(prefix)/release/lib/modules/
 endif
-	rm -f $(prefix)/release/lib/modules/simu_button.ko
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release/bin/tffpctl
@@ -72,11 +63,9 @@ release_cuberevo_2000hd: release_common_utils release_cube_common
 
 release_cuberevo_250hd: release_common_utils release_cube_common
 	echo "cuberevo-250hd" > $(prefix)/release/etc/hostname
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 
 release_cuberevo_mini_fta: release_common_utils release_cube_common
 	echo "cuberevo-mini-fta" > $(prefix)/release/etc/hostname
-	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_cube_small.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 
 release_cuberevo_mini2: release_common_utils release_cube_common
 	echo "cuberevo-mini2" > $(prefix)/release/etc/hostname
@@ -1009,10 +998,14 @@ endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxmailbox/embxmailbox.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshm/embxshm.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/mme/mme_host.ko $(prefix)/release/lib/modules/
-if !ENABLE_ATEVIO7500
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
-else
+if ENABLE_CUBEREVO
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/multituner/*.ko $(prefix)/release/lib/modules/
+else
+if ENABLE_ATEVIO7500
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/multituner/*.ko $(prefix)/release/lib/modules/
+else
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
+endif
 endif
 
 if !ENABLE_VIP2_V1
