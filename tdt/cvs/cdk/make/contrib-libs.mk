@@ -1329,6 +1329,64 @@ $(DEPDIR)/%ffmpeg: $(DEPDIR)/ffmpeg.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+$(DEPDIR)/ffmpeg_gst.do_compile: bootstrap $(DEPDIR)/ffmpeg.do_prepare
+	cd @DIR_ffmpeg@ && \
+	$(BUILDENV) \
+	./configure \
+		--disable-static --enable-shared \
+		--enable-cross-compile \
+		--disable-ffserver \
+		--disable-altivec \
+		--disable-debug \
+		--disable-asm \
+		--disable-amd3dnow \
+		--disable-amd3dnowext \
+		--disable-mmx \
+		--disable-mmx2 \
+		--disable-sse \
+		--disable-ssse3 \
+		--disable-armv5te \
+		--disable-armv6 \
+		--disable-armv6t2 \
+		--disable-armvfp \
+		--disable-iwmmxt \
+		--disable-mmi \
+		--disable-neon \
+		--disable-vis \
+		--disable-yasm \
+		--disable-indevs \
+		--disable-outdevs \
+		--disable-muxers \
+		--disable-encoders \
+		--disable-decoders \
+		\
+		--disable-demuxers \
+		--enable-demuxer=ogg \
+		--enable-demuxer=vorbis \
+		--enable-demuxer=flac \
+		\
+		--disable-protocols \
+		--disable-filters \
+		--disable-bsfs \
+		--enable-small \
+		--enable-pthreads \
+		--enable-bzlib \
+		--cross-prefix=$(target)- \
+		--target-os=linux \
+		--arch=sh4 \
+		--extra-cflags=-fno-strict-aliasing \
+		--enable-stripping \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-ffmpeg_gst $(DEPDIR)/std-ffmpeg_gst $(DEPDIR)/max-ffmpeg_gst \
+$(DEPDIR)/ffmpeg_gst: \
+$(DEPDIR)/%ffmpeg_gst: $(DEPDIR)/ffmpeg_gst.do_compile
+	cd @DIR_ffmpeg@ && \
+		@INSTALL_ffmpeg@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 #
 # libass
 #
@@ -1744,7 +1802,7 @@ $(DEPDIR)/gst_plugins_bad.do_compile: $(DEPDIR)/gst_plugins_bad.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr
+		--prefix=/usrf
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_bad $(DEPDIR)/std-gst_plugins_bad $(DEPDIR)/max-gst_plugins_bad \
@@ -1774,6 +1832,28 @@ $(DEPDIR)/gst_plugins_ugly: \
 $(DEPDIR)/%gst_plugins_ugly: $(DEPDIR)/gst_plugins_ugly.do_compile
 	cd @DIR_gst_plugins_ugly@ && \
 		@INSTALL_gst_plugins_ugly@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+# GST-FFMPEG
+$(DEPDIR)/gst_ffmpeg.do_prepare: bootstrap gstreamer gst-plugins-base ffmpeg_gst @DEPENDS_gst_ffmpeg@
+	@PREPARE_gst_ffmpeg@
+	touch $@
+
+$(DEPDIR)/gst_ffmpeg.do_compile: $(DEPDIR)/gst_ffmpeg.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_gst_ffmpeg@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-gst_ffmpeg $(DEPDIR)/std-gst_ffmpeg $(DEPDIR)/max-gst_ffmpeg \
+$(DEPDIR)/gst_ffmpeg: \
+$(DEPDIR)/%gst_ffmpeg: $(DEPDIR)/gst_ffmpeg.do_compile
+	cd @DIR_gst_ffmpeg@ && \
+		@INSTALL_gst_ffmpeg@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 

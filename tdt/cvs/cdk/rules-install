@@ -103,6 +103,7 @@ gst_plugins_base;rewrite-pkgconfig:pkgconfig/gstreamer-plugins-base.pc:pkgconfig
 gst_plugins_good;make:install:DESTDIR=TARGETS
 gst_plugins_bad;make:install:DESTDIR=TARGETS
 gst_plugins_ugly;make:install:DESTDIR=TARGETS
+gst_ffmpeg;make:install:DESTDIR=TARGETS
 
 gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
 
