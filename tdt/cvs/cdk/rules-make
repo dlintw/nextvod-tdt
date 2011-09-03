@@ -133,7 +133,6 @@ libdvdnav;4.1.3;libdvdnav-4.1.3;libdvdnav-4.1.3.tar.bz2:libdvdnav_4.1.3-3.diff;e
 libdvdread;4.1.3;libdvdread-4.1.3;libdvdread-4.1.3.tar.bz2:libdvdread_4.1.3-5.diff;extract:libdvdread-4.1.3.tar.bz2;patch:libdvdread_4.1.3-5.diff
 pyopenssl;0.8;pyOpenSSL-0.8;pyOpenSSL-0.8.tar.gz;extract:pyOpenSSL-0.8.tar.gz
 ffmpeg;0.6.3;ffmpeg-0.6.3;ffmpeg-0.6.3.tar.gz;extract:ffmpeg-0.6.3.tar.gz
-ffmpeg_gst;0.6.3;ffmpeg-0.6.3;ffmpeg-0.6.3.tar.gz;extract:ffmpeg-0.6.3.tar.gz
 libass;0.9.11;libass-0.9.11;libass-0.9.11.tar.gz;extract:libass-0.9.11.tar.gz
 
 libogg;1.2.2;libogg-1.2.2;libogg-1.2.2.tar.gz;extract:libogg-1.2.2.tar.gz
@@ -144,7 +143,7 @@ gst_plugins_base;0.10.34;gst-plugins-base-0.10.34;gst-plugins-base-0.10.34.tar.b
 gst_plugins_good;0.10.29;gst-plugins-good-0.10.29;gst-plugins-good-0.10.29.tar.bz2;extract:gst-plugins-good-0.10.29.tar.bz2
 gst_plugins_bad;0.10.21;gst-plugins-bad-0.10.21;gst-plugins-bad-0.10.21.tar.bz2;extract:gst-plugins-bad-0.10.21.tar.bz2
 gst_plugins_ugly;0.10.17;gst-plugins-ugly-0.10.17;gst-plugins-ugly-0.10.17.tar.bz2;extract:gst-plugins-ugly-0.10.17.tar.bz2
-gst_ffmpeg;0.10.12;gst-ffmpeg-0.10.12;gst-ffmpeg-0.10.12.tar.bz2;extract:gst-ffmpeg-0.10.12.tar.bz2;patch:gst-ffmpeg-0.10.12_lower_rank.patch
+gst_ffmpeg;0.10.11;gst-ffmpeg-0.10.11;gst-ffmpeg-0.10.11.tar.bz2;extract:gst-ffmpeg-0.10.11.tar.bz2;patch:gst-ffmpeg-0.10.12_lower_rank.patch
 
 gst_plugins_dvbmediasink;0.10.1;../apps/misc/tools/gst-plugins-dvbmediasink
 
