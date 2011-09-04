@@ -48,7 +48,9 @@ then
 fi
 
 #halt -d -f -n -i $poweroff $hddown
-
-/bin/cubefpctl --poweroff
-
+if [ -e /bin/cubefpctl ]; then
+	/bin/cubefpctl --poweroff
+else
+	/bin/fp_control -r 00:00:00 01.01.1980
+fi
 : exit 0
