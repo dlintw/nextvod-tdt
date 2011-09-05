@@ -11,4 +11,8 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
 echo -n "Rebooting... "
 #reboot -n
-/bin/cubefpctl --reboot
+if [ -e /bin/cubefpctl ]; then
+	/bin/cubefpctl --reboot
+else
+	/bin/fp_control -r 00:00:00 01.01.1980
+fi
