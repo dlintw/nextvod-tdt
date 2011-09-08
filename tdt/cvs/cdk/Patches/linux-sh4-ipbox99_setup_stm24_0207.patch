@@ -1,6 +1,6 @@
-diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/mach.c linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox55/mach.c
---- linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/mach.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox55/mach.c	2011-07-03 17:37:41.000000000 +0200
+diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox99/mach.c linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox99/mach.c
+--- linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox99/mach.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox99/mach.c	2011-07-03 17:37:41.000000000 +0200
 @@ -0,0 +1,60 @@
 +/*
 + * arch/sh/boards/st/mb442/mach.c
@@ -62,19 +62,19 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/mach.c linux
 +	.mv_init_irq		= mb442_init_irq,
 +	.mv_ioport_map		= mb442_ioport_map,
 +};
-diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/Makefile linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox55/Makefile
---- linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox55/Makefile	2011-07-03 17:37:41.000000000 +0200
+diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox99/Makefile linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox99/Makefile
+--- linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox99/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox99/Makefile	2011-07-03 17:37:41.000000000 +0200
 @@ -0,0 +1,5 @@
 +#
 +# Makefile for STMicroelectronics STb7100 Reference board
 +#
 +
 +obj-y := setup.o mach.o
-diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox55/setup.c
---- linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox55/setup.c	2011-07-03 17:37:41.000000000 +0200
-@@ -0,0 +1,174 @@
+diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox99/setup.c linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox99/setup.c
+--- linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox99/setup.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-sh4-2.6.32.16_stm24_0205/arch/sh/boards/ipbox99/setup.c	2011-07-03 17:37:41.000000000 +0200
+@@ -0,0 +1,177 @@
 +/*
 + * arch/sh/boards/st/mb442/setup.c
 + *
@@ -116,7 +116,7 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c linu
 +	{
 +		.name  = "LMI_SYS",
 +		.start = 0,
-+		.size  = 0x01600000,
++		.size  = 0x02000000,
 +		.flags = 0,
 +		.aka   = LMI_SYS_partalias
 +	}
@@ -124,7 +124,7 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c linu
 +
 +void __init mb442_setup(char** cmdline_p)
 +{
-+	printk("ABipbox 55 board initialisation\n");
++	printk("ABipbox 99 board initialisation\n");
 +
 +	stx7100_early_device_init();
 +
@@ -194,12 +194,16 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c linu
 +	return 1;
 +}
 +
-+static struct plat_stmmacphy_data mb442_phy_private_data = {
++#define STMMAC_PHY_ADDR 3
++static int stmmac_phy_irqs[PHY_MAX_ADDR] = {
++	[STMMAC_PHY_ADDR] = IRL3_IRQ,
++};
++
++static struct stmmac_mdio_bus_data mb442_phy_private_data = {
 +	.bus_id = 0,
-+	.phy_addr = 3,
 +	.phy_mask = 1,
-+	.interface = PHY_INTERFACE_MODE_MII,
 +	.phy_reset = &mb442_phy_reset,
++
 +};
 +
 +static struct platform_device mb442_phy_device = {
@@ -209,8 +213,8 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c linu
 +	.resource	= (struct resource[]) {
 +                {
 +			.name	= "phyirq",
-+			.start	= IRL3_IRQ,
-+			.end	= IRL3_IRQ,
++			.start	= -1,
++			.end	= -1,
 +			.flags	= IORESOURCE_IRQ,
 +		},
 +	},
@@ -225,11 +229,6 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c linu
 +static int __init mb442_device_init(void)
 +{
 +	stx7100_configure_sata();
-+
-+	stx7100_configure_pwm(&(struct stx7100_pwm_config) {
-+			.out0_enabled = 0,
-+			.out1_enabled = 1, });
-+
 +	stx7100_configure_ssc_i2c(0);
 +	stx7100_configure_ssc_i2c(1);
 +	stx7100_configure_ssc_i2c(2);
@@ -242,9 +241,13 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/ipbox55/setup.c linu
 +			.tx_od_enabled = 0, });
 +
 +	stx7100_configure_ethernet(&(struct stx7100_ethernet_config) {
-+			.mode = 0,
++			.mode = stx7100_ethernet_mode_mii,
 +			.ext_clk = 0,
-+			.phy_bus = 0, });
++			.phy_bus = 0,
++			.phy_addr = STMMAC_PHY_ADDR,
++			.mdio_bus_data = &mb442_phy_private_data,
++		});
++
 +	return platform_add_devices(mb442_devices,
 +			ARRAY_SIZE(mb442_devices));
 +}
@@ -258,12 +261,12 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/boards/Kconfig linux-sh4-2.
  
 +comment "Ipbox Boards"
 +
-+config SH_IPBOX55
-+	bool "ipbox55: STb7100 Ipbox board"
++config SH_IPBOX99
++	bool "ipbox99: STb7100 Ipbox board"
 +	depends on CPU_SUBTYPE_STX7100
 +	default n
 +	help
-+	  Select STb7100 Ipbox55 if configuring for an
++	  Select STb7100 Ipbox99 if configuring for an
 +	  STMicroelectronics STb7100 Reference Board (product code:
 +	  STb7100-REF). This is sometimes referred to as the CoCo board.
 +
@@ -277,7 +280,7 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/Makefile linux-sh4-2.6.32.1
  machdir-$(CONFIG_SH_ST_MB837)			+= mach-mb837
  machdir-$(CONFIG_SH_ST_MB839)			+= mach-mb839
  machdir-$(CONFIG_SH_ST_MB903)			+= mach-mb903
-+machdir-$(CONFIG_SH_IPBOX55)			+= ipbox55
++machdir-$(CONFIG_SH_IPBOX99)			+= ipbox99
  
  ifneq ($(machdir-y),)
  core-y	+= $(addprefix arch/sh/boards/, \
@@ -307,3 +310,37 @@ diff -urN linux-sh4-2.6.32.16_stm24_0205.org/arch/sh/Makefile linux-sh4-2.6.32.1
  	stx7100_ssc_devices[ssc].id = i2c_busnum;
  
  	plat_data = stx7100_ssc_devices[ssc].dev.platform_data;
+diff -urN linux-sh4-2.6.32.16_stm24_0205.org/drivers/usb/core/hub.c linux-sh4-2.6.32.16_stm24_0205/drivers/usb/core/hub.c
+--- linux-sh4-2.6.32.16_stm24_0205.org/drivers/usb/core/hub.c	2011-08-16 07:36:25.947316046 +0200
++++ linux-sh4-2.6.32.16_stm24_0205/drivers/usb/core/hub.c	2011-08-16 07:24:47.494815389 +0200
+@@ -1051,7 +1051,11 @@
+ 				dev_warn(hub_dev,
+ 					"insufficient power available "
+ 					"to use all downstream ports\n");
++#if defined(CONFIG_SH_IPBOX99)
++			hub->mA_per_port = 500;
++#else
+ 			hub->mA_per_port = 100;		/* 7.2.1.1 */
++#endif
+ 		}
+ 	} else {	/* Self-powered external hub */
+ 		/* FIXME: What about battery-powered external hubs that
+diff -urN linux-sh4-2.6.32.16_stm24_0205.org/drivers/media/dvb/dvb-core/dvb_ca_en50221.c linux-sh4-2.6.32.16_stm24_0205/drivers/media/dvb/dvb-core/dvb_ca_en50221.c
+--- linux-sh4-2.6.32.16_stm24_0205.org/drivers/media/dvb/dvb-core/dvb_ca_en50221.c	2011-08-28 17:32:52.000000000 +0200
++++ linux-sh4-2.6.32.16_stm24_0205/drivers/media/dvb/dvb-core/dvb_ca_en50221.c	2011-08-28 18:33:15.580391981 +0200
+@@ -2036,13 +2036,13 @@
+ 		atomic_set(&ca->slot_info[i].camchange_count, 0);
+ 		ca->slot_info[i].camchange_type = DVB_CA_EN50221_CAMCHANGE_REMOVED;
+ 		mutex_init(&ca->slot_info[i].slot_lock);
+-
++#if defined(CONFIG_SH_IPBOX9900)
+ 		/* Dagobert and add a ci device entry */
+ 	        ret = dvb_register_device(dvb_adapter, &ca->dvbdev_ci[i], &dvbdev_ci[i], ca, DVB_DEVICE_CI);
+ 		ca->slot_states[i] = DVB_CA_EN50221_CAMCHANGE_REMOVED;
+ 	        if (ret)
+ 		    printk("error creating ci device for slot %d\n", i);
+-
++#endif
+ 	}
+ 
+ 	if (signal_pending(current)) {
