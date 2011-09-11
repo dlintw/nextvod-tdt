@@ -523,7 +523,8 @@ FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 IPBOX9900PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox9900_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch  \
-		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
+		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch \
+                linux-sh4-ipbox_dvb_ca_stm24$(PATCH_STR).patch
 
 IPBOX99PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox99_setup_stm24$(PATCH_STR).patch \
@@ -580,9 +581,27 @@ UFS912PATCHES_HAVANA_STM24 = $(COMMONPATCHES_HAVANA_STM24) \
 		linux-sh4-ufs912_setup_havana_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_havana_stm24$(PATCH_STR).patch
 
+IPBOX9900PATCHES_HAVANA_STM24 = $(COMMONPATCHES_HAVANA_STM24) \
+		linux-sh4-lmb_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-ipbox_setup_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-stmmac_havana_stm24$(PATCH_STR).patch
+
+IPBOX99PATCHES_HAVANA_STM24 = $(COMMONPATCHES_HAVANA_STM24) \
+		linux-sh4-lmb_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-ipbox_setup_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-stmmac_havana_stm24$(PATCH_STR).patch
+
+IPBOX55PATCHES_HAVANA_STM24 = $(COMMONPATCHES_HAVANA_STM24) \
+		linux-sh4-lmb_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-ipbox_setup_havana_stm24$(PATCH_STR).patch \
+		linux-sh4-stmmac_havana_stm24$(PATCH_STR).patch
+
 KERNELPATCHES_HAVANA_STM24 =  \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_HAVANA_STM24)) \
-		$(if $(UFS912),$(UFS912PATCHES_HAVANA_STM24))
+		$(if $(UFS912),$(UFS912PATCHES_HAVANA_STM24)) \
+		$(if $(IPBOX9900),$(IPBOX9900PATCHES_HAVANA_STM24)) \
+		$(if $(IPBOX99),$(IPBOX99PATCHES_HAVANA_STM24))	\	
+		$(if $(IPBOX55),$(IPBOX55PATCHES_HAVANA_STM24))
 
 ############ Patches Havana End ###############
 
