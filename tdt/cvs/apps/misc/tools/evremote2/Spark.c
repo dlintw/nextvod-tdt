@@ -43,6 +43,7 @@
 #define	SPARK_RC05_PREDATA		"11EE"
 #define	SPARK_RC08_PREDATA		"44BB"
 #define	SPARK_RC09_PREDATA		"9966"
+#define	SPARK_RC12_PREDATA		"08F7"
 #define	SPARK_DEFAUYLT_PREDATA	"A25D"
 
 static tLongKeyPressSupport cLongKeyPressSupport = {
@@ -175,6 +176,72 @@ static tButton cButtonsSparRc08[] = {
     {""               , ""  , KEY_NULL},
 };
 
+static tButton cButtonsSparkRc12[] = {
+
+    {"MUTE"           , "87", KEY_MUTE},
+    {"POWER"          , "45", KEY_POWER},
+    {"PLAY_MODE"      , "A7", KEY_P},
+    {"V.FORMAT"       , "E5", KEY_V},
+    {"TIME"           , "C5", KEY_TIME},
+    {"USB"			  , "47", KEY_CLOSE},
+	{"FOLDER"		  , "65", KEY_ARCHIVE},
+
+    {"STOP"		 	, "25", KEY_STOP},
+    {"PLAY"			, "3D", KEY_PLAY},
+    {"PAUSE"		, "1D", KEY_PAUSE},
+    {"FASTFORWARD"	, "C7", KEY_FASTFORWARD},
+    {"REWIND" 		, "FD", KEY_REWIND},
+    {"PREV"			, "BF", KEY_PREVIOUS},
+    {"NEXT"			, "E7", KEY_NEXT},
+    {"FAST" 		, "67", KEY_F},
+    {"SLOW"   		, "9F", KEY_SLOW},
+
+    {"MENU"         , "DD", KEY_MENU},
+    {"Tms"			, "BD", KEY_T},
+    {"INFO"         , "FF", KEY_INFO},
+
+	{"UP"		   	, "5D", KEY_UP},
+	{"DOWN"        	, "55", KEY_DOWN},
+	{"LEFT"        	, "1F", KEY_LEFT},
+	{"RIGHT"       	, "7F", KEY_RIGHT},
+	{"OK"          	, "7D", KEY_OK},
+
+	{"EXIT" 		  , "3F", KEY_HOME},
+
+	{"REC"			  , "9D", KEY_RECORD},
+    {"EPG"            , "5F", KEY_EPG},
+    {"TV/SAT"		, "D5", KEY_AUX},
+    {"RECALL"         , "DF", KEY_BACK},
+    {"FIND"           , "95", KEY_FIND},
+    {"VOL+"           , "17", KEY_VOLUMEDOWN},
+    {"VOL-"           , "37", KEY_VOLUMEUP},
+
+    {"SAT"            , "15", KEY_SAT},
+	{"FAV"			  , "35", KEY_FAVORITES},
+    {"PAGE+"          , "57", KEY_CHANNELDOWN},
+    {"PAGE-"          , "D7", KEY_CHANNELUP},
+
+	{"KEY_0"        , "0D", KEY_0},
+	{"KEY_1"        , "F5", KEY_1},
+	{"KEY_2"        , "B5", KEY_2},
+	{"KEY_3"        , "F7", KEY_3},
+	{"KEY_4"        , "CD", KEY_4},
+	{"KEY_5"        , "AD", KEY_5},
+	{"KEY_6"        , "77", KEY_6},
+	{"KEY_7"        , "0F", KEY_7},
+	{"KEY_8"        , "8D", KEY_8},
+	{"KEY_9"        , "4F", KEY_9},
+
+	{"TV/RADIO" 	  , "ED", KEY_TV2},
+
+	{"RED"			, "2F", KEY_RED},
+	{"GREEN"		, "6F", KEY_GREEN},
+	{"YELLOW"		, "EF", KEY_YELLOW},
+	{"BLUE" 		, "05", KEY_BLUE},
+    {"WHITE"        , "2D", KEY_W},
+    {""               , ""  , KEY_NULL},
+};
+
 /* spark Default */
 static tButton cButtonsSparDefault[] = {
     {"POWER"          , "87", KEY_POWER},
@@ -262,6 +329,10 @@ static tButton *pSparkGetButton(char *pData)
 	else if (!strncasecmp(pData, SPARK_DEFAUYLT_PREDATA, sizeof(SPARK_DEFAUYLT_PREDATA)))
 	{
 		pButtons = cButtonsSparDefault;
+	}
+	else if (!strncasecmp(pData, SPARK_RC12_PREDATA, sizeof(SPARK_RC12_PREDATA)))
+	{
+		pButtons = cButtonsSparkRc12;
 	}
 	return pButtons;
 }
