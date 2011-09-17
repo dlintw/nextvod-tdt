@@ -559,7 +559,7 @@ KERNELPATCHES_24 =  \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_24)) \
 		$(if $(IPBOX99),$(IPBOX99PATCHES_24)) \
         $(if $(IPBOX55),$(IPBOX55PATCHES_24)) \
-        $(if $(CUBEREVO),$(CUBEREVOPATCHES_24))
+		$(if $(CUBEMOD),$(CUBEREVOPATCHES_24))
                 
 ############ Patches Kernel 24 End ###############
 
