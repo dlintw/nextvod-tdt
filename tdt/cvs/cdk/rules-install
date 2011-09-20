@@ -92,6 +92,7 @@ libdvdnav;make:install:DESTDIR=TARGETS
 libdvdread;make:install:DESTDIR=TARGETS
 ffmpeg;make:install:DESTDIR=TARGETS
 libass;make:install:DESTDIR=TARGETS
+libcap;make:install:DESTDIR=TARGETS
 
 libogg;make:install:DESTDIR=TARGETS
 libflac;make:install:DESTDIR=TARGETS

@@ -79,6 +79,7 @@ include make/neutrino.mk
 
 # Include vdr gui targets
 include make/vdr.mk
+include make/vdrdev.mk
 
 # Include enigma1-hd gui targets
 include make/enigma1-hd.mk

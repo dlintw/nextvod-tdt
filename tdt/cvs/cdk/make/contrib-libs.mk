@@ -453,11 +453,12 @@ $(DEPDIR)/min-libxml2 $(DEPDIR)/std-libxml2 $(DEPDIR)/max-libxml2 \
 $(DEPDIR)/libxml2: \
 $(DEPDIR)/%libxml2: libxml2.do_compile
 	cd @DIR_libxml2@ && \
-		@INSTALL_libxml2@ && \
-		sed -e "/^dependency_libs/ s,/usr/lib/libxml2.la,$(targetprefix)/usr/lib/libxml2.la,g" -i $(targetprefix)/usr/lib/python2.6/site-packages/libxml2mod.la && \
-		sed -e "s,^prefix=,prefix=$(targetprefix)," < xml2-config > $(crossprefix)/bin/xml2-config && \
-		chmod 755 $(crossprefix)/bin/xml2-config && \
-		sed -e "/^XML2_LIBDIR/ s,/usr/lib,$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/xml2Conf.sh && \
+		@INSTALL_libxml2@; \
+		[ -f "$(targetprefix)/usr/lib/python2.6/site-packages/libxml2mod.la" ] && \
+		sed -e "/^dependency_libs/ s,/usr/lib/libxml2.la,$(targetprefix)/usr/lib/libxml2.la,g" -i $(targetprefix)/usr/lib/python2.6/site-packages/libxml2mod.la; \
+		sed -e "s,^prefix=,prefix=$(targetprefix)," < xml2-config > $(crossprefix)/bin/xml2-config; \
+		chmod 755 $(crossprefix)/bin/xml2-config; \
+		sed -e "/^XML2_LIBDIR/ s,/usr/lib,$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/xml2Conf.sh; \
 		sed -e "/^XML2_INCLUDEDIR/ s,/usr/include,$(targetprefix)/usr/include,g" -i $(targetprefix)/usr/lib/xml2Conf.sh
 	@[ "x$*" = "x" ] && touch $@ || true
 
@@ -1921,6 +1922,45 @@ $(DEPDIR)/%brofs: $(DEPDIR)/brofs.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_brofs@ && \
 		@INSTALL_brofs@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# libcap
+#
+$(DEPDIR)/libcap.do_prepare:  @DEPENDS_libcap@
+	@PREPARE_libcap@
+	touch $@
+
+$(DEPDIR)/libcap.do_compile: $(DEPDIR)/libcap.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libcap@ && \
+	$(MAKE) \
+	DESTDIR=$(prefix)/cdkroot \
+	PREFIX=$(prefix)/cdkroot/usr \
+	LIBDIR=$(prefix)/cdkroot/usr/lib \
+	SBINDIR=$(prefix)/cdkroot/usr/sbin \
+	INCDIR=$(prefix)/cdkroot/usr/include \
+	BUILD_CC=gcc \
+	PAM_CAP=no \
+	LIBATTR=no \
+	CC=sh4-linux-gcc
+	touch $@
+
+$(DEPDIR)/min-libcap $(DEPDIR)/std-libcap $(DEPDIR)/max-libcap \
+$(DEPDIR)/libcap: \
+$(DEPDIR)/%libcap: $(DEPDIR)/libcap.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd @DIR_libcap@ && \
+		@INSTALL_libcap@ \
+		DESTDIR=$(prefix)/cdkroot \
+		PREFIX=$(prefix)/cdkroot/usr \
+		LIBDIR=$(prefix)/cdkroot/usr/lib \
+		SBINDIR=$(prefix)/cdkroot/usr/sbin \
+		INCDIR=$(prefix)/cdkroot/usr/include \
+		BUILD_CC=gcc \
+		PAM_CAP=no \
+		LIBATTR=no \
+		CC=sh4-linux-gcc
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 
