@@ -1,5 +1,5 @@
 
-URL="ftp://ftp.tvdr.de/vdr/Developer/"
+URLVDR="ftp://ftp.tvdr.de/vdr/Developer/"
 
 $(DEPDIR)/vdrdev.do_prepare: bootstrap freetype libxml2 fontconfig libcap
 	[ -d "$(appsdir)/vdr/vdr" ] && \
@@ -15,7 +15,7 @@ $(DEPDIR)/vdrdev.do_prepare: bootstrap freetype libxml2 fontconfig libcap
 	rm -rf $(appsdir)/vdr/$$PREPARE; \
 	[ -d "$(appsdir)/vdr/$$PREPARE.org" ] && \
 	rm -rf $(appsdir)/vdr/$$PREPARE.org; \
-	(cd $(appsdir)/vdr; wget $(URL)/$$PREPARE.tar.bz2; tar -xjf $$PREPARE.tar.bz2; rm -f $$PREPARE.tar.bz2;); \
+	(cd $(appsdir)/vdr; wget $(URLVDR)/$$PREPARE.tar.bz2; tar -xjf $$PREPARE.tar.bz2; rm -f $$PREPARE.tar.bz2;); \
 	cp -ra $(appsdir)/vdr/$$PREPARE $(appsdir)/vdr/$$PREPARE.org; \
 	ln -s $(appsdir)/vdr/$$PREPARE $(appsdir)/vdr/vdr; \
 	rm -rf $(appsdir)/vdr/vdr/PLUGINS/src/skincurses;
