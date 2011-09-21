@@ -76,7 +76,7 @@ PACKAGES="\
 	${UBUNTU:+fakeroot} \
 	${UBUNTU:+gawk} \
 	${UBUNTU:+gperf} \
-	${UBUNTU:+libglib2.0-bin} \ \
+	${UBUNTU:+libglib2.0-bin} \
 	${UBUNTU:+libglib2.0-dev} \
 ";
 
