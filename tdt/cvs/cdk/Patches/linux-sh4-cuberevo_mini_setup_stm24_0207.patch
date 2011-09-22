@@ -46,24 +46,6 @@
  	/* Save unparsed command line copy for /proc/cmdline */
  	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
  	*cmdline_p = command_line;
---- a/drivers/stm/stx7100_comms.c	2011-08-16 18:58:00.000000000 +0200
-+++ b/stx7100_comms.c	2011-08-25 20:33:06.368528840 +0200
-@@ -240,12 +240,12 @@
- 			STM_PAD_PIO_BIDIR_NAMED(3, 0, 1, "SCL"),
- 			STM_PAD_PIO_BIDIR_NAMED(3, 1, 1, "SDA"),
- 		},
--		.sysconfs_num = 2,
-+		.sysconfs_num = 1,
- 		.sysconfs = (struct stm_pad_sysconf []) {
- 			/* SSC1_MUX_SEL = 0 (default assignment) */
- 			STM_PAD_SYS_CFG(7, 2, 2, 0),
--			/* DVO_OUT_ON = 0 (SSC not DVO) */
--			STM_PAD_SYS_CFG(7, 10, 10, 0),
-+			/* DVO_OUT_ON = 0 (SSC not DVO) 
-+			STM_PAD_SYS_CFG(7, 10, 10, 0),*/
- 		},
- 	},
- 	[2] = {
 *** a/arch/sh/boards/mach-mb442/setup.c	2011-08-16 18:57:57.000000000 +0200
 --- b/setup.c	2011-09-13 20:40:02.770238585 +0200
 ***************
@@ -452,3 +434,33 @@
   
   	return platform_add_devices(mb442_devices,
   			ARRAY_SIZE(mb442_devices));
+--- a/drivers/stm/stx7100_comms.c	2011-08-16 18:58:00.000000000 +0200
++++ b/stx7100_comms.c	2011-09-21 20:11:09.330974528 +0200
+@@ -238,14 +238,14 @@
+ 		.gpios_num = 2,
+ 		.gpios = (struct stm_pad_gpio []) {
+ 			STM_PAD_PIO_BIDIR_NAMED(3, 0, 1, "SCL"),
+-			STM_PAD_PIO_BIDIR_NAMED(3, 1, 1, "SDA"),
++			STM_PAD_PIO_BIDIR_NAMED(3, 2, 1, "SDA"),
+ 		},
+-		.sysconfs_num = 2,
++		.sysconfs_num = 1,
+ 		.sysconfs = (struct stm_pad_sysconf []) {
+ 			/* SSC1_MUX_SEL = 0 (default assignment) */
+ 			STM_PAD_SYS_CFG(7, 2, 2, 0),
+-			/* DVO_OUT_ON = 0 (SSC not DVO) */
+-			STM_PAD_SYS_CFG(7, 10, 10, 0),
++			/* DVO_OUT_ON = 0 (SSC not DVO) 
++			STM_PAD_SYS_CFG(7, 10, 10, 0),*/
+ 		},
+ 	},
+ 	[2] = {
+@@ -344,7 +344,7 @@
+ 	BUG_ON(stx7100_ssc_configured[ssc]);
+ 	stx7100_ssc_configured[ssc] = 1;
+ 
+-	stx7100_ssc_devices[ssc].name = "i2c-stm";
++	stx7100_ssc_devices[ssc].name = "i2c-st40";
+ 	stx7100_ssc_devices[ssc].id = i2c_busnum;
+ 
+ 	plat_data = stx7100_ssc_devices[ssc].dev.platform_data;
