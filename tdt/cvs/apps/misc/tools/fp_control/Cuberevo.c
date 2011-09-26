@@ -40,7 +40,7 @@ static int setText(Context_t* context, char* theText);
 #define cVFD_DEVICE "/dev/vfd"
 #define cRC_DEVICE "/dev/rc"
 
-#define cMAXCharsCuberevo 11
+#define cMAXCharsCuberevo 14 /* 14seg ->rest is filtered by driver */
 
 typedef struct
 {
@@ -68,44 +68,45 @@ static void setMode(int fd)
 }
 
 /* calculate the time value which we can pass to
- * the micom fp. its a mjd time (mjd=modified
- * julian date). mjd is relativ to gmt so theGMTTime
- * must be in GMT/UTC.
+ * the micom fp.
  */
 static void setMicomTime(time_t theGMTTime, char* destString)
 {
-	/* from u-boot micom */
 	struct tm* now_tm;
 	now_tm = gmtime (&theGMTTime);
 
 	printf("Set Time (UTC): %02d:%02d:%02d %02d-%02d-%04d\n",
 		now_tm->tm_hour, now_tm->tm_min, now_tm->tm_sec, now_tm->tm_mday, now_tm->tm_mon+1, now_tm->tm_year+1900);
 	
-	double mjd = modJulianDate(now_tm);
-	int mjd_int = mjd;
-
-	destString[0] = ( mjd_int >> 8 );
-	destString[1] = ( mjd_int & 0xff );
+	destString[0] = now_tm->tm_year - 100;
+	destString[1] = now_tm->tm_mon + 1;
+	destString[2] = now_tm->tm_mday;
 	destString[2] = now_tm->tm_hour;
 	destString[3] = now_tm->tm_min;
 	destString[4] = now_tm->tm_sec;
 }
 
-static unsigned long getMicomTime(char* micomTimeString)
+static time_t getMicomTime(char* micomTimeString)
 {
-	unsigned int 	mjd 	= ((micomTimeString[1] & 0xFF) * 256) + (micomTimeString[2] & 0xFF);
-	unsigned long 	epoch 	= ((mjd - 40587)*86400);
+	unsigned int 	year 	= (micomTimeString[0] & 0xFF) + 2000;
+	unsigned long 	month 	= micomTimeString[1] & 0xFF;
+	unsigned long 	day 	= micomTimeString[2] & 0xFF;
 	
 	unsigned int 	hour 	= micomTimeString[3] & 0xFF;
 	unsigned int 	min 	= micomTimeString[4] & 0xFF;
 	unsigned int 	sec 	= micomTimeString[5] & 0xFF;
 
-	epoch += ( hour * 3600 + min * 60 + sec );
+	struct tm       the_tm;
 
-	printf( "MJD = %d epoch = %ld, time = %02d:%02d:%02d\n", mjd,
-		epoch, hour, min, sec );
-		
-	return epoch;
+    the_tm.tm_year = year - 1900;
+    the_tm.tm_mon  = month -1;
+    the_tm.tm_mday = day;
+    the_tm.tm_hour = hour;
+    the_tm.tm_min  = min;
+    the_tm.tm_sec  = sec;
+    the_tm.tm_isdst= -1;
+
+    return mktime(&the_tm);
 }
 
 /* ******************* driver functions ****************** */
@@ -154,27 +155,27 @@ static int setTime(Context_t* context, time_t* theGMTTime)
    }
    return 0;
 }
-	
+
 static int getTime(Context_t* context, time_t* theGMTTime)
 {
-   char fp_time[8];
+   struct micom_ioctl_data vData;
 
    fprintf(stderr, "waiting on current time from fp ...\n");
 
    /* front controller time */
-   if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
+   if (ioctl(context->fd, VFDGETTIME, &vData) < 0)
    {
       perror("gettime: ");
       return -1;
    }
 
-   /* if we get the fp time */
-   if (fp_time[0] != '\0')
+   /* if we get the time */
+   if (vData.u.get_time.time[0] != '\0')
    {
       fprintf(stderr, "success reading time from fp\n");
 
       /* current front controller time */
-      *theGMTTime = (time_t) getMicomTime(fp_time);
+      *theGMTTime = (time_t) getMicomTime(vData.u.get_time.time);
    } else
    {
       fprintf(stderr, "error reading time from fp\n");
@@ -183,6 +184,34 @@ static int getTime(Context_t* context, time_t* theGMTTime)
    return 0;
 }
 	
+static int getWakeupTime(Context_t* context, time_t* theGMTTime)
+{
+   struct micom_ioctl_data vData;
+
+   fprintf(stderr, "waiting on current time from fp ...\n");
+
+   /* front controller time */
+   if (ioctl(context->fd, VFDGETWAKEUPTIME, &vData) < 0)
+   {
+      perror("gettime: ");
+      return -1;
+   }
+
+   /* if we get the time */
+   if (vData.u.wakeup_time.time[0] != '\0')
+   {
+      fprintf(stderr, "success reading time from fp\n");
+
+      /* current front controller time */
+      *theGMTTime = (time_t) getMicomTime(vData.u.wakeup_time.time);
+   } else
+   {
+      fprintf(stderr, "error reading time from fp\n");
+      *theGMTTime = 0;
+   }
+   return 0;
+}
+
 static int setTimer(Context_t* context)
 {
    struct micom_ioctl_data vData;
@@ -225,12 +254,12 @@ static int setTimer(Context_t* context)
    } else
    {
       unsigned long diff;
-      char   	    fp_time[8];
+
 
       fprintf(stderr, "waiting on current time from fp ...\n");
 		
       /* front controller time */
-      if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
+      if (ioctl(context->fd, VFDGETTIME, &vData) < 0)
       {
 	     perror("gettime: ");
          return -1;
@@ -240,12 +269,12 @@ static int setTimer(Context_t* context)
       diff = (unsigned long int) wakeupTime - curTime;
 
       /* if we get the fp time */
-      if (fp_time[0] != '\0')
+      if (vData.u.get_time.time[0] != '\0')
       {
          fprintf(stderr, "success reading time from fp\n");
 			
          /* current front controller time */
-         curTime = (time_t) getMicomTime(fp_time);
+         curTime = (time_t) getMicomTime(vData.u.get_time.time);
 	 
  	     printf("curTime = %ld\n", curTime);
       } else
@@ -293,21 +322,20 @@ static int setTimerManual(Context_t* context, time_t* theGMTTime)
 
        if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
        {
-	  perror("standby: ");
+	      perror("standby: ");
           return -1;
        }
              
    } else
    {
       unsigned long diff;
-      char   	    fp_time[8];
 
       fprintf(stderr, "waiting on current time from fp ...\n");
 		
       /* front controller time */
-      if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
+      if (ioctl(context->fd, VFDGETTIME, &vData) < 0)
       {
-	 perror("gettime: ");
+         perror("gettime: ");
          return -1;
       }
 		
@@ -315,12 +343,12 @@ static int setTimerManual(Context_t* context, time_t* theGMTTime)
       diff = (unsigned long int) wakeupTime - curTime;
 
       /* if we get the fp time */
-      if (fp_time[0] != '\0')
+      if (vData.u.get_time.time[0] != '\0')
       {
          fprintf(stderr, "success reading time from fp\n");
 			
          /* current front controller time */
-         curTime = (time_t) getMicomTime(fp_time);
+         curTime = (time_t) getMicomTime(vData.u.get_time.time);
       } else
       {
           fprintf(stderr, "error reading time ... assuming localtime\n");
@@ -333,7 +361,7 @@ static int setTimerManual(Context_t* context, time_t* theGMTTime)
 
       if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
       {
-	 perror("standby: ");
+         perror("standby: ");
          return -1;
       }
    }
@@ -539,7 +567,6 @@ static int setBrightness(Context_t* context, int brightness)
 
 static int setLight(Context_t* context, int on)
 {
-    
     if (on)
        setBrightness(context, 7);
     else
@@ -548,37 +575,23 @@ static int setLight(Context_t* context, int on)
     return 0;
 }
 
-/* 0xc1 = rcu
- * 0xc2 = front
- * 0xc3 = time
- * 0xc4 = ac ???
- */
 static int getWakeupReason(Context_t* context, int* reason)
 {
-   char mode[8];
+   struct micom_ioctl_data vData;
 
    fprintf(stderr, "waiting on wakeupmode from fp ...\n");
 
    /* front controller time */
-   if (ioctl(context->fd, VFDGETWAKEUPMODE, &mode) < 0)
+   if (ioctl(context->fd, VFDGETWAKEUPMODE, &vData) < 0)
    {
       perror("getWakeupReason: ");
       return -1;
    }
 
-   /* if we get the fp time */
-   if (mode[0] != '\0')
-   {
-      fprintf(stderr, "success reading wakeupdmode from fp\n");
-
-      *reason = mode[1] & 0xff;
+   *reason = vData.u.status.status & 0xff;
       
-      printf("reason = 0x%x\n", *reason);
-   } else
-   {
-      fprintf(stderr, "error reading wakeupmode from fp\n");
-      *reason = 0;
-   }
+   printf("reason = 0x%x\n", *reason);
+
    return 0;
 }
 
@@ -700,5 +713,6 @@ Model_t Cuberevo_model = {
 	.GetVersion       = getVersion,
 	.SetRF            = setRFModulator,
 	.SetFan           = setFan,
+    .GetWakeupTime    = getWakeupTime,
 	.private          = NULL
 };

@@ -20,21 +20,13 @@ struct set_icon_s {
 
 struct set_led_s {
 	int led_nr;
+    /* on:
+     * 0 = off
+     * 1 = on
+     * 2 = slow
+     * 3 = fast
+     */
 	int on;
-};
-
-/* time must be given as follows:
- * time[0] & time[1] = mjd ???
- * time[2] = hour
- * time[3] = min
- * time[4] = sec
- */
-struct set_standby_s {
-	char time[5];
-};
-
-struct set_time_s {
-	char time[5];
 };
 
 struct set_fan_s {
@@ -43,6 +35,30 @@ struct set_fan_s {
 
 struct set_rf_s {
     int on;
+};
+
+/* YYMMDDhhmm */
+struct set_standby_s {
+    char time[10];
+};
+
+/* YYMMDDhhmmss */
+struct set_time_s {
+    char time[12];
+};
+
+/* YYMMDDhhmmss */
+struct get_time_s {
+    char time[12];
+};
+
+struct get_wakeupstatus {
+    char status;
+};
+
+/* YYMMDDhhmmss */
+struct get_wakeuptime {
+    char time[12];
 };
 
 struct micom_ioctl_data {
@@ -56,6 +72,9 @@ struct micom_ioctl_data {
         struct set_mode_s mode;
         struct set_standby_s standby;
         struct set_time_s time;
+        struct get_time_s get_time;
+        struct get_wakeupstatus status;
+        struct get_wakeuptime wakeup_time;
     } u;
 };
 

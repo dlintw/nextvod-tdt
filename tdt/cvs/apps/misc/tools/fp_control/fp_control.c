@@ -53,6 +53,8 @@ tArgs vArgs[] =
 "Args: No arguments\n\tSet the most recent timer from e2 to the frontcontroller and standby" },
    { "-g", "--getTime        ",
 "Args: No arguments\n\tReturn current set frontcontroller time" },
+   { "-gw", "--getWakeupTime        ",
+"Args: No arguments\n\tReturn current wakeup time" },
    { "-s", "--setTime        ",
 "Args: time date Format: HH:MM:SS dd-mm-YYYY\n\tSet the current frontcontroller time" },
    { "-m", "--setTimerManual ",
@@ -84,8 +86,6 @@ tArgs vArgs[] =
    { "-v", "--version",
 "Args: No argumens\n\tGet version from fc" },
    { "-sw", "--setWakeup",
-"Args: No argumens\n\tset WakeUp reason" },
-   { "-ww", "--writeWakeup",
 "Args: No argumens\n\tset WakeUp reason" },
    { "-ww", "--writeWakeup",
 "Args: No argumens\n\twrite WakeUp file" },
@@ -189,6 +189,22 @@ void processCommand (Context_t * context, int argc, char* argv[])
 				    }
 				}
 
+		    }
+			else if ((strcmp(argv[i], "-gw") == 0) || (strcmp(argv[i], "--getWakeupTime") == 0))
+	        {
+	        	time_t theGMTTime;
+
+	        	/* get the frontcontroller time */
+	            if (((Model_t*)context->m)->GetWakeupTime)
+	            {
+				    if (((Model_t*)context->m)->GetWakeupTime(context, &theGMTTime) == 0)
+				    {
+						struct tm *gmt = gmtime(&theGMTTime);
+
+						fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+						     gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
+				    }
+				}
 		    }
 			else if ((strcmp(argv[i], "-s") == 0) || (strcmp(argv[i], "--setTime") == 0))
 	        {
