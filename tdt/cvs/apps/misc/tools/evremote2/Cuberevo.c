@@ -32,6 +32,7 @@
 #include <sys/un.h>
 #include <signal.h>
 #include <time.h>
+#include <sys/ioctl.h>
 
 #include "global.h"
 #include "map.h"
@@ -45,42 +46,27 @@
 
 /* ***************** our key assignment **************** */
 
+static int version = 0;
+
 static tLongKeyPressSupport cLongKeyPressSupport = {
   10, 140,
 };
 
 static tButton cButtonCuberevo[] = {
-    {"MEDIA"          , "09", KEY_MEDIA},   //fixme
-    {"ARCHIVE"        , "0D", KEY_ARCHIVE}, //fixme
-    {"MENU"           , "26", KEY_MENU},
-    {"RED"            , "2A", KEY_RED},
-    {"GREEN"          , "2D", KEY_GREEN},
-    {"YELLOW"         , "2E", KEY_YELLOW},
-    {"BLUE"           , "2B", KEY_BLUE},
-    {"EXIT"           , "27", KEY_HOME},
-    {"TEXT"           , "31", KEY_TEXT},
-    {"EPG"            , "06", KEY_EPG},
-    {"REWIND"         , "1E", KEY_REWIND},
-    {"FASTFORWARD"    , "21", KEY_FASTFORWARD},
-    {"PLAY"           , "20", KEY_PLAY},
-    {"PAUSE"          , "25", KEY_PAUSE},
-    {"RECORD"         , "07", KEY_RECORD},
-    {"STOP"           , "22", KEY_STOP},
-    {"STANDBY"        , "0A", KEY_POWER},
-    {"MUTE"           , "0C", KEY_MUTE},
-#if 0
-    {"CHANNELUP"      , "1A", KEY_PAGEUP},    //fixme
-    {"CHANNELDOWN"    , "1B", KEY_PAGEDOWN},  //fixme
-#endif
-    {"VOLUMEUP"       , "34", KEY_VOLUMEUP},
-    {"VOLUMEDOWN"     , "35", KEY_VOLUMEDOWN},
-    {"HELP"           , "81", KEY_HELP},      //fixme
+    {"KEY_F1"         , "00", KEY_F1},
+    {"KEY_F2"         , "01", KEY_F1},
+    {"KEY_F3"         , "02", KEY_F1},
     {"INFO"           , "03", KEY_INFO},
-    {"OK"             , "1F", KEY_OK},
-    {"UP"             , "1A", KEY_UP},
-    {"RIGHT"          , "1C", KEY_RIGHT},
-    {"DOWN"           , "1B", KEY_DOWN},
-    {"LEFT"           , "1D", KEY_LEFT},
+    {"RADIO"          , "04", KEY_RADIO},
+    {"PREVIOUS"       , "05", KEY_PREVIOUS},
+    {"EPG"            , "06", KEY_EPG},
+    {"RECORD"         , "07", KEY_RECORD},
+    {"FAVORITES"      , "08", KEY_FAVORITES},
+    {"MEDIA"          , "09", KEY_MEDIA},   //fixme
+    {"STANDBY"        , "0A", KEY_POWER},
+    {"KEY_F5"         , "0B", KEY_F5},
+    {"MUTE"           , "0C", KEY_MUTE},
+    {"ARCHIVE"        , "0D", KEY_ARCHIVE}, //fixme
     {"0BUTTON"        , "10", KEY_0},
     {"1BUTTON"        , "11", KEY_1},
     {"2BUTTON"        , "12", KEY_2},
@@ -91,35 +77,109 @@ static tButton cButtonCuberevo[] = {
     {"7BUTTON"        , "17", KEY_7},
     {"8BUTTON"        , "18", KEY_8},
     {"9BUTTON"        , "19", KEY_9},
+    {"UP"             , "1A", KEY_UP},
+    {"DOWN"           , "1B", KEY_DOWN},
+    {"RIGHT"          , "1C", KEY_RIGHT},
+    {"LEFT"           , "1D", KEY_LEFT},
+    {"REWIND"         , "1E", KEY_REWIND},
+    {"OK"             , "1F", KEY_OK},
+    {"PLAY"           , "20", KEY_PLAY},
+    {"FASTFORWARD"    , "21", KEY_FASTFORWARD},
+    {"STOP"           , "22", KEY_STOP},
     {"SLOW"           , "23", KEY_SLOW},
     {"AGAIN"          , "24", KEY_AGAIN},
-    {"BOOKMARKS"      , "29", KEY_BOOKMARKS},
-    {"WWW"            , "36", KEY_WWW},
+    {"PAUSE"          , "25", KEY_PAUSE},
+    {"MENU"           , "26", KEY_MENU},
+    {"EXIT"           , "27", KEY_HOME},
+    {"KEY_F7"         , "28", KEY_F7},
+    {"KEY_BOOMARKS"   , "29", KEY_BOOKMARKS},
+    {"RED"            , "2A", KEY_RED},
+    {"BLUE"           , "2B", KEY_BLUE},
+    {"KEY_F8"         , "2C", KEY_F8},
+    {"GREEN"          , "2D", KEY_GREEN},
+    {"YELLOW"         , "2E", KEY_YELLOW},
     {"AUDIO"          , "2F", KEY_AUDIO},
     {"SUBTITLE"       , "30", KEY_SUBTITLE},
-    {"PREVIOUS"       , "05", KEY_PREVIOUS},
-    {"RADIO"          , "04", KEY_RADIO},
-    {"FAVORITES"      , "08", KEY_FAVORITES},
+    {"TEXT"           , "31", KEY_TEXT},
+    {"CHANNELUP"      , "32", KEY_CHANNELUP},
+    {"CHANNELDOWN"    , "33", KEY_CHANNELDOWN},
+    {"VOLUMEUP"       , "34", KEY_VOLUMEUP},
+    {"VOLUMEDOWN"     , "35", KEY_VOLUMEDOWN},
+    {"WWW"            , "36", KEY_WWW},
     {""               , ""  , KEY_NULL},
 };
 
 /* ***************** our fp button assignment **************** */
 
-static tButton cButtonCuberevoFrontpanel[] = {
-	{"FP_POWER"		, "00", KEY_POWER},
-	{"FP_MENU"		, "01", KEY_MENU},
-	{"FP_MENU"		, "02", KEY_EXIT},
-	{"FP_F9"		, "03", KEY_F9},
-	{"FP_OK"		, "04", KEY_OK},
-	{"FP_LEFT"		, "05", KEY_LEFT},
-	{"FP_RIGHT"		, "06", KEY_RIGHT},
-	{"FP_UP"		, "07", KEY_UP},
-	{"FP_DOWN"		, "08", KEY_DOWN},
-	{""	            , ""  , KEY_NULL}
+typedef struct
+{
+    char*          KeyName;
+	unsigned short code;
+    int            KeyCode;
+} key_table_t;
+
+key_table_t front_keymap_13grid[] =
+{
+   { "STANDBY", 0x1000,              KEY_POWER         },  /* front power */
+   { "LEFT"   , 0x0002,              KEY_LEFT          },  /* front left */
+   { "RIGHT"  , 0x0004,              KEY_RIGHT         },  /* front right */
+   { "UP"     , 0x4000,              KEY_UP            },  /* front up */
+   { "DOWN"   , 0x0040,              KEY_DOWN          },  /* front down */
+   { "OK"     , 0x0020,              KEY_OK            },  /* front ok */
+   { "MENU"   , 0x0001,              KEY_MENU          },  /* front menu */
+#if 0
+//fixme
+   { 0x1000|0x0002,       key_front_p_left  },
+   { 0x1000|0x0004,       key_front_p_right },
+   { 0x1000|0x4000,       key_front_p_up    },
+   { 0x1000|0x0040,       key_front_p_down  },
+   { 0x1000|0x0020,       key_front_p_ok    },
+   { 0x1000|0x0001,       key_front_p_menu  },
+#endif
+   { "RELEASE" , 0x0000,              0xffff            },
+   { ""        , 0x0000,              KEY_NULL          },
 };
+
+key_table_t front_keymap_12dotmatrix[] =
+{
+   { "STANDBY", (1<<0),        KEY_POWER         },  /* front power */
+   { "LEFT"   , (1<<5),        KEY_LEFT          },  /* front left */
+   { "RIGHT"  , (1<<6),        KEY_RIGHT         },  /* front right */
+   { "UP"     , (1<<7),        KEY_UP            },  /* front up */
+   { "DOWN"   , (1<<8),        KEY_DOWN          },  /* front down */
+   { "OK"     , (1<<4),        KEY_OK            },  /* front ok */
+   { "MENU"   , (1<<1),        KEY_MENU          },  /* front menu */
+#if 0
+//fixme
+   { (1<<0)|(1<<5), key_front_p_left  },
+   { (1<<0)|(1<<6), key_front_p_right },
+   { (1<<0)|(1<<7), key_front_p_up    },
+   { (1<<0)|(1<<8), key_front_p_down  },
+   { (1<<0)|(1<<4), key_front_p_ok    },
+   { (1<<0)|(1<<1), key_front_p_menu  },
+#endif
+   { "RELEASE", 0x0000,        0xffff            },  /* front release */
+   { ""       , 0x0000,        KEY_NULL          },
+};
+
+int getCuberevoCode(key_table_t* cKeys, unsigned short code) 
+{
+    int vLoop = 0;
+    
+    for (vLoop = 0; cKeys[vLoop].KeyCode != KEY_NULL; vLoop++)
+    {
+        if (cKeys[vLoop].code == code)
+        {
+           printf("%02X - %s\n", cKeys[vLoop].KeyCode, cKeys[vLoop].KeyName);
+           return cKeys[vLoop].KeyCode;
+        }
+    }
+    return 0;
+}
 
 static int pInit(Context_t* context, int argc, char* argv[]) 
 {
+    struct micom_ioctl_data micom;
     int vFd;
     vFd = open(rcDeviceName, O_RDWR);
 
@@ -135,6 +195,13 @@ static int pInit(Context_t* context, int argc, char* argv[])
 
     printf("period %d, delay %d\n", cLongKeyPressSupport.period, cLongKeyPressSupport.delay);
 
+    if (ioctl(vFd, VFDGETVERSION, &micom) < 0)
+    {
+       perror("getVersion: ");
+    }
+
+    printf("micom version = %d\n", micom.u.version.version);
+
     return vFd;
 }
 
@@ -146,7 +213,6 @@ static int pRead(Context_t* context)
     static   int    vNextKey = 0;
     static   int    lastCode = 0;
     int             vCurrentCode = -1;
-    static   char   vOldButton = 0;
 
     //printf("%s >\n", __func__);
 
@@ -157,7 +223,10 @@ static int pRead(Context_t* context)
        if(vData[0] == 0xe0)
            vKeyType = RemoteControl;
        else 
-       if(vData[0] == 0xE1) //fixme 0xe2
+       if(vData[0] == 0xE1)
+           vKeyType = FrontPanel;
+       else
+       if(vData[0] == 0xE2)
            vKeyType = FrontPanel;
        else
            continue;
@@ -167,14 +236,16 @@ static int pRead(Context_t* context)
        if(vKeyType == RemoteControl) 
        {
            if (vData[1] != 0xff)
+           {
                vCurrentCode = 
                     getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[1]);
+           }
            else
            {
-               lastCode = vCurrentCode = 0;
+               vCurrentCode = lastCode = 0;
            }
               
-           if (vCurrentCode != 0) 
+           if (vCurrentCode != 0)
            {
                vNextKey = ((vCurrentCode != lastCode) ? vNextKey + 1 : vNextKey) % 0x100;
                lastCode = vCurrentCode;
@@ -188,17 +259,26 @@ static int pRead(Context_t* context)
        }
        else 
        {
-//FIXME
-           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[1]);
-
-           if(vCurrentCode != 0) 
+           static int front_key;
+           
+           if(vData[0] == 0xE1)
            {
-             vNextKey = (vOldButton != vData[1] ? vNextKey + 1 : vNextKey) % 0x100;
+               front_key = vData[1] << 8;
+               vCurrentCode = 0;
+           }
+           else
+           {
+               front_key |= vData[1];
 
-             /* printf("nextFlag %d\n", vNextKey);*/
-
-             vCurrentCode += (vNextKey << 16);
-             break;
+               /* 12 dot, 12 and 14 segs */
+               if ((version == 0) || (version == 2))
+                   vCurrentCode = getCuberevoCode(front_keymap_12dotmatrix, front_key);
+               else
+                   vCurrentCode = getCuberevoCode(front_keymap_13grid, front_key);
+                   
+/* fixme */
+               if (vCurrentCode == 0xffff) /* key release */
+                  vCurrentCode = 0x0000;    
            }
        }
     }
@@ -222,14 +302,14 @@ static int pShutdown(Context_t* context)
 }
 
 RemoteControl_t Cuberevo_RC = {
-  "Kathrein Cuberevo RemoteControl",
+  "Cuberevo RemoteControl",
   Cuberevo,
   &pInit,
   &pShutdown,
   &pRead,
   &pNotification,
   cButtonCuberevo,
-  cButtonCuberevoFrontpanel,
+  NULL,
   NULL,
   1,
   &cLongKeyPressSupport,
