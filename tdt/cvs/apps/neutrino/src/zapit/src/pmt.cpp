@@ -386,7 +386,7 @@ int parse_pmt(CZapitChannel * const channel)
 
 	filter[0] = 0x02;	/* table_id */
 	filter[1] = channel->getServiceId() >> 8;
-	filter[2] = channel->getServiceId();
+	filter[2] = channel->getServiceId() & 0xFF;
 	filter[3] = 0x01;	/* current_next_indicator */
 	filter[4] = 0x00;	/* section_number */
 	mask[0] = 0xFF;
@@ -479,10 +479,7 @@ int parse_pmt(CZapitChannel * const channel)
 	}
 	/* pmt */
 	section_length = ((buffer[1] & 0x0F) << 8) + buffer[2];
-
-	//if(!channel->getPidsFlag()) 
-		channel->setPcrPid(((buffer[8] & 0x1F) << 8) + buffer[9]);
-
+	channel->setPcrPid(((buffer[8] & 0x1F) << 8) + buffer[9]);
 	program_info_length = ((buffer[10] & 0x0F) << 8) | buffer[11];
 
 	if (program_info_length)
