@@ -3,36 +3,32 @@
 #
 $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	@PREPARE_busybox@
+	cd @DIR_busybox@ && \
+		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-buildsys.patch && \
+		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-chpasswd.patch && \
+		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-crond.patch && \
+		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-inetd.patch && \
+		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-syslogd.patch && \
+		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-tail.patch
 	touch $@
 
-$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.18.5.config | $(DEPDIR)/$(GLIBC_DEV)
+$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.19.2/busybox-1.19.2.config | $(DEPDIR)/$(GLIBC_DEV)
 	cd @DIR_busybox@ && \
 		export CROSS_COMPILE=$(target)- && \
 		$(MAKE) mrproper && \
 		$(INSTALL) -m644 ../$(lastword $^) .config && \
-		$(MAKE)
+		$(MAKE) all \
+			CROSS_COMPILE=$(target)- \
+			CFLAGS_EXTRA="$(TARGET_CFLAGS)"
 	touch $@
 
 $(DEPDIR)/min-busybox $(DEPDIR)/std-busybox $(DEPDIR)/max-busybox \
 $(DEPDIR)/busybox: \
 $(DEPDIR)/%busybox: $(DEPDIR)/busybox.do_compile
-if STM22
-
-else
-	cp -rd $(buildprefix)/root/etc/fw_env.config $(prefix)/cdkroot/etc
-endif
 	cd @DIR_busybox@ && \
-		cp ../Patches/rcSBB examples && \
-		cp ../Patches/inittabBB examples && \
 		export CROSS_COMPILE=$(target)- && \
-		$(INSTALL) -m644 examples/inittabBB $(prefix)/$*cdkroot/etc && \
-		$(INSTALL) -m755 examples/rcSBB $(prefix)/$*cdkroot/etc/init.d && \
 		@INSTALL_busybox@
-		( cd $(prefix)/$*cdkroot && \
-			[ -f linuxrc ] && rm linuxrc || true && \
-			[ -f etc/inittabBB ] && rm etc/inittabBB || true && \
-			[ -f etc/init.d/rcSBB ] && rm etc/init.d/rcSBB || true )
-#       @CLEANUP_busybox@
+#		@CLEANUP_busybox@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -47,6 +43,7 @@ $(flashprefix)/root/bin/busybox: $(DEPDIR)/busybox.do_compile
 			[ -f linuxrc ] && rm linuxrc || true ) && \
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
+
 	
 # Enable ftp: 423212 -> 425604 busybox binary
 #.PHONY: flash-busybox

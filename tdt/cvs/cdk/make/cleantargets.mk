@@ -65,6 +65,7 @@ endif
 	-rm -rf $(prefix)/release_neutrino*
 	-rm -rf SOURCES SPECS BUILD && install -d SOURCES SPECS BUILD
 	-rm -rf $(prefix)/ccache
+	-rm -rf $(DEPDIR)/autofs.*
 
 # Be brutal...just nuke it!
 distclean-local:
