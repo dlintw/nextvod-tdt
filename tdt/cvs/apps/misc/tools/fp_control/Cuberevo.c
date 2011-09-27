@@ -88,13 +88,13 @@ static void setMicomTime(time_t theGMTTime, char* destString)
 
 static time_t getMicomTime(char* micomTimeString)
 {
-	unsigned int 	year 	= (micomTimeString[0] & 0xFF) + 2000;
-	unsigned long 	month 	= micomTimeString[1] & 0xFF;
-	unsigned long 	day 	= micomTimeString[2] & 0xFF;
+	unsigned int 	year 	= (micomTimeString[5] & 0xFF) + 2000;
+	unsigned long 	month 	= micomTimeString[4] & 0xFF;
+	unsigned long 	day 	= micomTimeString[3] & 0xFF;
 	
-	unsigned int 	hour 	= micomTimeString[3] & 0xFF;
-	unsigned int 	min 	= micomTimeString[4] & 0xFF;
-	unsigned int 	sec 	= micomTimeString[5] & 0xFF;
+	unsigned int 	hour 	= micomTimeString[2] & 0xFF;
+	unsigned int 	min 	= micomTimeString[1] & 0xFF;
+	unsigned int 	sec 	= micomTimeString[0] & 0xFF;
 
 	struct tm       the_tm;
 
@@ -575,6 +575,11 @@ static int setLight(Context_t* context, int on)
     return 0;
 }
 
+/* attention: this is not the wakeup reason as for other
+ * boxes (poweron, timer and son on) this is:
+ * 0x00 ->timer off
+ * 0x02 ->timer on
+ */
 static int getWakeupReason(Context_t* context, int* reason)
 {
    struct micom_ioctl_data vData;
@@ -588,6 +593,7 @@ static int getWakeupReason(Context_t* context, int* reason)
       return -1;
    }
 
+    
    *reason = vData.u.status.status & 0xff;
       
    printf("reason = 0x%x\n", *reason);
