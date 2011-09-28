@@ -124,20 +124,15 @@ key_table_t front_keymap_13grid[] =
    { "LEFT"   , 0x0002,              KEY_LEFT          },  /* front left */
    { "RIGHT"  , 0x0004,              KEY_RIGHT         },  /* front right */
    { "UP"     , 0x4000,              KEY_UP            },  /* front up */
+#if 0
+   { "FILE"   , 0x0200,              KEY_???           },  /* front down */
+#endif
    { "DOWN"   , 0x0040,              KEY_DOWN          },  /* front down */
    { "OK"     , 0x0020,              KEY_OK            },  /* front ok */
+   { "HOME"   , 0x0010,              KEY_HOME          },  /* front back */
    { "MENU"   , 0x0001,              KEY_MENU          },  /* front menu */
-#if 0
-//fixme
-   { 0x1000|0x0002,       key_front_p_left  },
-   { 0x1000|0x0004,       key_front_p_right },
-   { 0x1000|0x4000,       key_front_p_up    },
-   { 0x1000|0x0040,       key_front_p_down  },
-   { 0x1000|0x0020,       key_front_p_ok    },
-   { 0x1000|0x0001,       key_front_p_menu  },
-#endif
-   { "RELEASE" , 0x0000,              0xffff            },
-   { ""        , 0x0000,              KEY_NULL          },
+   { "RELEASE", 0x0000,             0xffff            },
+   { ""       , 0x0000,             KEY_NULL          },
 };
 
 key_table_t front_keymap_12dotmatrix[] =
@@ -149,15 +144,6 @@ key_table_t front_keymap_12dotmatrix[] =
    { "DOWN"   , (1<<8),        KEY_DOWN          },  /* front down */
    { "OK"     , (1<<4),        KEY_OK            },  /* front ok */
    { "MENU"   , (1<<1),        KEY_MENU          },  /* front menu */
-#if 0
-//fixme
-   { (1<<0)|(1<<5), key_front_p_left  },
-   { (1<<0)|(1<<6), key_front_p_right },
-   { (1<<0)|(1<<7), key_front_p_up    },
-   { (1<<0)|(1<<8), key_front_p_down  },
-   { (1<<0)|(1<<4), key_front_p_ok    },
-   { (1<<0)|(1<<1), key_front_p_menu  },
-#endif
    { "RELEASE", 0x0000,        0xffff            },  /* front release */
    { ""       , 0x0000,        KEY_NULL          },
 };
@@ -201,7 +187,8 @@ static int pInit(Context_t* context, int argc, char* argv[])
     }
 
     printf("micom version = %d\n", micom.u.version.version);
-
+    version = micom.u.version.version;
+    
     return vFd;
 }
 
@@ -270,19 +257,31 @@ static int pRead(Context_t* context)
            {
                front_key |= vData[1];
 
+               printf("front_key = 0x%04x\n", front_key);
+
                /* 12 dot, 12 and 14 segs */
                if ((version == 0) || (version == 2))
                    vCurrentCode = getCuberevoCode(front_keymap_12dotmatrix, front_key);
                else
                    vCurrentCode = getCuberevoCode(front_keymap_13grid, front_key);
                    
-/* fixme */
-               if (vCurrentCode == 0xffff) /* key release */
-                  vCurrentCode = 0x0000;    
+               if (vCurrentCode != 0)
+               {
+                   vNextKey = ((vCurrentCode != lastCode) ? vNextKey + 1 : vNextKey) % 0x100;
+                   lastCode = vCurrentCode;
+
+    //             printf("nextFlag %d\n", vNextKey);
+
+                   vCurrentCode += (vNextKey << 16);
+
+                   break;
+               }
+//               if (vCurrentCode == 0xffff) /* key release */
+//                  vCurrentCode = 0x0000;    
            }
        }
     }
-//    printf("%s < %08X\n", __func__, vCurrentCode);
+    printf("%s < %08X\n", __func__, vCurrentCode);
     
     return vCurrentCode;
 }
