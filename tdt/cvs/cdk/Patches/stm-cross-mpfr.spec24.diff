@@ -4,7 +4,7 @@
  ../configure \
      --prefix=%{_stm_cross_dir} \
      --build=%{_stm_host_config} \
-+    --with-gmp-build=../../gmp-4.3.2/objdir/ \
++    --with-gmp=%{_stm_cross_dir} \
      --disable-shared
  %pmake
  
