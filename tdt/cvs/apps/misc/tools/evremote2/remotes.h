@@ -35,6 +35,7 @@ extern RemoteControl_t HDBOX_RC;
 extern RemoteControl_t Hs5101_RC;
 extern RemoteControl_t UFS912_RC;
 extern RemoteControl_t Spark_RC;
+extern RemoteControl_t Adb_Box_RC;
 extern RemoteControl_t Cuberevo_RC;
 
 static RemoteControl_t * AvailableRemoteControls[] = {
@@ -48,6 +49,7 @@ static RemoteControl_t * AvailableRemoteControls[] = {
 	&Hs5101_RC,
 	&UFS912_RC,
 	&Spark_RC,
+	&Adb_Box_RC,
 	&Cuberevo_RC,
 	NULL
 };

@@ -38,7 +38,7 @@ struct vfd_ioctl_data {
 	unsigned char length;
 };
 
-typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox, Hs5101, Ufs912, Spark, Cuberevo} eBoxType;
+typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox, Hs5101, Ufs912, Spark, Cuberevo, Adb_Box} eBoxType;
 
 typedef struct Context_s {
 	void* /* Model_t */  *m; /* instance data */
@@ -87,6 +87,7 @@ extern Model_t HL101_model;
 extern Model_t VIP2_model;
 extern Model_t Hs5101_model;
 extern Model_t Spark_model;
+extern Model_t Adb_Box_model;
 extern Model_t Cuberevo_model;
 
 static Model_t * AvailableModels[] = {
@@ -99,6 +100,7 @@ static Model_t * AvailableModels[] = {
 	&Hs5101_model,
 	&UFS912_model,
 	&Spark_model,
+	&Adb_Box_model,
 	&Cuberevo_model,
 	NULL
 };

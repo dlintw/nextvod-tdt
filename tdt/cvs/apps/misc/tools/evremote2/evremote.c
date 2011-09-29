@@ -377,6 +377,8 @@ int getModel()
             vBoxType = HdBox;
         else if(!strncasecmp(vName,"hs5101", 6))
             vBoxType = Hs5101;
+        else if(!strncasecmp(vName,"adb_box", 5))
+            vBoxType = Adb_Box;
         else if(!strncasecmp(vName,"ufs912", 5))
             vBoxType = Ufs912;
         else if(!strncasecmp(vName,"spark", 5))
