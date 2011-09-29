@@ -538,7 +538,8 @@ IPBOX55PATCHES_24 = $(COMMONPATCHES_24) \
 
 CUBEREVOPATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-$(CUBEMOD)_setup_stm24$(PATCH_STR).patch \
-		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-cuberevo_rtl8201_stm24$(PATCH_STR).patch
 
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
