@@ -54,8 +54,8 @@ static tLongKeyPressSupport cLongKeyPressSupport = {
 
 static tButton cButtonCuberevo[] = {
     {"KEY_F1"         , "00", KEY_F1},
-    {"KEY_F2"         , "01", KEY_F1},
-    {"KEY_F3"         , "02", KEY_F1},
+    {"KEY_F2"         , "01", KEY_F2},
+    {"KEY_F3"         , "02", KEY_F3},
     {"INFO"           , "03", KEY_INFO},
     {"RADIO"          , "04", KEY_RADIO},
     {"PREVIOUS"       , "05", KEY_PREVIOUS},
