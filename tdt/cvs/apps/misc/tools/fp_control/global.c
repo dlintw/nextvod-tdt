@@ -30,12 +30,33 @@
 
 /* #define E2TIMERSXML "/usr/local/share/enigma2/timers.xml" */
 #define E2TIMERSXML "/etc/enigma2/timers.xml"
+#define E2WAKEUPTIME "/proc/stb/fp/wakeup_time"
 
 #define NEUTRINO_TIMERS "/usr/local/share/config/timerd.conf"
 
 #define CONFIG "/etc/vdstandby.cfg"
 char * sDisplayStd = "%a %d %H:%M:%S";
 
+#define E2_WAKEUP_TIME_PROC
+#ifdef E2_WAKEUP_TIME_PROC
+unsigned long int read_e2_timers(time_t curTime)
+{
+	unsigned long int recordTime = 3000000000ul;
+	char              line[12];
+	FILE              *fd = fopen (E2WAKEUPTIME, "r");
+
+	if (fd > 0)
+	{
+		fgets(line, 11, fd);
+		recordTime = atol(line);
+	} else
+	{
+		printf("error reading %s\n", E2WAKEUPTIME);
+	}
+
+	return recordTime;
+}
+#else
 unsigned long int read_e2_timers(time_t curTime)
 {
 	unsigned long int recordTime = 3000000000ul;
@@ -52,10 +73,7 @@ unsigned long int read_e2_timers(time_t curTime)
 			{
 				unsigned long int tmp = 0;
 				strncpy(recordString, line+14, 10);
-/* konfetti: decrease array index from 11 to 10:
- * ->the array is defined as 11 characters which are addressed by 0-10 not 11!
- */
-				recordString[10] = '\0';
+				recordString[11] = '\0';
 				tmp = atol(recordString);
 				recordTime = (tmp < recordTime && tmp > curTime ? tmp : recordTime);
 			}
@@ -67,6 +85,7 @@ unsigned long int read_e2_timers(time_t curTime)
 
 	return recordTime;
 }
+#endif
 
 unsigned long int read_neutrino_timers(time_t curTime)
 {
@@ -120,7 +139,7 @@ unsigned long int read_neutrino_timers(time_t curTime)
 
 	   recordTime = mktime(&tsWake);
 	} 
-    printf("recordTime %ld\n", recordTime);
+printf("recordTime %d\n", recordTime);
 	return recordTime;
 }
 
@@ -159,7 +178,7 @@ int searchModel(Context_t  *context, eBoxType type) {
     for (i = 0; AvailableModels[i] != NULL; i++)
 
         if (AvailableModels[i]->Type == type) {
-            context->m = (void*) AvailableModels[i];
+            context->m = AvailableModels[i];
             return 0;
         }
 

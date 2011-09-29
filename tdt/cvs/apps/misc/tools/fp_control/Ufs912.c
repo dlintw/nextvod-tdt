@@ -182,89 +182,97 @@ static int getTime(Context_t* context, time_t* theGMTTime)
    }
    return 0;
 }
-	
+
 static int setTimer(Context_t* context)
 {
-   struct micom_ioctl_data vData;
-   time_t                  curTime;
-   time_t                  wakeupTime;
+   struct micom_ioctl_data  vData;
+   time_t                   curTime;
+   time_t                   wakeupTime;
    struct tm               *ts;
+   struct tm               *tsWakeupTime;
    tUFS912Private* private = (tUFS912Private*) 
-        ((Model_t*)context->m)->private;
-
+      ((Model_t*)context->m)->private;
+   
    time(&curTime);
-   ts = localtime (&curTime);
-
-   fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
-
    wakeupTime = read_e2_timers(curTime);
    
-   /* failed to read e2 timers so lets take a look if
-    * we are running on neutrino
-    */
+   // failed to read e2 timers so lets take a look if
+   // we are running on neutrino
    if (wakeupTime == 3000000000ul)
-   {
       wakeupTime = read_neutrino_timers(curTime);
+   
+   ts = localtime(&curTime);
+   fprintf(stderr, "Current Time: %lu\n\t%02d:%02d:%02d %02d-%02d-%04d\n", curTime,
+      ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon + 1, ts->tm_year + 1900);
+   if (wakeupTime != 3000000000ul)
+   {
+      tsWakeupTime = localtime(&wakeupTime);
+      fprintf(stderr, "Wakeup Time:  %lu\n\t%02d:%02d:%02d %02d-%02d-%04d\n", wakeupTime,
+         tsWakeupTime->tm_hour, tsWakeupTime->tm_min, tsWakeupTime->tm_sec, 
+         tsWakeupTime->tm_mday, tsWakeupTime->tm_mon + 1, tsWakeupTime->tm_year + 1900);
    }
 
-   wakeupTime -= private->wakeupDecrement;
-   
    if ((wakeupTime == 0) || (curTime > wakeupTime))
    {
-       /* nothing to do for e2 */   
-       fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
-
-       vData.u.standby.time[0] = '\0';
-       if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-       {
-	  perror("standby: ");
-          return -1;
-       }
-             
+      /* nothing to do */   
+      fprintf(stderr, "no timer found clearing fp wakeup time ... good bye ...\n");
+      
+      vData.u.standby.time[0] = '\0';
+      
+      fflush(stdout);
+      fflush(stderr);
+      sleep(1);
+      if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
+      {
+         perror("standby: ");
+         return -1;
+      }
    } else
    {
       unsigned long diff;
-      char   	    fp_time[8];
-
+      char          fp_time[8];
+      
       fprintf(stderr, "waiting on current time from fp ...\n");
-		
-      /* front controller time */
-       if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
-       {
-	  perror("gettime: ");
-          return -1;
-       }
-
-      /* difference from now to wake up */
-      diff = (unsigned long int) wakeupTime - curTime;
-
-      /* if we get the fp time */
+      
+      // front controller time
+      if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
+      {
+         perror("gettime: ");
+         return -1;
+      }
+      
+      // as the frontpanel time can be different(wrong) only set the difference
+      diff = (unsigned long int) (wakeupTime - curTime);
+      
+      // if we get the fp time
       if (fp_time[0] != '\0')
       {
          fprintf(stderr, "success reading time from fp\n");
-			
+         
          /* current front controller time */
          curTime = (time_t) getMicomTime(fp_time);
-	 
-	 printf("curTime = %d\n", curTime);
+         
+         printf("fp_curTime    = %lu\n", curTime);
       } else
       {
           fprintf(stderr, "error reading time ... assuming localtime\n");
           /* noop current time already set */
       }
-
+      
       wakeupTime = curTime + diff;
-
-      printf("wakeupTime = %d\n", wakeupTime);
+      
+      printf("fp_wakeupTime = %lu\n", wakeupTime);
       
       setMicomTime(wakeupTime, vData.u.standby.time);
-
-       if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-       {
-	  perror("standby: ");
-          return -1;
-       }
+      
+      fflush(stdout);
+      fflush(stderr);
+      sleep(1);
+      if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
+      {
+         perror("standby: ");
+         return -1;
+      }
    }
    return 0;
 }
