@@ -30,9 +30,13 @@ $(appsdir)/enigma2/config.status: bootstrap freetype expat fontconfig libpng jpe
 			$(if $(VIP1_V2),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_VIP1_V2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-vip1_v2) \
 			$(if $(VIP2_V1),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_VIP2_V1 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-vip2_v1) \
 			$(if $(HOMECAST5101),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_HS5101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
+			$(if $(ADB_BOX),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_ADB_BOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include" --enable-adb_box) \
 			$(if $(OCTAGON1008),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_OCTAGON1008 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
 
 $(DEPDIR)/enigma2.do_prepare:
+if ENABLE_ADB_BOX
+	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches/e2_api5.patch
+endif
 if ENABLE_HL101
 	cd $(appsdir)/enigma2 && patch -p1 < ../../cdk/Patches/e2_api5.patch
 endif

@@ -354,6 +354,13 @@ AC_ARG_ENABLE(spark7162,
 AM_CONDITIONAL(ENABLE_SPARK7162,test "$enable_spark7162" = "yes")
 AC_SUBST(SPARK7162)
 
+AC_ARG_ENABLE(adb_box,
+	AS_HELP_STRING(--enable-adb_box,    enable adb_box stuff),
+	[case "${enableval}" in
+		yes) ADB_BOX=adb_box ;;
+	esac],[enable_adb_box=no])
+AM_CONDITIONAL(ENABLE_ADB_BOX,test "$enable_adb_box" = "yes")
+AC_SUBST(ADB_BOX)
 AC_ARG_ENABLE(ufs922,
 	AS_HELP_STRING(--enable-ufs922,    enable kathrein ufs922 stuff),
 	[case "${enableval}" in
@@ -1154,6 +1161,7 @@ edision argus vip1 v2 stuff : $enable_vip1_v2
 edision argus vip2 v1 stuff : $enable_vip2_v1
 spark box stuff             : $enable_spark
 spark7162 box stuff         : $enable_spark7162
+adb_box stuff               : $enable_adb_box
 ufs910 stuff                : $enable_ufs910
 ufs910 flash                : $enable_flash_ufs910
 ufs912 stuff                : $enable_ufs912

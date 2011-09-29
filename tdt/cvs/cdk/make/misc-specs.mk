@@ -13,6 +13,9 @@ $(DEPDIR)/boot-elf:
 	cp $(buildprefix)/root/firmware/*.fw $(targetprefix)/lib/firmware/
 	@[ "x$*" = "x" ] && touch $@ || true
 
+if ENABLE_ADB_BOX
+LIRCD_CONF := lircd_adb_box.conf
+else !ENABLE_ADB_BOX
 if ENABLE_SPARK
 LIRCD_CONF := lircd_spark.conf
 else !ENABLE_SPARK
@@ -38,6 +41,7 @@ endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
 endif !ENABLE_SPARK7162
 endif !ENABLE_SPARK
+endif !ENABLE_ADB_BOX
 
 $(DEPDIR)/misc-cp:
 	cp $(buildprefix)/root/sbin/hotplug $(targetprefix)/sbin

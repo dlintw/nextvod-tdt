@@ -1,0 +1,150 @@
+diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c linux-sh4/arch/sh/boards/mach-mb442/setup.c
+--- linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c	2011-09-08 14:15:40.000000000 +0200
++++ linux-sh4/arch/sh/boards/mach-mb442/setup.c	2011-09-08 19:13:06.000000000 +0200
+@@ -22,13 +22,27 @@
+ #include <linux/stm/platform.h>
+ #include <linux/stm/stx7100.h>
+ #include <asm/irl.h>
++#include <linux/bpa2.h>
++const char *LMI_VID_partalias[] = { "BPA2_Region1", "coredisplay-video", "gfx-memory", "v4l2-video-buffers", "v4l2-coded-video-buffers", NULL };
+ 
++const char *LMI_SYS_partalias[] = { "BPA2_Region0", "bigphysarea", NULL };
+ 
+-
+-#define MB442_PIO_STE100P_RESET stm_gpio(2, 4)
+-#define MB442_PIO_SMC91X_RESET stm_gpio(2, 6)
+-#define MB442_PIO_FLASH_VPP stm_gpio(2, 7)
+-
++static struct bpa2_partition_desc bpa2_parts_table[] = {
++      {
++                .name  = "LMI_VID",
++                .start = 0x10800000,
++                .size  = 0x03800000,
++                .flags = 0,
++                .aka   = LMI_VID_partalias
++            },
++            {
++                .name  = "LMI_SYS",
++                .start = 0,
++                .size  = 0x01C00000,
++                .flags = 0,
++                .aka   = LMI_SYS_partalias
++            }
++        };
+ 
+ 
+ void __init mb442_setup(char** cmdline_p)
+@@ -47,13 +61,13 @@
+ 
+ static struct resource mb442_smc91x_resources[] = {
+ 	[0] = {
+-		.start	= 0x02000300,
+-		.end	= 0x02000300 + 0xff,
++		.start	= 0x00c00000,
++		.end	= 0x00c3ffff,
+ 		.flags	= IORESOURCE_MEM,
+ 	},
+ 	[1] = {
+-		.start	= IRL0_IRQ,
+-		.end	= IRL0_IRQ,
++		.start	= IRL1_IRQ,
++		.end	= IRL1_IRQ,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+ };
+@@ -65,50 +79,11 @@
+ 	.resource	= mb442_smc91x_resources,
+ };
+ 
+-static void mb442_set_vpp(struct map_info *info, int enable)
+-{
+-	gpio_set_value(MB442_PIO_FLASH_VPP, enable);
+-}
+ 
+-static struct platform_device mb442_physmap_flash = {
+-	.name		= "physmap-flash",
+-	.id		= -1,
+-	.num_resources	= 1,
+-	.resource	= (struct resource[]) {
+-		STM_PLAT_RESOURCE_MEM(0, 8*1024*1024),
+-	},
+-	.dev.platform_data = &(struct physmap_flash_data) {
+-		.width		= 2,
+-		.set_vpp	= mb442_set_vpp,
+-	},
+-};
+-
+-
+-static int mb442_phy_reset(void* bus)
+-{
+-	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
+-	udelay(1);
+-	gpio_set_value(MB442_PIO_STE100P_RESET, 0);
+-	udelay(1);
+-	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
+-
+-	return 1;
+-}
+-
+-#define STMMAC_PHY_ADDR 14
+-static int stmmac_phy_irqs[PHY_MAX_ADDR] = {
+-	[STMMAC_PHY_ADDR] = IRL3_IRQ,
+-};
+-static struct stmmac_mdio_bus_data stmmac_mdio_bus = {
+-	.bus_id = 0,
+-	.phy_reset = mb442_phy_reset,
+-	.phy_mask = 1,
+-	.irqs = stmmac_phy_irqs,
+-};
+ 
+ static struct platform_device *mb442_devices[] __initdata = {
+ 	&mb442_smc91x_device,
+-	&mb442_physmap_flash,
++
+ };
+ 
+ static int __init mb442_device_init(void)
+@@ -120,8 +95,7 @@
+ 			.out1_enabled = 1, });
+ 
+ 	stx7100_configure_ssc_i2c(0);
+-	stx7100_configure_ssc_spi(1, NULL);
+-	stx7100_configure_ssc_i2c(2);
++	stx7100_configure_ssc_i2c(1);
+ 
+ 	stx7100_configure_usb();
+ 
+@@ -130,32 +104,7 @@
+ 			.tx_enabled = 0,
+ 			.tx_od_enabled = 0, });
+ 
+-	stx7100_configure_pata(&(struct stx7100_pata_config) {
+-			.emi_bank = 3,
+-			.pc_mode = 1,
+-			.irq = IRL1_IRQ, });
+-
+-	gpio_request(MB442_PIO_FLASH_VPP, "Flash VPP");
+-	gpio_direction_output(MB442_PIO_FLASH_VPP, 0);
+-
+-	gpio_request(MB442_PIO_STE100P_RESET, "STE100P reset");
+-	gpio_direction_output(MB442_PIO_STE100P_RESET, 1);
+-
+-	stx7100_configure_ethernet(&(struct stx7100_ethernet_config) {
+-			.mode = stx7100_ethernet_mode_mii,
+-			.ext_clk = 0,
+-			.phy_bus = 0,
+-			.phy_addr = STMMAC_PHY_ADDR,
+-			.mdio_bus_data = &stmmac_mdio_bus,
+-		});
+-
+-	/* Reset the SMSC 91C111 Ethernet chip */
+-	gpio_request(MB442_PIO_SMC91X_RESET, "SMC91x reset");
+-	gpio_direction_output(MB442_PIO_SMC91X_RESET, 0);
+-	udelay(1);
+-	gpio_set_value(MB442_PIO_SMC91X_RESET, 1);
+-	udelay(1);
+-	gpio_set_value(MB442_PIO_SMC91X_RESET, 0);
++
+ 
+ 	return platform_add_devices(mb442_devices,
+ 			ARRAY_SIZE(mb442_devices));

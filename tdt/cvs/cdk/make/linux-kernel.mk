@@ -224,6 +224,9 @@ PATCH_STR=_0123
 endif ENABLE_P0123
 endif !ENABLE_P0119
 
+if ENABLE_ADB_BOX
+STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
+else !ENABLE_ADB_BOX
 if ENABLE_HL101
 STM23_DVB_PATCH = linux-sh4-linuxdvb_api5_stm23.patch
 else !ENABLE_HL101
@@ -250,6 +253,7 @@ endif !ENABLE_IPBOX9900
 endif !ENABLE_VIP2_V1
 endif !ENABLE_VIP1_V2
 endif !ENABLE_HL101
+endif !ENABLE_ADB_BOX
 
 COMMONPATCHES_23 = \
 		linux-squashfs3.0_lzma_stm23.patch \
@@ -338,6 +342,25 @@ VIP2PATCHES_23 = $(COMMONPATCHES_23) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
 		linux-sh4-vip2_setup_stm23$(PATCH_STR).patch
 
+ADB_BOXPATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_stb7100_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_sata1_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_sata2_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_sata3_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_pio_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_soc_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_net1_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_net2_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-adb_box_nand_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-adb_box_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-adb_box_stb7100_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-adb_box_sata1_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-adb_box_sata2_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-adb_box_sata3_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-adb_box_net_stm23$(PATCH_STR).patch) \
+		linux-sh4-sound_stm23$(PATCH_STR).patch
 UFS910PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
@@ -391,6 +414,7 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_23)) \
 		$(if $(HS7810A),$(HS7810APATCHES_23)) \
 		$(if $(HOMECAST5101),$(HS5101PATCHES_23)) \
+		$(if $(ADB_BOX),$(ADB_BOXPATCHES_23)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_23)) \
 		$(if $(IPBOX99),$(IPBOX99PATCHES_23)) \
                 $(if $(IPBOX55),$(IPBOX55PATCHES_23))
@@ -520,6 +544,15 @@ FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
+ADB_BOXPATCHES_24 = $(COMMONPATCHES_24) \
+		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
+		sata_32bit_fix_stm24$(PATCH_STR).patch \
+		linux-sh4-adb_box_setup_stm24$(PATCH_STR).patch \
+		linux-usbwait123_stm24.patch \
+		linux-sh4-ufs910_reboot_stm24.patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-pcm_noise_fix_stm24$(PATCH_STR).patch \
+		mini_fo_stm24$(PATCH_STR).patch
 IPBOX9900PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox9900_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch  \
@@ -556,6 +589,7 @@ KERNELPATCHES_24 =  \
 		$(if $(HS7810A),$(HS7810APATCHES_24)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_24)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_24)) \
+		$(if $(ADB_BOX),$(ADB_BOX_PATCHES_24)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_24)) \
 		$(if $(IPBOX99),$(IPBOX99PATCHES_24)) \
         $(if $(IPBOX55),$(IPBOX55PATCHES_24)) \
@@ -687,7 +721,7 @@ endif !STM22
 #
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(FLASH_UFS910)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)
+MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(FLASH_UFS910)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -944,6 +978,7 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	$(if $(CUBEREVO_2000HD),PLATFORM: stb7109ref\n) \
 	$(if $(CUBEREVO_9500HD),PLATFORM: stb7109ref\n) \
 	$(if $(HOMECAST5101),PLATFORM: stb7109ref\n) \
+	$(if $(ADB_BOX),PLATFORM: stb7100ref\n) \
 	$(if $(IPBOX9900),PLATFORM: stb7109ref\n) \
 	$(if $(IPBOX99),PLATFORM: stb7109ref\n) \
 	$(if $(IPBOX55),PLATFORM: stb7109ref\n) \
@@ -977,6 +1012,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
  		$(if $(UFS912),UFS912=$(UFS912)) \
  		$(if $(SPARK),SPARK=$(SPARK)) \
  		$(if $(SPARK7162),SPARK7162=$(SPARK7162)) \
+		$(if $(ADB_BOX),ADB_BOX=$(ADB_BOX)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \
 		$(if $(CUBEREVO_MINI2),CUBEREVO_MINI2=$(CUBEREVO_MINI2)) \
@@ -1011,6 +1047,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
  		$(if $(UFS912),UFS912=$(UFS912)) \
  		$(if $(SPARK),SPARK=$(SPARK)) \
  		$(if $(SPARK7162),SPARK7162=$(SPARK7162)) \
+		$(if $(ADB_BOX),ADB_BOX=$(ADB_BOX)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \
 		$(if $(CUBEREVO_MINI2),CUBEREVO_MINI2=$(CUBEREVO_MINI2)) \

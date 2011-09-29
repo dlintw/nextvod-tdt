@@ -89,6 +89,7 @@ $(DEPDIR)/%release_neutrino_nightly:
 	cp $(targetprefix)/boot/uImage $(prefix)/$(release_dir)/boot/ && \
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/$(release_dir)/boot/video.elf && \
 	$(if $(UFS910),cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/$(release_dir)/etc/ &&) \
+	$(if $(ADB_BOX),cp $(targetprefix)/boot/video_7100.elf $(prefix)/$(release_dir)/boot/video.elf &&) \
 	$(if $(TF7700),cp $(targetprefix)/boot/video_7109.elf $(prefix)/$(release_dir)/boot/video.elf &&) \
 	$(if $(HL101),cp $(targetprefix)/boot/video_7109.elf $(prefix)/$(release_dir)/boot/video.elf &&) \
 	$(if $(VIP1_V2),cp $(targetprefix)/boot/video_7109.elf $(prefix)/$(release_dir)/boot/video.elf &&) \
@@ -308,6 +309,18 @@ if ENABLE_HL101
 	rm -f $(prefix)/$(release_dir)/bin/evremote
 	rm -f $(prefix)/$(release_dir)/bin/gotosleep
 else
+if ENABLE_ADB_BOX
+	echo "Adb-Box" > $(prefix)/release_neutrino/etc/hostname
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stsci/stsci.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/vfd/vfd.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ADB_BOX_fan/cooler.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_neutrino/lib/modules/
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-stv6306.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
+	rm -f $(prefix)/release_neutrino/bin/evremote
+	rm -f $(prefix)/release_neutrino/bin/gotosleep
+else
 if ENABLE_VIP1_V2
 	echo "Edision" > $(prefix)/$(release_dir)/etc/hostname
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/proton/proton.ko $(prefix)/$(release_dir)/lib/modules/
@@ -466,6 +479,7 @@ endif
 endif
 endif
 endif
+endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmfb.ko $(prefix)/$(release_dir)/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshell/embxshell.ko $(prefix)/$(release_dir)/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxmailbox/embxmailbox.ko $(prefix)/$(release_dir)/lib/modules/
@@ -595,6 +609,12 @@ if ENABLE_HL101
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/$(release_dir)/usr/bin/
 	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/$(release_dir)/usr/lib/
 #	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/$(release_dir)/usr/bin/
+endif
+if ENABLE_ADB_BOX
+	cp -dp $(buildprefix)/root/etc/lircd_ADB_BOX.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
+#	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 endif
 if ENABLE_VIP1_V2
 	cp -dp $(buildprefix)/root/etc/lircd_vip1_v2.conf $(prefix)/$(release_dir)/etc/lircd.conf

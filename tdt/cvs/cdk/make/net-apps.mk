@@ -78,6 +78,11 @@ endif
 #
 # AUTOFS
 #
+if ENABLE_ADB_BOX
+$(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
+	rpm $(DRPM) --noscripts --badreloc --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
+	touch $@
+else
 if ENABLE_TF7700
 $(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
 	rpm $(DRPM) --noscripts --badreloc --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
@@ -123,8 +128,11 @@ endif
 endif
 endif
 endif
+endif
 
 $(DEPDIR)/autofs.do_compile: bootstrap $(DEPDIR)/autofs.do_prepare
+if ENABLE_ADB_BOX
+else
 if ENABLE_TF7700
 else
 if ENABLE_UFS912
@@ -149,6 +157,7 @@ endif
 endif
 endif
 endif
+endif
 	touch $@
 
 $(DEPDIR)/min-autofs $(DEPDIR)/std-autofs $(DEPDIR)/max-autofs $(DEPDIR)/ipk-autofs \
@@ -156,6 +165,9 @@ $(DEPDIR)/autofs: \
 $(DEPDIR)/%autofs: $(AUTOFS_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(DEPDIR)/autofs.do_compile
 	@[ "x$*" = "xipk-" ] && rm -rf  $(prefix)/$*cdkroot || true
+if ENABLE_ADB_BOX
+	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
+else
 if ENABLE_TF7700
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
 else
@@ -180,6 +192,7 @@ else
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default && \
 	cd @DIR_autofs@  && \
 		@INSTALL_autofs@
+endif
 endif
 endif
 endif

@@ -41,7 +41,7 @@ $(DEPDIR)/%release_neutrino_static:
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_neutrino_static/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/ffmpeg $(prefix)/release_neutrino_static/sbin/ && \
 	cp -R $(buildprefix)/static/common/* $(prefix)/release_neutrino_static/ && \
-	cp -R $(buildprefix)/static/$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(HS7810A)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)/* $(prefix)/release_neutrino_static/ && \
+	cp -R $(buildprefix)/static/$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(HS7810A)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)$(ADB_BOX)/* $(prefix)/release_neutrino_static/ && \
 	cp -R $(buildprefix)/static/neutrino/* $(prefix)/release_neutrino_static/ && \
 	cp -rd $(targetprefix)/lib/* $(prefix)/release_neutrino_static/lib/ && \
 	rm -f $(prefix)/release_neutrino_static/lib/*.a && \
@@ -76,6 +76,12 @@ else
 if ENABLE_HL101
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/proton/proton.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino_static/lib/modules/
+else
+if ENABLE_ADB_BOX
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stsci/stsci.ko $(prefix)/release_neutrino_static/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/vfd/vfd.ko $(prefix)/release_neutrino_static/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ADB_BOX_fan/cooler.ko $(prefix)/release_neutrino_static/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_neutrino_static/lib/modules/
 else
 if ENABLE_VIP1_V2
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/proton/proton.ko $(prefix)/release_neutrino_static/lib/modules/
@@ -140,6 +146,7 @@ else
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/led/led.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd/vfd.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_neutrino_static/lib/modules/
+endif
 endif
 endif
 endif
