@@ -80,7 +80,7 @@ echo "21) IPBOX9900"
 echo "22) IPBOX99"
 echo "23) IPBOX55"
 echo "24) Fortis HS7810A"
-echo "25) B4Team ADB_BOX"
+echo "25) B4Team ADB 5800S"
 
 case $1 in
 	[1-9] | 1[0-9] | 2[0-9]) REPLY=$1
