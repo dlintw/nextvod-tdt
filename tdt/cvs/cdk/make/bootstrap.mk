@@ -583,7 +583,7 @@ else !STM23
 CROSS_GMP = cross-sh4-gmp
 CROSS_GMP_VERSION = 5.0.1-9
 CROSS_GMP_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_GMP)).spec
-CROSS_GMP_SPEC_PATCH =
+CROSS_GMP_SPEC_PATCH = $(CROSS_GMP_SPEC).$(CROSS_GMP_VERSION).diff
 CROSS_GMP_PATCHES =
 CROSS_GMP_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GMP)-$(CROSS_GMP_VERSION).$(host_arch).rpm
 # endif STM24
