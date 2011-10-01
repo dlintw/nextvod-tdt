@@ -614,7 +614,7 @@ release_adb_box:
 
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stsci/stsci.ko $(prefix)/release/lib/modules/
 	sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/stsci.ko
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/vfd/vfd.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/adb_box_vfd/vfd.ko $(prefix)/release/lib/modules/
 	sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/vfd.ko
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release/lib/modules/
 	sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/stmcore-display-stx7100.ko

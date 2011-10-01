@@ -292,16 +292,16 @@ SPARK7162PATCHES_23 = $(COMMONPATCHES_23) \
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
-    	$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-    	$(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
+	    	$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+	    	$(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
 
 FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),fortis_hdbox_setup_stm23.diff) \
 		$(if $(P0119),fortis_hdbox_dvb_core_stm23.patch) \
-        $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-        $(if $(P0123),linux-sh4-fortis_hdbox_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-fortis_hdbox_setup_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 ATEVIO7500PATCHES_23 = $(COMMONPATCHES_23) \
@@ -312,10 +312,10 @@ ATEVIO7500PATCHES_23 = $(COMMONPATCHES_23) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 OCTAGON1008PATCHES_23 = $(COMMONPATCHES_23) \
-        $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-        $(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-        $(if $(P0123),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
-        $(if $(P0119),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
+	        $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 HS7810APATCHES_23 = $(COMMONPATCHES_23) \
@@ -361,6 +361,7 @@ ADB_BOXPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0123),linux-sh4-adb_box_sata3_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-adb_box_net_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch
+
 UFS910PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
@@ -471,15 +472,15 @@ TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-sata-v06_stm24$(PATCH_STR).patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
-			stx7100_fdma_fix_stm24$(PATCH_STR).patch \
-			sata_32bit_fix_stm24$(PATCH_STR).patch \
-			linux-sh4-ufs910_setup_stm24$(PATCH_STR).patch \
-			linux-usbwait123_stm24.patch \
-			linux-sh4-ufs910_reboot_stm24.patch \
-			linux-sh4-smsc911x_dma_stm24$(PATCH_STR).patch \
-			linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
-			linux-sh4-pcm_noise_fix_stm24$(PATCH_STR).patch \
-			mini_fo_stm24$(PATCH_STR).patch
+		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
+		sata_32bit_fix_stm24$(PATCH_STR).patch \
+		linux-sh4-ufs910_setup_stm24$(PATCH_STR).patch \
+		linux-usbwait123_stm24.patch \
+		linux-sh4-ufs910_reboot_stm24.patch \
+		linux-sh4-smsc911x_dma_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-pcm_noise_fix_stm24$(PATCH_STR).patch \
+		mini_fo_stm24$(PATCH_STR).patch
 
 FLASHUFS910PATCHES_24 = $(UFS910PATCHES_24)
 
@@ -493,7 +494,7 @@ OCTAGON1008PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-octagon1008_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch
 
 ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
@@ -516,14 +517,14 @@ HL101_PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-hl101_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
 		linux-sh4-vip2_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 SPARK_PATCHES_24 = $(COMMONPATCHES_24) \
@@ -541,7 +542,7 @@ FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-fortis_hdbox_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-	    linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 ADB_BOXPATCHES_24 = $(COMMONPATCHES_24) \
@@ -553,6 +554,7 @@ ADB_BOXPATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		linux-sh4-pcm_noise_fix_stm24$(PATCH_STR).patch \
 		mini_fo_stm24$(PATCH_STR).patch
+
 IPBOX9900PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox9900_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch  \
@@ -592,8 +594,8 @@ KERNELPATCHES_24 =  \
 		$(if $(ADB_BOX),$(ADB_BOX_PATCHES_24)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_24)) \
 		$(if $(IPBOX99),$(IPBOX99PATCHES_24)) \
-        $(if $(IPBOX55),$(IPBOX55PATCHES_24)) \
-        $(if $(CUBEMOD),$(CUBEREVOPATCHES_24))
+		$(if $(IPBOX55),$(IPBOX55PATCHES_24)) \
+		$(if $(CUBEMOD),$(CUBEREVOPATCHES_24))
                 
 ############ Patches Kernel 24 End ###############
 

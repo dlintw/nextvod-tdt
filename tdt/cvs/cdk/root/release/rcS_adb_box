@@ -92,7 +92,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init drivers"
    insmod $MODDIR/pti.ko
    if [ $player -gt 131 ]; then
-	insmod $MODDIR/pti.ko
+	insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
 	insmod $MODDIR/stm_monitor.ko
 	insmod $MODDIR/stmsysfs.ko
     	insmod $MODDIR/stmdvb.ko
@@ -105,7 +105,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
-   insmod $MODDIR/stsci.ko
+   insmod $MODDIR/smartcard.ko
 
    mknod /dev/sci0 c 169 0
    mknod /dev/sci1 c 169 1
@@ -131,24 +131,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/sbin/telnetd -l /bin/login
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
-
-   NFS=`grep -c nfs /proc/cmdline`
-   if [ "$NFS" -eq "1" ]; then 
-      echo "Booting from nfs, don't set network" 
-   else 
-      if [ -e /etc/network/interfaces ]; then 
-	 ip addr flush eth0 
-	 /etc/init.d/networking stop 
-	 DHCP=`grep -c dhcp /etc/network/interfaces`
-	 if [ "$DHCP" -eq "1" ]; then 
-	    echo "Starting dhcp"
-            /etc/init.d/udhcpc start 
-	 fi 
-	 /etc/init.d/networking start 
-      fi 
-   fi
-
-   touch /dev/.udev
 
    echo "LOAD e2 PKT MOD" > /dev/vfd
    echo "LOAD e2 PKT MOD"

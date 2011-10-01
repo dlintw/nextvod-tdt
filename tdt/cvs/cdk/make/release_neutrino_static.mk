@@ -79,8 +79,8 @@ if ENABLE_HL101
 else
 if ENABLE_ADB_BOX
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stsci/stsci.ko $(prefix)/release_neutrino_static/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/vfd/vfd.ko $(prefix)/release_neutrino_static/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ADB_BOX_fan/cooler.ko $(prefix)/release_neutrino_static/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/adb_box_vfd/vfd.ko $(prefix)/release_neutrino_static/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/adb_box_fan/cooler.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_neutrino_static/lib/modules/
 else
 if ENABLE_VIP1_V2

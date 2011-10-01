@@ -100,12 +100,13 @@ release_hl101: cpu7101
 release_adb_box: cpu7100
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stsci/stsci.ko $(releaseprefix)/lib/modules/
 	sh4-linux-strip --strip-unneeded $(releaseprefix)/lib/modules/stsci.ko
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/vfd/vfd.ko $(releaseprefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/adb_box_vfd/vfd.ko $(releaseprefix)/release/lib/modules/
 	sh4-linux-strip --strip-unneeded $(releaseprefix)/lib/modules/vfd.ko
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/adb_box_fan/cooler.ko $(releaseprefix)/release/lib/modules/
 	sh4-linux-strip --strip-unneeded $(releaseprefix)/lib/modules/cooler.ko
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(releaseprefix)/lib/modules/
 	sh4-linux-strip --strip-unneeded $(releaseprefix)/lib/modules/stmcore-display-stx7100.ko
+
 release_vip2_v1: release_vip1_v2
 release_vip1_v2: cpu7101
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(releaseprefix)/lib/modules/

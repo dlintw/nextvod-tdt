@@ -352,10 +352,10 @@ if ENABLE_HL101
 else
 if ENABLE_ADB_BOX
 
-	echo "ADB_BOX" > $(prefix)/release_neutrino/etc/hostname
+	echo "Adb_Box" > $(prefix)/release_neutrino/etc/hostname
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stsci/stsci.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/vfd/vfd.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ADB_BOX_fan/cooler.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/adb_box_vfd/vfd.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/adb_box_fan/cooler.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_neutrino/lib/modules/
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-avl2108.fw
@@ -1176,7 +1176,7 @@ if ENABLE_HL101
 #	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 endif
 if ENABLE_ADB_BOX
-	cp -dp $(buildprefix)/root/etc/lircd_ADB_BOX.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -dp $(buildprefix)/root/etc/lircd_adb_box.conf $(prefix)/release_neutrino/etc/lircd.conf
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
 #	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
