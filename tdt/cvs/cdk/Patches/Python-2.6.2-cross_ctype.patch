@@ -10,7 +10,7 @@ Reviewed-by: Carmelo Amoroso <carmelo.amoroso@st.com>
                                           ffi_configfile):
                  from distutils.dir_util import mkpath
                  mkpath(ffi_builddir)
--                config_args = []
+-                config_args = ['--host=%s' % os.environ["TARGET_OS"], ]
 +                config_args = ['--target=' + str(os.environ.get('TARGET_CONFIG'))  + ' --host=' + str(os.environ.get('HOST_CONFIG')), ]
  
                  # Pass empty CFLAGS because we'll just append the resulting
