@@ -1,0 +1,10 @@
+--- stm-cross-libelf.spec.org	2011-02-02 11:38:26.000000000 +0100
++++ stm-cross-libelf.spec	2011-10-01 15:18:07.000000000 +0200
+@@ -26,6 +26,7 @@
+ 
+ %build
+ %cross_setup
++export CC="gcc -m32"
+ 
+ mkdir objdir
+ cd objdir
