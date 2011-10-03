@@ -131,8 +131,21 @@ key_table_t front_keymap_13grid[] =
    { "OK"     , 0x0020,              KEY_OK            },  /* front ok */
    { "HOME"   , 0x0010,              KEY_HOME          },  /* front back */
    { "MENU"   , 0x0001,              KEY_MENU          },  /* front menu */
-   { "RELEASE", 0x0000,             0xffff            },
-   { ""       , 0x0000,             KEY_NULL          },
+   { "RELEASE", 0x0000,              0xffff            },
+   { ""       , 0x0000,              KEY_NULL          },
+};
+
+key_table_t front_keymap_7seg[] =
+{
+   { "STANDBY"  , 0x0001,              KEY_POWER         },  /* front power */
+   { "MENU"     , 0x0002,              KEY_MENU          },  /* front menu  */
+   { "EXIT"     , 0x0004,              KEY_HOME          },  /* front exit  */
+   { "OK"       , 0x0010,              KEY_OK            },  /* front ok    */
+   { "LEFT"     , 0x0020,              KEY_LEFT          },  /* front left  */
+   { "RIGHT"    , 0x0040,              KEY_RIGHT         },  /* front right */
+   { "UP"       , 0x0080,              KEY_UP            },  /* front up    */
+   { "DOWN"     , 0x0100,              KEY_DOWN          },  /* front down  */
+   { ""         , 0x0000,              KEY_NULL          },
 };
 
 key_table_t front_keymap_12dotmatrix[] =
@@ -262,6 +275,9 @@ static int pRead(Context_t* context)
                /* 12 dot, 12 and 14 segs */
                if ((version == 0) || (version == 2))
                    vCurrentCode = getCuberevoCode(front_keymap_12dotmatrix, front_key);
+               else
+               if (version == 3)
+                   vCurrentCode = getCuberevoCode(front_keymap_7seg, front_key);
                else
                    vCurrentCode = getCuberevoCode(front_keymap_13grid, front_key);
                    
