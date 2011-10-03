@@ -124,14 +124,12 @@ key_table_t front_keymap_13grid[] =
    { "LEFT"   , 0x0002,              KEY_LEFT          },  /* front left */
    { "RIGHT"  , 0x0004,              KEY_RIGHT         },  /* front right */
    { "UP"     , 0x4000,              KEY_UP            },  /* front up */
-#if 0
-   { "FILE"   , 0x0200,              KEY_???           },  /* front down */
-#endif
+   { "FILE"   , 0x2000,              KEY_ARCHIVE       },  /* front file */
    { "DOWN"   , 0x0040,              KEY_DOWN          },  /* front down */
    { "OK"     , 0x0020,              KEY_OK            },  /* front ok */
    { "HOME"   , 0x0010,              KEY_HOME          },  /* front back */
    { "MENU"   , 0x0001,              KEY_MENU          },  /* front menu */
-   { "RELEASE", 0x0000,              0xffff            },
+   { "RELEASE", 0xFFFF,              KEY_NULL          },  /* release */
    { ""       , 0x0000,              KEY_NULL          },
 };
 
@@ -151,13 +149,15 @@ key_table_t front_keymap_7seg[] =
 key_table_t front_keymap_12dotmatrix[] =
 {
    { "STANDBY", (1<<0),        KEY_POWER         },  /* front power */
+   { "MENU"   , (1<<1),        KEY_MENU          },  /* front menu */
+   { "HOME"   , (1<<2),        KEY_HOME          },  /* front back */
+   { "FILE"   , (1<<3),        KEY_ARCHIVE       },  /* front file */
+   { "OK"     , (1<<4),        KEY_OK            },  /* front ok */
    { "LEFT"   , (1<<5),        KEY_LEFT          },  /* front left */
    { "RIGHT"  , (1<<6),        KEY_RIGHT         },  /* front right */
    { "UP"     , (1<<7),        KEY_UP            },  /* front up */
    { "DOWN"   , (1<<8),        KEY_DOWN          },  /* front down */
-   { "OK"     , (1<<4),        KEY_OK            },  /* front ok */
-   { "MENU"   , (1<<1),        KEY_MENU          },  /* front menu */
-   { "RELEASE", 0x0000,        0xffff            },  /* front release */
+   { "RELEASE", 0xFFFF,        KEY_NULL          },  /* front release */
    { ""       , 0x0000,        KEY_NULL          },
 };
 
