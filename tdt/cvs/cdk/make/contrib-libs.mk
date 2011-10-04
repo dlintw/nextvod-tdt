@@ -568,6 +568,7 @@ $(DEPDIR)/glib2.do_compile: bootstrap libz $(DEPDIR)/glib2.do_prepare
 	cd @DIR_glib2@ && \
 		$(BUILDENV) \
 		CFLAGS="$(TARGET_CFLAGS) -Os" \
+		LDFLAGS="$(TARGET_LDFLAGS) -L\$(targetprefix)/usr/lib" \
 		./configure \
 			--cache-file=config.cache \
 			--disable-gtk-doc \
