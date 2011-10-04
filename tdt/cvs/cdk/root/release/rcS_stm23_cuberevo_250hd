@@ -2,7 +2,7 @@
 
 MODDIR=/lib/modules
 
-insmod $MODDIR/micom.ko paramDebug=150
+insmod $MODDIR/micom.ko paramDebug=50
 
 if [ -e /var/etc/.firstboot ]; then
    rm /var/etc/.firstboot
