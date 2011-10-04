@@ -13,8 +13,8 @@ fi
 
 
 if [ -e /var/etc/.firstboot ]; then
-   echo "WAIT 3 min" > /dev/vfd
-   echo "WAIT 3 min"
+   echo "WAIT 1 min" > /dev/vfd
+   echo "WAIT 1 min"
    rm /var/etc/.firstboot
    touch /dev/.devfsd
 fi
@@ -105,7 +105,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
-   insmod $MODDIR/stsci.ko
+   insmod $MODDIR/smartcard.ko
 
    mknod /dev/sci0 c 169 0
    mknod /dev/sci1 c 169 1
