@@ -26,12 +26,6 @@
 #define VFDLEDBRIGHTNESS	0xc0425af8
 #define VFDGETWAKEUPMODE	0xc0425af9
 
-/* cuberevo */
-#define VFDSETRF              0xc0425af7
-#define VFDSETFAN             0xc0425af8
-#define VFDGETWAKEUPTIME      0xc0425b00
-
-
 struct vfd_ioctl_data {
 	unsigned char start;
 	unsigned char data[64];
@@ -75,6 +69,7 @@ typedef struct Model_s {
 	int     (* SetRF)          (Context_t* context, int on);
 	int     (* SetFan)         (Context_t* context, int on);
 	int     (* GetWakeupTime)  (Context_t* context, time_t* theGMTTime);
+	int     (* SetDisplayTime) (Context_t* context, int on);
     void* private;
 } Model_t;
 

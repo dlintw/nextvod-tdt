@@ -529,6 +529,22 @@ static int setRFModulator(Context_t* context, int on)
    return 0;   
 }
 
+static int setDisplayTime(Context_t* context, int on)
+{
+   struct micom_ioctl_data vData;
+
+   vData.u.display_time.on = on;
+   
+   setMode(context->fd);
+
+   if (ioctl(context->fd, VFDSETDISPLAYTIME, &vData) < 0)
+   {
+      perror("setDisplayTime: ");
+      return -1;
+   }
+   return 0;   
+}
+
 static int setFan(Context_t* context, int on)
 {
    struct micom_ioctl_data vData;
@@ -720,5 +736,6 @@ Model_t Cuberevo_model = {
 	.SetRF            = setRFModulator,
 	.SetFan           = setFan,
     .GetWakeupTime    = getWakeupTime,
+    .SetDisplayTime   = setDisplayTime,
 	.private          = NULL
 };

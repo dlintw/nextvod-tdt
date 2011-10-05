@@ -93,6 +93,8 @@ tArgs vArgs[] =
 "Args: 0/1\n\tset fan on/off" },
    { "-sr", "--setRF",
 "Args: 0/1\n\tset rf modulator on/off" },
+   { "-dt", "--display_timer",
+"Args: 0/1\n\tset display time on/off" },
    { NULL, NULL, NULL }
 };
 
@@ -461,7 +463,7 @@ void processCommand (Context_t * context, int argc, char* argv[])
 
 					on = atoi(argv[i + 1]);
 
-					/* set display icon */
+					/* set fan on/off */
 					if (((Model_t*)context->m)->SetFan)
 						((Model_t*)context->m)->SetFan(context, on);
 				}
@@ -475,9 +477,23 @@ void processCommand (Context_t * context, int argc, char* argv[])
 
 					on = atoi(argv[i + 1]);
 
-					/* set display icon */
+					/* set rf on/off */
 					if (((Model_t*)context->m)->SetRF)
 						((Model_t*)context->m)->SetRF(context, on);
+				}
+				i += 2;
+		    }
+			else if ((strcmp(argv[i], "-dt") == 0) || (strcmp(argv[i], "--display_time") == 0))
+	        {
+	        	if (i + 1 <= argc)
+				{
+					int on;
+
+					on = atoi(argv[i + 1]);
+
+					/* set display icon */
+					if (((Model_t*)context->m)->SetDisplayTime)
+						((Model_t*)context->m)->SetDisplayTime(context, on);
 				}
 				i += 2;
 		    }
