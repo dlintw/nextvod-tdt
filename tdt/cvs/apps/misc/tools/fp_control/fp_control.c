@@ -40,6 +40,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/* software version of fp_control. please increas on every change */
+static const char* sw_version = "1.00";
+
 typedef struct
 {
    char* arg;
@@ -611,6 +614,8 @@ int main (int argc, char* argv[])
 {
     eBoxType vBoxType = Unknown;
     Context_t context;
+
+    printf("%s: SW Version %s\n", argv[0], sw_version);
 
     vBoxType = getModel();
 

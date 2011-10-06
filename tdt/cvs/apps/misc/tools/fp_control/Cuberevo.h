@@ -88,6 +88,11 @@ struct get_wakeuptime {
     char time[12];
 };
 
+/* 0 = 12dot 12seg, 1 = 13grid, 2 = 12 dot 14seg, 3 = 7seg */
+struct get_version_s {
+    int version;
+};
+
 struct micom_ioctl_data {
     union
     {
@@ -103,6 +108,7 @@ struct micom_ioctl_data {
         struct get_wakeupstatus status;
         struct get_wakeuptime wakeup_time;
         struct set_display_time_s display_time;
+        struct get_version_s version;
     } u;
 };
 

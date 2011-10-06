@@ -619,30 +619,19 @@ static int getWakeupReason(Context_t* context, int* reason)
 
 static int getVersion(Context_t* context, int* version)
 {
-   char strVersion[8];
+   struct micom_ioctl_data micom;
 
    fprintf(stderr, "waiting on version from fp ...\n");
 
    /* front controller time */
-   if (ioctl(context->fd, VFDGETVERSION, &strVersion) < 0)
+   if (ioctl(context->fd, VFDGETVERSION, &micom) < 0)
    {
       perror("getVersion: ");
       return -1;
    }
 
-   /* if we get the fp time */
-   if (strVersion[0] != '\0')
-   {
-      fprintf(stderr, "success reading version from fp\n");
+   printf("micom version = %d\n", micom.u.version.version);
 
-      *version = strVersion[1] * 10 | strVersion[2];
-      
-      printf("version = %d\n", *version);
-   } else
-   {
-      fprintf(stderr, "error reading version from fp\n");
-      *version = 0;
-   }
    return 0;
 }
 
