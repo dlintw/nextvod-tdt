@@ -90,7 +90,7 @@ a52dec;make:install:DESTDIR=TARGETS
 libdvdcss;make:install:DESTDIR=TARGETS
 libdvdnav;make:install:DESTDIR=TARGETS
 libdvdread;make:install:DESTDIR=TARGETS
-ffmpeg;make:install:DESTDIR=TARGETS
+ffmpeg;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libavcodec.pc;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libavdevice.pc;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libavformat.pc;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libavutil.pc
 libass;make:install:DESTDIR=TARGETS
 libcap;make:install:DESTDIR=TARGETS
 
