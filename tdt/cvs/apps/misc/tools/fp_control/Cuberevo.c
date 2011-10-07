@@ -73,7 +73,7 @@ static void setMode(int fd)
 static void setMicomTime(time_t theGMTTime, char* destString, int seconds)
 {
 	struct tm* now_tm;
-	now_tm = gmtime (&theGMTTime);
+	now_tm = localtime(&theGMTTime);
 
 	printf("Set Time (UTC): %02d:%02d:%02d %02d-%02d-%04d\n",
 		now_tm->tm_hour, now_tm->tm_min, now_tm->tm_sec, now_tm->tm_mday, now_tm->tm_mon+1, now_tm->tm_year+1900);
@@ -184,7 +184,7 @@ static int getWakeupTime(Context_t* context, time_t* theGMTTime)
 {
    struct micom_ioctl_data vData;
 
-   fprintf(stderr, "waiting on current time from fp ...\n");
+   fprintf(stderr, "waiting on current wakeup-time from fp ...\n");
 
    /* front controller time */
    if (ioctl(context->fd, VFDGETWAKEUPTIME, &vData) < 0)
