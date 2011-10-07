@@ -70,6 +70,7 @@ typedef struct Model_s {
 	int     (* SetFan)         (Context_t* context, int on);
 	int     (* GetWakeupTime)  (Context_t* context, time_t* theGMTTime);
 	int     (* SetDisplayTime) (Context_t* context, int on);
+	int     (* SetTimeMode)    (Context_t* context, int twentyFour);
     void* private;
 } Model_t;
 

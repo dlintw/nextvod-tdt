@@ -98,6 +98,8 @@ tArgs vArgs[] =
 "Args: 0/1\n\tset rf modulator on/off" },
    { "-dt", "--display_timer",
 "Args: 0/1\n\tset display time on/off" },
+   { "-tm", "--time_mode",
+"Args: 0/1\n\ttoggle 12/24 hour mode" },
    { NULL, NULL, NULL }
 };
 
@@ -497,6 +499,20 @@ void processCommand (Context_t * context, int argc, char* argv[])
 					/* set display icon */
 					if (((Model_t*)context->m)->SetDisplayTime)
 						((Model_t*)context->m)->SetDisplayTime(context, on);
+				}
+				i += 2;
+		    }
+			else if ((strcmp(argv[i], "-tm") == 0) || (strcmp(argv[i], "--time_mode") == 0))
+	        {
+	        	if (i + 1 <= argc)
+				{
+					int twentyFour;
+
+					twentyFour = atoi(argv[i + 1]);
+
+					/* toggle 12/24 hour mode */
+					if (((Model_t*)context->m)->SetTimeMode)
+						((Model_t*)context->m)->SetTimeMode(context, twentyFour);
 				}
 				i += 2;
 		    }

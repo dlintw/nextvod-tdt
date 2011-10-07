@@ -528,6 +528,22 @@ static int setFan(Context_t* context, int on)
    return 0;   
 }
 
+static int setTimeMode(Context_t* context, int twentyFour)
+{
+   struct micom_ioctl_data vData;
+
+   vData.u.time_mode.twentyFour = twentyFour;
+   
+   setMode(context->fd);
+
+   if (ioctl(context->fd, VFDSETTIMEMODE, &vData) < 0)
+   {
+      perror("setTimeMode: ");
+      return -1;
+   }
+   return 0;   
+}
+
 static int setBrightness(Context_t* context, int brightness)
 {
    struct micom_ioctl_data vData;
@@ -693,5 +709,6 @@ Model_t Cuberevo_model = {
 	.SetFan           = setFan,
     .GetWakeupTime    = getWakeupTime,
     .SetDisplayTime   = setDisplayTime,
+    .SetTimeMode      = setTimeMode,
 	.private          = NULL
 };
