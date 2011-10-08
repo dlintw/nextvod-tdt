@@ -354,13 +354,16 @@ ADB_BOXPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-adb_box_net1_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-adb_box_net2_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-adb_box_nand_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch)\
+		linux-sh4-ufs910_pcmplayer_stm23.patch \
+		$(if $(P0123),stx7100_fdma_fix_stm23_123.patch) \
+		linux-sh4-ufs910_reboot_stm23.patch \
 		$(if $(P0123),linux-sh4-adb_box_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-adb_box_stb7100_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-adb_box_sata1_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-adb_box_sata2_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-adb_box_sata3_stm23$(PATCH_STR).patch) \
-		$(if $(P0123),linux-sh4-adb_box_net_stm23$(PATCH_STR).patch) \
-		linux-sh4-sound_stm23$(PATCH_STR).patch
+		$(if $(P0123),linux-sh4-adb_box_net_stm23$(PATCH_STR).patch)
 
 UFS910PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
