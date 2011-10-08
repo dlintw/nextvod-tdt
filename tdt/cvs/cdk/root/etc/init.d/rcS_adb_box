@@ -90,7 +90,6 @@ if [ ! -e /var/etc/.firstboot ]; then
     fi
 
    echo "init drivers"
-   insmod $MODDIR/pti.ko
    if [ $player -gt 131 ]; then
 	insmod $MODDIR/pti.ko
 	insmod $MODDIR/stm_monitor.ko
