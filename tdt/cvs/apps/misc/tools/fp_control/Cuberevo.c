@@ -633,9 +633,11 @@ static int Exit(Context_t* context)
 
 static int Clear(Context_t* context)
 {
-   struct micom_ioctl_data vData;
+   struct vfd_ioctl_data data;
+   
+   data.start = 0;
 
-   if (ioctl(context->fd, VFDDISPLAYWRITEONOFF, &vData) < 0)
+   if (ioctl(context->fd, VFDDISPLAYWRITEONOFF, &data) < 0)
    {
       perror("Clear: ");
       return -1;
