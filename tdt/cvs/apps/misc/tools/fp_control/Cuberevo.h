@@ -1,6 +1,30 @@
 #ifndef __ufs912__
 #define __ufs912__
 
+/* ioctl numbers ->hacky */
+#define VFDBRIGHTNESS         0xc0425a03
+#define VFDPWRLED             0xc0425a04 /* added by zeroone, also used in fp_control/global.h ; set PowerLed Brightness on HDBOX*/
+#define VFDDRIVERINIT         0xc0425a08
+#define VFDICONDISPLAYONOFF   0xc0425a0a
+#define VFDDISPLAYWRITEONOFF  0xc0425a05
+#define VFDDISPLAYCHARS       0xc0425a00
+
+#define VFDCLEARICONS	      0xc0425af6
+#define VFDSETRF              0xc0425af7
+#define VFDSETFAN             0xc0425af8
+#define VFDGETWAKEUPMODE      0xc0425af9
+#define VFDGETTIME            0xc0425afa
+#define VFDSETTIME            0xc0425afb
+#define VFDSTANDBY            0xc0425afc
+#define VFDREBOOT		      0xc0425afd
+#define VFDSETLED             0xc0425afe
+#define VFDSETMODE            0xc0425aff
+
+#define VFDGETWAKEUPTIME      0xc0425b00
+#define VFDGETVERSION         0xc0425b01
+#define VFDSETDISPLAYTIME     0xc0425b02
+#define VFDSETTIMEMODE        0xc0425b03
+
 /* this setups the mode temporarily (for one ioctl)
  * to the desired mode. currently the "normal" mode
  * is the compatible vfd mode
@@ -11,11 +35,6 @@ struct set_mode_s {
 
 struct set_brightness_s {
 	int level;
-};
-
-struct set_icon_s {
-	int icon_nr;
-	int on;
 };
 
 struct set_led_s {
@@ -35,6 +54,15 @@ struct set_fan_s {
 
 struct set_rf_s {
     int on;
+};
+
+struct set_display_time_s {
+    int on;
+};
+
+struct set_icon_s {
+	int icon_nr;
+	int on;
 };
 
 /* YYMMDDhhmm */
@@ -61,6 +89,15 @@ struct get_wakeuptime {
     char time[12];
 };
 
+/* 0 = 12dot 12seg, 1 = 13grid, 2 = 12 dot 14seg, 3 = 7seg */
+struct get_version_s {
+    int version;
+};
+
+struct set_time_mode_s {
+    int twentyFour;
+};
+
 struct micom_ioctl_data {
     union
     {
@@ -75,6 +112,9 @@ struct micom_ioctl_data {
         struct get_time_s get_time;
         struct get_wakeupstatus status;
         struct get_wakeuptime wakeup_time;
+        struct set_display_time_s display_time;
+        struct get_version_s version;
+        struct set_time_mode_s time_mode;
     } u;
 };
 

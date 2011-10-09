@@ -21,7 +21,7 @@
  */
 
 /*
- * Cuberevo 9000 HD Frontcontroller
+ * Cuberevo 900/9000 HD Frontcontroller
  *
  * Devices:
  *  - /dev/vfd (vfd ioctls and read/write function)
@@ -55,7 +55,7 @@
 #define EVENT_BTN_HI                  0xe1
 #define EVENT_BTN_LO                  0xe2
 
-#define EVENT_RC                   0xe0
+#define EVENT_RC                      0xe0
 
 #define EVENT_ANSWER_GETWAKEUP_SEC       0xe3
 #define EVENT_ANSWER_GETWAKEUP_MIN       0xe4
@@ -75,7 +75,7 @@
 #define EVENT_ANSWER_UNKNOWN2            0xef
 
 //----------------------------------------------
-short paramDebug = 10;
+short paramDebug = 0;
 
 static unsigned char expectEventData = 0;
 static unsigned char expectEventId = 1;
@@ -89,7 +89,7 @@ static unsigned char expectEventId = 1;
 
 #define cMinimumSize   2
 
-#define BUFFERSIZE   256     //must be 2 ^ n
+#define BUFFERSIZE   512     //must be 2 ^ n
 static unsigned char RCVBuffer [BUFFERSIZE];
 static int           RCVBufferStart = 0, RCVBufferEnd = 0;
 
@@ -100,6 +100,8 @@ static wait_queue_head_t   wq;
 static wait_queue_head_t   rx_wq;
 static wait_queue_head_t   ack_wq;
 static int dataReady = 0;
+
+const char* driver_version = "1.01";
 
 //----------------------------------------------
 
@@ -190,11 +192,11 @@ void handleCopyData(int len)
     unsigned char* data = kmalloc(len / 2, GFP_KERNEL);
     
     i = 0;
-    j = 1;
+    j = (RCVBufferEnd + 1) % BUFFERSIZE;
     
     while (i != len / 2)
     {
-        printk("%d. = 0x%02x\n", j,  RCVBuffer[j]);
+        dprintk(50, "%d. = 0x%02x\n", j,  RCVBuffer[j]);
         data[i] = RCVBuffer[j];
         j += 2; //filter answer tag
         j %= BUFFERSIZE;
@@ -454,16 +456,18 @@ static irqreturn_t FP_interrupt(int irq, void *dev_id)
         RCVBuffer [RCVBufferStart] = *ASC_X_RX_BUFF;
         RCVBufferStart = (RCVBufferStart + 1) % BUFFERSIZE;
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32)
-        // We are to fast, lets make a break
-        udelay(0);
-#endif
-
         dataArrived = 1;
 
         if (RCVBufferStart == RCVBufferEnd)
         {
             printk ("FP: RCV buffer overflow!!! (%d - %d)\n", RCVBufferStart, RCVBufferEnd);
+        }
+    
+        //give the reader process the chance to consume the data
+        if (getLen() > cPackageSize * 20)
+        {
+           udelay(0);
+           break;
         }
     }
 
@@ -582,7 +586,22 @@ static void __exit micom_cleanup_module(void)
 module_init(micom_init_module);
 module_exit(micom_cleanup_module);
 
-MODULE_DESCRIPTION("MICOM frontcontroller module");
+#if defined(CUBEREVO_MINI) 
+MODULE_DESCRIPTION("MICOM frontcontroller module (CUBEREVO_MINI)" );
+#elif defined(CUBEREVO_MINI2) 
+MODULE_DESCRIPTION("MICOM frontcontroller module (CUBEREVO_MINI2)");
+#elif defined(CUBEREVO_250HD)
+MODULE_DESCRIPTION("MICOM frontcontroller module (CUBEREVO_250HD)");
+#elif defined(CUBEREVO)
+MODULE_DESCRIPTION("MICOM frontcontroller module (CUBEREVO)");
+#elif defined(CUBEREVO_2000HD)
+MODULE_DESCRIPTION("MICOM frontcontroller module (CUBEREVO_2000HD)");
+#elif defined(CUBEREVO_3000HD)
+MODULE_DESCRIPTION("MICOM frontcontroller module (CUBEREVO_3000HD)");
+#else
+MODULE_DESCRIPTION("MICOM frontcontroller module (UNKNOWN)");
+#endif
+
 MODULE_AUTHOR("Konfetti");
 MODULE_LICENSE("GPL");
 

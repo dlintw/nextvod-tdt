@@ -4829,10 +4829,9 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Plu
 +	plugin.py
 +
 + 
-diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py enigma2-nightly.patched/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py
 --- enigma2-nightly.org/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py	1970-01-01 01:00:00.000000000 +0100
-+++ enigma2-nightly.patched/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py	2011-09-03 18:34:24.230350952 +0200
-@@ -0,0 +1,334 @@
++++ enigma2-nightly.patched/lib/python/Plugins/Extensions/CuberevoVFD/plugin.py	2011-10-07 19:51:24.620979351 +0200
+@@ -0,0 +1,355 @@
 +from Screens.Screen import Screen
 +from Screens.MessageBox import MessageBox
 +from Plugins.Plugin import PluginDescriptor
@@ -4864,7 +4863,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Plu
 +config.plugins.CuberevoVFD.scroll = ConfigSelection(default = "once", choices = [("never"), ("once"), ("always")])
 +config.plugins.CuberevoVFD.brightness = ConfigSelection(default = "bright", choices = [("dark"), ("medium"), ("bright")])
 +config.plugins.CuberevoVFD.showClock = ConfigEnableDisable(default = True)
-+config.plugins.CuberevoVFD.setDaylight = ConfigEnableDisable(default = False)
++#config.plugins.CuberevoVFD.setDaylight = ConfigEnableDisable(default = False)
 +config.plugins.CuberevoVFD.timeMode = ConfigSelection(default = "24h", choices = [("12h"),("24h")])
 +config.plugins.CuberevoVFD.setLed = ConfigEnableDisable(default = False)
 +config.plugins.CuberevoVFD.setFan = ConfigEnableDisable(default = True)
@@ -4887,7 +4886,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Plu
 +		# create elements for the menu list
 +		self.list = [ ]
 +		self.list.append(getConfigListEntry(_("Show clock"), config.plugins.CuberevoVFD.showClock))
-+		self.list.append(getConfigListEntry(_("Daylight"), config.plugins.CuberevoVFD.setDaylight))
++#		self.list.append(getConfigListEntry(_("Daylight"), config.plugins.CuberevoVFD.setDaylight))
 +		self.list.append(getConfigListEntry(_("Time mode"), config.plugins.CuberevoVFD.timeMode))
 +		self.list.append(getConfigListEntry(_("Set led"), config.plugins.CuberevoVFD.setLed))
 +		self.list.append(getConfigListEntry(_("Brightness"), config.plugins.CuberevoVFD.brightness))
@@ -4920,10 +4919,10 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Plu
 +		else:
 +			cubeVfd.disableClock()
 +
-+		if config.plugins.CuberevoVFD.setDaylight.getValue():
-+			cubeVfd.enableDaylight()
-+		else:
-+			cubeVfd.disableDaylight()
++#		if config.plugins.CuberevoVFD.setDaylight.getValue():
++#			cubeVfd.enableDaylight()
++#		else:
++#			cubeVfd.disableDaylight()
 +
 +		if config.plugins.CuberevoVFD.timeMode.value == "24h":
 +			cubeVfd.enableTimeMode()
@@ -4986,7 +4985,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Plu
 +		self.fanEnabled = config.plugins.CuberevoVFD.setFan.getValue()
 +		self.ledEnabled = config.plugins.CuberevoVFD.setLed.getValue()
 +		self.clockEnabled = config.plugins.CuberevoVFD.showClock.getValue()
-+		self.daylightEnabled = config.plugins.CuberevoVFD.setDaylight.getValue()
++#		self.daylightEnabled = config.plugins.CuberevoVFD.setDaylight.getValue()
 +		if config.plugins.CuberevoVFD.timeMode.value == "24h":
 +			self.timeModeEnabled = 1
 +		else:
@@ -5039,61 +5038,82 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Plu
 +
 +	def enableClock(self):
 +		self.clockEnabled = True
++		try:
++			os.popen("/bin/fp_control -dt 1")
++		except OSError:
++			print "no memory"
 +
 +	def disableClock(self):
 +		self.clockEnabled = False
++		try:
++			os.popen("/bin/fp_control -dt 0")
++		except OSError:
++			print "no memory"
 +
 +	def enableTimeMode(self):
 +		self.timeModeEnabled = 1
 +		try:
-+			os.popen("/bin/cubefpctl --settimemode 1")
++			os.popen("/bin/fp_control -tm 1")
 +		except OSError:
 +			print "no memory"
 +
 +	def disableTimeMode(self):
 +		self.timeModeEnabled = 0
 +		try:
-+			os.popen("/bin/cubefpctl --settimemode 0")
++			os.popen("/bin/fp_control -tm 0")
 +		except OSError:
 +			print "no memory"
 +
-+	def enableDaylight(self):
-+		self.daylightEnabled = True
-+		try:
-+			os.popen("/bin/cubefpctl --setdaylight 1")
-+		except OSError:
-+			print "no memory"
-+		try:
-+			os.popen("/bin/cubefpctl --syncfptime")
-+		except OSError:
-+			print "no memory"
++# konfetti: what that?
++#	def enableDaylight(self):
++#		self.daylightEnabled = True
++#		try:
++#			os.popen("/bin/cubefpctl --setdaylight 1")
++#		except OSError:
++#			print "no memory"
++#		try:
++#			os.popen("/bin/cubefpctl --syncfptime")
++#		except OSError:
++#			print "no memory"
 +
-+	def disableDaylight(self):
-+		self.daylightEnabled = False
-+		try:
-+			os.popen("/bin/cubefpctl --setdaylight 0")
-+		except OSError:
-+			print "no memory"
-+		try:
-+			os.popen("/bin/cubefpctl --syncfptime")
-+		except OSError:
-+			print "no memory"
++#	def disableDaylight(self):
++#		self.daylightEnabled = False
++#		try:
++#			os.popen("/bin/cubefpctl --setdaylight 0")
++#		except OSError:
++#			print "no memory"
++#		try:
++#			os.popen("/bin/cubefpctl --syncfptime")
++#		except OSError:
++#			print "no memory"
 +
 +	def enableLed(self):
 +		self.ledEnabled = True
-+		evfd.getInstance().vfd_set_light(self.ledEnabled)
++		try:
++			os.popen("/bin/fp_control -l 0 1")
++		except OSError:
++			print "no memory"
 +
 +	def disableLed(self):
 +		self.ledEnabled = False
-+		evfd.getInstance().vfd_set_light(self.ledEnabled)
++		try:
++			os.popen("/bin/fp_control -l 0 0")
++		except OSError:
++			print "no memory"
 +
 +	def enableFan(self):
 +		self.fanEnabled = True
-+		evfd.getInstance().vfd_set_fan(self.fanEnabled)
++		try:
++			os.popen("/bin/fp_control -sf 1")
++		except OSError:
++			print "no memory"
 +
 +	def disableFan(self):
 +		self.fanEnabled = False
-+		evfd.getInstance().vfd_set_fan(self.fanEnabled)
++		try:
++			os.popen("/bin/fp_control -sf 0")
++		except OSError:
++			print "no memory"
 +
 +	def regExpMatch(self, pattern, string):
 +		if string is None:

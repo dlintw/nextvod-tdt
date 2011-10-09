@@ -1,5 +1,5 @@
---- SPECS/stm-cross-gcc.spec.orig	2010-04-28 13:53:55.000000000 +0200
-+++ SPECS/stm-cross-gcc.spec	2010-04-28 13:55:22.000000000 +0200
+--- stm-cross-gcc.spec.org	2011-10-06 08:46:32.188456263 +0200
++++ stm-cross-gcc.spec	2011-10-06 08:50:11.808456226 +0200
 @@ -236,7 +236,7 @@
  %if_target_arch cortex
          --with-gxx-include-dir="target%{_stm_target_include_dir}/c++/%{version}" \
@@ -24,7 +24,7 @@
  rm -r %{buildroot}%{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
  rm -f %{buildroot}%{_stm_cross_lib_dir}/libiberty.a
 -rm -f  %{buildroot}%{_stm_cross_dir}/lib64/libiberty.a
-+rm -f  %{buildroot}%{_stm_cross_dir}/lib{32,64}/libiberty.a || true
++rm -f  %{buildroot}%{_stm_devkit_dir}/lib{32,64}/libiberty.a || true
  rm -r %{buildroot}%{_stm_cross_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
 +rm %{buildroot}%{_stm_cross_info_dir}/cpp.info* || true
 +rm %{buildroot}%{_stm_cross_info_dir}/gcc.info* || true
