@@ -28,7 +28,7 @@ module_init_tools;make:INSTALL=install:install:sbin_PROGRAMS="depmod modinfo":bi
 #
 grep;make:install:DESTDIR=TARGETS
 openrdate;make:install:DESTDIR=TARGETS
-e2fsprogs;rewrite-pkgconfig:lib/uuid/uuid.pc:lib/blkid/blkid.pc;make:install:DESTDIR=TARGETS
+e2fsprogs;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libuuid.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/com_err.pc:TARGETS/usr/lib/pkgconfig/uuid.pc:TARGETS/usr/lib/pkgconfig/blkid.pc
 xfsprogs;make:install:prefix=TARGETS
 mc;make:install:DESTDIR=TARGETS
 sdparm;make:install:DESTDIR=TARGETS
