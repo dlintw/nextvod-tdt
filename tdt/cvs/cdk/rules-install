@@ -55,7 +55,7 @@ libz;make:install:prefix=TARGETS/usr;install:-m644:libz.a:TARGETS/usr/lib
 libreadline;make:install:DESTDIR=TARGETS
 #freetype;make:install:libdir=TARGETS/usr/lib:includedir=TARGETS/usr/include:bindir=TARGETS/usr/bin:prefix=TARGETS/usr
 freetype_old;make:install:DESTDIR=BUILD/freetype-2.1.4/install_dir
-freetype;rewrite-pkgconfig:builds/unix/freetype2.pc;make:install:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libfreetype.la
+freetype;make:install:prefix=TARGETS/usr;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/freetype2.pc;rewrite-libtool:TARGETS/usr/lib/libfreetype.la
 fontconfig;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/fontconfig.pc;rewrite-libtool:TARGETS/usr/lib/libfontconfig.la;rewrite-dependency:TARGETS/usr/lib/libfontconfig.la
 lirc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblirc_client.la
 jpeg;make:install:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libjpeg.la
