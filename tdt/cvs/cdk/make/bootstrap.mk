@@ -694,11 +694,11 @@ endif STM24
 #
 # CROSS GCC
 #
-CROSS_GCC		= cross-sh4-gcc
-CROSS_CPP		= cross-sh4-cpp
-CROSS_G++		= cross-sh4-g++
-CROSS_PROTOIZE		= cross-sh4-protoize
-CROSS_LIBGCC		= cross-sh4-libgcc
+CROSS_GCC = cross-sh4-gcc
+CROSS_CPP = cross-sh4-cpp
+CROSS_G++ = cross-sh4-g++
+CROSS_PROTOIZE = cross-sh4-protoize
+CROSS_LIBGCC = cross-sh4-libgcc
 if STM22
 CROSS_GCC_VERSION = 4.1.1-23
 CROSS_GCC_RAWVERSION = $(firstword $(subst -, ,$(CROSS_GCC_VERSION)))
