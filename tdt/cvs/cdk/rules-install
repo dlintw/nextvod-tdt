@@ -49,7 +49,7 @@ opkg;make:install:DESTDIR=TARGETS;link:/usr/bin/opkg-cl:TARGET/usr/bin/opkg;mkdi
 #
 # contrib libs
 #
-libboost;remove:TARGET/include/boost;move:boost:TARGET/usr/include/boost
+libboost;remove:TARGETS/include/boost;move:boost:TARGETS/usr/include/boost
 ncurses;
 libz;make:install:prefix=TARGETS/usr;install:-m644:libz.a:TARGETS/usr/lib
 libreadline;make:install:DESTDIR=TARGETS
