@@ -158,17 +158,16 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
  			ARRAY_SIZE(mb442_devices));
 diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c linux-sh4/drivers/net/smc91x.c
 --- linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c	2011-09-20 19:49:00.000000000 +0200
-+++ linux-sh4/drivers/net/smc91x.c	2011-09-20 20:25:50.000000000 +0200
-@@ -233,6 +233,8 @@
- 		}							\
++++ linux-sh4/drivers/net/smc91x.c	2011-10-09 11:51:23.000000000 +0200
+@@ -234,7 +234,6 @@
  	}								\
  } while (0)
-+// d-mon: nbox' hardcoded MAC
-+unsigned char hw_mac[6] = {0,3,0x91,0x11,0x22,0x33 };   
  
- 
+-
  /*
-@@ -269,6 +271,10 @@
+  * this does a soft reset on the device
+  */
+@@ -269,6 +268,10 @@
  	SMC_SELECT_BANK(lp, 0);
  	SMC_SET_RCR(lp, RCR_SOFTRST);
  
@@ -179,7 +178,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c linux-sh4/dri
  	/*
  	 * Setup the Configuration Register
  	 * This is necessary because the CONFIG_REG is not affected
-@@ -309,6 +315,8 @@
+@@ -309,6 +312,8 @@
  	SMC_SET_RCR(lp, RCR_CLEAR);
  	SMC_SET_TCR(lp, TCR_CLEAR);
  
@@ -188,7 +187,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c linux-sh4/dri
  	SMC_SELECT_BANK(lp, 1);
  	ctl = SMC_GET_CTL(lp) | CTL_LE_ENABLE;
  
-@@ -325,6 +333,8 @@
+@@ -325,6 +330,8 @@
  
  	/* Reset the MMU */
  	SMC_SELECT_BANK(lp, 2);
@@ -197,7 +196,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c linux-sh4/dri
  	SMC_SET_MMU_CMD(lp, MC_RESET);
  	SMC_WAIT_MMU_BUSY(lp);
  }
-@@ -349,7 +359,9 @@
+@@ -349,7 +356,9 @@
  	SMC_SET_MAC_ADDR(lp, dev->dev_addr);
  
  	/* now, enable interrupts */
@@ -208,7 +207,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c linux-sh4/dri
  	if (lp->version >= (CHIP_91100 << 4))
  		mask |= IM_MDINT;
  	SMC_SELECT_BANK(lp, 2);
-@@ -1117,10 +1129,14 @@
+@@ -1117,10 +1126,14 @@
  	 * Enable PHY Interrupts (for register 18)
  	 * Interrupts listed here are disabled
  	 */
@@ -223,30 +222,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c linux-sh4/dri
  
  	/* Configure the Receive/Phy Control register */
  	SMC_SELECT_BANK(lp, 0);
-@@ -2005,8 +2021,20 @@
- 
- 	/* Get the MAC address */
- 	SMC_SELECT_BANK(lp, 1);
--	SMC_GET_MAC_ADDR(lp, dev->dev_addr);
--
-+	//SMC_GET_MAC_ADDR(lp, dev->dev_addr);
-+            SMC_SET_MAC_ADDR(lp, hw_mac); 
-+        int j;	
-+        	for(j=0; j<6; j++) 
-+        	    dev->dev_addr[j] = hw_mac[j]; 
-+    	/************************************************************************/
-+    	    /* print mac address from device registers */
-+    		printk("MAC HW DEV address: ");
-+    		    for(j=0; j<6; j++)
-+    			{
-+    				printk("%02X",dev->dev_addr[j]);
-+    					if(j<5) printk(":");
-+    					    }
-+    						printk("\n");  
- 	/* now, reset the chip, and put it into a known state */
- 	smc_reset(dev);
- 
-@@ -2354,7 +2382,11 @@
+@@ -2354,7 +2367,11 @@
  		ret = -ENOMEM;
  		goto out_release_attrib;
  	}
@@ -261,7 +237,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c linux-sh4/dri
  		struct smc_local *lp = netdev_priv(ndev);
 diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.h linux-sh4/drivers/net/smc91x.h
 --- linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.h	2011-09-20 19:48:58.000000000 +0200
-+++ linux-sh4/drivers/net/smc91x.h	2011-09-20 21:23:14.000000000 +0200
++++ linux-sh4/drivers/net/smc91x.h	2011-10-03 16:24:15.000000000 +0200
 @@ -250,16 +250,19 @@
   * to do a SMC_outl, which on a 16 bit bus translates into two 16 bit writes.
   * This bypasses the special logic which would prevent this also updating
