@@ -374,11 +374,11 @@
   
 ! static struct mtd_partition mtd_parts_table[3] = {
   	{
-! 		.name = "Boot firmware",
+  		.name = "Boot firmware",
 ! 		.size = 0x00040000,
   		.offset = 0x00000000,
   	}, {
-! 		.name = "Kernel",
+  		.name = "Kernel",
 ! 		.size = 0x00100000,
 ! 		.offset = 0x00040000,
   	}, {
@@ -397,17 +397,17 @@
   
 ! static struct mtd_partition mtd_parts_table[] = {
   	{
-! 		.name = "NOR U-BOOT :    0xA000.0000-0xA005.FFFF (384KB)",
-! 		.size = 0x00060000,
+  		.name = "Boot firmware",
+! 		.size = 0x00080000,
   		.offset = 0x00000000,
   	}, {
-! 		.name = "NOR ROOT :      0xA008.0000-0xA07F.FFFF (5MB)",
-! 		.size = 0x00500000,
-! 		.offset = 0x00060000,
+  		.name = "Kernel",
+! 		.size = 0x00700000,
+! 		.offset = 0x00080000,
   	}, {
-! 		.name = "NOR ROOT :	 0xA008.0000-0xA07F.FFFF (2.7MB)",
+! 		.name = "Reserve",
   		.size = MTDPART_SIZ_FULL,
-! 		.offset = 0x00560000,
+! 		.offset = 0x00780000,
   	}
   };
   
