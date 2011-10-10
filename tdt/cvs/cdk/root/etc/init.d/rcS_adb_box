@@ -13,8 +13,8 @@ fi
 
 
 if [ -e /var/etc/.firstboot ]; then
-   echo "WAIT 1 min" > /dev/vfd
-   echo "WAIT 1 min"
+   echo "WAIT 3 min" > /dev/vfd
+   echo "WAIT 3 min"
    rm /var/etc/.firstboot
    touch /dev/.devfsd
 fi
@@ -130,24 +130,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/sbin/telnetd -l /bin/login
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
-
-   NFS=`grep -c nfs /proc/cmdline`
-   if [ "$NFS" -eq "1" ]; then 
-      echo "Booting from nfs, don't set network" 
-   else 
-      if [ -e /etc/network/interfaces ]; then 
-	 ip addr flush eth0 
-	 /etc/init.d/networking stop 
-	 DHCP=`grep -c dhcp /etc/network/interfaces`
-	 if [ "$DHCP" -eq "1" ]; then 
-	    echo "Starting dhcp"
-            /etc/init.d/udhcpc start 
-	 fi 
-	 /etc/init.d/networking start 
-      fi 
-   fi
-
-   touch /dev/.udev
 
    echo "LOAD e2 PKT MOD" > /dev/vfd
    echo "LOAD e2 PKT MOD"
