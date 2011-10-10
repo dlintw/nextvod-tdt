@@ -174,7 +174,7 @@
 +
 +#define BOOT_SIZE	0x040000	// boot loader
 +#define WELCOME_SIZE	0x020000	// welcomeboot config
-+#define KERNEL_SIZE	0x200000	// kernel size
++#define KERNEL_SIZE	0x220000	// kernel size
 +#define ROOT_SIZE	(WINDOW_SIZE-WELCOME_SIZE-KERNEL_SIZE-DB_SIZE-BOOT_SIZE)
 +#define DB_SIZE	0xa00000
 +
@@ -219,7 +219,7 @@
 +       .mask_flags = MTD_WRITEABLE,    /* force read-only */
 +   },
 +   {
-+       .name       = "nor.config",
++       .name       = "nor.config_welcome",
 +       .offset     = BOOT_SIZE,
 +       .size       = WELCOME_SIZE,
 +   },
