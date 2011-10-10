@@ -224,8 +224,6 @@ static int setTimer(Context_t* context)
       wakeupTime = read_neutrino_timers(curTime);
    }
 
-   wakeupTime -= private->wakeupDecrement;
-   
    if ((wakeupTime == 0) || (curTime > wakeupTime))
    {
        /* nothing to do for e2 */   
