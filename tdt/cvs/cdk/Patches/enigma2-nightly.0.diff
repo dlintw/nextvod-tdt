@@ -1226,7 +1226,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/driver/vfd
 +			memset(&data, 0, sizeof(struct vfd_ioctl_data));
 +
 +			data.start = 0x00;
-+    			data.data[0] = id & 0x0f;
++    			data.data[0] = id;
 +    			data.data[4] = onoff;
 +    			data.length = 5;
 +
