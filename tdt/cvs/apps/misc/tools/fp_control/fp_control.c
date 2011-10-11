@@ -41,7 +41,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* software version of fp_control. please increas on every change */
-static const char* sw_version = "1.00";
+static const char* sw_version = "1.01";
 
 typedef struct
 {

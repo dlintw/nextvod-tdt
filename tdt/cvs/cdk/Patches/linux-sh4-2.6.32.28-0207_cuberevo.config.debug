@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.28
-# Wed Aug  3 17:55:20 2011
+# Mon Oct 10 19:27:56 2011
 #
 CONFIG_SUPERH=y
 CONFIG_SUPERH32=y
@@ -140,8 +140,8 @@ CONFIG_LBDAF=y
 #
 CONFIG_IOSCHED_NOOP=y
 CONFIG_IOSCHED_AS=y
-# CONFIG_IOSCHED_DEADLINE is not set
-# CONFIG_IOSCHED_CFQ is not set
+CONFIG_IOSCHED_DEADLINE=y
+CONFIG_IOSCHED_CFQ=y
 CONFIG_DEFAULT_AS=y
 # CONFIG_DEFAULT_DEADLINE is not set
 # CONFIG_DEFAULT_CFQ is not set
@@ -340,7 +340,7 @@ CONFIG_GUSA_RB=y
 #
 # Boot options
 #
-CONFIG_ZERO_PAGE_OFFSET=0x00801000
+CONFIG_ZERO_PAGE_OFFSET=0x00001000
 CONFIG_BOOT_LINK_OFFSET=0x00800000
 CONFIG_ENTRY_OFFSET=0x00001000
 # CONFIG_UBC_WAKEUP is not set
@@ -661,6 +661,7 @@ CONFIG_PHYLIB=y
 # CONFIG_BROADCOM_PHY is not set
 # CONFIG_ICPLUS_PHY is not set
 # CONFIG_REALTEK_PHY is not set
+CONFIG_RTL8201=y
 # CONFIG_NATIONAL_PHY is not set
 # CONFIG_STE10XP is not set
 # CONFIG_LSI_ET1011C_PHY is not set
@@ -694,7 +695,6 @@ CONFIG_STMMAC_ETH=y
 # CONFIG_STMMAC_TIMER is not set
 # CONFIG_NETDEV_10000 is not set
 # CONFIG_WLAN is not set
-CONFIG_RTL8201=y
 
 #
 # Enable WiMAX (Networking options) to see the WiMAX drivers
@@ -832,11 +832,6 @@ CONFIG_I2C_ALGOBIT=y
 #
 # I2C system bus drivers (mostly embedded / system-on-chip)
 #
-# CONFIG_I2C_DESIGNWARE is not set
-# CONFIG_I2C_GPIO is not set
-# CONFIG_I2C_OCORES is not set
-# CONFIG_I2C_SH_MOBILE is not set
-# CONFIG_I2C_SIMTEC is not set
 # CONFIG_I2C_DESIGNWARE is not set
 # CONFIG_I2C_GPIO is not set
 # CONFIG_I2C_OCORES is not set
@@ -1007,6 +1002,10 @@ CONFIG_DVB_CAPTURE_DRIVERS=y
 CONFIG_DVB_FE_CUSTOMISE=y
 
 #
+# Customise DVB Frontends
+#
+
+#
 # Multistandard (satellite) frontends
 #
 # CONFIG_DVB_STB0899 is not set
@@ -1108,7 +1107,6 @@ CONFIG_DVB_TUNER_DIB0070=m
 #
 # CONFIG_DVB_DUMMY_FE is not set
 # CONFIG_DAB is not set
-
 
 #
 # Graphics support
@@ -1397,7 +1395,11 @@ CONFIG_EXT4_FS_XATTR=y
 CONFIG_JBD2=y
 CONFIG_FS_MBCACHE=y
 # CONFIG_REISERFS_FS is not set
-# CONFIG_JFS_FS is not set
+CONFIG_JFS_FS=y
+# CONFIG_JFS_POSIX_ACL is not set
+# CONFIG_JFS_SECURITY is not set
+# CONFIG_JFS_DEBUG is not set
+# CONFIG_JFS_STATISTICS is not set
 # CONFIG_FS_POSIX_ACL is not set
 # CONFIG_XFS_FS is not set
 # CONFIG_GFS2_FS is not set

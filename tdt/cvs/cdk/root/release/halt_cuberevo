@@ -51,6 +51,6 @@ fi
 if [ -e /bin/cubefpctl ]; then
 	/bin/cubefpctl --poweroff
 else
-	/bin/fp_control -m 00:00:00 01.01.2980
+	/bin/fp_control -e
 fi
 : exit 0

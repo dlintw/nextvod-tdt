@@ -4,7 +4,7 @@
  Summary: The GNU assembler, linker and binary utilities.
  Name: %{_stm_pkg_prefix}-cross-binutils
  Source0: binutils-%{binutils_version}.tar.bz2
-+Patch: cross-binutils.diff
++Patch: stm-cross-binutils.diff
  
  Group: Development/Languages 
  %description
