@@ -353,7 +353,7 @@ else
 if ENABLE_ADB_BOX
 
 	echo "Adb_Box" > $(prefix)/release_neutrino/etc/hostname
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stsci/stsci.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/adb_box_vfd/vfd.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/adb_box_fan/cooler.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_neutrino/lib/modules/
