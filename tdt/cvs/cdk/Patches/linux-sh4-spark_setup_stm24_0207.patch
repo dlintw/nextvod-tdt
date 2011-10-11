@@ -471,9 +471,9 @@
   	.dev.platform_data = &(struct physmap_flash_data) {
   		.width		= 2,
 ! 		.set_vpp	= mb618_nor_set_vpp,
-  	},
-  };
-  
+! 	},
+! };
+! 
 ! /* J34 must be in the 1-2 position to enable NOR Flash */
 ! static struct mtd_partition mb618_nand_flash_partitions[] = {
 ! 	{
@@ -484,9 +484,9 @@
 ! 		.name	= "NAND home",
 ! 		.offset	= MTDPART_OFS_APPEND,
 ! 		.size	= MTDPART_SIZ_FULL
-! 	},
-! };
-! 
+  	},
+  };
+  
 ! struct stm_nand_bank_data nand_bank_data = {
 ! 	.csn		= 0,
 ! 	.nr_partitions	= ARRAY_SIZE(mb618_nand_flash_partitions),
@@ -510,7 +510,7 @@
   static int mb618_phy_reset(void *bus)
   {
   	epld_write(1, 0);	/* bank = Ctrl */
---- 72,177 ----
+--- 72,167 ----
   
   	stx7111_early_device_init();
   
@@ -524,30 +524,20 @@
 ! // Nor Flash Configuration
 ! static struct mtd_partition nor_parts[] = {
 ! 	{
-! 		.name   = "U-BOOT", 		//  (384KB)
-! 		.size   = 0x00060000,
-! 		.offset = 0,
+! 		.name   = "Boot firmware", 		//  (512K)
+! 		.size   = 0x00080000,
+! 		.offset = 0x00000000,
   	},
   	{
-! 		.name   = "U-BOOT Config", 	//  (128KB)
-! 		.size   = 0x00020000,
-! 		.offset = 0x00060000,
-  	},
-! 	{
 ! 		.name   = "Kernel",			//  (7MB)
 ! 		.size   = 0x00700000,
 ! 		.offset = 0x00080000,
-! 	},
+  	},
 ! 	{
 ! 		.name   = "Reserve",		//  (512K)
 ! 		.size   = MTDPART_SIZ_FULL,
-! 		.offset = MTDPART_OFS_APPEND,
+! 		.offset = 0x00780000,
   	},
-+ 	{
-+ 		.name   = "NOR ALL",		//  (8MB)
-+ 		.size   = 0x00800000,
-+ 		.offset = 0,
-+ 	}
   };
   
 ! static struct platform_device mb618_nor_device = {
@@ -632,7 +622,7 @@
   	.name		= "epld",
   	.id		= -1,
   	.num_resources	= 1,
---- 183,195 ----
+--- 173,185 ----
   	return 1;
   }
   
@@ -771,7 +761,7 @@
   
   	return platform_add_devices(mb618_devices, ARRAY_SIZE(mb618_devices));
   }
---- 206,245 ----
+--- 196,235 ----
   	},
   };
   
@@ -821,7 +811,7 @@
   
   	epld_write(0, 0);	/* bank = Test */
   	epld_write(0x63, test_offset);
---- 283,289 ----
+--- 273,279 ----
   	const int version_offset = 0;
   	int version;
   
@@ -841,7 +831,7 @@
   	.mv_ioport_map		= mb618_ioport_map,
 - 	STM_PCI_IO_MACHINE_VEC
   };
---- 316,324 ----
+--- 306,314 ----
   }
   
   struct sh_machine_vector mv_mb618 __initmv = {
