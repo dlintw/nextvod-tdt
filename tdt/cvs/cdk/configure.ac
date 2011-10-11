@@ -644,7 +644,7 @@ AC_MSG_CHECKING([for apps directory])
 #if test ! -f "$appsdir/dvb/zapit/configure.ac" ; then
 if test ! -f "$appsdir/enigma2/configure.ac" ; then
 	AC_MSG_WARN([appsdir $appsdir not found])
-	appsdir="missing"
+	appsdir="missing_appsir"
 	dircheck="fail"
 else
 	AC_MSG_RESULT([yes])
@@ -653,7 +653,7 @@ fi
 AC_MSG_CHECKING([for boot directory])
 if test ! -d "$bootdir/u-boot-tufsbox" ; then
 	AC_MSG_WARN([bootdir $bootdir not found])
-	bootdir="missing"
+	bootdir="missing_bootdir"
 	dircheck="fail"
 else
 	AC_MSG_RESULT([yes])
@@ -662,7 +662,7 @@ fi
 AC_MSG_CHECKING([for driver directory])
 if test ! -f "$driverdir/Makefile" ; then
 	AC_MSG_WARN([driverdir $driverdir not found])
-	driverdir="missing"
+	driverdir="missing_driverdir"
 	dircheck="fail"
 else
 	AC_MSG_RESULT([yes])
@@ -671,7 +671,7 @@ fi
 AC_MSG_CHECKING([for hostapps directory])
 if test ! -f "$hostappsdir/configure.ac" ; then
 	AC_MSG_WARN([hostappsdir $hostappsdir not found])
-	hostappsdir="missing"
+	hostappsdir="missing_hostappsdir"
 	dircheck="fail"
 else
 	AC_MSG_RESULT([yes])
