@@ -72,10 +72,10 @@ static tButton cButtonsEdisionSpark[] = {
     {"INFO"           , "a7", KEY_INFO}, //THIS IS WRONG SHOULD BE KEY_INFO
     {"AUDIO"          , "35", KEY_AUDIO},
 
-	{"VOL+"           , "C7", KEY_VOLUMEUP},
-	{"VOL-"           , "DD", KEY_VOLUMEDOWN},
-	{"PAGE+"          , "07", KEY_PAGEUP},
-	{"PAGE-"          , "5F", KEY_PAGEDOWN},
+    {"VOL+"           , "C7", KEY_VOLUMEUP},
+    {"VOL-"           , "DD", KEY_VOLUMEDOWN},
+    {"PAGE+"          , "07", KEY_PAGEUP},
+    {"PAGE-"          , "5F", KEY_PAGEDOWN},
 
     {"DOWN"        , "0f", KEY_DOWN},
     {"UP"          , "27", KEY_UP},
