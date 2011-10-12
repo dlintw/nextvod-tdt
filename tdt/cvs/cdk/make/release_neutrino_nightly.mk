@@ -330,7 +330,7 @@ if ENABLE_ADB_BOX
 	ln -s ../init.d/umountfs $(prefix)/$(release_dir)/etc/rc.d/rc0.d/S40umountfs
 	ln -s ../init.d/halt $(prefix)/$(release_dir)/etc/rc.d/rc0.d/S90halt
 	mkdir -p $(prefix)/$(release_dir)/etc/rc.d/rc6.d
-	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/sendsigs $(prefix)/$(release_dir)/etc/rc.d/rc6.d/S20sendsigs
 	ln -s ../init.d/umountfs $(prefix)/$(release_dir)/etc/rc.d/rc6.d/S40umountfs
 	ln -s ../init.d/reboot $(prefix)/$(release_dir)/etc/rc.d/rc6.d/S90reboot
 
