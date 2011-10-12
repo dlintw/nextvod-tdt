@@ -39,85 +39,17 @@
 #include "remotes.h"
 #include "Adb_Box.h"
 
-// definicje czasu
-static  clock_t start_t = 0;
-static  clock_t end_t = 0;
-//static  int klong = 0;
+#define Adb_box_LONGKEY
 
-// definicje czasu
-struct timeval t2, t1;
-static  int klong = 0;
-static  double elapsedTime;
-
-/*
+#ifdef Adb_box_LONGKEY
 static tLongKeyPressSupport cLongKeyPressSupport = {
-  10, 140,
+  20, 106,
 };
-*/
+#endif
+
 
 /* B4Team ADB_BOX RCU */
 static tButton cButtonsADB_BOX[] = {
-/*
-    {"POWER"          , "80", KEY_POWER},
-    {"MUTE"           , "a8", KEY_MUTE},
-
-    {"MENU_FRONT"     , "49", KEY_MENU},
-    {"EXIT_FRONT"     , "4B", KEY_HOME},
-    {"STANDBY_FRONT"  , "48", KEY_POWER},
-    {"OPTIONS_FRONT"  , "47", KEY_HELP},
-
-    {"0BUTTON"        , "8c", KEY_0},
-    {"1BUTTON"        , "44", KEY_1},
-    {"2BUTTON"        , "c4", KEY_2},
-    {"3BUTTON"        , "a4", KEY_3},
-    {"4BUTTON"        , "64", KEY_4},
-    {"5BUTTON"        , "e4", KEY_5},
-    {"6BUTTON"        , "14", KEY_6},
-    {"7BUTTON"        , "18", KEY_7},
-    {"8BUTTON"        , "d8", KEY_8},
-    {"9BUTTON"        , "94", KEY_9},
-
-    {"DOWN"           , "78", KEY_DOWN},
-    {"UP"             , "90", KEY_UP},
-    {"RIGHT"          , "08", KEY_RIGHT},
-    {"LEFT"           , "00", KEY_LEFT},
-    {"OK"             , "98", KEY_OK},
-    {"BACK"           , "20", KEY_BACK},
-    {"INFO"           , "a0", KEY_INFO}, //THIS IS WRONG SHOULD BE KEY_INFO
-    {"CHANNELUP"      , "58", KEY_PAGEUP},
-    {"CHANNELDOWN"    , "50", KEY_PAGEDOWN},
-    {"VOLUMEUP"       , "10", KEY_VOLUMEUP},
-    {"VOLUMEDOWN"     , "88", KEY_VOLUMEDOWN},
-    {"SETUP"          , "0c", KEY_AUDIO},
-
-    {"MENU"           , "e0", KEY_MENU},
-    {"GUIDE"          , "c0", KEY_EPG},
-    {"TEXT"           , "48", KEY_TEXT},
-    {"EXIT"           , "cc", KEY_HOME},
-    {"LIST"           , "38", KEY_FAVORITES},
-
-    {"RED"            , "f8", KEY_RED},
-    {"GREEN"          , "28", KEY_GREEN},
-    {"YELLOW"         , "04", KEY_YELLOW},
-    {"BLUE"           , "84", KEY_BLUE},
-adb_box_ioctl_data
-    {"REWIND"         , "d0", KEY_REWIND},
-    {"PAUSE"          , "24", KEY_PAUSE},
-    {"PLAY"           , "b0", KEY_PLAY},
-    {"FASTFORWARD"    , "b8", KEY_FASTFORWARD},
-    {"RECORD"         , "f0", KEY_RECORD},
-    {"STOP"           , "70", KEY_STOP},
-
-    {"VOD"            , "30", KEY_ARCHIVE},
-    {"N"              , "40", KEY_V},
-    {"@"              , "68", KEY_TIME},
-    {"APP"            , "60", KEY_AUX},
-    {"STAR"           , "4c", KEY_SAT},
-
-    {""               , ""  , KEY_NULL},
-*/
-/* CZARNY */
-// ORYGINAL
 
     {"POWER"          	, "01", KEY_POWER},
     {"VOD"            	, "02", KEY_AUX},
@@ -177,10 +109,6 @@ adb_box_ioctl_data
 
     {"STAR"          	, "2c", KEY_HELP},
 
-/* long press */
-//    {"L_UP"          	, "2d", KEY_PLAYCD},
-//    {"L_DOWN"        	, "2e", KEY_DOWN},
-
     {""               	, ""  , KEY_NULL},
 };
 /* fixme: move this to a structure and
@@ -220,6 +148,7 @@ int pShutdown(Context_t* context ) {
     return 0;
 }
 
+#ifndef Adb_box_LONGKEY
 static int pRead(Context_t* context ) {
     char                vBuffer[128];
     char                vData[10];
@@ -228,28 +157,58 @@ static int pRead(Context_t* context ) {
 
     read (context->fd, vBuffer, cSize);
 
-    //parse and send key event
-/*
-    vData[0] = vBuffer[17];
-    vData[1] = vBuffer[18];
-    vData[2] = '\0';
-*/
 
     vData[0] = vBuffer[14];
     vData[1] = vBuffer[15];
     vData[2] = '\0';
 
-//    printf("[ ADB_BOX RCU ] key: %s\n", &vBuffer);   //move to DEBUG
-//    printf("[ ADB_BOX RCU ] key: %s -> %s\n", vData, &vBuffer[20]);   //move to DEBUG
+/*
+    printf("[ Adb_box RCU ] key: %s\n", &vBuffer);   			//move to DEBUG
+    printf("[ Adb_box RCU ] key: %s -> %s\n", vData, &vBuffer[20]);   	//move to DEBUG
+*/
+    vCurrentCode = getInternalCode(cButtonsAdb_box, vData);
 
-    vCurrentCode = getInternalCode(cButtonsADB_BOX, vData);
-//	printf("[ ADB_BOX RCU ] key: vCC -> %i\n", vCurrentCode);
+    printf("[ Adb_box RCU ] key: vCC -> %i\n", vCurrentCode);
 
-//    vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
-//	printf("[ ADB_BOX RCU ] key: vCC -> %i\n", vCurrentCode);
-    
     return vCurrentCode;
 }
+
+#else
+
+static int gNextKey = 0;
+
+static int pRead(Context_t* context) {
+    char                vBuffer[128];
+    char         	vData[3];
+    const int    	cSize		= 128;
+    int          	vCurrentCode	= -1;
+    
+    read (context->fd, vBuffer, cSize);
+
+
+    vData[0] = vBuffer[14];
+    vData[1] = vBuffer[15];
+    vData[2] = '\0';
+
+
+    vCurrentCode = getInternalCode(cButtonsADB_BOX, vData);
+
+    //printf("[ Adb_box RCU ] key: vCC -> %i\n", vCurrentCode);		//move to DEBUG
+
+    if (vCurrentCode&0x80 == 0) 
+    {
+        gNextKey++;
+        gNextKey%=20;
+    }
+    //printf("[ Adb_box RCU ] key: gNextKey -> %i\n", gNextKey);	//move to DEBUG
+
+    vCurrentCode += (gNextKey<<16);
+    printf("[ Adb_box RCU ] key: vCC -> %i\n", vCurrentCode);
+
+    return vCurrentCode;
+}
+#endif
+
 
 static int pNotification(Context_t* context, const int cOn) {
 
@@ -265,7 +224,6 @@ static int pNotification(Context_t* context, const int cOn) {
 
     if(cOn)
     {
-       //printf("[ ADB_BOX RCU ] pNotification[1]\n");   //move to DEBUG
 
        ioctl_fd = open("/dev/vfd", O_RDONLY);
 
@@ -280,7 +238,7 @@ static int pNotification(Context_t* context, const int cOn) {
     else
     {
        usleep(100000);
-//       printf("[ ADB_BOX RCU ] pNotification[0]\n");   //move to DEBUG
+
        ioctl_fd = open("/dev/vfd", O_RDONLY);
 
        	data.start = 0x00;
@@ -305,6 +263,11 @@ RemoteControl_t Adb_Box_RC = {
 	cButtonsADB_BOX,
 	NULL,
         NULL,
-    0,
-    NULL,
+#ifndef Adb_box_LONGKEY
+    	0,
+    	NULL,
+#else
+    	1,
+    	&cLongKeyPressSupport,
+#endif
 };
