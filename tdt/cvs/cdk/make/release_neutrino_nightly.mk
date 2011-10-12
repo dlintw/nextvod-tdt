@@ -311,7 +311,7 @@ if ENABLE_HL101
 else
 if ENABLE_ADB_BOX
 	echo "Adb_Box" > $(prefix)/$(release_dir)/etc/hostname
-	rm -f $(prefix)/release_neutrino/sbin/halt
+	rm -f $(prefix)/$(release_dir)/sbin/halt
 	cp $(buildprefix)/root/release/halt_adb_box $(prefix)/$(release_dir)/etc/init.d/halt
 	chmod 777 $(prefix)/$(release_dir)/etc/init.d/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/$(release_dir)/sbin/
