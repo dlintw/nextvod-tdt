@@ -73,7 +73,8 @@ static void setMode(int fd)
 static void setMicomTime(time_t theGMTTime, char* destString, int seconds)
 {
 	struct tm* now_tm;
-	now_tm = localtime(&theGMTTime);
+//	now_tm = localtime(&theGMTTime);
+	now_tm = gmtime (&theGMTTime);
 
 	printf("Set Time (UTC): %02d:%02d:%02d %02d-%02d-%04d\n",
 		now_tm->tm_hour, now_tm->tm_min, now_tm->tm_sec, now_tm->tm_mday, now_tm->tm_mon+1, now_tm->tm_year+1900);
@@ -202,19 +203,22 @@ static int getWakeupTime(Context_t* context, time_t* theGMTTime)
 static int setTimer(Context_t* context)
 {
    struct micom_ioctl_data vData;
-   time_t                  curTime;
-   time_t                  wakeupTime;
+   time_t                  curTime=0;
+   time_t                  wakeupTime=0;
    struct tm               *ts;
+   struct tm               *tsWakeupTime;
    tCUBEREVOPrivate* private = (tCUBEREVOPrivate*) 
         ((Model_t*)context->m)->private;
 
    time(&curTime);
    ts = localtime (&curTime);
 
-   fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+   fprintf(stderr, "Current Linux Time: %02d:%02d:%02d %02d-%02d-%04d\n",
 	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
 
    wakeupTime = read_e2_timers(curTime);
+
+   printf("e2 wakeupTime = %ld\n", wakeupTime);
    
    /* failed to read e2 timers so lets take a look if
     * we are running on neutrino
@@ -222,6 +226,14 @@ static int setTimer(Context_t* context)
    if (wakeupTime == 3000000000ul)
    {
       wakeupTime = read_neutrino_timers(curTime);
+   }
+
+   if (wakeupTime != 3000000000ul)
+   {
+      tsWakeupTime = localtime(&wakeupTime);
+      fprintf(stderr, "Wakeup Time:  %lu\n\t%02d:%02d:%02d %02d-%02d-%04d\n", wakeupTime,
+         tsWakeupTime->tm_hour, tsWakeupTime->tm_min, tsWakeupTime->tm_sec, 
+         tsWakeupTime->tm_mday, tsWakeupTime->tm_mon + 1, tsWakeupTime->tm_year + 1900);
    }
 
    if ((wakeupTime == 0) || (curTime > wakeupTime))
@@ -240,7 +252,6 @@ static int setTimer(Context_t* context)
    {
       unsigned long diff;
 
-
       fprintf(stderr, "waiting on current time from fp ...\n");
 		
       /* front controller time */
@@ -256,7 +267,7 @@ static int setTimer(Context_t* context)
       /* current front controller time */
       curTime = (time_t) getMicomTime(vData.u.get_time.time);
 	 
-      printf("curTime = %ld\n", curTime);
+      printf("curTime (fp) = %ld\n", curTime);
 
       wakeupTime = curTime + diff;
 
