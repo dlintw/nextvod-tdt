@@ -112,7 +112,12 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    insmod $MODDIR/starci.ko
 
+   # Full feature pti
    insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+   if [ $?=='2' ]; then
+      # Simple pti
+      insmod $MODDIR/pti.ko
+   fi
    insmod $MODDIR/stm_monitor.ko
    insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/stmdvb.ko
