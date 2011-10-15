@@ -48,7 +48,8 @@ unsigned long int read_e2_timers(time_t curTime)
 	if (fd > 0)
 	{
 		fgets(line, 11, fd);
-		recordTime = atol(line);
+		sscanf(line, "%lu", &recordTime);
+		printf("parsed wakeup_time \"%s\"=%lu\n", line, recordTime);
 	} else
 	{
 		printf("error reading %s\n", E2WAKEUPTIME);
@@ -79,9 +80,7 @@ unsigned long int read_e2_timers(time_t curTime)
 			}
 		}
 	} else
-	{
-	    printf("error reading %s\n", E2TIMERSXML);
-	}
+		printf("error reading %s\n", E2TIMERSXML);
 
 	return recordTime;
 }
@@ -90,12 +89,12 @@ unsigned long int read_e2_timers(time_t curTime)
 unsigned long int read_neutrino_timers(time_t curTime)
 {
 	unsigned long int recordTime = 3000000000ul;
-	char*             line = malloc(1000);
+	char              line[1000];
 	FILE              *fd = fopen (NEUTRINO_TIMERS, "r");
 
 	if (fd > 0)
 	{
-	        printf("opening %s\n", NEUTRINO_TIMERS);
+		printf("opening %s\n", NEUTRINO_TIMERS);
 		
 		while(fgets(line, 999, fd) != NULL)
 		{
@@ -110,36 +109,14 @@ unsigned long int read_neutrino_timers(time_t curTime)
 
 				if (str != NULL)
 				{
-				   tmp = atol(str + 1);
-
-				   recordTime = (tmp < recordTime && tmp > curTime ? tmp : recordTime);
+					tmp = atol(str + 1);
+					recordTime = (tmp < recordTime && tmp > curTime ? tmp : recordTime);
 				}
 			}
 		}
 	} else
-	{
-	    printf("error reading %s\n", NEUTRINO_TIMERS);
-	}
+		printf("error reading %s\n", NEUTRINO_TIMERS);
 
-        free(line);
-
-	if (recordTime == 3000000000ul)
-        {
-	   struct tm tsWake;
-	   struct tm *ts;
-
-           ts = localtime (&curTime);
-
-	   tsWake.tm_hour = ts->tm_hour;
-	   tsWake.tm_min  = ts->tm_min;
-	   tsWake.tm_sec  = ts->tm_sec;
-	   tsWake.tm_mday = ts->tm_mday;
-	   tsWake.tm_mon  = ts->tm_mon;
-	   tsWake.tm_year = ts->tm_year + 1;
-
-	   recordTime = mktime(&tsWake);
-	} 
-printf("recordTime %d\n", recordTime);
 	return recordTime;
 }
 

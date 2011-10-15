@@ -79,12 +79,22 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stv090x.ko
    insmod $MODDIR/ufs912_cic.ko
    if [ $player=='player191' ]; then
+      # Full feature pti
       insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+      if [ $?=='2' ]; then
+         # Simple pti
+         insmod $MODDIR/pti.ko
+      fi
       insmod $MODDIR/stm_monitor.ko
       insmod $MODDIR/stmsysfs.ko
       insmod $MODDIR/stmdvb.ko
    elif [ $player=='player179' ]; then
+      # Full feature pti
       insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
+      if [ $?=='2' ]; then
+         # Simple pti
+         insmod $MODDIR/pti.ko
+      fi
       insmod $MODDIR/stm_monitor.ko
       insmod $MODDIR/stmsysfs.ko
       insmod $MODDIR/stmdvb.ko
