@@ -151,7 +151,7 @@ static int setTime(Context_t* context, time_t* theGMTTime)
 
    setMicomTime(*theGMTTime, vData.u.time.time, 1);
 
-   printf("time: %s\n", vData.u.time.time);
+   printf("Setting Fp Time to: %s\n", vData.u.time.time);
 
    if (ioctl(context->fd, VFDSETTIME, &vData) < 0)
    {
@@ -177,7 +177,7 @@ static int getTime(Context_t* context, time_t* theGMTTime)
    /* current front controller time */
    *theGMTTime = (time_t) getMicomTime(vData.u.get_time.time);
       
-   printf("ctime %s\n", ctime(theGMTTime));
+   printf("Got Fp Time %s\n", ctime(theGMTTime));
    return 0;
 }
 	
@@ -204,21 +204,22 @@ static int setTimer(Context_t* context)
 {
    struct micom_ioctl_data vData;
    time_t                  curTime=0;
+   time_t                  curTimeFp=0;
    time_t                  wakeupTime=0;
    struct tm               *ts;
+   struct tm               *tsFp;
    struct tm               *tsWakeupTime;
    tCUBEREVOPrivate* private = (tCUBEREVOPrivate*) 
         ((Model_t*)context->m)->private;
 
    time(&curTime);
    ts = localtime (&curTime);
-
    fprintf(stderr, "Current Linux Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
+      ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
 
    wakeupTime = read_e2_timers(curTime);
 
-   printf("e2 wakeupTime = %ld\n", wakeupTime);
+   printf("e2 wakeupTime = %lu\n", wakeupTime);
    
    /* failed to read e2 timers so lets take a look if
     * we are running on neutrino
@@ -236,7 +237,7 @@ static int setTimer(Context_t* context)
          tsWakeupTime->tm_mday, tsWakeupTime->tm_mon + 1, tsWakeupTime->tm_year + 1900);
    }
 
-   if ((wakeupTime == 0) || (curTime > wakeupTime))
+   if ((wakeupTime == 0) || (wakeupTime == 3000000000ul))
    {
        /* nothing to do for e2 */   
        fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
@@ -250,6 +251,7 @@ static int setTimer(Context_t* context)
              
    } else
    {
+#if 0
       unsigned long diff;
 
       fprintf(stderr, "waiting on current time from fp ...\n");
@@ -270,8 +272,22 @@ static int setTimer(Context_t* context)
       printf("curTime (fp) = %ld\n", curTime);
 
       wakeupTime = curTime + diff;
+#else
 
-      printf("wakeupTime = %ld\n", wakeupTime);
+      getTime(context, &curTimeFp);
+      tsFp = localtime (&curTimeFp);
+      fprintf(stderr, "Current Fp Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+         tsFp->tm_hour, tsFp->tm_min, tsFp->tm_sec, tsFp->tm_mday, tsFp->tm_mon+1, tsFp->tm_year+1900);
+
+      time(&curTime);
+      ts = localtime (&curTime);
+      fprintf(stderr, "Current Linux Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+         ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
+
+      setTime(context, &curTime);
+
+#endif
+      printf("Setting Fp Wakeup Time to = %lu\n", wakeupTime);
       
       setMicomTime(wakeupTime, vData.u.standby.time, 0);
 
