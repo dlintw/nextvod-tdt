@@ -72,19 +72,16 @@ static void setMode(int fd)
  */
 static void setMicomTime(time_t theGMTTime, char* destString, int seconds)
 {
-	struct tm* now_tm;
-//	now_tm = localtime(&theGMTTime);
-	now_tm = gmtime (&theGMTTime);
+   struct tm* now_tm;
+   now_tm = localtime(&theGMTTime);
+   //now_tm = gmtime (&theGMTTime);
 
-	printf("Calculated FP Timestamp (UTC): %02d:%02d:%02d %02d-%02d-%04d\n",
-		now_tm->tm_hour, now_tm->tm_min, now_tm->tm_sec, now_tm->tm_mday, now_tm->tm_mon+1, now_tm->tm_year+1900);
-	
-    if (seconds)
-       sprintf(destString, "%02d%02d%02d%02d%02d%02d", 
-		   now_tm->tm_year-100, now_tm->tm_mon+1, now_tm->tm_mday, now_tm->tm_hour, now_tm->tm_min, now_tm->tm_sec);
-    else
-       sprintf(destString, "%02d%02d%02d%02d%02d", 
-		   now_tm->tm_year-100, now_tm->tm_mon+1, now_tm->tm_mday, now_tm->tm_hour, now_tm->tm_min);
+   if (seconds)
+      sprintf(destString, "%02d%02d%02d%02d%02d%02d", 
+         now_tm->tm_year-100, now_tm->tm_mon+1, now_tm->tm_mday, now_tm->tm_hour, now_tm->tm_min, now_tm->tm_sec);
+   else
+      sprintf(destString, "%02d%02d%02d%02d%02d", 
+         now_tm->tm_year-100, now_tm->tm_mon+1, now_tm->tm_mday, now_tm->tm_hour, now_tm->tm_min);
 }
 
 static time_t getMicomTime(char* micomTimeString)
@@ -143,29 +140,31 @@ static int usage(Context_t* context, char* prg_name)
    return -1;
 }
 
-static int setTime(Context_t* context, time_t* theGMTTime)
+static int setTime(Context_t* context, time_t *theGMTTime)
 {
    struct micom_ioctl_data vData;
-
-   printf("%s\n", __func__);
+   printf("%s ->\n", __func__);
 
    setMicomTime(*theGMTTime, vData.u.time.time, 1);
 
-   printf("Setting Fp Time to: %s\n", vData.u.time.time);
+   fprintf(stderr, "Setting current Fp Time to: %s (mtime)\n", vData.u.time.time);
 
    if (ioctl(context->fd, VFDSETTIME, &vData) < 0)
    {
       perror("settime: ");
       return -1;
    }
+
+   printf("%s <-\n", __func__);
    return 0;
 }
 
 static int getTime(Context_t* context, time_t* theGMTTime)
 {
    struct micom_ioctl_data vData;
+   printf("%s ->\n", __func__);
 
-   fprintf(stderr, "waiting on current time from fp ...\n");
+   fprintf(stderr, "Getting current Fp Time...\n");
 
    /* front controller time */
    if (ioctl(context->fd, VFDGETTIME, &vData) < 0)
@@ -174,10 +173,12 @@ static int getTime(Context_t* context, time_t* theGMTTime)
       return -1;
    }
 
+   fprintf(stderr, "Got current Fp Time %s (mtime)\n", vData.u.get_time.time);
+
    /* current front controller time */
    *theGMTTime = (time_t) getMicomTime(vData.u.get_time.time);
-      
-   printf("Got Fp Time %s\n", ctime(theGMTTime));
+
+   printf("%s <-\n", __func__);
    return 0;
 }
 	
@@ -212,6 +213,8 @@ static int setTimer(Context_t* context)
    tCUBEREVOPrivate* private = (tCUBEREVOPrivate*) 
         ((Model_t*)context->m)->private;
 
+   printf("%s ->\n", __func__);
+
    time(&curTime);
    ts = localtime (&curTime);
    fprintf(stderr, "Current Linux Time: %02d:%02d:%02d %02d-%02d-%04d\n",
@@ -219,8 +222,6 @@ static int setTimer(Context_t* context)
 
    wakeupTime = read_e2_timers(curTime);
 
-   printf("e2 wakeupTime = %lu\n", wakeupTime);
-   
    /* failed to read e2 timers so lets take a look if
     * we are running on neutrino
     */
@@ -229,18 +230,10 @@ static int setTimer(Context_t* context)
       wakeupTime = read_neutrino_timers(curTime);
    }
 
-   if (wakeupTime != 3000000000ul)
-   {
-      tsWakeupTime = localtime(&wakeupTime);
-      fprintf(stderr, "Wakeup Time:  %lu\n\t%02d:%02d:%02d %02d-%02d-%04d\n", wakeupTime,
-         tsWakeupTime->tm_hour, tsWakeupTime->tm_min, tsWakeupTime->tm_sec, 
-         tsWakeupTime->tm_mday, tsWakeupTime->tm_mon + 1, tsWakeupTime->tm_year + 1900);
-   }
-
    if ((wakeupTime == 0) || (wakeupTime == 3000000000ul))
    {
        /* nothing to do for e2 */   
-       fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
+       fprintf(stderr, "No timer found. Entering DeepStandby. ... good bye ...\n");
 
        vData.u.standby.time[0] = '\0';
        if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
@@ -248,18 +241,18 @@ static int setTimer(Context_t* context)
           perror("standby: ");
           return -1;
        }
-             
-   } else
+   }
+   else
    {
 #if 0
       unsigned long diff;
 
       fprintf(stderr, "waiting on current time from fp ...\n");
-		
+
       /* front controller time */
       if (ioctl(context->fd, VFDGETTIME, &vData) < 0)
       {
-	     perror("gettime: ");
+         perror("gettime: ");
          return -1;
       }
 
@@ -268,35 +261,44 @@ static int setTimer(Context_t* context)
 
       /* current front controller time */
       curTime = (time_t) getMicomTime(vData.u.get_time.time);
-	 
+
       printf("curTime (fp) = %ld\n", curTime);
 
       wakeupTime = curTime + diff;
 #else
-
+      // Get current Frontpanel time
       getTime(context, &curTimeFp);
       tsFp = localtime (&curTimeFp);
-      fprintf(stderr, "Current Fp Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-         tsFp->tm_hour, tsFp->tm_min, tsFp->tm_sec, tsFp->tm_mday, tsFp->tm_mon+1, tsFp->tm_year+1900);
+      fprintf(stderr, "Current Fp Time:     %02d:%02d:%02d %02d-%02d-%04d\n",
+         tsFp->tm_hour, tsFp->tm_min, tsFp->tm_sec, 
+         tsFp->tm_mday, tsFp->tm_mon + 1, tsFp->tm_year + 1900);
 
+      // Get current Linux time
       time(&curTime);
       ts = localtime (&curTime);
-      fprintf(stderr, "Current Linux Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-         ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
+      fprintf(stderr, "Current Linux Time:  %02d:%02d:%02d %02d-%02d-%04d\n",
+         ts->tm_hour, ts->tm_min, ts->tm_sec, 
+         ts->tm_mday, ts->tm_mon + 1, ts->tm_year + 1900);
 
+      // Set current Linux time as new current Frontpanel time
       setTime(context, &curTime);
 
+      // Print wakeup time
+      tsWakeupTime = localtime(&wakeupTime);
+      fprintf(stderr, "Planned Wakeup Time: %02d:%02d:%02d %02d-%02d-%04d\n", 
+         tsWakeupTime->tm_hour, tsWakeupTime->tm_min, tsWakeupTime->tm_sec, 
+         tsWakeupTime->tm_mday, tsWakeupTime->tm_mon + 1, tsWakeupTime->tm_year + 1900);
 #endif
-      printf("Setting Fp Wakeup Time to = %lu\n", wakeupTime);
-      
       setMicomTime(wakeupTime, vData.u.standby.time, 0);
-
-       if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-       {
-          perror("standby: ");
-          return -1;
-       }
+      fprintf(stderr, "Setting Fp Wakeup Time to = %s (mtime)\n", vData.u.standby.time);
+      if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
+      {
+         perror("standby: ");
+         return -1;
+      }
    }
+
+   printf("%s <-\n", __func__);
    return 0;
 }
 
