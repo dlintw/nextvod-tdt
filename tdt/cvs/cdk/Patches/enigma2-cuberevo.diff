@@ -1406,26 +1406,6 @@ diff -urN enigma2-nightly/lib/python/Plugins/SystemPlugins/VFD-Icons/plugin.py e
  		
  
  VFDIconsInstance = None
---- enigma2-nightly/lib/python/Components/Timezones.py	2010-05-03 13:45:15.006899015 +0200
-+++ enigma2-nightly/lib/python/Components/Timezones.py	2010-05-02 14:06:52.000000000 +0200
-@@ -50,6 +50,17 @@
- 		except:
- 			from enigma import e_tzset
- 			e_tzset()
-+#+++>
-+		import os
-+		try:
-+			os.popen("/bin/cubefpctl --setgmtoffset")
-+		except OSError:
-+			print "no memory"
-+		try:
-+			os.popen("/bin/cubefpctl --syncfptime")
-+		except OSError:
-+			print "no memory"
-+#+++<
- 		
- 	def getTimezoneList(self):
- 		return [ str(x[0]) for x in self.timezones ]
 --- enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2010-05-03 13:45:15.266902593 +0200
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2010-05-03 15:26:26.934973004 +0200
 @@ -1541,7 +1541,7 @@

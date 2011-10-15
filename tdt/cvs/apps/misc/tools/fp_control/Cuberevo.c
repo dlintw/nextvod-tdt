@@ -76,7 +76,7 @@ static void setMicomTime(time_t theGMTTime, char* destString, int seconds)
 //	now_tm = localtime(&theGMTTime);
 	now_tm = gmtime (&theGMTTime);
 
-	printf("Set Time (UTC): %02d:%02d:%02d %02d-%02d-%04d\n",
+	printf("Calculated FP Timestamp (UTC): %02d:%02d:%02d %02d-%02d-%04d\n",
 		now_tm->tm_hour, now_tm->tm_min, now_tm->tm_sec, now_tm->tm_mday, now_tm->tm_mon+1, now_tm->tm_year+1900);
 	
     if (seconds)
