@@ -144,7 +144,8 @@ gst_plugins_bad;0.10.21;gst-plugins-bad-0.10.21;gst-plugins-bad-0.10.21.tar.bz2;
 gst_plugins_ugly;0.10.17;gst-plugins-ugly-0.10.17;gst-plugins-ugly-0.10.17.tar.bz2;extract:gst-plugins-ugly-0.10.17.tar.bz2
 gst_ffmpeg;0.10.11;gst-ffmpeg-0.10.11;gst-ffmpeg-0.10.11.tar.bz2;extract:gst-ffmpeg-0.10.11.tar.bz2;patch:gst-ffmpeg-0.10.12_lower_rank.patch
 
-gst_plugins_dvbmediasink;0.10.1;../apps/misc/tools/gst-plugins-dvbmediasink
+gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;;link:../apps/misc/tools/gst-plugins-dvbmediasink:gst-plugins-dvbmediasink-0.10.1
+#gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;gst-plugins-dvbmediasink-0.10.1;link:../apps/misc/tools/gst-plugins-dvbmediasink:gst-plugins-dvbmediasink-0.10.1
 
 evebrowser;0.0.1;evebrowser-0.0.1
 dvbdata;0.6;dvbdata-0.6;dvbdata-0.6.tar.gz;extract:dvbdata-0.6.tar.gz
