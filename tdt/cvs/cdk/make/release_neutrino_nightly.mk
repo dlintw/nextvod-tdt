@@ -80,7 +80,7 @@ $(DEPDIR)/%release_neutrino_nightly:
 	cp -dp $(targetprefix)/sbin/sfdisk $(prefix)/$(release_dir)/sbin/ && \
 	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/$(release_dir)/sbin/ && \
 	cp -dp $(targetprefix)/sbin/blkid $(prefix)/$(release_dir)/sbin/ && \
-	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI) $(prefix)/$(release_dir)/sbin/MAKEDEV && \
+	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI)$(if $(ADB_BOX),_adb_box) $(prefix)/$(release_dir)/sbin/MAKEDEV && \
 	cp -dp $(targetprefix)/usr/sbin/vsftpd $(prefix)/$(release_dir)/usr/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/rdate $(prefix)/$(release_dir)/sbin/ && \
 	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/$(release_dir)/bin/ && \
