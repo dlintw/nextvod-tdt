@@ -47,6 +47,17 @@ then
 	poweroff=""
 fi
 
-halt -d -f -n -i $poweroff $hddown
+#/bin/fp_control -e
+
+
+#green led off
+/bin/fp_control -l 1 0
+
+#red led on
+/bin/fp_control -l 0 1
+x="`date +"%H%M"`" 
+/bin/fp_control -e $x
+echo "0" > /proc/progress
+halt -d -f -i $poweroff $hddown
 
 : exit 0
