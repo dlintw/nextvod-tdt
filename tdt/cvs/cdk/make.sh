@@ -6,6 +6,7 @@ if [ "$1" == -h ] || [ "$1" == --help ]; then
  echo "Parameter 3: debug (Y/N)"
  echo "Parameter 4: player(1-2)"
  echo "Parameter 5: Multicom(1-2)"
+ echo "Parameter 6: Media Framwork(1-2)"
  exit
 fi
 
@@ -367,7 +368,26 @@ esac
 
 ##############################################
 
-CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM"
+echo -e "\nMedia Framework:"
+echo "   1) eplayer3  (Recommended)"
+echo "   2) gstreamer (Only working with enigma2 diff0 at the moment)"
+case $5 in
+        [1-2]) REPLY=$6
+        echo -e "\nSelected media framwork: $REPLY\n"
+        ;;
+        *)
+        read -p "Select media framwork (1-2)? ";;
+esac
+
+case "$REPLY" in
+	1) MEDIAFW="";;
+	2) MEDIAFW="--enable-mediafwgstreamer";;
+	*) MEDIAFW="";;
+esac
+
+##############################################
+
+CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM $MEDIAFW"
 
 ##############################################
 

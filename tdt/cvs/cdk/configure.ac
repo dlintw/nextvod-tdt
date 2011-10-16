@@ -179,6 +179,12 @@ AC_ARG_WITH(assume-kernelsources-old,
 	[assume_kernelsources_old="yes"],[assume_kernelsources_old="no"])
 AM_CONDITIONAL(ASSUME_KERNELSOURCES_OLD,test "$assume_kernelsources_old" = "yes")
 
+AC_ARG_ENABLE(mediafwgstreamer,
+	AS_HELP_STRING(--enable-mediafwgstreamer,	set up the CDK to use mediafw gstreamer),
+	,[enable_mediafwgstreamer=no])
+AM_CONDITIONAL(ENABLE_MEDIAFWGSTREAMER,test "$enable_mediafwgstreamer" = "yes")
+AC_SUBST(MEDIAFWGSTREAMER)
+
 AC_ARG_ENABLE(flashrules,
 	AS_HELP_STRING(--enable-flashrules,	enable rules for creating flash targets),
 	,[enable_flashrules=yes])
@@ -488,6 +494,7 @@ AC_ARG_ENABLE(ipbox55,
 	esac],[enable_ipbox55=no])
 AM_CONDITIONAL(ENABLE_IPBOX55,test "$enable_ipbox55" = "yes")
 AC_SUBST(IPBOX55)
+
 
 
 AC_SUBST(CFLAGS)
@@ -831,6 +838,17 @@ else
 		KERNELLABEL="201"
 	fi
 fi
+fi
+
+AC_SUBST(MEDIAFW)
+AC_SUBST(MEDIAFW_DEP)
+
+if test "$enable_mediafwgstreamer" == "yes"; then
+	MEDIAFW="gstreamer"
+	MEDIAFW_DEP="gst_plugins_dvbmediasink"
+else
+	MEDIAFW="eplayer3"
+	MEDIAFW_DEP="ffmpeg"
 fi
 
 #TUXBOX_RULES_MAKE_EXDIR(binutils)
@@ -1188,6 +1206,9 @@ Player179                   : $enable_player179
 Player191                   : $enable_player191
 Multicom322                 : $enable_multicom322
 Multicom324                 : $enable_multicom324
+MediaFw Gstreamer           : $enable_mediafwgstreamer
+MediaFw                     : $MEDIAFW
+MediaFw Dep                 : $MEDIAFW_DEP
 ])
 
 if test "$dircheck" = "fail"; then
