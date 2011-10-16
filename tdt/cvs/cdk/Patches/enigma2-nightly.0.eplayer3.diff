@@ -1,3 +1,38 @@
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/configure.ac enigma2-nightly.patched/configure.ac
+--- enigma2-nightly.org/configure.ac	2011-09-03 18:23:23.590021783 +0200
++++ enigma2-nightly.patched/configure.ac	2011-09-03 18:23:47.060032502 +0200
+@@ -30,7 +30,7 @@
+ AM_CONDITIONAL(HAVE_GIT_DIR, test -d "$srcdir/.git")
+ AM_CONDITIONAL(HAVE_FAKE_GIT_DIR, test -f "$srcdir/.git/last_commit_info")
+ 
+-PKG_CHECK_MODULES(BASE, [freetype2 fribidi gstreamer-0.10 gstreamer-pbutils-0.10 libdvbsi++ libpng libxml-2.0 sigc++-1.2])
++PKG_CHECK_MODULES(BASE, [freetype2 fribidi libdvbsi++ libpng libxml-2.0 sigc++-1.2])
+ PKG_CHECK_MODULES(LIBDDVD, libdreamdvd, HAVE_LIBDDVD="yes", HAVE_LIBDDVD="no")
+ AM_CONDITIONAL(HAVE_LIBDDVD, test "$HAVE_LIBDDVD" = "yes")
+ 
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/enigma.cpp enigma2-nightly.patched/main/enigma.cpp
+--- enigma2-nightly.org/main/enigma.cpp	2011-09-03 18:23:28.060023358 +0200
++++ enigma2-nightly.patched/main/enigma.cpp	2011-09-03 18:23:47.560033163 +0200
+@@ -30,7 +30,9 @@
+ #include "bsod.h"
+ #include "version_info.h"
+ 
++#if not defined(__sh__)
+ #include <gst/gst.h>
++#endif
+ 
+ #ifdef OBJECT_DEBUG
+ int object_total_remaining;
+@@ -132,7 +147,9 @@
+ 	atexit(object_dump);
+ #endif
+ 
++#if not defined(__sh__)
+ 	gst_init(&argc, &argv);
++#endif
+ 
+ 	// set pythonpath if unset
+ 	setenv("PYTHONPATH", eEnv::resolve("${libdir}/enigma2/python").c_str(), 0);
 diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.am enigma2-nightly.patched/main/Makefile.am
 --- enigma2-nightly.org/main/Makefile.am	2011-09-03 18:23:28.030023423 +0200
 +++ enigma2-nightly.patched/main/Makefile.am	2011-09-03 18:23:47.570032972 +0200
