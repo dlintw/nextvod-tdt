@@ -45,15 +45,16 @@ unsigned long int read_e2_timers(time_t curTime)
 	char              line[12];
 	FILE              *fd = fopen (E2WAKEUPTIME, "r");
 
+	printf("Getting enigma2 wakeup time");
+
 	if (fd > 0)
 	{
 		fgets(line, 11, fd);
 		sscanf(line, "%lu", &recordTime);
-		printf("parsed wakeup_time \"%s\"=%lu\n", line, recordTime);
-	} else
-	{
-		printf("error reading %s\n", E2WAKEUPTIME);
+		printf(" - Done\n");
 	}
+	else
+		printf(" - Error reading %s\n", E2WAKEUPTIME);
 
 	return recordTime;
 }
@@ -64,6 +65,8 @@ unsigned long int read_e2_timers(time_t curTime)
 	char              recordString[11];
 	char              line[1000];
 	FILE              *fd = fopen (E2TIMERSXML, "r");
+
+	printf("Getting enigma2 wakeup time");
 
 	if (fd > 0)
 	{
@@ -79,8 +82,11 @@ unsigned long int read_e2_timers(time_t curTime)
 				recordTime = (tmp < recordTime && tmp > curTime ? tmp : recordTime);
 			}
 		}
-	} else
-		printf("error reading %s\n", E2TIMERSXML);
+		printf(" - Done\n");
+	}
+	else
+		printf(" - Error reading %s\n", E2TIMERSXML);
+
 
 	return recordTime;
 }
@@ -91,6 +97,8 @@ unsigned long int read_neutrino_timers(time_t curTime)
 	unsigned long int recordTime = 3000000000ul;
 	char              line[1000];
 	FILE              *fd = fopen (NEUTRINO_TIMERS, "r");
+
+	printf("Getting neutrino wakeup time");
 
 	if (fd > 0)
 	{
@@ -114,8 +122,10 @@ unsigned long int read_neutrino_timers(time_t curTime)
 				}
 			}
 		}
-	} else
-		printf("error reading %s\n", NEUTRINO_TIMERS);
+		printf(" - Done\n");
+	}
+	else
+		printf(" - Error reading %s\n", NEUTRINO_TIMERS);
 
 	return recordTime;
 }
