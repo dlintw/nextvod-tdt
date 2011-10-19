@@ -37,6 +37,8 @@ readable="  root root   0444"
  bpamem="  root root   0644"
 ramzswap="  root root   0644"
      rc="  root root   0644"
+ tundev="  root root   0644"	
+ ttyusb="  root root   0644"
 
 MAXVT=63
 
@@ -289,6 +291,8 @@ cvt () {
 			st200)  echo st220 st231;;
 			mme)    echo mme ;;
 			bpamem) echo bpamem ;;
+			ttyusb) echo ttyusb ;;
+			tundev) echo tundev ;;
 			ramzswap) echo ramzswap ;;
 			rc) echo rc ;;
 			*)	echo "$1" ;;
@@ -517,6 +521,8 @@ do
 		$0 $opts bpamem
 		$0 $opts ramzswap
 		$0 $opts rc
+		$0 $opts ttyusb
+		$0 $opts tundev
 		$0 $opts alsasnd
 		;;
 	generic-sparc)
@@ -2058,6 +2064,19 @@ do
 		makedev usb/rio500 c $major 64 $audio
 		makedev usb/usblcd c $major 65 $audio
 		makedev usb/cpad0 c $major 66 $audio
+		;;
+	ttyusb)
+		major=188
+		for i in 0 1 2 3 4 5 6 7 8 9
+		do
+			makedev ttyUSB$i c $major $i $ttyusb
+		done
+		;;
+	tundev)
+		mkdir -p net
+		major=10
+		i=200
+		makedev net/tun c $major $i $tundev	
 		;;
 	bluetooth)
 		major=216
