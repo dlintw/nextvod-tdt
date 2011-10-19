@@ -1645,6 +1645,7 @@ $(DEPDIR)/libflac.do_compile: $(DEPDIR)/libflac.do_prepare
 		--host=$(target) \
 		--prefix=/usr \
 		--disable-oggtest --disable-id3libtest \
+		--disable-asm-optimizations \
 		--disable-doxygen-docs \
 		--disable-xmms-plugin \
 		--without-xmms-prefix \
@@ -1713,7 +1714,7 @@ $(DEPDIR)/%gst_plugins_base: $(DEPDIR)/gst_plugins_base.do_compile
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 # GST-PLUGINS-GOOD
-$(DEPDIR)/gst_plugins_good.do_prepare: bootstrap gstreamer gst_plugins_base libsoup @DEPENDS_gst_plugins_good@
+$(DEPDIR)/gst_plugins_good.do_prepare: bootstrap gstreamer gst_plugins_base libsoup libflac @DEPENDS_gst_plugins_good@
 	@PREPARE_gst_plugins_good@
 	touch $@
 
