@@ -35,6 +35,8 @@ readable="  root root   0444"
   st231="  root root   0644"
     mme="  root root   0644"
  bpamem="  root root   0644"
+ramzswap="  root root   0644"
+     rc="  root root   0644"
 
 MAXVT=63
 
@@ -284,9 +286,11 @@ cvt () {
 			ramdisk)	echo ram ;;
 			mtd)	echo mtdblock mtd mtdr ;;
 			lirc)   echo lirc ;;
-                        st200)  echo st220 st231;;
-                        mme)    echo mme ;;
-                        bpamem) echo bpamem ;;
+			st200)  echo st220 st231;;
+			mme)    echo mme ;;
+			bpamem) echo bpamem ;;
+			ramzswap) echo ramzswap ;;
+			rc) echo rc ;;
 			*)	echo "$1" ;;
 		esac
 		shift
@@ -508,9 +512,11 @@ do
 		$0 $opts fb
 		$0 $opts rtc
 		$0 $opts lirc
-                $0 $opts st200
-                $0 $opts mme
-                $0 $opts bpamem
+		$0 $opts st200
+		$0 $opts mme
+		$0 $opts bpamem
+		$0 $opts ramzswap
+		$0 $opts rc
 		$0 $opts alsasnd
 		;;
 	generic-sparc)
@@ -1958,8 +1964,41 @@ do
         	makedev bpamem2 c 153 2 $bpamem
         	makedev bpamem3 c 153 3 $bpamem
         	makedev bpamem4 c 153 4 $bpamem
+        	makedev bpamem5 c 153 5 $bpamem
+        	makedev bpamem6 c 153 6 $bpamem
+        	makedev bpamem7 c 153 7 $bpamem
+        	makedev bpamem8 c 153 8 $bpamem
+        	makedev bpamem9 c 153 9 $bpamem
+        	makedev bpamem10 c 153 10 $bpamem
+        	makedev bpamem11 c 153 11 $bpamem
+        	makedev bpamem12 c 153 12 $bpamem
+        	makedev bpamem13 c 153 13 $bpamem
+        	makedev bpamem14 c 153 14 $bpamem
+        	makedev bpamem15 c 153 15 $bpamem
+        	makedev bpamem16 c 153 16 $bpamem
+        	makedev bpamem17 c 153 17 $bpamem
+        	makedev bpamem18 c 153 18 $bpamem
+        	makedev bpamem19 c 153 19 $bpamem
+        	makedev bpamem20 c 153 20 $bpamem
+        	makedev bpamem21 c 153 21 $bpamem
+        	makedev bpamem22 c 153 22 $bpamem
+        	makedev bpamem23 c 153 23 $bpamem
+        	makedev bpamem24 c 153 24 $bpamem
+        	makedev bpamem25 c 153 25 $bpamem
+        	makedev bpamem26 c 153 26 $bpamem
+        	makedev bpamem27 c 153 27 $bpamem
+        	makedev bpamem28 c 153 28 $bpamem
+        	makedev bpamem29 c 153 29 $bpamem
+        	makedev bpamem30 c 153 30 $bpamem
+        	makedev bpamem31 c 153 31 $bpamem
+        	makedev bpamem32 c 153 32 $bpamem
         	;;
-
+	ramzswap)
+		makedev ramzswap0 b 253 0 $ramzswap
+		;;
+	rc)
+		makedev rc c 147 1 $rc
+		;;
 	comedi)
 		major=98
 		for minor in 0 1 2 3
