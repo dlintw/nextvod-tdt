@@ -102,9 +102,9 @@ static Model_t * AvailableModels[] = {
 };
 
 double modJulianDate(struct tm *theTime);
-unsigned long int read_e2_timers(time_t curTime);
+time_t read_e2_timers(time_t curTime);
+time_t read_neutrino_timers(time_t curTime);
 int searchModel(Context_t  *context, eBoxType type);
 int checkConfig(int* display, int* display_custom, char** timeFormat, int* wakeup);
-unsigned long int read_neutrino_timers(time_t curTime);
 
 #endif

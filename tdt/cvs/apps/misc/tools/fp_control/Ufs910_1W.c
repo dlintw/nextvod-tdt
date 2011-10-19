@@ -29,6 +29,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
+#include <limits.h>
 #include <sys/ioctl.h>
 
 #include "global.h"
@@ -177,7 +178,7 @@ static int setTimer(Context_t* context)
    /* failed to read e2 timers so lets take a look if
     * we are running on neutrino
     */
-   if (wakeupTime == 3000000000ul)
+   if (wakeupTime == LONG_MAX)
    {
       wakeupTime = read_neutrino_timers(curTime);
    }

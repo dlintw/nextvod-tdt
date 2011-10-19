@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <limits.h>
 #include <sys/ioctl.h>
 
 #include "global.h"
@@ -218,9 +219,9 @@ static int getWakeupTime(Context_t* context, time_t* theGMTTime)
 static int setTimer(Context_t* context)
 {
    struct micom_ioctl_data vData;
-   time_t                  curTime=0;
-   time_t                  curTimeFp=0;
-   time_t                  wakeupTime=0;
+   time_t                  curTime    = 0;
+   time_t                  curTimeFp  = 0;
+   time_t                  wakeupTime = 0;
    struct tm               *ts;
    struct tm               *tsFp;
    struct tm               *tsWakeupTime;
@@ -251,10 +252,10 @@ static int setTimer(Context_t* context)
    /* failed to read e2 timers so lets take a look if
     * we are running on neutrino
     */
-   if (wakeupTime == 3000000000ul)
+   if (wakeupTime == LONG_MAX)
       wakeupTime = read_neutrino_timers(curTime);
 
-   if ((wakeupTime == 0) || (wakeupTime == 3000000000ul))
+   if ((wakeupTime == 0) || (wakeupTime == LONG_MAX))
    {
        /* clear timer */
        vData.u.standby.time[0] = '\0';

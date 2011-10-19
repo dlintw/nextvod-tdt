@@ -24,6 +24,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <limits.h>
 #include <sys/ioctl.h>
 
 #include "global.h"
@@ -39,18 +40,18 @@ char * sDisplayStd = "%a %d %H:%M:%S";
 
 #define E2_WAKEUP_TIME_PROC
 #ifdef E2_WAKEUP_TIME_PROC
-unsigned long int read_e2_timers(time_t curTime)
+time_t read_e2_timers(time_t curTime)
 {
-	unsigned long int recordTime = 3000000000ul;
-	char              line[12];
-	FILE              *fd = fopen (E2WAKEUPTIME, "r");
+	char   line[12];
+	time_t recordTime = LONG_MAX;
+	FILE   *fd        = fopen (E2WAKEUPTIME, "r");
 
 	printf("Getting enigma2 wakeup time");
 
 	if (fd > 0)
 	{
 		fgets(line, 11, fd);
-		sscanf(line, "%lu", &recordTime);
+		sscanf(line, "%ld", &recordTime);
 		printf(" - Done\n");
 	}
 	else
@@ -59,12 +60,12 @@ unsigned long int read_e2_timers(time_t curTime)
 	return recordTime;
 }
 #else
-unsigned long int read_e2_timers(time_t curTime)
+time_t read_e2_timers(time_t curTime)
 {
-	unsigned long int recordTime = 3000000000ul;
-	char              recordString[11];
-	char              line[1000];
-	FILE              *fd = fopen (E2TIMERSXML, "r");
+	char   recordString[11];
+	char   line[1000];
+	time_t recordTime = LONG_MAX;
+	FILE   *fd        = fopen (E2TIMERSXML, "r");
 
 	printf("Getting enigma2 wakeup time");
 
@@ -92,11 +93,11 @@ unsigned long int read_e2_timers(time_t curTime)
 }
 #endif
 
-unsigned long int read_neutrino_timers(time_t curTime)
+time_t read_neutrino_timers(time_t curTime)
 {
-	unsigned long int recordTime = 3000000000ul;
-	char              line[1000];
-	FILE              *fd = fopen (NEUTRINO_TIMERS, "r");
+	char   line[1000];
+	time_t recordTime = LONG_MAX;
+	FILE   *fd        = fopen (NEUTRINO_TIMERS, "r");
 
 	printf("Getting neutrino wakeup time");
 
@@ -110,7 +111,7 @@ unsigned long int read_neutrino_timers(time_t curTime)
 
 			if (strstr(line, "ALARM_TIME_") != NULL )
 			{
-				unsigned long int tmp = 0;
+				time_t tmp = 0;
 				char* str;
 
 				str = strstr(line, "=");
@@ -135,41 +136,41 @@ unsigned long int read_neutrino_timers(time_t curTime)
 double modJulianDate(struct tm *theTime)
 {
 
-  double date;
-  int month;
-  int day; 
-  int year;
+	double date;
+	int month;
+	int day; 
+	int year;
 
-  year  = theTime->tm_year + 1900;
-  month = theTime->tm_mon + 1;
-  day   = theTime->tm_mday;
+	year  = theTime->tm_year + 1900;
+	month = theTime->tm_mon + 1;
+	day   = theTime->tm_mday;
 
-  date = day - 32076 + 
-    1461 * (year + 4800 + (month - 14)/12)/4 +
-    367 * (month - 2 - (month - 14)/12*12)/12 - 
-    3 * ((year + 4900 + (month - 14)/12)/100)/4;
+	date = day - 32076 + 
+		1461 * (year + 4800 + (month - 14)/12)/4 +
+		367 * (month - 2 - (month - 14)/12*12)/12 - 
+		3 * ((year + 4900 + (month - 14)/12)/100)/4;
 
-  date += (theTime->tm_hour + 12.0)/24.0;
-  date += (theTime->tm_min)/1440.0;
-  date += (theTime->tm_sec)/86400.0;
+	date += (theTime->tm_hour + 12.0)/24.0;
+	date += (theTime->tm_min)/1440.0;
+	date += (theTime->tm_sec)/86400.0;
 
-  date -= 2400000.5;
+	date -= 2400000.5;
 
-  return date;
+	return date;
 }
 
 /* ********************************************** */
 
 int searchModel(Context_t  *context, eBoxType type) {
-    int i;
-    for (i = 0; AvailableModels[i] != NULL; i++)
+	int i;
+	for (i = 0; AvailableModels[i] != NULL; i++)
 
-        if (AvailableModels[i]->Type == type) {
-            context->m = AvailableModels[i];
-            return 0;
-        }
+		if (AvailableModels[i]->Type == type) {
+			context->m = AvailableModels[i];
+			return 0;
+		}
 
-    return -1;
+	return -1;
 }
 
 int checkConfig(int* display, int* display_custom, char** timeFormat, int* wakeup) {
@@ -189,7 +190,7 @@ int checkConfig(int* display, int* display_custom, char** timeFormat, int* wakeu
 	{
 		printf("config file (%s) not found, use standard config", CONFIG);
 		printf("configs: DISPLAY = %d, DISPLAYCUSTOM = %d, CUSTOM = %s, WAKEUPDECREMENT  %d\n", 
-	            *display, *display_custom, *timeFormat, *wakeup);
+			*display, *display_custom, *timeFormat, *wakeup);
 		return -1;
 	}
 	
@@ -211,10 +212,10 @@ int checkConfig(int* display, int* display_custom, char** timeFormat, int* wakeu
 	}
 	
 	if (*timeFormat == NULL)
-	   *timeFormat = sDisplayStd;
+		*timeFormat = sDisplayStd;
 	
 	printf("configs: DISPLAY = %d, DISPLAYCUSTOM = %d, CUSTOM = %s, WAKEUPDECREMENT  %d\n", 
-	            *display, *display_custom, *timeFormat, *wakeup);
+		*display, *display_custom, *timeFormat, *wakeup);
 	
 	fclose(fd_config);
 	
