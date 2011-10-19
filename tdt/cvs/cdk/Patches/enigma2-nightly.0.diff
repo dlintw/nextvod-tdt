@@ -7410,7 +7410,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/bsod.cpp 
 diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/enigma.cpp enigma2-nightly.patched/main/enigma.cpp
 --- enigma2-nightly.org/main/enigma.cpp	2011-09-03 18:23:28.060023358 +0200
 +++ enigma2-nightly.patched/main/enigma.cpp	2011-09-03 18:23:47.560033163 +0200
-@@ -27,10 +27,18 @@
+@@ -27,6 +27,14 @@
  #include <lib/python/connections.h>
  #include <lib/python/python.h>
  
@@ -7425,11 +7425,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/enigma.cp
  #include "bsod.h"
  #include "version_info.h"
  
- #include <gst/gst.h>
- 
- #ifdef OBJECT_DEBUG
- int object_total_remaining;
-@@ -124,6 +134,11 @@
+@@ -124,6 +132,11 @@
  
  int main(int argc, char **argv)
  {
@@ -7441,7 +7437,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/enigma.cp
  #ifdef MEMLEAK_CHECK
  	atexit(DumpUnfreed);
  #endif
-@@ -227,6 +244,12 @@
+@@ -227,6 +240,12 @@
  	gRC::getInstance()->setSpinnerDC(my_dc);
  
  	eRCInput::getInstance()->keyEvent.connect(slot(keyEvent));
