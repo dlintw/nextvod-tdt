@@ -81,8 +81,8 @@ neutrino-nightly-clean neutrino-nightly-distclean:
 	rm -f $(DEPDIR)/neutrino-nightly
 	rm -f $(DEPDIR)/neutrino-nightly.do_compile
 	rm -f $(DEPDIR)/neutrino-nightly.do_prepare
+	rm -rf $(appsdir)/neutrino-nightly.org
 	rm -rf $(appsdir)/neutrino-nightly
-
 
 #
 #NORMAL
