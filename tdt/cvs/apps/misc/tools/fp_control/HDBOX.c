@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <limits.h>
 #include <sys/ioctl.h>
 
 #include "global.h"
@@ -202,7 +203,7 @@ static int setTimer(Context_t* context)
     * we are running on neutrino
     */
 
-   if (wakeupTime == 3000000000ul)
+   if (wakeupTime == LONG_MAX)
    {
       wakeupTime = read_neutrino_timers(curTime);
    }

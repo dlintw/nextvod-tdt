@@ -37,6 +37,8 @@ readable="  root root   0444"
  bpamem="  root root   0644"
 ramzswap="  root root   0644"
      rc="  root root   0644"
+ tundev="  root root   0644"
+ ttyusb="  root root   0644"
 
 MAXVT=63
 
@@ -222,7 +224,11 @@ cvt () {
 			ide7)	echo hdo hdp ;;
 			ide8)	echo hdq hdr ;;
 			ide9)	echo hds hdt ;;
-			sd)	echo sda sdb sdc sdd ;;
+			sd)   (for d in a b c d e f g h i j k l m \
+					n o p q r s t u v w x y z ; do
+					echo -n sd$d " "
+				done) ; echo
+				;;
 			dasd)   (for d in a b c d e f g h i j k l m \
 					n o p q r s t u v w x y z ; do
 					echo -n dasd$d " "
@@ -289,6 +295,8 @@ cvt () {
 			st200)  echo st220 st231;;
 			mme)    echo mme ;;
 			bpamem) echo bpamem ;;
+			ttyusb) echo ttyusb ;;
+			tundev) echo tundev ;;
 			ramzswap) echo ramzswap ;;
 			rc) echo rc ;;
 			*)	echo "$1" ;;
@@ -517,6 +525,8 @@ do
 		$0 $opts bpamem
 		$0 $opts ramzswap
 		$0 $opts rc
+		$0 $opts ttyusb
+		$0 $opts tundev
 		$0 $opts alsasnd
 		;;
 	generic-sparc)
@@ -1942,57 +1952,30 @@ do
 	lirc)
 		makedev lirc c 61 0 $mouse
 		;;
-        st220)
-                makedev st220 c 63 0 $st220
-                symlink st220-0 st220
-                for i in 1 2
-                do
-                        makedev st220-$i c 63 $i $st220
-                done
-                ;;
-        st231)
-                makedev st231 c 63 0 $st231
-                symlink st231-0 st231
-                makedev st231-1 c 63 1 $st231
-                makedev st231-2 c 63 1 $st231
-                makedev st231-3 c 63 1 $st231
-                ;;
-        mme)    makedev mme c 231 0 $mme
-        	;;
-        bpamem) makedev bpamem0 c 153 0 $bpamem 
-        	makedev bpamem1 c 153 1 $bpamem
-        	makedev bpamem2 c 153 2 $bpamem
-        	makedev bpamem3 c 153 3 $bpamem
-        	makedev bpamem4 c 153 4 $bpamem
-        	makedev bpamem5 c 153 5 $bpamem
-        	makedev bpamem6 c 153 6 $bpamem
-        	makedev bpamem7 c 153 7 $bpamem
-        	makedev bpamem8 c 153 8 $bpamem
-        	makedev bpamem9 c 153 9 $bpamem
-        	makedev bpamem10 c 153 10 $bpamem
-        	makedev bpamem11 c 153 11 $bpamem
-        	makedev bpamem12 c 153 12 $bpamem
-        	makedev bpamem13 c 153 13 $bpamem
-        	makedev bpamem14 c 153 14 $bpamem
-        	makedev bpamem15 c 153 15 $bpamem
-        	makedev bpamem16 c 153 16 $bpamem
-        	makedev bpamem17 c 153 17 $bpamem
-        	makedev bpamem18 c 153 18 $bpamem
-        	makedev bpamem19 c 153 19 $bpamem
-        	makedev bpamem20 c 153 20 $bpamem
-        	makedev bpamem21 c 153 21 $bpamem
-        	makedev bpamem22 c 153 22 $bpamem
-        	makedev bpamem23 c 153 23 $bpamem
-        	makedev bpamem24 c 153 24 $bpamem
-        	makedev bpamem25 c 153 25 $bpamem
-        	makedev bpamem26 c 153 26 $bpamem
-        	makedev bpamem27 c 153 27 $bpamem
-        	makedev bpamem28 c 153 28 $bpamem
-        	makedev bpamem29 c 153 29 $bpamem
-        	makedev bpamem30 c 153 30 $bpamem
-        	makedev bpamem31 c 153 31 $bpamem
-        	makedev bpamem32 c 153 32 $bpamem
-        	;;
+	st220)
+		makedev st220 c 63 0 $st220
+		symlink st220-0 st220
+		for i in 1 2
+		do
+			makedev st220-$i c 63 $i $st220
+		done
+		;;
+	st231)
+		makedev st231 c 63 0 $st231
+		symlink st231-0 st231
+		makedev st231-1 c 63 1 $st231
+		makedev st231-2 c 63 1 $st231
+		makedev st231-3 c 63 1 $st231
+		;;
+	mme)
+		makedev mme c 231 0 $mme
+		;;
+	bpamem)
+		for i in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32
+		do
+			makedev bpamem$i c 153 $i $bpamem
+		done
+		;;
 	ramzswap)
 		makedev ramzswap0 b 253 0 $ramzswap
 		;;
@@ -2058,6 +2041,19 @@ do
 		makedev usb/rio500 c $major 64 $audio
 		makedev usb/usblcd c $major 65 $audio
 		makedev usb/cpad0 c $major 66 $audio
+		;;
+	ttyusb)
+		major=188
+		for i in 0 1 2 3 4 5 6 7 8 9
+		do
+			makedev ttyUSB$i c $major $i $ttyusb
+		done
+		;;
+	tundev)
+		mkdir -p net
+		major=10
+		i=200
+		makedev net/tun c $major $i $tundev	
 		;;
 	bluetooth)
 		major=216
