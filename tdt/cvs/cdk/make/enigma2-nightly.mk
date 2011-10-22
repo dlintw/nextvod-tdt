@@ -12,6 +12,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	rm -rf $(appsdir)/enigma2-nightly; \
 	rm -rf $(appsdir)/enigma2-nightly.org; \
 	rm -rf $(appsdir)/enigma2-nightly.newest; \
+	rm -rf $(appsdir)/enigma2-nightly.patched; \
 	clear; \
 	echo "Media Framwork: $(MEDIAFW)"; \
 	echo "Choose between the following revisions:"; \
