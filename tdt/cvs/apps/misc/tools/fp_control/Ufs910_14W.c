@@ -323,7 +323,7 @@ static int getTime(Context_t* context, time_t* theGMTTime)
    return -1;
 }
 	
-static int setTimer(Context_t* context)
+static int setTimer(Context_t* context, time_t* theGMTTime)
 {
    time_t                  curTime;
    struct tm               *ts;
@@ -340,43 +340,10 @@ static int setTimer(Context_t* context)
 
    startPseudoStandby(context, private);
 
-   private->wakeupTime = read_e2_timers(curTime);
-
-   /* failed to read e2 timers so lets take a look if
-    * we are running on neutrino
-    */
-   if (private->wakeupTime == LONG_MAX)
-   {
-      private->wakeupTime = read_neutrino_timers(curTime);
-   }
-
-   private->wakeupTime -= private->wakeupDecrement;
-
-   Sleep(context, &private->wakeupTime);
-
-   stopPseudoStandby(context, private);
-
-   return 0;
-}
-
-static int setTimerManual(Context_t* context, time_t* theGMTTime)
-{
-   time_t                  curTime;
-   struct tm               *ts;
-   tUFS910Private* private = (tUFS910Private*) 
-        ((Model_t*)context->m)->private;
-   
-   printf("%s\n", __func__);
-
-   time(&curTime);
-   ts = localtime (&curTime);
-
-   fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
-
-   startPseudoStandby(context, private);
-
-   private->wakeupTime = *theGMTTime;
+   if (theGMTTime == NULL)
+      private->wakeupTime = read_timers_utc(curTime);
+   else
+      private->wakeupTime = *theGMTTime;
 
    Sleep(context, &private->wakeupTime);
 
@@ -639,12 +606,6 @@ static int setLight(Context_t* context, int on)
     return 0;
 }
 
-static int getWakeupReason(Context_t* context, int* reason)
-{
-   fprintf(stderr, "%s: not implemented\n", __func__);
-   return -1;
-}
-
 static int Exit(Context_t* context)
 {
     tUFS910Private* private = (tUFS910Private*) 
@@ -693,7 +654,6 @@ Model_t Ufs910_14W_model = {
 	.SetTime                   = setTime,
 	.GetTime                   = getTime,
 	.SetTimer                  = setTimer,
-	.SetTimerManual            = setTimerManual,
 	.GetTimer                  = getTimer,
 	.Shutdown                  = shutdown,
 	.Reboot                    = reboot,
@@ -703,13 +663,9 @@ Model_t Ufs910_14W_model = {
 	.SetIcon                   = setIcon,
 	.SetBrightness              = setBrightness,
 	.SetPwrLed                 = setPwrLed,
-	.GetWakeupReason           = getWakeupReason,
 	.SetLight                  = setLight,
 	.Exit                      = Exit,
     .SetLedBrightness          = NULL,
-    .GetVersion                = NULL,
-    .SetWakeupReason           = NULL,
-    .writeWakeupFile           = NULL,
 	.SetRF                     = NULL,
     .SetFan                    = NULL,
     .private                   = NULL,

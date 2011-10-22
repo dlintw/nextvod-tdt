@@ -169,7 +169,7 @@ static int Spark_getTime(Context_t* context, time_t* theGMTTime)
    return 0;
 }
 
-static int Spark_setTimer(Context_t* context)
+static int Spark_setTimer(Context_t* context, time_t* theGMTTime)
 {
    struct aotom_ioctl_data vData;
    time_t                  curTime;
@@ -184,19 +184,12 @@ static int Spark_setTimer(Context_t* context)
    fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
 	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
 
-   wakeupTime = read_e2_timers(curTime);
+   if (theGMTTime == NULL)
+      wakeupTime = read_timers_utc(curTime);
+   else
+      wakeupTime = *theGMTTime;
 
-   /* failed to read e2 timers so lets take a look if
-    * we are running on neutrino
-    */
-   if (wakeupTime == LONG_MAX)
-   {
-      wakeupTime = read_neutrino_timers(curTime);
-   }
-
-   wakeupTime -= private->wakeupDecrement;
-
-   if ((wakeupTime == 0) || (curTime > wakeupTime))
+   if ((wakeupTime <= 0) || (wakeupTime == LONG_MAX))
    {
        /* nothing to do for e2 */
        fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
@@ -250,77 +243,6 @@ static int Spark_setTimer(Context_t* context)
    return 0;
 }
 
-static int Spark_setTimerManual(Context_t* context, time_t* theGMTTime)
-{
-   struct aotom_ioctl_data vData;
-   time_t                  curTime;
-   time_t                  wakeupTime;
-   struct tm               *ts;
-
-   time(&curTime);
-   ts = localtime (&curTime);
-
-   fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
-
-   wakeupTime = *theGMTTime;
-
-   if ((wakeupTime == 0) || (curTime > wakeupTime))
-   {
-       /* nothing to do for e2 */
-       fprintf(stderr, "wrong timer parsed clearing fp wakeup time ... good bye ...\n");
-
-       vData.u.standby.time[0] = '\0';
-
-       if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-       {
-	  perror("standby: ");
-          return -1;
-       }
-
-   } else
-   {
-      unsigned long diff;
-   	  time_t iTime;
-
-      fprintf(stderr, "waiting on current time from fp ...\n");
-
-      /* front controller time */
-      if (ioctl(context->fd, VFDGETTIME, &iTime) < 0)
-      {
-	 	 perror("gettime: ");
-         return -1;
-      }
-
-      /* difference from now to wake up */
-      diff = (unsigned long int) wakeupTime - curTime;
-
-      /* if we get the fp time */
-      if (iTime != '\0')
-      {
-         fprintf(stderr, "success reading time from fp\n");
-
-         /* current front controller time */
-         curTime = iTime;
-      } else
-      {
-          fprintf(stderr, "error reading time ... assuming localtime\n");
-          /* noop current time already set */
-      }
-
-      wakeupTime = curTime + diff;
-
-      Spark_setAotomTime(wakeupTime, vData.u.standby.time);
-
-      if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-      {
-	 perror("standby: ");
-         return -1;
-      }
-   }
-   return 0;
-}
-
 static int Spark_getTimer(Context_t* context, time_t* theGMTTime)
 {
    fprintf(stderr, "%s: not implemented\n", __func__);
@@ -333,7 +255,7 @@ static int Spark_shutdown(Context_t* context, time_t* shutdownTimeGMT)
 
    /* shutdown immediate */
    if (*shutdownTimeGMT == -1)
-      return (Spark_setTimer(context));
+      return (Spark_setTimer(context, NULL));
 
    while (1)
    {
@@ -344,7 +266,7 @@ static int Spark_shutdown(Context_t* context, time_t* shutdownTimeGMT)
       if (curTime >= *shutdownTimeGMT)
       {
           /* set most recent e2 timer and bye bye */
-          return (Spark_setTimer(context));
+          return (Spark_setTimer(context, NULL));
       }
 
       usleep(100000);
@@ -517,12 +439,6 @@ static int Spark_setLight(Context_t* context, int on)
     return 0;
 }
 
-static int Spark_getWakeupReason(Context_t* context, int* reason)
-{
-   fprintf(stderr, "%s: not implemented\n", __func__);
-   return -1;
-}
-
 static int Spark_Exit(Context_t* context)
 {
    tSparkPrivate* private = (tSparkPrivate*)
@@ -557,7 +473,6 @@ Model_t Spark_model = {
 	.SetTime                   = Spark_setTime,
 	.GetTime                   = Spark_getTime,
 	.SetTimer                  = Spark_setTimer,
-	.SetTimerManual            = Spark_setTimerManual,
 	.GetTimer                  = Spark_getTimer,
 	.Shutdown                  = Spark_shutdown,
 	.Reboot                    = Spark_reboot,
@@ -565,15 +480,12 @@ Model_t Spark_model = {
 	.SetText                   = Spark_setText,
 	.SetLed                    = Spark_setLed,
 	.SetIcon                   = Spark_setIcon,
-	.SetBrightness              = Spark_setBrightness,
+	.SetBrightness             = Spark_setBrightness,
 	.SetPwrLed                 = Spark_setPwrLed,
-	.GetWakeupReason           = Spark_getWakeupReason,
 	.SetLight                  = Spark_setLight,
 	.Exit                      = Spark_Exit,
     .SetLedBrightness          = NULL,
     .GetVersion                = NULL,
-    .SetWakeupReason           = NULL,
-    .writeWakeupFile           = NULL,
 	.SetRF                     = NULL,
     .SetFan                    = NULL,
     .private                   = NULL,

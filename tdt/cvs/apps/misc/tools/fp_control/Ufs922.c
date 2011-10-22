@@ -186,7 +186,7 @@ static int getTime(Context_t* context, time_t* theGMTTime)
    return 0;
 }
 	
-static int setTimer(Context_t* context)
+static int setTimer(Context_t* context, time_t* theGMTTime)
 {
    struct micom_ioctl_data vData;
    time_t                  curTime    = 0;
@@ -217,15 +217,12 @@ static int setTimer(Context_t* context)
    // Set current Linux time as new current Frontpanel time
    setTime(context, &curTime);
 
-   wakeupTime = read_e2_timers(curTime);
+   if (theGMTTime == NULL)
+      wakeupTime = read_timers_utc(curTime);
+   else
+      wakeupTime = *theGMTTime;
 
-   /* failed to read e2 timers so lets take a look if
-    * we are running on neutrino
-    */
-   if (wakeupTime == LONG_MAX)
-      wakeupTime = read_neutrino_timers(curTime);
-
-   if ((wakeupTime == 0) || (wakeupTime == LONG_MAX))
+   if ((wakeupTime <= 0) || (wakeupTime == LONG_MAX))
    {
        /* clear timer */
        vData.u.standby.time[0] = '\0';
@@ -256,77 +253,6 @@ static int setTimer(Context_t* context)
    return 0;
 }
 
-static int setTimerManual(Context_t* context, time_t* theGMTTime)
-{
-   struct micom_ioctl_data vData;
-   time_t                  curTime;
-   time_t                  wakeupTime;
-   struct tm               *ts;
-
-   time(&curTime);
-   ts = localtime (&curTime);
-
-   fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
-
-   wakeupTime = *theGMTTime;
-   
-   if ((wakeupTime == 0) || (curTime > wakeupTime))
-   {
-       /* nothing to do for e2 */   
-       fprintf(stderr, "wrong timer parsed clearing fp wakeup time ... good bye ...\n");
-
-       vData.u.standby.time[0] = '\0';
-
-       if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-       {
-	  perror("standby: ");
-          return -1;
-       }
-             
-   } else
-   {
-      unsigned long diff;
-      char   	    fp_time[8];
-
-      fprintf(stderr, "waiting on current time from fp ...\n");
-		
-      /* front controller time */
-      if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
-      {
-	 perror("gettime: ");
-         return -1;
-      }
-		
-      /* difference from now to wake up */
-      diff = (unsigned long int) wakeupTime - curTime;
-
-      /* if we get the fp time */
-      if (fp_time[0] != '\0')
-      {
-         fprintf(stderr, "success reading time from fp\n");
-			
-         /* current front controller time */
-         curTime = (time_t) getMicomTime(fp_time);
-      } else
-      {
-          fprintf(stderr, "error reading time ... assuming localtime\n");
-          /* noop current time already set */
-      }
-
-      wakeupTime = curTime + diff;
-
-      setMicomTime(wakeupTime, vData.u.standby.time);
-
-      if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-      {
-	 perror("standby: ");
-         return -1;
-      }
-   }
-   return 0;
-}
-
 static int getTimer(Context_t* context, time_t* theGMTTime)
 {
    fprintf(stderr, "%s: not implemented\n", __func__);
@@ -339,7 +265,7 @@ static int shutdown(Context_t* context, time_t* shutdownTimeGMT)
    
    /* shutdown immediate */
    if (*shutdownTimeGMT == -1)
-      return (setTimer(context));
+      return (setTimer(context, NULL));
 
    while (1)
    {
@@ -350,7 +276,7 @@ static int shutdown(Context_t* context, time_t* shutdownTimeGMT)
       if (curTime >= *shutdownTimeGMT)
       {
           /* set most recent e2 timer and bye bye */
-          return (setTimer(context));
+          return (setTimer(context, NULL));
       }
 
       usleep(100000);
@@ -510,51 +436,11 @@ static int setBrightness(Context_t* context, int brightness)
    return 0;   
 }
 
-static int setWakeupReason(Context_t* context)
-{
-   time_t                  curTimeFP;
-   time_t                  wakeupTime;
-   int                     reason;
-   
-   reason = 0;
-   FILE *datei1 = fopen(WAKEUPFILE,"r");
-	 if(datei1 != NULL) {
-     fscanf(datei1,"%ld", &wakeupTime);
-     fclose(datei1);
-     if (wakeupTime < 1999999999) {
-     	 int rc = getTime(context, &curTimeFP);
-     	 if (rc == 0) {
-     	 	 if (curTimeFP >= wakeupTime) {
-     	 	 	 reason = 1;
-     	 	 }
-     	 }
-     }
-   }
-   else {
-   	 printf("wakeup File not found\n");
-   }
-   if (reason == 1) {
-     FILE *fd = fopen(WAS_TIMER_WAKEUP, "w");
-     if(fd == NULL) {
-       fprintf(stderr, "setWakeupReason failed to open %s\n", WAS_TIMER_WAKEUP);
-       return -1;
-     }
-     if(fwrite("1\n", 2, 1, fd) != 1)
-       fprintf(stderr, "setWakeupReason failed to write to %s\n", WAS_TIMER_WAKEUP);
-     else
-       fprintf(stderr, "setWakeupReason set %s to 1\n", WAS_TIMER_WAKEUP);
-     fclose(fd);
-     return 0;
-   } 
-   return 0;
-}
-
 static int setPwrLed(Context_t* context, int brightness)
 {
 	fprintf(stderr, "%s: not implemented\n", __func__);
 	return -1;
 }
-
 
 static int setLight(Context_t* context, int on)
 {
@@ -687,7 +573,6 @@ Model_t UFS922_model = {
 	.SetTime                   = setTime,
 	.GetTime                   = getTime,
 	.SetTimer                  = setTimer,
-	.SetTimerManual            = setTimerManual,
 	.GetTimer                  = getTimer,
 	.Shutdown                  = shutdown,
 	.Reboot                    = reboot,
@@ -695,14 +580,13 @@ Model_t UFS922_model = {
 	.SetText                   = setText,
 	.SetLed                    = setLed,
 	.SetIcon                   = setIcon,
-	.SetBrightness              = setBrightness,
+	.SetBrightness             = setBrightness,
 	.SetPwrLed                 = setPwrLed,
-	.GetWakeupReason           = getWakeupReason,
+//	.GetWakeupReason           = getWakeupReason,  //TODO: CHECK IF WORKING
 	.SetLight                  = setLight,
 	.Exit                      = Exit,
     .SetLedBrightness          = setLedBrightness,
     .GetVersion                = getVersion,
-    .SetWakeupReason           = setWakeupReason,
 	.SetRF                     = NULL,
     .SetFan                    = NULL,
     .private                   = NULL

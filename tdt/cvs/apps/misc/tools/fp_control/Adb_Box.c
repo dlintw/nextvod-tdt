@@ -170,7 +170,7 @@ static int getTime(Context_t* context, time_t* theGMTTime)
    return 0;
 }
 
-static int setTimer(Context_t* context)
+static int setTimer(Context_t* context, time_t* theGMTTime)
 {
    struct adb_box_ioctl_data vData;
    time_t                  curTime;
@@ -185,19 +185,12 @@ static int setTimer(Context_t* context)
    fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
 	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
 
-   wakeupTime = read_e2_timers(curTime);
+   if (theGMTTime == NULL)
+      wakeupTime = read_timers_utc(curTime);
+   else
+      wakeupTime = *theGMTTime;
 
-   /* failed to read e2 timers so lets take a look if
-    * we are running on neutrino
-    */
-   if (wakeupTime == LONG_MAX)
-   {
-      wakeupTime = read_neutrino_timers(curTime);
-   }
-
-   wakeupTime -= private->wakeupDecrement;
-
-   if ((wakeupTime == 0) || (curTime > wakeupTime))
+   if ((wakeupTime <= 0) || (wakeupTime == LONG_MAX))
    {
        /* nothing to do for e2 */
        fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
@@ -252,77 +245,6 @@ static int setTimer(Context_t* context)
    return 0;
 }
 
-static int setTimerManual(Context_t* context, time_t* theGMTTime)
-{
-   struct adb_box_ioctl_data vData;
-   time_t                  curTime;
-   time_t                  wakeupTime;
-   struct tm               *ts;
-
-   time(&curTime);
-   ts = localtime (&curTime);
-
-   fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
-
-   wakeupTime = *theGMTTime;
-
-   if ((wakeupTime == 0) || (curTime > wakeupTime))
-   {
-       /* nothing to do for e2 */
-       fprintf(stderr, "wrong timer parsed clearing fp wakeup time ... good bye ...\n");
-
-       vData.u.standby.time[0] = '\0';
-
-       if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-       {
-	  perror("standby: ");
-          return -1;
-       }
-
-   } else
-   {
-      unsigned long diff;
-      char   	    fp_time[8];
-
-      fprintf(stderr, "waiting on current time from fp ...\n");
-
-      /* front controller time */
-      if (ioctl(context->fd, VFDGETTIME, &fp_time) < 0)
-      {
-	 perror("gettime: ");
-         return -1;
-      }
-
-      /* difference from now to wake up */
-      diff = (unsigned long int) wakeupTime - curTime;
-
-      /* if we get the fp time */
-      if (fp_time[0] != '\0')
-      {
-         fprintf(stderr, "success reading time from fp\n");
-
-         /* current front controller time */
-         curTime = (time_t) getAdb_BoxTime(fp_time);
-      } else
-      {
-          fprintf(stderr, "error reading time ... assuming localtime\n");
-          /* noop current time already set */
-      }
-
-      wakeupTime = curTime + diff;
-
-      setAdb_BoxTime(wakeupTime, vData.u.standby.time);
-
-      if (ioctl(context->fd, VFDSTANDBY, &vData) < 0)
-      {
-	 perror("standby: ");
-         return -1;
-      }
-   }
-   return 0;
-}
-
 static int getTimer(Context_t* context, time_t* theGMTTime)
 {
    fprintf(stderr, "%s: not implemented\n", __func__);
@@ -335,7 +257,7 @@ static int shutdown(Context_t* context, time_t* shutdownTimeGMT)
 
    /* shutdown immediate */
    if (*shutdownTimeGMT == -1)
-      return (setTimer(context));
+      return (setTimer(context, NULL));
 
    while (1)
    {
@@ -346,7 +268,7 @@ static int shutdown(Context_t* context, time_t* shutdownTimeGMT)
       if (curTime >= *shutdownTimeGMT)
       {
           /* set most recent e2 timer and bye bye */
-          return (setTimer(context));
+          return (setTimer(context, NULL));
       }
 
       usleep(100000);
@@ -519,12 +441,6 @@ static int setLight(Context_t* context, int on)
     return 0;
 }
 
-static int getWakeupReason(Context_t* context, int* reason)
-{
-   fprintf(stderr, "%s: not implemented\n", __func__);
-   return -1;
-}
-
 static int Exit(Context_t* context)
 {
    tADB_BOXPrivate* private = (tADB_BOXPrivate*)
@@ -559,7 +475,6 @@ Model_t Adb_Box_model = {
 	.SetTime                   = setTime,
 	.GetTime                   = getTime,
 	.SetTimer                  = setTimer,
-	.SetTimerManual            = setTimerManual,
 	.GetTimer                  = getTimer,
 	.Shutdown                  = shutdown,
 	.Reboot                    = reboot,
@@ -569,13 +484,10 @@ Model_t Adb_Box_model = {
 	.SetIcon                   = setIcon,
 	.SetBrightness              = setBrightness,
 	.SetPwrLed                 = setPwrLed,
-	.GetWakeupReason           = getWakeupReason,
 	.SetLight                  = setLight,
 	.Exit                      = Exit,
     .SetLedBrightness          = NULL,
     .GetVersion                = NULL,
-    .SetWakeupReason           = NULL,
-    .writeWakeupFile           = NULL,
 	.SetRF                     = NULL,
     .SetFan                    = NULL,
     .private                   = NULL,

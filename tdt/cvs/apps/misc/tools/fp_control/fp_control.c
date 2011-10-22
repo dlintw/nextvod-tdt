@@ -41,7 +41,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* software version of fp_control. please increas on every change */
-static const char* sw_version = "1.01";
+static const char* sw_version = "1.02";
 
 typedef struct
 {
@@ -53,19 +53,22 @@ typedef struct
 tArgs vArgs[] =
 {
    { "-e", "--setTimer       ",
-"Args: No arguments\n\tSet the most recent timer from e2 to the frontcontroller and standby" },
+"Args: No arguments or [time date] Format: HH:MM:SS dd-mm-YYYY \
+\n\tSet the most recent timer from e2 to the frontcontroller and standby \
+\n\tSet the current frontcontroller wake-up time" },
+   { "-d", "--shutdown       ",
+"Args: [time date] Format: HH:MM:SS dd-mm-YYYY\n\tMimics shutdown command. Shutdown receiver via fc at given time." },
+
    { "-g", "--getTime        ",
 "Args: No arguments\n\tReturn current set frontcontroller time" },
    { "-gw", "--getWakeupTime        ",
 "Args: No arguments\n\tReturn current wakeup time" },
+
    { "-s", "--setTime        ",
 "Args: time date Format: HH:MM:SS dd-mm-YYYY\n\tSet the current frontcontroller time" },
-   { "-m", "--setTimerManual ",
-"Args: time date Format: HH:MM:SS dd-mm-YYYY\n\tSet the current frontcontroller wake-up time" },
    { "-gt", "--getTimer       ",
 "Args: No arguments\n\tGet the current frontcontroller wake-up time" },
-   { "-d", "--shutdown       ",
-"Args: [time date] Format: HH:MM:SS dd-mm-YYYY\n\tShutdown receiver via fc at given time." },
+
    { "-r", "--reboot         ",
 "Args: time date Format: HH:MM:SS dd-mm-YYYY\n\tReboot receiver via fc at given time." },
    { "-p", "--sleep          ",
@@ -88,10 +91,6 @@ tArgs vArgs[] =
 "Args: No argumens\n\tClear display, all icons and leds off" },
    { "-v", "--version",
 "Args: No argumens\n\tGet version from fc" },
-   { "-sw", "--setWakeup",
-"Args: No argumens\n\tset WakeUp reason" },
-   { "-ww", "--writeWakeup",
-"Args: No argumens\n\twrite WakeUp file" },
    { "-sf", "--setFan",
 "Args: 0/1\n\tset fan on/off" },
    { "-sr", "--setRF",
@@ -176,10 +175,24 @@ void processCommand (Context_t * context, int argc, char* argv[])
 		{
 	        if ((strcmp(argv[i], "-e") == 0) || (strcmp(argv[i], "--setTimer") == 0))
 	        {
-	        	/* setup timer; wake-up time will be read from e2 */
-	            if (((Model_t*)context->m)->SetTimer)
-	                ((Model_t*)context->m)->SetTimer(context);
-		    }
+				if (argc == 4)
+				{
+					time_t theGMTTime;
+					getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
+					/* set the frontcontroller timer from args */
+					if (((Model_t*)context->m)->SetTimer)
+						((Model_t*)context->m)->SetTimer(context, &theGMTTime);
+					i += 2;
+				}
+				else if (argc == 2)
+				{
+					/* setup timer; wake-up time will be read from e2 */
+					if (((Model_t*)context->m)->SetTimer)
+						((Model_t*)context->m)->SetTimer(context, NULL);
+				}
+				else
+					usage(context, argv[0], argv[1]);
+			}
 			else if ((strcmp(argv[i], "-g") == 0) || (strcmp(argv[i], "--getTime") == 0))
 	        {
 	        	time_t theGMTTime;
@@ -226,22 +239,6 @@ void processCommand (Context_t * context, int argc, char* argv[])
 						((Model_t*)context->m)->SetTime(context, &theGMTTime);
 				} else
 					usage(context, argv[0], argv[1]);
-
-				i += 2;
-		    }
-			else if ((strcmp(argv[i], "-m") == 0) || (strcmp(argv[i], "--setTimerManual") == 0))
-	        {
-	        	time_t theGMTTime;
-
-	            if (argc == 4)
-				{
-					getTimeFromArg(argv[i + 1], argv[i + 2], &theGMTTime);
-
-					/* set the frontcontroller timer from args */
-					if (((Model_t*)context->m)->SetTimerManual)
-						((Model_t*)context->m)->SetTimerManual(context, &theGMTTime);
-	            } else
-	               usage(context, argv[0], argv[1]);
 
 				i += 2;
 		    }
@@ -394,13 +391,19 @@ void processCommand (Context_t * context, int argc, char* argv[])
 			// END SetPwrLed
 			else if ((strcmp(argv[i], "-w") == 0) || (strcmp(argv[i], "--getWakeupReason") == 0))
 	        {
-				int reason;
+				int ret = -1;
+				eWakeupReason reason;
 
 				if (((Model_t*)context->m)->GetWakeupReason)
-					if (((Model_t*)context->m)->GetWakeupReason(context, &reason) == 0)
-					{
-						printf("wakeup reason = %d\n", reason);
-					}
+					ret = ((Model_t*)context->m)->GetWakeupReason(context, &reason);
+				else
+					ret = getWakeupReasonPseudo(&reason);
+				
+				if (ret == 0)
+				{
+					printf("wakeup reason = %d\n", reason);
+					syncWasTimerWakeup(reason);
+				}
 		    }
 			else if ((strcmp(argv[i], "-L") == 0) || (strcmp(argv[i], "--setLight") == 0))
 	        {
@@ -446,20 +449,6 @@ void processCommand (Context_t * context, int argc, char* argv[])
 		     	if (((Model_t*)context->m)->GetVersion)
 		    		((Model_t*)context->m)->GetVersion(context, &version);
 			}
-			else if ((strcmp(argv[i], "-sw") == 0) || (strcmp(argv[i], "--setWakeup") == 0))
-	        {
-	        	/* set WakeUp reason */
-	            if (((Model_t*)context->m)->SetWakeupReason)
-	                ((Model_t*)context->m)->SetWakeupReason(context);
-
-		    }
-			else if ((strcmp(argv[i], "-ww") == 0) || (strcmp(argv[i], "--writeWakeup") == 0))
-	        {
-	        	/* only write WakeUp File */
-	            if (((Model_t*)context->m)->writeWakeupFile)
-	                ((Model_t*)context->m)->writeWakeupFile(context);
-
-		    }
 			else if ((strcmp(argv[i], "-sf") == 0) || (strcmp(argv[i], "--setFan") == 0))
 	        {
 	        	if (i + 1 <= argc)

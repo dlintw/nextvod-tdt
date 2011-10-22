@@ -32,6 +32,8 @@ struct vfd_ioctl_data {
 	unsigned char length;
 };
 
+typedef enum {NONE, TIMER} eWakeupReason;
+
 typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox, Hs5101, Ufs912, Spark, Cuberevo, Adb_Box} eBoxType;
 
 typedef struct Context_s {
@@ -48,8 +50,7 @@ typedef struct Model_s {
 	int     (* Usage)          (Context_t* context, char* prg_name);
 	int     (* SetTime)        (Context_t* context, time_t* theGMTTime);
 	int     (* GetTime)        (Context_t* context, time_t* theGMTTime);
-	int     (* SetTimer)       (Context_t* context);
-	int     (* SetTimerManual) (Context_t* context, time_t* theGMTTime);
+	int     (* SetTimer)       (Context_t* context, time_t* theGMTTime);
 	int     (* GetTimer)       (Context_t* context, time_t* theGMTTime);
 	int     (* Shutdown)       (Context_t* context, time_t* shutdownTimeGMT);
 	int     (* Reboot)         (Context_t* context, time_t* rebootTimeGMT);
@@ -59,13 +60,11 @@ typedef struct Model_s {
 	int     (* SetIcon)        (Context_t* context, int which, int on);
 	int     (* SetBrightness)  (Context_t* context, int brightness);
 	int     (* SetPwrLed)  	   (Context_t* context, int pwrled); /* added by zeroone; set PowerLed Brightness on HDBOX*/
-	int     (* GetWakeupReason)(Context_t* context, int* reason);
+	int     (* GetWakeupReason)(Context_t* context, eWakeupReason* reason);
 	int     (* SetLight)       (Context_t* context, int on);
 	int     (* Exit)           (Context_t* context);
 	int     (* SetLedBrightness) (Context_t* context, int brightness);
 	int     (* GetVersion)       (Context_t* context, int* version);
-	int     (* SetWakeupReason)(Context_t* context);
-	int     (* writeWakeupFile)(Context_t* context);
 	int     (* SetRF)          (Context_t* context, int on);
 	int     (* SetFan)         (Context_t* context, int on);
 	int     (* GetWakeupTime)  (Context_t* context, time_t* theGMTTime);
@@ -102,9 +101,12 @@ static Model_t * AvailableModels[] = {
 };
 
 double modJulianDate(struct tm *theTime);
-time_t read_e2_timers(time_t curTime);
-time_t read_neutrino_timers(time_t curTime);
+time_t read_timers_utc(time_t curTime);
+time_t read_fake_timer_utc(time_t curTime);
 int searchModel(Context_t  *context, eBoxType type);
 int checkConfig(int* display, int* display_custom, char** timeFormat, int* wakeup);
+
+int getWakeupReasonPseudo(eWakeupReason *reason);
+int syncWasTimerWakeup(eWakeupReason reason);
 
 #endif

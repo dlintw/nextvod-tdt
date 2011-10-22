@@ -156,7 +156,7 @@ static int getTime(Context_t* context, time_t* theGMTTime)
    return -1;
 }
 	
-static int setTimer(Context_t* context)
+static int setTimer(Context_t* context, time_t* theGMTTime)
 {
    time_t                  curTime;
    time_t                  wakeupTime;
@@ -171,86 +171,23 @@ static int setTimer(Context_t* context)
    ts = localtime (&curTime);
 
    fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
+      ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
 
-   wakeupTime = read_e2_timers(curTime);
+   if (theGMTTime == NULL)
+      wakeupTime = read_timers_utc(curTime);
+   else
+      wakeupTime = *theGMTTime;
 
-   /* failed to read e2 timers so lets take a look if
-    * we are running on neutrino
-    */
-   if (wakeupTime == LONG_MAX)
+   if ((wakeupTime <= 0) || (wakeupTime == LONG_MAX))
+      wakeupTime = read_fake_timer_utc(curTime);
+
+   if (curTime > wakeupTime)
    {
-      wakeupTime = read_neutrino_timers(curTime);
+      printf("Wrong System Time -> Reboot\n");
+      diffTm = 5;
    }
-
-   wakeupTime -= private->wakeupDecrement;
-   
-   if (curTime > wakeupTime)
-   {
-        printf("Wrong System Time -> Reboot\n");
-	diffTm = 5;
-   } else
-	diffTm = (unsigned long int) wakeupTime - curTime;
-
-   printf("DIFFTIME: %ld\n", diffTm);
-
-   uTime0 = diffTm % 256;
-   uTime1 = (diffTm/256) % 256;
-   uTime2 = ((diffTm/256)/256) % 256;
-   uTime3 = (((diffTm/256)/256)/256) % 256;
-
-   printf("%03d %03d %03d %03d\n", uTime3, uTime2, uTime1, uTime0);
-
-   cTime[0] = 'Q';
-   cTime[1] = uTime3;
-   cTime[2] = uTime2;
-   cTime[3] = uTime1;
-   cTime[4] = uTime0;
-
-   printf("GOOD BYE\n");
-
-   sleep(1);
-
-   /* SWITCH ON RED LED */
-   write(context->fd, "2" ,1);
-   usleep(1000);
-
-   write(context->fd, &cTime[0], 1);
-   usleep(1000);
-   write(context->fd, &cTime[1], 1);
-   usleep(1000);
-   write(context->fd, &cTime[2], 1);
-   usleep(1000);
-   write(context->fd, &cTime[3], 1);
-   usleep(1000);
-   write(context->fd, &cTime[4], 1);
-
-   return 0;
-}
-
-static int setTimerManual(Context_t* context, time_t* theGMTTime)
-{
-   time_t                  curTime;
-   time_t                  wakeupTime;
-   struct tm               *ts;
-   unsigned long int       diffTm;
-   unsigned char           uTime0, uTime1, uTime2, uTime3;
-   char                    cTime[6];
-
-   time(&curTime);
-   ts = localtime (&curTime);
-
-   fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
-	   ts->tm_hour, ts->tm_min, ts->tm_sec, ts->tm_mday, ts->tm_mon+1, ts->tm_year+1900);
-
-   wakeupTime = *theGMTTime;
-   
-   if (curTime > wakeupTime)
-   {
-        printf("Wrong System Time -> Reboot\n");
-	diffTm = 5;
-   } else
-	diffTm = (unsigned long int) wakeupTime - curTime;
+   else
+      diffTm = (unsigned long int) wakeupTime - curTime;
 
    printf("DIFFTIME: %ld\n", diffTm);
 
@@ -300,7 +237,7 @@ static int shutdown(Context_t* context, time_t* shutdownTimeGMT)
    
    /* shutdown immediate */
    if (*shutdownTimeGMT == -1)
-      return (setTimer(context));
+      return (setTimer(context, NULL));
 
    while (1)
    {
@@ -309,7 +246,7 @@ static int shutdown(Context_t* context, time_t* shutdownTimeGMT)
       if (curTime >= *shutdownTimeGMT)
       {
           /* set most recent e2 timer and bye bye */
-          return (setTimer(context));
+          return (setTimer(context, NULL));
       }
 
       usleep(100000);
@@ -495,12 +432,6 @@ static int setLight(Context_t* context, int on)
 }
 
 
-static int getWakeupReason(Context_t* context, int* reason)
-{
-   fprintf(stderr, "%s: not implemented\n", __func__);
-   return -1;
-}
-
 static int Exit(Context_t* context)
 {
     tUFS910Private* private = (tUFS910Private*) 
@@ -543,7 +474,6 @@ Model_t Ufs910_1W_model = {
 	.SetTime                   = setTime,
 	.GetTime                   = getTime,
 	.SetTimer                  = setTimer,
-	.SetTimerManual            = setTimerManual,
 	.GetTimer                  = getTimer,
 	.Shutdown                  = shutdown,
 	.Reboot                    = reboot,
@@ -553,13 +483,9 @@ Model_t Ufs910_1W_model = {
 	.SetIcon                   = setIcon,
 	.SetBrightness              = setBrightness,
 	.SetPwrLed                 = setPwrLed,
-	.GetWakeupReason           = getWakeupReason,
 	.SetLight                  = setLight,
 	.Exit                      = Exit,
     .SetLedBrightness          = NULL,
-    .GetVersion                = NULL,
-    .SetWakeupReason           = NULL,
-    .writeWakeupFile           = NULL,
 	.SetRF                     = NULL,
     .SetFan                    = NULL,
     .private                   = NULL,
