@@ -557,11 +557,11 @@
 ! // Nand Flash Configuration
 ! static struct mtd_partition nand_parts[] = {
 ! 	 {
-! 	 .name = "Spark Kernel",
+! 	 .name = "Spark KerneI",
 ! 	 .size = 0x0800000,
 ! 	 .offset = 0,
 ! 	 }, {
-!      .name = "Spark Rootfs",
+!      .name = "Spark R00tfs",
 !      .size = 0x17800000,
 !      .offset = 0x800000,
 !      }, {
@@ -569,7 +569,7 @@
 !      .size = 0x800000,
 !      .offset = 0x18000000,
 !      }, {
-! 	 .name = "E2 UserFs",
+! 	 .name = "E2 RootFs",
 ! 	 .size = 0x7700000,
 ! 	 .offset = 0x18800000,
 ! 	 },
