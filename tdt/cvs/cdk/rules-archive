@@ -72,7 +72,7 @@ fbset_2.1.orig.tar.gz;http://ftp.de.debian.org/debian/pool/main/f/fbset
 # fbset_2.1-6.diff.gz;http://archive.debian.org/debian-archive/pool/main/f/fbset
 # fbset_2.1-6.diff.gz;http://ftp.kaist.ac.kr/debian-archive/pool/main/f/fbset/
 fbset_2.1-6.diff.gz;http://archive.debian.org/debian/dists/potato/main/source/admin/
-util-linux-2.12r.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.12
+util-linux-2.12r.tar.bz2;ftp://debian.lcs.mit.edu/pub/linux/utils/util-linux/v2.12/
 boost_1_40_0.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/boost
 boost_1_46_1.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/boost
 pngquant-1.0-src.tgz;ftp://ftp.simplesystems.org/pub/libpng/png/applications
