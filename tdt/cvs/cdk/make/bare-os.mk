@@ -605,6 +605,7 @@ $(DEPDIR)/%$(MAKEDEV): root/sbin/MAKEDEV $(MAKEDEV_RPM)
 	@TUXBOX_YAUD_CUSTOMIZE@
 	$(INSTALL) -m 755 root/sbin/MAKEDEV_no_CI $(prefix)/$*cdkroot/sbin
 	$(INSTALL) -m 755 root/sbin/MAKEDEV_dual_tuner $(prefix)/$*cdkroot/sbin
+	$(INSTALL) -m 755 root/sbin/MAKEDEV_adb_box $(prefix)/$*cdkroot/sbin
 
 if TARGETRULESET_FLASH
 flash-makedev: $(flashprefix)/root/sbin/MAKEDEV
