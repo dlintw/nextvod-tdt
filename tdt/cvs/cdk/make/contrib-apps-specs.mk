@@ -762,12 +762,13 @@ TAR_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-TAR_RPM := RPMS/sh4/stlinux20-sh4-tar-1.16.1-7.sh4.rpm
+TAR_RPM := RPMS/sh4/$(STLINUX)-sh4-$(TAR)-$(TAR_VERSION).sh4.rpm
 
 $(TAR_RPM): \
 		$(if $(TAR_SPEC_PATCH),Patches/$(TAR_SPEC_PATCH)) \
 		$(if $(TAR_PATCHES),$(TAR_PATCHES:%=Patches/%)) \
-		Archive/stlinux22-target-$(TAR)-$(TAR_VERSION).src.rpm
+		$(DEPDIR)/$(GLIBC_DEV) \
+		Archive/$(STLINUX)-target-$(TAR)-$(TAR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(TAR_SPEC_PATCH),( cd SPECS && patch -p1 $(TAR_SPEC) < ../Patches/$(TAR_PATCH) ) &&) \
 	$(if $(TAR_PATCHES),cp $(TAR_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -775,7 +776,7 @@ $(TAR_RPM): \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(TAR_SPEC)
 
 $(DEPDIR)/min-$(TAR) $(DEPDIR)/std-$(TAR) $(DEPDIR)/max-$(TAR) $(DEPDIR)/$(TAR): \
-$(DEPDIR)/%$(TAR): $(TAR_RPM)
+$(DEPDIR)/%$(TAR): $(DEPDIR)/%$(GLIBC) $(TAR_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
