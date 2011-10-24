@@ -534,13 +534,13 @@ COREUTILS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-COREUTILS_RPM := RPMS/sh4/stlinux20-sh4-coreutils-5.2.1-9.sh4.rpm
+COREUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(COREUTILS)-$(COREUTILS_VERSION).sh4.rpm
 
 $(COREUTILS_RPM): \
 		$(if $(COREUTILS_SPEC_PATCH),Patches/$(COREUTILS_SPEC_PATCH)) \
 		$(if $(COREUTILS_PATCHES),$(COREUTILS_PATCHES:%=Patches/%)) \
-		$(DSPDIR)/$(GLIBC_DEV) \
-		Archive/stlinux22-target-$(COREUTILS)-$(COREUTILS_VERSION).src.rpm
+		$(DEPDIR)/$(GLIBC_DEV) \
+		Archive/$(STLINUX)-target-$(COREUTILS)-$(COREUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(COREUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(COREUTILS_SPEC) < ../Patches/$(COREUTILS_PATCH) ) &&) \
 	$(if $(COREUTILS_PATCHES),cp $(COREUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
