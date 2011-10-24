@@ -1,7 +1,7 @@
 diff -Nur linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c linux-sh4/arch/sh/boards/st/mb442/setup.c
 --- linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c	2011-05-27 18:30:18.000000000 +0200
-+++ linux-sh4/arch/sh/boards/st/mb442/setup.c	2011-05-01 22:44:38.000000000 +0200
-@@ -19,18 +19,41 @@
++++ linux-sh4/arch/sh/boards/st/mb442/setup.c	2011-10-18 23:08:25.000000000 +0200
+@@ -19,18 +19,42 @@
  #include <linux/mtd/mtd.h>
  #include <linux/mtd/physmap.h>
  #include <linux/mtd/partitions.h>
@@ -9,8 +9,8 @@ diff -Nur linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c li
  #include <linux/phy.h>
  #include <linux/lirc.h>
  #include <asm/irl.h>
- 
--static int ascs[2] __initdata = { 2, 3 };
++#include <linux/stm/emi.h>
++
 +static int ascs[2] __initdata = { 2 };
 +
 +const char *LMI_VID_partalias[] = { "BPA2_Region1", "coredisplay-video", "gfx-memory", "v4l2-video-buffers", NULL };
@@ -32,7 +32,8 @@ diff -Nur linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c li
 +		.aka   = LMI_SYS_partalias
 +	}
 +};
-+
+ 
+-static int ascs[2] __initdata = { 2, 3 };
  
  void __init mb442_setup(char** cmdline_p)
  {
@@ -45,7 +46,7 @@ diff -Nur linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c li
  }
  
  static struct plat_stm_pwm_data pwm_private_info = {
-@@ -40,19 +63,19 @@
+@@ -40,19 +64,19 @@
  static struct plat_ssc_data ssc_private_info = {
  	.capability  =
  		ssc0_has(SSC_I2C_CAPABILITY) |
@@ -70,7 +71,7 @@ diff -Nur linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c li
  		.flags	= IORESOURCE_IRQ,
  	},
  };
-@@ -64,93 +87,9 @@
+@@ -64,93 +88,45 @@
  	.resource	= smc91x_resources,
  };
  
@@ -88,19 +89,37 @@ diff -Nur linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c li
 -		.size = MTDPART_SIZ_FULL,
 -		.offset = 0x00140000,
 -	}
--};
--
++static struct resource physmap_flash_resource = {
++	.start		= 0x00000000,
++	.end		= 0x001FFFFF,
++	.flags		= IORESOURCE_MEM,
+ };
+ 
 -static struct stpio_pin *vpp_pio;
 -static void set_vpp(struct map_info *info, int enable)
--{
++static struct mtd_partition mtd_parts_table[2] = {
+ {
 -	stpio_set_pin(vpp_pio, enable);
 -}
 -
 -static struct physmap_flash_data physmap_flash_data = {
 -	.width		= 2,
 -	.set_vpp	= set_vpp,
--	.nr_parts	= ARRAY_SIZE(mtd_parts_table),
--	.parts		= mtd_parts_table
++        .name = "U-Boot firmware 256kB", // U-boot od A0200000 do A0220000
++        .size = 0x00040000,
++        .offset = 0x00000000,
++        }, {
++        .name = "U-Boot env 64kB",
++        .size = 0x00010000,
++        .offset = 0x00040000,
++        }
++    };
++
++static struct physmap_flash_data physmap_flash_data = { 
++	.width		= 2, 
++	.parts		= mtd_parts_table, 
+ 	.nr_parts	= ARRAY_SIZE(mtd_parts_table),
+ 	.parts		= mtd_parts_table
 -};
 -
 -static struct resource physmap_flash_resource = {
@@ -108,17 +127,19 @@ diff -Nur linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c li
 -	.end		= 0x00800000 - 1,
 -	.flags		= IORESOURCE_MEM,
 -};
--
--static struct platform_device physmap_flash = {
--	.name		= "physmap-flash",
--	.id		= -1,
--	.dev		= {
++	}; 
+ 
+ static struct platform_device physmap_flash = {
+ 	.name		= "physmap-flash",
+ 	.id		= -1,
+ 	.dev		= {
 -		.platform_data	= &physmap_flash_data,
--	},
--	.num_resources	= 1,
--	.resource	= &physmap_flash_resource,
--};
--
++	.platform_data	= &physmap_flash_data,
+ 	},
+ 	.num_resources	= 1,
+ 	.resource	= &physmap_flash_resource,
+ };
+ 
 -static struct stpio_pin *phy_reset_pin;
 -
 -static int mb442_phy_reset(void* bus)
@@ -156,16 +177,16 @@ diff -Nur linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c li
 -		.platform_data = &phy_private_data,
 -	 }
 -};
--
+ 
  static struct platform_device *mb442_devices[] __initdata = {
  	&smc91x_device,
 -	&physmap_flash,
 -	&mb442_phy_device,
-+
++        &physmap_flash,
  };
  
  /* Configuration based on Futarque-RC signals train. */
-@@ -171,21 +110,6 @@
+@@ -171,22 +147,7 @@
  	stx7100_configure_ssc(&ssc_private_info);
  	stx7100_configure_usb();
  	stx7100_configure_lirc(&lirc_scd);
@@ -184,6 +205,8 @@ diff -Nur linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/mb442/setup.c li
 -	stpio_set_pin(smc91x_reset, 1);
 -	udelay(1);
 -	stpio_set_pin(smc91x_reset, 0);
- 
+-
++        
  	return platform_add_devices(mb442_devices,
  				    ARRAY_SIZE(mb442_devices));
+ }
