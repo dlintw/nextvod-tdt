@@ -806,11 +806,12 @@ STRACE_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-STRACE_RPM := RPMS/sh4/$(STLINUX)-sh4-strace-4.5.14-10.sh4.rpm
+STRACE_RPM := RPMS/sh4/$(STLINUX)-sh4-$(STRACE)-$(STRACE_VERSION).sh4.rpm
 
 $(STRACE_RPM): \
 		$(if $(STRACE_SPEC_PATCH),Patches/$(STRACE_SPEC_PATCH)) \
 		$(if $(STRACE_PATCHES),$(STRACE_PATCHES:%=Patches/%)) \
+		$(DEPDIR)/$(GLIBC_DEV) \
 		Archive/$(STLINUX)-target-$(STRACE)-$(STRACE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(STRACE_SPEC_PATCH),( cd SPECS && patch -p1 $(STRACE_SPEC) < ../Patches/$(STRACE_PATCH) ) &&) \
@@ -819,7 +820,7 @@ $(STRACE_RPM): \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(STRACE_SPEC)
 
 $(DEPDIR)/min-$(STRACE) $(DEPDIR)/std-$(STRACE) $(DEPDIR)/max-$(STRACE) $(DEPDIR)/$(STRACE): \
-$(DEPDIR)/%$(STRACE): $(STRACE_RPM)
+$(DEPDIR)/%$(STRACE): $(DEPDIR)/%$(GLIBC) $(STRACE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force --noscripts -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
