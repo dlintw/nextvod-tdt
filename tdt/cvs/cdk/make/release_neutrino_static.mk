@@ -37,8 +37,6 @@ $(DEPDIR)/%release_neutrino_static:
 	cp -dp $(targetprefix)/sbin/blkid $(prefix)/release_neutrino_static/sbin/ && \
 	cp -dp $(targetprefix)/usr/bin/rdate $(prefix)/release_neutrino_static/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release_neutrino_static/etc/init.d/ && \
-	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release_neutrino_static/bin/ && \
-	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_neutrino_static/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/ffmpeg $(prefix)/release_neutrino_static/sbin/ && \
 	cp -R $(buildprefix)/static/common/* $(prefix)/release_neutrino_static/ && \
 	cp -R $(buildprefix)/static/$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(HS7810A)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)$(ADB_BOX)/* $(prefix)/release_neutrino_static/ && \
