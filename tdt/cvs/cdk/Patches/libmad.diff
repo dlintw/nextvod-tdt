@@ -9,7 +9,7 @@
 +Name: mad
 +Description: MPEG Audio Decoder
 +Requires:
-+Version: 0.15.0b
++Version: 0.15.1b
 +Libs: -L${libdir} -lmad -lm
 +Cflags: -I${includedir}
 --- libmad-0.15.1b.orig/configure.ac	2010-05-24 00:11:11.000000000 +0200
