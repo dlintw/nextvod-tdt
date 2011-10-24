@@ -660,20 +660,21 @@ DIFF_SPEC_PATCH :=
 DIFF_PATCHES :=
 else !STM23
 # if STM24
-DIFF_VERSION := 2.8.1-9
+DIFF_VERSION := 2.8.1-10
 DIFF_SPEC := stm-target-$(DIFF).spec
 DIFF_SPEC_PATCH :=
 DIFF_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-DIFF_RPM := RPMS/sh4/stlinux20-sh4-diff-2.7-3.sh4.rpm
-DIFF_DOC_RPM := RPMS/sh4/stlinux20-sh4-diff-doc-2.7-3.sh4.rpm
+DIFF_RPM := RPMS/sh4/$(STLINUX)-sh4-$(DIFF)-$(DIFF_VERSION).sh4.rpm
+DIFF_DOC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(DIFF)-doc-$(SED_VERSION).sh4.rpm
 
 $(DIFF_RPM) $(DIFF_DOC_RPM): \
 		$(if $(DIFF_SPEC_PATCH),Patches/$(DIFF_SPEC_PATCH)) \
 		$(if $(DIFF_PATCHES),$(DIFF_PATCHES:%=Patches/%)) \
-		Archive/stlinux20-target-$(DIFF)-$(DIFF_VERSION).src.rpm
+		$(DEPDIR)/$(GLIBC_DEV) \
+		Archive/$(STLINUX)-target-$(DIFF)-$(DIFF_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(DIFF_SPEC_PATCH),( cd SPECS && patch -p1 $(DIFF_SPEC) < ../Patches/$(DIFF_PATCH) ) &&) \
 	$(if $(DIFF_PATCHES),cp $(DIFF_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -681,7 +682,7 @@ $(DIFF_RPM) $(DIFF_DOC_RPM): \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(DIFF_SPEC)
 
 $(DEPDIR)/min-$(DIFF) $(DEPDIR)/std-$(DIFF) $(DEPDIR)/max-$(DIFF) $(DEPDIR)/$(DIFF): \
-$(DEPDIR)/%$(DIFF): $(DIFF_RPM)
+$(DEPDIR)/%$(DIFF): $(DEPDIR)/%$(GLIBC) $(DIFF_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) .deps/$(notdir $@) || true
