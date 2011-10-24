@@ -578,13 +578,13 @@ NET_TOOLS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-NET_TOOLS_RPM := RPMS/sh4/stlinux20-sh4-net-tools-1.60-4.sh4.rpm
+NET_TOOLS_RPM = RPMS/sh4/$(STLINUX)-sh4-$(NET_TOOLS)-$(NET_TOOLS_VERSION).sh4.rpm
 
 $(NET_TOOLS_RPM): \
 		$(if $(NET_TOOLS_SPEC_PATCH),Patches/$(NET_TOOLS_SPEC_PATCH)) \
 		$(if $(NET_TOOLS_PATCHES),$(NET_TOOLS_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/stlinux20-target-$(NET_TOOLS)-$(NET_TOOLS_VERSION).src.rpm
+		Archive/$(STLINUX)-target-$(NET_TOOLS)-$(NET_TOOLS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(NET_TOOLS_SPEC_PATCH),( cd SPECS && patch -p1 $(NET_TOOLS_SPEC) < ../Patches/$(NET_TOOLS_PATCH) ) &&) \
 	$(if $(NET_TOOLS_PATCHES),cp $(NET_TOOLS_PATCHES:%=Patches/%) SOURCES/ &&) \
