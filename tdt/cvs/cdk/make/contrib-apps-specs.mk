@@ -615,20 +615,20 @@ SED_SPEC_PATCH :=
 SED_PATCHES :=
 else !STM23
 # if STM24
-SED_VERSION := 4.1.5-12
+SED_VERSION := 4.1.5-13
 SED_SPEC := stm-target-$(SEDX).spec
 SED_SPEC_PATCH :=
 SED_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-SED_RPM := RPMS/sh4/stlinux20-sh4-sed-4.0.7-6.sh4.rpm
+SED_RPM = RPMS/sh4/$(STLINUX)-sh4-$(SEDX)-$(SED_VERSION).sh4.rpm
 
 $(SED_RPM): \
 		$(if $(SED_SPEC_PATCH),Patches/$(SED_SPEC_PATCH)) \
 		$(if $(SED_PATCHES),$(SED_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/stlinux20-target-$(SEDX)-$(SED_VERSION).src.rpm
+		Archive/$(STLINUX)-target-$(SEDX)-$(SED_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(SED_SPEC_PATCH),( cd SPECS && patch -p1 $(SED_SPEC) < ../Patches/$(SED_PATCH) ) &&) \
 	$(if $(SED_PATCHES),cp $(SED_PATCHES:%=Patches/%) SOURCES/ &&) \
