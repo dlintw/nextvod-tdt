@@ -51,6 +51,13 @@ STABLE = YES
 endif !BLEEDING_EDGE
 export STABLE
 
+# rpm helper-"functions":
+TARGETLIB = $(targetprefix)/usr/lib
+PKG_CONFIG_PATH = $(targetprefix)/usr/lib/pkgconfig
+REWRITE_LIBDIR = sed -i "s,^libdir=.*,libdir='$(targetprefix)/usr/lib'," $(targetprefix)/usr/lib
+REWRITE_LIBDEP = sed -i -e "s,\(^dependency_libs='\| \|-L\|^dependency_libs='\)/usr/lib,\$(targetprefix)/usr/lib," $(targetprefix)/usr/lib
+REWRITE_PKGCONF = sed -i "s,^prefix=.*,prefix='$(targetprefix)/usr',"
+
 BUILDENV := \
 	CC=$(target)-gcc \
 	CXX=$(target)-g++ \
@@ -101,34 +108,24 @@ DEPDIR = .deps
 
 VPATH = $(DEPDIR)
 
-ACLOCAL_AMFLAGS = -I .
-
-CONFIG_STATUS_DEPENDENCIES = \
-	$(top_srcdir)/rules.pl \
-	$(top_srcdir)/rules-install $(top_srcdir)/rules-install-flash \
-	$(top_srcdir)/rules-make$(if $(STABLE),,.latest) \
-	Makefile-archive
-
 CONFIGURE_OPTS = \
-        --build=$(build) \
-        --host=$(target) \
-        --prefix=$(targetprefix)/usr \
-        --with-driver=$(driverdir) \
-        --with-dvbincludes=$(driverdir)/dvb/include \
-        --with-target=cdk
+	--build=$(build) \
+	--host=$(target) \
+	--prefix=$(targetprefix)/usr \
+	--with-driver=$(driverdir) \
+	--with-dvbincludes=$(driverdir)/include \
+	--with-target=cdk
 
 if ENABLE_CCACHE
-CONFIGURE_OPTS += --enable-ccache
+CONFIGURE_OPTS += --enable-ccache 
 endif
 
 if MAINTAINER_MODE
-CONFIGURE_OPTS_MAINTAINER = \
-	--enable-maintainer-mode
+CONFIGURE_OPTS += --enable-maintainer-mode
 endif
 
 if TARGETRULESET_FLASH
-CONFIGURE_OPTS_DEBUG = \
-	--without-debug
+CONFIGURE_OPTS += --without-debug
 endif
 
 CONFIGURE = \
@@ -138,7 +135,15 @@ CONFIGURE = \
 	CFLAGS="-Wall $(TARGET_CFLAGS)" \
 	CXXFLAGS="-Wall $(TARGET_CXXFLAGS)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
-	./configure $(CONFIGURE_OPTS) $(CONFIGURE_OPTS_MAINTAINER) $(CONFIGURE_OPTS_DEBUG)
+	./configure $(CONFIGURE_OPTS)
+
+ACLOCAL_AMFLAGS = -I .
+
+CONFIG_STATUS_DEPENDENCIES = \
+	$(top_srcdir)/rules.pl \
+	$(top_srcdir)/rules-install $(top_srcdir)/rules-install-flash \
+	$(top_srcdir)/rules-make$(if $(STABLE),,.latest) \
+	Makefile-archive
 
 min-query std-query max-query query: \
 %query:

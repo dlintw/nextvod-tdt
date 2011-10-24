@@ -296,19 +296,20 @@ FINDUTILS_SPEC_PATCH :=
 FINDUTILS_PATCHES := 
 else !STM23
 # if STM24
-FINDUTILS_VERSION := 4.1.20-10
+FINDUTILS_VERSION := 4.1.20-13
 FINDUTILS_SPEC := stm-target-$(FINDUTILS).spec
 FINDUTILS_SPEC_PATCH :=
 FINDUTILS_PATCHES := 
 # endif STM24
 endif !STM23
 endif !STM22
-FINDUTILS_RPM := RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
+FINDUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
 
 $(FINDUTILS_RPM): \
 		$(if $(FINDUTILS_SPEC_PATCH),Patches/$(FINDUTILS_SPEC_PATCH)) \
 		$(if $(FINDUTILS_PATCHES),$(FINDUTILS_PATCHES:%=Patches/%)) \
-		Archive/stlinux20-target-$(FINDUTILS)-$(FINDUTILS_VERSION).src.rpm
+		$(DEPDIR)/$(GLIBC_DEV) \
+		Archive/$(STLINUX)-target-$(FINDUTILS)-$(FINDUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(FINDUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(FINDUTILS_SPEC) < ../Patches/$(FINDUTILS_PATCH) ) &&) \
 	$(if $(FINDUTILS_PATCHES),cp $(FINDUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -316,7 +317,7 @@ $(FINDUTILS_RPM): \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(FINDUTILS_SPEC)
 
 $(DEPDIR)/min-$(FINDUTILS) $(DEPDIR)/std-$(FINDUTILS) $(DEPDIR)/max-$(FINDUTILS) $(DEPDIR)/$(FINDUTILS): \
-$(DEPDIR)/%$(FINDUTILS): RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
+$(DEPDIR)/%$(FINDUTILS): $(FINDUTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $<
 	[ "x$*" = "x" ] && touch $@ || true
@@ -324,7 +325,7 @@ $(DEPDIR)/%$(FINDUTILS): RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION
 
 flash-findutils: $(flashprefix)/root/usr/bin/find
 
-$(flashprefix)/root/usr/bin/find: RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
+$(flashprefix)/root/usr/bin/find: RPMS/sh4/$(STLINUX)-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
 		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	touch $@
@@ -479,7 +480,7 @@ BASH_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-BASH_RPM := RPMS/sh4/$(STLINUX)-sh4-bash-3.0-6.sh4.rpm
+BASH_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BASH)-$(BASH_VERSION).sh4.rpm
 
 $(BASH_RPM): \
 		$(if $(BASH_SPEC_PATCH),Patches/$(BASH_SPEC_PATCH)) \
@@ -506,7 +507,7 @@ min-$(BASH).do_clean std-$(BASH).do_clean max-$(BASH).do_clean $(BASH).do_clean:
 	$(hostprefix)/bin/target-shellconfig --list || true && \
 	( $(hostprefix)/bin/target-shellconfig --del /bin/bash ) &> /dev/null || echo "Unable to unregister shell" && \
 	$(hostprefix)/bin/target-shellconfig --list && \
-	rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) -ev --noscripts stlinux20-sh4-$(BASH) || true && \
+	rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) -ev --noscripts $(STLINUX)-sh4-$(BASH) || true && \
 	[ "x$*" = "x" ] && [ -f .deps/$(subst -clean,,$@) ] && rm .deps/$(subst -clean,,$@) || true
 
 #
@@ -533,13 +534,13 @@ COREUTILS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-COREUTILS_RPM := RPMS/sh4/stlinux20-sh4-coreutils-5.2.1-9.sh4.rpm
+COREUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(COREUTILS)-$(COREUTILS_VERSION).sh4.rpm
 
 $(COREUTILS_RPM): \
 		$(if $(COREUTILS_SPEC_PATCH),Patches/$(COREUTILS_SPEC_PATCH)) \
 		$(if $(COREUTILS_PATCHES),$(COREUTILS_PATCHES:%=Patches/%)) \
-		$(DSPDIR)/$(GLIBC_DEV) \
-		Archive/stlinux22-target-$(COREUTILS)-$(COREUTILS_VERSION).src.rpm
+		$(DEPDIR)/$(GLIBC_DEV) \
+		Archive/$(STLINUX)-target-$(COREUTILS)-$(COREUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(COREUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(COREUTILS_SPEC) < ../Patches/$(COREUTILS_PATCH) ) &&) \
 	$(if $(COREUTILS_PATCHES),cp $(COREUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -577,13 +578,13 @@ NET_TOOLS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-NET_TOOLS_RPM := RPMS/sh4/stlinux20-sh4-net-tools-1.60-4.sh4.rpm
+NET_TOOLS_RPM = RPMS/sh4/$(STLINUX)-sh4-$(NET_TOOLS)-$(NET_TOOLS_VERSION).sh4.rpm
 
 $(NET_TOOLS_RPM): \
 		$(if $(NET_TOOLS_SPEC_PATCH),Patches/$(NET_TOOLS_SPEC_PATCH)) \
 		$(if $(NET_TOOLS_PATCHES),$(NET_TOOLS_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/stlinux20-target-$(NET_TOOLS)-$(NET_TOOLS_VERSION).src.rpm
+		Archive/$(STLINUX)-target-$(NET_TOOLS)-$(NET_TOOLS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(NET_TOOLS_SPEC_PATCH),( cd SPECS && patch -p1 $(NET_TOOLS_SPEC) < ../Patches/$(NET_TOOLS_PATCH) ) &&) \
 	$(if $(NET_TOOLS_PATCHES),cp $(NET_TOOLS_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -614,20 +615,20 @@ SED_SPEC_PATCH :=
 SED_PATCHES :=
 else !STM23
 # if STM24
-SED_VERSION := 4.1.5-12
+SED_VERSION := 4.1.5-13
 SED_SPEC := stm-target-$(SEDX).spec
 SED_SPEC_PATCH :=
 SED_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-SED_RPM := RPMS/sh4/stlinux20-sh4-sed-4.0.7-6.sh4.rpm
+SED_RPM = RPMS/sh4/$(STLINUX)-sh4-$(SEDX)-$(SED_VERSION).sh4.rpm
 
 $(SED_RPM): \
 		$(if $(SED_SPEC_PATCH),Patches/$(SED_SPEC_PATCH)) \
 		$(if $(SED_PATCHES),$(SED_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/stlinux20-target-$(SEDX)-$(SED_VERSION).src.rpm
+		Archive/$(STLINUX)-target-$(SEDX)-$(SED_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(SED_SPEC_PATCH),( cd SPECS && patch -p1 $(SED_SPEC) < ../Patches/$(SED_PATCH) ) &&) \
 	$(if $(SED_PATCHES),cp $(SED_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -659,20 +660,21 @@ DIFF_SPEC_PATCH :=
 DIFF_PATCHES :=
 else !STM23
 # if STM24
-DIFF_VERSION := 2.8.1-9
+DIFF_VERSION := 2.8.1-10
 DIFF_SPEC := stm-target-$(DIFF).spec
 DIFF_SPEC_PATCH :=
 DIFF_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-DIFF_RPM := RPMS/sh4/stlinux20-sh4-diff-2.7-3.sh4.rpm
-DIFF_DOC_RPM := RPMS/sh4/stlinux20-sh4-diff-doc-2.7-3.sh4.rpm
+DIFF_RPM := RPMS/sh4/$(STLINUX)-sh4-$(DIFF)-$(DIFF_VERSION).sh4.rpm
+DIFF_DOC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(DIFF)-doc-$(SED_VERSION).sh4.rpm
 
 $(DIFF_RPM) $(DIFF_DOC_RPM): \
 		$(if $(DIFF_SPEC_PATCH),Patches/$(DIFF_SPEC_PATCH)) \
 		$(if $(DIFF_PATCHES),$(DIFF_PATCHES:%=Patches/%)) \
-		Archive/stlinux20-target-$(DIFF)-$(DIFF_VERSION).src.rpm
+		$(DEPDIR)/$(GLIBC_DEV) \
+		Archive/$(STLINUX)-target-$(DIFF)-$(DIFF_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(DIFF_SPEC_PATCH),( cd SPECS && patch -p1 $(DIFF_SPEC) < ../Patches/$(DIFF_PATCH) ) &&) \
 	$(if $(DIFF_PATCHES),cp $(DIFF_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -680,7 +682,7 @@ $(DIFF_RPM) $(DIFF_DOC_RPM): \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(DIFF_SPEC)
 
 $(DEPDIR)/min-$(DIFF) $(DEPDIR)/std-$(DIFF) $(DEPDIR)/max-$(DIFF) $(DEPDIR)/$(DIFF): \
-$(DEPDIR)/%$(DIFF): $(DIFF_RPM)
+$(DEPDIR)/%$(DIFF): $(DEPDIR)/%$(GLIBC) $(DIFF_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) .deps/$(notdir $@) || true
@@ -760,12 +762,13 @@ TAR_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-TAR_RPM := RPMS/sh4/stlinux20-sh4-tar-1.16.1-7.sh4.rpm
+TAR_RPM := RPMS/sh4/$(STLINUX)-sh4-$(TAR)-$(TAR_VERSION).sh4.rpm
 
 $(TAR_RPM): \
 		$(if $(TAR_SPEC_PATCH),Patches/$(TAR_SPEC_PATCH)) \
 		$(if $(TAR_PATCHES),$(TAR_PATCHES:%=Patches/%)) \
-		Archive/stlinux22-target-$(TAR)-$(TAR_VERSION).src.rpm
+		$(DEPDIR)/$(GLIBC_DEV) \
+		Archive/$(STLINUX)-target-$(TAR)-$(TAR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(TAR_SPEC_PATCH),( cd SPECS && patch -p1 $(TAR_SPEC) < ../Patches/$(TAR_PATCH) ) &&) \
 	$(if $(TAR_PATCHES),cp $(TAR_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -773,7 +776,7 @@ $(TAR_RPM): \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(TAR_SPEC)
 
 $(DEPDIR)/min-$(TAR) $(DEPDIR)/std-$(TAR) $(DEPDIR)/max-$(TAR) $(DEPDIR)/$(TAR): \
-$(DEPDIR)/%$(TAR): $(TAR_RPM)
+$(DEPDIR)/%$(TAR): $(DEPDIR)/%$(GLIBC) $(TAR_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
@@ -803,11 +806,12 @@ STRACE_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-STRACE_RPM := RPMS/sh4/$(STLINUX)-sh4-strace-4.5.14-10.sh4.rpm
+STRACE_RPM := RPMS/sh4/$(STLINUX)-sh4-$(STRACE)-$(STRACE_VERSION).sh4.rpm
 
 $(STRACE_RPM): \
 		$(if $(STRACE_SPEC_PATCH),Patches/$(STRACE_SPEC_PATCH)) \
 		$(if $(STRACE_PATCHES),$(STRACE_PATCHES:%=Patches/%)) \
+		$(DEPDIR)/$(GLIBC_DEV) \
 		Archive/$(STLINUX)-target-$(STRACE)-$(STRACE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(STRACE_SPEC_PATCH),( cd SPECS && patch -p1 $(STRACE_SPEC) < ../Patches/$(STRACE_PATCH) ) &&) \
@@ -816,7 +820,7 @@ $(STRACE_RPM): \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(STRACE_SPEC)
 
 $(DEPDIR)/min-$(STRACE) $(DEPDIR)/std-$(STRACE) $(DEPDIR)/max-$(STRACE) $(DEPDIR)/$(STRACE): \
-$(DEPDIR)/%$(STRACE): $(STRACE_RPM)
+$(DEPDIR)/%$(STRACE): $(DEPDIR)/%$(GLIBC) $(STRACE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force --noscripts -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
@@ -856,6 +860,10 @@ $(DEPDIR)/$(UTIL_LINUX): $(UTIL_LINUX_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/uuid.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/blkid.pc
+	$(REWRITE_LIBDEP)/lib{blkid,uuid}.la
+	$(REWRITE_LIBDIR)/lib{blkid,uuid}.la
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif STM24
 

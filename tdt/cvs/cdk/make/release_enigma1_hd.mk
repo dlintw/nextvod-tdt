@@ -44,9 +44,7 @@ $(DEPDIR)/%release_enigma1_hd:
 	cp -dp $(targetprefix)/sbin/sfdisk $(prefix)/release_enigma1_hd/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release_enigma1_hd/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/etc/init.d/udhcpc $(prefix)/release_enigma1_hd/etc/init.d/ && \
-cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI)$(if $(ADB_BOX),_adb_box) $(prefix)/release_enigma1_hd/sbin/MAKEDEV && \
-	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release_enigma1_hd/bin/ && \
-	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_enigma1_hd/bin/ && \
+	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI)$(if $(ADB_BOX),_adb_box) $(prefix)/release_enigma1_hd/sbin/MAKEDEV && \
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release_enigma1_hd/boot/video.elf && \
 	$(if $(TF7700),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_enigma1_hd/boot/video.elf &&) \
 	$(if $(UFS922),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_enigma1_hd/boot/video.elf &&) \

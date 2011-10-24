@@ -1,7 +1,14 @@
 diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c linux-sh4/arch/sh/boards/mach-mb442/setup.c
 --- linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c	2011-09-08 14:15:40.000000000 +0200
-+++ linux-sh4/arch/sh/boards/mach-mb442/setup.c	2011-09-09 14:22:43.000000000 +0200
-@@ -22,13 +22,28 @@
++++ linux-sh4/arch/sh/boards/mach-mb442/setup.c	2011-10-18 18:22:26.000000000 +0200
+@@ -18,17 +18,35 @@
+ #include <linux/delay.h>
+ #include <linux/spi/spi.h>
+ #include <linux/mtd/mtd.h>
++#include <linux/mtd/nand.h> 
++#include <linux/stm/nand.h> 
++#include <linux/mtd/partitions.h> 
+ #include <linux/mtd/physmap.h>
  #include <linux/stm/platform.h>
  #include <linux/stm/stx7100.h>
  #include <asm/irl.h>
@@ -37,7 +44,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
  
  
  void __init mb442_setup(char** cmdline_p)
-@@ -43,17 +58,18 @@
+@@ -43,17 +61,18 @@
  	stx7100_configure_asc(3, &(struct stx7100_asc_config) {
  			.hw_flow_control = 0,
  			.is_console = 0, });
@@ -60,18 +67,42 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
  		.flags	= IORESOURCE_IRQ,
  	},
  };
-@@ -65,50 +81,11 @@
+@@ -65,52 +84,48 @@
  	.resource	= mb442_smc91x_resources,
  };
  
 -static void mb442_set_vpp(struct map_info *info, int enable)
--{
++static struct resource physmap_flash_resource = {
++	.start		= 0x00000000,
++	.end		= 0x001FFFFF,
++	.flags		= IORESOURCE_MEM,
++};
++
++static struct mtd_partition mtd_parts_table[2] = {
+ {
 -	gpio_set_value(MB442_PIO_FLASH_VPP, enable);
 -}
--
++        .name = "U-Boot firmware 192kB", // U-boot od A0200000 do A0220000
++        .size = 0x00030000,
++        .offset = 0x00000000,
++    }, {
++        .name = "U-Boot env 64kB",
++        .size = 0x00010000,
++        .offset = 0x00040000,
++    }
++  };
++
++static struct physmap_flash_data physmap_flash_data = {
++	.width		= 2, 
++	.parts		= mtd_parts_table, 
++	.nr_parts	= ARRAY_SIZE(mtd_parts_table),
++	.parts		= mtd_parts_table
++}; 
+ 
 -static struct platform_device mb442_physmap_flash = {
--	.name		= "physmap-flash",
--	.id		= -1,
++static struct platform_device physmap_flash = {
+ 	.name		= "physmap-flash",
+ 	.id		= -1,
 -	.num_resources	= 1,
 -	.resource	= (struct resource[]) {
 -		STM_PLAT_RESOURCE_MEM(0, 8*1024*1024),
@@ -79,10 +110,12 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
 -	.dev.platform_data = &(struct physmap_flash_data) {
 -		.width		= 2,
 -		.set_vpp	= mb442_set_vpp,
--	},
++	.dev		= { 
++	.platform_data	= &physmap_flash_data,
+ 	},
 -};
- 
- 
+-
+-
 -static int mb442_phy_reset(void* bus)
 -{
 -	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
@@ -104,15 +137,22 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
 -	.phy_mask = 1,
 -	.irqs = stmmac_phy_irqs,
 -};
--
++	.num_resources	= 1,
++	.resource	= &physmap_flash_resource,
++}; 
+ 
  static struct platform_device *mb442_devices[] __initdata = {
  	&mb442_smc91x_device,
 -	&mb442_physmap_flash,
-+
++        &physmap_flash,
++       
  };
  
++
  static int __init mb442_device_init(void)
-@@ -120,8 +97,7 @@
+ {
+ 	stx7100_configure_sata();
+@@ -120,8 +135,7 @@
  			.out1_enabled = 1, });
  
  	stx7100_configure_ssc_i2c(0);
@@ -122,10 +162,11 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
  
  	stx7100_configure_usb();
  
-@@ -130,32 +106,7 @@
+@@ -129,33 +143,7 @@
+ 			.rx_mode = stx7100_lirc_rx_mode_ir,
  			.tx_enabled = 0,
  			.tx_od_enabled = 0, });
- 
+-
 -	stx7100_configure_pata(&(struct stx7100_pata_config) {
 -			.emi_bank = 3,
 -			.pc_mode = 1,
@@ -152,7 +193,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
 -	gpio_set_value(MB442_PIO_SMC91X_RESET, 1);
 -	udelay(1);
 -	gpio_set_value(MB442_PIO_SMC91X_RESET, 0);
-+
++	
  
  	return platform_add_devices(mb442_devices,
  			ARRAY_SIZE(mb442_devices));

@@ -550,7 +550,7 @@ FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 
 ADB_BOXPATCHES_24 = $(COMMONPATCHES_24) \
 		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
-		sata_32bit_fix_stm24$(PATCH_STR).patch \
+		linux-sh4-sata-v06_stm24$(PATCH_STR).patch \
 		linux-sh4-adb_box_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
 		linux-sh4-ufs910_reboot_stm24.patch \
