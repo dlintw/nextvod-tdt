@@ -296,19 +296,20 @@ FINDUTILS_SPEC_PATCH :=
 FINDUTILS_PATCHES := 
 else !STM23
 # if STM24
-FINDUTILS_VERSION := 4.1.20-10
+FINDUTILS_VERSION := 4.1.20-13
 FINDUTILS_SPEC := stm-target-$(FINDUTILS).spec
 FINDUTILS_SPEC_PATCH :=
 FINDUTILS_PATCHES := 
 # endif STM24
 endif !STM23
 endif !STM22
-FINDUTILS_RPM := RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
+FINDUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
 
 $(FINDUTILS_RPM): \
 		$(if $(FINDUTILS_SPEC_PATCH),Patches/$(FINDUTILS_SPEC_PATCH)) \
 		$(if $(FINDUTILS_PATCHES),$(FINDUTILS_PATCHES:%=Patches/%)) \
-		Archive/stlinux20-target-$(FINDUTILS)-$(FINDUTILS_VERSION).src.rpm
+		$(DEPDIR)/$(GLIBC_DEV) \
+		Archive/$(STLINUX)-target-$(FINDUTILS)-$(FINDUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(FINDUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(FINDUTILS_SPEC) < ../Patches/$(FINDUTILS_PATCH) ) &&) \
 	$(if $(FINDUTILS_PATCHES),cp $(FINDUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -316,7 +317,7 @@ $(FINDUTILS_RPM): \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(FINDUTILS_SPEC)
 
 $(DEPDIR)/min-$(FINDUTILS) $(DEPDIR)/std-$(FINDUTILS) $(DEPDIR)/max-$(FINDUTILS) $(DEPDIR)/$(FINDUTILS): \
-$(DEPDIR)/%$(FINDUTILS): RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
+$(DEPDIR)/%$(FINDUTILS): $(FINDUTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $<
 	[ "x$*" = "x" ] && touch $@ || true
@@ -324,7 +325,7 @@ $(DEPDIR)/%$(FINDUTILS): RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION
 
 flash-findutils: $(flashprefix)/root/usr/bin/find
 
-$(flashprefix)/root/usr/bin/find: RPMS/sh4/stlinux20-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
+$(flashprefix)/root/usr/bin/find: RPMS/sh4/$(STLINUX)-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
 		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
 	touch $@
