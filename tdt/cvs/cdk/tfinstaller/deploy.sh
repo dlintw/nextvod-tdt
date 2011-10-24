@@ -1,5 +1,20 @@
 #!/bin/sh
 
+echo "-------------------------------------"
+echo "deploy.sh"
+echo "V0.10: Try several times to mount USB sticks if mount fails"
+echo "V0.09: Log installation to boot medium removed again because it caused problems"
+echo "V0.08: Log installation to boot medium"
+echo "V0.07: Do not install E2 if disk is not partitioned
+             and parameter partition is set to 0"
+echo "V0.06: Added EXT2 option for E2 and MINI partitions"
+echo "V0.05: Added JFS option for RECORD partition"
+echo "V0.04: Changed ini File format"
+echo "V0.03: Suppress meaningless tar errors during save settings"
+echo "V0.02: Format Mini partitions with Ext3 instead of Ext2"
+echo "V0.01: New parameter CREATEMINI and cleanup of KEEPSETTINGS"
+echo "-------------------------------------"
+
 # default installation device
 HDD=/dev/sda
 
@@ -16,17 +31,34 @@ fi
 echo "Mounting USB stick"
 echo '   9'     > /dev/fpsmall
 echo 'USB STCK' > /dev/fplarge
+
 sleep 5
 mkdir /instsrc
-mount -t vfat /dev/sdb1 /instsrc
-if [ $? -ne 0 ]; then
- mount -t vfat /dev/sdb /instsrc
+
+i=1
+while (true) do
+  mount -t vfat /dev/sdb1 /instsrc
   if [ $? -ne 0 ]; then
+    mount -t vfat /dev/sdb /instsrc
+    if [ $? -eq 0 ]; then
+      break
+    fi
+  else
+    break
+  fi
+
+  if [ $i -gt 5 ]; then
     echo "USB" > /dev/fpsmall
     echo "FAILED" > /dev/fplarge
     exit
   fi
-fi
+
+  echo "USB" > /dev/fpsmall
+  echo "RETRY $i" > /dev/fplarge
+
+  sleep 5
+  i=`expr $i + 1`
+done
 
 
 # If the file topfield.tfd is located on the stick, flash it
@@ -82,18 +114,7 @@ eval `sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
    < /instsrc/Enigma_Installer.ini \
     | sed -n -e "/^\[parameter\]/,/^\s*\[/{/^[^;].*\=.*/p;}"`
 
-echo "-------------------------------------"
-echo "deploy.sh"
-echo "V0.09: Log installation to boot medium removed again because it caused problems"
-echo "V0.08: Log installation to boot medium"
-echo "V0.07: Do not install E2 if disk is not partitioned
-             and parameter partition is set to 0"
-echo "V0.06: Added EXT2 option for E2 and MINI partitions"
-echo "V0.05: Added JFS option for RECORD partition"
-echo "V0.04: Changed ini File format"
-echo "V0.03: Suppress meaningless tar errors during save settings"
-echo "V0.02: Format Mini partitions with Ext3 instead of Ext2"
-echo "V0.01: New parameter CREATEMINI and cleanup of KEEPSETTINGS"
+
 echo "-------------------------------------"
 echo "partition:" "$partition"
 echo "createmini:" "$createmini"
@@ -311,7 +332,7 @@ if [ "$update" = "1" ]; then
   echo 'ROOT FS'  > /dev/fplarge
   mount $ROOTFS /instdest
   cd /instdest
-  gunzip -c /instsrc/rootfs.tar.gz | tar -xv
+  gunzip -c /instsrc/rootfs.tar.gz | tar -x
   if [ "$usbhdd" = "1" ]; then
     sed -e "s#sda#sdb#g" etc/fstab > fstab1
     mv fstab1 etc/fstab
@@ -334,7 +355,7 @@ if [ "$keepsettings" = "1" ]; then
   echo "SETTINGS" > /dev/fplarge
   mount $ROOTFS /instdest
   cd /instdest
-  tar xvf "/instsrc/e2settings/backup.tar.gz"
+  tar xzf "/instsrc/e2settings/backup.tar.gz"
   cd /
   sync
   sleep 3
