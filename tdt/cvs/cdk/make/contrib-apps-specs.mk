@@ -480,7 +480,7 @@ BASH_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
-BASH_RPM := RPMS/sh4/$(STLINUX)-sh4-bash-3.0-6.sh4.rpm
+BASH_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BASH)-$(BASH_VERSION).sh4.rpm
 
 $(BASH_RPM): \
 		$(if $(BASH_SPEC_PATCH),Patches/$(BASH_SPEC_PATCH)) \
@@ -507,7 +507,7 @@ min-$(BASH).do_clean std-$(BASH).do_clean max-$(BASH).do_clean $(BASH).do_clean:
 	$(hostprefix)/bin/target-shellconfig --list || true && \
 	( $(hostprefix)/bin/target-shellconfig --del /bin/bash ) &> /dev/null || echo "Unable to unregister shell" && \
 	$(hostprefix)/bin/target-shellconfig --list && \
-	rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) -ev --noscripts stlinux20-sh4-$(BASH) || true && \
+	rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) -ev --noscripts $(STLINUX)-sh4-$(BASH) || true && \
 	[ "x$*" = "x" ] && [ -f .deps/$(subst -clean,,$@) ] && rm .deps/$(subst -clean,,$@) || true
 
 #
