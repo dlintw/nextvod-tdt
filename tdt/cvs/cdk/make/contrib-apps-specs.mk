@@ -860,6 +860,10 @@ $(DEPDIR)/$(UTIL_LINUX): $(UTIL_LINUX_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/uuid.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/blkid.pc
+	$(REWRITE_LIBDEP)/lib{blkid,uuid}.la
+	$(REWRITE_LIBDIR)/lib{blkid,uuid}.la
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif STM24
 
