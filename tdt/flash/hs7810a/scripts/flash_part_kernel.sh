@@ -28,6 +28,9 @@ cp $TMPKERNELDIR/uImage $CURDIR/uImage
 # Create a fortis signed update file for fw's 
 $FUP -ce $OUTFILE -k $CURDIR/uImage
 
+# Change reseller id
+./fup -r $OUTFILE 2522
+
 rm -f $CURDIR/uImage
 
 zip $OUTFILE.zip $OUTFILE
