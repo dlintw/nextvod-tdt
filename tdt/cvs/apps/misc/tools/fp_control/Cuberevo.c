@@ -43,6 +43,8 @@ static int setText(Context_t* context, char* theText);
 
 #define cMAXCharsCuberevo 14 /* 14seg ->rest is filtered by driver */
 
+//#define USE_FP_UTC
+
 typedef struct
 {
     int    display;
@@ -75,7 +77,11 @@ static void setMicomTime(time_t theGMTTime, char* destString, int seconds)
 {
    struct tm* now_tm;
    char tmpString[13];
+#ifdef USE_FP_UTC
    now_tm = gmtime (&theGMTTime);
+#else
+   now_tm = localtime (&theGMTTime);
+#endif
 
    if (seconds)
    {
@@ -94,9 +100,10 @@ static void setMicomTime(time_t theGMTTime, char* destString, int seconds)
 static time_t getMicomTime(char* micomTimeString)
 {
     char            convertTime[128];
-	unsigned int 	year, month, day;
-	unsigned int 	hour, min, sec;
-	struct tm       the_tm;
+    unsigned int    year, month, day;
+    unsigned int    hour, min, sec;
+    struct tm       the_tm;
+    time_t          convertedTime;
 
     sprintf(convertTime, "%02x %02x %02x %02x %02x %02x\n", 
                                   micomTimeString[0], micomTimeString[1],
@@ -113,7 +120,22 @@ static time_t getMicomTime(char* micomTimeString)
     the_tm.tm_sec  = sec;
     the_tm.tm_isdst= -1;
 
-    return mktime(&the_tm);
+    convertedTime = mktime(&the_tm); //16:00:00
+
+#ifdef USE_FP_UTC
+#else
+// We have to convert the localstring to utc 
+    {
+        struct tm* wrong_tz_time_utc_tm;
+        struct tm* wrong_tz_time_local_tm;
+        wrong_tz_time_utc_tm = gmtime(&convertedTime);  //16:00:00
+        wrong_tz_time_local_tm = localtime(&convertedTime);  //18:00:00
+
+        convertedTime -= difftime(mktime(&wrong_tz_time_local_tm), mktime(&wrong_tz_time_utc_tm)); // -> local = 16:00:00 / utc = 14:00:00
+    }
+#endif
+
+    return convertedTime;
 }
 
 /* ******************* driver functions ****************** */
