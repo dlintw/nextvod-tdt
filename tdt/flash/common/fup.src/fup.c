@@ -21,7 +21,7 @@
 #include "crc16.h"
 #include "dummy.h"
 
-#define VERSION "1.7
+#define VERSION "1.7"
 #define DATE "25.10.2011"
 
 //#define USE_ZLIB
