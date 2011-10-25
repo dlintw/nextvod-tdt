@@ -25,10 +25,9 @@ mkdir $TMPROOTDIR
 mkdir $TMPKERNELDIR
 mkdir $TMPFWDIR
 
-echo "This script creates flashable images for Atevio 7500"
-echo "Will probably be adapted in future to support clones"
+echo "This script creates flashable images for Fortis HS7910a"
 echo "Author: Schischu"
-echo "Date: 01-31-2011"
+echo "Date: 10-25-2011"
 echo "-----------------------------------------------------------------------"
 echo "It's expected that a images was already build prior to this execution!"
 echo "-----------------------------------------------------------------------"
@@ -60,7 +59,7 @@ echo "Checking if flashtool fup exists..."
 if [ ! -e $CURDIR/fup ]; then
   echo "Flashtool fup is missing, trying to compile it..."
   cd $CURDIR/../common/fup.src
-  $CURDIR/../common/fup.src/compile.sh USE_ZLIB
+  $CURDIR/../common/fup.src/compile.sh NO_ZLIB
   mv $CURDIR/../common/fup.src/fup $CURDIR/fup
   cd $CURDIR
   if [ ! -e $CURDIR/fup ]; then
@@ -80,20 +79,20 @@ echo "Flashtool fup exists"
 echo "-----------------------------------------------------------------------"
 echo "Checking targets..."
 echo "Found flashtarget:"
-echo "   1) KERNEL with ROOT"
-echo "   2) KERNEL with ROOT and FW"
+#echo "   1) KERNEL with ROOT"
+#echo "   2) KERNEL with ROOT and FW"
 echo "   3) KERNEL"
-echo "   4) FW"
+#echo "   4) FW"
 read -p "Select flashtarget (1-4)? "
 case "$REPLY" in
-	1)  echo "Creating KERNEL with ROOT..."
-		$SCRIPTDIR/flash_part_wo_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR;;
-	2)  echo "Creating KERNEL with ROOT and FW..."
-		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPFWDIR $TMPROOTDIR;;
+#	1)  echo "Creating KERNEL with ROOT..."
+#		$SCRIPTDIR/flash_part_wo_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR;;
+#	2)  echo "Creating KERNEL with ROOT and FW..."
+#		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPFWDIR $TMPROOTDIR;;
 	3)  echo "Creating KERNEL..."
 		$SCRIPTDIR/flash_part_kernel.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR;;
-	4)  echo "Creating FW..."
-		$SCRIPTDIR/flash_part_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPFWDIR;;
+#	4)  echo "Creating FW..."
+#		$SCRIPTDIR/flash_part_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPFWDIR;;
 	*)  "Invalid Input! Exiting..."
 		exit 3;;
 esac

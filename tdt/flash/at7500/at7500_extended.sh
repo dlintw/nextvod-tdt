@@ -61,9 +61,9 @@ echo "Root prepared"
 echo "Checking if flashtool fup exists..."
 if [ ! -e $CURDIR/fup ]; then
   echo "Flashtool fup is missing, trying to compile it..."
-  cd $CURDIR/fup.src
-  $CURDIR/fup.src/compile.sh
-  mv $CURDIR/fup.src/fup $CURDIR/fup
+  cd $CURDIR/../common/fup.src
+  $CURDIR/../common/fup.src/compile.sh USE_ZLIB
+  mv $CURDIR/../common/fup.src/fup $CURDIR/fup
   cd $CURDIR
   if [ ! -e $CURDIR/fup ]; then
     echo "Compiling failed! Exiting..."

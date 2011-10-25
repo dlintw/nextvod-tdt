@@ -24,6 +24,7 @@
 #define VERSION "1.6"
 #define DATE "27.02.2011"
 
+//#define USE_ZLIB
 
 unsigned short blockCounter = 0;
 unsigned short blockCounterTotal = 0;
@@ -106,6 +107,7 @@ unsigned short readShort(FILE* file) {
 }
 
 int extractAndWrite(FILE* file, unsigned char * buffer, unsigned short len, unsigned short decLen) {
+#ifdef USE_ZLIB
          if(len != decLen) {
             //zlib
             z_stream strm;
@@ -131,7 +133,9 @@ int extractAndWrite(FILE* file, unsigned char * buffer, unsigned short len, unsi
             fwrite(out, 1, decLen, file);
             return decLen;
          }
-         else {
+         else 
+#endif
+         {
             fwrite(buffer, 1, len, file);
             return len;
          }
@@ -142,6 +146,7 @@ int extractAndWrite(FILE* file, unsigned char * buffer, unsigned short len, unsi
 unsigned short readAndCompress(FILE * file, unsigned char ** dataBuf, unsigned short pos, unsigned short * uncompressedDataLen) {
 
    *uncompressedDataLen = fread((*dataBuf) + pos, 1, *uncompressedDataLen, file);
+#ifdef USE_ZLIB
    // So now we have to check if zlib can compress this or not
    z_stream strm;
    unsigned char in[*uncompressedDataLen];
@@ -174,7 +179,9 @@ unsigned short readAndCompress(FILE * file, unsigned char ** dataBuf, unsigned s
    //if(strm.avail_out == 0 && have > 0 && *uncompressedDataLen > have) {
    if(have < *uncompressedDataLen) {
       memcpy((*dataBuf) + pos, out, have);
-   } else {
+   } else 
+#endif
+   {
       have = *uncompressedDataLen;
    }
    
@@ -236,7 +243,7 @@ int writeBlock(FILE* irdFile, FILE* file, unsigned char firstBlock, unsigned sho
 
 int readBlock(FILE* file, const char * name, unsigned char firstBlock)
 {
-   //printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
+   printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
    
    unsigned short len = 0;
    unsigned short crc = 0;
@@ -247,8 +254,8 @@ int readBlock(FILE* file, const char * name, unsigned char firstBlock)
    crc = readShort(file);
    
    
-   //printf(" LEN  = %X (%d)\n", len, len);
-   //printf(" CRC  = %X\n", crc);
+   printf(" LEN  = %X (%d)\n", len, len);
+   printf(" CRC  = %X\n", crc);
    
    unsigned char dataBuf[len - 2/*crc*/];
    if (fread(dataBuf, 1, len - 2/*crc*/, file) != len - 2/*crc*/)
@@ -256,13 +263,13 @@ int readBlock(FILE* file, const char * name, unsigned char firstBlock)
    
    unsigned short dataCrc = 0;
    dataCrc = crc16(dataCrc, dataBuf, len - 2/*crc*/);
-   //printf("  CALC CRC = %04X\n", dataCrc);
+   printf("  CALC CRC = %04X\n", dataCrc);
    
    if(crc != dataCrc)
       getchar();
    
    type = extractShort(dataBuf, 0);
-   //printf("  TYPE = %X\n", type);
+   printf("  TYPE = %X\n", type);
    
    blockCounterTotal++;
    
@@ -299,10 +306,10 @@ int readBlock(FILE* file, const char * name, unsigned char firstBlock)
             printf("-> %s\n", nameOut);
          }
 
-         //printf("   %s (%d)\n", ext[type], blockCounter++);
+         printf("   %s (%d)\n", ext[type], blockCounter++);
 
          unsigned short decLen = extractShort(dataBuf, 2);
-         //printf("    LEN = %X (%d)\n", decLen, decLen);
+         printf("    LEN = %X (%d)\n", decLen, decLen);
          extractAndWrite(fd[type], dataBuf + 4, len -6, decLen);
       }
       else {
@@ -665,8 +672,13 @@ int main(int argc, char* argv[])
       fclose(irdFile);
    }
    else {
+#ifdef USE_ZLIB
+      unsigned char zlib = 1;
+#else
+      unsigned char zlib = 0;
+#endif
       printf("\n");
-      printf("Version: %s Date: %s                                                                     \n", VERSION, DATE);
+      printf("Version: %s Date: %s USE_ZLIB: %d                                                        \n", VERSION, DATE, zlib);
       printf("\n");
       printf("Usage: %s -xcstv []                                                                      \n", argv[0]);
       printf("       -x [update.ird]           Extract IRD                                             \n");
