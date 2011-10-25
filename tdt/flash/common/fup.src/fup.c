@@ -21,8 +21,8 @@
 #include "crc16.h"
 #include "dummy.h"
 
-#define VERSION "1.6"
-#define DATE "27.02.2011"
+#define VERSION "1.7
+#define DATE "25.10.2011"
 
 //#define USE_ZLIB
 
@@ -145,6 +145,7 @@ int extractAndWrite(FILE* file, unsigned char * buffer, unsigned short len, unsi
 
 unsigned short readAndCompress(FILE * file, unsigned char ** dataBuf, unsigned short pos, unsigned short * uncompressedDataLen) {
 
+   unsigned short have = 0;
    *uncompressedDataLen = fread((*dataBuf) + pos, 1, *uncompressedDataLen, file);
 #ifdef USE_ZLIB
    // So now we have to check if zlib can compress this or not
@@ -160,8 +161,6 @@ unsigned short readAndCompress(FILE * file, unsigned char ** dataBuf, unsigned s
    strm.avail_in = *uncompressedDataLen;
    memcpy(in, (*dataBuf) + pos, *uncompressedDataLen);
    strm.next_in = in;
-   
-   unsigned short have = 0;
    
    //do {
       strm.avail_out = *uncompressedDataLen;
