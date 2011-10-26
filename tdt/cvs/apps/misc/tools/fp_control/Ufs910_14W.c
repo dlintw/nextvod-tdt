@@ -345,8 +345,6 @@ static int setTimer(Context_t* context, time_t* theGMTTime)
    else
       private->wakeupTime = *theGMTTime;
 
-   private->wakeupTime -= private->wakeupDecrement;
-
    Sleep(context, &private->wakeupTime);
 
    stopPseudoStandby(context, private);

@@ -189,8 +189,6 @@ static int Spark_setTimer(Context_t* context, time_t* theGMTTime)
    else
       wakeupTime = *theGMTTime;
 
-   wakeupTime -= private->wakeupDecrement;
-
    if ((wakeupTime <= 0) || (wakeupTime == LONG_MAX))
    {
        /* nothing to do for e2 */

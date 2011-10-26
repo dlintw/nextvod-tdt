@@ -222,8 +222,6 @@ static int setTimer(Context_t* context, time_t* theGMTTime)
    else
       wakeupTime = *theGMTTime;
 
-   wakeupTime -= private->wakeupDecrement;
-
    if ((wakeupTime <= 0) || (wakeupTime == LONG_MAX))
    {
        /* clear timer */
