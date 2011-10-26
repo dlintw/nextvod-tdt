@@ -54,7 +54,7 @@ tArgs vArgs[] =
 {
    { "-e", "--setTimer       ",
 "Args: No arguments or [time date] Format: HH:MM:SS dd-mm-YYYY \
-\n\tSet the most recent timer from e2 to the frontcontroller and standby \
+\n\tSet the most recent timer from e2 or neutrino to the frontcontroller and standby \
 \n\tSet the current frontcontroller wake-up time" },
    { "-d", "--shutdown       ",
 "Args: [time date] Format: HH:MM:SS dd-mm-YYYY\n\tMimics shutdown command. Shutdown receiver via fc at given time." },
