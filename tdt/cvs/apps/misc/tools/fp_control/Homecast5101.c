@@ -245,7 +245,7 @@ static int setTimer(Context_t* context, time_t* theGMTTime)
    struct tm               *ts;
    tHS5101Private* private = (tHS5101Private*) 
         ((Model_t*)context->m)->private;
-   
+
    printf("%s\n", __func__);
 
    time(&curTime);
@@ -260,6 +260,8 @@ static int setTimer(Context_t* context, time_t* theGMTTime)
       private->wakeupTime = read_timers_utc(curTime);
    else
       private->wakeupTime = *theGMTTime;
+
+   private->wakeupTime -= private->wakeupDecrement;
 
    Sleep(context, &private->wakeupTime);
 
