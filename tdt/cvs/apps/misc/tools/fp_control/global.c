@@ -137,6 +137,13 @@ static time_t read_neutrino_timers(time_t curTime)
 	else
 		printf(" - Error reading %s\n", NEUTRINO_TIMERS);
 
+	if (recordTime != LONG_MAX) {
+		int wakeupDecrement = 5*60;
+		int platzhalter;
+		checkConfig(&platzhalter, &platzhalter, &platzhalter, &wakeupDecrement);
+		recordTime -= wakeupDecrement;
+	}
+
 	return recordTime;
 }
 
