@@ -41,8 +41,8 @@ busybox-1.19.2.tar.bz2;http://www.busybox.net/downloads
 lsb_3.2-20.tar.gz;http://190.9.128.108/repositorios/universo/pool/main/l/lsb
 # lsb_3.2-12.tar.gz;http://ftp.de.debian.org/debian/pool/main/l/lsb
 ipkg-0.99.163.tar.gz;http://www.handhelds.org/download/packages/ipkg
-module-init-tools-3.3-pre1.tar.bz2;http://www.kernel.org/pub/linux/utils/kernel/module-init-tools
-module-init-tools-3.12-pre2.tar.bz2;http://www.kernel.org/pub/linux/utils/kernel/module-init-tools/
+module-init-tools-3.3-pre1.tar.bz2;http://ftp.tlk-l.net/pub/mirrors/kernel.org/linux/utils/kernel/module-init-tools/
+module-init-tools-3.12-pre2.tar.bz2;http://ftp.tlk-l.net/pub/mirrors/kernel.org/linux/utils/kernel/module-init-tools/
 sysvinit-2.86.tar.gz;ftp://ftp.cistron.nl/pub/people/miquels/sysvinit
 sysvinit_2.86.ds1.orig.tar.gz;http://ftp.de.debian.org/debian/pool/main/s/sysvinit
 sysvinit_2.86.ds1-38.diff.gz;http://ftp.de.debian.org/debian/pool/main/s/sysvinit
