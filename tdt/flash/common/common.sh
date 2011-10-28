@@ -26,6 +26,7 @@ if [ ! -e $CURDIR/mksquashfs3.3 ]; then
   cd $CURDIR/squashfs-tools
   make all
   mv $CURDIR/squashfs-tools/mksquashfs $CURDIR/mksquashfs3.3
+  mv $CURDIR/squashfs-tools/unsquashfs $CURDIR/unsquashfs3.3
   cd $CURDIR
   rm -rf $CURDIR/squashfs-tools
   if [ ! -e $CURDIR/mksquashfs3.3 ]; then
@@ -56,6 +57,7 @@ if [ ! -e $CURDIR/mksquashfs4.0 ]; then
   patch -p1 < $BASEDIR/cvs/cdk/Patches/squashfs-tools-4.0-lzma.patch
   make all
   mv $CURDIR/squashfs-tools/squashfs4.0/squashfs-tools/mksquashfs $CURDIR/mksquashfs4.0
+  mv $CURDIR/squashfs-tools/squashfs4.0/squashfs-tools/unsquashfs $CURDIR/unsquashfs4.0
   cd $CURDIR
   rm -rf $CURDIR/squashfs-tools
   if [ ! -e $CURDIR/mksquashfs4.0 ]; then
