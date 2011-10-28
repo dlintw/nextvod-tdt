@@ -23,6 +23,6 @@ echo "/dev/mtdblock2	/boot	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
 #echo "/dev/mtdblock5	/root	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
 
 
-if [  -e $CURDIR/extras/dev_at7500.tar.gz ]; then
-  sudo tar -xzf $CURDIR/extras/dev_at7500.tar.gz -C $TMPROOTDIR/dev/
+if [  -e $CURDIR/extras/dev_hs7810a.tar.gz ]; then
+  sudo tar -xzf $CURDIR/extras/dev_hs7810a.tar.gz -C $TMPROOTDIR/dev/
 fi
