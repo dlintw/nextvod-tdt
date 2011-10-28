@@ -174,12 +174,12 @@ diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/sat7111/setup.c 
 +	 },
 +	{
 +	 .name = "ROOT FS",
-+	 .size = 0x00ad0000, //0x00ae0000,	//10,875M
++	 .size = 0x00ac0000, //0x00ae0000,	//10,875M
 +	 .offset = 0x00d20000,
 +	 },
 +	{
 +	 .name = "Device",
-+	 .size = 0x002d0000, //0x002e0000,	// 2,875M
++	 .size = 0x002c0000, //0x002e0000,	// 2,875M
 +	 .offset = 0x01820000,
 +	 },
 +	{
@@ -342,12 +342,12 @@ diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/sat7111/setup.c 
 +	 },
 +	{
 +	 .name = "ROOT FS",
-+	 .size = 0x00ad0000, //0x00ae0000,	//10,875M
++	 .size = 0x00ac0000, //0x00ae0000,	//10,875M
 +	 .offset = 0x00d20000,
 +	 },
 +	{
 +	 .name = "Device",
-+	 .size = 0x002d0000, //0x002e0000,	// 2,875M
++	 .size = 0x002c0000, //0x002e0000,	// 2,875M
 +	 .offset = 0x01820000,
 +	 },
 +	{
@@ -386,7 +386,7 @@ diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/sat7111/setup.c 
 +	 },
 +	{
 +	 .name = "ROOT",
-+	 .size = 0x01260000,	//18,55M
++	 .size = 0x01240000,	//18,55M
 +	 .offset =	0x007e0000,
 +	},
 +	{

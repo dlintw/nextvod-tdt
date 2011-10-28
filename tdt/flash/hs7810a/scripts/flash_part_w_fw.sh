@@ -57,37 +57,37 @@ cat $CURDIR/mtd_fw.sum.pad.bin >> $CURDIR/mtd_fw.sum.pad.signed.bin
 # ./release
 # ./release/etc
 # ./release/usr
-echo "MKFSJFFS2 -qUfv -p0x1260000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin"
-$MKFSJFFS2 -qUfv -p0x1260000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin > /dev/null
+echo "MKFSJFFS2 -qUfv -p0x1240000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin"
+$MKFSJFFS2 -qUfv -p0x1240000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin > /dev/null
 echo "SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin"
 $SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin > /dev/null
-echo "PAD 0x1260000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin"
-$PAD 0x1260000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin
+echo "PAD 0x1240000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin"
+$PAD 0x1240000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin
 
 # Split the rootfs
 
 #root
-echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.r.bin bs=1 skip=0 count=0x00ad0000"
-dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.r.bin bs=1 skip=0 count=11337728
+echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.r.bin bs=1 skip=0 count=0x00ac0000"
+dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.r.bin bs=1 skip=0 count=11272192
 cat $CURDIR/dummy.squash.signed.padded > $CURDIR/mtd_root.sum.pad.r.signed.bin
 cat $CURDIR/mtd_root.sum.pad.r.bin >> $CURDIR/mtd_root.sum.pad.r.signed.bin
 #dev7
-echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.d.bin bs=1 skip=0x00ad0000 count=0x002d0000"
-dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.d.bin bs=1 skip=11337728 count=2949120
+echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.d.bin bs=1 skip=0x00ac0000 count=0x002c0000"
+dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.d.bin bs=1 skip=11272192 count=2883584
 cat $CURDIR/dummy.squash.signed.padded > $CURDIR/mtd_root.sum.pad.d.signed.bin
 cat $CURDIR/mtd_root.sum.pad.d.bin >> $CURDIR/mtd_root.sum.pad.d.signed.bin
 #config2345
-echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c0.bin bs=1 skip=0x00da0000 count=0x00040000"
-dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c0.bin bs=1 skip=14286848 count=262144
-echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c4.bin bs=1 skip=0x00de0000 count=0x00040000"
-dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c4.bin bs=1 skip=14548992 count=262144
-echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c8.bin bs=1 skip=0x00e20000 count=0x00020000"
-dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c8.bin bs=1 skip=14811136 count=131072
-echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.ca.bin bs=1 skip=0x00e40000 count=0x00020000"
-dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.ca.bin bs=1 skip=14942208 count=131072
+echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c0.bin bs=1 skip=0x00d80000 count=0x00040000"
+dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c0.bin bs=1 skip=14155776 count=262144
+echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c4.bin bs=1 skip=0x00dc0000 count=0x00040000"
+dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c4.bin bs=1 skip=14417920 count=262144
+echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c8.bin bs=1 skip=0x00e00000 count=0x00020000"
+dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.c8.bin bs=1 skip=14680064 count=131072
+echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.ca.bin bs=1 skip=0x00e20000 count=0x00020000"
+dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.ca.bin bs=1 skip=14811136 count=131072
 #user9
-echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.u.bin bs=1 skip=0x00e60000 count=0x00400000"
-dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.u.bin bs=1 skip=15073280 count=4194304
+echo "dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.u.bin bs=1 skip=0x00e40000 count=0x00400000"
+dd if=$CURDIR/mtd_root.sum.pad.bin of=$CURDIR/mtd_root.sum.pad.u.bin bs=1 skip=14942208 count=4194304
 
 $FUP -c $OUTFILE -k $CURDIR/uImage -a $CURDIR/mtd_fw.sum.pad.signed.bin -r $CURDIR/mtd_root.sum.pad.r.signed.bin -d $CURDIR/mtd_root.sum.pad.d.signed.bin -c0 $CURDIR/mtd_root.sum.pad.c0.bin -c4 $CURDIR/mtd_root.sum.pad.c4.bin -c8 $CURDIR/mtd_root.sum.pad.c8.bin -ca $CURDIR/mtd_root.sum.pad.ca.bin -u $CURDIR/mtd_root.sum.pad.u.bin
 
