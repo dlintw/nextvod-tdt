@@ -1729,35 +1729,11 @@ do
 		;;
 	audio)
 		major=`Major sound 14`
-		makedev mixer      c $major  0 $audio
-		makedev mixer1     c $major 16 $audio
-		makedev mixer2     c $major 32 $audio
-		makedev mixer3     c $major 48 $audio
-		makedev sequencer  c $major  1 $audio
-		makedev midi00     c $major  2 $audio
-		makedev midi01     c $major 18 $audio
-		makedev midi02     c $major 34 $audio
-		makedev midi03     c $major 50 $audio
+		makedev adsp       c $major 12 $audio
 		makedev dsp        c $major  3 $audio
 		makedev dsp1       c $major 19 $audio
-		makedev dsp2       c $major 35 $audio
-		makedev dsp3       c $major 51 $audio
 		makedev audio      c $major  4 $audio
 		makedev audio1     c $major 20 $audio
-		makedev audio2     c $major 36 $audio
-		makedev audio3     c $major 52 $audio
-		makedev sndstat    c $major  6 $audio
-		makedev audioctl   c $major  7 $audio
-		major=31
-		makedev mpu401data c $major 0  $audio
-		makedev mpu401stat c $major 1  $audio
-		major=35
-		for i in 0 1 2 3
-		do
-			makedev midi$i  c $major $i $audio
-			makedev rmidi$i c $major `math $i + 64` $audio
-			makedev smpte$i c $major `math $i + 128` $audio
-		done
 		;;
 	pcaudio)
 		major=`Major pcsp 13` || continue
@@ -1768,19 +1744,14 @@ do
 	alsasnd)
 		major=`Major alsasnd 116` || continue
 		mkdir -p snd
-		for i in 0 1 2 3 4 5 6 7; do
-		  makedev snd/controlC$i c $major `math 32 \* $i` $audio
-		  for j in 0 1 2 3 4 5 6 7; do
-		    makedev snd/hwC${i}D${j} c $major `math 32 \* $i + 4 + $j` $audio
-		  done
-		  for j in 0 1 2 3 4 5 6 7; do
-		    makedev snd/midiC${i}D${j} c $major `math 32 \* $i + 8 + $j` $audio
-		    makedev snd/pcmC${i}D${j}p c $major `math 32 \* $i + 16 + $j` $audio
-		    makedev snd/pcmC${i}D${j}c c $major `math 32 \* $i + 24 + $j` $audio
-		  done
-		done
-		makedev snd/seq c $major 1 $audio
-		makedev snd/timer c $major 33 $audio
+		makedev snd/controlC0 c $major 7 $audio
+		makedev snd/controlC1 c $major 9 $audio
+		makedev snd/pcmC0D0p c $major 6 $audio
+		makedev snd/pcmC0D1p c $major 5 $audio
+		makedev snd/pcmC0D2p c $major 3 $audio
+		makedev snd/pcmC0D3c c $major 4 $audio
+		makedev snd/pcmC1D0p c $major 8 $audio
+		makedev snd/timer c $major 2 $audio
 		;;
 
 	video|video4linux|v4l|radio)
