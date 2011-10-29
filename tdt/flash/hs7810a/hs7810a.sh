@@ -59,7 +59,7 @@ echo "Checking if flashtool fup exists..."
 if [ ! -e $CURDIR/fup ]; then
   echo "Flashtool fup is missing, trying to compile it..."
   cd $CURDIR/../common/fup.src
-  $CURDIR/../common/fup.src/compile.sh NO_ZLIB
+  $CURDIR/../common/fup.src/compile.sh USE_ZLIB
   mv $CURDIR/../common/fup.src/fup $CURDIR/fup
   cd $CURDIR
   if [ ! -e $CURDIR/fup ]; then
@@ -80,15 +80,15 @@ echo "-----------------------------------------------------------------------"
 echo "Checking targets..."
 echo "Found flashtarget:"
 #echo "   1) KERNEL with ROOT"
-#echo "   2) KERNEL with ROOT and FW"
+echo "   2) KERNEL with ROOT and FW"
 echo "   3) KERNEL"
 #echo "   4) FW"
 read -p "Select flashtarget (1-4)? "
 case "$REPLY" in
 #	1)  echo "Creating KERNEL with ROOT..."
 #		$SCRIPTDIR/flash_part_wo_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR;;
-#	2)  echo "Creating KERNEL with ROOT and FW..."
-#		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPFWDIR $TMPROOTDIR;;
+	2)  echo "Creating KERNEL with ROOT and FW..."
+		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPFWDIR $TMPROOTDIR;;
 	3)  echo "Creating KERNEL..."
 		$SCRIPTDIR/flash_part_kernel.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR;;
 #	4)  echo "Creating FW..."

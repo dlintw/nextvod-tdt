@@ -13,7 +13,7 @@
 + 	int command_line_len = strlen(command_line);
 + 	int org_command_line_len = strlen(org_command_line);
 + 
-+ 	//if(command_line_len >= org_command_line_len && !strncmp(command_line, org_command_line, org_command_line_len))
++ 	if(command_line_len >= org_command_line_len && !strncmp(command_line, org_command_line, org_command_line_len))
 + 	{
 + 		int i;
 + 		for(i = 0; i < (command_line_len - 7); i++)
@@ -52,423 +52,421 @@ diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/sat7111/Makefile
 diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/sat7111/setup.c linux-sh4/arch/sh/boards/st/sat7111/setup.c
 *** linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/sat7111/setup.c	1970-01-01 02:00:00.000000000 +0200
 --- linux-sh4/arch/sh/boards/st/sat7111/setup.c	2011-07-29 06:50:50.654192548 +0300
-***************
-*** 0 ****
---- 1,414 ----
-+ /*
-+  * arch/sh/boards/st/sat7111/setup.c
-+  *
-+  * Copyright (C) 2008 STMicroelectronics Limited
-+  * Author: Stuart Menefy (stuart.menefy@st.com)
-+  *
-+  * May be copied or modified under the terms of the GNU General Public
-+  * License.  See linux/COPYING for more information.
-+  *
-+  * STMicroelectronics STx7111 Mboard support.
-+  */
-+ 
-+ #include <linux/init.h>
-+ #include <linux/platform_device.h>
-+ #include <linux/leds.h>
-+ #include <linux/stm/pio.h>
-+ #include <linux/stm/soc.h>
-+ #include <linux/stm/emi.h>
-+ #include <linux/mtd/mtd.h>
-+ #include <linux/mtd/physmap.h>
-+ #include <linux/mtd/partitions.h>
-+ #include <linux/bpa2.h>
-+ #include <linux/phy.h>
-+ #include <linux/delay.h>
-+ #include <linux/lirc.h>
-+ #include <linux/gpio_keys.h>
-+ #include <linux/input.h>
-+ #include <asm/irq-ilc.h>
-+ #include <asm/irl.h>
-+ #include <asm/io.h>
-+ #include "../common/common.h"
-+ 
-+ const char *LMI_IO_partalias[] = { "v4l2-coded-video-buffers", "BPA2_Region1", "v4l2-video-buffers" ,
-+                                     "coredisplay-video", "gfx-memory", "BPA2_Region0", "LMI_VID", NULL };
-+  
-+ /*
-+ 0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
-+ 0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
-+ 0x40800000 - 0x47FFFFFF - linux   (120mb) 
-+ 0x48000000 - 0x49FFFFFF - bigphys ( 32mb)
-+ 0x4A000000 - 0x4FFFFFFF - lmi_io  ( 96mb)
+@@ -0,0 +1,255 @@
++/*
++ * arch/sh/boards/st/sat7111/setup.c
++ *
++ * Copyright (C) 2008 STMicroelectronics Limited
++ * Author: Stuart Menefy (stuart.menefy@st.com)
++ *
++ * May be copied or modified under the terms of the GNU General Public
++ * License.  See linux/COPYING for more information.
++ *
++ * STMicroelectronics STx7111 Mboard support.
 + */
-+ static struct bpa2_partition_desc bpa2_parts_table[] = {
-+     {
-+  	    .name  = "bigphysarea",
-+  	    .start = 0x48000000,
-+  	    .size  = 0x02000000, /* 32 Mb */
-+  	    .flags = 0,
-+  	    .aka   = NULL
-+     }, 
-+     {
-+  	    .name  = "LMI_IO",
-+  	    .start = 0x4A000000,
-+  	    .size  = 0x06000000, /* 92 Mb */
-+  	    .flags = 0,
-+  	    .aka   = LMI_IO_partalias
-+     }, 
-+  };
++
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/leds.h>
++#include <linux/stm/pio.h>
++#include <linux/stm/soc.h>
++#include <linux/stm/emi.h>
++#include <linux/mtd/mtd.h>
++#include <linux/mtd/map.h>
++#include <linux/mtd/concat.h>
++#include <linux/mtd/physmap.h>
++#include <linux/mtd/partitions.h>
++#include <linux/bpa2.h>
++#include <linux/phy.h>
++#include <linux/delay.h>
++#include <linux/lirc.h>
++#include <linux/gpio_keys.h>
++#include <linux/input.h>
++#include <asm/irq-ilc.h>
++#include <asm/irl.h>
++#include <asm/io.h>
++#include "../common/common.h"
++
++const char *LMI_IO_partalias[] = { "v4l2-coded-video-buffers", "BPA2_Region1", "v4l2-video-buffers" ,
++                                    "coredisplay-video", "gfx-memory", "BPA2_Region0", "LMI_VID", NULL };
 + 
-+ /* Whether the hardware supports NOR or NAND Flash depends on J34.
-+  * In position 1-2 CSA selects NAND, in position 2-3 is selects NOR.
-+  * Note that J30A must be in position 2-3 to select the on board Flash
-+  * (both NOR and NAND).
-+  */
-+ #define FLASH_NOR
-+ 
-+ static int ascs[2] __initdata = { 2 | STASC_FLAG_NORTSCTS << 8, 3 | STASC_FLAG_NORTSCTS << 8};
-+ 
-+ static void __init sat7111_setup(char** cmdline_p)
-+ {
-+ 	printk("STMicroelectronics sat7111 initialisation\n");
-+ 
-+ 	stx7111_early_device_init();
-+ 	stx7111_configure_asc(ascs, 2, 0);
-+   	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
-+ }
-+ 
-+ static struct plat_stm_pwm_data pwm_private_info = {
-+ 	.flags		= PLAT_STM_PWM_OUT0,
++/*
++0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
++0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
++0x40800000 - 0x47FFFFFF - linux   (120mb) 
++0x48000000 - 0x49FFFFFF - bigphys ( 32mb)
++0x4A000000 - 0x4FFFFFFF - lmi_io  ( 96mb)
++*/
++static struct bpa2_partition_desc bpa2_parts_table[] = {
++    {
++ 	    .name  = "bigphysarea",
++ 	    .start = 0x48000000,
++ 	    .size  = 0x02000000, /* 32 Mb */
++ 	    .flags = 0,
++ 	    .aka   = NULL
++    }, 
++    {
++ 	    .name  = "LMI_IO",
++ 	    .start = 0x4A000000,
++ 	    .size  = 0x06000000, /* 92 Mb */
++ 	    .flags = 0,
++ 	    .aka   = LMI_IO_partalias
++    }, 
 + };
-+ 
-+ static struct plat_ssc_data ssc_private_info = {
-+ 	.capability  =
-+ 		ssc0_has(SSC_I2C_CAPABILITY) |
-+ 		ssc1_has(SSC_I2C_CAPABILITY) |
-+ 		ssc2_has(SSC_I2C_CAPABILITY) |
-+ 		ssc3_has(SSC_I2C_CAPABILITY),
-+ };
-+ 
-+ static struct platform_device sat7111_leds = {
-+ 	.name = "leds-gpio",
-+ 	.id = -1,
-+ 	.dev.platform_data = &(struct gpio_led_platform_data) {
-+ 		.num_leds = 2,
-+ 		.leds = (struct gpio_led[]) {
-+ 			{
-+ 				.name = "HB red",
-+ 				.default_trigger = "error",
-+ 				.gpio = stpio_to_gpio(3, 5),
-+ 			},
-+ 			{
-+ 				.name = "HB white",
-+ 				.default_trigger = "power",
-+ 				.gpio = stpio_to_gpio(3, 0),
-+ 			},
-+ 		},
-+ 	},
-+ };
-+ 
-+ static struct gpio_keys_button sat7111_buttons[] = {
-+ 	{
-+ 		.code = BTN_0,
-+ 		.gpio = stpio_to_gpio(6, 2),
-+ 		.desc = "KD1",
-+ 	},
-+ 	{
-+ 		.code = BTN_1,
-+ 		.gpio = stpio_to_gpio(6, 3),
-+ 		.desc = "KD2",
-+ 	},
-+ 	{
-+ 		.code = BTN_2,
-+ 		.gpio = stpio_to_gpio(6, 4),
-+ 		.desc = "KD3",
-+ 	},
-+ 	{
-+ 		.code = BTN_3,
-+ 		.gpio = stpio_to_gpio(6, 5),
-+ 		.desc = "KD4",
-+ 	},
-+ 	{
-+ 		.code = BTN_4,
-+ 		.gpio = stpio_to_gpio(6, 2),
-+ 		.desc = "KD5",
-+ 	},
-+ 	{
-+ 		.code = BTN_5,
-+ 		.gpio = stpio_to_gpio(6, 2),
-+ 		.desc = "KD6",
-+ 	},
-+ 	{
-+ 		.code = BTN_6,
-+ 		.gpio = stpio_to_gpio(6, 2),
-+ 		.desc = "KD7",
-+ 	},
-+ 	{
-+ 		.code = BTN_7,
-+ 		.gpio = stpio_to_gpio(6, 2),
-+ 		.desc = "KD8",
-+ 	},
-+ 	{
-+ 		.code = BTN_8,
-+ 		.gpio = stpio_to_gpio(6, 2),
-+ 		.desc = "KD9",
-+ 	},
-+ 	{
-+ 		.code = BTN_9,
-+ 		.gpio = stpio_to_gpio(6, 2),
-+ 		.desc = "KD10",
-+ 	},
-+ };
-+ 
-+ static struct gpio_keys_platform_data sat7111_button_data = {
-+ 	.buttons = sat7111_buttons,
-+ 	.nbuttons = ARRAY_SIZE(sat7111_buttons),
-+ };
-+ 
-+ static struct platform_device sat7111_button_device = {
-+ 	.name = "gpio-keys",
-+ 	.id = -1,
-+ 	.num_resources = 0,
-+ 	.dev = {
-+ 		.platform_data = &sat7111_button_data,
-+ 	}
-+ };
-+ 
-+ /* J34 must be in the 2-3 position to enable NOR Flash */
-+ static struct stpio_pin *vpp_pio;
-+ static struct stpio_pin *phy_reset_pio;
-+ static struct stpio_pin *usb_reset_pio;
-+ 
-+ static void set_vpp(struct map_info * info, int enable)
-+ {
-+ 	stpio_set_pin(vpp_pio, enable);
-+ }
-+ 
-+ static struct mtd_partition mtd_parts_table[10] = {
-+ 	{
-+ 	 .name = "Boot firmware",
-+ 	 .size = 0x00100000,
-+ 	 .offset = 0x00000000,
-+ 	 },
-+ 	{
-+ 	 .name = "Kernel",
-+ 	 .size = 0x00200000, //2M
-+ 	 .offset = 0x00100000,
-+ 	 }, 
-+ 
-+ 	{
-+ 	 .name = "APP",
-+ 	 .size = 0x00a00000,	//10M
-+ 	 .offset = 0x00300000,
-+ 	 },
-+ 
-+ 	{
-+ 	 .name = "ROOT FS",
-+ 	 .size = 0x00b00000,	//11M
-+ 	 .offset = 0x00d00000, 
-+ 	 },	 	 
-+ 	{
-+ 	 .name = "Device",
-+ 	 .size = 0x00300000,	// 3M
-+ 	 .offset = 0x01800000,
-+ 	 },
-+ 	{
-+ 	 .name = "Config",
-+ 	 .size = 0x00100000,	
-+ 	 .offset = 0x01b00000, // 1.2M
-+ 	 },
-+ 	{
-+ 	 .name = "User",
-+ 	 .size = MTDPART_SIZ_FULL,	
-+ 	 .offset = 0x01c00000, // 4M
-+ 	 },	 
-+ 	{
-+ 	 .name = "All",
-+ 	 .size = MTDPART_SIZ_FULL,	//32M
-+ 	 .offset = 0x00000000,
-+ 	 },
-+ 	{
-+ 	 .name = "APP_ORG",
-+ 	 .size = 0x00500000,	//5M
-+ 	 .offset = 0x00300000,
-+ 	 },
-+ 	{
-+ 	 .name = "APP_BAK",
-+ 	 .size = 0x00500000,	//5M
-+ 	 .offset = 0x00800000,
-+ 	 }	 	 	 
-+ };
-+ 
-+ static struct physmap_flash_data physmap_flash_data = {
-+ 	.width		= 2,
-+ 	.set_vpp	= set_vpp,
-+ 	.nr_parts	= ARRAY_SIZE(mtd_parts_table),
-+ 	.parts		= mtd_parts_table
-+ };
-+ 
-+ static int sat7111_phy_reset(void *bus)
-+ {
-+ 	stpio_set_pin(phy_reset_pio, 1);
-+ 	udelay(1);
-+ 	stpio_set_pin(phy_reset_pio, 0);
-+ 	udelay(1);
-+ 	stpio_set_pin(phy_reset_pio, 1);
-+     
-+ 	return 1;
-+ }
-+ 
-+ static struct plat_stmmacphy_data phy_private_data = {
-+ 	/* SMSC LAN 8700 */
-+ 	.bus_id = 0,
-+ 	.phy_addr = 0,
-+ 	.phy_mask = 0,
-+ 	.phy_reset = &sat7111_phy_reset,
-+ 	.interface = PHY_INTERFACE_MODE_MII,
-+ };
-+ 
-+ static struct platform_device sat7111_phy_device = {
-+ 	.name		= "stmmacphy",
-+ 	.id		= 0,
-+ 	.num_resources	= 1,
-+ 	.resource	= (struct resource[]) {
-+ 		{
-+ 			.name	= "phyirq",
-+ 			.start	= -1,/*FIXME*/
-+ 			.end	= -1,
-+ 			.flags	= IORESOURCE_IRQ,
-+ 		},
-+ 	},
-+ 	.dev = {
-+ 		.platform_data = &phy_private_data,
-+ 	}
-+ };
-+ 
-+ static struct physmap_flash_data sat7111_physmap_flash_data = {
-+ 	.width		= 2,
-+ 	.set_vpp	= NULL,
-+ 	.nr_parts	= ARRAY_SIZE(mtd_parts_table),
-+ 	.parts		= mtd_parts_table
-+ };
-+ 
-+ static struct platform_device physmap_flash = {
-+ 	.name		= "physmap-flash",
-+ 	.id		= -1,
-+ 	.num_resources	= 1,
-+ 	.resource	= (struct resource[]) {
-+ 		{
-+ 			.start		= 0x00000000,
-+ 			.end		= 64*1024*1024 - 1,
-+ 			.flags		= IORESOURCE_MEM,
-+ 		}
-+ 	},
-+ 	.dev		= {
-+ 		.platform_data	= &sat7111_physmap_flash_data,
-+ 	},
-+ };
-+ 
-+ /* J34 must be in the 1-2 position to enable NOR Flash */
-+ static struct mtd_partition nand_partitions[] = {
-+ 	{
-+ 		.name	= "NAND root",
-+ 		.offset	= 0,
-+ 		.size 	= 0x00800000
-+ 	}, {
-+ 		.name	= "NAND home",
-+ 		.offset	= MTDPART_OFS_APPEND,
-+ 		.size	= MTDPART_SIZ_FULL
-+ 	},
-+ };
-+ 
-+ static struct plat_stmnand_data sat7111_nand_config = {
-+ 	.emi_bank		= 0,
-+ 	.emi_withinbankoffset	= 0,
-+ 
-+ 	/* Timings for NAND512W3A */
-+ 	.emi_timing_data = &(struct emi_timing_data) {
-+ 		.rd_cycle_time	= 40,		 /* times in ns */
-+ 		.rd_oee_start	= 0,
-+ 		.rd_oee_end	= 10,
-+ 		.rd_latchpoint	= 10,
-+ 		.busreleasetime = 0,
-+ 
-+ 		.wr_cycle_time	= 40,
-+ 		.wr_oee_start	= 0,
-+ 		.wr_oee_end	= 10,
-+ 
-+ 		.wait_active_low = 0,
-+ 	},
-+ 
-+ 	.chip_delay		= 40,		/* time in us */
-+ 	.mtd_parts		= nand_partitions,
-+ 	.nr_parts		= ARRAY_SIZE(nand_partitions),
-+ };
-+ 
-+ static struct platform_device *sat7111_devices[] __initdata = {
-+ //	&sat7111_leds,
-+ #ifdef FLASH_NOR
-+ 	&physmap_flash,
-+ #endif
-+ 	&sat7111_phy_device,
-+ //	&sat7111_button_device,
-+ };
-+ 
-+ /* Configuration based on Futarque-RC signals train. */
-+ lirc_scd_t lirc_scd = {
-+ 	.code = 0x3FFFC028,
-+ 	.codelen = 0x1e,
-+ 	.alt_codelen = 0,
-+ 	.nomtime = 0x1f4,
-+ 	.noiserecov = 0,
-+ };
-+ 
-+ static int __init device_init(void)
-+ {
-+ 	//stx7111_configure_pwm(&pwm_private_info);
-+ 	stx7111_configure_ssc(&ssc_private_info);
-+ 	stx7111_configure_usb(1); /* Enable inverter */
-+ 	stx7111_configure_ethernet(1, 0, 0, 0);
-+     	stx7111_configure_lirc(&lirc_scd);
-+ 
-+ 	vpp_pio = stpio_request_pin(3,6, "VPP", STPIO_OUT);
-+     	phy_reset_pio = stpio_request_pin(4,4, "PHY", STPIO_OUT);
-+      	usb_reset_pio = stpio_request_pin(3,5, "USB_RESET", STPIO_OUT);
-+ 	stpio_set_pin(usb_reset_pio, 1);
-+ 	udelay(1);
-+ 	stpio_set_pin(usb_reset_pio, 0);
-+ 	udelay(1);
-+ 	stpio_set_pin(usb_reset_pio, 1);     
-+ 
-+ #ifndef FLASH_NOR
-+ 	stx7111_configure_nand(&sat7111_nand_config);
-+ 	/* The MTD NAND code doesn't understand the concept of VPP,
-+ 	 * (or hardware write protect) so permanently enable it.
-+ 	 */
-+ 	stpio_set_pin(vpp_pio, 1);
-+ #endif
-+ 	stpio_set_pin(vpp_pio, 1);
-+ 
-+ 	return platform_add_devices(sat7111_devices, ARRAY_SIZE(sat7111_devices));
-+ }
-+ arch_initcall(device_init);
-+ 
-+ static void __iomem *sat7111_ioport_map(unsigned long port, unsigned int size)
-+ {
-+ 	/* However picking somewhere safe isn't as easy as you might think.
-+ 	 * I used to use external ROM, but that can cause problems if you are
-+ 	 * in the middle of updating Flash. So I'm now using the processor core
-+ 	 * version register, which is guaranted to be available, and non-writable.
-+ 	 */
-+ 	return (void __iomem *)CCN_PVR;
-+ }
-+ 
-+ static void __init sat7111_init_irq(void)
-+ {
-+ }
-+ 
-+ struct sh_machine_vector mv_sat7111 __initmv = {
-+ 	.mv_name		= "sat7111",
-+ 	.mv_setup		= sat7111_setup,
-+ 	.mv_nr_irqs		= NR_IRQS,
-+ 	.mv_init_irq		= sat7111_init_irq,
-+ 	.mv_ioport_map		= sat7111_ioport_map,
-+ };
++
++static int ascs[2] __initdata = { 2 | STASC_FLAG_NORTSCTS << 8, 3 | STASC_FLAG_NORTSCTS << 8};
++
++static void __init sat7111_setup(char** cmdline_p)
++{
++	printk("STMicroelectronics sat7111 initialisation\n");
++
++	stx7111_early_device_init();
++	stx7111_configure_asc(ascs, 2, 0);
++  	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
++}
++
++static struct plat_stm_pwm_data pwm_private_info = {
++	.flags		= PLAT_STM_PWM_OUT0,
++};
++
++static struct plat_ssc_data ssc_private_info = {
++	.capability  =
++		ssc0_has(SSC_I2C_CAPABILITY) |
++		ssc1_has(SSC_I2C_CAPABILITY) |
++		ssc2_has(SSC_I2C_CAPABILITY) |
++		ssc3_has(SSC_I2C_CAPABILITY),
++};
++
++/* J34 must be in the 2-3 position to enable NOR Flash */
++static struct stpio_pin *vpp_pio;
++static struct stpio_pin *phy_reset_pio;
++static struct stpio_pin *usb_reset_pio;
++
++static void set_vpp(struct map_info * info, int enable)
++{
++	stpio_set_pin(vpp_pio, enable);
++}
++
++static struct map_info nor_map = {
++	 .name = "physmap-flash",
++	 .size = 0x02000000,	//32MB
++	 .phys = 0x00000000,
++	 .bankwidth = 2,
++	 .set_vpp	= NULL,
++};
++
++static struct mtd_partition partition_info[]=
++{
++	{
++	 .name = "Boot firmware",
++	 .size = 0x00100000,	//1M
++	 .offset = 0x00000000,
++	 },
++	{
++	 .name = "Kernel",
++	 .size = 0x00200000,	//2M
++	 .offset = 0x00100000,
++	 },
++	{
++	 .name = "APP_BAK",
++	 .size = 0x004e0000,	//4,75M
++	 .offset = 0x00820000,
++	 },
++	{
++	 .name = "ROOT FS",
++	 .size = 0x00ac0000, //0x00ae0000,	//10,875M
++	 .offset = 0x00d20000,
++	 },
++	{
++	 .name = "Device",
++	 .size = 0x002c0000, //0x002e0000,	// 2,875M
++	 .offset = 0x01820000,
++	 },
++	{
++	 .name = "Config",
++	 .size = 0x000c0000,	// 0,75M
++	 .offset = 0x01b00000,
++	 },
++	{
++	 .name = "User",
++	 .size = 0x00400000,	// 4M
++	 .offset = 0x01c00000,
++	 },
++	{
++	 .name = "APP_ORG",
++	 .size = 0x004e0000,	//4,75M
++	 .offset = 0x00320000,
++	 },
++};
++
++static struct physmap_flash_data sat7111_physmap_flash_data = {
++	.width		= 2,
++	.set_vpp	= NULL,
++	.nr_parts	= ARRAY_SIZE(partition_info),
++	.parts		= partition_info
++};
++static struct platform_device physmap_flash = {
++	.name		= "physmap-flash",
++	.id		= -1,
++	.num_resources	= 1,
++	.resource	= (struct resource[]) {
++		{
++			.start		= 0x00000000,
++			.end		= 32*1024*1024 - 1,
++			.flags		= IORESOURCE_MEM,
++		}
++	},
++	.dev		= {
++		.platform_data	= &sat7111_physmap_flash_data,
++	},
++};
++
++static int sat7111_phy_reset(void *bus)
++{
++	stpio_set_pin(phy_reset_pio, 1);
++	udelay(1);
++	stpio_set_pin(phy_reset_pio, 0);
++	udelay(1);
++	stpio_set_pin(phy_reset_pio, 1);
++    
++	return 1;
++}
++
++static struct plat_stmmacphy_data phy_private_data = {
++	/* SMSC LAN 8700 */
++	.bus_id = 0,
++	.phy_addr = -1,
++	.phy_mask = 0,
++	.phy_reset = &sat7111_phy_reset,
++	.interface = PHY_INTERFACE_MODE_MII,
++};
++
++static struct platform_device sat7111_phy_device = {
++	.name		= "stmmacphy",
++	.id		= 0,
++	.num_resources	= 1,
++	.resource	= (struct resource[]) {
++		{
++			.name	= "phyirq",
++			.start	= -1,/*FIXME*/
++			.end	= -1,
++			.flags	= IORESOURCE_IRQ,
++		},
++	},
++	.dev = {
++		.platform_data = &phy_private_data,
++	}
++};
++
++static struct platform_device *sat7111_devices[] __initdata = {
++	&sat7111_phy_device,
++	&physmap_flash,
++};
++
++
++static int __init device_init(void)
++{
++	int i, devices_found = 0;
++
++	stx7111_configure_ssc(&ssc_private_info);
++	stx7111_configure_usb(1); /* Enable inverter */
++	stx7111_configure_ethernet(1, 0, 0, 0);
++
++	vpp_pio = stpio_request_pin(3,6, "VPP", STPIO_OUT);
++    	phy_reset_pio = stpio_request_pin(4,4, "PHY", STPIO_OUT);
++     	usb_reset_pio = stpio_request_pin(3,5, "USB_RESET", STPIO_OUT);
++	stpio_set_pin(usb_reset_pio, 1);
++	udelay(1);
++	stpio_set_pin(usb_reset_pio, 0);
++	udelay(1);
++	stpio_set_pin(usb_reset_pio, 1);     
++
++	stpio_set_pin(vpp_pio, 1);
++
++	return platform_add_devices(sat7111_devices, ARRAY_SIZE(sat7111_devices));
++}
++arch_initcall(device_init);
++
++static void __iomem *sat7111_ioport_map(unsigned long port, unsigned int size)
++{
++	/* However picking somewhere safe isn't as easy as you might think.
++	 * I used to use external ROM, but that can cause problems if you are
++	 * in the middle of updating Flash. So I'm now using the processor core
++	 * version register, which is guaranted to be available, and non-writable.
++	 */
++	return (void __iomem *)CCN_PVR;
++}
++
++static void __init sat7111_init_irq(void)
++{
++}
++
++struct sh_machine_vector mv_sat7111 __initmv = {
++	.mv_name		= "sat7111",
++	.mv_setup		= sat7111_setup,
++	.mv_nr_irqs		= NR_IRQS,
++	.mv_init_irq		= sat7111_init_irq,
++	.mv_ioport_map		= sat7111_ioport_map,
++};
+*** linux-sh4-2.6.23.17_stm23_0123_orig/drivers/mtd/maps/physmap.c	2011-06-19 18:34:29.000000000 +0300
+--- linux-sh4/drivers/mtd/maps/physmap.c	2011-07-29 06:50:51.114192548 +0300
+@@ -18,6 +18,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/map.h>
++#include <linux/mtd/concat.h>
+ #include <linux/mtd/partitions.h>
+ #include <linux/mtd/physmap.h>
+ #include <asm/io.h>
+@@ -77,6 +78,87 @@
+ static const char *part_probe_types[] = { "cmdlinepart", "RedBoot", NULL };
+ #endif
+ 
++
++static struct mtd_partition partition_info[]=
++{
++	{
++	 .name = "Boot firmware",
++	 .size = 0x00100000,	//1M
++	 .offset = 0x00000000,
++	 },
++	{
++	 .name = "Kernel",
++	 .size = 0x00200000,	//2M
++	 .offset = 0x00100000,
++	 },
++	{
++	 .name = "APP_BAK",
++	 .size = 0x004e0000,	//4,875M
++	 .offset = 0x00820000,
++	 },
++	{
++	 .name = "ROOT FS",
++	 .size = 0x00ac0000, //0x00ae0000,	//10,875M
++	 .offset = 0x00d20000,
++	 },
++	{
++	 .name = "Device",
++	 .size = 0x002c0000, //0x002e0000,	// 2,875M
++	 .offset = 0x01820000,
++	 },
++	{
++	 .name = "Config",
++	 .size = 0x000c0000,	// 0,75M
++	 .offset = 0x01b00000,
++	 },
++	{
++	 .name = "User",
++	 .size = 0x00400000,	// 4M
++	 .offset = 0x01c00000,
++	 },
++	{
++	 .name = "APP_ORG",
++	 .size = 0x004e0000,	//4,875M
++	 .offset = 0x00320000,
++	 },
++};
++
++static struct mtd_partition higlvl_partition_info[]=
++{
++	{
++	 .name = "Boot firmware",
++	 .size = 0x00100000,	//1M
++	 .offset = 0x00000000,
++	 },
++	{
++	 .name = "Kernel",
++	 .size = 0x00200000,	//2M
++	 .offset = 0x00100000,
++	 },
++	{
++	 .name = "FW",
++	 .size = 0x004e0000,	//4,875M
++	 .offset = 0x00300000,
++	 },
++	{
++	 .name = "ROOT",
++	 .size = 0x01240000,	//18,55M
++	 .offset =	0x007e0000,
++	},
++	{
++	 .name = "SWAP",
++	 .size = 0x004e0000,	//4,875M
++	 .offset = 0x01a60000,
++	 },
++};
++
++#define NUM_PARTITIONS ARRAY_SIZE(partition_info)
++#define NUM_HIGHLVL_PARTITIONS ARRAY_SIZE(higlvl_partition_info)
++
++static struct mtd_info *lowlvl_parts[NUM_PARTITIONS];
++static struct mtd_info *merged_mtd;
++
++
+ static int physmap_flash_probe(struct platform_device *dev)
+ {
+ 	struct physmap_flash_data *physmap_data;
+@@ -88,7 +170,7 @@
+ 	if (physmap_data == NULL)
+ 		return -ENODEV;
+ 
+-       	printk(KERN_NOTICE "physmap platform flash device: %.8llx at %.8llx\n",
++       	printk("physmap platform flash device: %.8llx at %.8llx\n",
+ 	    (unsigned long long)(dev->resource->end - dev->resource->start + 1),
+ 	    (unsigned long long)dev->resource->start);
+ 
+@@ -115,6 +197,8 @@
+ 	info->map.bankwidth = physmap_data->width;
+ 	info->map.set_vpp = physmap_data->set_vpp;
+ 
++	printk("MAP: %s %p %lu %d %p\n", info->map.name, info->map.phys, info->map.size, info->map.bankwidth, info->map.set_vpp);
++
+ 	info->map.virt = ioremap(info->map.phys, info->map.size);
+ 	if (info->map.virt == NULL) {
+ 		dev_err(&dev->dev, "Failed to ioremap flash region\n");
+@@ -124,6 +208,8 @@
+ 
+ 	simple_map_init(&info->map);
+ 
++	printk("FLASH virtual address: 0x%p\n", info->map.virt);
++
+ 	probe_type = rom_probe_types;
+ 	for (; info->mtd == NULL && *probe_type != NULL; probe_type++)
+ 		info->mtd = do_map_probe(*probe_type, &info->map);
+@@ -134,6 +220,25 @@
+ 	}
+ 	info->mtd->owner = THIS_MODULE;
+ 
++	partition_info[0].mtdp = &lowlvl_parts[0];
++	partition_info[1].mtdp = &lowlvl_parts[1];
++	partition_info[2].mtdp = &lowlvl_parts[2];
++	partition_info[3].mtdp = &lowlvl_parts[3];
++	partition_info[4].mtdp = &lowlvl_parts[4];
++	partition_info[5].mtdp = &lowlvl_parts[5];
++	partition_info[6].mtdp = &lowlvl_parts[6];
++	partition_info[7].mtdp = &lowlvl_parts[7];
++
++	add_mtd_partitions(info->mtd, partition_info, NUM_PARTITIONS);
++
++	merged_mtd = mtd_concat_create(lowlvl_parts, NUM_PARTITIONS, "NOR Flash Concatenated");
++	if(merged_mtd)
++	{
++		add_mtd_partitions(merged_mtd, higlvl_partition_info, NUM_HIGHLVL_PARTITIONS);
++	}
++
++
++#if 0
+ #ifdef CONFIG_MTD_PARTITIONS
+ 	err = parse_mtd_partitions(info->mtd, part_probe_types, &info->parts, 0);
+ 	if (err > 0) {
+@@ -150,6 +255,7 @@
+ #endif
+ 
+ 	add_mtd_device(info->mtd);
++#endif
+ 	return 0;
+ 
+ err_out:
 *** linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/kernel/cpu/sh4/setup-stx7111.c	2011-06-19 18:34:29.000000000 +0300
 --- linux-sh4/arch/sh/kernel/cpu/sh4/setup-stx7111.c	2011-07-29 06:50:51.114192548 +0300
 ***************
