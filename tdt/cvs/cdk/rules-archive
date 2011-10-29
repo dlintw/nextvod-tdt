@@ -160,6 +160,8 @@ gst-ffmpeg-0.10.11.tar.bz2;http://gstreamer.freedesktop.org/src/gst-ffmpeg/
 
 BroFS1.2.tgz;http://www.avalpa.com/assets/freesoft/other/
 
+alsa-lib-1.0.21a.tar.bz2;ftp://ftp.alsa-project.org/pub/lib/
+
 #
 # net apps
 #

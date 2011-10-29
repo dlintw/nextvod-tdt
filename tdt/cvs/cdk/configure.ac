@@ -984,6 +984,7 @@ TUXBOX_RULES_MAKE(gst_plugins_bad)
 TUXBOX_RULES_MAKE(gst_plugins_ugly)
 TUXBOX_RULES_MAKE(gst_ffmpeg)
 TUXBOX_RULES_MAKE(gst_plugins_dvbmediasink)
+TUXBOX_RULES_MAKE(libalsa)
 
 #
 # GUI
