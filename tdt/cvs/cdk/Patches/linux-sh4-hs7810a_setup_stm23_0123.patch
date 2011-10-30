@@ -906,3 +906,173 @@ diff -rcN linux-sh4-2.6.23.17_stm23_0123_orig/arch/sh/boards/st/sat7111/setup.c 
   
   		if (regs->pc & 1)
   			die("unaligned program counter", regs, error_code);
+*** linux-sh4/drivers/net/stmmac/common.h	2011-02-01 21:31:52.000000000 +0100
+--- linux-sh4/drivers/net/stmmac/common.h.patched	2011-02-03 12:07:07.000000000 +0100
+***************
+*** 207,232 ****
+  	return;
+  }
+  
+  /*
+   * This function gets the hardware MAC address
+   */
+  static inline void stmmac_get_mac_addr(unsigned long ioaddr,
+  				unsigned char *addr, unsigned int high,
+! 				unsigned int low)
+  {
+! 	unsigned int hi_addr, lo_addr;
+! 
+! 	/* Read the MAC address from the hardware */
+! 	hi_addr = readl(ioaddr + high);
+! 	lo_addr = readl(ioaddr + low);
+! 
+! 	/* Extract the MAC address from the high and low words */
+! 	addr[0] = lo_addr & 0xff;
+! 	addr[1] = (lo_addr >> 8) & 0xff;
+! 	addr[2] = (lo_addr >> 16) & 0xff;
+! 	addr[3] = (lo_addr >> 24) & 0xff;
+! 	addr[4] = hi_addr & 0xff;
+! 	addr[5] = (hi_addr >> 8) & 0xff;
+  
+  	return;
+  }
+--- 207,238 ----
+  	return;
+  }
+  
++ static inline unsigned char hex(char ch)
++ {
++ 	if (ch >= 'a' && ch <= 'f')
++ 		return ch-'a'+10;
++ 	if (ch >= 'A' && ch <= 'F')
++ 		return ch-'A'+10;
++ 	if (ch >= '0' && ch <= '9')
++ 		return ch-'0';
++ 	return -1;
++ }
++ 
+  /*
+   * This function gets the hardware MAC address
+   */
+  static inline void stmmac_get_mac_addr(unsigned long ioaddr,
+  				unsigned char *addr, unsigned int high,
+! 				unsigned int low, char* ethaddr)
+  {
+! 	int i, j;
+! 	for(i = 0, j = 0; i < 6; i++)
+! 	{
+! 		addr[i] = (hex(ethaddr[j])<<4) + hex(ethaddr[j + 1]);
+! 		j += 3;
+! 	}
+! 	printk("PARSE CMDLINE: %s\n", ethaddr);
+! 	printk("ETHADDR: %02X:%02X:%02X:%02X:%02X:%02X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
+  
+  	return;
+  }
+***************
+*** 296,302 ****
+  	void (*set_umac_addr) (unsigned long ioaddr, unsigned char *addr,
+  			     unsigned int reg_n);
+  	void (*get_umac_addr) (unsigned long ioaddr, unsigned char *addr,
+! 			     unsigned int reg_n);
+  };
+  
+  struct mac_link {
+--- 302,308 ----
+  	void (*set_umac_addr) (unsigned long ioaddr, unsigned char *addr,
+  			     unsigned int reg_n);
+  	void (*get_umac_addr) (unsigned long ioaddr, unsigned char *addr,
+! 			     unsigned int reg_n, char* ethaddr);
+  };
+  
+  struct mac_link {
+*** linux-sh4/drivers/net/stmmac/gmac.c	2011-02-01 21:31:53.000000000 +0100
+--- linux-sh4/drivers/net/stmmac/gmac.c.patched	2011-02-03 12:11:18.000000000 +0100
+***************
+*** 414,423 ****
+  }
+  
+  static void gmac_get_umac_addr(unsigned long ioaddr, unsigned char *addr,
+! 				unsigned int reg_n)
+  {
+  	stmmac_get_mac_addr(ioaddr, addr, GMAC_ADDR_HIGH(reg_n),
+! 				GMAC_ADDR_LOW(reg_n));
+  }
+  
+  #ifdef STMMAC_VLAN_TAG_USED
+--- 414,423 ----
+  }
+  
+  static void gmac_get_umac_addr(unsigned long ioaddr, unsigned char *addr,
+! 				unsigned int reg_n, char* ethaddr)
+  {
+  	stmmac_get_mac_addr(ioaddr, addr, GMAC_ADDR_HIGH(reg_n),
+! 				GMAC_ADDR_LOW(reg_n), ethaddr);
+  }
+  
+  #ifdef STMMAC_VLAN_TAG_USED
+*** linux-sh4/drivers/net/stmmac/mac100.c	2011-02-01 21:31:52.000000000 +0100
+--- linux-sh4/drivers/net/stmmac/mac100.c.patched	2011-02-03 12:11:15.000000000 +0100
+***************
+*** 280,288 ****
+  }
+  
+  static void mac100_get_umac_addr(unsigned long ioaddr, unsigned char *addr,
+! 			  unsigned int reg_n)
+  {
+! 	stmmac_get_mac_addr(ioaddr, addr, MAC_ADDR_HIGH, MAC_ADDR_LOW);
+  }
+  
+  static void mac100_set_filter(struct net_device *dev)
+--- 280,288 ----
+  }
+  
+  static void mac100_get_umac_addr(unsigned long ioaddr, unsigned char *addr,
+! 			  unsigned int reg_n, char* ethaddr)
+  {
+! 	stmmac_get_mac_addr(ioaddr, addr, MAC_ADDR_HIGH, MAC_ADDR_LOW, ethaddr);
+  }
+  
+  static void mac100_set_filter(struct net_device *dev)
+*** linux-sh4/drivers/net/stmmac/stmmac_main.c	2011-02-01 21:31:53.000000000 +0100
+--- linux-sh4/drivers/net/stmmac/stmmac_main.c.patched	2011-02-03 12:07:11.000000000 +0100
+***************
+*** 143,148 ****
+--- 143,150 ----
+  module_param(tx_coe, int, S_IRUGO | S_IWUSR);
+  MODULE_PARM_DESC(tx_coe, "GMAC COE type 2 [on/off]");
+  
++ static char g_env_mac[] = "00:00:00:00:00:00";
++ 
+  static const u32 default_msg_level = (NETIF_MSG_DRV | NETIF_MSG_PROBE |
+  				      NETIF_MSG_LINK | NETIF_MSG_IFUP |
+  				      NETIF_MSG_IFDOWN | NETIF_MSG_TIMER);
+***************
+*** 1883,1889 ****
+  	dev->weight = 64;
+  
+  	/* Get the MAC address */
+! 	priv->mac_type->ops->get_umac_addr(dev->base_addr, dev->dev_addr, 0);
+  	stmmac_init_coalescence(priv->is_gmac, dev->mtu);
+  
+  	if (!is_valid_ether_addr(dev->dev_addr)) {
+--- 1885,1891 ----
+  	dev->weight = 64;
+  
+  	/* Get the MAC address */
+! 	priv->mac_type->ops->get_umac_addr(dev->base_addr, dev->dev_addr, 0, g_env_mac);
+  	stmmac_init_coalescence(priv->is_gmac, dev->mtu);
+  
+  	if (!is_valid_ether_addr(dev->dev_addr)) {
+***************
+*** 2348,2353 ****
+--- 2350,2358 ----
+  			tmrate = simple_strtoul(opt + 7, NULL, 0);
+  #endif
+  		}
++ 		else if( !strncmp(opt,"ethaddr:", 8)) {
++ 			memcpy(g_env_mac, opt + 8, 17);
++ 		}
+  	}
+  	return 0;
+  }
