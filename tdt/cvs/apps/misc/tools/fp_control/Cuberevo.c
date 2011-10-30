@@ -30,16 +30,21 @@
 #include <unistd.h>
 #include <limits.h>
 #include <sys/ioctl.h>
+#include <linux/input.h>
 
 #include "global.h"
 #include "Cuberevo.h"
 
 static int setText(Context_t* context, char* theText);
+static int Clear(Context_t* context);
+static int setIcon (Context_t* context, int which, int on);
+static int getVersion(Context_t* context, int* version);
+static int setDisplayTime(Context_t* context, int on);
 
 /******************** constants ************************ */
 
 #define cVFD_DEVICE "/dev/vfd"
-#define cRC_DEVICE "/dev/rc"
+#define cEVENT_DEVICE "/dev/input/event0"
 
 #define cMAXCharsCuberevo 14 /* 14seg ->rest is filtered by driver */
 
@@ -369,25 +374,40 @@ static int Sleep(Context_t* context, time_t* wakeUpGMT)
    int        vFd;
    fd_set     rfds;
    struct     timeval tv;
-   int        retval;
+   int        retval, i, rd, version;
    struct tm  *ts;
    char       output[cMAXCharsCuberevo + 1];
+   struct input_event ev[64];
    tCUBEREVOPrivate* private = (tCUBEREVOPrivate*) 
         ((Model_t*)context->m)->private;
 
    printf("%s\n", __func__);
 
-   vFd = open(cRC_DEVICE, O_RDWR);
+   vFd = open(cEVENT_DEVICE, O_RDWR);
       
    if (vFd < 0)
    {
-      fprintf(stderr, "cannot open %s\n", cRC_DEVICE);
+      fprintf(stderr, "cannot open %s\n", cEVENT_DEVICE);
       perror("");
       return -1;
    }
+   
+   Clear(context); /* clear display */
+   setIcon(context, 1, 1); /* show standby icon */
+   
+   getVersion(context, &version);
       
-   printf("%s 1\n", __func__);
-
+   /* 4char vfd's ? */
+   if ((version == 3) && (private->display))
+   {
+      /* yes: then enable fp time */
+      setDisplayTime(context, 1);
+   }
+   else   
+   {
+      setDisplayTime(context, 0);
+   }
+         
    while (sleep)
    {
       time(&curTime);
@@ -398,26 +418,56 @@ static int Sleep(Context_t* context, time_t* wakeUpGMT)
          sleep = 0;
       } else
       {
-	 FD_ZERO(&rfds);
-	 FD_SET(vFd, &rfds);
+	      FD_ZERO(&rfds);
+	      FD_SET(vFd, &rfds);
 
-	 tv.tv_sec = 0;
-	 tv.tv_usec = 100000;
+	      tv.tv_sec = 0;
+	      tv.tv_usec = 100000;
 
-	 retval = select(vFd + 1, &rfds, NULL, NULL, &tv);
+	      retval = select(vFd + 1, &rfds, NULL, NULL, &tv);
 
-	 if (retval > 0)
-	 {
-            sleep = 0;
-	 } 
+	      if (retval > 0)
+	      {
+		      rd = read(vFd, ev, sizeof(struct input_event) * 64);
+
+		      if (rd < (int) sizeof(struct input_event)) 
+              {
+			      continue;
+		      }
+
+		      for (i = 0; i < rd / sizeof(struct input_event); i++)
+              {
+			      if (ev[i].type == EV_SYN) 
+                  {
+			      
+                  } 
+                  else 
+                  if (ev[i].type == EV_MSC && (ev[i].code == MSC_RAW || 
+                      ev[i].code == MSC_SCAN)) 
+                  {
+			      } else 
+                  {
+				      if (ev[i].code == 116)
+                         sleep = 0;
+			      }
+	         } 
+          }
       }
 
-      if (private->display)
+      if ((private->display) && (version != 3))
       {
+         /* show soft time with user format */
          strftime(output, cMAXCharsCuberevo + 1, private->timeFormat, ts);
          setText(context, output);
       } 
    }
+
+   Clear(context); /* clear display */
+   setIcon(context, 1, 0); /* unshow standby icon */
+
+   if (version == 3)
+      setDisplayTime(context, 0);
+
    return 0;
 }
 	
@@ -428,7 +478,7 @@ static int setText(Context_t* context, char* theText)
    strncpy(vHelp, theText, cMAXCharsCuberevo);
    vHelp[cMAXCharsCuberevo] = '\0';
  
-   /* printf("%s, %d\n", vHelp, strlen(vHelp));*/
+   /* printf("%s, %d\n", vHelp, strlen(vHelp)); */
  
    write(context->fd, vHelp, strlen(vHelp));
 
@@ -563,9 +613,11 @@ static int getWakeupReason(Context_t* context, int* reason)
       perror("getWakeupReason: ");
       return -1;
    }
-
     
-   *reason = vData.u.status.status & 0xff;
+   if (vData.u.status.status & 0xff == 0x02)
+      *reason = TIMER;
+   else   
+      *reason = NONE;
       
    printf("reason = 0x%x\n", *reason);
 
@@ -584,6 +636,8 @@ static int getVersion(Context_t* context, int* version)
       perror("getVersion: ");
       return -1;
    }
+
+   *version = micom.u.version.version;
 
    printf("micom version = %d\n", micom.u.version.version);
 
@@ -656,7 +710,7 @@ static int setIcon (Context_t* context, int which, int on)
 
 
 Model_t Cuberevo_model = {
-	.Name             = "Kathrein CUBEREVO frontpanel control utility",
+	.Name             = "CUBEREVO frontpanel control utility",
 	.Type             = Cuberevo,
 	.Init             = init,
 	.Clear            = Clear,
@@ -673,7 +727,7 @@ Model_t Cuberevo_model = {
 	.SetIcon          = setIcon,
 	.SetBrightness    = setBrightness,
 	.SetPwrLed        = NULL,
-//	.GetWakeupReason  = getWakeupReason,  //TODO: CHECK IF WORKING
+	.GetWakeupReason  = getWakeupReason,
 	.SetLight         = setLight,
 	.Exit             = Exit,
 	.SetLedBrightness = setLedBrightness,

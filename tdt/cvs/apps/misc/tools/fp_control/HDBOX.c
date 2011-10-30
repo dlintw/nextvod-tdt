@@ -30,17 +30,19 @@
 #include <unistd.h>
 #include <limits.h>
 #include <sys/ioctl.h>
+#include <linux/input.h>
 
 #include "global.h"
 #include "HDBOX.h"
 
 static int setText(Context_t* context, char* theText);
+static int Clear(Context_t* context);
+static int setIcon (Context_t* context, int which, int on);
 
 /******************** constants ************************ */
 
 #define cVFD_DEVICE "/dev/vfd"
-#define cRC_DEVICE "/dev/rc"
-
+#define cEVENT_DEVICE "/dev/input/event0"
 
 #define cMAXCharsHDBOX 12
 
@@ -199,7 +201,7 @@ static int setTimer(Context_t* context, time_t* theGMTTime)
       wakeupTime = read_timers_utc(curTime);
    else
       wakeupTime = *theGMTTime;
-
+  
    if ((wakeupTime <= 0) || (wakeupTime == LONG_MAX))
    {
        /* nothing to do for e2 */  
@@ -315,17 +317,18 @@ static int Sleep(Context_t* context, time_t* wakeUpGMT)
    int        vFd;
    fd_set     rfds;
    struct     timeval tv;
-   int        retval;
+   int        retval, i, rd;
    struct tm  *ts;
    char       output[cMAXCharsHDBOX + 1];
+   struct input_event ev[64];
    tHDBOXPrivate* private = (tHDBOXPrivate*) 
         ((Model_t*)context->m)->private;
 
-   vFd = open(cRC_DEVICE, O_RDWR);
+   vFd = open(cEVENT_DEVICE, O_RDWR);
       
    if (vFd < 0)
    {
-      fprintf(stderr, "cannot open %s\n", cRC_DEVICE);
+      fprintf(stderr, "cannot open %s\n", cEVENT_DEVICE);
       perror("");
       return -1;
    }
@@ -340,18 +343,40 @@ static int Sleep(Context_t* context, time_t* wakeUpGMT)
          sleep = 0;
       } else
       {
-	 FD_ZERO(&rfds);
-	 FD_SET(vFd, &rfds);
+	      FD_ZERO(&rfds);
+	      FD_SET(vFd, &rfds);
 
-	 tv.tv_sec = 0;
-	 tv.tv_usec = 100000;
+	      tv.tv_sec = 0;
+	      tv.tv_usec = 100000;
 
-	 retval = select(vFd + 1, &rfds, NULL, NULL, &tv);
+	      retval = select(vFd + 1, &rfds, NULL, NULL, &tv);
 
-	 if (retval > 0)
-	 {
-            sleep = 0;
-	 } 
+	      if (retval > 0)
+	      {
+		      rd = read(vFd, ev, sizeof(struct input_event) * 64);
+
+		      if (rd < (int) sizeof(struct input_event)) 
+              {
+			      continue;
+		      }
+
+		      for (i = 0; i < rd / sizeof(struct input_event); i++)
+              {
+			      if (ev[i].type == EV_SYN) 
+                  {
+			      
+                  } 
+                  else 
+                  if (ev[i].type == EV_MSC && (ev[i].code == MSC_RAW || 
+                      ev[i].code == MSC_SCAN)) 
+                  {
+			      } else 
+                  {
+				      if (ev[i].code == 116)
+                         sleep = 0;
+			      }
+	         } 
+          }
       }
 
       if (private->display)
