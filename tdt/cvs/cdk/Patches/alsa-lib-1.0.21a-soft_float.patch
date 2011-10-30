@@ -1,0 +1,15 @@
+The simple_none.c file checks the value of the HAVE_SOFT_FLOAT define, but doesn't include 
+config.h in order to get the definition of it.
+
+Signed-off-by: David McKay <david.mckay@st.com>
+
+--- alsa-lib-1.0.21a/src/mixer/simple_none.c.orig	2009-11-18 17:01:03.000000000 +0000
++++ alsa-lib-1.0.21a/src/mixer/simple_none.c	2009-11-18 17:02:42.000000000 +0000
+@@ -40,6 +40,7 @@
+ #include <limits.h>
+ #include <alsa/asoundlib.h>
+ #include "mixer_simple.h"
++#include "config.h"
+ 
+ #ifndef DOC_HIDDEN
+ 
