@@ -235,6 +235,7 @@ release_spark:
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/bin/evremote
 	rm -f $(prefix)/release/bin/gotosleep
+	rm -f $(prefix)/release/bin/vdstandby
 
 release_spark7162:
 	echo "spark7162" > $(prefix)/release/etc/hostname
@@ -296,6 +297,7 @@ release_spark7162:
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release/bin/evremote
 	rm -f $(prefix)/release/bin/gotosleep
+	rm -f $(prefix)/release/bin/vdstandby
 
 release_fortis_hdbox:
 	echo "fortis" > $(prefix)/release/etc/hostname
@@ -532,6 +534,8 @@ release_ufs910:
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	mv $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 
+	rm -f $(prefix)/release/bin/vdstandby
+
 release_hl101:
 	echo "hl101" > $(prefix)/release/etc/hostname
 	rm -f $(prefix)/release/sbin/halt
@@ -586,6 +590,8 @@ release_hl101:
 	echo 'sda1   -fstype=auto,noatime,nodiratime          :/dev/sda1' >> $(prefix)/release/etc/auto.usb
 	echo 'sda2   -fstype=auto,noatime,nodiratime          :/dev/sda2' >> $(prefix)/release/etc/auto.usb
 	echo 'sda3   -fstype=auto,noatime,nodiratime          :/dev/sda3' >> $(prefix)/release/etc/auto.usb
+
+	rm -f $(prefix)/release/bin/vdstandby
 
 release_adb_box:
 	echo "Adb_Box" > $(prefix)/release/etc/hostname
@@ -648,6 +654,8 @@ release_adb_box:
 	echo 'sda2   -fstype=auto,noatime,nodiratime          :/dev/sda2' >> $(prefix)/release/etc/auto.usb
 	echo 'sda3   -fstype=auto,noatime,nodiratime          :/dev/sda3' >> $(prefix)/release/etc/auto.usb
 
+	rm -f $(prefix)/release/bin/vdstandby
+
 release_vip1_v2: release_common_utils
 	echo "Edision" > $(prefix)/release/etc/hostname
 	cp -f $(targetprefix)/sbin/shutdown $(prefix)/release/sbin/
@@ -672,6 +680,8 @@ endif
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 
+	rm -f $(prefix)/release/bin/vdstandby
+
 release_vip2_v1: release_vip1_v2
 
 release_hs5101:
@@ -689,6 +699,8 @@ release_hs5101:
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
 
+	rm -f $(prefix)/release/bin/vdstandby
+
 release_tf7700: release_common_utils
 	echo "tf7700" > $(prefix)/release/etc/hostname
 	cp -f $(targetprefix)/sbin/shutdown $(prefix)/release/sbin/
@@ -703,6 +715,8 @@ if STM22
 else
 	[ -e $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko ] && cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules || true
 endif
+
+	rm -f $(prefix)/release/bin/vdstandby
 
 release_ipbox9900: release_common_utils
 	echo "ipbox" > $(prefix)/release/etc/hostname
@@ -936,6 +950,7 @@ release_base:
 	cp $(buildprefix)/root/release/bootclean.sh $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/networking $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/bootscreen/bootlogo.mvi $(prefix)/release/boot/ && \
+	cp $(buildprefix)/root/bin/vdstandby $(prefix)/release/bin/ && \
 	cp -rd $(targetprefix)/lib/* $(prefix)/release/lib/ && \
 	rm -f $(prefix)/release/lib/*.a && \
 	rm -f $(prefix)/release/lib/*.o && \
