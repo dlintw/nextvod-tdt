@@ -1,6 +1,6 @@
 #!/bin/sh
 
-model='/proc/stb/info/model'
+model=`cat /proc/stb/info/model`
 
 if [ $# -eq 1 ]; then
    if [ "$1" = "-a" ]; then

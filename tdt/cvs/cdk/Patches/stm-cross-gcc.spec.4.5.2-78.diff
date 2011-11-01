@@ -46,7 +46,7 @@
  rm -r %{buildroot}%{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
  rm -f %{buildroot}%{_stm_cross_lib_dir}/libiberty.a
 -rm -f  %{buildroot}%{_stm_cross_dir}/lib64/libiberty.a
-+rm -f  %{buildroot}%{_stm_devkit_dir}/lib{32,64}/libiberty.a || true
++rm -f  %{buildroot}%{_stm_cross_dir}/lib{32,64}/libiberty.a || true
  rm -r %{buildroot}%{_stm_cross_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
 +rm %{buildroot}%{_stm_cross_info_dir}/cpp.info* || true
 +rm %{buildroot}%{_stm_cross_info_dir}/gcc.info* || true
