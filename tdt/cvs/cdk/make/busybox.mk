@@ -9,7 +9,8 @@ $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-crond.patch && \
 		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-inetd.patch && \
 		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-syslogd.patch && \
-		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-tail.patch
+		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-tail.patch && \
+		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-tftp.patch
 	touch $@
 
 $(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.19.2/busybox-1.19.2.config | $(DEPDIR)/$(GLIBC_DEV)
