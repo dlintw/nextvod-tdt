@@ -39,7 +39,7 @@ libtool;2.2.6a;libtool-2.2.6;libtool-2.2.6a.tar.gz:libtool-2.2.6a-cross_compile.
 #
 # root
 #
-busybox;1.19.2;busybox-1.19.2;busybox-1.19.2.tar.bz2:busybox.diff;extract:busybox-1.19.2.tar.bz2
+busybox;1.19.3;busybox-1.19.3;busybox-1.19.3.tar.bz2:busybox.diff;extract:busybox-1.19.3.tar.bz2
 #lsb;3.2-12;lsb-3.2;lsb_3.2-12.tar.gz;extract:lsb_3.2-12.tar.gz
 lsb;3.2-20;lsb-3.2;lsb_3.2-20.tar.gz;extract:lsb_3.2-20.tar.gz
 ipkg;0.99.163;ipkg-0.99.163;ipkg-0.99.163.tar.gz;extract:ipkg-0.99.163.tar.gz
