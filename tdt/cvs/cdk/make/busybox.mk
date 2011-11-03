@@ -4,16 +4,11 @@
 $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	@PREPARE_busybox@
 	cd @DIR_busybox@ && \
-		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-buildsys.patch && \
-		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-chpasswd.patch && \
-		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-crond.patch && \
-		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-inetd.patch && \
-		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-syslogd.patch && \
-		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-tail.patch && \
-		patch -p1 < ../Patches/busybox-1.19.2/busybox-1.19.2-tftp.patch
+		patch -p1 < ../Patches/busybox-1.19.3/busybox-1.19.3-getty.patch && \
+		patch -p1 < ../Patches/busybox-1.19.3/busybox-1.19.3-modinfo.patch
 	touch $@
 
-$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.19.2/busybox-1.19.2.config | $(DEPDIR)/$(GLIBC_DEV)
+$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.19.3/busybox-1.19.3.config | $(DEPDIR)/$(GLIBC_DEV)
 	cd @DIR_busybox@ && \
 		export CROSS_COMPILE=$(target)- && \
 		$(MAKE) mrproper && \
@@ -45,6 +40,4 @@ $(flashprefix)/root/bin/busybox: $(DEPDIR)/busybox.do_compile
 	touch $@
 	@FLASHROOTDIR_MODIFIED@
 
-	
-# Enable ftp: 423212 -> 425604 busybox binary
 #.PHONY: flash-busybox
