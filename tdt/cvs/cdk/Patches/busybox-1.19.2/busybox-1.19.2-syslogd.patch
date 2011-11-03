@@ -9,7 +9,22 @@
  	if (!parser)
  		/* didn't find default /etc/syslog.conf */
  		/* proceed as if we built busybox without config support */
-@@ -678,7 +678,7 @@ static void timestamp_and_log(int pri, c
+@@ -594,6 +594,14 @@ static void log_locally(time_t now, char
+ 			}
+ 			/* newFile == "f.0" now */
+ 			rename(log_file->path, newFile);
++			/* Incredibly, if F and F.0 are hardlinks, POSIX
++			 * _demands_ that rename returns 0 but does not
++			 * remove F!!!
++			 * (hardlinked F/F.0 pair was observed after
++			 * power failure during rename()).
++			 * Ensure old file is gone:
++			 */
++			unlink(log_file->path);
+ #ifdef SYSLOGD_WRLOCK
+ 			fl.l_type = F_UNLCK;
+ 			fcntl(log_file->fd, F_SETLKW, &fl);
+@@ -678,7 +686,7 @@ static void timestamp_and_log(int pri, c
  	if (LOG_PRI(pri) < G.logLevel) {
  #if ENABLE_FEATURE_IPC_SYSLOG
  		if ((option_mask32 & OPT_circularlog) && G.shbuf) {

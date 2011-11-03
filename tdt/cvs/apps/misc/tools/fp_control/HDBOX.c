@@ -186,8 +186,10 @@ static int setTimer(Context_t* context, time_t* theGMTTime)
 {
    struct nuvoton_ioctl_data vData;
    time_t                    curTime;
+   time_t                    curTimeFP;
    time_t                    wakeupTime;
    struct tm                 *ts;
+   struct tm                 *tsw;
    tHDBOXPrivate* private = (tHDBOXPrivate*) 
         ((Model_t*)context->m)->private;
 
@@ -202,7 +204,18 @@ static int setTimer(Context_t* context, time_t* theGMTTime)
    else
       wakeupTime = *theGMTTime;
   
-   if ((wakeupTime <= 0) || (wakeupTime == LONG_MAX))
+	tsw = localtime (&wakeupTime);
+  printf("wakeup Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+    tsw->tm_hour, tsw->tm_min, tsw->tm_sec, tsw->tm_mday, tsw->tm_mon+1, tsw->tm_year+1900);
+    
+	tsw = localtime (&curTime);
+  printf("current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+    tsw->tm_hour, tsw->tm_min, tsw->tm_sec, tsw->tm_mday, tsw->tm_mon+1, tsw->tm_year+1900);    
+  
+  
+   //check --> WakupTime is set and larger curTime and no larger than a year in the future (gost)
+   if ((wakeupTime <= 0) || (curTime > wakeupTime) || (curTime < (wakeupTime-25920000)))
+   //if ((wakeupTime <= 0) || (wakeupTime == LONG_MAX))
    {
        /* nothing to do for e2 */  
        fprintf(stderr, "no e2 timer found clearing fp wakeup time ... good bye ...\n");
@@ -237,14 +250,24 @@ static int setTimer(Context_t* context, time_t* theGMTTime)
          fprintf(stderr, "success reading time from fp\n");
 			
          /* current front controller time */
-         curTime = (time_t) getNuvotonTime(fp_time);
+         curTimeFP = (time_t) getNuvotonTime(fp_time);
+                  
+         /* set FP-Time if curTime > or < 12h (gost)*/  
+         if (((curTimeFP - curTime) > 43200) || ((curTime - curTimeFP) > 43200)) {
+         		setTime(context,&curTime);
+         		curTimeFP = curTime;
+         }
+         tsw = gmtime (&curTimeFP);
+         printf("fp_time (UTC): %02d:%02d:%02d %02d-%02d-%04d\n",
+	   				tsw->tm_hour, tsw->tm_min, tsw->tm_sec, tsw->tm_mday, tsw->tm_mon+1, tsw->tm_year+1900);
+         
       } else
       {
           fprintf(stderr, "error reading time ... assuming localtime\n");
           /* noop current time already set */
       }
 
-      wakeupTime = curTime + diff;
+      wakeupTime = curTimeFP + diff;
 
       setNuvotonTime(wakeupTime, vData.u.standby.time);
 
