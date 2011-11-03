@@ -1,7 +1,7 @@
 diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c linux-sh4/arch/sh/boards/mach-mb442/setup.c
 --- linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c	2011-09-08 14:15:40.000000000 +0200
-+++ linux-sh4/arch/sh/boards/mach-mb442/setup.c	2011-10-18 18:22:26.000000000 +0200
-@@ -18,17 +18,35 @@
++++ linux-sh4/arch/sh/boards/mach-mb442/setup.c	2011-11-01 21:26:59.000000000 +0100
+@@ -18,17 +18,37 @@
  #include <linux/delay.h>
  #include <linux/spi/spi.h>
  #include <linux/mtd/mtd.h>
@@ -20,6 +20,8 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
 -#define MB442_PIO_FLASH_VPP stm_gpio(2, 7)
 -
 +#include <linux/bpa2.h>
++#include <linux/stm/emi.h>
++#include <linux/stm/gpio.h> 
 +
 +const char *LMI_VID_partalias[] = { "BPA2_Region1", "coredisplay-video", "gfx-memory", "v4l2-video-buffers", "v4l2-coded-video-buffers", NULL };
 +
@@ -44,7 +46,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
  
  
  void __init mb442_setup(char** cmdline_p)
-@@ -43,17 +61,18 @@
+@@ -43,17 +63,18 @@
  	stx7100_configure_asc(3, &(struct stx7100_asc_config) {
  			.hw_flow_control = 0,
  			.is_console = 0, });
@@ -67,7 +69,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
  		.flags	= IORESOURCE_IRQ,
  	},
  };
-@@ -65,52 +84,48 @@
+@@ -65,52 +86,91 @@
  	.resource	= mb442_smc91x_resources,
  };
  
@@ -106,27 +108,41 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
 -	.num_resources	= 1,
 -	.resource	= (struct resource[]) {
 -		STM_PLAT_RESOURCE_MEM(0, 8*1024*1024),
--	},
--	.dev.platform_data = &(struct physmap_flash_data) {
--		.width		= 2,
--		.set_vpp	= mb442_set_vpp,
 +	.dev		= { 
 +	.platform_data	= &physmap_flash_data,
  	},
+-	.dev.platform_data = &(struct physmap_flash_data) {
+-		.width		= 2,
+-		.set_vpp	= mb442_set_vpp,
+-	},
 -};
--
--
++	.num_resources	= 1,
++	.resource	= &physmap_flash_resource,
++}; 
+ 
++static struct mtd_partition mb442_nand_flash_partitions[] = {
+ 
 -static int mb442_phy_reset(void* bus)
--{
+ {
 -	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
 -	udelay(1);
 -	gpio_set_value(MB442_PIO_STE100P_RESET, 0);
 -	udelay(1);
 -	gpio_set_value(MB442_PIO_STE100P_RESET, 1);
--
++	.name	= "NAND1 uImage 3MB",
++	.offset	= 0,
++	.size 	= 0x00300000,
++	}, {
++	.name	= "NAND1 RootFS 61MB",
++	.offset	= MTDPART_OFS_APPEND,
++	.size	= MTDPART_SIZ_FULL,
++	},
++};
+ 
 -	return 1;
 -}
--
++struct stm_nand_bank_data nand_bank_data = {
+ 
 -#define STMMAC_PHY_ADDR 14
 -static int stmmac_phy_irqs[PHY_MAX_ADDR] = {
 -	[STMMAC_PHY_ADDR] = IRL3_IRQ,
@@ -136,15 +152,38 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
 -	.phy_reset = mb442_phy_reset,
 -	.phy_mask = 1,
 -	.irqs = stmmac_phy_irqs,
--};
-+	.num_resources	= 1,
-+	.resource	= &physmap_flash_resource,
-+}; 
++	.csn		= 1,
++	.nr_partitions	= ARRAY_SIZE(mb442_nand_flash_partitions),
++	.partitions	= mb442_nand_flash_partitions,
++	.options	= NAND_NO_AUTOINCR,
++	.timing_data	= &(struct stm_nand_timing_data) {
++	.sig_setup	= 40,		/* times in ns */
++	.sig_hold	= 40,
++	.CE_deassert	= 0,
++	.WE_to_RBn	= 100,
++	.wr_on		= 0,
++	.wr_off		= 10,
++	.rd_on		= 0,
++	.rd_off		= 10,
++	.chip_delay	= 25,			/* in us */
++},
++	.emi_withinbankoffset	= 0,
++};
++
++static struct platform_device mb442_nand_device = { 
++	.name		= "stm-nand-emi", 
++	.dev.platform_data = &(struct stm_plat_nand_emi_data){ 
++	.nr_banks	= 1,
++	.banks		= &nand_bank_data,
++	.emi_rbn_gpio	= stm_gpio(4, 5), 
++	},
+ };
  
  static struct platform_device *mb442_devices[] __initdata = {
  	&mb442_smc91x_device,
 -	&mb442_physmap_flash,
 +        &physmap_flash,
++	&mb442_nand_device,
 +       
  };
  
@@ -152,7 +191,7 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
  static int __init mb442_device_init(void)
  {
  	stx7100_configure_sata();
-@@ -120,8 +135,7 @@
+@@ -120,8 +180,7 @@
  			.out1_enabled = 1, });
  
  	stx7100_configure_ssc_i2c(0);
@@ -162,11 +201,10 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
  
  	stx7100_configure_usb();
  
-@@ -129,33 +143,7 @@
- 			.rx_mode = stx7100_lirc_rx_mode_ir,
+@@ -130,32 +189,6 @@
  			.tx_enabled = 0,
  			.tx_od_enabled = 0, });
--
+ 
 -	stx7100_configure_pata(&(struct stx7100_pata_config) {
 -			.emi_bank = 3,
 -			.pc_mode = 1,
@@ -193,10 +231,198 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/arch/sh/boards/mach-mb442/setup.c 
 -	gpio_set_value(MB442_PIO_SMC91X_RESET, 1);
 -	udelay(1);
 -	gpio_set_value(MB442_PIO_SMC91X_RESET, 0);
-+	
  
  	return platform_add_devices(mb442_devices,
  			ARRAY_SIZE(mb442_devices));
+diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/ata/sata_stm.c linux-sh4/drivers/ata/sata_stm.c
+--- linux-sh4-2.6.32.28_stm24_0207_orig/drivers/ata/sata_stm.c	2011-10-28 00:21:08.000000000 +0200
++++ linux-sh4/drivers/ata/sata_stm.c	2011-11-03 17:46:10.000000000 +0100
+@@ -871,6 +871,8 @@
+ 	} else if (readl(mmio + DMAC_RAWERR) & 1) {
+ 		ata_port_printk(ap, KERN_ERR, "DMA error asserted\n");
+ 	}
++	
++	else handled = 0;
+ 
+ 	return handled;
+ 
+@@ -951,16 +953,17 @@
+ 	struct ata_host *host = dev_instance;
+ 	unsigned int handled = 0;
+ 	unsigned int i;
+-	struct stm_host_priv *hpriv = host->private_data;
++	unsigned long flags;
+ 
+ DPRINTK("ENTER\n");
+ 
+ 	spin_lock(&host->lock);
+ 
+-	for (i = 0; i < host->n_ports; i++) {
+-		if (hpriv->shared_dma_host_irq)
+-			handled += stm_sata_dma_irq(host->ports[i]);
+-		handled += stm_sata_host_irq(host->ports[i]);
++	for (i = 0; i < host->n_ports; i++) 
++	   {
++		handled += stm_sata_dma_irq(host->ports[i]);
++		if (!(handled)) handled += stm_sata_host_irq(host->ports[i]);
++		else handled = 0;
+ 	}
+ 
+ 	spin_unlock(&host->lock);
+@@ -968,6 +971,7 @@
+ 	return IRQ_RETVAL(handled);
+ }
+ 
++
+ static void stm_irq_clear(struct ata_port *ap)
+ {
+ 	/* TODO */
+@@ -1229,6 +1233,9 @@
+ 	hpriv->device_state = devm_stm_device_init(dev,
+ 		sata_private_info->device_config);
+ 
++	if (!hpriv->device_state)
++		return -EBUSY; 
++
+ 	mem_res = platform_get_resource(pdev,IORESOURCE_MEM,0);
+ 	phys_base = mem_res->start;
+ 	phys_size = mem_res->end - mem_res->start + 1;
+@@ -1303,32 +1310,11 @@
+ 	 * host controller interrupt lines separated out. So if we have two
+ 	 * irq resources, then it is one of these
+ 	 */
+-
+-	dma_irq = platform_get_irq(pdev, 1);
+-	if (dma_irq > 0) {
+-		/* We have two interrupts */
+-		if (devm_request_irq(host->dev, dma_irq, stm_sata_dma_interrupt,
+-				     0, dev_driver_string(host->dev), host) < 0)
+-			panic("Cannot register SATA dma interrupt %d\n",
+-			      dma_irq);
+-		hpriv->shared_dma_host_irq = 0;
+-	} else {
+-		hpriv->shared_dma_host_irq = 1;
+-	}
+-
+ 	ret = ata_host_activate(host, platform_get_irq(pdev, 0),
+ 				stm_sata_interrupt,
+ 				IRQF_SHARED, &stm_sht);
+-
+ 	if (ret && dma_irq > 0)
+ 		devm_free_irq(host->dev, dma_irq, host);
+-	else {
+-		/* by default the device is on */
+-		pm_runtime_set_active(&pdev->dev);
+-		pm_suspend_ignore_children(&pdev->dev, 1);
+-		pm_runtime_enable(&pdev->dev);
+-	}
+-
+ 	return ret;
+ 
+ }
+@@ -1492,7 +1478,6 @@
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.owner = THIS_MODULE,
+-		.pm = &stm_sata_pm,
+ 	},
+ 	.probe = stm_sata_probe,
+ 	.remove = stm_sata_remove,
+diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/mtd/nand/Kconfig linux-sh4/drivers/mtd/nand/Kconfig
+--- linux-sh4-2.6.32.28_stm24_0207_orig/drivers/mtd/nand/Kconfig	2011-09-08 14:15:42.000000000 +0200
++++ linux-sh4/drivers/mtd/nand/Kconfig	2011-10-30 12:32:08.000000000 +0100
+@@ -489,7 +489,8 @@
+ 			CPU_SUBTYPE_STX7200 || \
+ 			CPU_SUBTYPE_STX7105 || \
+ 			CPU_SUBTYPE_STX7108 || \
+-			CPU_SUBTYPE_STX7141)
++			CPU_SUBTYPE_STX7141 || \
++			CPU_SUBTYPE_STX7100)
+        help
+          Enables the STMicroelectronics NAND driver for platforms in which the
+          device is connected via an EMI bank.
+diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/mtd/nand/stm_nand_emi.c linux-sh4/drivers/mtd/nand/stm_nand_emi.c
+--- linux-sh4-2.6.32.28_stm24_0207_orig/drivers/mtd/nand/stm_nand_emi.c	2011-09-08 14:15:42.000000000 +0200
++++ linux-sh4/drivers/mtd/nand/stm_nand_emi.c	2011-11-01 19:20:43.000000000 +0100
+@@ -37,13 +37,14 @@
+ #include <linux/stm/platform.h>
+ #include <linux/stm/nand.h>
+ #include <asm/dma.h>
++#include <linux/stm/pio.h>
+ 
+ #ifdef CONFIG_MTD_PARTITIONS
+ #include <linux/mtd/partitions.h>
+ #endif
+ 
+ #define NAME	"stm-nand-emi"
+-
++struct stpio_pin *nand_ce_pin = NULL;
+ /*
+  * Private data for stm_emi_nand driver.  Concurrency and device locking
+  * handled by MTD layers.
+@@ -461,12 +462,24 @@
+ 
+ 	if (ctrl & NAND_CTRL_CHANGE) {
+ 		if (ctrl & NAND_CLE) {
+-			this->IO_ADDR_W = data->io_cmd;
+-		} else if (ctrl & NAND_ALE) {
+-			this->IO_ADDR_W = data->io_addr;
+-		} else {
+-			this->IO_ADDR_W = data->io_base;
++			this->IO_ADDR_W = (void *)((unsigned int)this->IO_ADDR_W | (unsigned int)(1 << 17));
+ 		}
++		else {
++			this->IO_ADDR_W = (void *)((unsigned int)this->IO_ADDR_W & ~(unsigned int)(1 << 17));
++		}
++
++		if (ctrl & NAND_ALE) {
++			this->IO_ADDR_W = (void *)((unsigned int)this->IO_ADDR_W | (unsigned int)(1 << 16));
++		}
++		else {
++			this->IO_ADDR_W = (void *)((unsigned int)this->IO_ADDR_W & ~(unsigned int)(1 << 16));
++		}
++	if (ctrl & NAND_NCE) {
++		    stpio_set_pin(nand_ce_pin, 0); 
++			}
++			else {
++			stpio_set_pin(nand_ce_pin, 1); 
++		}	
+ 	}
+ 
+ 	if (cmd != NAND_CMD_NONE)
+@@ -629,10 +642,10 @@
+ 		goto out4;
+ 	}
+ 
+-	data->io_addr = ioremap_nocache(data->emi_base | (1 << 18), 1);
++	data->io_addr = ioremap_nocache(data->emi_base | (1 << 16), 1);
+ 	if (!data->io_addr) {
+ 		printk(KERN_ERR NAME ": ioremap failed for io_addr 0x%08x\n",
+-		       data->emi_base | (1 << 18));
++		       data->emi_base | (1 << 16));
+ 		res = -ENOMEM;
+ 		goto out5;
+ 	}
+@@ -646,8 +659,8 @@
+ 
+ 	tm = bank->timing_data;
+ 
+-	data->chip.IO_ADDR_R = data->io_base;
+-	data->chip.IO_ADDR_W = data->io_base;
++	data->chip.IO_ADDR_R = 0xA0400000;
++	data->chip.IO_ADDR_W = 0xA0800000;
+ 	data->chip.chip_delay = tm->chip_delay;
+ 	data->chip.cmd_ctrl = nand_cmd_ctrl_emi;
+ 
+@@ -746,7 +759,7 @@
+ 			GFP_KERNEL);
+ 	if (!group)
+ 		return -ENOMEM;
+-
++	nand_ce_pin = stpio_request_set_pin(3, 6, "nand_sel", STPIO_OUT, 0);
+ 	rbn_gpio = pdata->emi_rbn_gpio;
+ 	if (gpio_is_valid(rbn_gpio)) {
+ 		res = gpio_request(rbn_gpio, "nand_RBn");
 diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c linux-sh4/drivers/net/smc91x.c
 --- linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/smc91x.c	2011-09-20 19:49:00.000000000 +0200
 +++ linux-sh4/drivers/net/smc91x.c	2011-10-09 11:51:23.000000000 +0200
@@ -330,3 +556,33 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/stm/stx7100_comms.c linux-
  	stx7100_ssc_devices[ssc].id = i2c_busnum;
  
  	plat_data = stx7100_ssc_devices[ssc].dev.platform_data;
+diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/include/linux/libata.h linux-sh4/include/linux/libata.h
+--- linux-sh4-2.6.32.28_stm24_0207_orig/include/linux/libata.h	2011-10-28 00:21:08.000000000 +0200
++++ linux-sh4/include/linux/libata.h	2011-10-30 18:22:18.000000000 +0100
+@@ -52,6 +52,7 @@
+  * compile-time options: to be removed as soon as all the drivers are
+  * converted to the new debugging mechanism
+  */
++//#define ATA_DEBUG
+ #undef ATA_DEBUG		/* debugging output */
+ #undef ATA_VERBOSE_DEBUG	/* yet more debugging output */
+ #undef ATA_IRQ_TRAP		/* define to ack screaming irqs */
+@@ -938,6 +939,18 @@
+ #undef writew
+ #define writew(v_,a_)	sata_writew(ap, v_, a_)
+ 
++/* overwrite the original definition from io.h */
++#undef __raw_readb
++#define __raw_readb(a_)		readb(a_)
++#undef __raw_writeb
++#define __raw_writeb(v_,a_)	writeb(v_,a_)
++#undef __raw_readw
++#define __raw_readw(a_)		readw(a_)
++#undef __raw_writew
++#define __raw_writew(v_,a_)	writew(v_,a_)
++
++
++
+ struct ata_port_info {
+ 	unsigned long		flags;
+ 	unsigned long		link_flags;
