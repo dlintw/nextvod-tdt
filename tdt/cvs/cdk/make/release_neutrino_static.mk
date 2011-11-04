@@ -220,6 +220,7 @@ endif
 endif
 endif
 endif
+endif
 
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmfb.ko $(prefix)/release_neutrino_static/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshell/embxshell.ko $(prefix)/release_neutrino_static/lib/modules/

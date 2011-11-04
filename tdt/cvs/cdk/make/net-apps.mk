@@ -134,6 +134,7 @@ endif
 endif
 endif
 endif
+endif
 
 $(DEPDIR)/autofs.do_compile: bootstrap $(DEPDIR)/autofs.do_prepare
 if ENABLE_ADB_BOX
@@ -157,6 +158,7 @@ else
 	cd @DIR_autofs@  && \
 		$(MAKE_OPTS) \
 		$(MAKE)
+endif
 endif
 endif
 endif
@@ -202,6 +204,7 @@ else
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default && \
 	cd @DIR_autofs@  && \
 		@INSTALL_autofs@
+endif
 endif
 endif
 endif
