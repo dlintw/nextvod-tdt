@@ -1180,6 +1180,8 @@ update http prefix          : $updatehttpprefix
 stock directory             : $stockdir
 ipkg build directory        : $ipkgbuilddir
 Fortis/hdbox stuff          : $enable_fortis_hdbox
+Fortis hs7810a stuff        : $enable_hs7810a
+Fortis hs7110 stuff         : $enable_hs7110
 Atevio 7500 stuff           : $enable_atevio7500
 octagon1008 stuff           : $enable_octagon1008
 topfield stuff              : $enable_tf7700
