@@ -484,6 +484,7 @@ TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
+		sata_stx7100_B4Team_fix_stm24_0207.patch \
 		sata_32bit_fix_stm24$(PATCH_STR).patch \
 		linux-sh4-ufs910_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
