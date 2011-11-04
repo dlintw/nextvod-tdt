@@ -318,7 +318,7 @@ OCTAGON1008PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
 
-HS7810APATCHES_23 = $(COMMONPATCHES_23) \
+HS7810PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-hs7810a_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-hs7810a_setup_stm23$(PATCH_STR).patch) \
