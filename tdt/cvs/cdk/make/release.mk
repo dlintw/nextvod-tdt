@@ -496,7 +496,7 @@ release_hs7810a:
 	mv $(prefix)/release/lib/firmware/component_7111_mb618.fw $(prefix)/release/lib/firmware/component.fw
 	rm $(prefix)/release/lib/firmware/component_7105_pdk7105.fw
 
-release_hs1110:
+release_hs7110:
 	echo "hs7110" > $(prefix)/release/etc/hostname
 	rm -f $(prefix)/release/sbin/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
