@@ -98,6 +98,11 @@ $(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
 	rpm $(DRPM) --noscripts --badreloc --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
 	touch $@
 else
+if ENABLE_HS7110
+$(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
+	rpm $(DRPM) --noscripts --badreloc --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
+	touch $@
+else
 if ENABLE_HL101
 $(DEPDIR)/autofs.do_prepare:  Archive/stlinux23-sh4-autofs-3.1.7-13.sh4.rpm
 	rpm $(DRPM) --noscripts --badreloc --relocate /opt/STM/STLinux-2.3/devkit/sh4/target=$(prefix)/cdkroot --ignorearch --nodeps --nosignature -Uhv $<
@@ -139,6 +144,8 @@ if ENABLE_UFS912
 else
 if ENABLE_HS7810A
 else
+if ENABLE_HS7110
+else
 if ENABLE_HL101
 else
 if ENABLE_SPARK
@@ -175,6 +182,9 @@ if ENABLE_UFS912
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
 else
 if ENABLE_HS7810A
+	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
+else
+if ENABLE_HS7110
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/default
 else
 if ENABLE_HL101
