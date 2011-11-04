@@ -399,6 +399,14 @@ AC_ARG_ENABLE(hs7810a,
 AM_CONDITIONAL(ENABLE_HS7810A,test "$enable_hs7810a" = "yes")
 AC_SUBST(HS7810A)
 
+AC_ARG_ENABLE(hs7110,
+	AS_HELP_STRING(--enable-hs7110,    enable fortis hs7110 stuff),
+	[case "${enableval}" in
+		yes) HS7110=hs7110 ;;
+	esac],[enable_hs7110=no])
+AM_CONDITIONAL(ENABLE_HS7110,test "$enable_hs7110" = "yes")
+AC_SUBST(HS7110)
+
 AC_ARG_ENABLE(cuberevo,
 	AS_HELP_STRING(--enable-cuberevo,    enable cuberevo stuff),
 	[case "${enableval}" in
@@ -1172,6 +1180,8 @@ update http prefix          : $updatehttpprefix
 stock directory             : $stockdir
 ipkg build directory        : $ipkgbuilddir
 Fortis/hdbox stuff          : $enable_fortis_hdbox
+Fortis hs7810a stuff        : $enable_hs7810a
+Fortis hs7110 stuff         : $enable_hs7110
 Atevio 7500 stuff           : $enable_atevio7500
 octagon1008 stuff           : $enable_octagon1008
 topfield stuff              : $enable_tf7700

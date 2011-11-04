@@ -325,6 +325,13 @@ HS7810APATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
 
+HS7110PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-hs7110_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-hs7110_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		fortis_hdbox_dvb_core_stm23.patch
+		
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
@@ -417,6 +424,7 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_23)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_23)) \
 		$(if $(HS7810A),$(HS7810APATCHES_23)) \
+		$(if $(HS7110),$(HS7110PATCHES_23)) \
 		$(if $(HOMECAST5101),$(HS5101PATCHES_23)) \
 		$(if $(ADB_BOX),$(ADB_BOXPATCHES_23)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_23)) \
@@ -510,6 +518,12 @@ HS7810APATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch
 
+HS7110PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-hs7110_setup_stm24$(PATCH_STR).patch \
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
+		linux-sh4-lmb_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch
+		
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
@@ -592,6 +606,7 @@ KERNELPATCHES_24 =  \
 		$(if $(SPARK7162),$(SPARK7162_PATCHES_24)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_24)) \
 		$(if $(HS7810A),$(HS7810APATCHES_24)) \
+		$(if $(HS7110),$(HS7110PATCHES_24)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_24)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_24)) \
 		$(if $(ADB_BOX),$(ADB_BOXPATCHES_24)) \
@@ -726,7 +741,7 @@ endif !STM22
 #
 
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(FLASH_UFS910)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
+MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(HS7110)$(FLASH_UFS910)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -1011,6 +1026,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
  		$(if $(HS7810A),HS7810A=$(HS7810A)) \
+ 		$(if $(HS7110),HS7110=$(HS7110)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
@@ -1046,6 +1062,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
  		$(if $(HS7810A),HS7810A=$(HS7810A)) \
+ 		$(if $(HS7110),HS7110=$(HS7110)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
