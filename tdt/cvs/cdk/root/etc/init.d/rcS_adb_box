@@ -64,7 +64,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    fi
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko
+   insmod $MODDIR/avs.ko type=stv6412
 
    echo "init player"
    player=`cat /proc/stb/player/version`
