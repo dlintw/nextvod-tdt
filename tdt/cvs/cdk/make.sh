@@ -2,7 +2,7 @@
 
 if [ "$1" == -h ] || [ "$1" == --help ]; then
  echo "Parameter 1: target system (1-26)"
- echo "Parameter 2: kernel (1-4)"
+ echo "Parameter 2: kernel (1-9)"
  echo "Parameter 3: debug (Y/N)"
  echo "Parameter 4: player(1-2)"
  echo "Parameter 5: Multicom(1-2)"
@@ -117,8 +117,8 @@ case "$REPLY" in
 	22) TARGET="--enable-ipbox99";;
 	23) TARGET="--enable-ipbox55";;
 	24) TARGET="--enable-hs7810a --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
-	24) TARGET="--enable-hs7110 --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
 	25) TARGET="--enable-adb_box";;
+	26) TARGET="--enable-hs7110 --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
 	 *) TARGET="--enable-ufs910";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"
