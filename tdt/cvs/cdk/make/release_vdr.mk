@@ -44,7 +44,9 @@ $(DEPDIR)/%release_vdr:
 	cp -dp $(targetprefix)/sbin/sfdisk $(prefix)/release_vdr/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release_vdr/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/etc/init.d/udhcpc $(prefix)/release_vdr/etc/init.d/ && \
-	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI) $(prefix)/release_vdr/sbin/MAKEDEV && \
+cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI) $(prefix)/release_vdr/sbin/MAKEDEV && \
+	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release_vdr/bin/ && \
+	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_vdr/bin/ && \
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release_vdr/boot/video.elf && \
 	$(if $(TF7700),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdr/boot/video.elf &&) \
 	$(if $(UFS922),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdr/boot/video.elf &&) \

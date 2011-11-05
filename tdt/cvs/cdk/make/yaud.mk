@@ -32,6 +32,7 @@ min-bare-os std-bare-os max-bare-os bare-os: \
 		%busybox \
 		\
 		%libz \
+		%grep \
 		%$(INITSCRIPTS) \
 		%openrdate \
 		%$(NETBASE) \
