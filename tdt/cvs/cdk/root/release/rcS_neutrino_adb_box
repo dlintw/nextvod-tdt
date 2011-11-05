@@ -1,8 +1,26 @@
 #!/bin/sh
 
 MODDIR=/lib/modules
+boxtype=`cat /etc/boxtype`
 
-insmod $MODDIR/vfd.ko
+if [ $boxtype == 'bska' ]; then
+  echo "Init VFD bialy"
+  insmod $MODDIR/vfd.ko rec=0
+else
+  echo "Init VFD czarny"
+  insmod $MODDIR/vfd.ko rec=1
+fi
+
+loadMME() {
+   # mme bug workaround
+   /bin/dd if=/dev/zero of=/dev/st231-0 bs=1024 count=4096
+   /bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
+   # end mme bug wa
+   echo "load a firmware"
+   /bin/stslave -t stb7100.1 -R /boot/audio.elf
+   echo "load v firmware"
+   /bin/stslave -t stb7100.0 -R /boot/video.elf
+}
 
 if [ -e /var/etc/.firstboot ]; then
    echo "WAIT 3 min" > /dev/vfd
@@ -11,11 +29,18 @@ if [ -e /var/etc/.firstboot ]; then
    touch /dev/.devfsd
 fi
 
-/etc/init.d/mountvirtfs start
-
-insmod $MODDIR/e2_proc.ko
+   /etc/init.d/mountvirtfs start
+   /etc/init.d/portmap start
 
 if [ ! -e /var/etc/.firstboot ]; then
+
+   insmod $MODDIR/e2_proc.ko
+
+   loadMME
+
+# start automounter with umount timeout of 5 seconds
+   insmod $MODDIR/autofs4.ko
+   /usr/sbin/automount --timeout=5 /autofs file /etc/auto.usb
 
    echo "Starting DEBUG Interface"
    /etc/init.d/mountall start
@@ -31,62 +56,65 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING MODULES"   
    echo "LOADING MODULES" >/dev/vfd
 
-   echo "load a/v firmware"
-   /bin/stslave -t stb7100.0 -R /boot/video.elf
-   /bin/stslave -t stb7100.1 -R /boot/audio.elf
-
    echo "init embx"
    insmod $MODDIR/embxshell.ko
    insmod $MODDIR/embxmailbox.ko mailbox0=0xb9211000:136:set2 mailbox1=0xb9212000:137:set2 ;
    insmod $MODDIR/embxshm.ko mailbox0=shm:0:7:0x60000000:0:256:256:0:1024:0xa4000000:0x10000000 ;
    insmod $MODDIR/mme_host.ko transport0=shm
 
+   if [ $boxtype == 'bsla' ]; then
    echo "init Cooler"
-   insmod $MODDIR/cooler.ko
+    insmod $MODDIR/cooler.ko
+   fi
 
    echo "init AVS"
-   insmod $MODDIR/avs.ko
+   insmod $MODDIR/avs.ko type=stv6412
 
    echo "init player"
    player=`cat /proc/stb/player/version`
-   if [ $player=='player179' ]; then
-	echo "[rcS] init player 179"
-   else
-	echo "[rcS] init player 131"
-   fi
+   player=`cat /proc/stb/player/version | awk '{ print substr( $0, length($0) - 2, length($0) ) }'`
+   echo "init player $player"
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
    insmod $MODDIR/stm_v4l2.ko
-   if [ $player=='player179' ]; then
+    if [ $player -gt 131 ]; then
 	insmod $MODDIR/stmvout.ko
 	insmod $MODDIR/stmvbi.ko
    fi
-   insmod $MODDIR/pseudocard.ko
+  insmod $MODDIR/pseudocard.ko
    
-   echo "init frontends"
-   insmod $MODDIR/fe-core.ko tuner=czarny ;
-   #insmod $MODDIR/fe-core.ko tuner=bialy ;
+    if [ $boxtype == 'bska' ]; then
+         echo "init frontends bialy"
+         insmod $MODDIR/fe-core.ko tuner=bialy ;
+    else
+         echo "init frontends czarny"
+	 insmod $MODDIR/fe-core.ko tuner=czarny ;
+    fi
 
    echo "init drivers"
-   insmod $MODDIR/pti.ko
-   if [ $player=='player179' ]; then
+   if [ $player -gt 131 ]; then
+	insmod $MODDIR/pti.ko
 	insmod $MODDIR/stm_monitor.ko
 	insmod $MODDIR/stmsysfs.ko
-    insmod $MODDIR/stmdvb.ko
+    	insmod $MODDIR/stmdvb.ko
    else
-    insmod $MODDIR/stmdvb.ko
-    insmod $MODDIR/stm_monitor.ko
+	insmod $MODDIR/pti.ko
+	insmod $MODDIR/stmdvb.ko
+	insmod $MODDIR/stm_monitor.ko
    fi	
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
+   insmod $MODDIR/bpamem.ko
    insmod $MODDIR/smartcard.ko
+   
+   mknod /dev/sci0 c 169 0
+   mknod /dev/sci1 c 169 1
 
-   /usr/local/bin/dvbtest -4 -f l /boot/Neutrino_boot.mp4
-   stfbcontrol a 0
+   /usr/local/bin/dvbtest -4 -f l /boot/bootlogo.mvi
 
    echo "init frontpanel"
    insmod $MODDIR/boxtype.ko
@@ -96,25 +124,11 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/bin/lircd
 
    mknod /dev/rc c 147 1
-   mknod /dev/sci0 c 169 0
-   mknod /dev/sci1 c 169 1 
    
    /bin/evremote2 &
 
-   #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
-   #mount /dev/sr0 /media/dvd
-   #fix this later if we got to manage a marusys raw device driver
-   #mount /dev/sda3 /hdd/
-
-   /etc/init.d/portmap start
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
-
-   #timefix e2
-   date -s "121220001970"
-
-   stfbcontrol a 255
-   killall -9 showiframe
 
    echo "LOADING neutrino" > /dev/vfd
    echo "LOADING neutrino"
@@ -124,22 +138,22 @@ if [ ! -e /var/etc/.firstboot ]; then
       echo "starting neutrino->"
       /etc/init.d/networking restart
       /usr/bin/start-emu.sh
-      /usr/bin/timeset.sh all &
       /usr/local/bin/neutrino -f -u
       rtv=$?
       echo "e2 ended <- RTV: " $rtv
       case "$rtv" in
 		0) echo "0"
 		   echo "E2 ERROR"
+		   init 6
       		   reboot;;
 		1) echo "1"
 		   echo "SHUTDOWN"
 		   echo "PowerOff" > /dev/vfd
-                   /bin/shutdown.sh
+		   init 0
                    umount -a;;
 		2) echo "2"
 		   echo "REBOOT"
-		   /usr/local/bin/dvbtest -4 -f l /boot/Neutrino_reboot.mp4
+		   init 6
 		   reboot;;
 		3) echo "3"
 		   echo "E2 RESTART"
@@ -147,6 +161,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 		   /usr/local/bin/dvbtest -4 -f l /boot/Neutrino_reboot.mp4;;
 		*) echo "*"
 		   echo "ERROR"
+		   init 6
                    reboot;;
       esac
    done 
