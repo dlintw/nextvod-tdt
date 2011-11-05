@@ -1,6 +1,6 @@
 diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/ata/sata_stm.c linux-sh4/drivers/ata/sata_stm.c
 --- linux-sh4-2.6.32.28_stm24_0207_orig/drivers/ata/sata_stm.c	2011-10-28 00:21:08.000000000 +0200
-+++ linux-sh4/drivers/ata/sata_stm.c	2011-11-03 17:46:10.000000000 +0100
++++ linux-sh4/drivers/ata/sata_stm.c	2011-11-03 21:54:28.000000000 +0100
 @@ -871,6 +871,8 @@
  	} else if (readl(mmio + DMAC_RAWERR) & 1) {
  		ata_port_printk(ap, KERN_ERR, "DMA error asserted\n");
@@ -10,12 +10,11 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/ata/sata_stm.c linux-sh4/d
  
  	return handled;
  
-@@ -951,16 +953,17 @@
+@@ -951,20 +953,20 @@
  	struct ata_host *host = dev_instance;
  	unsigned int handled = 0;
  	unsigned int i;
 -	struct stm_host_priv *hpriv = host->private_data;
-+	unsigned long flags;
  
  DPRINTK("ENTER\n");
  
@@ -26,22 +25,19 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/ata/sata_stm.c linux-sh4/d
 -			handled += stm_sata_dma_irq(host->ports[i]);
 -		handled += stm_sata_host_irq(host->ports[i]);
 +	for (i = 0; i < host->n_ports; i++) 
-+	{
++	   {
 +		handled += stm_sata_dma_irq(host->ports[i]);
 +		if (!(handled)) handled += stm_sata_host_irq(host->ports[i]);
 +		else handled = 0;
  	}
  
  	spin_unlock(&host->lock);
-@@ -968,6 +971,7 @@
+-
++	
  	return IRQ_RETVAL(handled);
  }
  
-+
- static void stm_irq_clear(struct ata_port *ap)
- {
- 	/* TODO */
-@@ -1229,6 +1233,9 @@
+@@ -1229,6 +1231,9 @@
  	hpriv->device_state = devm_stm_device_init(dev,
  		sata_private_info->device_config);
  
@@ -51,50 +47,17 @@ diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/drivers/ata/sata_stm.c linux-sh4/d
  	mem_res = platform_get_resource(pdev,IORESOURCE_MEM,0);
  	phys_base = mem_res->start;
  	phys_size = mem_res->end - mem_res->start + 1;
-@@ -1303,32 +1310,11 @@
- 	 * host controller interrupt lines separated out. So if we have two
- 	 * irq resources, then it is one of these
- 	 */
--
--	dma_irq = platform_get_irq(pdev, 1);
--	if (dma_irq > 0) {
--		/* We have two interrupts */
--		if (devm_request_irq(host->dev, dma_irq, stm_sata_dma_interrupt,
--				     0, dev_driver_string(host->dev), host) < 0)
--			panic("Cannot register SATA dma interrupt %d\n",
--			      dma_irq);
--		hpriv->shared_dma_host_irq = 0;
--	} else {
--		hpriv->shared_dma_host_irq = 1;
--	}
--
- 	ret = ata_host_activate(host, platform_get_irq(pdev, 0),
- 				stm_sata_interrupt,
- 				IRQF_SHARED, &stm_sht);
--
- 	if (ret && dma_irq > 0)
- 		devm_free_irq(host->dev, dma_irq, host);
--	else {
--		/* by default the device is on */
--		pm_runtime_set_active(&pdev->dev);
--		pm_suspend_ignore_children(&pdev->dev, 1);
--		pm_runtime_enable(&pdev->dev);
--	}
--
- 	return ret;
- 
- }
-@@ -1492,7 +1478,6 @@
- 	.driver = {
- 		.name = DRV_NAME,
- 		.owner = THIS_MODULE,
--		.pm = &stm_sata_pm,
- 	},
- 	.probe = stm_sata_probe,
- 	.remove = stm_sata_remove,
 diff -Nur linux-sh4-2.6.32.28_stm24_0207_orig/include/linux/libata.h linux-sh4/include/linux/libata.h
 --- linux-sh4-2.6.32.28_stm24_0207_orig/include/linux/libata.h	2011-10-28 00:21:08.000000000 +0200
 +++ linux-sh4/include/linux/libata.h	2011-10-30 18:22:18.000000000 +0100
+@@ -52,6 +52,7 @@
+  * compile-time options: to be removed as soon as all the drivers are
+  * converted to the new debugging mechanism
+  */
++//#define ATA_DEBUG
+ #undef ATA_DEBUG		/* debugging output */
+ #undef ATA_VERBOSE_DEBUG	/* yet more debugging output */
+ #undef ATA_IRQ_TRAP		/* define to ack screaming irqs */
 @@ -938,6 +939,18 @@
  #undef writew
  #define writew(v_,a_)	sata_writew(ap, v_, a_)
