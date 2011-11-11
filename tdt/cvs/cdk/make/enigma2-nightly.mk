@@ -38,7 +38,7 @@ $(DEPDIR)/enigma2-nightly.do_prepare:
 	[ -d "$(appsdir)/enigma2-nightly" ] && \
 	git pull $(appsdir)/enigma2-nightly $$HEAD;\
 	[ -d "$(appsdir)/enigma2-nightly" ] || \
-	git clone -b $$HEAD git://git.opendreambox.org/git/enigma2.git $(appsdir)/enigma2-nightly; \
+	git clone -b $$HEAD git://gitorious.org/open-duckbox-project-sh4/guigit.git $(appsdir)/enigma2-nightly; \
 	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.newest; \
 	[ "$$REVISION" == "" ] || (cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd "$(buildprefix)";); \
 	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.org; \
