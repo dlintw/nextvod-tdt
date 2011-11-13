@@ -81,7 +81,7 @@
 +	{
 +		.name = "VAR-JFFS2",
 +		.size =   0x013C0000,  //0xa40000-0x1dfffff 19,5MB
-+		.offset = 0x00C00000,
++		.offset = 0x00C40000,
 +	},
 +	{
 +		.name = "Boot Config",

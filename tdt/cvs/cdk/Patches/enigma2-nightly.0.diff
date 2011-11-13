@@ -7526,3 +7526,231 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/RecordTimer.py
  			return True
  
  	def setAutoincreaseEnd(self, entry = None):
+--- enigma2-nightly.org/lib/driver/vfd.cpp	2010-10-31 00:55:10.717950000 +0200
++++ enigma2-nightly.org/lib/driver/vfd.cpp	2010-11-05 07:27:31.275684176 +0100
+@@ -29,8 +29,12 @@
+ void * start_loop (void *arg);
+ bool blocked = false;
+ bool requested = false;
+-char chars[64];
++bool VFD_CENTER = false;
++bool scoll_loop = false;
++int VFD_SCROLL = 1;
+ 
++char chars[64];
++char g_str[64];
+ 
+ struct vfd_ioctl_data {
+ 	unsigned char start;
+@@ -38,7 +42,13 @@
+ 	unsigned char length;
+ };
+ 
+-
++#ifdef PLATFORM_OCTAGON1008
++	#define VFDLENGTH 8
++#elif defined (PLATFORM_FORTIS_HDBOX) || defined(PLATFORM_ATEVIO7500)
++	#define VFDLENGTH 12
++#else
++	#define VFDLENGTH 16
++#endif
+ 
+ evfd* evfd::instance = NULL;
+ 
+@@ -179,7 +189,14 @@
+ 	vfd.vfd_write_string("AAF DEV-TEAM", true);
+ 	//run 2 times through all icons 
+ 	for  (int vloop = 0; vloop < 128; vloop++) {
+-		/*if (vloop%14 == 0 )
++#if !defined(PLATFORM_FORTIS_HDBOX) && !defined(PLATFORM_OCTAGON1008) && !defined(PLATFORM_ATEVIO7500) && !defined(PLATFORM_CUBEREVO) && !defined(PLATFORM_CUBEREVO_MINI) && !defined(PLATFORM_CUBEREVO_MINI2) && !defined(PLATFORM_CUBEREVO_MINI_FTA) && !defined(PLATFORM_CUBEREVO_250HD) && !defined(PLATFORM_CUBEREVO_2000HD) && !defined(PLATFORM_CUBEREVO_9500HD)
++		if (vloop%2 == 1) {
++			vfd.vfd_set_icon( (tvfd_icon) (((vloop%32)/2)%16), ICON_OFF, true);
++			//usleep(1000);
++			vfd.vfd_set_icon( (tvfd_icon) ((((vloop%32)/2)%16)+1), ICON_ON, true);
++		}
++#else
++		if (vloop%14 == 0 )
+ 			vfd.vfd_set_brightness(1);
+ 		else if (vloop%14 == 1 )
+ 			vfd.vfd_set_brightness(2);
+@@ -206,21 +223,17 @@
+ 		else if (vloop%14 == 12 )
+ 			vfd.vfd_set_brightness(1);
+ 		else if (vloop%14 == 13 )
+-			vfd.vfd_set_brightness(0);*/
+-		if (vloop%2 == 1) {
+-			vfd.vfd_set_icon( (tvfd_icon) (((vloop%32)/2)%16), ICON_OFF, true);
+-			//usleep(1000);
+-			vfd.vfd_set_icon( (tvfd_icon) ((((vloop%32)/2)%16)+1), ICON_ON, true);
+-		}
++			vfd.vfd_set_brightness(0);
++#endif		
+ 		usleep(75000);
+ 	}
+ 	vfd.vfd_set_brightness(7);
+-	
++#if !defined(PLATFORM_FORTIS_HDBOX) && !defined(PLATFORM_OCTAGON1008)	&& !defined(PLATFORM_ATEVIO7500) && !defined(PLATFORM_CUBEREVO) && !defined(PLATFORM_CUBEREVO_MINI) && !defined(PLATFORM_CUBEREVO_MINI2) && !defined(PLATFORM_CUBEREVO_MINI_FTA) && !defined(PLATFORM_CUBEREVO_250HD) && !defined(PLATFORM_CUBEREVO_2000HD) && !defined(PLATFORM_CUBEREVO_9500HD)
+ 	//set all blocked icons
+ 	for (int id = 0x10; id < 0x20; id++) {
+ 		vfd.vfd_set_icon((tvfd_icon)id, icon_onoff[id]);	
+ 	}
+-
++#endif
+ 	blocked = false;
+ 	return NULL;
+ }
+@@ -229,6 +242,106 @@
+ 
+ //////////////////////////////////////////////////////////////////////////////////////
+ 
++#if defined(PLATFORM_FORTIS_HDBOX) || defined(PLATFORM_OCTAGON1008) || defined(PLATFORM_ATEVIO7500) || defined(PLATFORM_CUBEREVO) || defined(PLATFORM_CUBEREVO_MINI) || defined(PLATFORM_CUBEREVO_MINI2) || defined(PLATFORM_CUBEREVO_MINI_FTA) || defined(PLATFORM_CUBEREVO_250HD) || defined(PLATFORM_CUBEREVO_2000HD) || defined(PLATFORM_CUBEREVO_9500HD)
++void evfd::vfd_write_string_scrollText(char* text) {
++	return;
++}
++
++//we can not use a member function (vfd_write_string_scrollText) in pthread, so we use a second (same content) non member function (vfd_write_string_scrollText1)
++static void *vfd_write_string_scrollText1(void *arg) {
++	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
++	bool scoll_loop = true;
++	char out[VFDLENGTH+1];
++	int i, len;
++	evfd vfd;
++	len = strlen((char *) g_str);
++	memset(out, 0, VFDLENGTH+1);
++	while(scoll_loop && (len > VFDLENGTH)) {
++		if (blocked) {
++			usleep(250000);
++		} else {
++			scoll_loop = false;
++		}
++		for (i=0; i<=(len-VFDLENGTH); i++) {
++			if (blocked) {
++				memset(out, ' ', VFDLENGTH);
++				memcpy(out, g_str+i, VFDLENGTH);
++				vfd.vfd_write_string(out,true);
++				usleep(250000);
++			} else {
++				scoll_loop = false;
++				i = len-VFDLENGTH;
++			}
++		}
++		for (i=1; i < VFDLENGTH; i++) {
++			if (blocked) {
++				memset(out, ' ', VFDLENGTH);
++				memcpy(out, g_str+len+i-VFDLENGTH, VFDLENGTH-i);
++				vfd.vfd_write_string(out,true);
++				usleep(250000);
++			} else {
++				scoll_loop = false;
++				i = VFDLENGTH;
++			}
++		}
++		memcpy(out, g_str, VFDLENGTH);
++		vfd.vfd_write_string(out,true);
++		if (VFD_SCROLL != 2 || !blocked)
++			scoll_loop = false;
++	}
++	blocked = false;
++	return NULL;
++}
++
++void evfd::vfd_write_string(char * str)
++{
++	int i = strlen(str);
++	if(blocked)
++	{
++		pthread_cancel(thread_start_loop);
++		pthread_join(thread_start_loop, NULL);
++		blocked=false;
++	}
++	memset(g_str,0,64);
++	strcpy(g_str,str);
++	vfd_write_string(str, false);
++	if(i > VFDLENGTH && VFD_SCROLL)
++	{
++		blocked = true;
++		pthread_create(&thread_start_loop, NULL, vfd_write_string_scrollText1, (void *)str);
++		pthread_detach(thread_start_loop);
++	}
++}
++
++void evfd::vfd_write_string(char * str, bool force)
++{
++	int ws = 0;
++	int i = strlen(str);
++	if (VFD_CENTER) {
++		if (i < VFDLENGTH)
++			ws=(VFDLENGTH-i)/2;
++		else
++			ws=0;
++	}
++	if (i > VFDLENGTH) i = VFDLENGTH;
++	struct vfd_ioctl_data data;
++	memset(data.data, ' ', VFDLENGTH);
++	if (VFD_CENTER)
++		memcpy(data.data+ws, str, VFDLENGTH-ws);
++	else
++		memcpy(data.data, str, i);
++	data.start = 0;
++	if (VFD_CENTER)
++		data.length = i+ws<=VFDLENGTH?i+ws:VFDLENGTH;
++	else
++		data.length = i;
++		file_vfd = open (VFD_DEVICE, O_WRONLY);
++		write(file_vfd,data.data,data.length);
++		close (file_vfd);
++	return;
++}
++
++#else
+ void evfd::vfd_write_string(char * str)
+ {
+ 	vfd_write_string(str, false);
+@@ -290,7 +403,7 @@
+ 	}
+ 	return;
+ }
+-
++#endif
+ void evfd::vfd_clear_string()
+ {
+ 	vfd_write_string("                ");
+@@ -374,3 +487,13 @@
+ 	close (file_vfd);
+ 	return;
+ }
++
++void evfd::vfd_set_SCROLL(int id)
++{
++	VFD_SCROLL=id;
++}
++
++void evfd::vfd_set_CENTER(bool id)
++{
++	VFD_CENTER=id;
++}
+--- enigma2-nightly.org/lib/driver/vfd.h	2010-10-31 00:55:10.717950000 +0200
++++ enigma2-nightly.org/lib/driver/vfd.h	2010-10-30 20:20:10.000000000 +0200
+@@ -4,7 +4,12 @@
+ #define ICON_ON  1
+ #define ICON_OFF 0
+ 
++#ifndef PLATFORM_HDBOX
+ typedef enum { USB = 0x10, HD, HDD, LOCK, BT, MP3, MUSIC, DD, MAIL, MUTE, PLAY, PAUSE, FF, FR, REC, CLOCK } tvfd_icon;
++#else
++typedef enum { USB = 0x10, STANDBY, SAT, REC, TIMESHIFT, TIMER, HD, LOCK, DD, MUTE, TUNER1, TUNER2, MP3, REPEAT,
++			   PLAY, PAUSE, TER, FILE, 480i, 480p, 576i, 576p, 720p, 1080i, 1080p } tvfd_icon;
++#endif
+ 
+ class evfd
+ {
+@@ -23,6 +28,8 @@
+ 	void init();
+ 	static evfd* getInstance();
+ 
++        void vfd_set_SCROLL(int id);
++	void vfd_set_CENTER(bool id);
+ 	void vfd_set_icon(tvfd_icon id, bool onoff);
+ 	void vfd_set_icon(tvfd_icon id, bool onoff, bool force);
+ 	void vfd_clear_icons();
+ 
