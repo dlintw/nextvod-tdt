@@ -130,7 +130,8 @@ libdvdcss;1.2.10;libdvdcss-1.2.10;libdvdcss-1.2.10.tar.gz;extract:libdvdcss-1.2.
 libdvdnav;4.1.3;libdvdnav-4.1.3;libdvdnav-4.1.3.tar.bz2:libdvdnav_4.1.3-3.diff;extract:libdvdnav-4.1.3.tar.bz2;patch:libdvdnav_4.1.3-3.diff
 libdvdread;4.1.3;libdvdread-4.1.3;libdvdread-4.1.3.tar.bz2:libdvdread_4.1.3-5.diff;extract:libdvdread-4.1.3.tar.bz2;patch:libdvdread_4.1.3-5.diff
 pyopenssl;0.8;pyOpenSSL-0.8;pyOpenSSL-0.8.tar.gz;extract:pyOpenSSL-0.8.tar.gz
-ffmpeg;0.6.3;ffmpeg-0.6.3;ffmpeg-0.6.3.tar.gz;extract:ffmpeg-0.6.3.tar.gz
+#ffmpeg;0.6.3;ffmpeg-0.6.3;ffmpeg-0.6.3.tar.gz;extract:ffmpeg-0.6.3.tar.gz
+ffmpeg;0.8.6;ffmpeg-0.8.6;ffmpeg-0.8.6.tar.gz;extract:ffmpeg-0.8.6.tar.gz
 libass;0.9.11;libass-0.9.11;libass-0.9.11.tar.gz;extract:libass-0.9.11.tar.gz
 libcap;2.22;libcap-2.22;libcap-2.22.tar.gz;extract:libcap-2.22.tar.gz
 
