@@ -557,11 +557,11 @@
 ! // Nand Flash Configuration
 ! static struct mtd_partition nand_parts[] = {
 ! 	 {
-! 	 .name = "Spark KerneI",
+! 	 .name = "Spark Kernel",
 ! 	 .size = 0x0800000,
 ! 	 .offset = 0,
 ! 	 }, {
-!      .name = "Spark R00tfs",
+!      .name = "Spark Rootfs",
 !      .size = 0x17800000,
 !      .offset = 0x800000,
 !      }, {
@@ -841,3 +841,72 @@
   	.mv_init_irq		= mb618_init_irq,
   	.mv_ioport_map		= mb618_ioport_map,
   };
+*** linux-sh4-2.6.32.28_stm24_0207.orig/drivers/mtd/nand/nand_ecc.c	2011-11-16 23:19:57.000000000 +0200
+--- linux-sh4/drivers/mtd/nand/nand_ecc.c	2011-11-17 21:10:15.882600432 +0200
+***************
+*** 492,503 ****
+  	}
+  	/* count nr of bits; use table lookup, faster than calculating it */
+  	if ((bitsperbyte[b0] + bitsperbyte[b1] + bitsperbyte[b2]) == 1) {
+! 		printk(KERN_DEBUG "%s: ignoring error in ECC, data ok: [",
+! 		       __func__);
+  		return 1;	/* error in ecc data; no action needed */
+  	}
+  
+! 	printk(KERN_ERR "%s: uncorrectable error: [", __func__);
+  	return -1;
+  }
+  EXPORT_SYMBOL(__nand_correct_data);
+--- 492,503 ----
+  	}
+  	/* count nr of bits; use table lookup, faster than calculating it */
+  	if ((bitsperbyte[b0] + bitsperbyte[b1] + bitsperbyte[b2]) == 1) {
+! 		/*printk(KERN_DEBUG "%s: ignoring error in ECC, data ok: [",
+! 		       __func__);*/
+  		return 1;	/* error in ecc data; no action needed */
+  	}
+  
+! 	//printk(KERN_ERR "%s: uncorrectable error: [", __func__);
+  	return -1;
+  }
+  EXPORT_SYMBOL(__nand_correct_data);
+*** linux-sh4-2.6.32.28_stm24_0207.orig/drivers/mtd/nand/nand_base.c	2011-11-16 23:19:57.000000000 +0200
+--- linux-sh4/drivers/mtd/nand/nand_base.c	2011-11-17 21:15:21.970973574 +0200
+***************
+*** 1201,1220 ****
+  
+  			/* Now read the page into the buffer */
+  			if (unlikely(ops->mode == MTD_OOB_RAW))
+! 				ret = chip->ecc.read_page_raw(mtd, chip,
+! 							      bufpoi, page);
+! 			else if (!aligned && NAND_SUBPAGE_READ(chip) && !oob)
+! 				ret = chip->ecc.read_subpage(mtd, chip, col, bytes, bufpoi);
+  			else
+! 				ret = chip->ecc.read_page(mtd, chip, bufpoi,
+! 							  page);
+  			if (ret < 0)
+  				break;
+  
+  			/* Transfer not aligned data */
+  			if (!aligned) {
+! 				if (!NAND_SUBPAGE_READ(chip) && !oob)
+! 					chip->pagebuf = realpage;
+  				memcpy(buf, chip->buffers->databuf + col, bytes);
+  			}
+  
+--- 1201,1215 ----
+  
+  			/* Now read the page into the buffer */
+  			if (unlikely(ops->mode == MTD_OOB_RAW))
+! 				ret = chip->ecc.read_page_raw(mtd, chip,bufpoi, page);
+  			else
+! 				ret = chip->ecc.read_page(mtd, chip, bufpoi, page);
+  			if (ret < 0)
+  				break;
+  
+  			/* Transfer not aligned data */
+  			if (!aligned) {
+! 				chip->pagebuf = realpage;
+  				memcpy(buf, chip->buffers->databuf + col, bytes);
+  			}
+  
