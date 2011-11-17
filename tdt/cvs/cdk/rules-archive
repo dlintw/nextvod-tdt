@@ -142,7 +142,8 @@ libdvdcss-1.2.10.tar.gz;http://download.videolan.org/pub/libdvdcss/1.2.10
 libdvdnav-4.1.3.tar.bz2;http://www.mplayerhq.hu/MPlayer/releases/dvdnav-old
 libdvdread-4.1.3.tar.bz2;http://www.mplayerhq.hu/MPlayer/releases/dvdnav-old
 pyOpenSSL-0.8.tar.gz;http://downloads.sourceforge.net/project/pyopenssl/pyopenssl/0.8/
-ffmpeg-0.6.3.tar.gz;http://ffmpeg.org/releases/
+#ffmpeg-0.6.3.tar.gz;http://ffmpeg.org/releases/
+ffmpeg-0.8.6.tar.gz;http://ffmpeg.org/releases/
 libass-0.9.11.tar.gz;http://libass.googlecode.com/files/
 #libcap-2.16.tar.gz;http://www.kernel.org/pub/linux/libs/security/linux-privs/kernel-2.6/
 libcap-2.22.tar.gz;http://ftp.ntu.edu.tw/ftp/linux/libs/security/linux-privs/libcap2/

@@ -152,7 +152,9 @@ static char* Codec2Encoding(enum CodecID id, int* version)
     case CODEC_ID_RV20:
         return "V_RMV";
     case CODEC_ID_MPEG4:
+#if LIBAVCODEC_VERSION_MAJOR < 53
     case CODEC_ID_XVID:
+#endif
     case CODEC_ID_MSMPEG4V1:
     case CODEC_ID_MSMPEG4V2:
     case CODEC_ID_MSMPEG4V3:
@@ -208,10 +210,8 @@ static char* Codec2Encoding(enum CodecID id, int* version)
     case CODEC_ID_HDMV_PGS_SUBTITLE:
     case CODEC_ID_DVB_TELETEXT:
         return "S_TEXT/SRT"; /* fixme */
-#ifdef KNOWN_IN_FFMPEG_VERSION
     case CODEC_ID_SRT:
         return "S_TEXT/SRT"; /* fixme */
-#endif
     default:
         ffmpeg_err("ERROR! CODEC NOT FOUND -> %d\n",id);
     }
@@ -267,6 +267,32 @@ float getDurationFromSSALine(unsigned char* line){
 
     free(Text);
     return (float)msec/1000.0;
+}
+
+/* search for metatdata in context and stream
+ * and map it to our metadata.
+ */
+static char* searchMeta(AVMetadata *metadata, char* ourTag)
+{
+   AVMetadataTag *tag = NULL;
+   int i = 0;
+   
+   while (metadata_map[i] != NULL)
+   {
+      if (strcmp(ourTag, metadata_map[i]) == 0)
+      {
+          while ((tag = av_metadata_get(metadata, "", tag, AV_METADATA_IGNORE_SUFFIX)))
+          {
+              if (strcmp(tag->key, metadata_map[ i + 1 ]) == 0)
+              {
+                  return tag->value;
+              }
+          }
+      }
+      i++;
+   }
+   
+   return NULL;
 }
 
 /* **************************** */
@@ -821,7 +847,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
         memset(&track, 0, sizeof(track));
    
         switch (stream->codec->codec_type) {
-        case CODEC_TYPE_VIDEO:
+        case AVMEDIA_TYPE_VIDEO:
             ffmpeg_printf(10, "CODEC_TYPE_VIDEO %d\n",stream->codec->codec_type);
             
             if (encoding != NULL) {
@@ -888,13 +914,22 @@ int container_ffmpeg_init(Context_t *context, char * filename)
                 ffmpeg_err("codec type video but codec unknown %d\n", stream->codec->codec_id);
             }
             break;
-        case CODEC_TYPE_AUDIO:
+        case AVMEDIA_TYPE_AUDIO:
             ffmpeg_printf(10, "CODEC_TYPE_AUDIO %d\n",stream->codec->codec_type);
             
             if (encoding != NULL) {
+                AVDictionaryEntry *lang;
                 track.type           = eTypeES;
 
-                track.Name           = stream->language;
+                lang = av_dict_get(stream->metadata, "language", NULL, 0);
+
+                if (lang)
+                   track.Name        = strdup(lang->value);
+                else
+                   track.Name        = strdup("und");
+                
+                ffmpeg_printf(10, "Language %s\n", track.Name);
+
                 track.Encoding       = encoding;
                 track.Id             = n;
 
@@ -921,9 +956,9 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 
 //( (AVStream*) audioTrack->stream)->codec->flags |= CODEC_FLAG_TRUNCATED;
                         if(codec != NULL && !avcodec_open(stream->codec, codec))
-printf("AVCODEC__INIT__SUCCESS\n");
-else
-printf("AVCODEC__INIT__FAILED\n");
+                           printf("AVCODEC__INIT__SUCCESS\n");
+                        else
+                           printf("AVCODEC__INIT__FAILED\n");
 
 
                 }
@@ -1083,12 +1118,21 @@ printf("AVCODEC__INIT__FAILED\n");
                 ffmpeg_err("codec type audio but codec unknown %d\n", stream->codec->codec_id);
             }
             break;
-        case CODEC_TYPE_SUBTITLE:
+        case AVMEDIA_TYPE_SUBTITLE:
         {    
+            AVDictionaryEntry *lang;
+
             ffmpeg_printf(10, "CODEC_TYPE_SUBTITLE %d\n",stream->codec->codec_type);
 
-            track.Name           = stream->language;
-            track.language       = stream->language;
+             lang = av_dict_get(stream->metadata, "language", NULL, 0);
+
+             if (lang)
+                track.Name        = strdup(lang->value);
+             else
+                track.Name        = strdup("und");
+
+            ffmpeg_printf(10, "Language %s\n", track.Name);
+
             track.Encoding       = encoding;
             track.Id             = n;
 
@@ -1107,7 +1151,6 @@ printf("AVCODEC__INIT__FAILED\n");
             ffmpeg_printf(1, "subtitle codec %d\n", stream->codec->codec_id);
             ffmpeg_printf(1, "subtitle width %d\n", stream->codec->width);
             ffmpeg_printf(1, "subtitle height %d\n", stream->codec->height);
-            ffmpeg_printf(1, "subtitle language %s\n", stream->language);
             ffmpeg_printf(1, "subtitle stream %p\n", stream);
 
             if(stream->duration == AV_NOPTS_VALUE) {
@@ -1538,32 +1581,6 @@ static int container_ffmpeg_swich_subtitle(Context_t* context, int* arg)
 {
     /* Hellmaster1024: nothing to do here!*/
     return cERR_CONTAINER_FFMPEG_NO_ERROR;
-}
-
-/* search for metatdata in context and stream
- * and map it to our metadata.
- */
-static char* searchMeta(AVMetadata *metadata, char* ourTag)
-{
-   AVMetadataTag *tag = NULL;
-   int i = 0;
-   
-   while (metadata_map[i] != NULL)
-   {
-      if (strcmp(ourTag, metadata_map[i]) == 0)
-      {
-          while ((tag = av_metadata_get(metadata, "", tag, AV_METADATA_IGNORE_SUFFIX)))
-          {
-              if (strcmp(tag->key, metadata_map[ i + 1 ]) == 0)
-              {
-                  return tag->value;
-              }
-          }
-      }
-      i++;
-   }
-   
-   return NULL;
 }
 
 /* konfetti comment: I dont like the mechanism of overwriting
