@@ -81,7 +81,7 @@ if [ ! -e /var/etc/.firstboot ]; then
       fi
       insmod $MODDIR/stm_monitor.ko
       insmod $MODDIR/stmsysfs.ko
-      insmod $MODDIR/stmdvb.ko
+      insmod $MODDIR/stmdvb.ko TSsource0=0;
    else
       insmod $MODDIR/pti.ko
       insmod $MODDIR/stmdvb.ko
