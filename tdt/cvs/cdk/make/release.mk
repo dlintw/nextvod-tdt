@@ -209,6 +209,8 @@ release_spark:
 	##p -f $(buildprefix)/root/release/vfd_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/vfd.ko
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd.fulan/vfd.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/encrypt.ko
+	cp -f $(buildprefix)/root/sbin/flash_* $(prefix)/release/sbin
+	cp -f $(buildprefix)/root/sbin/nand* $(prefix)/release/sbin
 
 	cp -dp $(buildprefix)/root/etc/lircd_spark.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
