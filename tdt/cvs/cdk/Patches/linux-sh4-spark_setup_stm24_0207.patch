@@ -277,7 +277,7 @@
   			switch (phydev->irq) {
   			case PHY_POLL:
   				irq_str = "POLL";
---- 192,213 ----
+--- 192,214 ----
   			 * and no PHY number was provided to the MAC,
   			 * use the one probed here.
   			 */
@@ -291,6 +291,7 @@
 ! 					(phydev->phy_id == 0x1c040011) || // STe100p
 ! 					(phydev->phy_id == 0x00061c50) || // STe101p
 ! 					(phydev->phy_id == 0x00008201) || //
+! 					(phydev->phy_id == 0x0007c0f1) || // Pingulux
 ! 					(phydev->phy_id == 0x001cc912)))  // RTL821x
 ! 			{
   				priv->plat->phy_addr = addr;
