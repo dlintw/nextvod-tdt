@@ -185,7 +185,7 @@ void CListFrame::initVar(void)
 	m_nFontHeaderListHeight = m_pcFontHeaderList->getHeight();
 	
 	m_pcFontTitle = FONT_TITLE;
-	m_textTitle = "MovieBrowser";
+	m_textTitle = g_Locale->getText(LOCALE_MOVIEBROWSER_HEAD);
 	m_nFontTitleHeight = m_pcFontTitle->getHeight();
 	
 	m_nNrOfPages = 1;
