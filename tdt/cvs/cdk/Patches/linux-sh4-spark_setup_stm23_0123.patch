@@ -835,3 +835,46 @@
   	}
   	return 0;
   }
+*** common.h	2011-11-20 21:19:26.000000000 +0200
+--- linux-sh4/drivers/net/stmmac/common.h	2011-11-20 21:52:28.447268196 +0200
+***************
+*** 215,221 ****
+  				unsigned int low)
+  {
+  	unsigned int hi_addr, lo_addr;
+! 
+  	/* Read the MAC address from the hardware */
+  	hi_addr = readl(ioaddr + high);
+  	lo_addr = readl(ioaddr + low);
+--- 215,221 ----
+  				unsigned int low)
+  {
+  	unsigned int hi_addr, lo_addr;
+! #if 0
+  	/* Read the MAC address from the hardware */
+  	hi_addr = readl(ioaddr + high);
+  	lo_addr = readl(ioaddr + low);
+***************
+*** 227,233 ****
+  	addr[3] = (lo_addr >> 24) & 0xff;
+  	addr[4] = hi_addr & 0xff;
+  	addr[5] = (hi_addr >> 8) & 0xff;
+! 
+  	return;
+  }
+  
+--- 227,240 ----
+  	addr[3] = (lo_addr >> 24) & 0xff;
+  	addr[4] = hi_addr & 0xff;
+  	addr[5] = (hi_addr >> 8) & 0xff;
+! #else
+!  	addr[0] = 0;
+!  	addr[1] = 0;
+!  	addr[2] = 0;
+!  	addr[3] = 0;
+!  	addr[4] = 0;
+!  	addr[5] = 0;
+! #endif
+  	return;
+  }
+       
