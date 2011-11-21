@@ -3892,7 +3892,7 @@
 +#endif
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	1970-01-01 01:00:00.000000000 +0100
 +++ enigma2-nightly/lib/python/Plugins/SystemPlugins/Tuxtxt/tuxtxt/tuxtxt.c	2010-07-02 16:30:00.000000000 +0200
-@@ -0,0 +1,6765 @@
+@@ -0,0 +1,6770 @@
 +/******************************************************************************
 + *                      <<< TuxTxt - Teletext Plugin >>>                      *
 + *                                                                            *
@@ -4029,6 +4029,11 @@
 +		printf("errno = %d, ioctl = %d\n", errno, STMFBIO_BLT); 
 +#endif
 +		perror("FBIO_BLIT");
++	}
++
++	if(ioctl(fb, STMFBIO_SYNC_BLITTER) < 0)
++	{
++		perror("ioctl STMFBIO_SYNC_BLITTER");
 +	}
 +
 +	debugf(100, "%s: <\n", __func__);
