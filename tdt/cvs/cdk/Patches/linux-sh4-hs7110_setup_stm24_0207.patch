@@ -37,7 +37,7 @@ diff -urN linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/boards/mach-sat7111/Makefi
 diff -urN linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/boards/mach-sat7111/setup.c linux-sh4/arch/sh/boards/mach-sat7111/setup.c
 --- linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/boards/mach-sat7111/setup.c	1970-01-01 02:00:00.000000000 +0200
 +++ linux-sh4/arch/sh/boards/mach-sat7111/setup.c	2011-11-22 20:32:29.866709598 +0200
-@@ -0,0 +1,236 @@
+@@ -0,0 +1,214 @@
 +/*
 + * arch/sh/boards/mach-sat7111/setup.c
 + *
@@ -139,58 +139,35 @@ diff -urN linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/boards/mach-sat7111/setup.
 +		.nr_parts	= 10,
 +		.set_vpp	= sat7111_nor_set_vpp,
 +		.parts		=  (struct mtd_partition []) {
-+			{
-+			 .name = "Boot firmware",
-+			 .size = 0x00100000,
-+			 .offset = 0x00000000,
-+			 },
-+			{
-+			 .name = "Kernel",
-+			 .size = 0x00200000, 		//2M
-+			 .offset = 0x00100000,
-+			 },
-+
-+			{
-+			 .name = "APP",
-+			 .size = 0x00a00000,		//10M
-+			 .offset = 0x00300000,
-+			 },
-+
-+			{
-+			 .name = "ROOT FS",
-+			 .size = 0x00b00000,		//11M
-+			 .offset = 0x00d00000,
-+			 },
-+			{
-+			 .name = "Device",
-+			 .size = 0x00300000,		// 3M
-+			 .offset = 0x01800000,
-+			 },
-+			{
-+			 .name = "Config",
-+			 .size = 0x00100000,
-+			 .offset = 0x01b00000, 		// 1.2M
-+			 },
-+			{
-+			 .name = "User",
-+			 .size = MTDPART_SIZ_FULL,
-+			 .offset = 0x01c00000, 		// 4M
-+			 },
-+			{
-+			 .name = "All",
-+			 .size = MTDPART_SIZ_FULL,	//32M
-+			 .offset = 0x00000000,
-+			 },
-+			{
-+			 .name = "APP_ORG",
-+			 .size = 0x00500000,		//5M
-+			 .offset = 0x00300000,
-+			 },
-+			{
-+			 .name = "APP_BAK",
-+			 .size = 0x00500000,		//5M
-+			 .offset = 0x00800000,
-+			 }
++		{
++		.name = "Boot firmware",
++		.size = 0x00060000,	//	0,375M
++		.offset = 0x00000000,
++		},
++		{
++		.name = "Kernel",
++		.size = 0x001c0000,	// 	1,75M
++		.offset = 0x0060000,
++		},
++		{
++		.name = "Root",
++		.size = 0x00d20000,	// 	13,125M
++		.offset = 0x00220000,
++		},
++		{
++		.name = "Var", // org user
++		.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
++		.offset = 0x01c00000,//0x016a0000, 
++		},
++		{
++		.name = "Swap", // org free + config
++		.size = 0x560000,     // 5,375M unused in org kernel
++		.offset = 0x016a0000,
++		},
++		{
++		.name = "Full",
++		.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
++		.offset = 0x00060000,
 +		},
 +	},
 +};
