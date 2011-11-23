@@ -136,7 +136,7 @@ diff -urN linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/boards/mach-sat7111/setup.
 +	},
 +	.dev.platform_data = &(struct physmap_flash_data) {
 +		.width		= 2,
-+		.nr_parts	= 10,
++		.nr_parts	= 6,
 +		.set_vpp	= sat7111_nor_set_vpp,
 +		.parts		=  (struct mtd_partition []) {
 +			{
