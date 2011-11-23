@@ -139,35 +139,36 @@ diff -urN linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/boards/mach-sat7111/setup.
 +		.nr_parts	= 10,
 +		.set_vpp	= sat7111_nor_set_vpp,
 +		.parts		=  (struct mtd_partition []) {
-+		{
-+		.name = "Boot firmware",
-+		.size = 0x00060000,	//	0,375M
-+		.offset = 0x00000000,
-+		},
-+		{
-+		.name = "Kernel",
-+		.size = 0x001c0000,	// 	1,75M
-+		.offset = 0x0060000,
-+		},
-+		{
-+		.name = "Root",
-+		.size = 0x00d20000,	// 	13,125M
-+		.offset = 0x00220000,
-+		},
-+		{
-+		.name = "Var", // org user
-+		.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-+		.offset = 0x01c00000,//0x016a0000, 
-+		},
-+		{
-+		.name = "Swap", // org free + config
-+		.size = 0x560000,     // 5,375M unused in org kernel
-+		.offset = 0x016a0000,
-+		},
-+		{
-+		.name = "Full",
-+		.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-+		.offset = 0x00060000,
++			{
++			.name = "Boot firmware",
++			.size = 0x00060000,	//	0,375M
++			.offset = 0x00000000,
++			},
++			{
++			.name = "Kernel",
++			.size = 0x001c0000,	// 	1,75M
++			.offset = 0x0060000,
++			},
++			{
++			.name = "Root",
++			.size = 0x00d20000,	// 	13,125M
++			.offset = 0x00220000,
++			},
++			{
++			.name = "Var", // org user
++			.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
++			.offset = 0x01c00000,//0x016a0000, 
++			},
++			{
++			.name = "Swap", // org free + config
++			.size = 0x560000,     // 5,375M unused in org kernel
++			.offset = 0x016a0000,
++			},
++			{
++			.name = "Full",
++			.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
++			.offset = 0x00060000,
++			},
 +		},
 +	},
 +};
