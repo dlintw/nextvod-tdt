@@ -179,35 +179,36 @@ diff -urN linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/boards/mach-sat7111/setup.
 +		.nr_parts	= 6,
 +		.set_vpp	= sat7111_nor_set_vpp,
 +		.parts		=  (struct mtd_partition []) {
-+		{
-+		.name = "Boot firmware",
-+		.size = 0x00060000,	//	0,375M
-+		.offset = 0x00000000,
-+		},
-+		{
-+		.name = "Kernel",
-+		.size = 0x001c0000,	// 	1,75M
-+		.offset = 0x0060000,
-+		},
-+		{
-+		.name = "Root",
-+		.size = 0x00d20000,	// 	13,125M
-+		.offset = 0x00220000,
-+		},
-+		{
-+		.name = "Var", // org user
-+		.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-+		.offset = 0x01c00000,//0x016a0000, 
-+		},
-+		{
-+		.name = "Swap", // org free + config
-+		.size = 0x560000,     // 5,375M unused in org kernel
-+		.offset = 0x016a0000,
-+		},
-+		{
-+		.name = "Full",
-+		.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-+		.offset = 0x00060000,
++			{
++			.name = "Boot firmware",
++			.size = 0x00060000,	//	0,375M
++			.offset = 0x00000000,
++			},
++			{
++			.name = "Kernel",
++			.size = 0x001c0000,	// 	1,75M
++			.offset = 0x0060000,
++			},
++			{
++			.name = "Root",
++			.size = 0x00d20000,	// 	13,125M
++			.offset = 0x00220000,
++			},
++			{
++			.name = "Var", // org user
++			.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
++			.offset = 0x01c00000,//0x016a0000, 
++			},
++			{
++			.name = "Swap", // org free + config
++			.size = 0x560000,     // 5,375M unused in org kernel
++			.offset = 0x016a0000,
++			},
++			{
++			.name = "Full",
++			.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
++			.offset = 0x00060000,
++			},
 +		},
 +	},
 +};
@@ -321,315 +322,3 @@ diff -urN linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/boards/mach-sat7111/setup.
  };
 @@ -125,8 +125,8 @@
  		/* .id set in stx7111_configure_asc() */
- 		.num_resources	= 4,
- 		.resource	= (struct resource[]) {
--			STM_PLAT_RESOURCE_MEM(0xfd033000, 0x2c),
--			STM_PLAT_RESOURCE_IRQ(evt2irq(0x1100), -1),
-+			STM_PLAT_RESOURCE_MEM(0xfd034000, 0x2c),
-+			STM_PLAT_RESOURCE_IRQ(evt2irq(0x2440), -1),
- 			STM_PLAT_RESOURCE_DMA_NAMED("rx_half_full", 14),
- 			STM_PLAT_RESOURCE_DMA_NAMED("tx_half_empty", 18),
- 		},
-*** linux-sh4-2.6.32.28_stm24_0207_orig/drivers/stm/gpio.c	2011-08-06 17:16:42.676314198 +0300
---- linux-sh4/drivers/stm/gpio.c	2011-08-07 03:21:10.140239689 +0300
-***************
-*** 27,38 ****
-  #include <linux/stm/platform.h>
-  #include <linux/stm/pad.h>
-  #include <linux/stm/pio.h>
-  #include "reg_pio.h"
-  
-  
-- 
-  struct stpio_pin {
-  #ifdef CONFIG_STPIO
-  	void (*func)(struct stpio_pin *pin, void *dev);
-  	void* dev;
-  	unsigned short port_no, pin_no;
---- 27,42 ----
-  #include <linux/stm/platform.h>
-  #include <linux/stm/pad.h>
-  #include <linux/stm/pio.h>
-+ #ifdef CONFIG_PROC_FS
-+ #include <linux/proc_fs.h>
-+ #include <linux/kallsyms.h>
-+ #endif
-  #include "reg_pio.h"
-  
-  
-  struct stpio_pin {
-  #ifdef CONFIG_STPIO
-+ 	const char *pin_name;
-  	void (*func)(struct stpio_pin *pin, void *dev);
-  	void* dev;
-  	unsigned short port_no, pin_no;
-***************
-*** 41,47 ****
-  
-  struct stm_gpio_pin {
-  	unsigned char flags;
-! #define PIN_FAKE_EDGE		4
-  #define PIN_IGNORE_EDGE_FLAG	2
-  #define PIN_IGNORE_EDGE_VAL	1
-  #define PIN_IGNORE_RISING_EDGE	(PIN_IGNORE_EDGE_FLAG | 0)
---- 45,51 ----
-  
-  struct stm_gpio_pin {
-  	unsigned char flags;
-! #define PIN_FAKE_EDGE			4
-  #define PIN_IGNORE_EDGE_FLAG	2
-  #define PIN_IGNORE_EDGE_VAL	1
-  #define PIN_IGNORE_RISING_EDGE	(PIN_IGNORE_EDGE_FLAG | 0)
-***************
-*** 75,81 ****
-  static struct sysdev_class stm_gpio_sysdev_class;
-  
-  
-- 
-  int stm_gpio_num; /* Number of available internal PIOs (pins) */
-  EXPORT_SYMBOL(stm_gpio_num);
-  
---- 79,84 ----
-***************
-*** 352,357 ****
---- 355,363 ----
-  
-  	port->pins[offset].direction = direction;
-  	set__PIO_PCx(port->base, offset, direction);
-+ 
-+ 	if (!port->pins[offset].stpio.pin_name)
-+ 		port->pins[offset].stpio.pin_name = "-----";
-  }
-  
-  
-***************
-*** 387,392 ****
---- 393,400 ----
-  	struct stm_gpio_port *port = to_stm_gpio_port(chip);
-  
-  	set__PIO_PCx__INPUT_HIGH_IMPEDANCE(port->base, offset);
-+ 	if (!port->pins[offset].stpio.pin_name)
-+ 		port->pins[offset].stpio.pin_name = "-----";
-  
-  	return 0;
-  }
-***************
-*** 399,404 ****
---- 407,414 ----
-  	__stm_gpio_set(port, offset, value);
-  
-  	set__PIO_PCx__OUTPUT_PUSH_PULL(port->base, offset);
-+ 	if (!port->pins[offset].stpio.pin_name)
-+ 		port->pins[offset].stpio.pin_name = "-----";
-  
-  	return 0;
-  }
-***************
-*** 465,477 ****
-  
-  	gpio_pin->stpio.port_no = port_no;
-  	gpio_pin->stpio.pin_no = pin_no;
-! 
-  	return &gpio_pin->stpio;
-  }
-  EXPORT_SYMBOL(__stpio_request_pin);
-  
-  void stpio_free_pin(struct stpio_pin *pin)
-  {
-  	stm_pad_release_gpio(stm_gpio(pin->port_no, pin->pin_no));
-  }
-  EXPORT_SYMBOL(stpio_free_pin);
---- 475,491 ----
-  
-  	gpio_pin->stpio.port_no = port_no;
-  	gpio_pin->stpio.pin_no = pin_no;
-! 	gpio_pin->stpio.pin_name = (name==NULL)?"-----":name;
-  	return &gpio_pin->stpio;
-  }
-  EXPORT_SYMBOL(__stpio_request_pin);
-  
-  void stpio_free_pin(struct stpio_pin *pin)
-  {
-+ 	stpio_configure_pin(pin, STPIO_IN);
-+ 	pin->pin_name = NULL;
-+ 	pin->func = 0;
-+ 	pin->dev = 0;
-  	stm_pad_release_gpio(stm_gpio(pin->port_no, pin->pin_no));
-  }
-  EXPORT_SYMBOL(stpio_free_pin);
-***************
-*** 587,592 ****
---- 601,687 ----
-  }
-  EXPORT_SYMBOL(stpio_set_irq_type);
-  
-+ #ifdef CONFIG_PROC_FS
-+ 
-+ static struct proc_dir_entry *proc_stpio;
-+ 
-+ static inline const char *stpio_get_direction_name(unsigned int direction)
-+ {
-+ 	switch (direction) {
-+ 	case STPIO_NONPIO:		return "IN  (pull-up)      ";
-+ 	case STPIO_BIDIR:		return "BI  (open-drain)   ";
-+ 	case STPIO_OUT:			return "OUT (push-pull)    ";
-+ 	case STPIO_IN:			return "IN  (Hi-Z)         ";
-+ 	case STPIO_ALT_OUT:		return "Alt-OUT (push-pull)";
-+ 	case STPIO_ALT_BIDIR:	return "Alt-BI (open-drain)";
-+ 	default:				return "forbidden          ";
-+ 	}
-+ };
-+ 
-+ static inline const char *stpio_get_handler_name(void *func)
-+ {
-+ 	static char sym_name[KSYM_NAME_LEN];
-+ 	char *modname;
-+ 	unsigned long symbolsize, offset;
-+ 	const char *symb;
-+ 
-+ 	if (func == NULL)
-+ 		return "";
-+ 
-+ 	symb = kallsyms_lookup((unsigned long)func, &symbolsize, &offset,
-+ 			&modname, sym_name);
-+ 
-+ 	return symb ? symb : "???";
-+ }
-+ 
-+ static int stpio_read_proc(char *page, char **start, off_t off, int count,
-+ 		int *eof, void *data_unused)
-+ {
-+ 	int len;
-+ 	int port_no, pin_no;
-+ 	off_t begin = 0;
-+ 	int num_ports = stm_gpio_num / STM_GPIO_PINS_PER_PORT;
-+ 	struct stm_gpio_port *port;
-+ 	struct stm_gpio_pin *pin;
-+ 
-+ 	len = sprintf(page, "  port      name          direction\n");
-+ 	for (port_no = 0; port_no < num_ports; port_no++)
-+ 	{
-+ 		for (pin_no = 0; pin_no < STM_GPIO_PINS_PER_PORT; pin_no++) {
-+ 
-+ 			port = &stm_gpio_ports[port_no];
-+ 			if(!port) continue;
-+ 
-+ 			pin = &port->pins[pin_no];
-+ 			if(!pin) continue;
-+ 
-+ 			char *name = pin->stpio.pin_name ? pin->stpio.pin_name : "";
-+ 			len += sprintf(page + len,
-+ 					"PIO %d.%d [%-10s] [%s] [%s]\n",
-+ 					port_no, pin_no, name,
-+ 					stpio_get_direction_name(pin->direction),
-+ 					stpio_get_handler_name(pin->stpio.func));
-+ 
-+ 			if (len + begin > off + count)
-+ 				goto done;
-+ 			if (len + begin < off) {
-+ 				begin += len;
-+ 				len = 0;
-+ 			}
-+ 		}
-+ 	}
-+ 
-+ 	*eof = 1;
-+ 
-+ done:
-+ 	if (off >= len + begin)
-+ 		return 0;
-+ 	*start = page + (off - begin);
-+ 	return ((count < begin + len - off) ? count : begin + len - off);
-+ }
-+ 
-+ #endif /* CONFIG_PROC_FS */
-+ 
-  #endif /* CONFIG_STPIO */
-  
-  
-***************
-*** 967,972 ****
---- 1062,1073 ----
-  {
-  	int ret;
-  
-+ #ifdef CONFIG_PROC_FS
-+ 	proc_stpio = create_proc_entry("stpio", 0, NULL);
-+ 	if (proc_stpio)
-+ 		proc_stpio->read_proc = stpio_read_proc;
-+ #endif
-+ 
-  	ret = sysdev_class_register(&stm_gpio_sysdev_class);
-  	if (ret)
-  		return ret;
-
-*** linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/phy/phy_device.c	2011-08-04 16:27:16.440157990 +0300
---- linux-sh4/drivers/net/phy/phy_device.c	2011-08-05 17:35:37.308158605 +0300
-***************
-*** 962,968 ****
-  		return retval;
-  	}
-  
-! 	pr_debug("%s: Registered new driver\n", new_driver->name);
-  
-  	return 0;
-  }
---- 962,968 ----
-  		return retval;
-  	}
-  
-! 	pr_info("%s: Registered new driver (0x%08x)\n", new_driver->name, new_driver->phy_id);
-  
-  	return 0;
-  }
-
-*** linux-sh4-2.6.32.28_stm24_0207_orig/drivers/net/stmmac/stmmac_mdio.c	2011-08-06 17:16:40.233314199 +0300
---- linux-sh4/drivers/net/stmmac/stmmac_mdio.c	2011-08-07 00:24:49.531239690 +0300
-***************
-*** 169,174 ****
---- 169,175 ----
-  	priv->mii = new_bus;
-  
-  	found = 0;
-+ 
-  	for (addr = 0; addr < PHY_MAX_ADDR; addr++) {
-  		struct phy_device *phydev = new_bus->phy_map[addr];
-  		if (phydev) {
-***************
-*** 191,202 ****
-  			 * and no PHY number was provided to the MAC,
-  			 * use the one probed here.
-  			 */
-! 			if ((priv->plat->bus_id == mdio_bus_data->bus_id) &&
-! 			    (priv->plat->phy_addr == -1))
-  				priv->plat->phy_addr = addr;
-  
-- 			act = (priv->plat->bus_id == mdio_bus_data->bus_id) &&
-- 				(priv->plat->phy_addr == addr);
-  			switch (phydev->irq) {
-  			case PHY_POLL:
-  				irq_str = "POLL";
---- 192,213 ----
-  			 * and no PHY number was provided to the MAC,
-  			 * use the one probed here.
-  			 */
-! 
-! 			act = 0;
-! 
-! 			if ((priv->plat->bus_id == mdio_bus_data->bus_id) && (/*(priv->plat->phy_addr == -1) ||*/
-! 					(phydev->phy_id == 0x0181b880) || // Davicom DM9161E
-! 					(phydev->phy_id == 0x0181b8a0) || // Davicom DM9161A
-! 					(phydev->phy_id == 0x00181b80) || // Davicom DM9131
-! 					(phydev->phy_id == 0x1c040011) || // STe100p
-! 					(phydev->phy_id == 0x00061c50) || // STe101p
-! 					(phydev->phy_id == 0x00008201) || (phydev->phy_id == 0x0007c0f1) ||
-! 					(phydev->phy_id == 0x001cc912)))  // RTL821x
-! 			{
-  				priv->plat->phy_addr = addr;
-+ 				act=1;
-+ 			}
-  
-  			switch (phydev->irq) {
-  			case PHY_POLL:
-  				irq_str = "POLL";
-
