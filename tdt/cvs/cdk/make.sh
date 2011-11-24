@@ -157,7 +157,7 @@ echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
 echo "   2) STM 23 P0119"
 case $2 in
-        [1-10]) REPLY=$2
+        [1-9] | 1[0-9]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
