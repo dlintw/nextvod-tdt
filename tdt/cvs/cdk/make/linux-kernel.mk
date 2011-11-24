@@ -467,17 +467,17 @@ COMMONPATCHES_24 = \
 		linux-sh4-sound_stm24$(PATCH_STR).patch \
 		linux-sh4-time_stm24$(PATCH_STR).patch \
 		linux-sh4-init_mm_stm24$(PATCH_STR).patch \
-		$(if $(P0207),linux-sh4-copro_stm24$(PATCH_STR).patch) \
+		linux-sh4-copro_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-strcpy_stm24$(PATCH_STR).patch) \
-		linux-squashfs-lzma_stm24$(PATCH_STR).patch \
+		$(if $(P0207),linux-squashfs-lzma_stm24$(PATCH_STR).patch) \
 		$(if $(P0207),linux-sh4-ext23_as_ext4_stm24$(PATCH_STR).patch) \
 		bpa2_procfs_stm24$(PATCH_STR).patch \
 		$(if $(P0207),xchg_fix_stm24$(PATCH_STR).patch) \
-		mm_cache_update_stm24$(PATCH_STR).patch \
+		$(if $(P0207),mm_cache_update_stm24$(PATCH_STR).patch) \
 		$(if $(P0207),linux-sh4-ehci_stm24$(PATCH_STR).patch) \
 		$(if $(P0207),linux-ftdi_sio.c_stm24$(PATCH_STR).patch) \
-		linux-sh4-lzma-fix_stm24$(PATCH_STR).patch \
-		linux-tune_stm24.patch
+		$(if $(P0207),linux-sh4-lzma-fix_stm24$(PATCH_STR).patch) \
+		$(if $(P0207),linux-tune_stm24.patch)
 
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-tf7700_setup_stm24$(PATCH_STR).patch \
