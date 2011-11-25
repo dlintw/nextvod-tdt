@@ -359,12 +359,38 @@ endif
 
 else
 if ENABLE_SPARK
-
-	echo "spark" > $(prefix)/release_neutrino/etc/hostname
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
+	echo "spark" > $(prefix)/$(release_dir)/etc/hostname
+	rm -f $(prefix)/release_neutrino/sbin/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
+	cp $(buildprefix)/root/release/halt_spark $(prefix)/release_neutrino/etc/init.d/halt
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/halt
+	mkdir -p $(prefix)/release_neutrino/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release_neutrino/etc/rc.d
+	ln -fs halt $(prefix)/release_neutrino/sbin/reboot
+	ln -fs halt $(prefix)/release_neutrino/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release_neutrino/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release_neutrino/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_neutrino/boot/video.elf
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release_neutrino/boot/audio.elf
+
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
+
+	mv $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw $(prefix)/release_neutrino/lib/firmware/component.fw
+	rm $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-stv6306.fw
