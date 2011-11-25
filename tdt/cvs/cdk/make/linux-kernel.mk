@@ -518,15 +518,15 @@ ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch
 
 HS7810APATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-hs7810a_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch
 
 HS7110PATCHES_24 = $(COMMONPATCHES_24) \
-		linux-sh4-hs7110_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
+		linux-sh4-hs7110_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch
 		
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
@@ -550,15 +550,15 @@ VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
 		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 SPARK_PATCHES_24 = $(COMMONPATCHES_24) \
-		linux-sh4-spark_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
+		linux-sh4-spark_setup_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch)
 		
 SPARK7162_PATCHES_24 = $(COMMONPATCHES_24) \
-		linux-sh4-spark7162_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-		linux-sh4-lmb_stm24$(PATCH_STR).patch
+		linux-sh4-lmb_stm24$(PATCH_STR).patch \
+		linux-sh4-spark7162_setup_stm24$(PATCH_STR).patch
 
 FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-fortis_hdbox_setup_stm24$(PATCH_STR).patch \
