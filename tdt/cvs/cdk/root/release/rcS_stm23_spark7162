@@ -2,7 +2,6 @@
 
 MODDIR=/lib/modules
 echo "init frontpanel"
-insmod $MODDIR/vfd.ko
 insmod $MODDIR/aotom.ko
 insmod $MODDIR/simu_button.ko
 insmod $MODDIR/encrypt.ko
