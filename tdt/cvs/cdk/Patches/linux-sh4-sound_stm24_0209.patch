@@ -157,9 +157,9 @@
 + #define snd_stm_assert snd_assert
   
   #endif
-  
+
 *** linux-sh4-2.6.32.46_stm24_0209.orig/include/sound/core.h	2009-12-03 05:51:21.000000000 +0200
---- linux-sh4/include/sound/core.h	2011-11-25 01:28:37.501558519 +0200
+--- linux-sh4/include/sound/core.h	2011-11-25 02:39:54.783603673 +0200
 ***************
 *** 362,367 ****
 --- 362,384 ----
@@ -186,3 +186,22 @@
    * snd_BUG - give a BUG warning message and stack trace
    *
    * Calls WARN() if CONFIG_SND_DEBUG is set.
+***************
+*** 389,394 ****
+--- 406,412 ----
+  #else /* !CONFIG_SND_DEBUG */
+  
+  #define snd_printd(fmt, args...)	do { } while (0)
++ #define snd_assert(expr, args...)	(void)(expr)
+  #define snd_BUG()			do { } while (0)
+  static inline int __snd_bug_on(int cond)
+  {
+***************
+*** 458,462 ****
+--- 476,481 ----
+  const struct snd_pci_quirk *
+  snd_pci_quirk_lookup(struct pci_dev *pci, const struct snd_pci_quirk *list);
+  
++ int snd_get_minor(int type, int card, int dev);
+  
+  #endif /* __SOUND_CORE_H */
