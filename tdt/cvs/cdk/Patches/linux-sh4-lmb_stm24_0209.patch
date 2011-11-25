@@ -1,5 +1,5 @@
 *** linux-sh4-2.6.32.46_stm24_0209.orig/arch/sh/kernel/setup.c	2011-11-24 22:22:25.000000000 +0200
---- linux-sh4/arch/sh/kernel//setup.c	2011-11-25 00:27:20.051560457 +0200
+--- linux-sh4/arch/sh/kernel//setup.c	2011-11-25 01:51:28.388809920 +0200
 ***************
 *** 239,283 ****
   void __init setup_bootmem_allocator(unsigned long free_pfn)

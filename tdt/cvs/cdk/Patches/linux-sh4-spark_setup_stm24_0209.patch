@@ -329,41 +329,6 @@
   }
 --- 207,212 ----
 
-*** linux-sh4-2.6.32.46_stm24_0209.orig/arch/sh/kernel/setup.c	2011-11-24 22:22:25.000000000 +0200
---- linux-sh4/arch/sh/kernel/setup.c	2011-11-24 23:22:08.671595855 +0200
-***************
-*** 419,424 ****
---- 419,448 ----
-  #endif
-  #endif
-  
-+ 	{
-+ 		/* spider: remove bigphysarea allocation from command line */
-+ 		int i;
-+ 		int command_line_len = strlen(command_line);
-+ 
-+ 		for(i = 0; i < (command_line_len-11); i++)
-+ 		{
-+ 			if(!strncmp(command_line + i + 1, "bigphysarea", 11))
-+ 			{
-+ 				// search for next pos
-+ 				int k;
-+ 				int pos=command_line_len;
-+ 				for(k=i+1; k<command_line_len; k++)
-+ 					if(command_line[k]==' ') {
-+ 						pos=k;
-+ 						break;
-+ 					}
-+ 				memmove(command_line+i, command_line+pos, command_line_len-pos);
-+ 				memset(&command_line[command_line_len-(pos-i)], '\0', pos-i);
-+ 				break;
-+ 			}
-+ 		}
-+ 	}
-+ 
-  	/* Save unparsed command line copy for /proc/cmdline */
-  	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
-  	*cmdline_p = command_line;
 *** linux-sh4-2.6.32.46_stm24_0209.orig/drivers/net/stmmac/stmmac_mdio.c	2011-11-24 22:22:25.000000000 +0200
 --- linux-sh4/drivers/net/stmmac/stmmac_mdio.c	2011-11-24 23:33:55.732873713 +0200
 ***************
@@ -413,3 +378,38 @@
   			switch (phydev->irq) {
   			case PHY_POLL:
   				irq_str = "POLL";
+*** linux-sh4-2.6.32.46_stm24_0209.patched/arch/sh/kernel/setup.c	2011-11-25 01:51:28.388809920 +0200
+--- linux-sh4/arch/sh/kernel/setup.c	2011-11-25 01:54:52.106690472 +0200
+***************
+*** 388,393 ****
+--- 388,417 ----
+  #endif
+  #endif
+  
++ 	{
++ 		/* spider: remove bigphysarea allocation from command line */
++ 		int i;
++ 		int command_line_len = strlen(command_line);
++ 
++ 		for(i = 0; i < (command_line_len-11); i++)
++ 		{
++ 			if(!strncmp(command_line + i + 1, "bigphysarea", 11))
++ 			{
++ 				// search for next pos
++ 				int k;
++ 				int pos=command_line_len;
++ 				for(k=i+1; k<command_line_len; k++)
++ 					if(command_line[k]==' ') {
++ 						pos=k;
++ 						break;
++ 					}
++ 				memmove(command_line+i, command_line+pos, command_line_len-pos);
++ 				memset(&command_line[command_line_len-(pos-i)], '\0', pos-i);
++ 				break;
++ 			}
++ 		}
++ 	}
++ 
+  	/* Save unparsed command line copy for /proc/cmdline */
+  	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
+  	*cmdline_p = command_line;
