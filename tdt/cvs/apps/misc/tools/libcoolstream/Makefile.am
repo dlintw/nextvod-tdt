@@ -2,7 +2,7 @@ INCLUDES = \
 	-I../../../neutrino/src/libeventserver \
 	-I../../../neutrino/lib/ \
 	-I../../../neutrino/src/ \
-	-I../libeplayer3/include 
+	-I../libeplayer3/include
 
 lib_LTLIBRARIES = libcoolstream.la
 libcoolstream_la_SOURCES = audio_cs.cpp dmx_cs.cpp dvb-ci.cpp playback_cs.cpp pwrmngr.cpp record_cs.cpp video_cs.cpp cool.cpp \

@@ -1,8 +1,8 @@
 export CFLAGS
 export CXXFLAGS
 
-export DRPM 
-export DRPMBUILD 
+export DRPM
+export DRPMBUILD
 
 AUTOMAKE_OPTIONS = -Wno-portability
 

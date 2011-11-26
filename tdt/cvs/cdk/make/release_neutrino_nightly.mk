@@ -275,10 +275,35 @@ if ENABLE_UFS912
 else
 if ENABLE_SPARK
 	echo "spark" > $(prefix)/$(release_dir)/etc/hostname
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/$(release_dir)/lib/modules/
+	rm -f $(prefix)/$(release_dir)/sbin/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/$(release_dir)/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/$(release_dir)/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/$(release_dir)/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/$(release_dir)/etc/init.d/
+	cp $(buildprefix)/root/release/halt_spark $(prefix)/$(release_dir)/etc/init.d/halt
+	chmod 755 $(prefix)/$(release_dir)/etc/init.d/umountfs
+	chmod 755 $(prefix)/$(release_dir)/etc/init.d/rc
+	chmod 755 $(prefix)/$(release_dir)/etc/init.d/sendsigs
+	chmod 755 $(prefix)/$(release_dir)/etc/init.d/halt
+	mkdir -p $(prefix)/$(release_dir)/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/$(release_dir)/etc/rc.d
+	ln -fs halt $(prefix)/$(release_dir)/sbin/reboot
+	ln -fs halt $(prefix)/$(release_dir)/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/$(release_dir)/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/$(release_dir)/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/$(release_dir)/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/$(release_dir)/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/$(release_dir)/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/$(release_dir)/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/$(release_dir)/etc/rc.d/rc6.d/S90reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/$(release_dir)/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/$(release_dir)/lib/modules/
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/$(release_dir)/boot/video.elf
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/$(release_dir)/boot/audio.elf
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/$(release_dir)/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/$(release_dir)/etc/
+	mv $(prefix)/$(release_dir)/lib/firmware/component_7111_mb618.fw $(prefix)/$(release_dir)/lib/firmware/component.fw
+	rm $(prefix)/$(release_dir)/lib/firmware/component_7105_pdk7105.fw
 	rm -f $(prefix)/$(release_dir)/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/$(release_dir)/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/$(release_dir)/lib/firmware/dvb-fe-cx24116.fw

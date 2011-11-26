@@ -1,9 +1,7 @@
 #!/bin/sh
 
 MODDIR=/lib/modules
-insmod $MODDIR/vfd.ko
 insmod $MODDIR/aotom.ko
-#insmod $MODDIR/nuvoton.ko
 
 if [ -e /var/etc/.firstboot ]; then
    #fp_control does not work here

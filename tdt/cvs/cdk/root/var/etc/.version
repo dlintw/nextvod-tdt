@@ -1,8 +1,6 @@
 comment=created by git
-imagename=Neutrino for Duckbox 
-homepage=http://gitorious.org/open-duckbox-project-sh4 
-creator=git-developer 
-docs=http://gitorious.org/open-duckbox-project-sh4/pages/Home 
+imagename=Neutrino for Duckbox
+homepage=http://gitorious.org/open-duckbox-project-sh4
+creator=git-developer
+docs=http://gitorious.org/open-duckbox-project-sh4/pages/Home
 forum=http://gitorious.org/open-duckbox-project-sh4
-version=0100201110111839
-git=rev-2916-g2f19f8d

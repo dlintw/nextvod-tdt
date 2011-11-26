@@ -451,6 +451,10 @@ if ENABLE_P0207
 PATCH_STR=_0207
 endif
 
+if ENABLE_P0209
+PATCH_STR=_0209
+endif
+
 if ENABLE_HAVANA_P0207_5
 PATCH_STR=_0207_5
 GIT_STR=207-5
@@ -464,16 +468,16 @@ COMMONPATCHES_24 = \
 		linux-sh4-time_stm24$(PATCH_STR).patch \
 		linux-sh4-init_mm_stm24$(PATCH_STR).patch \
 		linux-sh4-copro_stm24$(PATCH_STR).patch \
-		linux-sh4-strcpy_stm24$(PATCH_STR).patch \
-		linux-squashfs-lzma_stm24$(PATCH_STR).patch \
-		linux-sh4-ext23_as_ext4_stm24$(PATCH_STR).patch \
+		$(if $(P0207),linux-sh4-strcpy_stm24$(PATCH_STR).patch) \
+		$(if $(P0207),linux-squashfs-lzma_stm24$(PATCH_STR).patch) \
+		$(if $(P0207),linux-sh4-ext23_as_ext4_stm24$(PATCH_STR).patch) \
 		bpa2_procfs_stm24$(PATCH_STR).patch \
-		xchg_fix_stm24$(PATCH_STR).patch \
-		mm_cache_update_stm24$(PATCH_STR).patch \
+		$(if $(P0207),xchg_fix_stm24$(PATCH_STR).patch) \
+		$(if $(P0207),mm_cache_update_stm24$(PATCH_STR).patch) \
 		$(if $(P0207),linux-sh4-ehci_stm24$(PATCH_STR).patch) \
 		$(if $(P0207),linux-ftdi_sio.c_stm24$(PATCH_STR).patch) \
-		linux-sh4-lzma-fix_stm24$(PATCH_STR).patch \
-		linux-tune_stm24.patch
+		$(if $(P0207),linux-sh4-lzma-fix_stm24$(PATCH_STR).patch) \
+		$(if $(P0207),linux-tune_stm24.patch)
 
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-tf7700_setup_stm24$(PATCH_STR).patch \
@@ -514,15 +518,15 @@ ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch
 
 HS7810APATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-hs7810a_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch
 
 HS7110PATCHES_24 = $(COMMONPATCHES_24) \
-		linux-sh4-hs7110_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
+		linux-sh4-hs7110_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch
 		
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
@@ -546,15 +550,15 @@ VIP2_PATCHES_24  = $(COMMONPATCHES_24) \
 		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 SPARK_PATCHES_24 = $(COMMONPATCHES_24) \
-		linux-sh4-spark_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
-		linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch
+		linux-sh4-spark_setup_stm24$(PATCH_STR).patch \
+		$(if $(P0207),linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch)
 		
 SPARK7162_PATCHES_24 = $(COMMONPATCHES_24) \
-		linux-sh4-spark7162_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-		linux-sh4-lmb_stm24$(PATCH_STR).patch
+		linux-sh4-lmb_stm24$(PATCH_STR).patch \
+		linux-sh4-spark7162_setup_stm24$(PATCH_STR).patch
 
 FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-fortis_hdbox_setup_stm24$(PATCH_STR).patch \
@@ -700,10 +704,14 @@ else
 if ENABLE_P0207
 KERNELHEADERS_VERSION := 2.6.32.16-44
 else
+if ENABLE_P0209
+KERNELHEADERS_VERSION := 2.6.32.16-44
+else
 if ENABLE_HAVANA_P0207_5
 KERNELHEADERS_VERSION := 2.6.32.16-44
 else
 KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
+endif
 endif
 endif
 endif
@@ -783,8 +791,12 @@ else
 if ENABLE_P0207
 HOST_KERNEL_VERSION := 2.6.32.28$(KERNELSTMLABEL)-$(KERNELLABEL)
 else
+if ENABLE_P0209
+HOST_KERNEL_VERSION := 2.6.32.46$(KERNELSTMLABEL)-$(KERNELLABEL)
+else
 if ENABLE_HAVANA_P0207_5
 HOST_KERNEL_VERSION := 2.6.32.28$(KERNELSTMLABEL)-$(KERNELLABEL)
+endif
 endif
 endif
 endif

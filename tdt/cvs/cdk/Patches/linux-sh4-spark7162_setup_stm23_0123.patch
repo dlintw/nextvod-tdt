@@ -707,22 +707,38 @@ diff -pcr linux-sh4-2.6.23.17_stm23_0123_setup/drivers/net/stmmac/stmmac_main.c 
   	}
   	return 0;
   }
-Only in linux-sh4-2.6.23.17_stm23_0123/include: asm
-Only in linux-sh4-2.6.23.17_stm23_0123/include: config
-Only in linux-sh4-2.6.23.17_stm23_0123/include/linux: autoconf.h
-Only in linux-sh4-2.6.23.17_stm23_0123/include/linux: version.h
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/basic: docproc
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/basic: .docproc.cmd
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/basic: fixdep
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/basic: .fixdep.cmd
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: conf
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: .conf.cmd
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: conf.o
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: .conf.o.cmd
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: kxgettext.o
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: .kxgettext.o.cmd
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: lex.zconf.c
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: zconf.hash.c
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: zconf.tab.c
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: zconf.tab.o
-Only in linux-sh4-2.6.23.17_stm23_0123/scripts/kconfig: .zconf.tab.o.cmd
+*** linux-sh4-2.6.23.17_stm23_0123.orig/arch/sh/kernel/setup.c	2011-11-23 22:41:04.009168798 +0200
+--- linux-sh4/arch/sh/kernel/setup.c	2011-11-23 22:38:14.000000000 +0200
+***************
+*** 276,281 ****
+--- 276,305 ----
+  #endif
+  #endif
+  
++ 	{
++ 		/* spider: remove bigphysarea allocation from command line */
++ 		int i;
++ 		int command_line_len = strlen(command_line);
++ 
++ 		for(i = 0; i < (command_line_len-11); i++)
++ 		{
++ 			if(!strncmp(command_line + i + 1, "bigphysarea", 11))
++ 			{
++ 				// search for next pos
++ 				int k;
++ 				int pos=command_line_len;
++ 				for(k=i+1; k<command_line_len; k++)
++ 					if(command_line[k]==' ') {
++ 						pos=k;
++ 						break;
++ 					}
++ 				memmove(command_line+i, command_line+pos, command_line_len-pos);
++ 				memset(&command_line[command_line_len-(pos-i)], '\0', pos-i);
++ 				break;
++ 			}
++ 		}
++ 	}
++ 
+  	/* Save unparsed command line copy for /proc/cmdline */
+  	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
+  	*cmdline_p = command_line;
