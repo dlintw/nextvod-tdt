@@ -6,7 +6,6 @@ insmod $MODDIR/nuvoton.ko paramDebug=0
 insmod $MODDIR/simu_button.ko
 
 if [ -e /var/etc/.firstboot ]; then
-   echo "WAIT 1 min" >/dev/vfd
    echo "WAIT 1 min"
    rm /var/etc/.firstboot
    touch /dev/.devfsd
@@ -35,7 +34,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stmfb.ko display0=1280x720-32@50:15m:pal:yuv:yuv
 
    echo "LOADING MODULES"   
-   echo "LOAD" > /dev/vfd
 
    if [ ! -e /boot/audio.elf ]; then
       echo "FW MISSING!!!"
@@ -55,7 +53,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init AVS"
    insmod $MODDIR/avs.ko type=avs_none
 
-   player=`cat /proc/stb/player/version`
    player=`cat /proc/stb/player/version | awk '{ print substr( $0, length($0) - 2, length($0) ) }'`
    echo "init player $player"
 
@@ -98,7 +95,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    mknod /dev/rc c 147 1 
    mknod /dev/lnb c 149 0
    mknod /dev/sci0 c 169 0
-   mknod /dev/sci1 c 169 1 
 
    /bin/evremote2 10 140 &
 
@@ -128,7 +124,6 @@ if [ ! -e /var/etc/.firstboot ]; then
       fi 
    fi
 
-   echo "run" > /dev/vfd
    echo "LOADING E2"
 
    until false
@@ -159,7 +154,6 @@ if [ ! -e /var/etc/.firstboot ]; then
 fi
 
 #never reached
-echo "REBOOT HS7110" > /dev/vfd
 echo "REBOOT HS7110"
 reboot -f
 
