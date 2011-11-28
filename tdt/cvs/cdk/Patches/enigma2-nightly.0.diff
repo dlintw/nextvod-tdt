@@ -7540,6 +7540,35 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/RecordTimer.py
  	void vfd_set_icon(tvfd_icon id, bool onoff, bool force);
  	void vfd_clear_icons();
  
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/plugin.py enigma2-nightly.patched/lib/python/Plugins/SystemPlugins/Videomode/plugin.py
+--- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/plugin.py	2011-09-03 18:23:27.500022987 +0200
++++ enigma2-nightly.patched/lib/python/Plugins/SystemPlugins/Videomode/plugin.py	2011-09-03 18:23:47.440033378 +0200
+@@ -64,6 +64,7 @@
+ 				self.list.append(getConfigListEntry(_("Resolution"), config.av.videorate[config.av.videomode[config.av.videoport.value].value]))
+ 			else:
+ 				self.list.append(getConfigListEntry(_("Refresh Rate"), config.av.videorate[config.av.videomode[config.av.videoport.value].value]))
++		self.list.append(getConfigListEntry(_("3D Mode"), config.av.threedmode))
+ 
+ 		port = config.av.videoport.value
+ 		if port not in config.av.videomode:
+@@ -85,7 +86,16 @@
+ 		elif config.av.aspect.value == "4_3":
+ 			self.list.append(getConfigListEntry(_("Display 16:9 content as"), config.av.policy_169))
+ 
+-#		if config.av.videoport.value == "DVI":
++#--->
++#-#		if config.av.videoport.value == "DVI":
++#---<
++#+++>
++		if config.av.videoport.value == "Component":
++			self.list.append(getConfigListEntry(_("Color Format"), config.av.colorformat_yuv))
++		if config.av.videoport.value == "HDMI":
++			self.list.append(getConfigListEntry(_("Color Format"), config.av.colorformat_hdmi))
++			self.list.append(getConfigListEntry(_("Audio Source"), config.av.hdmi_audio_source))
++#+++<
+ #			self.list.append(getConfigListEntry(_("Allow Unsupported Modes"), config.av.edid_override))
+ 		if config.av.videoport.value == "Scart":
+ 			self.list.append(getConfigListEntry(_("Color Format"), config.av.colorformat))
 --- enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHardware.py	2011-11-26 21:23:40.969118129 +0100
 +++ enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Videomode/VideoHardware.py	2011-11-27 13:11:50.886150736 +0100
 @@ -13,52 +13,42 @@
