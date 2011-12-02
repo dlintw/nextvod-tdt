@@ -507,7 +507,7 @@ release_hs7110:
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/release/etc/init.d/
-	cp $(buildprefix)/root/release/halt_hs7810a $(prefix)/release/etc/init.d/halt
+	cp $(buildprefix)/root/release/halt_hs7110 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/umountfs
 	chmod 755 $(prefix)/release/etc/init.d/rc
 	chmod 755 $(prefix)/release/etc/init.d/sendsigs
