@@ -279,7 +279,7 @@ release_spark7162:
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/fonts
-	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/local/share/fonts/
+	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/share/fonts/
 
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release/lib/modules/ftdi.ko
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release/lib/modules
