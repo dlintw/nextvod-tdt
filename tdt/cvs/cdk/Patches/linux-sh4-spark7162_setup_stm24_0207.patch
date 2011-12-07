@@ -1,3 +1,400 @@
+diff -crp linux-sh4-2.6.32.28_stm24_0207/arch/sh/boards/mach-hdk7105/setup.c linux-sh4-2.6.32.28_stm24_0207.i2s/arch/sh/boards/mach-hdk7105/setup.c
+*** linux-sh4-2.6.32.28_stm24_0207/arch/sh/boards/mach-hdk7105/setup.c	2011-08-09 09:35:34.000000000 +0800
+--- linux-sh4-2.6.32.28_stm24_0207.i2s/arch/sh/boards/mach-hdk7105/setup.c	2011-12-07 11:02:58.687710500 +0800
+***************
+*** 27,36 ****
+--- 27,70 ----
+  #include <linux/mtd/physmap.h>
+  #include <linux/mtd/nand.h>
+  #include <linux/mtd/partitions.h>
++ #include <linux/bpa2.h>
+  #include <linux/spi/spi.h>
+  #include <linux/spi/flash.h>
+  #include <asm/irq-ilc.h>
+  
++ /***** 2011-11-14 D26LF Add:
++     Description:spi flash
++ */
++ #define SPI_FLASH_BOOT
++ /***** 2011-11-14 D26LF Add end ****/
++ 
++ const char *LMI_IO_partalias[] = { "v4l2-coded-video-buffers", "BPA2_Region1", "v4l2-video-buffers" ,
++                                     "coredisplay-video", "gfx-memory", "BPA2_Region0", "LMI_VID", NULL };
++ 
++ /*
++ 0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
++ 0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
++ 0x40800000 - 0x47FFFFFF - linux   (120mb)
++ 0x48000000 - 0x49FFFFFF - bigphys ( 32mb)
++ 0x4A000000 - 0x4FFFFFFF - lmi_io  ( 96mb)
++ */
++ static struct bpa2_partition_desc bpa2_parts_table[] = {
++     {
++  	    .name  = "bigphysarea",
++  	    .start = 0x48000000,
++  	    .size  = 0x02000000, /* 32 Mb */
++  	    .flags = 0,
++  	    .aka   = NULL
++     },
++     {
++  	    .name  = "LMI_IO",
++  	    .start = 0x4A000000,
++  	    .size  = 0x06000000, /* 92 Mb */
++  	    .flags = 0,
++  	    .aka   = LMI_IO_partalias
++     },
++  };
++ 
+  /*
+   * Flash setup depends on boot-device:
+   *
+***************
+*** 47,55 ****
+   * [Jumper settings based on board v1.2-011]
+   */
+  
+! #define HDK7105_PIO_PCI_SERR  stm_gpio(15, 4)
+! #define HDK7105_PIO_PHY_RESET stm_gpio(15, 5)
+! #define HDK7105_PIO_PCI_RESET stm_gpio(15, 7)
+  #define HDK7105_GPIO_FLASH_WP stm_gpio(6, 4)
+  
+  
+--- 81,90 ----
+   * [Jumper settings based on board v1.2-011]
+   */
+  
+! //#define HDK7105_PIO_PCI_SERR  stm_gpio(15, 4)
+! //#define HDK7105_PIO_PHY_RESET stm_gpio(15, 5)
+! #define HDK7105_PIO_PHY_RESET stm_gpio(5, 7)
+! //#define HDK7105_PIO_PCI_RESET stm_gpio(15, 7)
+  #define HDK7105_GPIO_FLASH_WP stm_gpio(6, 4)
+  
+  
+*************** static void __init hdk7105_setup(char **
+*** 68,75 ****
+--- 103,113 ----
+  	stx7105_configure_asc(3, &(struct stx7105_asc_config) {
+  			.hw_flow_control = 1,
+  			.is_console = 0, });
++ 
++    	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
+  }
+  
++ #if 0
+  /* PCI configuration */
+  static struct stm_plat_pci_config hdk7105_pci_config = {
+  	.pci_irq = {
+*************** int pcibios_map_platform_irq(struct pci_
+*** 96,101 ****
+--- 134,140 ----
+          /* We can use the standard function on this board */
+  	return stx7105_pcibios_map_platform_irq(&hdk7105_pci_config, pin);
+  }
++ #endif  /* 0 */
+  
+  static struct platform_device hdk7105_leds = {
+  	.name = "leds-gpio",
+*************** static struct platform_device hdk7105_fr
+*** 160,166 ****
+  static int hdk7105_phy_reset(void *bus)
+  {
+  	gpio_set_value(HDK7105_PIO_PHY_RESET, 0);
+! 	udelay(100);
+  	gpio_set_value(HDK7105_PIO_PHY_RESET, 1);
+  
+  	return 1;
+--- 199,205 ----
+  static int hdk7105_phy_reset(void *bus)
+  {
+  	gpio_set_value(HDK7105_PIO_PHY_RESET, 0);
+! 	mdelay(100);
+  	gpio_set_value(HDK7105_PIO_PHY_RESET, 1);
+  
+  	return 1;
+*************** static struct platform_device hdk7105_ph
+*** 211,216 ****
+--- 250,256 ----
+  	},
+  };
+  
++ #if 0
+  static struct mtd_partition hdk7105_nand_flash_partitions[] = {
+  	{
+  		.name	= "NAND root",
+*************** static struct mtd_partition hdk7105_nand
+*** 222,227 ****
+--- 262,312 ----
+  		.size	= MTDPART_SIZ_FULL
+  	},
+  };
++ #else
++ static struct mtd_partition hdk7105_nand_flash_partitions[] = {
++     {
++ 		.name	= "uboot",
++ 		.offset	= 0,
++ 		.size 	= 0x00100000 //1M  //uboot boot mode
++ 	},
++ 	{
++ 		.name	= "Spark kernel",
++ 		.offset	= 0x00100000,
++ 		.size 	= 0x00a00000 //10M
++ 	},
++ 
++ 	{
++         .name = "Reserve0",
++         .offset = 0x00b00000,
++ 		.size = 0x00700000, //7M
++ 	},
++ 
++     {
++         .name = "Reserve1",
++ 		.offset = 0x01200000,
++ 		.size = 0x00200000, //2M
++     },
++ 
++     {
++ 		.name	= "Spark Userfs",
++ 		.offset	= 0x01400000,
++ 		.size	= 0x16c00000  //364M
++ 	},
++ 
++     {
++ 		.name	= "E2 kernel",
++ 		.offset	= 0x18000000,
++ 		.size	= 0x00800000 //8M
++ 	},
++ 
++     {
++ 		.name	= "E2 Userfs",
++ 		.offset	= 0x18800000,
++ 		.size	= 0x07700000 //119M	cc changed reserved 1024KB for u-boot bbt
++ 	},
++ };
++ 
++ #endif  /* 0 */
+  
+  struct stm_nand_bank_data hdk7105_nand_bank_data = {
+  	.csn		= 1,
+*************** struct stm_nand_bank_data hdk7105_nand_b
+*** 244,249 ****
+--- 329,344 ----
+  };
+  
+  static struct mtd_partition hdk7105_serial_flash_partitions[] = {
++ 	/***** 2011-11-14 D26LF Modi:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	{
++ 		.name = "uboot",
++ 		.size = 0x00100000,
++ 		.offset = 0,
++ 	},
++ 	#else
+  	{
+  		.name = "SFLASH_1",
+  		.size = 0x00080000,
+*************** static struct mtd_partition hdk7105_seri
+*** 253,283 ****
+  		.size = MTDPART_SIZ_FULL,
+  		.offset = MTDPART_OFS_NXTBLK,
+  	},
+  };
+  
+  static struct flash_platform_data hdk7105_serial_flash_data = {
+  	.name = "m25p80",
+  	.parts = hdk7105_serial_flash_partitions,
+  	.nr_parts = ARRAY_SIZE(hdk7105_serial_flash_partitions),
+  	.type = "m25p32",
+  };
+  
+  static struct spi_board_info hdk7105_serial_flash = {
+  	.modalias       = "m25p80",
+  	.bus_num        = 0,
+  	.chip_select    = stm_gpio(2, 4),
+! 	.max_speed_hz   = 5000000,
+  	.platform_data  = &hdk7105_serial_flash_data,
+  	.mode           = SPI_MODE_3,
+  };
+  
+  
+  static struct platform_device *hdk7105_devices[] __initdata = {
+! 	&hdk7105_leds,
+  	&hdk7105_front_panel,
+! 	&hdk7105_physmap_flash,
+  };
+  
+  static int __init hdk7105_device_init(void)
+  {
+  	struct sysconf_field *sc;
+--- 348,415 ----
+  		.size = MTDPART_SIZ_FULL,
+  		.offset = MTDPART_OFS_NXTBLK,
+  	},
++ 	#endif
++ 	/***** 2011-11-14 D26LF Modi end ****/
+  };
+  
+  static struct flash_platform_data hdk7105_serial_flash_data = {
+  	.name = "m25p80",
+  	.parts = hdk7105_serial_flash_partitions,
+  	.nr_parts = ARRAY_SIZE(hdk7105_serial_flash_partitions),
++ 	/***** 2011-11-14 D26LF Modi:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	.type = "en25f16",
++ 	#else
+  	.type = "m25p32",
++ 	#endif
++ 	/***** 2011-11-14 D26LF Modi end ****/
+  };
+  
+  static struct spi_board_info hdk7105_serial_flash = {
+  	.modalias       = "m25p80",
+  	.bus_num        = 0,
+  	.chip_select    = stm_gpio(2, 4),
+! 	.max_speed_hz   = 500000,
+  	.platform_data  = &hdk7105_serial_flash_data,
+  	.mode           = SPI_MODE_3,
+  };
+  
+  
+  static struct platform_device *hdk7105_devices[] __initdata = {
+! 	//&hdk7105_leds,
+  	&hdk7105_front_panel,
+! 	//&hdk7105_physmap_flash,
+  };
+  
++ void hdk7105_unconfigure_ssc_i2c(void)
++ {
++     stx7105_unconfigure_ssc_i2c(1, &(struct stx7105_ssc_config) {
++                     .routing.ssc2.sclk = stx7105_ssc1_sclk_pio2_5,
++                     .routing.ssc2.mtsr = stx7105_ssc1_mtsr_pio2_6, });
++ }
++ 
++ EXPORT_SYMBOL(hdk7105_unconfigure_ssc_i2c);
++ 
++ void hdk7105_configure_ssc_spi(void)
++ {
++ 	stx7105_configure_ssc_spi(4, &(struct stx7105_ssc_config) {
++ 			.routing.ssc1.sclk = stx7105_ssc1_sclk_pio2_5,
++ 			.routing.ssc1.mtsr = stx7105_ssc1_mtsr_pio2_6,
++ 			.routing.ssc1.mrst = stx7105_ssc1_mrst_pio2_7});
++ }
++ 
++ EXPORT_SYMBOL(hdk7105_configure_ssc_spi);
++ 
++ void hdk7105_spi_register(void)
++ {
++ 	spi_register_board_info(&hdk7105_serial_flash, 1);
++ }
++ 
++ EXPORT_SYMBOL(hdk7105_spi_register);
++ 
++ 
+  static int __init hdk7105_device_init(void)
+  {
+  	struct sysconf_field *sc;
+*************** static int __init hdk7105_device_init(vo
+*** 308,317 ****
+--- 440,458 ----
+  		pr_info("Configuring FLASH for boot-from-SPI\n");
+  		hdk7105_physmap_flash.resource[0].start = emi_bank_base(1);
+  		hdk7105_physmap_flash.resource[0].end = emi_bank_base(2) - 1;
++ 		/***** 2011-11-14 D26LF Modi:
++ 		    Description:spi flash
++ 		*/
++ 		#ifdef SPI_FLASH_BOOT
++ 		hdk7105_nand_bank_data.csn = 0;
++ 		#else
+  		hdk7105_nand_bank_data.csn = 2;
++ 		#endif
++ 		/***** 2011-11-14 D26LF Modi end ****/
+  		break;
+  	}
+  
++ 	#if 0
+  	/* Setup the PCI_SERR# PIO */
+  	if (gpio_request(HDK7105_PIO_PCI_SERR, "PCI_SERR#") == 0) {
+  		gpio_direction_input(HDK7105_PIO_PCI_SERR);
+*************** static int __init hdk7105_device_init(vo
+*** 322,333 ****
+  		printk(KERN_WARNING "hdk7105: Failed to claim PCI SERR PIO!\n");
+  	}
+  	stx7105_configure_pci(&hdk7105_pci_config);
+  
+! 	stx7105_configure_sata(0);
+  
+  	stx7105_configure_pwm(&(struct stx7105_pwm_config) {
+  			.out0 = stx7105_pwm_out0_pio13_0,
+  			.out1 = stx7105_pwm_out1_disabled, });
+  
+  	/* Set SPI Boot pads as inputs to avoid contention with SSC1 */
+  	gpio_request(stm_gpio(15, 0), "SPI Boot CLK");
+--- 463,477 ----
+  		printk(KERN_WARNING "hdk7105: Failed to claim PCI SERR PIO!\n");
+  	}
+  	stx7105_configure_pci(&hdk7105_pci_config);
++ 	#endif  /* 0 */
+  
+! 	//stx7105_configure_sata(0);
+  
++ 	#if 0
+  	stx7105_configure_pwm(&(struct stx7105_pwm_config) {
+  			.out0 = stx7105_pwm_out0_pio13_0,
+  			.out1 = stx7105_pwm_out1_disabled, });
++ 	#endif  /* 0 */
+  
+  	/* Set SPI Boot pads as inputs to avoid contention with SSC1 */
+  	gpio_request(stm_gpio(15, 0), "SPI Boot CLK");
+*************** static int __init hdk7105_device_init(vo
+*** 344,353 ****
+--- 488,502 ----
+  			.routing.ssc0.sclk = stx7105_ssc0_sclk_pio2_2,
+  			.routing.ssc0.mtsr = stx7105_ssc0_mtsr_pio2_3, });
+  	/* SPI - SerialFLASH */
++ 	#if 0
+  	stx7105_configure_ssc_spi(1, &(struct stx7105_ssc_config) {
+  			.routing.ssc1.sclk = stx7105_ssc1_sclk_pio2_5,
+  			.routing.ssc1.mtsr = stx7105_ssc1_mtsr_pio2_6,
+  			.routing.ssc1.mrst = stx7105_ssc1_mrst_pio2_7});
++ 	#endif  /* 0 */
++ 		stx7105_configure_ssc_i2c(1, &(struct stx7105_ssc_config) {
++ 				.routing.ssc1.sclk = stx7105_ssc1_sclk_pio2_5,
++ 				.routing.ssc1.mtsr = stx7105_ssc1_mtsr_pio2_6, });
+  	/* I2C_xxxC - JN1 (NIM), JN3, UT1 (CI chip), US2 (EEPROM) */
+  	stx7105_configure_ssc_i2c(2, &(struct stx7105_ssc_config) {
+  			.routing.ssc2.sclk = stx7105_ssc2_sclk_pio3_4,
+*************** static int __init hdk7105_device_init(vo
+*** 360,372 ****
+  	stx7105_configure_usb(0, &(struct stx7105_usb_config) {
+  			.ovrcur_mode = stx7105_usb_ovrcur_active_low,
+  			.pwr_enabled = 1,
+! 			.routing.usb0.ovrcur = stx7105_usb0_ovrcur_pio4_4,
+! 			.routing.usb0.pwr = stx7105_usb0_pwr_pio4_5, });
+  	stx7105_configure_usb(1, &(struct stx7105_usb_config) {
+  			.ovrcur_mode = stx7105_usb_ovrcur_active_low,
+  			.pwr_enabled = 1,
+! 			.routing.usb1.ovrcur = stx7105_usb1_ovrcur_pio4_6,
+! 			.routing.usb1.pwr = stx7105_usb1_pwr_pio4_7, });
+  
+  	gpio_request(HDK7105_PIO_PHY_RESET, "eth_phy_reset");
+  	gpio_direction_output(HDK7105_PIO_PHY_RESET, 1);
+--- 509,521 ----
+  	stx7105_configure_usb(0, &(struct stx7105_usb_config) {
+  			.ovrcur_mode = stx7105_usb_ovrcur_active_low,
+  			.pwr_enabled = 1,
+! 			.routing.usb0.ovrcur = stx7105_usb1_ovrcur_pio4_6,
+! 			.routing.usb0.pwr = stx7105_usb1_pwr_pio4_7, });
+  	stx7105_configure_usb(1, &(struct stx7105_usb_config) {
+  			.ovrcur_mode = stx7105_usb_ovrcur_active_low,
+  			.pwr_enabled = 1,
+! 			.routing.usb1.ovrcur = stx7105_usb0_ovrcur_pio4_4,
+! 			.routing.usb1.pwr = stx7105_usb0_pwr_pio4_5, });
+  
+  	gpio_request(HDK7105_PIO_PHY_RESET, "eth_phy_reset");
+  	gpio_direction_output(HDK7105_PIO_PHY_RESET, 1);
 *** linux-sh4-2.6.32.28_stm24_0207_orig/drivers/stm/gpio.c	2011-08-06 17:16:42.676314198 +0300
 --- linux-sh4/drivers/stm/gpio.c	2011-08-07 03:21:10.140239689 +0300
 ***************
@@ -725,6 +1122,299 @@
   	.mv_setup		= mb680_setup,
   	.mv_nr_irqs		= NR_IRQS,
   	.mv_init_irq		= mb680_init_irq,
+*** linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/kernel/setup.c	2011-11-17 21:34:14.782844589 +0200
+--- linux-sh4/arch/sh/kernel/setup.c	2011-11-23 21:32:15.299229956 +0200
+***************
+*** 388,393 ****
+--- 388,417 ----
+  #endif
+  #endif
+  
++ 	{
++ 		/* spider: remove bigphysarea allocation from command line */
++ 		int i;
++ 		int command_line_len = strlen(command_line);
++ 
++ 		for(i = 0; i < (command_line_len-11); i++)
++ 		{
++ 			if(!strncmp(command_line + i + 1, "bigphysarea", 11))
++ 			{
++ 				// search for next pos
++ 				int k;
++ 				int pos=command_line_len;
++ 				for(k=i+1; k<command_line_len; k++)
++ 					if(command_line[k]==' ') {
++ 						pos=k;
++ 						break;
++ 					}
++ 				memmove(command_line+i, command_line+pos, command_line_len-pos);
++ 				memset(&command_line[command_line_len-(pos-i)], '\0', pos-i);
++ 				break;
++ 			}
++ 		}
++ 	}
++ 
+  	/* Save unparsed command line copy for /proc/cmdline */
+  	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
+  	*cmdline_p = command_line;
+diff -crp linux-sh4-2.6.32.28_stm24_0207/drivers/mtd/devices/m25p80.c linux-sh4-2.6.32.28_stm24_0207.i2s/drivers/mtd/devices/m25p80.c
+*** linux-sh4-2.6.32.28_stm24_0207/drivers/mtd/devices/m25p80.c	2011-08-09 09:35:35.000000000 +0800
+--- linux-sh4-2.6.32.28_stm24_0207.i2s/drivers/mtd/devices/m25p80.c	2011-12-07 11:03:43.614673525 +0800
+***************
+*** 28,33 ****
+--- 28,41 ----
+  
+  #include <linux/spi/spi.h>
+  #include <linux/spi/flash.h>
++ /***** 2011-11-14 D26LF Add:
++     Description:spi flash
++ */
++ #define SPI_FLASH_BOOT
++ #ifdef SPI_FLASH_BOOT
++ #include <linux/stm/pio.h>
++ #endif  /* SPI_FLASH_BOOT */
++ /***** 2011-11-14 D26LF Add end ****/
+  
+  
+  #define FLASH_PAGESIZE		256
+*************** struct m25p {
+*** 80,85 ****
+--- 88,101 ----
+  	unsigned		partitioned:1;
+  	u8			erase_opcode;
+  	u8			command[CMD_SIZE + FAST_READ_DUMMY_BYTE];
++ 	/***** 2011-11-14 D26LF Add:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	struct 		stpio_pin *pin;
++ 	#endif  /* SPI_FLASH_BOOT */
++ 	/***** 2011-11-14 D26LF Add end ****/
++ 
+  };
+  
+  static inline struct m25p *mtd_to_m25p(struct mtd_info *mtd)
+*************** static int wait_till_ready(struct m25p *
+*** 172,177 ****
+--- 188,232 ----
+  	return 1;
+  }
+  
++ /***** 2011-11-14 D26LF Add:
++     Description:spi flash
++ */
++ #ifdef SPI_FLASH_BOOT
++ static int write_open (struct m25p *flash)
++ {
++ 	//printk("write_open 0x%x\n", read_sr(flash));
++ 	if (flash->pin)
++ 	{
++ 		stpio_set_pin(flash->pin, 1);
++ 	}
++ 	wait_till_ready(flash);
++ 	write_enable(flash);
++ 	write_sr(flash, 0);
++ 	wait_till_ready(flash);
++ 	//printk("write_open 0x%x\n", read_sr(flash));
++ 
++ 	return 0;
++ }
++ 
++ static int write_close (struct m25p *flash)
++ {
++ 	//printk("write_close\n");
++ 	//printk("write_close 0x%x\n", read_sr(flash));
++ 	wait_till_ready(flash);
++ 	write_enable(flash);
++ 	write_sr(flash,0x9C);
++ 	wait_till_ready(flash);
++ 	if (flash->pin)
++ 	{
++ 		stpio_set_pin(flash->pin, 0);
++ 	}
++ 	//printk("write_close 0x%x\n", read_sr(flash));
++ 
++ 	return 0;
++ }
++ #endif
++ /***** 2011-11-14 D26LF Add end ****/
++ 
+  /*
+   * Erase the whole flash memory
+   *
+*************** static int m25p80_erase(struct mtd_info 
+*** 260,269 ****
+--- 315,341 ----
+  
+  	mutex_lock(&flash->lock);
+  
++ 	/***** 2011-11-14 D26LF Add:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	write_open(flash);
++ 	#endif
++ 	/***** 2011-11-14 D26LF Add end ****/
++ 
+  	/* whole-chip erase? */
+  	if (len == flash->mtd.size) {
+  		if (erase_chip(flash)) {
+  			instr->state = MTD_ERASE_FAILED;
++ 
++ 			/***** 2011-11-14 D26LF Add:
++ 			    Description:spi flash
++ 			*/
++ 			#ifdef SPI_FLASH_BOOT
++ 			write_close(flash);
++ 			#endif
++ 			/***** 2011-11-14 D26LF Add end ****/
++ 
+  			mutex_unlock(&flash->lock);
+  			return -EIO;
+  		}
+*************** static int m25p80_erase(struct mtd_info 
+*** 278,283 ****
+--- 350,364 ----
+  		while (len) {
+  			if (erase_sector(flash, addr)) {
+  				instr->state = MTD_ERASE_FAILED;
++ 
++ 				/***** 2011-11-14 D26LF Add:
++ 				    Description:spi flash
++ 				*/
++ 				#ifdef SPI_FLASH_BOOT
++ 				write_close(flash);
++ 				#endif
++ 				/***** 2011-11-14 D26LF Add end ****/
++ 
+  				mutex_unlock(&flash->lock);
+  				return -EIO;
+  			}
+*************** static int m25p80_erase(struct mtd_info 
+*** 287,292 ****
+--- 368,381 ----
+  		}
+  	}
+  
++ 	/***** 2011-11-14 D26LF Add:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	write_close(flash);
++ 	#endif
++ 	/***** 2011-11-14 D26LF Add end ****/
++ 
+  	mutex_unlock(&flash->lock);
+  
+  	instr->state = MTD_ERASE_DONE;
+*************** static int m25p80_write(struct mtd_info 
+*** 410,415 ****
+--- 499,512 ----
+  		return 1;
+  	}
+  
++ 	/***** 2011-11-14 D26LF Add:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	write_open(flash);
++ 	#endif
++ 	/***** 2011-11-14 D26LF Add end ****/
++ 
+  	write_enable(flash);
+  
+  	/* Set up the opcode in the write buffer. */
+*************** static int m25p80_write(struct mtd_info 
+*** 464,469 ****
+--- 561,574 ----
+  		}
+  	}
+  
++ 	/***** 2011-11-14 D26LF Add:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	write_close(flash);
++ 	#endif
++ 	/***** 2011-11-14 D26LF Add end ****/
++ 
+  	mutex_unlock(&flash->lock);
+  
+  	return 0;
+*************** static int sst_write(struct mtd_info *mt
+*** 505,510 ****
+--- 610,623 ----
+  	if (ret)
+  		goto time_out;
+  
++ 	/***** 2011-11-14 D26LF Add:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	write_open(flash);
++ 	#endif
++ 	/***** 2011-11-14 D26LF Add end ****/
++ 
+  	write_enable(flash);
+  
+  	actual = to % 2;
+*************** static int sst_write(struct mtd_info *mt
+*** 571,576 ****
+--- 684,698 ----
+  	}
+  
+  time_out:
++ 
++ 	/***** 2011-11-14 D26LF Add:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	write_close(flash);
++ 	#endif
++ 	/***** 2011-11-14 D26LF Add end ****/
++ 
+  	mutex_unlock(&flash->lock);
+  	return ret;
+  }
+*************** static struct flash_info __devinitdata m
+*** 678,683 ****
+--- 800,814 ----
+  	{ "w25x16", 0xef3015, 0, 64 * 1024, 32, SECT_4K, },
+  	{ "w25x32", 0xef3016, 0, 64 * 1024, 64, SECT_4K, },
+  	{ "w25x64", 0xef3017, 0, 64 * 1024, 128, SECT_4K, },
++ 
++ 	/***** 2011-11-14 D26LF Add:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	/* EON */
++ 	{ "en25f16", 0x1c3115, 0, 64 * 1024, 32, },
++ 	#endif
++ 	/***** 2011-11-14 D26LF Add end ****/
+  };
+  
+  static struct flash_info *__devinit jedec_probe(struct spi_device *spi)
+*************** static int __devinit m25p_probe(struct s
+*** 774,779 ****
+--- 905,922 ----
+  	if (!flash)
+  		return -ENOMEM;
+  
++ 	/***** 2011-11-14 D26LF Add:
++ 	    Description:spi flash
++ 	*/
++ 	#ifdef SPI_FLASH_BOOT
++ 	flash->pin = stpio_request_pin(5, 4, "SPI_FLASH_PROTECT", STPIO_OUT);
++ 	if (flash->pin)
++ 	{
++ 		stpio_set_pin(flash->pin, 0);
++ 	}
++ 	#endif
++ 	/***** 2011-11-14 D26LF Add end ****/
++ 
+  	flash->spi = spi;
+  	mutex_init(&flash->lock);
+  	dev_set_drvdata(&spi->dev, flash);
 *** linux-sh4-2.6.32.28_stm24_0207.orig/drivers/mtd/nand/nand_ecc.c	2011-11-16 23:19:57.000000000 +0200
 --- linux-sh4/drivers/mtd/nand/nand_ecc.c	2011-11-17 21:10:15.882600432 +0200
 ***************
@@ -794,38 +1484,336 @@
   				memcpy(buf, chip->buffers->databuf + col, bytes);
   			}
   
-*** linux-sh4-2.6.32.28_stm24_0207.orig/arch/sh/kernel/setup.c	2011-11-17 21:34:14.782844589 +0200
---- linux-sh4/arch/sh/kernel/setup.c	2011-11-23 21:32:15.299229956 +0200
-***************
-*** 388,393 ****
---- 388,417 ----
-  #endif
-  #endif
+
+diff -crp linux-sh4-2.6.32.28_stm24_0207/drivers/mtd/nand/stm_nand_flex.c linux-sh4-2.6.32.28_stm24_0207.i2s/drivers/mtd/nand/stm_nand_flex.c
+*** linux-sh4-2.6.32.28_stm24_0207/drivers/mtd/nand/stm_nand_flex.c	2011-08-09 09:35:35.000000000 +0800
+--- linux-sh4-2.6.32.28_stm24_0207.i2s/drivers/mtd/nand/stm_nand_flex.c	2011-12-07 11:03:43.881548486 +0800
+*************** static void __exit stm_nand_flex_exit(vo
+*** 1280,1286 ****
+--- 1280,1295 ----
+  	platform_driver_unregister(&stm_nand_flex_driver);
+  }
   
-+ 	{
-+ 		/* spider: remove bigphysarea allocation from command line */
-+ 		int i;
-+ 		int command_line_len = strlen(command_line);
++ /***** 2011-11-14 D26LF Modi:
++     Description:spi flash
++ */
++ #define SPI_FLASH_BOOT
++ #ifdef SPI_FLASH_BOOT
++ late_initcall(stm_nand_flex_init);
++ #else
+  module_init(stm_nand_flex_init);
++ #endif
++ /***** 2011-11-14 D26LF Modi end ****/
+  module_exit(stm_nand_flex_exit);
+  
+  MODULE_LICENSE("GPL");
+diff -crp linux-sh4-2.6.32.28_stm24_0207/drivers/spi/spi_stm.c linux-sh4-2.6.32.28_stm24_0207.i2s/drivers/spi/spi_stm.c
+*** linux-sh4-2.6.32.28_stm24_0207/drivers/spi/spi_stm.c	2011-08-09 09:35:36.000000000 +0800
+--- linux-sh4-2.6.32.28_stm24_0207.i2s/drivers/spi/spi_stm.c	2011-12-07 11:03:08.673699464 +0800
+*************** static int spi_stm_txrx_bufs(struct spi_
+*** 338,344 ****
+  
+  }
+  
+! static int __init spi_stm_probe(struct platform_device *pdev)
+  {
+  	struct stm_plat_ssc_data *plat_data = pdev->dev.platform_data;
+  	struct spi_master *master;
+--- 338,344 ----
+  
+  }
+  
+! static int spi_stm_probe(struct platform_device *pdev)
+  {
+  	struct stm_plat_ssc_data *plat_data = pdev->dev.platform_data;
+  	struct spi_master *master;
+diff -crp linux-sh4-2.6.32.28_stm24_0207/drivers/stm/stx7105_comms.c linux-sh4-2.6.32.28_stm24_0207.i2s/drivers/stm/stx7105_comms.c
+*** linux-sh4-2.6.32.28_stm24_0207/drivers/stm/stx7105_comms.c	2011-08-09 09:35:36.000000000 +0800
+--- linux-sh4-2.6.32.28_stm24_0207.i2s/drivers/stm/stx7105_comms.c	2011-12-07 11:03:36.835991851 +0800
+*************** static struct platform_device stx7105_ss
+*** 344,354 ****
+  			/* .pad_config_* set in stx7105_configure_ssc_*() */
+  		},
+  	},
+  };
+  
+! static int __initdata stx7105_ssc_configured[ARRAY_SIZE(stx7105_ssc_devices)];
+  
+! int __init stx7105_configure_ssc_i2c(int ssc, struct stx7105_ssc_config *config)
+  {
+  	static int i2c_busnum;
+  	struct stx7105_ssc_config default_config = {};
+--- 344,370 ----
+  			/* .pad_config_* set in stx7105_configure_ssc_*() */
+  		},
+  	},
++ 	[4] = {
++ 		/* .name & .id set in stx7105_configure_ssc_*() */
++ 		.num_resources = 2,
++ 		.resource = (struct resource[]) {
++ 			STM_PLAT_RESOURCE_MEM(0xfd041000, 0x110),
++ 			STM_PLAT_RESOURCE_IRQ(evt2irq(0x10c0), -1),
++ 		},
++ 		.dev.platform_data = &(struct stm_plat_ssc_data) {
++ 			/* .pad_config_* set in stx7105_configure_ssc_*() */
++ 		},
++ 	},
+  };
+  
+! static int stx7105_ssc_configured[ARRAY_SIZE(stx7105_ssc_devices)];
+  
+! static void ssc_i2c_dev_release(struct device *dev)
+! {
+! 	printk(KERN_INFO "ssc_i2c_dev_release...\n");
+! }
+! 
+! int stx7105_configure_ssc_i2c(int ssc, struct stx7105_ssc_config *config)
+  {
+  	static int i2c_busnum;
+  	struct stx7105_ssc_config default_config = {};
+*************** int __init stx7105_configure_ssc_i2c(int
+*** 365,370 ****
+--- 381,387 ----
+  
+  	stx7105_ssc_devices[ssc].name = "i2c-stm";
+  	stx7105_ssc_devices[ssc].id = i2c_busnum;
++ 	stx7105_ssc_devices[ssc].dev.release = ssc_i2c_dev_release;
+  
+  	plat_data = stx7105_ssc_devices[ssc].dev.platform_data;
+  
+*************** int __init stx7105_configure_ssc_i2c(int
+*** 513,525 ****
+  	return i2c_busnum++;
+  }
+  
+! int __init stx7105_configure_ssc_spi(int ssc, struct stx7105_ssc_config *config)
+  {
+  	static int spi_busnum;
+  	struct stx7105_ssc_config default_config = {};
+  	struct stm_plat_ssc_data *plat_data;
+  	struct stm_pad_config *pad_config;
+  
+  	BUG_ON(ssc < 0 || ssc >= ARRAY_SIZE(stx7105_ssc_devices));
+  
+  	BUG_ON(stx7105_ssc_configured[ssc]);
+--- 530,707 ----
+  	return i2c_busnum++;
+  }
+  
+! int stx7105_unconfigure_ssc_i2c(int ssc, struct stx7105_ssc_config *config)
+! {
+! 	static int i2c_busnum = 1;
+! 	struct stx7105_ssc_config default_config = {};
+! 	struct stm_plat_ssc_data *plat_data;
+! 	struct stm_pad_config *pad_config;
+! 
+! 	BUG_ON(ssc < 0 || ssc >= ARRAY_SIZE(stx7105_ssc_devices));
+! 
+! 	stx7105_ssc_configured[ssc] = 0;
+! 	if (!config)
+! 		config = &default_config;
+! 
+! 	stx7105_ssc_devices[ssc].name = "i2c-stm";
+! 	stx7105_ssc_devices[ssc].id = i2c_busnum;
+! 	stx7105_ssc_devices[ssc].dev.release = ssc_i2c_dev_release;
+! 
+! 	plat_data = stx7105_ssc_devices[ssc].dev.platform_data;
+! 
+! 	switch (ssc) {
+! 	case 0:
+! 	case 1:
+! 		pad_config = &stx7105_ssc_i2c_pad_configs[ssc];
+! 		break;
+! 	case 2:
+! 		pad_config = stm_pad_config_alloc(2, 2);
+! 
+! 		/* SCL */
+! 		switch (config->routing.ssc2.sclk) {
+! 		case stx7105_ssc2_sclk_pio2_4: /* 7106 only! */
+! 			BUG_ON(cpu_data->type != CPU_STX7106);
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					2, 4, 2, "SCL");
+! 			/* ssc2_sclk_in: 00 = PIO2.4 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 11, 12, 0);
+! 
+! 			break;
+! 		case stx7105_ssc2_sclk_pio3_4:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					3, 4, 2, "SCL");
+! 			/* ssc2_sclk_in: 01 = PIO3.4 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 11, 12, 1);
+! 			break;
+! 		case stx7105_ssc2_sclk_pio12_0:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					12, 0, 3, "SCL");
+! 			/* ssc2_sclk_in: 10 = PIO12.0 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 11, 12, 2);
+! 			break;
+! 		case stx7105_ssc2_sclk_pio13_4:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					13, 4, 2, "SCL");
+! 			/* ssc2_sclk_in: 11 = PIO13.4 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 11, 12, 3);
+! 			break;
+! 		}
+! 
+! 		/* SDA */
+! 		switch (config->routing.ssc2.mtsr) {
+! 		case stx7105_ssc2_mtsr_pio2_0:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					2, 0, 3, "SDA");
+! 			/* ssc2_mtsr_in: 00 = PIO2.0 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 9, 10, 0);
+! 			break;
+! 		case stx7105_ssc2_mtsr_pio3_5:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					3, 5, 2, "SDA");
+! 			/* ssc2_mtsr_in: 01 = PIO3.5 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 9, 10, 1);
+! 			break;
+! 		case stx7105_ssc2_mtsr_pio12_1:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					12, 1, 3, "SDA");
+! 			/* ssc2_mtsr_in: 10 = PIO12.1 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 9, 10, 2);
+! 			break;
+! 		case stx7105_ssc2_mtsr_pio13_5:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					13, 5, 2, "SDA");
+! 			/* ssc2_mtsr_in: 11 = PIO13.5 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 9, 10, 3);
+! 			break;
+! 		}
+! 
+! 		break;
+! 	case 3:
+! 		pad_config = stm_pad_config_alloc(2, 2);
+! 
+! 		/* SCL */
+! 		switch (config->routing.ssc3.sclk) {
+! 		case stx7105_ssc3_sclk_pio2_7: /* 7106 only! */
+! 			BUG_ON(cpu_data->type != CPU_STX7106);
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					2, 7, 2, "SCL");
+! 			/* ssc3_sclk_in: 00 = PIO2.7 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 18, 19, 0);
+! 			break;
+! 		case stx7105_ssc3_sclk_pio3_6:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					3, 6, 2, "SCL");
+! 			/* ssc3_sclk_in: 01 = PIO3.6 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 18, 19, 1);
+! 			break;
+! 		case stx7105_ssc3_sclk_pio13_2:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					13, 2, 4, "SCL");
+! 			/* ssc3_sclk_in: 10 = PIO13.2 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 18, 19, 2);
+! 			break;
+! 		case stx7105_ssc3_sclk_pio13_6:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					13, 6, 2, "SCL");
+! 			/* ssc3_sclk_in: 11 = PIO13.6 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 18, 19, 3);
+! 			break;
+! 		}
+! 
+! 		/* SDA */
+! 		switch (config->routing.ssc3.mtsr) {
+! 		case stx7105_ssc3_mtsr_pio2_1:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					2, 1, 3, "SDA");
+! 			/* ssc3_mtsr_in: 00 = PIO2.1 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 16, 17, 0);
+! 			break;
+! 		case stx7105_ssc3_mtsr_pio3_7:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					3, 7, 2, "SDA");
+! 			/* ssc3_mtsr_in: 01 = PIO3.7 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 16, 17, 1);
+! 			break;
+! 		case stx7105_ssc3_mtsr_pio13_3:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					13, 3, 4, "SDA");
+! 			/* ssc3_mtsr_in: 10 = PIO13.3 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 16, 17, 2);
+! 			break;
+! 		case stx7105_ssc3_mtsr_pio13_7:
+! 			stm_pad_config_add_pio_bidir_named(pad_config,
+! 					13, 7, 2, "SDA");
+! 			/* ssc3_mtsr_in: 11 = PIO13.7 */
+! 			stm_pad_config_add_sys_cfg(pad_config, 16, 16, 17, 3);
+! 			break;
+! 		}
+! 
+! 		break;
+! 	default:
+! 		BUG();
+! 		pad_config = NULL; /* Keep the compiler happy ;-) */
+! 		break;
+! 	}
+! 
+! 	plat_data->pad_config = pad_config;
+! 
+! 	/* I2C bus number reservation (to prevent any hot-plug device
+! 	 * from using it) */
+! 	//i2c_register_board_info(i2c_busnum, NULL, 0);
+! 
+! 	platform_device_unregister(&stx7105_ssc_devices[ssc]);
+! 
+! 	return i2c_busnum++;
+! }
+! 
+! int stx7105_configure_ssc_spi(int ssc, struct stx7105_ssc_config *config)
+  {
+  	static int spi_busnum;
+  	struct stx7105_ssc_config default_config = {};
+  	struct stm_plat_ssc_data *plat_data;
+  	struct stm_pad_config *pad_config;
+  
 + 
-+ 		for(i = 0; i < (command_line_len-11); i++)
-+ 		{
-+ 			if(!strncmp(command_line + i + 1, "bigphysarea", 11))
-+ 			{
-+ 				// search for next pos
-+ 				int k;
-+ 				int pos=command_line_len;
-+ 				for(k=i+1; k<command_line_len; k++)
-+ 					if(command_line[k]==' ') {
-+ 						pos=k;
-+ 						break;
-+ 					}
-+ 				memmove(command_line+i, command_line+pos, command_line_len-pos);
-+ 				memset(&command_line[command_line_len-(pos-i)], '\0', pos-i);
-+ 				break;
-+ 			}
-+ 		}
-+ 	}
-+ 
-  	/* Save unparsed command line copy for /proc/cmdline */
-  	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
-  	*cmdline_p = command_line;
+  	BUG_ON(ssc < 0 || ssc >= ARRAY_SIZE(stx7105_ssc_devices));
+  
+  	BUG_ON(stx7105_ssc_configured[ssc]);
+*************** int __init stx7105_configure_ssc_spi(int
+*** 530,536 ****
+  
+  	stx7105_ssc_devices[ssc].name = "spi-stm";
+  	stx7105_ssc_devices[ssc].id = spi_busnum;
+! 
+  	plat_data = stx7105_ssc_devices[ssc].dev.platform_data;
+  
+  	switch (ssc) {
+--- 712,718 ----
+  
+  	stx7105_ssc_devices[ssc].name = "spi-stm";
+  	stx7105_ssc_devices[ssc].id = spi_busnum;
+! 	stx7105_ssc_devices[ssc].dev.release = ssc_i2c_dev_release;
+  	plat_data = stx7105_ssc_devices[ssc].dev.platform_data;
+  
+  	switch (ssc) {
+*************** int __init stx7105_configure_ssc_spi(int
+*** 538,543 ****
+--- 720,728 ----
+  	case 1:
+  		pad_config = &stx7105_ssc_spi_pad_configs[ssc];
+  		break;
++ 	case 4:
++ 		pad_config = &stx7105_ssc_spi_pad_configs[1];
++ 		break;
+  	case 2:
+  		pad_config = stm_pad_config_alloc(3, 2);
+  		
+diff -crp linux-sh4-2.6.32.28_stm24_0207/include/linux/stm/stx7105.h linux-sh4-2.6.32.28_stm24_0207.i2s/include/linux/stm/stx7105.h
+*** linux-sh4-2.6.32.28_stm24_0207/include/linux/stm/stx7105.h	2011-08-09 09:35:36.000000000 +0800
+--- linux-sh4-2.6.32.28_stm24_0207.i2s/include/linux/stm/stx7105.h	2011-12-07 11:02:08.856831910 +0800
+*************** struct stx7105_ssc_config {
+*** 112,117 ****
+--- 112,118 ----
+  };
+  /* SSC configure functions return I2C/SPI bus number */
+  int stx7105_configure_ssc_i2c(int ssc, struct stx7105_ssc_config *config);
++ int stx7105_unconfigure_ssc_i2c(int ssc, struct stx7105_ssc_config *config);
+  int stx7105_configure_ssc_spi(int ssc, struct stx7105_ssc_config *config);
+  
+  
