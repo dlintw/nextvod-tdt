@@ -7,6 +7,7 @@ if [ "$1" == -h ] || [ "$1" == --help ]; then
  echo "Parameter 4: player(1-2)"
  echo "Parameter 5: Multicom(1-2)"
  echo "Parameter 6: Media Framwork(1-2)"
+ echo "Parameter 7: External LCD support(1-2)"
  exit
 fi
 
@@ -164,17 +165,19 @@ case $2 in
         read -p "Select kernel (1-10)? ";;
 esac
 
+ASK_EXTERNAL_LCD=""
+
 case "$REPLY" in
 	1) KERNEL="--enable-stm22 --enable-p0041";;
 	2) KERNEL="--enable-stm23 --enable-p0119";;
 	3) KERNEL="--enable-stm23 --enable-p0119 --enable-havana";;
 	4) KERNEL="--enable-stm23 --enable-p0123";;
-	5) KERNEL="--enable-stm24 --enable-p0201";STMFB="stm24";;
-	6) KERNEL="--enable-stm24 --enable-p0205";STMFB="stm24";;
-	7) KERNEL="--enable-stm24 --enable-p0206";STMFB="stm24";;
-	8) KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
-	9) KERNEL="--enable-stm24 --enable-havana-p0207_5";STMFB="stm24";;
-	10) KERNEL="--enable-stm24 --enable-p0209";STMFB="stm24";;
+	5) KERNEL="--enable-stm24 --enable-p0201";STMFB="stm24";ASK_EXTERNAL_LCD="y";;
+	6) KERNEL="--enable-stm24 --enable-p0205";STMFB="stm24";ASK_EXTERNAL_LCD="y";;
+	7) KERNEL="--enable-stm24 --enable-p0206";STMFB="stm24";ASK_EXTERNAL_LCD="y";;
+	8) KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";ASK_EXTERNAL_LCD="y";;
+	9) KERNEL="--enable-stm24 --enable-havana-p0207_5";STMFB="stm24";ASK_EXTERNAL_LCD="y";;
+	10) KERNEL="--enable-stm24 --enable-p0209";STMFB="stm24";ASK_EXTERNAL_LCD="y";;
 	*) KERNEL="--enable-stm22 --enable-p0041";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"
@@ -375,7 +378,7 @@ esac
 echo -e "\nMedia Framework:"
 echo "   1) eplayer3  (Recommended)"
 echo "   2) gstreamer (Only working with enigma2 diff0 at the moment)"
-case $5 in
+case $6 in
         [1-2]) REPLY=$6
         echo -e "\nSelected media framwork: $REPLY\n"
         ;;
@@ -391,7 +394,30 @@ esac
 
 ##############################################
 
-CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM $MEDIAFW"
+if [ "$ASK_EXTERNAL_LCD" == "y" ]; then
+
+   echo -e "\nExternal LCD support:"
+   echo "   1) No external LCD"
+   echo "   2) graphlcd for external LCD"
+   case $7 in
+           [1-2]) REPLY=$7
+           echo -e "\nSelected LCD support: $REPLY\n"
+           ;;
+           *)
+           read -p "Select external LCD support (1-2)? ";;
+   esac
+
+   case "$REPLY" in
+	   1) EXTERNAL_LCD="";;
+	   2) EXTERNAL_LCD="--enable-externallcd";;
+	   *) EXTERNAL_LCD="";;
+   esac
+
+fi
+
+##############################################
+
+CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM $MEDIAFW $EXTERNAL_LCD"
 
 ##############################################
 

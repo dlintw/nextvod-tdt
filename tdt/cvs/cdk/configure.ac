@@ -193,6 +193,12 @@ AC_ARG_ENABLE(mediafwgstreamer,
 AM_CONDITIONAL(ENABLE_MEDIAFWGSTREAMER,test "$enable_mediafwgstreamer" = "yes")
 AC_SUBST(MEDIAFWGSTREAMER)
 
+AC_ARG_ENABLE(externallcd,
+	AS_HELP_STRING(--enable-externallcd,	set up the CDK to use graphlcd),
+	,[enable_externallcd=no])
+AM_CONDITIONAL(ENABLE_EXTERNALLCD,test "$enable_externallcd" = "yes")
+AC_SUBST(EXTERNALLCD)
+
 AC_ARG_ENABLE(flashrules,
 	AS_HELP_STRING(--enable-flashrules,	enable rules for creating flash targets),
 	,[enable_flashrules=yes])
@@ -861,6 +867,14 @@ else
 fi
 fi
 
+AC_SUBST(EXTERNALLCD_DEP)
+
+if test "$enable_externallcd" == "yes"; then
+	EXTERNALLCD_DEP="graphlcd"
+else
+	EXTERNALLCD_DEP=""
+fi
+
 AC_SUBST(MEDIAFW)
 AC_SUBST(MEDIAFW_DEP)
 
@@ -1006,6 +1020,7 @@ TUXBOX_RULES_MAKE(gst_plugins_ugly)
 TUXBOX_RULES_MAKE(gst_ffmpeg)
 TUXBOX_RULES_MAKE(gst_plugins_dvbmediasink)
 TUXBOX_RULES_MAKE(libalsa)
+TUXBOX_RULES_MAKE(libusb)
 
 #
 # GUI
@@ -1234,6 +1249,8 @@ Multicom324                 : $enable_multicom324
 MediaFw Gstreamer           : $enable_mediafwgstreamer
 MediaFw                     : $MEDIAFW
 MediaFw Dep                 : $MEDIAFW_DEP
+EXTERNALLCD                 : $enable_externallcd
+EXTERNALLCD_DEP             : $EXTERNALLCD_DEP
 ])
 
 if test "$dircheck" = "fail"; then

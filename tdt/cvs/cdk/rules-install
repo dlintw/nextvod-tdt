@@ -98,7 +98,7 @@ libflac;make:install:DESTDIR=TARGETS
 evebrowser;make:install:DESTDIR=TARGETS
 brofs;make:install:DESTDIR=TARGETS/usr/bin
 libalsa;make:install:DESTDIR=TARGETS
-
+libusb;make:install:DESTDIR=TARGETS
 #
 # gstreamer
 #

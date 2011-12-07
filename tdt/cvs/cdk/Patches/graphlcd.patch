@@ -1,0 +1,108 @@
+--- Make.config	2011-12-06 23:03:38.986910111 +0100
++++ Make.config.fix	2011-12-06 23:03:18.216901196 +0100
+@@ -3,10 +3,10 @@
+ 
+ ### The C compiler and options:
+ 
+-CC       = gcc
++CC       = sh4-linux-gcc
+ CFLAGS   = -O2
+ 
+-CXX      = g++
++CXX      = sh4-linux-g++
+ CXXFLAGS = -g -O2 -Wall -Woverloaded-virtual
+ #CXXFLAGS = -g -ggdb -O0 -Wall -Woverloaded-virtual
+ 
+@@ -16,9 +16,13 @@
+ 
+ ### The directory environment:
+ 
+-ifndef $(DESTDIR)
+-DESTDIR = /usr/local
+-endif
++#note/todo: this is very unproper; use here a variable which 
++#points to the cdkroot!
++DESTDIR = ../../../tufsbox/cdkroot/usr/
++
++#ifndef $(DESTDIR)
++#DESTDIR = /usr/local
++#endif
+ 
+ BINDIR = $(DESTDIR)/bin
+ LIBDIR = $(DESTDIR)/lib
+@@ -27,7 +31,8 @@
+ 
+ ### Includes and defines
+ 
+-#INCLUDES += -I
++INCLUDES += -I$(DESTDIR)/include
++
+ 
+ DEFINES += -D_GNU_SOURCE
+ 
+@@ -40,4 +45,4 @@
+ 
+ # uncomment this variable if you want to enable the experimental AX 206 based digital photo frame driver
+ # Read DRIVER.ax206dpf before use!
+-#HAVE_AX206DPF_EXPERIMENTAL=1
++HAVE_AX206DPF_EXPERIMENTAL=1
+--- glcddrivers/port.c	2011-12-07 22:31:41.607561726 +0100
++++ glcddrivers/port.fix	2011-12-07 22:31:47.877565426 +0100
+@@ -16,12 +16,35 @@
+ #include <syslog.h>
+ #include <unistd.h>
+ #include <termios.h>
++#ifndef __sh__
+ #include <sys/io.h>
++#endif
+ #include <sys/ioctl.h>
+ #include <linux/ppdev.h>
+ #include <linux/parport.h>
+ 
++#ifdef __sh__
+ 
++/* konfetti: those are currently only dummy. not tested, not really
++ * thinking on it. it needs revise for the params etc. also we need
++ * to revise the assembler code below. but for now its ok because
++ * I (we) only want the peal lcd to be running ;)
++ */
++
++#define __NR_ioperm 101
++#define __NR_iopl 110
++
++static inline int ioperm(int port, unsigned long int from, unsigned long int num)
++{
++	return syscall(__NR_ioperm, port, from, num);
++}
++
++static inline int iopl(int level)
++{
++	return syscall(__NR_iopl, level);
++}
++
++#endif
+ 
+ #include "port.h"
+ 
+@@ -31,17 +54,21 @@
+ static inline int port_in(int port)
+ {
+     unsigned char value;
++#ifndef __sh__
+     __asm__ volatile ("inb %1,%0"
+                       : "=a" (value)
+                       : "d" ((unsigned short) port));
++#endif
+     return value;
+ }
+ 
+ static inline void port_out(unsigned short int port, unsigned char val)
+ {
++#ifndef __sh__
+     __asm__ volatile ("outb %0,%1\n"
+                       :
+                       : "a" (val), "d" (port));
++#endif
+ }
+ 
+ cParallelPort::cParallelPort()
