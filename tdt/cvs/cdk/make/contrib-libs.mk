@@ -1891,25 +1891,25 @@ $(DEPDIR)/libusb.do_prepare:  @DEPENDS_libusb@
 	touch $@ 
  
 $(DEPDIR)/libusb.do_compile: $(DEPDIR)/libusb.do_prepare 
-	export PATH=$(hostprefix)/bin:$(PATH) && \ 
-	cd @DIR_libusb@ && \ 
-	$(BUILDENV) \ 
-	./configure \ 
-		--host=$(target) \ 
-		--prefix=/usr && \ 
-		$(MAKE) all 
-	touch $@ 
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libusb@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr && \
+		$(MAKE) all
+	touch $@
  
-$(DEPDIR)/min-libusb $(DEPDIR)/std-libusb $(DEPDIR)/max-libusb \ 
-$(DEPDIR)/libusb: \ 
-$(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile 
-	@[ "x$*" = "x" ] && touch $@ || true 
-	cd @DIR_libusb@ && \ 
-		@INSTALL_libusb@ 
-	@TUXBOX_YAUD_CUSTOMIZE@ 
+$(DEPDIR)/min-libusb $(DEPDIR)/std-libusb $(DEPDIR)/max-libusb \
+$(DEPDIR)/libusb: \
+$(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd @DIR_libusb@ && \
+		@INSTALL_libusb@
+	@TUXBOX_YAUD_CUSTOMIZE@
 
 # graphlcd
-$(DEPDIR)/graphlcd.do_prepare: @DEPENDS_libusb@
+$(DEPDIR)/graphlcd.do_prepare:	libusb
 	[ -d graphlcd-base ] && \
     rm -rf graphlcd-base;
 	git clone git://projects.vdr-developer.org/graphlcd-base.git --branch touchcol graphlcd-base;
@@ -1923,8 +1923,21 @@ $(DEPDIR)/graphlcd.do_compile: $(DEPDIR)/graphlcd.do_prepare
 	$(MAKE) all
 	touch $@
 
-$(DEPDIR)/graphlcd: graphlcd.do_compile
-	touch $@
+$(DEPDIR)/min-graphlcd $(DEPDIR)/std-graphlcd $(DEPDIR)/max-graphlcd \
+$(DEPDIR)/graphlcd: \
+$(DEPDIR)/%graphlcd: $(DEPDIR)/graphlcd.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd graphlcd-base && \
+		cp glcddrivers/*.so* $(targetprefix)/usr/lib/ && \
+		cp glcdgraphics/*.so* $(targetprefix)/usr/lib/ && \
+		cp glcdskin/*.so* $(targetprefix)/usr/lib/ && \
+		cp tools/showpic/showpic $(targetprefix)/usr/bin/ && \
+		cp tools/showtext/showtext $(targetprefix)/usr/bin/ && \
+		cp graphlcd.conf $(targetprefix)/etc/
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+#$(DEPDIR)/graphlcd: graphlcd.do_compile
+#	touch $@
 
 endif
 
