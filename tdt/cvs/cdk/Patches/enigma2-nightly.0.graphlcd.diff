@@ -1,6 +1,97 @@
-diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/lcd.cpp enigma2-nightly.patched/lib/gdi/lcd.cpp
---- enigma2-nightly.org/lib/gdi/lcd.cpp	2011-12-08 23:44:23.812464925 +0100
-+++ enigma2-nightly.patched/lib/gdi/lcd.cpp	2011-12-08 23:00:08.000000000 +0100
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/lcd.h enigma2-nightly.patched/lib/gdi/lcd.h
+--- enigma2-nightly.org/lib/gdi/lcd.h	2011-12-08 23:44:23.822464745 +0100
++++ enigma2-nightly.patched/lib/gdi/lcd.h	2011-12-08 22:09:03.000000000 +0100
+@@ -5,6 +5,16 @@
+ #include <lib/gdi/esize.h>
+ #include <lib/gdi/erect.h>
+ 
++#ifdef __sh__
++#include <glcdgraphics/bitmap.h>
++#include <glcdgraphics/glcd.h>
++#include <glcdgraphics/image.h>
++#include <glcddrivers/config.h>
++#include <glcddrivers/driver.h>
++#include <glcddrivers/drivers.h>
++#include <glcdgraphics/extformats.h>
++#endif
++
+ #define LCD_CONTRAST_MIN 0
+ #define LCD_CONTRAST_MAX 63
+ #define LCD_BRIGHTNESS_MIN 0
+@@ -24,6 +34,7 @@
+ 	int _stride;
+ 	int locked;
+ #endif
++
+ public:
+ 	int lock();
+ 	void unlock();
+@@ -44,6 +55,15 @@
+ 	static eDBoxLCD *instance;
+ 	unsigned char inverted;
+ 	int is_oled;
++
++#ifdef __sh__
++	GLCD::cDriver * lcd;
++    GLCD::cBitmap * bitmap;
++    int displayNumber;
++    int depth;
++    int width, height;
++#endif
++
+ #ifdef SWIG
+ 	eDBoxLCD();
+ 	~eDBoxLCD();
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/Makefile.am enigma2-nightly.patched/lib/gdi/Makefile.am
+--- enigma2-nightly.org/lib/gdi/Makefile.am	2011-12-08 23:44:44.892475533 +0100
++++ enigma2-nightly.patched/lib/gdi/Makefile.am	2011-12-08 19:16:22.000000000 +0100
+@@ -2,7 +2,8 @@
+ 	-I$(top_srcdir) \
+ 	-I$(top_srcdir)/include \
+ 	-include Python.h \
+-	-include $(top_builddir)/enigma2_config.h
++	-include $(top_builddir)/enigma2_config.h \
++	-I$(top_srcdir)/../../cdk/graphlcd-base
+ 
+ AM_CXXFLAGS = \
+ 	$(LIBSDL_CFLAGS)
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Makefile.am enigma2-nightly.patched/lib/python/Makefile.am
+--- enigma2-nightly.org/lib/python/Makefile.am	2011-12-08 23:44:44.942475783 +0100
++++ enigma2-nightly.patched/lib/python/Makefile.am	2011-12-08 19:21:45.000000000 +0100
+@@ -2,7 +2,8 @@
+ 	-I$(top_srcdir) \
+ 	-I$(top_srcdir)/include \
+ 	-include Python.h \
+-	-include $(top_builddir)/enigma2_config.h
++	-include $(top_builddir)/enigma2_config.h \
++	-I$(top_srcdir)/../../cdk/graphlcd-base
+ 
+ SUBDIRS = Components Tools Screens Plugins
+ 
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.am enigma2-nightly.patched/main/Makefile.am
+--- enigma2-nightly.org/main/Makefile.am	2011-12-08 23:44:45.212475695 +0100
++++ enigma2-nightly.patched/main/Makefile.am	2011-12-08 19:23:24.000000000 +0100
+@@ -2,7 +2,8 @@
+ 	-I$(top_srcdir) \
+ 	-I$(top_srcdir)/include \
+ 	-include Python.h \
+-	-include $(top_builddir)/enigma2_config.h
++	-include $(top_builddir)/enigma2_config.h \
++	-I$(top_srcdir)/../../cdk/graphlcd-base
+ 
+ AM_CXXFLAGS = \
+ 	$(LIBSDL_CFLAGS)
+@@ -51,7 +52,7 @@
+ 	@LIBXMLCCWRAP_LIBS@ \
+ 	@PTHREAD_LIBS@ \
+ 	@PYTHON_LDFLAGS@ \
+-	-ldl -lpthread -lcrypt -lresolv -lrt -lmmeimage -leplayer3
++	-ldl -lpthread -lcrypt -lresolv -lrt -lmmeimage -leplayer3 -lglcddrivers -lglcdgraphics -lglcdskin
+ 
+ enigma2_LDFLAGS = -Wl,--export-dynamic
+ 
+--- enigma2-nightly.org/lib/gdi/lcd.cpp	2011-12-09 18:38:57.721821533 +0100
++++ enigma2-nightly.patched/lib/gdi/lcd.cpp	2011-12-09 18:40:42.281871918 +0100
 @@ -16,6 +16,16 @@
  #include <lib/base/init_num.h>
  #include <lib/gdi/glcddc.h>
@@ -27,7 +118,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/lcd.cp
  eDBoxLCD::eDBoxLCD()
  {
  	int xres=132, yres=64, bpp=8;
-@@ -226,3 +238,119 @@
+@@ -226,3 +238,128 @@
  	}
  }
  
@@ -126,116 +217,33 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/lcd.cp
 +
 +void eDBoxLCD::update()
 +{
-+	eDebug("eDBoxLCD::update");
++//	eDebug("eDBoxLCD::update");
 +
++    bitmap->Clear();
 +    lcd->Refresh(false);
-+    for (int x = 0; x < width; x++)
++    for (int x = 0; x < _stride; x++)
 +       for (int y = 0; y < height; y++)
 +       { 
 +          unsigned int color;
 +/* fixme: why +2 ? */
++/*
++doppelt
 +          color = (_buffer[y * width + x * (depth / 8) + 2] & 0xF0) |
 +                  (_buffer[y * width + x * (depth / 8) + 1 + 2] >> 4);
++*/          
++/* gestaucht (fehlen zeilen; jede 2 ?)
++          color = _buffer[y * width + x];
++*/
++          color = _buffer[y * _stride + x * (depth / 8)] | 
++                  _buffer[y * _stride + x * (depth / 8) + 1];
++
++		  if (inverted)
++			  color = 0xFF - color;
 +          
-+//fixme		  if (inverted)
-+//			  color = 0xFF - color;
-+          
-+          //lcd->SetPixel(x, y, color);
 +		  bitmap->DrawPixel(x, y, color);
 +       }
++	lcd->SetScreen(bitmap->Data(), bitmap->Width(), bitmap->Height());
 +    lcd->Refresh(true);
 +}
 +
 +#endif    
-diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/lcd.h enigma2-nightly.patched/lib/gdi/lcd.h
---- enigma2-nightly.org/lib/gdi/lcd.h	2011-12-08 23:44:23.822464745 +0100
-+++ enigma2-nightly.patched/lib/gdi/lcd.h	2011-12-08 22:09:03.000000000 +0100
-@@ -5,6 +5,16 @@
- #include <lib/gdi/esize.h>
- #include <lib/gdi/erect.h>
- 
-+#ifdef __sh__
-+#include <glcdgraphics/bitmap.h>
-+#include <glcdgraphics/glcd.h>
-+#include <glcdgraphics/image.h>
-+#include <glcddrivers/config.h>
-+#include <glcddrivers/driver.h>
-+#include <glcddrivers/drivers.h>
-+#include <glcdgraphics/extformats.h>
-+#endif
-+
- #define LCD_CONTRAST_MIN 0
- #define LCD_CONTRAST_MAX 63
- #define LCD_BRIGHTNESS_MIN 0
-@@ -24,6 +34,7 @@
- 	int _stride;
- 	int locked;
- #endif
-+
- public:
- 	int lock();
- 	void unlock();
-@@ -44,6 +55,15 @@
- 	static eDBoxLCD *instance;
- 	unsigned char inverted;
- 	int is_oled;
-+
-+#ifdef __sh__
-+	GLCD::cDriver * lcd;
-+    GLCD::cBitmap * bitmap;
-+    int displayNumber;
-+    int depth;
-+    int width, height;
-+#endif
-+
- #ifdef SWIG
- 	eDBoxLCD();
- 	~eDBoxLCD();
-diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/Makefile.am enigma2-nightly.patched/lib/gdi/Makefile.am
---- enigma2-nightly.org/lib/gdi/Makefile.am	2011-12-08 23:44:44.892475533 +0100
-+++ enigma2-nightly.patched/lib/gdi/Makefile.am	2011-12-08 19:16:22.000000000 +0100
-@@ -2,7 +2,8 @@
- 	-I$(top_srcdir) \
- 	-I$(top_srcdir)/include \
- 	-include Python.h \
--	-include $(top_builddir)/enigma2_config.h
-+	-include $(top_builddir)/enigma2_config.h \
-+	-I$(top_srcdir)/../../cdk/graphlcd-base
- 
- AM_CXXFLAGS = \
- 	$(LIBSDL_CFLAGS)
-diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Makefile.am enigma2-nightly.patched/lib/python/Makefile.am
---- enigma2-nightly.org/lib/python/Makefile.am	2011-12-08 23:44:44.942475783 +0100
-+++ enigma2-nightly.patched/lib/python/Makefile.am	2011-12-08 19:21:45.000000000 +0100
-@@ -2,7 +2,8 @@
- 	-I$(top_srcdir) \
- 	-I$(top_srcdir)/include \
- 	-include Python.h \
--	-include $(top_builddir)/enigma2_config.h
-+	-include $(top_builddir)/enigma2_config.h \
-+	-I$(top_srcdir)/../../cdk/graphlcd-base
- 
- SUBDIRS = Components Tools Screens Plugins
- 
-diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.am enigma2-nightly.patched/main/Makefile.am
---- enigma2-nightly.org/main/Makefile.am	2011-12-08 23:44:45.212475695 +0100
-+++ enigma2-nightly.patched/main/Makefile.am	2011-12-08 19:23:24.000000000 +0100
-@@ -2,7 +2,8 @@
- 	-I$(top_srcdir) \
- 	-I$(top_srcdir)/include \
- 	-include Python.h \
--	-include $(top_builddir)/enigma2_config.h
-+	-include $(top_builddir)/enigma2_config.h \
-+	-I$(top_srcdir)/../../cdk/graphlcd-base
- 
- AM_CXXFLAGS = \
- 	$(LIBSDL_CFLAGS)
-@@ -51,7 +52,7 @@
- 	@LIBXMLCCWRAP_LIBS@ \
- 	@PTHREAD_LIBS@ \
- 	@PYTHON_LDFLAGS@ \
--	-ldl -lpthread -lcrypt -lresolv -lrt -lmmeimage -leplayer3
-+	-ldl -lpthread -lcrypt -lresolv -lrt -lmmeimage -leplayer3 -lglcddrivers -lglcdgraphics -lglcdskin
- 
- enigma2_LDFLAGS = -Wl,--export-dynamic
- 
