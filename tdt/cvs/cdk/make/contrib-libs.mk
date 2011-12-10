@@ -1882,8 +1882,6 @@ $(DEPDIR)/%gst_plugins_dvbmediasink: $(DEPDIR)/gst_plugins_dvbmediasink.do_compi
 
 ################ EXTERNAL_CLD #############################
 
-if STM24
-
 # libusb 
 # 
 $(DEPDIR)/libusb.do_prepare:  @DEPENDS_libusb@ 
@@ -1911,7 +1909,7 @@ $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
 # graphlcd
 $(DEPDIR)/graphlcd.do_prepare:	libusb
 	[ -d graphlcd-base ] && \
-    rm -rf graphlcd-base;
+    rm -rf graphlcd-base; \
 	git clone git://projects.vdr-developer.org/graphlcd-base.git --branch touchcol graphlcd-base;
 	cd graphlcd-base && \
     patch -p0 <../Patches/graphlcd.patch
@@ -1938,8 +1936,6 @@ $(DEPDIR)/%graphlcd: $(DEPDIR)/graphlcd.do_compile
 
 #$(DEPDIR)/graphlcd: graphlcd.do_compile
 #	touch $@
-
-endif
 
 ################ END EXTERNAL_CLD #############################
 

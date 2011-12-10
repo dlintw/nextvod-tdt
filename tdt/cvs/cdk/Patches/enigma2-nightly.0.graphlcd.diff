@@ -90,9 +90,9 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
  
  enigma2_LDFLAGS = -Wl,--export-dynamic
  
---- enigma2-nightly.org/lib/gdi/lcd.cpp	2011-12-09 18:38:57.721821533 +0100
-+++ enigma2-nightly.patched/lib/gdi/lcd.cpp	2011-12-09 18:40:42.281871918 +0100
-@@ -16,6 +16,16 @@
+--- enigma2-nightly.org/lib/gdi/lcd.cpp	2011-12-09 18:42:20.151922287 +0100
++++ enigma2-nightly.patched/lib/gdi/lcd.cpp	2011-12-10 13:44:17.469468133 +0100
+@@ -16,6 +16,18 @@
  #include <lib/base/init_num.h>
  #include <lib/gdi/glcddc.h>
  
@@ -104,12 +104,14 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +#include <glcddrivers/driver.h>
 +#include <glcddrivers/drivers.h>
 +#include <glcdgraphics/extformats.h>
++
++#include <byteswap.h>
 +#endif
 +
  eDBoxLCD *eDBoxLCD::instance;
  
  eLCD::eLCD()
-@@ -52,6 +62,8 @@
+@@ -52,6 +64,8 @@
  	locked=0;
  }
  
@@ -118,7 +120,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
  eDBoxLCD::eDBoxLCD()
  {
  	int xres=132, yres=64, bpp=8;
-@@ -226,3 +238,128 @@
+@@ -226,3 +240,151 @@
  	}
  }
  
@@ -217,23 +219,44 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +
 +void eDBoxLCD::update()
 +{
-+//	eDebug("eDBoxLCD::update");
-+
 +    bitmap->Clear();
 +    lcd->Refresh(false);
-+    for (int x = 0; x < _stride; x++)
++
++#if 1
++
++    for (int x = 0; x < width; x++)
++       for (int y = 0; y < height; y++)
++       { 
++          __u16 *buf16  = (__u16*) _buffer;
++
++#if BYTE_ORDER == LITTLE_ENDIAN
++          __u16 col16   = bswap_16(*((__u16*)(((__u16*)buf16) + y * width + x)));
++#else
++          __u16 col16   = *((__u16*)(((__u16*)buf16) + y  * width + x));
++#endif
++          __u8 red, green, blue, alpha; 
++          __u32 color32;
++          
++          /* BBBBB GGGGGG RRRRR */
++ 		  blue  = (col16 & 0xF800) >> 11;
++          green = (col16 & 0x7E0) >> 5;
++          red   = (col16 & 0x1f);
++          alpha = 0;
++          
++          color32 = alpha << 24 | red << 16 | green << 8 | blue;
++
++		  if (inverted)
++			  color32 = 0xFFFFFF - color32;
++          
++		  bitmap->DrawPixel(x, y, color32);
++       }
++#else
++
++    for (int x = 0; x < width; x++)
 +       for (int y = 0; y < height; y++)
 +       { 
 +          unsigned int color;
-+/* fixme: why +2 ? */
-+/*
-+doppelt
-+          color = (_buffer[y * width + x * (depth / 8) + 2] & 0xF0) |
-+                  (_buffer[y * width + x * (depth / 8) + 1 + 2] >> 4);
-+*/          
-+/* gestaucht (fehlen zeilen; jede 2 ?)
-+          color = _buffer[y * width + x];
-+*/
++
 +          color = _buffer[y * _stride + x * (depth / 8)] | 
 +                  _buffer[y * _stride + x * (depth / 8) + 1];
 +
@@ -242,6 +265,8 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +          
 +		  bitmap->DrawPixel(x, y, color);
 +       }
++#endif
++
 +	lcd->SetScreen(bitmap->Data(), bitmap->Width(), bitmap->Height());
 +    lcd->Refresh(true);
 +}
