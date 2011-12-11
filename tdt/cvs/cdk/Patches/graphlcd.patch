@@ -106,12 +106,24 @@
  }
  
  cParallelPort::cParallelPort()
---- graphlcd.conf	2011-12-08 20:46:40.067817918 +0100
-+++ graphlcd.conf.fix	2011-12-08 22:43:09.002653290 +0100
-@@ -117,466 +117,6 @@
+--- graphlcd.conf	2011-12-11 17:28:26.778505886 +0100
++++ graphlcd.conf.fix	2011-12-11 17:28:33.998507890 +0100
+@@ -29,7 +29,7 @@
+ #  Select the process priority that is used when sleeping.
+ #  Possible values: -20 <= x <= 19
+ #  Default value: 0
+-WaitPriority=0
++WaitPriority=19
  
- ########################################################################
- 
+ # General driver settings
+ #  This section lists the display settings that are parsed and
+@@ -114,467 +114,7 @@
+ #  A value of 0 completely disables complete refreshs. 
+ #  Possible values: 0 <= x <= 50
+ #  Default value: 5
+-
+-########################################################################
+-
 -[framebuffer]
 -# framebuffer driver
 -#  Output goes to a framebuffer device
@@ -570,11 +582,10 @@
 -# USB ID activy 5xx:
 -#Vendor=0x1509
 -#Product=0x925d
--########################################################################
--
++RefreshDisplay=50
+ ########################################################################
+ 
  [ax206dpf]
- #  THIS IS AN EXPERIMENTAL DRIVER!
- #  You have to uncomment the variable HAVE_AX206DPF_EXPERIMENTAL
 @@ -588,8 +128,8 @@
  #
  #  Default size: 320 x 240 or 240 x 320 (see "Portrait")
