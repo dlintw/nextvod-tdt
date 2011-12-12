@@ -75,7 +75,7 @@ ncurses;5.5;ncurses-5.5;ncurses-5.5.tar.gz;extract:ncurses-5.5.tar.gz
 libz;1.2.3;zlib-1.2.3;zlib-1.2.3.tar.bz2;extract:zlib-1.2.3.tar.bz2
 libreadline;5.2;readline-5.2;readline-5.2.tar.gz;extract:readline-5.2.tar.gz
 freetype_old;2.1.4;freetype-2.1.4;freetype-2.1.4.tar.bz2:libfreetype.diff;extract:freetype-2.1.4.tar.bz2;patch:libfreetype.diff
-freetype;2.3.12;freetype-2.3.12;freetype-2.3.12.tar.bz2;extract:freetype-2.3.12.tar.bz2
+freetype;2.3.5;freetype-2.3.5;freetype-2.3.5.tar.bz2;extract:freetype-2.3.5.tar.bz2
 lirc;0.8.2;lirc-0.8.2;lirc-0.8.2.tar.gz:lirc.diff;extract:lirc-0.8.2.tar.gz;patch:lirc.diff
 jpeg;6b;jpeg-6b;jpegsrc.v6b.tar.gz:jpeg.diff;extract:jpegsrc.v6b.tar.gz;patch:jpeg.diff
 libpng;1.2.16;libpng-1.2.16;libpng-1.2.16.tar.bz2:libpng.diff;extract:libpng-1.2.16.tar.bz2

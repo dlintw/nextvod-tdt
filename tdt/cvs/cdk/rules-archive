@@ -85,8 +85,8 @@ opkg-0.1.8.tar.gz;http://opkg.googlecode.com/files/
 ncurses-5.5.tar.gz;http://ftp.gnu.org/pub/gnu/ncurses
 zlib-1.2.3.tar.bz2;http://kent.dl.sourceforge.net/sourceforge/libpng
 readline-5.2.tar.gz;ftp://ftp.cwru.edu/pub/bash
-#freetype-2.3.5.tar.bz2;http://download.savannah.gnu.org/releases/freetype
-freetype-2.4.8.tar.bz2;http://download.savannah.gnu.org/releases/freetype
+freetype-2.3.5.tar.bz2;http://download.savannah.gnu.org/releases/freetype
+#freetype-2.4.8.tar.bz2;http://download.savannah.gnu.org/releases/freetype
 lirc-0.8.2.tar.gz;http://prdownloads.sourceforge.net/lirc
 jpegsrc.v6b.tar.gz;ftp://ftp.uni-leipzig.de/pub/linux/ftp:robot.informatik.uni-leipzig.de/Sources/System/Libs
 libpng-1.2.16.tar.bz2;http://kent.dl.sourceforge.net/sourceforge/libpng
