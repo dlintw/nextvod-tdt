@@ -37,5 +37,5 @@ vdrdev-clean vdrdev-distclean:
 	rm -f $(DEPDIR)/vdr
 	rm -f $(DEPDIR)/vdr.do_compile
 	rm -f $(DEPDIR)/vdr.do_prepare
-	rm -rf $(appsdir)/vdr/
+	rm -rf $(appsdir)/vdr/vdr
 
