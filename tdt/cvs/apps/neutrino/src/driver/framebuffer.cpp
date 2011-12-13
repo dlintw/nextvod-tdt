@@ -1910,7 +1910,7 @@ void CFrameBuffer::blitRGBtoFB(int pan_x, int pan_y, int original_width, int ori
 
 void CFrameBuffer::resize(int format)
 {
-	char *aVideoSystems[][2] = {
+	const char *aVideoSystems[][2] = {
 	{"VIDEO_STD_NTSC", "pal"},
 	{"VIDEO_STD_SECAM", "pal"},
 	{"VIDEO_STD_PAL", "pal"},

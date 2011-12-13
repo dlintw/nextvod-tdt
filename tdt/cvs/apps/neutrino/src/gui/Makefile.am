@@ -11,8 +11,7 @@ INCLUDES = \
 	-I$(top_srcdir)/lib/libnet \
 	-I$(top_srcdir)/lib/libconfigfile \
 	-I$(top_srcdir)/lib/xmltree \
-	-I$(top_srcdir)/../misc/tools/libcoolstream \
-	-I$(top_srcdir)/../misc/tools \
+	-I$(top_srcdir)/lib/libcoolstream \
 	-I$(top_srcdir)/lib/libupnpclient \
 	@CURL_CFLAGS@ \
 	@FREETYPE_CFLAGS@ \

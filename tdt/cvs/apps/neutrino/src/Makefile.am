@@ -12,14 +12,14 @@ INCLUDES = \
 	-I$(top_srcdir)/lib/libnet \
 	-I$(top_srcdir)/lib/xmltree \
 	-I$(top_srcdir)/lib/libmd5sum \
-	-I$(top_srcdir)/lib/libcoolstream \
 	-I$(top_srcdir)/lib/libupnpclient \
-	@FREETYPE_CFLAGS@ \
-	@LIBCS_CFLAGS@ \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/../misc/tools/libcoolstream \
 	-I$(top_srcdir)/../../driver/bpamem/ \
-	-I$(top_srcdir)/../misc/tools 
+	@FREETYPE_CFLAGS@ \
+	@LIBCS_CFLAGS@
+
+
+INCLUDES += -I$(top_srcdir)/lib/libcoolstream \
+			-I$(top_srcdir)/../misc/tools/libeplayer3/include
 
 bin_PROGRAMS = neutrino
 
@@ -34,13 +34,12 @@ neutrino_LDADD = \
 	gui/widget/libneutrino_gui_widget2.a \
 	driver/pictureviewer/libneutrino_pictureviewer.a \
 	system/libneutrino_system.a \
-	-lcoolstream \
-	driver/libneutrino_driver.a \
 	gui/movieinfo.o \
-	driver/audiodec/libneutrino_driver_audiodec.a \
-	driver/libneutrino_driver_netfile.a \
 	gui/libneutrino_gui2.a \
 	sectionsd/libsectionsd.a \
+	driver/libneutrino_driver.a \
+	driver/audiodec/libneutrino_driver_audiodec.a \
+	driver/libneutrino_driver_netfile.a \
 	timerd/libtimerd.a \
 	zapit/src/libzapit.a \
 	nhttpd/libnhttpd.a \
@@ -57,6 +56,7 @@ neutrino_LDADD = \
 	$(top_builddir)/lib/xmltree/libtuxbox-xmltree.a \
 	$(top_builddir)/lib/libnet/libtuxbox-net.a \
 	$(top_builddir)/lib/libmd5sum/libtuxbox-md5sum.a \
+	$(top_builddir)/lib/libtuxtxt/libtuxtxt.a \
 	$(top_builddir)/lib/libdvbsub/libdvbsub.a \
 	$(top_builddir)/lib/libupnpclient/libtuxbox-upnpclient.a \
 	@CURL_LIBS@ \
@@ -68,10 +68,8 @@ neutrino_LDADD = \
 	-lgif \
 	-ljpeg \
 	-leplayer3 \
-    $(top_builddir)/lib/libtuxtxt/libtuxtxt.a \
 	-lrt -lpthread -lmmeimage -ldl
-	
-#	@AVFORMAT_LIBS@
-#	@AVUTIL_LIBS@
-#	-lvorbisfile -lvorbis -logg
-# 	-lnxp
+
+neutrino_LDADD += \
+	$(top_srcdir)/lib/libcoolstream/libcoolstream.a \
+	-lavformat -lavcodec -lavutil -lass

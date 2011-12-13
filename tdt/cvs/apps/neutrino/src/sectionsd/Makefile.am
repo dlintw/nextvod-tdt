@@ -4,7 +4,7 @@ INCLUDES = \
 	-I$(top_srcdir)/lib/libconfigfile \
 	-I$(top_srcdir)/lib/connection \
 	-I$(top_srcdir)/lib/libeventserver \
-	-I$(top_srcdir)/../misc/tools/libcoolstream \
+	-I$(top_srcdir)/lib/libcoolstream \
 	-I$(top_srcdir)/lib/xmltree
 
 AM_CPPFLAGS = -D DO_NOT_INCLUDE_STUFF_NOT_NEEDED_FOR_SECTIONSD

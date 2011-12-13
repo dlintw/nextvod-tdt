@@ -6,21 +6,16 @@ INCLUDES = \
 	-I$(top_srcdir)/daemons \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/zapit/include \
-	-I$(top_srcdir)/lib/libeventserver \
 	-I$(top_srcdir)/lib/libnet \
 	-I$(top_srcdir)/lib/libconfigfile \
-	-I$(top_srcdir)/../misc/tools/libcoolstream \
 	-I$(top_srcdir)/lib/connection \
 	-I$(top_srcdir)/lib/libeventserver \
 	@FREETYPE_CFLAGS@ \
-	-I$(top_srcdir)/lib \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/../../driver/bpamem
+	-I$(top_srcdir)/lib
 
 noinst_LIBRARIES = libneutrino_driver.a libneutrino_driver_netfile.a
 
 libneutrino_driver_a_SOURCES = \
-	ringbuffer.c \
 	encoding.cpp \
 	fontrenderer.cpp \
 	framebuffer.cpp \
@@ -38,7 +33,13 @@ libneutrino_driver_a_SOURCES = \
 	shutdown_count.cpp \
 	genpsi.c \
 	streamts.cpp \
-	rfmod.cpp
+	rfmod.cpp \
+	ringbuffer.c
+
+INCLUDES += \
+	-I$(top_srcdir)/../misc/tools/libeplayer3/include \
+	-I$(top_srcdir)/../../driver/bpamem \
+	-I$(top_srcdir)/lib/libcoolstream
 
 libneutrino_driver_netfile_a_SOURCES = netfile.cpp
 
