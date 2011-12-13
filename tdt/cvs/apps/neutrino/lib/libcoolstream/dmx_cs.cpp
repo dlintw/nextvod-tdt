@@ -16,7 +16,7 @@ static const char * FILENAME = "dmx_cs.cpp";
 
 cDemux *videoDemux = NULL;
 cDemux *audioDemux = NULL;
-cDemux *pcrDemux = NULL;
+//cDemux *pcrDemux = NULL;
 
 //EVIL END
 

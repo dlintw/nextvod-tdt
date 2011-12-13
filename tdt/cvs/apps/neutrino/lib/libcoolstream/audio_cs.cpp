@@ -265,7 +265,7 @@ bool cAudio::Resume(bool Pcm)
 
 void cAudio::SetStreamType(AUDIO_FORMAT type)
 {
-	char *aAUDIOFORMAT[] = {
+	const char *aAUDIOFORMAT[] = {
 		"AUDIO_FMT_AUTO",
 		"AUDIO_FMT_MPEG",
 		"AUDIO_FMT_MP3",

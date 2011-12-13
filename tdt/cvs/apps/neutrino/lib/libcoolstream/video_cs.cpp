@@ -468,16 +468,11 @@ void cVideo::Standby(unsigned int bOn)
 	int fd_avs = open("/proc/stb/avs/0/standby", O_RDWR);
 	int fd_hdmi  = open("/dev/fb0",   O_RDWR);
 
-#if defined(PLAYER179) || defined(PLAYER191)
 	struct stmfbio_output_configuration outputConfig = {STMFBIO_OUTPUTID_MAIN};
-#elif defined(PLAYER131)
-	struct stmfbio_output_configuration outputConfig = {0};
-	outputConfig.outputid = 1;
-#endif
 
 	if(ioctl(fd_hdmi, STMFBIO_GET_OUTPUT_CONFIG, &outputConfig)<0)
 		printf("Getting current output configuration failed\n");
-  
+
 	outputConfig.caps = 0;
 	outputConfig.activate = STMFBIO_ACTIVATE_IMMEDIATE;
 	outputConfig.analogue_config = 0;
