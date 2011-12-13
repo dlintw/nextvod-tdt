@@ -3,6 +3,7 @@
 #include "pictureviewer.h"
 #include "config.h"
 #include "fb_display.h"
+#include "pv_config.h"
 #include "driver/framebuffer.h"
 
 
