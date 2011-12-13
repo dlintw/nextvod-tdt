@@ -67,6 +67,7 @@ AC_OUTPUT([
 Makefile
 lib/Makefile
 lib/libconfigfile/Makefile
+lib/libcoolstream/Makefile
 lib/connection/Makefile
 lib/libeventserver/Makefile
 lib/libmd5sum/Makefile

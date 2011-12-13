@@ -5,6 +5,7 @@ SUBDIRS = \
 	sectionsdclient \
 	timerdclient \
 	libconfigfile \
+	libcoolstream \
 	libmd5sum \
 	libnet \
 	xmltree \
