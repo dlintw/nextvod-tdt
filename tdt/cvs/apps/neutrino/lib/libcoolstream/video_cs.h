@@ -3,7 +3,7 @@
 
 #include <sys/types.h>
 
-#include <coolstream/control.h>
+#include "control.h"
 #include <../../../neutrino/src/driver/vfd.h>
 
 #include "cs_types.h"

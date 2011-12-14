@@ -41,15 +41,11 @@
 #include <signal.h>
 #include "libnet.h"
 
-#include <coolstream/control.h>
-
 #include <config.h>
 
 #include <global.h>
 #include <neutrino.h>
 #include <gui/widget/stringinput.h>
-
-// obsolete #include <gui/streaminfo.h>
 
 #include <gui/widget/messagebox.h>
 #include <gui/widget/hintbox.h>
