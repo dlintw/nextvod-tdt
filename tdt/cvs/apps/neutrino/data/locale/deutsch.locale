@@ -323,7 +323,7 @@ extra.zapit_backup Sichere Kanalliste nach /tmp
 extra.zapit_fast_zap schnelles Zapping
 extra.zapit_fe_timeout Tuning Zeitüberschreitung (1 = 10ms)
 extra.zapit_hvoltage High (13.5/18.5) Voltage
-extra.zapit_make_bouquet Mache restliche Kanalliste
+extra.zapit_make_bouquet Bouquet "Andere" erstellen
 extra.zapit_menu Zapit Optionen
 extra.zapit_motor_speed Rotor Geschwindigkeit (10 = 1deg/sec)
 extra.zapit_restore Stelle Kanalliste wieder von /tmp wieder her
