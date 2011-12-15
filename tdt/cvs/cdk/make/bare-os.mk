@@ -11,7 +11,7 @@ $(DEPDIR)/filesystem: \
 $(DEPDIR)/%filesystem: bootstrap-cross
 	$(INSTALL) -d $(targetprefix)/{bin,boot,dev,dev.static,etc,home,lib,mnt,opt,proc,root,sbin,sys,tmp,usr,var}
 	$(INSTALL) -d $(targetprefix)/etc/{default,opt}
-	$(INSTALL) -d $(targetprefix)/usr/{bin,include,lib,local,sbin,share,src,X11}
+	$(INSTALL) -d $(targetprefix)/usr/{bin,include,lib,local,sbin,share,src}
 	$(INSTALL) -d $(targetprefix)/usr/lib/X11
 	$(INSTALL) -d $(targetprefix)/usr/local/{bin,include,lib,man,sbin,share,src}
 	$(INSTALL) -d $(targetprefix)/usr/local/man/{man1,man2,man3,man4,man5,man6,man7,man8}
@@ -140,8 +140,8 @@ $(GMP_RPM): \
 
 $(DEPDIR)/$(GMP): $(GMP_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
-	$(REWRITE_LIBDEP)/libgmp.la
-	$(REWRITE_LIBDIR)/libgmp.la
+	sed -i "/^libdir/s|'/usr/lib'|'$(targetprefix)/usr/lib'|" $(targetprefix)/usr/lib/libgmp.la
+	sed -i "/^dependency_libs/s|-L/usr/lib -L/lib ||" $(targetprefix)/usr/lib/libgmp.la
 	touch $@
 endif !STM22
 
@@ -178,8 +178,8 @@ $(MPFR_RPM): \
 
 $(DEPDIR)/$(MPFR): $(MPFR_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
-	$(REWRITE_LIBDEP)/libmpfr.la
-	$(REWRITE_LIBDIR)/libmpfr.la
+	sed -i "/^libdir/s|'/usr/lib'|'$(targetprefix)/usr/lib'|" $(targetprefix)/usr/lib/libmpfr.la
+	sed -i "/^dependency_libs/s|-L/usr/lib -L/lib ||" $(targetprefix)/usr/lib/libmpfr.la
 	touch .deps/$(notdir $@)
 endif !STM22
 
@@ -206,8 +206,8 @@ $(MPC_RPM): \
 
 $(DEPDIR)/$(MPC): $(MPC_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
-	$(REWRITE_LIBDEP)/libmpc.la
-	$(REWRITE_LIBDIR)/libmpc.la
+	sed -i "/^libdir/s|'/usr/lib'|'$(targetprefix)/usr/lib'|" $(targetprefix)/usr/lib/libmpc.la
+	sed -i "/^dependency_libs/s|-L/usr/lib -L/lib ||" $(targetprefix)/usr/lib/libmpc.la
 	touch $@
 endif STM24
 
@@ -233,7 +233,6 @@ $(LIBELF_RPM): \
 
 $(DEPDIR)/$(LIBELF): $(LIBELF_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libelf.pc
 	touch $@
 endif STM24
 
@@ -297,8 +296,8 @@ $(DEPDIR)/%$(LIBSTDC_DEV): $(DEPDIR)/%$(LIBSTDC) $(LIBSTDC_DEV_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
-	$(REWRITE_LIBDEP)/lib{std,sup}c++.la
-	$(REWRITE_LIBDIR)/lib{std,sup}c++.la
+	sed -i "/^libdir/s|'/usr/lib'|'$(targetprefix)/usr/lib'|" $(targetprefix)/usr/lib/lib{std,sup}c++.la
+	sed -i "/^dependency_libs/s|-L/usr/lib -L/lib ||" $(targetprefix)/usr/lib/lib{std,sup}c++.la
 
 $(DEPDIR)/min-$(LIBGCC) $(DEPDIR)/std-$(LIBGCC) $(DEPDIR)/max-$(LIBGCC) $(DEPDIR)/$(LIBGCC): \
 $(DEPDIR)/%$(LIBGCC): $(LIBGCC_RPM)
