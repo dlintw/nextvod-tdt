@@ -209,22 +209,17 @@ GST_STATIC_PAD_TEMPLATE ( \
 	GST_PAD_SINK, \
 	GST_PAD_ALWAYS, \
 	GST_STATIC_CAPS ( \
-		"video/mpeg, " \
-		"mpegversion = (int) { 1, 2, 4 }, " \
-		"systemstream = (boolean) false, " \
-	COMMON_VIDEO_CAPS "; " \
-		"video/x-h264, " \
-	COMMON_VIDEO_CAPS "; " \
-		"video/x-h263, " \
-	COMMON_VIDEO_CAPS "; " \
-		"video/x-msmpeg, " \
-	MPEG4V2_LIMITED_CAPS ", mspegversion = (int) 43; " \
+		"  video/mpeg, " \
+		"  mpegversion = (int) { 1, 2, 4 }, " \
+		"  systemstream = (boolean) false; " \
+		\
+		"video/x-h263; " \
+		"video/x-h264; " \
+		\
 		"video/x-divx, " \
-	MPEG4V2_LIMITED_CAPS ", divxversion = (int) [ 3, 5 ]; " \
-		"video/x-xvid, " \
-	MPEG4V2_LIMITED_CAPS "; " \
-		"video/x-3ivx, " \
-	MPEG4V2_LIMITED_CAPS "; ") \
+		"  divxversion = (int) { 3, 4, 5 }; " \
+		"video/x-xvid; " \
+		"video/x-3ivx; ") \
 )
 
 #define SINK_FACTORY_STM_BASE_EXTENDED \
@@ -233,24 +228,24 @@ GST_STATIC_PAD_TEMPLATE ( \
 	GST_PAD_SINK, \
 	GST_PAD_ALWAYS, \
 	GST_STATIC_CAPS ( \
-		"video/mpeg, " \
-		"mpegversion = (int) { 1, 2, 4 }, " \
-		"systemstream = (boolean) false, " \
-	COMMON_VIDEO_CAPS "; " \
-		"video/x-h264, " \
-	COMMON_VIDEO_CAPS "; " \
-		"video/x-h263, " \
-	COMMON_VIDEO_CAPS "; " \
-		"video/x-msmpeg, " \
-	MPEG4V2_LIMITED_CAPS ", mspegversion = (int) 43; " \
+		"  video/mpeg, " \
+		"  mpegversion = (int) { 1, 2, 4 }, " \
+		"  systemstream = (boolean) false; " \
+		\
+		"video/x-h263; " \
+		"video/x-h264; " \
+		\
 		"video/x-divx, " \
-	MPEG4V2_LIMITED_CAPS ", divxversion = (int) [ 3, 5 ]; " \
-		"video/x-xvid, " \
-	COMMON_VIDEO_CAPS "; " \
-		"video/x-3ivx, " \
-	MPEG4V2_LIMITED_CAPS "; " \
+		"  divxversion = (int) { 3, 4, 5 }; " \
+		"video/x-xvid; " \
+		"video/x-3ivx; " \
+		\
 		"video/x-wmv, " \
-	COMMON_VIDEO_CAPS "; ") \
+		"  wmvversion = (int) {1, 2, 3}; " \
+		\
+		"video/x-wmv, " \
+		"  wmvversion = (int) 3, " \
+		"  format = (fourcc) WVC1; ") \
 )
 
 //TODO: All but 7100 and 7101 have wmv and vc1 capability. Need to add it
@@ -1058,9 +1053,12 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 	if (self->fd < 0)
 		return GST_FLOW_OK;
 
+	//printf("T: %lld\n", timestamp);
+
 	unsigned char start_code = MPEG_VIDEO_PES_START_CODE;
 	unsigned int pic_start_code = 0;
 	unsigned int insertVideoPrivateDataHeader = 0;
+
 	if (self->streamtype == STREAMTYPE_WMV) {
 		insertVideoPrivateDataHeader = 1;
 		start_code = VC1_VIDEO_PES_START_CODE;
@@ -1092,7 +1090,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 			
 			pes_header_size_initial = buildPesHeader(pes_header_initial, self->initial_header_private_data_size, GST_CLOCK_TIME_NONE, start_code, 0, 0);
 
-#if 1
+#if 0
 			printf("-->\n");
 			Hexdump(pes_header_initial, pes_header_size_initial);
 			Hexdump(self->initial_header_private_data, self->initial_header_private_data_size);
@@ -1125,7 +1123,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 
 			pes_header_size_initial = buildPesHeader(pes_header_initial, codec_data_len, GST_CLOCK_TIME_NONE, start_code, 0, 0);
 
-#if 1
+#if 0
 			printf("-->\n");
 			Hexdump(pes_header_initial, pes_header_size_initial);
 			Hexdump(GST_BUFFER_DATA (self->codec_data), codec_data_len);
@@ -1230,7 +1228,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 
 		insertVideoPrivateDataHeader = 0;
 
-#if 1
+#if 0
 		printf("--> %d\n", self->runtime_header_data_size);
 		Hexdump(pes_header, pes_header_size);
 		if (self->runtime_header_data_size > 0)
@@ -1517,11 +1515,17 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			self->runtime_header_data[11] = (sttc >> 8) & 0xFF;
 			self->runtime_header_data[12] =  sttc & 0xFF;
 
-			gint rate, rate_nu = -1, rate_de = -1;
+			guint rate, rate_nu = 0, rate_de = 0;
 			gst_structure_get_fraction (structure, "framerate", &rate_nu, &rate_de);
-			rate = rate_de / 10;
+
+			if (rate_nu != 0)
+				rate = (1000000 * rate_de) / rate_nu;
+			else 
+				rate = 0;
+
+			//rate = rate_de / 10;
 			
-			printf("\nRate: %d -> %d\n", rate_de, rate);
+			printf("\nRate: %d %d -> %u\n", rate_nu, rate_de, rate);
 			self->runtime_header_data[13] = (rate >> 24) & 0xFF;
 			self->runtime_header_data[14] = (rate >> 16) & 0xFF;
 			self->runtime_header_data[15] = (rate >> 8) & 0xFF;
