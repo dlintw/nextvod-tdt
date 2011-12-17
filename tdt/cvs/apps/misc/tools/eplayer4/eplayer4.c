@@ -29,29 +29,31 @@
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
 
+
 int kbhit(void) {
-        struct timeval tv;
-        fd_set read_fd;
+    struct timeval tv;
+    fd_set read_fd;
 
-        tv.tv_sec=1;
-        tv.tv_usec=0;
+    tv.tv_sec=1;
+    tv.tv_usec=0;
 
-        FD_ZERO(&read_fd);
-        FD_SET(0,&read_fd);
+    FD_ZERO(&read_fd);
+    FD_SET(0,&read_fd);
 
-        if(select(1, &read_fd, NULL, NULL, &tv) == -1)
-                return 0;
+    if(select(1, &read_fd, NULL, NULL, &tv) == -1)
+            return 0;
 
-        if(FD_ISSET(0,&read_fd))
-                return 1;
+    if(FD_ISSET(0,&read_fd))
+            return 1;
 
-        return 0;
+    return 0;
 }
 
 int main(int argc,char* argv[]) {
     int showInfos = 0, noinput = 0;
     char file[255] = {""};
-    int speed = 0, speedmap = 0;
+    int speedmap = 0;
+    gdouble speed = 1.0;
     printf("%s >\n", __FILE__);
 
     if (argc < 2)
@@ -62,39 +64,38 @@ int main(int argc,char* argv[]) {
 
     strcat(file, argv[1]);
 
-printf ("File=%s\n", file);
+    printf ("File=%s\n", file);
 
-gst_init(&argc, &argv);
+    gst_init(&argc, &argv);
 
-GstElement *m_gst_playbin;
-gchar *uri;
-uri = g_filename_to_uri(file, NULL, NULL);
+    GstElement *m_gst_playbin;
+    gchar *uri;
+    uri = g_filename_to_uri(file, NULL, NULL);
 
-m_gst_playbin = gst_element_factory_make("playbin2", "playbin");
+    m_gst_playbin = gst_element_factory_make("playbin2", "playbin");
 
-printf ("URI=%s\n", uri);
+    printf ("URI=%s\n", uri);
 
-g_object_set (G_OBJECT (m_gst_playbin), "uri", uri, NULL);
-int flags = 0x47; // ( GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_TEXT );
-g_object_set (G_OBJECT (m_gst_playbin), "flags", flags, NULL);
-g_free(uri);
+    g_object_set (G_OBJECT (m_gst_playbin), "uri", uri, NULL);
+    int flags = 0x47; // ( GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_TEXT );
+    g_object_set (G_OBJECT (m_gst_playbin), "flags", flags, NULL);
+    g_free(uri);
 
-//GstElement *subsink = gst_element_factory_make("appsink", "subtitle_sink");
+    //GstElement *subsink = gst_element_factory_make("appsink", "subtitle_sink");
 
-//gst_bus_set_sync_handler(gst_pipeline_get_bus (GST_PIPELINE (m_gst_playbin)), gstBusSyncHandler, this);
+    //gst_bus_set_sync_handler(gst_pipeline_get_bus (GST_PIPELINE (m_gst_playbin)), gstBusSyncHandler, this);
 
-
+    gst_element_set_state (m_gst_playbin, GST_STATE_PLAYING);
 
         while(1) {
-        		int Key = 0;
+            int Key = 0;
 
-	    			if(kbhit())
-	    				if(noinput == 0)
-            		Key = getchar();
+            if(kbhit())
+                if(noinput == 0)
+            Key = getchar();
             
-           
             if(Key == 0 || Key == 0xA)
-							continue;
+                continue;
             
             switch (Key) {
             case 'q': //STOP
@@ -103,6 +104,13 @@ g_free(uri);
 
             case 'c': //CONTINUE
                 gst_element_set_state (m_gst_playbin, GST_STATE_PLAYING);
+                
+                speed = 1.0;
+                printf("Continue with speed %f\n", speed);
+                gst_element_seek (m_gst_playbin, speed, GST_FORMAT_TIME, GST_SEEK_FLAG_NONE, 
+                    GST_SEEK_TYPE_NONE, 0, 
+                    GST_SEEK_TYPE_NONE, -1);
+                
                 break;
 
             case 'p': //PAUSE
@@ -112,7 +120,6 @@ g_free(uri);
             case 'k': {
                 int Key2 = getchar() - 48;
                 double sec=0.0;
-				
 
                 switch (Key2) {
                     case 1: sec=-15.0;break;
@@ -125,40 +132,76 @@ g_free(uri);
 
                 printf("seconds %d \n", Key2);
                 gint64 time_nanoseconds;
-				gint64 pos;
-				GstFormat fmt = GST_FORMAT_TIME;
-				gst_element_query_position(m_gst_playbin, &fmt, &pos);
+                gint64 pos;
+                GstFormat fmt = GST_FORMAT_TIME;
+                gst_element_query_position(m_gst_playbin, &fmt, &pos);
 
-				time_nanoseconds = pos + (sec * 1000000000);
-				if (time_nanoseconds < 0) time_nanoseconds = 0;
+                time_nanoseconds = pos + (sec * 1000000000);
+                if (time_nanoseconds < 0) time_nanoseconds = 0;
 
 
                 double seekTo = 0;
-				seekTo = time_nanoseconds / 1000000000.0;
+                seekTo = time_nanoseconds / 1000000000.0;
                 printf("SeekTo = %02d:%02d:%02d (%.4f sec)\n", (int)((seekTo/60)/60)%60, (int)(seekTo/60)%60, (int)seekTo%60, seekTo);
 
-				gst_element_seek (m_gst_playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-					GST_SEEK_TYPE_SET, time_nanoseconds,
-					GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE);
+                gst_element_seek (m_gst_playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
+                    GST_SEEK_TYPE_SET, time_nanoseconds,
+                    GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE);
                 break;
             }
 
             case 'l': {
                 double length = 0;
-				GstFormat fmt = GST_FORMAT_TIME; //Returns time in nanosecs
-				gint64 len;
+                GstFormat fmt = GST_FORMAT_TIME; //Returns time in nanosecs
+                gint64 len;
                 gst_element_query_duration(m_gst_playbin, &fmt, &len);
-				length = len / 1000000000.0;
+                length = len / 1000000000.0;
                 printf("Length = %02d:%02d:%02d (%.4f sec)\n", (int)((length/60)/60)%60, (int)(length/60)%60, (int)length%60, length);
                 break;
             }
             case 'j': {
                 double sec = 0;
-				GstFormat fmt = GST_FORMAT_TIME; //Returns time in nanosecs
-				gint64 pos;
+                GstFormat fmt = GST_FORMAT_TIME; //Returns time in nanosecs
+                gint64 pos;
                 gst_element_query_position(m_gst_playbin, &fmt, &pos);
                 sec = pos / 1000000000.0;
                 printf("Pts = %02d:%02d:%02d (%.4f sec)\n", (int)((sec/60)/60)%60, (int)(sec/60)%60, (int)sec%60, sec);
+                break;
+            }
+
+            case 'f':
+            {
+                if (speed < 1.0)
+                    speed = 1.0;
+                    
+                speed++;
+
+                if (speed > 4.0)
+                    speed = 1.0;
+                
+                printf("FastForward with speed %f\n", speed);
+                gst_element_seek (m_gst_playbin, speed, GST_FORMAT_TIME, GST_SEEK_FLAG_NONE, 
+                    GST_SEEK_TYPE_NONE, 0, 
+                    GST_SEEK_TYPE_NONE, -1);
+                
+                break;
+            }
+
+             case 'b':
+            {
+                if (speed >= 1.0)
+                    speed = 0.0;
+                   
+                speed--;
+                   
+                if (speed < -4.0)
+                    speed = -1.0;
+                
+                printf("Reverse with speed %f\n", speed);
+                gst_element_seek (m_gst_playbin, speed, GST_FORMAT_TIME, GST_SEEK_FLAG_NONE, 
+                    GST_SEEK_TYPE_NONE, 0, 
+                    GST_SEEK_TYPE_NONE, -1);
+                
                 break;
             }
 
@@ -166,7 +209,9 @@ g_free(uri);
             {
                 break;
             }
-            default: {
+
+            default:
+            {
                 printf("Control: %x\n", Key);
                 printf("al:       List audio tracks\n");
                 printf("ac:       List current audio track\n");
