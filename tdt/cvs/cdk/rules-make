@@ -141,7 +141,7 @@ libflac;1.2.1;flac-1.2.1;flac-1.2.1.tar.gz:flac-1.2.1.patch;extract:flac-1.2.1.t
 
 gstreamer;0.10.34;gstreamer-0.10.34;gstreamer-0.10.34.tar.bz2;extract:gstreamer-0.10.34.tar.bz2
 gst_plugins_base;0.10.34;gst-plugins-base-0.10.34;gst-plugins-base-0.10.34.tar.bz2;extract:gst-plugins-base-0.10.34.tar.bz2
-gst_plugins_good;0.10.29;gst-plugins-good-0.10.29;gst-plugins-good-0.10.29.tar.bz2;extract:gst-plugins-good-0.10.29.tar.bz2
+gst_plugins_good;0.10.29;gst-plugins-good-0.10.29;gst-plugins-good-0.10.29.tar.bz2;extract:gst-plugins-good-0.10.29.tar.bz2;patch:gst-plugins-good-0.10.29_avidemux_only_send_pts_on_keyframe.patch
 gst_plugins_bad;0.10.21;gst-plugins-bad-0.10.21;gst-plugins-bad-0.10.21.tar.bz2;extract:gst-plugins-bad-0.10.21.tar.bz2
 gst_plugins_ugly;0.10.17;gst-plugins-ugly-0.10.17;gst-plugins-ugly-0.10.17.tar.bz2;extract:gst-plugins-ugly-0.10.17.tar.bz2
 gst_ffmpeg;0.10.11;gst-ffmpeg-0.10.11;gst-ffmpeg-0.10.11.tar.bz2;extract:gst-ffmpeg-0.10.11.tar.bz2;patch:gst-ffmpeg-0.10.12_lower_rank.patch
