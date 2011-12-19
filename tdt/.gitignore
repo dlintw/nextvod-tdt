@@ -47,7 +47,6 @@ cvs/apps/misc/tools/gitVCInfo/gitVCInfo
 cvs/apps/misc/tools/hotplug/Makefile
 cvs/apps/misc/tools/hotplug/hotplug
 cvs/apps/misc/tools/install-sh
-cvs/apps/misc/tools/libcoolstream/Makefile
 cvs/apps/misc/tools/libdreamdvd/Makefile
 cvs/apps/misc/tools/libdreamdvd/libdreamdvd.pc
 cvs/apps/misc/tools/libeplayer2/Makefile
@@ -82,6 +81,7 @@ cvs/apps/neutrino/lib/Makefile
 cvs/apps/neutrino/lib/connection/Makefile
 cvs/apps/neutrino/lib/controldclient/Makefile
 cvs/apps/neutrino/lib/libconfigfile/Makefile
+cvs/apps/neutrino/lib/libcoolstream/Makefile
 cvs/apps/neutrino/lib/libdvbsub/Makefile
 cvs/apps/neutrino/lib/libeventserver/Makefile
 cvs/apps/neutrino/lib/libmd5sum/Makefile
@@ -128,7 +128,6 @@ cvs/apps/misc/tools/libmme_host/Makefile
 cvs/apps/misc/tools/libmmeimage/Makefile
 cvs/apps/misc/tools/vfdctl/Makefile
 cvs/apps/misc/tools/vfdctl/vfdctl
-
 
 cvs/cdk/Makefile
 cvs/cdk/Makefile-archive
@@ -193,4 +192,3 @@ cvs/driver/include/stmfb
 cvs/driver/multicom
 cvs/driver/player2
 cvs/driver/stgfb/stmfb
-
