@@ -15,7 +15,6 @@ python-*
 readline-*
 setuptools-*
 zope.interface-*
-busybox-*
 e2fsprogs-*
 sqlite-3.6.0
 boost_*
