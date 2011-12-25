@@ -337,9 +337,8 @@ else
 if ENABLE_ADB_BOX
 	echo "Adb_Box" > $(prefix)/$(release_dir)/etc/hostname
 	rm -f $(prefix)/$(release_dir)/sbin/halt
-	cp $(buildprefix)/root/release/halt_adb_box $(prefix)/$(release_dir)/etc/init.d/halt
-	chmod 777 $(prefix)/$(release_dir)/etc/init.d/halt
-	cp -f $(targetprefix)/sbin/halt $(prefix)/$(release_dir)/sbin/
+	cp -f $(targetprefix)/sbin/halt $(prefix)/$(release_dir)/etc/init.d/halt
+	cp -f $(targetprefix)/sbin/shutdown $(prefix)/$(release_dir)/sbin/
 	cp $(buildprefix)/root/release/umountfs $(prefix)/$(release_dir)/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/$(release_dir)/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/$(release_dir)/etc/init.d/
@@ -365,6 +364,15 @@ if ENABLE_ADB_BOX
 	cp -f $(buildprefix)/root/release/fstab_adb_box $(prefix)/$(release_dir)/etc/fstab
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/$(release_dir)/boot/video.elf
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/adb_box_fan/cooler.ko $(prefix)/$(release_dir)/lib/modules/
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/$(release_dir)/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/$(release_dir)/etc/
+if STM23
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/$(release_dir)/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/$(release_dir)/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/$(release_dir)/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/$(release_dir)/lib/modules
+endif
 
 	rm -f $(prefix)/$(release_dir)/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/$(release_dir)/lib/firmware/dvb-fe-stv6306.fw
@@ -372,19 +380,6 @@ if ENABLE_ADB_BOX
 	rm -f $(prefix)/$(release_dir)/bin/evremote
 	rm -f $(prefix)/$(release_dir)/bin/gotosleep
 
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/$(release_dir)/lib/modules/ftdi.ko
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/$(release_dir)/lib/modules
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/$(release_dir)/lib/modules
-	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/$(release_dir)/lib/modules
-
-#	install autofs
-	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/$(release_dir)/usr/sbin/
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko $(prefix)/$(release_dir)/lib/modules
-	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/$(release_dir)/etc/
-	echo 'sda    -fstype=auto,noatime,nodiratime          :/dev/sda' >> $(prefix)/$(release_dir)/etc/auto.usb
-	echo 'sda1   -fstype=auto,noatime,nodiratime          :/dev/sda1' >> $(prefix)/$(release_dir)/etc/auto.usb
-	echo 'sda2   -fstype=auto,noatime,nodiratime          :/dev/sda2' >> $(prefix)/$(release_dir)/etc/auto.usb
-	echo 'sda3   -fstype=auto,noatime,nodiratime          :/dev/sda3' >> $(prefix)/$(release_dir)/etc/auto.usb
 else
 if ENABLE_VIP1_V2
 	echo "Edision" > $(prefix)/$(release_dir)/etc/hostname
