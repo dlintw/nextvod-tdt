@@ -81,15 +81,15 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
  
  AM_CXXFLAGS = \
  	$(LIBSDL_CFLAGS)
-@@ -51,7 +52,7 @@
- 	@LIBXMLCCWRAP_LIBS@ \
- 	@PTHREAD_LIBS@ \
- 	@PYTHON_LDFLAGS@ \
--	-ldl -lpthread -lcrypt -lresolv -lrt -lmmeimage -leplayer3
-+	-ldl -lpthread -lcrypt -lresolv -lrt -lmmeimage -leplayer3 -lglcddrivers -lglcdgraphics -lglcdskin
+@@ -55,6 +55,8 @@
  
  enigma2_LDFLAGS = -Wl,--export-dynamic
  
++enigma2_LDADD += -lglcddrivers -lglcdgraphics -lglcdskin
++ 
+ if HAVE_GIT_DIR
+ GIT_DIR = $(top_srcdir)/.git
+ GIT = git --git-dir=$(GIT_DIR)
 --- enigma2-nightly/main/enigma.cpp	2011-12-11 15:18:31.286513516 +0100
 +++ enigma2-nightly.patched/main/enigma.cpp	2011-12-11 15:19:36.656544176 +0100
 @@ -182,7 +182,12 @@

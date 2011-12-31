@@ -1,7 +1,7 @@
 diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/configure.ac enigma2-nightly.patched/configure.ac
 --- enigma2-nightly.org/configure.ac	2011-09-03 18:23:23.590021783 +0200
 +++ enigma2-nightly.patched/configure.ac	2011-09-03 18:23:47.060032502 +0200
-@@ -33,6 +34,26 @@
+@@ -34,6 +34,26 @@
  PKG_CHECK_MODULES(LIBDDVD, libdreamdvd, HAVE_LIBDDVD="yes", HAVE_LIBDDVD="no")
  AM_CONDITIONAL(HAVE_LIBDDVD, test "$HAVE_LIBDDVD" = "yes")
  
@@ -7501,7 +7501,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/RecordTimer.py
  void evfd::vfd_clear_string()
  {
  	vfd_write_string("                ");
-@@ -374,3 +487,13 @@
+@@ -374,3 +510,13 @@
  	close (file_vfd);
  	return;
  }
