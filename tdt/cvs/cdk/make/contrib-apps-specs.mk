@@ -45,7 +45,7 @@ INITSCRIPTS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(INITSCRIPTS)-$(SYSVINIT_VERSION).sh
 $(SYSVINIT_RPM) $(INITSCRIPTS_RPM): \
 		$(if $(SYSVINIT_SPEC_PATCH),Patches/$(SYSVINIT_SPEC_PATCH)) \
 		$(if $(SYSVINIT_PATCHES),$(SYSVINIT_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(SYSVINIT)-$(SYSVINIT_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(SYSVINIT)-$(SYSVINIT_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(SYSVINIT_SPEC_PATCH),( cd SPECS && patch -p1 $(SYSVINIT_SPEC) < ../Patches/$(SYSVINIT_SPEC_PATCH) ) &&) \
 	$(if $(SYSVINIT_PATCHES),cp $(SYSVINIT_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -175,7 +175,7 @@ NETBASE_RPM := RPMS/sh4/$(STLINUX)-sh4-$(NETBASE)-$(NETBASE_VERSION).sh4.rpm
 $(NETBASE_RPM): \
 		$(if $(NETBASE_SPEC_PATCH),Patches/$(NETBASE_SPEC_PATCH)) \
 		$(if $(NETBASE_PATCHES),$(NETBASE_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(NETBASE)-$(NETBASE_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(NETBASE)-$(NETBASE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $< && \
 	$(if $(NETBASE_SPEC_PATCH),( cd SPECS && patch -p1 $(NETBASE_SPEC) < ../Patches/$(NETBASE_PATCH) ) &&) \
 	$(if $(NETBASE_PATCHES),cp $(NETBASE_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -254,7 +254,7 @@ BC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BC)-$(BC_VERSION).sh4.rpm
 $(BC_RPM): \
 		$(if $(BC_SPEC_PATCH),Patches/$(BC_SPEC_PATCH)) \
 		$(if $(BC_PATCHES),$(BC_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(BC)-$(BC_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(BC)-$(BC_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(BC_SPEC_PATCH),( cd SPECS && patch -p1 $(BC_SPEC) < ../Patches/$(BC_PATCH) ) &&) \
 	$(if $(BC_PATCHES),cp $(BC_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -309,7 +309,7 @@ $(FINDUTILS_RPM): \
 		$(if $(FINDUTILS_SPEC_PATCH),Patches/$(FINDUTILS_SPEC_PATCH)) \
 		$(if $(FINDUTILS_PATCHES),$(FINDUTILS_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/$(STLINUX)-target-$(FINDUTILS)-$(FINDUTILS_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(FINDUTILS)-$(FINDUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(FINDUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(FINDUTILS_SPEC) < ../Patches/$(FINDUTILS_PATCH) ) &&) \
 	$(if $(FINDUTILS_PATCHES),cp $(FINDUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -363,7 +363,7 @@ DISTRIBUTIONUTILS_DOC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(DISTRIBUTIONUTILS_DOC)-$(
 $(DISTRIBUTIONUTILS_RPM) $(DISTRIBUTIONUTILS_DOC_RPM): \
 		$(if $(DISTRIBUTIONUTILS_SPEC_PATCH),Patches/$(DISTRIBUTIONUTILS_SPEC_PATCH)) \
 		$(if $(DISTRIBUTIONUTILS_PATCHES),$(DISTRIBUTIONUTILS_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(DISTRIBUTIONUTILS)-$(DISTRIBUTIONUTILS_VERSION).src.rpm \
+		$(archivedir)/$(STLINUX)-target-$(DISTRIBUTIONUTILS)-$(DISTRIBUTIONUTILS_VERSION).src.rpm \
 		| $(DEPDIR)/$(GLIBC_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(DISTRIBUTIONUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(DISTRIBUTIONUTILS_SPEC) < ../Patches/$(DISTRIBUTIONUTILS_SPEC_PATCH) ) &&) \
@@ -425,7 +425,7 @@ MTD_UTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MTD_UTILS)-$(MTD_UTILS_VERSION).sh4.r
 $(MTD_UTILS_RPM): \
 		$(if $(MTD_UTILS_SPEC_PATCH),Patches/$(MTD_UTILS_SPEC_PATCH)) \
 		$(if $(MTD_UTILS_PATCHES),$(MTD_UTILS_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(MTD_UTILS)-$(MTD_UTILS_VERSION).src.rpm libz
+		$(archivedir)/$(STLINUX)-target-$(MTD_UTILS)-$(MTD_UTILS_VERSION).src.rpm libz
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(MTD_UTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(MTD_UTILS_SPEC) < ../Patches/$(MTD_UTILS_PATCH) ) &&) \
 	$(if $(MTD_UTILS_PATCHES),cp $(MTD_UTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -487,7 +487,7 @@ $(BASH_RPM): \
 		$(if $(BASH_PATCHES),$(BASH_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(DEPDIR)/$(LIBTERMCAP_DEV) \
-		Archive/$(STLINUX)-target-$(BASH)-$(BASH_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(BASH)-$(BASH_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(BASH_SPEC_PATCH),( cd SPECS && patch -p1 $(BASH_SPEC) < ../Patches/$(BASH_PATCH) ) &&) \
 	$(if $(BASH_PATCHES),cp $(BASH_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -540,7 +540,7 @@ $(COREUTILS_RPM): \
 		$(if $(COREUTILS_SPEC_PATCH),Patches/$(COREUTILS_SPEC_PATCH)) \
 		$(if $(COREUTILS_PATCHES),$(COREUTILS_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/$(STLINUX)-target-$(COREUTILS)-$(COREUTILS_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(COREUTILS)-$(COREUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(COREUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(COREUTILS_SPEC) < ../Patches/$(COREUTILS_PATCH) ) &&) \
 	$(if $(COREUTILS_PATCHES),cp $(COREUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -584,7 +584,7 @@ $(NET_TOOLS_RPM): \
 		$(if $(NET_TOOLS_SPEC_PATCH),Patches/$(NET_TOOLS_SPEC_PATCH)) \
 		$(if $(NET_TOOLS_PATCHES),$(NET_TOOLS_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/$(STLINUX)-target-$(NET_TOOLS)-$(NET_TOOLS_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(NET_TOOLS)-$(NET_TOOLS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(NET_TOOLS_SPEC_PATCH),( cd SPECS && patch -p1 $(NET_TOOLS_SPEC) < ../Patches/$(NET_TOOLS_PATCH) ) &&) \
 	$(if $(NET_TOOLS_PATCHES),cp $(NET_TOOLS_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -628,7 +628,7 @@ $(SED_RPM): \
 		$(if $(SED_SPEC_PATCH),Patches/$(SED_SPEC_PATCH)) \
 		$(if $(SED_PATCHES),$(SED_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/$(STLINUX)-target-$(SEDX)-$(SED_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(SEDX)-$(SED_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(SED_SPEC_PATCH),( cd SPECS && patch -p1 $(SED_SPEC) < ../Patches/$(SED_PATCH) ) &&) \
 	$(if $(SED_PATCHES),cp $(SED_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -674,7 +674,7 @@ $(DIFF_RPM) $(DIFF_DOC_RPM): \
 		$(if $(DIFF_SPEC_PATCH),Patches/$(DIFF_SPEC_PATCH)) \
 		$(if $(DIFF_PATCHES),$(DIFF_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/$(STLINUX)-target-$(DIFF)-$(DIFF_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(DIFF)-$(DIFF_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(DIFF_SPEC_PATCH),( cd SPECS && patch -p1 $(DIFF_SPEC) < ../Patches/$(DIFF_PATCH) ) &&) \
 	$(if $(DIFF_PATCHES),cp $(DIFF_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -724,7 +724,7 @@ FILE_RPM := RPMS/sh4/stlinux20-sh4-file-4.17-3.sh4.rpm
 $(FILE_RPM): \
 		$(if $(FILE_SPEC_PATCH),Patches/$(FILE_SPEC_PATCH)) \
 		$(if $(FILE_PATCHES),$(FILE_PATCHES:%=Patches/%)) \
-		Archive/stlinux22-target-$(FILE)-$(FILE_VERSION).src.rpm
+		$(archivedir)/stlinux22-target-$(FILE)-$(FILE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(FILE_SPEC_PATCH),( cd SPECS && patch -p1 $(FILE_SPEC) < ../Patches/$(FILE_PATCH) ) &&) \
 	$(if $(FILE_PATCHES),cp $(FILE_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -768,7 +768,7 @@ $(TAR_RPM): \
 		$(if $(TAR_SPEC_PATCH),Patches/$(TAR_SPEC_PATCH)) \
 		$(if $(TAR_PATCHES),$(TAR_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/$(STLINUX)-target-$(TAR)-$(TAR_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(TAR)-$(TAR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(TAR_SPEC_PATCH),( cd SPECS && patch -p1 $(TAR_SPEC) < ../Patches/$(TAR_PATCH) ) &&) \
 	$(if $(TAR_PATCHES),cp $(TAR_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -812,7 +812,7 @@ $(STRACE_RPM): \
 		$(if $(STRACE_SPEC_PATCH),Patches/$(STRACE_SPEC_PATCH)) \
 		$(if $(STRACE_PATCHES),$(STRACE_PATCHES:%=Patches/%)) \
 		$(DEPDIR)/$(GLIBC_DEV) \
-		Archive/$(STLINUX)-target-$(STRACE)-$(STRACE_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(STRACE)-$(STRACE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(STRACE_SPEC_PATCH),( cd SPECS && patch -p1 $(STRACE_SPEC) < ../Patches/$(STRACE_PATCH) ) &&) \
 	$(if $(STRACE_PATCHES),cp $(STRACE_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -848,7 +848,7 @@ UTIL_LINUX_RPM := RPMS/sh4/$(STLINUX)-sh4-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).sh
 $(UTIL_LINUX_RPM): \
 		$(if $(UTIL_LINUX_SPEC_PATCH),Patches/$(UTIL_LINUX_SPEC_PATCH)) \
 		$(if $(UTIL_LINUX_PATCHES),$(UTIL_LINUX_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).src.rpm \
+		$(archivedir)/$(STLINUX)-target-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).src.rpm \
 		| $(NCURSES_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(UTIL_LINUX_SPEC_PATCH),( cd SPECS && patch -p1 $(UTIL_LINUX_SPEC) < ../Patches/$(UTIL_LINUX_SPEC_PATCH) ) &&) \
