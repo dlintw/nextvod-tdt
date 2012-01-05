@@ -566,10 +566,6 @@ AC_ARG_WITH(updatehttpprefix,
 	[  --with-updatehttpprefix=URL  optional URL containing the URL of a directory with update images [[NONE]]],
 	[updatehttpprefix="$with_updatehttpprefix"],[updatehttpprefix=])
 
-AC_ARG_WITH(stockdir,
-	[  --with-stockdir=DIR  optional directory containing stock stuff [[[CVS/]stock]]],
-	[stockdir="$with_stockdir"],[stockdir="`pwd`/stock"])
-
 AC_ARG_WITH(ipkgbuilddir,
 	[  --with-ipkgbuilddir=DIR  temporary directory for building ipkg packages [[[CVS]/ipkgbuild]]],
 	[ipkgbuilddir="$with_ipkgbuilddir"],[ipkgbuilddir="`pwd`/ipkgbuild"])
@@ -585,7 +581,6 @@ AC_SUBST(serversupport)
 AC_SUBST(ucodesdir)
 AC_SUBST(customizationsdir)
 AC_SUBST(updatehttpprefix)
-AC_SUBST(stockdir)
 AC_SUBST(ipkgbuilddir)
 flashprefix_ro=${flashprefix}/ro
 AC_SUBST(flashprefix_ro)
@@ -603,6 +598,10 @@ else
 	TUXBOX_CHECKIMAGE=@true
 fi
 AC_SUBST(TUXBOX_CHECKIMAGE)
+
+AC_ARG_WITH(archivedir,
+	[  --with-archivedir=DIR   where to store downloaded files [[Archive/]]],
+	[archivedir="$with_archivedir"],[archivedir="$buildprefix/Archive"])
 
 AC_ARG_WITH(cvsdir,
 	[  --with-cvsdir=DIR       where to find the cvs],
@@ -626,7 +625,7 @@ AC_ARG_WITH(hostappsdir,
 
 AC_ARG_WITH(gnuserver,
 	[  --with-gnuserver=ADDRESS   the gnu server for gnu-stuff (without ftp://)],
-	[gnuserver="$with_gnuserver"],[gnuserver="NONE"])
+	[gnuserver="$with_gnuserver"],[gnuserver=ftp.gwdg.de/pub/misc/gnu/ftp/gnu])
 
 AC_ARG_WITH(defaultserver,
 	[  --with-defaultserver=ADDRESS   the server that is taken if no server is given/works (without http://)],
@@ -660,17 +659,12 @@ else
 	fi
 fi
 
-if test "$gnuserver" = "NONE"; then
-	gnuserver="ftp.gwdg.de/pub/misc/gnu/ftp/gnu"
-fi
-
 if test "$defaultserver" = "NONE"; then
 	defaultserver=""
 fi
 
 dircheck="ok"
 AC_MSG_CHECKING([for apps directory])
-#if test ! -f "$appsdir/dvb/zapit/configure.ac" ; then
 if test ! -f "$appsdir/enigma2/configure.ac" ; then
 	AC_MSG_WARN([appsdir $appsdir not found])
 	appsdir="missing_appsir"
@@ -712,6 +706,7 @@ AC_SUBST(driverdir)
 AC_SUBST(hostappsdir)
 AC_SUBST(gnuserver)
 AC_SUBST(defaultserver)
+AC_SUBST(archivedir)
 
 AC_PATH_PROG(M4,m4,no)
 if test "$M4" = "no"; then
@@ -1146,7 +1141,6 @@ AC_SUBST(DRPMBUILD)
 
 test -d ~/Archive || mkdir ~/Archive
 ln -sf ~/Archive
-install -d $stockdir/{conf,root,.app,.eme,.dat}
 
 #
 # internal
@@ -1201,11 +1195,11 @@ boot directory              : $bootdir
 driver directory            : $driverdir
 host apps directory         : $hostappsdir
 customization directory     : $customizationsdir
+archive directory:          : $archivedir
 ucode directory             : $ucodesdir
 GNU server                  : $gnuserver
 default server              : $defaultserver
 update http prefix          : $updatehttpprefix
-stock directory             : $stockdir
 ipkg build directory        : $ipkgbuilddir
 Fortis/hdbox stuff          : $enable_fortis_hdbox
 Fortis hs7810a stuff        : $enable_hs7810a
