@@ -114,7 +114,7 @@ static int pInit(Context_t* context, int argc, char* argv[]) {
     vAddr.sun_family = AF_UNIX;
     // in new lircd its moved to /var/run/lirc/lircd by default and need use key to run as old version
     
-    strcpy(vAddr.sun_path, "/dev/lircd");
+    strcpy(vAddr.sun_path, "/var/run/lirc/lircd");
 
     vHandle = socket(AF_UNIX,SOCK_STREAM, 0);
 
