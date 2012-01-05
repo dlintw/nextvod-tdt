@@ -1,6 +1,6 @@
 # vdr
-VERSION_vdr	:= 0.0.2
-DIR_vdr	:= ../apps/vdr
+VERSION_vdr := 0.0.2
+DIR_vdr := ../apps/vdr
 #VDR = 1.7.16
 VDR = 1.7.14
 
@@ -11,12 +11,12 @@ if ENABLE_VDR1711
 		$(MAKE_OPTS) $(MAKE) vdr plugins prefix=$(targetprefix)
 	touch $@
 else
-	if [ ! -e $(buildprefix)/Archive/vdr-$(VDR)_mod.bz2 ]; then \
-		cd $(buildprefix)/Archive/; \
+	if [ ! -e $(archivedir)/vdr-$(VDR)_mod.bz2 ]; then \
+		cd $(archivedir)/; \
 		wget http://kathif.vs120005.hl-users.com/test/vdr-$(VDR)_mod.bz2 ; \
 	fi; 
 	cd $(DIR_vdr) && \
-	tar jxf $(buildprefix)/Archive/vdr-$(VDR)_mod.bz2
+	tar jxf $(archivedir)/vdr-$(VDR)_mod.bz2
 	cd $(DIR_vdr)/vdr-$(VDR) && \
 		$(MAKE_OPTS) $(MAKE) vdr plugins prefix=$(targetprefix)
 	touch $@
