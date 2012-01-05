@@ -289,11 +289,12 @@ SPARK7162PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0123),linux-sh4-spark7162_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-spark7162_sound_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
+
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
-	    	$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
-	    	$(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
+		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
 
 FORTISPATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
@@ -312,7 +313,7 @@ ATEVIO7500PATCHES_23 = $(COMMONPATCHES_23) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 OCTAGON1008PATCHES_23 = $(COMMONPATCHES_23) \
-	        $(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-octagon_setup_stm23$(PATCH_STR).patch) \
@@ -331,7 +332,7 @@ HS7110PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0123),linux-sh4-hs7110_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		fortis_hdbox_dvb_core_stm23.patch
-		
+
 TF7700PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
@@ -429,7 +430,7 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(ADB_BOX),$(ADB_BOXPATCHES_23)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_23)) \
 		$(if $(IPBOX99),$(IPBOX99PATCHES_23)) \
-                $(if $(IPBOX55),$(IPBOX55PATCHES_23))
+		$(if $(IPBOX55),$(IPBOX55PATCHES_23))
 
 ############ Patches Kernel 23 End ###############
 
@@ -582,7 +583,7 @@ IPBOX9900PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox9900_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch  \
 		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch \
-                linux-sh4-ipbox_dvb_ca_stm24$(PATCH_STR).patch
+		linux-sh4-ipbox_dvb_ca_stm24$(PATCH_STR).patch
 
 IPBOX99PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox99_setup_stm24$(PATCH_STR).patch \
@@ -620,7 +621,7 @@ KERNELPATCHES_24 =  \
 		$(if $(IPBOX99),$(IPBOX99PATCHES_24)) \
 		$(if $(IPBOX55),$(IPBOX55PATCHES_24)) \
 		$(if $(CUBEMOD),$(CUBEREVOPATCHES_24))
-                
+
 ############ Patches Kernel 24 End ###############
 
 ############ Patches Havana ###############
@@ -728,7 +729,7 @@ KERNELHEADERS_RPM := RPMS/noarch/$(STLINUX)-sh4-$(KERNELHEADERS)-$(KERNELHEADERS
 $(KERNELHEADERS_RPM): \
 		$(if $(KERNELHEADERS_SPEC_PATCH),Patches/$(KERNELHEADERS_SPEC_PATCH)) \
 		$(if $(KERNELHEADERS_PATCHES),$(KERNELHEADERS_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm \
+		$(archivedir)/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm \
 		| linux-kernel.do_prepare
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(KERNELHEADERS_SPEC_PATCH),( cd SPECS && patch -p1 $(KERNELHEADERS_SPEC) < ../Patches/$(KERNELHEADERS_SPEC_PATCH) ) &&) \
@@ -744,12 +745,9 @@ $(DEPDIR)/%$(KERNELHEADERS): $(KERNELHEADERS_RPM)
 	touch $@
 endif !STM22
 
-
-
 #
 # HOST-KERNEL
 #
-
 # IMPORTANT: it is expected that only one define is set
 MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(HS7110)$(FLASH_UFS910)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
 
@@ -897,7 +895,7 @@ else !STM23_HAVANA
 
 $(HOST_KERNEL_RPM): \
 		$(if $(HOST_KERNEL_SPEC_PATCH),Patches/$(HOST_KERNEL_SPEC_PATCH)) \
-		Archive/$(HOST_KERNEL_SRC_RPM)
+		$(archivedir)/$(HOST_KERNEL_SRC_RPM)
 	rpm $(DRPM) --nosignature --nodeps -Uhv $(lastword $^) && \
 	$(if $(HOST_KERNEL_SPEC_PATCH),( cd SPECS; patch -p1 $(HOST_KERNEL_SPEC) < ../Patches/$(HOST_KERNEL_SPEC_PATCH) ) &&) \
 	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/$(HOST_KERNEL_SPEC)
@@ -1030,7 +1028,6 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 	$(if $(PLAYER131),cp $(driverdir)/stgfb/stmfb/Linux/video/stmfb.h $(targetprefix)/usr/include/linux)
 	$(if $(PLAYER179),cp $(driverdir)/stgfb/stmfb/linux/drivers/video/stmfb.h $(targetprefix)/usr/include/linux)
 	$(if $(PLAYER191),cp $(driverdir)/stgfb/stmfb/linux/drivers/video/stmfb.h $(targetprefix)/usr/include/linux)
-	$(if $(PLAYER191),cp $(driverdir)/stgfb/stmfb/linux/drivers/video/stmfb.h $(targetprefix)/usr/include/linux)
 	cp $(driverdir)/player2/linux/include/linux/dvb/stm_ioctls.h $(targetprefix)/usr/include/linux/dvb
 	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
@@ -1039,16 +1036,16 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
- 		$(if $(HS7810A),HS7810A=$(HS7810A)) \
- 		$(if $(HS7110),HS7110=$(HS7110)) \
+		$(if $(HS7810A),HS7810A=$(HS7810A)) \
+		$(if $(HS7110),HS7110=$(HS7110)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
 		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
- 		$(if $(UFS912),UFS912=$(UFS912)) \
- 		$(if $(SPARK),SPARK=$(SPARK)) \
- 		$(if $(SPARK7162),SPARK7162=$(SPARK7162)) \
+		$(if $(UFS912),UFS912=$(UFS912)) \
+		$(if $(SPARK),SPARK=$(SPARK)) \
+		$(if $(SPARK7162),SPARK7162=$(SPARK7162)) \
 		$(if $(ADB_BOX),ADB_BOX=$(ADB_BOX)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \
@@ -1075,16 +1072,16 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
- 		$(if $(HS7810A),HS7810A=$(HS7810A)) \
- 		$(if $(HS7110),HS7110=$(HS7110)) \
+		$(if $(HS7810A),HS7810A=$(HS7810A)) \
+		$(if $(HS7110),HS7110=$(HS7110)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
 		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
- 		$(if $(UFS912),UFS912=$(UFS912)) \
- 		$(if $(SPARK),SPARK=$(SPARK)) \
- 		$(if $(SPARK7162),SPARK7162=$(SPARK7162)) \
+		$(if $(UFS912),UFS912=$(UFS912)) \
+		$(if $(SPARK),SPARK=$(SPARK)) \
+		$(if $(SPARK7162),SPARK7162=$(SPARK7162)) \
 		$(if $(ADB_BOX),ADB_BOX=$(ADB_BOX)) \
 		$(if $(CUBEREVO),CUBEREVO=$(CUBEREVO)) \
 		$(if $(CUBEREVO_MINI),CUBEREVO_MINI=$(CUBEREVO_MINI)) \

@@ -13,7 +13,7 @@ $(hostprefix)/bin/ccache: @DEPENDS_ccache@
 	@PREPARE_ccache@
 	cd @DIR_ccache@ && \
 		./configure \
- 			--build=$(build) \
+			--build=$(build) \
 			--host=$(build) \
 			--prefix= && \
 			$(MAKE) all && \
@@ -39,7 +39,6 @@ $(hostprefix)/bin/mkcramfs: @DEPENDS_cramfs@
 # MKSQUASHFS with LZMA support
 #
 MKSQUASHFS = $(hostprefix)/bin/mksquashfs
-
 mksquashfs: $(MKSQUASHFS)
 
 if STM22
@@ -47,9 +46,9 @@ $(hostprefix)/bin/mksquashfs: @DEPENDS_squashfs@
 	rm -rf @DIR_squashfs@
 	mkdir -p @DIR_squashfs@
 	cd @DIR_squashfs@ && \
-	bunzip2 -cd ../Archive/lzma442.tar.bz2 | TAPE=- tar -x && \
+	bunzip2 -cd $(archivedir)/lzma442.tar.bz2 | TAPE=- tar -x && \
 	patch -p1 < ../Patches/lzma_zlib-stream.diff && \
-	gunzip -cd ../Archive/squashfs3.0.tar.gz | TAPE=- tar -x && \
+	gunzip -cd $(archivedir)/squashfs3.0.tar.gz | TAPE=- tar -x && \
 	cd squashfs3.0 && patch -p1 < ../../Patches/mksquashfs_lzma.diff
 	$(MAKE) -C @DIR_squashfs@/C/7zip/Compress/LZMA_Lib
 	$(MAKE) -C @DIR_squashfs@/squashfs3.0/squashfs-tools
@@ -62,8 +61,8 @@ $(hostprefix)/bin/mksquashfs: @DEPENDS_squashfs@
 	rm -rf @DIR_squashfs@
 	mkdir -p @DIR_squashfs@
 	cd @DIR_squashfs@ && \
-	bunzip2 -cd ../Archive/lzma465.tar.bz2 | TAPE=- tar -x && \
-	gunzip -cd ../Archive/squashfs4.0.tar.gz | TAPE=- tar -x && \
+	bunzip2 -cd $(archivedir)/lzma465.tar.bz2 | TAPE=- tar -x && \
+	gunzip -cd $(archivedir)/squashfs4.0.tar.gz | TAPE=- tar -x && \
 	cd squashfs4.0/squashfs-tools && patch -p1 < ../../../Patches/squashfs-tools-4.0-lzma.patch
 	$(MAKE) -C @DIR_squashfs@/squashfs4.0/squashfs-tools
 	$(INSTALL) -d $(@D)
@@ -111,7 +110,6 @@ $(crossprefix)/bin/ipkg: @DEPENDS_ipkg_host@
 
 #	$(INSTALL_DIR) $(crossprefix)/etc/ipkg
 #	echo "src/gz cross file://$(ipkprefix)" >$(crossprefix)/etc/ipkg/cross-feed.conf
-
 
 #
 # PYTHON-HOST
