@@ -1708,7 +1708,7 @@ $(DEPDIR)/gst_plugins_base.do_compile: $(DEPDIR)/gst_plugins_base.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--disable-theora --disable-pango --disable-vorbis
+		--disable-theora --disable-pango --disable-vorbis --disable-x
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_base $(DEPDIR)/std-gst_plugins_base $(DEPDIR)/max-gst_plugins_base \
@@ -1732,7 +1732,7 @@ $(DEPDIR)/gst_plugins_good.do_compile: $(DEPDIR)/gst_plugins_good.do_prepare
 		--host=$(target) \
 		--prefix=/usr \
 		--disable-esd --disable-esdtest \
-		--disable-shout2 --disable-shout2test
+		--disable-shout2 --disable-shout2test --disable-x
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_good $(DEPDIR)/std-gst_plugins_good $(DEPDIR)/max-gst_plugins_good \
