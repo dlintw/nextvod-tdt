@@ -124,7 +124,7 @@ endif
 $(DEPDIR)/portmap.do_prepare: @DEPENDS_portmap@
 	@PREPARE_portmap@
 	cd @DIR_portmap@ && \
-		gunzip -cd ../$(lastword $^) | cat > debian.patch && \
+		gunzip -cd $(lastword $^) | cat > debian.patch && \
 		patch -p1 <debian.patch && \
 		sed -e 's/### BEGIN INIT INFO/# chkconfig: S 41 10\n### BEGIN INIT INFO/g' -i debian/init.d
 	touch $@
