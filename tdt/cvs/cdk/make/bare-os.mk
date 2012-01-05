@@ -71,7 +71,7 @@ GLIBC_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm
 $(GLIBC_RPM) $(GLIBC_DEV_RPM): \
 		$(if $(GLIBC_SPEC_PATCH),Patches/$(GLIBC_SPEC_PATCH)) \
 		$(if $(GLIBC_PATCHES),$(GLIBC_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSION).src.rpm \
+		$(archivedir)/$(STLINUX)-target-$(GLIBC)-$(GLIBC_VERSION).src.rpm \
 		| filesystem
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(GLIBC_SPEC_PATCH),( cd SPECS && patch -p1 $(GLIBC_SPEC) < ../Patches/$(GLIBC_SPEC_PATCH) ) &&) \
@@ -131,7 +131,7 @@ GMP_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GMP)-$(GMP_VERSION).sh4.rpm
 
 $(GMP_RPM): \
 		$(addprefix Patches/,$(GMP_SPEC_PATCH) $(GMP_PATCHES)) \
-		Archive/$(STLINUX:%23=%24)-target-$(GMP)-$(GMP_VERSION).src.rpm
+		$(archivedir)/$(STLINUX:%23=%24)-target-$(GMP)-$(GMP_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(GMP_SPEC_PATCH),( cd SPECS && patch -p1 $(GMP_SPEC) < ../Patches/$(GMP_SPEC_PATCH) ) &&) \
 	$(if $(GMP_PATCHES),cp $(addprefix Patches/,$(GMP_PATCHES)) SOURCES/ &&) \
@@ -169,7 +169,7 @@ MPFR_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPFR)-$(MPFR_VERSION).sh4.rpm
 $(MPFR_RPM): \
 		$(GMP) \
 		$(addprefix Patches/,$(MPFR_SPEC_PATCH) $(MPFR_PATCHES)) \
-		Archive/$(STLINUX:%23=%24)-target-$(MPFR)-$(MPFR_VERSION).src.rpm
+		$(archivedir)/$(STLINUX:%23=%24)-target-$(MPFR)-$(MPFR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(MPFR_SPEC_PATCH),( cd SPECS && patch -p1 $(MPFR_SPEC) < ../Patches/$(MPFR_SPEC_PATCH) ) &&) \
 	$(if $(MPFR_PATCHES),cp $(addprefix Patches/,$(MPFR_PATCHES)) SOURCES/ &&) \
@@ -197,7 +197,7 @@ MPC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPC)-$(MPC_VERSION).sh4.rpm
 $(MPC_RPM): \
 		$(MPFR) \
 		$(addprefix Patches/,$(MPC_SPEC_PATCH) $(MPC_PATCHES)) \
-		Archive/$(STLINUX:%23=%24)-target-$(MPC)-$(MPC_VERSION).src.rpm
+		$(archivedir)/$(STLINUX:%23=%24)-target-$(MPC)-$(MPC_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(MPC_SPEC_PATCH),( cd SPECS && patch -p1 $(MPC_SPEC) < ../Patches/$(MPC_SPEC_PATCH) ) &&) \
 	$(if $(MPC_PATCHES),cp $(addprefix Patches/,$(MPC_PATCHES)) SOURCES/ &&) \
@@ -224,7 +224,7 @@ LIBELF_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBELF)-$(LIBELF_VERSION).sh4.rpm
 
 $(LIBELF_RPM): \
 		$(addprefix Patches/,$(LIBELF_SPEC_PATCH) $(LIBELF_PATCHES)) \
-		Archive/$(STLINUX:%23=%24)-target-$(LIBELF)-$(LIBELF_VERSION).src.rpm
+		$(archivedir)/$(STLINUX:%23=%24)-target-$(LIBELF)-$(LIBELF_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(LIBELF_SPEC_PATCH),( cd SPECS && patch -p1 $(LIBELF_SPEC) < ../Patches/$(LIBELF_SPEC_PATCH) ) &&) \
 	$(if $(LIBELF_PATCHES),cp $(addprefix Patches/,$(LIBELF_PATCHES)) SOURCES/ &&) \
@@ -239,10 +239,10 @@ endif STM24
 #
 # GCC LIBSTDC++
 #
-GCC		:= gcc
-LIBSTDC		:= libstdc++
-LIBSTDC_DEV	:= libstdc++-dev
-LIBGCC		:= libgcc
+GCC := gcc
+LIBSTDC := libstdc++
+LIBSTDC_DEV := libstdc++-dev
+LIBGCC := libgcc
 if STM22
 GCC_VERSION := 4.1.1-26
 GCC_SPEC := stm-target-$(GCC)-sh4processed.spec
@@ -271,7 +271,7 @@ LIBGCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBGCC)-$(GCC_VERSION).sh4.rpm
 
 $(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM): \
 		$(addprefix Patches/,$(GCC_SPEC_PATCH) $(GCC_PATCHES)) \
-		Archive/$(STLINUX:%23=%24)-target-$(GCC)-$(GCC_VERSION).src.rpm \
+		$(archivedir)/$(STLINUX:%23=%24)-target-$(GCC)-$(GCC_VERSION).src.rpm \
 		| $(DEPDIR)/$(GLIBC_DEV) $(MPFR) $(MPC) $(LIBELF)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(GCC_SPEC_PATCH),( cd SPECS && patch -p1 $(GCC_SPEC) < ../Patches/$(GCC_SPEC_PATCH) ) &&) \
@@ -323,9 +323,9 @@ $(DEPDIR)/%$(LIBGCC): $(LIBGCC_RPM)
 #
 # LIBTERMCAP
 #
-LIBTERMCAP		:= libtermcap
-LIBTERMCAP_DEV		:= libtermcap-dev
-LIBTERMCAP_DOC		:= libtermcap-doc
+LIBTERMCAP := libtermcap
+LIBTERMCAP_DEV := libtermcap-dev
+LIBTERMCAP_DOC := libtermcap-doc
 if STM22
 LIBTERMCAP_VERSION := 2.0.8-8
 LIBTERMCAP_RAWVERSION := $(firstword $(subst -, ,$(LIBTERMCAP_VERSION)))
@@ -356,7 +356,7 @@ LIBTERMCAP_DOC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP_DOC)-$(LIBTERMCAP_VER
 $(LIBTERMCAP_RPM) $(LIBTERMCAP_DEV_RPM) $(LIBTERMCAP_DOC_RPM): \
 		$(if $(LIBTERMCAP_SPEC_PATCH),Patches/$(LIBTERMCAP_SPEC_PATCH)) \
 		$(if $(LIBTERMCAP_PATCHES),$(LIBTERMCAP_PATCHES:%=Patches/%)) \
-		Archive/$(STM_SRC)-target-$(LIBTERMCAP)-$(LIBTERMCAP_VERSION).src.rpm \
+		$(archivedir)/$(STM_SRC)-target-$(LIBTERMCAP)-$(LIBTERMCAP_VERSION).src.rpm \
 		| $(DEPDIR)/$(GLIBC_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(LIBTERMCAP_SPEC_PATCH),( cd SPECS && patch -p1 $(LIBTERMCAP_SPEC) < ../Patches/$(LIBTERMCAP_SPEC_PATCH) ) &&) \
@@ -404,9 +404,9 @@ endif TARGETRULESET_FLASH
 #
 # NCURSES
 #
-NCURSES		:= ncurses
-NCURSES_BASE	:= ncurses-base
-NCURSES_DEV	:= ncurses-dev
+NCURSES := ncurses
+NCURSES_BASE := ncurses-base
+NCURSES_DEV := ncurses-dev
 if STM22
 NCURSES_VERSION := 5.5-9
 NCURSES_SPEC := stm-target-$(NCURSES).spec
@@ -435,7 +435,7 @@ $(DEPDIR)/ncurses.do_compile \
 $(NCURSES_RPM) $(NCURSES_BASE_RPM) $(NCURSES_DEV_RPM): \
 		$(if $(NCURSES_SPEC_PATCH),Patches/$(NCURSES_SPEC_PATCH)) \
 		$(if $(NCURSES_PATCHES),$(NCURSES_PATCHES:%=Patches/%)) \
-		Archive/$(STM_SRC)-target-$(NCURSES)-$(NCURSES_VERSION).src.rpm \
+		$(archivedir)/$(STM_SRC)-target-$(NCURSES)-$(NCURSES_VERSION).src.rpm \
 		| $(DEPDIR)/$(LIBSTDC_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(NCURSES_SPEC_PATCH),( cd SPECS && patch -p1 $(NCURSES_SPEC) < ../Patches/$(NCURSES_SPEC_PATCH) ) &&) \
@@ -521,7 +521,7 @@ BASE_PASSWD_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION)
 $(BASE_PASSWD_RPM): \
 		$(if $(BASE_PASSWD_SPEC_PATCH),Patches/$(BASE_PASSWD_SPEC_PATCH)) \
 		$(if $(BASE_PASSWD_PATCHES),$(BASE_PASSWD_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(BASE_PASSWD_SPEC_PATCH),( cd SPECS && patch -p1 $(BASE_PASSWD_SPEC) < ../Patches/$(BASE_PASSWD_SPEC_PATCH) ) &&) \
 	$(if $(BASE_PASSWD_PATCHES),cp $(BASE_PASSWD_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -534,9 +534,9 @@ $(DEPDIR)/%$(BASE_PASSWD): $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(BASE_PASSWD_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  --nopost -Uhv \
 		--replacepkgs --badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
-        $(hostprefix)/bin/update-passwd -L -p $(prefix)/$*cdkroot/usr/share/base-passwd/passwd.master \
-               	-g $(prefix)/$*cdkroot/usr/share/base-passwd/group.master -P $(prefix)/$*cdkroot/etc/passwd \
-               	-S $(prefix)/$*cdkroot/etc/shadow -G $(prefix)/$*cdkroot/etc/group && \
+		$(hostprefix)/bin/update-passwd -L -p $(prefix)/$*cdkroot/usr/share/base-passwd/passwd.master \
+			-g $(prefix)/$*cdkroot/usr/share/base-passwd/group.master -P $(prefix)/$*cdkroot/etc/passwd \
+			-S $(prefix)/$*cdkroot/etc/shadow -G $(prefix)/$*cdkroot/etc/group && \
 	chmod 600 $(prefix)/$*cdkroot/etc/shadow && \
 	( cd $(prefix)/$*cdkroot/etc && sed -e "s|/bin/bash|/bin/sh|g" -i passwd ) && \
 	rm -f $(prefix)/$*cdkroot/etc/shadow
@@ -550,9 +550,9 @@ $(flashprefix)/root/usr/sbin/update-passwd: \
 		$(BASE_PASSWD_RPM)
 	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
 		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-        $(hostprefix)/bin/update-passwd -L -p $(flashprefix)/root/usr/share/base-passwd/passwd.master \
-               	-g $(flashprefix)/root/usr/share/base-passwd/group.master -P $(flashprefix)/root/etc/passwd \
-               	-S $(flashprefix)/root/etc/shadow -G $(flashprefix)/root/etc/group && \
+		$(hostprefix)/bin/update-passwd -L -p $(flashprefix)/root/usr/share/base-passwd/passwd.master \
+			-g $(flashprefix)/root/usr/share/base-passwd/group.master -P $(flashprefix)/root/etc/passwd \
+			-S $(flashprefix)/root/etc/shadow -G $(flashprefix)/root/etc/group && \
 	chmod 600 $(flashprefix)/root/etc/shadow && \
 	( cd $(flashprefix)/root/etc && sed -e "s|/bin/bash|/bin/sh|g" -i passwd )
 	touch $@
@@ -588,7 +588,7 @@ MAKEDEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MAKEDEV)-$(MAKEDEV_VERSION).sh4.rpm
 $(MAKEDEV_RPM): \
 		$(if $(MAKEDEV_SPEC_PATCH),Patches/$(MAKEDEV_SPEC_PATCH)) \
 		$(if $(MAKEDEV_PATCHES),$(MAKEDEV_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(MAKEDEV)-$(MAKEDEV_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(MAKEDEV)-$(MAKEDEV_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(MAKEDEV_SPEC_PATCH),( cd SPECS && patch -p1 $(MAKEDEV_SPEC) < ../Patches/$(MAKEDEV_SPEC_PATCH) ) &&) \
 	$(if $(MAKEDEV_PATCHES),cp $(MAKEDEV_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -647,7 +647,7 @@ BASE_FILES_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BASE_FILES)-$(BASE_FILES_VERSION).sh
 $(BASE_FILES_RPM): \
 		$(if $(BASE_FILES_SPEC_PATCH),Patches/$(BASE_FILES_SPEC_PATCH)) \
 		$(if $(BASE_FILES_PATCHES),$(BASE_FILES_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(BASE_FILES)-$(BASE_FILES_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(BASE_FILES)-$(BASE_FILES_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(BASE_FILES_SPEC_PATCH),( cd SPECS && patch -p1 $(BASE_FILES_SPEC) < ../Patches/$(BASE_FILES_SPEC_PATCH) ) &&) \
 	$(if $(BASE_FILES_PATCHES),cp $(BASE_FILES_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -754,7 +754,7 @@ UDEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(UDEV)-$(UDEV_VERSION).sh4.rpm
 $(UDEV_RPM): \
 		$(if $(UDEV_SPEC_PATCH),Patches/$(UDEV_SPEC_PATCH)) \
 		$(if $(UDEV_PATCHES),$(UDEV_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(UDEV)-$(UDEV_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(UDEV)-$(UDEV_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(UDEV_SPEC_PATCH),( cd SPECS && patch -p1 $(UDEV_SPEC) < ../Patches/$(UDEV_SPEC_PATCH) ) &&) \
 	$(if $(UDEV_PATCHES),cp $(UDEV_PATCHES:%=Patches/%) SOURCES/ &&) \
@@ -788,7 +788,7 @@ HOTPLUG_RPM := RPMS/sh4/$(STLINUX)-sh4-$(HOTPLUG)-$(HOTPLUG_VERSION).sh4.rpm
 $(HOTPLUG_RPM): \
 		$(if $(HOTPLUG_SPEC_PATCH),Patches/$(HOTPLUG_SPEC_PATCH)) \
 		$(if $(HOTPLUG_PATCHES),$(HOTPLUG_PATCHES:%=Patches/%)) \
-		Archive/$(STLINUX)-target-$(HOTPLUG)-$(HOTPLUG_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(HOTPLUG)-$(HOTPLUG_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(HOTPLUG_SPEC_PATCH),( cd SPECS && patch -p1 $(HOTPLUG_SPEC) < ../Patches/$(HOTPLUG_SPEC_PATCH) ) &&) \
 	$(if $(HOTPLUG_PATCHES),cp $(HOTPLUG_PATCHES:%=Patches/%) SOURCES/ &&) \
