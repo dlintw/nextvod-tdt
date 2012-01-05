@@ -147,7 +147,11 @@ $(DEPDIR)/lirc.do_compile: $(DEPDIR)/lirc.do_prepare
 			--mandir=\$${prefix}/share/man \
 			--with-kerneldir=$(buildprefix)/$(KERNEL_DIR) \
 			--without-x \
+			--with-devdir=/dev \
+			--with-moduledir=/lib/modules \
+			--with-major=61 \
 			--with-driver=userspace \
+			--enable-debug \
 			--with-syslog=LOG_DAEMON \
 			--enable-sandboxed && \
 		$(MAKE) all
