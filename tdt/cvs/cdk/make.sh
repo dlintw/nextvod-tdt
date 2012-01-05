@@ -21,8 +21,7 @@ CONFIGPARAM=" \
  --with-cvsdir=$KATIDIR/cvs \
  --with-customizationsdir=$KATIDIR/custom \
  --enable-ccache \
- --enable-flashrules \
- --with-stockdir=$KATIDIR/stock"
+ --enable-flashrules"
 
 ##############################################
 

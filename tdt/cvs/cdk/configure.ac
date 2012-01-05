@@ -566,10 +566,6 @@ AC_ARG_WITH(updatehttpprefix,
 	[  --with-updatehttpprefix=URL  optional URL containing the URL of a directory with update images [[NONE]]],
 	[updatehttpprefix="$with_updatehttpprefix"],[updatehttpprefix=])
 
-AC_ARG_WITH(stockdir,
-	[  --with-stockdir=DIR  optional directory containing stock stuff [[[CVS/]stock]]],
-	[stockdir="$with_stockdir"],[stockdir="`pwd`/stock"])
-
 AC_ARG_WITH(ipkgbuilddir,
 	[  --with-ipkgbuilddir=DIR  temporary directory for building ipkg packages [[[CVS]/ipkgbuild]]],
 	[ipkgbuilddir="$with_ipkgbuilddir"],[ipkgbuilddir="`pwd`/ipkgbuild"])
@@ -585,7 +581,6 @@ AC_SUBST(serversupport)
 AC_SUBST(ucodesdir)
 AC_SUBST(customizationsdir)
 AC_SUBST(updatehttpprefix)
-AC_SUBST(stockdir)
 AC_SUBST(ipkgbuilddir)
 flashprefix_ro=${flashprefix}/ro
 AC_SUBST(flashprefix_ro)
@@ -1146,7 +1141,6 @@ AC_SUBST(DRPMBUILD)
 
 test -d ~/Archive || mkdir ~/Archive
 ln -sf ~/Archive
-install -d $stockdir/{conf,root,.app,.eme,.dat}
 
 #
 # internal
@@ -1205,7 +1199,6 @@ ucode directory             : $ucodesdir
 GNU server                  : $gnuserver
 default server              : $defaultserver
 update http prefix          : $updatehttpprefix
-stock directory             : $stockdir
 ipkg build directory        : $ipkgbuilddir
 Fortis/hdbox stuff          : $enable_fortis_hdbox
 Fortis hs7810a stuff        : $enable_hs7810a
