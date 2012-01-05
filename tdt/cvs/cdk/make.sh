@@ -20,6 +20,7 @@ CONFIGPARAM=" \
  --prefix=$KATIDIR/tufsbox \
  --with-cvsdir=$KATIDIR/cvs \
  --with-customizationsdir=$KATIDIR/custom \
+ --with-archivedir=$HOME/Archive \
  --enable-ccache \
  --enable-flashrules"
 

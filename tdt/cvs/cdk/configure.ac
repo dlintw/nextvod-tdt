@@ -599,6 +599,10 @@ else
 fi
 AC_SUBST(TUXBOX_CHECKIMAGE)
 
+AC_ARG_WITH(archivedir,
+	[  --with-archivedir=DIR   where to store downloaded files [[Archive/]]],
+	[archivedir="$with_archivedir"],[archivedir="$buildprefix/Archive"])
+
 AC_ARG_WITH(cvsdir,
 	[  --with-cvsdir=DIR       where to find the cvs],
 	[cvsdir="$with_cvsdir"],[cvsdir="NONE"])
@@ -621,7 +625,7 @@ AC_ARG_WITH(hostappsdir,
 
 AC_ARG_WITH(gnuserver,
 	[  --with-gnuserver=ADDRESS   the gnu server for gnu-stuff (without ftp://)],
-	[gnuserver="$with_gnuserver"],[gnuserver="NONE"])
+	[gnuserver="$with_gnuserver"],[gnuserver=ftp.gwdg.de/pub/misc/gnu/ftp/gnu])
 
 AC_ARG_WITH(defaultserver,
 	[  --with-defaultserver=ADDRESS   the server that is taken if no server is given/works (without http://)],
@@ -655,17 +659,12 @@ else
 	fi
 fi
 
-if test "$gnuserver" = "NONE"; then
-	gnuserver="ftp.gwdg.de/pub/misc/gnu/ftp/gnu"
-fi
-
 if test "$defaultserver" = "NONE"; then
 	defaultserver=""
 fi
 
 dircheck="ok"
 AC_MSG_CHECKING([for apps directory])
-#if test ! -f "$appsdir/dvb/zapit/configure.ac" ; then
 if test ! -f "$appsdir/enigma2/configure.ac" ; then
 	AC_MSG_WARN([appsdir $appsdir not found])
 	appsdir="missing_appsir"
@@ -707,6 +706,7 @@ AC_SUBST(driverdir)
 AC_SUBST(hostappsdir)
 AC_SUBST(gnuserver)
 AC_SUBST(defaultserver)
+AC_SUBST(archivedir)
 
 AC_PATH_PROG(M4,m4,no)
 if test "$M4" = "no"; then
@@ -1195,6 +1195,7 @@ boot directory              : $bootdir
 driver directory            : $driverdir
 host apps directory         : $hostappsdir
 customization directory     : $customizationsdir
+archive directory:          : $archivedir
 ucode directory             : $ucodesdir
 GNU server                  : $gnuserver
 default server              : $defaultserver
