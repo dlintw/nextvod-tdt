@@ -43,10 +43,12 @@ if [ ! -e $CURDIR/mksquashfs4.0 ]; then
   cd $CURDIR
   rm -rf $CURDIR/squashfs4.0
   if [ ! -e $CURDIR/squashfs4.0.tar.gz ]; then
-    wget "http://heanet.dl.sourceforge.net/sourceforge/squashfs/squashfs4.0.tar.gz"
+    #wget "http://heanet.dl.sourceforge.net/sourceforge/squashfs/squashfs4.0.tar.gz"
+    wget "http://pkgs.fedoraproject.org/repo/pkgs/squashfs-tools/squashfs4.0.tar.gz/a3c23391da4ebab0ac4a75021ddabf96/squashfs4.0.tar.gz"
   fi
   if [ ! -e $CURDIR/lzma465.tar.bz2 ]; then
-    wget "http://heanet.dl.sourceforge.net/sourceforge/sevenzip/lzma465.tar.bz2"
+    #wget "http://heanet.dl.sourceforge.net/sourceforge/sevenzip/lzma465.tar.bz2"
+    wget "http://pkgs.fedoraproject.org/repo/pkgs/SevenZip/lzma465.tar.bz2/29d5ffd03a5a3e51aef6a74e9eafb759/lzma465.tar.bz2"
   fi
   mkdir $CURDIR/squashfs-tools
   cd $CURDIR/squashfs-tools
