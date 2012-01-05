@@ -100,7 +100,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    rm -f /dev/sparkid
    mknod /dev/sparkid c $major 0 
 
-   /bin/evremote2 spark &
+   /bin/evremote2 10 100 &
 
    /etc/init.d/mountall start
    /etc/init.d/hostname start
