@@ -1972,7 +1972,9 @@ do
 			makedev dvb/adapter$i/dvr0      c 212 `math 64 \* $i + 5` $video
 			makedev dvb/adapter$i/dvr1      c 212 `math 64 \* $i + 21` $video
 			makedev dvb/adapter$i/ca0       c 212 `math 64 \* $i + 6` $video
-			makedev dvb/adapter$i/ca1       c 212 `math 64 \* $i + 22` $video
+#on no ci boxes the hw descrambler is on ca0. So we link ca1 also to ca0
+#and can (not must) use the same config
+			makedev dvb/adapter$i/ca1       c 212 `math 64 \* $i + 6` $video
 			makedev dvb/adapter$i/net0      c 212 `math 64 \* $i + 7` $video
 			makedev dvb/adapter$i/osd0      c 212 `math 64 \* $i + 8` $video
 		done

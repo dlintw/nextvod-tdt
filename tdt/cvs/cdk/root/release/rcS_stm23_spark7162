@@ -109,7 +109,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    rm -f /dev/sparkid
    mknod /dev/sparkid c $major 0 
 
-   /bin/evremote2 spark 100 &
+   /bin/evremote2 10 100 &
 
    stfbcontrol a 255
 

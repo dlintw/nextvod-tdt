@@ -87,7 +87,8 @@ zlib-1.2.3.tar.bz2;http://kent.dl.sourceforge.net/sourceforge/libpng
 readline-5.2.tar.gz;ftp://ftp.cwru.edu/pub/bash
 freetype-2.3.5.tar.bz2;http://download.savannah.gnu.org/releases/freetype
 #freetype-2.4.8.tar.bz2;http://download.savannah.gnu.org/releases/freetype
-lirc-0.8.2.tar.gz;http://prdownloads.sourceforge.net/lirc
+#lirc-0.8.2.tar.gz;http://prdownloads.sourceforge.net/lirc
+lirc-0.9.0.tar.gz;http://prdownloads.sourceforge.net/lirc
 jpegsrc.v6b.tar.gz;ftp://ftp.uni-leipzig.de/pub/linux/ftp:robot.informatik.uni-leipzig.de/Sources/System/Libs
 libpng-1.2.16.tar.bz2;http://kent.dl.sourceforge.net/sourceforge/libpng
 libungif-4.1.3.tar.bz2;http://dietmarw.trale.de/Archive

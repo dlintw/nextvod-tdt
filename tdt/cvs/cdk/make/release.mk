@@ -211,6 +211,7 @@ release_spark:
 
 	cp -dp $(buildprefix)/root/etc/lircd_spark.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+	mkdir $(prefix)/release/lirc
 
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/fonts
 	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/share/fonts/
@@ -279,6 +280,7 @@ release_spark7162:
 
 	cp -dp $(buildprefix)/root/etc/lircd_spark7162.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+	mkdir $(prefix)/release/lirc
 
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/fonts
 	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/share/fonts/
@@ -589,6 +591,7 @@ release_ufs910:
 
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+	mkdir $(prefix)/release/lirc
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
@@ -633,6 +636,7 @@ release_hl101:
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_hl101.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	cp -dp $(buildprefix)/root/etc/lircd_hl101.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+	mkdir $(prefix)/release/lirc
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx21143.fw
@@ -695,6 +699,7 @@ release_adb_box:
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_adb_box.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	cp -dp $(buildprefix)/root/etc/lircd_adb_box.conf $(prefix)/release/etc/lircd.conf
 	cp -dp $(buildprefix)/root/usr/bin/lircd_adb $(prefix)/release/usr/bin/lircd
+	mkdir $(prefix)/release/lirc
 	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release/etc/boxtype
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-cx24116.fw
@@ -732,6 +737,7 @@ if STM23
 endif
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+	mkdir $(prefix)/release/lirc
 
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/fonts
 	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/local/share/fonts/
@@ -755,6 +761,7 @@ release_hs5101:
 
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release/etc/
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+	mkdir $(prefix)/release/lirc
 
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-stv6306.fw
@@ -791,6 +798,7 @@ release_ipbox9900: release_common_utils
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ipbox.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release/usr/bin/lircd
+	mkdir $(prefix)/release/lirc
 	cp -p $(buildprefix)/root/release/tvmode_ipbox $(prefix)/release/usr/bin/tvmode
 
 if STM22
@@ -827,6 +835,7 @@ release_ipbox99: release_common_utils
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ipbox.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release/usr/bin/lircd
+	mkdir $(prefix)/release/lirc
 	cp -p $(buildprefix)/root/release/tvmode_ipbox $(prefix)/release/usr/bin/tvmode
 
 if STM22
@@ -863,6 +872,7 @@ release_ipbox55: release_common_utils
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ipbox.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release/etc/lircd.conf
 	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release/usr/bin/lircd
+	mkdir $(prefix)/release/lirc
 	cp -p $(buildprefix)/root/release/tvmode_ipbox55 $(prefix)/release/usr/bin/tvmode
 
 if STM22
@@ -965,7 +975,7 @@ release_base:
 	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/etc/init.d/udhcpc $(prefix)/release/etc/init.d/ && \
-	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(VIP2_V1),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI)$(if $(IPBOX9900),_dual_tuner)$(if $(IPBOX99),_no_CI)$(if $(IPBOX55),_no_CI)$(if $(ADB_BOX),_adb_box) $(prefix)/release/sbin/MAKEDEV && \
+	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(VIP2_V1),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI)$(if $(IPBOX9900),_dual_tuner)$(if $(IPBOX99),_no_CI)$(if $(IPBOX55),_no_CI)$(if $(ADB_BOX),_adb_box)$(if $(SPARK),_no_CI) $(prefix)/release/sbin/MAKEDEV && \
 	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release/bin/ && \
 	cp $(targetprefix)/boot/audio.elf $(prefix)/release/boot/audio.elf && \
