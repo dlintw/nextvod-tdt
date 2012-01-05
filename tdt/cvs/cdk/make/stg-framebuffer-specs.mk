@@ -1,14 +1,14 @@
 #
 # STGFB
 #
-DEPMOD          = /sbin/depmod
+DEPMOD = /sbin/depmod
 
 STGFB_DIR := stgfb-2.0_stm22_0006
 HOST_STGFB := host-stgfb-source
 HOST_STGFB_VERSION := 2.0_stm22_0006-22
 
 RPMS/noarch/$(STLINUX)-$(HOST_STGFB)-$(HOST_STGFB_VERSION).noarch.rpm: \
-		Archive/$(STLINUX)-$(HOST_STGFB)-$(HOST_STGFB_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-$(HOST_STGFB)-$(HOST_STGFB_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $< && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(subst -source,,$(HOST_STGFB)).spec
 
@@ -57,7 +57,7 @@ CONSOLE_DATAA := console-data
 CONSOLE_DATA_VERSION := 1999.08.29-4
 
 RPMS/sh4/stlinux20-sh4-console-data-1999.08.29-4.sh4.rpm: \
-		Archive/stlinux22-target-$(CONSOLE_DATAA)-$(CONSOLE_DATA_VERSION).src.rpm
+		$(archivedir)/stlinux22-target-$(CONSOLE_DATAA)-$(CONSOLE_DATA_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(CONSOLE_DATAA).spec < ../Patches/stm-target-$(CONSOLE_DATAA).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(CONSOLE_DATAA).spec
@@ -76,7 +76,7 @@ CONSOLE_TOOLS := console-tools
 CONSOLE_TOOLS_VERSION := 0.2.3-6
 
 RPMS/sh4/stlinux20-sh4-console-tools-0.2.3-6.sh4.rpm: \
-		Archive/stlinux22-target-$(CONSOLE_TOOLS)-$(CONSOLE_TOOLS_VERSION).src.rpm
+		$(archivedir)/stlinux22-target-$(CONSOLE_TOOLS)-$(CONSOLE_TOOLS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(CONSOLE_TOOLS).spec < ../Patches/stm-target-$(CONSOLE_TOOLS).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(CONSOLE_TOOLS).spec
@@ -96,7 +96,7 @@ $(DEPDIR)/%$(CONSOLE_TOOLS): RPMS/sh4/stlinux20-sh4-$(CONSOLE_TOOLS)-$(CONSOLE_T
 ICE := ICE
 ICE_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-ICE-6.8.1-2.sh4.rpm: \
-		Archive/stlinux20-target-$(ICE)-$(ICE_VERSION).src.rpm
+		$(archivedir)/stlinux20-target-$(ICE)-$(ICE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(ICE).spec < ../Patches/stm-target-$(ICE).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(ICE).spec
@@ -113,7 +113,7 @@ $(DEPDIR)/%$(ICE): RPMS/sh4/stlinux20-sh4-$(ICE)-$(ICE_VERSION).sh4.rpm
 SM := SM
 SM_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-SM-6.8.1-2.sh4.rpm: \
-		Archive/stlinux20-target-$(SM)-$(SM_VERSION).src.rpm
+		$(archivedir)/stlinux20-target-$(SM)-$(SM_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(SM).spec < ../Patches/stm-target-$(SM).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(SM).spec
@@ -130,7 +130,7 @@ $(DEPDIR)/%$(SM): RPMS/sh4/stlinux20-sh4-$(SM)-$(SM_VERSION).sh4.rpm
 XPROTO := Xproto
 XPROTO_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-Xproto-6.8.1-2.sh4.rpm: \
-		Archive/stlinux20-target-$(XPROTO)-$(XPROTO_VERSION).src.rpm
+		$(archivedir)/stlinux20-target-$(XPROTO)-$(XPROTO_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XPROTO).spec < ../Patches/stm-target-$(XPROTO).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XPROTO).spec
@@ -147,7 +147,7 @@ $(DEPDIR)/%$(XPROTO): RPMS/sh4/stlinux20-sh4-$(XPROTO)-$(XPROTO_VERSION).sh4.rpm
 XEXTENSIONS := XExtensions
 XEXTENSIONS_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-XExtensions-6.8.1-2.sh4.rpm: \
-		Archive/stlinux20-target-$(XEXTENSIONS)-$(XEXTENSIONS_VERSION).src.rpm
+		$(archivedir)/stlinux20-target-$(XEXTENSIONS)-$(XEXTENSIONS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XEXTENSIONS).spec < ../Patches/stm-target-$(XEXTENSIONS).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XEXTENSIONS).spec
@@ -165,7 +165,7 @@ XT := Xt
 XT_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-Xt-6.8.1-2.sh4.rpm: \
 		$(DEPDIR)/$(SM) \
-		Archive/stlinux20-target-$(XT)-$(XT_VERSION).src.rpm
+		$(archivedir)/stlinux20-target-$(XT)-$(XT_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XT).spec < ../Patches/stm-target-$(XT).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XT).spec
@@ -182,7 +182,7 @@ $(DEPDIR)/%$(XT): RPMS/sh4/stlinux20-sh4-$(XT)-$(XT_VERSION).sh4.rpm
 XTRANS := xtrans
 XTRANS_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-xtrans-6.8.1-2.sh4.rpm: \
-		Archive/stlinux20-target-$(XTRANS)-$(XTRANS_VERSION).src.rpm
+		$(archivedir)/stlinux20-target-$(XTRANS)-$(XTRANS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XTRANS).spec < ../Patches/stm-target-$(XTRANS).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XTRANS).spec
@@ -200,7 +200,7 @@ XAU := Xau
 XAU_VERSION := 6.8.1-2
 RPMS/sh4/stlinux20-sh4-Xau-6.8.1-2.sh4.rpm: \
 		$(DEPDIR)/$(XPROTO) \
-		Archive/stlinux20-target-$(XAU)-$(XAU_VERSION).src.rpm
+		$(archivedir)/stlinux20-target-$(XAU)-$(XAU_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(XAU).spec < ../Patches/stm-target-$(XAU).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(XAU).spec
@@ -220,7 +220,7 @@ RPMS/sh4/stlinux20-sh4-X11-6.8.1-4.sh4.rpm: \
 		$(DEPDIR)/$(XAU) \
 		$(DEPDIR)/$(XEXTENSIONS) \
 		$(DEPDIR)/$(XTRANS) \
-		Archive/stlinux20-target-$(X11)-$(X11_VERSION).src.rpm
+		$(archivedir)/stlinux20-target-$(X11)-$(X11_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(X11).spec < ../Patches/stm-target-$(X11).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(X11).spec
@@ -239,7 +239,7 @@ $(DEPDIR)/%$(X11): $(DEPDIR)/%$(XAU) RPMS/sh4/stlinux20-sh4-$(X11)-$(X11_VERSION
 LIRC_APPS := lirc-apps
 LIRC_APPS_VERSION := 0.7.2pre1-7
 RPMS/sh4/stlinux20-sh4-lirc-apps-0.7.2pre1-7.sh4.rpm: \
-		Archive/stlinux20-target-$(LIRC_APPS)-$(LIRC_APPS_VERSION).src.rpm
+		$(archivedir)/stlinux20-target-$(LIRC_APPS)-$(LIRC_APPS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(LIRC_APPS).spec
 $(DEPDIR)/min-$(LIRC_APPS) $(DEPDIR)/std-$(LIRC_APPS) $(DEPDIR)/max-$(LIRC_APPS) $(DEPDIR)/$(LIRC_APPS): \
@@ -269,7 +269,7 @@ DIRECTFB_VERSION := 1.0.0-19
 RPMS/sh4/$(STLINUX)-sh4-$(DIRECTFB)-$(DIRECTFB_VERSION).sh4.rpm \
 RPMS/sh4/$(STLINUX)-sh4-$(DIRECTFB_DEV)-$(DIRECTFB_VERSION).sh4.rpm: \
 		freetype \
-		Archive/$(STLINUX)-target-$(DIRECTFB)-$(DIRECTFB_VERSION).src.rpm
+		$(archivedir)/$(STLINUX)-target-$(DIRECTFB)-$(DIRECTFB_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	( cd SPECS; patch -p1 stm-target-$(DIRECTFB).spec < ../Patches/stm-target-$(DIRECTFB).spec.diff ) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(DIRECTFB).spec
@@ -299,7 +299,7 @@ DIRECTFB_EXAMPLES_VERSION := 0.9.22_stcvs20050810-7
 RPMS/sh4/stlinux20-sh4-directfb-examples-0.9.22_stcvs20050810-7.sh4.rpm: \
 		$(FREETYPE_DEV) \
 		$(DIRECTFB_DEV) \
-		Archive/stlinux20-target-directfb-examples-0.9.22_stcvs20050810-7.src.rpm
+		$(archivedir)/stlinux20-target-directfb-examples-0.9.22_stcvs20050810-7.src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(DIRECTFB_EXAMPLES).spec
 
