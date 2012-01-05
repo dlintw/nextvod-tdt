@@ -1135,13 +1135,6 @@ fi
 AC_SUBST(DRPM)
 AC_SUBST(DRPMBUILD)
 
-#	old
-#test -d ../../Archive || mkdir ../../Archive
-#ln -sf ../../Archive
-
-test -d ~/Archive || mkdir ~/Archive
-ln -sf ~/Archive
-
 #
 # internal
 #
