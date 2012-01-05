@@ -1,3 +1,4 @@
+
 /* GStreamer DVB Media Sink
  * Copyright 2006 Felix Domke <tmbinc@elitedvb.net>
  * based on code by:
@@ -1035,7 +1036,7 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 #define H263_VIDEO_PES_START_CODE               0xfe
 #define MAX_PES_PACKET_SIZE                     65400
 
-
+//#define DEBUG_EXT
 
 static GstFlowReturn
 gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
@@ -1053,7 +1054,9 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 	if (self->fd < 0)
 		return GST_FLOW_OK;
 
-	//printf("T: %lld\n", timestamp);
+#ifdef DEBUG_EXT
+	printf("gst_dvbvideosink_render 1\n");
+#endif
 
 	unsigned char start_code = MPEG_VIDEO_PES_START_CODE;
 	unsigned int pic_start_code = 0;
@@ -1080,6 +1083,9 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 		start_code = H263_VIDEO_PES_START_CODE;
 	}
 
+#ifdef DEBUG_EXT
+	printf("gst_dvbvideosink_render - write initial header\n");
+#endif
 
 	if (self->initial_header)
 	{
@@ -1146,6 +1152,10 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 		self->initial_header = FALSE;
 	}
 
+#ifdef DEBUG_EXT
+	printf("gst_dvbvideosink_render - initial header written\n");
+	printf("gst_dvbvideosink_render - write pes packages\n");
+#endif
 
 	unsigned int data_position = 0;
 	//int i = 0;
@@ -1173,8 +1183,11 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 				pic_start_code = 0;
 			}
 		}
-		else if (self->streamtype == STREAMTYPE_H264 && data_position == 0) {
+		else if (self->streamtype == STREAMTYPE_H264 && data_position == 0 && self->h264_nal_len_size > 0) {
 			//This code replaces all nal length bytes with HEAD
+#ifdef DEBUG_EXT
+			printf("gst_dvbvideosink_render - h264 replace nal lenght %d\n", self->h264_nal_len_size);
+#endif
 			unsigned int pos = 0;
 			if (self->h264_nal_len_size == 4) {
 				while(TRUE) {
@@ -1219,14 +1232,24 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 				data = dest;
 				data_len = dest_pos;
 			}
+#ifdef DEBUG_EXT
+			printf("gst_dvbvideosink_render - h264 nal lenght replaced\n");
+#endif
 		}
 
+#ifdef DEBUG_EXT
+		printf("gst_dvbvideosink_render - build PESHeader\n");
+#endif
 		if (insertVideoPrivateDataHeader) insertVideoPrivateDataHeader = data_len;
 		pes_header_size = buildPesHeader(pes_header, pes_packet_size, 
 			timestamp, start_code, data_position==0?pic_start_code:0, 
 			insertVideoPrivateDataHeader);
 
 		insertVideoPrivateDataHeader = 0;
+
+#ifdef DEBUG_EXT
+		printf("gst_dvbvideosink_render - PESHeader built\n");
+#endif
 
 #if 0
 		printf("--> %d\n", self->runtime_header_data_size);
@@ -1262,6 +1285,10 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 		//printf("< pos=%u size=%u\n", data_position, pes_packet_size);
 	}
 
+#ifdef DEBUG_EXT
+	printf("gst_dvbvideosink_render - pes packages written\n");
+#endif
+
 	return GST_FLOW_OK;
 
 poll_error:
@@ -1290,6 +1317,10 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 	GstStructure    *structure = gst_caps_get_structure (caps, 0);
 	const char      *mimetype = gst_structure_get_name (structure);
 	int              streamtype = STREAMTYPE_UNKNOWN;
+
+#ifdef DEBUG_EXT
+	printf("gst_dvbvideosink_set_caps ->\n");
+#endif
 
 	printf("\nMIMETYPE: %s\n", mimetype);
 
@@ -1336,6 +1367,9 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		const GValue *cd_data = gst_structure_get_value (structure, "codec_data");
 		streamtype = STREAMTYPE_H264;
 		if (cd_data) {
+#ifdef DEBUG_EXT
+			printf("[V] video/x-h264 has codec_data\n");
+#endif
 			unsigned char tmp[2048];
 			unsigned int tmp_len = 0;
 			GstBuffer *codec_data = gst_value_get_buffer (cd_data);
@@ -1670,6 +1704,10 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 		self->dec_running = TRUE;
 	} else
 		GST_ELEMENT_ERROR (self, STREAM, TYPE_NOT_FOUND, (NULL), ("unimplemented stream type %s", mimetype));
+
+#ifdef DEBUG_EXT
+	printf("gst_dvbvideosink_set_caps <-\n");
+#endif
 
 	return TRUE;
 }
