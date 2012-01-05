@@ -188,7 +188,7 @@ $(DEPDIR)/%$(NETBASE): \
 		$(NETBASE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force --nopost -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
-	( cd root/etc/network && $(INSTALL) interfaces_yaud $(prefix)/$*cdkroot/etc/network/interfaces || true ) && \
+	( cd root/etc/network && $(INSTALL) interfaces $(prefix)/$*cdkroot/etc/network/interfaces || true ) && \
 	( export HHL_CROSS_TARGET_DIR=$(prefix)/$*cdkroot && cd $(prefix)/$*cdkroot/etc/init.d && \
 		for s in networking ; do \
 			$(hostprefix)/bin/target-initdconfig --add $${s#init.d/} || \
