@@ -197,7 +197,6 @@ enigma2.cvs;CMD_CVS -d :pserver:anonymous@dreamboxupdate.com:/cvs co enigma2
 #
 # in work
 #
-record-0.1.20070712.tar.gz;
 flashybrid_0.15.tar.gz;http://ftp.debian.org/debian/pool/main/f/flashybrid
 netkit-base-0.17.tar.gz;ftp://ftp.uk.linux.org/pub/linux/Networking/netkit
 ruby-1.8.6.tar.bz2;ftp://ftp.ruby-lang.org/pub/ruby/1.8

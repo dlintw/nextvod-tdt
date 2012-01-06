@@ -190,7 +190,6 @@ enigma2;cvs;enigma2-cvs;enigma2.cvs:enigma2.diff:e2-fb.diff:e2-rc.diff;extract:e
 #
 # in work
 #
-record;0.1.20070712;record-0.1.20070712;record-0.1.20070712.tar.gz;extract:record-0.1.20070712.tar.gz
 flashybrid;0.15;flashybrid-0.15;flashybrid_0.15.tar.gz;extract:flashybrid_0.15.tar.gz:flashybrid-0.15;patch:flashybrid.diff
 netkit_base;0.17;netkit-base-0.17;netkit-base-0.17.tar.gz;extract:netkit-base-0.17.tar.gz
 ruby;1.8.6;ruby-1.8.6;ruby-1.8.6.tar.bz2;extract:ruby-1.8.6.tar.bz2
