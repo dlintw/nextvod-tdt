@@ -1036,7 +1036,6 @@ TUXBOX_RULES_MAKE_RPM(directfb_examples)
 # in work
 #
 TUXBOX_RULES_MAKE(flashybrid)
-TUXBOX_RULES_MAKE(record)
 TUXBOX_RULES_MAKE(netkit_base)
 
 #

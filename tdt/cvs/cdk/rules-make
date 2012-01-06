@@ -117,7 +117,7 @@ pixman;0.18.0;pixman-0.18.0;pixman-0.18.0.tar.gz;extract:pixman-0.18.0.tar.gz
 cairo;1.8.10;cairo-1.8.10;cairo-1.8.10.tar.gz;extract:cairo-1.8.10.tar.gz;patch:cairo-1.8.10.diff
 expat;2.0.1;expat-2.0.1;expat-2.0.1.tar.gz;extract:expat-2.0.1.tar.gz
 fontconfig;2.5.93;fontconfig-2.5.93;fontconfig-2.5.93.tar.gz;extract:fontconfig-2.5.93.tar.gz
-python;2.6;python-2.6;Python-2.6.tar.bz2:python_2.6.diff:Python-2.6.2-libffi_pic.patch:Python-2.6.2-sitecustomize.patch;extract:Python-2.6.tar.bz2;move:Python-2.6:python-2.6;patch:python_2.6.diff;patch:Python-2.6.2-libffi_pic.patch;patch:Python-2.6.2-sitecustomize.patch
+python;2.6;python-2.6;Python-2.6.tar.bz2:python_2.6.diff;extract:Python-2.6.tar.bz2;move:Python-2.6:python-2.6;patch:python_2.6.diff
 elementtree;1.2.6-20050316;elementtree-1.2.6-20050316;elementtree-1.2.6-20050316.tar.gz;extract:elementtree-1.2.6-20050316.tar.gz
 lxml;2.0.5;lxml-2.0.5;lxml-2.0.5.tgz;extract:lxml-2.0.5.tgz
 libxmlccwrap;0.0.12;libxmlccwrap-0.0.12;libxmlccwrap-0.0.12.tar.gz;extract:libxmlccwrap-0.0.12.tar.gz
@@ -190,7 +190,6 @@ enigma2;cvs;enigma2-cvs;enigma2.cvs:enigma2.diff:e2-fb.diff:e2-rc.diff;extract:e
 #
 # in work
 #
-record;0.1.20070712;record-0.1.20070712;record-0.1.20070712.tar.gz;extract:record-0.1.20070712.tar.gz
 flashybrid;0.15;flashybrid-0.15;flashybrid_0.15.tar.gz;extract:flashybrid_0.15.tar.gz:flashybrid-0.15;patch:flashybrid.diff
 netkit_base;0.17;netkit-base-0.17;netkit-base-0.17.tar.gz;extract:netkit-base-0.17.tar.gz
 ruby;1.8.6;ruby-1.8.6;ruby-1.8.6.tar.bz2;extract:ruby-1.8.6.tar.bz2

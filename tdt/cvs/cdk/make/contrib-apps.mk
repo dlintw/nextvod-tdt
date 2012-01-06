@@ -48,7 +48,7 @@ endif
 $(DEPDIR)/grep.do_prepare: @DEPENDS_grep@
 	@PREPARE_grep@
 	cd @DIR_grep@ && \
-		gunzip -cd ../$(lastword $^) | cat > debian.patch && \
+		gunzip -cd $(lastword $^) | cat > debian.patch && \
 		patch -p1 <debian.patch
 	touch $@
 

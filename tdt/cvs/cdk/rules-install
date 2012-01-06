@@ -132,7 +132,6 @@ ethtool;make:install:DESTDIR=TARGETS
 #
 # in work
 #
-record;make:install
 flashybrid;make:install
 netkit_base;make:install:PREFIX=TARGETS
 ruby;make:install:DESTDIR=TARGETS
