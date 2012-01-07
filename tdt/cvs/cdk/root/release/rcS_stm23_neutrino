@@ -32,7 +32,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/hostname start
 
    echo "starting telnetd"
-   /usr/sbin/telnetd -l /bin/login
+   /usr/sbin/telnetd -l /bin/autologin
 
    #used by fp_control! otherwise crash
    insmod $MODDIR/boxtype.ko

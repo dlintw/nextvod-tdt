@@ -34,7 +34,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/hostname start
 
    echo "starting telnetd"
-   /usr/sbin/telnetd -l /bin/login
+   /usr/sbin/telnetd -l /bin/autologin
 
 
    echo "LOADING MODULES"   
