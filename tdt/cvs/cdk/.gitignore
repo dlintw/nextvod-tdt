@@ -18,3 +18,15 @@ zope.interface-*
 e2fsprogs-*
 sqlite-3.6.0
 boost_*
+mc-*
+lirc-*
+libusb-*
+libsoup-*
+libogg-*
+gstreamer-*
+gst-*
+graphlcd-*
+glib-*
+flac-*
+alsa-*
+
