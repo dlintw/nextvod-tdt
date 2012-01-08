@@ -10,11 +10,21 @@ TMPFWDIR=$6
 
 cp -a $RELEASEDIR/* $TMPROOTDIR
 
+mv $TMPROOTDIR/etc/enigma2/ $TMPROOTDIR/var/etc/enigma2/
+ln -s /var/etc/enigma2 $TMPROOTDIR/etc/enigma2
+
 mv $TMPROOTDIR/var/* $TMPEXTDIR
 mkdir $TMPEXTDIR/usr
+mkdir $TMPEXTDIR/usr/share
 mkdir $TMPEXTDIR/usr/lib
 mv $TMPROOTDIR/usr/lib/enigma2 $TMPEXTDIR/usr/lib/
 ln -s /var/usr/lib/enigma2 $TMPROOTDIR/usr/lib/
+mv $TMPROOTDIR/usr/share/* $TMPEXTDIR/usr/share/
+rm -rf $TMPROOTDIR/usr/share/
+ln -s /var/usr/share $TMPROOTDIR/usr/share
+rm $TMPEXTDIR/usr/share/enigma2
+mv $TMPROOTDIR/usr/local/share/enigma2/ $TMPEXTDIR/usr/share/
+ln -s /usr/share/enigma2 $TMPROOTDIR/usr/local/share/enigma2
 
 mv $TMPROOTDIR/boot/uImage $TMPKERNELDIR/uImage
 
