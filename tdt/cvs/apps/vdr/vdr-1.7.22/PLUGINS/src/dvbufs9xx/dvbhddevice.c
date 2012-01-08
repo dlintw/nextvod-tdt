@@ -446,8 +446,15 @@ void cDvbHdDevice::SetVolumeDevice(int Volume)
 
 void cDvbHdDevice::SetDigitalAudioDevice(bool On)
 {
-  dsyslog("cDvbHdDevice::%s:%d \n", __func__, __LINE__);
+  dsyslog("cDvbHdDevice::%s:%d %d\n", __func__, __LINE__,On);
 
+  if(On == 1)
+  {
+    dsyslog("SetDigitalAudioDevice = ON\n");
+    digitalAudio = 1;
+    SetAudioEncoding(AUDIO_ENCODING_AC3);
+    ChangeAVEncoding(0, 1);
+  }
   if (digitalAudio != On) {
      if (digitalAudio)
         cCondWait::SleepMs(1000); // Wait until any leftover digital data has been flushed
