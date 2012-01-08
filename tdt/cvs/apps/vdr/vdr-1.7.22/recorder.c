@@ -166,9 +166,17 @@ void cRecorder::Action(void)
               }
            }
         if (time(NULL) - t > MAXBROKENTIMEOUT) {
+#ifndef __sh__
            esyslog("ERROR: video data stream broken");
            ShutdownHandler.RequestEmergencyExit();
            t = time(NULL);
+#else
+           esyslog("ERROR: [recorder.c] video data stream broken");
+           //Eine Meldung ist besser ;)
+           Skins.QueueMessage(mtWarning, tr("ERROR: [recorder.c] video data stream broken"), 5, -1);
+           t = time(NULL);
+           break;
+#endif
            }
         }
 }
