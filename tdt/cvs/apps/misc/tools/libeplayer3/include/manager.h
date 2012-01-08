@@ -18,7 +18,7 @@ typedef enum {
 typedef enum {
     eTypeES,
     eTypePES
-} eTrackType;
+} eTrackTypeEplayer;
 
 typedef struct Track_s {
     char *                Name;
@@ -38,7 +38,7 @@ typedef struct Track_s {
     long long int         pts;
 
     /* for later use: */
-    eTrackType            type;
+    eTrackTypeEplayer     type;
     int                   width;
     int                   height;
 
