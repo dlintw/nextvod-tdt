@@ -9,7 +9,9 @@
 
 #include "recorder.h"
 #include "shutdown.h"
-
+#ifdef __sh__
+#include "skins.h"
+#endif
 #define RECORDERBUFSIZE  (MEGABYTE(5) / TS_SIZE * TS_SIZE) // multiple of TS_SIZE
 
 // The maximum time we wait before assuming that a recorded video data stream
