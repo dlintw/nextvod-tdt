@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2011-12-03 16:25+0100\n"
+"POT-Creation-Date: 2011-12-21 22:29+0100\n"
 "PO-Revision-Date: 2008-03-02 19:02+0100\n"
 "Last-Translator: Luca Olivetti <luca@ventoso.org>\n"
 "Language-Team: Catalan <vdr@linuxtv.org>\n"
@@ -881,8 +881,41 @@ msgstr "pan&scan"
 msgid "letterbox"
 msgstr "letterbox"
 
-msgid "center cut out"
-msgstr "center cut out"
+msgid "bestfit"
+msgstr ""
+
+msgid "nonlinear"
+msgstr ""
+
+msgid "PAL"
+msgstr ""
+
+msgid "480p"
+msgstr ""
+
+msgid "576p50"
+msgstr ""
+
+msgid "720p60"
+msgstr ""
+
+msgid "1080i60"
+msgstr ""
+
+msgid "720p50"
+msgstr ""
+
+msgid "1080i50"
+msgstr ""
+
+msgid "1080p30"
+msgstr ""
+
+msgid "1080p24"
+msgstr ""
+
+msgid "1080p25"
+msgstr ""
 
 msgid "no"
 msgstr "no"
@@ -913,6 +946,10 @@ msgstr "Subtítols"
 
 msgid "Setup.DVB$Primary DVB interface"
 msgstr "Tarja DVB primària"
+
+#, fuzzy
+msgid "Setup.DVB$Video System"
+msgstr "Format del vídeo"
 
 msgid "Setup.DVB$Video format"
 msgstr "Format del vídeo"
@@ -1332,3 +1369,6 @@ msgstr "Prem qualsevol tecla per cancel·lar el reinici"
 #, c-format
 msgid "VDR will shut down in %s minutes"
 msgstr "VDR s'apagarà en %s minuts"
+
+#~ msgid "center cut out"
+#~ msgstr "center cut out"

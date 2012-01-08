@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.7.16\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2011-12-03 16:25+0100\n"
+"POT-Creation-Date: 2011-12-21 22:29+0100\n"
 "PO-Revision-Date: 2011-02-15 16:29+0100\n"
 "Last-Translator: Milan Hrala <hrala.milan@gmail.com>\n"
 "Language-Team: Slovak <vdr@linuxtv.org>\n"
@@ -878,8 +878,41 @@ msgstr "pan&scan"
 msgid "letterbox"
 msgstr "letterbox"
 
-msgid "center cut out"
-msgstr "oreza» do stredu"
+msgid "bestfit"
+msgstr ""
+
+msgid "nonlinear"
+msgstr ""
+
+msgid "PAL"
+msgstr ""
+
+msgid "480p"
+msgstr ""
+
+msgid "576p50"
+msgstr ""
+
+msgid "720p60"
+msgstr ""
+
+msgid "1080i60"
+msgstr ""
+
+msgid "720p50"
+msgstr ""
+
+msgid "1080i50"
+msgstr ""
+
+msgid "1080p30"
+msgstr ""
+
+msgid "1080p24"
+msgstr ""
+
+msgid "1080p25"
+msgstr ""
 
 msgid "no"
 msgstr "nie"
@@ -910,6 +943,10 @@ msgstr "Titulky"
 
 msgid "Setup.DVB$Primary DVB interface"
 msgstr "Hlavné DVB rozhranie"
+
+#, fuzzy
+msgid "Setup.DVB$Video System"
+msgstr "Formát videa"
 
 msgid "Setup.DVB$Video format"
 msgstr "Formát videa"
@@ -1329,3 +1366,6 @@ msgstr "ktorákoµvek  klávesa zru¹í re¹tart"
 #, c-format
 msgid "VDR will shut down in %s minutes"
 msgstr "VDR sa vypne za %s minút"
+
+#~ msgid "center cut out"
+#~ msgstr "oreza» do stredu"

@@ -59,6 +59,8 @@ enum eVideoSystem { vsPAL,
 
 enum eVideoDisplayFormat { vdfPanAndScan,
                            vdfLetterBox,
+                           vdfBestFit,
+                           vdfNonLinear,
                            vdfCenterCutOut
                          };
 
@@ -425,6 +427,9 @@ public:
 // Video format facilities
 
 public:
+  virtual void SetVideoSystem(int VideoSystem);
+         ///< Sets the video system (resolution) to the given one.
+         ///< A derived class must first call the base class function!
   virtual void SetVideoDisplayFormat(eVideoDisplayFormat VideoDisplayFormat);
          ///< Sets the video display format to the given one (only useful
          ///< if this device has an MPEG decoder).

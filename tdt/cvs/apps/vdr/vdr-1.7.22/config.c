@@ -421,6 +421,7 @@ cSetup::cSetup(void)
   NumberKeysForChars = 1;
   VideoDisplayFormat = 1;
   VideoFormat = 0;
+  VideoSystem = 5;
   UpdateChannels = 5;
   UseDolbyDigital = 1;
   ChannelInfoPos = 0;
@@ -615,6 +616,7 @@ bool cSetup::Parse(const char *Name, const char *Value)
   else if (!strcasecmp(Name, "NumberKeysForChars"))  NumberKeysForChars = atoi(Value);
   else if (!strcasecmp(Name, "VideoDisplayFormat"))  VideoDisplayFormat = atoi(Value);
   else if (!strcasecmp(Name, "VideoFormat"))         VideoFormat        = atoi(Value);
+  else if (!strcasecmp(Name, "VideoSystem"))         VideoSystem        = atoi(Value);
   else if (!strcasecmp(Name, "UpdateChannels"))      UpdateChannels     = atoi(Value);
   else if (!strcasecmp(Name, "UseDolbyDigital"))     UseDolbyDigital    = atoi(Value);
   else if (!strcasecmp(Name, "ChannelInfoPos"))      ChannelInfoPos     = atoi(Value);
@@ -712,6 +714,7 @@ bool cSetup::Save(void)
   Store("NumberKeysForChars", NumberKeysForChars);
   Store("VideoDisplayFormat", VideoDisplayFormat);
   Store("VideoFormat",        VideoFormat);
+  Store("VideoSystem",        VideoSystem);
   Store("UpdateChannels",     UpdateChannels);
   Store("UseDolbyDigital",    UseDolbyDigital);
   Store("ChannelInfoPos",     ChannelInfoPos);

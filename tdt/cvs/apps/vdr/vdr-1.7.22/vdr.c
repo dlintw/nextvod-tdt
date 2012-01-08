@@ -32,7 +32,9 @@
 #include <pwd.h>
 #include <signal.h>
 #include <stdlib.h>
+#ifdef HAS_LIBCAP
 #include <sys/capability.h>
+#endif
 #include <sys/prctl.h>
 #include <termios.h>
 #include <unistd.h>
@@ -115,8 +117,9 @@ static bool SetUser(const char *UserName, bool UserDump)//XXX name?
 
 static bool DropCaps(void)
 {
+#ifdef HAS_LIBCAP
   // drop all capabilities except selected ones
-  cap_t caps = cap_from_text("= cap_sys_nice,cap_sys_time,cap_net_raw=ep");
+  cap_t caps = cap_from_text("= cap_sys_nice,cap_sys_time=ep");
   if (!caps) {
      fprintf(stderr, "vdr: cap_from_text failed: %s\n", strerror(errno));
      return false;
@@ -127,6 +130,7 @@ static bool DropCaps(void)
      return false;
      }
   cap_free(caps);
+#endif
   return true;
 }
 

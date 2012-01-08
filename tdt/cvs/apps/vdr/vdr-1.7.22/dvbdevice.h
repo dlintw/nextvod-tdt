@@ -159,7 +159,7 @@ public:
 
 // Common Interface facilities:
 
-private:
+public:
   cCiAdapter *ciAdapter;
 
 // Channel facilities
@@ -181,6 +181,7 @@ protected:
   virtual bool SetChannelDevice(const cChannel *Channel, bool LiveView);
 public:
   virtual bool HasLock(int TimeoutMs = 0);
+  virtual void ChannelIsLocked();
 
 // PID handle facilities
 

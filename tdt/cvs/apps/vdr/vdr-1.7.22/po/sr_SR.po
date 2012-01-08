@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.7.1\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2011-12-03 16:25+0100\n"
+"POT-Creation-Date: 2011-12-21 22:29+0100\n"
 "PO-Revision-Date: 2011-01-09 15:57+0100\n"
 "Last-Translator: Milan Cvijanoviæ <elcom_cvijo@hotmail.com>\n"
 "Language-Team: Serbian <vdr@linuxtv.org>\n"
@@ -896,8 +896,41 @@ msgstr "pro¹iri i ispitaj"
 msgid "letterbox"
 msgstr "pravougaonik"
 
-msgid "center cut out"
-msgstr "izre¾i sredinu"
+msgid "bestfit"
+msgstr ""
+
+msgid "nonlinear"
+msgstr ""
+
+msgid "PAL"
+msgstr ""
+
+msgid "480p"
+msgstr ""
+
+msgid "576p50"
+msgstr ""
+
+msgid "720p60"
+msgstr ""
+
+msgid "1080i60"
+msgstr ""
+
+msgid "720p50"
+msgstr ""
+
+msgid "1080i50"
+msgstr ""
+
+msgid "1080p30"
+msgstr ""
+
+msgid "1080p24"
+msgstr ""
+
+msgid "1080p25"
+msgstr ""
 
 #, fuzzy
 msgid "no"
@@ -929,6 +962,10 @@ msgstr "Titlovi"
 
 msgid "Setup.DVB$Primary DVB interface"
 msgstr "Primarni DVB ureðaj"
+
+#, fuzzy
+msgid "Setup.DVB$Video System"
+msgstr "Video format"
 
 msgid "Setup.DVB$Video format"
 msgstr "Video format"
@@ -1356,3 +1393,6 @@ msgstr "Pritisni jedan taster za poni¹tenje restart-a"
 #, c-format
 msgid "VDR will shut down in %s minutes"
 msgstr "VDR se iskljuèuje za %s minuta"
+
+#~ msgid "center cut out"
+#~ msgstr "izre¾i sredinu"

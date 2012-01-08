@@ -374,6 +374,10 @@ bool cDevice::GrabImageFile(const char *FileName, bool Jpeg, int Quality, int Si
   return result == 0;
 }
 
+void cDevice::SetVideoSystem(int VideoSystem)
+{
+}
+
 void cDevice::SetVideoDisplayFormat(eVideoDisplayFormat VideoDisplayFormat)
 {
   cSpuDecoder *spuDecoder = GetSpuDecoder();

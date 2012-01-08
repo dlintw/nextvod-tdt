@@ -20,7 +20,7 @@ PREFIX  ?= /usr/local
 MANDIR   = $(PREFIX)/share/man
 BINDIR   = $(PREFIX)/bin
 INCDIR   = $(PREFIX)/include
-LOCDIR   = ./locale
+LOCDIR   = $(PREFIX)/share/locale
 LIBS     = -ljpeg -lpthread -ldl -lcap -lrt $(shell pkg-config --libs freetype2 fontconfig)
 INCLUDES ?= $(shell pkg-config --cflags freetype2 fontconfig)
 
@@ -190,7 +190,7 @@ install: install-bin install-conf install-doc install-plugins install-i18n insta
 
 install-bin: vdr
 	@mkdir -p $(DESTDIR)$(BINDIR)
-	@cp --remove-destination vdr svdrpsend $(DESTDIR)$(BINDIR)
+	@cp --remove-destination vdr svdrpsend.pl $(DESTDIR)$(BINDIR)
 
 # Configuration files:
 

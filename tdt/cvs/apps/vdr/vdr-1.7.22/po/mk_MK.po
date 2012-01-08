@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR-1.7.14\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2011-12-03 16:25+0100\n"
+"POT-Creation-Date: 2011-12-21 22:29+0100\n"
 "PO-Revision-Date: 2010-03-11 00:54+0100\n"
 "Last-Translator: Dimitar Petrovski <dimeptr@gmail.com>\n"
 "Language-Team: Macedonian <en@li.org>\n"
@@ -879,8 +879,41 @@ msgstr "прошири и барај"
 msgid "letterbox"
 msgstr "плико"
 
-msgid "center cut out"
-msgstr "исечи средина"
+msgid "bestfit"
+msgstr ""
+
+msgid "nonlinear"
+msgstr ""
+
+msgid "PAL"
+msgstr ""
+
+msgid "480p"
+msgstr ""
+
+msgid "576p50"
+msgstr ""
+
+msgid "720p60"
+msgstr ""
+
+msgid "1080i60"
+msgstr ""
+
+msgid "720p50"
+msgstr ""
+
+msgid "1080i50"
+msgstr ""
+
+msgid "1080p30"
+msgstr ""
+
+msgid "1080p24"
+msgstr ""
+
+msgid "1080p25"
+msgstr ""
 
 msgid "no"
 msgstr "не"
@@ -911,6 +944,10 @@ msgstr "Титл"
 
 msgid "Setup.DVB$Primary DVB interface"
 msgstr "Примарен DVB уред"
+
+#, fuzzy
+msgid "Setup.DVB$Video System"
+msgstr "Видео формат"
 
 msgid "Setup.DVB$Video format"
 msgstr "Видео формат"
@@ -1330,3 +1367,6 @@ msgstr "Притиснете копче за откажување на рест�
 #, c-format
 msgid "VDR will shut down in %s minutes"
 msgstr "VDR ќе се исклучи за %s минути"
+
+#~ msgid "center cut out"
+#~ msgstr "исечи средина"

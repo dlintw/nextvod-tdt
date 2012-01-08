@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2011-12-03 16:25+0100\n"
+"POT-Creation-Date: 2011-12-21 22:29+0100\n"
 "PO-Revision-Date: 2009-09-23 23:50+0800\n"
 "Last-Translator: Nan Feng <nfgx@21cn.com>\n"
 "Language-Team: Chinese (simplified) <vdr@linuxtv.org>\n"
@@ -881,8 +881,41 @@ msgstr "pan&scan模式"
 msgid "letterbox"
 msgstr "letterbox模式"
 
-msgid "center cut out"
-msgstr "Center-cut-out模式"
+msgid "bestfit"
+msgstr ""
+
+msgid "nonlinear"
+msgstr ""
+
+msgid "PAL"
+msgstr ""
+
+msgid "480p"
+msgstr ""
+
+msgid "576p50"
+msgstr ""
+
+msgid "720p60"
+msgstr ""
+
+msgid "1080i60"
+msgstr ""
+
+msgid "720p50"
+msgstr ""
+
+msgid "1080i50"
+msgstr ""
+
+msgid "1080p30"
+msgstr ""
+
+msgid "1080p24"
+msgstr ""
+
+msgid "1080p25"
+msgstr ""
 
 msgid "no"
 msgstr "不"
@@ -913,6 +946,10 @@ msgstr "字幕"
 
 msgid "Setup.DVB$Primary DVB interface"
 msgstr "使用中卫星卡接口"
+
+#, fuzzy
+msgid "Setup.DVB$Video System"
+msgstr "视频格式"
 
 msgid "Setup.DVB$Video format"
 msgstr "视频格式"
@@ -1332,3 +1369,6 @@ msgstr "请按任意键重启"
 #, c-format
 msgid "VDR will shut down in %s minutes"
 msgstr "VDR系统将要在%s分钟关闭"
+
+#~ msgid "center cut out"
+#~ msgstr "Center-cut-out模式"

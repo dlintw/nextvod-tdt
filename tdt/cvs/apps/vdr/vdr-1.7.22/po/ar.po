@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.7.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2011-12-03 16:25+0100\n"
+"POT-Creation-Date: 2011-12-21 22:29+0100\n"
 "PO-Revision-Date: 2008-10-16 11:16-0400\n"
 "Last-Translator: Osama Alrawab <alrawab@hotmail.com>\n"
 "Language-Team: Arabic <ar@li.org>\n"
@@ -899,8 +899,41 @@ msgstr "بحث خفيف"
 msgid "letterbox"
 msgstr "صندوق الحروف"
 
-msgid "center cut out"
-msgstr "قص من الوسط"
+msgid "bestfit"
+msgstr ""
+
+msgid "nonlinear"
+msgstr ""
+
+msgid "PAL"
+msgstr ""
+
+msgid "480p"
+msgstr ""
+
+msgid "576p50"
+msgstr ""
+
+msgid "720p60"
+msgstr ""
+
+msgid "1080i60"
+msgstr ""
+
+msgid "720p50"
+msgstr ""
+
+msgid "1080i50"
+msgstr ""
+
+msgid "1080p30"
+msgstr ""
+
+msgid "1080p24"
+msgstr ""
+
+msgid "1080p25"
+msgstr ""
 
 msgid "no"
 msgstr "ﻻ"
@@ -931,6 +964,10 @@ msgstr "الترجمة"
 
 msgid "Setup.DVB$Primary DVB interface"
 msgstr "كرت الستالايت الاولى"
+
+#, fuzzy
+msgid "Setup.DVB$Video System"
+msgstr "نوع الفيديو  "
 
 msgid "Setup.DVB$Video format"
 msgstr "نوع الفيديو  "
@@ -1358,6 +1395,9 @@ msgstr "اضغط اى زر لالغاء اعادة التشغيل"
 #, c-format
 msgid "VDR will shut down in %s minutes"
 msgstr "البرنامج سيقوم بالاغلاق بعد%s دقيقة "
+
+#~ msgid "center cut out"
+#~ msgstr "قص من الوسط"
 
 #~ msgid "Path"
 #~ msgstr "المسار"

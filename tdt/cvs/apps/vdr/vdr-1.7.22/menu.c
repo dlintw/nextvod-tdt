@@ -2744,7 +2744,8 @@ private:
   int originalNumSubtitleLanguages;
   int numSubtitleLanguages;
   void Setup(void);
-  const char *videoDisplayFormatTexts[3];
+  const char *videoDisplayFormatTexts[4];
+  const char *videoSystemTexts[10];
   const char *updateChannelsTexts[6];
 public:
   cMenuSetupDVB(void);
@@ -2761,7 +2762,18 @@ cMenuSetupDVB::cMenuSetupDVB(void)
   originalNumSubtitleLanguages = numSubtitleLanguages;
   videoDisplayFormatTexts[0] = tr("pan&scan");
   videoDisplayFormatTexts[1] = tr("letterbox");
-  videoDisplayFormatTexts[2] = tr("center cut out");
+  videoDisplayFormatTexts[2] = tr("bestfit");
+  videoDisplayFormatTexts[3] = tr("nonlinear");
+  videoSystemTexts[0] = tr("PAL");              //pal
+  videoSystemTexts[1] = tr("480p");
+  videoSystemTexts[2] = tr("576p50");
+  videoSystemTexts[3] = tr("720p60");
+  videoSystemTexts[4] = tr("1080i60");
+  videoSystemTexts[5] = tr("720p50");
+  videoSystemTexts[6] = tr("1080i50");
+  videoSystemTexts[7] = tr("1080p30");
+  videoSystemTexts[8] = tr("1080p24");
+  videoSystemTexts[9] = tr("1080p25");
   updateChannelsTexts[0] = tr("no");
   updateChannelsTexts[1] = tr("names only");
   updateChannelsTexts[2] = tr("PIDs only");
@@ -2781,9 +2793,9 @@ void cMenuSetupDVB::Setup(void)
   Clear();
 
   Add(new cMenuEditIntItem( tr("Setup.DVB$Primary DVB interface"), &data.PrimaryDVB, 1, cDevice::NumDevices()));
+  Add(new cMenuEditStraItem(tr("Setup.DVB$Video System"),          &data.VideoSystem, 10, videoSystemTexts));
   Add(new cMenuEditBoolItem(tr("Setup.DVB$Video format"),          &data.VideoFormat, "4:3", "16:9"));
-  if (data.VideoFormat == 0)
-     Add(new cMenuEditStraItem(tr("Setup.DVB$Video display format"), &data.VideoDisplayFormat, 3, videoDisplayFormatTexts));
+  Add(new cMenuEditStraItem(tr("Setup.DVB$Video display format"),  &data.VideoDisplayFormat, 4, videoDisplayFormatTexts));
   Add(new cMenuEditBoolItem(tr("Setup.DVB$Use Dolby Digital"),     &data.UseDolbyDigital));
   Add(new cMenuEditStraItem(tr("Setup.DVB$Update channels"),       &data.UpdateChannels, 6, updateChannelsTexts));
   Add(new cMenuEditIntItem( tr("Setup.DVB$Audio languages"),       &numAudioLanguages, 0, I18nLanguages()->Size()));
@@ -2807,6 +2819,7 @@ eOSState cMenuSetupDVB::ProcessKey(eKeys Key)
 {
   int oldPrimaryDVB = ::Setup.PrimaryDVB;
   int oldVideoDisplayFormat = ::Setup.VideoDisplayFormat;
+  int oldVideoSystem = ::Setup.VideoSystem;
   bool oldVideoFormat = ::Setup.VideoFormat;
   bool newVideoFormat = data.VideoFormat;
   bool oldDisplaySubtitles = ::Setup.DisplaySubtitles;
@@ -2870,6 +2883,8 @@ eOSState cMenuSetupDVB::ProcessKey(eKeys Key)
   if (state == osBack && Key == kOk) {
      if (::Setup.PrimaryDVB != oldPrimaryDVB)
         state = osSwitchDvb;
+     if (::Setup.VideoSystem != oldVideoSystem)
+        cDevice::PrimaryDevice()->SetVideoSystem(::Setup.VideoSystem);
      if (::Setup.VideoDisplayFormat != oldVideoDisplayFormat)
         cDevice::PrimaryDevice()->SetVideoDisplayFormat(eVideoDisplayFormat(::Setup.VideoDisplayFormat));
      if (::Setup.VideoFormat != oldVideoFormat)

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.6.0\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2011-12-03 16:25+0100\n"
+"POT-Creation-Date: 2011-12-21 22:29+0100\n"
 "PO-Revision-Date: 2007-08-15 15:52+0200\n"
 "Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
 "Language-Team: Finnish <vdr@linuxtv.org>\n"
@@ -881,8 +881,41 @@ msgstr "pan&scan"
 msgid "letterbox"
 msgstr "letterbox"
 
-msgid "center cut out"
-msgstr "center cut out"
+msgid "bestfit"
+msgstr ""
+
+msgid "nonlinear"
+msgstr ""
+
+msgid "PAL"
+msgstr ""
+
+msgid "480p"
+msgstr ""
+
+msgid "576p50"
+msgstr ""
+
+msgid "720p60"
+msgstr ""
+
+msgid "1080i60"
+msgstr ""
+
+msgid "720p50"
+msgstr ""
+
+msgid "1080i50"
+msgstr ""
+
+msgid "1080p30"
+msgstr ""
+
+msgid "1080p24"
+msgstr ""
+
+msgid "1080p25"
+msgstr ""
 
 msgid "no"
 msgstr "ei"
@@ -913,6 +946,10 @@ msgstr "Tekstitys"
 
 msgid "Setup.DVB$Primary DVB interface"
 msgstr "Ensisijainen DVB-sovitin"
+
+#, fuzzy
+msgid "Setup.DVB$Video System"
+msgstr "Kuvasuhde"
 
 msgid "Setup.DVB$Video format"
 msgstr "Kuvasuhde"
@@ -1332,3 +1369,6 @@ msgstr "Peru uudelleenkäynnistys painamalla mitä tahansa näppäintä"
 #, c-format
 msgid "VDR will shut down in %s minutes"
 msgstr "VDR sammuu %s minuutin kuluttua"
+
+#~ msgid "center cut out"
+#~ msgstr "center cut out"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.7.12\n"
 "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
-"POT-Creation-Date: 2011-12-03 16:25+0100\n"
+"POT-Creation-Date: 2011-12-21 22:29+0100\n"
 "PO-Revision-Date: 2011-03-10 23:52+0100\n"
 "Last-Translator: Lucian Muresan <lucianm@users.sourceforge.net>\n"
 "Language-Team: Romanian <vdr@linuxtv.org>\n"
@@ -881,8 +881,41 @@ msgstr "pan&scan"
 msgid "letterbox"
 msgstr "letterbox"
 
-msgid "center cut out"
-msgstr "center cut out"
+msgid "bestfit"
+msgstr ""
+
+msgid "nonlinear"
+msgstr ""
+
+msgid "PAL"
+msgstr ""
+
+msgid "480p"
+msgstr ""
+
+msgid "576p50"
+msgstr ""
+
+msgid "720p60"
+msgstr ""
+
+msgid "1080i60"
+msgstr ""
+
+msgid "720p50"
+msgstr ""
+
+msgid "1080i50"
+msgstr ""
+
+msgid "1080p30"
+msgstr ""
+
+msgid "1080p24"
+msgstr ""
+
+msgid "1080p25"
+msgstr ""
 
 msgid "no"
 msgstr "nu"
@@ -913,6 +946,10 @@ msgstr "Subtitrare"
 
 msgid "Setup.DVB$Primary DVB interface"
 msgstr "Dispozitiv DVB primar"
+
+#, fuzzy
+msgid "Setup.DVB$Video System"
+msgstr "Format video"
 
 msgid "Setup.DVB$Video format"
 msgstr "Format video"
@@ -1332,3 +1369,6 @@ msgstr "Apãsaþi orice tastã pentru a anula repornirea"
 #, c-format
 msgid "VDR will shut down in %s minutes"
 msgstr "VDR se va închide în %s minute"
+
+#~ msgid "center cut out"
+#~ msgstr "center cut out"

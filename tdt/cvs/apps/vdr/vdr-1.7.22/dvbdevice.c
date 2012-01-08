@@ -978,7 +978,7 @@ cDvbDevice::cDvbDevice(int Adapter, int Frontend)
   if (fd_frontend >= 0) {
      if (ioctl(fd_frontend, FE_GET_INFO, &frontendInfo) >= 0) {
         switch (frontendInfo.type) {
-          case FE_QPSK: frontendType = (frontendInfo.caps & FE_CAN_2G_MODULATION) ? SYS_DVBS2 : SYS_DVBS; break;
+          case FE_QPSK: frontendType = (frontendInfo.caps & FE_CAN_INVERSION_AUTO) ? SYS_DVBS2 : SYS_DVBS; break;
           case FE_OFDM: frontendType = SYS_DVBT; break;
           case FE_QAM:  frontendType = SYS_DVBC_ANNEX_AC; break;
           case FE_ATSC: frontendType = SYS_ATSC; break;
@@ -1412,7 +1412,24 @@ bool cDvbDevice::SetChannelDevice(const cChannel *Channel, bool LiveView)
 
 bool cDvbDevice::HasLock(int TimeoutMs)
 {
+  static bool lock = false;
+  if ((dvbTuner ? dvbTuner->Locked(TimeoutMs) : false)  && !lock) {
+     printf("cDvbDevice : HasLock We've got a LOCK!!!\n");
+     lock = true;
+     ChannelIsLocked();
+     }
+  else if(!(dvbTuner ? dvbTuner->Locked(TimeoutMs) : false) && lock) {
+     lock = false;
+     printf("cDvbDevice : HasLock LOST LOCK!!!\n");
+     }
+  else if(!(dvbTuner ? dvbTuner->Locked(TimeoutMs) : false))
+     printf("cDvbDevice : HasLock NO LOCK!!!\n");
   return dvbTuner ? dvbTuner->Locked(TimeoutMs) : false;
+}
+
+void cDvbDevice::ChannelIsLocked()
+{
+  // basic
 }
 
 void cDvbDevice::SetTransferModeForDolbyDigital(int Mode)
