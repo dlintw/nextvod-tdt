@@ -296,68 +296,8 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
  		<widget source="text" render="Label" position="6,0" size="120,16" font="Display;16" transparent="1" />
  		<widget source="parent.list" render="Label" position="6,18" size="120,46" font="Display;12">
  			<convert type="StringListSelection" />
---- enigma2-nightly.org/lib/gdi/glcddc.cpp	2011-12-11 16:45:04.071648715 +0100
-+++ enigma2-nightly.patched/lib/gdi/glcddc.cpp	2011-12-11 17:31:29.748597316 +0100
-@@ -5,6 +5,23 @@
- 
- gLCDDC *gLCDDC::instance;
- 
-+#ifdef __sh__
-+static inline int time_after(struct timespec oldtime, uint32_t delta_ms)
-+{
-+	// calculate the oldtime + add on the delta
-+	uint64_t oldtime_ms = (oldtime.tv_sec * 1000) + (oldtime.tv_nsec / 1000000);
-+	oldtime_ms += delta_ms;
-+
-+	// calculate the nowtime
-+	struct timespec nowtime;
-+	clock_gettime(CLOCK_MONOTONIC, &nowtime);
-+	uint64_t nowtime_ms = (nowtime.tv_sec * 1000) + (nowtime.tv_nsec / 1000000);
-+
-+	// check
-+	return nowtime_ms > oldtime_ms;
-+}
-+#endif
-+
- gLCDDC::gLCDDC()
- {
- 	lcd = new eDBoxLCD();
-@@ -22,6 +39,10 @@
- 	surface.clut.data=0;
- 
- 	m_pixmap = new gPixmap(&surface);
-+
-+#ifdef __sh__    
-+    clock_gettime(CLOCK_MONOTONIC, &last_update);
-+#endif
- }
- 
- gLCDDC::~gLCDDC()
-@@ -32,11 +53,21 @@
- 
- void gLCDDC::exec(const gOpcode *o)
- {
-+
- 	switch (o->opcode)
- 	{
- 	case gOpcode::flush:
--//		if (update)
-+#ifdef __sh__    
-+//        if (time_after(last_update, 1500) && update)
-+        if (update)
-+        {
-+            lcd->update();
-+            clock_gettime(CLOCK_MONOTONIC, &last_update);
-+        }
-+#else
-+//	     if (update)
- 			lcd->update();
-+#endif
- 	default:
- 		gDC::exec(o);
- 		break;
---- enigma2-nightly.org/lib//gdi/lcd.cpp	2011-12-11 17:59:48.309448280 +0100
-+++ enigma2-nightly.patched/lib//gdi/lcd.cpp	2011-12-11 18:01:52.069506886 +0100
+--- enigma2-nightly.org/lib/gdi/lcd.cpp	2012-01-09 22:08:01.169715166 +0100
++++ enigma2-nightly.patched/lib/gdi/lcd.cpp	2012-01-09 22:12:53.429860770 +0100
 @@ -16,6 +16,18 @@
  #include <lib/base/init_num.h>
  #include <lib/gdi/glcddc.h>
@@ -386,7 +326,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
  eDBoxLCD::eDBoxLCD()
  {
  	int xres=132, yres=64, bpp=8;
-@@ -226,3 +240,131 @@
+@@ -226,3 +240,146 @@
  	}
  }
  
@@ -474,7 +414,18 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +eDBoxLCD::~eDBoxLCD()
 +{
 +	eDebug("eDBoxLCD::~eDBoxLCD");
-+    delete lcd;
++
++/* konfetti: there is an error in graphlcd (I reported it alread)
++ * ->InitSingleDisplay returns 0 if dpf_open fails, which leads
++ * to a crash here!
++    if (lcd)
++    {
++	   lcd->DeInit();
++       delete lcd;
++    }
++    if (bitmap)
++      delete bitmap;
++*/
 +}
 +
 +eDBoxLCD *eDBoxLCD::getInstance()
@@ -485,36 +436,40 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +
 +void eDBoxLCD::update()
 +{
-+    bitmap->Clear();
++    if (lcdfd == 1)
++    {
 +
-+    for (int x = 0; x < width; x++)
-+       for (int y = 0; y < height; y++)
-+       { 
-+          __u16 *buf16  = (__u16*) _buffer;
++       bitmap->Clear();
++
++       for (int x = 0; x < width; x++)
++          for (int y = 0; y < height; y++)
++          { 
++             __u16 *buf16  = (__u16*) _buffer;
 +
 +#if BYTE_ORDER == LITTLE_ENDIAN
-+          __u16 col16   = bswap_16(*((__u16*)(((__u16*)buf16) + y * width + x)));
++             __u16 col16   = bswap_16(*((__u16*)(((__u16*)buf16) + y * width + x)));
 +#else
-+          __u16 col16   = *((__u16*)(((__u16*)buf16) + y  * width + x));
++             __u16 col16   = *((__u16*)(((__u16*)buf16) + y  * width + x));
 +#endif
-+          __u8 red, green, blue, alpha; 
-+          __u32 color32;
-+          
-+          /* BBBBB GGGGGG RRRRR */
-+ 		  blue  = ((col16 & 0xF800) >> 11) * ( 255 / 31);
-+          green = ((col16 & 0x7E0) >> 5) * (255 / 63);
-+          red   = (col16 & 0x1f) * (255 / 31);
-+          alpha = 255;
-+          
-+          color32 = alpha << 24 | red << 16 | green << 8 | blue;
++             __u8 red, green, blue, alpha; 
++             __u32 color32;
 +
-+		  if (inverted)
-+			  color32 = 0xFFFFFF - color32;
-+          
-+		  bitmap->DrawPixel(x, y, color32);
-+       }
-+	lcd->SetScreen(bitmap->Data(), bitmap->Width(), bitmap->Height());
-+    lcd->Refresh(false); /* partial update */
++             /* BBBBB GGGGGG RRRRR */
++ 		     blue  = ((col16 & 0xF800) >> 11) * ( 255 / 31);
++             green = ((col16 & 0x7E0) >> 5) * (255 / 63);
++             red   = (col16 & 0x1f) * (255 / 31);
++             alpha = 255;
++
++             color32 = alpha << 24 | red << 16 | green << 8 | blue;
++
++		     if (inverted)
++			     color32 = 0xFFFFFF - color32;
++
++		     bitmap->DrawPixel(x, y, color32);
++          }
++	   lcd->SetScreen(bitmap->Data(), bitmap->Width(), bitmap->Height());
++       lcd->Refresh(false); /* partial update */
++   }
 +}
 +
 +#endif    
