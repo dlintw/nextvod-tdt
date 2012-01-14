@@ -597,3 +597,14 @@
  #
  # UpsideDown
  #  Rotates the display output by 180 degrees. This might be useful, if
+--- glcddrivers/ax206dpf.c	2012-01-08 11:51:56.907120065 +0100
++++ glcddrivers/ax206dpf.c.fix	2012-01-11 22:15:36.496080564 +0100
+@@ -212,7 +212,7 @@
+     {
+         dh[di]->dpfh = NULL;
+         dh[di]->attached = false;
+-        return 0;
++        return error;
+     }
+     dh[di]->attached = true;
+     struct usb_device *dev = usb_device(dh[di]->dpfh->dev.udev);
