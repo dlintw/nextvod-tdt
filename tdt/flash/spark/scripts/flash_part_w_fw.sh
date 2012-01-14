@@ -33,18 +33,18 @@ cp $TMPKERNELDIR/uImage $CURDIR/uImage
 $PAD 0x800000 $CURDIR/uImage $CURDIR/mtd_kernel.pad.bin
 
 # --- ROOT ---
-# Size 77MB !
-#echo "MKFSJFFS2 --qUfv -p0x7700000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin"
-#$MKFSJFFS2 -qUfv -p0x7700000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin
-#echo "SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin"
-#$SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin
-#echo "$PAD 0x7700000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin"
-#$PAD 0x7700000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin
+# Size 64MB !
+echo "MKFSJFFS2 --qUfv -p0x4000000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin"
+$MKFSJFFS2 -qUfv -p0x4000000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin
+echo "SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin"
+$SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin
+echo "$PAD 0x4000000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin"
+$PAD 0x4000000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin
 
-echo "MKFSJFFS2 --qUfv -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin"
-$MKFSJFFS2 -qUfv -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin
-echo "SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.pad.bin"
-$SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.pad.bin
+#echo "MKFSJFFS2 --qUfv -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin"
+#$MKFSJFFS2 -qUfv -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin
+#echo "SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.pad.bin"
+#$SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.pad.bin
 
 rm -f $CURDIR/uImage
 rm -f $CURDIR/mtd_root.bin
@@ -58,8 +58,8 @@ fi
 
 SIZE=`stat mtd_root.sum.pad.bin -t --format %s`
 SIZE=`printf "0x%x" $SIZE`
-if [[ $SIZE > "0x9e0000" ]]; then
-  echo "ROOT TO BIG. $SIZE instead of 0x9e0000" > /dev/stderr
+if [[ $SIZE > "0x4000000" ]]; then
+  echo "ROOT TO BIG. $SIZE instead of 0x4000000" > /dev/stderr
 fi
 
 mv $CURDIR/mtd_kernel.pad.bin $OUTDIR/uImage
