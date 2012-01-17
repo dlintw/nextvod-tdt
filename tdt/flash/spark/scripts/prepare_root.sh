@@ -12,7 +12,7 @@ cp -a $RELEASEDIR/* $TMPROOTDIR
 mv $TMPROOTDIR/boot/uImage $TMPKERNELDIR/uImage
 
 
-# --- ROOT ---i
+# --- ROOT ---
 cd $TMPROOTDIR/dev/
 MAKEDEV="sudo $TMPROOTDIR/sbin/MAKEDEV -p $TMPROOTDIR/etc/passwd -g $TMPROOTDIR/etc/group"
 ${MAKEDEV} std
