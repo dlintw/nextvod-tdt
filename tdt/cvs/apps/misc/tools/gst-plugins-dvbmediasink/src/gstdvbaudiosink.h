@@ -87,8 +87,17 @@ struct _GstDVBAudioSink
 	guint32  initial_header_private_data_size;
 	gboolean initial_header_private_data_valid;
 
-	guint8 aac_adts_header[7];
+	guint8  *runtime_header_data;
+	guint32  runtime_header_data_size;
+
+	guint8   aac_adts_header[7];
 	gboolean aac_adts_header_valid;
+
+	guint16 pcm_bits_per_sample;
+	guint32 pcm_sub_frame_len;
+	guint32 pcm_sub_frame_per_pes;
+	guint8  pcm_break_buffer[8192];
+	guint32 pcm_break_buffer_size;
 
 	gint control_sock[2];
 
