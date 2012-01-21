@@ -1325,6 +1325,8 @@ $(DEPDIR)/ffmpeg.do_compile: bootstrap libass rtmpdump $(DEPDIR)/ffmpeg.do_prepa
 		--enable-decoder=iff_byterun1 \
 		--enable-pthreads \
 		--enable-bzlib \
+		--enable-librtmp \
+		--pkg-config=pkg-config \
 		--cross-prefix=$(target)- \
 		--target-os=linux \
 		--arch=sh4 \
@@ -2075,7 +2077,7 @@ $(DEPDIR)/%libalsa: $(DEPDIR)/libalsa.do_compile
 #
 # rtmpdump
 #
-$(DEPDIR)/rtmpdump.do_prepare: bootstrap openssl-dev @DEPENDS_rtmpdump@
+$(DEPDIR)/rtmpdump.do_prepare: bootstrap openssl openssl-dev @DEPENDS_rtmpdump@
 	@PREPARE_rtmpdump@
 	touch $@
 
