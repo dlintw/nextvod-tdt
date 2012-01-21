@@ -178,6 +178,8 @@ GST_STATIC_PAD_TEMPLATE ( \
 		"framed = (boolean) true; " \
 		"audio/x-ac3, " \
 		"framed = (boolean) true; " \
+		"audio/x-eac3, " \
+		"framed = (boolean) true; " \
 		"audio/x-private1-ac3, " \
 		"framed = (boolean) true; " \
 		"audio/x-dts, " \
@@ -200,6 +202,8 @@ GST_STATIC_PAD_TEMPLATE ( \
 	GST_STATIC_CAPS ("audio/mpeg, " \
 		"framed = (boolean) true; " \
 		"audio/x-ac3, " \
+		"framed = (boolean) true; " \
+		"audio/x-eac3, " \
 		"framed = (boolean) true; " \
 		"audio/x-private1-ac3, " \
 		"framed = (boolean) true; " \
@@ -780,7 +784,7 @@ gst_dvbaudiosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 				break;
 		}
 	}
-	else if (!strcmp(type, "audio/x-ac3")) {
+	else if (!strcmp(type, "audio/x-ac3") || !strcmp(type, "audio/x-eac3")) {
 		GST_INFO_OBJECT (self, "MIMETYPE %s",type);
 		bypass = BYPASS_AC3;
 	}
