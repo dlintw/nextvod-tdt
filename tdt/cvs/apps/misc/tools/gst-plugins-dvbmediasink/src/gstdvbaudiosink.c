@@ -1308,7 +1308,7 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp, 
 	if (stream_id == 0xBD && pcm_sub_frame_len > 0) { //PCM
 		//pes_header[4] = 0x07; //pes length
 		//pes_header[5] = 0xF1; //pes length
-		pes_header[4] =  ((pcm_sub_frame_len+26>>8) & 0xFF; // ((pcm_sub_frame_len+(18/*sizeof(lpcm_pes)*/-6)+14/*sizeof(lpcm_prv)*/)>>8) & 0xFF;
+		pes_header[4] =  ((pcm_sub_frame_len+26)>>8) & 0xFF; // ((pcm_sub_frame_len+(18/*sizeof(lpcm_pes)*/-6)+14/*sizeof(lpcm_prv)*/)>>8) & 0xFF;
 		pes_header[5] =   (pcm_sub_frame_len+26)    & 0xFF; // (pcm_sub_frame_len+(18/*sizeof(lpcm_pes)*/-6)+14/*sizeof(lpcm_prv)*/)     & 0xFF;
 		
 		pes_header[6] = 0x81; //fixed
