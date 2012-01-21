@@ -2072,3 +2072,27 @@ $(DEPDIR)/%libalsa: $(DEPDIR)/libalsa.do_compile
 		@INSTALL_libalsa@
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
+# rtmpdump
+#
+$(DEPDIR)/rtmpdump.do_prepare: bootstrap openssl-dev @DEPENDS_rtmpdump@
+	@PREPARE_rtmpdump@
+	touch $@
+
+$(DEPDIR)/rtmpdump.do_compile: $(DEPDIR)/rtmpdump.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_rtmpdump@ && \
+	cp $(hostprefix)/share/libtool/config/ltmain.sh .. && \
+	libtoolize -f -c && \
+	$(BUILDENV) \
+		make CROSS_COMPILE=$(target)- \
+		CPPFLAGS="$(CPPFLAGS) -I/home/atemio/flashimg/BUILDGIT/checkout_stm23/tdt/tufsbox/cdkroot/usr/include/librtmp"
+	touch $@
+
+$(DEPDIR)/min-rtmpdump $(DEPDIR)/std-rtmpdump $(DEPDIR)/max-rtmpdump \
+$(DEPDIR)/rtmpdump: \
+$(DEPDIR)/%rtmpdump: $(DEPDIR)/rtmpdump.do_compile
+	cd @DIR_rtmpdump@ && \
+		@INSTALL_rtmpdump@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@

@@ -98,6 +98,7 @@ evebrowser;make:install:DESTDIR=TARGETS
 brofs;make:install:DESTDIR=TARGETS/usr/bin
 libalsa;make:install:DESTDIR=TARGETS
 libusb;make:install:DESTDIR=TARGETS
+rtmpdump;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/librtmp.pc
 
 #
 # gstreamer
