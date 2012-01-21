@@ -2085,8 +2085,7 @@ $(DEPDIR)/rtmpdump.do_compile: $(DEPDIR)/rtmpdump.do_prepare
 	cp $(hostprefix)/share/libtool/config/ltmain.sh .. && \
 	libtoolize -f -c && \
 	$(BUILDENV) \
-		make CROSS_COMPILE=$(target)- \
-		CPPFLAGS="$(CPPFLAGS) -I/home/atemio/flashimg/BUILDGIT/checkout_stm23/tdt/tufsbox/cdkroot/usr/include/librtmp"
+		make CROSS_COMPILE=$(target)-
 	touch $@
 
 $(DEPDIR)/min-rtmpdump $(DEPDIR)/std-rtmpdump $(DEPDIR)/max-rtmpdump \
