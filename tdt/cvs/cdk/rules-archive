@@ -145,6 +145,7 @@ gst-plugins-good-0.10.30.2.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plug
 gst-plugins-bad-0.10.22.2.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plugins-bad/pre
 gst-plugins-ugly-0.10.18.2.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plugins-ugly/pre
 gst-ffmpeg-0.10.13.tar.bz2;http://gstreamer.freedesktop.org/src/gst-ffmpeg/
+gst-fluendo-mpegdemux-0.10.69.tar.gz;http://core.fluendo.com/gstreamer/src/gst-fluendo-mpegdemux/
 
 #
 # net apps

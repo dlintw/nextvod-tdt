@@ -1695,7 +1695,9 @@ $(DEPDIR)/gstreamer.do_compile: $(DEPDIR)/gstreamer.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr
+		--prefix=/usr \
+		--disable-docs-build --disable-dependency-tracking --with-check=no \
+		ac_cv_func_register_printf_function=no
 	touch $@
 
 $(DEPDIR)/min-gstreamer $(DEPDIR)/std-gstreamer $(DEPDIR)/max-gstreamer \
@@ -1718,7 +1720,7 @@ $(DEPDIR)/gst_plugins_base.do_compile: $(DEPDIR)/gst_plugins_base.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--disable-theora --disable-pango --disable-vorbis --disable-x
+		--disable-theora --disable-pango --disable-vorbis --disable-x  --with-audioresample-format=int --with-check=no
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_base $(DEPDIR)/std-gst_plugins_base $(DEPDIR)/max-gst_plugins_base \
@@ -1742,7 +1744,7 @@ $(DEPDIR)/gst_plugins_good.do_compile: $(DEPDIR)/gst_plugins_good.do_prepare
 		--host=$(target) \
 		--prefix=/usr \
 		--disable-esd --disable-esdtest \
-		--disable-shout2 --disable-shout2test --disable-x
+		--disable-shout2 --disable-shout2test --disable-x --with-check=no
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_good $(DEPDIR)/std-gst_plugins_good $(DEPDIR)/max-gst_plugins_good \
@@ -1764,7 +1766,8 @@ $(DEPDIR)/gst_plugins_bad.do_compile: $(DEPDIR)/gst_plugins_bad.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr
+		--prefix=/usr \
+		 ac_cv_openssldir=no --with-check=no
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_bad $(DEPDIR)/std-gst_plugins_bad $(DEPDIR)/max-gst_plugins_bad \
@@ -1786,7 +1789,7 @@ $(DEPDIR)/gst_plugins_ugly.do_compile: $(DEPDIR)/gst_plugins_ugly.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr
+		--prefix=/usr --with-check=no
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_ugly $(DEPDIR)/std-gst_plugins_ugly $(DEPDIR)/max-gst_plugins_ugly \
@@ -1843,14 +1846,9 @@ $(DEPDIR)/gst_ffmpeg.do_compile: $(DEPDIR)/gst_ffmpeg.do_prepare
 		--enable-demuxer=ogg \
 		--enable-demuxer=vorbis \
 		--enable-demuxer=flac \
-		\
-		--disable-parsers \
-		--enable-parser=ogg \
-		--enable-parser=vorbis \
-		--enable-parser=flac \
+		--enable-demuxer=mpegts \
 		\
 		--disable-bsfs \
-		--enable-small \
 		--enable-pthreads \
 		--enable-bzlib"
 	touch $@
@@ -1860,6 +1858,28 @@ $(DEPDIR)/gst_ffmpeg: \
 $(DEPDIR)/%gst_ffmpeg: $(DEPDIR)/gst_ffmpeg.do_compile
 	cd @DIR_gst_ffmpeg@ && \
 		@INSTALL_gst_ffmpeg@
+	@[ "x$*" = "x" ] && touch $@ || true
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+# GST-PLUGINS-FLUENDO-MPEGDEMUX
+$(DEPDIR)/gst_plugins_fluendo_mpegdemux.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_gst_plugins_fluendo_mpegdemux@
+	@PREPARE_gst_plugins_fluendo_mpegdemux@
+	touch $@
+
+$(DEPDIR)/gst_plugins_fluendo_mpegdemux.do_compile: $(DEPDIR)/gst_plugins_fluendo_mpegdemux.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_gst_plugins_fluendo_mpegdemux@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr --with-check=no
+	touch $@
+
+$(DEPDIR)/min-gst_plugins_fluendo_mpegdemux $(DEPDIR)/std-gst_plugins_fluendo_mpegdemux $(DEPDIR)/max-gst_plugins_fluendo_mpegdemux \
+$(DEPDIR)/gst_plugins_fluendo_mpegdemux: \
+$(DEPDIR)/%gst_plugins_fluendo_mpegdemux: $(DEPDIR)/gst_plugins_fluendo_mpegdemux.do_compile
+	cd @DIR_gst_plugins_fluendo_mpegdemux@ && \
+		@INSTALL_gst_plugins_fluendo_mpegdemux@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 

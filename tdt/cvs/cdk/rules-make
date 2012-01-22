@@ -145,10 +145,11 @@ rtmpdump;2.3;rtmpdump-2.3;rtmpdump-2.3.tgz;extract:rtmpdump-2.3.tgz
 gstreamer;0.10.35.2;gstreamer-0.10.35.2;gstreamer-0.10.35.2.tar.bz2;extract:gstreamer-0.10.35.2.tar.bz2
 gst_plugins_base;0.10.35.2;gst-plugins-base-0.10.35.2;gst-plugins-base-0.10.35.2.tar.bz2;extract:gst-plugins-base-0.10.35.2.tar.bz2
 gst_plugins_good;0.10.30.2;gst-plugins-good-0.10.30.2;gst-plugins-good-0.10.30.2.tar.bz2;extract:gst-plugins-good-0.10.30.2.tar.bz2;patch:gst-plugins-good-0.10.29_avidemux_only_send_pts_on_keyframe.patch
-gst_plugins_bad;0.10.22.2;gst-plugins-bad-0.10.22.2;gst-plugins-bad-0.10.22.2.tar.bz2:gst-plugins-bad-0.10.22-mpegtsdemux_remove_bluray_pgs_detection.diff;extract:gst-plugins-bad-0.10.22.2.tar.bz2;patch:gst-plugins-bad-0.10.22-mpegtsdemux_remove_bluray_pgs_detection.diff
+gst_plugins_bad;0.10.22.2;gst-plugins-bad-0.10.22.2;gst-plugins-bad-0.10.22.2.tar.bz2:gst-plugins-bad-0.10.22-mpegtsdemux_remove_bluray_pgs_detection.diff:gst-plugins-bad-0.10.22-mpegtsdemux_speedup.diff;extract:gst-plugins-bad-0.10.22.2.tar.bz2;patch:gst-plugins-bad-0.10.22-mpegtsdemux_remove_bluray_pgs_detection.diff;patch:gst-plugins-bad-0.10.22-mpegtsdemux_speedup.diff
 #gst_plugins_bad;0.10.22.2;gst-plugins-bad-0.10.22.2;gst-plugins-bad-0.10.22.2.tar.bz2:gst-plugins-bad-0.10.20-mpegtsdemux_fix_bd_streamtype_detection.diff;extract:gst-plugins-bad-0.10.22.2.tar.bz2;patch:gst-plugins-bad-0.10.20-mpegtsdemux_fix_bd_streamtype_detection.diff
 gst_plugins_ugly;0.10.18.2;gst-plugins-ugly-0.10.18.2;gst-plugins-ugly-0.10.18.2.tar.bz2;extract:gst-plugins-ugly-0.10.18.2.tar.bz2
 gst_ffmpeg;0.10.13;gst-ffmpeg-0.10.13;gst-ffmpeg-0.10.13.tar.bz2;extract:gst-ffmpeg-0.10.13.tar.bz2;patch:gst-ffmpeg-0.10.12_lower_rank.patch
+gst_plugins_fluendo_mpegdemux;0.10.69;gst-fluendo-mpegdemux-0.10.69;gst-fluendo-mpegdemux-0.10.69.tar.gz;extract:gst-fluendo-mpegdemux-0.10.69.tar.gz
 gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;;link:../apps/misc/tools/gst-plugins-dvbmediasink:gst-plugins-dvbmediasink-0.10.1
 #gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;gst-plugins-dvbmediasink-0.10.1;link:../apps/misc/tools/gst-plugins-dvbmediasink:gst-plugins-dvbmediasink-0.10.1
 

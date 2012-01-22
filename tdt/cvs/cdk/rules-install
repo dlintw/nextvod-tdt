@@ -109,6 +109,7 @@ gst_plugins_good;make:install:DESTDIR=TARGETS
 gst_plugins_bad;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/gstreamer-plugins-bad-0.10.pc;rewrite-libtool:TARGETS/usr/lib/libogg.la:TARGETS/usr/lib/libgstbasevideo-0.10.la:TARGETS/usr/lib/libgstsignalprocessor-0.10.la:TARGETS/usr/lib/libgstphotography-0.10.la
 gst_plugins_ugly;make:install:DESTDIR=TARGETS
 gst_ffmpeg;make:install:DESTDIR=TARGETS
+gst_plugins_fluendo_mpegdemux;make:install:DESTDIR=TARGETS
 gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
 
 #
