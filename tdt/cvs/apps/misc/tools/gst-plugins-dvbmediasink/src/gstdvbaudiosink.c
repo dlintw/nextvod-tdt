@@ -1215,11 +1215,15 @@ loop_start:
 		}
 		else
 			GST_LOG_OBJECT (self, "going into poll, have %d bytes to write", len - written);
+#if CHECK_DRAIN
 		if (poll(pfd, 2, -1) == -1) {
 			if (errno == EINTR)
 				continue;
 			return -1;
 		}
+#else
+		pfd[1].revents = POLLOUT;
+#endif
 		if (pfd[0].revents & POLLIN) {
 			/* read all stop commands */
 			while (TRUE) {
