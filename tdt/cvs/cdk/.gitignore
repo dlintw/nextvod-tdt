@@ -31,3 +31,5 @@ flac-*
 alsa-*
 DirectFB-*
 freetype-*
+!*.diff
+!*.patch
