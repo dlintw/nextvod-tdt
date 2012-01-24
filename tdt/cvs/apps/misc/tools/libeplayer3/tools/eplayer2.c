@@ -278,11 +278,12 @@ int main(int argc,char* argv[]) {
             {
                 char* tag = tags[i];
                 player->playback->Command(player, PLAYBACK_INFO, &tag);
-
+#if !defined(VDR1722)
                 if (tag != NULL)
                     printf("\t%s:\t%s\n",tags[i], tag);
                 else
                     printf("\t%s:\tNULL\n",tags[i]);
+#endif
                 i++;
             }
 
@@ -461,8 +462,37 @@ int main(int argc,char* argv[]) {
                 player->playback->Command(player, PLAYBACK_FASTBACKWARD, &speedmap);
                 break;
             }
+#if defined(VDR1722)
+            case 'g': {
+				char gotoString [256];
+				gets (gotoString);
+                int gotoPos = atoi(gotoString);
 
+				double length = 0;
+				float sec;
+
+				printf("gotoPos %i\n", gotoPos);
+                if (player->container && player->container->selectedContainer)
+                    player->container->selectedContainer->Command(player, CONTAINER_LENGTH, &length);
+
+				if(gotoPos <= 0){
+					printf("kleiner als erlaubt\n");
+					sec = 0.0;
+				}else if(gotoPos >= ((int)length - 10)){
+					printf("laenger als erlaubt\n");
+					sec = (int)length - 10;
+				}else{
+					printf("normal action\n");
+					sec = gotoPos;
+				}
+
+				player->playback->Command(player, PLAYBACK_SEEK, (void*)&sec);	
+                printf("goto postion (%i sec)\n", sec);
+                break;
+            }
+#endif
             case 'k': {
+#if !defined(VDR1722)
                 int Key2 = getchar() - 48;
                 float sec=0.0;
                 printf("seconds %d \n", Key2);
@@ -474,6 +504,34 @@ int main(int argc,char* argv[]) {
                     case 6: sec= 60.0;break;
                     case 9: sec= 300.0;break;
                 }
+#else
+		char seek [256];
+		gets (seek);
+                unsigned int seekTo = atoi(seek);
+		double length = 0;
+		float sec;
+		
+		unsigned long long int CurrentPTS = 0;
+                player->playback->Command(player, PLAYBACK_PTS, &CurrentPTS);
+                if (player->container && player->container->selectedContainer)
+                    player->container->selectedContainer->Command(player, CONTAINER_LENGTH, &length);
+				
+		int CurrentSec = CurrentPTS / 90000;
+		printf("CurrentSec = %i, seekTo = %i, abs(seekTo) = %i  seekTo + CurrentSec %i\n", CurrentSec, seekTo, abs(seekTo), (seekTo + CurrentSec));
+		int ergSec = CurrentSec + seekTo;
+		if(ergSec < 0){
+			printf("kleiner als erlaubt\n");
+			sec = 0.0;
+		}else if((CurrentSec + seekTo) >= ((int)length - 10)){
+			printf("laenger als erlaubt\n");
+			sec = (int)length - 10;
+		}else{
+			printf("normal action\n");
+			sec = seekTo + CurrentSec;
+		}
+
+		printf("springe %i \n", (int)sec);
+#endif
                 player->playback->Command(player, PLAYBACK_SEEK, (void*)&sec);
                 break;
             }

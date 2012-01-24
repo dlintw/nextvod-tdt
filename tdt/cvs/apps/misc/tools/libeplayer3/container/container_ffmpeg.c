@@ -1437,6 +1437,7 @@ static int container_ffmpeg_seek(Context_t *context, float sec) {
     Track_t * current = NULL;
     int flag = 0;
 
+#if !defined(VDR1722)
     ffmpeg_printf(10, "seeking %f sec\n", sec);
 
     if (sec == 0.0)
@@ -1444,7 +1445,15 @@ static int container_ffmpeg_seek(Context_t *context, float sec) {
         ffmpeg_err("sec = 0.0 ignoring\n");
         return cERR_CONTAINER_FFMPEG_ERR;
     }
+#else
+    ffmpeg_printf(10, "goto %f sec\n", sec);
 
+    if (sec < 0.0)
+    { 
+        ffmpeg_err("sec < 0.0 ignoring\n");
+        return cERR_CONTAINER_FFMPEG_ERR;
+    }
+#endif
     context->manager->video->Command(context, MANAGER_GET_TRACK, &videoTrack);
     context->manager->audio->Command(context, MANAGER_GET_TRACK, &audioTrack);
 
@@ -1488,9 +1497,11 @@ static int container_ffmpeg_seek(Context_t *context, float sec) {
         {
             sec *= 180000.0;
         }
-
+#if !defined(VDR1722)
         pos += sec;
-
+#else
+        pos = sec;
+#endif
         if (pos < 0)
         {
            ffmpeg_err("end of file reached\n");
@@ -1508,8 +1519,9 @@ static int container_ffmpeg_seek(Context_t *context, float sec) {
 
     } else
     {
+#if !defined(VDR1722)
         sec += ((float) current->pts / 90000.0f);
-
+#endif
         ffmpeg_printf(10, "2. seeking to position %f sec ->time base %f %d\n", sec, av_q2d(((AVStream*) current->stream)->time_base), AV_TIME_BASE);
         
         if (av_seek_frame(avContext, -1 /* or streamindex */, sec * AV_TIME_BASE, flag) < 0) {

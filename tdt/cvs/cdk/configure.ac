@@ -169,6 +169,13 @@ AC_ARG_ENABLE(enable_vdr1711,
 	,[enable_vdr1711=no])
 AM_CONDITIONAL(ENABLE_VDR1711,test "$enable_vdr1711" = "yes")
 
+AC_ARG_ENABLE(enable_vdr1722,
+	AS_HELP_STRING(--enable-vdr1722,	set up the CDK to use vdr 1.7.22),
+	[case "${enableval}" in
+		yes) VDR1722=vdr1722 ;;
+	esac],[enable_vdr1722=no])
+AM_CONDITIONAL(ENABLE_VDR1722,test "$enable_vdr1722" = "yes")
+
 AC_ARG_WITH(cpu,
 	[  --with-cpu=MODEL        cpu model [[sh4]]],
 	[CPU_MODEL="$withval"],[CPU_MODEL="sh4"])
@@ -1172,6 +1179,7 @@ Patchlevel P0207            : $enable_p0207
 Patchlevel P0209            : $enable_p0209
 HAVANA Patchlevel P0207_5   : $enable_havana_p0207_5
 vdr VDR 1.7.11              : $enable_vdr1711
+vdr VDR 1.7.22              : $enable_vdr1722
 flash rules                 : $enable_flashrules
 ccache                      : $enable_ccache
 target prefix               : $targetprefix

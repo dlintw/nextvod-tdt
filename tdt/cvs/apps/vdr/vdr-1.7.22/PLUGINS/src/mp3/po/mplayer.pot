@@ -1,0 +1,113 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: <see README>\n"
+"POT-Creation-Date: 2012-01-15 09:46+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Select"
+msgstr ""
+
+msgid "Parent"
+msgstr ""
+
+msgid "ID3 info"
+msgstr ""
+
+msgid "Scanning directory..."
+msgstr ""
+
+msgid "Error scanning directory!"
+msgstr ""
+
+msgid "Mount"
+msgstr ""
+
+msgid "Unmount"
+msgstr ""
+
+msgid "Eject"
+msgstr ""
+
+msgid "Selected source is not mounted!"
+msgstr ""
+
+msgid "Mount failed!"
+msgstr ""
+
+msgid "Mount succeeded"
+msgstr ""
+
+msgid "Unmount succeeded"
+msgstr ""
+
+msgid "Unmount failed!"
+msgstr ""
+
+msgid "Eject failed!"
+msgstr ""
+
+msgid "MPlayer"
+msgstr ""
+
+msgid "Setup.MPlayer$Control mode"
+msgstr ""
+
+msgid "Traditional"
+msgstr ""
+
+msgid "Slave"
+msgstr ""
+
+msgid "disabled"
+msgstr ""
+
+msgid "global only"
+msgstr ""
+
+msgid "local first"
+msgstr ""
+
+msgid "Setup.MPlayer$Resume mode"
+msgstr ""
+
+msgid "Hide mainmenu entry"
+msgstr ""
+
+msgid "Setup.MPlayer$Slave command key"
+msgstr ""
+
+msgid "Jump: "
+msgstr ""
+
+msgid "MPlayer Audio ID"
+msgstr ""
+
+msgid "Audiostream ID"
+msgstr ""
+
+msgid "MPlayer browser"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "MPlayer source"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Media replay via MPlayer"
+msgstr ""

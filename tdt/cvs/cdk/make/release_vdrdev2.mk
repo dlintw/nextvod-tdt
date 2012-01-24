@@ -100,6 +100,9 @@ cp $(buildprefix)/root/release/rcS_vdrdev2$(if $(TF7700),_$(TF7700))$(if $(UFS91
 	cp $(buildprefix)/root/var/vdr/remote.conf $(prefix)/release_vdrdev2/usr/local/share/vdr/ && \
 	cp $(buildprefix)/root/var/vdr/setup.conf $(prefix)/release_vdrdev2/usr/local/share/vdr/ && \
 	cp $(buildprefix)/root/var/vdr/sources.conf $(prefix)/release_vdrdev2/usr/local/share/vdr/ && \
+	cp $(buildprefix)/root/var/vdr/plugins/mplayersources.conf $(prefix)/release_vdrdev2/usr/local/share/vdr/plugins && \
+	cp $(buildprefix)/root/usr/local/bin/mplayer.sh $(prefix)/release_vdrdev2/usr/local/bin/ && \
+        chmod 755 $(prefix)/release_vdrdev2/usr/local/bin/mplayer.sh && \
 	cp -rd $(buildprefix)/root/var/vdr/themes/* $(prefix)/release_vdrdev2/usr/local/share/vdr/themes/ && \
 	cp $(buildprefix)/root/usr/local/bin/runvdrdev2 $(prefix)/release_vdrdev2/usr/local/bin/runvdr && \
 	cp $(buildprefix)/root/usr/local/bin/vdrshutdown $(prefix)/release_vdrdev2/usr/local/bin/ && \

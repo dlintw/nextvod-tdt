@@ -409,10 +409,27 @@ case "$REPLY" in
 	*) EXTERNAL_LCD="";;
 esac
 
-
 ##############################################
 
-CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM $MEDIAFW $EXTERNAL_LCD"
+echo -e "\nVDR-1.7.22:"
+echo "   1) No"
+echo "   2) Yes"
+case $8 in
+        [1-2]) REPLY=$8
+        echo -e "\nSelected VDR-1.7.22: $REPLY\n"
+        ;;
+        *)
+        read -p "Select VDR-1.7.22 (1-2)? ";;
+esac
+
+case "$REPLY" in
+	1) VDR="";;
+	2) VDR="--enable-vdr1722";;
+	*) VDR="";;
+esac
+##############################################
+
+CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM $MEDIAFW $EXTERNAL_LCD $VDR"
 
 ##############################################
 

@@ -22,6 +22,9 @@ dvbufs9xx
 # dvd player
 dvd --dvd=/dev/sr0
 
+# mplayer/mp3 plugin (libeplayer3)
+mplayer -M /usr/bin/mplayer.sh
+
 ###
 # put config lines above here
 #
