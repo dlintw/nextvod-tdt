@@ -7,7 +7,7 @@ $(DEPDIR)/vdrdev2.do_compile: bootstrap freetype libxml2 jpeg libz libpng fontco
 	cd $(appsdir)/vdr/vdr-1.7.22 && \
 		$(BUILDENV) $(MAKE) all plugins install-bin install-conf install-plugins install-i18n \
 		DESTDIR=$(targetprefix) \
-		VIDEODIR=/hdd/movies \
+		VIDEODIR=/hdd/movie \
 		CONFDIR=/usr/local/share/vdr \
 		PLUGINLIBDIR=/usr/lib/vdr
 	touch $@

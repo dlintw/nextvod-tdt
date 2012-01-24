@@ -90,7 +90,7 @@ yaud-vdr: yaud-none stslave openssl openssl-dev \
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 yaud-vdrdev2: yaud-none stslave openssl openssl-dev \
-		boot-elf misc-cp remote firstboot vdrdev2
+		boot-elf misc-cp remote firstboot vdrdev2 release_vdrdev2
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 yaud-neutrino: yaud-none lirc stslave\
