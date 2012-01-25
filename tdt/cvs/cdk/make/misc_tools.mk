@@ -37,6 +37,9 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	$(if $(STM22), -DSTM22)"
 	[ "x$*" = "x" ] && touch $@ || true
 
+misc-tools-clean:
+	-$(MAKE) -C $(appsdir)/misc/tools distclean
+
 flash-misc-tools: $(DEPDIR)/misc-tools \
 		| $(flashprefix)/root
 	$(MAKE) -C $(appsdir)/misc/tools install DESTDIR=$(flashprefix)/root
