@@ -27,6 +27,8 @@
 // ----------------------------------------------------------------
 
 class cFileSource;
+class cFileObj;
+class cDirList;
 
 extern char *Quote(const char *str);
 extern char *AddPath(const char *dir, const char *filename);
@@ -127,4 +129,11 @@ public:
   inline bool NeedsMount(void) const { return needsmount; }
   };
 
+// ----------------------------------------------------------------
+class cPlayList : public cList<cFileObj> {
+	private:
+		cFileObj *item;
+	public:
+		void addToCurrentList(cFileObj *cItem);
+};
 #endif //___DATA_H

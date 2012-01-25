@@ -426,25 +426,24 @@ void cMPlayerPlayer::Action(void)
   char buff[BSIZE+0]; // additional space for fake newline
   int c=0;
   bool force=true, slavePatch=false, trustedTotal=false, playBack=false;
-  printf("%s:%d \n", __func__, __LINE__);
   while(run) {
-    if(playMode==pmPlay && playBack) {printf("%s:%d \n", __func__, __LINE__);
+    if(playMode==pmPlay && playBack) {
 	int t=time(0);
-      if(t>=nextTime) {printf("%s:%d \n", __func__, __LINE__);
+      if(t>=nextTime) {
         MPlayerControl("l");
         nextTime=t+(total>0 ? TIME_INT : POS_INT);
 		printf("nextime %i\n", nextTime);
         }
-      if(t>=nextPos) {printf("%s:%d \n", __func__, __LINE__);
+      if(t>=nextPos) {
         if(!slavePatch) MPlayerControl("j");
         nextPos=t+POS_INT;
         }
       }
-//printf("%s:%d \n", __func__, __LINE__);
+
     poll(pfd,1,300);
     int r=read(outpipe[0],buff+c,BSIZE-c);
     if(r>0) c+=r;
-    if(c>0) {printf("%s:%d \n", __func__, __LINE__);
+    if(c>0) {
       buff[c]=0; // make sure buffer is NULL terminated
       char *p;
       do {
@@ -453,20 +452,19 @@ void cMPlayerPlayer::Action(void)
 			  p=&buff[c];        // Have to ffake one.
 			  buff[c]='\n'; c++; buff[c]=0;
 			}
-         printf("p %s buff %s\n",p,buff);
-         if(p) {printf("%s:%d \n", __func__, __LINE__);
+         if(p) {
 
           char cc=*p;
           *p++=0;
           int itime;
 		  if(strncmp(buff,"ANS_PLAYING ",11)==0) {
-            if(!playBack) {printf("%s:%d \n", __func__, __LINE__);
+            if(!playBack) {
 			  printf("ANS_PLAYING\n");
               playBack=true;
               nextTime=nextPos=0;
 			  d(printf("PLAYBACK STARTED\n"))
 			  printf("RESPOS = %i\n", resPos);
-              if(resPos>=0) {printf("%s:%d \n", __func__, __LINE__);
+              if(resPos>=0) {
 				d(printf("resPos>=0\n"))
                 if(!currentName ||
                    !strcmp(currentName,file->FullPath()) ||
@@ -478,7 +476,7 @@ void cMPlayerPlayer::Action(void)
               }
             }
           else if(strncmp(buff,"Playing ",8)==0 ||
-                  strncmp(buff,"Spiele ",7)==0) {printf("%s:%d \n", __func__, __LINE__);
+                  strncmp(buff,"Spiele ",7)==0) {
             nextTime=nextPos=0;
             index=saveIndex=total=-1;
             trustedTotal=false;
@@ -491,14 +489,14 @@ void cMPlayerPlayer::Action(void)
               }
             d(printf("PLAYING %s\n",currentName))
             }
-          else if(sscanf(buff,"ANS_LENGTH=%d",&itime)==1) {printf("%s:%d \n", __func__, __LINE__);
-			// Gesamtlï¿½nge
+          else if(sscanf(buff,"ANS_LENGTH=%d",&itime)==1) {
+			// Gesamtlänge
 			if(itime>0) {
               total=itime;
               trustedTotal=true;
               }
             }
-          else if(sscanf(buff,"ANS_POSITION=%d",&itime)==1) {printf("%s:%d \n", __func__, __LINE__);
+          else if(sscanf(buff,"ANS_POSITION=%d",&itime)==1) {
 			  //aktuelle zeit
 			  printf("ANS_POSITION=%i\n",itime);
               if(total>=0){
@@ -520,13 +518,12 @@ void cMPlayerPlayer::Action(void)
           }
         } while(c>0 && p);
       }
-//printf("%s:%d \n", __func__, __LINE__);
-    if(playBack) {printf("%s:%d \n", __func__, __LINE__);
+    if(playBack) {
       SetMPlayerVolume(force);
       force=false;
       }
     }
-printf("%s:%d \n", __func__, __LINE__);
+
   if(resume && curPos>=0) resume->SetResume(file,curPos, total);
 
   // restore old locale

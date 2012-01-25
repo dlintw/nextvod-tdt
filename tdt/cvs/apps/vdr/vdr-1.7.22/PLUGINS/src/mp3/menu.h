@@ -37,17 +37,19 @@ class cFileSources;
 class cFileSource;
 class cFileObj;
 class cDirList;
+class cPlayList;
 
 // ----------------------------------------------------------------
 
 class cMenuBrowse : public cOsdMenu {
 private:
+  cPlayList *plist;
   eOSState Select(bool isred);
   eOSState Parent(void);
   bool LoadDir(const char *dir);
 protected:
   static cFileObj *lastselect;
-  //
+//
   cDirList *list;
   cFileSource *source;
   bool dirselectable, withID3;
@@ -64,7 +66,7 @@ public:
   cMenuBrowse(cFileSource *Source, bool Dirselect, bool WithID3, const char *title, const char * const *Excl);
   ~cMenuBrowse();
   static cFileObj *GetSelected(void) { return lastselect; }
-  };
+ };
 
 // ----------------------------------------------------------------
 

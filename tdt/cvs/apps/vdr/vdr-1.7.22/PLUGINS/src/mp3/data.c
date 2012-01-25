@@ -38,7 +38,6 @@
 #include "data-src.h"
 
 // ----------------------------------------------------------------
-
 const char *mountscript = "mount.sh";
 
 char *Quote(const char *str)
@@ -563,3 +562,30 @@ cFileSource *cFileSources::FindSource(const char *filename)
     }
   return 0;
 }
+
+// -- cPlayList --------------------------------------------------------------
+void cPlayList::addToCurrentList(cFileObj *cItem)
+{
+	fprintf(stderr, "setCurrentList %s", cItem->Name());
+	Add(new cFileObj(cItem));
+	
+/* 	list = CurrentList;
+
+	cFileObj *xitem=list->First();
+	fprintf(stderr, "xitem->Name() %s \n", xitem->Name());
+	
+	while(xitem) {
+		fprintf(stderr, "xitem->Name() %s \n", xitem->Name());
+		xitem=list->Next(xitem); 
+	} */
+
+
+	return;
+}
+
+/* cFileObj *cCurrentPlayLists::GetSelected(void) { 
+cCurrentPlayLists
+	item;
+
+	return item; 
+} */

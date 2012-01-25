@@ -169,13 +169,6 @@ AC_ARG_ENABLE(enable_vdr1711,
 	,[enable_vdr1711=no])
 AM_CONDITIONAL(ENABLE_VDR1711,test "$enable_vdr1711" = "yes")
 
-AC_ARG_ENABLE(enable_vdr1722,
-	AS_HELP_STRING(--enable-vdr1722,	set up the CDK to use vdr 1.7.22),
-	[case "${enableval}" in
-		yes) VDR1722=vdr1722 ;;
-	esac],[enable_vdr1722=no])
-AM_CONDITIONAL(ENABLE_VDR1722,test "$enable_vdr1722" = "yes")
-
 AC_ARG_WITH(cpu,
 	[  --with-cpu=MODEL        cpu model [[sh4]]],
 	[CPU_MODEL="$withval"],[CPU_MODEL="sh4"])
@@ -524,7 +517,13 @@ AC_ARG_ENABLE(ipbox55,
 AM_CONDITIONAL(ENABLE_IPBOX55,test "$enable_ipbox55" = "yes")
 AC_SUBST(IPBOX55)
 
-
+AC_ARG_ENABLE(vdr1722,
+	AS_HELP_STRING(--enable-vdr1722,    enable vdr-1.7.22 stuff),
+	[case "${enableval}" in
+		yes) VDR1722=vdr1722 ;;
+	esac],[enable_vdr1722=no])
+AM_CONDITIONAL(ENABLE_VDR1722,test "$enable_vdr1722" = "yes")
+AC_SUBST(VDR1722)
 
 AC_SUBST(CFLAGS)
 AC_SUBST(TARGET_CFLAGS)

@@ -99,6 +99,8 @@ void cMenuSetupMPlayer::Store(void)
 
 class cMPlayerControl : public cControl {
 private:
+  cFileObj *current;
+  cPlayList *plist;
   static cFileObj *file;
   static bool rewind;
   cMPlayerPlayer *player;
@@ -119,6 +121,7 @@ private:
   void Jump(void);
   void JumpProcess(eKeys Key);
   void JumpDisplay(void);
+  void gotoChapter(int g);
 public:
   cMPlayerControl(void);
   virtual ~cMPlayerControl();
@@ -332,6 +335,36 @@ void cMPlayerControl::Jump(void)
   jumpactive=true;
 }
 
+void cMPlayerControl::gotoChapter(int g){
+    fprintf(stderr, "gotoCHAPTER");
+	plist=new cPlayList;
+    
+	cFileObj *item=plist->First();
+    while(item) {
+      fprintf(stderr, "plist %s", item->Name());
+      item=plist->Next(item);
+      }
+
+
+/* 	cFileObj *CurrentList =  cMenuBrowse::GetSelected();
+	fprintf(stderr, "currentlist %s", CurrentList->Name());
+	 */
+
+/* 	fprintf(stderr,"klick-right\n");
+	cFileObj *CurrentList = CurrentPlayLists.GetSelected();
+	fprintf(stderr, "currentlist %s", CurrentList->Name()); */
+/* 	
+	cFileObj *xitem=CurrentList->First();
+	fprintf(stderr, "xitem->Name() %s \n", xitem->Name());
+	
+	while(xitem) {
+		fprintf(stderr, "xitem->Name() %s \n", xitem->Name());
+		xitem=CurrentList->Next(xitem); 
+	} 
+*/
+}
+	
+
 eOSState cMPlayerControl::ProcessKey(eKeys Key)
 {
   if(!player->Active()) { Hide(); Stop(); return osEnd; }
@@ -373,7 +406,16 @@ eOSState cMPlayerControl::ProcessKey(eKeys Key)
       case kFastFwd|k_Repeat:
       case kFastFwd:
       case kRight|k_Repeat:
-      case kRight:  player->SkipSeconds(10);  break;
+      case kRight:  {
+		gotoChapter(1);
+
+	
+	
+	
+	  //player->SkipSeconds(10);  
+	  break;
+	  
+	  }
 
       case kRed:     Jump(); break;
 

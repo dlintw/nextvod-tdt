@@ -34,6 +34,7 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	$(if $(PLAYER131), -DPLAYER131) \
 	$(if $(PLAYER179), -DPLAYER179) \
 	$(if $(PLAYER191), -DPLAYER191) \
+	$(if $(VDR1722), -DVDR1722) \
 	$(if $(STM22), -DSTM22)"
 	[ "x$*" = "x" ] && touch $@ || true
 

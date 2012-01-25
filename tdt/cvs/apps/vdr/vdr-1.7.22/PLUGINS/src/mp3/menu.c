@@ -103,6 +103,7 @@ cMenuBrowse::~cMenuBrowse()
 
 cFileObj *cMenuBrowse::CurrentItem(void)
 {
+
   cMenuBrowseItem *item = (cMenuBrowseItem *)Get(Current());
   return item ? item->Item():0;
 }
@@ -127,8 +128,12 @@ bool cMenuBrowse::LoadDir(const char *dir)
   Status(tr("Scanning directory..."));
   bool res=list->Load(source,dir,excl);
   if(res) {
-    cFileObj *item=list->First();
+	plist=new cPlayList;
+	cFileObj *item=list->First();
     while(item) {
+		plist->addToCurrentList(item);
+
+//	  CurrentPlayLists.addToCurrentList(new cFileObj(item));
       Add(new cMenuBrowseItem(item),(parent && !strcmp(item->Name(),parent)));
       item=list->Next(item);
       }
@@ -196,6 +201,7 @@ eOSState cMenuBrowse::Select(bool isred)
           }
         // fall through to otFile
       case otFile:
+		
         lastselect=new cFileObj(item);
         res=osBack;
         break;
