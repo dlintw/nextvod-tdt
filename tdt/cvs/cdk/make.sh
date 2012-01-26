@@ -4,10 +4,11 @@ if [ "$1" == -h ] || [ "$1" == --help ]; then
  echo "Parameter 1: target system (1-26)"
  echo "Parameter 2: kernel (1-9)"
  echo "Parameter 3: debug (Y/N)"
- echo "Parameter 4: player(1-2)"
- echo "Parameter 5: Multicom(1-2)"
- echo "Parameter 6: Media Framwork(1-2)"
- echo "Parameter 7: External LCD support(1-2)"
+ echo "Parameter 4: player (1-2)"
+ echo "Parameter 5: Multicom (1-2)"
+ echo "Parameter 6: Media Framwork (1-2)"
+ echo "Parameter 7: External LCD support (1-2)"
+ echo "Parameter 8: VDR (1-2)"
  exit
 fi
 
