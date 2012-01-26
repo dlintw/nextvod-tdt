@@ -160,6 +160,8 @@ include make/release_neutrino_nightly.mk
 
 include make/release_vdr.mk
 
+include make/release_vdrdev2.mk
+
 include make/release_enigma1_hd.mk
 
 # New static folder
