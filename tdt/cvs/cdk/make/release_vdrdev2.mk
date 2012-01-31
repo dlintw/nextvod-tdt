@@ -38,10 +38,15 @@ $(DEPDIR)/%release_vdrdev2:
 	cp -dp $(targetprefix)/sbin/mke2fs $(prefix)/release_vdrdev2/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mkfs.ext2 $(prefix)/release_vdrdev2/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mkfs.ext3 $(prefix)/release_vdrdev2/sbin/ && \
+	cp -dp $(targetprefix)/sbin/e2fsck $(prefix)/release_vdrdev2/sbin/ && \
+	cp -dp $(targetprefix)/sbin/fsck $(prefix)/release_vdrdev2/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.ext2 $(prefix)/release_vdrdev2/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.ext3 $(prefix)/release_vdrdev2/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.nfs $(prefix)/release_vdrdev2/sbin/ && \
 	cp -dp $(targetprefix)/sbin/sfdisk $(prefix)/release_vdrdev2/sbin/ && \
+	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release_vdrdev2/sbin/ && \
+	cp -dp $(targetprefix)/sbin/blkid $(prefix)/release_vdrdev2/sbin/ && \
+	cp -dp $(targetprefix)/usr/bin/rdate $(prefix)/release_vdrdev2/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release_vdrdev2/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/etc/init.d/udhcpc $(prefix)/release_vdrdev2/etc/init.d/ && \
 cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI) $(prefix)/release_vdrdev2/sbin/MAKEDEV && \
@@ -49,6 +54,7 @@ cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBO
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_vdrdev2/bin/ && \
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release_vdrdev2/boot/video.elf && \
 	$(if $(TF7700),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdrdev2/boot/video.elf &&) \
+	$(if $(UFS912),cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_vdrdev2/boot/video.elf &&) \
 	$(if $(UFS922),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdrdev2/boot/video.elf &&) \
 	$(if $(CUBEREVO),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdrdev2/boot/video.elf &&) \
 	$(if $(CUBEREVO_MINI),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdrdev2/boot/video.elf &&) \
@@ -60,6 +66,7 @@ cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBO
 	$(if $(FORTIS_HDBOX),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_vdrdev2/boot/video.elf &&) \
 	$(if $(ATEVIO7500),cp $(targetprefix)/boot/video_7105.elf $(prefix)/release_vdrdev2/boot/video.elf &&) \
 	cp $(targetprefix)/boot/audio.elf $(prefix)/release_vdrdev2/boot/audio.elf && \
+	$(if $(UFS912),cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release_vdrdev2/boot/audio.elf &&) \
 	cp -a $(targetprefix)/dev/* $(prefix)/release_vdrdev2/dev/ && \
 	cp -dp $(targetprefix)/etc/fstab $(prefix)/release_vdrdev2/etc/ && \
 	cp -dp $(targetprefix)/etc/group $(prefix)/release_vdrdev2/etc/ && \
@@ -68,7 +75,7 @@ cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBO
 	cp -dp $(targetprefix)/etc/hosts $(prefix)/release_vdrdev2/etc/ && \
 	cp -dp $(targetprefix)/etc/inittab $(prefix)/release_vdrdev2/etc/ && \
 	$(if $(UFS910),cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release_vdrdev2/etc/ &&) \
-	cp -dp $(targetprefix)/etc/localtime $(prefix)/release_vdrdev2/etc/ && \
+##	cp -dp $(targetprefix)/etc/localtime $(prefix)/release_vdrdev2/etc/ && \
 	cp -dp $(targetprefix)/etc/mtab $(prefix)/release_vdrdev2/etc/ && \
 	cp -dp $(targetprefix)/etc/passwd $(prefix)/release_vdrdev2/etc/ && \
 	cp -dp $(targetprefix)/etc/profile $(prefix)/release_vdrdev2/etc/ && \
@@ -87,12 +94,13 @@ cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBO
 	cp -dp $(targetprefix)/etc/init.d/halt $(prefix)/release_vdrdev2/etc/init.d/ && \
 	cp $(buildprefix)/root/release/reboot $(prefix)/release_vdrdev2/etc/init.d/ && \
 	echo "576i50" > $(prefix)/release_vdrdev2/etc/videomode && \
-cp $(buildprefix)/root/release/rcS_vdrdev2$(if $(TF7700),_$(TF7700))$(if $(UFS910),_$(UFS910))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_vdrdev2/etc/init.d/rcS && \
+	cp $(buildprefix)/root/release/rcS_vdrdev2$(if $(TF7700),_$(TF7700))$(if $(UFS910),_$(UFS910))$(if $(UFS912),_$(UFS912))$(if $(UFS922),_$(UFS922))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_vdrdev2/etc/init.d/rcS && \
 	chmod 755 $(prefix)/release_vdrdev2/etc/init.d/rcS && \
 	mkdir -p $(prefix)/release_vdrdev2/usr/local/share/vdr && \
 	mkdir -p $(prefix)/release_vdrdev2/usr/local/share/vdr/plugins && \
 	mkdir -p $(prefix)/release_vdrdev2/usr/local/share/vdr/themes && \
 	mkdir -p $(prefix)/release_vdrdev2/usr/local/bin && \
+	mkdir -p $(prefix)/release_vdrdev2/usr/lib/locale && \
 	cp $(buildprefix)/root/var/vdr/plugins_vdrdev2.load $(prefix)/release_vdrdev2/usr/local/share/vdr/plugins.load && \
 	cp $(buildprefix)/root/var/vdr/channels.conf $(prefix)/release_vdrdev2/usr/local/share/vdr/ && \
 	cp $(buildprefix)/root/var/vdr/diseqc.conf $(prefix)/release_vdrdev2/usr/local/share/vdr/ && \
@@ -113,6 +121,8 @@ cp $(buildprefix)/root/release/rcS_vdrdev2$(if $(TF7700),_$(TF7700))$(if $(UFS91
 	cp $(buildprefix)/root/release/vsftpd $(prefix)/release_vdrdev2/etc/init.d/ && \
 	cp $(buildprefix)/root/release/bootclean.sh $(prefix)/release_vdrdev2/etc/init.d/ && \
 	cp $(buildprefix)/root/release/networking $(prefix)/release_vdrdev2/etc/init.d/ && \
+	cp $(buildprefix)/root/bin/autologin $(prefix)/release_vdrdev2/bin/ && \
+	cp -rd $(buildprefix)/root/usr/lib/locale/* $(prefix)/release_vdrdev2/usr/lib/locale/ && \
 	cp -rd $(targetprefix)/lib/* $(prefix)/release_vdrdev2/lib/ && \
 	rm -f $(prefix)/release_vdrdev2/lib/*.a && \
 	rm -f $(prefix)/release_vdrdev2/lib/*.o && \
@@ -171,6 +181,49 @@ if ENABLE_UFS922
 	rm -f $(prefix)/release_vdrdev2/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_vdrdev2/bin/evremote
 	rm -f $(prefix)/release_vdrdev2/bin/gotosleep
+else
+if ENABLE_UFS912
+
+	echo "ufs912" > $(prefix)/release_vdrdev2/etc/hostname
+	rm -f $(prefix)/release_vdrdev2/sbin/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release_vdrdev2/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release_vdrdev2/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release_vdrdev2/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_vdrdev2/etc/init.d/
+	cp $(buildprefix)/root/release/halt_ufs912 $(prefix)/release_vdrdev2/etc/init.d/halt
+	chmod 755 $(prefix)/release_vdrdev2/etc/init.d/umountfs
+	chmod 755 $(prefix)/release_vdrdev2/etc/init.d/rc
+	chmod 755 $(prefix)/release_vdrdev2/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release_vdrdev2/etc/init.d/halt
+	mkdir -p $(prefix)/release_vdrdev2/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release_vdrdev2/etc/rc.d
+	ln -fs halt $(prefix)/release_vdrdev2/sbin/reboot
+	ln -fs halt $(prefix)/release_vdrdev2/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release_vdrdev2/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release_vdrdev2/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release_vdrdev2/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release_vdrdev2/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release_vdrdev2/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release_vdrdev2/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release_vdrdev2/etc/rc.d/rc6.d/S90reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release_vdrdev2/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release_vdrdev2/lib/modules/
+##	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_vdrdev2/boot/video.elf
+##	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release_vdrdev2/boot/audio.elf
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_vdrdev2/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_vdrdev2/etc/
+
+	mv $(prefix)/release_vdrdev2/lib/firmware/component_7111_mb618.fw $(prefix)/release_vdrdev2/lib/firmware/component.fw
+	rm $(prefix)/release_vdrdev2/lib/firmware/component_7105_pdk7105.fw
+
+	rm -f $(prefix)/release_vdrdev2/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release_vdrdev2/lib/firmware/dvb-fe-stv6306.fw
+	rm -f $(prefix)/release_vdrdev2/lib/firmware/dvb-fe-cx24116.fw
+	rm -f $(prefix)/release_vdrdev2/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release_vdrdev2/bin/evremote
+	rm -f $(prefix)/release_vdrdev2/bin/gotosleep
+
 else
 if ENABLE_CUBEREVO
 	echo "cuberevo" > $(prefix)/release_vdrdev2/etc/hostname
@@ -452,17 +505,21 @@ endif
 endif
 endif
 endif
+endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmfb.ko $(prefix)/release_vdrdev2/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshell/embxshell.ko $(prefix)/release_vdrdev2/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxmailbox/embxmailbox.ko $(prefix)/release_vdrdev2/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/embxshm/embxshm.ko $(prefix)/release_vdrdev2/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/multicom/mme/mme_host.ko $(prefix)/release_vdrdev2/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/bpamem/bpamem.ko $(prefix)/release_vdrdev2/lib/modules/
 if !ENABLE_ATEVIO7500
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release_vdrdev2/lib/modules/
 else
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/multituner/*.ko $(prefix)/release_vdrdev2/lib/modules/
 endif
-
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/lzo-kmod/lzo1x_compress.ko $(prefix)/release_vdrdev2/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/lzo-kmod/lzo1x_decompress.ko $(prefix)/release_vdrdev2/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/compcache/ramzswap.ko $(prefix)/release_vdrdev2/lib/modules/
 if !ENABLE_SPARK
 if !ENABLE_SPARK7162
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cic/*.ko $(prefix)/release_vdrdev2/lib/modules/
@@ -659,6 +716,8 @@ endif
 
 
 #######################################################################################
+	echo "duckbox-rev#: " > $(prefix)/release_vdrdev2/etc/imageinfo
+	git describe >> $(prefix)/release_vdrdev2/etc/imageinfo
 #######################################################################################
 
 	$(INSTALL_DIR) $(prefix)/release_vdrdev2/usr/lib
@@ -676,7 +735,14 @@ endif
 	rm -rf $(prefix)/release_vdrdev2/usr/lib/alsaplayer
 	rm -rf $(prefix)/release_vdrdev2/usr/lib/engines
 	rm -rf $(prefix)/release_vdrdev2/usr/lib/enigma2
-	rm -rf $(prefix)/release_vdrdev2/usr/lib/gconv
+
+	rm -rf $(prefix)/release_vdrdev2/usr/lib/gconv/*
+	cp -rd $(targetprefix)/usr/lib/gconv/gconv-modules $(prefix)/release_vdrdev2/usr/lib/gconv/
+#cp -rd $(targetprefix)/usr/lib/gconv/ISO8859-1.so $(prefix)/release_vdrdev2/usr/lib/gconv/
+	cp -rd $(targetprefix)/usr/lib/gconv/ISO8859-9.so $(prefix)/release_vdrdev2/usr/lib/gconv/
+	cp -rd $(targetprefix)/usr/lib/gconv/ISO8859-15.so $(prefix)/release_vdrdev2/usr/lib/gconv/
+	cp -rd $(targetprefix)/usr/lib/gconv/UTF-32.so $(prefix)/release_vdrdev2/usr/lib/gconv/
+
 	rm -rf $(prefix)/release_vdrdev2/usr/lib/libxslt-plugins
 	rm -rf $(prefix)/release_vdrdev2/usr/lib/pkgconfig
 	rm -rf $(prefix)/release_vdrdev2/usr/lib/sigc++-1.2
@@ -688,7 +754,7 @@ endif
 
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/vdr #############
 	cp -RP $(buildprefix)/own_build/vdr/* $(prefix)/release_vdrdev2/
-
+	ln -sf /usr/share/zoneinfo/CET $(prefix)/release_vdrdev2/etc/localtime
 #######################################################################################
 #######################################################################################
 
@@ -704,6 +770,10 @@ endif
 
 #	mkdir -p $(prefix)/release_vdrdev2/usr/share/locale/
 	cp -rd $(targetprefix)/usr/share/locale/* $(prefix)/release_vdrdev2/usr/share/locale
+
+	mkdir -p $(prefix)/release_vdrdev2/usr/local/share/locale
+#	cp -rd $(targetprefix)/usr/local/share/locale/* $(prefix)/release_vdrdev2/usr/local/share/locale
+	cp -rd $(targetprefix)/usr/local/share/locale/de_DE $(prefix)/release_vdrdev2/usr/local/share/locale/
 
 #######################################################################################
 #######################################################################################
@@ -733,7 +803,7 @@ if STM24
 	[ -e $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko ] && cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_vdrdev2/lib/modules || true
 	[ -e $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko ] && cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_vdrdev2/lib/modules || true
 	[ -e $(kernelprefix)/linux-sh4/fs/ntfs/ntfs.ko ] && cp $(kernelprefix)/linux-sh4/fs/ntfs/ntfs.ko $(prefix)/release_vdrdev2/lib/modules || true
-	[ -e $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cpu_frequ/cpu_frequ.ko ] && cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cpu_frequ/cpu_frequ.ko $(prefix)/release/lib/modules || true
+	[ -e $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cpu_frequ/cpu_frequ.ko ] && cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cpu_frequ/cpu_frequ.ko $(prefix)/release_vdrdev2/lib/modules || true
 endif
 
 	touch $@

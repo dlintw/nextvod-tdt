@@ -40,6 +40,15 @@ if [ -e $PLUGINCFG ]; then
    done < $PLUGINCFG
 fi
 
+# set timezone = Europe/Berlin
+#export TZ=$( cat /tmp/TZ )
+# export TZ=$( cat /etc/localtime )
+export TZ=CET
+
+# set default language
+export LANG=de_DE.UTF-8
+export LC_ALL=de_DE.UTF-8
+
 #echo "Plugins:" $PLUGINS
 #sleep 3
 
