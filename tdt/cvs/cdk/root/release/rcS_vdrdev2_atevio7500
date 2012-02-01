@@ -71,7 +71,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/lnbh221.ko
    insmod $MODDIR/lnb_pio.ko
    insmod $MODDIR/avl2108.ko
-   insmod $MODDIR/tda10024.ko
+   #insmod $MODDIR/tda10024.ko
 
    insmod $MODDIR/starci.ko 
    if [ $player=='player191' ]; then
