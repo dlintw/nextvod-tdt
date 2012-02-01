@@ -923,7 +923,7 @@ static inline void Hexdump(unsigned char *Data, int length)
 //#define RESEND_TIMESTAMP_EVERY_SUB_FRAME
 
 
-#define INJECT_XVID_DIRECTLY
+//#define INJECT_XVID_DIRECTLY
 
 static size_t
 buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp, 
@@ -1553,7 +1553,7 @@ gst_dvbvideosink_set_caps (GstBaseSink * basesink, GstCaps * caps)
 			gst_structure_get_fraction (structure, "framerate", &rate_nu, &rate_de);
 
 			if (rate_nu != 0)
-				rate = (1000000 * rate_de) / rate_nu;
+				rate = (1000000000) / ((rate_nu * 1000)/rate_de);
 			else 
 				rate = 0;
 

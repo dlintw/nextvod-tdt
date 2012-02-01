@@ -1411,7 +1411,7 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 	gboolean         late_initial_header = FALSE;
 
 #ifdef DEBUG_EXT
-	printf("gst_dvbvideosink_render 0\n");
+	printf("gst_dvbaudiosink_render 0\n");
 #endif
 
 	if (self->bypass == BYPASS_UNKNOWN) {
@@ -1441,7 +1441,7 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 	}
 
 #ifdef DEBUG_EXT
-	printf("gst_dvbvideosink_render 1\n");
+	printf("gst_dvbaudiosink_render 1\n");
 #endif
 
 	if (self->initial_header)
@@ -1478,8 +1478,8 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 	}
 
 #ifdef DEBUG_EXT
-	printf("gst_dvbvideosink_render - initial header written\n");
-	printf("gst_dvbvideosink_render - write pes packages\n");
+	printf("gst_dvbaudiosink_render - initial header written\n");
+	printf("gst_dvbaudiosink_render - write pes packages\n");
 #endif
 
 	/* LPCM workaround.. we also need the first two byte of the lpcm header.. (substreamid and num of frames) 
@@ -1570,7 +1570,7 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 		//int pes_header_size = 0;
 
 #ifdef DEBUG_EXT
-		printf("gst_dvbvideosink_render - build PESHeader\n");
+		printf("gst_dvbaudiosink_render - build PESHeader\n");
 #endif
 		pes_header_size = buildPesHeader(pes_header, pes_packet_size, 
 			timestamp, start_code, late_initial_header, self->pcm_sub_frame_len);
@@ -1662,9 +1662,12 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 			ASYNC_WRITE(self->runtime_header_data, self->runtime_header_data_size);
 		ASYNC_WRITE(data + data_position, pes_packet_size);
 #endif
+		if (self->aac_adts_header_valid){
+			pes_packet_size += 7;
+		}		
 
 #ifdef DEBUG_EXT
-	printf("gst_dvbvideosink_render - pes package written\n");
+	printf("gst_dvbaudiosink_render - pes package written\n");
 #endif
 
 		if (late_initial_header) {
@@ -1697,7 +1700,7 @@ gst_dvbaudiosink_render (GstBaseSink * sink, GstBuffer * buffer)
 	//printf("L <-\n");
 
 #ifdef DEBUG_EXT
-	printf("gst_dvbvideosink_render - all pes packages written\n");
+	printf("gst_dvbaudiosink_render - all pes packages written\n");
 #endif
 
 
@@ -1808,6 +1811,7 @@ gst_dvbaudiosink_change_state (GstElement * element, GstStateChange transition)
 		self->fd = open("/dev/dvb/adapter0/audio0", O_RDWR|O_NONBLOCK);
 
 		if (self->fd) {
+			ioctl(self->fd, AUDIO_CLEAR_BUFFER, NULL);
 			ioctl(self->fd, AUDIO_SELECT_SOURCE, AUDIO_SOURCE_MEMORY);
 			ioctl(self->fd, AUDIO_PLAY);
 			ioctl(self->fd, AUDIO_PAUSE);
