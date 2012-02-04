@@ -1,4 +1,4 @@
-#include "pv_config.h"
+﻿#include "pv_config.h"
 
 #ifdef FBV_SUPPORT_PNG
 	#include <png.h>
@@ -52,7 +52,11 @@ int fh_png_load(const char *name,unsigned char **buffer,int* xp,int* yp)
 		return(FH_ERROR_FORMAT);
 	}
 
-	if(setjmp(png_ptr->jmpbuf))
+#if (PNG_LIBPNG_VER < 10500)
+	if (setjmp(png_ptr->jmpbuf))
+#else
+	if (setjmp(png_jmpbuf(png_ptr)))
+#endif
 	{
 		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 		fclose(fh); 
@@ -78,7 +82,9 @@ int fh_png_load(const char *name,unsigned char **buffer,int* xp,int* yp)
 		png_set_background(png_ptr, (png_color_16*)&my_background, PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
 	}
 
-	if (color_type & PNG_COLOR_MASK_ALPHA)
+#if PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR <= 2 && PNG_LIBPNG_VER_RELEASE < 36
+		if (color_type & PNG_COLOR_MASK_ALPHA)
+#endif
 		png_set_strip_alpha(png_ptr);
 
 	if (bit_depth < 8)
@@ -139,7 +145,11 @@ int fh_png_getsize(const char *name,int *x,int *y, int wanted_width, int wanted_
 		return(FH_ERROR_FORMAT);
 	}
 
-	if(setjmp(png_ptr->jmpbuf))
+#if (PNG_LIBPNG_VER < 10500)
+	if (setjmp(png_ptr->jmpbuf))
+#else
+	if (setjmp(png_jmpbuf(png_ptr)))
+#endif
 	{
 		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 		fclose(fh); 
