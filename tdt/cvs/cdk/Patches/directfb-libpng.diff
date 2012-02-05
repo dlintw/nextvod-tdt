@@ -1,11 +1,5 @@
 --- a/interfaces/IDirectFBImageProvider/idirectfbimageprovider_png.c
 +++ b/interfaces/IDirectFBImageProvider/idirectfbimageprovider_png.c
-@@ -1,4 +1,4 @@
--/*
-+﻿/*
-    (c) Copyright 2006-2010  ST Microelectronics R&D
- 
- based on code:
 @@ -248,7 +248,7 @@
       if (!data->png_ptr)
            goto error;
