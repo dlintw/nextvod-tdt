@@ -113,6 +113,7 @@ cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBO
         chmod 755 $(prefix)/release_vdrdev2/usr/local/bin/mplayer.sh && \
 	cp -rd $(buildprefix)/root/var/vdr/themes/* $(prefix)/release_vdrdev2/usr/local/share/vdr/themes/ && \
 	cp $(buildprefix)/root/usr/local/bin/runvdrdev2 $(prefix)/release_vdrdev2/usr/local/bin/runvdr && \
+	chmod 755 $(prefix)/release_vdrdev2/usr/local/bin/runvdr && \
 	cp $(buildprefix)/root/usr/local/bin/vdrshutdown $(prefix)/release_vdrdev2/usr/local/bin/ && \
 	cp $(buildprefix)/root/release/mountvirtfs $(prefix)/release_vdrdev2/etc/init.d/ && \
 	cp $(buildprefix)/root/release/mme_check $(prefix)/release_vdrdev2/etc/init.d/ && \
