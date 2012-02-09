@@ -274,7 +274,7 @@ static platform_type_t pftype = PF_UNKNOWN;
 #define BYPASS_PCML     0x05
 #define BYPASS_LPCM     0x06
 #define BYPASS_MPEG1_L3 0x0A
-#define BYPASS_AAC      0x0B
+#define BYPASS_AAC      0x08
 #define BYPASS_WMA      0x0C
 #define BYPASS_VORBIS   0x0D
 #define BYPASS_FLAC     0x0E
