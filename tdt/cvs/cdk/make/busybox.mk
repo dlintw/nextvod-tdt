@@ -11,7 +11,7 @@ $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 #		patch -p1 < ../Patches/busybox-1.19.3/busybox-1.19.3-wget.patch
 	touch $@
 
-$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.19.3/busybox-1.19.3.config | $(DEPDIR)/$(GLIBC_DEV)
+$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.19.4/busybox-1.19.4.config | $(DEPDIR)/$(GLIBC_DEV)
 	cd @DIR_busybox@ && \
 		export CROSS_COMPILE=$(target)- && \
 		$(MAKE) mrproper && \
