@@ -69,11 +69,19 @@ void cDvbCiAdapter::Write(const uint8_t *Buffer, int Length)
 
 bool cDvbCiAdapter::Reset(int Slot)
 {
+#if 1
+  if (ioctl(fd, CA_RESET, Slot) < 0)
+     esyslog("ERROR: can't reset CAM slot %d on device %d: %m", Slot, device->DeviceNumber());
+  else
+     return true;
+  return false;
+#else
   if (ioctl(fd, CA_RESET, 1 << Slot) != -1)
      return true;
   else
      esyslog("ERROR: can't reset CAM slot %d on device %d: %m", Slot, device->DeviceNumber());
   return false;
+#endif
 }
 
 eModuleStatus cDvbCiAdapter::ModuleStatus(int Slot)
