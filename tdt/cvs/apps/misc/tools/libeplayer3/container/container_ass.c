@@ -391,7 +391,8 @@ static void ASSThread(Context_t *context) {
             //       subtitel zeitpunkt zu bestimmen und solange zu schlafen.
             usleep(1000);
 
-            img = ass_render_frame(ass_renderer, ass_track, playPts / 90.0, &change);
+			if(ass_renderer && ass_track)
+            	img = ass_render_frame(ass_renderer, ass_track, playPts / 90.0, &change);
 
             ass_printf(150, "img %p pts %lu %f\n", img, playPts, playPts / 90.0);
 
