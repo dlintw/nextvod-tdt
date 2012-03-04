@@ -761,7 +761,7 @@ static int PlaybackSeek(Context_t  *context, float * pos) {
 
     playback_printf(10, "pos: %f\n", *pos);
 
-    if (!context->playback->isHttp && context->playback->isPlaying && !context->playback->isForwarding && !context->playback->BackWard && !context->playback->SlowMotion && !context->playback->isPaused) {
+    if (context->playback->isPlaying && !context->playback->isForwarding && !context->playback->BackWard && !context->playback->SlowMotion && !context->playback->isPaused) {
         context->playback->isSeeking = 1;
 
         context->output->Command(context, OUTPUT_CLEAR, NULL);
