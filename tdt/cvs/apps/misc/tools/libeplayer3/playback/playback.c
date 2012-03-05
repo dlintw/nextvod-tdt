@@ -226,7 +226,7 @@ static int PlaybackOpen(Context_t  *context, char * uri) {
 
             //free(extension);
         } /* http */
-        else if (!strncmp("mms://", uri, 6) || !strncmp("rtsp://", uri, 7) || !strncmp("rtmp://", uri, 7) || !strncmp("rtmpt://", uri, 8) || !strncmp("rtmpe://", uri, 8) || !strncmp("rtmpte://", uri, 9) || !strncmp("rtmps://", uri, 8)) {
+        else if (!strncmp("mms://", uri, 6) || !strncmp("rtsp://", uri, 7) || !strncmp("rtmp://", uri, 7) || !strncmp("rtmpt://", uri, 8) || !strncmp("rtmpe://", uri, 8) || !strncmp("rtmpte://", uri, 9) || !strncmp("rtmps://", uri, 8) || !strncmp("rtp://", uri, 6)) {
 /*            char * extension = NULL; */
             context->playback->isFile = 0;
             context->playback->isHttp = 1;
