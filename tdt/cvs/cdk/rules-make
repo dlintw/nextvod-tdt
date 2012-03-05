@@ -138,7 +138,6 @@ libalsa;1.0.21a;alsa-lib-1.0.21a;alsa-lib-1.0.21a.tar.bz2:alsa-lib-1.0.21a-soft_
 libusb;0.1.12;libusb-0.1.12;libusb-0.1.12.tar.gz;extract:libusb-0.1.12.tar.gz
 #rtmpdump;2.4;rtmpdump;rtmpdump-2.4.tar.gz;extract:rtmpdump-2.4.tar.gz
 rtmpdump;2.4;rtmpdump;rtmpdump-2.4.tar.gz;extract:rtmpdump-2.4.tar.gz
-#libboost;boost-1.49.0;boost_1_49_0;boost_1_49_0.tar.bz2;extract:boost_1_49_0.tar.bz2;patch:libboost.diff
 
 #
 # GSTREAMER
