@@ -1231,7 +1231,7 @@ $(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/OpenSSL: \
 #
 # ffmpeg
 #
-$(DEPDIR)/ffmpeg.do_prepare: bootstrap libass libz rtmpdump @DEPENDS_ffmpeg@
+$(DEPDIR)/ffmpeg.do_prepare: bootstrap libass rtmpdump @DEPENDS_ffmpeg@
 	@PREPARE_ffmpeg@
 	cd @DIR_ffmpeg@ && \
 	patch -p1 < ../Patches/ffmpeg.patch;
@@ -1257,7 +1257,7 @@ $(DEPDIR)/ffmpeg.do_prepare: bootstrap libass libz rtmpdump @DEPENDS_ffmpeg@
 #		--prefix=/usr
 #	touch $@
 
-$(DEPDIR)/ffmpeg.do_compile: bootstrap libass libz rtmpdump $(DEPDIR)/ffmpeg.do_prepare
+$(DEPDIR)/ffmpeg.do_compile: bootstrap libass rtmpdump $(DEPDIR)/ffmpeg.do_prepare
 	cd @DIR_ffmpeg@ && \
 	$(BUILDENV) \
 	./configure \
@@ -2100,7 +2100,7 @@ $(DEPDIR)/rtmpdump.do_prepare: bootstrap openssl openssl-dev libz @DEPENDS_rtmpd
 	@PREPARE_rtmpdump@
 	touch $@
 
-$(DEPDIR)/rtmpdump.do_compile: $(DEPDIR)/rtmpdump.do_prepare
+$(DEPDIR)/rtmpdump.do_compile: bootstrap openssl openssl-dev libz $(DEPDIR)/rtmpdump.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_rtmpdump@ && \
 	cp $(hostprefix)/share/libtool/config/ltmain.sh .. && \
@@ -2112,7 +2112,7 @@ $(DEPDIR)/rtmpdump.do_compile: $(DEPDIR)/rtmpdump.do_prepare
 $(DEPDIR)/min-rtmpdump $(DEPDIR)/std-rtmpdump $(DEPDIR)/max-rtmpdump \
 $(DEPDIR)/rtmpdump: \
 $(DEPDIR)/%rtmpdump: $(DEPDIR)/rtmpdump.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_rtmpdump@ && \
 		@INSTALL_rtmpdump@
-	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
