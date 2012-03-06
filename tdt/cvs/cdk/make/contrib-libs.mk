@@ -2115,6 +2115,4 @@ $(DEPDIR)/%rtmpdump: $(DEPDIR)/rtmpdump.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_rtmpdump@ && \
 		@INSTALL_rtmpdump@
-	rm -rf @DIR_rtmpdump@
-	rm $(HOME)/Archive/rtmpdump-2.4.tar.gz
 	@TUXBOX_YAUD_CUSTOMIZE@
