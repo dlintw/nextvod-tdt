@@ -134,7 +134,7 @@ flac-1.2.1.tar.gz;http://ignum.dl.sourceforge.net/project/flac/flac-src/flac-1.2
 BroFS1.2.tgz;http://www.avalpa.com/assets/freesoft/other/
 alsa-lib-1.0.21a.tar.bz2;ftp://ftp.alsa-project.org/pub/lib/
 libusb-0.1.12.tar.gz;http://downloads.sourceforge.net/libusb/
-rtmpdump-2.3.tgz;http://rtmpdump.mplayerhq.hu/download/
+rtmpdump-2.4.tar.gz;http://rtmpdump.mplayerhq.hu/download/
 
 #
 # GSTREAMER

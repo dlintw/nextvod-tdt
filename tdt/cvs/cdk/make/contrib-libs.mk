@@ -2096,11 +2096,11 @@ $(DEPDIR)/%libalsa: $(DEPDIR)/libalsa.do_compile
 #
 # rtmpdump
 #
-$(DEPDIR)/rtmpdump.do_prepare: bootstrap openssl openssl-dev @DEPENDS_rtmpdump@
+$(DEPDIR)/rtmpdump.do_prepare: bootstrap openssl openssl-dev libz @DEPENDS_rtmpdump@	
 	@PREPARE_rtmpdump@
 	touch $@
 
-$(DEPDIR)/rtmpdump.do_compile: $(DEPDIR)/rtmpdump.do_prepare
+$(DEPDIR)/rtmpdump.do_compile: bootstrap openssl openssl-dev libz $(DEPDIR)/rtmpdump.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_rtmpdump@ && \
 	cp $(hostprefix)/share/libtool/config/ltmain.sh .. && \
@@ -2112,7 +2112,7 @@ $(DEPDIR)/rtmpdump.do_compile: $(DEPDIR)/rtmpdump.do_prepare
 $(DEPDIR)/min-rtmpdump $(DEPDIR)/std-rtmpdump $(DEPDIR)/max-rtmpdump \
 $(DEPDIR)/rtmpdump: \
 $(DEPDIR)/%rtmpdump: $(DEPDIR)/rtmpdump.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_rtmpdump@ && \
 		@INSTALL_rtmpdump@
-	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
