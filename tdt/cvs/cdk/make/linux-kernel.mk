@@ -496,8 +496,8 @@ UFS910PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs910_reboot_stm24.patch \
 		linux-sh4-smsc911x_dma_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
-		linux-sh4-pcm_noise_fix_stm24$(PATCH_STR).patch \
-		mini_fo_stm24$(PATCH_STR).patch
+		linux-sh4-pcm_noise_fix_stm24$(PATCH_STR).patch
+#		mini_fo_stm24$(PATCH_STR).patch
 
 FLASHUFS910PATCHES_24 = $(COMMONPATCHES_24) \
 		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
@@ -508,8 +508,8 @@ FLASHUFS910PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs910_reboot_stm24.patch \
 		linux-sh4-smsc911x_dma_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
-		linux-sh4-pcm_noise_fix_stm24$(PATCH_STR).patch \
-		mini_fo_stm24$(PATCH_STR).patch
+		linux-sh4-pcm_noise_fix_stm24$(PATCH_STR).patch
+#		mini_fo_stm24$(PATCH_STR).patch
 
 UFS912PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs912_setup_stm24$(PATCH_STR).patch \
