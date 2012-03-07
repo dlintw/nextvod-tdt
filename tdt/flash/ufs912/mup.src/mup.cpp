@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
        printf("For image information:\n");
        printf("  %s i FILENAME       Info as TXT\n", argv[0]);
        printf("  %s x FILENAME       Info as XML (basic)\n", argv[0]);
-       printf("  %s xx FILENAME      Info as TXT (detailed)\n", argv[0]);
+       printf("  %s xx FILENAME      Info as XML (detailed)\n", argv[0]);
        printf("For image verification:\n");
        printf("  %s v FILENAME       \n", argv[0]);
        printf("For image extraction:\n");
@@ -158,12 +158,14 @@ int main(int argc, char* argv[])
        printf("Choose ProductCode\n");
        printf("1: 0x11321000 - Kathrein UFS-922\n");
        printf("2: 0x11301003 - Kathrein UFS-912\n");
+       printf("3: 0x11301006 - Kathrein UFS-913\n");
        printf(":> ");
        scanf("%d", &productCode);
 
        switch(productCode)
        {
        case 1: productCode = 0x11321000; break;
+       case 3: productCode = 0x11321006; break;
        case 2: default: productCode = 0x11301003; break;
        }
 
