@@ -2,7 +2,7 @@
 
 MODDIR=/lib/modules
 
-insmod $MODDIR/vfd.ko       
+insmod $MODDIR/vfd.ko
 echo "    Welcome     " > /dev/vfd
 
 if [ -e /var/etc/.firstboot ]; then
@@ -61,13 +61,18 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
    insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/ksound.ko
+# only for stm23
    insmod $MODDIR/p2div64.ko
+# only for stm23
    insmod $MODDIR/stm_v4l2.ko
+   insmod $MODDIR/stmvout.ko
+   insmod $MODDIR/stmvbi.ko
    insmod $MODDIR/pseudocard.ko
    insmod $MODDIR/cx24116.ko
    insmod $MODDIR/cimax.ko
    insmod $MODDIR/pti.ko
    insmod $MODDIR/stm_monitor.ko
+   insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/stmdvb.ko
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
