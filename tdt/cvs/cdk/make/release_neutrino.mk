@@ -94,6 +94,7 @@ $(DEPDIR)/%release_neutrino:
 	cp -dp $(targetprefix)/etc/hosts $(prefix)/release_neutrino/etc/ && \
 	cp -dp $(targetprefix)/etc/inittab $(prefix)/release_neutrino/etc/ && \
 	$(if $(UFS910),cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release_neutrino/etc/ &&) \
+	mkdir -p $(prefix)/release_neutrino/var/run/lirc
 	cp -dp $(targetprefix)/etc/localtime $(prefix)/release_neutrino/etc/ && \
 	cp -dp $(targetprefix)/etc/mtab $(prefix)/release_neutrino/etc/ && \
 	cp -dp $(targetprefix)/etc/passwd $(prefix)/release_neutrino/etc/ && \
