@@ -49,3 +49,13 @@
  
  clean:
  	rm -f *.o *.swp vsftpd
+--- vsftpd-2.3.4/parseconf.c	2010-03-27 23:20:56.903712923 +0100
++++ vsftpd-2.3.4/parseconf.c	2010-03-27 23:20:38.691538456 +0100
+@@ -223,7 +223,6 @@
+      * race conditions.
+      */
+     if (vsf_sysutil_retval_is_error(retval) ||
+-        vsf_sysutil_statbuf_get_uid(p_statbuf) != vsf_sysutil_getuid() ||
+         !vsf_sysutil_statbuf_is_regfile(p_statbuf))
+     {
+       die("config file not owned by correct user, or not a file");
