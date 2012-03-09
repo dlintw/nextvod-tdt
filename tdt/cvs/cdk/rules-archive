@@ -155,8 +155,8 @@ portmap_6.0-9.diff.gz;http://debian.osuosl.org/debian/pool/main/p/portmap
 nfs-utils-1.1.1.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/nfs
 nfs-utils_1.1.1-12.diff.gz;http://ftp.de.debian.org/debian/pool/main/n/nfs-utils
 autofs-4.1.4.tar.bz2;http://pkgs.fedoraproject.org/repo/pkgs/autofs/autofs-4.1.4.tar.bz2/7e3949114c00665b4636f0c318179657;http://www.fhloston-paradise.de
-vsftpd-2.0.7.tar.gz;http://gd.tuwien.ac.at/infosys/servers/ftp/vsftpd
-vsftpd-2.2.2.tar.gz;http://www.fhloston-paradise.de
+#vsftpd-2.0.7.tar.gz;http://gd.tuwien.ac.at/infosys/servers/ftp/vsftpd
+vsftpd-2.3.4.tar.gz;http://gd.tuwien.ac.at/infosys/servers/ftp/vsftpd
 netkit-ftp-0.17.tar.gz;ftp://ftp.uk.linux.org/pub/linux/Networking/netkit
 samba-3.0.28.tar.gz;http://us1.samba.org/samba/ftp
 samba-3.5.5.tar.gz;http://www.samba.org/samba/ftp/stable/
