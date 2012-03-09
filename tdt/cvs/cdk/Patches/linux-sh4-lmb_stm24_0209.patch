@@ -137,17 +137,3 @@
   	sparse_init();
   
 --- 412,417 ----
-*** linux-sh4-2.6.32.46_stm24_0209.orig/arch/sh/kernel/sh_ksyms_32.c	2011-11-24 22:22:25.000000000 +0200
---- linux-sh4/arch/sh/kernel//sh_ksyms_32.c	2011-11-25 00:25:52.744562206 +0200
-***************
-*** 52,57 ****
---- 52,60 ----
-  EXPORT_SYMBOL(__ndelay);
-  EXPORT_SYMBOL(__const_udelay);
-  
-+ /* Dagobert: Need to export this if we use CONFIG_CC_OPTIMIZE_FOR_SIZE */
-+ EXPORT_SYMBOL(strcpy);
-+ 
-  #define DECLARE_EXPORT(name)		\
-  	extern void name(void);EXPORT_SYMBOL(name)
-  
