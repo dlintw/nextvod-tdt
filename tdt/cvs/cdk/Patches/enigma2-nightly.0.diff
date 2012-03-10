@@ -4692,6 +4692,29 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Compone
  class Harddisk:
  	def __init__(self, device):
  		self.device = device
+@@ -41,20 +59,8 @@
+ 			self.disk_path = self.dev_path
+ 
+ 		elif self.type == DEVTYPE_DEVFS:
+-			tmp = readFile(self.sysfsPath('dev')).split(':')
+-			s_major = int(tmp[0])
+-			s_minor = int(tmp[1])
+-			for disc in listdir("/dev/discs"):
+-				dev_path = path.realpath('/dev/discs/' + disc)
+-				disk_path = dev_path + '/disc'
+-				try:
+-					rdev = stat(disk_path).st_rdev
+-				except OSError:
+-					continue
+-				if s_major == major(rdev) and s_minor == minor(rdev):
+-					self.dev_path = dev_path
+-					self.disk_path = disk_path
+-					break
++			self.dev_path = '/dev/' + self.device
++			self.disk_path = self.dev_path
+ 
+ 		print "new Harddisk", self.device, '->', self.dev_path, '->', self.disk_path
+ 		self.startIdle()
 @@ -181,7 +198,12 @@
                                  continue                                                                    
                          try:                                                                                
