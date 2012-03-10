@@ -120,7 +120,7 @@
  	case IIC_FSM_COMPLETE:
  		dbg_print2("-Complete\n");
  
-@@ -970,7 +934,7 @@
+@@ -965,7 +934,7 @@
  }
  #endif
  
@@ -129,7 +129,7 @@
  {
  	unsigned long iic_baudrate;
  	unsigned short iic_rep_start_hold;
-@@ -986,11 +950,11 @@
+@@ -981,11 +950,11 @@
  	unsigned char iic_prescaler;
  	unsigned short iic_prescaler_dataout;
  #endif
@@ -143,6 +143,18 @@
  	ns_per_clk = NANOSEC_PER_SEC / clock;
  
  	if (check_fastmode(adap)) {
+@@ -1046,11 +1015,6 @@
+ 	ssc_store32(adap, SSC_STOP_SETUP, iic_stop_setup);
+ 	ssc_store32(adap, SSC_BUS_FREE, iic_bus_free);
+ 
+-	/*
+-	 * Set Slave Address to allow 'General Call'
+-	 */
+-	ssc_store32(adap, SSC_SLAD, 0x7f);
+-
+ #ifdef CONFIG_I2C_STM_HW_GLITCH
+ 	/* See DDTS GNBvd40668 */
+ 	iic_prescaler = 1;
 @@ -1198,15 +1162,7 @@
  	i2c_stm->adapter.nr = pdev->id;
  	i2c_stm->adapter.algo = &iic_stm_algo;
