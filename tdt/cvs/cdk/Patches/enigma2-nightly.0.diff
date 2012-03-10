@@ -3954,7 +3954,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.cpp eni
  	return 0;
  }
  
-@@ -183,10 +212,86 @@
+@@ -183,16 +212,94 @@
  
  void fbClass::blit()
  {
@@ -4041,6 +4041,14 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.cpp eni
  }
  
  fbClass::~fbClass()
+ {
++#if not defined(__sh__) 
+ 	if (available)
+ 		ioctl(fd, FBIOPUT_VSCREENINFO, &oldscreen);
++#endif
+ 	if (lfb)
+ 		munmap(lfb, available);
+ 	showConsole(1);
 @@ -231,19 +336,62 @@
  
  void fbClass::enableManualBlit()
