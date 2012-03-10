@@ -770,7 +770,7 @@ $(DEPDIR)/fontconfig.do_compile: bootstrap libz fontconfig.do_prepare
 		libtoolize -f -c && \
 		autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
-		CFLAGS="$(TARGET_CFLAGS) -Os" \
+		CFLAGS="$(TARGET_CFLAGS) -Os -I$(targetprefix)/usr/include/libxml2" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
