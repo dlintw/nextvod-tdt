@@ -295,9 +295,19 @@
  	.timing_data	= &(struct stm_nand_timing_data) {
  		.sig_setup	= 50,		/* times in ns */
  		.sig_hold	= 50,
-@@ -177,31 +160,15 @@
- 		.rd_off		= 50,
- 		.chip_delay	= 50,		/* in us */
+@@ -171,37 +154,21 @@
+ 		.sig_hold	= 50,
+ 		.CE_deassert	= 0,
+ 		.WE_to_RBn	= 100,
+-		.wr_on		= 20,
+-		.wr_off		= 50,
+-		.rd_on		= 20,
+-		.rd_off		= 50,
++		.wr_on		= 10,
++		.wr_off		= 30,
++		.rd_on		= 10,
++		.rd_off		= 30,
+		.chip_delay	= 50,		/* in us */
  	},
 +	.emi_withinbankoffset	= 0,
  };
