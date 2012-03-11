@@ -465,6 +465,7 @@ $(flashprefix)/var-stock-neutrino: \
 	mkdir $@/tmp
 	mkdir $@/log
 	mkdir -p $@/lib/urandom
+	mkdir -p $@/run/lirc
 	touch $@
 	@TUXBOX_CUSTOMIZE@
 
