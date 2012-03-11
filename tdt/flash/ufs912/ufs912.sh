@@ -51,9 +51,9 @@ echo "Root prepared"
 echo "Checking if flashtool mup exists..."
 if [ ! -e $CURDIR/mup ]; then
   echo "Flashtool mup is missing, trying to compile it..."
-  cd $CURDIR/mup.src
-  $CURDIR/mup.src/compile.sh
-  mv $CURDIR/mup.src/mup $CURDIR/mup
+  cd $CURDIR/../common/mup.src
+  $CURDIR/../common/mup.src/compile.sh
+  mv $CURDIR/../common/mup.src/mup $CURDIR/mup
   cd $CURDIR
   if [ ! -e $CURDIR/mup ]; then
     echo "Compiling failed! Exiting..."
