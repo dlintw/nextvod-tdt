@@ -30,6 +30,7 @@ $(flashprefix)/root: bootstrap $(wildcard root-local.sh) config.status \
 	$(INSTALL) -d $@/var
 	$(INSTALL) -d $@/var/{bin,lock/subsys,log,run}
 	ln -s /tmp $@/var/tmp
+	mkdir -p $@/run/lirc
 #	$(INSTALL) -d $@/var/{backups,cache,lib/misc,local,mail,opt,spool}
 #	ln -s /var/mail $@/var/spool/mail
 #	$(INSTALL) -d $@/lib/tuxbox
