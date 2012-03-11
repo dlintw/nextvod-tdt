@@ -304,7 +304,7 @@ $(flashprefix)/root-stock-neutrino: \
 	ln -sf /usr/lib/libcrypto.so.0.9.8 $@/lib/libcrypto.so.0.9.8
 	rm -f $@/usr/lib/{libalsaplayer.so,libalsaplayer.so.0,libalsaplayer.so.0.0.2,libasound.so,libasound.so.2,libasound.so.2.0.0}
 	rm -f $@/usr/lib/{libfontconfig.so,libfontconfig.so.1,libfontconfig.so.1.3.0,libform.so,libform.so.5,libform.so.5.5}
-	rm -f $@/usr/lib/{libncurses.so,libncurses.so.5,libreadline.so,libreadline.so.5,libreadline.so.5.2,libssl.so,libssl.so.0.9.8,xml2Conf.sh,xsltConf.sh}
+	rm -f $@/usr/lib/{libncurses.so,libncurses.so.5,libreadline.so,libreadline.so.5,libreadline.so.5.2,libssl.so,xml2Conf.sh,xsltConf.sh}
 	rm -f $@/usr/lib/{libdvdnavmini.so,libdvdnavmini.so.4,libdvdnavmini.so.4.1.2,libfbsplashrender.so,libfbsplashrender.so.1,libfbsplashrender.so.1.0.0}
 	rm -f $@/usr/lib/{libfbsplash.so,libfbsplash.so.1,libfbsplash.so.1.0.0,liblcms.so,liblcms.so.1,liblcms.so.1.0.16}
 	rm -rf $@/usr/local/share/config

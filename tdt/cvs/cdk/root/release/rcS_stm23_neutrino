@@ -59,7 +59,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init player"
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
-   insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/ksound.ko
 # only for stm23
    insmod $MODDIR/p2div64.ko
