@@ -35,6 +35,8 @@ readable="  root root   0444"
   st231="  root root   0644"
     mme="  root root   0644"
  bpamem="  root root   0644"
+ tundev="  root root   0644"
+ ttyusb="  root root   0644"
 
 MAXVT=63
 
@@ -291,6 +293,8 @@ cvt () {
 			st200)  echo st220 st231;;
 			mme)    echo mme ;;
 			bpamem) echo bpamem ;;
+			ttyusb) echo ttyusb ;;
+			tundev) echo tundev ;;
 			*)	echo "$1" ;;
 		esac
 		shift
@@ -515,6 +519,8 @@ do
 		$0 $opts st200
 		$0 $opts mme
 		$0 $opts bpamem
+		$0 $opts ttyusb
+		$0 $opts tundev
 		$0 $opts alsasnd
 		;;
 	generic-sparc)
@@ -1959,14 +1965,19 @@ do
 		do
 			mkdir -p dvb/adapter$i
 			makedev dvb/adapter$i/video0	c 212 `math 64 \* $i + 0` $video
+			makedev dvb/adapter$i/video1	c 212 `math 64 \* $i + 16` $video
 			makedev dvb/adapter$i/audio0    c 212 `math 64 \* $i + 1` $video
 			makedev dvb/adapter$i/frontend0 c 212 `math 64 \* $i + 3` $video
+			makedev dvb/adapter$i/frontend1 c 212 `math 64 \* $i + 19` $video
 			makedev dvb/adapter$i/demux0    c 212 `math 64 \* $i + 4` $video
 			makedev dvb/adapter$i/demux1    c 212 `math 64 \* $i + 20` $video
+			makedev dvb/adapter$i/demux2    c 212 `math 64 \* $i + 36` $video
 			makedev dvb/adapter$i/dvr0      c 212 `math 64 \* $i + 5` $video
 			makedev dvb/adapter$i/dvr1      c 212 `math 64 \* $i + 21` $video
+			makedev dvb/adapter$i/dvr2      c 212 `math 64 \* $i + 37` $video
 			makedev dvb/adapter$i/ca0       c 212 `math 64 \* $i + 6` $video
 			makedev dvb/adapter$i/ca1       c 212 `math 64 \* $i + 6` $video
+			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 38` $video
 			makedev dvb/adapter$i/net0      c 212 `math 64 \* $i + 7` $video
 			makedev dvb/adapter$i/osd0      c 212 `math 64 \* $i + 8` $video
 
@@ -1988,6 +1999,19 @@ do
 		makedev usb/rio500 c $major 64 $audio
 		makedev usb/usblcd c $major 65 $audio
 		makedev usb/cpad0 c $major 66 $audio
+		;;
+	ttyusb)
+		major=188
+		for i in 0 1 2 3 4 5 6 7 8 9
+		do
+			makedev ttyUSB$i c $major $i $ttyusb
+		done
+		;;
+	tundev)
+		mkdir -p net
+		major=10
+		i=200
+		makedev net/tun c $major $i $tundev
 		;;
 	bluetooth)
 		major=216
