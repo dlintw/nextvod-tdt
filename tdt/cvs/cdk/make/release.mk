@@ -990,7 +990,7 @@ release_base:
 	cp -dp $(targetprefix)/etc/hosts $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/inetd.conf $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/inittab $(prefix)/release/etc/ && \
-	cp -dp $(targetprefix)/etc/localtime $(prefix)/release/etc/enigma2/ && \
+	cp -dp $(targetprefix)/etc/localtime $(prefix)/release/var/etc/ && \
 	cp -dp $(targetprefix)/etc/mtab $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/passwd $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/profile $(prefix)/release/etc/ && \
@@ -999,7 +999,7 @@ release_base:
 	cp -dp $(targetprefix)/etc/services $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/shells $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/shells.conf $(prefix)/release/etc/ && \
-	cp -dp $(targetprefix)/etc/timezone.xml $(prefix)/release/etc/enigma2/ && \
+	cp -dp $(targetprefix)/etc/timezone.xml $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/vsftpd.conf $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/inetd.conf $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/image-version $(prefix)/release/etc/ && \
