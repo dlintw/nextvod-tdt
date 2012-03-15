@@ -1946,7 +1946,7 @@ $(DEPDIR)/graphlcd.do_prepare:	libusb
 
 $(DEPDIR)/graphlcd.do_compile: $(DEPDIR)/graphlcd.do_prepare
 	cd graphlcd-base && \
-	$(BUILDENV) && \
+	$(BUILDENV) \
 	$(MAKE) all
 	touch $@
 
