@@ -458,6 +458,9 @@ CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM $MEDIAFW $EXTERNAL_LCD $VDR"
 # introduced new ones
 # CONFIGPARAM="$CONFIGPARAM --enable-bleeding-edge"
 
+# Check this option if you want to use the old version of GCC.
+#CONFIGPARAM="$CONFIGPARAM --enable-old-gcc-stm24"
+
 ##############################################
 
 echo && \
