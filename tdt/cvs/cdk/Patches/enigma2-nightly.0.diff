@@ -7743,21 +7743,3 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/RecordTimer.py eni
  			return True
  
  	def setAutoincreaseEnd(self, entry = None):
-
-diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Components/Timezones.py enigma2-nightly.patched/lib/python/Components/Timezones.py
---- enigma2-nightly.org/lib/python/Components/Timezones.py	2012-03-14 11:08:56.000000000 +0100
-+++ enigma2-nightly.patched/lib/python/Components/Timezones.py	2012-03-14 11:16:19.000000000 +0100
-@@ -38,11 +38,11 @@
- 		
- 		environ['TZ'] = self.timezones[index][1]
- 		try:
--			unlink("/etc/localtime")
-+			unlink("/var/etc/localtime")
- 		except OSError:
- 			pass
- 		try:
--			symlink("/usr/share/zoneinfo/%s" %(self.timezones[index][1]), "/etc/localtime")
-+			symlink("/usr/share/zoneinfo/%s" %(self.timezones[index][1]), "/var/etc/localtime")
- 		except OSError:
- 			pass
- 		try:

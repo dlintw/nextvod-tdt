@@ -990,7 +990,7 @@ release_base:
 	cp -dp $(targetprefix)/etc/hosts $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/inetd.conf $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/inittab $(prefix)/release/etc/ && \
-	cp -dp $(targetprefix)/etc/localtime $(prefix)/release/var/etc/ && \
+	cp -dp $(targetprefix)/etc/localtime $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/mtab $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/passwd $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/profile $(prefix)/release/etc/ && \
