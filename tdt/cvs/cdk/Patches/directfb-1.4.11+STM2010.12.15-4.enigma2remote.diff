@@ -164,7 +164,7 @@ diff -Nur DirectFB-1.4.11/inputdrivers/enigma2remote/enigma2remote.c DirectFB-1.
 +     { DIKS_CURSOR_RIGHT, "RIGHT" },
 +     { DIKS_CURSOR_UP, "UP" },
 +     { DIKS_CURSOR_DOWN, "DOWN" },
-+     { DIKS_OK, "OK" },
++     { DIKS_ENTER, "OK" },
 +     { DIKS_ESCAPE, "ESC" },
 +     { DIKS_BACK, "BACK" },
 +     { DIKS_RED, "RED" },
