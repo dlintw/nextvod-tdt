@@ -1025,11 +1025,6 @@ TUXBOX_RULES_MAKE(libusb)
 TUXBOX_RULES_MAKE(rtmpdump)
 
 #
-# GUI
-#
-#TUXBOX_RULES_MAKE(enigma2)
-
-#
 # development
 #
 TUXBOX_RULES_MAKE(ruby)

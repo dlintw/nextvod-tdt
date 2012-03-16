@@ -53,7 +53,7 @@ grep;2.5.1;grep-2.5.1;grep-2.5.1.tar.bz2:grep_2.5.1.ds2-6.diff.gz;extract:grep-2
 openrdate;1.1.2;openrdate-1.1.2;openrdate-1.1.2.tar.gz;extract:openrdate-1.1.2.tar.gz
 e2fsprogs;1.41.14;e2fsprogs-1.41.14;e2fsprogs-1.41.14.tar.gz:e2fsprogs-1.41.11-relative-usrlib-path.patch:e2fsprogs-1.41.11-no-lib-deps.patch;extract:e2fsprogs-1.41.14.tar.gz;patch:e2fsprogs-1.41.11-relative-usrlib-path.patch;patch:e2fsprogs-1.41.11-no-lib-deps.patch
 xfsprogs;2.9.4-1;xfsprogs-2.9.4;xfsprogs_2.9.4-1.tar.gz:xfsprogs.diff;extract:xfsprogs_2.9.4-1.tar.gz;patch:xfsprogs.diff
-mc;4.6.1;mc-4.6.1;mc-4.6.1.tar.gz:mc.diff;extract:mc-4.6.1.tar.gz;patch:mc.diff
+mc;4.8.0;mc-4.8.0;mc-4.8.0.tar.bz2:mc.diff;extract:mc-4.8.0.tar.bz2
 sdparm;1.01;sdparm-1.01;sdparm-1.01.tgz;extract:sdparm-1.01.tgz
 sg3_utils;1.24;sg3_utils-1.24;sg3_utils-1.24.tgz:sg3_utils.diff;extract:sg3_utils-1.24.tgz;patch:sg3_utils.diff
 console_data;1.03;console-data-1.03;console-data_1.03.orig.tar.gz;extract:console-data_1.03.orig.tar.gz
@@ -64,7 +64,7 @@ fuse;2.7.2;fuse-2.7.2;fuse-2.7.2.tar.gz:fuse.diff;extract:fuse-2.7.2.tar.gz;patc
 curlftpfs;0.9.1;curlftpfs-0.9.1;curlftpfs-0.9.1.tar.gz;extract:curlftpfs-0.9.1.tar.gz
 fbset;2.1;fbset-2.1;fbset_2.1.orig.tar.gz:fbset_2.1-6.diff.gz:fbset_2.1-fb.modes-ST.patch;extract:fbset_2.1.orig.tar.gz;patch:fbset_2.1-6.diff.gz;patch:fbset_2.1-fb.modes-ST.patch
 util_linux;2.12r;util-linux-2.12r;util-linux-2.12r.tar.bz2:util-linux_2.12r-12.deb.diff.gz:util-linux-stm.diff;extract:util-linux-2.12r.tar.bz2;patch:util-linux_2.12r-12.deb.diff.gz
-pngquant;1.0;pngquant-1.0;pngquant-1.0-src.tgz;extract:pngquant-1.0-src.tgz
+pngquant;1.1;pngquant-1.1;pngquant-1.1-src.tgz;extract:pngquant-1.1-src.tgz
 mplayer;1.0;mplayer-export-*;mplayer-export-snapshot.tar.bz2;extract:mplayer-export-snapshot.tar.bz2
 mencoder;1.0;mplayer-export-*;mplayer-export-snapshot.tar.bz2;extract:mplayer-export-snapshot.tar.bz2
 jfsutils;1.1.15;jfsutils-1.1.15;jfsutils-1.1.15.tar.gz;extract:jfsutils-1.1.15.tar.gz
@@ -170,11 +170,6 @@ zd1211;2_15_0_0;ZD1211LnxDrv_2_15_0_0;zd1211lnxdrv_2_15_0_0.tar.gz:zd1211.diff;e
 wireless_tools;29;wireless_tools.29;wireless_tools.29.tar.gz;extract:wireless_tools.29.tar.gz
 wpa_supplicant;0.5.9.;wpa_supplicant-0.5.9;wpa_supplicant-0.5.9.tar.gz;extract:wpa_supplicant-0.5.9.tar.gz
 ethtool;6;ethtool-6;ethtool-6.tar.gz;extract:ethtool-6.tar.gz
-
-#
-# GUI
-#
-enigma2;cvs;enigma2-cvs;enigma2.cvs:enigma2.diff:e2-fb.diff:e2-rc.diff;extract:enigma2.cvs;patch:enigma2.diff;patch:e2-fb.diff;patch:e2-rc.diff
 
 #
 # development
