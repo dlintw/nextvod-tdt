@@ -100,7 +100,7 @@ libiconv;1.11;libiconv-1.11;libiconv-1.11.tar.gz;extract:libiconv-1.11.tar.gz
 libmng;1.0.10;libmng-1.0.10;libmng-1.0.10.tar.bz2;extract:libmng-1.0.10.tar.bz2
 lcms;1.17;lcms-1.17;lcms-1.17.tar.gz:lcms.diff;extract:lcms-1.17.tar.gz;patch:lcms.diff
 openssl;0.9.6m;openssl-0.9.6m;openssl-0.9.6m.tar.gz;extract:openssl-0.9.6m.tar.gz
-directfb;1.4.11;DirectFB-1.4.11;DirectFB-1.4.11.tar.gz:directfb-1.4.11+STM2010.12.15-4.diff:directfb-1.4.11+STM2010.12.15-4.no-vt.diff:directfb-libpng.diff;extract:DirectFB-1.4.11.tar.gz;patch:directfb-1.4.11+STM2010.12.15-4.diff;patch:directfb-1.4.11+STM2010.12.15-4.no-vt.diff;patch:directfb-libpng.diff
+directfb;1.4.11;DirectFB-1.4.11;DirectFB-1.4.11.tar.gz:directfb-1.4.11+STM2010.12.15-4.diff:directfb-1.4.11+STM2010.12.15-4.no-vt.diff:directfb-libpng.diff:directfb-1.4.11+STM2010.12.15-4.enigma2remote.diff;extract:DirectFB-1.4.11.tar.gz;patch:directfb-1.4.11+STM2010.12.15-4.diff:;patch:directfb-1.4.11+STM2010.12.15-4.no-vt.diff;patch:directfb-libpng.diff;patch:directfb-1.4.11+STM2010.12.15-4.enigma2remote.diff
 dfbpp;1.0.0;DFB++-1.0.0;DFB++-1.0.0.tar.gz;extract:DFB++-1.0.0.tar.gz
 webkitdfb;2010-11-18;webkitdfb_2010-11-18;webkitdfb_2010-11-18.tar.gz:webkitdfb.diff;extract:webkitdfb_2010-11-18.tar.gz;patch:webkitdfb.diff
 icu4c;4_4_1;icu/source;icu4c-4_4_1-src.tgz:icu4c-4_4_1_locales.patch;extract:icu4c-4_4_1-src.tgz

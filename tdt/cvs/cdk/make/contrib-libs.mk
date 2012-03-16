@@ -694,7 +694,7 @@ $(DEPDIR)/directfb.do_compile: bootstrap freetype directfb.do_prepare
 			--disable-devmem \
 			--disable-multi \
 			--with-gfxdrivers=stgfx \
-			--with-inputdrivers=linuxinput \
+			--with-inputdrivers=linuxinput,enigma2remote \
 			--without-software \
 			--enable-stmfbdev \
 			--disable-fbdev \
