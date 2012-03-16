@@ -115,7 +115,7 @@ $(DEPDIR)/freetype.do_compile: $(DEPDIR)/freetype.do_prepare
 define freetype/install/post
 	cd @DIR_freetype@ && \
 		sed -e "s,^prefix=,prefix=$(targetprefix)," < builds/unix/freetype-config > $(crossprefix)/bin/freetype-config && \
-		ln -sf freetype-config $(target)-freetype-config && \
+		ln -sf $(crossprefix)/bin/freetype-config $(crossprefix)/bin/$(target)-freetype-config && \
 		chmod 755 $(crossprefix)/bin/freetype-config
 		ln -sf $(targetprefix)/usr/include/freetype2/freetype $(targetprefix)/usr/include/freetype
 endef

@@ -67,7 +67,7 @@ util-linux-2.12r.tar.bz2;ftp://debian.lcs.mit.edu/pub/linux/utils/util-linux/v2.
 boost_1_49_0.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/boost
 pngquant-1.0-src.tgz;ftp://ftp.simplesystems.org/pub/libpng/png/applications
 mplayer-export-snapshot.tar.bz2;ftp://ftp.mplayerhq.hu/MPlayer/releases
-jfsutils-1.1.14.tar.gz;http://jfs.sourceforge.net/project/pub
+jfsutils-1.1.15.tar.gz;http://jfs.sourceforge.net/project/pub;http://fossies.org/linux/misc
 opkg-0.1.8.tar.gz;http://opkg.googlecode.com/files
 
 #
@@ -84,7 +84,7 @@ lirc-0.9.0.tar.gz;http://prdownloads.sourceforge.net/lirc
 jpegsrc.v6b.tar.gz;ftp://ftp.uni-leipzig.de/pub/linux/ftp:robot.informatik.uni-leipzig.de/Sources/System/Libs
 libpng-1.2.16.tar.bz2;http://kent.dl.sourceforge.net/sourceforge/libpng
 libpng-1.5.6.tar.gz;http://www.fhloston-paradise.de
-libungif-4.1.3.tar.bz2;http://dietmarw.trale.de/Archive
+libungif-4.1.4.tar.bz2;http://heanet.dl.sourceforge.net/sourceforge/giflib
 giflib-4.1.6.tar.bz2;http://heanet.dl.sourceforge.net/sourceforge/giflib
 curl-7.23.1.tar.gz;http://curl.haxx.se/download
 libvorbisidec_1.0.2+svn16259.orig.tar.gz;http://ftp.debian.org/debian/pool/main/libv/libvorbisidec
