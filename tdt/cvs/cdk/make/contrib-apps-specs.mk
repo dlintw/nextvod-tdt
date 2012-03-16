@@ -47,7 +47,7 @@ $(SYSVINIT_RPM) $(INITSCRIPTS_RPM): \
 		$(if $(SYSVINIT_PATCHES),$(SYSVINIT_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(SYSVINIT)-$(SYSVINIT_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(SYSVINIT_SPEC_PATCH),( cd SPECS && patch -p1 $(SYSVINIT_SPEC) < ../Patches/$(SYSVINIT_SPEC_PATCH) ) &&) \
+	$(if $(SYSVINIT_SPEC_PATCH),( cd SPECS && patch -p1 $(SYSVINIT_SPEC) < $(buildprefix)/Patches/$(SYSVINIT_SPEC_PATCH) ) &&) \
 	$(if $(SYSVINIT_PATCHES),cp $(SYSVINIT_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(SYSVINIT_SPEC)
@@ -177,7 +177,7 @@ $(NETBASE_RPM): \
 		$(if $(NETBASE_PATCHES),$(NETBASE_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(NETBASE)-$(NETBASE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $< && \
-	$(if $(NETBASE_SPEC_PATCH),( cd SPECS && patch -p1 $(NETBASE_SPEC) < ../Patches/$(NETBASE_PATCH) ) &&) \
+	$(if $(NETBASE_SPEC_PATCH),( cd SPECS && patch -p1 $(NETBASE_SPEC) < $(buildprefix)/Patches/$(NETBASE_PATCH) ) &&) \
 	$(if $(NETBASE_PATCHES),cp $(NETBASE_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(NETBASE).spec
@@ -256,7 +256,7 @@ $(BC_RPM): \
 		$(if $(BC_PATCHES),$(BC_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(BC)-$(BC_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(BC_SPEC_PATCH),( cd SPECS && patch -p1 $(BC_SPEC) < ../Patches/$(BC_PATCH) ) &&) \
+	$(if $(BC_SPEC_PATCH),( cd SPECS && patch -p1 $(BC_SPEC) < $(buildprefix)/Patches/$(BC_PATCH) ) &&) \
 	$(if $(BC_PATCHES),cp $(BC_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(BC_SPEC)
@@ -311,7 +311,7 @@ $(FINDUTILS_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(FINDUTILS)-$(FINDUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(FINDUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(FINDUTILS_SPEC) < ../Patches/$(FINDUTILS_PATCH) ) &&) \
+	$(if $(FINDUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(FINDUTILS_SPEC) < $(buildprefix)/Patches/$(FINDUTILS_PATCH) ) &&) \
 	$(if $(FINDUTILS_PATCHES),cp $(FINDUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(FINDUTILS_SPEC)
@@ -366,7 +366,7 @@ $(DISTRIBUTIONUTILS_RPM) $(DISTRIBUTIONUTILS_DOC_RPM): \
 		$(archivedir)/$(STLINUX)-target-$(DISTRIBUTIONUTILS)-$(DISTRIBUTIONUTILS_VERSION).src.rpm \
 		| $(DEPDIR)/$(GLIBC_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(DISTRIBUTIONUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(DISTRIBUTIONUTILS_SPEC) < ../Patches/$(DISTRIBUTIONUTILS_SPEC_PATCH) ) &&) \
+	$(if $(DISTRIBUTIONUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(DISTRIBUTIONUTILS_SPEC) < $(buildprefix)/Patches/$(DISTRIBUTIONUTILS_SPEC_PATCH) ) &&) \
 	$(if $(DISTRIBUTIONUTILS_PATCHES),cp $(DISTRIBUTIONUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(DISTRIBUTIONUTILS_SPEC)
@@ -427,7 +427,7 @@ $(MTD_UTILS_RPM): \
 		$(if $(MTD_UTILS_PATCHES),$(MTD_UTILS_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(MTD_UTILS)-$(MTD_UTILS_VERSION).src.rpm libz
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(MTD_UTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(MTD_UTILS_SPEC) < ../Patches/$(MTD_UTILS_PATCH) ) &&) \
+	$(if $(MTD_UTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(MTD_UTILS_SPEC) < $(buildprefix)/Patches/$(MTD_UTILS_PATCH) ) &&) \
 	$(if $(MTD_UTILS_PATCHES),cp $(MTD_UTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/$(MTD_UTILS_SPEC)
@@ -489,7 +489,7 @@ $(BASH_RPM): \
 		$(DEPDIR)/$(LIBTERMCAP_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(BASH)-$(BASH_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(BASH_SPEC_PATCH),( cd SPECS && patch -p1 $(BASH_SPEC) < ../Patches/$(BASH_PATCH) ) &&) \
+	$(if $(BASH_SPEC_PATCH),( cd SPECS && patch -p1 $(BASH_SPEC) < $(buildprefix)/Patches/$(BASH_PATCH) ) &&) \
 	$(if $(BASH_PATCHES),cp $(BASH_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(BASH_SPEC)
@@ -542,7 +542,7 @@ $(COREUTILS_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(COREUTILS)-$(COREUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(COREUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(COREUTILS_SPEC) < ../Patches/$(COREUTILS_PATCH) ) &&) \
+	$(if $(COREUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(COREUTILS_SPEC) < $(buildprefix)/Patches/$(COREUTILS_PATCH) ) &&) \
 	$(if $(COREUTILS_PATCHES),cp $(COREUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(COREUTILS_SPEC)
@@ -586,7 +586,7 @@ $(NET_TOOLS_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(NET_TOOLS)-$(NET_TOOLS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(NET_TOOLS_SPEC_PATCH),( cd SPECS && patch -p1 $(NET_TOOLS_SPEC) < ../Patches/$(NET_TOOLS_PATCH) ) &&) \
+	$(if $(NET_TOOLS_SPEC_PATCH),( cd SPECS && patch -p1 $(NET_TOOLS_SPEC) < $(buildprefix)/Patches/$(NET_TOOLS_PATCH) ) &&) \
 	$(if $(NET_TOOLS_PATCHES),cp $(NET_TOOLS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(NET_TOOLS_SPEC)
@@ -630,7 +630,7 @@ $(SED_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(SEDX)-$(SED_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(SED_SPEC_PATCH),( cd SPECS && patch -p1 $(SED_SPEC) < ../Patches/$(SED_PATCH) ) &&) \
+	$(if $(SED_SPEC_PATCH),( cd SPECS && patch -p1 $(SED_SPEC) < $(buildprefix)/Patches/$(SED_PATCH) ) &&) \
 	$(if $(SED_PATCHES),cp $(SED_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(SED_SPEC)
@@ -676,7 +676,7 @@ $(DIFF_RPM) $(DIFF_DOC_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(DIFF)-$(DIFF_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(DIFF_SPEC_PATCH),( cd SPECS && patch -p1 $(DIFF_SPEC) < ../Patches/$(DIFF_PATCH) ) &&) \
+	$(if $(DIFF_SPEC_PATCH),( cd SPECS && patch -p1 $(DIFF_SPEC) < $(buildprefix)/Patches/$(DIFF_PATCH) ) &&) \
 	$(if $(DIFF_PATCHES),cp $(DIFF_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(DIFF_SPEC)
@@ -726,7 +726,7 @@ $(FILE_RPM): \
 		$(if $(FILE_PATCHES),$(FILE_PATCHES:%=Patches/%)) \
 		$(archivedir)/stlinux22-target-$(FILE)-$(FILE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(FILE_SPEC_PATCH),( cd SPECS && patch -p1 $(FILE_SPEC) < ../Patches/$(FILE_PATCH) ) &&) \
+	$(if $(FILE_SPEC_PATCH),( cd SPECS && patch -p1 $(FILE_SPEC) < $(buildprefix)/Patches/$(FILE_PATCH) ) &&) \
 	$(if $(FILE_PATCHES),cp $(FILE_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(FILE_SPEC)
@@ -770,7 +770,7 @@ $(TAR_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(TAR)-$(TAR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(TAR_SPEC_PATCH),( cd SPECS && patch -p1 $(TAR_SPEC) < ../Patches/$(TAR_PATCH) ) &&) \
+	$(if $(TAR_SPEC_PATCH),( cd SPECS && patch -p1 $(TAR_SPEC) < $(buildprefix)/Patches/$(TAR_PATCH) ) &&) \
 	$(if $(TAR_PATCHES),cp $(TAR_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(TAR_SPEC)
@@ -814,7 +814,7 @@ $(STRACE_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(STRACE)-$(STRACE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(STRACE_SPEC_PATCH),( cd SPECS && patch -p1 $(STRACE_SPEC) < ../Patches/$(STRACE_PATCH) ) &&) \
+	$(if $(STRACE_SPEC_PATCH),( cd SPECS && patch -p1 $(STRACE_SPEC) < $(buildprefix)/Patches/$(STRACE_PATCH) ) &&) \
 	$(if $(STRACE_PATCHES),cp $(STRACE_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(STRACE_SPEC)
@@ -851,7 +851,7 @@ $(UTIL_LINUX_RPM): \
 		$(archivedir)/$(STLINUX)-target-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).src.rpm \
 		| $(NCURSES_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(UTIL_LINUX_SPEC_PATCH),( cd SPECS && patch -p1 $(UTIL_LINUX_SPEC) < ../Patches/$(UTIL_LINUX_SPEC_PATCH) ) &&) \
+	$(if $(UTIL_LINUX_SPEC_PATCH),( cd SPECS && patch -p1 $(UTIL_LINUX_SPEC) < $(buildprefix)/Patches/$(UTIL_LINUX_SPEC_PATCH) ) &&) \
 	$(if $(UTIL_LINUX_PATCHES),cp $(UTIL_LINUX_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(UTIL_LINUX_SPEC)
