@@ -28,6 +28,9 @@ cdk-clean:
 	-$(MAKE) -C $(driverdir) KERNEL_LOCATION=$(buildprefix)/linux-sh4 \
 		BIN_DEST=$(targetprefix)/bin \
 		INSTALL_MOD_PATH=$(targetprefix) clean
+	-$(MAKE) -C $(appsdir)/neutrino distclean
+	-$(MAKE) -C $(appsdir)/neutrino-beta distclean
+	-$(MAKE) -C $(appsdir)/enigma2-nightly distclean
 	-$(MAKE) -C $(appsdir)/tuxbox/libs clean
 	-$(MAKE) -C $(appsdir)/tuxbox/libtuxbox clean
 	-$(MAKE) -C $(appsdir)/tuxbox/plugins clean
@@ -62,7 +65,7 @@ endif
 	-rm -rf $(prefix)/*cdkroot-tftpboot
 	-rm -rf $(rpmdbprefix)/
 	-rm -rf $(ipkprefix)/
-	-rm -rf $(prefix)/release_neutrino*
+	-rm -rf $(prefix)/release*
 	-rm -rf SOURCES SPECS BUILD && install -d SOURCES SPECS BUILD
 	-rm -rf $(prefix)/ccache
 	-rm -rf $(DEPDIR)/autofs.*
@@ -85,6 +88,9 @@ distclean-local:
 	-rm -f Makefile-archive
 	-rm -f rules-downcheck.pl
 	-rm -f linux
+	-rm -f linux-sh4
+	-rm -rf $(appsdir)/enigma2-*
+	-rm -rf $(appsdir)/neutrino-*
 	-rm -rf $(DEPDIR)
 #	-rm -rf $(targetprefix)
 	-rm -rf $(hostprefix)
@@ -156,6 +162,7 @@ list-clean:
 
 $(LIST_CLEAN): \
 %-clean:
+	-[ ! -z "$(UNINSTALL_$*)" -a -d $(DIR_$*) ] && ( cd $(DIR_$*) && $(UNINSTALL_$*) || true )
 	-$(DEPSCLEANUP_$*)
 
 $(RPMLIST_CLEAN): \
@@ -173,6 +180,7 @@ list-distclean:
 
 $(LIST_DISTCLEAN): \
 %-distclean:
+	-[ ! -z "$(UNINSTALL_$*)" -a -d $(DIR_$*) ] && ( cd $(DIR_$*) && $(UNINSTALL_$*) || true )
 	-$(DISTCLEANUP_$*)
 	-$(DEPSDISTCLEANUP_$*)
 
@@ -192,4 +200,4 @@ $(RPMLIST_DISTCLEAN): \
 	-rm .deps/$(subst -distclean,,$@)*
 
 .PHONY: depsclean mostlyclean-local cdk-clean distclean-local flash-semiclean \
-flash-mostlyclean flash-clean
+flash-mostlyclean flash-clean list-clean
