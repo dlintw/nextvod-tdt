@@ -52,7 +52,7 @@ e2fsprogs-1.40.2.tar.gz;http://kernel.org/pub/linux/kernel/people/tytso/e2fsprog
 e2fsprogs-1.41.11.tar.gz;http://prdownloads.sourceforge.net/e2fsprogs
 e2fsprogs-1.41.14.tar.gz;http://prdownloads.sourceforge.net/e2fsprogs
 xfsprogs_2.9.4-1.tar.gz;ftp://oss.sgi.com/projects/xfs/cmd_tars
-mc-4.6.1.tar.gz;ftp://ftp.zcu.cz/pub/linux/utils/file/managers/mc
+mc-4.8.0.tar.bz2;http://www.midnight-commander.org/downloads
 sdparm-1.01.tgz;http://sg.torque.net/sg/p
 sg3_utils-1.24.tgz;http://sg.torque.net/sg/p
 console-data_1.03.orig.tar.gz;ftp://ftp.debian.org/debian/pool/main/c/console-data
