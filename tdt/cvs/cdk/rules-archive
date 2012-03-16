@@ -67,7 +67,7 @@ util-linux-2.12r.tar.bz2;ftp://debian.lcs.mit.edu/pub/linux/utils/util-linux/v2.
 boost_1_49_0.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/boost
 pngquant-1.0-src.tgz;ftp://ftp.simplesystems.org/pub/libpng/png/applications
 mplayer-export-snapshot.tar.bz2;ftp://ftp.mplayerhq.hu/MPlayer/releases
-jfsutils-1.1.14.tar.gz;http://jfs.sourceforge.net/project/pub
+jfsutils-1.1.15.tar.gz;http://jfs.sourceforge.net/project/pub;http://fossies.org/linux/misc
 opkg-0.1.8.tar.gz;http://opkg.googlecode.com/files
 
 #
