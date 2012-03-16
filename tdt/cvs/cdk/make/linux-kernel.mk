@@ -1129,8 +1129,8 @@ linux-kernel.%:
 	@echo
 	@echo "You have to edit m a n u a l l y Patches/linux-$(KERNELVERSION).config to make changes permanent !!!"
 	@echo ""
-	diff linux/.config.old linux/.config
-
+	diff $(KERNEL_DIR)/.config.old $(KERNEL_DIR)/.config
+	@echo ""
 #-------------------
 
 $(flashprefix)/root-cramfs/lib \
