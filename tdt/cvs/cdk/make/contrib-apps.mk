@@ -948,7 +948,7 @@ $(DEPDIR)/util-linux.do_prepare: @DEPENDS_util_linux@
 		for p in `grep -v "^#" debian/patches/00list` ; do \
 			patch -p1 < debian/patches/$$p.dpatch; \
 		done; \
-		patch -p1 < ../Patches/util-linux-stm.diff
+		patch -p1 < $(buildprefix)/Patches/util-linux-stm.diff
 	touch $@
 
 $(DEPDIR)/util-linux.do_compile: bootstrap util-linux.do_prepare
