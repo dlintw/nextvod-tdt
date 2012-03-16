@@ -135,53 +135,6 @@ $(flashprefix)/root/sbin/fbsplashd: $(SPLASHUTILS_RPM)
 	@FLASHROOTDIR_MODIFIED@
 
 #
-# BINUTILS
-#
-BINUTILS := binutils
-BINUTILS_DEV := binutils-dev
-if STM22
-BINUTILS_VERSION := 2.17.50.0.4-14
-BINUTILS_SPEC := stm-target-$(BINUTILS)-sh4processed.spec
-BINUTILS_SPEC_PATCH :=
-BINUTILS_PATCHES :=
-else !STM22
-if STM23
-# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
-BINUTILS_VERSION := 2.19.1-41
-BINUTILS_SPEC := stm-target-$(BINUTILS).spec
-BINUTILS_SPEC_PATCH :=
-BINUTILS_PATCHES :=
-else !STM23
-# if STM24
-BINUTILS_VERSION := 2.19.1-41
-BINUTILS_SPEC := stm-target-$(BINUTILS).spec
-BINUTILS_SPEC_PATCH :=
-BINUTILS_PATCHES :=
-# endif STM24
-endif !STM23
-endif !STM22
-BINUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS)-$(BINUTILS_VERSION).sh4.rpm
-BINUTILS_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS_DEV)-$(BINUTILS_VERSION).sh4.rpm
-
-$(BINUTILS_RPM) $(BINUTILS_DEV_RPM): \
-		$(if $(BINUTILS_SPEC_PATCH),Patches/$(BINUTILS_PATCH)) \
-		$(if $(BINUTILS_PATCHES),$(BINUTILS_PATCHES:%=Patches/%)) \
-		$(archivedir)/$(STLINUX:%23=%24)-target-$(BINUTILS)-$(BINUTILS_VERSION).src.rpm
-	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(BINUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(BINUTILS_SPEC) < ../Patches/$(BINUTILS_SPEC_PATCH) ) &&) \
-	$(if $(BINUTILS_PATCHES),cp $(BINUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
-	export PATH=$(hostprefix)/bin:$(PATH) && \
-	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(BINUTILS_SPEC)
-
-$(BINUTILS): $(BINUTILS_RPM)
-	@rpm $(DRPM) --ignorearch --nodeps -Uhv $< && \
-	touch .deps/$(notdir $@)
-
-$(BINUTILS_DEV): $(BINUTILS_DEV_RPM)
-	@rpm $(DRPM) --ignorearch --nodeps --noscripts -Uhv $< && \
-	touch .deps/$(notdir $@)
-
-#
 # STSLAVE
 #
 STSLAVE := stslave
