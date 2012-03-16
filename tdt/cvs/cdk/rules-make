@@ -64,7 +64,7 @@ fuse;2.7.2;fuse-2.7.2;fuse-2.7.2.tar.gz:fuse.diff;extract:fuse-2.7.2.tar.gz;patc
 curlftpfs;0.9.1;curlftpfs-0.9.1;curlftpfs-0.9.1.tar.gz;extract:curlftpfs-0.9.1.tar.gz
 fbset;2.1;fbset-2.1;fbset_2.1.orig.tar.gz:fbset_2.1-6.diff.gz:fbset_2.1-fb.modes-ST.patch;extract:fbset_2.1.orig.tar.gz;patch:fbset_2.1-6.diff.gz;patch:fbset_2.1-fb.modes-ST.patch
 util_linux;2.12r;util-linux-2.12r;util-linux-2.12r.tar.bz2:util-linux_2.12r-12.deb.diff.gz:util-linux-stm.diff;extract:util-linux-2.12r.tar.bz2;patch:util-linux_2.12r-12.deb.diff.gz
-pngquant;1.0;pngquant-1.0;pngquant-1.0-src.tgz;extract:pngquant-1.0-src.tgz
+pngquant;1.1;pngquant-1.1;pngquant-1.1-src.tgz;extract:pngquant-1.1-src.tgz
 mplayer;1.0;mplayer-export-*;mplayer-export-snapshot.tar.bz2;extract:mplayer-export-snapshot.tar.bz2
 mencoder;1.0;mplayer-export-*;mplayer-export-snapshot.tar.bz2;extract:mplayer-export-snapshot.tar.bz2
 jfsutils;1.1.15;jfsutils-1.1.15;jfsutils-1.1.15.tar.gz;extract:jfsutils-1.1.15.tar.gz
