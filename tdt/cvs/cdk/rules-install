@@ -77,7 +77,7 @@ directfb;rewrite-pkgconfig:directfb.pc;rewrite-pkgconfig:directfb-internal.pc;re
 dfbpp;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:dfb++.pc;rewrite-libtool:TARGETS/usr/lib/libdfb++.la
 webkitdfb;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libwebkitgtk-1.0.la;rewrite-dependency:TARGETS/usr/lib/libwebkitgtk-1.0.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/webkit-1.0.pc
 icu4c;make:install:DESTDIR=TARGETS
-enchant;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libenchant.la;rewrite-dependency:TARGETS/usr/lib/libenchant.la
+enchant;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libenchant.la;rewrite-dependency:TARGETS/usr/lib/libenchant.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/enchant.pc
 lite;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblite.la:TARGETS/usr/lib/libleck.la;rewrite-dependency:TARGETS/usr/lib/liblite.la:TARGETS/usr/lib/libleck.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/lite.pc:TARGETS/usr/lib/pkgconfig/leck.pc
 sqlite;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libsqlite3.la;rewrite-dependency:TARGETS/usr/lib/libsqlite3.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/sqlite3.pc
 libsoup;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libsoup-2.4.pc;rewrite-libtool:TARGETS/usr/lib/libsoup-2.4.la;rewrite-dependency:TARGETS/usr/lib/libsoup-2.4.la;move:TARGETS/usr/include/libsoup-2.4/libsoup:TARGETS/usr/include/libsoup;remove:TARGETS/usr/include/libsoup-2.4
