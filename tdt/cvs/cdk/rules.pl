@@ -181,7 +181,7 @@ sub process_make_prepare (@)
       $_ .= "-Z " if defined $1;
       if ( $_[1] =~ m#\.bz2$# )
       {
-        $output .= "( cd " . $dir . "; bunzip2 -cd \\\$(archivedir)/" . $_[1] . " | patch $_ )";
+        $output .= "( cd " . $dir . " && chmod +w -R .; bunzip2 -cd \\\$(archivedir)/" . $_[1] . " | patch $_ )";
       }
       elsif ( $_[1] =~ m#\.deb\.diff\.gz$# )
       {
@@ -189,7 +189,7 @@ sub process_make_prepare (@)
       }
       elsif ( $_[1] =~ m#\.gz$# )
       {
-        $output .= "( cd " . $dir . "; gunzip -cd \\\$(archivedir)/" . $_[1] . " | patch $_ )";
+        $output .= "( cd " . $dir . " && chmod +w -R .; gunzip -cd \\\$(archivedir)/" . $_[1] . " | patch $_ )";
       }
       elsif ( $_[1] =~ m#\.spec\.diff$# )
       {
@@ -197,7 +197,7 @@ sub process_make_prepare (@)
       }
       else
       {
-        $output .= "( cd " . $dir . "; patch $_ < ../Patches/" . $_[1] . " )";
+        $output .= "( cd " . $dir . " && chmod +w -R .; patch $_ < ../Patches/" . $_[1] . " )";
       }
     }
     elsif ( $_[0] eq "rpmbuild" )

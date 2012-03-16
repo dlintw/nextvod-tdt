@@ -172,11 +172,6 @@ wpa_supplicant;0.5.9.;wpa_supplicant-0.5.9;wpa_supplicant-0.5.9.tar.gz;extract:w
 ethtool;6;ethtool-6;ethtool-6.tar.gz;extract:ethtool-6.tar.gz
 
 #
-# GUI
-#
-enigma2;cvs;enigma2-cvs;enigma2.cvs:enigma2.diff:e2-fb.diff:e2-rc.diff;extract:enigma2.cvs;patch:enigma2.diff;patch:e2-fb.diff;patch:e2-rc.diff
-
-#
 # development
 #
 

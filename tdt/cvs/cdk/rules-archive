@@ -169,11 +169,6 @@ ethtool-6.tar.gz;http://downloads.openwrt.org/sources
 ethtool-2.6.33.tar.gz;http://downloads.sourceforge.net/project/gkernel/ethtool/2.6.33
 
 #
-# GUI
-#
-enigma2.cvs;CMD_CVS -d :pserver:anonymous@dreamboxupdate.com:/cvs co enigma2
-
-#
 # development
 #
 
