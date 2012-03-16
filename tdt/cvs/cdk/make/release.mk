@@ -1483,7 +1483,7 @@ endif
 		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/gfxdrivers/*.la; \
 		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/gfxdrivers/*.o; \
 		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/inputdrivers/*; \
-		cp -a $(targetprefix)/usr/lib/directfb-1.4-5/inputdrivers/libdirectfb_ps2mouse.so $(prefix)/release/usr/lib/directfb-1.4-5/inputdrivers/; \
+		cp -a $(targetprefix)/usr/lib/directfb-1.4-5/inputdrivers/libdirectfb_enigma2remote.so $(prefix)/release/usr/lib/directfb-1.4-5/inputdrivers/; \
 		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/systems/*.a; \
 		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/systems/*.la; \
 		rm -rf $(prefix)/release/usr/lib/directfb-1.4-5/systems/*.o; \
