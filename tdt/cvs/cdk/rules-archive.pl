@@ -28,7 +28,7 @@ while ( <RULES> )
         $output .= "wget -t 2 -T 10 -c -P \$(archivedir) " . $_ . "/" . $file . " || \\\n\t";
       }
     }
-    $output .= "wget -c -P \$(archivedir) http://tuxbox.berlios.de/pub/tuxbox/cdk/src/" . $file . " )";
+    $output .= "wget -c -P \$(archivedir) http://downloads.openwrt.org/sources/" . $file . " )";
     $output .= "\n\t\@touch \$\@";
     $output .= "\n\n";
   }
