@@ -1022,6 +1022,9 @@ TUXBOX_RULES_MAKE(gst_plugins_fluendo_mpegdemux)
 TUXBOX_RULES_MAKE(gst_plugins_dvbmediasink)
 TUXBOX_RULES_MAKE(libalsa)
 TUXBOX_RULES_MAKE(rtmpdump)
+TUXBOX_RULES_MAKE(libdvbsipp)
+TUXBOX_RULES_MAKE(tuxtxt32bpp)
+TUXBOX_RULES_MAKE(libdreamdvd2)
 
 #
 # EXTERNAL_LCD

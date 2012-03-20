@@ -2106,3 +2106,106 @@ $(DEPDIR)/%rtmpdump: $(DEPDIR)/rtmpdump.do_compile
 	cd @DIR_rtmpdump@ && \
 		@INSTALL_rtmpdump@
 	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# libdvbsi++
+#
+$(DEPDIR)/libdvbsipp.do_prepare:  @DEPENDS_libdvbsipp@
+	@PREPARE_libdvbsipp@
+	touch $@
+
+$(DEPDIR)/libdvbsipp.do_compile: $(DEPDIR)/libdvbsipp.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libdvbsipp@ && \
+	aclocal -I $(hostprefix)/share/aclocal -I m4 && \
+	autoheader && \
+	autoconf && \
+	automake --foreign && \
+	libtoolize --force && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr && \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-libdvbsipp $(DEPDIR)/std-libdvbsipp $(DEPDIR)/max-libdvbsipp \
+$(DEPDIR)/libdvbsipp: \
+$(DEPDIR)/%libdvbsipp: $(DEPDIR)/libdvbsipp.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd @DIR_libdvbsipp@ && \
+		@INSTALL_libdvbsipp@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+
+#
+# tuxtxt32bpp
+#
+$(DEPDIR)/tuxtxt32bpp.do_prepare:  @DEPENDS_tuxtxt32bpp@
+	[ -d "tuxtxt" ] && \
+	cd tuxtxt && git pull; \
+	[ -d "tuxtxt" ] || \
+	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
+	touch py-compile
+	chmod 755 py-compile
+	cd @DIR_tuxtxt32bpp@ && patch -p1 < ../../Patches/tuxtxt32bpp-1.0-fix_dbox_headers.diff
+	touch $@
+
+$(DEPDIR)/tuxtxt32bpp.do_compile: $(DEPDIR)/tuxtxt32bpp.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_tuxtxt32bpp@ && \
+	aclocal -I $(hostprefix)/share/aclocal && \
+	autoheader && \
+	autoconf && \
+	automake --foreign && \
+	libtoolize --force && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+		--with-boxtype=generic \
+		--with-configdir=/etc && \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-tuxtxt32bpp $(DEPDIR)/std-tuxtxt32bpp $(DEPDIR)/max-tuxtxt32bpp \
+$(DEPDIR)/tuxtxt32bpp: \
+$(DEPDIR)/%tuxtxt32bpp: $(DEPDIR)/tuxtxt32bpp.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd @DIR_tuxtxt32bpp@ && \
+		@INSTALL_tuxtxt32bpp@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# libdreamdvd
+#
+$(DEPDIR)/libdreamdvd2.do_prepare:  @DEPENDS_libdreamdvd2@
+	[ -d "libdreamdvd" ] && \
+	cd libdreamdvd && git pull; \
+	[ -d "libdreamdvd" ] || \
+	git clone git://schwerkraft.elitedvb.net/libdreamdvd/libdreamdvd.git;
+	touch $@
+
+$(DEPDIR)/libdreamdvd2.do_compile: $(DEPDIR)/libdreamdvd2.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libdreamdvd2@ && \
+	aclocal -I $(hostprefix)/share/aclocal && \
+	autoheader && \
+	autoconf && \
+	automake --foreign && \
+	libtoolize --force && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr && \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-libdreamdvd2 $(DEPDIR)/std-libdreamdvd2 $(DEPDIR)/max-libdreamdvd2 \
+$(DEPDIR)/libdreamdvd2: \
+$(DEPDIR)/%libdreamdvd2: $(DEPDIR)/libdreamdvd2.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd @DIR_libdreamdvd2@ && \
+		@INSTALL_libdreamdvd2@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
