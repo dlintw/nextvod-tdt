@@ -2211,3 +2211,20 @@ $(DEPDIR)/%libdreamdvd2: $(DEPDIR)/libdreamdvd2.do_compile
 		@INSTALL_libdreamdvd2@
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
+# PilImaging
+#
+$(DEPDIR)/pilimaging: bootstrap python @DEPENDS_pilimaging@
+	@PREPARE_pilimaging@
+	cd @DIR_pythonimaging@ && \
+		echo 'JPEG_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' > setup_site.py && \
+		echo 'ZLIB_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
+		echo 'FREETYPE_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py build && \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr && \
+		@DISTCLEANUP_pilimaging@
+	@DISTCLEANUP_pilimaging@
+	@touch $@
+	@TUXBOX_YAUD_CUSTOMIZE@
