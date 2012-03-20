@@ -1297,7 +1297,8 @@ if ENABLE_HL101
 endif
 if ENABLE_ADB_BOX
 	cp -dp $(buildprefix)/root/etc/lircd_adb_box.conf $(prefix)/release_neutrino/etc/lircd.conf
-	cp -dp $(buildprefix)/root/usr/bin/lircd_adb $(prefix)/release_neutrino/usr/bin/lircd
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
 	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
 endif
 if ENABLE_VIP1_V2

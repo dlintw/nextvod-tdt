@@ -98,8 +98,8 @@ release_hl101: cpu7101
    cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/proton/proton.ko $(releaseprefix)/lib/modules/
 
 release_adb_box: cpu7100
-	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stsci/stsci.ko $(releaseprefix)/lib/modules/
-	sh4-linux-strip --strip-unneeded $(releaseprefix)/lib/modules/stsci.ko
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release/lib/modules/
+	sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/smartcard.ko
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/adb_box_vfd/vfd.ko $(releaseprefix)/release/lib/modules/
 	sh4-linux-strip --strip-unneeded $(releaseprefix)/lib/modules/vfd.ko
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/adb_box_fan/cooler.ko $(releaseprefix)/release/lib/modules/
