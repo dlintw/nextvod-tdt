@@ -163,6 +163,8 @@ gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;;link:../apps/mi
 #
 graphlcd;base-touchcol;graphlcd-base-touchcol;graphlcd-base-touchcol.tar.bz2:graphlcd.patch;extract:graphlcd-base-touchcol.tar.bz2;patch:graphlcd.patch
 libusb;0.1.12;libusb-0.1.12;libusb-0.1.12.tar.gz;extract:libusb-0.1.12.tar.gz
+libusbcompat;0.1.3;libusb-compat-0.1.3;libusb-compat-0.1.3.tar.bz2;extract:libusb-compat-0.1.3.tar.bz2
+libgd2;2.0.35;gd-2.0.35;gd-2.0.35.tar.gz;extract:gd-2.0.35.tar.gz
 
 #
 # net apps

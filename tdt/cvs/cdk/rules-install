@@ -121,6 +121,8 @@ gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
 #
 graphlcd;make:install:DESTDIR=TARGETS
 libusb;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libusb.pc;rewrite-libtool:TARGETS/usr/lib/libusb.la;rewrite-libtool:TARGETS/usr/lib/libusbpp.la
+libusbcompat;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libusb.pc;rewrite-libtool:TARGETS/usr/lib/libusb.la
+libgd2;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libgd.la
 
 #
 # net apps

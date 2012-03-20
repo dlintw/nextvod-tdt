@@ -1979,6 +1979,22 @@ $(DEPDIR)/libgd2: bootstrap libz libpng jpeg libiconv freetype fontconfig @DEPEN
 	@touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
+# libusbcompat
+#
+$(DEPDIR)/libusbcompat: bootstrap libusb2 @DEPENDS_libusbcompat@
+	@PREPARE_libusbcompat@
+	cd @DIR_libusbcompat@ && \
+	$(BUILDENV) \
+	./configure \
+		--build=$(build) \
+		--host=$(target) \
+		--prefix=/usr && \
+		$(MAKE) && \
+		@INSTALL_libusbcompat@
+	@DISTCLEANUP_libusbcompat@
+	@touch $@
+	@TUXBOX_YAUD_CUSTOMIZE@
 
 ################ END EXTERNAL_CLD #############################
 
