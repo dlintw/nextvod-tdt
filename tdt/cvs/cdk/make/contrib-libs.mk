@@ -1957,6 +1957,28 @@ graphlcd-base-touchcol.tar.bz2:
 	if [ -d $(archivedir)/graphlcd-base-touchcol.tar.bz2; then \
 		rm $(archivedir)/graphlcd-base-touchcol.tar.bz2; \
 	fi
+####################### LCD4LINUX #############################
+#
+# LIBGD2
+#
+$(DEPDIR)/libgd2: bootstrap libz libpng jpeg libiconv freetype fontconfig @DEPENDS_libgd2@
+	@PREPARE_libgd2@
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libgd2@ && \
+	chmod +w configure && \
+	libtoolize -f -c && \
+	autoreconf --force --install -I$(hostprefix)/share/aclocal && \
+	$(BUILDENV) \
+	./configure \
+		--build=$(build) \
+		--host=$(target) \
+		--prefix=/usr && \
+		$(MAKE) && \
+		@INSTALL_libgd2@
+	@DISTCLEANUP_libgd2@
+	@touch $@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 
 ################ END EXTERNAL_CLD #############################
 

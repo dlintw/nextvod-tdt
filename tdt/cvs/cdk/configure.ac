@@ -1032,7 +1032,7 @@ TUXBOX_RULES_MAKE(libdreamdvd2)
 #
 TUXBOX_RULES_MAKE(graphlcd)
 TUXBOX_RULES_MAKE(libusb)
-
+TUXBOX_RULES_MAKE(libgd2)
 
 #
 # development
