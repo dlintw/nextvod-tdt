@@ -135,7 +135,6 @@ evebrowser;0.0.1;evebrowser-0.0.1
 dvbdata;0.6;dvbdata-0.6;dvbdata-0.6.tar.gz;extract:dvbdata-0.6.tar.gz
 brofs;1.2;BroFS1.2;BroFS1.2.tgz;extract:BroFS1.2.tgz
 libalsa;1.0.21a;alsa-lib-1.0.21a;alsa-lib-1.0.21a.tar.bz2:alsa-lib-1.0.21a-soft_float.patch;extract:alsa-lib-1.0.21a.tar.bz2;patch:alsa-lib-1.0.21a-soft_float.patch
-libusb;0.1.12;libusb-0.1.12;libusb-0.1.12.tar.gz;extract:libusb-0.1.12.tar.gz
 rtmpdump;2.4;rtmpdump-2.4;rtmpdump-2.4.tar.gz;extract:rtmpdump-2.4.tar.gz;move:rtmpdump:rtmpdump-2.4
 
 #
@@ -153,6 +152,12 @@ gst_ffmpeg;0.10.13;gst-ffmpeg-0.10.13;gst-ffmpeg-0.10.13.tar.bz2;extract:gst-ffm
 gst_plugins_fluendo_mpegdemux;0.10.69;gst-fluendo-mpegdemux-0.10.69;gst-fluendo-mpegdemux-0.10.69.tar.gz:gst-plugins-fluendo-mpegdemux-0.10.69-add_dts_hd_detection.diff;extract:gst-fluendo-mpegdemux-0.10.69.tar.gz;patch:gst-plugins-fluendo-mpegdemux-0.10.69-add_dts_hd_detection.diff
 gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;;link:../apps/misc/tools/gst-plugins-dvbmediasink:gst-plugins-dvbmediasink-0.10.1
 #gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;gst-plugins-dvbmediasink-0.10.1;link:../apps/misc/tools/gst-plugins-dvbmediasink:gst-plugins-dvbmediasink-0.10.1
+
+#
+# EXTERNAL_LCD
+#
+graphlcd;base-touchcol;graphlcd-base-touchcol;graphlcd-base-touchcol.tar.bz2:graphlcd.patch;extract:graphlcd-base-touchcol.tar.bz2;patch:graphlcd.patch
+libusb;0.1.12;libusb-0.1.12;libusb-0.1.12.tar.gz;extract:libusb-0.1.12.tar.gz
 
 #
 # net apps
