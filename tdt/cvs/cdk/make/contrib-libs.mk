@@ -1942,35 +1942,19 @@ $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
 #
 # graphlcd
 #
-$(DEPDIR)/graphlcd.do_prepare:	libusb
-	[ -d graphlcd-base ] && \
-	rm -rf graphlcd-base; \
-	git clone git://projects.vdr-developer.org/graphlcd-base.git --branch touchcol graphlcd-base;
-	cd graphlcd-base && \
-	patch -p0 < $(buildprefix)/Patches/graphlcd.patch
-	touch $@
-
-$(DEPDIR)/graphlcd.do_compile: $(DEPDIR)/graphlcd.do_prepare
-	cd graphlcd-base && \
+$(DEPDIR)/graphlcd: graphlcd-base-touchcol.tar.bz2 bootstrap libusb @DEPENDS_graphlcd@
+	@PREPARE_graphlcd@
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_graphlcd@ && \
 	$(BUILDENV) \
-	$(MAKE) all
-	touch $@
-
-$(DEPDIR)/min-graphlcd $(DEPDIR)/std-graphlcd $(DEPDIR)/max-graphlcd \
-$(DEPDIR)/graphlcd: \
-$(DEPDIR)/%graphlcd: $(DEPDIR)/graphlcd.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
-	cd graphlcd-base && \
-		cp glcddrivers/*.so* $(targetprefix)/usr/lib/ && \
-		cp glcdgraphics/*.so* $(targetprefix)/usr/lib/ && \
-		cp glcdskin/*.so* $(targetprefix)/usr/lib/ && \
-		cp tools/showpic/showpic $(targetprefix)/usr/bin/ && \
-		cp tools/showtext/showtext $(targetprefix)/usr/bin/ && \
-		cp graphlcd.conf $(targetprefix)/etc/
+		$(MAKE) all && \
+		@INSTALL_graphlcd@
+	@DISTCLEANUP_graphlcd@
+	@touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-#$(DEPDIR)/graphlcd: graphlcd.do_compile
-#	touch $@
+graphlcd-base-touchcol.tar.bz2:
+	rm $(archivedir)/graphlcd-base-touchcol.tar.bz2
 
 ################ END EXTERNAL_CLD #############################
 
