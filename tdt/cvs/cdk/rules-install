@@ -97,7 +97,6 @@ libflac;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig
 evebrowser;make:install:DESTDIR=TARGETS
 brofs;make:install:DESTDIR=TARGETS/usr/bin
 libalsa;make:install:DESTDIR=TARGETS
-libusb;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libusb.pc;rewrite-libtool:TARGETS/usr/lib/libusb.la;rewrite-libtool:TARGETS/usr/lib/libusbpp.la
 rtmpdump;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/librtmp.pc
 
 #
@@ -111,6 +110,12 @@ gst_plugins_ugly;make:install:DESTDIR=TARGETS
 gst_ffmpeg;make:install:DESTDIR=TARGETS
 gst_plugins_fluendo_mpegdemux;make:install:DESTDIR=TARGETS
 gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
+
+#
+# EXTERNAL_LCD
+#
+graphlcd;make:install:DESTDIR=TARGETS
+libusb;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libusb.pc;rewrite-libtool:TARGETS/usr/lib/libusb.la;rewrite-libtool:TARGETS/usr/lib/libusbpp.la
 
 #
 # net apps
