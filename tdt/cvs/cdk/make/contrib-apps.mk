@@ -1040,3 +1040,21 @@ $(DEPDIR)/%opkg: $(DEPDIR)/opkg.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
+# sysstat
+#
+$(DEPDIR)/sysstat: bootstrap @DEPENDS_sysstat@
+	@PREPARE_sysstat@
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_sysstat@ && \
+	$(BUILDENV) \
+	./configure \
+		--build=$(build) \
+		--host=$(target) \
+		--prefix=/usr \
+		--disable-documentation && \
+		$(MAKE) && \
+		@INSTALL_sysstat@
+	@DISTCLEANUP_sysstat@
+	@touch $@
+	@TUXBOX_YAUD_CUSTOMIZE@

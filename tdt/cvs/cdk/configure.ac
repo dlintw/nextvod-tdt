@@ -952,6 +952,7 @@ TUXBOX_RULES_MAKE(mencoder)
 TUXBOX_RULES_MAKE(util_linux)
 TUXBOX_RULES_MAKE(jfsutils)
 TUXBOX_RULES_MAKE(opkg)
+TUXBOX_RULES_MAKE(sysstat)
 
 #
 # contrib libs
