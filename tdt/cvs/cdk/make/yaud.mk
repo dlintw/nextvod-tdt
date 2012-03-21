@@ -142,7 +142,7 @@ yaud-enigma1-hd: yaud-none lirc stslave\
 endif
 
 yaud-enigma2-pli-nightly: yaud-none host-python lirc \
-		boot-elf remote firstboot enigma2-nightly enigma2-misc release
+		boot-elf remote firstboot enigma2-pli-nightly enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #work yet!!!
