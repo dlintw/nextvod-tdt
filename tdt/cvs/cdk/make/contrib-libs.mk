@@ -2282,7 +2282,7 @@ $(DEPDIR)/%tuxtxt32bpp: $(DEPDIR)/tuxtxt32bpp.do_compile
 # libdreamdvd
 #
 $(DEPDIR)/libdreamdvd.do_prepare:  @DEPENDS_libdreamdvd@
-	PREPARE_libdreamdvd@
+	@PREPARE_libdreamdvd@
 	touch $@
 
 $(DEPDIR)/libdreamdvd.do_compile: $(DEPDIR)/libdreamdvd.do_prepare
