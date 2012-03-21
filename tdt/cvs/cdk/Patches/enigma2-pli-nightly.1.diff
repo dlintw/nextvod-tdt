@@ -3332,7 +3332,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/gdi/fb
  	}
  
 -
-+#if not efined(__sh__)
++#if not defined(__sh__)
  	if (ioctl(fbFd, FBIOGET_VSCREENINFO, &screeninfo)<0)
  	{
  		perror("FBIOGET_VSCREENINFO");
