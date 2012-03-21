@@ -131,6 +131,10 @@ yaud-enigma2-nightly: yaud-none host-python lirc stslave\
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
+yaud-enigma2-pli-nightly: yaud-none host-python lirc stslave\
+		boot-elf remote firstboot enigma2-pli-nightly enigma2-misc release
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 if STM22
 yaud-enigma1-hd: yaud-none lirc stslave\
 		boot-elf hotplug remote firstboot enigma1-hd release_enigma1_hd
