@@ -37,3 +37,4 @@ rtmpdump-*
 !*.diff
 !*.patch
 vsftpd-*
+libcap-*
