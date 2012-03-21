@@ -1,0 +1,493 @@
+diff -Nur tuxtxt.org/libtuxtxt/config.log tuxtxt/libtuxtxt/config.log
+--- tuxtxt.org/libtuxtxt/config.log	2012-03-21 04:58:18.000000000 -0700
++++ tuxtxt/libtuxtxt/config.log	2012-03-21 05:01:46.228166141 -0700
+@@ -754,6 +754,7 @@
+ config.status:1195: creating Makefile
+ config.status:1195: creating tuxbox-tuxtxt.pc
+ config.status:1195: creating config.h
++config.status:1367: config.h is unchanged
+ config.status:1415: executing depfiles commands
+ config.status:1415: executing libtool commands
+ 
+diff -Nur tuxtxt.org/libtuxtxt/.deps/libtuxtxt.Plo tuxtxt/libtuxtxt/.deps/libtuxtxt.Plo
+--- tuxtxt.org/libtuxtxt/.deps/libtuxtxt.Plo	2012-03-21 04:58:17.000000000 -0700
++++ tuxtxt/libtuxtxt/.deps/libtuxtxt.Plo	2012-03-21 05:01:46.376166141 -0700
+@@ -1 +1,288 @@
+-# dummy
++libtuxtxt.lo: libtuxtxt.c \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/ioctl.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/features.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/cdefs.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/wordsize.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/gnu/stubs.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/ioctls.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/ioctls.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/ioctl.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm-generic/ioctl.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/ioctl-types.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/ttydefaults.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/fcntl.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/fcntl.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/types.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/types.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/typesizes.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/time.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.5.2/include/stddef.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/endian.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/endian.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/byteswap.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/select.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/select.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/sigset.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/time.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/sysmacros.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/pthreadtypes.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/pthread.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sched.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/sched.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/xlocale.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/signal.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/setjmp.h \
++ tuxtxt_common.h config.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/mman.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/mman.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/stdio.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/libio.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/_G_config.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/wchar.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.5.2/include/stdarg.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/stdio_lim.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/sys_errlist.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/stdio.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/stdlib.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/alloca.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/string.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/string.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/string2.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/ctype.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/unistd.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/posix_opt.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/confname.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/getopt.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/time.h \
++ tuxtxt_def.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/dvb/dmx.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/types.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/types.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm-generic/types.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm-generic/int-ll64.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/bitsperlong.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm-generic/bitsperlong.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/posix_types.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/stddef.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/compiler.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/posix_types.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/ft2build.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/config/ftheader.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/freetype.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/config/ftconfig.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/config/ftoption.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/config/ftstdlib.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.5.2/include/limits.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.5.2/include/syslimits.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/limits.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/posix1_lim.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/local_lim.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/limits.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/posix2_lim.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/setjmp.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/fterrors.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftmoderr.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/fterrdef.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/fttypes.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftsystem.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftimage.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftcache.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftglyph.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/fb.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/i2c.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/input.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/videodev.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/ioctl.h \
++ /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/videodev2.h
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/ioctl.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/features.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/cdefs.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/wordsize.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/gnu/stubs.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/ioctls.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/ioctls.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/ioctl.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm-generic/ioctl.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/ioctl-types.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/ttydefaults.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/fcntl.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/fcntl.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/types.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/types.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/typesizes.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/time.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.5.2/include/stddef.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/endian.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/endian.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/byteswap.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/select.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/select.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/sigset.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/time.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/sysmacros.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/pthreadtypes.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/pthread.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sched.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/sched.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/xlocale.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/signal.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/setjmp.h:
++
++tuxtxt_common.h:
++
++config.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/mman.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/mman.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/stdio.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/libio.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/_G_config.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/wchar.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.5.2/include/stdarg.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/stdio_lim.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/sys_errlist.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/stdio.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/stdlib.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/alloca.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/string.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/string.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/string2.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/ctype.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/unistd.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/posix_opt.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/confname.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/getopt.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/sys/time.h:
++
++tuxtxt_def.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/dvb/dmx.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/types.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/types.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm-generic/types.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm-generic/int-ll64.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/bitsperlong.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm-generic/bitsperlong.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/posix_types.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/stddef.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/compiler.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/asm/posix_types.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/ft2build.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/config/ftheader.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/freetype.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/config/ftconfig.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/config/ftoption.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/config/ftstdlib.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.5.2/include/limits.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/devkit/sh4/lib/gcc/sh4-linux/4.5.2/include/syslimits.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/limits.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/posix1_lim.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/local_lim.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/limits.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/bits/posix2_lim.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/setjmp.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/fterrors.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftmoderr.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/fterrdef.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/fttypes.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftsystem.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftimage.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftcache.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/freetype2/freetype/ftglyph.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/fb.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/i2c.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/input.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/videodev.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/ioctl.h:
++
++/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/include/linux/videodev2.h:
+diff -Nur tuxtxt.org/libtuxtxt/.libs/libtuxtxt.la tuxtxt/libtuxtxt/.libs/libtuxtxt.la
+--- tuxtxt.org/libtuxtxt/.libs/libtuxtxt.la	1969-12-31 16:00:00.000000000 -0800
++++ tuxtxt/libtuxtxt/.libs/libtuxtxt.la	2012-03-21 05:01:52.008166143 -0700
+@@ -0,0 +1,41 @@
++# libtuxtxt.la - a libtool library file
++# Generated by ltmain.sh (GNU libtool) 2.2.6
++#
++# Please DO NOT delete this file!
++# It is necessary for linking the library.
++
++# The name that we can dlopen(3).
++dlname='libtuxtxt.so.0'
++
++# Names of this library.
++library_names='libtuxtxt.so.0.0.0 libtuxtxt.so.0 libtuxtxt.so'
++
++# The name of the static archive.
++old_library=''
++
++# Linker flags that can not go in dependency_libs.
++inherited_linker_flags=''
++
++# Libraries that this one depends upon.
++dependency_libs=' -L/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/lib /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/lib/libfreetype.la -lz'
++
++# Names of additional weak libraries provided by this library
++weak_library_names=''
++
++# Version information for libtuxtxt.
++current=0
++age=0
++revision=0
++
++# Is this an already installed library?
++installed=no
++
++# Should we warn about portability when linking against -modules?
++shouldnotlink=no
++
++# Files to dlopen/dlpreopen
++dlopen=''
++dlpreopen=''
++
++# Directory that this library needs to be installed in:
++libdir='/usr/lib'
+diff -Nur tuxtxt.org/libtuxtxt/.libs/libtuxtxt.lai tuxtxt/libtuxtxt/.libs/libtuxtxt.lai
+--- tuxtxt.org/libtuxtxt/.libs/libtuxtxt.lai	1969-12-31 16:00:00.000000000 -0800
++++ tuxtxt/libtuxtxt/.libs/libtuxtxt.lai	2012-03-21 05:01:52.012166145 -0700
+@@ -0,0 +1,41 @@
++# libtuxtxt.la - a libtool library file
++# Generated by ltmain.sh (GNU libtool) 2.2.6
++#
++# Please DO NOT delete this file!
++# It is necessary for linking the library.
++
++# The name that we can dlopen(3).
++dlname='libtuxtxt.so.0'
++
++# Names of this library.
++library_names='libtuxtxt.so.0.0.0 libtuxtxt.so.0 libtuxtxt.so'
++
++# The name of the static archive.
++old_library=''
++
++# Linker flags that can not go in dependency_libs.
++inherited_linker_flags=''
++
++# Libraries that this one depends upon.
++dependency_libs=' -L/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/lib /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/lib/libfreetype.la -lz'
++
++# Names of additional weak libraries provided by this library
++weak_library_names=''
++
++# Version information for libtuxtxt.
++current=0
++age=0
++revision=0
++
++# Is this an already installed library?
++installed=yes
++
++# Should we warn about portability when linking against -modules?
++shouldnotlink=no
++
++# Files to dlopen/dlpreopen
++dlopen=''
++dlpreopen=''
++
++# Directory that this library needs to be installed in:
++libdir='/usr/lib'
+Binary files tuxtxt.org/libtuxtxt/.libs/libtuxtxt.o and tuxtxt/libtuxtxt/.libs/libtuxtxt.o differ
+Binary files tuxtxt.org/libtuxtxt/.libs/libtuxtxt.so and tuxtxt/libtuxtxt/.libs/libtuxtxt.so differ
+Binary files tuxtxt.org/libtuxtxt/.libs/libtuxtxt.so.0 and tuxtxt/libtuxtxt/.libs/libtuxtxt.so.0 differ
+Binary files tuxtxt.org/libtuxtxt/.libs/libtuxtxt.so.0.0.0 and tuxtxt/libtuxtxt/.libs/libtuxtxt.so.0.0.0 differ
+diff -Nur tuxtxt.org/libtuxtxt/libtuxtxt.la tuxtxt/libtuxtxt/libtuxtxt.la
+--- tuxtxt.org/libtuxtxt/libtuxtxt.la	1969-12-31 16:00:00.000000000 -0800
++++ tuxtxt/libtuxtxt/libtuxtxt.la	2012-03-21 05:01:52.008166143 -0700
+@@ -0,0 +1,41 @@
++# libtuxtxt.la - a libtool library file
++# Generated by ltmain.sh (GNU libtool) 2.2.6
++#
++# Please DO NOT delete this file!
++# It is necessary for linking the library.
++
++# The name that we can dlopen(3).
++dlname='libtuxtxt.so.0'
++
++# Names of this library.
++library_names='libtuxtxt.so.0.0.0 libtuxtxt.so.0 libtuxtxt.so'
++
++# The name of the static archive.
++old_library=''
++
++# Linker flags that can not go in dependency_libs.
++inherited_linker_flags=''
++
++# Libraries that this one depends upon.
++dependency_libs=' -L/home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/lib /home/ubuntu/git/ufs912_pli_209/tdt/tufsbox/cdkroot/usr/lib/libfreetype.la -lz'
++
++# Names of additional weak libraries provided by this library
++weak_library_names=''
++
++# Version information for libtuxtxt.
++current=0
++age=0
++revision=0
++
++# Is this an already installed library?
++installed=no
++
++# Should we warn about portability when linking against -modules?
++shouldnotlink=no
++
++# Files to dlopen/dlpreopen
++dlopen=''
++dlpreopen=''
++
++# Directory that this library needs to be installed in:
++libdir='/usr/lib'
+diff -Nur tuxtxt.org/libtuxtxt/libtuxtxt.lo tuxtxt/libtuxtxt/libtuxtxt.lo
+--- tuxtxt.org/libtuxtxt/libtuxtxt.lo	1969-12-31 16:00:00.000000000 -0800
++++ tuxtxt/libtuxtxt/libtuxtxt.lo	2012-03-21 05:01:51.616166142 -0700
+@@ -0,0 +1,12 @@
++# libtuxtxt.lo - a libtool object file
++# Generated by ltmain.sh (GNU libtool) 2.2.6
++#
++# Please DO NOT delete this file!
++# It is necessary for linking the library.
++
++# Name of the PIC object.
++pic_object='.libs/libtuxtxt.o'
++
++# Name of the non-PIC object
++non_pic_object=none
++
+diff -Nur tuxtxt.org/libtuxtxt/tuxtxt_common.h tuxtxt/libtuxtxt/tuxtxt_common.h
+--- tuxtxt.org/libtuxtxt/tuxtxt_common.h	2012-03-21 03:53:24.000000000 -0700
++++ tuxtxt/libtuxtxt/tuxtxt_common.h	2012-03-21 05:01:34.008166144 -0700
+@@ -5623,6 +5623,7 @@
+ void tuxtxt_EndRendering(tstRenderInfo* renderinfo)
+ {
+ 	int i;
++#ifndef HAVE_GENERIC_HARDWARE
+ #ifndef HAVE_TRIPLEDRAGON
+ 	if (renderinfo->pig >= 0)
+ 		close(renderinfo->pig);
+@@ -5635,6 +5636,7 @@
+ #else
+ 	system("pzapit --pig 0 0 0 0 0");
+ #endif
++#endif
+ 	/* clear subtitlecache */
+ 	for (i = 0; i < SUBTITLE_CACHESIZE; i++)
+ 	{
+diff -Nur tuxtxt.org/libtuxtxt/tuxtxt_def.h tuxtxt/libtuxtxt/tuxtxt_def.h
+--- tuxtxt.org/libtuxtxt/tuxtxt_def.h	2012-03-21 03:53:24.000000000 -0700
++++ tuxtxt/libtuxtxt/tuxtxt_def.h	2012-03-21 05:00:01.192166143 -0700
+@@ -38,9 +38,11 @@
+ #include <linux/fb.h>
+ 
+ #ifndef HAVE_TRIPLEDRAGON
++#ifndef HAVE_GENERIC_HARDWARE
+ #include <dbox/avs_core.h>
+ #include <dbox/saa7126_core.h>
+ #endif
++#endif
+ 
+ #define FLOFSIZE 4
+ 

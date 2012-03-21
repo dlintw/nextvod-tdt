@@ -2203,10 +2203,47 @@ $(DEPDIR)/%libdvbsipp: $(DEPDIR)/libdvbsipp.do_compile
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 
+
+#
+# libtuxtxt
+#
+$(DEPDIR)/libtuxtxt.do_prepare:  @DEPENDS_libtuxtxt@
+	[ -d "tuxtxt" ] && \
+	cd tuxtxt && git pull; \
+	[ -d "tuxtxt" ] || \
+	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
+	cd @DIR_tuxtxt32bpp@ && patch -p1 < ../../Patches/libtuxtxt-1.0-fix_dbox_headers.diff
+	touch $@
+
+$(DEPDIR)/libtuxtxt.do_compile: $(DEPDIR)/libtuxtxt.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libtuxtxt@ && \
+	aclocal -I $(hostprefix)/share/aclocal && \
+	autoheader && \
+	autoconf && \
+	automake --foreign && \
+	libtoolize --force && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+		--with-boxtype=generic \
+		--with-configdir=/etc && \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-libtuxtxtbpp $(DEPDIR)/std-libtuxtxtbpp $(DEPDIR)/max-libtuxtxt \
+$(DEPDIR)/libtuxtxt: \
+$(DEPDIR)/%libtuxtxt: $(DEPDIR)/libtuxtxt.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd @DIR_libtuxtxt@ && \
+		@INSTALL_libtuxtxt@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 #
 # tuxtxt32bpp
 #
-$(DEPDIR)/tuxtxt32bpp.do_prepare:  @DEPENDS_tuxtxt32bpp@
+$(DEPDIR)/tuxtxt32bpp.do_prepare: libtuxtxt @DEPENDS_tuxtxt32bpp@
 	[ -d "tuxtxt" ] && \
 	cd tuxtxt && git pull; \
 	[ -d "tuxtxt" ] || \

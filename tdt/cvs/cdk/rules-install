@@ -100,6 +100,7 @@ brofs;make:install:DESTDIR=TARGETS/usr/bin
 libalsa;make:install:DESTDIR=TARGETS
 rtmpdump;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/librtmp.pc
 libdvbsipp;make:install:prefix=/usr:DESTDIR=TARGETS
+libtuxtxt;make:install:prefix=/usr:DESTDIR=TARGETS
 tuxtxt32bpp;make:install:prefix=/usr:DESTDIR=TARGETS
 libdreamdvd;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libdreamdvd.pc
 libdreamdvd2;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libdreamdvd.pc
