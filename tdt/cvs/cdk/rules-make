@@ -140,6 +140,7 @@ rtmpdump;2.4;rtmpdump-2.4;rtmpdump-2.4.tar.gz;extract:rtmpdump-2.4.tar.gz;move:r
 pilimaging;1.1.7;Imaging-1.1.7;Imaging-1.1.7.tar.gz;extract:Imaging-1.1.7.tar.gz
 libdvbsipp;0.3.6;libdvbsi++-0.3.6;libdvbsi++-0.3.6.tar.bz2;extract:libdvbsi++-0.3.6.tar.bz2;patch:libdvbsi++-0.3.6-fix_unaligned_access.patch
 tuxtxt32bpp;1.0;tuxtxt/tuxtxt;;
+libdreamdvd;1.0;libdreamdvd;;link:../apps/misc/tools/libdreamdvd:libdreamdvd
 libdreamdvd2;1.0;libdreamdvd;
 
 #
