@@ -1954,7 +1954,7 @@ $(DEPDIR)/graphlcd: graphlcd-base-touchcol.tar.bz2 bootstrap libusb @DEPENDS_gra
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 graphlcd-base-touchcol.tar.bz2:
-	if [ -d $(archivedir)/graphlcd-base-touchcol.tar.bz2; then \
+	if [ -d $(archivedir)/graphlcd-base-touchcol.tar.bz2 ]; then \
 		rm $(archivedir)/graphlcd-base-touchcol.tar.bz2; \
 	fi
 ####################### LCD4LINUX #############################
