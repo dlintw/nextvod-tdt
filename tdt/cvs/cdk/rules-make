@@ -142,7 +142,7 @@ libdvbsipp;0.3.6;libdvbsi++-0.3.6;libdvbsi++-0.3.6.tar.bz2;extract:libdvbsi++-0.
 libtuxtxt;1.0;tuxtxt/libtuxtxt;;
 tuxtxt32bpp;1.0;tuxtxt/tuxtxt;;
 libdreamdvd;1.0;libdreamdvd;;link:../apps/misc/tools/libdreamdvd:libdreamdvd
-libdreamdvd2;1.0;libdreamdvd;patch:libdreamdvd-1.0-support_sh4.patch
+libdreamdvd2;1.0;libdreamdvd;;patch:libdreamdvd-1.0-support_sh4.patch
 
 #
 # GSTREAMER
