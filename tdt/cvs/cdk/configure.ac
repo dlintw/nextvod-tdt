@@ -1026,12 +1026,15 @@ TUXBOX_RULES_MAKE(rtmpdump)
 TUXBOX_RULES_MAKE(libdvbsipp)
 TUXBOX_RULES_MAKE(tuxtxt32bpp)
 TUXBOX_RULES_MAKE(libdreamdvd2)
+TUXBOX_RULES_MAKE(pilimaging)
 
 #
 # EXTERNAL_LCD
 #
 TUXBOX_RULES_MAKE(graphlcd)
 TUXBOX_RULES_MAKE(libusb)
+TUXBOX_RULES_MAKE(libusb2)
+TUXBOX_RULES_MAKE(libusbcompat)
 TUXBOX_RULES_MAKE(libgd2)
 
 #
@@ -1285,8 +1288,6 @@ AC_CONFIG_FILES([
 Makefile
 rules-downcheck.pl
 ])
-#packages/fuse/Makefile
 
 AC_CONFIG_COMMANDS([rules-downcheck-chmod],[chmod +x rules-downcheck.pl])
-
 AC_OUTPUT
