@@ -37,6 +37,7 @@ readable="  root root   0444"
  bpamem="  root root   0644"
 ramzswap="  root root   0644"
      rc="  root root   0644"
+hdmi_cec="  root root   0644"
  tundev="  root root   0644"
  ttyusb="  root root   0644"
 
@@ -299,6 +300,7 @@ cvt () {
 			ttyusb) echo ttyusb ;;
 			tundev) echo tundev ;;
 			rc) echo rc ;;
+			hdmi_cec) echo hdmi_cec ;;
 			*)	echo "$1" ;;
 		esac
 		shift
@@ -525,6 +527,7 @@ do
 		$0 $opts bpamem
 		$0 $opts ramzswap
 		$0 $opts rc
+		$0 $opts hdmi_cec
 		$0 $opts ttyusb
 		$0 $opts tundev
 		$0 $opts alsasnd
@@ -1952,6 +1955,9 @@ do
 		;;
 	rc)
 		makedev rc c 147 1 $rc
+		;;
+	hdmi_cec)
+		makedev hdmi_cec c 149 0 $hdmi_cec
 		;;
 	comedi)
 		major=98
