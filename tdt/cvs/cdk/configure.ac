@@ -1025,6 +1025,7 @@ TUXBOX_RULES_MAKE(libalsa)
 TUXBOX_RULES_MAKE(rtmpdump)
 TUXBOX_RULES_MAKE(libdvbsipp)
 TUXBOX_RULES_MAKE(tuxtxt32bpp)
+TUXBOX_RULES_MAKE(libdreamdvd)
 TUXBOX_RULES_MAKE(libdreamdvd2)
 
 #

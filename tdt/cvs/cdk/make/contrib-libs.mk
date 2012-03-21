@@ -2219,6 +2219,36 @@ $(DEPDIR)/%tuxtxt32bpp: $(DEPDIR)/tuxtxt32bpp.do_compile
 #
 # libdreamdvd
 #
+$(DEPDIR)/libdreamdvd.do_prepare:  @DEPENDS_libdreamdvd@
+	PREPARE_libdreamdvd@
+	touch $@
+
+$(DEPDIR)/libdreamdvd.do_compile: $(DEPDIR)/libdreamdvd.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libdreamdvd@ && \
+	aclocal -I $(hostprefix)/share/aclocal && \
+	autoheader && \
+	autoconf && \
+	automake --foreign && \
+	libtoolize --force && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr && \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-libdreamdvd $(DEPDIR)/std-libdreamdvd $(DEPDIR)/max-libdreamdvd \
+$(DEPDIR)/libdreamdvd: \
+$(DEPDIR)/%libdreamdvd: $(DEPDIR)/libdreamdvd.do_compile
+	@[ "x$*" = "x" ] && touch $@ || true
+	cd @DIR_libdreamdvd@ && \
+		@INSTALL_libdreamdvd@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# libdreamdvd
+#
 $(DEPDIR)/libdreamdvd2.do_prepare:  @DEPENDS_libdreamdvd2@
 	[ -d "libdreamdvd" ] && \
 	cd libdreamdvd && git pull; \

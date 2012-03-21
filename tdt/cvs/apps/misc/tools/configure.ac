@@ -33,8 +33,6 @@ AC_OUTPUT([
 Makefile
 devinit/Makefile
 evremote2/Makefile
-libdreamdvd/Makefile
-libdreamdvd/libdreamdvd.pc
 libeplayer2/Makefile
 libeplayer3/Makefile
 fp_control/Makefile
