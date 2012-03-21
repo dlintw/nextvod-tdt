@@ -923,7 +923,6 @@ $(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/lxml: \
 	touch $@ && \
 	@TUXBOX_CUSTOMIZE@
 
-
 #
 # LIBXMLCCWRAP
 #
@@ -1341,7 +1340,6 @@ $(DEPDIR)/%ffmpeg: $(DEPDIR)/ffmpeg.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-
 #
 # libass
 #
@@ -1368,7 +1366,6 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-
 #
 # WebKitDFB
 #
@@ -1376,7 +1373,6 @@ $(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant lite curl 
 	@PREPARE_webkitdfb@
 	touch $@
 
-#
 $(DEPDIR)/webkitdfb.do_compile: $(DEPDIR)/webkitdfb.do_prepare
 	export PATH=$(BUILDPREFIX)/@DIR_icu4c@/host/config:$(PATH) && \
 	cd @DIR_webkitdfb@ && \
@@ -1624,7 +1620,9 @@ $(DEPDIR)/%cairo: $(DEPDIR)/cairo.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
 # libogg
+#
 $(DEPDIR)/libogg.do_prepare: bootstrap  @DEPENDS_libogg@
 	@PREPARE_libogg@
 	touch $@
@@ -1646,7 +1644,9 @@ $(DEPDIR)/%libogg: $(DEPDIR)/libogg.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
 # libflac
+#
 $(DEPDIR)/libflac.do_prepare: bootstrap  @DEPENDS_libflac@
 	@PREPARE_libflac@
 	touch $@
@@ -1681,12 +1681,10 @@ $(DEPDIR)/%libflac: $(DEPDIR)/libflac.do_compile
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
+# GSTREAMER + PLUGINS  This will become the "libeplayer4"
 #
-# GSTREAMER + PLUGINS
-# This will become the "libeplayer4"
-#
-
 # GSTREAMER
+#
 $(DEPDIR)/gstreamer.do_prepare: bootstrap glib2 libxml2 @DEPENDS_gstreamer@
 	@PREPARE_gstreamer@
 	touch $@
@@ -1710,7 +1708,9 @@ $(DEPDIR)/%gstreamer: $(DEPDIR)/gstreamer.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
 # GST-PLUGINS-BASE
+#
 $(DEPDIR)/gst_plugins_base.do_prepare: bootstrap glib2 gstreamer libogg libalsa @DEPENDS_gst_plugins_base@
 	@PREPARE_gst_plugins_base@
 	touch $@
@@ -1733,7 +1733,9 @@ $(DEPDIR)/%gst_plugins_base: $(DEPDIR)/gst_plugins_base.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
 # GST-PLUGINS-GOOD
+#
 $(DEPDIR)/gst_plugins_good.do_prepare: bootstrap gstreamer gst_plugins_base libsoup libflac @DEPENDS_gst_plugins_good@
 	@PREPARE_gst_plugins_good@
 	touch $@
@@ -1756,8 +1758,9 @@ $(DEPDIR)/%gst_plugins_good: $(DEPDIR)/gst_plugins_good.do_compile
 		@INSTALL_gst_plugins_good@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
+#
 # GST-PLUGINS-BAD
+#
 $(DEPDIR)/gst_plugins_bad.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_gst_plugins_bad@
 	@PREPARE_gst_plugins_bad@
 	touch $@
@@ -1780,7 +1783,9 @@ $(DEPDIR)/%gst_plugins_bad: $(DEPDIR)/gst_plugins_bad.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
 # GST-PLUGINS-UGLY
+#
 $(DEPDIR)/gst_plugins_ugly.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_gst_plugins_ugly@
 	@PREPARE_gst_plugins_ugly@
 	touch $@
@@ -1801,8 +1806,9 @@ $(DEPDIR)/%gst_plugins_ugly: $(DEPDIR)/gst_plugins_ugly.do_compile
 		@INSTALL_gst_plugins_ugly@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
+#
 # GST-FFMPEG
+#
 $(DEPDIR)/gst_ffmpeg.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_gst_ffmpeg@
 	@PREPARE_gst_ffmpeg@
 	touch $@
@@ -1862,8 +1868,9 @@ $(DEPDIR)/%gst_ffmpeg: $(DEPDIR)/gst_ffmpeg.do_compile
 		@INSTALL_gst_ffmpeg@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
+#
 # GST-PLUGINS-FLUENDO-MPEGDEMUX
+#
 $(DEPDIR)/gst_plugins_fluendo_mpegdemux.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_gst_plugins_fluendo_mpegdemux@
 	@PREPARE_gst_plugins_fluendo_mpegdemux@
 	touch $@
@@ -1959,7 +1966,7 @@ graphlcd-base-touchcol.tar.bz2:
 	fi
 ####################### LCD4LINUX #############################
 #
-# LIBGD2
+# libgd2
 #
 $(DEPDIR)/libgd2: bootstrap libz libpng jpeg libiconv freetype fontconfig @DEPENDS_libgd2@
 	@PREPARE_libgd2@
@@ -1976,6 +1983,24 @@ $(DEPDIR)/libgd2: bootstrap libz libpng jpeg libiconv freetype fontconfig @DEPEN
 		$(MAKE) && \
 		@INSTALL_libgd2@
 	@DISTCLEANUP_libgd2@
+	@touch $@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# libusb2
+#
+$(DEPDIR)/libusb2: bootstrap @DEPENDS_libusb2@
+	@PREPARE_libusb2@
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libusb2@ && \
+	$(BUILDENV) \
+	./configure \
+		--build=$(build) \
+		--host=$(target) \
+		--prefix=/usr && \
+		$(MAKE) all && \
+		@INSTALL_libusb2@
+	@DISTCLEANUP_libusb2@
 	@touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
 
