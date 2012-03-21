@@ -3379,7 +3379,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/gdi/fb
  
  int fbClass::SetMode(int nxRes, int nyRes, int nbpp)
  {
-+#if not defined(__sh__)
++#if defined(__sh__)
 +	xRes=nxRes; 
 +	yRes=nyRes; 
 +	bpp=32;
