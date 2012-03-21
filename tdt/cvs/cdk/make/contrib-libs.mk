@@ -2212,7 +2212,7 @@ $(DEPDIR)/libtuxtxt.do_prepare:  @DEPENDS_libtuxtxt@
 	cd tuxtxt && git pull; \
 	[ -d "tuxtxt" ] || \
 	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
-	cd @DIR_tuxtxt32bpp@ && patch -p1 < ../../Patches/libtuxtxt-1.0-fix_dbox_headers.diff
+	cd @DIR_libtuxtxt@ && patch -p1 < ../../Patches/libtuxtxt-1.0-fix_dbox_headers.diff
 	touch $@
 
 $(DEPDIR)/libtuxtxt.do_compile: $(DEPDIR)/libtuxtxt.do_prepare
@@ -2228,11 +2228,13 @@ $(DEPDIR)/libtuxtxt.do_compile: $(DEPDIR)/libtuxtxt.do_prepare
 		--host=$(target) \
 		--prefix=/usr \
 		--with-boxtype=generic \
-		--with-configdir=/etc && \
+		--with-configdir=/usr \
+		--with-datadir=/usr/share/tuxtxt \
+		--with-fontdir=/usr/share/fonts && \
 	$(MAKE) all
 	touch $@
 
-$(DEPDIR)/min-libtuxtxtbpp $(DEPDIR)/std-libtuxtxtbpp $(DEPDIR)/max-libtuxtxt \
+$(DEPDIR)/min-libtuxtxt $(DEPDIR)/std-libtuxtxt $(DEPDIR)/max-libtuxtxt \
 $(DEPDIR)/libtuxtxt: \
 $(DEPDIR)/%libtuxtxt: $(DEPDIR)/libtuxtxt.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -2266,7 +2268,9 @@ $(DEPDIR)/tuxtxt32bpp.do_compile: $(DEPDIR)/tuxtxt32bpp.do_prepare
 		--host=$(target) \
 		--prefix=/usr \
 		--with-boxtype=generic \
-		--with-configdir=/etc && \
+		--with-configdir=/usr \
+		--with-datadir=/usr/share/tuxtxt \
+		--with-fontdir=/usr/share/fonts && \
 	$(MAKE) all
 	touch $@
 
