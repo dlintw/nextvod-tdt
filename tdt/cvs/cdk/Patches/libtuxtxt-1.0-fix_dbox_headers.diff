@@ -2,7 +2,7 @@ diff -Nur ta/tuxtxt_common.h b/tuxtxt_common.h
 --- a/tuxtxt_common.h	2012-03-21 03:53:24.000000000 -0700
 +++ b/tuxtxt_common.h	2012-03-21 05:01:34.008166144 -0700
 
-@@ -32,6 +32,61 @@
+@@ -32,6 +32,67 @@
  #include <tdgfx/stb04gfx.h>
  #endif
  
@@ -16,6 +16,12 @@ diff -Nur ta/tuxtxt_common.h b/tuxtxt_common.h
 +
 +	bltData.operation  = BLT_OP_COPY;
 +	bltData.srcOffset  = 1920*1080*4;
++
++	if (!renderinfo->var_screeninfo.yoffset) // First Buffer
++		;
++	else // Second Buffer
++		bltData.srcOffset += renderinfo->var_screeninfo.xres * renderinfo->var_screeninfo.yres * 4;
++
 +	bltData.srcPitch   = 720 * 4;
 +	bltData.srcFormat  = SURF_BGRA8888;
 +	bltData.dstFormat  = SURF_BGRA8888;
