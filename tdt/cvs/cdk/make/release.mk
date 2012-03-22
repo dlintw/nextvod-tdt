@@ -1240,7 +1240,7 @@ endif
 	fi
 	
 	$(INSTALL_DIR) $(prefix)/release/usr/tuxtxt
-	cp -p $(targetprefix)/usr/tuxtxt/tuxtxt2.conf $(prefix)/release/usr/tuxtxt/
+	cp -p $(targetprefix)/etc/tuxbox/tuxtxt2.conf $(prefix)/release/usr/tuxtxt/
 	
 	cp -p $(targetprefix)/usr/sbin/ethtool $(prefix)/release/usr/sbin/
 

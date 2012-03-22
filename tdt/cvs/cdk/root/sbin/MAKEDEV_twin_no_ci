@@ -35,6 +35,7 @@ readable="  root root   0444"
   st231="  root root   0644"
     mme="  root root   0644"
  bpamem="  root root   0644"
+    vfd="  root root   0644"
 hdmi_cec="  root root   0644"
  tundev="  root root   0644"
  ttyusb="  root root   0644"
@@ -296,6 +297,7 @@ cvt () {
 			bpamem) echo bpamem ;;
 			ttyusb) echo ttyusb ;;
 			tundev) echo tundev ;;
+			vfd) echo vfd ;;
 			hdmi_cec) echo hdmi_cec ;;
 			*)	echo "$1" ;;
 		esac
@@ -521,6 +523,7 @@ do
 		$0 $opts st200
 		$0 $opts mme
 		$0 $opts bpamem
+		$0 $opts vfd
 		$0 $opts hdmi_cec
 		$0 $opts ttyusb
 		$0 $opts tundev
@@ -1943,6 +1946,9 @@ do
 		do
 			makedev bpamem$i c 153 $i $bpamem
 		done
+		;;
+	vfd)
+		makedev vfd c 147 0 $vfd
 		;;
 	hdmi_cec)
 		makedev hdmi_cec c 149 0 $hdmi_cec

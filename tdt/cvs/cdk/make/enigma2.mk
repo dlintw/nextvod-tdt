@@ -90,7 +90,6 @@ $(DEPDIR)/enigma2-misc:
 	$(INSTALL_DIR) $(targetprefix)/media/{hdd,dvd} && \
 	$(INSTALL_DIR) $(targetprefix)/hdd/{music,picture,movie} && \
 	$(INSTALL_DIR) $(targetprefix)/usr/tuxtxt && \
-	chmod 755 $(targetprefix)/usr/bin/tuxtxt && \
 	$(INSTALL_FILE) root/usr/tuxtxt/tuxtxt2.conf $(targetprefix)/usr/tuxtxt/
 if ENABLE_TF7700
 	cd $(targetprefix)/usr/local/share/enigma2/ && mv -f keymap_tf7700.xml keymap.xml
