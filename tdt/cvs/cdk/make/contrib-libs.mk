@@ -2205,7 +2205,9 @@ $(DEPDIR)/%libdvbsipp: $(DEPDIR)/libdvbsipp.do_compile
 #
 # libtuxtxt
 #
-$(DEPDIR)/libtuxtxt.do_prepare:  @DEPENDS_libtuxtxt@
+$(DEPDIR)/libtuxtxt.do_prepare: @DEPENDS_libtuxtxt@
+	rm -rf $(buildprefix)/tuxtxt && \
+	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
 	cd @DIR_libtuxtxt@ && \
 	patch -p1 < $(buildprefix)/Patches/libtuxtxt-1.0-fix_dbox_headers.diff
 
@@ -2227,7 +2229,6 @@ $(DEPDIR)/libtuxtxt.do_compile: $(DEPDIR)/libtuxtxt.do_prepare
 		--with-fontdir=/usr/share/fonts && \
 	$(MAKE) all
 
-
 $(DEPDIR)/min-libtuxtxt $(DEPDIR)/std-libtuxtxt $(DEPDIR)/max-libtuxtxt \
 $(DEPDIR)/libtuxtxt: \
 $(DEPDIR)/%libtuxtxt: $(DEPDIR)/libtuxtxt.do_compile
@@ -2239,7 +2240,7 @@ $(DEPDIR)/%libtuxtxt: $(DEPDIR)/libtuxtxt.do_compile
 #
 # tuxtxt32bpp
 #
-$(DEPDIR)/tuxtxt32bpp.do_prepare: plituxtxt.tar.bz2 libtuxtxt @DEPENDS_tuxtxt32bpp@
+$(DEPDIR)/tuxtxt32bpp.do_prepare: libtuxtxt @DEPENDS_tuxtxt32bpp@
 	cd @DIR_tuxtxt32bpp@ && \
 		patch -p1 < $(buildprefix)/Patches/tuxtxt32bpp-1.0-fix_dbox_headers.diff;
 
@@ -2268,14 +2269,6 @@ $(DEPDIR)/%tuxtxt32bpp: $(DEPDIR)/tuxtxt32bpp.do_compile
 		@INSTALL_tuxtxt32bpp@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-
-plituxtxt.tar.bz2:
-	rm -rf $(buildprefix)/tuxtxt && \
-	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
-	tar cjf tuxtxt.tar.bz2 tuxtxt --exclude=.git && \
-	mv tuxtxt.tar.bz2 $(archivedir)
-#	rm -rf $(buildprefix)/tuxtxt
 
 #
 # libdreamdvd
