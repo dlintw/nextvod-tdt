@@ -1534,7 +1534,7 @@ $(DEPDIR)/%sqlite: $(DEPDIR)/sqlite.do_compile
 		@INSTALL_sqlite@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-	
+
 #
 # libsoup
 #
@@ -1941,9 +1941,9 @@ $(DEPDIR)/libusb.do_compile: $(DEPDIR)/libusb.do_prepare
 $(DEPDIR)/min-libusb $(DEPDIR)/std-libusb $(DEPDIR)/max-libusb \
 $(DEPDIR)/libusb: \
 $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_libusb@ && \
 		@INSTALL_libusb@
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
@@ -2048,10 +2048,10 @@ $(DEPDIR)/evebrowser.do_compile: $(DEPDIR)/evebrowser.do_prepare
 $(DEPDIR)/min-evebrowser $(DEPDIR)/std-evebrowser $(DEPDIR)/max-evebrowser \
 $(DEPDIR)/evebrowser: \
 $(DEPDIR)/%evebrowser: $(DEPDIR)/evebrowser.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_evebrowser@ && \
 		@INSTALL_evebrowser@ && \
 		cp -ar enigma2/HbbTv $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
@@ -2071,9 +2071,9 @@ $(DEPDIR)/brofs.do_compile: $(DEPDIR)/brofs.do_prepare
 $(DEPDIR)/min-brofs $(DEPDIR)/std-brofs $(DEPDIR)/max-brofs \
 $(DEPDIR)/brofs: \
 $(DEPDIR)/%brofs: $(DEPDIR)/brofs.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_brofs@ && \
 		@INSTALL_brofs@
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
@@ -2143,9 +2143,9 @@ $(DEPDIR)/libalsa.do_compile: $(DEPDIR)/libalsa.do_prepare
 $(DEPDIR)/min-libalsa $(DEPDIR)/std-libalsa $(DEPDIR)/max-libalsa \
 $(DEPDIR)/libalsa: \
 $(DEPDIR)/%libalsa: $(DEPDIR)/libalsa.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_libalsa@ && \
 		@INSTALL_libalsa@
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
@@ -2167,9 +2167,9 @@ $(DEPDIR)/rtmpdump.do_compile: bootstrap openssl openssl-dev libz $(DEPDIR)/rtmp
 $(DEPDIR)/min-rtmpdump $(DEPDIR)/std-rtmpdump $(DEPDIR)/max-rtmpdump \
 $(DEPDIR)/rtmpdump: \
 $(DEPDIR)/%rtmpdump: $(DEPDIR)/rtmpdump.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_rtmpdump@ && \
 		@INSTALL_rtmpdump@
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
@@ -2197,23 +2197,17 @@ $(DEPDIR)/libdvbsipp.do_compile: $(DEPDIR)/libdvbsipp.do_prepare
 $(DEPDIR)/min-libdvbsipp $(DEPDIR)/std-libdvbsipp $(DEPDIR)/max-libdvbsipp \
 $(DEPDIR)/libdvbsipp: \
 $(DEPDIR)/%libdvbsipp: $(DEPDIR)/libdvbsipp.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_libdvbsipp@ && \
 		@INSTALL_libdvbsipp@
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-
 
 #
 # libtuxtxt
 #
 $(DEPDIR)/libtuxtxt.do_prepare:  @DEPENDS_libtuxtxt@
-	[ -d "tuxtxt" ] && \
-	cd tuxtxt && git pull; \
-	[ -d "tuxtxt" ] || \
-	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
-	cd @DIR_libtuxtxt@ && patch -p1 < ../../Patches/libtuxtxt-1.0-fix_dbox_headers.diff
-	touch $@
+	cd @DIR_libtuxtxt@ && \
+	patch -p1 < $(buildprefix)/Patches/libtuxtxt-1.0-fix_dbox_headers.diff
 
 $(DEPDIR)/libtuxtxt.do_compile: $(DEPDIR)/libtuxtxt.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
@@ -2232,28 +2226,22 @@ $(DEPDIR)/libtuxtxt.do_compile: $(DEPDIR)/libtuxtxt.do_prepare
 		--with-datadir=/usr/share/tuxtxt \
 		--with-fontdir=/usr/share/fonts && \
 	$(MAKE) all
-	touch $@
+
 
 $(DEPDIR)/min-libtuxtxt $(DEPDIR)/std-libtuxtxt $(DEPDIR)/max-libtuxtxt \
 $(DEPDIR)/libtuxtxt: \
 $(DEPDIR)/%libtuxtxt: $(DEPDIR)/libtuxtxt.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_libtuxtxt@ && \
 		@INSTALL_libtuxtxt@
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # tuxtxt32bpp
 #
-$(DEPDIR)/tuxtxt32bpp.do_prepare: libtuxtxt @DEPENDS_tuxtxt32bpp@
-	[ -d "tuxtxt" ] && \
-	cd tuxtxt && git pull; \
-	[ -d "tuxtxt" ] || \
-	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
-	touch py-compile
-	chmod 755 py-compile
-	cd @DIR_tuxtxt32bpp@ && patch -p1 < ../../Patches/tuxtxt32bpp-1.0-fix_dbox_headers.diff
-	touch $@
+$(DEPDIR)/tuxtxt32bpp.do_prepare: plituxtxt.tar.bz2 libtuxtxt @DEPENDS_tuxtxt32bpp@
+	cd @DIR_tuxtxt32bpp@ && \
+		patch -p1 < $(buildprefix)/Patches/tuxtxt32bpp-1.0-fix_dbox_headers.diff;
 
 $(DEPDIR)/tuxtxt32bpp.do_compile: $(DEPDIR)/tuxtxt32bpp.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
@@ -2272,15 +2260,22 @@ $(DEPDIR)/tuxtxt32bpp.do_compile: $(DEPDIR)/tuxtxt32bpp.do_prepare
 		--with-datadir=/usr/share/tuxtxt \
 		--with-fontdir=/usr/share/fonts && \
 	$(MAKE) all
-	touch $@
 
 $(DEPDIR)/min-tuxtxt32bpp $(DEPDIR)/std-tuxtxt32bpp $(DEPDIR)/max-tuxtxt32bpp \
 $(DEPDIR)/tuxtxt32bpp: \
 $(DEPDIR)/%tuxtxt32bpp: $(DEPDIR)/tuxtxt32bpp.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_tuxtxt32bpp@ && \
 		@INSTALL_tuxtxt32bpp@
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
+
+
+plituxtxt.tar.bz2:
+	rm -rf $(buildprefix)/tuxtxt && \
+	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
+	tar cjf tuxtxt.tar.bz2 tuxtxt --exclude=.git && \
+	mv tuxtxt.tar.bz2 $(archivedir)
+#	rm -rf $(buildprefix)/tuxtxt
 
 #
 # libdreamdvd
@@ -2307,9 +2302,9 @@ $(DEPDIR)/libdreamdvd.do_compile: $(DEPDIR)/libdreamdvd.do_prepare
 $(DEPDIR)/min-libdreamdvd $(DEPDIR)/std-libdreamdvd $(DEPDIR)/max-libdreamdvd \
 $(DEPDIR)/libdreamdvd: \
 $(DEPDIR)/%libdreamdvd: $(DEPDIR)/libdreamdvd.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_libdreamdvd@ && \
 		@INSTALL_libdreamdvd@
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
@@ -2340,9 +2335,9 @@ $(DEPDIR)/libdreamdvd2.do_compile: $(DEPDIR)/libdreamdvd2.do_prepare
 $(DEPDIR)/min-libdreamdvd2 $(DEPDIR)/std-libdreamdvd2 $(DEPDIR)/max-libdreamdvd2 \
 $(DEPDIR)/libdreamdvd2: \
 $(DEPDIR)/%libdreamdvd2: $(DEPDIR)/libdreamdvd2.do_compile
-	@[ "x$*" = "x" ] && touch $@ || true
 	cd @DIR_libdreamdvd2@ && \
 		@INSTALL_libdreamdvd2@
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
