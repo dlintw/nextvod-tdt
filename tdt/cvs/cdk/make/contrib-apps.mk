@@ -1105,7 +1105,8 @@ $(DEPDIR)/autofs.do_compile: bootstrap autofs.do_prepare
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
-			--prefix=/usr && \
+			--prefix=/usr \
+			--mandir=/usr/local/man && \
 		$(MAKE) all
 	touch $@
 
