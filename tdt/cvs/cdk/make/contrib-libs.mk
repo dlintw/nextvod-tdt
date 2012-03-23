@@ -2350,3 +2350,4 @@ $(DEPDIR)/pilimaging: bootstrap python @DEPENDS_pilimaging@
 	@DISTCLEANUP_pilimaging@
 	@touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
+

@@ -104,6 +104,7 @@ libtuxtxt;make:install:prefix=/usr:DESTDIR=TARGETS
 tuxtxt32bpp;make:install:prefix=/usr:DESTDIR=TARGETS
 libdreamdvd;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libdreamdvd.pc
 libdreamdvd2;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libdreamdvd.pc
+hotplug_e2;make:install:prefix=/usr:DESTDIR=TARGETS
 
 
 #

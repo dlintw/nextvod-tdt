@@ -70,6 +70,8 @@ mencoder;1.0;mplayer-export-*;mplayer-export-snapshot.tar.bz2;extract:mplayer-ex
 jfsutils;1.1.15;jfsutils-1.1.15;jfsutils-1.1.15.tar.gz;extract:jfsutils-1.1.15.tar.gz
 opkg;0.1.8;opkg-0.1.8;opkg-0.1.8.tar.gz;extract:opkg-0.1.8.tar.gz
 sysstat;10.0.4;sysstat-10.0.4;sysstat-10.0.4.tar.gz;extract:sysstat-10.0.4.tar.gz
+hotplug_e2;1.0;hotplug-e2-helper;;
+autofs;3.1.7;autofs-3.1.7;autofs-3.1.7.tar.gz;extract:autofs-3.1.7.tar.gz;patch:autofs-3.1.7-stm.patch;patch:autofs-4.0.0-open_max.patch;patch:autofs-3.1.7-labelfix.patch;patch:autofs-3.1.7-timeout.patch
 
 #
 # contrib libs

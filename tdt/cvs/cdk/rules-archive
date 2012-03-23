@@ -71,6 +71,7 @@ mplayer-export-snapshot.tar.bz2;ftp://ftp.mplayerhq.hu/MPlayer/releases
 jfsutils-1.1.15.tar.gz;http://jfs.sourceforge.net/project/pub;http://fossies.org/linux/misc
 opkg-0.1.8.tar.gz;http://opkg.googlecode.com/files
 sysstat-10.0.4.tar.gz;http://pagesperso-orange.fr/sebastien.godard
+autofs-3.1.7.tar.gz;ftp://ftp.kernel.org/pub/linux/daemons/autofs/v3/
 
 #
 # contrib libs

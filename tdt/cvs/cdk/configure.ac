@@ -918,7 +918,6 @@ TUXBOX_RULES_MAKE(sysvinit)
 #
 TUXBOX_RULES_MAKE(portmap)
 TUXBOX_RULES_MAKE(nfs_utils)
-TUXBOX_RULES_MAKE(autofs)
 TUXBOX_RULES_MAKE(vsftpd)
 TUXBOX_RULES_MAKE(netkit_ftp)
 TUXBOX_RULES_MAKE(samba)
@@ -953,6 +952,8 @@ TUXBOX_RULES_MAKE(util_linux)
 TUXBOX_RULES_MAKE(jfsutils)
 TUXBOX_RULES_MAKE(opkg)
 TUXBOX_RULES_MAKE(sysstat)
+TUXBOX_RULES_MAKE(hotplug_e2)
+TUXBOX_RULES_MAKE(autofs)
 
 #
 # contrib libs
