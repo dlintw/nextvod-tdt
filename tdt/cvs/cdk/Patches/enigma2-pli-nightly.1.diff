@@ -393,6 +393,19 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/driver
  
  if HAVE_LIBSDL
  driver_libenigma_driver_a_SOURCES += \
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/driver/rc.cpp enigma2-nightly.org/lib/driver/rc.cpp
+--- enigma2-nightly.org.org/lib/driver/rc.cpp	1969-12-31 16:00:00.000000000 -0800
++++ enigma2-nightly.org/lib/driver/rc.cpp	2012-03-20 01:26:31.327115296 -0700
+@@ -148,6 +148,9 @@
+ 
+ bool eRCInputEventDriver::isKeyboard()
+ {
++	if (getDeviceName().find("RC") != std::string::npos)
++		return false;
++
+ 	/* check whether the input device has KEY_A, in which case we assume it is a keyboard */
+ 	return hasCap(keyCaps, KEY_A);
+ }
 diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/vfd.cpp
 --- enigma2-nightly.org.org/lib/driver/vfd.cpp	1969-12-31 16:00:00.000000000 -0800
 +++ enigma2-nightly.org/lib/driver/vfd.cpp	2012-03-20 01:26:31.327115296 -0700
