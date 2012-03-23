@@ -253,12 +253,12 @@ else !STM24
 $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare
 	cd @DIR_e2fsprogs@ && \
 	$(BUILDENV) \
+	cc="$(target)-gcc") \
 	./configure \
 		--build=$(build) \
 		--host=$(target) \
 		--target=$(target) \
 		--with-linker=$(target)-ld \
-		$(if $(STABLE), cc="$(target)-gcc") \
 		--enable-htree \
 		--disable-profile \
 		--disable-e2initrd-helper \
@@ -1105,7 +1105,8 @@ $(DEPDIR)/autofs.do_compile: bootstrap autofs.do_prepare
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
-			--prefix=/usr && \
+			--prefix=/usr \
+			--mandir=/usr/local/man && \
 		$(MAKE) all
 	touch $@
 
