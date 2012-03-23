@@ -447,19 +447,10 @@ case "$REPLY" in
 	2) VDR="--enable-vdr1722";;
 	*) VDR="";;
 esac
+
 ##############################################
 
 CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM $MEDIAFW $EXTERNAL_LCD $VDR"
-
-##############################################
-
-# Enable this option if you want to use the latest version of every package.
-# The latest version might have solved some bugs, but might also have
-# introduced new ones
-# CONFIGPARAM="$CONFIGPARAM --enable-bleeding-edge"
-
-# Check this option if you want to use the old version of GCC.
-#CONFIGPARAM="$CONFIGPARAM --enable-old-gcc-stm24"
 
 ##############################################
 

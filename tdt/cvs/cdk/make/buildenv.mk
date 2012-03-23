@@ -44,13 +44,6 @@ STM_SRC := $(STLINUX)
 endif !STM23
 endif !STM22
 
-if BLEEDING_EDGE
-STABLE =
-else !BLEEDING_EDGE
-STABLE = YES
-endif !BLEEDING_EDGE
-export STABLE
-
 # rpm helper-"functions":
 TARGETLIB = $(targetprefix)/usr/lib
 PKG_CONFIG_PATH = $(targetprefix)/usr/lib/pkgconfig
@@ -142,7 +135,7 @@ ACLOCAL_AMFLAGS = -I .
 CONFIG_STATUS_DEPENDENCIES = \
 	$(top_srcdir)/rules.pl \
 	$(top_srcdir)/rules-install $(top_srcdir)/rules-install-flash \
-	$(top_srcdir)/rules-make$(if $(STABLE),,.latest) \
+	$(top_srcdir)/rules-make \
 	Makefile-archive
 
 min-query std-query max-query query: \

@@ -159,11 +159,6 @@ AC_ARG_ENABLE(debug,
 	,[enable_debug=no])
 AM_CONDITIONAL(DEBUG,test "$enable_debug" = "yes")
 
-AC_ARG_ENABLE(bleeding_edge,
-	AS_HELP_STRING(--enable-bleeding-edge,	Use latest possible version for every package),
-	,[enable_bleeding_edge=no])
-AM_CONDITIONAL(BLEEDING_EDGE,test "$enable_bleeding_edge" = "yes")
-
 AC_ARG_ENABLE(enable_vdr1711,
 	AS_HELP_STRING(--enable-vdr1711,	set up the CDK to use vdr 1.7.11),
 	,[enable_vdr1711=no])
@@ -359,18 +354,18 @@ AM_CONDITIONAL(ENABLE_VIP1_V2,test "$enable_vip1_v2" = "yes")
 AC_SUBST(VIP1_V2)
 
 AC_ARG_ENABLE(spark,
-    AS_HELP_STRING(--enable-spark,    enable spark),
-    [case "${enableval}" in
-        yes) SPARK=spark ;;
-    esac],[enable_spark=no])
+	AS_HELP_STRING(--enable-spark,    enable spark),
+	[case "${enableval}" in
+		yes) SPARK=spark ;;
+	esac],[enable_spark=no])
 AM_CONDITIONAL(ENABLE_SPARK,test "$enable_spark" = "yes")
 AC_SUBST(SPARK)
 
 AC_ARG_ENABLE(spark7162,
-    AS_HELP_STRING(--enable-spark7162,    enable spark7162),
-    [case "${enableval}" in
-        yes) SPARK7162=spark7162 ;;
-    esac],[enable_spark7162=no])
+	AS_HELP_STRING(--enable-spark7162,    enable spark7162),
+	[case "${enableval}" in
+		yes) SPARK7162=spark7162 ;;
+	esac],[enable_spark7162=no])
 AM_CONDITIONAL(ENABLE_SPARK7162,test "$enable_spark7162" = "yes")
 AC_SUBST(SPARK7162)
 
@@ -844,11 +839,11 @@ else
 		KERNELVERSION=${VERSION_linuxp0207}
 		KERNELSTMLABEL="_${VERSION_linuxp0207#*_}"
 		KERNELLABEL="207"
-    elif test "$enable_p0209" == "yes"; then
+	elif test "$enable_p0209" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0209}
 		KERNELSTMLABEL="_${VERSION_linuxp0209#*_}"
 		KERNELLABEL="209"
-    elif test "$enable_p0207" == "yes"; then
+	elif test "$enable_p0207" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0207}
 		KERNELSTMLABEL="_${VERSION_linuxp0207#*_}"
 		KERNELLABEL="207"
