@@ -24,12 +24,12 @@
 +	 },
 +	{
 +	 .name = "ROOT FS",
-+	 .size = 0x00BE0000,	//11,875M
++	 .size = 0x00BD0000,	//11,8125M + 10000error
 +	 .offset = 0x01220000,	//1200000 + 20000squasfs
 +	 },
 +	{
 +	 .name = "Device",
-+	 .size = 0x002E0000,	// 2,875M
++	 .size = 0x002D0000,	// 2,8125M + 10000error
 +	 .offset = 0x01E20000,	//1E00000 + 20000squasfs
 +	 },
 +	{
@@ -68,13 +68,13 @@
 +	 },
 +	{
 +	 .name = "ROOT",
-+	 .size = 0x02C80000,	//43,5M
++	 .size = 0x02C60000,	//43,375M
 +	 .offset =	0x00AE0000,
 +	},
 +	{
 +	 .name = "SWAP",
 +	 .size = 0x006E0000,	//6,875M
-+	 .offset = 0x03760000,
++	 .offset = 0x03740000,
 +	 },
 +};
 +
