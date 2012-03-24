@@ -63,13 +63,13 @@
 +	 },
 +	{
 +	 .name = "FW",
-+	 .size = 0x004e0000,	//4,875M
++	 .size = 0x006E0000,	//6,875M
 +	 .offset = 0x00400000,
 +	 },
 +	{
 +	 .name = "ROOT",
-+	 .size = 0x02E80000,	//45,5MM
-+	 .offset =	0x008e0000,
++	 .size = 0x02C80000,	//43,5M
++	 .offset =	0x00AE0000,
 +	},
 +	{
 +	 .name = "SWAP",

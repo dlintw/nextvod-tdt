@@ -914,7 +914,6 @@ release_base:
 	cp -dp $(targetprefix)/etc/services $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/shells $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/shells.conf $(prefix)/release/etc/ && \
-	cp -dp $(targetprefix)/etc/timezone.xml $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/vsftpd.conf $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/inetd.conf $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/image-version $(prefix)/release/etc/ && \
