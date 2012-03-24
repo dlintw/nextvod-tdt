@@ -1106,7 +1106,7 @@ $(DEPDIR)/autofs.do_compile: bootstrap autofs.do_prepare
 			--build=$(build) \
 			--host=$(target) \
 			--prefix=/usr && \
-		$(MAKE) all
+		$(MAKE) all CC=$(target)-gcc STRIP=$(target)-strip
 	touch $@
 
 $(DEPDIR)/min-autofs $(DEPDIR)/std-autofs $(DEPDIR)/max-autofs \
