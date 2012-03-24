@@ -3429,14 +3429,14 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/gdi/fb
  	if ((screeninfo.xres!=nxRes) && (screeninfo.yres!=nyRes) && (screeninfo.bits_per_pixel!=nbpp))
  	{
  		eDebug("SetMode failed: wanted: %dx%dx%d, got %dx%dx%d",
-@@ -167,6 +195,7 @@
- 		printf("fb failed\n");
+@@ -168,6 +196,7 @@
  	}
  	stride=fix.line_length;
-+#endif
  	memset(lfb, 0, stride*yRes);
++#endif
  	blit();
  	return 0;
+ }
 @@ -174,9 +203,15 @@
  
  void fbClass::getMode(int &xres, int &yres, int &bpp)
@@ -3568,7 +3568,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/gdi/fb
  	return fbFd;
  }
  
-@@ -242,25 +374,47 @@
+@@ -242,25 +374,49 @@
  	if (locked == 2)  // re-enable manualBlit
  		enableManualBlit();
  	locked=0;
@@ -3588,6 +3588,8 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/gdi/fb
 +
 +	if (ioctl( fbFd, STMFBIO_SET_OUTPUT_CONFIG, &outcfg ) < 0)
 +		perror("STMFBIO_SET_OUTPUT_CONFIG\n");
++
++	memset(lfb, 0, stride*yRes);
 +#endif
 +
  	SetMode(xRes, yRes, bpp);
