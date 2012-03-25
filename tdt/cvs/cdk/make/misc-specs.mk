@@ -118,22 +118,6 @@ $(DEPDIR)/%$(SPLASHUTILS): $(SPLASHUTILS_RPM)
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-flash-splashutils: $(flashprefix)/root/sbin/fbsplashd
-
-$(flashprefix)/root/sbin/fbsplashd: $(SPLASHUTILS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	cp root/etc/splash/luxisri.ttf $(flashprefix)/root/etc/splash/ && \
-	cp -rd root/etc/splash/{vdr,liquid,together}_theme $(flashprefix)/root/etc/splash/ && \
-	$(LN_SF) liquid_theme $(flashprefix)/root/etc/splash/default && \
-	rm -rf $(flashprefix)/root/etc/splash/st_theme && \
-	$(INSTALL_DIR) $(flashprefix)/root/lib/lsb && \
-	cp root/lib/lsb/splash-functions $(flashprefix)/root/lib/lsb/ && \
-	rm $(flashprefix)/root/sbin/{fbsplashd.static,splash-functions.sh} && \
-	rm $(flashprefix)/root/usr/bin/{bootsplash2fbsplash,splash_geninitramfs,splash_manager,splash_resize} && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
-
 #
 # STSLAVE
 #
@@ -186,14 +170,6 @@ $(DEPDIR)/%$(STSLAVE): linux-kernel-headers binutils-dev $(STSLAVE_RPM)
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM22
-
-flash-stslave: $(flashprefix)/root/bin/stslave
-
-$(flashprefix)/root/bin/stslave: $(STSLAVE)
-	$(INSTALL_DIR) $(dir $@) && \
-	$(CP_D) $(targetprefix)/bin/stslave $@ && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
 
 #
 # OPENSSL
@@ -303,14 +279,6 @@ $(DEPDIR)/%$(ALSALIB_DEV): %$(ALSALIB) $(ALSALIB_DEV_RPM)
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-flash-alsa-lib: $(flashprefix)/root/usr/bin/aserver
-
-$(flashprefix)/root/usr/bin/aserver: $(ALSALIB_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
-
 #
 # ALSAUTILS
 #
@@ -354,16 +322,6 @@ $(DEPDIR)/%$(ALSAUTILS): $(ALSAUTILS_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-alsa-utils: $(flashprefix)/root/usr/bin/amixer
-
-$(flashprefix)/root/usr/bin/amixer: $(ALSAUTILS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	rm -rf $(flashprefix)/root/usr/share/sounds/alsa && \
-	rmdir $(flashprefix)/root/usr/share/sounds && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
 
 #
 # ALSAPLAYER
@@ -419,12 +377,3 @@ $(DEPDIR)/%$(ALSAPLAYER_DEV): $(ALSAPLAYER_DEV_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-alsaplayer: $(flashprefix)/root/usr/bin/alsaplayer
-
-$(flashprefix)/root/usr/bin/alsaplayer: $(ALSAPLAYER_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
-
