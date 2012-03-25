@@ -70,45 +70,6 @@ $(hostprefix)/bin/mksquashfs: @DEPENDS_squashfs@
 endif
 
 #
-# IPKG-UTILS
-#
-IPKG_BUILD_BIN = $(crossprefix)/bin/ipkg-build
-
-ipkg-utils: $(IPKG_BUILD_BIN)
-
-$(crossprefix)/bin/ipkg-build: @DEPENDS_ipkg_utils@ | $(ipkprefix)
-	@PREPARE_ipkg_utils@
-	cd @DIR_ipkg_utils@ && \
-		$(MAKE) all PREFIX=$(crossprefix) && \
-		$(MAKE) install PREFIX=$(crossprefix)
-#       @DISTCLEANUP_ipkg_utils@
-
-#
-# IPKG-HOST
-#
-IPKG_BIN = $(crossprefix)/bin/ipkg
-IPKG_CONF = $(crossprefix)/etc/ipkg.conf
-
-ipkg-host: $(IPKG_BIN)
-
-$(crossprefix)/bin/ipkg: @DEPENDS_ipkg_host@
-	@PREPARE_ipkg_host@
-	cd @DIR_ipkg_host@/ipkg-@VERSION_ipkg_host@ && \
-		./configure \
-			--prefix=$(crossprefix) && \
-		$(MAKE) && \
-		$(MAKE) install && \
-	$(LN_SF) ipkg-cl $@
-	echo "dest root $(flashprefix)/root" >$(IPKG_CONF)
-	( echo "lists_dir ext $(flashprefix)/root/usr/lib/ipkg"; \
-	  echo "arch sh4 10"; \
-	  echo "arch all 1"; \
-	  echo "src/gz cross file://$(ipkprefix)" ) >>$(IPKG_CONF)
-
-#	$(INSTALL_DIR) $(crossprefix)/etc/ipkg
-#	echo "src/gz cross file://$(ipkprefix)" >$(crossprefix)/etc/ipkg/cross-feed.conf
-
-#
 # PYTHON-HOST
 #
 $(DEPDIR)/host-python: @DEPENDS_host_python@

@@ -818,8 +818,6 @@ fi
 TUXBOX_RULES_MAKE(squashfs)
 TUXBOX_RULES_MAKE(ccache)
 TUXBOX_RULES_MAKE(cramfs)
-TUXBOX_RULES_MAKE(ipkg_utils)
-TUXBOX_RULES_MAKE(ipkg_host)
 TUXBOX_RULES_MAKE(host_python)
 TUXBOX_RULES_MAKE(libtool)
 
@@ -1119,7 +1117,6 @@ boot prefix                 : $bootprefix
 host prefix                 : $hostprefix
 cross prefix                : $crossprefix
 build prefix                : $buildprefix
-ipk packages prefix         : $ipkprefix
 root partition size         : $ROOT_PARTITION_SIZE
 data partition size         : $DATA_PARTITION_SIZE
 serversupport               : $serversupport
@@ -1134,7 +1131,6 @@ ucode directory             : $ucodesdir
 GNU server                  : $gnuserver
 default server              : $defaultserver
 update http prefix          : $updatehttpprefix
-ipkg build directory        : $ipkgbuilddir
 Fortis/hdbox stuff          : $enable_fortis_hdbox
 Fortis hs7810a stuff        : $enable_hs7810a
 Fortis hs7110 stuff         : $enable_hs7110
