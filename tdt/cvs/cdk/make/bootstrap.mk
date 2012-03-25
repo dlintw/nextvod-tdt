@@ -70,9 +70,20 @@ STM_RELOCATE := /opt/STM/STLinux-2.4
 endif !STM23
 endif !STM22
 
+#######################################   BOOTSTRAP-HOST   #########################################
 #
-# BOOTSTRAP-HOST
+# HOST-FILESYSTEM
 #
+host-filesystem:
+	$(INSTALL) -d $(prefix)
+	$(INSTALL) -d $(configprefix)
+	$(INSTALL) -d $(devkitprefix)
+	$(INSTALL) -d $(devkitprefix)/sources
+	$(INSTALL) -d $(devkitprefix)/sources/kernel
+	$(INSTALL) -d $(hostprefix)
+	$(INSTALL) -d $(hostprefix)/{bin,doc,etc,include,info,lib,man,share,var}
+	$(INSTALL) -d $(hostprefix)/man/man{1,2,3,4,5,6,7,8,9}
+	touch .deps/$@
 
 #
 # CCACHE
@@ -219,21 +230,6 @@ $(HOST_DISTRIBUTIONUTILS): $(HOST_DISTRIBUTIONUTILS_RPM)
 	touch .deps/$(notdir $@)
 
 #
-# HOST-FILESYSTEM
-#
-
-host-filesystem:
-	$(INSTALL) -d $(prefix)
-	$(INSTALL) -d $(configprefix)
-	$(INSTALL) -d $(devkitprefix)
-	$(INSTALL) -d $(devkitprefix)/sources
-	$(INSTALL) -d $(devkitprefix)/sources/kernel
-	$(INSTALL) -d $(hostprefix)
-	$(INSTALL) -d $(hostprefix)/{bin,doc,etc,include,info,lib,man,share,var}
-	$(INSTALL) -d $(hostprefix)/man/man{1,2,3,4,5,6,7,8,9}
-	touch .deps/$@
-
-#
 # HOST AUTOTOOLS
 #
 HOST_AUTOTOOLS = host-autotools
@@ -378,24 +374,6 @@ $(DEPDIR)/$(HOST_PKGCONFIG): $(HOST_PKGCONFIG_RPM)
 	touch $@
 endif !STM22
 
-if STM22
-else !STM22
-#
-# HOST-LIBLZO
-#
-##HOST_LIBLZO		:= host-liblzo
-##HOST_LIBLZO_VERSION	:= 2.03-1
-
-##RPMS/sh4/$(STLINUX)-$(HOST_LIBLZO)-$(HOST_LIBLZO_VERSION).sh4.rpm: \
-##		$(archivedir)/$(STM_SRC)-$(HOST_LIBLZO)-$(HOST_LIBLZO_VERSION).src.rpm
-##	rpm  $(DRPM) --nosignature -Uhv $< && \
-##	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-$(HOST_LIBLZO).spec
-
-##$(HOST_LIBLZO): RPMS/sh4/$(STLINUX)-$(HOST_LIBLZO)-$(HOST_LIBLZO_VERSION).sh4.rpm
-##	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
-##	touch .deps/$(notdir $@)
-endif !STM22
-
 #
 # HOST-MTD-UTILS
 #
@@ -421,7 +399,6 @@ HOST_MTD_UTILS_PATCHES =
 endif !STM23
 endif !STM22
 HOST_MTD_UTILS_RPM = RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).sh4.rpm
-
 
 # Workaround for stm24, where is the host-lzo package available?
 if STM24
@@ -459,10 +436,7 @@ $(DEPDIR)/bootstrap-host: | \
 		$(HOST_MTD_UTILS)
 	$(if $(HOST_MTD_UTILS_RPM),[ "x$*" = "x" ] && touch -r $(HOST_MTD_UTILS_RPM) $@ || true)
 
-#
-# BOOTSTRAP-CROSS
-#
-
+########################################   BOOTSTRAP-CROSS   ########################################
 #
 # CROSS_FILESYSTEM
 #
@@ -784,14 +758,6 @@ $(CROSS_PROTOIZE): $(CROSS_PROTOIZE_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
-#flash-cross-sh4-libgcc: $(flashprefix)/root/lib/libgcc_s-$(CROSS_GCC_RAWVERSION).so.1
-#
-#$(flashprefix)/root/lib/libgcc_s-$(CROSS_GCC_RAWVERSION).so.1: $(CROSS_LIBGCC_RPM)
-#	@rpm --dbpath $(flashprefix)-rpmdb  $(DRPM) --ignorearch --nodeps  -Uhv \
-#		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $<
-#	touch $@
-#	@FLASHROOTDIR_MODIFIED@
-
 #
 # BOOTSTRAP-CROSS
 #
@@ -829,8 +795,10 @@ $(DEPDIR)/libtool.do_compile: $(DEPDIR)/libtool.do_prepare
 	$(MAKE)
 	touch $@
 
-$(DEPDIR)/libtool: $(DEPDIR)/libtool.do_compile
+$(DEPDIR)/min-libtool $(DEPDIR)/std-libtool $(DEPDIR)/max-libtool \
+$(DEPDIR)/libtool: \
+$(DEPDIR)/%libtool: $(DEPDIR)/libtool.do_compile
 	cd @DIR_libtool@ && \
 	@INSTALL_libtool@
+##		sed -i -e 's,\(hardcode_into_libs\)=yes,\1=no,g' $(hostprefix)/bin/libtool
 	touch $@
-
