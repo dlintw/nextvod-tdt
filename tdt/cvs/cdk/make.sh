@@ -22,8 +22,7 @@ CONFIGPARAM=" \
  --with-cvsdir=$KATIDIR/cvs \
  --with-customizationsdir=$KATIDIR/custom \
  --with-archivedir=$HOME/Archive \
- --enable-ccache \
- --enable-flashrules"
+ --enable-ccache"
 
 ##############################################
 
@@ -467,6 +466,7 @@ echo "-----------------------"
 echo "Your build enivroment is ready :-)"
 echo "Your next step could be:"
 echo "make yaud-enigma2-nightly"
+echo "make yaud-enigma2-pli-nightly"
 echo "make yaud-neutrino"
 echo "make yaud-vdr"
 echo "make yaud-vdrdev2"
