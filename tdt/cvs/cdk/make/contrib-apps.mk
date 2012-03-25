@@ -14,8 +14,6 @@ $(DEPDIR)/module-init-tools.do_compile: bootstrap $(DEPDIR)/module-init-tools.do
 			--prefix= && \
 		$(MAKE)
 	touch $@
-#			--enable-zlib \
-#
 
 $(DEPDIR)/min-module-init-tools $(DEPDIR)/std-module-init-tools $(DEPDIR)/max-module-init-tools \
 $(DEPDIR)/module-init-tools: \
@@ -27,20 +25,6 @@ $(DEPDIR)/%module-init-tools: $(DEPDIR)/%lsb $(MODULE_INIT_TOOLS:%=root/etc/%) $
 #	@DISTCLEANUP_module_init_tools@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-
-flash-module-init-tools: $(flashprefix)/root/sbin/depmod
-
-$(flashprefix)/root/sbin/depmod: flash-lsb $(MODULE_INIT_TOOLS:%=root/etc/%) $(DEPDIR)/module-init-tools.do_compile | $(flashprefix)/root
-	cd @DIR_module_init_tools@  && \
-		for i in depmod modinfo ; do \
-			$(INSTALL) -m 755 $$i $(@D) ; done
-	$(call adapted-etc-flashfiles,$(MODULE_INIT_TOOLS_ADAPTED_ETC_FILES))
-	$(call initdconfig-flash,module-init-tools)
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
 
 #
 # GREP
@@ -75,18 +59,6 @@ $(DEPDIR)/%grep: $(DEPDIR)/grep.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-
-flash-grep: $(flashprefix)/root/usr/bin/grep
-
-$(flashprefix)/root/usr/bin/grep: $(DEPDIR)/grep.do_compile | $(flashprefix)/root
-	cd @DIR_grep@  && \
-		for i in src/{grep,egrep,fgrep} ; do \
-			$(INSTALL) -m 755 $$i $(@D) ; done
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
-
 #
 # LSB
 #
@@ -105,18 +77,6 @@ $(DEPDIR)/%lsb: $(DEPDIR)/lsb.do_compile
 #	@DISTCLEANUP_lsb@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-
-flash-lsb: $(flashprefix)/root/lib/lsb/init-functions
-
-$(flashprefix)/root/lib/lsb/init-functions: $(DEPDIR)/lsb.do_compile | $(flashprefix)/root
-	cd @DIR_lsb@  && \
-		$(INSTALL) -d $(@D) && \
-		$(INSTALL) -m 644 init-functions $@
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
 
 #
 # PORTMAP
@@ -145,23 +105,6 @@ $(DEPDIR)/%portmap: $(DEPDIR)/%lsb $(PORTMAP_ADAPTED_ETC_FILES:%=root/etc/%) $(D
 #	@DISTCLEANUP_portmap@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-
-flash-portmap: $(flashprefix)/root/sbin/portmap
-
-$(flashprefix)/root/sbin/portmap: bootstrap flash-lsb $(DEPDIR)/portmap.do_compile \
-		$(PORTMAP_ADAPTED_ETC_FILES:%=root/etc/%) | $(flashprefix)/root
-	cd @DIR_portmap@  && \
-		$(INSTALL) -m 0755 portmap $(flashprefix)/root/sbin && \
-		$(INSTALL) -m 0755 pmap_dump $(flashprefix)/root/sbin && \
-		$(INSTALL) -m 0755 pmap_set $(flashprefix)/root/sbin && \
-		$(INSTALL) -m 755 debian/init.d $(flashprefix)/root/etc/init.d/portmap
-	$(call adapted-etc-flashfiles,$(PORTMAP_ADAPTED_ETC_FILES))
-	$(call initdconfig-flash,portmap)
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
 
 #
 # OPENRDATE
@@ -198,27 +141,6 @@ $(DEPDIR)/%openrdate: $(OPENRDATE_ADAPTED_ETC_FILES:%=root/etc/%) \
 #	@DISTCLEANUP_openrdate@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-
-flash-openrdate: $(flashprefix)/root/usr/bin/rdate
-
-$(flashprefix)/root/usr/bin/rdate: bootstrap $(DEPDIR)/openrdate.do_compile \
-		$(OPENRDATE_ADAPTED_ETC_FILES:%=root/etc/%) | $(flashprefix)/root
-	cd @DIR_openrdate@  && \
-		$(INSTALL) -m 755 src/rdate $@
-	( cd root/etc && for i in $(OPENRDATE_ADAPTED_ETC_FILES); do \
-		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
-		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done ) && \
-	( export HHL_CROSS_TARGET_DIR=$(flashprefix)/root && cd $(flashprefix)/root/etc/init.d && \
-		for s in rdate.sh ; do \
-			$(hostprefix)/bin/target-initdconfig --add $$s || \
-			echo "Unable to enable initd service: $$s" ; done && rm *rpmsave 2>/dev/null || true )
-	@touch $@
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
-
 
 #
 # E2FSPROGS
@@ -299,32 +221,10 @@ $(DEPDIR)/%e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
 	[ "x$*" = "x" ] && ( cd @DIR_e2fsprogs@ && \
 		$(MAKE) install -C lib/uuid DESTDIR=$(targetprefix) && \
 		$(MAKE) install -C lib/blkid DESTDIR=$(targetprefix) ) || true
-#       @DISTCLEANUP_e2fsprogs@
+#	@DISTCLEANUP_e2fsprogs@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM24
-
-if TARGETRULESET_FLASH
-
-flash-e2fsprogs: $(flashprefix)/root/sbin/mke2fs
-
-$(flashprefix)/root/sbin/mke2fs: bootstrap $(DEPDIR)/e2fsprogs | $(flashprefix)
-	cd @DIR_e2fsprogs@ && \
-		for i in misc/chattr misc/lsattr misc/uuidgen; do \
-			$(INSTALL) $$i $(flashprefix)/root/bin; done && \
-		for i in e2fsck/e2fsck misc/fsck misc/mke2fs; do \
-			$(INSTALL) $$i $(flashprefix)/root/sbin; done && \
-		$(INSTALL) misc/mke2fs.conf $(flashprefix)/root/etc && \
-		ln -sf e2fsck $(flashprefix)/root/sbin/fsck.ext2 && \
-		ln -sf e2fsck $(flashprefix)/root/sbin/fsck.ext3 && \
-		ln -sf mke2fs $(flashprefix)/root/sbin/mkfs.ext2 && \
-		ln -sf mke2fs $(flashprefix)/root/sbin/mkfs.ext3 && \
-		ln -sf tune2fs $(flashprefix)/root/sbin/e2label && \
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif
-#		for i in e2fsck/e2fsck misc/fsck misc/mke2fs misc/tune2fs; do \
-#
 
 #
 # XFSPROGS
@@ -351,41 +251,20 @@ $(DEPDIR)/xfsprogs.do_compile: $(DEPDIR)/e2fsprogs $(DEPDIR)/libreadline $(DEPDI
 			--enable-gettext=yes \
 			--enable-readline=yes \
 			--enable-editline=no \
-			--enable-termcap=yes \
-			--enable-shared-uuid=yes && \
+			--enable-termcap=yes && \
 		cp -p Makefile.sgi Makefile && export top_builddir=`pwd` && \
 		$(MAKE) $(MAKE_OPTS)
 	touch $@
 
-$(DEPDIR)/min-xfsprogs $(DEPDIR)/std-xfsprogs $(DEPDIR)/max-xfsprogs $(DEPDIR)/ipk-xfsprogs \
+$(DEPDIR)/min-xfsprogs $(DEPDIR)/std-xfsprogs $(DEPDIR)/max-xfsprogs \
 $(DEPDIR)/xfsprogs: \
 $(DEPDIR)/%xfsprogs: $(DEPDIR)/xfsprogs.do_compile
-	@[ "x$*" = "xipk-" ] && rm -rf  $(prefix)/ipk-cdkroot || true
 	cd @DIR_xfsprogs@ && \
 		export top_builddir=`pwd` && \
 		@INSTALL_xfsprogs@
-#       @DISTCLEANUP_xfsprogs@
+#	@DISTCLEANUP_xfsprogs@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-
-flash-xfsprogs: $(flashprefix)/root/sbin/mkfs.xfs 
-
-$(flashprefix)/root/sbin/mkfs.xfs: bootstrap $(DEPDIR)/xfsprogs.do_compile
-	cd @DIR_xfsprogs@ && \
-		for i in mkfs/mkfs.xfs repair/xfs_repair; do \
-			$(INSTALL) $$i $(flashprefix)/root/sbin; done && \
-		$(INSTALL) fsck/xfs_fsck.sh $(flashprefix)/root/sbin/fsck.xfs && \
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
-
-xfsprogs.build_ipk: $(DEPDIR)/ipk-xfsprogs
-	cp -prd ipk-control/xfsprogs/* $(prefix)/ipk-cdkroot && make $(prefix)/ipk-cdkroot/strippy && \
-	ipkg-build -o root -g root $(prefix)/ipk-cdkroot $(prefix)/ipk
-#	-rm -rf  $(prefix)/ipk-cdkroot
 
 #
 # MC
@@ -414,13 +293,9 @@ $(DEPDIR)/%mc: %glib2 $(DEPDIR)/mc.do_compile
 		@INSTALL_mc@
 #		export top_builddir=`pwd` && \
 #		$(MAKE) install DESTDIR=$(prefix)/$*cdkroot
-#       @DISTCLEANUP_mc@
+#	@DISTCLEANUP_mc@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-# Evaluate package mc
-# call MacroName,Source Package,Package
-$(eval $(call Package,mc,mc))
 
 #
 # SDPARM
@@ -443,23 +318,16 @@ $(DEPDIR)/sdparm.do_compile: $(DEPDIR)/sdparm.do_prepare
 		$(MAKE) $(MAKE_OPTS)
 	touch $@
 
-$(DEPDIR)/min-sdparm $(DEPDIR)/std-sdparm $(DEPDIR)/max-sdparm $(DEPDIR)/ipk-sdparm $(DEPDIR)/sdparm: \
+$(DEPDIR)/min-sdparm $(DEPDIR)/std-sdparm $(DEPDIR)/max-sdparm $(DEPDIR)/sdparm: \
 $(DEPDIR)/%sdparm: $(DEPDIR)/sdparm.do_compile
-	@[ "x$*" = "xipk-" ] && rm -rf  $(prefix)/ipk-cdkroot || true
 	cd @DIR_sdparm@ && \
 		export PATH=$(MAKE_PATH) && \
 		@INSTALL_sdparm@
 	@( cd $(prefix)/$*cdkroot/usr/share/man/man8 && \
 		gzip -v9 sdparm.8 )
-#       @CLEANUP_sdparm@
+#	@DISTCLEANUP_sdparm@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-sdparm.build_ipk: $(DEPDIR)/ipk-sdparm
-	cp -prd ipk-control/sdparm/* $(prefix)/ipk-cdkroot && \
-	make $(prefix)/ipk-cdkroot/strippy && \
-	ipkg-build -o root -g root $(prefix)/ipk-cdkroot $(prefix)/ipk
-	-rm -rf  $(prefix)/ipk-cdkroot
 
 #
 # SG3_UTILS
@@ -484,10 +352,9 @@ $(DEPDIR)/sg3_utils.do_compile: $(DEPDIR)/sg3_utils.do_prepare
 		$(MAKE) $(MAKE_OPTS)
 	touch $@
 
-$(DEPDIR)/min-sg3_utils $(DEPDIR)/std-sg3_utils $(DEPDIR)/max-sg3_utils $(DEPDIR)/ipk-sg3_utils \
+$(DEPDIR)/min-sg3_utils $(DEPDIR)/std-sg3_utils $(DEPDIR)/max-sg3_utils \
 $(DEPDIR)/sg3_utils: \
 $(DEPDIR)/%sg3_utils: $(DEPDIR)/sg3_utils.do_compile
-	@[ "x$*" = "xipk-" ] && rm -rf  $(prefix)/ipk-cdkroot || true
 	cd @DIR_sg3_utils@ && \
 		export PATH=$(MAKE_PATH) && \
 		@INSTALL_sg3_utils@
@@ -497,41 +364,10 @@ $(DEPDIR)/%sg3_utils: $(DEPDIR)/sg3_utils.do_compile
 	( cd root/etc && for i in $(SG3_UTILS_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(prefix)/$*cdkroot/etc/$$i || true; \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; done ) && \
-	$(INSTALL) -m755 root/usr/sbin/sg_down.sh $(prefix)/$*cdkroot/usr/sbin && \
-	[ "x$*" != "xipk-" ] && \
-             ( export HHL_CROSS_TARGET_DIR=$(prefix)/$*cdkroot && cd $(prefix)/$*cdkroot/etc/init.d && \
-		for s in sg_down ; do \
-			$(hostprefix)/bin/target-initdconfig --add $$s || \
-			echo "Unable to enable initd service: $$s" ; done && rm *rpmsave 2>/dev/null || true )
-#       @DISTCLEANUP_sg3_utils@
+	$(INSTALL) -m755 root/usr/sbin/sg_down.sh $(prefix)/$*cdkroot/usr/sbin
+#	@DISTCLEANUP_sg3_utils@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-sg3_utils.build_ipk: $(DEPDIR)/ipk-sg3_utils
-	cp -prd ipk-control/sg3_utils/* $(prefix)/ipk-cdkroot && \
-	make $(prefix)/ipk-cdkroot/strippy && \
-	ipkg-build -o root -g root $(prefix)/ipk-cdkroot $(prefix)/ipk
-	-rm -rf  $(prefix)/ipk-cdkroot
-
-if TARGETRULESET_FLASH
-
-flash-sg3_utils: $(flashprefix)/root/sbin/sg_start
-
-$(flashprefix)/root/sbin/sg_start: bootstrap $(SG3_UTILS_ADAPTED_ETC_FILES:%=root/etc/%) \
-		$(DEPDIR)/sg3_utils.do_compile
-	cd @DIR_sg3_utils@ && \
-		$(INSTALL) -m755 .libs/sg_start $@
-	( cd root/etc && for i in $(SG3_UTILS_ADAPTED_ETC_FILES); do \
-		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
-		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done ) && \
-	$(INSTALL) -m755 root/usr/sbin/sg_down.sh $(flashprefix)/root/sbin && \
-	( export HHL_CROSS_TARGET_DIR=$(flashprefix)/root && cd $(flashprefix)/root/etc/init.d && \
-		for s in sg_down ; do \
-			$(hostprefix)/bin/target-initdconfig --add $$s || \
-			echo "Unable to enable initd service: $$s" ; done && rm *rpmsave 2>/dev/null || true ) && \
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif
 
 #
 # IPKG
@@ -548,8 +384,6 @@ $(DEPDIR)/ipkg.do_compile: $(DEPDIR)/ipkg.do_prepare
 			--host=$(target) \
 			--prefix=/usr && \
 		$(MAKE)
-#			--datadir=/usr/share && \
-#
 	touch $@
 
 $(DEPDIR)/min-ipkg $(DEPDIR)/std-ipkg $(DEPDIR)/max-ipkg \
@@ -565,22 +399,6 @@ $(DEPDIR)/%ipkg: $(DEPDIR)/ipkg.do_compile
 #	@DISTCLEANUP_ipkg@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-
-flash-ipkg: $(flashprefix)/root/usr/bin/ipkg
-
-$(flashprefix)/root/usr/bin/ipkg: $(DEPDIR)/ipkg.do_compile | $(flashprefix)/root
-	cd @DIR_ipkg@ && \
-		$(MAKE) install DESTDIR=$|
-	$(LN_SF) ipkg-cl $|/usr/bin/ipkg
-	rm -rf $|/include/libipkg 
-	$(INSTALL) -d $|/etc && $(INSTALL) -m 644 root/etc/ipkg.conf $|/etc/
-	$(INSTALL) -d $(flashprefix)/root/usr/lib/ipkg
-	$(INSTALL) -m 644 root/usr/lib/ipkg/status.initial $(flashprefix)/root/usr/lib/ipkg/status
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
 
 #
 # ZD1211
@@ -608,17 +426,8 @@ $(DEPDIR)/%zd1211: $(DEPDIR)/zd1211.do_compile
 			install
 	$(DEPMOD) -ae -b $(targetprefix) -r $(KERNELVERSION)
 #	@DISTCLEANUP_zd1211@
-#	@[ "x$*" = "x" ] && touch $@ || true
+	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-
-flash-zd1211.cramfs flash-zd1211.squashfs flash-zd1211.jffs2: \
-flash-zd1211.%: bootstrap zd1211.do_compile | $(flashprefix)/root
-	$(MAKE) zd1211 targetprefix=$(flashprefix)/root-$*
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
 
 #
 # NANO
@@ -649,10 +458,6 @@ $(DEPDIR)/%nano: $(DEPDIR)/nano.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-# Evaluate package nano
-# call MacroName,Source Package,Package
-$(eval $(call Package,nano,nano))
-
 #
 # RSYNC
 #
@@ -681,17 +486,6 @@ $(DEPDIR)/%rsync: $(DEPDIR)/rsync.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-
-flash-rsync: $(flashprefix)/root/usr/bin/rsync
-
-$(flashprefix)/root/usr/bin/rsync: $(DEPDIR)/rsync.do_compile | $(flashprefix)/root
-	cd @DIR_rsync@  && \
-		$(INSTALL) $(@F) $@
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
-
 #
 # LM_SENSORS
 #
@@ -718,21 +512,6 @@ $(DEPDIR)/%lm_sensors: $(DEPDIR)/lm_sensors.do_compile
 #	@DISTCLEANUP_lm_sensors@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-
-flash-lm_sensors: $(flashprefix)/root/usr/sbin/i2cdetect
-
-$(flashprefix)/root/usr/bin/i2cdetect: $(DEPDIR)/lm_sensors.do_compile | $(flashprefix)/root
-	cd @DIR_lm_sensors@  && \
-		for i in prog/dump/{i2cset,i2cdump} detect/i2cdetect; do \
-			$(INSTALL) $$i $(flashprefix)/root/usr/sbin; done
-#	/usr/bin/sensors needs libsensors.so.3 -> if needed:
-#$(flashprefix)/root/usr/bin/i2cdetect: $(DEPDIR)/lm_sensors | $(flashprefix)/root
-#...		prog/sensors/sensors
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-endif
 
 #
 # FUSE
@@ -773,14 +552,6 @@ $(DEPDIR)/%fuse: %curl %glib2 $(DEPDIR)/fuse.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-# Evaluate package libfuse
-# call MacroName,Source Package,Package
-$(eval $(call Package,fuse,libfuse))
-
-# Evaluate package fuse-utils
-# call MacroName,Source Package,Package
-$(eval $(call Package,fuse,fuse-utils))
-
 #
 # CURLFTPFS
 #
@@ -808,10 +579,6 @@ $(DEPDIR)/%curlftpfs: %fuse $(DEPDIR)/curlftpfs.do_compile
 #	@DISTCLEANUP_curlftpfs@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-# Evaluate package curlftpfs
-# call MacroName,Source Package,Package
-$(eval $(call Package,curlftpfs,curlftpfs))
 
 #
 # FBSET
@@ -1010,7 +777,6 @@ $(DEPDIR)/%jfsutils: $(DEPDIR)/jfsutils.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-
 #
 # opkg
 #
@@ -1117,4 +883,3 @@ $(DEPDIR)/%autofs: $(DEPDIR)/autofs.do_compile
 #	@DISTCLEANUP_jfsutils@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
