@@ -1,5 +1,5 @@
 #
-# LIBBOOST
+# libboost
 #
 $(DEPDIR)/libboost: bootstrap @DEPENDS_libboost@
 	@PREPARE_libboost@
@@ -9,7 +9,7 @@ $(DEPDIR)/libboost: bootstrap @DEPENDS_libboost@
 	touch $@
 
 #
-# LIBZ
+# libz
 #
 if !STM22
 LIBZ_ORDER = binutils-dev
@@ -37,7 +37,7 @@ $(DEPDIR)/%libz: $(DEPDIR)/libz.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBREADLINE
+# libreadline
 #
 $(DEPDIR)/libreadline.do_prepare: bootstrap @DEPENDS_libreadline@
 	@PREPARE_libreadline@
@@ -95,7 +95,7 @@ $(DEPDIR)/freetype-old: $(DEPDIR)/freetype-old.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# FREETYPE
+# freetype
 #
 $(DEPDIR)/freetype.do_prepare: bootstrap @DEPENDS_freetype@
 	@PREPARE_freetype@
@@ -111,23 +111,20 @@ $(DEPDIR)/freetype.do_compile: $(DEPDIR)/freetype.do_prepare
 		$(MAKE) all
 	touch $@
 
-define freetype/install/post
+$(DEPDIR)/min-freetype $(DEPDIR)/std-freetype $(DEPDIR)/max-freetype \
+$(DEPDIR)/freetype: \
+$(DEPDIR)/%freetype: $(DEPDIR)/freetype.do_compile
 	cd @DIR_freetype@ && \
 		sed -e "s,^prefix=,prefix=$(targetprefix)," < builds/unix/freetype-config > $(crossprefix)/bin/freetype-config && \
+		@INSTALL_freetype@
+		chmod 755 $(crossprefix)/bin/freetype-config && \
 		ln -sf $(crossprefix)/bin/freetype-config $(crossprefix)/bin/$(target)-freetype-config && \
-		chmod 755 $(crossprefix)/bin/freetype-config
 		ln -sf $(targetprefix)/usr/include/freetype2/freetype $(targetprefix)/usr/include/freetype
-endef
-
-# Evaluate yaud and temporary package install
-$(eval $(call Cdkroot,freetype))
-
-# Evaluate packages
-$(eval $(call Package,freetype,libfreetype))
-$(eval $(call Package,freetype,libfreetype-dev))
+#	@DISTCLEANUP_freetype@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIRC
+# lirc
 #
 $(DEPDIR)/lirc.do_prepare: bootstrap @DEPENDS_lirc@
 	@PREPARE_lirc@
@@ -156,19 +153,16 @@ $(DEPDIR)/lirc.do_compile: $(DEPDIR)/lirc.do_prepare
 		$(MAKE) all
 	touch $@
 
-# Evaluate yaud and temporary package install
-$(eval $(call Cdkroot,lirc))
-
-flash-lircd: $(flashprefix)/root/usr/bin/lircd
-
-$(flashprefix)/root/usr/bin/lircd: lirc.do_compile
-	( cd @DIR_lirc@ && \
-		$(MAKE) install DESTDIR=$(flashprefix)/root ) && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
+$(DEPDIR)/min-lirc $(DEPDIR)/std-lirc $(DEPDIR)/max-lirc \
+$(DEPDIR)/lirc: \
+$(DEPDIR)/%lirc: $(DEPDIR)/lirc.do_compile
+	cd @DIR_lirc@ && \
+		@INSTALL_lirc@
+#	@DISTCLEANUP_lirc@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# JPEG
+# jpeg
 #
 $(DEPDIR)/jpeg.do_prepare: bootstrap @DEPENDS_jpeg@
 	@PREPARE_jpeg@
@@ -186,23 +180,16 @@ $(DEPDIR)/jpeg.do_compile: $(DEPDIR)/jpeg.do_prepare
 		$(MAKE) all
 	touch $@
 
-define jpeg/install/pre
-	$(INSTALL_DIR) $(prefix)/$*cdkroot/usr/bin
-	$(INSTALL_DIR) $(prefix)/$*cdkroot/usr/lib
-	$(INSTALL_DIR) $(prefix)/$*cdkroot/usr/include
-	$(INSTALL_DIR) $(prefix)/$*cdkroot/usr/man/man1
-endef
-
-# Evaluate yaud and temporary package install
-$(eval $(call Cdkroot,jpeg))
-
-# Evaluate packages
-$(eval $(call Package,jpeg,libjpeg))
-$(eval $(call Package,jpeg,libjpeg-dev))
-$(eval $(call Package,jpeg,jpeg-tools))
+$(DEPDIR)/min-jpeg $(DEPDIR)/std-jpeg $(DEPDIR)/max-jpeg \
+$(DEPDIR)/jpeg: \
+$(DEPDIR)/%jpeg: $(DEPDIR)/jpeg.do_compile
+	cd @DIR_jpeg@ && \
+		@INSTALL_jpeg@
+#	@DISTCLEANUP_jpeg@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBPNG
+# libpng
 #
 $(DEPDIR)/libpng.do_prepare: bootstrap @DEPENDS_libpng@
 	@PREPARE_libpng@
@@ -222,21 +209,18 @@ $(DEPDIR)/libpng.do_compile: libz $(DEPDIR)/libpng.do_prepare
 		$(MAKE) all
 	touch $@
 
-define libpng/install/post
+$(DEPDIR)/min-libpng $(DEPDIR)/std-libpng $(DEPDIR)/max-libpng \
+$(DEPDIR)/libpng: \
+$(DEPDIR)/%libpng: $(DEPDIR)/libpng.do_compile
 	cd @DIR_libpng@ && \
-		sed -e "s,^prefix=\",prefix=\"$(targetprefix)," < libpng-config > $(crossprefix)/bin/libpng-config && \
-		chmod 755 $(crossprefix)/bin/libpng-config
-endef
-
-# Evaluate yaud and temporary package install
-$(eval $(call Cdkroot,libpng,libz))
-
-# Evaluate packages
-$(eval $(call Package,libpng,libpng))
-$(eval $(call Package,libpng,libpng-dev))
+		@INSTALL_libpng@
+#		sed -e "s,^prefix=\",prefix=\"$(targetprefix)," < libpng-config > $(targetprefix)/usr/bin/libpng-config
+#		ln -s $(targetprefix)/usr/bin/libpng-config $(hostprefix)/bin/libpng-config
+#	@DISTCLEANUP_libpng@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBUNGIF
+# libungif
 #
 $(DEPDIR)/libungif.do_prepare: bootstrap @DEPENDS_libungif@
 	@PREPARE_libungif@
@@ -253,16 +237,16 @@ $(DEPDIR)/libungif.do_compile: $(DEPDIR)/libungif.do_prepare
 		$(MAKE)
 	touch $@
 
-# Evaluate yaud and temporary package install
-$(eval $(call Cdkroot,libungif))
-
-# Evaluate packages
-$(eval $(call Package,libungif,libungif))
-$(eval $(call Package,libungif,libungif-utils))
-$(eval $(call Package,libungif,libungif-dev))
+$(DEPDIR)/min-libungif $(DEPDIR)/std-libungif $(DEPDIR)/max-libungif \
+$(DEPDIR)/libungif: \
+$(DEPDIR)/%libungif: $(DEPDIR)/libungif.do_compile
+	cd @libungif@ && \
+		@INSTALL_libungif@
+#	@DISTCLEANUP_libungif@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBGIF
+# libgif
 #
 $(DEPDIR)/libgif.do_prepare: bootstrap @DEPENDS_libgif@
 	@PREPARE_libgif@
@@ -279,11 +263,16 @@ $(DEPDIR)/libgif.do_compile: $(DEPDIR)/libgif.do_prepare
 		$(MAKE)
 	touch $@
 
-# Evaluate yaud and temporary package install
-$(eval $(call Cdkroot,libgif))
+$(DEPDIR)/min-libgif $(DEPDIR)/std-libgif $(DEPDIR)/max-libgif \
+$(DEPDIR)/libgif: \
+$(DEPDIR)/%libgif: $(DEPDIR)/libgif.do_compile
+	cd @DIR_libgif@ && \
+		@INSTALL_libgif@
+#	@DISTCLEANUP_libgif@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBCURL
+# libcurl
 #
 $(DEPDIR)/curl.do_prepare: @DEPENDS_curl@
 	@PREPARE_curl@
@@ -302,21 +291,18 @@ $(DEPDIR)/curl.do_compile: bootstrap libz $(DEPDIR)/curl.do_prepare
 		$(MAKE) all
 	touch $@
 
-define curl/install/post
+$(DEPDIR)/min-curl $(DEPDIR)/std-curl $(DEPDIR)/max-curl \
+$(DEPDIR)/curl: \
+$(DEPDIR)/%curl: $(DEPDIR)/curl.do_compile
 	cd @DIR_curl@ && \
 		sed -e "s,^prefix=,prefix=$(targetprefix)," < curl-config > $(crossprefix)/bin/curl-config && \
 		chmod 755 $(crossprefix)/bin/curl-config
-endef
-
-# Evaluate yaud and temporary package install
-$(eval $(call Cdkroot,curl,libz))
-
-# Evaluate packages
-$(eval $(call Package,curl,libcurl))
-$(eval $(call Package,curl,curl))
+		@INSTALL_curl@
+#	@DISTCLEANUP_curl@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBFRIBIDI
+# libfribidi
 #
 $(DEPDIR)/libfribidi.do_prepare: bootstrap @DEPENDS_libfribidi@
 	@PREPARE_libfribidi@
@@ -343,7 +329,7 @@ $(DEPDIR)/%libfribidi: $(DEPDIR)/libfribidi.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBSIGC
+# libsigc
 #
 $(DEPDIR)/libsigc.do_prepare: bootstrap @DEPENDS_libsigc@
 	@PREPARE_libsigc@
@@ -369,7 +355,7 @@ $(DEPDIR)/%libsigc: $(DEPDIR)/libsigc.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBMAD
+# libmad
 #
 $(DEPDIR)/libmad.do_prepare: bootstrap @DEPENDS_libmad@
 	@PREPARE_libmad@
@@ -404,7 +390,7 @@ $(DEPDIR)/%libmad: $(DEPDIR)/libmad.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBID3TAG
+# libid3tag
 #
 $(DEPDIR)/libid3tag.do_prepare: bootstrap @DEPENDS_libid3tag@
 	@PREPARE_libid3tag@
@@ -431,7 +417,7 @@ $(DEPDIR)/%libid3tag: %libz $(DEPDIR)/libid3tag.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBXML2
+# libxml2
 #
 $(DEPDIR)/libxml2.do_prepare: bootstrap @DEPENDS_libxml2@
 	@PREPARE_libxml2@
@@ -463,22 +449,11 @@ $(DEPDIR)/%libxml2: libxml2.do_compile
 		chmod 755 $(crossprefix)/bin/xml2-config; \
 		sed -e "/^XML2_LIBDIR/ s,/usr/lib,$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/xml2Conf.sh; \
 		sed -e "/^XML2_INCLUDEDIR/ s,/usr/include,$(targetprefix)/usr/include,g" -i $(targetprefix)/usr/lib/xml2Conf.sh
+#	@DISTCLEANUP_libxml2@
 	@[ "x$*" = "x" ] && touch $@ || true
 
-flash-libxml2-enigma2: $(flashprefix)/root-enigma2/usr/lib/libxml2mod.so
-
-$(flashprefix)/root-enigma2/usr/lib/libxml2mod.so: \
-%/usr/lib/libxml2mod.so: libxml2.do_compile
-	( cd @DIR_libxml2@ && \
-		$(MAKE) install DESTDIR=$* ) && \
-	rm $*/usr/bin/{xml2-config,xmlcatalog,xmllint} && \
-	rm $*/usr/lib/python2.6/site-packages/libxml2mod.a && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
-
-
 #
-# LIBXSLT
+# libxslt
 #
 $(DEPDIR)/libxslt.do_prepare: @DEPENDS_libxslt@
 	@PREPARE_libxslt@
@@ -515,21 +490,11 @@ $(DEPDIR)/%libxslt: %libxml2 libxslt.do_compile
 		sed -e "/^dependency_libs/ s,/usr/lib/libxslt.la,$(targetprefix)/usr/lib/libxslt.la,g" -i $(targetprefix)/usr/lib/libexslt.la && \
 		sed -e "/^XML2_LIBDIR/ s,/usr/lib,$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/xsltConf.sh && \
 		sed -e "/^XML2_INCLUDEDIR/ s,/usr/include,$(targetprefix)/usr/include,g" -i $(targetprefix)/usr/lib/xsltConf.sh
+#	@DISTCLEANUP_libxslt@
 	@[ "x$*" = "x" ] && touch $@ || true
 
-flash-libxslt-enigma2: $(flashprefix)/root-enigma2/usr/lib/libxsltmod.so
-
-$(flashprefix)/root-enigma2/usr/lib/libxsltmod.so: \
-%/usr/lib/libxsltmod.so: libxslt.do_compile
-	( cd @DIR_libxslt@ && \
-		$(MAKE) install DESTDIR=$* ) && \
-	rm $*/usr/bin/{xslt-config,xsltproc} && \
-	rm $*/usr/lib/python2.6/site-packages/libxsltmod.a && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
-
 #
-# LIBVORBISIDEC
+# libvorbisidec
 #
 
 $(DEPDIR)/libvorbisidec.do_prepare: @DEPENDS_libvorbisidec@
@@ -553,7 +518,7 @@ $(DEPDIR)/libvorbisidec: $(DEPDIR)/libvorbisidec.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# GLIB2
+# libglib2
 # You need libglib2.0-dev on host system
 #
 $(DEPDIR)/glib2.do_prepare: @DEPENDS_glib2@
@@ -591,12 +556,8 @@ $(DEPDIR)/%glib2: $(DEPDIR)/glib2.do_compile
 #	@DISTCLEANUP_glib2@
 	@[ "x$*" = "x" ] && touch $@ || true
 
-# Evaluate package glib2
-# call MacroName,Source Package,Package
-$(eval $(call Package,glib2,libglib2))
-
 #
-# LIBICONV
+# libiconv
 #
 $(DEPDIR)/libiconv.do_prepare: bootstrap @DEPENDS_libiconv@
 	@PREPARE_libiconv@
@@ -612,7 +573,7 @@ $(DEPDIR)/libiconv.do_compile: $(DEPDIR)/libiconv.do_prepare
 		$(MAKE)
 	touch $@
 
-$(DEPDIR)/min-libiconv $(DEPDIR)/std-libiconv $(DEPDIR)/max-libiconv $(DEPDIR)/ipk-libiconv \
+$(DEPDIR)/min-libiconv $(DEPDIR)/std-libiconv $(DEPDIR)/max-libiconv \
 $(DEPDIR)/libiconv: \
 $(DEPDIR)/%libiconv: $(DEPDIR)/libiconv.do_compile
 	cd @DIR_libiconv@ && \
@@ -621,7 +582,7 @@ $(DEPDIR)/%libiconv: $(DEPDIR)/libiconv.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBMNG
+# libmng
 #
 $(DEPDIR)/libmng.do_prepare: @DEPENDS_libmng@
 	@PREPARE_libmng@
@@ -645,11 +606,8 @@ $(DEPDIR)/libmng.do_compile: bootstrap libz jpeg lcms libmng.do_prepare
 		$(MAKE)
 	touch $@
 
-# Evaluate yaud and temporary package install
-$(eval $(call Cdkroot,libmng))
-
 #
-# LCMS
+# lcms
 #
 $(DEPDIR)/lcms.do_prepare: @DEPENDS_lcms@
 	@PREPARE_lcms@
@@ -667,11 +625,8 @@ $(DEPDIR)/lcms.do_compile: bootstrap libz jpeg lcms.do_prepare
 		$(MAKE)
 	touch $@
 
-# Evaluate yaud and temporary package install
-$(eval $(call Cdkroot,lcms))
-
 #
-# DirectFB
+# directfb
 #
 $(DEPDIR)/directfb.do_prepare: @DEPENDS_directfb@
 	@PREPARE_directfb@
@@ -702,10 +657,13 @@ $(DEPDIR)/directfb.do_compile: bootstrap freetype directfb.do_prepare
 		$(MAKE) LD=$(target)-ld
 	touch $@
 
-$(DEPDIR)/directfb: directfb.do_compile
+$(DEPDIR)/min-directfb $(DEPDIR)/std-directfb $(DEPDIR)/max-directfb \
+$(DEPDIR)/directfb: \
+$(DEPDIR)/%directfb: $(DEPDIR)/directfb.do_compile
 	cd @DIR_directfb@ && \
 		@INSTALL_directfb@
-	touch $@
+#	@DISTCLEANUP_directfb@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
 # DFB++
@@ -724,17 +682,17 @@ $(DEPDIR)/dfbpp.do_compile: bootstrap libz jpeg directfb dfbpp.do_prepare
 			export top_builddir=`pwd` && \
 		$(MAKE) all
 	touch $@
-#		$(BUILDENV) PKG_CONFIG=$(hostprefix)/bin/pkg-config \
-#
 
-$(DEPDIR)/dfbpp: dfbpp.do_compile
+$(DEPDIR)/min-dfbpp $(DEPDIR)/std-dfbpp $(DEPDIR)/max-dfbpp \
+$(DEPDIR)/dfbpp: \
+$(DEPDIR)/%dfbpp: $(DEPDIR)/dfbpp.do_compile
 	cd @DIR_dfbpp@ && \
-		@INSTALL_dfbpp@
-#	sed -e "s, /usr/lib, $(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/libdfb++.la
-	touch $@
+		@INSTALL_directfb@
+#	@DISTCLEANUP_dfbpp@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# EXPAT
+# expat
 #
 $(DEPDIR)/expat.do_prepare: @DEPENDS_expat@
 	@PREPARE_expat@
@@ -751,13 +709,16 @@ $(DEPDIR)/expat.do_compile: bootstrap expat.do_prepare
 		$(MAKE) all
 	touch $@
 
-$(DEPDIR)/expat: expat.do_compile
+$(DEPDIR)/min-expat $(DEPDIR)/std-expat $(DEPDIR)/max-expat \
+$(DEPDIR)/expat: \
+$(DEPDIR)/%expat: $(DEPDIR)/expat.do_compile
 	cd @DIR_expat@ && \
 		@INSTALL_expat@
-	touch $@
+#	@DISTCLEANUP_dfbpp@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# FONTCONFIG
+# fontconfig
 #
 $(DEPDIR)/fontconfig.do_prepare: @DEPENDS_fontconfig@
 	@PREPARE_fontconfig@
@@ -785,13 +746,16 @@ $(DEPDIR)/fontconfig.do_compile: bootstrap libz fontconfig.do_prepare
 		$(MAKE)
 	touch $@
 
-$(DEPDIR)/fontconfig: fontconfig.do_compile
+$(DEPDIR)/min-fontconfig $(DEPDIR)/std-fontconfig $(DEPDIR)/max-fontconfig \
+$(DEPDIR)/fontconfig: \
+$(DEPDIR)/%fontconfig: $(DEPDIR)/fontconfig.do_compile
 	cd @DIR_fontconfig@ && \
 		@INSTALL_fontconfig@
-	touch $@
+#	@DISTCLEANUP_fontconfig@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# Python
+# python
 #
 $(DEPDIR)/python.do_prepare: host-python @DEPENDS_python@
 	@PREPARE_python@ && \
@@ -836,27 +800,12 @@ $(DEPDIR)/%python: python.do_compile
 			HOSTPYTHON=$(crossprefix)/bin/python \
 			HOSTPGEN=$(crossprefix)/bin/pgen \
 			install DESTDIR=$(prefix)/$*cdkroot ) && \
-	$(LN_SF) ../../libpython2.6.so.1.0 $(prefix)/$*cdkroot/usr/lib/python2.6/config/libpython2.6.so && \
+	$(LN_SF) ../../libpython2.6.so.1.0 $(prefix)/$*cdkroot/usr/lib/python2.6/config/libpython2.6.so
+#	@DISTCLEANUP_python@
 	[ "x$*" = "x" ] && touch $@ || true
 
-flash-python-enigma2: $(flashprefix)/root-enigma2/usr/bin/python
-
-$(flashprefix)/root-enigma2/usr/bin/python: \
-%/usr/bin/python: python.do_compile
-	( cd @DIR_python@ && \
-		$(MAKE) $(MAKE_ARGS) \
-			HOSTPYTHON=$(crossprefix)/bin/python \
-			HOSTPGEN=$(crossprefix)/bin/pgen \
-			install DESTDIR=$* ) && \
-	rm $*/usr/bin/{python,idle,pydoc,python2.6-config,python-config,smtpd.py} && \
-	$(LN_SF) python2.6 $@ && \
-	chmod 755 $*/usr/lib/libpython2.6.so.1.0 && \
-	rm -rf $*/usr/lib/python2.6/config/ && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
-
 #
-# ELEMENTTREE
+# elementtree
 #
 $(DEPDIR)/elementtree.do_prepare: @DEPENDS_elementtree@
 	@PREPARE_elementtree@
@@ -872,23 +821,11 @@ $(DEPDIR)/%elementtree: %python elementtree.do_compile
 		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
 		PYTHONHOME=$(targetprefix)/usr \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_elementtree@
 	[ "x$*" = "x" ] && touch $@ || true
-#		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-#
-
-flash-elementtree-enigma2: $(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/elementtree
-
-$(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/elementtree: \
-%/usr/lib/python2.6/site-packages/elementtree: elementtree.do_compile
-	( cd @DIR_elementtree@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$*/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$* --prefix=/usr ) && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
 
 #
-# LXML
+# lxml
 #
 $(DEPDIR)/lxml.do_prepare: @DEPENDS_lxml@
 	@PREPARE_lxml@
@@ -910,21 +847,11 @@ $(DEPDIR)/%lxml: lxml.do_compile
 		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_lxml@
 	[ "x$*" = "x" ] && touch $@ || true
 
-flash-lxml-enigma2: $(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/lxml
-
-$(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/lxml: \
-%/usr/lib/python2.6/site-packages/lxml: lxml.do_compile
-	( cd @DIR_lxml@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$*/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$* --prefix=/usr ) && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
-
 #
-# LIBXMLCCWRAP
+# libxmlccwrap
 #
 $(DEPDIR)/libxmlccwrap.do_prepare: @DEPENDS_libxmlccwrap@
 	@PREPARE_libxmlccwrap@
@@ -948,19 +875,11 @@ $(DEPDIR)/%libxmlccwrap: libxmlccwrap.do_compile
 		@INSTALL_libxmlccwrap@ && \
 		sed -e "/^dependency_libs/ s,-L/usr/lib,-L$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/libxmlccwrap.la && \
 		sed -e "/^dependency_libs/ s, /usr/lib, $(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/libxmlccwrap.la
+#	@DISTCLEANUP_libxmlccwrap@
 	[ "x$*" = "x" ] && touch $@ || true
 
-flash-libxmlccwrap-enigma2: $(flashprefix)/root-enigma2/usr/lib/libxmlccwrap.so
-
-$(flashprefix)/root-enigma2/usr/lib/libxmlccwrap.so: \
-%/usr/lib/libxmlccwrap.so: libxmlccwrap.do_compile
-	( cd @DIR_libxmlccwrap@ && \
-		$(MAKE) install DESTDIR=$* ) && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
-
 #
-# SETUPTOOLS
+# setuptools
 #
 $(DEPDIR)/setuptools.do_prepare: @DEPENDS_setuptools@
 	@PREPARE_setuptools@
@@ -976,10 +895,11 @@ $(DEPDIR)/setuptools: \
 $(DEPDIR)/%setuptools: setuptools.do_compile
 	cd @DIR_setuptools@ && \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_setuptools@
 	[ "x$*" = "x" ] && touch $@ || true
 
 #
-# ZOPE INTERFACE
+# zope interface
 #
 $(DEPDIR)/zope-interface.do_prepare: @DEPENDS_zope_interface@
 	@PREPARE_zope_interface@
@@ -998,21 +918,11 @@ $(DEPDIR)/%zope-interface: zope-interface.do_compile
 	cd @DIR_zope_interface@ && \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_zope-interface@
 	[ "x$*" = "x" ] && touch $@ || true
 
-flash-zope-interface-enigma2: $(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/zope/interface
-
-$(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/zope/interface: \
-%/usr/lib/python2.6/site-packages/zope/interface: zope-interface.do_compile
-	( cd @DIR_zope_interface@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$*/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$* --prefix=/usr ) && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
-
 #
-# TWISTED
+# twisted
 #
 $(DEPDIR)/twisted.do_prepare: @DEPENDS_twisted@
 	@PREPARE_twisted@
@@ -1027,27 +937,16 @@ $(DEPDIR)/twisted.do_compile: bootstrap setuptools twisted.do_prepare
 
 $(DEPDIR)/min-twisted $(DEPDIR)/std-twisted $(DEPDIR)/max-twisted \
 $(DEPDIR)/twisted: \
-$(DEPDIR)/%twisted: twisted.do_prepare
+$(DEPDIR)/%twisted: twisted.do_compile
 	cd @DIR_twisted@ && \
 		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_twisted@
 	[ "x$*" = "x" ] && touch $@ || true
 
-flash-twisted-enigma2: $(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/twisted
-
-$(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/twisted: \
-%/usr/lib/python2.6/site-packages/twisted: twisted.do_compile
-	( cd @DIR_twisted@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$*/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$* --prefix=/usr ) && \
-	rm $*/usr/bin/{tap2deb,tapconvert,manhole,tap2rpm,t-im,pyhtmlizer,trial,mktap,twistd,bookify,lore,mailmail,ckeygen,tkconch,conch,cftp,im} && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
-
 #
-# TWISTEDWEB2
+# twistetweb2
 #
 $(DEPDIR)/twistedweb2.do_prepare: @DEPENDS_twistedweb2@
 	@PREPARE_twistedweb2@
@@ -1062,26 +961,16 @@ $(DEPDIR)/twistedweb2.do_compile: bootstrap setuptools twistedweb2.do_prepare
 
 $(DEPDIR)/min-twistedweb2 $(DEPDIR)/std-twistedweb2 $(DEPDIR)/max-twistedweb2 \
 $(DEPDIR)/twistedweb2: \
-$(DEPDIR)/%twistedweb2: twistedweb2.do_prepare
+$(DEPDIR)/%twistedweb2: twistedweb2.do_compile
 	cd @DIR_twistedweb2@ && \
 		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_twistedweb2@
 	[ "x$*" = "x" ] && touch $@ || true
 
-flash-twistedweb2-enigma2: $(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/twisted/web2
-
-$(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/twisted/web2: \
-%/usr/lib/python2.6/site-packages/twisted/web2: twisted.do_compile
-	( cd @DIR_twistedweb2@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$*/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$* --prefix=/usr ) && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
-
 #
-# A52DEC
+# a52dec
 #
 $(DEPDIR)/a52dec.do_prepare: @DEPENDS_a52dec@
 	@PREPARE_a52dec@
@@ -1097,13 +986,16 @@ $(DEPDIR)/a52dec.do_compile: bootstrap a52dec.do_prepare
 		$(MAKE) install
 	touch $@
 
-$(DEPDIR)/a52dec: a52dec.do_compile
+$(DEPDIR)/min-a52dec $(DEPDIR)/std-a52dec $(DEPDIR)/max-a52dec \
+$(DEPDIR)/a52dec: \
+$(DEPDIR)/%a52dec: a52dec.do_compile
 	cd @DIR_a52dec@ && \
 		@INSTALL_a52dec@
-	touch $@
+#	@DISTCLEANUP_a52dec@
+	[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBDVDCSS
+# libdvdcss
 #
 $(DEPDIR)/libdvdcss.do_prepare: @DEPENDS_libdvdcss@
 	@PREPARE_libdvdcss@
@@ -1120,13 +1012,16 @@ $(DEPDIR)/libdvdcss.do_compile: bootstrap libdvdcss.do_prepare
 		$(MAKE) all
 	touch $@
 
-$(DEPDIR)/libdvdcss: libdvdcss.do_compile
+$(DEPDIR)/min-libdvdcss $(DEPDIR)/std-libdvdcss $(DEPDIR)/max-libdvdcss \
+$(DEPDIR)/libdvdcss: \
+$(DEPDIR)/%libdvdcss: libdvdcss.do_compile
 	cd @DIR_libdvdcss@ && \
 		@INSTALL_libdvdcss@
-	touch $@
+#	@DISTCLEANUP_libdvdcss@
+	[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBDVDNAV
+# libdvdnav
 #
 $(DEPDIR)/libdvdnav.do_prepare: @DEPENDS_libdvdnav@
 	@PREPARE_libdvdnav@
@@ -1149,13 +1044,16 @@ $(DEPDIR)/libdvdnav.do_compile: bootstrap libdvdread libdvdnav.do_prepare
 		$(MAKE) all
 	touch $@
 
-$(DEPDIR)/libdvdnav: libdvdnav.do_compile
+$(DEPDIR)/min-libdvdnav $(DEPDIR)/std-libdvdnav $(DEPDIR)/max-libdvdnav \
+$(DEPDIR)/libdvdnav: \
+$(DEPDIR)/%libdvdnav: libdvdnav.do_compile
 	cd @DIR_libdvdnav@ && \
 		@INSTALL_libdvdnav@
-	touch $@
+#	@DISTCLEANUP_libdvdnav@
+	[ "x$*" = "x" ] && touch $@ || true
 
 #
-# LIBDVDREAD
+# libdvdread
 #
 $(DEPDIR)/libdvdread.do_prepare: @DEPENDS_libdvdread@
 	@PREPARE_libdvdread@
@@ -1184,16 +1082,19 @@ $(DEPDIR)/libdvdread.do_compile: bootstrap libdvdread.do_prepare
 	chmod 0755 $(buildprefix)/libdvdread-4.1.3/misc/dvdread-config
 	touch $@
 
-$(DEPDIR)/libdvdread: libdvdread.do_compile
+$(DEPDIR)/min-libdvdread $(DEPDIR)/std-libdvdread $(DEPDIR)/max-libdvdread \
+$(DEPDIR)/libdvdread: \
+$(DEPDIR)/%libdvdread: libdvdread.do_compile
 	cd @DIR_libdvdread@ && \
 		@INSTALL_libdvdread@
 	sed 's!/usr/lib!$(targetprefix)/usr/lib!g' $(targetprefix)/usr/lib/libdvdread.la > $(targetprefix)/usr/lib/libdvdread.la1
 	cp $(targetprefix)/usr/lib/libdvdread.la1 $(targetprefix)/usr/lib/libdvdread.la
 	rm $(targetprefix)/usr/lib/libdvdread.la1
-	touch $@
+#	@DISTCLEANUP_libdvdread@
+	[ "x$*" = "x" ] && touch $@ || true
 
 #
-# PYOPENSSL
+# pyopenssl
 #
 $(DEPDIR)/pyopenssl.do_prepare: @DEPENDS_pyopenssl@
 	@PREPARE_pyopenssl@
@@ -1212,54 +1113,22 @@ $(DEPDIR)/%pyopenssl: pyopenssl.do_compile
 	cd @DIR_pyopenssl@ && \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_pyopenssl@
 	[ "x$*" = "x" ] && touch $@ || true
-
-flash-pyopenssl-enigma2: $(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/OpenSSL
-
-$(flashprefix)/root-enigma2/usr/lib/python2.6/site-packages/OpenSSL: \
-%/usr/lib/python2.6/site-packages/OpenSSL: pyopenssl.do_compile
-	( cd @DIR_pyopenssl@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$*/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$* --prefix=/usr ) && \
-	rm $*/usr/lib/python2.6/site-packages/OpenSSL/test && \
-	touch $@ && \
-	@TUXBOX_CUSTOMIZE@
 
 #
 # ffmpeg
 #
 $(DEPDIR)/ffmpeg.do_prepare: bootstrap libass rtmpdump @DEPENDS_ffmpeg@
 	@PREPARE_ffmpeg@
-	cd @DIR_ffmpeg@ && \
-	patch -p1 < $(buildprefix)/Patches/ffmpeg.patch;
 	touch $@
-
-#$(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
-#	export PATH=$(hostprefix)/bin:$(PATH) && \
-#	cd @DIR_ffmpeg@ && \
-#	$(BUILDENV) \
-#	./configure \
-#		--enable-parsers --disable-decoders --disable-encoders --enable-demuxers \
-#		--disable-muxers --disable-ffplay --disable-ffmpeg --disable-ffserver \
-#		--disable-devices \
-#		--disable-protocols --enable-protocol=file --enable-bsfs \
-#		--disable-mpegaudio-hp --disable-zlib --enable-bzlib \
-#		--disable-static --enable-shared \
-#		--enable-cross-compile \
-#		--cross-prefix=$(target)- \
-#		--target-os=linux \
-#		--arch=sh4 \
-#		--extra-cflags=-fno-strict-aliasing \
-#		--enable-stripping \
-#		--prefix=/usr
-#	touch $@
 
 $(DEPDIR)/ffmpeg.do_compile: bootstrap libass rtmpdump $(DEPDIR)/ffmpeg.do_prepare
 	cd @DIR_ffmpeg@ && \
 	$(BUILDENV) \
 	./configure \
-		--disable-static --enable-shared \
+		--disable-static \
+		--enable-shared \
 		--enable-cross-compile \
 		--disable-ffserver \
 		--disable-altivec \
@@ -1337,8 +1206,8 @@ $(DEPDIR)/ffmpeg: \
 $(DEPDIR)/%ffmpeg: $(DEPDIR)/ffmpeg.do_compile
 	cd @DIR_ffmpeg@ && \
 		@INSTALL_ffmpeg@
+#	@DISTCLEANUP_pyopenssl@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # libass
@@ -1363,8 +1232,8 @@ $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 	cd @DIR_libass@ && \
 		@INSTALL_libass@
 	echo "libdir='$(targetprefix)/usr/lib'" >> $(targetprefix)/usr/lib/libass.la
+#	@DISTCLEANUP_libass@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # WebKitDFB
@@ -1377,7 +1246,9 @@ $(DEPDIR)/webkitdfb.do_compile: $(DEPDIR)/webkitdfb.do_prepare
 	export PATH=$(BUILDPREFIX)/@DIR_icu4c@/host/config:$(PATH) && \
 	cd @DIR_webkitdfb@ && \
 	$(BUILDENV) \
-	./autogen.sh --with-target=directfb --without-gtkplus \
+	./autogen.sh \
+		--with-target=directfb \
+		--without-gtkplus \
 		--host=$(target) \
 		--prefix=/usr \
 		--with-cairo-directfb \
@@ -1407,8 +1278,8 @@ $(DEPDIR)/webkitdfb: \
 $(DEPDIR)/%webkitdfb: $(DEPDIR)/webkitdfb.do_compile
 	cd @DIR_webkitdfb@ && \
 		@INSTALL_webkitdfb@
+#	@DISTCLEANUP_webkitdfb@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # icu4c
@@ -1446,8 +1317,8 @@ $(DEPDIR)/%icu4c: $(DEPDIR)/icu4c.do_compile
 	cd @DIR_icu4c@ && \
 		unset TARGET && \
 		@INSTALL_icu4c@
+#	@DISTCLEANUP_icu4c@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # enchant
@@ -1456,9 +1327,6 @@ $(DEPDIR)/enchant.do_prepare: bootstrap @DEPENDS_enchant@
 	@PREPARE_enchant@
 	touch $@
 
-#	libtoolize -f -c && \
-#	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal
-
 $(DEPDIR)/enchant.do_compile: $(DEPDIR)/enchant.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_enchant@ && \
@@ -1466,8 +1334,8 @@ $(DEPDIR)/enchant.do_compile: $(DEPDIR)/enchant.do_prepare
 	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 	$(BUILDENV)  \
 	./configure --disable-aspell --disable-ispell --disable-myspell --disable-zemberek \
-	--host=$(target) \
-	--prefix=/usr && \
+		--host=$(target) \
+		--prefix=/usr && \
 	$(MAKE) LD=$(target)-ld
 	touch $@
 
@@ -1476,8 +1344,8 @@ $(DEPDIR)/enchant: \
 $(DEPDIR)/%enchant: $(DEPDIR)/enchant.do_compile
 	cd @DIR_enchant@ && \
 		@INSTALL_enchant@
+#	@DISTCLEANUP_enchant@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # lite
@@ -1504,8 +1372,8 @@ $(DEPDIR)/lite: \
 $(DEPDIR)/%lite: $(DEPDIR)/lite.do_compile
 	cd @DIR_lite@ && \
 		@INSTALL_lite@
+#	@DISTCLEANUP_lite@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # sqlite
@@ -1532,8 +1400,8 @@ $(DEPDIR)/sqlite: \
 $(DEPDIR)/%sqlite: $(DEPDIR)/sqlite.do_compile
 	cd @DIR_sqlite@ && \
 		@INSTALL_sqlite@
+#	@DISTCLEANUP_sqlite@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # libsoup
@@ -1558,8 +1426,8 @@ $(DEPDIR)/libsoup: \
 $(DEPDIR)/%libsoup: $(DEPDIR)/libsoup.do_compile
 	cd @DIR_libsoup@ && \
 		@INSTALL_libsoup@
+#	@DISTCLEANUP_libsoup@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # pixman
@@ -1582,8 +1450,8 @@ $(DEPDIR)/pixman: \
 $(DEPDIR)/%pixman: $(DEPDIR)/pixman.do_compile
 	cd @DIR_pixman@ && \
 		@INSTALL_pixman@
+#	@DISTCLEANUP_pixman@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # cairo
@@ -1617,8 +1485,8 @@ $(DEPDIR)/cairo: \
 $(DEPDIR)/%cairo: $(DEPDIR)/cairo.do_compile
 	cd @DIR_cairo@ && \
 		@INSTALL_cairo@
+#	@DISTCLEANUP_cairo@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # libogg
@@ -1641,8 +1509,8 @@ $(DEPDIR)/libogg: \
 $(DEPDIR)/%libogg: $(DEPDIR)/libogg.do_compile
 	cd @DIR_libogg@ && \
 		@INSTALL_libogg@
+#	@DISTCLEANUP_libogg@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # libflac
@@ -1677,8 +1545,8 @@ $(DEPDIR)/libflac: \
 $(DEPDIR)/%libflac: $(DEPDIR)/libflac.do_compile
 	cd @DIR_libflac@ && \
 		@INSTALL_libflac@
+#	@DISTCLEANUP_libflac@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # GSTREAMER + PLUGINS  This will become the "libeplayer4"
@@ -1696,7 +1564,9 @@ $(DEPDIR)/gstreamer.do_compile: $(DEPDIR)/gstreamer.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--disable-docs-build --disable-dependency-tracking --with-check=no \
+		--disable-docs-build \
+		--disable-dependency-tracking \
+		--with-check=no \
 		ac_cv_func_register_printf_function=no
 	touch $@
 
@@ -1705,6 +1575,7 @@ $(DEPDIR)/gstreamer: \
 $(DEPDIR)/%gstreamer: $(DEPDIR)/gstreamer.do_compile
 	cd @DIR_gstreamer@ && \
 		@INSTALL_gstreamer@
+#	@DISTCLEANUP_gstreamer@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
@@ -1722,7 +1593,12 @@ $(DEPDIR)/gst_plugins_base.do_compile: $(DEPDIR)/gst_plugins_base.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--disable-theora --disable-pango --disable-vorbis --disable-x  --with-audioresample-format=int --with-check=no
+		--disable-theora \
+		--disable-pango \
+		--disable-vorbis \
+		--disable-x \
+		--with-audioresample-format=int \
+		--with-check=no
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_base $(DEPDIR)/std-gst_plugins_base $(DEPDIR)/max-gst_plugins_base \
@@ -1730,8 +1606,8 @@ $(DEPDIR)/gst_plugins_base: \
 $(DEPDIR)/%gst_plugins_base: $(DEPDIR)/gst_plugins_base.do_compile
 	cd @DIR_gst_plugins_base@ && \
 		@INSTALL_gst_plugins_base@
+#	@DISTCLEANUP_gst_plugins_base@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # GST-PLUGINS-GOOD
@@ -1747,8 +1623,12 @@ $(DEPDIR)/gst_plugins_good.do_compile: $(DEPDIR)/gst_plugins_good.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--disable-esd --disable-esdtest \
-		--disable-shout2 --disable-shout2test --disable-x --with-check=no
+		--disable-esd \
+		--disable-esdtest \
+		--disable-shout2 \
+		--disable-shout2test \
+		--disable-x \
+		--with-check=no
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_good $(DEPDIR)/std-gst_plugins_good $(DEPDIR)/max-gst_plugins_good \
@@ -1756,8 +1636,9 @@ $(DEPDIR)/gst_plugins_good: \
 $(DEPDIR)/%gst_plugins_good: $(DEPDIR)/gst_plugins_good.do_compile
 	cd @DIR_gst_plugins_good@ && \
 		@INSTALL_gst_plugins_good@
+#	@DISTCLEANUP_gst_plugins_good@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
+
 #
 # GST-PLUGINS-BAD
 #
@@ -1772,7 +1653,8 @@ $(DEPDIR)/gst_plugins_bad.do_compile: $(DEPDIR)/gst_plugins_bad.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		ac_cv_openssldir=no --with-check=no
+		ac_cv_openssldir=no \
+		--with-check=no
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_bad $(DEPDIR)/std-gst_plugins_bad $(DEPDIR)/max-gst_plugins_bad \
@@ -1780,8 +1662,8 @@ $(DEPDIR)/gst_plugins_bad: \
 $(DEPDIR)/%gst_plugins_bad: $(DEPDIR)/gst_plugins_bad.do_compile
 	cd @DIR_gst_plugins_bad@ && \
 		@INSTALL_gst_plugins_bad@
+#	@DISTCLEANUP_gst_plugins_bad@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # GST-PLUGINS-UGLY
@@ -1796,7 +1678,8 @@ $(DEPDIR)/gst_plugins_ugly.do_compile: $(DEPDIR)/gst_plugins_ugly.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr --with-check=no
+		--prefix=/usr \
+		--with-check=no
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_ugly $(DEPDIR)/std-gst_plugins_ugly $(DEPDIR)/max-gst_plugins_ugly \
@@ -1804,8 +1687,9 @@ $(DEPDIR)/gst_plugins_ugly: \
 $(DEPDIR)/%gst_plugins_ugly: $(DEPDIR)/gst_plugins_ugly.do_compile
 	cd @DIR_gst_plugins_ugly@ && \
 		@INSTALL_gst_plugins_ugly@
+#	@DISTCLEANUP_gst_plugins_ugly@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
+
 #
 # GST-FFMPEG
 #
@@ -1813,7 +1697,6 @@ $(DEPDIR)/gst_ffmpeg.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_g
 	@PREPARE_gst_ffmpeg@
 	touch $@
 
-#configuring included Libav instance with args --prefix=/usr --disable-ffserver --disable-ffplay        --disable-ffmpeg --disable-ffprobe --enable-postproc --enable-gpl --enable-static --enable-pic 	--disable-encoder=flac --disable-decoder=cavs --disable-protocols --disable-devices	--disable-network --disable-hwaccels --disable-filters --disable-doc	--enable-optimizations --enable-cross-compile         --target-os=linux --arch=sh4 --cross-prefix=sh4-linux-
 $(DEPDIR)/gst_ffmpeg.do_compile: $(DEPDIR)/gst_ffmpeg.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_gst_ffmpeg@ && \
@@ -1866,8 +1749,9 @@ $(DEPDIR)/gst_ffmpeg: \
 $(DEPDIR)/%gst_ffmpeg: $(DEPDIR)/gst_ffmpeg.do_compile
 	cd @DIR_gst_ffmpeg@ && \
 		@INSTALL_gst_ffmpeg@
+#	@DISTCLEANUP_gst_ffmpeg@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
+
 #
 # GST-PLUGINS-FLUENDO-MPEGDEMUX
 #
@@ -1889,10 +1773,12 @@ $(DEPDIR)/gst_plugins_fluendo_mpegdemux: \
 $(DEPDIR)/%gst_plugins_fluendo_mpegdemux: $(DEPDIR)/gst_plugins_fluendo_mpegdemux.do_compile
 	cd @DIR_gst_plugins_fluendo_mpegdemux@ && \
 		@INSTALL_gst_plugins_fluendo_mpegdemux@
+#	@DISTCLEANUP_gst_ffmpeg@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
+#
 # GST-PLUGINS-DVBMEDIASINK
+#
 $(DEPDIR)/gst_plugins_dvbmediasink.do_prepare: bootstrap gstreamer gst_plugins_base gst_plugins_good gst_plugins_bad gst_plugins_ugly @DEPENDS_gst_plugins_dvbmediasink@
 	@PREPARE_gst_plugins_dvbmediasink@
 	touch $@
@@ -1916,10 +1802,10 @@ $(DEPDIR)/gst_plugins_dvbmediasink: \
 $(DEPDIR)/%gst_plugins_dvbmediasink: $(DEPDIR)/gst_plugins_dvbmediasink.do_compile
 	cd @DIR_gst_plugins_dvbmediasink@ && \
 		@INSTALL_gst_plugins_dvbmediasink@
+#	@DISTCLEANUP_gst_plugins_dvbmediasink@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
-################ EXTERNAL_CLD #############################
+################ EXTERNAL_LCD #############################
 
 #
 # libusb 
@@ -1943,8 +1829,8 @@ $(DEPDIR)/libusb: \
 $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
 	cd @DIR_libusb@ && \
 		@INSTALL_libusb@
+#	@DISTCLEANUP_libusb@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # graphlcd
@@ -2021,7 +1907,7 @@ $(DEPDIR)/libusbcompat: bootstrap libusb2 @DEPENDS_libusbcompat@
 	@touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-################ END EXTERNAL_CLD #############################
+################ END EXTERNAL_LCD #############################
 
 #
 # eve-browser
@@ -2051,8 +1937,8 @@ $(DEPDIR)/%evebrowser: $(DEPDIR)/evebrowser.do_compile
 	cd @DIR_evebrowser@ && \
 		@INSTALL_evebrowser@ && \
 		cp -ar enigma2/HbbTv $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/
+#	@DISTCLEANUP_evebrowser@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # brofs
@@ -2073,8 +1959,8 @@ $(DEPDIR)/brofs: \
 $(DEPDIR)/%brofs: $(DEPDIR)/brofs.do_compile
 	cd @DIR_brofs@ && \
 		@INSTALL_brofs@
+#	@DISTCLEANUP_brofs@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # libcap
@@ -2113,7 +1999,8 @@ $(DEPDIR)/%libcap: $(DEPDIR)/libcap.do_compile
 		PAM_CAP=no \
 		LIBATTR=no \
 		CC=sh4-linux-gcc
-	@TUXBOX_YAUD_CUSTOMIZE@
+#	@DISTCLEANUP_libcap@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
 # alsa-lib
@@ -2145,8 +2032,8 @@ $(DEPDIR)/libalsa: \
 $(DEPDIR)/%libalsa: $(DEPDIR)/libalsa.do_compile
 	cd @DIR_libalsa@ && \
 		@INSTALL_libalsa@
+#	@DISTCLEANUP_libalsa@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # rtmpdump
@@ -2169,8 +2056,8 @@ $(DEPDIR)/rtmpdump: \
 $(DEPDIR)/%rtmpdump: $(DEPDIR)/rtmpdump.do_compile
 	cd @DIR_rtmpdump@ && \
 		@INSTALL_rtmpdump@
+#	@DISTCLEANUP_rtmpdump@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # libdvbsi++
@@ -2199,8 +2086,8 @@ $(DEPDIR)/libdvbsipp: \
 $(DEPDIR)/%libdvbsipp: $(DEPDIR)/libdvbsipp.do_compile
 	cd @DIR_libdvbsipp@ && \
 		@INSTALL_libdvbsipp@
+#	@DISTCLEANUP_libdvbsipp@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # libtuxtxt
@@ -2234,8 +2121,8 @@ $(DEPDIR)/libtuxtxt: \
 $(DEPDIR)/%libtuxtxt: $(DEPDIR)/libtuxtxt.do_compile
 	cd @DIR_libtuxtxt@ && \
 		@INSTALL_libtuxtxt@
+#	@DISTCLEANUP_libtuxtxt@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # tuxtxt32bpp
@@ -2267,8 +2154,8 @@ $(DEPDIR)/tuxtxt32bpp: \
 $(DEPDIR)/%tuxtxt32bpp: $(DEPDIR)/tuxtxt32bpp.do_compile
 	cd @DIR_tuxtxt32bpp@ && \
 		@INSTALL_tuxtxt32bpp@
+#	@DISTCLEANUP_tuxtxt32bpp@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # libdreamdvd
@@ -2297,11 +2184,11 @@ $(DEPDIR)/libdreamdvd: \
 $(DEPDIR)/%libdreamdvd: $(DEPDIR)/libdreamdvd.do_compile
 	cd @DIR_libdreamdvd@ && \
 		@INSTALL_libdreamdvd@
+#	@DISTCLEANUP_libdreamdvd@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
-# libdreamdvd
+# libdreamdvd2
 #
 $(DEPDIR)/libdreamdvd2.do_prepare:  @DEPENDS_libdreamdvd2@
 	[ -d "libdreamdvd" ] && \
@@ -2330,11 +2217,11 @@ $(DEPDIR)/libdreamdvd2: \
 $(DEPDIR)/%libdreamdvd2: $(DEPDIR)/libdreamdvd2.do_compile
 	cd @DIR_libdreamdvd2@ && \
 		@INSTALL_libdreamdvd2@
+#	@DISTCLEANUP_libdreamdvd2@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
-# PilImaging
+# pilimaging
 #
 $(DEPDIR)/pilimaging: bootstrap python @DEPENDS_pilimaging@
 	@PREPARE_pilimaging@
@@ -2350,4 +2237,3 @@ $(DEPDIR)/pilimaging: bootstrap python @DEPENDS_pilimaging@
 	@DISTCLEANUP_pilimaging@
 	@touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
-
