@@ -9,4 +9,3 @@ $(appsdir)/tuxbox/libtuxbox/config.status: bootstrap
 
 libtuxbox: $(appsdir)/tuxbox/libtuxbox/config.status
 	$(MAKE) -C $(appsdir)/tuxbox/libtuxbox all install
-
