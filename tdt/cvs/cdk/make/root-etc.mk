@@ -69,8 +69,8 @@ FUSE_ADAPTED_ETC_FILES = init.d/fuse
 
 
 #
-# Functions for copying customized etc files from cvs/cdk/root/etc into yaud and flash targets and
-# for updating init scripts in runlevel for yaud and flash targets
+# Functions for copying customized etc files from cvs/cdk/root/etc into yaud targets and
+# for updating init scripts in runlevel for yaud targets
 #
 define adapted-etc-files
 	cd root/etc && \
@@ -78,14 +78,6 @@ define adapted-etc-files
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(prefix)/$*cdkroot/etc/$$i || true; \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; \
 	done
-endef
-
-define adapted-etc-flashfiles
-	cd root/etc && \
-		for i in $(1); do \
-			[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
-			[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; \
-		done
 endef
 
 define initdconfig
@@ -96,13 +88,3 @@ define initdconfig
 		done && \
 		rm *rpmsave 2>/dev/null || true
 endef
-
-define initdconfig-flash
-	export HHL_CROSS_TARGET_DIR=$(flashprefix)/root && \
-	cd $(prefix)/$*cdkroot/etc/init.d && \
-		for s in $(1) ; do \
-			$(hostprefix)/bin/target-initdconfig --add $$s || echo "Unable to enable initd service: $$s" ; \
-		done && \
-		rm *rpmsave 2>/dev/null || true
-endef
-
