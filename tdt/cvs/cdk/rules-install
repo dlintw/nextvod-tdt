@@ -97,7 +97,7 @@ libogg;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/
 libflac;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/flac.pc;rewrite-libtool:TARGETS/usr/lib/libFLAC.la
 evebrowser;make:install:DESTDIR=TARGETS
 brofs;make:install:DESTDIR=TARGETS/usr/bin
-libalsa;make:install:DESTDIR=TARGETS
+libalsa;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/alsa.pc;rewrite-libtool:TARGETS/usr/lib/libasound.la
 rtmpdump;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/librtmp.pc
 libdvbsipp;make:install:prefix=/usr:DESTDIR=TARGETS
 libtuxtxt;make:install:prefix=/usr:DESTDIR=TARGETS
