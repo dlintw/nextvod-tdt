@@ -21,8 +21,6 @@ $(hostprefix)/bin/ccache: @DEPENDS_ccache@
 #	@CLEANUP_ccache@
 endif
 
-if TARGETRULESET_FLASH
-
 #
 # MKCRAMFS
 #
@@ -71,7 +69,6 @@ $(hostprefix)/bin/mksquashfs: @DEPENDS_squashfs@
 #	rm -rf @DIR_squashfs@
 endif
 
-endif
 #
 # IPKG-UTILS
 #
