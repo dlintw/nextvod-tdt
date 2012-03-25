@@ -1283,30 +1283,27 @@ if ENABLE_UFS910
 	[ -e $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/mini_fo/mini_fo.ko ] && cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/mini_fo/mini_fo.ko $(prefix)/release_neutrino/lib/modules || true
 endif
 
-if ENABLE_FLASH_UFS910
-	cp -dp $(buildprefix)/root/etc/lircd.conf $(prefix)/release_neutrino/etc/
-	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
-	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
-endif
-
 if ENABLE_HL101
 	cp -dp $(buildprefix)/root/etc/lircd_hl101.conf $(prefix)/release_neutrino/etc/lircd.conf
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
 #	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 endif
+
 if ENABLE_ADB_BOX
 	cp -dp $(buildprefix)/root/etc/lircd_adb_box.conf $(prefix)/release_neutrino/etc/lircd.conf
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
 	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
 endif
+
 if ENABLE_VIP1_V2
 	cp -dp $(buildprefix)/root/etc/lircd_vip1_v2.conf $(prefix)/release_neutrino/etc/lircd.conf
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
 #	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 endif
+
 if ENABLE_VIP2_V1
 	cp -dp $(buildprefix)/root/etc/lircd_vip2_v1.conf $(prefix)/release_neutrino/etc/lircd.conf
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
@@ -1316,7 +1313,6 @@ endif
 
 	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release_neutrino/usr/bin/
 	cp -p $(targetprefix)/usr/sbin/ethtool $(prefix)/release_neutrino/usr/sbin/
-
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/tuxtxt
 
 
@@ -1431,38 +1427,7 @@ endif
 #	rm $(prefix)/release_neutrino/bin/mount
 	cp -RP $(buildprefix)/own_build/neutrino/* $(prefix)/release_neutrino/
 
-#if ENABLE_FLASH_UFS910
-######### FOR FLASHBUILDING UFS-910 with mount -o bind /var/etc /etc #################
-#	rm $(prefix)/release_neutrino/boot/bootlogo.mvi
-#	cp -RP $(prefix)/release_neutrino/etc $(prefix)/release_neutrino/var/
-#	rm -rf $(prefix)/release_neutrino/etc
-#	mkdir -p $(prefix)/release_neutrino/etc/init.d
-#	cp -RP $(prefix)/release_neutrino/var/etc/init.d/{rcS,mountvirtfs} $(prefix)/release_neutrino/etc/init.d
-#	rm -rf $(prefix)/release_neutrino/var/etc/init.d/{rcS,mountvirtfs}
-#	mv $(prefix)/release_neutrino/var/etc/inittab $(prefix)/release_neutrino/etc/
-#	mkdir -p $(prefix)/release_neutrino/var/usr/local/share
-#	mv $(prefix)/release_neutrino/usr/local/share/config $(prefix)/release_neutrino/var/usr/local/share/
-#	mv $(prefix)/release_neutrino/usr/local/share/neutrino $(prefix)/release_neutrino/var/usr/local/share/
-#	( cd $(prefix)/release_neutrino/usr/local/share && ln -s /var/usr/local/share/config && ln -s /var/usr/local/share/neutrino && ln -s /var/usr/local/share/operations )
-#	rm -rf $(prefix)/release_neutrino/tuxbox
-#	( cd $(prefix)/release_neutrino/ && ln -s /var/tuxbox )
-#	rm -rf $(prefix)/release_neutrino/lib/tuxbox
-#	( cd $(prefix)/release_neutrino/lib && ln -s /var/tuxbox )
-#	rm -rf $(prefix)/release_neutrino/share/tuxbox
-#	( cd $(prefix)/release_neutrino/share && ln -s /var/tuxbox )
-#	mv $(prefix)/release_neutrino/media $(prefix)/release_neutrino/var/
-#	mv $(prefix)/release_neutrino/hdd $(prefix)/release_neutrino/var/
-#	mv $(prefix)/release_neutrino/mnt $(prefix)/release_neutrino/var/
-#	( cd $(prefix)/release_neutrino/ && ln -s /var/media && ln -s /var/mnt && ln -s /var/hdd )
-#	( cd $(prefix)/release_neutrino/dev && sudo tar -xzvf dev_neutrino.tar.gz && sudo chmod 777 -R $(prefix)/release_neutrino/dev )
-#	rm $(prefix)/release_neutrino/dev/dev_neutrino.tar.gz
-#	rm $(prefix)/release_neutrino/var/etc/.firstboot
-#	rm $(prefix)/release_neutrino/sbin/{fsck.nfs,fsck.ext2,fsck.ext3,killall5,sfdisk}
-#	rm $(prefix)/release_neutrino/bin/{showiframe,stslave,tfd2mtd,tffpctl}
-#	rm $(prefix)/release_neutrino/usr/bin/showiframe
-#	( cd $(prefix)/release_neutrino/sbin && ln -sf mke2fs mkfs.ext2 && ln -sf mke2fs mkfs.ext3 )
-#	( cd $(prefix)/release_neutrino/bin && ln -sf busybox pidof )
-#endif
+######################################################################################
 
 	cp $(kernelprefix)/$(kernelpath)/arch/sh/boot/uImage $(prefix)/release_neutrino/boot/
 
