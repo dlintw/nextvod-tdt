@@ -61,7 +61,8 @@ if [ ! -e /var/etc/.firstboot ]; then
 	echo "init AVS"
 	insmod $MODDIR/avs.ko type=stv6412
 
-	echo "init player"
+	player=`cat /proc/stb/player/version`
+	echo "init player $player"
 	insmod $MODDIR/mmelog.ko
 	insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER1
 	insmod $MODDIR/ksound.ko
@@ -118,7 +119,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
 	NFS=`grep -c nfs /proc/cmdline`
 	if [ "$NFS" -eq "1" ]; then 
-	echo "Booting from nfs, don't set network" 
+		echo "Booting from nfs, don't set network" 
 	else 
 		if [ -e /etc/network/interfaces ]; then 
 			ip addr flush eth0 
