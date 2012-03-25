@@ -64,20 +64,6 @@ $(DEPDIR)/%$(SYSVINIT): $(SYSVINIT_ADAPTED_ETC_FILES:%=root/etc/%) \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-flash-sysvinit: $(flashprefix)/root/etc/inittab
-
-$(flashprefix)/root/etc/inittab: $(SYSVINIT_ADAPTED_ETC_FILES:%=root/etc/%) \
-		$(SYSVINIT_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	( cd root/etc && for i in $(SYSVINIT_ADAPTED_ETC_FILES); do \
-		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
-		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done )
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 $(DEPDIR)/min-$(INITSCRIPTS) $(DEPDIR)/std-$(INITSCRIPTS) $(DEPDIR)/max-$(INITSCRIPTS) \
 $(DEPDIR)/$(INITSCRIPTS): \
 $(DEPDIR)/%$(INITSCRIPTS): $(INITSCRIPTS_ADAPTED_ETC_FILES:%=root/etc/%) \
@@ -111,44 +97,9 @@ $(DEPDIR)/%$(INITSCRIPTS): $(INITSCRIPTS_ADAPTED_ETC_FILES:%=root/etc/%) \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-flash-initscripts: $(flashprefix)/root/etc/init.d/rc
-
-$(flashprefix)/root/etc/init.d/rc: $(INITSCRIPTS_ADAPTED_ETC_FILES:%=root/etc/%) \
-		$(INITSCRIPTS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts --nopost -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	( cd $(flashprefix)/root/etc/init.d/ && \
-		sed -e "s|-uid 0 ||g" -i bootclean.sh && \
-		sed -e "s|-empty ||g" -i bootclean.sh && \
-		sed -e "s/chmod \-f/chmod/g" -i bootmisc.sh && \
-		sed -e "s/chown \-f/chown/g" -i bootmisc.sh && \
-		sed -e "s|/etc/nologin|/var/tmp/nologin|g" -i bootmisc.sh && \
-		sed -e "s|PATH=/lib/init:/bin:/sbin|PATH=/lib/init:/bin:/sbin:/usr/bin:/usr/sbin|g" -i checkroot.sh && \
-		sed -e "s/hostname \-\-file/hostname \-F/g" -i hostname.sh && \
-		sed -e "s|PATH=/lib/init:/sbin:/bin|PATH=/lib/init:/bin:/sbin:/usr/bin:/usr/sbin|g" -i rmnologin && \
-		sed -e "s|# chkconfig: 2345 99 0|# chkconfig: 2345 69 0|" -i rmnologin && \
-		sed -e "s|readlink -f /etc/nologin|readlink -f /var/tmp/nologin|g" -i rmnologin ) 
-	( cd $(flashprefix)/root/etc/default/ && \
-		sed -e "s|EDITMOTD=yes|EDITMOTD=no|g" -i rcS )
-	( cd root/etc && for i in $(INITSCRIPTS_ADAPTED_ETC_FILES); do \
-		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
-		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done ) && \
-	( export HHL_CROSS_TARGET_DIR=$(flashprefix)/root && cd $(flashprefix)/root/etc/init.d && \
-		for s in mountvirtfs bootlogd checkroot.sh checkfs.sh mountall.sh \
-		hostname.sh mountnfs.sh bootmisc.sh urandom \
-		sendsigs umountnfs.sh umountfs halt reboot \
-		rmnologin single stop-bootlogd ; do \
-			$(hostprefix)/bin/target-initdconfig --add $${s#init.d/} || \
-			echo "Unable to enable initd service: $${s#init.d/}" ; done && rm *rpmsave *.orig 2>/dev/null || true )
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 #
 # NETBASE
 #
-#ftp://ftp.stlinux.com/pub/stlinux/2.3/SRPMS/stlinux23-target-netbase-4.07-5.src.rpm
 NETBASE := netbase
 if STM22
 NETBASE_VERSION := 4.07-4
@@ -201,33 +152,9 @@ $(DEPDIR)/%$(NETBASE): \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-flash-netbase: $(flashprefix)/root/etc/init.d/networking
-
-$(flashprefix)/root/etc/init.d/networking: $(NETBASE_ADAPTED_ETC_FILES:%=root/etc/%) \
-		$(NETBASE_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	( cd root/etc && for i in $(NETBASE_ADAPTED_ETC_FILES); do \
-		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
-		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done ) && \
-	( export HHL_CROSS_TARGET_DIR=$(flashprefix)/root && cd $(flashprefix)/root/etc/init.d && \
-		for s in networking ; do \
-			$(hostprefix)/bin/target-initdconfig --add $${s#init.d/} || \
-			echo "Unable to enable initd service: $${s#init.d/}" ; \
-		done && rm *rpmsave 2>/dev/null || true ) && \
-	( cd $(flashprefix)/root/etc/network && \
-		for i in if-down.d if-post-down.d if-pre-up.d if-up.d run; do \
-			$(INSTALL) -d $$i; \
-		done )
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 #
 # BC
 #
-#ftp://ftp.stlinux.com/pub/stlinux/2.3/SRPMS/stlinux23-target-bc-1.06-4.src.rpm
 BC := bc
 if STM22
 BC_VERSION := 1.06-3
@@ -268,16 +195,6 @@ $(DEPDIR)/%$(BC): $(BC_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-flash-bc: $(flashprefix)/root/usr/bin/bc
-
-$(flashprefix)/root/usr/bin/bc: $(BC_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
 
 #
 # FINDUTILS
@@ -322,14 +239,6 @@ $(DEPDIR)/%$(FINDUTILS): $(FINDUTILS_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $<
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-findutils: $(flashprefix)/root/usr/bin/find
-
-$(flashprefix)/root/usr/bin/find: RPMS/sh4/$(STLINUX)-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
 
 #
 # DISTRIBUTIONUTILS
@@ -386,16 +295,6 @@ $(DEPDIR)/%$(DISTRIBUTIONUTILS_DOC): $(DISTRIBUTIONUTILS_DOC_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
-if TARGETRULESET_FLASH
-flash-distributionutils: $(flashprefix)/root/usr/sbin/initdconfig
-
-$(flashprefix)/root/usr/sbin/initdconfig: $(DISTRIBUTIONUTILS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 #
 # HOST-MTD-UTILS
 #
@@ -439,22 +338,6 @@ $(DEPDIR)/%$(MTD_UTILS): $(MTD_UTILS_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-flash-mtd-utils: $(flashprefix)/root/usr/sbin/flash_info
-
-$(flashprefix)/root/usr/sbin/flash_info: $(MTD_UTILS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	rm -rf $(flashprefix)/root/usr/share && \
-	rm $(flashprefix)/root/usr/sbin/{doc_loadbios,docfdisk,flash_otp_dump,flash_otp_info,ftl_check,ftl_format} && \
-	rm $(flashprefix)/root/usr/sbin/{jffs2dump,mkfs.jffs,mkfs.jffs2,nanddump,nandwrite,nftl_format,nftldump,rfddump,rfdformat,sumtool}
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
-
-##################################################################################################
 
 #
 # BASH
@@ -826,14 +709,6 @@ $(DEPDIR)/%$(STRACE): $(DEPDIR)/%$(GLIBC) $(STRACE_RPM)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-flash-strace: $(flashprefix)/root/usr/bin/strace
-
-$(flashprefix)/root/usr/bin/strace: $(STRACE_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-
 #
 # UTIL LINUX
 # 
@@ -866,8 +741,3 @@ $(DEPDIR)/$(UTIL_LINUX): $(UTIL_LINUX_RPM)
 	$(REWRITE_LIBDIR)/lib{blkid,uuid}.la
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif STM24
-
-##################################################################################################
-
-
-.PHONY: flash-tcp-wrappers
