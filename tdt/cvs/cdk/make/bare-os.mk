@@ -1,11 +1,6 @@
 #
 # FILESYSTEM
 #
-#$(prefix)/min-cdkroot $(prefix)/std-cdkroot $(prefix)/max-cdkroot \
-#$(targetprefix): \
-#$(prefix)/%:
-#	$(INSTALL) -d $@
-
 $(DEPDIR)/min-filesystem $(DEPDIR)/std-filesystem $(DEPDIR)/max-filesystem \
 $(DEPDIR)/filesystem: \
 $(DEPDIR)/%filesystem: bootstrap-cross
@@ -99,15 +94,6 @@ $(DEPDIR)/%$(GLIBC_DEV): $(DEPDIR)/%$(GLIBC) $(GLIBC_DEV_RPM)
 #Wrote: RPMS/sh4/stlinux23-sh4-glibc-i18ndata-2.5-27.sh4.rpm
 #Wrote: RPMS/sh4/stlinux23-sh4-glibc-nscd-2.5-27.sh4.rpm
 #Wrote: RPMS/sh4/stlinux23-sh4-glibc-doc-2.5-27.sh4.rpm
-
-
-flash-glibc: $(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so
-
-$(flashprefix)/root/lib/libc-$(GLIBC_RAWVERSION).so: $(GLIBC_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
 
 #
 # BINUTILS
@@ -353,14 +339,6 @@ $(DEPDIR)/%$(LIBGCC): $(LIBGCC_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
-#flash-libstdc++: $(flashprefix)/root/usr/lib/libstdc++.so.6.0.3
-#
-#$(flashprefix)/root/usr/lib/libstdc++.so.6.0.3: RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm
-#	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-#		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-#	touch $@
-#	@FLASHROOTDIR_MODIFIED@
-
 #Wrote: RPMS/sh4/stlinux20-sh4-cpp-3.4.3-22.sh4.rpm
 #Wrote: RPMS/sh4/stlinux20-sh4-cpp-doc-3.4.3-22.sh4.rpm
 #Wrote: RPMS/sh4/stlinux20-sh4-g++-3.4.3-22.sh4.rpm
@@ -438,17 +416,6 @@ $(DEPDIR)/%$(LIBTERMCAP_DOC): $(LIBTERMCAP_DOC_RPM)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-flash-libtermcap: $(flashprefix)/root/usr/lib/libtermcap.so.$(LIBTERMCAP_RAWVERSION)
-
-$(flashprefix)/root/usr/lib/libtermcap.so.$(LIBTERMCAP_RAWVERSION): $(NCURSES) $(LIBTERMCAP_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	$(INSTALL) -m 644 $(buildprefix)/root/etc/termcap $(flashprefix)/root/etc && \
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 #
 # NCURSES
 #
@@ -516,29 +483,10 @@ $(DEPDIR)/%$(NCURSES_DEV): $(DEPDIR)/%$(NCURSES_BASE) $(NCURSES_DEV_RPM)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-# Evaluate packages
-$(eval $(call Packages,ncurses))
-
 #Wrote: RPMS/sh4/stlinux23-sh4-ncurses-dbg-5.5-9.sh4.rpm
 #Wrote: RPMS/sh4/stlinux23-sh4-ncurses-pic-5.5-9.sh4.rpm
 #Wrote: RPMS/sh4/stlinux23-sh4-ncurses-bin-5.5-9.sh4.rpm
 #Wrote: RPMS/sh4/stlinux23-sh4-ncurses-term-5.5-9.sh4.rpm
-
-#flash-ncurses-base: $(flashprefix)/root/usr/share/terminfo
-#
-#$(flashprefix)/root/usr/share/terminfo: RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_BASE)-$(NCURSES_VERSION).sh4.rpm
-#	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-#		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-#	touch $@
-#	@FLASHROOTDIR_MODIFIED@
-#
-#flash-ncurses: flash-ncurses-base $(flashprefix)/root/lib/libncurses.so.5.4
-#
-#$(flashprefix)/root/lib/libncurses.so.5.4: RPMS/sh4/$(STLINUX)-sh4-$(NCURSES)-$(NCURSES_VERSION).sh4.rpm
-#	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-#		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-#	touch $@
-#	@FLASHROOTDIR_MODIFIED@
 
 #
 # BASE-PASSWD
@@ -591,22 +539,6 @@ $(DEPDIR)/%$(BASE_PASSWD): $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-flash-base-passwd: $(flashprefix)/root/usr/sbin/update-passwd
-
-$(flashprefix)/root/usr/sbin/update-passwd: \
-		$(BASE_PASSWD_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-		$(hostprefix)/bin/update-passwd -L -p $(flashprefix)/root/usr/share/base-passwd/passwd.master \
-			-g $(flashprefix)/root/usr/share/base-passwd/group.master -P $(flashprefix)/root/etc/passwd \
-			-S $(flashprefix)/root/etc/shadow -G $(flashprefix)/root/etc/group && \
-	chmod 600 $(flashprefix)/root/etc/shadow && \
-	( cd $(flashprefix)/root/etc && sed -e "s|/bin/bash|/bin/sh|g" -i passwd )
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 #
 # MAKEDEV
 #
@@ -654,17 +586,6 @@ $(DEPDIR)/%$(MAKEDEV): root/sbin/MAKEDEV $(MAKEDEV_RPM)
 	$(INSTALL) -m 755 root/sbin/MAKEDEV_no_CI $(prefix)/$*cdkroot/sbin
 	$(INSTALL) -m 755 root/sbin/MAKEDEV_dual_tuner $(prefix)/$*cdkroot/sbin
 	$(INSTALL) -m 755 root/sbin/MAKEDEV_adb_box $(prefix)/$*cdkroot/sbin
-
-if TARGETRULESET_FLASH
-flash-makedev: $(flashprefix)/root/sbin/MAKEDEV
-
-$(flashprefix)/root/sbin/MAKEDEV: root/sbin/MAKEDEV $(MAKEDEV_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	$(INSTALL) -m 755 root/sbin/MAKEDEV_flash $(flashprefix)/root/sbin/MAKEDEV
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
 
 #
 # BASE-FILES
@@ -714,64 +635,6 @@ $(DEPDIR)/%$(BASE_FILES): $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
 	echo "tmpfs         /tmp                tmpfs   defaults                        0 0" >> $(prefix)/$*cdkroot/etc/fstab && \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-flash-base-files: $(flashprefix)/root/etc/fstab
-
-$(flashprefix)/root/etc/fstab: $(BASE_FILES_ADAPTED_ETC_FILES:%=root/etc/%) \
-		$(BASEFILES_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	( cd root/etc && for i in $(BASE_FILES_ADAPTED_ETC_FILES); do \
-		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; done ) && \
-	echo "proc          /proc               proc    defaults                        0 0" >> $(flashprefix)/root/etc/fstab && \
-	echo "tmpfs         /tmp                tmpfs   defaults                        0 0" >> $(flashprefix)/root/etc/fstab && \
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
-#
-# INITSCRIPTS/SYSVINIT
-#
-#$(DEPDIR)/sysvinit.do_prepare: @DEPENDS_sysvinit@
-#	@PREPARE_sysvinit@
-#	cd @DIR_sysvinit@ && \
-#		gunzip -cd ../$(lastword $^) | cat > debian.patch && \
-#		patch -p1 <debian.patch
-#	touch $@
-#
-#$(DEPDIR)/sysvinit.do_compile: bootstrap $(DEPDIR)/sysvinit.do_prepare
-#	cd @DIR_sysvinit@  && \
-#		$(BUILDENV) \
-#		./configure \
-#			--build=$(build) \
-#			--host=$(target) \
-#			--target=$(target) \
-#			--prefix= && \
-#		$(MAKE)
-#	touch $@
-#
-#$(DEPDIR)/min-sysvinit $(DEPDIR)/std-sysvinit $(DEPDIR)/max-sysvinit \
-#$(DEPDIR)/sysvinit: \
-#$(DEPDIR)/%sysvinit: $(DEPDIR)/sysvinit.do_compile
-#	cd @DIR_sysvinit@  && \
-#		@INSTALL_sysvinit@
-##	@DISTCLEANUP_sysvinit@
-#	@[ "x$*" = "x" ] && touch $@ || true
-#	@TUXBOX_YAUD_CUSTOMIZE@
-#
-#if TARGETRULESET_FLASH
-#
-#flash-sysvinit: $(flashprefix)/root/usr/bin/hgrep
-#
-#$(flashprefix)/root/usr/bin/hgrep: bootstrap $(DEPDIR)/sysvinit.do_compile | $(flashprefix)/root
-#	cd @DIR_sysvinit@  && \
-#		$(INSTALL) src/grep $@
-#	@FLASHROOTDIR_MODIFIED@
-#	@TUXBOX_CUSTOMIZE@
-#endif
-
-######################################################################################################
 
 #
 # UDEV
@@ -853,16 +716,4 @@ $(DEPDIR)/%$(HOTPLUG): $(HOTPLUG_RPM)
 			echo "Unable to enable initd service: $$s" ; done && rm *rpmsave 2>/dev/null || true )
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-flash-hotplug: $(flashprefix)/root/sbin/hotplug
-
-$(flashprefix)/root/sbin/hotplug: $(HOTPLUG_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 endif STM22
-
