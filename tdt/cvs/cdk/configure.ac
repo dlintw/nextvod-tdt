@@ -169,14 +169,6 @@ AC_ARG_WITH(cpu,
 	[CPU_MODEL="$withval"],[CPU_MODEL="sh4"])
 AC_SUBST(CPU_MODEL)
 
-AC_ARG_WITH(targetruleset,
-	[  --with-targetruleset=NAME	OBSOLETE, use --[[enable|disable]]-flashrules instead],
-	[TARGETRULESET="$withval"],[TARGETRULESET="notset"])
-
-if test "$TARGETRULESET" != "notset"; then
-	AC_MSG_WARN([--with-targetruleset is obsolete; use --[[enable|disable]]-flashrules instead]);
-fi
-
 AC_ARG_WITH(assume-kernelsources-old,
 	[  --with-assume-kernelsources-old	Do not recompile due to new kernel sources],
 	[assume_kernelsources_old="yes"],[assume_kernelsources_old="no"])
@@ -193,18 +185,6 @@ AC_ARG_ENABLE(externallcd,
 	,[enable_externallcd=no])
 AM_CONDITIONAL(ENABLE_EXTERNALLCD,test "$enable_externallcd" = "yes")
 AC_SUBST(EXTERNALLCD)
-
-AC_ARG_ENABLE(flashrules,
-	AS_HELP_STRING(--enable-flashrules,	enable rules for creating flash targets),
-	,[enable_flashrules=yes])
-AM_CONDITIONAL(TARGETRULESET_FLASH,test "$enable_flashrules" = "yes")
-
-if test "$enable_flashrules" = "yes"; then
-	INSTALLRULESETFILE="-flash"
-else
-	INSTALLRULESETFILE=""
-fi
-
 
 
 if test -z "$CFLAGS" ; then
@@ -472,14 +452,6 @@ AC_ARG_ENABLE(cuberevo_9500hd,
 AM_CONDITIONAL(ENABLE_CUBEREVO_9500HD,test "$enable_cuberevo_9500hd" = "yes")
 AC_SUBST(CUBEREVO_9500HD)
 
-AC_ARG_ENABLE(flash_ufs910,
-	AS_HELP_STRING(--enable-flash_ufs910,    enable flash ufs910 stuff),
-	[case "${enableval}" in
-		yes) FLASH_UFS910=flash_ufs910 ;;
-	esac],[enable_flash_ufs910=no])
-AM_CONDITIONAL(ENABLE_FLASH_UFS910,test "$enable_flash_ufs910" = "yes")
-AC_SUBST(FLASH_UFS910)
-
 AC_ARG_ENABLE(homecast5101,
 	AS_HELP_STRING(--enable-homecast5101,    enable homecast 5101 stuff),
 	[case "${enableval}" in
@@ -543,14 +515,6 @@ AC_ARG_WITH(bootprefix,
 	[  --with-bootprefix=DIR   prefix for boot files [[PREFIX/cdkroot-tftpboot]]],
 	[bootprefix="$with_bootprefix"],[bootprefix="${prefix}/cdkroot-tftpboot"])
 
-AC_ARG_WITH(flashprefix,
-	[  --with-flashprefix=DIR  prefix for flash files [[PREFIX/cdkflash]] (only used for flash building)],
-	[flashprefix="$with_flashprefix"],[flashprefix="${prefix}/cdkflash"])
-
-AC_ARG_WITH(ipkprefix,
-	[  --with-ipkprefix=DIR  prefix for ipkg package files [[PREFIX/ipk]]],
-	[ipkprefix="$with_ipkprefix"],[ipkprefix="${prefix}/ipk"])
-
 AC_ARG_WITH(serversupport,
 	[  --with-serversupport=DIR  prefix for server file templates [[PREFIX/serversupport]]],
 	[serversupport="$with_serversupport"],[serversupport="${prefix}/serversupport"])
@@ -567,26 +531,15 @@ AC_ARG_WITH(updatehttpprefix,
 	[  --with-updatehttpprefix=URL  optional URL containing the URL of a directory with update images [[NONE]]],
 	[updatehttpprefix="$with_updatehttpprefix"],[updatehttpprefix=])
 
-AC_ARG_WITH(ipkgbuilddir,
-	[  --with-ipkgbuilddir=DIR  temporary directory for building ipkg packages [[[CVS]/ipkgbuild]]],
-	[ipkgbuilddir="$with_ipkgbuilddir"],[ipkgbuilddir="`pwd`/ipkgbuild"])
-
 buildprefix=`pwd`
 AC_SUBST(targetprefix)
 AC_SUBST(hostprefix)
 AC_SUBST(buildprefix)
 AC_SUBST(bootprefix)
-AC_SUBST(flashprefix)
-AC_SUBST(ipkprefix)
 AC_SUBST(serversupport)
 AC_SUBST(ucodesdir)
 AC_SUBST(customizationsdir)
 AC_SUBST(updatehttpprefix)
-AC_SUBST(ipkgbuilddir)
-flashprefix_ro=${flashprefix}/ro
-AC_SUBST(flashprefix_ro)
-flashprefix_rw=${flashprefix}/rw
-AC_SUBST(flashprefix_rw)
 
 AC_ARG_WITH(checkImage,
 	[  --with-checkImage=[[none,rename,warn]]	How/if to invoke checkImage [[none]]],
@@ -737,35 +690,6 @@ fi
 AC_PROG_YACC
 if test "$YACC" != "bison -y"; then
 	AC_MSG_ERROR(No bison found)
-fi
-
-if test "$enable_flashrules" = "yes"; then
-	MKLIBS="$hostappsdir/mklibs/mklibs.py"
-	AC_SUBST(MKLIBS)
-
-	AC_PATH_PROG(MKCRAMFS,mkcramfs,no)
-	if test "$MKCRAMFS" = "no"; then
-		AC_MSG_WARN(using tufsbox cramfs)
-		MKCRAMFS=$hostprefix/bin/mkcramfs
-	fi
-	AC_PATH_PROG(MKJFFS2,mkjffs2,no)
-	if test "$MKJFFS2" = "no"; then
-		AC_PATH_PROG(MKFSJFFS2,mkfs.jffs2,no)
-		if test "$MKFSJFFS2" = "no"; then
-			AC_MSG_WARN(using tufsbox mkfs.jffs2)
-			MKFSJFFS2="$hostprefix/bin/mkfs.jffs2"
-		fi
-		MKJFFS2="$MKFSJFFS2"
-	fi
-	AC_PATH_PROG(CFV,cfv,no)
-	if test "$CFV" = "no"; then
-		AC_MSG_WARN(No cfv found)
-	fi
-
-	AC_PATH_PROG(FAKEROOT,fakeroot,no)
-	if test "$fakeroot" = "no"; then
-		AC_MSG_ERROR(No fakeroot found)
-	fi
 fi
 
 if test "$enable_ccache" = "yes"; then
@@ -1009,14 +933,6 @@ TUXBOX_RULES_MAKE(libflac)
 TUXBOX_RULES_MAKE(libcap)
 TUXBOX_RULES_MAKE(evebrowser)
 TUXBOX_RULES_MAKE(brofs)
-TUXBOX_RULES_MAKE(gstreamer)
-TUXBOX_RULES_MAKE(gst_plugins_base)
-TUXBOX_RULES_MAKE(gst_plugins_good)
-TUXBOX_RULES_MAKE(gst_plugins_bad)
-TUXBOX_RULES_MAKE(gst_plugins_ugly)
-TUXBOX_RULES_MAKE(gst_ffmpeg)
-TUXBOX_RULES_MAKE(gst_plugins_fluendo_mpegdemux)
-TUXBOX_RULES_MAKE(gst_plugins_dvbmediasink)
 TUXBOX_RULES_MAKE(libalsa)
 TUXBOX_RULES_MAKE(rtmpdump)
 TUXBOX_RULES_MAKE(libdvbsipp)
@@ -1027,7 +943,19 @@ TUXBOX_RULES_MAKE(libdreamdvd2)
 TUXBOX_RULES_MAKE(pilimaging)
 
 #
-# EXTERNAL_LCD
+# gstreamer
+#
+TUXBOX_RULES_MAKE(gstreamer)
+TUXBOX_RULES_MAKE(gst_plugins_base)
+TUXBOX_RULES_MAKE(gst_plugins_good)
+TUXBOX_RULES_MAKE(gst_plugins_bad)
+TUXBOX_RULES_MAKE(gst_plugins_ugly)
+TUXBOX_RULES_MAKE(gst_ffmpeg)
+TUXBOX_RULES_MAKE(gst_plugins_fluendo_mpegdemux)
+TUXBOX_RULES_MAKE(gst_plugins_dvbmediasink)
+
+#
+# external lcd
 #
 TUXBOX_RULES_MAKE(graphlcd)
 TUXBOX_RULES_MAKE(libusb)
@@ -1044,7 +972,7 @@ TUXBOX_RULES_MAKE(ruby)
 # framebuffer
 #
 #TUXBOX_RULES_MAKE_RPM(directfb)
-TUXBOX_RULES_MAKE_RPM(directfb_examples)
+#TUXBOX_RULES_MAKE_RPM(directfb_examples)
 
 #
 # in work
@@ -1185,7 +1113,6 @@ Patchlevel P0209            : $enable_p0209
 HAVANA Patchlevel P0207_5   : $enable_havana_p0207_5
 vdr VDR 1.7.11              : $enable_vdr1711
 vdr VDR 1.7.22              : $enable_vdr1722
-flash rules                 : $enable_flashrules
 ccache                      : $enable_ccache
 target prefix               : $targetprefix
 boot prefix                 : $bootprefix
@@ -1221,7 +1148,6 @@ spark box stuff             : $enable_spark
 spark7162 box stuff         : $enable_spark7162
 adb_box stuff               : $enable_adb_box
 ufs910 stuff                : $enable_ufs910
-ufs910 flash                : $enable_flash_ufs910
 ufs912 stuff                : $enable_ufs912
 ufs922 stuff                : $enable_ufs922
 cuberevo stuff              : $enable_cuberevo
@@ -1269,18 +1195,8 @@ TUXBOX_TOUCH='[@[ "x$*" = "x" ] && touch $@ || true]'
 AC_SUBST(TUXBOX_TOUCH)
 TUXBOX_YAUD_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(prefix)/$*cdkroot $(buildprefix) || true]'
 AC_SUBST(TUXBOX_YAUD_CUSTOMIZE)
-FLASHROOTDIR_MODIFIED='touch $(flashprefix)/root'
-AC_SUBST(FLASHROOTDIR_MODIFIED)
-TUXBOX_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(flashprefix) $(buildprefix) || true]'
+TUXBOX_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(buildprefix) || true]'
 AC_SUBST(TUXBOX_CUSTOMIZE)
-TUXBOX_FLASHROOT_MODIFIED='[[ "x$*" = "x$(flashprefix)/root" ] && touch $(flashprefix)/root || true]'
-AC_SUBST(TUXBOX_FLASHROOT_MODIFIED)
-TUXBOX_FLASH_CUSTOMIZE='[[ "x$*" = "x$(flashprefix)/root" -a -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(flashprefix) $(buildprefix) || true]'
-AC_SUBST(TUXBOX_FLASH_CUSTOMIZE)
-FLASHROOT_MODIFIED='[touch $(flashprefix)/root || true]'
-AC_SUBST(FLASHROOT_MODIFIED)
-FLASH_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(flashprefix) $(buildprefix) || true]'
-AC_SUBST(FLASH_CUSTOMIZE)
 
 AC_CONFIG_FILES([
 Makefile
