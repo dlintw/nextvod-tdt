@@ -10,9 +10,6 @@ DISTCLEANUP_$1="rm -rf $DIR_$1"
 DISTCLEANUP="$DISTCLEANUP $DIR_$1"
 DEPSDISTCLEANUP_$1="rm .deps/$1 .deps/$1.do_compile .deps/$1.do_prepare"
 LIST_DISTCLEAN="$LIST_DISTCLEAN $1-distclean"
-IPKG_$1="cp -prd ipk-control/$1/* ${ipkgbuilddir}/ && rm -rf ${ipkgbuilddir}/CONTROL/.svn && make ${ipkgbuilddir}/strippy && \
-ipkg-build -o root -g root ${ipkgbuilddir} ${ipkprefix} && \
-rm -rf ${ipkgbuilddir}"
 AC_SUBST(DEPENDS_$1)dnl
 AC_SUBST(DIR_$1)dnl
 AC_SUBST(PREPARE_$1)dnl
@@ -25,7 +22,6 @@ AC_SUBST(LIST_CLEAN)dnl
 AC_SUBST(DISTCLEANUP_$1)dnl
 AC_SUBST(DEPSDISTCLEANUP_$1)dnl
 AC_SUBST(LIST_DISTCLEAN)dnl
-AC_SUBST(IPKG_$1)dnl
 AC_MSG_RESULT(done)
 ])
 
