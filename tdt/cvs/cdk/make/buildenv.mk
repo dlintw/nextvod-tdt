@@ -117,10 +117,6 @@ if MAINTAINER_MODE
 CONFIGURE_OPTS += --enable-maintainer-mode
 endif
 
-if TARGETRULESET_FLASH
-CONFIGURE_OPTS += --without-debug
-endif
-
 CONFIGURE = \
 	./autogen.sh && \
 	CC=$(target)-gcc \
