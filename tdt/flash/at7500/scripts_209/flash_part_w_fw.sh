@@ -96,10 +96,20 @@ $FUP -c $OUTFILE -k $CURDIR/uImage -a $CURDIR/mtd_fw.sum.pad.signed.bin -r $CURD
 
 rm -f $CURDIR/uImage
 rm -f $CURDIR/mtd_fw.bin
-#rm -f $CURDIR/mtd_root.bin
+rm -f $CURDIR/mtd_root.bin
 rm -f $CURDIR/mtd_fw.sum.bin
-#rm -f $CURDIR/mtd_root.sum.bin
+rm -f $CURDIR/mtd_root.sum.bin
 rm -f $CURDIR/mtd_fw.sum.pad.bin
-#rm -f $CURDIR/mtd_root.sum.pad.bin
+rm -f $CURDIR/mtd_root.sum.pad.bin
+rm -f $CURDIR/mtd_root.sum.pad.c0.bin
+rm -f $CURDIR/mtd_root.sum.pad.c4.bin
+rm -f $CURDIR/mtd_root.sum.pad.c8.bin
+rm -f $CURDIR/mtd_root.sum.pad.ca.bin
+rm -f $CURDIR/mtd_root.sum.pad.d.bin
+rm -f $CURDIR/mtd_root.sum.pad.r.bin
+rm -f $CURDIR/mtd_root.sum.pad.u.bin
+rm -f $CURDIR/mtd_fw.sum.pad.signed.bin
+rm -f $CURDIR/mtd_root.sum.pad.d.signed.bin
+rm -f $CURDIR/mtd_root.sum.pad.r.signed.bin
 
 zip $OUTFILE.zip $OUTFILE

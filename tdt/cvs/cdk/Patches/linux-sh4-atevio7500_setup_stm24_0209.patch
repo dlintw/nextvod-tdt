@@ -186,12 +186,12 @@
 +	 },
 +	{
 +	 .name = "ROOT FS",
-+	 .size = 0x00BC0000,	//11,75M
++	 .size = 0x00BD0000,	//11,8125M
 +	 .offset = 0x01220000,	//1200000 + 20000squasfs
 +	 },
 +	{
 +	 .name = "Device",
-+	 .size = 0x002C0000,	// 2,75M
++	 .size = 0x002D0000,	// 2,8125M
 +	 .offset = 0x01E20000,	//1E00000 + 20000squasfs
 +	 },
 +	{
