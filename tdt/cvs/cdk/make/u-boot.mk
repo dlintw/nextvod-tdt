@@ -97,37 +97,7 @@ $(DEPDIR)/%u-boot-utils: $(DEPDIR)/u-boot-utils.do_compile
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM22
 
-if TARGETRULESET_FLASH
-flash-u-boot-utils: $(flashprefix)/root/usr/sbin/fw_printenv
-
-$(flashprefix)/root/usr/sbin/fw_printenv: $(DEPDIR)/u-boot-utils.do_compile
-	$(INSTALL) -d $(flashprefix)/root/{etc,usr/sbin} && \
-	cd $(HOST_U_BOOT_DIR) && \
-		$(INSTALL) -m 755 STM/env/fw_printenv $@ && \
-		$(LN_SF) fw_printenv $(flashprefix)/root/usr/sbin/fw_setenv
-	$(INSTALL) -m 644 $(buildprefix)/root/etc/fw_env.config $(flashprefix)/root/etc/
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 $(DEPDIR)/u-boot: $(DEPDIR)/u-boot.do_compile
-#%install
-#%host_setup
-#rm -rf %{buildroot}
-#cd u-boot
-#install -d -m 755 %{buildroot}%{_stm_binary_uboot_dir}
-#cp u-boot       %{buildroot}%{_stm_binary_uboot_dir}
-#cp u-boot.*     %{buildroot}%{_stm_binary_uboot_dir}
-#cp setupenv*    %{buildroot}%{_stm_binary_uboot_dir}
-#cp STM/localenv %{buildroot}%{_stm_binary_uboot_dir}
-#cp kscript      %{buildroot}%{_stm_binary_uboot_dir}
-####cp COPYING      %{buildroot}%{_stm_binary_uboot_dir}/LICENSE
-####
-####echo -e "ST Linux Distribution "%{_hhl_build_id}" Binary U-boot\n \
-####CPU: sh4\n \
-####PLATFORM: stb7100ref_27\n \
-####U-BOOT VERSION: 1.1.2_st2.0\n" > \
-####%{buildroot}%{_stm_binary_uboot_dir}/README.ST
-
 
 #stlinux20-host-u-boot ftp://ftp.stlinux.com/pub/stlinux/2.0/ST_Linux_2.0/SRPM_Distribution/sh4-SRPMS-updates/stlinux20-host-u-boot-sh4_stb7100ref_27-2.0-14.src.rpm
 HOST_U_BOOT_SH4_STB7100REF_27 := host-u-boot-sh4_stb7100ref_27
@@ -137,11 +107,6 @@ RPMS/sh4/stlinux20-$(HOST_U_BOOT_SH4_STB7100REF_27)-2.0-14.sh4.rpm: $(archivedir
 $(HOST_U_BOOT_SH4_STB7100REF_27): RPMS/sh4/stlinux20-$(HOST_U_BOOT_SH4_STB7100REF_27)-2.0-14.sh4.rpm
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
-#ftp://ftp.stlinux.com/pub/stlinux/2.2/SRPMS/stlinux22-target-u-boot-sh4_stb7100ref_27-1.1.2_stm22_0017-1.src.rpm
-#ftp://ftp.stlinux.com/pub/stlinux/2.2/SRPMS/stlinux22-target-u-boot-sh4_stb7100ref_30-1.1.2_stm22_0017-1.src.rpm
-#ftp://ftp.stlinux.com/pub/stlinux/2.2/updates/SRPMS/stlinux22-target-u-boot-sh4_stb7100ref_27-1.1.2_stm22_0020-1.src.rpm
-#ftp://ftp.stlinux.com/pub/stlinux/2.2/updates/SRPMS/stlinux22-target-u-boot-sh4_stb7100ref_30-1.1.2_stm22_0020-1.src.rpm
-
 
 #
 # HOST-U-BOOT-TOOLS
@@ -188,4 +153,3 @@ $(DEPDIR)/$(HOST_U_BOOT_TOOLS): u-boot.do_prepare $(HOST_U_BOOT_TOOLS_RPM) | boo
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
 	touch $@
 endif !STM22
-

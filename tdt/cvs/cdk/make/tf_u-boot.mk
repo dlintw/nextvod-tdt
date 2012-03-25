@@ -46,18 +46,6 @@ $(DEPDIR)/%u-boot-utils: $(DEPDIR)/u-boot-utils.do_compile
 #	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-flash-u-boot-utils: $(flashprefix)/root/usr/sbin/fw_printenv
-
-$(flashprefix)/root/usr/sbin/fw_printenv: $(DEPDIR)/u-boot-utils.do_compile
-	$(INSTALL) -d $(flashprefix)/root/{etc,usr/sbin} && \
-	cd $(U_BOOT_DIR) && \
-		$(INSTALL) -m 755 STM/env/fw_printenv $@ && \
-		$(LN_SF) fw_printenv $(flashprefix)/root/usr/sbin/fw_setenv
-	$(INSTALL) -m 644 $(buildprefix)/root/etc/fw_env.config $(flashprefix)/root/etc/
-	@FLASHROOTDIR_MODIFIED@
-endif
-
 $(TFINSTALLER_DIR)/u-boot.ftfd: $(U_BOOT_DIR)/u-boot.bin $(TFINSTALLER_DIR)/tfpacker
 	$(TFINSTALLER_DIR)/tfpacker $< $@
 	$(TFINSTALLER_DIR)/tfpacker -t $< $(@D)/Enigma_Installer.tfd
