@@ -104,13 +104,6 @@ yaud-neutrino-beta: yaud-none lirc stslave\
 		boot-elf remote firstboot neutrino-beta release_neutrino_nightly
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-flash-ufs910-neutrino: yaud-none stslave \
-		yaud-neutrino \
-		kernel-squashfs.ubimage \
-		root-stock.neutrino \
-		var-stock.neutrino
-	@TUXBOX_YAUD_CUSTOMIZE@
-
 if STM22
 yaud-enigma2: yaud-none host-python lirc stslave\
 		boot-elf hotplug remote firstboot enigma2 enigma2-misc release
@@ -143,25 +136,6 @@ endif
 
 yaud-enigma2-pli-nightly: yaud-none host-python lirc \
 		boot-elf remote firstboot enigma2-pli-nightly enigma2-misc release
-	@TUXBOX_YAUD_CUSTOMIZE@
-
-#work yet!!!
-flash-ufs910-enigma2: \
-		yaud-none host-python lirc stslave \
-		boot-elf hotplug remote firstboot enigma2 enigma2-misc release \
-		kernel-squashfs.ubimage \
-		conf-stock.enigma2 \
-		root-stock.enigma2 \
-		app-stock.enigma2 \
-		var-stock.enigma2
-	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-hdbox-enigma2: \
-		yaud-none host-python lirc \
-		boot-elf hotplug remote firstboot enigma2 enigma2-misc release \
-		kernel-squashfs-hdbox.ubimage \
-		root-stock-hdbox.enigma2 \
-		var-stock-hdbox.enigma2
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 yaud-none: \
@@ -243,7 +217,3 @@ max-yaud-none: \
 		%net-utils \
 		%disk-utils
 	@TUXBOX_YAUD_CUSTOMIZE@
-#		%$(BASH) \
-#		%$(COREUTILS) \
-#		%$(NET_TOOLS) \
-#
