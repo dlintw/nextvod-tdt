@@ -7,11 +7,7 @@ include make/buildenv.mk
 include make/archive-specs.mk
 
 # Include host apps targets
-# ipkg-utils
 include make/hostapps.mk
-
-# Include ipk stuff
-include make/ipkg.mk
 
 # Include bootstrap targets (SPECS derived)
 include make/bootstrap.mk
@@ -93,9 +89,6 @@ include make/libtuxbox.mk
 # Include yaud targets
 include make/yaud.mk
 
-# Include prog targets
-include make/prog.mk
-
 # Include usb targets
 include make/flashybrid.mk
 
@@ -109,10 +102,6 @@ include make/stg-framebuffer-specs.mk
 # Include misc targets (SPECS derived)
 # (splashutils)
 include make/misc-specs.mk
-
-# flash_parts-[root]-[cramfs,squashfs,jffs2,all]
-# Expand all flash targets containg the word "all"
-include make/flash-expand-targets.mk
 
 # Create complete images ("without u-boot bootloader stuff")
 include make/fullimages.mk
@@ -141,9 +130,6 @@ include make/helper-images.mk
 
 # A number of cleaning targets
 include make/cleantargets.mk
-
-# "Phony" make targets
-include make/phony.mk
 
 # Create the TAGS file
 include make/tags.mk
