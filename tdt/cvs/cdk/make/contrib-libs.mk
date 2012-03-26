@@ -276,6 +276,7 @@ $(DEPDIR)/%libgif: $(DEPDIR)/libgif.do_compile
 #
 $(DEPDIR)/curl.do_prepare: @DEPENDS_curl@
 	@PREPARE_curl@
+	touch $@
 
 $(DEPDIR)/curl.do_compile: bootstrap libz $(DEPDIR)/curl.do_prepare
 	cd @DIR_curl@ && \
@@ -288,6 +289,7 @@ $(DEPDIR)/curl.do_compile: bootstrap libz $(DEPDIR)/curl.do_prepare
 			--mandir=/usr/share/man \
 			--with-random && \
 		$(MAKE) all
+	touch $@
 
 $(DEPDIR)/min-curl $(DEPDIR)/std-curl $(DEPDIR)/max-curl \
 $(DEPDIR)/curl: \
