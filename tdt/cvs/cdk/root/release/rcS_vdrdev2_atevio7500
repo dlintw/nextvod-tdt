@@ -8,7 +8,7 @@ if [ -e /var/etc/.firstboot ]; then
    echo "WAIT 1 min" >/dev/vfd
    echo "WAIT 1 min"
    rm /var/etc/.firstboot
-   touch /dev/.udev
+   touch /dev/.devfsd
 fi
 
 /etc/init.d/mountvirtfs start

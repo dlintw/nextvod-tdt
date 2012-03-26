@@ -130,8 +130,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
 
-   touch /dev/.udev
-
    #init rc.modules
 #   /var/config/rc.modules &
 

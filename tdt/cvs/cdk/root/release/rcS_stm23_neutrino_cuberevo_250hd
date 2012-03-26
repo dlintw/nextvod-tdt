@@ -10,7 +10,7 @@ if [ -e /var/etc/.firstboot ]; then
    sleep 1
    echo "WAIT 3 min"
    echo "WAIT 3 min" > /dev/dbox/fp0
-   touch /dev/.udev
+   touch /dev/.devfsd
 fi
 
 /etc/init.d/mountvirtfs start
