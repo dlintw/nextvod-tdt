@@ -175,7 +175,7 @@ else !STM24
 $(DEPDIR)/e2fsprogs.do_compile: $(DEPDIR)/e2fsprogs.do_prepare
 	cd @DIR_e2fsprogs@ && \
 	$(BUILDENV) \
-	cc="$(target)-gcc") \
+	cc=$(target)-gcc \
 	./configure \
 		--build=$(build) \
 		--host=$(target) \

@@ -276,7 +276,6 @@ $(DEPDIR)/%libgif: $(DEPDIR)/libgif.do_compile
 #
 $(DEPDIR)/curl.do_prepare: @DEPENDS_curl@
 	@PREPARE_curl@
-	touch $@
 
 $(DEPDIR)/curl.do_compile: bootstrap libz $(DEPDIR)/curl.do_prepare
 	cd @DIR_curl@ && \
@@ -289,15 +288,15 @@ $(DEPDIR)/curl.do_compile: bootstrap libz $(DEPDIR)/curl.do_prepare
 			--mandir=/usr/share/man \
 			--with-random && \
 		$(MAKE) all
-	touch $@
 
 $(DEPDIR)/min-curl $(DEPDIR)/std-curl $(DEPDIR)/max-curl \
 $(DEPDIR)/curl: \
 $(DEPDIR)/%curl: $(DEPDIR)/curl.do_compile
 	cd @DIR_curl@ && \
-		sed -e "s,^prefix=,prefix=$(targetprefix)," < curl-config > $(crossprefix)/bin/curl-config && \
-		chmod 755 $(crossprefix)/bin/curl-config
+		sed -e "s,^prefix=,prefix=$(targetprefix)," < curl-config > $(hostprefix)/bin/curl-config && \
+		chmod 755 $(hostprefix)/bin/curl-config && \
 		@INSTALL_curl@
+	rm -f $(targetprefix)/usr/bin/curl-config
 #	@DISTCLEANUP_curl@
 	@[ "x$*" = "x" ] && touch $@ || true
 
