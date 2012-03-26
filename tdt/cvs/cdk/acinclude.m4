@@ -1,7 +1,7 @@
 AC_DEFUN([TUXBOX_RULES_MAKE],[
 AC_MSG_CHECKING([$1 rules])
 eval `${srcdir}/rules.pl make ${srcdir}/rules-make $1 cdkoutput`
-INSTALL_$1=`${srcdir}/rules.pl install ${srcdir}/rules-install${INSTALLRULESETFILE} $1`
+INSTALL_$1=`${srcdir}/rules.pl install ${srcdir}/rules-install $1`
 UNINSTALL_$1=`${srcdir}/rules.pl uninstall ${srcdir}/rules-uninstall $1`
 DEPSCLEANUP_$1="rm .deps/$1"
 DEPSCLEANUP="$DEPSCLEANUP .deps/$1"
@@ -31,7 +31,7 @@ eval `${srcdir}/rules.pl make ${srcdir}/rules-make $1 cdkoutput`
 SOURCEDIR_$1=$DIR_$1
 CONFIGURE_$1="../$DIR_$1/configure"
 PREPARE_$1="$PREPARE_$1 && ( rm -rf build_$1 || /bin/true ) && mkdir build_$1"
-INSTALL_$1=`${srcdir}/rules.pl install ${srcdir}/rules-install${INSTALLRULESETFILE} $1`
+INSTALL_$1=`${srcdir}/rules.pl install ${srcdir}/rules-install $1`
 CLEANUP_$1="rm -rf $DIR_$1 build_$1"
 CLEANUP="$CLEANUP $DIR_$1"
 DIR_$1="build_$1"
