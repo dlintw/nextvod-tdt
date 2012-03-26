@@ -83,7 +83,7 @@ $(DEPDIR)/enigma2-misc:
 	$(INSTALL_FILE) root/etc/tuxbox/tuxtxt2.conf $(targetprefix)/etc/tuxbox/ && \
 	$(INSTALL_FILE) root/etc/tuxbox/cables.xml $(targetprefix)/etc/tuxbox/ && \
 	$(INSTALL_FILE) root/etc/tuxbox/terrestrial.xml $(targetprefix)/etc/tuxbox/ && \
-	$(INSTALL_FILE) root/etc/tuxbox/timezone.xml $(targetprefix)/etc/tuxbox/ && \
+	$(INSTALL_FILE) root/etc/tuxbox/timezone.xml $(targetprefix)/etc/ && \
 	$(INSTALL_DIR) $(targetprefix)/boot && \
 	$(INSTALL_FILE) root/bootscreen/bootlogo.mvi $(targetprefix)/boot/ && \
 	$(INSTALL_DIR) $(targetprefix)/media/{hdd,dvd} && \
