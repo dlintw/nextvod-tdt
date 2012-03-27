@@ -4,7 +4,7 @@ eval `${srcdir}/rules.pl make ${srcdir}/rules-make $1 cdkoutput`
 INSTALL_$1=`${srcdir}/rules.pl install ${srcdir}/rules-install $1`
 UNINSTALL_$1=`${srcdir}/rules.pl uninstall ${srcdir}/rules-uninstall $1`
 DEPSCLEANUP_$1="rm .deps/$1"
-DEPSCLEANUP="$DEPSCLEANUP .deps/$1"
+DEPSCLEANUP="$DEPSCLEANUP .deps/$1 .deps/$1.do_compile .deps/$1.do_prepare"
 LIST_CLEAN="$LIST_CLEAN $1-clean"
 DISTCLEANUP_$1="rm -rf $DIR_$1"
 DISTCLEANUP="$DISTCLEANUP $DIR_$1"
