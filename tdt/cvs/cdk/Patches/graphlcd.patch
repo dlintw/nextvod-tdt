@@ -55,7 +55,7 @@
  	@$(MAKE) -C glcdskin install
  	@$(MAKE) -C tools install
 -	test -d "${UDEVRULESDIR}" && install -m 644 -o root -g root "$(UDEVRULE)" "$(UDEVRULESDIR)"
-+	install -m 0755 graphlcd.conf $(ETCDIR)
++	install -m 0644 graphlcd.conf $(ETCDIR)
  
  uninstall:
  	@$(MAKE) -C glcdgraphics uninstall
