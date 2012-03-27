@@ -11,7 +11,7 @@ $(targetprefix)/var/etc/.version:
 	echo "version=0100`date +%Y%m%d%H%M`" >> $@
 	echo "git =`git describe`" >> $@
 
-N_CPPFLAGS +=-DNEW_LIBCURL
+N_CPPFLAGS =-DNEW_LIBCURL
 
 N_CONFIG_OPTS = --enable-silent-rules
 
