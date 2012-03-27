@@ -103,14 +103,3 @@ enigma2-clean enigma2-distclean:
 	rm -f $(DEPDIR)/enigma2.do_compile
 	cd $(appsdir)/enigma2 && \
 		$(MAKE) distclean
-
-#
-# dvb/libdvbsi++
-#
-$(appsdir)/dvb/libdvbsi++/config.status: bootstrap
-	cd $(appsdir)/dvb/libdvbsi++ && $(CONFIGURE) CPPFLAGS="$(CPPFLAGS) -I$(driverdir)/dvb/include"
-
-$(DEPDIR)/libdvbsi++: $(appsdir)/dvb/libdvbsi++/config.status
-	$(MAKE) -C $(appsdir)/dvb/libdvbsi++ all install
-	touch $@
-
