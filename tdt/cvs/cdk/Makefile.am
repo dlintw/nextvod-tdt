@@ -55,9 +55,6 @@ include make/misc_tools.mk
 # Plugins
 include make/plugins.mk
 
-# Include stock gui targets
-include make/stock.mk
-
 # Include enigma gui targets
 include make/enigma.mk
 
@@ -89,44 +86,9 @@ include make/libtuxbox.mk
 # Include yaud targets
 include make/yaud.mk
 
-# Include usb targets
-include make/flashybrid.mk
-
-# Include development targets
-include make/development.mk
-
-# Include stg-framebuffer targets (SPECS derived)
-# (stgfb X... freetype directfb)
-include make/stg-framebuffer-specs.mk
-
 # Include misc targets (SPECS derived)
 # (splashutils)
 include make/misc-specs.mk
-
-# Create complete images ("without u-boot bootloader stuff")
-include make/fullimages.mk
-
-# Create update images
-include make/partition-update-images.mk
-
-# Create images of the root and var file systems
-include make/partition-images.mk
-
-# Create root and var filesystems, ready for image creation
-include make/flashable-dirs.mk
-
-# Strip libraries of symbols not needed.
-include make/reduce-libs.mk
-
-# Create the root file systems for jffs2-only, cramfs, and squashfs
-# images (containing kernel modules but not GUI)
-include make/flashroot-fs.mk
-
-# Create the root file system, without kernel and GUI (be aware of RW_FILES)
-include make/flashroot.mk
-
-# Create partition und update partition images from given directories
-include make/helper-images.mk
 
 # A number of cleaning targets
 include make/cleantargets.mk

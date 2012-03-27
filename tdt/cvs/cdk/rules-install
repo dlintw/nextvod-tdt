@@ -143,15 +143,6 @@ lighttpd;make:install:DESTDIR=TARGETS
 wireless_tools;make:install:INSTALL_MAN=TARGETS/usr/share/man:PREFIX=TARGETS/usr
 ethtool;make:install:DESTDIR=TARGETS
 
-#
-# development
-#
 
-#
-# in work
-#
-flashybrid;make:install
-netkit_base;make:install:PREFIX=TARGETS
-ruby;make:install:DESTDIR=TARGETS
 
 >>?;rules-install-local

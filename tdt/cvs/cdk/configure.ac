@@ -962,51 +962,6 @@ TUXBOX_RULES_MAKE(libusbcompat)
 TUXBOX_RULES_MAKE(libgd2)
 
 #
-# development
-#
-TUXBOX_RULES_MAKE(ruby)
-
-#
-# framebuffer
-#
-#TUXBOX_RULES_MAKE_RPM(directfb)
-#TUXBOX_RULES_MAKE_RPM(directfb_examples)
-
-#
-# in work
-#
-TUXBOX_RULES_MAKE(flashybrid)
-TUXBOX_RULES_MAKE(netkit_base)
-
-#
-# dummy
-#
-
-#
-# msttf
-#
-
-#
-# additional
-#
-
-#
-# java
-#
-
-#
-# fun stuff
-#
-
-#
-# dvb apps
-#
-
-#
-# bluetooth
-#
-
-#
 # RPM stuff
 #
 configprefix=$prefix/config
