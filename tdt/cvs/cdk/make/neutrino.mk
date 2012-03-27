@@ -11,32 +11,7 @@ $(targetprefix)/var/etc/.version:
 	echo "version=0100`date +%Y%m%d%H%M`" >> $@
 	echo "git =`git describe`" >> $@
 
-N_CPPFLAGS = \
-	$(if $(CUBEREVO),-D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO) \
-	$(if $(CUBEREVO_MINI),-D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_MINI) \
-	$(if $(CUBEREVO_MINI2),-D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_MINI2) \
-	$(if $(CUBEREVO_MINI_FTA),-D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_MINI_FTA) \
-	$(if $(CUBEREVO_250HD),-D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_250HD) \
-	$(if $(CUBEREVO_2000HD),-D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_2000HD) \
-	$(if $(CUBEREVO_9500HD),-D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_9500HD) \
-	$(if $(UFS910),-D__KERNEL_STRICT_NAMES -DPLATFORM_UFS910) \
-	$(if $(UFS912),-D__KERNEL_STRICT_NAMES -DPLATFORM_UFS912) \
-	$(if $(SPARK),-D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK) \
-	$(if $(SPARK7162),-D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK7162) \
-	$(if $(UFS922),-D__KERNEL_STRICT_NAMES -DPLATFORM_UFS922) \
-	$(if $(TF7700),-D__KERNEL_STRICT_NAMES -DPLATFORM_TF7700) \
-	$(if $(FORTIS_HDBOX),-D__KERNEL_STRICT_NAMES -DPLATFORM_FORTIS_HDBOX) \
-	$(if $(ATEVIO7500),-D__KERNEL_STRICT_NAMES -DPLATFORM_ATEVIO7500) \
-	$(if $(OCTAGON1008),-D__KERNEL_STRICT_NAMES -DPLATFORM_OCTAGON1008) \
-	$(if $(HS7810A),-D__KERNEL_STRICT_NAMES -DPLATFORM_HS7810A) \
-	$(if $(HL101),-D__KERNEL_STRICT_NAMES -DPLATFORM_HL101) \
-	$(if $(VIP1_V2),-D__KERNEL_STRICT_NAMES -DPLATFORM_VIP1_V2) \
-	$(if $(VIP2_V1),-D__KERNEL_STRICT_NAMES -DPLATFORM_VIP2_V1) \
-	$(if $(ADB_BOX),-D__KERNEL_STRICT_NAMES -DPLATFORM_ADB_BOX)
-
-N_CPPFLAGS +=-DNEW_LIBCURL
-
-N_CPPFLAGS +=-I$(driverdir)/include -I$(buildprefix)/$(KERNEL_DIR)/include
+N_CPPFLAGS =-DNEW_LIBCURL
 
 N_CONFIG_OPTS = --enable-silent-rules
 
@@ -68,7 +43,9 @@ $(appsdir)/neutrino-beta/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jp
 			--with-plugindir=/usr/lib/tuxbox/plugins \
 			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
 			PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig \
+			$(PLATFORM_CPPFLAGS) \
 			CPPFLAGS="$(N_CPPFLAGS)"
+
 
 $(DEPDIR)/neutrino-beta.do_compile: $(appsdir)/neutrino-beta/config.status
 	cd $(appsdir)/neutrino-beta && \
@@ -114,7 +91,7 @@ $(appsdir)/neutrino/config.status: bootstrap freetype libpng libid3tag openssl c
 			--with-gamesdir=/usr/local/share/games \
 			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
 			PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig \
-			CPPFLAGS="$(N_CPPFLAGS)"
+			$(PLATFORM_CPPFLAGS)
 
 $(DEPDIR)/neutrino.do_prepare: Patches/neutrino.patch
 	touch $@
