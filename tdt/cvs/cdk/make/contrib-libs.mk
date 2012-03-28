@@ -5,7 +5,7 @@ $(DEPDIR)/libboost: bootstrap @DEPENDS_libboost@
 	@PREPARE_libboost@
 	cd @DIR_libboost@ && \
 		@INSTALL_libboost@
-#	@CLEANUP_libboost@
+#	@DISTCLEANUP_libboost@
 	touch $@
 
 #
@@ -688,7 +688,7 @@ $(DEPDIR)/min-dfbpp $(DEPDIR)/std-dfbpp $(DEPDIR)/max-dfbpp \
 $(DEPDIR)/dfbpp: \
 $(DEPDIR)/%dfbpp: $(DEPDIR)/dfbpp.do_compile
 	cd @DIR_dfbpp@ && \
-		@INSTALL_directfb@
+		@INSTALL_dfbpp@
 #	@DISTCLEANUP_dfbpp@
 	@[ "x$*" = "x" ] && touch $@ || true
 
@@ -715,7 +715,7 @@ $(DEPDIR)/expat: \
 $(DEPDIR)/%expat: $(DEPDIR)/expat.do_compile
 	cd @DIR_expat@ && \
 		@INSTALL_expat@
-#	@DISTCLEANUP_dfbpp@
+#	@DISTCLEANUP_expat@
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
@@ -1852,11 +1852,16 @@ graphlcd-base-touchcol.tar.bz2:
 		rm $(archivedir)/graphlcd-base-touchcol.tar.bz2; \
 	fi
 ####################### LCD4LINUX #############################
+
+#
 #
 # libgd2
 #
-$(DEPDIR)/libgd2: bootstrap libz libpng jpeg libiconv freetype fontconfig @DEPENDS_libgd2@
+$(DEPDIR)/libgd2.do_prepare: bootstrap libz libpng jpeg libiconv freetype fontconfig @DEPENDS_libgd2@
 	@PREPARE_libgd2@
+	touch $@
+
+$(DEPDIR)/libgd2.do_compile: $(DEPDIR)/libgd2.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libgd2@ && \
 	chmod +w configure && \
@@ -1867,17 +1872,24 @@ $(DEPDIR)/libgd2: bootstrap libz libpng jpeg libiconv freetype fontconfig @DEPEN
 		--build=$(build) \
 		--host=$(target) \
 		--prefix=/usr && \
-		$(MAKE) && \
+		$(MAKE)
+
+$(DEPDIR)/min-libgd2 $(DEPDIR)/std-libgd2 $(DEPDIR)/max-libgd2 \
+$(DEPDIR)/libgd2: \
+$(DEPDIR)/%libgd2: $(DEPDIR)/libgd2.do_compile
+	cd @DIR_libgd2@ && \
 		@INSTALL_libgd2@
-	@DISTCLEANUP_libgd2@
-	@touch $@
-	@TUXBOX_YAUD_CUSTOMIZE@
+#	@DISTCLEANUP_libgd2@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
 # libusb2
 #
-$(DEPDIR)/libusb2: bootstrap @DEPENDS_libusb2@
+$(DEPDIR)/libusb2.do_prepare: bootstrap @DEPENDS_libusb2@
 	@PREPARE_libusb2@
+	touch $@
+
+$(DEPDIR)/libusb2.do_compile: $(DEPDIR)/libusb2.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libusb2@ && \
 	$(BUILDENV) \
@@ -1885,28 +1897,39 @@ $(DEPDIR)/libusb2: bootstrap @DEPENDS_libusb2@
 		--build=$(build) \
 		--host=$(target) \
 		--prefix=/usr && \
-		$(MAKE) all && \
+		$(MAKE) all
+
+$(DEPDIR)/min-libusb2 $(DEPDIR)/std-libusb2 $(DEPDIR)/max-libusb2 \
+$(DEPDIR)/libusb2: \
+$(DEPDIR)/%libusb2: $(DEPDIR)/libusb2.do_compile
+	cd @DIR_libusb2@ && \
 		@INSTALL_libusb2@
-	@DISTCLEANUP_libusb2@
-	@touch $@
-	@TUXBOX_YAUD_CUSTOMIZE@
+#	@DISTCLEANUP_libusb2@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
 # libusbcompat
 #
-$(DEPDIR)/libusbcompat: bootstrap libusb2 @DEPENDS_libusbcompat@
+$(DEPDIR)/libusbcompat.do_prepare: bootstrap libusb2 @DEPENDS_libusbcompat@
 	@PREPARE_libusbcompat@
+	touch $@
+
+$(DEPDIR)/libusbcompat.do_compile: $(DEPDIR)/libusbcompat.do_prepare
 	cd @DIR_libusbcompat@ && \
 	$(BUILDENV) \
 	./configure \
 		--build=$(build) \
 		--host=$(target) \
 		--prefix=/usr && \
-		$(MAKE) && \
+		$(MAKE)
+
+$(DEPDIR)/min-libusbcompat $(DEPDIR)/std-libusbcompat $(DEPDIR)/max-libusbcompat \
+$(DEPDIR)/libusbcompat: \
+$(DEPDIR)/%libusbcompat: $(DEPDIR)/libusbcompat.do_compile
+	cd @DIR_libusbcompat@ && \
 		@INSTALL_libusbcompat@
-	@DISTCLEANUP_libusbcompat@
-	@touch $@
-	@TUXBOX_YAUD_CUSTOMIZE@
+#	@DISTCLEANUP_libusbcompat@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 ################ END EXTERNAL_LCD #############################
 
@@ -2098,6 +2121,7 @@ $(DEPDIR)/libtuxtxt.do_prepare: @DEPENDS_libtuxtxt@
 	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
 	cd @DIR_libtuxtxt@ && \
 	patch -p1 < $(buildprefix)/Patches/libtuxtxt-1.0-fix_dbox_headers.diff
+	touch $@
 
 $(DEPDIR)/libtuxtxt.do_compile: $(DEPDIR)/libtuxtxt.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
@@ -2116,6 +2140,7 @@ $(DEPDIR)/libtuxtxt.do_compile: $(DEPDIR)/libtuxtxt.do_prepare
 		--with-datadir=/usr/share/tuxtxt \
 		--with-fontdir=/usr/share/fonts && \
 	$(MAKE) all
+	touch $@
 
 $(DEPDIR)/min-libtuxtxt $(DEPDIR)/std-libtuxtxt $(DEPDIR)/max-libtuxtxt \
 $(DEPDIR)/libtuxtxt: \
