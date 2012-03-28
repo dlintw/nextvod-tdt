@@ -148,6 +148,7 @@ echo -e "\nKernel:"
 echo " Maintained:"
 echo "   8) STM 24 P0207 (Recommended)"
 echo "  10) STM 24 P0209"
+echo "  11) STM 24 P0210 (Experimental, UFS910)"
 echo " Experimental:"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
@@ -159,7 +160,7 @@ case $2 in
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
-        read -p "Select kernel (1-10)? ";;
+        read -p "Select kernel (1-11)? ";;
 esac
 
 case "$REPLY" in
@@ -171,6 +172,7 @@ case "$REPLY" in
 	7)  KERNEL="--enable-stm24 --enable-p0206";STMFB="stm24";;
 	8)  KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
 	10) KERNEL="--enable-stm24 --enable-p0209";STMFB="stm24";;
+	11) KERNEL="--enable-stm24 --enable-p0210";STMFB="stm24";;
 	*)  KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"
