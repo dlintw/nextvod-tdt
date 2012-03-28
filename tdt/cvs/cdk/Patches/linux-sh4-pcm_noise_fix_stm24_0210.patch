@@ -1,0 +1,10 @@
+--- a/sound/stm/pcm_player.c	2011-06-29 20:24:54.000000000 +0200
++++ b/sound/stm/pcm_player.c	2011-07-01 17:12:20.992653000 +0200
+@@ -689,6 +689,7 @@
+ 
+ 	/* Stop PCM player */
+ 
++	set__AUD_PCMOUT_CTRL__MODE__MUTE(pcm_player);
+ 	set__AUD_PCMOUT_CTRL__MODE__OFF(pcm_player);
+ 
+ 	/* Stop FDMA transfer */
