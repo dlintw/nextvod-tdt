@@ -31,7 +31,6 @@ $(DEPDIR)/%release_neutrino:
 	$(INSTALL_DIR) $(prefix)/release_neutrino/ram && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino/var && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino/var/etc && \
-	$(INSTALL_FILE) root/etc/tuxbox/timezone.xml $(targetprefix)/etc/ && \
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release_neutrino && \
 	touch $(prefix)/release_neutrino/var/etc/.firstboot && \
