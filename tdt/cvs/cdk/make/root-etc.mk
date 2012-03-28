@@ -8,7 +8,7 @@ BASE_PASSWD_ADAPTED_ETC_FILES =
 ETC_RW_FILES += passwd passwd.org group group.org shadow
 
 #BASE_FILES_ADAPTED_ETC_FILES = hosts issue.net motd profile resolv.conf
-BASE_FILES_ADAPTED_ETC_FILES = fstab issue.net motd profile resolv.conf
+BASE_FILES_ADAPTED_ETC_FILES = timezone.xml fstab issue.net motd profile resolv.conf
 ETC_RW_FILES += hosts issue.net motd profile resolv.conf \
 	inputrc issue skel
 
