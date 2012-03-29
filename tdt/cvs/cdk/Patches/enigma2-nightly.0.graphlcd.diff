@@ -42,45 +42,9 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/lcd.h 
  #ifdef SWIG
  	eDBoxLCD();
  	~eDBoxLCD();
-diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/Makefile.am enigma2-nightly.patched/lib/gdi/Makefile.am
---- enigma2-nightly.org/lib/gdi/Makefile.am	2011-12-08 23:44:44.892475533 +0100
-+++ enigma2-nightly.patched/lib/gdi/Makefile.am	2011-12-08 19:16:22.000000000 +0100
-@@ -2,7 +2,8 @@
- 	-I$(top_srcdir) \
- 	-I$(top_srcdir)/include \
- 	-include Python.h \
--	-include $(top_builddir)/enigma2_config.h
-+	-include $(top_builddir)/enigma2_config.h \
-+	-I$(top_srcdir)/../../cdk/graphlcd-base
- 
- AM_CXXFLAGS = \
- 	$(LIBSDL_CFLAGS)
-diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/python/Makefile.am enigma2-nightly.patched/lib/python/Makefile.am
---- enigma2-nightly.org/lib/python/Makefile.am	2011-12-08 23:44:44.942475783 +0100
-+++ enigma2-nightly.patched/lib/python/Makefile.am	2011-12-08 19:21:45.000000000 +0100
-@@ -2,7 +2,8 @@
- 	-I$(top_srcdir) \
- 	-I$(top_srcdir)/include \
- 	-include Python.h \
--	-include $(top_builddir)/enigma2_config.h
-+	-include $(top_builddir)/enigma2_config.h \
-+	-I$(top_srcdir)/../../cdk/graphlcd-base
- 
- SUBDIRS = Components Tools Screens Plugins
- 
 diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.am enigma2-nightly.patched/main/Makefile.am
 --- enigma2-nightly.org/main/Makefile.am	2011-12-08 23:44:45.212475695 +0100
 +++ enigma2-nightly.patched/main/Makefile.am	2011-12-08 19:23:24.000000000 +0100
-@@ -2,7 +2,8 @@
- 	-I$(top_srcdir) \
- 	-I$(top_srcdir)/include \
- 	-include Python.h \
--	-include $(top_builddir)/enigma2_config.h
-+	-include $(top_builddir)/enigma2_config.h \
-+	-I$(top_srcdir)/../../cdk/graphlcd-base
- 
- AM_CXXFLAGS = \
- 	$(LIBSDL_CFLAGS)
 @@ -55,6 +55,8 @@
  
  enigma2_LDFLAGS = -Wl,--export-dynamic
@@ -340,8 +304,8 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +	eDebug("eDBoxLCD::eDBoxLCD >");
 +
 +	displayNumber = 0;
-+    is_oled = 1;
-+    
++	is_oled = 1;
++
 +	instance=this;
 +
 +	if (GLCD::Config.Load("/etc/graphlcd.conf") == false)
@@ -359,10 +323,10 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +
 +	lcd = GLCD::CreateDriver(GLCD::Config.driverConfigs[displayNumber].id, &GLCD::Config.driverConfigs[displayNumber]);
 +	
-+    if (!lcd)
++	if (!lcd)
 +	{
 +		eDebug("ERROR: Failed creating display object\n");
-+        return;
++		return;
 +	}
 +	if (lcd->Init() != 0)
 +	{
@@ -372,9 +336,9 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +	}
 +	lcd->SetBrightness(GLCD::Config.driverConfigs[displayNumber].brightness);
 +
-+    lcd->GetFeature((std::string) "depth", depth);
-+    width = GLCD::Config.driverConfigs[displayNumber].width;
-+    height = GLCD::Config.driverConfigs[displayNumber].height;
++	lcd->GetFeature((std::string) "depth", depth);
++	width = GLCD::Config.driverConfigs[displayNumber].width;
++	height = GLCD::Config.driverConfigs[displayNumber].height;
 +
 +	eDebug("config -> (w %d, h %d)", width, height);
 +
@@ -384,8 +348,8 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +	lcd->SetScreen(bitmap->Data(), bitmap->Width(), bitmap->Height());
 +	lcd->Refresh(true);
 +
-+    lcdfd = 1; //needed for detected()
-+    setSize(width, height, depth);
++	lcdfd = 1; //needed for detected()
++	setSize(width, height, depth);
 +
 +	eDebug("eDBoxLCD::eDBoxLCD (w %d, h %d, depth %d)<", width, height, depth);
 +}
@@ -393,7 +357,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +void eDBoxLCD::setInverted(unsigned char inv)
 +{
 +	eDebug("eDBoxLCD::setInverted");
-+    inverted = inv;
++	inverted = inv;
 +	update();
 +}
 +
@@ -407,7 +371,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +{
 +	eDebug("eDBoxLCD::setLCDBrightness");
 +/* fixme range check */
-+    lcd->SetBrightness(brightness);
++	lcd->SetBrightness(brightness);
 +	return(0);
 +}
 +
@@ -415,13 +379,13 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
 +{
 +	eDebug("eDBoxLCD::~eDBoxLCD");
 +
-+    if (lcd)
-+    {
-+	   lcd->DeInit();
-+       delete lcd;
-+    }
-+    if (bitmap)
-+      delete bitmap;
++	if (lcd)
++	{
++		lcd->DeInit();
++		delete lcd;
++	}
++	if (bitmap)
++		delete bitmap;
 +}
 +
 +eDBoxLCD *eDBoxLCD::getInstance()

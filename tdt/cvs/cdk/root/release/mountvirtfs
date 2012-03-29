@@ -322,7 +322,16 @@ then
 	#	is mounted on /dev we need to create that directory
 	#	manually.
 	#
+	DEVFS="0"
 	if grep -qs '/dev devfs' /proc/mounts
+	then
+		DEVFS="1"
+	fi
+	if grep -qs '/dev tmpfs' /proc/mounts
+	then
+		DEVFS="1"
+	fi
+	if [ "$DEVFS" = 1 ]
 	then
 		if [ ! -d /dev/pts ]
 		then

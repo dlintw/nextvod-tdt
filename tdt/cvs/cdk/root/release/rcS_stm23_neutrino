@@ -2,7 +2,7 @@
 
 MODDIR=/lib/modules
 
-insmod $MODDIR/vfd.ko       
+insmod $MODDIR/vfd.ko
 echo "    Welcome     " > /dev/vfd
 
 if [ -e /var/etc/.firstboot ]; then
@@ -59,15 +59,19 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init player"
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER0;
-   insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/ksound.ko
+# only for stm23
    insmod $MODDIR/p2div64.ko
+# only for stm23
    insmod $MODDIR/stm_v4l2.ko
+   insmod $MODDIR/stmvout.ko
+   insmod $MODDIR/stmvbi.ko
    insmod $MODDIR/pseudocard.ko
    insmod $MODDIR/cx24116.ko
    insmod $MODDIR/cimax.ko
    insmod $MODDIR/pti.ko
    insmod $MODDIR/stm_monitor.ko
+   insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/stmdvb.ko
    insmod $MODDIR/player2.ko
    insmod $MODDIR/sth264pp.ko
@@ -76,22 +80,24 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/silencegen.ko
    insmod $MODDIR/bpamem.ko
 
-   echo "init lircd"
-   /usr/bin/lircd
-
    echo "init frontpanel"
    insmod $MODDIR/simu_button.ko
-   /bin/evremote2 &
+
    var=`cat /proc/boxtype`
    case "$var" in
-   	0) echo "1W boxtype"
-	   echo "B" > /dev/ttyAS1
-           echo "B" > /dev/ttyAS1;;
-  	1|3) echo "14W boxtype"
-      	   insmod $MODDIR/button.ko
-      	   insmod $MODDIR/led.ko;;
-   	*) echo "unknown boxtype";;
+	0)	echo "1W boxtype"
+		echo "B" > /dev/ttyAS1
+		echo "B" > /dev/ttyAS1;;
+	1|3)	echo "14W boxtype"
+		echo "init lircd"
+		mkdir -p /var/run/lirc
+		/usr/bin/lircd
+		insmod $MODDIR/button.ko
+		insmod $MODDIR/led.ko;;
+	*) echo "unknown boxtype";;
    esac
+
+   /bin/evremote2 &
 
    #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
    #mount /dev/sr0 /media/dvd

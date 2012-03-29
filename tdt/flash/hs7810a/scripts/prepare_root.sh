@@ -39,4 +39,6 @@ ${MAKEDEV} lp par audio video fb rtc lirc st200 alsasnd mme bpamem
 ${MAKEDEV} ppp busmice
 ${MAKEDEV} input i2c mtd
 ${MAKEDEV} dvb
+${MAKEDEV} vfd
+${MAKEDEV} hdmi_cec
 cd -

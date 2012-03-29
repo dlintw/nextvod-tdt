@@ -39,9 +39,9 @@
 #include "remotes.h"
 #include "Adb_Box.h"
 
-#define Adb_box_LONGKEY
+#define ADB_BOX_LONGKEY
 
-#ifdef Adb_box_LONGKEY
+#ifdef ADB_BOX_LONGKEY
 static tLongKeyPressSupport cLongKeyPressSupport = {
   20, 106,
 };
@@ -148,7 +148,7 @@ int pShutdown(Context_t* context ) {
     return 0;
 }
 
-#ifndef Adb_box_LONGKEY
+#ifndef ADB_BOX_LONGKEY
 static int pRead(Context_t* context ) {
     char                vBuffer[128];
     char                vData[10];
@@ -163,12 +163,12 @@ static int pRead(Context_t* context ) {
     vData[2] = '\0';
 
 /*
-    printf("[ Adb_box RCU ] key: %s\n", &vBuffer);   			//move to DEBUG
-    printf("[ Adb_box RCU ] key: %s -> %s\n", vData, &vBuffer[20]);   	//move to DEBUG
+    printf("[ ADB_BOX RCU ] key: %s\n", &vBuffer);   			//move to DEBUG
+    printf("[ ADB_BOX RCU ] key: %s -> %s\n", vData, &vBuffer[20]);   	//move to DEBUG
 */
-    vCurrentCode = getInternalCode(cButtonsAdb_box, vData);
+    vCurrentCode = getInternalCode(cButtonsADB_BOX, vData);
 
-    printf("[ Adb_box RCU ] key: vCC -> %i\n", vCurrentCode);
+    printf("[ ADB_BOX RCU ] key: vCC -> %i\n", vCurrentCode);
 
     return vCurrentCode;
 }
@@ -193,17 +193,17 @@ static int pRead(Context_t* context) {
 
     vCurrentCode = getInternalCode(cButtonsADB_BOX, vData);
 
-    //printf("[ Adb_box RCU ] key: vCC -> %i\n", vCurrentCode);		//move to DEBUG
+    //printf("[ ADB_BOX RCU ] key: vCC -> %i\n", vCurrentCode);		//move to DEBUG
 
     if (vCurrentCode&0x80 == 0) 
     {
         gNextKey++;
         gNextKey%=20;
     }
-    //printf("[ Adb_box RCU ] key: gNextKey -> %i\n", gNextKey);	//move to DEBUG
+    //printf("[ ADB_BOX RCU ] key: gNextKey -> %i\n", gNextKey);	//move to DEBUG
 
     vCurrentCode += (gNextKey<<16);
-    printf("[ Adb_box RCU ] key: vCC -> %i\n", vCurrentCode);
+    printf("[ ADB_BOX RCU ] key: vCC -> %i\n", vCurrentCode);
 
     return vCurrentCode;
 }
@@ -263,7 +263,7 @@ RemoteControl_t Adb_Box_RC = {
 	cButtonsADB_BOX,
 	NULL,
         NULL,
-#ifndef Adb_box_LONGKEY
+#ifndef ADB_BOX_LONGKEY
     	0,
     	NULL,
 #else

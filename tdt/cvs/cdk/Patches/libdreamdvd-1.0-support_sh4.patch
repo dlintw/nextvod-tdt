@@ -1,0 +1,299 @@
+diff -Nur libdreamdvd.org/main.c libdreamdvd.patched/main.c
+--- libdreamdvd.org/main.c	2012-03-19 13:05:05.000000000 -0700
++++ libdreamdvd.patched/main.c	2012-03-21 02:40:35.312166142 -0700
+@@ -27,6 +27,11 @@
+ #include "mpegaudioenc.h"
+ #include "a52dec.h"
+ 
++#ifdef __sh__
++//activate LPCM support
++#define HARDWARE_SUPPORT_LPCM
++#endif
++
+ /*
+  * local helper functions
+  */
+@@ -38,6 +43,9 @@
+ 
+ 	while (written < count) {
+ 		n = write(fd, &ptr[written], count - written);
++#if defined(__sh__)
++		return 0;
++#else
+ 		if (n < 0) {
+ 			if (errno != EINTR) {
+ 				perror("write");
+@@ -46,6 +54,7 @@
+ 		} else {
+ 			written += n;
+ 		}
++#endif
+ 	}
+ 
+ 	return written;
+@@ -121,7 +130,11 @@
+ 	// defaults
+ 	ddvd_set_ac3thru(pconfig, 0);
+ 	ddvd_set_language(pconfig, "en");
++#if defined(__sh__)
++	ddvd_set_dvd_path(pconfig, "/dev/sr0");
++#else
+ 	ddvd_set_dvd_path(pconfig, "/dev/cdroms/cdrom0");
++#endif
+ 	ddvd_set_video(pconfig, DDVD_4_3, DDVD_LETTERBOX, DDVD_PAL);
+ 	ddvd_set_lfb(pconfig, NULL, 720, 576, 1, 720);
+ 	struct ddvd_resume resume_info;
+@@ -619,7 +632,10 @@
+ 	enum ddvd_result res = DDVD_OK;
+ 	int msg;
+ 	// try to load liba52.so.0 for softdecoding
++#if defined(__sh__)
++#else
+ 	int have_liba52 = ddvd_load_liba52();
++#endif
+ 	
+ 	// decide which resize routine we should use
+ 	// on 4bpp mode we use bicubic resize for sd skins because we get much better results with subtitles and the speed is ok
+@@ -802,10 +818,13 @@
+ 	ddvd_mpa_init(48000, 192000);	//init MPA Encoder with 48kHz and 192k Bitrate
+ 
+ 	int ac3thru = 1;
++#if defined(__sh__)
++#else
+ 	if (have_liba52) {
+ 		state = a52_init(0);	//init AC3 Decoder 
+ 		ac3thru = playerconfig->ac3thru;
+ 	}
++#endif
+ 
+ 	char osdtext[512];
+ 	strcpy(osdtext, "");
+@@ -885,8 +904,13 @@
+ 		goto err_dvdnav_open;
+ 	}
+ 
++#if defined(__sh__)
++	/* set read ahead cache usage to yes for ufs910 */
++	if (dvdnav_set_readahead_flag(dvdnav, 1) != DVDNAV_STATUS_OK) {
++#else
+ 	/* set read ahead cache usage to no */
+ 	if (dvdnav_set_readahead_flag(dvdnav, 0) != DVDNAV_STATUS_OK) {
++#endif
+ 		printf("Error on dvdnav_set_readahead_flag: %s\n", dvdnav_err_to_string(dvdnav));
+ 		res = DDVD_FAIL_PREFS;
+ 		goto err_dvdnav;
+@@ -987,7 +1011,11 @@
+ 				}
+ 			}
+ 
++#if defined(__sh__)
++			result = dvdnav_get_next_cache_block(dvdnav, &buf, &event, &len);
++#else
+ 			result = dvdnav_get_next_block(dvdnav, buf, &event, &len);
++#endif
+ 			if (result == DVDNAV_STATUS_ERR) {
+ 				printf("Error getting next block: %s\n", dvdnav_err_to_string(dvdnav));
+ 				sprintf(osdtext, "Error: Getting next block: %s", dvdnav_err_to_string(dvdnav));
+@@ -1240,10 +1268,22 @@
+ 					{
+ 						if (audio_type != DDVD_MPEG) {
+ 							//printf("Switch to MPEG Audio\n");
++#if defined(__sh__)
++							//stop audio bevor change encoding
++							if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
++								perror("AUDIO_STOP");
++							if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
++								perror("AUDIO_CLEAR_BUFFER");
++#endif
+ 							if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
+ 								perror("AUDIO_SET_AV_SYNC");
+ 							if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 1) < 0)
+ 								perror("AUDIO_SET_BYPASS_MODE");
++#if defined(__sh__)
++							//start audio after encoding set
++							if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
++								perror("AUDIO_PLAY");
++#endif
+ 							audio_type = DDVD_MPEG;
+ 						}
+ 
+@@ -1262,6 +1302,13 @@
+ 					{
+ 						if (audio_type != DDVD_LPCM) {
+ 							//printf("Switch to LPCM Audio\n");
++#if defined(__sh__)
++							//stop audio bevor change encoding
++							if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
++								perror("AUDIO_STOP");
++							if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
++								perror("AUDIO_CLEAR_BUFFER");
++#endif
+ 							if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
+ 								perror("AUDIO_SET_AV_SYNC");
+ #ifdef HARDWARE_SUPPORT_LPCM
+@@ -1270,6 +1317,11 @@
+ 							if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 0) < 0)
+ #endif
+ 								perror("AUDIO_SET_BYPASS_MODE");
++#if defined(__sh__)
++							//start audio after encoding set
++							if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
++								perror("AUDIO_PLAY");
++#endif
+ 							audio_type = DDVD_LPCM;
+ 							ddvd_lpcm_count = 0;
+ 						}
+@@ -1331,6 +1383,13 @@
+ 					} else if ((buf[14 + 3]) == 0xBD && (buf[14 + buf[14 + 8] + 9]) == 0x88 + audio_id) {	// dts audio
+ 						if (audio_type != DDVD_DTS) {
+ 							//printf("Switch to DTS Audio (thru)\n");
++#if defined(__sh__)
++							//stop audio bevor change encoding
++							if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
++								perror("AUDIO_STOP");
++							if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
++								perror("AUDIO_CLEAR_BUFFER");
++#endif
+ 							if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
+ 								perror("AUDIO_SET_AV_SYNC");
+ #ifdef CONVERT_TO_DVB_COMPLIANT_DTS
+@@ -1339,6 +1398,11 @@
+ 							if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 5) < 0)	// DTS VOB
+ #endif
+ 								perror("AUDIO_SET_BYPASS_MODE");
++#if defined(__sh__)
++							//start audio after encoding set
++							if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
++								perror("AUDIO_PLAY");
++#endif
+ 							audio_type = DDVD_DTS;
+ 						}
+ 
+@@ -1366,7 +1430,18 @@
+ 					} else if ((buf[14 + 3]) == 0xBD && (buf[14 + buf[14 + 8] + 9]) == 0x80 + audio_id) {	// ac3 audio
+ 						if (audio_type != DDVD_AC3) {
+ 							//printf("Switch to AC3 Audio\n");
++#if defined(__sh__)
++							if (ac3thru) {
++#else
+ 							if (ac3thru || !have_liba52) {	// !have_liba52 and !ac3thru should never happen, but who knows ;)
++#endif
++#if defined(__sh__)
++								//stop audio bevor change encoding
++								if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
++									perror("AUDIO_STOP");
++								if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
++									perror("AUDIO_CLEAR_BUFFER");
++#endif
+ 								if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
+ 									perror("AUDIO_SET_AV_SYNC");
+ #ifdef CONVERT_TO_DVB_COMPLIANT_AC3
+@@ -1375,11 +1450,28 @@
+ 								if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 3) < 0)	// AC3 VOB
+ #endif
+ 									perror("AUDIO_SET_BYPASS_MODE");
++#if defined(__sh__)
++								//start audio after encoding set
++								if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
++									perror("AUDIO_PLAY");
++#endif
+ 							} else {
++#if defined(__sh__)
++								//stop audio bevor change encoding
++								if (ioctl(ddvd_fdaudio, AUDIO_STOP) < 0)
++									perror("AUDIO_STOP");
++								if (ioctl(ddvd_fdaudio, AUDIO_CLEAR_BUFFER) < 0)
++									perror("AUDIO_CLEAR_BUFFER");
++#endif
+ 								if (ioctl(ddvd_fdaudio, AUDIO_SET_AV_SYNC, 1) < 0)
+ 									perror("AUDIO_SET_AV_SYNC");
+ 								if (ioctl(ddvd_fdaudio, AUDIO_SET_BYPASS_MODE, 1) < 0)
+ 									perror("AUDIO_SET_BYPASS_MODE");
++#if defined(__sh__)
++								//start audio after encoding set
++								if (ioctl(ddvd_fdaudio, AUDIO_PLAY) < 0)
++									perror("AUDIO_PLAY");
++#endif
+ 							}
+ 							audio_type = DDVD_AC3;
+ 						}
+@@ -1394,7 +1486,15 @@
+ 							//printf("APTS? %X\n",(int)apts);
+ 						}
+ 
++#if defined(__sh__)
++						if (ac3thru) {
++#else
++		
+ 						if (ac3thru || !have_liba52) {	// !have_liba52 and !ac3thru should never happen, but who knows ;)
++#endif
++#if defined(__sh__)
++						safe_write(ddvd_ac3_fd, buf + 14, buf[19] + (buf[18] << 8) + 6);
++#else
+ #ifdef CONVERT_TO_DVB_COMPLIANT_AC3
+ 							unsigned short pes_len = (buf[14 + 4] << 8 | buf[14 + 5]);
+ 							pes_len -= 4;	// strip first 4 bytes of pes payload
+@@ -1406,6 +1506,7 @@
+ #else
+ 							safe_write(ddvd_ac3_fd, buf + 14, buf[19] + (buf[18] << 8) + 6);
+ #endif
++#endif
+ 							//fwrite(buf+buf[22]+27, 1, ((buf[18]<<8)|buf[19])-buf[22]-7, fac3); //debugwrite
+ 						} else {
+ 							// a bit more funny than lpcm sound, because we do a complete recoding here
+@@ -2591,10 +2692,13 @@
+ 	close(ddvd_output_fd);
+ err_open_output_fd:
+ 
++#if defined(__sh__)
++#else
+ 	if (have_liba52) {
+ 		a52_free(state);
+ 		ddvd_close_liba52();
+ 	}
++#endif
+ 
+ 	//Clear Screen
+ 	//struct ddvd_resize_return blit_area;			
+@@ -2938,6 +3042,14 @@
+ }
+ 
+ // blit to argb in 32bit mode
++#ifdef __sh__
++#define alpha_composite(composite, fg, alpha, bg) {  \
++    unsigned short temp = ((unsigned short)(fg)*(unsigned short)(alpha) +   \
++    (unsigned short)(bg)*(unsigned short)(255 - (unsigned short)(alpha)) +  \
++    (unsigned short)128);  \
++    (composite) = (unsigned char)((temp + (temp >> 8)) >> 8);  \
++}
++#endif
+ static void ddvd_blit_to_argb(void *_dst, const void *_src, int pix)
+ {
+ 	unsigned long *dst = _dst;
+@@ -2945,13 +3057,26 @@
+ 	while (pix--) {
+ 		int p = (*src++);
+ 		int a, r, g, b;
++#ifdef __sh__
++		int r1, g1, b1;
++#endif		
+ 		if (p == 0) {
+ 			r = g = b = a = 0;	//clear screen (transparency)
+ 		} else {
++#ifdef __sh__
++			a = 0xFF - (ddvd_tr[p] >> 8);
++			r1 = ddvd_rd[p] >> 8;
++			g1 = ddvd_gn[p] >> 8;
++			b1 = ddvd_bl[p] >> 8;
++			alpha_composite(r, r1, a, 0);
++			alpha_composite(g, g1, a, 0);
++			alpha_composite(b, b1, a, 0);
++#else
+ 			a = 0xFF - (ddvd_tr[p] >> 8);
+ 			r = ddvd_rd[p] >> 8;
+ 			g = ddvd_gn[p] >> 8;
+ 			b = ddvd_bl[p] >> 8;
++#endif
+ 		}
+ 		*dst++ = (a << 24) | (r << 16) | (g << 8) | (b << 0);
+ 	}

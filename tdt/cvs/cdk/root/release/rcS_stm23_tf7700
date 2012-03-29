@@ -19,28 +19,29 @@ if [ -e /var/etc/.firstboot ]; then
    echo "WAIT" > /dev/fpsmall
    echo "3 min" > /dev/fplarge
    rm /var/etc/.firstboot
-   touch /dev/.udev #workaround till diff0 is fixed
+   touch /dev/.devfsd
 fi
 
 /etc/init.d/mountvirtfs start
 
 # remove /dev/ttyAS1 to avoid interference with the FP driver
 if [ -e /dev/ttyAS1 ]; then
-  rm -f /dev/ttyAS1
+   rm -f /dev/ttyAS1
 fi
 
 # Update the GMT offset in case it changed during the standby
 /bin/tffpctl --setgmtoffset
 
 /etc/init.d/portmap start
-
-# start automounter with umount timeout of 5 seconds
-/usr/sbin/automount --timeout=5 /autofs file /etc/auto.usb
-
+if [ -e $MODDIR/autofs4.ko ]; then 
+   insmod $MODDIR/autofs4.ko
+   # start automounter with umount timeout of 5 seconds
+   /usr/sbin/automount --timeout=5 /autofs file /etc/auto.usb
+fi
 if [ ! -e /var/etc/.firstboot ]; then
    echo "LOAD" > /dev/fpsmall
    echo "MODULES" > /dev/fplarge
-   echo "LOADING MODULES"   
+   echo "LOADING MODULES"
 
    echo "init stmfb"
    insmod $MODDIR/stmcore-display-stx7109c3.ko
@@ -60,7 +61,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init AVS"
    insmod $MODDIR/avs.ko type=stv6412
 
-   echo "init player"
+   player=`cat /proc/stb/player/version`
+   echo "init player $player"
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/mpeg2hw.ko mmeName=MPEG2_TRANSFORMER1
    insmod $MODDIR/ksound.ko
@@ -69,7 +71,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/pseudocard.ko
    
    insmod $MODDIR/cx24116.ko
-   
+
    insmod $MODDIR/starci.ko
    insmod $MODDIR/pti.ko
    if [ $player=='player191' ]; then
@@ -95,13 +97,13 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/simu_button.ko
    tffpctl --keyemulationmode 2
    /bin/evremote2 110 10 &
-   
+
    insmod $MODDIR/bpamem.ko
    mknod /dev/bpamem c 153 0 
-   
+
    showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
-   
+
    # Workaround why is jfs always not mountable?
    # fsck.ext3 /dev/sda3 -a
    fsck.jfs /dev/sda3 -a
@@ -130,11 +132,11 @@ if [ ! -e /var/etc/.firstboot ]; then
          /etc/init.d/networking start 
       fi
    fi
-   
+
    echo "    " > /dev/fpsmall
    echo "ENIGMA 2" > /dev/fplarge
    echo "LOADING e2"
-   
+
    stfbcontrol a 255
    until false
    do
@@ -145,29 +147,29 @@ if [ ! -e /var/etc/.firstboot ]; then
       /bin/tffpctl --setgmtoffset
       echo "e2 ended <- RTV: " $rtv
       case "$rtv" in
-		0) echo "0"
-		   echo "E2 ERROR"
-      		   #kill tuxtxt because it inhibit e2 from
-                   #restart auf crashs. of course this could
-                   #ne done better ;-)
-                   /usr/bin/killall tuxtxt
-		   #rset
-		   showiframe -p /boot/bootlogo.mvi &
-		   echo "0" > /proc/progress;;
-		1) echo "1"
-		   echo "SHUTDOWN"
-		   echo "SHUTDOWN" > /dev/fplarge
-		   init 0;;
-		2) echo "2"
-		   echo "REBOOT"
-		   init 6;;
-		3) echo "3"
-		   echo "E2 RESTART"
-		   #rset
-		   showiframe -p /boot/bootlogo.mvi &
-		   echo "0" > /proc/progress;;
-		*) echo "*"
-		   echo "ERROR";;
+         0) echo "0"
+            echo "E2 ERROR"
+            #kill tuxtxt because it inhibit e2 from
+            #restart auf crashs. of course this could
+            #ne done better ;-)
+            /usr/bin/killall tuxtxt
+            #rset
+            showiframe -p /boot/bootlogo.mvi &
+            echo "0" > /proc/progress;;
+         1) echo "1"
+            echo "SHUTDOWN"
+            echo "SHUTDOWN" > /dev/fplarge
+            init 0;;
+         2) echo "2"
+            echo "REBOOT"
+            init 6;;
+         3) echo "3"
+            echo "E2 RESTART"
+            #rset
+            showiframe -p /boot/bootlogo.mvi &
+            echo "0" > /proc/progress;;
+         *) echo "*"
+            echo "ERROR";;
       esac
    done 
 fi

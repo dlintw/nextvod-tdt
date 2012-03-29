@@ -30,17 +30,3 @@ $(DEPDIR)/%busybox: $(DEPDIR)/busybox.do_compile
 #		@CLEANUP_busybox@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-busybox: $(flashprefix)/root/bin/busybox
-
-$(flashprefix)/root/bin/busybox: $(DEPDIR)/busybox.do_compile
-	@cd @DIR_busybox@ && \
-		export CROSS_COMPILE=$(target)- && \
-		$(MAKE) install CONFIG_PREFIX=$(flashprefix)/root && \
-		export HHL_CROSS_TARGET_DIR=$(flashprefix)/root && $(hostprefix)/bin/target-shellconfig --add /bin/ash 5 && \
-		( cd $(flashprefix)/root && \
-			[ -f linuxrc ] && rm linuxrc || true ) && \
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-
-#.PHONY: flash-busybox

@@ -31,5 +31,15 @@ flac-*
 alsa-*
 DirectFB-*
 freetype-*
+busybox-*
+libpng-*
+rtmpdump-*
 !*.diff
 !*.patch
+vsftpd-*
+libcap-*
+autofs*
+hotplug*
+libdreamdvd*
+libdvbsi*
+tuxtxt*

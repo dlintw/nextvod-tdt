@@ -47,7 +47,7 @@ $(SYSVINIT_RPM) $(INITSCRIPTS_RPM): \
 		$(if $(SYSVINIT_PATCHES),$(SYSVINIT_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(SYSVINIT)-$(SYSVINIT_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(SYSVINIT_SPEC_PATCH),( cd SPECS && patch -p1 $(SYSVINIT_SPEC) < ../Patches/$(SYSVINIT_SPEC_PATCH) ) &&) \
+	$(if $(SYSVINIT_SPEC_PATCH),( cd SPECS && patch -p1 $(SYSVINIT_SPEC) < $(buildprefix)/Patches/$(SYSVINIT_SPEC_PATCH) ) &&) \
 	$(if $(SYSVINIT_PATCHES),cp $(SYSVINIT_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(SYSVINIT_SPEC)
@@ -63,20 +63,6 @@ $(DEPDIR)/%$(SYSVINIT): $(SYSVINIT_ADAPTED_ETC_FILES:%=root/etc/%) \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; done )
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-flash-sysvinit: $(flashprefix)/root/etc/inittab
-
-$(flashprefix)/root/etc/inittab: $(SYSVINIT_ADAPTED_ETC_FILES:%=root/etc/%) \
-		$(SYSVINIT_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	( cd root/etc && for i in $(SYSVINIT_ADAPTED_ETC_FILES); do \
-		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
-		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done )
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
 
 $(DEPDIR)/min-$(INITSCRIPTS) $(DEPDIR)/std-$(INITSCRIPTS) $(DEPDIR)/max-$(INITSCRIPTS) \
 $(DEPDIR)/$(INITSCRIPTS): \
@@ -111,44 +97,9 @@ $(DEPDIR)/%$(INITSCRIPTS): $(INITSCRIPTS_ADAPTED_ETC_FILES:%=root/etc/%) \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-flash-initscripts: $(flashprefix)/root/etc/init.d/rc
-
-$(flashprefix)/root/etc/init.d/rc: $(INITSCRIPTS_ADAPTED_ETC_FILES:%=root/etc/%) \
-		$(INITSCRIPTS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts --nopost -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	( cd $(flashprefix)/root/etc/init.d/ && \
-		sed -e "s|-uid 0 ||g" -i bootclean.sh && \
-		sed -e "s|-empty ||g" -i bootclean.sh && \
-		sed -e "s/chmod \-f/chmod/g" -i bootmisc.sh && \
-		sed -e "s/chown \-f/chown/g" -i bootmisc.sh && \
-		sed -e "s|/etc/nologin|/var/tmp/nologin|g" -i bootmisc.sh && \
-		sed -e "s|PATH=/lib/init:/bin:/sbin|PATH=/lib/init:/bin:/sbin:/usr/bin:/usr/sbin|g" -i checkroot.sh && \
-		sed -e "s/hostname \-\-file/hostname \-F/g" -i hostname.sh && \
-		sed -e "s|PATH=/lib/init:/sbin:/bin|PATH=/lib/init:/bin:/sbin:/usr/bin:/usr/sbin|g" -i rmnologin && \
-		sed -e "s|# chkconfig: 2345 99 0|# chkconfig: 2345 69 0|" -i rmnologin && \
-		sed -e "s|readlink -f /etc/nologin|readlink -f /var/tmp/nologin|g" -i rmnologin ) 
-	( cd $(flashprefix)/root/etc/default/ && \
-		sed -e "s|EDITMOTD=yes|EDITMOTD=no|g" -i rcS )
-	( cd root/etc && for i in $(INITSCRIPTS_ADAPTED_ETC_FILES); do \
-		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
-		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done ) && \
-	( export HHL_CROSS_TARGET_DIR=$(flashprefix)/root && cd $(flashprefix)/root/etc/init.d && \
-		for s in mountvirtfs bootlogd checkroot.sh checkfs.sh mountall.sh \
-		hostname.sh mountnfs.sh bootmisc.sh urandom \
-		sendsigs umountnfs.sh umountfs halt reboot \
-		rmnologin single stop-bootlogd ; do \
-			$(hostprefix)/bin/target-initdconfig --add $${s#init.d/} || \
-			echo "Unable to enable initd service: $${s#init.d/}" ; done && rm *rpmsave *.orig 2>/dev/null || true )
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 #
 # NETBASE
 #
-#ftp://ftp.stlinux.com/pub/stlinux/2.3/SRPMS/stlinux23-target-netbase-4.07-5.src.rpm
 NETBASE := netbase
 if STM22
 NETBASE_VERSION := 4.07-4
@@ -177,7 +128,7 @@ $(NETBASE_RPM): \
 		$(if $(NETBASE_PATCHES),$(NETBASE_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(NETBASE)-$(NETBASE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $< && \
-	$(if $(NETBASE_SPEC_PATCH),( cd SPECS && patch -p1 $(NETBASE_SPEC) < ../Patches/$(NETBASE_PATCH) ) &&) \
+	$(if $(NETBASE_SPEC_PATCH),( cd SPECS && patch -p1 $(NETBASE_SPEC) < $(buildprefix)/Patches/$(NETBASE_PATCH) ) &&) \
 	$(if $(NETBASE_PATCHES),cp $(NETBASE_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/stm-target-$(NETBASE).spec
@@ -201,33 +152,9 @@ $(DEPDIR)/%$(NETBASE): \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-if TARGETRULESET_FLASH
-flash-netbase: $(flashprefix)/root/etc/init.d/networking
-
-$(flashprefix)/root/etc/init.d/networking: $(NETBASE_ADAPTED_ETC_FILES:%=root/etc/%) \
-		$(NETBASE_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --nopost -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	( cd root/etc && for i in $(NETBASE_ADAPTED_ETC_FILES); do \
-		[ -f $$i ] && $(INSTALL) -m644 $$i $(flashprefix)/root/etc/$$i || true; \
-		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(flashprefix)/root/etc/$$i || true; done ) && \
-	( export HHL_CROSS_TARGET_DIR=$(flashprefix)/root && cd $(flashprefix)/root/etc/init.d && \
-		for s in networking ; do \
-			$(hostprefix)/bin/target-initdconfig --add $${s#init.d/} || \
-			echo "Unable to enable initd service: $${s#init.d/}" ; \
-		done && rm *rpmsave 2>/dev/null || true ) && \
-	( cd $(flashprefix)/root/etc/network && \
-		for i in if-down.d if-post-down.d if-pre-up.d if-up.d run; do \
-			$(INSTALL) -d $$i; \
-		done )
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
 #
 # BC
 #
-#ftp://ftp.stlinux.com/pub/stlinux/2.3/SRPMS/stlinux23-target-bc-1.06-4.src.rpm
 BC := bc
 if STM22
 BC_VERSION := 1.06-3
@@ -256,7 +183,7 @@ $(BC_RPM): \
 		$(if $(BC_PATCHES),$(BC_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(BC)-$(BC_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(BC_SPEC_PATCH),( cd SPECS && patch -p1 $(BC_SPEC) < ../Patches/$(BC_PATCH) ) &&) \
+	$(if $(BC_SPEC_PATCH),( cd SPECS && patch -p1 $(BC_SPEC) < $(buildprefix)/Patches/$(BC_PATCH) ) &&) \
 	$(if $(BC_PATCHES),cp $(BC_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(BC_SPEC)
@@ -268,16 +195,6 @@ $(DEPDIR)/%$(BC): $(BC_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-flash-bc: $(flashprefix)/root/usr/bin/bc
-
-$(flashprefix)/root/usr/bin/bc: $(BC_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
 
 #
 # FINDUTILS
@@ -311,7 +228,7 @@ $(FINDUTILS_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(FINDUTILS)-$(FINDUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(FINDUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(FINDUTILS_SPEC) < ../Patches/$(FINDUTILS_PATCH) ) &&) \
+	$(if $(FINDUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(FINDUTILS_SPEC) < $(buildprefix)/Patches/$(FINDUTILS_PATCH) ) &&) \
 	$(if $(FINDUTILS_PATCHES),cp $(FINDUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(FINDUTILS_SPEC)
@@ -322,14 +239,6 @@ $(DEPDIR)/%$(FINDUTILS): $(FINDUTILS_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $<
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-findutils: $(flashprefix)/root/usr/bin/find
-
-$(flashprefix)/root/usr/bin/find: RPMS/sh4/$(STLINUX)-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
 
 #
 # DISTRIBUTIONUTILS
@@ -366,7 +275,7 @@ $(DISTRIBUTIONUTILS_RPM) $(DISTRIBUTIONUTILS_DOC_RPM): \
 		$(archivedir)/$(STLINUX)-target-$(DISTRIBUTIONUTILS)-$(DISTRIBUTIONUTILS_VERSION).src.rpm \
 		| $(DEPDIR)/$(GLIBC_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(DISTRIBUTIONUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(DISTRIBUTIONUTILS_SPEC) < ../Patches/$(DISTRIBUTIONUTILS_SPEC_PATCH) ) &&) \
+	$(if $(DISTRIBUTIONUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(DISTRIBUTIONUTILS_SPEC) < $(buildprefix)/Patches/$(DISTRIBUTIONUTILS_SPEC_PATCH) ) &&) \
 	$(if $(DISTRIBUTIONUTILS_PATCHES),cp $(DISTRIBUTIONUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(DISTRIBUTIONUTILS_SPEC)
@@ -385,16 +294,6 @@ $(DEPDIR)/%$(DISTRIBUTIONUTILS_DOC): $(DISTRIBUTIONUTILS_DOC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
-
-if TARGETRULESET_FLASH
-flash-distributionutils: $(flashprefix)/root/usr/sbin/initdconfig
-
-$(flashprefix)/root/usr/sbin/initdconfig: $(DISTRIBUTIONUTILS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
 
 #
 # HOST-MTD-UTILS
@@ -427,7 +326,7 @@ $(MTD_UTILS_RPM): \
 		$(if $(MTD_UTILS_PATCHES),$(MTD_UTILS_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(MTD_UTILS)-$(MTD_UTILS_VERSION).src.rpm libz
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(MTD_UTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(MTD_UTILS_SPEC) < ../Patches/$(MTD_UTILS_PATCH) ) &&) \
+	$(if $(MTD_UTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(MTD_UTILS_SPEC) < $(buildprefix)/Patches/$(MTD_UTILS_PATCH) ) &&) \
 	$(if $(MTD_UTILS_PATCHES),cp $(MTD_UTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/$(MTD_UTILS_SPEC)
@@ -439,22 +338,6 @@ $(DEPDIR)/%$(MTD_UTILS): $(MTD_UTILS_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-if TARGETRULESET_FLASH
-flash-mtd-utils: $(flashprefix)/root/usr/sbin/flash_info
-
-$(flashprefix)/root/usr/sbin/flash_info: $(MTD_UTILS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	rm -rf $(flashprefix)/root/usr/share && \
-	rm $(flashprefix)/root/usr/sbin/{doc_loadbios,docfdisk,flash_otp_dump,flash_otp_info,ftl_check,ftl_format} && \
-	rm $(flashprefix)/root/usr/sbin/{jffs2dump,mkfs.jffs,mkfs.jffs2,nanddump,nandwrite,nftl_format,nftldump,rfddump,rfdformat,sumtool}
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-endif TARGETRULESET_FLASH
-
-
-##################################################################################################
 
 #
 # BASH
@@ -489,7 +372,7 @@ $(BASH_RPM): \
 		$(DEPDIR)/$(LIBTERMCAP_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(BASH)-$(BASH_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(BASH_SPEC_PATCH),( cd SPECS && patch -p1 $(BASH_SPEC) < ../Patches/$(BASH_PATCH) ) &&) \
+	$(if $(BASH_SPEC_PATCH),( cd SPECS && patch -p1 $(BASH_SPEC) < $(buildprefix)/Patches/$(BASH_PATCH) ) &&) \
 	$(if $(BASH_PATCHES),cp $(BASH_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(BASH_SPEC)
@@ -542,7 +425,7 @@ $(COREUTILS_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(COREUTILS)-$(COREUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(COREUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(COREUTILS_SPEC) < ../Patches/$(COREUTILS_PATCH) ) &&) \
+	$(if $(COREUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(COREUTILS_SPEC) < $(buildprefix)/Patches/$(COREUTILS_PATCH) ) &&) \
 	$(if $(COREUTILS_PATCHES),cp $(COREUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(COREUTILS_SPEC)
@@ -586,7 +469,7 @@ $(NET_TOOLS_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(NET_TOOLS)-$(NET_TOOLS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(NET_TOOLS_SPEC_PATCH),( cd SPECS && patch -p1 $(NET_TOOLS_SPEC) < ../Patches/$(NET_TOOLS_PATCH) ) &&) \
+	$(if $(NET_TOOLS_SPEC_PATCH),( cd SPECS && patch -p1 $(NET_TOOLS_SPEC) < $(buildprefix)/Patches/$(NET_TOOLS_PATCH) ) &&) \
 	$(if $(NET_TOOLS_PATCHES),cp $(NET_TOOLS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(NET_TOOLS_SPEC)
@@ -630,7 +513,7 @@ $(SED_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(SEDX)-$(SED_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(SED_SPEC_PATCH),( cd SPECS && patch -p1 $(SED_SPEC) < ../Patches/$(SED_PATCH) ) &&) \
+	$(if $(SED_SPEC_PATCH),( cd SPECS && patch -p1 $(SED_SPEC) < $(buildprefix)/Patches/$(SED_PATCH) ) &&) \
 	$(if $(SED_PATCHES),cp $(SED_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(SED_SPEC)
@@ -676,7 +559,7 @@ $(DIFF_RPM) $(DIFF_DOC_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(DIFF)-$(DIFF_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(DIFF_SPEC_PATCH),( cd SPECS && patch -p1 $(DIFF_SPEC) < ../Patches/$(DIFF_PATCH) ) &&) \
+	$(if $(DIFF_SPEC_PATCH),( cd SPECS && patch -p1 $(DIFF_SPEC) < $(buildprefix)/Patches/$(DIFF_PATCH) ) &&) \
 	$(if $(DIFF_PATCHES),cp $(DIFF_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(DIFF_SPEC)
@@ -726,7 +609,7 @@ $(FILE_RPM): \
 		$(if $(FILE_PATCHES),$(FILE_PATCHES:%=Patches/%)) \
 		$(archivedir)/stlinux22-target-$(FILE)-$(FILE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(FILE_SPEC_PATCH),( cd SPECS && patch -p1 $(FILE_SPEC) < ../Patches/$(FILE_PATCH) ) &&) \
+	$(if $(FILE_SPEC_PATCH),( cd SPECS && patch -p1 $(FILE_SPEC) < $(buildprefix)/Patches/$(FILE_PATCH) ) &&) \
 	$(if $(FILE_PATCHES),cp $(FILE_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(FILE_SPEC)
@@ -770,7 +653,7 @@ $(TAR_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(TAR)-$(TAR_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(TAR_SPEC_PATCH),( cd SPECS && patch -p1 $(TAR_SPEC) < ../Patches/$(TAR_PATCH) ) &&) \
+	$(if $(TAR_SPEC_PATCH),( cd SPECS && patch -p1 $(TAR_SPEC) < $(buildprefix)/Patches/$(TAR_PATCH) ) &&) \
 	$(if $(TAR_PATCHES),cp $(TAR_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(TAR_SPEC)
@@ -814,7 +697,7 @@ $(STRACE_RPM): \
 		$(DEPDIR)/$(GLIBC_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(STRACE)-$(STRACE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(STRACE_SPEC_PATCH),( cd SPECS && patch -p1 $(STRACE_SPEC) < ../Patches/$(STRACE_PATCH) ) &&) \
+	$(if $(STRACE_SPEC_PATCH),( cd SPECS && patch -p1 $(STRACE_SPEC) < $(buildprefix)/Patches/$(STRACE_PATCH) ) &&) \
 	$(if $(STRACE_PATCHES),cp $(STRACE_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(STRACE_SPEC)
@@ -825,14 +708,6 @@ $(DEPDIR)/%$(STRACE): $(DEPDIR)/%$(GLIBC) $(STRACE_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-strace: $(flashprefix)/root/usr/bin/strace
-
-$(flashprefix)/root/usr/bin/strace: $(STRACE_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
-		--replacepkgs --badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^)
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
 
 #
 # UTIL LINUX
@@ -851,7 +726,7 @@ $(UTIL_LINUX_RPM): \
 		$(archivedir)/$(STLINUX)-target-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).src.rpm \
 		| $(NCURSES_DEV)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(UTIL_LINUX_SPEC_PATCH),( cd SPECS && patch -p1 $(UTIL_LINUX_SPEC) < ../Patches/$(UTIL_LINUX_SPEC_PATCH) ) &&) \
+	$(if $(UTIL_LINUX_SPEC_PATCH),( cd SPECS && patch -p1 $(UTIL_LINUX_SPEC) < $(buildprefix)/Patches/$(UTIL_LINUX_SPEC_PATCH) ) &&) \
 	$(if $(UTIL_LINUX_PATCHES),cp $(UTIL_LINUX_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(UTIL_LINUX_SPEC)
@@ -866,8 +741,3 @@ $(DEPDIR)/$(UTIL_LINUX): $(UTIL_LINUX_RPM)
 	$(REWRITE_LIBDIR)/lib{blkid,uuid}.la
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif STM24
-
-##################################################################################################
-
-
-.PHONY: flash-tcp-wrappers
