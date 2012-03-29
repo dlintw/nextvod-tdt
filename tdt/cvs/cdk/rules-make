@@ -53,7 +53,7 @@ openrdate;1.1.2;openrdate-1.1.2;openrdate-1.1.2.tar.gz;extract:openrdate-1.1.2.t
 e2fsprogs;1.41.14;e2fsprogs-1.41.14;e2fsprogs-1.41.14.tar.gz:e2fsprogs-1.41.11-relative-usrlib-path.patch:e2fsprogs-1.41.11-no-lib-deps.patch;extract:e2fsprogs-1.41.14.tar.gz;patch:e2fsprogs-1.41.11-relative-usrlib-path.patch;patch:e2fsprogs-1.41.11-no-lib-deps.patch
 xfsprogs;2.9.4-1;xfsprogs-2.9.4;xfsprogs_2.9.4-1.tar.gz:xfsprogs.diff;extract:xfsprogs_2.9.4-1.tar.gz;patch:xfsprogs.diff
 mc;4.8.0;mc-4.8.0;mc-4.8.0.tar.bz2:mc.diff;extract:mc-4.8.0.tar.bz2
-sdparm;1.01;sdparm-1.01;sdparm-1.01.tgz;extract:sdparm-1.01.tgz
+sdparm;1.07;sdparm-1.07;sdparm-1.07.tgz;extract:sdparm-1.07.tgz
 sg3_utils;1.24;sg3_utils-1.24;sg3_utils-1.24.tgz:sg3_utils.diff;extract:sg3_utils-1.24.tgz;patch:sg3_utils.diff
 console_data;1.03;console-data-1.03;console-data_1.03.orig.tar.gz;extract:console-data_1.03.orig.tar.gz
 nano;2.0.6;nano-2.0.6;nano-2.0.6.tar.gz;extract:nano-2.0.6.tar.gz
