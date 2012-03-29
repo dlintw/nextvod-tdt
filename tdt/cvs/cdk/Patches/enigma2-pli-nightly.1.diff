@@ -6134,43 +6134,20 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/python
  			}, prio=2)
  		
  		self.allowPiP = True
-@@ -72,6 +82,41 @@
+@@ -72,6 +82,18 @@
  		assert InfoBar.instance is None, "class InfoBar is a singleton class and just one instance of this class is allowed!"
  		InfoBar.instance = self
  
 +#+++>
-+		# I know that this is not nice but i dont know how to directly access VolumneControl
-+		from Screens.Volume import Volume
-+		self.volumeDialog = session.instantiateDialog(Volume)
-+		from enigma import eTimer
-+		self.hideVolTimer = eTimer()
-+		self.hideVolTimer.callback.append(self.volHide)
-+		from Components.config import config, ConfigSubsection, ConfigInteger
-+		config.audio = ConfigSubsection()
-+		config.audio.volume = ConfigInteger(default = 100, limits = (0, 100))
-+		
-+	def volHide(self):
-+		self.volumeDialog.hide()
-+
 +	def _volUp(self):
 +		print "_volUp"
-+		from enigma import eDVBVolumecontrol
-+		eDVBVolumecontrol.getInstance().volumeUp()
-+		self.volumeDialog.setValue(eDVBVolumecontrol.getInstance().getVolume())
-+		self.volumeDialog.show()
-+		self.hideVolTimer.start(3000, True)
-+		config.audio.volume.value = eDVBVolumecontrol.getInstance().getVolume()
-+		config.audio.volume.save()
++		from Components.VolumeControl import VolumeControl
++		VolumeControl.instance.volUp()
 +
 +	def _volDown(self):
 +		print "_volDown"
-+		from enigma import eDVBVolumecontrol
-+		eDVBVolumecontrol.getInstance().volumeDown()
-+		self.volumeDialog.setValue(eDVBVolumecontrol.getInstance().getVolume())
-+		self.volumeDialog.show()
-+		self.hideVolTimer.start(3000, True)
-+		config.audio.volume.value = eDVBVolumecontrol.getInstance().getVolume()
-+		config.audio.volume.save()
++		from Components.VolumeControl import VolumeControl
++		VolumeControl.instance.volDown()
 +#+++<
 +
  	def __onClose(self):
