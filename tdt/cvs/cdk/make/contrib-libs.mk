@@ -2156,6 +2156,7 @@ $(DEPDIR)/%libtuxtxt: $(DEPDIR)/libtuxtxt.do_compile
 $(DEPDIR)/tuxtxt32bpp.do_prepare: libtuxtxt @DEPENDS_tuxtxt32bpp@
 	cd @DIR_tuxtxt32bpp@ && \
 		patch -p1 < $(buildprefix)/Patches/tuxtxt32bpp-1.0-fix_dbox_headers.diff;
+	touch $@
 
 $(DEPDIR)/tuxtxt32bpp.do_compile: $(DEPDIR)/tuxtxt32bpp.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
@@ -2174,6 +2175,7 @@ $(DEPDIR)/tuxtxt32bpp.do_compile: $(DEPDIR)/tuxtxt32bpp.do_prepare
 		--with-datadir=/usr/share/tuxtxt \
 		--with-fontdir=/usr/share/fonts && \
 	$(MAKE) all
+	touch $@
 
 $(DEPDIR)/min-tuxtxt32bpp $(DEPDIR)/std-tuxtxt32bpp $(DEPDIR)/max-tuxtxt32bpp \
 $(DEPDIR)/tuxtxt32bpp: \
