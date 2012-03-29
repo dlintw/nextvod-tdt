@@ -26,7 +26,7 @@ $(DEPDIR)/neutrino-beta.do_prepare:
 	cd $(appsdir)/neutrino-beta && patch -p1 < "$(buildprefix)/Patches/neutrino.libcool.beta.diff"
 	touch $@
 
-$(appsdir)/neutrino-beta/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost openssl libopenthreads
+$(appsdir)/neutrino-beta/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost openssl libopenthreads sdparm
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/neutrino-beta && \
 		ACLOCAL_FLAGS="-I $(hostprefix)/share/aclocal" ./autogen.sh && \
@@ -75,7 +75,7 @@ neutrino-beta-distclean:
 #
 #NORMAL
 #
-$(appsdir)/neutrino/config.status: bootstrap freetype libpng libid3tag openssl curl libmad libboost libgif
+$(appsdir)/neutrino/config.status: bootstrap $(EXTERNALLCD_DEP) freetype libpng libid3tag openssl curl libmad libboost libgif sdparm
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/neutrino && \
 		ACLOCAL_FLAGS="-I $(hostprefix)/share/aclocal" ./autogen.sh && \
