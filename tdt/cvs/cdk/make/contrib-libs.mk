@@ -1244,7 +1244,7 @@ $(DEPDIR)/webkitdfb.do_prepare: bootstrap glib2 icu4c libxml2 enchant lite curl 
 	touch $@
 
 $(DEPDIR)/webkitdfb.do_compile: $(DEPDIR)/webkitdfb.do_prepare
-	export PATH=$(BUILDPREFIX)/@DIR_icu4c@/host/config:$(PATH) && \
+	export PATH=$(buildprefix)/@DIR_icu4c@/host/config:$(PATH) && \
 	cd @DIR_webkitdfb@ && \
 	$(BUILDENV) \
 	./autogen.sh \
@@ -1303,7 +1303,7 @@ $(DEPDIR)/icu4c.do_compile: $(DEPDIR)/icu4c.do_prepare
 	cd @DIR_icu4c@ && \
 	$(BUILDENV) \
 	./configure \
-		--with-cross-build=$(BUILDPREFIX)/@DIR_icu4c@/host \
+		--with-cross-build=$(buildprefix)/@DIR_icu4c@/host \
 		--host=$(target) \
 		--prefix=/usr \
 		--disable-extras \
