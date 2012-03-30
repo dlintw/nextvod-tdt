@@ -65,6 +65,15 @@
  	return count;
  }
  
+@@ -1694,7 +1698,7 @@
+ 
+ 	ftdi_determine_type(port);
+ 	ftdi_set_max_packet_size(port);
+-	read_latency_timer(port);
++//	read_latency_timer(port);
+ 	create_sysfs_attrs(port);
+ 	return 0;
+ }
 @@ -1800,9 +1804,9 @@
  	struct usb_device *dev = port->serial->dev;
  	struct ftdi_private *priv = usb_get_serial_port_data(port);
