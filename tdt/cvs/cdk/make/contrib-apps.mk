@@ -867,6 +867,8 @@ $(DEPDIR)/autofs.do_prepare: @DEPENDS_autofs@
 
 $(DEPDIR)/autofs.do_compile: bootstrap autofs.do_prepare 
 	cd @DIR_autofs@ && \
+		cp aclocal.m4 acinclude.m4 && \
+		autoconf && \
 		$(BUILDENV) \
 		./configure \
 			--build=$(build) \
@@ -880,6 +882,6 @@ $(DEPDIR)/autofs: \
 $(DEPDIR)/%autofs: $(DEPDIR)/autofs.do_compile
 	cd @DIR_autofs@ && \
 		@INSTALL_autofs@
-#	@DISTCLEANUP_jfsutils@
+#	@DISTCLEANUP_autofs@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@

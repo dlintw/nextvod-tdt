@@ -38,7 +38,8 @@ rtmpdump-*
 !*.patch
 vsftpd-*
 libcap-*
-autofs*
+autofs-4.1.4
+autofs-3.1.7
 hotplug*
 libdreamdvd*
 libdvbsi*
