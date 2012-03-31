@@ -72,9 +72,9 @@ $(DEPDIR)/enigma2-pli-nightly: enigma2-pli-nightly.do_prepare enigma2-pli-nightl
 	touch $@
 
 enigma2-pli-nightly-clean enigma2-pli-nightly-distclean:
-	rm -f $(DEPDIR)/enigma2-nightly
-	rm -f $(DEPDIR)/enigma2-nightly.do_compile
-	rm -f $(DEPDIR)/enigma2-nightly.do_prepare
+	rm -f $(DEPDIR)/enigma2-pli-nightly
+	rm -f $(DEPDIR)/enigma2-pli-nightly.do_compile
+	rm -f $(DEPDIR)/enigma2-pli-nightly.do_prepare
 	rm -rf $(appsdir)/enigma2-nightly
 	rm -rf $(appsdir)/enigma2-nightly.newest
 	rm -rf $(appsdir)/enigma2-nightly.org

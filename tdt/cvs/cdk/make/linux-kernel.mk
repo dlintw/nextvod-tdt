@@ -477,6 +477,8 @@ TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-sata-v06_stm24$(PATCH_STR).patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-mmap_stm24.patch \
+		linux-sh4-remove_pcm_reader_stm24.patch \
 		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
 		sata_32bit_fix_stm24$(PATCH_STR).patch \
 		sata_stx7100_B4Team_fix_stm24$(PATCH_STR).patch \
