@@ -971,6 +971,29 @@ $(DEPDIR)/%twistedweb2: twistedweb2.do_compile
 	[ "x$*" = "x" ] && touch $@ || true
 
 #
+# pythonwifi
+#
+$(DEPDIR)/pythonwifi.do_prepare: @DEPENDS_pythonwifi@
+	@PREPARE_pythonwifi@
+	touch $@
+
+$(DEPDIR)/pythonwifi.do_compile: bootstrap setuptools pythonwifi.do_prepare
+	cd @DIR_pythonwifi@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py build
+	touch $@
+
+$(DEPDIR)/min-pythonwifi $(DEPDIR)/std-pythonwifi $(DEPDIR)/max-pythonwifi \
+$(DEPDIR)/pythonwifi: \
+$(DEPDIR)/%pythonwifi: pythonwifi.do_compile
+	cd @DIR_pythonwifi@ && \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_pythonwifi@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
 # a52dec
 #
 $(DEPDIR)/a52dec.do_prepare: @DEPENDS_a52dec@
