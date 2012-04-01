@@ -870,7 +870,6 @@ release_base:
 	touch $(prefix)/release/var/etc/.firstboot && \
 	cp -a $(targetprefix)/bin/* $(prefix)/release/bin/ && \
 	ln -s /bin/showiframe $(prefix)/release/usr/bin/showiframe && \
-	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/usr/bin/sdparm $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release/sbin/ && \
@@ -951,6 +950,14 @@ release_base:
 	rm -f $(prefix)/release/lib/*.o && \
 	rm -f $(prefix)/release/lib/*.la && \
 	find $(prefix)/release/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
+
+	if [ -e $(targetprefix)/usr/bin/hotplug_e2_helper ]; then \
+		cp -dp $(targetprefix)/usr/bin/hotplug_e2_helper $(prefix)/release/sbin/hotplug; \
+		cp -dp $(targetprefix)/usr/bin/bdpoll $(prefix)/release/sbin/; \
+		rm -f $(prefix)/release/bin/hotplug; \
+	else \
+		cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/; \
+	fi;
 
 if STM24
 	cp -dp $(targetprefix)/sbin/mkfs $(prefix)/release/sbin/
