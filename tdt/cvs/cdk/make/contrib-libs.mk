@@ -2299,7 +2299,7 @@ $(DEPDIR)/%libdreamdvd2: $(DEPDIR)/libdreamdvd2.do_compile
 #
 $(DEPDIR)/pilimaging: bootstrap python @DEPENDS_pilimaging@
 	@PREPARE_pilimaging@
-	cd @DIR_pythonimaging@ && \
+	cd @DIR_pilimaging@ && \
 		echo 'JPEG_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' > setup_site.py && \
 		echo 'ZLIB_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
 		echo 'FREETYPE_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
