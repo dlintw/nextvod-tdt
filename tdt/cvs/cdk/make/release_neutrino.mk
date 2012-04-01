@@ -119,6 +119,7 @@ $(DEPDIR)/%release_neutrino:
 	cp $(buildprefix)/root/bin/autologin $(prefix)/release_neutrino/bin/ && \
 	echo "576i50" > $(prefix)/release_neutrino/etc/videomode && \
 	cp $(buildprefix)/root/release/rcS_neutrino$(if $(TF7700),_$(TF7700))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(ADB_BOX),_$(ADB_BOX))$(if $(UFS922),_$(UFS922))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/etc/init.d/rcS && \
+	cp $(buildprefix)/root/etc/$(if $(ATEVIO7500),$(ATEVIO7500))$(if $(FORTIS_HDBOX),$(FORTIS_HDBOX))$(if $(OCTAGON1008),$(OCTAGON1008))$(if $(TF7700),$(TF7700))$(if $(UFS910),$(UFS910))$(if $(UFS912),$(UFS912))$(if $(UFS922),$(UFS922)).fw_env.config $(prefix)/release_neutrino/etc/fw_env.config && \
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/rcS && \
 	cp $(buildprefix)/root/release/mountvirtfs $(prefix)/release_neutrino/etc/init.d/ && \
 	cp $(buildprefix)/root/release/mme_check $(prefix)/release_neutrino/etc/init.d/ && \
