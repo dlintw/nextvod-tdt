@@ -993,7 +993,6 @@ void CInfoViewer::showSNR () {
 	if (::statfs("/var", &s) == 0) {
 		per = (s.f_blocks - s.f_bfree) / (s.f_blocks/100);
 	}
-	if (per < 0) per = 0;
 	varscale->paint(BoxEndX - (2*ICON_LARGE_WIDTH + 2*ICON_SMALL_WIDTH + 4*2) - 102, BoxEndY - ICON_Y_1, per);
 	per = 0;
 	//HD info
@@ -1015,7 +1014,6 @@ void CInfoViewer::showSNR () {
 			break;
 		}
 	}
-	if (per < 0) per = 0;
 	hddscale->paint(BoxEndX - (2*ICON_LARGE_WIDTH + 2*ICON_SMALL_WIDTH + 4*2) - 102, BoxEndY - ICON_Y_1 + 10, per);
   }
 }
