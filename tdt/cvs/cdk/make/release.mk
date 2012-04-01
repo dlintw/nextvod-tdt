@@ -1366,7 +1366,9 @@ endif
 		if [ -e $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko ]; then \
 			cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules; \
 		fi; \
-		cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/; \
+		cp -f $(buildprefix)/root/release/auto.hotplug $(prefix)/release/etc/; \
+		cp -f $(buildprefix)/root/release/auto.network $(prefix)/release/etc/; \
+		cp -f $(buildprefix)/root/release/autofs $(prefix)/release/etc/init.d/; \
 	fi
 
 #

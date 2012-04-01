@@ -33,11 +33,7 @@ fi
 /bin/tffpctl --setgmtoffset
 
 /etc/init.d/portmap start
-if [ -e $MODDIR/autofs4.ko ]; then 
-   insmod $MODDIR/autofs4.ko
-   # start automounter with umount timeout of 5 seconds
-   /usr/sbin/automount --timeout=5 /autofs file /etc/auto.usb
-fi
+/etc/init.d/autofs start
 if [ ! -e /var/etc/.firstboot ]; then
    echo "LOAD" > /dev/fpsmall
    echo "MODULES" > /dev/fplarge
