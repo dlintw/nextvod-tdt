@@ -833,6 +833,8 @@ $(DEPDIR)/hotplug_e2.do_prepare: @DEPENDS_hotplug_e2@
 	cd @DIR_hotplug_e2@ && git pull; \
 	[ -d @DIR_hotplug_e2@ ] || \
 	git clone git://openpli.git.sourceforge.net/gitroot/openpli/hotplug-e2-helper;
+	cd @DIR_hotplug_e2@ && \
+	patch -p1 < $(buildprefix)/Patches/hotplug-e2-helper-support_fw_upload.patch
 	touch $@
 
 $(DEPDIR)/hotplug_e2.do_compile: bootstrap hotplug_e2.do_prepare 
