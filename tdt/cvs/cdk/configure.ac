@@ -1150,12 +1150,12 @@ AC_MSG_RESULT([
 ])
 fi
 
+TUXBOX_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && KERNEL='$used_kernelversion' KERNELVERSION=$(KERNELVERSION) && $(customizationsdir)/$(notdir $@)-local.sh $(buildprefix) || true]'
+AC_SUBST(TUXBOX_CUSTOMIZE)
+TUXBOX_YAUD_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && KERNEL='$used_kernelversion' KERNELVERSION=$(KERNELVERSION) && $(customizationsdir)/$(notdir $@)-local.sh $(prefix)/$*cdkroot $(buildprefix) || true]'
+AC_SUBST(TUXBOX_YAUD_CUSTOMIZE)
 TUXBOX_TOUCH='[@[ "x$*" = "x" ] && touch $@ || true]'
 AC_SUBST(TUXBOX_TOUCH)
-TUXBOX_YAUD_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(prefix)/$*cdkroot $(buildprefix) || true]'
-AC_SUBST(TUXBOX_YAUD_CUSTOMIZE)
-TUXBOX_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(buildprefix) || true]'
-AC_SUBST(TUXBOX_CUSTOMIZE)
 
 AC_CONFIG_FILES([
 Makefile
@@ -1163,4 +1163,5 @@ rules-downcheck.pl
 ])
 
 AC_CONFIG_COMMANDS([rules-downcheck-chmod],[chmod +x rules-downcheck.pl])
+
 AC_OUTPUT
