@@ -100,7 +100,7 @@ $(SPLASHUTILS_RPM): \
 		jpeg libmng freetype libpng \
 		$(archivedir)/stlinux23-target-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(SPLASHUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(SPLASHUTILS_SPEC) < ../Patches/$(SPLASHUTILS_SPEC_PATCH) ) &&) \
+	$(if $(SPLASHUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(SPLASHUTILS_SPEC) < $(buildprefix)/Patches/$(SPLASHUTILS_SPEC_PATCH) ) &&) \
 	$(if $(SPLASHUTILS_PATCHES),cp $(SPLASHUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	export PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig && \
@@ -117,69 +117,6 @@ $(DEPDIR)/%$(SPLASHUTILS): $(SPLASHUTILS_RPM)
 	cp root/lib/lsb/splash-functions $(targetprefix)/lib/lsb/ && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-splashutils: $(flashprefix)/root/sbin/fbsplashd
-
-$(flashprefix)/root/sbin/fbsplashd: $(SPLASHUTILS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	cp root/etc/splash/luxisri.ttf $(flashprefix)/root/etc/splash/ && \
-	cp -rd root/etc/splash/{vdr,liquid,together}_theme $(flashprefix)/root/etc/splash/ && \
-	$(LN_SF) liquid_theme $(flashprefix)/root/etc/splash/default && \
-	rm -rf $(flashprefix)/root/etc/splash/st_theme && \
-	$(INSTALL_DIR) $(flashprefix)/root/lib/lsb && \
-	cp root/lib/lsb/splash-functions $(flashprefix)/root/lib/lsb/ && \
-	rm $(flashprefix)/root/sbin/{fbsplashd.static,splash-functions.sh} && \
-	rm $(flashprefix)/root/usr/bin/{bootsplash2fbsplash,splash_geninitramfs,splash_manager,splash_resize} && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
-
-#
-# BINUTILS
-#
-BINUTILS := binutils
-BINUTILS_DEV := binutils-dev
-if STM22
-BINUTILS_VERSION := 2.17.50.0.4-14
-BINUTILS_SPEC := stm-target-$(BINUTILS)-sh4processed.spec
-BINUTILS_SPEC_PATCH :=
-BINUTILS_PATCHES :=
-else !STM22
-if STM23
-# Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
-BINUTILS_VERSION := 2.19.1-41
-BINUTILS_SPEC := stm-target-$(BINUTILS).spec
-BINUTILS_SPEC_PATCH :=
-BINUTILS_PATCHES :=
-else !STM23
-# if STM24
-BINUTILS_VERSION := 2.19.1-41
-BINUTILS_SPEC := stm-target-$(BINUTILS).spec
-BINUTILS_SPEC_PATCH :=
-BINUTILS_PATCHES :=
-# endif STM24
-endif !STM23
-endif !STM22
-BINUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS)-$(BINUTILS_VERSION).sh4.rpm
-BINUTILS_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS_DEV)-$(BINUTILS_VERSION).sh4.rpm
-
-$(BINUTILS_RPM) $(BINUTILS_DEV_RPM): \
-		$(if $(BINUTILS_SPEC_PATCH),Patches/$(BINUTILS_PATCH)) \
-		$(if $(BINUTILS_PATCHES),$(BINUTILS_PATCHES:%=Patches/%)) \
-		$(archivedir)/$(STLINUX:%23=%24)-target-$(BINUTILS)-$(BINUTILS_VERSION).src.rpm
-	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(BINUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(BINUTILS_SPEC) < ../Patches/$(BINUTILS_SPEC_PATCH) ) &&) \
-	$(if $(BINUTILS_PATCHES),cp $(BINUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
-	export PATH=$(hostprefix)/bin:$(PATH) && \
-	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(BINUTILS_SPEC)
-
-$(BINUTILS): $(BINUTILS_RPM)
-	@rpm $(DRPM) --ignorearch --nodeps -Uhv $< && \
-	touch .deps/$(notdir $@)
-
-$(BINUTILS_DEV): $(BINUTILS_DEV_RPM)
-	@rpm $(DRPM) --ignorearch --nodeps --noscripts -Uhv $< && \
-	touch .deps/$(notdir $@)
 
 #
 # STSLAVE
@@ -213,7 +150,7 @@ $(STSLAVE_RPM): \
 		$(if $(STSLAVE_PATCHES),$(STSLAVE_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX:%23=%24)-target-$(STSLAVE)-$(STSLAVE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(STSLAVE_SPEC_PATCH),( cd SPECS && patch -p1 $(STSLAVE_SPEC) < ../Patches/$(STSLAVE_SPEC_PATCH) ) &&) \
+	$(if $(STSLAVE_SPEC_PATCH),( cd SPECS && patch -p1 $(STSLAVE_SPEC) < $(buildprefix)/Patches/$(STSLAVE_SPEC_PATCH) ) &&) \
 	$(if $(STSLAVE_PATCHES),cp $(STSLAVE_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(STSLAVE_SPEC)
@@ -233,14 +170,6 @@ $(DEPDIR)/%$(STSLAVE): linux-kernel-headers binutils-dev $(STSLAVE_RPM)
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM22
-
-flash-stslave: $(flashprefix)/root/bin/stslave
-
-$(flashprefix)/root/bin/stslave: $(STSLAVE)
-	$(INSTALL_DIR) $(dir $@) && \
-	$(CP_D) $(targetprefix)/bin/stslave $@ && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
 
 #
 # OPENSSL
@@ -276,7 +205,7 @@ $(OPENSSL_RPM) $(OPENSSL_DEV_RPM): \
 		$(if $(OPENSSL_PATCHES),$(OPENSSL_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(OPENSSL)-$(OPENSSL_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(OPENSSL_SPEC_PATCH),( cd SPECS && patch -p1 $(OPENSSL_SPEC) < ../Patches/$(OPENSSL_SPEC_PATCH) ) &&) \
+	$(if $(OPENSSL_SPEC_PATCH),( cd SPECS && patch -p1 $(OPENSSL_SPEC) < $(buildprefix)/Patches/$(OPENSSL_SPEC_PATCH) ) &&) \
 	$(if $(OPENSSL_PATCHES),cp $(OPENSSL_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(OPENSSL_SPEC)
@@ -286,6 +215,9 @@ $(DEPDIR)/%$(OPENSSL): $(OPENSSL_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
+	sed -i "s,^prefix=.*,prefix=$(targetprefix)/usr," $(targetprefix)/usr/lib/pkgconfig/libcrypto.pc
+	sed -i "s,^prefix=.*,prefix=$(targetprefix)/usr," $(targetprefix)/usr/lib/pkgconfig/libssl.pc
+	sed -i "s,^prefix=.*,prefix=$(targetprefix)/usr," $(targetprefix)/usr/lib/pkgconfig/openssl.pc
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(OPENSSL_DEV) $(DEPDIR)/std-$(OPENSSL_DEV) $(DEPDIR)/max-$(OPENSSL_DEV) $(DEPDIR)/$(OPENSSL_DEV): \
@@ -307,7 +239,7 @@ ALSALIB_SPEC_PATCH := stm-target-$(ALSALIB).spec22.diff
 ALSALIB_PATCHES :=
 else !STM22
 if STM23
-ALSALIB_VERSION := $(if $(STABLE),1.0.16-16,1.0.21a-22)
+ALSALIB_VERSION := 1.0.16-16
 ALSALIB_SPEC := stm-target-$(ALSALIB).spec
 ALSALIB_SPEC_PATCH := $(ALSALIB_SPEC)23.diff
 ALSALIB_PATCHES :=
@@ -328,7 +260,7 @@ $(ALSALIB_RPM) $(ALSALIB_DEV_RPM): \
 		$(if $(ALSALIB_PATCHES),$(ALSALIB_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(ALSALIB)-$(ALSALIB_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(ALSALIB_SPEC_PATCH),( cd SPECS && patch -p1 $(ALSALIB_SPEC) < ../Patches/$(ALSALIB_SPEC_PATCH) ) &&) \
+	$(if $(ALSALIB_SPEC_PATCH),( cd SPECS && patch -p1 $(ALSALIB_SPEC) < $(buildprefix)/Patches/$(ALSALIB_SPEC_PATCH) ) &&) \
 	$(if $(ALSALIB_PATCHES),cp $(ALSALIB_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(ALSALIB_SPEC)
@@ -347,14 +279,6 @@ $(DEPDIR)/%$(ALSALIB_DEV): %$(ALSALIB) $(ALSALIB_DEV_RPM)
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-flash-alsa-lib: $(flashprefix)/root/usr/bin/aserver
-
-$(flashprefix)/root/usr/bin/aserver: $(ALSALIB_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
-
 #
 # ALSAUTILS
 #
@@ -366,9 +290,9 @@ ALSAUTILS_SPEC_PATCH :=
 ALSAUTILS_PATCHES :=
 else !STM22
 if STM23
-ALSAUTILS_VERSION := $(if $(STABLE),1.0.16-14,1.0.21-17)
+ALSAUTILS_VERSION := 1.0.16-14
 ALSAUTILS_SPEC := stm-target-$(ALSAUTILS).spec
-ALSAUTILS_SPEC_PATCH := $(if $(STABLE),,$(ALSAUTILS_SPEC)23.diff)
+ALSAUTILS_SPEC_PATCH :=
 ALSAUTILS_PATCHES :=
 else !STM23
 # if STM24
@@ -387,7 +311,7 @@ $(ALSAUTILS_RPM): \
 		$(NCURSES_DEV) $(ALSALIB_DEV) \
 		$(archivedir)/$(STLINUX)-target-$(ALSAUTILS)-$(ALSAUTILS_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(ALSAUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(ALSAUTILS_SPEC) < ../Patches/$(ALSAUTILS_SPEC_PATCH) ) &&) \
+	$(if $(ALSAUTILS_SPEC_PATCH),( cd SPECS && patch -p1 $(ALSAUTILS_SPEC) < $(buildprefix)/Patches/$(ALSAUTILS_SPEC_PATCH) ) &&) \
 	$(if $(ALSAUTILS_PATCHES),cp $(ALSAUTILS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --nodeps --target=sh4-linux SPECS/$(ALSAUTILS_SPEC)
@@ -398,16 +322,6 @@ $(DEPDIR)/%$(ALSAUTILS): $(ALSAUTILS_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-alsa-utils: $(flashprefix)/root/usr/bin/amixer
-
-$(flashprefix)/root/usr/bin/amixer: $(ALSAUTILS_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	rm -rf $(flashprefix)/root/usr/share/sounds/alsa && \
-	rmdir $(flashprefix)/root/usr/share/sounds && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
 
 #
 # ALSAPLAYER
@@ -444,7 +358,7 @@ $(ALSAPLAYER_RPM) $(ALSAPLAYER_DEV_RPM): \
 		libmad libid3tag \
 		$(archivedir)/$(STLINUX:%23=%24)-target-$(ALSAPLAYER)-$(ALSAPLAYER_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(ALSAPLAYER_SPEC_PATCH),( cd SPECS && patch -p1 $(ALSAPLAYER_SPEC) < ../Patches/$(ALSAPLAYER_SPEC_PATCH) ) &&) \
+	$(if $(ALSAPLAYER_SPEC_PATCH),( cd SPECS && patch -p1 $(ALSAPLAYER_SPEC) < $(buildprefix)/Patches/$(ALSAPLAYER_SPEC_PATCH) ) &&) \
 	$(if $(ALSAPLAYER_PATCHES),cp $(ALSAPLAYER_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	export PKG_CONFIG_PATH=$(targetprefix)/usr/include/pkgconfig && \
@@ -463,12 +377,3 @@ $(DEPDIR)/%$(ALSAPLAYER_DEV): $(ALSAPLAYER_DEV_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-
-flash-alsaplayer: $(flashprefix)/root/usr/bin/alsaplayer
-
-$(flashprefix)/root/usr/bin/alsaplayer: $(ALSAPLAYER_RPM)
-	@rpm --dbpath $(flashprefix)-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
-		--badreloc --relocate $(targetprefix)=$(flashprefix)/root $(lastword $^) && \
-	touch $@ && \
-	@FLASHROOTDIR_MODIFIED@
-

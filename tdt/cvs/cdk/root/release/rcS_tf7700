@@ -19,7 +19,7 @@ if [ -e /var/etc/.firstboot ]; then
    echo "WAIT" > /dev/fpsmall
    echo "3 min" > /dev/fplarge
    rm /var/etc/.firstboot
-   touch /dev/.udev #workaround till diff0 is fixed
+   touch /dev/.devfsd
 fi
 
 /etc/init.d/mountvirtfs start

@@ -37,3 +37,13 @@ rtmpdump-*
 !*.diff
 !*.patch
 vsftpd-*
+libcap-*
+autofs-4.1.4
+autofs-3.1.7
+hotplug*
+libdreamdvd*
+libdvbsi*
+tuxtxt*
+Cheetah-*
+e2openplugin-OpenWebif
+sdparm-*

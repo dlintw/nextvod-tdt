@@ -116,17 +116,6 @@ UFS910PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ftdi_sio.c_stm22.patch \
 		linux-ufs910_stboards_stm22.patch
 
-FLASHUFS910PATCHES_41 = $(COMMONPATCHES_41) \
-		linux-ufs910_smsc_stm22.patch \
-		linux-ufs910_i2c_stm22.patch \
-		linux-ufs910_setup_stm22.patch \
-		linux-fat_stm22.patch \
-		linux-fuse_stm22.patch \
-		linux-net_stm22.patch \
-		linux-tune_stm22.patch \
-		linux-ftdi_sio.c_stm22.patch \
-		linux-ufs910_stboards_stm22.patch
-
 IPBOX9900PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ipbox_patches_stm22.patch \
 		linux-ipbox_setup_stm22.patch \
@@ -204,7 +193,6 @@ KERNELPATCHES_41 = \
 		$(if $(UFS922),$(UFS922PATCHES_41)) \
 		$(if $(CUBEMOD),$(CUBEPATCHES_041)) \
 		$(if $(UFS910),$(UFS910PATCHES_41)) \
-		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_41)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500_41)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_41)) \
@@ -381,8 +369,6 @@ UFS910PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0123),stx7100_fdma_fix_stm23_123.patch) \
 		linux-sh4-ufs910_reboot_stm23.patch
 
-FLASHUFS910PATCHES_23 = $(UFS910PATCHES_23)
-
 IPBOX9900PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-fdma_stm23$(PATCH_STR).patch) \
 		linux-sh4-sound_stm23$(PATCH_STR).patch \
@@ -420,7 +406,6 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(UFS922),$(UFS922PATCHES_23)) \
 		$(if $(CUBEMOD),$(CUBEPATCHES_023)) \
 		$(if $(UFS910),$(UFS910PATCHES_23)) \
-		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_23)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_23)) \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_23)) \
 		$(if $(OCTAGON1008),$(OCTAGON1008PATCHES_23)) \
@@ -456,6 +441,10 @@ if ENABLE_P0209
 PATCH_STR=_0209
 endif
 
+if ENABLE_P0210
+PATCH_STR=_0210
+endif
+
 if ENABLE_HAVANA_P0207_5
 PATCH_STR=_0207_5
 GIT_STR=207-5
@@ -488,18 +477,8 @@ TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-sata-v06_stm24$(PATCH_STR).patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
-		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
-		sata_32bit_fix_stm24$(PATCH_STR).patch \
-		sata_stx7100_B4Team_fix_stm24$(PATCH_STR).patch \
-		linux-sh4-ufs910_setup_stm24$(PATCH_STR).patch \
-		linux-usbwait123_stm24.patch \
-		linux-sh4-ufs910_reboot_stm24.patch \
-		linux-sh4-smsc911x_dma_stm24$(PATCH_STR).patch \
-		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
-		linux-sh4-pcm_noise_fix_stm24$(PATCH_STR).patch \
-		mini_fo_stm24$(PATCH_STR).patch
-
-FLASHUFS910PATCHES_24 = $(COMMONPATCHES_24) \
+		$(if $(P0209)$(P0210),linux-sh4-mmap_stm24.patch) \
+		$(if $(P0209)$(P0210),linux-sh4-remove_pcm_reader_stm24.patch) \
 		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
 		sata_32bit_fix_stm24$(PATCH_STR).patch \
 		sata_stx7100_B4Team_fix_stm24$(PATCH_STR).patch \
@@ -526,7 +505,8 @@ OCTAGON1008PATCHES_24 = $(COMMONPATCHES_24) \
 ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-atevio7500_setup_stm24$(PATCH_STR).patch \
-		linux-sh4-stmmac_stm24$(PATCH_STR).patch
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
+		$(if $(P0209),linux-sh4-atevio7500_mtdconcat_stm24$(PATCH_STR).patch)
 
 HS7810APATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
@@ -544,7 +524,8 @@ UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
-		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
+		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch) \
+		$(if $(P0209),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 HL101_PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-hl101_setup_stm24$(PATCH_STR).patch \
@@ -613,7 +594,6 @@ CUBEREVOPATCHES_24 = $(COMMONPATCHES_24) \
 
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
-		$(if $(FLASH_UFS910),$(FLASHUFS910PATCHES_24)) \
 		$(if $(UFS912),$(UFS912PATCHES_24)) \
 		$(if $(UFS922),$(UFS922PATCHES_24)) \
 		$(if $(TF7700),$(TF7700PATCHES_24)) \
@@ -720,10 +700,14 @@ else
 if ENABLE_P0209
 KERNELHEADERS_VERSION := 2.6.32.16-44
 else
+if ENABLE_P0210
+KERNELHEADERS_VERSION := 2.6.32.16-44
+else
 if ENABLE_HAVANA_P0207_5
 KERNELHEADERS_VERSION := 2.6.32.16-44
 else
 KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
+endif
 endif
 endif
 endif
@@ -743,7 +727,7 @@ $(KERNELHEADERS_RPM): \
 		$(archivedir)/$(STLINUX)-target-$(KERNELHEADERS)-$(KERNELHEADERS_VERSION).src.rpm \
 		| linux-kernel.do_prepare
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(KERNELHEADERS_SPEC_PATCH),( cd SPECS && patch -p1 $(KERNELHEADERS_SPEC) < ../Patches/$(KERNELHEADERS_SPEC_PATCH) ) &&) \
+	$(if $(KERNELHEADERS_SPEC_PATCH),( cd SPECS && patch -p1 $(KERNELHEADERS_SPEC) < $(buildprefix)/Patches/$(KERNELHEADERS_SPEC_PATCH) ) &&) \
 	$(if $(KERNELHEADERS_PATCHES),cp $(KERNELHEADERS_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(KERNELHEADERS_SPEC)
@@ -760,7 +744,7 @@ endif !STM22
 # HOST-KERNEL
 #
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(HS7110)$(FLASH_UFS910)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
+MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(HS7110)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -804,8 +788,12 @@ else
 if ENABLE_P0209
 HOST_KERNEL_VERSION := 2.6.32.46$(KERNELSTMLABEL)-$(KERNELLABEL)
 else
+if ENABLE_P0210
+HOST_KERNEL_VERSION := 2.6.32.57$(KERNELSTMLABEL)-$(KERNELLABEL)
+else
 if ENABLE_HAVANA_P0207_5
 HOST_KERNEL_VERSION := 2.6.32.28$(KERNELSTMLABEL)-$(KERNELLABEL)
+endif
 endif
 endif
 endif
@@ -847,7 +835,7 @@ $(DEPDIR)/linux-kernel.do_prepare:
 #if not exist create symlink
 	[ -d "linux-sh4" ] || \
 	ln -s $(KERNEL_DIR) linux-sh4
-	$(if $(HAVANA_STM24_KERNEL_PATCHES),cd $(KERNEL_DIR) && cat $(HAVANA_STM24_KERNEL_PATCHES:%=../Patches/%) | patch -p1)
+	$(if $(HAVANA_STM24_KERNEL_PATCHES),cd $(KERNEL_DIR) && cat $(HAVANA_STM24_KERNEL_PATCHES:%=$(buildprefix)/Patches/%) | patch -p1)
 	$(INSTALL) -m644 Patches/$(HAVANA_STM24_KERNEL_CONFIG) $(KERNEL_DIR)/.config
 	-rm $(KERNEL_DIR)/localversion*
 	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
@@ -867,7 +855,7 @@ $(DEPDIR)/linux-kernel.do_compile: \
 	cd $(KERNEL_DIR) && \
 		export PATH=$(hostprefix)/bin:$(PATH) && \
 		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
-		@M4@ ../Patches/$(HAVANA_STM24_KERNEL_CONFIG) > .config && \
+		@M4@ $(buildprefix)/Patches/$(HAVANA_STM24_KERNEL_CONFIG) > .config && \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
 
@@ -908,7 +896,7 @@ $(HOST_KERNEL_RPM): \
 		$(if $(HOST_KERNEL_SPEC_PATCH),Patches/$(HOST_KERNEL_SPEC_PATCH)) \
 		$(archivedir)/$(HOST_KERNEL_SRC_RPM)
 	rpm $(DRPM) --nosignature --nodeps -Uhv $(lastword $^) && \
-	$(if $(HOST_KERNEL_SPEC_PATCH),( cd SPECS; patch -p1 $(HOST_KERNEL_SPEC) < ../Patches/$(HOST_KERNEL_SPEC_PATCH) ) &&) \
+	$(if $(HOST_KERNEL_SPEC_PATCH),( cd SPECS; patch -p1 $(HOST_KERNEL_SPEC) < $(buildprefix)/Patches/$(HOST_KERNEL_SPEC_PATCH) ) &&) \
 	rpmbuild $(DRPMBUILD) -ba -v --clean --target=sh4-linux SPECS/$(HOST_KERNEL_SPEC)
 
 $(DEPDIR)/linux-kernel.do_prepare: \
@@ -918,7 +906,7 @@ $(DEPDIR)/linux-kernel.do_prepare: \
 	rm -rf $(KERNEL_DIR)
 	rm -rf linux{,-sh4}
 	rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^)
-	$(if $(HOST_KERNEL_PATCHES),cd $(KERNEL_DIR) && cat $(HOST_KERNEL_PATCHES:%=../Patches/%) | patch -p1)
+	$(if $(HOST_KERNEL_PATCHES),cd $(KERNEL_DIR) && cat $(HOST_KERNEL_PATCHES:%=$(buildprefix)/Patches/%) | patch -p1)
 	$(INSTALL) -m644 Patches/$(HOST_KERNEL_CONFIG) $(KERNEL_DIR)/.config
 	-rm $(KERNEL_DIR)/localversion*
 	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
@@ -939,7 +927,7 @@ $(DEPDIR)/linux-kernel.do_compile: \
 	cd $(KERNEL_DIR) && \
 		export PATH=$(hostprefix)/bin:$(PATH) && \
 		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
-		@M4@ ../Patches/$(HOST_KERNEL_CONFIG) > .config && \
+		@M4@ $(buildprefix)/Patches/$(HOST_KERNEL_CONFIG) > .config && \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
 
@@ -983,7 +971,7 @@ $(DEPDIR)/linux-kernel.%.do_compile: \
 		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
 		@M4@ -Drootfs=$* --define=rootsize=$(ROOT_PARTITION_SIZE) --define=datasize=$(DATA_PARTITION_SIZE) ../$(word 3,$^) \
 					> drivers/mtd/maps/stboards.c && \
-		@M4@ --define=btldrdef=$* ../Patches/$(HOST_KERNEL_CONFIG) \
+		@M4@ --define=btldrdef=$* $(buildprefix)/Patches/$(HOST_KERNEL_CONFIG) \
 					> .config && \
 		sed $(NFS_FLASH_SED_CONF) -i .config && \
 		sed $(XFS_SED_CONF) $(NFSSERVER_SED_CONF) $(NTFS_SED_CONF) -i .config && \
@@ -1012,7 +1000,6 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	$(if $(VIP1_V2),PLATFORM: stb7109ref\n) \
 	$(if $(VIP2_V1),PLATFORM: stb7109ref\n) \
 	$(if $(UFS910),PLATFORM: stb7100ref\n) \
-	$(if $(FLASH_UFS910),PLATFORM: stb7100ref\n) \
 	$(if $(CUBEREVO),PLATFORM: stb7109ref\n) \
 	$(if $(CUBEREVO_MINI),PLATFORM: stb7109ref\n) \
 	$(if $(CUBEREVO_MINI2),PLATFORM: stb7109ref\n) \
@@ -1043,7 +1030,6 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 	$(MAKE) -C $(driverdir) ARCH=sh \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
-		$(if $(FLASH_UFS910),FLASH_UFS910=$(FLASH_UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
@@ -1079,7 +1065,6 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		BIN_DEST=$(targetprefix)/bin \
 		INSTALL_MOD_PATH=$(targetprefix) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
-		$(if $(FLASH_UFS910),FLASH_UFS910=$(FLASH_UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
@@ -1128,38 +1113,6 @@ linux-kernel.%:
 	@echo
 	@echo "You have to edit m a n u a l l y Patches/linux-$(KERNELVERSION).config to make changes permanent !!!"
 	@echo ""
-	diff linux/.config.old linux/.config
-
+	diff $(KERNEL_DIR)/.config.old $(KERNEL_DIR)/.config
+	@echo ""
 #-------------------
-
-$(flashprefix)/root-cramfs/lib \
-$(flashprefix)/root-squashfs/lib \
-$(flashprefix)/root-jffs2/lib \
-$(flashprefix)/root-usb/lib \
-$(flashprefix)/root-focramfs/lib \
-$(flashprefix)/root-fosquashfs/lib: \
-$(flashprefix)/root-%/lib: \
-		$(DEPDIR)/linux-kernel.%.do_compile
-	-rm -rf $(flashprefix)/root-$*
-	$(MAKE) -C $(KERNEL_DIR) ARCH=sh INSTALL_MOD_PATH=$(flashprefix)/root-$* modules_install
-	-rm $(flashprefix)/root-$*/lib/modules/$(KERNELVERSION)/build
-	-rm $(flashprefix)/root-$*/lib/modules/$(KERNELVERSION)/source
-	@TUXBOX_CUSTOMIZE@
-
-$(flashprefix)/root-disk/lib: \
-$(flashprefix)/root-%/lib: \
-		$(DEPDIR)/linux-kernel.do_compile
-#		$(DEPDIR)/linux-kernel.%.do_compile
-	-rm -rf $(flashprefix)/root-$*
-	$(INSTALL_DIR) $(dir $@)/{boot,lib/firmware} && \
-	$(INSTALL_FILE) $(KERNEL_DIR)/arch/sh/boot/uImage $(dir $@)/boot/vmlinux.ub && \
-	$(CP_D) root/boot/ACF_*x.elf $(dir $@)/boot/ && \
-	$(CP_D) root/boot/vid_*.elf $(dir $@)/boot/ && \
-	$(CP_D) root/firmware/dvb-fe-cx24116.fw $(dir $@)/lib/firmware/ && \
-	$(CP_D) root/firmware/dvb-fe-cx21143.fw $(dir $@)/lib/firmware/ && \
-	$(MAKE) -C $(KERNEL_DIR) ARCH=sh INSTALL_MOD_PATH=$(flashprefix)/root-$* modules_install
-	$(MAKE) -C $(driverdir) ARCH=sh KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) INSTALL_MOD_PATH=$(flashprefix)/root-$* install
-	-rm $(flashprefix)/root-$*/lib/modules/$(KERNELVERSION)/build
-	-rm $(flashprefix)/root-$*/lib/modules/$(KERNELVERSION)/source
-	@TUXBOX_CUSTOMIZE@
-

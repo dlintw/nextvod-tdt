@@ -35,8 +35,14 @@ ${MAKEDEV} sg
 ${MAKEDEV} ptyp ptyq
 ${MAKEDEV} console
 ${MAKEDEV} ttyAS0 ttyAS1 ttyAS2 ttyAS3
-${MAKEDEV} lp par audio video fb rtc lirc st200 alsasnd mme bpamem
+${MAKEDEV} lp par audio video fb rtc lirc st200 alsasnd 
 ${MAKEDEV} ppp busmice
 ${MAKEDEV} input i2c mtd
+${MAKEDEV} mme bpamem
 ${MAKEDEV} dvb
+${MAKEDEV} vfd
+${MAKEDEV} rc
+${MAKEDEV} hdmi_cec
+${MAKEDEV} ttyusb
+${MAKEDEV} sci
 cd -

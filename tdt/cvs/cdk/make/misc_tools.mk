@@ -13,7 +13,6 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	$(MAKE) -C $(appsdir)/misc/tools all install DESTDIR=$(prefix)/$*cdkroot \
 	CPPFLAGS="\
 	$(if $(UFS910), -DPLATFORM_UFS910) \
-	$(if $(FLASH_UFS910), -DPLATFORM_FLASH_UFS910) \
 	$(if $(UFS912), -DPLATFORM_UFS912) \
 	$(if $(UFS922), -DPLATFORM_UFS922) \
 	$(if $(FORTIS_HDBOX), -DPLATFORM_FORTIS_HDBOX) \
@@ -40,19 +39,3 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 
 misc-tools-clean:
 	-$(MAKE) -C $(appsdir)/misc/tools distclean
-
-flash-misc-tools: $(DEPDIR)/misc-tools \
-		| $(flashprefix)/root
-	$(MAKE) -C $(appsdir)/misc/tools install DESTDIR=$(flashprefix)/root
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@
-
-
-flash-vfdctl: $(flashprefix)/root/bin/vfdctl
-
-$(flashprefix)/root/bin/vfdctl: $(DEPDIR)/misc-tools \
-		| $(flashprefix)/root
-	$(MAKE) -C $(appsdir)/misc/tools/vfdctl install DESTDIR=$(flashprefix)/root
-	touch $@
-	@FLASHROOTDIR_MODIFIED@
-	@TUXBOX_CUSTOMIZE@

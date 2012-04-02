@@ -22,8 +22,7 @@ CONFIGPARAM=" \
  --with-cvsdir=$KATIDIR/cvs \
  --with-customizationsdir=$KATIDIR/custom \
  --with-archivedir=$HOME/Archive \
- --enable-ccache \
- --enable-flashrules"
+ --enable-ccache"
 
 ##############################################
 
@@ -60,7 +59,6 @@ CONFIGPARAM="${CONFIGPARAM} --host=${host_alias} --build=${host_alias}"
 
 echo "Targets:"
 echo " 1) Kathrein UFS-910"
-echo " 2) Kathrein UFS-910-FLASH"
 echo " 3) Kathrein UFS-912"
 echo " 4) Kathrein UFS-922"
 echo " 5) Topfield 7700 HDPVR"
@@ -95,12 +93,11 @@ case $1 in
 esac
 
 case "$REPLY" in
-	 1) TARGET="--enable-ufs910 --with-rootpartitionsize=0x9e0000 --with-datapartitionsize=0x480000";;
-	 2) TARGET="--enable-flash_ufs910 --with-rootpartitionsize=0x9e0000 --with-datapartitionsize=0x480000";;
+	 1) TARGET="--enable-ufs910";;
 	 3) TARGET="--enable-ufs912";;
 	 4) TARGET="--enable-ufs922";;
 	 5) TARGET="--enable-tf7700";;
-	 6) TARGET="--enable-fortis_hdbox --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
+	 6) TARGET="--enable-fortis_hdbox";;
 	 7) TARGET="--enable-hl101";;
 	 8) TARGET="--enable-vip";;
 	 9) TARGET="--enable-cuberevo";;
@@ -111,17 +108,17 @@ case "$REPLY" in
 	14) TARGET="--enable-cuberevo_2000hd";;
 	15) TARGET="--enable-cuberevo_mini_fta";;
 	16) TARGET="--enable-homecast5101";;
-	17) TARGET="--enable-octagon1008 --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
+	17) TARGET="--enable-octagon1008";;
 	18) TARGET="--enable-spark";;
 	19) TARGET="--enable-atevio7500";;
 	20) TARGET="--enable-spark7162";;
 	21) TARGET="--enable-ipbox9900";;
 	22) TARGET="--enable-ipbox99";;
 	23) TARGET="--enable-ipbox55";;
-	24) TARGET="--enable-hs7810a --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
+	24) TARGET="--enable-hs7810a";;
 	25) TARGET="--enable-adb_box";;
-	26) TARGET="--enable-hs7110 --with-rootpartitionsize=0xa00000 --with-datapartitionsize=0x13C0000";;
-	 *) TARGET="--enable-ufs910";;
+	26) TARGET="--enable-hs7110";;
+	 *) TARGET="--enable-ufs912";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"
 
@@ -149,35 +146,34 @@ esac
 
 echo -e "\nKernel:"
 echo " Maintained:"
-echo "    4) STM 23 P0123"
-echo "    6) STM 24 P0205"
-echo "    8) STM 24 P0207 (Recommended)"
-echo "   10) STM 24 P0209 (only spark, ufs910)"
+echo "   8) STM 24 P0207 (Recommended)"
+echo "  10) STM 24 P0209"
+echo "  11) STM 24 P0210 (Experimental, UFS910)"
 echo " Experimental:"
-echo "   9) HAVANA P0207-5 (experimental)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
 echo "   2) STM 23 P0119"
+echo "   4) STM 23 P0123"
+echo "   6) STM 24 P0205"
 case $2 in
         [1-9] | 1[0-9]) REPLY=$2
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
-        read -p "Select kernel (1-10)? ";;
+        read -p "Select kernel (1-11)? ";;
 esac
 
 case "$REPLY" in
-	1) KERNEL="--enable-stm22 --enable-p0041";;
-	2) KERNEL="--enable-stm23 --enable-p0119";;
-	3) KERNEL="--enable-stm23 --enable-p0119 --enable-havana";;
-	4) KERNEL="--enable-stm23 --enable-p0123";;
-	5) KERNEL="--enable-stm24 --enable-p0201";STMFB="stm24";;
-	6) KERNEL="--enable-stm24 --enable-p0205";STMFB="stm24";;
-	7) KERNEL="--enable-stm24 --enable-p0206";STMFB="stm24";;
-	8) KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
-	9) KERNEL="--enable-stm24 --enable-havana-p0207_5";STMFB="stm24";;
+	1)  KERNEL="--enable-stm22 --enable-p0041";;
+	2)  KERNEL="--enable-stm23 --enable-p0119";;
+	4)  KERNEL="--enable-stm23 --enable-p0123";;
+	5)  KERNEL="--enable-stm24 --enable-p0201";STMFB="stm24";;
+	6)  KERNEL="--enable-stm24 --enable-p0205";STMFB="stm24";;
+	7)  KERNEL="--enable-stm24 --enable-p0206";STMFB="stm24";;
+	8)  KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
 	10) KERNEL="--enable-stm24 --enable-p0209";STMFB="stm24";;
-	*) KERNEL="--enable-stm22 --enable-p0041";;
+	11) KERNEL="--enable-stm24 --enable-p0210";STMFB="stm24";;
+	*)  KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"
 
@@ -323,8 +319,8 @@ esac
 
 echo -e "\nMulticom:"
 echo "   1) Multicom 3.2.2     (Recommended for Player179)"
-echo "   2) Multicom 3.2.4 rc3 (Recommended for Player191)"
-echo "   3) Multicom 3.2.4     (Experimental)"
+echo "   2) Multicom 3.2.4 rc3"
+echo "   3) Multicom 3.2.4     (Recommended for Player191)"
 case $5 in
         [1-3]) REPLY=$5
         echo -e "\nSelected multicom: $REPLY\n"
@@ -395,7 +391,7 @@ esac
 
 echo -e "\nMedia Framework:"
 echo "   1) eplayer3  (Recommended)"
-echo "   2) gstreamer (Only working with enigma2 diff0 at the moment)"
+echo "   2) gstreamer"
 case $6 in
         [1-2]) REPLY=$6
         echo -e "\nSelected media framwork: $REPLY\n"
@@ -447,16 +443,10 @@ case "$REPLY" in
 	2) VDR="--enable-vdr1722";;
 	*) VDR="";;
 esac
+
 ##############################################
 
 CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM $MEDIAFW $EXTERNAL_LCD $VDR"
-
-##############################################
-
-# Enable this option if you want to use the latest version of every package.
-# The latest version might have solved some bugs, but might also have
-# introduced new ones
-# CONFIGPARAM="$CONFIGPARAM --enable-bleeding-edge"
 
 ##############################################
 
@@ -477,8 +467,8 @@ echo $CONFIGPARAM >lastChoice
 echo "-----------------------"
 echo "Your build enivroment is ready :-)"
 echo "Your next step could be:"
-echo "make yaud-enigma2"
 echo "make yaud-enigma2-nightly"
+echo "make yaud-enigma2-pli-nightly"
 echo "make yaud-neutrino"
 echo "make yaud-vdr"
 echo "make yaud-vdrdev2"

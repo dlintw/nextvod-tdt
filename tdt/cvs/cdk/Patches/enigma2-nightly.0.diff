@@ -3858,9 +3858,9 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/epng.cpp e
  	{
  		eDebug("error :/");
  		png_destroy_write_struct(&png_ptr, &info_ptr);
-diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.cpp enigma2-nightly.patched/lib/gdi/fb.cpp
---- enigma2-nightly.org/lib/gdi/fb.cpp	2012-02-27 21:55:24.000000000 +0100
-+++ enigma2-nightly.patched/lib/gdi/fb.cpp	2012-03-06 19:40:12.000000000 +0100
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/fb.cpp enigma2-nightly.patched/lib/gdi/fb.cpp
+--- enigma2-nightly.org/lib/gdi/fb.cpp	2012-03-14 11:22:04.606094024 -0700
++++ enigma2-nightly.patched/lib/gdi/fb.cpp	2012-03-16 02:35:52.000000000 -0700
 @@ -9,6 +9,10 @@
  
  #include <lib/gdi/fb.h>
@@ -3944,17 +3944,19 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.cpp eni
  	xRes=screeninfo.xres;
  	yRes=screeninfo.yres;
  	bpp=screeninfo.bits_per_pixel;
-@@ -164,7 +191,9 @@
+@@ -164,7 +191,11 @@
  		printf("fb failed\n");
  	}
  	stride=fix.line_length;
-+#if not defined(__sh__) 
++#if defined(__sh__) 
++	memset(lfb_direct, 0, stride*yRes);
++#else
  	memset(lfb, 0, stride*yRes);
 +#endif
  	return 0;
  }
  
-@@ -183,16 +212,94 @@
+@@ -183,16 +214,94 @@
  
  void fbClass::blit()
  {
@@ -4049,7 +4051,59 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.cpp eni
  	if (lfb)
  		munmap(lfb, available);
  	showConsole(1);
-@@ -231,19 +336,62 @@
+@@ -215,6 +324,27 @@
+ 	}
+ 	else
+ 		locked = 1;
++	
++#if defined(__sh__) 
++	outcfg.outputid = STMFBIO_OUTPUTID_MAIN;
++	if (ioctl( fd, STMFBIO_GET_OUTPUT_CONFIG, &outcfg ) < 0)
++		perror("STMFBIO_GET_OUTPUT_CONFIG\n");
++
++	outinfo.outputid = STMFBIO_OUTPUTID_MAIN;
++	if (ioctl( fd, STMFBIO_GET_OUTPUTINFO, &outinfo ) < 0)
++		perror("STMFBIO_GET_OUTPUTINFO\n");
++
++	//if (ioctl( fd, STMFBIO_GET_VAR_SCREENINFO_EX, &infoex ) < 0)
++	//	printf("ERROR\n");
++
++	planemode.layerid = 0;
++	if (ioctl( fd, STMFBIO_GET_PLANEMODE, &planemode ) < 0)
++		perror("STMFBIO_GET_PLANEMODE\n");
++
++	if (ioctl( fd, STMFBIO_GET_VAR_SCREENINFO_EX, &infoex ) < 0)
++		perror("STMFBIO_GET_VAR_SCREENINFO_EX\n");
++#endif
++
+ 	return fd;
+ }
+ 
+@@ -225,25 +355,86 @@
+ 	if (locked == 2)  // re-enable manualBlit
+ 		enableManualBlit();
+ 	locked=0;
++
++#if defined(__sh__) 
++	if (ioctl( fd, STMFBIO_SET_VAR_SCREENINFO_EX, &infoex ) < 0)
++		perror("STMFBIO_SET_VAR_SCREENINFO_EX\n");
++
++	if (ioctl( fd, STMFBIO_SET_PLANEMODE, &planemode ) < 0)
++		perror("STMFBIO_SET_PLANEMODE\n");
++
++	if (ioctl( fd, STMFBIO_SET_VAR_SCREENINFO_EX, &infoex ) < 0)
++		perror("STMFBIO_SET_VAR_SCREENINFO_EX\n");
++
++	if (ioctl( fd, STMFBIO_SET_OUTPUTINFO, &outinfo ) < 0)
++		perror("STMFBIO_SET_OUTPUTINFO\n");
++
++	if (ioctl( fd, STMFBIO_SET_OUTPUT_CONFIG, &outcfg ) < 0)
++		perror("STMFBIO_SET_OUTPUT_CONFIG\n");
++#endif
++
+ 	SetMode(xRes, yRes, bpp);
+ 	PutCMAP();
+ }
  
  void fbClass::enableManualBlit()
  {
@@ -4071,8 +4125,8 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.cpp eni
  	else
  		m_manual_blit = 0;
 +#endif
- }
- 
++}
++
 +#if defined(__sh__) 
 +void fbClass::clearFBblit()
 +{
@@ -4094,8 +4148,8 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.cpp eni
 +	else
 +		return -1;
 +
-+}
-+
+ }
+ 
 +void fbClass::setFBdiff(int top, int left, int right, int bottom)
 +{
 +	if(top < 0) top = 0;
@@ -4112,10 +4166,10 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.cpp eni
 +	bottomDiff = bottom;
 +}
 +#endif
-diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.h enigma2-nightly.patched/lib/gdi/fb.h
---- enigma2-nightly.org/lib/gdi/fb.h	2012-02-27 21:55:24.000000000 +0100
-+++ enigma2-nightly.patched/lib/gdi/fb.h	2012-03-06 19:40:12.000000000 +0100
-@@ -4,10 +4,18 @@
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/gdi/fb.h enigma2-nightly.patched/lib/gdi/fb.h
+--- enigma2-nightly.org/lib/gdi/fb.h	2012-03-14 11:22:04.606094024 -0700
++++ enigma2-nightly.patched/lib/gdi/fb.h	2012-03-16 02:35:35.000000000 -0700
+@@ -4,10 +4,23 @@
  #include <lib/base/eerror.h>
  #include <linux/fb.h>
  
@@ -4127,6 +4181,11 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.h enigm
  	int fd;
  	unsigned int xRes, yRes, stride, bpp;
 +#if defined(__sh__) 
++	struct stmfbio_output_configuration outcfg;
++	struct stmfbio_outputinfo outinfo;
++	struct stmfbio_planeinfo planemode;
++	struct stmfbio_var_screeninfo_ex infoex;
++	
 +	unsigned int xResFB, yResFB; 
 +	int topDiff, leftDiff, rightDiff, bottomDiff; 
 +	unsigned char *lfb_direct;
@@ -4134,7 +4193,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.h enigm
  	int available;
  	struct fb_var_screeninfo screeninfo, oldscreen;
  	fb_cmap cmap;
-@@ -48,10 +56,23 @@
+@@ -48,10 +61,23 @@
  	int PutCMAP();
  #endif
  	static fbClass *getInstance();
@@ -4651,6 +4710,20 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/stmfb.cpp 
 +//	printf("unimplemented bcm_accel_fill\n");
 +}
 +
+diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Components/DreamInfoHandler.py enigma2-nightly.patched/lib/python/Components/DreamInfoHandler.py
+--- enigma2-nightly.org/lib/python/Components/DreamInfoHandler.py	2012-02-27 21:55:24.000000000 +0100
++++ enigma2-nightly.patched/lib/python/Components/DreamInfoHandler.py	2012-03-06 19:40:12.000000000 +0100
+@@ -124,6 +124,10 @@
+			self.attributes["packagename"] = str(data)
+		if self.elements[-1] == "needsRestart":
+			self.attributes["needsRestart"] = str(data)
++#+++>
++		if self.elements[-1] == "details":
++			self.attributes["details"] = str(data)
++#+++<
+		if self.elements[-1] == "shortdescription":
+			self.attributes["shortdescription"] = str(data)
+		if self.elements[-1] == "description":
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly.patched/lib/python/Components/Harddisk.py
 --- enigma2-nightly.org/lib/python/Components/Harddisk.py	2012-02-27 21:55:24.000000000 +0100
 +++ enigma2-nightly.patched/lib/python/Components/Harddisk.py	2012-03-06 19:40:12.000000000 +0100

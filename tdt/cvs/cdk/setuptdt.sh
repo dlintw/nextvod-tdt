@@ -60,17 +60,17 @@ PACKAGES="\
 	swig \
 	dialog \
 	wget \
-	${UBUNTU:+rpm}                                          ${FEDORA:+rpm-build} \
-	${UBUNTU:+lsb-release}     ${SUSE:+lsb-release}         ${FEDORA:+redhat-lsb} \
-	${UBUNTU:+git-core}        ${SUSE:+git-core}            ${FEDORA:+git} \
-	${UBUNTU:+libncurses5-dev} ${SUSE:+ncurses-devel}       ${FEDORA:+ncurses-devel} \
-	${UBUNTU:+gettext}         ${SUSE:+gettext-devel}       ${FEDORA:+gettext-devel} \
-	${UBUNTU:+zlib1g-dev}      ${SUSE:+zlib-devel}          ${FEDORA:+zlib-devel} \
-	${UBUNTU:+g++}             ${SUSE:+gcc gcc-c++}         ${FEDORA:+gcc-c++} \
-	${UBUNTU:+automake}        ${SUSE:+automake make} \
-	${UBUNTU:+xfslibs-dev}     ${SUSE:+xfsprogs-devel} \
-	${UBUNTU:+pkg-config}      ${SUSE:+pkg-config} \
-	${UBUNTU:+patch}           ${SUSE:+patch} \
+	${UBUNTU:+rpm}                                               ${FEDORA:+rpm-build} \
+	${UBUNTU:+lsb-release}          ${SUSE:+lsb-release}         ${FEDORA:+redhat-lsb} \
+	${UBUNTU:+git-core}             ${SUSE:+git-core}            ${FEDORA:+git} \
+	${UBUNTU:+libncurses5-dev}      ${SUSE:+ncurses-devel}       ${FEDORA:+ncurses-devel} \
+	${UBUNTU:+gettext}              ${SUSE:+gettext-devel}       ${FEDORA:+gettext-devel} \
+	${UBUNTU:+zlib1g-dev}           ${SUSE:+zlib-devel}          ${FEDORA:+zlib-devel} \
+	${UBUNTU:+g++}                  ${SUSE:+gcc gcc-c++}         ${FEDORA:+gcc-c++} \
+	${UBUNTU:+automake}             ${SUSE:+automake make} \
+	${UBUNTU:+xfslibs-dev}          ${SUSE:+xfsprogs-devel} \
+	${UBUNTU:+pkg-config}           ${SUSE:+pkg-config} \
+	${UBUNTU:+patch}                ${SUSE:+patch} \
 	${UBUNTU:+autopoint} \
 	${UBUNTU:+cfv} \
 	${UBUNTU:+fakeroot} \
@@ -87,10 +87,11 @@ if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then
 	# ST changed to the -m32 option for their gcc compiler build
 	# we might need to install more 32bit versions of some packages
 	PACKAGES="$PACKAGES \
-	${UBUNTU:+gcc-multilib}         ${SUSE:+gcc-32bit}      ${FEDORA:+libstdc++-devel.i686} \
-	${UBUNTU:+lib32ncurses5-dev}                            ${FEDORA:+glibc-devel.i686} \
-	${UBUNTU:+lib32z1-dev}                                  ${FEDORA:+libgcc.i686} \
-	${UBUNTU:+libc6-dev-i386}                               ${FEDORA:+ncurses-devel.i686} \
+	${UBUNTU:+gcc-multilib}         ${SUSE:+gcc-32bit}           ${FEDORA:+libstdc++-devel.i686} \
+	${UBUNTU:+g++-multilib}                                      ${FEDORA:+glibc-devel.i686} \
+	${UBUNTU:+lib32ncurses5-dev}                                 ${FEDORA:+libgcc.i686} \
+	${UBUNTU:+lib32z1-dev}                                       ${FEDORA:+ncurses-devel.i686} \
+	${UBUNTU:+libc6-dev-i386} \
 	";
 fi
 

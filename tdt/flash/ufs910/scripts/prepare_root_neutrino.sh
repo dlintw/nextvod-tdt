@@ -20,7 +20,7 @@ mv $TMPROOTDIR/boot/uImage $TMPKERNELDIR/uImage
 mkdir $TMPVARDIR/root_ro
 
 # --- ROOT ---
-echo "/dev/mtdblock3	/var	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
+#echo "/dev/mtdblock3	/var	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
 
 cd $TMPROOTDIR/dev/
 MAKEDEV="sudo $TMPROOTDIR/sbin/MAKEDEV -p $TMPROOTDIR/etc/passwd -g $TMPROOTDIR/etc/group"
@@ -38,6 +38,7 @@ ${MAKEDEV} lp par audio video fb rtc lirc st200 alsasnd mme bpamem
 ${MAKEDEV} ppp busmice
 ${MAKEDEV} input i2c mtd
 ${MAKEDEV} dvb
+${MAKEDEV} vfd
 cd -
 
 

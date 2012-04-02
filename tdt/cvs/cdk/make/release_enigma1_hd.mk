@@ -1,5 +1,5 @@
 #Trick ALPHA-Version ;)
-$(DEPDIR)/min-release_enigma1_hd $(DEPDIR)/std-release_enigma1_hd $(DEPDIR)/max-release_enigma1_hd $(DEPDIR)/ipk-release_enigma1_hd $(DEPDIR)/release_enigma1_hd: \
+$(DEPDIR)/min-release_enigma1_hd $(DEPDIR)/std-release_enigma1_hd $(DEPDIR)/max-release_enigma1_hd $(DEPDIR)/release_enigma1_hd: \
 $(DEPDIR)/%release_enigma1_hd:
 	rm -rf $(prefix)/release_enigma1_hd || true
 	$(INSTALL_DIR) $(prefix)/release_enigma1_hd && \

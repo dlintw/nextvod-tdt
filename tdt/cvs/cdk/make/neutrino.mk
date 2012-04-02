@@ -1,4 +1,6 @@
-# tuxbox/neutrino
+#
+# Makefile to build NEUTRINO
+#
 
 $(targetprefix)/var/etc/.version:
 	echo "imagename=Neutrino-HD" > $@
@@ -9,17 +11,29 @@ $(targetprefix)/var/etc/.version:
 	echo "version=0100`date +%Y%m%d%H%M`" >> $@
 	echo "git =`git describe`" >> $@
 
-#
-#NIGHTLY
-#
+N_CPPFLAGS =-DNEW_LIBCURL
 
-$(appsdir)/neutrino-nightly/config.status: bootstrap freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost openssl
+N_CONFIG_OPTS = --enable-silent-rules
+
+#
+# NEUTRINO BETA
+#
+$(DEPDIR)/neutrino-beta.do_prepare:
+	svn co http://109.75.98.228/coolstream_public_svn/THIRDPARTY/applications/neutrino-beta/ --username coolstream --password coolstream $(appsdir)/neutrino-beta
+	rm -rf $(appsdir)/neutrino-beta/lib/libcoolstream/*.*
+	cp -ra $(appsdir)/neutrino-beta $(appsdir)/neutrino-beta.org
+	cd $(appsdir)/neutrino-beta && patch -p1 < "$(buildprefix)/Patches/neutrino.beta.diff"
+	cd $(appsdir)/neutrino-beta && patch -p1 < "$(buildprefix)/Patches/neutrino.libcool.beta.diff"
+	touch $@
+
+$(appsdir)/neutrino-beta/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost openssl libopenthreads sdparm
 	export PATH=$(hostprefix)/bin:$(PATH) && \
-	cd $(appsdir)/neutrino-nightly && \
+	cd $(appsdir)/neutrino-beta && \
 		ACLOCAL_FLAGS="-I $(hostprefix)/share/aclocal" ./autogen.sh && \
 		$(BUILDENV) \
 		./configure \
 			--host=$(target) \
+			$(N_CONFIG_OPTS) \
 			--with-tremor \
 			--with-libdir=/usr/lib \
 			--with-datadir=/share/tuxbox \
@@ -29,67 +43,39 @@ $(appsdir)/neutrino-nightly/config.status: bootstrap freetype jpeg libpng libgif
 			--with-plugindir=/usr/lib/tuxbox/plugins \
 			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
 			PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig \
-			$(if $(PLAYER131),PLAYER131=$(PLAYER131)) \
-			$(if $(PLAYER179),PLAYER179=$(PLAYER179)) \
-			$(if $(PLAYER191),PLAYER191=$(PLAYER191)) \
-			$(if $(CUBEREVO),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_MINI),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_MINI -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_MINI2),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_MINI2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_MINI_FTA),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_MINI_FTA -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_250HD),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_250HD -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_2000HD),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_2000HD -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_9500HD),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_9500HD -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(UFS910),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(FLASH_UFS910),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_FLASH_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(UFS912),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS912 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(SPARK),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(SPARK7162),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK7162 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(UFS922),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS922 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(TF7700),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_TF7700 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(ATEVIO7500),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_ATEVIO7500 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(OCTAGON1008),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_OCTAGON1008 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(HS7810A),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_HS7810A -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(HS7110),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_HS7110 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(ADB_BOX),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_ADB_BOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(VIP1_V2),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_VIP1_V2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(VIP2_V1),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_VIP2_V1 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
+			$(PLATFORM_CPPFLAGS) \
+			CPPFLAGS="$(N_CPPFLAGS)"
 
-#svn co http://www.coolstreamtech.de/coolstream_public_svn/THIRDPARTY/applications/neutrino-experimental/ --username coolstream --password coolstream $(appsdir)/neutrino-nightly
-$(DEPDIR)/neutrino-nightly.do_prepare: Patches/neutrino-nightly.0.diff
-	git clone git://novatux.git.sourceforge.net/gitroot/novatux/neutrino-experimental $(appsdir)/neutrino-nightly
-	rm -rf $(appsdir)/neutrino-nightly/lib/libcoolstream
-	rm -rf $(appsdir)/neutrino-nightly/src/zapit/include/linux
-	cp -ra $(appsdir)/neutrino-nightly $(appsdir)/neutrino-nightly.org
-	cd $(appsdir)/neutrino-nightly && patch -p1 <../../cdk/$(word 1,$^)
-	touch $@
 
-$(DEPDIR)/neutrino-nightly.do_compile: $(appsdir)/neutrino-nightly/config.status
-	cd $(appsdir)/neutrino-nightly && \
+$(DEPDIR)/neutrino-beta.do_compile: $(appsdir)/neutrino-beta/config.status
+	cd $(appsdir)/neutrino-beta && \
 		$(MAKE) all
 	touch $@
 
-$(DEPDIR)/neutrino-nightly: neutrino-nightly.do_prepare neutrino-nightly.do_compile
-	$(MAKE) -C $(appsdir)/neutrino-nightly install DESTDIR=$(targetprefix)
+$(DEPDIR)/neutrino-beta: neutrino-beta.do_prepare neutrino-beta.do_compile
+	$(MAKE) -C $(appsdir)/neutrino-beta install DESTDIR=$(targetprefix) && \
 	make $(targetprefix)/var/etc/.version
 	$(target)-strip $(targetprefix)/usr/local/bin/neutrino
 	$(target)-strip $(targetprefix)/usr/local/bin/pzapit
 	$(target)-strip $(targetprefix)/usr/local/bin/sectionsdcontrol
 	touch $@
 
-neutrino-nightly-clean neutrino-nightly-distclean:
-	rm -f $(DEPDIR)/neutrino-nightly
-	rm -f $(DEPDIR)/neutrino-nightly.do_compile
-	rm -f $(DEPDIR)/neutrino-nightly.do_prepare
+neutrino-beta-clean:
+	rm -f $(DEPDIR)/neutrino-beta
+	cd $(appsdir)/neutrino-beta && \
+		$(MAKE) distclean
+
+neutrino-beta-distclean:
+	rm -f $(DEPDIR)/neutrino-beta
+	rm -f $(DEPDIR)/neutrino-beta.do_compile
+	rm -f $(DEPDIR)/neutrino-beta.do_prepare
 	rm -rf $(appsdir)/neutrino-nightly.org
 	rm -rf $(appsdir)/neutrino-nightly
 
 #
 #NORMAL
 #
-
-$(appsdir)/neutrino/config.status: bootstrap freetype libpng libid3tag openssl curl libmad libboost libgif
+$(appsdir)/neutrino/config.status: bootstrap $(EXTERNALLCD_DEP) freetype libpng libid3tag openssl curl libmad libboost libgif sdparm
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/neutrino && \
 		ACLOCAL_FLAGS="-I $(hostprefix)/share/aclocal" ./autogen.sh && \
@@ -105,30 +91,7 @@ $(appsdir)/neutrino/config.status: bootstrap freetype libpng libid3tag openssl c
 			--with-gamesdir=/usr/local/share/games \
 			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
 			PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig \
-			$(if $(CUBEREVO),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_MINI),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_MINI -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_MINI2),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_MINI2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_MINI_FTA),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_MINI_FTA -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_250HD),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_250HD -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_2000HD),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_2000HD -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(CUBEREVO_9500HD),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_CUBEREVO_9500HD -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(UFS910),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(FLASH_UFS910),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_FLASH_UFS910 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(UFS912),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS912 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(SPARK),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(SPARK7162),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_SPARK7162 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(UFS922),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_UFS922 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(TF7700),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_TF7700 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(FORTIS_HDBOX),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_FORTIS_HDBOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(ATEVIO7500),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_ATEVIO7500 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(OCTAGON1008),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_OCTAGON1008 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(HS7810A),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_HS7810A -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(HS7110),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_HS7110 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(HL101),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_HL101 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(ADB_BOX),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_ADB_BOX -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(VIP1_V2),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_VIP1_V2 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
-			$(if $(VIP2_V1),CPPFLAGS="$(CPPFLAGS) -D__KERNEL_STRICT_NAMES -DPLATFORM_VIP2_V1 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
-
+			$(PLATFORM_CPPFLAGS)
 
 $(DEPDIR)/neutrino.do_prepare: Patches/neutrino.patch
 	touch $@
@@ -151,5 +114,3 @@ neutrino-clean neutrino-distclean:
 	rm -f $(DEPDIR)/neutrino.do_prepare
 	cd $(appsdir)/neutrino && \
 		$(MAKE) distclean
-
-#libogg is needed

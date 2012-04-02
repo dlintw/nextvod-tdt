@@ -6,7 +6,7 @@ release_dir="release_neutrino_nightly"
 #
 # max ALPHA-Version ;)
 #
-$(DEPDIR)/min-release_neutrino_nightly $(DEPDIR)/std-release_neutrino_nightly $(DEPDIR)/max-release_neutrino_nightly $(DEPDIR)/ipk-release_neutrino_nightly $(DEPDIR)/release_neutrino_nightly: \
+$(DEPDIR)/min-release_neutrino_nightly $(DEPDIR)/std-release_neutrino_nightly $(DEPDIR)/max-release_neutrino_nightly $(DEPDIR)/release_neutrino_nightly: \
 $(DEPDIR)/%release_neutrino_nightly:
 
 # the following target creates the common file base
@@ -672,7 +672,8 @@ if ENABLE_HL101
 endif
 if ENABLE_ADB_BOX
 	cp -dp $(buildprefix)/root/etc/lircd_adb_box.conf $(prefix)/$(release_dir)/etc/lircd.conf
-	cp -dp $(buildprefix)/root/usr/bin/lircd_adb $(prefix)/$(release_dir)/usr/bin/lircd
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/$(release_dir)/usr/bin/
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/$(release_dir)/usr/lib/
 	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/$(release_dir)/etc/boxtype
 endif
 if ENABLE_VIP1_V2

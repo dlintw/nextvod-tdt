@@ -40,5 +40,3 @@ enigma: lirc fbset lm_sensors enigma.do_compile
 $(targetprefix)/include/mtd/mtd-user.h: $(hostappsdir)/mkfs.jffs2/include/mtd/mtd-user.h
 	$(INSTALL) -d $(@D)
 	cp -rd $(hostappsdir)/mkfs.jffs2/include/mtd/* $(@D)
-
-

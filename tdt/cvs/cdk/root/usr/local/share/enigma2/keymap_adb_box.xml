@@ -88,8 +88,8 @@
 	</map>
 	
 	<map context="InfobarChannelSelection">
-		<key id="KEY_LEFT" mapto="zapUp" flags="mr" />
-		<key id="KEY_RIGHT" mapto="zapDown" flags="mr" />
+		<key id="KEY_LEFT" mapto="zapL" flags="mr" />
+		<key id="KEY_RIGHT" mapto="zapR" flags="mr" />
 		<key id="KEY_PAGEUP" mapto="zapDown" flags="m" />
 		<key id="KEY_PAGEDOWN" mapto="zapUp" flags="m" />
 		<key id="KEY_UP" mapto="switchChannelUp" flags="mr" />

@@ -14,20 +14,17 @@ depsclean:
 # currently rpmdepsclean is including targets made by tuxbox rules
 rpmdepsclean:
 	( cd .deps && find . ! -name "*\.*" -delete )
-#	$(RPMDEPSCLEANUP)
 
-
-if TARGETRULESET_FLASH
-mostlyclean-local: flash-clean cdk-clean
-else
 mostlyclean-local: cdk-clean
-endif
 
 # Clean tuxbox source directories
 cdk-clean:
 	-$(MAKE) -C $(driverdir) KERNEL_LOCATION=$(buildprefix)/linux-sh4 \
 		BIN_DEST=$(targetprefix)/bin \
 		INSTALL_MOD_PATH=$(targetprefix) clean
+	-$(MAKE) -C $(appsdir)/neutrino distclean
+	-$(MAKE) -C $(appsdir)/neutrino-beta distclean
+	-$(MAKE) -C $(appsdir)/enigma2-nightly distclean
 	-$(MAKE) -C $(appsdir)/tuxbox/libs clean
 	-$(MAKE) -C $(appsdir)/tuxbox/libtuxbox clean
 	-$(MAKE) -C $(appsdir)/tuxbox/plugins clean
@@ -49,23 +46,17 @@ clean-local: mostlyclean-local depsclean rpmdepsclean
 	-$(MAKE) -C $(appsdir)/dvb/dvbsnoop uninstall
 	-$(MAKE) -C $(hostappsdir) uninstall
 	-rm -rf $(hostprefix)
-if TARGETRULESET_FLASH
-	-rm -rf $(flashprefix)/
-	-rm -rf $(flashprefix)-rpmdb/
-	-rm -rf $(ipkgbuilddir)/
-endif
 	-rm -rf $(crossprefix)/
 	-rm -rf $(configprefix)/
 	-rm -rf $(devkitprefix)/
 	-rm -rf $(prefix)/*cdkroot/
 	-rm -rf $(prefix)/*cdkroot-rpmdb
 	-rm -rf $(prefix)/*cdkroot-tftpboot
-	-rm -rf $(rpmdbprefix)/
-	-rm -rf $(ipkprefix)/
-	-rm -rf $(prefix)/release_neutrino*
+	-rm -rf $(rpmdbprefix)
+	-rm -rf $(prefix)/release*
 	-rm -rf SOURCES SPECS BUILD && install -d SOURCES SPECS BUILD
 	-rm -rf $(prefix)/ccache
-	-rm -rf $(DEPDIR)/autofs.*
+
 
 # Be brutal...just nuke it!
 distclean-local:
@@ -85,15 +76,13 @@ distclean-local:
 	-rm -f Makefile-archive
 	-rm -f rules-downcheck.pl
 	-rm -f linux
+	-rm -f linux-sh4
+	-rm -rf $(appsdir)/enigma2-*
+	-rm -rf $(appsdir)/neutrino-*
 	-rm -rf $(DEPDIR)
 #	-rm -rf $(targetprefix)
 	-rm -rf $(hostprefix)
 	-rm -rf $(serversupport)
-if TARGETRULESET_FLASH
-	-rm -rf $(flashprefix)/
-	-rm -rf $(flashprefix)-rpmdb/
-	-rm -rf $(ipkgbuilddir)/
-endif
 	-rm -rf $(crossprefix)/
 	-rm -rf $(configprefix)/
 	-rm -rf $(devkitprefix)/
@@ -101,52 +90,11 @@ endif
 	-rm -rf $(prefix)/*cdkroot-rpmdb
 	-rm -rf $(prefix)/*cdkroot-tftpboot
 	-rm -rf $(rpmdbprefix)/
-	-rm -rf $(ipkprefix)/
 	-rm -rf SOURCES SPECS BUILD BUILDROOT SRPMS RPMS
 	-rm -rf $(prefix)/ccache
 	-rm -rf $(kernelprefix)/u-boot
 	-rm -rf $(STGFB_DIR)
 	-@DISTCLEANUP@
-#	rm symlinks
-#	-rm compile config config.guess config.sub COPYING depcomp INSTALL install-sh ltmain.sh missing
-
-
-if TARGETRULESET_FLASH
-################################################################
-# flash-clean deletes everything created with the flash-* commands
-# flash-semiclean leaves the flfs-images and the root-$filesystem dirs.
-# (This is sensible, while these files seldomly change, and take rather
-# long to build.)
-
-# flash-semiclean is "homemade",
-# flash-clean and flash-mostlyclean have semantics like in the GNU
-# Makefile standards.
-
-flash-semiclean:
-	rm -f $(flashprefix)/*.cramfs $(flashprefix)/*.squashfs \
-	$(flashprefix)/*.jffs2 $(flashprefix)/.*-flfs \
-	$(flashprefix)/*.list
-	rm -rf $(flashprefix)/root
-	rm -rf $(flashprefix)/root-stock*
-	rm -rf $(flashprefix)/root-neutrino*
-	rm -rf $(flashprefix)/root-radiobox*
-	rm -rf $(flashprefix)/root-enigma*
-	rm -rf $(flashprefix)/conf*
-	rm -rf $(flashprefix)/var*
-	rm -rf $(flashprefix)/data*
-	rm -rf $(flashprefix)/kernel*
-	-rm -rf $(flashprefix)/mtdblock*
-	-rm -rf $(flashprefix)/sdax*
-	-rm -rf $(flashprefix)-rpmdb/*
-	-rm $(flashprefix)/enigma2*
-
-flash-mostlyclean: flash-semiclean
-	rm -rf $(flashprefix)/root-*
-	rm -f $(flashprefix)/*.flfs*x
-
-flash-clean: flash-mostlyclean
-	rm -f $(flashprefix)/*.img*
-endif ## TARGETRULESET_FLASH
 
 #
 # RPM stuff
@@ -191,5 +139,4 @@ $(RPMLIST_DISTCLEAN): \
 	-rm RPMS/sh4/$(STLINUX)-sh4-$(subst -distclean,,$@)*
 	-rm .deps/$(subst -distclean,,$@)*
 
-.PHONY: depsclean mostlyclean-local cdk-clean distclean-local flash-semiclean \
-flash-mostlyclean flash-clean
+.PHONY: depsclean mostlyclean-local cdk-clean distclean-local list-clean

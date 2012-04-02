@@ -146,6 +146,14 @@ AC_ARG_ENABLE(p0209,
 AM_CONDITIONAL(ENABLE_P0209,test "$enable_p0209" = "yes")
 AC_SUBST(P0209)
 
+AC_ARG_ENABLE(p0210,
+	AS_HELP_STRING(--enable-p0210,  set up the CDK to use the STLinux 2.4 with patchlevel 0210),
+	[case "${enableval}" in
+		yes) P0210=p0210 ;;
+	esac], [enable_p0210=no])
+AM_CONDITIONAL(ENABLE_P0210,test "$enable_p0210" = "yes")
+AC_SUBST(P0210)
+
 AC_ARG_ENABLE(havana_p0207_5,
 	AS_HELP_STRING(enable-havana-p0207_5,  set up the CDK to use the STLinux 2.4 with Havana patchlevel 0207_5),
 	[case "${enableval}" in
@@ -159,11 +167,6 @@ AC_ARG_ENABLE(debug,
 	,[enable_debug=no])
 AM_CONDITIONAL(DEBUG,test "$enable_debug" = "yes")
 
-AC_ARG_ENABLE(bleeding_edge,
-	AS_HELP_STRING(--enable-bleeding-edge,	Use latest possible version for every package),
-	,[enable_bleeding_edge=no])
-AM_CONDITIONAL(BLEEDING_EDGE,test "$enable_bleeding_edge" = "yes")
-
 AC_ARG_ENABLE(enable_vdr1711,
 	AS_HELP_STRING(--enable-vdr1711,	set up the CDK to use vdr 1.7.11),
 	,[enable_vdr1711=no])
@@ -173,14 +176,6 @@ AC_ARG_WITH(cpu,
 	[  --with-cpu=MODEL        cpu model [[sh4]]],
 	[CPU_MODEL="$withval"],[CPU_MODEL="sh4"])
 AC_SUBST(CPU_MODEL)
-
-AC_ARG_WITH(targetruleset,
-	[  --with-targetruleset=NAME	OBSOLETE, use --[[enable|disable]]-flashrules instead],
-	[TARGETRULESET="$withval"],[TARGETRULESET="notset"])
-
-if test "$TARGETRULESET" != "notset"; then
-	AC_MSG_WARN([--with-targetruleset is obsolete; use --[[enable|disable]]-flashrules instead]);
-fi
 
 AC_ARG_WITH(assume-kernelsources-old,
 	[  --with-assume-kernelsources-old	Do not recompile due to new kernel sources],
@@ -198,18 +193,6 @@ AC_ARG_ENABLE(externallcd,
 	,[enable_externallcd=no])
 AM_CONDITIONAL(ENABLE_EXTERNALLCD,test "$enable_externallcd" = "yes")
 AC_SUBST(EXTERNALLCD)
-
-AC_ARG_ENABLE(flashrules,
-	AS_HELP_STRING(--enable-flashrules,	enable rules for creating flash targets),
-	,[enable_flashrules=yes])
-AM_CONDITIONAL(TARGETRULESET_FLASH,test "$enable_flashrules" = "yes")
-
-if test "$enable_flashrules" = "yes"; then
-	INSTALLRULESETFILE="-flash"
-else
-	INSTALLRULESETFILE=""
-fi
-
 
 
 if test -z "$CFLAGS" ; then
@@ -359,18 +342,18 @@ AM_CONDITIONAL(ENABLE_VIP1_V2,test "$enable_vip1_v2" = "yes")
 AC_SUBST(VIP1_V2)
 
 AC_ARG_ENABLE(spark,
-    AS_HELP_STRING(--enable-spark,    enable spark),
-    [case "${enableval}" in
-        yes) SPARK=spark ;;
-    esac],[enable_spark=no])
+	AS_HELP_STRING(--enable-spark,    enable spark),
+	[case "${enableval}" in
+		yes) SPARK=spark ;;
+	esac],[enable_spark=no])
 AM_CONDITIONAL(ENABLE_SPARK,test "$enable_spark" = "yes")
 AC_SUBST(SPARK)
 
 AC_ARG_ENABLE(spark7162,
-    AS_HELP_STRING(--enable-spark7162,    enable spark7162),
-    [case "${enableval}" in
-        yes) SPARK7162=spark7162 ;;
-    esac],[enable_spark7162=no])
+	AS_HELP_STRING(--enable-spark7162,    enable spark7162),
+	[case "${enableval}" in
+		yes) SPARK7162=spark7162 ;;
+	esac],[enable_spark7162=no])
 AM_CONDITIONAL(ENABLE_SPARK7162,test "$enable_spark7162" = "yes")
 AC_SUBST(SPARK7162)
 
@@ -477,14 +460,6 @@ AC_ARG_ENABLE(cuberevo_9500hd,
 AM_CONDITIONAL(ENABLE_CUBEREVO_9500HD,test "$enable_cuberevo_9500hd" = "yes")
 AC_SUBST(CUBEREVO_9500HD)
 
-AC_ARG_ENABLE(flash_ufs910,
-	AS_HELP_STRING(--enable-flash_ufs910,    enable flash ufs910 stuff),
-	[case "${enableval}" in
-		yes) FLASH_UFS910=flash_ufs910 ;;
-	esac],[enable_flash_ufs910=no])
-AM_CONDITIONAL(ENABLE_FLASH_UFS910,test "$enable_flash_ufs910" = "yes")
-AC_SUBST(FLASH_UFS910)
-
 AC_ARG_ENABLE(homecast5101,
 	AS_HELP_STRING(--enable-homecast5101,    enable homecast 5101 stuff),
 	[case "${enableval}" in
@@ -548,21 +523,9 @@ AC_ARG_WITH(bootprefix,
 	[  --with-bootprefix=DIR   prefix for boot files [[PREFIX/cdkroot-tftpboot]]],
 	[bootprefix="$with_bootprefix"],[bootprefix="${prefix}/cdkroot-tftpboot"])
 
-AC_ARG_WITH(flashprefix,
-	[  --with-flashprefix=DIR  prefix for flash files [[PREFIX/cdkflash]] (only used for flash building)],
-	[flashprefix="$with_flashprefix"],[flashprefix="${prefix}/cdkflash"])
-
-AC_ARG_WITH(ipkprefix,
-	[  --with-ipkprefix=DIR  prefix for ipkg package files [[PREFIX/ipk]]],
-	[ipkprefix="$with_ipkprefix"],[ipkprefix="${prefix}/ipk"])
-
 AC_ARG_WITH(serversupport,
 	[  --with-serversupport=DIR  prefix for server file templates [[PREFIX/serversupport]]],
 	[serversupport="$with_serversupport"],[serversupport="${prefix}/serversupport"])
-
-AC_ARG_WITH(ucodesdir,
-	[  --with-ucodesdir=DIR  optional directory containing ucodes [[NONE]]],
-	[ucodesdir="$with_ucodesdir"],[ucodesdir="NONE"])
 
 AC_ARG_WITH(customizationsdir,
 	[  --with-customizationsdir=DIR  optional directory containing customization scripts [[[CVS]]]],
@@ -572,26 +535,14 @@ AC_ARG_WITH(updatehttpprefix,
 	[  --with-updatehttpprefix=URL  optional URL containing the URL of a directory with update images [[NONE]]],
 	[updatehttpprefix="$with_updatehttpprefix"],[updatehttpprefix=])
 
-AC_ARG_WITH(ipkgbuilddir,
-	[  --with-ipkgbuilddir=DIR  temporary directory for building ipkg packages [[[CVS]/ipkgbuild]]],
-	[ipkgbuilddir="$with_ipkgbuilddir"],[ipkgbuilddir="`pwd`/ipkgbuild"])
-
 buildprefix=`pwd`
 AC_SUBST(targetprefix)
 AC_SUBST(hostprefix)
 AC_SUBST(buildprefix)
 AC_SUBST(bootprefix)
-AC_SUBST(flashprefix)
-AC_SUBST(ipkprefix)
 AC_SUBST(serversupport)
-AC_SUBST(ucodesdir)
 AC_SUBST(customizationsdir)
 AC_SUBST(updatehttpprefix)
-AC_SUBST(ipkgbuilddir)
-flashprefix_ro=${flashprefix}/ro
-AC_SUBST(flashprefix_ro)
-flashprefix_rw=${flashprefix}/rw
-AC_SUBST(flashprefix_rw)
 
 AC_ARG_WITH(checkImage,
 	[  --with-checkImage=[[none,rename,warn]]	How/if to invoke checkImage [[none]]],
@@ -673,7 +624,7 @@ dircheck="ok"
 AC_MSG_CHECKING([for apps directory])
 if test ! -f "$appsdir/enigma2/configure.ac" ; then
 	AC_MSG_WARN([appsdir $appsdir not found])
-	appsdir="missing_appsir"
+	appsdir="missing_appsdir"
 	dircheck="fail"
 else
 	AC_MSG_RESULT([yes])
@@ -744,35 +695,6 @@ if test "$YACC" != "bison -y"; then
 	AC_MSG_ERROR(No bison found)
 fi
 
-if test "$enable_flashrules" = "yes"; then
-	MKLIBS="$hostappsdir/mklibs/mklibs.py"
-	AC_SUBST(MKLIBS)
-
-	AC_PATH_PROG(MKCRAMFS,mkcramfs,no)
-	if test "$MKCRAMFS" = "no"; then
-		AC_MSG_WARN(using tufsbox cramfs)
-		MKCRAMFS=$hostprefix/bin/mkcramfs
-	fi
-	AC_PATH_PROG(MKJFFS2,mkjffs2,no)
-	if test "$MKJFFS2" = "no"; then
-		AC_PATH_PROG(MKFSJFFS2,mkfs.jffs2,no)
-		if test "$MKFSJFFS2" = "no"; then
-			AC_MSG_WARN(using tufsbox mkfs.jffs2)
-			MKFSJFFS2="$hostprefix/bin/mkfs.jffs2"
-		fi
-		MKJFFS2="$MKFSJFFS2"
-	fi
-	AC_PATH_PROG(CFV,cfv,no)
-	if test "$CFV" = "no"; then
-		AC_MSG_WARN(No cfv found)
-	fi
-
-	AC_PATH_PROG(FAKEROOT,fakeroot,no)
-	if test "$fakeroot" = "no"; then
-		AC_MSG_ERROR(No fakeroot found)
-	fi
-fi
-
 if test "$enable_ccache" = "yes"; then
 	AC_PATH_PROG(CCACHE,ccache,no)
 	if test "$CCACHE" = "no"; then
@@ -783,8 +705,6 @@ fi
 
 FONTDIR="/share/fonts"
 AC_SUBST(FONTDIR)
-UCODEDIR="/var/tufsbox/ucodes"
-AC_SUBST(UCODEDIR)
 
 CLEANUP="rm -rf"
 AC_SUBST(CLEANUP)
@@ -816,6 +736,7 @@ TUXBOX_RULES_MAKE(linuxp0205)
 TUXBOX_RULES_MAKE(linuxp0206)
 TUXBOX_RULES_MAKE(linuxp0207)
 TUXBOX_RULES_MAKE(linuxp0209)
+TUXBOX_RULES_MAKE(linuxp0210)
 
 if test "$enable_stm22" = "yes"; then
 	if test "$enable_p0040" == "yes"; then
@@ -844,11 +765,15 @@ else
 		KERNELVERSION=${VERSION_linuxp0207}
 		KERNELSTMLABEL="_${VERSION_linuxp0207#*_}"
 		KERNELLABEL="207"
-    elif test "$enable_p0209" == "yes"; then
+	elif test "$enable_p0209" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0209}
 		KERNELSTMLABEL="_${VERSION_linuxp0209#*_}"
 		KERNELLABEL="209"
-    elif test "$enable_p0207" == "yes"; then
+	elif test "$enable_p0210" == "yes"; then
+		KERNELVERSION=${VERSION_linuxp0210}
+		KERNELSTMLABEL="_${VERSION_linuxp0210#*_}"
+		KERNELLABEL="210"
+	elif test "$enable_p0207" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0207}
 		KERNELSTMLABEL="_${VERSION_linuxp0207#*_}"
 		KERNELLABEL="207"
@@ -899,8 +824,6 @@ fi
 TUXBOX_RULES_MAKE(squashfs)
 TUXBOX_RULES_MAKE(ccache)
 TUXBOX_RULES_MAKE(cramfs)
-TUXBOX_RULES_MAKE(ipkg_utils)
-TUXBOX_RULES_MAKE(ipkg_host)
 TUXBOX_RULES_MAKE(host_python)
 TUXBOX_RULES_MAKE(libtool)
 
@@ -918,7 +841,6 @@ TUXBOX_RULES_MAKE(sysvinit)
 #
 TUXBOX_RULES_MAKE(portmap)
 TUXBOX_RULES_MAKE(nfs_utils)
-TUXBOX_RULES_MAKE(autofs)
 TUXBOX_RULES_MAKE(vsftpd)
 TUXBOX_RULES_MAKE(netkit_ftp)
 TUXBOX_RULES_MAKE(samba)
@@ -952,6 +874,9 @@ TUXBOX_RULES_MAKE(mencoder)
 TUXBOX_RULES_MAKE(util_linux)
 TUXBOX_RULES_MAKE(jfsutils)
 TUXBOX_RULES_MAKE(opkg)
+TUXBOX_RULES_MAKE(sysstat)
+TUXBOX_RULES_MAKE(hotplug_e2)
+TUXBOX_RULES_MAKE(autofs)
 
 #
 # contrib libs
@@ -972,8 +897,6 @@ TUXBOX_RULES_MAKE(libfribidi)
 TUXBOX_RULES_MAKE(libsigc)
 TUXBOX_RULES_MAKE(libmad)
 TUXBOX_RULES_MAKE(libid3tag)
-TUXBOX_RULES_MAKE(libxml2)
-TUXBOX_RULES_MAKE(libxslt)
 TUXBOX_RULES_MAKE(libvorbisidec)
 TUXBOX_RULES_MAKE(glib2)
 TUXBOX_RULES_MAKE(libiconv)
@@ -984,19 +907,11 @@ TUXBOX_RULES_MAKE(directfb)
 TUXBOX_RULES_MAKE(dfbpp)
 TUXBOX_RULES_MAKE(expat)
 TUXBOX_RULES_MAKE(fontconfig)
-TUXBOX_RULES_MAKE(python)
-TUXBOX_RULES_MAKE(elementtree)
-TUXBOX_RULES_MAKE(lxml)
 TUXBOX_RULES_MAKE(libxmlccwrap)
-TUXBOX_RULES_MAKE(zope_interface)
-TUXBOX_RULES_MAKE(setuptools)
-TUXBOX_RULES_MAKE(twisted)
-TUXBOX_RULES_MAKE(twistedweb2)
 TUXBOX_RULES_MAKE(a52dec)
 TUXBOX_RULES_MAKE(libdvdcss)
 TUXBOX_RULES_MAKE(libdvdnav)
 TUXBOX_RULES_MAKE(libdvdread)
-TUXBOX_RULES_MAKE(pyopenssl)
 TUXBOX_RULES_MAKE(ffmpeg)
 TUXBOX_RULES_MAKE(libass)
 TUXBOX_RULES_MAKE(webkitdfb)
@@ -1012,6 +927,34 @@ TUXBOX_RULES_MAKE(libflac)
 TUXBOX_RULES_MAKE(libcap)
 TUXBOX_RULES_MAKE(evebrowser)
 TUXBOX_RULES_MAKE(brofs)
+TUXBOX_RULES_MAKE(libalsa)
+TUXBOX_RULES_MAKE(rtmpdump)
+TUXBOX_RULES_MAKE(libdvbsipp)
+TUXBOX_RULES_MAKE(libtuxtxt)
+TUXBOX_RULES_MAKE(tuxtxt32bpp)
+TUXBOX_RULES_MAKE(libdreamdvd)
+TUXBOX_RULES_MAKE(libdreamdvd2)
+
+#
+# python
+#
+TUXBOX_RULES_MAKE(elementtree)
+TUXBOX_RULES_MAKE(libxml2)
+TUXBOX_RULES_MAKE(libxslt)
+TUXBOX_RULES_MAKE(lxml)
+TUXBOX_RULES_MAKE(setuptools)
+TUXBOX_RULES_MAKE(twisted)
+TUXBOX_RULES_MAKE(twistedweb2)
+TUXBOX_RULES_MAKE(pilimaging)
+TUXBOX_RULES_MAKE(python)
+TUXBOX_RULES_MAKE(pyopenssl)
+TUXBOX_RULES_MAKE(pythonwifi)
+TUXBOX_RULES_MAKE(pythoncheetah)
+TUXBOX_RULES_MAKE(zope_interface)
+
+#
+# gstreamer
+#
 TUXBOX_RULES_MAKE(gstreamer)
 TUXBOX_RULES_MAKE(gst_plugins_base)
 TUXBOX_RULES_MAKE(gst_plugins_good)
@@ -1020,59 +963,15 @@ TUXBOX_RULES_MAKE(gst_plugins_ugly)
 TUXBOX_RULES_MAKE(gst_ffmpeg)
 TUXBOX_RULES_MAKE(gst_plugins_fluendo_mpegdemux)
 TUXBOX_RULES_MAKE(gst_plugins_dvbmediasink)
-TUXBOX_RULES_MAKE(libalsa)
+
+#
+# external lcd
+#
+TUXBOX_RULES_MAKE(graphlcd)
 TUXBOX_RULES_MAKE(libusb)
-TUXBOX_RULES_MAKE(rtmpdump)
-
-#
-# GUI
-#
-#TUXBOX_RULES_MAKE(enigma2)
-
-#
-# development
-#
-TUXBOX_RULES_MAKE(ruby)
-
-#
-# framebuffer
-#
-#TUXBOX_RULES_MAKE_RPM(directfb)
-TUXBOX_RULES_MAKE_RPM(directfb_examples)
-
-#
-# in work
-#
-TUXBOX_RULES_MAKE(flashybrid)
-TUXBOX_RULES_MAKE(netkit_base)
-
-#
-# dummy
-#
-
-#
-# msttf
-#
-
-#
-# additional
-#
-
-#
-# java
-#
-
-#
-# fun stuff
-#
-
-#
-# dvb apps
-#
-
-#
-# bluetooth
-#
+TUXBOX_RULES_MAKE(libusb2)
+TUXBOX_RULES_MAKE(libusbcompat)
+TUXBOX_RULES_MAKE(libgd2)
 
 #
 # RPM stuff
@@ -1176,17 +1075,16 @@ Patchlevel P0205            : $enable_p0205
 Patchlevel P0206            : $enable_p0206
 Patchlevel P0207            : $enable_p0207
 Patchlevel P0209            : $enable_p0209
+Patchlevel P0210            : $enable_p0210
 HAVANA Patchlevel P0207_5   : $enable_havana_p0207_5
 vdr VDR 1.7.11              : $enable_vdr1711
 vdr VDR 1.7.22              : $enable_vdr1722
-flash rules                 : $enable_flashrules
 ccache                      : $enable_ccache
 target prefix               : $targetprefix
 boot prefix                 : $bootprefix
 host prefix                 : $hostprefix
 cross prefix                : $crossprefix
 build prefix                : $buildprefix
-ipk packages prefix         : $ipkprefix
 root partition size         : $ROOT_PARTITION_SIZE
 data partition size         : $DATA_PARTITION_SIZE
 serversupport               : $serversupport
@@ -1196,12 +1094,10 @@ boot directory              : $bootdir
 driver directory            : $driverdir
 host apps directory         : $hostappsdir
 customization directory     : $customizationsdir
-archive directory:          : $archivedir
-ucode directory             : $ucodesdir
+archive directory           : $archivedir
 GNU server                  : $gnuserver
 default server              : $defaultserver
 update http prefix          : $updatehttpprefix
-ipkg build directory        : $ipkgbuilddir
 Fortis/hdbox stuff          : $enable_fortis_hdbox
 Fortis hs7810a stuff        : $enable_hs7810a
 Fortis hs7110 stuff         : $enable_hs7110
@@ -1215,7 +1111,6 @@ spark box stuff             : $enable_spark
 spark7162 box stuff         : $enable_spark7162
 adb_box stuff               : $enable_adb_box
 ufs910 stuff                : $enable_ufs910
-ufs910 flash                : $enable_flash_ufs910
 ufs912 stuff                : $enable_ufs912
 ufs922 stuff                : $enable_ufs922
 cuberevo stuff              : $enable_cuberevo
@@ -1259,28 +1154,17 @@ AC_MSG_RESULT([
 ])
 fi
 
+TUXBOX_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && KERNEL='$used_kernelversion' KERNELVERSION=$(KERNELVERSION) && $(customizationsdir)/$(notdir $@)-local.sh $(buildprefix) || true]'
+AC_SUBST(TUXBOX_CUSTOMIZE)
+TUXBOX_YAUD_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && KERNEL='$used_kernelversion' KERNELVERSION=$(KERNELVERSION) && $(customizationsdir)/$(notdir $@)-local.sh $(prefix)/$*cdkroot $(buildprefix) || true]'
+AC_SUBST(TUXBOX_YAUD_CUSTOMIZE)
 TUXBOX_TOUCH='[@[ "x$*" = "x" ] && touch $@ || true]'
 AC_SUBST(TUXBOX_TOUCH)
-TUXBOX_YAUD_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(prefix)/$*cdkroot $(buildprefix) || true]'
-AC_SUBST(TUXBOX_YAUD_CUSTOMIZE)
-FLASHROOTDIR_MODIFIED='touch $(flashprefix)/root'
-AC_SUBST(FLASHROOTDIR_MODIFIED)
-TUXBOX_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(flashprefix) $(buildprefix) || true]'
-AC_SUBST(TUXBOX_CUSTOMIZE)
-TUXBOX_FLASHROOT_MODIFIED='[[ "x$*" = "x$(flashprefix)/root" ] && touch $(flashprefix)/root || true]'
-AC_SUBST(TUXBOX_FLASHROOT_MODIFIED)
-TUXBOX_FLASH_CUSTOMIZE='[[ "x$*" = "x$(flashprefix)/root" -a -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(flashprefix) $(buildprefix) || true]'
-AC_SUBST(TUXBOX_FLASH_CUSTOMIZE)
-FLASHROOT_MODIFIED='[touch $(flashprefix)/root || true]'
-AC_SUBST(FLASHROOT_MODIFIED)
-FLASH_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(flashprefix) $(buildprefix) || true]'
-AC_SUBST(FLASH_CUSTOMIZE)
 
 AC_CONFIG_FILES([
 Makefile
 rules-downcheck.pl
 ])
-#packages/fuse/Makefile
 
 AC_CONFIG_COMMANDS([rules-downcheck-chmod],[chmod +x rules-downcheck.pl])
 

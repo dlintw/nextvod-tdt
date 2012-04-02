@@ -130,8 +130,6 @@ if [ ! -e /var/etc/.firstboot ]; then
       fi 
    fi
 
-   touch /dev/.udev
-
    echo "run app" > /dev/vfd
    echo "LOADING neutrino"
 

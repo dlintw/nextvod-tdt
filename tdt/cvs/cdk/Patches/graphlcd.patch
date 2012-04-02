@@ -1,5 +1,5 @@
---- Make.config	2011-12-06 23:03:38.986910111 +0100
-+++ Make.config.fix	2011-12-06 23:03:18.216901196 +0100
+--- graphlcd-base/Make.config	2011-12-06 23:03:38.986910111 +0100
++++ graphlcd-base/Make.config.fix	2011-12-06 23:03:18.216901196 +0100
 @@ -3,10 +3,10 @@
  
  ### The C compiler and options:
@@ -13,41 +13,54 @@
  CXXFLAGS = -g -O2 -Wall -Woverloaded-virtual
  #CXXFLAGS = -g -ggdb -O0 -Wall -Woverloaded-virtual
  
-@@ -16,9 +16,13 @@
+@@ -20,14 +20,15 @@
+ DESTDIR = /usr/local
+ endif
  
- ### The directory environment:
- 
--ifndef $(DESTDIR)
--DESTDIR = /usr/local
--endif
-+#note/todo: this is very unproper; use here a variable which 
-+#points to the cdkroot!
-+DESTDIR = ../../../tufsbox/cdkroot/usr/
-+
-+#ifndef $(DESTDIR)
-+#DESTDIR = /usr/local
-+#endif
- 
- BINDIR = $(DESTDIR)/bin
- LIBDIR = $(DESTDIR)/lib
-@@ -27,7 +31,8 @@
+-BINDIR = $(DESTDIR)/bin
+-LIBDIR = $(DESTDIR)/lib
+-INCDIR = $(DESTDIR)/include
+-MANDIR = $(DESTDIR)/man
++BINDIR = $(DESTDIR)/usr/bin
++LIBDIR = $(DESTDIR)/usr/lib
++INCDIR = $(DESTDIR)/usr/include
++MANDIR = $(DESTDIR)/usr/man
++ETCDIR = $(DESTDIR)/etc
  
  ### Includes and defines
  
 -#INCLUDES += -I
 +INCLUDES += -I$(DESTDIR)/include
-+
  
  DEFINES += -D_GNU_SOURCE
  
-@@ -40,4 +45,4 @@
+@@ -40,4 +41,4 @@
  
  # uncomment this variable if you want to enable the experimental AX 206 based digital photo frame driver
  # Read DRIVER.ax206dpf before use!
 -#HAVE_AX206DPF_EXPERIMENTAL=1
 +HAVE_AX206DPF_EXPERIMENTAL=1
---- glcddrivers/port.c	2011-12-07 22:31:41.607561726 +0100
-+++ glcddrivers/port.fix	2011-12-07 22:31:47.877565426 +0100
+--- graphlcd-base/Makefile	2011-12-06 23:03:38.986910111 +0100
++++ graphlcd-base/Makefile.fix	2011-12-06 23:03:18.216901196 +0100
+@@ -7,6 +7,7 @@
+ ARCHIVE = $(PROJECT)-$(VERSION)
+ PACKAGE = $(ARCHIVE)
+ TMPDIR = /tmp
++include Make.config
+ 
+ UDEVRULESDIR ?= /etc/udev/rules.d/
+ UDEVRULE ?= 99-graphlcd-base.rules
+@@ -24,7 +25,7 @@
+ 	@$(MAKE) -C glcddrivers install
+ 	@$(MAKE) -C glcdskin install
+ 	@$(MAKE) -C tools install
+-	test -d "${UDEVRULESDIR}" && install -m 644 -o root -g root "$(UDEVRULE)" "$(UDEVRULESDIR)"
++	install -m 0644 graphlcd.conf $(ETCDIR)
+ 
+ uninstall:
+ 	@$(MAKE) -C glcdgraphics uninstall
+--- graphlcd-base/glcddrivers/port.c	2011-12-07 22:31:41.607561726 +0100
++++ graphlcd-base/glcddrivers/port.fix	2011-12-07 22:31:47.877565426 +0100
 @@ -16,12 +16,35 @@
  #include <syslog.h>
  #include <unistd.h>
@@ -106,8 +119,8 @@
  }
  
  cParallelPort::cParallelPort()
---- graphlcd.conf.orig	2012-03-07 01:52:17.571231592 +0100
-+++ graphlcd.conf	2012-03-07 01:54:58.223427153 +0100
+--- graphlcd-base/graphlcd.conf	2011-12-11 17:28:26.778505886 +0100
++++ graphlcd-base/graphlcd.conf.fix	2011-12-11 17:28:33.998507890 +0100
 @@ -29,7 +29,7 @@
  #  Select the process priority that is used when sleeping.
  #  Possible values: -20 <= x <= 19
@@ -597,14 +610,69 @@
  #
  # UpsideDown
  #  Rotates the display output by 180 degrees. This might be useful, if
---- glcddrivers/ax206dpf.c	2012-01-08 11:51:56.907120065 +0100
-+++ glcddrivers/ax206dpf.c.fix	2012-01-11 22:15:36.496080564 +0100
-@@ -212,7 +212,7 @@
-     {
-         dh[di]->dpfh = NULL;
-         dh[di]->attached = false;
--        return 0;
-+        return error;
-     }
-     dh[di]->attached = true;
-     struct usb_device *dev = usb_device(dh[di]->dpfh->dev.udev);
+--- graphlcd-base/tools/convpic/Makefile.org	2012-01-21 23:04:06.899524642 +0100
++++ graphlcd-base/tools/convpic/Makefile	2012-01-21 23:04:06.847524649 +0100
+@@ -36,7 +36,7 @@ $(PRGNAME): $(OBJS)
+ 
+ install: $(PRGNAME)
+ 	install -d $(BINDIR)
+-	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
++	install -m 755 $(PRGNAME) $(BINDIR)
+ 
+ uninstall:
+ 	rm -f $(BINDIR)/$(PRGNAME)
+--- graphlcd-base/tools/crtfont/Makefile.org	2012-01-21 23:10:38.711524640 +0100
++++ graphlcd-base/tools/crtfont/Makefile	2012-01-21 23:10:38.663524640 +0100
+@@ -35,7 +35,7 @@ $(PRGNAME): $(OBJS)
+ 
+ install: $(PRGNAME)
+ 	install -d $(BINDIR)
+-	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
++	install -m 755 $(PRGNAME) $(BINDIR)
+ 
+ uninstall:
+ 	rm -f $(BINDIR)/$(PRGNAME)
+--- graphlcd-base/tools/genfont/Makefile.org	2012-01-21 23:13:28.307524643 +0100
++++ graphlcd-base/tools/genfont/Makefile	2012-01-21 23:13:28.255524646 +0100
+@@ -38,7 +38,7 @@ $(PRGNAME): $(OBJS)
+ 
+ install: $(PRGNAME)
+ 	install -d $(BINDIR)
+-	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
++	install -m 755 $(PRGNAME) $(BINDIR)
+ 	
+ uninstall:
+ 	rm -f $(BINDIR)/$(PRGNAME)
+--- graphlcd-base/tools/showpic/Makefile.org	2012-01-21 23:15:43.891524641 +0100
++++ graphlcd-base/tools/showpic/Makefile	2012-01-21 23:15:43.843524640 +0100
+@@ -36,7 +36,7 @@ $(PRGNAME): $(OBJS)
+ 
+ install: $(PRGNAME)
+ 	install -d $(BINDIR)
+-	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
++	install -m 755 $(PRGNAME) $(BINDIR)
+ 
+ uninstall:
+ 	rm -f $(BINDIR)/$(PRGNAME)
+--- graphlcd-base/tools/showtext/Makefile.org	2012-01-21 23:18:13.715524639 +0100
++++ graphlcd-base/tools/showtext/Makefile	2012-01-21 23:18:13.667524641 +0100
+@@ -36,7 +36,7 @@ $(PRGNAME): $(OBJS)
+ 
+ install: $(PRGNAME)
+ 	install -d $(BINDIR)
+-	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
++	install -m 755 $(PRGNAME) $(BINDIR)
+ 
+ uninstall:
+ 	rm -f $(BINDIR)/$(PRGNAME)
+--- graphlcd-base/tools/lcdtestpattern/Makefile.org	2012-01-21 23:19:57.715524641 +0100
++++ graphlcd-base/tools/lcdtestpattern/Makefile	2012-01-21 23:19:56.899524641 +0100
+@@ -36,7 +36,7 @@ $(PRGNAME): $(OBJS)
+ 
+ install: $(PRGNAME)
+ 	install -d $(BINDIR)
+-	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
++	install -m 755 $(PRGNAME) $(BINDIR)
+ 
+ uninstall:
+ 	rm -f $(BINDIR)/$(PRGNAME)

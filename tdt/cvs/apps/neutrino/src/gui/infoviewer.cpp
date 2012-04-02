@@ -1014,7 +1014,6 @@ void CInfoViewer::showSNR () {
 			break;
 		}
 	}
-
 	hddscale->paint(BoxEndX - (2*ICON_LARGE_WIDTH + 2*ICON_SMALL_WIDTH + 4*2) - 102, BoxEndY - ICON_Y_1 + 10, per);
   }
 }

@@ -46,8 +46,8 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/main/Makefile.
  enigma2_LDFLAGS = -Wl,--export-dynamic
  
 diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/servicemp3.cpp enigma2-nightly.patched/lib/service/servicemp3.cpp
---- enigma2-nightly.org/lib/service/servicemp3.cpp	2011-09-03 18:23:27.990023248 +0200
-+++ enigma2-nightly.patched/lib/service/servicemp3.cpp	2011-09-03 18:23:47.540032997 +0200
+--- enigma2-nightly.org/lib/service/servicemp3.cpp	2012-03-29 00:55:33.000000000 +0200
++++ enigma2-nightly.patched/lib/service/servicemp3.cpp	2012-03-29 00:55:20.000000000 +0200
 @@ -15,8 +15,10 @@
  
  #include <string>
@@ -80,7 +80,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
 +		int rd = fd >= 0 ? read(fd, tmp, 255) : 0;
 +		if (fd >= 0)
 +			close(fd);
-+		if (!strncmp(tmp, "ufs912\n", rd) || !strncmp(tmp, "atevio7500\n", rd))
++		if (!strncmp(tmp, "ufs912\n", rd) || !strncmp(tmp, "atevio7500\n", rd) || !strncmp(tmp, "hs7110\n", rd))
 +			extensions.push_back("wmv");
 +#endif
  		sc->addServiceFactory(eServiceFactoryMP3::id, this, extensions);
@@ -114,7 +114,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	m_sourceinfo.is_video = FALSE;
  	m_sourceinfo.audiotype = atUnknown;
  	if ( (strcasecmp(ext, ".mpeg") && strcasecmp(ext, ".mpg") && strcasecmp(ext, ".vob") && strcasecmp(ext, ".bin") && strcasecmp(ext, ".dat") ) == 0 )
-@@ -377,10 +404,168 @@
+@@ -377,10 +404,180 @@
  	}
  
  	setBufferSize(m_buffer_size);
@@ -156,6 +156,18 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
 +    if(!strncmp("http://", m_ref.path.c_str(), 7))
 +        ;
 +    else if(!strncmp("rtsp://", m_ref.path.c_str(), 7))
++        ;
++    else if(!strncmp("rtmp://", m_ref.path.c_str(), 7))
++        ;
++    else if(!strncmp("rtmpe://", m_ref.path.c_str(), 8))
++        ;
++    else if(!strncmp("rtmpt://", m_ref.path.c_str(), 8))
++        ;
++    else if(!strncmp("rtmps://", m_ref.path.c_str(), 8))
++        ;
++    else if(!strncmp("rtmpte://", m_ref.path.c_str(), 9))
++        ;
++    else if(!strncmp("rtp://", m_ref.path.c_str(), 6))
 +        ;
 +    else if(!strncmp("upnp://", m_ref.path.c_str(), 7))
 +        ;
@@ -283,7 +295,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	// disconnect subtitle callback
  	GstElement *appsink = gst_bin_get_by_name(GST_BIN(m_gst_playbin), "subtitle_sink");
  
-@@ -390,14 +575,17 @@
+@@ -390,14 +587,17 @@
  		gst_object_unref(appsink);
  	}
  
@@ -302,7 +314,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	if (m_stream_tags)
  		gst_tag_list_free(m_stream_tags);
  	
-@@ -406,6 +594,22 @@
+@@ -406,6 +606,22 @@
  		gst_object_unref (GST_OBJECT (m_gst_playbin));
  		eDebug("eServiceMP3::destruct!");
  	}
@@ -325,7 +337,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  }
  
  DEFINE_REF(eServiceMP3);
-@@ -413,20 +617,35 @@
+@@ -413,20 +629,35 @@
  RESULT eServiceMP3::connectEvent(const Slot2<void,iPlayableService*,int> &event, ePtr<eConnection> &connection)
  {
  	connection = new eConnection((iPlayableService*)this, m_event.connect(event));
@@ -363,7 +375,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	m_event(this, evStart);
  
  	return 0;
-@@ -440,15 +659,42 @@
+@@ -440,15 +671,42 @@
  
  RESULT eServiceMP3::stop()
  {
@@ -407,7 +419,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	m_state = stStopped;
  
  	return 0;
-@@ -462,21 +708,96 @@
+@@ -462,21 +720,96 @@
  RESULT eServiceMP3::pause(ePtr<iPauseableService> &ptr)
  {
  	ptr=this;
@@ -504,7 +516,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  }
  
  void eServiceMP3::seekTimeoutCB()
-@@ -504,21 +825,30 @@
+@@ -504,21 +837,30 @@
  		// iPausableService
  RESULT eServiceMP3::pause()
  {
@@ -536,7 +548,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	return 0;
  }
  
-@@ -531,6 +861,7 @@
+@@ -531,6 +873,7 @@
  
  RESULT eServiceMP3::getLength(pts_t &pts)
  {
@@ -544,7 +556,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -545,11 +876,23 @@
+@@ -545,11 +888,23 @@
  		/* len is in nanoseconds. we have 90 000 pts per second. */
  	
  	pts = len / 11111;
@@ -568,7 +580,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  		/* convert pts to nanoseconds */
  	gint64 time_nanoseconds = to * 11111LL;
  	if (!gst_element_seek (m_gst_playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-@@ -559,7 +902,8 @@
+@@ -559,7 +914,8 @@
  		eDebug("eServiceMP3::seekTo failed");
  		return -1;
  	}
@@ -578,7 +590,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	return 0;
  }
  
-@@ -567,6 +911,7 @@
+@@ -567,6 +923,7 @@
  {
  	RESULT ret = -1;
  
@@ -586,7 +598,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	if (m_gst_playbin) {
  		eSingleLocker l(m_subs_to_pull_lock); // this is needed to dont handle incomming subtitles during seek!
  		if (!(ret = seekToImpl(to)))
-@@ -578,10 +923,12 @@
+@@ -578,10 +935,12 @@
  		}
  	}
  
@@ -600,7 +612,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  RESULT eServiceMP3::trickSeek(gdouble ratio)
  {
  	if (!m_gst_playbin)
-@@ -622,10 +969,12 @@
+@@ -622,10 +981,12 @@
  
  	return 0;
  }
@@ -613,7 +625,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	if (!m_gst_playbin)
  		return -1;
  
-@@ -635,12 +984,17 @@
+@@ -635,12 +996,17 @@
  	if (ppos < 0)
  		ppos = 0;
  	seekTo(ppos);
@@ -632,7 +644,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	GstFormat fmt = GST_FORMAT_TIME;
  	gint64 pos;
  	GstElement *sink;
-@@ -675,6 +1029,24 @@
+@@ -675,6 +1041,24 @@
  
  	/* pos is in nanoseconds. we have 90 000 pts per second. */
  	pts = pos / 11111;
@@ -657,7 +669,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  // 	eDebug("gst_element_query_position %lld pts (%lld ms)", pts, pos/1000000);
  	return 0;
  }
-@@ -687,6 +1059,9 @@
+@@ -687,6 +1071,9 @@
  
  RESULT eServiceMP3::isCurrentlySeekable()
  {
@@ -667,7 +679,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	int ret = 3; // seeking and fast/slow winding possible
  	GstElement *sink;
  
-@@ -712,6 +1087,7 @@
+@@ -712,6 +1099,7 @@
  	}
  
  	return ret;
@@ -675,7 +687,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  }
  
  RESULT eServiceMP3::info(ePtr<iServiceInformation>&i)
-@@ -737,7 +1113,9 @@
+@@ -737,7 +1125,9 @@
  
  int eServiceMP3::getInfo(int w)
  {
@@ -685,7 +697,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  
  	switch (w)
  	{
-@@ -777,7 +1155,9 @@
+@@ -777,7 +1167,9 @@
  	case sTagKeywords:
  	case sTagChannelMode:
  	case sUser+12:
@@ -695,7 +707,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	case sTagTrackGain:
  	case sTagTrackPeak:
  	case sTagAlbumGain:
-@@ -788,6 +1168,7 @@
+@@ -788,6 +1180,7 @@
  	case sTagPreviewImage:
  	case sTagAttachment:
  		return resIsPyObject;
@@ -703,7 +715,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	case sTagTrackNumber:
  		tag = GST_TAG_TRACK_NUMBER;
  		break;
-@@ -821,22 +1202,25 @@
+@@ -821,22 +1214,25 @@
  	case sTagCRC:
  		tag = "has-crc";
  		break;
@@ -730,7 +742,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	if ( !m_stream_tags && w < sUser && w > 26 )
  		return "";
  	const gchar *tag = 0;
-@@ -949,9 +1333,68 @@
+@@ -949,9 +1345,68 @@
  		g_free(value);
  		return res;
  	}
@@ -799,7 +811,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  PyObject *eServiceMP3::getInfoObject(int w)
  {
  	const gchar *tag = 0;
-@@ -1011,6 +1454,7 @@
+@@ -1011,6 +1466,7 @@
  
  	return 0;
  }
@@ -807,7 +819,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  
  RESULT eServiceMP3::audioChannel(ePtr<iAudioChannelSelection> &ptr)
  {
-@@ -1043,30 +1487,37 @@
+@@ -1043,30 +1499,37 @@
  
  int eServiceMP3::getCurrentTrack()
  {
@@ -845,7 +857,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	int current_audio;
  	g_object_set (G_OBJECT (m_gst_playbin), "current-audio", i, NULL);
  	g_object_get (G_OBJECT (m_gst_playbin), "current-audio", &current_audio, NULL);
-@@ -1077,6 +1528,13 @@
+@@ -1077,6 +1540,13 @@
  		return 0;
  	}
  	return -1;
@@ -859,7 +871,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  }
  
  int eServiceMP3::getCurrentChannel()
-@@ -1094,6 +1552,7 @@
+@@ -1094,6 +1564,7 @@
  {
   	if (i >= m_audioStreams.size())
  		return -2;
@@ -867,7 +879,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  		info.m_description = m_audioStreams[i].codec;
  /*	if (m_audioStreams[i].type == atMPEG)
  		info.m_description = "MPEG";
-@@ -1113,11 +1572,27 @@
+@@ -1113,11 +1584,27 @@
  		info.m_description = "FLAC";
  	else
  		info.m_description = "???";*/
@@ -896,7 +908,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  subtype_t getSubtitleType(GstPad* pad, gchar *g_codec=NULL)
  {
  	subtype_t type = stUnknown;
-@@ -1555,9 +2030,9 @@
+@@ -1555,9 +2042,9 @@
  	else
  		eDebug("gstPoll unhandled Message %d\n", msg.type);
  }
@@ -908,7 +920,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  void eServiceMP3::gstCBsubtitleAvail(GstElement *appsink, gpointer user_data)
  {
  	eServiceMP3 *_this = (eServiceMP3*)user_data;	
-@@ -1681,9 +2156,30 @@
+@@ -1681,9 +2168,30 @@
  	else
  		eDebug("no subtitle sink!");
  }
@@ -939,7 +951,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	while ( !m_subtitle_pages.empty() )
  	{
  		SubtitlePage &frontpage = m_subtitle_pages.front();
-@@ -1739,6 +2235,7 @@
+@@ -1739,6 +2247,7 @@
  	}
  	if (m_subtitle_pages.empty())
  		pullSubtitle();
@@ -947,7 +959,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  }
  
  
-@@ -1771,9 +2268,11 @@
+@@ -1771,9 +2280,11 @@
  
  	if (m_currentSubtitleStream != pid)
  	{
@@ -959,7 +971,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  		m_subs_to_pull = 0;
  		m_prev_decoder_time = -1;
  		m_subtitle_pages.clear();
-@@ -1782,10 +2281,14 @@
+@@ -1782,10 +2293,14 @@
  	m_subtitle_widget = 0;
  	m_subtitle_widget = new eSubtitleWidget(parent);
  	m_subtitle_widget->resize(parent->size()); /* full size */
@@ -975,7 +987,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  // 	gst_pad_remove_buffer_probe (pad, subprobe_handler_id);
  
  	m_event((iPlayableService*)this, evUpdatedInfo);
-@@ -1804,6 +2307,11 @@
+@@ -1804,6 +2319,11 @@
  	m_subtitle_pages.clear();
  	delete m_subtitle_widget;
  	m_subtitle_widget = 0;
@@ -987,7 +999,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	return 0;
  }
  
-@@ -1867,7 +2375,9 @@
+@@ -1867,7 +2387,9 @@
  int eServiceMP3::setBufferSize(int size)
  {
  	m_buffer_size = size;
@@ -997,7 +1009,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	return 0;
  }
  
-@@ -1883,6 +2393,7 @@
+@@ -1883,6 +2405,7 @@
  
  void eServiceMP3::setAC3Delay(int delay)
  {
@@ -1005,7 +1017,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	ac3_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1916,10 +2427,12 @@
+@@ -1916,10 +2439,12 @@
  			gst_object_unref(sink);
  		}
  	}
@@ -1018,7 +1030,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/service/se
  	pcm_delay = delay;
  	if (!m_gst_playbin || m_state != stRunning)
  		return;
-@@ -1960,5 +2473,6 @@
+@@ -1960,5 +2485,6 @@
  			gst_object_unref(sink);
  		}
  	}
