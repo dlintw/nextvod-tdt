@@ -104,7 +104,6 @@ list-clean:
 
 $(LIST_CLEAN): \
 %-clean:
-	-[ ! -z "$(UNINSTALL_$*)" -a -d $(DIR_$*) ] && ( cd $(DIR_$*) && $(UNINSTALL_$*) || true )
 	-$(DEPSCLEANUP_$*)
 
 $(RPMLIST_CLEAN): \
@@ -122,7 +121,6 @@ list-distclean:
 
 $(LIST_DISTCLEAN): \
 %-distclean:
-	-[ ! -z "$(UNINSTALL_$*)" -a -d $(DIR_$*) ] && ( cd $(DIR_$*) && $(UNINSTALL_$*) || true )
 	-$(DISTCLEANUP_$*)
 	-$(DEPSDISTCLEANUP_$*)
 
