@@ -1,12 +1,12 @@
 #
 # MODULE-INIT-TOOLS
 #
-$(DEPDIR)/module-init-tools.do_prepare: @DEPENDS_module_init_tools@
+$(DEPDIR)/module_init_tools.do_prepare: @DEPENDS_module_init_tools@
 	@PREPARE_module_init_tools@
 	touch $@
 
-$(DEPDIR)/module-init-tools.do_compile: bootstrap $(DEPDIR)/module-init-tools.do_prepare
-	cd @DIR_module_init_tools@  && \
+$(DEPDIR)/module_init_tools.do_compile: bootstrap $(DEPDIR)/module-init-tools.do_prepare
+	cd @DIR_module_init_tools@ && \
 		$(BUILDENV) \
 		./configure \
 			--build=$(build) \
@@ -15,9 +15,9 @@ $(DEPDIR)/module-init-tools.do_compile: bootstrap $(DEPDIR)/module-init-tools.do
 		$(MAKE)
 	touch $@
 
-$(DEPDIR)/min-module-init-tools $(DEPDIR)/std-module-init-tools $(DEPDIR)/max-module-init-tools \
-$(DEPDIR)/module-init-tools: \
-$(DEPDIR)/%module-init-tools: $(DEPDIR)/%lsb $(MODULE_INIT_TOOLS:%=root/etc/%) $(DEPDIR)/module-init-tools.do_compile
+$(DEPDIR)/min-module_init_tools $(DEPDIR)/std-module_init_tools $(DEPDIR)/max-module_init_tools \
+$(DEPDIR)/module_init_tools: \
+$(DEPDIR)/%module_init_tools: $(DEPDIR)/%lsb $(MODULE_INIT_TOOLS:%=root/etc/%) $(DEPDIR)/module_init_tools.do_compile
 	cd @DIR_module_init_tools@  && \
 		@INSTALL_module_init_tools@
 	$(call adapted-etc-files,$(MODULE_INIT_TOOLS_ADAPTED_ETC_FILES))
@@ -37,7 +37,7 @@ $(DEPDIR)/grep.do_prepare: @DEPENDS_grep@
 	touch $@
 
 $(DEPDIR)/grep.do_compile: bootstrap $(DEPDIR)/grep.do_prepare
-	cd @DIR_grep@  && \
+	cd @DIR_grep@ && \
 		$(BUILDENV) \
 		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
@@ -53,7 +53,7 @@ $(DEPDIR)/grep.do_compile: bootstrap $(DEPDIR)/grep.do_prepare
 $(DEPDIR)/min-grep $(DEPDIR)/std-grep $(DEPDIR)/max-grep \
 $(DEPDIR)/grep: \
 $(DEPDIR)/%grep: $(DEPDIR)/grep.do_compile
-	cd @DIR_grep@  && \
+	cd @DIR_grep@ && \
 		@INSTALL_grep@
 #	@DISTCLEANUP_grep@
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -72,7 +72,7 @@ $(DEPDIR)/lsb.do_compile: bootstrap $(DEPDIR)/lsb.do_prepare
 $(DEPDIR)/min-lsb $(DEPDIR)/std-lsb $(DEPDIR)/max-lsb \
 $(DEPDIR)/lsb: \
 $(DEPDIR)/%lsb: $(DEPDIR)/lsb.do_compile
-	cd @DIR_lsb@  && \
+	cd @DIR_lsb@ && \
 		@INSTALL_lsb@
 #	@DISTCLEANUP_lsb@
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -98,7 +98,7 @@ $(DEPDIR)/portmap.do_compile: bootstrap $(DEPDIR)/portmap.do_prepare
 $(DEPDIR)/min-portmap $(DEPDIR)/std-portmap $(DEPDIR)/max-portmap \
 $(DEPDIR)/portmap: \
 $(DEPDIR)/%portmap: $(DEPDIR)/%lsb $(PORTMAP_ADAPTED_ETC_FILES:%=root/etc/%) $(DEPDIR)/portmap.do_compile
-	cd @DIR_portmap@  && \
+	cd @DIR_portmap@ && \
 		@INSTALL_portmap@
 	$(call adapted-etc-files,$(PORTMAP_ADAPTED_ETC_FILES))
 	$(call initdconfig,portmap)
@@ -115,7 +115,7 @@ $(DEPDIR)/openrdate.do_prepare: bootstrap @DEPENDS_openrdate@
 	touch $@
 
 $(DEPDIR)/openrdate.do_compile: $(DEPDIR)/openrdate.do_prepare
-	cd @DIR_openrdate@  && \
+	cd @DIR_openrdate@ && \
 		$(BUILDENV) \
 		./configure \
 			--build=$(build) \
@@ -129,7 +129,7 @@ $(DEPDIR)/min-openrdate $(DEPDIR)/std-openrdate $(DEPDIR)/max-openrdate \
 $(DEPDIR)/openrdate: \
 $(DEPDIR)/%openrdate: $(OPENRDATE_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(DEPDIR)/openrdate.do_compile
-	cd @DIR_openrdate@  && \
+	cd @DIR_openrdate@ && \
 		@INSTALL_openrdate@
 	( cd root/etc && for i in $(OPENRDATE_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(prefix)/$*cdkroot/etc/$$i || true; \
