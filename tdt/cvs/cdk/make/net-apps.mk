@@ -39,7 +39,6 @@ $(DEPDIR)/%nfs-utils: $(NFS_UTILS_ADAPTED_ETC_FILES:%=root/etc/%) \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; done )
 #	@DISTCLEANUP_nfs_utils@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@[ "x$*" = "xipk-" ] && make $(prefix)/$*cdkroot/strippy || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
