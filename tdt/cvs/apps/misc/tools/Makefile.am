@@ -3,7 +3,6 @@ AUTOMAKE_OPTIONS = gnu
 SUBDIRS = \
 	devinit \
 	evremote2 \
-	libeplayer2 \
 	libeplayer3 \
 	fp_control \
 	showiframe \
