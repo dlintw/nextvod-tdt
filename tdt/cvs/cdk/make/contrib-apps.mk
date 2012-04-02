@@ -212,10 +212,9 @@ $(DEPDIR)/e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
 	touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
 else !STM24
-$(DEPDIR)/min-e2fsprogs $(DEPDIR)/std-e2fsprogs $(DEPDIR)/max-e2fsprogs $(DEPDIR)/ipk-e2fsprogs \
+$(DEPDIR)/min-e2fsprogs $(DEPDIR)/std-e2fsprogs $(DEPDIR)/max-e2fsprogs \
 $(DEPDIR)/e2fsprogs: \
 $(DEPDIR)/%e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
-	@[ "x$*" = "xipk-" ] && rm -rf  $(prefix)/ipk-cdkroot || true
 	cd @DIR_e2fsprogs@ && \
 		@INSTALL_e2fsprogs@
 	[ "x$*" = "x" ] && ( cd @DIR_e2fsprogs@ && \
@@ -521,7 +520,7 @@ $(DEPDIR)/fuse.do_prepare: @DEPENDS_fuse@
 	touch $@
 
 $(DEPDIR)/fuse.do_compile: bootstrap curl glib2 $(DEPDIR)/fuse.do_prepare
-	cd @DIR_fuse@  && \
+	cd @DIR_fuse@ && \
 		$(BUILDENV) \
 		CFLAGS="$(TARGET_CFLAGS) -I$(buildprefix)/linux/arch/sh" \
 		./configure \
@@ -537,7 +536,7 @@ $(DEPDIR)/fuse.do_compile: bootstrap curl glib2 $(DEPDIR)/fuse.do_prepare
 $(DEPDIR)/min-fuse $(DEPDIR)/std-fuse $(DEPDIR)/max-fuse \
 $(DEPDIR)/fuse: \
 $(DEPDIR)/%fuse: %curl %glib2 $(DEPDIR)/fuse.do_compile
-	cd @DIR_fuse@  && \
+	cd @DIR_fuse@ && \
 		@INSTALL_fuse@
 	-rm $(prefix)/$*cdkroot/etc/udev/rules.d/99-fuse.rules
 	-rmdir $(prefix)/$*cdkroot/etc/udev/rules.d
@@ -574,7 +573,7 @@ $(DEPDIR)/curlftpfs.do_compile: fuse bootstrap $(DEPDIR)/curlftpfs.do_prepare
 $(DEPDIR)/min-curlftpfs $(DEPDIR)/std-curlftpfs $(DEPDIR)/max-curlftpfs \
 $(DEPDIR)/curlftpfs: \
 $(DEPDIR)/%curlftpfs: %fuse $(DEPDIR)/curlftpfs.do_compile
-	cd @DIR_curlftpfs@  && \
+	cd @DIR_curlftpfs@ && \
 		@INSTALL_curlftpfs@
 #	@DISTCLEANUP_curlftpfs@
 	@[ "x$*" = "x" ] && touch $@ || true
