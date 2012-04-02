@@ -1597,24 +1597,24 @@ $(DEPDIR)/%pythoncheetah: pythoncheetah.do_compile
 #
 # zope interface
 #
-$(DEPDIR)/zope-interface.do_prepare: @DEPENDS_zope_interface@
+$(DEPDIR)/zope_interface.do_prepare: @DEPENDS_zope_interface@
 	@PREPARE_zope_interface@
 	touch $@
 
-$(DEPDIR)/zope-interface.do_compile: bootstrap setuptools zope-interface.do_prepare
+$(DEPDIR)/zope_interface.do_compile: bootstrap python setuptools zope_interface.do_prepare
 	cd @DIR_zope_interface@ && \
 		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
 		$(crossprefix)/bin/python ./setup.py build
 	touch $@
 
-$(DEPDIR)/min-zope-interface $(DEPDIR)/std-zope-interface $(DEPDIR)/max-zope-interface \
-$(DEPDIR)/zope-interface: \
-$(DEPDIR)/%zope-interface: zope-interface.do_compile
+$(DEPDIR)/min-zope_interface $(DEPDIR)/std-zope_interface $(DEPDIR)/max-zope_interface \
+$(DEPDIR)/zope_interface: \
+$(DEPDIR)/%zope_interface: zope_interface.do_compile
 	cd @DIR_zope_interface@ && \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_zope-interface@
+#	@DISTCLEANUP_zope_interface@
 	[ "x$*" = "x" ] && touch $@ || true
 
 
