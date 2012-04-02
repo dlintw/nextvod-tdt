@@ -98,7 +98,7 @@ libsigc++-1.2.5.tar.gz;http://ftp.gnome.org/pub/GNOME/sources/libsigc++/1.2
 libmad-0.15.1b.tar.gz;ftp://ftp.mars.org/pub/mpeg
 libid3tag-0.15.1b.tar.gz;http://bent.latency.net/bent/darcs/libid3tag-0.15.1b/src
 glib-2.28.3.tar.gz;http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.28
-libiconv-1.11.tar.gz;http://ftp.gnu.org/pub/gnu/libiconv
+libiconv-1.14.tar.gz;http://ftp.gnu.org/gnu/libiconv
 libmng-1.0.10.tar.bz2;http://dfn.dl.sourceforge.net/sourceforge/libmng
 lcms-1.17.tar.gz;http://dfn.dl.sourceforge.net/sourceforge/lcms
 openssl-0.9.6m.tar.gz;ftp://ftp.openssl.org/source
