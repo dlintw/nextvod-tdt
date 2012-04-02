@@ -5,7 +5,7 @@ $(DEPDIR)/module_init_tools.do_prepare: @DEPENDS_module_init_tools@
 	@PREPARE_module_init_tools@
 	touch $@
 
-$(DEPDIR)/module_init_tools.do_compile: bootstrap $(DEPDIR)/module-init-tools.do_prepare
+$(DEPDIR)/module_init_tools.do_compile: bootstrap $(DEPDIR)/module_init_tools.do_prepare
 	cd @DIR_module_init_tools@ && \
 		$(BUILDENV) \
 		./configure \

@@ -28,7 +28,7 @@ min-bare-os std-bare-os max-bare-os bare-os: \
 		%$(BASE_PASSWD) \
 		%$(MAKEDEV) \
 		%$(BASE_FILES) \
-		%module-init-tools \
+		%module_init_tools \
 		%busybox \
 		\
 		%libz \
