@@ -29,7 +29,7 @@ echo "This script creates flashable images for Fortis HS7910a"
 echo "Author: Schischu"
 echo "Date: 10-25-2011"
 echo "-----------------------------------------------------------------------"
-echo "It's expected that a images was already build prior to this execution!"
+echo "It's expected that an image was already build prior to this execution!"
 echo "-----------------------------------------------------------------------"
 
 $BASEDIR/flash/common/common.sh $BASEDIR/flash/common/

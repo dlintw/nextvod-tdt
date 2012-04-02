@@ -28,9 +28,9 @@ mkdir $TMPSTORAGEDIR
 
 echo "This script creates flashable images for UFS910 MINI/MAXI UBOOT"
 echo "Author: Schischu, Oxygen-1"
-echo "Date: 02-04-2012"
+echo "Date: 04-02-2012"
 echo "-----------------------------------------------------------------------"
-echo "It's expected that a image was already build prior to this execution!"
+echo "It's expected that an image was already build prior to this execution!"
 echo "-----------------------------------------------------------------------"
 
 $BASEDIR/flash/common/common.sh $BASEDIR/flash/common/
