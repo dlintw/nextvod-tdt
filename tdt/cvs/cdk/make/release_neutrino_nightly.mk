@@ -6,7 +6,7 @@ release_dir="release_neutrino_nightly"
 #
 # max ALPHA-Version ;)
 #
-$(DEPDIR)/min-release_neutrino_nightly $(DEPDIR)/std-release_neutrino_nightly $(DEPDIR)/max-release_neutrino_nightly $(DEPDIR)/ipk-release_neutrino_nightly $(DEPDIR)/release_neutrino_nightly: \
+$(DEPDIR)/min-release_neutrino_nightly $(DEPDIR)/std-release_neutrino_nightly $(DEPDIR)/max-release_neutrino_nightly $(DEPDIR)/release_neutrino_nightly: \
 $(DEPDIR)/%release_neutrino_nightly:
 
 # the following target creates the common file base
