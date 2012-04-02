@@ -1,0 +1,10 @@
+--- stm-cross-binutils.spec	2010-04-01 21:05:05.000000000 +0100
++++ stm-cross-binutils.spec_org	2012-04-01 21:55:37.841839856 +0100
+@@ -137,6 +137,7 @@
+ %cross_configure \
+        --enable-nls \
+        --disable-multilib \
++       --disable-werror \
+        --program-prefix=%{_stm_target_toolprefix} \
+ %if_target_cpu st200
+        --with-float=soft \
