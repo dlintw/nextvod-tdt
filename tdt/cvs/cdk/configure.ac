@@ -527,10 +527,6 @@ AC_ARG_WITH(serversupport,
 	[  --with-serversupport=DIR  prefix for server file templates [[PREFIX/serversupport]]],
 	[serversupport="$with_serversupport"],[serversupport="${prefix}/serversupport"])
 
-AC_ARG_WITH(ucodesdir,
-	[  --with-ucodesdir=DIR  optional directory containing ucodes [[NONE]]],
-	[ucodesdir="$with_ucodesdir"],[ucodesdir="NONE"])
-
 AC_ARG_WITH(customizationsdir,
 	[  --with-customizationsdir=DIR  optional directory containing customization scripts [[[CVS]]]],
 	[customizationsdir="$with_customizationsdir"],[customizationsdir="`pwd`"])
@@ -545,7 +541,6 @@ AC_SUBST(hostprefix)
 AC_SUBST(buildprefix)
 AC_SUBST(bootprefix)
 AC_SUBST(serversupport)
-AC_SUBST(ucodesdir)
 AC_SUBST(customizationsdir)
 AC_SUBST(updatehttpprefix)
 
@@ -629,7 +624,7 @@ dircheck="ok"
 AC_MSG_CHECKING([for apps directory])
 if test ! -f "$appsdir/enigma2/configure.ac" ; then
 	AC_MSG_WARN([appsdir $appsdir not found])
-	appsdir="missing_appsir"
+	appsdir="missing_appsdir"
 	dircheck="fail"
 else
 	AC_MSG_RESULT([yes])
@@ -710,8 +705,6 @@ fi
 
 FONTDIR="/share/fonts"
 AC_SUBST(FONTDIR)
-UCODEDIR="/var/tufsbox/ucodes"
-AC_SUBST(UCODEDIR)
 
 CLEANUP="rm -rf"
 AC_SUBST(CLEANUP)
@@ -1097,8 +1090,7 @@ boot directory              : $bootdir
 driver directory            : $driverdir
 host apps directory         : $hostappsdir
 customization directory     : $customizationsdir
-archive directory:          : $archivedir
-ucode directory             : $ucodesdir
+archive directory           : $archivedir
 GNU server                  : $gnuserver
 default server              : $defaultserver
 update http prefix          : $updatehttpprefix
