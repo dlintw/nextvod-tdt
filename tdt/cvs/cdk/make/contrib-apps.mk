@@ -18,7 +18,7 @@ $(DEPDIR)/module_init_tools.do_compile: bootstrap $(DEPDIR)/module_init_tools.do
 $(DEPDIR)/min-module_init_tools $(DEPDIR)/std-module_init_tools $(DEPDIR)/max-module_init_tools \
 $(DEPDIR)/module_init_tools: \
 $(DEPDIR)/%module_init_tools: $(DEPDIR)/%lsb $(MODULE_INIT_TOOLS:%=root/etc/%) $(DEPDIR)/module_init_tools.do_compile
-	cd @DIR_module_init_tools@  && \
+	cd @DIR_module_init_tools@ && \
 		@INSTALL_module_init_tools@
 	$(call adapted-etc-files,$(MODULE_INIT_TOOLS_ADAPTED_ETC_FILES))
 	$(call initdconfig,module-init-tools)
@@ -828,12 +828,9 @@ $(DEPDIR)/sysstat: bootstrap @DEPENDS_sysstat@
 # hotplug-e2
 #
 $(DEPDIR)/hotplug_e2.do_prepare: @DEPENDS_hotplug_e2@
-	[ -d @DIR_hotplug_e2@ ] && \
-	cd @DIR_hotplug_e2@ && git pull; \
-	[ -d @DIR_hotplug_e2@ ] || \
+	@PREPARE_hotplug_e2@
 	git clone git://openpli.git.sourceforge.net/gitroot/openpli/hotplug-e2-helper;
-	cd @DIR_hotplug_e2@ && \
-	patch -p1 < $(buildprefix)/Patches/hotplug-e2-helper-support_fw_upload.patch
+	cd @DIR_hotplug_e2@ && patch -p1 < $(buildprefix)/Patches/hotplug-e2-helper-support_fw_upload.patch
 	touch $@
 
 $(DEPDIR)/hotplug_e2.do_compile: bootstrap hotplug_e2.do_prepare 
