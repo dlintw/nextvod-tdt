@@ -2,6 +2,11 @@
 
 MODDIR=$1
 
+PTI_P179_ARGS=""
+PTI_P191_ARGS=""
+STMDVB_P179_ARGS=""
+STMDVB_P191_ARGS=""
+
 insmod $MODDIR/boxtype.ko
 
 fp_control -c
@@ -14,8 +19,8 @@ insmod $MODDIR/cimax.ko
 
 insmod $MODDIR/simu_button.ko
 
-var=`cat /proc/boxtype`
-case "$var" in
+BOXTYPE=`cat /proc/boxtype`
+case "$BOXTYPE" in
 0) echo "1W boxtype"
    echo "B" > /dev/ttyAS1
    echo "B" > /dev/ttyAS1;;
