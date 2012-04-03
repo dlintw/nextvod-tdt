@@ -1879,13 +1879,13 @@ $(DEPDIR)/%gst_plugins_dvbmediasink: $(DEPDIR)/gst_plugins_dvbmediasink.do_compi
 ##############################   EXTERNAL_LCD   ################################
 
 #
-# libusb 
+# libusb
 #
-$(DEPDIR)/libusb.do_prepare:  @DEPENDS_libusb@ 
-	@PREPARE_libusb@ 
-	touch $@ 
+$(DEPDIR)/libusb.do_prepare: @DEPENDS_libusb@
+	@PREPARE_libusb@
+	touch $@
 
-$(DEPDIR)/libusb.do_compile: $(DEPDIR)/libusb.do_prepare 
+$(DEPDIR)/libusb.do_compile: $(DEPDIR)/libusb.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libusb@ && \
 	$(BUILDENV) \
@@ -1906,16 +1906,24 @@ $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
 #
 # graphlcd
 #
-$(DEPDIR)/graphlcd: graphlcd-base-touchcol.tar.bz2 bootstrap libusb @DEPENDS_graphlcd@
+$(DEPDIR)/graphlcd.do_prepare: graphlcd-base-touchcol.tar.bz2 bootstrap libusb @DEPENDS_graphlcd@
 	@PREPARE_graphlcd@
+	touch $@
+
+$(DEPDIR)/graphlcd.do_compile: $(DEPDIR)/graphlcd.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_graphlcd@ && \
 	$(BUILDENV) \
-		$(MAKE) all && \
+		$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-graphlcd $(DEPDIR)/std-graphlcd $(DEPDIR)/max-graphlcd \
+$(DEPDIR)/graphlcd: \
+$(DEPDIR)/%graphlcd: $(DEPDIR)/graphlcd.do_compile
+	cd @DIR_graphlcd@ && \
 		@INSTALL_graphlcd@
-	@DISTCLEANUP_graphlcd@
-	@touch $@
-	@TUXBOX_YAUD_CUSTOMIZE@
+#	@DISTCLEANUP_graphlcd@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 graphlcd-base-touchcol.tar.bz2:
 	if [ -d $(archivedir)/graphlcd-base-touchcol.tar.bz2 ]; then \
