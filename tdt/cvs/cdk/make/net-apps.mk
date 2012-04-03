@@ -14,7 +14,7 @@ $(DEPDIR)/nfs-utils.do_prepare: @DEPENDS_nfs_utils@
 	touch $@
 
 $(DEPDIR)/nfs-utils.do_compile: bootstrap e2fsprogs $(DEPDIR)/nfs-utils.do_prepare
-	cd @DIR_nfs_utils@  && \
+	cd @DIR_nfs_utils@ && \
 		$(BUILDENV) \
 		./configure \
 			--build=$(build) \
@@ -27,25 +27,18 @@ $(DEPDIR)/nfs-utils.do_compile: bootstrap e2fsprogs $(DEPDIR)/nfs-utils.do_prepa
 		$(MAKE)
 	touch $@
 
-$(DEPDIR)/min-nfs-utils $(DEPDIR)/std-nfs-utils $(DEPDIR)/max-nfs-utils $(DEPDIR)/ipk-nfs-utils \
+$(DEPDIR)/min-nfs-utils $(DEPDIR)/std-nfs-utils $(DEPDIR)/max-nfs-utils \
 $(DEPDIR)/nfs-utils: \
 $(DEPDIR)/%nfs-utils: $(NFS_UTILS_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(DEPDIR)/nfs-utils.do_compile
-	@[ "x$*" = "xipk-" ] && rm -rf  $(prefix)/$*cdkroot || true
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/{default,init.d} && \
-	cd @DIR_nfs_utils@  && \
+	cd @DIR_nfs_utils@ && \
 		@INSTALL_nfs_utils@
 	( cd root/etc && for i in $(NFS_UTILS_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(prefix)/$*cdkroot/etc/$$i || true; \
-		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; done ) && \
-	[ "x$*" != "xipk-" ] && { \
-		export HHL_CROSS_TARGET_DIR=$(prefix)/$*cdkroot && cd $(prefix)/$*cdkroot/etc/init.d && \
-			for s in nfs-common nfs-kernel-server ; do \
-				$(hostprefix)/bin/target-initdconfig --add $$s || \
-				echo "Unable to enable initd service: $$s" ; done && rm *rpmsave 2>/dev/null || true ; } || true
+		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; done )
 #	@DISTCLEANUP_nfs_utils@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@[ "x$*" = "xipk-" ] && make $(prefix)/$*cdkroot/strippy || true
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 #

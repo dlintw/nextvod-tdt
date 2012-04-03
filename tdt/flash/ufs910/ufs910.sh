@@ -10,7 +10,7 @@ SCRIPTDIR=$CURDIR/scripts
 TMPDIR=$CURDIR/tmp
 TMPROOTDIR=$TMPDIR/ROOT
 TMPKERNELDIR=$TMPDIR/KERNEL
-TMPVARDIR=$TMPDIR/VAR
+TMPSTORAGEDIR=$TMPDIR/STORAGE
 
 OUTDIR=$CURDIR/out
 
@@ -24,13 +24,13 @@ fi
 
 mkdir $TMPROOTDIR
 mkdir $TMPKERNELDIR
-mkdir $TMPVARDIR
+mkdir $TMPSTORAGEDIR
 
 echo "This script creates flashable images for UFS910 MINI/MAXI UBOOT"
-echo "Author: Schischu"
-echo "Date: 07-02-2011"
+echo "Author: Schischu, Oxygen-1"
+echo "Date: 04-02-2012"
 echo "-----------------------------------------------------------------------"
-echo "It's expected that a images was already build prior to this execution!"
+echo "It's expected that an image was already build prior to this execution!"
 echo "-----------------------------------------------------------------------"
 
 $BASEDIR/flash/common/common.sh $BASEDIR/flash/common/
@@ -49,15 +49,17 @@ read -p "Select target (1-2)? "
 case "$REPLY" in
 	0)  echo "Skipping...";;
 	1)  echo "Preparing Enigma2 Root..."
-		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPVARDIR $TMPKERNELDIR;;
+		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPSTORAGEDIR $TMPKERNELDIR;;
 	2)  echo "Preparing Neutrino Root..."
-		$SCRIPTDIR/prepare_root_neutrino.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPVARDIR $TMPKERNELDIR;;
+		$SCRIPTDIR/prepare_root_neutrino.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPSTORAGEDIR $TMPKERNELDIR;;
 	*)  "Invalid Input! Exiting..."
 		exit 2;;
 esac
 echo "Root prepared"
-
-echo "Flashtool fup exists"
+echo ""
+echo "You can customize your image now (i.e. move files you like from ROOT to STORAGE)."
+echo "Or insert your changes into scripts/customize.sh"
+$SCRIPTDIR/customize.sh $CURDIR $TMPROOTDIR $TMPSTORAGEDIR $TMPKERNELDIR
 echo "-----------------------------------------------------------------------"
 echo "Checking targets..."
 echo "Found flashtarget:"
@@ -65,7 +67,7 @@ echo "   1) KERNEL with ROOT and FW"
 read -p "Select flashtarget (1)? "
 case "$REPLY" in
 	1)  echo "Creating KERNEL with ROOT and FW..."
-		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR $TMPVARDIR;;
+		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR $TMPSTORAGEDIR;;
 	*)  "Invalid Input! Exiting..."
 		exit 3;;
 esac

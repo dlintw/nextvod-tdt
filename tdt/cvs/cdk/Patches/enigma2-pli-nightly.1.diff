@@ -4111,6 +4111,31 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/python
  
  		print "new Harddisk", self.device, '->', self.dev_path, '->', self.disk_path
  		self.startIdle()
+@@ -655,6 +662,13 @@
+ 		for item in getProcMounts():
+ 			if item[0] == dev:
+ 				return item[1]
++
++#+++>
++		#Check if has autofs mountpoint
++		mount = self.getAutofsMountpoint(device)
++		if mount:
++			return mount
++#+++<
+ 		return None
+ 
+ 	def addHotplugPartition(self, device, physdev = None):
+@@ -672,6 +684,10 @@
+ 		error, blacklisted, removable, is_cdrom, partitions, medium_found = self.getBlockDevInfo(device)
+ 		if not blacklisted and medium_found:
+ 			description = self.getUserfriendlyDeviceName(device, physdev)
++#+++>
++			if description.startswith("External Storage"):
++				return False, False, False, False, [], False
++#+++<
+ 			p = Partition(mountpoint = self.getMountpoint(device), description = description, force_mounted = True, device = device)
+ 			self.partitions.append(p)
+ 			if p.mountpoint: # Plugins won't expect unmounted devices 
 diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/python/Components/NimManager.py enigma2-nightly.org/lib/python/Components/NimManager.py
 --- enigma2-nightly.org.org/lib/python/Components/NimManager.py	2012-03-20 01:26:26.699115294 -0700
 +++ enigma2-nightly.org/lib/python/Components/NimManager.py	2012-03-20 01:26:31.467115298 -0700
@@ -5162,6 +5187,18 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/python
  
  if HAVE_TEMPFANCONTROL
  SUBDIRS += TempFanControl
+diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/python/Plugins/SystemPlugins/Hotplug/plugin.py enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Hotplug/plugin.py
+--- enigma2-nightly.org.org/lib/python/Plugins/SystemPlugins/Hotplug/plugin.py	2012-03-20 01:26:26.851115295 -0700
++++ enigma2-nightly.org/lib/python/Plugins/SystemPlugins/Hotplug/plugin.py	2012-03-20 01:26:33.979115300 -0700
+@@ -9,6 +9,8 @@
+ 	action = v.get("ACTION")
+ 	device = v.get("DEVPATH")
+ 	physdevpath = v.get("PHYSDEVPATH")
++	if physdevpath == "-":
++		physdevpath = None
+ 	media_state = v.get("X_E2_MEDIA_STATUS")
+ 
+ 	dev = device.split('/')[-1]
 diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/python/Plugins/SystemPlugins/SkinSelector/plugin.py enigma2-nightly.org/lib/python/Plugins/SystemPlugins/SkinSelector/plugin.py
 --- enigma2-nightly.org.org/lib/python/Plugins/SystemPlugins/SkinSelector/plugin.py	2012-03-20 01:26:26.851115295 -0700
 +++ enigma2-nightly.org/lib/python/Plugins/SystemPlugins/SkinSelector/plugin.py	2012-03-20 01:26:33.979115300 -0700
@@ -5507,7 +5544,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org.org/lib/python
 -	widescreen_modes = set(["720p", "1080i"])
 +	modes["Scart"] = ["PAL"]
 +	modes["Component"] = ["576i", "576p", "720p", "1080i", "1080p"]
-+	modes["HDMI"]  = ["576i", "576p", "720p", "1080i", "1080p"]
++	modes["HDMI"]  = ["720p", "1080i", "1080p", "576i", "576p"]
 +	modes["HDMI-PC"] = ["PC"]
 +
 +	widescreen_modes = set(["576i", "576p", "720p", "1080i", "1080p"])

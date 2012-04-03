@@ -4,19 +4,20 @@ CURDIR=$1
 RELEASEDIR=$2
 
 TMPROOTDIR=$3
-TMPVARDIR=$4
+TMPSTORAGEDIR=$4
 TMPKERNELDIR=$5
 
-cp -a $RELEASEDIR/* $TMPROOTDIR
+find $RELEASEDIR -mindepth 1 -maxdepth 1 -exec cp -at$TMPROOTDIR -- {} +
+mkdir $TMPROOTDIR/root_rw
+mkdir $TMPROOTDIR/storage
+cp ../common/init_mini_fo $TMPROOTDIR/sbin/
+chmod 777 $TMPROOTDIR/sbin/init_mini_fo
 
 # --- BOOT ---
 mv $TMPROOTDIR/boot/uImage $TMPKERNELDIR/uImage
 
-# --- VAR ---
-mv $TMPROOTDIR/var/* $TMPVARDIR
-
-# --- ROOT ---
-echo "/dev/mtdblock3	/var	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
+# --- STORAGE FOR MINI_FO ---
+mkdir $TMPSTORAGEDIR/root_ro
 
 cd $TMPROOTDIR/dev/
 MAKEDEV="sudo $TMPROOTDIR/sbin/MAKEDEV -p $TMPROOTDIR/etc/passwd -g $TMPROOTDIR/etc/group"
@@ -37,7 +38,4 @@ ${MAKEDEV} dvb
 ${MAKEDEV} vfd
 cd -
 
-
-
 #TODO: We need to strip the ROOT further as there is no chance that this will fit into the flash at the moment !!!
-#TODO: Also how to use VAR best ?

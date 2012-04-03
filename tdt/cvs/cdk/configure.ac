@@ -527,10 +527,6 @@ AC_ARG_WITH(serversupport,
 	[  --with-serversupport=DIR  prefix for server file templates [[PREFIX/serversupport]]],
 	[serversupport="$with_serversupport"],[serversupport="${prefix}/serversupport"])
 
-AC_ARG_WITH(ucodesdir,
-	[  --with-ucodesdir=DIR  optional directory containing ucodes [[NONE]]],
-	[ucodesdir="$with_ucodesdir"],[ucodesdir="NONE"])
-
 AC_ARG_WITH(customizationsdir,
 	[  --with-customizationsdir=DIR  optional directory containing customization scripts [[[CVS]]]],
 	[customizationsdir="$with_customizationsdir"],[customizationsdir="`pwd`"])
@@ -545,7 +541,6 @@ AC_SUBST(hostprefix)
 AC_SUBST(buildprefix)
 AC_SUBST(bootprefix)
 AC_SUBST(serversupport)
-AC_SUBST(ucodesdir)
 AC_SUBST(customizationsdir)
 AC_SUBST(updatehttpprefix)
 
@@ -629,7 +624,7 @@ dircheck="ok"
 AC_MSG_CHECKING([for apps directory])
 if test ! -f "$appsdir/enigma2/configure.ac" ; then
 	AC_MSG_WARN([appsdir $appsdir not found])
-	appsdir="missing_appsir"
+	appsdir="missing_appsdir"
 	dircheck="fail"
 else
 	AC_MSG_RESULT([yes])
@@ -710,8 +705,6 @@ fi
 
 FONTDIR="/share/fonts"
 AC_SUBST(FONTDIR)
-UCODEDIR="/var/tufsbox/ucodes"
-AC_SUBST(UCODEDIR)
 
 CLEANUP="rm -rf"
 AC_SUBST(CLEANUP)
@@ -904,8 +897,6 @@ TUXBOX_RULES_MAKE(libfribidi)
 TUXBOX_RULES_MAKE(libsigc)
 TUXBOX_RULES_MAKE(libmad)
 TUXBOX_RULES_MAKE(libid3tag)
-TUXBOX_RULES_MAKE(libxml2)
-TUXBOX_RULES_MAKE(libxslt)
 TUXBOX_RULES_MAKE(libvorbisidec)
 TUXBOX_RULES_MAKE(glib2)
 TUXBOX_RULES_MAKE(libiconv)
@@ -916,19 +907,11 @@ TUXBOX_RULES_MAKE(directfb)
 TUXBOX_RULES_MAKE(dfbpp)
 TUXBOX_RULES_MAKE(expat)
 TUXBOX_RULES_MAKE(fontconfig)
-TUXBOX_RULES_MAKE(python)
-TUXBOX_RULES_MAKE(elementtree)
-TUXBOX_RULES_MAKE(lxml)
 TUXBOX_RULES_MAKE(libxmlccwrap)
-TUXBOX_RULES_MAKE(zope_interface)
-TUXBOX_RULES_MAKE(setuptools)
-TUXBOX_RULES_MAKE(twisted)
-TUXBOX_RULES_MAKE(twistedweb2)
 TUXBOX_RULES_MAKE(a52dec)
 TUXBOX_RULES_MAKE(libdvdcss)
 TUXBOX_RULES_MAKE(libdvdnav)
 TUXBOX_RULES_MAKE(libdvdread)
-TUXBOX_RULES_MAKE(pyopenssl)
 TUXBOX_RULES_MAKE(ffmpeg)
 TUXBOX_RULES_MAKE(libass)
 TUXBOX_RULES_MAKE(webkitdfb)
@@ -951,7 +934,23 @@ TUXBOX_RULES_MAKE(libtuxtxt)
 TUXBOX_RULES_MAKE(tuxtxt32bpp)
 TUXBOX_RULES_MAKE(libdreamdvd)
 TUXBOX_RULES_MAKE(libdreamdvd2)
+
+#
+# python
+#
+TUXBOX_RULES_MAKE(elementtree)
+TUXBOX_RULES_MAKE(libxml2)
+TUXBOX_RULES_MAKE(libxslt)
+TUXBOX_RULES_MAKE(lxml)
+TUXBOX_RULES_MAKE(setuptools)
+TUXBOX_RULES_MAKE(twisted)
+TUXBOX_RULES_MAKE(twistedweb2)
 TUXBOX_RULES_MAKE(pilimaging)
+TUXBOX_RULES_MAKE(python)
+TUXBOX_RULES_MAKE(pyopenssl)
+TUXBOX_RULES_MAKE(pythonwifi)
+TUXBOX_RULES_MAKE(pythoncheetah)
+TUXBOX_RULES_MAKE(zope_interface)
 
 #
 # gstreamer
@@ -1095,8 +1094,7 @@ boot directory              : $bootdir
 driver directory            : $driverdir
 host apps directory         : $hostappsdir
 customization directory     : $customizationsdir
-archive directory:          : $archivedir
-ucode directory             : $ucodesdir
+archive directory           : $archivedir
 GNU server                  : $gnuserver
 default server              : $defaultserver
 update http prefix          : $updatehttpprefix
@@ -1156,12 +1154,12 @@ AC_MSG_RESULT([
 ])
 fi
 
+TUXBOX_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && KERNEL='$used_kernelversion' KERNELVERSION=$(KERNELVERSION) && $(customizationsdir)/$(notdir $@)-local.sh $(buildprefix) || true]'
+AC_SUBST(TUXBOX_CUSTOMIZE)
+TUXBOX_YAUD_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && KERNEL='$used_kernelversion' KERNELVERSION=$(KERNELVERSION) && $(customizationsdir)/$(notdir $@)-local.sh $(prefix)/$*cdkroot $(buildprefix) || true]'
+AC_SUBST(TUXBOX_YAUD_CUSTOMIZE)
 TUXBOX_TOUCH='[@[ "x$*" = "x" ] && touch $@ || true]'
 AC_SUBST(TUXBOX_TOUCH)
-TUXBOX_YAUD_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(prefix)/$*cdkroot $(buildprefix) || true]'
-AC_SUBST(TUXBOX_YAUD_CUSTOMIZE)
-TUXBOX_CUSTOMIZE='[[ -x $(customizationsdir)/$(notdir $@)-local.sh ] && $(customizationsdir)/$(notdir $@)-local.sh $(buildprefix) || true]'
-AC_SUBST(TUXBOX_CUSTOMIZE)
 
 AC_CONFIG_FILES([
 Makefile
@@ -1169,4 +1167,5 @@ rules-downcheck.pl
 ])
 
 AC_CONFIG_COMMANDS([rules-downcheck-chmod],[chmod +x rules-downcheck.pl])
+
 AC_OUTPUT

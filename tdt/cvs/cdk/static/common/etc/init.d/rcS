@@ -4,37 +4,40 @@ NEUTRINO="NO" #Is set below
 ENIGMA2="NO" #Is set below
 VDR="NO" #Is set below
 
-PLAYER="player131" #Is set below
+PLAYER="player191" #Is set below
 CPU="STx7100" #Is set below
 
-STM="stm23" #Is set below
+STM="stm24" #Is set below
 
 MODDIR=/lib/modules
 
-touch /dev/.udev
+mount -a
 
-mount -t tmpfs -o size=64k,mode=0755 mdev /dev
-mkdir /dev/pts
-mount -t devpts devpts /dev/pts
-mount -t proc proc /proc
-mount -t sysfs sysfs /sys
-echo /sbin/mdev > /proc/sys/kernel/hotplug
-/sbin/mdev -s
-
-
+if [ -ne /etc/.devfs ]; then
+	mount -t tmpfs -o size=64k,mode=0755 mdev /dev
+	touch /dev/.udev
+	mkdir /dev/pts
+	mount -t devpts devpts /dev/pts
+	echo /sbin/mdev > /proc/sys/kernel/hotplug
+	/sbin/mdev -s
+else
+	mount -t tmpfs tmpfs /ram
+	cp -a /dev /ram
+	mount --bind /dev /dev.static
+	mount --bind /ram /dev
+	touch /dev/.devfs
+fi
 
 CPU=`cat /proc/cpuinfo | grep "cpu type" | sed "s/cpu type\t: //g" | sed "s/i/x/g"` | sed "s/b/x/g"`
 #STx7105, STx7111, STx7100, STx7101, STx7109
 
-if [ `cat /proc/version | grep -c "stm22"` -eq "1" ]; then
-   STM="stm22"
-elif [ `cat /proc/version | grep -c "stm23"` -eq "1" ]; then
+if [ `cat /proc/version | grep -c "stm23"` -eq "1" ]; then
    STM="stm23"
 elif [ `cat /proc/version | grep -c "stm24"` -eq "1" ]; then
    STM="stm24"
 fi
 
-. /etc/init.d/vfd
+. /etc/init.d/vfd.sh
 
 initVFD $MODDIR
 echoVFD "DUCKBOX"
@@ -52,7 +55,7 @@ fi
 insmod $MODDIR/e2_proc.ko
 
 PLAYER=`cat /proc/stb/player/version`
-#player179, player131
+#player179, player191
 
 echo "starting network services"
 /etc/init.d/hostname start
@@ -117,10 +120,8 @@ fi
 insmod $MODDIR/ksound.ko
 insmod $MODDIR/p2div64.ko
 insmod $MODDIR/stm_v4l2.ko
-if [ $PLAYER -eq 'player179' ]; then
-   insmod $MODDIR/stmvout.ko
-   insmod $MODDIR/stmvbi.ko
-fi
+insmod $MODDIR/stmvout.ko
+insmod $MODDIR/stmvbi.ko
 insmod $MODDIR/pseudocard.ko
 
 if [ $PLAYER -eq 'player179' ]; then
@@ -129,9 +130,10 @@ if [ $PLAYER -eq 'player179' ]; then
    insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/stmdvb.ko $STMDVB_P179_ARGS
 elif
-   insmod $MODDIR/pti.ko $PTI_P131_ARGS
-   insmod $MODDIR/stmdvb.ko $STMDVB_P131_ARGS
+   insmod $MODDIR/pti.ko $PTI_P191_ARGS
    insmod $MODDIR/stm_monitor.ko
+   insmod $MODDIR/stmsysfs.ko
+   insmod $MODDIR/stmdvb.ko $STMDVB_P191_ARGS
 fi
 insmod $MODDIR/player2.ko
 insmod $MODDIR/sth264pp.ko

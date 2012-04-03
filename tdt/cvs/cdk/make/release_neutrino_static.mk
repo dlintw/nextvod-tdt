@@ -1,4 +1,4 @@
-$(DEPDIR)/min-release_neutrino_static $(DEPDIR)/std-release_neutrino_static $(DEPDIR)/max-release_neutrino_static $(DEPDIR)/ipk-release_neutrino_static $(DEPDIR)/release_neutrino_static: \
+$(DEPDIR)/min-release_neutrino_static $(DEPDIR)/std-release_neutrino_static $(DEPDIR)/max-release_neutrino_static $(DEPDIR)/release_neutrino_static: \
 $(DEPDIR)/%release_neutrino_static:
 	$(INSTALL_DIR) $(prefix)/release_neutrino_static && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino_static/bin && \

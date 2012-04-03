@@ -496,6 +496,7 @@ release_hs7110:
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/wireless/rt2870sta/rt2870sta.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/wireless/rt3070sta/rt3070sta.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/wireless/rtl871x/8712u.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/wireless/rt5370sta/rt5370sta.ko $(prefix)/release/lib/modules/	
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/wireless/rtl8192cu_hs7110/8192cu.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf
 	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release/boot/audio.elf
@@ -822,7 +823,7 @@ endif
 # The main target depends on the model.
 # IMPORTANT: it is assumed that only one variable is set. Otherwise the target name won't be resolved.
 #
-$(DEPDIR)/min-release $(DEPDIR)/std-release $(DEPDIR)/max-release $(DEPDIR)/ipk-release $(DEPDIR)/release: \
+$(DEPDIR)/min-release $(DEPDIR)/std-release $(DEPDIR)/max-release $(DEPDIR)/release: \
 $(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(HS7810A)$(HS7110)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
 	touch $@
 
@@ -869,7 +870,6 @@ release_base:
 	touch $(prefix)/release/var/etc/.firstboot && \
 	cp -a $(targetprefix)/bin/* $(prefix)/release/bin/ && \
 	ln -s /bin/showiframe $(prefix)/release/usr/bin/showiframe && \
-	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/usr/bin/sdparm $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release/sbin/ && \
@@ -941,6 +941,7 @@ release_base:
 	cp $(buildprefix)/root/release/hostname $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/vsftpd $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/bootclean.sh $(prefix)/release/etc/init.d/ && \
+	cp $(buildprefix)/root/release/network $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/networking $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/bootscreen/bootlogo.mvi $(prefix)/release/boot/ && \
 	cp $(buildprefix)/root/bin/autologin $(prefix)/release/bin/ && \
@@ -950,6 +951,14 @@ release_base:
 	rm -f $(prefix)/release/lib/*.o && \
 	rm -f $(prefix)/release/lib/*.la && \
 	find $(prefix)/release/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
+
+	if [ -e $(targetprefix)/usr/bin/hotplug_e2_helper ]; then \
+		cp -dp $(targetprefix)/usr/bin/hotplug_e2_helper $(prefix)/release/sbin/hotplug; \
+		cp -dp $(targetprefix)/usr/bin/bdpoll $(prefix)/release/sbin/; \
+		rm -f $(prefix)/release/bin/hotplug; \
+	else \
+		cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/; \
+	fi;
 
 if STM24
 	cp -dp $(targetprefix)/sbin/mkfs $(prefix)/release/sbin/
@@ -1358,7 +1367,9 @@ endif
 		if [ -e $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko ]; then \
 			cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/autofs4/autofs4.ko $(prefix)/release/lib/modules; \
 		fi; \
-		cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release/etc/; \
+		cp -f $(buildprefix)/root/release/auto.hotplug $(prefix)/release/etc/; \
+		cp -f $(buildprefix)/root/release/auto.network $(prefix)/release/etc/; \
+		cp -f $(buildprefix)/root/release/autofs $(prefix)/release/etc/init.d/; \
 	fi
 
 #
@@ -1374,7 +1385,7 @@ endif
 		cp -a $(targetprefix)/usr/lib/gstreamer-0.10/libgstasf.so $(prefix)/release/usr/lib/gstreamer-0.10/; \
 		cp -a $(targetprefix)/usr/lib/gstreamer-0.10/libgstassrender.so $(prefix)/release/usr/lib/gstreamer-0.10/; \
 		cp -a $(targetprefix)/usr/lib/gstreamer-0.10/libgstaudioconvert.so $(prefix)/release/usr/lib/gstreamer-0.10/; \
-		cp -a $(targetprefix)/usr/lib/gstreamer-0.10/libgstaudioparsersbad.so $(prefix)/release/usr/lib/gstreamer-0.10/; \
+		cp -a $(targetprefix)/usr/lib/gstreamer-0.10/libgstaudioparsers.so $(prefix)/release/usr/lib/gstreamer-0.10/; \
 		cp -a $(targetprefix)/usr/lib/gstreamer-0.10/libgstaudioresample.so $(prefix)/release/usr/lib/gstreamer-0.10/; \
 		cp -a $(targetprefix)/usr/lib/gstreamer-0.10/libgstautodetect.so $(prefix)/release/usr/lib/gstreamer-0.10/; \
 		cp -a $(targetprefix)/usr/lib/gstreamer-0.10/libgstavi.so $(prefix)/release/usr/lib/gstreamer-0.10/; \

@@ -418,83 +418,6 @@ $(DEPDIR)/%libid3tag: %libz $(DEPDIR)/libid3tag.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# libxml2
-#
-$(DEPDIR)/libxml2.do_prepare: bootstrap @DEPENDS_libxml2@
-	@PREPARE_libxml2@
-	touch $@
-
-$(DEPDIR)/libxml2.do_compile: libxml2.do_prepare
-	cd @DIR_libxml2@ && \
-		$(BUILDENV) \
-		./configure \
-			--build=$(build) \
-			--host=$(target) \
-			--prefix=/usr \
-			--mandir=/usr/share/man \
-			--with-python=$(crossprefix) \
-			--without-c14n \
-			--without-debug \
-			--without-mem-debug && \
-		$(MAKE) all 
-	touch $@
-
-$(DEPDIR)/min-libxml2 $(DEPDIR)/std-libxml2 $(DEPDIR)/max-libxml2 \
-$(DEPDIR)/libxml2: \
-$(DEPDIR)/%libxml2: libxml2.do_compile
-	cd @DIR_libxml2@ && \
-		@INSTALL_libxml2@; \
-		[ -f "$(targetprefix)/usr/lib/python2.6/site-packages/libxml2mod.la" ] && \
-		sed -e "/^dependency_libs/ s,/usr/lib/libxml2.la,$(targetprefix)/usr/lib/libxml2.la,g" -i $(targetprefix)/usr/lib/python2.6/site-packages/libxml2mod.la; \
-		sed -e "s,^prefix=,prefix=$(targetprefix)," < xml2-config > $(crossprefix)/bin/xml2-config; \
-		chmod 755 $(crossprefix)/bin/xml2-config; \
-		sed -e "/^XML2_LIBDIR/ s,/usr/lib,$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/xml2Conf.sh; \
-		sed -e "/^XML2_INCLUDEDIR/ s,/usr/include,$(targetprefix)/usr/include,g" -i $(targetprefix)/usr/lib/xml2Conf.sh
-#	@DISTCLEANUP_libxml2@
-	@[ "x$*" = "x" ] && touch $@ || true
-
-#
-# libxslt
-#
-$(DEPDIR)/libxslt.do_prepare: @DEPENDS_libxslt@
-	@PREPARE_libxslt@
-	touch $@
-
-$(DEPDIR)/libxslt.do_compile: bootstrap libxml2 libxslt.do_prepare
-	cd @DIR_libxslt@ && \
-		$(BUILDENV) \
-		CPPFLAGS="$(CPPFLAGS) -I$(targetprefix)/usr/include/libxml2 -Os" \
-		CFLAGS="$(TARGET_CFLAGS) -Os" \
-		./configure \
-			--build=$(build) \
-			--host=$(target) \
-			--prefix=/usr \
-			--with-libxml-prefix="$(crossprefix)" \
-			--with-libxml-include-prefix="$(targetprefix)/usr/include" \
-			--with-libxml-libs-prefix="$(targetprefix)/usr/lib" \
-			--with-python=$(crossprefix) \
-			--without-crypto \
-			--without-debug \
-			--without-mem-debug && \
-		$(MAKE) all
-	touch $@
-
-$(DEPDIR)/min-libxslt $(DEPDIR)/std-libxslt $(DEPDIR)/max-libxslt \
-$(DEPDIR)/libxslt: \
-$(DEPDIR)/%libxslt: %libxml2 libxslt.do_compile
-	cd @DIR_libxslt@ && \
-		@INSTALL_libxslt@ && \
-		sed -e "/^dependency_libs/ s,/usr/lib/libxslt.la,$(targetprefix)/usr/lib/libxslt.la,g" -i $(targetprefix)/usr/lib/python2.6/site-packages/libxsltmod.la && \
-		sed -e "/^dependency_libs/ s,/usr/lib/libexslt.la,$(targetprefix)/usr/lib/libexslt.la,g" -i $(targetprefix)/usr/lib/python2.6/site-packages/libxsltmod.la && \
-		sed -e "s,^prefix=,prefix=$(targetprefix)," < xslt-config > $(crossprefix)/bin/xslt-config && \
-		chmod 755 $(crossprefix)/bin/xslt-config && \
-		sed -e "/^dependency_libs/ s,/usr/lib/libxslt.la,$(targetprefix)/usr/lib/libxslt.la,g" -i $(targetprefix)/usr/lib/libexslt.la && \
-		sed -e "/^XML2_LIBDIR/ s,/usr/lib,$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/xsltConf.sh && \
-		sed -e "/^XML2_INCLUDEDIR/ s,/usr/include,$(targetprefix)/usr/include,g" -i $(targetprefix)/usr/lib/xsltConf.sh
-#	@DISTCLEANUP_libxslt@
-	@[ "x$*" = "x" ] && touch $@ || true
-
-#
 # libvorbisidec
 #
 
@@ -578,6 +501,7 @@ $(DEPDIR)/min-libiconv $(DEPDIR)/std-libiconv $(DEPDIR)/max-libiconv \
 $(DEPDIR)/libiconv: \
 $(DEPDIR)/%libiconv: $(DEPDIR)/libiconv.do_compile
 	cd @DIR_libiconv@ && \
+		cp ./srcm4/* $(hostprefix)/share/aclocal/ && \
 		@INSTALL_libiconv@
 #	@DISTCLEANUP_libiconv@
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -756,102 +680,6 @@ $(DEPDIR)/%fontconfig: $(DEPDIR)/fontconfig.do_compile
 	@[ "x$*" = "x" ] && touch $@ || true
 
 #
-# python
-#
-$(DEPDIR)/python.do_prepare: host-python @DEPENDS_python@
-	@PREPARE_python@ && \
-	touch $@
-
-$(DEPDIR)/python.do_compile: openssl openssl-dev sqlite bootstrap python.do_prepare
-	( cd @DIR_python@ && \
-		CONFIG_SITE= \
-		$(BUILDENV) \
-		./configure \
-			--build=$(build) \
-			--host=$(target) \
-			--target=$(target) \
-			--prefix=/usr \
-			--sysconfdir=/etc \
-			--enable-shared \
-			--disable-ipv6 \
-			--without-cxx-main \
-			--with-threads \
-			HOSTPYTHON=$(crossprefix)/bin/python \
-			OPT="$(TARGET_CFLAGS)" && \
-		$(MAKE) $(MAKE_ARGS) \
-			TARGET_OS=$(target) \
-			PYTHON_DISABLE_MODULES="_tkinter" \
-			PYTHON_MODULES_INCLUDE="$(prefix)/$*cdkroot/usr/include" \
-			PYTHON_MODULES_LIB="$(prefix)/$*cdkroot/usr/lib" \
-			CROSS_COMPILE=yes \
-			CFLAGS="$(TARGET_CFLAGS) -fno-inline" \
-			LDFLAGS="$(TARGET_LDFLAGS)" \
-			LD="$(target)-gcc" \
-			HOSTPYTHON=$(crossprefix)/bin/python \
-			HOSTPGEN=$(crossprefix)/bin/pgen \
-			all ) && \
-	touch $@
-
-$(DEPDIR)/min-python $(DEPDIR)/std-python $(DEPDIR)/max-python \
-$(DEPDIR)/python: \
-$(DEPDIR)/%python: python.do_compile
-	( cd @DIR_python@ && \
-		$(MAKE) $(MAKE_ARGS) \
-			TARGET_OS=$(target) \
-			HOSTPYTHON=$(crossprefix)/bin/python \
-			HOSTPGEN=$(crossprefix)/bin/pgen \
-			install DESTDIR=$(prefix)/$*cdkroot ) && \
-	$(LN_SF) ../../libpython2.6.so.1.0 $(prefix)/$*cdkroot/usr/lib/python2.6/config/libpython2.6.so
-#	@DISTCLEANUP_python@
-	[ "x$*" = "x" ] && touch $@ || true
-
-#
-# elementtree
-#
-$(DEPDIR)/elementtree.do_prepare: @DEPENDS_elementtree@
-	@PREPARE_elementtree@
-	touch $@
-
-$(DEPDIR)/elementtree.do_compile: bootstrap elementtree.do_prepare
-	touch $@
-
-$(DEPDIR)/min-elementtree $(DEPDIR)/std-elementtree $(DEPDIR)/max-elementtree \
-$(DEPDIR)/elementtree: \
-$(DEPDIR)/%elementtree: %python elementtree.do_compile
-	cd @DIR_elementtree@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONHOME=$(targetprefix)/usr \
-		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_elementtree@
-	[ "x$*" = "x" ] && touch $@ || true
-
-#
-# lxml
-#
-$(DEPDIR)/lxml.do_prepare: @DEPENDS_lxml@
-	@PREPARE_lxml@
-	touch $@
-
-$(DEPDIR)/lxml.do_compile: bootstrap python lxml.do_prepare
-	cd @DIR_lxml@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py build \
-			--with-xml2-config=$(crossprefix)/bin/xml2-config \
-			--with-xslt-config=$(crossprefix)/bin/xslt-config
-	touch $@
-
-$(DEPDIR)/min-lxml $(DEPDIR)/std-lxml $(DEPDIR)/max-lxml \
-$(DEPDIR)/lxml: \
-$(DEPDIR)/%lxml: lxml.do_compile
-	cd @DIR_lxml@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_lxml@
-	[ "x$*" = "x" ] && touch $@ || true
-
-#
 # libxmlccwrap
 #
 $(DEPDIR)/libxmlccwrap.do_prepare: @DEPENDS_libxmlccwrap@
@@ -877,97 +705,6 @@ $(DEPDIR)/%libxmlccwrap: libxmlccwrap.do_compile
 		sed -e "/^dependency_libs/ s,-L/usr/lib,-L$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/libxmlccwrap.la && \
 		sed -e "/^dependency_libs/ s, /usr/lib, $(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/libxmlccwrap.la
 #	@DISTCLEANUP_libxmlccwrap@
-	[ "x$*" = "x" ] && touch $@ || true
-
-#
-# setuptools
-#
-$(DEPDIR)/setuptools.do_prepare: @DEPENDS_setuptools@
-	@PREPARE_setuptools@
-	touch $@
-
-$(DEPDIR)/setuptools.do_compile: bootstrap setuptools.do_prepare
-	cd @DIR_setuptools@ && \
-		$(crossprefix)/bin/python ./setup.py build
-	touch $@
-
-$(DEPDIR)/min-setuptools $(DEPDIR)/std-setuptools $(DEPDIR)/max-setuptools \
-$(DEPDIR)/setuptools: \
-$(DEPDIR)/%setuptools: setuptools.do_compile
-	cd @DIR_setuptools@ && \
-		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_setuptools@
-	[ "x$*" = "x" ] && touch $@ || true
-
-#
-# zope interface
-#
-$(DEPDIR)/zope-interface.do_prepare: @DEPENDS_zope_interface@
-	@PREPARE_zope_interface@
-	touch $@
-
-$(DEPDIR)/zope-interface.do_compile: bootstrap setuptools zope-interface.do_prepare
-	cd @DIR_zope_interface@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py build
-	touch $@
-
-$(DEPDIR)/min-zope-interface $(DEPDIR)/std-zope-interface $(DEPDIR)/max-zope-interface \
-$(DEPDIR)/zope-interface: \
-$(DEPDIR)/%zope-interface: zope-interface.do_compile
-	cd @DIR_zope_interface@ && \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_zope-interface@
-	[ "x$*" = "x" ] && touch $@ || true
-
-#
-# twisted
-#
-$(DEPDIR)/twisted.do_prepare: @DEPENDS_twisted@
-	@PREPARE_twisted@
-	touch $@
-
-$(DEPDIR)/twisted.do_compile: bootstrap setuptools twisted.do_prepare
-	cd @DIR_twisted@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python -c "import setuptools; execfile('setup.py')" build
-	touch $@
-
-$(DEPDIR)/min-twisted $(DEPDIR)/std-twisted $(DEPDIR)/max-twisted \
-$(DEPDIR)/twisted: \
-$(DEPDIR)/%twisted: twisted.do_compile
-	cd @DIR_twisted@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_twisted@
-	[ "x$*" = "x" ] && touch $@ || true
-
-#
-# twistetweb2
-#
-$(DEPDIR)/twistedweb2.do_prepare: @DEPENDS_twistedweb2@
-	@PREPARE_twistedweb2@
-	touch $@
-
-$(DEPDIR)/twistedweb2.do_compile: bootstrap setuptools twistedweb2.do_prepare
-	cd @DIR_twistedweb2@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python -c "import setuptools; execfile('setup.py')" build
-	touch $@
-
-$(DEPDIR)/min-twistedweb2 $(DEPDIR)/std-twistedweb2 $(DEPDIR)/max-twistedweb2 \
-$(DEPDIR)/twistedweb2: \
-$(DEPDIR)/%twistedweb2: twistedweb2.do_compile
-	cd @DIR_twistedweb2@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_twistedweb2@
 	[ "x$*" = "x" ] && touch $@ || true
 
 #
@@ -1092,29 +829,6 @@ $(DEPDIR)/%libdvdread: libdvdread.do_compile
 	cp $(targetprefix)/usr/lib/libdvdread.la1 $(targetprefix)/usr/lib/libdvdread.la
 	rm $(targetprefix)/usr/lib/libdvdread.la1
 #	@DISTCLEANUP_libdvdread@
-	[ "x$*" = "x" ] && touch $@ || true
-
-#
-# pyopenssl
-#
-$(DEPDIR)/pyopenssl.do_prepare: @DEPENDS_pyopenssl@
-	@PREPARE_pyopenssl@
-	touch $@
-
-$(DEPDIR)/pyopenssl.do_compile: bootstrap setuptools pyopenssl.do_prepare
-	cd @DIR_pyopenssl@ && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py build
-	touch $@
-
-$(DEPDIR)/min-pyopenssl $(DEPDIR)/std-pyopenssl $(DEPDIR)/max-pyopenssl \
-$(DEPDIR)/pyopenssl: \
-$(DEPDIR)/%pyopenssl: pyopenssl.do_compile
-	cd @DIR_pyopenssl@ && \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_pyopenssl@
 	[ "x$*" = "x" ] && touch $@ || true
 
 #
@@ -1549,8 +1263,364 @@ $(DEPDIR)/%libflac: $(DEPDIR)/libflac.do_compile
 #	@DISTCLEANUP_libflac@
 	@[ "x$*" = "x" ] && touch $@ || true
 
+
+##############################   PYTHON   #####################################
+
 #
-# GSTREAMER + PLUGINS  This will become the "libeplayer4"
+# elementtree
+#
+$(DEPDIR)/elementtree.do_prepare: @DEPENDS_elementtree@
+	@PREPARE_elementtree@
+	touch $@
+
+$(DEPDIR)/elementtree.do_compile: bootstrap elementtree.do_prepare
+	touch $@
+
+$(DEPDIR)/min-elementtree $(DEPDIR)/std-elementtree $(DEPDIR)/max-elementtree \
+$(DEPDIR)/elementtree: \
+$(DEPDIR)/%elementtree: %python elementtree.do_compile
+	cd @DIR_elementtree@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONHOME=$(targetprefix)/usr \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_elementtree@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# libxml2
+#
+$(DEPDIR)/libxml2.do_prepare: bootstrap @DEPENDS_libxml2@
+	@PREPARE_libxml2@
+	touch $@
+
+$(DEPDIR)/libxml2.do_compile: libxml2.do_prepare
+	cd @DIR_libxml2@ && \
+		$(BUILDENV) \
+		./configure \
+			--build=$(build) \
+			--host=$(target) \
+			--prefix=/usr \
+			--mandir=/usr/share/man \
+			--with-python=$(crossprefix) \
+			--without-c14n \
+			--without-debug \
+			--without-mem-debug && \
+		$(MAKE) all 
+	touch $@
+
+$(DEPDIR)/min-libxml2 $(DEPDIR)/std-libxml2 $(DEPDIR)/max-libxml2 \
+$(DEPDIR)/libxml2: \
+$(DEPDIR)/%libxml2: libxml2.do_compile
+	cd @DIR_libxml2@ && \
+		@INSTALL_libxml2@; \
+		[ -f "$(targetprefix)/usr/lib/python2.6/site-packages/libxml2mod.la" ] && \
+		sed -e "/^dependency_libs/ s,/usr/lib/libxml2.la,$(targetprefix)/usr/lib/libxml2.la,g" -i $(targetprefix)/usr/lib/python2.6/site-packages/libxml2mod.la; \
+		sed -e "s,^prefix=,prefix=$(targetprefix)," < xml2-config > $(crossprefix)/bin/xml2-config; \
+		chmod 755 $(crossprefix)/bin/xml2-config; \
+		sed -e "/^XML2_LIBDIR/ s,/usr/lib,$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/xml2Conf.sh; \
+		sed -e "/^XML2_INCLUDEDIR/ s,/usr/include,$(targetprefix)/usr/include,g" -i $(targetprefix)/usr/lib/xml2Conf.sh
+#	@DISTCLEANUP_libxml2@
+	@[ "x$*" = "x" ] && touch $@ || true
+
+#
+# libxslt
+#
+$(DEPDIR)/libxslt.do_prepare: @DEPENDS_libxslt@
+	@PREPARE_libxslt@
+	touch $@
+
+$(DEPDIR)/libxslt.do_compile: bootstrap libxml2 libxslt.do_prepare
+	cd @DIR_libxslt@ && \
+		$(BUILDENV) \
+		CPPFLAGS="$(CPPFLAGS) -I$(targetprefix)/usr/include/libxml2 -Os" \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
+		./configure \
+			--build=$(build) \
+			--host=$(target) \
+			--prefix=/usr \
+			--with-libxml-prefix="$(crossprefix)" \
+			--with-libxml-include-prefix="$(targetprefix)/usr/include" \
+			--with-libxml-libs-prefix="$(targetprefix)/usr/lib" \
+			--with-python=$(crossprefix) \
+			--without-crypto \
+			--without-debug \
+			--without-mem-debug && \
+		$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-libxslt $(DEPDIR)/std-libxslt $(DEPDIR)/max-libxslt \
+$(DEPDIR)/libxslt: \
+$(DEPDIR)/%libxslt: %libxml2 libxslt.do_compile
+	cd @DIR_libxslt@ && \
+		@INSTALL_libxslt@ && \
+		sed -e "/^dependency_libs/ s,/usr/lib/libxslt.la,$(targetprefix)/usr/lib/libxslt.la,g" -i $(targetprefix)/usr/lib/python2.6/site-packages/libxsltmod.la && \
+		sed -e "/^dependency_libs/ s,/usr/lib/libexslt.la,$(targetprefix)/usr/lib/libexslt.la,g" -i $(targetprefix)/usr/lib/python2.6/site-packages/libxsltmod.la && \
+		sed -e "s,^prefix=,prefix=$(targetprefix)," < xslt-config > $(crossprefix)/bin/xslt-config && \
+		chmod 755 $(crossprefix)/bin/xslt-config && \
+		sed -e "/^dependency_libs/ s,/usr/lib/libxslt.la,$(targetprefix)/usr/lib/libxslt.la,g" -i $(targetprefix)/usr/lib/libexslt.la && \
+		sed -e "/^XML2_LIBDIR/ s,/usr/lib,$(targetprefix)/usr/lib,g" -i $(targetprefix)/usr/lib/xsltConf.sh && \
+		sed -e "/^XML2_INCLUDEDIR/ s,/usr/include,$(targetprefix)/usr/include,g" -i $(targetprefix)/usr/lib/xsltConf.sh
+#	@DISTCLEANUP_libxslt@
+	@[ "x$*" = "x" ] && touch $@ || true
+
+#
+# lxml
+#
+$(DEPDIR)/lxml.do_prepare: @DEPENDS_lxml@
+	@PREPARE_lxml@
+	touch $@
+
+$(DEPDIR)/lxml.do_compile: bootstrap python lxml.do_prepare
+	cd @DIR_lxml@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py build \
+			--with-xml2-config=$(crossprefix)/bin/xml2-config \
+			--with-xslt-config=$(crossprefix)/bin/xslt-config
+	touch $@
+
+$(DEPDIR)/min-lxml $(DEPDIR)/std-lxml $(DEPDIR)/max-lxml \
+$(DEPDIR)/lxml: \
+$(DEPDIR)/%lxml: lxml.do_compile
+	cd @DIR_lxml@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_lxml@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# setuptools
+#
+$(DEPDIR)/setuptools.do_prepare: @DEPENDS_setuptools@
+	@PREPARE_setuptools@
+	touch $@
+
+$(DEPDIR)/setuptools.do_compile: bootstrap setuptools.do_prepare
+	cd @DIR_setuptools@ && \
+		$(crossprefix)/bin/python ./setup.py build
+	touch $@
+
+$(DEPDIR)/min-setuptools $(DEPDIR)/std-setuptools $(DEPDIR)/max-setuptools \
+$(DEPDIR)/setuptools: \
+$(DEPDIR)/%setuptools: setuptools.do_compile
+	cd @DIR_setuptools@ && \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_setuptools@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# twisted
+#
+$(DEPDIR)/twisted.do_prepare: @DEPENDS_twisted@
+	@PREPARE_twisted@
+	touch $@
+
+$(DEPDIR)/twisted.do_compile: bootstrap setuptools twisted.do_prepare
+	cd @DIR_twisted@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python -c "import setuptools; execfile('setup.py')" build
+	touch $@
+
+$(DEPDIR)/min-twisted $(DEPDIR)/std-twisted $(DEPDIR)/max-twisted \
+$(DEPDIR)/twisted: \
+$(DEPDIR)/%twisted: twisted.do_compile
+	cd @DIR_twisted@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_twisted@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# twistetweb2
+#
+$(DEPDIR)/twistedweb2.do_prepare: @DEPENDS_twistedweb2@
+	@PREPARE_twistedweb2@
+	touch $@
+
+$(DEPDIR)/twistedweb2.do_compile: bootstrap setuptools twistedweb2.do_prepare
+	cd @DIR_twistedweb2@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python -c "import setuptools; execfile('setup.py')" build
+	touch $@
+
+$(DEPDIR)/min-twistedweb2 $(DEPDIR)/std-twistedweb2 $(DEPDIR)/max-twistedweb2 \
+$(DEPDIR)/twistedweb2: \
+$(DEPDIR)/%twistedweb2: twistedweb2.do_compile
+	cd @DIR_twistedweb2@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_twistedweb2@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# pilimaging
+#
+$(DEPDIR)/pilimaging: bootstrap python @DEPENDS_pilimaging@
+	@PREPARE_pilimaging@
+	cd @DIR_pilimaging@ && \
+		echo 'JPEG_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' > setup_site.py && \
+		echo 'ZLIB_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
+		echo 'FREETYPE_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py build && \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr && \
+		@DISTCLEANUP_pilimaging@
+	@DISTCLEANUP_pilimaging@
+	@touch $@
+	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# pyopenssl
+#
+$(DEPDIR)/pyopenssl.do_prepare: @DEPENDS_pyopenssl@
+	@PREPARE_pyopenssl@
+	touch $@
+
+$(DEPDIR)/pyopenssl.do_compile: bootstrap setuptools pyopenssl.do_prepare
+	cd @DIR_pyopenssl@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py build
+	touch $@
+
+$(DEPDIR)/min-pyopenssl $(DEPDIR)/std-pyopenssl $(DEPDIR)/max-pyopenssl \
+$(DEPDIR)/pyopenssl: \
+$(DEPDIR)/%pyopenssl: pyopenssl.do_compile
+	cd @DIR_pyopenssl@ && \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_pyopenssl@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# python
+#
+$(DEPDIR)/python.do_prepare: host-python @DEPENDS_python@
+	@PREPARE_python@ && \
+	touch $@
+
+$(DEPDIR)/python.do_compile: openssl openssl-dev sqlite bootstrap python.do_prepare
+	( cd @DIR_python@ && \
+		CONFIG_SITE= \
+		$(BUILDENV) \
+		./configure \
+			--build=$(build) \
+			--host=$(target) \
+			--target=$(target) \
+			--prefix=/usr \
+			--sysconfdir=/etc \
+			--enable-shared \
+			--disable-ipv6 \
+			--without-cxx-main \
+			--with-threads \
+			HOSTPYTHON=$(crossprefix)/bin/python \
+			OPT="$(TARGET_CFLAGS)" && \
+		$(MAKE) $(MAKE_ARGS) \
+			TARGET_OS=$(target) \
+			PYTHON_DISABLE_MODULES="_tkinter" \
+			PYTHON_MODULES_INCLUDE="$(prefix)/$*cdkroot/usr/include" \
+			PYTHON_MODULES_LIB="$(prefix)/$*cdkroot/usr/lib" \
+			CROSS_COMPILE=yes \
+			CFLAGS="$(TARGET_CFLAGS) -fno-inline" \
+			LDFLAGS="$(TARGET_LDFLAGS)" \
+			LD="$(target)-gcc" \
+			HOSTPYTHON=$(crossprefix)/bin/python \
+			HOSTPGEN=$(crossprefix)/bin/pgen \
+			all ) && \
+	touch $@
+
+$(DEPDIR)/min-python $(DEPDIR)/std-python $(DEPDIR)/max-python \
+$(DEPDIR)/python: \
+$(DEPDIR)/%python: python.do_compile
+	( cd @DIR_python@ && \
+		$(MAKE) $(MAKE_ARGS) \
+			TARGET_OS=$(target) \
+			HOSTPYTHON=$(crossprefix)/bin/python \
+			HOSTPGEN=$(crossprefix)/bin/pgen \
+			install DESTDIR=$(prefix)/$*cdkroot ) && \
+	$(LN_SF) ../../libpython2.6.so.1.0 $(prefix)/$*cdkroot/usr/lib/python2.6/config/libpython2.6.so
+#	@DISTCLEANUP_python@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# pythonwifi
+#
+$(DEPDIR)/pythonwifi.do_prepare: @DEPENDS_pythonwifi@
+	@PREPARE_pythonwifi@
+	touch $@
+
+$(DEPDIR)/pythonwifi.do_compile: bootstrap setuptools pythonwifi.do_prepare
+	cd @DIR_pythonwifi@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py build
+	touch $@
+
+$(DEPDIR)/min-pythonwifi $(DEPDIR)/std-pythonwifi $(DEPDIR)/max-pythonwifi \
+$(DEPDIR)/pythonwifi: \
+$(DEPDIR)/%pythonwifi: pythonwifi.do_compile
+	cd @DIR_pythonwifi@ && \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_pythonwifi@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# pythoncheetah
+#
+$(DEPDIR)/pythoncheetah.do_prepare: @DEPENDS_pythoncheetah@
+	@PREPARE_pythoncheetah@
+	touch $@
+
+$(DEPDIR)/pythoncheetah.do_compile: bootstrap setuptools pythoncheetah.do_prepare
+	cd @DIR_pythoncheetah@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py build
+	touch $@
+
+$(DEPDIR)/min-pythoncheetah $(DEPDIR)/std-pythoncheetah $(DEPDIR)/max-pythoncheetah \
+$(DEPDIR)/pythoncheetah: \
+$(DEPDIR)/%pythoncheetah: pythoncheetah.do_compile
+	cd @DIR_pythoncheetah@ && \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_pythonwifi@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# zope interface
+#
+$(DEPDIR)/zope_interface.do_prepare: @DEPENDS_zope_interface@
+	@PREPARE_zope_interface@
+	touch $@
+
+$(DEPDIR)/zope_interface.do_compile: bootstrap python setuptools zope_interface.do_prepare
+	cd @DIR_zope_interface@ && \
+		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py build
+	touch $@
+
+$(DEPDIR)/min-zope_interface $(DEPDIR)/std-zope_interface $(DEPDIR)/max-zope_interface \
+$(DEPDIR)/zope_interface: \
+$(DEPDIR)/%zope_interface: zope_interface.do_compile
+	cd @DIR_zope_interface@ && \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_zope_interface@
+	[ "x$*" = "x" ] && touch $@ || true
+
+
+
+##############################   GSTREAMER + PLUGINS   #########################
+
 #
 # GSTREAMER
 #
@@ -1806,16 +1876,16 @@ $(DEPDIR)/%gst_plugins_dvbmediasink: $(DEPDIR)/gst_plugins_dvbmediasink.do_compi
 #	@DISTCLEANUP_gst_plugins_dvbmediasink@
 	@[ "x$*" = "x" ] && touch $@ || true
 
-################ EXTERNAL_LCD #############################
+##############################   EXTERNAL_LCD   ################################
 
 #
-# libusb 
+# libusb
 #
-$(DEPDIR)/libusb.do_prepare:  @DEPENDS_libusb@ 
-	@PREPARE_libusb@ 
-	touch $@ 
+$(DEPDIR)/libusb.do_prepare: @DEPENDS_libusb@
+	@PREPARE_libusb@
+	touch $@
 
-$(DEPDIR)/libusb.do_compile: $(DEPDIR)/libusb.do_prepare 
+$(DEPDIR)/libusb.do_compile: $(DEPDIR)/libusb.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libusb@ && \
 	$(BUILDENV) \
@@ -1836,22 +1906,31 @@ $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
 #
 # graphlcd
 #
-$(DEPDIR)/graphlcd: graphlcd-base-touchcol.tar.bz2 bootstrap libusb @DEPENDS_graphlcd@
+$(DEPDIR)/graphlcd.do_prepare: graphlcd-base-touchcol.tar.bz2 bootstrap libusb @DEPENDS_graphlcd@
 	@PREPARE_graphlcd@
+	touch $@
+
+$(DEPDIR)/graphlcd.do_compile: $(DEPDIR)/graphlcd.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_graphlcd@ && \
 	$(BUILDENV) \
-		$(MAKE) all && \
+		$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-graphlcd $(DEPDIR)/std-graphlcd $(DEPDIR)/max-graphlcd \
+$(DEPDIR)/graphlcd: \
+$(DEPDIR)/%graphlcd: $(DEPDIR)/graphlcd.do_compile
+	cd @DIR_graphlcd@ && \
 		@INSTALL_graphlcd@
-	@DISTCLEANUP_graphlcd@
-	@touch $@
-	@TUXBOX_YAUD_CUSTOMIZE@
+#	@DISTCLEANUP_graphlcd@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 graphlcd-base-touchcol.tar.bz2:
 	if [ -d $(archivedir)/graphlcd-base-touchcol.tar.bz2 ]; then \
 		rm $(archivedir)/graphlcd-base-touchcol.tar.bz2; \
 	fi
-####################### LCD4LINUX #############################
+
+##############################   LCD4LINUX   ###################################
 
 #
 #
@@ -1931,7 +2010,8 @@ $(DEPDIR)/%libusbcompat: $(DEPDIR)/libusbcompat.do_compile
 #	@DISTCLEANUP_libusbcompat@
 	@[ "x$*" = "x" ] && touch $@ || true
 
-################ END EXTERNAL_LCD #############################
+##############################   END EXTERNAL_LCD   #############################
+
 
 #
 # eve-browser
@@ -2247,21 +2327,3 @@ $(DEPDIR)/%libdreamdvd2: $(DEPDIR)/libdreamdvd2.do_compile
 		@INSTALL_libdreamdvd2@
 #	@DISTCLEANUP_libdreamdvd2@
 	@[ "x$*" = "x" ] && touch $@ || true
-
-#
-# pilimaging
-#
-$(DEPDIR)/pilimaging: bootstrap python @DEPENDS_pilimaging@
-	@PREPARE_pilimaging@
-	cd @DIR_pythonimaging@ && \
-		echo 'JPEG_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' > setup_site.py && \
-		echo 'ZLIB_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
-		echo 'FREETYPE_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
-		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py build && \
-		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr && \
-		@DISTCLEANUP_pilimaging@
-	@DISTCLEANUP_pilimaging@
-	@touch $@
-	@TUXBOX_YAUD_CUSTOMIZE@

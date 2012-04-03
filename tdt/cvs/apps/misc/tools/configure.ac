@@ -33,7 +33,6 @@ AC_OUTPUT([
 Makefile
 devinit/Makefile
 evremote2/Makefile
-libeplayer2/Makefile
 libeplayer3/Makefile
 fp_control/Makefile
 showiframe/Makefile

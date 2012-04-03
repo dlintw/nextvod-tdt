@@ -28,7 +28,7 @@ echo "This script creates flashable images for Spark"
 echo "Author: Schischu"
 echo "Date: 05-01-2012"
 echo "-----------------------------------------------------------------------"
-echo "It's expected that a images was already build prior to this execution!"
+echo "It's expected that an image was already build prior to this execution!"
 echo "-----------------------------------------------------------------------"
 
 $BASEDIR/flash/common/common.sh $BASEDIR/flash/common/

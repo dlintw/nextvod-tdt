@@ -17,9 +17,7 @@ fi
 
 insmod $MODDIR/e2_proc.ko
 
-# start automounter with umount timeout of 5 seconds
-insmod $MODDIR/autofs4.ko
-/usr/sbin/automount --timeout=5 /autofs file /etc/auto.usb
+/etc/init.d/autofs start
 
 if [ ! -e /var/etc/.firstboot ]; then
 
@@ -110,15 +108,12 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/silencegen.ko
 
    insmod $MODDIR/bpamem.ko
-   mknod /dev/bpamem c 153 0 
 
    showiframe -p /boot/bootlogo.mvi &
    stfbcontrol a 0
 
    echo "init frontpanel"
    insmod $MODDIR/simu_button.ko
-
-   mknod /dev/rc c 147 1 
 
    #params:
    #period
@@ -127,8 +122,6 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    # timefix e2
    # date -s "121220001970"
-
-   stfbcontrol a 255
 
    /etc/init.d/mountall start
 
@@ -139,24 +132,12 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
 
-   NFS=`grep -c nfs /proc/cmdline`
-   if [ "$NFS" -eq "1" ]; then 
-      echo "Booting from nfs, don't set network" 
-   else 
-      if [ -e /etc/network/interfaces ]; then 
-	 ip addr flush eth0 
-	 /etc/init.d/networking stop 
-	 DHCP=`grep -c dhcp /etc/network/interfaces`
-	 if [ "$DHCP" -eq "1" ]; then 
-	    echo "Starting dhcp"
-            /etc/init.d/udhcpc start 
-	 fi 
-	 /etc/init.d/networking start 
-      fi 
-   fi
+   /etc/init.d/network start &
 
    echo "LOADING e2" > /dev/vfd
    echo "LOADING e2"
+
+   stfbcontrol a 255
 
    until false
    do

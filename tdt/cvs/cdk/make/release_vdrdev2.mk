@@ -1,5 +1,5 @@
 #Trick ALPHA-Version ;)
-$(DEPDIR)/min-release_vdrdev2 $(DEPDIR)/std-release_vdrdev2 $(DEPDIR)/max-release_vdrdev2 $(DEPDIR)/ipk-release_vdrdev2 $(DEPDIR)/release_vdrdev2: \
+$(DEPDIR)/min-release_vdrdev2 $(DEPDIR)/std-release_vdrdev2 $(DEPDIR)/max-release_vdrdev2 $(DEPDIR)/release_vdrdev2: \
 $(DEPDIR)/%release_vdrdev2:
 	rm -rf $(prefix)/release_vdrdev2 || true
 	$(INSTALL_DIR) $(prefix)/release_vdrdev2 && \

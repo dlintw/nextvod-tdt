@@ -32,7 +32,7 @@ echo "Will probably be adapted in future to support clones"
 echo "Author: Schischu"
 echo "Date: 01-31-2011"
 echo "-----------------------------------------------------------------------"
-echo "It's expected that a images was already build prior to this execution!"
+echo "It's expected that an image was already build prior to this execution!"
 echo "-----------------------------------------------------------------------"
 
 $BASEDIR/flash/common/common.sh $BASEDIR/flash/common/

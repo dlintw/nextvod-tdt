@@ -1,12 +1,12 @@
 #
 # MODULE-INIT-TOOLS
 #
-$(DEPDIR)/module-init-tools.do_prepare: @DEPENDS_module_init_tools@
+$(DEPDIR)/module_init_tools.do_prepare: @DEPENDS_module_init_tools@
 	@PREPARE_module_init_tools@
 	touch $@
 
-$(DEPDIR)/module-init-tools.do_compile: bootstrap $(DEPDIR)/module-init-tools.do_prepare
-	cd @DIR_module_init_tools@  && \
+$(DEPDIR)/module_init_tools.do_compile: bootstrap $(DEPDIR)/module_init_tools.do_prepare
+	cd @DIR_module_init_tools@ && \
 		$(BUILDENV) \
 		./configure \
 			--build=$(build) \
@@ -15,10 +15,10 @@ $(DEPDIR)/module-init-tools.do_compile: bootstrap $(DEPDIR)/module-init-tools.do
 		$(MAKE)
 	touch $@
 
-$(DEPDIR)/min-module-init-tools $(DEPDIR)/std-module-init-tools $(DEPDIR)/max-module-init-tools \
-$(DEPDIR)/module-init-tools: \
-$(DEPDIR)/%module-init-tools: $(DEPDIR)/%lsb $(MODULE_INIT_TOOLS:%=root/etc/%) $(DEPDIR)/module-init-tools.do_compile
-	cd @DIR_module_init_tools@  && \
+$(DEPDIR)/min-module_init_tools $(DEPDIR)/std-module_init_tools $(DEPDIR)/max-module_init_tools \
+$(DEPDIR)/module_init_tools: \
+$(DEPDIR)/%module_init_tools: $(DEPDIR)/%lsb $(MODULE_INIT_TOOLS:%=root/etc/%) $(DEPDIR)/module_init_tools.do_compile
+	cd @DIR_module_init_tools@ && \
 		@INSTALL_module_init_tools@
 	$(call adapted-etc-files,$(MODULE_INIT_TOOLS_ADAPTED_ETC_FILES))
 	$(call initdconfig,module-init-tools)
@@ -37,7 +37,7 @@ $(DEPDIR)/grep.do_prepare: @DEPENDS_grep@
 	touch $@
 
 $(DEPDIR)/grep.do_compile: bootstrap $(DEPDIR)/grep.do_prepare
-	cd @DIR_grep@  && \
+	cd @DIR_grep@ && \
 		$(BUILDENV) \
 		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
@@ -53,7 +53,7 @@ $(DEPDIR)/grep.do_compile: bootstrap $(DEPDIR)/grep.do_prepare
 $(DEPDIR)/min-grep $(DEPDIR)/std-grep $(DEPDIR)/max-grep \
 $(DEPDIR)/grep: \
 $(DEPDIR)/%grep: $(DEPDIR)/grep.do_compile
-	cd @DIR_grep@  && \
+	cd @DIR_grep@ && \
 		@INSTALL_grep@
 #	@DISTCLEANUP_grep@
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -72,7 +72,7 @@ $(DEPDIR)/lsb.do_compile: bootstrap $(DEPDIR)/lsb.do_prepare
 $(DEPDIR)/min-lsb $(DEPDIR)/std-lsb $(DEPDIR)/max-lsb \
 $(DEPDIR)/lsb: \
 $(DEPDIR)/%lsb: $(DEPDIR)/lsb.do_compile
-	cd @DIR_lsb@  && \
+	cd @DIR_lsb@ && \
 		@INSTALL_lsb@
 #	@DISTCLEANUP_lsb@
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -98,7 +98,7 @@ $(DEPDIR)/portmap.do_compile: bootstrap $(DEPDIR)/portmap.do_prepare
 $(DEPDIR)/min-portmap $(DEPDIR)/std-portmap $(DEPDIR)/max-portmap \
 $(DEPDIR)/portmap: \
 $(DEPDIR)/%portmap: $(DEPDIR)/%lsb $(PORTMAP_ADAPTED_ETC_FILES:%=root/etc/%) $(DEPDIR)/portmap.do_compile
-	cd @DIR_portmap@  && \
+	cd @DIR_portmap@ && \
 		@INSTALL_portmap@
 	$(call adapted-etc-files,$(PORTMAP_ADAPTED_ETC_FILES))
 	$(call initdconfig,portmap)
@@ -115,7 +115,7 @@ $(DEPDIR)/openrdate.do_prepare: bootstrap @DEPENDS_openrdate@
 	touch $@
 
 $(DEPDIR)/openrdate.do_compile: $(DEPDIR)/openrdate.do_prepare
-	cd @DIR_openrdate@  && \
+	cd @DIR_openrdate@ && \
 		$(BUILDENV) \
 		./configure \
 			--build=$(build) \
@@ -129,7 +129,7 @@ $(DEPDIR)/min-openrdate $(DEPDIR)/std-openrdate $(DEPDIR)/max-openrdate \
 $(DEPDIR)/openrdate: \
 $(DEPDIR)/%openrdate: $(OPENRDATE_ADAPTED_ETC_FILES:%=root/etc/%) \
 		$(DEPDIR)/openrdate.do_compile
-	cd @DIR_openrdate@  && \
+	cd @DIR_openrdate@ && \
 		@INSTALL_openrdate@
 	( cd root/etc && for i in $(OPENRDATE_ADAPTED_ETC_FILES); do \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(prefix)/$*cdkroot/etc/$$i || true; \
@@ -212,10 +212,9 @@ $(DEPDIR)/e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
 	touch $@
 	@TUXBOX_YAUD_CUSTOMIZE@
 else !STM24
-$(DEPDIR)/min-e2fsprogs $(DEPDIR)/std-e2fsprogs $(DEPDIR)/max-e2fsprogs $(DEPDIR)/ipk-e2fsprogs \
+$(DEPDIR)/min-e2fsprogs $(DEPDIR)/std-e2fsprogs $(DEPDIR)/max-e2fsprogs \
 $(DEPDIR)/e2fsprogs: \
 $(DEPDIR)/%e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
-	@[ "x$*" = "xipk-" ] && rm -rf  $(prefix)/ipk-cdkroot || true
 	cd @DIR_e2fsprogs@ && \
 		@INSTALL_e2fsprogs@
 	[ "x$*" = "x" ] && ( cd @DIR_e2fsprogs@ && \
@@ -521,7 +520,7 @@ $(DEPDIR)/fuse.do_prepare: @DEPENDS_fuse@
 	touch $@
 
 $(DEPDIR)/fuse.do_compile: bootstrap curl glib2 $(DEPDIR)/fuse.do_prepare
-	cd @DIR_fuse@  && \
+	cd @DIR_fuse@ && \
 		$(BUILDENV) \
 		CFLAGS="$(TARGET_CFLAGS) -I$(buildprefix)/linux/arch/sh" \
 		./configure \
@@ -537,7 +536,7 @@ $(DEPDIR)/fuse.do_compile: bootstrap curl glib2 $(DEPDIR)/fuse.do_prepare
 $(DEPDIR)/min-fuse $(DEPDIR)/std-fuse $(DEPDIR)/max-fuse \
 $(DEPDIR)/fuse: \
 $(DEPDIR)/%fuse: %curl %glib2 $(DEPDIR)/fuse.do_compile
-	cd @DIR_fuse@  && \
+	cd @DIR_fuse@ && \
 		@INSTALL_fuse@
 	-rm $(prefix)/$*cdkroot/etc/udev/rules.d/99-fuse.rules
 	-rmdir $(prefix)/$*cdkroot/etc/udev/rules.d
@@ -574,7 +573,7 @@ $(DEPDIR)/curlftpfs.do_compile: fuse bootstrap $(DEPDIR)/curlftpfs.do_prepare
 $(DEPDIR)/min-curlftpfs $(DEPDIR)/std-curlftpfs $(DEPDIR)/max-curlftpfs \
 $(DEPDIR)/curlftpfs: \
 $(DEPDIR)/%curlftpfs: %fuse $(DEPDIR)/curlftpfs.do_compile
-	cd @DIR_curlftpfs@  && \
+	cd @DIR_curlftpfs@ && \
 		@INSTALL_curlftpfs@
 #	@DISTCLEANUP_curlftpfs@
 	@[ "x$*" = "x" ] && touch $@ || true
@@ -829,10 +828,9 @@ $(DEPDIR)/sysstat: bootstrap @DEPENDS_sysstat@
 # hotplug-e2
 #
 $(DEPDIR)/hotplug_e2.do_prepare: @DEPENDS_hotplug_e2@
-	[ -d @DIR_hotplug_e2@ ] && \
-	cd @DIR_hotplug_e2@ && git pull; \
-	[ -d @DIR_hotplug_e2@ ] || \
+	@PREPARE_hotplug_e2@
 	git clone git://openpli.git.sourceforge.net/gitroot/openpli/hotplug-e2-helper;
+	cd @DIR_hotplug_e2@ && patch -p1 < $(buildprefix)/Patches/hotplug-e2-helper-support_fw_upload.patch
 	touch $@
 
 $(DEPDIR)/hotplug_e2.do_compile: bootstrap hotplug_e2.do_prepare 
@@ -867,6 +865,8 @@ $(DEPDIR)/autofs.do_prepare: @DEPENDS_autofs@
 
 $(DEPDIR)/autofs.do_compile: bootstrap autofs.do_prepare 
 	cd @DIR_autofs@ && \
+		cp aclocal.m4 acinclude.m4 && \
+		autoconf && \
 		$(BUILDENV) \
 		./configure \
 			--build=$(build) \
@@ -880,6 +880,6 @@ $(DEPDIR)/autofs: \
 $(DEPDIR)/%autofs: $(DEPDIR)/autofs.do_compile
 	cd @DIR_autofs@ && \
 		@INSTALL_autofs@
-#	@DISTCLEANUP_jfsutils@
+#	@DISTCLEANUP_autofs@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
