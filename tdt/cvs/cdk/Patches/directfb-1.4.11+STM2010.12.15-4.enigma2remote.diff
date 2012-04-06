@@ -96,7 +96,7 @@
 diff -Nur DirectFB-1.4.11/inputdrivers/enigma2remote/enigma2remote.c DirectFB-1.4.11_2/inputdrivers/enigma2remote/enigma2remote.c
 --- DirectFB-1.4.11/inputdrivers/enigma2remote/enigma2remote.c	1969-12-31 16:00:00.000000000 -0800
 +++ DirectFB-1.4.11_2/inputdrivers/enigma2remote/enigma2remote.c	2012-03-13 03:21:53.341293991 -0700
-@@ -0,0 +1,295 @@
+@@ -0,0 +1,309 @@
 +/*
 +   This library is free software; you can redistribute it and/or
 +   modify it under the terms of the GNU Lesser General Public
@@ -164,7 +164,8 @@ diff -Nur DirectFB-1.4.11/inputdrivers/enigma2remote/enigma2remote.c DirectFB-1.
 +     { DIKS_CURSOR_RIGHT, "RIGHT" },
 +     { DIKS_CURSOR_UP, "UP" },
 +     { DIKS_CURSOR_DOWN, "DOWN" },
-+     { DIKS_ENTER, "OK" },
++     { DIKS_RETURN, "ENTER" },
++     { DIKS_OK, "OK" },
 +     { DIKS_ESCAPE, "ESC" },
 +     { DIKS_BACK, "BACK" },
 +     { DIKS_RED, "RED" },
@@ -238,6 +239,7 @@ diff -Nur DirectFB-1.4.11/inputdrivers/enigma2remote/enigma2remote.c DirectFB-1.
 +     printf("Connected.\n");
 +
 +     while (1) {
++          int recvBufferPos = 0;
 +          //if (readLineControlPipe(driver_data, recvBuffer, 1024) <= 0)
 +          //     break;
 +          
@@ -247,22 +249,34 @@ diff -Nur DirectFB-1.4.11/inputdrivers/enigma2remote/enigma2remote.c DirectFB-1.
 +          printf("CMD [\'%s\']\n", recvBuffer);
 +          direct_thread_testcancel( thread );
 +
-+          /* translate rccode to DirectFB keycode */
-+          evt.key_symbol = enigma2remote_parse_rccode( recvBuffer );
-+          
-+          
-+          printf("KEY [\'%d\']\n", evt.key_symbol);
-+          
-+          if (evt.key_symbol != DIKS_NULL) {
-+               /* set event type and dispatch*/
-+               evt.type = DIET_KEYPRESS;
-+               evt.flags = DIEF_KEYSYMBOL;
-+               dfb_input_dispatch( data->device, &evt );
++          while (1) { //OK\nENTER\n\0
++               int i;
++               char keyBuffer[16];
++               for (i = 0; i < readlen && i < 16 && recvBuffer[recvBufferPos + i] != '\n' && recvBuffer[recvBufferPos + i] != '\0'; i++) {
++                    keyBuffer[i] = recvBuffer[recvBufferPos + i];
++               }
++               if (i == 0) break;
++               keyBuffer[i] = '\0';
++               recvBufferPos += i + 1;
 +
-+               /* set event type and dispatch*/
-+               evt.type = DIET_KEYRELEASE;
-+               evt.flags = DIEF_KEYSYMBOL;
-+               dfb_input_dispatch( data->device, &evt );
++               /* translate rccode to DirectFB keycode */
++               evt.key_symbol = enigma2remote_parse_rccode( keyBuffer );
++
++
++               printf("KEY [\'%s\' -> \'%d\']\n", keyBuffer, evt.key_symbol);
++
++               if (evt.key_symbol != DIKS_NULL) {
++                    /* set event type and dispatch*/
++                    evt.type = DIET_KEYPRESS;
++                    evt.flags = DIEF_KEYSYMBOL;
++                    dfb_input_dispatch( data->device, &evt );
++
++                    /* set event type and dispatch*/
++                    evt.type = DIET_KEYRELEASE;
++                    evt.flags = DIEF_KEYSYMBOL;
++                    dfb_input_dispatch( data->device, &evt );
++               }
++               if ( i >= readlen) break;
 +          }
 +     }
 +
