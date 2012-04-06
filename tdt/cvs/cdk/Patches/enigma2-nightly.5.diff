@@ -3614,20 +3614,22 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/accel.cpp 
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/epng.cpp enigma2-nightly.patched/lib/gdi/epng.cpp
 --- enigma2-nightly.org/lib/gdi/epng.cpp	2012-03-08 20:34:58.000000000 +0100
 +++ enigma2-nightly.patched/lib/gdi/epng.cpp	2012-03-08 22:37:04.000000000 +0100
-@@ -1,7 +1,12 @@
+@@ -1,8 +1,13 @@
 +#define PNG_SKIP_SETJMP_CHECK
  #include <png.h>
  #include <stdio.h>
  #include <lib/gdi/epng.h>
  #include <unistd.h>
-+ 
+ 
 +#if (PNG_LIBPNG_VER > 10500)
 +#include "zlib.h"
 +#endif
-
++
  extern "C" {
  #include <jpeglib.h>
-@@ -52,5 +57,9 @@
+ }
+@@ -51,7 +56,11 @@
+ 		fclose(fp);
  		return 0;
  	 }
 +#if (PNG_LIBPNG_VER < 10500)
@@ -3637,17 +3639,19 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/epng.cpp e
 +#endif
  	{
  		eDebug("das war wohl nix");
-@@ -262,5 +271,9 @@
+ 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+@@ -261,7 +270,11 @@
+ 		PNG_COLOR_TYPE_RGB_ALPHA, 
  		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
  
-- 	if (setjmp(png_ptr->jmpbuf))
 +#if (PNG_LIBPNG_VER < 10500)
-+ 	if (setjmp(png_ptr->jmpbuf))
+ 	if (setjmp(png_ptr->jmpbuf))
 +#else
 +	if (setjmp(png_jmpbuf(png_ptr)))
 +#endif
  	{
  		eDebug("error :/");
+ 		png_destroy_write_struct(&png_ptr, &info_ptr);
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/fb.cpp enigma2-nightly.patched/lib/gdi/fb.cpp
 --- enigma2-nightly.org/lib/gdi/fb.cpp	2012-03-08 20:34:58.000000000 +0100
 +++ enigma2-nightly.patched/lib/gdi/fb.cpp	2012-03-08 20:34:59.000000000 +0100
@@ -4074,7 +4078,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/Makefile.a
 diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/picload.cpp enigma2-nightly.patched/lib/gdi/picload.cpp
 --- enigma2-nightly.org/lib/gdi/picload.cpp	2012-03-08 20:34:58.000000000 +0100
 +++ enigma2-nightly.patched/lib/gdi/picload.cpp	2012-03-08 22:41:44.000000000 +0100
-@@ -1,5 +1,6 @@
+@@ -1,9 +1,11 @@
 -#include <png.h>	// must be included before Python.h because of setjmp
 +#define PNG_SKIP_SETJMP_CHECK
 +#include <png.h>
@@ -4082,7 +4086,12 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/picload.cp
  
  #include <lib/gdi/picload.h>
  #include <lib/gdi/picexif.h>
-@@ -46,11 +47,11 @@
++#include "../../../misc/tools/libmmeimage/libmmeimage.h"
+ 
+ extern "C" {
+ #include <jpeglib.h>
+@@ -45,11 +46,11 @@
+ 	return(cr);
  }
  
 -static unsigned char *simple_resize(unsigned char *orgin, int ox, int oy, int dx, int dy)
@@ -4159,7 +4168,7 @@ diff -Nur --exclude=.git --exclude=tuxtxt enigma2-nightly.org/lib/gdi/picload.cp
  		}
  	}
  	delete [] orgin;
-@@ -252,7 +256,7 @@
+@@ -252,7 +254,7 @@
 }
  
  //---------------------------------------------------------------------
