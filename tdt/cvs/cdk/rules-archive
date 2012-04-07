@@ -33,7 +33,7 @@ libtool-2.4.tar.gz;http://ftp.gnu.org/gnu/libtool
 # root
 #
 busybox-1.19.4.tar.bz2;http://www.busybox.net/downloads
-lsb_3.2-20.tar.gz;http://ftp.de.debian.org/debian/pool/main/l/lsb;http://ftp.uni-erlangen.de/pub/debian/pool/main/l/lsb
+lsb_3.2-20.tar.gz;http://www.meyersound.com/opensource/code/D-Mitri-Engine/5.0/debian-sources;http://ftp.uni-erlangen.de/pub/debian/pool/main/l/lsb
 lsb_3.2-28.1.tar.gz;http://ftp.de.debian.org/debian/pool/main/l/lsb;http://ftp.uni-erlangen.de/pub/debian/pool/main/l/lsb
 ipkg-0.99.163.tar.gz;http://www.handhelds.org/download/packages/ipkg
 module-init-tools-3.3-pre1.tar.bz2;http://ftp.tlk-l.net/pub/mirrors/kernel.org/linux/utils/kernel/module-init-tools
@@ -174,7 +174,7 @@ gd-2.0.35.tar.gz;http://www.chipsnbytes.net/downloads
 # net apps
 #
 portmap-6.0.tgz;http://neil.brown.name/portmap
-portmap_6.0-9.diff.gz;http://debian.osuosl.org/debian/pool/main/p/portmap
+portmap_6.0.0-2.diff.gz ;http://debian.osuosl.org/debian/pool/main/p/portmap
 nfs-utils-1.1.1.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/nfs
 nfs-utils_1.1.1-12.diff.gz;http://ftp.de.debian.org/debian/pool/main/n/nfs-utils
 autofs-4.1.4.tar.gz;http://kernel.org/pub/linux/daemons/autofs/v4

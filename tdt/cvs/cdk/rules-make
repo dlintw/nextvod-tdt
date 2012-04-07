@@ -183,7 +183,7 @@ enigma2-openwebif;1.0;e2openplugin-OpenWebif;;
 #
 # net apps
 #
-portmap;6.0;portmap_6.0;portmap-6.0.tgz:portmap_6.0.diff:portmap_6.0-9.diff.gz;extract:portmap-6.0.tgz;patch:portmap_6.0.diff
+portmap;6.0;portmap_6.0;portmap-6.0.tgz:portmap_6.0.diff:portmap_6.0.0-2.diff.gz;extract:portmap-6.0.tgz;patch:portmap_6.0.diff
 nfs_utils;1.1.1;nfs-utils-1.1.1;nfs-utils-1.1.1.tar.bz2:nfs-utils_1.1.1-12.diff.gz;extract:nfs-utils-1.1.1.tar.bz2
 #vsftpd;2.0.7;vsftpd-2.0.7;vsftpd-2.0.7.tar.gz:vsftpd.diff;extract:vsftpd-2.0.7.tar.gz;patch:vsftpd.diff
 vsftpd;2.3.4;vsftpd-2.3.4;vsftpd-2.3.4.tar.gz:vsftpd.diff;extract:vsftpd-2.3.4.tar.gz;patch:vsftpd_2.3.4.diff
