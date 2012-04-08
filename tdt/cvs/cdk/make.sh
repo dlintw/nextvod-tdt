@@ -148,8 +148,8 @@ echo -e "\nKernel:"
 echo " Maintained:"
 echo "   8) STM 24 P0207 (Recommended)"
 echo "  10) STM 24 P0209"
-echo "  11) STM 24 P0210 (Experimental, UFS910)"
 echo " Experimental:"
+echo "  11) STM 24 P0210 (UFS910)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
 echo "   2) STM 23 P0119"
@@ -319,7 +319,6 @@ esac
 
 echo -e "\nMulticom:"
 echo "   1) Multicom 3.2.2     (Recommended for Player179)"
-echo "   2) Multicom 3.2.4 rc3"
 echo "   3) Multicom 3.2.4     (Recommended for Player191)"
 case $5 in
         [1-3]) REPLY=$5
@@ -348,25 +347,7 @@ case "$REPLY" in
        echo "export CONFIG_MULTICOM322=y" >> .config
        cd -
     ;;
-	2) MULTICOM="--enable-multicom324"
-       cd ../driver/include/
-       if [ -L multicom ]; then
-          rm multicom
-       fi
-
-       ln -s ../multicom-3.2.4_rc3/include multicom
-       cd -
-
-       cd ../driver/
-       if [ -L multicom ]; then
-          rm multicom
-       fi
-
-       ln -s multicom-3.2.4_rc3 multicom
-       echo "export CONFIG_MULTICOM324=y" >> .config
-       cd -
-    ;;
-	3) MULTICOM="--enable-multicom324"
+	2 | 3) MULTICOM="--enable-multicom324"
        cd ../driver/include/
        if [ -L multicom ]; then
           rm multicom

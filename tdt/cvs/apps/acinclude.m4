@@ -39,11 +39,11 @@ elif test "$TARGET" = "cdk"; then
 	AC_MSG_RESULT(cdk)
 
 	if test "$CC" = "" -a "$CXX" = ""; then
-		CC=powerpc-tuxbox-linux-gnu-gcc CXX=powerpc-tuxbox-linux-gnu-g++
+		CC=sh4-linux-gcc CXX=sh4-linux-g++
 	fi
 	if test "$CFLAGS" = "" -a "$CXXFLAGS" = ""; then
-		CFLAGS="-Wall -Os -mcpu=823 -pipe $DEBUG_CFLAGS"
-		CXXFLAGS="-Wall -Os -mcpu=823 -pipe $DEBUG_CFLAGS"
+		CFLAGS="-Wall -O2 -pipe $DEBUG_CFLAGS"
+		CXXFLAGS="-Wall -O2 -pipe $DEBUG_CFLAGS"
 	fi
 	if test "$prefix" = "NONE"; then
 		AC_MSG_ERROR(invalid prefix, you need to specify one in cdk mode)
@@ -53,7 +53,7 @@ elif test "$TARGET" = "cdk"; then
 	fi
 	if test "$host_alias" = ""; then
 		cross_compiling=yes
-		host_alias=powerpc-tuxbox-linux-gnu
+		host_alias=sh4-linux
 	fi
 else
 	AC_MSG_RESULT(none)
@@ -126,9 +126,6 @@ TUXBOX_APPS_DIRECTORY_ONE(libdir,LIBDIR,libdir,/lib,/tuxbox,
 TUXBOX_APPS_DIRECTORY_ONE(plugindir,PLUGINDIR,libdir,/lib,/tuxbox/plugins,
 	[--with-plugindir=PATH   ],[where to find the plugins])
 
-TUXBOX_APPS_DIRECTORY_ONE(ucodedir,UCODEDIR,localstatedir,/var,/tuxbox/ucodes,
-	[--with-ucodedir=PATH    ],[where to find the ucodes])
-
 TUXBOX_APPS_DIRECTORY_ONE(themesdir,THEMESDIR,datadir,/share,/tuxbox/neutrino/themes,
 	[--with-themesdir=PATH     ],[where to find the themes (don't change)])
 ])
@@ -140,7 +137,6 @@ AC_SUBST(FONTDIR)
 AC_SUBST(GAMESDIR)
 AC_SUBST(LIBDIR)
 AC_SUBST(PLUGINDIR)
-AC_SUBST(UCODEDIR)
 AC_SUBST(THEMESDIR)
 dnl end workaround
 
@@ -155,14 +151,7 @@ AC_ARG_WITH(driver,
 	[DRIVER="$withval"],[DRIVER=""])
 
 if test "$DRIVER"; then
-	if test -d "$DRIVER/include"; then
-		AC_DEFINE(HAVE_DBOX2_DRIVER,1,[Define to 1 if you have the dbox2 driver sources])
-	#else
-	#	AC_MSG_ERROR([can't find driver sources])
-	fi
-
 	AC_SUBST(DRIVER)
-
 	CPPFLAGS="$CPPFLAGS -I$DRIVER/include"
 fi
 ])
@@ -485,4 +474,3 @@ AC_DEFUN([AC_PROG_EGREP],
  EGREP=$ac_cv_prog_egrep
  AC_SUBST([EGREP])
 ])
-

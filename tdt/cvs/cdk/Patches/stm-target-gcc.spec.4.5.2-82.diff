@@ -8,12 +8,13 @@
  	--enable-shared \
  %if "%{_stm_target_arch}" != "armv7"
  	--disable-libgomp \
-@@ -353,6 +353,8 @@
+@@ -353,6 +353,9 @@
  rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_man_dir}/man7
  rm -r %{buildroot}%{_gccdir}/install-tools
  rm -r %{buildroot}%{_stm_cross_target_dir}%{_stm_target_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
 +rm -rf %{buildroot}%{_gccdir}/include/ssl
 +rm -rf %{buildroot}%{_gccdir}/include/xulrunner-1.9.2.17/nss
++rm -rf %{buildroot}%{_gccdir}/include/seamonkey
  
  %unfixincludes %{buildroot}%{_gccdir}
  

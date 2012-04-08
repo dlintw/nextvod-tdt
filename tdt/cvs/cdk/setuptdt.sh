@@ -107,18 +107,3 @@ if [ ! "$?" -eq "0" ]; then
 		ln -s /bin/bash /bin/sh
 	fi
 fi
-
-#Is this also necessary for other dists?
-DEBIAN_VERSION=`cat /etc/debian_version`
-if [ $DEBIAN_VERSION == "wheezy/sid" ]; then
-	# Do we need to take care of 32bit and 64bit?
-	echo "Downgrading to gcc-4.5"
-	apt-get install gcc-4.5
-	apt-get install g++-4.5
-	update-alternatives --remove-all gcc
-	update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.5 45 --slave /usr/bin/g++ g++ /usr/bin/g++-4.5 --slave /usr/bin/gcov gcov /usr/bin/gcov-4.5
-
-	ln -s /usr/include/i386-linux-gnu/bits /usr/include/bits
-	ln -s /usr/include/i386-linux-gnu/gnu /usr/include/gnu
-	ln -s /usr/include/i386-linux-gnu/sys /usr/include/sys
-fi

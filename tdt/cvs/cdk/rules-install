@@ -28,7 +28,7 @@ module_init_tools;make:INSTALL=install:install:sbin_PROGRAMS="depmod modinfo":bi
 #
 grep;make:install:DESTDIR=TARGETS
 openrdate;make:install:DESTDIR=TARGETS
-e2fsprogs;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libuuid.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/com_err.pc:TARGETS/usr/lib/pkgconfig/uuid.pc:TARGETS/usr/lib/pkgconfig/blkid.pc
+e2fsprogs;rewrite-pkgconfig:lib/e2p/e2p.pc:lib/com_err.pc:lib/uuid.pc:lib/blkid.pc:lib/ss/ss.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libuuid.la
 xfsprogs;make:install:prefix=TARGETS
 mc;make:install:DESTDIR=TARGETS
 sdparm;make:install:DESTDIR=TARGETS
@@ -44,7 +44,7 @@ pngquant;install:-m755:pngquant:TARGETS/usr/bin
 mplayer;make:install INSTALLSTRIP="":DESTDIR=TARGETS
 mencoder;make:install INSTALLSTRIP="":DESTDIR=TARGETS
 jfsutils;make:install:prefix=TARGETS
-opkg;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libopkg.pc;link:/usr/bin/opkg-cl:TARGETS/usr/bin/opkg;mkdir:TARGETS/var/opkg;rewrite-libtool:TARGETS/usr/lib/libopkg.la
+opkg;rewrite-pkgconfig:libopkg.pc;make:install:DESTDIR=TARGETS;link:/usr/bin/opkg-cl:TARGETS/usr/bin/opkg;mkdir:TARGETS/var/opkg;rewrite-libtool:TARGETS/usr/lib/libopkg.la
 sysstat;make:install:DESTDIR=TARGETS
 
 #
@@ -55,18 +55,18 @@ ncurses;
 libz;make:install:prefix=TARGETS/usr;install:-m644:libz.a:TARGETS/usr/lib
 libreadline;make:install:DESTDIR=TARGETS
 freetype_old;make:install:DESTDIR=BUILD/freetype-2.1.4/install_dir
-freetype;make:install::libdir=TARGETS/usr/lib:includedir=TARGETS/usr/include:bindir=TARGETS/usr/bin:prefix=TARGETS/usr;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/freetype2.pc;rewrite-libtool:TARGETS/usr/lib/libfreetype.la
-fontconfig;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/fontconfig.pc;rewrite-libtool:TARGETS/usr/lib/libfontconfig.la;rewrite-dependency:TARGETS/usr/lib/libfontconfig.la
+freetype;rewrite-pkgconfig:builds/unix/freetype2.pc;make:install:libdir=TARGETS/usr/lib:includedir=TARGETS/usr/include:bindir=TARGETS/usr/bin:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libfreetype.la
+fontconfig;rewrite-pkgconfig:fontconfig.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libfontconfig.la;rewrite-dependency:TARGETS/usr/lib/libfontconfig.la
 lirc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblirc_client.la
 jpeg;make:install:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libjpeg.la
-libpng;make:install:prefix=TARGETS/usr;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libpng15.pc;rewrite-libtool:TARGETS/usr/lib/libpng.la:TARGETS/usr/lib/libpng15.la
+libpng;rewrite-pkgconfig:libpng15.pc;make:install:prefix=TARGETS/usr;rewrite-libtool:TARGETS/usr/lib/libpng.la:TARGETS/usr/lib/libpng15.la
 libungif;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libungif.la
 libgif;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libgif.la
-curl;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libcurl.pc;rewrite-libtool:TARGETS/usr/lib/libcurl.la
+curl;rewrite-pkgconfig:libcurl.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libcurl.la
 libfribidi;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/fribidi.pc;rewrite-libtool:TARGETS/usr/lib/libfribidi.la
-libsigc;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/sigc++-1.2.pc;rewrite-libtool:TARGETS/usr/lib/libsigc-1.2.la;rewrite-dependency:TARGETS/usr/lib/libsigc-1.2.la
-libmad;make:install:DESTDIR=TARGETS;install:-m644:mad.pc:TARGETS/usr/lib/pkgconfig;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/mad.pc;rewrite-libtool:TARGETS/usr/lib/libmad.la
-libid3tag;make:install:DESTDIR=TARGETS;install:-m644:id3tag.pc:TARGETS/usr/lib/pkgconfig;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/id3tag.pc;rewrite-libtool:TARGETS/usr/lib/libid3tag.la
+libsigc;rewrite-pkgconfig:sigc++-1.2.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libsigc-1.2.la;rewrite-dependency:TARGETS/usr/lib/libsigc-1.2.la
+libmad;rewrite-pkgconfig:mad.pc;make:install:DESTDIR=TARGETS;install:-m644:mad.pc:TARGETS/usr/lib/pkgconfig;rewrite-libtool:TARGETS/usr/lib/libmad.la
+libid3tag;rewrite-pkgconfig:id3tag.pc;make:install:DESTDIR=TARGETS;install:-m644:id3tag.pc:TARGETS/usr/lib/pkgconfig;rewrite-libtool:TARGETS/usr/lib/libid3tag.la
 libvorbisidec;make:install:DESTDIR=TARGETS;install:-m644:vorbisidec.pc:TARGETS/usr/lib/pkgconfig;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/vorbisidec.pc;rewrite-libtool:TARGETS/usr/lib/libvorbisidec.la
 glib2;rewrite-pkgconfig:glib-2.0.pc:gmodule-2.0.pc:gio-2.0.pc:gio-unix-2.0.pc:gmodule-export-2.0.pc:gmodule-no-export-2.0.pc:gobject-2.0.pc:gthread-2.0.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libglib-2.0.la;rewrite-libtool:TARGETS/usr/lib/libgmodule-2.0.la;rewrite-dependency:TARGETS/usr/lib/libgmodule-2.0.la;rewrite-libtool:TARGETS/usr/lib/libgio-2.0.la;rewrite-dependency:TARGETS/usr/lib/libgio-2.0.la;rewrite-libtool:TARGETS/usr/lib/libgobject-2.0.la;rewrite-dependency:TARGETS/usr/lib/libgobject-2.0.la;rewrite-libtool:TARGETS/usr/lib/libgthread-2.0.la;rewrite-dependency:TARGETS/usr/lib/libgthread-2.0.la
 libiconv;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libiconv.la
@@ -78,46 +78,46 @@ webkitdfb;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libwebkit
 icu4c;make:install:DESTDIR=TARGETS
 enchant;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libenchant.la;rewrite-dependency:TARGETS/usr/lib/libenchant.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/enchant.pc
 lite;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/liblite.la:TARGETS/usr/lib/libleck.la;rewrite-dependency:TARGETS/usr/lib/liblite.la:TARGETS/usr/lib/libleck.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/lite.pc:TARGETS/usr/lib/pkgconfig/leck.pc
-sqlite;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libsqlite3.la;rewrite-dependency:TARGETS/usr/lib/libsqlite3.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/sqlite3.pc
+sqlite;rewrite-pkgconfig:sqlite3.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libsqlite3.la;rewrite-dependency:TARGETS/usr/lib/libsqlite3.la
 libsoup;rewrite-pkgconfig:libsoup-2.4.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libsoup-2.4.la;rewrite-dependency:TARGETS/usr/lib/libsoup-2.4.la
 pixman;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libpixman-1.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/pixman-1.pc
 cairo;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libcairo.la;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/cairo.pc:TARGETS/usr/lib/pkgconfig/cairo-directfb.pc:TARGETS/usr/lib/pkgconfig/cairo-ft.pc:TARGETS/usr/lib/pkgconfig/cairo-png.pc
 expat;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libexpat.la
 libxmlccwrap;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxmlccwrap.la
 a52dec;make:install:DESTDIR=TARGETS
-libdvdcss;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libdvdcss.pc;rewrite-libtool:TARGETS/usr/lib/libdvdcss.la
-libdvdnav;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/dvdnav.pc:TARGETS/usr/lib/pkgconfig/dvdnavmini.pc;rewrite-libtool:TARGETS/usr/lib/libdvdnav.la:TARGETS/usr/lib/libdvdnavmini.la
-libdvdread;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/dvdread.pc
-ffmpeg;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libavcodec.pc:TARGETS/usr/lib/pkgconfig/libavdevice.pc:TARGETS/usr/lib/pkgconfig/libavformat.pc:TARGETS/usr/lib/pkgconfig/libavutil.pc:TARGETS/usr/lib/pkgconfig/libswscale.pc
-libass;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGET/usr/lib/pkgconfig/libass.pc;rewrite-libtool:TARGET/usr/lib/libass.la
+libdvdcss;rewrite-pkgconfig:src/libdvdcss.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libdvdcss.la
+libdvdnav;rewrite-pkgconfig:misc/dvdnav.pc:misc/dvdnavmini.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libdvdnav.la:TARGETS/usr/lib/libdvdnavmini.la
+libdvdread;rewrite-pkgconfig:misc/dvdread.pc;make:install:DESTDIR=TARGETS
+ffmpeg;rewrite-pkgconfig:libavcodec/libavcodec.pc:libavdevice/libavdevice.pc:libavformat/libavformat.pc:libavutil/libavutil.pc:libswscale/libswscale.pc;make:install:DESTDIR=TARGETS
+libass;rewrite-pkgconfig:libass.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libass.la
 libcap;make:install:DESTDIR=TARGETS
-libogg;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/ogg.pc;rewrite-libtool:TARGETS/usr/lib/libogg.la
-libflac;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/flac.pc;rewrite-libtool:TARGETS/usr/lib/libFLAC.la
+libogg;rewrite-pkgconfig:ogg.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libogg.la
+libflac;rewrite-pkgconfig:src/libFLAC/flac.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libFLAC.la
 evebrowser;make:install:DESTDIR=TARGETS
 brofs;make:install:DESTDIR=TARGETS/usr/bin
 libalsa;rewrite-pkgconfig:utils/alsa.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libasound.la
-rtmpdump;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/librtmp.pc
-libdvbsipp;make:install:prefix=/usr:DESTDIR=TARGETS
-libtuxtxt;rewrite-pkgconfig:tuxbox-tuxtxt.pc;make:install:prefix=/usr:DESTDIR=TARGETS
-tuxtxt32bpp;make:install:prefix=/usr:DESTDIR=TARGETS
-libdreamdvd;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libdreamdvd.pc
-libdreamdvd2;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libdreamdvd.pc
+rtmpdump;rewrite-pkgconfig:librtmp/librtmp.pc;make:install:prefix=/usr:DESTDIR=TARGETS
+libdvbsipp;rewrite-pkgconfig:libdvbsi++.pc;make:install:prefix=/usr:DESTDIR=TARGETS
+libtuxtxt;rewrite-pkgconfig:tuxbox-tuxtxt.pc;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libtuxtxt.la
+tuxtxt32bpp;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libtuxtxt32bpp.la
+libdreamdvd;rewrite-pkgconfig:libdreamdvd.pc;make:install:prefix=/usr:DESTDIR=TARGETS
+libdreamdvd2;rewrite-pkgconfig:libdreamdvd.pc;make:install:prefix=/usr:DESTDIR=TARGETS
 hotplug_e2;make:install:prefix=/usr:DESTDIR=TARGETS
 
 #
 # PYTHON
 #
-libxml2;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libxml-2.0.pc:TARGETS/usr/lib/pkgconfig/libxslt.pc;rewrite-libtool:TARGETS/usr/lib/libxml2.la;rewrite-dependency:TARGETS/usr/lib/;rewrite-libtool:TARGETS/usr/lib/python2.6/site-packages/libxml2mod.la
-libxslt;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libxslt.pc:TARGETS/usr/lib/pkgconfig/libexslt.pc;rewrite-libtool:TARGETS/usr/lib/libxslt.la:TARGETS/usr/lib/libexslt.la:TARGETS/usr/lib/python2.6/site-packages/libxsltmod.la
+libxml2;rewrite-pkgconfig:libxml-2.0.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxml2.la;rewrite-dependency:TARGETS/usr/lib/;rewrite-libtool:TARGETS/usr/lib/python2.6/site-packages/libxml2mod.la
+libxslt;rewrite-pkgconfig:libxslt.pc:libexslt.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libxslt.la:TARGETS/usr/lib/libexslt.la:TARGETS/usr/lib/python2.6/site-packages/libxsltmod.la
 
 #
 # GSTREAMER
 #
-gstreamer;rewrite-pkgconfig:pkgconfig/gstreamer.pc:pkgconfig/gstreamer-base.pc:pkgconfig/gstreamer-check.pc:pkgconfig/gstreamer-controller.pc:pkgconfig/gstreamer-dataprotocol.pc:pkgconfig/gstreamer-net.pc;make:install:DESTDIR=TARGET;rewrite-libtool:TARGETS/usr/lib/libgstreamer-0.10.la:TARGETS/usr/lib/libgstbase-0.10.la:TARGETS/usr/lib/libgstcheck-0.10.la:TARGETS/usr/lib/libgstcontroller-0.10.la:TARGETS/usr/lib/libgstdataprotocol-0.10.la:TARGETS/usr/lib/libgstnet-0.10.la;rewrite-dependency:TARGETS/usr/lib/libgstbase-0.10.la::TARGETS/usr/lib/libgstcheck-0.10.la:TARGETS/usr/lib/libgstcontroller-0.10.la:TARGETS/usr/lib/libgstdataprotocol-0.10.la:TARGETS/usr/lib/libgstnet-0.10.la
-gst_plugins_bad;rewrite-pkgconfig:pkgconfig/gstreamer-plugins-bad-0.10.pc:pkgconfig/gstreamer-basevideo.pc:pkgconfig/gstreamer-codecparsers.pc;make:install:DESTDIR=TARGETS
-gst_plugins_base;rewrite-pkgconfig:pkgconfig/gstreamer-plugins-base.pc:pkgconfig/gstreamer-app.pc:pkgconfig/gstreamer-audio.pc:pkgconfig/gstreamer-cdda.pc:pkgconfig/gstreamer-fft.pc:pkgconfig/gstreamer-floatcast.pc:pkgconfig/gstreamer-interfaces.pc:pkgconfig/gstreamer-netbuffer.pc:pkgconfig/gstreamer-pbutils.pc:pkgconfig/gstreamer-riff.pc:pkgconfig/gstreamer-rtp.pc:pkgconfig/gstreamer-rtsp.pc:pkgconfig/gstreamer-sdp.pc:pkgconfig/gstreamer-tag.pc:pkgconfig/gstreamer-video.pc;make:install:DESTDIR=TARGET;rewrite-libtool:TARGETS/usr/lib/libgstapp-0.10.la:TARGETS/usr/lib/libgstaudio-0.10.la:TARGETS/usr/lib/libgstcdda-0.10.la:TARGETS/usr/lib/libgstfft-0.10.la:TARGETS/usr/lib/libgstfloatcast-0.10.la:TARGETS/usr/lib/libgstinterfaces-0.10.la:TARGETS/usr/lib/libgstnetbuffer-0.10.la:TARGETS/usr/lib/libgstpbutils-0.10.la:TARGETS/usr/lib/libgstriff-0.10.la:TARGETS/usr/lib/libgstrtp-0.10.la:TARGETS/usr/lib/libgstrtsp-0.10.la:TARGETS/usr/lib/libgstsdp-0.10.la:TARGETS/usr/lib/libgsttag-0.10.la:TARGETS/usr/lib/libgstvideo-0.10.la;rewrite-dependency:TARGETS/usr/lib/libgstaudio-0.10.la:TARGETS/usr/lib/libgstcdda-0.10.la:TARGETS/usr/lib/libgstpbutils-0.10.la:TARGETS/usr/lib/libgstriff-0.10.la
-gst_plugins_good;rewrite-pkgconfig:pkgconfig/gstreamer-plugins-good-0.10-uninstalled.pc;make:install:DESTDIR=TARGETS
-gst_plugins_ugly;rewrite-pkgconfig:pkgconfig/gstreamer-plugins-ugly-0.10-uninstalled.pc;make:install:DESTDIR=TARGETS
+gstreamer;rewrite-pkgconfig:pkgconfig/gstreamer.pc:pkgconfig/gstreamer-base.pc:pkgconfig/gstreamer-check.pc:pkgconfig/gstreamer-controller.pc:pkgconfig/gstreamer-dataprotocol.pc:pkgconfig/gstreamer-net.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libgstreamer-0.10.la:TARGETS/usr/lib/libgstbase-0.10.la:TARGETS/usr/lib/libgstcheck-0.10.la:TARGETS/usr/lib/libgstcontroller-0.10.la:TARGETS/usr/lib/libgstdataprotocol-0.10.la:TARGETS/usr/lib/libgstnet-0.10.la;rewrite-dependency:TARGETS/usr/lib/libgstbase-0.10.la::TARGETS/usr/lib/libgstcheck-0.10.la:TARGETS/usr/lib/libgstcontroller-0.10.la:TARGETS/usr/lib/libgstdataprotocol-0.10.la:TARGETS/usr/lib/libgstnet-0.10.la
+gst_plugins_bad;rewrite-pkgconfig:pkgconfig/gstreamer-plugins-bad.pc:pkgconfig/gstreamer-basevideo.pc:pkgconfig/gstreamer-codecparsers.pc;make:install:DESTDIR=TARGETS
+gst_plugins_base;rewrite-pkgconfig:pkgconfig/gstreamer-plugins-base.pc:pkgconfig/gstreamer-app.pc:pkgconfig/gstreamer-audio.pc:pkgconfig/gstreamer-cdda.pc:pkgconfig/gstreamer-fft.pc:pkgconfig/gstreamer-floatcast.pc:pkgconfig/gstreamer-interfaces.pc:pkgconfig/gstreamer-netbuffer.pc:pkgconfig/gstreamer-pbutils.pc:pkgconfig/gstreamer-riff.pc:pkgconfig/gstreamer-rtp.pc:pkgconfig/gstreamer-rtsp.pc:pkgconfig/gstreamer-sdp.pc:pkgconfig/gstreamer-tag.pc:pkgconfig/gstreamer-video.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libgstapp-0.10.la:TARGETS/usr/lib/libgstaudio-0.10.la:TARGETS/usr/lib/libgstcdda-0.10.la:TARGETS/usr/lib/libgstfft-0.10.la:TARGETS/usr/lib/libgstfloatcast-0.10.la:TARGETS/usr/lib/libgstinterfaces-0.10.la:TARGETS/usr/lib/libgstnetbuffer-0.10.la:TARGETS/usr/lib/libgstpbutils-0.10.la:TARGETS/usr/lib/libgstriff-0.10.la:TARGETS/usr/lib/libgstrtp-0.10.la:TARGETS/usr/lib/libgstrtsp-0.10.la:TARGETS/usr/lib/libgstsdp-0.10.la:TARGETS/usr/lib/libgsttag-0.10.la:TARGETS/usr/lib/libgstvideo-0.10.la;rewrite-dependency:TARGETS/usr/lib/libgstaudio-0.10.la:TARGETS/usr/lib/libgstcdda-0.10.la:TARGETS/usr/lib/libgstpbutils-0.10.la:TARGETS/usr/lib/libgstriff-0.10.la
+gst_plugins_good;make:install:DESTDIR=TARGETS
+gst_plugins_ugly;make:install:DESTDIR=TARGETS
 gst_ffmpeg;make:install:DESTDIR=TARGETS
 gst_plugins_fluendo_mpegdemux;make:install:DESTDIR=TARGETS
 gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
@@ -126,9 +126,9 @@ gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
 # EXTERNAL_LCD
 #
 graphlcd;make:install:DESTDIR=TARGETS
-libusb;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libusb.pc;rewrite-libtool:TARGETS/usr/lib/libusb.la;rewrite-libtool:TARGETS/usr/lib/libusbpp.la
-libusb2;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libusb-1.0.pc;rewrite-libtool:TARGETS/usr/lib/libusb-1.0.la
-libusbcompat;make:install:DESTDIR=TARGETS;rewrite-pkgconfig:TARGETS/usr/lib/pkgconfig/libusb.pc;rewrite-libtool:TARGETS/usr/lib/libusb.la
+libusb;rewrite-pkgconfig:libusb.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libusb.la;rewrite-libtool:TARGETS/usr/lib/libusbpp.la
+libusb2;rewrite-pkgconfig:libusb-1.0.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libusb-1.0.la
+libusbcompat;rewrite-pkgconfig:libusb.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libusb.la
 libgd2;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libgd.la
 
 #
