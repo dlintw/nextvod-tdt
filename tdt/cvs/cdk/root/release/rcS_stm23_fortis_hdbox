@@ -30,7 +30,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    echo "init stmfb"
    insmod $MODDIR/stmcore-display-stx7109c3.ko
-   insmod $MODDIR/stmfb.ko display0=720x576-32@50:12m:pal:yuv:yuv;;
+   insmod $MODDIR/stmfb.ko display0=720x576-32@50:15m:pal:yuv:yuv
   
    echo "STB7100-VIDEO"
    /bin/ustslave /dev/st231-0 /boot/video.elf
