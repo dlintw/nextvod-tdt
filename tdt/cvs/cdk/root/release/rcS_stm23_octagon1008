@@ -33,9 +33,10 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING MODULES"   
    echo "LOADING MODULES" >/dev/vfd
 
-   echo "load a/v firmware"
-   /bin/stslave -t stb7100.0 -R /boot/video.elf
-   /bin/stslave -t stb7100.1 -R /boot/audio.elf
+   echo "STB7100-VIDEO"
+   /bin/ustslave /dev/st231-0 /boot/video.elf
+   echo "STB7100-AUDIO"
+   /bin/ustslave /dev/st231-1 /boot/audio.elf
 
    echo "init embx"
    insmod $MODDIR/embxshell.ko
