@@ -21,21 +21,21 @@ insmod $MODDIR/e2_proc.ko
 
 if [ ! -e /var/etc/.firstboot ]; then
 
-  echo "Starting DEBUG Interface"
+   echo "Starting DEBUG Interface"
    /etc/init.d/mountall start
    /etc/init.d/hostname start
 
-  echo "starting telnetd"
+   echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/autologin
 
-  echo "init stmfb"
-    insmod $MODDIR/stmcore-display-stx7109c3.ko
-    insmod $MODDIR/stmfb.ko display0=720x576-32@60:12m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
+   echo "init stmfb"
+   insmod $MODDIR/stmcore-display-stx7109c3.ko
+   insmod $MODDIR/stmfb.ko display0=720x576-32@50:15m:pal:yuv:yuv
   
-  echo "STB7100-VIDEO"
-	/bin/stslave -t stb7100.0 -R /boot/video.elf
-  echo "STB7100-AUDIO"
-	/bin/stslave -t stb7100.1 -R /boot/audio.elf
+   echo "STB7100-VIDEO"
+   /bin/ustslave /dev/st231-0 /boot/video.elf
+   echo "STB7100-AUDIO"
+   /bin/ustslave /dev/st231-1 /boot/audio.elf
 
    echo "LOADING MODULES"
    echo "LOADING MODULES" >/dev/vfd
@@ -113,18 +113,18 @@ if [ ! -e /var/etc/.firstboot ]; then
    #delay
    /bin/evremote2 10 140 &
 
-	echo "init cardreader"
-	mknod /dev/sci0 c 253 0
-	mknod /dev/sci1 c 253 1
+   echo "init cardreader"
+   mknod /dev/sci0 c 253 0
+   mknod /dev/sci1 c 253 1
 #	insmod $MODDIR/sci-ng.ko
 
    #DVD-PLAYER EXIT-TASTE LOAD OR EJECT DVD
    #mount /dev/sr0 /media/dvd
    #fix this later if we got to manage a marusys raw device driver
 
-  /etc/init.d/portmap start
-  /etc/init.d/vsftpd start
-  /usr/sbin/inetd
+   /etc/init.d/portmap start
+   /etc/init.d/vsftpd start
+   /usr/sbin/inetd
 
    #timefix e2
    date -s "121220001970"
@@ -158,7 +158,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 		   echo "ERROR"
            init 6;;
       esac
-   done 
+   done
 fi
 
 #never reached
