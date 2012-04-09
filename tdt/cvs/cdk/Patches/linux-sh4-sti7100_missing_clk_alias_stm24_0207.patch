@@ -1,0 +1,14 @@
+--- linux-sh4-orig/drivers/stm/stx7100_clock.c	2011-02-04 18:18:02.000000000 +0100
++++ linux-sh4/drivers/stm/stx7100_clock.c	2011-02-24 09:07:12.173372582 +0100
+@@ -31,5 +31,11 @@
+ 	/* usb_phy_clk generated internally to the wrapped system PLL */
+ 	/* usb_48_clk generated internally to the wrapped system PLL */
+ 
++	clk_add_alias("pcm_player_clk", "snd_pcm_player.0", "CLKC_FS0_CH1",
++		NULL);
++	clk_add_alias("pcm_player_clk", "snd_pcm_player.1", "CLKC_FS0_CH2",
++		NULL);
++	clk_add_alias("spdif_player_clk", NULL, "CLKC_FS0_CH3", NULL);
++
+ 	return 0;
+ }
