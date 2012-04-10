@@ -1,3 +1,13 @@
+--- openpli-plugins-enigma2/networkbrowser/src/NetworkBrowser.py.org	2012-03-31 14:38:41.108148992 -0700
++++ openpli-plugins-enigma2/networkbrowser/src/NetworkBrowser.py	2012-04-01 11:34:30.679747955 -0700
+@@ -134,7 +134,6 @@
+ 
+ 	def cleanup(self):
+ 		del self.Timer
+-		iAutoMount.stopMountConsole()
+ 		iNetwork.stopRestartConsole()
+ 		iNetwork.stopGetInterfacesConsole()
+ 
 --- openpli-plugins-enigma2/networkbrowser/src/plugin.py.org	2012-03-31 14:38:41.108148992 -0700
 +++ openpli-plugins-enigma2/networkbrowser/src/plugin.py	2012-04-01 11:34:30.679747955 -0700
 @@ -25,23 +25,11 @@
