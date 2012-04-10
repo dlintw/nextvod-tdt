@@ -1281,7 +1281,6 @@ $(DEPDIR)/elementtree: \
 $(DEPDIR)/%elementtree: %python elementtree.do_compile
 	cd @DIR_elementtree@ && \
 		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONHOME=$(targetprefix)/usr \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
 #	@DISTCLEANUP_elementtree@
 	[ "x$*" = "x" ] && touch $@ || true
