@@ -138,7 +138,8 @@ libdreamdvd2;1.0;libdreamdvd;;patch:libdreamdvd-1.0-support_sh4.patch
 # PYTHON
 #
 elementtree;1.2.6-20050316;elementtree-1.2.6-20050316;elementtree-1.2.6-20050316.tar.gz;extract:elementtree-1.2.6-20050316.tar.gz
-libxml2;2.6.30;libxml2-2.6.30;libxml2-2.6.30.tar.gz;extract:libxml2-2.6.30.tar.gz
+#libxml2;2.6.30;libxml2-2.6.30;libxml2-2.6.30.tar.gz;extract:libxml2-2.6.30.tar.gz
+libxml2;2.7.8;libxml2-2.7.8;libxml2-2.7.8.tar.gz:libxml2-2.7.8.diff;extract:libxml2-2.7.8.tar.gz;patch:libxml2-2.7.8.diff
 libxslt;1.1.24;libxslt-1.1.24;libxslt-1.1.24.tar.gz;extract:libxslt-1.1.24.tar.gz
 lxml;2.0.5;lxml-2.0.5;lxml-2.0.5.tgz;extract:lxml-2.0.5.tgz
 setuptools;0.6c8;setuptools-0.6c8;setuptools-0.6c8.tar.gz;extract:setuptools-0.6c8.tar.gz

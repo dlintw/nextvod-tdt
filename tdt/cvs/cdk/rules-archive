@@ -137,6 +137,7 @@ libdvbsi++-0.3.6.tar.bz2;http://www.saftware.de/libdvbsi++
 #
 elementtree-1.2.6-20050316.tar.gz;http://effbot.org/media/downloads
 libxml2-2.6.30.tar.gz;ftp://ftp.gnome.org/pub/GNOME/sources/libxml2/2.6
+libxml2-2.7.8.tar.gz;http://xmlsoft.org/sources/
 libxslt-1.1.24.tar.gz;http://xmlsoft.org/sources
 lxml-2.0.5.tgz;http://launchpad.net/lxml/2.0/2.0.5/+download
 setuptools-0.6c8.tar.gz;http://pypi.python.org/packages/source/s/setuptools
