@@ -1266,11 +1266,13 @@ endif
 	$(INSTALL_DIR) $(prefix)/release/usr/lib/python2.6
 	cp -a $(targetprefix)/usr/lib/python2.6/* $(prefix)/release/usr/lib/python2.6/
 	rm -rf $(prefix)/release/usr/lib/python2.6/test
+	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/Cheetah-2.4.4-py2.6.egg-info
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/lxml
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/lxml-2.0.5-py2.6.egg-info
 	rm -f $(prefix)/release/usr/lib/python2.6/site-packages/libxml2mod.so
 	rm -f $(prefix)/release/usr/lib/python2.6/site-packages/libxsltmod.so
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/OpenSSL/test
+	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/python_wiffi-0.5.0-py2.6.egg-info
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/setuptools
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/setuptools-0.6c8-py2.6.egg-info
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/zope.interface-3.3.0-py2.6.egg-info
