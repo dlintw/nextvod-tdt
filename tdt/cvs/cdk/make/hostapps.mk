@@ -76,9 +76,12 @@ $(DEPDIR)/host-python: @DEPENDS_host_python@
 	@PREPARE_host_python@ && \
 	( cd @DIR_host_python@ && \
 		rm -rf config.cache; \
+		autoconf && \
 		CONFIG_SITE= \
 		OPT="$(HOST_CFLAGS)" \
-		./configure --without-cxx-main --without-threads && \
+		./configure \
+			--without-cxx-main \
+			--without-threads && \
 		$(MAKE) python Parser/pgen && \
 		mv python ./hostpython && \
 		mv Parser/pgen ./hostpgen && \
@@ -98,3 +101,4 @@ $(DEPDIR)/host-python: @DEPENDS_host_python@
 			all install && \
 		cp ./hostpgen $(crossprefix)/bin/pgen ) && \
 	touch $@
+
