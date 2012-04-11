@@ -1281,7 +1281,6 @@ $(DEPDIR)/elementtree: \
 $(DEPDIR)/%elementtree: %python elementtree.do_compile
 	cd @DIR_elementtree@ && \
 		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
-		PYTHONHOME=$(targetprefix)/usr \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
 #	@DISTCLEANUP_elementtree@
 	[ "x$*" = "x" ] && touch $@ || true
@@ -1507,6 +1506,7 @@ $(DEPDIR)/python.do_prepare: host-python @DEPENDS_python@
 
 $(DEPDIR)/python.do_compile: openssl openssl-dev sqlite bootstrap python.do_prepare
 	( cd @DIR_python@ && \
+		autoconf && \
 		CONFIG_SITE= \
 		$(BUILDENV) \
 		./configure \
@@ -1519,6 +1519,7 @@ $(DEPDIR)/python.do_compile: openssl openssl-dev sqlite bootstrap python.do_prep
 			--disable-ipv6 \
 			--without-cxx-main \
 			--with-threads \
+			--with-pymalloc \
 			HOSTPYTHON=$(crossprefix)/bin/python \
 			OPT="$(TARGET_CFLAGS)" && \
 		$(MAKE) $(MAKE_ARGS) \
