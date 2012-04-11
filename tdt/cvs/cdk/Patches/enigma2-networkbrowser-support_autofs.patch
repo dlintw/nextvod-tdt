@@ -1,5 +1,5 @@
---- openpli-plugins-enigma2/networkbrowser/src/NetworkBrowser.py.org	2012-03-31 14:38:41.108148992 -0700
-+++ openpli-plugins-enigma2/networkbrowser/src/NetworkBrowser.py	2012-04-01 11:34:30.679747955 -0700
+--- enigma2-networkbrowser/src/NetworkBrowser.py.org	2012-03-31 14:38:41.108148992 -0700
++++ enigma2-networkbrowser/src/NetworkBrowser.py	2012-04-01 11:34:30.679747955 -0700
 @@ -134,7 +134,6 @@
  
  	def cleanup(self):
@@ -8,8 +8,8 @@
  		iNetwork.stopRestartConsole()
  		iNetwork.stopGetInterfacesConsole()
  
---- openpli-plugins-enigma2/networkbrowser/src/plugin.py.org	2012-03-31 14:38:41.108148992 -0700
-+++ openpli-plugins-enigma2/networkbrowser/src/plugin.py	2012-04-01 11:34:30.679747955 -0700
+--- enigma2-networkbrowser/src/plugin.py.org	2012-03-31 14:38:41.108148992 -0700
++++ enigma2-networkbrowser/src/plugin.py	2012-04-01 11:34:30.679747955 -0700
 @@ -25,23 +25,11 @@
  def MountManagerCallFunction(iface):
  	return MountManagerMain
@@ -34,8 +34,8 @@
 -				"menuEntryDescription": lambda x: _("Attempt to recover lost mounts (in background)")})
  	]
  
---- openpli-plugins-enigma2/networkbrowser/src/AutoMount.py.org	2012-03-31 14:38:41.100148992 -0700
-+++ openpli-plugins-enigma2/networkbrowser/src/AutoMount.py	2012-04-01 11:34:27.919747954 -0700
+--- enigma2-networkbrowser/src/AutoMount.py.org	2012-03-31 14:38:41.100148992 -0700
++++ enigma2-networkbrowser/src/AutoMount.py	2012-04-01 11:34:27.919747954 -0700
 @@ -2,12 +2,12 @@
  # for localized messages
  from __init__ import _
