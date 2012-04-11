@@ -34,13 +34,12 @@ $(DEPDIR)/enigma2-openpli-plugins-enigma2.do_prepare:
 # enigma2-networkbrowser
 #
 
-$(DEPDIR)/enigma2-networkbrowser.do_prepare: $(DEPDIR)/enigma2-openpli-plugins-enigma2.do_prepare 
-	cd openpli-plugins-enigma2 && \
-	patch -p1 < $(buildprefix)/Patches/enigma2-networkbrowser-support_autofs.patch
+$(DEPDIR)/enigma2_networkbrowser.do_prepare:  @DEPENDS_enigma2_networkbrowser@
+	@PREPARE_enigma2_networkbrowser@
 	touch $@
 
-$(DEPDIR)/enigma2-networkbrowser.do_compile: $(DEPDIR)/enigma2-networkbrowser.do_prepare 
-	cd openpli-plugins-enigma2/networkbrowser/src/lib && \
+$(DEPDIR)/enigma2_networkbrowser.do_compile: $(DEPDIR)/enigma2_networkbrowser.do_prepare 
+	cd @DIR_enigma2_networkbrowser@/src/lib && \
 		$(BUILDENV) \
 		sh4-linux-gcc -shared -o netscan.so \
 			-I $(targetprefix)/usr/include/python2.6 \
@@ -61,7 +60,7 @@ $(DEPDIR)/enigma2-networkbrowser.do_compile: $(DEPDIR)/enigma2-networkbrowser.do
 			statusq.c \
 			statusq.h \
 			time_compat.h
-	cd openpli-plugins-enigma2/networkbrowser && \
+	cd @DIR_enigma2_networkbrowser@ && \
 		mkdir -p $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/NetworkBrowser && \
 		cp -a po $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/NetworkBrowser/ && \
 		cp -a meta $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/NetworkBrowser/ && \
@@ -70,10 +69,9 @@ $(DEPDIR)/enigma2-networkbrowser.do_compile: $(DEPDIR)/enigma2-networkbrowser.do
 		rm -rf $(targetprefix)/usr/lib/enigma2/python/Plugins/SystemPlugins/NetworkBrowser/lib
 	touch $@
 
-$(DEPDIR)/min-enigma2-networkbrowser $(DEPDIR)/std-enigma2-networkbrowser $(DEPDIR)/max-enigma2-networkbrowser \
-$(DEPDIR)/enigma2-networkbrowser: \
-$(DEPDIR)/%enigma2-networkbrowser: $(DEPDIR)/enigma2-networkbrowser.do_compile
-#	@DISTCLEANUP_enigma2-networkbrowser@
-	@[ "x$*" = "x" ] && touch $@ || true
+$(DEPDIR)/min-enigma2_networkbrowser $(DEPDIR)/std-enigma2_networkbrowser $(DEPDIR)/max-enigma2_networkbrowser \
+$(DEPDIR)/enigma2_networkbrowser: \
+$(DEPDIR)/%enigma2_networkbrowser: $(DEPDIR)/enigma2_networkbrowser.do_compile
+#	@DISTCLEANUP_enigma2_networkbrowser@
 
 

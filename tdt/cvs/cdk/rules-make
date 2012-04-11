@@ -154,6 +154,11 @@ pythoncheetah;2.4.4;Cheetah-2.4.4;Cheetah-2.4.4.tar.gz;extract:Cheetah-2.4.4.tar
 zope_interface;3.3.0;zope.interface-3.3.0;zope.interface-3.3.0.tar.gz;extract:zope.interface-3.3.0.tar.gz
 
 #
+# ENGIMA2
+#
+enigma2_networkbrowser;1.0;enigma2-networkbrowser;enigma2-openpli-plugins-enigma2.git:enigma2-networkbrowser-support_autofs.patch;extract:enigma2-openpli-plugins-enigma2.git/networkbrowser:enigma2-networkbrowser;patch:enigma2-networkbrowser-support_autofs.patch
+
+#
 # GSTREAMER
 #
 #gstreamer;0.11.1;gstreamer-0.11.1;gstreamer-0.11.1.tar.bz2;extract:gstreamer-0.11.1.tar.bz2

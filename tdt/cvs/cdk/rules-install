@@ -123,6 +123,11 @@ gst_plugins_fluendo_mpegdemux;make:install:DESTDIR=TARGETS
 gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
 
 #
+# ENGIMA2
+#
+enigma2_networkbrowser;make:install:DESTDIR=TARGETS
+
+#
 # EXTERNAL_LCD
 #
 graphlcd;make:install:DESTDIR=TARGETS

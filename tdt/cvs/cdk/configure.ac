@@ -965,6 +965,11 @@ TUXBOX_RULES_MAKE(gst_plugins_fluendo_mpegdemux)
 TUXBOX_RULES_MAKE(gst_plugins_dvbmediasink)
 
 #
+# enigma2
+#
+TUXBOX_RULES_MAKE(enigma2_networkbrowser)
+
+#
 # external lcd
 #
 TUXBOX_RULES_MAKE(graphlcd)

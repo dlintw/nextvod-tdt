@@ -165,6 +165,11 @@ gst-ffmpeg-0.10.13.tar.bz2;http://gstreamer.freedesktop.org/src/gst-ffmpeg
 gst-fluendo-mpegdemux-0.10.69.tar.gz;http://core.fluendo.com/gstreamer/src/gst-fluendo-mpegdemux
 
 #
+# ENIGMA2
+#
+enigma2-openpli-plugins-enigma2.git;git://openpli.git.sourceforge.net/gitroot/openpli/plugins-enigma2
+
+#
 # EXTERNAL_LCD
 #
 graphlcd-base-touchcol.git;git://projects.vdr-developer.org/graphlcd-base.git;a39f265732d0bc28cb66b58b5ecf1964a130d02b;touchcol
