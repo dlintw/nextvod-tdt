@@ -31,8 +31,7 @@ ccache;2.4;ccache-2.4;ccache-2.4.tar.gz;extract:ccache-2.4.tar.gz
 cramfs;1.1;cramfs-1.1;cramfs-1.1.tar.gz;extract:cramfs-1.1.tar.gz
 ipkg_utils;050831;ipkg-utils-050831;ipkg-utils-050831.tar.gz;extract:ipkg-utils-050831.tar.gz;patch:ipkg-utils.diff
 ipkg_host;0.99.163;ipkg-host;ipkg-0.99.163.tar.gz:ipkg-host.diff;dirextract:ipkg-0.99.163.tar.gz;patch:ipkg-host.diff
-#host_python;2.6;host-python-2.6;Python-2.6.tar.bz2:python_2.6.diff;extract:Python-2.6.tar.bz2;move:Python-2.6:host-python-2.6;patch:python_2.6.diff
-host_python;2.6.6;host-python-2.6.6;Python-2.6.6.tar.bz2:python_2.6.6.diff;extract:Python-2.6.6.tar.bz2;move:Python-2.6.6:host-python-2.6.6;patch:python_2.6.6.diff
+host_python;2.6;host-python-2.6;Python-2.6.tar.bz2:python_2.6.diff;extract:Python-2.6.tar.bz2;move:Python-2.6:host-python-2.6;patch:python_2.6.diff
 libtool;2.2.6a;libtool-2.2.6;libtool-2.2.6a.tar.gz:libtool-2.2.6a-cross_compile.patch:libtool-2.2.6a-trailing_slash.patch;extract:libtool-2.2.6a.tar.gz;patch:libtool-2.2.6a-cross_compile.patch;patch:libtool-2.2.6a-trailing_slash.patch
 #libtool;2.4;libtool-2.4;libtool-2.4.tar.gz:libtool-2.4-cross_compile.patch:libtool-2.4-trailing_slash.patch;extract:libtool-2.4.tar.gz;patch:libtool-2.4-cross_compile.patch;patch:libtool-2.4-trailing_slash.patch
 
@@ -129,8 +128,8 @@ brofs;1.2;BroFS1.2;BroFS1.2.tgz;extract:BroFS1.2.tgz
 libalsa;1.0.21a;alsa-lib-1.0.21a;alsa-lib-1.0.21a.tar.bz2:alsa-lib-1.0.21a-soft_float.patch;extract:alsa-lib-1.0.21a.tar.bz2;patch:alsa-lib-1.0.21a-soft_float.patch
 rtmpdump;2.4;rtmpdump-2.4;rtmpdump-2.4.tar.gz;extract:rtmpdump-2.4.tar.gz;move:rtmpdump:rtmpdump-2.4
 libdvbsipp;0.3.6;libdvbsi++-0.3.6;libdvbsi++-0.3.6.tar.bz2;extract:libdvbsi++-0.3.6.tar.bz2;patch:libdvbsi++-0.3.6-fix_unaligned_access.patch
-libtuxtxt;1.0;tuxtxt/libtuxtxt;;
-tuxtxt32bpp;1.0;tuxtxt/tuxtxt;;
+libtuxtxt;1.0;libtuxtxt;libtuxtxt.git:libtuxtxt-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/libtuxtxt;patch:libtuxtxt-1.0-fix_dbox_headers.diff
+tuxtxt32bpp;1.0;tuxtxt;libtuxtxt.git:tuxtxt32bpp-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/tuxtxt;patch:tuxtxt32bpp-1.0-fix_dbox_headers.diff
 libdreamdvd;1.0;libdreamdvd;;link:../apps/misc/tools/libdreamdvd:libdreamdvd
 libdreamdvd2;1.0;libdreamdvd;;patch:libdreamdvd-1.0-support_sh4.patch
 
@@ -138,8 +137,7 @@ libdreamdvd2;1.0;libdreamdvd;;patch:libdreamdvd-1.0-support_sh4.patch
 # PYTHON
 #
 elementtree;1.2.6-20050316;elementtree-1.2.6-20050316;elementtree-1.2.6-20050316.tar.gz;extract:elementtree-1.2.6-20050316.tar.gz
-#libxml2;2.6.30;libxml2-2.6.30;libxml2-2.6.30.tar.gz;extract:libxml2-2.6.30.tar.gz
-libxml2;2.7.8;libxml2-2.7.8;libxml2-2.7.8.tar.gz:libxml2-2.7.8.diff;extract:libxml2-2.7.8.tar.gz;patch:libxml2-2.7.8.diff
+libxml2;2.6.30;libxml2-2.6.30;libxml2-2.6.30.tar.gz;extract:libxml2-2.6.30.tar.gz
 libxslt;1.1.24;libxslt-1.1.24;libxslt-1.1.24.tar.gz;extract:libxslt-1.1.24.tar.gz
 lxml;2.0.5;lxml-2.0.5;lxml-2.0.5.tgz;extract:lxml-2.0.5.tgz
 setuptools;0.6c8;setuptools-0.6c8;setuptools-0.6c8.tar.gz;extract:setuptools-0.6c8.tar.gz
@@ -147,8 +145,7 @@ twisted;8.2.0;Twisted-8.2.0;Twisted-8.2.0.tar.bz2;extract:Twisted-8.2.0.tar.bz2
 twistedweb2;8.1.0;TwistedWeb2-8.1.0;TwistedWeb2-8.1.0.tar.bz2;extract:TwistedWeb2-8.1.0.tar.bz2
 pilimaging;1.1.7;Imaging-1.1.7;Imaging-1.1.7.tar.gz;extract:Imaging-1.1.7.tar.gz
 pyopenssl;0.8;pyOpenSSL-0.8;pyOpenSSL-0.8.tar.gz;extract:pyOpenSSL-0.8.tar.gz
-#python;2.6;python-2.6;Python-2.6.tar.bz2:python_2.6.diff:python-2.6-force_largefile_support.diff;extract:Python-2.6.tar.bz2;move:Python-2.6:python-2.6;patch:python_2.6.diff;patch:python-2.6-force_largefile_support.diff
-python;2.6.6;python-2.6.6;Python-2.6.6.tar.bz2:python_2.6.6.diff;extract:Python-2.6.6.tar.bz2;move:Python-2.6.6:python-2.6.6;patch:python_2.6.6.diff
+python;2.6;python-2.6;Python-2.6.tar.bz2:python_2.6.diff:python-2.6-force_largefile_support.diff;extract:Python-2.6.tar.bz2;move:Python-2.6:python-2.6;patch:python_2.6.diff;patch:python-2.6-force_largefile_support.diff
 pythonwifi;0.5.0;python-wifi-0.5.0;python-wifi-0.5.0.tar.bz2;extract:python-wifi-0.5.0.tar.bz2
 pythoncheetah;2.4.4;Cheetah-2.4.4;Cheetah-2.4.4.tar.gz;extract:Cheetah-2.4.4.tar.gz
 zope_interface;3.3.0;zope.interface-3.3.0;zope.interface-3.3.0.tar.gz;extract:zope.interface-3.3.0.tar.gz
@@ -172,7 +169,7 @@ gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;;link:../apps/mi
 #
 # EXTERNAL_LCD
 #
-graphlcd;base-touchcol;graphlcd-base-touchcol;;
+graphlcd;base-touchcol;graphlcd-base-touchcol;graphlcd-base-touchcol.git:graphlcd.patch;extract:graphlcd-base-touchcol.git;patch:graphlcd.patch
 libusb;0.1.12;libusb-0.1.12;libusb-0.1.12.tar.gz;extract:libusb-0.1.12.tar.gz
 libusb2;1.0.8;libusb-1.0.8;libusb-1.0.8.tar.bz2;extract:libusb-1.0.8.tar.bz2
 libusbcompat;0.1.3;libusb-compat-0.1.3;libusb-compat-0.1.3.tar.bz2;extract:libusb-compat-0.1.3.tar.bz2

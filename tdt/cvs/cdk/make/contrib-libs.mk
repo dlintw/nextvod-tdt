@@ -1281,6 +1281,7 @@ $(DEPDIR)/elementtree: \
 $(DEPDIR)/%elementtree: %python elementtree.do_compile
 	cd @DIR_elementtree@ && \
 		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
+		PYTHONHOME=$(targetprefix)/usr \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
 #	@DISTCLEANUP_elementtree@
 	[ "x$*" = "x" ] && touch $@ || true
@@ -1506,7 +1507,6 @@ $(DEPDIR)/python.do_prepare: host-python @DEPENDS_python@
 
 $(DEPDIR)/python.do_compile: openssl openssl-dev sqlite bootstrap python.do_prepare
 	( cd @DIR_python@ && \
-		autoconf && \
 		CONFIG_SITE= \
 		$(BUILDENV) \
 		./configure \
@@ -1519,7 +1519,6 @@ $(DEPDIR)/python.do_compile: openssl openssl-dev sqlite bootstrap python.do_prep
 			--disable-ipv6 \
 			--without-cxx-main \
 			--with-threads \
-			--with-pymalloc \
 			HOSTPYTHON=$(crossprefix)/bin/python \
 			OPT="$(TARGET_CFLAGS)" && \
 		$(MAKE) $(MAKE_ARGS) \
@@ -1909,11 +1908,7 @@ $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
 #
 $(DEPDIR)/graphlcd.do_prepare: bootstrap libusb @DEPENDS_graphlcd@
 	@PREPARE_graphlcd@
-	git clone git://projects.vdr-developer.org/graphlcd-base.git --branch touchcol graphlcd-base-touchcol;
-	cd @DIR_graphlcd@ && \
-	patch -p1 < $(buildprefix)/Patches/graphlcd.patch
 	touch $@
-
 
 $(DEPDIR)/graphlcd.do_compile: $(DEPDIR)/graphlcd.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
@@ -2197,10 +2192,7 @@ $(DEPDIR)/%libdvbsipp: $(DEPDIR)/libdvbsipp.do_compile
 # libtuxtxt
 #
 $(DEPDIR)/libtuxtxt.do_prepare: @DEPENDS_libtuxtxt@
-	rm -rf $(buildprefix)/tuxtxt && \
-	git clone git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;
-	cd @DIR_libtuxtxt@ && \
-	patch -p1 < $(buildprefix)/Patches/libtuxtxt-1.0-fix_dbox_headers.diff
+	@PREPARE_libtuxtxt@
 	touch $@
 
 $(DEPDIR)/libtuxtxt.do_compile: $(DEPDIR)/libtuxtxt.do_prepare
@@ -2234,8 +2226,7 @@ $(DEPDIR)/%libtuxtxt: $(DEPDIR)/libtuxtxt.do_compile
 # tuxtxt32bpp
 #
 $(DEPDIR)/tuxtxt32bpp.do_prepare: libtuxtxt @DEPENDS_tuxtxt32bpp@
-	cd @DIR_tuxtxt32bpp@ && \
-		patch -p1 < $(buildprefix)/Patches/tuxtxt32bpp-1.0-fix_dbox_headers.diff;
+	@PREPARE_tuxtxt32bpp@
 	touch $@
 
 $(DEPDIR)/tuxtxt32bpp.do_compile: $(DEPDIR)/tuxtxt32bpp.do_prepare
