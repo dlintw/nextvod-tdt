@@ -1,7 +1,16 @@
 diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/configure.in python-2.6.6/configure.in
 --- python-2.6.6.org/configure.in	2010-05-25 04:27:03.000000000 +0200
 +++ python-2.6.6/configure.in	2012-04-09 18:43:41.000000000 +0200
-@@ -2697,50 +2697,6 @@
+@@ -1500,7 +1500,7 @@
+ }],
+ ac_cv_sizeof_off_t=`cat conftestval`,
+ ac_cv_sizeof_off_t=0,
+-ac_cv_sizeof_off_t=4)
++ac_cv_sizeof_off_t=8)
+ ])
+ AC_MSG_RESULT($ac_cv_sizeof_off_t)
+ AC_DEFINE_UNQUOTED(SIZEOF_OFF_T, $ac_cv_sizeof_off_t,
+@@ -2713,50 +2713,6 @@
    AC_CHECK_LIB(resolv, inet_aton)
  )
  
@@ -52,7 +61,16 @@ diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/configure.in python-2.6.
  dnl Check if system zlib has *Copy() functions
  dnl
  dnl On MacOSX the linker will search for dylibs on the entire linker path
-@@ -3844,45 +3800,6 @@
+@@ -3011,7 +2967,7 @@
+ buggygetaddrinfo=yes
+ ])
+ 
+-if test "$buggygetaddrinfo" = "yes"; then
++if test "$buggygetaddrinfo" = "yes" -a x"$cross_compiling" != "xyes"; then
+ 	if test "$ipv6" = "yes"; then
+ 		echo 'Fatal: You must get working getaddrinfo() function.'
+ 		echo '       or you can specify "--disable-ipv6"'.
+@@ -3860,48 +3816,9 @@
    AC_MSG_RESULT(no)
  fi
  
@@ -97,7 +115,11 @@ diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/configure.in python-2.6.
 -
  AC_CHECK_TYPE(socklen_t,,
    AC_DEFINE(socklen_t,int,
-             Define to `int' if <sys/socket.h> does not define.),[
+-            Define to `int' if <sys/socket.h> does not define.),[
++            Define to 'int' if <sys/socket.h> does not define.),[
+ #ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
+ #endif
 diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Include/pyport.h python-2.6.6/Include/pyport.h
 --- python-2.6.6.org/Include/pyport.h	2010-05-09 17:15:40.000000000 +0200
 +++ python-2.6.6/Include/pyport.h	2012-04-09 18:43:41.000000000 +0200
@@ -160,32 +182,6 @@ diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Lib/distutils/command/bu
              libraries=self.get_libraries(ext),
              library_dirs=ext.library_dirs,
              runtime_library_dirs=ext.runtime_library_dirs,
-diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Lib/distutils/unixccompiler.py python-2.6.6/Lib/distutils/unixccompiler.py
---- python-2.6.6.org/Lib/distutils/unixccompiler.py	2010-06-27 14:39:22.000000000 +0200
-+++ python-2.6.6/Lib/distutils/unixccompiler.py	2012-04-09 18:43:41.000000000 +0200
-@@ -305,6 +305,8 @@
-         dylib_f = self.library_filename(lib, lib_type='dylib')
-         static_f = self.library_filename(lib, lib_type='static')
- 
-+        print "Looking in %s for %s" % (lib, dirs)
-+
-         if sys.platform == 'darwin':
-             # On OSX users can specify an alternate SDK using
-             # '-isysroot', calculate the SDK root if it is specified
-@@ -336,10 +338,13 @@
-             # assuming that *all* Unix C compilers do.  And of course I'm
-             # ignoring even GCC's "-static" option.  So sue me.
-             if os.path.exists(dylib):
-+                print "Found %s" % (dylib)
-                 return dylib
-             elif os.path.exists(shared):
-+                print "Found %s" % (shared)
-                 return shared
-             elif os.path.exists(static):
-+                print "Found %s" % (static) 
-                 return static
- 
-         # Oops, didn't find it in *any* of 'dirs'
 diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Lib/plat-linux3/regen python-2.6.6/Lib/plat-linux3/regen
 --- python-2.6.6.org/Lib/plat-linux3/regen	1970-01-01 01:00:00.000000000 +0100
 +++ python-2.6.6/Lib/plat-linux3/regen	2012-04-09 18:43:41.000000000 +0200
@@ -250,7 +246,15 @@ diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Lib/sitecustomize.py pyt
 diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Makefile.pre.in python-2.6.6/Makefile.pre.in
 --- python-2.6.6.org/Makefile.pre.in	2010-08-02 00:05:31.000000000 +0200
 +++ python-2.6.6/Makefile.pre.in	2012-04-09 18:43:41.000000000 +0200
-@@ -197,6 +197,7 @@
+@@ -175,6 +175,7 @@
+ 
+ PYTHON=		python$(EXE)
+ BUILDPYTHON=	python$(BUILDEXE)
++HOSTPYTHON=	./$(BUILDPYTHON)
+ 
+ # The task to run while instrument when building the profile-opt target
+ PROFILE_TASK=	$(srcdir)/Tools/pybench/pybench.py -n 2 --with-gc --with-syscheck
+@@ -197,6 +198,7 @@
  
  ##########################################################################
  # Grammar
@@ -258,7 +262,7 @@ diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Makefile.pre.in python-2
  GRAMMAR_H=	$(srcdir)/Include/graminit.h
  GRAMMAR_C=	$(srcdir)/Python/graminit.c
  GRAMMAR_INPUT=	$(srcdir)/Grammar/Grammar
-@@ -205,6 +206,7 @@
+@@ -205,6 +207,7 @@
  ##########################################################################
  # Parser
  PGEN=		Parser/pgen$(EXE)
@@ -266,7 +270,7 @@ diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Makefile.pre.in python-2
  
  POBJS=		\
  		Parser/acceler.o \
-@@ -394,8 +396,10 @@
+@@ -394,8 +397,10 @@
  # Build the shared modules
  sharedmods: $(BUILDPYTHON)
  	@case $$MAKEFLAGS in \
@@ -279,7 +283,7 @@ diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Makefile.pre.in python-2
  	esac
  
  # Build static library
-@@ -514,10 +518,24 @@
+@@ -514,10 +519,24 @@
  Modules/python.o: $(srcdir)/Modules/python.c
  	$(MAINCC) -c $(PY_CFLAGS) -o $@ $(srcdir)/Modules/python.c
  
@@ -306,50 +310,36 @@ diff -Nur '--exclude-from=diff-ignore' python-2.6.6.org/Makefile.pre.in python-2
  
  $(PGEN):	$(PGENOBJS)
  		$(CC) $(OPT) $(LDFLAGS) $(PGENOBJS) $(LIBS) -o $(PGEN)
-@@ -886,24 +904,24 @@
- 		done; \
+@@ -887,23 +906,23 @@
  	done
  	$(INSTALL_DATA) $(srcdir)/LICENSE $(DESTDIR)$(LIBDEST)/LICENSE.txt
--	PYTHONPATH=$(DESTDIR)$(LIBDEST)  $(RUNSHARED) \
+ 	PYTHONPATH=$(DESTDIR)$(LIBDEST)  $(RUNSHARED) \
 -		./$(BUILDPYTHON) -Wi -tt $(DESTDIR)$(LIBDEST)/compileall.py \
--		-d $(LIBDEST) -f \
--		-x 'bad_coding|badsyntax|site-packages' $(DESTDIR)$(LIBDEST)
--	PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
++		$(HOSTPYTHON) -Wi -tt $(DESTDIR)$(LIBDEST)/compileall.py \
+ 		-d $(LIBDEST) -f \
+ 		-x 'bad_coding|badsyntax|site-packages' $(DESTDIR)$(LIBDEST)
+ 	PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
 -		./$(BUILDPYTHON) -Wi -tt -O $(DESTDIR)$(LIBDEST)/compileall.py \
--		-d $(LIBDEST) -f \
--		-x 'bad_coding|badsyntax|site-packages' $(DESTDIR)$(LIBDEST)
--	-PYTHONPATH=$(DESTDIR)$(LIBDEST)  $(RUNSHARED) \
++		$(HOSTPYTHON) -Wi -tt -O $(DESTDIR)$(LIBDEST)/compileall.py \
+ 		-d $(LIBDEST) -f \
+ 		-x 'bad_coding|badsyntax|site-packages' $(DESTDIR)$(LIBDEST)
+ 	-PYTHONPATH=$(DESTDIR)$(LIBDEST)  $(RUNSHARED) \
 -		./$(BUILDPYTHON) -Wi -t $(DESTDIR)$(LIBDEST)/compileall.py \
--		-d $(LIBDEST)/site-packages -f \
--		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
--	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
++		$(HOSTPYTHON) -Wi -t $(DESTDIR)$(LIBDEST)/compileall.py \
+ 		-d $(LIBDEST)/site-packages -f \
+ 		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
+ 	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
 -		./$(BUILDPYTHON) -Wi -t -O $(DESTDIR)$(LIBDEST)/compileall.py \
--		-d $(LIBDEST)/site-packages -f \
--		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
--	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
++		$(HOSTPYTHON) -Wi -t -O $(DESTDIR)$(LIBDEST)/compileall.py \
+ 		-d $(LIBDEST)/site-packages -f \
+ 		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
+ 	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
 -		./$(BUILDPYTHON) -Wi -t -c "import lib2to3.pygram, lib2to3.patcomp;lib2to3.patcomp.PatternCompiler()"
-+#	PYTHONPATH=$(DESTDIR)$(LIBDEST)  $(RUNSHARED) \
-+#		./$(BUILDPYTHON) -Wi -tt $(DESTDIR)$(LIBDEST)/compileall.py \
-+#		-d $(LIBDEST) -f \
-+#		-x 'bad_coding|badsyntax|site-packages' $(DESTDIR)$(LIBDEST)
-+#	PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
-+#		./$(BUILDPYTHON) -Wi -tt -O $(DESTDIR)$(LIBDEST)/compileall.py \
-+#		-d $(LIBDEST) -f \
-+#		-x 'bad_coding|badsyntax|site-packages' $(DESTDIR)$(LIBDEST)
-+#	-PYTHONPATH=$(DESTDIR)$(LIBDEST)  $(RUNSHARED) \
-+#		./$(BUILDPYTHON) -Wi -t $(DESTDIR)$(LIBDEST)/compileall.py \
-+#		-d $(LIBDEST)/site-packages -f \
-+#		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
-+#	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
-+#		./$(BUILDPYTHON) -Wi -t -O $(DESTDIR)$(LIBDEST)/compileall.py \
-+#		-d $(LIBDEST)/site-packages -f \
-+#		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
-+#	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
-+#		./$(BUILDPYTHON) -Wi -t -c "import lib2to3.pygram, lib2to3.patcomp;lib2to3.patcomp.PatternCompiler()"
++		$(HOSTPYTHON) -Wi -t -c "import lib2to3.pygram, lib2to3.patcomp;lib2to3.patcomp.PatternCompiler()"
  
  # Create the PLATDIR source directory, if one wasn't distributed..
  $(srcdir)/Lib/$(PLATDIR):
-@@ -1001,7 +1019,7 @@
+@@ -1001,7 +1020,7 @@
  # Install the dynamically loadable modules
  # This goes into $(exec_prefix)
  sharedinstall:
