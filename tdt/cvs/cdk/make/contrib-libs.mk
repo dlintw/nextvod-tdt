@@ -1907,9 +1907,13 @@ $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
 #
 # graphlcd
 #
-$(DEPDIR)/graphlcd.do_prepare: graphlcd-base-touchcol.tar.bz2 bootstrap libusb @DEPENDS_graphlcd@
+$(DEPDIR)/graphlcd.do_prepare: bootstrap libusb @DEPENDS_graphlcd@
 	@PREPARE_graphlcd@
+	git clone git://projects.vdr-developer.org/graphlcd-base.git --branch touchcol graphlcd-base-touchcol;
+	cd @DIR_graphlcd@ && \
+	patch -p1 < $(buildprefix)/Patches/graphlcd.patch
 	touch $@
+
 
 $(DEPDIR)/graphlcd.do_compile: $(DEPDIR)/graphlcd.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
@@ -1924,12 +1928,7 @@ $(DEPDIR)/%graphlcd: $(DEPDIR)/graphlcd.do_compile
 	cd @DIR_graphlcd@ && \
 		@INSTALL_graphlcd@
 #	@DISTCLEANUP_graphlcd@
-	@[ "x$*" = "x" ] && touch $@ || true
-
-graphlcd-base-touchcol.tar.bz2:
-	if [ -d $(archivedir)/graphlcd-base-touchcol.tar.bz2 ]; then \
-		rm $(archivedir)/graphlcd-base-touchcol.tar.bz2; \
-	fi
+	[ "x$*" = "x" ] && touch $@ || true
 
 ##############################   LCD4LINUX   ###################################
 
