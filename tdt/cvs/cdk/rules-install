@@ -98,7 +98,7 @@ brofs;make:install:DESTDIR=TARGETS/usr/bin
 libalsa;rewrite-pkgconfig:utils/alsa.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libasound.la
 rtmpdump;rewrite-pkgconfig:librtmp/librtmp.pc;make:install:prefix=/usr:DESTDIR=TARGETS
 libdvbsipp;rewrite-pkgconfig:libdvbsi++.pc;make:install:prefix=/usr:DESTDIR=TARGETS
-libtuxtxt;rewrite-pkgconfig:tuxbox-tuxtxt.pc;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libtuxtxt.la
+tuxtxtlib;rewrite-pkgconfig:tuxbox-tuxtxt.pc;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libtuxtxt.la
 tuxtxt32bpp;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libtuxtxt32bpp.la
 libdreamdvd;rewrite-pkgconfig:libdreamdvd.pc;make:install:prefix=/usr:DESTDIR=TARGETS
 libdreamdvd2;rewrite-pkgconfig:libdreamdvd.pc;make:install:prefix=/usr:DESTDIR=TARGETS
