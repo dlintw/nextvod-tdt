@@ -188,7 +188,7 @@
  
  	def sanitizeOptions(self, origOptions, cifs=False):
  		options = origOptions.strip()
-@@ -116,51 +130,7 @@
+@@ -116,74 +130,18 @@
  
  	def CheckMountPoint(self, item, callback):
  		data = self.automounts[item]
@@ -241,17 +241,36 @@
  
  	def CheckMountPointFinished(self, result, retval, extra_args):
  		print "[AutoMount.py] CheckMountPointFinished",result,retval
-@@ -179,19 +149,14 @@
- 					self.automounts[data['sharename']]['isMounted'] = False
- 				if os.path.exists(path):
- 					if not os.path.ismount(path):
+		(data, callback ) = extra_args
+		path = os.path.join('/media/net', data['sharename'])
+-		if os.path.exists(path):
+-			if os.path.ismount(path):
+-				if self.automounts.has_key(data['sharename']):
+-					self.automounts[data['sharename']]['isMounted'] = True
+-					desc = data['sharename']
+-					if self.automounts[data['sharename']]['hdd_replacement'] == 'True': #hdd replacement hack
+-						self.makeHDDlink(path)
+-					harddiskmanager.addMountedPartition(path, desc)
++		if self.automounts.has_key(data['sharename']):
++			self.automounts[data['sharename']]['isMounted'] = True
++			desc = data['sharename']
++			if self.automounts[data['sharename']]['hdd_replacement'] == 'True': #hdd replacement hack
++				self.makeHDDlink(path)
++			harddiskmanager.addMountedPartition(path, desc)
+-			else:
+-				if self.automounts.has_key(data['sharename']):
+-					self.automounts[data['sharename']]['isMounted'] = False
+-				if os.path.exists(path):
+-					if not os.path.ismount(path):
 -					        try:
-+						try:
- 							os.rmdir(path)
- 							harddiskmanager.removeMountedPartition(path)
- 						except Exception, ex:
+-							os.rmdir(path)
+-							harddiskmanager.removeMountedPartition(path)
+-						except Exception, ex:
 -						        print "Failed to remove", path, "Error:", ex
-+							print "Failed to remove", path, "Error:", ex
+ 		if self.checkList:
+ 			# Go to next item in list...
+ 			self.CheckMountPoint(self.checkList.pop(), callback)
+@@ -187,11 +145,6 @@
  		if self.checkList:
  			# Go to next item in list...
  			self.CheckMountPoint(self.checkList.pop(), callback)
