@@ -1,6 +1,6 @@
 
 # Plugins
-$(DEPDIR)/enigma2-plugins: enigma2-openwebif enigma2-networkbrowser
+$(DEPDIR)/enigma2-plugins: enigma2-openwebif enigma2_networkbrowser
 
 #
 # enigma2-openwebif
