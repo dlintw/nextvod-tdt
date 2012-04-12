@@ -2226,7 +2226,7 @@ $(DEPDIR)/%tuxtxtlib: $(DEPDIR)/tuxtxtlib.do_compile
 #
 # tuxtxt32bpp
 #
-$(DEPDIR)/tuxtxt32bpp.do_prepare: libtuxtxt @DEPENDS_tuxtxt32bpp@
+$(DEPDIR)/tuxtxt32bpp.do_prepare: tuxtxtlib @DEPENDS_tuxtxt32bpp@
 	@PREPARE_tuxtxt32bpp@
 	touch $@
 
