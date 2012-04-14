@@ -593,13 +593,13 @@ if STM23
 # Due to libtool errors of target-gcc, the stm24 version is used instead of stm23
 CROSS_MPFR_VERSION = 2.4.2-6
 CROSS_MPFR_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_MPFR)).spec
-CROSS_MPFR_SPEC_PATCH = $(CROSS_MPFR_SPEC)24.diff
+CROSS_MPFR_SPEC_PATCH = $(CROSS_MPFR_SPEC).$(CROSS_MPFR_VERSION).diff
 CROSS_MPFR_PATCHES =
 else !STM23
 # if STM24
 CROSS_MPFR_VERSION = 2.4.2-6
 CROSS_MPFR_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_MPFR)).spec
-CROSS_MPFR_SPEC_PATCH = $(CROSS_MPFR_SPEC)24.diff
+CROSS_MPFR_SPEC_PATCH = $(CROSS_MPFR_SPEC).$(CROSS_MPFR_VERSION).diff
 CROSS_MPFR_PATCHES =
 # endif STM24
 endif !STM23
