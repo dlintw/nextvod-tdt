@@ -89,8 +89,8 @@ if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then
 	PACKAGES="$PACKAGES \
 	${UBUNTU:+gcc-multilib}         ${SUSE:+gcc-32bit}           ${FEDORA:+libstdc++-devel.i686} \
 	${UBUNTU:+libc6-dev-i386}                                    ${FEDORA:+glibc-devel.i686} \
-	${UBUNTU:+lib32ncurses5-dev}                                 ${FEDORA:+libgcc.i686} \
-	${UBUNTU:+lib32z1-dev}                                       ${FEDORA:+ncurses-devel.i686} \
+	${UBUNTU:+lib32z1-dev}                                       ${FEDORA:+libgcc.i686} \
+	                                                             ${FEDORA:+ncurses-devel.i686} \
 	";
 fi
 $INSTALL $PACKAGES
