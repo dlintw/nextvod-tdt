@@ -85,7 +85,8 @@ freetype_old;2.1.4;freetype-2.1.4;freetype-2.1.4.tar.bz2:libfreetype.diff;extrac
 freetype;2.3.5;freetype-2.3.5;freetype-2.3.5.tar.bz2;extract:freetype-2.3.5.tar.bz2
 #freetype;2.4.8;freetype-2.4.8;freetype-2.4.8.tar.bz2;extract:freetype-2.4.8.tar.bz2
 lirc;0.9.0;lirc-0.9.0;lirc-0.9.0.tar.gz:lirc-0.9.0-try_first_last_remote.diff;extract:lirc-0.9.0.tar.gz;patch:lirc-0.9.0-try_first_last_remote.diff
-jpeg;6b;jpeg-6b;jpegsrc.v6b.tar.gz:jpeg.diff;extract:jpegsrc.v6b.tar.gz;patch:jpeg.diff
+#jpeg;6b;jpeg-6b;jpegsrc.v6b.tar.gz:jpeg.diff;extract:jpegsrc.v6b.tar.gz;patch:jpeg.diff
+jpeg;8b;jpeg-8b;jpegsrc.v8b.tar.gz:jpeg.diff;extract:jpegsrc.v8b.tar.gz;patch:jpeg.diff
 libpng;1.5.6;libpng-1.5.6;libpng-1.5.6.tar.gz:libpng.diff;extract:libpng-1.5.6.tar.gz
 libungif;4.1.4;libungif-4.1.4;libungif-4.1.4.tar.bz2;extract:libungif-4.1.4.tar.bz2
 libgif;4.1.6;giflib-4.1.6;giflib-4.1.6.tar.bz2;extract:giflib-4.1.6.tar.bz2
