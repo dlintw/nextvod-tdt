@@ -86,6 +86,7 @@ host-filesystem:
 	$(INSTALL) -d $(devkitprefix)/sources/kernel
 	$(INSTALL) -d $(hostprefix)
 	$(INSTALL) -d $(hostprefix)/{bin,doc,etc,include,info,lib,man,share,var}
+	ln -s /$(hostprefix)/lib $(hostprefix)/lib64
 	$(INSTALL) -d $(hostprefix)/man/man{1,2,3,4,5,6,7,8,9}
 	touch .deps/$@
 
