@@ -71,7 +71,7 @@ PACKAGES="\
 	${UBUNTU:+xfslibs-dev}          ${SUSE:+xfsprogs-devel} \
 	${UBUNTU:+pkg-config}           ${SUSE:+pkg-config} \
 	${UBUNTU:+patch}                ${SUSE:+patch} \
-	${UBUNTU:+autopoint} \
+	${UBUNTU:+autopoint}            ${SUSE:+glib2-devel} \
 	${UBUNTU:+cfv} \
 	${UBUNTU:+fakeroot} \
 	${UBUNTU:+gawk} \
