@@ -88,7 +88,7 @@ if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then
 	# we might need to install more 32bit versions of some packages
 	PACKAGES="$PACKAGES \
 	${UBUNTU:+gcc-multilib}         ${SUSE:+gcc-32bit}           ${FEDORA:+libstdc++-devel.i686} \
-	${UBUNTU:+libc6-dev-i386}       ${SUSE:+zlib-32bit}          ${FEDORA:+glibc-devel.i686} \
+	${UBUNTU:+libc6-dev-i386}       ${SUSE:+zlib-devel-32bit}    ${FEDORA:+glibc-devel.i686} \
 	${UBUNTU:+lib32z1-dev}                                       ${FEDORA:+libgcc.i686} \
 	                                                             ${FEDORA:+ncurses-devel.i686} \
 	";
