@@ -653,7 +653,7 @@ release_adb_box:
 	rm -f $(prefix)/release/bin/vdstandby
 
 release_vip1_v2: release_common_utils
-	echo "Edision" > $(prefix)/release/etc/hostname
+	echo "Edision-v2" > $(prefix)/release/etc/hostname
 	cp -f $(targetprefix)/sbin/shutdown $(prefix)/release/sbin/
 	cp $(buildprefix)/root/release/halt_vip2 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
@@ -680,6 +680,7 @@ endif
 	rm -f $(prefix)/release/bin/vdstandby
 
 release_vip2_v1: release_vip1_v2
+	echo "Edision-v1" > $(prefix)/release/etc/hostname
 
 release_hs5101:
 	echo "hs5101" > $(prefix)/release/etc/hostname
@@ -717,7 +718,7 @@ endif
 	rm -f $(prefix)/release/bin/vdstandby
 
 release_ipbox9900: release_common_utils
-	echo "ipbox" > $(prefix)/release/etc/hostname
+	echo "ipbox9900" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox99xx/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
@@ -750,7 +751,7 @@ endif
 	echo "config.usage.hdd_standby=0" >> $(prefix)/release/etc/enigma2/settings
 
 release_ipbox99: release_common_utils
-	echo "ipbox" > $(prefix)/release/etc/hostname
+	echo "ipbox99" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox99xx/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
@@ -782,7 +783,7 @@ endif
 	echo "config.usage.hdd_standby=0" >> $(prefix)/release/etc/enigma2/settings
 
 release_ipbox55: release_common_utils
-	echo "ipbox" > $(prefix)/release/etc/hostname
+	echo "ipbox55" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox55/front.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
@@ -887,7 +888,8 @@ release_base:
 	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/etc/init.d/udhcpc $(prefix)/release/etc/init.d/ && \
-	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(VIP2_V1),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI)$(if $(IPBOX9900),_dual_tuner)$(if $(IPBOX99),_no_CI)$(if $(IPBOX55),_no_CI)$(if $(ADB_BOX),_adb_box)$(if $(SPARK),_no_CI) $(prefix)/release/sbin/MAKEDEV && \
+	cp -dp $(targetprefix)/sbin/MAKEDEV $(prefix)/release/sbin/MAKEDEV && \
+	cp -f $(buildprefix)/root/release/makedev $(prefix)/release/etc/init.d/ && \
 	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release/bin/ && \
 	cp $(targetprefix)/boot/audio.elf $(prefix)/release/boot/audio.elf && \

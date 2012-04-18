@@ -585,9 +585,6 @@ $(DEPDIR)/%$(MAKEDEV): root/sbin/MAKEDEV $(MAKEDEV_RPM)
 	$(INSTALL) -m 755 root/sbin/MAKEDEV $(prefix)/$*cdkroot/sbin
 	[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
-	$(INSTALL) -m 755 root/sbin/MAKEDEV_no_CI $(prefix)/$*cdkroot/sbin
-	$(INSTALL) -m 755 root/sbin/MAKEDEV_dual_tuner $(prefix)/$*cdkroot/sbin
-	$(INSTALL) -m 755 root/sbin/MAKEDEV_adb_box $(prefix)/$*cdkroot/sbin
 
 #
 # BASE-FILES

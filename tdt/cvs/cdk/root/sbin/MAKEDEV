@@ -38,6 +38,7 @@ readable="  root root   0444"
 ramzswap="  root root   0644"
      rc="  root root   0644"
     vfd="  root root   0644"
+   hdmi="  root root   0644"
 hdmi_cec="  root root   0644"
     sci="  root root   0644"
  tundev="  root root   0644"
@@ -303,6 +304,7 @@ cvt () {
 			tundev) echo tundev ;;
 			rc) echo rc ;;
 			vfd) echo vfd ;;
+			hdmi) echo hdmi ;;
 			hdmi_cec) echo hdmi_cec ;;
 			sci) echo sci ;;
 			*)	echo "$1" ;;
@@ -532,6 +534,7 @@ do
 		$0 $opts ramzswap
 		$0 $opts rc
 		$0 $opts vfd
+		$0 $opts hdmi
 		$0 $opts hdmi_cec
 		$0 $opts sci
 		$0 $opts ttyusb
@@ -1965,6 +1968,9 @@ do
 	vfd)
 		makedev vfd c 147 0 $vfd
 		;;
+	hdmi)
+		makedev hdmi.0.0 c 254 0 $hdmi
+		;;
 	hdmi_cec)
 		makedev hdmi_cec c 149 0 $hdmi_cec
 		;;
@@ -2004,10 +2010,54 @@ do
 			makedev dvb/adapter$i/demux1    c 212 `math 64 \* $i + 20` $video
 			makedev dvb/adapter$i/dvr0      c 212 `math 64 \* $i + 5` $video
 			makedev dvb/adapter$i/dvr1      c 212 `math 64 \* $i + 21` $video
-			makedev dvb/adapter$i/ca0       c 212 `math 64 \* $i + 6` $video
-			makedev dvb/adapter$i/ca1       c 212 `math 64 \* $i + 22` $video
 			makedev dvb/adapter$i/net0      c 212 `math 64 \* $i + 7` $video
 			makedev dvb/adapter$i/osd0      c 212 `math 64 \* $i + 8` $video
+		done
+		;;
+	dvb_2nd)
+		mkdir -p dvb
+		for i in 0
+		do
+			mkdir -p dvb/adapter$i
+			makedev dvb/adapter$i/video1	c 212 `math 64 \* $i + 16` $video
+			makedev dvb/adapter$i/frontend1 c 212 `math 64 \* $i + 19` $video
+			makedev dvb/adapter$i/demux2    c 212 `math 64 \* $i + 36` $video
+			makedev dvb/adapter$i/dvr2      c 212 `math 64 \* $i + 37` $video
+		done
+		;;
+	dvb_ca)
+		mkdir -p dvb
+		for i in 0
+		do
+			mkdir -p dvb/adapter$i
+			makedev dvb/adapter$i/ca0       c 212 `math 64 \* $i + 6` $video
+			makedev dvb/adapter$i/ca1       c 212 `math 64 \* $i + 22` $video
+		done
+		;;
+	dvb_ca_2nd)
+		mkdir -p dvb
+		for i in 0
+		do
+			mkdir -p dvb/adapter$i
+			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 38` $video
+		done
+		;;
+	dvb_ca_no)
+		#on no ci boxes the hw descrambler is on ca0. So we link ca1 also to ca0
+		#and can (not must) use the same config
+		mkdir -p dvb
+		for i in 0
+		do
+			mkdir -p dvb/adapter$i
+			makedev dvb/adapter$i/ca0       c 212 `math 64 \* $i + 6` $video
+			makedev dvb/adapter$i/ca1       c 212 `math 64 \* $i + 6` $video
+		done
+		;;
+	dvb_ci)
+		mkdir -p dvb
+		for i in 0
+		do
+			mkdir -p dvb/adapter$i
 			makedev dvb/adapter$i/ci0      c 212 `math 64 \* $i + 9` $video
 			makedev dvb/adapter$i/ci1      c 212 `math 64 \* $i + 25` $video
 		done
