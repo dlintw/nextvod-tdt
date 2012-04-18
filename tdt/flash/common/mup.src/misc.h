@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <string.h>
+#include <stdint.h>
 
 #define SW_MAGIC_VALUE "MARUSWUP"
 
@@ -20,6 +21,6 @@ enum
 	SW_UPDATER_VERSION = 100,
 };
 
-char * strTime(time_t now);
+char * strTime(uint32_t /*time_t*/ now);
 
 #endif

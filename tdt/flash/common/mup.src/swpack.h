@@ -34,7 +34,7 @@ private:
 		uint32_t  mHeaderVersion;
 		uint32_t  mProductCode;
 		uint32_t  mSWVersion;
-		time_t        mDate;
+		uint32_t /*time_t*/        mDate;
 		uint32_t  mInventoryCount; /* not used ->loop over MAX_INVENTORY_COUNT */
 		uint32_t  mInvalidateFlag;
 

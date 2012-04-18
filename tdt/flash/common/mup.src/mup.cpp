@@ -318,9 +318,9 @@ int32_t main(int32_t argc, char* argv[])
        SwPack * swpack = new SwPack();
        swpack->setProductCode(0x11321000);
 
-       int8_t * part1 = strdup("922.cramfs");
-       int8_t * part2 = strdup("uImage.922.105");
-       int8_t * part3 = strdup("root.922.105.cramfs");
+       char * part1 = strdup("922.cramfs");
+       char * part2 = strdup("uImage.922.105");
+       char * part3 = strdup("root.922.105.cramfs");
 
        //////////////
        stat(part1, &buf);
