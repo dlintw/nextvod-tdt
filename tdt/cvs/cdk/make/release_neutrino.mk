@@ -55,7 +55,8 @@ $(DEPDIR)/%release_neutrino:
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release_neutrino/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/etc/init.d/udhcpc $(prefix)/release_neutrino/etc/init.d/ && \
 	cp -dp $(buildprefix)/root/var/etc/.version $(prefix)/release_neutrino/var/etc/ && \
-	cp -dp $(targetprefix)/sbin/MAKEDEV$(if $(TF7700),_dual_tuner)$(if $(FORTIS_HDBOX),_dual_tuner)$(if $(ATEVIO7500),_dual_tuner)$(if $(CUBEREVO),_dual_tuner)$(if $(CUBEREVO_9500HD),_dual_tuner)$(if $(UFS922),_dual_tuner)$(if $(CUBEREVO_MINI_FTA),_no_CI)$(if $(CUBEREVO_250HD),_no_CI)$(if $(CUBEREVO_2000HD),_no_CI)$(if $(ADB_BOX),_adb_box) $(prefix)/release_neutrino/sbin/MAKEDEV && \
+	cp -dp $(targetprefix)/sbin/MAKEDEV $(prefix)/release_neutrino/sbin/MAKEDEV && \
+	cp -f $(buildprefix)/root/release/makedev $(prefix)/release_neutrino/etc/init.d/ && \
 	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release_neutrino/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_neutrino/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/ffmpeg $(prefix)/release_neutrino/sbin/ && \
@@ -482,7 +483,7 @@ endif
 else
 if ENABLE_VIP1_V2
 
-	echo "Edision" > $(prefix)/release_neutrino/etc/hostname
+	echo "Edision-v2" > $(prefix)/release_neutrino/etc/hostname
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/proton/proton.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 
@@ -494,7 +495,7 @@ if ENABLE_VIP1_V2
 else
 if ENABLE_VIP2_V1
 
-	echo "Edision" > $(prefix)/release_neutrino/etc/hostname
+	echo "Edision-v1" > $(prefix)/release_neutrino/etc/hostname
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 
