@@ -8,4 +8,4 @@ if [  -e pad.exe ]; then
   rm pad.exe
 fi
 
-g++ -m32 -o pad pad.c
+g++ -o pad pad.c
