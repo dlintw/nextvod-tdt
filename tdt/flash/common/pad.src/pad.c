@@ -8,6 +8,7 @@
 /**************************************************************************/
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -18,8 +19,8 @@
 
 int main(int argc, char* argv[])
 {
-    int padToSize = 0, readBytes = 0;
-    unsigned char buffer[BUFSIZE];
+    int32_t padToSize = 0, readBytes = 0;
+    uint8_t buffer[BUFSIZE];
     FILE * input = fopen(argv[2], "rb");
     FILE * output = fopen(argv[3], "wb");
 
@@ -31,7 +32,7 @@ int main(int argc, char* argv[])
     memset(buffer, 0xFF, BUFSIZE);
 
     while(padToSize > 0)
-    padToSize -= fwrite(buffer, 1, padToSize>BUFSIZE?BUFSIZE:padToSize, output);
+        padToSize -= fwrite(buffer, 1, padToSize>BUFSIZE?BUFSIZE:padToSize, output);
 
     return 0;
 }

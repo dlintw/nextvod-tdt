@@ -567,6 +567,7 @@ FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 		$(if $(P0209),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 ADB_BOXPATCHES_24 = $(COMMONPATCHES_24) \
+		$(if $(P0209)$(P0210),linux-sh4-mmap_stm24.patch) \
 		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
 		sata_32bit_fix_stm24$(PATCH_STR).patch \
 		linux-sh4-adb_box_setup_stm24$(PATCH_STR).patch \

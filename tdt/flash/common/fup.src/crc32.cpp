@@ -8,13 +8,12 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
+#include <stdint.h>
 
-
-unsigned long crc32 (unsigned long, const unsigned char *, unsigned int);
 /* ========================================================================
  * Table of CRC-32's of all single-byte values (made by make_crc_table)
  */
-const unsigned long crc_table[256] = {
+const uint64_t crc_table[256] = {
   0x00000000L, 0x77073096L, 0xee0e612cL, 0x990951baL, 0x076dc419L,
   0x706af48fL, 0xe963a535L, 0x9e6495a3L, 0x0edb8832L, 0x79dcb8a4L,
   0xe0d5e91eL, 0x97d2d988L, 0x09b64c2bL, 0x7eb17cbdL, 0xe7b82d07L,
@@ -68,35 +67,13 @@ const unsigned long crc_table[256] = {
   0x5d681b02L, 0x2a6f2b94L, 0xb40bbe37L, 0xc30c8ea1L, 0x5a05df1bL,
   0x2d02ef8dL
 };
-/*
-#define DO1(buf)  crc = crc_table[((int)crc ^ (*buf++)) & 0xff] ^ (crc >> 8);
-#define DO2(buf)  DO1(buf); DO1(buf);
-#define DO4(buf)  DO2(buf); DO2(buf);
-#define DO8(buf)  DO4(buf); DO4(buf);
-
-
-
-unsigned long crc32(unsigned long crc, unsigned char  buf, unsigned long len)
-{
-    crc = crc ^ 0xffffffffL;
-    while (len >= 8)
-    {
-      DO8(buf);
-      len -= 8;
-    }
-    if (len) do {
-      DO1(buf);
-    } while (--len);
-    return crc ^ 0xffffffffL;
-}*/
-
 
 #define _CRC32_(crc, ch)	 (crc = (crc >> 8) ^ crc_table[(crc ^ (ch)) & 0xff])
 
-unsigned long crc32(unsigned long crc,unsigned char *buf, unsigned long size)
+uint64_t crc32(uint64_t crc, uint8_t *buf, uint32_t size)
 {
-	unsigned char *p;
-	unsigned long  len, nr;
+	uint8_t *p;
+	uint32_t  len, nr;
 	crc = crc ^ 0xffffffffL;
 	len = 0;
 	nr=size;

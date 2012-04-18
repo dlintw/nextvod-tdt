@@ -14,11 +14,10 @@ TMPFWDIR=$TMPDIR/FW
 OUTDIR=$CURDIR/out
 
 if [  -e $TMPDIR ]; then
-  sudo rm -rf $TMPDIR/*
-else
-  mkdir $TMPDIR
+  rm -rf $TMPDIR/*
 fi
 
+mkdir $TMPDIR
 mkdir $TMPROOTDIR
 mkdir $TMPKERNELDIR
 mkdir $TMPFWDIR
