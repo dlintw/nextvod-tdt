@@ -11,12 +11,12 @@
 
 /* Hash a single 512-bit block. This is the core of the algorithm. */
 
-void SHA1Transform(uint64_t state[5], uint8_t buffer[64])
+void SHA1Transform(uint32_t state[5], uint8_t buffer[64])
 {
-uint64_t a, b, c, d, e;
+uint32_t a, b, c, d, e;
 typedef union {
     uint8_t  c[64];
-    uint64_t l[16];
+    uint32_t l[16];
 } CHAR64LONG16;
 CHAR64LONG16* block;
 #ifdef SHA1HANDSOFF
@@ -104,7 +104,7 @@ uint32_t i, j;
 
 void SHA1Final(uint8_t digest[20], SHA1_CTX* context)
 {
-uint64_t i, j;
+uint32_t i, j;
 uint8_t finalcount[8];
 
     for (i = 0; i < 8; i++) {

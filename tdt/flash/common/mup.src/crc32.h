@@ -10,6 +10,6 @@
 
 #include <stdint.h>
 
-uint64_t crc32 (uint8_t *data, uint32_t len);
+uint32_t crc32 (uint8_t *data, uint32_t len);
 
 #endif /* CRC32_H_ */

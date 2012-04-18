@@ -191,7 +191,7 @@ int32_t SwUnity::isValid()
 void SwUnity::calcSH1(uint8_t ** sh1_hash, uint32_t * sh1_hash_len)
 {
 #if GCRY
-	/* let us see how int64_t is the hash key for SHA1 ... */
+	/* let us see how int32_t is the hash key for SHA1 ... */
 	*sh1_hash_len = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
 
 	*sh1_hash = (uint8_t *)malloc((*sh1_hash_len) * sizeof(uint8_t));
@@ -215,7 +215,7 @@ void SwUnity::calcSH1(uint8_t ** sh1_hash, uint32_t * sh1_hash_len)
 uint32_t SwUnity::calcCRC32(uint8_t ** crc32_hash, uint32_t * crc32_hash_len)
 {
 #if GCRY
-	/* let us see how int64_t is the hash key for CRC32 ... */
+	/* let us see how int32_t is the hash key for CRC32 ... */
 	*crc32_hash_len = gcry_md_get_algo_dlen( GCRY_MD_CRC32 );
 
 	*crc32_hash = (uint8_t *)malloc((*crc32_hash_len) * sizeof(uint8_t));
