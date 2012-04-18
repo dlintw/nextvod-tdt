@@ -15,6 +15,3 @@ cd -
 # --- BOOT ---
 mv $TMPROOTDIR/boot/uImage $TMPKERNELDIR/uImage
 
-# --- ROOT ---
-
-
