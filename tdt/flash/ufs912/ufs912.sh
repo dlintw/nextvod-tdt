@@ -15,6 +15,7 @@ OUTDIR=$CURDIR/out
 
 if [  -e $TMPDIR ]; then
   rm -rf $TMPDIR/*
+fi
 
 mkdir $TMPDIR
 mkdir $TMPROOTDIR
