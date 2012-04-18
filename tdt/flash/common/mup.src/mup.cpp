@@ -8,6 +8,7 @@
 /**************************************************************************/
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -33,11 +34,11 @@ void clear (FILE *fp)
     }
 }
 
-int main(int argc, char* argv[])
+int32_t main(int32_t argc, char* argv[])
 { 
    FILE*          file;
-   int            i, data_len;
-   unsigned char* buffer;
+   int32_t        i, data_len;
+   uint8_t*       buffer;
    struct         stat buf;
 
    bool doInfo = false;
@@ -94,7 +95,7 @@ int main(int argc, char* argv[])
           return -3;
        }
 
-       buffer = (unsigned char*) malloc(data_len);
+       buffer = (uint8_t*) malloc(data_len);
 
        if (buffer == NULL)
        {
@@ -145,13 +146,13 @@ int main(int argc, char* argv[])
 
        char outputName[1024];
        strcpy(outputName, argv[2]);
-       unsigned int inputBufferLength = 255;
+       uint32_t inputBufferLength = 255;
        char inputBuffer[inputBufferLength + 1];
        char partitionName[inputBufferLength + 1];
-       int productCode = 0;
-       int flashOffset = -1;
-       int nand = 0;
-       int blockSize = 0;
+       int32_t productCode = 0;
+       int32_t flashOffset = -1;
+       int32_t nand = 0;
+       int32_t blockSize = 0;
 
        SwPack * swpack = new SwPack();
 
@@ -212,7 +213,7 @@ int main(int argc, char* argv[])
 
             if (!strcmp(inputBuffer, "foo")) {
                 data_len = 8;
-                buffer = (unsigned char*) malloc(8);
+                buffer = (uint8_t*) malloc(8);
                 buffer[0] = 0xFF;
                 buffer[1] = 0xFF;
                 buffer[2] = 0xFF;
@@ -234,7 +235,7 @@ int main(int argc, char* argv[])
                     return -3;
                 }
 
-                buffer = (unsigned char*) malloc(data_len);
+                buffer = (uint8_t*) malloc(data_len);
 
                 if (buffer == NULL)
                 {
@@ -288,7 +289,7 @@ int main(int argc, char* argv[])
             else
                 strcpy(partitionName, inputBuffer); // NOR RAW
 
-            swpack->appendPartition(flashOffset, partitionName, (unsigned char*)buffer, i);
+            swpack->appendPartition(flashOffset, partitionName, (uint8_t*)buffer, i);
 
             free(buffer);
         }
@@ -317,9 +318,9 @@ int main(int argc, char* argv[])
        SwPack * swpack = new SwPack();
        swpack->setProductCode(0x11321000);
 
-       char * part1 = strdup("922.cramfs");
-       char * part2 = strdup("uImage.922.105");
-       char * part3 = strdup("root.922.105.cramfs");
+       int8_t * part1 = strdup("922.cramfs");
+       int8_t * part2 = strdup("uImage.922.105");
+       int8_t * part3 = strdup("root.922.105.cramfs");
 
        //////////////
        stat(part1, &buf);
@@ -332,7 +333,7 @@ int main(int argc, char* argv[])
           return -3;
        }
 
-       buffer = (unsigned char*) malloc(data_len);
+       buffer = (uint8_t*) malloc(data_len);
 
        if (buffer == NULL)
        {
@@ -343,7 +344,7 @@ int main(int argc, char* argv[])
        i = fread( buffer, 1, data_len, file);
        fclose(file);
 
-       swpack->appendPartition(0x004E0000, part1,          (unsigned char*)buffer           , i);
+       swpack->appendPartition(0x004E0000, part1,          (uint8_t*)buffer           , i);
 
        free(buffer);
 
@@ -358,7 +359,7 @@ int main(int argc, char* argv[])
           return -3;
        }
 
-       buffer = (unsigned char*) malloc(data_len);
+       buffer = (uint8_t*) malloc(data_len);
 
        if (buffer == NULL)
        {
@@ -369,7 +370,7 @@ int main(int argc, char* argv[])
        i = fread( buffer, 1, data_len, file);
        fclose(file);
 
-       swpack->appendPartition(0x00040000, part2, (unsigned char*)buffer           , i);
+       swpack->appendPartition(0x00040000, part2, (uint8_t*)buffer           , i);
 
        free(buffer);
 
@@ -384,7 +385,7 @@ int main(int argc, char* argv[])
           return -3;
        }
 
-       buffer = (unsigned char*) malloc(data_len);
+       buffer = (uint8_t*) malloc(data_len);
 
        if (buffer == NULL)
        {
@@ -395,7 +396,7 @@ int main(int argc, char* argv[])
        i = fread( buffer, 1, data_len, file);
        fclose(file);
 
-       swpack->appendPartition(0x002A0000, part3,      (unsigned char*)buffer           , i);
+       swpack->appendPartition(0x002A0000, part3,      (uint8_t*)buffer           , i);
 
        free(buffer);
 
@@ -418,7 +419,7 @@ int main(int argc, char* argv[])
                  return -4;
               }
 
-              for(int j = 0; j < 20; j++)
+              for(int32_t j = 0; j < 20; j++)
                   printf("%02X ", *(buffer+j));
            printf("\n");
 

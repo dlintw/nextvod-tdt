@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -22,7 +23,7 @@ SwPack::SwPack()
 */
 
 	this->mHeader = (tSWPack *) malloc(sizeof(tSWPack));
-	memcpy(this->mHeader->mMagicNumber, (unsigned char *) SW_MAGIC_VALUE,
+	memcpy(this->mHeader->mMagicNumber, (uint8_t *) SW_MAGIC_VALUE,
 			sizeof(SW_MAGIC_VALUE) <= sizeof(this->mHeader->mMagicNumber)?
 					sizeof(SW_MAGIC_VALUE):sizeof(this->mHeader->mMagicNumber));
 	this->mHeader->mHeaderVersion 	= 100;
@@ -32,7 +33,7 @@ SwPack::SwPack()
 	this->mHeader->mDate 			= time(NULL);
 	this->mHeader->mInventoryCount 	= 0;
 	this->mHeader->mInvalidateFlag 	= 0;
-	memcpy(this->mHeader->mUpdateInfo, (unsigned char *) "Software Update",
+	memcpy(this->mHeader->mUpdateInfo, (uint8_t *) "Software Update",
 				sizeof("Software Update") <= sizeof(this->mHeader->mUpdateInfo)?
 						sizeof("Software Update"):sizeof(this->mHeader->mUpdateInfo));
 
@@ -40,7 +41,7 @@ SwPack::SwPack()
 	mCurInventoryOffset = 0;
 }
 
-SwPack::SwPack(unsigned char* data, unsigned int datalen)
+SwPack::SwPack(uint8_t* data, uint32_t datalen)
 {
 	mData = data;
 	mDataLength = datalen;
@@ -56,7 +57,7 @@ void SwPack::parse()
 
 	this->mInventoryCount = 0;
 
-	int offsetNextEntry = 0;
+	int32_t offsetNextEntry = 0;
 
 	/* until mInventoryCount seems to be not used loop over all inventories */
 	while(this->mInventoryCount < MAX_INVENTORY_COUNT)
@@ -103,7 +104,7 @@ void SwPack::print()
 	vHelpStr[SW_UPDATE_INFO_LENGTH] = '\0';
 	printf("mUpdateInfo     = %s\n", vHelpStr);
 
-	for(unsigned int i = 0; i < this->mInventoryCount; i++)
+	for(uint32_t i = 0; i < this->mInventoryCount; i++)
 	{
 		this->mInventory[i]->print();
 	}
@@ -131,7 +132,7 @@ void SwPack::printXML(bool d)
 	vHelpStr[SW_UPDATE_INFO_LENGTH] = '\0';
 	printf("\t\t<UpdateInfo value=\"%s\" />\n", vHelpStr);
 
-	for(unsigned int i = 0; i < this->mInventoryCount; i++)
+	for(uint32_t i = 0; i < this->mInventoryCount; i++)
 	{
 		this->mInventory[i]->printXML(d);
 	}
@@ -142,7 +143,7 @@ void SwPack::printXML(bool d)
 bool SwPack::verify()
 {
 	bool rtv = true;
-	for(unsigned int i = 0; i < this->mInventoryCount; i++)
+	for(uint32_t i = 0; i < this->mInventoryCount; i++)
 	{
 		if(!this->mInventory[i]->verify())
 			rtv = false;
@@ -153,13 +154,13 @@ bool SwPack::verify()
 
 void SwPack::extract()
 {
-	for(unsigned int i = 0; i < this->mInventoryCount; i++)
+	for(uint32_t i = 0; i < this->mInventoryCount; i++)
 		this->mInventory[i]->extract();
 
 	return;
 }
 
-void SwPack::appendPartition(unsigned int flashOffset, char * filename, unsigned char * data, unsigned int dataLength)
+void SwPack::appendPartition(uint32_t flashOffset, char * filename, uint8_t * data, uint32_t dataLength)
 {
 
 
@@ -174,32 +175,32 @@ void SwPack::appendPartition(unsigned int flashOffset, char * filename, unsigned
 
 }
 
-int SwPack::createImage(unsigned char ** data)
+int32_t SwPack::createImage(uint8_t ** data)
 {
 	/*int */mDataLength = SW_UPDATE_HEADER_SIZE + MAX_INVENTORY_COUNT * SW_INVENTORY_SIZE;
-	for(unsigned int i = 0; i < this->mInventoryCount; i++)
+	for(uint32_t i = 0; i < this->mInventoryCount; i++)
 		mDataLength+=this->mInventory[i]->getChildData(NULL);
 
 	printf("TOTAL SIZE: %u\n", mDataLength);
 
-	mData = (unsigned char *)malloc(mDataLength);
+	mData = (uint8_t *)malloc(mDataLength);
 	memcpy(mData, mHeader, sizeof(tSWPack));
-	for(unsigned int i = 0; i < this->mInventoryCount; i++) {
-		int cDataLenght = this->mInventory[i]->getData(NULL);
-		unsigned char* cData = (unsigned char*)malloc(cDataLenght);
+	for(uint32_t i = 0; i < this->mInventoryCount; i++) {
+		int32_t cDataLenght = this->mInventory[i]->getData(NULL);
+		uint8_t* cData = (uint8_t*)malloc(cDataLenght);
 		this->mInventory[i]->getData(&cData);
 
 		memcpy(mData + SW_UPDATE_HEADER_SIZE + i * SW_INVENTORY_SIZE, cData, cDataLenght);
 		free(cData);
 
 		cDataLenght = this->mInventory[i]->getChildData(NULL);
-		cData = (unsigned char*)malloc(cDataLenght);
+		cData = (uint8_t*)malloc(cDataLenght);
 		this->mInventory[i]->getChildData(&cData);
 		memcpy(mData + this->mInventory[i]->getImageOffset() + SW_UPDATE_HEADER_SIZE + MAX_INVENTORY_COUNT * SW_INVENTORY_SIZE, cData, cDataLenght);
 		free(cData);
 	}
 
-	*data = (unsigned char *)malloc(this->mDataLength);
+	*data = (uint8_t *)malloc(this->mDataLength);
 	memcpy(*data, this->mData, this->mDataLength);
 
 	return mDataLength;

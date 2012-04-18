@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -34,7 +35,7 @@ SwUnity::SwUnity()
 */
 
 	this->mHeader = (tSWUnity *) malloc(sizeof(tSWUnity));
-	memcpy(this->mHeader->mMagicNumber, (unsigned char *) SW_MAGIC_VALUE,
+	memcpy(this->mHeader->mMagicNumber, (uint8_t *) SW_MAGIC_VALUE,
 			sizeof(SW_MAGIC_VALUE) <= sizeof(this->mHeader->mMagicNumber)?
 					sizeof(SW_MAGIC_VALUE):sizeof(this->mHeader->mMagicNumber));
 
@@ -46,18 +47,18 @@ SwUnity::SwUnity()
 	this->mHeader->mFlashOffset 	= 0;
 	this->mHeader->mDataLength	 	= 0;
 
-	memcpy(this->mHeader->mUpdateInfo, (unsigned char *) "Software Update",
+	memcpy(this->mHeader->mUpdateInfo, (uint8_t *) "Software Update",
 				sizeof("Software Update") <= sizeof(this->mHeader->mUpdateInfo)?
 						sizeof("Software Update"):sizeof(this->mHeader->mUpdateInfo));
 }
 
-SwUnity::SwUnity(unsigned char* data, unsigned int datalen)
+SwUnity::SwUnity(uint8_t* data, uint32_t datalen)
 {
 	mData = data;
 	mDataLength = datalen;
 }
 
-int SwUnity::parse()
+int32_t SwUnity::parse()
 {
 	if(this->mDataLength >= sizeof(tSWUnity))
 	{
@@ -106,7 +107,7 @@ void SwUnity::print()
 	vHelpStr[20] = '\0';
 
 	printf("mHashValue      =\n");
-	for (int i = 0; i < 20; i++)
+	for (int32_t i = 0; i < 20; i++)
 	{
 	   printf("0x%02x ", vHelpStr[i] & 0xff);
 	   if ( ((i + 1) % 10) == 0)
@@ -147,7 +148,7 @@ void SwUnity::printXML(bool d)
 
 	if(d) {
 		printf("\t\t\t\t<Hash value=\"");
-		for (int i = 0; i < 20; i++)
+		for (int32_t i = 0; i < 20; i++)
 		{
 		   printf("%02X", vHelpStr[i] & 0xff);
 		}
@@ -166,7 +167,7 @@ void SwUnity::printXML(bool d)
 
 #if 0
 	printf("\t\t\t\t<Data value=\"");
-		for (int i = 0; i < this->mChildDataLength; i++)
+		for (int32_t i = 0; i < this->mChildDataLength; i++)
 		{
 		   printf("%02X", this->mChildData[i]);
 		}
@@ -176,7 +177,7 @@ void SwUnity::printXML(bool d)
 	printf("\t\t\t</SWUnity>\n");
 }
 
-int SwUnity::isValid()
+int32_t SwUnity::isValid()
 {
     if (strncmp((char*)this->mHeader->mMagicNumber, (char*)SW_MAGIC_VALUE, SW_UPDATE_MAGIC_SIZE) != 0)
         return 0;
@@ -187,13 +188,13 @@ int SwUnity::isValid()
     return 1;
 }
 
-void SwUnity::calcSH1(unsigned char ** sh1_hash, unsigned int * sh1_hash_len)
+void SwUnity::calcSH1(uint8_t ** sh1_hash, uint32_t * sh1_hash_len)
 {
 #if GCRY
-	/* let us see how long is the hash key for SHA1 ... */
+	/* let us see how int64_t is the hash key for SHA1 ... */
 	*sh1_hash_len = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
 
-	*sh1_hash = (unsigned char *)malloc((*sh1_hash_len) * sizeof(unsigned char));
+	*sh1_hash = (uint8_t *)malloc((*sh1_hash_len) * sizeof(uint8_t));
 
 	/* calculate the hash */
 	gcry_md_hash_buffer( GCRY_MD_SHA1, *sh1_hash, this->mChildData, this->mChildDataLength );
@@ -202,7 +203,7 @@ void SwUnity::calcSH1(unsigned char ** sh1_hash, unsigned int * sh1_hash_len)
 	SHA1_CTX mContext;
 
 	*sh1_hash_len = 20;
-	*sh1_hash = (unsigned char *)malloc((*sh1_hash_len) * sizeof(unsigned char));
+	*sh1_hash = (uint8_t *)malloc((*sh1_hash_len) * sizeof(uint8_t));
 
 	SHA1Init( &mContext );
 	SHA1Update( &mContext, this->mChildData, this->mChildDataLength );
@@ -211,26 +212,28 @@ void SwUnity::calcSH1(unsigned char ** sh1_hash, unsigned int * sh1_hash_len)
 	return;
 }
 
-unsigned int SwUnity::calcCRC32(unsigned char ** crc32_hash, unsigned int * crc32_hash_len)
+uint32_t SwUnity::calcCRC32(uint8_t ** crc32_hash, uint32_t * crc32_hash_len)
 {
 #if GCRY
-	/* let us see how long is the hash key for CRC32 ... */
+	/* let us see how int64_t is the hash key for CRC32 ... */
 	*crc32_hash_len = gcry_md_get_algo_dlen( GCRY_MD_CRC32 );
 
-	*crc32_hash = (unsigned char *)malloc((*crc32_hash_len) * sizeof(unsigned char));
+	*crc32_hash = (uint8_t *)malloc((*crc32_hash_len) * sizeof(uint8_t));
 
 	/* calculate the hash */
 	gcry_md_hash_buffer( GCRY_MD_CRC32, *crc32_hash, this->mChildData, this->mChildDataLength );
 #endif
 
 	printf("%d\n", this->mChildDataLength);
-	for(int i = 0; i < 40; i++)
+	for(int32_t i = 0; i < 40 && i < this->mChildDataLength; i++)
 		printf("%02X ", this->mChildData[i]);
 	printf("\n");
 
-	for(int i = 0; i < 40; i++)
-		printf("%02X ", this->mChildData[this->mChildDataLength - 41 + i]);
-	printf("\n");
+  if (this->mChildDataLength >= 80) {
+	  for(int32_t i = 0; i < 40; i++)
+	  	printf("%02X ", this->mChildData[this->mChildDataLength - 41 + i]);
+	  printf("\n");
+	}
 
 	return crc32(this->mChildData, this->mChildDataLength);
 }
@@ -240,17 +243,17 @@ bool SwUnity::verify()
 	bool crc32 = false;
 	bool sh1   = false;
 
-	unsigned char * sh1HashArray = NULL;
-	unsigned int sh1HashLength = 0;
+	uint8_t * sh1HashArray = NULL;
+	uint32_t sh1HashLength = 0;
 	calcSH1(&sh1HashArray, &sh1HashLength);
 
 	printf("SH1 ORG:  ");
-	for (int i = 0; i < 20; i++)
+	for (int32_t i = 0; i < 20; i++)
 	   printf("%02X ", this->mHeader->mHashValue[i] & 0xff);
 	printf("\n");
 
 	printf("SH1 CALC: ");
-	for (int i = 0; i < 20; i++)
+	for (int32_t i = 0; i < 20; i++)
 	   printf("%02X ", sh1HashArray[i] & 0xff);
 	printf("\n");
 
@@ -259,9 +262,9 @@ bool SwUnity::verify()
 	else
 		sh1 = true;
 
-	unsigned char * crc32HashArray = NULL;
-	unsigned int crc32Hash = 0;
-	unsigned int crc32HashLength = 0;
+	uint8_t * crc32HashArray = NULL;
+	uint32_t crc32Hash = 0;
+	uint32_t crc32HashLength = 0;
 	crc32Hash = calcCRC32(&crc32HashArray, &crc32HashLength);
 
 	/*crc32Hash = crc32HashArray[0];
@@ -282,13 +285,13 @@ bool SwUnity::verify()
 void SwUnity::extract()
 {
    char vHelpStr[256];
-   int  fd;
-   unsigned int i;
+   int32_t  fd;
+   uint32_t i;
 
    strncpy(vHelpStr, (char*)this->mHeader->mFileName, SW_UPDATE_FILENAME_LENGTH);
    vHelpStr[SW_UPDATE_FILENAME_LENGTH] = '\0';
 
-   for(int i = 0; i < strlen(vHelpStr); i++)
+   for(int32_t i = 0; i < strlen(vHelpStr); i++)
       if(vHelpStr[i] == '/' || vHelpStr[i] == '\\')
           vHelpStr[i] = '_';
 
@@ -308,7 +311,7 @@ void SwUnity::extract()
    close(fd);
 }
 
-void SwUnity::setPartition(unsigned int flashOffset, char* filename, unsigned char * data, unsigned int dataLength)
+void SwUnity::setPartition(uint32_t flashOffset, char* filename, uint8_t * data, uint32_t dataLength)
 {
 	this->mHeader->mFlashOffset = flashOffset;
 
@@ -318,29 +321,29 @@ void SwUnity::setPartition(unsigned int flashOffset, char* filename, unsigned ch
 	this->mHeader->mDataLength = dataLength;
 
 	this->mChildDataLength = dataLength;
-	this->mChildData = (unsigned char *)malloc(dataLength);
+	this->mChildData = (uint8_t *)malloc(dataLength);
 	memcpy(this->mChildData, data, dataLength);
 
-	unsigned char * sh1HashArray = NULL;
-	unsigned int sh1HashLength = 0;
+	uint8_t * sh1HashArray = NULL;
+	uint32_t sh1HashLength = 0;
 	calcSH1(&sh1HashArray, &sh1HashLength);
-	for (int i = 0; i < 20; i++)
+	for (int32_t i = 0; i < 20; i++)
 	{
 		this->mHeader->mHashValue[i] = sh1HashArray[i];
 	}
 
-	unsigned int crc32HashLength = 0;
+	uint32_t crc32HashLength = 0;
 	this->mHeader->mCRC = calcCRC32(NULL, &crc32HashLength);
 
 
 	this->mDataLength = this->mChildDataLength + SW_UPDATE_HEADER_SIZE;
 
-	this->mData = (unsigned char *) malloc(this->mDataLength);
+	this->mData = (uint8_t *) malloc(this->mDataLength);
 	memcpy(this->mData, this->mHeader, sizeof(tSWUnity));
 	memcpy(this->mData + SW_UPDATE_HEADER_SIZE, this->mChildData, this->mChildDataLength);
 }
 
-unsigned int SwUnity::getData(unsigned char ** data)
+uint32_t SwUnity::getData(uint8_t ** data)
 {
 	if(data != NULL) {
 		memcpy(*data, this->mData, this->mDataLength);

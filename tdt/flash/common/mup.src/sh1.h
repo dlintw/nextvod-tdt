@@ -2,10 +2,12 @@
 #ifndef SH1_H_
 #define SH1_H_
 
+#include <stdint.h>
+
 typedef struct {
-    unsigned long state[5];
-    unsigned long count[2];
-    unsigned char buffer[64];
+    uint64_t state[5];
+    uint64_t count[2];
+    uint8_t  buffer[64];
 } SHA1_CTX;
 
 /*
@@ -37,10 +39,10 @@ A million repetitions of "a"
 //#include "GlobalConfig.h"
 //#include "SHA1.h"
 
-void SHA1Transform(unsigned long state[5], unsigned char buffer[64]);
+void SHA1Transform(uint64_t state[5], uint8_t buffer[64]);
 void SHA1Init(SHA1_CTX* context);
-void SHA1Update(SHA1_CTX* context, unsigned char* data, unsigned int len);
-void SHA1Final(unsigned char digest[20], SHA1_CTX* context);
+void SHA1Update(SHA1_CTX* context, uint8_t* data, uint32_t len);
+void SHA1Final(uint8_t digest[20], SHA1_CTX* context);
 
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
 

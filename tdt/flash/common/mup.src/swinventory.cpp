@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "swinventory.h"
 
 SwInventory::SwInventory()
@@ -15,7 +17,7 @@ SwInventory::SwInventory()
 */
 
 	this->mHeader = (tSWInventory *) malloc(sizeof(tSWInventory));
-	memcpy(this->mHeader->mMagicNumber, (unsigned char *) SW_MAGIC_VALUE,
+	memcpy(this->mHeader->mMagicNumber, (uint8_t *) SW_MAGIC_VALUE,
 			sizeof(SW_MAGIC_VALUE) <= sizeof(this->mHeader->mMagicNumber)?
 					sizeof(SW_MAGIC_VALUE):sizeof(this->mHeader->mMagicNumber));
 
@@ -29,14 +31,14 @@ SwInventory::SwInventory()
 	this->mUnity = new SwUnity();
 }
 
-SwInventory::SwInventory(unsigned char* data, unsigned int offset, unsigned int datalen)
+SwInventory::SwInventory(uint8_t* data, uint32_t offset, uint32_t datalen)
 {
 	mData = data;
 	mDataOffsetToBOF = offset;
 	mDataLength = datalen;
 }
 
-int SwInventory::parse()
+int32_t SwInventory::parse()
 {
 	if(this->mDataLength >= sizeof(tSWInventory))
 	{
@@ -99,7 +101,7 @@ void SwInventory::printXML(bool d)
     printf("\t\t</SWInventory>\n");
 }
 
-int SwInventory::isValid()
+int32_t SwInventory::isValid()
 {
     if (strncmp((char*)this->mHeader->mMagicNumber, (char*)SW_MAGIC_VALUE, SW_UPDATE_MAGIC_SIZE) != 0)
         return 0;
@@ -120,7 +122,7 @@ void SwInventory::extract()
 	this->mUnity->extract();
 }
 
-void SwInventory::setPartition(unsigned int flashOffset, char * filename, unsigned char * data, unsigned int dataLength, unsigned int imageOffset)
+void SwInventory::setPartition(uint32_t flashOffset, char * filename, uint8_t * data, uint32_t dataLength, uint32_t imageOffset)
 {
 	this->mHeader->mFlashOffset = flashOffset;
 	this->mHeader->mImageOffset = imageOffset;
@@ -129,10 +131,10 @@ void SwInventory::setPartition(unsigned int flashOffset, char * filename, unsign
 	this->mUnity->setPartition(flashOffset, filename, data, dataLength);
 
 	this->mDataLength = sizeof(tSWInventory);
-	this->mData = (unsigned char *) malloc(sizeof(tSWInventory));
+	this->mData = (uint8_t *) malloc(sizeof(tSWInventory));
 	memcpy(this->mData, this->mHeader, sizeof(tSWInventory));
 
-	this->mChildData = (unsigned char*)malloc(this->mUnity->getData(NULL));
+	this->mChildData = (uint8_t*)malloc(this->mUnity->getData(NULL));
 	this->mChildDataLength = this->mUnity->getData(&this->mChildData);
 
 	if(this->mChildDataLength % 0x100 != 0) {
@@ -141,7 +143,7 @@ void SwInventory::setPartition(unsigned int flashOffset, char * filename, unsign
 	}
 }
 
-unsigned int SwInventory::getChildData(unsigned char ** data)
+uint32_t SwInventory::getChildData(uint8_t ** data)
 {
 	if(data != NULL) {
 		memcpy(*data, this->mChildData, this->mChildDataLength);
@@ -149,7 +151,7 @@ unsigned int SwInventory::getChildData(unsigned char ** data)
 	return this->mChildDataLength;
 }
 
-unsigned int SwInventory::getData(unsigned char ** data)
+uint32_t SwInventory::getData(uint8_t ** data)
 {
 	if(data != NULL) {
 		memcpy(*data, this->mData, this->mDataLength);
@@ -157,7 +159,7 @@ unsigned int SwInventory::getData(unsigned char ** data)
 	return this->mDataLength;
 }
 
-unsigned int SwInventory::getImageOffset()
+uint32_t SwInventory::getImageOffset()
 {
 	return this->mHeader->mImageOffset;
 }

@@ -1,13 +1,15 @@
 #ifndef SWUNITY_H_ 
 #define SWUNITY_H_ 
 
+#include <stdint.h>
+
 #include "misc.h"
 
 class SwUnity
 {
 public:
 	SwUnity();
-	SwUnity(unsigned char* data, unsigned int datalen);
+	SwUnity(uint8_t* data, uint32_t datalen);
 	void            print();
 	void            printXML(bool d);
 	int             parse();
@@ -16,45 +18,45 @@ public:
 	bool            verify();
 	void            extract();
 
-	void            setProductCode(unsigned int code) {
+	void            setProductCode(uint32_t code) {
 			this->mHeader->mProductCode = code; }
 
-	void            setPartition(unsigned int flashOffset, char* filename, unsigned char * data, unsigned int dataLength);
-	unsigned int    getData(unsigned char ** data);
+	void            setPartition(uint32_t flashOffset, char* filename, uint8_t * data, uint32_t dataLength);
+	uint32_t    getData(uint8_t ** data);
 private:
-	void            calcSH1(unsigned char ** sh1_hash, unsigned int * sh1_hash_len);
-	unsigned int    calcCRC32(unsigned char ** crc32_hash, unsigned int * crc32_hash_len);
+	void            calcSH1(uint8_t ** sh1_hash, uint32_t * sh1_hash_len);
+	uint32_t    calcCRC32(uint8_t ** crc32_hash, uint32_t * crc32_hash_len);
 
 
 
 private:
 	typedef struct sSWUnity
 	{
-		unsigned char mMagicNumber[SW_UPDATE_MAGIC_SIZE];
-		unsigned int  mHeaderVersion;
-		unsigned int  mProductCode;
-		unsigned int  mSWVersion;
+		uint8_t mMagicNumber[SW_UPDATE_MAGIC_SIZE];
+		uint32_t  mHeaderVersion;
+		uint32_t  mProductCode;
+		uint32_t  mSWVersion;
 		time_t        mDate;
-		unsigned int  mFlashOffset;
-		unsigned int  mDataLength;
+		uint32_t  mFlashOffset;
+		uint32_t  mDataLength;
 
 		char          mHashValue[20];
-		unsigned int  mCRC;
+		uint32_t  mCRC;
 
-		unsigned char mFileName[SW_UPDATE_FILENAME_LENGTH];
-		unsigned char mUpdateInfo[SW_UPDATE_INFO_LENGTH];
+		uint8_t mFileName[SW_UPDATE_FILENAME_LENGTH];
+		uint8_t mUpdateInfo[SW_UPDATE_INFO_LENGTH];
 	} tSWUnity;
 
 	// Parsed Unity Header
 	tSWUnity  * mHeader;
 
 	// Unity Header + Partition Data
-	unsigned int    mDataLength;
-	unsigned char * mData;
+	uint32_t    mDataLength;
+	uint8_t * mData;
 
 	// Partition Data
-	unsigned int    mChildDataLength;
-	unsigned char * mChildData;
+	uint32_t    mChildDataLength;
+	uint8_t * mChildData;
 };
 
 #endif

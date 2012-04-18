@@ -8,4 +8,4 @@ if [  -e mup.exe ]; then
   rm mup.exe
 fi
 
-g++ -m32 -o mup mup.cpp misc.cpp crc32.cpp sh1.cpp swinventory.cpp swpack.cpp swunity.cpp
+g++ -o mup mup.cpp misc.cpp crc32.cpp sh1.cpp swinventory.cpp swpack.cpp swunity.cpp

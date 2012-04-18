@@ -8,7 +8,8 @@
 #ifndef CRC32_H_
 #define CRC32_H_
 
+#include <stdint.h>
 
-unsigned long crc32 (unsigned char *data, unsigned int len);
+uint64_t crc32 (uint8_t *data, uint32_t len);
 
 #endif /* CRC32_H_ */

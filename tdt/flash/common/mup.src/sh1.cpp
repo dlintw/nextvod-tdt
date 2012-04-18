@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -10,16 +11,16 @@
 
 /* Hash a single 512-bit block. This is the core of the algorithm. */
 
-void SHA1Transform(unsigned long state[5], unsigned char buffer[64])
+void SHA1Transform(uint64_t state[5], uint8_t buffer[64])
 {
-unsigned long a, b, c, d, e;
+uint64_t a, b, c, d, e;
 typedef union {
-    unsigned char c[64];
-    unsigned long l[16];
+    uint8_t  c[64];
+    uint64_t l[16];
 } CHAR64LONG16;
 CHAR64LONG16* block;
 #ifdef SHA1HANDSOFF
-static unsigned char workspace[64];
+static uint8_t workspace[64];
     block = (CHAR64LONG16*)workspace;
     memcpy(block, buffer, 64);
 #else
@@ -79,9 +80,9 @@ void SHA1Init(SHA1_CTX* context)
 
 /* Run your data through this. */
 
-void SHA1Update(SHA1_CTX* context, unsigned char* data, unsigned int len)
+void SHA1Update(SHA1_CTX* context, uint8_t* data, uint32_t len)
 {
-unsigned int i, j;
+uint32_t i, j;
 
     j = (context->count[0] >> 3) & 63;
     if ((context->count[0] += len << 3) < (len << 3)) context->count[1]++;
@@ -101,22 +102,22 @@ unsigned int i, j;
 
 /* Add padding and return the message digest. */
 
-void SHA1Final(unsigned char digest[20], SHA1_CTX* context)
+void SHA1Final(uint8_t digest[20], SHA1_CTX* context)
 {
-unsigned long i, j;
-unsigned char finalcount[8];
+uint64_t i, j;
+uint8_t finalcount[8];
 
     for (i = 0; i < 8; i++) {
-        finalcount[i] = (unsigned char)((context->count[(i >= 4 ? 0 : 1)]
+        finalcount[i] = (uint8_t)((context->count[(i >= 4 ? 0 : 1)]
          >> ((3-(i & 3)) * 8) ) & 255);  /* Endian independent */
     }
-    SHA1Update(context, (unsigned char *)"\200", 1);
+    SHA1Update(context, (uint8_t *)"\200", 1);
     while ((context->count[0] & 504) != 448) {
-        SHA1Update(context, (unsigned char *)"\0", 1);
+        SHA1Update(context, (uint8_t *)"\0", 1);
     }
     SHA1Update(context, finalcount, 8);  /* Should cause a SHA1Transform() */
     for (i = 0; i < 20; i++) {
-        digest[i] = (unsigned char)
+        digest[i] = (uint8_t)
          ((context->state[i>>2] >> ((3-(i & 3)) * 8) ) & 255);
     }
     /* Wipe variables */

@@ -1,6 +1,7 @@
 #ifndef SWPACK_H_ 
 #define SWPACK_H_ 
 
+#include <stdint.h>
 
 
 #include "swinventory.h"
@@ -11,7 +12,7 @@ class SwPack
 {
 public:
 	SwPack();
-	SwPack(unsigned char* data, unsigned int datalen);
+	SwPack(uint8_t* data, uint32_t datalen);
 	void            print();
 	void            printXML(bool d);
 	void            parse();
@@ -20,42 +21,42 @@ public:
 	bool            verify();
 	void            extract();
 
-	void            setProductCode(unsigned int code) {
+	void            setProductCode(uint32_t code) {
 		this->mHeader->mProductCode = code; }
 
-	void            appendPartition(unsigned int flashOffset, char* filename, unsigned char * data, unsigned int dataLength);
-	int 			createImage(unsigned char ** data);
+	void            appendPartition(uint32_t flashOffset, char* filename, uint8_t * data, uint32_t dataLength);
+	int32_t 			createImage(uint8_t ** data);
 
 private:
 	typedef struct sSWPack
 	{
-		unsigned char mMagicNumber[SW_UPDATE_MAGIC_SIZE];
-		unsigned int  mHeaderVersion;
-		unsigned int  mProductCode;
-		unsigned int  mSWVersion;
+		uint8_t mMagicNumber[SW_UPDATE_MAGIC_SIZE];
+		uint32_t  mHeaderVersion;
+		uint32_t  mProductCode;
+		uint32_t  mSWVersion;
 		time_t        mDate;
-		unsigned int  mInventoryCount; /* not used ->loop over MAX_INVENTORY_COUNT */
-		unsigned int  mInvalidateFlag;
+		uint32_t  mInventoryCount; /* not used ->loop over MAX_INVENTORY_COUNT */
+		uint32_t  mInvalidateFlag;
 
 		char          mUpdateInfo[SW_UPDATE_INFO_LENGTH];
 	} tSWPack;
 
 	tSWPack       * mHeader;
 
-	unsigned int    mDataLength;
-	unsigned char * mData;
+	uint32_t    mDataLength;
+	uint8_t * mData;
 
 	char          * mXML;
 
-	unsigned int    mChildDataOffset;
-	unsigned int    mChildDataLength;
-	unsigned char * mChildData;
+	uint32_t    mChildDataOffset;
+	uint32_t    mChildDataLength;
+	uint8_t * mChildData;
 
-	unsigned int    mInventoryCount;
+	uint32_t    mInventoryCount;
 	SwInventory   * mInventory[MAX_INVENTORY_COUNT];
 
 private:
-	unsigned int    mCurInventoryOffset;
+	uint32_t    mCurInventoryOffset;
 };
 
 #endif
