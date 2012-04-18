@@ -321,7 +321,6 @@ int32_t readBlock(FILE* file, const char * name, uint8_t firstBlock)
    
    return len;
 }
-extern uint64_t crc32 (uint64_t crc, const uint8_t * buf, uint32_t len);
 
 int32_t main(int32_t argc, char* argv[])
 { 
@@ -330,7 +329,7 @@ int32_t main(int32_t argc, char* argv[])
    uint8_t firstBlock = 1;
       
    if(argc == 3 && strlen(argv[1]) == 2 && strncmp(argv[1], "-s", 2) == 0) {
-      uint64_t crc = 0;
+      uint32_t crc = 0;
       char signedFileName[128];
       strcpy(signedFileName, argv[2]);
       strcat(signedFileName, ".signed");
@@ -345,15 +344,15 @@ int32_t main(int32_t argc, char* argv[])
          crc = crc32(crc, buffer, 1/*0x2710*/);
       }
    
-      printf("Signed footer: %08lX\n", crc);
+      printf("Signed footer: %08X\n", crc);
       fwrite(&crc, 1, 4, signedFile);
       
       fclose(file);
       fclose(signedFile);
    }
    else if(argc == 3 && strlen(argv[1]) == 2 && strncmp(argv[1], "-t", 2) == 0) {
-      uint64_t crc = 0;
-      uint64_t orgcrc = 0;
+      uint32_t crc = 0;
+      uint32_t orgcrc = 0;
       file = fopen(argv[2], "r");
       
       uint8_t buffer[0x2710];
@@ -365,8 +364,8 @@ int32_t main(int32_t argc, char* argv[])
          crc = crc32(crc, buffer, 1/*0x2710*/);
       }
    
-      printf("Signed footer: %08lX\n", crc);
-      printf("Original Signed footer: %08lX\n", orgcrc);
+      printf("Signed footer: %08X\n", crc);
+      printf("Original Signed footer: %08X\n", orgcrc);
       
       fclose(file);
    }

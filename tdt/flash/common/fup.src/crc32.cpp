@@ -13,7 +13,7 @@
 /* ========================================================================
  * Table of CRC-32's of all single-byte values (made by make_crc_table)
  */
-const uint64_t crc_table[256] = {
+const uint32_t crc_table[256] = {
   0x00000000L, 0x77073096L, 0xee0e612cL, 0x990951baL, 0x076dc419L,
   0x706af48fL, 0xe963a535L, 0x9e6495a3L, 0x0edb8832L, 0x79dcb8a4L,
   0xe0d5e91eL, 0x97d2d988L, 0x09b64c2bL, 0x7eb17cbdL, 0xe7b82d07L,
@@ -70,7 +70,7 @@ const uint64_t crc_table[256] = {
 
 #define _CRC32_(crc, ch)	 (crc = (crc >> 8) ^ crc_table[(crc ^ (ch)) & 0xff])
 
-uint64_t crc32(uint64_t crc, uint8_t *buf, uint32_t size)
+uint32_t crc32(uint32_t crc, uint8_t *buf, uint32_t size)
 {
 	uint8_t *p;
 	uint32_t  len, nr;
