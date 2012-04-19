@@ -17,7 +17,7 @@
 
 #define BUFSIZE 4096
 
-int32_T main(int32_t argc, char* argv[])
+int32_t main(int32_t argc, char* argv[])
 {
     int32_t padToSize = 0, readBytes = 0;
     uint8_t buffer[BUFSIZE];
