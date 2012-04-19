@@ -131,9 +131,9 @@ else !STM23
 # if STM24
 HOST_RPMCONFIG_VERSION = 2.4-21
 HOST_RPMCONFIG_SPEC = stm-$(HOST_RPMCONFIG).spec
-HOST_RPMCONFIG_SPEC_PATCH = $(HOST_RPMCONFIG_SPEC)24.diff
-HOST_RPMCONFIG_PATCHES = stm-$(HOST_RPMCONFIG)-ignore-skip-cvs-errors.patch \
-			 stm-$(HOST_RPMCONFIG)-autoreconf-add-libtool-macros24.patch
+HOST_RPMCONFIG_SPEC_PATCH = $(HOST_RPMCONFIG_SPEC).$(HOST_RPMCONFIG_VERSION).diff
+HOST_RPMCONFIG_PATCHES = stm-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION)-ignore-skip-cvs-errors.patch \
+			 stm-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION)-autoreconf-add-libtool-macros.patch
 # endif STM24
 endif !STM23
 endif !STM22

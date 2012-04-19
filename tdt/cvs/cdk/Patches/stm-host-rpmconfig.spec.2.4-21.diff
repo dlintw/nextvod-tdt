@@ -18,8 +18,8 @@
  Version: %{_stm_build_id}
  Release: 21 
  Source0: stm-host-rpmconfig-%{version}-%{_build_cpu}.tar.gz
-+Patch0: stm-host-rpmconfig-ignore-skip-cvs-errors.patch
-+Patch1: stm-host-rpmconfig-autoreconf-add-libtool-macros24.patch
++Patch0: stm-host-rpmconfig-%{version}-%{release}-ignore-skip-cvs-errors.patch
++Patch1: stm-host-rpmconfig-%{version}-%{release}-autoreconf-add-libtool-macros.patch
  License: GPL
  Group: Development/Tools
  BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
