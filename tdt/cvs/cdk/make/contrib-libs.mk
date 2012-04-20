@@ -240,7 +240,7 @@ $(DEPDIR)/libungif.do_compile: $(DEPDIR)/libungif.do_prepare
 $(DEPDIR)/min-libungif $(DEPDIR)/std-libungif $(DEPDIR)/max-libungif \
 $(DEPDIR)/libungif: \
 $(DEPDIR)/%libungif: $(DEPDIR)/libungif.do_compile
-	cd @libungif@ && \
+	cd @DIR_libungif@ && \
 		@INSTALL_libungif@
 #	@DISTCLEANUP_libungif@
 	[ "x$*" = "x" ] && touch $@ || true
