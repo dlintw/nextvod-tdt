@@ -58,7 +58,7 @@ if [ "$?" != "0" ]; then
     echo "Probably causes are:"
     echo "  - Missing SSH Key"
     if [ ! -f ~/.ssh/id_rsa.pub ]; then
-        ssh-keygen -t rsa -C $USERNAME@duckbox -N -P << EOF
+        ssh-keygen -t rsa -C $USERNAME@duckbox -N "" << EOF
 
 y
 EOF
