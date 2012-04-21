@@ -49,6 +49,17 @@ if [ -z "$FEDORA$SUSE$UBUNTU" ]; then
 	INSTALL="echo "
 fi
 
+if [ "$SUSE" == 1 ]; then
+	SUSE_VERSION=`cat /etc/SuSE-release | line | awk '{ print $2 }'`
+	if [ "$SUSE_VERSION" == "12.1" ]; then
+		zypper ar "http://download.opensuse.org/repositories/home:/toganm/openSUSE_12.1/" fakeroot
+	fi
+	if [ "$SUSE_VERSION" == "11.4" ]; then
+		zypper ar "http://download.opensuse.org/repositories/home:/toganm/openSUSE_11.4/" fakeroot
+	fi
+	zypper ref
+fi
+
 PACKAGES="\
 	make \
 	subversion \
@@ -72,7 +83,7 @@ PACKAGES="\
 	${UBUNTU:+pkg-config}           ${SUSE:+pkg-config} \
 	${UBUNTU:+patch}                ${SUSE:+patch} \
 	${UBUNTU:+autopoint}            ${SUSE:+glib2-devel} \
-	${UBUNTU:+cfv} \
+	${UBUNTU:+cfv}                  ${SUSE:+fakeroot} \
 	${UBUNTU:+fakeroot} \
 	${UBUNTU:+gawk} \
 	${UBUNTU:+gperf} \
@@ -96,16 +107,18 @@ fi
 $INSTALL $PACKAGES
 
 #Is this also necessary for other dists?
-DEBIAN_VERSION=`cat /etc/debian_version`
-if [ $DEBIAN_VERSION == "wheezy/sid" ]; then
-	if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then
-		ln -s /usr/include/x86_64-linux-gnu/bits /usr/include/bits
-		ln -s /usr/include/x86_64-linux-gnu/gnu /usr/include/gnu
-		ln -s /usr/include/x86_64-linux-gnu/sys /usr/include/sys
-	else
-		ln -s /usr/include/i386-linux-gnu/bits /usr/include/bits
-		ln -s /usr/include/i386-linux-gnu/gnu /usr/include/gnu
-		ln -s /usr/include/i386-linux-gnu/sys /usr/include/sys
+if [ "$UBUNTU" == 1 ]; then
+	DEBIAN_VERSION=`cat /etc/debian_version`
+	if [ "$DEBIAN_VERSION" == "wheezy/sid" ]; then
+		if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then
+			ln -s /usr/include/x86_64-linux-gnu/bits /usr/include/bits
+			ln -s /usr/include/x86_64-linux-gnu/gnu /usr/include/gnu
+			ln -s /usr/include/x86_64-linux-gnu/sys /usr/include/sys
+		else
+			ln -s /usr/include/i386-linux-gnu/bits /usr/include/bits
+			ln -s /usr/include/i386-linux-gnu/gnu /usr/include/gnu
+			ln -s /usr/include/i386-linux-gnu/sys /usr/include/sys
+		fi
 	fi
 fi
 
