@@ -54,6 +54,9 @@ if [ "$SUSE" == 1 ]; then
 	if [ "$SUSE_VERSION" == "12.1" ]; then
 		zypper ar "http://download.opensuse.org/repositories/home:/toganm/openSUSE_12.1/" fakeroot
 	fi
+	if [ "$SUSE_VERSION" == "11.3" ]; then
+		zypper ar "http://download.opensuse.org/repositories/home:/toganm/openSUSE_11.3/" fakeroot
+	fi
 	if [ "$SUSE_VERSION" == "11.4" ]; then
 		zypper ar "http://download.opensuse.org/repositories/home:/toganm/openSUSE_11.4/" fakeroot
 	fi
