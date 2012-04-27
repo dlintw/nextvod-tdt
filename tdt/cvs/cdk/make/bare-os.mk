@@ -203,9 +203,9 @@ endif !STM23
 MPFR_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPFR)-$(MPFR_VERSION).sh4.rpm
 
 $(MPFR_RPM): \
-		$(GMP) \
 		$(addprefix Patches/,$(MPFR_SPEC_PATCH) $(MPFR_PATCHES)) \
-		$(archivedir)/$(STLINUX:%23=%24)-target-$(MPFR)-$(MPFR_VERSION).src.rpm
+		$(archivedir)/$(STLINUX:%23=%24)-target-$(MPFR)-$(MPFR_VERSION).src.rpm \
+		| $(DEPDIR)/$(GMP)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(MPFR_SPEC_PATCH),( cd SPECS && patch -p1 $(MPFR_SPEC) < $(buildprefix)/Patches/$(MPFR_SPEC_PATCH) ) &&) \
 	$(if $(MPFR_PATCHES),cp $(addprefix Patches/,$(MPFR_PATCHES)) SOURCES/ &&) \
