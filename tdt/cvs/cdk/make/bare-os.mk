@@ -231,9 +231,9 @@ MPC_PATCHES := stm-target-$(MPC).$(MPC_VERSION).diff
 MPC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPC)-$(MPC_VERSION).sh4.rpm
 
 $(MPC_RPM): \
-		$(MPFR) \
 		$(addprefix Patches/,$(MPC_SPEC_PATCH) $(MPC_PATCHES)) \
-		$(archivedir)/$(STLINUX:%23=%24)-target-$(MPC)-$(MPC_VERSION).src.rpm
+		$(archivedir)/$(STLINUX:%23=%24)-target-$(MPC)-$(MPC_VERSION).src.rpm \
+		| $(DEPDIR)/$(MPFR)
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
 	$(if $(MPC_SPEC_PATCH),( cd SPECS && patch -p1 $(MPC_SPEC) < $(buildprefix)/Patches/$(MPC_SPEC_PATCH) ) &&) \
 	$(if $(MPC_PATCHES),cp $(addprefix Patches/,$(MPC_PATCHES)) SOURCES/ &&) \
