@@ -146,7 +146,7 @@ endif !STM22
 STSLAVE_RPM := RPMS/sh4/$(STLINUX)-sh4-$(STSLAVE)-$(STSLAVE_VERSION).sh4.rpm
 
 $(STSLAVE_RPM): \
-		$(if $(STSLAVE_SPEC_PATCH),Patches/$(STSLAVE_PATCH)) \
+		$(if $(STSLAVE_SPEC_PATCH),Patches/$(STSLAVE_SPEC_PATCH)) \
 		$(if $(STSLAVE_PATCHES),$(STSLAVE_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX:%23=%24)-target-$(STSLAVE)-$(STSLAVE_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
