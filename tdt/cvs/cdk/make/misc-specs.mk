@@ -201,7 +201,7 @@ OPENSSL_RPM := RPMS/sh4/$(STLINUX)-sh4-$(OPENSSL)-$(OPENSSL_VERSION).sh4.rpm
 OPENSSL_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(OPENSSL_DEV)-$(OPENSSL_VERSION).sh4.rpm
 
 $(OPENSSL_RPM) $(OPENSSL_DEV_RPM): \
-		$(if $(OPENSSL_SPEC_PATCH),Patches/$(OPENSSL_PATCH)) \
+		$(if $(OPENSSL_SPEC_PATCH),Patches/$(OPENSSL_SPEC_PATCH)) \
 		$(if $(OPENSSL_PATCHES),$(OPENSSL_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(OPENSSL)-$(OPENSSL_VERSION).src.rpm
 	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
