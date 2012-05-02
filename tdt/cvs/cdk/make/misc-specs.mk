@@ -95,7 +95,7 @@ endif !STM22
 SPLASHUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).sh4.rpm
 
 $(SPLASHUTILS_RPM): \
-		$(if $(SPLASHUTILS_SPEC_PATCH),Patches/$(SPLASHUTILS_PATCH)) \
+		$(if $(SPLASHUTILS_SPEC_PATCH),Patches/$(SPLASHUTILS_SPEC_PATCH)) \
 		$(if $(SPLASHUTILS_PATCHES),$(SPLASHUTILS_PATCHES:%=Patches/%)) \
 		jpeg libmng freetype libpng \
 		$(archivedir)/stlinux23-target-$(SPLASHUTILS)-$(SPLASHUTILS_VERSION).src.rpm
