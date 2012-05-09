@@ -318,7 +318,7 @@ extra.update_dir Update-Verzeichnis
 extra.use_gotoxx Benutze gotoXX
 extra.use_log Log nach /tmp/log
 extra.west Westen
-extra.zap_cycle Zap Zyklen
+extra.zap_cycle Zap nur in Bouquet
 extra.zapit_backup Sichere Kanalliste nach /tmp
 extra.zapit_fast_zap schnelles Zapping
 extra.zapit_fe_timeout Tuning Zeitüberschreitung (1 = 10ms)
