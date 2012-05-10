@@ -509,7 +509,7 @@ ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-atevio7500_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-		$(if $(P0209),linux-sh4-atevio7500_mtdconcat_stm24$(PATCH_STR).patch)
+		$(if $(P0209)$(P0210),linux-sh4-atevio7500_mtdconcat_stm24$(PATCH_STR).patch)
 
 HS7810APATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
@@ -525,7 +525,7 @@ HS7110PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-squashfs-downgrade-stm24-to-stm23.patch \
 		linux-squashfs3.0_lzma_stm23.patch \
 		linux-squashfs-downgrade-stm24-patch-2.6.25 \
-		linux-squashfs-downgrade-stm24-rm_d_alloc_anon.patch		
+		linux-squashfs-downgrade-stm24-rm_d_alloc_anon.patch
 		
 UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
@@ -662,7 +662,7 @@ KERNELPATCHES_HAVANA_STM24 =  \
 		$(if $(ATEVIO7500),$(ATEVIO7500PATCHES_HAVANA_STM24)) \
 		$(if $(UFS912),$(UFS912PATCHES_HAVANA_STM24)) \
 		$(if $(IPBOX9900),$(IPBOX9900PATCHES_HAVANA_STM24)) \
-		$(if $(IPBOX99),$(IPBOX99PATCHES_HAVANA_STM24))	\
+		$(if $(IPBOX99),$(IPBOX99PATCHES_HAVANA_STM24)) \
 		$(if $(IPBOX55),$(IPBOX55PATCHES_HAVANA_STM24))
 
 ############ Patches Havana End ###############
