@@ -4,11 +4,11 @@
 $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	@PREPARE_busybox@
 	cd @DIR_busybox@
-#	cd @DIR_busybox@ && \
-#		patch -p1 < ../Patches/busybox-1.19.3/busybox-1.19.3-getty.patch && \
-#		patch -p1 < ../Patches/busybox-1.19.3/busybox-1.19.3-mdev.patch && \
-#		patch -p1 < ../Patches/busybox-1.19.3/busybox-1.19.3-modinfo.patch && \
-#		patch -p1 < ../Patches/busybox-1.19.3/busybox-1.19.3-wget.patch
+	cd @DIR_busybox@ && \
+		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-buildsys.patch && \
+		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-getty.patch && \
+		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-lineedit.patch && \
+		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-sed.patch
 	touch $@
 
 $(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.19.4/busybox-1.19.4.config | $(DEPDIR)/$(GLIBC_DEV)
