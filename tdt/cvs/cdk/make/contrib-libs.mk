@@ -812,22 +812,16 @@ $(DEPDIR)/libdvdread.do_compile: bootstrap libdvdread.do_prepare
 			--enable-shared \
 			--prefix=/usr && \
 		$(MAKE) all
-	echo '#!/bin/sh' > $(buildprefix)/libdvdread-4.1.3/misc/dvdread-config
-	echo 'prefix='$(targetprefix)/usr >> $(buildprefix)/libdvdread-4.1.3/misc/dvdread-config
-	echo 'libdir='$(targetprefix)/usr/lib >> $(buildprefix)/libdvdread-4.1.3/misc/dvdread-config
-	echo >> $(buildprefix)/libdvdread-4.1.3/misc/dvdread-config
-	cat $(buildprefix)/libdvdread-4.1.3/misc/dvdread-config.sh >> $(buildprefix)/libdvdread-4.1.3/misc/dvdread-config
-	chmod 0755 $(buildprefix)/libdvdread-4.1.3/misc/dvdread-config
 	touch $@
 
 $(DEPDIR)/min-libdvdread $(DEPDIR)/std-libdvdread $(DEPDIR)/max-libdvdread \
 $(DEPDIR)/libdvdread: \
 $(DEPDIR)/%libdvdread: libdvdread.do_compile
 	cd @DIR_libdvdread@ && \
+		sed -e "s,^prefix=,prefix=$(targetprefix)," < misc/dvdread-config > $(crossprefix)/bin/dvdread-config && \
+		chmod 755 $(crossprefix)/bin/dvdread-config && \
 		@INSTALL_libdvdread@
-	sed 's!/usr/lib!$(targetprefix)/usr/lib!g' $(targetprefix)/usr/lib/libdvdread.la > $(targetprefix)/usr/lib/libdvdread.la1
-	cp $(targetprefix)/usr/lib/libdvdread.la1 $(targetprefix)/usr/lib/libdvdread.la
-	rm $(targetprefix)/usr/lib/libdvdread.la1
+		rm -f $(targetprefix)/usr/bin/dvdread-config
 #	@DISTCLEANUP_libdvdread@
 	[ "x$*" = "x" ] && touch $@ || true
 
