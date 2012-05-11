@@ -27,6 +27,7 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	$(if $(ATEVIO7500), -DPLATFORM_ATEVIO7500) \
 	$(if $(HS7810A), -DPLATFORM_HS7810A) \
 	$(if $(HS7110), -DPLATFORM_HS7110) \
+	$(if $(WHITEBOX), -DPLATFORM_WHITEBOX) \	
 	$(if $(IPBOX9900), -DPLATFORM_IPBOX9900) \
 	$(if $(IPBOX99), -DPLATFORM_IPBOX99) \
 	$(if $(IPBOX55), -DPLATFORM_IPBOX55) \

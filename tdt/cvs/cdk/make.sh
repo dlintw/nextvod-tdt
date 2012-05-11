@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == -h ] || [ "$1" == --help ]; then
- echo "Parameter 1: target system (1-26)"
+ echo "Parameter 1: target system (1-27)"
  echo "Parameter 2: kernel (1-9)"
  echo "Parameter 3: debug (Y/N)"
  echo "Parameter 4: player (1-2)"
@@ -83,13 +83,14 @@ echo "23) IPBOX55"
 echo "24) Fortis HS7810A"
 echo "25) B4Team ADB 5800S"
 echo "26) Fortis HS7110"
+echo "27) WHITEBOX"
 
 case $1 in
 	[1-9] | 1[0-9] | 2[0-9]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-26)? ";;
+	read -p "Select target (1-27)? ";;
 esac
 
 case "$REPLY" in
@@ -118,6 +119,7 @@ case "$REPLY" in
 	24) TARGET="--enable-hs7810a";;
 	25) TARGET="--enable-adb_box";;
 	26) TARGET="--enable-hs7110";;
+	27) TARGET="--enable-whitebox";;
 	 *) TARGET="--enable-ufs912";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"

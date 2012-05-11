@@ -404,6 +404,14 @@ AC_ARG_ENABLE(hs7110,
 AM_CONDITIONAL(ENABLE_HS7110,test "$enable_hs7110" = "yes")
 AC_SUBST(HS7110)
 
+AC_ARG_ENABLE(whitebox,
+	AS_HELP_STRING(--enable-whitebox,    enable fortis whitebox stuff),
+	[case "${enableval}" in
+		yes) WHITEBOX=whitebox ;;
+	esac],[enable_WHITEBOX=no])
+AM_CONDITIONAL(ENABLE_WHITEBOX,test "$enable_whitebox" = "yes")
+AC_SUBST(WHITEBOX)
+
 AC_ARG_ENABLE(cuberevo,
 	AS_HELP_STRING(--enable-cuberevo,    enable cuberevo stuff),
 	[case "${enableval}" in

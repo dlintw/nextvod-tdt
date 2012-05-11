@@ -459,6 +459,30 @@ else
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_enigma1_hd/lib/modules/
 
 	rm -f $(prefix)/release_enigma1_hd/lib/firmware/dvb-fe-cx21143.fw
+else
+if ENABLE_WHITEBOX
+
+	echo "whitebox" > $(prefix)/release_enigma1_hd/etc/hostname
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd_hs7110/vfd.ko $(prefix)/release_enigma1_hd/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release_enigma1_hd/lib/modules/
+if STM23
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_enigma1_hd/lib/modules/ftdi.ko
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_enigma1_hd/lib/modules
+	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_enigma1_hd/lib/modules
+	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_enigma1_hd/lib/modules
+endif
+
+	rm -f $(prefix)/release_enigma1_hd/lib/firmware/dvb-fe-cx24116.fw
+	rm -f $(prefix)/release_enigma1_hd/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release_enigma1_hd/bin/evremote
+else
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button/button.ko $(prefix)/release_enigma1_hd/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/led/led.ko $(prefix)/release_enigma1_hd/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd/vfd.ko $(prefix)/release_enigma1_hd/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_enigma1_hd/lib/modules/
+
+	rm -f $(prefix)/release_enigma1_hd/lib/firmware/dvb-fe-cx21143.fw
+endif
 endif
 endif
 endif
