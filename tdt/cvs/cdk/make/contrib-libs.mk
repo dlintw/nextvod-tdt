@@ -116,10 +116,11 @@ $(DEPDIR)/freetype: \
 $(DEPDIR)/%freetype: $(DEPDIR)/freetype.do_compile
 	cd @DIR_freetype@ && \
 		sed -e "s,^prefix=,prefix=$(targetprefix)," < builds/unix/freetype-config > $(crossprefix)/bin/freetype-config && \
-		@INSTALL_freetype@
 		chmod 755 $(crossprefix)/bin/freetype-config && \
 		ln -sf $(crossprefix)/bin/freetype-config $(crossprefix)/bin/$(target)-freetype-config && \
-		ln -sf $(targetprefix)/usr/include/freetype2/freetype $(targetprefix)/usr/include/freetype
+		ln -sf $(targetprefix)/usr/include/freetype2/freetype $(targetprefix)/usr/include/freetype && \
+		@INSTALL_freetype@
+		rm -f $(targetprefix)/usr/bin/freetype-config
 #	@DISTCLEANUP_freetype@
 	[ "x$*" = "x" ] && touch $@ || true
 
