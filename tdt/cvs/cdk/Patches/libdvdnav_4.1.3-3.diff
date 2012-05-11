@@ -1,3 +1,14 @@
+--- libdvdnav-4.1.3.orig/configure.ac	2012-05-10 17:28:37.540182957 +0200
++++ libdvdnav-4.1.3/configure.ac	2012-05-10 17:29:59.452179512 +0200
+@@ -99,7 +99,7 @@
+ AC_DISABLE_STATIC
+ AC_PROG_LIBTOOL
+ AC_SUBST(LIBTOOL_DEPS)
+-if ${CONFIG_SHELL} ./libtool --features | grep "enable static" >/dev/null; then
++if ${CONFIG_SHELL} libtool --features | grep "enable static" >/dev/null; then
+   STATIC="-static"
+ else
+   STATIC=
 --- libdvdnav-4.1.3.orig/debian/rules
 +++ libdvdnav-4.1.3/debian/rules
 @@ -0,0 +1,81 @@
