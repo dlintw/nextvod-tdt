@@ -778,7 +778,7 @@ $(DEPDIR)/libdvdnav.do_compile: bootstrap libdvdread libdvdnav.do_prepare
 			--prefix=/usr \
 			--enable-static \
 			--enable-shared \
-			--with-dvdread-config=$(targetprefix)/usr/bin/dvdread-config && \
+			--with-dvdread-config=$(crossprefix)/bin/dvdread-config && \
 		$(MAKE) all
 	touch $@
 
@@ -786,7 +786,10 @@ $(DEPDIR)/min-libdvdnav $(DEPDIR)/std-libdvdnav $(DEPDIR)/max-libdvdnav \
 $(DEPDIR)/libdvdnav: \
 $(DEPDIR)/%libdvdnav: libdvdnav.do_compile
 	cd @DIR_libdvdnav@ && \
+		sed -e "s,^prefix=,prefix=$(targetprefix)," < misc/dvdnav-config > $(crossprefix)/bin/dvdnav-config && \
+		chmod 755 $(crossprefix)/bin/dvdnav-config && \
 		@INSTALL_libdvdnav@
+		rm -f $(targetprefix)/usr/bin/dvdnav-config
 #	@DISTCLEANUP_libdvdnav@
 	[ "x$*" = "x" ] && touch $@ || true
 
