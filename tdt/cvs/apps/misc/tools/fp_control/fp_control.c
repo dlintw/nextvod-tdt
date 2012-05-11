@@ -586,7 +586,9 @@ int getModel()
 		else if(!strncasecmp(vName,"hs7810a", 7))
             vBoxType = HdBox;
 		else if(!strncasecmp(vName,"hs7110", 6))
-            vBoxType = HdBox;           
+            vBoxType = HdBox;
+		else if(!strncasecmp(vName,"whitebox", 8))
+            vBoxType = HdBox;
         else if(!strncasecmp(vName,"hs5101", 6))
             vBoxType = Hs5101;
         else if(!strncasecmp(vName,"octagon1008", 11))
