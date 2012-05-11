@@ -213,9 +213,10 @@ $(DEPDIR)/min-libpng $(DEPDIR)/std-libpng $(DEPDIR)/max-libpng \
 $(DEPDIR)/libpng: \
 $(DEPDIR)/%libpng: $(DEPDIR)/libpng.do_compile
 	cd @DIR_libpng@ && \
+		sed -e "s,^prefix=,prefix=$(targetprefix)," < libpng-config > $(crossprefix)/bin/libpng-config && \
+		chmod 755 $(crossprefix)/bin/libpng-config && \
 		@INSTALL_libpng@
-#		sed -e "s,^prefix=\",prefix=\"$(targetprefix)," < libpng-config > $(targetprefix)/usr/bin/libpng-config
-#		ln -s $(targetprefix)/usr/bin/libpng-config $(hostprefix)/bin/libpng-config
+		rm -f $(targetprefix)/usr/bin/libpng*-config
 #	@DISTCLEANUP_libpng@
 	[ "x$*" = "x" ] && touch $@ || true
 
