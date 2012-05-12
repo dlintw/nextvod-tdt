@@ -507,7 +507,7 @@ release_hs7110:
 	mv $(prefix)/release/lib/firmware/component_7111_mb618.fw $(prefix)/release/lib/firmware/component.fw
 	rm $(prefix)/release/lib/firmware/component_7105_pdk7105.fw
 
-release_WHITEBOX:
+release_whitebox:
 	echo "whitebox" > $(prefix)/release/etc/hostname
 	rm -f $(prefix)/release/sbin/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
