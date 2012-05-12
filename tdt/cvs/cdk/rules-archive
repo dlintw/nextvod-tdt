@@ -73,6 +73,7 @@ jfsutils-1.1.15.tar.gz;http://jfs.sourceforge.net/project/pub;http://fossies.org
 opkg-0.1.8.tar.gz;http://opkg.googlecode.com/files
 sysstat-10.0.4.tar.gz;http://pagesperso-orange.fr/sebastien.godard
 autofs-3.1.7.tar.gz;ftp://ftp.kernel.org/pub/linux/daemons/autofs/v3/
+ImageMagick-6.7.6-9.tar.bz2;ftp://ftp.fifi.org/pub/ImageMagick
 
 #
 # contrib libs

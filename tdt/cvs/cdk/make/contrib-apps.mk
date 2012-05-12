@@ -904,3 +904,40 @@ $(DEPDIR)/%autofs: $(DEPDIR)/autofs.do_compile
 #	@DISTCLEANUP_autofs@
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# imagemagick
+#
+$(DEPDIR)/imagemagick.do_prepare: bootstrap @DEPENDS_imagemagick@
+	@PREPARE_imagemagick@
+	touch $@
+
+$(DEPDIR)/imagemagick.do_compile: $(DEPDIR)/imagemagick.do_prepare
+	cd @DIR_imagemagick@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr \
+		--without-dps \
+		--without-fpx \
+		--without-gslib \
+		--without-jbig \
+		--without-jp2 \
+		--without-lcms \
+		--without-tiff \
+		--without-xml \
+		--enable-shared \
+		--enable-static \
+		--without-x && \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-imagemagick $(DEPDIR)/std-imagemagick $(DEPDIR)/max-imagemagick \
+$(DEPDIR)/imagemagick: \
+$(DEPDIR)/%imagemagick: $(DEPDIR)/imagemagick.do_compile
+	cd @DIR_imagemagick@ && \
+		@INSTALL_imagemagick@
+#	@DISTCLEANUP_imagemagick@
+	[ "x$*" = "x" ] && touch $@ || true
+
+
