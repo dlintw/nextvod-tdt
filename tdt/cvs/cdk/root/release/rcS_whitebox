@@ -71,7 +71,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    insmod $MODDIR/lnb.ko type=a8293
    insmod $MODDIR/stv090x.ko paramDebug=0
-   insmod $MODDIR/hs7110.ko
+   insmod $MODDIR/dummy_cic.ko
    if [ $player -gt 131 ]; then
 	insmod $MODDIR/pti.ko
 	insmod $MODDIR/stm_monitor.ko
