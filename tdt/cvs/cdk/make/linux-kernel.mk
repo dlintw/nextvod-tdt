@@ -1064,7 +1064,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(HS7810A),HS7810A=$(HS7810A)) \
 		$(if $(HS7110),HS7110=$(HS7110)) \
-		$(if $(WHITEBOX),WHITEBOX=$(WHITEBOX)) \		
+		$(if $(WHITEBOX),WHITEBOX=$(WHITEBOX)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
@@ -1100,7 +1100,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(OCTAGON1008),OCTAGON1008=$(OCTAGON1008)) \
 		$(if $(HS7810A),HS7810A=$(HS7810A)) \
 		$(if $(HS7110),HS7110=$(HS7110)) \
-		$(if $(WHITEBOX),WHITEBOX=$(WHITEBOX)) \	
+		$(if $(WHITEBOX),WHITEBOX=$(WHITEBOX)) \
 		$(if $(TF7700),TF7700=$(TF7700)) \
 		$(if $(HL101),HL101=$(HL101)) \
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
