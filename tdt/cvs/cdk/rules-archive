@@ -136,6 +136,7 @@ alsa-lib-1.0.21a.tar.bz2;ftp://ftp.alsa-project.org/pub/lib
 rtmpdump-2.4.tar.gz;http://rtmpdump.mplayerhq.hu/download
 libdvbsi++-0.3.6.tar.bz2;http://www.saftware.de/libdvbsi++
 libtuxtxt.git;git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;4ff8fffd72115130ff6594841e7bad2f85e85f12;HEAD
+pcre-8.11.tar.bz2;http://ftp.exim.org/pub/pcre
 
 #
 # PYTHON

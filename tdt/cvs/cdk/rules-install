@@ -105,6 +105,7 @@ tuxtxt32bpp;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr
 libdreamdvd;rewrite-pkgconfig:libdreamdvd.pc;make:install:prefix=/usr:DESTDIR=TARGETS
 libdreamdvd2;rewrite-pkgconfig:libdreamdvd.pc;make:install:prefix=/usr:DESTDIR=TARGETS
 hotplug_e2;make:install:prefix=/usr:DESTDIR=TARGETS
+libpcre;rewrite-pkgconfig:libpcre.pc:libpcrecpp.pc:libpcreposix.pc;make:install:prefix=/usr:DESTDIR=TARGET;rewrite-libtool:TARGET/usr/lib/libpcre.la:TARGET/usr/lib/libpcreposix.la
 
 #
 # PYTHON

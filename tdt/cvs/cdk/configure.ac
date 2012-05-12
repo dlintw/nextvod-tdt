@@ -944,6 +944,7 @@ TUXBOX_RULES_MAKE(tuxtxtlib)
 TUXBOX_RULES_MAKE(tuxtxt32bpp)
 TUXBOX_RULES_MAKE(libdreamdvd)
 TUXBOX_RULES_MAKE(libdreamdvd2)
+TUXBOX_RULES_MAKE(libpcre)
 
 #
 # python

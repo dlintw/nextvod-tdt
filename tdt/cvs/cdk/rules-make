@@ -134,6 +134,7 @@ tuxtxtlib;1.0;libtuxtxt;libtuxtxt.git:libtuxtxt-1.0-fix_dbox_headers.diff;extrac
 tuxtxt32bpp;1.0;tuxtxt;libtuxtxt.git:tuxtxt32bpp-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/tuxtxt;patch:tuxtxt32bpp-1.0-fix_dbox_headers.diff
 libdreamdvd;1.0;libdreamdvd;;link:../apps/misc/tools/libdreamdvd:libdreamdvd
 libdreamdvd2;1.0;libdreamdvd;;patch:libdreamdvd-1.0-support_sh4.patch
+libpcre;8.11;pcre-8.11;pcre-8.11.tar.bz2;extract:pcre-8.11.tar.bz2
 
 #
 # PYTHON

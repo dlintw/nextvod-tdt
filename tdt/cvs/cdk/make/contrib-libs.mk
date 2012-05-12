@@ -2320,3 +2320,34 @@ $(DEPDIR)/%libdreamdvd2: $(DEPDIR)/libdreamdvd2.do_compile
 		@INSTALL_libdreamdvd2@
 #	@DISTCLEANUP_libdreamdvd2@
 	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# libpcre
+#
+$(DEPDIR)/libpcre.do_prepare: bootstrap @DEPENDS_libpcre@
+	@PREPARE_libpcre@
+	touch $@
+
+$(DEPDIR)/libpcre.do_compile: $(DEPDIR)/libpcre.do_prepare
+	cd @DIR_libpcre@ && \
+	$(BUILDENV) \
+	./configure \
+		--build=$(build) \
+		--host=$(target) \
+		--prefix=/usr \
+		--enable-utf8 \
+		--enable-unicode-properties && \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-libpcre $(DEPDIR)/std-libpcre $(DEPDIR)/max-libpcre \
+$(DEPDIR)/libpcre: \
+$(DEPDIR)/%libpcre: $(DEPDIR)/libpcre.do_compile
+	cd @DIR_libpcre@ && \
+		sed -e "s,^prefix=,prefix=$(targetprefix)," < pcre-config > $(crossprefix)/bin/pcre-config && \
+		chmod 755 $(crossprefix)/bin/pcre-config && \
+		@INSTALL_libpcre@
+		rm -f $(targetprefix)/usr/bin/pcre-config
+#	@DISTCLEANUP_libpcre@
+	[ "x$*" = "x" ] && touch $@ || true
+
