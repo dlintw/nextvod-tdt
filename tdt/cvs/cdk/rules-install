@@ -149,6 +149,7 @@ samba;make:install
 netio;install:-m755:netio:TARGETS/usr/bin;install:-m755:bin/linux-i386:HOST/bin/netio
 lighttpd;make:install:DESTDIR=TARGETS
 wireless_tools;make:install:INSTALL_MAN=TARGETS/usr/share/man:PREFIX=TARGETS/usr
+wpa_supplicant;make:install:DESTDIR=TARGETS
 ethtool;make:install:DESTDIR=TARGETS
 
 
