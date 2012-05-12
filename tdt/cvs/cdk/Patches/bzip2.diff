@@ -22,8 +22,8 @@ diff -Naur bzip2-1.0.2/Makefile-libbz2_so bzip2-1.0.2-patched/Makefile-libbz2_so
 +	cp -f bzlib.h $(PREFIX)/include
 +	chmod a+r $(PREFIX)/include/bzlib.h
 +	if ( test ! -d $(PREFIX)/lib ) ; then mkdir -p $(PREFIX)/lib ; fi
-+	cp -f libbz2.so.1.0.2 $(PREFIX)/lib
-+	chmod a+r $(PREFIX)/lib/libbz2.so.1.0.2
-+	ln -sf libbz2.so.1.0.2 $(PREFIX)/lib/libbz2.so.1.0
-+	ln -sf libbz2.so.1.0.2 $(PREFIX)/lib/libbz2.so.1
-+	ln -sf libbz2.so.1.0.2 $(PREFIX)/lib/libbz2.so
++	cp -f libbz2.so.1.0.6 $(PREFIX)/lib
++	chmod a+r $(PREFIX)/lib/libbz2.so.1.0.6
++	ln -sf libbz2.so.1.0.6 $(PREFIX)/lib/libbz2.so.1.0
++	ln -sf libbz2.so.1.0.6 $(PREFIX)/lib/libbz2.so.1
++	ln -sf libbz2.so.1.0.6 $(PREFIX)/lib/libbz2.so
