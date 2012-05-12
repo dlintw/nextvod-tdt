@@ -44,7 +44,7 @@ fbset;install:-d:-m755:TARGETS/{usr/sbin,etc};install:-m755:fbset:TARGETS/usr/sb
 pngquant;install:-m755:pngquant:TARGETS/usr/bin
 mplayer;make:install INSTALLSTRIP="":DESTDIR=TARGETS
 mencoder;make:install INSTALLSTRIP="":DESTDIR=TARGETS
-jfsutils;make:install:prefix=TARGETS
+jfsutils;make:install:mandir=/usr/share/man:DESTDIR=TARGET
 opkg;rewrite-pkgconfig:libopkg.pc;make:install:DESTDIR=TARGETS;link:/usr/bin/opkg-cl:TARGETS/usr/bin/opkg;mkdir:TARGETS/var/opkg;rewrite-libtool:TARGETS/usr/lib/libopkg.la
 sysstat;make:install:DESTDIR=TARGETS
 imagemagick;rewrite-pkgconfig:magick/ImageMagick.pc:magick/MagickCore.pc:wand/MagickWand.pc:wand/Wand.pc:Magick++/lib/ImageMagick++.pc:Magick++/lib/Magick++.pc;make:install:prefix=/usr:DESTDIR=TARGET;rewrite-libtool:TARGET/usr/lib/libMagickCore.la:TARGET/usr/lib/libMagickWand.la:TARGET/usr/lib/libMagick++.la
