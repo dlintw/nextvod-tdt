@@ -1,4 +1,25 @@
 #
+#bzip2
+#
+$(DEPDIR)/bzip2.do_prepare: @DEPENDS_bzip2@
+	@PREPARE_bzip2@
+	touch $@
+
+$(DEPDIR)/bzip2.do_compile: bootstrap $(DEPDIR)/bzip2.do_prepare
+	cd @DIR_bzip2@ && \
+		mv Makefile-libbz2_so Makefile && \
+		$(MAKE) all CC=$(target)-gcc
+	touch $@
+
+$(DEPDIR)/min-bzip2 $(DEPDIR)/std-bzip2 $(DEPDIR)/max-bzip2 \
+$(DEPDIR)/bzip2: \
+$(DEPDIR)/%bzip2: $(DEPDIR)/bzip2.do_compile
+	cd @DIR_bzip2@ && \
+		@INSTALL_bzip2@
+#	@DISTCLEANUP_bzip2@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
 # MODULE-INIT-TOOLS
 #
 $(DEPDIR)/module_init_tools.do_prepare: @DEPENDS_module_init_tools@
