@@ -1,0 +1,54 @@
+--- libpng-1.5.6/pngrtran.c.org	2006-07-06 19:06:25.000000000 +0200
++++ libpng-1.5.6/pngrtran.c	2006-07-06 19:08:36.000000000 +0200
+@@ -2840,6 +2843,42 @@
+ }
+ #endif
+ 
++void /* PRIVATE */
++png_do_remove_color_if_full_alpha(png_row_infop row_info, png_bytep row)
++{
++   png_uint_32 row_width;
++   png_debug(1, "in png_do_read_invert_alpha");
++   row_width = row_info->width;
++   if (row_info->color_type == PNG_COLOR_TYPE_RGB_ALPHA)
++   {
++      if (row_info->bit_depth == 8)
++      {
++         png_bytep sp = row + row_info->rowbytes;
++         png_bytep dp = sp;
++         png_uint_32 i;
++
++         for (i = 0; i < row_width; i++)
++         {
++//#define STRICT
++#ifdef STRICT
++            if (*(--sp) == 0x00 ) // full_alpha
++#else
++            if (*(--sp) < 0x30 ) // full_alpha
++#endif
++            {
++               --dp;
++//               *(--dp) = (png_byte)(0x00);
++               *(--dp) = (png_byte)(0x00);
++               *(--dp) = (png_byte)(0x00);
++               *(--dp) = (png_byte)(0x00);
++            }
++            sp-=3;
++            dp=sp;
++         }
++      }
++   }
++}
++
+ #ifdef PNG_READ_FILLER_SUPPORTED
+ /* Add filler channel if we have RGB color */
+ void /* PRIVATE */
+@@ -2064,6 +2064,9 @@
+       png_error(png_ptr, "Uninitialized row");
+    }
+ 
++   png_do_remove_color_if_full_alpha(row_info, png_ptr->row_buf + 1);
++
+ #ifdef PNG_READ_EXPAND_SUPPORTED
+    if (png_ptr->transformations & PNG_EXPAND)
+    {
