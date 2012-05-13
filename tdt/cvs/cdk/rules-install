@@ -21,7 +21,7 @@ libtool;make:install
 busybox;make:install:CONFIG_PREFIX=TARGETS;shellconfigadd:/bin/ash:5
 lsb;install:-d:TARGETS/lib/lsb;install:-m644:init-functions:TARGETS/lib/lsb
 ipkg;make:install:DESTDIR=TARGETS
-module_init_tools;make:INSTALL=install:install:sbin_PROGRAMS="depmod modinfo":bin_PROGRAMS=:DESTDIR=TARGETS
+module_init_tools;make:INSTALL=install:install:sbin_PROGRAMS="depmod modinfo":bin_PROGRAMS=:mandir=/usr/share/man:DESTDIR=TARGETS
 
 #
 # contrib apps
