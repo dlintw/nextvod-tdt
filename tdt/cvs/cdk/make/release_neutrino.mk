@@ -987,6 +987,8 @@ endif
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
 else
 if ENABLE_ATEVIO7500
@@ -1019,11 +1021,11 @@ if ENABLE_ATEVIO7500
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release_neutrino/lib/modules/
 
 	mv $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw $(prefix)/release_neutrino/lib/firmware/component.fw
-	rm $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
-
+	rm -f $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
+	rm -f $(prefix)/release_neutrino/lib/modules/boxtype.ko
 else
 if ENABLE_OCTAGON1008
 
@@ -1059,6 +1061,8 @@ endif
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
 else
 	rm -f $(prefix)/release_neutrino/sbin/halt
@@ -1261,6 +1265,10 @@ if ENABLE_UFS910
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
 	[ -e $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/mini_fo/mini_fo.ko ] && cp $(targetprefix)/lib/modules/$(KERNELVERSION)/kernel/fs/mini_fo/mini_fo.ko $(prefix)/release_neutrino/lib/modules || true
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-stv6306.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
 endif
 
 if ENABLE_HL101
