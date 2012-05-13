@@ -167,7 +167,12 @@ $(DEPDIR)/%release_neutrino:
 	rm -f $(prefix)/release_neutrino/lib/*.o && \
 	rm -f $(prefix)/release_neutrino/lib/*.la && \
 	find $(prefix)/release_neutrino/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
+	[ -e $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko ] && cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules || true
+	[ -e $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko ] && cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules || true
+	[ -e $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko ] && cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules || true
+	[ -e $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko ] && cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules || true
+	[ -e $(kernelprefix)/$(kernelpath)/fs/cifs/cifs.ko ] && cp $(kernelprefix)/$(kernelpath)/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules || true
+	[ -e $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko ] && cp $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules || true
 
 if STM24
 	cp -dp $(targetprefix)/sbin/mkfs $(prefix)/release_neutrino/sbin/
@@ -247,11 +252,6 @@ if ENABLE_UFS922
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
 
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-
 else
 if ENABLE_UFS912
 
@@ -323,12 +323,6 @@ if ENABLE_HS7810A
 #	install autofs
 	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
 	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
-if STM23
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-endif
 
 	mv $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw $(prefix)/release_neutrino/lib/firmware/component.fw
 	rm $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
@@ -370,12 +364,6 @@ if ENABLE_HS7110
 #	install autofs
 	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
 	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
-if STM23
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-endif
 
 	mv $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw $(prefix)/release_neutrino/lib/firmware/component.fw
 	rm $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
@@ -417,12 +405,6 @@ if ENABLE_WHITEBOX
 #	install autofs
 	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
 	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
-if STM23
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-endif
 
 	mv $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw $(prefix)/release_neutrino/lib/firmware/component.fw
 	rm $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
@@ -534,12 +516,6 @@ if ENABLE_ADB_BOX
 #       install autofs
 	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
 	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
-if STM23
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/linux-sh4/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-endif
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-stv6306.fw
@@ -580,12 +556,7 @@ if ENABLE_CUBEREVO
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
 	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
 
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-
 if !STM22
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
 	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
@@ -593,8 +564,6 @@ if !STM22
 else
 	cp $(kernelprefix)/$(kernelpath)/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
@@ -645,12 +614,7 @@ if ENABLE_CUBEREVO_MINI
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
 	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
 
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-
 if !STM22
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
 	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
@@ -658,8 +622,6 @@ if !STM22
 else
 	cp $(kernelprefix)/$(kernelpath)/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
@@ -710,12 +672,7 @@ if ENABLE_CUBEREVO_MINI2
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
 	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
 
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-
 if !STM22
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
 	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
@@ -723,8 +680,6 @@ if !STM22
 else
 	cp $(kernelprefix)/$(kernelpath)/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
@@ -775,12 +730,7 @@ if ENABLE_CUBEREVO_MINI_FTA
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
 	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
 
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-
 if !STM22
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
 	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
@@ -788,8 +738,6 @@ if !STM22
 else
 	cp $(kernelprefix)/$(kernelpath)/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
@@ -840,12 +788,7 @@ if ENABLE_CUBEREVO_250HD
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
 	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
 
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-
 if !STM22
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
 	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
@@ -853,8 +796,6 @@ if !STM22
 else
 	cp $(kernelprefix)/$(kernelpath)/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
@@ -905,12 +846,7 @@ if ENABLE_CUBEREVO_2000HD
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
 	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
 
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-
 if !STM22
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
 	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
@@ -918,8 +854,6 @@ if !STM22
 else
 	cp $(kernelprefix)/$(kernelpath)/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
@@ -970,12 +904,7 @@ if ENABLE_CUBEREVO_9500HD
 	cp -f $(buildprefix)/root/bin/vdstandby $(prefix)/release_neutrino/bin/vdstandby
 	chmod 777 $(prefix)/release_neutrino/bin/vdstandby
 
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
-
 if !STM22
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
 	cp -f $(buildprefix)/root/bin/cubefpctl_stm23 $(prefix)/release_neutrino/bin/cubefpctl
 	chmod 777 $(prefix)/release_neutrino/bin/cubefpctl
 	cp -f $(buildprefix)/root/release/fp.ko_stm23_0123$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD)) $(prefix)/release_neutrino/lib/modules/fp.ko
@@ -983,8 +912,6 @@ if !STM22
 else
 	cp $(kernelprefix)/$(kernelpath)/drivers/net/tun.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/cp2101.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/cifs/cifs.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfsd/nfsd.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/exportfs/exportfs.ko $(prefix)/release_neutrino/lib/modules
 	cp $(kernelprefix)/$(kernelpath)/fs/nfs_common/nfs_acl.ko $(prefix)/release_neutrino/lib/modules
@@ -1056,13 +983,6 @@ if ENABLE_FORTIS_HDBOX
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release_neutrino/lib/modules/
 if !STM22
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release_neutrino/lib/modules/
-endif
-
-if STM23
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules
-	cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules
 endif
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
@@ -1495,15 +1415,6 @@ if STM22
 #	cp $(buildprefix)/own_build/neutrino/boot/uImage $(prefix)/release_neutrino/boot/
 	cp -dp $(targetprefix)/sbin/blkid $(prefix)/release_neutrino/usr/bin/
 	cp -dp $(targetprefix)/usr/bin/rdate $(prefix)/release_neutrino/usr/bin/
-endif
-
-
-if STM24
-	[ -e $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko ] && cp $(kernelprefix)/$(kernelpath)/fs/autofs4/autofs4.ko $(prefix)/release_neutrino/lib/modules || true
-	[ -e $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko ] && cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/ftdi_sio.ko $(prefix)/release_neutrino/lib/modules/ftdi.ko || true
-	[ -e $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko ] && cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/pl2303.ko $(prefix)/release_neutrino/lib/modules || true
-	[ -e $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko ] && cp $(kernelprefix)/$(kernelpath)/drivers/usb/serial/usbserial.ko $(prefix)/release_neutrino/lib/modules || true
-	[ -e $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko ] && cp $(kernelprefix)/$(kernelpath)/fs/ntfs/ntfs.ko $(prefix)/release_neutrino/lib/modules || true
 endif
 
 	touch $@
