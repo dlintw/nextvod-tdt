@@ -946,7 +946,6 @@ $(DEPDIR)/libass: \
 $(DEPDIR)/%libass: $(DEPDIR)/libass.do_compile
 	cd @DIR_libass@ && \
 		@INSTALL_libass@
-	echo "libdir='$(targetprefix)/usr/lib'" >> $(targetprefix)/usr/lib/libass.la
 #	@DISTCLEANUP_libass@
 	[ "x$*" = "x" ] && touch $@ || true
 
