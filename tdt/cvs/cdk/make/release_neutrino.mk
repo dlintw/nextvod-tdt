@@ -42,11 +42,21 @@ $(DEPDIR)/%release_neutrino:
 	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/portmap $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/mke2fs $(prefix)/release_neutrino/sbin/ && \
-	cp -dp $(targetprefix)/sbin/mkfs.ext2 $(prefix)/release_neutrino/sbin/ && \
-	cp -dp $(targetprefix)/sbin/mkfs.ext3 $(prefix)/release_neutrino/sbin/ && \
+	ln -sf /sbin/mke2fs $(prefix)/release_neutrino/sbin/mkfs.ext2 && \
+	ln -sf /sbin/mke2fs $(prefix)/release_neutrino/sbin/mkfs.ext3 && \
+	ln -sf /sbin/mke2fs $(prefix)/release_neutrino/sbin/mkfs.ext4 && \
+	ln -sf /sbin/mke2fs $(prefix)/release_neutrino/sbin/mkfs.ext4dev && \
 	cp -dp $(targetprefix)/sbin/fsck $(prefix)/release_neutrino/sbin/ && \
-	cp -dp $(targetprefix)/sbin/fsck.ext2 $(prefix)/release_neutrino/sbin/ && \
-	cp -dp $(targetprefix)/sbin/fsck.ext3 $(prefix)/release_neutrino/sbin/ && \
+	cp -dp $(targetprefix)/sbin/e2fsck $(prefix)/release_neutrino/sbin/ && \
+	ln -sf /sbin/e2fsck $(prefix)/release_neutrino/sbin/fsck.ext2 && \
+	ln -sf /sbin/e2fsck $(prefix)/release_neutrino/sbin/fsck.ext3 && \
+	ln -sf /sbin/e2fsck $(prefix)/release_neutrino/sbin/fsck.ext4 && \
+	ln -sf /sbin/e2fsck $(prefix)/release_neutrino/sbin/fsck.ext4dev && \
+	cp -dp $(targetprefix)/sbin/jfs_fsck $(prefix)/release_neutrino/sbin/ && \
+	ln -sf /sbin/jfs_fsck $(prefix)/release_neutrino/sbin/fsck.jfs && \
+	cp -dp $(targetprefix)/sbin/jfs_mkfs $(prefix)/release_neutrino/sbin/ && \
+	ln -sf /sbin/jfs_mkfs $(prefix)/release_neutrino/sbin/mkfs.jfs && \
+	cp -dp $(targetprefix)/sbin/jfs_tune $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/fsck.nfs $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/sfdisk $(prefix)/release_neutrino/sbin/ && \
 	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release_neutrino/sbin/ && \
