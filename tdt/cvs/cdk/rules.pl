@@ -142,7 +142,7 @@ sub process_make_prepare (@)
       }
       elsif ( $_[1] =~ m#\.zip$# )
       {
-        $output .= "unzip -d $_[2] \\\$(archivedir)/" . $_[1];
+        $output .= "unzip $_[2] \\\$(archivedir)/" . $_[1];
       }
       elsif ( $_[1] =~ m#\.src\.rpm$# )
       {
