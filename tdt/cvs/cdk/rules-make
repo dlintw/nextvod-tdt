@@ -139,7 +139,6 @@ libmpeg2;0.5.1;libmpeg2-0.5.1;libmpeg2-0.5.1.tar.gz;extract:libmpeg2-0.5.1.tar.g
 libsamplerate;0.1.8;libsamplerate-0.1.8;libsamplerate-0.1.8.tar.gz;extract:libsamplerate-0.1.8.tar.gz
 libvorbis;1.3.2;libvorbis-1.3.2;libvorbis-1.3.2.tar.bz2;extract:libvorbis-1.3.2.tar.bz2
 libmodplug;0.8.8.4;libmodplug-0.8.8.4;libmodplug-0.8.8.4.tar.gz;extract:libmodplug-0.8.8.4.tar.gz
-bzip;1.0.6;bzip2-1.0.6;bzip2-1.0.6.tar.gz;extract:bzip2-1.0.6.tar.gz
 tiff;4.0.1;tiff-4.0.1;tiff-4.0.1.tar.gz;extract:tiff-4.0.1.tar.gz
 lzo;2.06;lzo-2.06;lzo-2.06.tar.gz;extract:lzo-2.06.tar.gz
 yajl;2.0.1;yajl-2.0.1;yajl.git;extract:yajl.git

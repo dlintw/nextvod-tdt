@@ -110,7 +110,6 @@ libmpeg2;make:install:prefix=/usr:DESTDIR=TARGETS
 libsamplerate;make:install:prefix=/usr:DESTDIR=TARGETS
 libvorbis;make:install:prefix=/usr:DESTDIR=TARGETS
 libmodplug;make:install:prefix=/usr:DESTDIR=TARGETS
-bzip;make:install:prefix=/usr:DESTDIR=TARGETS
 tiff;make:install:prefix=/usr:DESTDIR=TARGETS
 lzo;make:install:prefix=/usr:DESTDIR=TARGETS
 yajl;make:install:prefix=/usr:DESTDIR=TARGETS
