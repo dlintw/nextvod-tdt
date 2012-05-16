@@ -116,6 +116,10 @@ yajl;make:install:prefix=/usr:DESTDIR=TARGETS
 libcdio;make:install:prefix=/usr:DESTDIR=TARGETS
 jasper;make:install:prefix=/usr:DESTDIR=TARGETS
 libmicrohttpd;make:install:prefix=/usr:DESTDIR=TARGETS
+libexif;make:install:prefix=/usr:DESTDIR=TARGETS
+minidlna;make:install:prefix=/usr:DESTDIR=TARGETS
+vlc;make:install:DESTDIR=TARGETS
+dbus;make:install:DESTDIR=TARGETS
 
 #
 # PYTHON

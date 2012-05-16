@@ -147,6 +147,13 @@ libcdio;0.83;libcdio-0.83;libcdio-0.83.tar.gz;extract:libcdio-0.83.tar.gz
 jasper;1.900.1;jasper-1.900.1;jasper-1.900.1.zip;extract:jasper-1.900.1.zip
 mysql;5.1.40;mysql-5.1.40;mysql-5.1.40.tar.gz;extract:mysql-5.1.40.tar.gz
 libmicrohttpd;0.9.19;libmicrohttpd-0.9.19;libmicrohttpd-0.9.19.tar.gz;extract:libmicrohttpd-0.9.19.tar.gz
+libexif;0.6.20;libexif-0.6.20;libexif-0.6.20.tar.gz;extract:libexif-0.6.20.tar.gz
+minidlna;1.0.24;minidlna-1.0.24;minidlna_1.0.24_src.tar.gz;extract:minidlna_1.0.24_src.tar.gz;patch:minidlna-1.0.24.patch
+#vlc;1.1.7;vlc-1.1.7;vlc_1.1.7.orig.tar.bz2;extract:vlc_1.1.7.orig.tar.bz2
+dbus;1.2.24;dbus-1.2.24;dbus-1.2.24.tar.gz;extract:dbus-1.2.24.tar.gz
+#vlc;2.0.1;vlc-2.0.1;vlc-2.0.1.tar.xz;extract:vlc-2.0.1.tar.xz
+vlc;1.1.7;vlc-1.1.7;vlc-1.1.7.tar.bz2;extract:vlc-1.1.7.tar.bz2
+
 
 #
 # PYTHON

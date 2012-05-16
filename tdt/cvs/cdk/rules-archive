@@ -150,6 +150,12 @@ libcdio-0.83.tar.gz;ftp://ftp.gnu.org/gnu/libcdio
 jasper-1.900.1.zip;http://www.ece.uvic.ca/~frodo/jasper/software
 mysql-5.1.40.tar.gz;http://downloads.mysql.com/archives/mysql-5.1
 libmicrohttpd-0.9.19.tar.gz;http://ftp.halifax.rwth-aachen.de/gnu/libmicrohttpd
+libexif-0.6.20.tar.gz;http://sourceforge.net/projects/libexif/files/libexif/0.6.20
+minidlna_1.0.24_src.tar.gz;http://netcologne.dl.sourceforge.net/project/minidlna/minidlna/1.0.24
+#vlc_1.1.7.orig.tar.bz2;http://cacing.vlsm.org/pool/main/v/vlc
+#vlc-2.0.1.tar.xz;http://download.videolan.org/pub/videolan/vlc/2.0.1
+vlc-1.1.7.tar.bz2;http://download.videolan.org/pub/videolan/vlc/1.1.7
+dbus-1.2.24.tar.gz;http://dbus.freedesktop.org/releases/dbus
 
 #
 # PYTHON
