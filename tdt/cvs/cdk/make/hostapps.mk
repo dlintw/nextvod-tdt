@@ -72,7 +72,7 @@ endif
 #
 # PYTHON-HOST
 #
-$(DEPDIR)/host-python: @DEPENDS_host_python@
+$(DEPDIR)/host_python: @DEPENDS_host_python@
 	@PREPARE_host_python@ && \
 	( cd @DIR_host_python@ && \
 		rm -rf config.cache; \
@@ -100,5 +100,5 @@ $(DEPDIR)/host-python: @DEPENDS_host_python@
 			HOSTPGEN=./hostpgen \
 			all install && \
 		cp ./hostpgen $(crossprefix)/bin/pgen ) && \
+	@DISTCLEANUP_host_python@
 	touch $@
-

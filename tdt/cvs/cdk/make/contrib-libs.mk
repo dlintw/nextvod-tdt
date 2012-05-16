@@ -1499,7 +1499,7 @@ $(DEPDIR)/%pyopenssl: pyopenssl.do_compile
 #
 # python
 #
-$(DEPDIR)/python.do_prepare: host-python @DEPENDS_python@
+$(DEPDIR)/python.do_prepare: host_python @DEPENDS_python@
 	@PREPARE_python@ && \
 	touch $@
 

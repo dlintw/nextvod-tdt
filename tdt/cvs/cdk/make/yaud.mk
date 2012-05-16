@@ -92,49 +92,49 @@ yaud-vdrdev2: yaud-none stslave openssl openssl-dev \
 		boot-elf misc-cp remote firstboot vdrdev2 release_vdrdev2
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-yaud-neutrino: yaud-none lirc stslave\
+yaud-neutrino: yaud-none lirc stslave \
 		boot-elf remote firstboot neutrino release_neutrino
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-yaud-neutrino-static: yaud-none lirc stslave\
+yaud-neutrino-static: yaud-none lirc stslave \
 		boot-elf remote firstboot neutrino release_neutrino_static
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-yaud-neutrino-beta: yaud-none lirc stslave\
+yaud-neutrino-beta: yaud-none lirc stslave \
 		boot-elf remote firstboot neutrino-beta release_neutrino_nightly
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 if STM22
-yaud-enigma2: yaud-none host-python lirc stslave\
+yaud-enigma2: yaud-none host_python lirc stslave \
 		boot-elf hotplug remote firstboot enigma2 enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 else
-yaud-enigma2: yaud-none host-python lirc \
+yaud-enigma2: yaud-none host_python lirc \
 		boot-elf remote firstboot enigma2 enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
 if STM22
-yaud-enigma2-nightly: yaud-none host-python lirc stslave\
+yaud-enigma2-nightly: yaud-none host_python lirc stslave \
 		boot-elf hotplug remote firstboot enigma2-nightly enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 else
-yaud-enigma2-nightly: yaud-none host-python lirc stslave\
+yaud-enigma2-nightly: yaud-none host_python lirc stslave \
 		boot-elf remote firstboot enigma2-nightly enigma2-misc release
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
 if STM22
-yaud-enigma1-hd: yaud-none lirc stslave\
+yaud-enigma1-hd: yaud-none lirc stslave \
 		boot-elf hotplug remote firstboot enigma1-hd release_enigma1_hd
 	@TUXBOX_YAUD_CUSTOMIZE@
 else
-yaud-enigma1-hd: yaud-none lirc stslave\
+yaud-enigma1-hd: yaud-none lirc stslave \
 		boot-elf remote firstboot enigma1-hd release_enigma1_hd
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
-yaud-enigma2-pli-nightly: yaud-none host-python lirc \
+yaud-enigma2-pli-nightly: yaud-none host_python lirc \
 		boot-elf remote firstboot enigma2-pli-nightly enigma2-misc enigma2-plugins release
 	@TUXBOX_YAUD_CUSTOMIZE@
 
