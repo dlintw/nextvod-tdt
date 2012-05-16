@@ -1,0 +1,14 @@
+/createcats
+/.dependencies
+/MANUAL
+/README.DE
+/doc/
+/html/
+/man/
+/po/epgsearch.pot
+/po/*.mo
+*.o
+*.so
+*.tgz
+*.tmp
+*~
