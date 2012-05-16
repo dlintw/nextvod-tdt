@@ -45,7 +45,6 @@ $(DEPDIR)/%module_init_tools: $(DEPDIR)/%lsb $(MODULE_INIT_TOOLS:%=root/etc/%) $
 	$(call initdconfig,module-init-tools)
 #	@DISTCLEANUP_module_init_tools@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # GREP
@@ -78,7 +77,6 @@ $(DEPDIR)/%grep: $(DEPDIR)/grep.do_compile
 		@INSTALL_grep@
 #	@DISTCLEANUP_grep@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # LSB
@@ -97,7 +95,6 @@ $(DEPDIR)/%lsb: $(DEPDIR)/lsb.do_compile
 		@INSTALL_lsb@
 #	@DISTCLEANUP_lsb@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # PORTMAP
@@ -125,7 +122,6 @@ $(DEPDIR)/%portmap: $(DEPDIR)/%lsb $(PORTMAP_ADAPTED_ETC_FILES:%=root/etc/%) $(D
 	$(call initdconfig,portmap)
 #	@DISTCLEANUP_portmap@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # OPENRDATE
@@ -161,7 +157,6 @@ $(DEPDIR)/%openrdate: $(OPENRDATE_ADAPTED_ETC_FILES:%=root/etc/%) \
 			echo "Unable to enable initd service: $$s" ; done && rm *rpmsave 2>/dev/null || true )
 #	@DISTCLEANUP_openrdate@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # E2FSPROGS
@@ -230,8 +225,8 @@ $(DEPDIR)/e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
 		LDCONFIG=true \
 		DESTDIR=$(targetprefix) && \
 	$(INSTALL) e2fsck/e2fsck.static $(targetprefix)/sbin
+#	@DISTCLEANUP_e2fsprogs@
 	touch $@
-	@TUXBOX_YAUD_CUSTOMIZE@
 else !STM24
 $(DEPDIR)/min-e2fsprogs $(DEPDIR)/std-e2fsprogs $(DEPDIR)/max-e2fsprogs \
 $(DEPDIR)/e2fsprogs: \
@@ -243,7 +238,6 @@ $(DEPDIR)/%e2fsprogs: $(DEPDIR)/e2fsprogs.do_compile
 		$(MAKE) install -C lib/blkid DESTDIR=$(targetprefix) ) || true
 #	@DISTCLEANUP_e2fsprogs@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM24
 
 #
@@ -284,7 +278,6 @@ $(DEPDIR)/%xfsprogs: $(DEPDIR)/xfsprogs.do_compile
 		@INSTALL_xfsprogs@
 #	@DISTCLEANUP_xfsprogs@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # MC
@@ -315,7 +308,6 @@ $(DEPDIR)/%mc: %glib2 $(DEPDIR)/mc.do_compile
 #		$(MAKE) install DESTDIR=$(prefix)/$*cdkroot
 #	@DISTCLEANUP_mc@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # SDPARM
@@ -347,7 +339,6 @@ $(DEPDIR)/%sdparm: $(DEPDIR)/sdparm.do_compile
 		gzip -v9 sdparm.8 )
 #	@DISTCLEANUP_sdparm@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # SG3_UTILS
@@ -387,7 +378,6 @@ $(DEPDIR)/%sg3_utils: $(DEPDIR)/sg3_utils.do_compile
 	$(INSTALL) -m755 root/usr/sbin/sg_down.sh $(prefix)/$*cdkroot/usr/sbin
 #	@DISTCLEANUP_sg3_utils@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # IPKG
@@ -418,7 +408,6 @@ $(DEPDIR)/%ipkg: $(DEPDIR)/ipkg.do_compile
 	$(INSTALL) -m 644 root/usr/lib/ipkg/status.initial $(prefix)/$*cdkroot/usr/lib/ipkg/status
 #	@DISTCLEANUP_ipkg@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # ZD1211
@@ -447,7 +436,6 @@ $(DEPDIR)/%zd1211: $(DEPDIR)/zd1211.do_compile
 	$(DEPMOD) -ae -b $(targetprefix) -r $(KERNELVERSION)
 #	@DISTCLEANUP_zd1211@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # NANO
@@ -476,7 +464,6 @@ $(DEPDIR)/%nano: $(DEPDIR)/nano.do_compile
 		@INSTALL_nano@
 #	@DISTCLEANUP_nano@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # RSYNC
@@ -504,7 +491,6 @@ $(DEPDIR)/%rsync: $(DEPDIR)/rsync.do_compile
 		@INSTALL_rsync@
 #	@DISTCLEANUP_rsync@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # LM_SENSORS
@@ -531,7 +517,6 @@ $(DEPDIR)/%lm_sensors: $(DEPDIR)/lm_sensors.do_compile
 		rm $(prefix)/$*cdkroot/usr/bin/ddcmon
 #	@DISTCLEANUP_lm_sensors@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # FUSE
@@ -570,7 +555,6 @@ $(DEPDIR)/%fuse: %curl %glib2 $(DEPDIR)/fuse.do_compile
 			echo "Unable to enable initd service: $$s" ; done && rm *rpmsave 2>/dev/null || true )
 #	@DISTCLEANUP_fuse@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # CURLFTPFS
@@ -598,7 +582,6 @@ $(DEPDIR)/%curlftpfs: %fuse $(DEPDIR)/curlftpfs.do_compile
 		@INSTALL_curlftpfs@
 #	@DISTCLEANUP_curlftpfs@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # FBSET
@@ -619,7 +602,6 @@ $(DEPDIR)/%fbset: fbset.do_compile
 		@INSTALL_fbset@
 #	@DISTCLEANUP_fbset@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # PNGQUANT
@@ -640,7 +622,6 @@ $(DEPDIR)/%pngquant: $(DEPDIR)/pngquant.do_compile
 		@INSTALL_pngquant@
 #	@DISTCLEANUP_pngquant@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # MPLAYER
@@ -668,7 +649,6 @@ $(DEPDIR)/%mplayer: $(DEPDIR)/mplayer.do_compile
 		@INSTALL_mplayer@
 #	@DISTCLEANUP_mplayer@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # MENCODER
@@ -721,7 +701,6 @@ $(DEPDIR)/%mencoder: $(DEPDIR)/mencoder.do_compile
 		@INSTALL_mencoder@
 #	@DISTCLEANUP_mencoder@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # UTIL-LINUX
@@ -767,7 +746,6 @@ $(DEPDIR)/%util-linux: util-linux.do_compile
 #		@INSTALL_util_linux@
 #	@DISTCLEANUP_util_linux@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM24
 
 #
@@ -795,7 +773,6 @@ $(DEPDIR)/%jfsutils: $(DEPDIR)/jfsutils.do_compile
 		@INSTALL_jfsutils@
 #	@DISTCLEANUP_jfsutils@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # opkg
@@ -822,9 +799,8 @@ $(DEPDIR)/opkg: \
 $(DEPDIR)/%opkg: $(DEPDIR)/opkg.do_compile
 	cd @DIR_opkg@ && \
 		@INSTALL_opkg@
-#	@DISTCLEANUP_jfsutils@
+#	@DISTCLEANUP_opkg@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # sysstat
@@ -843,7 +819,6 @@ $(DEPDIR)/sysstat: bootstrap @DEPENDS_sysstat@
 		@INSTALL_sysstat@
 	@DISTCLEANUP_sysstat@
 	@touch $@
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # hotplug-e2
@@ -873,9 +848,8 @@ $(DEPDIR)/hotplug_e2: \
 $(DEPDIR)/%hotplug_e2: $(DEPDIR)/hotplug_e2.do_compile
 	cd @DIR_hotplug_e2@ && \
 		@INSTALL_hotplug_e2@
-#	@DISTCLEANUP_jfsutils@
+#	@DISTCLEANUP_hotplug_e2@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # autofs
@@ -903,7 +877,6 @@ $(DEPDIR)/%autofs: $(DEPDIR)/autofs.do_compile
 		@INSTALL_autofs@
 #	@DISTCLEANUP_autofs@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # imagemagick
@@ -939,5 +912,3 @@ $(DEPDIR)/%imagemagick: $(DEPDIR)/imagemagick.do_compile
 		@INSTALL_imagemagick@
 #	@DISTCLEANUP_imagemagick@
 	[ "x$*" = "x" ] && touch $@ || true
-
-

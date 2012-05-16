@@ -920,7 +920,7 @@ $(DEPDIR)/ffmpeg: \
 $(DEPDIR)/%ffmpeg: $(DEPDIR)/ffmpeg.do_compile
 	cd @DIR_ffmpeg@ && \
 		@INSTALL_ffmpeg@
-#	@DISTCLEANUP_pyopenssl@
+#	@DISTCLEANUP_ffmpeg@
 	[ "x$*" = "x" ] && touch $@ || true
 
 #
@@ -1591,7 +1591,7 @@ $(DEPDIR)/%pythoncheetah: pythoncheetah.do_compile
 	cd @DIR_pythoncheetah@ && \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_pythonwifi@
+#	@DISTCLEANUP_pythoncheetah@
 	[ "x$*" = "x" ] && touch $@ || true
 
 #

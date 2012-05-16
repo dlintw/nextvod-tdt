@@ -39,7 +39,6 @@ $(DEPDIR)/%nfs-utils: $(NFS_UTILS_ADAPTED_ETC_FILES:%=root/etc/%) \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; done )
 #	@DISTCLEANUP_nfs_utils@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # vsftpd
@@ -60,9 +59,8 @@ $(DEPDIR)/%vsftpd: $(DEPDIR)/vsftpd.do_compile
 	cd @DIR_vsftpd@ && \
 		@INSTALL_vsftpd@
 		cp $(buildprefix)/root/etc/vsftpd.conf $(targetprefix)/etc
-#	@DISTCLEANUP_ethtool@
+#	@DISTCLEANUP_vsftpd@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # ETHTOOL
@@ -89,7 +87,6 @@ $(DEPDIR)/%ethtool: $(DEPDIR)/ethtool.do_compile
 		@INSTALL_ethtool@
 #	@DISTCLEANUP_ethtool@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # SAMBA
@@ -154,8 +151,8 @@ $(DEPDIR)/%netio: $(DEPDIR)/netio.do_compile
 	cd @DIR_netio@ && \
 		$(INSTALL) -d $(prefix)/$*cdkroot/usr/bin && \
 		@INSTALL_netio@
-	@TUXBOX_TOUCH@
-	@TUXBOX_YAUD_CUSTOMIZE@
+#	@DISTCLEANUP_netio@
+	@[ "x$*" = "x" ] && touch $@ || true
 
 #
 # LIGHTTPD
@@ -190,7 +187,6 @@ $(DEPDIR)/%lighttpd: $(DEPDIR)/lighttpd.do_compile
 	$(INSTALL) -d $(prefix)/$*cdkroot/etc/init.d && $(INSTALL) -m755 root/etc/init.d/lighttpd $(prefix)/$*cdkroot/etc/init.d
 #	@DISTCLEANUP_lighttpd@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # NETKIT_FTP
@@ -216,7 +212,6 @@ $(DEPDIR)/%netkit_ftp: $(DEPDIR)/netkit_ftp.do_compile
 		@INSTALL_netkit_ftp@
 #	@DISTCLEANUP_netkit_ftp@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # WIRELESS_TOOLS
@@ -237,7 +232,6 @@ $(DEPDIR)/%wireless_tools: $(DEPDIR)/wireless_tools.do_compile
 		@INSTALL_wireless_tools@
 #	@DISTCLEANUP_wireless_tools@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # WPA_SUPPLICANT
@@ -259,4 +253,3 @@ $(DEPDIR)/%wpa_supplicant: $(DEPDIR)/wpa_supplicant.do_compile
 		@INSTALL_wpa_supplicant@
 #	@DISTCLEANUP_wpa_supplicant@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
