@@ -920,7 +920,7 @@ $(DEPDIR)/ffmpeg: \
 $(DEPDIR)/%ffmpeg: $(DEPDIR)/ffmpeg.do_compile
 	cd @DIR_ffmpeg@ && \
 		@INSTALL_ffmpeg@
-#	@DISTCLEANUP_ffmpeg@
+#	@DISTCLEANUP_pyopenssl@
 	[ "x$*" = "x" ] && touch $@ || true
 
 #
@@ -1499,7 +1499,7 @@ $(DEPDIR)/%pyopenssl: pyopenssl.do_compile
 #
 # python
 #
-$(DEPDIR)/python.do_prepare: host_python @DEPENDS_python@
+$(DEPDIR)/python.do_prepare: host-python @DEPENDS_python@
 	@PREPARE_python@ && \
 	touch $@
 
@@ -1591,7 +1591,7 @@ $(DEPDIR)/%pythoncheetah: pythoncheetah.do_compile
 	cd @DIR_pythoncheetah@ && \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
 		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
-#	@DISTCLEANUP_pythoncheetah@
+#	@DISTCLEANUP_pythonwifi@
 	[ "x$*" = "x" ] && touch $@ || true
 
 #
@@ -2709,7 +2709,7 @@ $(DEPDIR)/%minidlna: $(DEPDIR)/minidlna.do_compile
 #
 # vlc
 #
-$(DEPDIR)/vlc.do_prepare: bootstrap ffmpeg @DEPENDS_vlc@
+$(DEPDIR)/vlc.do_prepare: bootstrap libfribidi ffmpeg @DEPENDS_vlc@
 	@PREPARE_vlc@
 	touch $@
 
@@ -2745,31 +2745,5 @@ $(DEPDIR)/%vlc: $(DEPDIR)/vlc.do_compile
 	cd @DIR_vlc@ && \
 		@INSTALL_vlc@
 	echo "libdir='$(targetprefix)/usr/lib'" >> $(targetprefix)/usr/lib/vlc.la
-	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
-
-#
-# dbus
-#
-$(DEPDIR)/dbus.do_prepare: bootstrap @DEPENDS_dbus@
-	@PREPARE_dbus@
-	touch $@
-
-$(DEPDIR)/dbus.do_compile: bootstrap $(DEPDIR)/dbus.do_prepare
-	cd @DIR_dbus@ && \
-	$(BUILDENV) \
-	CFLAGS="$(TARGET_CFLAGS) -Os" \
-	./configure \
-		--host=$(target) \
-		--disable-fontconfig \
-		--prefix=/usr
-	touch $@
-
-$(DEPDIR)/min-dbus $(DEPDIR)/std-dbus $(DEPDIR)/max-dbus \
-$(DEPDIR)/dbus: \
-$(DEPDIR)/%dbus: $(DEPDIR)/dbus.do_compile
-	cd @DIR_dbus@ && \
-		@INSTALL_dbus@
-	echo "libdir='$(targetprefix)/usr/lib'" >> $(targetprefix)/usr/lib/dbus.la
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
