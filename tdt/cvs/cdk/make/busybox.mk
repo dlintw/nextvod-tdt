@@ -6,8 +6,11 @@ $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	cd @DIR_busybox@
 	cd @DIR_busybox@ && \
 		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-buildsys.patch && \
+		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-ext4.patch && \
+		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-find.patch && \
 		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-getty.patch && \
 		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-lineedit.patch && \
+		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-mdev.patch && \
 		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-sed.patch
 	touch $@
 
