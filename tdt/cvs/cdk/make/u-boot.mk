@@ -148,7 +148,7 @@ $(DEPDIR)/$(HOST_U_BOOT_TOOLS): $(HOST_U_BOOT_TOOLS_RPM) | bootstrap-cross
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
 	touch $@
 else !STM22
-$(DEPDIR)/$(HOST_U_BOOT_TOOLS): u-boot.do_prepare $(HOST_U_BOOT_TOOLS_RPM) | bootstrap-cross
+$(DEPDIR)/$(HOST_U_BOOT_TOOLS): u-boot-utils.do_prepare $(HOST_U_BOOT_TOOLS_RPM) | bootstrap-cross
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $(lastword $^) && \
 	touch $@
 endif !STM22
