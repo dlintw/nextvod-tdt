@@ -1,44 +1,35 @@
-
+#
 # Plugins
-$(DEPDIR)/enigma2-plugins: enigma2-openwebif enigma2_networkbrowser
+#
+$(DEPDIR)/enigma2-plugins: enigma2_openwebif enigma2_networkbrowser
 
 #
 # enigma2-openwebif
 #
-$(DEPDIR)/enigma2-openwebif.do_prepare: bootstrap python pythoncheetah
-	rm -rf e2openplugin-OpenWebif
-	git clone git://github.com/E2OpenPlugins/e2openplugin-OpenWebif.git
+$(DEPDIR)/enigma2_openwebif.do_prepare: bootstrap python pythoncheetah @DEPENDS_enigma2_openwebif@
+	@PREPARE_enigma2_openwebif@
 	touch $@
 
-$(DEPDIR)/enigma2-openwebif.do_compile: $(DEPDIR)/enigma2-openwebif.do_prepare
-	cd e2openplugin-OpenWebif && \
+$(DEPDIR)/enigma2_openwebif.do_compile: $(DEPDIR)/enigma2_openwebif.do_prepare
+	cd @DIR_enigma2_openwebif@ && \
 		$(BUILDENV) \
 		cp -a plugin $(targetprefix)/usr/lib/enigma2/python/Plugins/Extensions/OpenWebif
 	touch $@
 
-$(DEPDIR)/min-enigma2-openwebif $(DEPDIR)/std-enigma2-openwebif $(DEPDIR)/max-enigma2-openwebif \
-$(DEPDIR)/enigma2-openwebif: \
-$(DEPDIR)/%enigma2-openwebif: $(DEPDIR)/enigma2-openwebif.do_compile
-#	@DISTCLEANUP_enigma2-openwebif@
+$(DEPDIR)/min-enigma2_openwebif $(DEPDIR)/std-enigma2_openwebif $(DEPDIR)/max-enigma2_openwebif \
+$(DEPDIR)/enigma2_openwebif: \
+$(DEPDIR)/%enigma2_openwebif: $(DEPDIR)/enigma2_openwebif.do_compile
+#	@DISTCLEANUP_enigma2_openwebif@
 	@[ "x$*" = "x" ] && touch $@ || true
-
-#
-# enigma2-openpli-plugins-enigma2
-#
-$(DEPDIR)/enigma2-openpli-plugins-enigma2.do_prepare: 
-	rm -rf openpli-plugins-enigma2
-	git clone git://openpli.git.sourceforge.net/gitroot/openpli/plugins-enigma2 openpli-plugins-enigma2
-	touch $@
 
 #
 # enigma2-networkbrowser
 #
-
-$(DEPDIR)/enigma2_networkbrowser.do_prepare:  @DEPENDS_enigma2_networkbrowser@
+$(DEPDIR)/enigma2_networkbrowser.do_prepare: @DEPENDS_enigma2_networkbrowser@
 	@PREPARE_enigma2_networkbrowser@
 	touch $@
 
-$(DEPDIR)/enigma2_networkbrowser.do_compile: $(DEPDIR)/enigma2_networkbrowser.do_prepare 
+$(DEPDIR)/enigma2_networkbrowser.do_compile: $(DEPDIR)/enigma2_networkbrowser.do_prepare
 	cd @DIR_enigma2_networkbrowser@/src/lib && \
 		$(BUILDENV) \
 		sh4-linux-gcc -shared -o netscan.so \
@@ -73,5 +64,4 @@ $(DEPDIR)/min-enigma2_networkbrowser $(DEPDIR)/std-enigma2_networkbrowser $(DEPD
 $(DEPDIR)/enigma2_networkbrowser: \
 $(DEPDIR)/%enigma2_networkbrowser: $(DEPDIR)/enigma2_networkbrowser.do_compile
 #	@DISTCLEANUP_enigma2_networkbrowser@
-
-
+	[ "x$*" = "x" ] && touch $@ || true

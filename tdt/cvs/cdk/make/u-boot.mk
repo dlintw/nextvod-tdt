@@ -40,13 +40,13 @@ $(HOST_U_BOOT_RPM): \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_U_BOOT_SPEC)
 
-$(DEPDIR)/u-boot.do_prepare: $(HOST_U_BOOT_RPM)
+$(DEPDIR)/u-boot-utils.do_prepare: $(HOST_U_BOOT_RPM)
 	@rpm $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch $@
 
 if STM22
-$(DEPDIR)/u-boot.do_compile: \
-		$(DEPDIR)/u-boot.do_prepare
+$(DEPDIR)/u-boot-utils.do_compile: \
+		$(DEPDIR)/u-boot-utils.do_prepare
 	cd $(HOST_U_BOOT_DIR) && \
 		$(MAKE) ARCH=sh4 CROSS_COMPILE=$(target)- mrproper && \
 		$(MAKE) $(MAKE_OPTS) stb7100ref_27_config && \
@@ -61,7 +61,7 @@ $(DEPDIR)/u-boot.do_compile: \
 		./tools/mkimage -A sh4 -O u-boot -T script -C none -a 0 -e 0 -d setupenv setupenv.ub
 	touch $@
 
-$(DEPDIR)/u-boot-utils.do_compile: bootstrap $(DEPDIR)/u-boot.do_prepare
+$(DEPDIR)/u-boot-utils.do_compile: bootstrap $(DEPDIR)/u-boot-utils.do_prepare
 	cd $(HOST_U_BOOT_DIR) && \
 		$(MAKE) -C STM/env ARCH=sh4 CROSS_COMPILE=$(target)- clean TARGETS=fw_printenv TARGETDIR=$(targetprefix) && \
 		$(MAKE) -C STM/env ARCH=sh4 CROSS_COMPILE=$(target)- all TARGETS=fw_printenv TARGETDIR=$(targetprefix)
@@ -76,10 +76,9 @@ $(DEPDIR)/%u-boot-utils: $(DEPDIR)/u-boot-utils.do_compile
 		$(LN_SF) fw_printenv $(prefix)/$*cdkroot/usr/sbin/fw_setenv
 	$(INSTALL) -m 644 $(buildprefix)/root/etc/fw_env.config $(prefix)/$*cdkroot/etc/
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 else !STM22
 ### TO be fixed
-$(DEPDIR)/u-boot-utils.do_compile: bootstrap $(DEPDIR)/u-boot.do_prepare
+$(DEPDIR)/u-boot-utils.do_compile: bootstrap $(DEPDIR)/u-boot-utils.do_prepare
 #	cd $(HOST_U_BOOT_DIR) && \
 #		$(MAKE) -C tools/env TOPDIR=$(buildprefix)/$(HOST_U_BOOT_DIR) ARCH=sh4 CROSS_COMPILE=$(target)- clean TARGETS=fw_printenv TARGETDIR=$(targetprefix) && \
 #		$(MAKE) -C tools/env TOPDIR=$(buildprefix)/$(HOST_U_BOOT_DIR) ARCH=sh4 CROSS_COMPILE=$(target)- all TARGETS=fw_printenv TARGETDIR=$(targetprefix)
@@ -94,10 +93,10 @@ $(DEPDIR)/%u-boot-utils: $(DEPDIR)/u-boot-utils.do_compile
 #		$(LN_SF) fw_printenv $(prefix)/$*cdkroot/usr/sbin/fw_setenv
 #	$(INSTALL) -m 644 $(buildprefix)/root/etc/fw_env.config $(prefix)/$*cdkroot/etc/
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 endif !STM22
 
-$(DEPDIR)/u-boot: $(DEPDIR)/u-boot.do_compile
+$(DEPDIR)/u-boot-utils: $(DEPDIR)/u-boot-utils.do_compile
+
 
 #stlinux20-host-u-boot ftp://ftp.stlinux.com/pub/stlinux/2.0/ST_Linux_2.0/SRPM_Distribution/sh4-SRPMS-updates/stlinux20-host-u-boot-sh4_stb7100ref_27-2.0-14.src.rpm
 HOST_U_BOOT_SH4_STB7100REF_27 := host-u-boot-sh4_stb7100ref_27

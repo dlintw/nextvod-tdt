@@ -940,8 +940,6 @@ TUXBOX_RULES_MAKE(brofs)
 TUXBOX_RULES_MAKE(libalsa)
 TUXBOX_RULES_MAKE(rtmpdump)
 TUXBOX_RULES_MAKE(libdvbsipp)
-TUXBOX_RULES_MAKE(tuxtxtlib)
-TUXBOX_RULES_MAKE(tuxtxt32bpp)
 TUXBOX_RULES_MAKE(libdreamdvd)
 TUXBOX_RULES_MAKE(libdreamdvd2)
 TUXBOX_RULES_MAKE(libmpeg2)
@@ -992,7 +990,10 @@ TUXBOX_RULES_MAKE(gst_plugins_dvbmediasink)
 #
 # enigma2
 #
+TUXBOX_RULES_MAKE(tuxtxtlib)
+TUXBOX_RULES_MAKE(tuxtxt32bpp)
 TUXBOX_RULES_MAKE(enigma2_networkbrowser)
+TUXBOX_RULES_MAKE(enigma2_openwebif)
 
 #
 # external lcd

@@ -132,8 +132,6 @@ brofs;1.2;BroFS1.2;BroFS1.2.tgz;extract:BroFS1.2.tgz
 libalsa;1.0.21a;alsa-lib-1.0.21a;alsa-lib-1.0.21a.tar.bz2:alsa-lib-1.0.21a-soft_float.patch;extract:alsa-lib-1.0.21a.tar.bz2;patch:alsa-lib-1.0.21a-soft_float.patch
 rtmpdump;2.4;rtmpdump-2.4;rtmpdump-2.4.tar.gz;extract:rtmpdump-2.4.tar.gz;move:rtmpdump:rtmpdump-2.4
 libdvbsipp;0.3.6;libdvbsi++-0.3.6;libdvbsi++-0.3.6.tar.bz2;extract:libdvbsi++-0.3.6.tar.bz2;patch:libdvbsi++-0.3.6-fix_unaligned_access.patch
-tuxtxtlib;1.0;libtuxtxt;libtuxtxt.git:libtuxtxt-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/libtuxtxt;patch:libtuxtxt-1.0-fix_dbox_headers.diff
-tuxtxt32bpp;1.0;tuxtxt;libtuxtxt.git:tuxtxt32bpp-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/tuxtxt;patch:tuxtxt32bpp-1.0-fix_dbox_headers.diff
 libdreamdvd;1.0;libdreamdvd;;link:../apps/misc/tools/libdreamdvd:libdreamdvd
 libdreamdvd2;1.0;libdreamdvd;;patch:libdreamdvd-1.0-support_sh4.patch
 libmpeg2;0.5.1;libmpeg2-0.5.1;libmpeg2-0.5.1.tar.gz;extract:libmpeg2-0.5.1.tar.gz
@@ -174,7 +172,10 @@ zope_interface;3.3.0;zope.interface-3.3.0;zope.interface-3.3.0.tar.gz;extract:zo
 #
 # ENGIMA2
 #
+tuxtxtlib;1.0;libtuxtxt;libtuxtxt.git:libtuxtxt-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/libtuxtxt;patch:libtuxtxt-1.0-fix_dbox_headers.diff
+tuxtxt32bpp;1.0;tuxtxt;libtuxtxt.git:tuxtxt32bpp-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/tuxtxt;patch:tuxtxt32bpp-1.0-fix_dbox_headers.diff
 enigma2_networkbrowser;1.0;enigma2-networkbrowser;enigma2-openpli-plugins-enigma2.git:enigma2-networkbrowser-support_autofs.patch;extract:enigma2-openpli-plugins-enigma2.git/networkbrowser:enigma2-networkbrowser;patch:enigma2-networkbrowser-support_autofs.patch
+enigma2_openwebif;1.0;enigma2_openwebif;e2openplugin-OpenWebif.git;extract:e2openplugin-OpenWebif.git
 
 #
 # GSTREAMER

@@ -136,7 +136,6 @@ BroFS1.2.tgz;http://www.avalpa.com/assets/freesoft/other
 alsa-lib-1.0.21a.tar.bz2;ftp://ftp.alsa-project.org/pub/lib
 rtmpdump-2.4.tar.gz;http://rtmpdump.mplayerhq.hu/download
 libdvbsi++-0.3.6.tar.bz2;http://www.saftware.de/libdvbsi++
-libtuxtxt.git;git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;4ff8fffd72115130ff6594841e7bad2f85e85f12;HEAD
 libmpeg2-0.5.1.tar.gz;http://libmpeg2.sourceforge.net/files
 libsamplerate-0.1.8.tar.gz;http://www.mega-nerd.com/SRC
 libvorbis-1.3.2.tar.bz2;http://downloads.xiph.org/releases/vorbis
@@ -188,7 +187,9 @@ gst-fluendo-mpegdemux-0.10.69.tar.gz;http://core.fluendo.com/gstreamer/src/gst-f
 #
 # ENIGMA2
 #
+libtuxtxt.git;git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;4ff8fffd72115130ff6594841e7bad2f85e85f12;HEAD
 enigma2-openpli-plugins-enigma2.git;git://openpli.git.sourceforge.net/gitroot/openpli/plugins-enigma2
+e2openplugin-OpenWebif.git;git://github.com/E2OpenPlugins/e2openplugin-OpenWebif.git
 
 #
 # EXTERNAL_LCD
