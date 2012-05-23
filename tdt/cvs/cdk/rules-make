@@ -175,7 +175,7 @@ zope_interface;3.3.0;zope.interface-3.3.0;zope.interface-3.3.0.tar.gz;extract:zo
 tuxtxtlib;1.0;libtuxtxt;libtuxtxt.git:libtuxtxt-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/libtuxtxt;patch:libtuxtxt-1.0-fix_dbox_headers.diff
 tuxtxt32bpp;1.0;tuxtxt;libtuxtxt.git:tuxtxt32bpp-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/tuxtxt;patch:tuxtxt32bpp-1.0-fix_dbox_headers.diff
 enigma2_networkbrowser;1.0;enigma2-networkbrowser;enigma2-openpli-plugins-enigma2.git:enigma2-networkbrowser-support_autofs.patch;extract:enigma2-openpli-plugins-enigma2.git/networkbrowser:enigma2-networkbrowser;patch:enigma2-networkbrowser-support_autofs.patch
-enigma2_openwebif;1.0;enigma2_openwebif;e2openplugin-OpenWebif.git;extract:e2openplugin-OpenWebif.git
+enigma2_openwebif;1.0;e2openplugin-OpenWebif;e2openplugin-OpenWebif.git;extract:e2openplugin-OpenWebif.git
 
 #
 # GSTREAMER
@@ -201,11 +201,6 @@ libusb;0.1.12;libusb-0.1.12;libusb-0.1.12.tar.gz;extract:libusb-0.1.12.tar.gz
 libusb2;1.0.8;libusb-1.0.8;libusb-1.0.8.tar.bz2;extract:libusb-1.0.8.tar.bz2
 libusbcompat;0.1.3;libusb-compat-0.1.3;libusb-compat-0.1.3.tar.bz2;extract:libusb-compat-0.1.3.tar.bz2
 libgd2;2.0.35;gd-2.0.35;gd-2.0.35.tar.gz;extract:gd-2.0.35.tar.gz
-
-#
-# Enigma2 Plugins
-#
-enigma2-openwebif;1.0;e2openplugin-OpenWebif;;
 
 #
 # net apps
