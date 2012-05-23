@@ -1205,7 +1205,7 @@ $(DEPDIR)/%cairo: $(DEPDIR)/cairo.do_compile
 #
 # libogg
 #
-$(DEPDIR)/libogg.do_prepare: bootstrap  @DEPENDS_libogg@
+$(DEPDIR)/libogg.do_prepare: bootstrap @DEPENDS_libogg@
 	@PREPARE_libogg@
 	touch $@
 
@@ -1229,7 +1229,7 @@ $(DEPDIR)/%libogg: $(DEPDIR)/libogg.do_compile
 #
 # libflac
 #
-$(DEPDIR)/libflac.do_prepare: bootstrap  @DEPENDS_libflac@
+$(DEPDIR)/libflac.do_prepare: bootstrap @DEPENDS_libflac@
 	@PREPARE_libflac@
 	touch $@
 
@@ -2012,7 +2012,7 @@ $(DEPDIR)/%libusbcompat: $(DEPDIR)/libusbcompat.do_compile
 #
 # eve-browser
 #
-$(DEPDIR)/evebrowser.do_prepare:  bootstrap webkitdfb @DEPENDS_evebrowser@
+$(DEPDIR)/evebrowser.do_prepare: bootstrap webkitdfb @DEPENDS_evebrowser@
 	svn checkout https://eve-browser.googlecode.com/svn/trunk/ @DIR_evebrowser@
 	touch $@
 
@@ -2474,7 +2474,7 @@ $(DEPDIR)/%tiff: $(DEPDIR)/tiff.do_compile
 #
 # lzo
 #
-$(DEPDIR)/lzo.do_prepare:  @DEPENDS_lzo@
+$(DEPDIR)/lzo.do_prepare: @DEPENDS_lzo@
 	@PREPARE_lzo@
 	touch $@
 
@@ -2655,7 +2655,7 @@ $(DEPDIR)/%libmicrohttpd: $(DEPDIR)/libmicrohttpd.do_compile
 #
 # libexif
 #
-$(DEPDIR)/libexif.do_prepare: bootstrap  @DEPENDS_libexif@
+$(DEPDIR)/libexif.do_prepare: bootstrap @DEPENDS_libexif@
 	@PREPARE_libexif@
 	touch $@
 
@@ -2709,7 +2709,7 @@ $(DEPDIR)/%minidlna: $(DEPDIR)/minidlna.do_compile
 #
 # vlc
 #
-$(DEPDIR)/vlc.do_prepare: bootstrap libfribidi ffmpeg @DEPENDS_vlc@
+$(DEPDIR)/vlc.do_prepare: bootstrap libstdc++-dev libfribidi ffmpeg @DEPENDS_vlc@
 	@PREPARE_vlc@
 	touch $@
 
@@ -2744,6 +2744,5 @@ $(DEPDIR)/vlc: \
 $(DEPDIR)/%vlc: $(DEPDIR)/vlc.do_compile
 	cd @DIR_vlc@ && \
 		@INSTALL_vlc@
-	echo "libdir='$(targetprefix)/usr/lib'" >> $(targetprefix)/usr/lib/vlc.la
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
