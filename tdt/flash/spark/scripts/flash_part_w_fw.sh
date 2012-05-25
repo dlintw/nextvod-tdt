@@ -34,8 +34,8 @@ $PAD 0x800000 $CURDIR/uImage $CURDIR/mtd_kernel.pad.bin
 
 # --- ROOT ---
 # Size 64MB !
-echo "MKFSJFFS2 --qUfv -p0x4000000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin"
-$MKFSJFFS2 -qUfv -p0x4000000 -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin
+echo "MKFSJFFS2 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin -e 0x20000 -p -n"
+$MKFSJFFS2 -r-$TMPROOTDIR -o $CURDIR/mtd_root.bin -e 0x20000 -p -n
 echo "SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin"
 $SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin
 echo "$PAD 0x4000000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin"
