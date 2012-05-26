@@ -61,7 +61,8 @@ console-data_1.03.orig.tar.gz;ftp://ftp.debian.org/debian/pool/main/c/console-da
 nano-2.0.6.tar.gz;http://www.nano-editor.org/dist/v2.0
 rsync-2.6.9.tar.gz;http://samba.anu.edu.au/ftp/rsync
 lm_sensors-2.9.2.tar.gz;http://dl.lm-sensors.org/lm-sensors/releases
-fuse-2.7.2.tar.gz;http://dfn.dl.sourceforge.net/sourceforge/fuse
+#fuse-2.7.2.tar.gz;http://dfn.dl.sourceforge.net/sourceforge/fuse
+fuse-2.9.0.tar.gz;http://dfn.dl.sourceforge.net/sourceforge/fuse
 curlftpfs-0.9.1.tar.gz;http://kent.dl.sourceforge.net/sourceforge/curlftpfs
 fbset_2.1.orig.tar.gz;http://ftp.de.debian.org/debian/pool/main/f/fbset
 fbset_2.1-6.diff.gz;http://archive.debian.org/debian/dists/potato/main/source/admin
