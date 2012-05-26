@@ -61,7 +61,8 @@ console-data_1.03.orig.tar.gz;ftp://ftp.debian.org/debian/pool/main/c/console-da
 nano-2.0.6.tar.gz;http://www.nano-editor.org/dist/v2.0
 rsync-2.6.9.tar.gz;http://samba.anu.edu.au/ftp/rsync
 lm_sensors-2.9.2.tar.gz;http://dl.lm-sensors.org/lm-sensors/releases
-fuse-2.7.2.tar.gz;http://dfn.dl.sourceforge.net/sourceforge/fuse
+#fuse-2.7.2.tar.gz;http://dfn.dl.sourceforge.net/sourceforge/fuse
+fuse-2.9.0.tar.gz;http://dfn.dl.sourceforge.net/sourceforge/fuse
 curlftpfs-0.9.1.tar.gz;http://kent.dl.sourceforge.net/sourceforge/curlftpfs
 fbset_2.1.orig.tar.gz;http://ftp.de.debian.org/debian/pool/main/f/fbset
 fbset_2.1-6.diff.gz;http://archive.debian.org/debian/dists/potato/main/source/admin
@@ -136,6 +137,7 @@ BroFS1.2.tgz;http://www.avalpa.com/assets/freesoft/other
 alsa-lib-1.0.21a.tar.bz2;ftp://ftp.alsa-project.org/pub/lib
 rtmpdump-2.4.tar.gz;http://rtmpdump.mplayerhq.hu/download
 libdvbsi++-0.3.6.tar.bz2;http://www.saftware.de/libdvbsi++
+libtuxtxt.git;git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;4ff8fffd72115130ff6594841e7bad2f85e85f12;HEAD
 libmpeg2-0.5.1.tar.gz;http://libmpeg2.sourceforge.net/files
 libsamplerate-0.1.8.tar.gz;http://www.mega-nerd.com/SRC
 libvorbis-1.3.2.tar.bz2;http://downloads.xiph.org/releases/vorbis
@@ -151,7 +153,10 @@ mysql-5.1.40.tar.gz;http://downloads.mysql.com/archives/mysql-5.1
 libmicrohttpd-0.9.19.tar.gz;http://ftp.halifax.rwth-aachen.de/gnu/libmicrohttpd
 libexif-0.6.20.tar.gz;http://sourceforge.net/projects/libexif/files/libexif/0.6.20
 minidlna_1.0.24_src.tar.gz;http://netcologne.dl.sourceforge.net/project/minidlna/minidlna/1.0.24
-vlc-1.1.13.tar.bz2;http://download.videolan.org/pub/videolan/vlc/1.1.13
+vlc-1.1.9.tar.bz2;http://download.videolan.org/pub/videolan/vlc/1.1.9
+djmount-0.71.tar.gz;http://sourceforge.net/projects/djmount/files/djmount/0.71
+libupnp-1.3.1.tar.gz;http://sourceforge.net/projects/upnp/files/latest/download
+#libupnp-1.6.17.tar.bz2;http://sourceforge.net/projects/pupnp/files/pupnp/libUPnP%201.6.17/libupnp-1.6.17.tar.bz2/download
 
 #
 # PYTHON
@@ -187,9 +192,7 @@ gst-fluendo-mpegdemux-0.10.69.tar.gz;http://core.fluendo.com/gstreamer/src/gst-f
 #
 # ENIGMA2
 #
-libtuxtxt.git;git://openpli.git.sourceforge.net/gitroot/openpli/tuxtxt;4ff8fffd72115130ff6594841e7bad2f85e85f12;HEAD
 enigma2-openpli-plugins-enigma2.git;git://openpli.git.sourceforge.net/gitroot/openpli/plugins-enigma2
-e2openplugin-OpenWebif.git;git://github.com/E2OpenPlugins/e2openplugin-OpenWebif.git
 
 #
 # EXTERNAL_LCD
