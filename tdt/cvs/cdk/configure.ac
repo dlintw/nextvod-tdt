@@ -961,7 +961,6 @@ TUXBOX_RULES_MAKE(minidlna)
 TUXBOX_RULES_MAKE(vlc)
 TUXBOX_RULES_MAKE(djmount)
 TUXBOX_RULES_MAKE(libupnp)
-TUXBOX_RULES_MAKE(rarfs)
 
 #
 # python

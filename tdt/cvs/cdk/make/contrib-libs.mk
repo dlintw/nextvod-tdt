@@ -2761,7 +2761,7 @@ $(DEPDIR)/djmount.do_compile: bootstrap libupnp fuse $(DEPDIR)/djmount.do_prepar
 	CFLAGS="$(TARGET_CFLAGS) -Os" \
 	./configure \
 		--host=$(target) \
-		--disable-FEATURE \
+		--with-libupnp-prefix=/home/aaf-svn/flashimg/BUILDGIT/checkout_stm24/tdt/cvs/cdk/libupnp-1.3.1/upnp/src \
 		--prefix=/usr
 	touch $@
 
@@ -2797,30 +2797,5 @@ $(DEPDIR)/%libupnp: $(DEPDIR)/libupnp.do_compile
 	cd @DIR_libupnp@ && \
 		@INSTALL_libupnp@
 	echo "libdir='$(targetprefix)/usr/lib'" >> $(targetprefix)/usr/lib/libupnp.la
-	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
-
-#
-# rarfs
-#
-$(DEPDIR)/rarfs.do_prepare: bootstrap fuse @DEPENDS_rarfs@
-	@PREPARE_rarfs@
-	touch $@
-
-$(DEPDIR)/rarfs.do_compile: bootstrap fuse $(DEPDIR)/rarfs.do_prepare
-	cd @DIR_libexif@ && \
-	$(BUILDENV) \
-	./configure \
-		--host=$(target) \
-		--disable-FEATURE \
-		--prefix=/usr
-	touch $@
-
-$(DEPDIR)/min-rarfs $(DEPDIR)/std-rarfs $(DEPDIR)/max-rarfs \
-$(DEPDIR)/rarfs: \
-$(DEPDIR)/%rarfs: $(DEPDIR)/rarfs.do_compile
-	cd @DIR_rarfs@ && \
-		@INSTALL_rarfs@
-	echo "libdir='$(targetprefix)/usr/lib'" >> $(targetprefix)/usr/lib/rarfs.la
 	@[ "x$*" = "x" ] && touch $@ || true
 	@TUXBOX_YAUD_CUSTOMIZE@
