@@ -121,6 +121,7 @@ minidlna;make:install:prefix=/usr:DESTDIR=TARGETS
 vlc;make:install:DESTDIR=TARGETS
 djmount;make:install:DESTDIR=TARGETS
 libupnp;make:install:DESTDIR=TARGETS
+rarfs;make:install:DESTDIR=TARGETS
 
 #
 # PYTHON
