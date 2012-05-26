@@ -100,12 +100,10 @@ brofs;make:install:DESTDIR=TARGETS/usr/bin
 libalsa;rewrite-pkgconfig:utils/alsa.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libasound.la
 rtmpdump;rewrite-pkgconfig:librtmp/librtmp.pc;make:install:prefix=/usr:DESTDIR=TARGETS
 libdvbsipp;rewrite-pkgconfig:libdvbsi++.pc;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libdvbsi++.la
-tuxtxtlib;rewrite-pkgconfig:tuxbox-tuxtxt.pc;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libtuxtxt.la
-tuxtxt32bpp;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libtuxtxt32bpp.la
 libdreamdvd;rewrite-pkgconfig:libdreamdvd.pc;make:install:prefix=/usr:DESTDIR=TARGETS
 libdreamdvd2;rewrite-pkgconfig:libdreamdvd.pc;make:install:prefix=/usr:DESTDIR=TARGETS
 hotplug_e2;make:install:prefix=/usr:DESTDIR=TARGETS
-libpcre;rewrite-pkgconfig:libpcre.pc:libpcrecpp.pc:libpcreposix.pc;make:install:prefix=/usr:DESTDIR=TARGET;rewrite-libtool:TARGET/usr/lib/libpcre.la:TARGET/usr/lib/libpcreposix.la
+libpcre;rewrite-pkgconfig:libpcre.pc:libpcrecpp.pc:libpcreposix.pc;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libpcre.la:TARGETS/usr/lib/libpcreposix.la
 libmpeg2;make:install:prefix=/usr:DESTDIR=TARGETS
 libsamplerate;make:install:prefix=/usr:DESTDIR=TARGETS
 libvorbis;make:install:prefix=/usr:DESTDIR=TARGETS
@@ -118,9 +116,7 @@ jasper;make:install:prefix=/usr:DESTDIR=TARGETS
 libmicrohttpd;make:install:prefix=/usr:DESTDIR=TARGETS
 libexif;make:install:prefix=/usr:DESTDIR=TARGETS
 minidlna;make:install:prefix=/usr:DESTDIR=TARGETS
-vlc;make:install:DESTDIR=TARGETS
-djmount;make:install:DESTDIR=TARGETS
-libupnp;make:install:DESTDIR=TARGETS
+vlc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libvlc.la:TARGETS/usr/lib/libvlccore.la
 
 #
 # PYTHON
@@ -143,7 +139,10 @@ gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
 #
 # ENGIMA2
 #
+tuxtxtlib;rewrite-pkgconfig:tuxbox-tuxtxt.pc;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libtuxtxt.la
+tuxtxt32bpp;make:install:prefix=/usr:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libtuxtxt32bpp.la
 enigma2_networkbrowser;make:install:DESTDIR=TARGETS
+enigma2_openwebif;make:install:DESTDIR=TARGETS
 
 #
 # EXTERNAL_LCD
