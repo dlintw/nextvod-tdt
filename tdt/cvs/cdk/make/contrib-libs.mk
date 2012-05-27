@@ -2808,7 +2808,7 @@ $(DEPDIR)/rarfs.do_compile: $(DEPDIR)/rarfs.do_prepare
 	cd @DIR_rarfs@ && \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	export PKG_CONFIG_PATH="$(prefix)/cdkroot/usr/lib/pkgconfig"
-	cd @DIR_libexif@ && \
+	cd @DIR_rarfs@ && \
 	$(BUILDENV) \
 	CFLAGS="$(TARGET_CFLAGS) -Os -D_FILE_OFFSET_BITS=64" \
 	./configure \
