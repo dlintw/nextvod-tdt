@@ -2805,12 +2805,16 @@ $(DEPDIR)/rarfs.do_prepare: bootstrap fuse @DEPENDS_rarfs@
 	touch $@
 
 $(DEPDIR)/rarfs.do_compile: $(DEPDIR)/rarfs.do_prepare
+	cd @DIR_rarfs@ && \
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	export PKG_CONFIG_PATH="$(prefix)/cdkroot/usr/lib/pkgconfig"
 	cd @DIR_libexif@ && \
 	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os -D_FILE_OFFSET_BITS=64" \
 	./configure \
 		--host=$(target) \
-		--disable-FEATURE \
-		--prefix=/usr
+		--disable-option-checking \
+		--prefix=/usr		
 	touch $@
 
 $(DEPDIR)/min-rarfs $(DEPDIR)/std-rarfs $(DEPDIR)/max-rarfs \
