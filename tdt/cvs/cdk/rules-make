@@ -61,7 +61,8 @@ console_data;1.03;console-data-1.03;console-data_1.03.orig.tar.gz;extract:consol
 nano;2.0.6;nano-2.0.6;nano-2.0.6.tar.gz;extract:nano-2.0.6.tar.gz
 rsync;2.6.9;rsync-2.6.9;rsync-2.6.9.tar.gz;extract:rsync-2.6.9.tar.gz
 lm_sensors;2.9.2;lm_sensors-2.9.2;lm_sensors-2.9.2.tar.gz;extract:lm_sensors-2.9.2.tar.gz
-fuse;2.7.2;fuse-2.7.2;fuse-2.7.2.tar.gz:fuse.diff;extract:fuse-2.7.2.tar.gz;patch:fuse.diff
+#fuse;2.7.2;fuse-2.7.2;fuse-2.7.2.tar.gz:fuse.diff;extract:fuse-2.7.2.tar.gz;patch:fuse.diff
+fuse;2.9.0;fuse-2.9.0;fuse-2.9.0.tar.gz:fuse.diff;extract:fuse-2.9.0.tar.gz
 curlftpfs;0.9.1;curlftpfs-0.9.1;curlftpfs-0.9.1.tar.gz;extract:curlftpfs-0.9.1.tar.gz
 fbset;2.1;fbset-2.1;fbset_2.1.orig.tar.gz:fbset_2.1-6.diff.gz:fbset_2.1-fb.modes-ST.patch;extract:fbset_2.1.orig.tar.gz;patch:fbset_2.1-6.diff.gz;patch:fbset_2.1-fb.modes-ST.patch
 util_linux;2.12r;util-linux-2.12r;util-linux-2.12r.tar.bz2:util-linux_2.12r-12.deb.diff.gz:util-linux-stm.diff;extract:util-linux-2.12r.tar.bz2;patch:util-linux_2.12r-12.deb.diff.gz
@@ -149,6 +150,10 @@ libmicrohttpd;0.9.19;libmicrohttpd-0.9.19;libmicrohttpd-0.9.19.tar.gz;extract:li
 libexif;0.6.20;libexif-0.6.20;libexif-0.6.20.tar.gz;extract:libexif-0.6.20.tar.gz
 minidlna;1.0.24;minidlna-1.0.24;minidlna_1.0.24_src.tar.gz;extract:minidlna_1.0.24_src.tar.gz;patch:minidlna-1.0.24.patch
 vlc;1.1.13;vlc-1.1.13;vlc-1.1.13.tar.bz2;extract:vlc-1.1.13.tar.bz2
+djmount;0.71;djmount-0.71;djmount-0.71.tar.gz;extract:djmount-0.71.tar.gz
+libupnp;1.3.1;libupnp-1.3.1;libupnp-1.3.1.tar.gz;extract:libupnp-1.3.1.tar.gz
+#libupnp;1.6.17;libupnp-1.6.17;libupnp-1.6.17.tar.bz2;extract:libupnp-1.6.17.tar.bz2
+rarfs;0.0.10;rarfs-0.0.10;rarfs-0.0.10.tar.gz;extract:rarfs-0.0.10.tar.gz
 
 #
 # PYTHON

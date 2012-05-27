@@ -2744,5 +2744,79 @@ $(DEPDIR)/vlc: \
 $(DEPDIR)/%vlc: $(DEPDIR)/vlc.do_compile
 	cd @DIR_vlc@ && \
 		@INSTALL_vlc@
+#	@DISTCLEANUP_vlc@
 	@[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
+
+#
+# djmount
+#
+$(DEPDIR)/djmount.do_prepare: bootstrap libupnp fuse @DEPENDS_djmount@
+	@PREPARE_djmount@
+	touch $@
+
+$(DEPDIR)/djmount.do_compile: $(DEPDIR)/djmount.do_prepare
+	cd @DIR_djmount@ && \
+	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	./configure \
+		--host=$(target) \
+		--disable-FEATURE \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-djmount $(DEPDIR)/std-djmount $(DEPDIR)/max-djmount \
+$(DEPDIR)/djmount: \
+$(DEPDIR)/%djmount: $(DEPDIR)/djmount.do_compile
+	cd @DIR_djmount@ && \
+		@INSTALL_djmount@
+#	@DISTCLEANUP_djmount@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# libupnp
+#
+$(DEPDIR)/libupnp.do_prepare: bootstrap @DEPENDS_libupnp@
+	@PREPARE_libupnp@
+	touch $@
+
+$(DEPDIR)/libupnp.do_compile: $(DEPDIR)/libupnp.do_prepare
+	cd @DIR_libupnp@ && \
+	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	./configure \
+		--host=$(target) \
+		--enable-debug \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-libupnp $(DEPDIR)/std-libupnp $(DEPDIR)/max-libupnp \
+$(DEPDIR)/libupnp: \
+$(DEPDIR)/%libupnp: $(DEPDIR)/libupnp.do_compile
+	cd @DIR_libupnp@ && \
+		@INSTALL_libupnp@
+#	@DISTCLEANUP_djmount@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# rarfs
+#
+$(DEPDIR)/rarfs.do_prepare: bootstrap fuse @DEPENDS_rarfs@
+	@PREPARE_rarfs@
+	touch $@
+
+$(DEPDIR)/rarfs.do_compile: $(DEPDIR)/rarfs.do_prepare
+	cd @DIR_libexif@ && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--disable-FEATURE \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-rarfs $(DEPDIR)/std-rarfs $(DEPDIR)/max-rarfs \
+$(DEPDIR)/rarfs: \
+$(DEPDIR)/%rarfs: $(DEPDIR)/rarfs.do_compile
+	cd @DIR_rarfs@ && \
+		@INSTALL_rarfs@
+#	@DISTCLEANUP_rarfs@
+	[ "x$*" = "x" ] && touch $@ || true

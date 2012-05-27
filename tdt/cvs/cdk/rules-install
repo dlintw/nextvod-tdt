@@ -117,6 +117,9 @@ libmicrohttpd;make:install:prefix=/usr:DESTDIR=TARGETS
 libexif;make:install:prefix=/usr:DESTDIR=TARGETS
 minidlna;make:install:prefix=/usr:DESTDIR=TARGETS
 vlc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libvlc.la:TARGETS/usr/lib/libvlccore.la
+djmount;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/djmount.la
+libupnp;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libupnp.la
+rarfs;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/rarfs.la
 
 #
 # PYTHON
