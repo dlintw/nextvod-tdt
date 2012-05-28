@@ -2786,7 +2786,8 @@ $(DEPDIR)/libupnp.do_compile: $(DEPDIR)/libupnp.do_prepare
 	./configure \
 		--host=$(target) \
 		--enable-debug \
-		--prefix=/usr
+		--prefix=/usr && \
+	$(MAKE) all
 	touch $@
 
 $(DEPDIR)/min-libupnp $(DEPDIR)/std-libupnp $(DEPDIR)/max-libupnp \
@@ -2794,7 +2795,7 @@ $(DEPDIR)/libupnp: \
 $(DEPDIR)/%libupnp: $(DEPDIR)/libupnp.do_compile
 	cd @DIR_libupnp@ && \
 		@INSTALL_libupnp@
-#	@DISTCLEANUP_djmount@
+#	@DISTCLEANUP_libupnp@
 	[ "x$*" = "x" ] && touch $@ || true
 
 #
