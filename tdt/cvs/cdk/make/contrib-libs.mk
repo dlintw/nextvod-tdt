@@ -2750,7 +2750,7 @@ $(DEPDIR)/%vlc: $(DEPDIR)/vlc.do_compile
 #
 # djmount
 #
-$(DEPDIR)/djmount.do_prepare: bootstrap libupnp fuse @DEPENDS_djmount@
+$(DEPDIR)/djmount.do_prepare: bootstrap fuse @DEPENDS_djmount@
 	@PREPARE_djmount@
 	touch $@
 
@@ -2760,8 +2760,8 @@ $(DEPDIR)/djmount.do_compile: $(DEPDIR)/djmount.do_prepare
 	CFLAGS="$(TARGET_CFLAGS) -Os" \
 	./configure \
 		--host=$(target) \
-		--disable-FEATURE \
-		--prefix=/usr
+		--prefix=/usr && \
+	$(MAKE) all
 	touch $@
 
 $(DEPDIR)/min-djmount $(DEPDIR)/std-djmount $(DEPDIR)/max-djmount \
