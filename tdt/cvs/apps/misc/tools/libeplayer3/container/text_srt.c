@@ -486,5 +486,5 @@ static char *SrtCapabilities[] = { "srt", NULL };
 Container_t SrtContainer = {
     "SRT",
     &Command,
-    SrtCapabilities,
+    SrtCapabilities
 };

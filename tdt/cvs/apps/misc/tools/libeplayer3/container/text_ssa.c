@@ -488,5 +488,5 @@ static char *SsaCapabilities[] = { "ssa", NULL };
 Container_t SsaContainer = {
     "SSA",
     &Command,
-    SsaCapabilities,
+    SsaCapabilities
 };

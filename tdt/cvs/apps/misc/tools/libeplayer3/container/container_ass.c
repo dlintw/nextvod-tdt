@@ -813,6 +813,5 @@ static char *ASS_Capabilities[] = {"ass", NULL };
 Container_t ASSContainer = {
     "ASS",
     &Command,
-    ASS_Capabilities,
-
+    ASS_Capabilities
 };

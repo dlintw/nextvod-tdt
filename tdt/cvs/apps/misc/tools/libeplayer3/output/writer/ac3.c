@@ -139,13 +139,12 @@ static WriterCaps_t caps_ac3 = {
     "ac3",
     eAudio,
     "A_AC3",
-    AUDIO_ENCODING_AC3,
+    AUDIO_ENCODING_AC3
 };
 
 struct Writer_s WriterAudioAC3 = {
     &reset,
     &writeData,
     NULL,
-    &caps_ac3,
+    &caps_ac3
 };
-

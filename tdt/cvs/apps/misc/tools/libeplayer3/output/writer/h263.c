@@ -151,26 +151,26 @@ static WriterCaps_t caps_h263 = {
     "h263",
     eVideo,
     "V_H263",
-    VIDEO_ENCODING_H263,
+    VIDEO_ENCODING_H263
 };
 
 struct Writer_s WriterVideoH263 = {
     &reset,
     &writeData,
     NULL,
-    &caps_h263,
+    &caps_h263
 };
 
 static WriterCaps_t caps_flv = {
     "FLV",
     eVideo,
     "V_FLV",
-    VIDEO_ENCODING_FLV1,
+    VIDEO_ENCODING_FLV1
 };
 
 struct Writer_s WriterVideoFLV = {
     &reset,
     &writeData,
     NULL,
-    &caps_flv,
+    &caps_flv
 };

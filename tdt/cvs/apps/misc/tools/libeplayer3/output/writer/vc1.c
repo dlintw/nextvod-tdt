@@ -289,4 +289,3 @@ struct Writer_s WriterVideoVC1 = {
     NULL,
     &caps
 };
-

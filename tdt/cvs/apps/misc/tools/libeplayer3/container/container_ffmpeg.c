@@ -1729,6 +1729,5 @@ static char *FFMPEG_Capabilities[] = {"avi", "mkv", "mp4", "ts", "mov", "flv", "
 Container_t FFMPEGContainer = {
     "FFMPEG",
     &Command,
-    FFMPEG_Capabilities,
-
+    FFMPEG_Capabilities
 };

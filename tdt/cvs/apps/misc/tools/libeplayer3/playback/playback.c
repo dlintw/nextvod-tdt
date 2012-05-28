@@ -1057,5 +1057,5 @@ PlaybackHandler_t PlaybackHandler = {
     0,
     &Command,
     "",
-    0,
+    0
 };

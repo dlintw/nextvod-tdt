@@ -157,12 +157,12 @@ static WriterCaps_t caps = {
     "dts",
     eAudio,
     "A_DTS",
-    AUDIO_ENCODING_DTS,
+    AUDIO_ENCODING_DTS
 };
 
 struct Writer_s WriterAudioDTS = {
     &reset,
     &writeData,
     NULL,
-    &caps,
+    &caps
 };
