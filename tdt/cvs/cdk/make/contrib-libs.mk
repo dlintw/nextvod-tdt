@@ -276,7 +276,7 @@ $(DEPDIR)/%libgif: $(DEPDIR)/libgif.do_compile
 #
 # libcurl
 #
-$(DEPDIR)/curl.do_prepare: bootstrap libz @DEPENDS_curl@
+$(DEPDIR)/curl.do_prepare: bootstrap openssl rtmpdump libz @DEPENDS_curl@
 	@PREPARE_curl@
 	touch $@
 
@@ -288,6 +288,10 @@ $(DEPDIR)/curl.do_compile: $(DEPDIR)/curl.do_prepare
 			--build=$(build) \
 			--host=$(target) \
 			--prefix=/usr \
+			--with-ssl \
+			--disable-debug \
+			--disable-verbose \
+			--disable-manual \
 			--mandir=/usr/share/man \
 			--with-random && \
 		$(MAKE) all
@@ -2823,4 +2827,29 @@ $(DEPDIR)/%rarfs: $(DEPDIR)/rarfs.do_compile
 	cd @DIR_rarfs@ && \
 		@INSTALL_rarfs@
 #	@DISTCLEANUP_rarfs@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# sshfs
+#
+$(DEPDIR)/sshfs.do_prepare: bootstrap fuse @DEPENDS_sshfs@
+	@PREPARE_sshfs@
+	touch $@
+
+$(DEPDIR)/sshfs.do_compile: $(DEPDIR)/sshfs.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_sshfs@ && \
+	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-sshfs $(DEPDIR)/std-sshfs $(DEPDIR)/max-sshfs \
+$(DEPDIR)/sshfs: \
+$(DEPDIR)/%sshfs: $(DEPDIR)/sshfs.do_compile
+	cd @DIR_sshfs@ && \
+		@INSTALL_sshfs@
+#	@DISTCLEANUP_sshfs@
 	[ "x$*" = "x" ] && touch $@ || true
