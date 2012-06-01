@@ -150,7 +150,7 @@ libexif;0.6.20;libexif-0.6.20;libexif-0.6.20.tar.gz;extract:libexif-0.6.20.tar.g
 minidlna;1.0.24;minidlna-1.0.24;minidlna_1.0.24_src.tar.gz;extract:minidlna_1.0.24_src.tar.gz;patch:minidlna-1.0.24.patch
 vlc;1.1.13;vlc-1.1.13;vlc-1.1.13.tar.bz2;extract:vlc-1.1.13.tar.bz2
 djmount;0.71;djmount-0.71;djmount-0.71.tar.gz;extract:djmount-0.71.tar.gz
-libupnp;1.3.1;libupnp-1.3.1;libupnp-1.3.1.tar.gz;extract:libupnp-1.3.1.tar.gz
+libupnp;1.6.17;libupnp-1.6.17;libupnp-1.6.17.tar.bz2;extract:libupnp-1.6.17.tar.bz2
 rarfs;0.0.10;rarfs-0.0.10;rarfs-0.0.10.tar.gz;extract:rarfs-0.0.10.tar.gz
 sshfs;2.4;sshfs-fuse-2.4;sshfs-fuse-2.4.tar.bz2;extract:sshfs-fuse-2.4.tar.bz2
 gmediarender;0.0.6;gmediarender-0.0.6;gmediarender-0.0.6.tar.bz2;extract:gmediarender-0.0.6.tar.bz2
