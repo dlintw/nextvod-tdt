@@ -2869,8 +2869,8 @@ $(DEPDIR)/gmediarender.do_compile: $(DEPDIR)/gmediarender.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--with-PACKAGE=no \
-		--with-libupnp=$(targetprefix)/usr
+		--with-libupnp=$(targetprefix)/usr && \
+	$(MAKE) all
 	touch $@
 
 $(DEPDIR)/min-gmediarender $(DEPDIR)/std-gmediarender $(DEPDIR)/max-gmediarender \
