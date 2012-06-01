@@ -2853,3 +2853,29 @@ $(DEPDIR)/%sshfs: $(DEPDIR)/sshfs.do_compile
 		@INSTALL_sshfs@
 #	@DISTCLEANUP_sshfs@
 	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# gmediarender
+#
+$(DEPDIR)/gmediarender.do_prepare: bootstrap gst_plugins_dvbmediasink libupnp @DEPENDS_gmediarender@
+	@PREPARE_gmediarender@
+	touch $@
+
+$(DEPDIR)/gmediarender.do_compile: $(DEPDIR)/gmediarender.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_gmediarender@ && \
+	export PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig && \
+	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-gmediarender $(DEPDIR)/std-gmediarender $(DEPDIR)/max-gmediarender \
+$(DEPDIR)/gmediarender: \
+$(DEPDIR)/%gmediarender: $(DEPDIR)/gmediarender.do_compile
+	cd @DIR_gmediarender@ && \
+		@INSTALL_gmediarender@
+#	@DISTCLEANUP_gmediarender@
+	[ "x$*" = "x" ] && touch $@ || true

@@ -121,6 +121,7 @@ djmount;make:install:DESTDIR=TARGETS
 libupnp;rewrite-pkgconfig:libupnp.pc;make:install:DESTDIR=TARGET;rewrite-libtool:TARGETS/usr/lib/libupnp.la:TARGETS/usr/lib/libixml.la:TARGETS/usr/lib/libthreadutil.la
 rarfs;make:install:DESTDIR=TARGETS
 sshfs;make:install:DESTDIR=TARGETS
+gmediarender;make:install:DESTDIR=TARGETS
 
 #
 # PYTHON
