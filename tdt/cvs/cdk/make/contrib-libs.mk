@@ -862,7 +862,6 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--disable-armv6 \
 		--disable-armv6t2 \
 		--disable-armvfp \
-		--disable-iwmmxt \
 		--disable-mmi \
 		--disable-neon \
 		--disable-vis \
