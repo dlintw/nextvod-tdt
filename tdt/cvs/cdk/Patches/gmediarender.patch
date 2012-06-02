@@ -1,0 +1,11 @@
+--- gmediarender-0.0.6/src/output_gstreamer.c	2007-11-07 10:39:32.000000000 +0100
++++ gmediarender-0.0.6/src/output_gstreamer.c.pached	2012-06-02 18:08:09.000000000 +0200
+@@ -315,7 +315,7 @@
+ 
+ 	scan_mime_list();
+ 
+-	play = gst_element_factory_make("playbin", "play");
++	play = gst_element_factory_make("playbin2", "play");
+ 
+ 	bus = gst_pipeline_get_bus(GST_PIPELINE(play));
+ 	gst_bus_add_watch(bus, my_bus_callback, NULL);
