@@ -153,7 +153,7 @@ djmount;0.71;djmount-0.71;djmount-0.71.tar.gz;extract:djmount-0.71.tar.gz
 libupnp;1.6.17;libupnp-1.6.17;libupnp-1.6.17.tar.bz2;extract:libupnp-1.6.17.tar.bz2
 rarfs;0.0.10;rarfs-0.0.10;rarfs-0.0.10.tar.gz;extract:rarfs-0.0.10.tar.gz
 sshfs;2.4;sshfs-fuse-2.4;sshfs-fuse-2.4.tar.bz2;extract:sshfs-fuse-2.4.tar.bz2
-gmediarender;0.0.6;gmediarender-0.0.6;gmediarender-0.0.6.tar.bz2;extract:gmediarender-0.0.6.tar.bz2
+gmediarender;0.0.6;gmediarender-0.0.6;gmediarender-0.0.6.tar.bz2;extract:gmediarender-0.0.6.tar.bz2;patch:gmediarender.patch
 mediatomb;0.12.1;mediatomb-0.12.1;mediatomb-0.12.1.tar.gz;extract:mediatomb-0.12.1.tar.gz;patch:mediatomb_libav_support.patch
 
 #
