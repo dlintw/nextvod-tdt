@@ -2883,13 +2883,12 @@ $(DEPDIR)/%gmediarender: $(DEPDIR)/gmediarender.do_compile
 #
 # mediatomb
 #
-$(DEPDIR)/mediatomb.do_prepare: bootstrap libstdc++-dev ffmpeg curl sqlite expat  @DEPENDS_mediatomb@
+$(DEPDIR)/mediatomb.do_prepare: bootstrap libstdc++-dev ffmpeg curl sqlite expat @DEPENDS_mediatomb@
 	@PREPARE_mediatomb@
 	touch $@
 
 $(DEPDIR)/mediatomb.do_compile: $(DEPDIR)/mediatomb.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
-	export ac_cv_func_malloc_0_nonnull=yes && \
 	cd @DIR_mediatomb@ && \
 	$(BUILDENV) \
 	CFLAGS="$(TARGET_CFLAGS) -Os" \
@@ -2905,6 +2904,7 @@ $(DEPDIR)/mediatomb.do_compile: $(DEPDIR)/mediatomb.do_prepare
 		--disable-libmp4v2 \
 		--disable-inotify \
 		--with-avformat-h=$(targetprefix)/usr/include \
+		--disable-rpl-malloc \
 		--prefix=/usr && \
 	$(MAKE) all
 	touch $@
