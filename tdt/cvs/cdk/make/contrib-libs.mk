@@ -2788,7 +2788,6 @@ $(DEPDIR)/libupnp.do_compile: $(DEPDIR)/libupnp.do_prepare
 	CFLAGS="$(TARGET_CFLAGS) -Os" \
 	./configure \
 		--host=$(target) \
-		--enable-debug \
 		--prefix=/usr && \
 	$(MAKE) all
 	touch $@
