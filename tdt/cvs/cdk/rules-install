@@ -122,6 +122,7 @@ libupnp;rewrite-pkgconfig:libupnp.pc;make:install:DESTDIR=TARGET;rewrite-libtool
 rarfs;make:install:DESTDIR=TARGETS
 sshfs;make:install:DESTDIR=TARGETS
 gmediarender;make:install:DESTDIR=TARGETS
+mediatomb;make:install:DESTDIR=TARGETS
 
 #
 # PYTHON

@@ -121,7 +121,7 @@ libdvdcss;1.2.10;libdvdcss-1.2.10;libdvdcss-1.2.10.tar.gz;extract:libdvdcss-1.2.
 libdvdnav;4.1.3;libdvdnav-4.1.3;libdvdnav-4.1.3.tar.bz2:libdvdnav_4.1.3-3.diff;extract:libdvdnav-4.1.3.tar.bz2;patch:libdvdnav_4.1.3-3.diff
 libdvdread;4.1.3;libdvdread-4.1.3;libdvdread-4.1.3.tar.bz2:libdvdread_4.1.3-5.diff;extract:libdvdread-4.1.3.tar.bz2;patch:libdvdread_4.1.3-5.diff
 ffmpeg;0.8.11;ffmpeg-0.8.11;ffmpeg-0.8.11.tar.gz:ffmpeg.patch;extract:ffmpeg-0.8.11.tar.gz;patch:ffmpeg.patch
-#ffmpeg;0.10;ffmpeg-0.10;ffmpeg-0.10.tar.gz:ffmpeg-0.10.patch;extract:ffmpeg-0.10.tar.gz;patch:ffmpeg-0.10.patch
+ffmpeg;0.11;ffmpeg-0.11;ffmpeg-0.11.tar.gz:ffmpeg.patch;extract:ffmpeg-0.11.tar.gz
 libass;0.9.11;libass-0.9.11;libass-0.9.11.tar.gz;extract:libass-0.9.11.tar.gz
 libcap;2.22;libcap-2.22;libcap-2.22.tar.gz;extract:libcap-2.22.tar.gz
 libogg;1.2.2;libogg-1.2.2;libogg-1.2.2.tar.gz;extract:libogg-1.2.2.tar.gz
@@ -154,6 +154,7 @@ libupnp;1.6.17;libupnp-1.6.17;libupnp-1.6.17.tar.bz2;extract:libupnp-1.6.17.tar.
 rarfs;0.0.10;rarfs-0.0.10;rarfs-0.0.10.tar.gz;extract:rarfs-0.0.10.tar.gz
 sshfs;2.4;sshfs-fuse-2.4;sshfs-fuse-2.4.tar.bz2;extract:sshfs-fuse-2.4.tar.bz2
 gmediarender;0.0.6;gmediarender-0.0.6;gmediarender-0.0.6.tar.bz2;extract:gmediarender-0.0.6.tar.bz2
+mediatomb;0.12.1;mediatomb-0.12.1;mediatomb-0.12.1.tar.gz;extract:mediatomb-0.12.1.tar.gz
 
 #
 # PYTHON

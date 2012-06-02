@@ -2880,3 +2880,39 @@ $(DEPDIR)/%gmediarender: $(DEPDIR)/gmediarender.do_compile
 		@INSTALL_gmediarender@
 #	@DISTCLEANUP_gmediarender@
 	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# mediatomb
+#
+$(DEPDIR)/mediatomb.do_prepare: bootstrap ffmpeg curl @DEPENDS_mediatomb@
+	@PREPARE_mediatomb@
+	touch $@
+
+$(DEPDIR)/mediatomb.do_compile: $(DEPDIR)/mediatomb.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_mediatomb@ && \
+	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	./configure \
+		--host=$(target) \
+		--disable-ffmpegthumbnailer \
+		--disable-libmagic \
+		--disable-mysql \
+		--disable-id3lib \
+		--disable-taglib \
+		--disable-lastfmlib \
+		--disable-libexif \
+		--disable-libmp4v2 \
+		--disable-inotify \
+		--with-avformat-h=$(targetprefix)/usr/include \
+		--prefix=/usr && \
+	$(MAKE) all
+	touch $@
+
+$(DEPDIR)/min-mediatomb $(DEPDIR)/std-mediatomb $(DEPDIR)/max-mediatomb \
+$(DEPDIR)/mediatomb: \
+$(DEPDIR)/%mediatomb: $(DEPDIR)/mediatomb.do_compile
+	cd @DIR_mediatomb@ && \
+		@INSTALL_mediatomb@
+#	@DISTCLEANUP_mediatomb@
+	[ "x$*" = "x" ] && touch $@ || true
