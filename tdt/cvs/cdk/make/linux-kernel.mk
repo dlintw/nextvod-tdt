@@ -616,6 +616,7 @@ IPBOX55PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
 
 CUBEREVOPATCHES_24 = $(COMMONPATCHES_24) \
+		$(if $(P0209)$(P0210),linux-sh4-mmap_stm24.patch) \
 		linux-sh4-$(CUBEMOD)_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		linux-sh4-cuberevo_rtl8201_stm24$(PATCH_STR).patch
