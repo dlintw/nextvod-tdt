@@ -849,6 +849,7 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-shared \
 		--enable-cross-compile \
 		--disable-ffserver \
+		--disable-ffplay \
 		--disable-altivec \
 		--disable-debug \
 		--disable-asm \
@@ -877,6 +878,7 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-muxer=h263 \
 		--enable-muxer=h264 \
 		--enable-muxer=mpeg1video \
+		--enable-muxer=mpeg2video \
 		--enable-muxer=image2 \
 		--disable-encoders \
 		--enable-encoder=aac \
@@ -889,6 +891,7 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-encoder=mjpeg \
 		--enable-encoder=png \
 		--enable-encoder=mpeg1video \
+		--enable-encoder=mpeg2video \
 		--disable-decoders \
 		--enable-decoder=aac \
 		--enable-decoder=mp3 \
@@ -897,15 +900,16 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-decoder=h263 \
 		--enable-decoder=h263i \
 		--enable-decoder=h264 \
+		--enable-decoder=mpeg1video \
 		--enable-decoder=mpeg2video \
 		--enable-decoder=png \
 		--enable-decoder=ljpeg \
 		--enable-decoder=mjpeg \
 		--enable-decoder=vorbis \
 		--enable-decoder=flac \
-		--enable-small \
 		--enable-decoder=dvbsub \
 		--enable-decoder=iff_byterun1 \
+		--enable-small \
 		--enable-pthreads \
 		--enable-bzlib \
 		--enable-librtmp \
