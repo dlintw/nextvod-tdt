@@ -165,3 +165,21 @@
  echo "#define ENABLE_NLS" >> ${CONFIGFILE}
  else
  echo "/*#define ENABLE_NLS*/" >> ${CONFIGFILE}
+--- minidlna-1.0.24/metadata.c	2012-01-17 23:49:01.000000000 +0100
++++ minidlna-1.0.24/metadata.c.patched	2012-05-17 00:51:15.000000000 +0200
+@@ -1514,10 +1514,14 @@
+ 	{
+ 		if( ctx->metadata )
+ 		{
++#if LIBAVCODEC_VERSION_MAJOR < 54
+ 			AVMetadataTag *tag = NULL;
+-
+ 			//DEBUG DPRINTF(E_DEBUG, L_METADATA, "Metadata:\n");
+ 			while( (tag = av_metadata_get(ctx->metadata, "", tag, AV_METADATA_IGNORE_SUFFIX)) )
++#else
++			AVDictionaryEntry *tag = NULL;
++			while( (tag = av_dict_get(ctx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) )
++#endif
+ 			{
+ 				//DEBUG DPRINTF(E_DEBUG, L_METADATA, "  %-16s: %s\n", tag->key, tag->value);
+ 				if( strcmp(tag->key, "title") == 0 )
