@@ -327,7 +327,7 @@ case $5 in
         echo -e "\nSelected multicom: $REPLY\n"
         ;;
         *)
-        read -p "Select multicom (1-2)? ";;
+        read -p "Select multicom (1-3)? ";;
 esac
 
 case "$REPLY" in
