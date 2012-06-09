@@ -4,7 +4,10 @@
 $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	@PREPARE_busybox@
 	cd @DIR_busybox@ && \
-		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-man.patch
+		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-ash.patch && \
+		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-ifupdown.patch && \
+		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-man.patch && \
+		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-tar.patch
 	touch $@
 
 $(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.20.1/busybox-1.20.1.config | $(DEPDIR)/$(GLIBC_DEV)
