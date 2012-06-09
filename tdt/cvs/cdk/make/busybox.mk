@@ -3,15 +3,8 @@
 #
 $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	@PREPARE_busybox@
-	cd @DIR_busybox@
-#	cd @DIR_busybox@ && \
-#		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-buildsys.patch && \
-#		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-ext4.patch && \
-#		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-find.patch && \
-#		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-getty.patch && \
-#		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-lineedit.patch && \
-#		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-mdev.patch && \
-#		patch -p1 < ../Patches/busybox-1.20.0/busybox-1.20.0-sed.patch
+	cd @DIR_busybox@ && \
+		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-man.patch
 	touch $@
 
 $(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.20.1/busybox-1.20.1.config | $(DEPDIR)/$(GLIBC_DEV)
