@@ -15,13 +15,12 @@ $(DEPDIR)/enigma2-pli-nightly.do_prepare:
 	echo " 0) Newest (Can fail due to outdated patch)"; \
 	echo "---- REVISIONS ----"; \
 	echo "1) Sat, 17 Mar 2012 19:51 - E2 OpenPli 945aeb939308b3652b56bc6c577853369d54a537"; \
-	echo "2) Thu, 07 Jun 2012 20:26 - E2 OpenPli 2a1beb80ac2669d7987078f974c2292963d34fbb"; \
-	echo "3) current inactive... comming soon, here is the next stable (case 2 == DIFF=2)"; \
+	echo "2) Sat, 18 May 2012 15:26  - E2 OpenPli 839e96b79600aba73f743fd39628f32bc1628f4c"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
 	[ "$$REPLY" == "0" ] && DIFF="0" && HEAD="experimental"; \
 	[ "$$REPLY" == "1" ] && DIFF="1" && REVISION="945aeb939308b3652b56bc6c577853369d54a537" && REPO="git://openpli.git.sourceforge.net/gitroot/openpli/enigma2"; \
-	[ "$$REPLY" == "2" ] && DIFF="1" && REVISION="2a1beb80ac2669d7987078f974c2292963d34fbb" && REPO="git://openpli.git.sourceforge.net/gitroot/openpli/enigma2"; \
+	[ "$$REPLY" == "2" ] && DIFF="2" && REVISION="839e96b79600aba73f743fd39628f32bc1628f4c" && REPO="git://openpli.git.sourceforge.net/gitroot/openpli/enigma2"; \
 	echo "Revision: " $$REVISION; \
 	[ -d "$(appsdir)/enigma2-nightly" ] && \
 	git pull $(appsdir)/enigma2-nightly $$HEAD;\
@@ -81,3 +80,4 @@ enigma2-pli-nightly-clean enigma2-pli-nightly-distclean:
 	rm -rf $(appsdir)/enigma2-nightly.newest
 	rm -rf $(appsdir)/enigma2-nightly.org
 	rm -rf $(appsdir)/enigma2-nightly.patched
+
