@@ -212,19 +212,19 @@
 +	     {
 +		 .name = "Spark Kernel",
 +		 .size = 0x0800000,
-+		 .offset = 0,
++		 .offset = 0
 +	     }, {
 +		 .name = "Spark Rootfs",
 +		 .size = 0x17800000,
-+		 .offset = 0x800000,
++		 .offset = 0x800000
 +	     }, {
 +		 .name = "E2 Kernel",
 +		 .size = 0x800000,
-+		 .offset = 0x18000000,
++		 .offset = 0x18000000
 +	     }, {
 +		 .name = "E2 RootFs",
 +		 .size = 0x4000000,
-+		 .offset = 0x18800000,
++		 .offset = 0x18800000
 +	     },
  	},
  	.timing_data	= &(struct stm_nand_timing_data) {

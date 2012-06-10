@@ -81,7 +81,7 @@
 + 	    .size  = 0x06000000, /* 92 Mb */
 + 	    .flags = 0,
 + 	    .aka   = LMI_IO_partalias
-+    }, 
++    }
 + };
  
  
@@ -172,43 +172,43 @@
 +	{
 +	 .name = "Boot firmware",
 +	 .size = 0x00100000,	//1M
-+	 .offset = 0x00000000,
++	 .offset = 0x00000000
 +	 },
 +	{
 +	 .name = "Kernel",
 +	 .size = 0x00300000,	//3M
-+	 .offset = 0x00100000,
++	 .offset = 0x00100000
 +	 },
 +	{
 +	 .name = "APP_BAK",
 +	 .size = 0x006E0000,	//6,875M
-+	 .offset = 0x00B20000,	//B00000 + 20000squasfs
++	 .offset = 0x00B20000	//B00000 + 20000squasfs
 +	 },
 +	{
 +	 .name = "ROOT FS",
 +	 .size = 0x00BD0000,	//11,8125M
-+	 .offset = 0x01220000,	//1200000 + 20000squasfs
++	 .offset = 0x01220000	//1200000 + 20000squasfs
 +	 },
 +	{
 +	 .name = "Device",
 +	 .size = 0x002D0000,	// 2,8125M
-+	 .offset = 0x01E20000,	//1E00000 + 20000squasfs
++	 .offset = 0x01E20000	//1E00000 + 20000squasfs
 +	 },
 +	{
 +	 .name = "Config",
 +	 .size = 0x000C0000,	// 0,75M
-+	 .offset = 0x02100000,
++	 .offset = 0x02100000
 +	 },
 +	{
 +	 .name = "User",
 +	 .size = 0x01D00000,	// 30M
-+	 .offset = 0x02200000,
++	 .offset = 0x02200000
 +	 },
 +	{
 +	 .name = "APP_ORG",
 +	 .size = 0x006E0000,	//6,875M
-+	 .offset = 0x00420000,	//400000 + 20000squasfs
-+	 },
++	 .offset = 0x00420000	//400000 + 20000squasfs
++	 }
  };
  
 -/* PCI configuration */

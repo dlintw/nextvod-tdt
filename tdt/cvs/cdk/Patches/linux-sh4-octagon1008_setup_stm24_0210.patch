@@ -71,28 +71,28 @@
 +	{
 +		.name = "Kernel",
 +		.size =   0x00200000,	//kernel 0x40000-0x1fffff 2MB
-+		.offset = 0x00040000,
++		.offset = 0x00040000
 +	},
 +	{
 +		.name = "ROOT SQUASHFS",
 +		.size =   0x00a00000, //root 0x240000-0xcffff 10,0MB
-+		.offset = 0x00240000,
++		.offset = 0x00240000
 +	},
 +	{
 +		.name = "VAR-JFFS2",
 +		.size =   0x013C0000,  //0xa40000-0x1dfffff 19,5MB
-+		.offset = 0x00C40000,
++		.offset = 0x00C40000
 +	},
 +	{
 +		.name = "Boot Config",
 +		.size =   0x00020000,	//boot config 0xa0020000-0xa003ffff  128k
-+		.offset = 0x00020000,
++		.offset = 0x00020000
 + 	},
 + 	{
 +		.name = "Full without bootloader",
 +		.size =   0x01FC0000,
-+		.offset = 0x00040000,
-+	},
++		.offset = 0x00040000
++	}
 +//};
 +//set above to #if 0 if you want to build an ird image
 +#else
@@ -105,47 +105,47 @@
 +	{
 +		.name = "[linux] - [  RAW   ] [RW]",
 +		.size =   0x00300000,	//kernel 3MB
-+		.offset = 0x00300000,
++		.offset = 0x00300000
 +	},
 +	{
 +		.name = "[appLW] - [appHIbak] [RO]",
 +		.size =   0x004E0000,	//app 5MB
-+		.offset = 0x00620000,
++		.offset = 0x00620000
 +	},
 +	{
 +		.name = "[appHI] - [squashfs] [RW]",
 +		.size =   0x004E0000,	//app 5MB
-+		.offset = 0x00B20000,
++		.offset = 0x00B20000
 +	},
 +	{
 +		.name = "[root ] - [squashfs] [RW]",
 +		.size =   0x007E0000, //root 8MB - 219 byte fake squash
-+		.offset = 0x01020000,
++		.offset = 0x01020000
 +	},
 + 	{
 +		.name = "[devfs] - [squashfs] [RW]",
 +		.size =   0x00300000,  //Devices 3MB
-+		.offset = 0x01800000,
++		.offset = 0x01800000
 +	},
 +	{
 +		.name = "[conf ] - [ jffs2  ] [RW]",
 +		.size =   0x00100000,  //Neutrino Config '/var/tuxbox/config' 1MB
-+		.offset = 0x01b00000,
++		.offset = 0x01b00000
 +	},
 +	{
 +		.name = "[user ] - [ jffs2  ] [RW]",
 +		.size =   0x00400000,  //VAR '/var' 4MB
-+		.offset = 0x01c00000,
++		.offset = 0x01c00000
 +	},
 +	{
 +		.name = "[fl-bl] - [  RAW   ] [RW]",
 +		.size =   0x01D00000,
-+		.offset = 0x00300000,
++		.offset = 0x00300000
 +	},
 +	{
 +		.name = "[fl+bl] - [  RAW   ] [RO]",
 +		.size =   0x02000000,
-+		.offset = 0x00000000,
++		.offset = 0x00000000
 +	}
 +#endif
 +};

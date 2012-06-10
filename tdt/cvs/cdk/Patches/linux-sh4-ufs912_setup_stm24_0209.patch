@@ -167,9 +167,9 @@
 -		.code = BTN_2,
 -		.gpio = stm_gpio(6, 4),
 -		.desc = "SW4",
-+		.name   = "NOR U-BOOT :    0xA000.0000-0xA007.FFFF (512KB)",
++		.name   = "NOR U-BOOT	0xA000.0000-0xA007.FFFF (512KB)",
 +		.size   = 0x00080000,
-+		.offset = 0,
++		.offset = 0
  	}, {
 -		.code = BTN_3,
 -		.gpio = stm_gpio(6, 5),
@@ -185,9 +185,9 @@
 -		.buttons = mb618_buttons,
 -		.nbuttons = ARRAY_SIZE(mb618_buttons),
 -	},
-+		.name   = "NOR R00T :      0xA008.0000-0xA03F.FFFF (3,5MB)",
++		.name   = "NOR R00T	0xA008.0000-0xA03F.FFFF (3,5MB)",
 +		.size   = MTDPART_SIZ_FULL,
-+		.offset = MTDPART_OFS_APPEND,
++		.offset = MTDPART_OFS_APPEND
 +	}
  };
  
@@ -237,42 +237,42 @@
 +static struct mtd_partition nand_parts[] = {
 +#ifdef ORIGINAL_MTD
 +	 {
-+	 .name = "NAND KERNEL :          0x0000.0000-0x002F.FFFF",
++	 .name = "NAND KERNEL	0x0000.0000-0x002F.FFFF",
 +	 .size = 0x300000,
-+	 .offset = 0,
++	 .offset = 0
 +	 }, {
-+	 .name = "NAND ROOT :            0x0030.0000-0x027F.FFFF",
++	 .name = "NAND ROOT	0x0030.0000-0x027F.FFFF",
 +	 .size = 0x2500000,
-+	 .offset = 0x300000,
++	 .offset = 0x300000
 +	 }, {
-+	 .name = "NAND CONFIG :          0x0280.0000-0x04FF.FFFF",
++	 .name = "NAND CONFIG	0x0280.0000-0x04FF.FFFF",
 +	 .size = 0x2800000,
-+	 .offset = 0x2800000,
++	 .offset = 0x2800000
 +	 }, {
-+	 .name = "NAND DATA :            0x0500.0000-0x07FF.FFFF",
++	 .name = "NAND DATA	0x0500.0000-0x07FF.FFFF",
 +	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-+	 .offset = 0x05000000,
-+	 },
++	 .offset = 0x05000000
++	 }
  #else
 -struct stm_nand_bank_data mb618_nand_flash = {
 -	.csn		= 0,
 +	 {
-+	 .name   = "NAND KERNEL :   0x0000.0000-0x003F.FFFF (  4MB)",
++	 .name   = "NAND KERNEL	0x0000.0000-0x003F.FFFF (  4MB)",
 +	 .size   = 0x400000,
-+	 .offset = 0,
++	 .offset = 0
 +	 }, {
-+	 .name   = "NAND FW :       0x0040.0000-0x00BF.FFFF (  8MB)",
++	 .name   = "NAND FW	0x0040.0000-0x00BF.FFFF (  8MB)",
 +	 .size   = 0x800000,
-+	 .offset = MTDPART_OFS_APPEND,
++	 .offset = MTDPART_OFS_APPEND
 +	 }, {
-+	 .name   = "NAND ROOT :     0x00C0.0000-0x04BF.FFFF ( 64MB)",
++	 .name   = "NAND ROOT	0x00C0.0000-0x04BF.FFFF ( 64MB)",
 +	 .size   = 0x4000000,
-+	 .offset = MTDPART_OFS_APPEND,
++	 .offset = MTDPART_OFS_APPEND
 +	 }, {
-+	 .name   = "NAND DATA :     0x04C0.0000-0x07FF.FFFF ( 52MB)",
++	 .name   = "NAND DATA	0x04C0.0000-0x07FF.FFFF ( 52MB)",
 +	 .size   = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-+	 .offset = MTDPART_OFS_APPEND,
-+	 },
++	 .offset = MTDPART_OFS_APPEND
++	 }
 +#endif
 +};
 +static struct stm_nand_bank_data nand_bank_data = {
