@@ -187,6 +187,7 @@ gst-plugins-bad-0.10.22.2.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plugi
 gst-plugins-ugly-0.10.18.2.tar.bz2;http://gstreamer.freedesktop.org/src/gst-plugins-ugly/pre
 gst-ffmpeg-0.10.13.tar.bz2;http://gstreamer.freedesktop.org/src/gst-ffmpeg
 gst-fluendo-mpegdemux-0.10.69.tar.gz;http://core.fluendo.com/gstreamer/src/gst-fluendo-mpegdemux
+gst-plugin-subsink.git;git://openpli.git.sourceforge.net/gitroot/openpli/gstsubsink;8182abe751364f6eb1ed45377b0625102aeb68d5;HEAD
 
 #
 # ENIGMA2

@@ -1856,9 +1856,38 @@ $(DEPDIR)/%gst_plugins_fluendo_mpegdemux: $(DEPDIR)/gst_plugins_fluendo_mpegdemu
 	[ "x$*" = "x" ] && touch $@ || true
 
 #
+# GST-PLUGIN-SUBSINK
+#
+$(DEPDIR)/gst_plugin_subsink.do_prepare: bootstrap gstreamer gst_plugins_base gst_plugins_good gst_plugins_bad gst_plugins_ugly @DEPENDS_gst_plugin_subsink@
+	@PREPARE_gst_plugin_subsink@
+	touch $@
+
+$(DEPDIR)/gst_plugin_subsink.do_compile: $(DEPDIR)/gst_plugin_subsink.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_gst_plugin_subsink@ && \
+	aclocal -I $(hostprefix)/share/aclocal -I m4 && \
+	autoheader && \
+	autoconf && \
+	automake --foreign && \
+	libtoolize --force && \
+	$(BUILDENV) \
+	./configure \
+		--host=$(target) \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-gst_plugin_subsink $(DEPDIR)/std-gst_plugin_subsink $(DEPDIR)/max-gst_plugin_subsink \
+$(DEPDIR)/gst_plugin_subsink: \
+$(DEPDIR)/%gst_plugin_subsink: $(DEPDIR)/gst_plugin_subsink.do_compile
+	cd @DIR_gst_plugin_subsink@ && \
+		@INSTALL_gst_plugin_subsink@
+#	@DISTCLEANUP_gst_plugin_subsink@
+	[ "x$*" = "x" ] && touch $@ || true
+
+#
 # GST-PLUGINS-DVBMEDIASINK
 #
-$(DEPDIR)/gst_plugins_dvbmediasink.do_prepare: bootstrap gstreamer gst_plugins_base gst_plugins_good gst_plugins_bad gst_plugins_ugly @DEPENDS_gst_plugins_dvbmediasink@
+$(DEPDIR)/gst_plugins_dvbmediasink.do_prepare: bootstrap gstreamer gst_plugins_base gst_plugins_good gst_plugins_bad gst_plugins_ugly gst_plugin_subsink @DEPENDS_gst_plugins_dvbmediasink@
 	@PREPARE_gst_plugins_dvbmediasink@
 	touch $@
 
@@ -1883,6 +1912,8 @@ $(DEPDIR)/%gst_plugins_dvbmediasink: $(DEPDIR)/gst_plugins_dvbmediasink.do_compi
 		@INSTALL_gst_plugins_dvbmediasink@
 #	@DISTCLEANUP_gst_plugins_dvbmediasink@
 	[ "x$*" = "x" ] && touch $@ || true
+
+
 
 ##############################   EXTERNAL_LCD   ################################
 
