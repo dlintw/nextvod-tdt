@@ -476,6 +476,8 @@ COMMONPATCHES_24 = \
 		linux-ftdi_sio.c_stm24$(PATCH_STR).patch \
 		linux-sh4-lzma-fix_stm24$(PATCH_STR).patch \
 		linux-tune_stm24.patch \
+		$(if $(P0209)$(P0210),linux-sh4-mmap_stm24.patch) \
+		$(if $(P0209)$(P0210),linux-sh4-remove_pcm_reader_stm24.patch) \
 		$(if $(P0209),linux-sh4-dwmac_stm24_0209.patch) \
 		$(if $(P0207),linux-sh4-sti7100_missing_clk_alias_stm24$(PATCH_STR).patch)
 
@@ -488,8 +490,6 @@ TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-sata-v06_stm24$(PATCH_STR).patch
 
 UFS910PATCHES_24 = $(COMMONPATCHES_24) \
-		$(if $(P0209)$(P0210),linux-sh4-mmap_stm24.patch) \
-		$(if $(P0209)$(P0210),linux-sh4-remove_pcm_reader_stm24.patch) \
 		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
 		sata_32bit_fix_stm24$(PATCH_STR).patch \
 		sata_stx7100_B4Team_fix_stm24$(PATCH_STR).patch \
@@ -589,7 +589,6 @@ FORTISPATCHES_24 = $(COMMONPATCHES_24) \
 		$(if $(P0209),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
 ADB_BOXPATCHES_24 = $(COMMONPATCHES_24) \
-		$(if $(P0209)$(P0210),linux-sh4-mmap_stm24.patch) \
 		stx7100_fdma_fix_stm24$(PATCH_STR).patch \
 		sata_32bit_fix_stm24$(PATCH_STR).patch \
 		linux-sh4-adb_box_setup_stm24$(PATCH_STR).patch \
@@ -616,7 +615,6 @@ IPBOX55PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-ipbox_bdinfo_stm24$(PATCH_STR).patch
 
 CUBEREVOPATCHES_24 = $(COMMONPATCHES_24) \
-		$(if $(P0209)$(P0210),linux-sh4-mmap_stm24.patch) \
 		linux-sh4-$(CUBEMOD)_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		linux-sh4-cuberevo_rtl8201_stm24$(PATCH_STR).patch

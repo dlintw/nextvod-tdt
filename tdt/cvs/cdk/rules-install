@@ -141,6 +141,7 @@ gst_plugins_ugly;make:install:DESTDIR=TARGETS
 gst_ffmpeg;make:install:DESTDIR=TARGETS
 gst_plugins_fluendo_mpegdemux;make:install:DESTDIR=TARGETS
 gst_plugins_dvbmediasink;make:install:DESTDIR=TARGETS
+gst_plugin_subsink;make:install:DESTDIR=TARGETS
 
 #
 # ENGIMA2
