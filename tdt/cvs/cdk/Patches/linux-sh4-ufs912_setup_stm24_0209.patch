@@ -167,7 +167,7 @@
 -		.code = BTN_2,
 -		.gpio = stm_gpio(6, 4),
 -		.desc = "SW4",
-+		.name   = "NOR U-BOOT       0xA000.0000-0xA007.FFFF (512KB)",
++		.name   = "NOR U-BOOT     0xA000.0000-0xA007.FFFF (512KB)",
 +		.size   = 0x00080000,
 +		.offset = 0
  	}, {
@@ -185,7 +185,7 @@
 -		.buttons = mb618_buttons,
 -		.nbuttons = ARRAY_SIZE(mb618_buttons),
 -	},
-+		.name   = "NOR R00T         0xA008.0000-0xA03F.FFFF (3,5MB)",
++		.name   = "NOR R00T       0xA008.0000-0xA03F.FFFF (3,5MB)",
 +		.size   = MTDPART_SIZ_FULL,
 +		.offset = MTDPART_OFS_APPEND
 +	}
@@ -237,19 +237,19 @@
 +static struct mtd_partition nand_parts[] = {
 +#ifdef ORIGINAL_MTD
 +	 {
-+	 .name = "NAND KERNEL      0x0000.0000-0x002F.FFFF",
++	 .name = "NAND KERNEL    0x0000.0000-0x002F.FFFF",
 +	 .size = 0x300000,
 +	 .offset = 0
 +	 }, {
-+	 .name = "NAND ROOT        0x0030.0000-0x027F.FFFF",
++	 .name = "NAND ROOT      0x0030.0000-0x027F.FFFF",
 +	 .size = 0x2500000,
 +	 .offset = 0x300000
 +	 }, {
-+	 .name = "NAND CONFIG      0x0280.0000-0x04FF.FFFF",
++	 .name = "NAND CONFIG    0x0280.0000-0x04FF.FFFF",
 +	 .size = 0x2800000,
 +	 .offset = 0x2800000
 +	 }, {
-+	 .name = "NAND DATA        0x0500.0000-0x07FF.FFFF",
++	 .name = "NAND DATA      0x0500.0000-0x07FF.FFFF",
 +	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
 +	 .offset = 0x05000000
 +	 }
