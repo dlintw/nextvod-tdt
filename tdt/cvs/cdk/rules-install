@@ -123,6 +123,7 @@ rarfs;make:install:DESTDIR=TARGETS
 sshfs;make:install:DESTDIR=TARGETS
 gmediarender;make:install:DESTDIR=TARGETS
 mediatomb;make:install:DESTDIR=TARGETS
+tinyxml;make:install:prefix=/usr:DESTDIR=TARGETS
 
 #
 # PYTHON
