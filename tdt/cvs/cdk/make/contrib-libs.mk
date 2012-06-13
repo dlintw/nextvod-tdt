@@ -2954,14 +2954,14 @@ $(DEPDIR)/%mediatomb: $(DEPDIR)/mediatomb.do_compile
 #
 # tinyxml
 #
-$(DEPDIR)/tinyxml.do_prepare:  @DEPENDS_tinyxml@
+$(DEPDIR)/tinyxml.do_prepare: @DEPENDS_tinyxml@
 	@PREPARE_tinyxml@
 	touch $@
 
 $(DEPDIR)/tinyxml.do_compile: $(DEPDIR)/tinyxml.do_prepare
-	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_tinyxml@ && \
-	$(MAKE) $(BUILDENV) LDFLAGS="-L$(targetprefix)/lib -L$(targetprefix)/usr/lib" LIBS="$(LDFLAGS)"
+	$(BUILDENV) \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-tinyxml $(DEPDIR)/std-tinyxml $(DEPDIR)/max-tinyxml \
@@ -2971,3 +2971,4 @@ $(DEPDIR)/%tinyxml: $(DEPDIR)/tinyxml.do_compile
 		@INSTALL_tinyxml@
 #	@DISTCLEANUP_tinyxml@
 	[ "x$*" = "x" ] && touch $@ || true
+

@@ -36,7 +36,6 @@ host_python;2.6.6;host-python-2.6.6;Python-2.6.6.tar.bz2:python_2.6.6.diff;extra
 libtool;2.2.6a;libtool-2.2.6;libtool-2.2.6a.tar.gz:libtool-2.2.6a-cross_compile.patch:libtool-2.2.6a-trailing_slash.patch;extract:libtool-2.2.6a.tar.gz;patch:libtool-2.2.6a-cross_compile.patch;patch:libtool-2.2.6a-trailing_slash.patch
 #libtool;2.4;libtool-2.4;libtool-2.4.tar.gz:libtool-2.4-cross_compile.patch:libtool-2.4-trailing_slash.patch;extract:libtool-2.4.tar.gz;patch:libtool-2.4-cross_compile.patch;patch:libtool-2.4-trailing_slash.patch
 
-
 #
 # root
 #
@@ -154,7 +153,7 @@ rarfs;0.0.10;rarfs-0.0.10;rarfs-0.0.10.tar.gz;extract:rarfs-0.0.10.tar.gz
 sshfs;2.4;sshfs-fuse-2.4;sshfs-fuse-2.4.tar.bz2;extract:sshfs-fuse-2.4.tar.bz2
 gmediarender;0.0.6;gmediarender-0.0.6;gmediarender-0.0.6.tar.bz2;extract:gmediarender-0.0.6.tar.bz2;patch:gmediarender.patch
 mediatomb;0.12.1;mediatomb-0.12.1;mediatomb-0.12.1.tar.gz;extract:mediatomb-0.12.1.tar.gz;patch:mediatomb_libav_support.patch
-tinyxml;2.6.2;tinyxml2.6.2;tinyxml_2_6_2.tar.gz;extract:tinyxml_2_6_2.tar.gz;move:tinyxml:tinyxml2.6.2
+tinyxml;2.6.2;tinyxml2.6.2;tinyxml_2_6_2.tar.gz;extract:tinyxml_2_6_2.tar.gz;move:tinyxml:tinyxml2.6.2;patch:tinyxml2.6.2.patch
 
 #
 # PYTHON
@@ -176,14 +175,6 @@ pythoncheetah;2.4.4;Cheetah-2.4.4;Cheetah-2.4.4.tar.gz;extract:Cheetah-2.4.4.tar
 zope_interface;3.3.0;zope.interface-3.3.0;zope.interface-3.3.0.tar.gz;extract:zope.interface-3.3.0.tar.gz
 
 #
-# ENGIMA2
-#
-tuxtxtlib;1.0;libtuxtxt;libtuxtxt.git:libtuxtxt-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/libtuxtxt;patch:libtuxtxt-1.0-fix_dbox_headers.diff
-tuxtxt32bpp;1.0;tuxtxt;libtuxtxt.git:tuxtxt32bpp-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/tuxtxt;patch:tuxtxt32bpp-1.0-fix_dbox_headers.diff
-enigma2_networkbrowser;1.0;enigma2-networkbrowser;enigma2-openpli-plugins-enigma2.git:enigma2-networkbrowser-support_autofs.patch;extract:enigma2-openpli-plugins-enigma2.git/networkbrowser:enigma2-networkbrowser;patch:enigma2-networkbrowser-support_autofs.patch
-enigma2_openwebif;1.0;e2openplugin-OpenWebif;e2openplugin-OpenWebif.git;extract:e2openplugin-OpenWebif.git
-
-#
 # GSTREAMER
 #
 #gstreamer;0.11.1;gstreamer-0.11.1;gstreamer-0.11.1.tar.bz2;extract:gstreamer-0.11.1.tar.bz2
@@ -199,6 +190,14 @@ gst_plugins_fluendo_mpegdemux;0.10.69;gst-fluendo-mpegdemux-0.10.69;gst-fluendo-
 gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;;link:../apps/misc/tools/gst-plugins-dvbmediasink:gst-plugins-dvbmediasink-0.10.1
 #gst_plugins_dvbmediasink;0.10.1;gst-plugins-dvbmediasink-0.10.1;gst-plugins-dvbmediasink-0.10.1;link:../apps/misc/tools/gst-plugins-dvbmediasink:gst-plugins-dvbmediasink-0.10.1
 gst_plugin_subsink;1.0;gst-plugin-subsink;gst-plugin-subsink.git;extract:gst-plugin-subsink.git
+
+#
+# ENGIMA2
+#
+tuxtxtlib;1.0;libtuxtxt;libtuxtxt.git:libtuxtxt-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/libtuxtxt;patch:libtuxtxt-1.0-fix_dbox_headers.diff
+tuxtxt32bpp;1.0;tuxtxt;libtuxtxt.git:tuxtxt32bpp-1.0-fix_dbox_headers.diff;extract:libtuxtxt.git/tuxtxt;patch:tuxtxt32bpp-1.0-fix_dbox_headers.diff
+enigma2_networkbrowser;1.0;enigma2-networkbrowser;enigma2-openpli-plugins-enigma2.git:enigma2-networkbrowser-support_autofs.patch;extract:enigma2-openpli-plugins-enigma2.git/networkbrowser:enigma2-networkbrowser;patch:enigma2-networkbrowser-support_autofs.patch
+enigma2_openwebif;1.0;e2openplugin-OpenWebif;e2openplugin-OpenWebif.git;extract:e2openplugin-OpenWebif.git
 
 #
 # EXTERNAL_LCD
