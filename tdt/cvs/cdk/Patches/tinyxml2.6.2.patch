@@ -1,3 +1,14 @@
+--- tinyxml2.6.2/tinyxml.h.org	2012-06-12 22:17:12.350272415 +0200
++++ tinyxml2.6.2/tinyxml.h	2012-06-12 22:17:11.826272393 +0200
+@@ -43,8 +43,8 @@
+ #define DEBUG
+ #endif
+ 
++#define TIXML_USE_STL
++
+ #ifdef TIXML_USE_STL
+ 	#include <string>
+  	#include <iostream>
 --- tinyxml2.6.2/Makefile.org	2012-06-12 22:17:12.350272415 +0200
 +++ tinyxml2.6.2/Makefile	2012-06-12 22:17:11.826272393 +0200
 @@ -19,11 +19,11 @@
