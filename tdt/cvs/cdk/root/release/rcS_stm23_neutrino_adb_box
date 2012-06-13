@@ -98,7 +98,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 	insmod $MODDIR/pti.ko
 	insmod $MODDIR/stm_monitor.ko
 	insmod $MODDIR/stmsysfs.ko
-    	insmod $MODDIR/stmdvb.ko
+    	insmod $MODDIR/stmdvb.ko TSIS_mode=parallel
    else
 	insmod $MODDIR/pti.ko
 	insmod $MODDIR/stmdvb.ko
@@ -110,9 +110,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/platform.ko
    insmod $MODDIR/bpamem.ko
    insmod $MODDIR/smartcard.ko
-   
-   mknod /dev/sci0 c 169 0
-   mknod /dev/sci1 c 169 1
 
    /usr/local/bin/dvbtest -4 -f l /boot/bootlogo.mvi
 
@@ -123,8 +120,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init lircd"
    /usr/bin/lircd
 
-   mknod /dev/rc c 147 1
-   
    /bin/evremote2 &
 
    /etc/init.d/vsftpd start
