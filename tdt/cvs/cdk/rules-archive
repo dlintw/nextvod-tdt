@@ -25,7 +25,7 @@ lzma465.tar.bz2;http://heanet.dl.sourceforge.net/sourceforge/sevenzip
 ccache-2.4.tar.gz;http://samba.org/ftp/ccache
 cramfs-1.1.tar.gz;http://heanet.dl.sourceforge.net/sourceforge/cramfs
 mtd-utils-1.5.0.tar.bz2;ftp://ftp.infradead.org/pub/mtd-utils
-ipkg-utils-050831.tar.gz;ftp.gwdg.de/linux/handhelds/packages/ipkg-utils
+ipkg-utils-050831.tar.gz;ftp://ftp.gwdg.de/linux/handhelds/packages/ipkg-utils
 libtool-2.2.6a.tar.gz;http://ftp.gnu.org/gnu/libtool
 libtool-2.4.tar.gz;http://ftp.gnu.org/gnu/libtool
 
@@ -35,7 +35,7 @@ libtool-2.4.tar.gz;http://ftp.gnu.org/gnu/libtool
 busybox-1.20.1.tar.bz2;http://www.busybox.net/downloads
 lsb_3.2-20.tar.gz;http://www.meyersound.com/opensource/code/D-Mitri-Engine/5.0/debian-sources;http://ftp.uni-erlangen.de/pub/debian/pool/main/l/lsb
 lsb_3.2-28.1.tar.gz;http://ftp.de.debian.org/debian/pool/main/l/lsb;http://ftp.uni-erlangen.de/pub/debian/pool/main/l/lsb
-ipkg-0.99.163.tar.gz;ftp.gwdg.de/linux/handhelds/packages/ipkg
+ipkg-0.99.163.tar.gz;ftp://ftp.gwdg.de/linux/handhelds/packages/ipkg
 module-init-tools-3.3-pre1.tar.bz2;http://ftp.tlk-l.net/pub/mirrors/kernel.org/linux/utils/kernel/module-init-tools
 module-init-tools-3.12-pre2.tar.bz2;http://ftp.tlk-l.net/pub/mirrors/kernel.org/linux/utils/kernel/module-init-tools
 sysvinit-2.86.tar.gz;ftp://ftp.cistron.nl/pub/people/miquels/sysvinit
