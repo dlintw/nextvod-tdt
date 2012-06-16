@@ -900,6 +900,9 @@ $(DEPDIR)/imagemagick.do_compile: $(DEPDIR)/imagemagick.do_prepare
 		--without-lcms \
 		--without-tiff \
 		--without-xml \
+		--without-perl \
+		--disable-openmp \
+		--without-zlib \
 		--enable-shared \
 		--enable-static \
 		--without-x && \
