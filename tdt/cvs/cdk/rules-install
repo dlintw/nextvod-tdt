@@ -29,7 +29,7 @@ module_init_tools;make:INSTALL=install:install:sbin_PROGRAMS="depmod modinfo":bi
 bzip2;make:install:PREFIX=TARGET/usr
 grep;make:install:DESTDIR=TARGETS
 openrdate;make:install:DESTDIR=TARGETS
-e2fsprogs;rewrite-pkgconfig:lib/e2p/e2p.pc:lib/com_err.pc:lib/uuid.pc:lib/blkid.pc:lib/ss/ss.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libuuid.la
+e2fsprogs;rewrite-pkgconfig:lib/e2p/e2p.pc:lib/et/com_err.pc:lib/uuid/uuid.pc:lib/blkid/blkid.pc:lib/ss/ss.pc;make:install:DESTDIR=TARGETS;rewrite-libtool:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libblkid.la:TARGETS/usr/lib/libuuid.la
 xfsprogs;make:install:prefix=TARGETS
 mc;make:install:DESTDIR=TARGETS
 sdparm;make:install:DESTDIR=TARGETS
