@@ -1,3 +1,5 @@
+#######################################      #########################################
+
 export CFLAGS
 export CXXFLAGS
 
@@ -5,6 +7,92 @@ export DRPM
 export DRPMBUILD
 
 AUTOMAKE_OPTIONS = -Wno-portability
+
+#######################################      #########################################
+
+if STM22
+if P0040
+KERNEL_DEPENDS = @DEPENDS_linuxp0040@
+KERNEL_DIR = @DIR_linuxp0040@
+KERNEL_PREPARE = @PREPARE_linuxp0040@
+else !P0040
+if P0041
+KERNEL_DEPENDS = @DEPENDS_linuxp0041@
+KERNEL_DIR = @DIR_linuxp0041@
+KERNEL_PREPARE = @PREPARE_linuxp0041@
+else !P0041
+KERNEL_DEPENDS = @DEPENDS_linux@
+KERNEL_DIR = @DIR_linux@
+KERNEL_PREPARE = @PREPARE_linux@
+endif !P0041
+endif !P0040
+else !STM22
+if STM23
+if ENABLE_P0119
+KERNEL_DEPENDS = @DEPENDS_linux23@
+KERNEL_DIR = @DIR_linuxp0119@
+KERNEL_PREPARE = @PREPARE_linux23@
+else !ENABLE_P0119
+if ENABLE_P0123
+KERNEL_DEPENDS = @DEPENDS_linux23@
+KERNEL_DIR = @DIR_linuxp0123@
+KERNEL_PREPARE = @PREPARE_linux23@
+else !ENABLE_P0123
+KERNEL_DEPENDS = @DEPENDS_linux23@
+KERNEL_DIR = @DIR_linux23@
+KERNEL_PREPARE = @PREPARE_linux23@
+endif !ENABLE_P0123
+endif !ENABLE_P0119
+else !STM23
+# if STM24
+KERNEL_DEPENDS = @DEPENDS_linux24@
+if ENABLE_P0201
+KERNEL_DIR = @DIR_linuxp0201@
+else
+if ENABLE_P0205
+KERNEL_DIR = @DIR_linuxp0205@
+else
+if ENABLE_P0206
+KERNEL_DIR = @DIR_linuxp0206@
+else
+if ENABLE_P0207
+KERNEL_DIR = @DIR_linuxp0207@
+else
+if ENABLE_P0209
+KERNEL_DIR = @DIR_linuxp0209@
+else
+KERNEL_DIR = @DIR_linuxp0210@
+endif
+endif
+endif
+endif
+endif
+KERNEL_PREPARE = @PREPARE_linux24@
+# endif STM24
+endif !STM23
+endif !STM22
+
+#######################################      #########################################
+
+if STM22
+STLINUX := stlinux22
+STM_SRC := stlinux23
+STM_RELOCATE := /opt/STM/STLinux-2.2
+else !STM22
+if STM23
+STLINUX := stlinux23
+STM_SRC := $(STLINUX)
+STM_RELOCATE := /opt/STM/STLinux-2.3
+else !STM23
+# if STM24
+STLINUX := stlinux24
+STM_SRC := $(STLINUX)
+STM_RELOCATE := /opt/STM/STLinux-2.4
+# endif STM24
+endif !STM23
+endif !STM22
+
+#######################################      #########################################
 
 if ENABLE_CCACHE
 PATH := $(hostprefix)/ccache-bin:$(crossprefix)/bin:$(PATH):/usr/sbin
@@ -31,20 +119,6 @@ MAKE_PATH := $(hostprefix)/bin:$(crossprefix)/bin:$(PATH)
 ADAPTED_ETC_FILES =
 ETC_RW_FILES =
 
-if STM22
-STLINUX := stlinux22
-STM_SRC := stlinux23
-else !STM22
-if STM23
-STLINUX := stlinux23
-STM_SRC := $(STLINUX)
-else !STM23
-# STM24
-STLINUX := stlinux24
-STM_SRC := $(STLINUX)
-endif !STM23
-endif !STM22
-
 # rpm helper-"functions":
 TARGETLIB = $(targetprefix)/usr/lib
 PKG_CONFIG_PATH = $(targetprefix)/usr/lib/pkgconfig
@@ -68,7 +142,6 @@ BUILDENV := \
 	CXXFLAGS="$(TARGET_CFLAGS)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
 	PKG_CONFIG_PATH="$(targetprefix)/usr/lib/pkgconfig"
-#	PKG_CONFIG_PATH="$(targetprefix)/lib/pkgconfig:$(targetprefix)/usr/lib/pkgconfig"
 
 MAKE_OPTS := \
 	CC=$(target)-gcc \
@@ -125,7 +198,6 @@ PLATFORM_CPPFLAGS := \
 	$(if $(IPBOX9900),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_IPBOX9900 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 	$(if $(IPBOX99),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_IPBOX99 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include") \
 	$(if $(IPBOX55),CPPFLAGS="$(CPPFLAGS) -DPLATFORM_IPBOX55 -I$(driverdir)/include -I $(buildprefix)/$(KERNEL_DIR)/include")
-
 
 DEPDIR = .deps
 
