@@ -1507,7 +1507,7 @@ $(DEPDIR)/%pyopenssl: pyopenssl.do_compile
 # python
 #
 $(DEPDIR)/python.do_prepare: bootstrap host_python openssl openssl-dev sqlite @DEPENDS_python@
-	@PREPARE_python@ && \
+	@PREPARE_python@
 	touch $@
 
 $(DEPDIR)/python.do_compile: $(DEPDIR)/python.do_prepare
