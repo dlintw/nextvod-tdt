@@ -13,8 +13,8 @@ $(DEPDIR)/%filesystem: bootstrap-cross
 	$(INSTALL) -d $(targetprefix)/usr/share/{aclocal,doc,info,locale,man,misc,nls}
 	$(INSTALL) -d $(targetprefix)/usr/share/man/{man0p,man1,man1p,man2,man3,man3p,man4,man5,man6,man7,man8,man9}
 	$(INSTALL) -d $(targetprefix)/var/{backups,cache,lib,local,lock,log,mail,opt,run,spool}
-	ln -sf /$(targetprefix)/lib $(targetprefix)/lib64
-	ln -sf /$(targetprefix)/usr/lib $(targetprefix)/usr/lib64
+	ln -sf $(targetprefix)/lib $(targetprefix)/lib64
+	ln -sf $(targetprefix)/usr/lib $(targetprefix)/usr/lib64
 	ln -s /tmp $(targetprefix)/var/tmp
 	$(INSTALL) -d $(targetprefix)/var/lib/misc
 	$(INSTALL) -d $(targetprefix)/var/lock/subsys

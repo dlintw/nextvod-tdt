@@ -1,79 +1,3 @@
-if STM22
-if P0040
-KERNEL_DEPENDS = @DEPENDS_linuxp0040@
-KERNEL_DIR = @DIR_linuxp0040@
-KERNEL_PREPARE = @PREPARE_linuxp0040@
-else !P0040
-if P0041
-KERNEL_DEPENDS = @DEPENDS_linuxp0041@
-KERNEL_DIR = @DIR_linuxp0041@
-KERNEL_PREPARE = @PREPARE_linuxp0041@
-else !P0041
-KERNEL_DEPENDS = @DEPENDS_linux@
-KERNEL_DIR = @DIR_linux@
-KERNEL_PREPARE = @PREPARE_linux@
-endif !P0041
-endif !P0040
-else !STM22
-if STM23
-if ENABLE_P0119
-KERNEL_DEPENDS = @DEPENDS_linux23@
-KERNEL_DIR = @DIR_linuxp0119@
-KERNEL_PREPARE = @PREPARE_linux23@
-else !ENABLE_P0119
-if ENABLE_P0123
-KERNEL_DEPENDS = @DEPENDS_linux23@
-KERNEL_DIR = @DIR_linuxp0123@
-KERNEL_PREPARE = @PREPARE_linux23@
-else !ENABLE_P0123
-KERNEL_DEPENDS = @DEPENDS_linux23@
-KERNEL_DIR = @DIR_linux23@
-KERNEL_PREPARE = @PREPARE_linux23@
-endif !ENABLE_P0123
-endif !ENABLE_P0119
-else !STM23
-# if STM24
-
-KERNEL_DEPENDS = @DEPENDS_linux24@
-if ENABLE_P0201
-KERNEL_DIR = @DIR_linuxp0201@
-else
-if ENABLE_P0205
-KERNEL_DIR = @DIR_linuxp0205@
-else
-if ENABLE_P0206
-KERNEL_DIR = @DIR_linuxp0206@
-else
-if ENABLE_P0207
-KERNEL_DIR = @DIR_linuxp0207@
-else
-if ENABLE_P0209
-KERNEL_DIR = @DIR_linuxp0209@
-else
-KERNEL_DIR = @DIR_linuxp0210@
-endif
-endif
-endif
-endif
-endif
-
-KERNEL_PREPARE = @PREPARE_linux24@
-# endif STM24
-endif !STM23
-endif !STM22
-
-if STM22
-STM_RELOCATE := /opt/STM/STLinux-2.2
-else !STM22
-if STM23
-STM_RELOCATE := /opt/STM/STLinux-2.3
-else !STM23
-# if STM24
-STM_RELOCATE := /opt/STM/STLinux-2.4
-# endif STM24
-endif !STM23
-endif !STM22
-
 #######################################   BOOTSTRAP-HOST   #########################################
 #
 # HOST-FILESYSTEM
@@ -86,7 +10,7 @@ host-filesystem:
 	$(INSTALL) -d $(devkitprefix)/sources/kernel
 	$(INSTALL) -d $(hostprefix)
 	$(INSTALL) -d $(hostprefix)/{bin,doc,etc,include,info,lib,man,share,var}
-	ln -s /$(hostprefix)/lib $(hostprefix)/lib64
+	ln -sf $(hostprefix)/lib $(hostprefix)/lib64
 	$(INSTALL) -d $(hostprefix)/man/man{1,2,3,4,5,6,7,8,9}
 	touch .deps/$@
 
