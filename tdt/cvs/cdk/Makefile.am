@@ -72,6 +72,7 @@ include make/enigma2-pli-nightly.mk
 
 # Include neutrino gui targets
 include make/neutrino.mk
+include make/neutrino_hd2.mk
 
 # Include vdr gui targets
 include make/vdr.mk
