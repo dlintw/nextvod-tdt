@@ -1412,8 +1412,14 @@ endif
 	rm -f $(prefix)/release_neutrino/usr/lib/*.o
 	rm -f $(prefix)/release_neutrino/usr/lib/*.la
 	mkdir -p $(prefix)/release_neutrino/usr/local/share/neutrino/icons/logo
+# not needed on nhd2 - begin
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y && ln -s /usr/local/share/neutrino/icons/logo )
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y && ln -s /usr/local/share/neutrino/icons/logo logos )
+# not needed on nhd2 - begin
+# on nhd2 - begin
+#	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd && ln -s /usr/local/share/neutrino/icons/logo )
+#	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd && ln -s /usr/local/share/neutrino/icons/logo logos )
+# on nhd2 - begin
 	find $(prefix)/release_neutrino/usr/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 #
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/neutrino #############
