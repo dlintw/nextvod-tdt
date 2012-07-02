@@ -40,6 +40,7 @@
 #include "Spark.h"
 
 
+#define	SPARK_RC04_PREDATA		"CC33"
 #define	SPARK_RC05_PREDATA		"11EE"
 #define	SPARK_RC08_PREDATA		"44BB"
 #define	SPARK_RC09_PREDATA		"9966"
@@ -248,7 +249,7 @@ static tButton cButtonsSparkRc12[] = {
 };
 
 /* spark Default */
-static tButton cButtonsSparDefault[] = {
+static tButton cButtonsSparkDefault[] = {
     {"POWER"          , "87", KEY_POWER},
     {"V.FORMAT"       , "0F", KEY_V},
     {"TV/SAT"         , "2F", KEY_AUX},
@@ -303,10 +304,73 @@ static tButton cButtonsSparDefault[] = {
     {"USB"			, "DF", KEY_CLOSE},
     {"Tms"			, "55", KEY_T},
     {"F1"             , "95", KEY_F1},
-    {"F2"             , "15", KEY_F1},
-    {"F3"             , "D7", KEY_F1},
+    {"F2"             , "15", KEY_F2},
+    {"F3"             , "D7", KEY_F3},
     {""               , ""  , KEY_NULL},
 };
+
+/* spark Default */
+static tButton cButtonsSparkRc04[] = {
+	{"POWER"          , "45", KEY_POWER},
+	{"V.FORMAT"       , "4D", KEY_V},
+	{"TIME"           , "ED", KEY_TIME},
+	{"MUTE"           , "8D", KEY_MUTE},
+	{"Tms"            , "57", KEY_T},
+	{"F1"             , "37", KEY_F1},
+	{"TV/SAT"         , "DD", KEY_AUX},
+
+	{"KEY_1"          , "3F", KEY_1},
+	{"KEY_2"          , "07", KEY_2},
+	{"KEY_3"          , "BD", KEY_3},
+	{"KEY_4"          , "5D", KEY_4},
+	{"KEY_5"          , "1F", KEY_5},
+	{"KEY_6"          , "9D", KEY_6},
+	{"KEY_7"          , "55", KEY_7},
+	{"KEY_8"          , "17", KEY_8},
+	{"KEY_9"          , "95", KEY_9},
+	{"KEY_0"          , "27", KEY_0},
+
+	{"TV/RADIO" 	  , "65", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCHB
+	{"RECALL"         , "A5", KEY_BACK},
+	{"FIND"           , "75", KEY_FIND},
+	{"REC"            , "D5", KEY_RECORD},
+	{"SAT"            , "A7", KEY_SAT},
+	{"FAV"			  , "B5", KEY_FAVORITES},
+	{"MENU"           , "1D", KEY_MENU},
+	{"INFO"           , "5F", KEY_INFO},
+	{"OK"		      , "BF", KEY_OK},
+	{"UP"		      , "9F", KEY_UP},
+	{"DOWN"		      , "AF", KEY_DOWN},
+	{"LEFT" 	      , "3D", KEY_LEFT},
+	{"RIGHT"		  , "7F", KEY_RIGHT},
+	{"EXIT"           , "2D", KEY_HOME},
+	{"EPG"            , "6F", KEY_EPG},
+	{"FOLDER"		  , "0D", KEY_ARCHIVE},
+	{"STOP"		 	  , "8F", KEY_STOP},
+	{"PAUSE"		  , "CD", KEY_PAUSE},
+	{"PLAY"			  , "4F", KEY_PLAY},
+	{"PREV"			  , "35", KEY_PREVIOUS},
+	{"NEXT"			  , "B7", KEY_NEXT},
+	{"FASTFORWARD"	  , "77", KEY_FASTFORWARD},
+	{"REWIND" 		  , "F5", KEY_REWIND},
+	{"FAST" 		  , "97", KEY_F},
+	{"SLOW"   		  , "15", KEY_SLOW},
+	{"PLAY_MODE"	  , "E5", KEY_P},
+	{"USB"			  , "67", KEY_CLOSE},
+
+	{"UHF"            , "0F", KEY_U},
+	{"AUDIO"          , "25", KEY_SUBTITLE},
+
+
+	{"RED"            , "05", KEY_RED},
+	{"GREEN"          , "87", KEY_GREEN},
+	{"YELLOW"         , "C5", KEY_YELLOW},
+	{"BLUE"           , "47", KEY_BLUE},
+
+
+	{""               , ""  , KEY_NULL},
+};
+
 
 /* fixme: move this to a structure and
  * use the private structure of RemoteControl_t
@@ -333,11 +397,15 @@ static tButton *pSparkGetButton(char *pData)
 	}
 	else if (!strncasecmp(pData, SPARK_DEFAUYLT_PREDATA, sizeof(SPARK_DEFAUYLT_PREDATA)))
 	{
-		pButtons = cButtonsSparDefault;
+		pButtons = cButtonsSparkDefault;
 	}
 	else if (!strncasecmp(pData, SPARK_RC12_PREDATA, sizeof(SPARK_RC12_PREDATA)))
 	{
 		pButtons = cButtonsSparkRc12;
+	}
+	else if (!strncasecmp(pData, SPARK_RC04_PREDATA, sizeof(SPARK_RC04_PREDATA)))
+	{
+		pButtons = cButtonsSparkRc04;
 	}
 	return pButtons;
 }
