@@ -3,16 +3,17 @@
 #
 $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	@PREPARE_busybox@
-	cd @DIR_busybox@ && \
-		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-ash.patch && \
-		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-ifupdown.patch && \
-		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-man.patch && \
-		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-mke2fs.patch && \
-		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-ps.patch && \
-		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-tar.patch
+	cd @DIR_busybox@
+#	cd @DIR_busybox@ && \
+#		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-ash.patch && \
+#		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-ifupdown.patch && \
+#		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-man.patch && \
+#		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-mke2fs.patch && \
+#		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-ps.patch && \
+#		patch -p1 < ../Patches/busybox-1.20.1/busybox-1.20.1-tar.patch
 	touch $@
 
-$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.20.1/busybox-1.20.1.config | $(DEPDIR)/$(GLIBC_DEV)
+$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox-1.20.2/busybox-1.20.2.config | $(DEPDIR)/$(GLIBC_DEV)
 	cd @DIR_busybox@ && \
 		export CROSS_COMPILE=$(target)- && \
 		$(MAKE) mrproper && \
