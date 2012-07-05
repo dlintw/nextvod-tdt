@@ -1368,8 +1368,8 @@ endif
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/local/share/config
 	cp -aR $(buildprefix)/root/usr/local/share/config/* $(prefix)/release_neutrino/usr/local/share/config/
 	cp -aR $(targetprefix)/usr/local/share/neutrino $(prefix)/release_neutrino/usr/local/share/
-#	TODO: HACK
-	cp -aR $(targetprefix)/usr/local/share/neutrino/* $(prefix)/release_neutrino/usr/local/share/neutrino
+#	TODO: HACK (without *.locale are missing!)
+	cp -aR $(targetprefix)/$(targetprefix)/usr/local/share/neutrino/* $(prefix)/release_neutrino/usr/local/share/neutrino
 #######################################################################################
 #	cp -aR $(targetprefix)/usr/local/share/fonts $(prefix)/release_neutrino/usr/local/share/
 	mkdir -p $(prefix)/release_neutrino/usr/local/share/fonts
@@ -1415,11 +1415,11 @@ endif
 # not needed on nhd2 - begin
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y && ln -s /usr/local/share/neutrino/icons/logo )
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd-y && ln -s /usr/local/share/neutrino/icons/logo logos )
-# not needed on nhd2 - begin
+# not needed on nhd2 - end
 # on nhd2 - begin
 #	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd && ln -s /usr/local/share/neutrino/icons/logo )
 #	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd && ln -s /usr/local/share/neutrino/icons/logo logos )
-# on nhd2 - begin
+# on nhd2 - end
 	find $(prefix)/release_neutrino/usr/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 #
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/neutrino #############
