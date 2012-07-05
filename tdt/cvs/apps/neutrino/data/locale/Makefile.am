@@ -1,4 +1,4 @@
-installdir = $(DATADIR)/neutrino/locale
+installdir = $(datadir)/neutrino/locale
 
 install_DATA = \
 	bayrisch.locale \

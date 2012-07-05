@@ -1,4 +1,4 @@
-installdir = $(DATADIR)/lcdd/clock
+installdir = $(datadir)/lcdd/clock
 
 install_DATA = \
 	d_a.bmp d_b.bmp d_c.bmp d_d.bmp d_e.bmp d_f.bmp d_g.bmp d_h.bmp d_i.bmp d_j.bmp \

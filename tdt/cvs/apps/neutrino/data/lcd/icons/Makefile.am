@@ -1,4 +1,4 @@
-installdir = $(DATADIR)/lcdd/icons
+installdir = $(datadir)/lcdd/icons
 
 install_DATA = \
 	lcd.png \

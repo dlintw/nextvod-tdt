@@ -1,4 +1,4 @@
-installdir = $(DATADIR)/neutrino/icons
+installdir = $(datadir)/neutrino/icons
 
 install_DATA = \
 	16_9.raw 16_9_gray.raw audio.raw blau.raw border_lr.raw border_ul.raw \

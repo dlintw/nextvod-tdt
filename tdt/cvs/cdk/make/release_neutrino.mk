@@ -1368,8 +1368,8 @@ endif
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/local/share/config
 	cp -aR $(buildprefix)/root/usr/local/share/config/* $(prefix)/release_neutrino/usr/local/share/config/
 	cp -aR $(targetprefix)/usr/local/share/neutrino $(prefix)/release_neutrino/usr/local/share/
-#	TODO: HACK (without *.locale are missing!)
-	cp -aR $(targetprefix)/$(targetprefix)/usr/local/share/neutrino/* $(prefix)/release_neutrino/usr/local/share/neutrino
+#	TODO: HACK (without *.locale are missing!) --- should be not longer needed since path fix
+#	cp -aR $(targetprefix)/$(targetprefix)/usr/local/share/neutrino/* $(prefix)/release_neutrino/usr/local/share/neutrino
 #######################################################################################
 #	cp -aR $(targetprefix)/usr/local/share/fonts $(prefix)/release_neutrino/usr/local/share/
 	mkdir -p $(prefix)/release_neutrino/usr/local/share/fonts
