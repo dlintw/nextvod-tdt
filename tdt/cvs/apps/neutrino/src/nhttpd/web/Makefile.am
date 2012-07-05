@@ -2,14 +2,14 @@ SUBDIRS = images scripts
 
 install-data-local:
 	for f in ./*.js; do gzip $$f -c >$$f.gz; done
-	install -d $(datadir)/neutrino/httpd-y
-	install -m 0644 *.yhtm $(datadir)/neutrino/httpd-y
-	install -m 0644 *.htm $(datadir)/neutrino/httpd-y
-	install -m 0644 *.html $(datadir)/neutrino/httpd-y
-	install -m 0644 *.css $(datadir)/neutrino/httpd-y
-	install -m 0644 *.gz $(datadir)/neutrino/httpd-y
-	install -m 0644 *.txt $(datadir)/neutrino/httpd-y
-	install -m 0644 *.ico $(datadir)/neutrino/httpd-y
+	install -d $(DATADIR)/neutrino/httpd-y
+	install -m 0644 *.yhtm $(DATADIR)/neutrino/httpd-y
+	install -m 0644 *.htm $(DATADIR)/neutrino/httpd-y
+	install -m 0644 *.html $(DATADIR)/neutrino/httpd-y
+	install -m 0644 *.css $(DATADIR)/neutrino/httpd-y
+	install -m 0644 *.gz $(DATADIR)/neutrino/httpd-y
+	install -m 0644 *.txt $(DATADIR)/neutrino/httpd-y
+	install -m 0644 *.ico $(DATADIR)/neutrino/httpd-y
 
 uninstall-local:
-	-rm -rf $(datadir)/neutrino/httpd-y
+	-rm -rf $(DATADIR)/neutrino/httpd-y
