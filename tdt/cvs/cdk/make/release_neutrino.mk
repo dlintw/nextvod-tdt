@@ -1406,7 +1406,7 @@ endif
 #
 #######################################################################################
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino && ln -s /usr/local/share/neutrino/httpd httpd-y )
-	( cd $(prefix)/release_neutrino/var && ln -s /usr/local/share/neutrino/httpd httpd-y )
+	( cd $(prefix)/release_neutrino/var && ln -s /usr/local/share/neutrino/httpd httpd )
 	cp $(appsdir)/neutrino/src/nhttpd/web/{Y_Baselib.js,Y_VLC.js} $(prefix)/release_neutrino/usr/local/share/neutrino/httpd/
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd && ln -s /usr/local/share/neutrino/icons/logo )
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd && ln -s /usr/local/share/neutrino/icons/logo logos )
