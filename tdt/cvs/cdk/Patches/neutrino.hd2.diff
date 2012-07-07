@@ -1,6 +1,6 @@
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/acinclude.m4 neutrino-hd2/acinclude.m4
---- neutrino-hd2.org/acinclude.m4	2012-07-01 19:49:35.970943773 +0200
-+++ neutrino-hd2/acinclude.m4	2012-07-01 19:49:36.391443131 +0200
+--- neutrino-hd2.org/acinclude.m4	2012-07-08 00:10:30.696791659 +0200
++++ neutrino-hd2/acinclude.m4	2012-07-08 00:10:30.868767511 +0200
 @@ -225,10 +225,10 @@
  AC_DEFUN([_TUXBOX_APPS_LIB_PKGCONFIG],[
  AC_REQUIRE([TUXBOX_APPS_PKGCONFIG])
@@ -16,20 +16,20 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/acinclu
  	AC_MSG_RESULT(no)
  fi
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/lib/libcoolstream/audio_cs.h neutrino-hd2/lib/libcoolstream/audio_cs.h
---- neutrino-hd2.org/lib/libcoolstream/audio_cs.h	2012-07-01 19:49:25.783443927 +0200
-+++ neutrino-hd2/lib/libcoolstream/audio_cs.h	2012-07-01 19:49:36.391443131 +0200
+--- neutrino-hd2.org/lib/libcoolstream/audio_cs.h	2012-07-08 00:10:24.528766722 +0200
++++ neutrino-hd2/lib/libcoolstream/audio_cs.h	2012-07-08 00:10:30.872766487 +0200
 @@ -25,7 +25,7 @@
  
  
  #ifdef __sh__
 -#include <player2/linux/include/linux/dvb/stm_ioctls.h>
-+#include <../libeplayer3/include/stm_ioctls.h>
++#include <linux/dvb/stm_ioctls.h>
  #endif
  
  
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/lib/libcoolstream/Makefile.am neutrino-hd2/lib/libcoolstream/Makefile.am
---- neutrino-hd2.org/lib/libcoolstream/Makefile.am	2012-07-01 19:49:25.783443927 +0200
-+++ neutrino-hd2/lib/libcoolstream/Makefile.am	2012-07-01 19:49:36.391443131 +0200
+--- neutrino-hd2.org/lib/libcoolstream/Makefile.am	2012-07-08 00:10:24.524766685 +0200
++++ neutrino-hd2/lib/libcoolstream/Makefile.am	2012-07-08 00:10:30.872766487 +0200
 @@ -7,7 +7,7 @@
  	-I$(top_srcdir)/src/zapit/include/client \
  	-I$(top_srcdir)/lib/connection \
@@ -40,8 +40,8 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/lib/lib
  noinst_LIBRARIES = libcoolstream.a
  
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/lib/libcoolstream/playback_cs.h neutrino-hd2/lib/libcoolstream/playback_cs.h
---- neutrino-hd2.org/lib/libcoolstream/playback_cs.h	2012-07-01 19:49:25.783443927 +0200
-+++ neutrino-hd2/lib/libcoolstream/playback_cs.h	2012-07-01 19:49:36.391443131 +0200
+--- neutrino-hd2.org/lib/libcoolstream/playback_cs.h	2012-07-08 00:10:24.524766685 +0200
++++ neutrino-hd2/lib/libcoolstream/playback_cs.h	2012-07-08 00:10:30.872766487 +0200
 @@ -58,8 +58,8 @@
  #endif
  
@@ -54,21 +54,25 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/lib/lib
  
  
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/lib/libcoolstream/video_cs.h neutrino-hd2/lib/libcoolstream/video_cs.h
---- neutrino-hd2.org/lib/libcoolstream/video_cs.h	2012-07-01 19:49:25.779443737 +0200
-+++ neutrino-hd2/lib/libcoolstream/video_cs.h	2012-07-01 19:49:36.391443131 +0200
+--- neutrino-hd2.org/lib/libcoolstream/video_cs.h	2012-07-08 00:10:24.520557402 +0200
++++ neutrino-hd2/lib/libcoolstream/video_cs.h	2012-07-08 00:10:30.872766487 +0200
 @@ -25,7 +25,7 @@
  #include <driver/framebuffer.h>
  
  #ifdef __sh__
 -#include <player2/linux/include/linux/dvb/stm_ioctls.h>
-+#include <../libeplayer3/include/stm_ioctls.h>
++#include <linux/dvb/stm_ioctls.h>
  #endif
  
  // bcm
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/lib/Makefile.am neutrino-hd2/lib/Makefile.am
---- neutrino-hd2.org/lib/Makefile.am	2012-07-01 19:49:27.335017634 +0200
-+++ neutrino-hd2/lib/Makefile.am	2012-07-01 19:49:36.391443131 +0200
-@@ -13,9 +13,9 @@
+--- neutrino-hd2.org/lib/Makefile.am	2012-07-08 00:10:25.312766480 +0200
++++ neutrino-hd2/lib/Makefile.am	2012-07-08 00:13:35.296443357 +0200
+@@ -10,13 +10,12 @@
+ 	libtuxtxt \
+ 	libdvbsub \
+ 	libupnpclient \
+-	liblcddisplay \
  	libcoolstream
  
  # libeplayer3
@@ -79,11 +83,11 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/lib/Mak
 +#SUBDIRS += libeplayer3
 +#endif
  
- #SUBDIRS += liblcddisplay
+ 
  
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/framebuffer.h neutrino-hd2/src/driver/framebuffer.h
---- neutrino-hd2.org/src/driver/framebuffer.h	2012-07-01 19:49:32.306943360 +0200
-+++ neutrino-hd2/src/driver/framebuffer.h	2012-07-01 19:49:36.391443131 +0200
+--- neutrino-hd2.org/src/driver/framebuffer.h	2012-07-08 00:10:27.600766706 +0200
++++ neutrino-hd2/src/driver/framebuffer.h	2012-07-08 00:10:30.872766487 +0200
 @@ -36,7 +36,7 @@
  
  // stmfb
@@ -93,60 +97,9 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  #endif
  
  // 32 bit
-diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/rcinput.h neutrino-hd2/src/driver/rcinput.h
---- neutrino-hd2.org/src/driver/rcinput.h	2012-07-01 19:49:32.306943360 +0200
-+++ neutrino-hd2/src/driver/rcinput.h	2012-07-01 19:49:36.391443131 +0200
-@@ -221,23 +221,12 @@
- 			
- 			RC_spkr		= KEY_MUTE,	    /* /include/linux/input.h: #define KEY_MUTE			0x71   */
- 			
--#if defined (PLATFORM_CUBEREVO) || defined (PLATFORM_CUBEREVO_MINI) || defined (PLATFORM_CUBEREVO_MINI2) || defined (PLATFORM_CUBEREVO_MINI_FTA) || defined (PLATFORM_CUBEREVO_250HD) || defined (PLATFORM_CUBEREVO_2000HD) || defined (PLATFORM_CUBEREVO_9500HD)			
--			RC_minus	= 0xBC,
--			RC_plus		= 0xBB,
--#else			
- 			RC_minus        = KEY_VOLUMEDOWN,   /* /include/linux/input.h: #define KEY_VOLUMEDOWN          114   */
- 			RC_plus         = KEY_VOLUMEUP,     /* /include/linux/input.h: #define KEY_VOLUMEUP            115   */
--#endif			
- 
- 			RC_standby	= KEY_POWER,	    /* /include/linux/input.h: #define KEY_POWER		0x74   */			
- 			
--#if defined (PLATFORM_GIGABLUE)
--			RC_home         = 0xAE,
--#elif defined (PLATFORM_CUBEREVO) || defined (PLATFORM_CUBEREVO_MINI) || defined (PLATFORM_CUBEREVO_MINI2) || defined (PLATFORM_CUBEREVO_MINI_FTA) || defined (PLATFORM_CUBEREVO_250HD) || defined (PLATFORM_CUBEREVO_2000HD) || defined (PLATFORM_CUBEREVO_9500HD)			
--			RC_home		= 0x9E,
--#else
- 			RC_home         = KEY_HOME,         /* /include/linux/input.h: #define KEY_HOME                	0x66   */
--#endif			
- 
- #if defined (PLATFORM_CUBEREVO) || defined (PLATFORM_CUBEREVO_MINI) || defined (PLATFORM_CUBEREVO_MINI2) || defined (PLATFORM_CUBEREVO_MINI_FTA) || defined (PLATFORM_CUBEREVO_250HD) || defined (PLATFORM_CUBEREVO_2000HD) || defined (PLATFORM_CUBEREVO_9500HD)
- 			RC_setup	= 0x8B,
-@@ -260,23 +249,12 @@
- 			RC_yellow	= KEY_YELLOW,	    /* /include/linux/input.h: #define KEY_YELLOW		0x190 */ /* in patched input.h */
- 			RC_blue		= KEY_BLUE,	    /* /include/linux/input.h: #define KEY_BLUE			0x191 */ /* in patched input.h */
- 
--#if defined (PLATFORM_CUBEREVO) || defined (PLATFORM_CUBEREVO_MINI) || defined (PLATFORM_CUBEREVO_MINI2) || defined (PLATFORM_CUBEREVO_MINI_FTA) || defined (PLATFORM_CUBEREVO_250HD) || defined (PLATFORM_CUBEREVO_2000HD) || defined (PLATFORM_CUBEREVO_9500HD)
--			RC_audio	= 0x3D,
--			RC_video	= 0x90,
--			
--			RC_text		= 0x173,
--#else
- 			RC_audio	= KEY_AUDIO,		/* 0x188 */
- 			RC_video	= KEY_VIDEO,		/* 0x189 */
- 			
- 			RC_text		= KEY_TEXT,		/* 0x184 */
--#endif
- 
--#if defined (PLATFORM_DUCKBOX)
- 			RC_info		= 0x8A,
--#else
--			RC_info		= KEY_INFO,		/* 0x166 */
--#endif			
- 			
- #if defined (PLATFORM_GIGABLUE)			
- 			RC_epg		= 0x8A,
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/gui/audioplayer.cpp neutrino-hd2/src/gui/audioplayer.cpp
---- neutrino-hd2.org/src/gui/audioplayer.cpp	2012-07-01 19:49:30.654943870 +0200
-+++ neutrino-hd2/src/gui/audioplayer.cpp	2012-07-01 19:49:36.395443802 +0200
+--- neutrino-hd2.org/src/gui/audioplayer.cpp	2012-07-08 00:10:26.680766697 +0200
++++ neutrino-hd2/src/gui/audioplayer.cpp	2012-07-08 00:10:30.872766487 +0200
 @@ -126,7 +126,6 @@
  }
  
@@ -156,8 +109,8 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/gui
  
  struct MemoryStruct {
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/gui/filebrowser.cpp neutrino-hd2/src/gui/filebrowser.cpp
---- neutrino-hd2.org/src/gui/filebrowser.cpp	2012-07-01 19:49:30.654943870 +0200
-+++ neutrino-hd2/src/gui/filebrowser.cpp	2012-07-01 19:49:36.395443802 +0200
+--- neutrino-hd2.org/src/gui/filebrowser.cpp	2012-07-08 00:10:26.684767028 +0200
++++ neutrino-hd2/src/gui/filebrowser.cpp	2012-07-08 00:10:30.872766487 +0200
 @@ -59,7 +59,6 @@
  #include <sys/stat.h>
  
@@ -167,8 +120,8 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/gui
  
  #include <driver/encoding.h>
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/gui/Makefile.am neutrino-hd2/src/gui/Makefile.am
---- neutrino-hd2.org/src/gui/Makefile.am	2012-07-01 19:49:30.658943980 +0200
-+++ neutrino-hd2/src/gui/Makefile.am	2012-07-01 19:49:36.395443802 +0200
+--- neutrino-hd2.org/src/gui/Makefile.am	2012-07-08 00:10:26.688771397 +0200
++++ neutrino-hd2/src/gui/Makefile.am	2012-07-08 00:10:30.872766487 +0200
 @@ -3,6 +3,7 @@
  SUBDIRS = widget bedit
  
@@ -178,8 +131,8 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/gui
  	-I$(top_srcdir)/src \
  	-I$(top_srcdir)/src/zapit/include \
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/gui/update.cpp neutrino-hd2/src/gui/update.cpp
---- neutrino-hd2.org/src/gui/update.cpp	2012-07-01 19:49:30.654943870 +0200
-+++ neutrino-hd2/src/gui/update.cpp	2012-07-01 19:49:36.395443802 +0200
+--- neutrino-hd2.org/src/gui/update.cpp	2012-07-08 00:10:26.684767028 +0200
++++ neutrino-hd2/src/gui/update.cpp	2012-07-08 00:10:30.872766487 +0200
 @@ -55,7 +55,6 @@
  #define SQUASHFS
  
@@ -189,76 +142,37 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/gui
  
  #include <stdio.h>
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/Makefile.am neutrino-hd2/src/Makefile.am
---- neutrino-hd2.org/src/Makefile.am	2012-07-01 19:49:32.331536078 +0200
-+++ neutrino-hd2/src/Makefile.am	2012-07-01 19:49:36.395443802 +0200
+--- neutrino-hd2.org/src/Makefile.am	2012-07-08 00:10:27.620766664 +0200
++++ neutrino-hd2/src/Makefile.am	2012-07-08 00:13:59.212793307 +0200
 @@ -17,7 +17,7 @@
  	@FREETYPE_CFLAGS@
  
  if ENABLE_LIBEPLAYER3
 -INCLUDES += -I$(top_srcdir)/lib/libeplayer3
-+INCLUDES +=   -I$(top_srcdir)/../misc/tools/libeplayer3/include
++INCLUDES += -I$(top_srcdir)/../misc/tools/libeplayer3/include
  endif
  
  if ENABLE_TEST_MENU
-@@ -68,13 +68,7 @@
- 	@MAD_LIBS@ \
- 	@ID3TAG_LIBS@ \
- 	@VORBISIDEC_LIBS@ \
--	-ljpeg -lgif -lrt -lpthread -lblkid -ldl -lFLAC -lavformat -lavcodec -lavutil
--
--if ENABLE_LIBEPLAYER3
+@@ -71,13 +71,13 @@
+ 	-ljpeg -lgif -lrt -lpthread -lblkid -ldl -lFLAC -lavformat -lavcodec -lavutil
+ 
+ if ENABLE_LIBEPLAYER3
 -neutrino_LDADD += $(top_builddir)/lib/libeplayer3/libeplayer3.a \
--	-lass
--endif
--
-+	-ljpeg -lgif -lrt -lpthread -lblkid -ldl -lFLAC -lavformat -lavcodec -lavutil -leplayer3 -lass
++neutrino_LDADD += -leplayer3 \
+ 	-lass
+ endif
+ 
+ # LCD display
+-neutrino_LDADD += \
+-	$(top_builddir)/lib/liblcddisplay/liblcddisplay.a
++#neutrino_LDADD += \
++#	$(top_builddir)/lib/liblcddisplay/liblcddisplay.a
  
  
  
-diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/neutrino.cpp neutrino-hd2/src/neutrino.cpp
---- neutrino-hd2.org/src/neutrino.cpp	2012-07-01 19:49:32.331536078 +0200
-+++ neutrino-hd2/src/neutrino.cpp	2012-07-01 19:58:11.486943355 +0200
-@@ -3167,12 +3167,12 @@
- #endif
- #if defined (PLATFORM_CUBEREVO) || defined (PLATFORM_CUBEREVO_MINI) || defined (PLATFORM_CUBEREVO_MINI2) || defined (PLATFORM_CUBEREVO_MINI_FTA) || defined (PLATFORM_CUBEREVO_250HD) || defined (PLATFORM_CUBEREVO_2000HD) || defined (PLATFORM_CUBEREVO_9500HD)
- 			//music player
--			else if( msg == CRCInput::RC_music) 
-+      else if( msg == CRCInput::RC_music) 
- 			{
- 				StopSubtitles();
- 
--				CAudioPlayerGui::CAudioPlayerGui tmpAudioPlayerGui;
--				tmpAudioPlayerGui.exec(NULL, "");
-+				//CAudioPlayerGui::CAudioPlayerGui tmpAudioPlayerGui;
-+				//tmpAudioPlayerGui.exec(NULL, "");
- 
- 				StartSubtitles();
- 			}
-@@ -3198,8 +3198,8 @@
- 			{
- 				StopSubtitles();
- 
--				CAudioPlayerGui::CAudioPlayerGui tmpAudioPlayerGui(true);
--				tmpAudioPlayerGui.exec(NULL, "");
-+				//CAudioPlayerGui::CAudioPlayerGui tmpAudioPlayerGui(true);
-+				//tmpAudioPlayerGui.exec(NULL, "");
- 
- 				StartSubtitles();
- 			}
-@@ -3226,8 +3226,8 @@
- 			{
- 				StopSubtitles();
- 				
--				CPictureViewerGui::CPictureViewerGui tmpPictureViewerGui;
--				tmpPictureViewerGui.exec(NULL, "");
-+				//CPictureViewerGui::CPictureViewerGui tmpPictureViewerGui;
-+				//tmpPictureViewerGui.exec(NULL, "");
- 				
- 				StartSubtitles();
- 			}
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/nhttpd/tuxboxapi/neutrinoapi.cpp neutrino-hd2/src/nhttpd/tuxboxapi/neutrinoapi.cpp
---- neutrino-hd2.org/src/nhttpd/tuxboxapi/neutrinoapi.cpp	2012-07-01 19:49:27.406948604 +0200
-+++ neutrino-hd2/src/nhttpd/tuxboxapi/neutrinoapi.cpp	2012-07-01 19:49:36.399443441 +0200
+--- neutrino-hd2.org/src/nhttpd/tuxboxapi/neutrinoapi.cpp	2012-07-08 00:10:25.384766754 +0200
++++ neutrino-hd2/src/nhttpd/tuxboxapi/neutrinoapi.cpp	2012-07-08 00:10:30.876771257 +0200
 @@ -64,7 +64,7 @@
  bool _initialize_iso639_map(void)
  {
@@ -269,8 +183,8 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/nht
  	{
  		while (in.peek() == '#')
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/nhttpd/web/scripts/Makefile.am neutrino-hd2/src/nhttpd/web/scripts/Makefile.am
---- neutrino-hd2.org/src/nhttpd/web/scripts/Makefile.am	2012-07-01 19:49:27.807443281 +0200
-+++ neutrino-hd2/src/nhttpd/web/scripts/Makefile.am	2012-07-01 19:49:36.399443441 +0200
+--- neutrino-hd2.org/src/nhttpd/web/scripts/Makefile.am	2012-07-08 00:10:25.616766780 +0200
++++ neutrino-hd2/src/nhttpd/web/scripts/Makefile.am	2012-07-08 00:10:30.876771257 +0200
 @@ -2,6 +2,3 @@
  
  install_DATA= api.sh _Y_Globals.sh _Y_Library.sh Y_Live.sh Y_Tools.sh
@@ -279,8 +193,8 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/nht
 -	chmod 0755 $(DATADIR)/neutrino/httpd/scripts/api.sh
 -	chmod 0755 $(DATADIR)/neutrino/httpd/scripts/Y_*.sh
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/system/httptool.cpp neutrino-hd2/src/system/httptool.cpp
---- neutrino-hd2.org/src/system/httptool.cpp	2012-07-01 19:49:30.942943464 +0200
-+++ neutrino-hd2/src/system/httptool.cpp	2012-07-01 19:49:36.399443441 +0200
+--- neutrino-hd2.org/src/system/httptool.cpp	2012-07-08 00:10:26.836766769 +0200
++++ neutrino-hd2/src/system/httptool.cpp	2012-07-08 00:10:30.876771257 +0200
 @@ -22,7 +22,6 @@
  #include <system/httptool.h>
  
@@ -290,8 +204,8 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/sys
  
  #include <global.h>
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/system/localize.cpp neutrino-hd2/src/system/localize.cpp
---- neutrino-hd2.org/src/system/localize.cpp	2012-07-01 19:49:30.938943268 +0200
-+++ neutrino-hd2/src/system/localize.cpp	2012-07-01 19:49:36.399443441 +0200
+--- neutrino-hd2.org/src/system/localize.cpp	2012-07-08 00:10:26.832766851 +0200
++++ neutrino-hd2/src/system/localize.cpp	2012-07-08 00:10:30.876771257 +0200
 @@ -45,7 +45,7 @@
  #include <string>
  
