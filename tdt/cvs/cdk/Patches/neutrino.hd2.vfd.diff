@@ -1,0 +1,121 @@
+diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/vfd.cpp neutrino-hd2/src/driver/vfd.cpp
+--- neutrino-hd2.org/src/driver/vfd.cpp	2012-07-08 23:47:03.332766718 +0200
++++ neutrino-hd2/src/driver/vfd.cpp	2012-07-09 01:12:03.488266346 +0200
+@@ -349,7 +349,9 @@
+ 
+ 	volume = vol;
+ 	wake_up();
++#if !defined (PLATFORM_DUCKBOX)
+ 	ShowIcon(VFD_ICON_FRAME, true);
++#endif
+ 
+ 	if ((mode == MODE_TVRADIO) && g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME]) 
+ 	{
+@@ -386,7 +388,9 @@
+ 	{
+ 		if (g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME] == 0) 
+ 		{
+-			ShowIcon(VFD_ICON_FRAME, true);
++#if !defined (PLATFORM_DUCKBOX)
++	    ShowIcon(VFD_ICON_FRAME, true);
++#endif
+ 			int pp;
+ 			if(perc == 255)
+ 				pp = 0;
+@@ -556,7 +560,9 @@
+ #if !defined (PLATFORM_CUBEREVO_250HD) && !defined (PLATFORM_GIGABLUE)	
+ 			showServicename(servicename);
+ #endif			
++#if !defined (PLATFORM_DUCKBOX)
+ 			ShowIcon(VFD_ICON_TV, true);
++#endif			
+ 			showclock = true;
+ 			//showTime();      /* "showclock = true;" implies that "showTime();" does a "displayUpdate();" */
+ 			break;
+@@ -564,7 +570,9 @@
+ 		case MODE_AUDIO:
+ 		{
+ 			ShowIcon(VFD_ICON_MP3, true);
++#if !defined (PLATFORM_DUCKBOX)
+ 			ShowIcon(VFD_ICON_TV, false);
++#endif
+ 			showAudioPlayMode(AUDIO_MODE_STOP);
+ 			showVolume(volume, false);
+ 			showclock = true;
+@@ -575,7 +583,9 @@
+ 		}
+ 
+ 		case MODE_SCART:
++#if !defined (PLATFORM_DUCKBOX)
+ 			ShowIcon(VFD_ICON_TV, false);
++#endif			
+ 			showVolume(volume, false);
+ 			showclock = true;
+ 			//showTime();      /* "showclock = true;" implies that "showTime();" does a "displayUpdate();" */
+@@ -598,14 +608,18 @@
+ 			ShowIcon(VFD_ICON_COL1, true);
+ 			ShowIcon(VFD_ICON_COL2, true);
+ #endif
++#if !defined (PLATFORM_DUCKBOX)
+ 			ShowIcon(VFD_ICON_TV, false);
++#endif
+ 			showclock = true;
+ 			showTime(true);      	/* "showclock = true;" implies that "showTime();" does a "displayUpdate();" */
+ 						/* "showTime()" clears the whole lcd in MODE_STANDBY */
+ 			break;
+ 		
+ 		case MODE_PIC:
++#if !defined (PLATFORM_DUCKBOX)
+ 			ShowIcon(VFD_ICON_TV, false);
++#endif
+ 			ShowIcon(VFD_ICON_HD, false);
+ 			ShowIcon(VFD_ICON_DOLBY, false);
+ 			
+@@ -613,7 +627,9 @@
+ 			break;
+ 			
+ 		case MODE_TS:
++#if !defined (PLATFORM_DUCKBOX)
+ 			ShowIcon(VFD_ICON_TV, false);
++#endif			
+ 			showclock = false;
+ 			break;
+ 		
+diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/vfd.h neutrino-hd2/src/driver/vfd.h
+--- neutrino-hd2.org/src/driver/vfd.h	2012-07-08 23:47:03.328767829 +0200
++++ neutrino-hd2/src/driver/vfd.h	2012-07-09 01:15:53.620266406 +0200
+@@ -46,6 +46,26 @@
+ // neutrino common
+ typedef enum
+ {
++#if defined (PLATFORM_DUCKBOX)
++    	VFD_ICON_USB = 0x10,
++    	VFD_ICON_HD,
++    	VFD_ICON_HDD,
++    	VFD_ICON_LOCK,
++    	VFD_ICON_BT,
++    	VFD_ICON_MP3,
++    	VFD_ICON_MUSIC,
++    	VFD_ICON_DOLBY,
++    	VFD_ICON_MAIL,
++    	VFD_ICON_MUTE,
++    	VFD_ICON_PLAY,
++    	VFD_ICON_PAUSE,
++    	VFD_ICON_FF,
++    	VFD_ICON_FR,
++    	VFD_ICON_REC,
++    	VFD_ICON_CLOCK,
++    	VFD_ICON_TIMESHIFT = VFD_ICON_REC,
++    	VFD_ICON_RADIO = VFD_ICON_MUSIC
++#else
+ 	VFD_ICON_BAR8		= 0x00000004,
+ 	VFD_ICON_BAR7		= 0x00000008,
+ 	VFD_ICON_BAR6		= 0x00000010,
+@@ -77,6 +97,7 @@
+ 	VFD_ICON_CAM1		= 0x0B000001,
+ 	VFD_ICON_COL2		= 0x0B000002,
+ 	VFD_ICON_CAM2		= 0x0C000001
++#endif
+ } vfd_icon;
+ 
+ 
