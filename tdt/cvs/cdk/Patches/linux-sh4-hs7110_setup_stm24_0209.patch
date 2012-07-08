@@ -91,7 +91,26 @@
  static void __init sat7111_setup(char** cmdline_p)
  {
  	printk(KERN_INFO "STMicroelectronics sat7111 reference board initialisation\n");
-@@ -109,6 +136,12 @@
+@@ -50,15 +77,14 @@
+ 	stx7111_early_device_init();
+ 
+ 	stx7111_configure_asc(2, &(struct stx7111_asc_config) {
+-			.hw_flow_control = 1,
++			.hw_flow_control = 0,
+ 			.is_console = 1, });
+ 	stx7111_configure_asc(3, &(struct stx7111_asc_config) {
+-			.hw_flow_control = 1,
++			.hw_flow_control = 0,
+ 			.is_console = 0, });
++	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
+ }
+ 
+-
+-
+ static struct platform_device sat7111_leds = {
+ 	.name = "leds-gpio",
+ 	.id = -1,
+@@ -109,6 +135,12 @@
  	},
  };
  
@@ -104,7 +123,7 @@
  static struct platform_device sat7111_nor_flash = {
  	.name		= "physmap-flash",
  	.id		= -1,
-@@ -118,75 +151,38 @@
+@@ -118,75 +150,38 @@
  	},
  	.dev.platform_data = &(struct physmap_flash_data) {
  		.width		= 2,
@@ -209,7 +228,7 @@
  			},
  		},
  	},
-@@ -216,15 +212,9 @@
+@@ -216,15 +211,9 @@
  
  static int __init sat7111_devices_init(void)
  {
@@ -227,7 +246,7 @@
  	stx7111_configure_ssc_i2c(3);
  
  	stx7111_configure_usb(&(struct stx7111_usb_config) {
-@@ -246,14 +236,6 @@
+@@ -246,14 +235,6 @@
  
  	gpio_direction_output(SAT7111_PHY_RESET, 0);
  
