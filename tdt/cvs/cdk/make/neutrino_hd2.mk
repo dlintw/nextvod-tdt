@@ -20,8 +20,10 @@ N_CONFIG_OPTS = --enable-silent-rules
 #
 $(DEPDIR)/neutrino-hd2.do_prepare:
 	svn co http://neutrinohd2.googlecode.com/svn/trunk/neutrino-hd $(appsdir)/neutrino-hd2
+#	rm -rf $(appsdir)/neutrino-hd2/lib/libcoolstream/*.*
 	cp -ra $(appsdir)/neutrino-hd2 $(appsdir)/neutrino-hd2.org
 	cd $(appsdir)/neutrino-hd2 && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2.diff"
+#	cd $(appsdir)/neutrino-hd2 && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2.extra.diff"
 	touch $@
 
 $(appsdir)/neutrino-hd2/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost libflac openssl sdparm
@@ -34,6 +36,7 @@ $(appsdir)/neutrino-hd2/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpe
 			$(N_CONFIG_OPTS) \
 			--enable-libeplayer3 \
 			--with-boxtype=duckbox \
+			--enable-pcmsoftdecoder \
 			--with-tremor \
 			--enable-libass \
 			--with-datadir=/usr/local/share \
