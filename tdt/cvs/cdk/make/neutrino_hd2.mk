@@ -34,6 +34,7 @@ $(appsdir)/neutrino-hd2/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpe
 			$(N_CONFIG_OPTS) \
 			--enable-libeplayer3 \
 			--with-boxtype=duckbox \
+			--enable-pcmsoftdecoder \
 			--with-tremor \
 			--enable-libass \
 			--with-datadir=/usr/local/share \
