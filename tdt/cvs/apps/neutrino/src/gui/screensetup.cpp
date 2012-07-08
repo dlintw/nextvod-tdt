@@ -127,7 +127,6 @@ int CScreenSetup::exec(CMenuTarget* parent, const std::string &)
 			case CRCInput::RC_up:
 				{
 					y_coord[selected]--;
-
 					int min = ( selected == 0 ) ? 0 : 400;
 					if ( y_coord[selected] < min )
 						y_coord[selected] = min ;
@@ -138,8 +137,6 @@ int CScreenSetup::exec(CMenuTarget* parent, const std::string &)
 			case CRCInput::RC_down:
 				{
 					y_coord[selected]++;
-
-					//int max = ( selected == 0 ) ? 200 : 576;
 					int max = ( selected == 0 ) ? 200 : frameBuffer->getScreenHeight(true);
 printf("selected %d y %d max %d\n", selected, y_coord[selected], max);
 					if ( y_coord[selected] > max )
@@ -151,7 +148,6 @@ printf("selected %d y %d max %d\n", selected, y_coord[selected], max);
 			case CRCInput::RC_left:
 				{
 					x_coord[selected]--;
-
 					int min = ( selected == 0 ) ? 0 : 400;
 					if ( x_coord[selected] < min )
 						x_coord[selected] = min ;
@@ -162,11 +158,10 @@ printf("selected %d y %d max %d\n", selected, y_coord[selected], max);
 			case CRCInput::RC_right:
 				{
 					x_coord[selected]++;
-
-					//int max = ( selected == 0 ) ? 200 : 720;
 					int max = ( selected == 0 ) ? 200 : frameBuffer->getScreenWidth(true);
-					if ( y_coord[selected] > max )
-						y_coord[selected] = max ;
+printf("selected %d x %d max %d\n", selected, x_coord[selected], max);
+					if ( x_coord[selected] > max )
+						x_coord[selected] = max ;
 					else
 						paintBorder( selected );
 					break;
