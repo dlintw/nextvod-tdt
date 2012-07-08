@@ -530,7 +530,7 @@ HS7110PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-hs7110_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch \
-		linux-squashfs-downgrade-stm24-to-stm23.patch \
+		linux-squashfs-downgrade-stm24$(PATCH_STR)-to-stm23.patch \
 		linux-squashfs3.0_lzma_stm23.patch \
 		linux-squashfs-downgrade-stm24-patch-2.6.25 \
 		linux-squashfs-downgrade-stm24-rm_d_alloc_anon.patch
