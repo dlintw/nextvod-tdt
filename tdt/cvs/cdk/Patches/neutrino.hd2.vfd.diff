@@ -1,27 +1,42 @@
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/vfd.cpp neutrino-hd2/src/driver/vfd.cpp
 --- neutrino-hd2.org/src/driver/vfd.cpp	2012-07-08 23:47:03.332766718 +0200
-+++ neutrino-hd2/src/driver/vfd.cpp	2012-07-09 01:12:03.488266346 +0200
-@@ -349,7 +349,9 @@
++++ neutrino-hd2/src/driver/vfd.cpp	2012-07-09 10:23:48.120276778 +0200
+@@ -349,6 +349,7 @@
  
  	volume = vol;
  	wake_up();
 +#if !defined (PLATFORM_DUCKBOX)
  	ShowIcon(VFD_ICON_FRAME, true);
-+#endif
  
  	if ((mode == MODE_TVRADIO) && g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME]) 
- 	{
-@@ -386,7 +388,9 @@
+@@ -374,7 +375,8 @@
+ 			}
+ 			oldpp = pp;
+ 		}
+-	}	
++	}
++#endif
+ }
+ 
+ void CVFD::showPercentOver(const unsigned char perc, const bool perform_update)
+@@ -386,7 +388,8 @@
  	{
  		if (g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME] == 0) 
  		{
 -			ShowIcon(VFD_ICON_FRAME, true);
 +#if !defined (PLATFORM_DUCKBOX)
 +	    ShowIcon(VFD_ICON_FRAME, true);
-+#endif
  			int pp;
  			if(perc == 255)
  				pp = 0;
+@@ -415,6 +418,7 @@
+ 				}
+ 				percentOver = pp;
+ 			}
++#endif
+ 		}
+ 	}	
+ }
 @@ -556,7 +560,9 @@
  #if !defined (PLATFORM_CUBEREVO_250HD) && !defined (PLATFORM_GIGABLUE)	
  			showServicename(servicename);
