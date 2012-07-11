@@ -209,11 +209,11 @@
 +			{
 +				.name = "Fw",
 +				.size = 0x2a0000,		// 	2M
-+				.offset = 0x00f80000,	//	ok
++				.offset = 0xd20000, //0x00e20000, //0x00f80000,	//	ok
 +			},
 +			{
 +				.name = "Root",
-+				.size = 0x00d60000,	// 	13,375M
++				.size = 0x00b00000, // 11M 0x00c00000,	// 	12M .size = 0x00d60000,	// 	13,375M
 +				.offset = 0x00220000,	//	ok
 +	 		},
 +			{
@@ -222,9 +222,9 @@
 +	 			.offset = 0x01c00000, 
 +	 		},
 +			{
-+			.name = "Swap", // org free + config
-+			.size = 0x560000,     // 4,375M unused in org kernel
-+			.offset = 0x016a0000,
++				.name = "Swap", // org free + config
++				.size = 0x960000, //9m 0x7c0000, //7m 0x6c0000, //6m 0x560000,     // 4,375M unused in org kernel
++				.offset = 0x12a0000, //0x1440000, // 0x1540000, //0x016a0000,
  			},
  		},
  	},
