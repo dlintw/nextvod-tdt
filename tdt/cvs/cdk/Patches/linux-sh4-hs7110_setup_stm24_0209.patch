@@ -223,8 +223,8 @@
 +	 		},
 +			{
 +				.name = "Swap", // org free + config
-+				.size = 0x960000, //9m 0x7c0000, //7m 0x6c0000, //6m 0x560000,     // 4,375M unused in org kernel
-+				.offset = 0x12a0000, //0x1440000, // 0x1540000, //0x016a0000,
++				.size = 0xBC0000, //0x960000, //9m 0x7c0000, //7m 0x6c0000, //6m 0x560000,     // 4,375M unused in org kernel
++				.offset = 0x1040000, // 0x12a0000, //0x1440000, // 0x1540000, //0x016a0000,
  			},
  		},
  	},
