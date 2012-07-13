@@ -785,7 +785,7 @@ $(DEPDIR)/opkg.do_prepare: bootstrap @DEPENDS_opkg@
 $(DEPDIR)/opkg.do_compile: $(DEPDIR)/opkg.do_prepare
 	cd @DIR_opkg@ && \
 		$(BUILDENV) \
-		./configure \
+		./autogen.sh \
 			--build=$(build) \
 			--host=$(target) \
 			--prefix=/usr \
