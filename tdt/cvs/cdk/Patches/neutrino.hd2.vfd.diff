@@ -1,7 +1,60 @@
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/vfd.cpp neutrino-hd2/src/driver/vfd.cpp
---- neutrino-hd2.org/src/driver/vfd.cpp	2012-07-08 23:47:03.332766718 +0200
-+++ neutrino-hd2/src/driver/vfd.cpp	2012-07-09 10:23:48.120276778 +0200
-@@ -349,6 +349,7 @@
+--- neutrino-hd2.org/src/driver/vfd.cpp	2012-07-12 23:06:49.292766711 +0200
++++ neutrino-hd2/src/driver/vfd.cpp	2012-07-13 14:48:34.664327637 +0200
+@@ -42,30 +42,36 @@
+ #include <math.h>
+ #include <system/debug.h>
+ 
++bool blocked = false;
+ 
+ //konfetti: let us share the device with evremote and fp_control
+ //it does currently not support more than one user (see e.g. micom)
+ #if defined (PLATFORM_DUCKBOX)
+ void CVFD::openDevice()
+-{ 
+-	fd = open("/dev/vfd", O_RDWR);
+-	
+-	if(fd < 0)
+-	{
+-		printf("failed to open vfd\n");
+-		
+-		fd = open("/dev/fplarge", O_RDWR);
+-	    
+-		if (fd < 0)
+-			printf("failed to open fplarge\n");
+-        }        
++{
++    if (!blocked)
++    {
++        fd = open("/dev/vfd", O_RDWR);
++        if(fd < 0)
++        {
++            printf("failed to open vfd\n");
++            fd = open("/dev/fplarge", O_RDWR);
++            if (fd < 0)
++                printf("failed to open fplarge\n");
++        }
++        else
++            blocked=true;
++    }
+ }
+ 
+ void CVFD::closeDevice()
+-{ 
+-	if (fd)
+-		close(fd);
+-	fd = -1;
++{
++    if (fd)
++    {
++        close(fd);
++        blocked=false;
++    }
++    fd = -1;
+ }
+ #endif
+ 
+@@ -349,6 +355,7 @@
  
  	volume = vol;
  	wake_up();
@@ -9,7 +62,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  	ShowIcon(VFD_ICON_FRAME, true);
  
  	if ((mode == MODE_TVRADIO) && g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME]) 
-@@ -374,7 +375,8 @@
+@@ -374,7 +381,8 @@
  			}
  			oldpp = pp;
  		}
@@ -19,7 +72,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  }
  
  void CVFD::showPercentOver(const unsigned char perc, const bool perform_update)
-@@ -386,7 +388,8 @@
+@@ -386,7 +394,8 @@
  	{
  		if (g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME] == 0) 
  		{
@@ -29,7 +82,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			int pp;
  			if(perc == 255)
  				pp = 0;
-@@ -415,6 +418,7 @@
+@@ -415,6 +424,7 @@
  				}
  				percentOver = pp;
  			}
@@ -37,7 +90,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  		}
  	}	
  }
-@@ -556,7 +560,9 @@
+@@ -556,7 +566,9 @@
  #if !defined (PLATFORM_CUBEREVO_250HD) && !defined (PLATFORM_GIGABLUE)	
  			showServicename(servicename);
  #endif			
@@ -47,7 +100,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showclock = true;
  			//showTime();      /* "showclock = true;" implies that "showTime();" does a "displayUpdate();" */
  			break;
-@@ -564,7 +570,9 @@
+@@ -564,7 +576,9 @@
  		case MODE_AUDIO:
  		{
  			ShowIcon(VFD_ICON_MP3, true);
@@ -57,7 +110,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showAudioPlayMode(AUDIO_MODE_STOP);
  			showVolume(volume, false);
  			showclock = true;
-@@ -575,7 +583,9 @@
+@@ -575,7 +589,9 @@
  		}
  
  		case MODE_SCART:
@@ -67,7 +120,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showVolume(volume, false);
  			showclock = true;
  			//showTime();      /* "showclock = true;" implies that "showTime();" does a "displayUpdate();" */
-@@ -598,14 +608,18 @@
+@@ -598,14 +614,18 @@
  			ShowIcon(VFD_ICON_COL1, true);
  			ShowIcon(VFD_ICON_COL2, true);
  #endif
@@ -86,7 +139,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			ShowIcon(VFD_ICON_HD, false);
  			ShowIcon(VFD_ICON_DOLBY, false);
  			
-@@ -613,7 +627,9 @@
+@@ -613,7 +633,9 @@
  			break;
  			
  		case MODE_TS:
