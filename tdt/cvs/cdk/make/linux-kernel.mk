@@ -507,6 +507,10 @@ UFS912PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		$(if $(P0207),linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch)
 
+UFS913PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-ufs913_setup_stm24$(PATCH_STR).patch \
+		linux-sh4-lmb_stm24$(PATCH_STR).patch
+
 OCTAGON1008PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-octagon1008_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
@@ -622,6 +626,7 @@ CUBEREVOPATCHES_24 = $(COMMONPATCHES_24) \
 KERNELPATCHES_24 =  \
 		$(if $(UFS910),$(UFS910PATCHES_24)) \
 		$(if $(UFS912),$(UFS912PATCHES_24)) \
+		$(if $(UFS913),$(UFS913PATCHES_24)) \
 		$(if $(UFS922),$(UFS922PATCHES_24)) \
 		$(if $(TF7700),$(TF7700PATCHES_24)) \
 		$(if $(HL101),$(HL101_PATCHES_24)) \
@@ -772,7 +777,7 @@ endif !STM22
 # HOST-KERNEL
 #
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(HS7110)$(WHITEBOX)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
+MODNAME = $(UFS910)$(UFS912)$(UFS913)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(HS7110)$(WHITEBOX)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -1070,6 +1075,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
 		$(if $(UFS912),UFS912=$(UFS912)) \
+		$(if $(UFS913),UFS913=$(UFS913)) \
 		$(if $(SPARK),SPARK=$(SPARK)) \
 		$(if $(SPARK7162),SPARK7162=$(SPARK7162)) \
 		$(if $(ADB_BOX),ADB_BOX=$(ADB_BOX)) \
@@ -1106,6 +1112,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
 		$(if $(UFS912),UFS912=$(UFS912)) \
+		$(if $(UFS913),UFS913=$(UFS913)) \
 		$(if $(SPARK),SPARK=$(SPARK)) \
 		$(if $(SPARK7162),SPARK7162=$(SPARK7162)) \
 		$(if $(ADB_BOX),ADB_BOX=$(ADB_BOX)) \

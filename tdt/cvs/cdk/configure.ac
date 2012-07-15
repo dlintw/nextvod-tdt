@@ -388,6 +388,14 @@ AC_ARG_ENABLE(ufs912,
 AM_CONDITIONAL(ENABLE_UFS912,test "$enable_ufs912" = "yes")
 AC_SUBST(UFS912)
 
+AC_ARG_ENABLE(ufs913,
+	AS_HELP_STRING(--enable-ufs913,    enable kathrein ufs913 stuff),
+	[case "${enableval}" in
+		yes) UFS913=ufs913 ;;
+	esac],[enable_ufs913=no])
+AM_CONDITIONAL(ENABLE_UFS913,test "$enable_ufs913" = "yes")
+AC_SUBST(UFS913)
+
 AC_ARG_ENABLE(hs7810a,
 	AS_HELP_STRING(--enable-hs7810a,    enable fortis hs7810a stuff),
 	[case "${enableval}" in

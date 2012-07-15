@@ -14,6 +14,7 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	CPPFLAGS="\
 	$(if $(UFS910), -DPLATFORM_UFS910) \
 	$(if $(UFS912), -DPLATFORM_UFS912) \
+	$(if $(UFS913), -DPLATFORM_UFS913) \
 	$(if $(UFS922), -DPLATFORM_UFS922) \
 	$(if $(FORTIS_HDBOX), -DPLATFORM_FORTIS_HDBOX) \
 	$(if $(OCTAGON1008), -DPLATFORM_OCTAGON1008) \
