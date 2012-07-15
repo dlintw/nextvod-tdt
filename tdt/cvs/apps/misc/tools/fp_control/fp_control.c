@@ -595,6 +595,8 @@ int getModel()
             vBoxType = HdBox;
         else if(!strncasecmp(vName,"ufs912", 6))
             vBoxType = Ufs912;
+        else if(!strncasecmp(vName,"ufs913", 6))
+            vBoxType = Ufs912;
         else if(!strncasecmp(vName,"spark", 6))
             vBoxType = Spark;
         else if(!strncasecmp(vName,"spark7162", 9))

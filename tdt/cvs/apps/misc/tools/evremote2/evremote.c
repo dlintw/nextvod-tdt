@@ -385,6 +385,8 @@ int getModel()
             vBoxType = Adb_Box;
         else if(!strncasecmp(vName,"ufs912", 5))
             vBoxType = Ufs912;
+        else if(!strncasecmp(vName,"ufs913", 5))
+            vBoxType = Ufs912;
         else if(!strncasecmp(vName,"spark", 5))
         {
     		vBoxType = Spark;
