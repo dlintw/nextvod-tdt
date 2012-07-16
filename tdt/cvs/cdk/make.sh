@@ -92,7 +92,7 @@ case $1 in
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-27)? ";;
+	read -p "Select target (1-28)? ";;
 esac
 
 case "$REPLY" in
@@ -156,6 +156,7 @@ echo "  10) STM 24 P0209"
 echo " Experimental:"
 echo "  11) STM 24 P0210 (UFS910, octagon1008, Fortis based (HDBOX), SPARK, Atevio7500)"
 echo "  12) STM 24 P0211 (UFS910, octagon1008, Cuberevo (IPBOX 9000), Fortis based (HDBOX), SPARK, Atevio7500)"
+echo "  13) STM 24 P0302 (UFS913)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
 echo "   2) STM 23 P0119"
@@ -166,7 +167,7 @@ case $2 in
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
-        read -p "Select kernel (1-12)? ";;
+        read -p "Select kernel (1-13)? ";;
 esac
 
 case "$REPLY" in
@@ -180,6 +181,7 @@ case "$REPLY" in
 	10) KERNEL="--enable-stm24 --enable-p0209";STMFB="stm24";;
 	11) KERNEL="--enable-stm24 --enable-p0210";STMFB="stm24";;
 	12) KERNEL="--enable-stm24 --enable-p0211";STMFB="stm24";;
+	13) KERNEL="--enable-stm24 --enable-p0302";STMFB="stm24";;
 	*)  KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"
