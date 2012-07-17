@@ -1192,6 +1192,7 @@ if ENABLE_ATEVIO7500
 else
 	if !ENABLE_SPARK7162
 		cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
+	endif
 endif
 
 if !ENABLE_VIP2_V1
