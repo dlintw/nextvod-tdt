@@ -1189,6 +1189,7 @@ if ENABLE_CUBEREVO_9500HD
 endif
 if ENABLE_ATEVIO7500
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/multituner/*.ko $(prefix)/release/lib/modules/
+endif
 if !ENABLE_SPARK7162
 if !ENABLE_ATEVIO7500
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
