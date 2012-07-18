@@ -4,15 +4,16 @@ audio.srs_algo_light lekki
 audio.srs_algo_normal normalny
 audio.srs_iq Algorytm SRS TruVolume
 audio.srs_nmgr Zarządzanie głośnością
-audio.srs_volume Reference volume
+audio.srs_volume Głośność standardowa
 audiomenu.analogout Dźwięk analogowy
 audiomenu.avs avs
 audiomenu.avs_control Tryb sterowania głośnością
 audiomenu.avsync Synchronizacja audio-wideo
 audiomenu.avsync_am Główne audio
-audiomenu.clockrec
+audiomenu.clockrec Czas nagrywania
 audiomenu.dolbydigital Dolby Digital
 audiomenu.hdmi_dd Dolby Digital przez HDMI
+audiomenu.hdmi_dd_source HDMI DD Source
 audiomenu.head Ustawienia dźwięku
 audiomenu.lirc lirc
 audiomenu.monoleft mono lewy kanał
@@ -22,6 +23,15 @@ audiomenu.PCMOffset Zmniejszenie głośności PCM
 audiomenu.spdif_dd Dolby Digital przez SPDIF
 audiomenu.stereo stereo
 audiomenu.volume_step Krok regulacji głośności
+audiomenu.ac3_delay AC3 Delay
+audiomenu.pcm_delay PCM Delay
+audiomenu.auto_lang Auto select audio
+audiomenu.auto_subs Auto select subtitles
+audiomenu.pref_lang Prefered language
+audiomenu.pref_lang_head Audio/EPG language preferences
+audiomenu.pref_languages Language preferences
+audiomenu.pref_subs Prefered subtitle language
+audiomenu.pref_subs_head Subtitle language preferences
 audioplayer.add Dodaj
 audioplayer.add_ic Icecast
 audioplayer.add_loc Lokalna
@@ -68,6 +78,7 @@ audioplayer.shuffle Sortuj losowo
 audioplayer.spectrum Analizator widma 
 audioplayer.stop Zatrzymaj
 audioplayer.title_artist tytuł, wykonawca
+audioplayersettings.general Ustawienia odtwarzacza audio
 audioplayerpicsettings.general Przeglądarka i odtwarzacz audio
 AUDIOSelectMenue.head Ścieżka audio i napisy
 AUDIOSelectMenue.no_tracks Brak ścieżek dźwiękowych
@@ -92,6 +103,7 @@ bouqueteditor.savingchanges Trwa zapisywanie zmian, proszę czekać...
 bouqueteditor.switch dodaj/usuń kanał
 bouqueteditor.switchmode TV / Radio
 bouquetlist.head Bukiety
+terrestrialsetup.provider Dostawca telewizji naziemnej
 cablesetup.provider Dostawca telewizji kablowej
 cam.empty Brak modułu w gnieździe
 cam.init_ok Pomyślna inicjalizacja modułu
@@ -109,6 +121,7 @@ channellist.favs Ulubione
 channellist.head Wszystkie kanały
 channellist.history Historia
 channellist.make_hdlist Bukiet z kanałami HD
+channellist.ca Ikony wyświetlacza
 channellist.nonefound Brak listy kanałów! Uruchom\nwyszukiwanie kanałów\n(Menu -> Usługi)
 channellist.provs Dostawcy
 channellist.sats Satelity
@@ -121,7 +134,9 @@ colorchooser.red Czerwony
 colormenu.background Kolor tła
 colormenu.fade Zanikanie menu
 colormenu.font Wielkość fontu
+colormenu.blendmode Tryb przejrzystość
 colormenu.gtx_alpha Przezroczystość (GTX)
+colormenu.gain Wzmocnienie koloru
 colormenu.head Ustawienia kolorów
 colormenu.menucolors Kolory menu
 colormenu.statusbar Pasek stanu
@@ -142,6 +157,9 @@ colorthememenu.gray szary
 colorthememenu.head Wybór tematów
 colorthememenu.neutrino_theme Neutrino
 colorthememenu.red_theme czerwony
+colorthememenu.pinky_theme Pinky
+colorthememenu.neutrinohd2_theme NeutrinoHD2
+colorthememenu.gigablue_theme Giga-Blue
 cpu.freq Prędkość procesora
 cpu.freq_default standardowa
 cpu.freq_normal pełna
@@ -289,6 +307,8 @@ extra.menu_left_exit "Lewy" - powrót do poprzedniego menu
 extra.north północ
 extra.record_time Bufor opcji timeshift (godz.)
 extra.rotor_swap Zamiana kierunków obrotnicy
+servicemenu.tuner_to_scan Tuner do skanowania
+extra.mbpreview Podgląd Biblioteki nagrań
 extra.savecolors Zapisz jako...
 extra.saveconfig Zapisz jako...
 extra.savekeys Zapisz ustawienia pilota
@@ -299,6 +319,7 @@ extra.sms_channel Tryb sms dla kanału
 extra.south południe
 extra.spts_mode Tryb SPTS
 extra.start_tostandby Tryb gotowości po uruchomieniu 
+extra.timeshift Timeshift
 extra.temp_timeshift Osobny katalog dla timeshift/pauzy
 extra.timeshift_pause Pauza
 extra.timezone Strefa czasowa
@@ -310,6 +331,9 @@ extra.tp_mod_16 QAM/16
 extra.tp_mod_256 QAM/256
 extra.tp_mod_32 QAM/32
 extra.tp_mod_64 QAM/64
+extra.tp_band Bandwidth
+extra.tp_hp Code Rate HP
+extra.tp_lp Code Rate LP
 extra.tp_pol Polaryzacja
 extra.tp_pol_h H
 extra.tp_rate SR
@@ -391,6 +415,10 @@ flashupdate.md5check Sprawdzanie sumy kontrolnej
 flashupdate.md5sumerror Nieprawidłowa suma kontrolna
 flashupdate.msgbox Dane wybranej aktualizacji:\nData: %s, %s\nWymagana wersja oprogramowania: %s\nTyp: %s\n\nPobrać i zainstalować wybraną aktualizację?
 flashupdate.msgbox_manual Dane wybranej aktualizacji:\nData: %s, %s\nWymagana wersja oprogramowania: %s\nTyp: %s\n\nZainstalować wybraną aktualizację?
+flashupdate.flashmd5sumerror Image zawiera błędy
+flashupdate.packagemd5sumerror Pakiet zawiera błędy
+flashupdate.flashmsgbox Znaleziono następujące nowy obraz: \ nDate:% s,% s nBaseImage \:% s \ nImageType:% s \ n \ nCzy chcesz zainstalować tę wersję?
+flashupdate.packagemsgbox Znaleziono następujące nowy pakiet: nPackage \:% s \ nDate:% s,% s \ nBaseImage:% s \ nType:% s \ n \ nCzy chcesz pobrać i zainstalować tę wersję?
 flashupdate.mtdselector Wybór partycji
 flashupdate.programmingflash Programowanie pamięci flash
 flashupdate.proxypassword Hasło
@@ -420,6 +448,10 @@ flashupdate.versioncheck Sprawdź wersję
 flashupdate.writeflash Zapis całej pamięci flash
 flashupdate.writeflashmtd Zapis pojedynczej partycji
 flashupdate.wrongbase Niepoprawna wersja oprogramowania bazowego.\nKontynouwać? 
+flashupdate.noversion Ręczne sprawdzanie aktualizacji pakietów w tej wersji nie są obecnie obsługiwane. \ nCzy jesteś pewien, że chcesz zainstalować ten pakiet?
+flashupdate.downloadedimage Flash Image pobrać?
+flashupdate.installpackage chcesz zainstalować ten pakiet?
+flashupdate.installfailed instalacja pakietu nie powiodła się
 fontmenu.channellist Lista kanałów
 fontmenu.epg EPG
 fontmenu.eventlist Lista programów
@@ -441,7 +473,7 @@ fontsize.eventlist_title Tytuł listy programów
 fontsize.filebrowser_item Przeglądarka plików
 fontsize.gamelist_itemlarge duża
 fontsize.gamelist_itemsmall mała
-fontsize.hint Trwa inicjalizowanie fontu, proszę czekać...
+fontsize.hint Trwa inicjalizacja czcionki,\nproszę czekać...
 fontsize.infobar_channame Nazwa kanału
 fontsize.infobar_info Informacja na pasku
 fontsize.infobar_number Kanał na pasku informacyjnym
@@ -542,11 +574,15 @@ hdd_fast minimalne
 hdd_format Tworzenie systemu plików (ext3)
 hdd_format_failed Błąd podczas tworzenia systemu plików!
 hdd_format_warn Na pewno utworzyć nowy system plików?\nWszystkie dane zostaną utracone!
+hdd_init_failed Inicjalizacja dysku się nie powiodła!
 hdd_fs System plików
 hdd_manage Zarządzanie
 hdd_middle średnie
 hdd_noise Wyciszenie
 hdd_not_found Brak dysku twardego
+hdd_init Inicjalizacja dysku twardego
+hdd_init_warn Czy na pewno inicjalizować?
+hdd_browser HDD Explorer
 hdd_reiser ReiserFS
 hdd_settings Dysk twardy
 hdd_sleep Stan gotowości
@@ -561,6 +597,7 @@ imageinfo.homepage Str. domowa:
 imageinfo.image Nazwa:
 imageinfo.license Licencja:
 imageinfo.version Wersja:
+imageinfo.type Type:
 inetradio.name Radio internetowe
 infobar.bar_color Kolor paska
 infobar.picon Logo
@@ -570,7 +607,7 @@ infobar.picon_normal standardowe
 infoviewer.epgnotload Informacje nie zostały jeszcze odczytane...
 infoviewer.epgwait Trwa odczytywanie informacji EPG...
 infoviewer.eventlist Informacje
-infoviewer.languages Audio
+infoviewer.languages Dźwięk
 infoviewer.motor_moving Ustawienie anteny
 infoviewer.next Później
 infoviewer.nocurrent Brak informacji o bieżącym programie
@@ -632,7 +669,10 @@ lcdmenu.statusline Pasek stanu
 lcdmenu.statusline.both głos / czas odtwarzania
 lcdmenu.statusline.playtime czas
 lcdmenu.statusline.volume głośność
+lcdmenu.scrolltext Przewijanie nazwy usługi
+lcdmenu.setfptime Ustaw czas VFD
 mainmenu.audioplayer Odtwarzacz audio
+mainmenu.inetradio Radio internetowe
 mainmenu.clearsectionsd Czyść bufor EPG
 mainmenu.games EMU
 mainmenu.head Menu główne
@@ -672,6 +712,7 @@ messagebox.discard Czy chcesz odrzucić zmiany?
 messagebox.error Błąd!
 messagebox.info Informacja
 messagebox.no NIE
+messagebox.ok OK
 messagebox.yes TAK
 miscsettings.bootinfo Informacje przy starcie
 miscsettings.bootmenu Pokaż boot menu
@@ -695,9 +736,14 @@ miscsettings.epg_old_events_hint2 pokazywać stare wpisy.
 miscsettings.epg_save Zapis i przywracanie EPG 
 miscsettings.fb_destination Konsola startowa
 miscsettings.general Ogólne
+servicemenu.tuner Ustawienia tunera
+miscsettings.zapit Start Channel
 miscsettings.head Ustawienia różne
 miscsettings.hwsections użyj sekcji hardware 
 miscsettings.infobar_sat_display Wyświetlanie nazwy satelity
+miscsettings.infobar_showca Infobar Crypticons
+miscsettings.infobar_radiotext Radio Text
+miscsettings.infobar_hddvar_display HDD Display
 miscsettings.noaviawatchdog włącz AVIA watchdog
 miscsettings.noenxwatchdog włącz eNX watchdog
 miscsettings.pmtupdate włącz aktualizację pmt 
@@ -743,7 +789,7 @@ motorcontrol.timed_mode Czas dla trybu krokowego
 motorcontrol.user_menu Menu użytkownika
 motorcontrol.west_limit Ustawienie limitu kierunku zachodniego 
 moviebrowser.book_clear_all Wyczyść wszystko
-moviebrowser.book_head Bookmarks
+moviebrowser.book_head Zakładki
 moviebrowser.book_lastmoviestop od ostatniego miejsca
 moviebrowser.book_movieend koniec filmu:
 moviebrowser.book_moviestart Start filmu:
@@ -785,8 +831,8 @@ moviebrowser.hint_newbook_forward Nowy skok w przód\n 'niebieski' końcowa pozy
 moviebrowser.info_audio Audio
 moviebrowser.info_channel Kanał
 moviebrowser.info_filename Nazwa
-moviebrowser.info_genre_major Genre
-moviebrowser.info_genre_minor Genre
+moviebrowser.info_genre_major Rodzaj
+moviebrowser.info_genre_minor Rodzaj
 moviebrowser.info_head Informacja o filmie
 moviebrowser.info_head_update Zapisz zmiany we wszystkich plikach 
 moviebrowser.info_info1 Info 1
@@ -864,8 +910,10 @@ movieplayer.bookmarkname_hint2 Podaj nazwę nowej zakładki
 movieplayer.buffering Trwa buforowanie...
 movieplayer.defdir Katalog startowy
 movieplayer.defplugin Uruchom wtyczkę
+movieplayer.vlcplayback Net Stream
 movieplayer.dvdplayback DVD
 movieplayer.fileplayback Odtwórz plik...
+movieplayer.showtshelp Help
 movieplayer.goto Skocz do ...
 movieplayer.goto.h1 = -> skok bezwzględny
 movieplayer.goto.h2 +,- -> skok względny
@@ -905,7 +953,7 @@ mpkey.audio Utwór audio
 mpkey.bookmark zapisz zakładkę
 mpkey.forward Do przodu
 mpkey.pause Pauza
-mpkey.play Play
+mpkey.play Odtwórz
 mpkey.plugin Uruchom wtyczkę
 mpkey.rewind Wstecz
 mpkey.stop Stop
@@ -949,6 +997,7 @@ nfs.type Protokół
 nfs.type_cifs CIFS
 nfs.type_lufs FTPFS
 nfs.type_nfs NFS
+nfs.type_smbfs SMBFS
 nfs.umount Odłącz katalog
 nfs.umounterror Błąd podczas odłączania.
 nfs.username Nazwa użytkownika (CIFS)
@@ -964,7 +1013,7 @@ options.null brak
 options.off NIE 
 options.on TAK 
 options.on.without_messages Bez wiadomości
-options.serial serial
+options.serial RS-232
 parentallock.changepin Zmiana kodu PIN
 parentallock.changepin_hint1 Wpisz nowy kod PIN.
 parentallock.changetolocked zablokowane bukiety
@@ -979,6 +1028,7 @@ parentallock.never nigdy
 parentallock.onsignal sygnał nadawcy
 parentallock.parentallock Blokada rodzicielska
 parentallock.prompt Żądanie kodu PIN
+pictureviewersettings.general Picviewer
 pictureviewer.decode_server_ip IP serwera dekodującego
 pictureviewer.decode_server_port Port serwera dekodującego
 pictureviewer.defdir Katalog startowy
@@ -1015,6 +1065,8 @@ pictureviewer.slideshow Pokaz slajdów
 pictureviewer.sortorder Sortuj wg
 pictureviewer.sortorder.date daty
 pictureviewer.sortorder.filename nazwy pliku
+pictureviewer.background Kolor tła
+pictureviewer.picaudiofile Audio Music File
 ping.ok jest dostępny (ping)
 ping.protocol jest niedostępny (błąd hosta lub protokołu)
 ping.socket jest niedostępny (błąd gniazda)
@@ -1033,7 +1085,7 @@ recordingmenu.apids_alt Nagraj wszystkie ścieżki
 recordingmenu.apids_std Nagraj podstawową ścieżkę
 recordingmenu.choose_direct_rec_dir Wybierz katalog dla nagrywania
 recordingmenu.defdir Katalog nagrań
-recordingmenu.epg_for_filename long filenames (with EPG data)
+recordingmenu.epg_for_filename Długie nazwy (z danymi EPG)
 recordingmenu.file dysk
 recordingmenu.filesettings Bezpośrednie ustawienia nagrywania 
 recordingmenu.head Ustawienia nagrywania
@@ -1042,7 +1094,7 @@ recordingmenu.no_scart Nie przełączaj w tryb SCART
 recordingmenu.off wyłączone
 recordingmenu.record_in_spts_mode Przełącz do spts przed nagrywaniem
 recordingmenu.recording_type Urządzenie nagrywające
-recordingmenu.ringbuffers no. of ringbuffers
+recordingmenu.ringbuffers liczba buforów
 recordingmenu.save_in_channeldir Zapisz w katalogu 
 recordingmenu.server Serwer nagrywania
 recordingmenu.server_ip Adres IP serwera
@@ -1055,7 +1107,8 @@ recordingmenu.stopplayback Zatrzymaj odtwarzanie
 recordingmenu.stopsectionsd Zatrzymaj sekcję
 recordingmenu.stream_pmt_pid nagrywaj PMT
 recordingmenu.stream_vtxt_pid Nagrywaj teletext
-recordingmenu.tsdir timeshift directory
+recordingmenu.stream_subtitle_pid record Subtitle
+recordingmenu.tsdir folder dla timeshift
 recordingmenu.use_fdatasync Zapis synchroniczny
 recordingmenu.use_o_sync Zapis synchroniczny (O_SYNC)
 recordingmenu.vcr magnetowid
@@ -1067,7 +1120,7 @@ reset_all Ustawienia fabryczne
 reset_channels Usuwanie listy kanałów
 reset_confirm Jesteś pewny?
 reset_settings Przywróć domyślne
-rfmod.carrier Czestotliwość
+rfmod.carrier Częstotliwość
 rfmod.carrier4500 4.5
 rfmod.carrier5500 5.5
 rfmod.carrier6000 6.0
@@ -1091,7 +1144,7 @@ satsetup.diseqc10 DiSEqC 1.0
 satsetup.diseqc11 DiSEqC 1.1
 satsetup.diseqc12 DiSEqC 1.2
 satsetup.diseqcrepeat Liczba powtórzeń DiSEqC
-satsetup.do_scan Include in all scan
+satsetup.do_scan Dołącz przy skanowaniu wszystkich
 satsetup.extended Konfiguracja DiSEqC
 satsetup.extended_motor Konfiguracja siłownika
 satsetup.lofh Wysoki offset LNB
@@ -1118,6 +1171,7 @@ scants.abort_body Czy napewno przerwać wyszukiwanie?
 scants.abort_header Przerwij skanowanie
 scants.actcable Kabel:
 scants.actsatellite Satelita:
+scants.actterrestrial DVB-T:
 scants.bouquet Bukiety
 scants.bouquet_create utwórz nowe
 scants.bouquet_erase usuń
@@ -1159,6 +1213,8 @@ settings.missingoptionsconffile Ustawienia Neutrino zostały rozszerzone.\nDla n
 settings.noconffile Nie można odnaleźć ustawień Neutrino.\nZostaną użyte wartości domyślne.
 settings.pos_bottom_left dolny lewy róg
 settings.pos_bottom_right dolny prawy róg
+settings.pos_default_center top center
+settings.pos_higher_center higher center
 settings.pos_top_left górny lewy róg
 settings.pos_top_right górny prawy róg
 shutdown.recoding_query Czy naprawdę chcesz przerwać nagranie ?
@@ -1177,6 +1233,7 @@ streaminfo.framerate Klatek/s
 streaminfo.framerate_unknown Klatek/s: brak danych
 streaminfo.head Informacje o strumieniu
 streaminfo.not_available niedostępne
+streaminfo.mode Rozdzielczość
 streaminfo.resolution Rozdzielczość
 streaminfo.signal Parametry sygnału
 streaming.buffer_overflow Nagrywanie zostało przerwane z powodu zbyt dużych opóźnień w zapisie.
@@ -1234,6 +1291,7 @@ timerlist.modify Edytuj
 timerlist.name Programator
 timerlist.new Dodaj
 timerlist.overlapping_timer Konflikt timer'a. Utworzyć mimo wszystko?
+timerlist.plugin Plugin
 timerlist.program.unknown Nieznany program
 timerlist.recording_dir Katalog nagrań
 timerlist.reload Odśwież
@@ -1305,11 +1363,16 @@ usermenu.button_blue Przycisk niebieski
 usermenu.button_green Przycisk zielony
 usermenu.button_red Przycisk czerwony
 usermenu.button_yellow Przycisk żółty
+usermenu.button_f1 Przycisk F1
+usermenu.button_f2 Przycisk F2
+usermenu.button_f3 Przycisk F3
+usermenu.button_f4 Przycisk F4
 usermenu.head Menu użytkownika
 usermenu.item_bar ---- Separator ----
 usermenu.item_epg_misc Opcje EPG
 usermenu.item_none wolne
 usermenu.item_vtxt Teletekst
+usermenu.item_plugins Plugins
 usermenu.name Nazwa
 video_mode_ok Czy ten tryb wideo działa poprawnie?
 videomenu.43mode Tryb 4:3
@@ -1332,8 +1395,9 @@ videomenu.dbdr_none brak
 videomenu.enabled_modes Tryby wideo dla przycisku V.F
 videomenu.fullscreen pełny ekran
 videomenu.hdmi_color_space Kolory HDMI
+videomenu.colour_range Colour Range
 videomenu.head Ustawienia obrazu
-videomenu.letterbox letterbox
+videomenu.letterbox Letterbox
 videomenu.osd Grafika ekranowa
 videomenu.panscan Pan&Scan
 videomenu.panscan2 Pan&Scan 14:9
@@ -1346,7 +1410,16 @@ videomenu.vcrsignal Wyp wyjścia VCR
 videomenu.vcrsignal_composite CVBS
 videomenu.vcrsignal_svideo S-Video
 videomenu.vcrswitch Automatycznie przełącz Scart
+videomenu.videoratio TV-System
+videomenu.videoratio_149 14:9
+videomenu.videoratio_169 16:9
+videomenu.videoratio_43 4:3
+videomenu.videoratio_autodetect Auto
 videomenu.videoformat Proporcje obrazu
+videomenu.panscan Pan&Scan
+videomenu.panscan2 Pan&Scan 14:9
+videomenu.letterbox Letterbox
+videomenu.fullscreen pełny ekran
 videomenu.videoformat_149 14:9
 videomenu.videoformat_169 16:9
 videomenu.videoformat_43 4:3
@@ -1362,3 +1435,188 @@ zapit.scantype.radio tylko radiowe
 zapit.scantype.tv tylko telewizyjne
 zapit.scantype.tvradio telewizyjne i radiowe
 zaptotimer.announce Za minutę zostanie zmieniony kanał.
+hddmenu.hddmount Zamontuj Dysk Twardy
+hddmenu.hddmounted Dysk Twardy zamontowany
+hddmenu.hddmountfailed Zamontowanie Dysk Twardy nie powiodło się
+hddmenu.hddumount Odmontuj Dysk Twardy
+hddmenu.hddumounted Dysk Twardy odmontowany
+mainmenu.mediaplayer Media Player
+osd.timezone Strefa czasowa
+osd.corners Kształt rogów
+osd.roundedcornersoff kanciaste
+osd.roundedcornerson zaokrąglone
+extra.volume_pos Pasek głośności
+progressbar.color Progressbar Color
+movieplayer.netstream Net Stream
+miscsettings.reset Ustawienia fabryczne
+videosettings.wss Wide Screen Auto
+zapitsetup.lastuse from last Channel
+zapitsetup.lastmode Uruchom tryb
+zapitsetup.lasttv Kanał telewizyjny
+zapitsetup.lastradio Kanał radiowy
+keybindingmenu.reload Odśwież EPG
+screenshot.announce stworzyć zrzut ekranu?
+screenshot.token tworzenie zrzutu ekranu ...
+screenshot.remove usunąć zrzut ekranu?
+servicemenu.restart_e2 Boot E2 as Standard
+helptext.tvmode Tutaj można przełączyć na Telewizje
+helptext.radiomode Tutaj można przełączyć na Radio
+helptext.scart Tutaj można przełączyć na Eurozłącze
+helptext.mediaplayer Tutaj można przełączyć na Mediaplayer.
+helptext.internetradio Tutaj można przełączyć na Radio Internetowe.
+helptext.audioplayer Tutaj można przełączyć na Odtwarzacz audio
+helptext.tsmoviebrowser Here you can play yout recorded files.
+helptext.fileplayback Tutaj możesz odtwarzać pliki
+helptext.netstream Here you can play streams from net.
+helptext.pictureviewer Tutaj możesz zobaczyć swoje zdjęcia
+helptext.upnpbrowser Tutaj możesz przełączyć się Przeglądarke UPnP
+helptext.mainsettings Tutaj możesz przełączyć się do głównych ustawień.
+helptext.service Tutaj można przejść do serwisu.
+helptext.sleeptimer Tutaj można ustawić Sleep Timer.
+helptext.reboot Tutaj można ponownie uruchomić urządzenie.
+helptext.shutdown Here you can shutdown your STB.
+helptext.boxinfo Here you can get HW infos about your STB.
+helptext.videosettings Here you can set up video setup.
+helptext.audiosettings Here you can set up audio setup.
+helptext.parentallock Here you can set up parental/pin setup.
+helptext.networksettings Here you can set up network setup.
+helptext.recordingsettings Here you can set up record setup.
+helptext.movieplayersettings Here you can set up movieplayer setup.
+helptext.osdsettings Here you can set up OSD setup.
+helptext.vfdsettings Here you can set up VFD setup.
+helptext.keyssettings Here you can set up remote control setup.
+helptext.audioplayersettings Here you can set up audioplayer setup.
+helptext.pictureviewersettings Here you can set up pictureviewer setup.
+helptext.miscsettings Here you can set up misc setup.
+helptext.hddsettings Here you can set up HDD setup.
+helptext.scansetup Here you can start channel scan.
+helptext.reloadchannels Here you can load the channel list.
+helptext.bouquteseditor Here you can edit your favorits list.
+helptext.deletechannels Here you can delete the channels list.
+helptext.cam Here you can set up you Cam modul.
+helptext.reloadplugins Here you can reload the plugins list.
+helptext.imageinfo Here you can get infos about the software.
+helptext.softrestart Here you can restart the software.
+helptext.softwareupdate Here you can update the software.
+helptext.miscsettingsgeneral Here you can set up dviers misc setup.
+helptext.miscsettingschannellist Here you can set up channel lists.
+helptext.miscsettingsepg Here you can set up EPG.
+helptext.miscsettingsfilebrowser Here you can set up the filebrowser.
+helptext.miscsettingszapitsetup Here you can set up the start-program and mode.
+miscsettings.logosdir Sender logos Dir
+
+mainmenu.extras Dodatki BPanther-a
+neutrino.delete_epg Kasowanie EPG...
+neutrino.save_epg Zapis EPG...
+EmuMenu.actsettings Zapisz ustawienia
+EmuMenu.emu_standby_off Zatrzymaj EMU w uśpieniu
+extrasMenu.emu Wybierz EMU
+extrasMenu.restartnet Restart sieci
+extrasMenu.bkprst Save/Restore ustawień
+BkpRstMenu.bkprst_bkpall Zapisz ustawienia
+BkpRstMenu.bkprst_rstall Odzyskaj ustawienia
+Neutrino.systemexecerror Błąd wewnętrzny, zrestartuj Neutrino.
+Neutrino.restart_msg1 Wymagany jest restart tunera, zrestartować teraz?
+Neutrino.restart_msg2 Zmiany zostaną aktywowane po restarcie tuners.
+swap.creating Czekaj na utworzenie pliku wymiany...
+swap.creating_ok Plik wymiany utworzony.
+swap.deleting Kasowanie pliku wymiany...
+swap.deleting_ok Plik wymiany został skasowany.
+extrasMenu.swap Utwórz plik wymiany
+extrasMenu.highsr highSR
+extrasMenu.modchange Zmiana modułów
+extrasMenu.vfd_setting Wyświetlacz VFD
+extrasMenu.vfd_center Centruj tekst na VFD
+extrasMenu.vfd_scroll Przesuwaj tekst na VFD
+extrasMenu.vfd_icons Wyłącz ikony na VFD
+extrasMenu.infobar_settings Ustawienia Infobar
+extrasMenu.infobar_show_cryptinfo Info o syst. kodowania
+extrasMenu.infobar_show_emu Informacja o EMU
+extrasMenu.infobar_show_res Info o rozdzielczości obrazu
+extrasMenu.onlineupdate Aktualizacja Online/Offline
+extrasMenu.onlineupdate_news Co nowego?
+extrasMenu.onlineupdate_check Sprawdź czy jest nowa wersja
+extrasMenu.onlineupdate_force Wymuś update
+extrasMenu.personalize Personalizacja
+options.on_star wł*
+EmuMenu.msg1_actsettings Inicjalizacja ustawień, czekaj...
+EmuMenu.msg2_actsettings Ustawienia zainicjowane, Rezapping...
+EmuMenu.cardserver Serwer
+BkpRstMenu.msg1_bkp Tworzenia kopii...
+BkpRstMenu.msg2_bkp Kopia wykonana do pliku backup.tar.gz
+BkpRstMenu.msg3_bkp Błąd tworzenia kopii.
+BkpRstMenu.msg1_rst Instalacja ustawień...
+BkpRstMenu.msg2_rst Ustawienia zainstalowane\nRestaruję Neutrino...
+BkpRstMenu.msg3_rst Błąd instalacji ustawień.\nZrestartuj Neutrino i spróbuj jeszcze raz.
+EmuMenu.Info_Head Informacja o EMU
+EmuMenu.Info skrócona informacja o Menu EMU.\n \nEMU -> /var/emu\nKonfiguracja/Keys -> /var/keys\n \nMenu jest wyszarzone, gdyż brakuje plików w /var/emu,\n lub mają złe nazwy\nNazwa pliku powinna być dokładnie taka jak nazwa opcji w Menu\n
+Update.Loading Ładuję info z serwera...
+Update.Err_Box FEHLER: Nieznana wersja softu w tunerze!
+Update.Err_Server FEHLER: Nieznana wersja softu na serwerze!
+Update.New_Version Wersja softu w tunerze   : %s - %i\nWersja softu na serwerze: %s - %i\n \nZnaleziono nową wersję softu.\n \nZostanie wykonana kopia aktualnych ustawień\ni uruchomiony update. Zostanie również zatrzymane\nNeutrino dla bezpieczeństwa. Po wykonaniu update'u\ntuner zostanie automatycznie zrestartowany\n \nCzy chcesz rozpocząć update?
+Update.No_New_Version Nie znaleziono nowej wersji softu.
+Update.startet Uruchomiono update, czekaj...
+Update.abort Update przerwany...
+Update.force Wymusić update?\n
+Update.Offline_reask Upewnij się, że pliki\nUpdate.tar.gz i Update.md5 znajdują się w /tmp.\n \nUruchomić update z dysku?\n
+Update.Offline_startet Update z dysku został uruchomiony, czekaj...
+Update.MD5Check Sprawdzanie MD5...
+Update.MD5Error Błąd sumy MD5.
+Update.FreeSpace Wolne miejsce w /var: %d kB.\nZarezerwowano -250 kB jako rezerwę, pozostało: %d kB.\nInstalacja needs: %d kB\n \nNa pewno zainstalować?
+Update.Addons_Menu Pobieranie dodatków
+extrasMenu.Start_Res Rozdzielczość startowa
+Module.cx24116 Sterownik tunera
+Module.stmdvb stmdvb
+Module.pti pti
+Module.player2_nas player2 - noaudiosync
+Module.player2_dlf player2 - discardlateframe
+Module.player2_uoafw player2 - useoldaudiofw
+Module.ftdi ftdi_sio
+Module.pl2303 pl2303
+Standby.Head Ustawienia trybu uśpienia
+Standby.Wakeup Budzenie przed nagrywaniem (s.)
+Standby.green Zielona dioda
+Standby.red Czerwona dioda
+Standby.yellow Żółta dioda
+Standby.green_timer Zielona dioda (Timer)
+Standby.red_timer Czerwona dioda (Timer)
+Standby.yellow_timer Żółta dioda (Timer)
+extrasMenu.extended_menu Ustawienia rozszerzone
+extrasMenu.extended_ac3_downmix Miksuj AC3
+extrasMenu.RGB_on_SCART Tryb RGB na SCART
+extrasMenu.openVPN openVPN
+extrasMenu.Telnet_wo_login Telnet bez logowania
+extrasMenu.No_Mount Montuj tylko znane partycje
+extrasMenu.SWAP_Partition Partycja SWAP
+extrasMenu.Offline_Update Update softu z dysku
+extrasMenu.infobar_show_satsig Wyświetl parametry sygnału?
+extrasMenu.No_FSCK Sprawdzanie HDD wyłączone
+extrasMenu.No_RAMCLEAN Czyszczenie pamięci wyłączone
+extrasMenu.SWAP_Partition Partycja SWAP
+extrasMenu.Offline_Update Aktualizacja Offline (Image)
+extrasMenu.infobar_show_satname Wyświetl nazwę satelity
+Standby.Pwrled Jasność diody 'Power' (0..7)
+extrasMenu.check_swap Sprawdź partycję SWAP (ext2/3) przy następnym starcie
+extrasMenu.ramcln Czyszczenie RAM (s., 0=wył)
+extrasMenu.amount Auto montowanie sdX1 -> /dev/hdd
+extrasMenu.netspeed Prędkość sieci
+extrasMenu.stoprec Brak informacji na TV przy zatrzymaniu nagrywania
+extra.zapit_tuner Wybierz tuner
+osd.timezone Strefa czasowa
+osd.corners Kształt rogów
+osd.roundedcornersoff kanciaste
+osd.roundedcornerson zaokrąglone
+
+extrasMenu.glcd Ustawienia GLCD
+extrasMenu.glcd_enable GLCD wł/wył
+extrasMenu.glcd_color_fg GLCD-kolor czcionki
+extrasMenu.glcd_color_bg GLCD-kolor tła
+extrasMenu.glcd_color_bar GLCD-kolor paska postępu
+extrasMenu.glcd_percent_channel GLCD-Wielkość nazwy kanału
+extrasMenu.glcd_percent_epg GLCD-Wielkość EPG
+extrasMenu.glcd_percent_bar GLCD-Wielkość paska postępu
+extrasMenu.glcd_percent_time GLCD-Wielkość zegara
+extrasMenu.glcd_usertime GLCD-Zegar
+extrasMenu.glcd_usertime_standby GLCD-Zegar w trybie czuwania
+extrasMenu.glcd_mirror_osd GLCD-Wyświetl OSD
+extrasMenu.glcd_font GLCD Czcionka
