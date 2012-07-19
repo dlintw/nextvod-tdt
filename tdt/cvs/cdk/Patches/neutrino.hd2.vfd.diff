@@ -1,6 +1,6 @@
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/vfd.cpp neutrino-hd2/src/driver/vfd.cpp
---- neutrino-hd2.org/src/driver/vfd.cpp	2012-07-12 23:06:49.292766711 +0200
-+++ neutrino-hd2/src/driver/vfd.cpp	2012-07-13 14:48:34.664327637 +0200
+--- neutrino-hd2.org/src/driver/vfd.cpp	2012-07-15 12:55:17.988766833 +0200
++++ neutrino-hd2/src/driver/vfd.cpp	2012-07-16 21:21:03.832266427 +0200
 @@ -42,30 +42,36 @@
  #include <math.h>
  #include <system/debug.h>
@@ -54,25 +54,86 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  }
  #endif
  
-@@ -349,6 +355,7 @@
+@@ -222,12 +228,14 @@
+ 	if( ioctl(fd, FRONT_IOCS_VFDBRIGHT, &brightness) < 0 )
+ 		perror("FRONT_IOCS_VFDBRIGHT");
+ #elif defined (PLATFORM_DUCKBOX)
+-        struct vfd_ioctl_data data;
+-	data.start_address = dimm;
+-	
+-	openDevice();
++
++	if(dimm < 1)
++		dimm = 1;
++	brightness = dimm;
++
++  openDevice();
+ 	
+-	if( ioctl(fd, VFDBRIGHTNESS, &data) < 0)
++	if( ioctl(fd, VFDBRIGHTNESS, &brightness) < 0)
+ 		perror("VFDBRIGHTNESS");
+ 	
+ 	closeDevice();
+@@ -349,10 +357,12 @@
  
  	volume = vol;
  	wake_up();
 +#if !defined (PLATFORM_DUCKBOX)
  	ShowIcon(VFD_ICON_FRAME, true);
- 
+-
++#endif
  	if ((mode == MODE_TVRADIO) && g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME]) 
-@@ -374,7 +381,8 @@
+ 	{
++#if !defined (PLATFORM_DUCKBOX)
+ 		int pp = (int) round((double) vol * (double) 8 / (double) 100);
+ 		if(pp > 8) pp = 8;
+ 
+@@ -374,7 +384,43 @@
  			}
  			oldpp = pp;
  		}
 -	}	
-+	}
++#else
++    int pp = (int) round((double) vol / (double) 2);
++    int i;
++    int j = pp / 5;
++    // v-lines 0-5 = {0x10,0x11,0x12,0x13,0x14,0x15}
++    char c1[1] = {0x11};
++    char c2[1] = {0x12}; 
++    char c3[1] = {0x13};
++    char c4[1] = {0x14};
++    char c5[1] = {0x15};
++    char VolumeBar[15];
++    memset (VolumeBar,0,sizeof VolumeBar);
++    strcpy(VolumeBar,"   ");
++    for(i=1; i <= j; i++)
++    {
++    strncat(VolumeBar,c5,1);
++    }
++    i = pp % 5;
++    switch (i)
++     {
++     case 1:
++       strncat(VolumeBar,c1,1);
++       break;
++     case 2:
++       strncat(VolumeBar,c2,1);
++       break;
++     case 3:
++       strncat(VolumeBar,c3,1);
++       break;
++     case 4:
++       strncat(VolumeBar,c4,1);
++       break;
++     }
++    dprintf(DEBUG_DEBUG,"CVFD::showVolume: vol %d - pp %d - fullblocks %d - mod %d - %s\n", vol, pp, j, i, VolumeBar);
++    ShowText(VolumeBar);
 +#endif
++	}
  }
  
  void CVFD::showPercentOver(const unsigned char perc, const bool perform_update)
-@@ -386,7 +394,8 @@
+@@ -386,7 +432,8 @@
  	{
  		if (g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME] == 0) 
  		{
@@ -82,7 +143,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			int pp;
  			if(perc == 255)
  				pp = 0;
-@@ -415,6 +424,7 @@
+@@ -415,6 +462,7 @@
  				}
  				percentOver = pp;
  			}
@@ -90,7 +151,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  		}
  	}	
  }
-@@ -556,7 +566,9 @@
+@@ -556,7 +604,9 @@
  #if !defined (PLATFORM_CUBEREVO_250HD) && !defined (PLATFORM_GIGABLUE)	
  			showServicename(servicename);
  #endif			
@@ -100,7 +161,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showclock = true;
  			//showTime();      /* "showclock = true;" implies that "showTime();" does a "displayUpdate();" */
  			break;
-@@ -564,7 +576,9 @@
+@@ -564,7 +614,9 @@
  		case MODE_AUDIO:
  		{
  			ShowIcon(VFD_ICON_MP3, true);
@@ -110,7 +171,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showAudioPlayMode(AUDIO_MODE_STOP);
  			showVolume(volume, false);
  			showclock = true;
-@@ -575,7 +589,9 @@
+@@ -575,7 +627,9 @@
  		}
  
  		case MODE_SCART:
@@ -120,7 +181,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showVolume(volume, false);
  			showclock = true;
  			//showTime();      /* "showclock = true;" implies that "showTime();" does a "displayUpdate();" */
-@@ -598,14 +614,18 @@
+@@ -598,14 +652,18 @@
  			ShowIcon(VFD_ICON_COL1, true);
  			ShowIcon(VFD_ICON_COL2, true);
  #endif
@@ -139,7 +200,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			ShowIcon(VFD_ICON_HD, false);
  			ShowIcon(VFD_ICON_DOLBY, false);
  			
-@@ -613,7 +633,9 @@
+@@ -613,7 +671,9 @@
  			break;
  			
  		case MODE_TS:
@@ -149,9 +210,55 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showclock = false;
  			break;
  		
+@@ -1237,9 +1297,9 @@
+ #if defined (PLATFORM_CUBEREVO) || defined (PLATFORM_CUBEREVO_MINI) || defined (PLATFORM_CUBEREVO_MINI2) || defined (PLATFORM_CUBEREVO_MINI_FTA) || defined (PLATFORM_CUBEREVO_2000HD) || defined (PLATFORM_CUBEREVO_250HD) || defined (PLATFORM_CUBEREVO_9500HD)	
+ 	vfd_set_icon(icon, show);
+ #elif defined (PLATFORM_DUCKBOX)	
+-        struct vfd_ioctl_data data;
++  struct vfd_ioctl_data data;
+ 
+-        data.data[0] = icon;
++  data.data[0] = icon;
+ 	data.data[4] = show ? 1 : 0;
+ 	
+ 	openDevice();
+@@ -1360,14 +1420,16 @@
+ 	int len = strlen(str);
+ 	int i;
+ 	
+-	for(i = len-1; i > 0; i--) 
++	
++  for(i = len-1; i > 0; i--) 
+ 	{
+ 		if(str[i] == ' ')
+ 			str[i] = 0;
+ 		else
+ 			break;
+ 	}
+-
++	
++  /*
+ 	if(!strcmp(str, text) || len > 255)
+ 	{
+ 	        //printf("CVFD::ShowText < %s - %s\n", str, text);
+@@ -1375,10 +1437,12 @@
+         }
+ 	
+ 	strcpy(text, str);
+-	  
++	*/
++    
+ 	openDevice();
+ 	
+-	if( write(fd , str, len > 16? 16 : len ) < 0)
++	printf("CVFD::ShowText >%s< - %d\n", str, len);
++  if( write(fd , str, len > 16? 16 : len ) < 0)
+ 		perror("write to vfd failed");
+ 	
+ 	closeDevice();
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/vfd.h neutrino-hd2/src/driver/vfd.h
---- neutrino-hd2.org/src/driver/vfd.h	2012-07-08 23:47:03.328767829 +0200
-+++ neutrino-hd2/src/driver/vfd.h	2012-07-09 01:15:53.620266406 +0200
+--- neutrino-hd2.org/src/driver/vfd.h	2012-07-15 12:55:17.980766767 +0200
++++ neutrino-hd2/src/driver/vfd.h	2012-07-15 13:47:18.756266403 +0200
 @@ -46,6 +46,26 @@
  // neutrino common
  typedef enum
