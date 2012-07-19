@@ -1,6 +1,6 @@
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/vfd.cpp neutrino-hd2/src/driver/vfd.cpp
---- neutrino-hd2.org/src/driver/vfd.cpp	2012-07-15 12:55:17.988766833 +0200
-+++ neutrino-hd2/src/driver/vfd.cpp	2012-07-16 21:21:03.832266427 +0200
+--- neutrino-hd2.org/src/driver/vfd.cpp	2012-07-19 20:33:32.336766912 +0200
++++ neutrino-hd2/src/driver/vfd.cpp	2012-07-19 23:27:54.948410543 +0200
 @@ -42,30 +42,36 @@
  #include <math.h>
  #include <system/debug.h>
@@ -54,7 +54,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  }
  #endif
  
-@@ -222,12 +228,14 @@
+@@ -222,13 +228,15 @@
  	if( ioctl(fd, FRONT_IOCS_VFDBRIGHT, &brightness) < 0 )
  		perror("FRONT_IOCS_VFDBRIGHT");
  #elif defined (PLATFORM_DUCKBOX)
@@ -70,10 +70,12 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
 +  openDevice();
  	
 -	if( ioctl(fd, VFDBRIGHTNESS, &data) < 0)
-+	if( ioctl(fd, VFDBRIGHTNESS, &brightness) < 0)
- 		perror("VFDBRIGHTNESS");
+-		perror("VFDBRIGHTNESS");
++	//if( ioctl(fd, VFDBRIGHTNESS, &brightness) < 0)
++	//	perror("VFDBRIGHTNESS");
  	
  	closeDevice();
+ #endif		
 @@ -349,10 +357,12 @@
  
  	volume = vol;
@@ -257,8 +259,8 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  	
  	closeDevice();
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/vfd.h neutrino-hd2/src/driver/vfd.h
---- neutrino-hd2.org/src/driver/vfd.h	2012-07-15 12:55:17.980766767 +0200
-+++ neutrino-hd2/src/driver/vfd.h	2012-07-15 13:47:18.756266403 +0200
+--- neutrino-hd2.org/src/driver/vfd.h	2012-07-19 20:33:32.332266290 +0200
++++ neutrino-hd2/src/driver/vfd.h	2012-07-19 20:34:03.276266948 +0200
 @@ -46,6 +46,26 @@
  // neutrino common
  typedef enum
