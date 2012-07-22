@@ -222,6 +222,6 @@ netio126.zip;http://bnsmb.de/files/public/windows
 lighttpd-1.4.15.tar.gz;http://www.lighttpd.net/download
 zd1211lnxdrv_2_15_0_0.tar.gz;http://www.lutec.eu/treiber
 wireless_tools.29.tar.gz;http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux
-wpa_supplicant-0.5.9.tar.gz;http://hostap.epitest.fi/releases
+wpa_supplicant-1.0.tar.gz;http://hostap.epitest.fi/releases
 ethtool-6.tar.gz;http://downloads.openwrt.org/sources
 ethtool-2.6.33.tar.gz;http://downloads.sourceforge.net/project/gkernel/ethtool/2.6.33

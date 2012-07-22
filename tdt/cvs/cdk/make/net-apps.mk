@@ -241,15 +241,15 @@ $(DEPDIR)/wpa_supplicant.do_prepare: @DEPENDS_wpa_supplicant@
 	touch $@
 
 $(DEPDIR)/wpa_supplicant.do_compile: bootstrap Patches/wpa_supplicant.config $(DEPDIR)/wpa_supplicant.do_prepare
-	cd @DIR_wpa_supplicant@  && \
-		$(INSTALL) -m 644 ../$(word 2,$^) .config && \
+	cd @DIR_wpa_supplicant@/wpa_supplicant && \
+		$(INSTALL) -m 644 ../../$(word 2,$^) .config && \
 		$(MAKE) $(MAKE_OPTS)
 	touch $@
 
 $(DEPDIR)/min-wpa_supplicant $(DEPDIR)/std-wpa_supplicant $(DEPDIR)/max-wpa_supplicant \
 $(DEPDIR)/wpa_supplicant: \
 $(DEPDIR)/%wpa_supplicant: $(DEPDIR)/wpa_supplicant.do_compile
-	cd @DIR_wpa_supplicant@  && \
+	cd @DIR_wpa_supplicant@/wpa_supplicant  && \
 		@INSTALL_wpa_supplicant@
 #	@DISTCLEANUP_wpa_supplicant@
 	@[ "x$*" = "x" ] && touch $@ || true

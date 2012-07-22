@@ -220,7 +220,7 @@ netio;1.26;netio126;netio126.zip;extract:netio126.zip:netio126
 lighttpd;1.4.15;lighttpd-1.4.15;lighttpd-1.4.15.tar.gz;extract:lighttpd-1.4.15.tar.gz
 zd1211;2_15_0_0;ZD1211LnxDrv_2_15_0_0;zd1211lnxdrv_2_15_0_0.tar.gz:zd1211.diff;extract:zd1211lnxdrv_2_15_0_0.tar.gz;patch:zd1211.diff
 wireless_tools;29;wireless_tools.29;wireless_tools.29.tar.gz;extract:wireless_tools.29.tar.gz
-wpa_supplicant;0.5.9.;wpa_supplicant-0.5.9;wpa_supplicant-0.5.9.tar.gz;extract:wpa_supplicant-0.5.9.tar.gz
+wpa_supplicant;1.0;wpa_supplicant-1.0;wpa_supplicant-1.0.tar.gz;extract:wpa_supplicant-1.0.tar.gz
 ethtool;6;ethtool-6;ethtool-6.tar.gz;extract:ethtool-6.tar.gz
 #ethtool;2.6.35;ethtool-2.6.35;ethtool-2.6.35.tar.gz;extract:ethtool-2.6.35.tar.gz
 
