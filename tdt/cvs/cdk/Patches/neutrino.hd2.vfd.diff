@@ -1,6 +1,6 @@
 diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/driver/vfd.cpp neutrino-hd2/src/driver/vfd.cpp
 --- neutrino-hd2.org/src/driver/vfd.cpp	2012-07-19 20:33:32.336766912 +0200
-+++ neutrino-hd2/src/driver/vfd.cpp	2012-07-22 00:13:51.076766514 +0200
++++ neutrino-hd2/src/driver/vfd.cpp	2012-07-24 20:35:59.968720661 +0200
 @@ -42,30 +42,36 @@
  #include <math.h>
  #include <system/debug.h>
@@ -68,7 +68,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  		int pp = (int) round((double) vol * (double) 8 / (double) 100);
  		if(pp > 8) pp = 8;
  
-@@ -374,7 +382,43 @@
+@@ -374,7 +382,47 @@
  			}
  			oldpp = pp;
  		}
@@ -76,6 +76,8 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
 +#else
 +    int pp = (int) round((double) vol / (double) 2);
 +    int i;
++    if (oldpp !=pp)
++    {
 +    int j = pp / 5;
 +    // v-lines 0-5 = {0x10,0x11,0x12,0x13,0x14,0x15}
 +    char c1[1] = {0x11};
@@ -108,12 +110,14 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
 +     }
 +    dprintf(DEBUG_DEBUG,"CVFD::showVolume: vol %d - pp %d - fullblocks %d - mod %d - %s\n", vol, pp, j, i, VolumeBar);
 +    ShowText(VolumeBar);
++    oldpp=pp;
++    }
 +#endif
 +	}
  }
  
  void CVFD::showPercentOver(const unsigned char perc, const bool perform_update)
-@@ -386,7 +430,8 @@
+@@ -386,7 +434,8 @@
  	{
  		if (g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME] == 0) 
  		{
@@ -123,7 +127,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			int pp;
  			if(perc == 255)
  				pp = 0;
-@@ -415,6 +460,7 @@
+@@ -415,6 +464,7 @@
  				}
  				percentOver = pp;
  			}
@@ -131,7 +135,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  		}
  	}	
  }
-@@ -556,7 +602,9 @@
+@@ -556,7 +606,9 @@
  #if !defined (PLATFORM_CUBEREVO_250HD) && !defined (PLATFORM_GIGABLUE)	
  			showServicename(servicename);
  #endif			
@@ -141,7 +145,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showclock = true;
  			//showTime();      /* "showclock = true;" implies that "showTime();" does a "displayUpdate();" */
  			break;
-@@ -564,7 +612,9 @@
+@@ -564,7 +616,9 @@
  		case MODE_AUDIO:
  		{
  			ShowIcon(VFD_ICON_MP3, true);
@@ -151,7 +155,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showAudioPlayMode(AUDIO_MODE_STOP);
  			showVolume(volume, false);
  			showclock = true;
-@@ -575,7 +625,9 @@
+@@ -575,7 +629,9 @@
  		}
  
  		case MODE_SCART:
@@ -161,7 +165,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showVolume(volume, false);
  			showclock = true;
  			//showTime();      /* "showclock = true;" implies that "showTime();" does a "displayUpdate();" */
-@@ -598,14 +650,18 @@
+@@ -598,14 +654,18 @@
  			ShowIcon(VFD_ICON_COL1, true);
  			ShowIcon(VFD_ICON_COL2, true);
  #endif
@@ -180,7 +184,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			ShowIcon(VFD_ICON_HD, false);
  			ShowIcon(VFD_ICON_DOLBY, false);
  			
-@@ -613,7 +669,9 @@
+@@ -613,7 +673,9 @@
  			break;
  			
  		case MODE_TS:
@@ -190,7 +194,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  			showclock = false;
  			break;
  		
-@@ -1237,9 +1295,9 @@
+@@ -1237,9 +1299,9 @@
  #if defined (PLATFORM_CUBEREVO) || defined (PLATFORM_CUBEREVO_MINI) || defined (PLATFORM_CUBEREVO_MINI2) || defined (PLATFORM_CUBEREVO_MINI_FTA) || defined (PLATFORM_CUBEREVO_2000HD) || defined (PLATFORM_CUBEREVO_250HD) || defined (PLATFORM_CUBEREVO_9500HD)	
  	vfd_set_icon(icon, show);
  #elif defined (PLATFORM_DUCKBOX)	
@@ -202,7 +206,7 @@ diff -ur --exclude=.svn --exclude=.git --exclude=tuxtxt neutrino-hd2.org/src/dri
  	data.data[4] = show ? 1 : 0;
  	
  	openDevice();
-@@ -1378,7 +1436,8 @@
+@@ -1378,7 +1440,8 @@
  	  
  	openDevice();
  	
