@@ -1192,7 +1192,7 @@ if ENABLE_ATEVIO7500
 endif
 if !ENABLE_SPARK7162
 if !ENABLE_ATEVIO7500
-	[ -e cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko ] && cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/ || true
+	[ -e $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko ] && cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/ || true
 endif
 endif
 
