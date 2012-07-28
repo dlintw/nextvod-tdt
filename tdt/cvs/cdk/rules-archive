@@ -167,7 +167,7 @@ libxml2-2.7.8.tar.gz;http://xmlsoft.org/sources/
 libxslt-1.1.24.tar.gz;http://xmlsoft.org/sources
 lxml-2.0.5.tgz;http://launchpad.net/lxml/2.0/2.0.5/+download
 setuptools-0.6c8.tar.gz;http://pypi.python.org/packages/source/s/setuptools
-Twisted-8.2.0.tar.bz2;http://tmrc.mit.edu/mirror/twisted/Twisted/8.2
+Twisted-8.2.0.tar.bz2;http://twistedmatrix.com/Releases/Twisted/8.2
 TwistedWeb2-8.1.0.tar.bz2;http://tmrc.mit.edu/mirror/twisted/Web2/8.1
 Imaging-1.1.7.tar.gz;http://effbot.org/downloads
 pyOpenSSL-0.8.tar.gz;http://mirror.slitaz.org/sources/packages/p;http://downloads.sourceforge.net/project/pyopenssl/pyopenssl/0.8
