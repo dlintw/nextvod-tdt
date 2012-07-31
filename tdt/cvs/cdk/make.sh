@@ -165,7 +165,7 @@ case $2 in
         echo -e "\nSelected kernel: $REPLY\n"
         ;;
         *)
-        read -p "Select kernel (1-11)? ";;
+        read -p "Select kernel (1-12)? ";;
 esac
 
 case "$REPLY" in

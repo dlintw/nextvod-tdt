@@ -761,6 +761,7 @@ TUXBOX_RULES_MAKE(linuxp0206)
 TUXBOX_RULES_MAKE(linuxp0207)
 TUXBOX_RULES_MAKE(linuxp0209)
 TUXBOX_RULES_MAKE(linuxp0210)
+TUXBOX_RULES_MAKE(linuxp0211)
 
 if test "$enable_stm22" = "yes"; then
 	if test "$enable_p0040" == "yes"; then
@@ -797,6 +798,10 @@ else
 		KERNELVERSION=${VERSION_linuxp0210}
 		KERNELSTMLABEL="_${VERSION_linuxp0210#*_}"
 		KERNELLABEL="210"
+	elif test "$enable_p0211" == "yes"; then
+		KERNELVERSION=${VERSION_linuxp0211}
+		KERNELSTMLABEL="_${VERSION_linuxp0211#*_}"
+		KERNELLABEL="211"
 	elif test "$enable_p0207" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0207}
 		KERNELSTMLABEL="_${VERSION_linuxp0207#*_}"
@@ -1131,6 +1136,7 @@ Patchlevel P0206            : $enable_p0206
 Patchlevel P0207            : $enable_p0207
 Patchlevel P0209            : $enable_p0209
 Patchlevel P0210            : $enable_p0210
+Patchlevel P0211            : $enable_p0211
 HAVANA Patchlevel P0207_5   : $enable_havana_p0207_5
 vdr VDR 1.7.11              : $enable_vdr1711
 vdr VDR 1.7.22              : $enable_vdr1722
