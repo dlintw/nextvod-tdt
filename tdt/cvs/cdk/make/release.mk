@@ -698,7 +698,7 @@ release-clean:
 release_base:
 	rm -rf $(prefix)/release || true
 	$(INSTALL_DIR) $(prefix)/release && \
-	$(INSTALL_DIR) $(prefix)/release/{bin,boot,dev,dev.static,etc,hdd,lib,media,mnt,proc,ram,root,sbin,share,sys,tmp,usr,var} && \
+	$(INSTALL_DIR) $(prefix)/release/{bin,boot,dev,dev.static,etc,lib,media,mnt,proc,ram,root,sbin,share,sys,tmp,usr,var} && \
 	$(INSTALL_DIR) $(prefix)/release/etc/{enigma2,fonts,init.d,network,tuxbox} && \
 	$(INSTALL_DIR) $(prefix)/release/etc/network/{if-down.d,if-post-down.d,if-pre-up.d,if-up.d} && \
 	$(INSTALL_DIR) $(prefix)/release/lib/modules && \
