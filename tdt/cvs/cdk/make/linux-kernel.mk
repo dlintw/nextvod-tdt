@@ -453,6 +453,10 @@ if ENABLE_P0210
 PATCH_STR=_0210
 endif
 
+if ENABLE_P0211
+PATCH_STR=_0211
+endif
+
 if ENABLE_HAVANA_P0207_5
 PATCH_STR=_0207_5
 GIT_STR=207-5
@@ -476,8 +480,8 @@ COMMONPATCHES_24 = \
 		linux-ftdi_sio.c_stm24$(PATCH_STR).patch \
 		linux-sh4-lzma-fix_stm24$(PATCH_STR).patch \
 		linux-tune_stm24.patch \
-		$(if $(P0209)$(P0210),linux-sh4-mmap_stm24.patch) \
-		$(if $(P0209)$(P0210),linux-sh4-remove_pcm_reader_stm24.patch) \
+		$(if $(P0209)$(P0210)$(P0211),linux-sh4-mmap_stm24.patch) \
+		$(if $(P0209)$(P0210)$(P0211),linux-sh4-remove_pcm_reader_stm24.patch) \
 		$(if $(P0209),linux-sh4-dwmac_stm24_0209.patch) \
 		$(if $(P0207),linux-sh4-sti7100_missing_clk_alias_stm24$(PATCH_STR).patch)
 
@@ -521,7 +525,7 @@ ATEVIO7500PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
 		linux-sh4-atevio7500_setup_stm24$(PATCH_STR).patch \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
-		$(if $(P0209)$(P0210),linux-sh4-atevio7500_mtdconcat_stm24$(PATCH_STR).patch)
+		$(if $(P0209)$(P0210)$(P0211),linux-sh4-atevio7500_mtdconcat_stm24$(PATCH_STR).patch)
 
 HS7810APATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-lmb_stm24$(PATCH_STR).patch \
@@ -577,7 +581,7 @@ SPARK_PATCHES_24 = $(COMMONPATCHES_24) \
 		$(if $(P0207),linux-sh4-i2c-stm-downgrade_stm24$(PATCH_STR).patch) \
 		$(if $(P0209),linux-sh4-linux_yaffs2_stm24_0209.patch) \
 		$(if $(P0207)$(P0209),linux-sh4-lirc_stm.patch) \
-		$(if $(P0210),linux-sh4-lirc_stm_stm24$(PATCH_STR).patch)
+		$(if $(P0210)$(P0211),linux-sh4-lirc_stm_stm24$(PATCH_STR).patch)
 
 SPARK7162_PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
@@ -736,10 +740,14 @@ else
 if ENABLE_P0210
 KERNELHEADERS_VERSION := 2.6.32.46-45
 else
+if ENABLE_P0211
+KERNELHEADERS_VERSION := 2.6.32.46-45
+else
 if ENABLE_HAVANA_P0207_5
 KERNELHEADERS_VERSION := 2.6.32.16-44
 else
 KERNELHEADERS_VERSION := 2.6.32.10_stm24_0201-42
+endif
 endif
 endif
 endif
@@ -824,8 +832,12 @@ else
 if ENABLE_P0210
 HOST_KERNEL_VERSION := 2.6.32.57$(KERNELSTMLABEL)-$(KERNELLABEL)
 else
+if ENABLE_P0211
+HOST_KERNEL_VERSION := 2.6.32.59$(KERNELSTMLABEL)-$(KERNELLABEL)
+else
 if ENABLE_HAVANA_P0207_5
 HOST_KERNEL_VERSION := 2.6.32.28$(KERNELSTMLABEL)-$(KERNELLABEL)
+endif
 endif
 endif
 endif

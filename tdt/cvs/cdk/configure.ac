@@ -154,6 +154,14 @@ AC_ARG_ENABLE(p0210,
 AM_CONDITIONAL(ENABLE_P0210,test "$enable_p0210" = "yes")
 AC_SUBST(P0210)
 
+AC_ARG_ENABLE(p0211,
+	AS_HELP_STRING(--enable-p0211,  set up the CDK to use the STLinux 2.4 with patchlevel 0211),
+	[case "${enableval}" in
+		yes) P0211=p0211 ;;
+	esac], [enable_p0211=no])
+AM_CONDITIONAL(ENABLE_P0211,test "$enable_p0211" = "yes")
+AC_SUBST(P0211)
+
 AC_ARG_ENABLE(havana_p0207_5,
 	AS_HELP_STRING(enable-havana-p0207_5,  set up the CDK to use the STLinux 2.4 with Havana patchlevel 0207_5),
 	[case "${enableval}" in

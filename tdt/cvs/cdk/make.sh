@@ -154,6 +154,7 @@ echo "   8) STM 24 P0207 (Recommended)"
 echo "  10) STM 24 P0209"
 echo " Experimental:"
 echo "  11) STM 24 P0210 (UFS910, octagon1008, fortis_hdbox, at7500, spark)"
+echo "  12) STM 24 P0211 (!not yet ready!)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
 echo "   2) STM 23 P0119"
@@ -177,6 +178,7 @@ case "$REPLY" in
 	8)  KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
 	10) KERNEL="--enable-stm24 --enable-p0209";STMFB="stm24";;
 	11) KERNEL="--enable-stm24 --enable-p0210";STMFB="stm24";;
+	12) KERNEL="--enable-stm24 --enable-p0211";STMFB="stm24";;
 	*)  KERNEL="--enable-stm24 --enable-p0207";STMFB="stm24";;
 esac
 CONFIGPARAM="$CONFIGPARAM $KERNEL"
