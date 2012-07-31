@@ -120,11 +120,11 @@ endif
 
 if STM22
 yaud-enigma2-nightly: yaud-none host_python lirc stslave \
-		boot-elf hotplug remote firstboot enigma2-nightly enigma2-misc release
+		boot-elf hotplug remote firstboot enigma2-nightly release
 	@TUXBOX_YAUD_CUSTOMIZE@
 else
 yaud-enigma2-nightly: yaud-none host_python lirc stslave \
-		boot-elf remote firstboot enigma2-nightly enigma2-misc release
+		boot-elf remote firstboot enigma2-nightly release
 	@TUXBOX_YAUD_CUSTOMIZE@
 endif
 
@@ -139,7 +139,7 @@ yaud-enigma1-hd: yaud-none lirc stslave \
 endif
 
 yaud-enigma2-pli-nightly: yaud-none host_python lirc \
-		boot-elf remote firstboot enigma2-pli-nightly enigma2-misc enigma2-plugins release
+		boot-elf remote firstboot enigma2-pli-nightly enigma2-plugins release
 	@TUXBOX_YAUD_CUSTOMIZE@
 
 yaud-none: \
