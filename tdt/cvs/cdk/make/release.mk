@@ -32,7 +32,7 @@ release_common_utils:
 #
 release_cube_common:
 	cp $(buildprefix)/root/release/halt_cuberevo $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(buildprefix)/root/release/reboot_cuberevo $(prefix)/release/etc/init.d/reboot
 	chmod 777 $(prefix)/release/etc/init.d/reboot
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
@@ -100,7 +100,9 @@ release_cuberevo: release_common_utils release_cube_common release_cube_common_t
 release_ipbox9900: release_common_utils
 	echo "ipbox9900" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox99xx/micom.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/rmu/rmu.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/siinfo/siinfo.ko $(prefix)/release/lib/modules/
@@ -129,7 +131,9 @@ release_ipbox9900: release_common_utils
 release_ipbox99: release_common_utils
 	echo "ipbox99" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox99xx/micom.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/siinfo/siinfo.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_ipbox $(prefix)/release/etc/fstab
@@ -157,7 +161,9 @@ release_ipbox99: release_common_utils
 release_ipbox55: release_common_utils
 	echo "ipbox55" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ipbox $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/ipbox55/front.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/siinfo/siinfo.ko $(prefix)/release/lib/modules/
 	cp -f $(buildprefix)/root/release/fstab_ipbox $(prefix)/release/etc/fstab
@@ -185,7 +191,7 @@ release_ipbox55: release_common_utils
 release_ufs910: release_common_utils
 	echo "ufs910" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button/button.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/led/led.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd/vfd.ko $(prefix)/release/lib/modules/
@@ -206,7 +212,7 @@ release_ufs910: release_common_utils
 release_ufs912: release_common_utils
 	echo "ufs912" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs912 $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release/lib/modules/
@@ -225,7 +231,7 @@ release_ufs912: release_common_utils
 release_ufs913: release_common_utils
 	echo "ufs913" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs912 $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release/lib/modules/
@@ -244,7 +250,7 @@ release_ufs913: release_common_utils
 release_ufs922: release_common_utils
 	echo "ufs922" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
@@ -261,7 +267,7 @@ release_ufs922: release_common_utils
 release_spark: release_common_utils
 	echo "spark" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_spark $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/lnb/lnb.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
@@ -290,7 +296,7 @@ endif
 release_spark7162: release_common_utils
 	echo "spark7162" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_spark $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/boot/video_7105.elf $(prefix)/release/boot/video.elf
@@ -316,7 +322,7 @@ release_spark7162: release_common_utils
 release_fortis_hdbox: release_common_utils
 	echo "fortis" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_fortis_hdbox $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
@@ -332,7 +338,7 @@ release_fortis_hdbox: release_common_utils
 release_atevio7500: release_common_utils
 	echo "atevio7500" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_fortis_hdbox $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/multituner/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release/lib/modules/
@@ -352,7 +358,7 @@ release_atevio7500: release_common_utils
 release_octagon1008: release_common_utils
 	echo "octagon1008" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_octagon1008 $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
@@ -371,7 +377,7 @@ release_octagon1008: release_common_utils
 release_hs7810a: release_common_utils
 	echo "hs7810a" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_hs7810a $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/lnb/lnb.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
@@ -391,7 +397,7 @@ release_hs7810a: release_common_utils
 release_hs7110: release_common_utils
 	echo "hs7110" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_hs7110 $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/lnb/lnb.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
@@ -411,7 +417,7 @@ release_hs7110: release_common_utils
 release_whitebox: release_common_utils
 	echo "whitebox" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_whitebox $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/lnb/lnb.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
@@ -431,7 +437,7 @@ release_whitebox: release_common_utils
 release_hl101: release_common_utils
 	echo "hl101" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_hl101 $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/proton/proton.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
@@ -452,7 +458,7 @@ release_hl101: release_common_utils
 release_adb_box: release_common_utils
 	echo "Adb_Box" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_adb_box $(prefix)/release/etc/init.d/halt
-	chmod 777 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/adb_box_vfd/vfd.ko $(prefix)/release/lib/modules/
 	sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/vfd.ko
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
@@ -480,6 +486,7 @@ release_vip1_v2: release_common_utils
 	echo "Edision-v2" > $(prefix)/release/etc/hostname
 	cp -f $(targetprefix)/sbin/shutdown $(prefix)/release/sbin/
 	cp $(buildprefix)/root/release/halt_vip2 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
@@ -527,6 +534,7 @@ release_tf7700: release_common_utils
 	echo "tf7700" > $(prefix)/release/etc/hostname
 	cp -f $(targetprefix)/sbin/shutdown $(prefix)/release/sbin/
 	cp $(buildprefix)/root/release/halt_tf7700 $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/tffp/tffp.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
