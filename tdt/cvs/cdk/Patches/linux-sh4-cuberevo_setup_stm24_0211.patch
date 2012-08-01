@@ -516,30 +516,8 @@
  #include "stmmac.h"
  
  #undef STMMAC_DEBUG
-@@ -963,9 +964,21 @@
- 	/* verify if the MAC address is valid, in case of failures it
- 	 * generates a random MAC address */
- 	if (!is_valid_ether_addr(priv->dev->dev_addr)) {
-+/*
- 		priv->hw->mac->get_umac_addr((void __iomem *)
- 					     priv->dev->base_addr,
- 					     priv->dev->dev_addr, 0);
-+*/
-+		printk(KERN_INFO "\tHW MAC address from bdinfo: ");
-+		/* copy mac address from u-boot */
-+		dev->dev_addr[0] = bd.bi_enetaddr[0];
-+		dev->dev_addr[1] = bd.bi_enetaddr[1];
-+		dev->dev_addr[2] = bd.bi_enetaddr[2];
-+		dev->dev_addr[3] = bd.bi_enetaddr[3];
-+		dev->dev_addr[4] = bd.bi_enetaddr[4];
-+		dev->dev_addr[5] = bd.bi_enetaddr[5];
-+		print_mac_addr(dev->dev_addr);
-+
- 		if  (!is_valid_ether_addr(priv->dev->dev_addr))
- 			random_ether_addr(priv->dev->dev_addr);
- 	}
-@@ -1497,6 +1510,15 @@
- 	return count;
+@@ -958,14 +958,35 @@
+ 	return hw_cap;
  }
  
 +static inline void print_mac_addr(u8 addr[6])
@@ -551,6 +529,26 @@
 +	return;
 +}
 +
- /**
-  *  stmmac_poll - stmmac poll method (NAPI)
-  *  @napi : pointer to the napi structure.
+ static void stmmac_check_ether_addr(struct stmmac_priv *priv)
+ {
+ 	/* verify if the MAC address is valid, in case of failures it
+ 	 * generates a random MAC address */
+ 	if (!is_valid_ether_addr(priv->dev->dev_addr)) {
++/*
+ 		priv->hw->mac->get_umac_addr((void __iomem *)
+ 					     priv->dev->base_addr,
+ 					     priv->dev->dev_addr, 0);
++*/
++		printk(KERN_INFO "\tHW MAC address from bdinfo: ");
++		/* copy mac address from u-boot */
++		priv->dev->dev_addr[0] = bd.bi_enetaddr[0];
++		priv->dev->dev_addr[1] = bd.bi_enetaddr[1];
++		priv->dev->dev_addr[2] = bd.bi_enetaddr[2];
++		priv->dev->dev_addr[3] = bd.bi_enetaddr[3];
++		priv->dev->dev_addr[4] = bd.bi_enetaddr[4];
++		priv->dev->dev_addr[5] = bd.bi_enetaddr[5];
++		print_mac_addr(priv->dev->dev_addr);
++
+ 		if  (!is_valid_ether_addr(priv->dev->dev_addr))
+ 			random_ether_addr(priv->dev->dev_addr);
+ 	}
