@@ -650,7 +650,7 @@ release_base:
 	cp -dp $(targetprefix)/etc/shells.conf $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/vsftpd.conf $(prefix)/release/etc/ && \
 	cp $(buildprefix)/root/etc/image-version $(prefix)/release/etc/ && \
-	cp $(buildprefix)/root/etc/timezone.xml $(prefix)/release/etc/ && \
+	cp -dp $(targetprefix)/etc/timezone.xml $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/vdstandby.cfg $(prefix)/release/etc/ && \
 	cp -dp $(targetprefix)/etc/network/interfaces $(prefix)/release/etc/network/ && \
 	cp -dp $(targetprefix)/etc/network/options $(prefix)/release/etc/network/ && \
