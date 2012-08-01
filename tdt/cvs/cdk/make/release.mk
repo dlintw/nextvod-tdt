@@ -15,7 +15,6 @@ release_common_utils:
 	chmod 755 $(prefix)/release/etc/init.d/umountfs
 	chmod 755 $(prefix)/release/etc/init.d/rc
 	chmod 755 $(prefix)/release/etc/init.d/sendsigs
-	chmod 755 $(prefix)/release/etc/init.d/halt
 	mkdir -p $(prefix)/release/etc/rc.d/rc0.d
 	ln -s ../init.d $(prefix)/release/etc/rc.d
 	ln -fs halt $(prefix)/release/sbin/reboot
