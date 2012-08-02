@@ -282,9 +282,6 @@ release_spark: release_common_utils
 	mkdir -p $(prefix)/release/var/run/lirc
 	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/share/fonts/
 	[ -e $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko ] && cp $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/encrypt.ko || true
-if !ENABLE_P0209
-	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
-endif
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-{avl2108,cx24116,cx21143,stv6306}.fw
 	rm -f $(prefix)/release/bin/evremote
 	rm -f $(prefix)/release/bin/gotosleep
@@ -663,12 +660,11 @@ release_base:
 	cp $(buildprefix)/root/bootscreen/bootlogo.mvi $(prefix)/release/boot/ && \
 	cp $(buildprefix)/root/bin/autologin $(prefix)/release/bin/ && \
 	cp $(buildprefix)/root/bin/vdstandby $(prefix)/release/bin/ && \
-	cp -dp $(targetprefix)/usr/bin/killall $(prefix)/release/usr/bin/ && \
-	cp -dp $(targetprefix)/usr/bin/opkg-cl $(prefix)/release/usr/bin/opkg && \
-	cp -dp $(targetprefix)/usr/bin/python $(prefix)/release/usr/bin/ && \
-	cp -dp $(targetprefix)/usr/bin/ffmpeg $(prefix)/release/sbin/ && \
-	cp -dp $(targetprefix)/usr/sbin/ethtool $(prefix)/release/usr/sbin/ && \
-	cp $(kernelprefix)/linux-sh4/arch/sh/boot/uImage $(prefix)/release/boot/ && \
+	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release/usr/bin/ && \
+	cp -p $(targetprefix)/usr/bin/opkg-cl $(prefix)/release/usr/bin/opkg && \
+	cp -p $(targetprefix)/usr/bin/python $(prefix)/release/usr/bin/ && \
+	cp -p $(targetprefix)/usr/bin/ffmpeg $(prefix)/release/sbin/ && \
+	cp -p $(targetprefix)/usr/sbin/ethtool $(prefix)/release/usr/sbin/ && \
 	cp -rd $(targetprefix)/lib/* $(prefix)/release/lib/ && \
 	rm -f $(prefix)/release/lib/*.{a,o,la} && \
 	find $(prefix)/release/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
@@ -808,6 +804,8 @@ endif
 
 	find $(prefix)/release/lib/modules/ -name '*.ko' -exec sh4-linux-strip --strip-unneeded {} \;
 
+	cp $(kernelprefix)/linux-sh4/arch/sh/boot/uImage $(prefix)/release/boot/
+
 #
 #
 #
@@ -839,18 +837,6 @@ endif
 #
 #
 	cp -aR $(buildprefix)/root/usr/share/udhcpc/* $(prefix)/release/usr/share/udhcpc/
-
-#
-# alsa
-#
-	if [ -e $(targetprefix)/usr/share/alsa ]; then \
-		mkdir $(prefix)/release/usr/share/alsa/; \
-		mkdir $(prefix)/release/usr/share/alsa/cards/; \
-		mkdir $(prefix)/release/usr/share/alsa/pcm/; \
-		cp $(targetprefix)/usr/share/alsa/alsa.conf          $(prefix)/release/usr/share/alsa/alsa.conf; \
-		cp $(targetprefix)/usr/share/alsa/cards/aliases.conf $(prefix)/release/usr/share/alsa/cards/; \
-		cp $(targetprefix)/usr/share/alsa/pcm/default.conf   $(prefix)/release/usr/share/alsa/pcm/; \
-		cp $(targetprefix)/usr/share/alsa/pcm/dmix.conf      $(prefix)/release/usr/share/alsa/pcm/; fi
 
 #
 #
@@ -886,7 +872,7 @@ endif
 		cp -a $(targetprefix)/usr/local/lib/enigma2/* $(prefix)/release/usr/lib/enigma2/; fi
 
 #
-# Delete unnecessary plugins
+# Delete unnecessary plugins and files
 #
 	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/DemoPlugins
 	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/SystemPlugins/FrontprocessorUpgrade
@@ -894,9 +880,6 @@ endif
 	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/FileManager
 	rm -rf $(prefix)/release/usr/lib/enigma2/python/Plugins/Extensions/TuxboxPlugins
 
-#
-#
-#
 	$(INSTALL_DIR) $(prefix)/release/usr/lib/python2.6
 	cp -a $(targetprefix)/usr/lib/python2.6/* $(prefix)/release/usr/lib/python2.6/
 	rm -rf $(prefix)/release/usr/lib/python2.6/site-packages/Cheetah-2.4.4-py2.6.egg-info
@@ -929,6 +912,19 @@ endif
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.o' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.la' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
+
+#
+# alsa
+#
+	if [ -e $(targetprefix)/usr/share/alsa ]; then \
+		mkdir $(prefix)/release/usr/share/alsa/; \
+		mkdir $(prefix)/release/usr/share/alsa/cards/; \
+		mkdir $(prefix)/release/usr/share/alsa/pcm/; \
+		cp $(targetprefix)/usr/share/alsa/alsa.conf          $(prefix)/release/usr/share/alsa/alsa.conf; \
+		cp $(targetprefix)/usr/share/alsa/cards/aliases.conf $(prefix)/release/usr/share/alsa/cards/; \
+		cp $(targetprefix)/usr/share/alsa/pcm/default.conf   $(prefix)/release/usr/share/alsa/pcm/; \
+		cp $(targetprefix)/usr/share/alsa/pcm/dmix.conf      $(prefix)/release/usr/share/alsa/pcm/; \
+	fi
 
 #
 # AUTOFS
