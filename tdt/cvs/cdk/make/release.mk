@@ -519,6 +519,7 @@ release_base:
 	$(INSTALL_DIR) $(prefix)/release/mnt/{hdd,nfs,usb} && \
 	$(INSTALL_DIR) $(prefix)/release/usr/{bin,lib,local,share,tuxtxt} && \
 	$(INSTALL_DIR) $(prefix)/release/usr/local/{bin,share} && \
+	ln -sf /etc $(targetprefix)/usr/local/etc && \
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/{enigma2,keymaps} && \
 	ln -s /usr/local/share/keymaps $(prefix)/release/usr/share/keymaps
 	$(INSTALL_DIR) $(prefix)/release/usr/share/{fonts,zoneinfo,udhcpc} && \
@@ -587,7 +588,9 @@ release_base:
 	cp $(buildprefix)/root/etc/tuxbox/satellites.xml $(prefix)/release/etc/tuxbox/ && \
 	cp $(buildprefix)/root/etc/tuxbox/cables.xml $(prefix)/release/etc/tuxbox/ && \
 	cp $(buildprefix)/root/etc/tuxbox/terrestrial.xml $(prefix)/release/etc/tuxbox/ && \
-	cp $(buildprefix)/root/etc/tuxbox/tuxtxt2.conf $(prefix)/release/usr/tuxtxt/
+	cp $(buildprefix)/root/etc/tuxbox/tuxtxt2.conf $(prefix)/release/usr/tuxtxt/ && \
+	cp -aR $(buildprefix)/root/usr/share/udhcpc/* $(prefix)/release/usr/share/udhcpc/ && \
+	cp -aR $(buildprefix)/root/usr/share/zoneinfo/* $(prefix)/release/usr/share/zoneinfo/ && \
 	ln -sf /etc/timezone.xml $(prefix)/release/etc/tuxbox/timezone.xml && \
 	echo "576i50" > $(prefix)/release/etc/videomode && \
 	cp -R $(targetprefix)/etc/fonts/* $(prefix)/release/etc/fonts/ && \
@@ -605,25 +608,14 @@ release_base:
 	cp $(buildprefix)/root/bootscreen/bootlogo.mvi $(prefix)/release/boot/ && \
 	cp $(buildprefix)/root/bin/autologin $(prefix)/release/bin/ && \
 	cp $(buildprefix)/root/bin/vdstandby $(prefix)/release/bin/ && \
+	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release/usr/bin/ && \
 	cp -p $(targetprefix)/usr/bin/opkg-cl $(prefix)/release/usr/bin/opkg && \
 	cp -p $(targetprefix)/usr/bin/python $(prefix)/release/usr/bin/ && \
 	cp -p $(targetprefix)/usr/bin/ffmpeg $(prefix)/release/sbin/ && \
-	cp -p $(targetprefix)/usr/sbin/ethtool $(prefix)/release/usr/sbin/ && \
-	cp -rd $(targetprefix)/lib/* $(prefix)/release/lib/ && \
-	rm -f $(prefix)/release/lib/*.{a,o,la} && \
-	find $(prefix)/release/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
-
+	cp -p $(targetprefix)/usr/sbin/ethtool $(prefix)/release/usr/sbin/
 if STM24
 	cp -dp $(targetprefix)/sbin/mkfs $(prefix)/release/sbin/
 endif
-
-	if [ -e $(targetprefix)/usr/bin/hotplug_e2_helper ]; then \
-		cp -dp $(targetprefix)/usr/bin/hotplug_e2_helper $(prefix)/release/sbin/hotplug; \
-		cp -dp $(targetprefix)/usr/bin/bdpoll $(prefix)/release/sbin/; \
-		rm -f $(prefix)/release/bin/hotplug; \
-	else \
-		cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/; \
-	fi;
 
 #
 # Player
@@ -751,11 +743,16 @@ endif
 	cp $(kernelprefix)/linux-sh4/arch/sh/boot/uImage $(prefix)/release/boot/
 
 #
-# tuxtxt
+# lib usr/lib
 #
-	if [ -e $(targetprefix)/usr/bin/tuxtxt ]; then \
-		cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release/usr/bin/; \
-	fi
+	cp -R $(targetprefix)/lib/* $(prefix)/release/lib/
+	rm -f $(prefix)/release/lib/*.{a,o,la}
+	find $(prefix)/release/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
+
+	cp -R $(targetprefix)/usr/lib/* $(prefix)/release/usr/lib/
+	rm -rf $(prefix)/release/usr/lib/{engines,enigma2,gconv,ldscripts,libxslt-plugins,pkgconfig,python2.6,sigc++-1.2,X11}
+	rm -f $(prefix)/release/usr/lib/*.{a,o,la}
+	find $(prefix)/release/usr/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
 
 #
 # fonts
@@ -773,17 +770,7 @@ endif
 	ln -s /usr/share/fonts $(prefix)/release/usr/local/share/fonts
 
 #
-# zoneinfo
-#
-	cp -aR $(buildprefix)/root/usr/share/zoneinfo/* $(prefix)/release/usr/share/zoneinfo/
-
-#
-# udhcpc
-#
-	cp -aR $(buildprefix)/root/usr/share/udhcpc/* $(prefix)/release/usr/share/udhcpc/
-
-#
-# enigma2 bin
+# enigma2
 #
 	if [ -e $(targetprefix)/usr/bin/enigma2 ]; then \
 		cp -f $(targetprefix)/usr/bin/enigma2 $(prefix)/release/usr/local/bin/enigma2;fi
@@ -791,27 +778,21 @@ endif
 		cp -f $(targetprefix)/usr/local/bin/enigma2 $(prefix)/release/usr/local/bin/enigma2;fi
 	find $(prefix)/release/usr/local/bin/ -name  enigma2 -exec sh4-linux-strip --strip-unneeded {} \;
 
-	ln -s /etc $(prefix)/release/usr/local/etc
-
 	cp -a $(targetprefix)/usr/local/share/enigma2/* $(prefix)/release/usr/local/share/enigma2
 	cp $(buildprefix)/root/etc/enigma2/* $(prefix)/release/etc/enigma2
-
-#
-#
-#
-	cp -R $(targetprefix)/usr/lib/* $(prefix)/release/usr/lib/
-	rm -rf $(prefix)/release/usr/lib/{engines,enigma2,gconv,ldscripts,libxslt-plugins,pkgconfig,python2.6,sigc++-1.2,X11}
-	rm -f $(prefix)/release/usr/lib/*.{a,o,la}
-	find $(prefix)/release/usr/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
-
-	rm -f $(targetprefix)/usr/local/etc
-	ln -sf /etc $(targetprefix)/usr/local/etc && \
 	ln -s /usr/local/share/enigma2 $(prefix)/release/usr/share/enigma2
 
 	$(INSTALL_DIR) $(prefix)/release/usr/lib/enigma2
 	cp -a $(targetprefix)/usr/lib/enigma2/* $(prefix)/release/usr/lib/enigma2/
 	if test -d $(targetprefix)/usr/local/lib/enigma2; then \
 		cp -a $(targetprefix)/usr/local/lib/enigma2/* $(prefix)/release/usr/lib/enigma2/; fi
+
+#
+# tuxtxt
+#
+	if [ -e $(targetprefix)/usr/bin/tuxtxt ]; then \
+		cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release/usr/bin/; \
+	fi
 
 #
 # Delete unnecessary plugins and files
@@ -857,6 +838,17 @@ endif
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.o' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.la' -exec rm -f {} \;
 	find $(prefix)/release/usr/lib/python2.6/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
+
+#
+# hotplug
+#
+	if [ -e $(targetprefix)/usr/bin/hotplug_e2_helper ]; then \
+		cp -dp $(targetprefix)/usr/bin/hotplug_e2_helper $(prefix)/release/sbin/hotplug; \
+		cp -dp $(targetprefix)/usr/bin/bdpoll $(prefix)/release/sbin/; \
+		rm -f $(prefix)/release/bin/hotplug; \
+	else \
+		cp -dp $(targetprefix)/bin/hotplug $(prefix)/release/sbin/; \
+	fi;
 
 #
 # alsa
@@ -1008,3 +1000,4 @@ $(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(
 #
 release-clean:
 	rm -f $(DEPDIR)/release
+
