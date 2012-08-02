@@ -281,8 +281,8 @@ release_spark: release_common_utils
 	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
 	mkdir -p $(prefix)/release/var/run/lirc
 	cp $(targetprefix)/usr/local/share/fonts/* $(prefix)/release/usr/share/fonts/
+	[ -e $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko ] && cp $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/encrypt.ko || true
 if !ENABLE_P0209
-	cp $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/encrypt.ko
 	cp $(kernelprefix)/linux-sh4/drivers/usb/serial/usbserial.ko $(prefix)/release/lib/modules
 endif
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-{avl2108,cx24116,cx21143,stv6306}.fw
@@ -948,7 +948,7 @@ endif
 # GSTREAMER
 #
 	if [ -d $(prefix)/release/usr/lib/gstreamer-0.10 ]; then \
-		rm -rf $(prefix)/release/usr/lib/libav*; \
+		#removed rm \
 		rm -rf $(prefix)/release/usr/lib/libgstfft*; \
 		rm -rf $(prefix)/release/usr/lib/gstreamer-0.10/*; \
 		cp -a $(targetprefix)/usr/bin/gst-launch* $(prefix)/release/usr/bin/; \
