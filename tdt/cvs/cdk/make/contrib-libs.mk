@@ -798,7 +798,7 @@ $(DEPDIR)/libdvdnav.do_compile: $(DEPDIR)/libdvdnav.do_prepare
 
 $(DEPDIR)/min-libdvdnav $(DEPDIR)/std-libdvdnav $(DEPDIR)/max-libdvdnav \
 $(DEPDIR)/libdvdnav: \
-$(DEPDIR)/%libdvdnav: libdvdnav.do_compile
+$(DEPDIR)/%libdvdnav: $(DEPDIR)/libdvdnav.do_compile
 	cd @DIR_libdvdnav@ && \
 		sed -e "s,^prefix=,prefix=$(targetprefix)," < misc/dvdnav-config > $(crossprefix)/bin/dvdnav-config && \
 		chmod 755 $(crossprefix)/bin/dvdnav-config && \
@@ -833,7 +833,7 @@ $(DEPDIR)/libdvdread.do_compile: $(DEPDIR)/libdvdread.do_prepare
 
 $(DEPDIR)/min-libdvdread $(DEPDIR)/std-libdvdread $(DEPDIR)/max-libdvdread \
 $(DEPDIR)/libdvdread: \
-$(DEPDIR)/%libdvdread: libdvdread.do_compile
+$(DEPDIR)/%libdvdread: $(DEPDIR)/libdvdread.do_compile
 	cd @DIR_libdvdread@ && \
 		sed -e "s,^prefix=,prefix=$(targetprefix)," < misc/dvdread-config > $(crossprefix)/bin/dvdread-config && \
 		chmod 755 $(crossprefix)/bin/dvdread-config && \
@@ -915,6 +915,12 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-decoder=mjpeg \
 		--enable-decoder=vorbis \
 		--enable-decoder=flac \
+		--enable-protocol=file \
+		--enable-encoder=mpeg2video \
+		--enable-muxer=mpeg2video \
+		--enable-parser=mjpeg \
+		--enable-demuxer=mjpeg \
+		--enable-small \
 		--enable-decoder=dvbsub \
 		--enable-decoder=iff_byterun1 \
 		--enable-small \
@@ -927,7 +933,8 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--arch=sh4 \
 		--extra-cflags=-fno-strict-aliasing \
 		--enable-stripping \
-		--prefix=/usr
+		--prefix=/usr && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-ffmpeg $(DEPDIR)/std-ffmpeg $(DEPDIR)/max-ffmpeg \
@@ -953,7 +960,8 @@ $(DEPDIR)/libass.do_compile: $(DEPDIR)/libass.do_prepare
 		--host=$(target) \
 		--disable-fontconfig \
 		--disable-enca \
-		--prefix=/usr
+		--prefix=/usr && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-libass $(DEPDIR)/std-libass $(DEPDIR)/max-libass \
@@ -1052,7 +1060,7 @@ $(DEPDIR)/%icu4c: $(DEPDIR)/icu4c.do_compile
 #
 # enchant
 #
-$(DEPDIR)/enchant.do_prepare: bootstrap @DEPENDS_enchant@
+$(DEPDIR)/enchant.do_prepare: bootstrap glib2 @DEPENDS_enchant@
 	@PREPARE_enchant@
 	touch $@
 
@@ -1062,9 +1070,15 @@ $(DEPDIR)/enchant.do_compile: $(DEPDIR)/enchant.do_prepare
 	libtoolize -f -c && \
 	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 	$(BUILDENV) \
-	./configure --disable-aspell --disable-ispell --disable-myspell --disable-zemberek \
+	./configure \
+		--build=$(build) \
 		--host=$(target) \
-		--prefix=/usr && \
+		--prefix=/usr \
+		--with-gnu-ld \
+		--disable-aspell \
+		--disable-ispell \
+		--disable-myspell \
+		--disable-zemberek && \
 	$(MAKE) LD=$(target)-ld
 	touch $@
 
@@ -1119,9 +1133,8 @@ $(DEPDIR)/sqlite.do_compile: $(DEPDIR)/sqlite.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr \
-		--disable-tcl \
-		--disable-debug
+		--prefix=/usr && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-sqlite $(DEPDIR)/std-sqlite $(DEPDIR)/max-sqlite \
@@ -1230,7 +1243,8 @@ $(DEPDIR)/libogg.do_compile: $(DEPDIR)/libogg.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr
+		--prefix=/usr && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-libogg $(DEPDIR)/std-libogg $(DEPDIR)/max-libogg \
@@ -1266,7 +1280,8 @@ $(DEPDIR)/libflac.do_compile: $(DEPDIR)/libflac.do_prepare
 		--without-libiconv-prefix \
 		--without-id3lib \
 		--with-ogg-includes=. \
-		--disable-cpplibs
+		--disable-cpplibs && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-libflac $(DEPDIR)/std-libflac $(DEPDIR)/max-libflac \
@@ -1646,14 +1661,15 @@ $(DEPDIR)/gstreamer.do_prepare: bootstrap glib2 libxml2 @DEPENDS_gstreamer@
 $(DEPDIR)/gstreamer.do_compile: $(DEPDIR)/gstreamer.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_gstreamer@ && \
+	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		--disable-docs-build \
 		--disable-dependency-tracking \
-		--with-check=no \
-		ac_cv_func_register_printf_function=no
+		--disable-check \
+		ac_cv_func_register_printf_function=no && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-gstreamer $(DEPDIR)/std-gstreamer $(DEPDIR)/max-gstreamer \
@@ -1663,7 +1679,6 @@ $(DEPDIR)/%gstreamer: $(DEPDIR)/gstreamer.do_compile
 		@INSTALL_gstreamer@
 #	@DISTCLEANUP_gstreamer@
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # GST-PLUGINS-BASE
@@ -1675,16 +1690,19 @@ $(DEPDIR)/gst_plugins_base.do_prepare: bootstrap glib2 gstreamer libogg libalsa 
 $(DEPDIR)/gst_plugins_base.do_compile: $(DEPDIR)/gst_plugins_base.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_gst_plugins_base@ && \
+	autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
 		--disable-theora \
+		--disable-gnome_vfs \
 		--disable-pango \
 		--disable-vorbis \
 		--disable-x \
-		--with-audioresample-format=int \
-		--with-check=no
+		--disable-examples \
+		--with-audioresample-format=int && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_base $(DEPDIR)/std-gst_plugins_base $(DEPDIR)/max-gst_plugins_base \
@@ -1711,10 +1729,12 @@ $(DEPDIR)/gst_plugins_good.do_compile: $(DEPDIR)/gst_plugins_good.do_prepare
 		--prefix=/usr \
 		--disable-esd \
 		--disable-esdtest \
+		--disable-aalib \
 		--disable-shout2 \
 		--disable-shout2test \
 		--disable-x \
-		--with-check=no
+		--with-check=no && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_good $(DEPDIR)/std-gst_plugins_good $(DEPDIR)/max-gst_plugins_good \
@@ -1739,9 +1759,9 @@ $(DEPDIR)/gst_plugins_bad.do_compile: $(DEPDIR)/gst_plugins_bad.do_prepare
 	./configure \
 		--host=$(target) \
 		--prefix=/usr \
-		ac_cv_openssldir=no \
-		--with-check=no \
-		--disable-sdl
+		--disable-sdl \
+		ac_cv_openssldir=no && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_bad $(DEPDIR)/std-gst_plugins_bad $(DEPDIR)/max-gst_plugins_bad \
@@ -1765,8 +1785,8 @@ $(DEPDIR)/gst_plugins_ugly.do_compile: $(DEPDIR)/gst_plugins_ugly.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr \
-		--with-check=no
+		--prefix=/usr && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_ugly $(DEPDIR)/std-gst_plugins_ugly $(DEPDIR)/max-gst_plugins_ugly \
@@ -1852,7 +1872,9 @@ $(DEPDIR)/gst_plugins_fluendo_mpegdemux.do_compile: $(DEPDIR)/gst_plugins_fluend
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr --with-check=no
+		--prefix=/usr \
+		--with-check=no && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_fluendo_mpegdemux $(DEPDIR)/std-gst_plugins_fluendo_mpegdemux $(DEPDIR)/max-gst_plugins_fluendo_mpegdemux \
@@ -1881,7 +1903,8 @@ $(DEPDIR)/gst_plugin_subsink.do_compile: $(DEPDIR)/gst_plugin_subsink.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr
+		--prefix=/usr && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-gst_plugin_subsink $(DEPDIR)/std-gst_plugin_subsink $(DEPDIR)/max-gst_plugin_subsink \
@@ -1910,7 +1933,8 @@ $(DEPDIR)/gst_plugins_dvbmediasink.do_compile: $(DEPDIR)/gst_plugins_dvbmediasin
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr
+		--prefix=/usr && \
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-gst_plugins_dvbmediasink $(DEPDIR)/std-gst_plugins_dvbmediasink $(DEPDIR)/max-gst_plugins_dvbmediasink \
@@ -1994,6 +2018,7 @@ $(DEPDIR)/libgd2.do_compile: $(DEPDIR)/libgd2.do_prepare
 		--host=$(target) \
 		--prefix=/usr && \
 		$(MAKE)
+	touch $@
 
 $(DEPDIR)/min-libgd2 $(DEPDIR)/std-libgd2 $(DEPDIR)/max-libgd2 \
 $(DEPDIR)/libgd2: \
@@ -2019,6 +2044,7 @@ $(DEPDIR)/libusb2.do_compile: $(DEPDIR)/libusb2.do_prepare
 		--host=$(target) \
 		--prefix=/usr && \
 		$(MAKE) all
+	touch $@
 
 $(DEPDIR)/min-libusb2 $(DEPDIR)/std-libusb2 $(DEPDIR)/max-libusb2 \
 $(DEPDIR)/libusb2: \
@@ -2043,6 +2069,7 @@ $(DEPDIR)/libusbcompat.do_compile: $(DEPDIR)/libusbcompat.do_prepare
 		--host=$(target) \
 		--prefix=/usr && \
 		$(MAKE)
+	touch $@
 
 $(DEPDIR)/min-libusbcompat $(DEPDIR)/std-libusbcompat $(DEPDIR)/max-libusbcompat \
 $(DEPDIR)/libusbcompat: \
@@ -2575,6 +2602,7 @@ $(DEPDIR)/libpcre.do_prepare: bootstrap @DEPENDS_libpcre@
 	touch $@
 
 $(DEPDIR)/libpcre.do_compile: $(DEPDIR)/libpcre.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libpcre@ && \
 	$(BUILDENV) \
 	./configure \
