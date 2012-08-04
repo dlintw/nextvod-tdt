@@ -519,7 +519,7 @@ release_base:
 	$(INSTALL_DIR) $(prefix)/release/mnt/{hdd,nfs,usb} && \
 	$(INSTALL_DIR) $(prefix)/release/usr/{bin,lib,local,share,tuxtxt} && \
 	$(INSTALL_DIR) $(prefix)/release/usr/local/{bin,share} && \
-	ln -sf /etc $(targetprefix)/usr/local/etc && \
+	ln -sf /etc $(prefix)/release/usr/local/etc && \
 	$(INSTALL_DIR) $(prefix)/release/usr/local/share/{enigma2,keymaps} && \
 	ln -s /usr/local/share/keymaps $(prefix)/release/usr/share/keymaps
 	$(INSTALL_DIR) $(prefix)/release/usr/share/{fonts,zoneinfo,udhcpc} && \
@@ -1000,4 +1000,3 @@ $(DEPDIR)/%release: release_base release_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(
 #
 release-clean:
 	rm -f $(DEPDIR)/release
-
