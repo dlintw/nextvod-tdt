@@ -2855,9 +2855,11 @@ $(DEPDIR)/rarfs.do_compile: $(DEPDIR)/rarfs.do_prepare
 	cd @DIR_rarfs@ && \
 	export PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig && \
 	$(BUILDENV) \
-	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	CFLAGS="$(TARGET_CFLAGS) -Os -D_FILE_OFFSET_BITS=64" \
 	./configure \
 		--host=$(target) \
+		--disable-option-checking \
+		--includedir=/usr/include/fuse \
 		--prefix=/usr && \
 	$(MAKE) all
 	touch $@
