@@ -51,3 +51,5 @@ jpeg-*
 enigma2-networkbrowser
 host-python-*
 libtuxtxt
+libstgles-*
+compile

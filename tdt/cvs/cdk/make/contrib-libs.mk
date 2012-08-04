@@ -642,6 +642,8 @@ $(DEPDIR)/libstgles.do_prepare: bootstrap directfb @DEPENDS_libstgles@
 $(DEPDIR)/libstgles.do_compile: $(DEPDIR)/libstgles.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libstgles@ && \
+	cp $(hostprefix)/share/libtool/config/ltmain.sh . && \
+	aclocal -I $(hostprefix)/share/aclocal && \
 	autoconf && \
 	automake --foreign --add-missing && \
 	libtoolize --force && \
