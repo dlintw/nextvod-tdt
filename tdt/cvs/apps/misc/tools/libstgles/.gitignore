@@ -1,0 +1,11 @@
+*.o
+*.d
+libst3fx.so*
+libst3fx.pc
+*.tar.bz2
+
+st3fxdfb
+
+.config
+.rpmmacros
+.rpmrc

@@ -104,6 +104,9 @@ lcms;1.17;lcms-1.17;lcms-1.17.tar.gz:lcms.diff;extract:lcms-1.17.tar.gz;patch:lc
 openssl;0.9.6m;openssl-0.9.6m;openssl-0.9.6m.tar.gz;extract:openssl-0.9.6m.tar.gz
 directfb;1.4.11;DirectFB-1.4.11;DirectFB-1.4.11.tar.gz:directfb-1.4.11+STM2010.12.15-4.diff:directfb-1.4.11+STM2010.12.15-4.no-vt.diff:directfb-libpng.diff:directfb-1.4.11+STM2010.12.15-4.enigma2remote.diff;extract:DirectFB-1.4.11.tar.gz;patch:directfb-1.4.11+STM2010.12.15-4.diff:;patch:directfb-1.4.11+STM2010.12.15-4.no-vt.diff;patch:directfb-libpng.diff;patch:directfb-1.4.11+STM2010.12.15-4.enigma2remote.diff
 dfbpp;1.0.0;DFB++-1.0.0;DFB++-1.0.0.tar.gz;extract:DFB++-1.0.0.tar.gz
+
+libstgles;1.0;libstgles-1.0;;link:../apps/misc/tools/libstgles:libstgles-1.0
+
 webkitdfb;2010-11-18;webkitdfb_2010-11-18;webkitdfb_2010-11-18.tar.gz:webkitdfb.diff;extract:webkitdfb_2010-11-18.tar.gz;patch:webkitdfb.diff
 icu4c;4_4_1;icu/source;icu4c-4_4_1-src.tgz:icu4c-4_4_1_locales.patch;extract:icu4c-4_4_1-src.tgz
 enchant;1.5.0;enchant-1.5.0;enchant-1.5.0.tar.gz;extract:enchant-1.5.0.tar.gz
