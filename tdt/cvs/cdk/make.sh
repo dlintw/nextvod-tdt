@@ -452,7 +452,7 @@ esac
 
 ##############################################
 
-CONFIGPARAM="$CONFIGPARAM $GFW"
+CONFIGPARAM="$CONFIGPARAM $PLAYER $MULTICOM $MEDIAFW $EXTERNAL_LCD $VDR $GFW"
 
 ##############################################
 
