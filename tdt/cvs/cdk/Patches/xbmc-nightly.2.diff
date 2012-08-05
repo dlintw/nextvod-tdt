@@ -115,6 +115,15 @@ index c19f772..20c3ff5 100755
  	$(MAKE) -C lib/snesapu/SNES/SNESAPU
  endif
  imagelib: dllloader
+@@ -413,7 +441,7 @@ ifeq ($(findstring freebsd,@ARCH@), freebsd)
+ 		-exec install "{}" $(DESTDIR)$(libdir)/xbmc/"{}" \; \
+ 		-exec printf " -- %-75.75s\r" "{}" \;
+ else
+-	@find system addons -regextype posix-extended -type f -not -iregex ".*svn.*" -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs" -exec install -D "{}" $(DESTDIR)$(libdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
++	@find system addons -regextype posix-extended -type f -not -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs" -exec install -D "{}" $(DESTDIR)$(libdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
+ endif
+ 
+ install-scripts:
 diff --git a/configure.in b/configure.in
 index 1149466..86773ca 100755
 --- a/configure.in
