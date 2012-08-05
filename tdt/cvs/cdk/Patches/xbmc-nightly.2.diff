@@ -1,0 +1,5192 @@
+diff --git a/Makefile.in b/Makefile.in
+index c19f772..20c3ff5 100755
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -19,8 +19,7 @@ DVDPLAYER_ARCHIVES=xbmc/cores/dvdplayer/DVDPlayer.a \
+                    xbmc/cores/dvdplayer/DVDInputStreams/DVDInputStreams.a \
+                    xbmc/cores/dvdplayer/DVDSubtitles/DVDSubtitles.a
+ 
+-DIRECTORY_ARCHIVES=$(DVDPLAYER_ARCHIVES) \
+-                   lib/SlingboxLib/SlingboxLib.a \
++DIRECTORY_ARCHIVES=lib/SlingboxLib/SlingboxLib.a \
+                    lib/libRTV/librtv.a \
+                    lib/libUPnP/libupnp.a \
+                    lib/libXDAAP/libxdaap.a \
+@@ -29,7 +28,6 @@ DIRECTORY_ARCHIVES=$(DVDPLAYER_ARCHIVES) \
+                    lib/xbmc-dll-symbols/dll-symbols.a \
+                    xbmc/addons/addons.a \
+                    xbmc/cdrip/cdrip.a \
+-                   xbmc/cores/AudioEngine/audioengine.a \
+                    xbmc/cores/DllLoader/dllloader.a \
+                    xbmc/cores/DllLoader/exports/exports.a \
+                    xbmc/cores/DllLoader/exports/util/exports_utils.a \
+@@ -37,7 +35,6 @@ DIRECTORY_ARCHIVES=$(DVDPLAYER_ARCHIVES) \
+                    xbmc/cores/VideoRenderers/VideoRenderer.a \
+                    xbmc/cores/VideoRenderers/VideoShaders/VideoShaders.a \
+                    xbmc/cores/cores.a \
+-                   xbmc/cores/paplayer/paplayer.a \
+                    xbmc/cores/playercorefactory/playercorefactory.a \
+                    xbmc/dbwrappers/dbwrappers.a \
+                    xbmc/dialogs/dialogs.a \
+@@ -81,6 +78,21 @@ DIRECTORY_ARCHIVES=$(DVDPLAYER_ARCHIVES) \
+                    xbmc/windows/windows.a \
+                    xbmc/xbmc.a \
+ 
++#ifeq (@USE_AUDIOENGINE@,1)
++DIRECTORY_ARCHIVES += xbmc/cores/AudioEngine/audioengine.a
++#endif
++
++ifeq (@USE_DVDPLAYER@,1)
++DIRECTORY_ARCHIVES += $(DVDPLAYER_ARCHIVES)
++endif
++
++#ifeq (@USE_PAPLAYER@,1)
++DIRECTORY_ARCHIVES += xbmc/cores/paplayer/paplayer.a
++#endif
++
++ifeq (@USE_GSTPLAYER@,1)
++DIRECTORY_ARCHIVES += xbmc/cores/gstplayer/gstplayer.a
++endif
+ 
+ NWAOBJSXBMC=	xbmc/commons/commons.a \
+ 		xbmc/threads/threads.a \
+@@ -99,6 +111,11 @@ DIRECTORY_ARCHIVES += xbmc/rendering/gles/rendering_gles.a
+ DIRECTORY_ARCHIVES += xbmc/windowing/egl/windowing_egl.a
+ endif
+ 
++ifeq (@USE_OPENGLESV1@,1)
++DIRECTORY_ARCHIVES += xbmc/rendering/gles/rendering_gles.a
++DIRECTORY_ARCHIVES += xbmc/windowing/egl/windowing_egl.a
++endif
++
+ ifeq ($(findstring osx,@ARCH@),osx)
+ DIRECTORY_ARCHIVES += xbmc/osx/osx.a
+ DIRECTORY_ARCHIVES += xbmc/network/osx/network.a
+@@ -141,20 +158,27 @@ endif
+ LIB_DIRS=\
+ 	lib/cximage-6.0 \
+ 	lib/libexif \
+-	lib/cmyth \
+ 	lib/libhdhomerun \
+ 	lib/libid3tag \
+ 	lib/libapetag \
+ 	lib/cpluff \
+ 	lib/xbmc-dll-symbols
+ 
++ifeq (@USE_MYSQL@,1)
++LIB_DIRS += lib/cmyth
++endif
++
+ SS_DIRS=
+ ifneq (@DISABLE_RSXS@,1)
+   SS_DIRS+= xbmc/screensavers/rsxs-0.9/xbmc
+ endif
+ 
+-VIS_DIRS=xbmc/visualizations/OpenGLSpectrum \
+-         xbmc/visualizations/WaveForm
++VIS_DIRS=
++ifneq (@USE_OPENGLESV1@,1)
++  VIS_DIRS+=\
++	xbmc/visualizations/OpenGLSpectrum \
++	xbmc/visualizations/WaveForm
++endif
+ 
+ ifneq (@DISABLE_PROJECTM@,1)
+   VIS_DIRS+= xbmc/visualizations/XBMCProjectM
+@@ -286,8 +310,12 @@ else
+ endif
+ libexif: dllloader
+ 	$(MAKE) -C lib/libexif
++ifeq (@USE_MYSQL@,1)
+ cmyth: dllloader
+ 	$(MAKE) -C lib/cmyth
++else
++cmyth:
++endif
+ libhdhomerun: dllloader
+ 	$(MAKE) -C lib/libhdhomerun
+ libid3tag: dllloader
+@@ -307,7 +335,7 @@ ifeq (@USE_ASAP_CODEC@,1)
+   endif
+ endif
+ 	$(MAKE) -C lib/stsound/StSoundLibrary	
+-ifeq ($(or $(findstring powerpc,@ARCH@),$(findstring x86_64-linux,@ARCH@),$(findstring arm, @ARCH@),$(findstring freebsd,@ARCH@)),)
++ifeq ($(or $(findstring powerpc,@ARCH@),$(findstring x86_64-linux,@ARCH@),$(findstring arm, @ARCH@),$(findstring sh, @ARCH@)),)
+ 	$(MAKE) -C lib/snesapu/SNES/SNESAPU
+ endif
+ imagelib: dllloader
+diff --git a/configure.in b/configure.in
+index 1149466..86773ca 100755
+--- a/configure.in
++++ b/configure.in
+@@ -136,6 +136,8 @@ libusb_disabled_udev_found="== libusb disabled. =="
+ libcec_enabled="== libcec enabled. =="
+ libcec_disabled="== libcec disabled. CEC adapter support will not be available. =="
+ libcec_disabled_missing_libs="== libcec disabled because both libudev and libusb are not available. CEC adapter support will not be available. =="
++gstreamer_not_found="== GStreamer libraries not found. GStreamer support disabled. =="
++gstreamer_disabled="== GStreamer support manually disabled. =="
+ 
+ # External library message strings
+ external_libraries_enabled="== Use of all supported external libraries enabled. =="
+@@ -195,6 +197,12 @@ AC_ARG_ENABLE([gles],
+   [use_gles=$enableval],
+   [use_gles=no])
+ 
++AC_ARG_ENABLE([glesv1],
++  [AS_HELP_STRING([--enable-glesv1],
++  [enable OpenGLESv1 rendering (default is no)])],
++  [use_glesv1=$enableval],
++  [use_glesv1=no])
++
+ AC_ARG_ENABLE([sdl],
+   [AS_HELP_STRING([--enable-sdl],
+   [enable SDL (default is auto)])],
+@@ -237,6 +245,12 @@ AC_ARG_ENABLE([openmax],
+   [use_openmax=$enableval],
+   [use_openmax=auto])
+ 
++AC_ARG_ENABLE([gstreamer],
++  [AS_HELP_STRING([--enable-gstreamer],
++  [enable GStreamer support (default is auto)])],
++  [use_gstreamer=$enableval],
++  [use_gstreamer=auto])
++
+ AC_ARG_ENABLE([tegra],
+   [AS_HELP_STRING([--enable-tegra],
+   [enable Tegra2 arm (default is no)])],
+@@ -381,6 +395,30 @@ AC_ARG_ENABLE([asap-codec],
+   [use_asap=$enableval],
+   [use_asap=no])
+ 
++AC_ARG_ENABLE([mysql],
++  [AS_HELP_STRING([--disable-mysql],
++  [disable mysql])],
++  [use_mysql=$enableval],
++  [use_mysql=yes])
++
++AC_ARG_ENABLE([dvdplayer],
++  [AS_HELP_STRING([--disable-dvdplayer],
++  [disable dvdplayer])],
++  [use_dvdplayer=$enableval],
++  [use_dvdplayer=yes])
++
++AC_ARG_ENABLE([paplayer],
++  [AS_HELP_STRING([--disable-paplayer],
++  [disable paplayer])],
++  [use_paplayer=$enableval],
++  [use_paplayer=yes])
++
++AC_ARG_ENABLE([gstplayer],
++  [AS_HELP_STRING([--enable-gstplayer],
++  [enable gstplayer])],
++  [use_gstplayer=$enableval],
++  [use_gstplayer=no])
++
+ AC_ARG_ENABLE([webserver],
+   [AS_HELP_STRING([--disable-webserver],
+   [disable webserver])],
+@@ -561,6 +599,12 @@ case $host in
+      use_arch="arm"
+      AC_SUBST(ARCH_DEFINES, "-DTARGET_POSIX -DTARGET_LINUX -D_LINUX")
+      ;;
++  sh*-*-linux-gnu*)
++     use_texturepacker=no
++     ARCH="sh"
++     use_arch="sh"
++     AC_SUBST(ARCH_DEFINES, "-DTARGET_POSIX -DTARGET_LINUX -D_LINUX")
++     ;;
+   *)
+      AC_MSG_ERROR(unsupported host ($host))
+ esac
+@@ -727,20 +771,34 @@ else
+       AC_CHECK_LIB([GLU], [main],, AC_MSG_ERROR($missing_library))
+     fi
+   else
+-    AC_MSG_RESULT(== WARNING: OpenGL support is disabled. XBMC will run VERY slow. ==)
+-    AC_CHECK_LIB([SDL_gfx],[main])
++    if test "$use_glesv1" = "yes"; then
++      if test "$host_alias" = "sh4-linux" ; then
++        AC_DEFINE([HAVE_LIBEGL],[1],["Define to 1 if you have the `EGL' library (-lEGL)."])
++        AC_DEFINE([HAVE_LIBGLES],[1],["Define to 1 if you have the `GLES' library (-lGLES)."])
++        
++        PKG_CHECK_MODULES([STGLES],  [libstgles],
++	  INCLUDES="$INCLUDES $STGLES_CFLAGS"; LIBS="$LIBS $STGLES_LIBS"; use_stgles=yes],
++          AC_MSG_NOTICE($stgles_not_found); use_stgles=no)
++      fi
++    else
++      AC_MSG_RESULT(== WARNING: OpenGL support is disabled. XBMC will run VERY slow. ==)
++      AC_CHECK_LIB([SDL_gfx],[main])
++    fi
+   fi
+ fi
+ 
+ # platform common libraries
+-AC_CHECK_PROG(MYSQL_CONFIG, mysql_config, "yes", "no")
+-if test $MYSQL_CONFIG = "yes"; then
+-  INCLUDES="$INCLUDES `mysql_config --include`"
+-  MYSQL_LIBS=`mysql_config --libs`
+-  LIBS="$LIBS $MYSQL_LIBS"
+-  AC_SUBST(MYSQL_LIBS)
+-else
+-  AC_MSG_ERROR($missing_program)
++if test "$use_mysql" = "yes"; then
++  AC_CHECK_PROG(MYSQL_CONFIG, mysql_config, "yes", "no")
++  if test $MYSQL_CONFIG = "yes"; then
++    AC_DEFINE([HAVE_MYSQL],[1],["Define to 1 if you have the `mysql' library (-lmysqlclient)."])
++    INCLUDES="$INCLUDES `mysql_config --include`"
++    MYSQL_LIBS=`mysql_config --libs`
++    LIBS="$LIBS $MYSQL_LIBS"
++    AC_SUBST(MYSQL_LIBS)
++  else
++    AC_MSG_ERROR($missing_program)
++  fi
+ fi
+ AC_CHECK_HEADER([ass/ass.h],, AC_MSG_ERROR($missing_library))
+ AC_CHECK_HEADER([mpeg2dec/mpeg2.h],, AC_MSG_ERROR($missing_library))
+@@ -779,7 +837,9 @@ AC_CHECK_LIB([lzo2],        [main],, AC_MSG_ERROR($missing_library))
+ AC_CHECK_LIB([z],           [main],, AC_MSG_ERROR($missing_library))
+ AC_CHECK_LIB([crypto],      [main],, AC_MSG_ERROR($missing_library))
+ AC_CHECK_LIB([ssl],         [main],, AC_MSG_ERROR($missing_library))
+-AC_CHECK_LIB([mysqlclient], [main],, AC_MSG_ERROR($missing_library))
++if test "$use_mysql" = "yes"; then
++  AC_CHECK_LIB([mysqlclient], [main],, AC_MSG_ERROR($missing_library))
++fi
+ AC_CHECK_LIB([ssh],         [sftp_tell64],, AC_MSG_RESULT([Could not find suitable version of libssh]))
+ AC_CHECK_LIB([bluetooth],   [hci_devid],, AC_MSG_RESULT([Could not find suitable version of libbluetooth]))
+ AC_CHECK_LIB([yajl],        [main],, AC_MSG_ERROR($missing_library))
+@@ -853,10 +913,12 @@ else
+   esac
+   AC_CHECK_LIB([jasper],     [main],, AC_MSG_ERROR($missing_library)) # check for cximage
+   AC_CHECK_LIB([rt],         [clock_gettime],, AC_MSG_ERROR($missing_library))
+-
+-  PKG_CHECK_MODULES([ALSA],  [alsa],
+-    [INCLUDES="$INCLUDES $ALSA_CFLAGS"; LIBS="$LIBS $ALSA_LIBS"; use_alsa=yes],
+-    AC_MSG_NOTICE($alsa_not_found); use_alsa=no)
++  
++  if test "$use_alsa" = "yes"; then
++    PKG_CHECK_MODULES([ALSA],  [alsa],
++      [INCLUDES="$INCLUDES $ALSA_CFLAGS"; LIBS="$LIBS $ALSA_LIBS"; use_alsa=yes],
++      AC_MSG_NOTICE($alsa_not_found); use_alsa=no)
++  fi
+   PKG_CHECK_MODULES([DBUS],    [dbus-1],
+     [INCLUDES="$INCLUDES $DBUS_CFLAGS"; LIBS="$LIBS $DBUS_LIBS"; use_dbus=yes]; \
+     AC_DEFINE([HAVE_DBUS],[1],["Define to 1 if dbus is installed"]),
+@@ -1548,6 +1610,45 @@ else
+   fi
+ fi
+ 
++# GSTREAMER
++if test "x$use_gstreamer" != "xno"; then
++  if test "$host_vendor" = "apple" ; then
++    if test "x$use_gstreamer" = "xyes"; then
++      AC_MSG_ERROR([GStreamer not supported on this platform])
++    else
++      use_gstreamer="no"
++      AC_MSG_NOTICE($gstreamer_disabled)
++    fi
++    USE_GSTREAMER=0
++  else
++    AC_SUBST(gstreamer_req, 0.10.0)
++    AC_SUBST(gstreamer_plugins_base_req, 0.10.0)
++    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= $gstreamer_req, HAVE_GSTREAMER=1, HAVE_GSTREAMER=0)
++    PKG_CHECK_MODULES(GSTREAMER_BASE, gstreamer-base-0.10 >= $gstreamer_req, HAVE_GSTREAMER_BASE=1, HAVE_GSTREAMER_BASE=0)
++    PKG_CHECK_MODULES(GSTREAMER_PLUGINS_BASE, gstreamer-plugins-base-0.10 >= $gstreamer_plugins_base_req, HAVE_GSTREAMER_PLUGINS_BASE=1, HAVE_GSTREAMER_PLUGINS_BASE=0)
++    HAVE_GSTREAMER_APP=1
++    AC_CHECK_LIB([gstapp-0.10], main, , HAVE_GSTREAMER_APP=0)
++
++    if test $HAVE_GSTREAMER -eq 1 -a $HAVE_GSTREAMER_BASE -eq 1 -a $HAVE_GSTREAMER_PLUGINS_BASE -eq 1 -a $HAVE_GSTREAMER_APP -eq 1; then
++      INCLUDES="$INCLUDES $GSTREAMER_CFLAGS $GSTREAMER_BASE_CFLAGS $GSTREAMER_PLUGINS_BASE_CFLAGS"
++      LIBS="$LIBS $GSTREAMER_LIBS $GSTREAMER_BASE_LIBS $GSTREAMER_PLUGINS_BASE_LIBS"
++      USE_GSTREAMER=1
++      AC_DEFINE([HAVE_LIBGSTREAMER], [1], [Define to 1 if you have the 'GStreamer' library.])
++    else
++      if test "x$use_gstreamer" = "xyes"; then
++        AC_MSG_ERROR([$gstreamer_not_found])
++      else
++        use_gstreamer="no"
++        USE_GSTREAMER=0
++        AC_MSG_RESULT($gstreamer_not_found)
++      fi
++    fi
++  fi
++else
++  USE_GSTREAMER=0
++  AC_MSG_NOTICE($gstreamer_disabled)
++fi
++
+ # yajl version check (yajl_version.h was added in yajl 2.0)
+ AC_CHECK_HEADERS([yajl/yajl_version.h], [], [
+ AC_DEFINE(YAJL_MAJOR, 1, [yajl version 1])
+@@ -1639,16 +1740,23 @@ final_message="$final_message\n  target CPU:\t$use_cpu"
+ if test "$use_gles" = "yes"; then
+   final_message="$final_message\n  OpenGLES:\tYes"
+   USE_OPENGLES=1
++  USE_OPENGLESV1=0
+   USE_OPENGL=0
+ else
+   USE_OPENGLES=0
+   if test "$use_gl" = "yes"; then
+     final_message="$final_message\n  OpenGL:\tYes"
+     USE_OPENGL=1
++    USE_OPENGLESV1=0
+   else
+-    final_message="$final_message\n  OpenGL:\tNo (Very Slow)"
+-    SDL_DEFINES="-DHAS_SDL_2D"
+     USE_OPENGL=0
++    final_message="$final_message\n  OpenGLESV1:\tYes"
++    if test "$use_glesv1" = "yes"; then
++      USE_OPENGLESV1=1
++    else
++      final_message="$final_message\n  OpenGL:\tNo (Very Slow)"
++      SDL_DEFINES="-DHAS_SDL_2D"
++    fi
+   fi
+ fi
+ 
+@@ -1703,6 +1811,12 @@ else
+   final_message="$final_message\n  OpenMax:\tNo"
+ fi
+ 
++if test "$use_gstreamer" != "no"; then
++  final_message="$final_message\n  GStreamer:\tYes"
++else
++  final_message="$final_message\n  GStreamer:\tNo"
++fi
++
+ if test "$use_joystick" = "yes"; then
+   final_message="$final_message\n  Joystick:\tYes"
+   SDL_DEFINES="$SDL_DEFINES -DHAS_SDL_JOYSTICK"
+@@ -1879,6 +1993,41 @@ else
+   final_message="$final_message\n  ASAP Codec:\tNo"
+ fi
+ 
++if test "$use_mysql" = "yes"; then
++  final_message="$final_message\n  MySQL:\tYes"
++  USE_MYSQL=1
++else
++  final_message="$final_message\n  MySQL:\tNo"
++  USE_MYSQL=0
++fi
++
++if test "$use_dvdplayer" = "yes"; then
++  final_message="$final_message\n  dvdplayer:\tYes"
++  USE_DVDPLAYER=1
++  AC_DEFINE([HAVE_DVDPLAYER],[1],[""])
++else
++  final_message="$final_message\n  dvdplayer:\tNo"
++  USE_DVDPLAYER=0
++fi
++
++if test "$use_paplayer" = "yes"; then
++  final_message="$final_message\n  paplayer:\tYes"
++  USE_PAPLAYER=1
++  AC_DEFINE([HAVE_PAPLAYER],[1],[""])
++else
++  final_message="$final_message\n  paplayer:\tNo"
++  USE_PAPLAYER=0
++fi
++
++if test "$use_gstplayer" = "yes"; then
++  final_message="$final_message\n  gstplayer:\tYes"
++  USE_GSTPLAYER=1
++  AC_DEFINE([HAVE_GSTPLAYER],[1],[""])
++else
++  final_message="$final_message\n  gstplayer:\tNo"
++  USE_GSTPLAYER=0
++fi
++
+ if test "$use_webserver" = "yes"; then
+   final_message="$final_message\n  Webserver:\tYes"
+   USE_WEB_SERVER=1
+@@ -1992,6 +2141,7 @@ OUTPUT_FILES="Makefile \
+     xbmc/cores/dvdplayer/DVDSubtitles/Makefile \
+     xbmc/cores/AudioEngine/Makefile \
+     xbmc/cores/paplayer/Makefile \
++    xbmc/cores/gstplayer/Makefile \
+     lib/timidity/Makefile \
+     lib/xbadpcm/Makefile \
+     lib/asap/Makefile \
+@@ -2074,6 +2224,7 @@ AC_SUBST(LIBMEPG2_BASENAME)
+ AC_SUBST_FILE(XBMC_STANDALONE_SH_PULSE)
+ AC_SUBST(USE_OPENGL)
+ AC_SUBST(USE_OPENGLES)
++AC_SUBST(USE_OPENGLESV1)
+ AC_SUBST(USE_VDPAU)
+ AC_SUBST(USE_VAAPI)
+ AC_SUBST(USE_CRYSTALHD)
+@@ -2083,6 +2234,7 @@ AC_SUBST(USE_LIBAFPCLIENT)
+ AC_SUBST(USE_AIRPLAY)
+ AC_SUBST(USE_VDA)
+ AC_SUBST(USE_OPENMAX)
++AC_SUBST(USE_GSTREAMER)
+ AC_SUBST(USE_PULSE)
+ AC_SUBST(USE_XRANDR)
+ AC_SUBST(USE_ALSA)
+@@ -2093,6 +2245,10 @@ AC_SUBST(USE_AIRTUNES)
+ AC_SUBST(USE_LIBUDEV)
+ AC_SUBST(USE_LIBUSB)
+ AC_SUBST(USE_LIBCEC)
++AC_SUBST(USE_MYSQL)
++AC_SUBST(USE_DVDPLAYER)
++AC_SUBST(USE_PAPLAYER)
++AC_SUBST(USE_GSTPLAYER)
+ AC_SUBST(USE_WEB_SERVER)
+ 
+ 
+diff --git a/m4/ax_python_devel.m4 b/m4/ax_python_devel.m4
+index adbd207..4ca3434 100644
+--- a/m4/ax_python_devel.m4
++++ b/m4/ax_python_devel.m4
+@@ -243,7 +243,7 @@ EOD`
+ 			  "from distutils.sysconfig import get_python_lib as f; \
+ 			  import os; \
+ 			  print (os.path.join(f(plat_specific=1, standard_lib=1), 'config'));"`
+-			PYTHON_LDFLAGS="-L$ac_python_libdir -lpython$ac_python_version"
++			PYTHON_LDFLAGS="-L$PY_PATH/include/python2.6 -lpython$ac_python_version"
+ 		fi
+ 
+ 		if test -z "$PYTHON_LDFLAGS"; then
+diff --git a/xbmc/Application.cpp b/xbmc/Application.cpp
+index 639c621..1c42488 100644
+--- a/xbmc/Application.cpp
++++ b/xbmc/Application.cpp
+@@ -654,17 +654,23 @@ bool CApplication::Create()
+ 
+   g_powerManager.Initialize();
+ 
++#if HAS_AUDIOENGINE
+   // Load the AudioEngine before settings as they need to query the engine
+   if (!CAEFactory::LoadEngine())
+   {
+     CLog::Log(LOGFATAL, "CApplication::Create: Failed to load an AudioEngine");
+     FatalErrorHandler(true, true, true);
+   }
++#endif
+ 
+-  CLog::Log(LOGNOTICE, "load settings...");
++  CLog::Log(LOGNOTICE, "load gui settings...");
+ 
+   g_guiSettings.Initialize();  // Initialize default Settings - don't move
++  CLog::Log(LOGNOTICE, "set power manager defaults...");
+   g_powerManager.SetDefaults();
++  
++
++  CLog::Log(LOGNOTICE, "load settings...");
+   if (!g_settings.Load())
+     FatalErrorHandler(true, true, true);
+ 
+@@ -697,17 +703,22 @@ bool CApplication::Create()
+   if (!g_localizeStrings.Load(strLanguagePath, strLanguage))
+     FatalErrorHandler(false, false, true);
+ 
++#if HAS_AUDIOENGINE
+   // start the AudioEngine
+   if (!CAEFactory::StartEngine())
+   {
+     CLog::Log(LOGFATAL, "CApplication::Create: Failed to start the AudioEngine");
+     FatalErrorHandler(true, true, true);
+   }
++#endif
+ 
+   // restore AE's previous volume state
+   SetHardwareVolume(g_settings.m_fVolumeLevel);
++
++#if HAS_AUDIOENGINE
+   CAEFactory::AE->SetMute     (g_settings.m_bMute);
+   CAEFactory::AE->SetSoundMode(g_guiSettings.GetInt("audiooutput.guisoundmode"));
++#endif
+ 
+   // start-up Addons Framework
+   // currently bails out if either cpluff Dll is unavailable or system dir can not be scanned
+@@ -1998,8 +2009,8 @@ bool CApplication::RenderNoPresent()
+       ResetScreenSaver();
+       g_renderManager.Present();
+     }
+-    else
+-      g_renderManager.RenderUpdate(true);
++    //else
++    //  g_renderManager.RenderUpdate(true);
+ 
+     // close window overlays
+     CGUIDialog *overlay = (CGUIDialog *)g_windowManager.GetWindow(WINDOW_DIALOG_VIDEO_OVERLAY);
+@@ -3909,7 +3920,17 @@ bool CApplication::PlayFile(const CFileItem& item, bool bRestart)
+   // one of the players that allows gapless playback (paplayer, dvdplayer)
+   if (m_pPlayer)
+   {
+-    if ( !(m_eCurrentPlayer == eNewCore && (m_eCurrentPlayer == EPC_DVDPLAYER || m_eCurrentPlayer  == EPC_PAPLAYER)) )
++    if ( !(m_eCurrentPlayer == eNewCore && (
++#ifdef HAS_DVDPLAYER
++           m_eCurrentPlayer == EPC_DVDPLAYER || 
++#endif
++#ifdef HAS_PAPLAYER
++           m_eCurrentPlayer  == EPC_PAPLAYER ||
++#endif
++#ifdef HAS_GSTPLAYER
++           m_eCurrentPlayer  == EPC_GSTPLAYER ||
++#endif
++           0)) )
+     {
+       delete m_pPlayer;
+       m_pPlayer = NULL;
+@@ -5066,7 +5087,9 @@ void CApplication::ProcessSlow()
+   if (!IsPlayingVideo())
+     CAddonInstaller::Get().UpdateRepos();
+ 
++#if HAS_AUDIOENGINE
+   CAEFactory::AE->GarbageCollect();
++#endif
+ }
+ 
+ // Global Idle Time in Seconds
+@@ -5168,7 +5191,11 @@ bool CApplication::IsMuted() const
+ {
+   if (g_peripherals.IsMuted())
+     return true;
++#if HAS_AUDIOENGINE
+   return CAEFactory::AE->IsMuted();
++#else
++  return false;
++#endif
+ }
+ 
+ void CApplication::ToggleMute(void)
+@@ -5184,7 +5211,9 @@ void CApplication::Mute()
+   if (g_peripherals.Mute())
+     return;
+ 
++#if HAS_AUDIOENGINE
+   CAEFactory::AE->SetMute(true);
++#endif
+   g_settings.m_bMute = true;
+ }
+ 
+@@ -5193,7 +5222,9 @@ void CApplication::UnMute()
+   if (g_peripherals.UnMute())
+     return;
+ 
++#if HAS_AUDIOENGINE
+   CAEFactory::AE->SetMute(false);
++#endif
+   g_settings.m_bMute = false;
+ }
+ 
+@@ -5226,7 +5257,9 @@ void CApplication::SetHardwareVolume(float hardwareVolume)
+   if (value >= 0.99f)
+     value = 1.0f;
+ 
++#if HAS_AUDIOENGINE
+   CAEFactory::AE->SetVolume(value);
++#endif
+ }
+ 
+ int CApplication::GetVolume() const
+diff --git a/xbmc/ThumbLoader.cpp b/xbmc/ThumbLoader.cpp
+index f1a9701..ec9ec2a 100644
+--- a/xbmc/ThumbLoader.cpp
++++ b/xbmc/ThumbLoader.cpp
+@@ -99,6 +99,7 @@ bool CThumbExtractor::operator==(const CJob* job) const
+ 
+ bool CThumbExtractor::DoWork()
+ {
++    //return false;
+   if (URIUtils::IsLiveTV(m_path)
+   ||  URIUtils::IsUPnP(m_path)
+   ||  URIUtils::IsDAAP(m_path)
+diff --git a/xbmc/Util.cpp b/xbmc/Util.cpp
+index 76ae59a..2360f0e 100644
+--- a/xbmc/Util.cpp
++++ b/xbmc/Util.cpp
+@@ -928,7 +928,7 @@ void CUtil::TakeScreenshot(const CStdString &filename, bool sync)
+   unsigned char* pixels = new unsigned char[stride * height];
+ 
+   //read pixels from the backbuffer
+-#if HAS_GLES == 2
++#if HAS_GLES == 2 || HAS_GLES == 1
+   glReadPixels(viewport[0], viewport[1], viewport[2], viewport[3], GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)pixels);
+ #else
+   glReadPixels(viewport[0], viewport[1], viewport[2], viewport[3], GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)pixels);
+diff --git a/xbmc/cores/AudioEngine/AEFactory.cpp b/xbmc/cores/AudioEngine/AEFactory.cpp
+index 68d68a2..2b10966 100644
+--- a/xbmc/cores/AudioEngine/AEFactory.cpp
++++ b/xbmc/cores/AudioEngine/AEFactory.cpp
+@@ -25,8 +25,10 @@
+ #if defined(TARGET_DARWIN)
+   #include "Engines/CoreAudio/CoreAudioAE.h"
+ #else
++#if defined(HAS_SOFTAE)
+   #include "Engines/SoftAE/SoftAE.h"
+ #endif
++#endif
+ 
+ #if defined(HAS_PULSEAUDIO)
+   #include "Engines/PulseAE/PulseAE.h"
+@@ -50,8 +52,10 @@ bool CAEFactory::LoadEngine()
+     if (!loaded && engine == "PULSE")
+       loaded = CAEFactory::LoadEngine(AE_ENGINE_PULSE);
+     #endif
++    #if defined(HAS_SOFTAE)
+     if (!loaded && engine == "SOFT" )
+       loaded = CAEFactory::LoadEngine(AE_ENGINE_SOFT);
++    #endif
+   }
+ #endif
+ 
+@@ -64,10 +68,12 @@ bool CAEFactory::LoadEngine()
+   if (!loaded)
+     loaded = CAEFactory::LoadEngine(AE_ENGINE_COREAUDIO);
+ #else
++#if defined(HAS_SOFTAE)
+   if (!loaded)
+     loaded = CAEFactory::LoadEngine(AE_ENGINE_SOFT);
+ #endif
+-
++#endif
++  loaded = true;
+   return loaded;
+ }
+ 
+@@ -83,8 +89,10 @@ bool CAEFactory::LoadEngine(enum AEEngine engine)
+ #if defined(TARGET_DARWIN)
+     case AE_ENGINE_COREAUDIO: AE = new CCoreAudioAE(); break;
+ #else
++#if defined(HAS_SOFTAE)
+     case AE_ENGINE_SOFT     : AE = new CSoftAE(); break;
+ #endif
++#endif
+ #if defined(HAS_PULSEAUDIO)
+     case AE_ENGINE_PULSE    : AE = new CPulseAE(); break;
+ #endif
+@@ -93,11 +101,12 @@ bool CAEFactory::LoadEngine(enum AEEngine engine)
+       return false;
+   }
+ 
+-  return AE != NULL;
++  return true; //AE != NULL;
+ }
+ 
+ bool CAEFactory::StartEngine()
+ {
++#if 0
+   if (!AE)
+     return false;
+ 
+@@ -107,4 +116,7 @@ bool CAEFactory::StartEngine()
+   delete AE;
+   AE = NULL;
+   return false;
++#else
++  return true;
++#endif
+ }
+diff --git a/xbmc/cores/AudioEngine/AESinkFactory.cpp b/xbmc/cores/AudioEngine/AESinkFactory.cpp
+index 3e7d2a0..1f10267 100644
+--- a/xbmc/cores/AudioEngine/AESinkFactory.cpp
++++ b/xbmc/cores/AudioEngine/AESinkFactory.cpp
+@@ -31,11 +31,15 @@
+   #if defined(HAS_ALSA)
+     #include "Sinks/AESinkALSA.h"
+   #endif
+-  #include "Sinks/AESinkOSS.h"
++  #if defined(HAS_OSS)
++    #include "Sinks/AESinkOSS.h"
++  #endif
+ #else
+   #pragma message("NOTICE: No audio sink for target platform.  Audio output will not be available.")
+ #endif
+-#include "Sinks/AESinkProfiler.h"
++#if defined(HAS_PROFILER)
++  #include "Sinks/AESinkProfiler.h"
++#endif
+ #include "Sinks/AESinkNULL.h"
+ 
+ void CAESinkFactory::ParseDevice(std::string &device, std::string &driver)
+@@ -52,12 +56,18 @@ void CAESinkFactory::ParseDevice(std::string &device, std::string &driver)
+   #if defined(HAS_ALSA)
+         driver == "ALSA"        ||
+   #endif
++  #if defined(HAS_OSS)
+         driver == "OSS"         ||
++  #endif
+ #elif defined(TARGET_WINDOWS)
+         driver == "WASAPI"      ||
+         driver == "DIRECTSOUND" ||
+ #endif
++#if defined(HAS_PROFILER)
+         driver == "PROFILER"
++#else
++        0
++#endif
+         )
+       device = device.substr(pos + 1, device.length() - pos - 1);
+     else
+@@ -94,9 +104,10 @@ IAESink *CAESinkFactory::Create(std::string &device, AEAudioFormat &desiredForma
+   IAESink       *sink;
+   std::string    tmpDevice;
+ 
++#if defined(HAS_PROFILER)
+   if (driver == "PROFILER")
+     TRY_SINK(Profiler);
+-
++#endif
+ 
+ #if defined(TARGET_WINDOWS)
+ 
+@@ -111,8 +122,10 @@ IAESink *CAESinkFactory::Create(std::string &device, AEAudioFormat &desiredForma
+   if (driver.empty() || driver == "ALSA")
+     TRY_SINK(ALSA)
+   #endif
++  #if defined(HAS_OSS)
+   if (driver.empty() || driver == "OSS")
+     TRY_SINK(OSS)
++  #endif
+ 
+   /* no need to try others as both will have been attempted if driver is empty */
+   if (driver.empty())
+@@ -123,8 +136,10 @@ IAESink *CAESinkFactory::Create(std::string &device, AEAudioFormat &desiredForma
+   if (driver != "ALSA")
+       TRY_SINK(ALSA)
+   #endif
++  #if defined(HAS_OSS)
+   if (driver != "OSS")
+     TRY_SINK(OSS)
++  #endif
+ 
+ #endif /* defined TARGET_WINDOWS || defined TARGET_LINUX || defined TARGET_FREEBSD */
+ 
+@@ -154,8 +169,10 @@ void CAESinkFactory::EnumerateEx(AESinkInfoList &list)
+ #endif
+ 
+ #if defined(TARGET_LINUX) || defined(TARGET_FREEBSD)
++#if defined(HAS_OSS)
+   ENUMERATE_SINK(OSS);
+ #endif
++#endif
+ 
+ #if defined(TARGET_WINDOWS)
+   if (g_sysinfo.IsVistaOrHigher() && !g_advancedSettings.m_audioForceDirectSound)
+diff --git a/xbmc/cores/AudioEngine/Makefile.in b/xbmc/cores/AudioEngine/Makefile.in
+index 6f07ee9..be9afed 100644
+--- a/xbmc/cores/AudioEngine/Makefile.in
++++ b/xbmc/cores/AudioEngine/Makefile.in
+@@ -20,9 +20,11 @@ CXXFLAGS += -D__STDC_LIMIT_MACROS
+ 
+ SRCS  = AEFactory.cpp
+ SRCS += AESinkFactory.cpp
++ifeq (@USE_AUDIOENGINE@,1)
+ SRCS += Sinks/AESinkALSA.cpp
+ SRCS += Sinks/AESinkOSS.cpp
+ SRCS += Sinks/AESinkProfiler.cpp
++endif
+ SRCS += Sinks/AESinkNULL.cpp
+ 
+ SRCS += Utils/AEChannelInfo.cpp
+@@ -37,6 +39,7 @@ SRCS += Utils/AEWAVLoader.cpp
+ SRCS += Utils/AEELDParser.cpp
+ SRCS += Utils/AEDeviceInfo.cpp
+ 
++ifeq (@USE_AUDIOENGINE@,1)
+ SRCS += Engines/SoftAE/SoftAE.cpp
+ SRCS += Engines/SoftAE/SoftAEStream.cpp
+ SRCS += Engines/SoftAE/SoftAESound.cpp
+@@ -46,6 +49,7 @@ SRCS += Engines/PulseAE/PulseAEStream.cpp
+ SRCS += Engines/PulseAE/PulseAESound.cpp
+ 
+ SRCS += Encoders/AEEncoderFFmpeg.cpp
++endif
+ 
+ LIB   = audioengine.a
+ 
+diff --git a/xbmc/cores/DllLoader/DllLoader.h b/xbmc/cores/DllLoader/DllLoader.h
+index c74d58a..53f3297 100644
+--- a/xbmc/cores/DllLoader/DllLoader.h
++++ b/xbmc/cores/DllLoader/DllLoader.h
+@@ -24,7 +24,7 @@
+ #include "coffldr.h"
+ #include "LibraryLoader.h"
+ 
+-#if defined(__linux__) && !defined(__powerpc__) && !defined(__arm__)
++#if defined(__linux__) && !defined(__powerpc__) && !defined(__arm__) && !defined(__sh__)
+ #define USE_LDT_KEEPER
+ #include "ldt_keeper.h"
+ #endif
+diff --git a/xbmc/cores/DllLoader/DllLoaderContainer.cpp b/xbmc/cores/DllLoader/DllLoaderContainer.cpp
+index 09748ff..bba1cf3 100644
+--- a/xbmc/cores/DllLoader/DllLoaderContainer.cpp
++++ b/xbmc/cores/DllLoader/DllLoaderContainer.cpp
+@@ -42,6 +42,7 @@
+                  "special://xbmc/system/players/mplayer/;" \
+                  "special://xbmc/system/players/dvdplayer/;" \
+                  "special://xbmc/system/players/paplayer/;" \
++                 "special://xbmc/system/players/gstplayer/;" \
+                  "special://xbmc/system/python/"
+ 
+ #if defined(TARGET_DARWIN)
+diff --git a/xbmc/cores/DllLoader/ldt_keeper.c b/xbmc/cores/DllLoader/ldt_keeper.c
+index 1ed98d0..c6ef9fc 100644
+--- a/xbmc/cores/DllLoader/ldt_keeper.c
++++ b/xbmc/cores/DllLoader/ldt_keeper.c
+@@ -19,7 +19,7 @@
+  */
+ 
+ //#ifndef __powerpc__
+-#if !defined(__powerpc__) && !defined(__ppc__) && !defined(__arm__)
++#if !defined(__powerpc__) && !defined(__ppc__) && !defined(__arm__) && !defined(__sh__)
+ 
+ #include "ldt_keeper.h"
+ 
+diff --git a/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp b/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp
+index 253342a..ddbe2c8 100644
+--- a/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp
++++ b/xbmc/cores/VideoRenderers/LinuxRendererGLES.cpp
+@@ -24,7 +24,7 @@
+   #include "config.h"
+ #endif
+ 
+-#if HAS_GLES == 2
++#if HAS_GLES == 2 || HAS_GLES == 1
+ #include "system_gl.h"
+ 
+ #include <locale.h>
+@@ -33,21 +33,32 @@
+ #include "utils/fastmemcpy.h"
+ #include "utils/MathUtils.h"
+ #include "utils/GLUtils.h"
++#include "utils/log.h"
+ #include "settings/Settings.h"
+ #include "settings/AdvancedSettings.h"
+ #include "settings/GUISettings.h"
++
++#if HAS_GLES == 2 
+ #include "guilib/FrameBufferObject.h"
+ #include "VideoShaders/YUV2RGBShader.h"
+ #include "VideoShaders/VideoFilterShader.h"
++#endif
++
+ #include "windowing/WindowingFactory.h"
+ #include "dialogs/GUIDialogKaiToast.h"
+ #include "guilib/Texture.h"
++
++#if HAS_GLES == 2 
+ #include "lib/DllSwScale.h"
+ #include "../dvdplayer/DVDCodecs/Video/OpenMaxVideo.h"
++#endif
++
+ #include "threads/SingleLock.h"
+-#include "RenderCapture.h"
+ #include "RenderFormats.h"
++#include "threads/Event.h"
+ 
++#if HAS_GLES == 2 
++#include "RenderCapture.h"
+ #if defined(__ARM_NEON__)
+ #include "yuv2rgb.neon.h"
+ #endif
+@@ -55,10 +66,13 @@
+ #include "DVDCodecs/Video/DVDVideoCodecVideoToolBox.h"
+ #include <CoreVideo/CoreVideo.h>
+ #endif
++
++#endif
+ #ifdef TARGET_DARWIN_IOS
+ #include "osx/DarwinUtils.h"
+ #endif
+ 
++#if HAS_GLES == 2 
+ using namespace Shaders;
+ 
+ CLinuxRendererGLES::YUVBUFFER::YUVBUFFER()
+@@ -71,35 +85,53 @@ CLinuxRendererGLES::YUVBUFFER::YUVBUFFER()
+ CLinuxRendererGLES::YUVBUFFER::~YUVBUFFER()
+ {
+ }
++#endif
+ 
+ CLinuxRendererGLES::CLinuxRendererGLES()
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   m_textureTarget = GL_TEXTURE_2D;
+   for (int i = 0; i < NUM_BUFFERS; i++)
+   {
+     m_eventTexturesDone[i] = new CEvent(false,true);
++#if HAS_GLES == 2 
+ #if defined(HAVE_LIBOPENMAX)
+     m_buffers[i].openMaxBuffer = 0;
+ #endif
+ #ifdef HAVE_VIDEOTOOLBOXDECODER
+     m_buffers[i].cvBufferRef = NULL;
+ #endif
++#endif
+   }
+ 
++#if HAS_GLES == 1
++  m_renderMethod = RENDER_BYPASS;
++#else
+   m_renderMethod = RENDER_GLSL;
++#endif
+   m_renderQuality = RQ_SINGLEPASS;
+   m_iFlags = 0;
+   m_format = RENDER_FMT_NONE;
+ 
++#if HAS_GLES == 2 
+   m_iYV12RenderBuffer = 0;
++#endif
+   m_flipindex = 0;
+   m_currentField = FIELD_FULL;
++#if HAS_GLES == 2 
+   m_reloadShaders = 0;
+   m_pYUVShader = NULL;
+   m_pVideoFilterShader = NULL;
++#endif
+   m_scalingMethod = VS_SCALINGMETHOD_LINEAR;
+   m_scalingMethodGui = (ESCALINGMETHOD)-1;
+ 
++#if HAS_GLES == 1
++  // default texture handlers to ByPASS
++  m_textureUpload = &CLinuxRendererGLES::UploadBYPASSTexture;
++  m_textureCreate = &CLinuxRendererGLES::CreateBYPASSTexture;
++  m_textureDelete = &CLinuxRendererGLES::DeleteBYPASSTexture;
++#else
+   // default texture handlers to YUV
+   m_textureUpload = &CLinuxRendererGLES::UploadYV12Texture;
+   m_textureCreate = &CLinuxRendererGLES::CreateYV12Texture;
+@@ -110,19 +142,22 @@ CLinuxRendererGLES::CLinuxRendererGLES()
+ 
+   m_dllSwScale = new DllSwScale;
+   m_sw_context = NULL;
++#endif
++printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
+ }
+ 
+ CLinuxRendererGLES::~CLinuxRendererGLES()
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   UnInit();
+   for (int i = 0; i < NUM_BUFFERS; i++)
+     delete m_eventTexturesDone[i];
+ 
++#if HAS_GLES == 2 
+   if (m_rgbBuffer != NULL) {
+     delete [] m_rgbBuffer;
+     m_rgbBuffer = NULL;
+   }
+-
+   if (m_pYUVShader)
+   {
+     m_pYUVShader->Free();
+@@ -131,26 +166,32 @@ CLinuxRendererGLES::~CLinuxRendererGLES()
+   }
+ 
+   delete m_dllSwScale;
++#endif
+ }
+ 
+ void CLinuxRendererGLES::ManageTextures()
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   m_NumYV12Buffers = 2;
+   //m_iYV12RenderBuffer = 0;
++#endif
+   return;
+ }
+ 
+ bool CLinuxRendererGLES::ValidateRenderTarget()
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   if (!m_bValidated)
+   {
+     CLog::Log(LOGNOTICE,"Using GL_TEXTURE_2D");
+ 
++#if HAS_GLES == 2 
+      // create the yuv textures    
+     LoadShaders();
+-
+     for (int i = 0 ; i < m_NumYV12Buffers ; i++)
+       (this->*m_textureCreate)(i);
++#endif
+ 
+     m_bValidated = true;
+     return true;
+@@ -160,6 +201,7 @@ bool CLinuxRendererGLES::ValidateRenderTarget()
+ 
+ bool CLinuxRendererGLES::Configure(unsigned int width, unsigned int height, unsigned int d_width, unsigned int d_height, float fps, unsigned flags, ERenderFormat format, unsigned extended_format)
+ {
++printf("%s:%s[%d] -> width=%u height=%u d_width=%u d_height=%u fps=%f\n", __FILE__, __func__, __LINE__, width, height, d_width, d_height, fps);
+   m_sourceWidth = width;
+   m_sourceHeight = height;
+ 
+@@ -181,20 +223,26 @@ bool CLinuxRendererGLES::Configure(unsigned int width, unsigned int height, unsi
+   // frame is loaded after every call to Configure().
+   m_bValidated = false;
+ 
++#if HAS_GLES == 2 
+   for (int i = 0 ; i<m_NumYV12Buffers ; i++)
+     m_buffers[i].image.flags = 0;
++#endif
+ 
+   m_iLastRenderBuffer = -1;
+   return true;
+ }
+ 
++#if HAS_GLES == 2 
+ int CLinuxRendererGLES::NextYV12Texture()
+ {
+   return (m_iYV12RenderBuffer + 1) % m_NumYV12Buffers;
+ }
++#endif
+ 
+ int CLinuxRendererGLES::GetImage(YV12Image *image, int source, bool readonly)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   if (!image) return -1;
+   if (!m_bValidated) return -1;
+ 
+@@ -245,12 +293,15 @@ int CLinuxRendererGLES::GetImage(YV12Image *image, int source, bool readonly)
+   image->bpp      = 1;
+ 
+   return source;
++#endif
+ 
+   return -1;
+ }
+ 
+ void CLinuxRendererGLES::ReleaseImage(int source, bool preserve)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   YV12Image &im = m_buffers[source].image;
+ 
+   if( im.flags & IMAGE_FLAG_WRITING )
+@@ -262,10 +313,11 @@ void CLinuxRendererGLES::ReleaseImage(int source, bool preserve)
+ 
+   if( preserve )
+     im.flags |= IMAGE_FLAG_RESERVED;
+-
++#endif
+   m_bImageReady = true;
+ }
+ 
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::CalculateTextureSourceRects(int source, int num_planes)
+ {
+   YUVBUFFER& buf    =  m_buffers[source];
+@@ -324,7 +376,9 @@ void CLinuxRendererGLES::CalculateTextureSourceRects(int source, int num_planes)
+     }
+   }
+ }
++#endif
+ 
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::LoadPlane( YUVPLANE& plane, int type, unsigned flipindex
+                                 , unsigned width, unsigned height
+                                 , int stride, void* data )
+@@ -365,9 +419,12 @@ void CLinuxRendererGLES::LoadPlane( YUVPLANE& plane, int type, unsigned flipinde
+ 
+   plane.flipindex = flipindex;
+ }
++#endif
+ 
+ void CLinuxRendererGLES::Reset()
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   for(int i=0; i<m_NumYV12Buffers; i++)
+   {
+     /* reset all image flags, this will cleanup textures later */
+@@ -375,10 +432,12 @@ void CLinuxRendererGLES::Reset()
+     /* reset texture locks, a bit ugly, could result in tearing */
+     m_eventTexturesDone[i]->Set();
+   }
++#endif
+ }
+ 
+ void CLinuxRendererGLES::Update(bool bPauseDrawing)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   if (!m_bConfigured) return;
+   ManageDisplay();
+   ManageTextures();
+@@ -386,14 +445,18 @@ void CLinuxRendererGLES::Update(bool bPauseDrawing)
+ 
+ void CLinuxRendererGLES::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   if (!m_bConfigured) return;
++printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
+ 
+   // if its first pass, just init textures and return
+   if (ValidateRenderTarget())
+     return;
++printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
+ 
+   if (m_renderMethod & RENDER_BYPASS)
+   {
++    printf("RenderUpdate-> RENDER_BYPASS\n");
+     ManageDisplay();
+     ManageTextures();
+     g_graphicsContext.BeginPaint();
+@@ -409,12 +472,14 @@ void CLinuxRendererGLES::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
+     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+     glClearColor(0, 0, 0, 0);
+     glClear(GL_COLOR_BUFFER_BIT);
+-
++  
+     g_graphicsContext.EndPaint();
+     glFinish();
++printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
+     return;
+   }
+ 
++#if HAS_GLES == 2 
+   // this needs to be checked after texture validation
+   if (!m_bImageReady) return;
+ 
+@@ -425,6 +490,7 @@ void CLinuxRendererGLES::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
+   {
+     if (!buf.fields[FIELD_FULL][0].id) return;
+   }
++
+   if (buf.image.flags==0)
+     return;
+ 
+@@ -480,22 +546,27 @@ void CLinuxRendererGLES::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
+ #if !defined(TARGET_DARWIN)
+   glFinish();
+ #endif
++#endif
+ }
+ 
+ void CLinuxRendererGLES::FlipPage(int source)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   if( source >= 0 && source < m_NumYV12Buffers )
+     m_iYV12RenderBuffer = source;
+   else
+     m_iYV12RenderBuffer = NextYV12Texture();
+ 
+   m_buffers[m_iYV12RenderBuffer].flipindex = ++m_flipindex;
++#endif
+ 
+   return;
+ }
+ 
+ unsigned int CLinuxRendererGLES::PreInit()
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CSingleLock lock(g_graphicsContext);
+   m_bConfigured = false;
+   m_bValidated = false;
+@@ -504,10 +575,12 @@ unsigned int CLinuxRendererGLES::PreInit()
+   if ( m_resolution == RES_WINDOW )
+     m_resolution = RES_DESKTOP;
+ 
++#if HAS_GLES == 2 
+   m_iYV12RenderBuffer = 0;
+   m_NumYV12Buffers = 2;
+ 
+   m_formats.push_back(RENDER_FMT_YUV420P);
++#endif
+   m_formats.push_back(RENDER_FMT_BYPASS);
+ #if defined(HAVE_LIBOPENMAX)
+   m_formats.push_back(RENDER_FMT_OMXEGL);
+@@ -518,13 +591,16 @@ unsigned int CLinuxRendererGLES::PreInit()
+ 
+   // setup the background colour
+   m_clearColour = (float)(g_advancedSettings.m_videoBlackBarColour & 0xff) / 0xff;
+-
++  
++#if HAS_GLES == 2 
+   if (!m_dllSwScale->Load())
+     CLog::Log(LOGERROR,"CLinuxRendererGL::PreInit - failed to load rescale libraries!");
++#endif
+ 
+   return true;
+ }
+ 
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::UpdateVideoFilter()
+ {
+   if (m_scalingMethodGui == g_settings.m_currentVideoSettings.m_ScalingMethod)
+@@ -588,7 +664,9 @@ void CLinuxRendererGLES::UpdateVideoFilter()
+   SetTextureFilter(GL_LINEAR);
+   m_renderQuality = RQ_SINGLEPASS;
+ }
++#endif
+ 
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::LoadShaders(int field)
+ {
+ #ifdef TARGET_DARWIN_IOS
+@@ -696,11 +774,14 @@ void CLinuxRendererGLES::LoadShaders(int field)
+     m_textureDelete = &CLinuxRendererGLES::DeleteYV12Texture;
+   }
+ }
++#endif
+ 
+ void CLinuxRendererGLES::UnInit()
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CLog::Log(LOGDEBUG, "LinuxRendererGL: Cleaning up GL resources");
+   CSingleLock lock(g_graphicsContext);
++#if HAS_GLES == 2 
+ 
+   if (m_rgbBuffer != NULL)
+   {
+@@ -720,6 +801,7 @@ void CLinuxRendererGLES::UnInit()
+   }
+   // cleanup framebuffer object if it was in use
+   m_fbo.Cleanup();
++#endif
+   m_bValidated = false;
+   m_bImageReady = false;
+   m_bConfigured = false;
+@@ -727,10 +809,12 @@ void CLinuxRendererGLES::UnInit()
+ 
+ void CLinuxRendererGLES::Render(DWORD flags, int index)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   // If rendered directly by the hardware
+   if (m_renderMethod & RENDER_BYPASS)
+     return;
+ 
++#if HAS_GLES == 2 
+   // obtain current field, if interlaced
+   if( flags & RENDER_FLAG_TOP)
+     m_currentField = FIELD_TOP;
+@@ -780,8 +864,13 @@ void CLinuxRendererGLES::Render(DWORD flags, int index)
+     RenderSoftware(index, m_currentField);
+     VerifyGLState();
+   }
++#endif
+ }
+ 
++//Called by 
++//void CLinuxRendererGLES::Render(DWORD flags, int index) 
++//if GLES == 2
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::RenderSinglePass(int index, int field)
+ {
+   YV12Image &im     = m_buffers[index].image;
+@@ -886,7 +975,12 @@ void CLinuxRendererGLES::RenderSinglePass(int index, int field)
+ 
+   VerifyGLState();
+ }
++#endif
+ 
++//Called by 
++//void CLinuxRendererGLES::Render(DWORD flags, int index) 
++//if GLES == 2
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::RenderMultiPass(int index, int field)
+ {
+   // TODO: Multipass rendering does not currently work! FIX!
+@@ -1076,7 +1170,12 @@ void CLinuxRendererGLES::RenderMultiPass(int index, int field)
+   glDisable(m_textureTarget);
+   VerifyGLState();
+ }
++#endif
+ 
++//Called by 
++//void CLinuxRendererGLES::Render(DWORD flags, int index) 
++//if GLES == 2
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::RenderSoftware(int index, int field)
+ {
+   YUVPLANES &planes = m_buffers[index].fields[field];
+@@ -1137,7 +1236,12 @@ void CLinuxRendererGLES::RenderSoftware(int index, int field)
+   glDisable(m_textureTarget);
+   VerifyGLState();
+ }
++#endif
+ 
++//Called by 
++//void CLinuxRendererGLES::Render(DWORD flags, int index) 
++//if GLES == 2
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::RenderOpenMax(int index, int field)
+ {
+ #if defined(HAVE_LIBOPENMAX)
+@@ -1202,7 +1306,12 @@ void CLinuxRendererGLES::RenderOpenMax(int index, int field)
+   VerifyGLState();
+ #endif
+ }
++#endif
+ 
++//Called by 
++//void CLinuxRendererGLES::Render(DWORD flags, int index) 
++//if GLES == 2
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::RenderCoreVideoRef(int index, int field)
+ {
+ #ifdef HAVE_VIDEOTOOLBOXDECODER
+@@ -1265,9 +1374,13 @@ void CLinuxRendererGLES::RenderCoreVideoRef(int index, int field)
+   VerifyGLState();
+ #endif
+ }
++#endif
+ 
++//TODO: Called by ?
+ bool CLinuxRendererGLES::RenderCapture(CRenderCapture* capture)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   if (!m_bValidated)
+     return false;
+ 
+@@ -1309,12 +1422,14 @@ bool CLinuxRendererGLES::RenderCapture(CRenderCapture* capture)
+   // restore original video rect
+   m_destRect = saveSize;
+ 
++#endif
+   return true;
+ }
+ 
+ //********************************************************************************************************
+ // YV12 Texture creation, deletion, copying + clearing
+ //********************************************************************************************************
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::UploadYV12Texture(int source)
+ {
+   YUVBUFFER& buf    =  m_buffers[source];
+@@ -1456,7 +1571,9 @@ void CLinuxRendererGLES::UploadYV12Texture(int source)
+ 
+   glDisable(m_textureTarget);
+ }
++#endif
+ 
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::DeleteYV12Texture(int index)
+ {
+   YV12Image &im     = m_buffers[index].image;
+@@ -1489,7 +1606,9 @@ void CLinuxRendererGLES::DeleteYV12Texture(int index)
+     }
+   }
+ }
++#endif
+ 
++#if HAS_GLES == 2 
+ bool CLinuxRendererGLES::CreateYV12Texture(int index)
+ {
+   /* since we also want the field textures, pitch must be texture aligned */
+@@ -1598,10 +1717,12 @@ bool CLinuxRendererGLES::CreateYV12Texture(int index)
+   m_eventTexturesDone[index]->Set();
+   return true;
+ }
++#endif
+ 
+ //********************************************************************************************************
+ // CoreVideoRef Texture creation, deletion, copying + clearing
+ //********************************************************************************************************
++#if HAS_GLES == 2
+ void CLinuxRendererGLES::UploadCVRefTexture(int index)
+ {
+ #ifdef HAVE_VIDEOTOOLBOXDECODER
+@@ -1658,6 +1779,9 @@ void CLinuxRendererGLES::UploadCVRefTexture(int index)
+   m_eventTexturesDone[index]->Set();
+ #endif
+ }
++#endif
++
++#if HAS_GLES == 2
+ void CLinuxRendererGLES::DeleteCVRefTexture(int index)
+ {
+ #ifdef HAVE_VIDEOTOOLBOXDECODER
+@@ -1672,6 +1796,9 @@ void CLinuxRendererGLES::DeleteCVRefTexture(int index)
+   plane.id = 0;
+ #endif
+ }
++#endif
++
++#if HAS_GLES == 2
+ bool CLinuxRendererGLES::CreateCVRefTexture(int index)
+ {
+ #ifdef HAVE_VIDEOTOOLBOXDECODER
+@@ -1732,23 +1859,28 @@ bool CLinuxRendererGLES::CreateCVRefTexture(int index)
+ #endif
+   return true;
+ }
++#endif
+ 
+ //********************************************************************************************************
+ // BYPASS creation, deletion, copying + clearing
+ //********************************************************************************************************
+ void CLinuxRendererGLES::UploadBYPASSTexture(int index)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   m_eventTexturesDone[index]->Set();
+ }
+ void CLinuxRendererGLES::DeleteBYPASSTexture(int index)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+ }
+ bool CLinuxRendererGLES::CreateBYPASSTexture(int index)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   m_eventTexturesDone[index]->Set();
+   return true;
+ }
+ 
++#if HAS_GLES == 2 
+ void CLinuxRendererGLES::SetTextureFilter(GLenum method)
+ {
+   for (int i = 0 ; i<m_NumYV12Buffers ; i++)
+@@ -1777,9 +1909,12 @@ void CLinuxRendererGLES::SetTextureFilter(GLenum method)
+     }
+   }
+ }
++#endif
+ 
+ bool CLinuxRendererGLES::Supports(ERENDERFEATURE feature)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   if(feature == RENDERFEATURE_BRIGHTNESS)
+     return false;
+   
+@@ -1797,17 +1932,22 @@ bool CLinuxRendererGLES::Supports(ERENDERFEATURE feature)
+ 
+   if (feature == RENDERFEATURE_NONLINSTRETCH)
+     return false;
++#endif
+ 
+   return false;
+ }
+ 
++#if HAS_GLES == 2 
+ bool CLinuxRendererGLES::SupportsMultiPassRendering()
+ {
+   return false;
+ }
++#endif
+ 
+ bool CLinuxRendererGLES::Supports(EDEINTERLACEMODE mode)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   if (mode == VS_DEINTERLACEMODE_OFF)
+     return true;
+ 
+@@ -1820,12 +1960,15 @@ bool CLinuxRendererGLES::Supports(EDEINTERLACEMODE mode)
+   if(mode == VS_DEINTERLACEMODE_AUTO
+   || mode == VS_DEINTERLACEMODE_FORCE)
+     return true;
++#endif
+ 
+   return false;
+ }
+ 
+ bool CLinuxRendererGLES::Supports(EINTERLACEMETHOD method)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   if(m_renderMethod & RENDER_OMXEGL)
+     return false;
+ 
+@@ -1843,21 +1986,27 @@ bool CLinuxRendererGLES::Supports(EINTERLACEMETHOD method)
+   if(method == VS_INTERLACEMETHOD_SW_BLEND)
+ #endif
+     return true;
++#endif
+ 
+   return false;
+ }
+ 
+ bool CLinuxRendererGLES::Supports(ESCALINGMETHOD method)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   if(method == VS_SCALINGMETHOD_NEAREST
+   || method == VS_SCALINGMETHOD_LINEAR)
+     return true;
++#endif
+ 
+   return false;
+ }
+ 
+ EINTERLACEMETHOD CLinuxRendererGLES::AutoInterlaceMethod()
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++#if HAS_GLES == 2 
+   if(m_renderMethod & RENDER_OMXEGL)
+     return VS_INTERLACEMETHOD_NONE;
+ 
+@@ -1869,8 +2018,10 @@ EINTERLACEMETHOD CLinuxRendererGLES::AutoInterlaceMethod()
+ #else
+   return VS_INTERLACEMETHOD_SW_BLEND;
+ #endif
++#endif
+ }
+ 
++#if HAS_GLES == 2 
+ #ifdef HAVE_LIBOPENMAX
+ void CLinuxRendererGLES::AddProcessor(COpenMax* openMax, DVDVideoPicture *picture)
+ {
+@@ -1878,6 +2029,9 @@ void CLinuxRendererGLES::AddProcessor(COpenMax* openMax, DVDVideoPicture *pictur
+   buf.openMaxBuffer = picture->openMaxBuffer;
+ }
+ #endif
++#endif
++
++#if HAS_GLES == 2 
+ #ifdef HAVE_VIDEOTOOLBOXDECODER
+ void CLinuxRendererGLES::AddProcessor(struct __CVBuffer *cvBufferRef)
+ {
+@@ -1889,6 +2043,6 @@ void CLinuxRendererGLES::AddProcessor(struct __CVBuffer *cvBufferRef)
+   CVBufferRetain(buf.cvBufferRef);
+ }
+ #endif
+-
++#endif
+ 
+ #endif
+diff --git a/xbmc/cores/VideoRenderers/LinuxRendererGLES.h b/xbmc/cores/VideoRenderers/LinuxRendererGLES.h
+index 9d6d417..4586727 100644
+--- a/xbmc/cores/VideoRenderers/LinuxRendererGLES.h
++++ b/xbmc/cores/VideoRenderers/LinuxRendererGLES.h
+@@ -22,11 +22,13 @@
+  *
+  */
+ 
+-#if HAS_GLES == 2
++#if HAS_GLES == 2 || HAS_GLES == 1
+ 
+ #include "system_gl.h"
+ 
++#if HAS_GLES == 2
+ #include "xbmc/guilib/FrameBufferObject.h"
++#endif
+ #include "xbmc/guilib/Shader.h"
+ #include "settings/VideoSettings.h"
+ #include "RenderFlags.h"
+@@ -37,9 +39,11 @@
+ class CRenderCapture;
+ 
+ class CBaseTexture;
++#if HAS_GLES == 2 
+ namespace Shaders { class BaseYUV2RGBShader; }
+ namespace Shaders { class BaseVideoFilterShader; }
+ class COpenMaxVideo;
++#endif
+ 
+ #define NUM_BUFFERS 3
+ 
+@@ -65,6 +69,7 @@ struct DRAWRECT
+   float bottom;
+ };
+ 
++#if HAS_GLES == 2 
+ struct YUVRANGE
+ {
+   int y_min, y_max;
+@@ -78,14 +83,16 @@ struct YUVCOEF
+   float g_up, g_vp;
+   float b_up, b_vp;
+ };
+-
++#endif
+ enum RenderMethod
+ {
++#if HAS_GLES == 2 
+   RENDER_GLSL   = 0x001,
+   RENDER_SW     = 0x004,
+   RENDER_POT    = 0x010,
+   RENDER_OMXEGL = 0x040,
+   RENDER_CVREF  = 0x080,
++#endif
+   RENDER_BYPASS = 0x100
+ };
+ 
+@@ -105,6 +112,7 @@ enum RenderQuality
+ #define FIELD_TOP 1
+ #define FIELD_BOT 2
+ 
++#if HAS_GLES == 2 
+ extern YUVRANGE yuv_range_lim;
+ extern YUVRANGE yuv_range_full;
+ extern YUVCOEF yuv_coef_bt601;
+@@ -114,6 +122,7 @@ extern YUVCOEF yuv_coef_smtp240m;
+ 
+ class DllSwScale;
+ struct SwsContext;
++#endif
+ 
+ class CEvent;
+ 
+@@ -141,7 +150,9 @@ public:
+   virtual void RenderUpdate(bool clear, DWORD flags = 0, DWORD alpha = 255);
+ 
+   // Feature support
++#if HAS_GLES == 2 
+   virtual bool SupportsMultiPassRendering();
++#endif
+   virtual bool Supports(ERENDERFEATURE feature);
+   virtual bool Supports(EDEINTERLACEMODE mode);
+   virtual bool Supports(EINTERLACEMETHOD method);
+@@ -163,15 +174,17 @@ protected:
+   virtual void ManageTextures();
+   int  NextYV12Texture();
+   virtual bool ValidateRenderTarget();
++#if HAS_GLES == 2 
+   virtual void LoadShaders(int field=FIELD_FULL);
+   void SetTextureFilter(GLenum method);
+   void UpdateVideoFilter();
+-
++#endif
+   // textures
+   void (CLinuxRendererGLES::*m_textureUpload)(int index);
+   void (CLinuxRendererGLES::*m_textureDelete)(int index);
+   bool (CLinuxRendererGLES::*m_textureCreate)(int index);
+ 
++#if HAS_GLES == 2 
+   void UploadYV12Texture(int index);
+   void DeleteYV12Texture(int index);
+   bool CreateYV12Texture(int index);
+@@ -179,6 +192,7 @@ protected:
+   void UploadCVRefTexture(int index);
+   void DeleteCVRefTexture(int index);
+   bool CreateCVRefTexture(int index);
++#endif
+ 
+   void UploadBYPASSTexture(int index);
+   void DeleteBYPASSTexture(int index);
+@@ -187,6 +201,7 @@ protected:
+   void CalculateTextureSourceRects(int source, int num_planes);
+ 
+   // renderers
++#if HAS_GLES == 2 
+   void RenderMultiPass(int index, int field);     // multi pass glsl renderer
+   void RenderSinglePass(int index, int field);    // single pass glsl renderer
+   void RenderSoftware(int index, int field);      // single pass s/w yuv2rgb renderer
+@@ -197,6 +212,8 @@ protected:
+ 
+   int m_iYV12RenderBuffer;
+   int m_NumYV12Buffers;
++#endif
++
+   int m_iLastRenderBuffer;
+ 
+   bool m_bConfigured;
+@@ -215,6 +232,7 @@ protected:
+   int m_currentField;
+   int m_reloadShaders;
+ 
++#if HAS_GLES == 2 
+   struct YUVPLANE
+   {
+     GLuint id;
+@@ -262,6 +280,7 @@ protected:
+ 
+   Shaders::BaseYUV2RGBShader     *m_pYUVShader;
+   Shaders::BaseVideoFilterShader *m_pVideoFilterShader;
++#endif
+   ESCALINGMETHOD m_scalingMethod;
+   ESCALINGMETHOD m_scalingMethodGui;
+ 
+@@ -269,10 +288,12 @@ protected:
+   float m_clearColour;
+ 
+   // software scale libraries (fallback if required gl version is not available)
++#if HAS_GLES == 2 
+   DllSwScale  *m_dllSwScale;
+   struct SwsContext *m_sw_context;
+   BYTE	      *m_rgbBuffer;  // if software scale is used, this will hold the result image
+   unsigned int m_rgbBufferSize;
++#endif
+ 
+   CEvent* m_eventTexturesDone[NUM_BUFFERS];
+ 
+diff --git a/xbmc/cores/VideoRenderers/Makefile.in b/xbmc/cores/VideoRenderers/Makefile.in
+index 5bcaf6a..1c64aee 100644
+--- a/xbmc/cores/VideoRenderers/Makefile.in
++++ b/xbmc/cores/VideoRenderers/Makefile.in
+@@ -21,6 +21,12 @@ SRCS+= LinuxRendererGLES.cpp \
+ 
+ endif
+ 
++ifeq (@USE_OPENGLESV1@,1)
++SRCS+= LinuxRendererGLES.cpp \
++       OverlayRendererGL.cpp \
++
++endif
++
+ LIB=VideoRenderer.a
+ 
+ include @abs_top_srcdir@/Makefile.include
+diff --git a/xbmc/cores/VideoRenderers/OverlayRenderer.cpp b/xbmc/cores/VideoRenderers/OverlayRenderer.cpp
+index 175b145..559e164 100644
+--- a/xbmc/cores/VideoRenderers/OverlayRenderer.cpp
++++ b/xbmc/cores/VideoRenderers/OverlayRenderer.cpp
+@@ -300,7 +300,7 @@ COverlay* CRenderer::Convert(CDVDOverlaySSA* o, double pts)
+       return o->m_overlay->Acquire();
+   }
+ 
+-#if defined(HAS_GL) || defined(HAS_GLES)
++#if defined(HAS_GL) || (defined(HAS_GLES) && HAS_GLES == 2)
+   return new COverlayGlyphGL(images, width, height);
+ #elif defined(HAS_DX)
+   return new COverlayQuadsDX(images, width, height);
+@@ -326,7 +326,7 @@ COverlay* CRenderer::Convert(CDVDOverlay* o, double pts)
+     return r;
+   }
+ 
+-#if defined(HAS_GL) || defined(HAS_GLES)
++#if defined(HAS_GL) || (defined(HAS_GLES) && HAS_GLES == 2)
+   if     (o->IsOverlayType(DVDOVERLAY_TYPE_IMAGE))
+     r = new COverlayTextureGL((CDVDOverlayImage*)o);
+   else if(o->IsOverlayType(DVDOVERLAY_TYPE_SPU))
+diff --git a/xbmc/cores/VideoRenderers/OverlayRendererGL.cpp b/xbmc/cores/VideoRenderers/OverlayRendererGL.cpp
+index 22e3049..ec2e620 100644
+--- a/xbmc/cores/VideoRenderers/OverlayRendererGL.cpp
++++ b/xbmc/cores/VideoRenderers/OverlayRendererGL.cpp
+@@ -26,7 +26,7 @@
+ #include "OverlayRendererGL.h"
+ #ifdef HAS_GL
+   #include "LinuxRendererGL.h"
+-#elif HAS_GLES == 2
++#elif HAS_GLES == 2 || HAS_GLES == 1
+   #include "LinuxRendererGLES.h"
+   #include "guilib/MatrixGLES.h"
+ #endif
+@@ -41,9 +41,9 @@
+ #include "utils/GLUtils.h"
+ #include "RenderManager.h"
+ 
+-#if defined(HAS_GL) || HAS_GLES == 2
++#if defined(HAS_GL) || HAS_GLES == 2 || HAS_GLES == 1
+ 
+-#if HAS_GLES == 2
++#if HAS_GLES == 2 || HAS_GLES == 1
+ // GLES2.0 cant do CLAMP, but can do CLAMP_TO_EDGE.
+ #define GL_CLAMP	GL_CLAMP_TO_EDGE
+ #endif
+@@ -407,6 +407,7 @@ void COverlayGlyphGL::Render(SRenderState& state)
+ 
+   glPopMatrix();
+ #else
++#if defined(HAS_GL) || HAS_GLES == 2
+   g_matrices.MatrixMode(MM_MODELVIEW);
+   g_matrices.PushMatrix();
+   g_matrices.Translatef(state.x, state.y, 0.0f);
+@@ -443,6 +444,7 @@ void COverlayGlyphGL::Render(SRenderState& state)
+ 
+   g_matrices.PopMatrix();
+ #endif
++#endif
+ 
+   glDisable(GL_BLEND);
+   glDisable(GL_TEXTURE_2D);
+@@ -512,6 +514,7 @@ void COverlayTextureGL::Render(SRenderState& state)
+   glVertex2f(rd.left , rd.bottom);
+   glEnd();
+ #else
++#if defined(HAS_GL) || HAS_GLES == 2
+   g_Windowing.EnableGUIShader(SM_TEXTURE);
+ 
+   GLfloat col[4][4];
+@@ -556,6 +559,7 @@ void COverlayTextureGL::Render(SRenderState& state)
+ 
+   g_Windowing.DisableGUIShader();
+ #endif
++#endif
+ 
+   glDisable(GL_BLEND);
+   glDisable(GL_TEXTURE_2D);
+diff --git a/xbmc/cores/VideoRenderers/OverlayRendererGL.h b/xbmc/cores/VideoRenderers/OverlayRendererGL.h
+index f1fc467..5043c4c 100644
+--- a/xbmc/cores/VideoRenderers/OverlayRendererGL.h
++++ b/xbmc/cores/VideoRenderers/OverlayRendererGL.h
+@@ -31,7 +31,7 @@ class CDVDOverlaySpu;
+ class CDVDOverlaySSA;
+ typedef struct ass_image ASS_Image;
+ 
+-#if defined(HAS_GL) || HAS_GLES == 2
++#if defined(HAS_GL) || HAS_GLES == 2|| HAS_GLES == 1
+ 
+ namespace OVERLAY {
+ 
+diff --git a/xbmc/cores/VideoRenderers/RenderManager.cpp b/xbmc/cores/VideoRenderers/RenderManager.cpp
+index a8a69f5..f2b9431 100644
+--- a/xbmc/cores/VideoRenderers/RenderManager.cpp
++++ b/xbmc/cores/VideoRenderers/RenderManager.cpp
+@@ -37,7 +37,7 @@
+ 
+ #if defined(HAS_GL)
+   #include "LinuxRendererGL.h"
+-#elif HAS_GLES == 2
++#elif HAS_GLES == 2 || HAS_GLES == 1
+   #include "LinuxRendererGLES.h"
+ #elif defined(HAS_DX)
+   #include "WinRenderer.h"
+@@ -288,6 +288,7 @@ void CXBMCRenderManager::Update(bool bPauseDrawing)
+ 
+ void CXBMCRenderManager::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   { CRetakeLock<CExclusiveLock> lock(m_sharedSection);
+     if (!m_pRenderer)
+       return;
+@@ -314,6 +315,7 @@ void CXBMCRenderManager::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
+ 
+ unsigned int CXBMCRenderManager::PreInit()
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CRetakeLock<CExclusiveLock> lock(m_sharedSection);
+ 
+   m_presentcorr = 0.0;
+@@ -327,7 +329,7 @@ unsigned int CXBMCRenderManager::PreInit()
+   {
+ #if defined(HAS_GL)
+     m_pRenderer = new CLinuxRendererGL();
+-#elif HAS_GLES == 2
++#elif HAS_GLES == 2 || HAS_GLES == 1
+     m_pRenderer = new CLinuxRendererGLES();
+ #elif defined(HAS_DX)
+     m_pRenderer = new CWinRenderer();
+@@ -649,6 +651,7 @@ float CXBMCRenderManager::GetMaximumFPS()
+ 
+ void CXBMCRenderManager::Render(bool clear, DWORD flags, DWORD alpha)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CSharedLock lock(m_sharedSection);
+ 
+   if( m_presentmethod == PRESENT_METHOD_BOB )
+@@ -690,6 +693,7 @@ void CXBMCRenderManager::Present()
+ /* simple present method */
+ void CXBMCRenderManager::PresentSingle(bool clear, DWORD flags, DWORD alpha)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CSingleLock lock(g_graphicsContext);
+ 
+   m_pRenderer->RenderUpdate(clear, flags, alpha);
+@@ -700,6 +704,7 @@ void CXBMCRenderManager::PresentSingle(bool clear, DWORD flags, DWORD alpha)
+  * we just render the two fields right after eachother */
+ void CXBMCRenderManager::PresentBob(bool clear, DWORD flags, DWORD alpha)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CSingleLock lock(g_graphicsContext);
+ 
+   if(m_presentstep == PRESENT_FRAME)
+@@ -723,6 +728,8 @@ void CXBMCRenderManager::PresentBob(bool clear, DWORD flags, DWORD alpha)
+ 
+ void CXBMCRenderManager::PresentBlend(bool clear, DWORD flags, DWORD alpha)
+ {
++
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CSingleLock lock(g_graphicsContext);
+ 
+   if( m_presentfield == FS_BOT )
+@@ -742,6 +749,7 @@ void CXBMCRenderManager::PresentBlend(bool clear, DWORD flags, DWORD alpha)
+  * scaling then reinterlaceing resulting image         */
+ void CXBMCRenderManager::PresentWeave(bool clear, DWORD flags, DWORD alpha)
+ {
++printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CSingleLock lock(g_graphicsContext);
+ 
+   m_pRenderer->RenderUpdate(clear, flags | RENDER_FLAG_BOTH, alpha);
+diff --git a/xbmc/cores/VideoRenderers/RenderManager.h b/xbmc/cores/VideoRenderers/RenderManager.h
+index d068ec2..f445d0d 100644
+--- a/xbmc/cores/VideoRenderers/RenderManager.h
++++ b/xbmc/cores/VideoRenderers/RenderManager.h
+@@ -113,7 +113,7 @@ public:
+ 
+ #ifdef HAS_GL
+   CLinuxRendererGL    *m_pRenderer;
+-#elif HAS_GLES == 2
++#elif HAS_GLES == 2 || HAS_GLES == 1
+   CLinuxRendererGLES  *m_pRenderer;
+ #elif defined(HAS_DX)
+   CWinRenderer        *m_pRenderer;
+diff --git a/xbmc/cores/paplayer/Makefile.in b/xbmc/cores/paplayer/Makefile.in
+index 035cabd..f6e27fb 100644
+--- a/xbmc/cores/paplayer/Makefile.in
++++ b/xbmc/cores/paplayer/Makefile.in
+@@ -4,26 +4,29 @@ ARCH=@ARCH@
+ 
+ CFLAGS+=-DHAS_ALSA
+ 
+-SRCS=ADPCMCodec.cpp \
++SRCS=DVDPlayerCodec.cpp \
++     WAVcodec.cpp \
++     TimidityCodec.cpp \
++     ReplayGain.cpp \
++     OggCallback.cpp \
++
++ifeq (@USE_PAPLAYER@,1)
++SRCS+=ADPCMCodec.cpp \
+      AudioDecoder.cpp \
+      BXAcodec.cpp \
+      CDDAcodec.cpp \
+      CodecFactory.cpp \
+-     DVDPlayerCodec.cpp \
+      FLACcodec.cpp \
+      ModplugCodec.cpp \
+      MP3codec.cpp \
+      NSFCodec.cpp \
+-     OggCallback.cpp \
+      OGGcodec.cpp \
+      PAPlayer.cpp \
+      PCMCodec.cpp \
+-     ReplayGain.cpp \
+      SIDCodec.cpp \
+-     TimidityCodec.cpp \
+      VGMCodec.cpp \
+-     WAVcodec.cpp \
+-     YMCodec.cpp \
++     YMCodec.cpp
++endif
+ 
+ ifeq (@USE_ASAP_CODEC@,1)
+   SRCS+=ASAPCodec.cpp
+diff --git a/xbmc/cores/playercorefactory/PlayerCoreConfig.h b/xbmc/cores/playercorefactory/PlayerCoreConfig.h
+index cd78a82..aaf9d2f 100644
+--- a/xbmc/cores/playercorefactory/PlayerCoreConfig.h
++++ b/xbmc/cores/playercorefactory/PlayerCoreConfig.h
+@@ -20,12 +20,20 @@
+  *
+  */
+ 
++#include "system.h"
+ #include "utils/XBMCTinyXML.h"
+ #include "cores/IPlayer.h"
+ #include "PlayerCoreFactory.h"
++#ifdef HAS_DVDPLAYER
+ #include "cores/dvdplayer/DVDPlayer.h"
++#endif
++#ifdef HAS_PAPLAYER
+ #include "cores/paplayer/PAPlayer.h"
++#endif
+ #include "cores/ExternalPlayer/ExternalPlayer.h"
++#ifdef HAS_GSTPLAYER
++#include "cores/gstplayer/GSTPlayer.h"
++#endif
+ #include "utils/log.h"
+ 
+ class CPlayerCoreConfig
+@@ -70,10 +78,17 @@ public:
+     IPlayer* pPlayer;
+     switch(m_eCore)
+     {
++#ifdef HAS_DVDPLAYER
+       case EPC_MPLAYER:
+       case EPC_DVDPLAYER: pPlayer = new CDVDPlayer(callback); break;
++#endif
++#ifdef HAS_PAPLAYER
+       case EPC_PAPLAYER: pPlayer = new PAPlayer(callback); break;
++#endif
+       case EPC_EXTPLAYER: pPlayer = new CExternalPlayer(callback); break;
++#ifdef HAS_GSTPLAYER
++      case EPC_GSTPLAYER: pPlayer = new GSTPlayer(callback); break;
++#endif
+       default: return NULL;
+     }
+ 
+diff --git a/xbmc/cores/playercorefactory/PlayerCoreFactory.cpp b/xbmc/cores/playercorefactory/PlayerCoreFactory.cpp
+index 3aaf546..8dca13b 100644
+--- a/xbmc/cores/playercorefactory/PlayerCoreFactory.cpp
++++ b/xbmc/cores/playercorefactory/PlayerCoreFactory.cpp
+@@ -19,12 +19,24 @@
+  *
+  */
+ 
++#include "system.h"
+ #include "utils/BitstreamStats.h"
+ #include "PlayerCoreFactory.h"
+ #include "threads/SingleLock.h"
++
++#ifdef HAS_DVDPLAYER
+ #include "cores/dvdplayer/DVDPlayer.h"
++#endif
++
++#ifdef HAS_PAPLAYER
+ #include "cores/paplayer/PAPlayer.h"
+ #include "cores/paplayer/DVDPlayerCodec.h"
++#endif
++
++#ifdef HAS_GSTPLAYER
++#include "cores/gstplayer/GSTPlayer.h"
++#endif
++
+ #include "dialogs/GUIDialogContextMenu.h"
+ #include "utils/HttpHeader.h"
+ #include "settings/GUISettings.h"
+@@ -92,6 +104,7 @@ PLAYERCOREID CPlayerCoreFactory::GetPlayerCore(const CStdString& strCoreName)
+ 
+     for(PLAYERCOREID i = 0; i < s_vecCoreConfigs.size(); i++)
+     {
++      printf("%s\n", s_vecCoreConfigs[i]->GetName().c_str());
+       if (s_vecCoreConfigs[i]->GetName().Equals(strRealCoreName, false))
+         return i+1;
+     }
+@@ -125,6 +138,7 @@ void CPlayerCoreFactory::GetPlayers( VECPLAYERCORES &vecCores, const bool audio,
+ 
+   for(unsigned int i = 0; i < s_vecCoreConfigs.size(); i++)
+   {
++    CLog::Log(LOGDEBUG, "CPlayerCoreFactory::GetPlayers: %s (%d)", s_vecCoreConfigs[i]->m_name.c_str(), i+1);
+     if (audio == s_vecCoreConfigs[i]->m_bPlaysAudio && video == s_vecCoreConfigs[i]->m_bPlaysVideo)
+     {
+       CLog::Log(LOGDEBUG, "CPlayerCoreFactory::GetPlayers: adding player: %s (%d)", s_vecCoreConfigs[i]->m_name.c_str(), i+1);
+@@ -145,6 +159,7 @@ void CPlayerCoreFactory::GetPlayers( const CFileItem& item, VECPLAYERCORES &vecC
+ 
+   CLog::Log(LOGDEBUG, "CPlayerCoreFactory::GetPlayers: matched %"PRIuS" rules with players", vecCores.size());
+ 
++#ifdef HAS_PAPLAYER
+   if( PAPlayer::HandlesType(url.GetFileType()) )
+   {
+     // We no longer force PAPlayer as our default audio player (used to be true):
+@@ -182,6 +197,7 @@ void CPlayerCoreFactory::GetPlayers( const CFileItem& item, VECPLAYERCORES &vecC
+       }
+     }
+   }
++#endif
+ 
+   // Process defaults
+ 
+@@ -262,12 +278,16 @@ PLAYERCOREID CPlayerCoreFactory::SelectPlayerDialog(float posX, float posY)
+ 
+ bool CPlayerCoreFactory::LoadConfiguration(TiXmlElement* pConfig, bool clear)
+ {
++  CLog::Log(LOGERROR, "CPlayerCoreFactory::LoadConfiguration");
+   if (clear)
+   {
+     for(std::vector<CPlayerCoreConfig *>::iterator it = s_vecCoreConfigs.begin(); it != s_vecCoreConfigs.end(); it++)
+       delete *it;
+     s_vecCoreConfigs.clear();
+     // Builtin players; hard-coded because re-ordering them would break scripts
++
++#ifdef HAS_DVDPLAYER
++    CLog::Log(LOGERROR, "DVDPlayer");
+     CPlayerCoreConfig* dvdplayer = new CPlayerCoreConfig("DVDPlayer", EPC_DVDPLAYER, NULL);
+     dvdplayer->m_bPlaysAudio = dvdplayer->m_bPlaysVideo = true;
+     s_vecCoreConfigs.push_back(dvdplayer);
+@@ -275,10 +295,20 @@ bool CPlayerCoreFactory::LoadConfiguration(TiXmlElement* pConfig, bool clear)
+      // Don't remove this, its a placeholder for the old MPlayer core, it would break scripts
+     CPlayerCoreConfig* mplayer = new CPlayerCoreConfig("oldmplayercore", EPC_DVDPLAYER, NULL);
+     s_vecCoreConfigs.push_back(mplayer);
++#endif
+ 
++#ifdef HAS_PAPLAYER
++    CLog::Log(LOGERROR, "PAPlayer");
+     CPlayerCoreConfig* paplayer = new CPlayerCoreConfig("PAPlayer", EPC_PAPLAYER, NULL);
+     paplayer->m_bPlaysAudio = true;
+     s_vecCoreConfigs.push_back(paplayer);
++#endif
++
++#ifdef HAS_GSTPLAYER
++    CLog::Log(LOGERROR, "GSTPlayer");
++    CPlayerCoreConfig* gstplayer = new CPlayerCoreConfig("GSTPlayer", EPC_GSTPLAYER, NULL);
++    s_vecCoreConfigs.push_back(gstplayer);
++#endif
+ 
+     for(std::vector<CPlayerSelectionRule *>::iterator it = s_vecCoreSelectionRules.begin(); it != s_vecCoreSelectionRules.end(); it++)
+       delete *it;
+@@ -303,8 +333,15 @@ bool CPlayerCoreFactory::LoadConfiguration(TiXmlElement* pConfig, bool clear)
+       type.ToLower();
+ 
+       EPLAYERCORES eCore = EPC_NONE;
++#ifdef HAS_DVDPLAYER
+       if (type == "dvdplayer" || type == "mplayer") eCore = EPC_DVDPLAYER;
++#endif
++#ifdef HAS_PAPLAYER
+       if (type == "paplayer" ) eCore = EPC_PAPLAYER;
++#endif
++#ifdef HAS_GSTPLAYER
++      if (type == "gstplayer" ) eCore = EPC_GSTPLAYER;
++#endif
+       if (type == "externalplayer" ) eCore = EPC_EXTPLAYER;
+ 
+       if (eCore != EPC_NONE)
+diff --git a/xbmc/cores/playercorefactory/PlayerCoreFactory.h b/xbmc/cores/playercorefactory/PlayerCoreFactory.h
+index 04ac1dc..1fd0c80 100644
+--- a/xbmc/cores/playercorefactory/PlayerCoreFactory.h
++++ b/xbmc/cores/playercorefactory/PlayerCoreFactory.h
+@@ -34,18 +34,34 @@ class CPlayerSelectionRule;
+ enum EPLAYERCORES
+ {
+   EPC_NONE,
++#ifdef HAS_DVDPLAYER
+   EPC_DVDPLAYER,
+   EPC_MPLAYER,
++#endif
++#ifdef HAS_PAPLAYER
+   EPC_PAPLAYER,
+-  EPC_EXTPLAYER
++#endif
++  EPC_EXTPLAYER,
++#ifdef HAS_GSTPLAYER
++  EPC_GSTPLAYER,
++#endif
+ };
+ 
+ typedef unsigned int PLAYERCOREID;
+ typedef std::vector<PLAYERCOREID> VECPLAYERCORES;
+ const PLAYERCOREID PCID_NONE = 0;
++#if 0
++#ifdef HAS_DVDPLAYER
+ const PLAYERCOREID PCID_DVDPLAYER = 1;
+ const PLAYERCOREID PCID_MPLAYER = 2;
++#endif
++#ifdef HAS_PAPLAYER
+ const PLAYERCOREID PCID_PAPLAYER = 3;
++#endif
++#ifdef HAS_GSTPLAYER
++const PLAYERCOREID PCID_GSTPLAYER = 4;
++#endif
++#endif
+ 
+ class CPlayerCoreFactory
+ {
+diff --git a/xbmc/dbwrappers/Database.cpp b/xbmc/dbwrappers/Database.cpp
+index 72c384c..8200a73 100644
+--- a/xbmc/dbwrappers/Database.cpp
++++ b/xbmc/dbwrappers/Database.cpp
+@@ -29,9 +29,11 @@
+ #include "utils/AutoPtrHandle.h"
+ #include "utils/log.h"
+ #include "utils/URIUtils.h"
+-#include "mysqldataset.h"
+ #include "sqlitedataset.h"
+ 
++#ifdef HAS_MYSQL
++#include "mysqldataset.h"
++#endif
+ 
+ using namespace AUTOPTR;
+ using namespace dbiplus;
+@@ -363,10 +365,12 @@ bool CDatabase::Connect(const DatabaseSettings &dbSettings, bool create)
+   {
+     m_pDB.reset( new SqliteDatabase() ) ;
+   }
++#ifdef HAS_MYSQL
+   else if (dbSettings.type.Equals("mysql"))
+   {
+     m_pDB.reset( new MysqlDatabase() ) ;
+   }
++#endif
+   else
+   {
+     CLog::Log(LOGERROR, "Unable to determine database type: %s", dbSettings.type.c_str());
+diff --git a/xbmc/dbwrappers/Makefile b/xbmc/dbwrappers/Makefile
+index ce50c1c..45afd4c 100644
+--- a/xbmc/dbwrappers/Makefile
++++ b/xbmc/dbwrappers/Makefile
+@@ -1,8 +1,11 @@
+ SRCS=Database.cpp \
+      dataset.cpp \
+-     mysqldataset.cpp \
+      qry_dat.cpp \
+-     sqlitedataset.cpp \
++     sqlitedataset.cpp
++
++ifeq (@USE_MYSQL@,1)
++SRCS+=mysqldataset.cpp
++endif
+ 
+ LIB=dbwrappers.a
+ 
+diff --git a/xbmc/dbwrappers/mysqldataset.h b/xbmc/dbwrappers/mysqldataset.h
+index dc7d326..0f36a54 100644
+--- a/xbmc/dbwrappers/mysqldataset.h
++++ b/xbmc/dbwrappers/mysqldataset.h
+@@ -174,3 +174,4 @@ or insert() operations default = false) */
+ };
+ } //namespace
+ #endif
++
+diff --git a/xbmc/filesystem/VideoDatabaseDirectory/DirectoryNodeTitleTvShows.cpp b/xbmc/filesystem/VideoDatabaseDirectory/DirectoryNodeTitleTvShows.cpp
+index c0f6b3b..4361db4 100644
+--- a/xbmc/filesystem/VideoDatabaseDirectory/DirectoryNodeTitleTvShows.cpp
++++ b/xbmc/filesystem/VideoDatabaseDirectory/DirectoryNodeTitleTvShows.cpp
+@@ -53,9 +53,12 @@ bool CDirectoryNodeTitleTvShows::GetContent(CFileItemList& items) const
+   CQueryParams params;
+   CollectQueryParams(params);
+ 
++printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
+   bool bSuccess=videodatabase.GetTvShowsNav(BuildPath(), items, params.GetGenreId(), params.GetYear(), params.GetActorId(), params.GetDirectorId(), params.GetStudioId());
+ 
++printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
+   videodatabase.Close();
++printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
+ 
+   return bSuccess;
+ }
+diff --git a/xbmc/guilib/GUIAudioManager.cpp b/xbmc/guilib/GUIAudioManager.cpp
+index e197c2f..88a2fc2 100644
+--- a/xbmc/guilib/GUIAudioManager.cpp
++++ b/xbmc/guilib/GUIAudioManager.cpp
+@@ -187,6 +187,7 @@ void CGUIAudioManager::UnLoad()
+ // xbmc
+ bool CGUIAudioManager::Load()
+ {
++  return true;
+   CSingleLock lock(m_cs);
+ 
+   UnLoad();
+diff --git a/xbmc/guilib/GUIControlFactory.cpp b/xbmc/guilib/GUIControlFactory.cpp
+index 5f00ad2..cc913b7 100644
+--- a/xbmc/guilib/GUIControlFactory.cpp
++++ b/xbmc/guilib/GUIControlFactory.cpp
+@@ -65,6 +65,8 @@
+ 
+ using namespace std;
+ 
++//#define NO_ANIMATIONS
++
+ typedef struct
+ {
+   const char* name;
+@@ -348,6 +350,9 @@ bool CGUIControlFactory::GetConditionalVisibility(const TiXmlNode *control, CStd
+ 
+ bool CGUIControlFactory::GetAnimations(TiXmlNode *control, const CRect &rect, int context, vector<CAnimation> &animations)
+ {
++#ifdef NO_ANIMATIONS
++  bool ret = false;
++#else
+   TiXmlElement* node = control->FirstChildElement("animation");
+   bool ret = false;
+   if (node)
+@@ -383,6 +388,7 @@ bool CGUIControlFactory::GetAnimations(TiXmlNode *control, const CRect &rect, in
+     }
+     node = node->NextSiblingElement("animation");
+   }
++#endif
+   return ret;
+ }
+ 
+@@ -426,7 +432,11 @@ bool CGUIControlFactory::GetScroller(const TiXmlNode *control, const CStdString
+   if (node)
+   {
+     unsigned int scrollTime;
++#ifdef NO_ANIMATIONS
++    scrollTime = 0;
++#else
+     if (XMLUtils::GetUInt(control, scrollerTag, scrollTime))
++#endif
+     {
+       scroller = CScroller(scrollTime, CAnimEffect::GetTweener(node));
+       return true;
+@@ -671,7 +681,12 @@ CGUIControl* CGUIControlFactory::Create(int parentID, const CRect &rect, TiXmlEl
+   CStdString action;
+ 
+   int focusPosition = 0;
++
++#ifdef NO_ANIMATIONS
++  int scrollTime = 0;
++#else
+   int scrollTime = 200;
++#endif
+   bool useControlCoords = false;
+   bool renderFocusedLast = false;
+ 
+@@ -892,7 +907,9 @@ CGUIControl* CGUIControlFactory::Create(int parentID, const CRect &rect, TiXmlEl
+   GetInfoTexture(pControlNode, "imagepath", texture, texturePath, parentID);
+ 
+   XMLUtils::GetUInt(pControlNode,"timeperimage", timePerImage);
++#ifndef NO_ANIMATIONS
+   XMLUtils::GetUInt(pControlNode,"fadetime", fadeTime);
++#endif
+   XMLUtils::GetUInt(pControlNode,"pauseatend", timeToPauseAtEnd);
+   XMLUtils::GetBoolean(pControlNode, "randomize", randomized);
+   XMLUtils::GetBoolean(pControlNode, "loop", loop);
+@@ -908,7 +925,9 @@ CGUIControl* CGUIControlFactory::Create(int parentID, const CRect &rect, TiXmlEl
+ 
+   XMLUtils::GetBoolean(pControlNode, "showonepage", showOnePage);
+   XMLUtils::GetInt(pControlNode, "focusposition", focusPosition);
++#ifndef NO_ANIMATIONS
+   XMLUtils::GetInt(pControlNode, "scrolltime", scrollTime);
++#endif
+   XMLUtils::GetInt(pControlNode, "preloaditems", preloadItems, 0, 2);
+ 
+   XMLUtils::GetBoolean(pControlNode, "usecontrolcoords", useControlCoords);
+diff --git a/xbmc/guilib/GUIControlGroup.cpp b/xbmc/guilib/GUIControlGroup.cpp
+index 5a3b06e..ae38e3d 100644
+--- a/xbmc/guilib/GUIControlGroup.cpp
++++ b/xbmc/guilib/GUIControlGroup.cpp
+@@ -21,6 +21,8 @@
+ 
+ #include "GUIControlGroup.h"
+ #include "GUIControlProfiler.h"
++#include "utils/log.h"
++#include "utils/TimeUtils.h"
+ 
+ using namespace std;
+ 
+@@ -69,9 +71,19 @@ void CGUIControlGroup::AllocResources()
+   CGUIControl::AllocResources();
+   for (iControls it = m_children.begin(); it != m_children.end(); ++it)
+   {
++#ifdef _DEBUG
++  int64_t start;
++  start = CurrentHostCounter();
++#endif
+     CGUIControl *control = *it;
+     if (!control->IsDynamicallyAllocated())
+       control->AllocResources();
++#ifdef _DEBUG
++  int64_t end, freq;
++  end = CurrentHostCounter();
++  freq = CurrentHostFrequency();
++  CLog::Log(LOGDEBUG,"Load %s %d: %.2fms", "Control", control->GetControlType(), 1000.f * (end - start) / freq);
++#endif
+   }
+ }
+ 
+diff --git a/xbmc/guilib/GUIFontTTFGL.cpp b/xbmc/guilib/GUIFontTTFGL.cpp
+index 87e07ca..928ce58 100755
+--- a/xbmc/guilib/GUIFontTTFGL.cpp
++++ b/xbmc/guilib/GUIFontTTFGL.cpp
+@@ -28,7 +28,7 @@
+ #include "gui3d.h"
+ #include "utils/log.h"
+ #include "utils/GLUtils.h"
+-#if HAS_GLES == 2
++#if HAS_GLES == 2 || HAS_GLES == 1
+ #include "windowing/WindowingFactory.h"
+ #endif
+ 
+@@ -42,6 +42,9 @@ using namespace std;
+ 
+ #if defined(HAS_GL) || defined(HAS_GLES)
+ 
++#if HAS_GLES == 1 && defined(__sh__)
++  #define TTF_ARGB
++#endif
+ 
+ CGUIFontTTFGL::CGUIFontTTFGL(const CStdString& strFileName)
+ : CGUIFontTTFBase(strFileName)
+@@ -52,6 +55,9 @@ CGUIFontTTFGL::~CGUIFontTTFGL(void)
+ {
+ }
+ 
++
++extern unsigned int g_allocated_gpu;
++
+ void CGUIFontTTFGL::Begin()
+ {
+   if (m_nestedBeginCount == 0)
+@@ -63,7 +69,7 @@ void CGUIFontTTFGL::Begin()
+ 
+       // Bind the texture object
+       glBindTexture(GL_TEXTURE_2D, m_nTexture);
+-#ifdef HAS_GL
++#if defined(HAS_GL) || HAS_GLES == 1
+       glEnable(GL_TEXTURE_2D);
+ #endif
+       // Set the texture's stretching properties
+@@ -71,8 +77,17 @@ void CGUIFontTTFGL::Begin()
+       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+ 
+       // Set the texture image -- THIS WORKS, so the pixels must be wrong.
++#ifdef TTF_ARGB
++      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_texture->GetWidth(), m_texture->GetHeight(), 0,
++                   GL_RGBA, GL_UNSIGNED_BYTE, m_texture->GetPixels());
++    
++      //m_texture->m_allocated = m_texture->GetWidth() * m_texture->GetHeight() * 4;
++      //g_allocated_gpu += m_texture->m_allocated;
++      //printf("Allocate(GPU): %p (%d kbytes total=%d kbytes) [%s]\n", m_nTexture, m_texture->m_allocated, g_allocated_gpu, "FONT");
++#else
+       glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, m_texture->GetWidth(), m_texture->GetHeight(), 0,
+                    GL_ALPHA, GL_UNSIGNED_BYTE, m_texture->GetPixels());
++#endif
+ 
+       VerifyGLState();
+       m_bTextureLoaded = true;
+@@ -81,7 +96,7 @@ void CGUIFontTTFGL::Begin()
+     // Turn Blending On
+     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+     glEnable(GL_BLEND);
+-#ifdef HAS_GL
++#if defined(HAS_GL) || HAS_GLES == 1
+     glEnable(GL_TEXTURE_2D);
+ #endif
+     glBindTexture(GL_TEXTURE_2D, m_nTexture);
+@@ -97,6 +112,9 @@ void CGUIFontTTFGL::Begin()
+     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_PRIMARY_COLOR);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
+     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
++#endif
++
++#if defined(HAS_GL) || HAS_GLES == 1
+     VerifyGLState();
+ #else
+     g_Windowing.EnableGUIShader(SM_FONTS);
+@@ -116,17 +134,24 @@ void CGUIFontTTFGL::End()
+   if (--m_nestedBeginCount > 0)
+     return;
+ 
++#if defined(HAS_GL) || HAS_GLES == 1
+ #ifdef HAS_GL
+   glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+-
++#endif
+   glColorPointer   (4, GL_UNSIGNED_BYTE, sizeof(SVertex), (char*)m_vertex + offsetof(SVertex, r));
+   glVertexPointer  (3, GL_FLOAT        , sizeof(SVertex), (char*)m_vertex + offsetof(SVertex, x));
+   glTexCoordPointer(2, GL_FLOAT        , sizeof(SVertex), (char*)m_vertex + offsetof(SVertex, u));
+   glEnableClientState(GL_COLOR_ARRAY);
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
++#ifdef GL_QUADS
+   glDrawArrays(GL_QUADS, 0, m_vertex_count);
++#else
++   TODO: Convert quads to vertexes for real es1.1, without quads, support
++#endif
++#ifdef HAS_GL
+   glPopClientAttrib();
++#endif
+ #else
+   // GLES 2.0 version. Cannot draw quads. Convert to triangles.
+   GLint posLoc  = g_Windowing.GUIShaderGetPos();
+@@ -173,7 +198,11 @@ CBaseTexture* CGUIFontTTFGL::ReallocTexture(unsigned int& newHeight)
+ {
+   newHeight = CBaseTexture::PadPow2(newHeight);
+ 
++#ifdef TTF_ARGB
++  CBaseTexture* newTexture = new CTexture(m_textureWidth, newHeight, XB_FMT_A8R8G8B8);
++#else
+   CBaseTexture* newTexture = new CTexture(m_textureWidth, newHeight, XB_FMT_A8);
++#endif
+ 
+   if (!newTexture || newTexture->GetPixels() == NULL)
+   {
+@@ -205,11 +234,21 @@ bool CGUIFontTTFGL::CopyCharToTexture(FT_BitmapGlyph bitGlyph, Character* ch)
+   FT_Bitmap bitmap = bitGlyph->bitmap;
+ 
+   unsigned char* source = (unsigned char*) bitmap.buffer;
++#ifdef TTF_ARGB
++  unsigned char* target = (unsigned char*) m_texture->GetPixels() + (m_posY + ch->offsetY) * m_texture->GetPitch() + (m_posX + bitGlyph->left)*4/*ARGB*/;
++#else
+   unsigned char* target = (unsigned char*) m_texture->GetPixels() + (m_posY + ch->offsetY) * m_texture->GetPitch() + m_posX + bitGlyph->left;
++#endif
+ 
+   for (int y = 0; y < bitmap.rows; y++)
+   {
++#ifdef TTF_ARGB
++    for (unsigned int i = 0, j = 0; i < bitmap.width; i++, j+=4) {
++      memset(target + j, source[i], 4);
++    }
++#else
+     memcpy(target, source, bitmap.width);
++#endif
+     source += bitmap.width;
+     target += m_texture->GetPitch();
+   }
+@@ -228,13 +267,15 @@ bool CGUIFontTTFGL::CopyCharToTexture(FT_BitmapGlyph bitGlyph, Character* ch)
+   return TRUE;
+ }
+ 
+-
+ void CGUIFontTTFGL::DeleteHardwareTexture()
+ {
+   if (m_bTextureLoaded)
+   {
+-    if (glIsTexture(m_nTexture))
++    if (glIsTexture(m_nTexture)) {
++      //g_allocated_gpu -= m_texture->m_allocated;
++      //printf("Free(GPU): %p (%d kbytes total=%d kbytes) [%s]\n", m_nTexture, m_texture->m_allocated, g_allocated_gpu, "FONT");
+       glDeleteTextures(1, (GLuint*) &m_nTexture);
++    }
+     m_bTextureLoaded = false;
+   }
+ }
+diff --git a/xbmc/guilib/GUITextureGLES.cpp b/xbmc/guilib/GUITextureGLES.cpp
+index a4118d6..84c6a96 100644
+--- a/xbmc/guilib/GUITextureGLES.cpp
++++ b/xbmc/guilib/GUITextureGLES.cpp
+@@ -57,9 +57,11 @@ void CGUITextureGLES::Begin(color_t color)
+   }
+ 
+   bool hasAlpha = m_texture.m_textures[m_currentFrame]->HasAlpha() || m_col[0][3] < 255;
+-
++  
++#if HAS_GLES == 2
+   if (m_diffuse.size())
+   {
++
+     if (m_col[0][0] == 255 && m_col[0][1] == 255 && m_col[0][2] == 255 && m_col[0][3] == 255 )
+     {
+       g_Windowing.EnableGUIShader(SM_MULTI);
+@@ -90,7 +92,17 @@ void CGUITextureGLES::Begin(color_t color)
+       g_Windowing.EnableGUIShader(SM_TEXTURE_NOBLEND);
+     }
+   }
++#endif
+ 
++#if HAS_GLES == 1
++  glVertexPointer(3, GL_FLOAT, 0, m_vert);
++  glColorPointer(4, GL_UNSIGNED_BYTE, 0, m_col);
++  glTexCoordPointer(2, GL_FLOAT , 0, m_tex0);
++  
++  glEnableClientState(GL_VERTEX_ARRAY);
++  glEnableClientState(GL_COLOR_ARRAY);
++  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
++#else //HAS_GLES == 2
+   GLint posLoc  = g_Windowing.GUIShaderGetPos();
+   GLint colLoc  = g_Windowing.GUIShaderGetCol();
+   GLint tex0Loc = g_Windowing.GUIShaderGetCoord0();
+@@ -104,6 +116,7 @@ void CGUITextureGLES::Begin(color_t color)
+   if(colLoc >= 0)
+     glEnableVertexAttribArray(colLoc);
+   glEnableVertexAttribArray(tex0Loc);
++#endif
+ 
+   if ( hasAlpha )
+   {
+@@ -118,6 +131,11 @@ void CGUITextureGLES::Begin(color_t color)
+ 
+ void CGUITextureGLES::End()
+ {
++#if HAS_GLES == 1
++  glDisableClientState(GL_VERTEX_ARRAY);
++  glDisableClientState(GL_COLOR_ARRAY);
++  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
++#else //HAS_GLES == 2
+   if (m_diffuse.size())
+   {
+     glDisableVertexAttribArray(g_Windowing.GUIShaderGetCoord1());
+@@ -129,13 +147,72 @@ void CGUITextureGLES::End()
+   if(colLoc >= 0)
+     glDisableVertexAttribArray(g_Windowing.GUIShaderGetCol());
+   glDisableVertexAttribArray(g_Windowing.GUIShaderGetCoord0());
+-
++#endif
+   glEnable(GL_BLEND);
++#if HAS_GLES == 2
+   g_Windowing.DisableGUIShader();
++#endif
+ }
+ 
+ void CGUITextureGLES::Draw(float *x, float *y, float *z, const CRect &texture, const CRect &diffuse, int orientation)
+ {
++#if HAS_GLES == 1
++
++  // Setup vertex position values
++  m_vert[0][0] = x[3];
++  m_vert[0][1] = y[0];
++  m_vert[0][2] = z[0];
++  
++  m_vert[1][0] = x[0];
++  m_vert[1][1] = y[2];
++  m_vert[1][2] = z[1];
++  
++  m_vert[2][0] = x[1];
++  m_vert[2][1] = y[1];
++  m_vert[2][2] = z[2];
++  
++  m_vert[3][0] = x[2];
++  m_vert[3][1] = y[3];
++  m_vert[3][2] = z[3];
++
++  // Setup texture coordinates
++  //TopLeft
++  m_tex0[0][0] = texture.x1;
++  m_tex0[0][1] = texture.y1;
++  //BottomLeft
++  if (orientation & 4)
++  {
++    m_tex0[1][0] = texture.x2;
++    m_tex0[1][1] = texture.y1;
++  }
++  else
++  {
++    m_tex0[1][0] = texture.x1;
++    m_tex0[1][1] = texture.y2;
++  }
++  //TopRight
++  if (orientation & 4)
++  {
++    m_tex0[2][0] = texture.x1;
++    m_tex0[2][1] = texture.y2;
++  }
++  else
++  {
++    m_tex0[2][0] = texture.x2;
++    m_tex0[2][1] = texture.y1;
++  }
++  //BottomRight
++  m_tex0[3][0] = texture.x2;
++  m_tex0[3][1] = texture.y2;
++
++#ifdef GL_QUADS
++  glEnable(GL_TEXTURE_2D);
++  glDrawArrays(GL_QUADS, 0, 4);
++#else
++   TODO: Convert quads to vertexes for real es1.1, without quads, support
++#endif
++
++#else //HAS_GLES == 2
+   GLubyte idx[4] = {0, 1, 3, 2};        //determines order of triangle strip
+ 
+   // Setup vertex position values
+@@ -209,10 +286,12 @@ void CGUITextureGLES::Draw(float *x, float *y, float *z, const CRect &texture, c
+   }
+ 
+   glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, idx);
++#endif
+ }
+ 
+ void CGUITextureGLES::DrawQuad(const CRect &rect, color_t color, CBaseTexture *texture, const CRect *texCoords)
+ {
++#if HAS_GLES == 2 //TODO GLES == 1
+   if (texture)
+   {
+     texture->LoadToGPU();
+@@ -291,6 +370,7 @@ void CGUITextureGLES::DrawQuad(const CRect &rect, color_t color, CBaseTexture *t
+     glDisableVertexAttribArray(tex0Loc);
+ 
+   g_Windowing.DisableGUIShader();
++#endif
+ }
+ 
+ #endif
+diff --git a/xbmc/guilib/GUIVideoControl.cpp b/xbmc/guilib/GUIVideoControl.cpp
+index b6cfa4e..b9fcb6c 100644
+--- a/xbmc/guilib/GUIVideoControl.cpp
++++ b/xbmc/guilib/GUIVideoControl.cpp
+@@ -64,8 +64,8 @@ void CGUIVideoControl::Render()
+     g_graphicsContext.SetViewWindow(m_posX, m_posY, m_posX + m_width, m_posY + m_height);
+ 
+ #ifdef HAS_VIDEO_PLAYBACK
+-    color_t alpha = g_graphicsContext.MergeAlpha(0xFF000000) >> 24;
+-    g_renderManager.RenderUpdate(false, 0, alpha);
++    //color_t alpha = g_graphicsContext.MergeAlpha(0xFF000000) >> 24;
++    //g_renderManager.RenderUpdate(false, 0, alpha);
+ #else
+     ((CDummyVideoPlayer *)g_application.m_pPlayer)->Render();
+ #endif
+diff --git a/xbmc/guilib/GUIWindow.cpp b/xbmc/guilib/GUIWindow.cpp
+index 847e55e..4b06a96 100644
+--- a/xbmc/guilib/GUIWindow.cpp
++++ b/xbmc/guilib/GUIWindow.cpp
+@@ -49,6 +49,8 @@
+ 
+ using namespace std;
+ 
++//#define NO_ANIMATIONS
++
+ CGUIWindow::CGUIWindow(int id, const CStdString &xmlFile)
+ {
+   SetID(id);
+@@ -176,6 +178,8 @@ bool CGUIWindow::Load(CXBMCTinyXML &xmlDoc)
+       CGUIControlFactory::GetConditionalVisibility(pRootElement, condition);
+       m_visibleCondition = g_infoManager.Register(condition, GetID());
+     }
++
++#ifndef NO_ANIMATIONS
+     else if (strValue == "animation" && pChild->FirstChild())
+     {
+       CRect rect(0, 0, (float)m_coordsRes.iWidth, (float)m_coordsRes.iHeight);
+@@ -183,6 +187,7 @@ bool CGUIWindow::Load(CXBMCTinyXML &xmlDoc)
+       anim.Create(pChild, rect, GetID());
+       m_animations.push_back(anim);
+     }
++#endif
+     else if (strValue == "zorder" && pChild->FirstChild())
+     {
+       m_renderOrder = atoi(pChild->FirstChild()->Value());
+diff --git a/xbmc/guilib/Makefile.in b/xbmc/guilib/Makefile.in
+index d824caa..32f1320 100644
+--- a/xbmc/guilib/Makefile.in
++++ b/xbmc/guilib/Makefile.in
+@@ -3,7 +3,6 @@ SRCS=AnimatedGif.cpp \
+      DirectXGraphics.cpp \
+      DirtyRegionSolvers.cpp \
+      DirtyRegionTracker.cpp \
+-     FrameBufferObject.cpp \
+      GraphicContext.cpp \
+      GUIAction.cpp \
+      GUIAudioManager.cpp \
+@@ -75,18 +74,26 @@ SRCS=AnimatedGif.cpp \
+      XBTF.cpp \
+      XBTFReader.cpp \
+ 
++     
+ ifeq (@USE_OPENGL@,1)
+-SRCS+=TextureGL.cpp \
++SRCS+=FrameBufferObject.cpp \
++      TextureGL.cpp \
+       GUIFontTTFGL.cpp \
+       GUITextureGL.cpp
+ endif
+ ifeq (@USE_OPENGLES@,1)
+-SRCS+=TextureGL.cpp \
++SRCS+=FrameBufferObject.cpp \
++      TextureGL.cpp \
+       GUIFontTTFGL.cpp \
+       GUITextureGLES.cpp \
+       MatrixGLES.cpp \
+-      GUIShader.cpp \
+-
++      GUIShader.cpp
++endif
++ifeq (@USE_OPENGLESV1@,1)
++SRCS+=TextureGL.cpp \
++      GUIFontTTFGL.cpp \
++      GUITextureGLES.cpp \
++      MatrixGLES.cpp 
+ endif
+ 
+ LIB=guilib.a
+diff --git a/xbmc/guilib/MatrixGLES.cpp b/xbmc/guilib/MatrixGLES.cpp
+index 03c7fa6..907f21a 100644
+--- a/xbmc/guilib/MatrixGLES.cpp
++++ b/xbmc/guilib/MatrixGLES.cpp
+@@ -22,7 +22,7 @@
+ 
+ #include "system.h"
+ 
+-#if HAS_GLES == 2
++#if HAS_GLES == 2 || HAS_GLES == 1
+ #include "system_gl.h"
+ 
+ #include <cmath>
+diff --git a/xbmc/guilib/Texture.cpp b/xbmc/guilib/Texture.cpp
+index c1e0ab4..8232573 100644
+--- a/xbmc/guilib/Texture.cpp
++++ b/xbmc/guilib/Texture.cpp
+@@ -32,6 +32,11 @@
+ #include "filesystem/File.h"
+ #include "osx/DarwinUtils.h"
+ #endif
++#include <time.h>
++#include <semaphore.h>
++
++sem_t lock;
++unsigned char lock_init = 1;
+ 
+ /************************************************************************/
+ /*                                                                      */
+@@ -39,6 +44,8 @@
+ CBaseTexture::CBaseTexture(unsigned int width, unsigned int height, unsigned int format)
+  : m_hasAlpha( true )
+ {
++  m_path = NULL;
++  m_allocated = 0;
+   m_pixels = NULL;
+   m_loadedToGPU = false;
+   Allocate(width, height, format);
+@@ -46,6 +53,7 @@ CBaseTexture::CBaseTexture(unsigned int width, unsigned int height, unsigned int
+ 
+ CBaseTexture::CBaseTexture(const CBaseTexture &copy)
+ {
++  m_path = strdup(copy.m_path);
+   m_imageWidth = copy.m_imageWidth;
+   m_imageHeight = copy.m_imageHeight;
+   m_textureWidth = copy.m_textureWidth;
+@@ -57,18 +65,28 @@ CBaseTexture::CBaseTexture(const CBaseTexture &copy)
+   m_loadedToGPU = false;
+   if (copy.m_pixels)
+   {
+-    m_pixels = new unsigned char[GetPitch() * GetRows()];
++    unsigned int size = GetPitch() * GetRows();
++    m_pixels = new unsigned char[size];
++    //m_allocated = size/1024;
++    //printf("Allocate(C): %p (%d kbytes) [%s]\n", m_pixels, m_allocated, m_path);
+     memcpy(m_pixels, copy.m_pixels, GetPitch() * GetRows());
+   }
+ }
+ 
+ CBaseTexture::~CBaseTexture()
+ {
+-  delete[] m_pixels;
++  if(m_pixels)
++  {
++    //printf("Free: %p (%d kbytes) [%s]\n", m_pixels, sizeof(m_pixels), m_path);
++    delete[] m_pixels;
++    m_pixels = NULL;
++  }
+ }
+ 
+ void CBaseTexture::Allocate(unsigned int width, unsigned int height, unsigned int format)
+ {
++  unsigned int size;
++
+   m_imageWidth = width;
+   m_imageHeight = height;
+   m_format = format;
+@@ -98,8 +116,20 @@ void CBaseTexture::Allocate(unsigned int width, unsigned int height, unsigned in
+   CLAMP(m_textureHeight, g_Windowing.GetMaxTextureSize());
+   CLAMP(m_imageWidth, m_textureWidth);
+   CLAMP(m_imageHeight, m_textureHeight);
+-  delete[] m_pixels;
+-  m_pixels = new unsigned char[GetPitch() * GetRows()];
++  if(m_pixels)
++  {
++    //printf("Free: %p (%d kbytes) [%s]\n", m_pixels, m_allocated, m_path);
++    delete[] m_pixels;
++    m_pixels = NULL;
++  }
++  
++  size = GetPitch() * GetRows();
++  if (size)
++  {
++    m_pixels = new unsigned char[GetPitch() * GetRows()];
++    //m_allocated = size/1024;
++    //printf("Allocate: %p (%d kbytes) [%s]\n", m_pixels, m_allocated, m_path);
++  }
+ }
+ 
+ void CBaseTexture::Update(unsigned int width, unsigned int height, unsigned int pitch, unsigned int format, const unsigned char *pixels, bool loadToGPU)
+@@ -174,6 +204,10 @@ void CBaseTexture::ClampToEdge()
+ bool CBaseTexture::LoadFromFile(const CStdString& texturePath, unsigned int maxWidth, unsigned int maxHeight,
+                                 bool autoRotate, unsigned int *originalWidth, unsigned int *originalHeight)
+ {
++#if 1
++  m_path = strdup(texturePath.c_str());
++#endif
++
+   if (URIUtils::GetExtension(texturePath).Equals(".dds"))
+   { // special case for DDS images
+     CDDSImage image;
+@@ -188,22 +222,95 @@ bool CBaseTexture::LoadFromFile(const CStdString& texturePath, unsigned int maxW
+   //ImageLib is sooo sloow for jpegs. Try our own decoder first. If it fails, fall back to ImageLib.
+   if (URIUtils::GetExtension(texturePath).Equals(".jpg") || URIUtils::GetExtension(texturePath).Equals(".tbn"))
+   {
++    clock_t uptime = clock();
++    
++    char *file = strdup(CSpecialProtocol::TranslatePath(texturePath).c_str());
++    int fileLen = strlen(file);
++    file[fileLen-3] = 'r';
++    file[fileLen-2] = 'a';
++    file[fileLen-1] = 'w';
++    
++    int fileFd = open(file, O_RDONLY);
++    if(fileFd > 0)
++    {
++      unsigned int i = 0;
++      unsigned int pos = 0;
++      unsigned char version = 0;
++      unsigned int width = 0;
++      unsigned int height = 0;
++      unsigned long int bytesToRead = 0;
++      read(fileFd, &version, 1);
++      read(fileFd, &width, 4);
++      read(fileFd, &height, 4);
++      
++      bytesToRead = width * height * 4;
++      Allocate(width, height, XB_FMT_A8R8G8B8);
++      
++      while(bytesToRead > 0) {
++        i = read(fileFd, m_pixels + pos, bytesToRead>4096?4096:bytesToRead);
++        if (i <= 0)
++          break;
++        bytesToRead-=i;
++        pos+=i;
++      }
++      close(fileFd);
++      free(file);
++      printf("Reading took %d msec\n", (clock() - uptime) / (CLOCKS_PER_SEC / 1000));
++      return true;
++    }
++
++    if (lock_init)
++    {
++      sem_init(&lock, 0, 1);
++      lock_init = 0;
++    }
++
++    sem_wait(&lock);
++
+     CJpegIO jpegfile;
+     if (jpegfile.Open(texturePath, maxWidth, maxHeight))
+     {
+       if (jpegfile.Width() > 0 && jpegfile.Height() > 0)
+       {
+         Allocate(jpegfile.Width(), jpegfile.Height(), XB_FMT_A8R8G8B8);
++        printf("Parsing took %d msec\n", (clock() - uptime) / (CLOCKS_PER_SEC / 1000));
++        
+         if (jpegfile.Decode(m_pixels, GetPitch(), XB_FMT_A8R8G8B8))
+         {
+           if (autoRotate && jpegfile.Orientation())
+             m_orientation = jpegfile.Orientation() - 1;
+           m_hasAlpha=false;
+-          ClampToEdge();
++          printf("Decoding took %d msec\n", (clock() - uptime) / (CLOCKS_PER_SEC / 1000));
++          
++          fileFd = open(file, O_WRONLY|O_CREAT);
++          unsigned char version = 1;
++          unsigned int width = jpegfile.Width();
++          unsigned int height = jpegfile.Height();
++          int i = 0;
++          int pos = 0;
++          int bytesToWrite = jpegfile.Height() * GetPitch();
++          
++          write(fileFd, &version, 1);
++          write(fileFd, &width, 4);
++          write(fileFd, &height, 4);
++          
++          while(bytesToWrite > 0) {
++            i = write(fileFd, m_pixels + pos, bytesToWrite>4096?4096:bytesToWrite);
++            if (i <= 0)
++              break;
++            bytesToWrite-=i;
++            pos+=i;
++          }
++          close(fileFd);
++          printf("Saving took %d msec\n", (clock() - uptime) / (CLOCKS_PER_SEC / 1000));
++          free(file);
++          sem_post(&lock);
+           return true;
+         }
+       }
+     }
++    free(file);
++    sem_post(&lock);
+   }
+ 
+   DllImageLib dll;
+diff --git a/xbmc/guilib/Texture.h b/xbmc/guilib/Texture.h
+index 47def27..cbb8699 100644
+--- a/xbmc/guilib/Texture.h
++++ b/xbmc/guilib/Texture.h
+@@ -75,6 +75,10 @@ public:
+ 
+   static unsigned int PadPow2(unsigned int x);
+   bool SwapBlueRed(unsigned char *pixels, unsigned int height, unsigned int pitch, unsigned int elements = 4, unsigned int offset=0);
++#if 1
++  char * m_path;
++  unsigned int m_allocated;
++#endif
+ 
+ protected:
+   // helpers for computation of texture parameters for compressed textures
+diff --git a/xbmc/guilib/TextureGL.cpp b/xbmc/guilib/TextureGL.cpp
+index f12356f..bc8833b 100644
+--- a/xbmc/guilib/TextureGL.cpp
++++ b/xbmc/guilib/TextureGL.cpp
+@@ -29,6 +29,8 @@
+ 
+ using namespace std;
+ 
++unsigned int g_allocated_gpu = 0;
++
+ /************************************************************************/
+ /*    CGLTexture                                                       */
+ /************************************************************************/
+@@ -40,7 +42,9 @@ CGLTexture::CGLTexture(unsigned int width, unsigned int height, unsigned int for
+ 
+ CGLTexture::~CGLTexture()
+ {
++  //printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   DestroyTextureObject();
++  //printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
+ }
+ 
+ void CGLTexture::CreateTextureObject()
+@@ -51,12 +55,20 @@ void CGLTexture::CreateTextureObject()
+ void CGLTexture::DestroyTextureObject()
+ {
+   if (m_texture)
+-    glDeleteTextures(1, (GLuint*) &m_texture);
++  {
++    //if (m_allocated > 0)
++    {
++      //g_allocated_gpu -= m_allocated;
++      //printf("Free(GPU): -> %p (%d kbytes total=%d kbytes) [%s]\n", m_texture, m_allocated, g_allocated_gpu, m_path);
++      glDeleteTextures(1, (GLuint*) &m_texture);
++      //printf("Free(GPU): <-\n");
++    }
++  }
+ }
+ 
+ void CGLTexture::LoadToGPU()
+ {
+-  if (!m_pixels)
++  if (m_loadedToGPU || !m_pixels)
+   {
+     // nothing to load - probably same image (no change)
+     return;
+@@ -174,12 +186,18 @@ void CGLTexture::LoadToGPU()
+   }
+   glTexImage2D(GL_TEXTURE_2D, 0, internalformat, m_textureWidth, m_textureHeight, 0,
+     pixelformat, GL_UNSIGNED_BYTE, m_pixels);
++    //g_allocated_gpu += m_allocated;
++    //printf("Allocate(GPU): %p (%d kbytes total=%d kbytes) [%s]\n", m_texture, m_allocated, g_allocated_gpu, m_path);
+ 
+ #endif
+   VerifyGLState();
+ 
+-  delete [] m_pixels;
+-  m_pixels = NULL;
++  if (m_pixels)
++  {
++    //printf("Free: %p (%d kbytes) [%s]\n", m_pixels, m_allocated, m_path);
++    delete [] m_pixels;
++    m_pixels = NULL;
++  }
+ 
+   m_loadedToGPU = true;
+ }
+@@ -194,6 +212,9 @@ void CGLTexture::BindToUnit(unsigned int unit)
+ #else // GLES
+   glActiveTexture((unit == 1) ? GL_TEXTURE1 : GL_TEXTURE0);
+   glBindTexture(GL_TEXTURE_2D, m_texture);
++#if HAS_GLES == 1
++  glEnable(GL_TEXTURE_2D);
++#endif
+ #endif
+ }
+ 
+diff --git a/xbmc/input/linux/LinuxInputDevices.cpp b/xbmc/input/linux/LinuxInputDevices.cpp
+index 3d66083..39fe88d 100644
+--- a/xbmc/input/linux/LinuxInputDevices.cpp
++++ b/xbmc/input/linux/LinuxInputDevices.cpp
+@@ -185,7 +185,7 @@ XBMCKey basic_keycodes[] = { XBMCK_UNKNOWN, XBMCK_ESCAPE, XBMCK_1, XBMCK_2, XBMC
+     XBMCK_HELP,
+ 
+     /* DIKS_MENU, DIKS_CALCULATOR, DIKS_SETUP, */
+-    XBMCK_UNKNOWN, XBMCK_UNKNOWN, XBMCK_UNKNOWN,
++    XBMCK_c, XBMCK_UNKNOWN, XBMCK_UNKNOWN,
+ 
+     /*KEY_SLEEP, KEY_WAKEUP, KEY_FILE, KEY_SENDFILE, KEY_DELETEFILE,
+      KEY_XFER,*/
+diff --git a/xbmc/interfaces/json-rpc/VideoLibrary.cpp b/xbmc/interfaces/json-rpc/VideoLibrary.cpp
+index c4241b9..f59ad49 100644
+--- a/xbmc/interfaces/json-rpc/VideoLibrary.cpp
++++ b/xbmc/interfaces/json-rpc/VideoLibrary.cpp
+@@ -114,6 +114,8 @@ JSONRPC_STATUS CVideoLibrary::GetTVShows(const CStdString &method, ITransportLay
+     return InternalError;
+ 
+   CFileItemList items;
++
++printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
+   if (videodatabase.GetTvShowsNav("videodb://2/", items))
+   {
+     bool additionalInfo = false;
+diff --git a/xbmc/interfaces/python/XBPython.cpp b/xbmc/interfaces/python/XBPython.cpp
+index ed13b77..27f3ea6 100644
+--- a/xbmc/interfaces/python/XBPython.cpp
++++ b/xbmc/interfaces/python/XBPython.cpp
+@@ -24,6 +24,7 @@
+ #endif
+ 
+ // python.h should always be included first before any other includes
++#undef SIZEOF_SIZE_T
+ #include <Python.h>
+ 
+ #include "system.h"
+diff --git a/xbmc/interfaces/python/xbmcmodule/player.cpp b/xbmc/interfaces/python/xbmcmodule/player.cpp
+index 257d97a..08be317 100644
+--- a/xbmc/interfaces/python/xbmcmodule/player.cpp
++++ b/xbmc/interfaces/python/xbmcmodule/player.cpp
+@@ -19,6 +19,7 @@
+  *
+  */
+ 
++#include "system.h"
+ #include "pyutil.h"
+ #include "Application.h"
+ #include "GUIInfoManager.h"
+@@ -64,9 +65,18 @@ namespace PYXBMC
+     self->pPlayer->SetCallback(PyThreadState_Get(), (PyObject*)self);
+     self->playerCore = EPC_NONE;
+ 
+-    if (playerCore == EPC_DVDPLAYER ||
++    if (
++#ifdef HAS_DVDPLAYER
++        playerCore == EPC_DVDPLAYER ||
+         playerCore == EPC_MPLAYER ||
+-        playerCore == EPC_PAPLAYER)
++#endif
++#ifdef HAS_PAPLAYER
++        playerCore == EPC_PAPLAYER ||
++#endif
++#ifdef HAS_GSTPLAYER
++        playerCore == EPC_GSTPLAYER ||
++#endif
++        0 )
+     {
+       self->playerCore = (EPLAYERCORES)playerCore;
+     }
+@@ -786,9 +796,17 @@ namespace PYXBMC
+     "\n"
+     "core     : (optional) Use a specified playcore instead of letting xbmc decide the playercore to use.\n"
+     "         : - xbmc.PLAYER_CORE_AUTO\n"
++#ifdef HAS_DVDPLAYER
+     "         : - xbmc.PLAYER_CORE_DVDPLAYER\n"
+     "         : - xbmc.PLAYER_CORE_MPLAYER\n"
+-    "         : - xbmc.PLAYER_CORE_PAPLAYER\n");
++#endif
++#ifdef HAS_PAPLAYER
++    "         : - xbmc.PLAYER_CORE_PAPLAYER\n"
++#endif
++#ifdef HAS_GSTPLAYER
++    "         : - xbmc.PLAYER_CORE_GSTPLAYER\n"
++#endif
++  );
+ 
+ // Restore code and data sections to normal.
+ 
+diff --git a/xbmc/interfaces/python/xbmcmodule/xbmcmodule.cpp b/xbmc/interfaces/python/xbmcmodule/xbmcmodule.cpp
+index 4620674..3cbcf17 100644
+--- a/xbmc/interfaces/python/xbmcmodule/xbmcmodule.cpp
++++ b/xbmc/interfaces/python/xbmcmodule/xbmcmodule.cpp
+@@ -21,6 +21,7 @@
+ 
+ #include <Python.h>
+ 
++#include "system.h"
+ #include "player.h"
+ #include "pyplaylist.h"
+ #include "keyboard.h"
+@@ -1070,9 +1071,16 @@ namespace PYXBMC
+ 
+     // player constants
+     PyModule_AddIntConstant(pXbmcModule, (char*)"PLAYER_CORE_AUTO", EPC_NONE);
++#ifdef HAS_DVDPLAYER
+     PyModule_AddIntConstant(pXbmcModule, (char*)"PLAYER_CORE_DVDPLAYER", EPC_DVDPLAYER);
+     PyModule_AddIntConstant(pXbmcModule, (char*)"PLAYER_CORE_MPLAYER", EPC_MPLAYER);
++#endif
++#ifdef HAS_PAPLAYER
+     PyModule_AddIntConstant(pXbmcModule, (char*)"PLAYER_CORE_PAPLAYER", EPC_PAPLAYER);
++#endif
++#ifdef HAS_GSTPLAYER
++    PyModule_AddIntConstant(pXbmcModule, (char*)"PLAYER_CORE_GSTPLAYER", EPC_GSTPLAYER);
++#endif
+ 
+     // dvd state constants
+     PyModule_AddIntConstant(pXbmcModule, (char*)"TRAY_OPEN", TRAY_OPEN);
+diff --git a/xbmc/linux/PlatformDefs.h b/xbmc/linux/PlatformDefs.h
+index 852290c..d0c28df 100644
+--- a/xbmc/linux/PlatformDefs.h
++++ b/xbmc/linux/PlatformDefs.h
+@@ -159,7 +159,7 @@
+ #define __int64   long long
+ #define __uint64  unsigned long long
+ 
+-#if defined(__x86_64__) || defined(__powerpc__) || defined(__ppc__) || defined (__arm__) // should this be powerpc64 only?
++#if defined(__x86_64__) || defined(__powerpc__) || defined(__ppc__) || defined (__arm__) || defined (__sh__) // should this be powerpc64 only?
+ #define __stdcall
+ #else /* !__x86_64__ */
+ #define __stdcall   __attribute__((__stdcall__))
+diff --git a/xbmc/pictures/SlideShowPicture.cpp b/xbmc/pictures/SlideShowPicture.cpp
+index f94a7be..3613f80 100644
+--- a/xbmc/pictures/SlideShowPicture.cpp
++++ b/xbmc/pictures/SlideShowPicture.cpp
+@@ -762,7 +762,7 @@ void CSlideShowPic::Render(float *x, float *y, CBaseTexture* pTexture, color_t c
+ 
+   glEnd();
+   g_graphicsContext.EndPaint();
+-#elif defined(HAS_GLES)
++#elif defined(HAS_GLES) && HAS_GLES == 2
+   g_graphicsContext.BeginPaint();
+   if (pTexture)
+   {
+@@ -833,6 +833,7 @@ void CSlideShowPic::Render(float *x, float *y, CBaseTexture* pTexture, color_t c
+   g_Windowing.DisableGUIShader();
+ 
+   g_graphicsContext.EndPaint();
++#elif defined(HAS_GLES) && HAS_GLES == 1
+ #else
+ // SDL render
+   g_Windowing.BlitToScreen(m_pImage, NULL, NULL);
+diff --git a/xbmc/rendering/gles/RenderSystemGLES.cpp b/xbmc/rendering/gles/RenderSystemGLES.cpp
+index 5b02a01..caaed4a 100644
+--- a/xbmc/rendering/gles/RenderSystemGLES.cpp
++++ b/xbmc/rendering/gles/RenderSystemGLES.cpp
+@@ -22,7 +22,7 @@
+ 
+ #include "system.h"
+ 
+-#if HAS_GLES == 2
++#if HAS_GLES == 2 || HAS_GLES == 1
+ 
+ #include "guilib/GraphicContext.h"
+ #include "settings/AdvancedSettings.h"
+@@ -34,6 +34,7 @@
+ #include "utils/SystemInfo.h"
+ #include "utils/MathUtils.h"
+ 
++#if HAS_GLES == 2
+ static const char* ShaderNames[SM_ESHADERCOUNT] =
+     {"guishader_frag_default.glsl",
+      "guishader_frag_texture.glsl",
+@@ -44,11 +45,14 @@ static const char* ShaderNames[SM_ESHADERCOUNT] =
+      "guishader_frag_rgba.glsl",
+      "guishader_frag_rgba_blendcolor.glsl"
+     };
++#endif
+ 
+ CRenderSystemGLES::CRenderSystemGLES()
+  : CRenderSystemBase()
++#if HAS_GLES == 2
+  , m_pGUIshader(0)
+  , m_method(SM_DEFAULT)
++#endif
+ {
+   m_enumRenderingSystem = RENDERING_SYSTEM_OPENGLES;
+ }
+@@ -117,9 +121,9 @@ bool CRenderSystemGLES::InitRenderSystem()
+ 
+ 
+   m_bRenderCreated = true;
+-  
++#if HAS_GLES == 2
+   InitialiseGUIShader();
+-
++#endif
+   return true;
+ }
+ 
+@@ -153,6 +157,7 @@ bool CRenderSystemGLES::ResetRenderSystem(int width, int height, bool fullScreen
+ 
+ bool CRenderSystemGLES::DestroyRenderSystem()
+ {
++#if HAS_GLES == 2
+   CLog::Log(LOGDEBUG, "GUI Shader - Destroying Shader : %p", m_pGUIshader);
+ 
+   if (m_pGUIshader)
+@@ -169,7 +174,7 @@ bool CRenderSystemGLES::DestroyRenderSystem()
+     delete[] m_pGUIshader;
+     m_pGUIshader = NULL;
+   }
+-
++#endif
+   m_bRenderCreated = false;
+ 
+   return true;
+@@ -200,6 +205,10 @@ bool CRenderSystemGLES::ClearBuffers(color_t color)
+   float g = GET_G(color) / 255.0f;
+   float b = GET_B(color) / 255.0f;
+   float a = GET_A(color) / 255.0f;
++#if HAS_GLES == 1
++  //TODO: Ugly Hack, somehow the alpha value goes missing, check this
++  a = 0.0f;
++#endif
+ 
+   glClearColor(r, g, b, a);
+ 
+@@ -424,6 +433,7 @@ bool CRenderSystemGLES::TestRender()
+ {
+   static float theta = 0.0;
+ 
++#if HAS_GLES == 2
+   //RESOLUTION_INFO resInfo = g_settings.m_ResInfo[g_guiSettings.m_LookAndFeelResolution];
+   //glViewport(0, 0, resInfo.iWidth, resInfo.iHeight);
+ 
+@@ -466,6 +476,7 @@ bool CRenderSystemGLES::TestRender()
+ 
+   theta += 1.0f;
+ 
++#endif
+   return true;
+ }
+ 
+@@ -537,14 +548,17 @@ void CRenderSystemGLES::SetScissors(const CRect &rect)
+   GLint y1 = MathUtils::round_int(rect.y1);
+   GLint x2 = MathUtils::round_int(rect.x2);
+   GLint y2 = MathUtils::round_int(rect.y2);
++//#if HAS_GLES == 2
++  //Ugly Hack, seems that scissor does not work for us
+   glScissor(x1, m_height - y2, x2-x1, y2-y1);
++//#endif
+ }
+ 
+ void CRenderSystemGLES::ResetScissors()
+ {
+   SetScissors(CRect(0, 0, (float)m_width, (float)m_height));
+ }
+-
++#if HAS_GLES == 2
+ void CRenderSystemGLES::InitialiseGUIShader()
+ {
+   if (!m_pGUIshader)
+@@ -626,5 +640,5 @@ GLint CRenderSystemGLES::GUIShaderGetCoord1()
+ 
+   return -1;
+ }
+-
++#endif
+ #endif
+diff --git a/xbmc/rendering/gles/RenderSystemGLES.h b/xbmc/rendering/gles/RenderSystemGLES.h
+index 1eb9a69..4d07077 100644
+--- a/xbmc/rendering/gles/RenderSystemGLES.h
++++ b/xbmc/rendering/gles/RenderSystemGLES.h
+@@ -27,6 +27,7 @@
+ #include "system.h"
+ #include "system_gl.h"
+ #include "rendering/RenderSystem.h"
++#if HAS_GLES == 2
+ #include "xbmc/guilib/GUIShader.h"
+ 
+ enum ESHADERMETHOD
+@@ -41,6 +42,7 @@ enum ESHADERMETHOD
+   SM_TEXTURE_RGBA_BLENDCOLOR,
+   SM_ESHADERCOUNT
+ };
++#endif
+ 
+ class CRenderSystemGLES : public CRenderSystemBase
+ {
+@@ -78,6 +80,7 @@ public:
+ 
+   virtual void Project(float &x, float &y, float &z);
+   
++#if HAS_GLES == 2
+   void InitialiseGUIShader();
+   void EnableGUIShader(ESHADERMETHOD method);
+   void DisableGUIShader();
+@@ -86,6 +89,7 @@ public:
+   GLint GUIShaderGetCol();
+   GLint GUIShaderGetCoord0();
+   GLint GUIShaderGetCoord1();
++#endif
+ 
+ protected:
+   virtual void SetVSyncImpl(bool enable) = 0;
+@@ -103,8 +107,10 @@ protected:
+ 
+   CStdString m_RenderExtensions;
+ 
++#if HAS_GLES == 2
+   CGUIShader  **m_pGUIshader;  // One GUI shader for each method
+   ESHADERMETHOD m_method;      // Current GUI Shader method
++#endif
+ 
+   GLfloat    m_view[16];
+   GLfloat    m_projection[16];
+diff --git a/xbmc/settings/AdvancedSettings.cpp b/xbmc/settings/AdvancedSettings.cpp
+index 3982420..1918022 100644
+--- a/xbmc/settings/AdvancedSettings.cpp
++++ b/xbmc/settings/AdvancedSettings.cpp
+@@ -69,7 +69,11 @@ void CAdvancedSettings::Initialize()
+   m_karaokeAlwaysEmptyOnCdgs = 1;
+   m_karaokeUseSongSpecificBackground = 0;
+ 
++#ifdef HAS_PAPLAYER
+   m_audioDefaultPlayer = "paplayer";
++#else
++  m_audioDefaultPlayer = "gstplayer";
++#endif
+   m_audioPlayCountMinimumPercent = 90.0f;
+   m_audioHost = "default";
+ 
+@@ -90,8 +94,13 @@ void CAdvancedSettings::Initialize()
+   m_videoBlackBarColour = 0;
+   m_videoPPFFmpegDeint = "linblenddeint";
+   m_videoPPFFmpegPostProc = "ha:128:7,va,dr";
+-  m_videoDefaultPlayer = "dvdplayer";
+-  m_videoDefaultDVDPlayer = "dvdplayer";
++//#ifdef HAS_DVDPLAYER
++//  m_videoDefaultPlayer = "dvdplayer";
++//  m_videoDefaultDVDPlayer = "dvdplayer";
++//#else
++  m_videoDefaultPlayer = "gstplayer";
++  m_videoDefaultDVDPlayer = "gstplayer";
++//#endif
+   m_videoIgnoreSecondsAtStart = 3*60;
+   m_videoIgnorePercentAtEnd   = 8.0f;
+   m_videoPlayCountMinimumPercent = 90.0f;
+@@ -100,8 +109,12 @@ void CAdvancedSettings::Initialize()
+   m_videoEnableHighQualityHwScalers = false;
+   m_videoAutoScaleMaxFps = 30.0f;
+   m_videoAllowMpeg4VDPAU = false;
+-  m_videoAllowMpeg4VAAPI = false;  
++  m_videoAllowMpeg4VAAPI = false;
++#if defined(HAS_GLES) && HAS_GLES == 1
++  m_videoDisableBackgroundDeinterlace = true;
++#else
+   m_videoDisableBackgroundDeinterlace = false;
++#endif
+   m_videoCaptureUseOcclusionQuery = -1; //-1 is auto detect
+   m_DXVACheckCompatibility = false;
+   m_DXVACheckCompatibilityPresent = false;
+@@ -249,7 +262,7 @@ void CAdvancedSettings::Initialize()
+                                   //with ipv6.
+ 
+   m_fullScreen = m_startFullScreen = false;
+-  m_showExitButton = true;
++  m_showExitButton = false;
+   m_splashImage = true;
+ 
+   m_playlistRetries = 100;
+@@ -284,17 +297,17 @@ void CAdvancedSettings::Initialize()
+ 
+   m_measureRefreshrate = false;
+ 
+-  m_cacheMemBufferSize = 1024 * 1024 * 20;
++  m_cacheMemBufferSize = 0; //1024 * 1024 * 20;
+ 
+   m_jsonOutputCompact = true;
+   m_jsonTcpPort = 9090;
+ 
+   m_enableMultimediaKeys = false;
+ 
+-  m_canWindowed = true;
++  m_canWindowed = false;
+   m_guiVisualizeDirtyRegions = false;
+-  m_guiAlgorithmDirtyRegions = 0;
+-  m_guiDirtyRegionNoFlipTimeout = -1;
++  m_guiAlgorithmDirtyRegions = 3 /*2=DIRTYREGION_SOLVER_COST_REDUCTION 1=DIRTYREGION_SOLVER_UNION*/;
++  m_guiDirtyRegionNoFlipTimeout = 0;
+   m_logEnableAirtunes = false;
+   m_airTunesPort = 36666;
+   m_airPlayPort = 36667;
+diff --git a/xbmc/settings/GUISettings.cpp b/xbmc/settings/GUISettings.cpp
+index 4273c73..eda1b24 100644
+--- a/xbmc/settings/GUISettings.cpp
++++ b/xbmc/settings/GUISettings.cpp
+@@ -38,11 +38,16 @@
+ #include "windowing/WindowingFactory.h"
+ #include "powermanagement/PowerManager.h"
+ #include "cores/dvdplayer/DVDCodecs/Video/CrystalHD.h"
++
+ #include "cores/AudioEngine/AEFactory.h"
++#ifdef HAS_AUDIOENGINE
+ #include "cores/AudioEngine/AEAudioFormat.h"
++#endif
+ #include "guilib/GUIFont.h" // for FONT_STYLE_* definitions
+ #if defined(TARGET_DARWIN_OSX)
+-  #include "cores/AudioEngine/Engines/CoreAudio/CoreAudioHardware.h"
++  #ifdef HAS_AUDIOENGINE
++    #include "cores/AudioEngine/Engines/CoreAudio/CoreAudioHardware.h"
++  #endif
+ #endif
+ #include "guilib/GUIFontManager.h"
+ #include "utils/Weather.h"
+@@ -428,7 +433,7 @@ void CGUISettings::Initialize()
+   vsync.insert(make_pair(13106,VSYNC_DISABLED));
+   vsync.insert(make_pair(13107,VSYNC_VIDEO));
+   vsync.insert(make_pair(13108,VSYNC_ALWAYS));
+-  AddInt(vs, "videoscreen.vsync", 13105, DEFAULT_VSYNC, vsync, SPIN_CONTROL_TEXT);
++  AddInt(vs, "videoscreen.vsync", 13105, VSYNC_ALWAYS, vsync, SPIN_CONTROL_TEXT);
+ 
+   AddString(vs, "videoscreen.guicalibration",214,"", BUTTON_CONTROL_STANDARD);
+ #ifndef HAS_DX
+@@ -475,21 +480,21 @@ void CGUISettings::Initialize()
+   AddBool(aocat, "audiooutput.dtshdpassthrough" , 347, true );
+ #endif
+ 
+-#if defined(TARGET_DARWIN)
+-  #if defined(TARGET_DARWIN_IOS)
++//#if defined(TARGET_DARWIN)
++  //#if defined(TARGET_DARWIN_IOS)
+     CStdString defaultDeviceName = "Default";
+-  #else
+-    CStdString defaultDeviceName;
+-    CCoreAudioHardware::GetOutputDeviceName(defaultDeviceName);
+-  #endif
++  //#else
++  //  CStdString defaultDeviceName;
++  //  CCoreAudioHardware::GetOutputDeviceName(defaultDeviceName);
++  //#endif
+   AddString(ao, "audiooutput.audiodevice", 545, defaultDeviceName.c_str(), SPIN_CONTROL_TEXT);
+   AddString(NULL, "audiooutput.passthroughdevice", 546, defaultDeviceName.c_str(), SPIN_CONTROL_TEXT);
+-#else
+-  AddSeparator(ao, "audiooutput.sep1");
+-  AddString   (ao, "audiooutput.audiodevice"      , 545, CStdString(CAEFactory::AE->GetDefaultDevice(false)), SPIN_CONTROL_TEXT);
+-  AddString   (ao, "audiooutput.passthroughdevice", 546, CStdString(CAEFactory::AE->GetDefaultDevice(true )), SPIN_CONTROL_TEXT);
+-  AddSeparator(ao, "audiooutput.sep2");
+-#endif
++//#else
++//  AddSeparator(ao, "audiooutput.sep1");
++//  AddString   (ao, "audiooutput.audiodevice"      , 545, CStdString(CAEFactory::AE->GetDefaultDevice(false)), SPIN_CONTROL_TEXT);
++//  AddString   (ao, "audiooutput.passthroughdevice", 546, CStdString(CAEFactory::AE->GetDefaultDevice(true )), SPIN_CONTROL_TEXT);
++//  AddSeparator(ao, "audiooutput.sep2");
++//#endif
+ 
+   map<int,int> guimode;
+   guimode.insert(make_pair(34121, AE_SOUND_IDLE  ));
+@@ -836,7 +841,7 @@ void CGUISettings::Initialize()
+   AddString(laf, "lookandfeel.font",13303,"Default", SPIN_CONTROL_TEXT);
+   AddInt(laf, "lookandfeel.skinzoom",20109, 0, -20, 2, 20, SPIN_CONTROL_INT, MASK_PERCENT);
+   AddInt(laf, "lookandfeel.startupwindow",512,1, WINDOW_HOME, 1, WINDOW_PYTHON_END, SPIN_CONTROL_TEXT);
+-  AddString(laf, "lookandfeel.soundskin",15108,"SKINDEFAULT", SPIN_CONTROL_TEXT);
++  AddString(laf, "lookandfeel.soundskin",15108,"OFF", SPIN_CONTROL_TEXT);
+   AddSeparator(laf, "lookandfeel.sep2");
+   AddBool(laf, "lookandfeel.enablerssfeeds",13305,  true);
+   AddString(laf, "lookandfeel.rssedit", 21450, "", BUTTON_CONTROL_STANDARD);
+diff --git a/xbmc/system.h b/xbmc/system.h
+index aa6f2ae..c02ffb8 100644
+--- a/xbmc/system.h
++++ b/xbmc/system.h
+@@ -80,6 +80,22 @@
+   #define HAS_AIRTUNES
+ #endif
+ 
++#ifdef HAVE_MYSQL
++  #define HAS_MYSQL
++#endif
++
++#ifdef HAVE_DVDPLAYER
++  #define HAS_DVDPLAYER
++#endif
++
++#ifdef HAVE_PAPLAYER
++  #define HAS_PAPLAYER
++#endif
++
++#ifdef HAVE_GSTPLAYER
++  #define HAS_GSTPLAYER
++#endif
++
+ /**********************
+  * Non-free Components
+  **********************/
+@@ -142,6 +158,7 @@
+  *****************/
+ 
+ #if defined(TARGET_LINUX) || defined(TARGET_FREEBSD)
++#define HAS_LINUX_EVENTS
+ #if defined(HAVE_LIBAVAHI_COMMON) && defined(HAVE_LIBAVAHI_CLIENT)
+ #define HAS_ZEROCONF
+ #define HAS_AVAHI
+diff --git a/xbmc/system_gl.h b/xbmc/system_gl.h
+index 987aa6a..2328e59 100644
+--- a/xbmc/system_gl.h
++++ b/xbmc/system_gl.h
+@@ -52,4 +52,7 @@
+     #include <GLES2/gl2.h>
+     #include <GLES2/gl2ext.h>
+   #endif
++#elif HAS_GLES == 1
++  #include <GLES/gl.h>
++  #include <GLES/glext.h>
+ #endif
+diff --git a/xbmc/threads/Atomics.cpp b/xbmc/threads/Atomics.cpp
+index 5b09f18..d86fd9b 100644
+--- a/xbmc/threads/Atomics.cpp
++++ b/xbmc/threads/Atomics.cpp
+@@ -71,6 +71,25 @@ long cas(volatile long* pAddr, long expectedVal, long swapVal)
+ #elif defined(__mips__)
+ // TODO:
+ 
++#elif defined(__sh__)
++long cas(volatile long* pAddr, long expectedVal, long swapVal)
++{
++  unsigned int prev;
++
++  __asm__ __volatile__ (
++                "   .align 2               \n"
++                "   mov.l   @%2, %0       \n" /* Load the current value of *pAddr(%2) into prev (%0) */
++                "   cmp/eq  %0,  %3       \n" /* Verify that the current value (%2) == old value (%3) */
++                "   bf      2f             \n" /* Bail if the two values are not equal [not as expected] */
++                "   mov.l   %4,  @%2       \n" /* Attempt to store swapVal (%4) value into *pAddr (%2) [p must still be reserved] */
++                "2:                        \n"
++                : "=&r" (prev), "+m" (*pAddr)                   /* Outputs [prev, *pAddr] */
++                : "r" (pAddr), "r" (expectedVal), "r" (swapVal) /* Inputs [pAddr, expectedVal, swapVal] */
++                );
++  
++  return prev;
++}
++
+ #elif defined(WIN32)
+ 
+ long cas(volatile long* pAddr, long expectedVal, long swapVal)
+@@ -115,7 +134,7 @@ long cas(volatile long* pAddr,long expectedVal, long swapVal)
+ // 64-bit atomic compare-and-swap
+ // Returns previous value of *pAddr
+ ///////////////////////////////////////////////////////////////////////////
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__mips__) // PowerPC, ARM, and MIPS
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__mips__) || defined(__sh__) // PowerPC, ARM, MIPS and SH
+ 
+ // Not available/required
+ 
+@@ -212,6 +231,21 @@ long AtomicIncrement(volatile long* pAddr)
+ #elif defined(__mips__)
+ // TODO:
+ 
++#elif defined(__sh__)
++long AtomicIncrement(volatile long* pAddr)
++{
++  register long val;
++  __asm__ __volatile__ (
++                "   .align 2               \n"
++                "   mov.l   @%1,  %0       \n" //Move the first value to val
++                "   add     #1,   %0       \n" //Increase val by 1
++                "   mov.l   %0,   @%1      \n" //Move val to the first value
++                : "=&r" (val)
++                : "r" (pAddr)
++                );
++  return val;
++}
++
+ #elif defined(WIN32)
+ 
+ long AtomicIncrement(volatile long* pAddr)
+@@ -291,6 +325,21 @@ long AtomicAdd(volatile long* pAddr, long amount)
+ #elif defined(__mips__)
+ // TODO:
+ 
++#elif defined(__sh__)
++long AtomicAdd(volatile long* pAddr, long amount)
++{
++  register long val;
++  __asm__ __volatile__ (
++                "   .align 2               \n"
++                "   mov.l   @%1,  %0       \n"
++                "   add     %2,   %0       \n"
++                "   mov.l   %0,   @%1      \n"
++                : "=&r" (val)
++                : "r" (pAddr), "r" (amount)
++  );
++  return val;
++}
++
+ #elif defined(WIN32)
+ 
+ long AtomicAdd(volatile long* pAddr, long amount)
+@@ -370,6 +419,21 @@ long AtomicDecrement(volatile long* pAddr)
+ #elif defined(__mips__)
+ // TODO:
+ 
++#elif defined(__sh__)
++long AtomicDecrement(volatile long* pAddr)
++{
++  register long val;
++  __asm__ __volatile__ (
++                "   .align 2               \n"
++                "   mov.l   @%1,  %0       \n"
++                "   add     #-1,  %0       \n"
++                "   mov.l   %0,   @%1      \n"
++                : "=&r" (val)
++                : "r" (pAddr)
++  );
++  return val;
++}
++
+ #elif defined(WIN32)
+ 
+ long AtomicDecrement(volatile long* pAddr)
+@@ -450,6 +514,22 @@ long AtomicSubtract(volatile long* pAddr, long amount)
+ #elif defined(__mips__)
+ // TODO:
+ 
++#elif defined(__sh__)
++long AtomicSubtract(volatile long* pAddr, long amount)
++{
++  register long val;
++  amount *= -1;
++  __asm__ __volatile__ (
++                "   .align 2               \n"
++                "   mov.l   @%1,  %0       \n"
++                "   add     %2,   %0       \n"
++                "   mov.l   %0,   @%1      \n"
++                : "=&r" (val)
++                : "r" (pAddr), "r" (amount)
++  );
++  return val;
++}
++
+ #elif defined(WIN32)
+ 
+ long AtomicSubtract(volatile long* pAddr, long amount)
+diff --git a/xbmc/threads/Atomics.h b/xbmc/threads/Atomics.h
+index 10ececc..ff399aa 100644
+--- a/xbmc/threads/Atomics.h
++++ b/xbmc/threads/Atomics.h
+@@ -24,7 +24,7 @@
+ 
+ // TODO: Inline these methods
+ long cas(volatile long *pAddr, long expectedVal, long swapVal);
+-#if !defined(__ppc__) && !defined(__powerpc__) && !defined(__arm__)
++#if !defined(__ppc__) && !defined(__powerpc__) && !defined(__arm__) && !defined(__sh__)
+ long long cas2(volatile long long* pAddr, long long expectedVal, long long swapVal);
+ #endif
+ long AtomicIncrement(volatile long* pAddr);
+diff --git a/xbmc/threads/LockFree.cpp b/xbmc/threads/LockFree.cpp
+index 84343e3..fa44083 100644
+--- a/xbmc/threads/LockFree.cpp
++++ b/xbmc/threads/LockFree.cpp
+@@ -44,7 +44,7 @@ void lf_stack_push(lf_stack* pStack, lf_node* pNode)
+     top = pStack->top;
+     pNode->next.ptr = top.ptr; // Link in the new node
+     newTop.ptr = pNode;
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+   } while(cas((long*)&pStack->top, atomic_ptr_to_long(top), atomic_ptr_to_long(newTop)) != atomic_ptr_to_long(top));
+ #else
+     newTop.version = top.version + 1;
+@@ -62,7 +62,7 @@ lf_node* lf_stack_pop(lf_stack* pStack)
+     if (top.ptr == NULL)
+       return NULL;
+     newTop.ptr = ((lf_node*)top.ptr)->next.ptr; // Unlink the current top node
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+   } while(cas((long*)&pStack->top, atomic_ptr_to_long(top), atomic_ptr_to_long(newTop)) != atomic_ptr_to_long(top));
+ #else
+     newTop.version = top.version + 1;
+@@ -187,7 +187,7 @@ void lf_queue_enqueue(lf_queue* pQueue, void* value)
+   {
+     tail = pQueue->tail;
+     next = ((lf_queue_node*)tail.ptr)->next;
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+     if (atomic_ptr_to_long(tail) == atomic_ptr_to_long(pQueue->tail)) // Check consistency
+ #else
+     if (atomic_ptr_to_long_long(tail) == atomic_ptr_to_long_long(pQueue->tail)) // Check consistency
+@@ -196,7 +196,7 @@ void lf_queue_enqueue(lf_queue* pQueue, void* value)
+       if (next.ptr == NULL) // Was tail pointing to the last node?
+       {
+         node.ptr = pNode;
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+         if (cas((long*)&((lf_queue_node*)tail.ptr)->next, atomic_ptr_to_long(next), atomic_ptr_to_long(node)) == atomic_ptr_to_long(next)) // Try to link node at end
+ #else
+         node.version = next.version + 1;
+@@ -207,7 +207,7 @@ void lf_queue_enqueue(lf_queue* pQueue, void* value)
+       else // tail was lagging, try to help...
+       {
+         node.ptr = next.ptr;
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+         cas((long*)&pQueue->tail, atomic_ptr_to_long(tail), atomic_ptr_to_long(node)); // We don't care if we  are successful or not
+ #else
+         node.version = tail.version + 1;
+@@ -217,7 +217,7 @@ void lf_queue_enqueue(lf_queue* pQueue, void* value)
+     }
+   } while (true); // Keep trying until the enqueue is done
+   node.ptr = pNode;
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+   cas((long*)&pQueue->tail, atomic_ptr_to_long(tail), atomic_ptr_to_long(node)); // Try to swing the tail to the new node
+ #else
+   node.version = tail.version + 1;
+@@ -236,7 +236,7 @@ void* lf_queue_dequeue(lf_queue* pQueue)
+     head = pQueue->head;
+     tail = pQueue->tail;
+     next = ((lf_queue_node*)head.ptr)->next;
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+     if (atomic_ptr_to_long(head) == atomic_ptr_to_long(pQueue->head)) // Check consistency
+ #else
+     if (atomic_ptr_to_long_long(head) == atomic_ptr_to_long_long(pQueue->head)) // Check consistency
+@@ -247,7 +247,7 @@ void* lf_queue_dequeue(lf_queue* pQueue)
+         if (next.ptr == NULL) // Queue is empty
+           return NULL;
+         node.ptr = next.ptr;
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+         cas((long*)&pQueue->tail, atomic_ptr_to_long(tail), atomic_ptr_to_long(node)); // Tail is lagging. Try to advance it.
+ #else
+         node.version = tail.version + 1;
+@@ -258,7 +258,7 @@ void* lf_queue_dequeue(lf_queue* pQueue)
+       {
+         pVal = ((lf_queue_node*)next.ptr)->value;
+         node.ptr = next.ptr;
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+         if (cas((long*)&pQueue->head, atomic_ptr_to_long(head), atomic_ptr_to_long(node)) == atomic_ptr_to_long(head))
+ #else
+         node.version = head.version + 1;
+diff --git a/xbmc/threads/LockFree.h b/xbmc/threads/LockFree.h
+index 212781a..bd488cf 100644
+--- a/xbmc/threads/LockFree.h
++++ b/xbmc/threads/LockFree.h
+@@ -31,7 +31,7 @@
+ // A unique-valued pointer. Version is incremented with each write.
+ union atomic_ptr
+ {
+-#if !defined(__ppc__) && !defined(__powerpc__) && !defined(__arm__)
++#if !defined(__ppc__) && !defined(__powerpc__) && !defined(__arm__) && !defined(__sh__)
+   long long d;
+   struct {
+     void* ptr;
+@@ -45,7 +45,7 @@ union atomic_ptr
+ #endif
+ };
+ 
+-#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__)
++#if defined(__ppc__) || defined(__powerpc__) || defined(__arm__) || defined(__sh__)
+   #define atomic_ptr_to_long(p) (long) *((long*)&p)
+ #else
+   // This is ugly but correct as long as sizeof(void*) == sizeof(long)...
+diff --git a/xbmc/utils/CPUInfo.cpp b/xbmc/utils/CPUInfo.cpp
+index 7be4890..e33d3bb 100644
+--- a/xbmc/utils/CPUInfo.cpp
++++ b/xbmc/utils/CPUInfo.cpp
+@@ -186,7 +186,11 @@ CCPUInfo::CCPUInfo(void)
+           m_cores[nCurrId].m_strVendor.Trim();
+         }
+       }
++#if defined(__sh__)
++      else if (strncmp(buffer, "cpu type", strlen("cpu type"))==0)
++#else
+       else if (strncmp(buffer, "model name", strlen("model name"))==0)
++#endif
+       {
+         char *needle = strstr(buffer, ":");
+         if (needle && strlen(needle)>3)
+@@ -337,12 +341,19 @@ float CCPUInfo::getCPUFrequency()
+   rewind(m_fCPUInfo);
+   fflush(m_fCPUInfo);
+   while (fgets(buf, 256, m_fCPUInfo) != NULL) {
++#if defined(__sh__)
++    if (strncmp(buf, "bogomips", 8) == 0) {
++#else
+     if (strncmp(buf, "cpu MHz", 7) == 0) {
++#endif
+       needle = strchr(buf, ':');
+       sscanf(++needle, "%f", &mhz);
+       break;
+     }
+   }
++#if defined(__sh__)
++  mhz = 450.0f;
++#endif
+   return mhz;
+ #endif
+ }
+@@ -597,7 +608,7 @@ void CCPUInfo::ReadCPUFeatures()
+   #endif
+ #elif defined(LINUX)
+ // empty on purpose, the implementation is in the constructor
+-#elif !defined(__powerpc__) && !defined(__ppc__) && !defined(__arm__)
++#elif !defined(__powerpc__) && !defined(__ppc__) && !defined(__arm__)&& !defined(__sh__)
+   m_cpuFeatures |= CPU_FEATURE_MMX;
+ #elif defined(__powerpc__) || defined(__ppc__)
+   m_cpuFeatures |= CPU_FEATURE_ALTIVEC;
+diff --git a/xbmc/utils/CharsetConverter.cpp b/xbmc/utils/CharsetConverter.cpp
+index 4a1dd77..e951e9f 100644
+--- a/xbmc/utils/CharsetConverter.cpp
++++ b/xbmc/utils/CharsetConverter.cpp
+@@ -60,7 +60,11 @@ static iconv_t m_iconvUtf16LEtoUtf8              = (iconv_t)-1;
+ static iconv_t m_iconvUtf8toW                    = (iconv_t)-1;
+ static iconv_t m_iconvUcs2CharsetToUtf8          = (iconv_t)-1;
+ 
++#if defined(FRIBIDI_CHAR_SET_NOT_FOUND)
+ static FriBidiCharSet m_stringFribidiCharset     = FRIBIDI_CHAR_SET_NOT_FOUND;
++#else
++static FriBidiCharSet m_stringFribidiCharset     = FRIBIDI_CHARSET_NOT_FOUND;
++#endif
+ 
+ static CCriticalSection            m_critSection;
+ 
+@@ -69,6 +73,7 @@ static struct SFribidMapping
+   FriBidiCharSet name;
+   const char*    charset;
+ } g_fribidi[] = {
++#if defined(FRIBIDI_CHAR_SET_NOT_FOUND)
+   { FRIBIDI_CHAR_SET_ISO8859_6, "ISO-8859-6"   }
+ , { FRIBIDI_CHAR_SET_ISO8859_8, "ISO-8859-8"   }
+ , { FRIBIDI_CHAR_SET_CP1255   , "CP1255"       }
+@@ -76,6 +81,15 @@ static struct SFribidMapping
+ , { FRIBIDI_CHAR_SET_CP1256   , "CP1256"       }
+ , { FRIBIDI_CHAR_SET_CP1256   , "Windows-1256" }
+ , { FRIBIDI_CHAR_SET_NOT_FOUND, NULL           }
++#else
++  { FRIBIDI_CHARSET_ISO8859_6, "ISO-8859-6"   }
++, { FRIBIDI_CHARSET_ISO8859_8, "ISO-8859-8"   }
++, { FRIBIDI_CHARSET_CP1255   , "CP1255"       }
++, { FRIBIDI_CHARSET_CP1255   , "Windows-1255" }
++, { FRIBIDI_CHARSET_CP1256   , "CP1256"       }
++, { FRIBIDI_CHARSET_CP1256   , "Windows-1256" }
++, { FRIBIDI_CHARSET_NOT_FOUND, NULL           }
++#endif
+ };
+ 
+ static struct SCharsetMapping
+@@ -376,8 +390,11 @@ void CCharsetConverter::reset(void)
+   ICONV_SAFE_CLOSE(m_iconvUtf8toW);
+   ICONV_SAFE_CLOSE(m_iconvUcs2CharsetToUtf8);
+ 
+-
++#if defined(FRIBIDI_CHAR_SET_NOT_FOUND)
+   m_stringFribidiCharset = FRIBIDI_CHAR_SET_NOT_FOUND;
++#else
++  m_stringFribidiCharset = FRIBIDI_CHARSET_NOT_FOUND;
++#endif
+ 
+   CStdString strCharset=g_langInfo.GetGuiCharSet();
+   for(SFribidMapping *c = g_fribidi; c->charset; c++)
+@@ -396,7 +413,11 @@ void CCharsetConverter::utf8ToW(const CStdStringA& utf8String, CStdStringW &wStr
+   {
+     CStdStringA strFlipped;
+     FriBidiCharType charset = forceLTRReadingOrder ? FRIBIDI_TYPE_LTR : FRIBIDI_TYPE_PDF;
++#if defined(FRIBIDI_CHAR_SET_NOT_FOUND)
+     logicalToVisualBiDi(utf8String, strFlipped, FRIBIDI_CHAR_SET_UTF8, charset, bWasFlipped);
++#else
++    logicalToVisualBiDi(utf8String, strFlipped, FRIBIDI_CHARSET_UTF8, charset, bWasFlipped);
++#endif
+     CSingleLock lock(m_critSection);
+     convert(m_iconvUtf8toW,sizeof(wchar_t),UTF8_SOURCE,WCHAR_CHARSET,strFlipped,wString);
+   }
+@@ -674,5 +695,9 @@ bool CCharsetConverter::isValidUtf8(const CStdString& str)
+ 
+ void CCharsetConverter::utf8logicalToVisualBiDi(const CStdStringA& strSource, CStdStringA& strDest)
+ {
++#if defined(FRIBIDI_CHAR_SET_NOT_FOUND)
+   logicalToVisualBiDi(strSource, strDest, FRIBIDI_CHAR_SET_UTF8, FRIBIDI_TYPE_RTL);
++#else
++  logicalToVisualBiDi(strSource, strDest, FRIBIDI_CHARSET_UTF8, FRIBIDI_TYPE_RTL);
++#endif
+ }
+diff --git a/xbmc/utils/GLUtils.cpp b/xbmc/utils/GLUtils.cpp
+index a0e8c23..dbb03d7 100644
+--- a/xbmc/utils/GLUtils.cpp
++++ b/xbmc/utils/GLUtils.cpp
+@@ -86,11 +86,13 @@ void LogGraphicsInfo()
+   else
+     CLog::Log(LOGNOTICE, "GL_VERSION = NULL");
+ 
++#if defined(HAS_GL) || (defined(HAS_GLES) && HAS_GLES == 2)
+   s = glGetString(GL_SHADING_LANGUAGE_VERSION);
+   if (s)
+     CLog::Log(LOGNOTICE, "GL_SHADING_LANGUAGE_VERSION = %s", s);
+   else
+     CLog::Log(LOGNOTICE, "GL_SHADING_LANGUAGE_VERSION = NULL");
++#endif
+ 
+   //GL_NVX_gpu_memory_info extension
+ #define GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX          0x9047
+diff --git a/xbmc/utils/MathUtils.h b/xbmc/utils/MathUtils.h
+index 0da3f45..9dd778f 100644
+--- a/xbmc/utils/MathUtils.h
++++ b/xbmc/utils/MathUtils.h
+@@ -35,12 +35,14 @@
+ 
+ #if defined(__ppc__) || \
+     defined(__powerpc__) || \
++    defined(__sh__) || \
+    (defined(__APPLE__) && defined(__arm__) && defined(__llvm__))
+   #define DISABLE_MATHUTILS_ASM_ROUND_INT
+ #endif
+ 
+ #if defined(__ppc__) || \
+     defined(__powerpc__) || \
++    defined(__sh__) || \
+    (defined(__APPLE__) && defined(__llvm__)) 
+   #define DISABLE_MATHUTILS_ASM_TRUNCATE_INT
+ #endif
+diff --git a/xbmc/utils/fastmemcpy.c b/xbmc/utils/fastmemcpy.c
+index 92c581d..d4c922c 100644
+--- a/xbmc/utils/fastmemcpy.c
++++ b/xbmc/utils/fastmemcpy.c
+@@ -21,7 +21,7 @@
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+  *****************************************************************************/
+-#if !defined(_WIN32) && !defined(__ppc__) && !defined(__powerpc__) && !defined(__arm__) 
++#if !defined(_WIN32) && !defined(__ppc__) && !defined(__powerpc__) && !defined(__arm__) && !defined(__sh__) 
+ #define HAVE_MMX2
+ #define HAVE_SSE
+ 
+diff --git a/xbmc/utils/fastmemcpy.h b/xbmc/utils/fastmemcpy.h
+index d7dd936..141ac86 100644
+--- a/xbmc/utils/fastmemcpy.h
++++ b/xbmc/utils/fastmemcpy.h
+@@ -22,7 +22,7 @@
+ extern "C" {
+ #endif
+ 
+-#if !defined(_WIN32) && !defined(__ppc__) && !defined(__powerpc__)
++#if !defined(_WIN32) && !defined(__ppc__) && !defined(__powerpc__) && !defined(__sh__)
+ void * fast_memcpy(void * to, const void * from, size_t len);
+ //#define fast_memcpy memcpy
+ #else
+diff --git a/xbmc/video/windows/GUIWindowFullScreen.cpp b/xbmc/video/windows/GUIWindowFullScreen.cpp
+index 6f9989e..1ae1b65 100644
+--- a/xbmc/video/windows/GUIWindowFullScreen.cpp
++++ b/xbmc/video/windows/GUIWindowFullScreen.cpp
+@@ -163,6 +163,7 @@ void CGUIWindowFullScreen::FreeResources(bool forceUnload)
+ 
+ bool CGUIWindowFullScreen::OnAction(const CAction &action)
+ {
++//printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   if (g_application.m_pPlayer != NULL && g_application.m_pPlayer->OnAction(action))
+     return true;
+ 
+@@ -631,9 +632,10 @@ bool CGUIWindowFullScreen::OnAction(const CAction &action)
+ 
+ void CGUIWindowFullScreen::OnWindowLoaded()
+ {
++//printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CGUIWindow::OnWindowLoaded();
+   // override the clear colour - we must never clear fullscreen
+-  m_clearBackground = 0;
++  //m_clearBackground = 1;
+ 
+   CGUIProgressControl* pProgress = (CGUIProgressControl*)GetControl(CONTROL_PROGRESS);
+   if(pProgress)
+@@ -789,6 +791,7 @@ EVENT_RESULT CGUIWindowFullScreen::OnMouseEvent(const CPoint &point, const CMous
+ 
+ void CGUIWindowFullScreen::FrameMove()
+ {
++//printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   if (g_application.GetPlaySpeed() != 1)
+     g_infoManager.SetDisplayAfterSeek();
+   if (m_bShowCurrentTime)
+@@ -959,6 +962,7 @@ void CGUIWindowFullScreen::FrameMove()
+ 
+ void CGUIWindowFullScreen::Process(unsigned int currentTime, CDirtyRegionList &dirtyregion)
+ {
++//printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   // TODO: This isn't quite optimal - ideally we'd only be dirtying up the actual video render rect
+   //       which is probably the job of the renderer as it can more easily track resizing etc.
+   MarkDirtyRegion();
+@@ -968,9 +972,11 @@ void CGUIWindowFullScreen::Process(unsigned int currentTime, CDirtyRegionList &d
+ 
+ void CGUIWindowFullScreen::Render()
+ {
++//printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   if (g_application.m_pPlayer)
+     RenderTTFSubtitles();
+   CGUIWindow::Render();
++//printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
+ }
+ 
+ void CGUIWindowFullScreen::RenderTTFSubtitles()
+@@ -1104,6 +1110,7 @@ void CGUIWindowFullScreen::SeekChapter(int iChapter)
+ 
+ void CGUIWindowFullScreen::ShowSlider(int action, int label, float value, float min, float delta, float max, bool modal)
+ {
++//printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   m_sliderAction = action;
+   if (modal)
+     CGUIDialogSlider::ShowAndGetInput(g_localizeStrings.Get(label), value, min, delta, max, this);
+@@ -1113,6 +1120,7 @@ void CGUIWindowFullScreen::ShowSlider(int action, int label, float value, float
+ 
+ void CGUIWindowFullScreen::OnSliderChange(void *data, CGUISliderControl *slider)
+ {
++//printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   if (!slider)
+     return;
+ 
+@@ -1147,6 +1155,7 @@ void CGUIWindowFullScreen::OnSliderChange(void *data, CGUISliderControl *slider)
+ 
+ void CGUIWindowFullScreen::ToggleOSD()
+ {
++//printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
+   CGUIDialogVideoOSD *pOSD = (CGUIDialogVideoOSD *)g_windowManager.GetWindow(WINDOW_DIALOG_VIDEO_OSD);
+   if (pOSD)
+   {
+diff --git a/xbmc/video/windows/GUIWindowVideoNav.cpp b/xbmc/video/windows/GUIWindowVideoNav.cpp
+index 32b07a4..66d5733 100644
+--- a/xbmc/video/windows/GUIWindowVideoNav.cpp
++++ b/xbmc/video/windows/GUIWindowVideoNav.cpp
+@@ -1468,4 +1468,4 @@ void CGUIWindowVideoNav::ApplyWatchedFilter(CFileItemList &items)
+       }
+     }
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/xbmc/visualizations/EGLHelpers/VisMatrixGLES.h b/xbmc/visualizations/EGLHelpers/VisMatrixGLES.h
+index 11b2801..ec80fcb 100644
+--- a/xbmc/visualizations/EGLHelpers/VisMatrixGLES.h
++++ b/xbmc/visualizations/EGLHelpers/VisMatrixGLES.h
+@@ -24,8 +24,8 @@
+   #include <OpenGLES/ES2/gl.h>                                                                                                                                                                                     
+   #include <OpenGLES/ES2/glext.h>                                                                                                                                                                                  
+ #else                                                                                                                                                                                                            
+-  #include <GLES2/gl2.h>
+-  #include <GLES2/gl2ext.h>
++#include <GLES2/gl2.h>
++#include <GLES2/gl2ext.h>
+ #endif//__APPLE__
+ 
+ #include <string.h>
+diff --git a/xbmc/visualizations/OpenGLSpectrum/Makefile.in b/xbmc/visualizations/OpenGLSpectrum/Makefile.in
+index 09b3959..cca04ec 100644
+--- a/xbmc/visualizations/OpenGLSpectrum/Makefile.in
++++ b/xbmc/visualizations/OpenGLSpectrum/Makefile.in
+@@ -16,12 +16,19 @@ ifeq (@USE_OPENGLES@,1)
+     LDFLAGS += -lGLESv2
+   endif
+ else
+-  DEFINES += -DHAS_SDL
+-  DEFINES += -DHAS_SDL_OPENGL
+-  ifeq ($(findstring osx,$(ARCH)), osx)
+-    LDFLAGS += -framework OpenGL
++  ifeq (@USE_OPENGLESV1@,1)
++    DEFINES += -DHAS_GLES=1
++    INCLUDES+= -I@abs_top_srcdir@/xbmc/visualizations/EGLHelpers
++    OBJS += @abs_top_srcdir@/xbmc/visualizations/EGLHelpers/VisMatrixGLES.o
++    LDFLAGS += -lst3fx
+   else
+-    LDFLAGS += -lGL
++    DEFINES += -DHAS_SDL
++    DEFINES += -DHAS_SDL_OPENGL
++    ifeq ($(findstring osx,$(ARCH)), osx)
++      LDFLAGS += -framework OpenGL
++    else
++      LDFLAGS += -lGL
++    endif
+   endif
+ endif
+ 
+diff --git a/xbmc/visualizations/OpenGLSpectrum/opengl_spectrum.cpp b/xbmc/visualizations/OpenGLSpectrum/opengl_spectrum.cpp
+index fcfebf2..4290dda 100644
+--- a/xbmc/visualizations/OpenGLSpectrum/opengl_spectrum.cpp
++++ b/xbmc/visualizations/OpenGLSpectrum/opengl_spectrum.cpp
+@@ -48,6 +48,7 @@
+ #define GL_PROJECTION             MM_PROJECTION
+ #define GL_MODELVIEW              MM_MODELVIEW
+ 
++  #if HAS_GLES == 2
+ #define glPushMatrix()            vis_shader->PushMatrix()
+ #define glPopMatrix()             vis_shader->PopMatrix()
+ #define glTranslatef(x,y,z)       vis_shader->Translatef(x,y,z)
+@@ -58,6 +59,20 @@
+ #define glMatrixMode(a)           vis_shader->MatrixMode(a)
+ #define glLoadIdentity()          vis_shader->LoadIdentity()
+ #define glFrustum(a,b,c,d,e,f)    vis_shader->Frustum(a,b,c,d,e,f)
++  #else
++    #if HAS_GLES == 1
++#define glPushMatrix()            ;
++#define glPopMatrix()             ;
++#define glTranslatef(x,y,z)       ;
++#define glRotatef(a,x,y,z)        ;
++#define glPolygonMode(a,b)        ;
++#define glBegin(a)                ;
++#define glEnd()                   ;
++#define glMatrixMode(a)           ;
++#define glLoadIdentity()          ;
++#define glFrustum(a,b,c,d,e,f)    ;
++    #endif
++  #endif
+ 
+ GLenum  g_mode = GL_TRIANGLES;
+ float g_fWaveform[2][512];
+@@ -86,8 +101,10 @@ const char *vert = "attribute vec4 m_attrpos;\n"
+                    "  m_cord1     = m_attrcord1;\n"
+                    "}\n";
+ 
++  #if HAS_GLES == 2
+ CVisGUIShader *vis_shader = NULL;
+ 
++  #endif
+ #elif defined(HAS_SDL_OPENGL)
+ #include <GL/glew.h>
+ GLenum  g_mode = GL_FILL;
+@@ -157,7 +174,11 @@ void draw_bar(GLfloat x_offset, GLfloat z_offset, GLfloat height, GLfloat red, G
+ }
+ 
+ #elif defined(HAS_GLES)
+-
++#if HAS_GLES == 1
++void draw_bar(GLfloat x_offset, GLfloat z_offset, GLfloat height, GLfloat red, GLfloat green, GLfloat blue )
++{
++}
++#else
+ void draw_bar(GLfloat x_offset, GLfloat z_offset, GLfloat height, GLfloat red, GLfloat green, GLfloat blue )
+ {
+   GLfloat col[] =  {
+@@ -217,6 +238,7 @@ void draw_bar(GLfloat x_offset, GLfloat z_offset, GLfloat height, GLfloat red, G
+   glDisableVertexAttribArray(colLoc);
+ }
+ #endif
++#endif
+ 
+ void draw_bars(void)
+ {
+@@ -271,6 +293,7 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
+   scale = 1.0 / log(256.0);
+ 
+ #if defined(HAS_GLES)
++  #if HAS_GLES == 2
+   vis_shader = new CVisGUIShader(vert, frag);
+ 
+   if(!vis_shader)
+@@ -280,7 +303,8 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
+   {
+     delete vis_shader;
+     return ADDON_STATUS_UNKNOWN;
+-  }  
++  }
++  #endif
+ #endif
+ 
+   scale = 1.0 / log(256.0);
+@@ -449,11 +473,13 @@ extern "C" void ADDON_Stop()
+ extern "C" void ADDON_Destroy()
+ {
+ #if defined(HAS_GLES)
++  #if HAS_GLES == 2
+   if(vis_shader) 
+   {
+     vis_shader->Free();
+     delete vis_shader;
+   }
++  #endif
+ #endif
+ }
+ 
+diff --git a/xbmc/windowing/egl/WinBindingEGL.cpp b/xbmc/windowing/egl/WinBindingEGL.cpp
+index 0bf2c6c..568e274 100644
+--- a/xbmc/windowing/egl/WinBindingEGL.cpp
++++ b/xbmc/windowing/egl/WinBindingEGL.cpp
+@@ -74,7 +74,7 @@ bool CWinBindingEGL::CreateWindow(EGLNativeDisplayType nativeDisplay, EGLNativeW
+   m_nativeDisplay = nativeDisplay;
+   m_nativeWindow  = nativeWindow;
+ 
+-  m_display = eglGetDisplay(nativeDisplay);
++  m_display = eglGetDisplay(((intptr_t)(NativeDisplayType)nativeDisplay));
+   if (m_display == EGL_NO_DISPLAY) 
+   {
+     CLog::Log(LOGERROR, "EGL failed to obtain display");
+@@ -96,7 +96,12 @@ bool CWinBindingEGL::CreateWindow(EGLNativeDisplayType nativeDisplay, EGLNativeW
+         EGL_SAMPLE_BUFFERS,  0,
+         EGL_SAMPLES,         0,
+         EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
+-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
++        EGL_RENDERABLE_TYPE, 
++#if HAS_GLES == 2
++		EGL_OPENGL_ES2_BIT,
++#else
++        EGL_OPENGL_ES_BIT, 
++#endif
+         EGL_NONE
+   };
+ 
+diff --git a/xbmc/windowing/egl/WinSystemGLES.cpp b/xbmc/windowing/egl/WinSystemGLES.cpp
+index cc6c27f..7951826 100644
+--- a/xbmc/windowing/egl/WinSystemGLES.cpp
++++ b/xbmc/windowing/egl/WinSystemGLES.cpp
+@@ -54,10 +54,14 @@ bool CWinSystemGLES::InitWindowSystem()
+   CLog::Log(LOGDEBUG, "Video mode: %dx%d with %d bits per pixel.",
+     m_fb_width, m_fb_height, m_fb_bpp);
+ 
+-  m_display = EGL_DEFAULT_DISPLAY;
++  m_display = (void*)EGL_DEFAULT_DISPLAY;
++#ifdef fbdev_window
+   m_window  = (fbdev_window*)calloc(1, sizeof(fbdev_window));
+ 	m_window->width  = m_fb_width;
+ 	m_window->height = m_fb_height;
++#else
++  m_window = NULL;
++#endif
+ 
+   if (!CWinSystemBase::InitWindowSystem())
+     return false;
+@@ -67,7 +71,7 @@ bool CWinSystemGLES::InitWindowSystem()
+ 
+ bool CWinSystemGLES::DestroyWindowSystem()
+ {
+-  free(m_window);
++  if (m_window) free(m_window);
+   m_window = NULL;
+ 
+   return true;
+@@ -106,6 +110,8 @@ bool CWinSystemGLES::ResizeWindow(int newWidth, int newHeight, int newLeft, int
+ bool CWinSystemGLES::SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool blankOtherDisplays)
+ {
+   CLog::Log(LOGDEBUG, "CWinSystemDFB::SetFullScreen");
++#if defined(__sh__) //TODO: Fix crash at this point
++#else
+   m_nWidth  = res.iWidth;
+   m_nHeight = res.iHeight;
+   m_bFullScreen = fullScreen;
+@@ -114,17 +120,101 @@ bool CWinSystemGLES::SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool b
+   CreateNewWindow("", fullScreen, res, NULL);
+ 
+   CRenderSystemGLES::ResetRenderSystem(res.iWidth, res.iHeight, true, 0);
++#endif
++  return true;
++}
+ 
++bool TranslateStbInfo(CStdString name, int &x, int &y, float &fps, bool &p)
++{
++  if      (name == "576i50") {x = 720; y = 576; fps = 50.0f; p = false;}
++  else if (name == "576p50") {x = 720; y = 576; fps = 50.0f; p = true;}
++  
++  else if (name == "720p50") {x = 1280; y = 720; fps = 50.0f; p = true;}
++  else if (name == "720p60") {x = 1280; y = 720; fps = 60.0f; p = true;}
++  
++  else if (name == "1080i50") {x = 1920; y = 1080; fps = 50.0f; p = false;}
++  else if (name == "1080i60") {x = 1920; y = 1080; fps = 60.0f; p = false;}
++  
++  else if (name == "1080p50") {x = 1920; y = 1080; fps = 50.0f; p = true;}
++  else if (name == "1080p60") {x = 1920; y = 1080; fps = 60.0f; p = true;}
++  else if (name == "1080p24") {x = 1920; y = 1080; fps = 24.0f; p = true;}
++  else if (name == "1080p25") {x = 1920; y = 1080; fps = 25.0f; p = true;}
++  else if (name == "1080p30") {x = 1920; y = 1080; fps = 30.0f; p = true;}
++  else if (name == "1080p59") {x = 1920; y = 1080; fps = 59.0f; p = true;}
++  
++  else return false;
++  
+   return true;
+ }
+ 
+ void CWinSystemGLES::UpdateResolutions()
+ {
++#define HAS_STB_INTERFACE
++#ifdef HAS_STB_INTERFACE
++  CWinSystemBase::UpdateResolutions();
++
++  int w = 1280;
++  int h = 720;
++  UpdateDesktopResolution(g_settings.m_ResInfo[RES_DESKTOP], 0, w, h, 50.0);
++  
++  FILE* fpvmc = fopen("/proc/stb/video/videomode_choices", "r");
++  char modes[1024];
++  fread(modes, 1024, 1, fpvmc);
++  fclose(fpvmc);
++  
++  int itr = 0;
++  while(1)
++  {
++    RESOLUTION_INFO res;
++    char mode[20];
++    int charItr = 0;
++    
++    if (modes[itr] == ' ')
++      itr++;
++    
++    while(modes[itr] != ' ' && modes[itr] != '\0')
++    {
++      mode[charItr++] = modes[itr++];
++    }
++    mode[charItr] = '\0';
++    
++    if (mode[0] == '\0')
++      break;
++    
++    int w, h;
++    float fps;
++    bool p;
++    
++    if (!TranslateStbInfo(mode, w, h, fps, p))
++      continue;
++    printf("Adding %s - w=%d h=%d fps=%f p=%d\n", mode, w, h, fps, p);
++    
++    res.iWidth  = w;
++    res.iHeight = h;
++    res.fPixelRatio = 1.0f;
++    
++    res.strMode.Format("%s: %s @ %.2fHz", "0", mode, fps);
++    res.strOutput    = "0";
++    res.strId        = "1";
++    res.iSubtitles   = (int)(0.95*h);
++    res.fRefreshRate = fps;
++    res.bFullScreen  = true;
++
++    if ((float)w / (float)h >= 1.59)
++      res.dwFlags = D3DPRESENTFLAG_WIDESCREEN;
++    else
++      res.dwFlags = 0;
++
++    g_graphicsContext.ResetOverscan(res);
++    g_settings.m_ResInfo.push_back(res);
++  }
++#else
+   CWinSystemBase::UpdateResolutions();
+ 
+   int w = 1280;
+   int h = 720;
+   UpdateDesktopResolution(g_settings.m_ResInfo[RES_DESKTOP], 0, w, h, 0.0);
++#endif
+ }
+ 
+ bool CWinSystemGLES::IsExtSupported(const char* extension)
+diff --git a/xbmc/windowing/egl/WinSystemGLES.h b/xbmc/windowing/egl/WinSystemGLES.h
+index cd89803..e768515 100644
+--- a/xbmc/windowing/egl/WinSystemGLES.h
++++ b/xbmc/windowing/egl/WinSystemGLES.h
+@@ -28,9 +28,9 @@
+ #include "utils/GlobalsHandling.h"
+ #include "windowing/WinSystem.h"
+ 
+-class CWinBindingEGL;
++#include <EGL/egl.h>
+ 
+-typedef struct fbdev_window fbdev_window;
++class CWinBindingEGL;
+ 
+ class CWinSystemGLES : public CWinSystemBase, public CRenderSystemGLES
+ {
+@@ -45,6 +45,7 @@ public:
+   virtual bool  ResizeWindow(int newWidth, int newHeight, int newLeft, int newTop);
+   virtual bool  SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool blankOtherDisplays);
+   virtual void  UpdateResolutions();
++  virtual int   GetNumScreens() { return 1; }
+   virtual bool  IsExtSupported(const char* extension);
+ 
+   virtual void  ShowOSMouse(bool show);
+@@ -60,7 +61,11 @@ protected:
+   virtual bool  PresentRenderImpl(const CDirtyRegionList &dirty);
+   virtual void  SetVSyncImpl(bool enable);
+   void                  *m_display;
++#ifdef fbdev_window
+   fbdev_window          *m_window;
++#else
++  void                  *m_window;
++#endif
+   CWinBindingEGL        *m_eglBinding;
+   int                   m_fb_width;
+   int                   m_fb_height;
+diff --git a/xbmc/windows/GUIMediaWindow.cpp b/xbmc/windows/GUIMediaWindow.cpp
+index 8d398ed..7cd621f 100644
+--- a/xbmc/windows/GUIMediaWindow.cpp
++++ b/xbmc/windows/GUIMediaWindow.cpp
+@@ -575,7 +575,7 @@ void CGUIMediaWindow::SortItems(CFileItemList &items)
+ 
+   if (guiState.get())
+   {
+-    items.Sort(guiState->GetSortMethod(), guiState->GetDisplaySortOrder());
++    //items.Sort(guiState->GetSortMethod(), guiState->GetDisplaySortOrder());
+ 
+     // Should these items be saved to the hdd
+     if (items.CacheToDiscAlways())
+diff -Nur a/xbmc/cores/gstplayer/GSTPlayer.cpp b/xbmc/cores/gstplayer/GSTPlayer.cpp
+--- a/xbmc/cores/gstplayer/GSTPlayer.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/xbmc/cores/gstplayer/GSTPlayer.cpp	2012-07-14 14:29:45.507807462 +0200
+@@ -0,0 +1,612 @@
++/*
++ *      Copyright (C) 2005-2008 Team XBMC
++ *      http://www.xbmc.org
++ *
++ *  This Program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  This Program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with XBMC; see the file COPYING.  If not, write to
++ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
++ *  http://www.gnu.org/copyleft/gpl.html
++ *
++ */
++
++#include "system.h"
++#include "threads/SystemClock.h"
++#include "GSTPlayer.h"
++#include "GUIInfoManager.h"
++#include "Application.h"
++#include "FileItem.h"
++#include "settings/AdvancedSettings.h"
++#include "settings/GUISettings.h"
++#include "settings/Settings.h"
++#include "music/tags/MusicInfoTag.h"
++#include "utils/TimeUtils.h"
++#include "utils/log.h"
++#include "utils/MathUtils.h"
++#include "filesystem/SpecialProtocol.h"
++
++#ifdef HAS_VIDEO_PLAYBACK
++#include "cores/VideoRenderers/RenderManager.h"
++#endif
++
++GSTPlayer::GSTPlayer(IPlayerCallback& callback) :
++  IPlayer            (callback),
++  CThread            ("GSTPlayer")
++{
++  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  int argc = 0;
++  char**argv = NULL;
++
++  m_bIsPlaying = false;
++  m_bPaused = false;
++  m_bQueueFailed = false;
++  m_iSpeed = 1;
++
++  m_timeOffset = 0;
++
++  m_currentFile = new CFileItem;
++  m_nextFile = new CFileItem;
++
++  gst_init(&argc, &argv);
++  m_pGstPlaybin = gst_element_factory_make("playbin2", "playbin");
++
++  GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE (m_pGstPlaybin));
++  gst_bus_set_sync_handler(bus, gstBusSyncHandler, this);
++  gst_object_unref(bus);
++}
++
++GSTPlayer::~GSTPlayer()
++{
++  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++
++  CloseFile();
++
++  if (m_pGstPlaybin)
++  {
++    GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE (m_pGstPlaybin));
++    gst_bus_set_sync_handler(bus, NULL, NULL);
++    gst_object_unref(bus);
++  }
++
++  gst_element_set_state(m_pGstPlaybin, GST_STATE_NULL);
++
++/*
++  if (audioSink)
++  {
++    gst_object_unref(GST_OBJECT(audioSink));
++    audioSink = NULL;
++  }
++
++  if (videoSink)
++  {
++    gst_object_unref(GST_OBJECT(videoSink));
++    videoSink = NULL;
++  }
++*/
++
++  if (m_pGstPlaybin)
++    gst_object_unref (GST_OBJECT (m_pGstPlaybin));
++}
++
++void GSTPlayer::OnExit()
++{
++
++}
++
++bool GSTPlayer::OpenFile(const CFileItem& file, const CPlayerOptions &options)
++{
++  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  gchar *uri;
++  int flags;
++
++  m_iSpeed = 1;
++  m_bPaused = false;
++  m_bStopPlaying = false;
++
++  int audioMode = g_guiSettings.GetInt("audiooutput.mode");
++  bool passthrough = AUDIO_IS_BITSTREAM(audioMode);
++  
++  printf("%s:%s[%d] bitstream=%d mode=%d\n", __FILE__, __func__, __LINE__, passthrough, audioMode);
++  
++  FILE* fpAc3 = fopen("/proc/stb/audio/ac3", "w");
++  FILE* fpHdmiSource = fopen("/proc/stb/hdmi/audio_source", "w");
++  if (passthrough)
++  {
++    fprintf(fpAc3, "%s", "passthrough");
++    fprintf(fpHdmiSource, "%s", "spdif");
++  }
++  else
++  {
++    fprintf(fpAc3, "%s", "downmix");
++    fprintf(fpHdmiSource, "%s", "pcm");
++  }
++  fclose(fpAc3);
++  fclose(fpHdmiSource);
++
++  CLog::Log(LOGINFO, "GSTPlayer: Playing %s", file.GetPath().c_str());
++
++  m_timeOffset = (__int64)(options.starttime * 1000);
++
++  uri = g_filename_to_uri(file.GetPath().c_str(), NULL, NULL);
++  if (uri == NULL)
++    uri = strdup(file.GetPath().c_str());
++  g_object_set (G_OBJECT (m_pGstPlaybin), "uri", uri, NULL);
++  g_free(uri);
++
++  // ( GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_TEXT );
++  flags = GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_NATIVE_VIDEO; 
++  g_object_set (G_OBJECT (m_pGstPlaybin), "flags", flags, NULL);
++
++  *m_currentFile = file;
++
++  if (!IsRunning())
++    Create();
++
++  m_startEvent.Set();
++  
++  m_bIsPlaying = true;
++  m_bQueueFailed = false;
++  m_iCurrentAudioStream = -1;
++
++
++
++    m_iVideoWidth = 1280;
++    m_iVideoHeight = 720;
++    m_iVideoFramerate = 50000;
++    
++    m_evVideoSizeChanged = 0;
++    m_evVideoFramerateChanged = 0;
++    m_evVideoProgressiveChanged = 0;
++
++  gst_element_set_state (m_pGstPlaybin, GST_STATE_PLAYING);
++
++#if defined(HAS_VIDEO_PLAYBACK)
++    g_renderManager.PreInit();
++
++
++
++    
++    //g_renderManager.Configure(m_iVideoWidth, m_iVideoHeight, 1280, 720, m_iVideoFramerate/1000.0, 0, RENDER_FMT_NONE, 0);
++#endif
++
++  return true;
++}
++
++//Finished
++bool GSTPlayer::QueueNextFile(const CFileItem &file)
++{
++  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  if (IsPaused())
++    Pause();
++
++  if (file.GetPath() == m_currentFile->GetPath() &&
++      file.m_lStartOffset > 0 &&
++      file.m_lStartOffset == m_currentFile->m_lEndOffset)
++  { // continuing on a .cue sheet item - return true to say we'll handle the transistion
++    *m_nextFile = file;
++    return true;
++  }
++
++  // ok, we're good to go on queuing this one up
++  CLog::Log(LOGINFO, "GSTPlayer: Queuing next file %s", file.GetPath().c_str());
++
++  *m_nextFile = file;
++
++  return true;
++}
++
++//Finished
++void GSTPlayer::OnNothingToQueueNotify()
++{
++  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  //nothing to queue, stop playing
++  m_bQueueFailed = true;
++}
++
++bool GSTPlayer::CloseFile()
++{
++  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  if (IsPaused())
++    Pause();
++
++  m_bStopPlaying = true;
++  m_bStop = true;
++
++  StopThread();
++
++  gst_element_set_state(m_pGstPlaybin, GST_STATE_NULL);
++
++  m_currentFile->Reset();
++  m_nextFile->Reset();
++
++#if defined(HAS_VIDEO_PLAYBACK)
++  g_renderManager.UnInit();
++#endif
++  return true;
++}
++
++//Finished
++void GSTPlayer::Pause()
++{
++  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  CLog::Log(LOGDEBUG,"GSTPlayer: pause m_bplaying: %d", m_bIsPlaying);
++  if (!m_bIsPlaying || !m_pGstPlaybin)
++  return ;
++
++  m_bPaused = !m_bPaused;
++
++  if (m_bPaused)
++  {
++    gst_element_set_state (m_pGstPlaybin, GST_STATE_PAUSED);
++
++    m_callback.OnPlayBackPaused();
++    CLog::Log(LOGDEBUG, "GSTPlayer: Playback paused");
++  }
++  else
++  {
++    gst_element_set_state (m_pGstPlaybin, GST_STATE_PLAYING);
++
++    m_callback.OnPlayBackResumed();
++    CLog::Log(LOGDEBUG, "GSTPlayer: Playback resumed");
++  }
++}
++
++int GSTPlayer::GetTotalTime()
++{
++  return (int)GetTotalTime64();
++}
++
++__int64 GSTPlayer::GetTotalTime64()
++{
++  __int64 total;
++  gint64 len;
++  GstFormat fmt = GST_FORMAT_TIME; //Returns time in nanosecs
++  gst_element_query_duration(m_pGstPlaybin, &fmt, &len);
++  total = len / 1000000000;
++
++
++  if (m_currentFile->m_lEndOffset)
++    total = m_currentFile->m_lEndOffset * 1000 / 75;
++  if (m_currentFile->m_lStartOffset)
++    total -= m_currentFile->m_lStartOffset * 1000 / 75;
++
++  //printf("%s:%s[%d] len %lld\n", __FILE__, __func__, __LINE__, total);
++  return total;
++}
++
++
++float GSTPlayer::GetPercentage()
++{
++  float percent = (GetTime() * 100.0f) / GetTotalTime64();
++  //printf("%s:%s[%d] percent %f%%\n", __FILE__, __func__, __LINE__, percent);
++  return percent;
++}
++
++__int64 GSTPlayer::GetTime()
++{
++  __int64 ret;
++  __int64 timeplus;
++  gint64 pos;
++  GstFormat fmt = GST_FORMAT_TIME; //Returns time in nanosecs
++  gst_element_query_position(m_pGstPlaybin, &fmt, &pos);
++  timeplus = pos / 1000000;
++
++  ret = m_timeOffset + timeplus - m_currentFile->m_lStartOffset * 1000 / 75;
++
++  //printf("%s:%s[%d] pos %lld\n", __FILE__, __func__, __LINE__, ret);
++  return ret;
++}
++
++void GSTPlayer::Process()
++{
++  CLog::Log(LOGDEBUG, "GSTPlayer: Thread started");
++  
++  
++  if (m_startEvent.WaitMSec(100))
++  {
++    m_startEvent.Reset();
++
++
++
++    do
++    {
++      if (!m_bPaused)
++      {
++      }
++      else
++      {
++        
++      }
++      Sleep(100);
++    }
++    while (!m_bStopPlaying && m_bIsPlaying && !m_bStop);
++
++    CLog::Log(LOGINFO, "GSTPlayer: End of playback reached");
++    m_bIsPlaying = false;
++    if (!m_bStopPlaying && !m_bStop)
++      m_callback.OnPlayBackEnded();
++    else
++      m_callback.OnPlayBackStopped();
++  }
++  CLog::Log(LOGDEBUG, "GSTPlayer: Thread end");
++}
++
++void GSTPlayer::SetVolume(long nVolume)
++{
++  printf("%s:%s[%d] %ld\n", __FILE__, __func__, __LINE__, nVolume);
++  //-6000 = mute, 0 is max
++  //64 = mute, 0 is max
++  FILE* fp = fopen("/proc/stb/avs/0/volume", "w");
++  fprintf(fp, "%d", (int)((nVolume*-64)/6000.0));
++  fclose(fp);
++  
++}
++
++void GSTPlayer::gstBusCall(GstMessage *msg)
++{
++  //printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  if (!msg) return;
++  gchar *sourceName;
++  GstObject *source;
++  source = GST_MESSAGE_SRC(msg);
++  if (!GST_IS_OBJECT(source)) return;
++  sourceName = gst_object_get_name(source);
++
++  switch (GST_MESSAGE_TYPE (msg))
++  {
++    case GST_MESSAGE_EOS:
++      m_bIsPlaying = false;
++      break;
++    case GST_MESSAGE_STATE_CHANGED:
++    {
++      if(GST_MESSAGE_SRC(msg) != GST_OBJECT(m_pGstPlaybin))
++        break;
++      GstState old_state, new_state;
++      gst_message_parse_state_changed(msg, &old_state, &new_state, NULL);
++      if(old_state == new_state)
++        break;
++      printf("%s:%s[%d] state transition %s -> %s", __FILE__, __func__, __LINE__, gst_element_state_get_name(old_state), gst_element_state_get_name(new_state));
++      
++      GstStateChange transition = (GstStateChange)GST_STATE_TRANSITION(old_state, new_state);
++      switch(transition)
++      {
++        case GST_STATE_CHANGE_NULL_TO_READY:
++        case GST_STATE_CHANGE_READY_TO_PAUSED:
++        case GST_STATE_CHANGE_PAUSED_TO_PLAYING:
++        case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
++        case GST_STATE_CHANGE_PAUSED_TO_READY:
++        case GST_STATE_CHANGE_READY_TO_NULL:
++        default:
++        break;
++      }
++      break;
++    }
++    case GST_MESSAGE_ERROR:
++      break;
++    case GST_MESSAGE_INFO:
++      break;
++    case GST_MESSAGE_TAG:
++#if 0
++      GstTagList *tags, *result;
++      gst_message_parse_tag(msg, &tags);
++      
++      result = gst_tag_list_merge(m_stream_tags, tags, GST_TAG_MERGE_REPLACE);
++      if (result)
++      {
++        if (m_stream_tags)
++          gst_tag_list_free(m_stream_tags);
++        m_stream_tags = result;
++      }
++#endif
++      
++#if 0
++      const GValue *gv_image = gst_tag_list_get_value_index(tags, GST_TAG_IMAGE, 0);
++      if ( gv_image )
++      {
++        GstBuffer *buf_image;
++        buf_image = gst_value_get_buffer (gv_image);
++        int fd = open("/tmp/.id3coverart", O_CREAT|O_WRONLY|O_TRUNC, 0644);
++        if (fd >= 0)
++        {
++          int ret = write(fd, GST_BUFFER_DATA(buf_image), GST_BUFFER_SIZE(buf_image));
++          close(fd);
++          eDebug("eServiceMP3::/tmp/.id3coverart %d bytes written ", ret);
++        }
++      }
++#endif
++      //gst_tag_list_free(tags);
++      break;
++
++    case GST_MESSAGE_ASYNC_DONE:
++    {
++      if(GST_MESSAGE_SRC(msg) != GST_OBJECT(m_pGstPlaybin))
++        break;
++
++      GstTagList *tags;
++      gint i, active_idx, n_video = 0, n_audio = 0, n_text = 0;
++
++      g_object_get (m_pGstPlaybin, "n-video", &n_video, NULL);
++      g_object_get (m_pGstPlaybin, "n-audio", &n_audio, NULL);
++      g_object_get (m_pGstPlaybin, "n-text", &n_text, NULL);
++
++      if (n_audio > 0)
++        m_bHasAudio = true;
++      if (n_video > 0)
++        m_bHasVideo = true;
++
++      m_AudioStreams.size();
++
++      for (i = 0; i < n_audio; i++)
++      {
++        AudioStream audio;
++        gchar *g_codec, *g_lang;
++        GstPad* pad = 0;
++        g_signal_emit_by_name (m_pGstPlaybin, "get-audio-pad", i, &pad);
++        GstCaps* caps = gst_pad_get_negotiated_caps(pad);
++        if (!caps)
++          continue;
++        GstStructure* str = gst_caps_get_structure(caps, 0);
++        const gchar *g_type = gst_structure_get_name(str);
++        
++        //audio.m_AudioType = gstCheckAudioPad(str);
++        g_codec = g_strdup(g_type);
++        g_lang = g_strdup_printf ("Unknown");
++        g_signal_emit_by_name (m_pGstPlaybin, "get-audio-tags", i, &tags);
++        if ( tags && gst_is_tag_list(tags) )
++        {
++          gst_tag_list_get_string(tags, GST_TAG_AUDIO_CODEC, &g_codec);
++          gst_tag_list_get_string(tags, GST_TAG_LANGUAGE_CODE, &g_lang);
++          gst_tag_list_free(tags);
++        }
++        audio.m_sLanguageCode = g_lang;
++        audio.m_sCodec = g_codec;
++
++        m_AudioStreams.push_back(audio);
++
++        g_free (g_lang);
++        g_free (g_codec);
++        gst_caps_unref(caps);
++      }
++
++      break;
++    }
++    case GST_MESSAGE_ELEMENT:
++    {
++      const GstStructure *msgstruct = gst_message_get_structure(msg);
++      if (msgstruct)
++      {
++        //if ( gst_is_missing_plugin_message(msg) )
++        //  break;
++
++        const gchar *eventname = gst_structure_get_name(msgstruct);
++        if ( eventname == NULL )
++          break;
++
++        if (!strcmp(eventname, "eventSizeChanged") || !strcmp(eventname, "eventSizeAvail"))
++        {
++          gst_structure_get_int (msgstruct, "aspect_ratio", &m_iVideoAspect);
++          gst_structure_get_int (msgstruct, "width", &m_iVideoWidth);
++          gst_structure_get_int (msgstruct, "height", &m_iVideoHeight);
++          if (strstr(eventname, "Changed"))
++          {
++            m_evVideoSizeChanged = 1;
++            printf("%s:%s[%d] VideoSize Changed a=%d w=%d h=%d\n", __FILE__, __func__, __LINE__, m_iVideoAspect, m_iVideoWidth, m_iVideoHeight);
++            if (m_evVideoFramerateChanged)
++            {
++              g_renderManager.Configure(m_iVideoWidth, m_iVideoHeight, 1280, 720, m_iVideoFramerate/1000.0, 0, RENDER_FMT_NONE, 0);
++  g_application.getApplicationMessenger().SwitchToFullscreen();
++  }
++          }
++        }
++        else if (!strcmp(eventname, "eventFrameRateChanged") || !strcmp(eventname, "eventFrameRateAvail"))
++        {
++          gst_structure_get_int (msgstruct, "frame_rate", &m_iVideoFramerate);
++          if (strstr(eventname, "Changed"))
++          {
++            m_evVideoFramerateChanged = 1;
++            printf("%s:%s[%d] VideoFramerate Changed f=%i\n", __FILE__, __func__, __LINE__, m_iVideoFramerate);
++            
++            if (m_evVideoSizeChanged)
++            {
++              g_renderManager.Configure(m_iVideoWidth, m_iVideoHeight, 1280, 720, m_iVideoFramerate/1000.0, 0, RENDER_FMT_NONE, 0);
++  g_application.getApplicationMessenger().SwitchToFullscreen();
++  }
++          }
++        }
++        else if (!strcmp(eventname, "eventProgressiveChanged") || !strcmp(eventname, "eventProgressiveAvail"))
++        {
++          gst_structure_get_int (msgstruct, "progressive", &m_iVideoProgressive);
++          if (strstr(eventname, "Changed"))
++          {
++            m_evVideoProgressiveChanged = 1;
++            printf("%s:%s[%d] VideoProgressive Changed p=%i\n", __FILE__, __func__, __LINE__, m_iVideoProgressive);
++          }
++        }
++        else if (!strcmp(eventname, "redirect"))
++        {
++           const char *uri = gst_structure_get_string(msgstruct, "new-location");
++           gst_element_set_state (m_pGstPlaybin, GST_STATE_NULL);
++           g_object_set(G_OBJECT (m_pGstPlaybin), "uri", uri, NULL);
++           gst_element_set_state (m_pGstPlaybin, GST_STATE_PLAYING);
++        }
++      }
++      break;
++    }
++
++    default:
++      break;
++  }
++}
++
++void GSTPlayer::handleMessage(GstMessage *msg)
++{
++  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  if (GST_MESSAGE_TYPE(msg) == GST_MESSAGE_STATE_CHANGED && GST_MESSAGE_SRC(msg) != GST_OBJECT(m_pGstPlaybin))
++  {
++    gst_message_unref(msg);
++    return;
++  }
++  gstBusCall(msg);
++}
++
++GstBusSyncReply GSTPlayer::gstBusSyncHandler(GstBus *bus, GstMessage *message, gpointer user_data)
++{
++  //printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  GSTPlayer *_this = (GSTPlayer*)user_data;
++  if (_this) _this->handleMessage(message);
++  return GST_BUS_DROP;
++}
++
++int GSTPlayer::GetAudioStreamCount()
++{
++  return m_AudioStreams.size();
++}
++
++int GSTPlayer::GetAudioStream()
++{
++  if (m_iCurrentAudioStream == -1)
++    g_object_get (G_OBJECT (m_pGstPlaybin), "current-audio", &m_iCurrentAudioStream, NULL);
++  return m_iCurrentAudioStream;
++}
++
++void GSTPlayer::SetAudioStream(int iStream)
++{
++  if (iStream >= m_AudioStreams.size())
++    return;
++
++  int current_audio;
++  g_object_set (G_OBJECT (m_pGstPlaybin), "current-audio", iStream, NULL);
++  g_object_get (G_OBJECT (m_pGstPlaybin), "current-audio", &current_audio, NULL);
++  if ( current_audio == iStream )
++  {
++    m_iCurrentAudioStream = iStream;
++  }
++}
++
++void GSTPlayer::GetAudioStreamLanguage(int iStream, CStdString &strLanguage)
++{
++  strLanguage = "";
++  if (iStream >= m_AudioStreams.size())
++    return;
++
++  strLanguage = m_AudioStreams[iStream].m_sLanguageCode;
++}
++
++void GSTPlayer::GetAudioStreamName(int iStream, CStdString& strStreamName)
++{
++  strStreamName = "Unknown";
++  if (iStream >= m_AudioStreams.size())
++    return;
++
++  strStreamName = m_AudioStreams[iStream].m_sCodec;
++}
++
+diff -Nur a/xbmc/cores/gstplayer/GSTPlayer.h b/xbmc/cores/gstplayer/GSTPlayer.h
+--- a/xbmc/cores/gstplayer/GSTPlayer.h	1970-01-01 01:00:00.000000000 +0100
++++ b/xbmc/cores/gstplayer/GSTPlayer.h	2012-07-14 13:11:52.439961088 +0200
+@@ -0,0 +1,138 @@
++#pragma once
++
++/*
++ *      Copyright (C) 2005-2008 Team XBMC
++ *      http://www.xbmc.org
++ *
++ *  This Program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  This Program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with XBMC; see the file COPYING.  If not, write to
++ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
++ *  http://www.gnu.org/copyleft/gpl.html
++ *
++ */
++
++#include "cores/IPlayer.h"
++#include "threads/Thread.h"
++#include "threads/SharedSection.h"
++#include "utils/ssrc.h"
++
++#include <gst/gst.h>
++#include <gst/pbutils/missing-plugins.h>
++
++#define STATUS_NO_FILE  0
++#define STATUS_QUEUING  1
++#define STATUS_QUEUED   2
++#define STATUS_PLAYING  3
++#define STATUS_ENDING   4
++#define STATUS_ENDED    5
++
++typedef enum {
++  GST_PLAY_FLAG_VIDEO         = (1 << 0),
++  GST_PLAY_FLAG_AUDIO         = (1 << 1),
++  GST_PLAY_FLAG_TEXT          = (1 << 2),
++  GST_PLAY_FLAG_VIS           = (1 << 3),
++  GST_PLAY_FLAG_SOFT_VOLUME   = (1 << 4),
++  GST_PLAY_FLAG_NATIVE_AUDIO  = (1 << 5),
++  GST_PLAY_FLAG_NATIVE_VIDEO  = (1 << 6),
++  GST_PLAY_FLAG_DOWNLOAD      = (1 << 7),
++  GST_PLAY_FLAG_BUFFERING     = (1 << 8)
++} GstPlayFlags;
++
++class GSTPlayer : public IPlayer, public CThread
++{
++public:
++  GSTPlayer(IPlayerCallback& callback);
++  virtual ~GSTPlayer();
++
++  virtual bool OpenFile(const CFileItem& file, const CPlayerOptions &options);
++  virtual bool QueueNextFile(const CFileItem &file);
++  virtual void OnNothingToQueueNotify();
++  virtual bool CloseFile();
++  virtual bool IsPlaying() const { return m_bIsPlaying; }
++  virtual void Pause();
++  virtual bool IsPaused() const { return m_bPaused; }
++  virtual bool HasVideo() const { return m_bHasVideo; }
++  virtual bool HasAudio() const { return m_bHasAudio; }
++
++  virtual bool CanSeek() { return false; }
++  virtual void Seek(bool bPlus = true, bool bLargeStep = false) {}
++  
++  virtual void SetVolume(long nVolume);
++
++  virtual void GetAudioInfo( CStdString& strAudioInfo) {}
++  virtual void GetVideoInfo( CStdString& strVideoInfo) {}
++  virtual void GetGeneralInfo( CStdString& strVideoInfo) {}
++  virtual void Update(bool bPauseDrawing = false) {}
++  
++  virtual int GetTotalTime();
++  __int64 GetTotalTime64();
++  virtual __int64 GetTime();
++  virtual float GetPercentage();
++
++  virtual int GetAudioStreamCount();
++  virtual int GetAudioStream();
++  virtual void GetAudioStreamName(int iStream, CStdString &strStreamName);
++  virtual void SetAudioStream(int iStream);
++  virtual void GetAudioStreamLanguage(int iStream, CStdString &strLanguage);
++
++protected:
++  virtual void OnStartup() {}
++  virtual void Process();
++  virtual void OnExit();
++
++  struct AudioStream {
++    GstPad* m_Pad;
++//    audiotype_t m_AudioType;
++    CStdString m_sLanguageCode;
++    CStdString m_sCodec;
++  };
++
++  GstElement *m_pGstPlaybin;
++  
++  bool m_bPaused;
++  bool m_bIsPlaying;
++  bool m_bQueueFailed;
++  bool m_bStopPlaying;
++  int m_iSpeed;   // current playing speed
++  
++  bool m_bHasAudio;
++  bool m_bHasVideo;
++
++  std::vector<AudioStream> m_AudioStreams;
++  //int m_iAudioStreamCount;
++  int m_iCurrentAudioStream;
++
++  int m_iVideoAspect;
++  int m_iVideoWidth;
++  int m_iVideoHeight;
++  int m_iVideoFramerate;
++  int m_iVideoProgressive;
++
++  int m_evVideoSizeChanged;
++  int m_evVideoFramerateChanged;
++  int m_evVideoProgressiveChanged;
++
++  CEvent m_startEvent;
++
++private:
++  void gstBusCall(GstMessage *msg);
++  void handleMessage(GstMessage *msg);
++  static GstBusSyncReply gstBusSyncHandler(GstBus *bus, GstMessage *message, gpointer user_data);
++
++  __int64 m_timeOffset;
++
++  // our file
++  CFileItem*        m_currentFile;
++  CFileItem*        m_nextFile;
++};
++
+diff -Nur a/xbmc/cores/gstplayer/Makefile.in b/xbmc/cores/gstplayer/Makefile.in
+--- a/xbmc/cores/gstplayer/Makefile.in	1970-01-01 01:00:00.000000000 +0100
++++ b/xbmc/cores/gstplayer/Makefile.in	2012-06-02 17:45:02.000000000 +0200
+@@ -0,0 +1,10 @@
++ARCH=@ARCH@
++
++.PHONY: compile
++
++SRCS=GSTPlayer.cpp \
++
++LIB=gstplayer.a
++
++include @abs_top_srcdir@/Makefile.include
++-include $(patsubst %.cpp,%.P,$(patsubst %.c,%.P,$(SRCS)))

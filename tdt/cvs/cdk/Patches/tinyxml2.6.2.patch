@@ -1,17 +1,6 @@
---- tinyxml2.6.2/tinyxml.h.org	2012-06-12 22:17:12.350272415 +0200
-+++ tinyxml2.6.2/tinyxml.h	2012-06-12 22:17:11.826272393 +0200
-@@ -43,6 +43,8 @@
- #define DEBUG
- #endif
- 
-+#define TIXML_USE_STL
-+
- #ifdef TIXML_USE_STL
- 	#include <string>
-  	#include <iostream>
 --- tinyxml2.6.2/Makefile.org	2012-06-12 22:17:12.350272415 +0200
 +++ tinyxml2.6.2/Makefile	2012-06-12 22:17:11.826272393 +0200
-@@ -19,11 +19,11 @@
+@@ -19,14 +19,14 @@
  
  #****************************************************************************
  
@@ -26,8 +15,13 @@
 +AR     := sh4-linux-ar
 +RANLIB := sh4-linux-ranlib
  
- DEBUG_CFLAGS     := -Wall -Wno-format -g -DDEBUG
- RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -Wno-format -O3
+-DEBUG_CFLAGS     := -Wall -Wno-format -g -DDEBUG
+-RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -Wno-format -O3
++DEBUG_CFLAGS     := -Wall -Wno-format -g -DDEBUG -DTIXML_USE_STL
++RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -Wno-format -O3 -DTIXML_USE_STL
+ 
+ LIBS		 :=
+ 
 @@ -47,9 +47,9 @@
  endif
  
@@ -35,8 +29,8 @@
 -   CFLAGS   := ${CFLAGS} -pg -O3
 -   CXXFLAGS := ${CXXFLAGS} -pg -O3
 -   LDFLAGS  := ${LDFLAGS} -pg
-+   CFLAGS   := ${CFLAGS} -O3
-+   CXXFLAGS := ${CXXFLAGS} -O3
++   CFLAGS   := ${CFLAGS} -O3 -DTIXML_USE_STL
++   CXXFLAGS := ${CXXFLAGS} -O3 -DTIXML_USE_STL
 +   LDFLAGS  := ${LDFLAGS} -fPIC -shared
  endif
  
@@ -63,7 +57,7 @@
  ${OUTPUT}: ${OBJS}
  	${LD} -o $@ ${LDFLAGS} ${OBJS} ${LIBS} ${EXTRA_LIBS}
  
-@@ -128,3 +133,15 @@
+@@ -128,3 +133,16 @@
  tinyxmlparser.o: tinyxml.h tinystr.h
  xmltest.o: tinyxml.h tinystr.h
  tinyxmlerror.o: tinyxml.h tinystr.h
@@ -74,6 +68,7 @@
 +	chmod a+r $(PREFIX)/include/tinystr.h
 +	cp -f tinyxml.h $(PREFIX)/include
 +	chmod a+r $(PREFIX)/include/tinyxml.h
++	sed -i "0,/^#ifdef TIXML_USE_STL/s/^#ifdef TIXML_USE_STL/#define TIXML_USE_STL\n#ifdef TIXML_USE_STL/" $(PREFIX)/include/tinyxml.h
 +	if ( test ! -d $(PREFIX)/lib ) ; then mkdir -p $(PREFIX)/lib ; fi
 +	cp -f libtinyxml.so $(PREFIX)/lib
 +	chmod a+r $(PREFIX)/lib/libtinyxml.so
