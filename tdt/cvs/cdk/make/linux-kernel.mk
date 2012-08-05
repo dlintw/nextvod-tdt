@@ -961,6 +961,12 @@ $(DEPDIR)/linux-kernel.do_prepare: \
 	rm $(KERNEL_DIR)/.config
 	touch $@
 
+if ENABLE_GRAPHICFWDIRECTFB
+GRAPHICFWDIRECTFB_SED_CONF=-i s"/^\# CONFIG_BPA2_DIRECTFBOPTIMIZED is not set/CONFIG_BPA2_DIRECTFBOPTIMIZED=y/"
+else
+GRAPHICFWDIRECTFB_SED_CONF=-i s"/^CONFIG_BPA2_DIRECTFBOPTIMIZED=y/\# CONFIG_BPA2_DIRECTFBOPTIMIZED is not set/"
+endif
+
 #dagobert: without stboard ->not sure if we need this
 $(DEPDIR)/linux-kernel.do_compile: \
 		bootstrap-cross \
@@ -973,6 +979,7 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		export PATH=$(hostprefix)/bin:$(PATH) && \
 		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
 		@M4@ $(buildprefix)/Patches/$(HOST_KERNEL_CONFIG) > .config && \
+		sed $(GRAPHICFWDIRECTFB_SED_CONF) .config && \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
 

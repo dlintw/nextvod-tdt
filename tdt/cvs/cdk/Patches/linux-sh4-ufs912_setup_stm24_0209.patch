@@ -47,9 +47,22 @@
  			/* This is a signal from SPI block */
  			/* Hope this is set correctly by default */
  
+--- a/arch/sh/Kconfig.org	2012-03-08 08:58:51.000000000 -0800
++++ b/arch/sh/Kconfig	2012-03-09 08:48:35.000000000 -0800
+@@ -924,6 +924,10 @@
+ 
+ 	  If unsure, say N.
+ 
++config BPA2_DIRECTFBOPTIMIZED
++	bool "Kernel bpa2 map"
++	depends on BPA2
++
+ choice
+ 	prompt "Kernel command line"
+ 	optional
 --- a/arch/sh/boards/mach-mb618/setup.c.org	2012-03-08 08:58:51.000000000 -0800
 +++ b/arch/sh/boards/mach-mb618/setup.c	2012-03-09 08:48:35.000000000 -0800
-@@ -17,35 +17,52 @@
+@@ -17,35 +17,78 @@
  #include <linux/phy.h>
  #include <linux/i2c.h>
  #include <linux/gpio.h>
@@ -89,6 +102,31 @@
 +const char *LMI_IO_partalias[] = { "v4l2-coded-video-buffers", "BPA2_Region1", "v4l2-video-buffers" ,
 +                                    "coredisplay-video", "gfx-memory", "BPA2_Region0", "LMI_VID", NULL };
 + 
++#ifdef CONFIG_BPA2_DIRECTFBOPTIMIZED
++/*
++0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
++0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
++0x40800000 - 0x47FFFFFF - linux   (120mb) 
++0x47600000 - 0x483FFFFF - bigphys ( 14mb (0x00E00000))
++0x48400000 - 0x4FFFFFFF - lmi_io  ( 124mb (0x07C00000))
++*/
++static struct bpa2_partition_desc bpa2_parts_table[] = {
++    {
++ 	    .name  = "LMI_IO",
++ 	    .start = 0x47600000,
++ 	    .size  = 0x07C00000, /* 124 Mb */
++ 	    .flags = 0,
++ 	    .aka   = LMI_IO_partalias
++    }, 
++    {
++ 	    .name  = "bigphysarea",
++ 	    .start = 0x4F200000,
++ 	    .size  = 0x00E00000, /* 14 Mb */
++ 	    .flags = 0,
++ 	    .aka   = NULL
++    }, 
++ };
++#else
 +/*
 +0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
 +0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
@@ -112,6 +150,7 @@
 + 	    .aka   = LMI_IO_partalias
 +    }, 
 + };
++#endif
  
  static void __init mb618_setup(char** cmdline_p)
  {
