@@ -952,7 +952,6 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-muxer=mpeg2video \
 		--enable-parser=mjpeg \
 		--enable-demuxer=mjpeg \
-		--enable-small \
 		--enable-decoder=dvbsub \
 		--enable-decoder=iff_byterun1 \
 		--enable-small \
