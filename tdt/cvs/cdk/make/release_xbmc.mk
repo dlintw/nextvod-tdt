@@ -30,7 +30,7 @@ release_xbmc_common_utils:
 #
 # release_ufs912
 #
-release_xbmc_ufs912: release_common_utils
+release_xbmc_ufs912: release_xbmc_common_utils
 	echo "ufs912" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs912 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -46,7 +46,7 @@ release_xbmc_ufs912: release_common_utils
 #
 # release_ufs913
 #
-release_xbmc_ufs913: release_common_utils
+release_xbmc_ufs913: release_xbmc_common_utils
 	echo "ufs913" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs912 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -62,7 +62,7 @@ release_xbmc_ufs913: release_common_utils
 #
 # release_atevio7500
 #
-release_xbmc_atevio7500: release_common_utils
+release_xbmc_atevio7500: release_xbmc_common_utils
 	echo "atevio7500" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_fortis_hdbox $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
