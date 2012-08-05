@@ -1779,7 +1779,7 @@ $(DEPDIR)/%gst_plugins_good: $(DEPDIR)/gst_plugins_good.do_compile
 #
 # GST-PLUGINS-BAD
 #
-$(DEPDIR)/gst_plugins_bad.do_prepare: bootstrap gstreamer gst_plugins_base @DEPENDS_gst_plugins_bad@
+$(DEPDIR)/gst_plugins_bad.do_prepare: bootstrap gstreamer gst_plugins_base libmodplug @DEPENDS_gst_plugins_bad@
 	@PREPARE_gst_plugins_bad@
 	touch $@
 
@@ -1791,6 +1791,7 @@ $(DEPDIR)/gst_plugins_bad.do_compile: $(DEPDIR)/gst_plugins_bad.do_prepare
 		--host=$(target) \
 		--prefix=/usr \
 		--disable-sdl \
+		--disable-modplug \
 		ac_cv_openssldir=no && \
 	$(MAKE)
 	touch $@
@@ -1816,7 +1817,8 @@ $(DEPDIR)/gst_plugins_ugly.do_compile: $(DEPDIR)/gst_plugins_ugly.do_prepare
 	$(BUILDENV) \
 	./configure \
 		--host=$(target) \
-		--prefix=/usr && \
+		--prefix=/usr \
+		--disable-mpeg2dec && \
 	$(MAKE)
 	touch $@
 
@@ -2610,7 +2612,7 @@ $(DEPDIR)/yajl.do_prepare: bootstrap @DEPENDS_yajl@
 $(DEPDIR)/yajl.do_compile: $(DEPDIR)/yajl.do_prepare
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_yajl@ && \
-	sed -i "s/install: all/install: distro/g" Makefile && \
+	sed -i "s/install: all/install: distro/g" configure && \
 	$(BUILDENV) \
 	./configure \
 		--prefix=/usr && \
