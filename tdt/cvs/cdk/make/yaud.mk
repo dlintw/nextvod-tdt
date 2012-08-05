@@ -142,7 +142,7 @@ yaud-enigma2-pli-nightly: yaud-none host_python lirc \
 		boot-elf remote firstboot enigma2-pli-nightly enigma2-plugins release
 	@TUXBOX_YAUD_CUSTOMIZE@
 
-yaud-xbmc-nightly: yaud-none host_python firstboot xbmc-nightly release_xbmc
+yaud-xbmc-nightly: yaud-none host_python boot-elf firstboot xbmc-nightly release_xbmc
 	@TUXBOX_YAUD_CUSTOMIZE@
 	
 yaud-none: \
