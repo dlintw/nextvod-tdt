@@ -105,9 +105,9 @@ diff -urN enigma2-nightly.org/lib/driver/Makefile.am enigma2-nightly.org/lib/dri
  driverinclude_HEADERS = \
  	avswitch.h \
 diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/vfd.cpp
---- enigma2-nightly.org/lib/driver/vfd.cpp	2011-07-14 22:23:46.000000000 +0200
-+++ enigma2-nightly.org/lib/driver/vfd.cpp	2010-11-15 22:54:31.000000000 +0100
-@@ -7,21 +7,34 @@
+--- enigma2-nightly.org/lib/driver/vfd.cpp	2011-12-29 21:12:43.271630000 +0100
++++ enigma2-nightly.org/lib/driver/vfd.cpp	2011-12-30 16:22:27.000000000 +0100
+@@ -7,21 +7,35 @@
  #include <sys/ioctl.h>
  #include <ctype.h>
  #include <sys/stat.h>
@@ -130,6 +130,7 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 -#define VFDBRIGHTNESS           0xc0425a03
 -//light on off
 -#define VFDDISPLAYWRITEONOFF    0xc0425a05
++
 +#define VFDBRIGHTNESS		0xc0425a03
 +#define VFDDISPLAYWRITEONOFF	0xc0425a05
 +#define VFDDRIVERINIT		0xc0425a08
@@ -151,15 +152,7 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
  
  bool startloop_running = false;
  static bool icon_onoff[32];
-@@ -39,7 +52,6 @@
- };
- 
- 
--
- evfd* evfd::instance = NULL;
- 
- evfd* evfd::getInstance()
-@@ -67,166 +79,37 @@
+@@ -77,170 +91,45 @@
  	//close (file_vfd);
  }
  
@@ -172,7 +165,7 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 -
 -	if(fd < 0)
 -		return 0;
--
+ 
 -	n = read(fd, progress, sizeof(progress));
 -	close(fd);
 -
@@ -266,7 +259,7 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 -}
 -
 -#else
--
+ 
  void * start_loop (void *arg)
  {
  	evfd vfd;
@@ -280,7 +273,14 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 +	
  	//run 2 times through all icons 
  	for  (int vloop = 0; vloop < 128; vloop++) {
--		/*if (vloop%14 == 0 )
+-#if !defined(PLATFORM_FORTIS_HDBOX) && !defined(PLATFORM_OCTAGON1008) && !defined(PLATFORM_ATEVIO7500) && !defined(PLATFORM_CUBEREVO) && !defined(PLATFORM_CUBEREVO_MINI) && !defined(PLATFORM_CUBEREVO_MINI2) && !defined(PLATFORM_CUBEREVO_MINI_FTA) && !defined(PLATFORM_CUBEREVO_250HD) && !defined(PLATFORM_CUBEREVO_2000HD) && !defined(PLATFORM_CUBEREVO_9500HD)
+-		if (vloop%2 == 1) {
+-			vfd.vfd_set_icon( (tvfd_icon) (((vloop%32)/2)%16), ICON_OFF, true);
+-			//usleep(1000);
+-			vfd.vfd_set_icon( (tvfd_icon) ((((vloop%32)/2)%16)+1), ICON_ON, true);
+-		}
+-#else
+-		if (vloop%14 == 0 )
 -			vfd.vfd_set_brightness(1);
 -		else if (vloop%14 == 1 )
 -			vfd.vfd_set_brightness(2);
@@ -307,96 +307,113 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 -		else if (vloop%14 == 12 )
 -			vfd.vfd_set_brightness(1);
 -		else if (vloop%14 == 13 )
--			vfd.vfd_set_brightness(0);*/
- 		if (vloop%2 == 1) {
--			vfd.vfd_set_icon( (tvfd_icon) (((vloop%32)/2)%16), ICON_OFF, true);
+-			vfd.vfd_set_brightness(0);
+-#endif		
+-		usleep(75000);
+-	}
+-	vfd.vfd_set_brightness(7);
+-#if !defined(PLATFORM_FORTIS_HDBOX) && !defined(PLATFORM_OCTAGON1008)	&& !defined(PLATFORM_ATEVIO7500) && !defined(PLATFORM_CUBEREVO) && !defined(PLATFORM_CUBEREVO_MINI) && !defined(PLATFORM_CUBEREVO_MINI2) && !defined(PLATFORM_CUBEREVO_MINI_FTA) && !defined(PLATFORM_CUBEREVO_250HD) && !defined(PLATFORM_CUBEREVO_2000HD) && !defined(PLATFORM_CUBEREVO_9500HD)
++ 		if (vloop%2 == 1) {
++
 +			vfd.vfd_set_icon( (tvfd_icon) (((vloop%28)/2)%14), ICON_OFF, true);
- 			//usleep(1000);
--			vfd.vfd_set_icon( (tvfd_icon) ((((vloop%32)/2)%16)+1), ICON_ON, true);
++ 			//usleep(1000);
++
 +			vfd.vfd_set_icon( (tvfd_icon) ((((vloop%28)/2)%14)+1), ICON_ON, true);
- 		}
- 		usleep(75000);
- 	}
++ 		}
++ 		usleep(75000);
++ 	}
 +
- 	vfd.vfd_set_brightness(7);
--	
-+
++ 	vfd.vfd_set_brightness(7);
++	
  	//set all blocked icons
 -	for (int id = 0x10; id < 0x20; id++) {
+-		vfd.vfd_set_icon((tvfd_icon)id, icon_onoff[id]);	
+-	}
+-#endif
+-	blocked = false;
+-	return NULL;
+-}
++
 +	for (int id = 0x00; id < 0x0d; id++) {
- 		vfd.vfd_set_icon((tvfd_icon)id, icon_onoff[id]);	
- 	}
--
-+#endif
- 	blocked = false;
- 	return NULL;
++ 		vfd.vfd_set_icon((tvfd_icon)id, icon_onoff[id]);	
++ 	}
+ 
+ #endif
++ 	blocked = false;
++ 	return NULL;
++ }
++ 
+ 
+-//////////////////////////////////////////////////////////////////////////////////////
++ //////////////////////////////////////////////////////////////////////////////////////
+ 
+ #if defined(PLATFORM_FORTIS_HDBOX) || defined(PLATFORM_OCTAGON1008) || defined(PLATFORM_ATEVIO7500) || defined(PLATFORM_CUBEREVO) || defined(PLATFORM_CUBEREVO_MINI) || defined(PLATFORM_CUBEREVO_MINI2) || defined(PLATFORM_CUBEREVO_MINI_FTA) || defined(PLATFORM_CUBEREVO_250HD) || defined(PLATFORM_CUBEREVO_2000HD) || defined(PLATFORM_CUBEREVO_9500HD)
+ void evfd::vfd_write_string_scrollText(char* text) {
+@@ -347,62 +236,82 @@
+ 	vfd_write_string(str, false);
  }
  
--#endif
--
- //////////////////////////////////////////////////////////////////////////////////////
- 
- void evfd::vfd_write_string(char * str)
-@@ -236,58 +119,70 @@
- 
- void evfd::vfd_write_string(char * str, bool force)
- {
-+	eDebug("[%s]%s len=%d", __func__, str,strlen(str));
- 	int i;
- 	i = strlen ( str );
- 	if ( i > 63 ) i = 63;
+-void evfd::vfd_write_string(char * str, bool force)
+-{
+-	int i;
+-	i = strlen ( str );
+-	if ( i > 63 ) i = 63;
 -	memset ( chars, ' ', 63 );
 -	memcpy ( chars, str, i);	
 -
 -#ifdef PLATFORM_TF7700
--
++ void evfd::vfd_write_string(char * str, bool force)
++ {
++	eDebug("[%s]%s len=%d", __func__, str,strlen(str));
++ 	int i;
++ 	i = strlen ( str );
++ 	if ( i > 63 ) i = 63;
+ 
 -	// request the display to cancel the start loop
 -	requested = true;
 -	while(blocked) usleep(200000);
--
--	{
--#else
- 	if (!blocked || force) {
--#endif
- 		struct vfd_ioctl_data data;
- 		memset ( data.data, ' ', 63 );
--		memcpy ( data.data, str, i );	
-+		memcpy ( data.data, str, i );
++ 	if (!blocked || force) {
  
- 		data.start = 0;
- 		data.length = i;
--
- 		file_vfd = open (VFD_DEVICE, O_WRONLY);
+-	{
++ 		struct vfd_ioctl_data data;
++ 		memset ( data.data, ' ', 63 );
++	
++		memcpy ( data.data, str, i );
++ 
++ 		data.start = 0;
++ 		data.length = i;
++
++ 		file_vfd = open (VFD_DEVICE, O_WRONLY);
 +#ifdef IPBOX55
 +		ioctl ( file_vfd, VFDDISPLAYCHARS, str );
-+#else
- 		ioctl ( file_vfd, VFDDISPLAYCHARS, &data );
-+#endif
- 		close (file_vfd);
- 	}
- 	return;
- }
+ #else
+-	if (!blocked || force) {
++ 		ioctl ( file_vfd, VFDDISPLAYCHARS, &data );
+ #endif
+-		struct vfd_ioctl_data data;
+-		memset ( data.data, ' ', 63 );
+-		memcpy ( data.data, str, i );	
+-
+-		data.start = 0;
+-		data.length = i;
+-
+-		file_vfd = open (VFD_DEVICE, O_WRONLY);
+-		ioctl ( file_vfd, VFDDISPLAYCHARS, &data );
+-		close (file_vfd);
+-	}
+-	return;
+-}
++ 		close (file_vfd);
++ 	}
++ 	return;
++ }
++ 
  
 -void evfd::vfd_write_string_scrollText(char* text) {
 +void evfd::vfd_write_string_scrollText(char* text) 
 +{
 +//	eDebug("[%s]%slen=%d", __func__, text,strlen(text));
 +#ifdef IPBOX55
-+	if (!blocked) {
-+		int i, len = strlen(text);
-+		char* out = (char *) malloc(14);
-+
-+		for (i=0; i<=(len-4); i++) { // scroll text till end
-+			memset(out, ' ', 14);
-+			memcpy(out, text+i, 14);
-+			vfd_write_string(out);
-+			usleep(200000);
-+		}
-+		memcpy(out, text, 4); // display first 14 chars after scrolling
-+		vfd_write_string(out);
-+		free (out);
-+	}
-+#else
  	if (!blocked) {
  		int i, len = strlen(text);
 -		char* out = (char *) malloc(16);
@@ -405,89 +422,168 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 -		for (i=0; i<=(len-16); i++) { // scroll text till end
 -			memset(out, ' ', 16);
 -			memcpy(out, text+i, 16);
-+		for (i=0; i<=(len-14); i++) { // scroll text till end
+-			vfd_write_string(out);
+-			usleep(200000);
+-		}
+-		for (i=1; i<16; i++) { // scroll text with whitespaces from right
+-			memset(out, ' ', 16);
+-			memcpy(out, text+len+i-16, 16-i);
++		for (i=0; i<=(len-4); i++) { // scroll text till end
 +			memset(out, ' ', 14);
 +			memcpy(out, text+i, 14);
  			vfd_write_string(out);
  			usleep(200000);
  		}
- 		for (i=1; i<16; i++) { // scroll text with whitespaces from right
--			memset(out, ' ', 16);
--			memcpy(out, text+len+i-16, 16-i);
-+			memset(out, ' ', 14);
-+			memcpy(out, text+len+i-14, 14-i);
- 			vfd_write_string(out);
- 			usleep(200000);
- 		}
- 
+-
 -		memcpy(out, text, 16); // display first 16 chars after scrolling
-+		memcpy(out, text, 14); // display first 14 chars after scrolling
++		memcpy(out, text, 4); // display first 14 chars after scrolling
  		vfd_write_string(out);
  		free (out);
  	}
+-	return;
+-}
++#else
++ 	if (!blocked) {
++ 		int i, len = strlen(text);
++		char* out = (char *) malloc(14);
++ 
++
++		for (i=0; i<=(len-14); i++) { // scroll text till end
++			memset(out, ' ', 14);
++			memcpy(out, text+i, 14);
++ 			vfd_write_string(out);
++ 			usleep(200000);
++ 		}
++ 		for (i=1; i<16; i++) { // scroll text with whitespaces from right
++
++			memset(out, ' ', 14);
++			memcpy(out, text+len+i-14, 14-i);
++ 			vfd_write_string(out);
++ 			usleep(200000);
++ 		}
++ 
++
++		memcpy(out, text, 14); // display first 14 chars after scrolling
++ 		vfd_write_string(out);
++ 		free (out);
++ 	}
 +
 +#endif
++ 	return;
++ }
+ #endif
+ void evfd::vfd_clear_string()
+ {
+@@ -418,36 +327,45 @@
  	return;
  }
  
-@@ -308,31 +203,34 @@
- void evfd::vfd_set_icon(tvfd_icon id, bool onoff, bool force)
- {
- 	icon_onoff[id] = onoff;
+-void evfd::vfd_set_icon(tvfd_icon id, bool onoff, bool force)
+-{
+-	icon_onoff[id] = onoff;
 -
+-	if (!blocked || force) {
+-		struct vfd_ioctl_data data;
++ void evfd::vfd_set_icon(tvfd_icon id, bool onoff, bool force)
++ {
++ 	icon_onoff[id] = onoff;
++
 +#ifndef IPBOX55
- 	if (!blocked || force) {
- 		struct vfd_ioctl_data data;
- 
- 		if (!startloop_running) {
- 			memset(&data, 0, sizeof(struct vfd_ioctl_data));
--
- 			data.start = 0x00;
-     			data.data[0] = id & 0x0f;
-     			data.data[4] = onoff;
-     			data.length = 5;
--
++ 	if (!blocked || force) {
++ 		struct vfd_ioctl_data data;
++ 
++ 		if (!startloop_running) {
++ 			memset(&data, 0, sizeof(struct vfd_ioctl_data));
++
++ 			data.start = 0x00;
++     			data.data[0] = id & 0x0f;
++     			data.data[4] = onoff;
++     			data.length = 5;
++
 +//                      eDebug("[%s] 0x%2x 0x%2x ", __func__, data.data[0], data.data[4]);
- 			file_vfd = open (VFD_DEVICE, O_WRONLY);
-     			ioctl(file_vfd, VFDICONDISPLAYONOFF, &data);
- 			close (file_vfd);
- 		}
- 	}
++ 			file_vfd = open (VFD_DEVICE, O_WRONLY);
++     			ioctl(file_vfd, VFDICONDISPLAYONOFF, &data);
++ 			close (file_vfd);
++ 		}
++ 	}
 +#endif
- 	return;
- }
- 
- void evfd::vfd_clear_icons()
- {
--	for (int id = 0x10; id < 0x20; id++) {
++ 	return;
++ }
++ 
++ void evfd::vfd_clear_icons()
++ {
++
 +#ifndef IPBOX55
 +
 +	for (int id = 0x00; id < 0x0d; id++) {
- 		vfd_set_icon((tvfd_icon)id, false);	
- 	}
++ 		vfd_set_icon((tvfd_icon)id, false);	
++ 	}
 +#endif
- 	return;
- }
++ 	return;
++ }
  
-@@ -346,11 +244,12 @@
+-		if (!startloop_running) {
+-			memset(&data, 0, sizeof(struct vfd_ioctl_data));
+ 
+-			data.start = 0x00;
+-    			data.data[0] = id;
+-    			data.data[4] = onoff;
+-    			data.length = 5;
+-
+-			file_vfd = open (VFD_DEVICE, O_WRONLY);
+-    			ioctl(file_vfd, VFDICONDISPLAYONOFF, &data);
+-			close (file_vfd);
+-		}
+-	}
+-	return;
+-}
+-
+-void evfd::vfd_clear_icons()
+-{
+-	for (int id = 0x10; id < 0x20; id++) {
+-		vfd_set_icon((tvfd_icon)id, false);	
+-	}
+-	return;
+-}
+ 
+ //////////////////////////////////////////////////////////////////////////////////////
+ 
+@@ -457,15 +375,18 @@
+ 
+ 	memset(&data, 0, sizeof(struct vfd_ioctl_data));
  	
- 	data.start = setting & 0x07;
- 	data.length = 0;
--
-+	
-+#ifndef IPBOX55
- 	file_vfd = open (VFD_DEVICE, O_WRONLY);
- 	ioctl ( file_vfd, VFDBRIGHTNESS, &data );
- 	close (file_vfd);
--
-+#endif
- 	return;
- }
+-	data.start = setting & 0x07;
+-	data.length = 0;
++ 	data.start = setting & 0x07;
++ 	data.length = 0;
  
-@@ -366,11 +265,110 @@
- 	else
- 		data.start = 0x00;
-     	data.length = 0;
+-	file_vfd = open (VFD_DEVICE, O_WRONLY);
+-	ioctl ( file_vfd, VFDBRIGHTNESS, &data );
+-	close (file_vfd);
+ 
+-	return;
+-}
++#ifndef IPBOX55
++ 	file_vfd = open (VFD_DEVICE, O_WRONLY);
++ 	ioctl ( file_vfd, VFDBRIGHTNESS, &data );
++ 	close (file_vfd);
++
++#endif
++ 	return;
++ } 
+ 
+ 
+ void evfd::vfd_set_light(bool onoff)
+@@ -476,18 +397,109 @@
+ 
+ 	if (onoff)
+ 		data.start = 0x01;
+-	else
+-		data.start = 0x00;
+-    	data.length = 0;
++ 	else
++ 		data.start = 0x00;
++     	data.length = 0;
 +#ifndef IPBOX55
 +	file_vfd = open (VFD_DEVICE, O_WRONLY);
 +    	ioctl(file_vfd, VFDDISPLAYWRITEONOFF, &data);
@@ -518,20 +614,21 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 +	timebuf[4]=time_now->tm_mday;
 +	timebuf[5]=time_now->tm_mon+1;
 +	timebuf[6]=time_now->tm_year % 100;
-+
+ 
 +        eDebug("TIME_SYSTEM %d %d %d %d %d %d %d"
 +  		,timebuf[0],timebuf[1],timebuf[2],timebuf[3],timebuf[4],timebuf[5],timebuf[6]); 
 +
 +	struct vfd_ioctl_data data;
 +	memset(&data, 0, sizeof(struct vfd_ioctl_data));
 +        memcpy(&data,timebuf,7); 
- 
++		
  	file_vfd = open (VFD_DEVICE, O_WRONLY);
-+    	ioctl(file_vfd, VFDSETTIME, &data);
+ 
+-    	ioctl(file_vfd, VFDDISPLAYWRITEONOFF, &data);
++   	ioctl(file_vfd, VFDSETTIME, &data);
 +	close (file_vfd);
 +#endif
  
--    	ioctl(file_vfd, VFDDISPLAYWRITEONOFF, &data);
 +	return;
 +}
 +
@@ -543,11 +640,11 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 +#else
 + 	file_vfd = open (VFD_DEVICE, O_WRONLY);
 +    	ioctl(file_vfd, VFDSTANDBY);
-+	close (file_vfd);
+ 	close (file_vfd);
 +#endif
-+	return;
-+}
-+
+ 	return;
+ }
+ 
 +void evfd::vfd_set_timer_wakeup()
 +{
 +#ifndef IPBOX55
@@ -572,7 +669,7 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 +	timebuf[3]=now->tm_mday;
 +	timebuf[4]=now->tm_mon+1;
 +	timebuf[5]=now->tm_year % 100;
- 
++ 
 +        eDebug("TIME_WAKEUP %d:%d:%d %d %d %d"
 +		,timebuf[0],timebuf[1],timebuf[2],timebuf[3],timebuf[4],timebuf[5]); 
 +
@@ -582,36 +679,38 @@ diff -urN enigma2-nightly.org/lib/driver/vfd.cpp enigma2-nightly.org/lib/driver/
 +
 +	file_vfd = open (VFD_DEVICE, O_WRONLY);
 +    	ioctl(file_vfd, VFDSETTIMERWAKEUP, &data);
- 	close (file_vfd);
++ 	close (file_vfd);
 +#endif
- 	return;
++ 	return;
 +	
- }
++ }
 +
-+
-+
-+
-+
-+
-+
-+
-+
+ void evfd::vfd_set_fan(bool onoff)
+ {
+ #if defined(PLATFORM_CUBEREVO) || defined(PLATFORM_CUBEREVO_MINI) || defined(PLATFORM_CUBEREVO_MINI2) || defined(PLATFORM_CUBEREVO_MINI_FTA) || defined(PLATFORM_CUBEREVO_250HD) || defined(PLATFORM_CUBEREVO_2000HD) || defined(PLATFORM_CUBEREVO_9500HD) 
 diff -urN enigma2-nightly.org/lib/driver/vfd.h enigma2-nightly.org/lib/driver/vfd.h
 --- enigma2-nightly.org/lib/driver/vfd.h	2011-07-14 22:23:46.000000000 +0200
 +++ enigma2-nightly.org/lib/driver/vfd.h	2010-11-13 07:58:43.000000000 +0100
-@@ -4,7 +4,7 @@
+@@ -4,12 +4,7 @@
  #define ICON_ON  1
  #define ICON_OFF 0
  
+-#ifndef PLATFORM_HDBOX
 -typedef enum { USB = 0x10, HD, HDD, LOCK, BT, MP3, MUSIC, DD, MAIL, MUTE, PLAY, PAUSE, FF, FR, REC, CLOCK } tvfd_icon;
-+typedef enum { ICON_STANDBY = 0x00, ICON_PLAY, ICON_PAUSE, ICON_RECORD, ICON_DOLBY, ICON_HD, ICON_480P, ICON_480I, ICON_720P, ICON_1080I, ICON_1080P, ICON_576I, ICON_576P, ICON_MP3 } tvfd_icon;
+-#else
+-typedef enum { USB = 0x10, STANDBY, SAT, REC, TIMESHIFT, TIMER, HD, LOCK, DD, MUTE, TUNER1, TUNER2, MP3, REPEAT,
+-			   PLAY, PAUSE, TER, FILE, 480i, 480p, 576i, 576p, 720p, 1080i, 1080p } tvfd_icon;
+-#endif
++typedef enum { ICON_STANDBY = 0x00, ICON_PLAY, ICON_PAUSE, ICON_RECORD, ICON_DOLBY, ICON_HD, ICON_480P, ICON_480I, ICON_720P, ICON_1080I, ICON_1080P, ICON_576I, ICON_576P, ICON_MP3 } tvfd_icon; 
  
  class evfd
  {
-@@ -34,6 +34,9 @@
+@@ -41,7 +36,10 @@
  	
  	void vfd_set_brightness(unsigned char setting);
  	void vfd_set_light(bool onoff);
+-    void vfd_set_fan(bool onoff);
++	void vfd_set_fan(bool onoff);
 +	void vfd_set_time();
 +	void vfd_set_standby();	
 +	void vfd_set_timer_wakeup();
@@ -675,13 +774,11 @@ diff -urN enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  		self.max_idle_time = 0
  		self.idle_running = False
  		self.timer = None
-@@ -53,18 +34,19 @@
- 		self.dev_path = ''
+@@ -54,11 +35,12 @@
  		self.disk_path = ''
  		self.phys_path = path.realpath(self.sysfsPath('device'))
--
+ 
 -		if self.type == DEVTYPE_UDEV:
-+		
 +		print "[Harddisk] found: ", self.phys_path
 +		if self.type == self.DEVTYPE_UDEV:
  			self.dev_path = '/dev/' + self.device
@@ -689,16 +786,9 @@ diff -urN enigma2-nightly.org/lib/python/Components/Harddisk.py enigma2-nightly/
  
 -		elif self.type == DEVTYPE_DEVFS:
 +		elif self.type == self.DEVTYPE_DEVFS:
- 			tmp = readFile(self.sysfsPath('dev')).split(':')
- 			s_major = int(tmp[0])
- 			s_minor = int(tmp[1])
- 			for disc in listdir("/dev/discs"):
- 				dev_path = path.realpath('/dev/discs/' + disc)
--				disk_path = dev_path + '/disc'
-+ 				disk_path = dev_path + '/disc'
- 				try:
- 					rdev = stat(disk_path).st_rdev
- 				except OSError:
+ 			self.dev_path = '/dev/' + self.device
+ 			self.disk_path = self.dev_path
+ 
 @@ -81,9 +63,9 @@
  		return self.device < ob.device
  
@@ -1256,10 +1346,10 @@ diff -urN enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly/lib/dvb/dvb.cpp
  		}
  	}
  #if defined(__sh__) // we use our own algo for demux detection
--	else if (m_boxtype == UFS910 || m_boxtype == UFS912 || m_boxtype == SPARK || m_boxtype == SPARK7162 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX || m_boxtype == HL101 ||
--		m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || m_boxtype == VIP1_V2 || m_boxtype == VIP2_V1 || m_boxtype == HS7810A || m_boxtype == HS7110 || m_boxtype == WHITEBOX ||
+-	else if (m_boxtype == ADB_BOX ||  m_boxtype == UFS910 || m_boxtype == UFS912 || m_boxtype == SPARK || m_boxtype == SPARK7162 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX ||
+-		m_boxtype == HL101 || m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || m_boxtype == VIP1_V2 || m_boxtype == VIP2_V1 || m_boxtype == HS7810A || m_boxtype == HS7110 || m_boxtype == WHITEBOX ||
 -		m_boxtype == CUBEREVO_MINI_FTA || m_boxtype == CUBEREVO_250HD || m_boxtype == CUBEREVO_2000HD || m_boxtype == CUBEREVO_9500HD || m_boxtype == OCTAGON1008 || m_boxtype == ATEVIO7500)
-+	else if (m_boxtype == UFS910 || m_boxtype == UFS912 || m_boxtype == SPARK || m_boxtype == SPARK7162 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX || 
++	else if (m_boxtype == ADB_BOX ||  m_boxtype == UFS910 || m_boxtype == UFS912 || m_boxtype == SPARK || m_boxtype == SPARK7162 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX || 
 +		m_boxtype == HL101 || m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || m_boxtype == VIP1_V2 || m_boxtype == VIP2_V1 || m_boxtype == HS7810A || m_boxtype == HS7110 || m_boxtype == WHITEBOX ||
 +		m_boxtype == CUBEREVO_MINI_FTA || m_boxtype == CUBEREVO_250HD || m_boxtype == CUBEREVO_2000HD || m_boxtype == CUBEREVO_9500HD || m_boxtype == OCTAGON1008 || m_boxtype == ATEVIO7500 ||
 +		m_boxtype == IPBOX9900 || m_boxtype == IPBOX99 || m_boxtype == IPBOX55 )
@@ -1273,8 +1363,8 @@ diff -urN enigma2-nightly.org/lib/dvb/dvb.h enigma2-nightly/lib/dvb/dvb.h
  	int avail, busy;
  
  #if defined(__sh__)
--	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, SPARK, SPARK7162, ATEVIO7500, HS7810A, HS7110, WHITEBOX};
-+	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, SPARK, SPARK7162, ATEVIO7500, HS7810A, HS7110, WHITEBOX, IPBOX9900, IPBOX99, IPBOX55};
+-	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD, ADB_BOX, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, SPARK, SPARK7162, ATEVIO7500, HS7810A, HS7110, WHITEBOX};
++	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD, ADB_BOX, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, SPARK, SPARK7162, ATEVIO7500, HS7810A, HS7110, WHITEBOX, IPBOX9900, IPBOX99, IPBOX55};
  #else
   	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD };
  #endif
