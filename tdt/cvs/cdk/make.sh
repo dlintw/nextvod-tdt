@@ -1,14 +1,15 @@
 #!/bin/bash
 
 if [ "$1" == -h ] || [ "$1" == --help ]; then
- echo "Parameter 1: target system (1-27)"
- echo "Parameter 2: kernel (1-9)"
+ echo "Parameter 1: target system (1-28)"
+ echo "Parameter 2: kernel (1-12)"
  echo "Parameter 3: debug (Y/N)"
- echo "Parameter 4: player (1-2)"
- echo "Parameter 5: Multicom (1-2)"
- echo "Parameter 6: Media Framwork (1-2)"
+ echo "Parameter 4: player (1-3)"
+ echo "Parameter 5: Multicom (1-3)"
+ echo "Parameter 6: Media Framework (1-2)"
  echo "Parameter 7: External LCD support (1-2)"
  echo "Parameter 8: VDR (1-2)"
+ echo "Parameter 9: Graphic Framework (1-2)"
  exit
 fi
 
@@ -153,7 +154,7 @@ echo " Maintained:"
 echo "   8) STM 24 P0207 (Recommended)"
 echo "  10) STM 24 P0209"
 echo " Experimental:"
-echo "  11) STM 24 P0210 (UFS910, octagon1008, fortis_hdbox, at7500, spark)"
+echo "  11) STM 24 P0210 (UFS910, octagon1008, Fortis based (HDBOX), SPARK, Atevio7500)"
 echo "  12) STM 24 P0211 (UFS910, octagon1008, Cuberevo (IPBOX 9000), Fortis based (HDBOX), SPARK, Atevio7500)"
 echo " Deprecated (Not maintained):"
 echo "   1) STM 22 P0041"
