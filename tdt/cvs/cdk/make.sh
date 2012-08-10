@@ -379,7 +379,7 @@ esac
 
 echo -e "\nMedia Framework:"
 echo "   1) eplayer3  (Recommended for Enigma1/2, Neutrino/HD, VDR)"
-echo "   2) gstreamer (Recommended for Enigma2 / PLI)"
+echo "   2) gstreamer (Recommended for Enigma2 / PLI, XBMC)"
 case $6 in
         [1-2]) REPLY=$6
         echo -e "\nSelected media framwork: $REPLY\n"
