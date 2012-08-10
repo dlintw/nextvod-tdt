@@ -33,7 +33,6 @@ $(DEPDIR)/xbmc-nightly.do_prepare:
 	cp -ra $(appsdir)/xbmc-nightly $(appsdir)/xbmc-nightly.patched
 	touch $@
 
-
 #			PYTHON_LDFLAGS='-L$(targetprefix)/usr/include/python2.6 -lpython2.6' \
 #			PYTHON_VERSION='2.6' \
 #endable webserver else httpapihandler will fail
@@ -90,9 +89,6 @@ $(DEPDIR)/xbmc-nightly: xbmc-nightly.do_prepare xbmc-nightly.do_compile
 	$(MAKE) -C $(appsdir)/xbmc-nightly install DESTDIR=$(targetprefix)
 	if [ -e $(targetprefix)/usr/lib/xbmc/xbmc.bin ]; then \
 		$(target)-strip $(targetprefix)/usr/lib/xbmc/xbmc.bin; \
-		$(target)-strip $(targetprefix)/usr/lib/xbmc/system/*; \
-		$(target)-strip $(targetprefix)/usr/lib/xbmc/system/players/dvdplayer/*; \
-		$(target)-strip $(targetprefix)/usr/lib/xbmc/system/players/paplayer/*; \
 	fi
 	touch $@
 
