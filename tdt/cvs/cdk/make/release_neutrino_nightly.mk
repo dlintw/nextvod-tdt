@@ -5,7 +5,7 @@
 #
 # release_common_utils
 #
-release_common_neutrino_utils:
+release_neutrino_common_utils:
 #	remove the slink to busybox
 	rm -f $(prefix)/release/sbin/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release/sbin/
@@ -149,9 +149,9 @@ release_neutrino_ipbox55: release_neutrino_common_utils release_neutrino_common_
 	cp -p $(buildprefix)/root/release/tvmode_ipbox55 $(prefix)/release/usr/bin/tvmode
 
 #
-#  release_ufs910
+# release_ufs910
 #
-release_neutrino_ufs910: release_common_neutrino_utils
+release_neutrino_ufs910: release_neutrino_common_utils
 	echo "ufs910" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -167,9 +167,9 @@ release_neutrino_ufs910: release_common_neutrino_utils
 	rm -f $(prefix)/release/bin/vdstandby
 
 #
-#  release_ufs912
+# release_ufs912
 #
-release_neutrino_ufs912: release_common_neutrino_utils
+release_neutrino_ufs912: release_neutrino_common_utils
 	echo "ufs912" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs912 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -185,9 +185,9 @@ release_neutrino_ufs912: release_common_neutrino_utils
 	rm -f $(prefix)/release/bin/gotosleep
 
 #
-#  release_ufs913
+# release_ufs913
 #
-release_neutrino_ufs913: release_common_neutrino_utils
+release_neutrino_ufs913: release_neutrino_common_utils
 	echo "ufs913" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs912 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -203,9 +203,9 @@ release_neutrino_ufs913: release_common_neutrino_utils
 	rm -f $(prefix)/release/bin/gotosleep
 
 #
-#  release_ufs922
+# release_ufs922
 #
-release_neutrino_ufs922: release_common_neutrino_utils
+release_neutrino_ufs922: release_neutrino_common_utils
 	echo "ufs922" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_ufs $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -219,9 +219,9 @@ release_neutrino_ufs922: release_common_neutrino_utils
 	rm -f $(prefix)/release/bin/gotosleep
 
 #
-#  release_spark
+# release_spark
 #
-release_neutrino_spark: release_common_neutrino_utils
+release_neutrino_spark: release_neutrino_common_utils
 	echo "spark" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_spark $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -247,7 +247,7 @@ release_neutrino_spark: release_common_neutrino_utils
 #
 # release_spark7162
 #
-release_neutrino_spark7162: release_common_neutrino_utils
+release_neutrino_spark7162: release_neutrino_common_utils
 	echo "spark7162" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_spark $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -269,9 +269,9 @@ release_neutrino_spark7162: release_common_neutrino_utils
 	cp -f $(buildprefix)/root/sbin/nand* $(prefix)/release/sbin
 
 #
-#  release_fortis_hdbox
+# release_fortis_hdbox
 #
-release_neutrino_fortis_hdbox: release_common_neutrino_utils
+release_neutrino_fortis_hdbox: release_neutrino_common_utils
 	echo "fortis" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_fortis_hdbox $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -287,7 +287,7 @@ release_neutrino_fortis_hdbox: release_common_neutrino_utils
 #
 # release_atevio7500
 #
-release_neutrino_atevio7500: release_common_neutrino_utils
+release_neutrino_atevio7500: release_neutrino_common_utils
 	echo "atevio7500" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_fortis_hdbox $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -307,7 +307,7 @@ release_neutrino_atevio7500: release_common_neutrino_utils
 #
 # release_octagon1008
 #
-release_neutrino_octagon1008: release_common_neutrino_utils
+release_neutrino_octagon1008: release_neutrino_common_utils
 	echo "octagon1008" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_octagon1008 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -325,7 +325,7 @@ release_neutrino_octagon1008: release_common_neutrino_utils
 #
 # release_hs7810a
 #
-release_neutrino_hs7810a: release_common_neutrino_utils
+release_neutrino_hs7810a: release_neutrino_common_utils
 	echo "hs7810a" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_hs7810a $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -344,7 +344,7 @@ release_neutrino_hs7810a: release_common_neutrino_utils
 #
 # release_hs7110
 #
-release_neutrino_hs7110: release_common_neutrino_utils
+release_neutrino_hs7110: release_neutrino_common_utils
 	echo "hs7110" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_hs7110 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -363,7 +363,7 @@ release_neutrino_hs7110: release_common_neutrino_utils
 #
 # release_whitebox
 #
-release_neutrino_whitebox: release_common_neutrino_utils
+release_neutrino_whitebox: release_neutrino_common_utils
 	echo "whitebox" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_whitebox $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -382,7 +382,7 @@ release_neutrino_whitebox: release_common_neutrino_utils
 #
 # release_hl101
 #
-release_neutrino_hl101: release_common_neutrino_utils
+release_neutrino_hl101: release_neutrino_common_utils
 	echo "hl101" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_hl101 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -402,7 +402,7 @@ release_neutrino_hl101: release_common_neutrino_utils
 #
 # release_adb_box
 #
-release_neutrino_adb_box: release_common_neutrino_utils
+release_neutrino_adb_box: release_neutrino_common_utils
 	echo "Adb_Box" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_adb_box $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -425,7 +425,7 @@ release_neutrino_adb_box: release_common_neutrino_utils
 #
 # release_vip1_v2
 #
-release_neutrino_vip1_v2: release_common_neutrino_utils
+release_neutrino_vip1_v2: release_neutrino_common_utils
 	echo "Edision-v2" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_vip2 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
@@ -455,7 +455,7 @@ release_neutrino_vip2_v1: release_neutrino_vip1_v2
 #
 # release_hs5101
 #
-release_neutrino_hs5101: release_common_neutrino_utils
+release_neutrino_hs5101: release_neutrino_common_utils
 	echo "hs5101" > $(prefix)/release/etc/hostname
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/button_hs5101/button.ko $(prefix)/release/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/vfd_hs5101/vfd.ko $(prefix)/release/lib/modules/
@@ -471,7 +471,7 @@ release_neutrino_hs5101: release_common_neutrino_utils
 #
 # release_tf7700
 #
-release_neutrino_tf7700: release_common_neutrino_utils
+release_neutrino_tf7700: release_neutrino_common_utils
 	echo "tf7700" > $(prefix)/release/etc/hostname
 	cp $(buildprefix)/root/release/halt_tf7700 $(prefix)/release/etc/init.d/halt
 	chmod 755 $(prefix)/release/etc/init.d/halt
