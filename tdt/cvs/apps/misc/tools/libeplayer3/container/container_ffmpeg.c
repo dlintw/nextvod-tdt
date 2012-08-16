@@ -842,8 +842,13 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 
     ffmpeg_printf(20, "find_streaminfo\n");
 
+#if LIBAVCODEC_VERSION_MAJOR < 54
     if (av_find_stream_info(avContext) < 0) {
         ffmpeg_err("Error av_find_stream_info\n");
+#else
+    if (avformat_find_stream_info(avContext, NULL) < 0) {
+        ffmpeg_err("Error avformat_find_stream_info\n");
+#endif
 #ifdef this_is_ok
         /* crow reports that sometimes this returns an error
          * but the file is played back well. so remove this
@@ -1514,7 +1519,7 @@ static int container_ffmpeg_seek(Context_t *context, float sec) {
         current = audioTrack;
 
     if (current == NULL) {
-        ffmpeg_err( "no track avaibale to seek\n");
+        ffmpeg_err( "no track available to seek\n");
         return cERR_CONTAINER_FFMPEG_ERR;
     }
 
