@@ -95,6 +95,7 @@ start()
     ${MAKEDEV} hdmi_cec
   fi
   ${MAKEDEV} ttyusb
+  ${MAKEDEV} rfkill
   ${MAKEDEV} sci
 
   ##rm -rf pts

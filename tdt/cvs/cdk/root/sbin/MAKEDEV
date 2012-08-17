@@ -43,6 +43,7 @@ hdmi_cec="  root root   0644"
     sci="  root root   0644"
  tundev="  root root   0644"
  ttyusb="  root root   0644"
+ rfkill="  root root   0644"
 
 MAXVT=63
 
@@ -301,6 +302,7 @@ cvt () {
 			bpamem) echo bpamem ;;
 			ramzswap) echo ramzswap ;;
 			ttyusb) echo ttyusb ;;
+			rfkill) echo rfkill ;;
 			tundev) echo tundev ;;
 			rc) echo rc ;;
 			vfd) echo vfd ;;
@@ -538,6 +540,7 @@ do
 		$0 $opts hdmi_cec
 		$0 $opts sci
 		$0 $opts ttyusb
+		$0 $opts rfkill
 		$0 $opts tundev
 		$0 $opts alsasnd
 		;;
@@ -2086,11 +2089,14 @@ do
 			makedev ttyUSB$i c $major $i $ttyusb
 		done
 		;;
+	rfkill)
+		makedev rfkill c 10 62 $rfkill
+		;;
 	tundev)
 		mkdir -p net
 		major=10
 		i=200
-		makedev net/tun c $major $i $tundev	
+		makedev net/tun c $major $i $tundev
 		;;
 	bluetooth)
 		major=216
