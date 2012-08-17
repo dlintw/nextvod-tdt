@@ -418,7 +418,7 @@ if ENABLE_WHITEBOX
 
 else
 if ENABLE_SPARK
-	echo "spark" > $(prefix)/$(release_dir)/etc/hostname
+	echo "spark" > $(prefix)/release_neutrino/etc/hostname
 	rm -f $(prefix)/release_neutrino/sbin/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
