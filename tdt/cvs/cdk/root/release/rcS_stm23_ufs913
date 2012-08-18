@@ -85,8 +85,13 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stm_v4l2.ko
    insmod $MODDIR/pseudocard.ko
 
+   insmod $MODDIR/frontend_platform.ko
+   insmod $MODDIR/socket.ko
+   insmod $MODDIR/lnbh221.ko
+   insmod $MODDIR/lnb_pio.ko
+   insmod $MODDIR/lnb_a8293.ko
    insmod $MODDIR/avl6222.ko
-   insmod $MODDIR/ufs912_cic.ko
+   insmod $MODDIR/ufs913_cic.ko
    if [ $player=='player191' ]; then
       # Full feature pti
       insmod $MODDIR/pti.ko waitMS=20 videoMem=4096

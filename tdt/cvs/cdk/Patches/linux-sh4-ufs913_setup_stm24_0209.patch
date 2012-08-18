@@ -37,9 +37,30 @@
   	/* Save unparsed command line copy for /proc/cmdline */
   	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
   	*cmdline_p = command_line;
---- linux-sh4/arch/sh/boards/mach-hdk7105/setup.c.org	2012-04-11 14:50:46.000000000 +0200
-+++ linux-sh4/arch/sh/boards/mach-hdk7105/setup.c	2012-07-15 16:51:02.304835437 +0200
-@@ -14,45 +14,81 @@
+--- linux-sh4/drivers/mtd/chips/cfi_util.c.org	2012-04-11 14:50:46.000000000 +0200
++++ linux-sh4/drivers/mtd/chips/cfi_util.c	2012-07-15 11:36:33.220376415 +0200
+@@ -83,7 +83,7 @@
+ 	cfi_send_gen_cmd(0xFF, 0, base, map, cfi, cfi->device_type, NULL);
+ 	/* M29W128G flashes require an additional reset command
+ 	   when exit qry mode */
+-	if ((cfi->mfr == CFI_MFR_ST) && (cfi->id == 0x227E || cfi->id == 0x7E))
++	if ((cfi->mfr == CFI_MFR_ST || cfi->mfr == 0x7F /* kdhong for EON */) && (cfi->id == 0x227E || cfi->id == 0x7E))
+ 		cfi_send_gen_cmd(0xF0, 0, base, map, cfi, cfi->device_type, NULL);
+ }
+ EXPORT_SYMBOL_GPL(cfi_qry_mode_off);
+--- linux-sh4/drivers/mtd/nand/nand_ids.c.org	2009-12-03 04:51:21.000000000 +0100
++++ linux-sh4/drivers/mtd/nand/nand_ids.c	2012-07-15 11:36:36.116376322 +0200
+@@ -82,6 +82,7 @@
+ 	/* 1 Gigabit */
+ 	{"NAND 128MiB 1,8V 8-bit",	0xA1, 0, 128, 0, LP_OPTIONS},
+ 	{"NAND 128MiB 3,3V 8-bit",	0xF1, 0, 128, 0, LP_OPTIONS},
++	{"NAND 128MiB 3,3V 8-bit",	0xD1, 0, 128, 0, LP_OPTIONS},    /* added by kdhong */
+ 	{"NAND 128MiB 1,8V 16-bit",	0xB1, 0, 128, 0, LP_OPTIONS16},
+ 	{"NAND 128MiB 3,3V 16-bit",	0xC1, 0, 128, 0, LP_OPTIONS16},
+ 
+--- a/arch/sh/boards/mach-hdk7105/setup.c	2012-07-07 18:39:46.000000000 +0200
++++ b/setup.c	2012-07-10 12:47:07.000000000 +0200
+@@ -14,154 +14,222 @@
  #include <linux/platform_device.h>
  #include <linux/delay.h>
  #include <linux/io.h>
@@ -83,16 +104,14 @@
 -#define HDK7105_PIO_PCI_RESET stm_gpio(15, 7)
 -#define HDK7105_GPIO_FLASH_WP stm_gpio(6, 4)
 +#define HDK7105_PIO_PHY_RESET stm_gpio(2, 7)
-+#define HDK7105_PIO_NAND_WP stm_gpio(11, 7)
-+#define HDK7105_PIO_NAND_CS stm_gpio(15, 5)
 +
 +const char *LMI_IO_partalias[] = { "v4l2-coded-video-buffers", "BPA2_Region1", "v4l2-video-buffers" ,
 +                                   "coredisplay-video", "gfx-memory", "BPA2_Region0", "LMI_VID", NULL };
  
 +/* Directfb application can be greatly optimized by using a different layout. */
 +//#define DIRECTFB
-+
-+#ifdef DIRECTFB
+ 
+++#ifdef CONFIG_BPA2_DIRECTFBOPTIMIZED
 +/*
 +0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
 +0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
@@ -117,7 +136,7 @@
 +    }, 
 + };
 +#else
- 
++
 +/*
 +0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
 +0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
@@ -145,17 +164,18 @@
  
  static void __init hdk7105_setup(char **cmdline_p)
  {
-@@ -62,106 +98,20 @@
- 	stx7105_early_device_init();
+ 	printk(KERN_INFO "STMicroelectronics HDK7105 "
+ 			"board initialisation\n");
  
- 	stx7105_configure_asc(2, &(struct stx7105_asc_config) {
+-	stx7105_early_device_init();
+-
+-	stx7105_configure_asc(2, &(struct stx7105_asc_config) {
 -			.routing.asc2 = stx7105_asc2_pio4,
 -			.hw_flow_control = 1,
 -			.is_console = 1, });
 -	stx7105_configure_asc(3, &(struct stx7105_asc_config) {
 -			.hw_flow_control = 1,
-+			.hw_flow_control = 0,
- 			.is_console = 0, });
+-			.is_console = 0, });
 -}
 -
 -/* PCI configuration */
@@ -178,16 +198,105 @@
 -	.pci_clk = 33333333,
 -	.pci_reset_gpio = HDK7105_PIO_PCI_RESET,
 -};
-+	stx7105_configure_asc(3, &(struct stx7105_asc_config) {
-+			.hw_flow_control = 0,
-+			.is_console = 1, });
++	#define OR32( a, b ) ( iowrite32( ( ioread32( a ) | b ), a ));
++	#define UPDATE32( a, b, c ) ( iowrite32(( ( ioread32( a ) & b ) | c ), a) );
++	#define WHILE_NE32( a, b, c ) while( ( ioread32( a ) & b ) != c );
++	#define POKE32( a, b ) iowrite32( b, a );
++
++#if 1
++
++	/* CKGA_PLL0_CFG ->setup pll0 */
++	UPDATE32(0xfe213000, 0xfff80000, 0x00001201)	// overclk
++	//	UPDATE32(0xfe213000, 0xfff80000, 0x00000f01)	// non overclk
++	
++	/* CKGA_PLL1_DIV0_CFG */
++	  POKE32(0xfe213b00, 0x00000001)
++	
++	
++	/* CKGA_PLL1_DIV1_CFG */
++	  POKE32(0xfe213b04, 0x00000001)
++	
++	
++	/* CKGA_PLL1_DIV2_CFG */
++	  POKE32(0xfe213b08, 0x00000001)
++	
++	
++	/* CKGA_PLL1_DIV3_CFG */
++	  POKE32(0xfe213b0c, 0x0000000f)
++	
++	
++	/* CKGA_PLL0LS_DIV4_CFG */
++	  POKE32(0xfe213a10, 0x00000000)
++	
++
++	/* CKGA_PLL1_DIV5_CFG */
++	  POKE32(0xfe213b14, 0x00000007)
++	
++	
++	/* CKGA_PLL0LS_DIV6_CFG	*/
++	  POKE32(0xfe213a18, 0x00000000)
++	
++	
++	/* CKGA_PLL0LS_DIV7_CFG */
++	  POKE32(0xfe213a1c, 0x00000000)
++	
++	
++	/* CKGA_PLL1_DIV8_CFG */
++	  POKE32(0xfe213b20, 0x00000003)
++	
++	
++	/* CKGA_PLL1_DIV9_CFG */
++	  POKE32(0xfe213b24, 0x00000003)
++	
++	
++	/* CKGA_PLL1_DIV10_CFG */
++	  POKE32(0xfe213b28, 0x00000003)
++	
++	
++	/* CKGA_PLL1_DIV11_CFG */
++	  POKE32(0xfe213b2c, 0x00000003)
++	
++	/* CKGA_PLL0LS_DIV12_CFG */
++	  POKE32(0xfe213a30, 0x00000001)		// overclk
++	
++	/* CKGA_PLL1_DIV12_CFG */
++	 // POKE32(0xfe213b30, 0x00000002)		// non overclk
++	
++	
++	/* CKGA_PLL1_DIV13_CFG */
++	  POKE32(0xfe213b34, 0x0000001f)
++	
++	
++	/* CKGA_PLL1_DIV14_CFG */
++	  POKE32(0xfe213b38, 0x00000017)
++	
++	
++	/* CKGA_PLL1_DIV15_CFG */
++	  POKE32(0xfe213b3c, 0x00000007)
++	
++	
++	/* CKGA_PLL1_DIV16_CFG */
++	  POKE32(0xfe213b40, 0x00000003)
++	
++	
++	/* CKGA_PLL1_DIV17_CFG */
++	  POKE32(0xfe213b44, 0x00000003)
++	
++	
++	/* CKGA_CLKOPSRC_SWITCH_CFG	*/
++		POKE32(0xfe213014, 0xa9aa59aa)	// overclk
++	//	 POKE32(0xfe213014, 0xaaaa59aa) // non overclk
++	
++	/* CKGA_CLKOPSRC_SWITCH_CFG2 */
++	  POKE32(0xfe213024, 0x0000000a)
++#endif
  
 -int pcibios_map_platform_irq(struct pci_dev *dev, u8 slot, u8 pin)
 -{
 -        /* We can use the standard function on this board */
 -	return stx7105_pcibios_map_platform_irq(&hdk7105_pci_config, pin);
-+	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
- }
+-}
++	/* DDR */
  
 -static struct platform_device hdk7105_leds = {
 -	.name = "leds-gpio",
@@ -220,13 +329,36 @@
 -	{ 0x00000080, KEY_ENTER, "Enter (SWF1)" },
 -	{ 0x00100000, KEY_ESC, "Escape (SWF4)" },
 -};
--
++    int lmipl_sel_odt_int_del3_0 = 3;
++    int lmipl_dqs_valid_offset8_0 = 0;
++    int lmipl_sel_dqs_valid_del3_0 = 0;
++    int lmipl_dsq0_offset8_0 = 0x1e2;
++    int lmipl_dsq1_offset8_0 = 0x1e2;
++    int lmipl_dsq2_offset8_0 = 0x1e2;
++    int lmipl_dsq3_offset8_0 = 0x1e2;
++
++//	unsigned int sata = readl( 0xFE209000 + 0x824 );
++//	int DET = (sata & 0xf );
++	
++//	if( DET == 3 )
++	{
++		lmipl_dsq0_offset8_0 = 0x1ee;
++		lmipl_dsq1_offset8_0 = 0x1ee;
++		lmipl_dsq2_offset8_0 = 0x1ee;
++		lmipl_dsq3_offset8_0 = 0x1ee;
++	}
++	
++    unsigned int a = ((lmipl_sel_dqs_valid_del3_0<<27) | (lmipl_dsq2_offset8_0<<18) | (lmipl_dsq1_offset8_0<<9) | lmipl_dsq0_offset8_0);
++    unsigned int b = ((lmipl_sel_odt_int_del3_0<<27) | (lmipl_dqs_valid_offset8_0<<18) | lmipl_dsq3_offset8_0);
+ 
 -static struct tm1668_character hdk7105_front_panel_characters[] = {
 -	TM1668_7_SEG_HEX_DIGITS,
 -	TM1668_7_SEG_HEX_DIGITS_WITH_DOT,
 -	TM1668_7_SEG_SEGMENTS,
 -};
--
++	POKE32( 0xfe0011a8, a );	
++	POKE32( 0xfe0011ac, b );	// 1dc
+ 
 -static struct platform_device hdk7105_front_panel = {
 -	.name = "tm1668",
 -	.id = -1,
@@ -246,9 +378,18 @@
 -		.text = "7105",
 -	},
 -};
--
--
--
++	stx7105_early_device_init();
+ 
++	stx7105_configure_asc(2, &(struct stx7105_asc_config) {
++			.hw_flow_control = 0,
++			.is_console = 0, });
++	stx7105_configure_asc(3, &(struct stx7105_asc_config) {
++			.hw_flow_control = 0,
++			.is_console = 1, });
+ 
++	bpa2_init(bpa2_parts_table, ARRAY_SIZE(bpa2_parts_table));
++}
+ 
  static int hdk7105_phy_reset(void *bus)
  {
 -	gpio_set_value(HDK7105_PIO_PHY_RESET, 0);
@@ -260,7 +401,7 @@
  
  	return 1;
  }
-@@ -180,29 +130,105 @@
+@@ -180,29 +248,105 @@
  	.resource	= (struct resource[]) {
  		{
  			.start		= 0x00000000,
@@ -303,7 +444,7 @@
 +			{
 +				.name = "NOR Emergency Root",
 +				.size = 0x00180000,
- 				.offset = MTDPART_OFS_NXTBLK,
++				.offset = MTDPART_OFS_NXTBLK,
 +			},
 +			{
 +				.name = "NOR Box Configuration",
@@ -324,8 +465,8 @@
 +				.name = "NOR 4M",
 +				.size = 0x00400000,
 +				.offset = 0x00400000,
- 			}
- 		},
++			}
++		},
 +#else
 +		.nr_parts	= 7,
 +		.parts		=  (struct mtd_partition []) {
@@ -350,7 +491,7 @@
 +			{
 +				.name = "NOR  Emergency Kernel (ro)",
 +				.size = 0x001c0000,
-+				.offset = MTDPART_OFS_NXTBLK,
+ 				.offset = MTDPART_OFS_NXTBLK,
 +				.mask_flags = MTD_WRITEABLE,
 +			},
 +			{
@@ -371,13 +512,13 @@
 +				.name = "NOR  Kernel",
 +				.size = 0x00400000,
 +				.offset = 0x00400000 /*MTDPART_OFS_NXTBLK*/,
-+			}
-+		},
+ 			}
+ 		},
 +#endif
  	},
  };
  
-@@ -210,18 +236,39 @@
+@@ -210,18 +354,39 @@
  struct stm_nand_bank_data hdk7105_nand_flash = {
  	.csn		= 1,
  	.options	= NAND_NO_AUTOINCR | NAND_USE_FLASH_BBT,
@@ -420,7 +561,7 @@
  	.timing_data		= &(struct stm_nand_timing_data) {
  		.sig_setup	= 50,		/* times in ns */
  		.sig_hold	= 50,
-@@ -233,130 +280,25 @@
+@@ -233,130 +398,27 @@
  		.rd_off		= 40,
  		.chip_delay	= 30,		/* in us */
  	},
@@ -546,33 +687,18 @@
  			.routing.ssc0.mtsr = stx7105_ssc0_mtsr_pio2_3, });
 -	/* SPI - SerialFLASH */
 -	stx7105_configure_ssc_spi(1, &(struct stx7105_ssc_config) {
--			.routing.ssc1.sclk = stx7105_ssc1_sclk_pio2_5,
--			.routing.ssc1.mtsr = stx7105_ssc1_mtsr_pio2_6,
--			.routing.ssc1.mrst = stx7105_ssc1_mrst_pio2_7});
++
 +	/* I2C_xxxB -  */
 +	stx7105_configure_ssc_i2c(1, &(struct stx7105_ssc_config) {
-+			.routing.ssc0.sclk = stx7105_ssc1_sclk_pio2_5,
-+			.routing.ssc0.mtsr = stx7105_ssc1_mtsr_pio2_6, });
+ 			.routing.ssc1.sclk = stx7105_ssc1_sclk_pio2_5,
+-			.routing.ssc1.mtsr = stx7105_ssc1_mtsr_pio2_6,
+-			.routing.ssc1.mrst = stx7105_ssc1_mrst_pio2_7});
++			.routing.ssc1.mtsr = stx7105_ssc1_mtsr_pio2_6, });
++
  	/* I2C_xxxC - JN1 (NIM), JN3, UT1 (CI chip), US2 (EEPROM) */
  	stx7105_configure_ssc_i2c(2, &(struct stx7105_ssc_config) {
  			.routing.ssc2.sclk = stx7105_ssc2_sclk_pio3_4,
-@@ -367,7 +309,7 @@
- 			.routing.ssc3.mtsr = stx7105_ssc3_mtsr_pio3_7, });
- 
- 	stx7105_configure_usb(0, &(struct stx7105_usb_config) {
--			.ovrcur_mode = stx7105_usb_ovrcur_active_low,
-+			.ovrcur_mode = stx7105_usb_ovrcur_disabled,
- 			.pwr_enabled = 1,
- 			.routing.usb0.ovrcur = stx7105_usb0_ovrcur_pio4_4,
- 			.routing.usb0.pwr = stx7105_usb0_pwr_pio4_5, });
-@@ -382,40 +324,18 @@
- 
- 	stx7105_configure_ethernet(0, &(struct stx7105_ethernet_config) {
- 			.mode = stx7105_ethernet_mode_mii,
--			.ext_clk = 0,
-+			.ext_clk = 1,
- 			.phy_bus = 0,
- 			.phy_addr = 0,
+@@ -388,33 +450,14 @@
  			.mdio_bus_data = &stmmac_mdio_bus,
  		});
  
@@ -603,28 +729,8 @@
  			.rbn.flex_connected = -1,});
  
 -	spi_register_board_info(&hdk7105_serial_flash, 1);
--
++	stx7105_configure_audio(&(struct stx7105_audio_config) {
++			.spdif_player_output_enabled = 1, });
+ 
  	return platform_add_devices(hdk7105_devices,
  			ARRAY_SIZE(hdk7105_devices));
- }
---- linux-sh4/drivers/mtd/chips/cfi_util.c.org	2012-04-11 14:50:46.000000000 +0200
-+++ linux-sh4/drivers/mtd/chips/cfi_util.c	2012-07-15 11:36:33.220376415 +0200
-@@ -83,7 +83,7 @@
- 	cfi_send_gen_cmd(0xFF, 0, base, map, cfi, cfi->device_type, NULL);
- 	/* M29W128G flashes require an additional reset command
- 	   when exit qry mode */
--	if ((cfi->mfr == CFI_MFR_ST) && (cfi->id == 0x227E || cfi->id == 0x7E))
-+	if ((cfi->mfr == CFI_MFR_ST || cfi->mfr == 0x7F /* kdhong for EON */) && (cfi->id == 0x227E || cfi->id == 0x7E))
- 		cfi_send_gen_cmd(0xF0, 0, base, map, cfi, cfi->device_type, NULL);
- }
- EXPORT_SYMBOL_GPL(cfi_qry_mode_off);
---- linux-sh4/drivers/mtd/nand/nand_ids.c.org	2009-12-03 04:51:21.000000000 +0100
-+++ linux-sh4/drivers/mtd/nand/nand_ids.c	2012-07-15 11:36:36.116376322 +0200
-@@ -82,6 +82,7 @@
- 	/* 1 Gigabit */
- 	{"NAND 128MiB 1,8V 8-bit",	0xA1, 0, 128, 0, LP_OPTIONS},
- 	{"NAND 128MiB 3,3V 8-bit",	0xF1, 0, 128, 0, LP_OPTIONS},
-+	{"NAND 128MiB 3,3V 8-bit",	0xD1, 0, 128, 0, LP_OPTIONS},    /* added by kdhong */
- 	{"NAND 128MiB 1,8V 16-bit",	0xB1, 0, 128, 0, LP_OPTIONS16},
- 	{"NAND 128MiB 3,3V 16-bit",	0xC1, 0, 128, 0, LP_OPTIONS16},
- 
