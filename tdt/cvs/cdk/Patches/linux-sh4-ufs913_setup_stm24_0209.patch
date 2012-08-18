@@ -111,7 +111,7 @@
 +/* Directfb application can be greatly optimized by using a different layout. */
 +//#define DIRECTFB
  
-++#ifdef CONFIG_BPA2_DIRECTFBOPTIMIZED
++#ifdef CONFIG_BPA2_DIRECTFBOPTIMIZED
 +/*
 +0x40000000 - 0x403FFFFF - cocpu 1 ram (4mb)
 +0x40400000 - 0x407FFFFF - cocpu 2 ram (4mb)
