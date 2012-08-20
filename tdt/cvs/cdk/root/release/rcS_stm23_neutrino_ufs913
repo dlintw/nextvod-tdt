@@ -170,5 +170,5 @@ fi
 
 #never reached
 echo "REBOOT UFS913"/dev/vfd
-echo "REBOOT UFS913
+echo "REBOOT UFS913"
 reboot
