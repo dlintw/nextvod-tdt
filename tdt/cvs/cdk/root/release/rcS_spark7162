@@ -70,7 +70,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    fi
    insmod $MODDIR/pseudocard.ko
 
-   insmod $MODDIR/spark7162.ko
+   insmod $MODDIR/spark7162.ko UnionTunerType=t
    if [ $player -gt 131 ]; then
 	insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
 	insmod $MODDIR/stm_monitor.ko
