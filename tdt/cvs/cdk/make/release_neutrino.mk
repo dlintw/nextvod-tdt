@@ -1349,6 +1349,9 @@ endif
 	cp -p $(targetprefix)/usr/sbin/ethtool $(prefix)/release_neutrino/usr/sbin/
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/tuxtxt
 
+if !ENABLE_UFS913
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-avl6222.fw
+endif
 
 #######################################################################################
 	mkdir -p $(prefix)/release_neutrino/tuxbox/config
