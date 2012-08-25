@@ -78,7 +78,7 @@ imagemagick;6.7.7-7;ImageMagick-6.7.7-7;ImageMagick-6.7.7-7.tar.bz2;extract:Imag
 #
 # contrib libs
 #
-libboost;boost-1.50.0;boost_1_50_0;boost_1_50_0.tar.bz2;extract:boost_1_50_0.tar.bz2;patch:libboost.diff
+libboost;boost-1.51.0;boost_1_51_0;boost_1_51_0.tar.bz2;extract:boost_1_51_0.tar.bz2;patch:libboost.diff
 ncurses;5.5;ncurses-5.5;ncurses-5.5.tar.gz;extract:ncurses-5.5.tar.gz
 libz;1.2.3;zlib-1.2.3;zlib-1.2.3.tar.bz2;extract:zlib-1.2.3.tar.bz2
 libreadline;5.2;readline-5.2;readline-5.2.tar.gz;extract:readline-5.2.tar.gz
