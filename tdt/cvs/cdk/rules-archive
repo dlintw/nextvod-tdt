@@ -81,6 +81,7 @@ ncurses-5.5.tar.gz;http://ftp.gnu.org/pub/gnu/ncurses
 zlib-1.2.3.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/libpng
 zlib-1.2.5.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/libpng
 zlib-1.2.6.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/libpng
+zlib-1.2.7.tar.bz2;http://zlib.net
 readline-5.2.tar.gz;ftp://ftp.cwru.edu/pub/bash
 freetype-2.3.5.tar.bz2;http://download.savannah.gnu.org/releases/freetype
 freetype-2.4.8.tar.bz2;http://download.savannah.gnu.org/releases/freetype
@@ -164,7 +165,7 @@ tinyxml_2_6_2.tar.gz;http://ignum.dl.sourceforge.net/project/tinyxml/tinyxml/2.6
 elementtree-1.2.6-20050316.tar.gz;http://effbot.org/media/downloads
 libxml2-2.6.30.tar.gz;ftp://ftp.gnome.org/pub/GNOME/sources/libxml2/2.6
 libxml2-2.7.8.tar.gz;http://xmlsoft.org/sources/
-libxslt-1.1.24.tar.gz;http://xmlsoft.org/sources
+libxslt-1.1.26.tar.gz;http://xmlsoft.org/sources
 lxml-2.0.5.tgz;http://launchpad.net/lxml/2.0/2.0.5/+download
 setuptools-0.6c8.tar.gz;http://pypi.python.org/packages/source/s/setuptools
 Twisted-8.2.0.tar.bz2;http://twistedmatrix.com/Releases/Twisted/8.2
