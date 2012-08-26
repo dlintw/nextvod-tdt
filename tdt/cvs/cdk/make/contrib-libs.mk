@@ -564,6 +564,14 @@ $(DEPDIR)/lcms.do_compile: $(DEPDIR)/lcms.do_prepare
 		$(MAKE)
 	touch $@
 
+$(DEPDIR)/min-lcms $(DEPDIR)/std-lcms $(DEPDIR)/max-lcms \
+$(DEPDIR)/lcms: \
+$(DEPDIR)/%lcms: $(DEPDIR)/lcms.do_compile
+	cd @DIR_lcms@ && \
+		@INSTALL_lcms@
+#	@DISTCLEANUP_lcms@
+	[ "x$*" = "x" ] && touch $@ || true
+
 #
 # directfb
 #
