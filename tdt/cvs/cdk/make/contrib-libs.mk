@@ -699,7 +699,7 @@ $(DEPDIR)/%expat: $(DEPDIR)/expat.do_compile
 #
 # fontconfig
 #
-$(DEPDIR)/fontconfig.do_prepare: bootstrap libz libxml2 @DEPENDS_fontconfig@
+$(DEPDIR)/fontconfig.do_prepare: bootstrap libz expat freetype @DEPENDS_fontconfig@
 	@PREPARE_fontconfig@
 	touch $@
 
@@ -709,7 +709,7 @@ $(DEPDIR)/fontconfig.do_compile: $(DEPDIR)/fontconfig.do_prepare
 		libtoolize -f -c && \
 		autoreconf --verbose --force --install -I$(hostprefix)/share/aclocal && \
 		$(BUILDENV) \
-		CFLAGS="$(TARGET_CFLAGS) -Os -I$(targetprefix)/usr/include/libxml2" \
+		CFLAGS="$(TARGET_CFLAGS) -Os" \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
