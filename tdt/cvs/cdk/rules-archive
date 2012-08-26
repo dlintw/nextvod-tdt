@@ -167,7 +167,7 @@ libxml2-2.6.30.tar.gz;ftp://ftp.gnome.org/pub/GNOME/sources/libxml2/2.6
 libxml2-2.7.8.tar.gz;http://xmlsoft.org/sources/
 libxslt-1.1.26.tar.gz;http://xmlsoft.org/sources
 lxml-2.2.8.tgz;http://launchpad.net/lxml/2.2/2.2.8/+download
-setuptools-0.6c8.tar.gz;http://pypi.python.org/packages/source/s/setuptools
+setuptools-0.6c11.tar.gz;http://pypi.python.org/packages/source/s/setuptools
 Twisted-8.2.0.tar.bz2;http://twistedmatrix.com/Releases/Twisted/8.2
 TwistedWeb2-8.1.0.tar.bz2;http://twistedmatrix.com/Releases/Web2/8.1
 Imaging-1.1.7.tar.gz;http://effbot.org/downloads
