@@ -248,7 +248,10 @@ int32_t main(int32_t argc, char* argv[])
             }
 
             if(nand == NAND_RAW) {
-                sprintf(partitionName, "/2/O3/"); // NAND RAW
+                if (productCode == 0x11321006)
+                    sprintf(partitionName, "/2/3/"); // NAND RAW
+                else
+                    sprintf(partitionName, "/2/O3/"); // NAND RAW
                 strcat(partitionName, inputBuffer);
             }
             else if(nand == NAND_YAFFS2) {
@@ -264,7 +267,10 @@ int32_t main(int32_t argc, char* argv[])
 
                 printf("BS: %d\n", blockSize);
 
-                sprintf(partitionName, "/%X/O5/", blockSize); // NAND YAFFS2
+                if (productCode == 0x11321006)
+                    sprintf(partitionName, "/%X/5/", blockSize); // NAND YAFFS2
+                else
+                    sprintf(partitionName, "/%X/O5/", blockSize); // NAND YAFFS2
                 strcat(partitionName, inputBuffer);
             }
 

@@ -18,7 +18,7 @@ MKFSJFFS2=$TUFSBOXDIR/host/bin/mkfs.jffs2
 SUMTOOL=$TUFSBOXDIR/host/bin/sumtool
 MUP=$CURDIR/mup
 
-OUTFILE=$OUTDIR/update_w_fw.img
+OUTFILE=$OUTDIR/ufs913.software.V1.00.B00.data
 
 if [ ! -e $OUTDIR ]; then
   mkdir $OUTDIR
@@ -55,8 +55,8 @@ $SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin
 # To get the partitions erased we first need to fake an yaffs2 update
 $MUP c $OUTFILE << EOF
 3
-0x00000000, 0x800000, 3, foo
-0x00800000, 0x4000000, 3, foo
+0x00000000, 0x00800000, 3, foo
+0x00800000, 0x04000000, 3, foo
 0x00400000, 0x0, 0, uImage
 0x00000000, 0x0, 1, mtd_fw.sum.bin
 0x00800000, 0x0, 1, mtd_root.sum.bin
@@ -66,7 +66,7 @@ EOF
 rm -f $CURDIR/uImage
 rm -f $CURDIR/mtd_fw.bin
 rm -f $CURDIR/mtd_root.bin
-rm -f $CURDIR/mtd_fw.sum.bin
-rm -f $CURDIR/mtd_root.sum.bin
+#rm -f $CURDIR/mtd_fw.sum.bin
+#rm -f $CURDIR/mtd_root.sum.bin
 
 zip $OUTFILE.zip $OUTFILE

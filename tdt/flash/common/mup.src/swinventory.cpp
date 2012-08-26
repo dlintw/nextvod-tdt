@@ -137,8 +137,8 @@ void SwInventory::setPartition(uint32_t flashOffset, char * filename, uint8_t * 
 	this->mChildData = (uint8_t*)malloc(this->mUnity->getData(NULL));
 	this->mChildDataLength = this->mUnity->getData(&this->mChildData);
 
-	if(this->mChildDataLength % 0x100 != 0) {
-		this->mChildDataLength += (0x100 - (this->mChildDataLength % 0x100));
+	if(this->mChildDataLength % 0x200 != 0) {
+		this->mChildDataLength += (0x200 - (this->mChildDataLength % 0x200));
 		this->mHeader->mImageSize = this->mChildDataLength;
 		memcpy(this->mData, this->mHeader, sizeof(tSWInventory));
 	}
