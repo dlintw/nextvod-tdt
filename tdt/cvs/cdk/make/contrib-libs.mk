@@ -1565,10 +1565,12 @@ $(DEPDIR)/python.do_prepare: bootstrap host_python openssl openssl-dev sqlite @D
 	touch $@
 
 $(DEPDIR)/python.do_compile: $(DEPDIR)/python.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
 	( cd @DIR_python@ && \
-		autoconf && \
 		CONFIG_SITE= \
 		$(BUILDENV) \
+		autoreconf -Wcross --verbose --install --force Modules/_ctypes/libffi && \
+		autoconf && \
 		./configure \
 			--build=$(build) \
 			--host=$(target) \
