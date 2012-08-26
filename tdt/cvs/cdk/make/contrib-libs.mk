@@ -1519,20 +1519,28 @@ $(DEPDIR)/%twistedweb2: $(DEPDIR)/twistedweb2.do_compile
 #
 # pilimaging
 #
-$(DEPDIR)/pilimaging: bootstrap python @DEPENDS_pilimaging@
+$(DEPDIR)/pilimaging.do_prepare: bootstrap python @DEPENDS_pilimaging@
 	@PREPARE_pilimaging@
+	touch $@
+
+$(DEPDIR)/pilimaging.do_compile: $(DEPDIR)/pilimaging.do_prepare
 	cd @DIR_pilimaging@ && \
 		echo 'JPEG_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' > setup_site.py && \
 		echo 'ZLIB_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
 		echo 'FREETYPE_ROOT = "$(targetprefix)/usr/lib", "$(targetprefix)/usr/include"' >> setup_site.py && \
 		CC='$(target)-gcc' LDSHARED='$(target)-gcc -shared' \
 		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
-		$(crossprefix)/bin/python ./setup.py build && \
-		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr && \
-		@DISTCLEANUP_pilimaging@
-	@DISTCLEANUP_pilimaging@
-	@touch $@
-	@TUXBOX_YAUD_CUSTOMIZE@
+		$(crossprefix)/bin/python ./setup.py build
+	touch $@
+
+$(DEPDIR)/min-pilimaging $(DEPDIR)/std-pilimaging $(DEPDIR)/max-pilimaging \
+$(DEPDIR)/pilimaging: \
+$(DEPDIR)/%pilimaging: $(DEPDIR)/pilimaging.do_compile
+	cd @DIR_pilimaging@ && \
+		PYTHONPATH=$(targetprefix)/usr/lib/python2.6/site-packages \
+		$(crossprefix)/bin/python ./setup.py install --root=$(targetprefix) --prefix=/usr
+#	@DISTCLEANUP_pilimaging@
+	[ "x$*" = "x" ] && touch $@ || true
 
 #
 # pyopenssl
