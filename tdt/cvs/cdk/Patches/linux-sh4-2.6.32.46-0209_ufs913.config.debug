@@ -800,7 +800,11 @@ CONFIG_SERIO_SERPORT=y
 #
 # Character devices
 #
-# CONFIG_VT is not set
+CONFIG_VT=y
+# CONFIG_CONSOLE_TRANSLATIONS is not set
+# CONFIG_VT_CONSOLE is not set
+CONFIG_HW_CONSOLE=y
+# CONFIG_VT_HW_CONSOLE_BINDING is not set
 # CONFIG_DEVKMEM is not set
 # CONFIG_SERIAL_NONSTANDARD is not set
 
@@ -1023,6 +1027,12 @@ CONFIG_FB_SOFTWARE_DRAWING_HELPERS=y
 # Display device support
 #
 # CONFIG_DISPLAY_SUPPORT is not set
+
+#
+# Console display driver support
+#
+CONFIG_DUMMY_CONSOLE=y
+# CONFIG_FRAMEBUFFER_CONSOLE is not set
 # CONFIG_LOGO is not set
 CONFIG_SOUND=y
 CONFIG_SOUND_OSS_CORE=y
