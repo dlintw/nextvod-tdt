@@ -483,7 +483,8 @@ COMMONPATCHES_24 = \
 		$(if $(P0209)$(P0210)$(P0211),linux-sh4-mmap_stm24.patch) \
 		$(if $(P0209)$(P0210)$(P0211),linux-sh4-remove_pcm_reader_stm24.patch) \
 		$(if $(P0209),linux-sh4-dwmac_stm24_0209.patch) \
-		$(if $(P0207),linux-sh4-sti7100_missing_clk_alias_stm24$(PATCH_STR).patch)
+		$(if $(P0207),linux-sh4-sti7100_missing_clk_alias_stm24$(PATCH_STR).patch) \
+		$(if $(P0209),linux-sh4-directfb_stm24$(PATCH_STR).patch)
 
 
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
