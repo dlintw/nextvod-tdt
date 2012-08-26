@@ -125,7 +125,7 @@ libdvdnav;4.1.3;libdvdnav-4.1.3;libdvdnav-4.1.3.tar.bz2:libdvdnav_4.1.3-3.diff;e
 libdvdread;4.1.3;libdvdread-4.1.3;libdvdread-4.1.3.tar.bz2:libdvdread_4.1.3-5.diff;extract:libdvdread-4.1.3.tar.bz2;patch:libdvdread_4.1.3-5.diff
 ffmpeg;0.11.1;ffmpeg-0.11.1;ffmpeg-0.11.1.tar.gz:ffmpeg-0.11.patch;extract:ffmpeg-0.11.1.tar.gz;patch:ffmpeg-0.11.patch
 libass;0.9.11;libass-0.9.11;libass-0.9.11.tar.gz;extract:libass-0.9.11.tar.gz
-libcap;2.22;libcap-2.22;libcap-2.22.tar.gz;extract:libcap-2.22.tar.gz
+libcap;2.22;libcap-2.22;libcap-2.22.tar.bz2;extract:libcap-2.22.tar.bz2
 libogg;1.2.2;libogg-1.2.2;libogg-1.2.2.tar.gz;extract:libogg-1.2.2.tar.gz
 libflac;1.2.1;flac-1.2.1;flac-1.2.1.tar.gz:flac-1.2.1.patch;extract:flac-1.2.1.tar.gz;patch:flac-1.2.1.patch
 evebrowser;0.0.1;evebrowser-0.0.1
