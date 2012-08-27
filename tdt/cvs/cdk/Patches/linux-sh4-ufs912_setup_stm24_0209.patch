@@ -47,19 +47,6 @@
  			/* This is a signal from SPI block */
  			/* Hope this is set correctly by default */
  
---- a/arch/sh/Kconfig.org	2012-03-08 08:58:51.000000000 -0800
-+++ b/arch/sh/Kconfig	2012-03-09 08:48:35.000000000 -0800
-@@ -924,6 +924,10 @@
- 
- 	  If unsure, say N.
- 
-+config BPA2_DIRECTFBOPTIMIZED
-+	bool "Kernel bpa2 map"
-+	depends on BPA2
-+
- choice
- 	prompt "Kernel command line"
- 	optional
 --- a/arch/sh/boards/mach-mb618/setup.c.org	2012-03-08 08:58:51.000000000 -0800
 +++ b/arch/sh/boards/mach-mb618/setup.c	2012-03-09 08:48:35.000000000 -0800
 @@ -17,35 +17,78 @@
