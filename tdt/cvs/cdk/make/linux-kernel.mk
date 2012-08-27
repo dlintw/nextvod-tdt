@@ -483,7 +483,9 @@ COMMONPATCHES_24 = \
 		$(if $(P0209)$(P0210)$(P0211),linux-sh4-mmap_stm24.patch) \
 		$(if $(P0209)$(P0210)$(P0211),linux-sh4-remove_pcm_reader_stm24.patch) \
 		$(if $(P0209),linux-sh4-dwmac_stm24_0209.patch) \
-		$(if $(P0207),linux-sh4-sti7100_missing_clk_alias_stm24$(PATCH_STR).patch)
+		$(if $(P0207),linux-sh4-sti7100_missing_clk_alias_stm24$(PATCH_STR).patch) \
+		$(if $(P0209),linux-sh4-directfb_stm24$(PATCH_STR).patch)
+
 
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-tf7700_setup_stm24$(PATCH_STR).patch \
@@ -954,6 +956,7 @@ $(DEPDIR)/linux-kernel.do_prepare: \
 	$(INSTALL) -m644 Patches/$(HOST_KERNEL_CONFIG) $(KERNEL_DIR)/.config
 	-rm $(KERNEL_DIR)/localversion*
 	echo "$(KERNELSTMLABEL)" > $(KERNEL_DIR)/localversion-stm
+	if [ `grep -c "CONFIG_BPA2_DIRECTFBOPTIMIZED" $(KERNEL_DIR)/.config` -eq 0 ]; then echo "# CONFIG_BPA2_DIRECTFBOPTIMIZED is not set" >> $(KERNEL_DIR)/.config; fi
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh oldconfig
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/asm
 	$(MAKE) -C $(KERNEL_DIR) ARCH=sh include/linux/version.h
@@ -978,6 +981,7 @@ $(DEPDIR)/linux-kernel.do_compile: \
 		export PATH=$(hostprefix)/bin:$(PATH) && \
 		$(MAKE) ARCH=sh CROSS_COMPILE=$(target)- mrproper && \
 		@M4@ $(buildprefix)/Patches/$(HOST_KERNEL_CONFIG) > .config && \
+	if [ `grep -c "CONFIG_BPA2_DIRECTFBOPTIMIZED" .config` -eq 0 ]; then echo "# CONFIG_BPA2_DIRECTFBOPTIMIZED is not set" >> .config; fi && \
 		sed $(GRAPHICFWDIRECTFB_SED_CONF) .config && \
 		$(MAKE) $(if $(TF7700),TF7700=y) ARCH=sh CROSS_COMPILE=$(target)- uImage modules
 	touch $@
