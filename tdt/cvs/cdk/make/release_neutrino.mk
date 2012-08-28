@@ -505,6 +505,8 @@ if ENABLE_SPARK
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
 
+	cp -dp $(buildprefix)/root/etc/lircd_spark.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 else
 if ENABLE_SPARK7162
 
@@ -519,6 +521,8 @@ if ENABLE_SPARK7162
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
 
+	cp -dp $(buildprefix)/root/etc/lircd_spark7162.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 else
 if ENABLE_HL101
 
