@@ -2056,6 +2056,14 @@ do
 			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 38` $video
 		done
 		;;
+	dvb_ca_3nd)
+		mkdir -p dvb
+		for i in 0
+		do
+			mkdir -p dvb/adapter$i
+			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 38` $video
+		done
+		;;
 	dvb_ca_no)
 		#on no ci boxes the hw descrambler is on ca0. So we link ca1 also to ca0
 		#and can (not must) use the same config
