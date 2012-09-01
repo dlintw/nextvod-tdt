@@ -2061,7 +2061,7 @@ do
 		for i in 0
 		do
 			mkdir -p dvb/adapter$i
-			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 38` $video
+			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 22` $video
 		done
 		;;
 	dvb_ca_no)
