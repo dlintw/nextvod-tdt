@@ -5,11 +5,14 @@ BASEDIR=$CURDIR/../..
 TUFSBOXDIR=$BASEDIR/tufsbox
 CDKDIR=$BASEDIR/cvs/cdk
 
+EXTRADIR=$CURDIR/extra
 SCRIPTDIR=$CURDIR/scripts
 TMPDIR=$CURDIR/tmp
 TMPROOTDIR=$TMPDIR/ROOT
 TMPKERNELDIR=$TMPDIR/KERNEL
 TMPFWDIR=$TMPDIR/FW
+TMPTINYROOTDIR=$TMPDIR/TINYROOT
+TMPTINYKERNELDIR=$TMPDIR/TINYKERNEL
 
 OUTDIR=$CURDIR/out
 
@@ -63,22 +66,18 @@ if [ ! -e $CURDIR/mup ]; then
 fi
 echo "Flashtool mup exists"
 echo "-----------------------------------------------------------------------"
+echo "Creating tiny image..."
+$SCRIPTDIR/prepare_tiny.sh $CURDIR $EXTRADIR $TMPTINYROOTDIR $TMPTINYKERNELDIR
+$SCRIPTDIR/flash_tiny.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPTINYKERNELDIR $TMPTINYROOTDIR
+
+echo "-----------------------------------------------------------------------"
 echo "Checking targets..."
 echo "Found flashtarget:"
-echo "   1) KERNEL with ROOT"
-echo "   2) KERNEL with ROOT and FW"
-echo "   3) KERNEL"
-echo "   4) FW"
-read -p "Select flashtarget (1-4)? "
+echo "   1) KERNEL with ROOT and FW"
+read -p "Select flashtarget (1-1)? "
 case "$REPLY" in
-	1)  echo "Creating KERNEL with ROOT..."
-		$SCRIPTDIR/flash_part_wo_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR;;
-	2)  echo "Creating KERNEL with ROOT and FW..."
+	1)  echo "Creating KERNEL with ROOT and FW..."
 		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPFWDIR $TMPROOTDIR;;
-	3)  echo "Creating KERNEL..."
-		$SCRIPTDIR/flash_part_kernel.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR;;
-	4)  echo "Creating FW..."
-		$SCRIPTDIR/flash_part_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPFWDIR;;
 	*)  "Invalid Input! Exiting..."
 		exit 3;;
 esac
