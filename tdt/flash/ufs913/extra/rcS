@@ -4,6 +4,8 @@
 /sbin/ifconfig lo 127.0.0.1
 /bin/hostname $HOSTNAME
 
+sleep 4
+
 echo "Mount usb /dev/sda1"
 mount /dev/sda1 /mnt
 if [ ! -d /mnt/kathrein/ufs913 ]; then
@@ -14,19 +16,21 @@ fi
 echo "Check fw"
 if [ -e /mnt/kathrein/ufs913/mtd_fw.sum.bin ]; then
   echo "Write fw"
-  dd if=/mnt/kathrein/ufs913/mtd_fw.sum.bin of=/dev/mtd8
+  flash_eraseall -j /dev/mtd8
+  dd of=/dev/mtdblock8 if=/mnt/kathrein/ufs913/mtd_fw.sum.bin
 fi
 
 echo "Check rootfs"
 if [ -e /mnt/kathrein/ufs913/mtd_root.sum.bin ]; then
   echo "Write fw"
-  dd if=/mnt/kathrein/ufs913/mtd_root.sum.bin of=/dev/mtdblock9
+  flash_eraseall -j /dev/mtd9
+  dd of=/dev/mtdblock9 if=/mnt/kathrein/ufs913/mtd_root.sum.bin
 fi
 
 echo "Check fw"
-if [ -e /mnt/kathrein/ufs913/uImage ]; then
+if [ -e /mnt/kathrein/ufs913/uImage.bin ]; then
   echo "Write fw"
-  dd if=/mnt/kathrein/ufs913/uImage of=/dev/mtdblock6
+  dd if=/mnt/kathrein/ufs913/uImage.bin of=/dev/mtdblock6
 fi
 
 echo "Reboot"

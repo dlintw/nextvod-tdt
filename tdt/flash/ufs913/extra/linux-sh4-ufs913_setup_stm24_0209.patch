@@ -523,7 +523,7 @@
  	},
  };
  
-@@ -210,18 +354,39 @@
+@@ -210,153 +359,71 @@
  struct stm_nand_bank_data hdk7105_nand_flash = {
  	.csn		= 1,
  	.options	= NAND_NO_AUTOINCR | NAND_USE_FLASH_BBT,
@@ -548,28 +548,34 @@
 +	.partitions	= (struct mtd_partition []) {
 +		{
 +			.name	= "NAND FW        0x0000.0000-0x007F.FFFF (  8MB)",
-+			.offset	= 0,
-+			.size 	= 0x00800000
++			.size 	= 0x00800000,
++			.offset	= 0
 +		},
 +		{
 +			.name	= "NAND ROOT      0x0080.0000-0x047F.FFFF ( 64MB)",
-+			.offset = MTDPART_OFS_NXTBLK,
 +			.size   = 0x04000000,
++			.offset = MTDPART_OFS_APPEND
 +		},
 +		{
 +			.name	= "NAND DATA      0x0480.0000-0x07FF.FFFF ( 56MB)",
-+			.offset = MTDPART_OFS_NXTBLK,
-+			.size	= MTDPART_SIZ_FULL
++			.size	= MTDPART_SIZ_FULL,
++			.offset = MTDPART_OFS_APPEND
 +		}
 +	},
 +#endif
  	.timing_data		= &(struct stm_nand_timing_data) {
- 		.sig_setup	= 50,		/* times in ns */
- 		.sig_hold	= 50,
-@@ -233,130 +398,27 @@
- 		.rd_off		= 40,
- 		.chip_delay	= 30,		/* in us */
- 	},
+-		.sig_setup	= 50,		/* times in ns */
+-		.sig_hold	= 50,
++		.sig_setup	= 60,		/* times in ns */
++		.sig_hold	= 60,
+ 		.CE_deassert	= 0,
+-		.WE_to_RBn	= 100,
+-		.wr_on		= 10,
+-		.wr_off		= 40,
+-		.rd_on		= 10,
+-		.rd_off		= 40,
+-		.chip_delay	= 30,		/* in us */
+-	},
 -};
 -
 -/* Serial Flash */
@@ -594,8 +600,14 @@
 -				.offset = MTDPART_OFS_NXTBLK,
 -			},
 -		},
--	},
-+	.emi_withinbankoffset    = 0x3500000,
++		.WE_to_RBn	= 120,
++		.wr_on		= 20,
++		.wr_off		= 50,
++		.rd_on		= 20,
++		.rd_off		= 50,
++		.chip_delay	= 50,		/* in us */
+ 	},
++	.emi_withinbankoffset	= 0,
  };
  
  static struct platform_device *hdk7105_devices[] __initdata = {
