@@ -74,7 +74,7 @@ start()
   else
     ${MAKEDEV} dvb_ca_no
   fi
-  if [ ${TUNER} == "2" ] || [ ${TUNER} == "3" ]; then
+  if [ ${TUNER} == "2" ]; then
     ${MAKEDEV} dvb_2nd
     if [ ${CI} == "TRUE" ]; then
       ${MAKEDEV} dvb_ca_2nd
@@ -82,9 +82,7 @@ start()
   fi
   if [ ${TUNER} == "3" ]; then
     ${MAKEDEV} dvb_3nd
-    if [ ${CI} == "TRUE" ]; then
-      ${MAKEDEV} dvb_ca_3nd
-    fi
+    ${MAKEDEV} dvb_ca_3nd
   fi
   
   ${MAKEDEV} mme bpamem
