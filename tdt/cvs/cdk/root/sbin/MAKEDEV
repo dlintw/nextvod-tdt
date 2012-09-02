@@ -2028,7 +2028,7 @@ do
 			makedev dvb/adapter$i/dvr2      c 212 `math 64 \* $i + 37` $video
 		done
 		;;
-	dvb_3nd)
+	dvb_3rd)
 		mkdir -p dvb
 		for i in 0
 		do
@@ -2057,13 +2057,12 @@ do
 			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 38` $video
 		done
 		;;
-	dvb_ca_3nd)
+	dvb_ca_3rd)
 		mkdir -p dvb
 		for i in 0
 		do
 			mkdir -p dvb/adapter$i
-			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 22` $video
-			makedev dvb/adapter$i/ca3       c 212 `math 64 \* $i + 38` $video
+			makedev dvb/adapter$i/ca3       c 212 `math 64 \* $i + 54` $video
 		done
 		;;
 	dvb_ca_no)
@@ -2075,6 +2074,26 @@ do
 			mkdir -p dvb/adapter$i
 			makedev dvb/adapter$i/ca0       c 212 `math 64 \* $i + 6` $video
 			makedev dvb/adapter$i/ca1       c 212 `math 64 \* $i + 6` $video
+		done
+		;;
+	dvb_ca_2nd_no)
+		#on no ci boxes the hw descrambler is on ca0. So we link ca1 also to ca0
+		#and can (not must) use the same config
+		mkdir -p dvb
+		for i in 0
+		do
+			mkdir -p dvb/adapter$i
+			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 22` $video
+		done
+		;;
+	dvb_ca_3rd_no)
+		#on no ci boxes the hw descrambler is on ca0. So we link ca1 also to ca0
+		#and can (not must) use the same config
+		mkdir -p dvb
+		for i in 0
+		do
+			mkdir -p dvb/adapter$i
+			makedev dvb/adapter$i/ca3       c 212 `math 64 \* $i + 38` $video
 		done
 		;;
 	dvb_ci)

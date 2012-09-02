@@ -69,8 +69,8 @@ start()
   
   ${MAKEDEV} dvb
   if [ ${CI} == "TRUE" ]; then
-    ${MAKEDEV} dvb_ca
     ${MAKEDEV} dvb_ci
+    ${MAKEDEV} dvb_ca
   else
     ${MAKEDEV} dvb_ca_no
   fi
@@ -78,11 +78,17 @@ start()
     ${MAKEDEV} dvb_2nd
     if [ ${CI} == "TRUE" ]; then
       ${MAKEDEV} dvb_ca_2nd
+    else
+      ${MAKEDEV} dvb_ca_2nd_no
     fi
   fi
   if [ ${TUNER} == "3" ]; then
-    ${MAKEDEV} dvb_3nd
-    ${MAKEDEV} dvb_ca_3nd
+    ${MAKEDEV} dvb_3rd
+    if [ ${CI} == "TRUE" ]; then
+      ${MAKEDEV} dvb_ca_3rd
+    else
+      ${MAKEDEV} dvb_ca_3rd_no
+    then
   fi
   
   ${MAKEDEV} mme bpamem
