@@ -2035,6 +2035,7 @@ do
 			mkdir -p dvb/adapter$i
 			makedev dvb/adapter$i/video2	c 212 `math 64 \* $i + 32` $video
 			makedev dvb/adapter$i/frontend2 c 212 `math 64 \* $i + 35` $video
+			makedev dvb/adapter$i/frontend3 c 212 `math 64 \* $i + 51` $video
 			makedev dvb/adapter$i/demux3    c 212 `math 64 \* $i + 52` $video
 			makedev dvb/adapter$i/dvr3      c 212 `math 64 \* $i + 53` $video
 		done
@@ -2062,6 +2063,7 @@ do
 		do
 			mkdir -p dvb/adapter$i
 			makedev dvb/adapter$i/ca2       c 212 `math 64 \* $i + 22` $video
+			makedev dvb/adapter$i/ca3       c 212 `math 64 \* $i + 38` $video
 		done
 		;;
 	dvb_ca_no)
