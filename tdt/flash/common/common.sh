@@ -69,3 +69,29 @@ if [ ! -e $CURDIR/mksquashfs4.0 ]; then
     echo "Compiling successfull"
   fi
 fi
+
+
+echo "Checking if mksquashfs4.0 exists ($CURDIR/mksquashfs4.0)..."
+if [ ! -e $CURDIR/mkcramfs1.1 ]; then
+  echo "mksquashfs4.0 is missing, trying to compile it..."
+  cd $CURDIR
+  rm -rf $CURDIR/cramfs-tools
+  if [ ! -e $CURDIR/cramfs-1.1.tar.gz ]; then
+    #wget "http://heanet.dl.sourceforge.net/sourceforge/squashfs/squashfs4.0.tar.gz"
+    wget "http://downloads.sourceforge.net/project/cramfs/cramfs/1.1/cramfs-1.1.tar.gz"
+  fi
+  mkdir $CURDIR/cramfs-tools
+  cd $CURDIR/cramfs-tools
+  tar -xzf $CURDIR/cramfs-1.1.tar.gz
+  cd $CURDIR/cramfs-tools/cramfs-1.1
+  make all
+  mv $CURDIR/cramfs-tools/cramfs-1.1/mkcramfs $CURDIR/mkcramfs1.1
+  cd $CURDIR
+  rm -rf $CURDIR/cramfs-tools
+  if [ ! -e $CURDIR/mkcramfs1.1 ]; then
+    echo "Compiling failed! Exiting..."
+    exit 3
+  else
+    echo "Compiling successfull"
+  fi
+fi

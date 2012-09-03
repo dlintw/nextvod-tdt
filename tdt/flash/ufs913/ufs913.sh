@@ -31,6 +31,10 @@ echo "Date: 07-17-2012"
 echo "-----------------------------------------------------------------------"
 echo "It's expected that an image was already build prior to this execution!"
 echo "-----------------------------------------------------------------------"
+
+$BASEDIR/flash/common/common.sh $BASEDIR/flash/common/
+
+echo "-----------------------------------------------------------------------"
 echo "Checking targets..."
 echo "Found targets:"
 if [  -e $TUFSBOXDIR/release ]; then

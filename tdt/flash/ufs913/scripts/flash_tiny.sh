@@ -12,7 +12,7 @@ echo "OUTDIR       = $OUTDIR"
 echo "TMPKERNELDIR = $TMPKERNELDIR"
 echo "TMPROOTDIR   = $TMPROOTDIR"
 
-MKCRAMFS=mkcramfs
+MKCRAMFS=$CURDIR/../common/mkcramfs1.1
 MKFSJFFS2=$TUFSBOXDIR/host/bin/mkfs.jffs2
 SUMTOOL=$TUFSBOXDIR/host/bin/sumtool
 MUP=$CURDIR/mup
