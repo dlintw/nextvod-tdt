@@ -76,3 +76,58 @@ neutrino-hd2-distclean:
 	rm -f $(DEPDIR)/neutrino-hd2.do_prepare
 	rm -rf $(appsdir)/neutrino-hd2.org
 	rm -rf $(appsdir)/neutrino-hd2
+
+
+### nhd2-exp
+$(DEPDIR)/nhd2.do_prepare:
+	svn co http://neutrinohd2.googlecode.com/svn/branches/nhd2-exp $(appsdir)/nhd2-exp
+	cd $(appsdir)/nhd2-exp && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2-exp.diff"
+	touch $@
+
+$(appsdir)/nhd2-exp/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost libflac openssl sdparm
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd $(appsdir)/nhd2-exp && \
+		ACLOCAL_FLAGS="-I $(hostprefix)/share/aclocal" ./autogen.sh && \
+		$(BUILDENV) \
+		./configure \
+			--host=$(target) \
+			$(N_CONFIG_OPTS) \
+			--enable-libeplayer3 \
+			--with-boxtype=duckbox \
+			--enable-pcmsoftdecoder \
+			--with-tremor \
+			--enable-libass \
+			--with-datadir=/usr/local/share \
+			--with-libdir=/usr/lib \
+			--with-plugindir=/usr/lib/tuxbox/plugins \
+			--with-fontdir=/usr/local/share/fonts \
+			--with-configdir=/usr/local/share/config \
+			--with-gamesdir=/usr/local/share/games \
+			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
+			PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig \
+			$(PLATFORM_CPPFLAGS) \
+			CPPFLAGS="$(N_CPPFLAGS)"
+
+
+$(DEPDIR)/nhd2.do_compile: $(appsdir)/nhd2-exp/config.status
+	cd $(appsdir)/nhd2-exp && \
+		$(MAKE) all
+	touch $@
+
+$(DEPDIR)/nhd2: nhd2.do_prepare nhd2.do_compile
+	$(MAKE) -C $(appsdir)/nhd2-exp install DESTDIR=$(targetprefix) && \
+	make $(targetprefix)/var/etc/.version
+	$(target)-strip $(targetprefix)/usr/local/bin/neutrino
+	$(target)-strip $(targetprefix)/usr/local/bin/pzapit
+	$(target)-strip $(targetprefix)/usr/local/bin/sectionsdcontrol
+	touch $@
+
+nhd2-clean:
+	rm -f $(DEPDIR)/nhd2
+	cd $(appsdir)/nhd2-exp && \
+		$(MAKE) distclean
+
+nhd2-distclean:
+	rm -f $(DEPDIR)/nhd2
+	rm -f $(DEPDIR)/nhd2.do_compile
+	rm -f $(DEPDIR)/nhd2.do_prepare
