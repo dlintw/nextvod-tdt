@@ -10,7 +10,7 @@ start()
     HOST=`cat /etc/hostname`
   else
     # Expecting to be in /dev
-    MAKEDEV="fakeroot ../sbin/MAKEDEV -p ../etc/passwd -g ../etc/group"
+    MAKEDEV="sudo ../sbin/MAKEDEV -p ../etc/passwd -g ../etc/group"
     HOST=`cat ../etc/hostname`
   fi
 
