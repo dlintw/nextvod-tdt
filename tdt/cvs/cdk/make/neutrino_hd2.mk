@@ -85,7 +85,7 @@ $(DEPDIR)/neutrino-hd2-exp.do_prepare:
 
 $(appsdir)/neutrino-hd2-exp/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost libflac openssl sdparm
 	export PATH=$(hostprefix)/bin:$(PATH) && \
-	cd $(appsdir)/nhd2-exp && \
+	cd $(appsdir)/neutrino-hd2-exp && \
 		ACLOCAL_FLAGS="-I $(hostprefix)/share/aclocal" ./autogen.sh && \
 		$(BUILDENV) \
 		./configure \
