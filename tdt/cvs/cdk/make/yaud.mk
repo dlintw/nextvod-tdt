@@ -108,6 +108,10 @@ yaud-neutrino-hd2: yaud-none lirc stslave \
 		boot-elf remote firstboot neutrino-hd2 release_neutrino
 	@TUXBOX_YAUD_CUSTOMIZE@
 
+yaud-neutrino-hd2-exp: yaud-none lirc stslave \
+		boot-elf remote firstboot neutrino-hd2-exp release_neutrino
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 if STM22
 yaud-enigma2: yaud-none host_python lirc stslave \
 		boot-elf hotplug remote firstboot enigma2 enigma2-misc release

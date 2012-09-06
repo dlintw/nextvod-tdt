@@ -22,9 +22,7 @@ $(DEPDIR)/neutrino-hd2.do_prepare:
 	svn co http://neutrinohd2.googlecode.com/svn/trunk/neutrino-hd $(appsdir)/neutrino-hd2
 	cp -ra $(appsdir)/neutrino-hd2 $(appsdir)/neutrino-hd2.org
 	cd $(appsdir)/neutrino-hd2 && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2.diff"
-	cd $(appsdir)/neutrino-hd2 && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2.vfd.diff"
-	cd $(appsdir)/neutrino-hd2 && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2.eventlist.diff"
-	cd $(appsdir)/neutrino-hd2 && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2.infoviewer.diff"
+#	cd $(appsdir)/neutrino-hd2 && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2.infoviewer.diff"
 	touch $@
 
 $(appsdir)/neutrino-hd2/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost libflac openssl sdparm
@@ -78,13 +76,14 @@ neutrino-hd2-distclean:
 	rm -rf $(appsdir)/neutrino-hd2
 
 
-### nhd2-exp
-$(DEPDIR)/nhd2.do_prepare:
-	svn co http://neutrinohd2.googlecode.com/svn/branches/nhd2-exp $(appsdir)/nhd2-exp
-	cd $(appsdir)/nhd2-exp && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2-exp.diff"
+### neutrino-hd2-exp
+$(DEPDIR)/neutrino-hd2-exp.do_prepare:
+	svn co http://neutrinohd2.googlecode.com/svn/branches/nhd2-exp $(appsdir)/neutrino-hd2-exp
+	cp -ra $(appsdir)/neutrino-hd2-exp $(appsdir)/neutrino-hd2-exp.org
+	cd $(appsdir)/neutrino-hd2-exp && patch -p1 < "$(buildprefix)/Patches/neutrino.hd2-exp.diff"
 	touch $@
 
-$(appsdir)/nhd2-exp/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost libflac openssl sdparm
+$(appsdir)/neutrino-hd2-exp/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg libpng libgif libid3tag curl libmad libvorbisidec libboost libflac openssl sdparm
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/nhd2-exp && \
 		ACLOCAL_FLAGS="-I $(hostprefix)/share/aclocal" ./autogen.sh && \
@@ -109,25 +108,27 @@ $(appsdir)/nhd2-exp/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpeg li
 			CPPFLAGS="$(N_CPPFLAGS)"
 
 
-$(DEPDIR)/nhd2.do_compile: $(appsdir)/nhd2-exp/config.status
-	cd $(appsdir)/nhd2-exp && \
+$(DEPDIR)/neutrino-hd2-exp.do_compile: $(appsdir)/neutrino-hd2-exp/config.status
+	cd $(appsdir)/neutrino-hd2-exp && \
 		$(MAKE) all
 	touch $@
 
-$(DEPDIR)/nhd2: nhd2.do_prepare nhd2.do_compile
-	$(MAKE) -C $(appsdir)/nhd2-exp install DESTDIR=$(targetprefix) && \
+$(DEPDIR)/neutrino-hd2-exp: neutrino-hd2-exp.do_prepare neutrino-hd2-exp.do_compile
+	$(MAKE) -C $(appsdir)/neutrino-hd2-exp install DESTDIR=$(targetprefix) && \
 	make $(targetprefix)/var/etc/.version
 	$(target)-strip $(targetprefix)/usr/local/bin/neutrino
 	$(target)-strip $(targetprefix)/usr/local/bin/pzapit
 	$(target)-strip $(targetprefix)/usr/local/bin/sectionsdcontrol
 	touch $@
 
-nhd2-clean:
-	rm -f $(DEPDIR)/nhd2
-	cd $(appsdir)/nhd2-exp && \
+neutrino-hd2-exp-clean:
+	rm -f $(DEPDIR)/neutrino-hd2-exp
+	cd $(appsdir)/neutrino-hd2-exp && \
 		$(MAKE) distclean
 
-nhd2-distclean:
-	rm -f $(DEPDIR)/nhd2
-	rm -f $(DEPDIR)/nhd2.do_compile
-	rm -f $(DEPDIR)/nhd2.do_prepare
+neutrino-hd2-exp-distclean:
+	rm -f $(DEPDIR)/neutrino-hd2-exp
+	rm -f $(DEPDIR)/neutrino-hd2-exp.do_compile
+	rm -f $(DEPDIR)/neutrino-hd2-exp.do_prepare
+	rm -rf $(appsdir)/neutrino-hd2-exp.org
+	rm -rf $(appsdir)/neutrino-hd2-exp
