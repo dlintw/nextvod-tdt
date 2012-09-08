@@ -1,5 +1,6 @@
 #!/bin/sh
 
+/bin/update &
 
 /sbin/ifconfig lo 127.0.0.1
 /bin/hostname $HOSTNAME
@@ -10,6 +11,8 @@ echo "Mount usb /dev/sda1"
 mount /dev/sda1 /mnt
 if [ ! -d /mnt/kathrein/ufs913 ]; then
   echo "ERROR: NO UPDATEFOLDER ON USB"
+  killall update
+  /bin/update ERR_USB &
   exit 0
 fi
 

@@ -35,3 +35,5 @@ rm -rf $TMPROOTDIR/etc/init.d/*
 cp $EXTRADIR/profile $TMPROOTDIR/etc/
 cp $EXTRADIR/rcS $TMPROOTDIR/etc/init.d/
 chmod 755 $TMPROOTDIR/etc/init.d/rcS
+cp $EXTRADIR/update $TMPROOTDIR/bin
+chmod 755 $TMPROOTDIR/bin/update
