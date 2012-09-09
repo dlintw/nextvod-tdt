@@ -111,7 +111,7 @@ index c19f772..20c3ff5 100755
  endif
  	$(MAKE) -C lib/stsound/StSoundLibrary	
 -ifeq ($(or $(findstring powerpc,@ARCH@),$(findstring x86_64-linux,@ARCH@),$(findstring arm, @ARCH@),$(findstring freebsd,@ARCH@)),)
-+ifeq ($(or $(findstring powerpc,@ARCH@),$(findstring x86_64-linux,@ARCH@),$(findstring arm, @ARCH@),$(findstring sh, @ARCH@)),)
++ifeq ($(or $(findstring powerpc,@ARCH@),$(findstring x86_64-linux,@ARCH@),$(findstring arm, @ARCH@),$(findstring freebsd,@ARCH@),$(findstring sh, @ARCH@)),)
  	$(MAKE) -C lib/snesapu/SNES/SNESAPU
  endif
  imagelib: dllloader
@@ -120,10 +120,19 @@ index c19f772..20c3ff5 100755
  		-exec printf " -- %-75.75s\r" "{}" \;
  else
 -	@find system addons -regextype posix-extended -type f -not -iregex ".*svn.*" -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs" -exec install -D "{}" $(DESTDIR)$(libdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
-+	@find system addons -regextype posix-extended -type f -not -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs" -exec install -D "{}" $(DESTDIR)$(libdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
++	@find system addons -regextype posix-extended -type f -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs" -exec install -D "{}" $(DESTDIR)$(libdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
  endif
  
  install-scripts:
+@@ -443,7 +461,7 @@ ifeq ($(findstring freebsd,@ARCH@), freebsd)
+ 		-exec install -m 0644 "{}" $(DESTDIR)$(datarootdir)/xbmc/"{}" \; \
+ 		-exec printf " -- %-75.75s\r" "{}" \;
+ else
+-	@find addons language media sounds userdata system -regextype posix-extended -type f -not -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs|.*svn.*|.*\.so|.*\.dll" -exec install -D -m 0644 "{}" $(DESTDIR)$(datarootdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
++	@find addons language media sounds userdata system -regextype posix-extended -type f -not -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs|.*\.so|.*\.dll" -exec install -D -m 0644 "{}" $(DESTDIR)$(datarootdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
+ endif
+ 	@# Icons and links
+ 	@install -d $(DESTDIR)$(datarootdir)/applications
 diff --git a/configure.in b/configure.in
 index 1149466..86773ca 100755
 --- a/configure.in
