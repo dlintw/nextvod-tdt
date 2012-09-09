@@ -152,7 +152,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    /etc/init.d/network start &
 
-   (until false; do echo 1 > /proc/sys/vm/drop_caches; sleep 10; done) &
+   (until false; do echo 1 > /proc/sys/vm/drop_caches; sleep 2; done) &
 
    echo "LOADING xbmc" > /dev/vfd
    echo "LOADING xbmc"

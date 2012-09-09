@@ -1,6 +1,15 @@
 --- libpng-1.5.6/pngrtran.c.org	2006-07-06 19:06:25.000000000 +0200
 +++ libpng-1.5.6/pngrtran.c	2006-07-06 19:08:36.000000000 +0200
-@@ -2840,6 +2843,42 @@
+@@ -2064,6 +2064,8 @@
+       png_error(png_ptr, "Uninitialized row");
+    }
+ 
++   png_do_remove_color_if_full_alpha(row_info, png_ptr->row_buf + 1);
++
+ #ifdef PNG_READ_EXPAND_SUPPORTED
+    if (png_ptr->transformations & PNG_EXPAND)
+    {
+@@ -2840,6 +2843,33 @@
  }
  #endif
  
@@ -17,24 +26,15 @@
 +         png_bytep sp = row + row_info->rowbytes;
 +         png_bytep dp = sp;
 +         png_uint_32 i;
++         float f;
 +
 +         for (i = 0; i < row_width; i++)
 +         {
-+//#define STRICT
-+#ifdef STRICT
-+            if (*(--sp) == 0x00 ) // full_alpha
-+#else
-+            if (*(--sp) < 0x30 ) // full_alpha
-+#endif
-+            {
 +               --dp;
-+//               *(--dp) = (png_byte)(0x00);
-+               *(--dp) = (png_byte)(0x00);
-+               *(--dp) = (png_byte)(0x00);
-+               *(--dp) = (png_byte)(0x00);
-+            }
-+            sp-=3;
-+            dp=sp;
++            f = ((png_byte)*(--sp))/255.0; //a
++            *(--dp) = ((png_byte)*(--sp))*f; //r
++            *(--dp) = ((png_byte)*(--sp))*f; //g
++            *(--dp) = ((png_byte)*(--sp))*f; //b
 +         }
 +      }
 +   }
@@ -43,12 +43,3 @@
  #ifdef PNG_READ_FILLER_SUPPORTED
  /* Add filler channel if we have RGB color */
  void /* PRIVATE */
-@@ -2064,6 +2064,9 @@
-       png_error(png_ptr, "Uninitialized row");
-    }
- 
-+   png_do_remove_color_if_full_alpha(row_info, png_ptr->row_buf + 1);
-+
- #ifdef PNG_READ_EXPAND_SUPPORTED
-    if (png_ptr->transformations & PNG_EXPAND)
-    {

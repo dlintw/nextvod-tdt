@@ -523,7 +523,7 @@
  	},
  };
  
-@@ -210,153 +359,71 @@
+@@ -210,153 +359,66 @@
  struct stm_nand_bank_data hdk7105_nand_flash = {
  	.csn		= 1,
  	.options	= NAND_NO_AUTOINCR | NAND_USE_FLASH_BBT,
@@ -544,7 +544,7 @@
  		},
  	},
 +#else
-+	.nr_partitions	= 3,
++	.nr_partitions	= 2,
 +	.partitions	= (struct mtd_partition []) {
 +		{
 +			.name	= "NAND FW        0x0000.0000-0x007F.FFFF (  8MB)",
@@ -554,12 +554,7 @@
 +		{
 +			.name	= "NAND ROOT      0x0080.0000-0x047F.FFFF ( 64MB)",
 +			.offset = MTDPART_OFS_NXTBLK,
-+			.size   = 0x04000000,
-+		},
-+		{
-+			.name	= "NAND DATA      0x0480.0000-0x07FF.FFFF ( 56MB)",
-+			.offset = MTDPART_OFS_NXTBLK,
-+			.size	= MTDPART_SIZ_FULL
++			.size   = MTDPART_SIZ_FULL
 +		}
 +	},
 +#endif
