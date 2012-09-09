@@ -162,6 +162,14 @@ AC_ARG_ENABLE(p0211,
 AM_CONDITIONAL(ENABLE_P0211,test "$enable_p0211" = "yes")
 AC_SUBST(P0211)
 
+AC_ARG_ENABLE(p0302,
+	AS_HELP_STRING(--enable-p0302,  set up the CDK to use the STLinux 2.4 with patchlevel 0302),
+	[case "${enableval}" in
+		yes) P0302=p0302 ;;
+	esac], [enable_p0302=no])
+AM_CONDITIONAL(ENABLE_P0302,test "$enable_p0302" = "yes")
+AC_SUBST(P0302)
+
 AC_ARG_ENABLE(havana_p0207_5,
 	AS_HELP_STRING(enable-havana-p0207_5,  set up the CDK to use the STLinux 2.4 with Havana patchlevel 0207_5),
 	[case "${enableval}" in
@@ -768,6 +776,7 @@ TUXBOX_RULES_MAKE(linuxp0207)
 TUXBOX_RULES_MAKE(linuxp0209)
 TUXBOX_RULES_MAKE(linuxp0210)
 TUXBOX_RULES_MAKE(linuxp0211)
+TUXBOX_RULES_MAKE(linuxp0302)
 
 if test "$enable_stm22" = "yes"; then
 	if test "$enable_p0040" == "yes"; then
@@ -808,6 +817,10 @@ else
 		KERNELVERSION=${VERSION_linuxp0211}
 		KERNELSTMLABEL="_${VERSION_linuxp0211#*_}"
 		KERNELLABEL="211"
+	elif test "$enable_p0302" == "yes"; then
+		KERNELVERSION=${VERSION_linuxp0302}
+		KERNELSTMLABEL="_${VERSION_linuxp0302#*_}"
+		KERNELLABEL="302"
 	elif test "$enable_p0207" == "yes"; then
 		KERNELVERSION=${VERSION_linuxp0207}
 		KERNELSTMLABEL="_${VERSION_linuxp0207#*_}"
@@ -1157,6 +1170,7 @@ Patchlevel P0207            : $enable_p0207
 Patchlevel P0209            : $enable_p0209
 Patchlevel P0210            : $enable_p0210
 Patchlevel P0211            : $enable_p0211
+Patchlevel P0302            : $enable_p0302
 HAVANA Patchlevel P0207_5   : $enable_havana_p0207_5
 vdr VDR 1.7.11              : $enable_vdr1711
 vdr VDR 1.7.22              : $enable_vdr1722

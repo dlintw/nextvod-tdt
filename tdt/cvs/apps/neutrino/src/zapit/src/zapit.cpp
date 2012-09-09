@@ -2125,7 +2125,7 @@ int zapit_main_thread(void *data)
 	int tmp_time = time(0);
 	while (zapit_server.run(zapit_parse_command, CZapitMessages::ACTVERSION, true)) {
 		if (pmt_update_fd != -1) {
-			if (update_pmt && !standby && !scan_runs && channel && frontend->getSignalStrength() > 25000 && frontend->getSignalNoiseRatio() > 25000 && time(0) == tmp_time + 10) { // update all 10 sec.
+			if (time(0) == tmp_time + 10 && update_pmt && !standby && !scan_runs && channel && frontend->getSignalStrength() > 25000 && frontend->getSignalNoiseRatio() > 25000) { // update all 10 sec.
 				tmp_time = time(0);
 				pmt_set_update_filter(channel, &pmt_update_fd);
 			}
