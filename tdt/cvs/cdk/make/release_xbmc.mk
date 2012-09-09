@@ -470,6 +470,7 @@ endif
 	rm -rf $(prefix)/release/usr/share/xbmc/system/keymaps/*
 	cp -a $(targetprefix)/usr/share/xbmc/system/keymaps/appcommand.xml $(prefix)/release/usr/share/xbmc/system/keymaps/
 	cp -a $(targetprefix)/usr/share/xbmc/system/keymaps/keyboard.xml $(prefix)/release/usr/share/xbmc/system/keymaps/
+	sed -i "s/<home>FirstPage<\/home>/<!-- home>FirstPage<\/home -->/g" $(prefix)/release/usr/share/xbmc/system/keymaps/keyboard.xml
 #	cp -a $(targetprefix)/usr/share/xbmc/system/keymaps/remote.xml $(prefix)/release/usr/share/xbmc/system/keymaps/
 	cp $(buildprefix)/root/release/keymap_xbmc.xml $(prefix)/release/usr/share/xbmc/system/keymaps/duckbox.xml
 
