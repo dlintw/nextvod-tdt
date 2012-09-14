@@ -159,6 +159,7 @@ sshfs-fuse-2.4.tar.bz2;http://fossies.org/linux/misc
 gmediarender-0.0.6.tar.bz2;http://savannah.nongnu.org/download/gmrender
 mediatomb-0.12.1.tar.gz;http://downloads.sourceforge.net/mediatomb
 tinyxml_2_6_2.tar.gz;http://ignum.dl.sourceforge.net/project/tinyxml/tinyxml/2.6.2
+libnfs.git;git://github.com/sahlberg/libnfs.git;c0ebf57b212ffefe83e2a50358499f68e7289e93
 
 #
 # PYTHON

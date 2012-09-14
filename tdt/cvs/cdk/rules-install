@@ -127,6 +127,7 @@ sshfs;make:install:DESTDIR=TARGETS
 gmediarender;make:install:DESTDIR=TARGETS
 mediatomb;make:install:DESTDIR=TARGETS
 tinyxml;make:install:PREFIX=TARGETS/usr
+libnfs;make:install:DESTDIR=TARGETS
 
 #
 # PYTHON
