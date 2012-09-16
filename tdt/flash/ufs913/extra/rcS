@@ -9,14 +9,17 @@ sleep 4
 
 echo "Mount usb /dev/sda1"
 mount /dev/sda1 /mnt
-if [ ! -d /mnt/kathrein/ufs913 ]; then
+if [ ! -d /mnt/kathrein/ufs913 ]
+then
   echo "ERROR: NO UPDATEFOLDER ON USB"
-  killall update
-  /bin/update ERR_USB &
+  killall -9 update
+  /bin/update "ERR: NOUSB" &
   exit 0
 fi
 
 echo "Check fw"
+killall -9 update
+/bin/update "UPDATE FW" &
 if [ -e /mnt/kathrein/ufs913/mtd_fw.sum.bin ]; then
   echo "Write fw"
   flash_eraseall -j /dev/mtd8
@@ -24,15 +27,19 @@ if [ -e /mnt/kathrein/ufs913/mtd_fw.sum.bin ]; then
 fi
 
 echo "Check rootfs"
+killall -9 update
+/bin/update "UPDATE ROOT" &
 if [ -e /mnt/kathrein/ufs913/mtd_root.sum.bin ]; then
-  echo "Write fw"
+  echo "Write rootfs"
   flash_eraseall -j /dev/mtd9
   dd of=/dev/mtdblock9 if=/mnt/kathrein/ufs913/mtd_root.sum.bin
 fi
 
-echo "Check fw"
+killall -9 update
+/bin/update "UPDATE UIMAGE" &
+echo "Check uImage"
 if [ -e /mnt/kathrein/ufs913/uImage.bin ]; then
-  echo "Write fw"
+  echo "Write uImage"
   dd if=/mnt/kathrein/ufs913/uImage.bin of=/dev/mtdblock6
 fi
 

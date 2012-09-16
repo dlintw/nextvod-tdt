@@ -24,8 +24,8 @@
 #include <errno.h>
 #include <termios.h>
 
-int 	fd;
-char 	micom_cmd[20];
+int  fd;
+char micom_cmd[20];
 
 int settermflags(int fd) 
 {
@@ -68,31 +68,28 @@ int settermflags(int fd)
 
 void setText(int p, char* text)
 {
-   micom_cmd[0] = 0x21;
-	
-   memset( micom_cmd + 1, 32, 16 );
+    micom_cmd[0] = 0x21;
+    memset( micom_cmd + 1, ' ', 16);
+    strncpy( micom_cmd + 1 + p, text, strlen(text));
+    micom_cmd[17] = '\0';
 
-   strcpy( micom_cmd + 1 + p, text );
-   micom_cmd[17] = '\0';	
-
-   write(fd, micom_cmd, 17 );
+    write(fd, micom_cmd, 17 );
 
 }
 
 int main(int argc, char* argv[])
 {
-	
-	memset(micom_cmd, 0, 20);
+    memset(micom_cmd, 0, 20);
 
-	fd = open("/dev/ttyAS1", O_WRONLY);
+    fd = open("/dev/ttyAS1", O_WRONLY);
 
-	if (fd < 0)
-	{
-		printf("cannot open /dev/ttyAS1 (errno = %d)\n", errno);
-		exit(1);
-	}
+    if (fd < 0)
+    {
+        printf("cannot open /dev/ttyAS1 (errno = %d)\n", errno);
+        exit(1);
+    }
 
-	settermflags(fd);
+    settermflags(fd);
 
     int p = 0;
     int i = 1;
@@ -104,7 +101,7 @@ int main(int argc, char* argv[])
 
     while (1)
     {
-		setText(p, text);
+        setText(p, text);
 
         p = p + i;
 
