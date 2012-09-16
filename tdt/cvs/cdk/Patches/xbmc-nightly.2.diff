@@ -3573,15 +3573,27 @@ index 4273c73..eda1b24 100644
  
    map<int,int> guimode;
    guimode.insert(make_pair(34121, AE_SOUND_IDLE  ));
-@@ -836,7 +841,7 @@ void CGUISettings::Initialize()
+@@ -514,7 +519,7 @@ void CGUISettings::Initialize()
+   AddInt(NULL, "input.appleremotesequencetime", 13603, 500, 50, 50, 1000, SPIN_CONTROL_INT_PLUS, MASK_MS, TEXT_OFF);
+   AddSeparator(in, "input.sep1");
+ #endif
+-  AddBool(in, "input.remoteaskeyboard", 21449, false);
++  AddBool(in, "input.remoteaskeyboard", 21449, true);
+ #if defined(TARGET_DARWIN_IOS)
+   AddBool(NULL, "input.enablemouse", 21369, true);
+ #else
+@@ -836,9 +841,9 @@ void CGUISettings::Initialize()
    AddString(laf, "lookandfeel.font",13303,"Default", SPIN_CONTROL_TEXT);
    AddInt(laf, "lookandfeel.skinzoom",20109, 0, -20, 2, 20, SPIN_CONTROL_INT, MASK_PERCENT);
    AddInt(laf, "lookandfeel.startupwindow",512,1, WINDOW_HOME, 1, WINDOW_PYTHON_END, SPIN_CONTROL_TEXT);
 -  AddString(laf, "lookandfeel.soundskin",15108,"SKINDEFAULT", SPIN_CONTROL_TEXT);
 +  AddString(laf, "lookandfeel.soundskin",15108,"OFF", SPIN_CONTROL_TEXT);
    AddSeparator(laf, "lookandfeel.sep2");
-   AddBool(laf, "lookandfeel.enablerssfeeds",13305,  true);
+-  AddBool(laf, "lookandfeel.enablerssfeeds",13305,  true);
++  AddBool(laf, "lookandfeel.enablerssfeeds",13305,  false);
    AddString(laf, "lookandfeel.rssedit", 21450, "", BUTTON_CONTROL_STANDARD);
+ 
+   CSettingsCategory* loc = AddCategory(7, "locale", 14090);
 diff --git a/xbmc/system.h b/xbmc/system.h
 index aa6f2ae..c02ffb8 100644
 --- a/xbmc/system.h
