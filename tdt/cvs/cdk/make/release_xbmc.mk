@@ -168,6 +168,7 @@ release_xbmc_base:
 	cp $(buildprefix)/root/release/mountall $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/hostname $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/vsftpd $(prefix)/release/etc/init.d/ && \
+	cp $(buildprefix)/root/release/xbmc_userdata $(prefix)/release/etc/init.d/ && \
 	cp -dp $(targetprefix)/usr/sbin/vsftpd $(prefix)/release/usr/bin/ && \
 	cp $(buildprefix)/root/release/bootclean.sh $(prefix)/release/etc/init.d/ && \
 	cp $(buildprefix)/root/release/network $(prefix)/release/etc/init.d/ && \

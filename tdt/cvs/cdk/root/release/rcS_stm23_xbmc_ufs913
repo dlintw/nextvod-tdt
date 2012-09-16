@@ -157,6 +157,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING xbmc" > /dev/vfd
    echo "LOADING xbmc"
 
+   /etc/init.d/xbmc_userdata
+
    stfbcontrol a 255
 
    until false
