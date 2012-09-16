@@ -4507,7 +4507,7 @@ index 8d398ed..7cd621f 100644
 diff -Nur a/xbmc/cores/gstplayer/GSTPlayer.cpp b/xbmc/cores/gstplayer/GSTPlayer.cpp
 --- a/xbmc/cores/gstplayer/GSTPlayer.cpp	1970-01-01 01:00:00.000000000 +0100
 +++ b/xbmc/cores/gstplayer/GSTPlayer.cpp	2012-07-14 14:29:45.507807462 +0200
-@@ -0,0 +1,612 @@
+@@ -0,0 +1,636 @@
 +/*
 + *      Copyright (C) 2005-2008 Team XBMC
 + *      http://www.xbmc.org
@@ -4649,6 +4649,28 @@ diff -Nur a/xbmc/cores/gstplayer/GSTPlayer.cpp b/xbmc/cores/gstplayer/GSTPlayer.
 +  uri = g_filename_to_uri(file.GetPath().c_str(), NULL, NULL);
 +  if (uri == NULL)
 +    uri = strdup(file.GetPath().c_str());
++
++  if (!g_ascii_strncasecmp(uri, "nfs://", 6)) {
++    gchar* url = uri + 6;
++    gchar* new_uri;
++    gchar** tokens = g_strsplit(url, "/", 3);
++    gchar* cmd = g_strdup_printf("mount -tnfs  -onolock %s:/%s /tmp/nfs", tokens[0], tokens[1]);
++    
++    new_uri = g_strdup_printf("file:///tmp/nfs/%s", tokens[2]);
++    g_free(uri);
++    uri = new_uri;
++    
++    printf ("Playing: %s\n", uri);
++    
++    printf ("mkdir -p /tmp/nfs\n");
++    system("mkdir -p /tmp/nfs");
++    printf ("umount /tmp/nfs\n");
++    system("umount /tmp/nfs");
++    printf ("%s\n", cmd);
++    system(cmd);
++    g_free(cmd);
++  }
++
 +  g_object_set (G_OBJECT (m_pGstPlaybin), "uri", uri, NULL);
 +  g_free(uri);
 +
@@ -4741,6 +4763,8 @@ diff -Nur a/xbmc/cores/gstplayer/GSTPlayer.cpp b/xbmc/cores/gstplayer/GSTPlayer.
 +#if defined(HAS_VIDEO_PLAYBACK)
 +  g_renderManager.UnInit();
 +#endif
++  printf ("umount /tmp/nfs\n");
++  system("umount /tmp/nfs");
 +  return true;
 +}
 +
@@ -5276,3 +5300,24 @@ diff -Nur a/xbmc/cores/gstplayer/Makefile.in b/xbmc/cores/gstplayer/Makefile.in
 +
 +include @abs_top_srcdir@/Makefile.include
 +-include $(patsubst %.cpp,%.P,$(patsubst %.c,%.P,$(SRCS)))
+diff -Nur a/xbmc/guilib/JpegIO.cpp b/xbmc/guilib/JpegIO.cpp
+--- a/xbmc/guilib/JpegIO.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/xbmc/guilib/JpegIO.cpp	2012-06-02 17:45:02.000000000 +0200
+@@ -435,7 +435,7 @@ bool CJpegIO::CreateThumbnailFromSurface(unsigned char* buffer, unsigned int wid
+   struct jpeg_compress_struct cinfo;
+   struct my_error_mgr jerr;
+   JSAMPROW row_pointer[1];
+-  long unsigned int outBufSize = 0;
++  long unsigned int outBufSize = width * height;
+   unsigned char* result;
+   unsigned char* src = buffer;
+   unsigned char* rgbbuf, *src2, *dst2;
+@@ -446,7 +446,7 @@ bool CJpegIO::CreateThumbnailFromSurface(unsigned char* buffer, unsigned int wid
+     return false;
+   }
+ 
+-  result = (unsigned char*) malloc(width * height); //Initial buffer. Grows as-needed.
++  result = (unsigned char*) malloc(outBufSize); //Initial buffer. Grows as-needed.
+   if (result == NULL)
+   {
+     CLog::Log(LOGERROR, "JpegIO::CreateThumbnailFromSurface error allocating memory for image buffer");
