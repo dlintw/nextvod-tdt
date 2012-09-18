@@ -1,8 +1,7 @@
-# tuxbox/enigma2
+# tuxbox/xbmc-nightly
 
 $(DEPDIR)/xbmc-nightly.do_prepare:
 	REVISION=""; \
-	HEAD="master"; \
 	DIFF="0"; \
 	REPO="git://github.com/xbmc/xbmc.git"; \
 	rm -rf $(appsdir)/xbmc-nightly; \
@@ -22,12 +21,15 @@ $(DEPDIR)/xbmc-nightly.do_prepare:
 	[ "$$REPLY" == "1" ] && DIFF="1" && REVISION="460e79416c5cb13010456794f36f89d49d25da75"; \
 	[ "$$REPLY" == "2" ] && DIFF="2" && REVISION="327710767d2257dad27e3885effba1d49d4557f0"; \
 	echo "Revision: " $$REVISION; \
-	[ -d "$(appsdir)/xbmc-nightly" ] && \
-	git pull $(appsdir)/xbmc-nightly $$HEAD;\
-	[ -d "$(appsdir)/xbmc-nightly" ] || \
-	git clone -b $$HEAD $$REPO $(appsdir)/xbmc-nightly; \
-	cp -ra $(appsdir)/xbmc-nightly $(appsdir)/xbmc-nightly.newest; \
+	[ -d "$(archivedir)/xbmc.git" ] && \
+	(cd $(archivedir)/xbmc.git; git pull ; cd "$(buildprefix)";); \
+	[ -d "$(archivedir)/xbmc.git" ] || \
+	git clone $$REPO $(archivedir)/xbmc.git; \
+	cp -ra $(archivedir)/xbmc.git $(appsdir)/xbmc-nightly.newest; \
+	rm -rf $(appsdir)/xbmc-nightly.newest/.git; \
+	cp -ra $(archivedir)/xbmc.git $(appsdir)/xbmc-nightly; \
 	[ "$$REVISION" == "" ] || (cd $(appsdir)/xbmc-nightly; git checkout "$$REVISION"; cd "$(buildprefix)";); \
+	rm -rf $(appsdir)/xbmc-nightly/.git; \
 	cp -ra $(appsdir)/xbmc-nightly $(appsdir)/xbmc-nightly.org; \
 	cd $(appsdir)/xbmc-nightly && patch -p1 < "../../cdk/Patches/xbmc-nightly.$$DIFF.diff"; \
 	cp -ra $(appsdir)/xbmc-nightly $(appsdir)/xbmc-nightly.patched

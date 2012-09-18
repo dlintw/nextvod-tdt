@@ -5333,3 +5333,36 @@ diff -Nur a/xbmc/guilib/JpegIO.cpp b/xbmc/guilib/JpegIO.cpp
    if (result == NULL)
    {
      CLog::Log(LOGERROR, "JpegIO::CreateThumbnailFromSurface error allocating memory for image buffer");
+diff -Nur a/xbmc/settings/GUIWindowSettingsCategory.cpp b/xbmc/settings/GUIWindowSettingsCategory.cpp
+--- a/xbmc/settings/GUIWindowSettingsCategory.cpp
++++ b/xbmc/settings/GUIWindowSettingsCategory.cpp
+@@ -721,7 +721,8 @@ void CGUIWindowSettingsCategory::UpdateSettings()
+     }
+     else if (strSetting.Equals("audiooutput.guisoundmode"))
+     {
+-      CAEFactory::AE->SetSoundMode(g_guiSettings.GetInt("audiooutput.guisoundmode"));
++      if (CAEFactory::AE != NULL)
++        CAEFactory::AE->SetSoundMode(g_guiSettings.GetInt("audiooutput.guisoundmode"));
+     }
+     else if (strSetting.Equals("musicplayer.crossfade"))
+     {
+@@ -1856,7 +1857,8 @@ void CGUIWindowSettingsCategory::OnSettingChanged(CBaseSettingControl *pSettingControl)
+     }
+ #endif
+     
+-    CAEFactory::AE->OnSettingsChange(strSetting);
++    if (CAEFactory::AE != NULL)
++      CAEFactory::AE->OnSettingsChange(strSetting);
+   }
+ 
+   UpdateSettings();
+@@ -2709,7 +2711,8 @@ void CGUIWindowSettingsCategory::FillInAudioDevices(CSetting* pSetting, bool Passthrough)
+ 
+   int selectedValue = -1;
+   AEDeviceList sinkList;
+-  CAEFactory::AE->EnumerateOutputDevices(sinkList, Passthrough);
++  if (CAEFactory::AE != NULL)
++    CAEFactory::AE->EnumerateOutputDevices(sinkList, Passthrough);
+ #if !defined(TARGET_DARWIN)
+   if (sinkList.size()==0)
+   {
