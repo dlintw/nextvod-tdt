@@ -273,3 +273,17 @@ eglTerminate (EGLDisplay dpy)
   
   return EGL_TRUE;
 }
+
+EGLBoolean
+eglQuerySurface (EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint *value)
+{
+#ifdef DEBUG
+  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
+#endif
+  if (attribute == EGL_WIDTH)       *value = 1280;
+  else if (attribute == EGL_HEIGHT) *value = 720;
+  else return EGL_FALSE;
+  
+  return EGL_TRUE;
+}
+

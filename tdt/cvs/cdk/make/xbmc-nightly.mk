@@ -14,15 +14,17 @@ $(DEPDIR)/xbmc-nightly.do_prepare:
 	echo "---- REVISIONS ----"; \
 	echo "1) Sat, 14 Apr 2012 12:36 - 460e79416c5cb13010456794f36f89d49d25da75"; \
 	echo "2) Sun, 10 Jun 2012 13:53 - 327710767d2257dad27e3885effba1d49d4557f0"; \
-	echo "3) current inactive... comming soon, here is the next stable (case 3 == DIFF=3)"; \
+	echo "3) Fr,  31 Aug 2012 22:34 - Frodo_alpha5 - 12840c28d8fbfd71c26be798ff6b13828b05b168"; \
+	echo "4) current inactive... comming soon, here is the next stable (case 4 == DIFF=4)"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
 	[ "$$REPLY" == "0" ] && DIFF="2"; \
 	[ "$$REPLY" == "1" ] && DIFF="1" && REVISION="460e79416c5cb13010456794f36f89d49d25da75"; \
 	[ "$$REPLY" == "2" ] && DIFF="2" && REVISION="327710767d2257dad27e3885effba1d49d4557f0"; \
+	[ "$$REPLY" == "3" ] && DIFF="3" && REVISION="12840c28d8fbfd71c26be798ff6b13828b05b168"; \
 	echo "Revision: " $$REVISION; \
 	[ -d "$(archivedir)/xbmc.git" ] && \
-	(cd $(archivedir)/xbmc.git; git pull ; cd "$(buildprefix)";); \
+	(cd $(archivedir)/xbmc.git; git pull ; git checkout HEAD; cd "$(buildprefix)";); \
 	[ -d "$(archivedir)/xbmc.git" ] || \
 	git clone $$REPO $(archivedir)/xbmc.git; \
 	cp -ra $(archivedir)/xbmc.git $(appsdir)/xbmc-nightly.newest; \
