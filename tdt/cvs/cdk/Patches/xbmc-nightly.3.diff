@@ -4747,3 +4747,18 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
  	$(MAKE) -C lib/cximage-6.0
  
  codecs: papcodecs dvdpcodecs
+@@ -500,13 +522,13 @@
+ 		-not -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs|.*svn.*|.*\.so|.*\.dll" \
+ 		-exec sh -c "install -d \"$(DESTDIR)$(datarootdir)/xbmc/\`dirname '{}'\`\"" \; \
+ 		-and \
+ 		-exec install -m 0644 "{}" $(DESTDIR)$(datarootdir)/xbmc/"{}" \; \
+ 		-exec printf " -- %-75.75s\r" "{}" \;
+ else
+-	@find addons language media sounds userdata system -regextype posix-extended -type f -not -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs|.*svn.*|.*\.so|.*\.dll" -exec install -D -m 0644 "{}" $(DESTDIR)$(datarootdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
++	@find addons language media sounds userdata system -regextype posix-extended -type f -not -iregex "*.\-@ARCH@.*|.*\.vis|.*\.xbs|.*\.so|.*\.dll" -exec install -D -m 0644 "{}" $(DESTDIR)$(datarootdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
+ endif
+ endif
+ 	@# Icons and links
+ 	@install -d $(DESTDIR)$(datarootdir)/applications
+ 	@install tools/Linux/xbmc.desktop $(DESTDIR)$(datarootdir)/applications/xbmc.desktop
+ 	@install -d $(DESTDIR)$(datadir)/icons/hicolor/48x48/apps
