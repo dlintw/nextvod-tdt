@@ -901,11 +901,19 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--disable-altivec \
 		--disable-debug \
 		--disable-asm \
+		--disable-altivec \
 		--disable-amd3dnow \
 		--disable-amd3dnowext \
 		--disable-mmx \
+		--disable-mmxext \
 		--disable-sse \
+		--disable-sse2 \
+		--disable-sse3 \
 		--disable-ssse3 \
+		--disable-sse4 \
+		--disable-sse42 \
+		--disable-avx \
+		--disable-fma4 \
 		--disable-armv5te \
 		--disable-armv6 \
 		--disable-armv6t2 \
@@ -913,7 +921,12 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--disable-mmi \
 		--disable-neon \
 		--disable-vis \
+		--disable-inline-asm \
 		--disable-yasm \
+		--disable-mips32r2 \
+		--disable-mipsdspr1 \
+		--disable-mipsdspr2 \
+		--disable-mipsfpu \
 		--disable-indevs \
 		--disable-outdevs \
 		--disable-muxers \
