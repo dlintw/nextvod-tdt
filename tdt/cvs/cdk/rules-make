@@ -220,7 +220,7 @@ libgd2;2.0.35;gd-2.0.35;gd-2.0.35.tar.gz;extract:gd-2.0.35.tar.gz
 #
 # net apps
 #
-portmap;6.0;portmap_6.0;portmap-6.0.tgz:portmap_6.0.diff:portmap_6.0.0-2.diff.gz;extract:portmap-6.0.tgz;patch:portmap_6.0.diff
+portmap;6.0.0;portmap-6.0.0;portmap_6.0.0.orig.tar.gz:portmap_6.0.diff:portmap_6.0.0-2.diff.gz;extract:portmap_6.0.0.orig.tar.gz;patch:portmap_6.0.diff
 nfs_utils;1.1.1;nfs-utils-1.1.1;nfs-utils-1.1.1.tar.bz2:nfs-utils_1.1.1-12.diff.gz;extract:nfs-utils-1.1.1.tar.bz2
 vsftpd;2.3.4;vsftpd-2.3.4;vsftpd-2.3.4.tar.gz:vsftpd_2.3.4.diff;extract:vsftpd-2.3.4.tar.gz;patch:vsftpd_2.3.4.diff
 netkit_ftp;0.17;netkit-ftp-0.17;netkit-ftp-0.17.tar.gz:netkit-ftp.diff;extract:netkit-ftp-0.17.tar.gz;patch:netkit-ftp.diff
