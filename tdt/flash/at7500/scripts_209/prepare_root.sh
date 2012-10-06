@@ -26,3 +26,13 @@ rm -f $TMPROOTDIR/boot/*
 echo "/dev/mtdblock2	/boot	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
 #echo "/dev/mtdblock4	/var	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
 
+mv $TMPROOTDIR/usr/local/share/enigma2/po $TMPROOTDIR/usr/local/share/enigma2/po.old
+mkdir $TMPROOTDIR/usr/local/share/enigma2/po
+cp -r $TMPROOTDIR/usr/local/share/enigma2/po.old/en $TMPROOTDIR/usr/local/share/enigma2/po
+cp -r $TMPROOTDIR/usr/local/share/enigma2/po.old/de $TMPROOTDIR/usr/local/share/enigma2/po
+rm -rf $TMPROOTDIR/usr/local/share/enigma2/po.old
+
+if [ -d $TMPROOTDIR/usr/lib/gstreamer-0.10 ]; then
+  rm -f $TMPROOTDIR/usr/lib/libav*
+fi
+find $TMPROOTDIR/usr/lib/python2.6/ -name "*.py" -exec rm -f {} \;

@@ -6,3 +6,5 @@ pad
 squashfs4.0.tar.gz
 unsquashfs3.3
 unsquashfs4.0
+cramfs-1.1.tar.gz
+mkcramfs1.1
