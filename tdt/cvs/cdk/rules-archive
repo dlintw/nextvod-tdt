@@ -213,7 +213,7 @@ gd-2.0.35.tar.gz;http://www.chipsnbytes.net/downloads
 #
 # net apps
 #
-portmap-6.0.tgz;http://neil.brown.name/portmap
+portmap_6.0.0.orig.tar.gz;http://ftp.de.debian.org/debian/pool/main/p/portmap
 portmap_6.0.0-2.diff.gz ;http://debian.osuosl.org/debian/pool/main/p/portmap
 nfs-utils-1.1.1.tar.bz2;ftp://ftp.kernel.org/pub/linux/utils/nfs
 nfs-utils_1.1.1-12.diff.gz;http://ftp.de.debian.org/debian/pool/main/n/nfs-utils
