@@ -23,7 +23,8 @@ killall -9 update
 if [ -e /mnt/kathrein/ufs913/mtd_fw.sum.bin ]; then
   echo "Write fw"
   flash_eraseall -j /dev/mtd8
-  dd of=/dev/mtdblock8 if=/mnt/kathrein/ufs913/mtd_fw.sum.bin
+  nandwrite -a -m -p /dev/mtd8 /mnt/kathrein/ufs913/mtd_fw.sum.bin
+  #dd of=/dev/mtdblock8 if=/mnt/kathrein/ufs913/mtd_fw.sum.bin
 fi
 
 echo "Check rootfs"
@@ -32,7 +33,8 @@ killall -9 update
 if [ -e /mnt/kathrein/ufs913/mtd_root.sum.bin ]; then
   echo "Write rootfs"
   flash_eraseall -j /dev/mtd9
-  dd of=/dev/mtdblock9 if=/mnt/kathrein/ufs913/mtd_root.sum.bin
+  nandwrite -a -m -p /dev/mtd9 /mnt/kathrein/ufs913/mtd_root.sum.bin
+  #dd of=/dev/mtdblock9 if=/mnt/kathrein/ufs913/mtd_root.sum.bin
 fi
 
 killall -9 update
