@@ -22,12 +22,14 @@ $(DEPDIR)/enigma2-pli-nightly.do_prepare:
 	[ "$$REPLY" == "1" ] && DIFF="1" && REVISION="945aeb939308b3652b56bc6c577853369d54a537" && REPO="git://openpli.git.sourceforge.net/gitroot/openpli/enigma2"; \
 	[ "$$REPLY" == "2" ] && DIFF="2" && REVISION="839e96b79600aba73f743fd39628f32bc1628f4c" && REPO="git://openpli.git.sourceforge.net/gitroot/openpli/enigma2"; \
 	echo "Revision: " $$REVISION; \
-	[ -d "$(appsdir)/enigma2-nightly" ] && \
-	git pull $(appsdir)/enigma2-nightly $$HEAD;\
-	[ -d "$(appsdir)/enigma2-nightly" ] || \
-	git clone -b $$HEAD $$REPO $(appsdir)/enigma2-nightly; \
-	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.newest; \
+	[ -d "$(archivedir)/enigma2-pli-nightly.git" ] && \
+	(cd $(archivedir)/enigma2-pli-nightly.git; git pull ; git checkout HEAD; cd "$(buildprefix)";); \
+	[ -d "$(archivedir)/enigma2-pli-nightly.git" ] || \
+	git clone -b $$HEAD $$REPO $(archivedir)/enigma2-pli-nightly.git; \
+	cp -ra $(archivedir)/enigma2-pli-nightly.git $(appsdir)/enigma2-nightly.newest; \
+	cp -ra $(archivedir)/enigma2-pli-nightly.git $(appsdir)/enigma2-nightly; \
 	[ "$$REVISION" == "" ] || (cd $(appsdir)/enigma2-nightly; git checkout "$$REVISION"; cd "$(buildprefix)";); \
+	rm -rf $(appsdir)/enigma2-nightly/.git; \
 	cp -ra $(appsdir)/enigma2-nightly $(appsdir)/enigma2-nightly.org; \
 	cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-pli-nightly.$$DIFF.diff"; \
 	cd $(appsdir)/enigma2-nightly && patch -p1 < "../../cdk/Patches/enigma2-pli-nightly.$$DIFF.$(MEDIAFW).diff"; \
