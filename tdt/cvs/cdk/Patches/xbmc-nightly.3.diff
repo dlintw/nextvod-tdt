@@ -98,7 +98,7 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
  #include <errno.h>
 --- a/
 +++ b/xbmc/cores/gstplayer/GSTPlayer.cpp	2012-09-21 20:43:11.000000000 
-@@ -0,0 +1,632 @@
+@@ -0,0 +1,800 @@
 +/*
 + *      Copyright (C) 2005-2008 Team XBMC
 + *      http://www.xbmc.org
@@ -144,7 +144,7 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +  IPlayer            (callback),
 +  CThread            ("GSTPlayer")
 +{
-+  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  int argc = 0;
 +  char**argv = NULL;
 +
@@ -164,11 +164,12 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +  GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE (m_pGstPlaybin));
 +  gst_bus_set_sync_handler(bus, gstBusSyncHandler, this);
 +  gst_object_unref(bus);
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +}
 +
 +GSTPlayer::~GSTPlayer()
 +{
-+  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +
 +  CloseFile();
 +
@@ -197,16 +198,19 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +
 +  if (m_pGstPlaybin)
 +    gst_object_unref (GST_OBJECT (m_pGstPlaybin));
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +}
 +
 +void GSTPlayer::OnExit()
 +{
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +
 +}
 +
 +bool GSTPlayer::OpenFile(const CFileItem& file, const CPlayerOptions &options)
 +{
-+  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  gchar *uri;
 +  int flags;
 +
@@ -302,13 +306,14 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +    //g_renderManager.Configure(m_iVideoWidth, m_iVideoHeight, 1280, 720, m_iVideoFramerate/1000.0, 0, RENDER_FMT_NONE, 0);
 +#endif
 +
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +  return true;
 +}
 +
 +//Finished
 +bool GSTPlayer::QueueNextFile(const CFileItem &file)
 +{
-+  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  if (IsPaused())
 +    Pause();
 +
@@ -325,20 +330,22 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +
 +  *m_nextFile = file;
 +
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +  return true;
 +}
 +
 +//Finished
 +void GSTPlayer::OnNothingToQueueNotify()
 +{
-+  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  //nothing to queue, stop playing
 +  m_bQueueFailed = true;
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +}
 +
 +bool GSTPlayer::CloseFile()
 +{
-+  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  if (IsPaused())
 +    Pause();
 +
@@ -355,44 +362,42 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +#if defined(HAS_VIDEO_PLAYBACK)
 +  g_renderManager.UnInit();
 +#endif
-+  printf ("umount /tmp/nfs\n");
++  printf ("umount /tmp/nfs ->\n");
 +  system("umount /tmp/nfs");
++  printf ("umount /tmp/nfs <-\n");
 +  return true;
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +}
 +
 +//Finished
 +void GSTPlayer::Pause()
 +{
-+  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  CLog::Log(LOGDEBUG,"GSTPlayer: pause m_bplaying: %d", m_bIsPlaying);
-+  if (!m_bIsPlaying || !m_pGstPlaybin)
-+  return ;
++  if (!m_bIsPlaying || !m_pGstPlaybin) {
++    printf("%s:%s[%d] <<-\n", __FILE__, __func__, __LINE__);
++    return;
++  }
 +
-+  m_bPaused = !m_bPaused;
 +
 +  if (m_bPaused)
-+  {
-+    gst_element_set_state (m_pGstPlaybin, GST_STATE_PAUSED);
-+
-+    m_callback.OnPlayBackPaused();
-+    CLog::Log(LOGDEBUG, "GSTPlayer: Playback paused");
-+  }
-+  else
-+  {
 +    gst_element_set_state (m_pGstPlaybin, GST_STATE_PLAYING);
-+
-+    m_callback.OnPlayBackResumed();
-+    CLog::Log(LOGDEBUG, "GSTPlayer: Playback resumed");
-+  }
++  else
++    gst_element_set_state (m_pGstPlaybin, GST_STATE_PAUSED);
++  
++  m_bPaused = !m_bPaused;
++  
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +}
 +
 +__int64 GSTPlayer::GetTotalTime()
 +{
++  //d1printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  __int64 total;
 +  gint64 len;
 +  GstFormat fmt = GST_FORMAT_TIME; //Returns time in nanosecs
 +  gst_element_query_duration(m_pGstPlaybin, &fmt, &len);
-+  total = len / 1000000000;
++  total = len / 1000000;
 +
 +
 +  if (m_currentFile->m_lEndOffset)
@@ -400,20 +405,24 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +  if (m_currentFile->m_lStartOffset)
 +    total -= m_currentFile->m_lStartOffset * 1000 / 75;
 +
-+  //printf("%s:%s[%d] len %lld\n", __FILE__, __func__, __LINE__, total);
++  m_duration_ms = total;
++
++  //d1printf("%s:%s[%d] <- len=%lld\n", __FILE__, __func__, __LINE__, total);
 +  return total;
 +}
 +
 +
 +float GSTPlayer::GetPercentage()
 +{
++  //d1printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  float percent = (GetTime() * 100.0f) / GetTotalTime();
-+  //printf("%s:%s[%d] percent %f%%\n", __FILE__, __func__, __LINE__, percent);
++  //d1printf("%s:%s[%d] <- percent=%f%%\n", __FILE__, __func__, __LINE__, percent);
 +  return percent;
 +}
 +
 +__int64 GSTPlayer::GetTime()
 +{
++  //d1printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  __int64 ret;
 +  __int64 timeplus;
 +  gint64 pos;
@@ -423,8 +432,110 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +
 +  ret = m_timeOffset + timeplus - m_currentFile->m_lStartOffset * 1000 / 75;
 +
-+  //printf("%s:%s[%d] pos %lld\n", __FILE__, __func__, __LINE__, ret);
++  m_elapsed_ms = ret;
++
++  //d1printf("%s:%s[%d] <- pos=%lld\n", __FILE__, __func__, __LINE__, ret);
 +  return ret;
++}
++
++bool GSTPlayer::CanSeek()
++{
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] <- %d\n", __FILE__, __func__, __LINE__, GetTotalTime() > 0);
++  return GetTotalTime() > 0;
++}
++
++void GSTPlayer::Seek(bool bPlus, bool bLargeStep)
++{
++  printf("%s:%s[%d] -> bPlus=%d bLargeStep=%d\n", __FILE__, __func__, __LINE__, bPlus, bLargeStep);
++
++#if 0
++  // try chapter seeking first, chapter_index is ones based.
++  int chapter_index = GetChapter();
++  if (bLargeStep)
++  {
++    // seek to next chapter
++    if (bPlus && (chapter_index < GetChapterCount()))
++    {
++      SeekChapter(chapter_index + 1);
++      return;
++    }
++    // seek to previous chapter
++    if (!bPlus && chapter_index)
++    {
++      SeekChapter(chapter_index - 1);
++      return;
++    }
++  }
++#endif
++
++  int64_t seek_ms;
++  if (g_advancedSettings.m_videoUseTimeSeeking)
++  {
++    if (bLargeStep && (GetTotalTime() > (2000 * g_advancedSettings.m_videoTimeSeekForwardBig)))
++      seek_ms = bPlus ? g_advancedSettings.m_videoTimeSeekForwardBig : g_advancedSettings.m_videoTimeSeekBackwardBig;
++    else
++      seek_ms = bPlus ? g_advancedSettings.m_videoTimeSeekForward    : g_advancedSettings.m_videoTimeSeekBackward;
++    // convert to milliseconds
++    seek_ms *= 1000;
++    seek_ms += m_elapsed_ms;
++  }
++  else
++  {
++    float percent;
++    if (bLargeStep)
++      percent = bPlus ? g_advancedSettings.m_videoPercentSeekForwardBig : g_advancedSettings.m_videoPercentSeekBackwardBig;
++    else
++      percent = bPlus ? g_advancedSettings.m_videoPercentSeekForward    : g_advancedSettings.m_videoPercentSeekBackward;
++    percent /= 100.0f;
++    percent += (float)m_elapsed_ms/(float)m_duration_ms;
++    // convert to milliseconds
++    seek_ms = m_duration_ms * percent;
++  }
++
++  // handle stacked videos, dvdplayer does it so we do it too.
++  if (g_application.CurrentFileItem().IsStack() &&
++    (seek_ms > m_duration_ms || seek_ms < 0))
++  {
++    CLog::Log(LOGDEBUG, "CAMLPlayer::Seek: In mystery code, what did I do");
++    g_application.SeekTime((seek_ms - m_elapsed_ms) * 0.001 + g_application.GetTime());
++    // warning, don't access any object variables here as
++    // the object may have been destroyed
++    return;
++  }
++
++  if (seek_ms <= 1000)
++    seek_ms = 1000;
++
++  if (seek_ms > m_duration_ms)
++    seek_ms = m_duration_ms;
++
++  // do seek here
++  g_infoManager.SetDisplayAfterSeek(100000);
++  SeekTime(seek_ms);
++  m_callback.OnPlayBackSeek((int)seek_ms, (int)(seek_ms - m_elapsed_ms));
++  g_infoManager.SetDisplayAfterSeek();
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
++}
++
++void GSTPlayer::SeekTime(__int64 seek_ms)
++{
++  printf("%s:%s[%d] -> seek_ms=%ld\n", __FILE__, __func__, __LINE__, seek_ms);
++  // we cannot seek if paused
++  if (m_bPaused)
++    return;
++
++  if (seek_ms <= 0)
++    seek_ms = 100;
++
++  // seek here
++    // player_timesearch is nanoseconds (int64).
++    gst_element_seek (m_pGstPlaybin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
++        GST_SEEK_TYPE_SET, seek_ms*1000000,
++        GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE);
++    //WaitForSearchOK(5000);
++    //WaitForPlaying(5000);
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +}
 +
 +void GSTPlayer::Process()
@@ -435,9 +546,6 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +  if (m_startEvent.WaitMSec(100))
 +  {
 +    m_startEvent.Reset();
-+
-+
-+
 +    do
 +    {
 +      if (!m_bPaused)
@@ -463,19 +571,61 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +
 +void GSTPlayer::SetVolume(long nVolume)
 +{
-+  printf("%s:%s[%d] %ld\n", __FILE__, __func__, __LINE__, nVolume);
++  printf("%s:%s[%d] -> nVolume=%ld\n", __FILE__, __func__, __LINE__, nVolume);
 +  //-6000 = mute, 0 is max
 +  //64 = mute, 0 is max
 +  FILE* fp = fopen("/proc/stb/avs/0/volume", "w");
 +  fprintf(fp, "%d", (int)((nVolume*-64)/6000.0));
 +  fclose(fp);
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
++}
++
++float GSTPlayer::GetActualFPS()
++{
++  //d1printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++  FILE* fp = fopen("/proc/stb/vmpeg/0/framerate", "r");
++  int video_fps_tmp = 0;
++  float video_fps = 0.0f;
++  fscanf(fp, "%x", &video_fps_tmp);
++  fclose(fp);
++  video_fps = video_fps_tmp / 1000.0f;
 +  
++  //d1printf("%s:%s[%d] <- video_fps=%f\n", __FILE__, __func__, __LINE__, video_fps);
++  return video_fps;
++}
++
++int GSTPlayer::GetPictureWidth()
++{
++  //d1printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++  FILE* fp = fopen("/proc/stb/vmpeg/0/xres", "r");
++  int video_width = 0;
++  fscanf(fp, "%x", &video_width);
++  fclose(fp);
++  //d1printf("%s:%s[%d] <- video_width=%d\n", __FILE__, __func__, __LINE__, video_width);
++  return video_width;
++}
++
++int GSTPlayer::GetPictureHeight()
++{
++  //d1printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++  FILE* fp = fopen("/proc/stb/vmpeg/0/yres", "r");
++  int video_height = 0;
++  fscanf(fp, "%x", &video_height);
++  fclose(fp);
++  //d1printf("%s:%s[%d] <- video_height=%d\n", __FILE__, __func__, __LINE__, video_height);
++  return video_height;
 +}
 +
 +void GSTPlayer::gstBusCall(GstMessage *msg)
 +{
-+  //printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
-+  if (!msg) return;
++  //d2printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++  if (!msg) {
++    //d2printf("%s:%s[%d] <<-\n", __FILE__, __func__, __LINE__);
++    return;
++  }
++  
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++  
 +  gchar *sourceName;
 +  GstObject *source;
 +  source = GST_MESSAGE_SRC(msg);
@@ -495,7 +645,8 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +      gst_message_parse_state_changed(msg, &old_state, &new_state, NULL);
 +      if(old_state == new_state)
 +        break;
-+      printf("%s:%s[%d] state transition %s -> %s", __FILE__, __func__, __LINE__, gst_element_state_get_name(old_state), gst_element_state_get_name(new_state));
++      printf("%s:%s[%d] state transition %s -> %s\n", __FILE__, __func__, __LINE__, 
++        gst_element_state_get_name(old_state), gst_element_state_get_name(new_state));
 +      
 +      GstStateChange transition = (GstStateChange)GST_STATE_TRANSITION(old_state, new_state);
 +      switch(transition)
@@ -666,43 +817,55 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +    default:
 +      break;
 +  }
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +}
 +
 +void GSTPlayer::handleMessage(GstMessage *msg)
 +{
-+  printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  //d2printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  if (GST_MESSAGE_TYPE(msg) == GST_MESSAGE_STATE_CHANGED && GST_MESSAGE_SRC(msg) != GST_OBJECT(m_pGstPlaybin))
 +  {
 +    gst_message_unref(msg);
++    //d2printf("%s:%s[%d] <<-\n", __FILE__, __func__, __LINE__);
 +    return;
 +  }
 +  gstBusCall(msg);
++  //d2printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +}
 +
 +GstBusSyncReply GSTPlayer::gstBusSyncHandler(GstBus *bus, GstMessage *message, gpointer user_data)
 +{
-+  //printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
++  //d2printf("%s:%s[%d]\n", __FILE__, __func__, __LINE__);
 +  GSTPlayer *_this = (GSTPlayer*)user_data;
 +  if (_this) _this->handleMessage(message);
++  
++  //d2printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +  return GST_BUS_DROP;
 +}
 +
 +int GSTPlayer::GetAudioStreamCount()
 +{
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +  return m_AudioStreams.size();
 +}
 +
 +int GSTPlayer::GetAudioStream()
 +{
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  if (m_iCurrentAudioStream == -1)
 +    g_object_get (G_OBJECT (m_pGstPlaybin), "current-audio", &m_iCurrentAudioStream, NULL);
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +  return m_iCurrentAudioStream;
 +}
 +
 +void GSTPlayer::SetAudioStream(int iStream)
 +{
-+  if (iStream >= m_AudioStreams.size())
++  printf("%s:%s[%d] -> iStream=%d\n", __FILE__, __func__, __LINE__, iStream);
++  if (iStream >= m_AudioStreams.size()) {
++    printf("%s:%s[%d] <<-\n", __FILE__, __func__, __LINE__);
 +    return;
++  }
 +
 +  int current_audio;
 +  g_object_set (G_OBJECT (m_pGstPlaybin), "current-audio", iStream, NULL);
@@ -711,29 +874,34 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +  {
 +    m_iCurrentAudioStream = iStream;
 +  }
++  printf("%s:%s[%d] <-\n", __FILE__, __func__, __LINE__);
 +}
 +
 +void GSTPlayer::GetAudioStreamLanguage(int iStream, CStdString &strLanguage)
 +{
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  strLanguage = "";
 +  if (iStream >= m_AudioStreams.size())
 +    return;
 +
 +  strLanguage = m_AudioStreams[iStream].m_sLanguageCode;
++  printf("%s:%s[%d] <- lng=%s\n", __FILE__, __func__, __LINE__, strLanguage.c_str());
 +}
 +
 +void GSTPlayer::GetAudioStreamName(int iStream, CStdString& strStreamName)
 +{
++  printf("%s:%s[%d] ->\n", __FILE__, __func__, __LINE__);
 +  strStreamName = "Unknown";
 +  if (iStream >= m_AudioStreams.size())
 +    return;
 +
 +  strStreamName = m_AudioStreams[iStream].m_sCodec;
++  printf("%s:%s[%d] <- name=%s\n", __FILE__, __func__, __LINE__, strStreamName.c_str());
 +}
 +
 --- a/
 +++ b/xbmc/cores/gstplayer/GSTPlayer.h	2012-09-21 19:54:52.000000000 
-@@ -0,0 +1,136 @@
+@@ -0,0 +1,142 @@
 +#pragma once
 +
 +/*
@@ -799,8 +967,9 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +  virtual bool HasVideo() const { return m_bHasVideo; }
 +  virtual bool HasAudio() const { return m_bHasAudio; }
 +
-+  virtual bool CanSeek() { return false; }
-+  virtual void Seek(bool bPlus = true, bool bLargeStep = false) {}
++  virtual bool CanSeek();
++  virtual void Seek(bool bPlus = true, bool bLargeStep = false);
++  virtual void SeekTime(__int64 iTime = 0);
 +  
 +  virtual void SetVolume(long nVolume);
 +
@@ -813,12 +982,15 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +  virtual __int64 GetTime();
 +  virtual float GetPercentage();
 +
-+  virtual int GetAudioStreamCount();
-+  virtual int GetAudioStream();
++  virtual int  GetAudioStreamCount();
++  virtual int  GetAudioStream();
 +  virtual void GetAudioStreamName(int iStream, CStdString &strStreamName);
 +  virtual void SetAudioStream(int iStream);
 +  virtual void GetAudioStreamLanguage(int iStream, CStdString &strLanguage);
 +
++  virtual float GetActualFPS();
++  virtual int   GetPictureWidth();
++  virtual int   GetPictureHeight();
 +protected:
 +  virtual void OnStartup() {}
 +  virtual void Process();
@@ -864,6 +1036,8 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
 +  static GstBusSyncReply gstBusSyncHandler(GstBus *bus, GstMessage *message, gpointer user_data);
 +
 +  __int64 m_timeOffset;
++  int64_t                 m_elapsed_ms;
++  int64_t                 m_duration_ms;
 +
 +  // our file
 +  CFileItem*        m_currentFile;
