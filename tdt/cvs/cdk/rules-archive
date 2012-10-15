@@ -152,6 +152,7 @@ mysql-5.1.40.tar.gz;http://downloads.mysql.com/archives/mysql-5.1
 libmicrohttpd-0.9.19.tar.gz;http://ftp.halifax.rwth-aachen.de/gnu/libmicrohttpd
 libexif-0.6.20.tar.gz;http://sourceforge.net/projects/libexif/files/libexif/0.6.20
 minidlna_1.0.24_src.tar.gz;http://netcologne.dl.sourceforge.net/project/minidlna/minidlna/1.0.24
+minidlna_1.0.25_src.tar.gz;http://sourceforge.net/projects/minidlna/files/minidlna/1.0.25
 vlc-1.1.13.tar.bz2;http://download.videolan.org/pub/videolan/vlc/1.1.13
 djmount-0.71.tar.gz;http://sourceforge.net/projects/djmount/files/djmount/0.71
 libupnp-1.6.17.tar.bz2;http://sourceforge.net/projects/pupnp/files/latest/download

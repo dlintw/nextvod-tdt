@@ -153,7 +153,8 @@ jasper;1.900.1;jasper-1.900.1;jasper-1.900.1.zip;extract:jasper-1.900.1.zip
 mysql;5.1.40;mysql-5.1.40;mysql-5.1.40.tar.gz;extract:mysql-5.1.40.tar.gz
 libmicrohttpd;0.9.19;libmicrohttpd-0.9.19;libmicrohttpd-0.9.19.tar.gz;extract:libmicrohttpd-0.9.19.tar.gz
 libexif;0.6.20;libexif-0.6.20;libexif-0.6.20.tar.gz;extract:libexif-0.6.20.tar.gz
-minidlna;1.0.24;minidlna-1.0.24;minidlna_1.0.24_src.tar.gz;extract:minidlna_1.0.24_src.tar.gz;patch:minidlna-1.0.24.patch
+#minidlna;1.0.24;minidlna-1.0.24;minidlna_1.0.24_src.tar.gz;extract:minidlna_1.0.24_src.tar.gz;patch:minidlna-1.0.24.patch
+minidlna;1.0.25;minidlna-1.0.25;minidlna_1.0.25_src.tar.gz;extract:minidlna_1.0.25_src.tar.gz;patch:minidlna-1.0.25.patch
 vlc;1.1.13;vlc-1.1.13;vlc-1.1.13.tar.bz2;extract:vlc-1.1.13.tar.bz2
 djmount;0.71;djmount-0.71;djmount-0.71.tar.gz;extract:djmount-0.71.tar.gz
 libupnp;1.6.17;libupnp-1.6.17;libupnp-1.6.17.tar.bz2;extract:libupnp-1.6.17.tar.bz2
