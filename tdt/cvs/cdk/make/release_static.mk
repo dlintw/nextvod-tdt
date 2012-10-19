@@ -104,6 +104,10 @@ release_adb_box: cpu7100
 	sh4-linux-strip --strip-unneeded $(releaseprefix)/lib/modules/vfd.ko
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/adb_box_fan/cooler.ko $(releaseprefix)/release/lib/modules/
 	sh4-linux-strip --strip-unneeded $(releaseprefix)/lib/modules/cooler.ko
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cec_adb_box/cec_ctrl.ko $(prefix)/release/lib/modules/
+	sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/cec_ctrl.ko
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/dvbt/as102/dvb-as102.ko $(prefix)/release/lib/modules/
+	sh4-linux-strip --strip-unneeded $(prefix)/release/lib/modules/dvb-as102.ko
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(releaseprefix)/lib/modules/
 	sh4-linux-strip --strip-unneeded $(releaseprefix)/lib/modules/stmcore-display-stx7100.ko
 
