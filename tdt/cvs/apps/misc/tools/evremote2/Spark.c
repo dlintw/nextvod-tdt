@@ -173,7 +173,7 @@ static tButton cButtonsSparkRc08[] = {
 
 /* Amiko alien-spark RCU */
 static tButton cButtonsSparkRc09[] = {
-   {"POWER"          , "25", KEY_POWER},
+    {"POWER"          , "25", KEY_POWER},
     {"MUTE"           , "85", KEY_MUTE},
     {"TIME"           , "8D", KEY_TIME},
     {"V.FORMAT"       , "AD", KEY_V},
@@ -401,13 +401,74 @@ static tButton cButtonsSparkRc04[] = {
     {""               , ""  , KEY_NULL},
 };
 
+/* GALAXY RC */
+static tButton cButtonsGalaxy[] = {
+    {"POWER"          , "25", KEY_POWER},
+    {"R"              , "A5", KEY_R},
+    {"V.FORMAT"       , "AD", KEY_V},
+    {"TIME"           , "8D", KEY_TIME},
+    {"MUTE"           , "85", KEY_MUTE},
+    {"TV/SAT"         , "C5", KEY_AUX},
+    {"Tms"            , "E5", KEY_T},
+    {"PRESENTATION"   , "ED", KEY_PRESENTATION},
+    {"F1"             , "CD", KEY_F1},
+    {"0BUTTON"        , "57", KEY_0},
+    {"1BUTTON"        , "B5", KEY_1},
+    {"2BUTTON"        , "95", KEY_2},
+    {"3BUTTON"        , "BD", KEY_3},
+    {"4BUTTON"        , "F5", KEY_4},
+    {"5BUTTON"        , "D5", KEY_5},
+    {"6BUTTON"        , "FD", KEY_6},
+    {"7BUTTON"        , "35", KEY_7},
+    {"8BUTTON"        , "15", KEY_8},
+    {"9BUTTON"        , "3D", KEY_9},
+    {"TV/RADIO"       , "77", KEY_TV2},
+    {"RECALL"         , "7F", KEY_BACK},
+    {"VOL+"           , "C7", KEY_VOLUMEDOWN},
+    {"VOL-"           , "DD", KEY_VOLUMEUP},
+    {"PAGE-"          , "5F", KEY_PAGEDOWN},
+    {"PAGE+"          , "07", KEY_PAGEUP},
+    {"FIND"           , "9D", KEY_FIND},
+    {"SAT"            , "1D", KEY_SAT},
+    {"REC"            , "45", KEY_RECORD},
+    {"FAV"            , "87", KEY_FAVORITES},
+    {"MENU"           , "65", KEY_MENU},
+    {"INFO"           , "A7", KEY_INFO},
+    {"EXIT"           , "4D", KEY_EXIT},
+    {"EPG"            , "8F", KEY_EPG},
+    {"OK"             , "2F", KEY_OK},
+    {"UP"             , "27", KEY_UP},
+    {"DOWN"           , "0F", KEY_DOWN},
+    {"LEFT"           , "6D", KEY_LEFT},
+    {"RIGHT"          , "AF", KEY_RIGHT},
+    {"FOLDER"         , "75", KEY_ARCHIVE},
+    {"STOP"           , "F7", KEY_STOP},
+    {"PAUSE"          , "37", KEY_PAUSE},
+    {"PLAY"           , "B7", KEY_PLAY},
+    {"PREV"           , "55", KEY_PREVIOUS},
+    {"NEXT"           , "D7", KEY_NEXT},
+    {"REWIND"         , "17", KEY_REWIND},
+    {"FORWARD"        , "97", KEY_FORWARD},
+    {"USB"            , "9F", KEY_CLOSE},
+    {"RED"            , "7D", KEY_RED},
+    {"GREEN"          , "FF", KEY_GREEN},
+    {"YELLOW"         , "3F", KEY_YELLOW},
+    {"BLUE"           , "BF", KEY_BLUE},
+    {"PLAY_MODE"      , "1F", KEY_P},
+    {"SLOW"           , "5D", KEY_SLOW},
+    {"FAST"	          , "DF", KEY_FASTFORWARD},
+    {""               , ""  , KEY_NULL},
+};
 
 /* fixme: move this to a structure and
  * use the private structure of RemoteControl_t
  */
 static struct sockaddr_un  vAddr;
 
-
+#define STB_ID_GOLDENMEDIA_GM990        "09:00:07"
+#define STB_ID_EDISION_PINGULUX	        "09:00:08"
+#define STB_ID_AMIKO_ALIEN_SDH8900      "09:00:0A"
+#define STB_ID_GALAXYINNOVATIONS_S8120  "09:00:0B"
 
 static tButton *pSparkGetButton(char *pData)
 
@@ -421,11 +482,27 @@ static tButton *pSparkGetButton(char *pData)
 	{
 		pButtons = cButtonsSparkRc08;
 	}
-	else if (!strncasecmp(pData, SPARK_RC09_PREDATA, sizeof(SPARK_RC09_PREDATA)))
-	{
-		pButtons = cButtonsSparkRc09;
-	}
-	else if (!strncasecmp(pData, SPARK_DEFAUYLT_PREDATA, sizeof(SPARK_DEFAUYLT_PREDATA)))
+	else if (!strncasecmp(pData, SPARK_RC09_PREDATA, sizeof(SPARK_RC09_PREDATA))) {
+		static tButton *cButtons = NULL;
+		if (!cButtons) {
+			int fn = open("/proc/cmdline", O_RDONLY);
+			if (fn > -1) {
+				char procCmdLine[1024];
+				int len = read(fn, procCmdLine, sizeof(procCmdLine) - 1);
+				if (len > 0) {
+					procCmdLine[len] = 0;
+					if (strstr(procCmdLine, "STB_ID=" STB_ID_EDISION_PINGULUX))
+						cButtons = cButtonsEdisionSpark;
+					if (strstr(procCmdLine, "STB_ID=" STB_ID_GALAXYINNOVATIONS_S8120))
+						cButtons = cButtonsGalaxy;
+				}
+				close(fn);
+			}
+			if (!cButtons)
+				cButtons = cButtonsSparkRc09; /* Amiko Alien 8900 */
+		}
+		return cButtons;
+	}	else if (!strncasecmp(pData, SPARK_DEFAUYLT_PREDATA, sizeof(SPARK_DEFAUYLT_PREDATA)))
 	{
 		pButtons = cButtonsSparkDefault;
 	}
