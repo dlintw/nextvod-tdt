@@ -78,10 +78,10 @@ static tButton cButtonsEdisionSpark[] = {
     {"PAGE+"          , "07", KEY_PAGEUP},
     {"PAGE-"          , "5F", KEY_PAGEDOWN},
 
-    {"DOWN"        , "0f", KEY_DOWN},
-    {"UP"          , "27", KEY_UP},
-    {"RIGHT"       , "af", KEY_RIGHT},
-    {"LEFT"        , "6d", KEY_LEFT},
+    {"DOWN"           , "0f", KEY_DOWN},
+    {"UP"             , "27", KEY_UP},
+    {"RIGHT"          , "af", KEY_RIGHT},
+    {"LEFT"           , "6d", KEY_LEFT},
     {"OK/LIST"        , "2f", KEY_OK},
     {"MENU"           , "65", KEY_MENU},
     {"GUIDE"          , "8f", KEY_EPG},
@@ -112,7 +112,7 @@ static tButton cButtonsEdisionSpark[] = {
 };
 
 /* spark RC8 */
-static tButton cButtonsSparRc08[] = {
+static tButton cButtonsSparkRc08[] = {
     {"POWER"          , "4D", KEY_POWER},
     {"MUTE"           , "DD", KEY_MUTE},
     {"TIME"           , "ED", KEY_TIME},
@@ -121,7 +121,6 @@ static tButton cButtonsSparRc08[] = {
     {"TV/SAT"         , "37", KEY_AUX},
     {"USB"            , "0D", KEY_CLOSE},
     {"FIND"           , "35", KEY_FIND},
-
     {"0BUTTON"        , "27", KEY_0},
     {"1BUTTON"        , "7D", KEY_1},
     {"2BUTTON"        , "3F", KEY_2},
@@ -132,56 +131,105 @@ static tButton cButtonsSparRc08[] = {
     {"7BUTTON"        , "55", KEY_7},
     {"8BUTTON"        , "17", KEY_8},
     {"9BUTTON"        , "95", KEY_9},
-
-	{"TV/RADIO" 	  , "65", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCHB
+    {"TV/RADIO"       , "65", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCHB
     {"RECALL"         , "A5", KEY_BACK},
-
     {"MENU"           , "5F", KEY_MENU},
     {"INFO"           , "1D", KEY_INFO},
-
-	{"UP"		      , "9F", KEY_UP},
-	{"DOWN"		      , "AF", KEY_DOWN},
-	{"LEFT" 	      , "3D", KEY_LEFT},
-	{"RIGHT"		  , "7F", KEY_RIGHT},
-	{"OK"		      , "BF", KEY_OK},
+    {"UP"             , "9F", KEY_UP},
+    {"DOWN"           , "AF", KEY_DOWN},
+    {"LEFT"           , "3D", KEY_LEFT},
+    {"RIGHT"          , "7F", KEY_RIGHT},
+    {"OK"             , "BF", KEY_OK},
     {"EXIT"           , "2D", KEY_HOME},
     {"EPG"            , "25", KEY_EPG},
-
     {"VOL+"           , "8D", KEY_VOLUMEUP},
     {"VOL-"           , "B5", KEY_VOLUMEDOWN},
     {"REC"            , "EF", KEY_RECORD},
     {"PAGE+"          , "B7", KEY_PAGEUP},
     {"PAGE-"          , "77", KEY_PAGEDOWN},
-
-	{"FOLDER"		  , "E5", KEY_ARCHIVE},
-
-	{"STOP" 		  , "A7", KEY_STOP},
-	{"PLAY" 		  , "75", KEY_PLAY},
-	{"PAUSE"		  , "F5", KEY_PAUSE},
-	{"FASTFORWARD"	  , "CD", KEY_FASTFORWARD},
-	{"REWIND"		  , "D5", KEY_REWIND},
+    {"FOLDER"         , "E5", KEY_ARCHIVE},
+    {"STOP"           , "A7", KEY_STOP},
+    {"PLAY"           , "75", KEY_PLAY},
+    {"PAUSE"          , "F5", KEY_PAUSE},
+    {"FASTFORWARD"    , "CD", KEY_FASTFORWARD},
+    {"REWIND"         , "D5", KEY_REWIND},
     {"PREV"           , "8F", KEY_PREVIOUS},
     {"NEXT"           , "57", KEY_NEXT},
-
     {"Tms"            , "4F", KEY_T},
-
     {"FAST"           , "97", KEY_F},
     {"SLOW"           , "15", KEY_SLOW},
     {"PLAY_MODE"      , "6F", KEY_P},
     {"WHITE"          , "67", KEY_W},
-
     {"RED"            , "05", KEY_RED},
     {"GREEN"          , "87", KEY_GREEN},
     {"YELLOW"         , "C5", KEY_YELLOW},
     {"BLUE"           , "47", KEY_BLUE},
-
-	{"FAV"			  , "F7", KEY_FAVORITES},
+    {"FAV"            , "F7", KEY_FAVORITES},
     {"SAT"            , "2F", KEY_SAT},
     {"TTX"            , "DF", KEY_TITLE},
     {"AUDIO"          , "D7", KEY_SUBTITLE},
     {""               , ""  , KEY_NULL},
 };
 
+/* Amiko alien-spark RCU */
+static tButton cButtonsSparkRc09[] = {
+   {"POWER"          , "25", KEY_POWER},
+    {"MUTE"           , "85", KEY_MUTE},
+    {"TIME"           , "8D", KEY_TIME},
+    {"V.FORMAT"       , "AD", KEY_V},
+    {"TV/SAT"         , "A5", KEY_AUX},
+    {"PICASA"         , "E5", KEY_SUBTITLE},
+    {"SHOUTCAST"      , "ED", KEY_AUDIO},
+    {"YOUTUBE"        , "CD", KEY_VIDEO},
+    {"SPARK"          , "C5", KEY_S},
+    {"0BUTTON"        , "57", KEY_0},
+    {"1BUTTON"        , "B5", KEY_1},
+    {"2BUTTON"        , "95", KEY_2},
+    {"3BUTTON"        , "BD", KEY_3},
+    {"4BUTTON"        , "F5", KEY_4},
+    {"5BUTTON"        , "D5", KEY_5},
+    {"6BUTTON"        , "FD", KEY_6},
+    {"7BUTTON"        , "35", KEY_7},
+    {"8BUTTON"        , "15", KEY_8},
+    {"9BUTTON"        , "3D", KEY_9},
+    {"TV/RADIO"       , "77", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCHB
+    {"RECALL"         , "7F", KEY_BACK},
+    {"SAT"            , "9D", KEY_SAT},
+    {"FAV"     	      , "45", KEY_FAVORITES},
+    {"VOL-"           , "C7", KEY_VOLUMEDOWN},
+    {"VOL+"           , "DD", KEY_VOLUMEUP},
+    {"PAGE-"          , "07", KEY_CHANNELDOWN},
+    {"PAGE+"          , "5F", KEY_CHANNELUP},
+    {"INFO"           , "1D", KEY_INFO},
+    {"EPG"            , "87", KEY_EPG},
+    {"MENU"           , "65", KEY_MENU},
+    {"EXIT"           , "A7", KEY_HOME},
+    {"UP"	      , "27", KEY_UP},
+    {"DOWN"	      , "0F", KEY_DOWN},
+    {"LEFT" 	      , "6D", KEY_LEFT},
+    {"RIGHT"	      , "AF", KEY_RIGHT},
+    {"OK"	      , "2F", KEY_OK},
+    {"FIND"           , "4D", KEY_FIND},
+    {"REC"            , "8F", KEY_RECORD},
+    {"RED"            , "75", KEY_RED},
+    {"GREEN"          , "F7", KEY_GREEN},
+    {"YELLOW"         , "37", KEY_YELLOW},
+    {"BLUE"           , "B7", KEY_BLUE},
+    {"REWIND"	      , "55", KEY_REWIND},
+    {"PLAY" 	      , "D7", KEY_PLAY},
+    {"PAUSE"	      , "17", KEY_PAUSE},
+    {"FASTFORWARD"    , "97", KEY_FASTFORWARD},
+    {"FOLDER"	      , "5D", KEY_ARCHIVE},
+    {"PLAY_MODE"      , "DF", KEY_P},
+    {"USB"            , "1F", KEY_CLOSE},
+    {"STOP" 	      , "9F", KEY_STOP},
+    {"F1"             , "7D", KEY_HELP},
+    {"F2"             , "FF", KEY_PREVIOUS},
+    {"F3"             , "3F", KEY_NEXT},
+    {"F4"             , "BF", KEY_TITLE},
+    {""               , ""  , KEY_NULL},
+};
+ 
 static tButton cButtonsSparkRc12[] = {
 
     {"MUTE"           , "87", KEY_MUTE},
@@ -189,62 +237,53 @@ static tButton cButtonsSparkRc12[] = {
     {"PLAY_MODE"      , "A7", KEY_P},
     {"V.FORMAT"       , "E5", KEY_V},
     {"TIME"           , "C5", KEY_TIME},
-    {"USB"			  , "47", KEY_CLOSE},
-	{"FOLDER"		  , "65", KEY_ARCHIVE},
-
-    {"STOP"		 	, "25", KEY_STOP},
-    {"PLAY"			, "3D", KEY_PLAY},
-    {"PAUSE"		, "1D", KEY_PAUSE},
-    {"FASTFORWARD"	, "C7", KEY_FASTFORWARD},
-    {"REWIND" 		, "FD", KEY_REWIND},
-    {"PREV"			, "BF", KEY_PREVIOUS},
-    {"NEXT"			, "E7", KEY_NEXT},
-    {"FAST" 		, "67", KEY_F},
-    {"SLOW"   		, "9F", KEY_SLOW},
-
-    {"MENU"         , "DD", KEY_MENU},
-    {"Tms"			, "BD", KEY_T},
-    {"INFO"         , "FF", KEY_INFO},
-
-	{"UP"		   	, "5D", KEY_UP},
-	{"DOWN"        	, "55", KEY_DOWN},
-	{"LEFT"        	, "1F", KEY_LEFT},
-	{"RIGHT"       	, "7F", KEY_RIGHT},
-	{"OK"          	, "7D", KEY_OK},
-
-	{"EXIT" 		  , "3F", KEY_HOME},
-
-	{"REC"			  , "9D", KEY_RECORD},
+    {"USB"            , "47", KEY_CLOSE},
+    {"FOLDER"         , "65", KEY_ARCHIVE},
+    {"STOP"           , "25", KEY_STOP},
+    {"PLAY"           , "3D", KEY_PLAY},
+    {"PAUSE"          , "1D", KEY_PAUSE},
+    {"FASTFORWARD"    , "C7", KEY_FASTFORWARD},
+    {"REWIND"         , "FD", KEY_REWIND},
+    {"PREV"           , "BF", KEY_PREVIOUS},
+    {"NEXT"           , "E7", KEY_NEXT},
+    {"FAST"           , "67", KEY_F},
+    {"SLOW"           , "9F", KEY_SLOW},
+    {"MENU"           , "DD", KEY_MENU},
+    {"Tms"            , "BD", KEY_T},
+    {"INFO"           , "FF", KEY_INFO},
+    {"UP"	      , "5D", KEY_UP},
+    {"DOWN"           , "55", KEY_DOWN},
+    {"LEFT"           , "1F", KEY_LEFT},
+    {"RIGHT"          , "7F", KEY_RIGHT},
+    {"OK"             , "7D", KEY_OK},
+    {"EXIT"           , "3F", KEY_HOME},
+    {"REC"            , "9D", KEY_RECORD},
     {"EPG"            , "5F", KEY_EPG},
-    {"TV/SAT"		, "D5", KEY_AUX},
+    {"TV/SAT"         , "D5", KEY_AUX},
     {"RECALL"         , "DF", KEY_BACK},
     {"FIND"           , "95", KEY_FIND},
     {"VOL+"           , "17", KEY_VOLUMEUP},
     {"VOL-"           , "37", KEY_VOLUMEDOWN},
-
     {"SAT"            , "15", KEY_SAT},
-	{"FAV"			  , "35", KEY_FAVORITES},
+    {"FAV"            , "35", KEY_FAVORITES},
     {"PAGE+"          , "57", KEY_PAGEUP},
     {"PAGE-"          , "D7", KEY_PAGEDOWN},
-
-	{"KEY_0"        , "0D", KEY_0},
-	{"KEY_1"        , "F5", KEY_1},
-	{"KEY_2"        , "B5", KEY_2},
-	{"KEY_3"        , "F7", KEY_3},
-	{"KEY_4"        , "CD", KEY_4},
-	{"KEY_5"        , "AD", KEY_5},
-	{"KEY_6"        , "77", KEY_6},
-	{"KEY_7"        , "0F", KEY_7},
-	{"KEY_8"        , "8D", KEY_8},
-	{"KEY_9"        , "4F", KEY_9},
-
-	{"TV/RADIO" 	  , "ED", KEY_TV2},
-
-	{"RED"			, "2F", KEY_RED},
-	{"GREEN"		, "6F", KEY_GREEN},
-	{"YELLOW"		, "EF", KEY_YELLOW},
-	{"BLUE" 		, "05", KEY_BLUE},
-    {"WHITE"        , "2D", KEY_W},
+    {"KEY_0"          , "0D", KEY_0},
+    {"KEY_1"          , "F5", KEY_1},
+    {"KEY_2"          , "B5", KEY_2},
+    {"KEY_3"          , "F7", KEY_3},
+    {"KEY_4"          , "CD", KEY_4},
+    {"KEY_5"          , "AD", KEY_5},
+    {"KEY_6"          , "77", KEY_6},
+    {"KEY_7"          , "0F", KEY_7},
+    {"KEY_8"          , "8D", KEY_8},
+    {"KEY_9"          , "4F", KEY_9},
+    {"TV/RADIO"       , "ED", KEY_TV2},
+    {"RED"            , "2F", KEY_RED},
+    {"GREEN"          , "6F", KEY_GREEN},
+    {"YELLOW"         , "EF", KEY_YELLOW},
+    {"BLUE"           , "05", KEY_BLUE},
+    {"WHITE"          , "2D", KEY_W},
     {""               , ""  , KEY_NULL},
 };
 
@@ -265,44 +304,42 @@ static tButton cButtonsSparkDefault[] = {
     {"7BUTTON"        , "B7", KEY_7},
     {"8BUTTON"        , "17", KEY_8},
     {"9BUTTON"        , "F5", KEY_9},
-	{"TV/RADIO" 	  , "CD", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCHB
+    {"TV/RADIO"       , "CD", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCHB
     {"RECALL"         , "CF", KEY_BACK},
     {"PAGE+"          , "ED", KEY_PAGEUP},
     {"PAGE-"          , "DD", KEY_PAGEDOWN},
     {"FIND"           , "C5", KEY_FIND},
-	{"FOLDER"		  , "67", KEY_ARCHIVE},
+    {"FOLDER"         , "67", KEY_ARCHIVE},
     {"VOL+"           , "AF", KEY_VOLUMEUP},
     {"VOL-"           , "9F", KEY_VOLUMEDOWN},
     {"MENU"           , "C7", KEY_MENU},
     {"INFO"           , "1F", KEY_INFO},
-	{"UP"		      , "3F", KEY_UP},
-	{"DOWN"		      , "85", KEY_DOWN},
-	{"LEFT" 	      , "BF", KEY_LEFT},
-	{"RIGHT"		  , "FD", KEY_RIGHT},
-	{"OK"		      , "05", KEY_OK},
+    {"UP"             , "3F", KEY_UP},
+    {"DOWN"           , "85", KEY_DOWN},
+    {"LEFT"           , "BF", KEY_LEFT},
+    {"RIGHT"          , "FD", KEY_RIGHT},
+    {"OK"             , "05", KEY_OK},
     {"EXIT"           , "F9", KEY_HOME},
     {"EPG"            , "45", KEY_EPG},
-	{"FAV"			  , "3D", KEY_FAVORITES},
+    {"FAV"            , "3D", KEY_FAVORITES},
     {"SAT"            , "0D", KEY_SAT},
     {"RED"            , "6D", KEY_RED},
     {"GREEN"          , "8D", KEY_GREEN},
     {"YELLOW"         , "77", KEY_YELLOW},
     {"BLUE"           , "AD", KEY_BLUE},
     {"REC"            , "F7", KEY_RECORD},
-
-    {"STOP"		 	, "BB", KEY_STOP},
-    {"PLAY"			, "57", KEY_PLAY},
-    {"PAUSE"		, "4D", KEY_PAUSE},
-    {"FASTFORWARD"	, "35", KEY_FASTFORWARD},
-    {"REWIND" 		, "7F", KEY_REWIND},
-    {"PREV"			, "FB", KEY_PREVIOUS},
-    {"NEXT"			, "3B", KEY_NEXT},
-    {"FAST" 		, "E7", KEY_F},
-    {"SLOW"   		, "7B", KEY_SLOW},
-
-    {"PLAY_MODE"	, "B5", KEY_P},
-    {"USB"			, "DF", KEY_CLOSE},
-    {"Tms"			, "55", KEY_T},
+    {"STOP"           , "BB", KEY_STOP},
+    {"PLAY"           , "57", KEY_PLAY},
+    {"PAUSE"          , "4D", KEY_PAUSE},
+    {"FASTFORWARD"    , "35", KEY_FASTFORWARD},
+    {"REWIND"         , "7F", KEY_REWIND},
+    {"PREV"           , "FB", KEY_PREVIOUS},
+    {"NEXT"           , "3B", KEY_NEXT},
+    {"FAST"           , "E7", KEY_F},
+    {"SLOW"           , "7B", KEY_SLOW},
+    {"PLAY_MODE"      , "B5", KEY_P},
+    {"USB"            , "DF", KEY_CLOSE},
+    {"Tms"            , "55", KEY_T},
     {"F1"             , "95", KEY_F1},
     {"F2"             , "15", KEY_F2},
     {"F3"             , "D7", KEY_F3},
@@ -311,64 +348,57 @@ static tButton cButtonsSparkDefault[] = {
 
 /* spark Default */
 static tButton cButtonsSparkRc04[] = {
-	{"POWER"          , "45", KEY_POWER},
-	{"V.FORMAT"       , "4D", KEY_V},
-	{"TIME"           , "ED", KEY_TIME},
-	{"MUTE"           , "8D", KEY_MUTE},
-	{"Tms"            , "57", KEY_T},
-	{"F1"             , "37", KEY_F1},
-	{"TV/SAT"         , "DD", KEY_AUX},
-
-	{"KEY_1"          , "3F", KEY_1},
-	{"KEY_2"          , "07", KEY_2},
-	{"KEY_3"          , "BD", KEY_3},
-	{"KEY_4"          , "5D", KEY_4},
-	{"KEY_5"          , "1F", KEY_5},
-	{"KEY_6"          , "9D", KEY_6},
-	{"KEY_7"          , "55", KEY_7},
-	{"KEY_8"          , "17", KEY_8},
-	{"KEY_9"          , "95", KEY_9},
-	{"KEY_0"          , "27", KEY_0},
-
-	{"TV/RADIO" 	  , "65", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCHB
-	{"RECALL"         , "A5", KEY_BACK},
-	{"FIND"           , "75", KEY_FIND},
-	{"REC"            , "D5", KEY_RECORD},
-	{"SAT"            , "A7", KEY_SAT},
-	{"FAV"			  , "B5", KEY_FAVORITES},
-	{"MENU"           , "1D", KEY_MENU},
-	{"INFO"           , "5F", KEY_INFO},
-	{"OK"		      , "BF", KEY_OK},
-	{"UP"		      , "9F", KEY_UP},
-	{"DOWN"		      , "AF", KEY_DOWN},
-	{"LEFT" 	      , "3D", KEY_LEFT},
-	{"RIGHT"		  , "7F", KEY_RIGHT},
-	{"EXIT"           , "2D", KEY_HOME},
-	{"EPG"            , "6F", KEY_EPG},
-	{"FOLDER"		  , "0D", KEY_ARCHIVE},
-	{"STOP"		 	  , "8F", KEY_STOP},
-	{"PAUSE"		  , "CD", KEY_PAUSE},
-	{"PLAY"			  , "4F", KEY_PLAY},
-	{"PREV"			  , "35", KEY_PREVIOUS},
-	{"NEXT"			  , "B7", KEY_NEXT},
-	{"FASTFORWARD"	  , "77", KEY_FASTFORWARD},
-	{"REWIND" 		  , "F5", KEY_REWIND},
-	{"FAST" 		  , "97", KEY_F},
-	{"SLOW"   		  , "15", KEY_SLOW},
-	{"PLAY_MODE"	  , "E5", KEY_P},
-	{"USB"			  , "67", KEY_CLOSE},
-
-	{"UHF"            , "0F", KEY_U},
-	{"AUDIO"          , "25", KEY_SUBTITLE},
-
-
-	{"RED"            , "05", KEY_RED},
-	{"GREEN"          , "87", KEY_GREEN},
-	{"YELLOW"         , "C5", KEY_YELLOW},
-	{"BLUE"           , "47", KEY_BLUE},
-
-
-	{""               , ""  , KEY_NULL},
+    {"POWER"          , "45", KEY_POWER},
+    {"V.FORMAT"       , "4D", KEY_V},
+    {"TIME"           , "ED", KEY_TIME},
+    {"MUTE"           , "8D", KEY_MUTE},
+    {"Tms"            , "57", KEY_T},
+    {"F1"             , "37", KEY_F1},
+    {"TV/SAT"         , "DD", KEY_AUX},
+    {"KEY_1"          , "3F", KEY_1},
+    {"KEY_2"          , "07", KEY_2},
+    {"KEY_3"          , "BD", KEY_3},
+    {"KEY_4"          , "5D", KEY_4},
+    {"KEY_5"          , "1F", KEY_5},
+    {"KEY_6"          , "9D", KEY_6},
+    {"KEY_7"          , "55", KEY_7},
+    {"KEY_8"          , "17", KEY_8},
+    {"KEY_9"          , "95", KEY_9},
+    {"KEY_0"          , "27", KEY_0},
+    {"TV/RADIO"       , "65", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCHB
+    {"RECALL"         , "A5", KEY_BACK},
+    {"FIND"           , "75", KEY_FIND},
+    {"REC"            , "D5", KEY_RECORD},
+    {"SAT"            , "A7", KEY_SAT},
+    {"FAV"            , "B5", KEY_FAVORITES},
+    {"MENU"           , "1D", KEY_MENU},
+    {"INFO"           , "5F", KEY_INFO},
+    {"OK"             , "BF", KEY_OK},
+    {"UP"             , "9F", KEY_UP},
+    {"DOWN"           , "AF", KEY_DOWN},
+    {"LEFT"           , "3D", KEY_LEFT},
+    {"RIGHT"          , "7F", KEY_RIGHT},
+    {"EXIT"           , "2D", KEY_HOME},
+    {"EPG"            , "6F", KEY_EPG},
+    {"FOLDER"         , "0D", KEY_ARCHIVE},
+    {"STOP"           , "8F", KEY_STOP},
+    {"PAUSE"          , "CD", KEY_PAUSE},
+    {"PLAY"           , "4F", KEY_PLAY},
+    {"PREV"           , "35", KEY_PREVIOUS},
+    {"NEXT"           , "B7", KEY_NEXT},
+    {"FASTFORWARD"    , "77", KEY_FASTFORWARD},
+    {"REWIND"         , "F5", KEY_REWIND},
+    {"FAST"           , "97", KEY_F},
+    {"SLOW"           , "15", KEY_SLOW},
+    {"PLAY_MODE"      , "E5", KEY_P},
+    {"USB"            , "67", KEY_CLOSE},
+    {"UHF"            , "0F", KEY_U},
+    {"AUDIO"          , "25", KEY_SUBTITLE},
+    {"RED"            , "05", KEY_RED},
+    {"GREEN"          , "87", KEY_GREEN},
+    {"YELLOW"         , "C5", KEY_YELLOW},
+    {"BLUE"           , "47", KEY_BLUE},
+    {""               , ""  , KEY_NULL},
 };
 
 
@@ -389,7 +419,7 @@ static tButton *pSparkGetButton(char *pData)
 	}
 	else if (!strncasecmp(pData, SPARK_RC08_PREDATA, sizeof(SPARK_RC08_PREDATA)))
 	{
-		pButtons = cButtonsSparRc08;
+		pButtons = cButtonsSparkRc08;
 	}
 	else if (!strncasecmp(pData, SPARK_RC09_PREDATA, sizeof(SPARK_RC09_PREDATA)))
 	{
@@ -446,13 +476,13 @@ static int pRead(Context_t* context ) {
     char                vData[10];
     const int           cSize         = 128;
     int                 vCurrentCode  = -1;
-	int					rc;
-	tButton 			*cButtons = cButtonsEdisionSpark;
+    int                 rc;
+    tButton             *cButtons = cButtonsEdisionSpark;
 
-	memset(vBuffer, 0, 128);
+    memset(vBuffer, 0, 128);
     //wait for new command
     rc = read (context->fd, vBuffer, cSize);
-	if(rc <= 0)return -1;
+    if(rc <= 0)return -1;
 
     //parse and send key event
     vData[0] = vBuffer[17];
@@ -465,7 +495,7 @@ static int pRead(Context_t* context ) {
     vData[2] = vBuffer[10];
     vData[3] = vBuffer[11];
     vData[4] = '\0';
-	cButtons = pSparkGetButton(vData);
+    cButtons = pSparkGetButton(vData);
 
     vData[0] = vBuffer[14];
     vData[1] = vBuffer[15];
@@ -474,14 +504,14 @@ static int pRead(Context_t* context ) {
     printf("[RCU] key: %s -> %s\n", vData, &vBuffer[0]);
     vCurrentCode = getInternalCode(cButtons, vData);
 
-	if(vCurrentCode != 0) {
-		static int nextflag = 0;
-		if (('0' == vBuffer[17]) && ('0' == vBuffer[18]))
-		{
-		    nextflag++;
-		}
-		vCurrentCode += (nextflag << 16);
-	}
+    if(vCurrentCode != 0) {
+        static int nextflag = 0;
+        if (('0' == vBuffer[17]) && ('0' == vBuffer[18]))
+        {
+            nextflag++;
+        }
+        vCurrentCode += (nextflag << 16);
+    }
     return vCurrentCode;
 }
 
@@ -521,7 +551,7 @@ RemoteControl_t Spark_RC = {
 	cButtonsEdisionSpark,
 	NULL,
 	NULL,
-  	1,
-  	&cLongKeyPressSupport,
+	1,
+	&cLongKeyPressSupport,
 };
 
