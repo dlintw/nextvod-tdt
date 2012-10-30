@@ -535,11 +535,6 @@ if ENABLE_HL101
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
-
-	cp -dp $(buildprefix)/root/etc/lircd_hl101.conf $(prefix)/release_neutrino/etc/lircd.conf
-	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
-	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
-#	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 else
 if ENABLE_ADB_BOX
 
@@ -584,11 +579,6 @@ if ENABLE_ADB_BOX
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
-
-	cp -dp $(buildprefix)/root/etc/lircd_adb_box.conf $(prefix)/release_neutrino/etc/lircd.conf
-	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
-	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
-	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
 else
 if ENABLE_VIP1_V2
 
@@ -601,11 +591,6 @@ if ENABLE_VIP1_V2
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
-
-	cp -dp $(buildprefix)/root/etc/lircd_vip1_v2.conf $(prefix)/release_neutrino/etc/lircd.conf
-	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
-	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
-#	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 else
 if ENABLE_VIP2_V1
 
@@ -618,11 +603,6 @@ if ENABLE_VIP2_V1
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
-
-	cp -dp $(buildprefix)/root/etc/lircd_vip2_v1.conf $(prefix)/release_neutrino/etc/lircd.conf
-	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
-	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
-#	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 else
 if ENABLE_IPBOX9900
 	echo "IPBOX9900" > $(prefix)/release_neutrino/etc/hostname
@@ -667,11 +647,6 @@ if ENABLE_IPBOX9900
 	rm -f $(prefix)/release_neutrino/lib/modules/stmvout.ko
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
 	rm -f $(prefix)/release_neutrino/etc/network/interfaces
-
-	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release_neutrino/etc/lircd.conf
-	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release_neutrino/usr/bin/lircd
-	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
-	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
 else
 if ENABLE_IPBOX99
 	echo "IPBOX99" > $(prefix)/release_neutrino/etc/hostname
@@ -715,11 +690,6 @@ if ENABLE_IPBOX99
 	rm -f $(prefix)/release_neutrino/lib/modules/stmvout.ko
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
 	rm -f $(prefix)/release_neutrino/etc/network/interfaces
-
-	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release_neutrino/etc/lircd.conf
-	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release_neutrino/usr/bin/lircd
-	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
-	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
 else
 if ENABLE_IPBOX55
 	echo "IPBOX55" > $(prefix)/release_neutrino/etc/hostname
@@ -762,11 +732,6 @@ if ENABLE_IPBOX55
 	rm -f $(prefix)/release_neutrino/lib/modules/stmvout.ko
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
 	rm -f $(prefix)/release_neutrino/etc/network/interfaces
-
-	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release_neutrino/etc/lircd.conf
-	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release_neutrino/usr/bin/lircd
-	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
-	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
 else
 if ENABLE_CUBEREVO
 	echo "cuberevo" > $(prefix)/release_neutrino/etc/hostname
@@ -1495,6 +1460,49 @@ if ENABLE_UFS910
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
+endif
+
+if ENABLE_HL101
+	cp -dp $(buildprefix)/root/etc/lircd_hl101.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
+#	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+endif
+if ENABLE_ADB_BOX
+	cp -dp $(buildprefix)/root/etc/lircd_adb_box.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
+	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
+endif
+if ENABLE_IPBOX9900
+	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release_neutrino/usr/bin/lircd
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
+	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
+endif
+if ENABLE_IPBOX99
+	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release_neutrino/usr/bin/lircd
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
+	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
+endif
+if ENABLE_IPBOX55
+	cp -dp $(buildprefix)/root/etc/lircd_ipbox.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -p $(buildprefix)/root/release/lircd_ipbox $(prefix)/release_neutrino/usr/bin/lircd
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
+	cp -dp $(buildprefix)/root/etc/boxtype $(prefix)/release_neutrino/etc/boxtype
+endif
+if ENABLE_VIP1_V2
+	cp -dp $(buildprefix)/root/etc/lircd_vip1_v2.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
+#	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+endif
+if ENABLE_VIP2_V1
+	cp -dp $(buildprefix)/root/etc/lircd_vip2_v1.conf $(prefix)/release_neutrino/etc/lircd.conf
+	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
+#	cp -p $(buildprefix)/root/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
 endif
 
 	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release_neutrino/usr/bin/
