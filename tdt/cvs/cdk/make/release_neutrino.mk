@@ -568,8 +568,8 @@ if ENABLE_ADB_BOX
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/adb_box_fan/cooler.ko $(prefix)/release_neutrino/lib/modules
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cec_adb_box/cec_ctrl.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/dvbt/as102/dvb-as102.ko $(prefix)/release_neutrino/lib/modules/
-	cp $(buildprefix)/root/firmware/as102_data1_st.hex $(prefix)/release/lib/firmware/
-	cp $(buildprefix)/root/firmware/as102_data2_st.hex $(prefix)/release/lib/firmware/
+	cp $(buildprefix)/root/firmware/as102_data1_st.hex $(prefix)/release_neutrino/lib/firmware/
+	cp $(buildprefix)/root/firmware/as102_data2_st.hex $(prefix)/release_neutrino/lib/firmware/
 #       install autofs
 	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
 	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
