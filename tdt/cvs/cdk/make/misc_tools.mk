@@ -16,6 +16,8 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	$(if $(UFS912), -DPLATFORM_UFS912) \
 	$(if $(UFS913), -DPLATFORM_UFS913) \
 	$(if $(UFS922), -DPLATFORM_UFS922) \
+	$(if $(SPARK), -DPLATFORM_SPARK) \
+	$(if $(SPARK7162), -DPLATFORM_SPARK7162) \
 	$(if $(FORTIS_HDBOX), -DPLATFORM_FORTIS_HDBOX) \
 	$(if $(OCTAGON1008), -DPLATFORM_OCTAGON1008) \
 	$(if $(CUBEREVO), -DPLATFORM_CUBEREVO) \
