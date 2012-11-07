@@ -50,7 +50,7 @@ typedef struct
 /* ***************** our key assignment **************** */
 
 static tLongKeyPressSupport cLongKeyPressSupport = {
-  10, 140,
+    10, 140,
 };
 
 static tButton cButtonHDBOX[] = {
@@ -106,21 +106,20 @@ static tButton cButtonHDBOX[] = {
     {"7BUTTON"        , "17", KEY_7},
     {"8BUTTON"        , "18", KEY_8},
     {"9BUTTON"        , "19", KEY_9},
-    {""               , ""  , KEY_NULL},
-
+    {""               , ""  , KEY_NULL}
 };
 
 /* ***************** our fp button assignment **************** */
 
 static tButton cButtonHDBOXFrontpanel[] = {
-	{"STANDBY"	        , "00", KEY_POWER},
-	{"OK"	                , "06", KEY_OK},
-	{"MENU"		        , "05", KEY_MENU},
-	{"VOLUMEUP"		, "04", KEY_VOLUMEUP},
-	{"VOLUMEDOWN"		, "03", KEY_VOLUMEDOWN},
-	{"CHANNELUP"		, "01", KEY_PAGEUP},
-	{"CHANNELDOWN"          , "02", KEY_PAGEDOWN},
-	{""	                , ""  , KEY_NULL}
+    {"STANDBY"        , "00", KEY_POWER},
+    {"OK"             , "06", KEY_OK},
+    {"MENU"           , "05", KEY_MENU},
+    {"VOLUMEUP"       , "03", KEY_VOLUMEUP},
+    {"VOLUMEDOWN"     , "04", KEY_VOLUMEDOWN},
+    {"CHANNELUP"      , "01", KEY_PAGEUP},
+    {"CHANNELDOWN"    , "02", KEY_PAGEDOWN},
+    {""               , ""  , KEY_NULL}
 };
 
 static int pInit(Context_t* context, int argc, char* argv[]) 
@@ -161,58 +160,58 @@ static int pRead(Context_t* context)
     while (1)
     {
 #if 0
-       int vLoop;
-       int n = 
-#endif       
-       read (context->fd, vData, cHDBOXDataLen);
+        int vLoop;
+        int n = 
+#endif
+        read (context->fd, vData, cHDBOXDataLen);
 
 #if 0
-       printf("(len %d): ", n);
-       
-       for (vLoop = 0; vLoop < n; vLoop++)
-           printf("0x%02X ", vData[vLoop]);
-       printf("\n");
-#endif       
-       if ((vData[2] != 0x51) && (vData[2] != 0x63) && (vData[2] != 0x80))
-               continue;
+        printf("(len %d): ", n);
 
-       if(vData[2] == 0x63)
-           vKeyType = RemoteControl;
-       else 
-       if(vData[2] == 0x51)
-           vKeyType = FrontPanel;
-       else
-           continue;
+        for (vLoop = 0; vLoop < n; vLoop++)
+            printf("0x%02X ", vData[vLoop]);
+        printf("\n");
+#endif
+        if ((vData[2] != 0x51) && (vData[2] != 0x63) && (vData[2] != 0x80))
+            continue;
 
-       if(vKeyType == RemoteControl)
-       {    
-           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[5] & ~0x80);
+        if (vData[2] == 0x63)
+            vKeyType = RemoteControl;
+        else if (vData[2] == 0x51)
+            vKeyType = FrontPanel;
+        else
+            continue;
 
-           if(vCurrentCode != 0) {
-             vNextKey = (vData[5] & 0x80 == 0 ? vNextKey + 1 : vNextKey) % 0x100;
+        if (vKeyType == RemoteControl)
+        {
+            vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData[5] & ~0x80);
 
-             /* printf("nextFlag %d\n", vNextKey);*/
+            if (vCurrentCode != 0)
+            {
+                vNextKey = (vData[5] & 0x80 == 0 ? vNextKey + 1 : vNextKey) % 0x100;
 
-             vCurrentCode += (vNextKey << 16);
-             break;
-           }
-       }
-       else
-       {
-           vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[3]);
+                /* printf("nextFlag %d\n", vNextKey);*/
 
-           if(vCurrentCode != 0) 
-           {
-             vNextKey = (vOldButton != vData[3] ? vNextKey + 1 : vNextKey) % 0x100;
+                vCurrentCode += (vNextKey << 16);
+                break;
+            }
+        }
+        else
+        {
+            vCurrentCode = getInternalCodeHex((tButton*)((RemoteControl_t*)context->r)->Frontpanel, vData[3]);
 
-             /* printf("nextFlag %d\n", vNextKey);*/
+            if (vCurrentCode != 0) 
+            {
+                vNextKey = (vOldButton != vData[3] ? vNextKey + 1 : vNextKey) % 0x100;
 
-             vCurrentCode += (vNextKey << 16);
-             break;
-           }
-       }
+                /* printf("nextFlag %d\n", vNextKey);*/
+
+                vCurrentCode += (vNextKey << 16);
+                break;
+            }
+        }
     } /* for later use we make a dummy while loop here */
-    
+
     return vCurrentCode;
 }
 
@@ -224,24 +223,24 @@ static int pNotification(Context_t* context, const int cOn)
 
 static int pShutdown(Context_t* context) 
 {
-    tHDBOXPrivate*         private = (tHDBOXPrivate*) ((RemoteControl_t*)context->r)->private;
+    tHDBOXPrivate* private = (tHDBOXPrivate*) ((RemoteControl_t*)context->r)->private;
 
     close(context->fd);
     free(private);
-    
+
     return 0;
 }
 
 RemoteControl_t HDBOX_RC = {
-	"Fortis HDBOX RemoteControl",
-	HdBox,
-	&pInit,
-	&pShutdown,
-	&pRead,
-	&pNotification,
-	cButtonHDBOX,
-	cButtonHDBOXFrontpanel,
-	NULL,
+    "Fortis HDBOX RemoteControl",
+    HdBox,
+    &pInit,
+    &pShutdown,
+    &pRead,
+    &pNotification,
+    cButtonHDBOX,
+    cButtonHDBOXFrontpanel,
+    NULL,
     1,
     &cLongKeyPressSupport,
 };
