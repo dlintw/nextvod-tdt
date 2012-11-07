@@ -4929,7 +4929,7 @@ Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha5/tdt/cvs/apps/xbmc
  		-exec printf " -- %-75.75s\r" "{}" \;
  else
 -	@find addons language media sounds userdata system -regextype posix-extended -type f -not -iregex ".*@ARCH@.*|.*\.vis|.*\.xbs|.*svn.*|.*\.so|.*\.dll" -exec install -D -m 0644 "{}" $(DESTDIR)$(datarootdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
-+	@find addons language media sounds userdata system -regextype posix-extended -type f -not -iregex "*.\-@ARCH@.*|.*\.vis|.*\.xbs|.*\.so|.*\.dll" -exec install -D -m 0644 "{}" $(DESTDIR)$(datarootdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
++	@find addons language media sounds userdata system -regextype posix-extended -type f -not -iregex ".*-@ARCH@.*|.*\.vis|.*\.xbs|.*svn.*|.*\.so|.*\.dll" -exec install -D -m 0644 "{}" $(DESTDIR)$(datarootdir)/xbmc/"{}" \; -printf " -- %-75.75f\r"
  endif
  endif
  	@# Icons and links
