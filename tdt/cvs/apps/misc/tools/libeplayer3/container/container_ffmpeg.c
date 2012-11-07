@@ -869,6 +869,9 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 
     avContext->flags = AVFMT_FLAG_GENPTS;
 
+    if (context->playback->noprobe)
+	  avContext->max_analyze_duration = 1;
+
     ffmpeg_printf(20, "find_streaminfo\n");
 
 #if LIBAVCODEC_VERSION_MAJOR < 54

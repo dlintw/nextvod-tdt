@@ -757,16 +757,13 @@ void CMoviePlayerGui::PlayFile(void)
 						CFile::FileType ftype;
 						ftype = file->getType();
 
-						is_file_player = true;
-#if 0
-						if(ftype == CFile::FILE_AVI || ftype == CFile::FILE_MKV || ftype == CFile::FILE_WAV || ftype == CFile::FILE_ASF) {
+						if(ftype == CFile::FILE_TS) {
 
-							is_file_player = true;	// Movie player AVI/MKV
+							is_file_player = false;	// PLAYMODE_TS
 
 						} else {
-							is_file_player = false;	// Movie player AVI/MKV
+							is_file_player = true;	// PLAYMODE_FILE
 						}
-#endif
 
 						filename = file->Name.c_str();
 						update_lcd = true;

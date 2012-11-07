@@ -41,7 +41,11 @@ bool cPlayback::Open(playmode_t PlayMode)
 		"PLAYMODE_TS",
 		"PLAYMODE_FILE"
 	};
-
+  if (PlayMode == PLAYMODE_TS)
+        pm = true;
+  else
+        pm = false;
+        
 	printf("%s:%s - PlayMode=%s\n", FILENAME, __FUNCTION__, aPLAYMODE[PlayMode]);
 	
 	player = (Context_t*) malloc(sizeof(Context_t));
@@ -102,7 +106,9 @@ bool cPlayback::Start(char * filename, unsigned short vpid, int vtype, unsigned 
 	    printf("upnp://\n");
             isHTTP = true;
 	}
-	else
+	else if (pm)
+	    strcat(file, "myts://");
+  else
 	    strcat(file, "file://");
 
 	strcat(file, filename);
@@ -199,6 +205,7 @@ bool cPlayback::Stop(void)
 		player = NULL;
 
 	playing=false;
+	pm=false;
 	return true;
 }
 
@@ -395,6 +402,7 @@ cPlayback::cPlayback(int num)
 {
 	printf("%s:%s\n", FILENAME, __FUNCTION__);
 	playing=false;
+	pm=false;
 }
 
 cPlayback::~cPlayback()

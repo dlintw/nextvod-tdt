@@ -166,12 +166,19 @@ static int PlaybackOpen(Context_t  *context, char * uri) {
     context->playback->uri = strdup(uri);
 
     if (!context->playback->isPlaying) {
-        if (!strncmp("file://", uri, 7)) {
+        if (!strncmp("file://", uri, 7) || !strncmp("myts://", uri, 7)) {
             char * extension = NULL;
             context->playback->isFile = 1;
             context->playback->isHttp = 0;
             context->playback->isUPNP = 0;
 
+            if (!strncmp("myts://", uri, 7)) {
+                memcpy(context->playback->uri, "file", 4);
+                memcpy(uri, "file", 4);
+                context->playback->noprobe = 1;
+            } else
+                context->playback->noprobe = 0;
+            
             getExtension(uri+7, &extension);
 
             if(!extension)
@@ -1057,5 +1064,6 @@ PlaybackHandler_t PlaybackHandler = {
     0,
     &Command,
     "",
+    0,
     0
 };

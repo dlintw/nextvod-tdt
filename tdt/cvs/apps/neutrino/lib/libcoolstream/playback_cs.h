@@ -31,7 +31,8 @@ typedef enum {
 class cPlayback
 {
 	private:
-		int timeout;
+		bool pm;
+    int timeout;
 		pthread_cond_t read_cond;
 		pthread_mutex_t mutex;
 		CS_PLAYBACK_PDATA * privateData;
