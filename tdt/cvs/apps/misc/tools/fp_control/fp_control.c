@@ -601,6 +601,8 @@ int getModel()
             vBoxType = Spark;
         else if(!strncasecmp(vName,"spark7162", 9))
             vBoxType = Spark;
+        else if(!strncasecmp(vName,"adb_box", 7))
+            vBoxType = Adb_Box;
         else if ((!strncasecmp(vName,"cuberevo", 8)) ||
                  (!strncasecmp(vName,"cuberevo-mini", 13)) ||
                  (!strncasecmp(vName,"cuberevo-mini2", 14)) ||
