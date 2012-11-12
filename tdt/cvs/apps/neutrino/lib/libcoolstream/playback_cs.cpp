@@ -41,13 +41,14 @@ bool cPlayback::Open(playmode_t PlayMode)
 		"PLAYMODE_TS",
 		"PLAYMODE_FILE"
 	};
-  if (PlayMode == PLAYMODE_TS)
-        pm = true;
-  else
-        pm = false;
-        
+
+	if (PlayMode == PLAYMODE_TS)
+		pm = true;
+	else
+		pm = false;
+
 	printf("%s:%s - PlayMode=%s\n", FILENAME, __FUNCTION__, aPLAYMODE[PlayMode]);
-	
+
 	player = (Context_t*) malloc(sizeof(Context_t));
 
 	if(player) {

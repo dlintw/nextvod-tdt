@@ -706,11 +706,12 @@ void CMoviePlayerGui::PlayFile(void)
 						CFile::FileType ftype;
 						ftype = file->getType();
 
-						if(ftype == CFile::FILE_AVI || ftype == CFile::FILE_MKV) {
-							is_file_player = true;	// Movie player AVI/MKV
+						if(ftype == CFile::FILE_TS) {
+							is_file_player = false;	// PLAYMODE_TS
 						} else {
-							is_file_player = false;	// Movie player AVI/MKV
+							is_file_player = true;	// PLAYMODE_FILE
 						}
+
 						filename = file->Name.c_str();
 						sel_filename = file->getFileName();
 
@@ -768,9 +769,7 @@ void CMoviePlayerGui::PlayFile(void)
 						ftype = file->getType();
 
 						if(ftype == CFile::FILE_TS) {
-
 							is_file_player = false;	// PLAYMODE_TS
-
 						} else {
 							is_file_player = true;	// PLAYMODE_FILE
 						}
