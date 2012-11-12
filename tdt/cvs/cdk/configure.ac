@@ -1019,6 +1019,7 @@ TUXBOX_RULES_MAKE(gmediarender)
 TUXBOX_RULES_MAKE(mediatomb)
 TUXBOX_RULES_MAKE(tinyxml)
 TUXBOX_RULES_MAKE(libnfs)
+TUXBOX_RULES_MAKE(taglib)
 
 #
 # python

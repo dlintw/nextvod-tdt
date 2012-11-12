@@ -25,6 +25,10 @@ while ( <RULES> )
     {
       $output .= "wget -t 2 -T 10 -c -P \$(archivedir) " . $url . "/" . $file . " || \\\n\t";
     }
+    elsif ( $url =~ m#^https://# )
+    {
+      $output .= "wget -t 2 -T 10 -c -P \$(archivedir) " . $url . "/" . $file . " || \\\n\t";
+    }
     elsif ( $url =~ m#^cvs://# )
     {
       $output .= "cvs checkout ";

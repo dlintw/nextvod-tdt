@@ -41,6 +41,12 @@ sub load ($$$)
 sub process_make_depends (@)
 {
   my $output;
+  $output .= "";
+
+  if ( @_ <= 2 )
+  {
+    return "";
+  }
 
   @_ = split ( /:/, $_[2] );
 
@@ -142,7 +148,7 @@ sub process_make_prepare (@)
       }
       elsif ( $_[1] =~ m#\.zip$# )
       {
-        $output .= "unzip $_[2] \\\$(archivedir)/" . $_[1];
+        $output .= "unzip \\\$(archivedir)/" . $_[1];
       }
       elsif ( $_[1] =~ m#\.src\.rpm$# )
       {
