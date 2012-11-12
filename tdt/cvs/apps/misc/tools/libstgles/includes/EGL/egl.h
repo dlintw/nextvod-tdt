@@ -19,8 +19,8 @@ typedef int             EGLenum;		/* EGL enum. */
 typedef unsigned int    EGLBoolean;		/* EGL boolean. */
 typedef int             EGLConfig;		/* EGL config handle. */
 typedef void*           EGLContext;		/* EGL context handle. */
-typedef intptr_t        EGLDisplay;		/* EGL display handle. */
-typedef void *			EGLSurface;		/* EGL Surface Handle. */
+typedef void*           EGLDisplay;		/* EGL display handle. */
+typedef void *          EGLSurface;		/* EGL Surface Handle. */
 
 
 /* Out-of-band attribute value. */
@@ -133,7 +133,7 @@ typedef void *			EGLSurface;		/* EGL Surface Handle. */
 
 /* Out-of-band handle values */
 /* These values may vary depending on semantics of native concepts */
-#define EGL_DEFAULT_DISPLAY			((intptr_t)(NativeDisplayType)1) /* Default Display. */
+#define EGL_DEFAULT_DISPLAY			((EGLDisplay)(NativeDisplayType)1) /* Default Display. */
 #define EGL_NO_CONTEXT				((EGLContext)0) /* EGL No Context. */
 #define EGL_NO_DISPLAY				((EGLDisplay)0) /* EGL No Display. */
 #define EGL_NO_SURFACE				((EGLSurface)0)	/* EGL No Surface. */
@@ -163,7 +163,7 @@ EGLAPI const char * EGLAPIENTRY eglQueryString(EGLDisplay dpy, EGLint name);
 EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(int display_id);
 EGLAPI EGLBoolean EGLAPIENTRY eglInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor);
 EGLAPI EGLBoolean EGLAPIENTRY eglTerminate(EGLDisplay dpy);
-EGLAPI EGLint	  EGLAPIENTRY eglGetError(void);
+EGLAPI EGLint     EGLAPIENTRY eglGetError(void);
 EGLAPI EGLBoolean EGLAPIENTRY eglBindAPI(EGLenum api);
 EGLAPI EGLBoolean EGLAPIENTRY eglChooseConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *configs, EGLint config_size, EGLint *num_config);
 EGLAPI EGLSurface EGLAPIENTRY eglCreateWindowSurface(EGLDisplay dpy, EGLConfig config, NativeWindowType win, const EGLint *attrib_list);
