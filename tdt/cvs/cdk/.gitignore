@@ -69,3 +69,5 @@ tiff-*
 tinyxml*
 yajl-*
 libnfs-*
+portmap-*
+taglib-*
