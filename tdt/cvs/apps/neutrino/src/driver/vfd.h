@@ -90,7 +90,7 @@ typedef enum {
 	VFD_ICON_FF,
 	VFD_ICON_FR,
 
-#elif defined(PLATFORM_UFS910) || defined(PLATFORM_FLASH_UFS910)
+#elif defined(PLATFORM_UFS910)
 // UFS910
 	VFD_ICON_USB = 0x10,
 	VFD_ICON_HD,
