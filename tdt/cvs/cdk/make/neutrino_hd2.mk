@@ -92,7 +92,7 @@ $(appsdir)/neutrino-hd2-exp/config.status: bootstrap $(EXTERNALLCD_DEP) freetype
 			--host=$(target) \
 			$(N_CONFIG_OPTS) \
 			--enable-libeplayer3 \
-			--with-boxtype=duckbox \
+			--with-boxtype=$(MODNAME) \
 			--enable-pcmsoftdecoder \
 			--with-tremor \
 			--enable-libass \
