@@ -10,6 +10,7 @@ $(DEPDIR)/%release_neutrino:
 	$(INSTALL_DIR) $(prefix)/release_neutrino && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino/bin && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino/sbin && \
+	$(INSTALL_DIR) $(prefix)/release_neutrino/swap && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino/boot && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino/dev && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino/dev.static && \
@@ -31,6 +32,8 @@ $(DEPDIR)/%release_neutrino:
 	$(INSTALL_DIR) $(prefix)/release_neutrino/ram && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino/var && \
 	$(INSTALL_DIR) $(prefix)/release_neutrino/var/etc && \
+	$(INSTALL_DIR) $(prefix)/release_neutrino/var/boot && \
+	$(INSTALL_DIR) $(prefix)/release_neutrino/var/lib-misc && \
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release_neutrino && \
 	touch $(prefix)/release_neutrino/var/etc/.firstboot && \
@@ -511,18 +514,56 @@ else
 if ENABLE_SPARK7162
 
 	echo "spark7162" > $(prefix)/release_neutrino/etc/hostname
+	rm -f $(prefix)/release_neutrino/sbin/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
+	cp $(buildprefix)/root/release/halt_spark7162 $(prefix)/release_neutrino/etc/init.d/halt
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/halt
+	mkdir -p $(prefix)/release_neutrino/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release_neutrino/etc/rc.d
+	ln -fs halt $(prefix)/release_neutrino/sbin/reboot
+	ln -fs halt $(prefix)/release_neutrino/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release_neutrino/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release_neutrino/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release_neutrino/lib/modules/
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
 
+	cp -dp $(buildprefix)/root/release/encrypt_$(MODNAME)$(KERNELSTMLABEL).ko $(prefix)/release_neutrino/lib/modules/encrypt.ko
+
+	cp -f $(buildprefix)/root/release/fstab_spark7162 $(prefix)/release_neutrino/etc/fstab
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/smartcard/smartcard.ko $(prefix)/release_neutrino/lib/modules/
+	mv $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw $(prefix)/release_neutrino/lib/firmware/component.fw
+	mv $(prefix)/release_neutrino/lib/firmware/fdvo0_7105.fw $(prefix)/release_neutrino/lib/firmware/fdvo0.fw
+	rm -f $(prefix)/release_neutrino/boot/bootlogo.mvi
+	rm -f $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/fdvo0_7106.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-avl2108.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release_neutrino/lib/modules/boxtype.ko
+	rm -f $(prefix)/release_neutrino/bin/tffpctl
+	rm -f $(prefix)/release_neutrino/bin/tfd2mtd
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
-
 	cp -dp $(buildprefix)/root/etc/lircd_spark7162.conf $(prefix)/release_neutrino/etc/lircd.conf
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
+	mkdir -p $(prefix)/release_neutrino/usr/lib
+	cp -dp $(targetprefix)/usr/lib/liblirc* $(prefix)/release_neutrino/usr/lib/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/cpu_frequ/cpu_frequ.ko $(prefix)/release_neutrino/lib/modules/
 else
 if ENABLE_HL101
 
@@ -1518,7 +1559,9 @@ endif
 	mkdir -p $(prefix)/release_neutrino/var/plugins
 	mkdir -p $(prefix)/release_neutrino/lib/tuxbox
 	mkdir -p $(prefix)/release_neutrino/usr/lib/tuxbox
-	mkdir -p $(prefix)/release_neutrino/var/tuxbox/config
+#	mkdir -p $(prefix)/release_neutrino/var/tuxbox/config
+	mkdir -p $(prefix)/release_neutrino/var/tuxbox
+	ln -s /usr/local/share/config $(prefix)/release_neutrino/var/tuxbox/config
 	mkdir -p $(prefix)/release_neutrino/share/tuxbox
 	mkdir -p $(prefix)/release_neutrino/var/share/icons
 	mkdir -p $(prefix)/release_neutrino/var/usr/local/share/config
@@ -1576,6 +1619,9 @@ endif
 #	TODO: Channellist ....
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/local/share/config
 	cp -aR $(buildprefix)/root/usr/local/share/config/* $(prefix)/release_neutrino/usr/local/share/config/
+if ENABLE_SPARK7162
+	rm -f $(prefix)/release_neutrino/usr/local/share/config/neutrino.conf
+endif
 	cp -aR $(targetprefix)/usr/local/share/neutrino $(prefix)/release_neutrino/usr/local/share/
 #	TODO: HACK (without *.locale are missing!) --- should be not longer needed since path fix
 #	cp -aR $(targetprefix)/$(targetprefix)/usr/local/share/neutrino/* $(prefix)/release_neutrino/usr/local/share/neutrino

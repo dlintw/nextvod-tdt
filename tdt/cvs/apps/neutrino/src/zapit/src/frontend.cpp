@@ -151,6 +151,9 @@ int zapit(const t_channel_id channel_id, bool in_nvod, bool forupdate = 0, bool 
 
 CFrontend::CFrontend(int num)
 {
+#if defined PLATFORM_SPARK7162
+	num = num+1;
+#endif
 	printf("[fe%d] New frontend\n", num);
 	fd = -1;
 

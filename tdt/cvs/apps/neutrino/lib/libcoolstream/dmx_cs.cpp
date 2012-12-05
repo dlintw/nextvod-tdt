@@ -47,7 +47,11 @@ bool cDemux::Open(DMX_CHANNEL_TYPE pes_type, void * hVideoBuffer , int uBufferSi
 		return false;
 	}
 	
+#if defined PLATFORM_SPARK7162
+	int n = DMX_SOURCE_FRONT0+1;
+#else
 	int n = DMX_SOURCE_FRONT0;
+#endif
 	if (ioctl(privateData->m_fd_demux, DMX_SET_SOURCE, &n) < 0)
 		printf("DMX_SET_SOURCE failed(%m)");
 
