@@ -43,10 +43,12 @@
 
 #ifdef ADB_BOX_LONGKEY
 static tLongKeyPressSupport cLongKeyPressSupport = {
-  20, 106,
+//  140, 100,
+    250, 45,
 };
 #endif
 
+//extern int KeyPressDown;
 
 /* B4Team ADB_BOX RCU */
 static tButton cButtonsADB_BOX[] = {
@@ -107,7 +109,67 @@ static tButton cButtonsADB_BOX[] = {
 
     {"TIMER/APP"      	, "2b", KEY_TIME},
 
-    {"STAR"          	, "2c", KEY_HELP},
+    {"STAR"         	, "2c", KEY_HELP},
+
+//------long
+
+    {"POWER"          	, "41", KEY_POWER},
+    {"VOD"            	, "42", KEY_AUX},
+    {"N.Button"       	, "43", KEY_V},
+
+    {"EPG"            	, "44", KEY_EPG},
+    {"HOME"           	, "45", KEY_BACK}, //HOME
+    {"BACK"           	, "46", KEY_HOME}, //BACK
+    {"INFO"           	, "47", KEY_INFO}, //THIS IS WRONG SHOULD BE KEY_INFO
+
+    {"OPT"            	, "48", KEY_MENU},
+
+    {"VOLUMEUP"		, "49", KEY_VOLUMEUP},
+    {"VOLUMEDOWN"	, "4a", KEY_VOLUMEDOWN},
+    {"CHANNELUP"	, "4b", KEY_PAGEUP},
+    {"CHANNELDOWN"	, "4c", KEY_PAGEDOWN},
+
+    {"OK"             	, "4d", KEY_OK},
+
+    {"UP"          	, "4e", KEY_UP},
+    {"DOWN"        	, "4f", KEY_DOWN},
+    {"LEFT"       	, "50", KEY_LEFT},
+    {"RIGHT"       	, "51", KEY_RIGHT},
+ 
+    {"STOP"           	, "52", KEY_STOP},
+    {"REWIND"         	, "53", KEY_REWIND},
+    {"FASTFORWARD"    	, "54", KEY_FASTFORWARD},
+    {"PLAY"           	, "55", KEY_PLAY},
+    {"PAUSE"          	, "56", KEY_PAUSE},
+    {"RECORD"         	, "57", KEY_RECORD},
+
+    {"MUTE"           	, "58", KEY_MUTE},
+
+    {"TV/RADIO/@"     	, "59", KEY_TV2}, //WE USE TV2 AS TV/RADIO SWITCH BUTTON
+    {"TEXT"           	, "5a", KEY_TEXT},
+    {"LIST"           	, "5b", KEY_FAVORITES},
+
+    {"RED"            	, "5c", KEY_RED},
+    {"GREEN"          	, "5d", KEY_GREEN},
+    {"YELLOW"         	, "5e", KEY_YELLOW},
+    {"BLUE"           	, "5f", KEY_BLUE},
+
+    {"1BUTTON"        	, "60", KEY_1},
+    {"2BUTTON"        	, "61", KEY_2},
+    {"3BUTTON"        	, "62", KEY_3},
+    {"4BUTTON"        	, "63", KEY_4},
+    {"5BUTTON"        	, "64", KEY_5},
+    {"6BUTTON"        	, "65", KEY_6},
+    {"7BUTTON"        	, "66", KEY_7},
+    {"8BUTTON"        	, "67", KEY_8},
+    {"9BUTTON"        	, "68", KEY_9},
+    {"0BUTTON"        	, "69", KEY_0},
+
+    {"AUDIO/SETUP"    	, "6a", KEY_AUDIO},
+
+    {"TIMER/APP"      	, "6b", KEY_TIME},
+
+    {"STAR"         	, "6c", KEY_HELP},
 
     {""               	, ""  , KEY_NULL},
 };
@@ -182,30 +244,48 @@ static int pRead(Context_t* context) {
     char         	vData[3];
     const int    	cSize		= 128;
     int          	vCurrentCode	= -1;
+    char 		*buffer;
+
+    memset(vBuffer, 0, 128);
     
+    //wait for new command
     read (context->fd, vBuffer, cSize);
 
 
-    vData[0] = vBuffer[14];
-    vData[1] = vBuffer[15];
-    vData[2] = '\0';
 
 
-    vCurrentCode = getInternalCode(cButtonsADB_BOX, vData);
+  vData[0] = vBuffer[17];
+  vData[1] = vBuffer[18];
+  vData[2] = '\0';
+  //printf("[RCU ADB_BOX] key: %s -> %s\n", vData, &vBuffer[0]);
 
-    //printf("[ ADB_BOX RCU ] key: vCC -> %i\n", vCurrentCode);		//move to DEBUG
+  vData[0] = vBuffer[14];
+  vData[1] = vBuffer[15];
+  vData[2] = '\0';
+  printf("[RCU ADB_BOX] key: %s -> %s\n", vData, &vBuffer[0]);
 
-    if (vCurrentCode&0x80 == 0) 
-    {
-        gNextKey++;
-        gNextKey%=20;
-    }
-    //printf("[ ADB_BOX RCU ] key: gNextKey -> %i\n", gNextKey);	//move to DEBUG
 
-    vCurrentCode += (gNextKey<<16);
-    printf("[ ADB_BOX RCU ] key: vCC -> %i\n", vCurrentCode);
+  vCurrentCode = getInternalCode((tButton*)((RemoteControl_t*)context->r)->RemoteControl, vData);
+  
+  //printf("[ADB_BOX RCU] key: vCC -> %i\n", vCurrentCode);
+  //printf("[ADB_BOX RCU] [17|18]: %i,    {"CHANNELUP"	, "0b", KEY_PAGEUP},
+ 
+	if(vCurrentCode != 0) {
+		static int nextflag = 0;
+		if (('0' == vBuffer[17]) && ('0' == vBuffer[18]))
+		{
+		    nextflag++;
+		}
+//		printf("[ADB_BOX RCU] nextflag: nf -> %i\n", nextflag);
+		vCurrentCode += (nextflag << 16);
+	}
 
-    return vCurrentCode;
+
+//   printf("[ADB_BOX RCU] key: vCC -> %i\n", vCurrentCode); 
+
+return vCurrentCode;
+
+
 }
 #endif
 
