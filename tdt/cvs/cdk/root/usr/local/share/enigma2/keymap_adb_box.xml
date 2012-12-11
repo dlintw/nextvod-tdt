@@ -72,8 +72,9 @@
 	</map>
 
 	<map context="InfobarEPGActions">
-		<!--key id="KEY_EPG" mapto="showEventInfo" flags="m" /-->
-		<key id="KEY_EPG" mapto="showEventInfoPlugin" flags="m" />
+		<key id="KEY_EPG" mapto="showEventInfoPlugin" flags="b" />
+		<key id="KEY_EPG" mapto="showSimpleInfo" flags="l" />
+		<key id="KEY_INFO" mapto="showEventInfo" flags="l"/>
      	</map>
 	
 	<map context="InfobarInstantRecord">
@@ -209,10 +210,9 @@
 		<key id="KEY_VOLUMEUP" mapto="volumeUp" flags="mr" />
 		<key id="KEY_VOLUMEDOWN" mapto="volumeDown" flags="mr" />
 		<key id="KEY_MUTE" mapto="volumeMute" flags="mr" />
-	        <key id="KEY_POWER" mapto="power_long" flags="m" />
-	        <!--key id="KEY_POWER" mapto="power_long" flags="l" /> 
-	        <key id="KEY_POWER" mapto="power_down" flags="m" /> 
-	        <key id="KEY_POWER" mapto="power_up" flags="b" /--> 
+		<key id="KEY_POWER" mapto="power_long" flags="l" /> 
+		<key id="KEY_POWER" mapto="power_down" flags="m" /> 
+		<key id="KEY_POWER" mapto="power_up" flags="b" /> 
 	</map>
 
 	<map context="PowerKeyActions">
@@ -500,7 +500,15 @@
 		<key id="KEY_PAGEUP" mapto="nextBouquet" flags="m" />
 		<key id="KEY_PAGEDOWN" mapto="prevBouquet" flags="m" />
 		<key id="KEY_TEXT" mapto="subtitles" flags="m" />
-		<key id="KEY_BLUE" mapto="subtitles2" flags="m" />
+
+		<key id="KEY_YELLOW" mapto="yellow" flags="b" />
+		<key id="KEY_YELLOW" mapto="yellowLong" flags="l" />
+		<key id="KEY_GREEN" mapto="blackout" flags="b" />
+		<key id="KEY_GREEN" mapto="greenLong" flags="l" />
+		<key id="KEY_RED" mapto="showRed" flags="b" />
+		<key id="KEY_RED" mapto="showRedL" flags="l" />
+		<key id="KEY_BLUE" mapto="extensions_PKT" flags="b" />
+		<key id="KEY_BLUE" mapto="blueLong" flags="l" />
 	</map>
 	
 	<map context="pktActions">

@@ -76,7 +76,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    echo "init AVS"
    if [ $boxtype == 'bxzb' ]; then
-      insmod $MODDIR/avs_x.ko type=fake_avs
+      insmod $MODDIR/avs.ko type=fake_avs
    else
       insmod $MODDIR/avs.ko type=stv6412
 
@@ -108,10 +108,12 @@ if [ ! -e /var/etc/.firstboot ]; then
 	insmod $MODDIR/stm_monitor.ko
 	insmod $MODDIR/stmsysfs.ko
 	if [ $boxtype == 'bzzb' ]; then
-	  insmod $MODDIR/stmdvb.ko TSIS_mode=serial ;
-       else
-	  insmod $MODDIR/stmdvb.ko TSIS_mode=parallel ;
-        fi
+	  insmod $MODDIR/stmdvb.ko TSIS_mode=serial NIMS=twin ;
+	elif [ $boxtype == 'bsla' ]; then
+	  insmod $MODDIR/stmdvb.ko TSIS_mode=parallel NIMS=twin ;
+	else
+	  insmod $MODDIR/stmdvb.ko TSIS_mode=parallel NIMS=single ;
+	fi
    else
 	insmod $MODDIR/pti.ko
 	insmod $MODDIR/stmdvb.ko
@@ -123,9 +125,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/platform.ko
    insmod $MODDIR/smartcard.ko
 
-       echo "init dvb-t as102"
-       /var/config/dvbt &
-       insmod $MODDIR/dvb-as102.ko
+#       echo "init dvb-t as102"
+#       /var/config/dvbt &
+#       insmod $MODDIR/dvb-as102.ko
 
   if [ $boxtype == 'bxzb' ]; then
       echo "bxzb" > /proc/stb/video/switch_type
