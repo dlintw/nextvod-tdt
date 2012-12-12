@@ -37,6 +37,7 @@ extern RemoteControl_t UFS912_RC;
 extern RemoteControl_t Spark_RC;
 extern RemoteControl_t Adb_Box_RC;
 extern RemoteControl_t Cuberevo_RC;
+extern RemoteControl_t Ipbox_RC;
 
 static RemoteControl_t * AvailableRemoteControls[] = {
 	&Ufs910_1W_RC,
@@ -51,6 +52,7 @@ static RemoteControl_t * AvailableRemoteControls[] = {
 	&Spark_RC,
 	&Adb_Box_RC,
 	&Cuberevo_RC,
+	&Ipbox_RC,
 	NULL
 };
 
