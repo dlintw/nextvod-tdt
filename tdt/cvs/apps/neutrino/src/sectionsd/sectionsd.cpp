@@ -189,7 +189,7 @@ static bool dvb_time_update = false;
 
 //NTP- Config
 #define CONF_FILE "/var/tuxbox/config/neutrino.conf"
-const std::string ntp_system_cmd_prefix = "/sbin/rdate -4 -n -s ";
+const std::string ntp_system_cmd_prefix = "/usr/sbin/rdate -s ";
 //const std::string ntp_system_cmd_prefix = "/sbin/ntpdate ";
 std::string ntp_system_cmd;
 CConfigFile ntp_config(',');

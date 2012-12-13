@@ -35,7 +35,6 @@ $(DEPDIR)/%release_neutrino_static:
 	cp -dp $(targetprefix)/sbin/sfdisk $(prefix)/release_neutrino_static/sbin/ && \
 	cp -dp $(targetprefix)/sbin/tune2fs $(prefix)/release_neutrino_static/sbin/ && \
 	cp -dp $(targetprefix)/sbin/blkid $(prefix)/release_neutrino_static/sbin/ && \
-	cp -dp $(targetprefix)/usr/bin/rdate $(prefix)/release_neutrino_static/sbin/ && \
 	cp -dp $(targetprefix)/etc/init.d/portmap $(prefix)/release_neutrino_static/etc/init.d/ && \
 	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release_neutrino_static/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_neutrino_static/bin/ && \
@@ -298,7 +297,6 @@ endif
 if STM22
 	cp $(kernelprefix)/linux/arch/sh/boot/uImage $(prefix)/release_neutrino_static/boot/
 	cp -dp $(targetprefix)/sbin/blkid $(prefix)/release_neutrino_static/usr/bin/
-	cp -dp $(targetprefix)/usr/bin/rdate $(prefix)/release_neutrino_static/usr/bin/
 else
 	cp $(kernelprefix)/linux-sh4/arch/sh/boot/uImage $(prefix)/release_neutrino_static/boot/
 endif
