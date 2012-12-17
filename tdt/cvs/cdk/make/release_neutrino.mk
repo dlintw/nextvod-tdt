@@ -303,6 +303,8 @@ if ENABLE_UFS912
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
 
+	rm -f $(prefix)/release_neutrino/bin/tffpctl
+	rm -f $(prefix)/release_neutrino/bin/tfd2mtd
 else
 if ENABLE_UFS913
 
@@ -506,6 +508,9 @@ if ENABLE_SPARK
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
+
+	rm -f $(prefix)/release_neutrino/bin/tffpctl
+	rm -f $(prefix)/release_neutrino/bin/tfd2mtd
 
 	cp -dp $(buildprefix)/root/etc/lircd_spark.conf $(prefix)/release_neutrino/etc/lircd.conf
 	cp -dp $(targetprefix)/usr/bin/lircd $(prefix)/release_neutrino/usr/bin/
@@ -1215,6 +1220,9 @@ endif
 	rm -f $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
+
+	rm -f $(prefix)/release_neutrino/bin/tffpctl
+	rm -f $(prefix)/release_neutrino/bin/tfd2mtd
 else
 if ENABLE_ATEVIO7500
 
@@ -1251,6 +1259,9 @@ if ENABLE_ATEVIO7500
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
 	rm -f $(prefix)/release_neutrino/lib/modules/boxtype.ko
+
+	rm -f $(prefix)/release_neutrino/bin/tffpctl
+	rm -f $(prefix)/release_neutrino/bin/tfd2mtd
 else
 if ENABLE_OCTAGON1008
 
@@ -1289,6 +1300,9 @@ endif
 	rm -f $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
 	rm -f $(prefix)/release_neutrino/bin/evremote
+
+	rm -f $(prefix)/release_neutrino/bin/tffpctl
+	rm -f $(prefix)/release_neutrino/bin/tfd2mtd
 else
 	rm -f $(prefix)/release_neutrino/sbin/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
@@ -1500,6 +1514,8 @@ if ENABLE_UFS910
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-stv6306.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw
 	rm -f $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
+	rm -f $(prefix)/release_neutrino/bin/tffpctl
+	rm -f $(prefix)/release_neutrino/bin/tfd2mtd
 endif
 
 if ENABLE_HL101
