@@ -223,13 +223,7 @@ fi
 # CFLAGS="-g -O2 -fno-strict-aliasing"
 if test -z "$TARGET_CFLAGS" -o -z "$TARGET_CXXFLAGS"; then
 	TARGET_CFLAGS="-O2"
-	if test "$enable_flashrules" != "yes"; then
-		TARGET_CFLAGS="$TARGET_CFLAGS"
-		TARGET_LDFLAGS=""
-	else
-		TARGET_CFLAGS="$TARGET_CFLAGS"
-		TARGET_LDFLAGS=""
-	fi
+	TARGET_LDFLAGS=""
 	TARGET_CXXFLAGS="$TARGET_CFLAGS"
 fi
 
