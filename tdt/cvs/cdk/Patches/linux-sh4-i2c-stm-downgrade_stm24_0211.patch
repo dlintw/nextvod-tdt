@@ -120,7 +120,7 @@
  	case IIC_FSM_COMPLETE:
  		dbg_print2("-Complete\n");
  
-@@ -965,7 +934,7 @@
+@@ -965,5 +934,5 @@
  }
  #endif
  
@@ -136,10 +136,10 @@
 -	unsigned long ns_per_clk, clock ;
 +	unsigned long ns_per_clk;
  
- 	dbg_print("Assuming %lu MHz for the Timing Setup\n", clock / 1000000);
- 
 -	clock = clk_get_rate(adap->clk) + 500000; /* +0.5 Mhz for rounding */
 +	clock += 500000;	/* +0.5 Mhz for rounding */
+ 	dbg_print("Assuming %lu MHz for the Timing Setup\n", clock / 1000000);
+ 	
  	ns_per_clk = NANOSEC_PER_SEC / clock;
  
  	if (check_fastmode(adap)) {
@@ -172,15 +172,6 @@
  	init_waitqueue_head(&(i2c_stm->wait_queue));
  	if (i2c_add_numbered_adapter(&(i2c_stm->adapter)) < 0) {
  		dev_err(&pdev->dev, "I2C core refuses the i2c/stm adapter\n");
-@@ -1232,8 +1188,6 @@
- 	struct resource *res;
- 	struct iic_ssc *iic_stm = platform_get_drvdata(pdev);
- 
--	clk_disable(iic_stm->clk);
--
- 	i2c_del_adapter(&iic_stm->adapter);
- 	/* irq */
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
 @@ -1246,6 +1200,7 @@
  }
  

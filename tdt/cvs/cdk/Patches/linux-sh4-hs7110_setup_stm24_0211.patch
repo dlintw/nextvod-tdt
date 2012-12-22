@@ -239,11 +239,11 @@
 -			.out1_enabled = 0, });
 -
 -	stx7111_configure_ssc_spi(0, NULL);
-+	stx7111_configure_ssc_i2c(0);
- 	stx7111_configure_ssc_i2c(1); /* J12=1-2, J16=1-2 */
--	peripherals_i2c_bus = stx7111_configure_ssc_i2c(2);
-+	stx7111_configure_ssc_i2c(2);
- 	stx7111_configure_ssc_i2c(3);
++	stx7111_configure_ssc_i2c(0, NULL);
+ 	stx7111_configure_ssc_i2c(1, NULL); /* J12=1-2, J16=1-2 */
+-	peripherals_i2c_bus = stx7111_configure_ssc_i2c(2, NULL);
++	stx7111_configure_ssc_i2c(2, NULL);
+ 	stx7111_configure_ssc_i2c(3, NULL);
  
  	stx7111_configure_usb(&(struct stx7111_usb_config) {
 @@ -246,14 +235,6 @@
@@ -311,7 +311,7 @@
 +#include <linux/proc_fs.h>
 +#include <linux/kallsyms.h>
 +#endif
- #include "reg_pio.h"
+ #include <linux/stm/pm_sys.h>
  
  
  
@@ -438,7 +438,7 @@
 + 	if (proc_stpio)
 + 		proc_stpio->read_proc = stpio_read_proc;
 + #endif
- 	ret = sysdev_class_register(&stm_gpio_sysdev_class);
+ 	ret = platform_driver_register(&stm_gpio_driver);
  	if (ret)
  		return ret;
 
