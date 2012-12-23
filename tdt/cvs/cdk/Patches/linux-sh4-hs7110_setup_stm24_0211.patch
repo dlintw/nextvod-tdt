@@ -303,7 +303,7 @@
  		},
 --- linux-sh4/drivers/stm/gpio.c	2012-03-31 15:26:55.000000000 +0200
 +++ linux-sh4/drivers/stm/gpio.c.patched	2012-07-08 17:17:27.000000000 +0200
-@@ -27,13 +27,18 @@
+@@ -27,6 +27,10 @@
  #include <linux/stm/platform.h>
  #include <linux/stm/pad.h>
  #include <linux/stm/pio.h>
@@ -314,7 +314,7 @@
  #include <linux/stm/pm_sys.h>
  #include "reg_pio.h"
  
- 
+@@ -34,6 +38,7 @@
  
  struct stpio_pin {
  #ifdef CONFIG_STPIO
@@ -322,9 +322,17 @@
  	void (*func)(struct stpio_pin *pin, void *dev);
  	void* dev;
  	unsigned short port_no, pin_no;
-@@ -352,6 +356,9 @@
+@@ -52,6 +57,7 @@
+ #ifdef CONFIG_HIBERNATION
+ 	unsigned char pm_saved_data;
+ #endif
++	unsigned char direction;
+ 	struct stpio_pin stpio;
+ };
  
- 	port->pins[offset].direction = direction;
+@@ -392,6 +398,9 @@
+ 
+ 	gpio_pm_set_direction(&port->pins[offset], direction);
  	set__PIO_PCx(port->base, offset, direction);
 +
 + 	if (!port->pins[offset].stpio.pin_name)
@@ -332,7 +340,7 @@
  }
  
  
-@@ -470,6 +477,10 @@
+@@ -510,6 +519,10 @@
  
  void stpio_free_pin(struct stpio_pin *pin)
  {
@@ -343,7 +351,7 @@
  	stm_pad_release_gpio(stm_gpio(pin->port_no, pin->pin_no));
  }
  EXPORT_SYMBOL(stpio_free_pin);
-@@ -584,6 +595,85 @@
+@@ -624,6 +637,85 @@
  	set_irq_type(irq, triggertype);
  }
  EXPORT_SYMBOL(stpio_set_irq_type);
@@ -429,7 +437,7 @@
  
  #endif /* CONFIG_STPIO */
  
-@@ -964,7 +1054,11 @@
+@@ -1031,7 +1123,11 @@
  static int __init stm_gpio_init(void)
  {
  	int ret;
