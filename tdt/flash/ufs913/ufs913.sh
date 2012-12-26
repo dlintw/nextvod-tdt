@@ -25,7 +25,7 @@ mkdir $TMPROOTDIR
 mkdir $TMPKERNELDIR
 mkdir $TMPFWDIR
 
-echo "This script creates flashable images for Kathrein UFS912"
+echo "This script creates flashable images for Kathrein UFS913"
 echo "Author: Schischu"
 echo "Date: 07-17-2012"
 echo "-----------------------------------------------------------------------"

@@ -30,10 +30,10 @@ if [ ! -e /var/etc/.firstboot ]; then
      # We can not correct the mac from userspace if we are booting from nfsroot
      # echo "Booting from nfs, don't set network"
    #else
-     # HWADDR=`strings /dev/mtdblock2 | tail -n 1`
-     # ifconfig eth0 down
-     # ifconfig eth0 hw ether ${HWADDR}
-     # ifconfig eth0 up
+      HWADDR=`strings /dev/mtdblock2 | tail -n 1`
+      ifconfig eth0 down
+      ifconfig eth0 hw ether ${HWADDR}
+      ifconfig eth0 up
   # fi
 
    fp_control -c
