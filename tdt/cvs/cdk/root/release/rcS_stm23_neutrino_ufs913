@@ -24,17 +24,23 @@ if [ ! -e /var/etc/.firstboot ]; then
  echo "Starting DEBUG Interface"
    /etc/init.d/mountall start
    /etc/init.d/hostname start
+   /etc/init.d/networking start
 
-   #NFS=`grep -c nfs /proc/cmdline`
-   #if [ "$NFS" -eq "1" ]; then
-     # We can not correct the mac from userspace if we are booting from nfsroot
-     # echo "Booting from nfs, don't set network"
-   #else
-      HWADDR=`strings /dev/mtdblock2 | tail -n 1`
-      ifconfig eth0 down
-      ifconfig eth0 hw ether ${HWADDR}
-      ifconfig eth0 up
-  # fi
+  NFS=`grep -c nfs /proc/cmdline`
+  if [ "$NFS" -eq "1" ]; then
+      echo "Booting from nfs, don't set network"
+   else
+     if [ -e /etc/network/interfaces ]; then
+	 ip addr flush eth0
+	 /etc/init.d/networking stop
+	 DHCP=`grep -c dhcp /etc/network/interfaces`
+	 if [ "$DHCP" -eq "1" ]; then
+	    echo "Starting dhcp"
+            /etc/init.d/udhcpc start
+	 fi
+	 /etc/init.d/networking start
+     fi
+   fi
 
    fp_control -c
 
@@ -129,8 +135,6 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
-
-   /etc/init.d/network start &
 
    echo "LOADING Neutrino" > /dev/vfd
    echo "LOADING Neutrino"
