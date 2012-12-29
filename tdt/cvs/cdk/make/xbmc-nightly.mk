@@ -2,8 +2,10 @@
 
 $(DEPDIR)/xbmc-nightly.do_prepare:
 	REVISION=""; \
+	PVRREVISION=""; \
 	DIFF="0"; \
 	REPO="git://github.com/xbmc/xbmc.git"; \
+	PVRREPO="git://github.com/opdenkamp/xbmc-pvr-addons.git"; \
 	rm -rf $(appsdir)/xbmc-nightly; \
 	rm -rf $(appsdir)/xbmc-nightly.org; \
 	rm -rf $(appsdir)/xbmc-nightly.newest; \
@@ -23,19 +25,38 @@ $(DEPDIR)/xbmc-nightly.do_prepare:
 	[ "$$REPLY" == "1" ] && DIFF="1" && REVISION="460e79416c5cb13010456794f36f89d49d25da75"; \
 	[ "$$REPLY" == "2" ] && DIFF="2" && REVISION="327710767d2257dad27e3885effba1d49d4557f0"; \
 	[ "$$REPLY" == "3" ] && DIFF="3" && REVISION="12840c28d8fbfd71c26be798ff6b13828b05b168"; \
-	[ "$$REPLY" == "4" ] && DIFF="4" && REVISION="e292b1147bd89a7e53742e3e5039b9a906a3b1d0"; \
+	[ "$$REPLY" == "4" ] && DIFF="4" && REVISION="e292b1147bd89a7e53742e3e5039b9a906a3b1d0" \
+	                                 && PVRREVISION="9e6aca3ac0ff688f132ce0e8a4494b61b9b3ddac"; \
+	\
 	echo "Revision: " $$REVISION; \
 	[ -d "$(archivedir)/xbmc.git" ] && \
 	(cd $(archivedir)/xbmc.git; git pull ; git checkout HEAD; cd "$(buildprefix)";); \
 	[ -d "$(archivedir)/xbmc.git" ] || \
 	git clone $$REPO $(archivedir)/xbmc.git; \
+	\
+	echo "PVR Revision: " $$PVRREVISION; \
+	[ -d "$(archivedir)/xbmc-pvr-addons.git" ] && \
+	(cd $(archivedir)/xbmc-pvr-addons.git; git pull ; git checkout HEAD; cd "$(buildprefix)";); \
+	[ -d "$(archivedir)/xbmc-pvr-addons.git" ] || \
+	git clone $$PVRREPO $(archivedir)/xbmc-pvr-addons.git; \
+	\
 	cp -ra $(archivedir)/xbmc.git $(appsdir)/xbmc-nightly.newest; \
 	rm -rf $(appsdir)/xbmc-nightly.newest/.git; \
 	cp -ra $(archivedir)/xbmc.git $(appsdir)/xbmc-nightly; \
+	\
+	cp -ra $(archivedir)/xbmc-pvr-addons.git $(appsdir)/xbmc-nightly.newest/pvr-addons; \
+	rm -rf $(appsdir)/xbmc-nightly.newest/pvr-addons/.git; \
+	cp -ra $(archivedir)/xbmc-pvr-addons.git $(appsdir)/xbmc-nightly/pvr-addons; \
+	\
 	[ "$$REVISION" == "" ] || (cd $(appsdir)/xbmc-nightly; git checkout "$$REVISION"; cd "$(buildprefix)";); \
+	[ "$$PVRREVISION" == "" ] || (cd $(appsdir)/xbmc-nightly/pvr-addons; git checkout "$$PVRREVISION"; cd "$(buildprefix)";); \
+	\
 	rm -rf $(appsdir)/xbmc-nightly/.git; \
+	rm -rf $(appsdir)/xbmc-nightly/pvr-addons/.git; \
+	\
 	cp -ra $(appsdir)/xbmc-nightly $(appsdir)/xbmc-nightly.org; \
 	cd $(appsdir)/xbmc-nightly && patch -p1 < "../../cdk/Patches/xbmc-nightly.$$DIFF.diff"; \
+	cd $(appsdir)/xbmc-nightly && patch -p1 < "../../cdk/Patches/xbmc-nightly.pvr.$$DIFF.diff"; \
 	cp -ra $(appsdir)/xbmc-nightly $(appsdir)/xbmc-nightly.patched
 	touch $@
 

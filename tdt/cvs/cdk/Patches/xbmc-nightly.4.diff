@@ -4335,18 +4335,6 @@
    {
      if( pProgress->GetInfo() == 0 || pProgress->GetVisibleCondition() == 0)
      {
---- xbmc-nightly.org/xbmc/windowing/egl/EGLNativeTypeAndroid.cpp	2012-11-17 17:23:27.000000000 
-+++ xbmc-nightly/xbmc/windowing/egl/EGLNativeTypeAndroid.cpp	2012-11-17 17:25:59.000000000 
-@@ -141,4 +141,4 @@
--}
--
--bool CEGLNativeTypeAndroid::ShowWindow(bool show)
--{
-\ No newline at end of file
-+}
-+
-+bool CEGLNativeTypeAndroid::ShowWindow(bool show)
-+{
 --- xbmc-nightly.org/
 +++ xbmc-nightly/xbmc/windowing/egl/EGLNativeTypeStgles.cpp	2012-11-17 17:26:37.000000000 
 @@ -0,0 +1,385 @@

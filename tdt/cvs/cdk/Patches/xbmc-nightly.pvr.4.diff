@@ -1,0 +1,65 @@
+﻿Left base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha6/tdt/cvs/apps/xbmc-nightly.patched
+Right base folder: /home/ubuntu/repos/ufs913_xbmc_frodo_alpha6/tdt/cvs/apps/xbmc-nightly
+--- xbmc-nightly.patched/pvr-addons/lib/platform/util/atomic.h	2012-12-29 23:08:44.000000000 
++++ xbmc-nightly/pvr-addons/lib/platform/util/atomic.h	2012-12-29 23:22:30.000000000 
+@@ -78,12 +78,24 @@
+ #elif defined(__mips__)
+ // TODO:
+   long val;
+   #error AtomicIncrement undefined for mips
+   return val;
+ 
++#elif defined(__sh__)
++  register long val;
++  __asm__ __volatile__ (
++                "   .align 2               \n"
++                "   mov.l   @%1,  %0       \n" //Move the first value to val
++                "   add     #1,   %0       \n" //Increase val by 1
++                "   mov.l   %0,   @%1      \n" //Move val to the first value
++                : "=&r" (val)
++                : "r" (pAddr)
++                );
++  return val;
++
+ #elif defined(WIN32)
+   long val;
+   __asm
+   {
+     mov eax, pAddr ;
+     lock inc dword ptr [eax] ;
+--- xbmc-nightly.patched/pvr-addons/xbmc/libXBMC_addon.h	2012-12-29 23:08:44.000000000 
++++ xbmc-nightly/pvr-addons/xbmc/libXBMC_addon.h	2012-12-29 23:24:24.000000000 
+@@ -50,12 +50,14 @@
+ #elif defined(_POWERPC64)
+ #define ADDON_HELPER_ARCH       "powerpc64-linux"
+ #elif defined(__ARMEL__)
+ #define ADDON_HELPER_ARCH       "arm"
+ #elif defined(_MIPSEL)
+ #define ADDON_HELPER_ARCH       "mipsel-linux"
++#elif defined(__sh__)
++#define ADDON_HELPER_ARCH       "sh"
+ #else
+ #define ADDON_HELPER_ARCH       "i486-linux"
+ #endif
+ #endif
+ #include <dlfcn.h>              // linux+osx
+ #define ADDON_HELPER_EXT        ".so"
+--- xbmc-nightly.patched/pvr-addons/configure.ac	2012-12-29 23:08:44.000000000 
++++ xbmc-nightly/pvr-addons/configure.ac	2012-12-29 23:26:50.000000000 
+@@ -83,12 +83,16 @@
+     ARCHITECTURE="powerpc64"
+     ;;
+   mipsel-*-linux*)
+     OS="linux"
+     ARCHITECTURE="mipsel"
+     ;;
++  sh*-*-linux-gnu*)
++    OS="linux"
++    ARCHITECTURE="sh"
++    ;;
+   x86_64-*-linux*)
+     OS="linux"
+     ARCHITECTURE="x86_64"
+     ;;
+   *-*-linux*)
+     OS="linux"
