@@ -40,10 +40,10 @@ $(appsdir)/neutrino-hd2/config.status: bootstrap $(EXTERNALLCD_DEP) freetype jpe
 			--enable-libass \
 			--with-datadir=/usr/local/share \
 			--with-libdir=/usr/lib \
-			--with-plugindir=/usr/lib/tuxbox/plugins \
+			--with-plugindir=/var/plugins \
 			--with-fontdir=/usr/local/share/fonts \
-			--with-configdir=/usr/local/share/config \
-			--with-gamesdir=/usr/local/share/games \
+			--with-configdir=/var/tuxbox/config \
+			--with-gamesdir=/var/tuxbox/games \
 			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
 			PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig \
 			$(PLATFORM_CPPFLAGS) \
@@ -98,10 +98,10 @@ $(appsdir)/neutrino-hd2-exp/config.status: bootstrap $(EXTERNALLCD_DEP) freetype
 			--enable-libass \
 			--with-datadir=/usr/local/share \
 			--with-libdir=/usr/lib \
-			--with-plugindir=/usr/lib/tuxbox/plugins \
+			--with-plugindir=/var/plugins \
 			--with-fontdir=/usr/local/share/fonts \
-			--with-configdir=/usr/local/share/config \
-			--with-gamesdir=/usr/local/share/games \
+			--with-configdir=/var/tuxbox/config \
+			--with-gamesdir=/var/tuxbox/games \
 			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
 			PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig \
 			$(PLATFORM_CPPFLAGS) \
