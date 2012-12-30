@@ -37,6 +37,11 @@ $(DEPDIR)/%release_neutrino:
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release_neutrino && \
 	touch $(prefix)/release_neutrino/var/etc/.firstboot && \
+	mkdir -p $(prefix)/release_neutrino/var/plugins && \
+	mkdir -p $(prefix)/release_neutrino/var/tuxbox/config && \
+	mkdir -p $(prefix)/release_neutrino/usr/local/share && \
+	ln -sf /var/tuxbox/config $(prefix)/release_neutrino/usr/local/share/config && \
+	mkdir -p $(prefix)/release_neutrino/var/share/icons && \
 	cp -a $(targetprefix)/bin/* $(prefix)/release_neutrino/bin/ && \
 	ln -s /bin/showiframe $(prefix)/release_neutrino/usr/bin/showiframe && \
 	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release_neutrino/sbin/ && \
@@ -155,8 +160,8 @@ $(DEPDIR)/%release_neutrino:
 	cp -dp $(targetprefix)/etc/init.d/umountfs $(prefix)/release_neutrino/etc/init.d/ && \
 	cp -dp $(targetprefix)/etc/init.d/sendsigs $(prefix)/release_neutrino/etc/init.d/ && \
 	cp -dp $(targetprefix)/etc/init.d/halt $(prefix)/release_neutrino/etc/init.d/ && \
-	mkdir -p $(prefix)/release_neutrino/usr/local/share/config/tuxtxt/ && \
-	cp $(buildprefix)/root/etc/tuxbox/tuxtxt2.conf $(prefix)/release_neutrino/usr/local/share/config/tuxtxt/ && \
+	mkdir -p $(prefix)/release_neutrino/var/tuxbox/config/tuxtxt/ && \
+	cp $(buildprefix)/root/etc/tuxbox/tuxtxt2.conf $(prefix)/release_neutrino/var/tuxbox/config/tuxtxt/ && \
 	cp $(buildprefix)/root/release/reboot $(prefix)/release_neutrino/etc/init.d/ && \
 	cp $(buildprefix)/root/bin/autologin $(prefix)/release_neutrino/bin/ && \
 	echo "576i50" > $(prefix)/release_neutrino/etc/videomode && \
@@ -1570,22 +1575,10 @@ if !ENABLE_UFS913
 endif
 
 #######################################################################################
-	mkdir -p $(prefix)/release_neutrino/tuxbox/config
-	mkdir -p $(prefix)/release_neutrino/var/plugins
-	mkdir -p $(prefix)/release_neutrino/lib/tuxbox
-	mkdir -p $(prefix)/release_neutrino/usr/lib/tuxbox
-#	mkdir -p $(prefix)/release_neutrino/var/tuxbox/config
-	mkdir -p $(prefix)/release_neutrino/var/tuxbox
-	ln -s /usr/local/share/config $(prefix)/release_neutrino/var/tuxbox/config
-	mkdir -p $(prefix)/release_neutrino/share/tuxbox
-	mkdir -p $(prefix)/release_neutrino/var/share/icons
-	( cd $(prefix)/release_neutrino/share/tuxbox && ln -s /usr/local/share/neutrino )
 	( cd $(prefix)/release_neutrino/var/share/icons/ && ln -s /usr/local/share/neutrino/icons/logo )
 	( cd $(prefix)/release_neutrino/ && ln -s /usr/local/share/neutrino/icons/logo logos )
 	( cd $(prefix)/release_neutrino/lib && ln -s libcrypto.so.0.9.7 libcrypto.so.0.9.8 )
-	( cd $(prefix)/release_neutrino/lib/tuxbox && ln -s /var/plugins )
 	( cd $(prefix)/release_neutrino/var/tuxbox && ln -s /var/plugins )
-	( cd $(prefix)/release_neutrino/usr/lib/tuxbox && ln -s /var/plugins )
 
 #######################################################################################
 #######################################################################################
@@ -1631,10 +1624,9 @@ endif
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/local/share
 	cp -aR $(targetprefix)/usr/local/share/iso-codes $(prefix)/release_neutrino/usr/local/share/
 #	TODO: Channellist ....
-	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/local/share/config
-	cp -aR $(buildprefix)/root/usr/local/share/config/* $(prefix)/release_neutrino/usr/local/share/config/
+	cp -aR $(buildprefix)/root/usr/local/share/config/* $(prefix)/release_neutrino/var/tuxbox/config/
 if ENABLE_SPARK7162
-	rm -f $(prefix)/release_neutrino/usr/local/share/config/neutrino.conf
+	rm -f $(prefix)/release_neutrino/var/tuxbox/config/config/neutrino.conf
 endif
 	cp -aR $(targetprefix)/usr/local/share/neutrino $(prefix)/release_neutrino/usr/local/share/
 #	TODO: HACK (without *.locale are missing!) --- should be not longer needed since path fix
