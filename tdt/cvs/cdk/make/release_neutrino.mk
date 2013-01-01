@@ -1575,42 +1575,20 @@ if !ENABLE_UFS913
 endif
 
 #######################################################################################
+
 	( cd $(prefix)/release_neutrino/var/share/icons/ && ln -s /usr/local/share/neutrino/icons/logo )
 	( cd $(prefix)/release_neutrino/ && ln -s /usr/local/share/neutrino/icons/logo logos )
 	( cd $(prefix)/release_neutrino/lib && ln -s libcrypto.so.0.9.7 libcrypto.so.0.9.8 )
 	( cd $(prefix)/release_neutrino/var/tuxbox && ln -s /var/plugins )
 
-#######################################################################################
-#######################################################################################
-#######################################################################################
-
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/share
-
-#######################################################################################
-
-
-#######################################################################################
-
-#######################################################################################
-
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/share/zoneinfo
 	cp -aR $(buildprefix)/root/usr/share/zoneinfo/* $(prefix)/release_neutrino/usr/share/zoneinfo/
-
-#######################################################################################
 
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/share/udhcpc
 	cp -aR $(buildprefix)/root/usr/share/udhcpc/* $(prefix)/release_neutrino/usr/share/udhcpc/
 
-
-#######################################################################################
-#######################################################################################
-#######################################################################################
-#######################################################################################
-
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/local
-
-#######################################################################################
-
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/local/bin
 	cp $(targetprefix)/usr/local/bin/neutrino $(prefix)/release_neutrino/usr/local/bin/
 	cp $(targetprefix)/usr/local/bin/pzapit $(prefix)/release_neutrino/usr/local/bin/
@@ -1619,14 +1597,12 @@ endif
 	find $(prefix)/release_neutrino/usr/local/bin/ -name  pzapit -exec sh4-linux-strip --strip-unneeded {} \;
 	find $(prefix)/release_neutrino/usr/local/bin/ -name  sectionsdcontrol -exec sh4-linux-strip --strip-unneeded {} \;
 
-#######################################################################################
-
 	$(INSTALL_DIR) $(prefix)/release_neutrino/usr/local/share
 	cp -aR $(targetprefix)/usr/local/share/iso-codes $(prefix)/release_neutrino/usr/local/share/
 #	TODO: Channellist ....
 	cp -aR $(buildprefix)/root/usr/local/share/config/* $(prefix)/release_neutrino/var/tuxbox/config/
 if ENABLE_SPARK7162
-	rm -f $(prefix)/release_neutrino/var/tuxbox/config/config/neutrino.conf
+	rm -f $(prefix)/release_neutrino/var/tuxbox/config/neutrino.conf
 endif
 	cp -aR $(targetprefix)/usr/local/share/neutrino $(prefix)/release_neutrino/usr/local/share/
 #	TODO: HACK (without *.locale are missing!) --- should be not longer needed since path fix
@@ -1636,11 +1612,11 @@ endif
 	mkdir -p $(prefix)/release_neutrino/usr/local/share/fonts
 	cp $(buildprefix)/root/usr/share/fonts/tuxtxt.ttf $(prefix)/release_neutrino/usr/local/share/fonts/
 
-#       Font libass
+# Font libass
 	mkdir -p $(prefix)/release_neutrino/usr/share/fonts
 	cp $(buildprefix)/root/usr/share/fonts/FreeSans.ttf $(prefix)/release_neutrino/usr/share/fonts/
-
 	cp -aR $(targetprefix)/usr/local/share/fonts/micron.ttf $(prefix)/release_neutrino/usr/local/share/fonts/neutrino.ttf
+
 #######################################################################################
 	echo "duckbox-rev#: " > $(prefix)/release_neutrino/etc/imageinfo
 	git describe >> $(prefix)/release_neutrino/etc/imageinfo
@@ -1663,18 +1639,18 @@ endif
 	rm -f $(prefix)/release_neutrino/usr/lib/*.a
 	rm -f $(prefix)/release_neutrino/usr/lib/*.o
 	rm -f $(prefix)/release_neutrino/usr/lib/*.la
+
 	mkdir -p $(prefix)/release_neutrino/usr/local/share/neutrino/icons/logo
-#
-#######################################################################################
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino && ln -s /usr/local/share/neutrino/httpd httpd-y )
 	( cd $(prefix)/release_neutrino/var && ln -s /usr/local/share/neutrino/httpd httpd )
 	cp $(appsdir)/neutrino/src/nhttpd/web/{Y_Baselib.js,Y_VLC.js} $(prefix)/release_neutrino/usr/local/share/neutrino/httpd/
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd && ln -s /usr/local/share/neutrino/icons/logo )
 	( cd $(prefix)/release_neutrino/usr/local/share/neutrino/httpd && ln -s /usr/local/share/neutrino/icons/logo logos )
+
 #######################################################################################
-#
+
 	find $(prefix)/release_neutrino/usr/lib/ -name '*.so*' -exec sh4-linux-strip --strip-unneeded {} \;
-#
+
 ######## FOR YOUR OWN CHANGES use these folder in cdk/own_build/neutrino #############
 #	rm $(prefix)/release_neutrino/bin/mount
 	cp -RP $(buildprefix)/own_build/neutrino/* $(prefix)/release_neutrino/
