@@ -12,7 +12,7 @@ $(DEPDIR)/%diverse-tools: $(DIVERSE_TOOLS_ADAPTED_ETC_FILES:%=root/etc/%)
 			[ "$${s%%/*}" = "init.d" ] && ( \
 			$(hostprefix)/bin/target-initdconfig --add $${s#init.d/} || \
 			echo "Unable to enable initd service: $${s#init.d/}" ) ; done && rm *rpmsave 2>/dev/null || true ) && \
-	ln -sf /usr/share/zoneinfo/Europe/Berlin $(prefix)/$*cdkroot/etc/localtime
+	ln -sf /usr/share/zoneinfo/CET $(prefix)/$*cdkroot/etc/localtime
 #	( \
 #		[ -f root/usr/bin/dbox-perf-hdd.sh ] && $(INSTALL) -m 755 root/usr/bin/dbox-perf-hdd.sh $(prefix)/$*cdkroot/usr/bin || true && \
 #		[ -f root/usr/bin/dbox-perf-nfs.sh ] && $(INSTALL) -m 755 root/usr/bin/dbox-perf-nfs.sh $(prefix)/$*cdkroot/usr/bin || true )
