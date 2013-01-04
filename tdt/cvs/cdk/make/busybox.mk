@@ -9,7 +9,7 @@ $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 		patch -p1 < ../Patches/busybox-1.20.2-sys-resource.patch
 	touch $@
 
-$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox.config$(if $(UFS912)$(SPARK),_nandwrite) | $(DEPDIR)/$(GLIBC_DEV)
+$(DEPDIR)/busybox.do_compile: bootstrap $(DEPDIR)/busybox.do_prepare Patches/busybox.config$(if $(UFS912)$(UFS913)$(SPARK),_nandwrite) | $(DEPDIR)/$(GLIBC_DEV)
 	cd @DIR_busybox@ && \
 		export CROSS_COMPILE=$(target)- && \
 		$(MAKE) mrproper && \

@@ -1189,32 +1189,34 @@ archive directory           : $archivedir
 GNU server                  : $gnuserver
 default server              : $defaultserver
 update http prefix          : $updatehttpprefix
-Fortis/hdbox stuff          : $enable_fortis_hdbox
-Fortis hs7810a stuff        : $enable_hs7810a
-Fortis hs7110 stuff         : $enable_hs7110
-Atevio 7500 stuff           : $enable_atevio7500
-octagon1008 stuff           : $enable_octagon1008
-topfield stuff              : $enable_tf7700
-spider-box hl101 stuff      : $enable_hl101
-edision argus vip1 v2 stuff : $enable_vip1_v2
-edision argus vip2 v1 stuff : $enable_vip2_v1
-spark box stuff             : $enable_spark
-spark7162 box stuff         : $enable_spark7162
-adb_box stuff               : $enable_adb_box
 ufs910 stuff                : $enable_ufs910
 ufs912 stuff                : $enable_ufs912
 ufs922 stuff                : $enable_ufs922
+topfield stuff              : $enable_tf7700
+Fortis/hdbox stuff          : $enable_fortis_hdbox
+spider-box hl101 stuff      : $enable_hl101
+edision argus vip1 v2 stuff : $enable_vip1_v2
+edision argus vip2 v1 stuff : $enable_vip2_v1
 cuberevo stuff              : $enable_cuberevo
 cuberevo mini stuff         : $enable_cuberevo_mini
 cuberevo mini 2 stuff       : $enable_cuberevo_mini2
-cuberevo mini fta stuff     : $enable_cuberevo_mini_fta
 cuberevo 250hd stuff        : $enable_cuberevo_250hd
-cuberevo 2000hd stuff       : $enable_cuberevo_2000hd
 cuberevo 9500hd stuff       : $enable_cuberevo_9500hd
+cuberevo 2000hd stuff       : $enable_cuberevo_2000hd
+cuberevo mini fta stuff     : $enable_cuberevo_mini_fta
 homecast 5101 stuff         : $enable_homecast5101
+octagon1008 stuff           : $enable_octagon1008
+spark box stuff             : $enable_spark
+Atevio 7500 stuff           : $enable_atevio7500
+spark7162 box stuff         : $enable_spark7162
 ipbox 9900 stuff            : $enable_ipbox9900
 ipbox 99 stuff              : $enable_ipbox99
 ipbox 55 stuff              : $enable_ipbox55
+Fortis hs7810a stuff        : $enable_hs7810a
+adb_box stuff               : $enable_adb_box
+Fortis hs7110 stuff         : $enable_hs7110
+whitebox stuff              : $enable_whitebox
+ufs913 stuff                : $enable_ufs913
 XFS support for IDE         : $enable_xfs
 NFS server                  : $enable_nfsserver
 Samba Clients               : $enable_cifs
