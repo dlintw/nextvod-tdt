@@ -2,15 +2,6 @@
 # Makefile to build NEUTRINO
 #
 
-$(targetprefix)/var/etc/.version:
-	echo "imagename=Neutrino-HD" > $@
-	echo "homepage=http://gitorious.org/open-duckbox-project-sh4" >> $@
-	echo "creator=`id -un`" >> $@
-	echo "docs=http://gitorious.org/open-duckbox-project-sh4/pages/Home" >> $@
-	echo "forum=http://gitorious.org/open-duckbox-project-sh4" >> $@
-	echo "version=0100`date +%Y%m%d%H%M`" >> $@
-	echo "git =`git describe`" >> $@
-
 N_CPPFLAGS =-DNEW_LIBCURL
 
 N_CONFIG_OPTS = --enable-silent-rules
@@ -54,7 +45,6 @@ $(DEPDIR)/neutrino-beta.do_compile: $(appsdir)/neutrino-beta/config.status
 
 $(DEPDIR)/neutrino-beta: neutrino-beta.do_prepare neutrino-beta.do_compile
 	$(MAKE) -C $(appsdir)/neutrino-beta install DESTDIR=$(targetprefix) && \
-	make $(targetprefix)/var/etc/.version
 	$(target)-strip $(targetprefix)/usr/local/bin/neutrino
 	$(target)-strip $(targetprefix)/usr/local/bin/pzapit
 	$(target)-strip $(targetprefix)/usr/local/bin/sectionsdcontrol
