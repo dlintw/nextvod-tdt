@@ -86,8 +86,6 @@ $(DEPDIR)/%release_neutrino:
 	ln -sf /.version $(prefix)/release_neutrino/var/etc/.version && \
 	cp -dp $(targetprefix)/sbin/MAKEDEV $(prefix)/release_neutrino/sbin/MAKEDEV && \
 	cp -f $(buildprefix)/root/release/makedev $(prefix)/release_neutrino/etc/init.d/ && \
-	cp -dp $(targetprefix)/usr/bin/grep $(prefix)/release_neutrino/bin/ && \
-	cp -dp $(targetprefix)/usr/bin/egrep $(prefix)/release_neutrino/bin/ && \
 	cp -dp $(targetprefix)/usr/bin/ffmpeg $(prefix)/release_neutrino/sbin/ && \
 \
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release_neutrino/boot/video.elf && \
