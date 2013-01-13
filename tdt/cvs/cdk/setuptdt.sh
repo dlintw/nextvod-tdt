@@ -95,6 +95,9 @@ PACKAGES="\
 	${UBUNTU:+doc-base} \
 	${UBUNTU:+texi2html} \
 	${UBUNTU:+help2man} \
+	${UBUNTU:+liblzo2-dev} \
+	${UBUNTU:+libsdl-image1.2} \
+	${UBUNTU:+libsdl-image1.2-dev} \
 ";
 
 if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then

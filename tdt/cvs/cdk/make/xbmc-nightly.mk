@@ -18,15 +18,18 @@ $(DEPDIR)/xbmc-nightly.do_prepare:
 	echo "2) Sun, 10 Jun 2012 13:53 - 327710767d2257dad27e3885effba1d49d4557f0"; \
 	echo "3) Fr,  31 Aug 2012 22:34 - Frodo_alpha5 - 12840c28d8fbfd71c26be798ff6b13828b05b168"; \
 	echo "4) Fr,  31 Oct 2012 22:34 - Frodo_alpha7 - e292b1147bd89a7e53742e3e5039b9a906a3b1d0"; \
-	echo "5) current inactive... comming soon, here is the next stable (case 5 == DIFF=5)"; \
+	echo "5) Fr,  02 Jan 2013 22:34 - Frodo_rc3    - 7a6cb7f49ae19dca3c48c40fa3bd20dc3c490e60"; \
+	echo "6) current inactive... comming soon, here is the next stable (case 6 == DIFF=6)"; \
 	read -p "Select: "; \
 	echo "Selection: " $$REPLY; \
 	[ "$$REPLY" == "0" ] && DIFF="4"; \
 	[ "$$REPLY" == "1" ] && DIFF="1" && REVISION="460e79416c5cb13010456794f36f89d49d25da75"; \
 	[ "$$REPLY" == "2" ] && DIFF="2" && REVISION="327710767d2257dad27e3885effba1d49d4557f0"; \
-	[ "$$REPLY" == "3" ] && DIFF="3" && REVISION="12840c28d8fbfd71c26be798ff6b13828b05b168"; \
-	[ "$$REPLY" == "4" ] && DIFF="4" && REVISION="e292b1147bd89a7e53742e3e5039b9a906a3b1d0" \
+	[ "$$REPLY" == "3" ] && DIFF="3" && REVISION="Frodo_alpha5"; \
+	[ "$$REPLY" == "4" ] && DIFF="4" && REVISION="Frodo_alpha7" \
 	                                 && PVRREVISION="9e6aca3ac0ff688f132ce0e8a4494b61b9b3ddac"; \
+	[ "$$REPLY" == "5" ] && DIFF="5" && REVISION="Frodo_rc3" \
+	                                 && PVRREVISION="Frodo_rc3"; \
 	\
 	echo "Revision: " $$REVISION; \
 	[ -d "$(archivedir)/xbmc.git" ] && \
@@ -75,6 +78,7 @@ $(appsdir)/xbmc-nightly/config.status: bootstrap libboost directfb libstgles lib
 			PYTHON_SITE_PKG=$(targetprefix)/usr/lib/python2.6/site-packages \
 			PYTHON_CPPFLAGS=-I$(targetprefix)/usr/include/python2.6 \
 			PY_PATH=$(targetprefix)/usr \
+			TEXTUREPACKER_NATIVE_ROOT=/usr \
 			SWIG_EXE=none \
 			JRE_EXE=none \
 			--disable-gl \
