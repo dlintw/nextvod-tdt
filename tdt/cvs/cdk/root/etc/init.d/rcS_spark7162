@@ -72,7 +72,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    fi
    insmod $MODDIR/pseudocard.ko
 
-   insmod $MODDIR/spark7162.ko
+   #you can change t to c to switch the tuner type
+   insmod $MODDIR/spark7162.ko UnionTunerType=t
    #insmod $MODDIR/starci.ko 
    if [ $player=='player179' ]; then
       insmod $MODDIR/pti.ko waitMS=20 videoMem=4096
