@@ -90,6 +90,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko
+   insmod $MODDIR/cec.ko activemode=1 
 
    insmod $MODDIR/bpamem.ko
    mknod /dev/bpamem c 153 0 
