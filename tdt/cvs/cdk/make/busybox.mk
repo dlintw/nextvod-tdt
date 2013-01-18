@@ -5,6 +5,7 @@ $(DEPDIR)/busybox.do_prepare: @DEPENDS_busybox@
 	@PREPARE_busybox@
 	cd @DIR_busybox@ && \
 		patch -p1 < ../Patches/busybox-1.20.2-kernel_ver.patch && \
+		patch -p1 < ../Patches/busybox-1.20.2-ntpd.patch && \
 		patch -p1 < ../Patches/busybox-1.20.2-pkg-config-selinux.patch && \
 		patch -p1 < ../Patches/busybox-1.20.2-sys-resource.patch
 	touch $@
