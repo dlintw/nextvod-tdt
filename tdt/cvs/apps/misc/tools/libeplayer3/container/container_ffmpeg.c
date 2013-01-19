@@ -1342,6 +1342,7 @@ static int container_ffmpeg_stop(Context_t *context) {
         avContext = NULL;
     }
 
+	avformat_network_deinit();
     isContainerRunning = 0;
 
     releaseMutex(FILENAME, __FUNCTION__,__LINE__);
