@@ -847,7 +847,8 @@ int container_ffmpeg_init(Context_t *context, char * filename)
     /* initialize ffmpeg */
     avcodec_register_all();
     av_register_all();
-	avformat_network_init();
+    avformat_network_init();
+    av_log_set_level( AV_LOG_DEBUG );
 
 #if LIBAVCODEC_VERSION_MAJOR < 54
     if ((err = av_open_input_file(&avContext, filename, NULL, 0, NULL)) != 0) {
@@ -1342,7 +1343,7 @@ static int container_ffmpeg_stop(Context_t *context) {
         avContext = NULL;
     }
 
-	avformat_network_deinit();
+    avformat_network_deinit();
     isContainerRunning = 0;
 
     releaseMutex(FILENAME, __FUNCTION__,__LINE__);

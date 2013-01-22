@@ -1,11 +1,22 @@
---- ffmpeg-1.0/libavformat/aviobuf.c	2012-09-28 03:37:35.000000000 +0200
-+++ ffmpeg-1.0/libavformat/aviobuf.c.patched	2013-01-19 21:47:51.000000000 +0100
+--- ffmpeg-1.0/libavformat/aviobuf.c	2013-01-22 17:17:42.000000000 +0100
++++ ffmpeg-1.0/libavformat/aviobuf.c.patched	2013-01-22 17:16:26.000000000 +0100
 @@ -32,7 +32,7 @@
  #include "url.h"
  #include <stdarg.h>
  
 -#define IO_BUFFER_SIZE 32768
-+#define IO_BUFFER_SIZE 524288
++#define IO_BUFFER_SIZE 262144
  
  /**
   * Do seeks within this distance ahead of the current buffer by skipping
+@@ -701,6 +701,9 @@
+     } else {
+         buffer_size = IO_BUFFER_SIZE;
+     }
++    
++    av_log(NULL, AV_LOG_DEBUG, "[libavformat/aviobuf.c] ffio_fdopen: buffer_size=%d\n", buffer_size);
++    
+     buffer = av_malloc(buffer_size);
+     if (!buffer)
+         return AVERROR(ENOMEM);
+
