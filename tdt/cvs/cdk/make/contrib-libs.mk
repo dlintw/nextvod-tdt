@@ -2047,7 +2047,7 @@ $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
 #
 # graphlcd
 #
-$(DEPDIR)/graphlcd.do_prepare: bootstrap fontconfig libusb @DEPENDS_graphlcd@
+$(DEPDIR)/graphlcd.do_prepare: bootstrap libusb @DEPENDS_graphlcd@
 	@PREPARE_graphlcd@
 	touch $@
 
