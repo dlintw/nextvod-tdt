@@ -911,6 +911,7 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-cross-compile \
 		--disable-ffserver \
 		--disable-ffplay \
+		--disable-ffprobe \
 		--disable-debug \
 		--disable-asm \
 		--disable-altivec \
