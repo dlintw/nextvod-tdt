@@ -49,17 +49,18 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/arch/sh/boards/mach-hdk7105/setup.c lin
    * Flash setup depends on boot-device:
    *
 ***************
-*** 47,55 ****
+*** 47,56 ****
    * [Jumper settings based on board v1.2-011]
    */
   
 ! #define HDK7105_PIO_PCI_SERR  stm_gpio(15, 4)
 ! #define HDK7105_PIO_PHY_RESET stm_gpio(15, 5)
 ! #define HDK7105_PIO_PCI_RESET stm_gpio(15, 7)
-  #define HDK7105_GPIO_FLASH_WP stm_gpio(6, 4)
+! #define HDK7105_GPIO_FLASH_WP stm_gpio(6, 4)
   
   
---- 81,90 ----
+  
+--- 81,91 ----
    * [Jumper settings based on board v1.2-011]
    */
   
@@ -67,7 +68,8 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/arch/sh/boards/mach-hdk7105/setup.c lin
 ! //#define HDK7105_PIO_PHY_RESET stm_gpio(15, 5)
 ! #define HDK7105_PIO_PHY_RESET stm_gpio(5, 7)
 ! //#define HDK7105_PIO_PCI_RESET stm_gpio(15, 7)
-  #define HDK7105_GPIO_FLASH_WP stm_gpio(6, 4)
+! //#define HDK7105_GPIO_FLASH_WP stm_gpio(6, 4)
+  
   
   
 *************** static void __init hdk7105_setup(char **
@@ -220,7 +222,7 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/arch/sh/boards/mach-hdk7105/setup.c lin
   	.platform_data  = &(struct flash_platform_data) {
   		.name = "m25p80",
 + 		#ifdef SPI_FLASH_BOOT
-+ 		.type = "en25f16",
++ 		//.type = "en25f16",
 + 		.nr_parts	= 1,
 + 		#else
   		.type = "m25p32",
@@ -396,6 +398,26 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/arch/sh/boards/mach-hdk7105/setup.c lin
   
   	gpio_request(HDK7105_PIO_PHY_RESET, "eth_phy_reset");
   	gpio_direction_output(HDK7105_PIO_PHY_RESET, 1);
+*************** static int __init hdk7105_device_init(vo
+*** 405,412 ****
+  	 * since NAND MTD has no concept of write-protect, we permanently
+  	 * disable WP.
+  	 */
+! 	gpio_request(HDK7105_GPIO_FLASH_WP, "FLASH_WP");
+! 	gpio_direction_output(HDK7105_GPIO_FLASH_WP, 1);
+  
+  	stx7105_configure_nand(&(struct stm_nand_config) {
+  			.driver = stm_nand_flex,
+--- 543,550 ----
+  	 * since NAND MTD has no concept of write-protect, we permanently
+  	 * disable WP.
+  	 */
+! 	//gpio_request(HDK7105_GPIO_FLASH_WP, "FLASH_WP");
+! 	//gpio_direction_output(HDK7105_GPIO_FLASH_WP, 1);
+  
+  	stx7105_configure_nand(&(struct stm_nand_config) {
+  			.driver = stm_nand_flex,
+
 diff -crp linux-sh4-2.6.32.59_stm24_0211/arch/sh/kernel/setup.c linux-sh4-2.6.32.59_stm24_0211/arch/sh/kernel/setup.c
 *** linux-sh4-2.6.32.59_stm24_0211/arch/sh/kernel/setup.c	2012-09-14 12:37:42.000000000 +0200
 --- linux-sh4-2.6.32.59_stm24_0211/arch/sh/kernel/setup.c	2012-09-14 13:22:11.000000000 +0200
@@ -463,15 +485,15 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
 + 	*/
 + 	#ifdef SPI_FLASH_BOOT
 + 	struct 		stpio_pin *pin;
++ 	u32			jedec_id;
 + 	#endif  /* SPI_FLASH_BOOT */
 + 	/***** 2011-11-14 D26LF Add end ****/
-+ 
   };
   
   static inline struct m25p *mtd_to_m25p(struct mtd_info *mtd)
 *************** static int wait_till_ready(struct m25p *
 *** 172,177 ****
---- 188,232 ----
+--- 188,248 ----
   	return 1;
   }
   
@@ -489,6 +511,13 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
 + 	wait_till_ready(flash);
 + 	write_enable(flash);
 + 	write_sr(flash, 0);
++ 
++ 	if (flash->jedec_id >> 16 == 0x1f)
++ 	{
++ 		write_enable(flash);
++ 		write_sr(flash, 0);
++ 	}
++ 
 + 	wait_till_ready(flash);
 + 	//printk("write_open 0x%x\n", read_sr(flash));
 + 
@@ -501,7 +530,16 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
 + 	//printk("write_close 0x%x\n", read_sr(flash));
 + 	wait_till_ready(flash);
 + 	write_enable(flash);
-+ 	write_sr(flash,0x9C);
++ 
++ 	if (flash->jedec_id >> 16 == 0x1f)
++ 	{
++ 		write_sr(flash, 0xBC);
++ 	}
++ 	else
++ 	{
++ 		write_sr(flash, 0x9C);
++ 	}
++ 
 + 	wait_till_ready(flash);
 + 	if (flash->pin)
 + 	{
@@ -517,9 +555,9 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
   /*
    * Erase the whole flash memory
    *
-*************** static int m25p80_erase(struct mtd_info
+*************** static int m25p80_erase(struct mtd_info 
 *** 260,269 ****
---- 315,341 ----
+--- 331,357 ----
   
   	mutex_lock(&flash->lock);
   
@@ -547,9 +585,9 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
   			mutex_unlock(&flash->lock);
   			return -EIO;
   		}
-*************** static int m25p80_erase(struct mtd_info
+*************** static int m25p80_erase(struct mtd_info 
 *** 278,283 ****
---- 350,364 ----
+--- 366,380 ----
   		while (len) {
   			if (erase_sector(flash, addr)) {
   				instr->state = MTD_ERASE_FAILED;
@@ -565,9 +603,9 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
   				mutex_unlock(&flash->lock);
   				return -EIO;
   			}
-*************** static int m25p80_erase(struct mtd_info
+*************** static int m25p80_erase(struct mtd_info 
 *** 287,292 ****
---- 368,381 ----
+--- 384,397 ----
   		}
   	}
   
@@ -582,9 +620,9 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
   	mutex_unlock(&flash->lock);
   
   	instr->state = MTD_ERASE_DONE;
-*************** static int m25p80_write(struct mtd_info
+*************** static int m25p80_write(struct mtd_info 
 *** 410,415 ****
---- 499,512 ----
+--- 515,528 ----
   		return 1;
   	}
   
@@ -599,9 +637,9 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
   	write_enable(flash);
   
   	/* Set up the opcode in the write buffer. */
-*************** static int m25p80_write(struct mtd_info
+*************** static int m25p80_write(struct mtd_info 
 *** 464,469 ****
---- 561,574 ----
+--- 577,590 ----
   		}
   	}
   
@@ -618,7 +656,7 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
   	return 0;
 *************** static int sst_write(struct mtd_info *mt
 *** 505,510 ****
---- 610,623 ----
+--- 626,639 ----
   	if (ret)
   		goto time_out;
   
@@ -635,7 +673,7 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
   	actual = to % 2;
 *************** static int sst_write(struct mtd_info *mt
 *** 571,576 ****
---- 684,698 ----
+--- 700,714 ----
   	}
   
   time_out:
@@ -652,8 +690,23 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
   	return ret;
   }
 *************** static struct flash_info __devinitdata m
+*** 618,623 ****
+--- 756,767 ----
+  	{ "at26f004",   0x1f0400, 0, 64 * 1024, 8, SECT_4K, },
+  	{ "at26df081a", 0x1f4501, 0, 64 * 1024, 16, SECT_4K, },
+  	{ "at26df161a", 0x1f4601, 0, 64 * 1024, 32, SECT_4K, },
++ 
++ 	/*****     2012-06-18     *****/
++ 	//YWDRIVER_MODI add by lf for atmel 25fd161 start
++ 	{ "at25df161", 0x1f4602, 0, 64 * 1024, 32, SECT_4K, },
++ 	//YWDRIVER_MODI add by lf end
++ 
+  	{ "at26df321",  0x1f4701, 0, 64 * 1024, 64, SECT_4K, },
+  
+  	/* Macronix */
+*************** static struct flash_info __devinitdata m
 *** 680,685 ****
---- 802,816 ----
+--- 824,840 ----
   	{ "w25x16", 0xef3015, 0, 64 * 1024, 32, SECT_4K, },
   	{ "w25x32", 0xef3016, 0, 64 * 1024, 64, SECT_4K, },
   	{ "w25x64", 0xef3017, 0, 64 * 1024, 128, SECT_4K, },
@@ -664,6 +717,8 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
 + 	#ifdef SPI_FLASH_BOOT
 + 	/* EON */
 + 	{ "en25f16", 0x1c3115, 0, 64 * 1024, 32, },
++ 	{ "s25fl016k", 0xef4015, 0, 64 * 1024, 32, },
++ 	{ "en25qh16", 0x1c7015, 0 , 64 * 1024, 32, },
 + 	#endif
 + 	/***** 2011-11-14 D26LF Add end ****/
   };
@@ -671,7 +726,7 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
   static struct flash_info *__devinit jedec_probe(struct spi_device *spi)
 *************** static int __devinit m25p_probe(struct s
 *** 776,781 ****
---- 907,924 ----
+--- 931,949 ----
   	if (!flash)
   		return -ENOMEM;
   
@@ -684,9 +739,10 @@ diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/devices/m25p80.c linux-sh4-
 + 	{
 + 		stpio_set_pin(flash->pin, 0);
 + 	}
++ 
++ 	flash->jedec_id = info->jedec_id;
 + 	#endif
 + 	/***** 2011-11-14 D26LF Add end ****/
-+ 
   	flash->spi = spi;
   	mutex_init(&flash->lock);
   	dev_set_drvdata(&spi->dev, flash);
