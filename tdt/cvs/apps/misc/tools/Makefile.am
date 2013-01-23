@@ -14,6 +14,7 @@ SUBDIRS = \
 	gitVCInfo \
 	hotplug \
 	vfdctl \
+	hd-idle \
 	libmme_host \
 	libmmeimage \
 	ipbox_eeprom
