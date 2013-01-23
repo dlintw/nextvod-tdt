@@ -1,5 +1,5 @@
 /*
- * Vip2.c
+ * Spark.c
  *
  * (c) 2010 duckbox project
  *
@@ -464,6 +464,45 @@ static int Spark_Clear(Context_t* context)
 	 return 0;
 }
 
+static int Spark_getWakeupReason(Context_t* context, int *reason)
+{
+    if (ioctl(context->fd, VFDGETSTARTUPSTATE, reason) < 0)
+    {
+	perror("Spark_getWakeupReason: ");
+    
+	return -1;
+    }
+    
+    return 0;
+}
+
+static int Spark_setDisplayTime(Context_t* context, int on)
+{
+    if (on ==1) {
+	    time_t theGMTTime = time(NULL);
+	    struct tm *gmt;
+	    gmt = localtime(&theGMTTime);
+	    
+	    if (gmt->tm_year == 100) {
+		fprintf(stderr, "RTC Time not set.\n");
+	    } else {
+		fprintf(stderr, "Setting Clock to current time: %02d:%02d:%02d %02d-%02d-%04d\n",
+			gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
+			
+		theGMTTime += gmt->tm_gmtoff;
+		
+		if (ioctl(context->fd, VFDREBOOT, &theGMTTime) < 0)
+		{
+		    perror("settime: ");
+		    return -1;
+		}
+	     }
+	} else {
+		Spark_Clear(context);
+	}
+	return 0;
+}
+
 Model_t Spark_model = {
 	.Name			= "Edision Spark frontpanel control utility",
 	.Type			= Spark,
@@ -474,6 +513,7 @@ Model_t Spark_model = {
 	.GetTime		= Spark_getTime,
 	.SetTimer		= Spark_setTimer,
 	.GetTimer		= Spark_getTimer,
+	.SetDisplayTime		= Spark_setDisplayTime,
 	.Shutdown		= Spark_shutdown,
 	.Reboot			= Spark_reboot,
 	.Sleep			= Spark_Sleep,
@@ -488,5 +528,6 @@ Model_t Spark_model = {
 	.GetVersion		= NULL,
 	.SetRF			= NULL,
 	.SetFan			= NULL,
-	.private		= NULL
+	.private		= NULL,
+	.GetWakeupReason	= Spark_getWakeupReason
 };

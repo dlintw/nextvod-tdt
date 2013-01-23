@@ -20,6 +20,8 @@
 #define VFDDISPLAYCLR		0xc0425b00
 /* ufs912, 922, hdbox ->unset compat mode */
 #define VFDSETMODE		0xc0425aff
+/*spark*/
+#define VFDGETSTARTUPSTATE	0xc0425af8
 
 /* ufs912 */
 #define VFDGETVERSION	        0xc0425af7

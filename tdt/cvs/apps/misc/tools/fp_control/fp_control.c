@@ -41,7 +41,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* software version of fp_control. please increas on every change */
-static const char* sw_version = "1.02";
+static const char* sw_version = "1.03";
 
 typedef struct
 {
@@ -61,9 +61,10 @@ tArgs vArgs[] =
 
    { "-g", "--getTime        ",
 "Args: No arguments\n\tReturn current set frontcontroller time" },
+   { "-gs", "--getTimeAndSet        ",
+"Args: No arguments\n\tSet system time to current frontcontroller time" },
    { "-gw", "--getWakeupTime        ",
 "Args: No arguments\n\tReturn current wakeup time" },
-
    { "-s", "--setTime        ",
 "Args: time date Format: HH:MM:SS dd-mm-YYYY\n\tSet the current frontcontroller time" },
    { "-gt", "--getTimer       ",
@@ -101,6 +102,8 @@ tArgs vArgs[] =
 "Args: 0/1\n\ttoggle 12/24 hour mode" },
    { NULL, NULL, NULL }
 };
+
+const char *wakeupreason[4] = { "unknown", "poweron", "standby", "timer" };
 
 void usage(Context_t * context, char* prg, char* cmd)
 {
@@ -160,7 +163,6 @@ void getTimeFromArg(char* timeStr, char* dateStr, time_t* theGMTTime)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 void processCommand (Context_t * context, int argc, char* argv[])
 {
     int   i;
@@ -205,6 +207,31 @@ void processCommand (Context_t * context, int argc, char* argv[])
 						struct tm *gmt = gmtime(&theGMTTime);
 
 						fprintf(stderr, "Current Time: %02d:%02d:%02d %02d-%02d-%04d\n",
+						     gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
+				    }
+				}
+
+		    }
+			else if ((strcmp(argv[i], "-gs") == 0) || (strcmp(argv[i], "--getTimeAndSet") == 0))
+	        {
+	        	time_t theGMTTime;
+
+	        	/* get the frontcontroller time */
+	            if (((Model_t*)context->m)->GetTime)
+	            {
+				    if (((Model_t*)context->m)->GetTime(context, &theGMTTime) == 0)
+				    {
+						struct tm *gmt = gmtime(&theGMTTime);
+
+						struct timeval tv;
+						time_t allsec;
+
+						allsec=mktime(gmt);
+						tv.tv_sec=allsec;
+
+						settimeofday(&tv, 0);
+
+						fprintf(stderr, "Setting RTC to current frontpanel-time: %02d:%02d:%02d %02d-%02d-%04d\n",
 						     gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
 				    }
 				}
@@ -402,6 +429,7 @@ void processCommand (Context_t * context, int argc, char* argv[])
 				if (ret == 0)
 				{
 					printf("wakeup reason = %d\n", reason);
+					printf("(%s)\n", wakeupreason[reason & 0x03]);
 					syncWasTimerWakeup(reason);
 				}
 		    }
