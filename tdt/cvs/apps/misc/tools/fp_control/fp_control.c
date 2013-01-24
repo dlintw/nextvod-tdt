@@ -229,10 +229,13 @@ void processCommand (Context_t * context, int argc, char* argv[])
 						allsec=mktime(gmt);
 						tv.tv_sec=allsec;
 
-						settimeofday(&tv, 0);
+//						settimeofday(&tv, 0);   // only works on spark, so we make a system-call later
 
 						fprintf(stderr, "Setting RTC to current frontpanel-time: %02d:%02d:%02d %02d-%02d-%04d\n",
-						     gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
+							gmt->tm_hour, gmt->tm_min, gmt->tm_sec, gmt->tm_mday, gmt->tm_mon+1, gmt->tm_year+1900);
+						char cmd[50];
+						sprintf(cmd, "date -s %04d.%02d.%02d-%02d:%02d:%02d\n", gmt->tm_year+1900, gmt->tm_mon+1, gmt->tm_mday, gmt->tm_hour, gmt->tm_min, gmt->tm_sec);
+						system(cmd);
 				    }
 				}
 
