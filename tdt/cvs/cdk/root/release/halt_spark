@@ -53,7 +53,7 @@ fi
 #red led on
 /bin/fp_control -l 0 1
 
-/bin/fp_control -s `date +"%H:%M:%S %d-%m-%Y"`
+/bin/fp_control -dt 1
 /bin/fp_control -e
 echo "0" > /proc/progress
 halt -d -f -i $poweroff $hddown
