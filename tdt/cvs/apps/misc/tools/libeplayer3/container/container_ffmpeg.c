@@ -1720,6 +1720,7 @@ static int container_ffmpeg_play(Context_t *context)
 
 static int container_ffmpeg_stop(Context_t *context) {
     int ret = cERR_CONTAINER_FFMPEG_NO_ERROR;
+		void* threadstatus;
     int wait_time = 100;
 
     ffmpeg_printf(10, "\n");
@@ -1732,7 +1733,8 @@ static int container_ffmpeg_stop(Context_t *context) {
 
 		//for buffered io
 		wait_time = 100;
-		hasfillerThreadStarted = 2; // should end
+		if(hasfillerThreadStarted == 1)
+			hasfillerThreadStarted = 2; // should end
 		while ( (hasfillerThreadStarted != 0) && (--wait_time) > 0 ) {
         ffmpeg_printf(10, "Waiting for ffmpeg filler thread to terminate itself, will try another %d times\n", wait_time);
 
@@ -1743,7 +1745,9 @@ static int container_ffmpeg_stop(Context_t *context) {
         ffmpeg_err( "Timeout waiting for filler thread!\n");
 
         ret = cERR_CONTAINER_FFMPEG_ERR;
-    }
+    } else if(fillerThread != '\0') {
+				pthread_join(fillerThread, &threadstatus);
+		}
 
 		hasfillerThreadStarted = 0;
 		//for buffered io (end)
@@ -1759,9 +1763,11 @@ static int container_ffmpeg_stop(Context_t *context) {
         ffmpeg_err( "Timeout waiting for thread!\n");
 
         ret = cERR_CONTAINER_FFMPEG_ERR;
-    }
+    } else if(PlayThread != '\0') {
+				pthread_join(PlayThread, &threadstatus);
+		}
 
-    hasPlayThreadStarted = 0;
+		hasPlayThreadStarted = 0;
 
     getMutex(FILENAME, __FUNCTION__,__LINE__);
 

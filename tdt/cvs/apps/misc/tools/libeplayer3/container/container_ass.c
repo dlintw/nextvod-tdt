@@ -651,6 +651,7 @@ int container_ass_process_data(Context_t *context, SubtitleData_t* data)
 
 static int container_ass_stop(Context_t *context) {
     int ret = cERR_CONTAINER_ASS_NO_ERROR;
+		void* threadstatus;
     int wait_time = 20;
     Writer_t* writer;
 
@@ -672,7 +673,9 @@ static int container_ass_stop(Context_t *context) {
         ass_err( "Timeout waiting for thread!\n");
 
         ret = cERR_CONTAINER_ASS_ERROR;
-    }
+    } else if(PlayThread != '\0') {
+				pthread_join(PlayThread, &threadstatus);
+		}
 
     getMutex(__LINE__);
 
