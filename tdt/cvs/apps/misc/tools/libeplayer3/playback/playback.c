@@ -480,7 +480,6 @@ static int PlaybackContinue(Context_t  *context) {
 
 static int PlaybackStop(Context_t  *context) {
     int ret = cERR_PLAYBACK_NO_ERROR;
-		void* threadstatus;
     int wait_time = 20;
 
     playback_printf(10, "\n");
@@ -513,9 +512,7 @@ static int PlaybackStop(Context_t  *context) {
         playback_err( "Timeout waiting for thread!\n");
 
         ret = cERR_PLAYBACK_ERROR;
-    } else if(supervisorThread != '\0') {
-				pthread_join(supervisorThread, &threadstatus);
-		}
+    }
 
     playback_printf(10, "exiting with value %d\n", ret);
 

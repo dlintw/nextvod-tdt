@@ -53,22 +53,25 @@
 /* ***************************** */
 
 //for buffered io
+#define FILLBUFSIZE 2097152
 #define FILLBUFDIFF 1048576
 #define FILLBUFPAKET 5120
-int ffmpeg_buf_size = 2097152;
-ffmpeg_buf_seek_time = 3; //sec
-int(*ffmpeg_read_org)(void *opaque, uint8_t *buf, int buf_size) = NULL;
-int64_t(*ffmpeg_seek_org)(void *opaque, int64_t offset, int whence) = NULL;
-unsigned char* ffmpeg_buf_read = NULL;
-unsigned char* ffmpeg_buf_write = NULL;
-unsigned char* ffmpeg_buf = NULL;
+#define FILLBUFSEEKTIME 3 //sec
+
+static int ffmpeg_buf_size = FILLBUFSIZE;
+static ffmpeg_buf_seek_time = FILLBUFSEEKTIME;
+static int(*ffmpeg_read_org)(void *opaque, uint8_t *buf, int buf_size) = NULL;
+static int64_t(*ffmpeg_seek_org)(void *opaque, int64_t offset, int whence) = NULL;
+static unsigned char* ffmpeg_buf_read = NULL;
+static unsigned char* ffmpeg_buf_write = NULL;
+static unsigned char* ffmpeg_buf = NULL;
 static pthread_t fillerThread;
 static int hasfillerThreadStarted = 0;
 static pthread_mutex_t fillermutex;
-int ffmpeg_buf_valid_size = 0;
-int ffmpeg_do_seek_param = 0;
-int ffmpeg_do_seek_ret = 0;
-int ffmpeg_do_seek = 0;
+static int ffmpeg_buf_valid_size = 0;
+static int ffmpeg_do_seek_ret = 0;
+static int ffmpeg_do_seek = 0;
+static int ffmpeg_buf_stop = 0;
 //for buffered io (end)
 
 #define FFMPEG_DEBUG
@@ -118,6 +121,7 @@ static pthread_t PlayThread;
 static int hasPlayThreadStarted = 0;
 
 static AVFormatContext*   avContext = NULL;
+static AVDictionary *avio_opts = NULL;
 
 static unsigned char isContainerRunning = 0;
 
@@ -860,6 +864,7 @@ int container_set_ffmpeg_buf_size(int* size)
 	if(ffmpeg_buf == NULL)
 		ffmpeg_buf_size = (*size) + FILLBUFDIFF;
 
+ffmpeg_err("container_set_ffmpeg_buf_size=%d\n", (*size) + FILLBUFDIFF);
 	return cERR_CONTAINER_FFMPEG_NO_ERROR;
 }
 
@@ -874,17 +879,26 @@ int container_get_fillbufstatus(int* size)
 {
 	int rwdiff = 0;
 
-	if(ffmpeg_buf_read < ffmpeg_buf_write)
-		rwdiff = ffmpeg_buf_write - ffmpeg_buf_read;
-	if(ffmpeg_buf_read > ffmpeg_buf_write)
+	if(ffmpeg_buf != NULL && ffmpeg_buf_read != NULL && ffmpeg_buf_write != NULL)
 	{
-		rwdiff = (ffmpeg_buf + ffmpeg_buf_size) - ffmpeg_buf_read;
-		rwdiff += ffmpeg_buf_write - ffmpeg_buf;
+		if(ffmpeg_buf_read < ffmpeg_buf_write)
+			rwdiff = ffmpeg_buf_write - ffmpeg_buf_read;
+		if(ffmpeg_buf_read > ffmpeg_buf_write)
+		{
+			rwdiff = (ffmpeg_buf + ffmpeg_buf_size) - ffmpeg_buf_read;
+			rwdiff += ffmpeg_buf_write - ffmpeg_buf;
+		}
+
+		*size = rwdiff;
 	}
 
-	*size = rwdiff;
-
 	return cERR_CONTAINER_FFMPEG_NO_ERROR;
+}
+
+int container_stop_buffer()
+{
+	ffmpeg_buf_stop = 1;
+	return 0;
 }
 
 //flag 0: start direct
@@ -903,23 +917,25 @@ void ffmpeg_filler(Context_t *context, int flag)
 
 	while( (flag == 0 && avContext != NULL && avContext->pb != NULL && rwdiff > FILLBUFDIFF) || (flag == 1 && hasfillerThreadStarted != 2 && avContext != NULL && avContext->pb != NULL && rwdiff > FILLBUFDIFF) )
 	{
-		//do a seek
-		if(ffmpeg_do_seek == 1)
+		if(flag == 0 && ffmpeg_buf_stop == 1)
 		{
-			ffmpeg_do_seek_ret = ffmpeg_seek_org(avContext->pb->opaque, avContext->pb->pos + ffmpeg_do_seek_param, SEEK_SET);
+			ffmpeg_buf_stop = 0;
+			break;
+		}
+
+		getfillerMutex(FILENAME, __FUNCTION__,__LINE__);
+		//do a seek
+		if(ffmpeg_do_seek != 0)
+		{
+			ffmpeg_do_seek_ret = ffmpeg_seek_org(avContext->pb->opaque, avContext->pb->pos + ffmpeg_do_seek, SEEK_SET);
 			if(ffmpeg_do_seek_ret >= 0)
 			{
-				getfillerMutex(FILENAME, __FUNCTION__,__LINE__);
 				ffmpeg_buf_write = ffmpeg_buf;
 				ffmpeg_buf_read = ffmpeg_buf;
 			}
-			else
-				getfillerMutex(FILENAME, __FUNCTION__,__LINE__);
 
 			ffmpeg_do_seek = 0;
 		}
-		else
-			getfillerMutex(FILENAME, __FUNCTION__,__LINE__);
 
 		if(ffmpeg_buf_read == ffmpeg_buf_write)
 		{
@@ -952,20 +968,20 @@ void ffmpeg_filler(Context_t *context, int flag)
 			len = ffmpeg_read_org(avContext->pb->opaque, buf, size);
 			if(flag == 1 && hasfillerThreadStarted == 2) break;
 
-			ffmpeg_printf(20, "buffer-status (free buffer=%d)", rwdiff - FILLBUFDIFF - len);
+			ffmpeg_printf(20, "buffer-status (free buffer=%d)\n", rwdiff - FILLBUFDIFF - len);
 
 			getfillerMutex(FILENAME, __FUNCTION__,__LINE__);
-			memcpy(ffmpeg_buf_write, buf, len);
-
 			if(len > 0)
+			{
+				memcpy(ffmpeg_buf_write, buf, len);
 				ffmpeg_buf_write += len;
+			}
 			else
 			{
 				releasefillerMutex(FILENAME, __FUNCTION__,__LINE__);
 				ffmpeg_err("read not ok ret=%d\n", len);
 				break;
 			}
-
 			releasefillerMutex(FILENAME, __FUNCTION__,__LINE__);
 		}
 	}
@@ -1082,7 +1098,7 @@ int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size)
 {
 	int sumlen = 0;
 	int len = 0;
-	int count = 500;
+	int count = 2000;
 
 	while(sumlen < buf_size && (--count) > 0)
 	{
@@ -1094,7 +1110,12 @@ int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size)
 	}
 
 	if(count == 0)
-		ffmpeg_err( "Timeout waiting for buffered data!\n");
+	{
+		if(sumlen == 0)
+			ffmpeg_err( "Timeout waiting for buffered data (buf_size=%d sumlen=%d)!\n", buf_size, sumlen);
+		else
+			ffmpeg_err( "Timeout, not all buffered data availabel (buf_size=%d sumlen=%d)!\n", buf_size, sumlen);
+	}
 
 	return sumlen;
 }
@@ -1105,6 +1126,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 	int rwdiff = 0;
 	whence &= ~AVSEEK_FORCE;
 
+ffmpeg_err("seek start\n");
 	if(whence != SEEK_CUR && whence != SEEK_SET)
 		return AVERROR(EINVAL);
 
@@ -1129,7 +1151,8 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 	if(diff > 0 && diff < rwdiff)
 	{
 		/* can do the seek inside the buffer */
-		ffmpeg_printf(20, "buffer-seek diff=%d", diff);
+ffmpeg_err("buffer-seek diff=%lld, wherence=%d, offset=%lld, pos=%lld, rwdiff=%d\n", diff, whence, offset, avContext->pb->pos, rwdiff);
+		ffmpeg_printf(20, "buffer-seek diff=%lld\n", diff);
 		if(diff > (ffmpeg_buf + ffmpeg_buf_size) - ffmpeg_buf_read)
 			ffmpeg_buf_read = ffmpeg_buf + (diff - ((ffmpeg_buf + ffmpeg_buf_size) - ffmpeg_buf_read));
 		else
@@ -1138,7 +1161,8 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 	else if(diff < 0 && diff * -1 < ffmpeg_buf_valid_size)
 	{
 		/* can do the seek inside the buffer */
-		ffmpeg_printf(20, "buffer-seek diff=%d", diff);
+ffmpeg_err("buffer-seek diff=%lld, wherence=%d, offset=%lld, pos=%lld, rwdiff=%d\n", diff, whence, offset, avContext->pb->pos, rwdiff);
+		ffmpeg_printf(20, "buffer-seek diff=%lld\n", diff);
 		int tmpdiff = diff * -1;
 		if(tmpdiff > ffmpeg_buf_read - ffmpeg_buf)
 			ffmpeg_buf_read = (ffmpeg_buf + ffmpeg_buf_size) - (tmpdiff - (ffmpeg_buf_read - ffmpeg_buf));
@@ -1148,22 +1172,15 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 	else
 	{
 		releasefillerMutex(FILENAME, __FUNCTION__,__LINE__);
-		int count = 50;
-		ffmpeg_printf(20, "real-seek diff=%d", diff);
+ffmpeg_err("buffer-seek diff=%lld, wherence=%d, offset=%lld, pos=%lld, rwdiff=%d\n", diff, whence, offset, avContext->pb->pos, rwdiff);
+		ffmpeg_printf(20, "real-seek diff=%lld\n", diff);
 
-		ffmpeg_do_seek_param = diff;
 		ffmpeg_do_seek_ret = 0;
-		ffmpeg_do_seek = 1;
-		while(ffmpeg_do_seek == 1 && (--count) > 0)
+		ffmpeg_do_seek = diff;
+		while(ffmpeg_do_seek != 0)
 			usleep(100000);
 
-		if(count == 0 && ffmpeg_do_seek == 1)
-		{
-			ffmpeg_err( "Timeout waiting for seek!\n");
-			ffmpeg_do_seek = 0;
-			return -1;
-		}
-
+ffmpeg_err("real-seek-end diff=%d\n", diff);
 		ffmpeg_do_seek = 0;
 		if(ffmpeg_do_seek_ret < 0)
 		{
@@ -1171,8 +1188,9 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 			return ffmpeg_do_seek_ret;
 		}
 
+ffmpeg_err("real-seek-fillbuffer diff=%lld\n", diff);
 		//fill buffer
-		count = ffmpeg_buf_seek_time * 10;
+		int count = ffmpeg_buf_seek_time * 10;
 		int size = 0;
 
 		container_get_fillbufstatus(&size);
@@ -1181,11 +1199,26 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 			usleep(100000);
 			container_get_fillbufstatus(&size);
 		}
+ffmpeg_err("real-seek-fillbuffer-end diff=%lld\n", diff);
 		return avContext->pb->pos + diff;
 	}
 
 	releasefillerMutex(FILENAME, __FUNCTION__,__LINE__);
 	return avContext->pb->pos + diff;
+}
+
+static void ffmpeg_buf_free()
+{
+	ffmpeg_read_org = NULL;
+	ffmpeg_seek_org = NULL;
+	ffmpeg_buf_read = NULL;
+	ffmpeg_buf_write = NULL;
+	free(ffmpeg_buf);
+	ffmpeg_buf = NULL;
+	ffmpeg_buf_valid_size = 0;
+	ffmpeg_do_seek_ret = 0;
+	ffmpeg_do_seek = 0;
+	ffmpeg_buf_stop = 0;
 }
 //for buffered io (end)
 
@@ -1225,12 +1258,13 @@ int container_ffmpeg_init(Context_t *context, char * filename)
     avcodec_register_all();
     av_register_all();
     avformat_network_init();
-    //av_log_set_level( AV_LOG_DEBUG );
+    av_log_set_level( AV_LOG_DEBUG );
  
 #if LIBAVCODEC_VERSION_MAJOR < 54
     if ((err = av_open_input_file(&avContext, filename, NULL, 0, NULL)) != 0) {
 #else
-    if ((err = avformat_open_input(&avContext, filename, NULL, 0)) != 0) {
+    av_dict_set(&avio_opts, "timeout", "20000000", 0); //20sec
+    if ((err = avformat_open_input(&avContext, filename, NULL, &avio_opts)) != 0) {
 #endif
         char error[512];
 
@@ -1242,6 +1276,10 @@ int container_ffmpeg_init(Context_t *context, char * filename)
         av_strerror(err, error, 512);
         ffmpeg_err("Cause: %s\n", error);
 
+				if(avio_opts != NULL) av_dict_free(&avio_opts);
+				//for buffered io
+        ffmpeg_buf_free();
+        //for buffered io (end)
         releaseMutex(FILENAME, __FUNCTION__,__LINE__);
         return cERR_CONTAINER_FFMPEG_OPEN;
     }
@@ -1266,6 +1304,9 @@ int container_ffmpeg_init(Context_t *context, char * filename)
          * until other works are done and we can prove this.
          */
         av_close_input_file(avContext);
+        //for buffered io
+        ffmpeg_buf_free();
+        //for buffered io (end)
         releaseMutex(FILENAME, __FUNCTION__,__LINE__);
         return cERR_CONTAINER_FFMPEG_STREAM;
 #endif
@@ -1273,6 +1314,16 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 
 //for buffered io
 #if LIBAVCODEC_VERSION_MAJOR >= 54
+		ffmpeg_read_org = NULL;
+		ffmpeg_seek_org = NULL;
+    ffmpeg_buf_read = NULL;
+    ffmpeg_buf_write = NULL;
+    ffmpeg_buf = NULL;
+    ffmpeg_buf_valid_size = 0;
+    ffmpeg_do_seek_ret = 0;
+    ffmpeg_do_seek = 0;
+    ffmpeg_buf_stop = 0;
+
 		if(strstr(filename, "http://") == filename)
 		{
 			if(ffmpeg_buf_size > 0 && ffmpeg_buf_size > FILLBUFDIFF + FILLBUFPAKET)
@@ -1292,7 +1343,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 						ffmpeg_buf_read = ffmpeg_buf;
 						ffmpeg_buf_write = ffmpeg_buf;
 
-      		  //fill buffer
+						//fill buffer
 						ffmpeg_filler(context, 0);
 						ffmpeg_start_fillerTHREAD(context);
       		}
@@ -1720,8 +1771,7 @@ static int container_ffmpeg_play(Context_t *context)
 
 static int container_ffmpeg_stop(Context_t *context) {
     int ret = cERR_CONTAINER_FFMPEG_NO_ERROR;
-		void* threadstatus;
-    int wait_time = 100;
+		int wait_time = 100;
 
     ffmpeg_printf(10, "\n");
 
@@ -1745,9 +1795,7 @@ static int container_ffmpeg_stop(Context_t *context) {
         ffmpeg_err( "Timeout waiting for filler thread!\n");
 
         ret = cERR_CONTAINER_FFMPEG_ERR;
-    } else if(fillerThread != '\0') {
-				pthread_join(fillerThread, &threadstatus);
-		}
+    }
 
 		hasfillerThreadStarted = 0;
 		//for buffered io (end)
@@ -1763,9 +1811,7 @@ static int container_ffmpeg_stop(Context_t *context) {
         ffmpeg_err( "Timeout waiting for thread!\n");
 
         ret = cERR_CONTAINER_FFMPEG_ERR;
-    } else if(PlayThread != '\0') {
-				pthread_join(PlayThread, &threadstatus);
-		}
+    }
 
 		hasPlayThreadStarted = 0;
 
@@ -1776,10 +1822,11 @@ static int container_ffmpeg_stop(Context_t *context) {
         avContext = NULL;
     }
 
-		//for buffered io
-		free(ffmpeg_buf); ffmpeg_buf = NULL;
-		//for buffered io (end)
+		if(avio_opts != NULL) av_dict_free(&avio_opts);
 
+		//for buffered io
+		ffmpeg_buf_free();
+		//for buffered io (end)
 
     isContainerRunning = 0;
     avformat_network_deinit();
@@ -2268,6 +2315,10 @@ static int Command(void  *_context, ContainerCmd_t command, void * argument)
       int size = 0;
       ret = container_get_fillbufstatus(&size);
       *((int*)argument) = size;
+      break;
+    }
+		case CONTAINER_STOP_BUFFER: {
+      ret = container_stop_buffer();
       break;
     }
     default:

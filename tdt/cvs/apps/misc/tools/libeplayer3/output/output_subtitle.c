@@ -691,7 +691,6 @@ static int subtitle_Play(Context_t* context) {
 }
 
 static int subtitle_Stop(context) {
-		void* threadstatus;
     int wait_time = 20;
     int i;
     
@@ -706,9 +705,7 @@ static int subtitle_Stop(context) {
         subtitle_err("Timeout waiting for thread!\n");
 
         return cERR_SUBTITLE_ERROR;
-    } else if(thread_sub != '\0') {
-				pthread_join(thread_sub, &threadstatus);
-		}
+    }
     
     hasThreadStarted = 0;
 
