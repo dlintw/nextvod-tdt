@@ -796,8 +796,7 @@ std::string  CNeutrinoYParser::func_get_timer_list(CyhookHandler *hh, std::strin
 			case CTimerd::TIMER_ZAPTO :
 			case CTimerd::TIMER_RECORD :
 			{
-				//sAddData = NeutrinoAPI->Zapit->getChannelName(timer->channel_id);
-				sAddData = NeutrinoAPI->GetServiceName(timer->channel_id);
+				sAddData = ZapitTools::UTF8_to_Latin1(NeutrinoAPI->Zapit->getChannelName(timer->channel_id).c_str());
 				if (sAddData.empty())
 					sAddData = NeutrinoAPI->Zapit->isChannelTVChannel(timer->channel_id) ? "Unbekannter TV-Kanal" : "Unbekannter Radiokanal";
 
