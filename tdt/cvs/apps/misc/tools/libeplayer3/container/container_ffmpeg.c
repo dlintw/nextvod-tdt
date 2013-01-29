@@ -53,12 +53,12 @@
 /* ***************************** */
 
 //for buffered io
-#define FILLBUFSIZE 2097152
+#define FILLBUFSIZE 1048576
 #define FILLBUFDIFF 1048576
 #define FILLBUFPAKET 5120
 #define FILLBUFSEEKTIME 3 //sec
 
-static int ffmpeg_buf_size = FILLBUFSIZE;
+static int ffmpeg_buf_size = FILLBUFSIZE + FILLBUFDIFF;
 static ffmpeg_buf_seek_time = FILLBUFSEEKTIME;
 static int(*ffmpeg_read_org)(void *opaque, uint8_t *buf, int buf_size) = NULL;
 static int64_t(*ffmpeg_seek_org)(void *opaque, int64_t offset, int whence) = NULL;
@@ -862,9 +862,13 @@ int container_set_ffmpeg_buf_seek_time(int* time)
 int container_set_ffmpeg_buf_size(int* size)
 {
 	if(ffmpeg_buf == NULL)
-		ffmpeg_buf_size = (*size) + FILLBUFDIFF;
+	{
+		if(*size == 0)
+			ffmpeg_buf_size = 0;
+		else
+			ffmpeg_buf_size = (*size) + FILLBUFDIFF;
+	}
 
-ffmpeg_err("container_set_ffmpeg_buf_size=%d\n", (*size) + FILLBUFDIFF);
 	return cERR_CONTAINER_FFMPEG_NO_ERROR;
 }
 
@@ -1126,7 +1130,6 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 	int rwdiff = 0;
 	whence &= ~AVSEEK_FORCE;
 
-ffmpeg_err("seek start\n");
 	if(whence != SEEK_CUR && whence != SEEK_SET)
 		return AVERROR(EINVAL);
 
@@ -1151,7 +1154,6 @@ ffmpeg_err("seek start\n");
 	if(diff > 0 && diff < rwdiff)
 	{
 		/* can do the seek inside the buffer */
-ffmpeg_err("buffer-seek diff=%lld, wherence=%d, offset=%lld, pos=%lld, rwdiff=%d\n", diff, whence, offset, avContext->pb->pos, rwdiff);
 		ffmpeg_printf(20, "buffer-seek diff=%lld\n", diff);
 		if(diff > (ffmpeg_buf + ffmpeg_buf_size) - ffmpeg_buf_read)
 			ffmpeg_buf_read = ffmpeg_buf + (diff - ((ffmpeg_buf + ffmpeg_buf_size) - ffmpeg_buf_read));
@@ -1161,7 +1163,6 @@ ffmpeg_err("buffer-seek diff=%lld, wherence=%d, offset=%lld, pos=%lld, rwdiff=%d
 	else if(diff < 0 && diff * -1 < ffmpeg_buf_valid_size)
 	{
 		/* can do the seek inside the buffer */
-ffmpeg_err("buffer-seek diff=%lld, wherence=%d, offset=%lld, pos=%lld, rwdiff=%d\n", diff, whence, offset, avContext->pb->pos, rwdiff);
 		ffmpeg_printf(20, "buffer-seek diff=%lld\n", diff);
 		int tmpdiff = diff * -1;
 		if(tmpdiff > ffmpeg_buf_read - ffmpeg_buf)
@@ -1172,7 +1173,6 @@ ffmpeg_err("buffer-seek diff=%lld, wherence=%d, offset=%lld, pos=%lld, rwdiff=%d
 	else
 	{
 		releasefillerMutex(FILENAME, __FUNCTION__,__LINE__);
-ffmpeg_err("buffer-seek diff=%lld, wherence=%d, offset=%lld, pos=%lld, rwdiff=%d\n", diff, whence, offset, avContext->pb->pos, rwdiff);
 		ffmpeg_printf(20, "real-seek diff=%lld\n", diff);
 
 		ffmpeg_do_seek_ret = 0;
@@ -1180,7 +1180,6 @@ ffmpeg_err("buffer-seek diff=%lld, wherence=%d, offset=%lld, pos=%lld, rwdiff=%d
 		while(ffmpeg_do_seek != 0)
 			usleep(100000);
 
-ffmpeg_err("real-seek-end diff=%d\n", diff);
 		ffmpeg_do_seek = 0;
 		if(ffmpeg_do_seek_ret < 0)
 		{
@@ -1188,7 +1187,6 @@ ffmpeg_err("real-seek-end diff=%d\n", diff);
 			return ffmpeg_do_seek_ret;
 		}
 
-ffmpeg_err("real-seek-fillbuffer diff=%lld\n", diff);
 		//fill buffer
 		int count = ffmpeg_buf_seek_time * 10;
 		int size = 0;
@@ -1199,7 +1197,7 @@ ffmpeg_err("real-seek-fillbuffer diff=%lld\n", diff);
 			usleep(100000);
 			container_get_fillbufstatus(&size);
 		}
-ffmpeg_err("real-seek-fillbuffer-end diff=%lld\n", diff);
+
 		return avContext->pb->pos + diff;
 	}
 
@@ -1258,7 +1256,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
     avcodec_register_all();
     av_register_all();
     avformat_network_init();
-    av_log_set_level( AV_LOG_DEBUG );
+//    av_log_set_level( AV_LOG_DEBUG );
  
 #if LIBAVCODEC_VERSION_MAJOR < 54
     if ((err = av_open_input_file(&avContext, filename, NULL, 0, NULL)) != 0) {
