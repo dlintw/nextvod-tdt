@@ -40,7 +40,7 @@ start()
   
   # Decide if we support HDMI CEC
   HDMI_CEC="FALSE"
-  for TARGET in atevio7500 hs7110 hs7810a spark spark7162  ufs912 ufs913 whitebox; do
+  for TARGET in atevio7500 hs7110 hs7810a spark spark7162 ufs912 ufs913 whitebox; do
     if [ ${HOST} == ${TARGET} ]; then
       HDMI_CEC="TRUE"
       break
