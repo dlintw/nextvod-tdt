@@ -907,7 +907,7 @@ int container_stop_buffer()
 
 //flag 0: start direct
 //flag 1: from thread
-void ffmpeg_filler(Context_t *context, int flag)
+void ffmpeg_filler(Context_t *context, int* inpause, int flag)
 {
 	int len = 0;
 	int rwdiff = ffmpeg_buf_size;
@@ -988,16 +988,44 @@ void ffmpeg_filler(Context_t *context, int flag)
 			}
 			releasefillerMutex(FILENAME, __FUNCTION__,__LINE__);
 		}
+    else
+    {
+      //on long pause the server close the connection, so we use seek to reconnect
+      if(context != NULL && context->playback != NULL && inpause != NULL)
+      {
+        if((*inpause) == 0 && context->playback->isPaused)
+        {
+          (*inpause) = 1;
+        }
+        else if((*inpause) == 1 && !context->playback->isPaused)
+        {
+          int buflen = 0;
+          (*inpause) = 0;
+
+          getfillerMutex(FILENAME, __FUNCTION__,__LINE__);
+          if(ffmpeg_buf_read < ffmpeg_buf_write)
+			     buflen = ffmpeg_buf_write - ffmpeg_buf_read;
+		      if(ffmpeg_buf_read > ffmpeg_buf_write)
+		      {
+			      buflen = (ffmpeg_buf + ffmpeg_buf_size) - ffmpeg_buf_read;
+			      buflen += ffmpeg_buf_write - ffmpeg_buf;
+		      } 
+          ffmpeg_seek_org(avContext->pb->opaque, avContext->pb->pos + buflen, SEEK_SET);
+          releasefillerMutex(FILENAME, __FUNCTION__,__LINE__);
+        }
+      }
+    }
 	}
 }
 
 static void ffmpeg_fillerTHREAD(Context_t *context)
 {
 	ffmpeg_printf(10, "Running!\n");
+  int inpause = 0;
 
 	while(hasfillerThreadStarted != 2)
 	{
-		ffmpeg_filler(context, 1);
+		ffmpeg_filler(context, &inpause, 1);
 		usleep(10000);
 	}
 
@@ -1342,7 +1370,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 						ffmpeg_buf_write = ffmpeg_buf;
 
 						//fill buffer
-						ffmpeg_filler(context, 0);
+						ffmpeg_filler(context, NULL, 0);
 						ffmpeg_start_fillerTHREAD(context);
       		}
     		}
