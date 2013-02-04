@@ -3355,20 +3355,20 @@ _repeat:
 	else if( msg == NeutrinoMessages::ANNOUNCE_RECORD) {
 		system(NEUTRINO_RECORDING_TIMER_SCRIPT);
 		if( g_settings.recording_server_wakeup ) {
-			std::string command = "etherwake ";
+			std::string command = "ether-wake ";
 			command += g_settings.recording_server_mac;
 			if(system(command.c_str()) != 0)
-				perror("etherwake failed");
+				perror("ether-wake failed");
 		}
 		if (g_settings.recording_type == RECORDING_FILE) {
 			char * recDir = ((CTimerd::RecordingInfo*)data)->recordingDir;
 			for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++) {
 				if (strcmp(g_settings.network_nfs_local_dir[i],recDir) == 0) {
 					printf("[neutrino] waking up %s (%s)\n",g_settings.network_nfs_ip[i].c_str(),recDir);
-					std::string command = "etherwake ";
+					std::string command = "ether-wake ";
 					command += g_settings.network_nfs_mac[i];
 					if(system(command.c_str()) != 0)
-						perror("etherwake failed");
+						perror("ether-wake failed");
 					break;
 				}
 			}

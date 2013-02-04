@@ -423,7 +423,7 @@ proc()
 # -----------------------------------------------------------
 wol()
 {
-	msg=`etherwake $1`
+	msg=`ether-wake $1`
 	msg="<b>Wake on LAN $1</b><br><br>$msg"
 	y_format_message_html
 }
