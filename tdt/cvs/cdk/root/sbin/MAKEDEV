@@ -1771,14 +1771,13 @@ do
 	alsasnd)
 		major=`Major alsasnd 116` || continue
 		mkdir -p snd
-		makedev snd/controlC0 c $major 7 $audio
-		makedev snd/controlC1 c $major 9 $audio
-		makedev snd/pcmC0D0p c $major 6 $audio
-		makedev snd/pcmC0D1p c $major 5 $audio
-		makedev snd/pcmC0D2p c $major 3 $audio
-		makedev snd/pcmC0D3c c $major 4 $audio
-		makedev snd/pcmC1D0p c $major 8 $audio
-		makedev snd/timer c $major 2 $audio
+		makedev snd/controlC0 c $major 0 $audio
+		makedev snd/controlC1 c $major 32 $audio
+		makedev snd/pcmC0D0p c $major 16 $audio
+		makedev snd/pcmC0D1p c $major 17 $audio
+		makedev snd/pcmC0D2p c $major 18 $audio
+		makedev snd/pcmC1D0p c $major 48 $audio
+		makedev snd/timer c $major 33 $audio
 		;;
 
 	video|video4linux|v4l|radio)
