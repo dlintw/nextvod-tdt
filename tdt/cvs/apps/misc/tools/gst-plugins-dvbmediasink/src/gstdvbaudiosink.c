@@ -220,12 +220,13 @@ GST_STATIC_PAD_TEMPLATE ( \
 		"framed = (boolean) true") \
 )
 
-//TODO: Check if there are differences between the capabilities
 // FIRST GENERATION
 static GstStaticPadTemplate sink_factory_stm_stx7100 = SINK_FACTORY_STM_BASE_EXTENDED;
 static GstStaticPadTemplate sink_factory_stm_stx7101 = SINK_FACTORY_STM_BASE_EXTENDED;
 static GstStaticPadTemplate sink_factory_stm_stx7109 = SINK_FACTORY_STM_BASE_EXTENDED;
 
+//#define TODO_ALSASINK_WORKING //Todo: Some iamge have problems with the alsasink, needs investigation.
+#if defined(TODO_ALSASINK_WORKING)
 // SECOND GENERATION
 static GstStaticPadTemplate sink_factory_stm_stx7105 = SINK_FACTORY_STM_BASE;
 static GstStaticPadTemplate sink_factory_stm_stx7111 = SINK_FACTORY_STM_BASE;
@@ -233,6 +234,15 @@ static GstStaticPadTemplate sink_factory_stm_stx7111 = SINK_FACTORY_STM_BASE;
 // THIRD GENERATION
 static GstStaticPadTemplate sink_factory_stm_stx7106 = SINK_FACTORY_STM_BASE;
 static GstStaticPadTemplate sink_factory_stm_stx7108 = SINK_FACTORY_STM_BASE;
+#else
+// SECOND GENERATION
+static GstStaticPadTemplate sink_factory_stm_stx7105 = SINK_FACTORY_STM_BASE_EXTENDED;
+static GstStaticPadTemplate sink_factory_stm_stx7111 = SINK_FACTORY_STM_BASE_EXTENDED;
+
+// THIRD GENERATION
+static GstStaticPadTemplate sink_factory_stm_stx7106 = SINK_FACTORY_STM_BASE_EXTENDED;
+static GstStaticPadTemplate sink_factory_stm_stx7108 = SINK_FACTORY_STM_BASE_EXTENDED;
+#endif
 
 #define DEBUG_INIT(bla) \
 	GST_DEBUG_CATEGORY_INIT (dvbaudiosink_debug, "dvbaudiosink", 0, "dvbaudiosink element");
