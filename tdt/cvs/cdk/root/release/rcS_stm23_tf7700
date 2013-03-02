@@ -6,6 +6,8 @@ MODDIR=/lib/modules
 #/sbin/syslogd
 
 rm -f /dev/vfd
+rm -f /dev/rc
+rm -f /dev/fpc
 mknod -m 0666 /dev/fpc     c 62 0 2>/dev/null
 mknod -m 0666 /dev/vfd     c 62 0 2>/dev/null
 mknod -m 0666 /dev/rc      c 62 1 2>/dev/null
