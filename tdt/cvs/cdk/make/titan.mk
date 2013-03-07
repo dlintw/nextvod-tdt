@@ -6,7 +6,7 @@ $(DEPDIR)/titan.do_prepare:
 	[ -d "$(appsdir)/titan" ] && \
 	(cd $(appsdir)/titan; svn up; cd "$(buildprefix)";); \
 	[ -d "$(appsdir)/titan" ] || \
-	svn checkout --username public --password public-gitbuilding http://sbnc.myphotos.cc/svn/titan $(appsdir)/titan; \
+	svn checkout --username public --password public http://sbnc.myphotos.cc/svn/titan $(appsdir)/titan; \
 	[ -d "$(appsdir)/titan/titan/libipkg" ] || \
 	ln -s $(appsdir)/titan/libipkg $(appsdir)/titan/titan; \
 	[ -d "$(appsdir)/titan/titan/libdreamdvd" ] || \
@@ -66,7 +66,7 @@ $(DEPDIR)/titan-libipkg.do_prepare:
 	[ -d "$(appsdir)/titan" ] && \
 	(cd $(appsdir)/titan; svn up; cd "$(buildprefix)";); \
 	[ -d "$(appsdir)/titan" ] || \
-	svn checkout --username public --password public-gitbuilding http://sbnc.myphotos.cc/svn/titan $(appsdir)/titan; \
+	svn checkout --username public --password public http://sbnc.myphotos.cc/svn/titan $(appsdir)/titan; \
 	[ -d "$(appsdir)/titan/titan/libipkg" ] || \
 	ln -s $(appsdir)/titan/libipkg $(appsdir)/titan/titan; \
 	[ -d "$(appsdir)/titan/titan/libdreamdvd" ] || \
