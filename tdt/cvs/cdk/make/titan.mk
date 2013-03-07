@@ -164,7 +164,7 @@ $(DEPDIR)/titan-plugins.do_prepare:
 	ln -s $(appsdir)/titan/libdreamdvd $(appsdir)/titan/titan;
 	touch $@
 
-$(appsdir)/titan/plugins/config.status:
+$(appsdir)/titan/plugins/config.status: titan-libdreamdvd
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/titan/plugins && \
 	libtoolize --force && \
