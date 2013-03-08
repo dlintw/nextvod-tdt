@@ -148,7 +148,11 @@ yaud-enigma2-pli-nightly: yaud-none host_python lirc \
 
 yaud-xbmc-nightly: yaud-none host_python boot-elf firstboot xbmc-nightly release_xbmc
 	@TUXBOX_YAUD_CUSTOMIZE@
-	
+
+yaud-titan: yaud-none lirc stslave \
+		boot-elf remote firstboot titan release_titan_nightly
+	@TUXBOX_YAUD_CUSTOMIZE@
+
 yaud-none: \
 		bare-os \
 		libdvdcss \
