@@ -9,11 +9,13 @@ min-prepare-yaud std-prepare-yaud max-prepare-yaud: \
 #
 $(DEPDIR)/min-bootstrap $(DEPDIR)/std-bootstrap $(DEPDIR)/max-bootstrap $(DEPDIR)/bootstrap: \
 $(DEPDIR)/%bootstrap: \
-		%libtool \
-		%$(FILESYSTEM) \
-		| %$(GLIBC) \
-		%$(CROSS_LIBGCC) \
-		%$(LIBSTDC)
+	%libtool \
+	%$(FILESYSTEM) \
+	| %$(GLIBC) \
+	%$(CROSS_LIBGCC) \
+	%libz \
+	%$(LIBSTDC) \
+	%$(LIBSTDC_DEV)
 	@[ "x$*" = "x" ] && touch -r RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm $@ || true
 
 #
@@ -21,49 +23,48 @@ $(DEPDIR)/%bootstrap: \
 #
 min-bare-os std-bare-os max-bare-os bare-os: \
 %bare-os: \
-		%bootstrap \
-		%$(LIBTERMCAP) \
-		%$(NCURSES_BASE) \
-		%$(NCURSES) \
-		%$(BASE_PASSWD) \
-		%$(MAKEDEV) \
-		%$(BASE_FILES) \
-		%module_init_tools \
-		%busybox \
-		\
-		%libz \
-		%$(INITSCRIPTS) \
-		%openrdate \
-		%$(NETBASE) \
-		%$(BC) \
-		%$(SYSVINIT) \
-		%$(DISTRIBUTIONUTILS) \
-		\
-		%e2fsprogs \
-		%u-boot-utils \
-		%diverse-tools
-#		%$(RELEASE) \
-#		%$(FINDUTILS) \
+	%bootstrap \
+	%$(LIBTERMCAP) \
+	%$(NCURSES_BASE) \
+	%$(NCURSES) \
+	%$(BASE_PASSWD) \
+	%$(MAKEDEV) \
+	%$(BASE_FILES) \
+	%module_init_tools \
+	%busybox \
+	\
+	%$(INITSCRIPTS) \
+	%openrdate \
+	%$(NETBASE) \
+	%$(BC) \
+	%$(SYSVINIT) \
+	%$(DISTRIBUTIONUTILS) \
+	\
+	%e2fsprogs \
+	%u-boot-utils \
+	%diverse-tools
+#	%$(RELEASE) \
+#	%$(FINDUTILS) \
 #
 
 min-net-utils std-net-utils max-net-utils net-utils: \
 %net-utils: \
-		%$(NETKIT_FTP) \
-		%autofs \
-		%portmap \
-		%$(NFSSERVER) \
-		%vsftpd \
-		%ethtool \
-		%opkg \
-		%grep \
-		%$(CIFS)
+	%$(NETKIT_FTP) \
+	%autofs \
+	%portmap \
+	%$(NFSSERVER) \
+	%vsftpd \
+	%ethtool \
+	%opkg \
+	%grep \
+	%$(CIFS)
 
 min-disk-utils std-disk-utils max-disk-utils disk-utils: \
 %disk-utils: \
-		%$(XFSPROGS) \
-		%util-linux \
-		%jfsutils \
-		%$(SG3)
+	%$(XFSPROGS) \
+	%util-linux \
+	%jfsutils \
+	%$(SG3)
 
 #dummy targets
 #really ugly
