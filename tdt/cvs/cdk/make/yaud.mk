@@ -13,6 +13,13 @@ $(DEPDIR)/%bootstrap: \
 	%$(FILESYSTEM) \
 	| %$(GLIBC) \
 	%$(CROSS_LIBGCC) \
+	%$(GLIBC) \
+	%$(GLIBC_DEV) \
+	%$(BINUTILS) \
+	%$(BINUTILS_DEV) \
+	%$(GMP) \
+	%$(MPFR) \
+	%$(MPC) \
 	%libz \
 	%$(LIBSTDC) \
 	%$(LIBSTDC_DEV)
