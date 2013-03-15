@@ -572,31 +572,6 @@ $(DEPDIR)/$(CROSS_MPC): $(CROSS_MPC_RPM)
 endif STM24
 
 #
-# CROSS LIBELF
-#
-if STM24
-CROSS_LIBELF = cross-sh4-libelf
-CROSS_LIBELF_VERSION = 0.8.13-1
-CROSS_LIBELF_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_LIBELF)).spec
-CROSS_LIBELF_SPEC_PATCH = $(CROSS_LIBELF_SPEC).$(CROSS_LIBELF_VERSION).diff
-CROSS_LIBELF_PATCHES =
-CROSS_LIBELF_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_LIBELF)-$(CROSS_LIBELF_VERSION).$(host_arch).rpm
-
-$(CROSS_LIBELF_RPM): \
-		$(addprefix Patches/,$(CROSS_LIBELF_SPEC_PATCH) $(CROSS_LIBELF_PATCHES)) \
-		$(archivedir)/$(STLINUX:%23=%24)-$(subst cross-sh4-,cross-,$(CROSS_LIBELF))-$(CROSS_LIBELF_VERSION).src.rpm
-	rpm $(DRPM) --nosignature -Uhv $(lastword $^) && \
-	$(if $(CROSS_LIBELF_SPEC_PATCH),( cd SPECS && patch -p1 $(CROSS_LIBELF_SPEC) < $(buildprefix)/Patches/$(CROSS_LIBELF_SPEC_PATCH) ) &&) \
-	$(if $(CROSS_LIBELF_PATCHES),cp $(addprefix Patches/,$(CROSS_LIBELF_PATCHES)) SOURCES/ &&) \
-	export PATH=$(hostprefix)/bin:$(PATH) && \
-	rpmbuild $(DRPMBUILD) -bb -v --target=sh4-linux SPECS/$(CROSS_LIBELF_SPEC)
-
-$(DEPDIR)/$(CROSS_LIBELF): $(CROSS_LIBELF_RPM)
-	@rpm $(DRPM) --nodeps -Uhv $(lastword $^) && \
-	touch $@
-endif STM24
-
-#
 # CROSS GCC
 #
 CROSS_GCC = cross-sh4-gcc
@@ -648,7 +623,6 @@ $(CROSS_GCC_RPM) $(CROSS_CPP_RPM) $(CROSS_G++_RPM) $(CROSS_PROTOIZE_RPM) $(CROSS
 		$(archivedir)/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm \
 		$(if $(CROSS_MPFR),$(CROSS_MPFR)) \
 		$(if $(CROSS_MPC),$(CROSS_MPC)) \
-		$(if $(CROSS_LIBELF),$(CROSS_LIBELF)) \
 		$(if $(KERNELHEADERS),$(KERNELHEADERS)) \
 		kernel-headers
 	rpm $(DRPM) --nosignature --ignorearch --nodeps --force -Uhv \
