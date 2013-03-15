@@ -1154,7 +1154,9 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 	$(if $(PLAYER191),cp $(driverdir)/stgfb/stmfb/linux/drivers/video/stmfb.h $(targetprefix)/usr/include/linux)
 	cp $(driverdir)/player2/linux/include/linux/dvb/stm_ioctls.h $(targetprefix)/usr/include/linux/dvb
 	$(MAKE) -C $(driverdir) ARCH=sh \
+		CONFIG_MODULES_PATH=$(targetprefix) \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
+		DRIVER_TOPDIR=$(driverdir) \
 		$(if $(UFS910),UFS910=$(UFS910)) \
 		$(if $(FORTIS_HDBOX),FORTIS_HDBOX=$(FORTIS_HDBOX)) \
 		$(if $(ATEVIO7500),ATEVIO7500=$(ATEVIO7500)) \
@@ -1189,7 +1191,9 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(HAVANA_P0207_5),HAVANA_P0207_5=$(HAVANA_P0207_5)) \
 		CROSS_COMPILE=$(target)-
 	$(MAKE) -C $(driverdir) ARCH=sh \
+		CONFIG_MODULES_PATH=$(targetprefix) \
 		KERNEL_LOCATION=$(buildprefix)/$(KERNEL_DIR) \
+		DRIVER_TOPDIR=$(driverdir) \
 		BIN_DEST=$(targetprefix)/bin \
 		INSTALL_MOD_PATH=$(targetprefix) \
 		$(if $(UFS910),UFS910=$(UFS910)) \

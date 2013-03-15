@@ -113,20 +113,20 @@ fi
 $INSTALL $PACKAGES
 
 #Is this also necessary for other dists?
-if [ "$UBUNTU" == 1 ]; then
-	DEBIAN_VERSION=`cat /etc/debian_version`
-	if [ "$DEBIAN_VERSION" == "wheezy/sid" ]; then
-		if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then
-			ln -s /usr/include/x86_64-linux-gnu/bits /usr/include/bits
-			ln -s /usr/include/x86_64-linux-gnu/gnu /usr/include/gnu
-			ln -s /usr/include/x86_64-linux-gnu/sys /usr/include/sys
-		else
-			ln -s /usr/include/i386-linux-gnu/bits /usr/include/bits
-			ln -s /usr/include/i386-linux-gnu/gnu /usr/include/gnu
-			ln -s /usr/include/i386-linux-gnu/sys /usr/include/sys
-		fi
-	fi
-fi
+#if [ "$UBUNTU" == 1 ]; then
+#	DEBIAN_VERSION=`cat /etc/debian_version`
+#	if [ "$DEBIAN_VERSION" == "wheezy/sid" ]; then
+#		if [ `which arch > /dev/null 2>&1 && arch || uname -m` == x86_64 ]; then
+#			ln -s /usr/include/x86_64-linux-gnu/bits /usr/include/bits
+#			ln -s /usr/include/x86_64-linux-gnu/gnu /usr/include/gnu
+#			ln -s /usr/include/x86_64-linux-gnu/sys /usr/include/sys
+#		else
+#			ln -s /usr/include/i386-linux-gnu/bits /usr/include/bits
+#			ln -s /usr/include/i386-linux-gnu/gnu /usr/include/gnu
+#			ln -s /usr/include/i386-linux-gnu/sys /usr/include/sys
+#		fi
+#	fi
+#fi
 
 # Link sh to bash instead of dash on Ubuntu (and possibly others)
 /bin/sh --version 2>/dev/null | grep bash -s -q
