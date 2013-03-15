@@ -224,10 +224,10 @@ endif !STM22
 #
 if STM24
 MPC := mpc
-MPC_VERSION := 0.8.2-2
+MPC_VERSION := 1.0.1-4
 MPC_SPEC := stm-target-$(MPC).spec
-MPC_SPEC_PATCH := $(MPC_SPEC).$(MPC_VERSION).diff
-MPC_PATCHES := stm-target-$(MPC).$(MPC_VERSION).diff
+MPC_SPEC_PATCH :=
+MPC_PATCHES :=
 MPC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPC)-$(MPC_VERSION).sh4.rpm
 
 $(MPC_RPM): \
