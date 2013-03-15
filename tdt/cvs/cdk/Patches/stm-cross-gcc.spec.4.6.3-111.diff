@@ -1,0 +1,99 @@
+--- stm-cross-gcc.spec.orig	2012-11-02 22:10:38.605411043 +0100
++++ stm-cross-gcc.spec	2012-11-02 22:10:38.561411041 +0100
+@@ -69,6 +69,9 @@
+ 
+ %define _gccdir %{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}
+ 
++# Quick and dirty workaround. RPM complains about unpackaged files.
++%define _unpackaged_files_terminate_build 0
++
+ %description
+ This is the GNU C compiler, a fairly portable optimizing compiler which
+ supports multiple languages.  This package includes support for C, and
+@@ -242,7 +245,7 @@
+         --with-gmp=%{_stm_cross_dir} \
+         --with-mpfr=%{_stm_cross_dir} \
+         --without-ppl \
+-        --with-gxx-include-dir="\\\${prefix}/target%{_stm_target_include_dir}/c++/%{version}" \
++        --with-gxx-include-dir="\\\${prefix}/../../cdkroot%{_stm_target_include_dir}/c++/%{version}" \
+         --enable-__cxa_atexit \
+ %if "%{_stm_target_fpu}" == "no"
+ %if_target_arch sh4_uclibc
+@@ -283,13 +286,6 @@
+ %cross_setup
+ %cross_makeinstall
+ 
+-%if_target_arch sh4 sh4_uclibc
+-%make pdf html
+-
+-install -d %{buildroot}/%{_stm_cross_doc_dir}/html
+-cp gcc/doc/*.pdf %{buildroot}/%{_stm_cross_doc_dir}
+-cp -r gcc/HTML/gcc-%{version} %{buildroot}/%{_stm_cross_doc_dir}/html
+-%endif
+ 
+ cd ..
+ 
+@@ -357,14 +353,16 @@
+ 	\( -name "libmudflap*" -o -name "libssp*" \) -print | \
+ 	xargs --no-run-if-empty --verbose rm
+ # Remove some installed files we don't ship, to keep rpm happy
+-rm %{buildroot}%{_stm_cross_info_dir}/cppinternals.info.gz
+-rm %{buildroot}%{_stm_cross_info_dir}/gccinstall.info.gz
+-rm %{buildroot}%{_stm_cross_info_dir}/gccint.info.gz
+-rm -f %{buildroot}%{_stm_cross_info_dir}/dir.*
++rm %{buildroot}%{_stm_cross_info_dir}/cppinternals.info.gz || true
++rm %{buildroot}%{_stm_cross_info_dir}/gccinstall.info.gz || true
++rm %{buildroot}%{_stm_cross_info_dir}/gccint.info.gz || true
++rm -f %{buildroot}%{_stm_cross_info_dir}/dir.* || true
+ rm -r %{buildroot}%{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
+ rm -f %{buildroot}%{_stm_cross_lib_dir}/libiberty.a
+-rm -f  %{buildroot}%{_stm_cross_dir}/lib64/libiberty.a
++rm -f  %{buildroot}%{_stm_cross_dir}/lib{32,64}/libiberty.a || true
+ rm -r %{buildroot}%{_stm_cross_libexec_dir}/gcc/%{_stm_target_config}/%{version}/install-tools
++rm %{buildroot}%{_stm_cross_info_dir}/cpp.info* || true
++rm %{buildroot}%{_stm_cross_info_dir}/gcc.info* || true
+ 
+ rm -rf %{buildroot}%{_stm_cross_targetconf_dir}/share/gcc-%{version}/python
+ rm -f %{buildroot}%{_stm_cross_lib_dir}/gcc/%{_stm_target_config}/%{version}/plugin/include/sysroot-suffix.h
+@@ -642,10 +640,6 @@
+ %{_stm_cross_targetconf_dir}/bin/cpp
+ %{_stm_cross_sharedstate_dir}/locale/*/LC_MESSAGES/cpplib.mo
+ 
+-%files -n %{_cpp_pkgname}-doc
+-%defattr(-,root,root)
+-%{_stm_cross_info_dir}/cpp.info.gz
+-
+ %files -n %{_gpp_pkgname}
+ %defattr(-,root,root)
+ %{_stm_cross_bin_dir}/%{_stm_target_toolprefix}g++
+@@ -660,7 +654,6 @@
+ 
+ %files -n %{_gcc_pkgname}-doc
+ %defattr(-,root,root)
+-%{_stm_cross_info_dir}/gcc.info.gz
+ %{_stm_cross_man_dir}/man7/*
+ 
+ %if_target_arch sh4 sh4_uclibc
+@@ -677,22 +670,6 @@
+ %{_stm_cross_target_dir}/lib/m4-nofpu/libgcc_s-%{version}.so.1
+ %endif
+ 
+-%post -n %{_cpp_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir \
+-	%{_stm_cross_info_dir}/cpp.info
+-
+-%preun -n %{_cpp_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir --remove \
+-	%{_stm_cross_info_dir}/cpp.info
+-
+-%post -n %{_gcc_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir \
+-	%{_stm_cross_info_dir}/gcc.info
+-
+-%preun -n %{_gcc_pkgname}-doc
+-install-info --quiet --dir-file=%{_stm_cross_info_dir}/dir --remove \
+-	%{_stm_cross_info_dir}/gcc.info
+-
+ %changelog
+ * Mon Oct 29 2012 Christian Bruel <christian.bruel@st.com> 111
+ - [Replace patch: gcc-4.6.3-pr23233.patch; Bugzilla: 23233/23794] New implementation.
