@@ -1,19 +1,3 @@
-#######################################   BOOTSTRAP-HOST   #########################################
-#
-# HOST-FILESYSTEM
-#
-host-filesystem:
-	$(INSTALL) -d $(prefix)
-	$(INSTALL) -d $(configprefix)
-	$(INSTALL) -d $(devkitprefix)
-	$(INSTALL) -d $(devkitprefix)/sources
-	$(INSTALL) -d $(devkitprefix)/sources/kernel
-	$(INSTALL) -d $(hostprefix)
-	$(INSTALL) -d $(hostprefix)/{bin,doc,etc,include,info,lib,man,share,var}
-	ln -sf $(hostprefix)/lib $(hostprefix)/lib64
-	$(INSTALL) -d $(hostprefix)/man/man{1,2,3,4,5,6,7,8,9}
-	touch .deps/$@
-
 #
 # CCACHE
 #
@@ -33,6 +17,7 @@ $(hostprefix)/ccache-bin/gcc: | $(CCACHE)
 	ln -sf $| $(hostprefix)/bin/$(target)-gcc
 	ln -sf $| $(hostprefix)/bin/$(target)-g++
 
+##############################   BOOTSTRAP-HOST    #############################
 #
 # HOST-RPMCONFIG
 #
@@ -61,6 +46,7 @@ HOST_RPMCONFIG_PATCHES = stm-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION)-ignore-
 # endif STM24
 endif !STM23
 endif !STM22
+
 HOST_RPMCONFIG_RPM = RPMS/noarch/$(STLINUX)-$(HOST_RPMCONFIG)-$(HOST_RPMCONFIG_VERSION).noarch.rpm
 
 $(HOST_RPMCONFIG_RPM): \
@@ -74,8 +60,7 @@ $(HOST_RPMCONFIG_RPM): \
 	rpmbuild  $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(HOST_RPMCONFIG_SPEC)
 
 $(HOST_RPMCONFIG): $(HOST_RPMCONFIG_RPM)
-	@rpm $(DRPM) --ignorearch --nodeps -Uhv \
-		--badreloc --relocate $(STM_RELOCATE)=$(prefix) $< && \
+	@rpm $(DRPM) --ignorearch --nodeps -Uhv --badreloc --relocate $(STM_RELOCATE)=$(prefix) $< && \
 	touch .deps/$(notdir $@)
 
 #
@@ -102,6 +87,7 @@ HOST_BASE_PASSWD_PATCHES =
 # endif STM24
 endif !STM23
 endif !STM22
+
 HOST_BASE_PASSWD_RPM = RPMS/sh4/$(STLINUX)-$(HOST_BASE_PASSWD)-$(HOST_BASE_PASSWD_VERSION).sh4.rpm
 
 $(HOST_BASE_PASSWD_RPM): \
@@ -135,13 +121,14 @@ HOST_DISTRIBUTIONUTILS_SPEC_PATCH =
 HOST_DISTRIBUTIONUTILS_PATCHES =
 else !STM23
 # if STM24
-HOST_DISTRIBUTIONUTILS_VERSION = 2.8.4-5
+HOST_DISTRIBUTIONUTILS_VERSION = 2.8.4-6
 HOST_DISTRIBUTIONUTILS_SPEC = stm-$(HOST_DISTRIBUTIONUTILS).spec
 HOST_DISTRIBUTIONUTILS_SPEC_PATCH =
 HOST_DISTRIBUTIONUTILS_PATCHES =
 # endif STM24
 endif !STM23
 endif !STM22
+
 HOST_DISTRIBUTIONUTILS_RPM = RPMS/$(host_arch)/$(STLINUX)-$(HOST_DISTRIBUTIONUTILS)-$(HOST_DISTRIBUTIONUTILS_VERSION).$(host_arch).rpm
 
 $(HOST_DISTRIBUTIONUTILS_RPM): \
@@ -183,6 +170,7 @@ HOST_AUTOTOOLS_PATCHES =
 # endif STM24
 endif !STM23
 endif !STM22
+
 HOST_AUTOTOOLS_RPM = RPMS/sh4/$(STLINUX)-$(HOST_AUTOTOOLS)-$(HOST_AUTOTOOLS_VERSION).sh4.rpm
 
 $(HOST_AUTOTOOLS_RPM): \
@@ -217,6 +205,7 @@ HOST_AUTOMAKE_SPEC_PATCH =
 HOST_AUTOMAKE_PATCHES =
 # endif STM24
 endif !STM23
+
 HOST_AUTOMAKE_RPM = RPMS/sh4/$(STLINUX)-$(HOST_AUTOMAKE)-$(HOST_AUTOMAKE_VERSION).sh4.rpm
 
 $(HOST_AUTOMAKE_RPM): \
@@ -252,6 +241,7 @@ HOST_AUTOCONF_SPEC_PATCH = stm-$(HOST_AUTOCONF).$(HOST_AUTOCONF_VERSION).spec.di
 HOST_AUTOCONF_PATCHES = stm-$(HOST_AUTOCONF).$(HOST_AUTOCONF_VERSION).diff
 # endif STM24
 endif !STM23
+
 HOST_AUTOCONF_RPM = RPMS/sh4/$(STLINUX)-$(HOST_AUTOCONF)-$(HOST_AUTOCONF_VERSION).sh4.rpm
 
 $(HOST_AUTOCONF_RPM): \
@@ -287,6 +277,7 @@ HOST_PKGCONFIG_SPEC_PATCH =
 HOST_PKGCONFIG_PATCHES =
 # endif STM24
 endif !STM23
+
 HOST_PKGCONFIG_RPM = RPMS/sh4/$(STLINUX)-$(HOST_PKGCONFIG)-$(HOST_PKGCONFIG_VERSION).sh4.rpm
 
 $(HOST_PKGCONFIG_RPM): \
@@ -327,6 +318,7 @@ HOST_MTD_UTILS_PATCHES =
 # endif STM24
 endif !STM23
 endif !STM22
+
 HOST_MTD_UTILS_RPM = RPMS/sh4/$(STLINUX)-$(HOST_MTD_UTILS)-$(HOST_MTD_UTILS_VERSION).sh4.rpm
 
 # Workaround for stm24, where is the host-lzo package available?
@@ -365,21 +357,7 @@ $(DEPDIR)/bootstrap-host: | \
 		$(HOST_MTD_UTILS)
 	$(if $(HOST_MTD_UTILS_RPM),[ "x$*" = "x" ] && touch -r $(HOST_MTD_UTILS_RPM) $@ || true)
 
-########################################   BOOTSTRAP-CROSS   ########################################
-#
-# CROSS_FILESYSTEM
-#
-CROSS_FILESYSTEM = cross-sh4-filesystem
-
-cross-sh4-filesystem:
-	$(INSTALL) -d $(targetprefix)
-	$(INSTALL) -d $(crossprefix)
-	$(INSTALL) -d $(crossprefix)/{bin,doc,etc,include,lib,man,sh4-linux,share,var}
-	ln -s /$(crossprefix)/lib $(crossprefix)/lib64
-	$(INSTALL) -d $(crossprefix)/man/man{1,2,3,4,5,6,7,8,9}
-	$(INSTALL) -d $(crossprefix)/sh4-linux/{bin,include,lib}
-	touch .deps/$@
-
+##############################   BOOTSTRAP-CROSS   #############################
 #
 # CROSS_DISTRIBUTIONUTILS
 #
@@ -404,6 +382,7 @@ CROSS_DISTRIBUTIONUTILS_PATCHES =
 # endif STM24
 endif !STM23
 endif !STM22
+
 CROSS_DISTRIBUTIONUTILS_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_DISTRIBUTIONUTILS)-$(CROSS_DISTRIBUTIONUTILS_VERSION).$(host_arch).rpm
 
 $(CROSS_DISTRIBUTIONUTILS_RPM): \
@@ -452,6 +431,7 @@ CROSS_BINUTILS_PATCHES =
 # endif STM24
 endif !STM23
 endif !STM22
+
 CROSS_BINUTILS_RPM = RPMS/${host_arch}/$(STLINUX)-$(CROSS_BINUTILS)-$(CROSS_BINUTILS_VERSION).${host_arch}.rpm
 CROSS_BINUTILS_DEV_RPM = RPMS/${host_arch}/$(STLINUX)-$(CROSS_BINUTILS_DEV)-$(CROSS_BINUTILS_VERSION).${host_arch}.rpm
 
@@ -492,6 +472,7 @@ CROSS_GMP_VERSION = 5.1.0-11
 CROSS_GMP_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_GMP)).spec
 CROSS_GMP_SPEC_PATCH =
 CROSS_GMP_PATCHES =
+
 CROSS_GMP_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GMP)-$(CROSS_GMP_VERSION).$(host_arch).rpm
 # endif STM24
 endif !STM23
@@ -529,6 +510,7 @@ CROSS_MPFR_SPEC_PATCH =
 CROSS_MPFR_PATCHES =
 # endif STM24
 endif !STM23
+
 CROSS_MPFR_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_MPFR)-$(CROSS_MPFR_VERSION).$(host_arch).rpm
 
 $(CROSS_MPFR_RPM): \
@@ -555,6 +537,7 @@ CROSS_MPC_VERSION = 1.0.1-5
 CROSS_MPC_SPEC = stm-$(subst cross-sh4,cross,$(CROSS_MPC)).spec
 CROSS_MPC_SPEC_PATCH =
 CROSS_MPC_PATCHES =
+
 CROSS_MPC_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_MPC)-$(CROSS_MPC_VERSION).$(host_arch).rpm
 
 $(CROSS_MPC_RPM): \
@@ -609,6 +592,7 @@ CROSS_GCC_INVALIDATE =
 # endif STM24
 endif !STM23
 endif !STM22
+
 CROSS_GCC_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_GCC)-$(CROSS_GCC_VERSION).$(host_arch).rpm
 CROSS_CPP_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_CPP)-$(CROSS_GCC_VERSION).$(host_arch).rpm
 CROSS_G++_RPM = RPMS/$(host_arch)/$(STLINUX)-$(CROSS_G++)-$(CROSS_GCC_VERSION).$(host_arch).rpm
@@ -662,6 +646,50 @@ $(CROSS_PROTOIZE): $(CROSS_PROTOIZE_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
+##############################                     #############################
+#
+# HOST-FILESYSTEM
+#
+host-filesystem:
+	$(INSTALL) -d $(prefix)
+	$(INSTALL) -d $(configprefix)
+	$(INSTALL) -d $(devkitprefix)
+	$(INSTALL) -d $(hostprefix)
+	$(INSTALL) -d $(hostprefix)/{bin,doc,etc,include,info,lib,man,share,var}
+	ln -sf $(hostprefix)/lib $(hostprefix)/lib64
+	$(INSTALL) -d $(hostprefix)/man/man{1,2,3,4,5,6,7,8,9}
+	touch .deps/$@
+
+#
+# CROSS_FILESYSTEM
+#
+cross-sh4-filesystem:
+	$(INSTALL) -d $(targetprefix)
+	$(INSTALL) -d $(crossprefix)
+	$(INSTALL) -d $(crossprefix)/{bin,doc,etc,include,lib,man,sh4-linux,share,var}
+	ln -s /$(crossprefix)/lib $(crossprefix)/lib64
+	$(INSTALL) -d $(crossprefix)/man/man{1,2,3,4,5,6,7,8,9}
+	$(INSTALL) -d $(crossprefix)/sh4-linux/{bin,include,lib}
+	touch .deps/$@
+
+#
+# BOOTSTRAP-HOST
+#
+$(DEPDIR)/bootstrap-host: | \
+	host-filesystem \
+	cross-sh4-filesystem \
+	$(CCACHE) \
+	libtool \
+	host-rpmconfig \
+	host-base-passwd \
+	host-distributionutils \
+	host-autoconf \
+	host-autotools \
+	host-automake \
+	host-pkg-config \
+	host-mtd-utils
+	touch $@
+
 #
 # BOOTSTRAP-CROSS
 #
@@ -689,20 +717,14 @@ $(DEPDIR)/setup-cross-optional: \
 #
 # LIBTOOL
 #
-$(DEPDIR)/libtool.do_prepare: @DEPENDS_libtool@
+$(DEPDIR)/libtool: @DEPENDS_libtool@
 	@PREPARE_libtool@
+	cd @DIR_libtool@ && \
+		./configure \
+			--prefix=$(hostprefix) && \
+		$(MAKE) && \
+		@INSTALL_libtool@
+	@DISTCLEANUP_libtool@
 	touch $@
 
-$(DEPDIR)/libtool.do_compile: $(DEPDIR)/libtool.do_prepare
-	cd @DIR_libtool@ && \
-	./configure --prefix=$(hostprefix) && \
-	$(MAKE)
-	touch $@
 
-$(DEPDIR)/min-libtool $(DEPDIR)/std-libtool $(DEPDIR)/max-libtool \
-$(DEPDIR)/libtool: \
-$(DEPDIR)/%libtool: $(DEPDIR)/libtool.do_compile
-	cd @DIR_libtool@ && \
-	@INSTALL_libtool@
-##		sed -i -e 's,\(hardcode_into_libs\)=yes,\1=no,g' $(hostprefix)/bin/libtool
-	touch $@
