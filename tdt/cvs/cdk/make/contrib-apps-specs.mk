@@ -169,7 +169,7 @@ BC_SPEC_PATCH :=
 BC_PATCHES :=
 else !STM23
 # if STM24
-BC_VERSION := 1.06-5
+BC_VERSION := 1.06-6
 BC_SPEC := stm-target-$(BC).spec
 BC_SPEC_PATCH :=
 BC_PATCHES :=
