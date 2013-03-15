@@ -4,10 +4,9 @@
 $(DEPDIR)/min-filesystem $(DEPDIR)/std-filesystem $(DEPDIR)/max-filesystem \
 $(DEPDIR)/filesystem: \
 $(DEPDIR)/%filesystem: bootstrap-cross
-	$(INSTALL) -d $(targetprefix)/{bin,boot,dev,dev.static,etc,home,lib,mnt,opt,proc,root,sbin,sys,tmp,usr,var}
+	$(INSTALL) -d $(targetprefix)/{bin,boot,dev,dev.static,etc,lib,mnt,opt,proc,root,sbin,sys,tmp,usr,var}
 	$(INSTALL) -d $(targetprefix)/etc/{default,opt}
 	$(INSTALL) -d $(targetprefix)/usr/{bin,include,lib,local,sbin,share,src}
-	$(INSTALL) -d $(targetprefix)/usr/lib/X11
 	$(INSTALL) -d $(targetprefix)/usr/local/{bin,include,lib,man,sbin,share,src}
 	$(INSTALL) -d $(targetprefix)/usr/local/man/{man1,man2,man3,man4,man5,man6,man7,man8}
 	$(INSTALL) -d $(targetprefix)/usr/share/{aclocal,doc,info,locale,man,misc,nls}
@@ -15,23 +14,13 @@ $(DEPDIR)/%filesystem: bootstrap-cross
 	$(INSTALL) -d $(targetprefix)/var/{backups,cache,lib,local,lock,log,mail,opt,run,spool}
 	ln -sf $(targetprefix)/lib $(targetprefix)/lib64
 	ln -sf $(targetprefix)/usr/lib $(targetprefix)/usr/lib64
-	ln -s /tmp $(targetprefix)/var/tmp
 	$(INSTALL) -d $(targetprefix)/var/lib/misc
 	$(INSTALL) -d $(targetprefix)/var/lock/subsys
-#	$(LN_S) ../mail $(targetprefix)/var/spool/mail
-	ln -sf ../mail $(targetprefix)/var/spool/mail
 	$(INSTALL) -d $(targetprefix)/etc/{init.d,rc.d,samba}
 	$(INSTALL) -d $(targetprefix)/etc/rc.d/{rc3.d,rcS.d}
 	ln -s ../init.d $(targetprefix)/etc/rc.d/init.d
 	$(INSTALL) -d $(targetprefix)/etc/samba/private
-	$(INSTALL) -d $(targetprefix)/jffs
 	$(INSTALL) -d $(targetprefix)/media
-#	$(INSTALL) -d $(targetprefix)/include
-	$(INSTALL) -d $(targetprefix)/ram
-	$(INSTALL) -d $(targetprefix)/rom
-#	$(INSTALL) -d $(targetprefix)/share/{doc,info,locale,man,misc,nls}
-	$(INSTALL) -d $(targetprefix)/srv
-	$(INSTALL) -d $(targetprefix)/srv/www
 	$(INSTALL) -d $(targetprefix)/var/bin
 	[ "x$*" = "x" ] && touch $@ || true
 
@@ -63,6 +52,7 @@ GLIBC_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 GLIBC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GLIBC)-$(GLIBC_VERSION).sh4.rpm
 GLIBC_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GLIBC_DEV)-$(GLIBC_VERSION).sh4.rpm
 
@@ -91,12 +81,6 @@ $(DEPDIR)/%$(GLIBC_DEV): $(DEPDIR)/%$(GLIBC) $(GLIBC_DEV_RPM)
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
 
-#Wrote: RPMS/sh4/stlinux23-sh4-glibc-prof-2.5-27.sh4.rpm
-#Wrote: RPMS/sh4/stlinux23-sh4-glibc-locales-2.5-27.sh4.rpm
-#Wrote: RPMS/sh4/stlinux23-sh4-glibc-i18ndata-2.5-27.sh4.rpm
-#Wrote: RPMS/sh4/stlinux23-sh4-glibc-nscd-2.5-27.sh4.rpm
-#Wrote: RPMS/sh4/stlinux23-sh4-glibc-doc-2.5-27.sh4.rpm
-
 #
 # BINUTILS
 #
@@ -123,6 +107,7 @@ BINUTILS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 BINUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS)-$(BINUTILS_VERSION).sh4.rpm
 BINUTILS_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BINUTILS_DEV)-$(BINUTILS_VERSION).sh4.rpm
 
@@ -163,6 +148,7 @@ GMP_SPEC_PATCH :=
 GMP_PATCHES :=
 # endif STM24
 endif !STM23
+
 GMP_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GMP)-$(GMP_VERSION).sh4.rpm
 
 $(GMP_RPM): \
@@ -228,6 +214,7 @@ MPC_VERSION := 1.0.1-4
 MPC_SPEC := stm-target-$(MPC).spec
 MPC_SPEC_PATCH :=
 MPC_PATCHES :=
+
 MPC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MPC)-$(MPC_VERSION).sh4.rpm
 
 $(MPC_RPM): \
@@ -275,6 +262,7 @@ GCC_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 GCC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(GCC)-$(GCC_VERSION).sh4.rpm
 LIBSTDC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm
 LIBSTDC_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC_DEV)-$(GCC_VERSION).sh4.rpm
@@ -288,7 +276,7 @@ $(GCC_RPM) $(LIBSTDC_RPM) $(LIBSTDC_DEV_RPM) $(LIBGCC_RPM): \
 	$(if $(GCC_SPEC_PATCH),( cd SPECS && patch -p1 $(GCC_SPEC) < $(buildprefix)/Patches/$(GCC_SPEC_PATCH) ) &&) \
 	$(if $(GCC_PATCHES),cp $(addprefix Patches/,$(GCC_PATCHES)) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
-	rpmbuild $(DRPMBUILD) -bb --clean --target=sh4-linux SPECS/$(GCC_SPEC)
+	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(GCC_SPEC)
 
 $(DEPDIR)/min-$(GCC) $(DEPDIR)/std-$(GCC) $(DEPDIR)/max-$(GCC) $(DEPDIR)/$(GCC): \
 $(DEPDIR)/%$(GCC): $(DEPDIR)/%$(GLIBC_DEV) $(GCC_RPM)
@@ -315,11 +303,6 @@ $(DEPDIR)/%$(LIBGCC): $(LIBGCC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
-
-#Wrote: RPMS/sh4/stlinux20-sh4-cpp-3.4.3-22.sh4.rpm
-#Wrote: RPMS/sh4/stlinux20-sh4-cpp-doc-3.4.3-22.sh4.rpm
-#Wrote: RPMS/sh4/stlinux20-sh4-g++-3.4.3-22.sh4.rpm
-#Wrote: RPMS/sh4/stlinux20-sh4-gcc-doc-3.4.3-22.sh4.rpm
 
 # END OF BOOTSTRAP
 
@@ -352,6 +335,7 @@ LIBTERMCAP_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 LIBTERMCAP_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP)-$(LIBTERMCAP_VERSION).sh4.rpm
 LIBTERMCAP_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP_DEV)-$(LIBTERMCAP_VERSION).sh4.rpm
 LIBTERMCAP_DOC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(LIBTERMCAP_DOC)-$(LIBTERMCAP_VERSION).sh4.rpm
@@ -419,11 +403,11 @@ NCURSES_PATCHES :=
 endif STM24
 endif !STM23
 endif !STM22
+
 NCURSES_RPM := RPMS/sh4/$(STLINUX)-sh4-$(NCURSES)-$(NCURSES_VERSION).sh4.rpm
 NCURSES_BASE_RPM := RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_BASE)-$(NCURSES_VERSION).sh4.rpm
 NCURSES_DEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(NCURSES_DEV)-$(NCURSES_VERSION).sh4.rpm
 
-$(DEPDIR)/ncurses.do_compile \
 $(NCURSES_RPM) $(NCURSES_BASE_RPM) $(NCURSES_DEV_RPM): \
 		$(if $(NCURSES_SPEC_PATCH),Patches/$(NCURSES_SPEC_PATCH)) \
 		$(if $(NCURSES_PATCHES),$(NCURSES_PATCHES:%=Patches/%)) \
@@ -434,7 +418,6 @@ $(NCURSES_RPM) $(NCURSES_BASE_RPM) $(NCURSES_DEV_RPM): \
 	$(if $(NCURSES_PATCHES),cp $(NCURSES_PATCHES:%=Patches/%) SOURCES/ &&) \
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	rpmbuild $(DRPMBUILD) -bb -v --clean --target=sh4-linux SPECS/$(NCURSES_SPEC)
-	touch $(DEPDIR)/ncurses.do_compile
 
 $(DEPDIR)/min-$(NCURSES_BASE) $(DEPDIR)/std-$(NCURSES_BASE) $(DEPDIR)/max-$(NCURSES_BASE) \
 $(DEPDIR)/$(NCURSES_BASE): \
@@ -489,6 +472,7 @@ BASE_PASSWD_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 BASE_PASSWD_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BASE_PASSWD)-$(BASE_PASSWD_VERSION).sh4.rpm
 
 $(BASE_PASSWD_RPM): \
@@ -540,6 +524,7 @@ MAKEDEV_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 MAKEDEV_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MAKEDEV)-$(MAKEDEV_VERSION).sh4.rpm
 
 $(MAKEDEV_RPM): \
