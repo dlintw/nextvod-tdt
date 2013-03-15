@@ -55,7 +55,7 @@ GLIBC_SPEC_PATCH := $(GLIBC_SPEC)23.diff
 GLIBC_PATCHES := stm-target-glibc-sysincludes.patch
 else !STM23
 # if STM24
-GLIBC_VERSION := 2.10.1-21
+GLIBC_VERSION := 2.10.2-38
 GLIBC_RAWVERSION := $(firstword $(subst -, ,$(GLIBC_VERSION)))
 GLIBC_SPEC := stm-target-$(GLIBC).spec
 GLIBC_SPEC_PATCH :=
