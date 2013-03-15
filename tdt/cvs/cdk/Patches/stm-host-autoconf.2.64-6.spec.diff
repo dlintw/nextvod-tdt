@@ -1,0 +1,18 @@
+--- stm-host-autoconf.spec.orig	2012-07-12 12:08:25.964242762 +0200
++++ stm-host-autoconf.spec	2012-07-12 12:08:25.940242761 +0200
+@@ -9,6 +9,7 @@
+ Patch0   : autoconf-2.64-nodefault_path.patch
+ Patch1   : autoconf-2.64-m4_detection_not_portable.patch
+ Patch2   : autoconf-2.64-m4_detection_not_portable2.patch
++Patch3   : stm-host-autoconf.%{version}-%{release}.diff
+ Requires : %{_stm_pkg_prefix}-host-filesystem
+ Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+ Prefix   : %{_stm_install_prefix}
+@@ -35,6 +36,7 @@
+ %patch0 -p1
+ %patch1 -p1
+ %patch2 -p1
++%patch3 -p1
+ 
+ %build
+ %host_setup
