@@ -1240,11 +1240,13 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 			printf("gst_dvbvideosink_render - h264 nal lenght replaced\n");
 #endif
 		}
+#if 1
 		else if (self->streamtype == STREAMTYPE_DIVX5 || self->streamtype == STREAMTYPE_XVID) {
 			if (data_position == 0) {
 				int itr;
+				int end_itr = (pes_packet_size>128?124:pes_packet_size - 4);
 				unsigned char *data_p = data;
-				for (itr = 0; itr < (pes_packet_size>128?128:pes_packet_size); itr++) {
+				for (itr = 0; itr < end_itr; itr++) {
 					if (data_p[0] == 0x00 && data_p[1] == 0x00 && data_p[2] == 0x01 && data_p[3] == 0xb6) {
 						//video object layer found
 						int frametype = ((data_p[4] >> 6) & 0x3);
@@ -1256,6 +1258,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 				}
 			}
 		}
+#endif
 
 #ifdef DEBUG_EXT
 		printf("gst_dvbvideosink_render - build PESHeader\n");
