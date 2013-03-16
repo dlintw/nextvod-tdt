@@ -950,6 +950,7 @@ buildPesHeader(unsigned char *data, int size, unsigned long long int timestamp,
 		/* do we have a timestamp? */
 	if (timestamp != GST_CLOCK_TIME_NONE) {
 		unsigned long long pts = timestamp * 9LL / 100000 /* convert ns to 90kHz */;
+		//printf("PTS: %llu\n", pts);
 
 		// Timestamp present
 		pes_header[7] = 0x80; // Flag
@@ -1045,6 +1046,9 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 	unsigned char *data = GST_BUFFER_DATA(buffer);
 	unsigned int data_len = GST_BUFFER_SIZE (buffer);
 	long long        timestamp = GST_BUFFER_TIMESTAMP(buffer);
+	//unsigned char keyframe = !GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT);
+
+	//printf("kf: %d ts: %llu\n", keyframe, timestamp);
 
 	if (self->streamtype == STREAMTYPE_UNKNOWN) {
 		GST_ELEMENT_ERROR (self, STREAM, FORMAT, (NULL), ("hardware decoder not setup (no caps in pipeline?)"));
@@ -1236,6 +1240,22 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 			printf("gst_dvbvideosink_render - h264 nal lenght replaced\n");
 #endif
 		}
+		else if (self->streamtype == STREAMTYPE_DIVX5 || self->streamtype == STREAMTYPE_XVID) {
+			if (data_position == 0) {
+				int itr;
+				unsigned char *data_p = data;
+				for (itr = 0; itr < (pes_packet_size>128?128:pes_packet_size); itr++) {
+					if (data_p[0] == 0x00 && data_p[1] == 0x00 && data_p[2] == 0x01 && data_p[3] == 0xb6) {
+						//video object layer found
+						int frametype = ((data_p[4] >> 6) & 0x3);
+						if (frametype == 1 /*god hates p-frames*/)
+							timestamp = -1;
+						break;
+					}
+					data_p++;
+				}
+			}
+		}
 
 #ifdef DEBUG_EXT
 		printf("gst_dvbvideosink_render - build PESHeader\n");
@@ -1256,7 +1276,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 		Hexdump(pes_header, pes_header_size);
 		if (self->runtime_header_data_size > 0)
 			Hexdump(self->runtime_header_data, self->runtime_header_data_size);
-		Hexdump(data + data_position, pes_packet_size>16?16:pes_packet_size);
+		Hexdump(data + data_position, pes_packet_size>128?128:pes_packet_size);
 		printf("<--\n");
 #endif
 
