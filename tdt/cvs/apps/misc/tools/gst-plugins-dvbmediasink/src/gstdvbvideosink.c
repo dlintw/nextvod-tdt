@@ -1249,7 +1249,7 @@ gst_dvbvideosink_render (GstBaseSink * sink, GstBuffer * buffer)
 						//video object layer found
 						int frametype = ((data_p[4] >> 6) & 0x3);
 						if (frametype == 1 /*god hates p-frames*/)
-							timestamp = -1;
+							timestamp = GST_CLOCK_TIME_NONE;
 						break;
 					}
 					data_p++;
