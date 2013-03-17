@@ -348,15 +348,6 @@ $(HOST_MTD_UTILS): $(HOST_MTD_UTILS_RPM)
 	@rpm  $(DRPM) --ignorearch --nodeps -Uhv $< && \
 	touch .deps/$(notdir $@)
 
-#
-# BOOTSTRAP-HOST
-#
-$(DEPDIR)/bootstrap-host: | \
-		$(CCACHE_BIN) host-rpmconfig host-base-passwd host-distributionutils \
-		host-filesystem host-autotools $(HOST_AUTOMAKE) $(HOST_AUTOCONF) $(HOST_PKGCONFIG) \
-		$(HOST_MTD_UTILS)
-	$(if $(HOST_MTD_UTILS_RPM),[ "x$*" = "x" ] && touch -r $(HOST_MTD_UTILS_RPM) $@ || true)
-
 ##############################   BOOTSTRAP-CROSS   #############################
 #
 # CROSS_DISTRIBUTIONUTILS
