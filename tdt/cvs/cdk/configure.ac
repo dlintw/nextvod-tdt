@@ -1131,6 +1131,11 @@ AC_SUBST(DRPM)
 AC_SUBST(DRPMBUILD)
 
 #
+# mkdir archivedir
+#
+test -d $archivedir || mkdir $archivedir
+
+#
 # internal
 #
 AC_SUBST_FILE(ARCHIVE)
