@@ -2048,7 +2048,9 @@ $(DEPDIR)/%libusb: $(DEPDIR)/libusb.do_compile
 #
 # graphlcd
 #
-$(DEPDIR)/graphlcd.do_prepare: bootstrap libusb @DEPENDS_graphlcd@
+$(DEPDIR)/graphlcd.do_prepare: bootstrap libfreetype libusb @DEPENDS_graphlcd@
+	[ -d "$(archivedir)/graphlcd-base-touchcol.git" ] && \
+	(cd $(archivedir)/graphlcd-base-touchcol.git; git pull ; git checkout touchcol; cd "$(buildprefix)";); \
 	@PREPARE_graphlcd@
 	touch $@
 
