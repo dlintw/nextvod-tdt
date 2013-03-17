@@ -213,7 +213,7 @@ e2openplugin-OpenWebif.git;git://github.com/E2OpenPlugins/e2openplugin-OpenWebif
 #
 # EXTERNAL_LCD
 #
-graphlcd-base-touchcol.git;git://projects.vdr-developer.org/graphlcd-base.git;a39f265732d0bc28cb66b58b5ecf1964a130d02b;touchcol
+graphlcd-base-touchcol.git;git://projects.vdr-developer.org/graphlcd-base.git;touchcol
 libusb-0.1.12.tar.gz;http://downloads.sourceforge.net/libusb
 libusb-1.0.8.tar.bz2;http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-1.0.8
 libusb-compat-0.1.3.tar.bz2;http://downloads.sourceforge.net/project/libusb/libusb-compat-0.1/libusb-compat-0.1.3

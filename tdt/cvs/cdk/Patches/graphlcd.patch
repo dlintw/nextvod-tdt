@@ -1,6 +1,6 @@
---- graphlcd-base/Make.config	2011-12-06 23:03:38.986910111 +0100
-+++ graphlcd-base/Make.config.fix	2011-12-06 23:03:18.216901196 +0100
-@@ -3,10 +3,10 @@
+--- graphlcd-base/Make.config.orig	2013-03-17 10:50:28.611877538 +0100
++++ graphlcd-base/Make.config	2013-03-17 10:50:29.111877749 +0100
+@@ -3,7 +3,7 @@
  
  ### The C compiler and options:
  
@@ -8,12 +8,17 @@
 +CC       = sh4-linux-gcc
  CFLAGS   = -O2
  
--CXX      = g++
-+CXX      = sh4-linux-g++
- CXXFLAGS = -g -O2 -Wall -Woverloaded-virtual
- #CXXFLAGS = -g -ggdb -O0 -Wall -Woverloaded-virtual
+ #CXX      = g++
+@@ -13,7 +13,7 @@
  
-@@ -20,14 +20,15 @@
+ # no CXX given at all: force g++
+ ifeq (x$(CXX)x,xx)
+-  CXX=g++
++  CXX=sh4-linux-g++
+ endif
+ 
+ # CXX set to clang++: force clang
+@@ -40,14 +40,15 @@
  DESTDIR = /usr/local
  endif
  
@@ -33,13 +38,25 @@
 +INCLUDES += -I$(DESTDIR)/include
  
  DEFINES += -D_GNU_SOURCE
+ # define HAVE_DEBUG when invoking "make" if you want to use debugging
+@@ -64,7 +65,7 @@
+ HAVE_FREETYPE2=1
  
-@@ -40,4 +41,4 @@
+ # comment this variable out if you don't want to use fontconfig font names
+-HAVE_FONTCONFIG=1
++#HAVE_FONTCONFIG=1
+ 
+ # comment this variable out if you want binaries to be stripped when installing (for production-level binaries or packages)
+ #HAVE_STRIP = -s
+@@ -75,7 +76,7 @@
  
  # uncomment this variable if you want to enable the experimental AX 206 based digital photo frame driver
  # Read DRIVER.ax206dpf before use!
 -#HAVE_AX206DPF_EXPERIMENTAL=1
 +HAVE_AX206DPF_EXPERIMENTAL=1
+ 
+ # uncomment this variable if you want to enable the experimental support for picoLCD 256x64 
+ #HAVE_picoLCD_256x64_EXPERIMENTAL=1
 --- graphlcd-base/Makefile	2011-12-06 23:03:38.986910111 +0100
 +++ graphlcd-base/Makefile.fix	2011-12-06 23:03:18.216901196 +0100
 @@ -7,6 +7,7 @@
@@ -61,19 +78,21 @@
  	@$(MAKE) -C glcdgraphics uninstall
 --- graphlcd-base/glcddrivers/port.c	2011-12-07 22:31:41.607561726 +0100
 +++ graphlcd-base/glcddrivers/port.fix	2011-12-07 22:31:47.877565426 +0100
-@@ -16,12 +16,35 @@
- #include <syslog.h>
+@@ -18,13 +18,36 @@
  #include <unistd.h>
  #include <termios.h>
+ #include <pthread.h>
+-#include <sys/io.h>
 +#ifndef __sh__
- #include <sys/io.h>
++ #include <sys/io.h>
 +#endif
  #include <sys/ioctl.h>
  #include <linux/ppdev.h>
  #include <linux/parport.h>
  
-+#ifdef __sh__
  
+ 
++#ifdef __sh__
 +/* konfetti: those are currently only dummy. not tested, not really
 + * thinking on it. it needs revise for the params etc. also we need
 + * to revise the assembler code below. but for now its ok because
@@ -92,33 +111,11 @@
 +{
 +	return syscall(__NR_iopl, level);
 +}
-+
 +#endif
- 
++
  #include "port.h"
  
-@@ -31,17 +54,21 @@
- static inline int port_in(int port)
- {
-     unsigned char value;
-+#ifndef __sh__
-     __asm__ volatile ("inb %1,%0"
-                       : "=a" (value)
-                       : "d" ((unsigned short) port));
-+#endif
-     return value;
- }
- 
- static inline void port_out(unsigned short int port, unsigned char val)
- {
-+#ifndef __sh__
-     __asm__ volatile ("outb %0,%1\n"
-                       :
-                       : "a" (val), "d" (port));
-+#endif
- }
- 
- cParallelPort::cParallelPort()
+ #if defined(__linux__) && (defined(__i386__) || defined(__x86_64__))
 --- graphlcd-base/graphlcd.conf	2011-12-11 17:28:26.778505886 +0100
 +++ graphlcd-base/graphlcd.conf.fix	2011-12-11 17:28:33.998507890 +0100
 @@ -29,7 +29,7 @@
@@ -616,7 +613,7 @@
  
  install: $(PRGNAME)
  	install -d $(BINDIR)
--	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
+-	install -m 755 -o root -g root $(HAVE_STRIP) $(PRGNAME) $(BINDIR)
 +	install -m 755 $(PRGNAME) $(BINDIR)
  
  uninstall:
@@ -627,7 +624,7 @@
  
  install: $(PRGNAME)
  	install -d $(BINDIR)
--	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
+-	install -m 755 -o root -g root $(HAVE_STRIP) $(PRGNAME) $(BINDIR)
 +	install -m 755 $(PRGNAME) $(BINDIR)
  
  uninstall:
@@ -638,7 +635,7 @@
  
  install: $(PRGNAME)
  	install -d $(BINDIR)
--	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
+-	install -m 755 -o root -g root $(HAVE_STRIP) $(PRGNAME) $(BINDIR)
 +	install -m 755 $(PRGNAME) $(BINDIR)
  	
  uninstall:
@@ -649,7 +646,7 @@
  
  install: $(PRGNAME)
  	install -d $(BINDIR)
--	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
+-	install -m 755 -o root -g root $(HAVE_STRIP) $(PRGNAME) $(BINDIR)
 +	install -m 755 $(PRGNAME) $(BINDIR)
  
  uninstall:
@@ -660,7 +657,7 @@
  
  install: $(PRGNAME)
  	install -d $(BINDIR)
--	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
+-	install -m 755 -o root -g root $(HAVE_STRIP) $(PRGNAME) $(BINDIR)
 +	install -m 755 $(PRGNAME) $(BINDIR)
  
  uninstall:
@@ -671,7 +668,7 @@
  
  install: $(PRGNAME)
  	install -d $(BINDIR)
--	install -m 755 -o root -g root -s $(PRGNAME) $(BINDIR)
+-	install -m 755 -o root -g root $(HAVE_STRIP) $(PRGNAME) $(BINDIR)
 +	install -m 755 $(PRGNAME) $(BINDIR)
  
  uninstall:
