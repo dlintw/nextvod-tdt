@@ -11,7 +11,7 @@ $(DEPDIR)/console_data: bootstrap @DEPENDS_console_data@
 			--prefix=$(targetprefix) \
 			--with-main_compressor=gzip && \
 		@INSTALL_console_data@
-#	@CLEANUP_console_data@
+#	@DISTCLEANUP_console_data@
 	touch $@
 
 #
@@ -41,8 +41,9 @@ endif !STM23
 endif !STM22
 SYSVINIT_RPM := RPMS/sh4/$(STLINUX)-sh4-$(SYSVINIT)-$(SYSVINIT_VERSION).sh4.rpm
 INITSCRIPTS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(INITSCRIPTS)-$(SYSVINIT_VERSION).sh4.rpm
+SYSVINITTOOLS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(SYSVINITTOOLS)-$(SYSVINIT_VERSION).sh4.rpm
 
-$(SYSVINIT_RPM) $(INITSCRIPTS_RPM): \
+$(SYSVINIT_RPM) $(SYSVINITTOOLS_RPM) $(INITSCRIPTS_RPM): \
 		$(if $(SYSVINIT_SPEC_PATCH),Patches/$(SYSVINIT_SPEC_PATCH)) \
 		$(if $(SYSVINIT_PATCHES),$(SYSVINIT_PATCHES:%=Patches/%)) \
 		$(archivedir)/$(STLINUX)-target-$(SYSVINIT)-$(SYSVINIT_VERSION).src.rpm
@@ -62,7 +63,12 @@ $(DEPDIR)/%$(SYSVINIT): $(SYSVINIT_ADAPTED_ETC_FILES:%=root/etc/%) \
 		[ -f $$i ] && $(INSTALL) -m644 $$i $(prefix)/$*cdkroot/etc/$$i || true; \
 		[ "$${i%%/*}" = "init.d" ] && chmod 755 $(prefix)/$*cdkroot/etc/$$i || true; done )
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
+
+$(DEPDIR)/$(SYSVINITTOOLS): \
+$(DEPDIR)/%$(SYSVINITTOOLS): $(SYSVINITTOOLS_RPM)
+	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
+		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $<
+	[ "x$*" = "x" ] && touch $@ || true
 
 $(DEPDIR)/min-$(INITSCRIPTS) $(DEPDIR)/std-$(INITSCRIPTS) $(DEPDIR)/max-$(INITSCRIPTS) \
 $(DEPDIR)/$(INITSCRIPTS): \
@@ -95,7 +101,6 @@ $(DEPDIR)/%$(INITSCRIPTS): $(INITSCRIPTS_ADAPTED_ETC_FILES:%=root/etc/%) \
 			$(hostprefix)/bin/target-initdconfig --add $${s#init.d/} || \
 			echo "Unable to enable initd service: $${s#init.d/}" ; done && rm *rpmsave *.orig 2>/dev/null || true )
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # NETBASE
@@ -121,6 +126,7 @@ NETBASE_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 NETBASE_RPM := RPMS/sh4/$(STLINUX)-sh4-$(NETBASE)-$(NETBASE_VERSION).sh4.rpm
 
 $(NETBASE_RPM): \
@@ -150,7 +156,6 @@ $(DEPDIR)/%$(NETBASE): \
 			$(INSTALL) -d $$i; \
 		done )
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # BC
@@ -176,6 +181,7 @@ BC_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 BC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BC)-$(BC_VERSION).sh4.rpm
 
 $(BC_RPM): \
@@ -194,7 +200,6 @@ $(DEPDIR)/%$(BC): $(BC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force --noscripts -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # FINDUTILS
@@ -220,6 +225,7 @@ FINDUTILS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 FINDUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(FINDUTILS)-$(FINDUTILS_VERSION).sh4.rpm
 
 $(FINDUTILS_RPM): \
@@ -238,7 +244,6 @@ $(DEPDIR)/%$(FINDUTILS): $(FINDUTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps  -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $<
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # DISTRIBUTIONUTILS
@@ -265,9 +270,9 @@ DISTRIBUTIONUTILS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 DISTRIBUTIONUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(DISTRIBUTIONUTILS)-$(DISTRIBUTIONUTILS_VERSION).sh4.rpm
 DISTRIBUTIONUTILS_DOC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(DISTRIBUTIONUTILS_DOC)-$(DISTRIBUTIONUTILS_VERSION).sh4.rpm
-
 
 $(DISTRIBUTIONUTILS_RPM) $(DISTRIBUTIONUTILS_DOC_RPM): \
 		$(if $(DISTRIBUTIONUTILS_SPEC_PATCH),Patches/$(DISTRIBUTIONUTILS_SPEC_PATCH)) \
@@ -319,6 +324,7 @@ MTD_UTILS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 MTD_UTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(MTD_UTILS)-$(MTD_UTILS_VERSION).sh4.rpm
 
 $(MTD_UTILS_RPM): \
@@ -337,7 +343,6 @@ $(DEPDIR)/%$(MTD_UTILS): $(MTD_UTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^)
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # BASH
@@ -363,6 +368,7 @@ BASH_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 BASH_RPM := RPMS/sh4/$(STLINUX)-sh4-$(BASH)-$(BASH_VERSION).sh4.rpm
 
 $(BASH_RPM): \
@@ -382,7 +388,6 @@ $(DEPDIR)/%$(BASH): $(DEPDIR)/%$(GLIBC) $(DEPDIR)/%$(LIBTERMCAP) $(BASH_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --nodeps --noscripts --force -Uhvv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 min-$(BASH).do_clean std-$(BASH).do_clean max-$(BASH).do_clean $(BASH).do_clean: \
 %$(BASH).do_clean:
@@ -411,12 +416,13 @@ COREUTILS_PATCHES :=
 else !STM23
 # if STM24
 COREUTILS_VERSION := 8.9-19
-COREUTILS_SPEC := stm-target-$(COREUTILS).spec 
+COREUTILS_SPEC := stm-target-$(COREUTILS).spec
 COREUTILS_SPEC_PATCH :=
-COREUTILS_PATCHES := 
+COREUTILS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 COREUTILS_RPM := RPMS/sh4/$(STLINUX)-sh4-$(COREUTILS)-$(COREUTILS_VERSION).sh4.rpm
 
 $(COREUTILS_RPM): \
@@ -435,7 +441,6 @@ $(DEPDIR)/%$(COREUTILS): $(DEPDIR)/%$(GLIBC) $(COREUTILS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # NET-TOOLS
@@ -461,6 +466,7 @@ NET_TOOLS_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 NET_TOOLS_RPM = RPMS/sh4/$(STLINUX)-sh4-$(NET_TOOLS)-$(NET_TOOLS_VERSION).sh4.rpm
 
 $(NET_TOOLS_RPM): \
@@ -479,7 +485,6 @@ $(DEPDIR)/%$(NET_TOOLS): $(DEPDIR)/%$(GLIBC) $(NET_TOOLS_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # SED
@@ -505,6 +510,7 @@ SED_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 SED_RPM = RPMS/sh4/$(STLINUX)-sh4-$(SEDX)-$(SED_VERSION).sh4.rpm
 
 $(SED_RPM): \
@@ -523,7 +529,6 @@ $(DEPDIR)/%$(SEDX): $(DEPDIR)/%$(GLIBC) $(SED_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # DIFF
@@ -550,6 +555,7 @@ DIFF_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 DIFF_RPM := RPMS/sh4/$(STLINUX)-sh4-$(DIFF)-$(DIFF_VERSION).sh4.rpm
 DIFF_DOC_RPM := RPMS/sh4/$(STLINUX)-sh4-$(DIFF)-doc-$(SED_VERSION).sh4.rpm
 
@@ -569,14 +575,12 @@ $(DEPDIR)/%$(DIFF): $(DEPDIR)/%$(GLIBC) $(DIFF_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) .deps/$(notdir $@) || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 $(DEPDIR)/min-$(DIFF_DOC) $(DEPDIR)/std-$(DIFF_DOC) $(DEPDIR)/max-$(DIFF_DOC) $(DEPDIR)/$(DIFF_DOC): \
 $(DEPDIR)/%$(DIFF_DOC): $(DIFF_DOC_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # FILE
@@ -602,6 +606,7 @@ FILE_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 FILE_RPM := RPMS/sh4/stlinux20-sh4-file-4.17-3.sh4.rpm
 
 $(FILE_RPM): \
@@ -619,7 +624,6 @@ $(DEPDIR)/%$(FILE): $(FILE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # TAR
@@ -645,6 +649,7 @@ TAR_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 TAR_RPM := RPMS/sh4/$(STLINUX)-sh4-$(TAR)-$(TAR_VERSION).sh4.rpm
 
 $(TAR_RPM): \
@@ -663,7 +668,6 @@ $(DEPDIR)/%$(TAR): $(DEPDIR)/%$(GLIBC) $(TAR_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch -r $(lastword $^) $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # STRACE
@@ -689,6 +693,7 @@ STRACE_PATCHES :=
 # endif STM24
 endif !STM23
 endif !STM22
+
 STRACE_RPM := RPMS/sh4/$(STLINUX)-sh4-$(STRACE)-$(STRACE_VERSION).sh4.rpm
 
 $(STRACE_RPM): \
@@ -707,7 +712,6 @@ $(DEPDIR)/%$(STRACE): $(DEPDIR)/%$(GLIBC) $(STRACE_RPM)
 	@rpm --dbpath $(prefix)/$*cdkroot-rpmdb $(DRPM) --ignorearch  --force --noscripts -Uhv \
 		--badreloc --relocate $(targetprefix)=$(prefix)/$*cdkroot $(lastword $^) && \
 	[ "x$*" = "x" ] && touch $@ || true
-	@TUXBOX_YAUD_CUSTOMIZE@
 
 #
 # UTIL LINUX
@@ -718,6 +722,7 @@ UTIL_LINUX_VERSION = 2.16.1-22
 UTIL_LINUX_SPEC = stm-target-$(UTIL_LINUX).spec
 UTIL_LINUX_SPEC_PATCH =
 UTIL_LINUX_PATCHES =
+
 UTIL_LINUX_RPM := RPMS/sh4/$(STLINUX)-sh4-$(UTIL_LINUX)-$(UTIL_LINUX_VERSION).sh4.rpm
 
 $(UTIL_LINUX_RPM): \
@@ -739,5 +744,4 @@ $(DEPDIR)/$(UTIL_LINUX): $(UTIL_LINUX_RPM)
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/blkid.pc
 	$(REWRITE_LIBDEP)/lib{blkid,uuid}.la
 	$(REWRITE_LIBDIR)/lib{blkid,uuid}.la
-	@TUXBOX_YAUD_CUSTOMIZE@
 endif STM24
