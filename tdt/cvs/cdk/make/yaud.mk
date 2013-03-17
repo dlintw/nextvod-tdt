@@ -9,18 +9,17 @@ min-prepare-yaud std-prepare-yaud max-prepare-yaud: \
 #
 $(DEPDIR)/min-bootstrap $(DEPDIR)/std-bootstrap $(DEPDIR)/max-bootstrap $(DEPDIR)/bootstrap: \
 $(DEPDIR)/%bootstrap: \
-	%libtool \
 	%$(FILESYSTEM) \
 	| %$(GLIBC) \
 	%$(CROSS_LIBGCC) \
 	%$(GLIBC) \
 	%$(GLIBC_DEV) \
+	%libz \
 	%$(BINUTILS) \
 	%$(BINUTILS_DEV) \
 	%$(GMP) \
 	%$(MPFR) \
 	%$(MPC) \
-	%libz \
 	%$(LIBSTDC) \
 	%$(LIBSTDC_DEV)
 	@[ "x$*" = "x" ] && touch -r RPMS/sh4/$(STLINUX)-sh4-$(LIBSTDC)-$(GCC_VERSION).sh4.rpm $@ || true
@@ -40,11 +39,12 @@ min-bare-os std-bare-os max-bare-os bare-os: \
 	%module_init_tools \
 	%busybox \
 	\
+	%$(SYSVINIT) \
+	%$(SYSVINITTOOLS) \
 	%$(INITSCRIPTS) \
 	%openrdate \
 	%$(NETBASE) \
 	%$(BC) \
-	%$(SYSVINIT) \
 	%$(DISTRIBUTIONUTILS) \
 	\
 	%e2fsprogs \
