@@ -97,6 +97,60 @@ release_xbmc_adb_box: release_xbmc_common_utils
 	rm -f $(prefix)/release/lib/firmware/dvb-fe-{cx24116,cx21143}.fw
 
 #
+# release_xbmc_spark
+#
+release_xbmc_spark: release_xbmc_common_utils
+	echo "spark" > $(prefix)/release/etc/hostname
+	cp $(buildprefix)/root/release/halt_spark $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/lnb/lnb.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release/lib/modules/
+	[ -e $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko ] && cp $(buildprefix)/root/release/encrypt_spark$(KERNELSTMLABEL).ko $(prefix)/release/lib/modules/encrypt.ko || true
+	cp $(targetprefix)/boot/video_7111.elf $(prefix)/release/boot/video.elf
+	cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release/boot/audio.elf
+	mv $(prefix)/release/lib/firmware/component_7111_mb618.fw $(prefix)/release/lib/firmware/component.fw
+	rm $(prefix)/release/lib/firmware/component_7105_pdk7105.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-{avl2108,avl6222,cx24116,cx21143,stv6306}.fw
+	rm -f $(prefix)/release/bin/evremote
+	rm -f $(prefix)/release/bin/gotosleep
+	rm -f $(prefix)/release/bin/vdstandby
+	cp -dp $(buildprefix)/root/etc/lircd_spark.conf $(prefix)/release/etc/lircd.conf
+	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+	mkdir -p $(prefix)/release/var/run/lirc
+	cp -f $(buildprefix)/root/sbin/flash_* $(prefix)/release/sbin
+	cp -f $(buildprefix)/root/sbin/nand* $(prefix)/release/sbin
+
+#
+# release_xbmc_spark7162
+#
+release_xbmc_spark7162: release_xbmc_common_utils
+	echo "spark7162" > $(prefix)/release/etc/hostname
+	cp $(buildprefix)/root/release/halt_spark $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/aotom/aotom.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7105.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
+	if [ -e $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/i2c_spi/i2s.ko ]; then \
+		cp -f $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/i2c_spi/i2s.ko $(prefix)/release/lib/modules/; \
+	fi
+	cp $(targetprefix)/boot/video_7105.elf $(prefix)/release/boot/video.elf
+	cp $(targetprefix)/boot/audio_7105.elf $(prefix)/release/boot/audio.elf
+	mv $(prefix)/release/lib/firmware/component_7105_pdk7105.fw $(prefix)/release/lib/firmware/component.fw
+	rm -f $(prefix)/release/lib/firmware/component_7111_mb618.fw
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-{avl2108,avl6222,cx24116,cx21143,stv6306}.fw
+	rm -f $(prefix)/release/bin/evremote
+	rm -f $(prefix)/release/bin/gotosleep
+	rm -f $(prefix)/release/bin/vdstandby
+	cp -dp $(buildprefix)/root/etc/lircd_spark7162.conf $(prefix)/release/etc/lircd.conf
+	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release/usr/bin/
+	mkdir -p $(prefix)/release/var/run/lirc
+	cp -f $(buildprefix)/root/sbin/flashcp $(prefix)/release/sbin
+	cp -f $(buildprefix)/root/sbin/flash_* $(prefix)/release/sbin
+	cp -f $(buildprefix)/root/sbin/nand* $(prefix)/release/sbin
+
+#
 # release_base
 #
 # the following target creates the common file base
