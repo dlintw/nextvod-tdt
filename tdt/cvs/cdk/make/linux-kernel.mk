@@ -466,10 +466,9 @@ PATCH_STR=_0207_5
 GIT_STR=207-5
 endif
 
-STM24_DVB_PATCH = linux-sh4-linuxdvb_stm24$(PATCH_STR).patch
-
 COMMONPATCHES_24 = \
-		$(STM24_DVB_PATCH) \
+		linux-sh4-linuxdvb_stm24$(PATCH_STR).patch \
+		$(if $(P0207)$(P0209),linux-sh4-makefile_stm24.patch) \
 		linux-sh4-sound_stm24$(PATCH_STR).patch \
 		linux-sh4-time_stm24$(PATCH_STR).patch \
 		linux-sh4-init_mm_stm24$(PATCH_STR).patch \
@@ -489,7 +488,6 @@ COMMONPATCHES_24 = \
 		$(if $(P0209),linux-sh4-dwmac_stm24_0209.patch) \
 		$(if $(P0207),linux-sh4-sti7100_missing_clk_alias_stm24$(PATCH_STR).patch) \
 		$(if $(P0209),linux-sh4-directfb_stm24$(PATCH_STR).patch)
-
 
 TF7700PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-tf7700_setup_stm24$(PATCH_STR).patch \
