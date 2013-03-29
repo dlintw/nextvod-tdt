@@ -2,7 +2,7 @@
 
 MODDIR=/lib/modules
 echo "init frontpanel"
-insmod $MODDIR/nuvoton.ko paramDebug=0
+insmod $MODDIR/cn_micom.ko paramDebug=0
 insmod $MODDIR/simu_button.ko
 
 if [ -e /var/etc/.firstboot ]; then
@@ -64,7 +64,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    fi
    insmod $MODDIR/pseudocard.ko
 
-   insmod $MODDIR/lnb.ko type=a8293
+   insmod $MODDIR/lnb.ko type=pio
    insmod $MODDIR/stv090x.ko paramDebug=0
    insmod $MODDIR/dummy_cic.ko
    if [ $player -gt 131 ]; then
