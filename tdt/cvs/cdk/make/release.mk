@@ -223,6 +223,24 @@ release_ufs922: release_common_utils
 	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
 
 #
+# release_ufc960
+#
+release_ufc960: release_common_utils
+	echo "ufc960" > $(prefix)/release/etc/hostname
+	cp $(buildprefix)/root/release/halt_ufs $(prefix)/release/etc/init.d/halt
+	chmod 755 $(prefix)/release/etc/init.d/halt
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/micom/micom.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontends/*.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7109c3.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/ufs922_fan/fan_ctrl.ko $(prefix)/release/lib/modules/
+	cp $(targetprefix)/boot/video_7109.elf $(prefix)/release/boot/video.elf
+	rm -f $(prefix)/release/lib/firmware/dvb-fe-{avl2108,avl6222,cx24116}.fw
+	rm -f $(prefix)/release/bin/evremote
+	rm -f $(prefix)/release/bin/gotosleep
+	cp -f $(buildprefix)/root/usr/local/share/enigma2/keymap_ufs910.xml $(prefix)/release/usr/local/share/enigma2/keymap.xml
+
+
+#
 # release_spark
 #
 release_spark: release_common_utils
