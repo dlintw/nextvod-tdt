@@ -380,6 +380,7 @@ AC_ARG_ENABLE(adb_box,
 	esac],[enable_adb_box=no])
 AM_CONDITIONAL(ENABLE_ADB_BOX,test "$enable_adb_box" = "yes")
 AC_SUBST(ADB_BOX)
+
 AC_ARG_ENABLE(ufs922,
 	AS_HELP_STRING(--enable-ufs922,    enable kathrein ufs922 stuff),
 	[case "${enableval}" in
@@ -387,6 +388,14 @@ AC_ARG_ENABLE(ufs922,
 	esac],[enable_ufs922=no])
 AM_CONDITIONAL(ENABLE_UFS922,test "$enable_ufs922" = "yes")
 AC_SUBST(UFS922)
+
+AC_ARG_ENABLE(ufc960,
+	AS_HELP_STRING(--enable-ufc960,    enable kathrein ufc960 stuff),
+	[case "${enableval}" in
+		yes) UFC960=ufc960 ;;
+	esac],[enable_ufc960=no])
+AM_CONDITIONAL(ENABLE_UFC960,test "$enable_ufc960" = "yes")
+AC_SUBST(UFC960)
 
 AC_ARG_ENABLE(ufs910,
 	AS_HELP_STRING(--enable-ufs910,    enable kathrein ufs910 stuff),
@@ -1197,6 +1206,7 @@ update http prefix          : $updatehttpprefix
 ufs910 stuff                : $enable_ufs910
 ufs912 stuff                : $enable_ufs912
 ufs922 stuff                : $enable_ufs922
+ufc960 stuff                : $enable_ufc960
 topfield stuff              : $enable_tf7700
 Fortis/hdbox stuff          : $enable_fortis_hdbox
 spider-box hl101 stuff      : $enable_hl101

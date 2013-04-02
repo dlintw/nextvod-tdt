@@ -68,6 +68,19 @@ UFS922PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ftdi_sio.c_stm22.patch \
 		linux-ufs922_stboards_stm22.patch
 
+UFC960PATCHES_41 = $(COMMONPATCHES_41) \
+		linux-ufs922_stasc_stm22.patch \
+		linux-ufs922_stmmac_stm22.patch \
+		linux-ufs922_setup_stm22.patch \
+		linux-fat_stm22.patch \
+		linux-fuse_stm22.patch \
+		linux-net_stm22.patch \
+		linux-tune_stm22.patch \
+		linux-usbwait123_stm22.patch \
+		linux-jffs2-lzma_stm22.patch \
+		linux-ftdi_sio.c_stm22.patch \
+		linux-ufs922_stboards_stm22.patch
+
 TF7700PATCHES_41 = $(COMMONPATCHES_41) \
 		linux-ufs922_stasc_stm22.patch \
 		linux-tf7700_setup_stm22.patch \
@@ -191,6 +204,7 @@ KERNELPATCHES_41 = \
 		$(if $(VIP1_V2),$(VIP2PATCHES_41)) \
 		$(if $(VIP2_V1),$(VIP2PATCHES_41)) \
 		$(if $(UFS922),$(UFS922PATCHES_41)) \
+		$(if $(UFC960),$(UFC960PATCHES_41)) \
 		$(if $(CUBEMOD),$(CUBEPATCHES_041)) \
 		$(if $(UFS910),$(UFS910PATCHES_41)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_41)) \
@@ -279,6 +293,12 @@ SPARK7162PATCHES_23 = $(COMMONPATCHES_23) \
 		fortis_hdbox_dvb_core_stm23.patch
 
 UFS922PATCHES_23 = $(COMMONPATCHES_23) \
+		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
+		$(if $(P0123),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch)
+
+UFC960PATCHES_23 = $(COMMONPATCHES_23) \
 		$(if $(P0119),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
 		$(if $(P0119),linux-sh4-ufs922_setup_stm23$(PATCH_STR).patch) \
 		$(if $(P0123),linux-sh4-ufs912_sound_stm23$(PATCH_STR).patch) \
@@ -411,6 +431,7 @@ KERNELPATCHES_23 = $(if $(TF7700),$(TF7700PATCHES_23)) \
 		$(if $(SPARK),$(SPARKPATCHES_23)) \
 		$(if $(SPARK7162),$(SPARK7162PATCHES_23)) \
 		$(if $(UFS922),$(UFS922PATCHES_23)) \
+		$(if $(UFC960),$(UFC960PATCHES_23)) \
 		$(if $(CUBEMOD),$(CUBEPATCHES_023)) \
 		$(if $(UFS910),$(UFS910PATCHES_23)) \
 		$(if $(FORTIS_HDBOX),$(FORTISPATCHES_23)) \
@@ -562,6 +583,13 @@ UFS922PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
 		$(if $(P0207)$(P0209)$(P0211),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
 
+UFC960PATCHES_24 = $(COMMONPATCHES_24) \
+		linux-sh4-ufs922_setup_stm24$(PATCH_STR).patch \
+		linux-sh4-stmmac_stm24$(PATCH_STR).patch \
+		linux-sh4-i2c-st40-pio_stm24$(PATCH_STR).patch \
+		$(if $(P0207),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch) \
+		$(if $(P0209),linux-sh4-fortis_hdbox_i2c_st40_stm24$(PATCH_STR).patch)
+
 HL101_PATCHES_24 = $(COMMONPATCHES_24) \
 		linux-sh4-hl101_setup_stm24$(PATCH_STR).patch \
 		linux-usbwait123_stm24.patch \
@@ -635,6 +663,7 @@ KERNELPATCHES_24 =  \
 		$(if $(UFS912),$(UFS912PATCHES_24)) \
 		$(if $(UFS913),$(UFS913PATCHES_24)) \
 		$(if $(UFS922),$(UFS922PATCHES_24)) \
+		$(if $(UFC960),$(UFC960PATCHES_24)) \
 		$(if $(TF7700),$(TF7700PATCHES_24)) \
 		$(if $(HL101),$(HL101_PATCHES_24)) \
 		$(if $(VIP1_V2),$(VIP2_PATCHES_24)) \
@@ -810,7 +839,7 @@ endif !STM22
 # HOST-KERNEL
 #
 # IMPORTANT: it is expected that only one define is set
-MODNAME = $(UFS910)$(UFS912)$(UFS913)$(SPARK)$(SPARK7162)$(UFS922)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(HS7110)$(WHITEBOX)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)
+MODNAME = $(UFS910)$(UFS912)$(UFS913)$(UFS922)$(UFC960)$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(CUBEMOD)$(FORTIS_HDBOX)$(ATEVIO7500)$(OCTAGON1008)$(HS7810A)$(HS7110)$(WHITEBOX)$(HOMECAST5101)$(IPBOX9900)$(IPBOX99)$(IPBOX55)$(ADB_BOX)$(SPARK)$(SPARK7162)
 
 if DEBUG
 DEBUG_STR=.debug
@@ -1119,6 +1148,7 @@ $(DEPDIR)/%linux-kernel: bootstrap $(DEPDIR)/linux-kernel.do_compile
 	$(if $(ATEVIO7500),PLATFORM: stb7105ref\n) \
 	$(if $(OCTAGON1008),PLATFORM: stb7109ref\n) \
 	$(if $(UFS922),PLATFORM: stb7109ref\n) \
+	$(if $(UFC960),PLATFORM: stb7109ref\n) \
 	$(if $(TF7700),PLATFORM: stb7109ref\n) \
 	$(if $(HL101),PLATFORM: stb7109ref\n) \
 	$(if $(VIP1_V2),PLATFORM: stb7109ref\n) \
@@ -1167,6 +1197,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
 		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
+		$(if $(UFC960),UFC960=$(UFC960)) \
 		$(if $(UFS912),UFS912=$(UFS912)) \
 		$(if $(UFS913),UFS913=$(UFS913)) \
 		$(if $(SPARK),SPARK=$(SPARK)) \
@@ -1206,6 +1237,7 @@ $(DEPDIR)/driver: $(driverdir)/Makefile linux-kernel.do_compile
 		$(if $(VIP1_V2),VIP1_V2=$(VIP1_V2)) \
 		$(if $(VIP2_V1),VIP2_V1=$(VIP2_V1)) \
 		$(if $(UFS922),UFS922=$(UFS922)) \
+		$(if $(UFC960),UFC960=$(UFC960)) \
 		$(if $(UFS912),UFS912=$(UFS912)) \
 		$(if $(UFS913),UFS913=$(UFS913)) \
 		$(if $(SPARK),SPARK=$(SPARK)) \

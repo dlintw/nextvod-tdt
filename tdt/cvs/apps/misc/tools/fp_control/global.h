@@ -36,7 +36,7 @@ struct vfd_ioctl_data {
 
 typedef enum {NONE, TIMER} eWakeupReason;
 
-typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Tf7700, Hl101, Vip2, HdBox, Hs5101, Ufs912, Spark, Cuberevo, Adb_Box} eBoxType;
+typedef enum {Unknown, Ufs910_1W, Ufs910_14W, Ufs922, Ufc960, Tf7700, Hl101, Vip2, HdBox, Hs5101, Ufs912, Spark, Cuberevo, Adb_Box} eBoxType;
 
 typedef struct Context_s {
 	void* /* Model_t */  *m; /* instance data */
@@ -72,13 +72,14 @@ typedef struct Model_s {
 	int     (* GetWakeupTime)  (Context_t* context, time_t* theGMTTime);
 	int     (* SetDisplayTime) (Context_t* context, int on);
 	int     (* SetTimeMode)    (Context_t* context, int twentyFour);
-    void* private;
+	void* private;
 } Model_t;
 
 extern Model_t Ufs910_1W_model;
 extern Model_t Ufs910_14W_model;
 extern Model_t UFS912_model;
 extern Model_t UFS922_model;
+extern Model_t UFC960_model;
 extern Model_t HDBOX_model;
 extern Model_t HL101_model;
 extern Model_t VIP2_model;
@@ -91,6 +92,7 @@ static Model_t * AvailableModels[] = {
 	&Ufs910_1W_model,
 	&Ufs910_14W_model,
 	&UFS922_model,
+	&UFC960_model,
 	&HDBOX_model,
 	&HL101_model,
 	&VIP2_model,
