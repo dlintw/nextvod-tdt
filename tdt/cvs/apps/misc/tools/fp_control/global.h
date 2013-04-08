@@ -79,6 +79,7 @@ extern Model_t Ufs910_1W_model;
 extern Model_t Ufs910_14W_model;
 extern Model_t UFS912_model;
 extern Model_t UFS922_model;
+extern Model_t UFC960_model;
 extern Model_t HDBOX_model;
 extern Model_t HL101_model;
 extern Model_t VIP2_model;
@@ -97,6 +98,7 @@ static Model_t * AvailableModels[] = {
 	&VIP2_model,
 	&Hs5101_model,
 	&UFS912_model,
+	&UFC960_model,
 	&Spark_model,
 	&Adb_Box_model,
 	&Cuberevo_model,
