@@ -521,3 +521,29 @@
   			case PHY_POLL:
   				irq_str = "POLL";
 
+
+--- linux-sh/drivers/serial/stm-asc.c	2013-03-25 15:00:52.000000000 +0100
++++ linux-sh/drivers/serial/stm-asc.c.patched	2013-04-09 03:37:37.000000000 +0200
+@@ -543,17 +543,19 @@
+ 	ret = uart_register_driver(&asc_uart_driver);
+ 	if (ret)
+ 		return ret;
+-
++#if 0
+ 	ret = platform_driver_register(&asc_serial_driver);
+ 	if (ret)
+ 		uart_unregister_driver(&asc_uart_driver);
+-
++#endif
+ 	return ret;
+ }
+ 
+ static void __exit asc_exit(void)
+ {
++#if 0
+ 	platform_driver_unregister(&asc_serial_driver);
++#endif
+ 	uart_unregister_driver(&asc_uart_driver);
+ }
+ 
+ 
