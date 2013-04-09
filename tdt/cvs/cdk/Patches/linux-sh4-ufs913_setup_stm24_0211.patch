@@ -467,10 +467,10 @@
 +				.mask_flags = MTD_WRITEABLE,
 +			},
 +			{
-+				.name = "NOR  Uboot Config (ro)",
++				.name = "NOR  Uboot Config (rw)",
 +				.size = 0x00020000,
 +				.offset = MTDPART_OFS_NXTBLK,
-+				.mask_flags = MTD_WRITEABLE,
++//				.mask_flags = MTD_WRITEABLE,
 +			},
 +			{
 +				.name = "NOR  BoxData (ro)",
