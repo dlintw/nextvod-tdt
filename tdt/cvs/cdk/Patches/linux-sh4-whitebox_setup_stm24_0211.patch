@@ -38,8 +38,8 @@
   	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
   	*cmdline_p = command_line;
 
---- linux-sh4/arch/sh/boards/mach-sat7111/setup.c	2012-03-31 15:26:54.000000000 +0200
-+++ linux-sh4/arch/sh/boards/mach-sat7111/setup.c.patched	2012-07-08 20:51:17.000000000 +0200
+--- linux-sh4/arch/sh/boards/mach-sat7111/setup.c	2013-03-25 15:00:47.000000000 +0100
++++ linux-sh4/arch/sh/boards/mach-sat7111/setup.c.patched	2013-04-11 06:08:28.000000000 +0200
 @@ -28,13 +28,14 @@
  #include <linux/mtd/nand.h>
  #include <linux/mtd/physmap.h>
@@ -110,7 +110,16 @@
  static struct platform_device sat7111_leds = {
  	.name = "leds-gpio",
  	.id = -1,
-@@ -109,6 +135,12 @@
+@@ -77,8 +103,6 @@
+ 	},
+ };
+ 
+-
+-
+ static struct gpio_keys_button sat7111_buttons[] = {
+ 	{
+ 		.code = BTN_0,
+@@ -109,6 +133,25 @@
  	},
  };
  
@@ -120,18 +129,29 @@
 +	gpio_set_value(SAT7111_FLASH_VPP, enable);
 +}
 +
++// Nor Flash Configuration
++static struct mtd_partition nor_parts[] = {
++	{
++		.name   = "NOR U-BOOT     0xA000.0000-0xA007.FFFF (512KB)",
++		.size   = 0x00080000,
++		.offset = 0
++	}, {
++		.name   = "NOR R00T       0xA008.0000-0xA03F.FFFF (3,5MB)",
++		.size   = MTDPART_SIZ_FULL,
++		.offset = MTDPART_OFS_APPEND
++	}
++};
++
  static struct platform_device sat7111_nor_flash = {
  	.name		= "physmap-flash",
  	.id		= -1,
-@@ -118,75 +150,38 @@
+@@ -118,77 +161,76 @@
  	},
  	.dev.platform_data = &(struct physmap_flash_data) {
  		.width		= 2,
 -		.nr_parts	= 3,
-+		.nr_parts	= 6,
-+		.set_vpp	= sat7111_nor_set_vpp,
- 		.parts		=  (struct mtd_partition []) {
- 			{
+-		.parts		=  (struct mtd_partition []) {
+-			{
 -				.name = "NOR Flash 1",
 -				.size = 0x00080000,
 -				.offset = 0x00000000,
@@ -143,19 +163,61 @@
 -				.name = "NOR Flash 3",
 -				.size = MTDPART_SIZ_FULL,
 -				.offset = MTDPART_OFS_NXTBLK,
-+				.name = "Boot firmware",
-+				.size = 0x00060000,	//	0,375M
-+				.offset = 0x00000000,	//	ok
- 			},
+-			},
 -		},
 -
 -
--	},
--};
--
++		.nr_parts	= ARRAY_SIZE(nor_parts),
++		.parts		= nor_parts
+ 	},
+ };
+ 
 -struct stm_nand_bank_data sat7111_nand_flash = {
--	.csn		= 1,
--	.options	= NAND_NO_AUTOINCR | NAND_USE_FLASH_BBT,
++// Nand Flash Configuration
++static struct mtd_partition nand_parts[] = {
++#ifdef ORIGINAL_MTD
++	 {
++	 .name = "NAND KERNEL    0x0000.0000-0x002F.FFFF",
++	 .size = 0x300000,
++	 .offset = 0
++	 }, {
++	 .name = "NAND ROOT      0x0030.0000-0x027F.FFFF",
++	 .size = 0x2500000,
++	 .offset = 0x300000
++	 }, {
++	 .name = "NAND CONFIG    0x0280.0000-0x04FF.FFFF",
++	 .size = 0x2800000,
++	 .offset = 0x2800000
++	 }, {
++	 .name = "NAND DATA      0x0500.0000-0x07FF.FFFF",
++	 .size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
++	 .offset = 0x05000000
++	 }
++#else
++	 {
++	 .name   = "NAND KERNEL    0x0000.0000-0x003F.FFFF (  4MB)",
++	 .size   = 0x400000,
++	 .offset = 0
++	 }, {
++	 .name   = "NAND FW        0x0040.0000-0x00BF.FFFF (  8MB)",
++	 .size   = 0x800000,
++	 .offset = MTDPART_OFS_APPEND
++	 }, {
++	 .name   = "NAND ROOT      0x00C0.0000-0x04BF.FFFF ( 64MB)",
++	 .size   = 0x4000000,
++	 .offset = MTDPART_OFS_APPEND
++	 }, {
++	 .name   = "NAND DATA      0x04C0.0000-0x07FF.FFFF ( 52MB)",
++	 .size   = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
++	 .offset = MTDPART_OFS_APPEND
++	 }
++#endif
++};
++static struct stm_nand_bank_data nand_bank_data = {
+ 	.csn		= 1,
++	.nr_partitions	= ARRAY_SIZE(nand_parts),
++	.partitions	= nand_parts,
+ 	.options	= NAND_NO_AUTOINCR | NAND_USE_FLASH_BBT,
 -	.nr_partitions	= 2,
 -	.partitions	= (struct mtd_partition []) {
 -		{
@@ -168,19 +230,23 @@
 -			.size	= MTDPART_SIZ_FULL
 -		},
 -	},
--	.timing_data	= &(struct stm_nand_timing_data) {
--		.sig_setup	= 50,		/* times in ns */
--		.sig_hold	= 50,
--		.CE_deassert	= 0,
--		.WE_to_RBn	= 100,
--		.wr_on		= 10,
+ 	.timing_data	= &(struct stm_nand_timing_data) {
+ 		.sig_setup	= 50,		/* times in ns */
+ 		.sig_hold	= 50,
+ 		.CE_deassert	= 0,
+ 		.WE_to_RBn	= 100,
+ 		.wr_on		= 10,
 -		.wr_off		= 40,
--		.rd_on		= 10,
++		.wr_off		= 30,
+ 		.rd_on		= 10,
 -		.rd_off		= 40,
 -		.chip_delay	= 30,		/* in us */
--	},
--};
--
++		.rd_off		= 30,
++		.chip_delay	= 50,		/* in us */
+ 	},
++	.emi_withinbankoffset	= 0,
+ };
+ 
 -/* Serial Flash */
 -static struct spi_board_info sat7111_serial_flash = {
 -	.modalias       = "m25p80",
@@ -201,34 +267,45 @@
 -				.name = "Serial Flash 2",
 -				.size = MTDPART_SIZ_FULL,
 -				.offset = MTDPART_OFS_NXTBLK,
-+			{
-+				.name = "Kernel",
-+				.size = 0x001c0000,	// 	1,75M
-+				.offset = 0x0060000,	//	ok
-+			},
-+			{
-+				.name = "Fw",
-+				.size = 0x2a0000,		// 	2M
-+				.offset = 0xd20000, //0x00e20000, //0x00f80000,	//	ok
-+			},
-+			{
-+				.name = "Root",
-+				.size = 0x00b00000, // 11M 0x00c00000,	// 	12M .size = 0x00d60000,	// 	13,375M
-+				.offset = 0x00220000,	//	ok
-+	 		},
-+			{
-+	 			.name = "Var", // org user
-+	 			.size = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
-+	 			.offset = 0x01c00000, 
-+	 		},
-+			{
-+				.name = "Swap", // org free + config
-+				.size = 0xBC0000, //0x960000, //9m 0x7c0000, //7m 0x6c0000, //6m 0x560000,     // 4,375M unused in org kernel
-+				.offset = 0x1040000, // 0x12a0000, //0x1440000, // 0x1540000, //0x016a0000,
- 			},
- 		},
+-			},
+-		},
++static struct platform_device sat7111_nand_device = {
++	.name		= "stm-nand-emi",
++	.dev.platform_data = &(struct stm_plat_nand_emi_data){
++		.nr_banks	= 1,
++		.banks		= &nand_bank_data,
++		.emi_rbn_gpio	= -1,
  	},
-@@ -216,15 +211,9 @@
+ };
+ 
+@@ -208,23 +250,36 @@
+ 	.phy_mask = 0,
+ };
+ 
++static struct platform_device sat7111_epld_device = {
++	.name		= "epld",
++	.id		= -1,
++	.num_resources	= 1,
++	.resource	= (struct resource[]) {
++		{
++			.start	= 0x06000000,
++			/* Minimum size to ensure mapped by PMB */
++			.end	= 0x06000000+(8*1024*1024)-1,
++			.flags	= IORESOURCE_MEM,
++		}
++	},
++	.dev.platform_data = &(struct plat_epld_data) {
++//		 .opsize = 8,
++	},
++};
++
+ static struct platform_device *sat7111_devices[] __initdata = {
++//	&sat7111_epld_device,
+ 	&sat7111_leds,
+ 	&sat7111_nor_flash,
+ 	&sat7111_button_device,
++	&sat7111_nand_device,
+ };
  
  static int __init sat7111_devices_init(void)
  {
@@ -246,7 +323,7 @@
  	stx7111_configure_ssc_i2c(3, NULL);
  
  	stx7111_configure_usb(&(struct stx7111_usb_config) {
-@@ -246,14 +235,6 @@
+@@ -246,14 +301,6 @@
  
  	gpio_direction_output(SAT7111_PHY_RESET, 0);
  
@@ -262,45 +339,6 @@
  				    ARRAY_SIZE(sat7111_devices));
  }
 
---- linux-sh4/arch/sh/include/asm/irq-ilc.h	2012-03-31 15:26:54.634523363 +0200
-+++ linux-sh4/arch/sh/include/asm/irq-ilc.h.patched	2012-03-31 15:26:54.084558439 +0200
-@@ -40,7 +40,7 @@
- #define ILC_IRQ(x)	(ILC_FIRST_IRQ + (x))
- #elif	defined(CONFIG_CPU_SUBTYPE_STX7111)
- #define ILC_FIRST_IRQ	176
--#define ILC_NR_IRQS	(64+36)
-+#define ILC_NR_IRQS	(64+35)
- #define ILC_INT_IRQ(x)	(ILC_FIRST_IRQ + (x))
- #define ILC_EXT_IRQ(x)	(ILC_FIRST_IRQ + 64 + (x))
- #define ILC_IRQ(x)	ILC_INT_IRQ(x)
---- linux-sh4/drivers/stm/stx7111_comms.c	2012-03-31 15:26:54.723480793 +0200
-+++ linux-sh4/drivers/stm/stx7111_comms.c.patched	2012-03-31 15:26:54.982982566 +0200
-@@ -69,10 +69,10 @@
- 	[3] = {
- 		.gpios_num = 4,
- 		.gpios = (struct stm_pad_gpio []) {
--			STM_PAD_PIO_OUT(5, 0, 1),	/* TX */
--			STM_PAD_PIO_IN(5, 1, -1),	/* RX */
--			STM_PAD_PIO_IN_NAMED(5, 2, -1, "CTS"),
--			STM_PAD_PIO_OUT_NAMED(5, 3, 1, "RTS"),
-+			STM_PAD_PIO_OUT(6, 7, 1),	/* TX */
-+			STM_PAD_PIO_IN(6, 3, -1),	/* RX */
-+			STM_PAD_PIO_IN_NAMED(6, 2, -1, "CTS"),
-+			STM_PAD_PIO_OUT_NAMED(6, 6, 1, "RTS"),
- 		},
- 	},
- };
-@@ -125,8 +125,8 @@
- 		/* .id set in stx7111_configure_asc() */ 
- 		.num_resources	= 4,
- 		.resource	= (struct resource[]) {
--			STM_PLAT_RESOURCE_MEM(0xfd033000, 0x2c),
--			STM_PLAT_RESOURCE_IRQ(evt2irq(0x1100), -1),
-+			STM_PLAT_RESOURCE_MEM(0xfd034000, 0x2c),
-+			STM_PLAT_RESOURCE_IRQ(evt2irq(0x2440), -1),
- 			STM_PLAT_RESOURCE_DMA_NAMED("rx_half_full", 14),
- 			STM_PLAT_RESOURCE_DMA_NAMED("tx_half_empty", 18),
- 		},
 --- linux-sh4/drivers/stm/gpio.c	2012-03-31 15:26:55.000000000 +0200
 +++ linux-sh4/drivers/stm/gpio.c.patched	2012-07-08 17:17:27.000000000 +0200
 @@ -27,6 +27,10 @@
