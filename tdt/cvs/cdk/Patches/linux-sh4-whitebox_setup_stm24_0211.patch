@@ -145,7 +145,7 @@
  static struct platform_device sat7111_nor_flash = {
  	.name		= "physmap-flash",
  	.id		= -1,
-@@ -118,77 +161,76 @@
+@@ -118,77 +161,84 @@
  	},
  	.dev.platform_data = &(struct physmap_flash_data) {
  		.width		= 2,
@@ -195,19 +195,27 @@
 +	 }
 +#else
 +	 {
-+	 .name   = "NAND KERNEL    0x0000.0000-0x003F.FFFF (  4MB)",
-+	 .size   = 0x400000,
++	 .name   = "NAND LOADER    0x00000000-0x00060000 (0,375MB)",
++	 .size   = 0x60000,
 +	 .offset = 0
 +	 }, {
-+	 .name   = "NAND FW        0x0040.0000-0x00BF.FFFF (  8MB)",
-+	 .size   = 0x800000,
++	 .name   = "NAND KERNEL    0x00060000-0x001c0000 (1,75MB)",
++	 .size   = 0x1c0000,
 +	 .offset = MTDPART_OFS_APPEND
 +	 }, {
-+	 .name   = "NAND ROOT      0x00C0.0000-0x04BF.FFFF ( 64MB)",
-+	 .size   = 0x4000000,
++	 .name   = "NAND FW        0x001c0000-0x00460000 (2,625MB)",
++	 .size   = 0x2a0000,
 +	 .offset = MTDPART_OFS_APPEND
 +	 }, {
-+	 .name   = "NAND DATA      0x04C0.0000-0x07FF.FFFF ( 52MB)",
++	 .name   = "NAND ROOT      0x00460000-0x00f60000 (11MB)",
++	 .size   = 0xb00000,
++	 .offset = MTDPART_OFS_APPEND
++	 }, {
++	 .name   = "NAND VAR       0x00f60000-0x02d60000 (30MB)",
++	 .size   = 0x1e00000,	/* will expand to the end of the flash */
++	 .offset = MTDPART_OFS_APPEND
++	 }, {
++	 .name   = "NAND SWAP      0x02d60000-0x20000000 (466MB)",
 +	 .size   = MTDPART_SIZ_FULL,	/* will expand to the end of the flash */
 +	 .offset = MTDPART_OFS_APPEND
 +	 }
@@ -278,7 +286,7 @@
  	},
  };
  
-@@ -208,23 +250,36 @@
+@@ -208,23 +258,36 @@
  	.phy_mask = 0,
  };
  
@@ -323,7 +331,7 @@
  	stx7111_configure_ssc_i2c(3, NULL);
  
  	stx7111_configure_usb(&(struct stx7111_usb_config) {
-@@ -246,14 +301,6 @@
+@@ -246,14 +309,6 @@
  
  	gpio_direction_output(SAT7111_PHY_RESET, 0);
  
