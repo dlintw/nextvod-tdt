@@ -119,7 +119,7 @@
  static struct gpio_keys_button sat7111_buttons[] = {
  	{
  		.code = BTN_0,
-@@ -109,6 +133,25 @@
+@@ -109,6 +133,21 @@
  	},
  };
  
@@ -132,20 +132,16 @@
 +// Nor Flash Configuration
 +static struct mtd_partition nor_parts[] = {
 +	{
-+		.name   = "NOR U-BOOT     0xA000.0000-0xA007.FFFF (512KB)",
-+		.size   = 0x00080000,
-+		.offset = 0
-+	}, {
-+		.name   = "NOR R00T       0xA008.0000-0xA03F.FFFF (3,5MB)",
++		.name   = "NOR U-BOOT     0xA0000000-0xA0060000 (0,375MB)",
 +		.size   = MTDPART_SIZ_FULL,
-+		.offset = MTDPART_OFS_APPEND
++		.offset = 0
 +	}
 +};
 +
  static struct platform_device sat7111_nor_flash = {
  	.name		= "physmap-flash",
  	.id		= -1,
-@@ -118,77 +161,84 @@
+@@ -118,77 +157,80 @@
  	},
  	.dev.platform_data = &(struct physmap_flash_data) {
  		.width		= 2,
@@ -195,11 +191,7 @@
 +	 }
 +#else
 +	 {
-+	 .name   = "NAND LOADER    0x00000000-0x00060000 (0,375MB)",
-+	 .size   = 0x60000,
-+	 .offset = 0
-+	 }, {
-+	 .name   = "NAND KERNEL    0x00060000-0x001c0000 (1,75MB)",
++	 .name   = "NAND KERNEL    0x00000000-0x001c0000 (1,75MB)",
 +	 .size   = 0x1c0000,
 +	 .offset = MTDPART_OFS_APPEND
 +	 }, {
@@ -286,7 +278,7 @@
  	},
  };
  
-@@ -208,23 +258,36 @@
+@@ -208,23 +250,36 @@
  	.phy_mask = 0,
  };
  
@@ -331,7 +323,7 @@
  	stx7111_configure_ssc_i2c(3, NULL);
  
  	stx7111_configure_usb(&(struct stx7111_usb_config) {
-@@ -246,14 +309,6 @@
+@@ -246,14 +301,6 @@
  
  	gpio_direction_output(SAT7111_PHY_RESET, 0);
  
@@ -346,7 +338,6 @@
  	return platform_add_devices(sat7111_devices,
  				    ARRAY_SIZE(sat7111_devices));
  }
-
 --- linux-sh4/drivers/stm/gpio.c	2012-03-31 15:26:55.000000000 +0200
 +++ linux-sh4/drivers/stm/gpio.c.patched	2012-07-08 17:17:27.000000000 +0200
 @@ -27,6 +27,10 @@
@@ -592,4 +583,14 @@
  	uart_unregister_driver(&asc_uart_driver);
  }
  
+--- linux-sh/drivers/mtd/chips/cfi_cmdset_0002.c	2013-04-11 18:53:02.000000000 +0200
++++ linux-sh/drivers/mtd/chips/cfi_cmdset_0002.c.patched	2013-04-12 00:17:17.000000000 +0200
+@@ -388,7 +388,7 @@
+ 		cfi_fixup_major_minor(cfi, extp);
  
+ 		if (extp->MajorVersion != '1' ||
+-		    (extp->MinorVersion < '0' || extp->MinorVersion > '4')) {
++		    (extp->MinorVersion < '0' || extp->MinorVersion > '5')) {
+ 			printk(KERN_ERR "  Unknown Amd/Fujitsu Extended Query "
+ 			       "version %c.%c.\n",  extp->MajorVersion,
+ 			       extp->MinorVersion);
