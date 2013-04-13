@@ -594,3 +594,94 @@
  			printk(KERN_ERR "  Unknown Amd/Fujitsu Extended Query "
  			       "version %c.%c.\n",  extp->MajorVersion,
  			       extp->MinorVersion);
+diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/nand/nand_base.c linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/nand/nand_base.c
+*** linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/nand/nand_base.c	2012-09-14 12:32:12.000000000 +0200
+--- linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/nand/nand_base.c	2012-09-14 13:22:11.000000000 +0200
+*************** int nand_do_read_ops(struct mtd_info *mt
+*** 1379,1398 ****
+  
+  			/* Now read the page into the buffer */
+  			if (unlikely(ops->mode == MTD_OOB_RAW))
+! 				ret = chip->ecc.read_page_raw(mtd, chip,
+! 							      bufpoi, page);
+! 			else if (!aligned && NAND_SUBPAGE_READ(chip) && !oob)
+! 				ret = chip->ecc.read_subpage(mtd, chip, col, bytes, bufpoi);
+  			else
+! 				ret = chip->ecc.read_page(mtd, chip, bufpoi,
+! 							  page);
+  			if (ret < 0)
+  				break;
+  
+  			/* Transfer not aligned data */
+  			if (!aligned) {
+! 				if (!NAND_SUBPAGE_READ(chip) && !oob)
+! 					chip->pagebuf = realpage;
+  				memcpy(buf, chip->buffers->databuf + col, bytes);
+  			}
+  
+--- 1379,1393 ----
+  
+  			/* Now read the page into the buffer */
+  			if (unlikely(ops->mode == MTD_OOB_RAW))
+! 				ret = chip->ecc.read_page_raw(mtd, chip,bufpoi, page);
+  			else
+! 				ret = chip->ecc.read_page(mtd, chip, bufpoi, page);
+  			if (ret < 0)
+  				break;
+  
+  			/* Transfer not aligned data */
+  			if (!aligned) {
+! 				chip->pagebuf = realpage;
+  				memcpy(buf, chip->buffers->databuf + col, bytes);
+  			}
+  
+*************** static struct nand_flash_dev *nand_get_f
+*** 2906,2913 ****
+  	/* Decode ID string */
+  	if (nand_decode_id(mtd, chip, type, id_data, 8) != 0) {
+  		printk(KERN_INFO "Failed to decode NAND READID "
+! 		       "[%02x %02x %02x %02x]\n",
+! 		       id_data[0], id_data[1], id_data[2], id_data[3]);
+  		return ERR_PTR(-EINVAL);
+  	}
+  
+--- 2901,2908 ----
+  	/* Decode ID string */
+  	if (nand_decode_id(mtd, chip, type, id_data, 8) != 0) {
+  		printk(KERN_INFO "Failed to decode NAND READID "
+! 		       "[%02x %02x %02x %02x %02x]\n",
+! 		       id_data[0], id_data[1], id_data[2], id_data[3], id_data[4] );
+  		return ERR_PTR(-EINVAL);
+  	}
+  
+diff -crp linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/nand/nand_ecc.c linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/nand/nand_ecc.c
+*** linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/nand/nand_ecc.c	2012-09-14 12:32:12.000000000 +0200
+--- linux-sh4-2.6.32.59_stm24_0211/drivers/mtd/nand/nand_ecc.c	2012-09-14 13:22:11.000000000 +0200
+*************** int __nand_correct_data(unsigned char *b
+*** 492,503 ****
+  	}
+  	/* count nr of bits; use table lookup, faster than calculating it */
+  	if ((bitsperbyte[b0] + bitsperbyte[b1] + bitsperbyte[b2]) == 1) {
+! 		printk(KERN_DEBUG "%s: ignoring error in ECC, data ok: [",
+! 		       __func__);
+  		return 1;	/* error in ecc data; no action needed */
+  	}
+  
+! 	printk(KERN_ERR "%s: uncorrectable error: [", __func__);
+  	return -1;
+  }
+  EXPORT_SYMBOL(__nand_correct_data);
+--- 492,503 ----
+  	}
+  	/* count nr of bits; use table lookup, faster than calculating it */
+  	if ((bitsperbyte[b0] + bitsperbyte[b1] + bitsperbyte[b2]) == 1) {
+! 		/*printk(KERN_DEBUG "%s: ignoring error in ECC, data ok: [",
+! 		       __func__);*/
+  		return 1;	/* error in ecc data; no action needed */
+  	}
+  
+! 	//printk(KERN_ERR "%s: uncorrectable error: [", __func__);
+  	return -1;
+  }
+  EXPORT_SYMBOL(__nand_correct_data);
+
