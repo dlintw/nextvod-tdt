@@ -453,7 +453,7 @@ static int Clear(Context_t* context)
 
 Model_t CNBOX_model = {
 	.Name                      = "CreNova Micom frontpanel control utility",
-	.Type                      = HdBox,
+	.Type                      = CNBox,
 	.Init                      = init,
 	.Clear                     = Clear,
 	.Usage                     = usage,
