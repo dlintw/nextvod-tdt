@@ -78,17 +78,36 @@ int writeToSlave(int cpuf, int fd, off_t DestinationAddress, unsigned int Source
    unsigned char * BUFFER = malloc(Size);
    int err;
    
-   lseek(fd, SourceAddress, SEEK_SET);
-   read(fd, BUFFER, Size);
+   err = lseek(fd, SourceAddress, SEEK_SET);
+   if(err < 0)
+   {
+      printf("error seeking SourceAddress\n");
+      return 1;
+   }
+
+   err = read(fd, BUFFER, Size);
+   if(err != Size)
+   {
+      printf("error read fd\n");
+      return 1;
+   }
 
    err = lseek(cpuf, DestinationAddress, SEEK_SET);
    
    printf("seeking to %x\n", DestinationAddress);
    
-   if (err == -1)
+   if (err < 0)
+   {
       printf("error seeking copo addi (addi = %x)\n", DestinationAddress);
+      return 1;
+   }
       
-   write(cpuf, BUFFER, Size);
+   err = write(cpuf, BUFFER, Size);
+   if(err != Size)
+   {
+      printf("error write cpuf\n");
+      return 1;
+   }
 
    free(BUFFER);
    
@@ -97,17 +116,23 @@ int writeToSlave(int cpuf, int fd, off_t DestinationAddress, unsigned int Source
 
 int sectionToSlave(int cpuf, int fd, int * EntryPoint)
 {
-   int i = 0;
+   int i = 0, err = 0;
    int BootSection = -2;
    int LastSection = -2;
    unsigned long ramStart = 0;
    unsigned char kernelVersion = getKernelVersion();
+
    if(kernelVersion == 23 || kernelVersion == 24)
    {
       cop_properties_t cop;
 
-      ioctl(cpuf,STCOP_GET_PROPERTIES,&cop);
-      printf("base_address 0x%.8x\n", cop.cp_ram_start);
+      err = ioctl(cpuf,STCOP_GET_PROPERTIES,&cop);
+      if(err < 0)
+      {
+         printf("error ioctl STCOP_GET_PROPERTIES\n");
+         return 1;
+      }
+      printf("base_address 0x%.8lx\n", cop.cp_ram_start);
       ramStart = cop.cp_ram_start;
    }
 
@@ -122,8 +147,9 @@ int sectionToSlave(int cpuf, int fd, int * EntryPoint)
             continue;
          }
 
-         writeToSlave(cpuf, fd, IndexTable[i].DestinationAddress - ramStart, 
-            IndexTable[i].SourceAddress, IndexTable[i].Size);
+         err = writeToSlave(cpuf, fd, IndexTable[i].DestinationAddress - ramStart, 
+         IndexTable[i].SourceAddress, IndexTable[i].Size);
+         if(err != 0) return 1;
 
          LastSection = i;
       }
@@ -136,8 +162,9 @@ int sectionToSlave(int cpuf, int fd, int * EntryPoint)
       unsigned int DestinationAddress = (IndexTable[LastSection].DestinationAddress + IndexTable[LastSection].Size
                                         + (1 << Alignment)) & ~((1 << Alignment) - 1);
 
-      writeToSlave(cpuf, fd, DestinationAddress - ramStart, 
-         IndexTable[BootSection].SourceAddress, IndexTable[BootSection].Size);
+      err = writeToSlave(cpuf, fd, DestinationAddress - ramStart, 
+      IndexTable[BootSection].SourceAddress, IndexTable[BootSection].Size);
+      if(err != 0) return 1;
 
       *EntryPoint = DestinationAddress;
    } else {
@@ -212,13 +239,23 @@ int addIndex(unsigned int DestinationAddress, unsigned int SourceAddress, unsign
 
 int readDescription(int fd, unsigned int Address, unsigned int Size)
 {
-   int SectionIndex = 0;
+   int SectionIndex = 0, err = 0;
    int Position = 1;
    unsigned char buf[BUF_SIZE];
 
-   lseek(fd, Address, SEEK_SET);
+   err = lseek(fd, Address, SEEK_SET);
+   if(err < 0)
+   {
+      printf("error lseek Descritpion\n");
+      return 1;
+   }
 
-   read(fd, &buf, Size);
+   err = read(fd, &buf, Size);
+   if(err != Size)
+   {
+      printf("error read Descritpion\n");
+      return 1;
+   }
 
    while(Position < Size) {
       int i = 0;
@@ -235,26 +272,58 @@ int readDescription(int fd, unsigned int Address, unsigned int Size)
 
       SectionIndex++;
    }
+
+   return 0;
 }
 
 int loadElf(int cpuf, int fd, unsigned int *entry_p, unsigned int *stack_p, int verbose)
 {
    unsigned char buf[BUF_SIZE];
-   int ReadBytes = 0;
+   int ReadBytes = 0, err = 0;
 
    //EntryPoint
-   lseek(fd, 0x18, SEEK_SET);
-   read(fd, &buf, 4);
+   err = lseek(fd, 0x18, SEEK_SET);
+   if(err < 0)
+   {
+      printf("error lseek(0x18) loadElf\n");
+      return 1;
+   }
+
+   err = read(fd, &buf, 4);
+   if(err != 4)
+   {
+      printf("error read(4) loadElf\n");
+      return 1;
+   }
+
    *entry_p = buf[0]|buf[1]<<8|buf[2]<<16|buf[3]<<24;
    //printf("EntryPoint is 0x%08X\n", *entry_p);
 
    //seek to the table address field
-   lseek(fd, 0x20, SEEK_SET);
-   read(fd, &buf, 4);
+   err = lseek(fd, 0x20, SEEK_SET);
+   if(err < 0)
+   {
+      printf("error lseek(0x18) loadElf\n");
+      return 1;
+   }
+
+   err = read(fd, &buf, 4);
+   if(err != 4)
+   {
+      printf("error read(4) loadElf\n");
+      return 1;
+   }
+
    unsigned int TableAddress = buf[0]|buf[1]<<8|buf[2]<<16|buf[3]<<24;
    //printf("TableAddress is 0x%08X\n", TableAddress);
 
-   lseek(fd, TableAddress, SEEK_SET);
+   err = lseek(fd, TableAddress, SEEK_SET);
+   if(err < 0)
+   {
+      printf("error lseek(TableAdress) loadElf\n");
+      return 1;
+   }
+
    while( (ReadBytes = read(fd, &buf, 10 * sizeof(int))) == (10 * sizeof(int)) ) {
 
       unsigned int IncreasingNumber   = buf[0]  | buf[1]<<8  | buf[2]<<16  | buf[3]<<24;
@@ -274,7 +343,8 @@ int loadElf(int cpuf, int fd, unsigned int *entry_p, unsigned int *stack_p, int 
 
       if(DestinationAddress == 0x00 && SourceAddress != 0x00) {
          //Source Address is address of description
-         readDescription(fd, SourceAddress, Size);
+         err = readDescription(fd, SourceAddress, Size);
+         if(err != 0) return 1;
          break; //Exit While
       } else {
          //Add Index to Table
@@ -283,10 +353,16 @@ int loadElf(int cpuf, int fd, unsigned int *entry_p, unsigned int *stack_p, int 
       }
 
    }
-
+   if(ReadBytes != 10 * sizeof(int))
+   {
+      printf("error ReadBytes\n");
+      return 1;
+   }
+	
    //printTable();
 
-   sectionToSlave(cpuf, fd, entry_p);
+   err = sectionToSlave(cpuf, fd, entry_p);
+   if(err != 0) return 1;
 
    //printf("start address = 0x%08X\n", *entry_p);
 
@@ -305,7 +381,7 @@ int copLoadFile (int cpuf, char *infile, unsigned int *entry_p, unsigned int *st
    if ( (inf = open(infile, O_RDONLY))  < 0 )
    {
       printf("[%d] cannot open input file %s\n", errno, infile);
-      return(-1);
+      return(1);
    }
 
    if ( sfx = strrchr(infile, '.') )
@@ -315,7 +391,7 @@ int copLoadFile (int cpuf, char *infile, unsigned int *entry_p, unsigned int *st
          return( loadElf(cpuf, inf, entry_p, stack_p, verbose) );
    }
 
-   return -1;
+   return 1;
 }
 
 /* ------------------------------------------------------------------------
@@ -331,7 +407,7 @@ copRun (int cpuf, unsigned long entry_p, int verbose)
    if ( ioctl(cpuf, STCOP_START, entry_p) < 0)
    {
       printf("[%d] while triggering coprocessor start!\n", errno);
-      return(-1);
+      return(1);
    }
 
    if (verbose)
