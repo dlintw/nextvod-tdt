@@ -1,4 +1,4 @@
-<?xml version="1.0" ?> 
+<?xml version="1.0" ?>
 <epgfilter is_whitelist="1" except_current_next="1">
 	<filter onid="013e" tsid="2e7c" serviceID="12c7"/>
 	<filter onid="013e" tsid="2e7c" serviceID="12c8"/>
