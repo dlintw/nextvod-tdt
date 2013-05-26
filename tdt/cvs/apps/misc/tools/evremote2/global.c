@@ -79,7 +79,7 @@ int getInternalCode(tButton * cButtons, const char cCode[3]) {
         if ( (cButtons[vLoop].KeyWord[0] == cCode[0] || cButtons[vLoop].KeyWord[0] == (cCode[0]-32) ) && 
              (cButtons[vLoop].KeyWord[1] == cCode[1] || cButtons[vLoop].KeyWord[1] == (cCode[1]-32) )) {
              
-            printf("%02X - %s\n", cButtons[vLoop].KeyCode, cButtons[vLoop].KeyName);
+            printf("KEY: %02X - %s\n", cButtons[vLoop].KeyCode, cButtons[vLoop].KeyName);
             return cButtons[vLoop].KeyCode;
         }
     }

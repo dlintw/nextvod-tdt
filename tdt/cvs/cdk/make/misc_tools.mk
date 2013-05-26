@@ -35,6 +35,7 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	$(if $(IPBOX9900), -DPLATFORM_IPBOX9900) \
 	$(if $(IPBOX99), -DPLATFORM_IPBOX99) \
 	$(if $(IPBOX55), -DPLATFORM_IPBOX55) \
+	$(if $(VITAMIN_HD5000), -DPLATFORM_VITAMIN_HD5000) \
 	$(if $(PLAYER131), -DPLAYER131) \
 	$(if $(PLAYER179), -DPLAYER179) \
 	$(if $(PLAYER191), -DPLAYER191) \

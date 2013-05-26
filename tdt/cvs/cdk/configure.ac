@@ -429,6 +429,14 @@ AC_ARG_ENABLE(hs7810a,
 AM_CONDITIONAL(ENABLE_HS7810A,test "$enable_hs7810a" = "yes")
 AC_SUBST(HS7810A)
 
+AC_ARG_ENABLE(vitamin_hd5000,
+	AS_HELP_STRING(--enable-vitamin_hd5000,    enable vitamin_hd5000 stuff),
+	[case "${enableval}" in
+		yes) VITAMIN_HD5000=vitamin_hd5000 ;;
+	esac],[enable_vitamin_hd5000=no])
+AM_CONDITIONAL(ENABLE_VITAMIN_HD5000,test "$enable_vitamin_hd5000" = "yes")
+AC_SUBST(VITAMIN_HD5000)
+
 AC_ARG_ENABLE(hs7110,
 	AS_HELP_STRING(--enable-hs7110,    enable fortis hs7110 stuff),
 	[case "${enableval}" in
@@ -1232,6 +1240,7 @@ adb_box stuff               : $enable_adb_box
 Fortis hs7110 stuff         : $enable_hs7110
 whitebox stuff              : $enable_whitebox
 ufs913 stuff                : $enable_ufs913
+vitamin_hd5000 stuff         : $enable_vitamin_hd5000
 XFS support for IDE         : $enable_xfs
 NFS server                  : $enable_nfsserver
 Samba Clients               : $enable_cifs

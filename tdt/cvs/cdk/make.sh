@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == -h ] || [ "$1" == --help ]; then
- echo "Parameter 1: target system (1-28)"
+ echo "Parameter 1: target system (1-30)"
  echo "Parameter 2: kernel (1-13)"
  echo "Parameter 3: debug (y/N)"
  echo "Parameter 4: player (1-3)"
@@ -87,13 +87,14 @@ echo "26) Fortis HS7110"
 echo "27) WHITEBOX"
 echo "28) Kathrein UFS-913"
 echo "29) Kathrein UFC-960"
+echo "30) Vitamin HD5000"
 
 case $1 in
 	[1-9] | 1[0-9] | 2[0-9]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-28)? ";;
+	read -p "Select target (1-30)? ";;
 esac
 
 case "$REPLY" in
@@ -125,6 +126,7 @@ case "$REPLY" in
 	27) TARGET="--enable-whitebox";;
 	28) TARGET="--enable-ufs913";;
 	29) TARGET="--enable-ufc960";;
+	30) TARGET="--enable-vitamin_hd5000";;
 	 *) TARGET="--enable-ufs912";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"

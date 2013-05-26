@@ -409,7 +409,10 @@ int getModel()
         {
     		vBoxType = Cuberevo;
         }
-        else
+    	else if (!strncasecmp(vName,"vitamin_hd5000", 14))
+	    vBoxType = VitaminHD5000;
+
+	else
             vBoxType = Unknown;
     }
 
