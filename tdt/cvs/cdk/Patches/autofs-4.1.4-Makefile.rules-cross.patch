@@ -28,3 +28,18 @@
  SOLDFLAGS = -shared -Xlinker -rpath -Xlinker $(autofslibdir)
  
  # Standard rules
+
+--- autofs-4.1.4/Makefile.conf.in	2004-04-03 09:14:33.000000000 +0200
++++ autofs-4.1.4/Makefile.conf.in.patched	2013-05-16 18:19:24.000000000 +0200
+@@ -8,8 +8,8 @@
+ #
+ 
+ # Do we build with -fpie?
+-DAEMON_CFLAGS  = @DAEMON_CFLAGS@
+-DAEMON_LDFLAGS = @DAEMON_LDFLAGS@
++#DAEMON_CFLAGS  = @DAEMON_CFLAGS@
++#DAEMON_LDFLAGS = @DAEMON_LDFLAGS@
+ 
+ # Special parameters for glibc (libc 6)
+ LIBNSL    = @LIBNSL@
+

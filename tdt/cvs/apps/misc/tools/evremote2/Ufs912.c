@@ -89,19 +89,18 @@ static tButton cButtonUFS912[] = {
     {"7BUTTON"        , "07", KEY_7},
     {"8BUTTON"        , "08", KEY_8},
     {"9BUTTON"        , "09", KEY_9},
-    {""               , ""  , KEY_NULL},
+    {""               , ""  , KEY_NULL}
 };
 
 /* ***************** our fp button assignment **************** */
 
 static tButton cButtonUFS912Frontpanel[] = {
-	{"FP_MEDIA"		, "80", KEY_MENU},
-	{"FP_ON_OFF"		, "01", KEY_HOME},
+	{"FP_MEDIA"		, "80", KEY_MEDIA},
+	{"FP_ON_OFF"		, "01", KEY_POWER},
 	{"FP_MINUS"		, "04", KEY_DOWN},
 	{"FP_PLUS"		, "02", KEY_UP},
 	{"FP_TV_R"		, "08", KEY_OK},
-	{""	                , ""  , KEY_NULL}
-/* Powerkey is used as HOME EXIT Button? */
+	{""			, ""  , KEY_NULL}
 };
 
 static int pInit(Context_t* context, int argc, char* argv[]) 

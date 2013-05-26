@@ -41,7 +41,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* software version of fp_control. please increas on every change */
-static const char* sw_version = "1.03";
+static const char* sw_version = "1.04";
 
 typedef struct
 {
@@ -619,7 +619,7 @@ int getModel()
 		else if (!strncasecmp(vName,"hs7110", 6))
 			vBoxType = HdBox;
 		else if (!strncasecmp(vName,"whitebox", 8))
-			vBoxType = HdBox;
+			vBoxType = CNBox;
 		else if (!strncasecmp(vName,"hs5101", 6))
 			vBoxType = Hs5101;
 		else if (!strncasecmp(vName,"octagon1008", 11))
@@ -660,7 +660,11 @@ int main (int argc, char* argv[])
 
 	vBoxType = getModel();
 
-	searchModel(&context, vBoxType);
+	if (searchModel(&context, vBoxType) != 0)
+	{
+		printf("Model not found\n");
+		return -1;
+	}
 
 	printf("Selected Model: %s\n", ((Model_t*)context.m)->Name);
 
