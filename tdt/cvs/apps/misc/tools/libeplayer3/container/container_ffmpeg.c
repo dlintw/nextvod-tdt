@@ -53,7 +53,7 @@
 /* ***************************** */
 
 //for buffered io
-#define FILLBUFSIZE 1048576
+#define FILLBUFSIZE 0
 #define FILLBUFDIFF 1048576
 #define FILLBUFPAKET 5120
 #define FILLBUFSEEKTIME 3 //sec
