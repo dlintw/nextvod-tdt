@@ -60,14 +60,12 @@ AC_ARG_ENABLE(multicom324,
 AM_CONDITIONAL(ENABLE_MULTICOM324,test "$enable_multicom324" = "yes")
 AC_SUBST(MULTICOM324)
 
-AC_ARG_ENABLE([multicom406],
-	[AS_HELP_STRING(--enable-multicom406,    enable multicom406 stuff)],
-	[case "${enableval}" in 
-		yes) enable_multicom406=true ;;
-		no) enable_multicom406=false ;;
-		*) AC_MSG_ERROR([bad value ${enableval} for --enable-multicom406]) ;;
-	esac])
-AM_CONDITIONAL([ENABLE_MULTICOM406], [test x$enable_multicom406 = xtrue])
+AC_ARG_ENABLE(multicom406,
+	AS_HELP_STRING(--enable-multicom406, set up the CDK to use multicom406),
+	[case "${enableval}" in
+		yes) MULTICOM406=multicom406 ;;
+	esac],[enable_multicom406=no])
+AM_CONDITIONAL(ENABLE_MULTICOM406,test "$enable_multicom406" = "yes")
 AC_SUBST(MULTICOM406)
 
 AC_ARG_ENABLE(stm22,
