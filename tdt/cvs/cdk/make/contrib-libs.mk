@@ -974,17 +974,23 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-decoder=mjpeg \
 		--enable-decoder=vorbis \
 		--enable-decoder=flac \
+		--enable-decoder=wmv3 \
+		--enable-decoder=vp6 \
+		--enable-decoder=vp6a \
+		--enable-decoder=vp6f \
 		--enable-protocol=file \
 		--enable-encoder=mpeg2video \
 		--enable-muxer=mpeg2video \
 		--enable-parser=mjpeg \
 		--enable-demuxer=mjpeg \
+		--enable-demuxer=wav \
 		--enable-decoder=dvbsub \
 		--enable-decoder=iff_byterun1 \
 		--enable-small \
 		--enable-avresample \
 		--enable-pthreads \
 		--enable-bzlib \
+		--enable-zlib \
 		--enable-librtmp \
 		--pkg-config="pkg-config" \
 		--cross-prefix=$(target)- \
@@ -1910,6 +1916,9 @@ $(DEPDIR)/gst_ffmpeg.do_compile: $(DEPDIR)/gst_ffmpeg.do_prepare
 		--enable-decoder=ogg \
 		--enable-decoder=vorbis \
 		--enable-decoder=flac \
+		--enable-decoder=vp6 \
+		--enable-decoder=vp6a \
+		--enable-decoder=vp6f \
 		\
 		--disable-demuxers \
 		--enable-demuxer=ogg \

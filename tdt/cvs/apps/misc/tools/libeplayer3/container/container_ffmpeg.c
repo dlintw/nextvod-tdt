@@ -75,6 +75,8 @@ static int ffmpeg_do_seek = 0;
 static int ffmpeg_buf_stop = 0;
 //for buffered io (end)
 
+#define MAX_AUDIO_FRAME_SIZE 192000
+
 #define FFMPEG_DEBUG
 
 #ifdef FFMPEG_DEBUG
@@ -170,7 +172,7 @@ void releasefillerMutex(const char *filename, const const char *function, int li
 }
 //for buffered io (end)
 
-static char* Codec2Encoding(enum CodecID id, int* version)
+static char* Codec2Encoding(int id, int* version)
 {
     switch (id)
     {
@@ -621,7 +623,7 @@ if(!context->playback->BackWard && audioMute)
                     else if (audioTrack->inject_as_pcm == 1)
                     {
                         int      bytesDone = 0;
-                        unsigned int samples_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+                        unsigned int samples_size = MAX_AUDIO_FRAME_SIZE;
                         AVPacket avpkt;
                         avpkt = packet;
 
@@ -1300,7 +1302,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
     avcodec_register_all();
     av_register_all();
     avformat_network_init();
-//    av_log_set_level( AV_LOG_DEBUG );
+    av_log_set_level( AV_LOG_DEBUG );
  
 #if LIBAVCODEC_VERSION_MAJOR < 54
     if ((err = av_open_input_file(&avContext, filename, NULL, 0, NULL)) != 0) {
@@ -1524,7 +1526,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
                         AVCodec *codec = avcodec_find_decoder(stream->codec->codec_id);
 
 //( (AVStream*) audioTrack->stream)->codec->flags |= CODEC_FLAG_TRUNCATED;
-                        if(codec != NULL && !avcodec_open(stream->codec, codec))
+                        if(codec != NULL && !avcodec_open2(stream->codec, codec, NULL))
                            printf("AVCODEC__INIT__SUCCESS\n");
                         else
                            printf("AVCODEC__INIT__FAILED\n");
@@ -2024,8 +2026,20 @@ static int container_ffmpeg_seek_rel(Context_t *context, off_t pos, long long in
             sec = 0;
 
         ffmpeg_printf(10, "2. seeking to position %f sec ->time base %f %d\n", sec, av_q2d(((AVStream*) current->stream)->time_base), AV_TIME_BASE);
+        
+        ffmpeg_printf(10, "current ID= %d\n", current->Id);
 
-        if (av_seek_frame(avContext, -1 , sec * AV_TIME_BASE, flag) < 0) {
+        int stream_index = -1;
+        int64_t seek_target = sec * AV_TIME_BASE;
+
+				if(current->Id >= 0) {
+				    stream_index = current->Id;
+				    seek_target = av_rescale_q(seek_target, AV_TIME_BASE_Q, ((AVStream*) current->stream)->time_base);
+				    
+				    ffmpeg_printf(10, "3. stream_index=%d, seek_target=%lld\n", stream_index, seek_target);
+				}
+
+        if (av_seek_frame(avContext, stream_index, seek_target, flag) < 0) {
             ffmpeg_err( "Error seeking\n");
             releaseMutex(FILENAME, __FUNCTION__,__LINE__);
             return cERR_CONTAINER_FFMPEG_ERR;
@@ -2083,10 +2097,9 @@ static int container_ffmpeg_seek(Context_t *context, float sec) {
         flag |= AVSEEK_FLAG_BACKWARD;
 
     getMutex(FILENAME, __FUNCTION__,__LINE__);
-
     ffmpeg_printf(10, "iformat->flags %d\n", avContext->iformat->flags);
 
-    if (avContext->iformat->flags & AVFMT_TS_DISCONT)
+		if (avContext->iformat->flags & AVFMT_TS_DISCONT)
     {
 /* konfetti: for ts streams seeking frame per seconds does not work (why?).
  * I take this algo partly from ffplay.c.
@@ -2139,11 +2152,27 @@ static int container_ffmpeg_seek(Context_t *context, float sec) {
 #endif
         ffmpeg_printf(10, "2. seeking to position %f sec ->time base %f %d\n", sec, av_q2d(((AVStream*) current->stream)->time_base), AV_TIME_BASE);
 
-        if (av_seek_frame(avContext, -1 /* or streamindex */, sec * AV_TIME_BASE, flag) < 0) {
+        ffmpeg_printf(10, "current ID= %d\n", current->Id);
+
+        int stream_index = -1;
+        int64_t seek_target = sec * AV_TIME_BASE;
+
+				if(current->Id >= 0) {
+				    stream_index = current->Id;
+				    seek_target = av_rescale_q(seek_target, AV_TIME_BASE_Q, ((AVStream*) current->stream)->time_base);
+				    
+				    ffmpeg_printf(10, "3. stream_index=%d, seek_target=%lld\n", stream_index, seek_target);
+				}
+
+        //if (av_seek_frame(avContext, -1 /* or streamindex */, sec * AV_TIME_BASE, flag) < 0) {
+        if (av_seek_frame(avContext, stream_index, seek_target, flag) < 0) {
+        ffmpeg_printf(10, "xxxxxxxxxxxxxxxxxxxxxx 3. seeking end\n");
             ffmpeg_err( "Error seeking\n");
             releaseMutex(FILENAME, __FUNCTION__,__LINE__);
             return cERR_CONTAINER_FFMPEG_ERR;
         }
+        
+        ffmpeg_printf(10, "xxxxxxxxxxxxxxxxxxxxxx 4. seeking end\n");
     }
 
     releaseMutex(FILENAME, __FUNCTION__,__LINE__);
