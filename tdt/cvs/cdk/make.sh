@@ -333,12 +333,13 @@ esac
 echo -e "\nMulticom:"
 echo "   1) Multicom 3.2.2     (Recommended for Player179)"
 echo "   3) Multicom 3.2.4     (Recommended for Player191)"
+echo "   4) Multicom 4.0.6     (Recommended for Player191)"
 case $5 in
-        [1-3]) REPLY=$5
+        [1-4]) REPLY=$6
         echo -e "\nSelected multicom: $REPLY\n"
         ;;
         *)
-        read -p "Select multicom (1-3)? ";;
+        read -p "Select multicom (1-4)? ";;
 esac
 
 case "$REPLY" in
@@ -376,6 +377,24 @@ case "$REPLY" in
 
        ln -s multicom-3.2.4 multicom
        echo "export CONFIG_MULTICOM324=y" >> .config
+       cd -
+    ;;
+	4) MULTICOM="--enable-multicom406"
+       cd ../driver/include/
+       if [ -L multicom ]; then
+          rm multicom
+       fi
+
+       ln -s ../multicom-4.0.6/include multicom
+       cd -
+
+       cd ../driver/
+       if [ -L multicom ]; then
+          rm multicom
+       fi
+
+       ln -s multicom-4.0.6 multicom
+       echo "export CONFIG_MULTICOM406=y" >> .config
        cd -
     ;;
 	*) MULTICOM="--enable-multicom322";;
