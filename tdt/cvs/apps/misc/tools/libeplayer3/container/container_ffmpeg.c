@@ -1302,7 +1302,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
     avcodec_register_all();
     av_register_all();
     avformat_network_init();
-    av_log_set_level( AV_LOG_DEBUG );
+ //   av_log_set_level( AV_LOG_DEBUG );
  
 #if LIBAVCODEC_VERSION_MAJOR < 54
     if ((err = av_open_input_file(&avContext, filename, NULL, 0, NULL)) != 0) {
