@@ -45,7 +45,9 @@
 -#define MAX_INET_PROTOS	256		/* Must be a power of 2		*/
 +#define MAX_INET_PROTOS	32		/* Must be a power of 2		*/
  
---- linux-sh4/drivers/scsi/sd.c
+ 
+ /* This is used to register protocols. */
+ --- linux-sh4/drivers/scsi/sd.c
 +++ linux-sh4/drivers/scsi/sd.c
 @@ -1011,7 +1011,7 @@ static int sd_prep_fn(struct request_queue *q, struct request *rq)
  		SCpnt->cmnd[29] = (unsigned char) (this_count >> 16) & 0xff;
@@ -76,3 +78,4 @@
  	unsigned skip_ms_page_8:1;	/* do not use MODE SENSE page 0x08 */
  	unsigned skip_ms_page_3f:1;	/* do not use MODE SENSE page 0x3f */
  	unsigned skip_vpd_pages:1;	/* do not read VPD pages */
+
