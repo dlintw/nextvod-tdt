@@ -77,7 +77,10 @@ endif
 ifdef HS7110
  PART2=1
 endif
-ifdef WHITEBOX
+ifdef ATEMIO520
+ PART2=1
+endif
+ifdef ATEMIO530
  PART2=1
 endif
 ifdef VITAMIN_HD5000
