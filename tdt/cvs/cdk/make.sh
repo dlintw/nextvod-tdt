@@ -84,17 +84,18 @@ echo "23) IPBOX55"
 echo "24) Fortis HS7810A"
 echo "25) B4Team ADB 5800S"
 echo "26) Fortis HS7110"
-echo "27) WHITEBOX"
+echo "27) Atemio520"
 echo "28) Kathrein UFS-913"
 echo "29) Kathrein UFC-960"
 echo "30) Vitamin HD5000"
+echo "31) Atemio530"
 
 case $1 in
 	[1-9] | 1[0-9] | 2[0-9]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
-	read -p "Select target (1-30)? ";;
+	read -p "Select target (1-31)? ";;
 esac
 
 case "$REPLY" in
@@ -123,10 +124,11 @@ case "$REPLY" in
 	24) TARGET="--enable-hs7810a";;
 	25) TARGET="--enable-adb_box";;
 	26) TARGET="--enable-hs7110";;
-	27) TARGET="--enable-whitebox";;
+	27) TARGET="--enable-atemio520";;
 	28) TARGET="--enable-ufs913";;
 	29) TARGET="--enable-ufc960";;
 	30) TARGET="--enable-vitamin_hd5000";;
+	31) TARGET="--enable-atemio530";;
 	 *) TARGET="--enable-ufs912";;
 esac
 CONFIGPARAM="$CONFIGPARAM $TARGET"

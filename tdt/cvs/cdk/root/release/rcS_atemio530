@@ -159,7 +159,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 fi
 
 #never reached
-echo "REBOOT WHITEBOX" > /dev/vfd
-echo "REBOOT WHITEBOX"
+echo "REBOOT ATEMIO530" > /dev/vfd
+echo "REBOOT ATEMIO530"
 reboot -f
 
