@@ -112,7 +112,8 @@ $(DEPDIR)/%release_neutrino:
 	$(if $(OCTAGON1008),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf &&) \
 	$(if $(HS7810A),cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_neutrino/boot/video.elf &&) \
 	$(if $(HS7110),cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_neutrino/boot/video.elf &&) \
-	$(if $(WHITEBOX),cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_neutrino/boot/video.elf &&) \
+	$(if $(ATEMIO520),cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_neutrino/boot/video.elf &&) \
+	$(if $(ATEMIO530),cp $(targetprefix)/boot/video_7111.elf $(prefix)/release_neutrino/boot/video.elf &&) \
 	$(if $(IPBOX9900),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf &&) \
 	$(if $(IPBOX99),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf &&) \
 	$(if $(IPBOX55),cp $(targetprefix)/boot/video_7109.elf $(prefix)/release_neutrino/boot/video.elf &&) \
@@ -141,7 +142,8 @@ $(DEPDIR)/%release_neutrino:
 	$(if $(ATEVIO7500), cp $(targetprefix)/boot/audio_7105.elf $(prefix)/release_neutrino/boot/audio.elf &&) \
 	$(if $(OCTAGON1008), cp $(targetprefix)/boot/audio_7109.elf $(prefix)/release_neutrino/boot/audio.elf &&) \
 	$(if $(HS7810A), cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release_neutrino/boot/audio.elf &&) \
-	$(if $(WHITEBOX),cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release_neutrino/boot/audio.elf &&) \
+	$(if $(ATEMIO520),cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release_neutrino/boot/audio.elf &&) \
+	$(if $(ATEMIO530),cp $(targetprefix)/boot/audio_7111.elf $(prefix)/release_neutrino/boot/audio.elf &&) \
 	$(if $(IPBOX9900),cp $(targetprefix)/boot/audio.elf $(prefix)/release_neutrino/boot/audio.elf &&) \
 	$(if $(IPBOX99),cp $(targetprefix)/boot/audio.elf $(prefix)/release_neutrino/boot/audio.elf &&) \
 	$(if $(IPBOX55),cp $(targetprefix)/boot/audio.elf $(prefix)/release_neutrino/boot/audio.elf &&) \
@@ -206,7 +208,7 @@ if STM24
 endif
 
 if !STM22
-	cp $(buildprefix)/root/release/rcS_stm23_neutrino$(if $(TF7700),_$(TF7700))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(HS7810A),_$(HS7810A))$(if $(HS7110),_$(HS7110))$(if $(WHITEBOX),_$(WHITEBOX))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(ADB_BOX),_$(ADB_BOX))$(if $(UFS913),_$(UFS913))$(if $(UFS922),_$(UFS922))$(if $(UFC960),_$(UFC960))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(SPARK7162),_$(SPARK7162))$(if $(IPBOX9900),_$(IPBOX9900))$(if $(IPBOX99),_$(IPBOX99))$(if $(IPBOX55),_$(IPBOX55)) $(prefix)/release_neutrino/etc/init.d/rcS
+	cp $(buildprefix)/root/release/rcS_stm23_neutrino$(if $(TF7700),_$(TF7700))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(HS7810A),_$(HS7810A))$(if $(HS7110),_$(HS7110))$(if $(ATEMIO520),_$(ATEMIO520))$(if $(ATEMIO530),_$(ATEMIO530))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(ADB_BOX),_$(ADB_BOX))$(if $(UFS913),_$(UFS913))$(if $(UFS922),_$(UFS922))$(if $(UFC960),_$(UFC960))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(UFS912),_$(UFS912))$(if $(SPARK),_$(SPARK))$(if $(SPARK7162),_$(SPARK7162))$(if $(IPBOX9900),_$(IPBOX9900))$(if $(IPBOX99),_$(IPBOX99))$(if $(IPBOX55),_$(IPBOX55)) $(prefix)/release_neutrino/etc/init.d/rcS
 endif
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/avs/avs.ko $(prefix)/release_neutrino/lib/modules/
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/boxtype/boxtype.ko $(prefix)/release_neutrino/lib/modules/
@@ -479,15 +481,56 @@ if ENABLE_HS7110
 	rm -f $(prefix)/release_neutrino/bin/gotosleep
 
 else
-if ENABLE_WHITEBOX
+if ENABLE_ATEMIO520
 
-	echo "whitebox" > $(prefix)/release_neutrino/etc/hostname
+	echo "atemio520" > $(prefix)/release_neutrino/etc/hostname
 	rm -f $(prefix)/release_neutrino/sbin/halt
 	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
 	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
 	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
-	cp $(buildprefix)/root/release/halt_whitebox $(prefix)/release_neutrino/etc/init.d/halt
+	cp $(buildprefix)/root/release/halt_atemio520 $(prefix)/release_neutrino/etc/init.d/halt
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
+	chmod 755 $(prefix)/release_neutrino/etc/init.d/halt
+	mkdir -p $(prefix)/release_neutrino/etc/rc.d/rc0.d
+	ln -s ../init.d $(prefix)/release_neutrino/etc/rc.d
+	ln -fs halt $(prefix)/release_neutrino/sbin/reboot
+	ln -fs halt $(prefix)/release_neutrino/sbin/poweroff
+	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc0.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc0.d/S40umountfs
+	ln -s ../init.d/halt $(prefix)/release_neutrino/etc/rc.d/rc0.d/S90halt
+	mkdir -p $(prefix)/release_neutrino/etc/rc.d/rc6.d
+	ln -s ../init.d/sendsigs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S20sendsigs
+	ln -s ../init.d/umountfs $(prefix)/release_neutrino/etc/rc.d/rc6.d/S40umountfs
+	ln -s ../init.d/reboot $(prefix)/release_neutrino/etc/rc.d/rc6.d/S90reboot
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/frontcontroller/nuvoton/nuvoton.ko $(prefix)/release_neutrino/lib/modules/
+	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-sti7111.ko $(prefix)/release_neutrino/lib/modules/
+#	install autofs
+	cp -f $(targetprefix)/usr/sbin/automount $(prefix)/release_neutrino/usr/sbin/
+	cp -f $(buildprefix)/root/release/auto.usb $(prefix)/release_neutrino/etc/
+
+	mv $(prefix)/release_neutrino/lib/firmware/component_7111_mb618.fw $(prefix)/release_neutrino/lib/firmware/component.fw
+	rm $(prefix)/release_neutrino/lib/firmware/component_7105_pdk7105.fw
+
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-avl2108.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-stv6306.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx24116.fw
+	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
+	rm -f $(prefix)/release_neutrino/bin/evremote
+	rm -f $(prefix)/release_neutrino/bin/gotosleep
+
+else
+if ENABLE_ATEMIO530
+
+	echo "atemio530" > $(prefix)/release_neutrino/etc/hostname
+	rm -f $(prefix)/release_neutrino/sbin/halt
+	cp -f $(targetprefix)/sbin/halt $(prefix)/release_neutrino/sbin/
+	cp $(buildprefix)/root/release/umountfs $(prefix)/release_neutrino/etc/init.d/
+	cp $(buildprefix)/root/release/rc $(prefix)/release_neutrino/etc/init.d/
+	cp $(buildprefix)/root/release/sendsigs $(prefix)/release_neutrino/etc/init.d/
+	cp $(buildprefix)/root/release/halt_atemio530 $(prefix)/release_neutrino/etc/init.d/halt
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/umountfs
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/rc
 	chmod 755 $(prefix)/release_neutrino/etc/init.d/sendsigs
@@ -1381,6 +1424,7 @@ else
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_neutrino/lib/modules/
 
 	rm -f $(prefix)/release_neutrino/lib/firmware/dvb-fe-cx21143.fw
+endif
 endif
 endif
 endif
