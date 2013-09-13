@@ -1288,7 +1288,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/dvb/decode
 diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/dvb/dvb.cpp enigma2-nightly.patched/lib/dvb/dvb.cpp
 --- enigma2-nightly.org/lib/dvb/dvb.cpp	2013-04-03 19:05:11.000000000 +0200
 +++ enigma2-nightly.patched/lib/dvb/dvb.cpp	2013-04-03 20:04:25.000000000 +0200
-@@ -111,6 +111,56 @@
+@@ -111,6 +111,57 @@
  		m_boxtype = DM800SE;
  	else if (!strncmp(tmp, "dm7020hd\n", rd))
  		m_boxtype = DM7020HD;
@@ -1338,7 +1338,8 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/dvb/dvb.cp
 +	else if (!strncmp(tmp, "octagon1008\n", rd)) m_boxtype = OCTAGON1008;
 +	else if (!strncmp(tmp, "hs7810a\n", rd)) m_boxtype = HS7810A;
 +	else if (!strncmp(tmp, "hs7110\n", rd)) m_boxtype = HS7110;
-+	else if (!strncmp(tmp, "whitebox\n", rd)) m_boxtype = WHITEBOX;
++	else if (!strncmp(tmp, "atemio520\n", rd)) m_boxtype = ATEMIO520;
++	else if (!strncmp(tmp, "atemio530\n", rd)) m_boxtype = ATEMIO530;
 +	else if (!strncmp(tmp, "atevio7500\n", rd)) m_boxtype = ATEVIO7500;
 +	else if (!strncmp(tmp, "vitamin_hd5000\n", rd)) m_boxtype = VITAMIN_HD5000;
 +#endif
@@ -1351,7 +1352,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/dvb/dvb.cp
  	}
 +#if defined(__sh__) // we use our own algo for demux detection
 +	else if (m_boxtype == ADB_BOX ||  m_boxtype == UFS910 || m_boxtype == UFS912 || m_boxtype == SPARK || m_boxtype == SPARK7162 || m_boxtype == UFS922 || m_boxtype == TF7700HDPVR || m_boxtype == HDBOX ||
-+		m_boxtype == HL101 || m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || m_boxtype == VIP1_V2 || m_boxtype == VIP2_V1 || m_boxtype == HS7810A || m_boxtype == HS7110 || m_boxtype == WHITEBOX ||
++		m_boxtype == HL101 || m_boxtype == CUBEREVO || m_boxtype == CUBEREVO_MINI || m_boxtype == CUBEREVO_MINI2 || m_boxtype == VIP1_V2 || m_boxtype == VIP2_V1 || m_boxtype == HS7810A || m_boxtype == HS7110 || m_boxtype == ATEMIO520 || m_boxtype == ATEMIO530 ||
 +		m_boxtype == CUBEREVO_MINI_FTA || m_boxtype == CUBEREVO_250HD || m_boxtype == CUBEREVO_2000HD || m_boxtype == CUBEREVO_9500HD || m_boxtype == OCTAGON1008 || m_boxtype == ATEVIO7500 ||
 +		m_boxtype == IPBOX9900 || m_boxtype == IPBOX99 || m_boxtype == IPBOX55 || m_boxtype == VITAMIN_HD5000)
 +	{
@@ -1444,7 +1445,7 @@ diff -Nur '--exclude=.git' '--exclude=tuxtxt' enigma2-nightly.org/lib/dvb/dvb.h 
  
 -	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD };
 +#if defined(__sh__)
-+	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD, ADB_BOX, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, SPARK, SPARK7162, ATEVIO7500, HS7810A, HS7110, WHITEBOX, IPBOX9900, IPBOX99, IPBOX55, VITAMIN_HD5000};
++	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD, ADB_BOX, UFS910, UFS912, UFS922, TF7700HDPVR, HDBOX, HL101, CUBEREVO, CUBEREVO_MINI, CUBEREVO_MINI2, CUBEREVO_MINI_FTA, CUBEREVO_250HD, CUBEREVO_9500HD, CUBEREVO_2000HD, OCTAGON1008, VIP1_V2, VIP2_V1, SPARK, SPARK7162, ATEVIO7500, HS7810A, HS7110, ATEMIO520, ATEMIO530, IPBOX9900, IPBOX99, IPBOX55, VITAMIN_HD5000};
 +#else
 + 	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD };
 +#endif
