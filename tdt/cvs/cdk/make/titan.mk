@@ -6,16 +6,34 @@ $(DEPDIR)/titan.do_prepare:
 	[ -d "$(appsdir)/titan" ] && \
 	(cd $(appsdir)/titan; svn up; cd "$(buildprefix)";); \
 	[ -d "$(appsdir)/titan" ] || \
-	svn checkout --username public --password public http://sbnc.myphotos.cc/svn/titan $(appsdir)/titan; \
-	[ -d "$(appsdir)/titan/titan/libipkg" ] || \
-	ln -s $(appsdir)/titan/libipkg $(appsdir)/titan/titan; \
+	svn checkout --username public --password public http://sbnc.dyndns.tv/svn/titan $(appsdir)/titan; \
+	COMPRESSBIN=gzip; \
+	COMPRESSEXT=gz; \
+	$(if $(UFS910), COMPRESSBIN=lzma;) \
+	$(if $(UFS910), COMPRESSEXT=lzma;) \
+	[ -d "$(buildprefix)/BUILD" ] && \
+	(echo "[titan.mk] Kernel COMPRESSBIN=$$COMPRESSBIN"; echo "[titan.mk] Kernel COMPRESSEXT=$$COMPRESSEXT"; cd "$(buildprefix)/BUILD"; rm -f $(buildprefix)/BUILD/uimage.*; dd if=$(targetprefix)/boot/uImage of=uimage.tmp.$$COMPRESSEXT bs=1 skip=64; $$COMPRESSBIN -d uimage.tmp.$$COMPRESSEXT; str="`strings $(buildprefix)/BUILD/uimage.tmp | grep "Linux version 2.6" | sed 's/Linux version //' | sed 's/(.*)//' | sed 's/  / /'`"; code=`"$(appsdir)/titan/titan/tools/gettitancode" "$$str"`; code="$$code"UL; echo "[titan.mk] $$str -> $$code"; sed s/"^#define SYSCODE .*"/"#define SYSCODE $$code"/ -i "$(appsdir)/titan/titan/titan.c"); \
+	SVNVERSION=`svn info $(appsdir)/titan | grep Revision | sed s/'Revision: '//g`; \
+	SVNBOX=ufs910; \
+	$(if $(UFS910), SVNBOX=ufs910;) \
+	$(if $(UFS912), SVNBOX=ufs912;) \
+	$(if $(UFS922), SVNBOX=ufs922;) \
+	$(if $(OCTAGON1008), SVNBOX=atevio700;) \
+	$(if $(FORTIS_HDBOX), SVNBOX=atevio7000;) \
+	$(if $(ATEVIO7500), SVNBOX=atevio7500;) \
+	$(if $(ATEMIO510), SVNBOX=atemio510;) \
+	$(if $(ATEMIO520), SVNBOX=atemio520;) \
+	$(if $(ATEMIO530), SVNBOX=atemio530;) \
+	TPKDIR="/svn/tpk/"$$SVNBOX"-rev"$$SVNVERSION"-secret/sh4/titan"; \
+	(echo "[titan.mk] tpk SVNVERSION=$$SVNVERSION";echo "[titan.mk] tpk TPKDIR=$$TPKDIR"; sed s!"/svn/tpk/.*"!"$$TPKDIR\", 1, 0);"! -i "$(appsdir)/titan/titan/extensions.h"; sed s!"svn/tpk/.*"!"$$TPKDIR\") == 0)"! -i "$(appsdir)/titan/titan/tpk.h"; sed s/"^#define PLUGINVERSION .*"/"#define PLUGINVERSION $$SVNVERSION"/ -i "$(appsdir)/titan/titan/struct.h"); \
 	[ -d "$(appsdir)/titan/titan/libdreamdvd" ] || \
 	ln -s $(appsdir)/titan/libdreamdvd $(appsdir)/titan/titan; \
 	touch $@
+	rm -f $(buildprefix)/BUILD/uimage.*
 
 $(appsdir)/titan/titan/config.status: \
 	bootstrap libfreetype libpng libid3tag openssl libcurl libmad libboost libgif sdparm ethtool \
-		titan-libipkg titan-libdreamdvd	\
+		titan-libdreamdvd	\
 		$(MEDIAFW_DEP) $(EXTERNALLCD_DEP)
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/titan/titan && \
@@ -47,9 +65,11 @@ $(DEPDIR)/titan: titan.do_prepare titan.do_compile
 	touch $@
 	
 titan-clean:
+	rm -f $(buildprefix)/BUILD/uimage.*
 	rm -f $(DEPDIR)/titan
+	rm -f $(DEPDIR)/titan.do_prepare
 	cd $(appsdir)/titan/titan && \
-		$(MAKE) distclean
+		$(MAKE) clean
 
 titan-distclean:
 	rm -f $(DEPDIR)/titan*
@@ -58,49 +78,6 @@ titan-distclean:
 titan-updateyaud: titan-clean titan
 	mkdir -p $(prefix)/release/usr/local/bin
 	cp $(targetprefix)/usr/local/bin/titan $(prefix)/release_titan/usr/local/bin/
-	
-#
-# titan-libipkg
-#
-$(DEPDIR)/titan-libipkg.do_prepare:
-	[ -d "$(appsdir)/titan" ] && \
-	(cd $(appsdir)/titan; svn up; cd "$(buildprefix)";); \
-	[ -d "$(appsdir)/titan" ] || \
-	svn checkout --username public --password public http://sbnc.myphotos.cc/svn/titan $(appsdir)/titan; \
-	[ -d "$(appsdir)/titan/titan/libipkg" ] || \
-	ln -s $(appsdir)/titan/libipkg $(appsdir)/titan/titan; \
-	[ -d "$(appsdir)/titan/titan/libdreamdvd" ] || \
-	ln -s $(appsdir)/titan/libdreamdvd $(appsdir)/titan/titan; \
-	touch $@
-
-$(appsdir)/titan/libipkg/config.status: bootstrap
-	export PATH=$(hostprefix)/bin:$(PATH) && \
-	cd $(appsdir)/titan/libipkg && \
-		$(BUILDENV) \
-		./configure \
-			--build=$(build) \
-			--host=$(target) \
-			--prefix=/usr && \
-		$(MAKE)
-	touch $@
-
-$(DEPDIR)/titan-libipkg.do_compile: $(appsdir)/titan/libipkg/config.status
-	cd $(appsdir)/titan/libipkg && \
-		$(MAKE)
-	touch $@
-
-$(DEPDIR)/titan-libipkg: titan-libipkg.do_prepare titan-libipkg.do_compile
-	$(MAKE) -C $(appsdir)/titan/libipkg install DESTDIR=$(targetprefix)
-	touch $@
-	
-titan-libipkg-clean:
-	rm -f $(DEPDIR)/titan-libipkg
-	cd $(appsdir)/titan/libipkg && \
-		$(MAKE) distclean
-
-titan-libipkg-distclean:
-	rm -f $(DEPDIR)/titan-libipkg*
-	rm -rf $(appsdir)/titan/libipkg
 
 #
 # titan-libdreamdvd
@@ -109,9 +86,7 @@ $(DEPDIR)/titan-libdreamdvd.do_prepare:
 	[ -d "$(appsdir)/titan" ] && \
 	(cd $(appsdir)/titan; svn up; cd "$(buildprefix)";); \
 	[ -d "$(appsdir)/titan" ] || \
-	svn checkout --username public --password public http://sbnc.myphotos.cc/svn/titan $(appsdir)/titan; \
-	[ -d "$(appsdir)/titan/titan/libipkg" ] || \
-	ln -s $(appsdir)/titan/libipkg $(appsdir)/titan/titan; \
+	svn checkout --username public --password public http://sbnc.dyndns.tv/svn/titan $(appsdir)/titan; \
 	[ -d "$(appsdir)/titan/titan/libdreamdvd" ] || \
 	ln -s $(appsdir)/titan/libdreamdvd $(appsdir)/titan/titan; \
 	touch $@
@@ -143,7 +118,7 @@ $(DEPDIR)/titan-libdreamdvd: titan-libdreamdvd.do_prepare titan-libdreamdvd.do_c
 titan-libdreamdvd-clean:
 	rm -f $(DEPDIR)/titan-libdreamdvd
 	cd $(appsdir)/titan/libdreamdvd && \
-		$(MAKE) distclean
+		$(MAKE) clean
 
 titan-libdreamdvd-distclean:
 	rm -f $(DEPDIR)/titan-libdreamdvd*
@@ -157,9 +132,7 @@ $(DEPDIR)/titan-plugins.do_prepare:
 	[ -d "$(appsdir)/titan" ] && \
 	(cd $(appsdir)/titan; svn up; cd "$(buildprefix)";); \
 	[ -d "$(appsdir)/titan" ] || \
-	svn checkout --username public --password public http://sbnc.myphotos.cc/svn/titan $(appsdir)/titan; \
-	[ -d "$(appsdir)/titan/titan/libipkg" ] || \
-	ln -s $(appsdir)/titan/libipkg $(appsdir)/titan/titan; \
+	svn checkout --username public --password public http://sbnc.dyndns.tv/svn/titan $(appsdir)/titan; \
 	[ -d "$(appsdir)/titan/titan/libdreamdvd" ] || \
 	ln -s $(appsdir)/titan/libdreamdvd $(appsdir)/titan/titan;
 	touch $@
@@ -187,7 +160,8 @@ $(DEPDIR)/titan-plugins: titan-plugins.do_prepare titan-plugins.do_compile
 
 titan-plugins-clean:
 	rm -f $(DEPDIR)/titan-plugins
-	-$(MAKE) -C $(appsdir)/titan/plugins distclean
+	rm -f $(DEPDIR)/titan-plugins.do_prepare
+	-$(MAKE) -C $(appsdir)/titan/plugins clean
 	
 titan-plugins-distclean:
 	rm -f $(DEPDIR)/titan-plugins*
