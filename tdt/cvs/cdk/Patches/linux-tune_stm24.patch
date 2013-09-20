@@ -47,3 +47,35 @@
  
  
  /* This is used to register protocols. */
+ --- linux-sh4/drivers/scsi/sd.c
++++ linux-sh4/drivers/scsi/sd.c
+@@ -1011,7 +1011,7 @@ static int sd_prep_fn(struct request_queue *q, struct request *rq)
+ 		SCpnt->cmnd[29] = (unsigned char) (this_count >> 16) & 0xff;
+ 		SCpnt->cmnd[30] = (unsigned char) (this_count >> 8) & 0xff;
+ 		SCpnt->cmnd[31] = (unsigned char) this_count & 0xff;
+-	} else if (block > 0xffffffff) {
++	} else if (sdp->use_16_for_rw) {
+ 		SCpnt->cmnd[0] += READ_16 - READ_6;
+ 		SCpnt->cmnd[1] = protect | ((rq->cmd_flags & REQ_FUA) ? 0x8 : 0);
+ 		SCpnt->cmnd[2] = sizeof(block) > 4 ? (unsigned char) (block >> 56) & 0xff : 0;
+@@ -2203,6 +2203,8 @@ got_data:
+ 		}
+ 	}
+ 
++	sdp->use_16_for_rw = (sdkp->capacity > 0xffffffff);
++
+ 	/* Rescale capacity to 512-byte units */
+ 	if (sector_size == 4096)
+ 		sdkp->capacity <<= 3;
+
+--- linux-sh4/include/scsi/scsi_device.h
++++ linux-sh4/include/scsi/scsi_device.h
+@@ -137,6 +137,7 @@ struct scsi_device {
+				     * because we did a bus reset. */
+	unsigned use_10_for_rw:1; /* first try 10-byte read / write */
+	unsigned use_10_for_ms:1; /* first try 10-byte mode sense/select */
++	unsigned use_16_for_rw:1; /* Use read/write(16) over read/write(10) */
+	unsigned skip_ms_page_8:1;	/* do not use MODE SENSE page 0x08 */
+	unsigned skip_ms_page_3f:1;	/* do not use MODE SENSE page 0x3f */
+	unsigned use_192_bytes_for_3f:1; /* ask for 192 bytes from page 0x3f */
+
