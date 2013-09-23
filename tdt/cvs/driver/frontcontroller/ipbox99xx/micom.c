@@ -1191,7 +1191,7 @@ static void micomWriteString(unsigned char* aBuf, int len, int raw)
 		newlen = VFD_MAX_DATA_LEN;
 		aBuf[newlen] = '\0';
 	} else
-		newlen = len;
+		newlen = len + 1;
 
 	/* save last string written to fp */
 	memcpy(&lastdata.data, aBuf, newlen);
