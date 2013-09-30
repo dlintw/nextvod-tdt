@@ -907,8 +907,14 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 	./configure \
 		$(FFMPEG_CUSTOM_NEU) \
 		--disable-static \
-		--enable-shared \
-		--enable-cross-compile \
+		--disable-runtime-cpudetect \
+		--disable-doc \
+		--disable-htmlpages \
+		--disable-manpages \
+		--disable-podpages \
+		--disable-txtpages \
+		--disable-vfp \
+		--disable-fast-unaligned \
 		--disable-ffserver \
 		--disable-ffplay \
 		--disable-ffprobe \
@@ -940,6 +946,7 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--disable-mipsfpu \
 		--disable-indevs \
 		--disable-outdevs \
+		--disable-bsfs \
 		--disable-muxers \
 		--enable-muxer=ogg \
 		--enable-muxer=flac \
@@ -974,19 +981,21 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-decoder=mjpeg \
 		--enable-decoder=vorbis \
 		--enable-decoder=flac \
-		--enable-protocol=file \
 		--enable-encoder=mpeg2video \
 		--enable-muxer=mpeg2video \
 		--enable-parser=mjpeg \
 		--enable-demuxer=mjpeg \
 		--enable-demuxer=wav \
+		--enable-demuxer=rtsp \
 		--enable-decoder=dvbsub \
 		--enable-decoder=iff_byterun1 \
 		--enable-small \
-		--enable-avresample \
 		--enable-pthreads \
 		--enable-bzlib \
+		--enable-zlib \
 		--enable-librtmp \
+		--enable-shared \
+		--enable-cross-compile \
 		--pkg-config="pkg-config" \
 		--cross-prefix=$(target)- \
 		--target-os=linux \
@@ -994,7 +1003,7 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--extra-cflags="-fno-strict-aliasing" \
 		--enable-stripping \
 		--prefix=/usr && \
-	$(MAKE)
+		$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-ffmpeg $(DEPDIR)/std-ffmpeg $(DEPDIR)/max-ffmpeg \
