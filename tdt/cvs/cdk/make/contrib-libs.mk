@@ -1003,7 +1003,7 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--extra-cflags="-fno-strict-aliasing" \
 		--enable-stripping \
 		--prefix=/usr && \
-		$(MAKE)
+	$(MAKE)
 	touch $@
 
 $(DEPDIR)/min-ffmpeg $(DEPDIR)/std-ffmpeg $(DEPDIR)/max-ffmpeg \
