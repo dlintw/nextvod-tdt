@@ -31,8 +31,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <sys/uio.h>
 #include <linux/dvb/video.h>
 #include <linux/dvb/audio.h>
+#include <linux/dvb/stm_ioctls.h>
 #include <memory.h>
 #include <asm/types.h>
 #include <pthread.h>
@@ -41,7 +43,6 @@
 #include "common.h"
 #include "output.h"
 #include "debug.h"
-#include "stm_ioctls.h"
 #include "misc.h"
 #include "pes.h"
 #include "writer.h"
@@ -118,17 +119,14 @@ static int writeData(void* _call)
         return 0;
     }
 
-    int HeaderLength = InsertPesHeader (PesHeader, call->len, PRIVATE_STREAM_1_PES_START_CODE, call->Pts, 0);
+    struct iovec iov[2];
 
-    unsigned char* PacketStart = malloc(call->len + HeaderLength);
-    memcpy (PacketStart, PesHeader, HeaderLength);
-    memcpy (PacketStart + HeaderLength, call->data, call->len);
+    iov[0].iov_base = PesHeader;
+    iov[0].iov_len = InsertPesHeader (PesHeader, call->len, PRIVATE_STREAM_1_PES_START_CODE, call->Pts, 0);
+    iov[1].iov_base = call->data;
+    iov[1].iov_len = call->len;
 
-    int len = write(call->fd, PacketStart, call->len + HeaderLength);
-
-    free(PacketStart);
-
-    return len;
+    return writev(call->fd, iov, 2);
 }
 
 /* ***************************** */

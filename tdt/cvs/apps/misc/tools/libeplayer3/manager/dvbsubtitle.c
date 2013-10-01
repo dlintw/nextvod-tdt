@@ -1,5 +1,5 @@
 /*
- * subtitle manager handling.
+ * dvbsubtitle manager handling.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <libavformat/avformat.h>
 #include "manager.h"
 #include "common.h"
 
@@ -32,27 +33,27 @@
 /* ***************************** */
 #define TRACKWRAP 20
 
-#define SUBTITLE_MGR_DEBUG
+#define DVBSUBTITLE_MGR_DEBUG
 
-#ifdef SUBTITLE_MGR_DEBUG
+#ifdef DVBSUBTITLE_MGR_DEBUG
 
-static short debug_level = 10;
+static short debug_level = 0;
 
-#define subtitle_mgr_printf(level, x...) do { \
+#define dvbsubtitle_mgr_printf(level, x...) do { \
 if (debug_level >= level) printf(x); } while (0)
 #else
-#define subtitle_mgr_printf(level, x...)
+#define dvbsubtitle_mgr_printf(level, x...)
 #endif
 
-#ifndef SUBTITLE_MGR_SILENT
-#define subtitle_mgr_err(x...) do { printf(x); } while (0)
+#ifndef DVBSUBTITLE_MGR_SILENT
+#define dvbsubtitle_mgr_err(x...) do { printf(x); } while (0)
 #else
-#define subtitle_mgr_err(x...)
+#define dvbsubtitle_mgr_err(x...)
 #endif
 
 /* Error Constants */
-#define cERR_SUBTITLE_MGR_NO_ERROR        0
-#define cERR_SUBTITLE_MGR_ERROR          -1
+#define cERR_DVBSUBTITLE_MGR_NO_ERROR        0
+#define cERR_DVBSUBTITLE_MGR_ERROR          -1
 
 static const char FILENAME[] = __FILE__;
 
@@ -66,7 +67,7 @@ static const char FILENAME[] = __FILE__;
 
 static Track_t * Tracks = NULL;
 static int TrackCount = 0;
-static int CurrentTrack = -1; //no as default.
+static int CurrentTrack = -1;
 
 /* ***************************** */
 /* Prototypes                    */
@@ -78,7 +79,7 @@ static int CurrentTrack = -1; //no as default.
 
 static int ManagerAdd(Context_t  *context, Track_t track) {
 
-    subtitle_mgr_printf(10, "%s::%s %s %s %d\n", FILENAME, __FUNCTION__, track.Name, track.Encoding, track.Id);
+    dvbsubtitle_mgr_printf(10, "%s::%s name=\"%s\" encoding=\"%s\" id=%d\n", FILENAME, __FUNCTION__, track.Name, track.Encoding, track.Id);
 
     if (Tracks == NULL) {
         Tracks = malloc(sizeof(Track_t) * TRACKWRAP);
@@ -89,15 +90,15 @@ static int ManagerAdd(Context_t  *context, Track_t track) {
 
     if (Tracks == NULL)
     {
-        subtitle_mgr_err("%s:%s malloc failed\n", FILENAME, __FUNCTION__);
-        return cERR_SUBTITLE_MGR_ERROR;
+        dvbsubtitle_mgr_err("%s:%s malloc failed\n", FILENAME, __FUNCTION__);
+        return cERR_DVBSUBTITLE_MGR_ERROR;
     }
 
     int i;
     for (i = 0; i < TRACKWRAP; i++) {
 	if (Tracks[i].Id == track.Id) {
 		Tracks[i].pending = 0;
-        	return cERR_SUBTITLE_MGR_NO_ERROR;
+        	return cERR_DVBSUBTITLE_MGR_NO_ERROR;
 	}
     }
 
@@ -105,31 +106,31 @@ static int ManagerAdd(Context_t  *context, Track_t track) {
         copyTrack(&Tracks[TrackCount], &track);
         TrackCount++;
     } else {
-
-        subtitle_mgr_err("%s:%s TrackCount out if range %d - %d\n", FILENAME, __FUNCTION__, TrackCount, TRACKWRAP);
-        return cERR_SUBTITLE_MGR_ERROR;
+        dvbsubtitle_mgr_err("%s:%s TrackCount out if range %d - %d\n", FILENAME, __FUNCTION__, TrackCount, TRACKWRAP);
+        return cERR_DVBSUBTITLE_MGR_ERROR;
     }
 
     if (TrackCount > 0)
-        context->playback->isSubtitle = 1;
+        context->playback->isDvbSubtitle = 1;
 
-    subtitle_mgr_printf(10, "%s::%s\n", FILENAME, __FUNCTION__);
+    dvbsubtitle_mgr_printf(10, "%s::%s\n", FILENAME, __FUNCTION__);
 
-    return cERR_SUBTITLE_MGR_NO_ERROR;
+    return cERR_DVBSUBTITLE_MGR_NO_ERROR;
 }
 
 static char ** ManagerList(Context_t  *context __attribute__((unused))) {
-    char ** tracklist = NULL;
     int i = 0, j = 0;
+    char ** tracklist = NULL;
 
-    subtitle_mgr_printf(10, "%s::%s\n", FILENAME, __FUNCTION__);
+    dvbsubtitle_mgr_printf(10, "%s::%s\n", FILENAME, __FUNCTION__);
 
     if (Tracks != NULL) {
+
         tracklist = malloc(sizeof(char *) * ((TrackCount*2) + 1));
 
         if (tracklist == NULL)
         {
-            subtitle_mgr_err("%s:%s malloc failed\n", FILENAME, __FUNCTION__);
+            dvbsubtitle_mgr_err("%s:%s malloc failed\n", FILENAME, __FUNCTION__);
             return NULL;
         }
 
@@ -142,11 +143,10 @@ static char ** ManagerList(Context_t  *context __attribute__((unused))) {
             tracklist[j]    = strdup(tmp);
             tracklist[j+1]  = strdup(Tracks[i].Encoding);
         }
-
         tracklist[j] = NULL;
     }
 
-    subtitle_mgr_printf(10, "%s::%s return %p (%d - %d)\n", FILENAME, __FUNCTION__, tracklist, j, TrackCount);
+    dvbsubtitle_mgr_printf(10, "%s::%s return %p (%d - %d)\n", FILENAME, __FUNCTION__, tracklist, j, TrackCount);
 
     return tracklist;
 }
@@ -155,39 +155,40 @@ static int ManagerDel(Context_t * context) {
 
     int i = 0;
 
-    subtitle_mgr_printf(10, "%s::%s\n", FILENAME, __FUNCTION__);
+    dvbsubtitle_mgr_printf(10, "%s::%s\n", FILENAME, __FUNCTION__);
 
     if(Tracks != NULL) {
         for (i = 0; i < TrackCount; i++) {
             freeTrack(&Tracks[i]);
         }
-
         free(Tracks);
         Tracks = NULL;
     } else
     {
-        subtitle_mgr_err("%s::%s nothing to delete!\n", FILENAME, __FUNCTION__);
-        return cERR_SUBTITLE_MGR_ERROR;
+        dvbsubtitle_mgr_err("%s::%s nothing to delete!\n", FILENAME, __FUNCTION__);
+        return cERR_DVBSUBTITLE_MGR_ERROR;
     }
 
     TrackCount = 0;
     CurrentTrack = -1;
-    context->playback->isSubtitle = 0;
+    context->playback->isDvbSubtitle = 0;
 
-    subtitle_mgr_printf(10, "%s::%s return no error\n", FILENAME, __FUNCTION__);
+    dvbsubtitle_mgr_printf(10, "%s::%s return no error\n", FILENAME, __FUNCTION__);
 
-    return cERR_SUBTITLE_MGR_NO_ERROR;
+    return cERR_DVBSUBTITLE_MGR_NO_ERROR;
 }
+
 
 static int Command(void  *_context, ManagerCmd_t command, void * argument) {
     Context_t  *context = (Context_t*) _context;
-    int ret = cERR_SUBTITLE_MGR_NO_ERROR;
+    int ret = cERR_DVBSUBTITLE_MGR_NO_ERROR;
 
-    subtitle_mgr_printf(50, "%s::%s %d\n", FILENAME, __FUNCTION__, command);
+    dvbsubtitle_mgr_printf(10, "%s::%s\n", FILENAME, __FUNCTION__);
 
     switch(command) {
     case MANAGER_ADD: {
         Track_t * track = argument;
+
         ret = ManagerAdd(context, *track);
         break;
     }
@@ -197,36 +198,32 @@ static int Command(void  *_context, ManagerCmd_t command, void * argument) {
         break;
     }
     case MANAGER_GET: {
-        if (TrackCount > 0 && CurrentTrack >= 0)
+        dvbsubtitle_mgr_printf(20, "%s::%s MANAGER_GET\n", FILENAME, __FUNCTION__);
+
+        if ((TrackCount > 0) && (CurrentTrack >=0))
             *((int*)argument) = (int)Tracks[CurrentTrack].Id;
         else
             *((int*)argument) = (int)-1;
         break;
     }
     case MANAGER_GET_TRACK: {
-        //subtitle_mgr_printf(20, "%s::%s MANAGER_GET_TRACK\n", FILENAME, __FUNCTION__);
+        dvbsubtitle_mgr_printf(20, "%s::%s MANAGER_GET_TRACK\n", FILENAME, __FUNCTION__);
 
         if ((TrackCount > 0) && (CurrentTrack >=0))
-        {
-             subtitle_mgr_printf(120, "return %d, %p\n", CurrentTrack, &Tracks[CurrentTrack]);
             *((Track_t**)argument) = (Track_t*) &Tracks[CurrentTrack];
-        }
         else
-        {
-             subtitle_mgr_printf(20, "return NULL\n");
             *((Track_t**)argument) = NULL;
-        }
         break;
     }
     case MANAGER_GETENCODING: {
-        if (TrackCount > 0 && CurrentTrack >= 0)
+        if ((TrackCount > 0) && (CurrentTrack >=0))
             *((char**)argument) = (char *)strdup(Tracks[CurrentTrack].Encoding);
         else
             *((char**)argument) = (char *)strdup("");
         break;
     }
     case MANAGER_GETNAME: {
-        if (TrackCount > 0 && CurrentTrack >= 0)
+        if ((TrackCount > 0) && (CurrentTrack >=0))
             *((char**)argument) = (char *)strdup(Tracks[CurrentTrack].Name);
         else
             *((char**)argument) = (char *)strdup("");
@@ -234,16 +231,17 @@ static int Command(void  *_context, ManagerCmd_t command, void * argument) {
     }
     case MANAGER_SET: {
 	int i;
-        subtitle_mgr_printf(20, "%s::%s MANAGER_SET id=%d\n", FILENAME, __FUNCTION__, *((int*)argument));
+        dvbsubtitle_mgr_printf(20, "%s::%s MANAGER_SET id=%d\n", FILENAME, __FUNCTION__, *((int*)argument));
 
 	for (i = 0; i < TrackCount; i++)
 		if (Tracks[i].Id == *((int*)argument)) {
 			CurrentTrack = i;
 			break;
 		}
+
         if (i == TrackCount) {
-            subtitle_mgr_err("%s::%s track id %d unknown\n", FILENAME, __FUNCTION__, *((int*)argument));
-            ret = cERR_SUBTITLE_MGR_ERROR;
+            dvbsubtitle_mgr_err("%s::%s track id %d unknown\n", FILENAME, __FUNCTION__, *((int*)argument));
+            ret = cERR_DVBSUBTITLE_MGR_ERROR;
         }
         break;
     }
@@ -258,19 +256,19 @@ static int Command(void  *_context, ManagerCmd_t command, void * argument) {
         break;
     }
     default:
-        subtitle_mgr_err("%s:%s: ConatinerCmd not supported!", FILENAME, __FUNCTION__);
-        ret = cERR_SUBTITLE_MGR_ERROR;
+        dvbsubtitle_mgr_err("%s::%s ContainerCmd %d not supported!\n", FILENAME, __FUNCTION__, command);
+        ret = cERR_DVBSUBTITLE_MGR_ERROR;
         break;
     }
 
-    subtitle_mgr_printf(50, "%s:%s: returning %d\n", FILENAME, __FUNCTION__,ret);
+    dvbsubtitle_mgr_printf(10, "%s:%s: returning %d\n", FILENAME, __FUNCTION__,ret);
 
     return ret;
 }
 
 
-struct Manager_s SubtitleManager = {
-    "Subtitle",
+struct Manager_s DvbSubtitleManager = {
+    "DvbSubtitle",
     &Command,
     NULL
 };

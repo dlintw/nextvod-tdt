@@ -29,14 +29,14 @@ Collisions: Normal\n\
 Timer: 100.0000\n\n\
 [V4 Styles]\n\
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, TertiaryColour, BackColour, Bold, Italic, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, AlphaLevel, Encoding\n\
-Style: Default,Arial,26,16777215,0,16777215,0,0,0,2,2,2,2,20,20,10,0\n\n\
+Style: Default,Arial,64,16777215,0,16777215,0,0,0,2,2,2,2,20,20,10,0\n\n\
 [Events]\n\
 Format: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n\n\n"
 
 static inline unsigned char* text_to_ass(char *text, long long int pts, double duration)
 {
      char buf[1024];
-     int x,pos=0;
+     unsigned int x,pos=0;
      for(x=0;x<strlen(text);x++){
          if(text[x]=='\n'){
              buf[pos++]='\\';
@@ -114,11 +114,13 @@ typedef struct
 
 typedef struct
 {
-    unsigned char* destination;
+    uint32_t	   *destination;
     unsigned int   screen_width;
     unsigned int   screen_height;
     unsigned int   destStride;
     
+    void	   (*framebufferBlit)(void);
+
     int            shareFramebuffer;
     int            framebufferFD;
 } SubtitleOutputDef_t;

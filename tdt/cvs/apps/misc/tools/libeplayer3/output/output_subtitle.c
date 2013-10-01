@@ -46,7 +46,7 @@
 
 #ifdef SUBTITLE_DEBUG
 
-static short debug_level = 10;
+static short debug_level = 0;
 
 #define subtitle_printf(level, fmt, x...) do { \
 if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); } while (0)
@@ -103,13 +103,11 @@ static int readPointer = 0;
 static int writePointer = 0;
 static int hasThreadStarted = 0;
 static int isSubtitleOpened = 0;
-
-static int            screen_width     = 0;
-static int            screen_height    = 0;
-static int            destStride       = 0;
-static int            shareFramebuffer = 0;
-static int            framebufferFD    = -1;
-static unsigned char* destination      = NULL;
+static int	screen_width		= 0;
+static int	screen_height		= 0;
+static int	destStride		= 0;
+static void	(*framebufferBlit)	= NULL;
+static uint32_t	*destination		= NULL;
 
 /* ***************************** */
 /* Prototypes                    */
@@ -529,7 +527,7 @@ static int Write(void* _context, void *data) {
     int DataLength;
     unsigned long long int Pts;
     float Duration;
-    
+ 
     subtitle_printf(10, "\n");
 
     if (data == NULL)
@@ -597,7 +595,7 @@ static int Write(void* _context, void *data) {
     return cERR_SUBTITLE_NO_ERROR;
 }
 
-static int subtitle_Open(context) {
+static int subtitle_Open(Context_t* context __attribute__((unused))) {
     int i;
 
     subtitle_printf(10, "\n");
@@ -629,7 +627,7 @@ static int subtitle_Open(context) {
     return cERR_SUBTITLE_NO_ERROR;
 }
 
-static int subtitle_Close(Context_t* context) {
+static int subtitle_Close(Context_t* context __attribute__((unused))) {
     int i;
 
     subtitle_printf(10, "\n");
@@ -690,7 +688,7 @@ static int subtitle_Play(Context_t* context) {
     return cERR_SUBTITLE_NO_ERROR;
 }
 
-static int subtitle_Stop(context) {
+static int subtitle_Stop(Context_t* context __attribute__((unused))) {
     int wait_time = 20;
     int i;
     
@@ -781,8 +779,7 @@ static int Command(void  *_context, OutputCmd_t command, void * argument) {
         SubtitleOutputDef_t* out = (SubtitleOutputDef_t*)argument;
         out->screen_width = screen_width;
         out->screen_height = screen_height;
-        out->shareFramebuffer = shareFramebuffer;
-        out->framebufferFD = framebufferFD;
+        out->framebufferBlit = framebufferBlit;
         out->destination = destination;
         out->destStride = destStride;
         break;
@@ -791,8 +788,7 @@ static int Command(void  *_context, OutputCmd_t command, void * argument) {
         SubtitleOutputDef_t* out = (SubtitleOutputDef_t*)argument;
         screen_width = out->screen_width;
         screen_height = out->screen_height;
-        shareFramebuffer = out->shareFramebuffer;
-        framebufferFD = out->framebufferFD;
+        framebufferBlit = out->framebufferBlit;
         destination = out->destination;
         destStride = out->destStride;
         break;
