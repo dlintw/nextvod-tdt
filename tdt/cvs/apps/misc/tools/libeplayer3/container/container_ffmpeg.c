@@ -57,7 +57,7 @@
 /* ***************************** */
 
 //for buffered io
-#define FILLBUFSIZE 1048576
+#define FILLBUFSIZE 0
 #define FILLBUFDIFF 1048576
 #define FILLBUFPAKET 5120
 #define FILLBUFSEEKTIME 3 //sec
@@ -889,7 +889,7 @@ int container_set_ffmpeg_buf_seek_time(int* time)
 
 int container_set_ffmpeg_buf_size(int* size)
 {
-    if(ffmpeg_buf == NULL)
+		if(ffmpeg_buf == NULL)
     {
         if(*size == 0)
             ffmpeg_buf_size = 0;
@@ -897,6 +897,7 @@ int container_set_ffmpeg_buf_size(int* size)
             ffmpeg_buf_size = (*size) + FILLBUFDIFF;
     }
 
+		ffmpeg_printf(10, "size=%d, buffer size=%d\n", (*size), ffmpeg_buf_size);
     return cERR_CONTAINER_FFMPEG_NO_ERROR;
 }
 
@@ -1897,28 +1898,43 @@ static int container_ffmpeg_play(Context_t *context)
 
 static int container_ffmpeg_stop(Context_t *context) {
     int ret = cERR_CONTAINER_FFMPEG_NO_ERROR;
-    int wait_time = 20;
+    int wait_time = 100;
 
     ffmpeg_printf(10, "\n");
 
     if (!isContainerRunning)
     {
-	ffmpeg_err("Container not running\n");
-	return cERR_CONTAINER_FFMPEG_ERR;
+        ffmpeg_err("Container not running\n");
+        return cERR_CONTAINER_FFMPEG_ERR;
     }
-    if (context->playback)
-	context->playback->isPlaying = 0;
-
-    while ( (hasPlayThreadStarted != 0) && (--wait_time) > 0 ) {
-	ffmpeg_printf(10, "Waiting for ffmpeg thread to terminate itself, will try another %d times\n", wait_time);
-
-	usleep(100000);
+    
+    //for buffered io
+    wait_time = 100;
+    if(hasfillerThreadStarted[hasfillerThreadStartedID] == 1)
+        hasfillerThreadStarted[hasfillerThreadStartedID] = 2; // should end
+    while ( (hasfillerThreadStarted[hasfillerThreadStartedID] != 0) && (--wait_time) > 0 ) {
+        ffmpeg_printf(10, "Waiting for ffmpeg filler thread to terminate itself, will try another %d times, ID=%d\n", wait_time, hasfillerThreadStartedID);
+        usleep(100000);
     }
 
     if (wait_time == 0) {
-	ffmpeg_err( "Timeout waiting for thread!\n");
+        ffmpeg_err( "Timeout waiting for filler thread!\n");
+        ret = cERR_CONTAINER_FFMPEG_ERR;
+    }
+    //for buffered io (end)
+    
+    if (context->playback)
+        context->playback->isPlaying = 0;
 
-	ret = cERR_CONTAINER_FFMPEG_ERR;
+    wait_time = 100;
+    while ( (hasPlayThreadStarted != 0) && (--wait_time) > 0 ) {
+        ffmpeg_printf(10, "Waiting for ffmpeg thread to terminate itself, will try another %d times\n", wait_time);
+        usleep(100000);
+    }
+
+    if (wait_time == 0) {
+        ffmpeg_err( "Timeout waiting for thread!\n");
+        ret = cERR_CONTAINER_FFMPEG_ERR;
     }
 
     hasPlayThreadStarted = 0;
@@ -1926,8 +1942,10 @@ static int container_ffmpeg_stop(Context_t *context) {
 
     getMutex(FILENAME, __FUNCTION__,__LINE__);
 
-    if (avContext)
-	avformat_close_input(&avContext);
+    if (avContext) {
+        avformat_close_input(&avContext);
+        avContext = NULL;
+    }
 
     if(avio_opts != NULL) av_dict_free(&avio_opts);
 
@@ -2279,9 +2297,10 @@ static int Command(void  *_context, ContainerCmd_t command, void * argument)
 
     ffmpeg_printf(50, "Command %d\n", command);
 
-    if (command != CONTAINER_INIT && !avContext)
-	return cERR_CONTAINER_FFMPEG_ERR;
-    switch(command)
+    if(command != CONTAINER_SET_BUFFER_SEEK_TIME && command != CONTAINER_SET_BUFFER_SIZE && command != CONTAINER_GET_BUFFER_SIZE && command !=CONTAINER_GET_BUFFER_STATUS && command != CONTAINER_STOP_BUFFER && command != CONTAINER_INIT && !avContext)
+        return cERR_CONTAINER_FFMPEG_ERR;
+		
+		switch(command)
     {
     case CONTAINER_INIT:  {
 	char * filename = (char *)argument;
