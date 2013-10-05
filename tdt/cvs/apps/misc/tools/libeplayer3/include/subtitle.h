@@ -35,16 +35,19 @@ Format: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
 static inline unsigned char* text_to_ass(char *text, long long int pts, double duration)
 {
-     char buf[1024];
-     unsigned int x,pos=0;
-     for(x=0;x<strlen(text);x++){
+     char buf[2048];
+     unsigned int x,pos=0,len=0;
+     if(text == NULL) return NULL;
+     
+     len=strlen(text);
+     for(x=0;x<len;x++){
          if(text[x]=='\n'){
              buf[pos++]='\\';
              buf[pos++]='N';
          }else if(text[x]!='\r')buf[pos++]=text[x];
      }
      buf[pos++]='\0';
-     int len = 80 + strlen(buf);
+     len = 80 + strlen(buf);
      long long int end_pts = pts + (duration * 1000.0);
      char* line = (char*)malloc( sizeof(char) * len );
      int sc = pts / 10;

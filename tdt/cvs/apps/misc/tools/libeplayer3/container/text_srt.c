@@ -46,7 +46,7 @@
 
 #ifdef SRT_DEBUG
 
-static short debug_level = 0;
+static short debug_level = 20;
 
 #define srt_printf(level, fmt, x...) do { \
 if (debug_level >= level) printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); } while (0)
@@ -106,22 +106,24 @@ void data_to_manager(Context_t *context, char* Text, unsigned long long int Pts,
 
     if( context &&
         context->playback &&
-        context->playback->isPlaying){
+        context->playback->isPlaying && Text){
             int sl = strlen(Text)-1;
-            while(sl && (Text[sl]=='\n' || Text[sl]=='\r')) Text[sl--]='\0'; /*Delete last \n or \r */
+            while(sl>=0 && (Text[sl]=='\n' || Text[sl]=='\r')) Text[sl--]='\0'; /*Delete last \n or \r */
             unsigned char* line = text_to_ass(Text, Pts, Duration);
-            srt_printf(50,"Sub text is %s\n",Text);
-            srt_printf(50,"Sub line is %s\n",line);
-            SubtitleData_t data;
-            data.data      = line;
-            data.len       = strlen((char*)line);
-            data.extradata = (unsigned char *) DEFAULT_ASS_HEAD;
-            data.extralen  = strlen(DEFAULT_ASS_HEAD);
-            data.pts       = Pts*90;
-            data.duration  = Duration;
+            if(line != NULL){
+                srt_printf(50,"Sub text is %s\n",Text);
+                srt_printf(50,"Sub line is %s\n",line);
+                SubtitleData_t data;
+                data.data      = line;
+                data.len       = strlen((char*)line);
+                data.extradata = (unsigned char *) DEFAULT_ASS_HEAD;
+                data.extralen  = strlen(DEFAULT_ASS_HEAD);
+                data.pts       = Pts*90;
+                data.duration  = Duration;
 
-            context->container->assContainer->Command(context, CONTAINER_DATA, &data);
-//            free(line);
+                context->container->assContainer->Command(context, CONTAINER_DATA, &data);
+                free(line);
+            }
     }
 
     srt_printf(20, "<-- Text= \"%s\"\n", Text);
@@ -163,7 +165,7 @@ static void* SrtSubtitleThread(void *data) {
             pos++;
 
         } else if(pos == 2) {
-            srt_printf(20, "Data[0] = %d \'%c\'\n", Data[0], Data[0]);
+            srt_printf(20, "Data[0] = %d \n", Data[0]);
 
             if(Data[0] == '\n' || Data[0] == '\0' || Data[0] == 13 /* ^M */) {
                 if(Text == NULL)
