@@ -121,7 +121,7 @@ void data_to_manager(Context_t *context, char* Text, unsigned long long int Pts,
             data.duration  = Duration;
 
             context->container->assContainer->Command(context, CONTAINER_DATA, &data);
-            free(line);
+//            free(line);
     }
 
     srt_printf(20, "<-- Text= \"%s\"\n", Text);
