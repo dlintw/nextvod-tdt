@@ -988,6 +988,7 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-demuxer=wav \
 		--enable-demuxer=rtsp \
 		--enable-decoder=dvbsub \
+		--enable-decoder=dvdsub \
 		--enable-decoder=iff_byterun1 \
 		--enable-small \
 		--enable-pthreads \
