@@ -244,7 +244,6 @@ static char* Codec2Encoding(AVCodecContext *codec, int* version)
         return "A_AC3";
     case AV_CODEC_ID_DTS:
         return "A_DTS";
-#if 0
     case AV_CODEC_ID_AAC:
         return "A_AAC";
     case AV_CODEC_ID_WMAV1:
@@ -259,11 +258,12 @@ static char* Codec2Encoding(AVCodecContext *codec, int* version)
         return "A_RMA";
     case AV_CODEC_ID_VORBIS:
         return "A_VORBIS";
+#if 0
     case AV_CODEC_ID_FLAC:
         return return "A_FLAC";
-    case AV_CODEC_ID_PCM_S16LE:
-	return "A_PCM";
 #endif
+    case AV_CODEC_ID_PCM_S16LE:
+		return "A_PCM";
 /* subtitle */
     case AV_CODEC_ID_SSA:
         return "S_TEXT/ASS"; /* Hellmaster1024: seems to be ASS instead of SSA */
@@ -1587,6 +1587,12 @@ int container_ffmpeg_update_tracks(Context_t *context, char *filename, int initi
 		}
 		else {
 		    track.duration = (double) stream->duration * av_q2d(stream->time_base) * 1000.0;
+		}
+
+		if(!strncmp(encoding, "A_PCM", 5))
+        {
+            track.inject_raw_pcm = 1;
+            ffmpeg_printf(10, " Handle inject_raw_pcm = %d\n", track.inject_as_pcm);
 		}
 
 		if(!strncmp(encoding, "A_IPCM", 6))
