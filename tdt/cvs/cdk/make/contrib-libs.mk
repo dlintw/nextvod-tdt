@@ -956,6 +956,7 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-muxer=h264 \
 		--enable-muxer=mpeg1video \
 		--enable-muxer=mpeg2video \
+		--enable-muxer=image2 \
 		--disable-encoders \
 		--enable-encoder=aac \
 		--enable-encoder=h261 \
