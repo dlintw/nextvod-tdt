@@ -956,7 +956,6 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-muxer=h264 \
 		--enable-muxer=mpeg1video \
 		--enable-muxer=mpeg2video \
-		--enable-muxer=image2 \
 		--disable-encoders \
 		--enable-encoder=aac \
 		--enable-encoder=h261 \
@@ -981,15 +980,22 @@ $(DEPDIR)/ffmpeg.do_compile: $(DEPDIR)/ffmpeg.do_prepare
 		--enable-decoder=mjpeg \
 		--enable-decoder=vorbis \
 		--enable-decoder=flac \
-		--enable-encoder=mpeg2video \
-		--enable-muxer=mpeg2video \
+		--enable-decoder=dvbsub \
+		--enable-decoder=dvdsub \
+		--enable-decoder=iff_byterun1 \
+		--enable-decoder=rawvideo \
+		--enable-decoder=wmapro \
+		--enable-decoder=wmav1 \
+		--enable-decoder=wmav2 \
+		--enable-decoder=wmavoice \
+		--enable-decoder=ra_144 \
+		--enable-decoder=ra_288 \
+		--enable-decoder=png \
 		--enable-parser=mjpeg \
 		--enable-demuxer=mjpeg \
 		--enable-demuxer=wav \
 		--enable-demuxer=rtsp \
-		--enable-decoder=dvbsub \
-		--enable-decoder=dvdsub \
-		--enable-decoder=iff_byterun1 \
+		--enable-demuxer=mov \
 		--enable-small \
 		--enable-pthreads \
 		--enable-bzlib \

@@ -200,89 +200,91 @@ static char* Codec2Encoding(AVCodecContext *codec, int* version)
     fprintf(stderr, "Codec ID: %ld (%.8lx)\n", (long)codec->codec_id, (long)codec->codec_id);
     switch (codec->codec_id)
     {
-    case AV_CODEC_ID_MPEG1VIDEO:
-    case AV_CODEC_ID_MPEG2VIDEO:
-        return "V_MPEG1";
-    case AV_CODEC_ID_H263:
-    case AV_CODEC_ID_H263P:
-    case AV_CODEC_ID_H263I:
-        return "V_H263";
-    case AV_CODEC_ID_FLV1:
-        return "V_FLV";
-    case AV_CODEC_ID_VP5:
-    case AV_CODEC_ID_VP6:
-    case AV_CODEC_ID_VP6F:
-        return "V_VP6";
-    case AV_CODEC_ID_RV10:
-    case AV_CODEC_ID_RV20:
-        return "V_RMV";
-    case AV_CODEC_ID_MPEG4:
-    case AV_CODEC_ID_MSMPEG4V1:
-    case AV_CODEC_ID_MSMPEG4V2:
-    case AV_CODEC_ID_MSMPEG4V3:
-        return "V_MSCOMP";
-    case AV_CODEC_ID_WMV1:
-        *version = 1;
-        return "V_WMV";
-    case AV_CODEC_ID_WMV2:
-        *version = 2;
-        return "V_WMV";
-    case AV_CODEC_ID_WMV3:
-        *version = 3;
-        return "V_WMV";
-    case AV_CODEC_ID_VC1:
-        return "V_VC1";
-    case AV_CODEC_ID_H264:
-        return "V_MPEG4/ISO/AVC";
-    case AV_CODEC_ID_AVS:
-        return "V_AVS";
-    case AV_CODEC_ID_MP2:
-        return "A_MPEG/L3";
-    case AV_CODEC_ID_MP3:
-        return "A_MP3";
-    case AV_CODEC_ID_AC3:
-        return "A_AC3";
-    case AV_CODEC_ID_DTS:
-        return "A_DTS";
-    case AV_CODEC_ID_AAC:
-        return "A_AAC";
-    case AV_CODEC_ID_WMAV1:
-    case AV_CODEC_ID_WMAV2:
-    case AV_CODEC_ID_WMAPRO:
-        return "A_WMA";
-    case AV_CODEC_ID_MLP:
-        return "A_MLP";
-    case AV_CODEC_ID_RA_144:
-        return "A_RMA";
-    case AV_CODEC_ID_RA_288:
-        return "A_RMA";
-    case AV_CODEC_ID_VORBIS:
-        return "A_VORBIS";
+	    case AV_CODEC_ID_MPEG1VIDEO:
+	    case AV_CODEC_ID_MPEG2VIDEO:
+	        return "V_MPEG1";
+	    case AV_CODEC_ID_H263:
+	    case AV_CODEC_ID_H263P:
+	    case AV_CODEC_ID_H263I:
+	        return "V_H263";
+	    case AV_CODEC_ID_FLV1:
+	        return "V_FLV";
+	    case AV_CODEC_ID_VP5:
+	    case AV_CODEC_ID_VP6:
+	    case AV_CODEC_ID_VP6F:
+	        return "V_VP6";
+	    case AV_CODEC_ID_RV10:
+	    case AV_CODEC_ID_RV20:
+	        return "V_RMV";
+	    case AV_CODEC_ID_MPEG4:
+	    case AV_CODEC_ID_MSMPEG4V1:
+	    case AV_CODEC_ID_MSMPEG4V2:
+	    case AV_CODEC_ID_MSMPEG4V3:
+	        return "V_MSCOMP";
+	    case AV_CODEC_ID_WMV1:
+	        *version = 1;
+	        return "V_WMV";
+	    case AV_CODEC_ID_WMV2:
+	        *version = 2;
+	        return "V_WMV";
+	    case AV_CODEC_ID_WMV3:
+	        *version = 3;
+	        return "V_WMV";
+	    case AV_CODEC_ID_VC1:
+	        return "V_VC1";
+	    case AV_CODEC_ID_H264:
+	        return "V_MPEG4/ISO/AVC";
+	    case AV_CODEC_ID_AVS:
+	        return "V_AVS";
+	    case AV_CODEC_ID_MP2:
+	        return "A_MPEG/L3";
+	    case AV_CODEC_ID_MP3:
+	        return "A_MP3";
+	    case AV_CODEC_ID_AC3:
+	        return "A_AC3";
+	    case AV_CODEC_ID_DTS:
+	        return "A_DTS";
+	    case AV_CODEC_ID_MLP:
+	        return "A_MLP";
 #if 0
-    case AV_CODEC_ID_FLAC:
-        return return "A_FLAC";
+	    case AV_CODEC_ID_AAC:
+	        return "A_AAC";
+	    case AV_CODEC_ID_RA_144:
+	        return "A_RMA";
+	    case AV_CODEC_ID_RA_288:
+	        return "A_RMA";
+	    case AV_CODEC_ID_PCM_S16LE:
+			return "A_PCM";
+	    case AV_CODEC_ID_WMAV1:
+	    case AV_CODEC_ID_WMAV2:
+	    case AV_CODEC_ID_WMAPRO:
+	        return "A_WMA";
+	    case AV_CODEC_ID_VORBIS:
+	        return "A_VORBIS";
+	    case AV_CODEC_ID_FLAC:
+	        return return "A_FLAC";
 #endif
-    case AV_CODEC_ID_PCM_S16LE:
-		return "A_PCM";
 /* subtitle */
-    case AV_CODEC_ID_SSA:
-        return "S_TEXT/ASS"; /* Hellmaster1024: seems to be ASS instead of SSA */
-    case AV_CODEC_ID_TEXT: /* Hellmaster1024: i dont have most of this, but lets hope it is normal text :-) */
-    case AV_CODEC_ID_DVD_SUBTITLE:
-    case AV_CODEC_ID_DVB_SUBTITLE:
-    case AV_CODEC_ID_XSUB:
-    case AV_CODEC_ID_MOV_TEXT:
-    case AV_CODEC_ID_HDMV_PGS_SUBTITLE:
-    case AV_CODEC_ID_DVB_TELETEXT:
-//    case CODEC_ID_DVB_TELETEXT:
-//        return "S_TEXT/SRT"; /* fixme */
-    case AV_CODEC_ID_SRT:
-        return "S_TEXT/SRT"; /* fixme */
-    default:
-	// Default to injected-pcm for unhandled audio types.
-	if (codec->codec_type == AVMEDIA_TYPE_AUDIO)
-		return "A_IPCM";
-    	ffmpeg_err("Codec ID %ld (%.8lx) not found\n", (long)codec->codec_id, (long)codec->codec_id);
+	    case AV_CODEC_ID_SSA:
+	        return "S_TEXT/ASS"; /* Hellmaster1024: seems to be ASS instead of SSA */
+	    case AV_CODEC_ID_TEXT: /* Hellmaster1024: i dont have most of this, but lets hope it is normal text :-) */
+	    case AV_CODEC_ID_DVD_SUBTITLE:
+	    case AV_CODEC_ID_DVB_SUBTITLE:
+	    case AV_CODEC_ID_XSUB:
+	    case AV_CODEC_ID_MOV_TEXT:
+	    case AV_CODEC_ID_HDMV_PGS_SUBTITLE:
+	    case AV_CODEC_ID_DVB_TELETEXT:
+#if 0
+		case CODEC_ID_DVB_TELETEXT:
+			return "S_TEXT/SRT"; /* fixme */
+#endif
+	    case AV_CODEC_ID_SRT:
+	        return "S_TEXT/SRT"; /* fixme */
+	    default:
+// Default to injected-pcm for unhandled audio types.
+			if (codec->codec_type == AVMEDIA_TYPE_AUDIO)
+				return "A_IPCM";
+	   		ffmpeg_err("Codec ID %ld (%.8lx) not found\n", (long)codec->codec_id, (long)codec->codec_id);
     }
     return NULL;
 }
@@ -2399,7 +2401,7 @@ static int Command(void  *_context, ContainerCmd_t command, void * argument)
     return ret;
 }
 
-static char *FFMPEG_Capabilities[] = {"avi", "mkv", "mp4", "ts", "mov", "flv", "flac", "mp3", "mpg", "m2ts", "vob", "wmv","wma", "asf", "mp2", "m4v", "m4a", "divx", "dat", "mpeg", "trp", "mts", "vdr", "ogg", "wav", "wtv", "asx", "mvi", "png", "jpg", NULL };
+static char *FFMPEG_Capabilities[] = {"avi", "mkv", "mp4", "ts", "mov", "flv", "flac", "mp3", "mpg", "m2ts", "vob", "wmv","wma", "asf", "mp2", "m4v", "m4a", "divx", "dat", "mpeg", "trp", "mts", "vdr", "ogg", "wav", "wtv", "asx", "mvi", "png", "jpg", "ra", "rm", NULL };
 
 Container_t FFMPEGContainer = {
     "FFMPEG",
