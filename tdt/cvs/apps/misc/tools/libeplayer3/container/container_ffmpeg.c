@@ -246,6 +246,8 @@ static char* Codec2Encoding(AVCodecContext *codec, int* version)
 	        return "A_DTS";
 	    case AV_CODEC_ID_MLP:
 	        return "A_MLP";
+	    case AV_CODEC_ID_PCM_S16LE:
+			return "A_PCM";
 #if 0
 	    case AV_CODEC_ID_AAC:
 	        return "A_AAC";
@@ -253,8 +255,6 @@ static char* Codec2Encoding(AVCodecContext *codec, int* version)
 	        return "A_RMA";
 	    case AV_CODEC_ID_RA_288:
 	        return "A_RMA";
-	    case AV_CODEC_ID_PCM_S16LE:
-			return "A_PCM";
 	    case AV_CODEC_ID_WMAV1:
 	    case AV_CODEC_ID_WMAV2:
 	    case AV_CODEC_ID_WMAPRO:
