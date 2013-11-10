@@ -3156,3 +3156,37 @@ $(DEPDIR)/%taglib: $(DEPDIR)/taglib.do_compile
 #	@DISTCLEANUP_taglib@
 	[ "x$*" = "x" ] && touch $@ || true
 
+#
+# libvpx
+#
+$(DEPDIR)/libvpx.do_prepare: bootstrap @DEPENDS_libvpx@
+	@PREPARE_libvpx@
+	touch $@
+
+$(DEPDIR)/libvpx.do_compile: $(DEPDIR)/libvpx.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libvpx@ && \
+	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	./configure \
+		--target=$(target) \
+		--disable-optimizations \
+		--disable-docs \
+		--disable-examples \
+		--enable-vp8 \
+		--enable-pic \
+		--enable-shared \
+		--enable-small \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-libvpx $(DEPDIR)/std-libvpx $(DEPDIR)/max-libvpx \
+$(DEPDIR)/libvpx: \
+$(DEPDIR)/%libvpx: $(DEPDIR)/libvpx.do_compile
+	cd @DIR_libvpx@ && \
+		@INSTALL_libvpx@
+#	@DISTCLEANUP_libvpx@
+	[ "x$*" = "x" ] && touch $@ || true
+
+libvpx-distclean:
+	rm -f $(DEPDIR)/libvpx*

@@ -1047,6 +1047,7 @@ TUXBOX_RULES_MAKE(mediatomb)
 TUXBOX_RULES_MAKE(tinyxml)
 TUXBOX_RULES_MAKE(libnfs)
 TUXBOX_RULES_MAKE(taglib)
+TUXBOX_RULES_MAKE(libvpx)
 
 #
 # python
