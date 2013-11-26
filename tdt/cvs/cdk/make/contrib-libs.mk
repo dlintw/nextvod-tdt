@@ -3188,5 +3188,3 @@ $(DEPDIR)/%libvpx: $(DEPDIR)/libvpx.do_compile
 #	@DISTCLEANUP_libvpx@
 	[ "x$*" = "x" ] && touch $@ || true
 
-libvpx-distclean:
-	rm -f $(DEPDIR)/libvpx*
