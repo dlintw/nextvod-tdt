@@ -248,9 +248,9 @@ static char* Codec2Encoding(AVCodecContext *codec, int* version)
 	        return "A_MLP";
 	    case AV_CODEC_ID_PCM_S16LE:
 			return "A_PCM";
-#if 0
 	    case AV_CODEC_ID_AAC:
 	        return "A_AAC";
+#if 0
 	    case AV_CODEC_ID_RA_144:
 	        return "A_RMA";
 	    case AV_CODEC_ID_RA_288:
@@ -1610,7 +1610,6 @@ int container_ffmpeg_update_tracks(Context_t *context, char *filename, int initi
 			else
 			   printf("AVCODEC__INIT__FAILED\n");
 		}
-#if 0
 		else if(stream->codec->codec_id == AV_CODEC_ID_AAC) {
 		    ffmpeg_printf(10,"Create AAC ExtraData\n");
 		    ffmpeg_printf(10,"stream->codec->extradata_size %d\n", stream->codec->extradata_size);
@@ -1661,7 +1660,9 @@ int container_ffmpeg_update_tracks(Context_t *context, char *filename, int initi
 		    Hexdump(track.aacbuf,7);
 		    track.have_aacheader = 1;
 
-		} else if(stream->codec->codec_id == AV_CODEC_ID_WMAV1
+		} 
+#if 0
+		else if(stream->codec->codec_id == AV_CODEC_ID_WMAV1
 		    || stream->codec->codec_id == AV_CODEC_ID_WMAV2
 		    || stream->codec->codec_id == AV_CODEC_ID_WMAPRO) //if (stream->codec->extradata_size > 0)
 		{
