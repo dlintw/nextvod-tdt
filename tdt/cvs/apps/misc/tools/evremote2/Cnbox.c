@@ -62,7 +62,7 @@ static tButton cButtonCnbox[] = {
     {"YELLOW"         , "08", KEY_YELLOW},
     {"BLUE"           , "03", KEY_BLUE},
     {"EXIT"           , "1D", KEY_HOME},
-    {"BACK"           , "15", KEY_HOME},
+//    {"BACK"           , "15", KEY_HOME},
     {"TEXT"           , "03", KEY_TEXT},
     {"EPG"            , "09", KEY_EPG},
     {"REWIND"         , "1E", KEY_REWIND},
