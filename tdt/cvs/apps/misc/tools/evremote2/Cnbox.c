@@ -159,6 +159,7 @@ static int pRead(Context_t* context)
     eKeyType        vKeyType = RemoteControl;
     int             vCurrentCode = -1;
     static   int    vNextKey = 0;
+    static   int    lastCode = 0;
     static   char   vOldButton = 0;
 
     while (1)
@@ -187,13 +188,12 @@ static int pRead(Context_t* context)
 
             if (vCurrentCode != 0)
             {
-#if 0
-                vNextKey = (vData[5] & 0x80 == 0 ? vNextKey + 1 : vNextKey) % 0x100;
+                vNextKey = (vCurrentCode != lastCode ? vNextKey + 1 : vNextKey) % 0x100;
+                lastCode = vCurrentCode;
 
                 /* printf("nextFlag %d\n", vNextKey);*/
 
                 vCurrentCode += (vNextKey << 16);
-#endif
                 break;
             }
         }
