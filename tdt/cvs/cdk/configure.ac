@@ -967,6 +967,7 @@ TUXBOX_RULES_MAKE(sysstat)
 TUXBOX_RULES_MAKE(hotplug_e2)
 TUXBOX_RULES_MAKE(autofs)
 TUXBOX_RULES_MAKE(imagemagick)
+TUXBOX_RULES_MAKE(aiograb)
 
 #
 # contrib libs

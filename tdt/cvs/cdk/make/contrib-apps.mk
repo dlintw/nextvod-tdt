@@ -919,3 +919,31 @@ $(DEPDIR)/%imagemagick: $(DEPDIR)/imagemagick.do_compile
 		@INSTALL_imagemagick@
 #	@DISTCLEANUP_imagemagick@
 	[ "x$*" = "x" ] && touch $@ || true
+
+#
+# aiograb
+#
+$(DEPDIR)/aiograb.do_prepare: bootstrap libpng jpeg @DEPENDS_aiograb@
+	@PREPARE_aiograb@
+	touch $@
+
+$(DEPDIR)/aiograb.do_compile: $(DEPDIR)/aiograb.do_prepare
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_aiograb@ && \
+	autoreconf -i && \
+	$(BUILDENV) \
+	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	./configure \
+		--host=$(target) \
+		--build=$(build) \
+		--target=$(target) \
+		--prefix=/usr
+	touch $@
+
+$(DEPDIR)/min-aiograb $(DEPDIR)/std-aiograb $(DEPDIR)/max-aiograb \
+$(DEPDIR)/aiograb: \
+$(DEPDIR)/%aiograb: $(DEPDIR)/aiograb.do_compile
+	cd @DIR_aiograb@ && \
+		@INSTALL_aiograb@
+#	@DISTCLEANUP_aiograb@
+	[ "x$*" = "x" ] && touch $@ || true

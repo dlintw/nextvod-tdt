@@ -80,6 +80,7 @@ hotplug_e2;1.0;hotplug-e2-helper;;
 autofs;4.1.4;autofs-4.1.4;autofs-4.1.4.tar.gz;extract:autofs-4.1.4.tar.gz;patch:autofs-4.1.4-misc-fixes.patch;patch:autofs-4.1.4-multi-parse-fix.patch;patch:autofs-4.1.4-non-replicated-ping.patch;patch:autofs-4.1.4-locking-fix-1.patch;patch:autofs-4.1.4-cross.patch;patch:autofs-4.1.4-Makefile.rules-cross.patch;patch:autofs-4.1.4-install.patch;patch:autofs-4.1.4-auto.net-sort-option-fix.patch;patch:autofs-4.1.4-autofs-additional-distros.patch;patch:autofs-4.1.4-no-bash.patch;patch:autofs-4.1.4-autofs-add-hotplug.patch;patch:autofs-4.1.4-no_man.patch
 imagemagick;6.7.7-7;ImageMagick-6.7.7-7;ImageMagick-6.7.7-7.tar.bz2;extract:ImageMagick-6.7.7-7.tar.bz2
 libvpx;1.2.0;libvpx-v1.2.0;libvpx-v1.2.0.tar.bz2;extract:libvpx-v1.2.0.tar.bz2;patch:libvpx.patch
+aiograb;47983a78821c0fdbef3aab36113d5c6fc34bb11b;aio-grab-47983a78821c0fdbef3aab36113d5c6fc34bb11b;aio-grab.git;extract:aio-grab.git;patch:aio-grab-47983a78821c0fdbef3aab36113d5c6fc34bb11b-ADD_ST_SUPPORT.patch;patch:aio-grab-47983a78821c0fdbef3aab36113d5c6fc34bb11b-ADD_ST_FRAMESYNC_SUPPORT.patch
 
 #
 # contrib libs
