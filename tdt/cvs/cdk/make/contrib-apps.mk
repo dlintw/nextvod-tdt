@@ -932,7 +932,7 @@ $(DEPDIR)/aiograb.do_compile: $(DEPDIR)/aiograb.do_prepare
 	cd @DIR_aiograb@ && \
 	autoreconf -i && \
 	$(BUILDENV) \
-	CFLAGS="$(TARGET_CFLAGS) -Os" \
+	CFLAGS="$(TARGET_CFLAGS) -I$(driverdir)/bpamem -Os" \
 	./configure \
 		--host=$(target) \
 		--build=$(build) \
@@ -947,3 +947,4 @@ $(DEPDIR)/%aiograb: $(DEPDIR)/aiograb.do_compile
 		@INSTALL_aiograb@
 #	@DISTCLEANUP_aiograb@
 	[ "x$*" = "x" ] && touch $@ || true
+

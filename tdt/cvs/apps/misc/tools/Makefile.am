@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS = gnu
 
 SUBDIRS = \
+	aio-grab \
 	devinit \
 	evremote2 \
 	libeplayer3 \
