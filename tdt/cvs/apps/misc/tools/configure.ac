@@ -31,6 +31,7 @@ AC_SUBST(MULTICOM324)
 
 AC_OUTPUT([
 Makefile
+aio-grab/Makefile
 devinit/Makefile
 evremote2/Makefile
 libeplayer3/Makefile
