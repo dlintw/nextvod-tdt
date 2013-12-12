@@ -91,7 +91,7 @@ echo "30) Vitamin HD5000"
 echo "31) Atemio530"
 
 case $1 in
-	[1-9] | 1[0-9] | 2[0-9]) REPLY=$1
+	[1-9] | 1[0-9] | 2[0-9] | 3[0-9]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
@@ -334,10 +334,10 @@ esac
 
 echo -e "\nMulticom:"
 echo "   1) Multicom 3.2.2     (Recommended for Player179)"
-echo "   3) Multicom 3.2.4     (Recommended for Player191)"
-echo "   4) Multicom 4.0.6     (Recommended for Player191)"
+echo "   2) Multicom 3.2.4     (Recommended for Player191)"
+echo "   3) Multicom 4.0.6     (Recommended for Player2**)"
 case $5 in
-        [1-4]) REPLY=$6
+        [1-3]) REPLY=$5
         echo -e "\nSelected multicom: $REPLY\n"
         ;;
         *)
@@ -381,7 +381,7 @@ case "$REPLY" in
        echo "export CONFIG_MULTICOM324=y" >> .config
        cd -
     ;;
-	4) MULTICOM="--enable-multicom406"
+	3) MULTICOM="--enable-multicom406"
        cd ../driver/include/
        if [ -L multicom ]; then
           rm multicom
