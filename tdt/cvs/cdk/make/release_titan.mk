@@ -920,17 +920,17 @@ endif
 # The main target depends on the model.
 # IMPORTANT: it is assumed that only one variable is set. Otherwise the target name won't be resolved.
 #
-$(DEPDIR)/release_titan_nightly: \
-$(DEPDIR)/%release_titan_nightly: release_titan_base release_titan_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(UFS913)$(UFS922)$(SPARK)$(SPARK7162)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(HS7810A)$(HS7110)$(ATEMIO520)$(ATEMIO530)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(ADB_BOX)
+$(DEPDIR)/release_titan: \
+$(DEPDIR)/%release_titan: release_titan_base release_titan_$(TF7700)$(HL101)$(VIP1_V2)$(VIP2_V1)$(UFS910)$(UFS912)$(UFS913)$(UFS922)$(SPARK)$(SPARK7162)$(OCTAGON1008)$(FORTIS_HDBOX)$(ATEVIO7500)$(HS7810A)$(HS7110)$(ATEMIO520)$(ATEMIO530)$(CUBEREVO)$(CUBEREVO_MINI)$(CUBEREVO_MINI2)$(CUBEREVO_MINI_FTA)$(CUBEREVO_250HD)$(CUBEREVO_2000HD)$(CUBEREVO_9500HD)$(ADB_BOX)
 	touch $@
 
 #
-# FOR YOUR OWN CHANGES use these folder in cdk/own_build/neutrino-hd
+# FOR YOUR OWN CHANGES use these folder in cdk/own_build/titan
 #
 #	default for all receiver
-	find $(buildprefix)/own_build/neutrino-hd/ -mindepth 1 -maxdepth 1 -exec cp -at$(prefix)/release_titan/ -- {} +
+	find $(buildprefix)/own_build/titan/ -mindepth 1 -maxdepth 1 -exec cp -at$(prefix)/release_titan/ -- {} +
 #	receiver specific (only if directory exist)
-	[ -d "$(buildprefix)/own_build/neutrino-hd.$(BOXTYPE)" ] && find $(buildprefix)/own_build/neutrino-hd.$(BOXTYPE)/ -mindepth 1 -maxdepth 1 -exec cp -at$(prefix)/release_titan/ -- {} + || true
+	[ -d "$(buildprefix)/own_build/titan.$(BOXTYPE)" ] && find $(buildprefix)/own_build/titan.$(BOXTYPE)/ -mindepth 1 -maxdepth 1 -exec cp -at$(prefix)/release_titan/ -- {} + || true
 	rm -f $(prefix)/release_titan/for_your_own_changes
 
 # nicht die feine Art, aber funktioniert ;)
@@ -971,5 +971,5 @@ $(DEPDIR)/%release_titan_nightly: release_titan_base release_titan_$(TF7700)$(HL
 #
 # release-clean
 #
-release_titan_nightly-clean:
-	rm -f $(DEPDIR)/release_titan_nightly
+release_titan-clean:
+	rm -f $(DEPDIR)/release_titan
