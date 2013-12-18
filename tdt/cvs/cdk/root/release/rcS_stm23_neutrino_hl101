@@ -37,14 +37,19 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING MODULES"
    echo "LOADING" >/dev/vfd
 
-   if [ ! -e /boot/audio.elf ]; then
+   if [ ! -e /lib/firmware/audio.elf ]; then
       echo "FW MISSING!!!"
    fi
 
-   echo "load a firmware"
-   /bin/ustslave /dev/st231-1 /boot/audio.elf
-   echo "load v firmware"
-   /bin/ustslave /dev/st231-0 /boot/video.elf
+   echo "load video firmware"
+   /bin/dd if=/dev/zero of=/dev/st231-0 bs=1024 count=4096
+#   /bin/stslave -t st231.0 -R /lib/firmware/video.elf
+   /bin/ustslave /dev/st231-0 /lib/firmware/video.elf
+
+   echo "load audio firmware"
+   /bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
+#   /bin/stslave -t st231.1 -R /lib/firmware/audio.elf
+   /bin/ustslave /dev/st231-1 /lib/firmware/audio.elf
 
    echo "init embx"
    insmod $MODDIR/embxshell.ko
@@ -94,20 +99,18 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/platform.ko
    insmod $MODDIR/smartcard.ko
 
-   showiframe -p /boot/bootlogo.mvi &
+   showiframe -p /var/boot/bootlogo.mvi &
    stfbcontrol a 0
 
    echo "init lircd"
+   mkdir -p /var/run/lirc
    /usr/bin/lircd
 
    mknod /dev/rc c 147 1 
    mknod /dev/sci0 c 169 0
    mknod /dev/sci1 c 169 1 
-   
-   /bin/evremote2 hl101 &
 
-   /etc/init.d/mountall start
-   /etc/init.d/hostname start
+   /bin/evremote2 hl101 &
 
    echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/autologin
@@ -130,6 +133,9 @@ if [ ! -e /var/etc/.firstboot ]; then
       fi 
    fi
 
+   #timefix
+   date -s "200901011200"
+
    echo "run app" > /dev/vfd
    echo "LOADING neutrino"
 
@@ -139,31 +145,24 @@ if [ ! -e /var/etc/.firstboot ]; then
       /etc/init.d/networking restart
       /usr/bin/start-emu.sh
       /usr/bin/timeset.sh all &
-      /usr/local/bin/neutrino -f -u
+      /usr/local/bin/neutrino
       rtv=$?
-      echo "e2 ended <- RTV: " $rtv
+      echo "neutrino ended <- RTV: " $rtv
       case "$rtv" in
 		0) echo "0"
-		   echo "E2 ERROR"
-		   init 6;;
-		1) echo "1"
 		   echo "SHUTDOWN"
 		   init 0;;
-		2) echo "2"
+		1) echo "1"
 		   echo "REBOOT"
 		   init 6;;
-		3) echo "3"
-		   echo "E2 RESTART"
-		   echo "0" > /proc/progress
-		   /usr/local/bin/dvbtest -4 -f l /boot/Neutrino_reboot.mp4;;
 		*) echo "*"
 		   echo "ERROR"
 		   init 6;;
       esac
-   done 
+   done
 fi
 
 #never reached
 echo "REBOOT HL101" > /dev/vfd
 echo "REBOOT HL101"
-reboot 
+init 6

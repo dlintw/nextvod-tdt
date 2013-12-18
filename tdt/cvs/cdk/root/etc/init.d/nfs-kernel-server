@@ -24,24 +24,59 @@ PREFIX=/usr
 
 # Read config
 DEFAULTFILE=/etc/default/nfs-kernel-server
-#RPCNFSDCOUNT=8
-RPCNFSDCOUNT=4
+RPCNFSDCOUNT=8
 RPCMOUNTDOPTS=
 if [ -f $DEFAULTFILE ]; then
     . $DEFAULTFILE
 fi
 
+# The default state directory is /var/lib/nfs
+test -n "$NFS_STATEDIR" || NFS_STATEDIR=/var/lib/nfs
+#
+
+#directories
+create_directories(){
+	echo -n '[nfs-kernel-server] creating NFS state directory: '
+	mkdir -p "$NFS_STATEDIR"
+	(	cd "$NFS_STATEDIR"
+		#umask 077
+		umask 000
+		mkdir -p sm sm.bak
+		test -w sm/state || {
+			rm -f sm/state
+			:>sm/state
+		}
+		#umask 022
+		umask 000
+		for file in xtab etab smtab rmtab state
+		do
+			test -w "$file" || {
+				rm -f "$file"
+				:>"$file"
+			}
+		done
+	)
+	echo done
+}
+
+
 # See how we were called.
 case "$1" in
   start)
+  # The nfsd kernel module must exist along with its dependencies
+  if [ `lsmod | grep "nfsd" | wc -l` -lt 1 ]; then
+    insmod /lib/modules/exportfs.ko
+    insmod /lib/modules/nfsd.ko
+  fi
+  create_directories
 	cd /	# daemons should have root dir as cwd
 	if grep -q '^/' /etc/exports
 	then
-		printf "Exporting directories for $DESC..."
+		printf "[nfs-kernel-server] Exporting directories for $DESC..."
 		$PREFIX/sbin/exportfs -r
 		echo "done."
 
-		printf "Starting $DESC:"
+		printf "[nfs-kernel-server] Starting $DESC:"
 		printf " nfsd"
 		start-stop-daemon --start --quiet \
 		    --exec $PREFIX/sbin/rpc.nfsd -- $RPCNFSDCOUNT
@@ -52,14 +87,14 @@ case "$1" in
 		ClearAddr=
 		if [ -f /proc/net/rpc/auth.unix.ip/channel ]
 		then
-		    fgrep -qs 127.0.0.1 /proc/net/rpc/auth.unix.ip/content || {
+		    grep -qs 127.0.0.1 /proc/net/rpc/auth.unix.ip/content || {
 			echo "nfsd 127.0.0.1 2147483647 localhost" >/proc/net/rpc/auth.unix.ip/channel
 			ClearAddr=yes
 		    }
 		fi
 
 		$PREFIX/bin/rpcinfo -u localhost nfs 3 >/dev/null 2>&1 ||
-		    RPCMOUNTDOPTS="$RPCMOUNTDOPTS --no-nfs-version 3"
+		    RPCMOUNTDOPTS="$RPCMOUNTDOPTS"
 
 		[ -z "$ClearAddr" ] || echo "nfsd 127.0.0.1 1" >/proc/net/rpc/auth.unix.ip/channel
 
@@ -67,12 +102,12 @@ case "$1" in
 		    --exec $PREFIX/sbin/rpc.mountd -- $RPCMOUNTDOPTS
 		echo "."
 	else
-		echo "Not starting $DESC: No exports."
+		echo "[nfs-kernel-server] Not starting $DESC: No exports."
 	fi
 	;;
 
   stop)
-	printf "Stopping $DESC: mountd"
+	printf "[nfs-kernel-server] Stopping $DESC: mountd"
 	start-stop-daemon --stop --oknodo --quiet \
 	    --name rpc.mountd --user 0
 	printf " nfsd"
@@ -80,13 +115,13 @@ case "$1" in
 	    --name nfsd --user 0 --signal 2
 	echo "."
 
-	printf "Unexporting directories for $DESC..."
+	printf "[nfs-kernel-server] Unexporting directories for $DESC..."
 	$PREFIX/sbin/exportfs -au
 	echo "done."
 	;;
 
   reload | force-reload)
-	printf "Re-exporting directories for $DESC..."
+	printf "[nfs-kernel-server] Re-exporting directories for $DESC..."
 	$PREFIX/sbin/exportfs -r
 	echo "done."
 	;;

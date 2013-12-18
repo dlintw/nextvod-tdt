@@ -66,7 +66,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/silencegen.ko 
 fi
 
-showiframe -p /boot/bootlogo.mvi &
+showiframe -p /var/boot/bootlogo.mvi &
 stfbcontrol a 0
 
 if [ ! -e /var/etc/.firstboot ]; then
@@ -81,6 +81,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/sbin/telnetd -l /bin/autologin
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
+   mkdir -p /var/run/lirc
    /usr/bin/lircd -u
 
    if [ -e /etc/network/interfaces ]; then
@@ -113,11 +114,11 @@ if [ ! -e /var/etc/.firstboot ]; then
 		   init 6;;
 		3) echo "3"
 		   echo "E2 RESTART"
-		   showiframe -p /boot/bootlogo.mvi &
+		   showiframe -p /var/boot/bootlogo.mvi &
 		   echo "0" > /proc/progress;;
 		*) echo "*"
 		   echo "ERROR"
-		   showiframe -p /boot/bootlogo.mvi &
+		   showiframe -p /var/boot/bootlogo.mvi &
 		   echo "0" > /proc/progress;;
      esac
    done 

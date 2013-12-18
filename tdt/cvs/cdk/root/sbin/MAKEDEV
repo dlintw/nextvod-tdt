@@ -41,6 +41,7 @@ ramzswap="  root root   0644"
    hdmi="  root root   0644"
 hdmi_cec="  root root   0644"
     sci="  root root   0644"
+sci_fortis="  root root   0644"
  tundev="  root root   0644"
  ttyusb="  root root   0644"
  rfkill="  root root   0644"
@@ -297,6 +298,7 @@ cvt () {
 			ramdisk)	echo ram ;;
 			mtd)	echo mtdblock mtd mtdr ;;
 			lirc)   echo lirc ;;
+			uinput)   echo uinput ;;
 			st200)  echo st220 st231;;
 			mme)    echo mme ;;
 			bpamem) echo bpamem ;;
@@ -309,6 +311,7 @@ cvt () {
 			hdmi) echo hdmi ;;
 			hdmi_cec) echo hdmi_cec ;;
 			sci) echo sci ;;
+			sci_fortis) echo sci_fortis ;;
 			*)	echo "$1" ;;
 		esac
 		shift
@@ -530,6 +533,7 @@ do
 		$0 $opts fb
 		$0 $opts rtc
 		$0 $opts lirc
+		$0 $opts uinput
 		$0 $opts st200
 		$0 $opts mme
 		$0 $opts bpamem
@@ -539,6 +543,7 @@ do
 		$0 $opts hdmi
 		$0 $opts hdmi_cec
 		$0 $opts sci
+		$0 $opts sci_fortis
 		$0 $opts ttyusb
 		$0 $opts rfkill
 		$0 $opts tundev
@@ -671,17 +676,17 @@ do
 		line=`suffix $arg ttySC`
 		minor=`math 8 + $line`
 		makedev ttySC$line c 204 $minor $dialout
- 		;;
+		;;
 	ttyFW[0-3])
 		line=`suffix $arg ttyFW`
 		minor=`math 12 + $line`
 		makedev ttyFW$line c 204 $minor $dialout
- 		;;
+		;;
 	ttyAS[0-3])
 		line=`suffix $arg ttyAS`
 		minor=`math 40 + $line`
 		makedev ttyAS$line c 204 $minor $dialout
- 		;;
+		;;
 	ttyB[0-7])
 		minor=`suffix $arg ttyB`
 		makedev ttyB$minor c 11 $minor $dialout
@@ -1062,14 +1067,14 @@ do
 		mkdir -p thinkpad
 		makedev thinkpad/thinkpad c $major 170 $mouse
 		;;
-        rtc)
+	rtc)
 		major=`Major mouse 10` || continue
 		makedev rtc       c $major 135 $mouse
 		;;
 	efirtc)
 		major=`Major mouse 10` || continue
 		makedev efirtc    c $major 136 $mouse
- 		;;
+		;;
 	mwave)
 		makedev mwave     c 10 219 $mouse
 		;;
@@ -1111,7 +1116,6 @@ do
 		makedev ${arg}u1440 b $major `math $base + 28` $floppy
 		makedev ${arg}u2880 b $major `math $base + 32` $floppy
 		makedev ${arg}CompaQ b $major `math $base + 36` $floppy
-
 		makedev ${arg}h1440 b $major `math $base + 40` $floppy
 		makedev ${arg}u1680 b $major `math $base + 44` $floppy
 		makedev ${arg}h410  b $major `math $base + 48` $floppy
@@ -1295,8 +1299,8 @@ do
 			base=$(( $base - 256 ))
 		fi
 		makedev sd$unit b $major $base $disk
-		#for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
-		for part in 1 2 3 4 5 6 7 8
+		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		#for part in 1 2 3 4 5 6 7 8
 		do
 			minor=$(( $base + $part ))
 			makedev sd$unit$part b $major $minor $disk
@@ -1324,13 +1328,13 @@ do
 			minor=$(( $base + $part ))
 			makedev sd$unit$part b $major $minor $disk
 		done
-                ;;
+		;;
 	i2o.hd[a-z])
 		[ -d i2o ] || {
 			mkdir i2o
 			chown root:root i2o
 			chmod 755 i2o
-      			[ -e i2o/ctl ] || makedev i2o/ctl c 10 166 $disk
+			[ -e i2o/ctl ] || makedev i2o/ctl c 10 166 $disk
 		}
 		unit=`suffix $arg i2o.hd`
 		base=`index abcdefghijklmnopqrstuvwxyz $unit`
@@ -1353,7 +1357,7 @@ do
 			mkdir i2o
 			chown root:root i2o
 			chmod 755 i2o
-      			[ -e i2o/ctl ] || makedev i2o/ctl c 10 166 $disk
+			[ -e i2o/ctl ] || makedev i2o/ctl c 10 166 $disk
 		}
 		unit=`suffix $arg i2o.hd`
 		unitmaj=`first $unit`
@@ -1937,6 +1941,9 @@ do
 	lirc)
 		makedev lirc c 61 0 $mouse
 		;;
+	uinput)
+		makedev uinput c 10 223 $mouse
+		;;
 	st220)
 		makedev st220 c 63 0 $st220
 		symlink st220-0 st220
@@ -1980,6 +1987,12 @@ do
 		for i in 0 1
 		do
 			makedev sci$i c 169 $i $sci
+		done
+		;;
+	sci_fortis)
+		for i in 0 1
+		do
+			makedev sci$i c 253 $i $sci_fortis
 		done
 		;;
 	comedi)

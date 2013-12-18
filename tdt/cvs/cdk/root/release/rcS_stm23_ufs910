@@ -95,6 +95,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/bpamem.ko
 
    echo "init lircd"
+   mkdir -p /var/run/lirc
    /usr/bin/lircd
 
    echo "init frontpanel"
@@ -120,7 +121,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/sbin/inetd
 
    #timefix e2
-   date -s "121220001970"
+   date -s "200901011200"
 
    stfbcontrol a 255
 
@@ -136,7 +137,7 @@ if [ ! -e /var/etc/.firstboot ]; then
       case "$rtv" in
 		0) echo "0"
 		   echo "ERROR"
-      	   exit 1;;
+		   exit 1;;
 		1) echo "1"
 		   echo "SHUTDOWN"
 		   exit 1;;
@@ -146,7 +147,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 		3) echo "3"
 		   echo "RESTART"
 		   echo "0" > /proc/progress
-		   showiframe -p /boot/bootlogo.mvi &;;
+		   showiframe -p /var/boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
            exit 6;;

@@ -1,3 +1,0 @@
-dummy file.
-Release.mk always copies the rcS of stm22, and later overwrites it with the stm23 one.
-This should be changed.

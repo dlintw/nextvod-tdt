@@ -130,6 +130,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/simu_button.ko
 
    echo "init lircd"
+   mkdir -p /var/run/lirc
    /usr/bin/lircd
 
    /bin/evremote2 &

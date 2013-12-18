@@ -35,9 +35,15 @@ if [ ! -e /var/etc/.firstboot ]; then
    tvmode
    insmod $MODDIR/stmfb.ko display0=720x576-32@50:12m:0:pal:cvbs
 
-   echo "load a/v firmware"
-   /bin/ustslave /dev/st231-1 /boot/audio.elf
-   /bin/ustslave /dev/st231-0 /boot/video.elf
+   echo "load video firmware"
+   /bin/dd if=/dev/zero of=/dev/st231-0 bs=1024 count=4096
+#   /bin/stslave -t st231.0 -R /lib/firmware/video.elf
+   /bin/ustslave /dev/st231-0 /lib/firmware/video.elf
+
+   echo "load audio firmware"
+   /bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
+#   /bin/stslave -t st231.1 -R /lib/firmware/audio.elf
+   /bin/ustslave /dev/st231-1 /lib/firmware/audio.elf
 
    echo "init embx"
    insmod $MODDIR/embxshell.ko
@@ -68,7 +74,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    mknod /dev/bpamem c 153 0 
 fi
 
-#showiframe -p /boot/bootlogo.mvi &
+#showiframe -p /var/boot/bootlogo.mvi &
 stfbcontrol a 0
 
 if [ ! -e /var/etc/.firstboot ]; then
@@ -76,7 +82,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING neutrino"
 
    /etc/init.d/mountall start
-
    /etc/init.d/hostname start
 
    echo "starting telnetd"
@@ -84,6 +89,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
    mknod /dev/input/uinput c 10 223
+   mkdir -p /var/run/lirc
    /usr/bin/lircd -u
 
    if [ -e /etc/network/interfaces ]; then
@@ -96,32 +102,28 @@ if [ ! -e /var/etc/.firstboot ]; then
      /etc/init.d/networking start
    fi
 
+   #timefix
+   date -s "200901011200"
+
    stfbcontrol a 255
    until false
    do
       echo "starting neutrino->"
       /usr/local/bin/neutrino
       rtv=$?
-      echo "e2 ended <- RTV: " $rtv
+      echo "neutrino ended <- RTV: " $rtv
       case "$rtv" in
 		0) echo "0"
-		   echo "ERROR"
-		   init 6;;
-		1) echo "1"
 		   echo "SHUTDOWN"
-		   echo "SHUTDOWN" > /dev/dbox/vfd
 		   init 0;;
-		2) echo "2"
+		1) echo "1"
 		   echo "REBOOT"
 		   init 6;;
-		3) echo "3"
-		   echo "RESTART"
-		   echo "0" > /proc/progress;;
 		*) echo "*"
 		   echo "ERROR"
-		   echo "0" > /proc/progress;;
-     esac
-   done 
+		   init 6;;
+      esac
+   done
 fi
 echo "REBOOT IPBOX" > /dev/dbox/vfd
 echo "REBOOT IPBOX"

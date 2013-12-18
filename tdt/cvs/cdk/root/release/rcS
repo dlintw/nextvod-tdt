@@ -2,7 +2,7 @@
 
 MODDIR=/lib/modules
 
-insmod $MODDIR/vfd.ko       
+insmod $MODDIR/vfd.ko
 echo "    Welcome     " > /dev/vfd
 
 loadMME() {
@@ -11,9 +11,9 @@ loadMME() {
    /bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
    # end mme bug wa
    echo "load a firmware"
-   /bin/stslave -t stb7100.1 -R /boot/audio.elf
+   /bin/stslave -t st231.1 -R /boot/audio.elf
    echo "load v firmware"
-   /bin/stslave -t stb7100.0 -R /boot/video.elf
+   /bin/stslave -t st231.0 -R /boot/video.elf
 }
 
 if [ -e /var/etc/.firstboot ]; then
@@ -88,10 +88,11 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/silencegen.ko
    insmod $MODDIR/bpamem.ko
 
-   showiframe -p /boot/bootlogo.mvi &
+   showiframe -p /var/boot/bootlogo.mvi &
    stfbcontrol a 0
 
    echo "init lircd"
+   mkdir -p /var/run/lirc
    /usr/bin/lircd
 
    echo "init frontpanel"
@@ -117,7 +118,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    /usr/sbin/inetd
 
    #timefix e2
-   date -s "121220001970"
+   date -s "200901011200"
 
    stfbcontrol a 255
 
@@ -143,7 +144,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 		3) echo "3"
 		   echo "E2 RESTART"
 		   echo "0" > /proc/progress
-		   showiframe -p /boot/bootlogo.mvi &;;
+		   showiframe -p /var/boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
            init 6;;

@@ -23,9 +23,6 @@ if [ -f $DEFAULTFILE ]; then
     . $DEFAULTFILE
 fi
 
-#check for rmtab
-[ ! -e /var/lib/nfs/rmtab ] && touch /var/lib/nfs/rmtab
-
 # Determine whether lockd daemon is required.
 case "$NEED_LOCKD" in
 yes|no)	;;
@@ -56,7 +53,7 @@ esac
 case "$1" in
   start)
 	cd /	# daemons should have root dir as cwd
-	printf "Starting $DESC:"
+	printf "[nfs-common] Starting $DESC:"
 	printf " statd"
 	start-stop-daemon --start --quiet \
 	    --exec $PREFIX/sbin/rpc.statd -- $STATDOPTS
@@ -70,7 +67,7 @@ case "$1" in
 	;;
 
   stop)
-	printf "Stopping $DESC:"
+	printf "[nfs-common] Stopping $DESC:"
 	if [ "$NEED_LOCKD" = yes ]
 	then
 	    printf " lockd"

@@ -37,14 +37,19 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING MODULES"   
    echo "LOAD" > /dev/vfd
 
-   if [ ! -e /boot/audio.elf ]; then
+   if [ ! -e /lib/firmware/audio.elf ]; then
       echo "FW MISSING!!!"
    fi
 
-   echo "load a firmware"
-   /bin/ustslave /dev/st231-1 /boot/audio.elf
-   echo "load v firmware"
-   /bin/ustslave /dev/st231-0 /boot/video.elf
+   echo "load video firmware"
+   /bin/dd if=/dev/zero of=/dev/st231-0 bs=1024 count=4096
+#   /bin/stslave -t st231.0 -R /lib/firmware/video.elf
+   /bin/ustslave /dev/st231-0 /lib/firmware/video.elf
+
+   echo "load audio firmware"
+   /bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
+#   /bin/stslave -t st231.1 -R /lib/firmware/audio.elf
+   /bin/ustslave /dev/st231-1 /lib/firmware/audio.elf
 
    echo "init embx"
    insmod $MODDIR/embxshell.ko
@@ -92,7 +97,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/bpamem.ko
    mknod /dev/bpamem c 153 0 
 
-   showiframe -p /boot/bootlogo.mvi &
+   showiframe -p /var/boot/bootlogo.mvi &
    stfbcontrol a 0
 
    mknod /dev/rc c 147 1 
@@ -103,9 +108,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    /bin/evremote2 hdbox 100 &
 
    stfbcontrol a 255
-
-   /etc/init.d/mountall start
-   /etc/init.d/hostname start
 
    echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/autologin
@@ -128,38 +130,33 @@ if [ ! -e /var/etc/.firstboot ]; then
       fi 
    fi
 
+   #timefix
+   date -s "200901011200"
+
    echo "neu" > /dev/vfd
    echo "LOADING NEUTRINO"
 
    until false
    do
       echo "starting neutrino ->"
-      /usr/local/bin/neutrino -f -u
+      /usr/local/bin/neutrino
       rtv=$?
       echo "neutrino ended <- RTV: " $rtv
       case "$rtv" in
 		0) echo "0"
-		   echo "ERROR"
-      	   init 6;;
-		1) echo "1"
 		   echo "SHUTDOWN"
 		   init 0;;
-		2) echo "2"
+		1) echo "1"
 		   echo "REBOOT"
 		   init 6;;
-		3) echo "3"
-		   echo "RESTART"
-		   echo "0" > /proc/progress
-		   showiframe -p /boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
-           init 6;;
+		   init 6;;
       esac
-   done 
+   done
 fi
 
 #never reached
 echo "REBOOT HS7810A" > /dev/vfd
 echo "REBOOT HS7810A"
-reboot -f
-
+init 6

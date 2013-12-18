@@ -6,7 +6,7 @@
 #
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/sbin/vsftpd
+DAEMON=/usr/bin/vsftpd
 DESC="FTP server"
 NAME=vsftpd
 
@@ -17,7 +17,7 @@ CONFIGFILE="/etc/vsftpd.conf"
 CONFIGDEFAULTFILE="/etc/default/vsftpd"
 USERID=root
 GROUPID=root
-ENABLE="false"
+ENABLE="true"
 
 # Reads config file (will override defaults above)
 [ -r "$CONFIGDEFAULTFILE" ] && . $CONFIGDEFAULTFILE

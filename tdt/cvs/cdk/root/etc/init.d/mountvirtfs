@@ -163,40 +163,7 @@ domount sysfs "" /sys
 domakedev() {
         cd $1
 	ln -sf ../../sbin/MAKEDEV MAKEDEV
-	mknod -m 0666 fuse c 10 229
-	mknod -m 0666 avs c 221 0
-	mknod -m 0666 /dev/hdmi0.0 c 254 0
-        MAKEDEV="./MAKEDEV -p /etc/passwd -g /etc/group"
-        ${MAKEDEV} std
-        ${MAKEDEV} fd
-        ##${MAKEDEV} fd0 fd1
-        ${MAKEDEV} hda hdb
-        ${MAKEDEV} sda sdb sdc sdd
-        ${MAKEDEV} scd0 scd1
-        ${MAKEDEV} st0 st1
-        ${MAKEDEV} sg
-        ${MAKEDEV} ptyp ptyq
-        ${MAKEDEV} console
-        ##${MAKEDEV} ttyS0 ttyS1 ttyS2 ttyS3 ttyS4
-        ##${MAKEDEV} ttySC0 ttySC1 ttySC2 ttySC3 ttySC4
-        ##${MAKEDEV} ttyFW0 ttyFW1 ttyFW2 ttyFW3
-        ${MAKEDEV} ttyAS0 ttyAS1 ttyAS2 ttyAS3
-        ${MAKEDEV} lp par audio video fb rtc lirc st200 alsasnd
-        ${MAKEDEV} ppp busmice
-        ln -s -f /dev/input/mouse0 mouse
-        ${MAKEDEV} input i2c mtd
-	${MAKEDEV} dvb
-        #${MAKEDEV} ide0 ide1
-        #${MAKEDEV} sound
-
-        ##rm -rf pts
-        mkdir pts
-        ##chown root.root pts
-        ##chmod 0755 pts
-        ##rm -rf shm
-        mkdir shm
-        ##chown root.root shm
-        ##chmod 0755 shm
+	/etc/init.d/makedev start
 }
 
 doramdev() {
@@ -322,7 +289,16 @@ then
 	#	is mounted on /dev we need to create that directory
 	#	manually.
 	#
+	DEVFS="0"
 	if grep -qs '/dev devfs' /proc/mounts
+	then
+		DEVFS="1"
+	fi
+	if grep -qs '/dev tmpfs' /proc/mounts
+	then
+		DEVFS="1"
+	fi
+	if [ "$DEVFS" = 1 ]
 	then
 		if [ ! -d /dev/pts ]
 		then

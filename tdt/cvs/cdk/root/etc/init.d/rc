@@ -32,11 +32,6 @@ startup() {
   esac
 }
 
-#
-# Source splash functions
-#
-. /lib/lsb/splash-functions
-
   # Ignore CTRL-C only in this shell, so we can interrupt subprocesses.
   trap ":" INT QUIT TSTP
 
@@ -58,15 +53,6 @@ startup() {
 
   export runlevel previous
 
-  if grep -q splash /proc/cmdline; then
-	max_progress_m=`ls /etc/rc.d/rc3.d/S* | wc -l`
-	no_progress=`ls /etc/rc.d/rc3.d/S[8-9]?* 2>/dev/null | wc -l`
-	max_progress=`expr $max_progress_m - $no_progress`
-	k=`expr 32767 / $max_progress`
-	j=`expr 32767 + $k`
-  fi
-  echo "Running level 3" >/dev/vfd
-
   # Is there an rc directory for this new runlevel?
   if [ -d /etc/rc.d/rc$runlevel.d ]
   then
@@ -85,7 +71,6 @@ startup() {
 	# Now run the START scripts for this runlevel.
 	for i in /etc/rc.d/rc$runlevel.d/S*
 	do
-		splash_message $i
 		[ ! -f $i ] && continue
 
 		if [ $previous != N ] && [ $previous != S ]
@@ -108,15 +93,10 @@ startup() {
 			0|6)
 				startup $i stop
 				;;
-			3)
-				startup $i start
-				splash_progress
-				;;
 			*)
 				startup $i start
 				;;
 		esac
 	done
   fi
-splash_exit
 # eof /etc/init.d/rc

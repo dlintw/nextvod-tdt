@@ -126,7 +126,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko 
 
-   showiframe -p /boot/bootlogo.mvi &
+   showiframe -p /var/boot/bootlogo.mvi &
    stfbcontrol a 0
 
    echo "init frontpanel"
@@ -188,7 +188,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 		3) echo "3"
 		   echo "E2 RESTART"
 		   echo "0" > /proc/progress
-		   showiframe -p /boot/bootlogo.mvi &;;
+		   showiframe -p /var/boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
 		   fp_control -r 00:00:00 01.01.1980;;

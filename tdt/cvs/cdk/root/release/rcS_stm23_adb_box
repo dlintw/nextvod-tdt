@@ -143,13 +143,14 @@ if [ ! -e /var/etc/.firstboot ]; then
       echo "component720p" > /proc/stb/video/switch
   fi
 
-   showiframe -p /boot/bootlogo.mvi &
+   showiframe -p /var/boot/bootlogo.mvi &
    stfbcontrol a 0
 
    echo "init frontpanel"
    insmod $MODDIR/simu_button.ko
 
    echo "init lircd"
+   mkdir -p /var/run/lirc
    /usr/bin/lircd
 
    /bin/evremote2 &
@@ -181,12 +182,12 @@ if [ ! -e /var/etc/.firstboot ]; then
 		3) echo "3"
 		   echo "E2 RESTART" > /dev/vfd
 		   echo "0" > /proc/progress
-		   showiframe -p /boot/bootlogo.mvi &;;
+		   showiframe -p /var/boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR" > /dev/vfd
 		   sync
 		   echo "0" > /proc/progress
-		   showiframe -p /boot/bootlogo.mvi &;;
+		   showiframe -p /var/boot/bootlogo.mvi &;;
       esac
    done 
  fi

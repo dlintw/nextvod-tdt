@@ -51,9 +51,15 @@ if [ ! -e /var/etc/.firstboot ]; then
 	   insmod $MODDIR/stmfb.ko display0=720x576-32@50:12m:pal:yuv:yuv;;
    esac
 
-   echo "load a/v firmware"
-   /bin/ustslave /dev/st231-1 /boot/audio.elf
-   /bin/ustslave /dev/st231-0 /boot/video.elf
+   echo "load video firmware"
+   /bin/dd if=/dev/zero of=/dev/st231-0 bs=1024 count=4096
+#   /bin/stslave -t st231.0 -R /lib/firmware/video.elf
+   /bin/ustslave /dev/st231-0 /lib/firmware/video.elf
+
+   echo "load audio firmware"
+   /bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
+#   /bin/stslave -t st231.1 -R /lib/firmware/audio.elf
+   /bin/ustslave /dev/st231-1 /lib/firmware/audio.elf
 
    echo "init embx"
    insmod $MODDIR/embxshell.ko
@@ -83,7 +89,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/boxtype.ko
 fi
 
-showiframe -p /boot/bootlogo.mvi &
+showiframe -p /var/boot/bootlogo.mvi &
 stfbcontrol a 0
 
 if [ ! -e /var/etc/.firstboot ]; then
@@ -91,7 +97,6 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING e2"
 
    /etc/init.d/mountall start
-
    /etc/init.d/hostname start
 
    echo "starting telnetd"
@@ -109,6 +114,9 @@ if [ ! -e /var/etc/.firstboot ]; then
      /etc/init.d/networking start
    fi
 
+   #timefix
+   date -s "200901011200"
+
    stfbcontrol a 255
    until false
 do
@@ -119,23 +127,16 @@ do
       echo "neutrino ended <- RTV: " $rtv
       case "$rtv" in
 		0) echo "0"
-		   echo "ERROR"
-      	   init 6;;
-		1) echo "1"
 		   echo "SHUTDOWN"
 		   init 0;;
-		2) echo "2"
+		1) echo "1"
 		   echo "REBOOT"
 		   init 6;;
-		3) echo "3"
-		   echo "RESTART"
-		   echo "0" > /proc/progress
-		   showiframe -p /boot/bootlogo.mvi &;;
 		*) echo "*"
 		   echo "ERROR"
-           init 6;;
+		   init 6;;
       esac
-   done 
+   done
 fi
 
 echo "REBOOT CUBEREVO" > /dev/dbox/fp0

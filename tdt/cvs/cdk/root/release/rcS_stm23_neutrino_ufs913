@@ -32,6 +32,10 @@ if [ ! -e /var/etc/.firstboot ]; then
    else
      if [ -e /etc/network/interfaces ]; then
 	 ip addr flush eth0
+	 HWADDR=`grep -E -o '[[:xdigit:]]{2}(:[[:xdigit:]]{2}){5}' /dev/mtd2`
+	 ifconfig eth0 down
+	 ifconfig eth0 hw ether $HWADDR
+#	 ifconfig eth0 up
 	 /etc/init.d/networking stop
 	 DHCP=`grep -c dhcp /etc/network/interfaces`
 	 if [ "$DHCP" -eq "1" ]; then
@@ -45,7 +49,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    fp_control -c
 
    # green led on
-   fp_control -l 2 1
+   #fp_control -l 2 1
    # led brightness
    fp_control -led 80
 
@@ -54,28 +58,26 @@ if [ ! -e /var/etc/.firstboot ]; then
  echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/autologin
 
-   /etc/init.d/vsftpd start
-
  echo "init stmfb"
    insmod $MODDIR/stmcore-display-sti7105.ko
-   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:12m:pal:yuv:yuv;# display1=720x576-16@50:8m:pal:cvbs;
+   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:12m:pal:cvbs:yuv;# display1=720x576-16@50:8m:pal:cvbs;
 
    echo "LOADING MODULES"
    fp_control -t "LOADING MODULES"
 
-   if [ ! -e /boot/audio.elf ]; then
+   if [ ! -e /lib/firmware/audio.elf ]; then
       fp_control -t "FW MISSING!!!"
    fi
 
- echo "load video firmware"
+   echo "load video firmware"
    /bin/dd if=/dev/zero of=/dev/st231-0 bs=1024 count=4096
+#   /bin/stslave -t st231.0 -R /lib/firmware/video.elf
+   /bin/ustslave /dev/st231-0 /lib/firmware/video.elf
 
-   /bin/ustslave /dev/st231-0 /boot/video.elf
-
- echo "load audio firmware"
+   echo "load audio firmware"
    /bin/dd if=/dev/zero of=/dev/st231-1 bs=1024 count=4096
-
-   /bin/ustslave /dev/st231-1 /boot/audio.elf
+#   /bin/stslave -t st231.1 -R /lib/firmware/audio.elf
+   /bin/ustslave /dev/st231-1 /lib/firmware/audio.elf
 
  echo "init embx"
    insmod $MODDIR/embxshell.ko
@@ -85,8 +87,6 @@ if [ ! -e /var/etc/.firstboot ]; then
 
  echo "init AVS"
    insmod $MODDIR/avs.ko type=stv6417
-
-
    insmod $MODDIR/mmelog.ko
    insmod $MODDIR/ksound.ko
    insmod $MODDIR/p2div64.ko
@@ -105,16 +105,14 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/stm_monitor.ko
    insmod $MODDIR/stmsysfs.ko
    insmod $MODDIR/stmdvb.ko
-
-   insmod $MODDIR/player2.ko
+   insmod $MODDIR/player2.ko discardlateframe=0
    insmod $MODDIR/sth264pp.ko
    insmod $MODDIR/stmalloc.ko
    insmod $MODDIR/platform.ko
    insmod $MODDIR/silencegen.ko
-
    insmod $MODDIR/bpamem.ko
 
-   #showiframe -p /boot/bootlogo.mvi &
+   #showiframe -p /var/boot/bootlogo.mvi &
    stfbcontrol a 0
 
    echo "init frontpanel"
@@ -125,13 +123,8 @@ if [ ! -e /var/etc/.firstboot ]; then
    #delay
    /bin/evremote2 10 120 &
 
-   # timefix e2
-   # date -s "121220001970"
-
-   /etc/init.d/mountall start
-
-   /etc/init.d/hostname start
-
+   #timefix
+   date -s "200901011200"
 
    /etc/init.d/vsftpd start
    /usr/sbin/inetd
@@ -144,18 +137,24 @@ if [ ! -e /var/etc/.firstboot ]; then
    until false
    do
       echo "starting neutrino ->"
-      /usr/local/bin/neutrino -v 3
-      if [ -e /tmp/.reboot ]; then
-         echo "REBOOT"
-         init 6
-      else
-         echo "SHUTDOWN"
-         init 0
-      fi
+      /usr/local/bin/neutrino
+      rtv=$?
+      echo "neutrino ended <- RTV: " $rtv
+      case "$rtv" in
+		0) echo "0"
+		   echo "SHUTDOWN"
+		   init 0;;
+		1) echo "1"
+		   echo "REBOOT"
+		   init 6;;
+		*) echo "*"
+		   echo "ERROR"
+		   init 6;;
+      esac
    done
 fi
 
 #never reached
-echo "REBOOT UFS913"/dev/vfd
+echo "REBOOT UFS913" > /dev/vfd
 echo "REBOOT UFS913"
-reboot
+init 6

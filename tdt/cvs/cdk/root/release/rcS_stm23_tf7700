@@ -99,7 +99,7 @@ if [ ! -e /var/etc/.firstboot ]; then
    insmod $MODDIR/bpamem.ko
    mknod /dev/bpamem c 153 0 
 
-   showiframe -p /boot/bootlogo.mvi &
+   showiframe -p /var/boot/bootlogo.mvi &
    stfbcontrol a 0
 
    # Workaround why is jfs always not mountable?
@@ -152,7 +152,7 @@ if [ ! -e /var/etc/.firstboot ]; then
             #ne done better ;-)
             /usr/bin/killall tuxtxt
             #rset
-            showiframe -p /boot/bootlogo.mvi &
+            showiframe -p /var/boot/bootlogo.mvi &
             echo "0" > /proc/progress;;
          1) echo "1"
             echo "SHUTDOWN"
@@ -164,7 +164,7 @@ if [ ! -e /var/etc/.firstboot ]; then
          3) echo "3"
             echo "E2 RESTART"
             #rset
-            showiframe -p /boot/bootlogo.mvi &
+            showiframe -p /var/boot/bootlogo.mvi &
             echo "0" > /proc/progress;;
          *) echo "*"
             echo "ERROR";;
