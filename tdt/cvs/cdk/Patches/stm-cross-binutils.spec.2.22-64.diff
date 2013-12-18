@@ -1,20 +1,12 @@
---- stm-cross-binutils.spec.orig	2013-02-22 10:29:24.181295530 +0100
-+++ stm-cross-binutils.spec	2013-02-22 10:29:24.161295529 +0100
-@@ -42,9 +42,6 @@
- BuildRequires: texinfo
+--- stm-cross-binutils_2.22.64_org.spec	2013-04-05 22:55:27.031824892 +0200
++++ stm-cross-binutils_2.22.64.spec	2013-04-05 23:12:16.011866722 +0200
+@@ -140,9 +140,7 @@
+        --enable-packer="no" \
+        --disable-secinfo \
  %endif
- BuildRequires: %{_stm_pkg_prefix}-host-autoconf
--BuildRequires: %{_stm_pkg_prefix}-host-bison
--BuildRequires: %{_stm_pkg_prefix}-host-flex
--BuildRequires: %{_stm_pkg_prefix}-host-gettext
- BuildRequires: %{_stm_pkg_prefix}-host-rpmconfig
- 
- Group: Development/Languages
-@@ -125,6 +122,7 @@
-        --enable-nls \
-        --disable-multilib \
-        --with-system-zlib \
-+       --disable-werror \
- %if "%{_stm_target_fpu}" == "yes"
- %if_target_arch armv7 armv7_uclibc
-         --with-float=hard \
+-%if_target_cpu arm
+        --disable-werror \
+-%endif
+        --with-pkgversion="GNU Binutils - STMicroelectronics/Linux Base" \
+        --with-bugurl="https://bugzilla.stlinux.com" \
+        --enable-install-libbfd \

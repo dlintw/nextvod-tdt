@@ -1,0 +1,17 @@
+--- a/configure	2005-09-08 17:19:40.000000000 +0200
++++ b/configure	2011-03-24 14:34:12.000000000 +0100
+@@ -8440,10 +8440,10 @@ if test -f ${srcdir}/support/shobj-conf;
+ echo $ECHO_N "checking configuration for building shared libraries... $ECHO_C" >&6
+         eval `TERMCAP_LIB=$TERMCAP_LIB ${CONFIG_SHELL-/bin/sh} ${srcdir}/support/shobj-conf -C "${CC}" -c ${host_cpu} -o ${host_os} -v ${host_vendor}`
+
+-#	case "$SHLIB_LIBS" in
+-#	*curses*|*termcap*|*termlib*)	;;
+-#	*)			SHLIB_LIBS="$SHLIB_LIBS $TERMCAP_LIB" ;;
+-#	esac
++	case "$SHLIB_LIBS" in
++	*curses*|*termcap*|*termlib*)	;;
++	*)			SHLIB_LIBS="$SHLIB_LIBS $TERMCAP_LIB" ;;
++	esac
+
+
+

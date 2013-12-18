@@ -1,15 +1,14 @@
-diff -Naur bzip2-1.0.2/Makefile-libbz2_so bzip2-1.0.2-patched/Makefile-libbz2_so
---- bzip2-1.0.2/Makefile-libbz2_so	2001-12-30 03:15:59.000000000 +0100
-+++ bzip2-1.0.2-patched/Makefile-libbz2_so	2003-02-03 17:36:17.000000000 +0100
-@@ -7,7 +7,6 @@
- # important info about building the library like this.
+--- bzip2-1.0.6/Makefile-libbz2_so	2010-09-11 01:07:52.000000000 +0200
++++ bzip2-1.0.6-patched/Makefile-libbz2_so	2013-05-12 11:15:19.000000000 +0200
+@@ -22,7 +22,6 @@
+ 
  
  SHELL=/bin/sh
 -CC=gcc
  BIGFILES=-D_FILE_OFFSET_BITS=64
- CFLAGS=-fpic -fPIC -Wall -Winline -O2 -fomit-frame-pointer -fno-strength-reduce $(BIGFILES)
+ CFLAGS=-fpic -fPIC -Wall -Winline -O2 -g $(BIGFILES)
  
-@@ -42,3 +41,17 @@
+@@ -57,3 +56,17 @@
  	$(CC) $(CFLAGS) -c decompress.c
  bzlib.o: bzlib.c
  	$(CC) $(CFLAGS) -c bzlib.c
