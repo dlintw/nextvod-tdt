@@ -30,7 +30,6 @@
 #if defined(CONFIG_SH_ST_MB618) || defined(CONFIG_SH_ST_SAT7111) || defined(CONFIG_SH_ST_VITAMIN_HD5000)
 
 #if (defined(UFS912) || defined(SPARK) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(HS7810A) || defined(VITAMIN_HD5000)) && defined(__TDT__)
-
 #define HAS_DSUB 0
 #warning fixme: take a look if we have DSUB
 #else

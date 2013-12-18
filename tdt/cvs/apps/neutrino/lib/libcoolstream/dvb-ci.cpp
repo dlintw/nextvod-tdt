@@ -246,10 +246,7 @@ eData sendData(tSlot* slot, unsigned char* data, int len)
 	      d[0] = slot->slot;
 	      d[1] = slot->connection_id;
 	      d[2] = T_DATA_LAST; 	
-	      if (len > 127)
-		d[3] = 4; 			/* pointer to next length */
-	      else
-		d[3] = len + 1; 		/* len */
+	      d[3] = len + 1; 		/* len */
 	      d[4] = slot->connection_id; 	/* transport connection identifier*/
 
 	      len = 5;	

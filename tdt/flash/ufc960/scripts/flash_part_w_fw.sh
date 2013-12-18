@@ -80,18 +80,21 @@ SIZE=`stat mtd_kernel.pad.bin -t --format %s`
 SIZE=`printf "0x%x" $SIZE`
 if [[ $SIZE > "${KMAX}" ]]; then
   echo "KERNEL TO BIG. $SIZE instead of ${KMAX}" > /dev/stderr
+  read -p "Press ENTER to continue..."
 fi
 
 SIZE=`stat mtd_root.pad.bin -t --format %s`
 SIZE=`printf "0x%x" $SIZE`
 if [[ $SIZE > "${RMAX}" ]]; then
   echo "ROOT TO BIG. $SIZE instead of ${RMAX}" > /dev/stderr
+  read -p "Press ENTER to continue..."
 fi
 
 SIZE=`stat mtd_var.sum.pad.bin -t --format %s`
 SIZE=`printf "0x%x" $SIZE`
 if [[ $SIZE > "${VMAX}" ]]; then
   echo "VAR TO BIG. $SIZE instead of ${VMAX}" > /dev/stderr
+  read -p "Press ENTER to continue..."
 fi
 
 rm -f $CURDIR/mtd_kernel.pad.bin

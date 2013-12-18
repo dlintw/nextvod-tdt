@@ -1,3 +1,6 @@
+make_baulog.log
+build.env
+py-compile
 Twisted-*
 elementtree-*
 expat-*

@@ -1,6 +1,12 @@
+#!/bin/bash
+if [ `id -u` != 0 ]; then
+	echo "You are not running this script as root. Try it again as root or with su/sudo command."
+	echo "Bye Bye..."
+	exit
+fi
+
 CURDIR=`pwd`
 BASEDIR=$CURDIR/../..
-
 
 TUFSBOXDIR=$BASEDIR/tufsbox
 CDKDIR=$BASEDIR/cvs/cdk
@@ -23,7 +29,7 @@ mkdir $TMPKERNELDIR
 mkdir $TMPFWDIR
 
 echo "This script creates flashable images for Fortis HS7910a"
-echo "Author: Schischu"
+echo "Author: Schischu, BPanther"
 echo "Date: 10-25-2011"
 echo "-----------------------------------------------------------------------"
 echo "It's expected that an image was already build prior to this execution!"
@@ -35,22 +41,13 @@ echo "-----------------------------------------------------------------------"
 echo "Checking targets..."
 echo "Found targets:"
 if [  -e $TUFSBOXDIR/release ]; then
-  echo "   1) Prepare Enigma2"
+	echo "Preparing Enigma2..."
+	$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR
 fi
 if [  -e $TUFSBOXDIR/release_neutrino ]; then
-  echo "   2) Prepare Neutrino"
+	echo "Preparing Neutrino..."
+	$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR
 fi
-
-read -p "Select target (1-2)? "
-case "$REPLY" in
-	0)  echo "Skipping...";;
-	1)  echo "Preparing Enigma2 Root..."
-		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR;;
-	2)  echo "Preparing Neutrino Root..."
-		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR;;
-	*)  "Invalid Input! Exiting..."
-		exit 2;;
-esac
 echo "Root prepared"
 echo "Checking if flashtool fup exists..."
 if [ ! -e $CURDIR/fup ]; then

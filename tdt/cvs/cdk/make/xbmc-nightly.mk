@@ -8,8 +8,6 @@ $(DEPDIR)/xbmc-nightly.do_prepare:
 	PVRREPO="git://github.com/opdenkamp/xbmc-pvr-addons.git"; \
 	rm -rf $(appsdir)/xbmc-nightly; \
 	rm -rf $(appsdir)/xbmc-nightly.org; \
-	rm -rf $(appsdir)/xbmc-nightly.newest; \
-	rm -rf $(appsdir)/xbmc-nightly.patched; \
 	clear; \
 	echo "Choose between the following revisions:"; \
 	echo " 0) Newest (Can fail due to outdated patch)"; \
@@ -59,14 +57,11 @@ $(DEPDIR)/xbmc-nightly.do_prepare:
 	\
 	cp -ra $(appsdir)/xbmc-nightly $(appsdir)/xbmc-nightly.org; \
 	cd $(appsdir)/xbmc-nightly && patch -p1 < "../../cdk/Patches/xbmc-nightly.$$DIFF.diff"; \
-	cd $(appsdir)/xbmc-nightly && patch -p1 < "../../cdk/Patches/xbmc-nightly.pvr.$$DIFF.diff"; \
-	cp -ra $(appsdir)/xbmc-nightly $(appsdir)/xbmc-nightly.patched
+	cd $(appsdir)/xbmc-nightly && patch -p1 < "../../cdk/Patches/xbmc-nightly.pvr.$$DIFF.diff"
 	touch $@
 
-#			PYTHON_LDFLAGS='-L$(targetprefix)/usr/include/python2.6 -lpython2.6' \
-#			PYTHON_VERSION='2.6' \
 #endable webserver else httpapihandler will fail
-$(appsdir)/xbmc-nightly/config.status: bootstrap libboost directfb libstgles libass libmpeg2 libmad jpeg libsamplerate libogg libvorbis libmodplug curl libflac bzip2 tiff lzo libz fontconfig libfribidi freetype sqlite libpng libpcre libcdio jasper yajl libmicrohttpd tinyxml python gstreamer gst_plugins_dvbmediasink expat libnfs taglib
+$(appsdir)/xbmc-nightly/config.status: bootstrap opkg libboost directfb libstgles libass libmpeg2 libmad libjpeg libsamplerate libogg libvorbis libmodplug libcurl libflac bzip2 tiff lzo libfribidi libfreetype sqlite libpng libpcre libcdio jasper yajl libmicrohttpd tinyxml python gstreamer gst_plugins_dvbmediasink libexpat libnfs taglib
 	cd $(appsdir)/xbmc-nightly && \
 		$(BUILDENV) \
 		./bootstrap && \
@@ -75,8 +70,8 @@ $(appsdir)/xbmc-nightly/config.status: bootstrap libboost directfb libstgles lib
 			--prefix=/usr \
 			PKG_CONFIG=$(hostprefix)/bin/pkg-config \
 			PKG_CONFIG_PATH=$(targetprefix)/usr/lib/pkgconfig \
-			PYTHON_SITE_PKG=$(targetprefix)/usr/lib/python2.6/site-packages \
-			PYTHON_CPPFLAGS=-I$(targetprefix)/usr/include/python2.6 \
+			PYTHON_SITE_PKG=$(targetprefix)/usr/lib/python$(PYTHON_VERSION)/site-packages \
+			PYTHON_CPPFLAGS=-I$(targetprefix)/usr/include/python$(PYTHON_VERSION) \
 			PY_PATH=$(targetprefix)/usr \
 			TEXTUREPACKER_NATIVE_ROOT=/usr \
 			SWIG_EXE=none \

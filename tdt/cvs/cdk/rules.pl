@@ -52,13 +52,13 @@ sub process_make_depends (@)
 
   foreach ( @_ )
   {
-    if ( $_ =~ m#\.deb\.diff\.(bz2|gz)$# )
-    {
-      $output .= "Patches/" . $_ . " ";
-    }
-    elsif ( $_ =~ m#\.(diff|tar)\.(bz2|gz)$# )
+    if ( $_ =~ m#\.(diff|tar)\.(bz2|gz)$# )
     {
       $output .= "\\\$(archivedir)/" . $_ . " ";
+    }
+    elsif ( $_ =~ m#\.deb\.diff\.(bz2|gz)$# )
+    {
+      $output .= "Patches/" . $_ . " ";
     }
     elsif ( $_ =~ m#\.(bz2|gz)$# )
     {
@@ -77,6 +77,10 @@ sub process_make_depends (@)
       $output .= "\\\$(archivedir)/" . $_ . " ";
     }
     elsif ( $_ =~ m#\.zip$# )
+    {
+      $output .= "\\\$(archivedir)/" . $_ . " ";
+    }
+    elsif ( $_ =~ m#\.rpm$# )
     {
       $output .= "\\\$(archivedir)/" . $_ . " ";
     }
@@ -203,12 +207,20 @@ sub process_make_prepare (@)
       {
         $output .= "cabextract \\\$(archivedir)/" . $_[1];
       }
+      elsif ( $_[1] =~ m#\.rpm$# )
+      {
+        $output .= "rpm2cpio \\\$(archivedir)/" . $_[1] . " | cpio --extract --unconditional --preserve-modification-time --make-directories --no-absolute-filenames";
+      }
       else
       {
         die "can't recognize type of archive " . $_[1];
       }
 
       $output .= " )";
+    }
+    elsif ( $_[0] eq "apatch" )
+    {
+      $output .= "( cd " . $dir . " && chmod +w -R .;patch -p1 < \\\$(archivedir)/" . $_[1] . " )";
     }
     elsif ( $_[0] =~ m/patch(time)?(-(\d+))?/ )
     {
@@ -361,7 +373,7 @@ sub process_install_rule ($)
   {
     $output .= "TARGETNAME-ar cru " . join " ", @_;
   }
-  elsif ( $_ =~ m/^rewrite-(libtool|pkgconfig|dependency)/ )
+  elsif ( $_ =~ m/^rewrite-(libtool|dependency|pkgconfig)/ )
   {
     $output .= "perl -pi -e \"s,^libdir=.*\$\$,libdir='TARGET/usr/lib',\" ". join " ", @_ if $1 eq "libtool";
     $output .= "perl -pi -e \"s, /usr/lib, TARGET/usr/lib,g if /^dependency_libs/\"  ". join " ", @_ if $1 eq "dependency";

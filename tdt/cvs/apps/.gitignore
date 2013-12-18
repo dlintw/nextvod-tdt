@@ -4,3 +4,17 @@ enigma2-nightly.newest
 enigma2-nightly.newest.patched
 enigma2-nightly.patched
 enigma2-nightly.newest.diff
+xbmc-nightly
+xbmc-nightly.org
+xbmc-nightly.newest
+xbmc-nightly.newest.patched
+xbmc-nightly.patched
+neutrino-hd2-exp
+neutrino-hd2-exp.org
+neutrino-twin
+neutrino-twin.org
+diff-ignore
+diff-enigma2-pli-nightly.sh
+diff-neutrino.mp.sh
+diff-neutrino.hd2-exp.sh
+diff-neutrino.twin.sh

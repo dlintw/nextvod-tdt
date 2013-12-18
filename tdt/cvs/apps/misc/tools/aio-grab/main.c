@@ -128,7 +128,7 @@ int stb_type=UNKNOWN;
 
 int main(int argc, char **argv) {
 
-	printf("AiO Screengrabber");
+	printf("AiO Screengrabber "PACKAGE_VERSION"\n\n");
 
 	int xres_v,yres_v,xres_o,yres_o,xres,yres,aspect;
 	int c,osd_only,video_only,use_osd_res,width,use_png,use_jpg,jpg_quality,no_aspect,use_letterbox;
@@ -158,16 +158,11 @@ int main(int argc, char **argv) {
 	}
 	while (fgets(buf,sizeof(buf),pipe))
 	{
-		if(strcasestr(buf,"VULCAN"))
-			stb_type=VULCAN;
-		else if(strcasestr(buf,"PALLAS"))
-			stb_type=PALLAS;
-		else if(strcasestr(buf,"XILLEON"))
-			stb_type=XILLEON;
-		else if(strcasestr(buf,"BCM7401") || strcasestr(buf,"BCMFB"))
-			stb_type=BRCM7401;
-		else if(strcasestr(buf,"STi") || strcasestr(buf,"STx"))
-			stb_type=ST;
+		if (strcasestr(buf,"VULCAN")) stb_type=VULCAN;
+		if (strcasestr(buf,"PALLAS")) stb_type=PALLAS;
+		if (strcasestr(buf,"XILLEON")) stb_type=XILLEON;
+		if (strcasestr(buf,"BCM7401") || strcasestr(buf,"BCMFB")) stb_type=BRCM7401;
+		if (strcasestr(buf,"STi") || strcasestr(buf,"STx")) stb_type=ST;
 	}
 	pclose(pipe);
 

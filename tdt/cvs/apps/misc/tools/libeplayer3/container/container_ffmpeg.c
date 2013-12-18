@@ -112,7 +112,7 @@ if (debug_level >= level) printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); 
 #define cERR_CONTAINER_FFMPEG_ERR            -9
 #define cERR_CONTAINER_FFMPEG_END_OF_FILE    -10
 
-static const char* FILENAME = "container_ffmpeg.c";
+static const char* FILENAME = __FILE__;
 
 /* ***************************** */
 /* Types                         */
@@ -193,98 +193,104 @@ void releasefillerMutex(const char *filename, const const char *function, int li
 
     ffmpeg_printf(100, "::%d released mutex\n", line);
 }
-//for buffered io (end)
+//for buffered io (end)encoding
 
 static char* Codec2Encoding(AVCodecContext *codec, int* version)
 {
     fprintf(stderr, "Codec ID: %ld (%.8lx)\n", (long)codec->codec_id, (long)codec->codec_id);
     switch (codec->codec_id)
     {
-	    case AV_CODEC_ID_MPEG1VIDEO:
-	    case AV_CODEC_ID_MPEG2VIDEO:
-	        return "V_MPEG1";
-	    case AV_CODEC_ID_H263:
-	    case AV_CODEC_ID_H263P:
-	    case AV_CODEC_ID_H263I:
-	        return "V_H263";
-	    case AV_CODEC_ID_FLV1:
-	        return "V_FLV";
-	    case AV_CODEC_ID_VP5:
-	    case AV_CODEC_ID_VP6:
-	    case AV_CODEC_ID_VP6F:
-	        return "V_VP6";
-	    case AV_CODEC_ID_RV10:
-	    case AV_CODEC_ID_RV20:
-	        return "V_RMV";
-	    case AV_CODEC_ID_MPEG4:
-	    case AV_CODEC_ID_MSMPEG4V1:
-	    case AV_CODEC_ID_MSMPEG4V2:
-	    case AV_CODEC_ID_MSMPEG4V3:
-	        return "V_MSCOMP";
-	    case AV_CODEC_ID_WMV1:
-	        *version = 1;
-	        return "V_WMV";
-	    case AV_CODEC_ID_WMV2:
-	        *version = 2;
-	        return "V_WMV";
-	    case AV_CODEC_ID_WMV3:
-	        *version = 3;
-	        return "V_WMV";
-	    case AV_CODEC_ID_VC1:
-	        return "V_VC1";
-	    case AV_CODEC_ID_H264:
-	        return "V_MPEG4/ISO/AVC";
-	    case AV_CODEC_ID_AVS:
-	        return "V_AVS";
-	    case AV_CODEC_ID_MP2:
-	        return "A_MPEG/L3";
-	    case AV_CODEC_ID_MP3:
-	        return "A_MP3";
-	    case AV_CODEC_ID_AC3:
-	        return "A_AC3";
-	    case AV_CODEC_ID_DTS:
-	        return "A_DTS";
-	    case AV_CODEC_ID_MLP:
-	        return "A_MLP";
-	    case AV_CODEC_ID_PCM_S16LE:
-			return "A_PCM";
-	    case AV_CODEC_ID_AAC:
-	        return "A_AAC";
-#if 0
-	    case AV_CODEC_ID_RA_144:
-	        return "A_RMA";
-	    case AV_CODEC_ID_RA_288:
-	        return "A_RMA";
-	    case AV_CODEC_ID_WMAV1:
-	    case AV_CODEC_ID_WMAV2:
-	    case AV_CODEC_ID_WMAPRO:
-	        return "A_WMA";
-	    case AV_CODEC_ID_VORBIS:
-	        return "A_VORBIS";
-	    case AV_CODEC_ID_FLAC:
-	        return return "A_FLAC";
+    case AV_CODEC_ID_MPEG1VIDEO:
+        return "V_MPEG1";
+    case AV_CODEC_ID_MPEG2VIDEO:
+        return "V_MPEG1";
+    case AV_CODEC_ID_H263:
+    case AV_CODEC_ID_H263P:
+    case AV_CODEC_ID_H263I:
+        return "V_H263";
+    case AV_CODEC_ID_FLV1:
+        return "V_FLV";
+    case AV_CODEC_ID_VP5:
+    case AV_CODEC_ID_VP6:
+    case AV_CODEC_ID_VP6F:
+        return "V_VP6";
+    case AV_CODEC_ID_RV10:
+    case AV_CODEC_ID_RV20:
+        return "V_RMV";
+    case AV_CODEC_ID_MPEG4:
+#if LIBAVCODEC_VERSION_MAJOR < 53
+    case AV_CODEC_ID_XVID:
 #endif
+    case AV_CODEC_ID_MSMPEG4V1:
+    case AV_CODEC_ID_MSMPEG4V2:
+    case AV_CODEC_ID_MSMPEG4V3:
+        return "V_MSCOMP";
+    case AV_CODEC_ID_WMV1:
+        *version = 1;
+        return "V_WMV";
+    case AV_CODEC_ID_WMV2:
+        *version = 2;
+        return "V_WMV";
+    case AV_CODEC_ID_WMV3:
+        *version = 3;
+        return "V_WMV";
+    case AV_CODEC_ID_VC1:
+        return "V_VC1";
+    case AV_CODEC_ID_H264:
+#if LIBAVCODEC_VERSION_MAJOR < 54
+    case AV_CODEC_ID_FFH264:
+#endif
+        return "V_MPEG4/ISO/AVC";
+    case AV_CODEC_ID_AVS:
+        return "V_AVS";
+    case AV_CODEC_ID_MP2:
+        return "A_MPEG/L3";
+    case AV_CODEC_ID_MP3:
+        return "A_MP3";
+    case AV_CODEC_ID_AAC:
+        return "A_AAC";
+    case AV_CODEC_ID_AC3:
+        return "A_AC3";
+    case AV_CODEC_ID_DTS:
+        return "A_DTS";
+    case AV_CODEC_ID_WMAV1:
+    case AV_CODEC_ID_WMAV2:
+    case 86056:
+    case AV_CODEC_ID_WMAPRO:
+        return "A_WMA";
+    case AV_CODEC_ID_MLP:
+        return "A_MLP";
+    case AV_CODEC_ID_RA_144:
+        return "A_RMA";
+    case AV_CODEC_ID_RA_288:
+        return "A_RMA";
+    case AV_CODEC_ID_VORBIS:
+        return "A_IPCM";
+    case AV_CODEC_ID_FLAC:
+        return "A_IPCM";
+    case AV_CODEC_ID_PCM_S16LE:
+	return "A_PCM";
 /* subtitle */
-	    case AV_CODEC_ID_SSA:
-	        return "S_TEXT/ASS"; /* Hellmaster1024: seems to be ASS instead of SSA */
-	    case AV_CODEC_ID_TEXT: /* Hellmaster1024: i dont have most of this, but lets hope it is normal text :-) */
-	    case AV_CODEC_ID_DVD_SUBTITLE:
-	    case AV_CODEC_ID_DVB_SUBTITLE:
-	    case AV_CODEC_ID_XSUB:
-	    case AV_CODEC_ID_MOV_TEXT:
-	    case AV_CODEC_ID_HDMV_PGS_SUBTITLE:
-	    case AV_CODEC_ID_DVB_TELETEXT:
-#if 0
-		case CODEC_ID_DVB_TELETEXT:
-			return "S_TEXT/SRT"; /* fixme */
-#endif
-	    case AV_CODEC_ID_SRT:
-	        return "S_TEXT/SRT"; /* fixme */
-	    default:
-// Default to injected-pcm for unhandled audio types.
-			if (codec->codec_type == AVMEDIA_TYPE_AUDIO)
-				return "A_IPCM";
-	   		ffmpeg_err("Codec ID %ld (%.8lx) not found\n", (long)codec->codec_id, (long)codec->codec_id);
+    case AV_CODEC_ID_SSA:
+        return "S_TEXT/ASS"; /* Hellmaster1024: seems to be ASS instead of SSA */
+    case AV_CODEC_ID_TEXT: /* Hellmaster1024: i dont have most of this, but lets hope it is normal text :-) */
+    case AV_CODEC_ID_DVD_SUBTITLE:
+    case AV_CODEC_ID_DVB_SUBTITLE:
+    case AV_CODEC_ID_XSUB:
+    case AV_CODEC_ID_MOV_TEXT:
+    case AV_CODEC_ID_HDMV_PGS_SUBTITLE:
+    case AV_CODEC_ID_DVB_TELETEXT:
+//    case CODEC_ID_DVB_TELETEXT:
+//        return "S_TEXT/SRT"; /* fixme */
+    case AV_CODEC_ID_SRT:
+        return "S_TEXT/SRT"; /* fixme */
+    default:
+	// Default to injected-pcm for unhandled audio types.
+	if (codec->codec_type == AVMEDIA_TYPE_AUDIO)
+		return "A_IPCM";
+	if (codec->codec_type == AVMEDIA_TYPE_SUBTITLE)
+		return "S_TEXT/SRT";
+    	ffmpeg_err("Codec ID %ld (%.8lx) not found\n", (long)codec->codec_id, (long)codec->codec_id);
     }
     return NULL;
 }
@@ -342,16 +348,28 @@ float getDurationFromSSALine(unsigned char* line){
  * and map it to our metadata.
  */
 
+#if LIBAVCODEC_VERSION_MAJOR < 54
+static char* searchMeta(AVMetadata *metadata, char* ourTag)
+#else
 static char* searchMeta(AVDictionary * metadata, char* ourTag)
+#endif
 {
+#if LIBAVCODEC_VERSION_MAJOR < 54
+   AVMetadataTag *tag = NULL;
+#else
    AVDictionaryEntry *tag = NULL;
+#endif
    int i = 0;
 
    while (metadata_map[i] != NULL)
    {
       if (strcmp(ourTag, metadata_map[i]) == 0)
       {
+#if LIBAVCODEC_VERSION_MAJOR < 54
+          while ((tag = av_metadata_get(metadata, "", tag, AV_METADATA_IGNORE_SUFFIX)))
+#else
           while ((tag = av_dict_get(metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
+#endif
           {
               if (strcmp(tag->key, metadata_map[ i + 1 ]) == 0)
               {
@@ -782,41 +800,38 @@ static void FFMPEGThread(Context_t *context) {
 
 			       }
 			   }
+			}else
+			if(((AVStream*)subtitleTrack->stream)->codec->codec_id == AV_CODEC_ID_SSA)
+			{
+			    SubtitleData_t data;
 
-			    if(((AVStream*)subtitleTrack->stream)->codec->codec_id == AV_CODEC_ID_SSA)
-			    {
-			        SubtitleData_t data;
+			    ffmpeg_printf(10, "videoPts %lld\n", currentVideoPts);
 
-			        ffmpeg_printf(10, "videoPts %lld\n", currentVideoPts);
+			    data.data      = packet.data;
+			    data.len       = packet.size;
+			    data.extradata = subtitleTrack->extraData;
+			    data.extralen  = subtitleTrack->extraSize;
+			    data.pts       = pts;
+			    data.duration  = duration;
 
-			        data.data      = packet.data;
-			        data.len       = packet.size;
-			        data.extradata = subtitleTrack->extraData;
-			        data.extralen  = subtitleTrack->extraSize;
-			        data.pts       = pts;
-			        data.duration  = duration;
+			    context->container->assContainer->Command(context, CONTAINER_DATA, &data);
+			}else{
+			    /* hopefully native text ;) */
 
-			        context->container->assContainer->Command(context, CONTAINER_DATA, &data);
-			    }
-			    else
-			    {
-			        /* hopefully native text ;) */
+			    unsigned char* line = text_to_ass((char *)packet.data,pts/90,duration);
+			    ffmpeg_printf(50,"text line is %s\n",(char *)packet.data);
+			    ffmpeg_printf(50,"Sub line is %s\n",line);
+			    ffmpeg_printf(20, "videoPts %lld %f\n", currentVideoPts,currentVideoPts/90000.0);
+			    SubtitleData_t data;
+			    data.data      = line;
+			    data.len       = strlen((char*)line);
+			    data.extradata = (unsigned char *) DEFAULT_ASS_HEAD;
+			    data.extralen  = strlen(DEFAULT_ASS_HEAD);
+			    data.pts       = pts;
+			    data.duration  = duration;
 
-			        unsigned char* line = text_to_ass((char *)packet.data,pts/90,duration);
-			        ffmpeg_printf(50,"text line is %s\n",(char *)packet.data);
-			        ffmpeg_printf(50,"Sub line is %s\n",line);
-			        ffmpeg_printf(20, "videoPts %lld %f\n", currentVideoPts,currentVideoPts/90000.0);
-			        SubtitleData_t data;
-			        data.data      = line;
-			        data.len       = strlen((char*)line);
-			        data.extradata = (unsigned char *) DEFAULT_ASS_HEAD;
-			        data.extralen  = strlen(DEFAULT_ASS_HEAD);
-			        data.pts       = pts;
-			        data.duration  = duration;
-
-			        context->container->assContainer->Command(context, CONTAINER_DATA, &data);
-			        free(line);
-			    }
+			    context->container->assContainer->Command(context, CONTAINER_DATA, &data);
+			    free(line);
 			}
 		    } /* duration */
 	    }
@@ -1336,7 +1351,6 @@ int container_ffmpeg_init(Context_t *context, char * filename)
     /* initialize ffmpeg */
     avcodec_register_all();
     av_register_all();
-
     avformat_network_init();
 //    av_log_set_level( AV_LOG_DEBUG );
  
@@ -1385,6 +1399,7 @@ int container_ffmpeg_init(Context_t *context, char * filename)
 
     avContext->iformat->flags |= AVFMT_SEEK_TO_PTS;
     avContext->flags = AVFMT_FLAG_GENPTS;
+
     if (context->playback->noprobe)
         avContext->max_analyze_duration = 1;
 
@@ -1591,12 +1606,6 @@ int container_ffmpeg_update_tracks(Context_t *context, char *filename, int initi
 		    track.duration = (double) stream->duration * av_q2d(stream->time_base) * 1000.0;
 		}
 
-		if(!strncmp(encoding, "A_PCM", 5))
-        {
-            track.inject_raw_pcm = 1;
-            ffmpeg_printf(10, " Handle inject_raw_pcm = %d\n", track.inject_as_pcm);
-		}
-
 		if(!strncmp(encoding, "A_IPCM", 6))
 		{
 		    track.inject_as_pcm = 1;
@@ -1610,6 +1619,7 @@ int container_ffmpeg_update_tracks(Context_t *context, char *filename, int initi
 			else
 			   printf("AVCODEC__INIT__FAILED\n");
 		}
+#if 0
 		else if(stream->codec->codec_id == AV_CODEC_ID_AAC) {
 		    ffmpeg_printf(10,"Create AAC ExtraData\n");
 		    ffmpeg_printf(10,"stream->codec->extradata_size %d\n", stream->codec->extradata_size);
@@ -1660,9 +1670,7 @@ int container_ffmpeg_update_tracks(Context_t *context, char *filename, int initi
 		    Hexdump(track.aacbuf,7);
 		    track.have_aacheader = 1;
 
-		} 
-#if 0
-		else if(stream->codec->codec_id == AV_CODEC_ID_WMAV1
+		} else if(stream->codec->codec_id == AV_CODEC_ID_WMAV1
 		    || stream->codec->codec_id == AV_CODEC_ID_WMAV2
 		    || stream->codec->codec_id == AV_CODEC_ID_WMAPRO) //if (stream->codec->extradata_size > 0)
 		{
@@ -1841,7 +1849,7 @@ int container_ffmpeg_update_tracks(Context_t *context, char *filename, int initi
 		    	stream->codec->codec = NULL;
 		    }
 		}
-		if (stream->codec->codec && context->manager->subtitle->Command(context, MANAGER_ADD, &track) < 0) {
+		if (context->manager->subtitle->Command(context, MANAGER_ADD, &track) < 0) {
 		    /* konfetti: fixme: is this a reason to return with error? */
 		    ffmpeg_err("failed to add subtitle track %d\n", n);
 		}
@@ -1928,6 +1936,7 @@ static int container_ffmpeg_stop(Context_t *context) {
 
     if (wait_time == 0) {
         ffmpeg_err( "Timeout waiting for filler thread!\n");
+
         ret = cERR_CONTAINER_FFMPEG_ERR;
     }
     //for buffered io (end)
@@ -1938,11 +1947,13 @@ static int container_ffmpeg_stop(Context_t *context) {
     wait_time = 100;
     while ( (hasPlayThreadStarted != 0) && (--wait_time) > 0 ) {
         ffmpeg_printf(10, "Waiting for ffmpeg thread to terminate itself, will try another %d times\n", wait_time);
+
         usleep(100000);
     }
 
     if (wait_time == 0) {
         ffmpeg_err( "Timeout waiting for thread!\n");
+
         ret = cERR_CONTAINER_FFMPEG_ERR;
     }
 
@@ -2402,7 +2413,7 @@ static int Command(void  *_context, ContainerCmd_t command, void * argument)
     return ret;
 }
 
-static char *FFMPEG_Capabilities[] = {"avi", "mkv", "mp4", "ts", "mov", "flv", "flac", "mp3", "mpg", "m2ts", "vob", "wmv","wma", "asf", "mp2", "m4v", "m4a", "divx", "dat", "mpeg", "trp", "mts", "vdr", "ogg", "wav", "wtv", "asx", "mvi", "png", "jpg", "ra", "rm", NULL };
+static char *FFMPEG_Capabilities[] = {"avi", "mkv", "mp4", "ts", "mov", "flv", "flac", "mp3", "mpg", "m2ts", "vob", "wmv","wma", "asf", "mp2", "m4v", "m4a", "divx", "dat", "mpeg", "trp", "mts", "vdr", "ogg", "wav", "wtv", "asx", "mvi", "png", "jpg", NULL };
 
 Container_t FFMPEGContainer = {
     "FFMPEG",

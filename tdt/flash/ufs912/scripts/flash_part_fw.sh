@@ -47,4 +47,4 @@ EOF
 rm -f $CURDIR/mtd_fw.bin
 rm -f $CURDIR/mtd_fw.sum.bin
 
-zip $OUTFILE.zip $OUTFILE
+zip -j $OUTFILE.zip $OUTFILE

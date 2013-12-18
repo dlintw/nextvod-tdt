@@ -121,6 +121,10 @@ void framebuffer_init()
 }
 
 
+void blitFunction(){
+	printf("I should BLIT now\n");
+}
+
 int main(int argc,char* argv[]) {
     SubtitleOutputDef_t out;
     int showInfos = 0, noinput = 0;
@@ -169,8 +173,11 @@ int main(int argc,char* argv[]) {
     /* for testing ass subtitles */
     out.screen_width = xRes;
     out.screen_height = yRes;
-    out.destination   = (uint32_t *)lfb;
+    out.framebufferFD = fd;
+    out.destination   = lfb;
     out.destStride    = stride;
+    out.shareFramebuffer = 1;
+    out.framebufferBlit = blitFunction;
 
     player->output->subtitle->Command(player, (OutputCmd_t)OUTPUT_SET_SUBTITLE_OUTPUT, (void*) &out);
 

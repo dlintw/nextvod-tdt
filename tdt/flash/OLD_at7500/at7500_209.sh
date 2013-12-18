@@ -1,16 +1,21 @@
 #!/bin/bash
+if [ `id -u` != 0 ]; then
+	echo "You are not running this script as root. Try it again as root or with su/sudo command."
+	echo "Bye Bye..."
+	exit
+fi
+
 CURDIR=`pwd`
 BASEDIR=$CURDIR/../..
-
 
 TUFSBOXDIR=$BASEDIR/tufsbox
 CDKDIR=$BASEDIR/cvs/cdk
 
-SCRIPTDIR=$CURDIR/scripts
+SCRIPTDIR=$CURDIR/scripts_209
 TMPDIR=$CURDIR/tmp
 TMPROOTDIR=$TMPDIR/ROOT
 TMPKERNELDIR=$TMPDIR/KERNEL
-TMPSTORAGEDIR=$TMPDIR/STORAGE
+TMPFWDIR=$TMPDIR/FW
 
 OUTDIR=$CURDIR/out
 
@@ -21,11 +26,12 @@ fi
 mkdir $TMPDIR
 mkdir $TMPROOTDIR
 mkdir $TMPKERNELDIR
-mkdir $TMPSTORAGEDIR
+mkdir $TMPFWDIR
 
-echo "This script creates flashable images for UFS910 MINI/MAXI UBOOT"
-echo "Author: Schischu, Oxygen-1"
-echo "Date: 04-02-2012"
+echo "This script creates flashable images for Atevio 7500"
+echo "Will probably be adapted in future to support clones"
+echo "Author: Schischu, BPanther"
+echo "Date: 01-31-2011"
 echo "-----------------------------------------------------------------------"
 echo "It's expected that an image was already build prior to this execution!"
 echo "-----------------------------------------------------------------------"
@@ -36,42 +42,55 @@ echo "-----------------------------------------------------------------------"
 echo "Checking targets..."
 echo "Found targets:"
 if [  -e $TUFSBOXDIR/release ]; then
-  echo "   1) Prepare Enigma2"
+	echo "Preparing Enigma2..."
+	$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR
 fi
 if [  -e $TUFSBOXDIR/release_neutrino ]; then
-  echo "   2) Prepare Neutrino"
+	echo "Preparing Neutrino..."
+	$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR
+fi
+echo "Root prepared"
+echo "Checking if flashtool fup exists..."
+if [ ! -e $CURDIR/fup ]; then
+  echo "Flashtool fup is missing, trying to compile it..."
+  cd $CURDIR/../common/fup.src
+  $CURDIR/../common/fup.src/compile.sh USE_ZLIB
+  mv $CURDIR/../common/fup.src/fup $CURDIR/fup
+  cd $CURDIR
+  if [ ! -e $CURDIR/fup ]; then
+    echo "Compiling failed! Exiting..."
+    echo "It the error is \"cannot find -lz\" than you need to install the 32bit version of libz"
+    exit 3
+  else
+    echo "Compiling successfull"
+  fi
 fi
 
-read -p "Select target (1-2)? "
-case "$REPLY" in
-	0)  echo "Skipping...";;
-	1)  echo "Preparing Enigma2 Root..."
-		$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release $TMPROOTDIR $TMPSTORAGEDIR $TMPKERNELDIR;;
-	2)  echo "Preparing Neutrino Root..."
-		$SCRIPTDIR/prepare_root_neutrino.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPSTORAGEDIR $TMPKERNELDIR;;
-	*)  "Invalid Input! Exiting..."
-		exit 2;;
-esac
-echo "Root prepared"
-echo ""
-echo "You can customize your image now (i.e. move files you like from ROOT to STORAGE)."
-echo "Or insert your changes into scripts/customize.sh"
-$SCRIPTDIR/customize.sh $CURDIR $TMPROOTDIR $TMPSTORAGEDIR $TMPKERNELDIR
+echo "Flashtool fup exists"
 echo "-----------------------------------------------------------------------"
 echo "Checking targets..."
 echo "Found flashtarget:"
-echo "   1) KERNEL with ROOT and FW"
-read -p "Select flashtarget (1)? "
+echo "   1) KERNEL with ROOT"
+echo "   2) KERNEL with ROOT and FW"
+echo "   3) KERNEL"
+echo "   4) FW"
+read -p "Select flashtarget (1-4)? "
 case "$REPLY" in
-	1)  echo "Creating KERNEL with ROOT and FW..."
-		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR $TMPSTORAGEDIR;;
+	1)  echo "Creating KERNEL with ROOT..."
+		$SCRIPTDIR/flash_part_wo_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPROOTDIR;;
+	2)  echo "Creating KERNEL with ROOT and FW..."
+		$SCRIPTDIR/flash_part_w_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR $TMPFWDIR $TMPROOTDIR;;
+	3)  echo "Creating KERNEL..."
+		$SCRIPTDIR/flash_part_kernel.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPKERNELDIR;;
+	4)  echo "Creating FW..."
+		$SCRIPTDIR/flash_part_fw.sh $CURDIR $TUFSBOXDIR $OUTDIR $TMPFWDIR;;
 	*)  "Invalid Input! Exiting..."
 		exit 3;;
 esac
-#clear
+clear
 echo "-----------------------------------------------------------------------"
-AUDIOELFSIZE=`stat -c %s $TMPROOTDIR/boot/audio.elf`
-VIDEOELFSIZE=`stat -c %s $TMPROOTDIR/boot/video.elf`
+AUDIOELFSIZE=`stat -c %s $TMPFWDIR/audio.elf`
+VIDEOELFSIZE=`stat -c %s $TMPFWDIR/video.elf`
 if [ $AUDIOELFSIZE == "0" ]; then
   echo "!!! WARNING: AUDIOELF SIZE IS ZERO !!!"
   echo "IF YOUR ARE CREATING THE FW PART MAKE SURE THAT YOU USE CORRECT ELFS"
@@ -96,9 +115,7 @@ echo "Flashimage created:"
 echo `ls $OUTDIR`
 
 echo "-----------------------------------------------------------------------"
-echo "To flash the created image rename the *.img file to miniFLASH.img and "
-echo "copy it to the root (/) of your usb drive."
-echo "To start the flashing process press RECORD for 10 sec on your remote "
-echo "control while the box is starting"
+echo "To flash the created image copy the *.ird file to"
+echo "your usb drive"
 echo ""
 

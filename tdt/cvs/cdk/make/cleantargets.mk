@@ -19,66 +19,44 @@ mostlyclean-local: cdk-clean
 
 # Clean tuxbox source directories
 cdk-clean:
+	-$(MAKE) -C linux-sh4 clean
 	-$(MAKE) -C $(driverdir) KERNEL_LOCATION=$(buildprefix)/linux-sh4 \
 		BIN_DEST=$(targetprefix)/bin \
 		INSTALL_MOD_PATH=$(targetprefix) clean
-	-$(MAKE) -C $(appsdir)/neutrino distclean
-	-$(MAKE) -C $(appsdir)/neutrino-beta distclean
-	-$(MAKE) -C $(appsdir)/enigma2-nightly distclean
-	-$(MAKE) -C $(appsdir)/tuxbox/libs clean
-	-$(MAKE) -C $(appsdir)/tuxbox/libtuxbox clean
-	-$(MAKE) -C $(appsdir)/tuxbox/plugins clean
-	-$(MAKE) -C $(appsdir)/misc/libs clean
 	-$(MAKE) -C $(appsdir)/misc/tools distclean
-	-$(MAKE) -C $(appsdir)/dvb/dvbsnoop clean
-	-$(MAKE) -C $(hostappsdir) clean
-#	-$(MAKE) -C root clean
+#	-$(MAKE) -C $(appsdir)/dvb/dvbsnoop clean
 	-rm -rf build
 
 # Clean tuxbox source directories. Clean up in cdkroot as much as the
 # uninstall facilities of the components allow.
 clean-local: mostlyclean-local depsclean rpmdepsclean
-	-$(MAKE) -C $(appsdir)/tuxbox/libs uninstall
-	-$(MAKE) -C $(appsdir)/tuxbox/libtuxbox uninstall
-	-$(MAKE) -C $(appsdir)/tuxbox/plugins uninstall
-	-$(MAKE) -C $(appsdir)/misc/libs uninstall
-	-$(MAKE) -C $(appsdir)/misc/tools uninstall
-	-$(MAKE) -C $(appsdir)/dvb/dvbsnoop uninstall
-	-$(MAKE) -C $(hostappsdir) uninstall
 	-rm -rf $(hostprefix)
-	-rm -rf $(crossprefix)/
-	-rm -rf $(configprefix)/
-	-rm -rf $(devkitprefix)/
-	-rm -rf $(prefix)/*cdkroot/
+	-rm -rf $(configprefix)
+	-rm -rf $(devkitprefix)
+	-rm -rf $(prefix)/*cdkroot
 	-rm -rf $(prefix)/*cdkroot-rpmdb
 	-rm -rf $(prefix)/*cdkroot-tftpboot
-	-rm -rf $(rpmdbprefix)
 	-rm -rf $(prefix)/release*
 	-rm -rf SOURCES SPECS BUILD && install -d SOURCES SPECS BUILD
-	-rm -rf $(prefix)/ccache
-
+	-rm -rf build.env
+	-rm -rf $(DEPDIR)/u-boot-utils*
+	-rm -rf $(DEPDIR)/linux-kernel*
 
 # Be brutal...just nuke it!
 distclean-local:
-#	-$(MAKE) -C root distclean
 	-$(MAKE) -C $(appsdir) distclean
 #	-$(MAKE) -C $(appsdir)/dvb/dvbsnoop distclean
-#	-$(MAKE) -C $(appsdir)/dvb/libdvb++ distclean
-#	-$(MAKE) -C $(appsdir)/dvb/libdvbsi++ distclean
-	-$(MAKE) -C $(appsdir)/tuxbox/libs distclean
-	-$(MAKE) -C $(appsdir)/tuxbox/plugins distclean
-	-$(MAKE) -C $(appsdir)/tuxbox/libtuxbox distclean
-	-$(MAKE) -C $(appsdir)/misc/libs distclean
 	-$(MAKE) -C $(appsdir)/misc/tools distclean
 	-$(MAKE) -C $(hostappsdir) distclean
 	-$(MAKE) driver-clean
-	-$(MAKE) enigma2-clean
 	-rm -f Makefile-archive
 	-rm -f rules-downcheck.pl
-	-rm -f linux
 	-rm -f linux-sh4
 	-rm -rf $(appsdir)/enigma2-*
 	-rm -rf $(appsdir)/neutrino-*
+	-rm -rf $(appsdir)/nhd2-*
+	-rm -rf $(appsdir)/libstb-*
+	-rm -rf $(appsdir)/xbmc-*
 	-rm -rf $(DEPDIR)
 #	-rm -rf $(targetprefix)
 	-rm -rf $(hostprefix)
