@@ -17,7 +17,28 @@ MKSQUASHFS=$CURDIR/../common/mksquashfs4.0
 SUMTOOL=$TUFSBOXDIR/host/bin/sumtool
 PAD=$CURDIR/../common/pad
 
-OUTFILE=$OUTDIR/e2jffs2.img
+if [ -f $TMPROOTDIR/etc/hostname ]; then
+	HOST=`cat $TMPROOTDIR/etc/hostname`
+elif [ -f $TMPROOTDIR/var/etc/hostname ]; then
+	HOST=`cat $TMPROOTDIR/var/etc/hostname`
+fi
+if [ -d $CURDIR/../../cvs/apps/libstb-hal-exp-next ]; then
+	HAL_REV=_HAL-rev`cd $CURDIR/../../cvs/apps/libstb-hal-exp-next && git log | grep "^commit" | wc -l`-exp-next
+elif [ -d $CURDIR/../../cvs/apps/libstb-hal-exp ]; then
+	HAL_REV=_HAL-rev`cd $CURDIR/../../cvs/apps/libstb-hal-exp && git log | grep "^commit" | wc -l`-exp
+else
+	HAL_REV=_HAL-rev`cd $CURDIR/../../cvs/apps/libstb-hal && git log | grep "^commit" | wc -l`
+fi
+
+if [ -d $CURDIR/../../cvs/apps/neutrino-mp-exp-next ]; then
+	NMP_REV=_NMP-rev`cd $CURDIR/../../cvs/apps/neutrino-mp-exp-next && git log | grep "^commit" | wc -l`-exp-next
+elif [ -d $CURDIR/../../cvs/apps/neutrino-mp-exp ]; then
+	NMP_REV=_NMP-rev`cd $CURDIR/../../cvs/apps/neutrino-mp-exp && git log | grep "^commit" | wc -l`-exp
+else
+	NMP_REV=_NMP-rev`cd $CURDIR/../../cvs/apps/neutrino-mp && git log | grep "^commit" | wc -l`
+fi
+gitversion="_BASE-rev`(cd $CURDIR/../../ && git log | grep "^commit" | wc -l)`$HAL_REV$NMP_REV"
+OUTFILE=$OUTDIR/$HOST$gitversion
 
 if [ ! -e $OUTDIR ]; then
   mkdir $OUTDIR
@@ -25,6 +46,7 @@ fi
 
 if [ -e $OUTFILE ]; then
   rm -f $OUTFILE
+  rm -f $OUTFILE.md5
 fi
 
 # --- KERNEL ---
@@ -38,8 +60,8 @@ echo "MKFSJFFS2 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin -e 0x20000 -p -n"
 $MKFSJFFS2 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin -e 0x20000 -p -n
 echo "SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin"
 $SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_root.bin -o $CURDIR/mtd_root.sum.bin
-echo "$PAD 0x4000000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin"
-$PAD 0x4000000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin
+#echo "$PAD 0x4000000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin"
+#$PAD 0x4000000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin
 
 #echo "MKFSJFFS2 --qUfv -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin"
 #$MKFSJFFS2 -qUfv -e0x20000 -r $TMPROOTDIR -o $CURDIR/mtd_root.bin
@@ -48,7 +70,7 @@ $PAD 0x4000000 $CURDIR/mtd_root.sum.bin $CURDIR/mtd_root.sum.pad.bin
 
 #rm -f $CURDIR/uImage
 rm -f $CURDIR/mtd_root.bin
-rm -f $CURDIR/mtd_root.sum.bin
+#rm -f $CURDIR/mtd_root.sum.bin
 
 #SIZE=`stat mtd_kernel.pad.bin -t --format %s`
 #SIZE=`printf "0x%x" $SIZE`
@@ -56,16 +78,22 @@ rm -f $CURDIR/mtd_root.sum.bin
 #  echo "KERNEL TO BIG. $SIZE instead of 0x800000" > /dev/stderr
 #fi
 
-SIZE=`stat mtd_root.sum.pad.bin -t --format %s`
-SIZE=`printf "0x%x" $SIZE`
+#SIZE=`stat mtd_root.sum.pad.bin -t --format %s`
+SIZE=`stat mtd_root.sum.bin -t --format %s`
+SIZE=`printf "0x%07x" $SIZE`
 if [[ $SIZE > "0x4000000" ]]; then
   echo "ROOT TO BIG. $SIZE instead of 0x4000000" > /dev/stderr
+  read -p "Press ENTER to continue..."
 fi
 
 #mv $CURDIR/mtd_kernel.pad.bin $OUTDIR/uImage
-mv $CURDIR/mtd_root.sum.pad.bin $OUTDIR/e2jffs2.img
+#mv $CURDIR/mtd_root.sum.pad.bin $OUTDIR/e2jffs2.img
+mv $CURDIR/mtd_root.sum.bin $OUTDIR/e2jffs2.img
 
 rm -f $CURDIR/mtd_kernel.pad.bin
-rm -f $CURDIR/mtd_root.sum.pad.bin
-
-cd $OUTDIR;zip $OUTFILE.zip e2jffs2.img uImage
+#rm -f $CURDIR/mtd_root.sum.pad.bin
+rm -f $CURDIR/mtd_root.sum.bin
+cd $OUTDIR
+zip -j $OUTFILE.zip e2jffs2.img uImage
+rm -f $OUTDIR/e2jffs2.img
+rm -f $OUTDIR/uImage

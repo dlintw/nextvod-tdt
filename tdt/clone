@@ -22,7 +22,7 @@ echo "Checking if git is installed"
 whatis git | grep git
 if [ "$?" != "0" ]; then
     echo "    ERROR - git missing, has setuptdt.sh been executed?"
-    wget "http://gitorious.org/open-duckbox-project-sh4/tdt/blobs/raw/master/tdt/cvs/cdk/setuptdt.sh"
+    wget "http://gitorious.org/~max10/open-duckbox-project-sh4/tdt/blobs/raw/master/tdt/cvs/cdk/setuptdt.sh"
     exit 1
 fi
 echo "    OK - git is installed"
@@ -52,7 +52,7 @@ if [ "$REPONAME"  == "" ]; then
 fi
 
 echo "Cloning repository to $REPONAME"
-git clone git@gitorious.org:open-duckbox-project-sh4/tdt.git $REPONAME
+git clone git@gitorious.org:~max10/open-duckbox-project-sh4/tdt.git $REPONAME
 if [ "$?" != "0" ]; then
     echo "git-clone failed"
     echo "Probably causes are:"

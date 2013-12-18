@@ -4,40 +4,35 @@ CURDIR=$1
 RELEASEDIR=$2
 
 TMPROOTDIR=$3
-TMPKERNELDIR=$4
-TMPFWDIR=$5
+TMPEXTDIR=$4
+TMPKERNELDIR=$5
+TMPFWDIR=$6
 
-cp -a $RELEASEDIR/* $TMPROOTDIR
+find $RELEASEDIR -mindepth 1 -maxdepth 1 -exec cp -at$TMPROOTDIR -- {} +
 
+if [ ! -e $TMPROOTDIR/dev/mtd0 ]; then
+	cd $TMPROOTDIR/dev/
+	if [ -e $TMPROOTDIR/var/etc/init.d/makedev ]; then
+		$TMPROOTDIR/var/etc/init.d/makedev start
+	else
+		$TMPROOTDIR/etc/init.d/makedev start
+	fi
+	cd -
+fi
+
+mv $TMPROOTDIR/var/* $TMPEXTDIR
 mv $TMPROOTDIR/boot/uImage $TMPKERNELDIR/uImage
+rm -fr $TMPROOTDIR/boot
+mv $TMPROOTDIR/lib/firmware/* $TMPFWDIR
 
-mv $TMPROOTDIR/boot/audio.elf $TMPFWDIR/audio.elf
-mv $TMPROOTDIR/boot/video.elf $TMPFWDIR/video.elf
-
-mv $TMPROOTDIR/boot/bootlogo.mvi $TMPROOTDIR/etc/bootlogo.mvi
-sed -i "s/\/boot\/bootlogo.mvi/\/etc\/bootlogo.mvi/g" $TMPROOTDIR/etc/init.d/rcS
-
-rm -f $TMPROOTDIR/boot/*
-
-echo "/dev/mtdblock2	/boot	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
-#echo "/dev/mtdblock5	/root	jffs2	defaults	0	0" >> $TMPROOTDIR/etc/fstab
-
-cd $TMPROOTDIR/dev/
-MAKEDEV="sudo $TMPROOTDIR/sbin/MAKEDEV -p $TMPROOTDIR/etc/passwd -g $TMPROOTDIR/etc/group"
-${MAKEDEV} std
-${MAKEDEV} fd
-${MAKEDEV} hda hdb
-${MAKEDEV} sda sdb sdc sdd
-${MAKEDEV} scd0 scd1
-${MAKEDEV} st0 st1
-${MAKEDEV} sg
-${MAKEDEV} ptyp ptyq
-${MAKEDEV} console
-${MAKEDEV} ttyAS0 ttyAS1 ttyAS2 ttyAS3
-${MAKEDEV} lp par audio video fb rtc lirc st200 alsasnd mme bpamem
-${MAKEDEV} ppp busmice
-${MAKEDEV} input i2c mtd
-${MAKEDEV} dvb
-${MAKEDEV} vfd
-${MAKEDEV} hdmi_cec
-cd -
+# mini-rcS and inittab
+rm -f $TMPROOTDIR/etc
+mkdir -p $TMPROOTDIR/etc/init.d
+echo "#!/bin/sh" > $TMPROOTDIR/etc/init.d/rcS
+echo "mount -n -t proc proc /proc" >> $TMPROOTDIR/etc/init.d/rcS
+echo "mount -t jffs2 -o rw,noatime,nodiratime /dev/mtdblock2 /lib/firmware" >> $TMPROOTDIR/etc/init.d/rcS
+echo "mount -t jffs2 -o rw,noatime,nodiratime /dev/mtdblock3 /var" >> $TMPROOTDIR/etc/init.d/rcS
+echo "mount --bind /var/etc /etc" >> $TMPROOTDIR/etc/init.d/rcS
+echo "/etc/init.d/rcS &" >> $TMPROOTDIR/etc/init.d/rcS
+chmod 755 $TMPROOTDIR/etc/init.d/rcS
+cp -f $TMPEXTDIR/etc/inittab $TMPROOTDIR/etc

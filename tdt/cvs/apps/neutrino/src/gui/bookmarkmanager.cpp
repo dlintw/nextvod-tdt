@@ -333,7 +333,8 @@ const CBookmark * CBookmarkManager::getBookmark(CMenuTarget* parent)
 			renameBookmark(selected);
 			update=true;
 		}
-		else if((msg==CRCInput::RC_blue)||(msg==CRCInput::RC_green)||(CRCInput::isNumeric(msg)))
+		else if((msg==CRCInput::RC_blue)||(msg==CRCInput::RC_green)||
+				  (CRCInput::isNumeric(msg)) )
 		{
 			//Ignore
 		}
@@ -342,7 +343,7 @@ const CBookmark * CBookmarkManager::getBookmark(CMenuTarget* parent)
 			res=-1;
 			loop=false;
 		}
-		else if(msg == CRCInput::RC_help || msg == CRCInput::RC_info)
+		else if( msg == CRCInput::RC_help )
 		{
 			// TODO Add Help
 		}

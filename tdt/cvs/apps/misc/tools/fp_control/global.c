@@ -33,7 +33,7 @@
 #define E2TIMERSXML "/etc/enigma2/timers.xml"
 #define E2WAKEUPTIME "/proc/stb/fp/wakeup_time"
 
-#define NEUTRINO_TIMERS "/usr/local/share/config/timerd.conf"
+#define NEUTRINO_TIMERS "/var/tuxbox/config/timerd.conf"
 
 #define CONFIG "/etc/vdstandby.cfg"
 char * sDisplayStd = "%a %d %H:%M:%S";

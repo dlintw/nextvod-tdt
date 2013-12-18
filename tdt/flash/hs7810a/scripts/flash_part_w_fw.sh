@@ -102,4 +102,4 @@ rm -f $CURDIR/mtd_fw.sum.bin
 rm -f $CURDIR/mtd_fw.sum.pad.bin
 #rm -f $CURDIR/mtd_root.sum.pad.bin
 
-zip $OUTFILE.zip $OUTFILE
+zip -j $OUTFILE.zip $OUTFILE

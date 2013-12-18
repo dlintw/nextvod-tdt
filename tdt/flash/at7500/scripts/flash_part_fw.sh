@@ -23,6 +23,7 @@ fi
 
 if [ -e $OUTFILE ]; then
   rm -f $OUTFILE
+  rm -f $OUTFILE.md5
 fi
 
 # Create a jffs2 partition for fw's
@@ -37,7 +38,7 @@ $MKFSJFFS2 -qUfv -p0x6E0000 -e0x20000 -r $TMPFWDIR -o $CURDIR/mtd_fw.bin
 $SUMTOOL -v -p -e 0x20000 -i $CURDIR/mtd_fw.bin -o $CURDIR/mtd_fw.sum.bin
 $PAD 0x6E0000 $CURDIR/mtd_fw.sum.bin $CURDIR/mtd_fw.sum.pad.bin
 
-# Create a fortis signed update file for fw's 
+# Create a fortis signed update file for fw's
 echo "CMD: $FUP -ce $OUTFILE -f $CURDIR/mtd_fw.sum.pad.bin"
 $FUP -ce $OUTFILE -f $CURDIR/mtd_fw.sum.pad.bin
 
@@ -45,4 +46,4 @@ rm -f $CURDIR/mtd_fw.bin
 rm -f $CURDIR/mtd_fw.sum.bin
 rm -f $CURDIR/mtd_fw.sum.pad.bin
 
-zip $OUTFILE.zip $OUTFILE
+zip -j $OUTFILE.zip $OUTFILE

@@ -1,16 +1,22 @@
+#
 # misc/tools
+#
+misc-tools-clean:
+	-$(MAKE) -C $(appsdir)/misc/tools distclean
 
-#$(appsdir)/misc/tools/config.status: bootstrap libpng
-$(appsdir)/misc/tools/config.status: bootstrap
+if ENABLE_EPLAYER3
+EPLAYER3_LIBS = bzip2 ffmpeg_old
+endif
+
+$(appsdir)/misc/tools/config.status: bootstrap driver libstdc++-dev libpng libjpeg $(EPLAYER3_LIBS)
 	export PATH=$(hostprefix)/bin:$(PATH) && \
-	cd $(appsdir)/misc/tools && \
-	libtoolize -f -c && \
-	$(CONFIGURE) --prefix= \
-	$(if $(MULTICOM322), --enable-multicom322) $(if $(MULTICOM324), --enable-multicom324)
+	cd $(appsdir)/misc/tools && $(CONFIGURE) \
+	$(if $(MULTICOM324), --enable-multicom324) \
+	$(if $(MULTICOM406), --enable-multicom406) \
+	$(if $(EPLAYER3), --enable-eplayer3)
 
-$(DEPDIR)/min-misc-tools $(DEPDIR)/std-misc-tools $(DEPDIR)/max-misc-tools $(DEPDIR)/misc-tools: \
-$(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmpeg $(appsdir)/misc/tools/config.status
-	$(MAKE) -C $(appsdir)/misc/tools all install DESTDIR=$(prefix)/$*cdkroot \
+$(DEPDIR)/misc-tools: $(appsdir)/misc/tools/config.status
+	$(MAKE) -C $(appsdir)/misc/tools all prefix=$(targetprefix) \
 	CPPFLAGS="\
 	$(if $(UFS910), -DPLATFORM_UFS910) \
 	$(if $(UFS912), -DPLATFORM_UFS912) \
@@ -29,6 +35,7 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	$(if $(CUBEREVO_2000HD), -DPLATFORM_CUBEREVO_2000HD) \
 	$(if $(CUBEREVO_9500HD), -DPLATFORM_CUBEREVO_9500HD) \
 	$(if $(ATEVIO7500), -DPLATFORM_ATEVIO7500) \
+	$(if $(TF7700), -DPLATFORM_TF7700) \
 	$(if $(HS7810A), -DPLATFORM_HS7810A) \
 	$(if $(HS7110), -DPLATFORM_HS7110) \
 	$(if $(ATEMIO520), -DPLATFORM_ATEMIO520) \
@@ -37,12 +44,6 @@ $(DEPDIR)/%misc-tools: driver libstdc++-dev libdvdnav libdvdcss libpng jpeg ffmp
 	$(if $(IPBOX99), -DPLATFORM_IPBOX99) \
 	$(if $(IPBOX55), -DPLATFORM_IPBOX55) \
 	$(if $(VITAMIN_HD5000), -DPLATFORM_VITAMIN_HD5000) \
-	$(if $(PLAYER131), -DPLAYER131) \
-	$(if $(PLAYER179), -DPLAYER179) \
-	$(if $(PLAYER191), -DPLAYER191) \
-	$(if $(VDR1722), -DVDR1722) \
-	$(if $(STM22), -DSTM22)"
-	[ "x$*" = "x" ] && touch $@ || true
-
-misc-tools-clean:
-	-$(MAKE) -C $(appsdir)/misc/tools distclean
+	$(if $(PLAYER191), -DPLAYER191)" && \
+	$(MAKE) -C $(appsdir)/misc/tools install prefix=$(targetprefix)
+	touch $@

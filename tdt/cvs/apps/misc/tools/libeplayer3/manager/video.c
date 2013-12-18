@@ -136,10 +136,7 @@ static char ** ManagerList(Context_t  *context __attribute__((unused))) {
         for (i = 0, j = 0; i < TrackCount; i++, j+=2) {
 	    if (Tracks[i].pending)
 		continue;
-	    size_t len = strlen(Tracks[i].Name) + 20;
-	    char tmp[len];
-	    snprintf(tmp, len, "%d %s\n", Tracks[i].Id, Tracks[i].Name);
-            tracklist[j]    = strdup(tmp);
+            tracklist[j]    = strdup(Tracks[i].Name);
             tracklist[j+1]  = strdup(Tracks[i].Encoding);
         }
         tracklist[j] = NULL;
@@ -224,17 +221,13 @@ static int Command(void  *_context, ManagerCmd_t command, void * argument) {
         break;
     }
     case MANAGER_SET: {
-	int i;
+        int id = (int) argument;
 
-	for (i = 0; i < TrackCount; i++)
-		if (Tracks[i].Id == *((int*)argument)) {
-			CurrentTrack = i;
-			break;
-		}
-
-        if (i == TrackCount)
+        if (id < TrackCount)
+            CurrentTrack = id;
+        else
         {
-            video_mgr_err("%s::%s track id %d unknown\n", FILENAME, __FUNCTION__, *((int*)argument));
+            video_mgr_err("%s::%s track id out of range (%d - %d)\n", FILENAME, __FUNCTION__, id, TrackCount);
             ret = cERR_VIDEO_MGR_ERROR;
         }
         break;

@@ -21,11 +21,11 @@
 /* Includes                      */
 /* ***************************** */
 
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <sys/types.h>
@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include <limits.h>
 #include "common.h"
 #include "misc.h"
 #include "subtitle.h"
@@ -46,16 +47,16 @@
 
 #ifdef SRT_DEBUG
 
-static short debug_level = 20;
+static short debug_level = 10;
 
 #define srt_printf(level, fmt, x...) do { \
-if (debug_level >= level) printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); } while (0)
+if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); } while (0)
 #else
 #define srt_printf(level, fmt, x...)
 #endif
 
 #ifndef SRT_SILENT
-#define srt_err(fmt, x...) do { printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); } while (0)
+#define srt_err(fmt, x...) do { printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); } while (0)
 #else
 #define srt_err(fmt, x...)
 #endif
@@ -67,7 +68,7 @@ if (debug_level >= level) printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); 
 #define TRACKWRAP 20
 #define MAXLINELENGTH 80
 
-static const char FILENAME[] = "text_srt.c";
+static const char FILENAME[] = __FILE__;
 
 /* ***************************** */
 /* Types                         */
@@ -165,7 +166,7 @@ static void* SrtSubtitleThread(void *data) {
             pos++;
 
         } else if(pos == 2) {
-            srt_printf(20, "Data[0] = %d \n", Data[0]);
+            srt_printf(20, "Data[0] = %d \'%c\'\n", Data[0], Data[0]);
 
             if(Data[0] == '\n' || Data[0] == '\0' || Data[0] == 13 /* ^M */) {
                 if(Text == NULL)
@@ -360,8 +361,8 @@ static int SrtGetSubtitle(Context_t  *context, char * Filename) {
                 SrtManagerAdd(context, SrtSubtitle);
 
                 Track_t Subtitle;
-		memset(&Subtitle, 0, sizeof(Subtitle));
-		Subtitle.Name = subtitleExtension;
+                memset(&Subtitle, 0, sizeof(Subtitle));
+                Subtitle.Name = subtitleExtension;
                 Subtitle.Encoding = "S_TEXT/SRT";
                 Subtitle.Id = i++,
                 context->manager->subtitle->Command(context, MANAGER_ADD, &Subtitle);
@@ -422,6 +423,7 @@ static int SrtCloseSubtitle(Context_t *context __attribute__((unused))) {
     return cERR_SRT_NO_ERROR;
 }
 
+
 static int SrtSwitchSubtitle(Context_t *context, int* arg) {
     int ret = cERR_SRT_NO_ERROR;
 
@@ -438,7 +440,6 @@ static int SrtSwitchSubtitle(Context_t *context, int* arg) {
 
         hasThreadStarted = 1;
     }
-
     return ret;
 }
 

@@ -44,7 +44,7 @@
 #include <string>
 #include <string.h>
 #include <stdlib.h>
-#include <iostream>
+#include <unistd.h>
 
 //!!you have to set CONFIG_FRAMEBUFFER_CONSOLE in kernel!! thx bpanther
 #define CONSOLE "/dev/tty1"
@@ -64,10 +64,10 @@
 #define MAXOSD 2
 #define CHARDELAY 20000
 
-enum {VERSION, TYPE, DATE, TIME, CREATOR, NAME, WWW, NETW, DHCP, ROOT, IP, NETM, BROAD, GATEWAY, DNS, HEADLINE,
-		UNKNOWN, ENABLED, DISABLED, INTERN, LINUX, GCC, UPC, LOAD };
+enum {gVERSION, gTYPE, gDATE, gTIME, gCREATOR, gNAME, gWWW, gNETW, gDHCP, gROOT, gIP, gNETM, gBROAD, gGATEWAY, gDNS, gHEADLINE,
+		gUNKNOWN, gENABLED, gDISABLED, gINTERN, gLINUX, gGCC, gUPC, gLOAD };
 
-char *info[][MAXOSD] = {
+const char *info[][MAXOSD] = {
 	{ "Image Version   :"	, "Image Version   :" },
 	{ "Image Typ       :"	, "Image Type      :" },
 	{ "Datum           :"	, "Creation Date   :" },
@@ -176,15 +176,15 @@ int main (int argc, char **argv)
 		}
 	}
 
-	strcpy(creator, info[UNKNOWN][id]);
-	strcpy(imagename, info[UNKNOWN][id]);
-	strcpy(homepage, info[UNKNOWN][id]);
-	strcpy(root, info[INTERN][id]);	
-	strcpy(address, info[UNKNOWN][id]);
-	strcpy(broadcast, info[UNKNOWN][id]);
-	strcpy(netmask, info[UNKNOWN][id]);
-	strcpy(nameserver, info[UNKNOWN][id]);
-	strcpy(gateway, info[UNKNOWN][id]);
+	strcpy(creator, info[gUNKNOWN][id]);
+	strcpy(imagename, info[gUNKNOWN][id]);
+	strcpy(homepage, info[gUNKNOWN][id]);
+	strcpy(root, info[gINTERN][id]);	
+	strcpy(address, info[gUNKNOWN][id]);
+	strcpy(broadcast, info[gUNKNOWN][id]);
+	strcpy(netmask, info[gUNKNOWN][id]);
+	strcpy(nameserver, info[gUNKNOWN][id]);
+	strcpy(gateway, info[gUNKNOWN][id]);
 
 	FILE* fv1 = fopen(VERSION_FILE, "r");
 	if (fv1)
@@ -247,33 +247,33 @@ int main (int argc, char **argv)
 		fclose(fv5);
 	}
 
-  FILE* fv6 = fopen(MOUNTS_FILE, "r"); //Root-Server IP ermitteln, falls nfsboot
-  if (fv6) {
-    while (fgets(buf, BUFFERSIZE, fv6)!=NULL) {
-      sscanf(buf, "/dev/root / nfs rw,v2,rsize=4096,wsize=4096,hard,udp,nolock,addr=%s", (char *) &root);
-    }
-    fclose(fv6);
-  }
-  
-  FILE* fv7 = fopen(VERSION_FILE2, "r"); //Versionsdatei (/proc/version) auswerten
-  if (fv7) {
-    while (fgets(buf, BUFFERSIZE, fv2)!=NULL) {
-      sscanf(buf, "Linux version %s (%s) (%s) ", (char *) &linuxversion, (char *) &userpc, (char *) &gccversion/*, (char *) &gccversion, (char *) &gccversion*/);
-      //Linux version 2.6.17.14_stm22_0041 (BrechREiZ@rhel) (gcc-Version 4.1.1 (STMicroelectronics/Linux Base 4.1.1-23)) #1 PREEMPT Sun Mar 28 20:58:08 CEST 
-    }
-    fclose(fv7);
-  }
-  
-  FILE* fv8 = fopen(VERSION_FILE, "a"); //Versionsdatei (/.version) beschreibbar, dann jffs2/ext2...
-  if (fv8) {
-  fclose(fv8);
-  imagetyp = "jffs2/ext2";
-  }
+	FILE* fv6 = fopen(MOUNTS_FILE, "r"); //Root-Server IP ermitteln, falls nfsboot
+	if (fv6) {
+		while (fgets(buf, BUFFERSIZE, fv6)!=NULL) {
+			sscanf(buf, "/dev/root / nfs rw,v2,rsize=4096,wsize=4096,hard,udp,nolock,addr=%s", (char *) &root);
+		}
+		fclose(fv6);
+	}
+
+	FILE* fv7 = fopen(VERSION_FILE2, "r"); //Versionsdatei (/proc/version) auswerten
+	if (fv7) {
+		while (fgets(buf, BUFFERSIZE, fv2)!=NULL) {
+			sscanf(buf, "Linux version %s (%s) (%s) ", (char *) &linuxversion, (char *) &userpc, (char *) &gccversion/*, (char *) &gccversion, (char *) &gccversion*/);
+			//Linux version 2.6.17.14_stm22_0041 (BrechREiZ@rhel) (gcc-Version 4.1.1 (STMicroelectronics/Linux Base 4.1.1-23)) #1 PREEMPT Sun Mar 28 20:58:08 CEST 
+		}
+		fclose(fv7);
+	}
+
+	FILE* fv8 = fopen(VERSION_FILE, "a"); //Versionsdatei (/.version) beschreibbar, dann jffs2/ext2...
+	if (fv8) {
+		fclose(fv8);
+		imagetyp = "jffs2/ext2";
+	}
 
 	char message2[BUFFERSIZE];
 	strcpy(message2, "");
 	if (delay)
-		sprintf(message2, "%s %s .... ", info[LOAD][id], ladename);
+		sprintf(message2, "%s %s .... ", info[gLOAD][id], ladename);
 
 	char message[BIGBUFFERSIZE];
 	strcpy(message, "");
@@ -299,28 +299,28 @@ int main (int argc, char **argv)
 		"\t\t    %s %s, %s %s\n "					//Linux Version, gcc Version
 		"\t\t    %s %s\n\n"						//User, PC
 		"\t\t\t\t%s",
-		info[VERSION][id], imageversion, imagesubver, imagesubver2, 
-		info[TYPE][id], release_type == 0 ? "Release" 
+		info[gVERSION][id], imageversion, imagesubver, imagesubver2, 
+		info[gTYPE][id], release_type == 0 ? "Release" 
 						: release_type == 1 ? "Snapshot" 
 						: release_type == 2 ? "Intern" 
-						:	info[UNKNOWN][id],
-		info[DATE][id], day, month, year,
-		info[TIME][id], hour, minute,
-		info[CREATOR][id], creator,
-		info[NAME][id], imagename, imagetyp,
-		info[WWW][id], homepage,
-		info[HEADLINE][id],
-		info[NETW][id], nic_on == 0 ? info[DISABLED][id] : nic_on == 1 ? info[ENABLED][id] : info[UNKNOWN][id],
-		info[DHCP][id], dhcp == 1 ? info[DISABLED][id] : dhcp == 2 ? info[ENABLED][id] : info[UNKNOWN][id],
-		info[ROOT][id], root,
-		info[IP][id], address,
-		info[NETM][id], netmask,
-		info[BROAD][id], broadcast,
-		info[GATEWAY][id], gateway,
-		info[DNS][id], nameserver,
-		info[LINUX][id], linuxversion,
-		info[GCC][id], gccversion,
-		info[UPC][id], userpc,
+						:	info[gUNKNOWN][id],
+		info[gDATE][id], day, month, year,
+		info[gTIME][id], hour, minute,
+		info[gCREATOR][id], creator,
+		info[gNAME][id], imagename, imagetyp,
+		info[gWWW][id], homepage,
+		info[gHEADLINE][id],
+		info[gNETW][id], nic_on == 0 ? info[gDISABLED][id] : nic_on == 1 ? info[gENABLED][id] : info[gUNKNOWN][id],
+		info[gDHCP][id], dhcp == 1 ? info[gDISABLED][id] : dhcp == 2 ? info[gENABLED][id] : info[gUNKNOWN][id],
+		info[gROOT][id], root,
+		info[gIP][id], address,
+		info[gNETM][id], netmask,
+		info[gBROAD][id], broadcast,
+		info[gGATEWAY][id], gateway,
+		info[gDNS][id], nameserver,
+		info[gLINUX][id], linuxversion,
+		info[gGCC][id], gccversion,
+		info[gUPC][id], userpc,
 		message2);
 
 	FILE *fb = fopen(CONSOLE, "w");
@@ -340,8 +340,7 @@ int main (int argc, char **argv)
 	}
 	else
 	{
-		sprintf(message2, "%s %s .... ", info[LOAD][id], ladename);
-		int test=0;
+		sprintf(message2, "%s %s .... ", info[gLOAD][id], ladename);
 		for (unsigned int i = 0; i < strlen(message); i++) {
 			fputc(message[i], fb);
 			fputc(message[i], stdout);

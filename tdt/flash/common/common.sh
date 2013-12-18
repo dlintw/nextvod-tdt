@@ -71,9 +71,9 @@ if [ ! -e $CURDIR/mksquashfs4.0 ]; then
 fi
 
 
-echo "Checking if mksquashfs4.0 exists ($CURDIR/mksquashfs4.0)..."
+echo "Checking if mkcramfs1.1 exists ($CURDIR/mkcramfs1.1)..."
 if [ ! -e $CURDIR/mkcramfs1.1 ]; then
-  echo "mksquashfs4.0 is missing, trying to compile it..."
+  echo "mkcramfs1.1 is missing, trying to compile it..."
   cd $CURDIR
   rm -rf $CURDIR/cramfs-tools
   if [ ! -e $CURDIR/cramfs-1.1.tar.gz ]; then

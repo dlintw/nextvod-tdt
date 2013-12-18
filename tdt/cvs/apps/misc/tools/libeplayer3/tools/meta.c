@@ -16,8 +16,13 @@ static AVFormatContext*   avContext = NULL;
 
 void dump_metadata()
 {
+#if LIBAVCODEC_VERSION_MAJOR < 54
+    AVMetadataTag *tag = NULL;
+    while ((tag = av_metadata_get(avContext->metadata, "", tag, AV_METADATA_IGNORE_SUFFIX)))
+#else
     AVDictionaryEntry *tag = NULL;
     while ((tag = av_dict_get(avContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
+#endif
         printf("%s: %s\n", tag->key, tag->value);
 }
 
@@ -43,19 +48,27 @@ int main(int argc,char* argv[])
 
     av_register_all();
 
+#if LIBAVCODEC_VERSION_MAJOR < 54
+    if ((err = av_open_input_file(&avContext, file, NULL, 0, NULL)) != 0) {
+#else
     if ((err = avformat_open_input(&avContext, file, NULL, 0)) != 0) {
+#endif
         char error[512];
 
+#if LIBAVCODEC_VERSION_MAJOR < 54
+        printf("av_open_input_file failed %d (%s)\n", err, file);
+#else
         printf("avformat_open_input failed %d (%s)\n", err, file);
+#endif
         av_strerror(err, error, 512);
         printf("Cause: %s\n", error);
 
         return -1;
     }
 
-    if (avformat_find_stream_info(avContext, NULL) < 0)
+    if (av_find_stream_info(avContext) < 0)
     {
-        printf("Error avformat_find_stream_info\n");
+        printf("Error av_find_stream_info\n");
     }
 
     printf("\n***\n");
@@ -68,9 +81,17 @@ int main(int argc,char* argv[])
 
        if (stream)
        {
+#if LIBAVCODEC_VERSION_MAJOR < 54
+          AVMetadataTag *tag = NULL;
+#else
           AVDictionaryEntry *tag = NULL;
+#endif
           if (stream->metadata != NULL)
+#if LIBAVCODEC_VERSION_MAJOR < 54
+             while ((tag = av_metadata_get(stream->metadata, "", tag, AV_METADATA_IGNORE_SUFFIX)))
+#else
              while ((tag = av_dict_get(stream->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
+#endif
                 printf("%s: %s\n", tag->key, tag->value);
        }
     }
