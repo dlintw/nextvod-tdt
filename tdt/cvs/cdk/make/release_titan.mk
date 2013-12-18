@@ -911,10 +911,10 @@ endif
 #
 # Neutrino HD2 Workaround Build in Player
 #
-	if [ -e $(targetprefix)/usr/local/bin/eplayer3 ]; then \
-		cp -f $(targetprefix)/usr/local/bin/eplayer3 $(prefix)/release_titan/bin/; \
-		cp -f $(targetprefix)/usr/local/bin/meta $(prefix)/release_titan/bin/; \
-	fi
+#	if [ -e $(targetprefix)/usr/local/bin/eplayer3 ]; then \
+#		cp -f $(targetprefix)/usr/local/bin/eplayer3 $(prefix)/release_titan/bin/; \
+#		cp -f $(targetprefix)/usr/local/bin/meta $(prefix)/release_titan/bin/; \
+#	fi
 
 #
 # The main target depends on the model.
