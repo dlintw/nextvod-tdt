@@ -5,7 +5,7 @@ misc-tools-clean:
 	-$(MAKE) -C $(appsdir)/misc/tools distclean
 
 if ENABLE_EPLAYER3
-EPLAYER3_LIBS = bzip2 ffmpeg_old
+EPLAYER3_LIBS = bzip2 ffmpeg
 endif
 
 $(appsdir)/misc/tools/config.status: bootstrap driver libstdc++-dev libpng libjpeg $(EPLAYER3_LIBS)
