@@ -79,7 +79,7 @@ titan-updateyaud: titan-clean titan
 #
 # titan-libdreamdvd
 #
-$(DEPDIR)/titan-libdreamdvd.do_prepare:
+$(DEPDIR)/titan-libdreamdvd.do_prepare: | bootstrap libdvdnav
 	[ -d "$(appsdir)/titan" ] && \
 	(cd $(appsdir)/titan; svn up; cd "$(buildprefix)";); \
 	[ -d "$(appsdir)/titan" ] || \
@@ -88,7 +88,7 @@ $(DEPDIR)/titan-libdreamdvd.do_prepare:
 	ln -s $(appsdir)/titan/libdreamdvd $(appsdir)/titan/titan; \
 	touch $@
 
-$(appsdir)/titan/libdreamdvd/config.status: bootstrap libdvdnav
+$(appsdir)/titan/libdreamdvd/config.status:
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/titan/libdreamdvd && \
 		libtoolize --force && \

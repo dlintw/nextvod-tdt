@@ -122,7 +122,6 @@ release_titan_common_ipbox:
 	rm -f $(prefix)/release_titan/lib/modules/stmvout.ko
 	rm -f $(prefix)/release_titan/bin/gotosleep
 	rm -f $(prefix)/release_titan/etc/network/interfaces
-	echo "config.usage.hdd_standby=0" >> $(prefix)/release_titan/etc/enigma2/settings
 
 #
 # release_ipbox9900
@@ -165,7 +164,7 @@ release_titan_ufs910: release_titan_common_utils
 	rm $(prefix)/release_titan/lib/firmware/component_7105_pdk7105.fw
 	rm $(prefix)/release_titan/lib/firmware/component_7111_mb618.fw
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release_titan/etc/
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_titan/usr/bin/
+	cp -p $(targetprefix)/usr/sbin/lircd $(prefix)/release_titan/usr/bin/
 	rm -f $(prefix)/release_titan/bin/vdstandby
 	rm -f $(prefix)/release_titan/bin/eeprom
 
@@ -242,7 +241,7 @@ release_titan_spark: release_titan_common_utils
 	rm -f $(prefix)/release_titan/bin/vdstandby
 	rm -f $(prefix)/release_titan/bin/eeprom
 	cp -dp $(buildprefix)/root/etc/lircd_spark.conf $(prefix)/release_titan/etc/lircd.conf
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_titan/usr/bin/
+	cp -p $(targetprefix)/usr/sbin/lircd $(prefix)/release_titan/usr/bin/
 	cp -f $(buildprefix)/root/sbin/flash_* $(prefix)/release_titan/sbin
 	cp -f $(buildprefix)/root/sbin/nand* $(prefix)/release_titan/sbin
 
@@ -266,7 +265,7 @@ release_titan_spark7162: release_titan_common_utils
 	rm -f $(prefix)/release_titan/bin/vdstandby
 	rm -f $(prefix)/release_titan/bin/eeprom
 	cp -dp $(buildprefix)/root/etc/lircd_spark7162.conf $(prefix)/release_titan/etc/lircd.conf
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_titan/usr/bin/
+	cp -p $(targetprefix)/usr/sbin/lircd $(prefix)/release_titan/usr/bin/
 	cp -f $(buildprefix)/root/sbin/flashcp $(prefix)/release_titan/sbin
 	cp -f $(buildprefix)/root/sbin/flash_* $(prefix)/release_titan/sbin
 	cp -f $(buildprefix)/root/sbin/nand* $(prefix)/release_titan/sbin
@@ -409,7 +408,7 @@ release_titan_hl101: release_titan_common_utils
 	cp $(targetprefix)/lib/firmware/dvb-fe-stv6306.fw $(prefix)/release_titan/lib/firmware/
 	rm -f $(prefix)/release_titan/lib/firmware/dvb-fe-{avl6222,cx24116,cx21143}.fw
 	cp -dp $(buildprefix)/root/etc/lircd_hl101.conf $(prefix)/release_titan/etc/lircd.conf
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_titan/usr/bin/
+	cp -p $(targetprefix)/usr/sbin/lircd $(prefix)/release_titan/usr/bin/
 
 #
 # release_adb_box
@@ -430,7 +429,7 @@ release_titan_adb_box: release_titan_common_utils
 	rm -f $(prefix)/release_titan/lib/firmware/dvb-fe-{avl6222,cx24116,cx21143}.fw
 	cp -f $(buildprefix)/root/release/fstab_adb_box $(prefix)/release_titan/etc/fstab
 	cp -dp $(buildprefix)/root/etc/lircd_adb_box.conf $(prefix)/release_titan/etc/lircd.conf
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_titan/usr/bin/lircd
+	cp -p $(targetprefix)/usr/sbin/lircd $(prefix)/release_titan/usr/bin/lircd
 
 #
 # release_vip1_v2
@@ -446,7 +445,7 @@ release_titan_vip1_v2: release_titan_common_utils
 	rm -f $(prefix)/release_titan/lib/firmware/dvb-fe-{avl2108,avl6222,cx24116,cx21143,stv6306}.fw
 	cp -f $(buildprefix)/root/release/fstab_vip2 $(prefix)/release_titan/etc/fstab
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release_titan/etc/
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_titan/usr/bin/
+	cp -p $(targetprefix)/usr/sbin/lircd $(prefix)/release_titan/usr/bin/
 
 #
 # release_vip2_v1
@@ -465,7 +464,7 @@ release_titan_hs5101: release_titan_common_utils
 	cp $(targetprefix)/lib/modules/$(KERNELVERSION)/extra/stgfb/stmfb/stmcore-display-stx7100.ko $(prefix)/release_titan/lib/modules/
 	cp $(targetprefix)/boot/video_7100.elf $(prefix)/release_titan/lib/firmware/video.elf
 	cp -dp $(targetprefix)/etc/lircd.conf $(prefix)/release_titan/etc/
-	cp -p $(targetprefix)/usr/bin/lircd $(prefix)/release_titan/usr/bin/
+	cp -p $(targetprefix)/usr/sbin/lircd $(prefix)/release_titan/usr/bin/
 	rm -f $(prefix)/release_titan/lib/firmware/dvb-fe-{avl2108,avl6222,cx21143,stv6306}.fw
 	rm -f $(prefix)/release_titan/bin/vdstandby
 
@@ -495,21 +494,24 @@ release_titan_base:
 	$(INSTALL_DIR) $(prefix)/release_titan/lib/{modules,firmware} && \
 	$(INSTALL_DIR) $(prefix)/release_titan/hdd/{movie,music,picture} && \
 	$(INSTALL_DIR) $(prefix)/release_titan/media/{dvd,nfs,usb} && \
-	$(INSTALL_DIR) $(prefix)/release_titan/var && \
-	ln -sf /root1 $(prefix)/release_titan/var/root1 && \
-	ln -sf /media $(prefix)/release_titan/var/media && \
-	$(INSTALL_DIR) $(prefix)/release_titan/mnt && \
+	ln -sf /hdd $(prefix)/release_titan/media/hdd && \
+	$(INSTALL_DIR) $(prefix)/release_titan/mnt/{hdd,nfs,usb} && \
 	$(INSTALL_DIR) $(prefix)/release_titan/usr/{bin,lib,share} && \
-	$(INSTALL_DIR) $(prefix)/release_titan/usr/share/{udhcpc,zoneinfo} && \
-	$(INSTALL_DIR) $(prefix)/release_titan/var/{bin,etc,keys,lib,media,root,usr} && \
-	$(INSTALL_DIR) $(prefix)/release_titan/var/lib/{init,modules,urandom} && \
+	$(INSTALL_DIR) $(prefix)/release_titan/usr/share/{fonts,tuxbox,udhcpc,zoneinfo} && \
+	$(INSTALL_DIR) $(prefix)/release_titan/usr/share/tuxbox/titan && \
+	$(INSTALL_DIR) $(prefix)/release_titan/usr/share/tuxbox/titan/icons/logo && \
+	ln -sf /usr/share/tuxbox/titan/icons/logo $(prefix)/release_titan/logos && \
+	ln -sf /usr/share $(prefix)/release_titan/share && \
+	$(INSTALL_DIR) $(prefix)/release_titan/var/{bin,boot,etc,httpd,lib,plugins,tuxbox,update} && \
+	$(INSTALL_DIR) $(prefix)/release_titan/var/lib/nfs && \
+	$(INSTALL_DIR) $(prefix)/release_titan/var/tuxbox/config && \
+	$(INSTALL_DIR) $(prefix)/release_titan/var/tuxbox/config/{locale,zapit} && \
+	ln -sf /usr/share/tuxbox/titan/icons/logo $(prefix)/release_titan/var/httpd/logos && \
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release_titan && \
-	touch $(prefix)/release_titan/var/etc/.first && \
-	touch $(prefix)/release_titan/var/etc/.firstnet && \
-	touch $(prefix)/release_titan/var/etc/.firststart && \
-	touch $(prefix)/release_titan/var/etc/.image-version && \
+	touch $(prefix)/release_titan/var/etc/.firstboot && \
 	cp -a $(targetprefix)/bin/* $(prefix)/release_titan/bin/ && \
+	ln -sf /bin/showiframe $(prefix)/release_titan/usr/bin/showiframe && \
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release_titan/sbin/ && \
 	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release_titan/sbin/ && \
 	cp -dp $(targetprefix)/sbin/portmap $(prefix)/release_titan/sbin/ && \
@@ -558,12 +560,13 @@ release_titan_base:
 	cp -aR $(buildprefix)/root/usr/share/udhcpc/* $(prefix)/release_titan/usr/share/udhcpc/ && \
 	cp -aR $(buildprefix)/root/usr/share/zoneinfo/* $(prefix)/release_titan/usr/share/zoneinfo/ && \
 	echo "576i50" > $(prefix)/release_titan/etc/videomode && \
-	cp $(buildprefix)/root/release/rcS $(prefix)/release_titan/etc/init.d/rcS
+	cp $(buildprefix)/root/release/rcS_stm23_titan$(if $(TF7700),_$(TF7700))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(HS7810A),_$(HS7810A))$(if $(HS7110),_$(HS7110))$(if $(ATEMIO520),_$(ATEMIO520))$(if $(ATEMIO530),_$(ATEMIO530))$(if $(HL101),_$(HL101))$(if $(VIP1_V2),_$(VIP1_V2))$(if $(VIP2_V1),_$(VIP2_V1))$(if $(ADB_BOX),_$(ADB_BOX))$(if $(UFS910),_$(UFS910))$(if $(UFS912),_$(UFS912))$(if $(UFS913),_$(UFS913))$(if $(UFS922),_$(UFS922))$(if $(CUBEREVO),_$(CUBEREVO))$(if $(CUBEREVO_MINI),_$(CUBEREVO_MINI))$(if $(CUBEREVO_MINI2),_$(CUBEREVO_MINI2))$(if $(CUBEREVO_MINI_FTA),_$(CUBEREVO_MINI_FTA))$(if $(CUBEREVO_250HD),_$(CUBEREVO_250HD))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(CUBEREVO_9500HD),_$(CUBEREVO_9500HD))$(if $(SPARK),_$(SPARK))$(if $(SPARK7162),_$(SPARK7162)) $(prefix)/release_titan/etc/init.d/rcS
 	chmod 755 $(prefix)/release_titan/etc/init.d/rcS && \
 	cp -dp $(targetprefix)/usr/sbin/vsftpd $(prefix)/release_titan/usr/bin/ && \
 	cp $(buildprefix)/root/bin/autologin $(prefix)/release_titan/bin/ && \
 	cp -p $(targetprefix)/usr/bin/killall $(prefix)/release_titan/usr/bin/ && \
 	cp -dp $(targetprefix)/bin/hotplug $(prefix)/release_titan/sbin/ && \
+	rm -f $(prefix)/release_titan/bin/hotplug && \
 	cp -dp $(targetprefix)/sbin/blkid $(prefix)/release_titan/sbin/ && \
 	cp -p $(targetprefix)/usr/bin/ffmpeg $(prefix)/release_titan/sbin/ && \
 	ln -sf ../../bin/busybox $(prefix)/release_titan/usr/bin/ether-wake && \
@@ -579,7 +582,7 @@ endif
 endif
 
 	cp -dp $(buildprefix)/root/etc/inittab$(if $(FORTIS_HDBOX)$(OCTAGON1008)$(CUBEREVO)$(CUBEREVO_MINI2)$(CUBEREVO_2000HD),_ttyAS1) $(prefix)/release_titan/etc/inittab
-	cp $(buildprefix)/root/etc/fw_env.config$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(TF7700),_$(TF7700))$(if $(UFS910),_$(UFS910))$(if $(UFS912),_$(UFS912))$(if $(UFS913),_$(UFS913))$(if $(UFS922),_$(UFS922))$(if $(ADB_BOX),_$(ADB_BOX))$(if $(IPBOX9900),_$(IPBOX9900))$(if $(IPBOX99),_$(IPBOX99))$(if $(IPBOX55),_$(IPBOX55)) $(prefix)/release_titan/etc/fw_env.config
+	cp $(buildprefix)/root/etc/fw_env.config$(if $(ATEVIO7500),_$(ATEVIO7500))$(if $(FORTIS_HDBOX),_$(FORTIS_HDBOX))$(if $(OCTAGON1008),_$(OCTAGON1008))$(if $(TF7700),_$(TF7700))$(if $(UFS910),_$(UFS910))$(if $(UFS912),_$(UFS912))$(if $(UFS913),_$(UFS913))$(if $(UFS922),_$(UFS922))$(if $(ADB_BOX),_$(ADB_BOX))$(if $(CUBEREVO_2000HD),_$(CUBEREVO_2000HD))$(if $(IPBOX9900),_$(IPBOX9900))$(if $(IPBOX99),_$(IPBOX99))$(if $(IPBOX55),_$(IPBOX55))$(if $(SPARK),_$(SPARK))$(if $(SPARK7162),_$(SPARK7162)) $(prefix)/release_titan/etc/fw_env.config
 
 #
 # Player
@@ -703,30 +706,40 @@ endif
 #
 # fonts
 #
-#	cp -aR $(targetprefix)/usr/share/fonts/{neutrino,DejaVuLGCSansMono-Bold}.ttf $(prefix)/release_titan/usr/share/fonts
+#	cp -aR $(targetprefix)/usr/share/fonts/{titan,DejaVuLGCSansMono-Bold}.ttf $(prefix)/release_titan/usr/share/fonts
 #	ln -s /usr/share/fonts/DejaVuLGCSansMono-Bold.ttf $(prefix)/release_titan/usr/share/fonts/tuxtxt.ttf
 
 #
-# neutrino
+# titan
 #
 	mkdir -p $(prefix)/release_titan/usr/local/bin
 	ln -sf /usr/share $(prefix)/release_titan/usr/local/share
 	cp $(targetprefix)/usr/local/bin/titan $(prefix)/release_titan/usr/local/bin/
-	mkdir -p $(prefix)/release_titan/usr/local/sbin
+#	cp $(targetprefix)/usr/local/bin/pzapit $(prefix)/release_titan/usr/local/bin/
+#	cp $(targetprefix)/usr/local/bin/sectionsdcontrol $(prefix)/release_titan/usr/local/bin/
+#	mkdir -p $(prefix)/release_titan/usr/local/sbin
+#	if [ -e $(targetprefix)/usr/local/sbin/udpstreampes ]; then \
+#		cp $(targetprefix)/usr/local/sbin/udpstreampes $(prefix)/release_titan/usr/local/sbin/; \
+#	fi
+#	if [ -e $(targetprefix)/usr/local/bin/udpstreampes ]; then \
+#		cp $(targetprefix)/usr/local/bin/udpstreampes $(prefix)/release_titan/usr/local/bin/; \
+#	fi
 
 #
 # channellist / tuxtxt
 #
+#	cp -aR $(targetprefix)/var/tuxbox/config/* $(prefix)/release_titan/var/tuxbox/config
+#	cp -aR $(buildprefix)/root/usr/local/share/config/zapit $(prefix)/release_titan/var/tuxbox/config
 #	mkdir -p $(prefix)/release_titan/var/tuxbox/config/tuxtxt
 #	cp $(buildprefix)/root/etc/tuxbox/tuxtxt2.conf $(prefix)/release_titan/var/tuxbox/config/tuxtxt
-if !ENABLE_CUBEREVO_MINI2
-if !ENABLE_ATEVIO7500
-if !ENABLE_SPARK7162
-	rm -f $(prefix)/release_titan/var/tuxbox/config/cables.xml
-	rm -f $(prefix)/release_titan/var/tuxbox/config/terrestrial.xml
-endif
-endif
-endif
+#if !ENABLE_CUBEREVO_MINI2
+#if !ENABLE_ATEVIO7500
+#if !ENABLE_SPARK7162
+#	rm -f $(prefix)/release_titan/var/tuxbox/config/cables.xml
+#	rm -f $(prefix)/release_titan/var/tuxbox/config/terrestrial.xml
+#endif
+#endif
+#endif
 
 #
 # iso-codes
@@ -736,13 +749,13 @@ endif
 #
 # httpd/icons/locale/themes
 #
-#	cp -aR $(targetprefix)/usr/share/tuxbox/neutrino/* $(prefix)/release_titan/usr/share/tuxbox/neutrino
+#	cp -aR $(targetprefix)/usr/share/tuxbox/titan/* $(prefix)/release_titan/usr/share/tuxbox/titan
 
 #
 # backup/restore NMP
 #
-#	[ -e $(targetprefix)/usr/local/bin/backup.sh ] && cp -aR $(targetprefix)/usr/local/bin/backup.sh $(prefix)/release_titan/bin || true
-#	[ -e $(targetprefix)/usr/local/bin/restore.sh ] && cp -aR $(targetprefix)/usr/local/bin/restore.sh $(prefix)/release_titan/bin || true
+	[ -e $(targetprefix)/usr/local/bin/backup.sh ] && cp -aR $(targetprefix)/usr/local/bin/backup.sh $(prefix)/release_titan/bin || true
+	[ -e $(targetprefix)/usr/local/bin/restore.sh ] && cp -aR $(targetprefix)/usr/local/bin/restore.sh $(prefix)/release_titan/bin || true
 
 #
 # Delete unnecessary files
@@ -909,12 +922,12 @@ endif
 		cp -f $(targetprefix)/usr/lib/libmDNSResponder.so* $(prefix)/release_titan/usr/lib; \
 	fi
 #
-# Neutrino HD2 Workaround Build in Player
+# titan HD2 Workaround Build in Player
 #
-#	if [ -e $(targetprefix)/usr/local/bin/eplayer3 ]; then \
-#		cp -f $(targetprefix)/usr/local/bin/eplayer3 $(prefix)/release_titan/bin/; \
-#		cp -f $(targetprefix)/usr/local/bin/meta $(prefix)/release_titan/bin/; \
-#	fi
+	if [ -e $(targetprefix)/usr/local/bin/eplayer3 ]; then \
+		cp -f $(targetprefix)/usr/local/bin/eplayer3 $(prefix)/release_titan/bin/; \
+		cp -f $(targetprefix)/usr/local/bin/meta $(prefix)/release_titan/bin/; \
+	fi
 
 #
 # The main target depends on the model.
@@ -948,20 +961,35 @@ $(DEPDIR)/%release_titan: release_titan_base release_titan_$(TF7700)$(HL101)$(VI
 #
 #
 #
-#	mv -f $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/scan.jpg $(prefix)/release_titan/var/boot/
-#	ln -s /var/boot/scan.jpg $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/
-#	mv -f $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/mp3.jpg $(prefix)/release_titan/var/boot/
-#	ln -s /var/boot/mp3.jpg $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/
-#	rm -f $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/mp3-?.jpg
-#	mv -f $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/shutdown.jpg $(prefix)/release_titan/var/boot/
-#	ln -s /var/boot/shutdown.jpg $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/
-#	mv -f $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/radiomode.jpg $(prefix)/release_titan/var/boot/
-#	ln -s /var/boot/radiomode.jpg $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/
-#	mv -f $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/start.jpg $(prefix)/release_titan/var/boot/
-#	ln -s /var/boot/start.jpg $(prefix)/release_titan/usr/share/tuxbox/neutrino/icons/
+#	mv -f $(prefix)/release_titan/usr/share/tuxbox/titan/icons/scan.jpg $(prefix)/release_titan/var/boot/
+#	ln -s /var/boot/scan.jpg $(prefix)/release_titan/usr/share/tuxbox/titan/icons/
+#	mv -f $(prefix)/release_titan/usr/share/tuxbox/titan/icons/mp3.jpg $(prefix)/release_titan/var/boot/
+#	ln -s /var/boot/mp3.jpg $(prefix)/release_titan/usr/share/tuxbox/titan/icons/
+#	rm -f $(prefix)/release_titan/usr/share/tuxbox/titan/icons/mp3-?.jpg
+#	mv -f $(prefix)/release_titan/usr/share/tuxbox/titan/icons/shutdown.jpg $(prefix)/release_titan/var/boot/
+#	ln -s /var/boot/shutdown.jpg $(prefix)/release_titan/usr/share/tuxbox/titan/icons/
+#	mv -f $(prefix)/release_titan/usr/share/tuxbox/titan/icons/radiomode.jpg $(prefix)/release_titan/var/boot/
+#	ln -s /var/boot/radiomode.jpg $(prefix)/release_titan/usr/share/tuxbox/titan/icons/
+#	mv -f $(prefix)/release_titan/usr/share/tuxbox/titan/icons/start.jpg $(prefix)/release_titan/var/boot/
+#	ln -s /var/boot/start.jpg $(prefix)/release_titan/usr/share/tuxbox/titan/icons/
 
-#	mkdir -p $(prefix)/release_titan/usr/share/alsa/alsa.conf.d
-#	cp -dp $(targetprefix)/usr/share/alsa/alsa.conf $(prefix)/release_titan/usr/share/alsa/alsa.conf
+	mkdir -p $(prefix)/release_titan/usr/share/alsa
+	cp -dp $(targetprefix)/usr/share/alsa/alsa.conf $(prefix)/release_titan/usr/share/alsa/alsa.conf
+
+	rm -f $(prefix)/release_titan/bin/pic2m2v
+	rm -f $(prefix)/release_titan/usr/lib/*.py
+	rm -f $(prefix)/release_titan/usr/share/tuxbox/titan/httpd/images/rc_cst_v1.jpg
+	rm -f $(prefix)/release_titan/usr/share/tuxbox/titan/httpd/images/rc_cst_v2.jpg
+	rm -f $(prefix)/release_titan/usr/share/tuxbox/titan/httpd/images/rc_cst_v3.jpg
+	rm -f $(prefix)/release_titan/usr/share/tuxbox/titan/httpd/images/rc_cst_v4.jpg
+	rm -f $(prefix)/release_titan/usr/share/tuxbox/titan/httpd/images/rc_cst_v5.jpg
+	rm -f $(prefix)/release_titan/usr/share/tuxbox/titan/httpd/images/rc_cst_v6.jpg
+#if !ENABLE_SPARK
+#if !ENABLE_SPARK7162
+#	rm -f $(prefix)/release_titan/usr/share/tuxbox/titan/httpd/images/rc_spark_new.jpg
+#	rm -f $(prefix)/release_titan/usr/share/tuxbox/titan/httpd/images/rc_spark_old.jpg
+#endif
+#endif
 
 #
 # sh4-linux-strip all
