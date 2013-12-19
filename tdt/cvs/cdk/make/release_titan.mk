@@ -763,9 +763,9 @@ endif
 	rm -f $(prefix)/release_titan/usr/lib/libtermcap*
 	rm -f $(prefix)/release_titan/usr/lib/libmenu*
 	rm -f $(prefix)/release_titan/usr/lib/libpanel*
-	rm -f $(prefix)/release_titan/usr/lib/libdvdcss*
-	rm -f $(prefix)/release_titan/usr/lib/libdvdnav*
-	rm -f $(prefix)/release_titan/usr/lib/libdvdread*
+#	rm -f $(prefix)/release_titan/usr/lib/libdvdcss*
+#	rm -f $(prefix)/release_titan/usr/lib/libdvdnav*
+#	rm -f $(prefix)/release_titan/usr/lib/libdvdread*
 	rm -f $(prefix)/release_titan/lib/libncurses*
 	rm -f $(prefix)/release_titan/usr/lib/libopcodes*
 	rm -f $(prefix)/release_titan/lib/libSegFault*
