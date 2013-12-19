@@ -2,7 +2,7 @@
 # titan
 #
 
-$(DEPDIR)/titan.do_prepare:
+$(DEPDIR)/titan.do_prepare: | bootstrap $(EXTERNALLCD_DEP) libdvbsipp libfreetype libjpeg libpng libungif libid3tag libcurl libmad libvorbisidec openssl ffmpeg libopenthreads libusb2 libalsa titan-libdreamdvd $(MEDIAFW_DEP)
 	[ -d "$(appsdir)/titan" ] && \
 	(cd $(appsdir)/titan; svn up; cd "$(buildprefix)";); \
 	[ -d "$(appsdir)/titan" ] || \
@@ -31,10 +31,7 @@ $(DEPDIR)/titan.do_prepare:
 	touch $@
 	rm -f $(buildprefix)/BUILD/uimage.*
 
-$(appsdir)/titan/titan/config.status: \
-	bootstrap libfreetype libpng libid3tag openssl libcurl libmad libboost libgif sdparm ethtool \
-		titan-libdreamdvd	\
-		$(MEDIAFW_DEP) $(EXTERNALLCD_DEP)
+$(appsdir)/titan/titan/config.status:
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd $(appsdir)/titan/titan && \
 		libtoolize --force && \

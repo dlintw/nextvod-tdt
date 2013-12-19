@@ -717,8 +717,8 @@ endif
 #
 # channellist / tuxtxt
 #
-	mkdir -p $(prefix)/release_titan/var/tuxbox/config/tuxtxt
-	cp $(buildprefix)/root/etc/tuxbox/tuxtxt2.conf $(prefix)/release_titan/var/tuxbox/config/tuxtxt
+#	mkdir -p $(prefix)/release_titan/var/tuxbox/config/tuxtxt
+#	cp $(buildprefix)/root/etc/tuxbox/tuxtxt2.conf $(prefix)/release_titan/var/tuxbox/config/tuxtxt
 if !ENABLE_CUBEREVO_MINI2
 if !ENABLE_ATEVIO7500
 if !ENABLE_SPARK7162
@@ -741,8 +741,8 @@ endif
 #
 # backup/restore NMP
 #
-	[ -e $(targetprefix)/usr/local/bin/backup.sh ] && cp -aR $(targetprefix)/usr/local/bin/backup.sh $(prefix)/release_titan/bin || true
-	[ -e $(targetprefix)/usr/local/bin/restore.sh ] && cp -aR $(targetprefix)/usr/local/bin/restore.sh $(prefix)/release_titan/bin || true
+#	[ -e $(targetprefix)/usr/local/bin/backup.sh ] && cp -aR $(targetprefix)/usr/local/bin/backup.sh $(prefix)/release_titan/bin || true
+#	[ -e $(targetprefix)/usr/local/bin/restore.sh ] && cp -aR $(targetprefix)/usr/local/bin/restore.sh $(prefix)/release_titan/bin || true
 
 #
 # Delete unnecessary files
