@@ -44,6 +44,10 @@ if [  -e $TUFSBOXDIR/release_neutrino ]; then
 	echo "Preparing Neutrino..."
 	$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_neutrino $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR
 fi
+if [  -e $TUFSBOXDIR/release_titan ]; then
+	echo "Preparing Titan..."
+	$SCRIPTDIR/prepare_root.sh $CURDIR $TUFSBOXDIR/release_titan $TMPROOTDIR $TMPKERNELDIR $TMPFWDIR
+fi
 echo "Root prepared"
 echo "Checking if flashtool mup exists..."
 if [ ! -e $CURDIR/mup ]; then
