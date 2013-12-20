@@ -210,7 +210,7 @@ libdpf;0.12;dpflib-0.12;dpflib-0.12.tar.gz;extract:dpflib-0.12.tar.gz
 #
 # ide apps
 #
-autofs;4.1.4;autofs-4.1.4;autofs-4.1.4.tar.gz;extract:autofs-4.1.4.tar.gz;patch:autofs-4.1.4.patch
+autofs;4.1.4;autofs-4.1.4;autofs-4.1.4.tar.gz;extract:autofs-4.1.4.tar.gz;patch:autofs-4.1.4.patch;patch:autofs-4.1.4-ext4.patch
 #autofs;5.0.7;autofs-5.0.7;autofs-5.0.7.tar.gz;extract:autofs-5.0.7.tar.gz
 dosfstools;3.0.16;dosfstools-3.0.16;dosfstools-3.0.16.tar.gz;extract:dosfstools-3.0.16.tar.gz
 e2fsprogs;1.42.8;e2fsprogs-1.42.8;e2fsprogs-1.42.8.tar.gz;extract:e2fsprogs-1.42.8.tar.gz;patch:e2fsprogs-remove.ldconfig.call.patch
