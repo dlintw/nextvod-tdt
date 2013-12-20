@@ -107,8 +107,8 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    #stfbcontrol a 255
 
-   fp_control -t "LOADING neutrino"
-   echo "LOADING neutrino"
+   fp_control -t "LOADING titan"
+   echo "LOADING titan"
 
    echo "starting telnetd"
    /usr/sbin/telnetd -l /bin/autologin
@@ -130,13 +130,13 @@ if [ ! -e /var/etc/.firstboot ]; then
          /etc/init.d/networking start 
       fi
    fi
-sleep 1000
+
    until false
    do
-      echo "starting neutrino ->"
-      /usr/local/bin/neutrino
+      echo "starting titan ->"
+      /usr/local/bin/titan /mnt/config/titan.cfg
       rtv=$?
-      echo "neutrino ended <- RTV: " $rtv
+      echo "titan ended <- RTV: " $rtv
       case "$rtv" in
 		0) echo "0"
 		   echo "SHUTDOWN"

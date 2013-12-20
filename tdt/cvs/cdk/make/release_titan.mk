@@ -497,21 +497,15 @@ release_titan_base:
 	ln -sf /hdd $(prefix)/release_titan/media/hdd && \
 	$(INSTALL_DIR) $(prefix)/release_titan/mnt/{hdd,nfs,usb} && \
 	$(INSTALL_DIR) $(prefix)/release_titan/usr/{bin,lib,share} && \
-	$(INSTALL_DIR) $(prefix)/release_titan/usr/share/{fonts,tuxbox,udhcpc,zoneinfo} && \
+	$(INSTALL_DIR) $(prefix)/release_titan/usr/share/{fonts,udhcpc,zoneinfo} && \
 	$(INSTALL_DIR) $(prefix)/release_titan/usr/share/tuxbox/titan && \
 	$(INSTALL_DIR) $(prefix)/release_titan/usr/share/tuxbox/titan/icons/logo && \
-	ln -sf /usr/share/tuxbox/titan/icons/logo $(prefix)/release_titan/logos && \
-	ln -sf /usr/share $(prefix)/release_titan/share && \
-	$(INSTALL_DIR) $(prefix)/release_titan/var/{bin,boot,etc,httpd,lib,plugins,tuxbox,update} && \
+	$(INSTALL_DIR) $(prefix)/release_titan/var/{bin,etc,lib} && \
 	$(INSTALL_DIR) $(prefix)/release_titan/var/lib/nfs && \
-	$(INSTALL_DIR) $(prefix)/release_titan/var/tuxbox/config && \
-	$(INSTALL_DIR) $(prefix)/release_titan/var/tuxbox/config/{locale,zapit} && \
-	ln -sf /usr/share/tuxbox/titan/icons/logo $(prefix)/release_titan/var/httpd/logos && \
 	export CROSS_COMPILE=$(target)- && \
 		$(MAKE) install -C @DIR_busybox@ CONFIG_PREFIX=$(prefix)/release_titan && \
 	touch $(prefix)/release_titan/var/etc/.firstboot && \
 	cp -a $(targetprefix)/bin/* $(prefix)/release_titan/bin/ && \
-	ln -sf /bin/showiframe $(prefix)/release_titan/usr/bin/showiframe && \
 	cp -dp $(targetprefix)/sbin/init $(prefix)/release_titan/sbin/ && \
 	cp -dp $(targetprefix)/sbin/killall5 $(prefix)/release_titan/sbin/ && \
 	cp -dp $(targetprefix)/sbin/portmap $(prefix)/release_titan/sbin/ && \
@@ -973,8 +967,8 @@ $(DEPDIR)/%release_titan: release_titan_base release_titan_$(TF7700)$(HL101)$(VI
 #	mv -f $(prefix)/release_titan/usr/share/tuxbox/titan/icons/start.jpg $(prefix)/release_titan/var/boot/
 #	ln -s /var/boot/start.jpg $(prefix)/release_titan/usr/share/tuxbox/titan/icons/
 
-	mkdir -p $(prefix)/release_titan/usr/share/alsa
-	cp -dp $(targetprefix)/usr/share/alsa/alsa.conf $(prefix)/release_titan/usr/share/alsa/alsa.conf
+#	mkdir -p $(prefix)/release_titan/usr/share/alsa
+#	cp -dp $(targetprefix)/usr/share/alsa/alsa.conf $(prefix)/release_titan/usr/share/alsa/alsa.conf
 
 	rm -f $(prefix)/release_titan/bin/pic2m2v
 	rm -f $(prefix)/release_titan/usr/lib/*.py

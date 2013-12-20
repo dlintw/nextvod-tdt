@@ -38,7 +38,14 @@ elif [ -d $CURDIR/../../cvs/apps/neutrino-mp-exp ]; then
 else
 	NMP_REV=_NMP-rev`cd $CURDIR/../../cvs/apps/neutrino-mp && git log | grep "^commit" | wc -l`
 fi
-gitversion="_BASE-rev`(cd $CURDIR/../../ && git log | grep "^commit" | wc -l)`$HAL_REV$NMP_REV"
+
+if [ -d $CURDIR/../../cvs/apps/titan ]; then
+	TITAN_REV=_TITAN-rev`svn info $CURDIR/../../cvs/apps/titan | grep Revision | sed s/'Revision: '//g`
+	gitversion="_BASE-rev`(cd $CURDIR/../../ && git log | grep "^commit" | wc -l)`$TITAN_REV"
+else
+	gitversion="_BASE-rev`(cd $CURDIR/../../ && git log | grep "^commit" | wc -l)`$HAL_REV$NMP_REV"
+fi
+
 OUTFILE=$OUTDIR/update_w_fw.img
 OUTFILE_Z=$OUTDIR/$HOST$gitversion
 
