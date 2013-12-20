@@ -1971,7 +1971,7 @@ $(DEPDIR)/tuxtxt32bpp: tuxtxtlib @DEPENDS_tuxtxt32bpp@
 # libmpeg2
 #
 $(DEPDIR)/libmpeg2: bootstrap @DEPENDS_libmpeg2@
-	@PREPARE_libmpeg2)
+	@PREPARE_libmpeg2@
 	export PATH=$(hostprefix)/bin:$(PATH) && \
 	cd @DIR_libmpeg2@ && \
 		$(BUILDENV) \
