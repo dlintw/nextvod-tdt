@@ -62,7 +62,7 @@ static tButton cButtonCnbox[] = {
     {"YELLOW"         , "08", KEY_YELLOW},
     {"BLUE"           , "03", KEY_BLUE},
     {"EXIT"           , "1D", KEY_HOME},
-    {"BACK"           , "15", KEY_HOME},
+//    {"BACK"           , "15", KEY_HOME},
     {"TEXT"           , "03", KEY_TEXT},
     {"EPG"            , "09", KEY_EPG},
     {"REWIND"         , "1E", KEY_REWIND},
@@ -159,6 +159,7 @@ static int pRead(Context_t* context)
     eKeyType        vKeyType = RemoteControl;
     int             vCurrentCode = -1;
     static   int    vNextKey = 0;
+    static   int    lastCode = 0;
     static   char   vOldButton = 0;
 
     while (1)
@@ -187,13 +188,12 @@ static int pRead(Context_t* context)
 
             if (vCurrentCode != 0)
             {
-#if 0
-                vNextKey = (vData[5] & 0x80 == 0 ? vNextKey + 1 : vNextKey) % 0x100;
+                vNextKey = (vCurrentCode != lastCode ? vNextKey + 1 : vNextKey) % 0x100;
+                lastCode = vCurrentCode;
 
                 /* printf("nextFlag %d\n", vNextKey);*/
 
                 vCurrentCode += (vNextKey << 16);
-#endif
                 break;
             }
         }
