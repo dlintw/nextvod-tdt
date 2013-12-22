@@ -90,7 +90,7 @@ echo "30) Vitamin HD5000"
 echo "31) Atemio530"
 
 case $1 in
-	[1-9] | 1[0-9] | 2[0-9]) REPLY=$1
+	[1-9] | 1[0-9] | 2[0-9] | 3[0-9]) REPLY=$1
 	echo -e "\nSelected target: $REPLY\n"
 	;;
 	*)
