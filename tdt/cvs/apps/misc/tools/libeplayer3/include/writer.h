@@ -2,6 +2,7 @@
 #define WRITER_H_
 
 #include <stdio.h>
+#include <stdint.h>
 
 typedef enum { eNone, eAudio, eVideo, eGfx} eWriterType_t;
 
@@ -33,7 +34,7 @@ typedef struct {
     int                    fd;
     unsigned int           Screen_Width;
     unsigned int           Screen_Height;
-    unsigned char*         destination;
+    uint32_t		   *destination;
     unsigned int           destStride;
 } WriterFBCallData_t;
 
@@ -76,32 +77,6 @@ extern Writer_t WriterVideoVC1;
 extern Writer_t WriterFramebuffer;
 extern Writer_t WriterPipe;
 extern Writer_t WriterDVBSubtitle;
-
-static Writer_t * AvailableWriter[] = {
-    &WriterAudioIPCM,
-    &WriterAudioPCM,
-    &WriterAudioMP3,
-    &WriterAudioMPEGL3,
-    &WriterAudioAC3,
-    &WriterAudioAAC,
-    &WriterAudioDTS,
-    &WriterAudioWMA,
-    &WriterAudioFLAC,
-    &WriterAudioVORBIS,
-
-    &WriterVideoMPEG2,
-    &WriterVideoMPEGH264,
-    &WriterVideoH264,
-    &WriterVideoDIVX,
-    &WriterVideoFOURCC,
-    &WriterVideoMSCOMP,
-    &WriterVideoWMV,
-    &WriterVideoH263,
-    &WriterVideoFLV,
-    &WriterVideoVC1,
-    &WriterFramebuffer,
-    NULL
-};
 
 Writer_t* getWriter(char* encoding);
 
