@@ -702,11 +702,11 @@ endif
 # tuxtxt
 #
 	if [ -e $(targetprefix)/usr/bin/tuxtxt ]; then \
-		cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release/usr/bin/; \
+		cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release_titan/usr/bin/; \
 	fi
 
 	if [ -e $(targetprefix)/usr/share/fonts/tuxtxt.otb ]; then \
-		cp $(targetprefix)/usr/share/fonts/tuxtxt.otb $(prefix)/release/usr/share/fonts/; \
+		cp $(targetprefix)/usr/share/fonts/tuxtxt.otb $(prefix)/release_titan/usr/share/fonts/; \
 	fi
 
 #
