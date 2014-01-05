@@ -699,6 +699,17 @@ endif
 	fi
 
 #
+# tuxtxt
+#
+	if [ -e $(targetprefix)/usr/bin/tuxtxt ]; then \
+		cp -p $(targetprefix)/usr/bin/tuxtxt $(prefix)/release/usr/bin/; \
+	fi
+
+	if [ -e $(targetprefix)/usr/share/fonts/tuxtxt.otb ]; then \
+		cp $(targetprefix)/usr/share/fonts/tuxtxt.otb $(prefix)/release/usr/share/fonts/; \
+	fi
+
+#
 # fonts
 #
 #	cp -aR $(targetprefix)/usr/share/fonts/{titan,DejaVuLGCSansMono-Bold}.ttf $(prefix)/release_titan/usr/share/fonts
@@ -726,7 +737,7 @@ endif
 #	cp -aR $(targetprefix)/var/tuxbox/config/* $(prefix)/release_titan/var/tuxbox/config
 #	cp -aR $(buildprefix)/root/usr/local/share/config/zapit $(prefix)/release_titan/var/tuxbox/config
 #	mkdir -p $(prefix)/release_titan/var/tuxbox/config/tuxtxt
-#	cp $(buildprefix)/root/etc/tuxbox/tuxtxt2.conf $(prefix)/release_titan/var/tuxbox/config/tuxtxt
+	cp $(buildprefix)/root/etc/tuxbox/tuxtxt2.conf $(prefix)/release_titan/var/tuxbox/config/tuxtxt
 #if !ENABLE_CUBEREVO_MINI2
 #if !ENABLE_ATEVIO7500
 #if !ENABLE_SPARK7162

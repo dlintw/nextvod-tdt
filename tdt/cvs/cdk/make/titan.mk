@@ -2,9 +2,9 @@
 # titan
 #
 
-# $(DEPDIR)/titan.do_prepare: | bootstrap $(EXTERNALLCD_DEP) libdvbsipp libfreetype libjpeg libpng libungif libid3tag libcurl libmad libvorbisidec openssl ffmpeg libopenthreads libusb2 libalsa titan-libdreamdvd $(MEDIAFW_DEP)
+# $(DEPDIR)/titan.do_prepare: | bootstrap $(EXTERNALLCD_DEP) libdvbsipp libfreetype libjpeg libpng libungif libid3tag libcurl libmad libvorbisidec openssl ffmpeg libopenthreads libusb2 libalsa tuxtxt32bpp titan-libdreamdvd $(MEDIAFW_DEP)
 
-$(DEPDIR)/titan.do_prepare: | bootstrap libfreetype libjpeg libpng ffmpeg titan-libdreamdvd $(MEDIAFW_DEP)
+$(DEPDIR)/titan.do_prepare: | bootstrap libfreetype libjpeg libpng ffmpeg tuxtxt32bpp titan-libdreamdvd $(MEDIAFW_DEP)
 	[ -d "$(appsdir)/titan" ] && \
 	(cd $(appsdir)/titan; svn up; cd "$(buildprefix)";); \
 	[ -d "$(appsdir)/titan" ] || \
