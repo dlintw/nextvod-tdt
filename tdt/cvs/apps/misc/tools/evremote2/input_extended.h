@@ -78,10 +78,7 @@
 #define KEY_TEEN         0x19f
 #define KEY_TWEN         0x1a0
 #define KEY_BREAK        0x1a1
-#define KEY_SHOOT        0x1a2
-#define KEY_WWW          0x1a3
-#define KEY_SUBCHANNEL   0x1a4
-#define KEY_PLUGIN       0x1a5
+#define KEY_WWW          0x1a2
 
 #endif  /* !defined(KEY_OK)  */
 #endif  /* _INPUT_EXTENDED_H */
