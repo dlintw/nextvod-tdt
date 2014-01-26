@@ -775,7 +775,7 @@ FFMPEG_CONFIGURE += --enable-decoder=theora --enable-decoder=vorbis --enable-dec
 FFMPEG_CONFIGURE += --enable-demuxer=mjpeg --enable-demuxer=wav --enable-demuxer=rtsp
 FFMPEG_CONFIGURE += --enable-parser=mjpeg
 FFMPEG_CONFIGURE += --disable-indevs --disable-outdevs --disable-bsfs --disable-debug
-FFMPEG_CONFIGURE += --enable-pthreads --enable-bzlib --enable-zlib --enable-stripping
+FFMPEG_CONFIGURE += --enable-pthreads --enable-bzlib --enable-zlib --enable-librtmp --enable-stripping
 
 $(DEPDIR)/ffmpeg: bootstrap libass @DEPENDS_ffmpeg@
 	@PREPARE_ffmpeg@
