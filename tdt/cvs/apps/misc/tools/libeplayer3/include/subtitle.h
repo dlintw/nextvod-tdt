@@ -29,7 +29,7 @@ Collisions: Normal\n\
 Timer: 100.0000\n\n\
 [V4 Styles]\n\
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, TertiaryColour, BackColour, Bold, Italic, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, AlphaLevel, Encoding\n\
-Style: Default,Arial,64,16777215,0,16777215,0,0,0,2,2,2,2,20,20,10,0\n\n\
+Style: Default,Arial,58,16777215,0,16777215,0,0,0,2,2,2,2,20,20,10,0\n\n\
 [Events]\n\
 Format: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n\n\n"
 
@@ -117,13 +117,12 @@ typedef struct
 
 typedef struct
 {
-    uint32_t	   *destination;
+    unsigned char* destination;
     unsigned int   screen_width;
     unsigned int   screen_height;
     unsigned int   destStride;
     
-    void	   (*framebufferBlit)(void);
-
+    void           (*framebufferBlit)();
     int            shareFramebuffer;
     int            framebufferFD;
 } SubtitleOutputDef_t;

@@ -97,6 +97,7 @@ static const unsigned char clpcm_prv[14] = {   0xA0,   //sub_stream_id
 			};
 
 static unsigned char lpcm_prv[14];
+
 static unsigned char breakBuffer[8192];
 static unsigned int breakBufferFillSize = 0;
 

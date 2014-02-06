@@ -63,13 +63,6 @@ static const char* FILENAME = "output.c";
 /* Varaibles                     */
 /* ***************************** */
 
-static Output_t * AvailableOutput[] = {
-    &LinuxDvbOutput,
-    &SubtitleOutput,
-    &PipeOutput,
-    NULL
-};
-
 /* ***************************** */
 /* Prototypes                    */
 /* ***************************** */

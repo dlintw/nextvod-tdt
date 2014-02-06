@@ -29,18 +29,17 @@
 
 #define PLAYBACK_DEBUG
 
-static short debug_level = 0;
+static short debug_level = 10;
 
-static const char *FILENAME = "playback.c";
 #ifdef PLAYBACK_DEBUG
 #define playback_printf(level, fmt, x...) do { \
-if (debug_level >= level) printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); } while (0)
+if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); } while (0)
 #else
 #define playback_printf(level, fmt, x...)
 #endif
 
 #ifndef PLAYBACK_SILENT
-#define playback_err(fmt, x...) do { printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); } while (0)
+#define playback_err(fmt, x...) do { printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); } while (0)
 #else
 #define playback_err(fmt, x...)
 #endif
@@ -135,7 +134,7 @@ status = 1;
                  
                  if (count == 200)
                  {
-//                     playback_err("something went wrong, expect end but never reached?\n");
+                     playback_err("something went wrong, expect end but never reached?\n");
                      dieNow = 1;
                  }
                  usleep(10000);
@@ -260,8 +259,8 @@ static int PlaybackClose(Context_t  *context) {
     context->playback->SlowMotion   = 0;
     context->playback->Speed        = 0;
     if(context->playback->uri) {
-	free(context->playback->uri);
-	context->playback->uri = NULL;
+        free(context->playback->uri);
+        context->playback->uri = NULL;
     }
 
     playback_printf(10, "exiting with value %d\n", ret);
@@ -285,6 +284,7 @@ static int PlaybackPlay(Context_t  *context) {
         if (ret != 0) {
             playback_err("OUTPUT_PLAY failed!\n");
             playback_err("clearing isCreationPhase!\n");
+
             context->playback->isCreationPhase = 0;	// allow thread to go into next state
             context->playback->isPlaying       = 0;
             context->playback->isPaused        = 0;
@@ -748,19 +748,7 @@ static int PlaybackSwitchSubtitle(Context_t  *context, int* track) {
             {
                 playback_err("manager set track failed\n");
             }
-#if 0
-	    if (*track == 0xffff) {
-		//CHECK FOR SUBTITLES
-		if (context->container && context->container->textSrtContainer)
-		    context->container->textSrtContainer->Command(context, CONTAINER_INIT, context->playback->uri+7);
 
-		if (context->container && context->container->textSsaContainer)
-		    context->container->textSsaContainer->Command(context, CONTAINER_INIT, context->playback->uri+7);
-
-		if (context->container && context->container->assContainer)
-		    context->container->assContainer->Command(context, CONTAINER_INIT, NULL);
-	    }
-#endif
             context->manager->subtitle->Command(context, MANAGER_GET, &trackid);
 
 /* konfetti: I make this hack a little bit nicer,

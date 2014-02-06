@@ -50,13 +50,13 @@
 static short debug_level = 10;
 
 #define ssa_printf(level, fmt, x...) do { \
-if (debug_level >= level) printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); } while (0)
+if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); } while (0)
 #else
 #define ssa_printf(level, fmt, x...)
 #endif
 
 #ifndef SSA_SILENT
-#define ssa_err(fmt, x...) do { printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); } while (0)
+#define ssa_err(fmt, x...) do { printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); } while (0)
 #else
 #define ssa_err(fmt, x...)
 #endif
@@ -68,10 +68,10 @@ if (debug_level >= level) printf("[%s:%s] " fmt, FILENAME, __FUNCTION__, ## x); 
 #define TRACKWRAP 20
 #define MAXLINELENGTH 1000
 
-static const char FILENAME[] = "text_ssa.c";
-
 //Buffer size used in getLine function. Do not set to value less than 1 !!!
 #define SSA_BUFFER_SIZE 14
+
+static const char FILENAME[] = __FILE__;
 
 /* ***************************** */
 /* Types                         */
@@ -240,11 +240,9 @@ static char ** SsaManagerList(Context_t  *context __attribute__((unused))) {
     if (Tracks != NULL) {
         char help[256];
         int i = 0, j = 0;
-
         tracklist = malloc(sizeof(char *) * ((TrackCount*2) + 1));
 
         for (i = 0, j = 0; i < TrackCount; i++, j+=2) {
-
             sprintf(help, "%d", Tracks[i].Id);
             tracklist[j]    = strdup(help);
             tracklist[j+1]  = strdup(Tracks[i].File);
@@ -265,6 +263,7 @@ static void SsaManagerDel(Context_t * context __attribute__((unused))) {
         for (i = 0; i < TrackCount; i++) {
             if (Tracks[i].File != NULL)
                 free(Tracks[i].File);
+
             Tracks[i].File = NULL;
         }
         free(Tracks);
@@ -365,7 +364,7 @@ static int SsaGetSubtitle(Context_t  *context, char * Filename) {
                 SsaManagerAdd(context, SsaSubtitle);
 
                 Track_t Subtitle;
-		memset(&Subtitle, 0, sizeof(Subtitle));
+                memset(&Subtitle, 0, sizeof(Subtitle));
                 Subtitle.Name = subtitleExtension;
                 Subtitle.Encoding = "S_TEXT/SSA";
                 Subtitle.Id = i++;
@@ -378,6 +377,7 @@ static int SsaGetSubtitle(Context_t  *context, char * Filename) {
     free(copyFilename);
 
     ssa_printf(10, "<\n");
+
     return cERR_SSA_NO_ERROR;
 }
 

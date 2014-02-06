@@ -49,7 +49,7 @@
 
 #define LINUXDVB_DEBUG
 
-static short debug_level = 0;
+static short debug_level = 10;
 
 static const char FILENAME[] = __FILE__;
 
@@ -314,6 +314,7 @@ int LinuxDvbStop(Context_t  *context __attribute__((unused)), char * type) {
             linuxdvb_err("ioctl failed with errno %d\n", errno);
             linuxdvb_err("VIDEO_SET_SPEED: %s\n", strerror(errno));
         }
+
         if (ioctl(videofd, VIDEO_STOP, NULL) == -1)
         {
             linuxdvb_err("ioctl failed with errno %d\n", errno);
@@ -334,6 +335,7 @@ int LinuxDvbStop(Context_t  *context __attribute__((unused)), char * type) {
             linuxdvb_err("ioctl failed with errno %d\n", errno);
             linuxdvb_err("AUDIO_SET_SPEED: %s\n", strerror(errno));
         }
+
         if (ioctl(audiofd, AUDIO_STOP, NULL) == -1)
         {
             linuxdvb_err("ioctl failed with errno %d\n", errno);
