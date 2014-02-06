@@ -1,6 +1,5 @@
-CCFLAGSY += -Wno-uninitialized -D__TDT__
-
-# workaround for stlinux24
+EXTRA_CFLAGS += -Wno-uninitialized -D__TDT__
+# workaround for stm24
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
 endif
