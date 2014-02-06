@@ -257,13 +257,13 @@ static char* Codec2Encoding(AVCodecContext *codec, int* version)
     case AV_CODEC_ID_WMAV2:
     case 86056:
     case AV_CODEC_ID_WMAPRO:
-        return "A_WMA";
+        return "A_IPCM";
     case AV_CODEC_ID_MLP:
         return "A_MLP";
     case AV_CODEC_ID_RA_144:
-        return "A_RMA";
+        return "A_IPCM";
     case AV_CODEC_ID_RA_288:
-        return "A_RMA";
+        return "A_IPCM";
     case AV_CODEC_ID_VORBIS:
         return "A_IPCM";
     case AV_CODEC_ID_FLAC:
