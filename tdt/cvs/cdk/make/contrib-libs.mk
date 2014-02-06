@@ -768,10 +768,12 @@ FFMPEG_CONFIGURE += --disable-encoders
 FFMPEG_CONFIGURE += --enable-encoder=aac --enable-encoder=h261 --enable-encoder=h263 --enable-encoder=h263p --enable-encoder=ljpeg
 FFMPEG_CONFIGURE += --enable-encoder=mjpeg --enable-encoder=mpeg1video --enable-encoder=mpeg2video --enable-encoder=png
 FFMPEG_CONFIGURE += --disable-decoders
-FFMPEG_CONFIGURE += --enable-decoder=aac --enable-decoder=dvbsub --enable-decoder=flac --enable-decoder=h261 --enable-decoder=h263
+FFMPEG_CONFIGURE += --enable-decoder=aac --enable-decoder=dvbsub --enable-decoder=dvdsub --enable-decoder=flac --enable-decoder=h261 --enable-decoder=h263
 FFMPEG_CONFIGURE += --enable-decoder=h263i --enable-decoder=h264 --enable-decoder=iff_byterun1 --enable-decoder=mjpeg
 FFMPEG_CONFIGURE += --enable-decoder=mp3 --enable-decoder=mpeg1video --enable-decoder=mpeg2video --enable-decoder=png
 FFMPEG_CONFIGURE += --enable-decoder=theora --enable-decoder=vorbis --enable-decoder=wmv3 --enable-decoder=pcm_s16le
+FFMPEG_CONFIGURE += --enable-decoder=rawvideo --enable-decoder=wmapro --enable-decoder=wmav1 --enable-decoder=wmav2 --enable-decoder=wmavoice
+FFMPEG_CONFIGURE += --enable-decoder=iff_byterun1 --enable-decoder=ra_144 --enable-decoder=ra_288
 FFMPEG_CONFIGURE += --enable-demuxer=mjpeg --enable-demuxer=wav --enable-demuxer=rtsp
 FFMPEG_CONFIGURE += --enable-parser=mjpeg
 FFMPEG_CONFIGURE += --disable-indevs --disable-outdevs --disable-bsfs --disable-debug
@@ -2357,3 +2359,21 @@ $(DEPDIR)/taglib: bootstrap @DEPENDS_taglib@
 	@DISTCLEANUP_taglib@
 	touch $@
 
+#
+# libproxy
+#
+$(DEPDIR)/libproxy: $(DEPDIR)/libproxy @DEPENDS_libproxy@
+	svn checkout http://libproxy.googlecode.com/svn/trunk/ @DIR_libproxy@
+	export PATH=$(hostprefix)/bin:$(PATH) && \
+	cd @DIR_libproxy@ && \
+		$(BUILDENV) \
+		ACLOCAL_FLAGS="-I . -I $(targetprefix)/usr/share/aclocal" \
+		$(BUILDENV) \
+		./autogen.sh \
+			--build=$(build) \
+			--host=$(target) \
+			--prefix=/usr && \
+			$(MAKE) && \
+		@INSTALL_libproxy@ && \
+	@DISTCLEANUP_libproxy@
+	touch $@

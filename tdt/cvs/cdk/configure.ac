@@ -870,6 +870,7 @@ TUXBOX_RULES_MAKE(gmediarender)
 TUXBOX_RULES_MAKE(tinyxml)
 TUXBOX_RULES_MAKE(libnfs)
 TUXBOX_RULES_MAKE(taglib)
+TUXBOX_RULES_MAKE(libproxy)
 
 #
 # python
