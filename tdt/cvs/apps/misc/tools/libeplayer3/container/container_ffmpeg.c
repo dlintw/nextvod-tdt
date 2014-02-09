@@ -284,6 +284,8 @@ static char* Codec2Encoding(AVCodecContext *codec, int* version)
 // Default to injected-pcm for unhandled audio types.
 			if (codec->codec_type == AVMEDIA_TYPE_AUDIO)
 				return "A_IPCM";
+			if (codec->codec_type == AVMEDIA_TYPE_SUBTITLE)
+				return "S_TEXT/SRT";
 	   		ffmpeg_err("Codec ID %ld (%.8lx) not found\n", (long)codec->codec_id, (long)codec->codec_id);
     }
     return NULL;
