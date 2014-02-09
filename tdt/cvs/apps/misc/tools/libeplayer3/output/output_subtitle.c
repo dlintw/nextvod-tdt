@@ -46,7 +46,7 @@
 
 #ifdef SUBTITLE_DEBUG
 
-static short debug_level = 10;
+static short debug_level = 0;
 
 #define subtitle_printf(level, fmt, x...) do { \
 if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); } while (0)
@@ -103,14 +103,11 @@ static int readPointer = 0;
 static int writePointer = 0;
 static int hasThreadStarted = 0;
 static int isSubtitleOpened = 0;
-
-static int            screen_width     = 0;
-static int            screen_height    = 0;
-static int            destStride       = 0;
-static int            shareFramebuffer = 0;
-static int            framebufferFD    = -1;
-static unsigned char* destination      = NULL;
-static void           (*framebufferBlit)() = NULL;
+static int	screen_width		= 0;
+static int	screen_height		= 0;
+static int	destStride		= 0;
+static void	(*framebufferBlit)	= NULL;
+static uint32_t	*destination		= NULL;
 
 /* ***************************** */
 /* Prototypes                    */
@@ -479,7 +476,6 @@ static void* SubtitleThread(void* data) {
                 diff = (diff*1000)/90.0;
 
                 subtitle_printf(50, "DIFF: %lud\n", diff);
-
                 if(diff > 100)
                     usleep(diff);
 
@@ -505,7 +501,6 @@ static void* SubtitleThread(void* data) {
 
                 free(subText);
             }
-
         } /* trackID >= 0 */
         else //Wait
             usleep(500000);
@@ -785,22 +780,18 @@ static int Command(void  *_context, OutputCmd_t command, void * argument) {
         SubtitleOutputDef_t* out = (SubtitleOutputDef_t*)argument;
         out->screen_width = screen_width;
         out->screen_height = screen_height;
-        out->shareFramebuffer = shareFramebuffer;
-        out->framebufferFD = framebufferFD;
+        out->framebufferBlit = framebufferBlit;
         out->destination = destination;
         out->destStride = destStride;
-        out->framebufferBlit = framebufferBlit;
         break;
     }
     case OUTPUT_SET_SUBTITLE_OUTPUT: {
         SubtitleOutputDef_t* out = (SubtitleOutputDef_t*)argument;
         screen_width = out->screen_width;
         screen_height = out->screen_height;
-        shareFramebuffer = out->shareFramebuffer;
-        framebufferFD = out->framebufferFD;
+        framebufferBlit = out->framebufferBlit;
         destination = out->destination;
         destStride = out->destStride;
-        framebufferBlit = out->framebufferBlit;
         break;
     }
     case OUTPUT_SUBTITLE_REGISTER_FUNCTION: {
