@@ -56,7 +56,7 @@
 
 #ifdef ASS_DEBUG
 
-static short debug_level = 20;
+static short debug_level = 10;
 
 #define ass_printf(level, fmt, x...) do { \
 if (debug_level >= level) printf("[%s:%s] " fmt, __FILE__, __FUNCTION__, ## x); } while (0)
@@ -119,6 +119,8 @@ static ASS_Renderer *ass_renderer;
 
 //static float ass_font_scale = 0.4; // was: 0.7
 //static float ass_line_spacing = 0.4; // was: 0.7
+static float ass_font_scale = 0.9;
+static float ass_line_spacing = 0.9;
 
 static unsigned int screen_width     = 0;
 static unsigned int screen_height    = 0;
