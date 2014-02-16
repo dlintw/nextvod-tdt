@@ -31,7 +31,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    echo "init stmfb"
    insmod $MODDIR/stmcore-display-sti7105.ko
-   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:15m:pal:yuv:yuv
+   insmod $MODDIR/stmfb.ko display0=1920x1080-32@60:12m:24m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
 
    echo "LOADING MODULES"   
    echo "LOAD" > /dev/vfd

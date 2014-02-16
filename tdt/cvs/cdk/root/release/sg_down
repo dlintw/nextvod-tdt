@@ -1,23 +1,23 @@
 #! /bin/sh
 #
-# vsftpd
+# sg_down
 #
-# chkconfig: 3 20 0
+# chkconfig: 2345 20 0
 #
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/bin/vsftpd
-DESC="FTP server"
-NAME=vsftpd
+DAEMON=/usr/sbin/sg_down.sh
+NAME=sg_down
+DESC=sg_down
 
 test -x $DAEMON || exit 0
 
 # Defaults
-CONFIGFILE="/etc/vsftpd.conf"
-CONFIGDEFAULTFILE="/etc/default/vsftpd"
+CONFIGFILE="/etc/sg_down.conf"
+CONFIGDEFAULTFILE="/etc/default/sg_down"
 USERID=root
 GROUPID=root
-ENABLE="true"
+ENABLE="false"
 
 # Reads config file (will override defaults above)
 [ -r "$CONFIGDEFAULTFILE" ] && . $CONFIGDEFAULTFILE
@@ -32,8 +32,10 @@ set -e
 case "$1" in
   start)
 	echo -n "Starting $DESC: "
-	start-stop-daemon --start --quiet --chuid $USERID:$GROUPID \
-		--exec $DAEMON -b --
+	start-stop-daemon --start -v --background --pidfile /var/run/sg_downd.pid --make-pidfile --chuid $USERID:$GROUPID \
+		--exec $DAEMON --
+	#start-stop-daemon --start --quiet --chuid $USERID:$GROUPID \
+		#--exec $DAEMON -b --
 		#--exec $DAEMON -- -b -c $CONFIGFILE
 	echo "$NAME."
 	;;
@@ -49,10 +51,10 @@ case "$1" in
   restart)
 	echo -n "Restarting $DESC: "
 	start-stop-daemon --stop --oknodo --quiet --exec $DAEMON
-	echo "done."
+	echo "$NAME."
 	sleep 1
-	start-stop-daemon --start --quiet --chuid $USERID:$GROUPID \
-		--exec $DAEMON -b --
+	start-stop-daemon --start -v --background --pidfile /var/run/sg_downd.pid --make-pidfile --chuid $USERID:$GROUPID \
+		--exec $DAEMON --
 	echo "$NAME."
 	;;
   *)

@@ -6,9 +6,22 @@ insmod $MODDIR/aotom.ko
 insmod $MODDIR/simu_button.ko
 insmod $MODDIR/encrypt.ko
 
+ifconfig eth0 up
+udhcpc &
+
+busybox bash &
+
 if [ -e /var/etc/.firstboot ]; then
    echo "WAIT 1 min" >/dev/vfd
    echo "WAIT 1 min"
+   mknod -m 622 /dev/console c 5 1
+   mknod -m 666 /dev/null c 1 3
+   mknod -m 666 /dev/zero c 1 5
+   mknod -m 666 /dev/ptmx c 5 2
+   mknod -m 666 /dev/tty c 5 0
+   mknod -m 444 /dev/random c 1 8
+   mknod -m 444 /dev/urandom c 1 9
+   chown -v root:tty /dev/{console,ptmx,tty}
    rm /var/etc/.firstboot
    touch /dev/.devfsd
 fi
@@ -31,7 +44,7 @@ if [ ! -e /var/etc/.firstboot ]; then
 
    echo "init stmfb"
    insmod $MODDIR/stmcore-display-sti7105.ko
-   insmod $MODDIR/stmfb.ko display0=1280x720-32@50:8m:46m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
+   insmod $MODDIR/stmfb.ko display0=1920x1080-32@60:12m:24m:pal:yuv:yuv;# display1=720x576-16@50:1m:pal:cvbs;
 
    echo "LOADING MODULES"   
    echo "LOAD" > /dev/vfd
@@ -48,8 +61,12 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "init embx"
    insmod $MODDIR/embxshell.ko
    insmod $MODDIR/embxmailbox.ko mailbox0=0xfe211000:136:set2 mailbox1=0xfe212000:0 ;
-   insmod $MODDIR/embxshm.ko mailbox0=shm:0:7:0x60000000:0:256:256:0:512:0x40000000:0x10000000 ;
+   insmod $MODDIR/embxshm.ko mailbox0=shm:0:7:0x60000000:0:256:256:0:512:0x40000000:0x10000000
    insmod $MODDIR/mme_host.ko transport0=shm
+
+   #insmod $MODDIR/embxmailbox.ko mailbox0=0xFE211000:136:set2 mailbox1=0xFE212000:137:set2
+   #insmod $MODDIR/embxshm.ko mailbox0=TransportVideo0:0:3:0x00000000:0:16:16:0:256:0x40000000:0x40000000 mailbox1=TransportAudio1:0:5:0x00000000:0:16:16:0:256:0x40000000:0x40000000
+   #insmod $MODDIR/mme_host.ko transport0=TransportVideo0 transport1=TransportAudio1*/
 
    echo "init AVS"
    insmod $MODDIR/avs.ko type=avs_pio
@@ -144,28 +161,9 @@ if [ ! -e /var/etc/.firstboot ]; then
    echo "LOADING xbmc"
 
    /etc/init.d/xbmc_userdata
+/usr/lib/xbmc/xbmc.bin 
 
-   until false
-   do
-      echo "starting xbmc->"
-      /usr/lib/xbmc/xbmc.bin
-      rtv=$?
-      echo "xbmc ended <- RTV: " $rtv
-      case "$rtv" in
-		0) echo "0"
-		   echo " ERROR"
-      	   init 6;;
-		1) echo "1"
-		   echo "SHUTDOWN"
-		   init 0;;
-		2) echo "2"
-		   echo "REBOOT"
-		   init 6;;
-		*) echo "*"
-		   echo "ERROR"
-           init 6;;
-      esac
-   done 
+   
 fi
 
 #never reached
